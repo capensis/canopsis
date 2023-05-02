@@ -1,12 +1,12 @@
 <template lang="pug">
-  v-layout.c-pattern-operator-information(row, align-center)
+  v-layout.pattern-operator-information(row, align-center)
     c-pattern-operator-chip.mr-4
       slot
-    div.c-pattern-operator-information__bracket
+    div.pattern-operator-information__bracket
 </template>
 
 <style lang="scss" scoped>
-.c-pattern-operator-information {
+.pattern-operator-information {
   height: 100%;
   position: relative;
 

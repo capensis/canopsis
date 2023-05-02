@@ -1,36 +1,23 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { QUICK_RANGES, TIME_UNITS } from '@/constants';
 
-import CPatternGroupsField from '@/components/forms/fields/pattern/c-pattern-groups-field.vue';
-
-const localVue = createVueInstance();
+import PatternGroupsField from '@/components/forms/fields/pattern/pattern-groups-field.vue';
 
 const stubs = {
-  'c-pattern-group-field': true,
+  'pattern-group-field': true,
   'c-pattern-operator-chip': true,
 };
 
-const factory = (options = {}) => shallowMount(CPatternGroupsField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CPatternGroupsField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 const selectAddButton = wrapper => wrapper.find('v-btn-stub');
-const selectPatternGroupsField = wrapper => wrapper.findAll('c-pattern-group-field-stub');
+const selectPatternGroupsField = wrapper => wrapper.findAll('pattern-group-field-stub');
 const selectPatternGroupFieldByIndex = (wrapper, index) => selectPatternGroupsField(wrapper)
   .at(index);
 
-describe('c-pattern-groups-field', () => {
+describe('pattern-groups-field', () => {
+  const factory = generateShallowRenderer(PatternGroupsField, { stubs });
+  const snapshotFactory = generateRenderer(PatternGroupsField, { stubs });
+
   const groups = [
     { rules: [], key: 'key 1' },
     { rules: [], key: 'key 2' },
@@ -138,7 +125,7 @@ describe('c-pattern-groups-field', () => {
     ]);
   });
 
-  test('Renders `c-pattern-groups-field` with default props', () => {
+  test('Renders `pattern-groups-field` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         groups: [],
@@ -149,7 +136,7 @@ describe('c-pattern-groups-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `c-pattern-groups-field` with custom props', () => {
+  test('Renders `pattern-groups-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         groups,
@@ -165,7 +152,7 @@ describe('c-pattern-groups-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `c-pattern-groups-field` with errors', async () => {
+  test('Renders `pattern-groups-field` with errors', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         groups: [],

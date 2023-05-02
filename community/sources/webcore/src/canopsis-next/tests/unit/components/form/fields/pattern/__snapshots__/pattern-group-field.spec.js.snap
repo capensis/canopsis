@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-pattern-group-field Renders \`c-pattern-group-field\` with custom props 1`] = `
+exports[`pattern-group-field Renders \`pattern-group-field\` with custom props 1`] = `
 <div
   class="layout"
 >
   <div
     class="flex pa-2 mr-2"
   >
-    <c-pattern-operator-information-stub>
+    <pattern-operator-information-stub>
       And
-    </c-pattern-operator-information-stub>
+    </pattern-operator-information-stub>
   </div>
   <div
     class="flex xs11"
@@ -17,9 +17,10 @@ exports[`c-pattern-group-field Renders \`c-pattern-group-field\` with custom pro
     <div
       class="layout column"
     >
-      <c-pattern-rules-field-stub
+      <pattern-rules-field-stub
         attributes="[object Object]"
         disabled="true"
+        name="rules"
         rules=""
       />
     </div>
@@ -27,16 +28,16 @@ exports[`c-pattern-group-field Renders \`c-pattern-group-field\` with custom pro
 </div>
 `;
 
-exports[`c-pattern-group-field Renders \`c-pattern-group-field\` with default props 1`] = `
+exports[`pattern-group-field Renders \`pattern-group-field\` with default props 1`] = `
 <div
   class="layout"
 >
   <div
     class="flex pa-2 mr-2"
   >
-    <c-pattern-operator-information-stub>
+    <pattern-operator-information-stub>
       And
-    </c-pattern-operator-information-stub>
+    </pattern-operator-information-stub>
   </div>
   <div
     class="flex xs11"
@@ -44,8 +45,9 @@ exports[`c-pattern-group-field Renders \`c-pattern-group-field\` with default pr
     <div
       class="layout column"
     >
-      <c-pattern-rules-field-stub
+      <pattern-rules-field-stub
         attributes=""
+        name="rules"
         rules=""
       />
     </div>

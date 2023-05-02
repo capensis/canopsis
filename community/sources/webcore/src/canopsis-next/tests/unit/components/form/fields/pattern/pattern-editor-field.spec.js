@@ -1,6 +1,6 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import {
   ALARM_PATTERN_FIELDS,
@@ -12,41 +12,13 @@ import {
   TIME_UNITS,
 } from '@/constants';
 
-import CPatternsEditorField from '@/components/forms/fields/pattern/c-pattern-editor-field.vue';
-
-const localVue = createVueInstance();
+import PatternsEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
 const stubs = {
   'c-pattern-field': true,
-  'c-pattern-groups-field': true,
+  'pattern-groups-field': true,
   'pattern-advanced-editor-field': true,
 };
-
-const factory = (options = {}) => shallowMount(CPatternsEditorField, {
-  localVue,
-  stubs,
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CPatternsEditorField, {
-  localVue,
-  stubs,
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-
-  ...options,
-});
 
 const selectTabItems = wrapper => wrapper.findAll('a.v-tabs__item');
 const selectAdvancedTab = wrapper => selectTabItems(wrapper).at(1);
@@ -54,7 +26,26 @@ const selectPatternField = wrapper => wrapper.find('c-pattern-field-stub');
 const selectEditButton = wrapper => wrapper.find('v-btn-stub');
 const selectPatternAdvancedEditorField = wrapper => wrapper.find('pattern-advanced-editor-field-stub');
 
-describe('c-pattern-editor-field', () => {
+describe('pattern-editor-field', () => {
+  const factory = generateShallowRenderer(PatternsEditorField, {
+    stubs,
+
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(PatternsEditorField, {
+    stubs,
+
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+
   test('Pattern id changed to custom after trigger input event on the pattern field', () => {
     const wrapper = factory({
       propsData: {
@@ -234,7 +225,7 @@ describe('c-pattern-editor-field', () => {
     });
   });
 
-  test('Renders `c-pattern-editor-field` with default props', () => {
+  test('Renders `pattern-editor-field` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         patterns: {
@@ -248,7 +239,7 @@ describe('c-pattern-editor-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `c-pattern-editor-field` with custom props', () => {
+  test('Renders `pattern-editor-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         patterns: {
@@ -272,7 +263,7 @@ describe('c-pattern-editor-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `c-pattern-editor-field` with advanced tab', async () => {
+  test('Renders `pattern-editor-field` with advanced tab', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         patterns: {

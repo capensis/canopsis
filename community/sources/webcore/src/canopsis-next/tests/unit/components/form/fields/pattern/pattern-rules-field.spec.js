@@ -1,38 +1,22 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { PATTERN_OPERATORS, QUICK_RANGES, TIME_UNITS } from '@/constants';
 
-import CPatternRulesField from '@/components/forms/fields/pattern/c-pattern-rules-field.vue';
-
-const localVue = createVueInstance();
+import PatternRulesField from '@/components/forms/fields/pattern/pattern-rules-field.vue';
 
 const stubs = {
-  'c-pattern-rule-field': true,
+  'pattern-rule-field': true,
   'c-action-btn': true,
 };
 
-const factory = (options = {}) => shallowMount(CPatternRulesField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CPatternRulesField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 const selectAddButton = wrapper => wrapper.find('v-btn-stub');
-const selectPatternRulesField = wrapper => wrapper.findAll('c-pattern-rule-field-stub');
+const selectPatternRulesField = wrapper => wrapper.findAll('pattern-rule-field-stub');
 const selectPatternRuleFieldByIndex = (wrapper, index) => selectPatternRulesField(wrapper)
   .at(index);
 const selectPatternRemoveRuleButtonByIndex = (wrapper, index) => wrapper.findAll('c-action-btn-stub')
   .at(index);
 
-describe('c-pattern-rules-field', () => {
+describe('pattern-rules-field', () => {
   const rules = [
     {
       attribute: 'attribute 1',
@@ -53,6 +37,9 @@ describe('c-pattern-rules-field', () => {
       key: 'key 3',
     },
   ];
+
+  const factory = generateShallowRenderer(PatternRulesField, { stubs });
+  const snapshotFactory = generateRenderer(PatternRulesField, { stubs });
 
   test('Rule removed after trigger remove event on the pattern Rule field', () => {
     const wrapper = factory({
@@ -224,7 +211,7 @@ describe('c-pattern-rules-field', () => {
     ]);
   });
 
-  test('Renders `c-pattern-rules-field` with default props', () => {
+  test('Renders `pattern-rules-field` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         rules: [],
@@ -235,7 +222,7 @@ describe('c-pattern-rules-field', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `c-pattern-rules-field` with custom props', () => {
+  test('Renders `pattern-rules-field` with custom props', () => {
     const attribute = {
       text: 'Attribute text',
       value: 'attribute value',

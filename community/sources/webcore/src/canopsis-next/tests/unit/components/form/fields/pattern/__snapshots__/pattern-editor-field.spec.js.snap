@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with advanced tab 1`] = `
+exports[`pattern-editor-field Renders \`pattern-editor-field\` with advanced tab 1`] = `
 <div
   class="layout column"
 >
@@ -67,11 +67,11 @@ exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with advanced
             class="v-window-item"
             style="display: none;"
           >
-            <c-pattern-groups-field-stub
+            <pattern-groups-field-stub
               attributes=""
               class="mt-2"
+              groups=""
               name="patterns.groups"
-              value=""
             />
           </div>
         </transition-stub>
@@ -108,7 +108,7 @@ exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with advanced
 </div>
 `;
 
-exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with custom props 1`] = `
+exports[`pattern-editor-field Renders \`pattern-editor-field\` with custom props 1`] = `
 <div
   class="layout column"
 >
@@ -181,15 +181,15 @@ exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with custom p
           <div
             class="v-window-item"
           >
-            <c-pattern-groups-field-stub
+            <pattern-groups-field-stub
               attributes="[object Object]"
               class="mt-2"
               disabled="true"
+              groups="[object Object]"
               name="name.groups"
               readonly="true"
               required="true"
               type="alarm"
-              value="[object Object]"
             />
           </div>
         </transition-stub>
@@ -208,7 +208,7 @@ exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with custom p
 </div>
 `;
 
-exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with default props 1`] = `
+exports[`pattern-editor-field Renders \`pattern-editor-field\` with default props 1`] = `
 <div
   class="layout column"
 >
@@ -274,11 +274,11 @@ exports[`c-pattern-editor-field Renders \`c-pattern-editor-field\` with default 
           <div
             class="v-window-item"
           >
-            <c-pattern-groups-field-stub
+            <pattern-groups-field-stub
               attributes=""
               class="mt-2"
+              groups=""
               name="patterns.groups"
-              value=""
             />
           </div>
         </transition-stub>

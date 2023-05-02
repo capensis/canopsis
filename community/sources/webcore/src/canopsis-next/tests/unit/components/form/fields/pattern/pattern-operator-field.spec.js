@@ -1,12 +1,10 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 import { PATTERN_OPERATORS } from '@/constants';
 
-import CPatternOperatorField from '@/components/forms/fields/pattern/c-pattern-operator-field.vue';
+import PatternOperatorField from '@/components/forms/fields/pattern/pattern-operator-field.vue';
 import CSelectField from '@/components/forms/fields/c-select-field';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-select-field': createSelectInputStub('c-select-field'),
@@ -16,24 +14,15 @@ const snapshotStubs = {
   'c-select-field': CSelectField,
 };
 
-const factory = (options = {}) => shallowMount(CPatternOperatorField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CPatternOperatorField, {
-  localVue,
-  attachTo: document.body,
-  stubs: snapshotStubs,
-
-  ...options,
-});
-
 const selectSelectField = wrapper => wrapper.find('.c-select-field');
 
-describe('c-pattern-operator-field', () => {
+describe('pattern-operator-field', () => {
+  const factory = generateShallowRenderer(PatternOperatorField, { stubs });
+  const snapshotFactory = generateRenderer(PatternOperatorField, {
+    attachTo: document.body,
+    stubs: snapshotStubs,
+  });
+
   test('Value changed after trigger the select', () => {
     const wrapper = factory({
       propsData: {
@@ -52,7 +41,7 @@ describe('c-pattern-operator-field', () => {
     expect(eventData).toBe(PATTERN_OPERATORS.notExist);
   });
 
-  test('Renders `c-pattern-operator-field` with default props', () => {
+  test('Renders `pattern-operator-field` with default props', () => {
     const wrapper = snapshotFactory();
 
     const menuContent = wrapper.findMenu();
@@ -61,7 +50,7 @@ describe('c-pattern-operator-field', () => {
     expect(menuContent.element).toMatchSnapshot();
   });
 
-  test('Renders `c-pattern-operator-field` with custom props', () => {
+  test('Renders `pattern-operator-field` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: PATTERN_OPERATORS.exist,
