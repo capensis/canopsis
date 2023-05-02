@@ -92,7 +92,7 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest) (*Co
 		FindOne(ctx, bson.M{"_id": r.ID, "type": types.EntityTypeService, "soft_deleted": bson.M{"$exists": false}}).
 		Decode(&service)
 	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, nil
 		}
 		return nil, err
@@ -130,10 +130,15 @@ func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest) (*Context
 		FindOne(ctx, bson.M{"_id": r.ID, "soft_deleted": bson.M{"$exists": false}}, options.FindOne().SetProjection(bson.M{"services": 1})).
 		Decode(&e)
 	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, nil
 		}
 		return nil, err
+	}
+	result := &ContextGraphAggregationResult{}
+	if len(e.Services) == 0 {
+		result.Data = make([]entity.Entity, 0)
+		return result, nil
 	}
 
 	match := bson.M{
@@ -149,7 +154,6 @@ func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest) (*Context
 	}
 
 	defer cursor.Close(ctx)
-	result := &ContextGraphAggregationResult{}
 
 	if cursor.Next(ctx) {
 		err = cursor.Decode(result)
