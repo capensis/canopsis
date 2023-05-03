@@ -225,7 +225,9 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 
 		if entity.Type == types.EntityTypeConnector {
 			_, err = s.dbCollection.UpdateMany(ctx, bson.M{"connector": entity.ID}, bson.M{"$unset": bson.M{"connector": ""}})
-			return err
+			if err != nil {
+				return err
+			}
 		}
 
 		res = true
