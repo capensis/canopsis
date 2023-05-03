@@ -97,7 +97,7 @@ export default {
       };
     },
 
-    scenarioRequestErrorsRoForm({ request }) {
+    scenarioRequestErrorsToForm({ request }) {
       const flattenErrors = flatten({
         request: requestTemplateVariablesErrorsToForm(request, this.webhook.request),
       });
@@ -115,7 +115,7 @@ export default {
       try {
         const errors = await this.validateFormTemplates(this.webhook);
 
-        const wasSet = this.setFormErrors(this.scenarioRequestErrorsRoForm(errors, this.form));
+        const wasSet = this.setFormErrors(this.scenarioRequestErrorsToForm(errors));
 
         if (!wasSet) {
           this.$popups.success({ text: this.$t('declareTicket.syntaxIsValid') });
