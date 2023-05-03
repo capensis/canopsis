@@ -27,7 +27,9 @@ import FlowchartEditor from '@/components/common/flowchart/flowchart-editor.vue'
 jest.mock('@/helpers/uid', () => {
   const originalModule = jest.requireActual('@/helpers/uid');
 
-  return jest.fn(originalModule.default);
+  return {
+    uid: jest.fn(originalModule.uid),
+  };
 });
 jest.mock('@/helpers/clipboard', () => ({
   readTextFromClipboard: jest.fn(),
