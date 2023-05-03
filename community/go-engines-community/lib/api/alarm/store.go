@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/perfdata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
@@ -361,6 +362,13 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest) (*Details, err
 		{"$addFields": bson.M{
 			"is_meta_alarm": bson.M{"$cond": bson.A{bson.M{"$not": bson.A{"$v.meta"}}, false, true}},
 		}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": "$entity"},
 	}
 
 	if r.Steps != nil {
@@ -414,7 +422,7 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest) (*Details, err
 		}
 
 		if details.IsMetaAlarm {
-			childrenPipeline, err := s.getQueryBuilder().CreateChildrenAggregationPipeline(*r.Children, r.GetOpenedFilter(), details.EntityID, now)
+			childrenPipeline, err := s.getQueryBuilder().CreateChildrenAggregationPipeline(*r.Children, r.GetOpenedFilter(), details.Entity.ID, now)
 			if err != nil {
 				return nil, err
 			}
@@ -445,6 +453,11 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest) (*Details, err
 			Data: children.Data,
 			Meta: meta,
 		}
+	}
+
+	if len(r.PerfData) > 0 {
+		perfDataRe := perfdata.Parse(r.PerfData)
+		details.FilteredPerfData = perfdata.Filter(r.PerfData, perfDataRe, details.Entity.PerfData)
 	}
 
 	return &details, nil

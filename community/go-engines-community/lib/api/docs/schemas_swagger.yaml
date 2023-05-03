@@ -362,6 +362,10 @@ definitions:
     properties:
       children:
         $ref: '#/definitions/alarm.ChildrenDetails'
+      filtered_perf_data:
+        items:
+          type: string
+        type: array
       steps:
         $ref: '#/definitions/alarm.StepDetails'
     type: object
@@ -373,6 +377,10 @@ definitions:
         $ref: '#/definitions/alarm.ChildDetailsRequest'
       opened:
         type: boolean
+      perf_data:
+        items:
+          type: string
+        type: array
       steps:
         $ref: '#/definitions/alarm.StepsRequest'
       with_declare_tickets:
@@ -849,7 +857,17 @@ definitions:
           delete_after:
             $ref: '#/definitions/types.DurationWithEnabled'
         type: object
+      metrics:
+        properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+        type: object
       pbehavior:
+        properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+        type: object
+      perf_data_metrics:
         properties:
           delete_after:
             $ref: '#/definitions/types.DurationWithEnabled'
@@ -976,6 +994,10 @@ definitions:
           items:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
+        type: array
+      filtered_perf_data:
+        items:
+          type: string
         type: array
       idle_since:
         type: integer
@@ -1166,6 +1188,10 @@ definitions:
           items:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
+        type: array
+      filtered_perf_data:
+        items:
+          type: string
         type: array
       idle_since:
         type: integer
@@ -1382,6 +1408,10 @@ definitions:
           items:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
+        type: array
+      filtered_perf_data:
+        items:
+          type: string
         type: array
       idle_since:
         type: integer

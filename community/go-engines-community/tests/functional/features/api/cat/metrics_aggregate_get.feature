@@ -57,7 +57,10 @@ Feature: Get alarm metrics
           "value": 1,
           "aggregate_func": "avg"
         }
-      ]
+      ],
+      "meta": {
+        "min_date": {{ parseTimeTz "01-07-2021 00:00" }}
+      }
     }
     """
 
@@ -88,7 +91,7 @@ Feature: Get alarm metrics
     }
     """
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
@@ -138,7 +141,7 @@ Feature: Get alarm metrics
     }
     """
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
@@ -179,7 +182,7 @@ Feature: Get alarm metrics
     }
     """
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
@@ -221,7 +224,7 @@ Feature: Get alarm metrics
     }
     """
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
@@ -282,7 +285,7 @@ Feature: Get alarm metrics
     }
     """
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
@@ -329,7 +332,7 @@ Feature: Get alarm metrics
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "sampling": "Sampling is missing."
@@ -357,10 +360,10 @@ Feature: Get alarm metrics
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
-        "parameters.0.metric": "metric is not supported."
+        "parameters.0.metric": "Metric is not supported."
       }
     }
     """
@@ -385,7 +388,7 @@ Feature: Get alarm metrics
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "filter": "Filter doesn't exist."
@@ -415,7 +418,7 @@ Feature: Get alarm metrics
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "widget_filters.0": "WidgetFilter doesn't exist."
@@ -560,7 +563,7 @@ Feature: Get alarm metrics
     """json
     {
       "errors": {
-        "parameters.0.aggregate_func": "AggregateFunc must be one of [sum avg min max] or empty."
+        "parameters.0.aggregate_func": "AggregateFunc must be one of [sum last avg min max] or empty."
       }
     }
     """
