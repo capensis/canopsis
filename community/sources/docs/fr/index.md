@@ -43,6 +43,7 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
     
     | | | | | | |
     |-:|-|-|-|-|-|
+    | *mai 2023* | [4.5.14](notes-de-version/4.5.14.md) | | | | |
     | *janvier 2023* | [4.6.3](notes-de-version/4.6.3.md) | [4.5.13](notes-de-version/4.5.13.md) | | | |
     | *octobre-novembre 2022* | [4.6.2](notes-de-version/4.6.2.md) | [4.5.11](notes-de-version/4.5.11.md) | | | |
     | *jullet-aout-septembre 2022* | [4.6.1](notes-de-version/4.6.1.md) | [4.6.0](notes-de-version/4.6.0.md) |[4.5.10](notes-de-version/4.5.10.md) |[4.5.9](notes-de-version/4.5.9.md) | |
