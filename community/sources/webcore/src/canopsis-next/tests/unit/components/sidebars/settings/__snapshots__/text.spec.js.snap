@@ -3,6 +3,7 @@
 exports[`text Renders \`text\` widget settings with custom props 1`] = `
 <widget-settings-stub>
   <field-title-stub
+    name="title"
     value="Text widget"
   />
   <hr
@@ -23,6 +24,7 @@ exports[`text Renders \`text\` widget settings with custom props 1`] = `
 exports[`text Renders \`text\` widget settings with default props 1`] = `
 <widget-settings-stub>
   <field-title-stub
+    name="title"
     value=""
   />
   <hr

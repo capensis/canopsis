@@ -1,6 +1,9 @@
 <template lang="pug">
-  v-form.widget-settings(:class="{ 'widget-settings--divider': divider }", @submit.prevent="$emit('submit')")
-    v-list.widget-settings__list.pt-0.pb-0.mb-2(expand)
+  v-form.widget-settings(
+    :class="{ 'widget-settings--divider': divider }",
+    @submit.prevent="$emit('submit')"
+  )
+    v-list.widget-settings__list.py-0.mb-2(expand)
       slot
     v-btn.primary(
       :loading="submitting",

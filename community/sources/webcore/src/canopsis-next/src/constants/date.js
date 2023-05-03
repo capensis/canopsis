@@ -82,6 +82,7 @@ export const DATETIME_FORMATS = {
   timePickerWithSeconds: 'HH:mm:ss',
   veeValidateDateTimeFormat: 'dd/MM/yyyy HH:mm',
   refreshFieldFormat: 'Y __ D __ H _ m _ s _',
+  durationWithMilliseconds: 'Y __ D __ H _ m _ s _ S _',
   testSuiteFormat: 'DD MMM YYYY [\n]H:mm:ss [GMT]',
   vuetifyDatePicker: 'YYYY-MM-DD',
 };

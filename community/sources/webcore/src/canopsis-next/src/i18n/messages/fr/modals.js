@@ -918,4 +918,30 @@ export default {
       title: 'Modifier le générateur de liens',
     },
   },
+  createAlarmChart: {
+    [WIDGET_TYPES.barChart]: {
+      create: {
+        title: 'Créer un graphique à barres',
+      },
+      edit: {
+        title: 'Modifier le graphique à barres',
+      },
+    },
+    [WIDGET_TYPES.lineChart]: {
+      create: {
+        title: 'Créer un graphique en courbes',
+      },
+      edit: {
+        title: 'Modifier le graphique en courbes',
+      },
+    },
+    [WIDGET_TYPES.numbers]: {
+      create: {
+        title: 'Créer un tableau de nombres',
+      },
+      edit: {
+        title: 'Modifier le tableau des nombres',
+      },
+    },
+  },
 };
