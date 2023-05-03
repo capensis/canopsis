@@ -3,11 +3,11 @@
  *
  * @param {VueComponent} child
  * @param {VueComponent} parent
- * @returns {*}
+ * @returns {boolean}
  */
 export function isParent(child, parent) {
   if (child) {
-    if (child === parent || child._original === parent) {
+    if (child === parent || child._original === parent || parent.$el?.contains(child?.$el)) {
       return true;
     }
 

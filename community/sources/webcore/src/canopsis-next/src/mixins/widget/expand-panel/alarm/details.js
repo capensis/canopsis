@@ -25,6 +25,10 @@ export const widgetExpandPanelAlarmDetails = {
       return this.alarmDetails?.steps ?? {};
     },
 
+    filteredPerfData() {
+      return this.alarmDetails?.filtered_perf_data ?? [];
+    },
+
     children() {
       return this.alarmDetails?.children ?? {};
     },

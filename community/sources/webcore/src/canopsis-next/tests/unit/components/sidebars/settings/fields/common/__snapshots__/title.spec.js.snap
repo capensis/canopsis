@@ -18,6 +18,7 @@ exports[`title Renders \`title\` with custom props 1`] = `
           class="v-text-field__slot"
         >
           <input
+            name="title"
             placeholder="Widget title"
             type="text"
           />
@@ -57,6 +58,7 @@ exports[`title Renders \`title\` with default props 1`] = `
           class="v-text-field__slot"
         >
           <input
+            name="title"
             placeholder="Widget title"
             type="text"
           />

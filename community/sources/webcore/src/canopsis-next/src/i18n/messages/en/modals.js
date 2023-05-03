@@ -918,4 +918,30 @@ export default {
       title: 'Edit link generator',
     },
   },
+  createAlarmChart: {
+    [WIDGET_TYPES.barChart]: {
+      create: {
+        title: 'Create bar chart',
+      },
+      edit: {
+        title: 'Edit bar chart',
+      },
+    },
+    [WIDGET_TYPES.lineChart]: {
+      create: {
+        title: 'Create line chart',
+      },
+      edit: {
+        title: 'Edit line chart',
+      },
+    },
+    [WIDGET_TYPES.numbers]: {
+      create: {
+        title: 'Create numbers chart',
+      },
+      edit: {
+        title: 'Edit numbers chart',
+      },
+    },
+  },
 };

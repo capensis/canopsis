@@ -140,31 +140,30 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
       class="layout px-3 pb-3 justify-center column"
     />
   </div>
-  <button
-    class="mx-0 v-btn theme--light primary"
-    type="button"
+  <div
+    class="layout row wrap"
   >
-    <div
-      class="v-btn__content"
+    <button
+      class="mr-2 mx-0 v-btn theme--light primary"
+      type="button"
     >
-      Add
-    </div>
-  </button>
+      <div
+        class="v-btn__content"
+      >
+        Add
+      </div>
+    </button>
+  </div>
 </div>
 `;
 
 exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\` with default props 1`] = `
 <div>
-  <button
-    class="mx-0 v-btn theme--light primary"
-    type="button"
+  <div
+    class="layout row wrap"
   >
-    <div
-      class="v-btn__content"
-    >
-      Add
-    </div>
-  </button>
+    <!---->
+  </div>
 </div>
 `;
 
@@ -326,15 +325,19 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
   <div
     class="append-slot"
   />
-  <button
-    class="mx-0 v-btn theme--light primary"
-    type="button"
+  <div
+    class="layout row wrap"
   >
-    <div
-      class="v-btn__content"
+    <button
+      class="mr-2 mx-0 v-btn theme--light primary"
+      type="button"
     >
-      Add
-    </div>
-  </button>
+      <div
+        class="v-btn__content"
+      >
+        Add
+      </div>
+    </button>
+  </div>
 </div>
 `;

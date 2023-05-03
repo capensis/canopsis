@@ -270,6 +270,7 @@ export default {
   copyPropertyPath: 'Copy property path',
   hidden: 'Hidden',
   numberField: 'Number field',
+  chart: 'Chart | Charts',
   variableTypes: {
     string: 'String',
     number: 'Number',

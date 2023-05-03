@@ -2,6 +2,7 @@ import {
   AGGREGATE_FUNCTIONS,
   ALARM_METRIC_PARAMETERS,
   DATETIME_FORMATS,
+  EXTERNAL_METRIC_UNITS,
   KPI_RATING_ENTITY_METRICS,
   KPI_RATING_USER_CRITERIA,
   KPI_RATING_USER_METRICS,
@@ -12,10 +13,22 @@ import {
 
 import { addUnitToDate, convertDateToString, convertDateToTimestampByTimezone } from '@/helpers/date/date';
 import { isOmitEqual } from '@/helpers/equal';
-import { convertDurationToMaxUnitDuration } from '@/helpers/date/duration';
+import { convertDurationToMaxUnitDuration, convertDurationToString } from '@/helpers/date/duration';
 
 /**
  * @typedef { 'hour' | 'day' | 'week' | 'month' } Sampling
+ */
+
+/**
+ * @typedef { 'ms' | 'us' | 's' } ExternalMetricTimeUnit
+ */
+
+/**
+ * @typedef { 'c' | 'B' | 'KB' | 'MB' | 'GB' | 'TB' } ExternalMetricDataSizeUnit
+ */
+
+/**
+ * @typedef { ExternalMetricTimeUnit | ExternalMetricDataSizeUnit | '%' } ExternalMetricUnit
  */
 
 /**
@@ -35,6 +48,8 @@ export const isTimeMetric = metric => [
   ALARM_METRIC_PARAMETERS.averageResolve,
   ALARM_METRIC_PARAMETERS.timeToAck,
   ALARM_METRIC_PARAMETERS.timeToResolve,
+  ALARM_METRIC_PARAMETERS.maxAck,
+  ALARM_METRIC_PARAMETERS.minAck,
 ].includes(metric);
 
 /**
@@ -137,6 +152,41 @@ export const isMetricsQueryChanged = (query, oldQuery, minDate) => {
 };
 
 /**
+ * Check is external percent metric unit
+ *
+ * @param {ExternalMetricUnit} [unit]
+ * @returns {boolean}
+ */
+export const isExternalPercentMetricUnit = unit => unit === EXTERNAL_METRIC_UNITS.percent;
+
+/**
+ * Check is external time metric unit
+ *
+ * @param {ExternalMetricUnit} [unit]
+ * @returns {boolean}
+ */
+export const isExternalTimeMetricUnit = unit => [
+  EXTERNAL_METRIC_UNITS.microsecond,
+  EXTERNAL_METRIC_UNITS.millisecond,
+  EXTERNAL_METRIC_UNITS.second,
+].includes(unit);
+
+/**
+ * Check is external data size metric unit
+ *
+ * @param {ExternalMetricUnit} [unit]
+ * @returns {boolean}
+ */
+export const isExternalDataSizeMetricUnit = unit => [
+  EXTERNAL_METRIC_UNITS.continuousCounter,
+  EXTERNAL_METRIC_UNITS.byte,
+  EXTERNAL_METRIC_UNITS.kilobyte,
+  EXTERNAL_METRIC_UNITS.megabyte,
+  EXTERNAL_METRIC_UNITS.gigabyte,
+  EXTERNAL_METRIC_UNITS.terabyte,
+].includes(unit);
+
+/**
  * Convert metrics timestamps to local timezone
  *
  * @param {Metric[]} metrics
@@ -202,9 +252,27 @@ export const getAggregateFunctionsByMetric = (metric) => {
       return [AGGREGATE_FUNCTIONS.sum];
     case ALARM_METRIC_PARAMETERS.ratioTickets:
       return [AGGREGATE_FUNCTIONS.avg];
+    case ALARM_METRIC_PARAMETERS.createdAlarms:
+    case ALARM_METRIC_PARAMETERS.nonDisplayedAlarms:
+    case ALARM_METRIC_PARAMETERS.instructionAlarms:
+    case ALARM_METRIC_PARAMETERS.pbehaviorAlarms:
+    case ALARM_METRIC_PARAMETERS.correlationAlarms:
+    case ALARM_METRIC_PARAMETERS.ackAlarms:
+    case ALARM_METRIC_PARAMETERS.cancelAckAlarms:
+    case ALARM_METRIC_PARAMETERS.minAck:
+    case ALARM_METRIC_PARAMETERS.maxAck:
+    case ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms:
+    case ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms:
+      return [
+        AGGREGATE_FUNCTIONS.sum,
+        AGGREGATE_FUNCTIONS.avg,
+        AGGREGATE_FUNCTIONS.min,
+        AGGREGATE_FUNCTIONS.max,
+      ];
     default:
       return [
         AGGREGATE_FUNCTIONS.sum,
+        AGGREGATE_FUNCTIONS.last,
         AGGREGATE_FUNCTIONS.avg,
         AGGREGATE_FUNCTIONS.min,
         AGGREGATE_FUNCTIONS.max,
@@ -219,8 +287,8 @@ export const getAggregateFunctionsByMetric = (metric) => {
  * @returns {Duration}
  */
 export const getMaxTimeDurationForMetrics = (metrics) => {
-  const maxTimeValue = Math.max.apply(null, metrics.reduce((acc, { title: metric, data }) => {
-    if (isTimeMetric(metric)) {
+  const maxTimeValue = Math.max.apply(null, metrics.reduce((acc, { title: metric, data, unit }) => {
+    if (isTimeMetric(metric) || isExternalTimeMetricUnit(unit)) {
       const maxDatasetValue = Math.max.apply(null, data.map(({ value }) => value));
 
       acc.push(maxDatasetValue);
@@ -246,4 +314,139 @@ export const hasHistoryData = (metrics = []) => {
 
   return firstMetric.data?.length
     && firstMetric.data.every(({ history_timestamp: historyTimestamp }) => historyTimestamp);
+};
+
+/**
+ * Convert metric data size value to byte unit
+ *
+ * @param {number} value
+ * @param {ExternalMetricDataSizeUnit} unit
+ * @returns {number}
+ */
+export const convertDataSizeMetricValueToBytes = (value, unit) => {
+  const degree = {
+    [EXTERNAL_METRIC_UNITS.terabyte]: 4,
+    [EXTERNAL_METRIC_UNITS.gigabyte]: 3,
+    [EXTERNAL_METRIC_UNITS.megabyte]: 2,
+    [EXTERNAL_METRIC_UNITS.kilobyte]: 1,
+    [EXTERNAL_METRIC_UNITS.byte]: 0,
+    [EXTERNAL_METRIC_UNITS.continuousCounter]: 0,
+  }[unit];
+
+  return value * (1024 ** degree);
+};
+
+/**
+ * Convert metric time value to seconds unit
+ *
+ * @param {number} value
+ * @param {ExternalMetricTimeUnit} unit
+ * @returns {number}
+ */
+export const convertTimeMetricValueToSeconds = (value, unit) => {
+  if (unit === EXTERNAL_METRIC_UNITS.second) {
+    return value;
+  }
+
+  const degree = {
+    [EXTERNAL_METRIC_UNITS.millisecond]: 1,
+    [EXTERNAL_METRIC_UNITS.microsecond]: 2,
+  }[unit];
+
+  return value / (1000 ** degree);
+};
+
+/**
+ * Convert metric value by dataset unit
+ *
+ * @param {number} value
+ * @param {ExternalMetricUnit} unit
+ * @returns {number}
+ */
+export const convertMetricValueByUnit = (value, unit) => {
+  if (isExternalDataSizeMetricUnit(unit)) {
+    return convertDataSizeMetricValueToBytes(value, unit);
+  }
+
+  if (isExternalTimeMetricUnit(unit)) {
+    return convertTimeMetricValueToSeconds(value, unit);
+  }
+
+  return value;
+};
+
+/**
+ * Convert metric data size value to tick string
+ *
+ * @param {number} value
+ * @returns {string}
+ */
+// eslint-disable-next-line consistent-return
+export const convertDataSizeValueToTickString = (value) => {
+  const units = [
+    EXTERNAL_METRIC_UNITS.byte,
+    EXTERNAL_METRIC_UNITS.kilobyte,
+    EXTERNAL_METRIC_UNITS.megabyte,
+    EXTERNAL_METRIC_UNITS.gigabyte,
+    EXTERNAL_METRIC_UNITS.terabyte,
+  ];
+
+  for (let index = 0; index < units.length; index += 1) {
+    const result = value / (1024 ** index);
+
+    if (result < 1024 || index === units.length - 1) {
+      const resultUnit = units[index];
+
+      return `${result % 1 > 0 ? result.toFixed(2) : result}${resultUnit}`;
+    }
+  }
+};
+
+/**
+ * Convert time value to duration string with microseconds
+ *
+ * @param {number} value
+ * @returns {string}
+ */
+export const convertMetricDurationToString = (value) => {
+  const milliseconds = value * 1000;
+  const hasMicroseconds = milliseconds % 1 > 0;
+
+  let result = convertDurationToString(
+    value,
+    DATETIME_FORMATS.durationWithMilliseconds,
+    TIME_UNITS.second,
+    hasMicroseconds ? '' : '0s',
+  );
+
+  if (hasMicroseconds) {
+    const microseconds = (value * (1000 ** 2));
+    result += ` ${microseconds} μs`;
+  }
+
+  return result.trim();
+};
+
+/**
+ * Convert value to string by metric and unit
+ *
+ * @param {number} value
+ * @param {string} metric
+ * @param {ExternalMetricUnit} unit
+ * @returns {string}
+ */
+export const convertMetricValueToString = (value, metric, unit) => {
+  if (isTimeMetric(metric) || isExternalTimeMetricUnit(unit)) {
+    return convertMetricDurationToString(value);
+  }
+
+  if (isRatioMetric(metric) || isExternalPercentMetricUnit(unit)) {
+    return `${value}%`;
+  }
+
+  if (isExternalDataSizeMetricUnit(unit)) {
+    return convertDataSizeValueToTickString(value);
+  }
+
+  return value;
 };
