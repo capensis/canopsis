@@ -27,8 +27,9 @@ const (
 	ServicePeriodicalLockKey          = "service-periodical-lock"
 	ServiceIdleSincePeriodicalLockKey = "service-periodical-idle-since-lock"
 
-	RemediationPeriodicalLockKey      = "remediation-periodical-lock-key"
-	RemediationStatsPeriodicalLockKey = "remediation-stats-periodical-lock-key"
+	RemediationPeriodicalLockKey        = "remediation-periodical-lock-key"
+	RemediationStatsPeriodicalLockKey   = "remediation-stats-periodical-lock-key"
+	RemediationPostponedJobTasksLockKey = "remediation-postponed-job-tasks-lock-key"
 
 	PbehaviorSpanKey              = "pbehavior-span"
 	PbehaviorTypesKey             = "pbehavior-types"

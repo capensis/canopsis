@@ -8,12 +8,10 @@ const (
 
 type RemediationConf struct {
 	HttpTimeout                    string                       `toml:"http_timeout" bson:"http_timeout"`
-	LaunchJobRetriesAmount         int                          `toml:"launch_job_retries_amount" bson:"launch_job_retries_amount"`
-	LaunchJobRetriesInterval       string                       `toml:"launch_job_retries_interval" bson:"launch_job_retries_interval"`
-	WaitJobCompleteRetriesAmount   int                          `toml:"wait_job_complete_retries_amount" bson:"wait_job_complete_retries_amount"`
-	WaitJobCompleteRetriesInterval string                       `toml:"wait_job_complete_retries_interval" bson:"wait_job_complete_retries_interval"`
 	PauseManualInstructionInterval string                       `toml:"pause_manual_instruction_interval" bson:"pause_manual_instruction_interval"`
 	ExternalAPI                    map[string]ExternalApiConfig `toml:"external_api" bson:"external_api"`
+	JobTimeout                     string                       `toml:"job_timeout" bson:"job_timeout"`
+	JobRetryInterval               string                       `toml:"job_retry_interval" bson:"job_retry_interval"`
 }
 
 // ExternalApiConfig represents configuration of external service API.

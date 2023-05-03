@@ -340,12 +340,7 @@ Feature: run a job
       "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-running",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
-      "multiple_executions": false,
-      "retry_amount": 2,
-      "retry_interval": {
-        "value": 2,
-        "unit": "s"
-      }
+      "multiple_executions": false
     }
     """
     Then the response code should be 201
@@ -517,11 +512,11 @@ Feature: run a job
                   "status": 2
                 },
                 {
-                  "fail_reason": "job is executing too long, cannot retrieve status after 2 retries by 2s",
+                  "fail_reason": "job is executing too long, cannot retrieve status after retries",
                   "status": 2
                 },
                 {
-                  "fail_reason": "job is executing too long, cannot retrieve status after 1 retries by 1s",
+                  "fail_reason": "job is executing too long, cannot retrieve status after retries",
                   "status": 2
                 },
                 {
