@@ -11,7 +11,7 @@ import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 import {
   convertDateToTimestampByTimezone,
   convertDateToDateObjectByTimezone,
