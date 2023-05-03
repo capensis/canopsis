@@ -18,7 +18,5 @@ RUN groupadd ${CPS_GROUP} && useradd -d ${CPS_HOME} -g ${CPS_GROUP} -s /bin/bash
 
 COPY docker/files/vimrc ${CPS_HOME}/.vimrc
 
-RUN echo "deb http://archive.debian.org/debian stretch main" > /etc/apt/sources.list
-
 COPY docker/build/run-${CANOPSIS_DISTRIBUTION}.sh /run.sh
 RUN /bin/bash /run.sh
