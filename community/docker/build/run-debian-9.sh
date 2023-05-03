@@ -12,6 +12,7 @@ set -u
 #echo "deb http://security.debian.org/ stretch/updates main" >> /etc/apt/sources.list
 
 echo "deb http://archive.debian.org/debian stretch main contrib non-free" > /etc/apt/sources.list
+echo "deb http://archive.debian.org/debian-security stretch/updates main" >> /etc/apt/sources.list
 
 #####
 
