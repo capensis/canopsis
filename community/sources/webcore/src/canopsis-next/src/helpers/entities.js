@@ -7,7 +7,7 @@ import {
   WIDGET_TYPES,
 } from '@/constants';
 
-import uid from './uid';
+import { uid } from './uid';
 import uuid from './uuid';
 import { convertDateToString } from './date/date';
 import { formToWidget, widgetToForm } from './forms/widgets/common';
