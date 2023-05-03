@@ -20,6 +20,7 @@ type Options struct {
 	InfosDictionaryWaitTime time.Duration
 	ExternalDataApiTimeout  time.Duration
 	SoftDeleteWaitTime      time.Duration
+	CleanPerfDataWaitTime   time.Duration
 	FifoAckExchange         string
 }
 
@@ -35,6 +36,7 @@ func ParseOptions() Options {
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two runs of periodical process")
 	flag.DurationVar(&opts.InfosDictionaryWaitTime, "infosDictionaryWaitTime", time.Hour, "Duration to wait between two runs of update entity infos dictionary process")
 	flag.DurationVar(&opts.SoftDeleteWaitTime, "softDeleteWaitTime", time.Hour, "Duration to keep soft deleted entities in the db until they will be removed")
+	flag.DurationVar(&opts.CleanPerfDataWaitTime, "cleanPerfDataWaitTime", 24*time.Hour, "Duration to keep deleted perf data in entities")
 	flag.DurationVar(&opts.ExternalDataApiTimeout, "externalDataApiTimeout", 30*time.Second, "External API HTTP Request Timeout.")
 	flag.StringVar(&opts.FifoAckExchange, "fifoAckExchange", canopsis.FIFOAckExchangeName, "Publish FIFO Ack event to this exchange.")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
