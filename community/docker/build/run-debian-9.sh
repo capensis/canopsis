@@ -6,8 +6,15 @@ set -e
 set -o pipefail
 set -u
 
-echo "deb http://deb.debian.org/debian/ stretch main contrib non-free" > /etc/apt/sources.list
-echo "deb http://security.debian.org/ stretch/updates main" >> /etc/apt/sources.list
+## Stretch is not maintained in main repo anymore. Switching to archive
+
+#echo "deb http://deb.debian.org/debian/ stretch main contrib non-free" > /etc/apt/sources.list
+#echo "deb http://security.debian.org/ stretch/updates main" >> /etc/apt/sources.list
+
+echo "deb http://archive.debian.org/debian stretch main contrib non-free" > /etc/apt/sources.list
+echo "deb http://archive.debian.org/debian-security stretch/updates main" >> /etc/apt/sources.list
+
+#####
 
 rm -f /etc/localtime
 ln -s /usr/share/zoneinfo/UTC /etc/localtime
