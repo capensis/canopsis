@@ -203,7 +203,7 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Code:    http.StatusOK,
 			Method:  http.MethodGet,
 			Body:    "{\"id\":\"test-job-execution-long-succeeded\",\"status\":\"succeeded\"}",
-			Timeout: 2 * time.Second,
+			Timeout: 3 * time.Second,
 		},
 		"/api/35/execution/test-job-execution-long-succeeded/output": {
 			Code:   http.StatusOK,
@@ -219,7 +219,7 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Code:    http.StatusOK,
 			Method:  http.MethodGet,
 			Body:    "{\"id\":\"test-job-execution-long-failed\",\"status\":\"failed\"}",
-			Timeout: 2 * time.Second,
+			Timeout: 3 * time.Second,
 		},
 		"/api/35/execution/test-job-execution-long-failed/output": {
 			Code:   http.StatusOK,
