@@ -61,15 +61,34 @@ export const AGGREGATE_FUNCTIONS = {
   avg: 'avg',
   min: 'min',
   max: 'max',
+  last: 'last',
 };
 
 export const Y_AXES_IDS = {
   default: 'y',
   percent: 'yPercent',
   time: 'yTime',
+  bytes: 'yBytes',
+};
+
+export const EXTERNAL_METRIC_UNITS = {
+  millisecond: 'ms',
+  microsecond: 'us',
+  second: 's',
+  continuousCounter: 'c',
+  byte: 'B',
+  kilobyte: 'KB',
+  megabyte: 'MB',
+  gigabyte: 'GB',
+  terabyte: 'TB',
+  percent: '%',
 };
 
 export const X_AXES_IDS = {
   default: 'x',
   history: 'xHistory',
 };
+
+export const MAX_METRICS_DISPLAY_COUNT = 40;
+
+export const KPI_CHART_DEFAULT_HEIGHT = 560;

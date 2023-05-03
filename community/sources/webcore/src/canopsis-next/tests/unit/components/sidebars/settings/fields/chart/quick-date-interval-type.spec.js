@@ -2,7 +2,7 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { randomArrayItem } from '@unit/utils/array';
 import { QUICK_RANGES } from '@/constants';
 
-import FieldQuickDateIntervalType from '@/components/sidebars/settings/fields/common/quick-date-interval-type.vue';
+import FieldQuickDateIntervalType from '@/components/sidebars/settings/fields/chart/quick-date-interval-type.vue';
 
 const stubs = {
   'widget-settings-item': true,

@@ -3,6 +3,7 @@
 exports[`map Renders \`map\` widget settings with custom props 1`] = `
 <widget-settings-stub>
   <field-title-stub
+    name="title"
     value="Map widget"
   />
   <hr
@@ -80,6 +81,7 @@ exports[`map Renders \`map\` widget settings with custom props 1`] = `
 exports[`map Renders \`map\` widget settings with default props 1`] = `
 <widget-settings-stub>
   <field-title-stub
+    name="title"
     value=""
   />
   <hr
