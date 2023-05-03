@@ -152,6 +152,7 @@ import CTimezoneField from '@/components/forms/fields/c-timezone-field.vue';
 import CLanguageField from '@/components/forms/fields/c-language-field.vue';
 import CSamplingField from '@/components/forms/fields/c-sampling-field.vue';
 import CAlarmMetricParametersField from '@/components/forms/fields/kpi/c-alarm-metric-parameters-field.vue';
+import CAlarmExternalMetricParametersField from '@/components/forms/fields/kpi/c-alarm-external-metric-parameters-field.vue';
 import CAlarmMetricAggregateFunctionField from '@/components/forms/fields/kpi/c-alarm-metric-aggregate-function-field.vue';
 import CAlarmMetricPresetsField from '@/components/forms/fields/kpi/c-alarm-metric-presets-field.vue';
 import CAlarmMetricPresetField from '@/components/forms/fields/kpi/c-alarm-metric-preset-field.vue';
@@ -460,6 +461,7 @@ Vue.component('c-json-treeview', CJsonTreeview);
 Vue.component('c-responsive-list', CResponsiveList);
 Vue.component('c-sampling-field', CSamplingField);
 Vue.component('c-alarm-metric-parameters-field', CAlarmMetricParametersField);
+Vue.component('c-alarm-external-metric-parameters-field', CAlarmExternalMetricParametersField);
 Vue.component('c-alarm-metric-aggregate-function-field', CAlarmMetricAggregateFunctionField);
 Vue.component('c-alarm-metric-presets-field', CAlarmMetricPresetsField);
 Vue.component('c-alarm-metric-preset-field', CAlarmMetricPresetField);
@@ -576,6 +578,7 @@ Vue.use(ModalsPlugin, {
     [MODALS.createDeclareTicketEvent]: { maxWidth: 1280 },
     [MODALS.executeDeclareTickets]: { maxWidth: 920 },
     [MODALS.createLinkRule]: { maxWidth: 920 },
+    [MODALS.createAlarmChart]: { maxWidth: 500 },
 
     ...featuresService.get('components.modals.dialogPropsMap'),
   },

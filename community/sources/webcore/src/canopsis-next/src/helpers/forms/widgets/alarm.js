@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep, omit } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import {
@@ -13,14 +13,24 @@ import {
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
   ALARM_DENSE_TYPES,
   DEFAULT_LINKS_INLINE_COUNT,
+  WIDGET_TYPES,
 } from '@/constants';
 
 import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
+import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
 
 import { widgetColumnsToForm, formToWidgetColumns } from '../shared/widget-column';
 import { kioskParametersToForm } from '../shared/kiosk';
 import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget-template';
+
 import { openedToForm } from './common';
+import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './bar-chart';
+import { lineChartWidgetParametersToForm, formToLineChartWidgetParameters } from './line-chart';
+import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './numbers';
+
+/**
+ * @typedef {'BarChart', 'LineChart', 'Numbers'} AlarmChartType
+ */
 
 /**
  * @typedef {Object} AlarmsListDataTableColumn
@@ -52,6 +62,46 @@ import { openedToForm } from './common';
  * @typedef {Object} WidgetInfoPopup
  * @property {string} column
  * @property {string} template
+ */
+
+/**
+ * @typedef {Object} AlarmChartBarChartWidgetParameters
+ * @property {MetricPreset[]} metrics
+ * @property {boolean} stacked
+ * @property {string} chart_title
+ * @property {string} default_time_range
+ * @property {Sampling} default_sampling
+ * @property {boolean} comparison
+ */
+
+/**
+ * @typedef {Object} AlarmChartLineChartWidgetParameters
+ * @property {MetricPreset[]} metrics
+ * @property {string} chart_title
+ * @property {string} default_time_range
+ * @property {Sampling} default_sampling
+ * @property {boolean} comparison
+ */
+
+/**
+ * @typedef {Object} AlarmChartNumbersWidgetParameters
+ * @property {MetricPreset[]} metrics
+ * @property {string} chart_title
+ * @property {string} default_time_range
+ * @property {Sampling} default_sampling
+ * @property {string} show_trend
+ * @property {number} [font_size]
+ */
+
+/**
+ * @typedef {Object} AlarmChart
+ * @property {string} title
+ * @property {AlarmChartType} type
+ * @property {
+ *   AlarmChartBarChartWidgetParameters
+ *   | AlarmChartLineChartWidgetParameters
+ *   | AlarmChartNumbersWidgetParameters
+ * } parameters
  */
 
 /**
@@ -103,12 +153,18 @@ import { openedToForm } from './common';
  * @property {string} exportCsvDatetimeFormat
  * @property {boolean} clearFilterDisabled
  * @property {WidgetKioskParameters} kiosk
+ * @property {AlarmChart[]} charts
  */
 
 /**
  * @typedef {AlarmListBaseParameters} AlarmListBaseParametersForm
  * @property {string | Symbol} widgetColumnsTemplate
  * @property {WidgetColumnForm[]} widgetColumns
+ */
+
+/**
+ * @typedef {AlarmChart} AlarmChartForm
+ * @property {string} key
  */
 
 /**
@@ -125,6 +181,7 @@ import { openedToForm } from './common';
 
 /**
  * @typedef {AlarmListWidgetDefaultParametersForm & AlarmListWidgetParameters} AlarmListWidgetParametersForm
+ * @property {AlarmChartForm[]} charts
  */
 
 /**
@@ -177,6 +234,29 @@ export const periodicRefreshToDurationForm = (periodicRefresh = DEFAULT_PERIODIC
     : TIME_UNITS.second;
 
   return durationWithEnabledToForm({ ...periodicRefresh, unit });
+};
+
+/**
+ * Convert alarm list chart to form
+ *
+ * @param {AlarmChart} [chart = {}]
+ * @returns {AlarmChart}
+ */
+export const alarmListChartToForm = (chart = {}) => {
+  const convertersMap = {
+    [WIDGET_TYPES.barChart]: barChartWidgetParametersToForm,
+    [WIDGET_TYPES.lineChart]: lineChartWidgetParametersToForm,
+    [WIDGET_TYPES.numbers]: numbersWidgetParametersToForm,
+  };
+
+  const type = chart.type ?? WIDGET_TYPES.barChart;
+  const converter = convertersMap[type];
+
+  return {
+    type,
+    title: chart.title ?? '',
+    parameters: omit(converter ? converter(chart.parameters) : chart.parameters, ['periodic_refresh']),
+  };
 };
 
 /**
@@ -248,6 +328,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   exportCsvSeparator: parameters.exportCsvSeparator ?? EXPORT_CSV_SEPARATORS.comma,
   exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
   kiosk: kioskParametersToForm(parameters.kiosk),
+  charts: addKeyInEntities(parameters.charts),
 });
 
 /**
@@ -263,6 +344,28 @@ export const formToAlarmListBaseParameters = (form = {}) => ({
   widgetColumnsTemplate: formToWidgetTemplateValue(form.widgetColumnsTemplate),
   widgetColumns: formToWidgetColumns(form.widgetColumns),
 });
+
+/**
+ * Convert form to alarm list chart
+ *
+ * @param {AlarmChartForm} chart
+ * @returns {AlarmChart}
+ */
+export const formToAlarmListChart = ({ type, title, parameters }) => {
+  const convertersMap = {
+    [WIDGET_TYPES.barChart]: formToBarChartWidgetParameters,
+    [WIDGET_TYPES.lineChart]: formToLineChartWidgetParameters,
+    [WIDGET_TYPES.numbers]: formToNumbersWidgetParameters,
+  };
+
+  const converter = convertersMap[type];
+
+  return {
+    type,
+    title,
+    parameters: omit(converter ? converter(parameters) : parameters, ['periodic_refresh']),
+  };
+};
 
 /**
  * Convert form parameters to alarm list widget parameters
@@ -282,4 +385,5 @@ export const formToAlarmListWidgetParameters = form => ({
   widgetGroupColumns: formToWidgetColumns(form.widgetGroupColumns),
   widgetExportColumns: formToWidgetColumns(form.widgetExportColumns),
   serviceDependenciesColumns: formToWidgetColumns(form.serviceDependenciesColumns),
+  charts: removeKeyFromEntities(form.charts),
 });

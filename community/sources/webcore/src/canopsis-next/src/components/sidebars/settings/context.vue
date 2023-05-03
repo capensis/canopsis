@@ -71,6 +71,8 @@
         :templates-pending="widgetTemplatesPending"
       )
     v-divider
+    charts-form(v-model="form.parameters.charts")
+    v-divider
 </template>
 
 <script>
@@ -97,6 +99,7 @@ import FieldContextEntitiesTypesFilter from './fields/context/context-entities-t
 import ExportCsvForm from './forms/export-csv.vue';
 import WidgetSettings from './partials/widget-settings.vue';
 import WidgetSettingsGroup from './partials/widget-settings-group.vue';
+import ChartsForm from './forms/charts-form.vue';
 
 export default {
   name: SIDE_BARS.contextSettings,
@@ -109,6 +112,7 @@ export default {
     ExportCsvForm,
     WidgetSettings,
     WidgetSettingsGroup,
+    ChartsForm,
   },
   mixins: [
     authMixin,

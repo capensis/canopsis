@@ -106,7 +106,7 @@ export default {
       return {
         ...this.getIntervalQuery(),
 
-        parameters: this.query.parameters,
+        parameters: this.query.parameters.map(metric => ({ metric })),
         sampling: this.query.sampling,
         filter: this.query.filter,
       };
