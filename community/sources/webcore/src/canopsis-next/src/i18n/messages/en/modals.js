@@ -918,4 +918,7 @@ export default {
       title: 'Edit link generator',
     },
   },
+  importPbehaviorException: {
+    title: 'Import exception dates',
+  },
 };

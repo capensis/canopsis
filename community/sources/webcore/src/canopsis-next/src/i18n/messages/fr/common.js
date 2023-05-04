@@ -270,6 +270,7 @@ export default {
   copyPropertyPath: 'Copier le chemin de la propriété',
   hidden: 'Caché',
   numberField: 'Champ numérique',
+  chooseFile: 'Choisir le fichier',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
