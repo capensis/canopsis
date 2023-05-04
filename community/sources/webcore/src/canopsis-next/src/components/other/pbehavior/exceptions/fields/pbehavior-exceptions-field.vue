@@ -9,12 +9,13 @@
           v-field="exdates[index]",
           :key="exdate.key",
           :disabled="disabled",
-          with-type,
+          :with-type="withExdateType",
           @delete="removeItemFromArray(index)"
         )
     v-layout(v-if="!disabled", row)
-      v-flex
-        v-btn.ml-0(color="secondary", @click="addExceptionDate") {{ $t('modals.createPbehaviorException.addDate') }}
+      slot(name="actions")
+        v-flex
+          v-btn.ml-0(color="secondary", @click="addExceptionDate") {{ $t('modals.createPbehaviorException.addDate') }}
     v-alert(:value="errors.has('exdates')", type="error") {{ errors.first('exdates') }}
 </template>
 
@@ -24,13 +25,17 @@ import uid from '@/helpers/uid';
 import { convertDateToStartOfDayDateObject } from '@/helpers/date/date';
 
 import { formArrayMixin } from '@/mixins/form';
+import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
 
-import PbehaviorExceptionField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-exception-field.vue';
+import PbehaviorExceptionField from '@/components/other/pbehavior/exceptions/fields/pbehavior-exception-field.vue';
 
 export default {
   inject: ['$validator'],
   components: { PbehaviorExceptionField },
-  mixins: [formArrayMixin],
+  mixins: [
+    formArrayMixin,
+    entitiesFieldPbehaviorFieldTypeMixin,
+  ],
   model: {
     prop: 'exdates',
     event: 'input',
@@ -44,6 +49,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    withExdateType: {
+      type: Boolean,
+      default: false,
+    },
   },
   created() {
     this.$validator.attach({
@@ -52,6 +61,9 @@ export default {
       getter: () => !!this.exdates.length,
       vm: this,
     });
+  },
+  mounted() {
+    this.fetchFieldPbehaviorTypesList();
   },
   methods: {
     addExceptionDate() {

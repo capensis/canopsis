@@ -29,8 +29,8 @@ import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
  */
 export function pbehaviorExceptionToForm(exception = {}, timezone = getLocaleTimezone()) {
   return {
-    name: exception.name || '',
-    description: exception.description || '',
+    name: exception.name ?? '',
+    description: exception.description ?? '',
     exdates: exception.exdates
       ? addKeyInEntities(exception.exdates.map(({ begin, end, type }) => ({
         begin: convertDateToDateObjectByTimezone(begin, timezone),
@@ -39,6 +39,19 @@ export function pbehaviorExceptionToForm(exception = {}, timezone = getLocaleTim
       })))
       : [],
     _id: exception._id,
+  };
+}
+
+/**
+ * Convert pbehavior exception data to date exception form
+ *
+ * @param {Object} [exceptionImport = {}]
+ * @return {Object}
+ */
+export function pbehaviorExceptionImportToForm(exceptionImport = {}) {
+  return {
+    name: exceptionImport.name ?? '',
+    type: exceptionImport.type ?? '',
   };
 }
 
