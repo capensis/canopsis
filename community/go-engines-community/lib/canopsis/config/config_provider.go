@@ -88,10 +88,10 @@ type ApiConfig struct {
 }
 
 type RemediationConfig struct {
+	ExternalAPI                    map[string]ExternalApiConfig
 	HttpTimeout                    time.Duration
 	PauseManualInstructionInterval time.Duration
-	ExternalAPI                    map[string]ExternalApiConfig
-	JobTimeout                     time.Duration
+	JobWaitTimeout                 time.Duration
 	JobRetryInterval               time.Duration
 }
 
@@ -370,7 +370,7 @@ func NewRemediationConfigProvider(cfg RemediationConf, logger zerolog.Logger) *B
 			HttpTimeout:                    parseTimeDurationByStr(cfg.HttpTimeout, RemediationHttpTimeout, "http_timeout", sectionName, logger),
 			PauseManualInstructionInterval: parseTimeDurationByStr(cfg.PauseManualInstructionInterval, RemediationPauseManualInstructionInterval, "pause_manual_instruction_interval", sectionName, logger),
 			ExternalAPI:                    cfg.ExternalAPI,
-			JobTimeout:                     parseTimeDurationByStr(cfg.JobTimeout, RemediationPauseManualInstructionInterval, "job_timeout", sectionName, logger),
+			JobWaitTimeout:                 parseTimeDurationByStr(cfg.JobWaitTimeout, RemediationPauseManualInstructionInterval, "job_wait_timeout", sectionName, logger),
 			JobRetryInterval:               parseTimeDurationByStr(cfg.JobRetryInterval, RemediationPauseManualInstructionInterval, "job_retry_interval", sectionName, logger),
 		},
 		logger: logger,
@@ -400,9 +400,9 @@ func (p *BaseRemediationConfigProvider) Update(cfg RemediationConf) {
 	if ok {
 		p.conf.JobRetryInterval = d
 	}
-	d, ok = parseUpdatedTimeDurationByStr(cfg.JobTimeout, p.conf.JobTimeout, "job_timeout", sectionName, p.logger)
+	d, ok = parseUpdatedTimeDurationByStr(cfg.JobWaitTimeout, p.conf.JobWaitTimeout, "job_wait_timeout", sectionName, p.logger)
 	if ok {
-		p.conf.JobTimeout = d
+		p.conf.JobWaitTimeout = d
 	}
 
 	if !reflect.DeepEqual(cfg.ExternalAPI, p.conf.ExternalAPI) {
