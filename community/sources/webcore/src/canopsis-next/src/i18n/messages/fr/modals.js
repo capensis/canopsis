@@ -918,4 +918,7 @@ export default {
       title: 'Modifier le générateur de liens',
     },
   },
+  importPbehaviorException: {
+    title: 'Importer des dates d\'exception',
+  },
 };

@@ -2,17 +2,17 @@ import { range } from 'lodash';
 
 import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 
-import PbehaviorExceptionList from '@/components/other/pbehavior/pbehaviors/partials/pbehavior-exception-list.vue';
+import PbehaviorExceptionsList from '@/components/other/pbehavior/pbehaviors/partials/pbehavior-exceptions-list.vue';
 
 const localVue = createVueInstance();
 
-describe('pbehavior-exception-list', () => {
+describe('pbehavior-exceptions-list', () => {
   const totalItems = 5;
   const exceptions = range(totalItems).map(index => ({
     name: `exception-${index}`,
   }));
 
-  const snapshotFactory = generateRenderer(PbehaviorExceptionList, { localVue });
+  const snapshotFactory = generateRenderer(PbehaviorExceptionsList, { localVue });
 
   test('Renders `pbehavior-exception-list` without exceptions', () => {
     const wrapper = snapshotFactory();
