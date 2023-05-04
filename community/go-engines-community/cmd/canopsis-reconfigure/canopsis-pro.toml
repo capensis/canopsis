@@ -344,10 +344,10 @@ DumpKeepInterval = "1h"
 http_timeout = "5s"
 # job_retry_interval defines the interval after which the execution will be resumed.
 job_retry_interval = "15s"
-# job_wait_timeout defines the maximum wait time for the job to be completed after fails.
+# job_wait_interval defines the maximum wait time for the job to be completed after fails.
 # Basically in combination with job_retry_interval it means that the number of possible job execution retries
-# will be equal to ceil(job_wait_timeout / job_retry_interval)
-job_wait_timeout = "60s"
+# will be equal to ceil(job_wait_interval / job_retry_interval)
+job_wait_interval = "60s"
 # pause_manual_instruction_interval is used to pause instruction if user lost connection.
 pause_manual_instruction_interval = "15s"
 
@@ -488,7 +488,7 @@ with_body = true
 url_tpl = "{{ .host }}/jobs/{{ .jobID }}/status"
 method = "GET"
 response_status_key = "status"
-statuses = { Waiting = "running", Running = "running", Finished = "succeeded", Error = "failed" }
+statuses = { Waiting = "waiting", Running = "running", Finished = "succeeded", Error = "failed" }
 [Remediation.external_api.vtom.output_endpoint]
 url_tpl = "{{ .host }}/jobs/{{ .jobID }}/logs/last/stdout"
 method = "GET"

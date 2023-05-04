@@ -17,6 +17,8 @@ const (
 
 	RemediationHttpTimeout                    = 5 * time.Second
 	RemediationPauseManualInstructionInterval = 15 * time.Second
+	RemediationJobRetryInterval               = 10 * time.Second
+	RemediationJobWaitInterval                = 60 * time.Second
 
 	MetricsFlushInterval  = 10 * time.Second
 	MetricsSliInterval    = time.Hour

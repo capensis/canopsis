@@ -60,7 +60,7 @@ Feature: get a job
             "key2": "val2"
           },
           "multiple_executions": true,
-          "job_wait_timeout": {
+          "job_wait_interval": {
             "value": 40,
             "unit": "s"
           }
