@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { isArray, isObject } from 'lodash';
+import { isArray, isObject, isEmpty } from 'lodash';
 
 import { mapIds } from '@/helpers/entities';
 
@@ -84,11 +84,13 @@ export default {
           : this.originalValue;
       }
 
-      return [
-        isObject(this.originalValue)
-          ? this.originalValue._id
-          : this.originalValue,
-      ];
+      return isEmpty(this.originalValue)
+        ? []
+        : [
+          isObject(this.originalValue)
+            ? this.originalValue._id
+            : this.originalValue,
+        ];
     },
 
     preparedItems() {
