@@ -6,15 +6,22 @@ export default {
   metricsNotAvailable: 'TimescaleDB not running. Metrics are not available.',
   noData: 'No data available',
   selectMetric: 'Select metric to display',
+  addMetricMask: 'Add metrics by mask, e.g. cpu*',
+  displayedLabel: 'Displayed label',
   customColor: 'Custom color',
   calculationMethod: 'Calculation method',
   periodTrend: '{count} for the period\n{from} - {to}',
+  largeCountOfMetrics: 'The list of metrics to display is too large and truncated.',
+  onlyDisplayed: 'Only {count} metrics are displayed.',
+  autoAdd: 'Auto add',
+  addExternal: 'Add external',
   tabs: {
     collectionSettings: 'Collection settings',
     ratingSettings: 'Rating settings',
   },
 
   aggregateFunctions: {
+    [AGGREGATE_FUNCTIONS.last]: 'Last',
     [AGGREGATE_FUNCTIONS.sum]: 'Sum',
     [AGGREGATE_FUNCTIONS.avg]: 'Average',
     [AGGREGATE_FUNCTIONS.min]: 'Min',

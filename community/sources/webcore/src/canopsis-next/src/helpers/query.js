@@ -1,4 +1,4 @@
-import { isUndefined, isEmpty, omit, isArray } from 'lodash';
+import { isUndefined, isEmpty, omit, isArray, uniq } from 'lodash';
 
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import {
@@ -57,6 +57,22 @@ export function convertWidgetFilterToQuery({ parameters }) {
   }
 
   return {};
+}
+
+/**
+ * Convert widget filter to query
+ *
+ * @param {AlarmChart[]} charts
+ * @returns {string[]}
+ */
+export function convertWidgetChartsToPerfDataQuery(charts) {
+  const allMetrics = charts.reduce((acc, chart) => {
+    acc.push(...chart.parameters.metrics.map(({ metric }) => metric));
+
+    return acc;
+  }, []);
+
+  return uniq(allMetrics);
 }
 
 /**
@@ -137,12 +153,14 @@ export function convertContextWidgetToQuery(widget) {
     selectedTypes,
     widgetColumns,
     mainFilter,
+    charts = [],
   } = widget.parameters;
 
   const query = {
     page: 1,
     limit: itemsPerPage || PAGINATION_LIMIT,
     lockedFilter: mainFilter,
+    perf_data: convertWidgetChartsToPerfDataQuery(charts),
   };
 
   if (widgetColumns) {
@@ -238,7 +256,7 @@ export function convertChartWidgetToQuery(widget) {
     ...convertChartWidgetDefaultParametersToQuery(widget),
 
     with_history: comparison,
-    parameters: metrics.map(({ metric }) => metric),
+    parameters: metrics.map(({ metric, aggregate_func: aggregateFunc }) => ({ metric, aggregate_func: aggregateFunc })),
   };
 }
 
@@ -249,14 +267,14 @@ export function convertChartWidgetToQuery(widget) {
  * @returns {Object}
  */
 export function convertPieChartWidgetToQuery(widget) {
-  const { parameters: { metrics = [], aggregate_func: aggregateFunc } } = widget;
+  const { parameters: { metrics = [], aggregate_func: widgetAggregateFunc } } = widget;
 
   return {
     ...convertChartWidgetDefaultParametersToQuery(widget),
 
-    parameters: metrics.map(({ metric }) => ({
+    parameters: metrics.map(({ metric, aggregate_func: metricAggregateFunc }) => ({
       metric,
-      aggregate_func: aggregateFunc,
+      aggregate_func: metricAggregateFunc || widgetAggregateFunc,
     })),
   };
 }
@@ -268,11 +286,12 @@ export function convertPieChartWidgetToQuery(widget) {
  * @returns {Object}
  */
 export function convertNumbersWidgetToQuery(widget) {
-  const { parameters: { metrics = [] } } = widget;
+  const { parameters: { metrics = [], show_trend: showTrend = false } } = widget;
 
   return {
     ...convertChartWidgetDefaultParametersToQuery(widget),
 
+    with_history: showTrend,
     parameters: metrics.map(({ metric, aggregate_func: aggregateFunc }) => ({
       metric,
       aggregate_func: isRatioMetric(metric) ? undefined : aggregateFunc,
@@ -481,7 +500,7 @@ const convertFiltersToQuery = (filter, lockedFilter) => [
  * @returns {Object}
  */
 export const prepareAlarmDetailsQuery = (alarm, widget) => {
-  const { sort = {}, widgetGroupColumns = [] } = widget.parameters;
+  const { sort = {}, widgetGroupColumns = [], charts = [] } = widget.parameters;
   const columns = widgetGroupColumns.length > 0
     ? widgetGroupColumns
     : DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS;
@@ -492,6 +511,7 @@ export const prepareAlarmDetailsQuery = (alarm, widget) => {
     with_declare_tickets: true,
     with_links: true,
     opened: isResolvedAlarm(alarm) ? false : widget.parameters.opened,
+    perf_data: convertWidgetChartsToPerfDataQuery(charts),
     steps: {
       reversed: true,
       page: 1,

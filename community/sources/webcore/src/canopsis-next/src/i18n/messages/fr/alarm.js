@@ -118,6 +118,7 @@ export default {
   tabs: {
     moreInfos: 'Plus d\'infos',
     timeLine: 'Chronologie',
+    charts: 'Graphiques',
     alarmsChildren: 'Alarmes liées',
     trackSource: 'Cause racine',
     impactChain: 'Chaîne d\'impact',

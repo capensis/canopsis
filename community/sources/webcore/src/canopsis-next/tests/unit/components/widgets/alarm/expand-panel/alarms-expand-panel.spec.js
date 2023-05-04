@@ -21,6 +21,7 @@ const stubs = {
   'declared-tickets-list': true,
   'entity-gantt': true,
   'pbehaviors-simple-list': true,
+  'alarms-expand-panel-charts': true,
 };
 
 const selectTabs = wrapper => wrapper.vm.$children[0];
@@ -230,6 +231,9 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
         },
         widget: {
           parameters: {
+            charts: [{
+              metric: 'cpu',
+            }],
             moreInfoTemplate: 'template',
             isHtmlEnabledOnTimeLine: false,
             serviceDependenciesColumns: [{}],

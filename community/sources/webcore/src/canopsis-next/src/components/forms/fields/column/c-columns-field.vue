@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-movable-card-iterator-field(v-field="columns", @add="add")
+  c-movable-card-iterator-field(v-field="columns", addable, @add="add")
     template(#item="{ item, index }")
       column-field(
         v-field="columns[index]",
