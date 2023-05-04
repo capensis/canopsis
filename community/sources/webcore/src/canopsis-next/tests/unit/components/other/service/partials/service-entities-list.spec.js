@@ -1,6 +1,6 @@
 import Faker from 'faker';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import {
   createAlarmModule,
@@ -19,8 +19,6 @@ import {
 } from '@/constants';
 
 import ServiceEntitiesList from '@/components/other/service/partials/service-entities-list.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'service-entity-actions': true,
@@ -79,7 +77,7 @@ describe('service-entities-list', () => {
 
   const factory = generateShallowRenderer(ServiceEntitiesList, {
     store,
-    localVue,
+
     stubs,
     mocks: {
       $modals,
@@ -96,7 +94,7 @@ describe('service-entities-list', () => {
 
   const snapshotFactory = generateRenderer(ServiceEntitiesList, {
     store,
-    localVue,
+
     stubs,
     propsData: {
       service,

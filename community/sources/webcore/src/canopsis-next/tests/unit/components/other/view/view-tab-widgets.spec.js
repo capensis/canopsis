@@ -1,11 +1,9 @@
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import ViewTabWidgets from '@/components/other/view/view-tab-widgets.vue';
-
-const localVue = createVueInstance();
 
 const createWidgetsGridStub = className => ({
   template: `
@@ -21,18 +19,10 @@ const stubs = {
   'widget-wrapper': true,
 };
 
-const factory = (options = {}) => shallowMount(ViewTabWidgets, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(ViewTabWidgets, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(ViewTabWidgets, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(ViewTabWidgets, { stubs,
 });
 
 describe('view-tab-widgets', () => {

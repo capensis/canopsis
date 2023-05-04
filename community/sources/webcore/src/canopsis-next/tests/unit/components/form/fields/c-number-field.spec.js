@@ -1,28 +1,20 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createNumberInputStub } from '@unit/stubs/input';
 
 import CNumberField from '@/components/forms/fields/c-number-field.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'v-text-field': createNumberInputStub('v-text-field'),
 };
 
-const factory = (options = {}) => shallowMount(CNumberField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(CNumberField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(CNumberField, {
-  localVue,
+const snapshotFactory = generateRenderer(CNumberField, {
 
-  ...options,
 });
 
 const selectTextField = wrapper => wrapper.find('input.v-text-field');

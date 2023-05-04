@@ -1,10 +1,8 @@
 import Faker from 'faker';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import FieldNumber from '@/components/sidebars/settings/fields/common/number.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'widget-settings-item': true,
@@ -20,12 +18,12 @@ const selectNumberField = wrapper => wrapper.find('c-number-field-stub');
 
 describe('field-number', () => {
   const factory = generateShallowRenderer(FieldNumber, {
-    localVue,
+
     stubs,
   });
 
   const snapshotFactory = generateRenderer(FieldNumber, {
-    localVue,
+
     stubs: snapshotStubs,
   });
 

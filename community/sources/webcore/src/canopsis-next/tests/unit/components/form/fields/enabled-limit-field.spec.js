@@ -1,10 +1,8 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createInputStub, createNumberInputStub } from '@unit/stubs/input';
 
 import EnabledLimitField from '@/components/forms/fields/enabled-limit-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-enabled-field': createInputStub('c-enabled-field'),
@@ -16,28 +14,24 @@ const snapshotStubs = {
   'c-number-field': true,
 };
 
-const factory = (options = {}) => shallowMount(EnabledLimitField, {
-  localVue,
+const factory = generateShallowRenderer(EnabledLimitField, {
+
   stubs,
   parentComponent: {
     $_veeValidate: {
       validator: 'new',
     },
   },
-
-  ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(EnabledLimitField, {
-  localVue,
+const snapshotFactory = generateRenderer(EnabledLimitField, {
+
   stubs: snapshotStubs,
   parentComponent: {
     $_veeValidate: {
       validator: 'new',
     },
   },
-
-  ...options,
 });
 
 const selectEnabledField = wrapper => wrapper.find('input.c-enabled-field');

@@ -1,4 +1,4 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { ENTITIES_TYPES } from '@/constants';
 
@@ -6,25 +6,15 @@ import { widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
 
 import Columns from '@/components/sidebars/settings/fields/common/columns.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'widget-settings-item': true,
   'c-columns-with-template-field': true,
 };
 
-const factory = (options = {}) => shallowMount(Columns, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(Columns, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(Columns, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(Columns, { stubs,
 });
 
 const selectColumnsField = wrapper => wrapper.find('c-columns-with-template-field-stub');

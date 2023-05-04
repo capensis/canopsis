@@ -1,12 +1,10 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 import { PATTERN_OPERATORS } from '@/constants';
 
 import CPatternOperatorField from '@/components/forms/fields/pattern/c-pattern-operator-field.vue';
 import CSelectField from '@/components/forms/fields/c-select-field';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-select-field': createSelectInputStub('c-select-field'),
@@ -16,19 +14,13 @@ const snapshotStubs = {
   'c-select-field': CSelectField,
 };
 
-const factory = (options = {}) => shallowMount(CPatternOperatorField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(CPatternOperatorField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(CPatternOperatorField, {
-  localVue,
+const snapshotFactory = generateRenderer(CPatternOperatorField, {
+
   attachTo: document.body,
   stubs: snapshotStubs,
-
-  ...options,
 });
 
 const selectSelectField = wrapper => wrapper.find('.c-select-field');

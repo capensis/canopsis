@@ -1,10 +1,8 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import ServicePauseEventForm from '@/components/widgets/service-weather/service-pause-event-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-pbehavior-reason-field': true,
@@ -16,18 +14,12 @@ const snapshotStubs = {
   'c-description-field': true,
 };
 
-const factory = (options = {}) => shallowMount(ServicePauseEventForm, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(ServicePauseEventForm, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(ServicePauseEventForm, {
-  localVue,
-  stubs: snapshotStubs,
+const snapshotFactory = generateRenderer(ServicePauseEventForm, {
 
-  ...options,
+  stubs: snapshotStubs,
 });
 
 const selectPbehaviorReasonField = wrapper => wrapper.find('c-pbehavior-reason-field-stub');

@@ -1,12 +1,10 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
 import { TIME_UNITS } from '@/constants';
 
 import AlarmStatusRuleForm from '@/components/other/alarm-status-rule/form/alarm-status-rule-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-name-field': true,
@@ -27,18 +25,12 @@ const snapshotStubs = {
   'alarm-status-rule-patterns-form': true,
 };
 
-const factory = (options = {}) => shallowMount(AlarmStatusRuleForm, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(AlarmStatusRuleForm, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(AlarmStatusRuleForm, {
-  localVue,
-  stubs: snapshotStubs,
+const snapshotFactory = generateRenderer(AlarmStatusRuleForm, {
 
-  ...options,
+  stubs: snapshotStubs,
 });
 
 const selectNameField = wrapper => wrapper.find('c-name-field-stub');
