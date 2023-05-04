@@ -525,7 +525,7 @@ Feature: run a job
       "name": "test-job-to-job-execution-start-second-3-name",
       "config": "test-job-config-to-run-manual-vtom-job",
       "job_id": "test-job-succeeded",
-      "payload": "{\"resource1\": \"{{ `{{ .Alarm.Value.Resource }}` }}\", \"entity1\": \"{{ `{{ .Entity.ID }}` }}\"}",
+      "payload": "{\"parameters\": [\"{{ `{{ .Alarm.Value.Resource }}` }}\",\"{{ `{{ .Entity.ID }}` }}\"]}",
       "multiple_executions": false
     }
     """
@@ -653,7 +653,7 @@ Feature: run a job
       "name": "test-job-to-job-execution-start-second-4-name",
       "config": "test-job-config-to-run-manual-vtom-job",
       "job_id": "test-job-failed",
-      "payload": "{\"resource1\": \"{{ `{{ .Alarm.Value.Resource }}` }}\", \"entity1\": \"{{ `{{ .Entity.ID }}` }}\"}",
+      "payload": "{\"parameters\": [\"{{ `{{ .Alarm.Value.Resource }}` }}\",\"{{ `{{ .Entity.ID }}` }}\"]}",
       "multiple_executions": false
     }
     """
@@ -754,7 +754,7 @@ Feature: run a job
                 {
                   "name": "test-job-to-job-execution-start-second-4-name",
                   "status": 2,
-                  "fail_reason": "job failed, check {{ .dummyApiURL }} for more info"
+                  "fail_reason": "job failed, check {{ .dummyApiURL }}/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS for more info"
                 }
               ]
             }

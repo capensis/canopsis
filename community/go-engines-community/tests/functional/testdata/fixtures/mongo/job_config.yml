@@ -39,7 +39,7 @@ template:
     _id: <UUID()>,
     type: vtom,
     name: <UniqueName()>,
-    host: "http://localhost:3000",
+    host: "http://localhost:3000/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS",
     auth_token: <UUID()>,
     author: root,
     created: <NowUnix()>
