@@ -200,7 +200,7 @@ configuration:
     pause_manual_instruction_interval: 30m
     wait_job_complete_retries_amount: 1
     wait_job_complete_retries_interval: 1s
-    job_timeout: 10s
+    job_wait_timeout: 10s
     job_retry_interval: 10s
 
   configuration_healthcheck:

@@ -10,7 +10,7 @@ type RemediationConf struct {
 	HttpTimeout                    string                       `toml:"http_timeout" bson:"http_timeout"`
 	PauseManualInstructionInterval string                       `toml:"pause_manual_instruction_interval" bson:"pause_manual_instruction_interval"`
 	ExternalAPI                    map[string]ExternalApiConfig `toml:"external_api" bson:"external_api"`
-	JobTimeout                     string                       `toml:"job_timeout" bson:"job_timeout"`
+	JobWaitTimeout                 string                       `toml:"job_wait_timeout" bson:"job_wait_timeout"`
 	JobRetryInterval               string                       `toml:"job_retry_interval" bson:"job_retry_interval"`
 }
 
