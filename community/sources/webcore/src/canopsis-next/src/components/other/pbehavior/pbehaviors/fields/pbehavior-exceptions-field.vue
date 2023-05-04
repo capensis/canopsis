@@ -32,6 +32,7 @@ import uid from '@/helpers/uid';
 import { convertDateToStartOfDayDateObject } from '@/helpers/date/date';
 
 import { formArrayMixin } from '@/mixins/form';
+import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
 
 import PbehaviorExceptionField from './pbehavior-exception-field.vue';
 
@@ -39,7 +40,7 @@ import PbehaviorExceptionList from '../partials/pbehavior-exception-list.vue';
 
 export default {
   components: { PbehaviorExceptionList, PbehaviorExceptionField },
-  mixins: [formArrayMixin],
+  mixins: [formArrayMixin, entitiesFieldPbehaviorFieldTypeMixin],
   model: {
     prop: 'exdates',
     event: 'input',
@@ -66,6 +67,9 @@ export default {
     hasExceptionsOrExdates() {
       return this.exdates.length || this.exceptions.length;
     },
+  },
+  mounted() {
+    this.fetchFieldPbehaviorTypesList();
   },
   methods: {
     showSelectExceptionModal() {

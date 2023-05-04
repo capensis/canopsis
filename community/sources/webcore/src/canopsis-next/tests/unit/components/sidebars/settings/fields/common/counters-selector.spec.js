@@ -2,6 +2,7 @@ import Faker from 'faker';
 
 import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
+import { createMockedStoreModules, createPbehaviorTypesModule } from '@unit/utils/store';
 import FieldCountersSelector from '@/components/sidebars/settings/fields/common/counters-selector.vue';
 
 const localVue = createVueInstance();
@@ -22,6 +23,11 @@ const selectStateEnabledField = wrapper => selectEnabledFieldByIndex(wrapper, 1)
 const selectServiceWeatherStateCounterField = wrapper => wrapper.find('c-service-weather-state-counter-field-stub');
 
 describe('field-counters-selector', () => {
+  const { pbehaviorTypesModule } = createPbehaviorTypesModule();
+  const store = createMockedStoreModules([
+    pbehaviorTypesModule,
+  ]);
+
   const value = {
     pbehavior_enabled: false,
     pbehavior_types: [],
@@ -31,10 +37,12 @@ describe('field-counters-selector', () => {
   const factory = generateShallowRenderer(FieldCountersSelector, {
     localVue,
     stubs,
+    store,
   });
   const snapshotFactory = generateRenderer(FieldCountersSelector, {
     localVue,
     stubs,
+    store,
   });
 
   test('Pbehavior counters enabled after trigger enabled field', () => {

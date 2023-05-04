@@ -19,7 +19,10 @@
 </template>
 
 <script>
+import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
+
 export default {
+  mixins: [entitiesFieldPbehaviorFieldTypeMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -29,6 +32,9 @@ export default {
       type: Object,
       default: () => ({}),
     },
+  },
+  mounted() {
+    this.fetchFieldPbehaviorTypesList();
   },
   methods: {
     isActiveItemDisabled(item) {

@@ -12,23 +12,23 @@
       item-key="_id",
       select-all
     )
-      template(#items="{ selected, item }")
+      template(#items="props")
         tr
           td
-            v-checkbox-functional(v-model="selected", primary, hide-details)
-          td {{ item.name }}
+            v-checkbox-functional(v-model="props.selected", primary, hide-details)
+          td {{ props.item.name }}
 </template>
 
 <script>
 import { omit } from 'lodash';
 
-import entitiesPbehaviorExceptionMixin from '@/mixins/entities/pbehavior/exceptions';
 import { localQueryMixin } from '@/mixins/query-local/query';
+import entitiesPbehaviorExceptionMixin from '@/mixins/entities/pbehavior/exceptions';
 
 export default {
   mixins: [
-    entitiesPbehaviorExceptionMixin,
     localQueryMixin,
+    entitiesPbehaviorExceptionMixin,
   ],
   model: {
     prop: 'exceptions',
