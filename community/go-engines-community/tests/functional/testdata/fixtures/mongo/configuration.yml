@@ -171,23 +171,23 @@ configuration:
           type: header-token
           header: X-API-KEY
         reset_endpoint:
-          url_tpl: "{{ .host }}/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/{{ .jobID }}/action"
+          url_tpl: "{{ .host }}/jobs/{{ .jobID }}/action"
           method: POST
           headers:
             "Content-Type": "application/json"
             "Accept": "application/json"
           body: "{\"type\":\"ChangeStatus\",\"status\":\"Waiting\"}"
         launch_endpoint:
-          url_tpl: "{{ .host }}/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/{{ .jobID }}/action"
+          url_tpl: "{{ .host }}/jobs/{{ .jobID }}/action"
           method: POST
           headers:
             "Content-Type": "application/json"
             "Accept": "application/json"
           body: "{\"type\":\"Request\"}"
-          with_body: false
+          with_body: true
           with_url_query: false
         status_endpoint:
-          url_tpl: "{{ .host }}/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/{{ .jobID }}/status"
+          url_tpl: "{{ .host }}/jobs/{{ .jobID }}/status"
           method: GET
           response_status_key: status
           statuses:
@@ -196,10 +196,10 @@ configuration:
             Finished: succeeded
             Error: failed
         output_endpoint:
-          url_tpl: "{{ .host }}/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/{{ .jobID }}/logs/last/stdout"
+          url_tpl: "{{ .host }}/jobs/{{ .jobID }}/logs/last/stdout"
           method: GET
         err_output_endpoint:
-          url_tpl: "{{ .host }}/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/{{ .jobID }}/logs/last/stderr"
+          url_tpl: "{{ .host }}/jobs/{{ .jobID }}/logs/last/stderr"
           method: GET
         response_err_msg_key: message
     http_timeout: 1m
