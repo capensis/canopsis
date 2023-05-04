@@ -19,19 +19,27 @@ Feature: Get application information
         "job_config_types": [
           {
             "auth_type": "bearer-token",
-            "name": "awx"
+            "name": "awx",
+            "with_body": true,
+            "with_query": false
           },
           {
             "auth_type": "basic-auth",
-            "name": "jenkins"
+            "name": "jenkins",
+            "with_body": false,
+            "with_query": true
           },
           {
             "auth_type": "header-token",
-            "name": "rundeck"
+            "name": "rundeck",
+            "with_body": true,
+            "with_query": false
           },
           {
             "auth_type": "header-token",
-            "name": "vtom"
+            "name": "vtom",
+            "with_body": true,
+            "with_query": false
           }
         ]
       },
