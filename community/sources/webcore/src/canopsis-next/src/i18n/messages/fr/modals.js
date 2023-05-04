@@ -943,8 +943,8 @@ export default {
         title: 'Modifier le tableau des nombres',
       },
     },
-    importPbehaviorException: {
-      title: 'Importer des dates d\'exception',
-    },
+  },
+  importPbehaviorException: {
+    title: 'Importer des dates d\'exception',
   },
 };
