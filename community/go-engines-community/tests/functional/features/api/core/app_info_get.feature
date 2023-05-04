@@ -38,7 +38,7 @@ Feature: Get application information
           {
             "auth_type": "header-token",
             "name": "vtom",
-            "with_body": false,
+            "with_body": true,
             "with_query": false
           }
         ]

@@ -754,7 +754,7 @@ Feature: run a job
                 {
                   "name": "test-job-to-job-execution-start-second-4-name",
                   "status": 2,
-                  "fail_reason": "job failed, check {{ .dummyApiURL }}/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS for more info"
+                  "fail_reason": "job failed, check {{ .dummyApiURL }} for more info"
                 }
               ]
             }
