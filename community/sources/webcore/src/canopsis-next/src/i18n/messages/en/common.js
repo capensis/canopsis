@@ -270,6 +270,7 @@ export default {
   copyPropertyPath: 'Copy property path',
   hidden: 'Hidden',
   numberField: 'Number field',
+  chooseFile: 'Choose file',
   variableTypes: {
     string: 'String',
     number: 'Number',

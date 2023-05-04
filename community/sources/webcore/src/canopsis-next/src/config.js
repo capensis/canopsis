@@ -162,6 +162,7 @@ export const API_ROUTES = {
   pbehavior: {
     timespan: '/api/v4/pbehavior-timespans',
     exceptions: '/api/v4/pbehavior-exceptions',
+    exceptionImport: '/api/v4/pbehavior-exception-import',
     types: '/api/v4/pbehavior-types',
     nextTypesPriority: '/api/v4/pbehavior-types/next-priority',
     pbehaviors: '/api/v4/pbehaviors',
