@@ -17,8 +17,9 @@ func NewEngine(ctx context.Context, opts che.Options, logger zerolog.Logger) eng
 	cfg := m.DepConfig(ctx, dbClient)
 	config.SetDbClientRetry(dbClient, cfg)
 
-	e := che.NewEngine(ctx, opts, dbClient, cfg, metrics.NewNullMetaUpdater(), eventfilter.NewExternalDataGetterContainer(),
-		config.NewTimezoneConfigProvider(cfg, logger), config.NewTemplateConfigProvider(cfg), logger)
+	e := che.NewEngine(ctx, opts, dbClient, cfg, metrics.NewNullSender(), metrics.NewNullMetaUpdater(),
+		eventfilter.NewExternalDataGetterContainer(), config.NewTimezoneConfigProvider(cfg, logger),
+		config.NewTemplateConfigProvider(cfg), logger)
 	e.AddDeferFunc(func(ctx context.Context) {
 		err := dbClient.Disconnect(ctx)
 		if err != nil {
