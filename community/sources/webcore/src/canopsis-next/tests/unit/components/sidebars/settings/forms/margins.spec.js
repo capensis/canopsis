@@ -1,10 +1,8 @@
 import Faker from 'faker';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import Margins from '@/components/sidebars/settings/forms/margins.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'widget-settings-group': true,
@@ -26,12 +24,12 @@ describe('margins', () => {
   };
 
   const factory = generateShallowRenderer(Margins, {
-    localVue,
+
     stubs,
   });
 
   const snapshotFactory = generateRenderer(Margins, {
-    localVue,
+
     stubs,
   });
 

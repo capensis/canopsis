@@ -1,8 +1,6 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import AlarmColumnValueExtraDetails from '@/components/widgets/alarm/columns-formatting/alarm-column-value-extra-details.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'extra-details-ack': true,
@@ -14,13 +12,6 @@ const stubs = {
   'extra-details-parents': true,
   'extra-details-children': true,
 };
-
-const snapshotFactory = (options = {}) => mount(AlarmColumnValueExtraDetails, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 describe('alarm-column-value-extra-details', () => {
   const fullAlarm = {
@@ -61,6 +52,8 @@ describe('alarm-column-value-extra-details', () => {
       },
     },
   };
+
+  const snapshotFactory = generateRenderer(AlarmColumnValueExtraDetails, { stubs });
 
   it('Renders `alarm-column-value-extra-details` with empty alarm', () => {
     const wrapper = snapshotFactory({

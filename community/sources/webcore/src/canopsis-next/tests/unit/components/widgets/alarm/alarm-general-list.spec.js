@@ -1,18 +1,12 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { fakeStaticAlarms } from '@unit/data/alarm';
 
 import AlarmGeneralList from '@/components/widgets/alarm/alarm-general-list.vue';
 
-const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(AlarmGeneralList, {
-  localVue,
-
-  ...options,
-});
-
 describe('alarm-general-list', () => {
   const alarms = fakeStaticAlarms({ totalItems: 4 });
+
+  const snapshotFactory = generateRenderer(AlarmGeneralList);
 
   test('Renders `alarm-general-list` with empty items', () => {
     const wrapper = snapshotFactory({

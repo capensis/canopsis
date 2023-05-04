@@ -1,19 +1,13 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import MapBreadcrumbs from '@/components/widgets/map/partials/map-breadcrumbs.vue';
-
-const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(MapBreadcrumbs, {
-  localVue,
-
-  ...options,
-});
 
 const selectButtons = wrapper => wrapper.findAll('.v-btn');
 const selectButtonByIndex = (wrapper, index) => selectButtons(wrapper).at(index);
 
 describe('map-breadcrumbs', () => {
+  const snapshotFactory = generateRenderer(MapBreadcrumbs);
+
   test('Click emitted after button click was triggered', async () => {
     const previousMaps = [{}, {}, {}];
     const wrapper = snapshotFactory({

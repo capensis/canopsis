@@ -6,7 +6,7 @@
         v-btn.ma-0.ml-3(icon, small, @click="close")
           v-icon(color="white") close
     v-card-text
-      v-runtime-template(
+      c-runtime-template(
         v-if="point.entity && template",
         :template="compiledTemplate"
       )
@@ -32,7 +32,6 @@
 
 <script>
 import { isNumber } from 'lodash';
-import VRuntimeTemplate from 'v-runtime-template';
 
 import { COLORS } from '@/config';
 
@@ -46,7 +45,7 @@ import { authMixin } from '@/mixins/auth';
 import MermaidPointMarker from './mermaid-point-marker.vue';
 
 export default {
-  components: { VRuntimeTemplate, MermaidPointMarker },
+  components: { MermaidPointMarker },
   mixins: [authMixin],
   props: {
     point: {

@@ -1,11 +1,9 @@
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import KpiRatingSettingsList from '@/components/other/kpi/rating-settings/kpi-rating-settings-list.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
@@ -14,13 +12,6 @@ const stubs = {
   'c-action-btn': true,
   'c-table-pagination': true,
 };
-
-const snapshotFactory = (options = {}) => mount(KpiRatingSettingsList, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 describe('kpi-rating-settings-list', () => {
   const ratingSettingsItems = [
@@ -80,6 +71,8 @@ describe('kpi-rating-settings-list', () => {
       enabled: true,
     },
   ];
+
+  const snapshotFactory = generateRenderer(KpiRatingSettingsList, { stubs });
 
   it('Rating settings changed after enable rows', async () => {
     const wrapper = snapshotFactory({

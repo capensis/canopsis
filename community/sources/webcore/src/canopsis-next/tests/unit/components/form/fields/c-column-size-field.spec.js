@@ -1,24 +1,16 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import CColumnSizeField from '@/components/forms/fields/c-column-size-field.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {};
 
-const factory = (options = {}) => shallowMount(CColumnSizeField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(CColumnSizeField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(CColumnSizeField, {
-  localVue,
+const snapshotFactory = generateRenderer(CColumnSizeField, {
 
-  ...options,
 });
 
 const selectRadioGroupNode = wrapper => wrapper.vm.$children[0];

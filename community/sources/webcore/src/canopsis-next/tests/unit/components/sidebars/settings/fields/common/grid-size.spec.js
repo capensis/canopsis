@@ -1,28 +1,18 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import FieldGridSize from '@/components/sidebars/settings/fields/common/grid-size.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'widget-settings-item': true,
   'c-column-size-field': true,
 };
 
-const factory = (options = {}) => shallowMount(FieldGridSize, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(FieldGridSize, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(FieldGridSize, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(FieldGridSize, { stubs,
 });
 
 const selectColumnSizeField = wrapper => wrapper.find('c-column-size-field-stub');

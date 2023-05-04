@@ -1,35 +1,28 @@
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import EnabledLimit from '@/components/sidebars/settings/fields/common/enabled-limit.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'enabled-limit-field': true,
 };
 
-const snapshotFactory = (options = {}) => mount(EnabledLimit, {
-  localVue,
-  stubs,
-
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
-
-  ...options,
-});
-
 const selectEnabledLimitField = wrapper => wrapper.find('enabled-limit-field-stub');
 
 describe('enabled-limit', () => {
+  const snapshotFactory = generateRenderer(EnabledLimit, { stubs,
+    parentComponent: {
+      provide: {
+        list: {
+          register: jest.fn(),
+          unregister: jest.fn(),
+        },
+        listClick: jest.fn(),
+      },
+    },
+  });
+
   it('Value changed after trigger enabled limit field', () => {
     const wrapper = snapshotFactory();
 

@@ -1,12 +1,10 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { lineShapeToForm, rectShapeToForm } from '@/helpers/flowchart/shapes';
 
 import FlowchartProperties from '@/components/common/flowchart/flowchart-properties.vue';
 import { LINE_TYPES, STROKE_TYPES } from '@/constants';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'flowchart-color-field': true,
@@ -15,18 +13,10 @@ const stubs = {
   'flowchart-line-type-field': true,
 };
 
-const factory = (options = {}) => shallowMount(FlowchartProperties, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(FlowchartProperties, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(FlowchartProperties, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(FlowchartProperties, { stubs,
 });
 
 const selectFillColorField = wrapper => wrapper.find('flowchart-color-field-stub[label="Fill"]');

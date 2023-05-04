@@ -1,21 +1,14 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import CPatternOperatorInformation from '@/components/common/block/c-pattern-operator-information.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-pattern-operator-chip': true,
 };
 
-const snapshotFactory = (options = {}) => mount(CPatternOperatorInformation, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 describe('c-pattern-operator-information', () => {
+  const snapshotFactory = generateRenderer(CPatternOperatorInformation, { stubs });
+
   test('Renders `c-pattern-operator-information`', () => {
     const wrapper = snapshotFactory({
       slots: {

@@ -1,9 +1,7 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
@@ -14,24 +12,16 @@ const snapshotStubs = {
   'c-enabled-field': true,
 };
 
-const factory = (options = {}) => shallowMount(FilterSelector, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(FilterSelector, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(FilterSelector, {
-  localVue,
+const snapshotFactory = generateRenderer(FilterSelector, {
   stubs: snapshotStubs,
-
   parentComponent: {
     provide: {
       listClick: jest.fn(),
     },
   },
-
-  ...options,
 });
 
 const selectFilterSelectField = wrapper => wrapper.find('select.v-select');
