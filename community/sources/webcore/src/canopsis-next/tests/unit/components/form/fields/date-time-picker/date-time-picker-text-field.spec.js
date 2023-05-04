@@ -1,12 +1,10 @@
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 import { createInputStub } from '@unit/stubs/input';
 
 import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-text-field': createInputStub('v-text-field'),
@@ -17,30 +15,21 @@ const snapshotStubs = {
   'date-time-picker-menu': true,
 };
 
-const factory = (options = {}) => shallowMount(DateTimePickerTextField, {
-  localVue,
-  stubs,
-
+const factory = generateShallowRenderer(DateTimePickerTextField, { stubs,
   parentComponent: {
     $_veeValidate: {
       validator: 'new',
     },
   },
-
-  ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(DateTimePickerTextField, {
-  localVue,
+const snapshotFactory = generateRenderer(DateTimePickerTextField, {
   stubs: snapshotStubs,
-
   parentComponent: {
     $_veeValidate: {
       validator: 'new',
     },
   },
-
-  ...options,
 });
 
 const selectTextField = wrapper => wrapper.find('.v-text-field');

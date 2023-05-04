@@ -1,13 +1,11 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import MermaidEditor from '@/components/other/map/form/partials/mermaid-editor.vue';
 import { MERMAID_THEMES } from '@/constants';
 import { mermaidPointToForm } from '@/helpers/forms/map';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'mermaid-code-editor': true,
@@ -17,24 +15,15 @@ const stubs = {
   'mermaid-points-editor': true,
 };
 
-const factory = (options = {}) => shallowMount(MermaidEditor, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(MermaidEditor, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(MermaidEditor, {
-  localVue,
-  stubs,
-
+const snapshotFactory = generateRenderer(MermaidEditor, { stubs,
   parentComponent: {
     $_veeValidate: {
       validator: 'new',
     },
   },
-
-  ...options,
 });
 
 const selectMermaidCodeEditor = wrapper => wrapper.find('mermaid-code-editor-stub');

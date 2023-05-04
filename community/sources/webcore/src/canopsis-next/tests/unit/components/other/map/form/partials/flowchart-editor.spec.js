@@ -2,14 +2,12 @@ import Faker from 'faker';
 import { keyBy } from 'lodash';
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { MERMAID_THEMES, SHAPES } from '@/constants';
 import { flowchartPointToForm } from '@/helpers/forms/map';
 
 import FlowchartEditor from '@/components/other/map/form/partials/flowchart-editor.vue';
 import { shapeToForm } from '@/helpers/flowchart/shapes';
-
-const localVue = createVueInstance();
 
 const stubs = {
   flowchart: {
@@ -33,24 +31,15 @@ const stubs = {
   'flowchart-points-editor': true,
 };
 
-const factory = (options = {}) => shallowMount(FlowchartEditor, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(FlowchartEditor, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(FlowchartEditor, {
-  localVue,
-  stubs,
-
+const snapshotFactory = generateRenderer(FlowchartEditor, { stubs,
   parentComponent: {
     $_veeValidate: {
       validator: 'new',
     },
   },
-
-  ...options,
 });
 
 const selectFlowchart = wrapper => wrapper.find('.flowchart');

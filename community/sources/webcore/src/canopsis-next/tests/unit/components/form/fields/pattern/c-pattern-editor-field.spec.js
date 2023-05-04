@@ -1,6 +1,6 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import {
   ALARM_PATTERN_FIELDS,
@@ -14,38 +14,26 @@ import {
 
 import CPatternsEditorField from '@/components/forms/fields/pattern/c-pattern-editor-field.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'c-pattern-field': true,
   'c-pattern-groups-field': true,
   'pattern-advanced-editor-field': true,
 };
 
-const factory = (options = {}) => shallowMount(CPatternsEditorField, {
-  localVue,
-  stubs,
-
+const factory = generateShallowRenderer(CPatternsEditorField, { stubs,
   parentComponent: {
     $_veeValidate: {
       validator: 'new',
     },
   },
-
-  ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(CPatternsEditorField, {
-  localVue,
-  stubs,
-
+const snapshotFactory = generateRenderer(CPatternsEditorField, { stubs,
   parentComponent: {
     $_veeValidate: {
       validator: 'new',
     },
   },
-
-  ...options,
 });
 
 const selectTabItems = wrapper => wrapper.findAll('a.v-tabs__item');

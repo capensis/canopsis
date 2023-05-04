@@ -1,32 +1,26 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { MAX_LIMIT } from '@/constants';
 
 import CMapField from '@/components/forms/fields/map/c-map-field.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = (options = {}) => shallowMount(CMapField, {
-  localVue,
+const factory = generateShallowRenderer(CMapField, {
+
   stubs,
   attachTo: document.body,
-
-  ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(CMapField, {
-  localVue,
-  attachTo: document.body,
+const snapshotFactory = generateRenderer(CMapField, {
 
-  ...options,
+  attachTo: document.body,
 });
 
 const selectSelectField = wrapper => wrapper.find('select.v-select');

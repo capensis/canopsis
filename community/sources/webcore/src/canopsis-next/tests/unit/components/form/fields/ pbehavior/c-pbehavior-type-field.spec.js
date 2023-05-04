@@ -1,14 +1,12 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorTypesModule } from '@unit/utils/store';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { MAX_LIMIT } from '@/constants';
 
 import CPbehaviorTypeField from '@/components/forms/fields/pbehavior/c-pbehavior-type-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
@@ -22,16 +20,8 @@ describe('c-pbehavior-type-field', () => {
     pbehaviorTypesModule,
   ]);
 
-  const factory = generateShallowRenderer(CPbehaviorTypeField, {
-    localVue,
-    stubs,
-    store,
-  });
-
-  const snapshotFactory = generateRenderer(CPbehaviorTypeField, {
-    localVue,
-    store,
-  });
+  const factory = generateShallowRenderer(CPbehaviorTypeField, { stubs, store });
+  const snapshotFactory = generateRenderer(CPbehaviorTypeField, { store });
 
   test('Types fetched after mount', async () => {
     factory({

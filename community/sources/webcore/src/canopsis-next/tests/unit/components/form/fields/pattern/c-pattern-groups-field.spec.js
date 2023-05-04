@@ -1,28 +1,18 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { QUICK_RANGES, TIME_UNITS } from '@/constants';
 
 import CPatternGroupsField from '@/components/forms/fields/pattern/c-pattern-groups-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-pattern-group-field': true,
   'c-pattern-operator-chip': true,
 };
 
-const factory = (options = {}) => shallowMount(CPatternGroupsField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(CPatternGroupsField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(CPatternGroupsField, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(CPatternGroupsField, { stubs,
 });
 
 const selectAddButton = wrapper => wrapper.find('v-btn-stub');

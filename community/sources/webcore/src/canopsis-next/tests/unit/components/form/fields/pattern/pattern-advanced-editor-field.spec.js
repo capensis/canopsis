@@ -1,7 +1,7 @@
 import Faker from 'faker';
 import { Validator } from 'vee-validate';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import {
   ALARM_PATTERN_FIELDS,
@@ -14,24 +14,14 @@ import {
 
 import PatternAdvancedEditorField from '@/components/forms/fields/pattern/pattern-advanced-editor-field.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'c-json-field': true,
 };
 
-const factory = (options = {}) => shallowMount(PatternAdvancedEditorField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(PatternAdvancedEditorField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(PatternAdvancedEditorField, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(PatternAdvancedEditorField, { stubs,
 });
 
 const selectJsonFieldNode = wrapper => wrapper.vm.$children[0];

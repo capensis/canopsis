@@ -1,11 +1,9 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 import { ALARM_PATTERN_FIELDS } from '@/constants';
 
 import CPatternAttributeField from '@/components/forms/fields/pattern/c-pattern-attribute-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-select-field': createSelectInputStub('c-select-field'),
@@ -15,18 +13,12 @@ const snapshotStubs = {
   'c-select-field': true,
 };
 
-const factory = (options = {}) => shallowMount(CPatternAttributeField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(CPatternAttributeField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(CPatternAttributeField, {
-  localVue,
-  stubs: snapshotStubs,
+const snapshotFactory = generateRenderer(CPatternAttributeField, {
 
-  ...options,
+  stubs: snapshotStubs,
 });
 
 const selectSelectField = wrapper => wrapper.find('.c-select-field');

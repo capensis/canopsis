@@ -1,8 +1,6 @@
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import ServiceEntityInfoTab from '@/components/other/service/partials/service-entity-info-tab.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'service-entity-actions': true,
@@ -16,7 +14,7 @@ describe('service-entity-info-tab', () => {
   const executeInstruction = jest.fn();
 
   const snapshotFactory = generateRenderer(ServiceEntityInfoTab, {
-    localVue,
+
     stubs,
     listeners: {
       apply: applyAction,
@@ -24,7 +22,7 @@ describe('service-entity-info-tab', () => {
     },
   });
   const factory = generateShallowRenderer(ServiceEntityInfoTab, {
-    localVue,
+
     stubs,
     listeners: {
       apply: applyAction,
