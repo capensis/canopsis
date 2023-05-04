@@ -78,24 +78,16 @@ export default {
   },
   computed: {
     selectedTypesIds() {
-      if (isArray(this.originalValue)) {
-        return this.returnObject
-          ? mapIds(this.originalValue)
-          : this.originalValue;
-      }
+      return this.getSelectedTypesIds();
+    },
 
-      return isEmpty(this.originalValue)
-        ? []
-        : [
-          isObject(this.originalValue)
-            ? this.originalValue._id
-            : this.originalValue,
-        ];
+    originalSelectedTypesIds() {
+      return this.getSelectedTypesIds(this.originalValue);
     },
 
     preparedItems() {
       return this.fieldPbehaviorTypes.filter(type => (
-        !type.hidden || this.selectedTypesIds.includes(type._id)
+        !type.hidden || this.originalSelectedTypesIds.includes(type._id)
       ));
     },
 
@@ -112,6 +104,22 @@ export default {
       }
 
       return false;
+    },
+
+    getSelectedTypesIds(value = this.value) {
+      if (isArray(value)) {
+        return this.returnObject
+          ? mapIds(value)
+          : value;
+      }
+
+      return isEmpty(value)
+        ? []
+        : [
+          isObject(value)
+            ? value._id
+            : value,
+        ];
     },
   },
 };
