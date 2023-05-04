@@ -25,6 +25,7 @@ export const MODALS = {
   createWidgetTemplate: 'create-widget-template',
   createFilter: 'create-filter',
   alarmsList: 'alarms-list',
+  createAlarmChart: 'create-alarm-chart',
   colorPicker: 'color-picker',
   textEditor: 'text-editor',
   textEditorWithTemplate: 'text-editor-with-template',

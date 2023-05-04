@@ -17,6 +17,10 @@
       :class="timeLineTabClass"
     ) {{ $t('alarm.tabs.timeLine') }}
     v-tab(
+      v-if="hasWidgetCharts",
+      :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.charts}`"
+    ) {{ $t('alarm.tabs.charts') }}
+    v-tab(
       v-if="hasTickets",
       :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.ticketsDeclared}`"
     ) {{ $t('alarm.tabs.ticketsDeclared') }}
@@ -69,6 +73,16 @@
             v-card.tab-item-card
               v-card-text
                 declared-tickets-list(:tickets="alarm.v.tickets", :parent-alarm-id="parentAlarmId")
+      v-tab-item(v-if="hasWidgetCharts", :value="$constants.ALARMS_EXPAND_PANEL_TABS.charts", lazy)
+        v-layout.pa-3(row)
+          v-flex(:class="cardFlexClass")
+            v-card.tab-item-card
+              v-card-text
+                entity-charts(
+                  :charts="widget.parameters.charts",
+                  :entity="alarm.entity",
+                  :available-metrics="filteredPerfData"
+                )
       v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior")
         v-layout.pa-3.secondary.lighten-2(row)
           v-flex(:class="cardFlexClass")
@@ -137,7 +151,7 @@ import {
 import uid from '@/helpers/uid';
 import { getStepClass } from '@/helpers/tour';
 import { alarmToServiceDependency } from '@/helpers/treeview/service-dependencies';
-import { convertAlarmDetailsQueryToRequest } from '@/helpers/query';
+import { convertAlarmDetailsQueryToRequest, convertWidgetChartsToPerfDataQuery } from '@/helpers/query';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
@@ -146,6 +160,7 @@ import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permiss
 import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
 import DeclaredTicketsList from '@/components/other/declare-ticket/declared-tickets-list.vue';
+import EntityCharts from '@/components/widgets/chart/entity-charts.vue';
 
 import AlarmsTimeLine from '../time-line/alarms-time-line.vue';
 import EntityGantt from '../entity-gantt/entity-gantt.vue';
@@ -154,6 +169,7 @@ import AlarmsExpandPanelChildren from './alarms-expand-panel-children.vue';
 
 export default {
   components: {
+    EntityCharts,
     DeclaredTicketsList,
     PbehaviorsSimpleList,
     ServiceDependencies,
@@ -266,6 +282,10 @@ export default {
         && this.alarm.v.connector === JUNIT_ALARM_CONNECTOR
         && [ENTITY_TYPES.component, ENTITY_TYPES.resource].includes(this.alarm.entity.type);
     },
+
+    hasWidgetCharts() {
+      return this.widget.parameters.charts?.length && this.filteredPerfData.length;
+    },
   },
   watch: {
     'widget.parameters.moreInfoTemplate': {
@@ -280,6 +300,16 @@ export default {
           ...this.query,
 
           opened,
+        };
+      },
+    },
+
+    'widget.parameters.charts': {
+      handler(charts) {
+        this.query = {
+          ...this.query,
+
+          perf_data: convertWidgetChartsToPerfDataQuery(charts),
         };
       },
     },

@@ -8,13 +8,13 @@ import CColumnsField from '@/components/forms/fields/column/c-columns-field.vue'
 
 const snapshotStubs = {
   'c-movable-card-iterator-field': {
-    props: ['value'],
+    props: ['value', 'addable'],
     template: `
       <div class="c-movable-card-iterator-field">
         <div v-for="(item, index) in value" :key="index">
           <slot name="item" :item="item" :index="index" />
         </div>
-        <button class="add-item-btn" type="button" @click="$emit('add')" />
+        <button v-if="addable" class="add-item-btn" type="button" @click="$emit('add')" />
       </div>
     `,
   },
