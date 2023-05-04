@@ -341,9 +341,13 @@ DumpKeepInterval = "1h"
 # Remediation parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Remediation]
 
-http_timeout = "1m"
-job_retry_interval = "10s"
-job_timeout = "30s"
+http_timeout = "5s"
+# job_retry_interval defines the interval after which the execution will be resumed.
+job_retry_interval = "15s"
+# job_wait_timeout defines the maximum wait time for the job to be completed after fails.
+# Basically in combination with job_retry_interval it means that the number of possible job execution retries
+# will be equal to ceil(job_wait_timeout / job_retry_interval)
+job_wait_timeout = "60s"
 # pause_manual_instruction_interval is used to pause instruction if user lost connection.
 pause_manual_instruction_interval = "15s"
 
