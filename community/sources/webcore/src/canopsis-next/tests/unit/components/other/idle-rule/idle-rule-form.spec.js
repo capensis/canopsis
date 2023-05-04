@@ -1,11 +1,9 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { IDLE_RULE_TYPES } from '@/constants';
 
 import IdleRuleForm from '@/components/other/idle-rule/form/idle-rule-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-enabled-field': true,
@@ -13,18 +11,10 @@ const stubs = {
   'idle-rule-patterns-form': true,
 };
 
-const factory = (options = {}) => shallowMount(IdleRuleForm, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(IdleRuleForm, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(IdleRuleForm, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(IdleRuleForm, { stubs,
 });
 
 const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');

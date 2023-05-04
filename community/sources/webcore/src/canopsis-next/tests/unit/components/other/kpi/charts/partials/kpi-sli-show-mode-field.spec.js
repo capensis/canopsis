@@ -1,27 +1,19 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 import { KPI_SLI_GRAPH_DATA_TYPE } from '@/constants';
 
 import KpiSliShowModeField from '@/components/other/kpi/charts/partials/kpi-sli-show-mode-field';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = (options = {}) => shallowMount(KpiSliShowModeField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(KpiSliShowModeField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(KpiSliShowModeField, {
-  localVue,
+const snapshotFactory = generateRenderer(KpiSliShowModeField, {
 
-  ...options,
 });
 
 describe('kpi-sli-show-mode-field', () => {

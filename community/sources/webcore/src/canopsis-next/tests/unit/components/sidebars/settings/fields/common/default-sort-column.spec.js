@@ -1,25 +1,18 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 import { SORT_ORDERS } from '@/constants';
 
 import DefaultSortColumn from '@/components/sidebars/settings/fields/common/default-sort-column.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = (options = {}) => shallowMount(DefaultSortColumn, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(DefaultSortColumn, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(DefaultSortColumn, {
-  localVue,
+const snapshotFactory = generateRenderer(DefaultSortColumn, {
 
   parentComponent: {
     provide: {
@@ -30,8 +23,6 @@ const snapshotFactory = (options = {}) => mount(DefaultSortColumn, {
       listClick: jest.fn(),
     },
   },
-
-  ...options,
 });
 
 const selectColumnSelectField = wrapper => wrapper.findAll('select.v-select').at(0);

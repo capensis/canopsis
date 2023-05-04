@@ -2,7 +2,7 @@ import Faker from 'faker';
 import flushPromises from 'flush-promises';
 import { omit } from 'lodash';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarmDetails, fakeStaticAlarms } from '@unit/data/alarm';
@@ -21,8 +21,6 @@ import {
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 
 import AlarmsList from '@/components/widgets/alarm/alarms-list.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-advanced-search-field': true,
@@ -62,28 +60,24 @@ const snapshotStubs = {
   'mass-actions-panel': true,
 };
 
-const factory = (options = {}) => shallowMount(AlarmsList, {
-  localVue,
+const factory = generateShallowRenderer(AlarmsList, {
+
   stubs,
   parentComponent: {
     provide: {
       $system: {},
     },
   },
-
-  ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(AlarmsList, {
-  localVue,
+const snapshotFactory = generateRenderer(AlarmsList, {
+
   stubs: snapshotStubs,
   parentComponent: {
     provide: {
       $system: {},
     },
   },
-
-  ...options,
 });
 
 const selectCorrelationField = wrapper => wrapper.find('v-switch-stub');

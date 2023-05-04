@@ -1,11 +1,9 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { mockModals } from '@unit/utils/mock-hooks';
 import { ENTITIES_TYPES } from '@/constants';
 
 import FiltersList from '@/components/other/filter/filters-list.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-draggable-list-field': true,
@@ -17,18 +15,12 @@ const snapshotStubs = {
   'filter-tile': true,
 };
 
-const factory = (options = {}) => shallowMount(FiltersList, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(FiltersList, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(FiltersList, {
-  localVue,
-  stubs: snapshotStubs,
+const snapshotFactory = generateRenderer(FiltersList, {
 
-  ...options,
+  stubs: snapshotStubs,
 });
 
 const selectAddButton = wrapper => wrapper.find('v-btn-stub');

@@ -1,13 +1,11 @@
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import { COLORS } from '@/config';
 import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, PBEHAVIOR_TYPE_TYPES, SHAPES } from '@/constants';
 import { shapeToForm } from '@/helpers/flowchart/shapes';
-
-import FlowchartPreview from '@/components/other/map/partials/flowchart-preview.vue';
 import { getImpactStateColor } from '@/helpers/color';
 
-const localVue = createVueInstance();
+import FlowchartPreview from '@/components/other/map/partials/flowchart-preview.vue';
 
 const stubs = {
   panzoom: true,
@@ -28,20 +26,6 @@ const stubs = {
   'flowchart-points-preview': true,
   'c-help-icon': true,
 };
-
-const factory = (options = {}) => shallowMount(FlowchartPreview, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(FlowchartPreview, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectFlowchart = wrapper => wrapper.find('div.flowchart');
 
@@ -95,6 +79,9 @@ describe('flowchart-preview', () => {
       points,
     },
   };
+
+  const factory = generateShallowRenderer(FlowchartPreview, { stubs });
+  const snapshotFactory = generateRenderer(FlowchartPreview, { stubs });
 
   test('Shapes color changed by point with color indicator impact state', async () => {
     const wrapper = factory({
