@@ -22,8 +22,8 @@
       chart-loader(v-if="aggregatedMetricsPending", :has-metrics="hasMetrics")
       pie-chart-metrics(
         v-if="hasMetrics",
-        :metrics="aggregatedMetrics",
-        :colors-by-metrics="colorsByMetrics",
+        :chart-id="widget._id",
+        :metrics="preparedMetrics",
         :title="widget.parameters.chart_title",
         :show-mode="widget.parameters.show_mode",
         :downloading="downloading",
@@ -44,6 +44,7 @@ import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
 import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
+import { widgetChartMetricsMap } from '@/mixins/widget/chart/metrics-map';
 import { entitiesAggregatedMetricsMixin } from '@/mixins/entities/aggregated-metrics';
 import { permissionsWidgetsPieChartInterval } from '@/mixins/permissions/widgets/chart/pie/interval';
 import { permissionsWidgetsPieChartSampling } from '@/mixins/permissions/widgets/chart/pie/sampling';
@@ -69,6 +70,7 @@ export default {
     metricsIntervalFilterMixin,
     widgetSamplingFilterMixin,
     widgetPeriodicRefreshMixin,
+    widgetChartMetricsMap,
     entitiesAggregatedMetricsMixin,
     permissionsWidgetsPieChartInterval,
     permissionsWidgetsPieChartSampling,
@@ -88,20 +90,31 @@ export default {
       default: '',
     },
   },
+  data() {
+    return {
+      widgetMetricsMap: {},
+    };
+  },
   computed: {
     hasMetrics() {
       return !!this.aggregatedMetrics.length;
     },
 
-    colorsByMetrics() {
-      return this.widget.parameters.metrics.reduce((acc, { color, metric }) => {
-        if (color) {
-          acc[metric] = color;
-        }
+    preparedMetrics() {
+      return this.aggregatedMetrics.map((metric) => {
+        const parameters = this.widgetMetricsMap[metric.title] ?? {};
 
-        return acc;
-      }, {});
+        return {
+          ...metric,
+
+          color: parameters.color,
+          label: parameters.label,
+        };
+      });
     },
+  },
+  created() {
+    this.setWidgetMetricsMap();
   },
   methods: {
     ...mapMetricsActions({
@@ -117,8 +130,13 @@ export default {
       };
     },
 
-    fetchList() {
-      this.fetchAggregatedMetricsList({ widgetId: this.widget._id, params: this.getQuery() });
+    async fetchList() {
+      await this.fetchAggregatedMetricsList({
+        widgetId: this.widget._id,
+        params: this.getQuery(),
+      });
+
+      this.setWidgetMetricsMap();
     },
   },
 };
