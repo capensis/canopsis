@@ -96,7 +96,20 @@ func dummyHandler(dummyRoutes map[string]dummyResponse) func(w http.ResponseWrit
 
 		w.WriteHeader(response.Code)
 
-		if response.Body != "" {
+		if len(response.BodySequence) != 0 {
+			_, err := fmt.Fprintf(w, response.BodySequence[response.BodySequenceIndex])
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			response.BodySequenceIndex++
+			if response.BodySequenceIndex == len(response.BodySequence) {
+				response.BodySequenceIndex = 0
+			}
+
+			dummyRoutes[r.URL.Path] = response
+		} else if response.Body != "" {
 			_, err := fmt.Fprintf(w, response.Body)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -129,6 +142,9 @@ type dummyResponse struct {
 
 	Username string
 	Password string
+
+	BodySequence      map[int]string
+	BodySequenceIndex int
 }
 
 func getDummyRoutes(addr string) map[string]dummyResponse {
@@ -305,7 +321,10 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/test-job-succeeded/status": {
 			Code:   http.StatusOK,
 			Method: http.MethodGet,
-			Body:   "{\"status\":\"Finished\"}",
+			BodySequence: map[int]string{
+				0: "{\"status\":\"Waiting\"}",
+				1: "{\"status\":\"Finished\"}",
+			},
 		},
 		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/test-job-succeeded/logs/last/stdout": {
 			Code:   http.StatusOK,
@@ -319,7 +338,10 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/test-job-failed/status": {
 			Code:   http.StatusOK,
 			Method: http.MethodGet,
-			Body:   "{\"status\":\"Error\"}",
+			BodySequence: map[int]string{
+				0: "{\"status\":\"Waiting\"}",
+				1: "{\"status\":\"Error\"}",
+			},
 		},
 		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/test-job-failed/logs/last/stderr": {
 			Code:   http.StatusOK,
