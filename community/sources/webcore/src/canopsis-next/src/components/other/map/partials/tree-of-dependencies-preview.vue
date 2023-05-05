@@ -30,7 +30,7 @@ import {
 } from '@/constants';
 
 import { getEntityColor } from '@/helpers/color';
-import { generatePreparedDefaultContextWidget } from '@/helpers/entities';
+import { generatePreparedDefaultContextWidget } from '@/helpers/forms/widgets/common';
 import { getMapEntityText, normalizeTreeOfDependenciesMapEntities } from '@/helpers/map';
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
