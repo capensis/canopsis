@@ -1,20 +1,11 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import CAlarmTagsChips from '@/components/common/chips/c-alarm-tags-chips.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'c-alarm-actions-chips': true,
 };
-
-const snapshotFactory = (options = {}) => mount(CAlarmTagsChips, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 describe('c-alarm-tags-chips', () => {
   const tags = [
@@ -34,6 +25,8 @@ describe('c-alarm-tags-chips', () => {
   };
 
   const store = createMockedStoreModules([alarmTagModule]);
+
+  const snapshotFactory = generateRenderer(CAlarmTagsChips, { stubs });
 
   it('Renders `c-alarm-tags-chips` with selectedTag and without dropdown', () => {
     const wrapper = snapshotFactory({

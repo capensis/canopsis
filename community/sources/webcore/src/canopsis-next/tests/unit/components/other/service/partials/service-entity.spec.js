@@ -1,4 +1,4 @@
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 
 import { mockModals } from '@unit/utils/mock-hooks';
@@ -11,8 +11,6 @@ import {
 } from '@/constants';
 
 import ServiceEntity from '@/components/other/service/partials/service-entity.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-expansion-panel-content': {
@@ -59,7 +57,7 @@ describe('service-entity', () => {
 
   const snapshotFactory = generateRenderer(ServiceEntity, {
     store,
-    localVue,
+
     stubs: snapshotStubs,
     listeners: {
       'update:selected': updateSelected,
@@ -72,7 +70,7 @@ describe('service-entity', () => {
 
   const factory = generateShallowRenderer(ServiceEntity, {
     store,
-    localVue,
+
     stubs,
     mocks: { $modals },
     listeners: {

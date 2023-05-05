@@ -1,7 +1,7 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { createVueInstance, mount, shallowMount } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createSelectInputStub } from '@unit/stubs/input';
 
@@ -9,23 +9,15 @@ import { MAX_LIMIT } from '@/constants';
 
 import CFilterField from '@/components/forms/fields/pattern/c-filter-field.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'v-autocomplete': createSelectInputStub('v-autocomplete'),
 };
 
-const factory = (options = {}) => shallowMount(CFilterField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(CFilterField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(CFilterField, {
-  localVue,
+const snapshotFactory = generateRenderer(CFilterField, {
 
-  ...options,
 });
 
 const selectAutocomplete = wrapper => wrapper.find('.v-autocomplete');

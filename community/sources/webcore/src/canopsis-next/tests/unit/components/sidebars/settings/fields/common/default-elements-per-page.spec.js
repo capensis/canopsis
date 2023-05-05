@@ -1,9 +1,7 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 import DefaultElementsPerPage from '@/components/sidebars/settings/fields/common/default-elements-per-page.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'widget-settings-item': true,
@@ -14,18 +12,12 @@ const snapshotStubs = {
   'widget-settings-item': true,
 };
 
-const factory = (options = {}) => shallowMount(DefaultElementsPerPage, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(DefaultElementsPerPage, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(DefaultElementsPerPage, {
-  localVue,
-  stubs: snapshotStubs,
+const snapshotFactory = generateRenderer(DefaultElementsPerPage, {
 
-  ...options,
+  stubs: snapshotStubs,
 });
 
 const selectElementsPerPageField = wrapper => wrapper.find('select.v-select');

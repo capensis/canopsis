@@ -1,26 +1,16 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import CEntityField from '@/components/forms/fields/alarm/c-alarm-tag-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-alarm-action-chip': true,
 };
 
-const factory = (options = {}) => shallowMount(CEntityField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(CEntityField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(CEntityField, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(CEntityField, { stubs,
 });
 const selectSelectField = wrapper => wrapper.find('v-select-stub');
 

@@ -1,21 +1,13 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import { DEFAULT_LOCALE, THEMES_NAMES } from '@/config';
 import { GROUPS_NAVIGATION_TYPES, TOURS } from '@/constants';
 
 import AlarmsExpandPanelTour from '@/components/widgets/alarm/expand-panel/alarms-expand-panel-tour.vue';
-
-const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(AlarmsExpandPanelTour, {
-  localVue,
-
-  ...options,
-});
 
 const tours = {
   [Faker.datatype.string()]: Faker.datatype.boolean(),
@@ -66,6 +58,8 @@ const selectNextButton = wrapper => wrapper.find('.v-step__button-next');
 const selectStopButton = wrapper => wrapper.find('.v-step__button-stop');
 
 describe('alarms-expand-panel-tour', () => {
+  const snapshotFactory = generateRenderer(AlarmsExpandPanelTour);
+
   jest.useFakeTimers();
 
   afterAll(() => {

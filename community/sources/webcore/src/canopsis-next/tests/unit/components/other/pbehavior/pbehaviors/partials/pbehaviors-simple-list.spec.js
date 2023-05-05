@@ -2,7 +2,7 @@ import { range } from 'lodash';
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorModule } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { selectRowEditButtonByIndex, selectRowRemoveButtonByIndex } from '@unit/utils/table';
@@ -10,8 +10,6 @@ import { MODALS } from '@/constants';
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
 
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-search-field': true,
@@ -54,7 +52,7 @@ describe('pbehaviors-simple-list', () => {
   const store = createMockedStoreModules([pbehaviorModule]);
 
   const factory = generateShallowRenderer(PbehaviorsSimpleList, {
-    localVue,
+
     stubs,
     mocks: { $modals },
     parentComponent: {
@@ -66,7 +64,7 @@ describe('pbehaviors-simple-list', () => {
     },
   });
   const snapshotFactory = generateRenderer(PbehaviorsSimpleList, {
-    localVue,
+
     stubs,
     mocks: { $modals },
     parentComponent: {

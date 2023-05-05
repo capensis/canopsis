@@ -1,15 +1,13 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import { KPI_SLI_GRAPH_DATA_TYPE, QUICK_RANGES, SAMPLINGS } from '@/constants';
 
 import KpiSliFilters from '@/components/other/kpi/charts/partials/kpi-sli-filters';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-quick-date-interval-field': true,
@@ -18,18 +16,10 @@ const stubs = {
   'kpi-sli-show-mode-field': true,
 };
 
-const factory = (options = {}) => shallowMount(KpiSliFilters, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(KpiSliFilters, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(KpiSliFilters, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(KpiSliFilters, { stubs,
 });
 
 describe('kpi-sli-filters', () => {

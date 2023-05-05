@@ -1,14 +1,12 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 import { WEATHER_ACTIONS_TYPES } from '@/constants';
 
 import ServiceTemplate from '@/components/other/service/partials/service-template.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-runtime-template': CRuntimeTemplate,
@@ -33,7 +31,7 @@ describe('service-template', () => {
 
   const snapshotFactory = generateRenderer(ServiceTemplate, {
     store,
-    localVue,
+
     stubs,
     propsData: {
       service,

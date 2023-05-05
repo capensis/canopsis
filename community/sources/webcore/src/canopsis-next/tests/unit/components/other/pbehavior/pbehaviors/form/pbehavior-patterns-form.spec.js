@@ -1,10 +1,8 @@
 import Faker from 'faker';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import PbehaviorPatternsForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-patterns-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-patterns-field': true,
@@ -13,8 +11,8 @@ const stubs = {
 const selectPatternsField = wrapper => wrapper.find('c-patterns-field-stub');
 
 describe('pbehavior-patterns-form', () => {
-  const factory = generateShallowRenderer(PbehaviorPatternsForm, { localVue, stubs });
-  const snapshotFactory = generateRenderer(PbehaviorPatternsForm, { localVue, stubs });
+  const factory = generateShallowRenderer(PbehaviorPatternsForm, { stubs });
+  const snapshotFactory = generateRenderer(PbehaviorPatternsForm, { stubs });
 
   test('Patterns changed after trigger patterns field', () => {
     const wrapper = factory({

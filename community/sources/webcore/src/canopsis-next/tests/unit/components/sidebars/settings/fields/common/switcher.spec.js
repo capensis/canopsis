@@ -1,8 +1,6 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import Switcher from '@/components/sidebars/settings/fields/common/switcher.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-switch': {
@@ -18,24 +16,15 @@ const stubs = {
   },
 };
 
-const factory = (options = {}) => shallowMount(Switcher, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(Switcher, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(Switcher, {
-  localVue,
-  stubs,
-
+const snapshotFactory = generateRenderer(Switcher, { stubs,
   parentComponent: {
     provide: {
       listClick: jest.fn(),
     },
   },
-
-  ...options,
 });
 
 const selectSwitchField = wrapper => wrapper.find('input.v-switch');
