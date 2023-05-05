@@ -59,9 +59,9 @@
 <script>
 import { isObject } from 'lodash';
 
-import { API_HOST, API_ROUTES } from '@/config';
-
 import { USERS_PERMISSIONS } from '@/constants';
+
+import { getContextExportDownloadFileUrl } from '@/helpers/file-url';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -190,7 +190,7 @@ export default {
           data: this.getExportQuery(),
         });
 
-        this.downloadFile(`${API_HOST}${API_ROUTES.contextExport}/${fileData._id}/download`);
+        this.downloadFile(getContextExportDownloadFileUrl(fileData._id));
       } catch (err) {
         this.$popups.error({ text: this.$t('context.popups.exportFailed') });
       } finally {

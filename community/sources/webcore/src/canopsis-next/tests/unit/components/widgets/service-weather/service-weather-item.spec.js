@@ -15,7 +15,7 @@ import {
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
   USERS_PERMISSIONS,
 } from '@/constants';
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/forms/widgets/common';
 import { getImpactStateColor } from '@/helpers/color';
 
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
