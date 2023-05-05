@@ -32,14 +32,6 @@ const snapshotStubs = {
   'meta-alarm-rule-patterns-form': true,
 };
 
-const factory = generateShallowRenderer(MetaAlarmRuleForm, { stubs,
-});
-
-const snapshotFactory = generateRenderer(MetaAlarmRuleForm, {
-
-  stubs: snapshotStubs,
-});
-
 const selectIdField = wrapper => wrapper.find('c-id-field-stub');
 const selectDescriptionField = wrapper => wrapper.find('c-description-field-stub');
 const selectNameField = wrapper => wrapper.find('c-name-field-stub');
@@ -60,6 +52,9 @@ describe('meta-alarm-rule-form', () => {
     type: META_ALARMS_RULE_TYPES.complex,
     config: {},
   };
+
+  const factory = generateShallowRenderer(MetaAlarmRuleForm, { stubs });
+  const snapshotFactory = generateRenderer(MetaAlarmRuleForm, { stubs: snapshotStubs });
 
   test('ID changed after trigger id field', () => {
     const wrapper = factory({

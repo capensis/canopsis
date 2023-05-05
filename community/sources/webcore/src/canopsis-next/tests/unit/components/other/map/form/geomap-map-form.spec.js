@@ -9,16 +9,13 @@ const stubs = {
   'geomap-editor': true,
 };
 
-const factory = generateShallowRenderer(GeomapMapForm, { stubs,
-});
-
-const snapshotFactory = generateRenderer(GeomapMapForm, { stubs,
-});
-
 const selectNameField = wrapper => wrapper.find('c-name-field-stub');
 const selectGeomapEditor = wrapper => wrapper.find('geomap-editor-stub');
 
 describe('geomap-map-form', () => {
+  const factory = generateShallowRenderer(GeomapMapForm, { stubs });
+  const snapshotFactory = generateRenderer(GeomapMapForm, { stubs });
+
   test('Name changed after trigger name field', () => {
     const form = {
       name: '',

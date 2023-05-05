@@ -20,18 +20,6 @@ const snapshotStubs = {
   'c-select-field': CSelectField,
 };
 
-const factory = generateShallowRenderer(CEntityField, {
-
-  stubs,
-  attachTo: document.body,
-});
-
-const snapshotFactory = generateRenderer(CEntityField, {
-
-  stubs: snapshotStubs,
-  attachTo: document.body,
-});
-
 const selectAutocomplete = wrapper => wrapper.find('.c-select-field');
 
 const selectInput = wrapper => wrapper.find('input');
@@ -72,6 +60,15 @@ describe('c-entity-field', () => {
       },
     },
   ]);
+
+  const factory = generateShallowRenderer(CEntityField, {
+    stubs,
+    attachTo: document.body,
+  });
+  const snapshotFactory = generateRenderer(CEntityField, {
+    stubs: snapshotStubs,
+    attachTo: document.body,
+  });
 
   afterEach(() => {
     fetchListWithoutStore.mockClear();

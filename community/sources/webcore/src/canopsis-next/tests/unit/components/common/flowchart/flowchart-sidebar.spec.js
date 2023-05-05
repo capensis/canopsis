@@ -55,14 +55,6 @@ const snapshotStubs = {
   'image-shape-icon': true,
 };
 
-const factory = generateShallowRenderer(FlowchartSidebar, { stubs,
-});
-
-const snapshotFactory = generateRenderer(FlowchartSidebar, {
-
-  stubs: snapshotStubs,
-});
-
 const selectButtons = wrapper => wrapper.findAll('v-btn-stub');
 const selectButtonByIndex = (wrapper, index) => selectButtons(wrapper).at(index);
 const selectIconButtons = wrapper => wrapper.findAll('v-btn-stub.flowchart-sidebar__button-icon');
@@ -100,6 +92,9 @@ describe('flowchart-sidebar', () => {
   const y = 435;
   const width = 150;
   const height = 150;
+
+  const factory = generateShallowRenderer(FlowchartSidebar, { stubs });
+  const snapshotFactory = generateRenderer(FlowchartSidebar, { stubs: snapshotStubs });
 
   test('Rect shape added after trigger button', async () => {
     const id = Faker.datatype.string();

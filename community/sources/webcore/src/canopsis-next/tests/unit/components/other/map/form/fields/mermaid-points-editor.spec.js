@@ -14,18 +14,6 @@ const stubs = {
   'point-form-dialog-menu': true,
 };
 
-const factory = generateShallowRenderer(MermaidPoints, {
-
-  stubs,
-  attachTo: document.body,
-});
-
-const snapshotFactory = generateRenderer(MermaidPoints, {
-
-  stubs,
-  attachTo: document.body,
-});
-
 const selectRoot = wrapper => wrapper.find('div.mermaid-points');
 const selectPointContextmenu = wrapper => wrapper.find('point-contextmenu-stub');
 const selectPointFormDialogMenu = wrapper => wrapper.find('point-form-dialog-menu-stub');
@@ -90,6 +78,15 @@ const getEvent = () => ({
 
 describe('mermaid-points-editor', () => {
   const $modals = mockModals();
+
+  const factory = generateShallowRenderer(MermaidPoints, {
+    stubs,
+    attachTo: document.body,
+  });
+  const snapshotFactory = generateRenderer(MermaidPoints, {
+    stubs,
+    attachTo: document.body,
+  });
 
   test('Contextmenu opened after right click', async () => {
     const event = getEvent();

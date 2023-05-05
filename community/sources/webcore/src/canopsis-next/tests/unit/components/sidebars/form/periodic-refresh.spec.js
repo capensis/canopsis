@@ -10,29 +10,26 @@ const stubs = {
   'periodic-refresh-field': true,
 };
 
-const factory = generateShallowRenderer(PeriodicRefresh, { stubs,
-});
-
-const snapshotFactory = generateRenderer(PeriodicRefresh, {
-
-  stubs,
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-});
-
 const selectPeriodicRefreshField = wrapper => wrapper.find('periodic-refresh-field-stub');
 
 describe('periodic-refresh', () => {
+  const factory = generateShallowRenderer(PeriodicRefresh, { stubs });
+  const snapshotFactory = generateRenderer(PeriodicRefresh, {
+    stubs,
+    parentComponent: {
+      provide: {
+        list: {
+          register: jest.fn(),
+          unregister: jest.fn(),
+        },
+        listClick: jest.fn(),
+      },
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+
   it('Unit as seconds settled created, if unit doesn\'t exist', () => {
     const wrapper = factory({
       propsData: {

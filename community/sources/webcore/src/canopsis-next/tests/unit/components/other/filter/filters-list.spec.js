@@ -15,14 +15,6 @@ const snapshotStubs = {
   'filter-tile': true,
 };
 
-const factory = generateShallowRenderer(FiltersList, { stubs,
-});
-
-const snapshotFactory = generateRenderer(FiltersList, {
-
-  stubs: snapshotStubs,
-});
-
 const selectAddButton = wrapper => wrapper.find('v-btn-stub');
 const selectFilterTiles = wrapper => wrapper.findAll('filter-tile-stub');
 const selectDraggableField = wrapper => wrapper.find('c-draggable-list-field-stub');
@@ -33,6 +25,9 @@ describe('filters-list', () => {
     { _id: '1', title: 'Filter 1' },
     { _id: '2', title: 'Filter 2' },
   ];
+
+  const factory = generateShallowRenderer(FiltersList, { stubs });
+  const snapshotFactory = generateRenderer(FiltersList, { stubs: snapshotStubs });
 
   it('Create filter modal opened after trigger add button', () => {
     const wrapper = factory({

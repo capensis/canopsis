@@ -11,17 +11,14 @@ const stubs = {
   'idle-rule-patterns-form': true,
 };
 
-const factory = generateShallowRenderer(IdleRuleForm, { stubs,
-});
-
-const snapshotFactory = generateRenderer(IdleRuleForm, { stubs,
-});
-
 const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 const selectGeneralForm = wrapper => wrapper.find('idle-rule-general-form-stub');
 const selectPatternsForm = wrapper => wrapper.find('idle-rule-patterns-form-stub');
 
 describe('idle-rule-form', () => {
+  const factory = generateShallowRenderer(IdleRuleForm, { stubs });
+  const snapshotFactory = generateRenderer(IdleRuleForm, { stubs });
+
   test('IDLE Rule enabled after trigger enabled field', () => {
     const enabled = Faker.datatype.boolean();
     const wrapper = factory({

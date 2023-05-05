@@ -2,18 +2,13 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import PointContextmenu from '@/components/other/map/form/fields/point-contextmenu.vue';
 
-const factory = generateShallowRenderer(PointContextmenu, {
-
-});
-
-const snapshotFactory = generateRenderer(PointContextmenu, {
-
-});
-
 const selectListTiles = wrapper => wrapper.findAll('v-list-tile-stub');
 const selectListTileByIndex = (wrapper, index) => selectListTiles(wrapper).at(index);
 
 describe('mermaid-contextmenu', () => {
+  const factory = generateShallowRenderer(PointContextmenu);
+  const snapshotFactory = generateRenderer(PointContextmenu);
+
   test('Add point event emitted after trigger click on add point', () => {
     const wrapper = factory({
       propsData: {

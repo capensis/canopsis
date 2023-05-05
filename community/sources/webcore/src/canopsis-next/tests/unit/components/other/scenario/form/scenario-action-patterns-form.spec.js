@@ -6,15 +6,12 @@ const stubs = {
   'c-patterns-field': true,
 };
 
-const factory = generateShallowRenderer(ScenarioActionPatternsForm, { stubs,
-});
-
-const snapshotFactory = generateRenderer(ScenarioActionPatternsForm, { stubs,
-});
-
 const selectPatternsField = wrapper => wrapper.find('c-patterns-field-stub');
 
 describe('scenario-action-patterns-form', () => {
+  const factory = generateShallowRenderer(ScenarioActionPatternsForm, { stubs });
+  const snapshotFactory = generateRenderer(ScenarioActionPatternsForm, { stubs });
+
   test('Patterns changed after trigger patterns field', () => {
     const wrapper = factory();
 

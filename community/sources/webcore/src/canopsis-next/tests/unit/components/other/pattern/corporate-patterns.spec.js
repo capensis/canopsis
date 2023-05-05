@@ -10,12 +10,6 @@ const stubs = {
   'patterns-list': true,
 };
 
-const factory = generateShallowRenderer(CorporatePatterns, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CorporatePatterns, { stubs,
-});
-
 const selectPattersListNode = wrapper => wrapper.vm.$children[0];
 
 describe('corporate-patterns', () => {
@@ -49,6 +43,9 @@ describe('corporate-patterns', () => {
     remove,
     'remove-selected': removeSelected,
   };
+
+  const factory = generateShallowRenderer(CorporatePatterns, { stubs });
+  const snapshotFactory = generateRenderer(CorporatePatterns, { stubs });
 
   afterEach(() => {
     fetchPatternsList.mockClear();

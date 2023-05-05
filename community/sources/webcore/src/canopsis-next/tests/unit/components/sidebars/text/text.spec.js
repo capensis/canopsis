@@ -42,23 +42,6 @@ const snapshotStubs = {
   'field-date-interval': true,
 };
 
-const factory = generateShallowRenderer(TextSettings, { stubs,
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-});
-
-const snapshotFactory = generateRenderer(TextSettings, {
-  stubs: snapshotStubs,
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-});
-
 const generateDefaultTextWidget = () => ({
   ...formToWidget(widgetToForm({ type: WIDGET_TYPES.text })),
 
@@ -102,6 +85,22 @@ describe('text', () => {
     authModule,
     userPreferenceModule,
   ]);
+
+  const factory = generateShallowRenderer(TextSettings, { stubs,
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(TextSettings, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
 
   afterEach(() => {
     createWidget.mockReset();

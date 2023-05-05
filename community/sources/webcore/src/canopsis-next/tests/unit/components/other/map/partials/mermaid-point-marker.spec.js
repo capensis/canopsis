@@ -7,15 +7,12 @@ const stubs = {
   'point-icon': true,
 };
 
-const factory = generateShallowRenderer(MermaidPointMarker, { stubs,
-});
-
-const snapshotFactory = generateRenderer(MermaidPointMarker, { stubs,
-});
-
 const selectPointIconNode = wrapper => wrapper.vm.$children[0];
 
 describe('mermaid-point-marker', () => {
+  const factory = generateShallowRenderer(MermaidPointMarker, { stubs });
+  const snapshotFactory = generateRenderer(MermaidPointMarker, { stubs });
+
   test('Listeners applied to point icon', () => {
     const click = jest.fn();
     const wrapper = factory({

@@ -16,30 +16,27 @@ const stubs = {
   'kpi-error-overlay': true,
 };
 
-const factory = generateShallowRenderer(KpiAlarms, {
-
-  stubs,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-});
-
-const snapshotFactory = generateRenderer(KpiAlarms, {
-
-  stubs,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-});
-
 describe('kpi-alarms', () => {
   const nowTimestamp = 1386435600000;
 
   mockDateNow(nowTimestamp);
+
+  const factory = generateShallowRenderer(KpiAlarms, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(KpiAlarms, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   test('Metrics fetched after mount', async () => {
     const expectedDefaultParams = {

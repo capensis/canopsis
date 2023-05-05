@@ -9,14 +9,10 @@ const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = generateShallowRenderer(CEntityStateField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CEntityStateField, {
-
-});
-
 describe('c-entity-state-field', () => {
+  const factory = generateShallowRenderer(CEntityStateField, { stubs });
+  const snapshotFactory = generateRenderer(CEntityStateField);
+
   it('State type changed after trigger select field', () => {
     const wrapper = factory({
       propsData: {

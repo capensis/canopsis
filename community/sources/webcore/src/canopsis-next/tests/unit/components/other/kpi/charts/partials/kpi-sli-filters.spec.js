@@ -16,12 +16,6 @@ const stubs = {
   'kpi-sli-show-mode-field': true,
 };
 
-const factory = generateShallowRenderer(KpiSliFilters, { stubs,
-});
-
-const snapshotFactory = generateRenderer(KpiSliFilters, { stubs,
-});
-
 describe('kpi-sli-filters', () => {
   const nowTimestamp = 1386435600000;
   const initialQuery = {
@@ -35,6 +29,9 @@ describe('kpi-sli-filters', () => {
   };
 
   mockDateNow(nowTimestamp);
+
+  const factory = generateShallowRenderer(KpiSliFilters, { stubs });
+  const snapshotFactory = generateRenderer(KpiSliFilters, { stubs });
 
   it('Query changed after trigger a quick interval field', async () => {
     const wrapper = factory({

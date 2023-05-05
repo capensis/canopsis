@@ -9,16 +9,12 @@ const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = generateShallowRenderer(CQuickDateIntervalTypeField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CQuickDateIntervalTypeField, {
-
-});
-
 const selectSelectField = wrapper => wrapper.find('.v-select');
 
 describe('c-quick-date-interval-type-field', () => {
+  const factory = generateShallowRenderer(CQuickDateIntervalTypeField, { stubs });
+  const snapshotFactory = generateRenderer(CQuickDateIntervalTypeField);
+
   test('Value changed after trigger select field', () => {
     const wrapper = factory({
       propsData: {

@@ -30,15 +30,12 @@ const defaultStore = createMockedStoreModules([{
   },
 }]);
 
-const factory = generateShallowRenderer(KpiFilters, { stubs,
-});
-
-const snapshotFactory = generateRenderer(KpiFilters, { stubs,
-});
-
 const selectFiltersList = wrapper => wrapper.find('kpi-filters-list-stub');
 
 describe('kpi-filters', () => {
+  const factory = generateShallowRenderer(KpiFilters, { stubs });
+  const snapshotFactory = generateRenderer(KpiFilters, { stubs });
+
   it('Filters fetched after mount', async () => {
     const fetchFilters = jest.fn();
     factory({

@@ -13,17 +13,12 @@ const snapshotStubs = {
   'points-line-path': true,
 };
 
-const factory = generateShallowRenderer(FlowchartLineTypeField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(FlowchartLineTypeField, {
-
-  stubs: snapshotStubs,
-});
-
 const selectSelectField = wrapper => wrapper.find('.v-select');
 
 describe('flowchart-line-type-field', () => {
+  const factory = generateShallowRenderer(FlowchartLineTypeField, { stubs });
+  const snapshotFactory = generateRenderer(FlowchartLineTypeField, { stubs: snapshotStubs });
+
   test('Value changed after trigger select field', () => {
     const wrapper = factory();
 

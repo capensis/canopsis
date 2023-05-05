@@ -67,16 +67,6 @@ const stubs = {
 };
 const snapshotStubs = omit(stubs, ['v-tooltip']);
 
-const factory = generateShallowRenderer(GeomapEditor, { stubs });
-
-const snapshotFactory = generateRenderer(GeomapEditor, {
-  stubs: snapshotStubs,
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  } });
-
 const selectGeomap = wrapper => wrapper.find('div.geomap');
 const selectAddLocationBtn = wrapper => wrapper.find('v-btn-stub');
 const selectGeomapContextmenu = wrapper => wrapper.find('.geomap-contextmenu');
@@ -149,6 +139,16 @@ describe('geomap-editor', () => {
   const initialForm = {
     points: [],
   };
+
+  const factory = generateShallowRenderer(GeomapEditor, { stubs });
+  const snapshotFactory = generateRenderer(GeomapEditor, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
 
   test('Add on click mode enabled after trigger add location btn', async () => {
     const event = getEvent();

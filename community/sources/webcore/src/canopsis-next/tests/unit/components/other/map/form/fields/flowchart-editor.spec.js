@@ -31,17 +31,6 @@ const stubs = {
   'flowchart-points-editor': true,
 };
 
-const factory = generateShallowRenderer(FlowchartEditor, { stubs,
-});
-
-const snapshotFactory = generateRenderer(FlowchartEditor, { stubs,
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-});
-
 const selectFlowchart = wrapper => wrapper.find('.flowchart');
 const selectAddLocationBtn = wrapper => wrapper.find('add-location-btn-stub');
 const selectFlowchartPointsEditor = wrapper => wrapper.find('flowchart-points-editor-stub');
@@ -56,6 +45,16 @@ describe('flowchart-editor', () => {
     points: [],
     shapes: {},
   };
+
+  const factory = generateShallowRenderer(FlowchartEditor, { stubs });
+  const snapshotFactory = generateRenderer(FlowchartEditor, {
+    stubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
 
   test('Background changed after trigger flowchart', () => {
     const wrapper = factory({

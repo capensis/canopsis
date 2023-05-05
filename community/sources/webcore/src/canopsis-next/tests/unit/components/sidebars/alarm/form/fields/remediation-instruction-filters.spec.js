@@ -14,22 +14,6 @@ const snapshotStubs = {
   'remediation-instructions-filters-list': true,
 };
 
-const factory = generateShallowRenderer(RemediationInstructionsFilters, { stubs,
-});
-
-const snapshotFactory = generateRenderer(RemediationInstructionsFilters, {
-  stubs: snapshotStubs,
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
-});
-
 const selectRemediationInstructionsFiltersListField = wrapper => wrapper.find('remediation-instructions-filters-list-stub');
 const selectAddButton = wrapper => wrapper.find('button.v-btn');
 
@@ -43,6 +27,20 @@ describe('remediation-instructions-filters', () => {
     instructions: [],
     _id: 'id',
   }];
+
+  const factory = generateShallowRenderer(RemediationInstructionsFilters, { stubs });
+  const snapshotFactory = generateRenderer(RemediationInstructionsFilters, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      provide: {
+        list: {
+          register: jest.fn(),
+          unregister: jest.fn(),
+        },
+        listClick: jest.fn(),
+      },
+    },
+  });
 
   it('Instruction filters changed after trigger separator select field', () => {
     const wrapper = factory({
