@@ -18,11 +18,11 @@ exports[`pbehavior-recurrence-rule-exceptions-field Renders \`pbehavior-exceptio
     value="[object Object],[object Object]"
     with-exdate-type="true"
   >
-    <div
-      class="flex xs12"
+    <c-alert-stub
+      type="info"
     >
-      <!---->
-    </div>
+      No exceptions added yet
+    </c-alert-stub>
      
     <div
       class="flex"
@@ -70,23 +70,12 @@ exports[`pbehavior-recurrence-rule-exceptions-field Renders \`pbehavior-exceptio
   <div
     value=""
   >
-    <div
-      class="flex xs12"
+    <c-alert-stub
+      type="info"
+      value="true"
     >
-      <div
-        class="v-alert info"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light v-alert__icon"
-        >
-          info
-        </i>
-        <div>
-          No exceptions added yet
-        </div>
-      </div>
-    </div>
+      No exceptions added yet
+    </c-alert-stub>
      
     <div
       class="flex"
