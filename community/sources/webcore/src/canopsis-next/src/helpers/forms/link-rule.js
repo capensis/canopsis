@@ -9,7 +9,7 @@ import {
   LINK_RULE_ACTIONS,
 } from '@/constants';
 
-import uid from '../uid';
+import { uid } from '../uid';
 
 import { filterPatternsToForm, formFilterToPatterns } from './filter';
 import { externalDataToForm, formToExternalData } from './shared/external-data';
