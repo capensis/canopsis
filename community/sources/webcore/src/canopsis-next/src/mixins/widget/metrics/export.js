@@ -1,8 +1,9 @@
 import { KPI_RATING_METRICS_FILENAME_PREFIX } from '@/config';
 
 import { saveFile } from '@/helpers/file/files';
-import { exportMixinCreator } from '@/mixins/widget/export';
 import { getExportMetricDownloadFileUrl } from '@/helpers/file-url';
+
+import { exportMixinCreator } from '@/mixins/widget/export';
 
 export const metricsExportMixinCreator = ({ createExport, fetchExport }) => ({
   mixins: [
