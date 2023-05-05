@@ -1,8 +1,6 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import TimePickerField from '@/components/forms/fields/time-picker/time-picker-field.vue';
-
-const localVue = createVueInstance();
 
 const setValue = jest.fn();
 const setSearch = jest.fn();
@@ -24,18 +22,12 @@ const stubs = {
   },
 };
 
-const factory = (options = {}) => shallowMount(TimePickerField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(TimePickerField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(TimePickerField, {
-  localVue,
-  attachTo: document.body,
+const snapshotFactory = generateRenderer(TimePickerField, {
 
-  ...options,
+  attachTo: document.body,
 });
 
 const selectCombobox = wrapper => wrapper.find('.v-combobox, .v-autocomplete');

@@ -7,7 +7,6 @@ import Vuetify from 'vuetify';
 import VueMq from 'vue-mq';
 import VueFullScreen from 'vue-fullscreen';
 import VueClipboard from 'vue-clipboard2';
-import VueResizeText from 'vue-resize-text';
 import VueAsyncComputed from 'vue-async-computed';
 import PortalVue from 'portal-vue';
 import frDaySpanVuetifyMessages from 'dayspan-vuetify/src/locales/fr';
@@ -240,7 +239,6 @@ import * as sidebarsComponents from '@/components/sidebars';
 /* eslint-enable import/first */
 
 Vue.use(VueAsyncComputed);
-Vue.use(VueResizeText);
 Vue.use(PortalVue);
 Vue.use(Filters);
 Vue.use(Vuetify, {

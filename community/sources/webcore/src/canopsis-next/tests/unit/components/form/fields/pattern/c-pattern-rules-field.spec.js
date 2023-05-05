@@ -1,28 +1,18 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { PATTERN_OPERATORS, QUICK_RANGES, TIME_UNITS } from '@/constants';
 
 import CPatternRulesField from '@/components/forms/fields/pattern/c-pattern-rules-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-pattern-rule-field': true,
   'c-action-btn': true,
 };
 
-const factory = (options = {}) => shallowMount(CPatternRulesField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(CPatternRulesField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(CPatternRulesField, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(CPatternRulesField, { stubs,
 });
 
 const selectAddButton = wrapper => wrapper.find('v-btn-stub');

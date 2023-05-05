@@ -1,10 +1,8 @@
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import MermaidPreview from '@/components/other/map/partials/mermaid-preview.vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 import { mermaidPointToForm } from '@/helpers/forms/map';
-
-const localVue = createVueInstance();
 
 const stubs = {
   panzoom: true,
@@ -12,20 +10,6 @@ const stubs = {
   'mermaid-code-preview': true,
   'mermaid-points-preview': true,
 };
-
-const factory = (options = {}) => shallowMount(MermaidPreview, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(MermaidPreview, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectMermaidPointsPreview = wrapper => wrapper.find('mermaid-points-preview-stub');
 
@@ -40,6 +24,9 @@ describe('mermaid-preview', () => {
       ],
     },
   };
+
+  const factory = generateShallowRenderer(MermaidPreview, { stubs });
+  const snapshotFactory = generateRenderer(MermaidPreview, { stubs });
 
   test('Show map emitted after trigger mermaid points preview', async () => {
     const wrapper = factory({

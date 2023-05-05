@@ -1,12 +1,11 @@
 import Faker from 'faker';
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createMockedStoreGetters } from '@unit/utils/store';
 import { createTextareaInputStub, createNumberInputStub } from '@unit/stubs/input';
+import flushPromises from 'flush-promises';
 import { ENTITIES_STATES } from '@/constants';
 import CChangeStateField from '@/components/forms/fields/c-change-state-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'state-criticity-field': createNumberInputStub('state-criticity-field'),
@@ -17,23 +16,17 @@ const snapshotStubs = {
   'state-criticity-field': true,
 };
 
-const factory = (options = {}) => shallowMount(CChangeStateField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(CChangeStateField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(CChangeStateField, {
-  localVue,
+const snapshotFactory = generateRenderer(CChangeStateField, {
+
   stubs: snapshotStubs,
   parentComponent: {
     $_veeValidate: {
       validator: 'new',
     },
   },
-
-  ...options,
 });
 
 describe('c-change-state-field', () => {
@@ -181,7 +174,7 @@ describe('c-change-state-field', () => {
       },
     ]);
 
-    await localVue.nextTick();
+    await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
   });
