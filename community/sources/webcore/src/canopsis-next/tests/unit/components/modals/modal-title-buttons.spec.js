@@ -1,14 +1,12 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 import ModalTitleButtons from '@/components/modals/modal-title-buttons.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'modal-title-buttons': true,
@@ -32,8 +30,8 @@ describe('modal-title-buttons', () => {
     modalsModule,
   ]);
 
-  const factory = generateShallowRenderer(ModalTitleButtons, { localVue, stubs });
-  const snapshotFactory = generateRenderer(ModalTitleButtons, { localVue, stubs });
+  const factory = generateShallowRenderer(ModalTitleButtons, { stubs });
+  const snapshotFactory = generateRenderer(ModalTitleButtons, { stubs });
 
   test('Modals hide handler called after close button', () => {
     const modal = {

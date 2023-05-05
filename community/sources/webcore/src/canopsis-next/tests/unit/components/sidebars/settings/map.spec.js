@@ -2,7 +2,7 @@ import { omit } from 'lodash';
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockDateNow, mockSidebar } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
@@ -21,8 +21,6 @@ import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/form
 import { formToWidgetColumns, widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
 
 import MapSettings from '@/components/sidebars/settings/map.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'widget-settings': true,
@@ -53,30 +51,21 @@ const snapshotStubs = {
   'field-columns': true,
 };
 
-const factory = (options = {}) => shallowMount(MapSettings, {
-  localVue,
-  stubs,
-
+const factory = generateShallowRenderer(MapSettings, { stubs,
   parentComponent: {
     provide: {
       $clickOutside: new ClickOutside(),
     },
   },
-
-  ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(MapSettings, {
-  localVue,
+const snapshotFactory = generateRenderer(MapSettings, {
   stubs: snapshotStubs,
-
   parentComponent: {
     provide: {
       $clickOutside: new ClickOutside(),
     },
   },
-
-  ...options,
 });
 
 const generateDefaultMapWidget = () => ({

@@ -600,6 +600,20 @@ Feature: Get entities
       }
     }
     """
+    When I do GET /api/v4/entityservice-impacts?_id=test-connector-entity-get-1/test-connector-name-entity-get-1&with_flags=true
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
 
   Scenario: given services should be able to retrieve filtered by category dependencies and impacts
     Given I am admin

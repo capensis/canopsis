@@ -148,7 +148,7 @@ import {
   JUNIT_ALARM_CONNECTOR,
 } from '@/constants';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 import { getStepClass } from '@/helpers/tour';
 import { alarmToServiceDependency } from '@/helpers/treeview/service-dependencies';
 import { convertAlarmDetailsQueryToRequest, convertWidgetChartsToPerfDataQuery } from '@/helpers/query';

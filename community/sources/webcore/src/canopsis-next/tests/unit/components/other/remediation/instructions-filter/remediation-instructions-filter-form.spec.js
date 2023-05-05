@@ -1,12 +1,10 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createCheckboxInputStub, createInputStub, createSelectInputStub } from '@unit/stubs/input';
 import { MAX_LIMIT, REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
 
 import RemediationInstructionsFilterForm from '@/components/other/remediation/instructions-filter/remediation-instructions-filter-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-radio-group': createInputStub('v-radio-group'),
@@ -20,18 +18,12 @@ const snapshotStubs = {
   'c-help-icon': true,
 };
 
-const factory = (options = {}) => shallowMount(RemediationInstructionsFilterForm, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(RemediationInstructionsFilterForm, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(RemediationInstructionsFilterForm, {
-  localVue,
-  stubs: snapshotStubs,
+const snapshotFactory = generateRenderer(RemediationInstructionsFilterForm, {
 
-  ...options,
+  stubs: snapshotStubs,
 });
 
 const selectRadioGroups = wrapper => wrapper.findAll('.v-radio-group');

@@ -1,6 +1,6 @@
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
@@ -9,8 +9,6 @@ import { QUICK_RANGES, SAMPLINGS } from '@/constants';
 
 import KpiSli from '@/components/other/kpi/charts/kpi-sli';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'c-progress-overlay': true,
   'kpi-sli-filters': true,
@@ -18,28 +16,24 @@ const stubs = {
   'kpi-error-overlay': true,
 };
 
-const factory = (options = {}) => shallowMount(KpiSli, {
-  localVue,
+const factory = generateShallowRenderer(KpiSli, {
+
   stubs,
   parentComponent: {
     provide: {
       $system: {},
     },
   },
-
-  ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(KpiSli, {
-  localVue,
+const snapshotFactory = generateRenderer(KpiSli, {
+
   stubs,
   parentComponent: {
     provide: {
       $system: {},
     },
   },
-
-  ...options,
 });
 
 describe('kpi-sli', () => {

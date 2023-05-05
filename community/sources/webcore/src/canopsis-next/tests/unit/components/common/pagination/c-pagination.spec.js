@@ -1,10 +1,8 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import CPagination from '@/components/common/pagination/c-pagination.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-pagination': {
@@ -14,13 +12,10 @@ const stubs = {
   },
 };
 
-const factory = (options = {}) => shallowMount(CPagination, {
-  localVue,
-  stubs,
-  ...options,
-});
-
 describe('c-pagination', () => {
+  const factory = generateShallowRenderer(CPagination, { stubs });
+  const snapshotFactory = generateRenderer(CPagination);
+
   it('Pagination hidden without total', () => {
     const wrapper = factory({ propsData: { total: 0 } });
 
@@ -87,8 +82,8 @@ describe('c-pagination', () => {
   });
 
   it('Renders `c-pagination` with default props correctly', () => {
-    const wrapper = mount(CPagination, {
-      localVue,
+    const wrapper = snapshotFactory({
+
       propsData: { total: 1 },
     });
 
@@ -96,8 +91,7 @@ describe('c-pagination', () => {
   });
 
   it('Renders `c-pagination` with default props correctly', () => {
-    const wrapper = mount(CPagination, {
-      localVue,
+    const wrapper = snapshotFactory({
       propsData: { total: 1 },
     });
 
@@ -105,8 +99,7 @@ describe('c-pagination', () => {
   });
 
   it('Renders `c-pagination` on the top with disabled prev button correctly', () => {
-    const wrapper = mount(CPagination, {
-      localVue,
+    const wrapper = snapshotFactory({
       propsData: { page: 1, total: 2, limit: 1, type: 'top' },
     });
 
@@ -114,8 +107,8 @@ describe('c-pagination', () => {
   });
 
   it('Renders `c-pagination` on the top with disabled next button correctly', () => {
-    const wrapper = mount(CPagination, {
-      localVue,
+    const wrapper = snapshotFactory({
+
       propsData: { page: 2, total: 2, limit: 1, type: 'top' },
     });
 
@@ -123,8 +116,8 @@ describe('c-pagination', () => {
   });
 
   it('Renders `c-pagination` on the top with disabled buttons correctly', () => {
-    const wrapper = mount(CPagination, {
-      localVue,
+    const wrapper = snapshotFactory({
+
       propsData: { page: 1, total: 1, limit: 1, type: 'top' },
     });
 
@@ -132,8 +125,8 @@ describe('c-pagination', () => {
   });
 
   it('Renders `c-pagination` with default props on the top correctly', () => {
-    const wrapper = mount(CPagination, {
-      localVue,
+    const wrapper = snapshotFactory({
+
       propsData: { total: 1, type: 'top' },
     });
 
@@ -141,8 +134,8 @@ describe('c-pagination', () => {
   });
 
   it('Renders `c-pagination` on the bottom correctly', () => {
-    const wrapper = mount(CPagination, {
-      localVue,
+    const wrapper = snapshotFactory({
+
       propsData: { page: 3, total: 100 },
     });
 
@@ -150,8 +143,8 @@ describe('c-pagination', () => {
   });
 
   it('Renders `c-pagination` on the top correctly', () => {
-    const wrapper = mount(CPagination, {
-      localVue,
+    const wrapper = snapshotFactory({
+
       propsData: { page: 3, total: 100, type: 'top' },
     });
 

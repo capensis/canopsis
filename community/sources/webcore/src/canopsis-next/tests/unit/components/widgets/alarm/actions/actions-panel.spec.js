@@ -28,7 +28,7 @@ import {
 
 import featuresService from '@/services/features';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/common';
 import { prepareAlarmListWidget } from '@/helpers/widgets';
 
 import ActionsPanel from '@/components/widgets/alarm/actions/actions-panel.vue';

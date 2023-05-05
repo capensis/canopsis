@@ -1,18 +1,13 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createNumberInputStub } from '@unit/stubs/input';
 import GridRangeSize from '@/components/sidebars/settings/fields/common/grid-range-size.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-range-slider': createNumberInputStub('v-range-slider'),
 };
 
-const factory = (options = {}) => shallowMount(GridRangeSize, {
-  localVue,
-  stubs,
-
+const factory = generateShallowRenderer(GridRangeSize, { stubs,
   parentComponent: {
     provide: {
       list: {
@@ -22,14 +17,9 @@ const factory = (options = {}) => shallowMount(GridRangeSize, {
       listClick: jest.fn(),
     },
   },
-
-  ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(GridRangeSize, {
-  localVue,
-  stubs,
-
+const snapshotFactory = generateRenderer(GridRangeSize, { stubs,
   parentComponent: {
     provide: {
       list: {
@@ -39,8 +29,6 @@ const snapshotFactory = (options = {}) => mount(GridRangeSize, {
       listClick: jest.fn(),
     },
   },
-
-  ...options,
 });
 
 const selectRangeSliderField = wrapper => wrapper.find('input.v-range-slider');

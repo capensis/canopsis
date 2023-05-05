@@ -2,8 +2,7 @@ import { cloneDeep } from 'lodash';
 
 import { ALARM_LEVELS, ALARM_LEVELS_COLORS } from '@/constants';
 
-import { openedToForm } from './common';
-import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './alarm';
+import { openedToForm, alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './alarm';
 
 /**
  * @typedef {Object} StatsCalendarWidgetParameters

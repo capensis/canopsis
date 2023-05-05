@@ -1,12 +1,10 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { MODALS } from '@/constants';
 
 import TextEditor from '@/components/sidebars/settings/fields/common/text-editor.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'settings-button-field': {
@@ -24,24 +22,16 @@ const snapshotStubs = {
   'settings-button-field': true,
 };
 
-const factory = (options = {}) => shallowMount(TextEditor, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(TextEditor, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(TextEditor, {
-  localVue,
+const snapshotFactory = generateRenderer(TextEditor, {
   stubs: snapshotStubs,
-
   parentComponent: {
     provide: {
       listClick: jest.fn(),
     },
   },
-
-  ...options,
 });
 
 const selectSettingsCreateButton = wrapper => wrapper.find('.settings-button-field .create');

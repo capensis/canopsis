@@ -1,4 +1,4 @@
-import { cloneDeep, omit } from 'lodash';
+import { cloneDeep, isBoolean, isNull, omit } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 import {
@@ -23,7 +23,6 @@ import { widgetColumnsToForm, formToWidgetColumns } from '../shared/widget-colum
 import { kioskParametersToForm } from '../shared/kiosk';
 import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget-template';
 
-import { openedToForm } from './common';
 import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './bar-chart';
 import { lineChartWidgetParametersToForm, formToLineChartWidgetParameters } from './line-chart';
 import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './numbers';
@@ -183,6 +182,20 @@ import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './
  * @typedef {AlarmListWidgetDefaultParametersForm & AlarmListWidgetParameters} AlarmListWidgetParametersForm
  * @property {AlarmChartForm[]} charts
  */
+
+/**
+ * Convert opened field widget
+ *
+ * @param  {boolean | null} [opened]
+ * @returns {boolean | null}
+ */
+export const openedToForm = (opened) => {
+  if (isBoolean(opened) || isNull(opened)) {
+    return opened;
+  }
+
+  return true;
+};
 
 /**
  * Convert alarm list infoPopups parameters to form
