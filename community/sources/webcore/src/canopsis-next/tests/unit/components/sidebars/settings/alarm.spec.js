@@ -27,17 +27,18 @@ import {
 } from '@/constants';
 
 import ClickOutside from '@/services/click-outside';
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/forms/widgets/alarm';
 import {
+  generateDefaultAlarmListWidget,
   widgetToForm,
   formToWidget,
   getEmptyWidgetByType,
-  widgetParametersToForm, formToWidgetParameters,
+  widgetParametersToForm,
+  formToWidgetParameters,
 } from '@/helpers/forms/widgets/common';
 import { formToWidgetColumns, widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
 
 import AlarmSettings from '@/components/sidebars/settings/alarm.vue';
-import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/forms/widgets/alarm';
 
 const stubs = {
   'widget-settings': true,

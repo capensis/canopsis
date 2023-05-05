@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { X_AXES_IDS, SAMPLINGS } from '@/constants';
+import { X_AXES_IDS, SAMPLINGS, KPI_CHART_DEFAULT_HEIGHT } from '@/constants';
 
 import { colorToRgba, getMetricColor } from '@/helpers/color';
 import { convertMetricValueByUnit } from '@/helpers/metrics';
@@ -47,7 +47,7 @@ export default {
       type: Number,
     },
     height: {
-      default: 560,
+      default: KPI_CHART_DEFAULT_HEIGHT,
       type: Number,
     },
     sampling: {

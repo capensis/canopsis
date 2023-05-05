@@ -1,7 +1,7 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 import { createMockedStoreModules } from '@unit/utils/store';
@@ -9,14 +9,12 @@ import { KPI_RATING_CRITERIA, MAX_LIMIT } from '@/constants';
 
 import KpiRatingCriteriaField from '@/components/other/kpi/charts/partials/kpi-rating-criteria-field';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = (options = {}) => shallowMount(KpiRatingCriteriaField, {
-  localVue,
+const factory = generateShallowRenderer(KpiRatingCriteriaField, {
+
   stubs,
   store: createMockedStoreModules([{
     name: 'ratingSettings',
@@ -29,14 +27,10 @@ const factory = (options = {}) => shallowMount(KpiRatingCriteriaField, {
       fetchListWithoutStore: jest.fn(),
     },
   }]),
-
-  ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(KpiRatingCriteriaField, {
-  localVue,
+const snapshotFactory = generateRenderer(KpiRatingCriteriaField, {
 
-  ...options,
 });
 
 describe('kpi-rating-criteria-field', () => {

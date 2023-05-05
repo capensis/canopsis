@@ -14,7 +14,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { generatePreparedDefaultContextWidget } from '@/helpers/entities';
+import { generatePreparedDefaultContextWidget } from '@/helpers/forms/widgets/common';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 

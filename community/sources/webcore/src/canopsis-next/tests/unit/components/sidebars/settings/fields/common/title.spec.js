@@ -1,11 +1,9 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
 
 import Title from '@/components/sidebars/settings/fields/common/title.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'widget-settings-item': true,
@@ -16,15 +14,11 @@ const snapshotStubs = {
   'widget-settings-item': true,
 };
 
-const factory = (options = {}) => shallowMount(Title, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(Title, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(Title, {
-  localVue,
+const snapshotFactory = generateRenderer(Title, {
+
   stubs: snapshotStubs,
   parentComponent: {
     provide: {
@@ -35,8 +29,6 @@ const snapshotFactory = (options = {}) => mount(Title, {
       listClick: jest.fn(),
     },
   },
-
-  ...options,
 });
 
 const selectTextField = wrapper => wrapper.find('input.v-text-field');

@@ -1,7 +1,7 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
   createAuthModule,
   createMockedStoreModules,
@@ -10,12 +10,10 @@ import {
   createUserPreferenceModule,
 } from '@unit/utils/store';
 import { USERS_PERMISSIONS, WIDGET_TYPES } from '@/constants';
-import { generateDefaultServiceWeatherWidget } from '@/helpers/entities';
+import { generateDefaultServiceWeatherWidget } from '@/helpers/forms/widgets/common';
 import { DEFAULT_WEATHER_LIMIT } from '@/config';
 
 import ServiceWeatherWidget from '@/components/widgets/service-weather/service-weather.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-entity-category-field': true,
@@ -70,7 +68,7 @@ describe('service-weather', () => {
   ]);
 
   const factory = generateShallowRenderer(ServiceWeatherWidget, {
-    localVue,
+
     stubs,
     propsData: {
       widget,
@@ -82,7 +80,7 @@ describe('service-weather', () => {
   });
 
   const snapshotFactory = generateRenderer(ServiceWeatherWidget, {
-    localVue,
+
     stubs,
     propsData: {
       widget,

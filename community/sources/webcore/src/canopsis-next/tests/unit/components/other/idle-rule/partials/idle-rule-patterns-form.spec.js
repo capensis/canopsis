@@ -1,25 +1,15 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import IdleRulePatternsForm from '@/components/other/idle-rule/form/partials/idle-rule-patterns-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-patterns-field': true,
 };
 
-const factory = (options = {}) => shallowMount(IdleRulePatternsForm, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(IdleRulePatternsForm, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(IdleRulePatternsForm, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(IdleRulePatternsForm, { stubs,
 });
 
 const selectPatternsField = wrapper => wrapper.find('c-patterns-field-stub');

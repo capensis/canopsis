@@ -94,3 +94,8 @@
   name: test-resource-not-acked-metrics-axe-10
   type: resource
   impact_level: 1
+- id: 18
+  custom_id: test-resource-to-perf-data-get/test-component-to-perf-data-get
+  name: test-resource-to-perf-data-get
+  type: resource
+  impact_level: 1

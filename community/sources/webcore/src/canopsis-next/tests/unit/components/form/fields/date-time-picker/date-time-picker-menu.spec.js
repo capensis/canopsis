@@ -1,12 +1,10 @@
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 import DateTimePickerMenu from '@/components/forms/fields/date-time-picker/date-time-picker-menu.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'date-time-picker': true,
@@ -21,13 +19,13 @@ describe('date-time-picker-menu', () => {
   mockDateNow(nowTimestamp);
 
   const factory = generateShallowRenderer(DateTimePickerMenu, {
-    localVue,
+
     stubs,
     attachTo: document.body,
   });
 
   const snapshotFactory = generateRenderer(DateTimePickerMenu, {
-    localVue,
+
     stubs,
     attachTo: document.body,
   });

@@ -1,20 +1,15 @@
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import EntityColumnEventStatistics from '@/components/widgets/context/columns-formatting/entity-column-event-statistics.vue';
 
-const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(EntityColumnEventStatistics, {
-  localVue,
-  attachTo: document.body,
-
-  ...options,
-});
-
 describe('entity-column-event-statistics', () => {
+  const snapshotFactory = generateRenderer(EntityColumnEventStatistics, {
+    attachTo: document.body,
+  });
+
   it('Renders `entity-column-event-statistics` with default entity', async () => {
     snapshotFactory({
       propsData: {

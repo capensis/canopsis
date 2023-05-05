@@ -1,11 +1,9 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 import CAdvancedSearchField from '@/components/forms/fields/c-advanced-search-field.vue';
-
-const localVue = createVueInstance();
 
 const mockData = {
   search: Faker.lorem.words(),
@@ -35,14 +33,14 @@ const stubs = {
   },
   'v-tooltip': createActivatorElementStub('v-tooltip'),
 };
-
-const factory = (options = {}) => shallowMount(CAdvancedSearchField, {
-  localVue,
-  stubs,
-  ...options,
-});
+const snapshotStubs = {
+  'c-search-field': true,
+};
 
 describe('c-advanced-search-field', () => {
+  const factory = generateShallowRenderer(CAdvancedSearchField, { stubs });
+  const snapshotFactory = generateRenderer(CAdvancedSearchField, { stubs: snapshotStubs });
+
   it('Pass default search into props and it was applied to input field', () => {
     const { search } = mockData;
 
@@ -206,9 +204,7 @@ describe('c-advanced-search-field', () => {
     const tooltip = `
       <span>Tooltip content</span>
     `;
-    const wrapper = mount(CAdvancedSearchField, {
-      localVue,
-      stubs: ['c-search-field'],
+    const wrapper = snapshotFactory({
       propsData: {
         query: { search: 'c-advanced-search-field' },
         tooltip,

@@ -1,7 +1,7 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
@@ -23,39 +23,6 @@ const snapshotStubs = {
   'text-editor-field': true,
 };
 
-const factory = (options = {}) => shallowMount(TextEditor, {
-  stubs,
-  attachTo: document.body,
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-    provide: {
-      $clickOutside: new ClickOutside(),
-      $system: {},
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(TextEditor, {
-  stubs: snapshotStubs,
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-    provide: {
-      $clickOutside: new ClickOutside(),
-      $system: {},
-    },
-  },
-
-  ...options,
-});
-
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
 const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
@@ -64,6 +31,32 @@ const selectTextEditorField = wrapper => wrapper.find('text-editor-field-stub');
 describe('text-editor', () => {
   const $modals = mockModals();
   const $popups = mockPopups();
+
+  const factory = generateShallowRenderer(TextEditor, {
+    stubs,
+    attachTo: document.body,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+      provide: {
+        $clickOutside: new ClickOutside(),
+        $system: {},
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(TextEditor, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+      provide: {
+        $clickOutside: new ClickOutside(),
+        $system: {},
+      },
+    },
+  });
 
   test('Form submitted with empty string after trigger submit button', async () => {
     const action = jest.fn();

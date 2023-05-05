@@ -1,31 +1,19 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { PATTERN_FIELD_TYPES } from '@/constants';
 
 import CInputTypeField from '@/components/forms/fields/c-input-type-field.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = (options = {}) => shallowMount(CInputTypeField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CInputTypeField, {
-  localVue,
-
-  ...options,
-});
-
 const selectTextField = wrapper => wrapper.find('select.v-select');
 
 describe('c-input-type-field', () => {
+  const factory = generateShallowRenderer(CInputTypeField, { stubs });
+  const snapshotFactory = generateRenderer(CInputTypeField);
+
   it('Input type changed after trigger select field', () => {
     const wrapper = factory({
       propsData: {

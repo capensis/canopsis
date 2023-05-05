@@ -61,23 +61,7 @@ func (p *rmqPublisher) SendPerfDataEvent(ctx context.Context, uuid string, stats
 		Resource:      "task_importctx/report",
 		State:         state,
 		Output:        fmt.Sprintf("execution : %f sec, updated ent : %d, deleted ent : %d", stats.ExecTime.Seconds(), stats.Updated, stats.Deleted),
-		PerfDataArray: []types.PerfData{
-			{
-				Metric: "execution_time",
-				Unit:   "GAUGE",
-				Value:  stats.ExecTime.Seconds(),
-			},
-			{
-				Metric: "ent_updated",
-				Unit:   "GAUGE",
-				Value:  float64(stats.Updated),
-			},
-			{
-				Metric: "ent_deleted",
-				Unit:   "GAUGE",
-				Value:  float64(stats.Deleted),
-			},
-		},
+		PerfData:      fmt.Sprintf("execution_time=%ds ent_updated=%d ent_deleted=%d", int64(stats.ExecTime.Seconds()), stats.Updated, stats.Deleted),
 	})
 }
 
