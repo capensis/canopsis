@@ -20,6 +20,7 @@ const stubs = {
     </div>
   `,
   },
+  'c-alert': true,
 };
 
 const selectButtonByIndex = (wrapper, index) => wrapper.findAll('v-btn-stub').at(index);
