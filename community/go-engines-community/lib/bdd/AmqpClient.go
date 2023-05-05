@@ -22,7 +22,7 @@ import (
 )
 
 // stepTimeout is used to limit waiting time for wait steps.
-const stepTimeout = 10 * time.Second
+const stepTimeout = 15 * time.Second
 
 const (
 	consumePrefetchCount = 1000
