@@ -49,8 +49,3 @@ export function getNewWidgetGridParametersY(widgets) {
     return acc;
   }, { mobile: 0, tablet: 0, desktop: 0 });
 }
-
-export default {
-  getWidgetsLayoutBySize,
-  getNewWidgetGridParametersY,
-};
