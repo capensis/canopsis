@@ -4,14 +4,10 @@ import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
   DATETIME_FORMATS,
-  WIDGET_TYPES,
 } from '@/constants';
 
 import { uid } from './uid';
-import uuid from './uuid';
 import { convertDateToString } from './date/date';
-import { formToWidget, widgetToForm } from './forms/widgets/common';
-import { prepareAlarmListWidget, prepareContextWidget } from './widgets';
 
 /**
  * Checks if alarm is resolved
@@ -142,60 +138,6 @@ export const revertGroupBy = obj => Object.entries(obj).reduce((acc, [id, values
 
   return acc;
 }, {});
-
-/**
- * Generate alarm list widget form with default parameters.
- *
- * @return {WidgetForm}
- */
-export const generateDefaultAlarmListWidgetForm = () => widgetToForm({ type: WIDGET_TYPES.alarmList });
-
-/**
- * Generate alarm list widget with default parameters.
- *
- * @return {Widget}
- */
-export const generateDefaultAlarmListWidget = () => ({
-  ...formToWidget(generateDefaultAlarmListWidgetForm()),
-
-  _id: uuid(),
-});
-
-/**
- * Generate prepared default alarm list
- *
- * @returns {Widget}
- */
-export const generatePreparedDefaultAlarmListWidget = () => prepareAlarmListWidget(generateDefaultAlarmListWidget());
-
-/**
- * Generate context widget with default parameters.
- *
- * @return {Widget}
- */
-export const generateDefaultContextWidget = () => ({
-  ...formToWidget(widgetToForm({ type: WIDGET_TYPES.context })),
-
-  _id: uuid(),
-});
-
-/**
- * Generate prepared default context
- *
- * @returns {Widget}
- */
-export const generatePreparedDefaultContextWidget = () => prepareContextWidget(generateDefaultContextWidget());
-
-/**
- * Generate service weather widget with default parameters.
- *
- * @return {Widget}
- */
-export const generateDefaultServiceWeatherWidget = () => ({
-  ...formToWidget(widgetToForm({ type: WIDGET_TYPES.serviceWeather })),
-
-  _id: uuid(),
-});
 
 /**
  * Generate alarm details id by widgetId
