@@ -144,7 +144,21 @@ Feature: Metrics should be added on alarm changes
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=instruction_alarms&parameters[]=pbehavior_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "instruction_alarms"},
+        {"metric": "pbehavior_alarms"},
+        {"metric": "non_displayed_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -281,7 +295,21 @@ Feature: Metrics should be added on alarm changes
       "state": 1
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=correlation_alarms&parameters[]=pbehavior_alarms&parameters[]=non_displayed_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "correlation_alarms"},
+        {"metric": "pbehavior_alarms"},
+        {"metric": "non_displayed_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -473,7 +501,28 @@ Feature: Metrics should be added on alarm changes
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&parameters[]=active_alarms&parameters[]=instruction_alarms&parameters[]=ratio_instructions&parameters[]=non_displayed_alarms&parameters[]=ratio_non_displayed&parameters[]=ticket_active_alarms&parameters[]=ratio_tickets&parameters[]=ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "created_alarms"},
+        {"metric": "active_alarms"},
+        {"metric": "instruction_alarms"},
+        {"metric": "ratio_instructions"},
+        {"metric": "non_displayed_alarms"},
+        {"metric": "ratio_non_displayed"},
+        {"metric": "ticket_active_alarms"},
+        {"metric": "ratio_tickets"},
+        {"metric": "ack_alarms"},
+        {"metric": "ack_active_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -592,7 +641,28 @@ Feature: Metrics should be added on alarm changes
       "resource": "test-resource-metrics-axe-second-3-1"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=created_alarms&parameters[]=active_alarms&parameters[]=instruction_alarms&parameters[]=ratio_instructions&parameters[]=non_displayed_alarms&parameters[]=ratio_non_displayed&parameters[]=ticket_active_alarms&parameters[]=ratio_tickets&parameters[]=ack_alarms&parameters[]=ack_active_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "created_alarms"},
+        {"metric": "active_alarms"},
+        {"metric": "instruction_alarms"},
+        {"metric": "ratio_instructions"},
+        {"metric": "non_displayed_alarms"},
+        {"metric": "ratio_non_displayed"},
+        {"metric": "ticket_active_alarms"},
+        {"metric": "ratio_tickets"},
+        {"metric": "ack_alarms"},
+        {"metric": "ack_active_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -759,7 +829,20 @@ Feature: Metrics should be added on alarm changes
       }
     ]
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&&parameters[]=correlation_alarms&parameters[]=ratio_correlation&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "correlation_alarms"},
+        {"metric": "ratio_correlation"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -806,7 +889,20 @@ Feature: Metrics should be added on alarm changes
       "resource": "test-resource-metrics-axe-second-4-1"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&&parameters[]=correlation_alarms&parameters[]=ratio_correlation&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "correlation_alarms"},
+        {"metric": "ratio_correlation"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1125,7 +1221,19 @@ Feature: Metrics should be added on alarm changes
       "source_type": "resource"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ticket_active_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "ticket_active_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1199,7 +1307,20 @@ Feature: Metrics should be added on alarm changes
       "resource": "test-resource-metrics-axe-second-6"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "ack_alarms"},
+        {"metric": "average_ack"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1235,7 +1356,20 @@ Feature: Metrics should be added on alarm changes
       "resource": "test-resource-metrics-axe-second-6"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=ack_alarms&parameters[]=average_ack&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "ack_alarms"},
+        {"metric": "average_ack"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1329,5 +1463,29 @@ Feature: Metrics should be added on alarm changes
       "resource" : "test-resource-metrics-axe-second-7"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=min_ack&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and response key "data.0.data.0.value" is greater or equal than 2
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=max_ack&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and response key "data.0.data.0.value" is greater or equal than 4
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "min_ack"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and response key "data.0.data.0.value" is greater or equal than 2
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "max_ack"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and response key "data.0.data.0.value" is greater or equal than 4
