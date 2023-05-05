@@ -17,8 +17,7 @@ then
 	cp -TR /etc/nginx/ "${NGINX_CONFIGURATION_DIRECTORY}"
 	rm -rf "${NGINX_CONFIGURATION_DIRECTORY}/ssl"
 
-	sed -i -e "s,/etc/nginx,${NGINX_CONFIGURATION_DIRECTORY},g" "${NGINX_CONFIGURATION_DIRECTORY}/nginx.conf"
-	sed -i -e "s,/etc/nginx,${NGINX_CONFIGURATION_DIRECTORY},g" "${NGINX_CONFIGURATION_DIRECTORY}/conf.d/default.conf"
+	sed -i -e "s,/etc/nginx,${NGINX_CONFIGURATION_DIRECTORY},g" "${NGINX_CONFIGURATION_DIRECTORY}/nginx.conf" "${NGINX_CONFIGURATION_DIRECTORY}/conf.d/default.conf"
 fi
 
 if [ "$CPS_ENABLE_HTTPS" = "true" ]
@@ -35,7 +34,7 @@ fi
 
 if [ "$NGINX_DISABLE_IPV6" = "true" ]
 then
-	sed -i -e '/listen \[\:\:\]\:.*/d' "${NGINX_CONFIGURATION_DIRECTORY}"/conf.d/default.conf "${NGINX_CONFIGURATION_DIRECTORY}"/https.inc
+	sed -i -e '/listen \[\:\:\]\:.*/d' "${NGINX_CONFIGURATION_DIRECTORY}/conf.d/default.conf" "${NGINX_CONFIGURATION_DIRECTORY}/https.inc"
 fi
 
 if [ "$ENABLE_RUNDECK" = "true" ]
