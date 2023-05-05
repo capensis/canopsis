@@ -1,6 +1,6 @@
 import { mount, createVueInstance } from '@unit/utils/vue';
 import { fakeStaticAlarms, fakeAlarm } from '@unit/data/alarm';
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/common';
 
 import AlarmsExpandPanelChildren from '@/components/widgets/alarm/expand-panel/alarms-expand-panel-children.vue';
 
