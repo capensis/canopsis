@@ -1,14 +1,6 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import GridOverviewItem from '@/components/widgets/partials/grid-overview-item.vue';
-
-const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(GridOverviewItem, {
-  localVue,
-
-  ...options,
-});
 
 describe('grid-overview-item', () => {
   const widget = {
@@ -36,6 +28,8 @@ describe('grid-overview-item', () => {
       },
     },
   };
+
+  const snapshotFactory = generateRenderer(GridOverviewItem);
 
   it.each(['m', 't', 'l', 'xl'])('Renders `grid-overview-item` with %s desktop size', (size) => {
     const wrapper = snapshotFactory({

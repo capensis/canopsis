@@ -2,7 +2,7 @@ import flushPromises from 'flush-promises';
 import { omit, pick } from 'lodash';
 import Faker from 'faker';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { triggerDocumentMouseEvent, triggerDocumentKeyboardEvent } from '@unit/utils/events';
 
 import { CONNECTOR_SIDES, FLOWCHART_KEY_CODES, SHAPES } from '@/constants';
@@ -35,15 +35,6 @@ jest.mock('@/helpers/clipboard', () => ({
   readTextFromClipboard: jest.fn(),
   writeTextToClipboard: jest.fn(),
 }));
-
-const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(FlowchartEditor, {
-  localVue,
-  attachTo: document.body,
-
-  ...options,
-});
 
 const selectSvg = wrapper => wrapper.find('svg');
 const selectShapeByType = (wrapper, type) => {
@@ -119,6 +110,8 @@ describe('flowchart-editor', () => {
 
   jest.spyOn(window, 'getComputedStyle').mockReturnValue(viewBox);
 
+  const snapshotFactory = generateRenderer(FlowchartEditor, { attachTo: document.body });
+
   beforeEach(() => {
     getPointAtLength.mockClear();
     getTotalLength.mockClear();
@@ -132,7 +125,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes,
-        viewBox,
+        viewBox: { ...viewBox },
       },
     });
 
@@ -150,7 +143,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes,
-        viewBox,
+        viewBox: { ...viewBox },
         selected: [SHAPES.rect],
       },
     });
@@ -172,7 +165,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes,
-        viewBox,
+        viewBox: { ...viewBox },
         selected: [SHAPES.rect, SHAPES.circle],
       },
     });
@@ -189,7 +182,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes,
-        viewBox,
+        viewBox: { ...viewBox },
         selected: [SHAPES.rect, SHAPES.storage, SHAPES.circle],
       },
     });
@@ -206,7 +199,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes,
-        viewBox,
+        viewBox: { ...viewBox },
         selected: [SHAPES.rect, SHAPES.circle],
       },
     });
@@ -227,7 +220,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes: { rect, circle, line },
-        viewBox,
+        viewBox: { ...viewBox },
       },
     });
 
@@ -262,7 +255,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes: { rhombus, ellipse, storage },
-        viewBox,
+        viewBox: { ...viewBox },
         selected: [SHAPES.rhombus, SHAPES.ellipse],
       },
     });
@@ -296,7 +289,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes,
-        viewBox,
+        viewBox: { ...viewBox },
         selected: [SHAPES.rhombus, SHAPES.ellipse],
       },
     });
@@ -316,7 +309,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes,
-        viewBox,
+        viewBox: { ...viewBox },
         selected: [SHAPES.line, SHAPES.document],
       },
     });
@@ -349,7 +342,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes,
-        viewBox,
+        viewBox: { ...viewBox },
         selected: [SHAPES.process, SHAPES.arrowLine],
       },
     });
@@ -384,7 +377,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes,
-        viewBox,
+        viewBox: { ...viewBox },
         selected: [SHAPES.line, SHAPES.ellipse],
       },
     });
@@ -417,7 +410,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes,
-        viewBox,
+        viewBox: { ...viewBox },
         selected: [SHAPES.process, SHAPES.arrowLine],
       },
     });
@@ -458,7 +451,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes,
-        viewBox,
+        viewBox: { ...viewBox },
         selected: [SHAPES.rect, SHAPES.circle],
       },
     });
@@ -509,7 +502,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes,
-        viewBox,
+        viewBox: { ...viewBox },
       },
     });
 
@@ -551,7 +544,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes,
-        viewBox,
+        viewBox: { ...viewBox },
         selected: [SHAPES.rect, SHAPES.line, SHAPES.circle],
       },
     });
@@ -622,7 +615,7 @@ describe('flowchart-editor', () => {
           line: lineShape,
           rect: rectShape,
         },
-        viewBox,
+        viewBox: { ...viewBox },
         selected: [SHAPES.rect],
       },
     });
@@ -670,7 +663,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes: pick(shapes, [SHAPES.rect, SHAPES.line]),
-        viewBox,
+        viewBox: { ...viewBox },
       },
     });
 
@@ -743,7 +736,7 @@ describe('flowchart-editor', () => {
           rect: rectShape,
           line: lineShape,
         },
-        viewBox,
+        viewBox: { ...viewBox },
       },
     });
 
@@ -797,7 +790,7 @@ describe('flowchart-editor', () => {
           line: lineShape,
           rect: rectShape,
         },
-        viewBox,
+        viewBox: { ...viewBox },
       },
     });
 
@@ -846,7 +839,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes,
-        viewBox,
+        viewBox: { ...viewBox },
       },
     });
 
@@ -887,7 +880,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes,
-        viewBox,
+        viewBox: { ...viewBox },
       },
     });
 
@@ -936,7 +929,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes,
-        viewBox,
+        viewBox: { ...viewBox },
       },
     });
 
@@ -975,7 +968,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes,
-        viewBox,
+        viewBox: { ...viewBox },
       },
     });
 
@@ -1011,7 +1004,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes: {},
-        viewBox,
+        viewBox: { ...viewBox },
       },
     });
 
@@ -1040,7 +1033,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes: {},
-        viewBox,
+        viewBox: { ...viewBox },
       },
     });
 
@@ -1069,7 +1062,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes: {},
-        viewBox,
+        viewBox: { ...viewBox },
       },
     });
 
@@ -1095,7 +1088,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes: {},
-        viewBox,
+        viewBox: { ...viewBox },
       },
     });
 
@@ -1129,7 +1122,7 @@ describe('flowchart-editor', () => {
     wrapper = snapshotFactory({
       propsData: {
         shapes,
-        viewBox,
+        viewBox: { ...viewBox },
       },
     });
 

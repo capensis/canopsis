@@ -1,23 +1,17 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { mockModals } from '@unit/utils/mock-hooks';
 import FlowchartColorField from '@/components/common/flowchart/fields/flowchart-color-field.vue';
 import { MODALS } from '@/constants';
 
-const localVue = createVueInstance();
+const factory = generateShallowRenderer(FlowchartColorField, {
 
-const factory = (options = {}) => shallowMount(FlowchartColorField, {
-  localVue,
-
-  ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(FlowchartColorField, {
-  localVue,
+const snapshotFactory = generateRenderer(FlowchartColorField, {
 
-  ...options,
 });
 
 const selectCheckboxField = wrapper => wrapper.find('v-checkbox-stub');

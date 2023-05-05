@@ -2,7 +2,7 @@ import { omit } from 'lodash';
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockDateNow, mockSidebar } from '@unit/utils/mock-hooks';
 import {
@@ -24,8 +24,6 @@ import ClickOutside from '@/services/click-outside';
 import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/forms/widgets/common';
 
 import ServiceWeatherSettings from '@/components/sidebars/settings/service-weather.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'widget-settings': true,
@@ -122,7 +120,7 @@ describe('service-weather', () => {
   ]);
 
   const factory = generateShallowRenderer(ServiceWeatherSettings, {
-    localVue,
+
     stubs,
     store,
     propsData: {
@@ -140,7 +138,7 @@ describe('service-weather', () => {
   });
 
   const snapshotFactory = generateRenderer(ServiceWeatherSettings, {
-    localVue,
+
     stubs,
     store,
     propsData: {

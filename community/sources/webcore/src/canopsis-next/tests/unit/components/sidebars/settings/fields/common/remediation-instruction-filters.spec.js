@@ -1,11 +1,9 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createButtonStub } from '@unit/stubs/button';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { MODALS } from '@/constants';
 
 import RemediationInstructionsFilters from '@/components/sidebars/settings/fields/common/remediation-instructions-filters.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'remediation-instructions-filters-list': true,
@@ -16,17 +14,11 @@ const snapshotStubs = {
   'remediation-instructions-filters-list': true,
 };
 
-const factory = (options = {}) => shallowMount(RemediationInstructionsFilters, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(RemediationInstructionsFilters, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(RemediationInstructionsFilters, {
-  localVue,
+const snapshotFactory = generateRenderer(RemediationInstructionsFilters, {
   stubs: snapshotStubs,
-
   parentComponent: {
     provide: {
       list: {
@@ -36,8 +28,6 @@ const snapshotFactory = (options = {}) => mount(RemediationInstructionsFilters, 
       listClick: jest.fn(),
     },
   },
-
-  ...options,
 });
 
 const selectRemediationInstructionsFiltersListField = wrapper => wrapper.find('remediation-instructions-filters-list-stub');

@@ -1,7 +1,7 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
 import { LINE_TYPES } from '@/constants';
 import { uid } from '@/helpers/uid';
@@ -23,8 +23,6 @@ import { getFileDataUrlContent } from '@/helpers/file/file-select';
 import { getImageProperties } from '@/helpers/file/image';
 
 import FlowchartSidebar from '@/components/common/flowchart/flowchart-sidebar.vue';
-
-const localVue = createVueInstance();
 
 jest.mock('@/helpers/uid');
 jest.mock('@/helpers/file/file-select', () => ({
@@ -57,18 +55,12 @@ const snapshotStubs = {
   'image-shape-icon': true,
 };
 
-const factory = (options = {}) => shallowMount(FlowchartSidebar, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(FlowchartSidebar, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(FlowchartSidebar, {
-  localVue,
-  stubs: snapshotStubs,
+const snapshotFactory = generateRenderer(FlowchartSidebar, {
 
-  ...options,
+  stubs: snapshotStubs,
 });
 
 const selectButtons = wrapper => wrapper.findAll('v-btn-stub');

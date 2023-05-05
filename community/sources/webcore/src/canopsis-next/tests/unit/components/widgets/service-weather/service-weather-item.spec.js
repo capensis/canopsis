@@ -1,7 +1,7 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
   createAuthModule,
   createMockedStoreModules,
@@ -20,8 +20,6 @@ import { getImpactStateColor } from '@/helpers/color';
 
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import ServiceWeatherItem from '@/components/widgets/service-weather/service-weather-item.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-runtime-template': CRuntimeTemplate,
@@ -81,14 +79,14 @@ describe('service-weather-item', () => {
   ]);
 
   const factory = generateShallowRenderer(ServiceWeatherItem, {
-    localVue,
+
     stubs,
     attachTo: document.body,
     mocks: { $modals },
   });
 
   const snapshotFactory = generateRenderer(ServiceWeatherItem, {
-    localVue,
+
     stubs,
     attachTo: document.body,
     mocks: { $modals },

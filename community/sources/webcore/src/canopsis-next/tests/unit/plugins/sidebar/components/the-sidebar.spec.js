@@ -1,14 +1,12 @@
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockSidebar } from '@unit/utils/mock-hooks';
 
 import { SIDE_BARS } from '@/constants';
 
 import TheSidebar from '@/plugins/sidebar/components/the-sidebar.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'sidebar-base': {
@@ -17,12 +15,7 @@ const stubs = {
   },
 };
 
-const snapshotFactory = (options = {}) => mount(TheSidebar, {
-  localVue,
-  stubs,
-
-  ...options,
-});
+const snapshotFactory = generateRenderer(TheSidebar, { stubs });
 
 describe('the-sidebar', () => {
   const $sidebar = mockSidebar();

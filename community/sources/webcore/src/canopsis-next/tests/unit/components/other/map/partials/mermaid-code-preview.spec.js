@@ -1,10 +1,8 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import MermaidCodePreview from '@/components/other/map/partials/mermaid-code-preview.vue';
 import { MERMAID_THEMES } from '@/constants';
 import { renderMermaid } from '@/helpers/mermaid';
-
-const localVue = createVueInstance();
 
 jest.mock('@/helpers/mermaid', () => ({
   renderMermaid: jest.fn(
@@ -12,13 +10,9 @@ jest.mock('@/helpers/mermaid', () => ({
   ),
 }));
 
-const snapshotFactory = (options = {}) => mount(MermaidCodePreview, {
-  localVue,
-
-  ...options,
-});
-
 describe('mermaid-code-preview', () => {
+  const snapshotFactory = generateRenderer(MermaidCodePreview);
+
   test('Renders `mermaid-code-preview` with default props', () => {
     const wrapper = snapshotFactory();
 

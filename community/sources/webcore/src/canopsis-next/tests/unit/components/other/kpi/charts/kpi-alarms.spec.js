@@ -1,6 +1,6 @@
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
@@ -9,8 +9,6 @@ import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS } from '@/constants';
 
 import KpiAlarms from '@/components/other/kpi/charts/kpi-alarms';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'c-progress-overlay': true,
   'kpi-alarms-filters': true,
@@ -18,28 +16,24 @@ const stubs = {
   'kpi-error-overlay': true,
 };
 
-const factory = (options = {}) => shallowMount(KpiAlarms, {
-  localVue,
+const factory = generateShallowRenderer(KpiAlarms, {
+
   stubs,
   parentComponent: {
     provide: {
       $system: {},
     },
   },
-
-  ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(KpiAlarms, {
-  localVue,
+const snapshotFactory = generateRenderer(KpiAlarms, {
+
   stubs,
   parentComponent: {
     provide: {
       $system: {},
     },
   },
-
-  ...options,
 });
 
 describe('kpi-alarms', () => {
