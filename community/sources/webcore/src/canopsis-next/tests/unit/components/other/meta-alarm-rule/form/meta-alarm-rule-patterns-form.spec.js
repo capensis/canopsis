@@ -6,15 +6,12 @@ const stubs = {
   'c-patterns-field': true,
 };
 
-const factory = generateShallowRenderer(MetaAlarmRulePatternsForm, { stubs,
-});
-
-const snapshotFactory = generateRenderer(MetaAlarmRulePatternsForm, { stubs,
-});
-
 const selectPatternsFieldNode = wrapper => wrapper.vm.$children[0];
 
 describe('meta-alarm-rule-patterns-form', () => {
+  const factory = generateShallowRenderer(MetaAlarmRulePatternsForm, { stubs });
+  const snapshotFactory = generateRenderer(MetaAlarmRulePatternsForm, { stubs });
+
   test('Patterns changed after trigger patterns field', () => {
     const wrapper = factory();
 

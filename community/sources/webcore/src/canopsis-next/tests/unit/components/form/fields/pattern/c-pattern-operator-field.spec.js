@@ -14,18 +14,15 @@ const snapshotStubs = {
   'c-select-field': CSelectField,
 };
 
-const factory = generateShallowRenderer(CPatternOperatorField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CPatternOperatorField, {
-
-  attachTo: document.body,
-  stubs: snapshotStubs,
-});
-
 const selectSelectField = wrapper => wrapper.find('.c-select-field');
 
 describe('c-pattern-operator-field', () => {
+  const factory = generateShallowRenderer(CPatternOperatorField, { stubs });
+  const snapshotFactory = generateRenderer(CPatternOperatorField, {
+    attachTo: document.body,
+    stubs: snapshotStubs,
+  });
+
   test('Value changed after trigger the select', () => {
     const wrapper = factory({
       propsData: {

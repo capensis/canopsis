@@ -11,13 +11,6 @@ const stubs = {
   'v-btn': createButtonStub('v-btn'),
 };
 
-const factory = generateShallowRenderer(InfoPopup, { stubs,
-});
-
-const snapshotFactory = generateRenderer(InfoPopup, {
-
-});
-
 const selectCreateOrEditButton = wrapper => wrapper.find('button.v-btn');
 
 describe('info-popup', () => {
@@ -36,6 +29,9 @@ describe('info-popup', () => {
     label: Faker.datatype.string(),
     value: Faker.datatype.string(),
   }];
+
+  const factory = generateShallowRenderer(InfoPopup, { stubs });
+  const snapshotFactory = generateRenderer(InfoPopup);
 
   it('Info popup setting modal opened after trigger create button', () => {
     const wrapper = factory({

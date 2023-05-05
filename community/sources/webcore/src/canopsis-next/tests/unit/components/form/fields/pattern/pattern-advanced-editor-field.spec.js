@@ -18,15 +18,12 @@ const stubs = {
   'c-json-field': true,
 };
 
-const factory = generateShallowRenderer(PatternAdvancedEditorField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(PatternAdvancedEditorField, { stubs,
-});
-
 const selectJsonFieldNode = wrapper => wrapper.vm.$children[0];
 
 describe('pattern-advanced-editor-field', () => {
+  const factory = generateShallowRenderer(PatternAdvancedEditorField, { stubs });
+  const snapshotFactory = generateRenderer(PatternAdvancedEditorField, { stubs });
+
   test('Patterns invalid with wrong structure', () => {
     jest.useFakeTimers('legacy');
 

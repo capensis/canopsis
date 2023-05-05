@@ -9,22 +9,6 @@ const stubs = {
   'v-chip': createButtonStub('v-chip'),
 };
 
-const factory = generateShallowRenderer(RemediationInstructionsFiltersItem, { stubs,
-});
-
-const snapshotFactory = generateRenderer(RemediationInstructionsFiltersItem, {
-
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
-});
-
 const selectChip = wrapper => wrapper.find('button.v-chip');
 
 describe('remediation-instructions-filters-item', () => {
@@ -50,6 +34,19 @@ describe('remediation-instructions-filters-item', () => {
     _id: 'id2',
   };
   const filters = [lockedFilter, unLockedFilter];
+
+  const factory = generateShallowRenderer(RemediationInstructionsFiltersItem, { stubs });
+  const snapshotFactory = generateRenderer(RemediationInstructionsFiltersItem, {
+    parentComponent: {
+      provide: {
+        list: {
+          register: jest.fn(),
+          unregister: jest.fn(),
+        },
+        listClick: jest.fn(),
+      },
+    },
+  });
 
   it('Locked filter disabled after trigger input event on the chip', () => {
     const wrapper = factory({

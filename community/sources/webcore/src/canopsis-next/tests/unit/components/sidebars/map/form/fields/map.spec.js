@@ -8,33 +8,34 @@ const stubs = {
   'c-map-field': true,
 };
 
-const factory = generateShallowRenderer(FieldMap, { stubs,
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
-});
-
-const snapshotFactory = generateRenderer(FieldMap, { stubs,
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
-});
-
 const selectMapField = wrapper => wrapper.find('c-map-field-stub');
 
 describe('field-map', () => {
+  const factory = generateShallowRenderer(FieldMap, {
+    stubs,
+    parentComponent: {
+      provide: {
+        list: {
+          register: jest.fn(),
+          unregister: jest.fn(),
+        },
+        listClick: jest.fn(),
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(FieldMap, {
+    stubs,
+    parentComponent: {
+      provide: {
+        list: {
+          register: jest.fn(),
+          unregister: jest.fn(),
+        },
+        listClick: jest.fn(),
+      },
+    },
+  });
+
   it('Info popup setting modal opened after trigger create button', () => {
     const wrapper = factory({
       propsData: {

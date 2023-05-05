@@ -15,13 +15,10 @@ const stubs = {
   },
 };
 
-const factory = generateShallowRenderer(CRecordsPerPage, { stubs });
-
-const snapshotFactory = generateRenderer(CRecordsPerPage, {
-
-});
-
 describe('c-records-per-page-field', () => {
+  const factory = generateShallowRenderer(CRecordsPerPage, { stubs });
+  const snapshotFactory = generateRenderer(CRecordsPerPage);
+
   it('Default items is equal to PAGINATION_PER_PAGE_VALUES', () => {
     const wrapper = factory();
 

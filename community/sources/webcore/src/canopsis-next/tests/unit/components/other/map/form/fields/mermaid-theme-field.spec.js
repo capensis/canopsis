@@ -8,16 +8,12 @@ const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = generateShallowRenderer(MermaidThemeField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(MermaidThemeField, {
-
-});
-
 const selectSelectField = wrapper => wrapper.find('select.v-select');
 
 describe('mermaid-theme-field', () => {
+  const factory = generateShallowRenderer(MermaidThemeField, { stubs });
+  const snapshotFactory = generateRenderer(MermaidThemeField);
+
   test('Value changed after trigger select', () => {
     const wrapper = factory({
       propsData: {

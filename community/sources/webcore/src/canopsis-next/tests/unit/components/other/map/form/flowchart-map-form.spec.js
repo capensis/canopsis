@@ -9,16 +9,13 @@ const stubs = {
   'flowchart-editor': true,
 };
 
-const factory = generateShallowRenderer(FlowchartMapForm, { stubs,
-});
-
-const snapshotFactory = generateRenderer(FlowchartMapForm, { stubs,
-});
-
 const selectNameField = wrapper => wrapper.find('c-name-field-stub');
 const selectFlowchartEditor = wrapper => wrapper.find('flowchart-editor-stub');
 
 describe('flowchart-map-form', () => {
+  const factory = generateShallowRenderer(FlowchartMapForm, { stubs });
+  const snapshotFactory = generateRenderer(FlowchartMapForm, { stubs });
+
   test('Name changed after trigger name field', () => {
     const form = {
       name: '',

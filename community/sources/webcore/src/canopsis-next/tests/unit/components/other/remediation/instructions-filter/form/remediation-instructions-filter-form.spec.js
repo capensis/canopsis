@@ -18,14 +18,6 @@ const snapshotStubs = {
   'c-help-icon': true,
 };
 
-const factory = generateShallowRenderer(RemediationInstructionsFilterForm, { stubs,
-});
-
-const snapshotFactory = generateRenderer(RemediationInstructionsFilterForm, {
-
-  stubs: snapshotStubs,
-});
-
 const selectRadioGroups = wrapper => wrapper.findAll('.v-radio-group');
 const selectRunningField = wrapper => selectRadioGroups(wrapper).at(1);
 const selectWithField = wrapper => selectRadioGroups(wrapper).at(0);
@@ -52,6 +44,9 @@ describe('remediation-instructions-filter-form', () => {
   const store = createMockedStoreModules([
     remediationInstructionModule,
   ]);
+
+  const factory = generateShallowRenderer(RemediationInstructionsFilterForm, { stubs });
+  const snapshotFactory = generateRenderer(RemediationInstructionsFilterForm, { stubs: snapshotStubs });
 
   test('Instructions fetched after mount', () => {
     factory({

@@ -8,18 +8,14 @@ const stubs = {
   'v-btn': createButtonStub('v-btn'),
 };
 
-const factory = generateShallowRenderer(ButtonField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(ButtonField, {
-
-});
-
 const selectCreateButton = wrapper => wrapper.findAll('button.v-btn').at(0);
 const selectEditButton = wrapper => wrapper.findAll('button.v-btn').at(0);
 const selectDeleteButton = wrapper => wrapper.findAll('button.v-btn').at(1);
 
 describe('button-field', () => {
+  const factory = generateShallowRenderer(ButtonField, { stubs });
+  const snapshotFactory = generateRenderer(ButtonField);
+
   it('Create event emitted after click on the button', () => {
     const wrapper = factory({
       propsData: {

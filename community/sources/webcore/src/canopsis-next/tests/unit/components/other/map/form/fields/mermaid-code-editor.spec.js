@@ -8,20 +8,18 @@ const stubs = {
   'code-editor': true,
 };
 
-const factory = generateShallowRenderer(MermaidCodeEditor, { stubs,
-});
-
-const snapshotFactory = generateRenderer(MermaidCodeEditor, { stubs,
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-});
-
 const selectCodeEditorNode = wrapper => wrapper.vm.$children[0];
 
 describe('mermaid-code-editor', () => {
+  const factory = generateShallowRenderer(MermaidCodeEditor, { stubs });
+  const snapshotFactory = generateRenderer(MermaidCodeEditor, { stubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+
   test('Value changed after trigger code editor', () => {
     const wrapper = factory({
       propsData: {

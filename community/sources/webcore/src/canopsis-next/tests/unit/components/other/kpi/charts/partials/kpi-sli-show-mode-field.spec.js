@@ -9,14 +9,10 @@ const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = generateShallowRenderer(KpiSliShowModeField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(KpiSliShowModeField, {
-
-});
-
 describe('kpi-sli-show-mode-field', () => {
+  const factory = generateShallowRenderer(KpiSliShowModeField, { stubs });
+  const snapshotFactory = generateRenderer(KpiSliShowModeField);
+
   it('Unit changed after trigger select field', () => {
     const wrapper = factory({
       propsData: {

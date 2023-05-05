@@ -17,14 +17,6 @@ const snapshotStubs = {
   'c-select-field': CSelectField,
 };
 
-const factory = generateShallowRenderer(CPatternField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CPatternField, {
-
-  stubs: snapshotStubs,
-});
-
 const selectSelectField = wrapper => wrapper.find('.c-select-field');
 
 describe('c-pattern-field', () => {
@@ -45,6 +37,9 @@ describe('c-pattern-field', () => {
     { title: 'Pattern 2', _id: 'pattern-value-2' },
     { title: 'Pattern 3', _id: 'pattern-value-3' },
   ];
+
+  const factory = generateShallowRenderer(CPatternField, { stubs });
+  const snapshotFactory = generateRenderer(CPatternField, { stubs: snapshotStubs });
 
   afterEach(() => {
     fetchPatternsListWithoutStore.mockClear();

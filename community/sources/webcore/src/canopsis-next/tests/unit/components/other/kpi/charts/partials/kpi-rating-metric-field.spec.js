@@ -14,17 +14,12 @@ const snapshotStubs = {
   'c-select-field': CSelectField,
 };
 
-const factory = generateShallowRenderer(KpiRatingMetricField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(KpiRatingMetricField, {
-
-  stubs: snapshotStubs,
-});
-
 const selectSelectField = wrapper => wrapper.find('.c-select-field');
 
 describe('kpi-rating-metric-field', () => {
+  const factory = generateShallowRenderer(KpiRatingMetricField, { stubs });
+  const snapshotFactory = generateRenderer(KpiRatingMetricField, { stubs: snapshotStubs });
+
   it('Metric changed after trigger select field', () => {
     const wrapper = factory({
       propsData: {

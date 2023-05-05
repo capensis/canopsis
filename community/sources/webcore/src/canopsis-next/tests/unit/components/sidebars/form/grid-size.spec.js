@@ -9,15 +9,12 @@ const stubs = {
   'c-column-size-field': true,
 };
 
-const factory = generateShallowRenderer(FieldGridSize, { stubs,
-});
-
-const snapshotFactory = generateRenderer(FieldGridSize, { stubs,
-});
-
 const selectColumnSizeField = wrapper => wrapper.find('c-column-size-field-stub');
 
 describe('field-grid-size', () => {
+  const factory = generateShallowRenderer(FieldGridSize, { stubs });
+  const snapshotFactory = generateRenderer(FieldGridSize, { stubs });
+
   it('Column size changed after trigger field', () => {
     const wrapper = factory({
       propsData: {

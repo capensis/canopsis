@@ -8,21 +8,18 @@ const stubs = {
   'v-textarea': true,
 };
 
-const factory = generateShallowRenderer(CDescriptionField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CDescriptionField, {
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-});
-
 const selectTextareaNode = wrapper => wrapper.vm.$children[0];
 
 describe('c-description-field', () => {
+  const factory = generateShallowRenderer(CDescriptionField, { stubs });
+  const snapshotFactory = generateRenderer(CDescriptionField, {
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+
   test('Value changed after trigger the textarea', () => {
     const wrapper = factory({
       propsData: {

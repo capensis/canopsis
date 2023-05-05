@@ -9,12 +9,6 @@ const stubs = {
   'c-action-btn': true,
 };
 
-const factory = generateShallowRenderer(CPatternRulesField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CPatternRulesField, { stubs,
-});
-
 const selectAddButton = wrapper => wrapper.find('v-btn-stub');
 const selectPatternRulesField = wrapper => wrapper.findAll('c-pattern-rule-field-stub');
 const selectPatternRuleFieldByIndex = (wrapper, index) => selectPatternRulesField(wrapper)
@@ -43,6 +37,9 @@ describe('c-pattern-rules-field', () => {
       key: 'key 3',
     },
   ];
+
+  const factory = generateShallowRenderer(CPatternRulesField, { stubs });
+  const snapshotFactory = generateRenderer(CPatternRulesField, { stubs });
 
   test('Rule removed after trigger remove event on the pattern Rule field', () => {
     const wrapper = factory({

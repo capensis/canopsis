@@ -2,17 +2,12 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import AddLocationBtn from '@/components/other/map/form/fields/add-location-btn.vue';
 
-const factory = generateShallowRenderer(AddLocationBtn, {
-
-});
-
-const snapshotFactory = generateRenderer(AddLocationBtn, {
-
-});
-
 const selectBtnToggleNode = wrapper => wrapper.vm.$children[0];
 
 describe('add-location-btn', () => {
+  const factory = generateShallowRenderer(AddLocationBtn);
+  const snapshotFactory = generateRenderer(AddLocationBtn);
+
   test('Value updated after click button', () => {
     const wrapper = factory({
       propsData: {

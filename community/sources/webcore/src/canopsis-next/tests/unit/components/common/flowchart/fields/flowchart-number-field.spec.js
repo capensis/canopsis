@@ -9,16 +9,12 @@ const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = generateShallowRenderer(FlowchartNumberField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(FlowchartNumberField, {
-
-});
-
 const selectSelectField = wrapper => wrapper.find('.v-select');
 
 describe('flowchart-number-field', () => {
+  const factory = generateShallowRenderer(FlowchartNumberField, { stubs });
+  const snapshotFactory = generateRenderer(FlowchartNumberField);
+
   test('Value changed after trigger select field', () => {
     const wrapper = factory();
 
