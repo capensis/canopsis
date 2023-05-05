@@ -77,14 +77,12 @@ import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
 import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
 import DateTimeSplittedRangePickerText from '@/components/forms/fields/date-time-picker/date-time-splitted-range-picker-text.vue';
-import CPbehaviorTypeText from '@/components/forms/fields/pbehavior/c-pbehavior-type-text.vue';
 
 export default {
   inject: ['$validator'],
   components: {
     DateTimeSplittedRangePickerField,
     DateTimeSplittedRangePickerText,
-    CPbehaviorTypeText,
   },
   mixins: [
     formMixin,
