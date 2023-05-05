@@ -1,7 +1,7 @@
 import { API_HOST, API_ROUTES } from '@/config';
 
 /**
- * Get file url for test suite
+ * Get test suite file url
  *
  * @param {string} id
  * @return {string}
