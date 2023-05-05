@@ -3,6 +3,7 @@ import Faker from 'faker';
 import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 
+import { createMockedStoreModules, createPbehaviorTypesModule } from '@unit/utils/store';
 import PbehaviorExceptionsField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-exceptions-field.vue';
 import { MODALS } from '@/constants';
 
@@ -20,6 +21,11 @@ const selectAddExceptionButton = wrapper => selectButtonByIndex(wrapper, 0);
 const selectChooseExceptionButton = wrapper => selectButtonByIndex(wrapper, 1);
 
 describe('pbehavior-exceptions-field', () => {
+  const { pbehaviorTypesModule } = createPbehaviorTypesModule();
+  const store = createMockedStoreModules([
+    pbehaviorTypesModule,
+  ]);
+
   const nowTimestamp = 1386435500000;
   mockDateNow(nowTimestamp);
   const $modals = mockModals();
@@ -27,9 +33,10 @@ describe('pbehavior-exceptions-field', () => {
   const factory = generateShallowRenderer(PbehaviorExceptionsField, {
     localVue,
     stubs,
+    store,
     mocks: { $modals },
   });
-  const snapshotFactory = generateRenderer(PbehaviorExceptionsField, { localVue, stubs });
+  const snapshotFactory = generateRenderer(PbehaviorExceptionsField, { localVue, stubs, store });
 
   test('Exception added after trigger create button', () => {
     const exdates = [{ key: 'exdate-1', begin: 1, end: 2, type: '' }];
