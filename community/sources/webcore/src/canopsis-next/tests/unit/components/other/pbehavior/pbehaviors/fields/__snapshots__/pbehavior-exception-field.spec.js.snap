@@ -79,7 +79,6 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
       class="flex pl-2"
     >
       <c-pbehavior-type-text-stub
-        label=""
         value="type"
       />
     </div>
