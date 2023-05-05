@@ -1,10 +1,13 @@
-import { cloneDeep, isBoolean, isNull } from 'lodash';
+import { cloneDeep } from 'lodash';
 
 import {
   WIDGET_TYPES,
   WIDGET_GRID_SIZES_KEYS,
   DEFAULT_WIDGET_GRID_PARAMETERS,
 } from '@/constants';
+
+import { uuid } from '@/helpers/uuid';
+import { prepareAlarmListWidget, prepareContextWidget } from '@/helpers/widgets';
 
 import featuresService from '@/services/features';
 
@@ -297,15 +300,55 @@ export const formToWidget = form => ({
 });
 
 /**
- * Convert opened field widget
+ * Generate alarm list widget form with default parameters.
  *
- * @param  {boolean | null} [opened]
- * @returns {boolean | null}
+ * @return {WidgetForm}
  */
-export const openedToForm = (opened) => {
-  if (isBoolean(opened) || isNull(opened)) {
-    return opened;
-  }
+export const generateDefaultAlarmListWidgetForm = () => widgetToForm({ type: WIDGET_TYPES.alarmList });
 
-  return true;
-};
+/**
+ * Generate alarm list widget with default parameters.
+ *
+ * @return {Widget}
+ */
+export const generateDefaultAlarmListWidget = () => ({
+  ...formToWidget(generateDefaultAlarmListWidgetForm()),
+
+  _id: uuid(),
+});
+
+/**
+ * Generate prepared default alarm list
+ *
+ * @returns {Widget}
+ */
+export const generatePreparedDefaultAlarmListWidget = () => prepareAlarmListWidget(generateDefaultAlarmListWidget());
+
+/**
+ * Generate context widget with default parameters.
+ *
+ * @return {Widget}
+ */
+export const generateDefaultContextWidget = () => ({
+  ...formToWidget(widgetToForm({ type: WIDGET_TYPES.context })),
+
+  _id: uuid(),
+});
+
+/**
+ * Generate prepared default context
+ *
+ * @returns {Widget}
+ */
+export const generatePreparedDefaultContextWidget = () => prepareContextWidget(generateDefaultContextWidget());
+
+/**
+ * Generate service weather widget with default parameters.
+ *
+ * @return {Widget}
+ */
+export const generateDefaultServiceWeatherWidget = () => ({
+  ...formToWidget(widgetToForm({ type: WIDGET_TYPES.serviceWeather })),
+
+  _id: uuid(),
+});

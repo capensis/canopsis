@@ -18,7 +18,7 @@ import {
   USERS_PERMISSIONS,
 } from '@/constants';
 
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/forms/widgets/common';
 
 import AlarmsList from '@/components/widgets/alarm/alarms-list.vue';
 
