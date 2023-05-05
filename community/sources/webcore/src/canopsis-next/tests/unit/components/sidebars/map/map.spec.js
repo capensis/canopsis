@@ -51,23 +51,6 @@ const snapshotStubs = {
   'field-columns': true,
 };
 
-const factory = generateShallowRenderer(MapSettings, { stubs,
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-});
-
-const snapshotFactory = generateRenderer(MapSettings, {
-  stubs: snapshotStubs,
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-});
-
 const generateDefaultMapWidget = () => ({
   ...formToWidget(widgetToForm({ type: WIDGET_TYPES.map })),
 
@@ -128,6 +111,22 @@ describe('map', () => {
     widgetTemplateModule,
     infosModule,
   ]);
+
+  const factory = generateShallowRenderer(MapSettings, { stubs,
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(MapSettings, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
 
   afterEach(() => {
     createWidget.mockReset();

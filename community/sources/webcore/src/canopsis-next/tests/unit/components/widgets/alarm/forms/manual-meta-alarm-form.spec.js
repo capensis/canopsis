@@ -12,13 +12,6 @@ const stubs = {
   'v-text-field': createInputStub('v-text-field'),
 };
 
-const factory = generateShallowRenderer(ManualMetaAlarmForm, { stubs,
-});
-
-const snapshotFactory = generateRenderer(ManualMetaAlarmForm, {
-
-});
-
 const selectTextField = wrapper => wrapper.find('.v-text-field');
 const selectComboboxField = wrapper => wrapper.find('.v-combobox');
 
@@ -33,6 +26,9 @@ describe('manual-meta-alarm-form', () => {
   const store = createMockedStoreModules([
     alarmModule,
   ]);
+
+  const factory = generateShallowRenderer(ManualMetaAlarmForm, { stubs });
+  const snapshotFactory = generateRenderer(ManualMetaAlarmForm);
 
   test('Alarms fetched after mount', () => {
     factory({

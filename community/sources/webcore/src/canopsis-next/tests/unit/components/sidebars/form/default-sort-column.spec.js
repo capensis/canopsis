@@ -9,22 +9,6 @@ const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = generateShallowRenderer(DefaultSortColumn, { stubs,
-});
-
-const snapshotFactory = generateRenderer(DefaultSortColumn, {
-
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
-});
-
 const selectColumnSelectField = wrapper => wrapper.findAll('select.v-select').at(0);
 const selectOrderSelectField = wrapper => wrapper.findAll('select.v-select').at(1);
 
@@ -33,6 +17,19 @@ describe('default-sort-column', () => {
     { value: 'first', text: 'First' },
     { value: 'second', text: 'Second' },
   ];
+
+  const factory = generateShallowRenderer(DefaultSortColumn, { stubs });
+  const snapshotFactory = generateRenderer(DefaultSortColumn, {
+    parentComponent: {
+      provide: {
+        list: {
+          register: jest.fn(),
+          unregister: jest.fn(),
+        },
+        listClick: jest.fn(),
+      },
+    },
+  });
 
   it('Column changed after trigger select field with columns', () => {
     const [firstColumn, secondColumn] = columns;

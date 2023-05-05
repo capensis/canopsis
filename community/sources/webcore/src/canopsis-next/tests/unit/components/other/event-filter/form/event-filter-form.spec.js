@@ -23,12 +23,6 @@ const stubs = {
   'event-filter-drop-intervals-field': true,
 };
 
-const factory = generateShallowRenderer(EventFilterForm, { stubs,
-});
-
-const snapshotFactory = generateRenderer(EventFilterForm, { stubs,
-});
-
 const selectIdField = wrapper => wrapper.find('c-id-field-stub');
 const selectEventFilterTypeField = wrapper => wrapper.find('c-event-filter-type-field-stub');
 const selectDescriptionField = wrapper => wrapper.find('c-description-field-stub');
@@ -54,6 +48,9 @@ describe('event-filter-form', () => {
     },
     config: {},
   };
+
+  const factory = generateShallowRenderer(EventFilterForm, { stubs });
+  const snapshotFactory = generateRenderer(EventFilterForm, { stubs });
 
   test('ID changed after trigger id field', () => {
     const wrapper = factory({

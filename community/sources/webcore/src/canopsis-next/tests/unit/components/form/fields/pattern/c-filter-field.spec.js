@@ -13,13 +13,6 @@ const stubs = {
   'v-autocomplete': createSelectInputStub('v-autocomplete'),
 };
 
-const factory = generateShallowRenderer(CFilterField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CFilterField, {
-
-});
-
 const selectAutocomplete = wrapper => wrapper.find('.v-autocomplete');
 
 describe('c-filter-field', () => {
@@ -54,6 +47,9 @@ describe('c-filter-field', () => {
   const store = createMockedStoreModules([
     filterModule,
   ]);
+
+  const factory = generateShallowRenderer(CFilterField, { stubs });
+  const snapshotFactory = generateRenderer(CFilterField);
 
   afterEach(() => {
     filtersGetter.mockClear();

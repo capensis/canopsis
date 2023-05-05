@@ -16,20 +16,17 @@ const snapshotStubs = {
   'state-criticity-field': true,
 };
 
-const factory = generateShallowRenderer(CChangeStateField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CChangeStateField, {
-
-  stubs: snapshotStubs,
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-});
-
 describe('c-change-state-field', () => {
+  const factory = generateShallowRenderer(CChangeStateField, { stubs });
+  const snapshotFactory = generateRenderer(CChangeStateField, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+
   it('State changed after trigger the state field', () => {
     const initialValue = {
       state: ENTITIES_STATES.major,

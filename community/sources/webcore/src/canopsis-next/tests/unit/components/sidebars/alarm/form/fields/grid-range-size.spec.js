@@ -7,33 +7,33 @@ const stubs = {
   'v-range-slider': createNumberInputStub('v-range-slider'),
 };
 
-const factory = generateShallowRenderer(GridRangeSize, { stubs,
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
-});
-
-const snapshotFactory = generateRenderer(GridRangeSize, { stubs,
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
-});
-
 const selectRangeSliderField = wrapper => wrapper.find('input.v-range-slider');
 
 describe('grid-range-size', () => {
+  const factory = generateShallowRenderer(GridRangeSize, { stubs,
+    parentComponent: {
+      provide: {
+        list: {
+          register: jest.fn(),
+          unregister: jest.fn(),
+        },
+        listClick: jest.fn(),
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(GridRangeSize, {
+    stubs,
+    parentComponent: {
+      provide: {
+        list: {
+          register: jest.fn(),
+          unregister: jest.fn(),
+        },
+        listClick: jest.fn(),
+      },
+    },
+  });
+
   it('Value changed after trigger range slider field', () => {
     const wrapper = factory();
 

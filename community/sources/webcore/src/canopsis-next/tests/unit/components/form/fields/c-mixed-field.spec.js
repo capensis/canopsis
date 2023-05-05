@@ -10,20 +10,19 @@ const stubs = {
   'c-mixed-input-field': true,
 };
 
-const factory = generateShallowRenderer(CMixedField, { stubs,
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-});
-
-const snapshotFactory = generateRenderer(CMixedField, { stubs,
-});
-
 const selectInputTypeField = wrapper => wrapper.find('c-input-type-field-stub');
 
 describe('c-mixed-field', () => {
+  const factory = generateShallowRenderer(CMixedField, {
+    stubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(CMixedField, { stubs });
+
   it('Input type changed after trigger input type field with string value', () => {
     const wrapper = factory({
       propsData: {

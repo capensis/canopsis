@@ -10,16 +10,12 @@ const stubs = {
   'v-text-field': createNumberInputStub('v-text-field'),
 };
 
-const factory = generateShallowRenderer(CNumberField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CNumberField, {
-
-});
-
 const selectTextField = wrapper => wrapper.find('input.v-text-field');
 
 describe('c-number-field', () => {
+  const factory = generateShallowRenderer(CNumberField, { stubs });
+  const snapshotFactory = generateRenderer(CNumberField);
+
   it('Value changed after trigger the input', () => {
     const wrapper = factory();
     const textField = selectTextField(wrapper);

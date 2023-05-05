@@ -14,26 +14,23 @@ const snapshotStubs = {
   'widget-settings-item': true,
 };
 
-const factory = generateShallowRenderer(Title, { stubs,
-});
-
-const snapshotFactory = generateRenderer(Title, {
-
-  stubs: snapshotStubs,
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
-});
-
 const selectTextField = wrapper => wrapper.find('input.v-text-field');
 
 describe('title', () => {
+  const factory = generateShallowRenderer(Title, { stubs });
+  const snapshotFactory = generateRenderer(Title, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      provide: {
+        list: {
+          register: jest.fn(),
+          unregister: jest.fn(),
+        },
+        listClick: jest.fn(),
+      },
+    },
+  });
+
   it('Value changed after trigger text field', () => {
     const wrapper = factory({
       propsData: {

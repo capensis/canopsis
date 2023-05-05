@@ -16,27 +16,27 @@ const snapshotStubs = {
   'c-array-text-field': true,
 };
 
-const factory = generateShallowRenderer(CMixedInputField, { stubs,
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-});
-
-const snapshotFactory = generateRenderer(CMixedInputField, {
-  stubs: snapshotStubs,
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-});
-
 const selectTextField = wrapper => wrapper.find('input.v-text-field');
 const selectCombobox = wrapper => wrapper.find('input.v-combobox');
 
 describe('c-mixed-input-field', () => {
+  const factory = generateShallowRenderer(CMixedInputField, {
+    stubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(CMixedInputField, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+
   it('Value changed to empty string after trigger the input with null value', () => {
     const wrapper = factory({
       propsData: {

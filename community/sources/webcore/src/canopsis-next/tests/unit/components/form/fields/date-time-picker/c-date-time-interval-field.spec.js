@@ -8,12 +8,6 @@ const stubs = {
   'date-time-picker-field': true,
 };
 
-const factory = generateShallowRenderer(CDateTimeIntervalField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CDateTimeIntervalField, { stubs,
-});
-
 const selectDateTimePickerField = wrapper => wrapper.findAll('date-time-picker-field-stub');
 const selectFromDateTimePickerField = wrapper => selectDateTimePickerField(wrapper)
   .at(0);
@@ -22,6 +16,9 @@ const selectToDateTimePickerField = wrapper => selectDateTimePickerField(wrapper
 
 describe('c-date-time-interval-field', () => {
   const timestamp = 1386435600000;
+
+  const factory = generateShallowRenderer(CDateTimeIntervalField, { stubs });
+  const snapshotFactory = generateRenderer(CDateTimeIntervalField, { stubs });
 
   test('From changed after trigger from date time picker field', () => {
     const value = {

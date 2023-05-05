@@ -12,17 +12,12 @@ const snapshotStubs = {
   'widget-settings-item': true,
 };
 
-const factory = generateShallowRenderer(DefaultElementsPerPage, { stubs,
-});
-
-const snapshotFactory = generateRenderer(DefaultElementsPerPage, {
-
-  stubs: snapshotStubs,
-});
-
 const selectElementsPerPageField = wrapper => wrapper.find('select.v-select');
 
 describe('default-elements-per-page', () => {
+  const factory = generateShallowRenderer(DefaultElementsPerPage, { stubs });
+  const snapshotFactory = generateRenderer(DefaultElementsPerPage, { stubs: snapshotStubs });
+
   it('Value changed after trigger select field', () => {
     const wrapper = factory({
       propsData: {

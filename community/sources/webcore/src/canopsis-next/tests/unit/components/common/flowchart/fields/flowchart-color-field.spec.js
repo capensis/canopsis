@@ -6,19 +6,14 @@ import { mockModals } from '@unit/utils/mock-hooks';
 import FlowchartColorField from '@/components/common/flowchart/fields/flowchart-color-field.vue';
 import { MODALS } from '@/constants';
 
-const factory = generateShallowRenderer(FlowchartColorField, {
-
-});
-
-const snapshotFactory = generateRenderer(FlowchartColorField, {
-
-});
-
 const selectCheckboxField = wrapper => wrapper.find('v-checkbox-stub');
 const selectButton = wrapper => wrapper.find('v-btn-stub');
 
 describe('flowchart-color-field', () => {
   const $modals = mockModals();
+
+  const factory = generateShallowRenderer(FlowchartColorField);
+  const snapshotFactory = generateRenderer(FlowchartColorField);
 
   test('Value changed to first palette color after trigger select field with true', () => {
     const firstColor = Faker.internet.color();

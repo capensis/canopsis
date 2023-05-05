@@ -11,15 +11,12 @@ const stubs = {
   'c-columns-with-template-field': true,
 };
 
-const factory = generateShallowRenderer(Columns, { stubs,
-});
-
-const snapshotFactory = generateRenderer(Columns, { stubs,
-});
-
 const selectColumnsField = wrapper => wrapper.find('c-columns-with-template-field-stub');
 
 describe('columns', () => {
+  const factory = generateShallowRenderer(Columns, { stubs });
+  const snapshotFactory = generateRenderer(Columns, { stubs });
+
   it('Columns changed after trigger columns field', () => {
     const wrapper = factory({
       propsData: {
