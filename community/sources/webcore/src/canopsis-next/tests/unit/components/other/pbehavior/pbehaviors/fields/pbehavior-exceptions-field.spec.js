@@ -1,12 +1,10 @@
 import Faker from 'faker';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 
 import PbehaviorExceptionsField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-exceptions-field.vue';
 import { MODALS } from '@/constants';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'pbehavior-exception-list': true,
@@ -25,11 +23,10 @@ describe('pbehavior-exceptions-field', () => {
   const $modals = mockModals();
 
   const factory = generateShallowRenderer(PbehaviorExceptionsField, {
-    localVue,
     stubs,
     mocks: { $modals },
   });
-  const snapshotFactory = generateRenderer(PbehaviorExceptionsField, { localVue, stubs });
+  const snapshotFactory = generateRenderer(PbehaviorExceptionsField, { stubs });
 
   test('Exception added after trigger create button', () => {
     const exdates = [{ key: 'exdate-1', begin: 1, end: 2, type: '' }];

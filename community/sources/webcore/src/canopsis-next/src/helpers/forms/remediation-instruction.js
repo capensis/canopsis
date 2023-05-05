@@ -12,7 +12,7 @@ import {
   WORKFLOW_TYPES,
 } from '@/constants';
 
-import uuid from '@/helpers/uuid';
+import { uuid } from '@/helpers/uuid';
 import { durationToForm } from '@/helpers/date/duration';
 import { flattenErrorMap } from '@/helpers/forms/flatten-error-map';
 

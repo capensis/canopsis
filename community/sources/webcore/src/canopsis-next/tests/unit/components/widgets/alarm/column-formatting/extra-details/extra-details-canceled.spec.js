@@ -1,12 +1,10 @@
 import { omit } from 'lodash';
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import ExtraDetailsCanceled from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-canceled.vue';
-
-const localVue = createVueInstance();
 
 describe('extra-details-canceled', () => {
   const nowTimestamp = 1386435500000;
@@ -22,7 +20,7 @@ describe('extra-details-canceled', () => {
   };
 
   const snapshotFactory = generateRenderer(ExtraDetailsCanceled, {
-    localVue,
+
     attachTo: document.body,
   });
 

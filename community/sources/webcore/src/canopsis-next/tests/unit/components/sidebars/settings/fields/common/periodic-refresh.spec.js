@@ -1,26 +1,20 @@
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { TIME_UNITS } from '@/constants';
 
 import PeriodicRefresh from '@/components/sidebars/settings/fields/common/periodic-refresh.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'widget-settings-item': true,
   'periodic-refresh-field': true,
 };
 
-const factory = (options = {}) => shallowMount(PeriodicRefresh, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(PeriodicRefresh, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(PeriodicRefresh, {
-  localVue,
+const snapshotFactory = generateRenderer(PeriodicRefresh, {
+
   stubs,
   parentComponent: {
     provide: {
@@ -34,8 +28,6 @@ const snapshotFactory = (options = {}) => mount(PeriodicRefresh, {
       validator: 'new',
     },
   },
-
-  ...options,
 });
 
 const selectPeriodicRefreshField = wrapper => wrapper.find('periodic-refresh-field-stub');

@@ -3,6 +3,7 @@ import {
   Y_AXES_IDS,
   MAX_METRICS_DISPLAY_COUNT,
   TIME_UNITS,
+  KPI_CHART_DEFAULT_HEIGHT,
 } from '@/constants';
 
 import { fromSeconds } from '@/helpers/date/duration';
@@ -65,7 +66,9 @@ export const chartMetricsOptionsMixin = {
 
     labelsFont() {
       return {
-        size: 11,
+        size({ chart }) {
+          return chart.height < KPI_CHART_DEFAULT_HEIGHT ? 9 : 11;
+        },
         family: 'Arial, sans-serif',
       };
     },
@@ -78,8 +81,12 @@ export const chartMetricsOptionsMixin = {
         maxWidth: 700,
         labels: {
           font: this.labelsFont,
-          boxWidth: 15,
-          boxHeight: 15,
+          boxWidth({ chart }) {
+            return chart.height < KPI_CHART_DEFAULT_HEIGHT ? 10 : 15;
+          },
+          boxHeight({ chart }) {
+            return chart.height < KPI_CHART_DEFAULT_HEIGHT ? 10 : 15;
+          },
         },
       };
 

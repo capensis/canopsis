@@ -1,24 +1,8 @@
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import VDataTable from '@/plugins/vuetify-replacer/components/v-data-table/v-data-table.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {};
-
-const factory = (options = {}) => shallowMount(VDataTable, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(VDataTable, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectTableHeader = wrapper => wrapper.findAll('th');
 
@@ -32,6 +16,9 @@ describe('v-data-table', () => {
   const rowsPerPage = 5;
   const page = 1;
   const totalItems = 0;
+
+  const factory = generateShallowRenderer(VDataTable, { stubs });
+  const snapshotFactory = generateRenderer(VDataTable, { stubs });
 
   it('Column sorted by DESC after click on the header', () => {
     const wrapper = factory({

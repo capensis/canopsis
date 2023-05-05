@@ -1,12 +1,10 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 import CEllipsis from '@/components/common/table/c-ellipsis.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-menu': createActivatorElementStub('v-menu'),
@@ -26,12 +24,12 @@ const selectCardTitle = wrapper => selectMenu(wrapper).find('v-card-stub > v-car
 
 describe('c-ellipsis', () => {
   const factory = generateShallowRenderer(CEllipsis, {
-    localVue,
+
     stubs,
     attachTo: document.body,
   });
   const snapshotFactory = generateRenderer(CEllipsis, {
-    localVue,
+
     stubs,
     attachTo: document.body,
   });

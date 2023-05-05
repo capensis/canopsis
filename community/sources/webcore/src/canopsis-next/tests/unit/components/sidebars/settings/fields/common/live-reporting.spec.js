@@ -1,13 +1,11 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { fakeTimestamp } from '@unit/data/date';
 import { MODALS } from '@/constants';
 
 import LiveReporting from '@/components/sidebars/settings/fields/common/live-reporting.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'settings-button-field': {
@@ -25,24 +23,16 @@ const snapshotStubs = {
   'settings-button-field': true,
 };
 
-const factory = (options = {}) => shallowMount(LiveReporting, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(LiveReporting, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(LiveReporting, {
-  localVue,
+const snapshotFactory = generateRenderer(LiveReporting, {
   stubs: snapshotStubs,
-
   parentComponent: {
     provide: {
       listClick: jest.fn(),
     },
   },
-
-  ...options,
 });
 
 const selectSettingsCreateButton = wrapper => wrapper.find('.settings-button-field .create');

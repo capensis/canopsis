@@ -1,6 +1,6 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import {
   ALARM_PATTERN_FIELDS,
@@ -15,8 +15,6 @@ import {
 
 import CPatternRuleField from '@/components/forms/fields/pattern/pattern-rule-field.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'pattern-attribute-field': true,
   'c-infos-attribute-field': true,
@@ -29,18 +27,10 @@ const stubs = {
   'custom-component': true,
 };
 
-const factory = (options = {}) => shallowMount(CPatternRuleField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(CPatternRuleField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(CPatternRuleField, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(CPatternRuleField, { stubs,
 });
 
 const selectPatternAttributeField = wrapper => wrapper.find('pattern-attribute-field-stub');

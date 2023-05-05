@@ -1,26 +1,18 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createButtonStub } from '@unit/stubs/button';
 
 import ButtonField from '@/components/sidebars/settings/fields/partials/button-field.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'v-btn': createButtonStub('v-btn'),
 };
 
-const factory = (options = {}) => shallowMount(ButtonField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(ButtonField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(ButtonField, {
-  localVue,
+const snapshotFactory = generateRenderer(ButtonField, {
 
-  ...options,
 });
 
 const selectCreateButton = wrapper => wrapper.findAll('button.v-btn').at(0);

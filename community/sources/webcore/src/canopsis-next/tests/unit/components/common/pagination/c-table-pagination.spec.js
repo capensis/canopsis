@@ -1,10 +1,8 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import CTablePagination from '@/components/common/pagination/c-table-pagination.vue';
-
-const localVue = createVueInstance();
 
 const mockData = {
   page: Faker.datatype.number(),
@@ -31,18 +29,12 @@ const snapshotStubs = {
   'c-pagination': true,
 };
 
-const factory = (options = {}) => shallowMount(CTablePagination, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(CTablePagination, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(CTablePagination, {
-  localVue,
-  stubs: snapshotStubs,
+const snapshotFactory = generateRenderer(CTablePagination, {
 
-  ...options,
+  stubs: snapshotStubs,
 });
 
 describe('c-table-pagination', () => {

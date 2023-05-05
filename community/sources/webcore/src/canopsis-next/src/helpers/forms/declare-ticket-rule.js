@@ -7,7 +7,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filt
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 import { removeKeyFromEntities } from '@/helpers/entities';
 import { flattenErrorMap } from '@/helpers/forms/flatten-error-map';
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 
 /**
  * @typedef {Object} DeclareTicketRuleWebhookDeclareTicket

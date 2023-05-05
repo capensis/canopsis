@@ -1,12 +1,10 @@
 import Faker from 'faker';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { MODALS } from '@/constants';
 
 import FieldTemplate from '@/components/sidebars/settings/fields/common/template.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'widget-settings-item': true,
@@ -17,11 +15,11 @@ const selectButton = wrapper => wrapper.find('v-btn-stub');
 describe('field-template', () => {
   const $modals = mockModals();
   const factory = generateShallowRenderer(FieldTemplate, {
-    localVue,
+
     stubs,
     mocks: { $modals },
   });
-  const snapshotFactory = generateRenderer(FieldTemplate, { localVue, stubs });
+  const snapshotFactory = generateRenderer(FieldTemplate, { stubs });
 
   test('Value changed after trigger color indicator field', () => {
     const title = Faker.datatype.string();

@@ -90,3 +90,5 @@ export const X_AXES_IDS = {
 };
 
 export const MAX_METRICS_DISPLAY_COUNT = 40;
+
+export const KPI_CHART_DEFAULT_HEIGHT = 560;

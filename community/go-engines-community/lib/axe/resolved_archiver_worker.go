@@ -59,7 +59,7 @@ func (w *resolvedArchiverWorker) Work(ctx context.Context) {
 	var archived, deleted int64
 	updated := false
 	archiveAfter := conf.Config.Alarm.ArchiveAfter
-	if archiveAfter != nil && *archiveAfter.Enabled && archiveAfter.Value > 0 {
+	if types.IsDurationEnabledAndValid(archiveAfter) {
 		updated = true
 		archived, err = cleaner.ArchiveResolvedAlarms(ctx, archiveAfter.SubFrom(now), maxUpdates)
 		if err != nil {
@@ -73,7 +73,7 @@ func (w *resolvedArchiverWorker) Work(ctx context.Context) {
 	}
 
 	deleteAfter := conf.Config.Alarm.DeleteAfter
-	if deleteAfter != nil && *deleteAfter.Enabled && deleteAfter.Value > 0 {
+	if types.IsDurationEnabledAndValid(deleteAfter) {
 		updated = true
 		deleted, err = cleaner.DeleteArchivedResolvedAlarms(ctx, deleteAfter.SubFrom(now), maxUpdates)
 		if err != nil {

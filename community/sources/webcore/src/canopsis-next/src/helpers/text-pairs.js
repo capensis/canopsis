@@ -1,4 +1,4 @@
-import uid from './uid';
+import { uid } from './uid';
 
 /**
  * @typedef {Object} TextPairObject
