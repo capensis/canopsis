@@ -9,12 +9,10 @@
       :with-exdate-type="withExdateType"
     )
       template(#no-data="")
-        v-flex(xs12)
-          v-alert(
-            v-if="!hasExceptionsOrExdates",
-            :value="true",
-            type="info"
-          ) {{ $t('pbehavior.exceptions.emptyExceptions') }}
+        c-alert(
+          :value="!hasExceptionsOrExdates",
+          type="info"
+        ) {{ $t('pbehavior.exceptions.emptyExceptions') }}
       template(#actions="")
         v-flex
           v-btn.ml-0(outline, @click="addException") {{ $t('pbehavior.exceptions.create') }}
@@ -31,6 +29,7 @@ import { convertDateToStartOfDayDateObject } from '@/helpers/date/date';
 import { formArrayMixin } from '@/mixins/form';
 
 import PbehaviorExceptionsList from '../../pbehaviors/partials/pbehavior-exceptions-list.vue';
+
 import PbehaviorExceptionsField from './pbehavior-exceptions-field.vue';
 
 export default {
