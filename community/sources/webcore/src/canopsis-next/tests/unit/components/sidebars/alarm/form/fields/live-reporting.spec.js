@@ -23,24 +23,22 @@ const snapshotStubs = {
   'settings-button-field': true,
 };
 
-const factory = generateShallowRenderer(LiveReporting, { stubs,
-});
-
-const snapshotFactory = generateRenderer(LiveReporting, {
-  stubs: snapshotStubs,
-  parentComponent: {
-    provide: {
-      listClick: jest.fn(),
-    },
-  },
-});
-
 const selectSettingsCreateButton = wrapper => wrapper.find('.settings-button-field .create');
 const selectSettingsEditButton = wrapper => wrapper.find('.settings-button-field .edit');
 const selectSettingsDeleteButton = wrapper => wrapper.find('.settings-button-field .delete');
 
 describe('live-reporting', () => {
   const $modals = mockModals();
+
+  const factory = generateShallowRenderer(LiveReporting, { stubs });
+  const snapshotFactory = generateRenderer(LiveReporting, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      provide: {
+        listClick: jest.fn(),
+      },
+    },
+  });
 
   it('Live reporting modal opened after trigger create button', () => {
     const liveReporting = { tstart: fakeTimestamp(), tstop: fakeTimestamp() };

@@ -30,13 +30,10 @@ const defaultStore = createMockedStoreModules([{
   },
 }]);
 
-const factory = generateShallowRenderer(KpiRatingSettings, { stubs,
-});
-
-const snapshotFactory = generateRenderer(KpiRatingSettings, { stubs,
-});
-
 describe('kpi-rating-settings', () => {
+  const factory = generateShallowRenderer(KpiRatingSettings, { stubs });
+  const snapshotFactory = generateRenderer(KpiRatingSettings, { stubs });
+
   it('Rating settings fetched after mount', async () => {
     const fetchRatingSettings = jest.fn();
     factory({

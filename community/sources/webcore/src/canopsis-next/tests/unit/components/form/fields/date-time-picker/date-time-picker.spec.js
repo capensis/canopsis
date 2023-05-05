@@ -8,22 +8,6 @@ const stubs = {
   'time-picker-field': true,
 };
 
-const factory = generateShallowRenderer(DateTimePicker, {
-
-  stubs,
-  listeners: {
-    close: jest.fn(),
-  },
-});
-
-const snapshotFactory = generateRenderer(DateTimePicker, {
-
-  stubs,
-  listeners: {
-    close: jest.fn(),
-  },
-});
-
 const selectButtons = wrapper => wrapper.findAll('v-btn-stub');
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
 const selectApplyButton = wrapper => selectButtons(wrapper).at(1);
@@ -35,6 +19,19 @@ describe('date-time-picker', () => {
   const nowDate = new Date(nowTimestamp);
 
   mockDateNow(nowTimestamp);
+
+  const factory = generateShallowRenderer(DateTimePicker, {
+    stubs,
+    listeners: {
+      close: jest.fn(),
+    },
+  });
+  const snapshotFactory = generateRenderer(DateTimePicker, {
+    stubs,
+    listeners: {
+      close: jest.fn(),
+    },
+  });
 
   test('Time updated after trigger time picker field', async () => {
     const wrapper = factory({

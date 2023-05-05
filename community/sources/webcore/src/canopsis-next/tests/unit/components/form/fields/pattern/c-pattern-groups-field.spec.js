@@ -9,12 +9,6 @@ const stubs = {
   'c-pattern-operator-chip': true,
 };
 
-const factory = generateShallowRenderer(CPatternGroupsField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CPatternGroupsField, { stubs,
-});
-
 const selectAddButton = wrapper => wrapper.find('v-btn-stub');
 const selectPatternGroupsField = wrapper => wrapper.findAll('c-pattern-group-field-stub');
 const selectPatternGroupFieldByIndex = (wrapper, index) => selectPatternGroupsField(wrapper)
@@ -26,6 +20,9 @@ describe('c-pattern-groups-field', () => {
     { rules: [], key: 'key 2' },
     { rules: [], key: 'key 3' },
   ];
+
+  const factory = generateShallowRenderer(CPatternGroupsField, { stubs });
+  const snapshotFactory = generateRenderer(CPatternGroupsField, { stubs });
 
   test('Group removed after trigger remove event on the pattern group field', () => {
     const wrapper = factory({

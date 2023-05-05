@@ -13,26 +13,6 @@ const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = generateShallowRenderer(KpiRatingCriteriaField, {
-
-  stubs,
-  store: createMockedStoreModules([{
-    name: 'ratingSettings',
-    getters: {
-      pending: false,
-      items: [],
-      updatedAt: null,
-    },
-    actions: {
-      fetchListWithoutStore: jest.fn(),
-    },
-  }]),
-});
-
-const snapshotFactory = generateRenderer(KpiRatingCriteriaField, {
-
-});
-
 describe('kpi-rating-criteria-field', () => {
   const ratingSettings = [
     { id: 1, label: 'Rating setting 1' },
@@ -41,6 +21,22 @@ describe('kpi-rating-criteria-field', () => {
     { id: 4, label: 'Rating setting 4' },
     { id: 5, label: 'Rating setting 5' },
   ];
+
+  const factory = generateShallowRenderer(KpiRatingCriteriaField, {
+    stubs,
+    store: createMockedStoreModules([{
+      name: 'ratingSettings',
+      getters: {
+        pending: false,
+        items: [],
+        updatedAt: null,
+      },
+      actions: {
+        fetchListWithoutStore: jest.fn(),
+      },
+    }]),
+  });
+  const snapshotFactory = generateRenderer(KpiRatingCriteriaField);
 
   it('Rating settings fetched after mount', async () => {
     const fetchRatingSettings = jest.fn(() => ({

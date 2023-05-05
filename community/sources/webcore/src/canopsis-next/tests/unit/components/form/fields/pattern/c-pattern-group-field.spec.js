@@ -7,15 +7,12 @@ const stubs = {
   'c-pattern-rules-field': true,
 };
 
-const factory = generateShallowRenderer(CPatternGroupField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CPatternGroupField, { stubs,
-});
-
 const selectPatternRulesField = wrapper => wrapper.find('c-pattern-rules-field-stub');
 
 describe('c-pattern-group-field', () => {
+  const factory = generateShallowRenderer(CPatternGroupField, { stubs });
+  const snapshotFactory = generateRenderer(CPatternGroupField, { stubs });
+
   test('Rules updated after trigger input event on pattern rules field', async () => {
     const wrapper = factory({
       propsData: {

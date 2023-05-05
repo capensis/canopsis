@@ -20,28 +20,6 @@ const snapshotStubs = {
   'point-form': true,
 };
 
-const factory = generateShallowRenderer(PointFormDialog, {
-
-  stubs,
-  attachTo: document.body,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-});
-
-const snapshotFactory = generateRenderer(PointFormDialog, {
-
-  stubs: snapshotStubs,
-  attachTo: document.body,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-});
-
 const selectPointForm = wrapper => wrapper.find('point-form-stub');
 const selectCloseButton = wrapper => wrapper.findAll('button').at(0);
 const selectCancelButton = wrapper => wrapper.findAll('button').at(1);
@@ -50,6 +28,25 @@ const selectSubmitButton = wrapper => wrapper.find('button[type="submit"]');
 
 describe('point-form-dialog', () => {
   const $modals = mockModals();
+
+  const factory = generateShallowRenderer(PointFormDialog, {
+    stubs,
+    attachTo: document.body,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(PointFormDialog, {
+    stubs: snapshotStubs,
+    attachTo: document.body,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   test('Point dialog submitted with changes', async () => {
     const point = {

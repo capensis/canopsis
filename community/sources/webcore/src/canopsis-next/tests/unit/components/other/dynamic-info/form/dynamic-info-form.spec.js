@@ -10,17 +10,14 @@ const stubs = {
   'dynamic-info-patterns-form': true,
 };
 
-const factory = generateShallowRenderer(DynamicInfoForm, { stubs,
-});
-
-const snapshotFactory = generateRenderer(DynamicInfoForm, { stubs,
-});
-
 const selectDynamicInfoGeneralForm = wrapper => wrapper.find('dynamic-info-general-form-stub');
 const selectDynamicInfoInfosForm = wrapper => wrapper.find('dynamic-info-infos-form-stub');
 const selectDynamicInfoPatternsForm = wrapper => wrapper.find('dynamic-info-patterns-form-stub');
 
 describe('dynamic-info-form', () => {
+  const factory = generateShallowRenderer(DynamicInfoForm, { stubs });
+  const snapshotFactory = generateRenderer(DynamicInfoForm, { stubs });
+
   test('Dynamic info general fields changed after trigger general form', () => {
     const wrapper = factory({
       propsData: {

@@ -14,18 +14,13 @@ const snapshotStubs = {
   'c-description-field': true,
 };
 
-const factory = generateShallowRenderer(ServicePauseEventForm, { stubs,
-});
-
-const snapshotFactory = generateRenderer(ServicePauseEventForm, {
-
-  stubs: snapshotStubs,
-});
-
 const selectPbehaviorReasonField = wrapper => wrapper.find('c-pbehavior-reason-field-stub');
 const selectDescriptionField = wrapper => wrapper.find('c-description-field-stub');
 
 describe('service-pause-event-form', () => {
+  const factory = generateShallowRenderer(ServicePauseEventForm, { stubs });
+  const snapshotFactory = generateRenderer(ServicePauseEventForm, { stubs: snapshotStubs });
+
   test('Reason changed after trigger reason field', () => {
     const form = {
       comment: Faker.datatype.string(),

@@ -12,18 +12,6 @@ const snapshotStubs = {
   'c-enabled-field': true,
 };
 
-const factory = generateShallowRenderer(FilterSelector, { stubs,
-});
-
-const snapshotFactory = generateRenderer(FilterSelector, {
-  stubs: snapshotStubs,
-  parentComponent: {
-    provide: {
-      listClick: jest.fn(),
-    },
-  },
-});
-
 const selectFilterSelectField = wrapper => wrapper.find('select.v-select');
 
 describe('filter-selector', () => {
@@ -52,6 +40,16 @@ describe('filter-selector', () => {
       filter: { _id: 2 },
     },
   ];
+
+  const factory = generateShallowRenderer(FilterSelector, { stubs });
+  const snapshotFactory = generateRenderer(FilterSelector, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      provide: {
+        listClick: jest.fn(),
+      },
+    },
+  });
 
   it('Filter changed after trigger the select field', () => {
     const wrapper = factory({

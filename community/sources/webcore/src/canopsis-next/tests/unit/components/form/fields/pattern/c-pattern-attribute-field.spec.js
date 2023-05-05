@@ -13,17 +13,12 @@ const snapshotStubs = {
   'c-select-field': true,
 };
 
-const factory = generateShallowRenderer(CPatternAttributeField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CPatternAttributeField, {
-
-  stubs: snapshotStubs,
-});
-
 const selectSelectField = wrapper => wrapper.find('.c-select-field');
 
 describe('c-pattern-attribute-field', () => {
+  const factory = generateShallowRenderer(CPatternAttributeField, { stubs });
+  const snapshotFactory = generateRenderer(CPatternAttributeField, { stubs: snapshotStubs });
+
   it('Value changed after trigger the input', () => {
     const value = {
       value: ALARM_PATTERN_FIELDS.ack,

@@ -15,17 +15,6 @@ const stubs = {
   'mermaid-points-editor': true,
 };
 
-const factory = generateShallowRenderer(MermaidEditor, { stubs,
-});
-
-const snapshotFactory = generateRenderer(MermaidEditor, { stubs,
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-});
-
 const selectMermaidCodeEditor = wrapper => wrapper.find('mermaid-code-editor-stub');
 const selectAddLocationBtn = wrapper => wrapper.find('add-location-btn-stub');
 const selectMermaidThemeField = wrapper => wrapper.find('mermaid-theme-field-stub');
@@ -37,6 +26,15 @@ describe('mermaid-editor', () => {
     theme: MERMAID_THEMES.base,
     points: [],
   };
+
+  const factory = generateShallowRenderer(MermaidEditor, { stubs });
+  const snapshotFactory = generateRenderer(MermaidEditor, { stubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
 
   test('Code changed after trigger code editor', () => {
     const wrapper = factory({

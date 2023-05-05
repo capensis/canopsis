@@ -27,12 +27,6 @@ const stubs = {
   'custom-component': true,
 };
 
-const factory = generateShallowRenderer(CPatternRuleField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CPatternRuleField, { stubs,
-});
-
 const selectPatternAttributeField = wrapper => wrapper.find('c-pattern-attribute-field-stub');
 const selectPatternOperatorField = wrapper => wrapper.find('c-pattern-operator-field-stub');
 const selectMixedInputField = wrapper => wrapper.find('c-mixed-input-field-stub');
@@ -59,6 +53,9 @@ describe('c-pattern-rule-field', () => {
       value: 1,
     },
   };
+
+  const factory = generateShallowRenderer(CPatternRuleField, { stubs });
+  const snapshotFactory = generateRenderer(CPatternRuleField, { stubs });
 
   test('Attribute changed after trigger input event on the attribute field', () => {
     const wrapper = factory({

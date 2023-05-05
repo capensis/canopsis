@@ -6,15 +6,12 @@ const stubs = {
   'c-patterns-field': true,
 };
 
-const factory = generateShallowRenderer(IdleRulePatternsForm, { stubs,
-});
-
-const snapshotFactory = generateRenderer(IdleRulePatternsForm, { stubs,
-});
-
 const selectPatternsField = wrapper => wrapper.find('c-patterns-field-stub');
 
 describe('idle-rule-patterns-form', () => {
+  const factory = generateShallowRenderer(IdleRulePatternsForm, { stubs });
+  const snapshotFactory = generateRenderer(IdleRulePatternsForm, { stubs });
+
   test('Patterns changed after trigger patterns field', () => {
     const wrapper = factory();
 

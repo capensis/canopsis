@@ -20,22 +20,6 @@ const stubs = {
   'pattern-advanced-editor-field': true,
 };
 
-const factory = generateShallowRenderer(CPatternsEditorField, { stubs,
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-});
-
-const snapshotFactory = generateRenderer(CPatternsEditorField, { stubs,
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-});
-
 const selectTabItems = wrapper => wrapper.findAll('a.v-tabs__item');
 const selectAdvancedTab = wrapper => selectTabItems(wrapper).at(1);
 const selectPatternField = wrapper => wrapper.find('c-pattern-field-stub');
@@ -43,6 +27,21 @@ const selectEditButton = wrapper => wrapper.find('v-btn-stub');
 const selectPatternAdvancedEditorField = wrapper => wrapper.find('pattern-advanced-editor-field-stub');
 
 describe('c-pattern-editor-field', () => {
+  const factory = generateShallowRenderer(CPatternsEditorField, { stubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(CPatternsEditorField, { stubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+
   test('Pattern id changed to custom after trigger input event on the pattern field', () => {
     const wrapper = factory({
       propsData: {

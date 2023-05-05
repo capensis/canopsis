@@ -16,20 +16,19 @@ const stubs = {
   },
 };
 
-const factory = generateShallowRenderer(Switcher, { stubs,
-});
-
-const snapshotFactory = generateRenderer(Switcher, { stubs,
-  parentComponent: {
-    provide: {
-      listClick: jest.fn(),
-    },
-  },
-});
-
 const selectSwitchField = wrapper => wrapper.find('input.v-switch');
 
 describe('switcher', () => {
+  const factory = generateShallowRenderer(Switcher, { stubs });
+  const snapshotFactory = generateRenderer(Switcher, {
+    stubs,
+    parentComponent: {
+      provide: {
+        listClick: jest.fn(),
+      },
+    },
+  });
+
   it('Value changed after trigger switch field', () => {
     const wrapper = factory({
       propsData: {
