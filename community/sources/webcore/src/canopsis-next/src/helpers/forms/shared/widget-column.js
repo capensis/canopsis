@@ -5,7 +5,7 @@ import {
   ENTITY_INFOS_FIELDS,
 } from '@/constants';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 
 /**
  * @typedef {'impact-state' | 'state'} ColorIndicator

@@ -51,6 +51,12 @@ type Config struct {
 		LogCredentials bool                       `bson:"log_credentials,omitempty" json:"log_credentials"`
 		DeleteAfter    *types.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
 	} `bson:"webhook" json:"webhook"`
+	Metrics struct {
+		DeleteAfter *types.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
+	} `bson:"metrics" json:"metrics"`
+	PerfDataMetrics struct {
+		DeleteAfter *types.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
+	} `bson:"perf_data_metrics" json:"perf_data_metrics"`
 }
 
 type History struct {

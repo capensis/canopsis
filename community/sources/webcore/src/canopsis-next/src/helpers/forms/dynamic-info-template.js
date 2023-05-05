@@ -1,5 +1,5 @@
-import uuid from '@/helpers/uuid';
-import uid from '@/helpers/uid';
+import { uuid } from '@/helpers/uuid';
+import { uid } from '@/helpers/uid';
 
 /**
  * @typedef {Object} KeyValue

@@ -1,29 +1,13 @@
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import MermaidPointsPreview from '@/components/other/map/partials/mermaid-points-preview.vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 import { mermaidPointToForm } from '@/helpers/forms/map';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'mermaid-point-marker': true,
   'point-popup-dialog': true,
 };
-
-const factory = (options = {}) => shallowMount(MermaidPointsPreview, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(MermaidPointsPreview, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectPointMarkers = wrapper => wrapper.findAll('mermaid-point-marker-stub');
 const selectPointMarkerByIndex = (wrapper, index) => selectPointMarkers(wrapper).at(index);
@@ -45,6 +29,9 @@ const triggerPointClick = async (wrapper, index, rect = { left: 0, top: 0, width
 };
 
 describe('mermaid-points-preview', () => {
+  const factory = generateShallowRenderer(MermaidPointsPreview, { stubs });
+  const snapshotFactory = generateRenderer(MermaidPointsPreview, { stubs });
+
   test('Show alarms emitted after trigger point popup dialog', async () => {
     const point = mermaidPointToForm({ x: 1, y: 2 });
 

@@ -8,7 +8,7 @@ import {
   PATTERNS_FIELDS,
 } from '@/constants';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 
 import { filterPatternsToForm, formFilterToPatterns } from './filter';
 import {

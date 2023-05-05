@@ -1,7 +1,6 @@
 import VueMq from 'vue-mq';
 import VueClipboard from 'vue-clipboard2';
 import VueAsyncComputed from 'vue-async-computed';
-import VueResizeText from 'vue-resize-text';
 import PortalVue from 'portal-vue';
 import Vuetify from 'vuetify';
 import VueFullScreen from 'vue-fullscreen';
@@ -59,7 +58,6 @@ import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
  */
 export const bootstrapApplicationPlugins = (Vue) => {
   Vue.use(VueAsyncComputed);
-  Vue.use(VueResizeText);
   Vue.use(PortalVue);
   Vue.use(Filters);
   Vue.use(Vuetify, {

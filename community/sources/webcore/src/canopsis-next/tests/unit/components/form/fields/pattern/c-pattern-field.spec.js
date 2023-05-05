@@ -1,6 +1,6 @@
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 import { createMockedStoreModules } from '@unit/utils/store';
@@ -8,8 +8,6 @@ import { MAX_LIMIT, PATTERN_CUSTOM_ITEM_VALUE, PATTERN_TYPES } from '@/constants
 
 import CPatternField from '@/components/forms/fields/pattern/c-pattern-field.vue';
 import CSelectField from '@/components/forms/fields/c-select-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-select-field': createSelectInputStub('c-select-field'),
@@ -19,18 +17,12 @@ const snapshotStubs = {
   'c-select-field': CSelectField,
 };
 
-const factory = (options = {}) => shallowMount(CPatternField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(CPatternField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(CPatternField, {
-  localVue,
-  stubs: snapshotStubs,
+const snapshotFactory = generateRenderer(CPatternField, {
 
-  ...options,
+  stubs: snapshotStubs,
 });
 
 const selectSelectField = wrapper => wrapper.find('.c-select-field');

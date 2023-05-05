@@ -9,10 +9,10 @@ import {
 } from '@/constants';
 
 import {
+  openedToForm,
   alarmListBaseParametersToForm,
   formToAlarmListBaseParameters,
 } from './alarm';
-import { openedToForm } from './common';
 
 /**
  * @typedef {Object} CounterWidgetLevels
