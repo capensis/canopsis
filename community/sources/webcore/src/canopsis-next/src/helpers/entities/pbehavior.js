@@ -2,7 +2,7 @@ import { COLORS } from '@/config';
 
 import { PBEHAVIOR_ORIGINS, PBEHAVIOR_TYPE_TYPES, WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE } from '@/constants';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 import { getNowTimestamp } from '@/helpers/date/date';
 

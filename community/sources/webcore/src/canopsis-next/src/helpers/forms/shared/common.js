@@ -1,6 +1,4 @@
-import { omit } from 'lodash';
-
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 
 /**
  * @typedef {Object} Infos
@@ -33,26 +31,6 @@ export function primitiveArrayToForm(array, valueKey = 'value') {
  */
 export function formToPrimitiveArray(array, valueKey = 'value') {
   return array.map(item => item[valueKey]);
-}
-
-/**
- * Convert array with objects to form object
- *
- * @param {Object[]} array
- * @returns {Object[]}
- */
-export function arrayToForm(array) {
-  return array.map(item => ({ ...item, key: uid() }));
-}
-
-/**
- * Convert form object to array objects
- *
- * @param {Object[]} array
- * @returns {Object[]}
- */
-export function formToArray(array) {
-  return array.map(item => omit(item, ['key']));
 }
 
 /**

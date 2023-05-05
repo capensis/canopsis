@@ -27,7 +27,7 @@
 <script>
 import { DATETIME_FORMATS } from '@/constants';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 import { convertDurationToString, durationToSeconds } from '@/helpers/date/duration';
 
 import { activeViewMixin } from '@/mixins/active-view';
