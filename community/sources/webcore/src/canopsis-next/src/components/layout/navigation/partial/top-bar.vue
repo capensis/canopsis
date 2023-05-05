@@ -33,7 +33,7 @@ import { USERS_PERMISSIONS } from '@/constants';
 import { authMixin } from '@/mixins/auth';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
-import HealthcheckChipsList from '@/components/other/healthcheck/healthcheck-chips-list.vue';
+import HealthcheckChipsList from '@/components/other/healthcheck/partials/healthcheck-chips-list.vue';
 
 import AppLogo from './app-logo.vue';
 import AppVersion from './app-version.vue';

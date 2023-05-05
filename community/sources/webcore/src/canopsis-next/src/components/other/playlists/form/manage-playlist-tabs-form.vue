@@ -59,7 +59,7 @@ import GroupViewPanel from '@/components/layout/navigation/partial/groups-side-b
 import GroupPanel from '@/components/layout/navigation/partial/groups-side-bar/group-panel.vue';
 import GroupsSideBarGroup from '@/components/layout/navigation/partial/groups-side-bar/groups-side-bar-group.vue';
 
-import TabPanelContent from './partials/tab-panel-content.vue';
+import TabPanelContent from '../partials/tab-panel-content.vue';
 
 export default {
   components: {
