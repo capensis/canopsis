@@ -10,3 +10,9 @@
 - id: test-user-metrics-axe-second-5
   username: test-user-metrics-axe-second-5
   role: admin
+- id: test-user-to-group-metrics-get-1
+  username: test-user-to-group-metrics-get-1-username
+  role: test-role-to-group-metrics-get-1
+- id: test-user-to-group-metrics-get-2
+  username: test-user-to-group-metrics-get-2-username
+  role: test-role-to-group-metrics-get-2
