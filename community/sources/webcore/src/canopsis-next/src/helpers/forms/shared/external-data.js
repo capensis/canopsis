@@ -2,7 +2,7 @@ import { pick } from 'lodash';
 
 import { EXTERNAL_DATA_CONDITION_TYPES, EXTERNAL_DATA_TYPES } from '@/constants';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 
 import { formToRequest, requestToForm } from './request';
 

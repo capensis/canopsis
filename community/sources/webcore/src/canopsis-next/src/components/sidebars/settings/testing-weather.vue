@@ -44,7 +44,7 @@
 <script>
 import { MODALS, SIDE_BARS } from '@/constants';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { entitiesTestSuitesMixin } from '@/mixins/entities/test-suite';

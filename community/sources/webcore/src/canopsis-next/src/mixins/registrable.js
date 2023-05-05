@@ -1,7 +1,7 @@
 import { createNamespacedHelpers } from 'vuex';
 import { normalize } from 'normalizr';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 
 const { mapActions } = createNamespacedHelpers('entities');
 
