@@ -512,11 +512,11 @@ Feature: run a job
                   "status": 2
                 },
                 {
-                  "fail_reason": "job is executing too long, cannot retrieve status after retries",
+                  "fail_reason": "job is executing too long, cannot retrieve status after 4s",
                   "status": 2
                 },
                 {
-                  "fail_reason": "job is executing too long, cannot retrieve status after retries",
+                  "fail_reason": "job is executing too long, cannot retrieve status after 4s",
                   "status": 2
                 },
                 {

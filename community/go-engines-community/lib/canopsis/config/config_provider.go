@@ -370,8 +370,8 @@ func NewRemediationConfigProvider(cfg RemediationConf, logger zerolog.Logger) *B
 			HttpTimeout:                    parseTimeDurationByStr(cfg.HttpTimeout, RemediationHttpTimeout, "http_timeout", sectionName, logger),
 			PauseManualInstructionInterval: parseTimeDurationByStr(cfg.PauseManualInstructionInterval, RemediationPauseManualInstructionInterval, "pause_manual_instruction_interval", sectionName, logger),
 			ExternalAPI:                    cfg.ExternalAPI,
-			JobWaitInterval:                parseTimeDurationByStr(cfg.JobWaitInterval, RemediationJobWaitInterval, "job_wait_interval", sectionName, logger),
-			JobRetryInterval:               parseTimeDurationByStr(cfg.JobRetryInterval, RemediationJobRetryInterval, "job_retry_interval", sectionName, logger),
+			JobWaitInterval:                parseTimeDurationByStrWithMin(cfg.JobWaitInterval, RemediationJobWaitInterval, time.Second, "job_wait_interval", sectionName, logger),
+			JobRetryInterval:               parseTimeDurationByStrWithMin(cfg.JobRetryInterval, RemediationJobRetryInterval, time.Second, "job_retry_interval", sectionName, logger),
 		},
 		logger: logger,
 	}
@@ -396,11 +396,11 @@ func (p *BaseRemediationConfigProvider) Update(cfg RemediationConf) {
 	if ok {
 		p.conf.PauseManualInstructionInterval = d
 	}
-	d, ok = parseUpdatedTimeDurationByStr(cfg.JobRetryInterval, p.conf.JobRetryInterval, "job_retry_interval", sectionName, p.logger)
+	d, ok = parseUpdatedTimeDurationByStrWithMin(cfg.JobRetryInterval, p.conf.JobRetryInterval, time.Second, "job_retry_interval", sectionName, p.logger)
 	if ok {
 		p.conf.JobRetryInterval = d
 	}
-	d, ok = parseUpdatedTimeDurationByStr(cfg.JobWaitInterval, p.conf.JobWaitInterval, "job_wait_interval", sectionName, p.logger)
+	d, ok = parseUpdatedTimeDurationByStrWithMin(cfg.JobWaitInterval, p.conf.JobWaitInterval, time.Second, "job_wait_interval", sectionName, p.logger)
 	if ok {
 		p.conf.JobWaitInterval = d
 	}
@@ -771,6 +771,47 @@ func parseTimeDurationByStrWithMax(
 	return d
 }
 
+func parseTimeDurationByStrWithMin(
+	v string,
+	defaultVal, minVal time.Duration,
+	name, sectionName string,
+	logger zerolog.Logger,
+) time.Duration {
+	if v == "" {
+		logger.Warn().
+			Str("default", defaultVal.String()).
+			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
+
+		return defaultVal
+	}
+
+	d, err := time.ParseDuration(v)
+	if err != nil {
+		logger.Err(err).
+			Str("default", defaultVal.String()).
+			Str("invalid", v).
+			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+
+		return defaultVal
+	}
+
+	if d < minVal {
+		logger.Err(err).
+			Str("default", defaultVal.String()).
+			Str("min", minVal.String()).
+			Str("invalid", v).
+			Msgf("%s of %s config section is greater than min value, default value is used instead", name, sectionName)
+
+		return defaultVal
+	}
+
+	logger.Info().
+		Str("value", d.String()).
+		Msgf("%s of %s config section is used", name, sectionName)
+
+	return d
+}
+
 func parseUpdatedTimeDurationByStrWithMax(
 	v string,
 	oldVal, maxVal time.Duration,
@@ -804,6 +845,55 @@ func parseUpdatedTimeDurationByStrWithMax(
 			Str("max", maxVal.String()).
 			Str("invalid", v).
 			Msgf("%s of %s config section is greater than max value, previous value is used instead", name, sectionName)
+
+		return 0, false
+	}
+
+	if d == oldVal {
+		return 0, false
+	}
+
+	logger.Info().
+		Str("previous", oldVal.String()).
+		Str("new", d.String()).
+		Msgf("%s of %s config section is loaded", name, sectionName)
+
+	return d, true
+}
+
+func parseUpdatedTimeDurationByStrWithMin(
+	v string,
+	oldVal, minVal time.Duration,
+	name, sectionName string,
+	logger zerolog.Logger,
+) (time.Duration, bool) {
+	if v == "" {
+		if oldVal > 0 {
+			logger.Warn().
+				Str("previous", oldVal.String()).
+				Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
+		}
+
+		return 0, false
+	}
+
+	d, err := time.ParseDuration(v)
+	if err != nil {
+		if oldVal > 0 {
+			logger.Err(err).
+				Str("previous", oldVal.String()).
+				Str("invalid", v).
+				Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		}
+		return 0, false
+	}
+
+	if d < minVal {
+		logger.Err(err).
+			Str("previous", oldVal.String()).
+			Str("min", minVal.String()).
+			Str("invalid", v).
+			Msgf("%s of %s config section is greater than min value, previous value is used instead", name, sectionName)
 
 		return 0, false
 	}

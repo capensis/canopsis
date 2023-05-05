@@ -343,7 +343,7 @@ DumpKeepInterval = "1h"
 
 http_timeout = "5s"
 # job_retry_interval defines the interval after which the execution will be resumed.
-job_retry_interval = "15s"
+job_retry_interval = "10s"
 # job_wait_interval defines the maximum wait time for the job to be completed after fails.
 # Basically in combination with job_retry_interval it means that the number of possible job execution retries
 # will be equal to ceil(job_wait_interval / job_retry_interval)
