@@ -1,6 +1,6 @@
 import { POPUP_TYPES } from '@/constants';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 import { POPUP_AUTO_CLOSE_DELAY } from '@/config';
 
 export const types = {
