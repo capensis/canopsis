@@ -24,13 +24,14 @@ import uid from '@/helpers/uid';
 import { convertDateToStartOfDayDateObject } from '@/helpers/date/date';
 
 import { formArrayMixin } from '@/mixins/form';
+import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
 
 import PbehaviorExceptionField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-exception-field.vue';
 
 export default {
   inject: ['$validator'],
   components: { PbehaviorExceptionField },
-  mixins: [formArrayMixin],
+  mixins: [formArrayMixin, entitiesFieldPbehaviorFieldTypeMixin],
   model: {
     prop: 'exdates',
     event: 'input',
@@ -52,6 +53,9 @@ export default {
       getter: () => !!this.exdates.length,
       vm: this,
     });
+  },
+  mounted() {
+    this.fetchFieldPbehaviorTypesList();
   },
   methods: {
     addExceptionDate() {
