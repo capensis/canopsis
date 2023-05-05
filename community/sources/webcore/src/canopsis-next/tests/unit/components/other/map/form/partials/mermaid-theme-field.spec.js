@@ -1,26 +1,18 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 import MermaidThemeField from '@/components/other/map/form/partials/mermaid-theme-field.vue';
 import { MERMAID_THEMES } from '@/constants';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = (options = {}) => shallowMount(MermaidThemeField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(MermaidThemeField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(MermaidThemeField, {
-  localVue,
+const snapshotFactory = generateRenderer(MermaidThemeField, {
 
-  ...options,
 });
 
 const selectSelectField = wrapper => wrapper.find('select.v-select');

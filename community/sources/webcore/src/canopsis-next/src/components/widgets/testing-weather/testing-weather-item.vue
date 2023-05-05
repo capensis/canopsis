@@ -25,7 +25,6 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import VRuntimeTemplate from 'v-runtime-template';
 
 import {
   MODALS,
@@ -43,7 +42,6 @@ const { mapActions } = createNamespacedHelpers('alarm');
 
 export default {
   components: {
-    VRuntimeTemplate,
     TestSuiteStatistics,
   },
   mixins: [authMixin],

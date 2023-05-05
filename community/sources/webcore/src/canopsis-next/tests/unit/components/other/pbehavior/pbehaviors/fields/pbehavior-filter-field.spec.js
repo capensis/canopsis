@@ -1,13 +1,11 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { MODALS } from '@/constants';
 
 import PbehaviorFilterField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-filter-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {};
 
@@ -17,12 +15,12 @@ describe('pbehavior-filter-field', () => {
   const $modals = mockModals();
 
   const factory = generateShallowRenderer(PbehaviorFilterField, {
-    localVue,
+
     stubs,
     mocks: { $modals },
   });
   const snapshotFactory = generateRenderer(PbehaviorFilterField, {
-    localVue,
+
     stubs,
     parentComponent: {
       $_veeValidate: {

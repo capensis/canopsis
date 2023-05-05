@@ -1,25 +1,15 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import MetaAlarmRulePatternsForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-patterns-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-patterns-field': true,
 };
 
-const factory = (options = {}) => shallowMount(MetaAlarmRulePatternsForm, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(MetaAlarmRulePatternsForm, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(MetaAlarmRulePatternsForm, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(MetaAlarmRulePatternsForm, { stubs,
 });
 
 const selectPatternsFieldNode = wrapper => wrapper.vm.$children[0];

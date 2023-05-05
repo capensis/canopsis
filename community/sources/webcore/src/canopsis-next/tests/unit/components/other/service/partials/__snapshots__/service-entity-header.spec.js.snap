@@ -56,7 +56,6 @@ exports[`service-entity-header Renders \`service-entity-header\` with custom pro
     >
       <div
         class="mr-1 entity-name"
-        style="font-size: 16px;"
       >
         entity_name_field
       </div>
@@ -193,7 +192,6 @@ exports[`service-entity-header Renders \`service-entity-header\` with default pr
     >
       <div
         class="mr-1 entity-name"
-        style="font-size: 16px;"
       >
         name
       </div>

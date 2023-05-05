@@ -1,25 +1,15 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import FilterTile from '@/components/other/filter/partials/filter-tile.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-action-btn': true,
 };
 
-const factory = (options = {}) => shallowMount(FilterTile, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(FilterTile, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(FilterTile, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(FilterTile, { stubs,
 });
 
 const selectEditButton = wrapper => wrapper.findAll('c-action-btn-stub').at(0);

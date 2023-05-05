@@ -1,19 +1,13 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import PointContextmenu from '@/components/other/map/form/partials/point-contextmenu.vue';
 
-const localVue = createVueInstance();
+const factory = generateShallowRenderer(PointContextmenu, {
 
-const factory = (options = {}) => shallowMount(PointContextmenu, {
-  localVue,
-
-  ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(PointContextmenu, {
-  localVue,
+const snapshotFactory = generateRenderer(PointContextmenu, {
 
-  ...options,
 });
 
 const selectListTiles = wrapper => wrapper.findAll('v-list-tile-stub');

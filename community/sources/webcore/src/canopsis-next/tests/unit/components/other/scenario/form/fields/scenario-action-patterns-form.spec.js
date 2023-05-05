@@ -1,25 +1,15 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import ScenarioActionPatternsForm from '@/components/other/scenario/form/fields/scenario-action-patterns-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-patterns-field': true,
 };
 
-const factory = (options = {}) => shallowMount(ScenarioActionPatternsForm, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(ScenarioActionPatternsForm, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(ScenarioActionPatternsForm, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(ScenarioActionPatternsForm, { stubs,
 });
 
 const selectPatternsField = wrapper => wrapper.find('c-patterns-field-stub');
