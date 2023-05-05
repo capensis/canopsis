@@ -124,7 +124,7 @@ export const prepareAlarmForExport = (alarm = {}, timezone) => {
     [ALARM_EXPORT_PDF_FIELDS.comments]: alarm.comments?.map(comment => ({
       ...comment,
 
-      t: convertDateToStringWithNewTimezone(v.last_comment.t, DATETIME_FORMATS.longWithTimezone, timezone),
+      t: convertDateToStringWithNewTimezone(comment.t, DATETIME_FORMATS.longWithTimezone, timezone),
     })),
 
   };
