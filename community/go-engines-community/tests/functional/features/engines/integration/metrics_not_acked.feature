@@ -35,7 +35,22 @@ Feature: Metrics should be added on alarm changes
       "state" : 1
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=not_acked_alarms&parameters[]=not_acked_in_hour_alarms&parameters[]=not_acked_in_four_hours_alarms&parameters[]=not_acked_in_day_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "not_acked_alarms"},
+        {"metric": "not_acked_in_hour_alarms"},
+        {"metric": "not_acked_in_four_hours_alarms"},
+        {"metric": "not_acked_in_day_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -101,7 +116,21 @@ Feature: Metrics should be added on alarm changes
     """
     Then the response code should be 201
     When I save response filterID={{ .lastResponse._id }}
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=not_acked_in_hour_alarms&parameters[]=not_acked_in_four_hours_alarms&parameters[]=not_acked_in_day_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "not_acked_in_hour_alarms"},
+        {"metric": "not_acked_in_four_hours_alarms"},
+        {"metric": "not_acked_in_day_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -158,7 +187,21 @@ Feature: Metrics should be added on alarm changes
     """
     Then the response code should be 201
     When I save response filterID={{ .lastResponse._id }}
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=not_acked_in_hour_alarms&parameters[]=not_acked_in_four_hours_alarms&parameters[]=not_acked_in_day_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "not_acked_in_hour_alarms"},
+        {"metric": "not_acked_in_four_hours_alarms"},
+        {"metric": "not_acked_in_day_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -215,7 +258,21 @@ Feature: Metrics should be added on alarm changes
     """
     Then the response code should be 201
     When I save response filterID={{ .lastResponse._id }}
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=not_acked_in_hour_alarms&parameters[]=not_acked_in_four_hours_alarms&parameters[]=not_acked_in_day_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "not_acked_in_hour_alarms"},
+        {"metric": "not_acked_in_four_hours_alarms"},
+        {"metric": "not_acked_in_day_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -272,7 +329,21 @@ Feature: Metrics should be added on alarm changes
     """
     Then the response code should be 201
     When I save response filterID={{ .lastResponse._id }}
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=not_acked_in_hour_alarms&parameters[]=not_acked_in_four_hours_alarms&parameters[]=not_acked_in_day_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "not_acked_in_hour_alarms"},
+        {"metric": "not_acked_in_four_hours_alarms"},
+        {"metric": "not_acked_in_day_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -329,7 +400,21 @@ Feature: Metrics should be added on alarm changes
     """
     Then the response code should be 201
     When I save response filterID={{ .lastResponse._id }}
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=not_acked_in_hour_alarms&parameters[]=not_acked_in_four_hours_alarms&parameters[]=not_acked_in_day_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "not_acked_in_hour_alarms"},
+        {"metric": "not_acked_in_four_hours_alarms"},
+        {"metric": "not_acked_in_day_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -386,7 +471,21 @@ Feature: Metrics should be added on alarm changes
     """
     Then the response code should be 201
     When I save response filterID={{ .lastResponse._id }}
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=not_acked_in_hour_alarms&parameters[]=not_acked_in_four_hours_alarms&parameters[]=not_acked_in_day_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "not_acked_in_hour_alarms"},
+        {"metric": "not_acked_in_four_hours_alarms"},
+        {"metric": "not_acked_in_day_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -433,7 +532,21 @@ Feature: Metrics should be added on alarm changes
       "author": "test-author"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=not_acked_in_hour_alarms&parameters[]=not_acked_in_four_hours_alarms&parameters[]=not_acked_in_day_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "not_acked_in_hour_alarms"},
+        {"metric": "not_acked_in_four_hours_alarms"},
+        {"metric": "not_acked_in_day_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -490,7 +603,21 @@ Feature: Metrics should be added on alarm changes
     """
     Then the response code should be 201
     When I save response filterID={{ .lastResponse._id }}
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=not_acked_in_hour_alarms&parameters[]=not_acked_in_four_hours_alarms&parameters[]=not_acked_in_day_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "not_acked_in_hour_alarms"},
+        {"metric": "not_acked_in_four_hours_alarms"},
+        {"metric": "not_acked_in_day_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -572,7 +699,21 @@ Feature: Metrics should be added on alarm changes
       "resource" : "test-resource-not-acked-metrics-axe-8"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=not_acked_in_hour_alarms&parameters[]=not_acked_in_four_hours_alarms&parameters[]=not_acked_in_day_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "not_acked_in_hour_alarms"},
+        {"metric": "not_acked_in_four_hours_alarms"},
+        {"metric": "not_acked_in_day_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -629,7 +770,21 @@ Feature: Metrics should be added on alarm changes
     """
     Then the response code should be 201
     When I save response filterID={{ .lastResponse._id }}
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=not_acked_in_hour_alarms&parameters[]=not_acked_in_four_hours_alarms&parameters[]=not_acked_in_day_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "not_acked_in_hour_alarms"},
+        {"metric": "not_acked_in_four_hours_alarms"},
+        {"metric": "not_acked_in_day_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -698,7 +853,21 @@ Feature: Metrics should be added on alarm changes
       "resource" : "test-resource-not-acked-metrics-axe-9"
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=not_acked_in_hour_alarms&parameters[]=not_acked_in_four_hours_alarms&parameters[]=not_acked_in_day_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "not_acked_in_hour_alarms"},
+        {"metric": "not_acked_in_four_hours_alarms"},
+        {"metric": "not_acked_in_day_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -755,7 +924,21 @@ Feature: Metrics should be added on alarm changes
     """
     Then the response code should be 201
     When I save response filterID={{ .lastResponse._id }}
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=not_acked_in_hour_alarms&parameters[]=not_acked_in_four_hours_alarms&parameters[]=not_acked_in_day_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "not_acked_in_hour_alarms"},
+        {"metric": "not_acked_in_four_hours_alarms"},
+        {"metric": "not_acked_in_day_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -825,7 +1008,20 @@ Feature: Metrics should be added on alarm changes
     }
     """
     When I wait the next periodical process
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filterID }}&parameters[]=not_acked_in_hour_alarms&parameters[]=not_acked_in_four_hours_alarms&parameters[]=not_acked_in_day_alarms&sampling=day&from={{ nowDateTz }}&to={{ nowDateTz }}
+    When I do POST /api/v4/cat/metrics/alarm:
+    """json
+    {
+      "parameters": [
+        {"metric": "not_acked_in_hour_alarms"},
+        {"metric": "not_acked_in_four_hours_alarms"},
+        {"metric": "not_acked_in_day_alarms"}
+      ],
+      "filter": "{{ .filterID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
     Then the response code should be 200
     Then the response body should contain:
     """json

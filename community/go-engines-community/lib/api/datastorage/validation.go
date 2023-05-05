@@ -25,8 +25,7 @@ func ValidateConfig(sl validator.StructLevel) {
 		sl.ReportError(r.Alarm.DeleteAfter, "Alarm.DeleteAfter", "DeleteAfter", "gtfield", "ArchiveAfter")
 	}
 
-	if r.Alarm.DeleteAfter != nil && r.Alarm.DeleteAfter.Enabled != nil && *r.Alarm.DeleteAfter.Enabled && r.Alarm.DeleteAfter.Value > 0 &&
-		(r.Alarm.ArchiveAfter == nil || r.Alarm.ArchiveAfter.Enabled == nil || !*r.Alarm.ArchiveAfter.Enabled || r.Alarm.ArchiveAfter.Value == 0) {
+	if types.IsDurationEnabledAndValid(r.Alarm.DeleteAfter) && !types.IsDurationEnabledAndValid(r.Alarm.ArchiveAfter) {
 		sl.ReportError(r.Alarm.ArchiveAfter, "Alarm.ArchiveAfter", "ArchiveAfter", "required_if", "DeleteAfter")
 	}
 }
@@ -36,10 +35,7 @@ func durationGt(left, right *types.DurationWithEnabled) bool {
 		return false
 	}
 
-	if left != nil && right != nil &&
-		left.Enabled != nil && *left.Enabled &&
-		right.Enabled != nil && *right.Enabled &&
-		left.Value > 0 && right.Value > 0 {
+	if types.IsDurationEnabledAndValid(left) && types.IsDurationEnabledAndValid(right) {
 		now := types.NewCpsTime()
 		leftAt := left.AddTo(now)
 		rightAt := right.AddTo(now)

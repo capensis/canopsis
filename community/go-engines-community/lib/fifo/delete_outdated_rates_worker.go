@@ -43,7 +43,7 @@ func (w *deleteOutdatedRatesWorker) Work(ctx context.Context) {
 	}
 
 	d := conf.Config.HealthCheck.DeleteAfter
-	if d != nil && *d.Enabled && d.Value > 0 {
+	if types.IsDurationEnabledAndValid(d) {
 		mongoClient, err := mongo.NewClientWithOptions(ctx, 0, 0, 0,
 			w.DataStorageConfigProvider.Get().MongoClientTimeout, w.Logger)
 		if err != nil {
