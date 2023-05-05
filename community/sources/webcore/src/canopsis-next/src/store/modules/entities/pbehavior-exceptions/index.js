@@ -3,6 +3,8 @@ import { ENTITIES_TYPES } from '@/constants';
 
 import request from '@/services/request';
 
+import { convertObjectToFormData } from '@/helpers/request';
+
 import { createEntityModule } from '@/store/plugins/entities';
 
 export default createEntityModule({
@@ -18,12 +20,7 @@ export default createEntityModule({
     },
 
     import(context, { data } = {}) {
-      const formData = Object.entries(data).reduce((acc, [key, value]) => {
-        acc.append(key, value);
-        return acc;
-      }, new FormData());
-
-      return request.post(API_ROUTES.pbehavior.exceptionImport, formData, {
+      return request.post(API_ROUTES.pbehavior.exceptionImport, convertObjectToFormData(data), {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
     },
