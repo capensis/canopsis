@@ -8,7 +8,7 @@ import { triggerDocumentMouseEvent, triggerDocumentKeyboardEvent } from '@unit/u
 import { CONNECTOR_SIDES, FLOWCHART_KEY_CODES, SHAPES } from '@/constants';
 import { shapeToForm } from '@/helpers/flowchart/shapes';
 import { readTextFromClipboard, writeTextToClipboard } from '@/helpers/clipboard';
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 import RectShape from '@/components/common/flowchart/shapes/rect-shape/rect-shape.vue';
 import RhombusShape from '@/components/common/flowchart/shapes/rhombus-shape/rhombus-shape.vue';
 import CircleShape from '@/components/common/flowchart/shapes/circle-shape/circle-shape.vue';
@@ -27,7 +27,9 @@ import FlowchartEditor from '@/components/common/flowchart/flowchart-editor.vue'
 jest.mock('@/helpers/uid', () => {
   const originalModule = jest.requireActual('@/helpers/uid');
 
-  return jest.fn(originalModule.default);
+  return {
+    uid: jest.fn(originalModule.uid),
+  };
 });
 jest.mock('@/helpers/clipboard', () => ({
   readTextFromClipboard: jest.fn(),

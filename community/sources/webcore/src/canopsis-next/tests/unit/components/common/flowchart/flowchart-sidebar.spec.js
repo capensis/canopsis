@@ -4,7 +4,7 @@ import flushPromises from 'flush-promises';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
 import { LINE_TYPES } from '@/constants';
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 import {
   arrowLineShapeToForm,
   bidirectionalArrowLineShapeToForm,
