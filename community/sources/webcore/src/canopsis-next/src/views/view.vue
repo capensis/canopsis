@@ -14,7 +14,7 @@
 import Observer from '@/services/observer';
 
 import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
-import ViewFabBtns from '@/components/other/view/buttons/view-fab-btns.vue';
+import ViewFabBtns from '@/components/other/view/partials/view-fab-btns.vue';
 
 import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';

@@ -126,8 +126,8 @@ import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widget
 import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
   from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
 
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
-import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
+import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
+import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 
 import AlarmsListTable from './partials/alarms-list-table.vue';
 import AlarmsExpandPanelTour from './expand-panel/alarms-expand-panel-tour.vue';
