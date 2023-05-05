@@ -1,6 +1,6 @@
 import Faker from 'faker';
 
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { createCheckboxInputStub, createInputStub } from '@unit/stubs/input';
 import { randomArrayItem } from '@unit/utils/array';
 import { TIME_UNITS } from '@/constants';
@@ -8,8 +8,6 @@ import { dataStorageSettingsToForm } from '@/helpers/forms/data-storage';
 
 import CInformationBlock from '@/components/common/block/c-information-block.vue';
 import StorageSettingsForm from '@/components/other/storage-setting/form/storage-settings-form';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-information-block': CInformationBlock,
@@ -122,11 +120,11 @@ describe('storage-settings-form', () => {
   });
 
   const factory = generateRenderer(StorageSettingsForm, {
-    localVue,
+
     stubs,
   });
   const snapshotFactory = generateRenderer(StorageSettingsForm, {
-    localVue,
+
     stubs: snapshotStubs,
   });
 

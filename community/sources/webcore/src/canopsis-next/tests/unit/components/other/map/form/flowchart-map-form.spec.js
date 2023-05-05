@@ -1,28 +1,18 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import FlowchartMapForm from '@/components/other/map/form/flowchart-map-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-name-field': true,
   'flowchart-editor': true,
 };
 
-const factory = (options = {}) => shallowMount(FlowchartMapForm, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(FlowchartMapForm, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(FlowchartMapForm, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(FlowchartMapForm, { stubs,
 });
 
 const selectNameField = wrapper => wrapper.find('c-name-field-stub');

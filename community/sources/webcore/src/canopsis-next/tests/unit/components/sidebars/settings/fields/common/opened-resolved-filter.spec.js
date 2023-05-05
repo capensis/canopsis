@@ -1,30 +1,25 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
-import OpenedResolvedFilter from '@/components/sidebars/settings/fields/alarm/opened-resolved-filter.vue';
 import { ALARMS_OPENED_VALUES } from '@/constants';
 
-const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(OpenedResolvedFilter, {
-  localVue,
-
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
-
-  ...options,
-});
+import OpenedResolvedFilter from '@/components/sidebars/settings/fields/alarm/opened-resolved-filter.vue';
 
 const selectRadioElementsByValue = (wrapper, value) => wrapper
   .find(`.v-input--radio-group__input input[value="${value ?? ''}"]`);
 
 describe('opened-resolved-filter', () => {
+  const snapshotFactory = generateRenderer(OpenedResolvedFilter, {
+    parentComponent: {
+      provide: {
+        list: {
+          register: jest.fn(),
+          unregister: jest.fn(),
+        },
+        listClick: jest.fn(),
+      },
+    },
+  });
+
   it.each(Object.entries(ALARMS_OPENED_VALUES))(
     'Value changed after to %s after trigger a radio field',
     (key, value) => {

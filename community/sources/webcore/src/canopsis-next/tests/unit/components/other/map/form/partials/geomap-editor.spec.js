@@ -3,15 +3,13 @@ import { LatLngBounds } from 'leaflet';
 import { omit } from 'lodash';
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { geomapPointToForm } from '@/helpers/forms/map';
 import { MODALS } from '@/constants';
 
 import GeomapEditor from '@/components/other/map/form/partials/geomap-editor.vue';
-
-const localVue = createVueInstance();
 
 const fitBounds = jest.fn();
 const fitWorld = jest.fn();
@@ -69,25 +67,15 @@ const stubs = {
 };
 const snapshotStubs = omit(stubs, ['v-tooltip']);
 
-const factory = (options = {}) => shallowMount(GeomapEditor, {
-  localVue,
-  stubs,
+const factory = generateShallowRenderer(GeomapEditor, { stubs });
 
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(GeomapEditor, {
-  localVue,
+const snapshotFactory = generateRenderer(GeomapEditor, {
   stubs: snapshotStubs,
-
   parentComponent: {
     $_veeValidate: {
       validator: 'new',
     },
-  },
-
-  ...options,
-});
+  } });
 
 const selectGeomap = wrapper => wrapper.find('div.geomap');
 const selectAddLocationBtn = wrapper => wrapper.find('v-btn-stub');
@@ -259,7 +247,7 @@ describe('geomap-editor', () => {
       points: [newPoint],
     });
 
-    await localVue.nextTick();
+    await flushPromises();
     await checkMenuIsClosed(wrapper);
   });
 
@@ -308,7 +296,7 @@ describe('geomap-editor', () => {
 
     expect(wrapper).toEmit('input', { points: [newPoint] });
 
-    await localVue.nextTick();
+    await flushPromises();
     await checkMenuIsClosed(wrapper);
   });
 
@@ -328,7 +316,7 @@ describe('geomap-editor', () => {
 
     expect(wrapper).toEmit('input', { points: [point, newPoint] });
 
-    await localVue.nextTick();
+    await flushPromises();
     await checkMenuIsClosed(wrapper);
   });
 
@@ -366,7 +354,7 @@ describe('geomap-editor', () => {
 
     expect(wrapper).toEmit('input', { points: [] });
 
-    await localVue.nextTick();
+    await flushPromises();
     await checkMenuIsClosed(wrapper);
   });
 
@@ -388,7 +376,7 @@ describe('geomap-editor', () => {
       points: [point, newPoint],
     });
 
-    await localVue.nextTick();
+    await flushPromises();
     await checkMenuIsClosed(wrapper);
   });
 

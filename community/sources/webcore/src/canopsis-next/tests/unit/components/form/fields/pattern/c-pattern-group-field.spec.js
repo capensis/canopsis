@@ -1,26 +1,16 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import CPatternGroupField from '@/components/forms/fields/pattern/c-pattern-group-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-pattern-operator-information': true,
   'c-pattern-rules-field': true,
 };
 
-const factory = (options = {}) => shallowMount(CPatternGroupField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(CPatternGroupField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(CPatternGroupField, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(CPatternGroupField, { stubs,
 });
 
 const selectPatternRulesField = wrapper => wrapper.find('c-pattern-rules-field-stub');

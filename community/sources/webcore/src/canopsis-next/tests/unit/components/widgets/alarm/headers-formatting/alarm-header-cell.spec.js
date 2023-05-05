@@ -1,22 +1,16 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import { ALARM_FIELDS } from '@/constants';
-import AlarmHeaderCell from '@/components/widgets/alarm/headers-formatting/alarm-header-cell.vue';
 
-const localVue = createVueInstance();
+import AlarmHeaderCell from '@/components/widgets/alarm/headers-formatting/alarm-header-cell.vue';
 
 const stubs = {
   'alarm-header-priority': true,
 };
 
-const snapshotFactory = (options = {}) => mount(AlarmHeaderCell, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 describe('alarm-header-cell', () => {
+  const snapshotFactory = generateRenderer(AlarmHeaderCell, { stubs });
+
   it('Renders `alarm-header-cell` with priority header', () => {
     const wrapper = snapshotFactory({
       propsData: {

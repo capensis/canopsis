@@ -1,6 +1,6 @@
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
@@ -15,8 +15,6 @@ import { getColumnLabel } from '@/helpers/widgets';
 
 import CTreeviewDataTable from '@/components/common/table/c-treeview-data-table.vue';
 import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-treeview-data-table': CTreeviewDataTable,
@@ -120,8 +118,8 @@ describe('service-dependencies', () => {
     serviceModule,
   ]);
 
-  const snapshotFactory = generateRenderer(ServiceDependencies, { localVue, stubs });
-  const factory = generateShallowRenderer(ServiceDependencies, { localVue, stubs });
+  const snapshotFactory = generateRenderer(ServiceDependencies, { stubs });
+  const factory = generateShallowRenderer(ServiceDependencies, { stubs });
 
   it('Dependencies fetched after mount', async () => {
     factory({

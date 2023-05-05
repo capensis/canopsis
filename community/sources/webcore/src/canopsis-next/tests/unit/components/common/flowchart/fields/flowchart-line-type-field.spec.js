@@ -1,10 +1,8 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { LINE_TYPES } from '@/constants';
 
 import FlowchartLineTypeField from '@/components/common/flowchart/fields/flowchart-line-type-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'points-line-path': true,
@@ -15,18 +13,12 @@ const snapshotStubs = {
   'points-line-path': true,
 };
 
-const factory = (options = {}) => shallowMount(FlowchartLineTypeField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(FlowchartLineTypeField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(FlowchartLineTypeField, {
-  localVue,
-  stubs: snapshotStubs,
+const snapshotFactory = generateRenderer(FlowchartLineTypeField, {
 
-  ...options,
+  stubs: snapshotStubs,
 });
 
 const selectSelectField = wrapper => wrapper.find('.v-select');

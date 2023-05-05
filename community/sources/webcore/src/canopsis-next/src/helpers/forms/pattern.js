@@ -17,7 +17,7 @@ import {
   TIME_UNITS,
 } from '@/constants';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 import {
   getFieldType,
   isDatePatternRuleField,

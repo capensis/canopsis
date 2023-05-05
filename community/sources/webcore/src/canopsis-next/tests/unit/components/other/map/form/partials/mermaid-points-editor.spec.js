@@ -1,13 +1,12 @@
 import Faker from 'faker';
+import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { mockModals } from '@unit/utils/mock-hooks';
 import MermaidPoints from '@/components/other/map/form/partials/mermaid-points-editor.vue';
 import { mermaidPointToForm } from '@/helpers/forms/map';
 import { MODALS } from '@/constants';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'mermaid-point-marker': true,
@@ -15,20 +14,16 @@ const stubs = {
   'point-form-dialog-menu': true,
 };
 
-const factory = (options = {}) => shallowMount(MermaidPoints, {
-  localVue,
+const factory = generateShallowRenderer(MermaidPoints, {
+
   stubs,
   attachTo: document.body,
-
-  ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(MermaidPoints, {
-  localVue,
+const snapshotFactory = generateRenderer(MermaidPoints, {
+
   stubs,
   attachTo: document.body,
-
-  ...options,
 });
 
 const selectRoot = wrapper => wrapper.find('div.mermaid-points');
@@ -68,7 +63,7 @@ const fillPointDialog = (
 };
 
 const checkMenuIsClosed = async (wrapper) => {
-  await localVue.nextTick();
+  await flushPromises();
 
   expect(wrapper.vm.editingPoint).toBeFalsy();
   expect(wrapper.vm.addingPoint).toBeFalsy();

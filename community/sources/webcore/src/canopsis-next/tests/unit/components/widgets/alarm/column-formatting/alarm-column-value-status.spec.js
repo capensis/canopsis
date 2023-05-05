@@ -1,12 +1,10 @@
 import { omit } from 'lodash';
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
 
 import AlarmColumnValueStatus from '@/components/widgets/alarm/columns-formatting/alarm-column-value-status.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-no-events-icon': true,
@@ -14,7 +12,7 @@ const stubs = {
 
 describe('alarm-column-value-status', () => {
   const snapshotFactory = generateRenderer(AlarmColumnValueStatus, {
-    localVue,
+
     stubs,
     attachTo: document.body,
   });

@@ -3993,10 +3993,6 @@ chardet@^0.7.0:
   resolved "https://registry.yarnpkg.com/chardet/-/chardet-0.7.0.tgz#90094849f0937f2eedc2425d0d28a9e5f0cbad9e"
   integrity sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==
 
-"charenc@>= 0.0.1":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/charenc/-/charenc-0.0.2.tgz#c0a1d2f3a7092e03774bfa83f14c0fc5790a8667"
-
 chart.js@^3.5.1:
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-3.5.1.tgz#73e24d23a4134a70ccdb5e79a917f156b6f3644a"
@@ -4677,10 +4673,6 @@ cross-spawn@^7.0.0:
     path-key "^3.1.0"
     shebang-command "^2.0.0"
     which "^2.0.1"
-
-"crypt@>= 0.0.1":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/crypt/-/crypt-0.0.2.tgz#88d7ff7ec0dfb86f713dc87bbb42d044d3e6c41b"
 
 crypto-browserify@^3.11.0:
   version "3.12.0"
@@ -14329,13 +14321,6 @@ sha.js@^2.4.0, sha.js@^2.4.8:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
 
-sha1@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/sha1/-/sha1-1.1.1.tgz#addaa7a93168f393f19eb2b15091618e2700f848"
-  dependencies:
-    charenc ">= 0.0.1"
-    crypt ">= 0.0.1"
-
 shallow-clone@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/shallow-clone/-/shallow-clone-3.0.1.tgz#8f2981ad92531f55035b01fb230769a40e02efa3"
@@ -15744,11 +15729,6 @@ uuid@^8.3.0:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
-v-runtime-template@^1.10.0:
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/v-runtime-template/-/v-runtime-template-1.10.0.tgz#8ea7066c37cf4be5c701a06ca247e1afda89c4be"
-  integrity sha512-WLlq9jUepSfUrMEenw3mn7FDXX6hhbl11JjC1OKhwLzifHzVrY5a696TUHDPyj9jke3GGnR7b+2T3od/RL5cww==
-
 v8-compile-cache@^2.0.3:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/v8-compile-cache/-/v8-compile-cache-2.3.0.tgz#2de19618c66dc247dcfb6f99338035d8245a2cee"
@@ -15830,12 +15810,6 @@ vue-color@^2.6.0:
     lodash.throttle "^4.0.0"
     material-colors "^1.0.0"
     tinycolor2 "^1.1.2"
-
-vue-content-loading@^1.4.0:
-  version "1.5.3"
-  resolved "https://registry.yarnpkg.com/vue-content-loading/-/vue-content-loading-1.5.3.tgz#dc9b530ea8210bd627a32fa82700f72ffa7b4f93"
-  dependencies:
-    vue "^2.5.13"
 
 vue-eslint-parser@^9.0.1:
   version "9.1.0"
@@ -15936,10 +15910,6 @@ vue-mq@^1.0.1:
   dependencies:
     json2mq "^0.2.0"
 
-vue-resize-text@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/vue-resize-text/-/vue-resize-text-0.1.0.tgz#ad78bc19b4f867dae8cfcd682d252cee1b986d20"
-
 vue-router@^3.0.1:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.0.2.tgz#dedc67afe6c4e2bc25682c8b1c2a8c0d7c7e56be"
@@ -15991,7 +15961,7 @@ vue2-leaflet@^2.7.1:
   resolved "https://registry.yarnpkg.com/vue2-leaflet/-/vue2-leaflet-2.7.1.tgz#2f95c287621bf778f10804c88223877f5c049257"
   integrity sha512-K7HOlzRhjt3Z7+IvTqEavIBRbmCwSZSCVUlz9u4Rc+3xGCLsHKz4TAL4diAmfHElCQdPPVdZdJk8wPUt2fu6WQ==
 
-vue@^2.3.3, vue@^2.5.13:
+vue@^2.3.3:
   version "2.5.21"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.21.tgz#3d33dcd03bb813912ce894a8303ab553699c4a85"
 
