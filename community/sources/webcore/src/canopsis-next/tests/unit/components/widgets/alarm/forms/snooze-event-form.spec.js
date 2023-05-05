@@ -1,29 +1,19 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { TIME_UNITS } from '@/constants';
 
 import SnoozeEventForm from '@/components/widgets/alarm/forms/snooze-event-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-duration-field': true,
   'c-description-field': true,
 };
 
-const factory = (options = {}) => shallowMount(SnoozeEventForm, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(SnoozeEventForm, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(SnoozeEventForm, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(SnoozeEventForm, { stubs,
 });
 
 const selectDurationField = wrapper => wrapper.find('c-duration-field-stub');

@@ -1,10 +1,10 @@
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import flushPromises from 'flush-promises';
+
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import GeomapPreview from '@/components/other/map/partials/geomap-preview.vue';
 import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 import { geomapPointToForm } from '@/helpers/forms/map';
-
-const localVue = createVueInstance();
 
 const fitBounds = jest.fn();
 
@@ -31,20 +31,6 @@ const stubs = {
   'c-help-icon': true,
   'c-zoom-overlay': true,
 };
-
-const factory = (options = {}) => shallowMount(GeomapPreview, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(GeomapPreview, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectPointMarkers = wrapper => wrapper.findAll('geomap-marker-stub');
 const selectPointMarkerByIndex = (wrapper, index) => selectPointMarkers(wrapper).at(index);
@@ -105,6 +91,9 @@ describe('geomap-preview', () => {
     },
   ];
 
+  const factory = generateShallowRenderer(GeomapPreview, { stubs });
+  const snapshotFactory = generateRenderer(GeomapPreview, { stubs });
+
   beforeEach(() => {
     fitBounds.mockClear();
   });
@@ -148,7 +137,7 @@ describe('geomap-preview', () => {
       },
     });
 
-    await localVue.nextTick();
+    await flushPromises();
 
     expect(fitBounds).toBeCalledWith({
       _northEast: point.coordinates,
@@ -174,7 +163,7 @@ describe('geomap-preview', () => {
       map: newMap,
     });
 
-    await localVue.nextTick();
+    await flushPromises();
 
     expect(fitBounds).toBeCalledWith({
       _northEast: secondPoint.coordinates,

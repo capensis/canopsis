@@ -1,9 +1,7 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import AlarmHeaderTag from '@/components/widgets/alarm/headers-formatting/alarm-header-tag.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-alarm-action-chip': {
@@ -11,18 +9,10 @@ const stubs = {
   },
 };
 
-const factory = (options = {}) => shallowMount(AlarmHeaderTag, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(AlarmHeaderTag, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(AlarmHeaderTag, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(AlarmHeaderTag, { stubs,
 });
 
 const selectChip = wrapper => wrapper.find('.c-alarm-action-chip');

@@ -1,10 +1,8 @@
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
 import { SERVICE_WEATHER_WIDGET_MODAL_TYPES } from '@/constants';
 
 import FieldModalType from '@/components/sidebars/settings/fields/service-weather/modal-type.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'widget-settings-item': true,
@@ -18,9 +16,9 @@ const snapshotStubs = {
 const selectRadioGroup = wrapper => wrapper.find('.v-radio-group');
 
 describe('field-modal-type', () => {
-  const factory = generateShallowRenderer(FieldModalType, { localVue, stubs });
+  const factory = generateShallowRenderer(FieldModalType, { stubs });
 
-  const snapshotFactory = generateRenderer(FieldModalType, { localVue, stubs: snapshotStubs });
+  const snapshotFactory = generateRenderer(FieldModalType, { stubs: snapshotStubs });
 
   test('Value changed after trigger radio group', () => {
     const wrapper = factory();

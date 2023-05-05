@@ -12,6 +12,7 @@ import {
 } from '@/constants';
 
 import AlarmsExpandPanel from '@/components/widgets/alarm/expand-panel/alarms-expand-panel.vue';
+import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 
 const stubs = {
   'more-infos': true,
@@ -22,6 +23,7 @@ const stubs = {
   'entity-gantt': true,
   'pbehaviors-simple-list': true,
   'alarms-expand-panel-charts': true,
+  'c-runtime-template': CRuntimeTemplate,
 };
 
 const selectTabs = wrapper => wrapper.vm.$children[0];

@@ -1,25 +1,18 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createButtonStub } from '@unit/stubs/button';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { MODALS } from '@/constants';
 
 import RemediationInstructionsFiltersItem from '@/components/other/remediation/instructions-filter/remediation-instructions-filters-item.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'v-chip': createButtonStub('v-chip'),
 };
 
-const factory = (options = {}) => shallowMount(RemediationInstructionsFiltersItem, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(RemediationInstructionsFiltersItem, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(RemediationInstructionsFiltersItem, {
-  localVue,
+const snapshotFactory = generateRenderer(RemediationInstructionsFiltersItem, {
 
   parentComponent: {
     provide: {
@@ -30,8 +23,6 @@ const snapshotFactory = (options = {}) => mount(RemediationInstructionsFiltersIt
       listClick: jest.fn(),
     },
   },
-
-  ...options,
 });
 
 const selectChip = wrapper => wrapper.find('button.v-chip');

@@ -1,14 +1,12 @@
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 
 import { USERS_PERMISSIONS } from '@/constants';
 
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import ServiceEntityTemplate from '@/components/other/service/partials/service-entity-template.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-runtime-template': CRuntimeTemplate,
@@ -20,7 +18,7 @@ describe('service-entity-template', () => {
   const store = createMockedStoreModules([authModule]);
 
   const snapshotFactory = generateRenderer(ServiceEntityTemplate, {
-    localVue,
+
     stubs,
   });
 

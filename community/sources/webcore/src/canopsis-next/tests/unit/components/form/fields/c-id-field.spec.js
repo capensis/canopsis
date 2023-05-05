@@ -1,11 +1,9 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
 
 import CIdField from '@/components/forms/fields/c-id-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-text-field': createInputStub('v-text-field'),
@@ -16,24 +14,16 @@ const snapshotStubs = {
   'c-help-icon': true,
 };
 
-const factory = (options = {}) => shallowMount(CIdField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(CIdField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(CIdField, {
-  localVue,
+const snapshotFactory = generateRenderer(CIdField, {
   stubs: snapshotStubs,
-
   parentComponent: {
     $_veeValidate: {
       validator: 'new',
     },
   },
-
-  ...options,
 });
 
 const selectTextField = wrapper => wrapper.find('input.v-text-field');

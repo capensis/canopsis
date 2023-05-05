@@ -1,12 +1,10 @@
 import Faker from 'faker';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { SORT_ORDERS } from '@/constants';
 
 import FieldSortColumn from '@/components/sidebars/settings/fields/service-weather/sort-column.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'widget-settings-item': true,
@@ -23,12 +21,12 @@ const selectOrderField = wrapper => wrapper.find('.v-select');
 
 describe('field-sort-column', () => {
   const factory = generateShallowRenderer(FieldSortColumn, {
-    localVue,
+
     stubs,
   });
 
   const snapshotFactory = generateRenderer(FieldSortColumn, {
-    localVue,
+
     stubs: snapshotStubs,
   });
 

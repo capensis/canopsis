@@ -1,12 +1,10 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
 import { PATTERN_FIELD_TYPES } from '@/constants';
 
 import CMixedInputField from '@/components/forms/fields/c-mixed-input-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-text-field': createInputStub('v-text-field'),
@@ -18,30 +16,21 @@ const snapshotStubs = {
   'c-array-text-field': true,
 };
 
-const factory = (options = {}) => shallowMount(CMixedInputField, {
-  localVue,
-  stubs,
-
+const factory = generateShallowRenderer(CMixedInputField, { stubs,
   parentComponent: {
     $_veeValidate: {
       validator: 'new',
     },
   },
-
-  ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(CMixedInputField, {
-  localVue,
+const snapshotFactory = generateRenderer(CMixedInputField, {
   stubs: snapshotStubs,
-
   parentComponent: {
     $_veeValidate: {
       validator: 'new',
     },
   },
-
-  ...options,
 });
 
 const selectTextField = wrapper => wrapper.find('input.v-text-field');
