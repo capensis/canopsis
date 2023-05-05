@@ -3,7 +3,7 @@ import Faker from 'faker';
 import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { MODALS } from '@/constants';
-import uuid from '@/helpers/uuid';
+import { uuid } from '@/helpers/uuid';
 
 import Filters from '@/components/sidebars/settings/fields/common/filters.vue';
 

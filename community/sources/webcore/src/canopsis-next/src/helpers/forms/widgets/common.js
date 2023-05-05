@@ -6,6 +6,9 @@ import {
   DEFAULT_WIDGET_GRID_PARAMETERS,
 } from '@/constants';
 
+import { uuid } from '@/helpers/uuid';
+import { prepareAlarmListWidget, prepareContextWidget } from '@/helpers/widgets';
+
 import featuresService from '@/services/features';
 
 import {
@@ -40,8 +43,6 @@ import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from '
 import { lineChartWidgetParametersToForm, formToLineChartWidgetParameters } from './line-chart';
 import { pieChartWidgetParametersToForm, formToPieChartWidgetParameters } from './pie-chart';
 import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './numbers';
-import uuid from '@/helpers/uuid';
-import { prepareAlarmListWidget, prepareContextWidget } from '@/helpers/widgets';
 
 /**
  * @typedef {
