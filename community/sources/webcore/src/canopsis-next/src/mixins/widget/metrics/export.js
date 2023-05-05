@@ -1,7 +1,8 @@
-import { API_HOST, API_ROUTES, KPI_RATING_METRICS_FILENAME_PREFIX } from '@/config';
+import { KPI_RATING_METRICS_FILENAME_PREFIX } from '@/config';
 
 import { saveFile } from '@/helpers/file/files';
 import { exportMixinCreator } from '@/mixins/widget/export';
+import { getExportMetricDownloadFileUrl } from '@/helpers/file-url';
 
 export const metricsExportMixinCreator = ({ createExport, fetchExport }) => ({
   mixins: [
@@ -33,7 +34,7 @@ export const metricsExportMixinCreator = ({ createExport, fetchExport }) => ({
           data: this.getQuery(),
         });
 
-        this.downloadFile(`${API_HOST}${API_ROUTES.metrics.exportMetric}/${fileData._id}/download`);
+        this.downloadFile(getExportMetricDownloadFileUrl(fileData._id));
       } catch (err) {
         this.$popups.error({ text: this.$t('kpi.popups.exportFailed') });
       } finally {
