@@ -14,7 +14,7 @@
 <script>
 import { WIDGET_TYPES } from '@/constants';
 
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/forms/widgets/common';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
