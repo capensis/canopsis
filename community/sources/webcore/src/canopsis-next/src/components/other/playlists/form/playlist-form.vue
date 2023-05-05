@@ -20,13 +20,13 @@
 import GroupViewPanel from '@/components/layout/navigation/partial/groups-side-bar/group-view-panel.vue';
 import GroupPanel from '@/components/layout/navigation/partial/groups-side-bar/group-panel.vue';
 import GroupsSideBarGroup from '@/components/layout/navigation/partial/groups-side-bar/groups-side-bar-group.vue';
-import DraggablePlaylistTabs from '@/components/other/playlists/form/partials/draggable-playlist-tabs.vue';
+import DraggablePlaylistTabs from '@/components/other/playlists/form/fields/draggable-playlist-tabs.vue';
 
 import { MODALS } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
-import TabPanelContent from './partials/tab-panel-content.vue';
+import TabPanelContent from '../partials/tab-panel-content.vue';
 
 export default {
   inject: ['$validator'],

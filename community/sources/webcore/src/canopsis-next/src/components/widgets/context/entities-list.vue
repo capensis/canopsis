@@ -71,8 +71,8 @@ import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
 import { permissionsWidgetsContextCategory } from '@/mixins/permissions/widgets/context/category';
 
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
-import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
+import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
+import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 
 import ContextFab from './actions/context-fab.vue';
 import EntitiesListTableWithPagination from './partials/entities-list-table-with-pagination.vue';

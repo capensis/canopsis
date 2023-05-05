@@ -19,7 +19,7 @@
 <script>
 import { pbehaviorExceptionToForm } from '@/helpers/forms/exceptions-pbehavior';
 
-import PbehaviorExceptionsField from '../form/pbehavior-exceptions-field.vue';
+import PbehaviorExceptionsField from '../form/fields/pbehavior-exceptions-field.vue';
 
 export default {
   components: { PbehaviorExceptionsField },

@@ -38,8 +38,8 @@
 <script>
 import { METRICS_QUICK_RANGES } from '@/constants';
 
-import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
+import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
+import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
 
 export default {
   components: { FilterSelector, FiltersListBtn },

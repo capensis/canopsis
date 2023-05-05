@@ -66,8 +66,8 @@ import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
-import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
+import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
+import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 
 import MapBreadcrumbs from './partials/map-breadcrumbs.vue';
 
