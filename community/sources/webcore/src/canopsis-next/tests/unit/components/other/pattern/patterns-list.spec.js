@@ -1,6 +1,6 @@
 import { range } from 'lodash';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import {
   selectRowRemoveButtonByIndex,
   selectRowEditButtonByIndex,
@@ -12,8 +12,6 @@ import { PATTERN_TYPES } from '@/constants';
 import PatternsList from '@/components/other/pattern/patterns-list.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
   'c-search-field': true,
@@ -23,13 +21,6 @@ const stubs = {
   'c-action-btn': true,
   'c-table-pagination': true,
 };
-
-const snapshotFactory = (options = {}) => mount(PatternsList, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 describe('patterns-list', () => {
   const totalItems = 11;
@@ -45,6 +36,8 @@ describe('patterns-list', () => {
     },
     updated: 1614861888 + index,
   }));
+
+  const snapshotFactory = generateRenderer(PatternsList, { stubs });
 
   it('Selected items removed after trigger mass remove button', async () => {
     const wrapper = snapshotFactory({

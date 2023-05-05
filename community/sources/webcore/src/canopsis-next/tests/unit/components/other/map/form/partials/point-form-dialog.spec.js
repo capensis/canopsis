@@ -1,7 +1,7 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
@@ -9,8 +9,6 @@ import { mockModals } from '@unit/utils/mock-hooks';
 import { MODALS } from '@/constants';
 
 import PointFormDialog from '@/components/other/map/form/partials/point-form-dialog.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'point-form': true,
@@ -22,8 +20,8 @@ const snapshotStubs = {
   'point-form': true,
 };
 
-const factory = (options = {}) => shallowMount(PointFormDialog, {
-  localVue,
+const factory = generateShallowRenderer(PointFormDialog, {
+
   stubs,
   attachTo: document.body,
   parentComponent: {
@@ -31,12 +29,10 @@ const factory = (options = {}) => shallowMount(PointFormDialog, {
       $system: {},
     },
   },
-
-  ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(PointFormDialog, {
-  localVue,
+const snapshotFactory = generateRenderer(PointFormDialog, {
+
   stubs: snapshotStubs,
   attachTo: document.body,
   parentComponent: {
@@ -44,8 +40,6 @@ const snapshotFactory = (options = {}) => mount(PointFormDialog, {
       $system: {},
     },
   },
-
-  ...options,
 });
 
 const selectPointForm = wrapper => wrapper.find('point-form-stub');

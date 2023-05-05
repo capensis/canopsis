@@ -1,11 +1,9 @@
 import Faker from 'faker';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createMockedStoreModules } from '@unit/utils/store';
 import AlarmsListModal from '@/components/sidebars/settings/forms/alarms-list-modal.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'widget-settings-group': true,
@@ -53,13 +51,13 @@ describe('alarms-list-modal', () => {
   ]);
 
   const factory = generateShallowRenderer(AlarmsListModal, {
-    localVue,
+
     store,
     stubs,
   });
 
   const snapshotFactory = generateRenderer(AlarmsListModal, {
-    localVue,
+
     store,
     stubs: snapshotStubs,
   });

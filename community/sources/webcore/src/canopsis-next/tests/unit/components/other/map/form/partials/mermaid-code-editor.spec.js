@@ -1,33 +1,22 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import MermaidCodeEditor from '@/components/other/map/form/partials/mermaid-code-editor.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'code-editor': true,
 };
 
-const factory = (options = {}) => shallowMount(MermaidCodeEditor, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(MermaidCodeEditor, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(MermaidCodeEditor, {
-  localVue,
-  stubs,
-
+const snapshotFactory = generateRenderer(MermaidCodeEditor, { stubs,
   parentComponent: {
     $_veeValidate: {
       validator: 'new',
     },
   },
-
-  ...options,
 });
 
 const selectCodeEditorNode = wrapper => wrapper.vm.$children[0];

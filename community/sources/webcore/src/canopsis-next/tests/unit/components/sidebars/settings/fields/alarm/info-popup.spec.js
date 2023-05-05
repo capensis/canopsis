@@ -1,29 +1,21 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { MODALS } from '@/constants';
 
 import InfoPopup from '@/components/sidebars/settings/fields/alarm/info-popup.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'v-btn': createButtonStub('v-btn'),
 };
 
-const factory = (options = {}) => shallowMount(InfoPopup, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(InfoPopup, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(InfoPopup, {
-  localVue,
+const snapshotFactory = generateRenderer(InfoPopup, {
 
-  ...options,
 });
 
 const selectCreateOrEditButton = wrapper => wrapper.find('button.v-btn');

@@ -1,19 +1,14 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import FieldMap from '@/components/sidebars/settings/fields/map/map.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-map-field': true,
 };
 
-const factory = (options = {}) => shallowMount(FieldMap, {
-  localVue,
-  stubs,
-
+const factory = generateShallowRenderer(FieldMap, { stubs,
   parentComponent: {
     provide: {
       list: {
@@ -23,14 +18,9 @@ const factory = (options = {}) => shallowMount(FieldMap, {
       listClick: jest.fn(),
     },
   },
-
-  ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(FieldMap, {
-  localVue,
-  stubs,
-
+const snapshotFactory = generateRenderer(FieldMap, { stubs,
   parentComponent: {
     provide: {
       list: {
@@ -40,8 +30,6 @@ const snapshotFactory = (options = {}) => mount(FieldMap, {
       listClick: jest.fn(),
     },
   },
-
-  ...options,
 });
 
 const selectMapField = wrapper => wrapper.find('c-map-field-stub');

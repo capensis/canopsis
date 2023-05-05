@@ -1,10 +1,8 @@
 import Faker from 'faker';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import FieldCountersSelector from '@/components/sidebars/settings/fields/common/counters-selector.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'widget-settings-item': true,
@@ -29,11 +27,11 @@ describe('field-counters-selector', () => {
     state_types: [],
   };
   const factory = generateShallowRenderer(FieldCountersSelector, {
-    localVue,
+
     stubs,
   });
   const snapshotFactory = generateRenderer(FieldCountersSelector, {
-    localVue,
+
     stubs,
   });
 

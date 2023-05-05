@@ -1,9 +1,7 @@
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 
 import FieldColorIndicator from '@/components/sidebars/settings/fields/common/color-indicator.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'widget-settings-item': true,
@@ -13,8 +11,8 @@ const stubs = {
 const selectNumberField = wrapper => wrapper.find('c-color-indicator-field-stub');
 
 describe('field-color-indicator', () => {
-  const factory = generateShallowRenderer(FieldColorIndicator, { localVue, stubs });
-  const snapshotFactory = generateRenderer(FieldColorIndicator, { localVue, stubs });
+  const factory = generateShallowRenderer(FieldColorIndicator, { stubs });
+  const snapshotFactory = generateRenderer(FieldColorIndicator, { stubs });
 
   test('Value changed after trigger color indicator field', () => {
     const wrapper = factory();

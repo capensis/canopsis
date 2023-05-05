@@ -1,10 +1,8 @@
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 import { CANOPSIS_EDITION, WIDGET_TYPES } from '@/constants';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-alert-overlay': true,
@@ -28,7 +26,7 @@ describe('widget-wrapper', () => {
   const tabId = 'tab-id';
 
   const snapshotFactory = generateRenderer(WidgetWrapper, {
-    localVue,
+
     stubs,
     parentComponent: {
       provide: {

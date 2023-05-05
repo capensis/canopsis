@@ -1,19 +1,13 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import AddLocationBtn from '@/components/other/map/form/partials/add-location-btn.vue';
 
-const localVue = createVueInstance();
+const factory = generateShallowRenderer(AddLocationBtn, {
 
-const factory = (options = {}) => shallowMount(AddLocationBtn, {
-  localVue,
-
-  ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(AddLocationBtn, {
-  localVue,
+const snapshotFactory = generateRenderer(AddLocationBtn, {
 
-  ...options,
 });
 
 const selectBtnToggleNode = wrapper => wrapper.vm.$children[0];

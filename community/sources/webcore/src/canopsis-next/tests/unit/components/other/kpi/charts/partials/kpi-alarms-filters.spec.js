@@ -1,15 +1,13 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS } from '@/constants';
 
 import KpiAlarmsFilters from '@/components/other/kpi/charts/partials/kpi-alarms-filters';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-quick-date-interval-field': true,
@@ -18,18 +16,10 @@ const stubs = {
   'c-alarm-metric-parameters-field': true,
 };
 
-const factory = (options = {}) => shallowMount(KpiAlarmsFilters, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(KpiAlarmsFilters, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(KpiAlarmsFilters, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(KpiAlarmsFilters, { stubs,
 });
 
 describe('kpi-alarms-filters', () => {

@@ -2,7 +2,7 @@ import { omit } from 'lodash';
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockSidebar } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
@@ -20,8 +20,6 @@ import ClickOutside from '@/services/click-outside';
 import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/forms/widgets/common';
 
 import TextSettings from '@/components/sidebars/settings/text.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'widget-settings': true,
@@ -44,30 +42,21 @@ const snapshotStubs = {
   'field-date-interval': true,
 };
 
-const factory = (options = {}) => shallowMount(TextSettings, {
-  localVue,
-  stubs,
-
+const factory = generateShallowRenderer(TextSettings, { stubs,
   parentComponent: {
     provide: {
       $clickOutside: new ClickOutside(),
     },
   },
-
-  ...options,
 });
 
-const snapshotFactory = (options = {}) => mount(TextSettings, {
-  localVue,
+const snapshotFactory = generateRenderer(TextSettings, {
   stubs: snapshotStubs,
-
   parentComponent: {
     provide: {
       $clickOutside: new ClickOutside(),
     },
   },
-
-  ...options,
 });
 
 const generateDefaultTextWidget = () => ({

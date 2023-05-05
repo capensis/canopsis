@@ -2,7 +2,7 @@ import { get, cloneDeep, isEqual, isFunction } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 
 /**
  * Confirm modal click outside mixin creator
