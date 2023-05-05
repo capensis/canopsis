@@ -46,7 +46,7 @@ import { Calendar, Op } from 'dayspan';
 
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 import { getMostReadableTextColor } from '@/helpers/color';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/calendar/dayspan';
 import { pbehaviorToTimespanRequest } from '@/helpers/forms/timespans-pbehavior';

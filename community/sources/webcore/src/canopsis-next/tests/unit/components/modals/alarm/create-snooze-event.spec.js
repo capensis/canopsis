@@ -1,7 +1,7 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
@@ -17,8 +17,6 @@ import {
 
 import CreateSnoozeEvent from '@/components/modals/alarm/create-snooze-event.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'snooze-event-form': true,
@@ -30,43 +28,6 @@ const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'snooze-event-form': true,
 };
-
-const factory = (options = {}) => shallowMount(CreateSnoozeEvent, {
-  localVue,
-  stubs,
-  attachTo: document.body,
-  propsData: {
-    modal: {
-      config: {},
-    },
-  },
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CreateSnoozeEvent, {
-  localVue,
-  stubs: snapshotStubs,
-  propsData: {
-    modal: {
-      config: {},
-    },
-  },
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
 
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
 const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
@@ -130,6 +91,34 @@ describe('create-snooze-event', () => {
     },
   };
   const store = createMockedStoreModules([eventModule]);
+
+  const factory = generateShallowRenderer(CreateSnoozeEvent, {
+    stubs,
+    attachTo: document.body,
+    propsData: {
+      modal: {
+        config: {},
+      },
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(CreateSnoozeEvent, {
+    stubs: snapshotStubs,
+    propsData: {
+      modal: {
+        config: {},
+      },
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
 
   afterEach(() => {
     createEvent.mockClear();

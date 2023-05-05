@@ -6,7 +6,7 @@ import {
   DATETIME_FORMATS,
 } from '@/constants';
 
-import uid from './uid';
+import { uid } from './uid';
 import { convertDateToString } from './date/date';
 
 /**

@@ -1,27 +1,17 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import CDateTimeIntervalField from '@/components/forms/fields/date-time-picker/c-date-time-interval-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'date-time-picker-field': true,
 };
 
-const factory = (options = {}) => shallowMount(CDateTimeIntervalField, {
-  localVue,
-  stubs,
-
-  ...options,
+const factory = generateShallowRenderer(CDateTimeIntervalField, { stubs,
 });
 
-const snapshotFactory = (options = {}) => mount(CDateTimeIntervalField, {
-  localVue,
-  stubs,
-
-  ...options,
+const snapshotFactory = generateRenderer(CDateTimeIntervalField, { stubs,
 });
 
 const selectDateTimePickerField = wrapper => wrapper.findAll('date-time-picker-field-stub');

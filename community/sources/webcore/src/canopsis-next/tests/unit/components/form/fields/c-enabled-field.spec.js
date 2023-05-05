@@ -1,8 +1,6 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import CEnabledField from '@/components/forms/fields/c-enabled-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-switch': {
@@ -13,13 +11,10 @@ const stubs = {
   },
 };
 
-const factory = (options = {}) => shallowMount(CEnabledField, {
-  localVue,
-  stubs,
-  ...options,
-});
-
 describe('c-enabled-field', () => {
+  const factory = generateShallowRenderer(CEnabledField, { stubs });
+  const snapshotFactory = generateRenderer(CEnabledField);
+
   it('Value set in the input', () => {
     const wrapper = factory({ propsData: { value: false } });
     const input = wrapper.find('input.v-switch');
@@ -40,16 +35,13 @@ describe('c-enabled-field', () => {
   });
 
   it('Renders `c-enabled-field` with default props correctly', () => {
-    const wrapper = mount(CEnabledField, {
-      localVue,
-    });
+    const wrapper = snapshotFactory();
 
     expect(wrapper.element).toMatchSnapshot();
   });
 
   it('Renders `c-enabled-field` with custom props correctly', () => {
-    const wrapper = mount(CEnabledField, {
-      localVue,
+    const wrapper = snapshotFactory({
       propsData: {
         value: false,
         label: 'Custom label',

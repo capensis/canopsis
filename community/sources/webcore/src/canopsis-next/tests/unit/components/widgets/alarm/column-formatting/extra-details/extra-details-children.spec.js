@@ -1,9 +1,7 @@
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import flushPromises from 'flush-promises';
 import ExtraDetailsChildren from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-children.vue';
-
-const localVue = createVueInstance();
 
 describe('extra-details-children', () => {
   const total = 3;
@@ -12,7 +10,7 @@ describe('extra-details-children', () => {
   };
 
   const snapshotFactory = generateRenderer(ExtraDetailsChildren, {
-    localVue,
+
     attachTo: document.body,
   });
 

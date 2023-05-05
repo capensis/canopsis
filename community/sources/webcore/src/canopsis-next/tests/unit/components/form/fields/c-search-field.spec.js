@@ -1,10 +1,8 @@
 import Faker from 'faker';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import CSearchField from '@/components/forms/fields/c-search-field.vue';
-
-const localVue = createVueInstance();
 
 const mockData = {
   search: Faker.lorem.words(),
@@ -31,14 +29,8 @@ const snapshotStubs = {
 };
 
 describe('c-search-field', () => {
-  const factory = generateShallowRenderer(CSearchField, {
-    localVue,
-    stubs,
-  });
-  const snapshotFactory = generateRenderer(CSearchField, {
-    localVue,
-    stubs: snapshotStubs,
-  });
+  const factory = generateShallowRenderer(CSearchField, { stubs });
+  const snapshotFactory = generateRenderer(CSearchField, { stubs: snapshotStubs });
 
   it('Not empty value was pass into props and it was applied to input field', () => {
     const { search } = mockData;

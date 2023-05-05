@@ -1,11 +1,9 @@
 import Faker from 'faker';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createNumberInputStub } from '@unit/stubs/input';
 
 import FieldSlider from '@/components/sidebars/settings/fields/common/slider.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'widget-settings-item': true,
@@ -19,8 +17,8 @@ const snapshotStubs = {
 const selectSliderField = wrapper => wrapper.find('.v-slider');
 
 describe('field-slider', () => {
-  const factory = generateShallowRenderer(FieldSlider, { localVue, stubs });
-  const snapshotFactory = generateRenderer(FieldSlider, { localVue, stubs: snapshotStubs });
+  const factory = generateShallowRenderer(FieldSlider, { stubs });
+  const snapshotFactory = generateRenderer(FieldSlider, { stubs: snapshotStubs });
 
   test('Value changed after trigger number field', () => {
     const value = Faker.datatype.number();

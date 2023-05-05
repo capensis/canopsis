@@ -1,9 +1,7 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import KpiFiltersList from '@/components/other/kpi/filters/kpi-filters-list.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
@@ -13,13 +11,6 @@ const stubs = {
   'c-table-pagination': true,
   'kpi-filters-expand-item': true,
 };
-
-const snapshotFactory = (options = {}) => mount(KpiFiltersList, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectExpandButtonByRow = (wrapper, index) => wrapper
   .findAll('tbody > tr')
@@ -95,6 +86,8 @@ describe('kpi-filters-list', () => {
       updated: 1615440560,
     },
   ];
+
+  const snapshotFactory = generateRenderer(KpiFiltersList, { stubs });
 
   it('Renders `kpi-filters-list` with default props', () => {
     const wrapper = snapshotFactory({
