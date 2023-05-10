@@ -75,6 +75,10 @@
       {
         "selector": "ImportDeclaration[source.value=/\\u002Fpartial\\u002F/]",
         "message": "`partial` folder deprecated. Please, rename to `partials`."
+      },
+      {
+        "selector": "ImportDeclaration[source.value=/\\u002Ffield\\u002F/]",
+        "message": "`field` folder deprecated. Please, rename to `field`."
       }
     ]
   }
