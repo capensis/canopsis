@@ -24,9 +24,6 @@ describe('pattern-groups-field', () => {
     { rules: [], key: 'key 3' },
   ];
 
-  const factory = generateShallowRenderer(CPatternGroupsField, { stubs });
-  const snapshotFactory = generateRenderer(CPatternGroupsField, { stubs });
-
   test('Group removed after trigger remove event on the pattern group field', () => {
     const wrapper = factory({
       propsData: {
