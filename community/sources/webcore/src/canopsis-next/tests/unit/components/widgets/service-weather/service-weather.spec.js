@@ -10,7 +10,7 @@ import {
   createUserPreferenceModule,
 } from '@unit/utils/store';
 import { USERS_PERMISSIONS, WIDGET_TYPES } from '@/constants';
-import { generateDefaultServiceWeatherWidget } from '@/helpers/entities';
+import { generateDefaultServiceWeatherWidget } from '@/helpers/forms/widgets/common';
 import { DEFAULT_WEATHER_LIMIT } from '@/config';
 
 import ServiceWeatherWidget from '@/components/widgets/service-weather/service-weather.vue';

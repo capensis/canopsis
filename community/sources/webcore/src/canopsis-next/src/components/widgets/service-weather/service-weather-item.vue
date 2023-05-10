@@ -44,7 +44,7 @@ import {
 } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/forms/widgets/common';
 import { getEntityColor } from '@/helpers/color';
 
 import { authMixin } from '@/mixins/auth';
