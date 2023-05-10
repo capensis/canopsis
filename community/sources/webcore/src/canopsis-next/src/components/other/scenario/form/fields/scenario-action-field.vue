@@ -48,7 +48,7 @@ import { formMixin } from '@/mixins/form';
 import { confirmableFormMixinCreator } from '@/mixins/confirmable-form';
 
 import ActionParametersForm from '@/components/other/action/form/action-parameters-form.vue';
-import ActionAuthorField from '@/components/other/action/form/partials/action-author-field.vue';
+import ActionAuthorField from '@/components/other/action/form/fields/action-author-field.vue';
 
 import ScenarioActionPatternsForm from '../scenario-action-patterns-form.vue';
 
