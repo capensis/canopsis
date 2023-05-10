@@ -13,7 +13,7 @@
 <script>
 import { METRICS_QUICK_RANGES } from '@/constants';
 
-import KpiSliShowModeField from './kpi-sli-show-mode-field.vue';
+import KpiSliShowModeField from '../form/fields/kpi-sli-show-mode-field.vue';
 
 export default {
   components: { KpiSliShowModeField },

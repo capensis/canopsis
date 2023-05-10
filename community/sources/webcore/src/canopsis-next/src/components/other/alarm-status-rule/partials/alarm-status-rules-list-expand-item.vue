@@ -25,7 +25,7 @@ import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm } from '@/helpers/forms/filter';
 
-import AlarmStatusRulePatternsForm from '../form/partials/alarm-status-rule-patterns-form.vue';
+import AlarmStatusRulePatternsForm from '../form/alarm-status-rule-patterns-form.vue';
 
 export default {
   components: {

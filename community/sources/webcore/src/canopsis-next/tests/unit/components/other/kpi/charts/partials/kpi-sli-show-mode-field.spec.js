@@ -3,7 +3,7 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { KPI_SLI_GRAPH_DATA_TYPE } from '@/constants';
 
-import KpiSliShowModeField from '@/components/other/kpi/charts/partials/kpi-sli-show-mode-field';
+import KpiSliShowModeField from '@/components/other/kpi/charts/form/fields/kpi-sli-show-mode-field.vue';
 
 const stubs = {
   'v-select': createSelectInputStub('v-select'),

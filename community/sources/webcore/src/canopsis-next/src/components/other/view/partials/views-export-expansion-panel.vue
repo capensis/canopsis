@@ -35,8 +35,8 @@ import { difference } from 'lodash';
 
 import { formMixin } from '@/mixins/form';
 
-import GroupPanel from '@/components/layout/navigation/partial/groups-side-bar/group-panel.vue';
-import GroupViewPanel from '@/components/layout/navigation/partial/groups-side-bar/group-view-panel.vue';
+import GroupPanel from '@/components/layout/navigation/partials/groups-side-bar/group-panel.vue';
+import GroupViewPanel from '@/components/layout/navigation/partials/groups-side-bar/group-view-panel.vue';
 
 export default {
   components: { GroupPanel, GroupViewPanel },

@@ -17,9 +17,9 @@
 </template>
 
 <script>
-import GroupViewPanel from '@/components/layout/navigation/partial/groups-side-bar/group-view-panel.vue';
-import GroupPanel from '@/components/layout/navigation/partial/groups-side-bar/group-panel.vue';
-import GroupsSideBarGroup from '@/components/layout/navigation/partial/groups-side-bar/groups-side-bar-group.vue';
+import GroupViewPanel from '@/components/layout/navigation/partials/groups-side-bar/group-view-panel.vue';
+import GroupPanel from '@/components/layout/navigation/partials/groups-side-bar/group-panel.vue';
+import GroupsSideBarGroup from '@/components/layout/navigation/partials/groups-side-bar/groups-side-bar-group.vue';
 import DraggablePlaylistTabs from '@/components/other/playlists/form/fields/draggable-playlist-tabs.vue';
 
 import { MODALS } from '@/constants';
