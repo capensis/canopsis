@@ -604,14 +604,8 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 }
 
 func (s *store) GetLinks(ctx context.Context, ruleId string, alarmIds []string, userId string) ([]link.Link, bool, error) {
-	user := link.User{}
-	err := s.dbUserCollection.FindOne(ctx, bson.M{"_id": userId}, options.FindOne().SetProjection(bson.M{
-		"username": "$crecord_name",
-	})).Decode(&user)
+	user, err := s.findUser(ctx, userId)
 	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, false, errors.New("user not found")
-		}
 		return nil, false, err
 	}
 
@@ -1228,14 +1222,8 @@ func (s *store) fillLinks(ctx context.Context, result *AggregationResult, userId
 		return nil
 	}
 
-	user := link.User{}
-	err := s.dbUserCollection.FindOne(ctx, bson.M{"_id": userId}, options.FindOne().SetProjection(bson.M{
-		"username": "$crecord_name",
-	})).Decode(&user)
+	user, err := s.findUser(ctx, userId)
 	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return errors.New("user not found")
-		}
 		return err
 	}
 
@@ -1338,6 +1326,25 @@ func (s *store) GetAssignedDeclareTicketsMap(ctx context.Context, alarmIds []str
 	}
 
 	return assignedRulesMap, err
+}
+
+func (s *store) findUser(ctx context.Context, id string) (link.User, error) {
+	user := link.User{}
+	cursor, err := s.dbUserCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"_id": id}},
+		{"$addFields": bson.M{"username": "$crecord_name"}},
+	})
+	if err != nil {
+		return user, err
+	}
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		err = cursor.Decode(&user)
+		return user, err
+	}
+
+	return user, errors.New("user not found")
 }
 
 func (s *store) processPipeline(
