@@ -15,10 +15,19 @@ import { prepareAlarmListWidget, prepareContextWidget } from './widgets';
 
 /**
  * Checks if alarm is resolved
+ *
  * @param alarm - alarm entity
  * @returns {boolean}
  */
-export const isResolvedAlarm = alarm => [ENTITIES_STATUSES.closed, ENTITIES_STATUSES.cancelled]
+export const isResolvedAlarm = alarm => !!alarm.v.resolved;
+
+/**
+ * Checks if alarm is closed
+ *
+ * @param alarm - alarm entity
+ * @returns {boolean}
+ */
+export const isClosedAlarm = alarm => [ENTITIES_STATUSES.closed, ENTITIES_STATUSES.cancelled]
   .includes(alarm.v.status.val);
 
 /**
