@@ -6,7 +6,8 @@ import (
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/v2"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
+	linkv2 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link/v2"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -54,9 +55,9 @@ func benchmarkGeneratorGenerateForAlarms(
 	})
 
 	cfg := config.CanopsisConf{}
-	generator := link.NewGenerator(dbClient, template.NewExecutor(config.NewTemplateConfigProvider(cfg),
+	generator := linkv2.NewGenerator(dbClient, template.NewExecutor(config.NewTemplateConfigProvider(cfg),
 		config.NewTimezoneConfigProvider(cfg, zerolog.Nop())), zerolog.Nop())
-
+	user := link.User{}
 	ids := make([]string, 100)
 	for i := 0; i < len(ids); i++ {
 		ids[i] = "test-alarm-" + strconv.Itoa(i+1)
@@ -70,7 +71,7 @@ func benchmarkGeneratorGenerateForAlarms(
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_, err := generator.GenerateForAlarms(ctx, ids)
+		_, err := generator.GenerateForAlarms(ctx, ids, user)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}
