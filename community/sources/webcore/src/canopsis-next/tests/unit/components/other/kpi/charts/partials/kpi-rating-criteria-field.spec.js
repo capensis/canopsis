@@ -7,7 +7,7 @@ import { createSelectInputStub } from '@unit/stubs/input';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { KPI_RATING_CRITERIA, MAX_LIMIT } from '@/constants';
 
-import KpiRatingCriteriaField from '@/components/other/kpi/charts/partials/kpi-rating-criteria-field';
+import KpiRatingCriteriaField from '@/components/other/kpi/charts/form/fields/kpi-rating-criteria-field.vue';
 
 const stubs = {
   'v-select': createSelectInputStub('v-select'),

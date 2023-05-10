@@ -9,7 +9,7 @@ import {
 } from '@/helpers/forms/declare-ticket-rule';
 import { eventToAssociateTicketForm, formToAssociateTicketEvent } from '@/helpers/forms/associate-ticket-event';
 
-import uid from '../uid';
+import { uid } from '../uid';
 import { durationToForm } from '../date/duration';
 import { getLocaleTimezone } from '../date/date';
 
