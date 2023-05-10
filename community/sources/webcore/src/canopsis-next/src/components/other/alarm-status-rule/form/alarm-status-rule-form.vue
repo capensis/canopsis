@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import AlarmStatusRulePatternsForm from './partials/alarm-status-rule-patterns-form.vue';
+import AlarmStatusRulePatternsForm from './alarm-status-rule-patterns-form.vue';
 
 export default {
   inject: ['$validator'],
