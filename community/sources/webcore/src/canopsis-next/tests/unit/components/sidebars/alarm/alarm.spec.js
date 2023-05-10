@@ -38,7 +38,7 @@ import {
 } from '@/helpers/forms/widgets/common';
 import { formToWidgetColumns, widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
 
-import AlarmSettings from '@/components/sidebars/settings/alarm.vue';
+import AlarmSettings from '@/components/sidebars/alarm/alarm.vue';
 
 const stubs = {
   'widget-settings': true,
