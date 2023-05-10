@@ -305,14 +305,8 @@ func (s *store) fillLinks(ctx context.Context, response *ContextGraphAggregation
 		return nil
 	}
 
-	user := link.User{}
-	err := s.userDbCollection.FindOne(ctx, bson.M{"_id": userId}, options.FindOne().SetProjection(bson.M{
-		"username": "$crecord_name",
-	})).Decode(&user)
+	user, err := s.findUser(ctx, userId)
 	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return errors.New("user not found")
-		}
 		return err
 	}
 
@@ -340,6 +334,25 @@ func (s *store) fillLinks(ctx context.Context, response *ContextGraphAggregation
 
 func (s *store) getQueryBuilder() *entity.MongoQueryBuilder {
 	return entity.NewMongoQueryBuilder(s.dbClient)
+}
+
+func (s *store) findUser(ctx context.Context, id string) (link.User, error) {
+	user := link.User{}
+	cursor, err := s.userDbCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"_id": id}},
+		{"$addFields": bson.M{"username": "$crecord_name"}},
+	})
+	if err != nil {
+		return user, err
+	}
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		err = cursor.Decode(&user)
+		return user, err
+	}
+
+	return user, errors.New("user not found")
 }
 
 func transformInfos(request EditRequest) map[string]types.Info {
