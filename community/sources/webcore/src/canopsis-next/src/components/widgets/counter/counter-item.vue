@@ -33,7 +33,7 @@ import {
 } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/forms/widgets/common';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { authMixin } from '@/mixins/auth';

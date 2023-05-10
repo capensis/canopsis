@@ -41,9 +41,9 @@
 </template>
 
 <script>
-import { API_HOST, API_ROUTES } from '@/config';
-
 import { TECH_METRICS_EXPORT_STATUSES } from '@/constants';
+
+import { getTechMetricsDownloadFileUrl } from '@/helpers/file-url';
 
 import { entitiesTechMetricsMixin } from '@/mixins/entities/tech-metrics';
 import { exportMixinCreator } from '@/mixins/widget/export';
@@ -106,7 +106,7 @@ export default {
     },
 
     async downloadTechMetrics() {
-      this.downloadFile(`${API_HOST}${API_ROUTES.techMetrics}/download`);
+      this.downloadFile(getTechMetricsDownloadFileUrl());
     },
 
     isMetricReadyToDownload(item) {

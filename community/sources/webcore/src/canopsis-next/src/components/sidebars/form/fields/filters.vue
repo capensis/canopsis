@@ -24,7 +24,7 @@ import { pick } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import uuid from '@/helpers/uuid';
+import { uuid } from '@/helpers/uuid';
 
 import { authMixin } from '@/mixins/auth';
 

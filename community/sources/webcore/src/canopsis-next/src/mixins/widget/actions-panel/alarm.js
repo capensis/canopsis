@@ -7,8 +7,8 @@ import {
 } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
-
-import { generatePreparedDefaultAlarmListWidget, mapIds } from '@/helpers/entities';
+import { mapIds } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/forms/widgets/common';
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
 import { prepareEventsByAlarms } from '@/helpers/forms/event';
 
