@@ -2,8 +2,7 @@ import { omit } from 'lodash';
 
 import { DEFAULT_PERIODIC_REFRESH } from '@/constants';
 
-import uuid from '../uuid';
-
+import { uuid } from '../uuid';
 import { durationWithEnabledToForm } from '../date/duration';
 
 import { enabledToForm } from './shared/common';

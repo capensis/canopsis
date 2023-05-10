@@ -3,7 +3,7 @@ import { keyBy, omit } from 'lodash';
 import { COLORS } from '@/config';
 import { MAP_TYPES, MERMAID_THEMES, TREE_OF_DEPENDENCIES_TYPES } from '@/constants';
 
-import uuid from '@/helpers/uuid';
+import { uuid } from '@/helpers/uuid';
 import { shapeToForm } from '@/helpers/flowchart/shapes';
 import { addKeyInEntities, mapIds, removeKeyFromEntities } from '@/helpers/entities';
 

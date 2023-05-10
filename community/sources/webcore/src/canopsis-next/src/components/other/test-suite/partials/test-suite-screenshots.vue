@@ -12,7 +12,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { getTestSuiteFileUrl } from '@/helpers/url';
+import { getTestSuiteFileUrl } from '@/helpers/file-url';
 
 export default {
   props: {

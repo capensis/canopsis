@@ -105,11 +105,10 @@
 <script>
 import { omit, pick, isObject, isEqual } from 'lodash';
 
-import { API_HOST, API_ROUTES } from '@/config';
-
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
+import { getAlarmListExportDownloadFileUrl } from '@/helpers/file-url';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -404,7 +403,7 @@ export default {
           widgetId: this.widget._id,
         });
 
-        this.downloadFile(`${API_HOST}${API_ROUTES.alarmListExport}/${fileData._id}/download`);
+        this.downloadFile(getAlarmListExportDownloadFileUrl(fileData._id));
       } catch (err) {
         this.$popups.error({ text: this.$t('alarm.popups.exportFailed') });
       } finally {

@@ -58,7 +58,7 @@ import { pick } from 'lodash';
 
 import { ENTITY_TYPES, MAP_TYPES, MODALS } from '@/constants';
 
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/forms/widgets/common';
 
 import { permissionsWidgetsMapCategory } from '@/mixins/permissions/widgets/map/category';
 import { permissionsWidgetsMapFilters } from '@/mixins/permissions/widgets/map/filters';
