@@ -15,18 +15,13 @@ const snapshotStubs = {
   'text-editor-field': true,
 };
 
-const factory = generateShallowRenderer(InfoPopupForm, { stubs,
-});
-
-const snapshotFactory = generateRenderer(InfoPopupForm, {
-
-  stubs: snapshotStubs,
-});
-
 const selectColumnField = wrapper => wrapper.find('.v-select');
 const selectTextEditorField = wrapper => wrapper.find('text-editor-field-stub');
 
 describe('info-popup-form', () => {
+  const factory = generateShallowRenderer(InfoPopupForm, { stubs });
+  const snapshotFactory = generateRenderer(InfoPopupForm, { stubs: snapshotStubs });
+
   test('Column changed after trigger select field', () => {
     const columns = [
       { value: Faker.datatype.string() },

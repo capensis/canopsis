@@ -7,11 +7,6 @@ const stubs = {
   'c-alarm-action-chip': true,
 };
 
-const factory = generateShallowRenderer(CEntityField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CEntityField, { stubs,
-});
 const selectSelectField = wrapper => wrapper.find('v-select-stub');
 
 describe('c-alarm-tag-field', () => {
@@ -53,6 +48,9 @@ describe('c-alarm-tag-field', () => {
       },
     },
   ]);
+
+  const factory = generateShallowRenderer(CEntityField, { stubs });
+  const snapshotFactory = generateRenderer(CEntityField, { stubs });
 
   afterEach(() => {
     fetchAlarmTags.mockClear();

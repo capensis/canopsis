@@ -60,26 +60,6 @@ const snapshotStubs = {
   'mass-actions-panel': true,
 };
 
-const factory = generateShallowRenderer(AlarmsList, {
-
-  stubs,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-});
-
-const snapshotFactory = generateRenderer(AlarmsList, {
-
-  stubs: snapshotStubs,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-});
-
 const selectCorrelationField = wrapper => wrapper.find('v-switch-stub');
 const selectFilterSelectorField = wrapper => wrapper.find('filter-selector-stub');
 const selectCategoryField = wrapper => wrapper.find('c-entity-category-field-stub');
@@ -276,6 +256,23 @@ describe('alarms-list', () => {
     authModule,
     alarmTagModule,
   ]);
+
+  const factory = generateShallowRenderer(AlarmsList, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(AlarmsList, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   afterEach(() => {
     fetchUserPreference.mockClear();

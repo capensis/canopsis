@@ -41,7 +41,7 @@ import { entitiesViewMixin } from '@/mixins/entities/view';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
-import ViewsExportExpansionPanel from '@/components/other/view/import-export/views-export-expansion-panel.vue';
+import ViewsExportExpansionPanel from '@/components/other/view/partials/views-export-expansion-panel.vue';
 
 export default {
   components: {

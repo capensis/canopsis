@@ -8,16 +8,12 @@ const stubs = {
   },
 };
 
-const factory = generateShallowRenderer(CAlarmActionChip, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CAlarmActionChip, {
-
-});
-
 const selectCloseIcon = wrapper => wrapper.find('.v-icon');
 
 describe('c-alarm-action-chip', () => {
+  const factory = generateShallowRenderer(CAlarmActionChip, { stubs });
+  const snapshotFactory = generateRenderer(CAlarmActionChip);
+
   test('Renders `c-alarm-tag-chip` with default props', () => {
     const wrapper = factory({
       propsData: {

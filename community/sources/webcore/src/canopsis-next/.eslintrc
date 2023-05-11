@@ -57,6 +57,29 @@
     }],
     "import/no-cycle": "error",
     "import/prefer-default-export": "off",
-    "no-unused-expressions": "off"
+    "no-unused-expressions": "off",
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "Program > VariableDeclaration CallExpression[callee.name='generateShallowRenderer']",
+        "message": "generateShallowRenderer should be used inside describe."
+      },
+      {
+        "selector": "Program > VariableDeclaration CallExpression[callee.name='generateRenderer']",
+        "message": "generateRenderer should be used inside describe."
+      },
+      {
+        "selector": "ImportDeclaration[source.value=/form\\u002Fpartials/]",
+        "message": "All fields should be moved inside `/form/fields/`."
+      },
+      {
+        "selector": "ImportDeclaration[source.value=/\\u002Fpartial\\u002F/]",
+        "message": "`partial` folder deprecated. Please, rename to `partials`."
+      },
+      {
+        "selector": "ImportDeclaration[source.value=/\\u002Ffield\\u002F/]",
+        "message": "`field` folder deprecated. Please, rename to `field`."
+      }
+    ]
   }
 }

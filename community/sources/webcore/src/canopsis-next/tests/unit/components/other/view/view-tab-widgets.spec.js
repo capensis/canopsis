@@ -19,12 +19,6 @@ const stubs = {
   'widget-wrapper': true,
 };
 
-const factory = generateShallowRenderer(ViewTabWidgets, { stubs,
-});
-
-const snapshotFactory = generateRenderer(ViewTabWidgets, { stubs,
-});
-
 describe('view-tab-widgets', () => {
   const removeQuery = jest.fn();
   const fetchActiveView = jest.fn();
@@ -68,6 +62,9 @@ describe('view-tab-widgets', () => {
     { title: 'Widget 1', _id: 'id' },
     { title: 'Widget 2', _id: 'id2' },
   ];
+
+  const factory = generateShallowRenderer(ViewTabWidgets, { stubs });
+  const snapshotFactory = generateRenderer(ViewTabWidgets, { stubs });
 
   afterEach(() => {
     removeQuery.mockReset();

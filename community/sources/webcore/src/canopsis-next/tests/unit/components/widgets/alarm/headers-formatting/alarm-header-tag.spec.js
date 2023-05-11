@@ -9,12 +9,6 @@ const stubs = {
   },
 };
 
-const factory = generateShallowRenderer(AlarmHeaderTag, { stubs,
-});
-
-const snapshotFactory = generateRenderer(AlarmHeaderTag, { stubs,
-});
-
 const selectChip = wrapper => wrapper.find('.c-alarm-action-chip');
 
 describe('alarm-header-tag', () => {
@@ -32,6 +26,9 @@ describe('alarm-header-tag', () => {
   };
 
   const store = createMockedStoreModules([alarmTagModule]);
+
+  const factory = generateShallowRenderer(AlarmHeaderTag, { stubs });
+  const snapshotFactory = generateRenderer(AlarmHeaderTag, { stubs });
 
   test('Should emit `clear` event', () => {
     const wrapper = factory({

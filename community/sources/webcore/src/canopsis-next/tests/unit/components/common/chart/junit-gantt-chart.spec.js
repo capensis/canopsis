@@ -24,15 +24,6 @@ const stubs = {
   'horizontal-bar': true,
 };
 
-const factory = generateShallowRenderer(JunitGanttChart, { stubs,
-});
-
-const snapshotFactory = generateRenderer(JunitGanttChart, {
-
-  stubs: snapshotStubs,
-  attachTo: document.body,
-});
-
 const tooltipFactory = (dataIndex = 0) => ({
   opacity: 1,
   caretX: 100,
@@ -228,6 +219,12 @@ describe('junit-gantt-chart', () => {
     avg_time: 0,
     avg_status: 0,
   }];
+
+  const factory = generateShallowRenderer(JunitGanttChart, { stubs });
+  const snapshotFactory = generateRenderer(JunitGanttChart, {
+    stubs: snapshotStubs,
+    attachTo: document.body,
+  });
 
   it('Pagination next page event', async () => {
     const wrapper = factory({
