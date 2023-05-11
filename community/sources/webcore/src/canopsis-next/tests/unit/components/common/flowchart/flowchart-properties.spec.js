@@ -13,12 +13,6 @@ const stubs = {
   'flowchart-line-type-field': true,
 };
 
-const factory = generateShallowRenderer(FlowchartProperties, { stubs,
-});
-
-const snapshotFactory = generateRenderer(FlowchartProperties, { stubs,
-});
-
 const selectFillColorField = wrapper => wrapper.find('flowchart-color-field-stub[label="Fill"]');
 const selectStrokeColorField = wrapper => wrapper.find('flowchart-color-field-stub[label="Stroke"]');
 const selectStrokeWidthField = wrapper => wrapper.find('flowchart-number-field-stub[label="Stroke width"]');
@@ -29,6 +23,9 @@ const selectFontBackgroundColorField = wrapper => wrapper.find('flowchart-color-
 const selectFontSizeField = wrapper => wrapper.find('flowchart-number-field-stub[label="Font size"]');
 
 describe('flowchart-properties', () => {
+  const factory = generateShallowRenderer(FlowchartProperties, { stubs });
+  const snapshotFactory = generateRenderer(FlowchartProperties, { stubs });
+
   test('Fill changed after trigger color field', () => {
     const firstShape = rectShapeToForm({
       _id: 'first',

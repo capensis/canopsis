@@ -16,7 +16,7 @@ import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
 import { filterPatternsToForm } from '@/helpers/forms/filter';
 
-import KpiFilterPatternsForm from '../form/partials/kpi-filter-patterns-form.vue';
+import KpiFilterPatternsForm from '../form/kpi-filter-patterns-form.vue';
 
 export default {
   components: { KpiFilterPatternsForm },

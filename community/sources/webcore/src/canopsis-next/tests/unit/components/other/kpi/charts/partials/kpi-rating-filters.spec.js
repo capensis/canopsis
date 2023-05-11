@@ -17,12 +17,6 @@ const stubs = {
   'c-records-per-page-field': true,
 };
 
-const factory = generateShallowRenderer(KpiRatingFilters, { stubs,
-});
-
-const snapshotFactory = generateRenderer(KpiRatingFilters, { stubs,
-});
-
 describe('kpi-rating-filters', () => {
   const nowTimestamp = 1386435600000;
   const initialQuery = {
@@ -37,6 +31,9 @@ describe('kpi-rating-filters', () => {
   };
 
   mockDateNow(nowTimestamp);
+
+  const factory = generateShallowRenderer(KpiRatingFilters, { stubs });
+  const snapshotFactory = generateRenderer(KpiRatingFilters, { stubs });
 
   it('Query changed after trigger a quick interval field', async () => {
     const wrapper = factory({

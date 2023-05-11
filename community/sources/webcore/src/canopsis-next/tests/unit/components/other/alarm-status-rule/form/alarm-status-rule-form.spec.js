@@ -25,14 +25,6 @@ const snapshotStubs = {
   'alarm-status-rule-patterns-form': true,
 };
 
-const factory = generateShallowRenderer(AlarmStatusRuleForm, { stubs,
-});
-
-const snapshotFactory = generateRenderer(AlarmStatusRuleForm, {
-
-  stubs: snapshotStubs,
-});
-
 const selectNameField = wrapper => wrapper.find('c-name-field-stub');
 const selectDurationField = wrapper => wrapper.find('c-duration-field-stub');
 const selectPriorityField = wrapper => wrapper.find('c-priority-field-stub');
@@ -41,6 +33,9 @@ const selectDescriptionField = wrapper => wrapper.find('c-description-field-stub
 const selectAlarmStatusRulePatternsForm = wrapper => wrapper.find('alarm-status-rule-patterns-form-stub');
 
 describe('alarm-status-rule-form', () => {
+  const factory = generateShallowRenderer(AlarmStatusRuleForm, { stubs });
+  const snapshotFactory = generateRenderer(AlarmStatusRuleForm, { stubs: snapshotStubs });
+
   test('Name changed after trigger text field', () => {
     const wrapper = factory({
       propsData: {

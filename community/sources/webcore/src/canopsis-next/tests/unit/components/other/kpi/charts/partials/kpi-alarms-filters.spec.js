@@ -16,12 +16,6 @@ const stubs = {
   'c-alarm-metric-parameters-field': true,
 };
 
-const factory = generateShallowRenderer(KpiAlarmsFilters, { stubs,
-});
-
-const snapshotFactory = generateRenderer(KpiAlarmsFilters, { stubs,
-});
-
 describe('kpi-alarms-filters', () => {
   const nowTimestamp = 1386435600000;
   const initialQuery = {
@@ -38,6 +32,9 @@ describe('kpi-alarms-filters', () => {
    * Year ago date
    */
   const nowSubtractYearTimestamp = 1354834800;
+
+  const factory = generateShallowRenderer(KpiAlarmsFilters, { stubs });
+  const snapshotFactory = generateRenderer(KpiAlarmsFilters, { stubs });
 
   it('Query changed after trigger a quick interval field', async () => {
     const wrapper = factory({

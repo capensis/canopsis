@@ -7,31 +7,11 @@ import { createSelectInputStub } from '@unit/stubs/input';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { KPI_RATING_CRITERIA, MAX_LIMIT } from '@/constants';
 
-import KpiRatingCriteriaField from '@/components/other/kpi/charts/partials/kpi-rating-criteria-field';
+import KpiRatingCriteriaField from '@/components/other/kpi/charts/form/fields/kpi-rating-criteria-field.vue';
 
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
-
-const factory = generateShallowRenderer(KpiRatingCriteriaField, {
-
-  stubs,
-  store: createMockedStoreModules([{
-    name: 'ratingSettings',
-    getters: {
-      pending: false,
-      items: [],
-      updatedAt: null,
-    },
-    actions: {
-      fetchListWithoutStore: jest.fn(),
-    },
-  }]),
-});
-
-const snapshotFactory = generateRenderer(KpiRatingCriteriaField, {
-
-});
 
 describe('kpi-rating-criteria-field', () => {
   const ratingSettings = [
@@ -41,6 +21,22 @@ describe('kpi-rating-criteria-field', () => {
     { id: 4, label: 'Rating setting 4' },
     { id: 5, label: 'Rating setting 5' },
   ];
+
+  const factory = generateShallowRenderer(KpiRatingCriteriaField, {
+    stubs,
+    store: createMockedStoreModules([{
+      name: 'ratingSettings',
+      getters: {
+        pending: false,
+        items: [],
+        updatedAt: null,
+      },
+      actions: {
+        fetchListWithoutStore: jest.fn(),
+      },
+    }]),
+  });
+  const snapshotFactory = generateRenderer(KpiRatingCriteriaField);
 
   it('Rating settings fetched after mount', async () => {
     const fetchRatingSettings = jest.fn(() => ({

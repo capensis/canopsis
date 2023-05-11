@@ -26,8 +26,8 @@ import { getAvailableMetricByCriteria } from '@/helpers/metrics';
 
 import { formMixin } from '@/mixins/form';
 
-import KpiRatingCriteriaField from './kpi-rating-criteria-field.vue';
-import KpiRatingMetricField from './kpi-rating-metric-field.vue';
+import KpiRatingCriteriaField from '../form/fields/kpi-rating-criteria-field.vue';
+import KpiRatingMetricField from '../form/fields/kpi-rating-metric-field.vue';
 
 export default {
   components: { KpiRatingMetricField, KpiRatingCriteriaField },

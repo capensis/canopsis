@@ -29,7 +29,6 @@ const selectPatternAdvancedEditorField = wrapper => wrapper.find('pattern-advanc
 describe('pattern-editor-field', () => {
   const factory = generateShallowRenderer(PatternsEditorField, {
     stubs,
-
     parentComponent: {
       $_veeValidate: {
         validator: 'new',
@@ -38,7 +37,6 @@ describe('pattern-editor-field', () => {
   });
   const snapshotFactory = generateRenderer(PatternsEditorField, {
     stubs,
-
     parentComponent: {
       $_veeValidate: {
         validator: 'new',

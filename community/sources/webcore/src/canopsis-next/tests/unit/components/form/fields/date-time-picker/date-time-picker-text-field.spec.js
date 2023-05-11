@@ -15,29 +15,28 @@ const snapshotStubs = {
   'date-time-picker-menu': true,
 };
 
-const factory = generateShallowRenderer(DateTimePickerTextField, { stubs,
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-});
-
-const snapshotFactory = generateRenderer(DateTimePickerTextField, {
-  stubs: snapshotStubs,
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-});
-
 const selectTextField = wrapper => wrapper.find('.v-text-field');
 const selectDateTimePickerButton = wrapper => wrapper.find('date-time-picker-menu-stub');
 
 describe('date-time-picker-text-field', () => {
   const nowTimestamp = 1386435600000;
   mockDateNow(nowTimestamp);
+
+  const factory = generateShallowRenderer(DateTimePickerTextField, { stubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(DateTimePickerTextField, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
 
   test('String value changed after trigger text field', () => {
     const wrapper = factory();

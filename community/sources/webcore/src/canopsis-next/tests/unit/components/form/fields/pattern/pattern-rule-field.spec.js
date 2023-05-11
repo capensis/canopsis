@@ -13,7 +13,7 @@ import {
   TIME_UNITS,
 } from '@/constants';
 
-import CPatternRuleField from '@/components/forms/fields/pattern/pattern-rule-field.vue';
+import PatternRuleField from '@/components/forms/fields/pattern/pattern-rule-field.vue';
 
 const stubs = {
   'pattern-attribute-field': true,
@@ -26,12 +26,6 @@ const stubs = {
   'c-duration-field': true,
   'custom-component': true,
 };
-
-const factory = generateShallowRenderer(CPatternRuleField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CPatternRuleField, { stubs,
-});
 
 const selectPatternAttributeField = wrapper => wrapper.find('pattern-attribute-field-stub');
 const selectPatternOperatorField = wrapper => wrapper.find('pattern-operator-field-stub');
@@ -59,6 +53,9 @@ describe('pattern-rule-field', () => {
       value: 1,
     },
   };
+
+  const factory = generateShallowRenderer(PatternRuleField, { stubs });
+  const snapshotFactory = generateRenderer(PatternRuleField, { stubs });
 
   test('Attribute changed after trigger input event on the attribute field', () => {
     const wrapper = factory({

@@ -10,16 +10,13 @@ const stubs = {
   'c-description-field': true,
 };
 
-const factory = generateShallowRenderer(SnoozeEventForm, { stubs,
-});
-
-const snapshotFactory = generateRenderer(SnoozeEventForm, { stubs,
-});
-
 const selectDurationField = wrapper => wrapper.find('c-duration-field-stub');
 const selectDescriptionField = wrapper => wrapper.find('c-description-field-stub');
 
 describe('snooze-event-form', () => {
+  const factory = generateShallowRenderer(SnoozeEventForm, { stubs });
+  const snapshotFactory = generateRenderer(SnoozeEventForm, { stubs });
+
   test('Duration changed after trigger duration field', () => {
     const form = {
       duration: {

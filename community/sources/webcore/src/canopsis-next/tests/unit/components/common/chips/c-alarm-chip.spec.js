@@ -4,9 +4,9 @@ import { ENTITIES_STATUSES, ENTITY_INFOS_TYPE, EVENT_ENTITY_TYPES } from '@/cons
 
 import CAlarmChip from '@/components/common/chips/c-alarm-chip.vue';
 
-const snapshotFactory = generateRenderer(CAlarmChip);
-
 describe('c-alarm-chip', () => {
+  const snapshotFactory = generateRenderer(CAlarmChip);
+
   it('Renders `c-alarm-chip` with default props', () => {
     const wrapper = snapshotFactory();
 

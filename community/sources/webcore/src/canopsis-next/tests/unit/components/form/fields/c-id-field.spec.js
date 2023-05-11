@@ -14,21 +14,19 @@ const snapshotStubs = {
   'c-help-icon': true,
 };
 
-const factory = generateShallowRenderer(CIdField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CIdField, {
-  stubs: snapshotStubs,
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-});
-
 const selectTextField = wrapper => wrapper.find('input.v-text-field');
 
 describe('c-id-field', () => {
+  const factory = generateShallowRenderer(CIdField, { stubs });
+  const snapshotFactory = generateRenderer(CIdField, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+
   test('Value changed after trigger the text field', () => {
     const wrapper = factory({
       propsData: {

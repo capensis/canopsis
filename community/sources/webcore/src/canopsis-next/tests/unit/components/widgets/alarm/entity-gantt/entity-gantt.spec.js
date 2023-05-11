@@ -10,12 +10,6 @@ const stubs = {
   'junit-gantt-chart': true,
 };
 
-const factory = generateShallowRenderer(EntityGantt, { stubs,
-});
-
-const snapshotFactory = generateRenderer(EntityGantt, { stubs,
-});
-
 const selectJunitGanttChart = wrapper => wrapper.find('junit-gantt-chart-stub');
 
 describe('entity-gantt', () => {
@@ -43,6 +37,9 @@ describe('entity-gantt', () => {
       _id: 'entity-id',
     },
   };
+
+  const factory = generateShallowRenderer(EntityGantt, { stubs });
+  const snapshotFactory = generateRenderer(EntityGantt, { stubs });
 
   afterEach(() => {
     fetchItemGanttIntervalsWithoutStore.mockClear();

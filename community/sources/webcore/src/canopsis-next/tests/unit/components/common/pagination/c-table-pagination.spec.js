@@ -29,15 +29,10 @@ const snapshotStubs = {
   'c-pagination': true,
 };
 
-const factory = generateShallowRenderer(CTablePagination, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CTablePagination, {
-
-  stubs: snapshotStubs,
-});
-
 describe('c-table-pagination', () => {
+  const factory = generateShallowRenderer(CTablePagination, { stubs });
+  const snapshotFactory = generateRenderer(CTablePagination, { stubs: snapshotStubs });
+
   it('Pagination hidden without items', () => {
     const { falseTotalItems: totalItems } = mockData;
     const wrapper = factory({ propsData: { totalItems } });

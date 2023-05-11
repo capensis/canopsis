@@ -4,18 +4,12 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import CColumnSizeField from '@/components/forms/fields/c-column-size-field.vue';
 
-const stubs = {};
-
-const factory = generateShallowRenderer(CColumnSizeField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CColumnSizeField, {
-
-});
-
 const selectRadioGroupNode = wrapper => wrapper.vm.$children[0];
 
 describe('c-column-size-field', () => {
+  const factory = generateShallowRenderer(CColumnSizeField);
+  const snapshotFactory = generateRenderer(CColumnSizeField);
+
   test('Renders `c-column-size-field` with required props', () => {
     const wrapper = factory();
 
