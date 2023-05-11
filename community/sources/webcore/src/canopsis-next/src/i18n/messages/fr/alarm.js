@@ -196,6 +196,7 @@ export default {
     ticketAuthor: 'Auteur du ticket',
     ticketId: 'ID du ticket',
     ticketMessage: 'Message du ticket',
+    ticketCreatedAt: 'Ticket créé à',
     entityId: 'ID d\'entité',
     entityName: 'Nom de l\'entité',
     entityCategoryName: 'Nom de la catégorie d\'entité',
