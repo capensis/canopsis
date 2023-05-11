@@ -1,4 +1,4 @@
-import uid from '../uid';
+import { uid } from '../uid';
 
 /**
  * Add delimiters with instruction_modified_on to executions array for alarm timeline

@@ -12,17 +12,6 @@ const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = generateShallowRenderer(CMapField, {
-
-  stubs,
-  attachTo: document.body,
-});
-
-const snapshotFactory = generateRenderer(CMapField, {
-
-  attachTo: document.body,
-});
-
 const selectSelectField = wrapper => wrapper.find('select.v-select');
 
 describe('c-map-field', () => {
@@ -39,6 +28,12 @@ describe('c-map-field', () => {
   const store = createMockedStoreModules([
     mapModule,
   ]);
+
+  const factory = generateShallowRenderer(CMapField, {
+    stubs,
+    attachTo: document.body,
+  });
+  const snapshotFactory = generateRenderer(CMapField, { attachTo: document.body });
 
   afterEach(() => {
     fetchMapsListWithoutStore.mockClear();

@@ -16,7 +16,7 @@
 <script>
 import { formMixin, formArrayMixin } from '@/mixins/form';
 
-import PbehaviorExceptionsField from '@/components/other/pbehavior/exceptions/form/pbehavior-exceptions-field.vue';
+import PbehaviorExceptionsField from './fields/pbehavior-exceptions-field.vue';
 
 export default {
   inject: ['$validator'],

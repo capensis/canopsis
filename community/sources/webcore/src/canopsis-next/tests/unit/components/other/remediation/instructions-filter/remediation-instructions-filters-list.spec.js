@@ -6,21 +6,6 @@ const stubs = {
   'remediation-instructions-filters-item': true,
 };
 
-const factory = generateShallowRenderer(RemediationInstructionsFiltersList, { stubs,
-});
-
-const snapshotFactory = generateRenderer(RemediationInstructionsFiltersList, { stubs,
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
-});
-
 const selectRemediationInstructionsFiltersItemsField = wrapper => wrapper.findAll('remediation-instructions-filters-item-stub');
 
 describe('remediation-instructions-filters-list', () => {
@@ -39,6 +24,20 @@ describe('remediation-instructions-filters-list', () => {
     instructions: [{}],
     _id: 'id2',
   }];
+
+  const factory = generateShallowRenderer(RemediationInstructionsFiltersList, { stubs });
+  const snapshotFactory = generateRenderer(RemediationInstructionsFiltersList, {
+    stubs,
+    parentComponent: {
+      provide: {
+        list: {
+          register: jest.fn(),
+          unregister: jest.fn(),
+        },
+        listClick: jest.fn(),
+      },
+    },
+  });
 
   it('Instruction filters changed after trigger instruction filters item field', () => {
     const wrapper = factory({

@@ -21,8 +21,8 @@
 <script>
 import { isIdleRuleEntityType } from '@/helpers/forms/idle-rule';
 
-import IdleRuleGeneralForm from './partials/idle-rule-general-form.vue';
-import IdleRulePatternsForm from './partials/idle-rule-patterns-form.vue';
+import IdleRuleGeneralForm from './idle-rule-general-form.vue';
+import IdleRulePatternsForm from './idle-rule-patterns-form.vue';
 
 export default {
   inject: ['$validator'],

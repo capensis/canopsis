@@ -8,16 +8,12 @@ const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = generateShallowRenderer(CServiceWeatherStateCounterField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CServiceWeatherStateCounterField, {
-
-});
-
 const selectSelectField = wrapper => wrapper.find('.v-select');
 
 describe('c-service-weather-state-counter-field', () => {
+  const factory = generateShallowRenderer(CServiceWeatherStateCounterField, { stubs });
+  const snapshotFactory = generateRenderer(CServiceWeatherStateCounterField);
+
   it('Value changed after trigger the input', () => {
     const wrapper = factory();
 

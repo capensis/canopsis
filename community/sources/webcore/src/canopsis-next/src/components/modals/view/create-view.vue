@@ -46,7 +46,7 @@ import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/vi
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import ViewForm from '@/components/other/view/view-form.vue';
+import ViewForm from '@/components/other/view/form/view-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

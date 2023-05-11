@@ -17,31 +17,28 @@ const stubs = {
   'kpi-error-overlay': true,
 };
 
-const factory = generateShallowRenderer(KpiRating, {
-
-  stubs,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-});
-
-const snapshotFactory = generateRenderer(KpiRating, {
-
-  stubs,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-});
-
 describe('kpi-rating', () => {
   const nowTimestamp = 1386435600000;
   const nowUnix = nowTimestamp / 1000;
 
   mockDateNow(nowTimestamp);
+
+  const factory = generateShallowRenderer(KpiRating, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(KpiRating, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   it('Metrics doesn\'t fetched after mount without criteria', async () => {
     const fetchRatingMetrics = jest.fn(() => []);
