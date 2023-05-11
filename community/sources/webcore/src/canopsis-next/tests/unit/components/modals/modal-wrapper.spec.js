@@ -9,7 +9,8 @@ const stubs = {
 const selectModalTitleButtons = wrapper => wrapper.find('modal-title-buttons-stub');
 
 describe('modal-wrapper', () => {
-  const factory = generateShallowRenderer(ModalWrapper, { stubs,
+  const factory = generateShallowRenderer(ModalWrapper, {
+    stubs,
     parentComponent: {
       provide: {
         $modal: {},

@@ -21,12 +21,6 @@ const stubs = {
   'c-event-filter-patterns-field': true,
 };
 
-const factory = generateShallowRenderer(CPatternsField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(CPatternsField, { stubs,
-});
-
 const selectAlarmPatternsField = wrapper => wrapper.find('c-alarm-patterns-field-stub');
 const selectEntityPatternsField = wrapper => wrapper.find('c-entity-patterns-field-stub');
 const selectPbehaviorPatternsField = wrapper => wrapper.find('c-pbehavior-patterns-field-stub');
@@ -34,6 +28,9 @@ const selectEventFilterPatternsField = wrapper => wrapper.find('c-event-filter-p
 
 describe('c-patterns-field', () => {
   const patterns = filterPatternsToForm();
+
+  const factory = generateShallowRenderer(CPatternsField, { stubs });
+  const snapshotFactory = generateRenderer(CPatternsField, { stubs });
 
   test('Alarm pattern changed after trigger alarm patterns field', () => {
     const wrapper = factory({

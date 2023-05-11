@@ -24,8 +24,8 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import BroadcastMessage from '@/components/other/broadcast-message/broadcast-message.vue';
-import BroadcastMessageForm from '@/components/other/broadcast-message/broadcast-message-form.vue';
+import BroadcastMessage from '@/components/other/broadcast-message/partials/broadcast-message.vue';
+import BroadcastMessageForm from '@/components/other/broadcast-message/form/broadcast-message-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

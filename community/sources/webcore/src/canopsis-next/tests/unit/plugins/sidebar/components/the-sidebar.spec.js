@@ -15,10 +15,10 @@ const stubs = {
   },
 };
 
-const snapshotFactory = generateRenderer(TheSidebar, { stubs });
-
 describe('the-sidebar', () => {
   const $sidebar = mockSidebar();
+
+  const snapshotFactory = generateRenderer(TheSidebar, { stubs });
 
   it('Renders `the-sidebars` with type: alarmSettings', async () => {
     const sidebar = {

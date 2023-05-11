@@ -15,23 +15,6 @@ const snapshotStubs = {
   'c-help-icon': true,
 };
 
-const factory = generateShallowRenderer(CJsonField, { stubs,
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-});
-
-const snapshotFactory = generateRenderer(CJsonField, {
-  stubs: snapshotStubs,
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-});
-
 describe('c-json-field', () => {
   const name = 'jsonField';
   const defaultValue = '{}';
@@ -53,6 +36,23 @@ describe('c-json-field', () => {
         "entity_id": {{ .Entity.ID }
     }
 }`;
+
+  const factory = generateShallowRenderer(CJsonField, {
+    stubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(CJsonField, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
 
   it('Object value as prop', () => {
     const wrapper = factory({

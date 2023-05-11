@@ -22,17 +22,12 @@ const stubs = {
   },
 };
 
-const factory = generateShallowRenderer(TimePickerField, { stubs,
-});
-
-const snapshotFactory = generateRenderer(TimePickerField, {
-
-  attachTo: document.body,
-});
-
 const selectCombobox = wrapper => wrapper.find('.v-combobox, .v-autocomplete');
 
 describe('time-picker-field', () => {
+  const factory = generateShallowRenderer(TimePickerField, { stubs });
+  const snapshotFactory = generateRenderer(TimePickerField, { attachTo: document.body });
+
   afterEach(() => {
     setValue.mockClear();
     setSearch.mockClear();
