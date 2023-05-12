@@ -552,6 +552,278 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/ack:
+    put:
+      tags:
+        - alarms
+      summary: Ack alarm
+      description: |
+        Ack alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-ack
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.AckRequest'
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/ackremove:
+    put:
+      tags:
+        - alarms
+      summary: Remove ack alarm
+      description: |
+        Remove ack alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-ackremove
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.Request'
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/assocticket:
+    put:
+      tags:
+        - alarms
+      summary: Assoc ticket alarm
+      description: |
+        Assoc ticket alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-assocticket
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.AssocTicketRequest'
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/cancel:
+    put:
+      tags:
+        - alarms
+      summary: Cancel alarm
+      description: |
+        Cancel alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-cancel
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.Request'
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/changestate:
+    put:
+      tags:
+        - alarms
+      summary: Change state alarm
+      description: |
+        Change state alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-changestate
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.ChangeStateRequest'
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/comment:
+    put:
+      tags:
+        - alarms
+      summary: Comment alarm
+      description: |
+        Comment alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-comment
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.Request'
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/snooze:
+    put:
+      tags:
+        - alarms
+      summary: Snooze alarm
+      description: |
+        Snooze alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-snooze
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.SnoozeRequest'
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/uncancel:
+    put:
+      tags:
+        - alarms
+      summary: Uncancel alarm
+      description: |
+        Uncancel alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-uncancel
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.Request'
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /app-info:
     get:
       tags:
