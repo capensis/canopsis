@@ -30,7 +30,6 @@
       actions-panel(
         :item="alarm",
         :widget="widget",
-        :is-resolved-alarm="isClosedAlarm",
         :parent-alarm="parentAlarm",
         :refresh-alarms-list="refreshAlarmsList",
         :small="small"
