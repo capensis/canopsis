@@ -1530,6 +1530,7 @@ describe('alarms-list', () => {
 
   it('Periodic started after mount with enabled value', async () => {
     jest.useFakeTimers();
+    jest.spyOn(window, 'setInterval');
 
     const expanded = {};
     factory({
@@ -1562,7 +1563,7 @@ describe('alarms-list', () => {
       1000,
     );
 
-    jest.runTimersToTime(1000);
+    jest.advanceTimersByTime(1000);
 
     expect(fetchAlarmsList).toHaveBeenCalledWith(
       expect.any(Object),
@@ -1582,7 +1583,7 @@ describe('alarms-list', () => {
   });
 
   it('Interval cleared after update periodic refresh', async () => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
 
     const expanded = {};
     const wrapper = factory({
@@ -1638,7 +1639,7 @@ describe('alarms-list', () => {
   });
 
   it('Interval cleared after destroy', async () => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
 
     const expanded = {};
     const wrapper = factory({
