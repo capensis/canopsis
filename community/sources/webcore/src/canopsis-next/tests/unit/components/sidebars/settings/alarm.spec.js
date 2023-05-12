@@ -35,9 +35,9 @@ import {
   widgetParametersToForm, formToWidgetParameters,
 } from '@/helpers/forms/widgets/common';
 import { formToWidgetColumns, widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
+import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/forms/widgets/alarm';
 
 import AlarmSettings from '@/components/sidebars/settings/alarm.vue';
-import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/forms/widgets/alarm';
 
 const stubs = {
   'widget-settings': true,
@@ -115,6 +115,7 @@ const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher
 const selectFieldKioskHideActions = wrapper => wrapper.findAll('input.field-switcher').at(7);
 const selectFieldKioskHideMassSelection = wrapper => wrapper.findAll('input.field-switcher').at(8);
 const selectFieldKioskHideToolbar = wrapper => wrapper.findAll('input.field-switcher').at(9);
+const selectFieldActionsAllowWithOkState = wrapper => wrapper.findAll('input.field-switcher').at(10);
 const selectChartsForm = wrapper => wrapper.findAll('input.charts-form').at(0);
 
 describe('alarm', () => {
@@ -1190,6 +1191,32 @@ describe('alarm', () => {
           hideMassSelection,
           hideToolbar,
         }),
+      },
+    });
+  });
+
+  test('Actions allowed with state ok changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const isActionsAllowWithOkState = Faker.datatype.boolean();
+
+    selectFieldActionsAllowWithOkState(wrapper).vm.$emit('input', isActionsAllowWithOkState);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'isActionsAllowWithOkState', isActionsAllowWithOkState),
       },
     });
   });

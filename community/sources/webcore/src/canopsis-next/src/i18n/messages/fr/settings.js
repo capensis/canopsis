@@ -51,6 +51,7 @@ export default {
   inlineLinksCount: 'Nombre de liens en ligne',
   isMultiAckEnabled: 'Acquittement multiple',
   isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
+  isActionsAllowWithOkState: 'Actions autorisées lorsque l\'état est OK ?',
   fastAckOutput: 'Commentaire d\'acquittement rapide',
   fastCancelOutput: 'Commentaire d\'annulation rapide',
   isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',

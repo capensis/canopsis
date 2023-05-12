@@ -7,7 +7,6 @@ import { pickBy, compact, find } from 'lodash';
 
 import {
   MODALS,
-  ENTITIES_STATUSES,
   EVENT_ENTITY_TYPES,
   ALARM_LIST_ACTIONS_TYPES,
   LINK_RULE_ACTIONS,
@@ -22,6 +21,13 @@ import { isManualGroupMetaAlarmRuleType } from '@/helpers/forms/meta-alarm-rule'
 import { isInstructionExecutionIconInProgress } from '@/helpers/forms/remediation-instruction-execution';
 import { isInstructionManual } from '@/helpers/forms/remediation-instruction';
 import { harmonizeLinks, getLinkRuleLinkActionType } from '@/helpers/links';
+import {
+  isAlarmStateOk,
+  isAlarmStatusCancelled,
+  isAlarmStatusClosed,
+  isAlarmStatusFlapping,
+  isAlarmStatusOngoing,
+} from '@/helpers/entities/alarm';
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
@@ -56,10 +62,6 @@ export default {
     parentAlarm: {
       type: Object,
       default: null,
-    },
-    isResolvedAlarm: {
-      type: Boolean,
-      default: false,
     },
     small: {
       type: Boolean,
@@ -174,6 +176,38 @@ export default {
       };
     },
 
+    isAlarmStatusClosed() {
+      return isAlarmStatusClosed(this.item);
+    },
+
+    isAlarmStatusCancelled() {
+      return isAlarmStatusCancelled(this.item);
+    },
+
+    isAlarmStatusOngoing() {
+      return isAlarmStatusOngoing(this.item);
+    },
+
+    isAlarmStatusFlapping() {
+      return isAlarmStatusFlapping(this.item);
+    },
+
+    isOpenedAlarm() {
+      return !this.isAlarmStatusClosed && !this.isAlarmStatusCancelled;
+    },
+
+    isAlarmStateOk() {
+      return isAlarmStateOk(this.item);
+    },
+
+    isActionsAllowWithOkState() {
+      return this.widget.parameters.isActionsAllowWithOkState && this.isAlarmStateOk;
+    },
+
+    isAlarmOpenedOrActionAllowedWithStateOk() {
+      return this.isOpenedAlarm || this.isActionsAllowWithOkState;
+    },
+
     isParentAlarmManualMetaAlarm() {
       return isManualGroupMetaAlarmRuleType(this.parentAlarm?.meta_alarm_rule?.type);
     },
@@ -204,90 +238,16 @@ export default {
       };
     },
 
-    resolvedActions() {
-      const { pbehaviorList, variablesHelp } = this.filteredActionsMap;
-
-      return [
-        pbehaviorList,
-        ...this.linksActions,
-        variablesHelp,
-      ];
-    },
-
-    unresolvedActions() {
-      const { filteredActionsMap } = this;
+    instructionsActions() {
       const {
         assigned_instructions: assignedInstructions = [],
-        assigned_declare_ticket_rules: assignedDeclareTicketRules = [],
       } = this.item;
 
-      const actions = [
-        filteredActionsMap.snooze,
-        filteredActionsMap.pbehaviorAdd,
-        filteredActionsMap.pbehaviorList,
-        filteredActionsMap.comment,
-      ];
-
-      if (this.item.entity) {
-        actions.push(filteredActionsMap.history);
-      }
-
-      actions.push(filteredActionsMap.variablesHelp);
-
-      if (this.isParentAlarmManualMetaAlarm) {
-        actions.push(filteredActionsMap.removeAlarmsFromManualMetaAlarm);
-      }
-
-      /**
-       * If we will have actions for resolved alarms in the features we should move this condition to
-       * the every features repositories
-       */
-      if (featuresService.has('components.alarmListActionPanel.computed.actions')) {
-        const featuresActions = featuresService.call('components.alarmListActionPanel.computed.actions', this, []);
-
-        if (featuresActions?.length) {
-          actions.unshift(...featuresActions);
-        }
-      }
-
-      if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
-        if (this.item.v.ack) {
-          if (this.widget.parameters.isMultiAckEnabled) {
-            actions.unshift(filteredActionsMap.ack);
-          }
-
-          actions.unshift(
-            filteredActionsMap.cancel,
-            filteredActionsMap.fastCancel,
-            filteredActionsMap.ackRemove,
-            filteredActionsMap.changeState,
-          );
-
-          if (!this.item.v?.tickets?.length || this.widget.parameters.isMultiDeclareTicketEnabled) {
-            actions.unshift(filteredActionsMap.associateTicket);
-
-            if (assignedDeclareTicketRules.length) {
-              actions.unshift(filteredActionsMap.declareTicket);
-            }
-          }
-        } else {
-          actions.unshift(
-            filteredActionsMap.ack,
-            filteredActionsMap.fastAck,
-          );
-        }
-      }
-
-      actions.push(...this.linksActions);
-
-      /**
-       * Add actions for available instructions
-       */
-      if (assignedInstructions.length && filteredActionsMap.executeInstruction) {
+      if (assignedInstructions.length && this.filteredActionsMap.executeInstruction) {
         const pausedInstructions = assignedInstructions.filter(instruction => instruction.execution);
         const hasRunningInstruction = isInstructionExecutionIconInProgress(this.item.instruction_execution_icon);
 
-        assignedInstructions.forEach((instruction) => {
+        return assignedInstructions.map((instruction) => {
           const { execution } = instruction;
           let titlePrefix = 'execute';
           let cssClass = '';
@@ -301,8 +261,8 @@ export default {
             }
           }
 
-          const action = {
-            ...filteredActionsMap.executeInstruction,
+          return {
+            ...this.filteredActionsMap.executeInstruction,
 
             cssClass,
             disabled: hasRunningInstruction
@@ -310,18 +270,120 @@ export default {
             title: this.$t(`remediation.instruction.${titlePrefix}Instruction`, {
               instructionName: instruction.name,
             }),
-            method: () => filteredActionsMap.executeInstruction.method(instruction),
+            method: () => this.filteredActionsMap.executeInstruction.method(instruction),
           };
-
-          actions.push(action);
         });
+      }
+
+      return [];
+    },
+
+    ticketsActions() {
+      const actions = [];
+      const {
+        assigned_declare_ticket_rules: assignedDeclareTicketRules = [],
+      } = this.item;
+
+      if (!this.item.v?.tickets?.length || this.widget.parameters.isMultiDeclareTicketEnabled) {
+        actions.unshift(this.filteredActionsMap.associateTicket);
+
+        if (assignedDeclareTicketRules.length) {
+          actions.unshift(this.filteredActionsMap.declareTicket);
+        }
       }
 
       return actions;
     },
 
     actions() {
-      return compact(this.isResolvedAlarm ? this.resolvedActions : this.unresolvedActions);
+      const { filteredActionsMap } = this;
+      const actions = [];
+
+      if (this.isOpenedAlarm) {
+        actions.push(
+          filteredActionsMap.snooze,
+          filteredActionsMap.pbehaviorAdd,
+        );
+      }
+
+      if (this.isAlarmOpenedOrActionAllowedWithStateOk) {
+        actions.push(
+          filteredActionsMap.comment,
+        );
+      }
+
+      if (this.isOpenedAlarm && this.item.entity) {
+        actions.push(filteredActionsMap.history);
+      }
+
+      if (this.isOpenedAlarm) {
+        actions.push(filteredActionsMap.variablesHelp);
+      }
+
+      if (this.isAlarmOpenedOrActionAllowedWithStateOk && this.isParentAlarmManualMetaAlarm) {
+        actions.push(filteredActionsMap.removeAlarmsFromManualMetaAlarm);
+      }
+
+      /**
+         * If we will have actions for resolved alarms in the features we should move this condition to
+         * the every features repositories
+         */
+      if (
+        this.isOpenedAlarm
+        && featuresService.has('components.alarmListActionPanel.computed.actions')
+      ) {
+        const featuresActions = featuresService.call('components.alarmListActionPanel.computed.actions', this, []);
+
+        if (featuresActions?.length) {
+          actions.unshift(...featuresActions);
+        }
+      }
+
+      if (
+        (this.isAlarmStatusClosed && this.isActionsAllowWithOkState)
+        || this.isAlarmStatusOngoing
+        || this.isAlarmStatusFlapping
+      ) {
+        if (this.item.v.ack) {
+          if (this.widget.parameters.isMultiAckEnabled) {
+            actions.unshift(filteredActionsMap.ack);
+          }
+
+          actions.unshift(
+            filteredActionsMap.ackRemove,
+            filteredActionsMap.changeState,
+          );
+
+          if (!this.isAlarmStateOk) {
+            actions.unshift(
+              filteredActionsMap.cancel,
+              filteredActionsMap.fastCancel,
+            );
+          }
+
+          actions.unshift(...this.ticketsActions);
+        } else {
+          actions.unshift(
+            filteredActionsMap.ack,
+            filteredActionsMap.fastAck,
+          );
+        }
+      }
+
+      actions.push(...this.linksActions);
+
+      /**
+         * Add actions for available instructions
+         */
+      if (this.isOpenedAlarm && filteredActionsMap.executeInstruction) {
+        actions.push(...this.instructionsActions);
+      }
+
+      if (!this.isOpenedAlarm) {
+        actions.push(filteredActionsMap.variablesHelp);
+      }
+
+      return compact(actions);
     },
   },
   methods: {
