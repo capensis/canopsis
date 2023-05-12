@@ -4,13 +4,13 @@ import WebFont from 'webfontloader';
 import * as constants from '@/constants';
 import * as config from '@/config';
 
+import { bootstrapApplicationPlugins } from './plugins';
+import { registerApplicationComponents } from './components';
+
 import router from '@/router';
 import store from '@/store';
 import i18n from '@/i18n';
 import App from '@/app.vue';
-
-import { bootstrapApplicationPlugins } from './plugins';
-import { registerApplicationComponents } from './components';
 
 /**
  * @param {import('vue').VueConstructor | import('vue').Vue} Vue

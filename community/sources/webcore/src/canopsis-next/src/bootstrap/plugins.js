@@ -1,10 +1,14 @@
+import Vuetify from 'vuetify';
 import VueMq from 'vue-mq';
+import VueFullScreen from 'vue-fullscreen';
 import VueClipboard from 'vue-clipboard2';
 import VueAsyncComputed from 'vue-async-computed';
 import PortalVue from 'portal-vue';
-import Vuetify from 'vuetify';
-import VueFullScreen from 'vue-fullscreen';
 import frDaySpanVuetifyMessages from 'dayspan-vuetify/src/locales/fr';
+
+import 'vue-tour/dist/vue-tour.css';
+import 'vuetify/dist/vuetify.min.css';
+import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
 
 import { MODALS } from '@/constants';
 import { MEDIA_QUERIES_BREAKPOINTS, THEMES } from '@/config';
@@ -47,10 +51,6 @@ import ManualInstruction from '@/components/icons/manual_instruction.vue';
 import RestartAltIcon from '@/components/icons/restart_alt.vue';
 import ListDeleteIcon from '@/components/icons/list_delete.vue';
 import * as modalsComponents from '@/components/modals';
-
-import 'vue-tour/dist/vue-tour.css';
-import 'vuetify/dist/vuetify.min.css';
-import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
 
 /**
  * @param {import('vue').VueConstructor | import('vue').Vue} Vue
