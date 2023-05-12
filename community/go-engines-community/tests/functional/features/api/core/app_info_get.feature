@@ -9,7 +9,7 @@ Feature: Get application information
     Then the response body should be:
     """json
     {
-      "allow_change_severity_to_info": false,
+      "allow_change_severity_to_info": true,
       "app_title": "Canopsis Test",
       "edition": "pro",
       "footer": "Test footer",
