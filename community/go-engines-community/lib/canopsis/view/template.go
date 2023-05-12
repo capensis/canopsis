@@ -40,6 +40,7 @@ var columnsByType = map[string][]string{
 		"v.snooze_duration",
 		"v.pbh_inactive_duration",
 		"v.active_duration",
+		"v.events_count",
 		"tags",
 		"extra_details",
 		"impact_state",
