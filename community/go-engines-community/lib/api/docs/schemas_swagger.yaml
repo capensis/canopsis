@@ -536,6 +536,73 @@ definitions:
       reversed:
         type: boolean
     type: object
+  alarmaction.AckRequest:
+    properties:
+      ack_resources:
+        type: boolean
+      comment:
+        maxLength: 255
+        type: string
+    required:
+    - comment
+    type: object
+  alarmaction.AssocTicketRequest:
+    properties:
+      comment:
+        maxLength: 255
+        type: string
+      data:
+        additionalProperties:
+          type: string
+        type: object
+      system_name:
+        maxLength: 255
+        type: string
+      ticket:
+        type: string
+      ticket_resources:
+        type: boolean
+      url:
+        maxLength: 255
+        type: string
+    required:
+    - ticket
+    type: object
+  alarmaction.ChangeStateRequest:
+    properties:
+      comment:
+        maxLength: 255
+        type: string
+      state:
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        type: integer
+    required:
+    - comment
+    - state
+    type: object
+  alarmaction.Request:
+    properties:
+      comment:
+        maxLength: 255
+        type: string
+    required:
+    - comment
+    type: object
+  alarmaction.SnoozeRequest:
+    properties:
+      comment:
+        maxLength: 255
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+    required:
+    - comment
+    - duration
+    type: object
   alarmtag.Response:
     properties:
       _id:
