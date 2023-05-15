@@ -6,8 +6,9 @@ import (
 )
 
 type Author struct {
-	ID   string `bson:"_id" json:"_id"`
-	Name string `bson:"name" json:"name"`
+	ID          string `bson:"_id" json:"_id"`
+	Name        string `bson:"name" json:"name"`
+	DisplayName string `bson:"display_name" json:"-"`
 }
 
 type Role struct {

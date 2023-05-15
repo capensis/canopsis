@@ -294,6 +294,7 @@ func Default(
 			dbClient,
 			pgPoolProvider,
 			amqpChannel,
+			p.ApiConfigProvider,
 			p.TimezoneConfigProvider,
 			p.TemplateConfigProvider,
 			pbhEntityTypeResolver,

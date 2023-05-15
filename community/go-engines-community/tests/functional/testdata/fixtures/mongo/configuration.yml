@@ -33,6 +33,7 @@ configuration:
     api:
       bulkmaxsize: 10000
       tokensigningmethod: HS256
+      authorscheme: ["$username"]
     data_storage:
       timetoexecute: ""
     file:
