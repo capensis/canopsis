@@ -15,9 +15,10 @@ import {
 
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
-import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './alarm';
 import { widgetColumnsToForm, formToWidgetColumns } from '../shared/widget-column';
 import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget-template';
+
+import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './alarm';
 
 /**
  * @typedef {'more-info' | 'alarm-list' | 'both'} ServiceWeatherWidgetModalType

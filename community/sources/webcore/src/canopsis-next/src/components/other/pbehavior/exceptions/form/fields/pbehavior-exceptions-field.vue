@@ -20,7 +20,6 @@
 
 <script>
 import { uid } from '@/helpers/uid';
-
 import { convertDateToStartOfDayDateObject } from '@/helpers/date/date';
 
 import { formArrayMixin } from '@/mixins/form';

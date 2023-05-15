@@ -1,7 +1,5 @@
 import { pick } from 'lodash';
 
-import { metricPresetsToForm } from '../forms/metric';
-
 import {
   BAR_CHART_WIDGET_PRESET_PARAMETERS_BY_TYPE,
   BAR_CHART_WIDGET_PRESET_TYPES,
@@ -14,6 +12,8 @@ import {
 } from '@/constants';
 
 import { getDefaultAggregateFunctionByMetric } from '@/helpers/metrics';
+
+import { metricPresetsToForm } from '../forms/metric';
 
 /**
  * Get chart preset types by widget type
