@@ -32,14 +32,13 @@ func NewApi(store Store) API {
 // @Param body body AckRequest true "body"
 func (a *api) Ack(c *gin.Context) {
 	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
 	request := AckRequest{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	ok, err := a.store.Ack(c, c.Param("id"), request, userID, username)
+	ok, err := a.store.Ack(c, c.Param("id"), request, userID)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -60,14 +59,13 @@ func (a *api) Ack(c *gin.Context) {
 // @Param body body Request true "body"
 func (a *api) AckRemove(c *gin.Context) {
 	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
 	request := Request{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	ok, err := a.store.AckRemove(c, c.Param("id"), request, userID, username)
+	ok, err := a.store.AckRemove(c, c.Param("id"), request, userID)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -88,14 +86,13 @@ func (a *api) AckRemove(c *gin.Context) {
 // @Param body body SnoozeRequest true "body"
 func (a *api) Snooze(c *gin.Context) {
 	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
 	request := SnoozeRequest{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	ok, err := a.store.Snooze(c, c.Param("id"), request, userID, username)
+	ok, err := a.store.Snooze(c, c.Param("id"), request, userID)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -116,14 +113,13 @@ func (a *api) Snooze(c *gin.Context) {
 // @Param body body Request true "body"
 func (a *api) Cancel(c *gin.Context) {
 	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
 	request := Request{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	ok, err := a.store.Cancel(c, c.Param("id"), request, userID, username)
+	ok, err := a.store.Cancel(c, c.Param("id"), request, userID)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -144,14 +140,13 @@ func (a *api) Cancel(c *gin.Context) {
 // @Param body body Request true "body"
 func (a *api) Uncancel(c *gin.Context) {
 	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
 	request := Request{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	ok, err := a.store.Uncancel(c, c.Param("id"), request, userID, username)
+	ok, err := a.store.Uncancel(c, c.Param("id"), request, userID)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -172,14 +167,13 @@ func (a *api) Uncancel(c *gin.Context) {
 // @Param body body AssocTicketRequest true "body"
 func (a *api) AssocTicket(c *gin.Context) {
 	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
 	request := AssocTicketRequest{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	ok, err := a.store.AssocTicket(c, c.Param("id"), request, userID, username)
+	ok, err := a.store.AssocTicket(c, c.Param("id"), request, userID)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -200,14 +194,13 @@ func (a *api) AssocTicket(c *gin.Context) {
 // @Param body body Request true "body"
 func (a *api) Comment(c *gin.Context) {
 	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
 	request := Request{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	ok, err := a.store.Comment(c, c.Param("id"), request, userID, username)
+	ok, err := a.store.Comment(c, c.Param("id"), request, userID)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -228,14 +221,13 @@ func (a *api) Comment(c *gin.Context) {
 // @Param body body ChangeStateRequest true "body"
 func (a *api) ChangeState(c *gin.Context) {
 	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
 	request := ChangeStateRequest{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
-	ok, err := a.store.ChangeState(c, c.Param("id"), request, userID, username)
+	ok, err := a.store.ChangeState(c, c.Param("id"), request, userID)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
