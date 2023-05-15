@@ -1,11 +1,12 @@
 package middleware
 
 import (
+	"bytes"
+	"crypto/sha256"
 	"encoding/json"
 	"io"
 	"net/url"
 	"sort"
-	"strings"
 	"time"
 
 	libhttp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
@@ -23,7 +24,13 @@ func Cache(
 ) gin.HandlerFunc {
 	redisStore := persist.NewRedisStore(redisClient)
 	return cache.Cache(redisStore, defaultExpire, cache.WithPrefixKey(libredis.ApiCacheRequestKey), cache.WithCacheStrategyByRequest(func(c *gin.Context) (bool, cache.Strategy) {
-		cacheKey := getRequestUriIgnoreQueryOrder(c.Request.URL)
+		buff := bytes.Buffer{}
+		getRequestUriIgnoreQueryOrder(&buff, c.Request.URL)
+		if c.Request.URL.Fragment != "" {
+			buff.WriteRune('#')
+			buff.WriteString(c.Request.URL.EscapedFragment())
+		}
+
 		var body io.ReadCloser
 		var err error
 		if c.Request.Body != nil {
@@ -37,7 +44,8 @@ func Cache(
 				panic(err)
 			}
 
-			cacheKey += getRequestBodyIgnoreJsonOrder(b)
+			buff.WriteRune('|')
+			getRequestBodyIgnoreJsonOrder(&buff, b)
 		}
 
 		var cacheDuration time.Duration
@@ -45,17 +53,19 @@ func Cache(
 			cacheDuration = getExpire()
 		}
 
+		cacheKey := sha256.Sum256(buff.Bytes())
 		return true, cache.Strategy{
-			CacheKey:      cacheKey,
+			CacheKey:      string(cacheKey[:]),
 			CacheDuration: cacheDuration,
 		}
 	}))
 }
 
-func getRequestUriIgnoreQueryOrder(url *url.URL) string {
-	values := url.Query()
+func getRequestUriIgnoreQueryOrder(buff *bytes.Buffer, u *url.URL) {
+	buff.WriteString(u.Path)
+	values := u.Query()
 	if len(values) == 0 {
-		return url.Path
+		return
 	}
 
 	keys := make([]string, len(values))
@@ -66,22 +76,29 @@ func getRequestUriIgnoreQueryOrder(url *url.URL) string {
 	}
 
 	sort.Strings(keys)
-	sortedValues := make([]string, 0, len(keys))
+	added := false
+	buff.WriteRune('?')
 	for _, k := range keys {
 		sort.Strings(values[k])
+		escapedKey := url.QueryEscape(k)
 		for _, v := range values[k] {
-			sortedValues = append(sortedValues, k+"="+v)
+			if added {
+				buff.WriteRune('&')
+			}
+			buff.WriteString(escapedKey)
+			buff.WriteRune('=')
+			buff.WriteString(url.QueryEscape(v))
+			added = true
 		}
 	}
-
-	return url.Path + "?" + strings.Join(sortedValues, "&")
 }
 
-func getRequestBodyIgnoreJsonOrder(body []byte) string {
+func getRequestBodyIgnoreJsonOrder(buff *bytes.Buffer, body []byte) {
 	values := make(map[string]any)
 	err := json.Unmarshal(body, &values)
 	if err != nil || len(values) == 0 {
-		return string(body)
+		buff.Write(body)
+		return
 	}
 
 	keys := make([]string, len(values))
@@ -99,10 +116,9 @@ func getRequestBodyIgnoreJsonOrder(body []byte) string {
 		}
 	}
 
-	b, err := json.Marshal(sortedValues)
+	err = json.NewEncoder(buff).Encode(sortedValues)
 	if err != nil {
-		return string(body)
+		buff.Write(body)
+		return
 	}
-
-	return string(b)
 }
