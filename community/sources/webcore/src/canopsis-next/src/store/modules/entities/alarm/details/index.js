@@ -2,7 +2,6 @@ import Vue from 'vue';
 import { get } from 'lodash';
 
 import { API_ROUTES } from '@/config';
-
 import { ENTITIES_TYPES } from '@/constants';
 
 import { alarmDetailsSchema } from '@/store/schemas';

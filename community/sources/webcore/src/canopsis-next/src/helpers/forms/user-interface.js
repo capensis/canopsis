@@ -1,5 +1,4 @@
 import { DEFAULT_APP_TITLE, DEFAULT_LOCALE, POPUP_AUTO_CLOSE_DELAY } from '@/config';
-
 import { TIME_UNITS } from '@/constants';
 
 import { durationToForm } from '@/helpers/date/duration';

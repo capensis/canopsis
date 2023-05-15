@@ -58,7 +58,6 @@
 
 <script>
 import { isOmitEqual } from '@/helpers/equal';
-
 import { remediationInstructionStepOperationToForm } from '@/helpers/forms/remediation-instruction';
 
 import { formMixin, validationChildrenMixin } from '@/mixins/form';

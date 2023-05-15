@@ -11,9 +11,9 @@
 </template>
 
 <script>
-import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
-
 import { KPI_PIE_CHART_SHOW_MODS } from '@/constants';
+
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
   components: { WidgetSettingsItem },

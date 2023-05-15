@@ -25,6 +25,7 @@
 
 <script>
 import { difference } from 'lodash';
+
 import { filterValue, revertGroupBy } from '@/helpers/entities';
 
 import { formMixin } from '@/mixins/form';

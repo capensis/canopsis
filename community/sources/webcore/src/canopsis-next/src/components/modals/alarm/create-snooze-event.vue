@@ -22,13 +22,13 @@
 <script>
 import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
+import { formToSnooze, snoozeToForm } from '@/helpers/forms/snooze-event';
+
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
 import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-
-import { formToSnooze, snoozeToForm } from '@/helpers/forms/snooze-event';
 
 import SnoozeEventForm from '@/components/widgets/alarm/forms/snooze-event-form.vue';
 

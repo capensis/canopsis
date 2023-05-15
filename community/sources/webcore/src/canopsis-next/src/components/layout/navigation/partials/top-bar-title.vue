@@ -19,11 +19,11 @@
 <script>
 import { MODALS } from '@/constants';
 
+import Socket from '@/plugins/socket/services/socket';
+
 import { compile } from '@/helpers/handlebars';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
-
-import Socket from '@/plugins/socket/services/socket';
 
 export default {
   mixins: [entitiesInfoMixin],

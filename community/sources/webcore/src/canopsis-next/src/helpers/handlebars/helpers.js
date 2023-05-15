@@ -4,10 +4,10 @@ import axios from 'axios';
 
 import { DATETIME_FORMATS, MAX_LIMIT } from '@/constants';
 
+import i18n from '@/i18n';
+
 import { convertDurationToString } from '@/helpers/date/duration';
 import { convertDateToStringWithFormatForToday, convertDateToString } from '@/helpers/date/date';
-
-import i18n from '@/i18n';
 
 /**
  * Prepare object attributes from `{ key: value, keySecond: valueSecond }` format

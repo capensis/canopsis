@@ -4,12 +4,15 @@ import WebFont from 'webfontloader';
 import * as constants from '@/constants';
 import * as config from '@/config';
 
+/* eslint-disable import/order */
 import { bootstrapApplicationPlugins } from './plugins';
 import { registerApplicationComponents } from './components';
+/* eslint-enable import/order */
 
 import router from '@/router';
 import store from '@/store';
 import i18n from '@/i18n';
+
 import App from '@/app.vue';
 
 /**

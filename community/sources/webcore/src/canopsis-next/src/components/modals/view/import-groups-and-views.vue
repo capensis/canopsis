@@ -46,7 +46,6 @@ import {
 } from '@/helpers/forms/view';
 
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
-
 import { authMixin } from '@/mixins/auth';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesViewMixin } from '@/mixins/entities/view';
