@@ -10,11 +10,10 @@
 import { isNumber } from 'lodash';
 
 import { ENTITIES_STATES } from '@/constants';
+import { COLORS } from '@/config';
 
 import { isNotActivePbehaviorType } from '@/helpers/entities/pbehavior';
 import { getEntityColor } from '@/helpers/color';
-
-import { COLORS } from '@/config';
 
 export default {
   props: {

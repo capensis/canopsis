@@ -16,7 +16,6 @@
 
 <script>
 import { REMEDIATION_STATISTICS_FILENAME_PREFIX } from '@/config';
-
 import {
   QUICK_RANGES,
   SAMPLINGS,

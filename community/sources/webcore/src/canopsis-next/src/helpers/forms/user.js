@@ -1,5 +1,4 @@
 import { THEMES_NAMES } from '@/config';
-
 import { GROUPS_NAVIGATION_TYPES } from '@/constants';
 
 /**

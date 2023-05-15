@@ -17,11 +17,11 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
+import { dynamicInfoToForm, formToDynamicInfo } from '@/helpers/forms/dynamic-info';
+
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-
-import { dynamicInfoToForm, formToDynamicInfo } from '@/helpers/forms/dynamic-info';
 
 import DynamicInfoForm from '@/components/other/dynamic-info/form/dynamic-info-form.vue';
 

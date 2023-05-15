@@ -1,8 +1,9 @@
-import { createEntityModule } from '@/store/plugins/entities';
-
-import request from '@/services/request';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
+
+import request from '@/services/request';
+
+import { createEntityModule } from '@/store/plugins/entities';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',

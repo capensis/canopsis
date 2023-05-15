@@ -30,7 +30,6 @@
 import { keyBy } from 'lodash';
 
 import { SOCKET_ROOMS } from '@/config';
-
 import { DECLARE_TICKET_EXECUTION_STATUSES, MODALS } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';

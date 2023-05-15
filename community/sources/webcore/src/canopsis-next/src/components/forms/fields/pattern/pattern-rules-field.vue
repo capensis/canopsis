@@ -27,7 +27,6 @@
 
 <script>
 import { patternRuleToForm } from '@/helpers/forms/pattern';
-
 import { convertValueByOperator, getOperatorsByRule } from '@/helpers/pattern';
 
 import { formArrayMixin } from '@/mixins/form';

@@ -14,7 +14,6 @@
 
 <script>
 import { APP_HOST, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
-
 import { MODALS, ROUTES_NAMES } from '@/constants';
 
 import { removeTrailingSlashes } from '@/helpers/url';

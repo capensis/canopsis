@@ -39,12 +39,11 @@
 </template>
 
 <script>
-import { formMixin, validationChildrenMixin } from '@/mixins/form';
-
 import { remediationInstructionStepToForm } from '@/helpers/forms/remediation-instruction';
 import { isOmitEqual } from '@/helpers/equal';
 import { toSeconds } from '@/helpers/date/duration';
 
+import { formMixin, validationChildrenMixin } from '@/mixins/form';
 import { confirmableFormMixinCreator } from '@/mixins/confirmable-form';
 
 import RemediationInstructionOperationsForm from '../remediation-instruction-operations-form.vue';

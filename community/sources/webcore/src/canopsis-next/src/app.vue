@@ -22,12 +22,12 @@ import { createNamespacedHelpers } from 'vuex';
 import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
 import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, ROUTES_NAMES } from '@/constants';
 
-import { reloadPageWithTrailingSlashes } from '@/helpers/url';
-import { convertDateToString } from '@/helpers/date/date';
+import Socket from '@/plugins/socket/services/socket';
 
 import localStorageService from '@/services/local-storage';
 
-import Socket from '@/plugins/socket/services/socket';
+import { reloadPageWithTrailingSlashes } from '@/helpers/url';
+import { convertDateToString } from '@/helpers/date/date';
 
 import { authMixin } from '@/mixins/auth';
 import { systemMixin } from '@/mixins/system';
