@@ -1,7 +1,6 @@
 import { get } from 'lodash';
 
 import modalsStoreModule from './store';
-
 import TheModals from './components/the-modals.vue';
 import ModalBase from './components/modal-base.vue';
 

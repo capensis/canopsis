@@ -13,14 +13,10 @@ import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
 import { MODALS } from '@/constants';
 import { MEDIA_QUERIES_BREAKPOINTS, THEMES } from '@/config';
 
-import { setSeveralFields } from '@/helpers/immutable';
-
 import ValidatorPlugin from '@/plugins/validator';
 import ModalsPlugin from '@/plugins/modals';
-import featuresService from '@/services/features';
 import PopupsPlugin from '@/plugins/popups';
 import SidebarPlugin from '@/plugins/sidebar';
-import * as sidebarsComponents from '@/components/sidebars';
 import SetSeveralPlugin from '@/plugins/set-several';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ToursPlugin from '@/plugins/tours';
@@ -29,9 +25,13 @@ import SocketPlugin from '@/plugins/socket';
 import GridPlugin from '@/plugins/grid';
 import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';
 
+import featuresService from '@/services/features';
+
 import store from '@/store';
 import i18n from '@/i18n';
 import Filters from '@/filters';
+
+import { setSeveralFields } from '@/helpers/immutable';
 
 import BullhornIcon from '@/components/icons/bullhorn.vue';
 import AltRouteIcon from '@/components/icons/alt_route.vue';
@@ -51,6 +51,7 @@ import ManualInstruction from '@/components/icons/manual_instruction.vue';
 import RestartAltIcon from '@/components/icons/restart_alt.vue';
 import ListDeleteIcon from '@/components/icons/list_delete.vue';
 import * as modalsComponents from '@/components/modals';
+import * as sidebarsComponents from '@/components/sidebars';
 
 /**
  * @param {import('vue').VueConstructor | import('vue').Vue} Vue

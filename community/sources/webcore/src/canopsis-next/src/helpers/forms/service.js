@@ -2,8 +2,9 @@ import { isNumber, omit } from 'lodash';
 
 import { ENTITIES_STATES, OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
-import { infosToArray } from './shared/common';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
+
+import { infosToArray } from './shared/common';
 
 /**
  * @typedef {FilterPatterns} Service
