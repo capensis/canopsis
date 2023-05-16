@@ -14,7 +14,8 @@ Feature: Get a view
           "_id": "test-view-to-get-1",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1611229670,
           "description": "test-view-to-get-1-description",
@@ -23,7 +24,8 @@ Feature: Get a view
             "_id": "test-viewgroup-to-view-edit",
             "author": {
               "_id": "root",
-              "name": "root"
+              "name": "root",
+              "display_name": "root John Doe admin@canopsis.net"
             },
             "created": 1611229670,
             "title": "test-viewgroup-to-view-edit-title",
@@ -44,7 +46,8 @@ Feature: Get a view
           "_id": "test-view-to-get-2",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1611229670,
           "description": "test-view-to-get-2-description",
@@ -53,7 +56,8 @@ Feature: Get a view
             "_id": "test-viewgroup-to-view-edit",
             "author": {
               "_id": "root",
-              "name": "root"
+              "name": "root",
+              "display_name": "root John Doe admin@canopsis.net"
             },
             "created": 1611229670,
             "title": "test-viewgroup-to-view-edit-title",
@@ -90,7 +94,8 @@ Feature: Get a view
       "_id": "test-view-to-get-1",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "created": 1611229670,
       "description": "test-view-to-get-1-description",
@@ -99,7 +104,8 @@ Feature: Get a view
         "_id": "test-viewgroup-to-view-edit",
         "author": {
           "_id": "root",
-          "name": "root"
+          "name": "root",
+          "display_name": "root John Doe admin@canopsis.net"
         },
         "created": 1611229670,
         "title": "test-viewgroup-to-view-edit-title",
@@ -117,7 +123,8 @@ Feature: Get a view
           "title": "test-tab-to-view-get-1-title",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1611229670,
           "updated": 1611229670,
@@ -126,7 +133,8 @@ Feature: Get a view
               "_id": "test-widget-to-view-get-1",
               "author": {
                 "_id": "root",
-                "name": "root"
+                "name": "root",
+                "display_name": "root John Doe admin@canopsis.net"
               },
               "created": 1611229670,
               "updated": 1611229670,
@@ -150,7 +158,8 @@ Feature: Get a view
                   "is_private": false,
                   "author": {
                     "_id": "nopermsuser",
-                    "name": "nopermsuser"
+                    "name": "nopermsuser",
+                    "display_name": "nopermsuser   "
                   },
                   "created": 1611229670,
                   "updated": 1611229670,
@@ -172,7 +181,8 @@ Feature: Get a view
                   "is_private": false,
                   "author": {
                     "_id": "root",
-                    "name": "root"
+                    "name": "root",
+                    "display_name": "root John Doe admin@canopsis.net"
                   },
                   "created": 1611229670,
                   "updated": 1611229670,
@@ -196,7 +206,8 @@ Feature: Get a view
               "_id": "test-widget-to-view-get-2",
               "author": {
                 "_id": "root",
-                "name": "root"
+                "name": "root",
+                "display_name": "root John Doe admin@canopsis.net"
               },
               "created": 1611229670,
               "updated": 1611229670,
@@ -224,7 +235,8 @@ Feature: Get a view
           "title": "test-tab-to-view-get-2-title",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "widgets": [],
           "created": 1611229670,
@@ -245,7 +257,8 @@ Feature: Get a view
       "_id": "test-view-to-get-2",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "created": 1611229670,
       "description": "test-view-to-get-2-description",
@@ -254,7 +267,8 @@ Feature: Get a view
         "_id": "test-viewgroup-to-view-edit",
         "author": {
           "_id": "root",
-          "name": "root"
+          "name": "root",
+          "display_name": "root John Doe admin@canopsis.net"
         },
         "created": 1611229670,
         "title": "test-viewgroup-to-view-edit-title",

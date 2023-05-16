@@ -25,17 +25,19 @@ type Store interface {
 }
 
 type store struct {
-	client     mongo.DbClient
-	collection mongo.DbCollection
+	client         mongo.DbClient
+	collection     mongo.DbCollection
+	authorProvider author.Provider
 
 	defaultSearchByFields []string
 	defaultSortBy         string
 }
 
-func NewStore(dbClient mongo.DbClient) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
-		client:     dbClient,
-		collection: dbClient.Collection(mongo.LinkRuleMongoCollection),
+		client:         dbClient,
+		collection:     dbClient.Collection(mongo.LinkRuleMongoCollection),
+		authorProvider: authorProvider,
 
 		defaultSearchByFields: []string{"_id", "author.name", "name"},
 		defaultSortBy:         "created",
@@ -66,7 +68,7 @@ func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, err
 
 func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
-	pipeline = append(pipeline, author.Pipeline()...)
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -87,7 +89,7 @@ func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
 }
 
 func (s *store) Find(ctx context.Context, request ListRequest) (*AggregationResult, error) {
-	pipeline := author.Pipeline()
+	pipeline := s.authorProvider.Pipeline()
 	filter := common.GetSearchQuery(request.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
