@@ -162,8 +162,7 @@ import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './
  */
 
 /**
- * @typedef {AlarmChart} AlarmChartForm
- * @property {string} key
+ * @typedef {AlarmChart & ObjectKey} AlarmChartForm
  */
 
 /**

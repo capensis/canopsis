@@ -10,12 +10,12 @@
       handle=".action-drag-handler"
     )
       filter-tile(
-        v-for="filter in filters",
+        v-for="(filter, index) in filters",
         :filter="filter",
         :key="filter._id",
         :editable="editable",
-        @edit="$emit('edit', filter)",
-        @delete="$emit('delete', filter)"
+        @edit="$emit('edit', filter, index)",
+        @delete="$emit('delete', filter, index)"
       )
     v-btn.ml-0(
       v-if="addable",

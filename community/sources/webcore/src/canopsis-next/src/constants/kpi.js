@@ -24,7 +24,7 @@ export const KPI_RATING_CRITERIA = {
 
 export const KPI_RATING_USER_CRITERIA = [KPI_RATING_CRITERIA.user, KPI_RATING_CRITERIA.role];
 
-export const KPI_RATING_USER_METRICS = [
+export const KPI_RATING_USER_METRICS = [ // TODO: add new metrics
   ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
   ALARM_METRIC_PARAMETERS.ackAlarms,
   ALARM_METRIC_PARAMETERS.cancelAckAlarms,
@@ -33,7 +33,7 @@ export const KPI_RATING_USER_METRICS = [
   USER_METRIC_PARAMETERS.totalUserActivity,
 ];
 
-export const KPI_RATING_ENTITY_METRICS = [
+export const KPI_RATING_ENTITY_METRICS = [ // TODO: add new metrics
   ALARM_METRIC_PARAMETERS.createdAlarms,
   ALARM_METRIC_PARAMETERS.instructionAlarms,
   ALARM_METRIC_PARAMETERS.pbehaviorAlarms,
@@ -92,3 +92,10 @@ export const X_AXES_IDS = {
 export const MAX_METRICS_DISPLAY_COUNT = 40;
 
 export const KPI_CHART_DEFAULT_HEIGHT = 560;
+
+export const KPI_RATING_SETTINGS_TYPES = {
+  entity: 0,
+  user: 1,
+};
+
+export const KPI_ENTITY_RATING_SETTINGS_CUSTOM_PARAMETER = Symbol('custom').toString();

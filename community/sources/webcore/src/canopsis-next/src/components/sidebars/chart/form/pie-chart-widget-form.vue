@@ -12,7 +12,11 @@
       )
       field-pie-show-mode(v-field="form.parameters.show_mode")
     widget-settings-group(:title="$t('settings.advancedSettings')")
-      field-chart-title(v-field="form.parameters.chart_title")
+      field-title(
+        v-field="form.parameters.chart_title",
+        :label="$tc('common.header')",
+        :placeholder="$t('settings.headerTitle')"
+      )
       field-quick-date-interval-type(v-field="form.parameters.default_time_range")
       field-sampling(v-field="form.parameters.default_sampling")
       field-alarm-metric-aggregate-function(v-field="form.parameters.aggregate_func")
@@ -35,11 +39,10 @@ import { formMixin } from '@/mixins/form';
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 import FieldTitle from '@/components/sidebars/form/fields/title.vue';
 import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.vue';
+import FieldQuickDateIntervalType from '@/components/sidebars/chart/form/fields/quick-date-interval-type.vue';
 import FieldPreset from '@/components/sidebars/chart/form/fields/preset.vue';
 import FieldAlarmMetricPresets from '@/components/sidebars/chart/form/fields/alarm-metric-presets.vue';
 import FieldPieShowMode from '@/components/sidebars/chart/form/fields/pie-show-mode.vue';
-import FieldChartTitle from '@/components/sidebars/chart/form/fields/chart-title.vue';
-import FieldQuickDateIntervalType from '@/components/sidebars/chart/form/fields/quick-date-interval-type.vue';
 import FieldSampling from '@/components/sidebars/chart/form/fields/sampling.vue';
 import FieldAlarmMetricAggregateFunction from '@/components/sidebars/chart/form/fields/alarm-metric-aggregate-function.vue';
 import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
@@ -49,11 +52,10 @@ export default {
     WidgetSettingsGroup,
     FieldTitle,
     FieldPeriodicRefresh,
+    FieldQuickDateIntervalType,
     FieldPreset,
     FieldAlarmMetricPresets,
     FieldPieShowMode,
-    FieldChartTitle,
-    FieldQuickDateIntervalType,
     FieldSampling,
     FieldAlarmMetricAggregateFunction,
     FieldFilters,
