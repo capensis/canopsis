@@ -94,6 +94,7 @@ export default {
       return [
         ...this.alarmPayloadRangeVariables,
         ...this.externalDataAlarmPayloadVariables,
+        ...this.userPayloadVariables,
       ];
     },
 
@@ -111,6 +112,7 @@ export default {
         },
 
         ...this.externalDataEntityPayloadVariables,
+        ...this.userPayloadVariables,
       ];
     },
 
