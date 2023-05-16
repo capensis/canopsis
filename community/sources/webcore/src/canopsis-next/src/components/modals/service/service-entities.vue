@@ -43,8 +43,8 @@ import { MODALS, PBEHAVIOR_ORIGINS, SORT_ORDERS, USERS_PERMISSIONS, WEATHER_ACTI
 
 import Observer from '@/services/observer';
 
-import { createDowntimePbehavior } from '@/helpers/entities/pbehavior';
-import { convertActionToEvents } from '@/helpers/entities/entity';
+import { createDowntimePbehavior } from '@/helpers/entities/pbehavior/form';
+import { convertActionToEvents } from '@/helpers/entities/entity/actions';
 
 import { authMixin } from '@/mixins/auth';
 import { modalInnerMixin } from '@/mixins/modal/inner';

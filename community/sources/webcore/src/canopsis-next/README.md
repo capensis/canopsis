@@ -382,9 +382,9 @@ export default {
 ## Add widget directly into application source code
 Note: *We've added examples of `Counter` widget creation.*
 
-1. Put a new `WIDGET_TYPES` in the `src/constants/widget.js`:
+1. Put a new `WIDGET_TYPES` in the `src/constants/bar-line-pie-numbers-widget.js`:
 ```js
-// file src/constants/widget.js
+// file src/constants/bar-line-pie-numbers-widget.js
 
 export const WIDGET_TYPES = {
   // ...another widgets
@@ -392,9 +392,9 @@ export const WIDGET_TYPES = {
   counter: 'Counter', // <-- here. We are using camelCase for keys
 };
 ```
-2. Put a new icon for the widget type into `WIDGET_ICONS` in the `src/constants/widget.js`:
+2. Put a new icon for the widget type into `WIDGET_ICONS` in the `src/constants/bar-line-pie-numbers-widget.js`:
 ```js
-// file src/constants/widget.js
+// file src/constants/bar-line-pie-numbers-widget.js
 
 export const WIDGET_ICONS = {
   // ...another widgets icons
@@ -402,9 +402,9 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.counter]: 'view_module', // <-- here. 'view_module' is icon name from material UI
 };
 ```
-3. Put a new constant for the widget into `SIDE_BARS` in the `src/constants/widget.js`:
+3. Put a new constant for the widget into `SIDE_BARS` in the `src/constants/bar-line-pie-numbers-widget.js`:
 ```js
-// file src/constants/widget.js
+// file src/constants/bar-line-pie-numbers-widget.js
 
 export const SIDE_BARS = {
   // ...another widgets
@@ -412,9 +412,9 @@ export const SIDE_BARS = {
   counterSettings: 'counter-settings', // <-- here. This value should be equal to the component export name in the previous step but in the kebab-kase
 };
 ```
-4. Put a new map value into `SIDE_BARS_BY_WIDGET_TYPES` for the new `WIDGET_TYPE` and `SIDE_BARS` value in the `src/constants/widget.js`:
+4. Put a new map value into `SIDE_BARS_BY_WIDGET_TYPES` for the new `WIDGET_TYPE` and `SIDE_BARS` value in the `src/constants/bar-line-pie-numbers-widget.js`:
 ```js
-// file src/constants/widget.js
+// file src/constants/bar-line-pie-numbers-widget.js
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
   // ...another widgets
@@ -450,7 +450,7 @@ export { default as CounterSettings } from './settings/counter.vue'; // <-- here
 ```
 7. Also, we can add special rule for the widget if we have dependency of the canopsis backend `edition`. Example for the `pro` edition:
 ```js
-// file src/constants/widget.js
+// file src/constants/bar-line-pie-numbers-widget.js
 
 export const WIDGET_TYPES_RULES = {
   // ...another widgets rules
@@ -494,9 +494,9 @@ export default {
 };
 ```
 10. If we need to put default parameters of the widget on creation then we must do the following steps:
-* Create new file `src/helpers/forms/widgets/counter.js` with parameters preparation
+* Create new file `src/helpers/forms/widgets/widget.js` with parameters preparation
 ```js
-   // file src/helpers/forms/widgets/counter.js
+   // file src/helpers/forms/widgets/widget.js
 export const counterWidgetParametersToForm = (parameters = {}) => ({ // <-- Special parameters preparation for our new widget type
   opened: isBoolean(opened) || isNull(opened) ? parameters.opened : true,
   blockTemplate: parameters.blockTemplate ?? DEFAULT_COUNTER_BLOCK_TEMPLATE,
@@ -518,9 +518,9 @@ export const counterWidgetParametersToForm = (parameters = {}) => ({ // <-- Spec
   alarmsList: alarmListBaseParametersToForm(parameters.alarmsList),
 });
  ```
-* Put this function call inside `src/helpers/forms/widgets/common.js`:
+* Put this function call inside `src/helpers/forms/widgets/list.js`:
 ```js
-// file src/helpers/forms/widgets/common.js
+// file src/helpers/forms/widgets/list.js
 
 import { counterWidgetParametersToForm } from './counter';
 
@@ -1351,7 +1351,7 @@ export default {
 Type: `Array<Object>`<br>
 Allows us to define mixins for `alarm-list-table` component. Inside mixin we can customize all functionality which we want (lifecycle methods, data, computed properties and etc.).
 ```js
-// file mixins/alarm-list-table.js
+// file mixins/alarm-list-list.js
 export const alarmListTableMixin = {
   // ...another code
   components: {},

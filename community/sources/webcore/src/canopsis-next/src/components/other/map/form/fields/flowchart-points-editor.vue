@@ -57,7 +57,7 @@ import { cloneDeep } from 'lodash';
 
 import { FLOWCHART_MAX_POSITION_DIFF, FLOWCHART_MAX_TIMESTAMP_DIFF, MODALS } from '@/constants';
 
-import { flowchartPointToForm } from '@/helpers/forms/map';
+import { flowchartPointToForm } from '@/helpers/entities/map/form';
 import { waitVuetifyAnimation } from '@/helpers/vuetify';
 
 import { formMixin } from '@/mixins/form';

@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { getAvailableMetricsByCriteria } from '@/helpers/metrics';
+import { getAvailableMetricsByCriteria } from '@/helpers/entities/metric/list';
 
 export default {
   model: {

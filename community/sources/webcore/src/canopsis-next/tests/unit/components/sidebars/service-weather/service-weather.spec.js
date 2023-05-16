@@ -21,7 +21,7 @@ import {
 } from '@/constants';
 
 import ClickOutside from '@/services/click-outside';
-import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/forms/widgets/common';
+import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/entities/widget/form';
 
 import ServiceWeatherSettings from '@/components/sidebars/service-weather/service-weather.vue';
 

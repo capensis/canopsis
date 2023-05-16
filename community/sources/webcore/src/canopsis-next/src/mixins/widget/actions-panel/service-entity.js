@@ -8,8 +8,8 @@ import {
   PBEHAVIOR_TYPE_TYPES,
 } from '@/constants';
 
-import { mapIds } from '@/helpers/entities';
-import { isActionTypeAvailableForEntity } from '@/helpers/entities/entity';
+import { mapIds } from '@/helpers/array';
+import { isActionTypeAvailableForEntity } from '@/helpers/entities/entity/actions';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';

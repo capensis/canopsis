@@ -29,7 +29,8 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { isWarningAlarmState, mapIds } from '@/helpers/entities';
+import { mapIds } from '@/helpers/array';
+import { isAlarmStateOk } from '@/helpers/entities/alarm/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
@@ -73,7 +74,7 @@ export default {
   },
   computed: {
     alarms() {
-      return this.items.filter(isWarningAlarmState);
+      return this.items.filter(isAlarmStateOk);
     },
 
     metaAlarmId() {

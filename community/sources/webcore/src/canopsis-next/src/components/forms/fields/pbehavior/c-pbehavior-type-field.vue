@@ -22,7 +22,7 @@
 <script>
 import { MAX_LIMIT } from '@/constants';
 
-import { mapIds } from '@/helpers/entities';
+import { mapIds } from '@/helpers/array';
 
 import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
 

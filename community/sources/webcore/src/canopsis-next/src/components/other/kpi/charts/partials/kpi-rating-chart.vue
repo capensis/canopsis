@@ -19,7 +19,7 @@ import {
   convertDurationToString,
   fromSeconds,
 } from '@/helpers/date/duration';
-import { isRatioMetric, isTimeMetric } from '@/helpers/metrics';
+import { isRatioMetric, isTimeMetric } from '@/helpers/entities/metric/form';
 
 import BarChart from '@/components/common/chart/bar-chart.vue';
 

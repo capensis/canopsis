@@ -22,7 +22,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { userToForm, formToUser } from '@/helpers/forms/user';
+import { userToForm, formToUser } from '@/helpers/entities/user/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

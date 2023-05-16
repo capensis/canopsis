@@ -46,7 +46,7 @@
 <script>
 import { OLD_PATTERNS_FIELDS } from '@/constants';
 
-import { isOldPattern } from '@/helpers/pattern';
+import { isOldPattern } from '@/helpers/entities/pattern/form';
 
 import AlarmStatusRulesListExpandItem from './partials/alarm-status-rules-list-expand-item.vue';
 

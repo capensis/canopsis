@@ -28,13 +28,11 @@ import {
 
 import featuresService from '@/services/features';
 
-import {
-  prepareAlarmListWidget,
-  prepareContextWidget,
-  prepareServiceWeatherWidget,
-  prepareStatsCalendarAndCounterWidget,
-  prepareMapWidget,
-} from '@/helpers/widgets';
+import { prepareAlarmListWidget } from '@/helpers/entities/alarm/widget';
+import { prepareContextWidget } from '@/helpers/entities/entity/widget';
+import { prepareServiceWeatherWidget } from '@/helpers/entities/service-weather/widget';
+import { prepareStatsCalendarAndCounterWidget } from '@/helpers/entities/stats/widget';
+import { prepareMapWidget } from '@/helpers/entities/map/widget';
 
 import AlarmsListWidget from './alarm/alarms-list.vue';
 import EntitiesListWidget from './context/entities-list.vue';
