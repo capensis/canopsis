@@ -108,7 +108,7 @@ import { differenceBy, throttle } from 'lodash';
 import { TOP_BAR_HEIGHT } from '@/config';
 import { ALARM_DENSE_TYPES, ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
 
-import { isResolvedAlarm } from '@/helpers/entities';
+import { isClosedAlarm } from '@/helpers/entities';
 
 import featuresService from '@/services/features';
 
@@ -232,7 +232,7 @@ export default {
     },
 
     unresolvedSelected() {
-      return this.selected.filter(item => !isResolvedAlarm(item));
+      return this.selected.filter(item => !isClosedAlarm(item));
     },
 
     expanded() {

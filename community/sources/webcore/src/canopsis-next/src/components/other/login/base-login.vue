@@ -21,7 +21,7 @@
           template(v-if="footer")
             v-divider.my-2
             v-layout
-              div(v-html="footer")
+              c-compiled-template(:template="footer")
 </template>
 
 <script>
