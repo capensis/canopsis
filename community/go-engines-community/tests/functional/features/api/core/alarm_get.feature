@@ -784,7 +784,7 @@ Feature: Get alarms
                 "rule_id": "test-link-rule-to-alarm-link-get-1",
                 "label": "test-link-rule-to-alarm-link-get-1-link-1-label",
                 "icon_name": "test-link-rule-to-alarm-link-get-1-link-1-icon",
-                "url": "http://test-link-rule-to-alarm-link-get-1-link-1-url.com?resources[]=test-resource-to-alarm-link-get-1/test-component-default|test-link-mongo-data-regexp-1-status&"
+                "url": "http://test-link-rule-to-alarm-link-get-1-link-1-url.com?user=root&resources[]=test-resource-to-alarm-link-get-1/test-component-default|test-link-mongo-data-regexp-1-status&"
               },
               {
                 "rule_id": "test-link-rule-to-alarm-link-get-1",
@@ -797,19 +797,19 @@ Feature: Get alarms
                 "rule_id": "test-link-rule-to-alarm-link-get-2",
                 "label": "test-link-rule-to-alarm-link-get-2-link-1-label",
                 "icon_name": "test-link-rule-to-alarm-link-get-2-link-1-icon",
-                "url": "http://test-link-rule-to-alarm-link-get-2-link-1-url.com?info[]=test-resource-to-alarm-link-get-1-info-1-val&"
+                "url": "http://test-link-rule-to-alarm-link-get-2-link-1-url.com?user=root&info[]=test-resource-to-alarm-link-get-1-info-1-val&"
               },
               {
                 "rule_id": "test-link-rule-to-alarm-link-get-3",
                 "label": "test-link-rule-to-alarm-link-get-3-link-1-label",
                 "icon_name": "test-link-rule-to-alarm-link-get-3-link-1-icon",
-                "url": "http://test-link-rule-to-alarm-link-get-3-link-1-url.com?resources[]=test-resource-to-alarm-link-get-1/test-component-default&"
+                "url": "http://test-link-rule-to-alarm-link-get-3-link-1-url.com?user=root&resources[]=test-resource-to-alarm-link-get-1/test-component-default&"
               },
               {
                 "rule_id": "test-link-rule-to-alarm-link-get-4",
                 "label": "test-link-rule-to-alarm-link-get-4-link-1-label",
                 "icon_name": "test-link-rule-to-alarm-link-get-4-link-1-icon",
-                "url": "http://test-link-rule-to-alarm-link-get-4-link-1-url.com?info[]=test-resource-to-alarm-link-get-1-info-1-val|test-link-mongo-data-1-status&"
+                "url": "http://test-link-rule-to-alarm-link-get-4-link-1-url.com?user=root&info[]=test-resource-to-alarm-link-get-1-info-1-val|test-link-mongo-data-1-status&"
               }
             ],
             "test-category-to-alarm-link-get-2": [
@@ -854,13 +854,13 @@ Feature: Get alarms
                 "rule_id": "test-link-rule-to-alarm-link-get-2",
                 "label": "test-link-rule-to-alarm-link-get-2-link-1-label",
                 "icon_name": "test-link-rule-to-alarm-link-get-2-link-1-icon",
-                "url": "http://test-link-rule-to-alarm-link-get-2-link-1-url.com?info[]=test-resource-to-alarm-link-get-2-info-1-val&"
+                "url": "http://test-link-rule-to-alarm-link-get-2-link-1-url.com?user=root&info[]=test-resource-to-alarm-link-get-2-info-1-val&"
               },
               {
                 "rule_id": "test-link-rule-to-alarm-link-get-4",
                 "label": "test-link-rule-to-alarm-link-get-4-link-1-label",
                 "icon_name": "test-link-rule-to-alarm-link-get-4-link-1-icon",
-                "url": "http://test-link-rule-to-alarm-link-get-4-link-1-url.com?info[]=test-resource-to-alarm-link-get-2-info-1-val|test-link-mongo-data-2-status&"
+                "url": "http://test-link-rule-to-alarm-link-get-4-link-1-url.com?user=root&info[]=test-resource-to-alarm-link-get-2-info-1-val|test-link-mongo-data-2-status&"
               }
             ],
             "test-category-to-alarm-link-get-3": [
