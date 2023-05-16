@@ -9,7 +9,6 @@ import {
   TIME_UNITS,
 } from '@/constants';
 
-import { enabledToForm } from '@/helpers/forms/shared/common';
 import { durationToForm } from '@/helpers/date/duration';
 import { formToAction, actionParametersToForm, isAssociateTicketActionType } from '@/helpers/entities/action';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
@@ -64,7 +63,7 @@ export const idleRuleToForm = (idleRule = {}) => {
   });
 
   return {
-    enabled: enabledToForm(idleRule.enabled),
+    enabled: idleRule.enabled ?? true,
     name: idleRule.name ?? '',
     description: idleRule.description ?? '',
     comment: idleRule.comment ?? '',
