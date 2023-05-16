@@ -244,8 +244,8 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(dbClient, linkGenerator, timezoneConfigProvider, logger)
-		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, logger)
+		alarmStore := alarm.NewStore(dbClient, linkGenerator, timezoneConfigProvider, json.NewDecoder(), logger)
+		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, json.NewEncoder(), logger)
 		alarmRouter := protected.Group("/alarms")
 		{
 			alarmRouter.GET(
@@ -322,7 +322,7 @@ func RegisterRoutes(
 			exportConfigurationAPI.Export,
 		)
 
-		entityStore := entity.NewStore(dbClient, timezoneConfigProvider)
+		entityStore := entity.NewStore(dbClient, timezoneConfigProvider, json.NewDecoder())
 		entityAPI := entity.NewApi(
 			entityStore,
 			exportExecutor,
@@ -330,6 +330,7 @@ func RegisterRoutes(
 			entityPublChan,
 			metricsEntityMetaUpdater,
 			actionLogger,
+			json.NewEncoder(),
 			logger,
 		)
 
