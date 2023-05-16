@@ -5,6 +5,7 @@ package config
 import (
 	"fmt"
 	"html/template"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
@@ -14,6 +15,8 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/rs/zerolog"
 )
+
+const SystemEnvVariablesKey = "System"
 
 var weekdays = map[string]time.Weekday{}
 
@@ -591,17 +594,35 @@ type BaseTemplateConfigProvider struct {
 }
 
 func NewTemplateConfigProvider(cfg CanopsisConf) *BaseTemplateConfigProvider {
-	return &BaseTemplateConfigProvider{
-		conf: cfg.Template,
-		mx:   sync.RWMutex{},
-	}
+	p := BaseTemplateConfigProvider{mx: sync.RWMutex{}}
+	p.parseVariables(cfg.Template)
+
+	return &p
 }
 
 func (p *BaseTemplateConfigProvider) Update(cfg CanopsisConf) {
 	p.mx.Lock()
 	defer p.mx.Unlock()
 
-	p.conf = cfg.Template
+	p.parseVariables(cfg.Template)
+}
+
+func (p *BaseTemplateConfigProvider) parseVariables(templateCfg SectionTemplate) {
+	p.conf = templateCfg
+
+	systemVars := make(map[string]string)
+
+	for _, env := range os.Environ() {
+		for _, prefix := range templateCfg.SystemEnvVarPrefixes {
+			if strings.HasPrefix(env, prefix) {
+				if key, value, ok := strings.Cut(env, "="); ok {
+					systemVars[key] = value
+				}
+			}
+		}
+	}
+
+	p.conf.Vars[SystemEnvVariablesKey] = systemVars
 }
 
 func (p *BaseTemplateConfigProvider) Get() SectionTemplate {
