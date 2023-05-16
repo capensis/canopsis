@@ -109,7 +109,7 @@ export default {
   data() {
     return {
       editing: !this.value.type,
-      fullDay: isStartOfDay(this.value.begin) && isEndOfDay(this.value.end),
+      fullDay: isStartOfDay(this.value.begin) && (isEndOfDay(this.value.end) || isStartOfDay(this.value.end)),
     };
   },
   computed: {
