@@ -609,6 +609,9 @@ func (p *BaseTemplateConfigProvider) Update(cfg CanopsisConf) {
 
 func (p *BaseTemplateConfigProvider) parseVariables(templateCfg SectionTemplate) {
 	p.conf = templateCfg
+	if p.conf.Vars == nil {
+		p.conf.Vars = make(map[string]any)
+	}
 
 	systemVars := make(map[string]string)
 
@@ -622,7 +625,9 @@ func (p *BaseTemplateConfigProvider) parseVariables(templateCfg SectionTemplate)
 		}
 	}
 
-	p.conf.Vars[SystemEnvVariablesKey] = systemVars
+	if len(systemVars) != 0 {
+		p.conf.Vars[SystemEnvVariablesKey] = systemVars
+	}
 }
 
 func (p *BaseTemplateConfigProvider) Get() SectionTemplate {
