@@ -24,14 +24,14 @@ import { PAGINATION_LIMIT } from '@/config';
 import { setSeveralFields } from '@/helpers/immutable';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { convertDurationToString, durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
-import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '@/helpers/entities/widget/template/form';
-import { formToWidgetColumns, widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
-import { kioskParametersToForm } from '@/helpers/entities/shared/kiosk/form';
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
-import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from '@/helpers/entities/metric/widget/bar-widget';
-import { formToLineChartWidgetParameters, lineChartWidgetParametersToForm } from '@/helpers/entities/metric/widget/line-widget';
-import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from '@/helpers/entities/metric/widget/numbers-widget';
 
+import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../widget/template/form';
+import { formToWidgetColumns, widgetColumnsToForm } from '../widget/column/form';
+import { kioskParametersToForm } from '../shared/kiosk/form';
+import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from '../metric/widget/bar-widget';
+import { formToLineChartWidgetParameters, lineChartWidgetParametersToForm } from '../metric/widget/line-widget';
+import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from '../metric/widget/numbers-widget';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '../widget/table';
 
 /**

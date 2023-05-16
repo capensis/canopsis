@@ -11,7 +11,6 @@ import {
 
 import { uid } from '@/helpers/uid';
 import { externalDataToForm, formToExternalData } from '@/helpers/entities/shared/external-data/form';
-import { enabledToForm } from '@/helpers/forms/shared/common';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 
 /**
@@ -84,7 +83,7 @@ export const linkRuleLinkToForm = (link = {}) => ({
 export const linkRuleToForm = (linkRule = {}) => ({
   name: linkRule.name ?? '',
   type: linkRule.type ?? LINK_RULE_TYPES.alarm,
-  enabled: enabledToForm(linkRule.enabled),
+  enabled: linkRule.enabled ?? true,
   source_code: linkRule.source_code ?? LINK_RULE_DEFAULT_ALARM_SOURCE_CODE,
   links: (linkRule.links ?? []).map(linkRuleLinkToForm),
   external_data: externalDataToForm(linkRule.external_data),
