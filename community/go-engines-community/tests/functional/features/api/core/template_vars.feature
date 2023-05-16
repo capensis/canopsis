@@ -10,7 +10,7 @@ Feature: Get template env vars
       "Name": "Test",
       "Location": "FR",
       "System": {
-        "CPS_MONGO_URL": "{{ .CPS_MONGO_URL }}"
+        "CPS_MONGO_URL": "{{ .mongoURL }}"
       }
     }
     """
