@@ -4,7 +4,7 @@ import flushPromises from 'flush-promises';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { MERMAID_THEMES, SHAPES } from '@/constants';
-import { flowchartPointToForm } from '@/helpers/forms/map';
+import { flowchartPointToForm } from '@/helpers/entities/map/form';
 
 import FlowchartEditor from '@/components/other/map/form/fields/flowchart-editor.vue';
 import { shapeToForm } from '@/helpers/flowchart/shapes';

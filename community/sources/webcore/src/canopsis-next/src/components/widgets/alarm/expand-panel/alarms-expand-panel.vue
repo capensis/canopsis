@@ -151,7 +151,8 @@ import {
 import { uid } from '@/helpers/uid';
 import { getStepClass } from '@/helpers/tour';
 import { alarmToServiceDependency } from '@/helpers/treeview/service-dependencies';
-import { convertAlarmDetailsQueryToRequest, convertWidgetChartsToPerfDataQuery } from '@/helpers/query';
+import { convertAlarmDetailsQueryToRequest } from '@/helpers/entities/alarm/query';
+import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';

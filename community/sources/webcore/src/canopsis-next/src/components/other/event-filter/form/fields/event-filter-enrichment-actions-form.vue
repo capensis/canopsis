@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { eventFilterActionToForm } from '@/helpers/forms/event-filter';
+import { eventFilterActionToForm } from '@/helpers/entities/event-filter/rule/form';
 
 import { formArrayMixin } from '@/mixins/form';
 

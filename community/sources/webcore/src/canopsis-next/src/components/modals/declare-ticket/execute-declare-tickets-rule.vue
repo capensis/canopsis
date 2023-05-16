@@ -38,7 +38,7 @@ import {
   isDeclareTicketExecutionFailed,
   isDeclareTicketExecutionRunning,
   isDeclareTicketExecutionSucceeded,
-} from '@/helpers/forms/declare-ticket-rule';
+} from '@/helpers/entities/declare-ticket/rule/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';

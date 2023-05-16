@@ -15,7 +15,7 @@
 <script>
 import { VALIDATION_DELAY } from '@/constants';
 
-import { healthcheckParametersToForm } from '@/helpers/forms/healthcheck';
+import { healthcheckParametersToForm } from '@/helpers/entities/healthcheck/form';
 
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';

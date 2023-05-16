@@ -1,6 +1,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
-import { formToUser, userToForm } from '@/helpers/forms/user';
+import { formToUser, userToForm } from '@/helpers/entities/user/form';
 
 const { mapActions: authMapActions, mapGetters: authMapGetters } = createNamespacedHelpers('auth');
 const { mapActions: userMapActions } = createNamespacedHelpers('user');

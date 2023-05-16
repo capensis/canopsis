@@ -7,7 +7,7 @@ import { createMockedStoreModules, createPbehaviorModule } from '@unit/utils/sto
 import { mockModals } from '@unit/utils/mock-hooks';
 import { selectRowEditButtonByIndex, selectRowRemoveButtonByIndex } from '@unit/utils/table';
 import { MODALS } from '@/constants';
-import { createEntityIdPatternByValue } from '@/helpers/pattern';
+import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
 

@@ -32,7 +32,8 @@ import {
   convertStartDateIntervalToTimestampByTimezone,
   convertStopDateIntervalToTimestampByTimezone,
 } from '@/helpers/date/date-intervals';
-import { isMetricsQueryChanged, convertMetricsToTimezone } from '@/helpers/metrics';
+import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
+import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 import { saveFile } from '@/helpers/file/files';
 import { getExportMetricDownloadFileUrl } from '@/helpers/file-url';
 

@@ -17,7 +17,7 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { formToIdleRule, idleRuleToForm } from '@/helpers/forms/idle-rule';
+import { formToIdleRule, idleRuleToForm } from '@/helpers/entities/idle-rule/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

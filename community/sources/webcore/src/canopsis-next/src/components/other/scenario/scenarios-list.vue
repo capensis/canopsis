@@ -59,8 +59,8 @@
 <script>
 import { OLD_PATTERNS_FIELDS } from '@/constants';
 
-import { isOldPattern } from '@/helpers/pattern';
-import { isDeprecatedTrigger } from '@/helpers/entities/scenarios';
+import { isOldPattern } from '@/helpers/entities/pattern/form';
+import { isDeprecatedTrigger } from '@/helpers/entities/scenario/form';
 
 import { permissionsTechnicalExploitationScenarioMixin } from '@/mixins/permissions/technical/exploitation/scenario';
 

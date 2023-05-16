@@ -2,7 +2,7 @@ import { isBoolean } from 'lodash';
 
 import { REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
 
-import { mapIds } from '@/helpers/entities';
+import { mapIds } from '@/helpers/array';
 
 /**
  * @typedef {Object} RemediationInstructionFilterQuery
