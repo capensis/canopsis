@@ -48,7 +48,7 @@ Feature: update alarm
           "v": {
             "ack": {
               "_t": "ack",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "initiator": "user",
               "m": "test-comment-axe-api-1"
@@ -96,7 +96,7 @@ Feature: update alarm
               },
               {
                 "_t": "ack",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "initiator": "user",
                 "m": "test-comment-axe-api-1"
@@ -221,14 +221,14 @@ Feature: update alarm
               },
               {
                 "_t": "ack",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "initiator": "user",
                 "m": "test-comment-axe-api-2-1"
               },
               {
                 "_t": "ackremove",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "initiator": "user",
                 "m": "test-comment-axe-api-2-2"
@@ -293,14 +293,14 @@ Feature: update alarm
           "v": {
             "canceled": {
               "_t": "cancel",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "initiator": "user",
               "m": "test-comment-axe-api-3"
             },
             "status": {
               "_t": "statusinc",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "initiator": "user",
               "m": "test-comment-axe-api-3",
@@ -349,14 +349,14 @@ Feature: update alarm
               },
               {
                 "_t": "cancel",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "initiator": "user",
                 "m": "test-comment-axe-api-3"
               },
               {
                 "_t": "statusinc",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "initiator": "user",
                 "m": "test-comment-axe-api-3",
@@ -440,7 +440,7 @@ Feature: update alarm
           "v": {
             "status": {
               "_t": "statusdec",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "initiator": "user",
               "m": "test-comment-axe-api-4-2",
@@ -490,14 +490,14 @@ Feature: update alarm
               },
               {
                 "_t": "cancel",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "initiator": "user",
                 "m": "test-comment-axe-api-4-1"
               },
               {
                 "_t": "statusinc",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "initiator": "user",
                 "m": "test-comment-axe-api-4-1",
@@ -505,14 +505,14 @@ Feature: update alarm
               },
               {
                 "_t": "uncancel",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "initiator": "user",
                 "m": "test-comment-axe-api-4-2"
               },
               {
                 "_t": "statusdec",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "initiator": "user",
                 "m": "test-comment-axe-api-4-2",
@@ -578,7 +578,7 @@ Feature: update alarm
           "v": {
             "last_comment": {
               "_t": "comment",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "initiator": "user",
               "m": "test-comment-axe-api-5"
@@ -626,7 +626,7 @@ Feature: update alarm
               },
               {
                 "_t": "comment",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "initiator": "user",
                 "m": "test-comment-axe-api-5"
@@ -698,7 +698,7 @@ Feature: update alarm
             "tickets": [
               {
                 "_t": "assocticket",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "initiator": "user",
                 "m": "Ticket ID: test-ticket-axe-api-3. Ticket URL: test-ticket-url-axe-api-3. Ticket test-ticket-param-axe-api-3: test-ticket-param-val-axe-api-3.",
@@ -713,7 +713,7 @@ Feature: update alarm
             ],
             "ticket": {
               "_t": "assocticket",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "initiator": "user",
               "m": "Ticket ID: test-ticket-axe-api-3. Ticket URL: test-ticket-url-axe-api-3. Ticket test-ticket-param-axe-api-3: test-ticket-param-val-axe-api-3.",
@@ -768,7 +768,7 @@ Feature: update alarm
               },
               {
                 "_t": "assocticket",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "initiator": "user",
                 "m": "Ticket ID: test-ticket-axe-api-3. Ticket URL: test-ticket-url-axe-api-3. Ticket test-ticket-param-axe-api-3: test-ticket-param-val-axe-api-3.",
@@ -841,7 +841,7 @@ Feature: update alarm
           "v": {
             "state": {
               "_t": "changestate",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "initiator": "user",
               "m": "test-comment-axe-api-7",
@@ -890,7 +890,7 @@ Feature: update alarm
               },
               {
                 "_t": "changestate",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "initiator": "user",
                 "m": "test-comment-axe-api-7",
@@ -961,7 +961,7 @@ Feature: update alarm
           "v": {
             "snooze": {
               "_t": "snooze",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "initiator": "user",
               "m": "test-comment-axe-api-8",
@@ -1011,7 +1011,7 @@ Feature: update alarm
               },
               {
                 "_t": "snooze",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "initiator": "user",
                 "m": "test-comment-axe-api-8",
@@ -1100,7 +1100,7 @@ Feature: update alarm
           "v": {
             "ack": {
               "_t": "ack",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "initiator": "user",
               "m": "test-comment-axe-api-9"
@@ -1148,7 +1148,7 @@ Feature: update alarm
               },
               {
                 "_t": "ack",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "initiator": "user",
                 "m": "test-comment-axe-api-9"

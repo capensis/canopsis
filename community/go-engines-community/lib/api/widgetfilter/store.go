@@ -26,12 +26,13 @@ type Store interface {
 	UpdatePositions(ctx context.Context, filters []string, widgetId, userId string, isPrivate bool) (bool, error)
 }
 
-func NewStore(dbClient mongo.DbClient) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
 		client:             dbClient,
 		collection:         dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 		widgetCollection:   dbClient.Collection(mongo.WidgetMongoCollection),
 		userPrefCollection: dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		authorProvider:     authorProvider,
 	}
 }
 
@@ -40,6 +41,7 @@ type store struct {
 	collection         mongo.DbCollection
 	widgetCollection   mongo.DbCollection
 	userPrefCollection mongo.DbCollection
+	authorProvider     author.Provider
 }
 
 func (s *store) FindViewId(ctx context.Context, id string) (string, error) {
@@ -154,7 +156,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, userId string) (*Aggreg
 		r.Query,
 		pipeline,
 		sort,
-		author.Pipeline(),
+		s.authorProvider.Pipeline(),
 	))
 
 	if err != nil {
@@ -185,7 +187,7 @@ func (s *store) GetOneBy(ctx context.Context, id, userId string) (*Response, err
 			}},
 		},
 	}
-	pipeline = append(pipeline, author.Pipeline()...)
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
