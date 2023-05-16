@@ -14,15 +14,16 @@
       )
       kpi-rating-metric-field.mr-4.kpi-rating-toolbar__metric(
         v-field="query.metric",
-        :criteria="query.criteria"
+        :type="criteriaType",
+        hide-details
       )
       c-records-per-page-field(v-field="query.rowsPerPage")
 </template>
 
 <script>
-import { METRICS_QUICK_RANGES, USER_METRIC_PARAMETERS } from '@/constants';
+import { KPI_RATING_SETTINGS_TYPES, METRICS_QUICK_RANGES, USER_METRIC_PARAMETERS } from '@/constants';
 
-import { getAvailableMetricByCriteria } from '@/helpers/metrics';
+import { isUserCriteria, getAvailableMetricByCriteria } from '@/helpers/metrics';
 
 import { formMixin } from '@/mixins/form';
 
@@ -53,6 +54,12 @@ export default {
 
     isUserMetric() {
       return this.query.metric === USER_METRIC_PARAMETERS.totalUserActivity;
+    },
+
+    criteriaType() {
+      return isUserCriteria(this.query.criteria?.label)
+        ? KPI_RATING_SETTINGS_TYPES.user
+        : KPI_RATING_SETTINGS_TYPES.entity;
     },
   },
   methods: {

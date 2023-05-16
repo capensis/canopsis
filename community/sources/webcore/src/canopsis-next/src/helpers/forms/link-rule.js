@@ -45,8 +45,7 @@ import { enabledToForm } from './shared/common';
  */
 
 /**
- * @typedef {LinkRuleLink} LinkRuleLinkForm
- * @property {string} key
+ * @typedef {LinkRuleLink & ObjectKey} LinkRuleLinkForm
  */
 
 /**

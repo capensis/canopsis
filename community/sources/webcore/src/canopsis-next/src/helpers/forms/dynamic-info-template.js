@@ -2,8 +2,7 @@ import { uuid } from '@/helpers/uuid';
 import { uid } from '@/helpers/uid';
 
 /**
- * @typedef {Object} KeyValue
- * @property {string} key
+ * @typedef {Object & ObjectKey} KeyValue
  * @property {string} value
  */
 

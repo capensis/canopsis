@@ -1,0 +1,126 @@
+<template lang="pug">
+  filters-list(
+    v-field="filters",
+    :addable="addable",
+    :editable="editable",
+    @add="showCreateFilterModal",
+    @edit="showEditFilterModal",
+    @delete="showDeleteFilterModal"
+  )
+</template>
+
+<script>
+import { pick } from 'lodash';
+
+import { MODALS } from '@/constants';
+
+import { uuid } from '@/helpers/uuid';
+
+import { formArrayMixin } from '@/mixins/form';
+
+import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
+import FiltersList from '@/components/other/filter/filters-list.vue';
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
+
+export default {
+  components: { WidgetSettingsItem, FilterSelector, FiltersList },
+  mixins: [formArrayMixin],
+  model: {
+    prop: 'filters',
+    event: 'input',
+  },
+  props: {
+    widgetId: {
+      type: String,
+      required: false,
+    },
+    filters: {
+      type: Array,
+      default: () => [],
+    },
+    addable: {
+      type: Boolean,
+      default: false,
+    },
+    editable: {
+      type: Boolean,
+      default: false,
+    },
+    withAlarm: {
+      type: Boolean,
+      default: false,
+    },
+    withEntity: {
+      type: Boolean,
+      default: false,
+    },
+    withPbehavior: {
+      type: Boolean,
+      default: false,
+    },
+    withServiceWeather: {
+      type: Boolean,
+      default: false,
+    },
+    entityTypes: {
+      type: Array,
+      required: false,
+    },
+  },
+  computed: {
+    modalConfig() {
+      return {
+        ...pick(this, ['withAlarm', 'withEntity', 'withPbehavior', 'withServiceWeather', 'entityTypes']),
+
+        withTitle: true,
+      };
+    },
+  },
+  methods: {
+    showCreateFilterModal() {
+      this.$modals.show({
+        name: MODALS.createFilter,
+        config: {
+          ...this.modalConfig,
+
+          title: this.$t('modals.createFilter.create.title'),
+          action: newFilter => this.addItemIntoArray({
+            ...newFilter,
+
+            _id: uuid('filter'),
+            widget: this.widgetId,
+            is_private: false,
+          }),
+        },
+      });
+    },
+
+    showEditFilterModal(filter, index) {
+      this.$modals.show({
+        name: MODALS.createFilter,
+        config: {
+          ...this.modalConfig,
+
+          filter,
+          title: this.$t('modals.createFilter.edit.title'),
+          action: newFilter => this.updateItemInArray(index, {
+            ...newFilter,
+
+            widget: this.widgetId,
+            _id: filter._id,
+          }),
+        },
+      });
+    },
+
+    showDeleteFilterModal(filter, index) {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: () => this.removeItemFromArray(index),
+        },
+      });
+    },
+  },
+};
+</script>
