@@ -26,7 +26,7 @@ import { keyBy, omit } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { pbehaviorToDuplicateForm, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
+import { pbehaviorToDuplicateForm, pbehaviorToRequest } from '@/helpers/entities/pbehavior/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

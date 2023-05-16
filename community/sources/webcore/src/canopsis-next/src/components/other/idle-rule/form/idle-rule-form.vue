@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { isIdleRuleEntityType } from '@/helpers/forms/idle-rule';
+import { isIdleRuleEntityType } from '@/helpers/entities/idle-rule/form';
 
 import IdleRuleGeneralForm from './idle-rule-general-form.vue';
 import IdleRulePatternsForm from './idle-rule-patterns-form.vue';

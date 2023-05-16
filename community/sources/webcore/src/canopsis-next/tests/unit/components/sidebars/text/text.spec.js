@@ -17,7 +17,7 @@ import {
 import { SIDE_BARS, WIDGET_TYPES } from '@/constants';
 
 import ClickOutside from '@/services/click-outside';
-import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/forms/widgets/common';
+import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/entities/widget/form';
 
 import TextSettings from '@/components/sidebars/text/text.vue';
 

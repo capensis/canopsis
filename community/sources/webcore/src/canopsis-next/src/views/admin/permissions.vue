@@ -27,8 +27,8 @@ import { get, isEmpty, sortBy } from 'lodash';
 
 import { MAX_LIMIT, MODALS } from '@/constants';
 
-import { getGroupedPermissions } from '@/helpers/permission';
-import { roleToForm, formToRole } from '@/helpers/forms/role';
+import { getGroupedPermissions } from '@/helpers/entities/permissions/table';
+import { roleToForm, formToRole } from '@/helpers/entities/role/form';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesPermissionsMixin } from '@/mixins/entities/permission';

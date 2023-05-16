@@ -20,7 +20,7 @@
 <script>
 import { LINK_RULE_TYPES } from '@/constants';
 
-import { linkRuleLinkToForm } from '@/helpers/forms/link-rule';
+import { linkRuleLinkToForm } from '@/helpers/entities/link/form';
 
 import { formArrayMixin } from '@/mixins/form';
 

@@ -12,7 +12,7 @@ import {
 } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { ENTITY_TYPES, MAP_TYPES, MODALS, USERS_PERMISSIONS, WIDGET_TYPES } from '@/constants';
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/forms/widgets/common';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
 import MapWidget from '@/components/widgets/map/map.vue';
 

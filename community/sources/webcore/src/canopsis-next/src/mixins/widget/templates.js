@@ -3,7 +3,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { COLUMNS_WIDGET_TEMPLATES_TYPES, MAX_LIMIT, WIDGET_TEMPLATES_TYPES } from '@/constants';
 
-import { widgetColumnsToForm } from '@/helpers/forms/shared/widget-column';
+import { widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
 
 const { mapActions } = createNamespacedHelpers('widgetTemplate');
 

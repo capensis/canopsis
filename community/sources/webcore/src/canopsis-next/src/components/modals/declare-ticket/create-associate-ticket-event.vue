@@ -36,8 +36,8 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { eventToAssociateTicketForm, formToAssociateTicketEvent } from '@/helpers/forms/associate-ticket-event';
-import { isEntityComponentType } from '@/helpers/entities/entity';
+import { eventToAssociateTicketForm, formToAssociateTicketEvent } from '@/helpers/entities/associate-ticket/event/form';
+import { isEntityComponentType } from '@/helpers/entities/entity/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

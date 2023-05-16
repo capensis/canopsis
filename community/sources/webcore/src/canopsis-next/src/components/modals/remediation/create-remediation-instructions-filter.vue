@@ -25,7 +25,7 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { remediationInstructionFilterToForm } from '@/helpers/forms/remediation-instruction-filter';
+import { remediationInstructionFilterToForm } from '@/helpers/entities/remediation/instruction-filter/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
