@@ -85,7 +85,8 @@ func (a *api) GetDependencies(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.GetDependencies(c, r)
+	userId := c.MustGet(auth.UserKey).(string)
+	aggregationResult, err := a.store.GetDependencies(c, r, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -115,7 +116,8 @@ func (a *api) GetImpacts(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.GetImpacts(c, r)
+	userId := c.MustGet(auth.UserKey).(string)
+	aggregationResult, err := a.store.GetImpacts(c, r, userId)
 	if err != nil {
 		panic(err)
 	}
