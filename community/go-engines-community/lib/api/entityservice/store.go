@@ -22,8 +22,8 @@ import (
 
 type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Response, error)
-	GetDependencies(ctx context.Context, r ContextGraphRequest) (*ContextGraphAggregationResult, error)
-	GetImpacts(ctx context.Context, r ContextGraphRequest) (*ContextGraphAggregationResult, error)
+	GetDependencies(ctx context.Context, r ContextGraphRequest, userId string) (*ContextGraphAggregationResult, error)
+	GetImpacts(ctx context.Context, r ContextGraphRequest, userId string) (*ContextGraphAggregationResult, error)
 	Create(ctx context.Context, request CreateRequest) (*Response, error)
 	Update(ctx context.Context, request UpdateRequest) (*Response, ServiceChanges, error)
 	Delete(ctx context.Context, id string) (bool, error)
@@ -39,6 +39,7 @@ type store struct {
 	dbCollection              mongo.DbCollection
 	alarmDbCollection         mongo.DbCollection
 	resolvedAlarmDbCollection mongo.DbCollection
+	userDbCollection          mongo.DbCollection
 
 	linkGenerator link.Generator
 
@@ -51,6 +52,7 @@ func NewStore(db mongo.DbClient, linkGenerator link.Generator, logger zerolog.Lo
 		dbCollection:              db.Collection(mongo.EntityMongoCollection),
 		alarmDbCollection:         db.Collection(mongo.AlarmMongoCollection),
 		resolvedAlarmDbCollection: db.Collection(mongo.ResolvedAlarmMongoCollection),
+		userDbCollection:          db.Collection(mongo.RightsMongoCollection),
 
 		linkGenerator: linkGenerator,
 
@@ -86,7 +88,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	return nil, nil
 }
 
-func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest) (*ContextGraphAggregationResult, error) {
+func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, userId string) (*ContextGraphAggregationResult, error) {
 	service := types.Entity{}
 	err := s.dbCollection.
 		FindOne(ctx, bson.M{"_id": r.ID, "type": types.EntityTypeService, "soft_deleted": bson.M{"$exists": false}}).
@@ -116,7 +118,7 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest) (*Co
 		}
 	}
 
-	err = s.fillLinks(ctx, result)
+	err = s.fillLinks(ctx, result, userId)
 	if err != nil {
 		s.logger.Err(err).Msg("cannot fetch links")
 	}
@@ -124,7 +126,7 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest) (*Co
 	return result, nil
 }
 
-func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest) (*ContextGraphAggregationResult, error) {
+func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest, userId string) (*ContextGraphAggregationResult, error) {
 	e := types.Entity{}
 	err := s.dbCollection.
 		FindOne(ctx, bson.M{"_id": r.ID, "soft_deleted": bson.M{"$exists": false}}, options.FindOne().SetProjection(bson.M{"services": 1})).
@@ -162,7 +164,7 @@ func (s *store) GetImpacts(ctx context.Context, r ContextGraphRequest) (*Context
 		}
 	}
 
-	err = s.fillLinks(ctx, result)
+	err = s.fillLinks(ctx, result, userId)
 	if err != nil {
 		s.logger.Err(err).Msg("cannot fetch links")
 	}
@@ -302,9 +304,14 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	return true, nil
 }
 
-func (s *store) fillLinks(ctx context.Context, response *ContextGraphAggregationResult) error {
+func (s *store) fillLinks(ctx context.Context, response *ContextGraphAggregationResult, userId string) error {
 	if response == nil || len(response.Data) == 0 {
 		return nil
+	}
+
+	user, err := s.findUser(ctx, userId)
+	if err != nil {
+		return err
 	}
 
 	ids := make([]string, len(response.Data))
@@ -312,7 +319,7 @@ func (s *store) fillLinks(ctx context.Context, response *ContextGraphAggregation
 		ids[i] = v.ID
 	}
 
-	linksByEntityId, err := s.linkGenerator.GenerateForEntities(ctx, ids)
+	linksByEntityId, err := s.linkGenerator.GenerateForEntities(ctx, ids, user)
 	if err != nil || len(linksByEntityId) == 0 {
 		return err
 	}
@@ -331,6 +338,25 @@ func (s *store) fillLinks(ctx context.Context, response *ContextGraphAggregation
 
 func (s *store) getQueryBuilder() *entity.MongoQueryBuilder {
 	return entity.NewMongoQueryBuilder(s.dbClient)
+}
+
+func (s *store) findUser(ctx context.Context, id string) (link.User, error) {
+	user := link.User{}
+	cursor, err := s.userDbCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"_id": id}},
+		{"$addFields": bson.M{"username": "$crecord_name"}},
+	})
+	if err != nil {
+		return user, err
+	}
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		err = cursor.Decode(&user)
+		return user, err
+	}
+
+	return user, errors.New("user not found")
 }
 
 func transformInfos(request EditRequest) map[string]types.Info {
