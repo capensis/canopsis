@@ -76,7 +76,7 @@ Feature: update alarm
           "v": {
             "ticket": {
               "_t": "assocticket",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "initiator": "user",
               "m": "Ticket ID: test-ticket-axe-api-second-1. Ticket URL: test-ticket-url-axe-api-second-1. Ticket test-ticket-param-axe-api-second-1: test-ticket-param-val-axe-api-second-1.",
@@ -91,7 +91,7 @@ Feature: update alarm
             "tickets": [
               {
                 "_t": "assocticket",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "initiator": "user",
                 "m": "Ticket ID: test-ticket-axe-api-second-1. Ticket URL: test-ticket-url-axe-api-second-1. Ticket test-ticket-param-axe-api-second-1: test-ticket-param-val-axe-api-second-1.",
@@ -149,7 +149,7 @@ Feature: update alarm
               },
               {
                 "_t": "assocticket",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "initiator": "user",
                 "m": "Ticket ID: test-ticket-axe-api-second-1. Ticket URL: test-ticket-url-axe-api-second-1. Ticket test-ticket-param-axe-api-second-1: test-ticket-param-val-axe-api-second-1.",

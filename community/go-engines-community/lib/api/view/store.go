@@ -39,7 +39,7 @@ type Store interface {
 	Import(ctx context.Context, r ImportRequest, userId string) error
 }
 
-func NewStore(dbClient mongo.DbClient, tabStore viewtab.Store) Store {
+func NewStore(dbClient mongo.DbClient, tabStore viewtab.Store, authorProvider author.Provider) Store {
 	return &store{
 		client:                dbClient,
 		collection:            dbClient.Collection(mongo.ViewMongoCollection),
@@ -49,6 +49,7 @@ func NewStore(dbClient mongo.DbClient, tabStore viewtab.Store) Store {
 		groupCollection:       dbClient.Collection(mongo.ViewGroupMongoCollection),
 		aclCollection:         dbClient.Collection(mongo.RightsMongoCollection),
 		userPrefCollection:    dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "title", "description"},
 		defaultSortBy:         "position",
 
@@ -65,6 +66,7 @@ type store struct {
 	groupCollection       mongo.DbCollection
 	aclCollection         mongo.DbCollection
 	userPrefCollection    mongo.DbCollection
+	authorProvider        author.Provider
 	defaultSearchByFields []string
 	defaultSortBy         string
 
@@ -92,8 +94,8 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		}},
 		{"$unwind": bson.M{"path": "$group", "preserveNullAndEmptyArrays": true}},
 	}
-	project = append(project, author.PipelineForField("group.author")...)
-	project = append(project, author.Pipeline()...)
+	project = append(project, s.authorProvider.PipelineForField("group.author")...)
+	project = append(project, s.authorProvider.Pipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
@@ -121,7 +123,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 
 func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
-	pipeline = append(pipeline, getNestedObjectsPipeline()...)
+	pipeline = append(pipeline, s.getNestedObjectsPipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -1108,7 +1110,7 @@ func (s *store) getNextGroupPosition(ctx context.Context) (int64, error) {
 	return 0, nil
 }
 
-func getNestedObjectsPipeline() []bson.M {
+func (s *store) getNestedObjectsPipeline() []bson.M {
 	pipeline := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.ViewTabMongoCollection,
@@ -1118,7 +1120,7 @@ func getNestedObjectsPipeline() []bson.M {
 		}},
 		{"$unwind": bson.M{"path": "$tabs", "preserveNullAndEmptyArrays": true}},
 	}
-	pipeline = append(pipeline, author.PipelineForField("tabs.author")...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("tabs.author")...)
 	pipeline = append(pipeline,
 		bson.M{"$lookup": bson.M{
 			"from":         mongo.WidgetMongoCollection,
@@ -1128,7 +1130,7 @@ func getNestedObjectsPipeline() []bson.M {
 		}},
 		bson.M{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
 	)
-	pipeline = append(pipeline, author.PipelineForField("widgets.author")...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("widgets.author")...)
 	pipeline = append(pipeline,
 		bson.M{"$lookup": bson.M{
 			"from":         mongo.WidgetFiltersMongoCollection,
@@ -1138,7 +1140,7 @@ func getNestedObjectsPipeline() []bson.M {
 		}},
 		bson.M{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
 	)
-	pipeline = append(pipeline, author.PipelineForField("filters.author")...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("filters.author")...)
 	pipeline = append(pipeline,
 		bson.M{"$sort": bson.M{"filters.position": 1}},
 		bson.M{"$group": bson.M{
@@ -1199,8 +1201,8 @@ func getNestedObjectsPipeline() []bson.M {
 		}},
 		bson.M{"$unwind": bson.M{"path": "$group", "preserveNullAndEmptyArrays": true}},
 	)
-	pipeline = append(pipeline, author.PipelineForField("group.author")...)
-	pipeline = append(pipeline, author.Pipeline()...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("group.author")...)
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 	return pipeline
 }
 

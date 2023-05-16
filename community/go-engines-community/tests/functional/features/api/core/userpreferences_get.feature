@@ -24,7 +24,8 @@ Feature: Get user preferences
           "is_private": true,
           "author": {
             "_id": "test-user-to-user-preferences-edit",
-            "name": "test-user-to-user-preferences-edit"
+            "name": "test-user-to-user-preferences-edit",
+            "display_name": "test-user-to-user-preferences-edit   "
           },
           "created": 1611229670,
           "updated": 1611229670,
@@ -46,7 +47,8 @@ Feature: Get user preferences
           "is_private": true,
           "author": {
             "_id": "test-user-to-user-preferences-edit",
-            "name": "test-user-to-user-preferences-edit"
+            "name": "test-user-to-user-preferences-edit",
+            "display_name": "test-user-to-user-preferences-edit   "
           },
           "created": 1611229670,
           "updated": 1611229670,
