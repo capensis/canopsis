@@ -78,8 +78,7 @@ import { durationToForm, toSeconds } from '@/helpers/date/duration';
  */
 
 /**
- * @typedef {Object} PatternRuleForm
- * @property {string} key
+ * @typedef {Object & ObjectKey} PatternRuleForm
  * @property {string} attribute
  * @property {string} operator
  * @property {string} field
@@ -90,9 +89,8 @@ import { durationToForm, toSeconds } from '@/helpers/date/duration';
  */
 
 /**
- * @typedef {Object} PatternGroupForm
+ * @typedef {Object & ObjectKey} PatternGroupForm
  * @property {PatternRuleForm[]} rules
- * @property {string} key
  */
 
 /**

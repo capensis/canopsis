@@ -43,6 +43,7 @@ import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from '
 import { lineChartWidgetParametersToForm, formToLineChartWidgetParameters } from './line-chart';
 import { pieChartWidgetParametersToForm, formToPieChartWidgetParameters } from './pie-chart';
 import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './numbers';
+import { statisticsWidgetParametersToForm, formToStatisticsWidgetParameters } from './statistics';
 
 /**
  * @typedef {
@@ -57,7 +58,9 @@ import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './
  *   'BarChart' |
  *   'LineChart' |
  *   'PieChart' |
- *   'Numbers'
+ *   'Numbers' |
+ *   'UserStatistics' |
+ *   'AlarmStatistics'
  * } WidgetType
  */
 
@@ -147,7 +150,8 @@ import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './
  *   BarChartWidgetParameters |
  *   LineChartWidgetParameters |
  *   PieChartWidgetParameters |
- *   NumbersWidgetParameters
+ *   NumbersWidgetParameters |
+ *   StatisticsWidgetParameters
  * } WidgetParameters
  */
 
@@ -164,7 +168,8 @@ import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './
  *   BarChartWidgetParametersForm |
  *   LineChartWidgetParametersForm |
  *   PieChartWidgetParametersForm |
- *   NumbersWidgetParametersForm
+ *   NumbersWidgetParametersForm |
+ *   StatisticsWidgetParametersForm
  * } WidgetParametersForm
  */
 
@@ -209,6 +214,8 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
     [WIDGET_TYPES.lineChart]: lineChartWidgetParametersToForm,
     [WIDGET_TYPES.pieChart]: pieChartWidgetParametersToForm,
     [WIDGET_TYPES.numbers]: numbersWidgetParametersToForm,
+    [WIDGET_TYPES.userStatistics]: statisticsWidgetParametersToForm,
+    [WIDGET_TYPES.alarmStatistics]: statisticsWidgetParametersToForm,
 
     ...featuresService.get('helpers.forms.widgets.widgetParametersToForm.widgetsMap'),
   };
@@ -278,6 +285,8 @@ export const formToWidgetParameters = ({ type, parameters }) => {
     [WIDGET_TYPES.lineChart]: formToLineChartWidgetParameters,
     [WIDGET_TYPES.pieChart]: formToPieChartWidgetParameters,
     [WIDGET_TYPES.numbers]: formToNumbersWidgetParameters,
+    [WIDGET_TYPES.userStatistics]: formToStatisticsWidgetParameters,
+    [WIDGET_TYPES.alarmStatistics]: formToStatisticsWidgetParameters,
 
     ...featuresService.get('helpers.forms.widgets.formToWidgetParameters.widgetsMap'),
   };

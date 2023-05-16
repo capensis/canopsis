@@ -2,14 +2,16 @@
   c-select-field(
     v-field="value",
     :items="availableMetrics",
-    :label="$t('kpi.metrics.parameter')",
-    name="metric",
-    hide-details
+    :label="label || $t('kpi.metrics.parameter')",
+    :name="name",
+    :required="required",
+    :hide-details="hideDetails"
   )
 </template>
 
 <script>
-import { getAvailableMetricsByCriteria } from '@/helpers/metrics';
+
+import { KPI_RATING_ENTITY_METRICS, KPI_RATING_SETTINGS_TYPES, KPI_RATING_USER_METRICS } from '@/constants';
 
 export default {
   model: {
@@ -21,22 +23,41 @@ export default {
       type: String,
       required: true,
     },
-    criteria: {
-      type: Object,
+    type: {
+      type: Number,
+      default: KPI_RATING_SETTINGS_TYPES.entity,
+    },
+    label: {
+      type: String,
       required: false,
+    },
+    name: {
+      type: String,
+      default: 'metric',
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    hideDetails: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
     availableMetrics() {
-      return getAvailableMetricsByCriteria(this.criteria?.label)
-        .map((value) => {
-          const alarmKey = `alarm.metrics.${value}`;
+      const metrics = this.type === KPI_RATING_SETTINGS_TYPES.entity
+        ? KPI_RATING_USER_METRICS
+        : KPI_RATING_ENTITY_METRICS;
 
-          return {
-            value,
-            text: this.$te(alarmKey) ? this.$t(alarmKey) : this.$t(`user.metrics.${value}`),
-          };
-        });
+      return metrics.map((value) => {
+        const alarmKey = `alarm.metrics.${value}`;
+
+        return {
+          value,
+          text: this.$te(alarmKey) ? this.$t(alarmKey) : this.$t(`user.metrics.${value}`),
+        };
+      });
     },
   },
 };

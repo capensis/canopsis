@@ -101,7 +101,7 @@ export const getDateLabelBySampling = (value, sampling) => {
  * @param {string} criteria
  * @returns {boolean}
  */
-const isUserCriteria = criteria => KPI_RATING_USER_CRITERIA.includes(criteria);
+export const isUserCriteria = criteria => KPI_RATING_USER_CRITERIA.includes(criteria);
 
 /**
  * Get all metrics by criteria

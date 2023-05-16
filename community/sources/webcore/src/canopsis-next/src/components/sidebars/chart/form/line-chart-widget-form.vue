@@ -10,7 +10,11 @@
         with-external
       )
     widget-settings-group(:title="$t('settings.advancedSettings')")
-      field-chart-title(v-field="form.parameters.chart_title")
+      field-title(
+        v-field="form.parameters.chart_title",
+        :label="$tc('common.header')",
+        :placeholder="$t('settings.headerTitle')"
+      )
       field-quick-date-interval-type(v-field="form.parameters.default_time_range")
       field-sampling(v-field="form.parameters.default_sampling")
       field-filters(
@@ -28,26 +32,22 @@
 <script>
 import { formMixin } from '@/mixins/form';
 
-import WidgetSettings from '@/components/sidebars/partials/widget-settings.vue';
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 import FieldTitle from '@/components/sidebars/form/fields/title.vue';
 import FieldPeriodicRefresh from '@/components/sidebars/form/fields/periodic-refresh.vue';
+import FieldQuickDateIntervalType from '@/components/sidebars/form/fields/quick-date-interval-type.vue';
 import FieldAlarmMetricPresets from '@/components/sidebars/chart/form/fields/alarm-metric-presets.vue';
-import FieldChartTitle from '@/components/sidebars/chart/form/fields/chart-title.vue';
-import FieldQuickDateIntervalType from '@/components/sidebars/chart/form/fields/quick-date-interval-type.vue';
 import FieldSampling from '@/components/sidebars/chart/form/fields/sampling.vue';
 import FieldFilters from '@/components/sidebars/form/fields/filters.vue';
 import FieldSwitcher from '@/components/sidebars/form/fields/switcher.vue';
 
 export default {
   components: {
-    WidgetSettings,
     WidgetSettingsGroup,
     FieldTitle,
     FieldPeriodicRefresh,
-    FieldAlarmMetricPresets,
-    FieldChartTitle,
     FieldQuickDateIntervalType,
+    FieldAlarmMetricPresets,
     FieldSampling,
     FieldFilters,
     FieldSwitcher,

@@ -1,6 +1,11 @@
 import { uid } from '@/helpers/uid';
 
 /**
+ * @typedef {Object} ObjectKey
+ * @property {string} key
+ */
+
+/**
  * @typedef {Object} Infos
  * @property {string} name
  * @property {string} description
