@@ -1,5 +1,3 @@
-import { enabledToForm } from '@/helpers/forms/shared/common';
-
 import { isInstructionAuto } from '../instruction/form';
 
 /**

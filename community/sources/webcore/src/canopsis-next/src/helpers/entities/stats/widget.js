@@ -4,7 +4,9 @@ import {
   ALARM_FIELDS_TO_LABELS_KEYS,
   ALARM_UNSORTABLE_FIELDS,
   DEFAULT_ALARMS_WIDGET_COLUMNS,
-  ALARM_LEVELS, ALARM_LEVELS_COLORS } from '@/constants';
+  ALARM_LEVELS,
+  ALARM_LEVELS_COLORS,
+} from '@/constants';
 
 import { setSeveralFields } from '@/helpers/immutable';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/table';

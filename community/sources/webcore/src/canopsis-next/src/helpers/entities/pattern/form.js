@@ -24,7 +24,8 @@ import {
   PATTERN_QUICK_RANGES,
   PATTERNS_FIELDS,
   PATTERN_CUSTOM_ITEM_VALUE,
-  PATTERN_TYPES, TIME_UNITS,
+  PATTERN_TYPES,
+  TIME_UNITS,
 } from '@/constants';
 
 import { convertDateToTimestamp, isValidDateInterval } from '@/helpers/date/date';
