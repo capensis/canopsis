@@ -12,8 +12,9 @@ const (
 	AlarmCancelAutosolveDelay = 60 * 60 * time.Second
 	AlarmDefaultNameScheme    = "{{ rand_string 2 }}-{{ rand_string 2 }}-{{ rand_string 2 }}"
 
-	ApiTokenSigningMethod = "HS256"
-	ApiBulkMaxSize        = 10000
+	ApiTokenSigningMethod     = "HS256"
+	ApiBulkMaxSize            = 10000
+	ApiMetricsCacheExpiration = 24 * time.Hour
 
 	RemediationHttpTimeout                    = 30 * time.Second
 	RemediationLaunchJobRetriesAmount         = 3
