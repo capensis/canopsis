@@ -5,14 +5,15 @@ import { ENTITIES_STATES, ACTION_TYPES, PATTERNS_FIELDS, OLD_PATTERNS_FIELDS } f
 import { uid } from '@/helpers/uid';
 import { durationToForm } from '@/helpers/date/duration';
 import { getLocaleTimezone } from '@/helpers/date/date';
-import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from '@/helpers/entities/pbehavior/form';
-import { requestToForm, formToRequest } from '@/helpers/entities/shared/request/form';
-import { eventToAssociateTicketForm, formToAssociateTicketEvent } from '@/helpers/entities/associate-ticket/event/form';
+
+import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from '../pbehavior/form';
+import { requestToForm, formToRequest } from '../shared/request/form';
+import { eventToAssociateTicketForm, formToAssociateTicketEvent } from '../associate-ticket/event/form';
 import {
   declareTicketRuleWebhookDeclareTicketToForm,
   formToDeclareTicketRuleWebhookDeclareTicket,
-} from '@/helpers/entities/declare-ticket/rule/form';
-import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
+} from '../declare-ticket/rule/form';
+import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
 
 /**
  * @typedef {

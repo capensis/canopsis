@@ -3,7 +3,6 @@ import { omit, isNumber } from 'lodash';
 import { DEPRECATED_TRIGGERS } from '@/constants';
 
 import { durationToForm } from '@/helpers/date/duration';
-import { enabledToForm } from '@/helpers/forms/shared/common';
 import { formToAction, actionToForm } from '@/helpers/entities/action';
 import { getLocaleTimezone } from '@/helpers/date/date';
 

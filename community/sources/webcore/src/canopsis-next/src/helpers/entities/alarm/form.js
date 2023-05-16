@@ -143,4 +143,4 @@ export const isResolvedAlarmStatus = alarm => [ENTITIES_STATUSES.closed, ENTITIE
  * @param alarm - alarm entity
  * @returns {boolean}
  */
-export const isAlarmStateOk = alarm => ENTITIES_STATES.ok !== alarm.v.state.val;
+export const isAlarmStateNotOk = alarm => ENTITIES_STATES.ok !== alarm.v.state.val;
