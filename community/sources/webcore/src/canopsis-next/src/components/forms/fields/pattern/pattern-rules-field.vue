@@ -26,8 +26,7 @@
 </template>
 
 <script>
-import { patternRuleToForm } from '@/helpers/forms/pattern';
-import { convertValueByOperator, getOperatorsByRule } from '@/helpers/pattern';
+import { patternRuleToForm, convertValueByOperator, getOperatorsByRule } from '@/helpers/entities/pattern/form';
 
 import { formArrayMixin } from '@/mixins/form';
 

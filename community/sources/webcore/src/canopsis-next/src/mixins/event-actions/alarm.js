@@ -1,6 +1,6 @@
 import { isArray } from 'lodash';
 
-import { prepareEventByAlarm, prepareEventsByAlarms } from '@/helpers/forms/event';
+import { prepareEventByAlarm, prepareEventsByAlarms } from '@/helpers/entities/event/form';
 
 import { eventActionsMixin } from './index';
 

@@ -27,8 +27,8 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { alarmsToDeclareTicketEventForm, formToDeclareTicketEvents } from '@/helpers/forms/declare-ticket-event';
-import { isEntityComponentType } from '@/helpers/entities/entity';
+import { alarmsToDeclareTicketEventForm, formToDeclareTicketEvents } from '@/helpers/entities/declare-ticket/event/form';
+import { isEntityComponentType } from '@/helpers/entities/entity/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';

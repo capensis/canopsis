@@ -16,8 +16,9 @@
 <script>
 import { X_AXES_IDS, SAMPLINGS, KPI_CHART_DEFAULT_HEIGHT } from '@/constants';
 
-import { colorToRgba, getMetricColor } from '@/helpers/color';
-import { convertMetricValueByUnit } from '@/helpers/metrics';
+import { colorToRgba } from '@/helpers/color';
+import { getMetricColor } from '@/helpers/entities/metric/color';
+import { convertMetricValueByUnit } from '@/helpers/entities/metric/list';
 
 import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';
 

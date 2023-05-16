@@ -11,7 +11,7 @@ import {
   MODALS,
 } from '@/constants';
 
-import { getColumnLabel } from '@/helpers/widgets';
+import { getWidgetColumnLabel } from '@/helpers/entities/widget/table';
 
 import CTreeviewDataTable from '@/components/common/table/c-treeview-data-table.vue';
 import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';
@@ -111,7 +111,7 @@ describe('service-dependencies', () => {
 
     value: `entity.${column.value}`,
     sortable: false,
-    text: getColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
+    text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
   }));
 
   const store = createMockedStoreModules([
@@ -322,7 +322,7 @@ describe('service-dependencies', () => {
 
           value: `entity.${column.value}`,
           sortable: false,
-          text: getColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
+          text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
         })),
         root: entity,
       },

@@ -42,7 +42,7 @@ import { flow, isNumber } from 'lodash';
 
 import featuresService from '@/services/features';
 
-import { isResolvedAlarm } from '@/helpers/entities';
+import { isResolvedAlarmStatus } from '@/helpers/entities/alarm/form';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -155,7 +155,7 @@ export default {
     },
 
     isResolvedAlarm() {
-      return isResolvedAlarm(this.alarm);
+      return isResolvedAlarmStatus(this.alarm);
     },
 
     isNotFiltered() {

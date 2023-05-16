@@ -178,8 +178,8 @@
 <script>
 import { SIDE_BARS, ALARM_UNSORTABLE_FIELDS, ALARM_FIELDS_TO_LABELS_KEYS } from '@/constants';
 
-import { formToWidgetColumns } from '@/helpers/forms/shared/widget-column';
-import { getColumnLabel, getSortable } from '@/helpers/widgets';
+import { formToWidgetColumns } from '@/helpers/entities/widget/column/form';
+import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/table';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { entitiesInfosMixin } from '@/mixins/entities/infos';
@@ -251,12 +251,12 @@ export default {
       return formToWidgetColumns(this.form.parameters.widgetColumns).map(column => ({
         ...column,
 
-        text: getColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
+        text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
       }));
     },
 
     sortablePreparedWidgetColumns() {
-      return this.preparedWidgetColumns.filter(column => getSortable(column, ALARM_UNSORTABLE_FIELDS));
+      return this.preparedWidgetColumns.filter(column => getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS));
     },
   },
   mounted() {

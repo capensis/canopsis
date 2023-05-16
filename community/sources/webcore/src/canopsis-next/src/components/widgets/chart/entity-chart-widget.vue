@@ -26,8 +26,8 @@ import { pick } from 'lodash';
 import { WIDGET_TYPES } from '@/constants';
 
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
-import { convertWidgetToQuery } from '@/helpers/query';
-import { convertMetricsToTimezone } from '@/helpers/metrics';
+import { convertWidgetToQuery } from '@/helpers/entities/widget/query';
+import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
 
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';

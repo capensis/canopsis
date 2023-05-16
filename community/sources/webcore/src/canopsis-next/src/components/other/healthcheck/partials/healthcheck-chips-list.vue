@@ -17,7 +17,7 @@ import { createNamespacedHelpers } from 'vuex';
 import { COLORS, SOCKET_ROOMS } from '@/config';
 import { HEALTHCHECK_SERVICES_NAMES, ROUTES_NAMES, USERS_PERMISSIONS } from '@/constants';
 
-import { getHealthcheckNodeColor } from '@/helpers/color';
+import { getHealthcheckNodeColor } from '@/helpers/entities/healthcheck/color';
 
 import { authMixin } from '@/mixins/auth';
 import { healthcheckNodesMixin } from '@/mixins/healthcheck/healthcheck-nodes';

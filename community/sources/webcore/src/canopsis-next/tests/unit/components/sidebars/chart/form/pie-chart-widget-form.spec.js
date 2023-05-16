@@ -17,7 +17,7 @@ import {
   WIDGET_TYPES,
 } from '@/constants';
 
-import { widgetToForm, formToWidget } from '@/helpers/forms/widgets/common';
+import { widgetToForm, formToWidget } from '@/helpers/entities/widget/form';
 
 import PieChartWidgetForm from '@/components/sidebars/chart/form/pie-chart-widget-form.vue';
 
