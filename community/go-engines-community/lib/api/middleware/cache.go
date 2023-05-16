@@ -3,6 +3,7 @@ package middleware
 import (
 	"bytes"
 	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"io"
 	"net/url"
@@ -55,7 +56,7 @@ func Cache(
 
 		cacheKey := sha256.Sum256(buff.Bytes())
 		return true, cache.Strategy{
-			CacheKey:      string(cacheKey[:]),
+			CacheKey:      hex.EncodeToString(cacheKey[:]),
 			CacheDuration: cacheDuration,
 		}
 	}))
