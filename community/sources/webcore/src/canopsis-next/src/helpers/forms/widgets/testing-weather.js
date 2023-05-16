@@ -8,9 +8,8 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  */
 
 /**
- * @typedef {Object} StorageForm
+ * @typedef {Object & ObjectKey} StorageForm
  * @property {Storage} directory
- * @property {string} key
  */
 
 /**

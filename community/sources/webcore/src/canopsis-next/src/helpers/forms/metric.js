@@ -19,8 +19,7 @@ import { uid } from '@/helpers/uid';
  */
 
 /**
- * @typedef {MetricPreset} MetricPresetForm
- * @property {string} key
+ * @typedef {MetricPreset & ObjectKey} MetricPresetForm
  */
 
 /**
