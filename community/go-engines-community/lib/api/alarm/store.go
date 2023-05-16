@@ -2,7 +2,6 @@ package alarm
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"sort"
 	"strings"
@@ -11,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/perfdata"
@@ -68,6 +68,8 @@ type store struct {
 
 	timezoneConfigProvider config.TimezoneConfigProvider
 
+	decoder encoding.Decoder
+
 	logger zerolog.Logger
 }
 
@@ -75,6 +77,7 @@ func NewStore(
 	dbClient mongo.DbClient,
 	linkGenerator link.Generator,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	decoder encoding.Decoder,
 	logger zerolog.Logger,
 ) Store {
 	return &store{
@@ -89,6 +92,8 @@ func NewStore(
 		linkGenerator: linkGenerator,
 
 		timezoneConfigProvider: timezoneConfigProvider,
+
+		decoder: decoder,
 
 		logger: logger,
 	}
@@ -566,7 +571,7 @@ func (s *store) GetAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 
 func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, error) {
 	r := ExportFetchParameters{}
-	err := json.Unmarshal([]byte(t.Parameters), &r)
+	err := s.decoder.Decode([]byte(t.Parameters), &r)
 	if err != nil {
 		return nil, err
 	}
