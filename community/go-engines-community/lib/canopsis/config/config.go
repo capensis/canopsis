@@ -99,7 +99,8 @@ type SectionTechMetrics struct {
 }
 
 type SectionTemplate struct {
-	Vars map[string]any `toml:"vars"`
+	SystemEnvVarPrefixes []string       `bson:"system_env_var_prefixes" toml:"system_env_var_prefixes"`
+	Vars                 map[string]any `bson:"vars" toml:"vars"`
 }
 
 // CanopsisConf represents a generic configuration object.
