@@ -40,7 +40,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 	mongoClient := m.DepMongoClient(ctx, logger)
 	cfg := m.DepConfig(ctx, mongoClient)
 	config.SetDbClientRetry(mongoClient, cfg)
-	templateConfigProvider := config.NewTemplateConfigProvider(cfg)
+	templateConfigProvider := config.NewTemplateConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)

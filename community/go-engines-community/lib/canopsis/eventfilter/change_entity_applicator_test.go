@@ -18,7 +18,7 @@ import (
 func TestChangeEntityApply(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	applicator := eventfilter.NewChangeEntityApplicator(eventfilter.NewExternalDataGetterContainer(), tplExecutor)
 
 	var dataSets = []struct {
@@ -346,7 +346,7 @@ func TestChangeEntityApplyWithExternalData(t *testing.T) {
 	externalDataContainer := eventfilter.NewExternalDataGetterContainer()
 	externalDataContainer.Set("test", mockGetter)
 
-	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 
 	applicator := eventfilter.NewChangeEntityApplicator(externalDataContainer, tplExecutor)
 
