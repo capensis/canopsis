@@ -252,6 +252,8 @@ func RegisterRoutes(
 
 		alarmStore := alarm.NewStore(dbClient, linkGenerator, timezoneConfigProvider, authorProvider, logger)
 		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, logger)
+		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(dbClient, amqpChannel, "",
+			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, authorProvider, logger), logger)
 		alarmRouter := protected.Group("/alarms")
 		{
 			alarmRouter.GET(
@@ -264,8 +266,6 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
 				alarmAPI.Get,
 			)
-			alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(dbClient, amqpChannel, "",
-				canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, authorProvider, logger))
 			alarmRouter.PUT(
 				"/:id/ack",
 				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
@@ -1526,6 +1526,50 @@ func RegisterRoutes(
 					middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionDelete, enforcer),
 					middleware.PreProcessBulk(conf, false),
 					linkRuleAPI.BulkDelete,
+				)
+			}
+
+			alarmRouter := bulkRouter.Group("alarms")
+			{
+				alarmRouter.PUT(
+					"/ack",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+					alarmActionAPI.BulkAck,
+				)
+				alarmRouter.PUT(
+					"/ackremove",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+					alarmActionAPI.BulkAckRemove,
+				)
+				alarmRouter.PUT(
+					"/snooze",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+					alarmActionAPI.BulkSnooze,
+				)
+				alarmRouter.PUT(
+					"/cancel",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+					alarmActionAPI.BulkCancel,
+				)
+				alarmRouter.PUT(
+					"/uncancel",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+					alarmActionAPI.BulkUncancel,
+				)
+				alarmRouter.PUT(
+					"/assocticket",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+					alarmActionAPI.BulkAssocTicket,
+				)
+				alarmRouter.PUT(
+					"/comment",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+					alarmActionAPI.BulkComment,
+				)
+				alarmRouter.PUT(
+					"/changestate",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+					alarmActionAPI.BulkChangeState,
 				)
 			}
 		}

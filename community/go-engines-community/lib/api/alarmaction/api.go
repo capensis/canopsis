@@ -5,8 +5,10 @@ import (
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 )
 
 type API interface {
@@ -18,14 +20,23 @@ type API interface {
 	AssocTicket(c *gin.Context)
 	Comment(c *gin.Context)
 	ChangeState(c *gin.Context)
+	BulkAck(c *gin.Context)
+	BulkAckRemove(c *gin.Context)
+	BulkSnooze(c *gin.Context)
+	BulkCancel(c *gin.Context)
+	BulkUncancel(c *gin.Context)
+	BulkAssocTicket(c *gin.Context)
+	BulkComment(c *gin.Context)
+	BulkChangeState(c *gin.Context)
 }
 
 type api struct {
-	store Store
+	store  Store
+	logger zerolog.Logger
 }
 
-func NewApi(store Store) API {
-	return &api{store: store}
+func NewApi(store Store, logger zerolog.Logger) API {
+	return &api{store: store, logger: logger}
 }
 
 // Ack
@@ -242,4 +253,116 @@ func (a *api) ChangeState(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// BulkAck
+// @Param body body []BulkAckRequestItem true "body"
+func (a *api) BulkAck(c *gin.Context) {
+	userID := c.MustGet(auth.UserKey).(string)
+	bulk.Handler(c, func(request BulkAckRequestItem) (string, error) {
+		ok, err := a.store.Ack(c, request.ID, request.AckRequest, userID)
+		if err != nil || !ok {
+			return "", err
+		}
+
+		return request.ID, nil
+	}, a.logger)
+}
+
+// BulkAckRemove
+// @Param body body []BulkRequestItem true "body"
+func (a *api) BulkAckRemove(c *gin.Context) {
+	userID := c.MustGet(auth.UserKey).(string)
+	bulk.Handler(c, func(request BulkRequestItem) (string, error) {
+		ok, err := a.store.AckRemove(c, request.ID, request.Request, userID)
+		if err != nil || !ok {
+			return "", err
+		}
+
+		return request.ID, nil
+	}, a.logger)
+}
+
+// BulkSnooze
+// @Param body body []BulkSnoozeRequestItem true "body"
+func (a *api) BulkSnooze(c *gin.Context) {
+	userID := c.MustGet(auth.UserKey).(string)
+	bulk.Handler(c, func(request BulkSnoozeRequestItem) (string, error) {
+		ok, err := a.store.Snooze(c, request.ID, request.SnoozeRequest, userID)
+		if err != nil || !ok {
+			return "", err
+		}
+
+		return request.ID, nil
+	}, a.logger)
+}
+
+// BulkCancel
+// @Param body body []BulkRequestItem true "body"
+func (a *api) BulkCancel(c *gin.Context) {
+	userID := c.MustGet(auth.UserKey).(string)
+	bulk.Handler(c, func(request BulkRequestItem) (string, error) {
+		ok, err := a.store.Cancel(c, request.ID, request.Request, userID)
+		if err != nil || !ok {
+			return "", err
+		}
+
+		return request.ID, nil
+	}, a.logger)
+}
+
+// BulkUncancel
+// @Param body body []BulkRequestItem true "body"
+func (a *api) BulkUncancel(c *gin.Context) {
+	userID := c.MustGet(auth.UserKey).(string)
+	bulk.Handler(c, func(request BulkRequestItem) (string, error) {
+		ok, err := a.store.Uncancel(c, request.ID, request.Request, userID)
+		if err != nil || !ok {
+			return "", err
+		}
+
+		return request.ID, nil
+	}, a.logger)
+}
+
+// BulkAssocTicket
+// @Param body body []BulkAssocTicketRequestItem true "body"
+func (a *api) BulkAssocTicket(c *gin.Context) {
+	userID := c.MustGet(auth.UserKey).(string)
+	bulk.Handler(c, func(request BulkAssocTicketRequestItem) (string, error) {
+		ok, err := a.store.AssocTicket(c, request.ID, request.AssocTicketRequest, userID)
+		if err != nil || !ok {
+			return "", err
+		}
+
+		return request.ID, nil
+	}, a.logger)
+}
+
+// BulkComment
+// @Param body body []BulkCommentRequestItem true "body"
+func (a *api) BulkComment(c *gin.Context) {
+	userID := c.MustGet(auth.UserKey).(string)
+	bulk.Handler(c, func(request BulkCommentRequestItem) (string, error) {
+		ok, err := a.store.Comment(c, request.ID, request.CommentRequest, userID)
+		if err != nil || !ok {
+			return "", err
+		}
+
+		return request.ID, nil
+	}, a.logger)
+}
+
+// BulkChangeState
+// @Param body body []BulkChangeStateRequestItem true "body"
+func (a *api) BulkChangeState(c *gin.Context) {
+	userID := c.MustGet(auth.UserKey).(string)
+	bulk.Handler(c, func(request BulkChangeStateRequestItem) (string, error) {
+		ok, err := a.store.ChangeState(c, request.ID, request.ChangeStateRequest, userID)
+		if err != nil || !ok {
+			return "", err
+		}
+
+		return request.ID, nil
+	}, a.logger)
 }

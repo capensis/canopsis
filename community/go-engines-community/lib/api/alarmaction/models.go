@@ -33,3 +33,33 @@ type ChangeStateRequest struct {
 type CommentRequest struct {
 	Comment string `json:"comment" binding:"required,max=255"`
 }
+
+type BulkRequestItem struct {
+	Request
+	ID string `json:"_id" binding:"required"`
+}
+
+type BulkAckRequestItem struct {
+	AckRequest
+	ID string `json:"_id" binding:"required"`
+}
+
+type BulkSnoozeRequestItem struct {
+	SnoozeRequest
+	ID string `json:"_id" binding:"required"`
+}
+
+type BulkAssocTicketRequestItem struct {
+	AssocTicketRequest
+	ID string `json:"_id" binding:"required"`
+}
+
+type BulkChangeStateRequestItem struct {
+	ChangeStateRequest
+	ID string `json:"_id" binding:"required"`
+}
+
+type BulkCommentRequestItem struct {
+	CommentRequest
+	ID string `json:"_id" binding:"required"`
+}

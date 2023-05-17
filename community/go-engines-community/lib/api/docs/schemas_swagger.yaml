@@ -568,6 +568,95 @@ definitions:
     required:
     - ticket
     type: object
+  alarmaction.BulkAckRequestItem:
+    properties:
+      _id:
+        type: string
+      ack_resources:
+        type: boolean
+      comment:
+        maxLength: 255
+        type: string
+    required:
+    - _id
+    type: object
+  alarmaction.BulkAssocTicketRequestItem:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+      data:
+        additionalProperties:
+          type: string
+        type: object
+      system_name:
+        maxLength: 255
+        type: string
+      ticket:
+        type: string
+      ticket_resources:
+        type: boolean
+      url:
+        maxLength: 255
+        type: string
+    required:
+    - _id
+    - ticket
+    type: object
+  alarmaction.BulkChangeStateRequestItem:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+      state:
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        type: integer
+    required:
+    - _id
+    - state
+    type: object
+  alarmaction.BulkCommentRequestItem:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+    required:
+    - _id
+    - comment
+    type: object
+  alarmaction.BulkRequestItem:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+    required:
+    - _id
+    type: object
+  alarmaction.BulkSnoozeRequestItem:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+    required:
+    - _id
+    - duration
+    type: object
   alarmaction.ChangeStateRequest:
     properties:
       comment:
