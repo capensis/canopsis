@@ -191,10 +191,10 @@ func (a *api) AssocTicket(c *gin.Context) {
 }
 
 // Comment
-// @Param body body Request true "body"
+// @Param body body CommentRequest true "body"
 func (a *api) Comment(c *gin.Context) {
 	userID := c.MustGet(auth.UserKey).(string)
-	request := Request{}
+	request := CommentRequest{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
