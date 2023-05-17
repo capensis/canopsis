@@ -17,10 +17,11 @@ import {
 } from '@/constants';
 
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
-import { widgetColumnsToForm, formToWidgetColumns } from '@/helpers/entities/widget/column/form';
-import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '@/helpers/entities/widget/template/form';
 import { setSeveralFields } from '@/helpers/immutable';
-import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/table';
+
+import { widgetColumnsToForm, formToWidgetColumns } from '../widget/column/form';
+import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget/template/form';
+import { getWidgetColumnLabel, getWidgetColumnSortable } from '../widget/list';
 
 /**
  * @typedef {Object} ContextWidgetParameters

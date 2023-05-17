@@ -10,8 +10,7 @@ import {
 
 import { durationToForm } from '@/helpers/date/duration';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
-
-import { formToPrimitiveArray, primitiveArrayToForm } from '@/helpers/forms/shared/common';
+import { formToPrimitiveArray, primitiveArrayToForm } from '@/helpers/entities/shared/form';
 
 /**
  * @typedef {

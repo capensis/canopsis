@@ -83,7 +83,7 @@ import {
 } from '@/constants';
 
 import { formToWidgetColumns } from '@/helpers/entities/widget/column/form';
-import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/table';
+import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/list';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetSettingsMixin } from '@/mixins/widget/settings';

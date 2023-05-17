@@ -1,4 +1,4 @@
-import { uid } from '../uid';
+import { uid } from '@/helpers/uid';
 
 /**
  * @typedef {Service | Entity} ServiceDependency

@@ -2,7 +2,7 @@ import { isNumber, omit } from 'lodash';
 
 import { ENTITY_TYPES, BASIC_ENTITY_TYPES, ENTITIES_STATES } from '@/constants';
 
-import { infosToArray } from '@/helpers/forms/shared/common';
+import { infosToArray } from '@/helpers/entities/shared/form';
 
 /**
  * @typedef { 'service' | 'connector' | 'resource' | 'component' } EntityType

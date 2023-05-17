@@ -36,7 +36,7 @@
 <script>
 import {
   prepareRemediationInstructionExecutionsForAlarmTimeline,
-} from '@/helpers/entities/remediation/instruction-execution/table';
+} from '@/helpers/entities/remediation/instruction-execution/list';
 
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
