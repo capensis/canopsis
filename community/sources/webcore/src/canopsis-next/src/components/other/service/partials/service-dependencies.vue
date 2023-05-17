@@ -66,7 +66,7 @@ import {
   normalizeDependencies,
   getLoadMoreDenormalizedChild,
   dependenciesDenormalize,
-} from '@/helpers/treeview/service-dependencies';
+} from '@/helpers/entities/service-dependencies/list';
 
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 

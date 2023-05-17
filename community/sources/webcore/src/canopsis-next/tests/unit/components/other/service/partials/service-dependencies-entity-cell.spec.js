@@ -7,7 +7,7 @@ import {
   ENTITY_TYPES,
 } from '@/constants';
 
-import { getWidgetColumnLabel } from '@/helpers/entities/widget/table';
+import { getWidgetColumnLabel } from '@/helpers/entities/widget/list';
 
 import ServiceDependenciesEntityCell from '@/components/other/service/partials/service-dependencies-entity-cell.vue';
 
