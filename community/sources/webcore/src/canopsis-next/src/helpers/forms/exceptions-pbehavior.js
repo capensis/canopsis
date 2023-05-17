@@ -1,7 +1,7 @@
 import {
   convertDateToTimestampByTimezone,
   getLocaleTimezone,
-  convertDateToDateObjectByTimezone,
+  convertDateToDateObjectByTimezone, isStartOfDay,
 } from '@/helpers/date/date';
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
 
@@ -34,7 +34,7 @@ export function pbehaviorExceptionToForm(exception = {}, timezone = getLocaleTim
     exdates: exception.exdates
       ? addKeyInEntities(exception.exdates.map(({ begin, end, type }) => ({
         begin: convertDateToDateObjectByTimezone(begin, timezone),
-        end: convertDateToDateObjectByTimezone(end, timezone),
+        end: convertDateToDateObjectByTimezone(isStartOfDay(end) ? end - 1 : end, timezone),
         type: { ...type },
       })))
       : [],

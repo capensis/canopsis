@@ -15,7 +15,7 @@ import uid from '@/helpers/uid';
 import {
   convertDateToTimestampByTimezone,
   convertDateToDateObjectByTimezone,
-  getLocaleTimezone,
+  getLocaleTimezone, isStartOfDay,
 } from '@/helpers/date/date';
 import { addKeyInEntities, getIdFromEntity, removeKeyFromEntities } from '@/helpers/entities';
 
@@ -129,7 +129,7 @@ export const exdateToForm = (exdate, timezone = getLocaleTimezone()) => ({
   ...exdate,
   key: uid(),
   begin: convertDateToDateObjectByTimezone(exdate.begin, timezone),
-  end: convertDateToDateObjectByTimezone(exdate.end, timezone),
+  end: convertDateToDateObjectByTimezone(isStartOfDay(exdate.end) ? exdate.end - 1 : exdate.end, timezone),
 });
 
 /**
