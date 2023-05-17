@@ -19,7 +19,7 @@ func NewEngine(ctx context.Context, opts che.Options, logger zerolog.Logger) eng
 
 	e := che.NewEngine(ctx, opts, dbClient, cfg, metrics.NewNullSender(), metrics.NewNullMetaUpdater(),
 		eventfilter.NewExternalDataGetterContainer(), config.NewTimezoneConfigProvider(cfg, logger),
-		config.NewTemplateConfigProvider(cfg), logger)
+		config.NewTemplateConfigProvider(cfg, logger), logger)
 	e.AddDeferFunc(func(ctx context.Context) {
 		err := dbClient.Disconnect(ctx)
 		if err != nil {

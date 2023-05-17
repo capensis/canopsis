@@ -336,6 +336,7 @@ DumpKeepInterval = "1h"
 # System env vars can be used in any template like {{ .Env.System.ENV_MyVar }}.
 # The system_env_var_prefixes parameter defines the list of prefixes to filter the list of system variables.
 # Only those variables which contain the prefix are available for use in templates.
+# It's possible to use "" as a prefix, which allows all env variables in go and ui templates, it shouldn't be used in a production environment.
 [Canopsis.template]
 system_env_var_prefixes = ["ENV_"]
 

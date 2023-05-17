@@ -1194,7 +1194,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 	}
 
-	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	mockTechMetricsSender := mock_techmetrics.NewMockSender(ctrl)
 	mockTechMetricsSender.EXPECT().SendCheEntityInfo(gomock.Any(), gomock.Any()).AnyTimes()
 	processor := eventfilter.NewActionProcessor(tplExecutor, mockTechMetricsSender)

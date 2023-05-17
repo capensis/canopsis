@@ -591,10 +591,12 @@ func (p *BaseDataStorageConfigProvider) Get() DataStorageConfig {
 type BaseTemplateConfigProvider struct {
 	conf SectionTemplate
 	mx   sync.RWMutex
+
+	logger zerolog.Logger
 }
 
-func NewTemplateConfigProvider(cfg CanopsisConf) *BaseTemplateConfigProvider {
-	p := BaseTemplateConfigProvider{mx: sync.RWMutex{}}
+func NewTemplateConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseTemplateConfigProvider {
+	p := BaseTemplateConfigProvider{mx: sync.RWMutex{}, logger: logger}
 	p.parseVariables(cfg.Template)
 
 	return &p
@@ -614,6 +616,13 @@ func (p *BaseTemplateConfigProvider) parseVariables(templateCfg SectionTemplate)
 	}
 
 	systemVars := make(map[string]string)
+
+	for _, prefix := range templateCfg.SystemEnvVarPrefixes {
+		if prefix == "" {
+			p.logger.Warn().Msg("system_env_var_prefixes contains an empty prefix, all system env variables are exposed to the UI")
+			break
+		}
+	}
 
 	for _, env := range os.Environ() {
 		for _, prefix := range templateCfg.SystemEnvVarPrefixes {
