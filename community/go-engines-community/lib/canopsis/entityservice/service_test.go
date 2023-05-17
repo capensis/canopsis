@@ -99,7 +99,7 @@ func TestService_Process_GivenEvent_ShouldUpdateServices(t *testing.T) {
 	mockServiceLock.EXPECT().Release(gomock.Any())
 	mockServiceUpdateLock.EXPECT().Release(gomock.Any())
 
-	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 
 	service := entityservice.NewService(
 		mockAmqpPublisher,
@@ -216,7 +216,7 @@ func TestService_Process_GivenEventAndCachedAlarmCounters_ShouldUpdateServices(t
 	mockServiceLock.EXPECT().Release(gomock.Any())
 	mockServiceUpdateLock.EXPECT().Release(gomock.Any())
 
-	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 
 	service := entityservice.NewService(
 		mockAmqpPublisher,
@@ -301,7 +301,7 @@ func TestService_Process_GivenEventAndLockedService_ShouldSkipEvent(t *testing.T
 	gomock.InOrder(firstCall, secondCall)
 	mockServiceLock.EXPECT().Release(gomock.Any())
 
-	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 
 	service := entityservice.NewService(
 		mockAmqpPublisher,
@@ -439,7 +439,7 @@ func TestService_UpdateService_GivenEvent_ShouldUpdateService(t *testing.T) {
 		*alarms = []types.Alarm{alarm}
 	}).Return(nil)
 
-	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 
 	service := entityservice.NewService(
 		mockAmqpPublisher,
