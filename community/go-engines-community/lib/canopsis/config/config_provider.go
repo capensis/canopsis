@@ -615,7 +615,9 @@ func (p *BaseTemplateConfigProvider) parseVariables(templateCfg SectionTemplate)
 		p.conf.Vars = make(map[string]any)
 	}
 
-	systemVars := make(map[string]string)
+	if len(templateCfg.SystemEnvVarPrefixes) == 0 {
+		return
+	}
 
 	for _, prefix := range templateCfg.SystemEnvVarPrefixes {
 		if prefix == "" {
@@ -624,6 +626,7 @@ func (p *BaseTemplateConfigProvider) parseVariables(templateCfg SectionTemplate)
 		}
 	}
 
+	systemVars := make(map[string]string)
 	for _, env := range os.Environ() {
 		for _, prefix := range templateCfg.SystemEnvVarPrefixes {
 			if strings.HasPrefix(env, prefix) {
