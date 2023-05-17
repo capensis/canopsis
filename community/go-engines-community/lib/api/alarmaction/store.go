@@ -23,7 +23,7 @@ type Store interface {
 	Cancel(ctx context.Context, id string, r Request, userId string) (bool, error)
 	Uncancel(ctx context.Context, id string, r Request, userId string) (bool, error)
 	AssocTicket(ctx context.Context, id string, r AssocTicketRequest, userId string) (bool, error)
-	Comment(ctx context.Context, id string, r Request, userId string) (bool, error)
+	Comment(ctx context.Context, id string, r CommentRequest, userId string) (bool, error)
 	ChangeState(ctx context.Context, id string, r ChangeStateRequest, userId string) (bool, error)
 }
 
@@ -232,7 +232,7 @@ func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest
 	return true, nil
 }
 
-func (s *store) Comment(ctx context.Context, id string, r Request, userId string) (bool, error) {
+func (s *store) Comment(ctx context.Context, id string, r CommentRequest, userId string) (bool, error) {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id})
 	if err != nil || alarm.Alarm.ID == "" {
 		return false, err

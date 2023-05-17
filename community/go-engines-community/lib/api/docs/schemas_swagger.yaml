@@ -545,8 +545,6 @@ definitions:
       comment:
         maxLength: 255
         type: string
-    required:
-    - comment
     type: object
   alarmaction.AssocTicketRequest:
     properties:
@@ -583,16 +581,21 @@ definitions:
         - 3
         type: integer
     required:
-    - comment
     - state
     type: object
-  alarmaction.Request:
+  alarmaction.CommentRequest:
     properties:
       comment:
         maxLength: 255
         type: string
     required:
     - comment
+    type: object
+  alarmaction.Request:
+    properties:
+      comment:
+        maxLength: 255
+        type: string
     type: object
   alarmaction.SnoozeRequest:
     properties:
@@ -602,7 +605,6 @@ definitions:
       duration:
         $ref: '#/definitions/types.DurationWithUnit'
     required:
-    - comment
     - duration
     type: object
   alarmtag.Response:
