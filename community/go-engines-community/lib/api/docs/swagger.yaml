@@ -803,7 +803,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.Request'
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.CommentRequest'
             examples:
               comment:
                 summary: Comment
