@@ -150,7 +150,7 @@ import {
 
 import { uid } from '@/helpers/uid';
 import { getStepClass } from '@/helpers/tour';
-import { alarmToServiceDependency } from '@/helpers/treeview/service-dependencies';
+import { alarmToServiceDependency } from '@/helpers/entities/service-dependencies/list';
 import { convertAlarmDetailsQueryToRequest } from '@/helpers/entities/alarm/query';
 import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
 

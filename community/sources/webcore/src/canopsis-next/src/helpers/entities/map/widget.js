@@ -11,10 +11,11 @@ import {
 } from '@/constants';
 
 import { setSeveralFields } from '@/helpers/immutable';
-import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/table';
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
-import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '@/helpers/entities/widget/template/form';
-import { formToWidgetColumns, widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
+
+import { getWidgetColumnLabel, getWidgetColumnSortable } from '../widget/list';
+import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../widget/template/form';
+import { formToWidgetColumns, widgetColumnsToForm } from '../widget/column/form';
 
 /**
  * @typedef {Object} MapWidgetParameters

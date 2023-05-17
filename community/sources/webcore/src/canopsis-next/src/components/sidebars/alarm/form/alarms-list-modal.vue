@@ -42,7 +42,7 @@ import { filter } from 'lodash';
 import { ALARM_FIELDS_TO_LABELS_KEYS, ALARM_UNSORTABLE_FIELDS, WIDGET_TEMPLATES_TYPES } from '@/constants';
 
 import { formToWidgetColumns } from '@/helpers/entities/widget/column/form';
-import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/table';
+import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/list';
 
 import { formBaseMixin } from '@/mixins/form';
 import { alarmVariablesMixin } from '@/mixins/widget/variables/alarm';

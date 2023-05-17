@@ -5,8 +5,7 @@ import featuresService from '@/services/features';
 import {
   prepareRemediationInstructionsFiltersToQuery,
   getRemediationInstructionsFilters,
-} from '@/helpers/filter/remediation-instructions-filter';
-
+} from '../remediation/instruction-filter/query';
 import { convertAlarmUserPreferenceToQuery, convertAlarmWidgetToQuery } from '../alarm/query';
 import {
   convertChartUserPreferenceToQuery,

@@ -108,7 +108,7 @@ import { omit, pick, isObject, isEqual } from 'lodash';
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
-import { getAlarmListExportDownloadFileUrl } from '@/helpers/file-url';
+import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';

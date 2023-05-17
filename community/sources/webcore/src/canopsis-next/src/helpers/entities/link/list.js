@@ -1,6 +1,21 @@
 import { isUndefined } from 'lodash';
 
-import { getCollectionComparator } from '@/helpers/sort';
+/**
+ * Links collection comparator by label
+ *
+ * @returns {number}
+ */
+export const linksCollectionComparatorByLabel = (a, b) => {
+  if (a.label > b.label) {
+    return 1;
+  }
+
+  if (a.label < b.label) {
+    return -1;
+  }
+
+  return 0;
+};
 
 /**
  * Harmonize links for special category
@@ -16,7 +31,7 @@ export const harmonizeCategoryLinks = (links = {}, category) => {
 
   return links[category]
     .filter(link => !!link.rule_id)
-    .sort(getCollectionComparator('label'));
+    .sort(linksCollectionComparatorByLabel);
 };
 
 /**
@@ -49,7 +64,7 @@ export const getLinkRuleLinkActionType = (link = {}) => `${link.rule_id}.${link.
 export const harmonizeLinks = (links = {}) => Object.values(links)
   .map(nestedLinks => nestedLinks.filter(link => !!link.rule_id))
   .flat()
-  .sort(getCollectionComparator('label'));
+  .sort(linksCollectionComparatorByLabel);
 
 /**
  * Get filtered links for alarms
@@ -95,5 +110,5 @@ export const harmonizeAlarmsLinks = (alarms = []) => {
 
   return Object.values(linksByKeys)
     .filter(link => !link.single && !isUndefined(lastIndexesByRuleIds[link.rule_id]))
-    .sort(getCollectionComparator('label'));
+    .sort(linksCollectionComparatorByLabel);
 };
