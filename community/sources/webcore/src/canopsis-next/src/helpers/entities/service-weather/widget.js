@@ -18,11 +18,12 @@ import {
 import { DEFAULT_WEATHER_LIMIT, PAGINATION_LIMIT } from '@/config';
 
 import { setSeveralFields } from '@/helpers/immutable';
-import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/table';
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
-import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '@/helpers/entities/widget/template/form';
-import { formToWidgetColumns, widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
-import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from '@/helpers/entities/alarm/widget';
+
+import { getWidgetColumnLabel, getWidgetColumnSortable } from '../widget/list';
+import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../widget/template/form';
+import { formToWidgetColumns, widgetColumnsToForm } from '../widget/column/form';
+import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from '../alarm/widget';
 
 /**
  * @typedef {'more-info' | 'alarm-list' | 'both'} ServiceWeatherWidgetModalType

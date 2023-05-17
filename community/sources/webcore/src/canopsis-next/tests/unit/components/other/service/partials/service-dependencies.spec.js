@@ -11,7 +11,7 @@ import {
   MODALS,
 } from '@/constants';
 
-import { getWidgetColumnLabel } from '@/helpers/entities/widget/table';
+import { getWidgetColumnLabel } from '@/helpers/entities/widget/list';
 
 import CTreeviewDataTable from '@/components/common/table/c-treeview-data-table.vue';
 import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';

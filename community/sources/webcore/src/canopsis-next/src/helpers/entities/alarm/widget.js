@@ -32,7 +32,7 @@ import { kioskParametersToForm } from '../shared/kiosk/form';
 import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from '../metric/widget/bar-widget';
 import { formToLineChartWidgetParameters, lineChartWidgetParametersToForm } from '../metric/widget/line-widget';
 import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from '../metric/widget/numbers-widget';
-import { getWidgetColumnLabel, getWidgetColumnSortable } from '../widget/table';
+import { getWidgetColumnLabel, getWidgetColumnSortable } from '../widget/list';
 
 /**
  * @typedef {'BarChart', 'LineChart', 'Numbers'} AlarmChartType
