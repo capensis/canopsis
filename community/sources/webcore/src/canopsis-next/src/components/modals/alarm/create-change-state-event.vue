@@ -4,11 +4,10 @@
       template(#title="")
         span {{ $t('modals.createChangeStateEvent.title') }}
       template(#text="")
-        v-container
-          c-change-state-field(
-            v-model="form",
-            :label="$t('modals.createChangeStateEvent.fields.output')"
-          )
+        c-change-state-field(
+          v-model="form",
+          :label="$t('modals.createChangeStateEvent.fields.output')"
+        )
       template(#actions="")
         v-btn(
           depressed,
@@ -23,11 +22,9 @@
 </template>
 
 <script>
-import { MODALS, ENTITIES_STATES, EVENT_ENTITY_TYPES } from '@/constants';
+import { MODALS, ENTITIES_STATES } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
-import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
-import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
@@ -46,8 +43,6 @@ export default {
   mixins: [
     modalInnerMixin,
     entitiesInfoMixin,
-    modalInnerItemsMixin,
-    eventActionsAlarmMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
@@ -66,7 +61,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.createEvent(EVENT_ENTITY_TYPES.changeState, this.items, this.form);
+        await this.config?.action?.(this.form);
 
         this.$modals.hide();
       }

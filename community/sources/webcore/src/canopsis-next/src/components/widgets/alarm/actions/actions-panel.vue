@@ -1,5 +1,5 @@
 <template lang="pug">
-  shared-actions-panel(:actions="actions", :small="small")
+  shared-actions-panel(:actions="preparedActions", :small="small")
 </template>
 
 <script>
@@ -113,7 +113,6 @@ export default {
           type: ALARM_LIST_ACTIONS_TYPES.declareTicket,
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.declareTicket),
           title: this.$t('alarm.actions.titles.declareTicket'),
-          loading: this.ticketsForAlarmsPending,
           method: this.showDeclareTicketModal,
         },
         associateTicket: {
@@ -126,19 +125,19 @@ export default {
           type: ALARM_LIST_ACTIONS_TYPES.cancel,
           icon: '$vuetify.icons.list_delete',
           title: this.$t('alarm.actions.titles.cancel'),
-          method: this.showCancelEventModal,
+          method: this.showCancelModal,
         },
         fastCancel: {
           type: ALARM_LIST_ACTIONS_TYPES.fastCancel,
           icon: 'delete',
           title: this.$t('alarm.actions.titles.fastCancel'),
-          method: this.createFastCancelEvent,
+          method: this.createFastCancel,
         },
         changeState: {
           type: ALARM_LIST_ACTIONS_TYPES.changeState,
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.changeState),
           title: this.$t('alarm.actions.titles.changeState'),
-          method: this.showActionModal(MODALS.createChangeStateEvent),
+          method: this.showCreateChangeStateEventModal,
         },
         variablesHelp: {
           type: ALARM_LIST_ACTIONS_TYPES.variablesHelp,
@@ -322,10 +321,73 @@ export default {
     actions() {
       return compact(this.isResolvedAlarm ? this.resolvedActions : this.unresolvedActions);
     },
+
+    preparedActions() {
+      return this.actions.map(action => ({
+        ...action,
+        loading: this.isActionTypePending(action.type),
+      }));
+    },
   },
   methods: {
     afterSubmit() {
       this.refreshAlarmsList();
+    },
+
+    showCreateChangeStateEventModal() {
+      this.showCreateChangeStateEventModalByAlarms([this.item]);
+    },
+
+    showSnoozeModal() {
+      this.showSnoozeModalByAlarms([this.item]);
+    },
+
+    showAckModal() {
+      this.showAckModalByAlarms([this.item]);
+    },
+
+    createFastAckEvent() {
+      this.createFastAckActionByAlarms([this.item]);
+    },
+
+    showAssociateTicketModal() {
+      this.showAssociateTicketModalByAlarms([this.item]);
+    },
+
+    showDeclareTicketModal() {
+      this.showDeclareTicketModalByAlarms([this.item]);
+    },
+
+    showCreateCommentEventModal() {
+      this.showCreateCommentModalByAlarms([this.item]);
+    },
+
+    showAckRemoveModal() {
+      this.showAckRemoveModalByAlarms([this.item]);
+    },
+
+    showCancelModal() {
+      this.showCancelModalByAlarms([this.item]);
+    },
+
+    createFastCancel() {
+      this.createFastCancelActionByAlarms([this.item]);
+    },
+
+    showRemoveAlarmsFromManualMetaAlarmModal() {
+      this.showRemoveAlarmsFromManualMetaAlarmModalByAlarms([this.item]);
+    },
+
+    showVariablesHelperModal() {
+      this.showVariablesHelperModalByAlarm(this.item);
+    },
+
+    showAddPbehaviorModal() {
+      this.showAddPbehaviorModalByAlarms(this.item);
+    },
+
+    showHistoryModal() {
+      this.showHistoryModalByAlarm(this.item);
     },
 
     showExecuteInstructionModal(assignedInstruction) {
@@ -344,48 +406,6 @@ export default {
           onExecute: refreshAlarm,
         },
       });
-    },
-
-    showAssociateTicketModal() {
-      this.showAssociateTicketModalByAlarms([this.item]);
-    },
-
-    showDeclareTicketModal() {
-      this.showDeclareTicketModalByAlarms([this.item]);
-    },
-
-    showCreateCommentEventModal() {
-      this.$modals.show({
-        name: MODALS.createCommentEvent,
-        config: {
-          ...this.modalConfig,
-          action: data => this.createEvent(EVENT_ENTITY_TYPES.comment, this.item, data),
-        },
-      });
-    },
-
-    showRemoveAlarmsFromManualMetaAlarmModal() {
-      this.$modals.show({
-        name: MODALS.removeAlarmsFromManualMetaAlarm,
-        config: {
-          ...this.modalConfig,
-
-          title: this.$t('alarm.actions.titles.removeAlarmsFromManualMetaAlarm'),
-          parentAlarm: this.parentAlarm,
-        },
-      });
-    },
-
-    async createFastAckEvent() {
-      await this.createFastAckActionByAlarms([this.item]);
-
-      return this.refreshAlarmsList();
-    },
-
-    async createFastCancelEvent() {
-      await this.createFastCancelActionByAlarms([this.item]);
-
-      return this.refreshAlarmsList();
     },
   },
 };
