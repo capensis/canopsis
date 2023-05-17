@@ -15,9 +15,9 @@
           )
           associate-ticket-event-form.mt-3(v-model="form")
           c-description-field(
-            v-model="form.ticket_comment",
+            v-model="form.comment",
             :label="$tc('common.comment')",
-            name="ticket_comment"
+            name="comment"
           )
           c-alert(v-if="itemsWithoutAck.length", type="info") {{ alertMessage }}
       template(#actions="")

@@ -5,15 +5,14 @@
         span {{ $t('modals.createCommentEvent.title') }}
       template(#text="")
         v-layout(column)
-          template(v-if="items.length")
-            alarm-general-table(:items="items")
+          template(v-if="config.items.length")
+            alarm-general-table(:items="config.items")
             v-divider.my-3
-          v-text-field(
-            v-model="form.output",
-            v-validate="'required'",
+          c-name-field(
+            v-model="form.comment",
             :label="$tc('common.comment')",
-            :error-messages="errors.collect('comment')",
-            name="comment"
+            name="comment",
+            required
           )
       template(#actions="")
         v-btn(
@@ -56,7 +55,7 @@ export default {
   data() {
     return {
       form: {
-        output: '',
+        comment: '',
       },
     };
   },
@@ -70,11 +69,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.config.action({ ...this.form });
-
-        if (this.config && this.config.afterSubmit) {
-          await this.config.afterSubmit();
-        }
+        await this.config.action(this.form);
 
         this.$modals.hide();
       }

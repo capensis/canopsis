@@ -1,16 +1,11 @@
 import {
   DECLARE_TICKET_OUTPUT,
   ENTITIES_STATES,
-  EVENT_DEFAULT_ORIGIN,
   EVENT_ENTITY_TYPES,
-  EVENT_INITIATORS,
   TIME_UNITS,
   WEATHER_ACK_EVENT_OUTPUT,
   WEATHER_EVENT_DEFAULT_ENTITY,
 } from '@/constants';
-
-import { getNowTimestamp } from '@/helpers/date/date';
-import { toSeconds } from '@/helpers/date/duration';
 
 /**
  * @typedef {
@@ -81,58 +76,13 @@ import { toSeconds } from '@/helpers/date/duration';
 /**
  * @typedef {Object} SnoozeAction
  * @property {number} duration
- * @property {string} output
+ * @property {string} comment
  */
 
 /**
- * @typedef {Object} SnoozeActionForm
+ * @typedef {SnoozeAction} SnoozeActionForm
  * @property {Duration} duration
- * @property {string} output
  */
-
-/**
- * Prepare event by: type, alarm and already prepared data
- *
- * @param {EventType} type
- * @param {Alarm} alarm
- * @param {Object|Event} [data = {}]
- * @return {Event}
- */
-export const prepareEventByAlarm = (type, alarm, data = {}) => {
-  const event = {
-    id: alarm._id,
-    connector: alarm.v.connector,
-    connector_name: alarm.v.connector_name,
-    source_type: alarm.entity ? alarm.entity.type : null,
-    component: alarm.v.component,
-    state: alarm.v.state.val,
-    event_type: type,
-    crecord_type: type,
-    timestamp: getNowTimestamp(),
-    resource: alarm.v.resource,
-    ref_rk: `${alarm.v.resource}/${alarm.v.component}`,
-    origin: EVENT_DEFAULT_ORIGIN,
-    initiator: EVENT_INITIATORS.user,
-  };
-
-  if (type !== EVENT_ENTITY_TYPES.snooze) {
-    event.state_type = alarm.v.status.val;
-  }
-
-  return { ...event, ...data };
-};
-
-/**
- * Prepare event by: type, alarms and already prepared data
- *
- * @param {EventType} type
- * @param {Alarm[]} alarms
- * @param {Object|Event} [data]
- * @return {Event[]}
- */
-export const prepareEventsByAlarms = (type, alarms, data) => (
-  alarms.map(alarm => prepareEventByAlarm(type, alarm, data))
-);
 
 /**
  * Prepare event by: type, entity and already prepared data
@@ -274,16 +224,5 @@ export const snoozeToForm = (snooze = {}) => ({
     unit: snooze.duration?.unit ?? TIME_UNITS.minute,
     value: snooze.duration?.seconds ?? 1,
   },
-  output: snooze.output ?? '',
-});
-
-/**
- * Convert form snooze object to API snooze
- *
- * @param {SnoozeActionForm} form
- * @returns {SnoozeAction}
- */
-export const formToSnooze = form => ({
-  duration: toSeconds(parseInt(form.duration.value, 10), form.duration.unit),
-  output: form.output,
+  comment: snooze.comment ?? '',
 });

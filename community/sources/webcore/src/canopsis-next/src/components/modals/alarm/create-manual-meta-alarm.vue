@@ -4,15 +4,14 @@
       template(#title="")
         span {{ $t('modals.createManualMetaAlarm.title') }}
       template(#text="")
-        v-container
-          v-layout(row)
-            v-flex.text-xs-center
-              alarm-general-table(:items="alarms")
-          v-layout(row)
-            v-divider.my-3
-          v-layout(row)
-            v-flex(xs12)
-              manual-meta-alarm-form(v-model="form")
+        v-layout(row)
+          v-flex.text-xs-center
+            alarm-general-table(:items="alarms")
+        v-layout(row)
+          v-divider.my-3
+        v-layout(row)
+          v-flex(xs12)
+            manual-meta-alarm-form(v-model="form")
       template(#actions="")
         v-btn(
           depressed,
@@ -33,8 +32,6 @@ import { mapIds } from '@/helpers/array';
 import { isAlarmStateNotOk } from '@/helpers/entities/alarm/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
-import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
-import { entitiesManualMetaAlarmMixin } from '@/mixins/entities/manual-meta-alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -59,8 +56,6 @@ export default {
   },
   mixins: [
     modalInnerMixin,
-    modalInnerItemsMixin,
-    entitiesManualMetaAlarmMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
@@ -74,11 +69,7 @@ export default {
   },
   computed: {
     alarms() {
-      return this.items.filter(isAlarmStateNotOk);
-    },
-
-    metaAlarmId() {
-      return this.form.metaAlarm?._id;
+      return this.config.items.filter(isAlarmStateNotOk);
     },
   },
   methods: {
@@ -91,17 +82,13 @@ export default {
           alarms: mapIds(this.alarms),
         };
 
-        if (this.metaAlarmId) {
-          await this.addAlarmsIntoManualMetaAlarm({ id: this.metaAlarmId, data });
+        if (this.form.metaAlarm?._id) {
+          data.id = this.form.metaAlarm?._id;
         } else {
           data.name = this.form.metaAlarm;
-
-          await this.createManualMetaAlarm({ data });
         }
 
-        if (this.config.afterSubmit) {
-          await this.config.afterSubmit();
-        }
+        await this.config?.action?.(data);
 
         this.$modals.hide();
       }
