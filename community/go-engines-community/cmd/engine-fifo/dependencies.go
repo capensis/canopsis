@@ -20,5 +20,5 @@ func NewEngine(ctx context.Context, options fifo.Options, logger zerolog.Logger)
 	config.SetDbClientRetry(dbClient, cfg)
 
 	return fifo.Default(ctx, options, dbClient, cfg, eventfilter.NewExternalDataGetterContainer(),
-		config.NewTimezoneConfigProvider(cfg, logger), config.NewTemplateConfigProvider(cfg), logger)
+		config.NewTimezoneConfigProvider(cfg, logger), config.NewTemplateConfigProvider(cfg, logger), logger)
 }

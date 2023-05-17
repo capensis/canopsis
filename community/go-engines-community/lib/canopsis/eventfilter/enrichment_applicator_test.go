@@ -75,7 +75,7 @@ func TestApplyWithExternalData(t *testing.T) {
 	externalDataContainer := eventfilter.NewExternalDataGetterContainer()
 	externalDataContainer.Set("test", getter)
 
-	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 
 	applicator := eventfilter.NewChangeEntityApplicator(externalDataContainer, tplExecutor)
 
