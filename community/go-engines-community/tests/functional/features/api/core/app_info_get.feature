@@ -2,7 +2,6 @@ Feature: Get application information
   I need to be able to get application information
   Only admin should be able to get this information
 
-  @standalone
   Scenario: given get request should return application information
     When I do GET /api/v4/app-info
     Then the response code should be 200
