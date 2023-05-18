@@ -570,6 +570,20 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/alarmaction.AckRequest'
+            examples:
+              ack:
+                summary: Ack
+                description: Ack an alarm.
+                value: {
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+              ack_resources:
+                summary: Ack with resources
+                description: Ack an alarm of a component and all alarms of related resources.
+                value: {
+                  "ack_resources": true,
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
         required: true
       responses:
         204:
@@ -604,6 +618,13 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/alarmaction.Request'
+            examples:
+              ackremove:
+                summary: Remove ack
+                description: Remove ack from an alarm.
+                value: {
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
         required: true
       responses:
         204:
@@ -638,6 +659,34 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/alarmaction.AssocTicketRequest'
+            examples:
+              assocticket:
+                summary: Associate ticket
+                description: Associate ticket with an alarm.
+                value: {
+                  "ticket": "ENV-116",
+                  "url": "https://jira.local/ENV-116",
+                  "system_name": "Jira",
+                  "data": {
+                    "priority": "high",
+                    "tag": "env"
+                  },
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+              assocticket_resources:
+                summary: Associate ticket with resources
+                description: Associate ticket with an alarm of a component and all alarms of related resources.
+                value: {
+                  "ticket_resources": true,
+                  "ticket": "ENV-116",
+                  "url": "https://jira.local/ENV-116",
+                  "system_name": "Jira",
+                  "data": {
+                    "priority": "high",
+                    "tag": "env"
+                  },
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
         required: true
       responses:
         204:
@@ -672,6 +721,13 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/alarmaction.Request'
+            examples:
+              cancel:
+                summary: Cancel
+                description: Cacnel an alarm.
+                value: {
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
         required: true
       responses:
         204:
@@ -706,6 +762,14 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/alarmaction.ChangeStateRequest'
+            examples:
+              changestate:
+                summary: Change state
+                description: Change a state of an alarm.
+                value: {
+                  "state": 3,
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
         required: true
       responses:
         204:
@@ -740,6 +804,13 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/alarmaction.Request'
+            examples:
+              comment:
+                summary: Comment
+                description: Comment an alarm.
+                value: {
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
         required: true
       responses:
         204:
@@ -774,6 +845,17 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/alarmaction.SnoozeRequest'
+            examples:
+              snooze:
+                summary: Snooze
+                description: Snooze an alarm.
+                value: {
+                  "duration": {
+                    "value": 15,
+                    "unit": "m"
+                  },
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
         required: true
       responses:
         204:
@@ -808,6 +890,13 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/alarmaction.Request'
+            examples:
+              uncancel:
+                summary: Uncancel
+                description: Uncancel an alarm.
+                value: {
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
         required: true
       responses:
         204:
