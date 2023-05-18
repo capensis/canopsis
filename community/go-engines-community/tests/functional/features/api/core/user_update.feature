@@ -35,6 +35,7 @@ Feature: Update a user
       "firstname": "test-user-to-update-1-firstname-updated",
       "lastname": "test-user-to-update-1-lastname-updated",
       "name": "test-user-to-update-1-updated",
+      "display_name": "test-user-to-update-1-updated test-user-to-update-1-firstname-updated test-user-to-update-1-lastname-updated test-user-to-update-1-email-updated@canopsis.net",
       "role": {
         "_id": "test-role-to-edit-user",
         "name": "test-role-to-edit-user",
@@ -205,6 +206,7 @@ Feature: Update a user
       "firstname": "test-user-to-update-3-firstname-updated",
       "lastname": "test-user-to-update-3-lastname-updated",
       "name": "test-user-to-update-3-updated",
+      "display_name": "test-user-to-update-3-updated test-user-to-update-3-firstname-updated test-user-to-update-3-lastname-updated test-user-to-update-3-email-updated@canopsis.net",
       "role": {
         "_id": "test-role-to-edit-user",
         "name": "test-role-to-edit-user",

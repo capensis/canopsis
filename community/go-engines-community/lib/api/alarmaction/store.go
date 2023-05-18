@@ -8,7 +8,6 @@ import (
 	libauthor "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -34,7 +33,7 @@ func NewStore(
 	exchange, queue string,
 	encoder encoding.Encoder,
 	contentType string,
-	configProvider config.ApiConfigProvider,
+	authorProvider libauthor.Provider,
 	logger zerolog.Logger,
 ) Store {
 	return &store{
@@ -46,7 +45,7 @@ func NewStore(
 		queue:            queue,
 		encoder:          encoder,
 		contentType:      contentType,
-		configProvider:   configProvider,
+		authorProvider:   authorProvider,
 		logger:           logger,
 	}
 }
@@ -59,7 +58,7 @@ type store struct {
 	exchange, queue  string
 	encoder          encoding.Encoder
 	contentType      string
-	configProvider   config.ApiConfigProvider
+	authorProvider   libauthor.Provider
 	logger           zerolog.Logger
 }
 
@@ -468,27 +467,6 @@ func (s *store) ticketResources(
 }
 
 func (s *store) getAuthor(ctx context.Context, id string) (string, error) {
-	authorScheme := s.configProvider.Get().AuthorScheme
-	pipeline := []bson.M{
-		{"$match": bson.M{"_id": id}},
-		{"$addFields": bson.M{
-			"username": "$crecord_name",
-		}},
-		{"$addFields": bson.M{
-			"display_name": bson.M{"$concat": authorScheme},
-		}},
-	}
-	cursor, err := s.userDbCollection.Aggregate(ctx, pipeline)
-	if err != nil {
-		return "", err
-	}
-	defer cursor.Close(ctx)
-
-	if cursor.Next(ctx) {
-		author := libauthor.Author{}
-		err = cursor.Decode(&author)
-		return author.DisplayName, err
-	}
-
-	return "", nil
+	author, err := s.authorProvider.Find(ctx, id)
+	return author.DisplayName, err
 }

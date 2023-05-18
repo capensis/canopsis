@@ -85,6 +85,7 @@ func (r EditRequest) getBson(passwordEncoder password.Encoder) bson.M {
 type User struct {
 	ID                     string `bson:"_id" json:"_id"`
 	Name                   string `bson:"name" json:"name"`
+	DisplayName            string `bson:"display_name" json:"display_name"`
 	Lastname               string `bson:"lastname" json:"lastname"`
 	Firstname              string `bson:"firstname" json:"firstname"`
 	Email                  string `bson:"email" json:"email"`

@@ -1416,6 +1416,8 @@ default_rights:
       address: 30 Rue du Triez 59290 Wasquehal France
       name: John Doe
     email: admin@canopsis.net
+    firstname: John
+    lastname: Doe
     role: "@role_admin"
 
   role_to_widget_filter_edit_1:

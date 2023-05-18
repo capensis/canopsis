@@ -38,7 +38,8 @@ Feature: Get a resolve rule
           "old_entity_patterns": null,
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1619083733,
           "name": "test-resolve-rule-to-get-1-name",
@@ -78,7 +79,8 @@ Feature: Get a resolve rule
           "old_entity_patterns": null,
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1619083733,
           "name": "test-resolve-rule-to-get-2-name",
@@ -134,7 +136,8 @@ Feature: Get a resolve rule
       "old_entity_patterns": null,
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "created": 1619083733,
       "name": "test-resolve-rule-to-get-1-name",

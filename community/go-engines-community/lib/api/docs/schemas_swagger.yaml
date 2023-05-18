@@ -26,6 +26,8 @@ definitions:
         type: string
       defaultview:
         $ref: '#/definitions/user.View'
+      display_name:
+        type: string
       email:
         type: string
       enable:
@@ -748,6 +750,8 @@ definitions:
   author.Author:
     properties:
       _id:
+        type: string
+      display_name:
         type: string
       name:
         type: string
@@ -4652,6 +4656,8 @@ definitions:
         type: string
       defaultview:
         $ref: '#/definitions/user.View'
+      display_name:
+        type: string
       email:
         type: string
       enable:
