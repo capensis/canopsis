@@ -6,6 +6,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarmaction"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/appinfo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/associativetable"
@@ -63,6 +64,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgettemplate"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -91,6 +93,7 @@ func RegisterRoutes(
 	linkGenerator link.Generator,
 	dbClient mongo.DbClient,
 	pgPoolProvider postgres.PoolProvider,
+	amqpChannel amqp.Channel,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	templateConfigProvider config.TemplateConfigProvider,
 	pbhEntityTypeResolver libpbehavior.EntityTypeResolver,
@@ -257,6 +260,48 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
 				alarmAPI.Get,
+			)
+			alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(dbClient, amqpChannel, "",
+				canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, logger))
+			alarmRouter.PUT(
+				"/:id/ack",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+				alarmActionAPI.Ack,
+			)
+			alarmRouter.PUT(
+				"/:id/ackremove",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+				alarmActionAPI.AckRemove,
+			)
+			alarmRouter.PUT(
+				"/:id/snooze",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+				alarmActionAPI.Snooze,
+			)
+			alarmRouter.PUT(
+				"/:id/cancel",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+				alarmActionAPI.Cancel,
+			)
+			alarmRouter.PUT(
+				"/:id/uncancel",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+				alarmActionAPI.Uncancel,
+			)
+			alarmRouter.PUT(
+				"/:id/assocticket",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+				alarmActionAPI.AssocTicket,
+			)
+			alarmRouter.PUT(
+				"/:id/comment",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+				alarmActionAPI.Comment,
+			)
+			alarmRouter.PUT(
+				"/:id/changestate",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+				alarmActionAPI.ChangeState,
 			)
 		}
 		protected.POST(
@@ -692,7 +737,7 @@ func RegisterRoutes(
 			)
 		}
 
-		eventApi := event.NewApi(publisher, dbClient, userInterfaceConfig.Get().IsAllowChangeSeverityToInfo, logger)
+		eventApi := event.NewApi(publisher, dbClient, logger)
 		eventRouter := protected.Group("/event")
 		{
 			eventRouter.POST(
