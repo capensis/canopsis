@@ -13,28 +13,9 @@ Feature: update alarm
     Then the response code should be 403
 
   @concurrent
-  Scenario: given ack invalid request should return error
-    When I am admin
-    When I do PUT /api/v4/alarms/test-alarm-not-exist/ack
-    Then the response code should be 400
-    Then the response body should be:
-    """json
-    {
-      "errors": {
-        "comment": "Comment is missing."
-      }
-    }
-    """
-
-  @concurrent
   Scenario: given ack request and not exist alarm should return error
     When I am admin
-    When I do PUT /api/v4/alarms/test-alarm-not-exist/ack:
-    """json
-    {
-      "comment": "test-comment"
-    }
-    """
+    When I do PUT /api/v4/alarms/test-alarm-not-exist/ack
     Then the response code should be 404
 
   @concurrent
@@ -49,28 +30,9 @@ Feature: update alarm
     Then the response code should be 403
 
   @concurrent
-  Scenario: given ack remove invalid request should return error
-    When I am admin
-    When I do PUT /api/v4/alarms/test-alarm-not-exist/ackremove
-    Then the response code should be 400
-    Then the response body should be:
-    """json
-    {
-      "errors": {
-        "comment": "Comment is missing."
-      }
-    }
-    """
-
-  @concurrent
   Scenario: given ack remove request and not exist alarm should return error
     When I am admin
-    When I do PUT /api/v4/alarms/test-alarm-not-exist/ackremove:
-    """json
-    {
-      "comment": "test-comment"
-    }
-    """
+    When I do PUT /api/v4/alarms/test-alarm-not-exist/ackremove
     Then the response code should be 404
 
   @concurrent
@@ -93,7 +55,6 @@ Feature: update alarm
     """json
     {
       "errors": {
-        "comment": "Comment is missing.",
         "duration.unit": "Unit is missing.",
         "duration.value": "Value is missing."
       }
@@ -105,8 +66,7 @@ Feature: update alarm
       "duration": {
         "value": 1,
         "unit": "y"
-      },
-      "comment": "test-comment"
+      }
     }
     """
     Then the response code should be 400
@@ -125,7 +85,6 @@ Feature: update alarm
     When I do PUT /api/v4/alarms/test-alarm-not-exist/snooze:
     """json
     {
-      "comment": "test-comment",
       "duration": {
         "value": 3,
         "unit": "m"
@@ -146,28 +105,9 @@ Feature: update alarm
     Then the response code should be 403
 
   @concurrent
-  Scenario: given cancel invalid request should return error
-    When I am admin
-    When I do PUT /api/v4/alarms/test-alarm-not-exist/cancel
-    Then the response code should be 400
-    Then the response body should be:
-    """json
-    {
-      "errors": {
-        "comment": "Comment is missing."
-      }
-    }
-    """
-
-  @concurrent
   Scenario: given cancel request and not exist alarm should return error
     When I am admin
-    When I do PUT /api/v4/alarms/test-alarm-not-exist/cancel:
-    """json
-    {
-      "comment": "test-comment"
-    }
-    """
+    When I do PUT /api/v4/alarms/test-alarm-not-exist/cancel
     Then the response code should be 404
 
   @concurrent
@@ -182,28 +122,9 @@ Feature: update alarm
     Then the response code should be 403
 
   @concurrent
-  Scenario: given uncancel invalid request should return error
-    When I am admin
-    When I do PUT /api/v4/alarms/test-alarm-not-exist/uncancel
-    Then the response code should be 400
-    Then the response body should be:
-    """json
-    {
-      "errors": {
-        "comment": "Comment is missing."
-      }
-    }
-    """
-
-  @concurrent
   Scenario: given uncancel request and not exist alarm should return error
     When I am admin
-    When I do PUT /api/v4/alarms/test-alarm-not-exist/uncancel:
-    """json
-    {
-      "comment": "test-comment"
-    }
-    """
+    When I do PUT /api/v4/alarms/test-alarm-not-exist/uncancel
     Then the response code should be 404
 
   @concurrent
@@ -298,16 +219,14 @@ Feature: update alarm
     """json
     {
       "errors": {
-        "state": "State is missing.",
-        "comment": "Comment is missing."
+        "state": "State is missing."
       }
     }
     """
     When I do PUT /api/v4/alarms/test-alarm-not-exist/changestate:
     """json
     {
-      "state": 5,
-      "comment": "test-comment"
+      "state": 5
     }
     """
     Then the response code should be 400
@@ -326,8 +245,7 @@ Feature: update alarm
     When I do PUT /api/v4/alarms/test-alarm-not-exist/changestate:
     """json
     {
-      "state": 0,
-      "comment": "test-comment"
+      "state": 0
     }
     """
     Then the response code should be 404
