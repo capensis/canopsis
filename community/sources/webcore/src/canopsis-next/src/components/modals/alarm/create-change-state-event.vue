@@ -51,7 +51,7 @@ export default {
 
     return {
       form: {
-        output: '',
+        comment: '',
         state: firstItem ? firstItem.v.state.val : ENTITIES_STATES.major,
       },
     };

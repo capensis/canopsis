@@ -136,30 +136,6 @@ describe('service-entities-list', () => {
     expect(wrapper.vm.selectedEntities).toEqual([]);
   });
 
-  test('Ack action applied after trigger mass ack action', async () => {
-    const entity = {
-      _id: Faker.datatype.string(),
-      ack: null,
-      pbehaviors: [],
-    };
-    const wrapper = factory({
-      propsData: {
-        serviceEntities: [
-          entity,
-        ],
-      },
-    });
-
-    await selectCheckboxFunctional(wrapper).vm.$emit('change', true);
-
-    await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityAck);
-
-    expect(wrapper).toEmit('apply:action', {
-      actionType: WEATHER_ACTIONS_TYPES.entityAck,
-      entities: [entity],
-    });
-  });
-
   test('Ack remove action applied after trigger mass ackremove  action', async () => {
     const entity = {
       _id: Faker.datatype.string(),

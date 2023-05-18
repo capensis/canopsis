@@ -320,8 +320,6 @@ export const SERVICE_WEATHER_WIDGET_MODAL_TYPES = {
   both: 'both',
 };
 
-export const WEATHER_EVENT_DEFAULT_ENTITY = 'engine';
-
 export const WEATHER_ACK_EVENT_OUTPUT = {
   ack: 'MDS_ACKNOWLEDGE',
   validateOk: 'MDS_VALIDATEOK',
