@@ -1,3 +1,5 @@
+import { ENTITIES_STATES, ENTITIES_STATUSES, TIME_UNITS } from '@/constants';
+
 /**
  * @typedef {Object} AlarmOldLink
  * @property {string} label
@@ -127,7 +129,16 @@
  * @property {AlarmValue} v
  */
 
-import { ENTITIES_STATES, ENTITIES_STATUSES, TIME_UNITS } from '@/constants';
+/**
+ * @typedef {Object} SnoozeAction
+ * @property {number} duration
+ * @property {string} comment
+ */
+
+/**
+ * @typedef {SnoozeAction} SnoozeActionForm
+ * @property {Duration} duration
+ */
 
 /**
  * Checks if alarm is resolved

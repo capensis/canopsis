@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout(row)
+  v-layout(row, wrap)
     v-tooltip(v-for="action in actions", :key="action.type", top)
       template(#activator="{ on }")
         span(v-on="on")

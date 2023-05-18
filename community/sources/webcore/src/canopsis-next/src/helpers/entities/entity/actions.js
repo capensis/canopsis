@@ -4,15 +4,8 @@ import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
   ENTITY_EVENT_BY_ACTION_TYPE,
-  WEATHER_ACK_EVENT_OUTPUT,
   WEATHER_ACTIONS_TYPES,
 } from '@/constants';
-
-import {
-  createAckEventByEntity,
-  createInvalidateEventByEntity,
-  createValidateEventByEntity,
-} from '@/helpers/entities/event/form';
 
 import { getEntityEventIcon } from './icons';
 import { getEntityEventColor } from './color';
@@ -155,29 +148,4 @@ export const getAvailableActionsByEntities = (
   );
 
   return uniq(types).map(convertEntityActionTypeToAction);
-};
-
-/**
- * Convert action to events by type
- *
- * @param {string} actionType
- * @param {Entity} entity
- * @param {Object} payload
- * @return {Event[]}
- */
-export const convertActionToEvents = ({ actionType, entity }) => {
-  switch (actionType) {
-    case WEATHER_ACTIONS_TYPES.entityValidate:
-      return [
-        createAckEventByEntity({ entity, output: WEATHER_ACK_EVENT_OUTPUT.validateOk }),
-        createValidateEventByEntity({ entity }),
-      ];
-    case WEATHER_ACTIONS_TYPES.entityInvalidate:
-      return [
-        createAckEventByEntity({ entity, output: WEATHER_ACK_EVENT_OUTPUT.ack }),
-        createInvalidateEventByEntity({ entity }),
-      ];
-  }
-
-  return [];
 };
