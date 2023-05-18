@@ -94,6 +94,7 @@ func RegisterRoutes(
 	dbClient mongo.DbClient,
 	pgPoolProvider postgres.PoolProvider,
 	amqpChannel amqp.Channel,
+	apiConfigProvider config.ApiConfigProvider,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	templateConfigProvider config.TemplateConfigProvider,
 	pbhEntityTypeResolver libpbehavior.EntityTypeResolver,
@@ -262,7 +263,7 @@ func RegisterRoutes(
 				alarmAPI.Get,
 			)
 			alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(dbClient, amqpChannel, "",
-				canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, logger))
+				canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, apiConfigProvider, logger))
 			alarmRouter.PUT(
 				"/:id/ack",
 				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
