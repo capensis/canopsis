@@ -1,8 +1,6 @@
 import {
-  DECLARE_TICKET_OUTPUT,
   ENTITIES_STATES,
   EVENT_ENTITY_TYPES,
-  TIME_UNITS,
   WEATHER_ACK_EVENT_OUTPUT,
   WEATHER_EVENT_DEFAULT_ENTITY,
 } from '@/constants';
@@ -111,48 +109,10 @@ export const prepareEventByEntity = (entity, type, data = {}) => ({
  * @param {string} output
  * @return {Event}
  */
-export const createAckEventByEntity = ({ entity, output }) => prepareEventByEntity(
+export const createAckEventByEntity = ({ entity, comment }) => prepareEventByEntity(
   entity,
   EVENT_ENTITY_TYPES.ack,
-  { output },
-);
-
-/**
- * Create remove acknowledge event by entity data
- *
- * @param {Entity} entity
- * @param {string} output
- * @return {Event}
- */
-export const createRemoveAckEventByEntity = ({ entity, output }) => prepareEventByEntity(
-  entity,
-  EVENT_ENTITY_TYPES.ackRemove,
-  { output },
-);
-
-/**
- * Create associate ticket event by entity data
- *
- * @param {Entity} entity
- * @param {AssociateTicketEvent} payload
- * @return {Event}
- */
-export const createAssociateTicketEventByEntity = ({ entity, ...payload }) => prepareEventByEntity(
-  entity,
-  EVENT_ENTITY_TYPES.assocTicket,
-  payload,
-);
-
-/**
- * Create declare ticket event by entity data
- *
- * @param {Entity} entity
- * @return {Event}
- */
-export const createDeclareTicketEventByEntity = ({ entity }) => prepareEventByEntity(
-  entity,
-  EVENT_ENTITY_TYPES.declareTicket,
-  { output: DECLARE_TICKET_OUTPUT },
+  { comment },
 );
 
 /**
@@ -186,43 +146,3 @@ export const createInvalidateEventByEntity = ({ entity }) => prepareEventByEntit
     keep_state: true,
   },
 );
-
-/**
- * Create comment event by entity data
- *
- * @param {Entity} entity
- * @param {string} output
- * @return {Event}
- */
-export const createCommentEventByEntity = ({ entity, output }) => prepareEventByEntity(
-  entity,
-  EVENT_ENTITY_TYPES.comment,
-  { output },
-);
-
-/**
- * Create cancel event by entity data
- *
- * @param {Entity} entity
- * @param {string} output
- * @return {Event}
- */
-export const createCancelEventByEntity = ({ entity, output }) => prepareEventByEntity(
-  entity,
-  EVENT_ENTITY_TYPES.cancel,
-  { output },
-);
-
-/**
- * Convert snooze object to form snooze
- *
- * @param {SnoozeAction} snooze
- * @returns {SnoozeActionForm}
- */
-export const snoozeToForm = (snooze = {}) => ({
-  duration: {
-    unit: snooze.duration?.unit ?? TIME_UNITS.minute,
-    value: snooze.duration?.seconds ?? 1,
-  },
-  comment: snooze.comment ?? '',
-});

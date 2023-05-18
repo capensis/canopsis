@@ -42,15 +42,6 @@ export const widgetActionsPanelAlarmMixin = {
   methods: {
     ...mapAlarmActions({
       fetchResolvedAlarmsListWithoutStore: 'fetchResolvedAlarmsListWithoutStore',
-      createAlarmAckEvent: 'createAlarmAckEvent',
-      createAlarmAckremoveEvent: 'createAlarmAckremoveEvent',
-      createAlarmSnoozeEvent: 'createAlarmSnoozeEvent',
-      createAlarmAssocticketEvent: 'createAlarmAssocticketEvent',
-      createAlarmCommentEvent: 'createAlarmCommentEvent',
-      createAlarmCancelEvent: 'createAlarmCancelEvent',
-      createAlarmUncancelEvent: 'createAlarmUncancelEvent',
-      createAlarmChangestateEvent: 'createAlarmChangestateEvent',
-
       bulkCreateAlarmAckEvent: 'bulkCreateAlarmAckEvent',
       bulkCreateAlarmAckremoveEvent: 'bulkCreateAlarmAckremoveEvent',
       bulkCreateAlarmSnoozeEvent: 'bulkCreateAlarmSnoozeEvent',
