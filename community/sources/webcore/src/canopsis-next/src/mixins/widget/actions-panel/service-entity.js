@@ -6,7 +6,7 @@ import {
   WEATHER_ACK_EVENT_OUTPUT,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   WEATHER_ACTIONS_TYPES,
-  PBEHAVIOR_TYPE_TYPES, PBEHAVIOR_ORIGINS,
+  PBEHAVIOR_TYPE_TYPES, PBEHAVIOR_ORIGINS, ENTITIES_STATES,
 } from '@/constants';
 
 import { mapIds } from '@/helpers/array';
@@ -67,6 +67,7 @@ export const widgetActionPanelServiceEntityMixin = {
       bulkCreateAlarmAssocticketEvent: 'bulkCreateAlarmAssocticketEvent',
       bulkCreateAlarmCommentEvent: 'bulkCreateAlarmCommentEvent',
       bulkCreateAlarmCancelEvent: 'bulkCreateAlarmCancelEvent',
+      bulkCreateAlarmChangestateEvent: 'bulkCreateAlarmChangestateEvent',
     }),
 
     refreshEntities() {
@@ -221,11 +222,17 @@ export const widgetActionPanelServiceEntityMixin = {
             action: async (event) => {
               const availableEntities = this.getAvailableActions(WEATHER_ACTIONS_TYPES.entityAssocTicket, entities);
 
-              const preparedRequestData = availableEntities.map(
-                ({ alarm_id: alarmId }) => ({ _id: alarmId, ...event, comment: WEATHER_ACK_EVENT_OUTPUT.ack }),
-              );
+              await this.bulkCreateAlarmAckEvent({
+                data: availableEntities.map(
+                  ({ alarm_id: alarmId }) => ({ _id: alarmId, comment: WEATHER_ACK_EVENT_OUTPUT.ack }),
+                ),
+              });
 
-              await this.bulkCreateAlarmAssocticketEvent({ data: preparedRequestData });
+              await this.bulkCreateAlarmAssocticketEvent({
+                data: availableEntities.map(
+                  ({ alarm_id: alarmId }) => ({ _id: alarmId, ...event }),
+                ),
+              });
 
               this.refreshEntities();
             },
@@ -299,32 +306,54 @@ export const widgetActionPanelServiceEntityMixin = {
       });
     },
 
-    addValidateActionToQueue(/*  entities */) {
-      /**
-       * TODO: Event should be changed
-       */
-      /*
-      this.applyAction({
-        actionType: WEATHER_ACTIONS_TYPES.entityValidate,
-        entities,
-        payload: { comment: WEATHER_ACK_EVENT_OUTPUT.ack },
+    async addValidateActionToQueue(entities) {
+      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityValidate, true);
+
+      const availableEntities = this.getAvailableActions(WEATHER_ACTIONS_TYPES.entityValidate, entities);
+
+      await this.bulkCreateAlarmAckEvent({
+        data: availableEntities.map(
+          ({ alarm_id: alarmId }) => ({ _id: alarmId, comment: WEATHER_ACK_EVENT_OUTPUT.validateOk }),
+        ),
       });
-       */
+      await this.bulkCreateAlarmChangestateEvent({
+        data: availableEntities.map(
+          ({ alarm_id: alarmId }) => ({
+            _id: alarmId,
+            state: ENTITIES_STATES.critical,
+            output: WEATHER_ACK_EVENT_OUTPUT.validateOk,
+          }),
+        ),
+      });
+
+      this.refreshEntities();
+
+      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityInvalidate, false);
     },
 
-    addInvalidateActionToQueue(/*  entities */) {
-      /**
-       * TODO: Event should be changed
-       */
-      /*
-      this.applyAction({
-        entities,
-        actionType: WEATHER_ACTIONS_TYPES.entityInvalidate,
-        payload: {
-          comment: WEATHER_ACK_EVENT_OUTPUT.ack,
-        },
+    async addInvalidateActionToQueue(entities) {
+      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityInvalidate, true);
+
+      const availableEntities = this.getAvailableActions(WEATHER_ACTIONS_TYPES.entityInvalidate, entities);
+
+      await this.bulkCreateAlarmAckEvent({
+        data: availableEntities.map(
+          ({ alarm_id: alarmId }) => ({ _id: alarmId, comment: WEATHER_ACK_EVENT_OUTPUT.ack }),
+        ),
       });
-       */
+
+      await this.bulkCreateAlarmCancelEvent({
+        data: availableEntities.map(
+          ({ alarm_id: alarmId }) => ({
+            _id: alarmId,
+            comment: WEATHER_ACK_EVENT_OUTPUT.validateCancel,
+          }),
+        ),
+      });
+
+      this.refreshEntities();
+
+      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityInvalidate, false);
     },
 
     showCreateServicePauseEventModal(entities) {

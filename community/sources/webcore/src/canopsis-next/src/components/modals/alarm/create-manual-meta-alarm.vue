@@ -69,7 +69,7 @@ export default {
   },
   computed: {
     alarms() {
-      return this.config.items.filter(isAlarmStateNotOk);
+      return this.config.items?.filter(isAlarmStateNotOk) ?? [];
     },
   },
   methods: {
