@@ -47,19 +47,19 @@ describe('snooze-event-form', () => {
         unit: TIME_UNITS.day,
         value: Faker.datatype.number(),
       },
-      output: Faker.datatype.string(),
+      comment: Faker.datatype.string(),
     };
     const wrapper = factory({
       propsData: { form },
     });
 
-    const output = Faker.datatype.string();
+    const comment = Faker.datatype.string();
 
     const descriptionField = selectDescriptionField(wrapper);
 
-    descriptionField.vm.$emit('input', output);
+    descriptionField.vm.$emit('input', comment);
 
-    expect(wrapper).toEmit('input', { ...form, output });
+    expect(wrapper).toEmit('input', { ...form, comment });
   });
 
   test('Renders `snooze-event-form` with required props', () => {

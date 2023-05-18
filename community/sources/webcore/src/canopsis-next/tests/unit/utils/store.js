@@ -652,11 +652,27 @@ export const createAlarmModule = () => {
   const fetchAlarmItem = jest.fn();
   const fetchOpenAlarmsListWithoutStore = jest.fn();
   const fetchAlarmItemWithoutStore = jest.fn().mockResolvedValue({});
+  const bulkCreateAlarmAckEvent = jest.fn();
+  const bulkCreateAlarmAckremoveEvent = jest.fn();
+  const bulkCreateAlarmSnoozeEvent = jest.fn();
+  const bulkCreateAlarmAssocticketEvent = jest.fn();
+  const bulkCreateAlarmCommentEvent = jest.fn();
+  const bulkCreateAlarmCancelEvent = jest.fn();
+  const bulkCreateAlarmUncancelEvent = jest.fn();
+  const bulkCreateAlarmChangestateEvent = jest.fn();
 
   afterEach(() => {
     fetchAlarmItem.mockClear();
     fetchAlarmItemWithoutStore.mockClear();
     fetchOpenAlarmsListWithoutStore.mockClear();
+    bulkCreateAlarmAckEvent.mockClear();
+    bulkCreateAlarmAckremoveEvent.mockClear();
+    bulkCreateAlarmSnoozeEvent.mockClear();
+    bulkCreateAlarmAssocticketEvent.mockClear();
+    bulkCreateAlarmCommentEvent.mockClear();
+    bulkCreateAlarmCancelEvent.mockClear();
+    bulkCreateAlarmUncancelEvent.mockClear();
+    bulkCreateAlarmChangestateEvent.mockClear();
   });
 
   const alarmModule = {
@@ -665,6 +681,14 @@ export const createAlarmModule = () => {
       fetchItem: fetchAlarmItem,
       fetchItemWithoutStore: fetchAlarmItemWithoutStore,
       fetchOpenAlarmsListWithoutStore,
+      bulkCreateAlarmAckEvent,
+      bulkCreateAlarmAckremoveEvent,
+      bulkCreateAlarmSnoozeEvent,
+      bulkCreateAlarmAssocticketEvent,
+      bulkCreateAlarmCommentEvent,
+      bulkCreateAlarmCancelEvent,
+      bulkCreateAlarmUncancelEvent,
+      bulkCreateAlarmChangestateEvent,
     },
   };
 
@@ -672,6 +696,14 @@ export const createAlarmModule = () => {
     fetchAlarmItem,
     fetchAlarmItemWithoutStore,
     fetchOpenAlarmsListWithoutStore,
+    bulkCreateAlarmAckEvent,
+    bulkCreateAlarmAckremoveEvent,
+    bulkCreateAlarmSnoozeEvent,
+    bulkCreateAlarmAssocticketEvent,
+    bulkCreateAlarmCommentEvent,
+    bulkCreateAlarmCancelEvent,
+    bulkCreateAlarmUncancelEvent,
+    bulkCreateAlarmChangestateEvent,
     alarmModule,
   };
 };
