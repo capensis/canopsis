@@ -13,7 +13,6 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 var weekdays = map[string]time.Weekday{}
@@ -86,8 +85,7 @@ type TimezoneConfig struct {
 type ApiConfig struct {
 	TokenSigningMethod jwt.SigningMethod
 	BulkMaxSize        int
-	AuthorScheme       []any
-	authorSchemeStrs   []string
+	AuthorScheme       []string
 }
 
 type RemediationConfig struct {
@@ -324,15 +322,13 @@ func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfi
 	}
 
 	if len(cfg.API.AuthorScheme) == 0 {
-		conf.authorSchemeStrs = ApiAuthorScheme
-		conf.AuthorScheme = transformAuthorScheme(conf.authorSchemeStrs)
+		conf.AuthorScheme = ApiAuthorScheme
 		logger.Error().
 			Strs("default", ApiAuthorScheme).
 			Strs("invalid", cfg.API.AuthorScheme).
 			Msgf("bad value AuthorScheme of %s config section, default value is used instead", sectionName)
 	} else {
-		conf.authorSchemeStrs = cfg.API.AuthorScheme
-		conf.AuthorScheme = transformAuthorScheme(conf.authorSchemeStrs)
+		conf.AuthorScheme = cfg.API.AuthorScheme
 		logger.Info().
 			Strs("value", cfg.API.AuthorScheme).
 			Msgf("AuthorScheme of %s config section is used", sectionName)
@@ -369,13 +365,12 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 		p.logger.Error().
 			Strs("invalid", cfg.API.AuthorScheme).
 			Msgf("bad value AuthorScheme of %s config section, previous value is used", sectionName)
-	} else if !reflect.DeepEqual(cfg.API.AuthorScheme, p.conf.authorSchemeStrs) {
+	} else if !reflect.DeepEqual(cfg.API.AuthorScheme, p.conf.AuthorScheme) {
 		p.logger.Info().
-			Strs("previous", p.conf.authorSchemeStrs).
+			Strs("previous", p.conf.AuthorScheme).
 			Strs("new", cfg.API.AuthorScheme).
 			Msgf("AuthorScheme of %s config section is loaded", sectionName)
-		p.conf.authorSchemeStrs = cfg.API.AuthorScheme
-		p.conf.AuthorScheme = transformAuthorScheme(p.conf.authorSchemeStrs)
+		p.conf.AuthorScheme = cfg.API.AuthorScheme
 	}
 }
 
@@ -1266,17 +1261,4 @@ func (p *BaseMetricsSettingsConfigProvider) Get() MetricsConfig {
 	defer p.mx.RUnlock()
 
 	return p.conf
-}
-
-func transformAuthorScheme(authorScheme []string) []any {
-	result := make([]any, len(authorScheme))
-	for i, v := range authorScheme {
-		if len(v) > 0 && v[0] == '$' {
-			result[i] = bson.M{"$ifNull": bson.A{v, ""}}
-		} else {
-			result[i] = v
-		}
-	}
-
-	return result
 }

@@ -28,6 +28,7 @@ Feature: Account auth user
       "firstname": "test-user-to-get-1-firstname",
       "lastname": "test-user-to-get-1-lastname",
       "name": "test-user-to-get-1",
+      "display_name": "test-user-to-get-1 test-user-to-get-1-firstname test-user-to-get-1-lastname test-user-to-get-1-email@canopsis.net",
       "permissions": [
         {
           "_id": "test-permission-to-edit-user-1",
