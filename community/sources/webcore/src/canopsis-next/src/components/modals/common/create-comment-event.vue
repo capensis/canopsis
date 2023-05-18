@@ -5,8 +5,8 @@
         span {{ $t('modals.createCommentEvent.title') }}
       template(#text="")
         v-layout(column)
-          template(v-if="config.items.length")
-            alarm-general-table(:items="config.items")
+          template(v-if="items.length")
+            alarm-general-table(:items="items")
             v-divider.my-3
           c-name-field(
             v-model="form.comment",

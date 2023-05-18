@@ -305,6 +305,7 @@ export const USERS_PERMISSIONS = {
       acl: `${USER_PERMISSIONS_PREFIXES.api}_acl`,
       appInfoRead: `${USER_PERMISSIONS_PREFIXES.api}_app_info_read`,
       alarmRead: `${USER_PERMISSIONS_PREFIXES.api}_alarm_read`,
+      alarmUpdate: `${USER_PERMISSIONS_PREFIXES.api}_alarm_update`,
       entity: `${USER_PERMISSIONS_PREFIXES.api}_entity`,
       entityservice: `${USER_PERMISSIONS_PREFIXES.api}_entityservice`,
       entitycategory: `${USER_PERMISSIONS_PREFIXES.api}_entitycategory`,

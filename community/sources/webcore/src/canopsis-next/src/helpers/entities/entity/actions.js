@@ -10,12 +10,7 @@ import {
 
 import {
   createAckEventByEntity,
-  createAssociateTicketEventByEntity,
-  createCancelEventByEntity,
-  createCommentEventByEntity,
-  createDeclareTicketEventByEntity,
   createInvalidateEventByEntity,
-  createRemoveAckEventByEntity,
   createValidateEventByEntity,
 } from '@/helpers/entities/event/form';
 
@@ -170,29 +165,8 @@ export const getAvailableActionsByEntities = (
  * @param {Object} payload
  * @return {Event[]}
  */
-export const convertActionToEvents = ({ actionType, entity, payload }) => {
+export const convertActionToEvents = ({ actionType, entity }) => {
   switch (actionType) {
-    case WEATHER_ACTIONS_TYPES.entityAck:
-      return [
-        createAckEventByEntity({ entity, output: WEATHER_ACK_EVENT_OUTPUT.ack }),
-      ];
-    case WEATHER_ACTIONS_TYPES.entityAckRemove:
-      return [
-        createRemoveAckEventByEntity({ entity, output: payload.output }),
-      ];
-    case WEATHER_ACTIONS_TYPES.entityComment:
-      return [
-        createCommentEventByEntity({ entity, output: payload.output }),
-      ];
-    case WEATHER_ACTIONS_TYPES.entityCancel:
-      return [
-        createCancelEventByEntity({ entity, output: payload.output }),
-      ];
-    case WEATHER_ACTIONS_TYPES.entityAssocTicket:
-      return [
-        createAckEventByEntity({ entity, output: WEATHER_ACK_EVENT_OUTPUT.ack }),
-        createAssociateTicketEventByEntity({ entity, ...payload }),
-      ];
     case WEATHER_ACTIONS_TYPES.entityValidate:
       return [
         createAckEventByEntity({ entity, output: WEATHER_ACK_EVENT_OUTPUT.validateOk }),
@@ -202,10 +176,6 @@ export const convertActionToEvents = ({ actionType, entity, payload }) => {
       return [
         createAckEventByEntity({ entity, output: WEATHER_ACK_EVENT_OUTPUT.ack }),
         createInvalidateEventByEntity({ entity }),
-      ];
-    case WEATHER_ACTIONS_TYPES.declareTicket:
-      return [
-        createDeclareTicketEventByEntity({ entity }),
       ];
   }
 
