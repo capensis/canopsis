@@ -293,6 +293,7 @@ func Default(
 			linkGenerator,
 			dbClient,
 			pgPoolProvider,
+			amqpChannel,
 			p.TimezoneConfigProvider,
 			p.TemplateConfigProvider,
 			pbhEntityTypeResolver,
