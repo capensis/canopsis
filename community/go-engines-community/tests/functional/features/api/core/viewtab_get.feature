@@ -13,14 +13,16 @@ Feature: Get a view tab
       "title": "test-tab-to-get-title",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "widgets": [
         {
           "_id": "test-widget-to-tab-get-1",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1611229670,
           "grid_parameters": {
@@ -43,7 +45,8 @@ Feature: Get a view tab
               "is_private": false,
               "author": {
                 "_id": "nopermsuser",
-                "name": "nopermsuser"
+                "name": "nopermsuser",
+                "display_name": "nopermsuser   "
               },
               "created": 1611229670,
               "updated": 1611229670,
@@ -68,7 +71,8 @@ Feature: Get a view tab
           "_id": "test-widget-to-tab-get-2",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1611229670,
           "grid_parameters": {
@@ -91,7 +95,8 @@ Feature: Get a view tab
               "is_private": false,
               "author": {
                 "_id": "root",
-                "name": "root"
+                "name": "root",
+                "display_name": "root John Doe admin@canopsis.net"
               },
               "created": 1611229670,
               "updated": 1611229670,
