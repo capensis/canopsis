@@ -14,6 +14,7 @@ configuration:
     loader_no_update: true
     login_page_description: Test login
     max_matched_items: 4
+    allow_change_severity_to_info: true
 
   configuration_global:
     _id: global_config

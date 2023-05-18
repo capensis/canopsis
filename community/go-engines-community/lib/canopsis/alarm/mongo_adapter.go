@@ -171,15 +171,6 @@ func (a mongoAdapter) GetAllOpenedResourceAlarmsByComponent(ctx context.Context,
 	return a.getAlarmsWithEntity(ctx, req)
 }
 
-func (a mongoAdapter) GetUnacknowledgedAlarmsByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error) {
-	return a.getAlarmsWithEntity(ctx, bson.M{
-		"v.component": component,
-		"v.meta":      bson.M{"$exists": false},
-		"v.resolved":  nil,
-		"v.ack":       nil,
-	})
-}
-
 func (a mongoAdapter) GetAlarmsWithoutTicketByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error) {
 	return a.getAlarmsWithEntity(ctx, bson.M{
 		"v.component": component,
