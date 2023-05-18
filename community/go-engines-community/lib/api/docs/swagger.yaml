@@ -1191,6 +1191,21 @@ paths:
               type: array
               items:
                 $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkAckRequestItem'
+            examples:
+              ack:
+                summary: Ack
+                description: Ack alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "ack_resources": true,
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
         required: true
       responses:
         207:
@@ -1226,6 +1241,20 @@ paths:
               type: array
               items:
                 $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkRequestItem'
+            examples:
+              ackremove:
+                summary: Remove ack
+                description: Remove ack from alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
         required: true
       responses:
         207:
@@ -1261,6 +1290,35 @@ paths:
               type: array
               items:
                 $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkAssocTicketRequestItem'
+            examples:
+              assocticket:
+                summary: Associate ticket
+                description: Associate tickets with alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "ticket": "ENV-116",
+                    "url": "https://jira.local/ENV-116",
+                    "system_name": "Jira",
+                    "data": {
+                      "priority": "high",
+                      "tag": "env"
+                    },
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "ticket_resources": true,
+                    "ticket": "ENV-117",
+                    "url": "https://jira.local/ENV-117",
+                    "system_name": "Jira",
+                    "data": {
+                      "priority": "low",
+                      "tag": "env"
+                    },
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
         required: true
       responses:
         207:
@@ -1294,6 +1352,20 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkRequestItem'
+            examples:
+              cancel:
+                summary: Cancel
+                description: Cancel alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
         required: true
       responses:
         207:
@@ -1329,6 +1401,22 @@ paths:
               type: array
               items:
                 $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkChangeStateRequestItem'
+            examples:
+              changestate:
+                summary: Change state
+                description: Change state of alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "state": 3,
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "state": 2,
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
         required: true
       responses:
         207:
@@ -1364,6 +1452,20 @@ paths:
               type: array
               items:
                 $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkCommentRequestItem'
+            examples:
+              comment:
+                summary: Comment
+                description: Comment alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
         required: true
       responses:
         207:
@@ -1399,6 +1501,28 @@ paths:
               type: array
               items:
                 $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkSnoozeRequestItem'
+            examples:
+              snooze:
+                summary: Snooze
+                description: Snooze alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "duration": {
+                      "value": 15,
+                      "unit": "m"
+                    },
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "duration": {
+                      "value": 30,
+                      "unit": "s"
+                    },
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
         required: true
       responses:
         207:
@@ -1434,6 +1558,20 @@ paths:
               type: array
               items:
                 $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkRequestItem'
+            examples:
+              uncancel:
+                summary: Uncancel
+                description: Uncancel alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
         required: true
       responses:
         207:
