@@ -21,7 +21,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { snoozeToForm } from '@/helpers/entities/event/form';
+import { snoozeToForm } from '@/helpers/entities/alarm/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

@@ -127,7 +127,7 @@
  * @property {AlarmValue} v
  */
 
-import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
+import { ENTITIES_STATES, ENTITIES_STATUSES, TIME_UNITS } from '@/constants';
 
 /**
  * Checks if alarm is resolved
@@ -144,3 +144,17 @@ export const isResolvedAlarmStatus = alarm => [ENTITIES_STATUSES.closed, ENTITIE
  * @returns {boolean}
  */
 export const isAlarmStateNotOk = alarm => ENTITIES_STATES.ok !== alarm.v.state.val;
+
+/**
+ * Convert snooze object to form snooze
+ *
+ * @param {SnoozeAction} snooze
+ * @returns {SnoozeActionForm}
+ */
+export const snoozeToForm = (snooze = {}) => ({
+  duration: {
+    unit: snooze.duration?.unit ?? TIME_UNITS.minute,
+    value: snooze.duration?.seconds ?? 1,
+  },
+  comment: snooze.comment ?? '',
+});
