@@ -438,21 +438,6 @@ func (mr *MockAdapterMockRecorder) GetOpenedMetaAlarmWithEntity(arg0, arg1, arg2
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedMetaAlarmWithEntity", reflect.TypeOf((*MockAdapter)(nil).GetOpenedMetaAlarmWithEntity), arg0, arg1, arg2)
 }
 
-// GetUnacknowledgedAlarmsByComponent mocks base method.
-func (m *MockAdapter) GetUnacknowledgedAlarmsByComponent(arg0 context.Context, arg1 string) ([]types.AlarmWithEntity, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUnacknowledgedAlarmsByComponent", arg0, arg1)
-	ret0, _ := ret[0].([]types.AlarmWithEntity)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetUnacknowledgedAlarmsByComponent indicates an expected call of GetUnacknowledgedAlarmsByComponent.
-func (mr *MockAdapterMockRecorder) GetUnacknowledgedAlarmsByComponent(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUnacknowledgedAlarmsByComponent", reflect.TypeOf((*MockAdapter)(nil).GetUnacknowledgedAlarmsByComponent), arg0, arg1)
-}
-
 // GetWorstAlarmState mocks base method.
 func (m *MockAdapter) GetWorstAlarmState(arg0 context.Context, arg1 []string) (int64, error) {
 	m.ctrl.T.Helper()
@@ -763,20 +748,6 @@ func (mr *MockMetaAlarmEventProcessorMockRecorder) Process(arg0, arg1 interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Process", reflect.TypeOf((*MockMetaAlarmEventProcessor)(nil).Process), arg0, arg1)
 }
 
-// ProcessAckResources mocks base method.
-func (m *MockMetaAlarmEventProcessor) ProcessAckResources(arg0 context.Context, arg1 types.Event) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ProcessAckResources", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// ProcessAckResources indicates an expected call of ProcessAckResources.
-func (mr *MockMetaAlarmEventProcessorMockRecorder) ProcessAckResources(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessAckResources", reflect.TypeOf((*MockMetaAlarmEventProcessor)(nil).ProcessAckResources), arg0, arg1)
-}
-
 // ProcessAxeRpc mocks base method.
 func (m *MockMetaAlarmEventProcessor) ProcessAxeRpc(arg0 context.Context, arg1 rpc.AxeEvent, arg2 rpc.AxeResultEvent) error {
 	m.ctrl.T.Helper()
@@ -789,18 +760,4 @@ func (m *MockMetaAlarmEventProcessor) ProcessAxeRpc(arg0 context.Context, arg1 r
 func (mr *MockMetaAlarmEventProcessorMockRecorder) ProcessAxeRpc(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessAxeRpc", reflect.TypeOf((*MockMetaAlarmEventProcessor)(nil).ProcessAxeRpc), arg0, arg1, arg2)
-}
-
-// ProcessTicketResources mocks base method.
-func (m *MockMetaAlarmEventProcessor) ProcessTicketResources(arg0 context.Context, arg1 types.Event) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ProcessTicketResources", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// ProcessTicketResources indicates an expected call of ProcessTicketResources.
-func (mr *MockMetaAlarmEventProcessorMockRecorder) ProcessTicketResources(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessTicketResources", reflect.TypeOf((*MockMetaAlarmEventProcessor)(nil).ProcessTicketResources), arg0, arg1)
 }
