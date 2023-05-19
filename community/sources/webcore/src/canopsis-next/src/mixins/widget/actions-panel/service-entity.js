@@ -6,7 +6,9 @@ import {
   WEATHER_ACK_EVENT_OUTPUT,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   WEATHER_ACTIONS_TYPES,
-  PBEHAVIOR_TYPE_TYPES, PBEHAVIOR_ORIGINS, ENTITIES_STATES,
+  PBEHAVIOR_TYPE_TYPES,
+  PBEHAVIOR_ORIGINS,
+  ENTITIES_STATES,
 } from '@/constants';
 
 import { mapIds } from '@/helpers/array';
@@ -48,10 +50,10 @@ export const widgetActionPanelServiceEntityMixin = {
         [WEATHER_ACTIONS_TYPES.entityAck]: this.applyAckAction,
         [WEATHER_ACTIONS_TYPES.entityAckRemove]: this.showAckRemoveModal,
         [WEATHER_ACTIONS_TYPES.entityAssocTicket]: this.showCreateAssociateTicketModal,
-        [WEATHER_ACTIONS_TYPES.entityValidate]: this.addValidateActionToQueue,
-        [WEATHER_ACTIONS_TYPES.entityInvalidate]: this.addInvalidateActionToQueue,
+        [WEATHER_ACTIONS_TYPES.entityValidate]: this.applyValidateAction,
+        [WEATHER_ACTIONS_TYPES.entityInvalidate]: this.applyInvalidateAction,
         [WEATHER_ACTIONS_TYPES.entityPause]: this.showCreateServicePauseEventModal,
-        [WEATHER_ACTIONS_TYPES.entityPlay]: this.addPlayActionToQueue,
+        [WEATHER_ACTIONS_TYPES.entityPlay]: this.applyPlayAction,
         [WEATHER_ACTIONS_TYPES.entityCancel]: this.showCancelModal,
         [WEATHER_ACTIONS_TYPES.entityComment]: this.showCreateCommentEventModal,
         [WEATHER_ACTIONS_TYPES.declareTicket]: this.showCreateDeclareTicketModal,
@@ -306,7 +308,7 @@ export const widgetActionPanelServiceEntityMixin = {
       });
     },
 
-    async addValidateActionToQueue(entities) {
+    async applyValidateAction(entities) {
       this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityValidate, true);
 
       const availableEntities = this.getAvailableActions(WEATHER_ACTIONS_TYPES.entityValidate, entities);
@@ -331,7 +333,7 @@ export const widgetActionPanelServiceEntityMixin = {
       this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityInvalidate, false);
     },
 
-    async addInvalidateActionToQueue(entities) {
+    async applyInvalidateAction(entities) {
       this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityInvalidate, true);
 
       const availableEntities = this.getAvailableActions(WEATHER_ACTIONS_TYPES.entityInvalidate, entities);
@@ -377,7 +379,7 @@ export const widgetActionPanelServiceEntityMixin = {
       });
     },
 
-    async addPlayActionToQueue(entities) {
+    async applyPlayAction(entities) {
       this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityPlay, true);
 
       await this.createPlayEvent(entities);
