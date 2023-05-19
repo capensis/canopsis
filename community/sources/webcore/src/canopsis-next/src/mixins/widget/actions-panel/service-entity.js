@@ -194,7 +194,7 @@ export const widgetActionPanelServiceEntityMixin = {
             label: this.$t('common.note'),
             validationRules: 'required',
           },
-          action: async (comment) => {
+          action: async ({ comment }) => {
             const availableEntities = this.getAvailableActions(WEATHER_ACTIONS_TYPES.entityAckRemove, entities);
 
             const preparedRequestData = availableEntities.map(
@@ -321,7 +321,7 @@ export const widgetActionPanelServiceEntityMixin = {
           ({ alarm_id: alarmId }) => ({
             _id: alarmId,
             state: ENTITIES_STATES.critical,
-            output: WEATHER_ACK_EVENT_OUTPUT.validateOk,
+            comment: WEATHER_ACK_EVENT_OUTPUT.validateOk,
           }),
         ),
       });
