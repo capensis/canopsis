@@ -87,7 +87,6 @@ export const widgetActionsPanelAlarmMixin = {
               data: alarms.map(alarm => ({ ...ackEvent, _id: alarm._id })),
             });
 
-            await this.$emit('clear:items');
             await this.afterSubmit();
 
             if (needAssociateTicket) {
@@ -343,7 +342,7 @@ export const widgetActionsPanelAlarmMixin = {
 
         const links = await this.fetchAlarmLinkWithoutStore({
           id: link.rule_id,
-          params: { ids: mapIds(this.items) },
+          params: { ids: mapIds(alarms) },
         });
 
         const summaryLink = find(links, pick(link, ['icon_name', 'label']));
@@ -366,16 +365,15 @@ export const widgetActionsPanelAlarmMixin = {
       }
     },
 
-    showVariablesHelperModalByAlarm(alarm) {
-      const {
-        entity,
-        pbehavior,
-        infos,
-        ...alarmFields
-      } = alarm;
+    showVariablesHelperModalByAlarm({
+      entity,
+      pbehavior,
+      infos,
+      ...alarm
+    }) {
       const variables = [];
 
-      variables.push(convertObjectToTreeview(alarmFields, 'alarm'));
+      variables.push(convertObjectToTreeview(alarm, 'alarm'));
 
       if (entity) {
         variables.push(convertObjectToTreeview(entity, 'entity'));

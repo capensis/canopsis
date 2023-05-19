@@ -98,7 +98,6 @@ describe('service-entities-list', () => {
     pbehaviorModule,
   ]);
 
-  const applyAction = jest.fn();
   const refresh = jest.fn();
 
   const factory = generateShallowRenderer(ServiceEntitiesList, {
@@ -112,7 +111,6 @@ describe('service-entities-list', () => {
       pagination: {},
     },
     listeners: {
-      'apply:action': applyAction,
       refresh,
     },
   });
