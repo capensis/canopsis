@@ -607,23 +607,31 @@ export const createPbehaviorEntitiesModule = () => {
 export const createPbehaviorModule = () => {
   const fetchPbehaviorsByEntityIdWithoutStore = jest.fn().mockResolvedValue([]);
   const removePbehavior = jest.fn();
+  const createEntityPbehaviors = jest.fn();
+  const removeEntityPbehaviors = jest.fn();
 
   const pbehaviorModule = {
     name: 'pbehavior',
     actions: {
       fetchListByEntityIdWithoutStore: fetchPbehaviorsByEntityIdWithoutStore,
       removeWithoutStore: removePbehavior,
+      bulkCreateEntityPbehaviors: createEntityPbehaviors,
+      bulkRemoveEntityPbehaviors: removeEntityPbehaviors,
     },
   };
 
   afterEach(() => {
     removePbehavior.mockClear();
     fetchPbehaviorsByEntityIdWithoutStore.mockClear();
+    createEntityPbehaviors.mockClear();
+    removeEntityPbehaviors.mockClear();
   });
 
   return {
     removePbehavior,
     fetchPbehaviorsByEntityIdWithoutStore,
+    createEntityPbehaviors,
+    removeEntityPbehaviors,
     pbehaviorModule,
   };
 };
