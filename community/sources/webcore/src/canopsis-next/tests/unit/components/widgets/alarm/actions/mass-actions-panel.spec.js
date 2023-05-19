@@ -17,7 +17,8 @@ import {
   ENTITY_PATTERN_FIELDS,
   META_ALARMS_RULE_TYPES,
   MODALS,
-  PATTERN_CONDITIONS, TIME_UNITS,
+  PATTERN_CONDITIONS,
+  TIME_UNITS,
 } from '@/constants';
 
 import MassActionsPanel from '@/components/widgets/alarm/actions/mass-actions-panel.vue';
