@@ -18,7 +18,6 @@
 import { isUndefined } from 'lodash';
 
 import { KPI_RATING_METRICS_FILENAME_PREFIX } from '@/config';
-
 import {
   QUICK_RANGES,
   ALARM_METRIC_PARAMETERS,

@@ -100,7 +100,6 @@
 import { isString } from 'lodash';
 
 import { PATTERNS_FIELDS } from '@/constants';
-
 import { COLORS } from '@/config';
 
 import { isValidPatternRule } from '@/helpers/pattern';

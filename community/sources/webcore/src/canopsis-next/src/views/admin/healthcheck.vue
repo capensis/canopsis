@@ -36,7 +36,6 @@ import { isEqual } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { SOCKET_ROOMS } from '@/config';
-
 import { USERS_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';

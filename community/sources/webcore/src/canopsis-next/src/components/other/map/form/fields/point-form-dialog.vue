@@ -38,6 +38,7 @@
 
 <script>
 import { isEqual } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import { submittableMixinCreator } from '@/mixins/submittable';

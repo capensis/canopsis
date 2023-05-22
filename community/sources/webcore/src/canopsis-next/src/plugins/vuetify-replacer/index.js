@@ -11,7 +11,6 @@ import VTooltip from './components/v-tooltip/v-tooltip.vue';
 import VDataTable from './components/v-data-table/v-data-table.vue';
 import VTextarea from './components/v-textarea/v-textarea.vue';
 import VSelect from './components/v-select';
-
 import ClickOutside from './directives/click-outside';
 
 export default {
