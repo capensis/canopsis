@@ -585,7 +585,7 @@ func (sp *serviceProvider) createUser(c *gin.Context, relayUrl *url.URL, asserti
 
 	role := sp.getAssocAttribute(assertionInfo.Values, "role", sp.defaultRole)
 
-	err := sp.roleCollection.FindOne(c, bson.M{"crecord_name": role, "crecord_type": "role"}).Err()
+	err := sp.roleCollection.FindOne(c, bson.M{"name": role}).Err()
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			errMessage := fmt.Errorf("role %s doesn't exist", role)

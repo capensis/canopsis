@@ -1,15 +1,16 @@
-// userprovider contains user storages.
+// Package userprovider contains user storages.
 package userprovider
 
 import (
 	"context"
+	"errors"
 
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -21,22 +22,20 @@ type mongoProvider struct {
 // NewMongoProvider creates new provider.
 func NewMongoProvider(db libmongo.DbClient) security.UserProvider {
 	return &mongoProvider{
-		collection: db.Collection(libmongo.RightsMongoCollection),
+		collection: db.Collection(libmongo.UserCollection),
 	}
 }
 
 func (p *mongoProvider) FindByUsername(ctx context.Context, username string) (*security.User, error) {
 	return p.findByFilter(ctx, bson.M{
-		"crecord_type": model.LineTypeSubject,
-		"_id":          username,
-		"source":       bson.M{"$in": bson.A{"", nil}},
+		"name":   username,
+		"source": bson.M{"$in": bson.A{"", nil}},
 	})
 }
 
 func (p *mongoProvider) FindByAuthApiKey(ctx context.Context, apiKey string) (*security.User, error) {
 	return p.findByFilter(ctx, bson.M{
-		"crecord_type": model.LineTypeSubject,
-		"authkey":      apiKey,
+		"authkey": apiKey,
 	})
 }
 
@@ -49,8 +48,7 @@ func (p *mongoProvider) FindByID(ctx context.Context, id string) (*security.User
 	}
 
 	return p.findByFilter(ctx, bson.M{
-		"crecord_type": model.LineTypeSubject,
-		"_id":          objID,
+		"_id": objID,
 	})
 }
 
@@ -60,9 +58,8 @@ func (p *mongoProvider) FindByExternalSource(
 	source security.Source,
 ) (*security.User, error) {
 	return p.findByFilter(ctx, bson.M{
-		"crecord_type": model.LineTypeSubject,
-		"external_id":  externalID,
-		"source":       source,
+		"external_id": externalID,
+		"source":      source,
 	})
 }
 
@@ -72,11 +69,10 @@ func (p *mongoProvider) Save(ctx context.Context, u *security.User) error {
 		u.AuthApiKey = utils.NewID()
 	}
 
-	m := transformUserToDbModel(u)
 	_, err := p.collection.UpdateOne(
 		ctx,
-		bson.M{"_id": m.ID},
-		bson.M{"$set": *m},
+		bson.M{"_id": u.ID},
+		bson.M{"$set": u},
 		options.Update().SetUpsert(true),
 	)
 
@@ -89,64 +85,14 @@ func (p *mongoProvider) Save(ctx context.Context, u *security.User) error {
 
 // findByFilter returns User or nil if no user matches filter.
 func (p *mongoProvider) findByFilter(ctx context.Context, f interface{}) (*security.User, error) {
-	cursor, err := p.collection.Find(ctx, f)
+	var u security.User
+	err := p.collection.FindOne(ctx, f).Decode(&u)
 	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, nil
+		}
 		return nil, err
 	}
 
-	defer cursor.Close(ctx)
-
-	if cursor.Next(ctx) {
-		var line model.Rbac
-		err := cursor.Decode(&line)
-
-		if err != nil {
-			return nil, err
-		}
-
-		return transformDbModelToUser(&line), nil
-	}
-
-	return nil, nil
-}
-
-// transformUserToDbModel transforms User model to mongo document.
-func transformUserToDbModel(u *security.User) *model.Rbac {
-	var m model.Rbac
-	m.Type = model.LineTypeSubject
-	m.ID = u.ID
-	m.Name = u.Name
-	m.Email = u.Email
-	m.Firstname = u.Firstname
-	m.Lastname = u.Lastname
-	m.Role = u.Role
-	m.HashedPassword = u.HashedPassword
-	m.AuthApiKey = u.AuthApiKey
-	m.IsEnabled = u.IsEnabled
-	m.ExternalID = u.ExternalID
-	m.Source = string(u.Source)
-	m.Contact.Name = u.Contact.Name
-	m.Contact.Address = u.Contact.Address
-
-	return &m
-}
-
-// transformDbModelToUser transforms mongo document to User model.
-func transformDbModelToUser(m *model.Rbac) *security.User {
-	var u security.User
-	u.ID = m.ID
-	u.Name = m.Name
-	u.Email = m.Email
-	u.Firstname = m.Firstname
-	u.Lastname = m.Lastname
-	u.Role = m.Role
-	u.HashedPassword = m.HashedPassword
-	u.AuthApiKey = m.AuthApiKey
-	u.IsEnabled = m.IsEnabled
-	u.ExternalID = m.ExternalID
-	u.Source = security.Source(m.Source)
-	u.Contact.Name = m.Contact.Name
-	u.Contact.Address = m.Contact.Address
-
-	return &u
+	return &u, nil
 }
