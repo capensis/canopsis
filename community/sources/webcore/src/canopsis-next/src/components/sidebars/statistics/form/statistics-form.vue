@@ -4,9 +4,7 @@
     field-periodic-refresh(v-field="form.parameters.periodic_refresh")
     field-main-parameter(
       v-field="form.parameters.mainParameter",
-      :patterns="form.parameters.patterns",
-      :type="$constants.KPI_RATING_SETTINGS_TYPES.user",
-      @update:patterns="$emit('update:patterns', $event)"
+      :type="type"
     )
     field-statistics-columns(v-model="form.parameters.widgetColumns")
     widget-settings-group(:title="$t('settings.advancedSettings')")
@@ -18,16 +16,19 @@
       field-quick-date-interval-type(v-field="form.parameters.default_time_range")
       field-filters(
         v-field="form.parameters.mainFilter",
-        :filters.sync="form.filters",
+        :filters="form.filters",
         :widget-id="widget._id",
         addable,
         editable,
-        with-entity
+        with-entity,
+        @update:filters="updateField('filters', $event)"
       )
 </template>
 
 <script>
 import { KPI_RATING_SETTINGS_TYPES } from '@/constants';
+
+import { formMixin } from '@/mixins/form';
 
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
 import FieldTitle from '@/components/sidebars/form/fields/title.vue';
@@ -48,6 +49,7 @@ export default {
     FieldMainParameter,
     FieldStatisticsColumns,
   },
+  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',

@@ -1,8 +1,8 @@
 <template lang="pug">
   div
-    v-alert(
+    c-alert(
       :value="!pending && !filters.length",
-      type="info"
+      :type="errors.has(name) ? 'error' : 'info'"
     ) {{ $t('modals.createFilter.emptyFilters') }}
     c-draggable-list-field(
       v-field="filters",
@@ -26,13 +26,21 @@
 </template>
 
 <script>
+import { Validator } from 'vee-validate';
+
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
+import { validationAttachRequiredMixin } from '@/mixins/form/validation-attach-required';
 
 import FilterTile from './partials/filter-tile.vue';
 
 export default {
+  inject: {
+    $validator: {
+      default: new Validator(),
+    },
+  },
   components: { FilterTile },
-  mixins: [entitiesWidgetMixin],
+  mixins: [entitiesWidgetMixin, validationAttachRequiredMixin],
   model: {
     prop: 'filters',
     event: 'input',
@@ -54,6 +62,29 @@ export default {
       type: Boolean,
       default: true,
     },
+    name: {
+      type: String,
+      default: 'filters',
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  watch: {
+    filters() {
+      if (this.required) {
+        this.validateRequiredRule();
+      }
+    },
+  },
+  mounted() {
+    if (this.required) {
+      this.attachRequiredRule(() => this.filters.length > 0);
+    }
+  },
+  beforeDestroy() {
+    this.detachRequiredRule();
   },
 };
 </script>
