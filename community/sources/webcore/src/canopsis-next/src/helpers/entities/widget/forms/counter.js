@@ -8,11 +8,7 @@ import {
   DEFAULT_WIDGET_MARGIN,
 } from '@/constants';
 
-import {
-  openedToForm,
-  alarmListBaseParametersToForm,
-  formToAlarmListBaseParameters,
-} from '@/helpers/entities/alarm/widget';
+import { openedToForm, alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './alarm';
 
 /**
  * @typedef {Object} CounterWidgetLevels

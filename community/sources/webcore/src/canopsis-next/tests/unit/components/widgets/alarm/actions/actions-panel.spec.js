@@ -29,7 +29,7 @@ import {
 import featuresService from '@/services/features';
 
 import { generateDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
-import { prepareAlarmListWidget } from '@/helpers/entities/alarm/widget';
+import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
 
 import ActionsPanel from '@/components/widgets/alarm/actions/actions-panel.vue';
 

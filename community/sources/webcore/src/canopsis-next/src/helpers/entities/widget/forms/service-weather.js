@@ -20,10 +20,11 @@ import { DEFAULT_WEATHER_LIMIT, PAGINATION_LIMIT } from '@/config';
 import { setSeveralFields } from '@/helpers/immutable';
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
-import { getWidgetColumnLabel, getWidgetColumnSortable } from '../widget/list';
-import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../widget/template/form';
-import { formToWidgetColumns, widgetColumnsToForm } from '../widget/column/form';
-import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from '../alarm/widget';
+import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
+import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../template/form';
+import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
+
+import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './alarm';
 
 /**
  * @typedef {'more-info' | 'alarm-list' | 'both'} ServiceWeatherWidgetModalType
