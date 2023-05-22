@@ -31,6 +31,7 @@ import {
   SIDE_BARS_BY_WIDGET_TYPES,
   WIDGET_TYPES_RULES,
   WIDGET_ICONS,
+  TOP_LEVEL_WIDGET_TYPES,
 } from '@/constants';
 
 import { getNewWidgetGridParametersY } from '@/helpers/grid-layout';
@@ -65,16 +66,7 @@ export default {
         },
       });
 
-      const types = [
-        WIDGET_TYPES.alarmList,
-        WIDGET_TYPES.context,
-        WIDGET_TYPES.serviceWeather,
-        WIDGET_TYPES.statsCalendar,
-        WIDGET_TYPES.text,
-        WIDGET_TYPES.counter,
-        WIDGET_TYPES.testingWeather,
-        WIDGET_TYPES.map,
-      ].map(widgetTypePreparer);
+      const types = TOP_LEVEL_WIDGET_TYPES.map(widgetTypePreparer);
 
       types.push({
         type: 'chart',

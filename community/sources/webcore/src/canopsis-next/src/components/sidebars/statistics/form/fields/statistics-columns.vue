@@ -1,12 +1,15 @@
 <template lang="pug">
   widget-settings-item(:title="$tc('common.column', 2)")
-    c-alert(:value="!columns.length", color="info") {{ $t('widgetTemplate.errors.columnsRequired') }}
+    c-alert(
+      :value="!columns.length",
+      :type="errors.has(name) ? 'error' : 'info'"
+    ) {{ $t('widgetTemplate.errors.columnsRequired') }}
     c-progress-overlay(:pending="pending", transition)
     c-movable-card-iterator-field(v-field="columns", addable, @add="add")
       template(#item="{ item, index }")
         v-layout(column)
           kpi-rating-metric-field(
-            v-field="columns[index].column",
+            v-field="columns[index].metric",
             :type="type",
             :label="$tc('common.column')",
             :name="`column-${item.key}.column`",
@@ -18,7 +21,7 @@
           )
           c-select-field(
             v-if="columns[index].split",
-            v-field="columns[index].infos",
+            v-field="columns[index].criteria",
             :items="ratingSettings",
             :label="$t('common.infos')",
             :name="`column-${item.key}.infos`",

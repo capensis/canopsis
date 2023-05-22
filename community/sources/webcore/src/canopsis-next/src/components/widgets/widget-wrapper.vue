@@ -48,6 +48,7 @@ import BarChartWidget from './chart/bar-chart-widget.vue';
 import LineChartWidget from './chart/line-chart-widget.vue';
 import PieChartWidget from './chart/pie-chart-widget.vue';
 import NumbersWidget from './chart/numbers-widget.vue';
+import StatisticsWidget from './statistics/statistics-widget.vue';
 
 const { mapGetters } = createNamespacedHelpers('info');
 
@@ -65,6 +66,7 @@ export default {
     LineChartWidget,
     PieChartWidget,
     NumbersWidget,
+    StatisticsWidget,
 
     ...featuresService.get('components.widgetWrapper.components', {}),
   },

@@ -27,6 +27,17 @@ export const WIDGET_TYPES = {
   ...featuresService.get('constants.WIDGET_TYPES'),
 };
 
+export const TOP_LEVEL_WIDGET_TYPES = [
+  WIDGET_TYPES.alarmList,
+  WIDGET_TYPES.context,
+  WIDGET_TYPES.serviceWeather,
+  WIDGET_TYPES.statsCalendar,
+  WIDGET_TYPES.text,
+  WIDGET_TYPES.counter,
+  WIDGET_TYPES.testingWeather,
+  WIDGET_TYPES.map,
+];
+
 export const COMPONENTS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.alarmList]: 'alarms-list-widget',
   [WIDGET_TYPES.context]: 'entities-list-widget',
@@ -40,6 +51,8 @@ export const COMPONENTS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.lineChart]: 'line-chart-widget',
   [WIDGET_TYPES.pieChart]: 'pie-chart-widget',
   [WIDGET_TYPES.numbers]: 'numbers-widget',
+  [WIDGET_TYPES.userStatistics]: 'statistics-widget',
+  [WIDGET_TYPES.alarmStatistics]: 'statistics-widget',
 
   ...featuresService.get('constants.COMPONENTS_BY_WIDGET_TYPES'),
 };

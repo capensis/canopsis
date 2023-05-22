@@ -2,7 +2,7 @@ import {
   AGGREGATE_FUNCTIONS,
   ALARM_METRIC_PARAMETERS,
   DATETIME_FORMATS,
-  EXTERNAL_METRIC_UNITS,
+  EXTERNAL_METRIC_UNITS, KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA,
   KPI_RATING_ENTITY_METRICS,
   KPI_RATING_USER_CRITERIA,
   KPI_RATING_USER_METRICS,
@@ -102,6 +102,14 @@ export const getDateLabelBySampling = (value, sampling) => {
  * @returns {boolean}
  */
 export const isUserCriteria = criteria => KPI_RATING_USER_CRITERIA.includes(criteria);
+
+/**
+ * Check is custom criteria
+ *
+ * @param {string} criteria
+ * @returns {boolean}
+ */
+export const isCustomCriteria = criteria => criteria === KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA;
 
 /**
  * Get all metrics by criteria

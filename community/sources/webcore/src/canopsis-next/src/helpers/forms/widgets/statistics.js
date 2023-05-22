@@ -1,4 +1,6 @@
-import { DEFAULT_PERIODIC_REFRESH, QUICK_RANGES } from '@/constants';
+import { pick } from 'lodash';
+
+import { DEFAULT_PERIODIC_REFRESH, KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA, QUICK_RANGES } from '@/constants';
 
 import { uid } from '@/helpers/uid';
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
@@ -6,20 +8,33 @@ import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
 
 /**
  * @typedef {Object} StatisticsWidgetColumn
- * @property {string} column
- * @property {boolean} split
- * @property {string} infos
+ * @property {string} metric
+ * @property {string} criteria
  */
 
 /**
  * @typedef {StatisticsWidgetColumn & ObjectKey} StatisticsWidgetColumnForm
+ * @property {boolean} split
+ */
+
+/**
+ * @typedef {Object} StatisticsWidgetMainParameter
+ * @property {string | number} criteria
+ * @property {string} columnName
+ * @property {Filter[]} patterns
+ */
+
+/**
+ * @typedef {StatisticsWidgetMainParameter} StatisticsWidgetMainParameterForm
+ * @property {string | number} criteria
+ * @property {string} columnName
+ * @property {(Filter & ObjectKey)[]} patterns
  */
 
 /**
  * @typedef {Object} StatisticsWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
- * @property {string} mainParameter
- * @property {Filter[]} patterns
+ * @property {StatisticsWidgetMainParameter} mainParameter
  * @property {StatisticsWidgetColumn[]} widgetColumns
  * @property {string} table_title
  * @property {string} default_time_range
@@ -28,7 +43,7 @@ import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
 
 /**
  * @typedef {StatisticsWidgetParameters} StatisticsWidgetParametersForm
- * @property {(Filter & ObjectKey)[]} patterns
+ * @property {StatisticsWidgetMainParameterForm} mainParameter
  * @property {StatisticsWidgetColumn[]} StatisticsWidgetColumnForm
  */
 
@@ -39,10 +54,22 @@ import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
  * @returns {StatisticsWidgetColumnForm}
  */
 export const statisticsWidgetColumnToForm = (widgetColumn = {}) => ({
-  column: widgetColumn.column ?? '',
-  infos: widgetColumn.infos ?? '',
-  split: !!widgetColumn.split,
+  metric: widgetColumn.metric ?? '',
+  criteria: widgetColumn.criteria ?? '',
+  split: !!widgetColumn.criteria,
   key: uid(),
+});
+
+/**
+ * Convert statistics widget main parameter to form
+ *
+ * @param {StatisticsWidgetMainParameter} mainParameter
+ * @returns {StatisticsWidgetMainParameterForm}
+ */
+export const statisticsMainParameterToForm = (mainParameter = {}) => ({
+  criteria: mainParameter.criteria ?? '',
+  columnName: mainParameter.columnName ?? '',
+  patterns: addKeyInEntities(mainParameter.patterns),
 });
 
 /**
@@ -53,13 +80,41 @@ export const statisticsWidgetColumnToForm = (widgetColumn = {}) => ({
  */
 export const statisticsWidgetParametersToForm = (parameters = {}) => ({
   periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
-  mainParameter: parameters.mainParameter ?? '',
-  patterns: addKeyInEntities(parameters.patterns ?? []),
+  mainParameter: statisticsMainParameterToForm(parameters.mainParameter),
   widgetColumns: (parameters.widgetColumns ?? []).map(statisticsWidgetColumnToForm),
   table_title: parameters.table_title ?? '',
   default_time_range: parameters.default_time_range ?? QUICK_RANGES.last30Days.value,
   mainFilter: parameters.mainFilter ?? null,
 });
+
+/**
+ * Convert form to statistics widget column
+ *
+ * @param {StatisticsWidgetColumnForm} form
+ * @returns {StatisticsWidgetColumn}
+ */
+export const formToStatisticsWidgetColumn = form => pick(form, ['metric', 'criteria']);
+
+/**
+ * Convert form to statistics widget main parameter
+ *
+ * @param {StatisticsWidgetMainParameterForm} form
+ * @returns {StatisticsWidgetMainParameter}
+ */
+export const formToStatisticsMainParameter = (form) => {
+  const mainParameter = {
+    ...form,
+
+    patterns: removeKeyFromEntities(form.patterns),
+  };
+
+  if (form.criteria !== KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA) {
+    mainParameter.columnName = '';
+    mainParameter.patterns = [];
+  }
+
+  return mainParameter;
+};
 
 /**
  * Convert form to statistics widget parameters to form
@@ -70,6 +125,6 @@ export const statisticsWidgetParametersToForm = (parameters = {}) => ({
 export const formToStatisticsWidgetParameters = form => ({
   ...form,
 
-  patterns: removeKeyFromEntities(form.patterns),
-  widgetColumns: removeKeyFromEntities(form.patterns),
+  mainParameter: formToStatisticsMainParameter(form.mainParameter),
+  widgetColumns: form.widgetColumns.map(formToStatisticsWidgetColumn),
 });
