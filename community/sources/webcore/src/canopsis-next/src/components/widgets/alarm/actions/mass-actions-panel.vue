@@ -205,13 +205,6 @@ export default {
     hasMetaAlarm() {
       return this.items.some(item => item.is_meta_alarm);
     },
-
-    modalConfig() {
-      return {
-        items: this.items,
-        afterSubmit: this.afterSubmit,
-      };
-    },
   },
 
   methods: {

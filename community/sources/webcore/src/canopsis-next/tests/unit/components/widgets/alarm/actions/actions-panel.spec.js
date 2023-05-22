@@ -207,9 +207,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const ackAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.ack);
-
-    ackAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.ack).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -357,9 +355,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const pbehaviorAddAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd);
-
-    pbehaviorAddAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -401,9 +397,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const snoozeAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.snooze);
-
-    snoozeAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.snooze).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -646,9 +640,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const cancelAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.cancel);
-
-    cancelAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.cancel).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -726,9 +718,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const fastCancelAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastCancel);
-
-    fastCancelAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastCancel).trigger('click');
 
     await flushPromises();
 
@@ -775,9 +765,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const variablesHelpAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.variablesHelp);
-
-    variablesHelpAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.variablesHelp).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -833,9 +821,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const historyAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.history);
-
-    historyAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.history).trigger('click');
 
     const defaultWidget = prepareAlarmListWidget(generateDefaultAlarmListWidget());
 
@@ -897,9 +883,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const commentAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.comment);
-
-    commentAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.comment).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -951,12 +935,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const manualMetaAlarmUngroupAction = selectActionByType(
-      wrapper,
-      ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm,
-    );
-
-    manualMetaAlarmUngroupAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -1021,12 +1000,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const executeInstructionAction = selectActionByType(
-      wrapper,
-      ALARM_LIST_ACTIONS_TYPES.executeInstruction,
-    );
-
-    executeInstructionAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.executeInstruction).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -1058,12 +1032,8 @@ describe('actions-panel', () => {
       title: 'custom-title',
       method: jest.fn(),
     };
-    const featureHasSpy = jest.spyOn(featuresService, 'has')
-      .mockReturnValueOnce(false)
-      .mockReturnValueOnce(true);
-    const featureGetSpy = jest.spyOn(featuresService, 'get')
-      .mockReturnValueOnce((
-      ) => [customAction]);
+    const featureHasSpy = jest.spyOn(featuresService, 'has').mockReturnValueOnce(true);
+    const featureGetSpy = jest.spyOn(featuresService, 'get').mockReturnValueOnce(() => [customAction]);
 
     const wrapper = factory({
       store: createMockedStoreModules([
@@ -1077,9 +1047,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const executeInstructionAction = selectActionByType(wrapper, customAction.type);
-
-    executeInstructionAction.trigger('click');
+    selectActionByType(wrapper, customAction.type).trigger('click');
 
     expect(customAction.method).toBeCalled();
 
@@ -1312,6 +1280,38 @@ describe('actions-panel', () => {
         item: {
           ...alarm,
 
+          links: {
+            cat: [
+              {
+                icon_name: 'icon',
+                label: 'Label',
+                url: 'URL',
+                rule_id: 'RuleId',
+              },
+            ],
+          },
+        },
+        widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `actions-panel` with links in resolved alarm', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: {
+          ...alarm,
+
+          v: {
+            status: {
+              val: ENTITIES_STATUSES.closed,
+            },
+          },
           links: {
             cat: [
               {
