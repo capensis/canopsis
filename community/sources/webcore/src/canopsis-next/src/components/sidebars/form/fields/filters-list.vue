@@ -3,6 +3,8 @@
     v-field="filters",
     :addable="addable",
     :editable="editable",
+    :name="name",
+    :required="required",
     @add="showCreateFilterModal",
     @edit="showEditFilterModal",
     @delete="showDeleteFilterModal"
@@ -65,6 +67,14 @@ export default {
     entityTypes: {
       type: Array,
       required: false,
+    },
+    name: {
+      type: String,
+      default: 'filters',
+    },
+    required: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

@@ -98,4 +98,4 @@ export const KPI_RATING_SETTINGS_TYPES = {
   user: 1,
 };
 
-export const KPI_ENTITY_RATING_SETTINGS_CUSTOM_PARAMETER = Symbol('custom').toString();
+export const KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA = Symbol('custom').toString();

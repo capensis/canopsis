@@ -47,8 +47,8 @@ export default {
   computed: {
     availableMetrics() {
       const metrics = this.type === KPI_RATING_SETTINGS_TYPES.entity
-        ? KPI_RATING_USER_METRICS
-        : KPI_RATING_ENTITY_METRICS;
+        ? KPI_RATING_ENTITY_METRICS
+        : KPI_RATING_USER_METRICS;
 
       return metrics.map((value) => {
         const alarmKey = `alarm.metrics.${value}`;
