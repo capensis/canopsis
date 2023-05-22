@@ -31,7 +31,7 @@ describe('pbehaviors-simple-list', () => {
     _id: `id-pbehavior-${index}`,
     name: `name-${index}`,
     author: {
-      name: `author-${index}`,
+      display_name: `author-${index}`,
     },
     enabled: !!(index % 2),
     editable: !!(index % 2),
