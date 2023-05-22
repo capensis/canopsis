@@ -21,7 +21,7 @@ import {
   convertStopDateIntervalToTimestamp,
 } from './date/date-intervals';
 import { isResolvedAlarm } from './entities';
-import { isRatioMetric } from './metrics';
+import { isCustomCriteria, isRatioMetric } from './metrics';
 
 /**
  * WIDGET CONVERTERS
@@ -300,6 +300,47 @@ export function convertNumbersWidgetToQuery(widget) {
 }
 
 /**
+ * This function converts chart widgets default parameters to query Object
+ *
+ * @param {Widget} widget
+ * @returns {{ sampling: string, interval: Object }}
+ */
+export function convertStatisticsWidgetParametersToQuery(widget) {
+  const {
+    parameters: {
+      mainParameter = {},
+      widgetColumns = [],
+      default_time_range: defaultTimeRange,
+    },
+  } = widget;
+
+  const query = {
+    interval: {
+      from: QUICK_RANGES[defaultTimeRange].start,
+      to: QUICK_RANGES[defaultTimeRange].stop,
+    },
+    parameters: widgetColumns.map(({ metric, criteria }) => {
+      const parameter = {
+        metric,
+      };
+
+      if (criteria) {
+        parameter.criteria = criteria;
+      }
+
+      return parameter;
+    }),
+    entity_patterns: mainParameter.patterns.map(({ title, entity_pattern: pattern }) => ({ title, pattern })),
+  };
+
+  if (!isCustomCriteria(mainParameter.criteria)) {
+    query.criteria = mainParameter.criteria;
+  }
+
+  return query;
+}
+
+/**
  * USER_PREFERENCE CONVERTERS
  */
 
@@ -351,7 +392,7 @@ export function convertWeatherUserPreferenceToQuery({ content }) {
 export const convertMapUserPreferenceToQuery = ({ content: { category } }) => ({ category });
 
 /**
- * This function converts userPreference with widget type 'Map' to query Object
+ * This function converts userPreference with widget with chart type to query Object
  *
  * @param {Object} userPreference
  * @returns {{ sampling: string, interval: Object }}
@@ -373,7 +414,7 @@ export const convertChartUserPreferenceToQuery = ({ content: { sampling, interva
 };
 
 /**
- * This function converts userPreference with widgetXtype 'Context' to query Object
+ * This function converts userPreference with widget 'Context' type to query Object
  *
  * @param {Object} userPreference
  * @returns {{ category: string }}
@@ -387,6 +428,24 @@ export function convertContextUserPreferenceToQuery({ content }) {
     no_events: noEvents,
   };
 }
+
+/**
+ * This function converts userPreference with widget statistics type to query Object
+ *
+ * @param {Object} userPreference
+ * @returns {{ sampling: string, interval: Object }}
+ */
+export const convertStatisticsUserPreferenceToQuery = ({ content: { interval, mainFilter } }) => {
+  const query = {
+    filter: mainFilter,
+  };
+
+  if (interval) {
+    query.interval = interval;
+  }
+
+  return query;
+};
 
 /**
  * MAIN CONVERTERS
@@ -409,6 +468,8 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
     [WIDGET_TYPES.lineChart]: convertChartUserPreferenceToQuery,
     [WIDGET_TYPES.pieChart]: convertChartUserPreferenceToQuery,
     [WIDGET_TYPES.numbers]: convertChartUserPreferenceToQuery,
+    [WIDGET_TYPES.userStatistics]: convertStatisticsUserPreferenceToQuery,
+    [WIDGET_TYPES.alarmStatistics]: convertStatisticsUserPreferenceToQuery,
 
     ...featuresService.get('helpers.query.convertUserPreferenceToQuery.convertersMap'),
   };
@@ -435,6 +496,8 @@ export function convertWidgetToQuery(widget) {
     [WIDGET_TYPES.lineChart]: convertChartWidgetToQuery,
     [WIDGET_TYPES.pieChart]: convertPieChartWidgetToQuery,
     [WIDGET_TYPES.numbers]: convertNumbersWidgetToQuery,
+    [WIDGET_TYPES.userStatistics]: convertStatisticsWidgetParametersToQuery,
+    [WIDGET_TYPES.alarmStatistics]: convertStatisticsWidgetParametersToQuery,
 
     ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
   };
