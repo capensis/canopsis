@@ -90,7 +90,7 @@ export const widgetActionPanelServiceEntityMixin = {
       this.unavailableEntitiesAction[entity._id] = false;
     },
 
-    getAvailableActions(type, entities) {
+    getAvailableEntitiesByActionType(type, entities) {
       const {
         availableEntities,
         unavailableEntities,
@@ -173,7 +173,7 @@ export const widgetActionPanelServiceEntityMixin = {
     async applyAckAction(entities) {
       this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityAck, true);
 
-      const availableEntities = this.getAvailableActions(WEATHER_ACTIONS_TYPES.entityAck, entities);
+      const availableEntities = this.getAvailableEntitiesByActionType(WEATHER_ACTIONS_TYPES.entityAck, entities);
 
       const preparedRequestData = availableEntities.map(
         ({ alarm_id: alarmId }) => ({ _id: alarmId, comment: WEATHER_ACK_EVENT_OUTPUT.ack }),
@@ -197,7 +197,10 @@ export const widgetActionPanelServiceEntityMixin = {
             validationRules: 'required',
           },
           action: async ({ comment }) => {
-            const availableEntities = this.getAvailableActions(WEATHER_ACTIONS_TYPES.entityAckRemove, entities);
+            const availableEntities = this.getAvailableEntitiesByActionType(
+              WEATHER_ACTIONS_TYPES.entityAckRemove,
+              entities,
+            );
 
             const preparedRequestData = availableEntities.map(
               ({ alarm_id: alarmId }) => ({ _id: alarmId, comment }),
@@ -222,7 +225,10 @@ export const widgetActionPanelServiceEntityMixin = {
           config: {
             items: alarms,
             action: async (event) => {
-              const availableEntities = this.getAvailableActions(WEATHER_ACTIONS_TYPES.entityAssocTicket, entities);
+              const availableEntities = this.getAvailableEntitiesByActionType(
+                WEATHER_ACTIONS_TYPES.entityAssocTicket,
+                entities,
+              );
 
               await this.bulkCreateAlarmAckEvent({
                 data: availableEntities.map(
@@ -296,7 +302,10 @@ export const widgetActionPanelServiceEntityMixin = {
         name: MODALS.createCommentEvent,
         config: {
           action: async ({ comment }) => {
-            const availableEntities = this.getAvailableActions(WEATHER_ACTIONS_TYPES.entityComment, entities);
+            const availableEntities = this.getAvailableEntitiesByActionType(
+              WEATHER_ACTIONS_TYPES.entityComment,
+              entities,
+            );
 
             const preparedRequestData = availableEntities.map(({ alarm_id: alarmId }) => ({ _id: alarmId, comment }));
 
@@ -311,7 +320,10 @@ export const widgetActionPanelServiceEntityMixin = {
     async applyValidateAction(entities) {
       this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityValidate, true);
 
-      const availableEntities = this.getAvailableActions(WEATHER_ACTIONS_TYPES.entityValidate, entities);
+      const availableEntities = this.getAvailableEntitiesByActionType(
+        WEATHER_ACTIONS_TYPES.entityValidate,
+        entities,
+      );
 
       await this.bulkCreateAlarmAckEvent({
         data: availableEntities.map(
@@ -336,7 +348,7 @@ export const widgetActionPanelServiceEntityMixin = {
     async applyInvalidateAction(entities) {
       this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityInvalidate, true);
 
-      const availableEntities = this.getAvailableActions(WEATHER_ACTIONS_TYPES.entityInvalidate, entities);
+      const availableEntities = this.getAvailableEntitiesByActionType(WEATHER_ACTIONS_TYPES.entityInvalidate, entities);
 
       await this.bulkCreateAlarmAckEvent({
         data: availableEntities.map(
@@ -395,7 +407,10 @@ export const widgetActionPanelServiceEntityMixin = {
         config: {
           title: this.$t('common.note'),
           action: async (comment) => {
-            const availableEntities = this.getAvailableActions(WEATHER_ACTIONS_TYPES.entityCancel, entities);
+            const availableEntities = this.getAvailableEntitiesByActionType(
+              WEATHER_ACTIONS_TYPES.entityCancel,
+              entities,
+            );
 
             const preparedRequestData = availableEntities.map(
               ({ alarm_id: alarmId }) => ({ _id: alarmId, comment }),
