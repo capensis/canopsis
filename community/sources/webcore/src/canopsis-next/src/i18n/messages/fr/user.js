@@ -18,4 +18,13 @@ export default {
   metrics: {
     [USER_METRIC_PARAMETERS.totalUserActivity]: 'Durée totale de l\'activité',
   },
+  variables: {
+    userEmail: 'Courriel de l\'utilisateur',
+    userUsername: 'Nom d\'utilisateur',
+    userFirstname: 'Prénom de l\'utilisateur',
+    userLastname: 'Nom de famille de l\'utilisateur',
+    userExternalId: 'ID externe de l\'utilisateur',
+    userSource: 'Source d\'utilisateurs',
+    userRole: 'Rôle d\'utilisateur',
+  },
 };

@@ -27,10 +27,10 @@ func (g *generator) Load(ctx context.Context) error {
 	return nil
 }
 
-func (g *generator) GenerateForAlarms(ctx context.Context, ids []string) (map[string]link.LinksByCategory, error) {
+func (g *generator) GenerateForAlarms(ctx context.Context, ids []string, user link.User) (map[string]link.LinksByCategory, error) {
 	var res map[string]link.LinksByCategory
 	for _, v := range g.generators {
-		linksById, err := v.GenerateForAlarms(ctx, ids)
+		linksById, err := v.GenerateForAlarms(ctx, ids, user)
 		if err != nil {
 			return nil, err
 		}
@@ -41,10 +41,10 @@ func (g *generator) GenerateForAlarms(ctx context.Context, ids []string) (map[st
 	return res, nil
 }
 
-func (g *generator) GenerateForEntities(ctx context.Context, ids []string) (map[string]link.LinksByCategory, error) {
+func (g *generator) GenerateForEntities(ctx context.Context, ids []string, user link.User) (map[string]link.LinksByCategory, error) {
 	var res map[string]link.LinksByCategory
 	for _, v := range g.generators {
-		linksById, err := v.GenerateForEntities(ctx, ids)
+		linksById, err := v.GenerateForEntities(ctx, ids, user)
 		if err != nil {
 			return nil, err
 		}
@@ -55,10 +55,10 @@ func (g *generator) GenerateForEntities(ctx context.Context, ids []string) (map[
 	return res, nil
 }
 
-func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId string, alarmIds []string) ([]link.Link, error) {
+func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId string, alarmIds []string, user link.User) ([]link.Link, error) {
 	var res []link.Link
 	for _, v := range g.generators {
-		links, err := v.GenerateCombinedForAlarmsByRule(ctx, ruleId, alarmIds)
+		links, err := v.GenerateCombinedForAlarmsByRule(ctx, ruleId, alarmIds, user)
 		if err != nil {
 			return nil, err
 		}
