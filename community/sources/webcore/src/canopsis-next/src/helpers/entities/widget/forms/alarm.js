@@ -25,14 +25,15 @@ import { setSeveralFields } from '@/helpers/immutable';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { convertDurationToString, durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
+import { kioskParametersToForm } from '@/helpers/entities/shared/kiosk/form';
 
-import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../widget/template/form';
-import { formToWidgetColumns, widgetColumnsToForm } from '../widget/column/form';
-import { kioskParametersToForm } from '../shared/kiosk/form';
-import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from '../metric/widget/bar-widget';
-import { formToLineChartWidgetParameters, lineChartWidgetParametersToForm } from '../metric/widget/line-widget';
-import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from '../metric/widget/numbers-widget';
-import { getWidgetColumnLabel, getWidgetColumnSortable } from '../widget/list';
+import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../template/form';
+import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
+import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
+
+import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './bar-chart';
+import { formToLineChartWidgetParameters, lineChartWidgetParametersToForm } from './line-chart';
+import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './numbers-chart';
 
 /**
  * @typedef {'BarChart', 'LineChart', 'Numbers'} AlarmChartType
