@@ -37,7 +37,7 @@ func NewTokenService(
 ) TokenService {
 	return &tokenService{
 		config:           config,
-		dbRoleCollection: client.Collection(mongo.RightsMongoCollection),
+		dbRoleCollection: client.Collection(mongo.RoleCollection),
 		tokenGenerator:   generator,
 		tokenStore:       store,
 	}

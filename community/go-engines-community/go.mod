@@ -61,7 +61,7 @@ require (
 require (
 	github.com/dop251/goja v0.0.0-20230304130813-e2f543bf4b4c
 	github.com/go-testfixtures/testfixtures/v3 v3.8.1
-	github.com/goccy/go-yaml v1.9.5
+	github.com/goccy/go-yaml v1.11.0
 	github.com/golang-jwt/jwt/v4 v4.4.2
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/jackc/pgconn v1.13.0

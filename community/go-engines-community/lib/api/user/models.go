@@ -2,7 +2,6 @@ package user
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -42,13 +41,12 @@ type EditRequest struct {
 func (r CreateRequest) getBson(passwordEncoder password.Encoder) bson.M {
 	bsonModel := bson.M{
 		"_id":                       r.Name,
-		"crecord_name":              r.Name,
-		"crecord_type":              securitymodel.LineTypeSubject,
+		"name":                      r.Name,
 		"lastname":                  r.Lastname,
 		"firstname":                 r.Firstname,
 		"email":                     r.Email,
 		"role":                      r.Role,
-		"shadowpasswd":              string(passwordEncoder.EncodePassword([]byte(r.Password))),
+		"password":                  string(passwordEncoder.EncodePassword([]byte(r.Password))),
 		"ui_language":               r.UILanguage,
 		"ui_theme":                  r.UITheme,
 		"ui_groups_navigation_type": r.UIGroupsNavigationType,
@@ -64,7 +62,7 @@ func (r CreateRequest) getBson(passwordEncoder password.Encoder) bson.M {
 
 func (r EditRequest) getBson(passwordEncoder password.Encoder) bson.M {
 	bsonModel := bson.M{
-		"crecord_name":              r.Name,
+		"name":                      r.Name,
 		"lastname":                  r.Lastname,
 		"firstname":                 r.Firstname,
 		"email":                     r.Email,
@@ -76,7 +74,7 @@ func (r EditRequest) getBson(passwordEncoder password.Encoder) bson.M {
 		"defaultview":               r.DefaultView,
 	}
 	if r.Password != "" {
-		bsonModel["shadowpasswd"] = string(passwordEncoder.EncodePassword([]byte(r.Password)))
+		bsonModel["password"] = string(passwordEncoder.EncodePassword([]byte(r.Password)))
 	}
 
 	return bsonModel

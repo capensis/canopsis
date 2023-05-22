@@ -20,7 +20,6 @@ import (
 const (
 	DB                                = "canopsis"
 	ConfigurationMongoCollection      = "configuration"
-	RightsMongoCollection             = "default_rights"
 	SessionMongoCollection            = "session"
 	AlarmMongoCollection              = "periodical_alarm"
 	EntityMongoCollection             = "default_entities"
@@ -100,6 +99,10 @@ const (
 	WebhookHistoryMongoCollection    = "webhook_history"
 
 	LinkRuleMongoCollection = "link_rule"
+
+	UserCollection       = "user"
+	RoleCollection       = "role"
+	PermissionCollection = "permission"
 )
 
 const (
