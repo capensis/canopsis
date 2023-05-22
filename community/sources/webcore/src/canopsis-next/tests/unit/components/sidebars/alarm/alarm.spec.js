@@ -27,7 +27,7 @@ import {
 } from '@/constants';
 
 import ClickOutside from '@/services/click-outside';
-import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/entities/alarm/widget';
+import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/entities/widget/forms/alarm';
 import {
   generateDefaultAlarmListWidget,
   widgetToForm,

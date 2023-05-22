@@ -5,7 +5,7 @@ import { mockModals } from '@unit/utils/mock-hooks';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 import { createButtonStub } from '@unit/stubs/button';
-import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/entities/alarm/widget';
+import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/entities/widget/forms/alarm';
 
 import ChartsForm from '@/components/sidebars/chart/form/charts-form.vue';
 import { MODALS, WIDGET_TYPES } from '@/constants';

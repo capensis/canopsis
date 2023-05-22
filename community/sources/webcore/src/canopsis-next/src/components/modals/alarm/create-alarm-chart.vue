@@ -27,7 +27,7 @@
 <script>
 import { MODALS, VALIDATION_DELAY, WIDGET_TYPES } from '@/constants';
 
-import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/entities/alarm/widget';
+import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/entities/widget/forms/alarm';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
