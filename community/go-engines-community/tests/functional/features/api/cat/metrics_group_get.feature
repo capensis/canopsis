@@ -120,6 +120,10 @@ Feature: Get alarm metrics
         {
           "metric": "min_ack",
           "criteria": 11
+        },
+        {
+          "metric": "ticket_active_alarms",
+          "criteria": 11
         }
       ],
       "criteria": 3,
@@ -175,7 +179,8 @@ Feature: Get alarm metrics
                 "title": "value2",
                 "value": 300
               }
-            ]
+            ],
+            "ticket_active_alarms": []
           }
         },
         {
@@ -204,7 +209,8 @@ Feature: Get alarm metrics
                 "title": "value2",
                 "value": 400
               }
-            ]
+            ],
+            "ticket_active_alarms": []
           }
         }
       ],
