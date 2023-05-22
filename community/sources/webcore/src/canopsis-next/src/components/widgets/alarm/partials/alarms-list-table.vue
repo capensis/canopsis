@@ -110,7 +110,7 @@ import { ALARM_DENSE_TYPES, ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants
 
 import featuresService from '@/services/features';
 
-import { isResolvedAlarm } from '@/helpers/entities';
+import { isClosedAlarm } from '@/helpers/entities';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns/alarm';
@@ -232,7 +232,7 @@ export default {
     },
 
     unresolvedSelected() {
-      return this.selected.filter(item => !isResolvedAlarm(item));
+      return this.selected.filter(item => !isClosedAlarm(item));
     },
 
     expanded() {
