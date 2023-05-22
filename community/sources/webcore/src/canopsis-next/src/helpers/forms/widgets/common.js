@@ -6,10 +6,10 @@ import {
   DEFAULT_WIDGET_GRID_PARAMETERS,
 } from '@/constants';
 
+import featuresService from '@/services/features';
+
 import { uuid } from '@/helpers/uuid';
 import { prepareAlarmListWidget, prepareContextWidget } from '@/helpers/widgets';
-
-import featuresService from '@/services/features';
 
 import {
   alarmListWidgetParametersToForm,

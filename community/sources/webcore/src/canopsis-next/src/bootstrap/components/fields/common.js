@@ -10,7 +10,7 @@ export { default as CRetryField } from '@/components/forms/fields/c-retry-field.
 export { default as CPriorityField } from '@/components/forms/fields/c-priority-field.vue';
 export { default as CEnabledLimitField } from '@/components/forms/fields/c-enabled-limit-field.vue';
 
-export { default as CLazySearchFieldField } from '@/components/forms/fields/c-lazy-search-field.vue';
+export { default as CLazySearchField } from '@/components/forms/fields/c-lazy-search-field.vue';
 export { default as CRoleField } from '@/components/forms/fields/c-role-field.vue';
 export { default as CTimezoneField } from '@/components/forms/fields/c-timezone-field.vue';
 export { default as CLanguageField } from '@/components/forms/fields/c-language-field.vue';

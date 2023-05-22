@@ -52,7 +52,6 @@
 import { get, uniq } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-
 import {
   MODALS,
   ENTITY_TYPES,

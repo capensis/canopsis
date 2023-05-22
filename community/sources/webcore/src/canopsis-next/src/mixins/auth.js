@@ -2,6 +2,7 @@ import { get } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { CRUD_ACTIONS, GROUPS_NAVIGATION_TYPES } from '@/constants';
+
 import { checkUserAccess } from '@/helpers/permission';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('auth');
