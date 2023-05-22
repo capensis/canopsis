@@ -68,10 +68,11 @@ import FilterSelector from '@/components/other/filter/partials/filter-selector.v
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 
 import EntityColumnCell from '../columns-formatting/entity-column-cell.vue';
-import EntitiesListExpandPanel from './entities-list-expand-panel.vue';
 import ContextFab from '../actions/context-fab.vue';
 import ActionsPanel from '../actions/actions-panel.vue';
 import MassActionsPanel from '../actions/mass-actions-panel.vue';
+
+import EntitiesListExpandPanel from './entities-list-expand-panel.vue';
 
 export default {
   components: {

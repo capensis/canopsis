@@ -12,6 +12,7 @@
 
 <script>
 import { debounce } from 'lodash';
+
 import {
   KPI_ALARMS_GRAPH_BAR_PERCENTAGE,
   SAMPLINGS,

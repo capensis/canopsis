@@ -14,10 +14,9 @@ import {
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
 
-import { getEntityEventIcon } from '@/helpers/icon';
-
 import featuresService from '@/services/features';
 
+import { getEntityEventIcon } from '@/helpers/icon';
 import { isManualGroupMetaAlarmRuleType } from '@/helpers/forms/meta-alarm-rule';
 import { isInstructionExecutionIconInProgress } from '@/helpers/forms/remediation-instruction-execution';
 import { isInstructionManual } from '@/helpers/forms/remediation-instruction';

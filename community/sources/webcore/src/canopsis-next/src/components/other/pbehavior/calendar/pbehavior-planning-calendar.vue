@@ -45,6 +45,7 @@ import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Op } from 'dayspan';
 
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
+import { COLORS } from '@/config';
 
 import { uid } from '@/helpers/uid';
 import { getMostReadableTextColor } from '@/helpers/color';
@@ -57,7 +58,6 @@ import { entitiesPbehaviorTimespansMixin } from '@/mixins/entities/pbehavior/tim
 
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 import PbehaviorPlanningCalendarLegend from './partials/pbehavior-planning-calendar-legend.vue';
-import { COLORS } from '@/config';
 
 const { mapActions: pbehaviorTypesMapActions } = createNamespacedHelpers('pbehaviorTypes');
 

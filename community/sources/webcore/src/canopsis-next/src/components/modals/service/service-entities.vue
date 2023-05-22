@@ -39,7 +39,6 @@
 import { pick, isEmpty } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-
 import { MODALS, PBEHAVIOR_ORIGINS, SORT_ORDERS, USERS_PERMISSIONS, WEATHER_ACTIONS_TYPES } from '@/constants';
 
 import Observer from '@/services/observer';
