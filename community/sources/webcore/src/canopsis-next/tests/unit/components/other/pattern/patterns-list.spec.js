@@ -32,7 +32,7 @@ describe('patterns-list', () => {
     type: types[index % 3],
     enabled: !!(index % 2),
     author: {
-      name: `author-${index}`,
+      display_name: `author-${index}`,
     },
     updated: 1614861888 + index,
   }));
