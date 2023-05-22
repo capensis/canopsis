@@ -81,13 +81,13 @@ func benchmarkStoreFind(b *testing.B, fixturesPath string, request alarm.ListReq
 			b.Errorf("unexpected error %v", err)
 		}
 	})
-
+	userId := "test"
 	s := alarm.NewStore(dbClient, nil, config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()), zerolog.Nop())
 
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_, err := s.Find(ctx, request)
+		_, err := s.Find(ctx, request, userId)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}
