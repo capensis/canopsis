@@ -70,16 +70,17 @@ import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 
 import FieldOpenedResolvedFilter from '../alarm/form/fields/opened-resolved-filter.vue';
 import FieldTitle from '../form/fields/title.vue';
-import FieldTemplate from './form/fields/template.vue';
 import FieldGridSize from '../form/fields/grid-size.vue';
 import FieldFilters from '../form/fields/filters.vue';
 import FieldSlider from '../form/fields/slider.vue';
 import FieldSwitcher from '../form/fields/switcher.vue';
 import AlarmsListModalForm from '../alarm/form/alarms-list-modal.vue';
 import MarginsForm from '../form/margins.vue';
-import CounterLevelsForm from './form/counter-levels.vue';
 import WidgetSettings from '../partials/widget-settings.vue';
 import WidgetSettingsGroup from '../partials/widget-settings-group.vue';
+
+import CounterLevelsForm from './form/counter-levels.vue';
+import FieldTemplate from './form/fields/template.vue';
 
 export default {
   name: SIDE_BARS.counterSettings,

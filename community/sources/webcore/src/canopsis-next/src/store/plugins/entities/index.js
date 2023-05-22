@@ -6,6 +6,7 @@ import { SCHEMA_EMBEDDED_KEY } from '@/config';
 import { REQUEST_METHODS } from '@/constants';
 
 import request from '@/services/request';
+
 import schemas from '@/store/schemas';
 
 import { prepareEntitiesToDelete, cloneSchemaWithEmbedded } from './helpers';

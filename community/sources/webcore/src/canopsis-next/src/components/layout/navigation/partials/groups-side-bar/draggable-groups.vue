@@ -24,6 +24,7 @@
 import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
+
 import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
 
 import DraggableGroupViews from './draggable-group-views.vue';
