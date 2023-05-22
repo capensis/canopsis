@@ -1,5 +1,4 @@
 import { isObject } from 'lodash';
-
 import VeeValidate, { Validator, Rules } from 'vee-validate';
 
 import { isValidJson } from './helpers/is-valid-json';
