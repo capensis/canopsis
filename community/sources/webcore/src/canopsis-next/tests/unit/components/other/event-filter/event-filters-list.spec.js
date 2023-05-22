@@ -28,7 +28,7 @@ describe('event-filters-list', () => {
     priority: index,
     enabled: !!(index % 2),
     author: {
-      name: `author-${index}`,
+      display_name: `author-${index}`,
     },
     created: 1614861888 + index,
     updated: 1614861888 + index,

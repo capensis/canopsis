@@ -10,7 +10,7 @@ describe('pbehavior-comments', () => {
   const pbehaviorComments = range(totalItems).map(index => ({
     _id: `id-pbehavior-comment-${index}`,
     author: {
-      name: `author-pbehavior-comment-${index}`,
+      display_name: `author-pbehavior-comment-${index}`,
     },
     message: `message-pbehavior-comment-${index}`,
   }));
