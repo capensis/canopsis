@@ -34,7 +34,6 @@
 import { isNumber } from 'lodash';
 
 import { COLORS } from '@/config';
-
 import { USERS_PERMISSIONS } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
