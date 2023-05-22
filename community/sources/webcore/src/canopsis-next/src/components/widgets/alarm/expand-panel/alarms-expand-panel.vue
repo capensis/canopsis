@@ -164,6 +164,7 @@ import EntityCharts from '@/components/widgets/chart/entity-charts.vue';
 
 import AlarmsTimeLine from '../time-line/alarms-time-line.vue';
 import EntityGantt from '../entity-gantt/entity-gantt.vue';
+
 import AlarmsExpandPanelMoreInfos from './alarms-expand-panel-more-infos.vue';
 import AlarmsExpandPanelChildren from './alarms-expand-panel-children.vue';
 
