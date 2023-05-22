@@ -1,11 +1,14 @@
 import Vue from 'vue';
 import { get } from 'lodash';
 
-import request, { useRequestCancelling } from '@/services/request';
-import i18n from '@/i18n';
-import { alarmSchema } from '@/store/schemas';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
+
+import request, { useRequestCancelling } from '@/services/request';
+
+import i18n from '@/i18n';
+
+import { alarmSchema } from '@/store/schemas';
 
 import detailsModule from './details';
 import linksModule from './links';

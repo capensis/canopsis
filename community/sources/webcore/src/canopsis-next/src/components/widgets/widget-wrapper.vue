@@ -26,6 +26,8 @@ import {
   COMPONENTS_BY_WIDGET_TYPES,
 } from '@/constants';
 
+import featuresService from '@/services/features';
+
 import {
   prepareAlarmListWidget,
   prepareContextWidget,
@@ -33,8 +35,6 @@ import {
   prepareStatsCalendarAndCounterWidget,
   prepareMapWidget,
 } from '@/helpers/widgets';
-
-import featuresService from '@/services/features';
 
 import AlarmsListWidget from './alarm/alarms-list.vue';
 import EntitiesListWidget from './context/entities-list.vue';

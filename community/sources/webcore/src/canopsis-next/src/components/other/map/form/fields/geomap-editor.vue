@@ -95,12 +95,11 @@
 </template>
 
 <script>
-import { uid } from '@/helpers/uid';
 
 import { COLORS } from '@/config';
-
 import { MODALS } from '@/constants';
 
+import { uid } from '@/helpers/uid';
 import { geomapPointToForm } from '@/helpers/forms/map';
 import { getGeomapMarkerIconOptions } from '@/helpers/map';
 

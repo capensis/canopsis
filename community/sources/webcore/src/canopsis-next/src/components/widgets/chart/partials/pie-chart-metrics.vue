@@ -15,7 +15,6 @@
 
 <script>
 import { COLORS } from '@/config';
-
 import { KPI_PIE_CHART_SHOW_MODS } from '@/constants';
 
 import { getMetricColor, getMostReadableTextColor } from '@/helpers/color';
