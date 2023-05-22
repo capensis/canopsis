@@ -11,7 +11,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -37,7 +36,7 @@ func NewStore(
 ) Store {
 	return &store{
 		client:                 dbClient,
-		collection:             dbClient.Collection(mongo.RightsMongoCollection),
+		collection:             dbClient.Collection(mongo.UserCollection),
 		userPrefCollection:     dbClient.Collection(mongo.UserPreferencesMongoCollection),
 		patternCollection:      dbClient.Collection(mongo.PatternMongoCollection),
 		widgetFilterCollection: dbClient.Collection(mongo.WidgetFiltersMongoCollection),
@@ -47,7 +46,7 @@ func NewStore(
 		websocketStore:  websocketStore,
 		authorProvider:  authorProvider,
 
-		defaultSearchByFields: []string{"_id", "crecord_name", "firstname", "lastname", "role.name"},
+		defaultSearchByFields: []string{"_id", "name", "firstname", "lastname", "role.name"},
 		defaultSortBy:         "name",
 	}
 }
@@ -69,11 +68,15 @@ type store struct {
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
-	pipeline := []bson.M{
-		{"$match": bson.M{"crecord_type": securitymodel.LineTypeSubject}},
+	pipeline := make([]bson.M, 0)
+	project := []bson.M{
+		{"$addFields": bson.M{
+			"username": "$name",
+		}},
+		{"$addFields": bson.M{
+			"display_name": s.authorProvider.GetDisplayNameQuery(""),
+		}},
 	}
-	pipeline = append(pipeline, getRenameFieldsPipeline(s.authorProvider)...)
-	project := make([]bson.M, 0)
 
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 || r.Permission != "" || r.SortBy == "role.name" {
@@ -87,7 +90,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	}
 
 	if r.Permission != "" {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{fmt.Sprintf("role.rights.%s", r.Permission): bson.M{"$exists": true}}})
+		pipeline = append(pipeline, bson.M{"$match": bson.M{fmt.Sprintf("role.permissions.%s", r.Permission): bson.M{"$exists": true}}})
 	}
 
 	project = append(project, getViewPipeline()...)
@@ -138,10 +141,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 
 func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 	pipeline := []bson.M{
-		{"$match": bson.M{
-			"_id":          id,
-			"crecord_type": securitymodel.LineTypeSubject,
-		}},
+		{"$match": bson.M{"_id": id}},
 	}
 	pipeline = append(pipeline, getNestedObjectsPipeline(s.authorProvider)...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
@@ -188,7 +188,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*User, error) {
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
 		res, err := s.collection.UpdateOne(ctx,
-			bson.M{"_id": r.ID, "crecord_type": securitymodel.LineTypeSubject},
+			bson.M{"_id": r.ID},
 			bson.M{"$set": r.getBson(s.passwordEncoder)},
 		)
 		if err != nil || res.MatchedCount == 0 {
@@ -206,10 +206,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*User, error) {
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	delCount, err := s.collection.DeleteOne(ctx, bson.M{
-		"_id":          id,
-		"crecord_type": securitymodel.LineTypeSubject,
-	})
+	delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id})
 	if err != nil {
 		return false, err
 	}
@@ -311,7 +308,7 @@ func (s *store) BulkUpdate(ctx context.Context, requests []BulkUpdateRequestItem
 			writeModels,
 			mongodriver.
 				NewUpdateOneModel().
-				SetFilter(bson.M{"_id": r.ID, "crecord_type": securitymodel.LineTypeSubject}).
+				SetFilter(bson.M{"_id": r.ID}).
 				SetUpdate(bson.M{"$set": r.getBson(s.passwordEncoder)}),
 		)
 
@@ -339,7 +336,14 @@ func (s *store) BulkDelete(ctx context.Context, ids []string) error {
 }
 
 func getNestedObjectsPipeline(authorProvider author.Provider) []bson.M {
-	pipeline := getRenameFieldsPipeline(authorProvider)
+	pipeline := []bson.M{
+		{"$addFields": bson.M{
+			"username": "$name",
+		}},
+		{"$addFields": bson.M{
+			"display_name": authorProvider.GetDisplayNameQuery(""),
+		}},
+	}
 	pipeline = append(pipeline, getRolePipeline()...)
 	pipeline = append(pipeline, getViewPipeline()...)
 
@@ -348,23 +352,13 @@ func getNestedObjectsPipeline(authorProvider author.Provider) []bson.M {
 
 func getRolePipeline() []bson.M {
 	return []bson.M{
-		{"$graphLookup": bson.M{
-			"from":             mongo.RightsMongoCollection,
-			"startWith":        "$role",
-			"connectFromField": "role",
-			"connectToField":   "_id",
-			"as":               "role",
-			"maxDepth":         0,
+		{"$lookup": bson.M{
+			"from":         mongo.RoleCollection,
+			"localField":   "role",
+			"foreignField": "_id",
+			"as":           "role",
 		}},
 		{"$unwind": bson.M{"path": "$role", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"role": bson.M{
-				"_id":         "$role._id",
-				"name":        "$role.crecord_name",
-				"rights":      "$role.rights",
-				"defaultview": "$role.defaultview",
-			},
-		}},
 	}
 }
 
@@ -384,17 +378,5 @@ func getViewPipeline() []bson.M {
 			"as":           "role.defaultview",
 		}},
 		{"$unwind": bson.M{"path": "$role.defaultview", "preserveNullAndEmptyArrays": true}},
-	}
-}
-
-func getRenameFieldsPipeline(authorProvider author.Provider) []bson.M {
-	return []bson.M{
-		{"$addFields": bson.M{
-			"username": "$crecord_name",
-		}},
-		{"$addFields": bson.M{
-			"name":         "$crecord_name",
-			"display_name": authorProvider.GetDisplayNameQuery(""),
-		}},
 	}
 }

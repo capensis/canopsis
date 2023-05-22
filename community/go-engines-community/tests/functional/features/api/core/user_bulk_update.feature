@@ -348,7 +348,7 @@ Feature: Bulk update users
       }
     }
     """
-    When I am authenticated with username "test-user-to-bulk-update-1" and password "test-password-updated"
+    When I am authenticated with username "test-user-to-bulk-update-1-updated" and password "test-password-updated"
     When I do GET /api/v4/account/me
     Then the response code should be 200
     Then the response body should contain:
@@ -358,7 +358,7 @@ Feature: Bulk update users
       "name": "test-user-to-bulk-update-1-updated"
     }
     """
-    When I am authenticated with username "test-user-to-bulk-update-2" and password "test-password-updated"
+    When I am authenticated with username "test-user-to-bulk-update-2-updated" and password "test-password-updated"
     When I do GET /api/v4/account/me
     Then the response code should be 200
     Then the response body should contain:

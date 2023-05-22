@@ -23,27 +23,26 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
-		dbClient:              dbClient,
-		dbCollection:          dbClient.Collection(mongo.RightsMongoCollection),
-		defaultSearchByFields: []string{"_id", "crecord_name", "description"},
-		defaultSortBy:         "name",
+		dbClient:               dbClient,
+		dbCollection:           dbClient.Collection(mongo.RoleCollection),
+		dbPermissionCollection: dbClient.Collection(mongo.PermissionCollection),
+		dbUserCollection:       dbClient.Collection(mongo.UserCollection),
+		defaultSearchByFields:  []string{"_id", "name", "description"},
+		defaultSortBy:          "name",
 	}
 }
 
 type store struct {
-	dbClient              mongo.DbClient
-	dbCollection          mongo.DbCollection
-	defaultSearchByFields []string
-	defaultSortBy         string
+	dbClient               mongo.DbClient
+	dbCollection           mongo.DbCollection
+	dbPermissionCollection mongo.DbCollection
+	dbUserCollection       mongo.DbCollection
+	defaultSearchByFields  []string
+	defaultSortBy          string
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
-	pipeline := []bson.M{
-		{"$match": bson.M{"crecord_type": securitymodel.LineTypeRole}},
-		{"$addFields": bson.M{
-			"name": "$crecord_name",
-		}},
-	}
+	pipeline := make([]bson.M, 0)
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
@@ -93,10 +92,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 
 func (s *store) GetOneBy(ctx context.Context, id string) (*Role, error) {
 	pipeline := []bson.M{
-		{"$match": bson.M{
-			"_id":          id,
-			"crecord_type": securitymodel.LineTypeRole,
-		}},
+		{"$match": bson.M{"_id": id}},
 	}
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
@@ -122,7 +118,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Role, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*Role, error) {
-	types, err := getTypes(ctx, s.dbCollection, r.Permissions)
+	types, err := getTypes(ctx, s.dbPermissionCollection, r.Permissions)
 	if err != nil {
 		return nil, err
 	}
@@ -131,13 +127,11 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Role, error) {
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		role = nil
 		_, err = s.dbCollection.InsertOne(ctx, bson.M{
-			"_id":          r.Name,
-			"crecord_name": r.Name,
-			"crecord_type": securitymodel.LineTypeRole,
-			"description":  r.Description,
-			"defaultview":  r.DefaultView,
-			"rights":       transformPermissionsToDoc(r.Permissions, types),
-
+			"_id":         r.Name,
+			"name":        r.Name,
+			"description": r.Description,
+			"defaultview": r.DefaultView,
+			"permissions": transformPermissionsToDoc(r.Permissions, types),
 			"auth_config": r.AuthConfig,
 		})
 		if err != nil {
@@ -154,7 +148,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Role, error) {
 }
 
 func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Role, error) {
-	types, err := getTypes(ctx, s.dbCollection, r.Permissions)
+	types, err := getTypes(ctx, s.dbPermissionCollection, r.Permissions)
 	if err != nil {
 		return nil, err
 	}
@@ -163,12 +157,11 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Role, er
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		role = nil
 		res, err := s.dbCollection.UpdateOne(ctx,
-			bson.M{"_id": id, "crecord_type": securitymodel.LineTypeRole},
+			bson.M{"_id": id},
 			bson.M{"$set": bson.M{
 				"description": r.Description,
 				"defaultview": r.DefaultView,
-				"rights":      transformPermissionsToDoc(r.Permissions, types),
-
+				"permissions": transformPermissionsToDoc(r.Permissions, types),
 				"auth_config": r.AuthConfig,
 			}},
 		)
@@ -186,10 +179,7 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Role, er
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	res := s.dbCollection.FindOne(ctx, bson.M{
-		"crecord_type": securitymodel.LineTypeSubject,
-		"role":         id,
-	})
+	res := s.dbUserCollection.FindOne(ctx, bson.M{"role": id})
 	if err := res.Err(); err != nil {
 		if err != mongodriver.ErrNoDocuments {
 			return false, err
@@ -198,10 +188,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		return false, ErrLinkedToUser
 	}
 
-	delCount, err := s.dbCollection.DeleteOne(ctx, bson.M{
-		"_id":          id,
-		"crecord_type": securitymodel.LineTypeRole,
-	})
+	delCount, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
 	if err != nil {
 		return false, err
 	}
@@ -212,62 +199,31 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 func getNestedObjectsPipeline() []bson.M {
 	return []bson.M{
 		{"$addFields": bson.M{
-			"permissions": bson.M{"$map": bson.M{
-				"input": bson.M{"$objectToArray": "$rights"},
-				"as":    "each",
-				"in":    "$$each.k",
-			}},
-			"bitmasks": bson.M{"$map": bson.M{
-				"input": bson.M{"$objectToArray": "$rights"},
-				"as":    "each",
-				"in": bson.M{
-					"k": "$$each.k",
-					"v": "$$each.v.checksum",
-				},
-			}},
-		}},
-		{"$graphLookup": bson.M{
-			"from":             mongo.RightsMongoCollection,
-			"startWith":        "$permissions",
-			"connectFromField": "permissions",
-			"connectToField":   "_id",
-			"as":               "permissions",
-		}},
-		{"$addFields": bson.M{
-			"permissions": bson.M{"$map": bson.M{
-				"input": "$permissions",
-				"as":    "each",
-				"in": bson.M{
-					"_id":         "$$each._id",
-					"name":        "$$each.crecord_name",
-					"description": "$$each.description",
-					"type":        "$$each.type",
-					"bitmask": bson.M{"$arrayElemAt": bson.A{
-						bson.M{"$map": bson.M{
-							"input": bson.M{"$filter": bson.M{
-								"input": "$bitmasks",
-								"as":    "bitmask",
-								"cond": bson.M{
-									"$eq": bson.A{"$$each._id", "$$bitmask.k"},
-								},
-							}},
-							"as": "bitmask",
-							"in": "$$bitmask.v",
-						}},
-						0,
-					}},
-				},
-			}},
+			"permissions": bson.M{"$objectToArray": "$permissions"},
 		}},
 		{"$unwind": bson.M{"path": "$permissions", "preserveNullAndEmptyArrays": true}},
-		{"$sort": bson.M{"permissions.name": 1}},
+		{"$lookup": bson.M{
+			"from":         mongo.PermissionCollection,
+			"localField":   "permissions.k",
+			"foreignField": "_id",
+			"as":           "permissions.model",
+		}},
+		{"$unwind": bson.M{"path": "$permissions.model", "preserveNullAndEmptyArrays": true}},
+		{"$sort": bson.M{"permissions.model.name": 1}},
 		{"$group": bson.M{
 			"_id":         "$_id",
-			"name":        bson.M{"$first": "$crecord_name"},
+			"name":        bson.M{"$first": "$name"},
 			"description": bson.M{"$first": "$description"},
 			"defaultview": bson.M{"$first": "$defaultview"},
-			"permissions": bson.M{"$push": "$permissions"},
 			"auth_config": bson.M{"$first": "$auth_config"},
+			"permissions": bson.M{"$push": bson.M{"$cond": bson.M{
+				"if": "$permissions.model",
+				"then": bson.M{"$mergeObjects": bson.A{
+					"$permissions.model",
+					bson.M{"bitmask": "$permissions.v"},
+				}},
+				"else": "$$REMOVE",
+			}}},
 		}},
 		{"$lookup": bson.M{
 			"from":         mongo.ViewMongoCollection,
@@ -285,10 +241,10 @@ func fillRolePermissions(role *Role) {
 	}
 }
 
-func TransformBitmaskToActions(bitmask int64, roleType string) []string {
+func TransformBitmaskToActions(bitmask int64, permType string) []string {
 	actions := make([]string, 0)
-	switch roleType {
-	case securitymodel.LineObjectTypeCRUD:
+	switch permType {
+	case securitymodel.ObjectTypeCRUD:
 		actionsBitmasks := map[string]int64{
 			securitymodel.PermissionCreate: securitymodel.PermissionBitmaskCreate,
 			securitymodel.PermissionRead:   securitymodel.PermissionBitmaskRead,
@@ -300,7 +256,7 @@ func TransformBitmaskToActions(bitmask int64, roleType string) []string {
 				actions = append(actions, action)
 			}
 		}
-	case securitymodel.LineObjectTypeRW:
+	case securitymodel.ObjectTypeRW:
 		actionsBitmasks := map[string]int64{
 			securitymodel.PermissionRead:   securitymodel.PermissionBitmaskRead,
 			securitymodel.PermissionUpdate: securitymodel.PermissionBitmaskUpdate,
@@ -318,8 +274,8 @@ func TransformBitmaskToActions(bitmask int64, roleType string) []string {
 	return actions
 }
 
-func transformPermissionsToDoc(permissions map[string][]string, types map[string]string) map[string]interface{} {
-	rights := make(map[string]interface{}, len(permissions))
+func transformPermissionsToDoc(permissions map[string][]string, types map[string]string) map[string]int64 {
+	doc := make(map[string]int64, len(permissions))
 	actionsBitmasks := map[string]int64{
 		securitymodel.PermissionCreate: securitymodel.PermissionBitmaskCreate,
 		securitymodel.PermissionRead:   securitymodel.PermissionBitmaskRead,
@@ -335,7 +291,7 @@ func transformPermissionsToDoc(permissions map[string][]string, types map[string
 				continue
 			}
 			switch permType {
-			case securitymodel.LineObjectTypeCRUD, securitymodel.LineObjectTypeRW:
+			case securitymodel.ObjectTypeCRUD, securitymodel.ObjectTypeRW:
 				continue
 			}
 			bitmask = 1
@@ -345,27 +301,25 @@ func transformPermissionsToDoc(permissions map[string][]string, types map[string
 			}
 		}
 
-		rights[id] = map[string]int64{
-			"checksum": bitmask,
-		}
+		doc[id] = bitmask
 	}
 
-	return rights
+	return doc
 }
 
-func getTypes(ctx context.Context, rightsCollection mongo.DbCollection, permissions map[string][]string) (map[string]string, error) {
+func getTypes(ctx context.Context, permissionCollection mongo.DbCollection, permissions map[string][]string) (map[string]string, error) {
 	ids := make([]string, 0)
 	for id := range permissions {
 		ids = append(ids, id)
 	}
-	cursor, err := rightsCollection.Aggregate(ctx, []bson.M{
+	cursor, err := permissionCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
-			"_id":          bson.M{"$in": ids},
-			"crecord_type": securitymodel.LineTypeObject,
+			"_id": bson.M{"$in": ids},
 			"type": bson.M{"$in": bson.A{
-				nil, "",
-				securitymodel.LineObjectTypeCRUD,
-				securitymodel.LineObjectTypeRW,
+				nil,
+				"",
+				securitymodel.ObjectTypeCRUD,
+				securitymodel.ObjectTypeRW,
 			}},
 		},
 		}, {"$group": bson.M{
