@@ -95,7 +95,7 @@ export default {
         { text: this.$tc('common.action'), value: 'operation.type', sortable: false },
         { text: this.$t('idleRules.timeAwaiting'), value: 'duration', sortable: false },
         { text: this.$t('common.priority'), value: 'priority' },
-        { text: this.$t('common.author'), value: 'author.name' },
+        { text: this.$t('common.author'), value: 'author.display_name' },
         {
           text: this.$t('common.actionsLabel'),
           value: 'actions',
