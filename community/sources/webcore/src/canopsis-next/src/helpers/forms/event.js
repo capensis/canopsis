@@ -225,7 +225,7 @@ export const createDeclareTicketEventByEntity = ({ entity }) => prepareEventByEn
  */
 export const createValidateEventByEntity = ({ entity }) => prepareEventByEntity(
   entity,
-  EVENT_ENTITY_TYPES.validate,
+  EVENT_ENTITY_TYPES.changeState,
   {
     state: ENTITIES_STATES.critical,
     output: WEATHER_ACK_EVENT_OUTPUT.validateOk,
@@ -241,7 +241,7 @@ export const createValidateEventByEntity = ({ entity }) => prepareEventByEntity(
  */
 export const createInvalidateEventByEntity = ({ entity }) => prepareEventByEntity(
   entity,
-  EVENT_ENTITY_TYPES.invalidate,
+  EVENT_ENTITY_TYPES.cancel,
   {
     state: ENTITIES_STATES.major,
     output: WEATHER_ACK_EVENT_OUTPUT.validateCancel,
