@@ -169,12 +169,13 @@ func TestAdapter_LoadPolicy_GivenRole_ShouldAddCanPermissionsToRole(t *testing.T
 func TestAdapter_LoadPolicy_GivenUser_ShouldAddRoleToUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockRoleCursor := createMockCursor(ctrl, []role{{
-		ID: "testrole",
-	}})
+	mockRoleCursor := createMockCursor(ctrl, []role{
+		{ID: "testrole1"},
+		{ID: "testrole2"},
+	})
 	mockSubjCursor := createMockCursor(ctrl, []user{{
-		ID:   "testsubj",
-		Role: "testrole",
+		ID:    "testsubj",
+		Roles: []string{"testrole1", "testrole2"},
 	}})
 	mockRoleDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockRoleDbCollection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(mockRoleCursor, nil)
@@ -199,7 +200,8 @@ func TestAdapter_LoadPolicy_GivenUser_ShouldAddRoleToUser(t *testing.T) {
 	}
 
 	expectedPolicy := [][]string{
-		{"testsubj", "testrole"},
+		{"testsubj", "testrole1"},
+		{"testsubj", "testrole2"},
 	}
 	policy := m["g"]["g"].Policy
 	sort.Slice(policy, sortPolicy(policy))

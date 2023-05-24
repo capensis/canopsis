@@ -179,7 +179,7 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Role, er
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	res := s.dbUserCollection.FindOne(ctx, bson.M{"role": id})
+	res := s.dbUserCollection.FindOne(ctx, bson.M{"roles": id})
 	if err := res.Err(); err != nil {
 		if err != mongodriver.ErrNoDocuments {
 			return false, err
