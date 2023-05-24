@@ -66,6 +66,10 @@ Feature: Count matches
       "pbehavior_pattern": {
         "count": 0,
         "over_limit": false
+      },
+      "all": {
+        "count": 4,
+        "over_limit": false
       }
     }
     """
@@ -134,6 +138,10 @@ Feature: Count matches
       "pbehavior_pattern": {
         "count": 0,
         "over_limit": false
+      },
+      "all": {
+        "count": 4,
+        "over_limit": true
       }
     }
     """
@@ -158,6 +166,10 @@ Feature: Count matches
         "over_limit": false
       },
       "pbehavior_pattern": {
+        "count": 0,
+        "over_limit": false
+      },
+      "all": {
         "count": 0,
         "over_limit": false
       }
