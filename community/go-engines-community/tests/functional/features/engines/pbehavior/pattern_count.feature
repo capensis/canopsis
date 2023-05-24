@@ -151,6 +151,10 @@ Feature: Count matches
       "pbehavior_pattern": {
         "count": 4,
         "over_limit": false
+      },
+      "all": {
+        "count": 4,
+        "over_limit": false
       }
     }
     """
@@ -185,6 +189,10 @@ Feature: Count matches
     """json
     {
       "pbehavior_pattern": {
+        "count": 4,
+        "over_limit": true
+      },
+      "all": {
         "count": 4,
         "over_limit": true
       }
@@ -317,6 +325,10 @@ Feature: Count matches
       "pbehavior_pattern": {
         "count": 2,
         "over_limit": false
+      },
+      "all": {
+        "count": 2,
+        "over_limit": false
       }
     }
     """
@@ -341,6 +353,10 @@ Feature: Count matches
     """json
     {
       "pbehavior_pattern": {
+        "count": 0,
+        "over_limit": false
+      },
+      "all": {
         "count": 0,
         "over_limit": false
       }

@@ -471,11 +471,16 @@ func (s *store) Count(ctx context.Context, r CountRequest, maxCount int64) (Coun
 	g, ctx := errgroup.WithContext(ctx)
 	var err error
 	var alarmPatternQuery, entityPatternQuery, pbhPatternQuery bson.M
-	var alarmPatternCount, entityPatternCount, pbhPatternCount Count
+	allPipeline := make([]bson.M, 0)
+	var alarmPatternCount, entityPatternCount, pbhPatternCount, allCount Count
 	if len(r.AlarmPattern) > 0 {
 		alarmPatternQuery, err = r.AlarmPattern.ToMongoQuery("")
 		if err != nil {
 			return res, err
+		}
+
+		if len(r.PbehaviorPattern) > 0 || len(r.EntityPattern) > 0 {
+			allPipeline = append(allPipeline, bson.M{"$match": alarmPatternQuery})
 		}
 	}
 	if len(r.PbehaviorPattern) > 0 {
@@ -483,17 +488,38 @@ func (s *store) Count(ctx context.Context, r CountRequest, maxCount int64) (Coun
 		if err != nil {
 			return res, err
 		}
+
+		if len(r.AlarmPattern) > 0 || len(r.EntityPattern) > 0 {
+			allPipeline = append(allPipeline, bson.M{"$match": pbhPatternQuery})
+		}
 	}
 	if len(r.EntityPattern) > 0 {
 		entityPatternQuery, err = r.EntityPattern.ToMongoQuery("")
 		if err != nil {
 			return res, err
 		}
+
+		allEntityPatternQuery, err := r.EntityPattern.ToMongoQuery("entity")
+		if err != nil {
+			return res, err
+		}
+
+		allPipeline = append(allPipeline,
+			bson.M{"$lookup": bson.M{
+				"from":         mongo.EntityMongoCollection,
+				"localField":   "d",
+				"foreignField": "_id",
+				"as":           "entity",
+			}},
+			bson.M{"$unwind": "$entity"},
+			bson.M{"$match": allEntityPatternQuery},
+		)
 	}
 
 	if len(alarmPatternQuery) > 0 {
 		g.Go(func() error {
-			alarmPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection), alarmPatternQuery)
+			alarmPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection),
+				[]bson.M{{"$match": alarmPatternQuery}})
 			alarmPatternCount.OverLimit = alarmPatternCount.Count > maxCount
 
 			return err
@@ -502,7 +528,8 @@ func (s *store) Count(ctx context.Context, r CountRequest, maxCount int64) (Coun
 	if len(pbhPatternQuery) > 0 {
 		g.Go(func() error {
 			var err error
-			pbhPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection), pbhPatternQuery)
+			pbhPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection),
+				[]bson.M{{"$match": pbhPatternQuery}})
 			pbhPatternCount.OverLimit = pbhPatternCount.Count > maxCount
 
 			return err
@@ -511,12 +538,25 @@ func (s *store) Count(ctx context.Context, r CountRequest, maxCount int64) (Coun
 	if len(entityPatternQuery) > 0 {
 		g.Go(func() error {
 			var err error
-			entityPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.EntityMongoCollection), entityPatternQuery)
+			entityPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.EntityMongoCollection),
+				[]bson.M{{"$match": entityPatternQuery}})
 			entityPatternCount.OverLimit = entityPatternCount.Count > maxCount
 
 			return err
 		})
 	}
+	fetchAllCount := false
+	if len(allPipeline) > 0 {
+		fetchAllCount = true
+		g.Go(func() error {
+			var err error
+			allCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection), allPipeline)
+			allCount.OverLimit = allCount.Count > maxCount
+
+			return err
+		})
+	}
+
 	if err := g.Wait(); err != nil {
 		return res, err
 	}
@@ -524,15 +564,24 @@ func (s *store) Count(ctx context.Context, r CountRequest, maxCount int64) (Coun
 	res.AlarmPattern = alarmPatternCount
 	res.PbehaviorPattern = pbhPatternCount
 	res.EntityPattern = entityPatternCount
+	if fetchAllCount {
+		res.All = allCount
+	} else if len(r.AlarmPattern) > 0 {
+		res.All = alarmPatternCount
+	} else if len(r.PbehaviorPattern) > 0 {
+		res.All = pbhPatternCount
+	}
 
 	return res, nil
 }
 
-func (s *store) fetchCount(ctx context.Context, collection mongo.DbCollection, match bson.M) (int64, error) {
-	cursor, err := collection.Aggregate(ctx, []bson.M{
-		{"$match": match},
-		{"$count": "total_count"},
-	})
+func (s *store) fetchCount(
+	ctx context.Context,
+	collection mongo.DbCollection,
+	pipeline []bson.M,
+) (int64, error) {
+	pipeline = append(pipeline, bson.M{"$count": "total_count"})
+	cursor, err := collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return 0, err
 	}
