@@ -62,9 +62,10 @@ type CountRequest struct {
 }
 
 type CountResponse struct {
-	AlarmPattern     Count `json:"alarm_pattern" binding:"alarm_pattern"`
-	EntityPattern    Count `json:"entity_pattern" binding:"entity_pattern"`
-	PbehaviorPattern Count `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
+	AlarmPattern     Count `json:"alarm_pattern"`
+	EntityPattern    Count `json:"entity_pattern"`
+	PbehaviorPattern Count `json:"pbehavior_pattern"`
+	All              Count `json:"all"`
 }
 
 type Count struct {
