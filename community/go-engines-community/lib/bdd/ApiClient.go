@@ -809,7 +809,7 @@ func (a *ApiClient) IAm(ctx context.Context, role string) (context.Context, erro
 		Name string `bson:"name"`
 	}
 	err = a.db.Collection(mongo.UserCollection).FindOne(ctx, bson.M{
-		"role": r.ID,
+		"roles": r.ID,
 	}).Decode(&u)
 	if err != nil {
 		return ctx, fmt.Errorf("cannot fetch user: %w", err)

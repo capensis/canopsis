@@ -1490,6 +1490,7 @@ user:
   user_admin:
     <<: *user
     name: root
-    role: "@role_admin"
+    roles:
+      - "@role_admin"
     email: admin@canopsis.org
     password: "<Password(root)>"

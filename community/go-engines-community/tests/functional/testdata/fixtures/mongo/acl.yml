@@ -752,50 +752,67 @@ role:
       "@permission_to_edit_role_2": 15
       "@permission_to_edit_role_3": 7
 
-  role_to_edit_user:
+  role_to_user_edit_1:
     <<: *role
-    _id: test-role-to-edit-user
+    _id: test-role-to-user-edit-1
     name: <Current()._id>
     defaultview: test-view-to-edit-user
-    description: test-role-to-edit-user-description
+    description: test-role-to-user-edit-1-description
     permissions:
       "@permission_to_edit_user_1": 1
       "@permission_to_edit_user_2": 15
       "@permission_to_edit_user_3": 7
 
-  role_to_user_get_1:
+  role_to_user_edit_2:
     <<: *role
-    _id: test-role-to-user-get-1
+    _id: test-role-to-user-edit-2
     name: <Current()._id>
     defaultview: test-view-to-edit-user
-    description: test-role-to-user-get-1-description
+    description: test-role-to-user-edit-2-description
     permissions:
       "@permission_to_edit_user_1": 1
-      "@permission_to_edit_user_2": 15
-      "@permission_to_edit_user_3": 7
 
-  role_to_user_get_2:
+  role_to_user_edit_3:
     <<: *role
-    _id: test-role-to-user-get-2
+    _id: test-role-to-user-edit-3
     name: <Current()._id>
     defaultview: test-view-to-edit-user
-    description: test-role-to-user-get-2-description
+    description: test-role-to-user-edit-3-description
     permissions:
       "@permission_api_execution": 1
       "@permission_api_instruction": 15
       "@permission_api_instruction_approve": 1
 
+  role_to_account_get_1:
+    <<: *role
+    _id: test-role-to-account-get-1
+    name: <Current()._id>
+    defaultview: test-view-to-edit-user
+    permissions:
+      "@permission_to_edit_user_1": 1
+      "@permission_to_edit_user_2": 15
+      "@permission_to_edit_user_3": 4
+
+  role_to_account_get_2:
+    <<: *role
+    _id: test-role-to-account-get-2
+    name: <Current()._id>
+    permissions:
+      "@permission_to_edit_user_1": 1
+      "@permission_to_edit_user_2": 7
+      "@permission_to_edit_user_3": 3
+
   role_to_account_update_1:
     <<: *role
     _id: test-role-to-account-update-1
     name: <Current()._id>
-    permissions: {}
+    permissions: { }
 
   role_to_account_update_2:
     <<: *role
     _id: test-role-to-account-update-2
     name: <Current()._id>
-    permissions: {}
+    permissions: { }
 
   role_to_playlist_edit:
     <<: *role
@@ -919,7 +936,8 @@ user:
     email: admin@canopsis.net
     firstname: John
     lastname: Doe
-    role: "@role_admin"
+    roles:
+      - "@role_admin"
 
   user_manager:
     <<: *user
@@ -930,13 +948,15 @@ user:
       address: 30 Rue du Triez 59290 Wasquehal France
       name: John Doe
     email: manager@canopsis.net
-    role: "@role_manager"
+    roles:
+      - "@role_manager"
 
   user_noperms:
     <<: *user
     _id: nopermsuser
     name: <Current()._id>
-    role: "@role_noperms"
+    roles:
+      - "@role_noperms"
     firstname:
     lastname:
 
@@ -950,7 +970,9 @@ user:
     ui_groups_navigation_type: side-bar
     lastname: test-user-to-get-1-lastname
     email: test-user-to-get-1-email@canopsis.net
-    role: "@role_to_user_get_1"
+    roles:
+      - "@role_to_user_edit_2"
+      - "@role_to_user_edit_1"
     ui_tours:
       test-tour-to-get-user-1: true
     ui_language: en
@@ -966,7 +988,8 @@ user:
     ui_groups_navigation_type: side-bar
     lastname: test-user-to-get-2-lastname
     email: test-user-to-get-2-email@canopsis.net
-    role: "@role_to_user_get_2"
+    roles:
+      - "@role_to_user_edit_3"
     ui_language: en
     ui_theme: canopsis
 
@@ -974,33 +997,38 @@ user:
     <<: *user
     _id: test-user-to-check-unique-name
     name: test-user-to-check-unique-name-name
-    role: "@role_to_edit_user"
+    roles:
+      - "@role_to_user_edit_1"
 
   user_to_delete:
     <<: *user
     _id: test-user-to-delete
     name: <Current()._id>
-    role: "@role_to_edit_user"
+    roles:
+      - "@role_to_user_edit_1"
 
   user_to_update_1:
     <<: *user
     _id: test-user-to-update-1
     name: <Current()._id>
     authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
-    role: "@role_to_edit_user"
+    roles:
+      - "@role_to_user_edit_1"
 
   user_to_update_2:
     <<: *user
     _id: test-user-to-update-2
     name: <Current()._id>
-    role: "@role_to_edit_user"
+    roles:
+      - "@role_to_user_edit_1"
 
   user_to_update_3:
     <<: *user
     _id: test-user-to-update-3
     name: <Current()._id>
     authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
-    role: "@role_to_edit_user"
+    roles:
+      - "@role_to_user_edit_1"
     source: saml
     external_id: saml_id
 
@@ -1009,13 +1037,33 @@ user:
     _id: test-user-to-update-4
     name: <Current()._id>
     authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
-    role: "@role_to_edit_user"
+    roles:
+      - "@role_to_user_edit_1"
 
   user_to_delete_role_linked_to_user:
     <<: *user
     _id: test-user-to-delete-role-linked-to-user
     name: <Current()._id>
-    role: "@role_to_delete_linked_to_user"
+    roles:
+      - "@role_to_delete_linked_to_user"
+
+  user_to_account_get_1:
+    <<: *user
+    _id: test-user-to-account-get-1
+    name: <Current()._id>
+    email: test-user-to-account-get-1-email@canopsis.net
+    firstname: test-user-to-account-get-1-firstname
+    lastname: test-user-to-account-get-1-lastname
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e179f72a6426
+    roles:
+      - "@role_to_account_get_2"
+      - "@role_to_account_get_1"
+    defaultview: test-view-to-edit-user
+    ui_groups_navigation_type: side-bar
+    ui_tours:
+      test-tour-to-account-get-1: true
+    ui_language: en
+    ui_theme: canopsis
 
   user_to_account_update_1:
     <<: *user
@@ -1025,34 +1073,39 @@ user:
     firstname: test-user-to-account-update-1-firstname
     lastname: test-user-to-account-update-1-lastname
     authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6425
-    role: "@role_to_account_update_1"
+    roles:
+      - "@role_to_account_update_1"
 
   user_to_account_update_2:
     <<: *user
     _id: test-user-to-account-update-2
     name: <Current()._id>
-    role: "@role_to_account_update_2"
+    roles:
+      - "@role_to_account_update_2"
 
   user_to_bulk_update_1:
     <<: *user
     _id: test-user-to-bulk-update-1
     name: <Current()._id>
     authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
-    role: "@role_to_edit_user"
+    roles:
+      - "@role_to_user_edit_1"
 
   user_to_bulk_update_2:
     <<: *user
     _id: test-user-to-bulk-update-2
     name: <Current()._id>
     authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
-    role: "@role_to_edit_user"
+    roles:
+      - "@role_to_user_edit_1"
 
   user_to_bulk_update_3:
     <<: *user
     _id: test-user-to-bulk-update-3
     name: <Current()._id>
     authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
-    role: "@role_to_edit_user"
+    roles:
+      - "@role_to_user_edit_1"
     source: saml
     external_id: saml_id
 
@@ -1061,7 +1114,8 @@ user:
     _id: test-user-to-bulk-update-4
     name: <Current()._id>
     authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
-    role: "@role_to_edit_user"
+    roles:
+      - "@role_to_user_edit_1"
     firstname:
     lastname:
 
@@ -1069,43 +1123,50 @@ user:
     <<: *user
     _id: test-user-to-bulk-delete-1
     name: <Current()._id>
-    role: "@role_to_edit_user"
+    roles:
+      - "@role_to_user_edit_1"
 
   user_to_bulk_delete_2:
     <<: *user
     _id: test-user-to-bulk-delete-2
     name: <Current()._id>
-    role: "@role_to_edit_user"
+    roles:
+      - "@role_to_user_edit_1"
 
   user_to_view_edit:
     <<: *user
     _id: test-user-to-view-edit
     name: <Current()._id>
-    role: "@role_to_view_edit"
+    roles:
+      - "@role_to_view_edit"
 
   user_to_widget_filter_edit_1:
     <<: *user
     _id: test-user-to-widget-filter-edit-1
     name: <Current()._id>
-    role: "@role_to_widget_filter_edit_1"
+    roles:
+      - "@role_to_widget_filter_edit_1"
 
   user_to_playlist_edit:
     <<: *user
     _id: test-user-to-playlist-edit
     name: <Current()._id>
-    role: "@role_to_playlist_edit"
+    roles:
+      - "@role_to_playlist_edit"
 
   user_to_update_view_position:
     <<: *user
     _id: test-user-to-update-view-position
     name: <Current()._id>
-    role: "@role_to_update_view_position"
+    roles:
+      - "@role_to_update_view_position"
 
   user_to_rule_author_1:
     <<: *user
     _id: test-user-author-1-id
     name: test-user-author-1-username
-    role: "@role_noperms"
+    roles:
+      - "@role_noperms"
     firstname:
     lastname:
 
@@ -1113,25 +1174,29 @@ user:
     <<: *user
     _id: test-user-alternate-author-1-id
     name: <Current()._id>
-    role: "@role_noperms"
+    roles:
+      - "@role_noperms"
 
   user_to_rate_instruction:
     <<: *user
     _id: test-user-to-rate-instruction
     name: <Current()._id>
-    role: "@role_to_rate_instruction"
+    roles:
+      - "@role_to_rate_instruction"
 
   user_to_stats_instruction_get:
     <<: *user
     _id: test-user-to-stats-instruction-get
     name: <Current()._id>
-    role: "@role_to_stats_instruction_get"
+    roles:
+      - "@role_to_stats_instruction_get"
 
   user_to_user_preferences_edit:
     <<: *user
     _id: test-user-to-user-preferences-edit
     name: <Current()._id>
-    role: "@role_to_user_preferences_edit"
+    roles:
+      - "@role_to_user_preferences_edit"
     firstname:
     lastname:
 
@@ -1139,51 +1204,60 @@ user:
     <<: *user
     _id: test-user-to-tab-update-position
     name: <Current()._id>
-    role: "@role_to_tab_update_position"
+    roles:
+      - "@role_to_tab_update_position"
 
   user_to_filter_update_position_1:
     <<: *user
     _id: test-user-to-filter-update-position-1
     name: <Current()._id>
-    role: "@role_to_filter_update_position_1"
+    roles:
+      - "@role_to_filter_update_position_1"
   user_to_filter_update_position_2:
     <<: *user
     _id: test-user-to-filter-update-position-2
     name: <Current()._id>
-    role: "@role_to_filter_update_position_2"
+    roles:
+      - "@role_to_filter_update_position_2"
 
   user_to_widget_update_grid_position:
     <<: *user
     _id: test-user-to-widget-update-grid-position
     name: <Current()._id>
-    role: "@role_to_widget_update_grid_position"
+    roles:
+      - "@role_to_widget_update_grid_position"
 
   user_to_instruction_approve_1:
     <<: *user
     _id: user-to-instruction-approve-1
     name: <Current()._id>
-    role: "@role_to_instruction_approve_1"
+    roles:
+      - "@role_to_instruction_approve_1"
 
   user_to_instruction_approve_2:
     <<: *user
     _id: user-to-instruction-approve-2
     name: <Current()._id>
-    role: "@role_to_instruction_approve_2"
+    roles:
+      - "@role_to_instruction_approve_2"
 
   user_to_test_paused_executions:
     <<: *user
     _id: test-user-to-test-paused-executions
     name: <Current()._id>
-    role: "@role_manager"
+    roles:
+      - "@role_manager"
 
   user_to_widget_filter_edit_2:
     <<: *user
     _id: test-user-to-widget-filter-edit-2
     name: <Current()._id>
-    role: "@role_to_widget_filter_edit_2"
+    roles:
+      - "@role_to_widget_filter_edit_2"
 
   user_to_websocket_connect:
     <<: *user
     _id: test-user-to-websocket-connect
     name: <Current()._id>
-    role: "@role_to_websocket_connect"
+    roles:
+      - "@role_to_websocket_connect"
