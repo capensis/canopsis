@@ -2,14 +2,14 @@ package security
 
 // User represents user model.
 type User struct {
-	ID             string `bson:"_id"`
-	Name           string `bson:"name"`
-	Firstname      string `bson:"firstname"`
-	Lastname       string `bson:"lastname"`
-	Email          string `bson:"email"`
-	HashedPassword string `bson:"password,omitempty"`
-	AuthApiKey     string `bson:"authkey"`
-	Role           string `bson:"role"`
+	ID             string   `bson:"_id"`
+	Name           string   `bson:"name"`
+	Firstname      string   `bson:"firstname"`
+	Lastname       string   `bson:"lastname"`
+	Email          string   `bson:"email"`
+	HashedPassword string   `bson:"password,omitempty"`
+	AuthApiKey     string   `bson:"authkey"`
+	Roles          []string `bson:"roles"`
 	Contact        struct {
 		Name    string `bson:"name"`
 		Address string `bson:"address"`

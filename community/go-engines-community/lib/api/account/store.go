@@ -34,15 +34,14 @@ func NewStore(db mongo.DbClient, passwordEncoder password.Encoder, authorProvide
 func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 	cursor, err := s.collection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"_id": id}},
-		// Find role
+		// Find permissions
 		{"$lookup": bson.M{
 			"from":         mongo.RoleCollection,
-			"localField":   "role",
+			"localField":   "roles",
 			"foreignField": "_id",
 			"as":           "role",
 		}},
 		{"$unwind": bson.M{"path": "$role", "preserveNullAndEmptyArrays": true}},
-		// Find permissions
 		{"$addFields": bson.M{
 			"permissions": bson.M{"$objectToArray": "$role.permissions"},
 		}},
@@ -56,22 +55,8 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 		{"$unwind": bson.M{"path": "$permissions.model", "preserveNullAndEmptyArrays": true}},
 		{"$sort": bson.M{"permissions.model.name": 1}},
 		{"$group": bson.M{
-			"_id":                       "$_id",
-			"name":                      bson.M{"$first": "$name"},
-			"lastname":                  bson.M{"$first": "$lastname"},
-			"firstname":                 bson.M{"$first": "$firstname"},
-			"email":                     bson.M{"$first": "$email"},
-			"role":                      bson.M{"$first": "$role"},
-			"ui_language":               bson.M{"$first": "$ui_language"},
-			"ui_theme":                  bson.M{"$first": "$ui_theme"},
-			"ui_tours":                  bson.M{"$first": "$ui_tours"},
-			"ui_groups_navigation_type": bson.M{"$first": "$ui_groups_navigation_type"},
-			"enable":                    bson.M{"$first": "$enable"},
-			"defaultview":               bson.M{"$first": "$defaultview"},
-			"external_id":               bson.M{"$first": "$external_id"},
-			"source":                    bson.M{"$first": "$source"},
-			"authkey":                   bson.M{"$first": "$authkey"},
-			"paused_executions":         bson.M{"$first": "$paused_executions"},
+			"_id":  "$_id",
+			"data": bson.M{"$first": "$$ROOT"},
 			"permissions": bson.M{"$push": bson.M{"$cond": bson.M{
 				"if": "$permissions.model",
 				"then": bson.M{"$mergeObjects": bson.A{
@@ -81,6 +66,10 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 				"else": "$$REMOVE",
 			}}},
 		}},
+		{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+			"$data",
+			bson.M{"permissions": "$permissions"},
+		}}}},
 		// Find defaultview
 		{"$lookup": bson.M{
 			"from":         mongo.ViewMongoCollection,
@@ -89,13 +78,41 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 			"as":           "defaultview",
 		}},
 		{"$unwind": bson.M{"path": "$defaultview", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{
+			"path":                       "$roles",
+			"preserveNullAndEmptyArrays": true,
+			"includeArrayIndex":          "role_index",
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.RoleCollection,
+			"localField":   "roles",
+			"foreignField": "_id",
+			"as":           "roles",
+		}},
+		{"$unwind": bson.M{"path": "$roles", "preserveNullAndEmptyArrays": true}},
 		{"$lookup": bson.M{
 			"from":         mongo.ViewMongoCollection,
-			"localField":   "role.defaultview",
+			"localField":   "roles.defaultview",
 			"foreignField": "_id",
-			"as":           "role.defaultview",
+			"as":           "roles.defaultview",
 		}},
-		{"$unwind": bson.M{"path": "$role.defaultview", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$roles.defaultview", "preserveNullAndEmptyArrays": true}},
+		{"$sort": bson.M{"role_index": 1}},
+		{"$group": bson.M{
+			"_id":  "$_id",
+			"data": bson.M{"$first": "$$ROOT"},
+			"roles": bson.M{"$push": bson.M{
+				"$cond": bson.M{
+					"if":   "$roles._id",
+					"then": "$roles",
+					"else": "$$REMOVE",
+				},
+			}},
+		}},
+		{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+			"$data",
+			bson.M{"roles": "$roles"},
+		}}}},
 		{"$addFields": bson.M{
 			"username": "$name",
 		}},
@@ -117,8 +134,21 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 			return nil, err
 		}
 
-		for i := range user.Permissions {
-			user.Permissions[i].Actions = role.TransformBitmaskToActions(user.Permissions[i].Bitmask, user.Permissions[i].Type)
+		permIndexes := make(map[string]int, len(user.Permissions))
+		k := 0
+		for _, perm := range user.Permissions {
+			if idx, ok := permIndexes[perm.ID]; ok {
+				user.Permissions[idx].Bitmask |= perm.Bitmask
+			} else {
+				user.Permissions[k] = perm
+				permIndexes[perm.ID] = k
+				k++
+			}
+		}
+		user.Permissions = user.Permissions[:k]
+
+		for i, perm := range user.Permissions {
+			user.Permissions[i].Actions = role.TransformBitmaskToActions(perm.Bitmask, perm.Type)
 		}
 
 		return user, nil
