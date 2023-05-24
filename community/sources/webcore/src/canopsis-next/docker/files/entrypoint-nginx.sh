@@ -34,7 +34,7 @@ fi
 
 if [ "$NGINX_DISABLE_IPV6" = "true" ]
 then
-	sed -i -e '/listen \[\:\:\]\:.*/d' "${NGINX_CONFIGURATION_DIRECTORY}/conf.d/default.conf" "${NGINX_CONFIGURATION_DIRECTORY}"/https.inc"
+	sed -i -e '/listen \[\:\:\]\:.*/d' "${NGINX_CONFIGURATION_DIRECTORY}/conf.d/default.conf" "${NGINX_CONFIGURATION_DIRECTORY}"/https.inc
 fi
 
 if [ "$ENABLE_RUNDECK" = "true" ]
