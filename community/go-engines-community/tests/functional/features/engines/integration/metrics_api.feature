@@ -217,7 +217,7 @@ Feature: Entities and users should be synchronized in metrics db
     {
       "name": "test-user-metrics-api-2-name",
       "email": "test-user-metrics-api-2@canopsis.net",
-      "role": "admin",
+      "roles": ["admin"],
       "enable": true,
       "password": "test-password"
     }
@@ -284,7 +284,7 @@ Feature: Entities and users should be synchronized in metrics db
     {
       "name": "test-user-metrics-api-2-name-updated",
       "email": "test-user-metrics-api-2@canopsis.net",
-      "role": "admin",
+      "roles": ["admin"],
       "enable": true
     }
     """
@@ -309,7 +309,7 @@ Feature: Entities and users should be synchronized in metrics db
     {
       "name": "test-user-metrics-api-3-name",
       "email": "test-user-metrics-api-3@canopsis.net",
-      "role": "admin",
+      "roles": ["admin"],
       "enable": true,
       "password": "test-password"
     }

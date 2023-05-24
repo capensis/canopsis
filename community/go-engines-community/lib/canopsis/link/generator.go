@@ -16,11 +16,11 @@ type Generator interface {
 }
 
 type User struct {
-	Email      string `bson:"email"`
-	Username   string `bson:"username"`
-	Firstname  string `bson:"firstname"`
-	Lastname   string `bson:"lastname"`
-	ExternalID string `bson:"external_id"`
-	Source     string `bson:"source"`
-	Role       string `bson:"role"`
+	Email      string   `bson:"email"`
+	Username   string   `bson:"username"`
+	Firstname  string   `bson:"firstname"`
+	Lastname   string   `bson:"lastname"`
+	ExternalID string   `bson:"external_id"`
+	Source     string   `bson:"source"`
+	Roles      []string `bson:"roles"`
 }

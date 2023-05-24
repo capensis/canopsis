@@ -848,16 +848,17 @@ func (s *store) createPermissions(ctx context.Context, userID string, views map[
 	}
 
 	user := struct {
-		Role string `json:"role"`
+		Roles []string `json:"roles"`
 	}{}
 	err = res.Decode(&user)
 	if err != nil {
 		return err
 	}
 
+	roles := append([]string{security.RoleAdmin}, user.Roles...)
 	_, err = s.roleCollection.UpdateMany(ctx,
 		bson.M{
-			"_id": bson.M{"$in": bson.A{user.Role, security.RoleAdmin}},
+			"_id": bson.M{"$in": roles},
 		},
 		bson.M{"$set": setRole},
 	)
@@ -881,7 +882,9 @@ func (s *store) updatePermissions(ctx context.Context, view Response) error {
 
 func (s *store) deletePermissions(ctx context.Context, viewID string) error {
 	_, err := s.roleCollection.UpdateMany(ctx,
-		bson.M{},
+		bson.M{
+			"permissions." + viewID: bson.M{"$exists": true},
+		},
 		bson.M{"$unset": bson.M{
 			"permissions." + viewID: "",
 		}},
