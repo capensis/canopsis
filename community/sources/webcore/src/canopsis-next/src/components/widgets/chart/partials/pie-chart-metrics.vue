@@ -17,7 +17,8 @@
 import { COLORS } from '@/config';
 import { KPI_PIE_CHART_SHOW_MODS } from '@/constants';
 
-import { getMetricColor, getMostReadableTextColor } from '@/helpers/color';
+import { getMostReadableTextColor } from '@/helpers/color';
+import { getMetricColor } from '@/helpers/entities/metric/color';
 import { convertNumberToRoundedPercentString } from '@/helpers/string';
 
 import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';

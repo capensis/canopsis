@@ -28,8 +28,8 @@ import {
 
 import featuresService from '@/services/features';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/forms/widgets/common';
-import { prepareAlarmListWidget } from '@/helpers/widgets';
+import { generateDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
+import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
 
 import ActionsPanel from '@/components/widgets/alarm/actions/actions-panel.vue';
 

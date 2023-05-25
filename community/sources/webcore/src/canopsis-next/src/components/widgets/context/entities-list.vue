@@ -61,7 +61,7 @@ import { isObject } from 'lodash';
 
 import { USERS_PERMISSIONS } from '@/constants';
 
-import { getContextExportDownloadFileUrl } from '@/helpers/file-url';
+import { getContextExportDownloadFileUrl } from '@/helpers/entities/entity/url';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';

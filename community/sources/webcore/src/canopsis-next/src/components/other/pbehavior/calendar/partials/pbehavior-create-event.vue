@@ -28,8 +28,8 @@ import { MODALS } from '@/constants';
 import {
   calendarEventToPbehaviorForm,
   formToCalendarEvent,
-} from '@/helpers/forms/planning-pbehavior';
-import { isOmitEqual } from '@/helpers/equal';
+} from '@/helpers/entities/pbehavior/form';
+import { isOmitEqual } from '@/helpers/collection';
 import { getMenuClassByCalendarEvent } from '@/helpers/calendar/dayspan';
 
 import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';

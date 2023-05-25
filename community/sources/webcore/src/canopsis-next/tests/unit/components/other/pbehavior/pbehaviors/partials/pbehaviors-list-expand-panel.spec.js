@@ -1,5 +1,5 @@
 import { generateRenderer } from '@unit/utils/vue';
-import { createEntityIdPatternByValue } from '@/helpers/pattern';
+import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
 import PbehaviorsListExpandItem from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-list-expand-item.vue';
 

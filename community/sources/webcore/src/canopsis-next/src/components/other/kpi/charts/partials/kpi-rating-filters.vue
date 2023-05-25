@@ -22,7 +22,7 @@
 <script>
 import { METRICS_QUICK_RANGES, USER_METRIC_PARAMETERS } from '@/constants';
 
-import { getAvailableMetricByCriteria } from '@/helpers/metrics';
+import { getAvailableMetricByCriteria } from '@/helpers/entities/metric/list';
 
 import { formMixin } from '@/mixins/form';
 

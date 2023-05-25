@@ -50,7 +50,7 @@ import { COLORS } from '@/config';
 import { uid } from '@/helpers/uid';
 import { getMostReadableTextColor } from '@/helpers/color';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/calendar/dayspan';
-import { pbehaviorToTimespanRequest } from '@/helpers/forms/timespans-pbehavior';
+import { pbehaviorToTimespanRequest } from '@/helpers/entities/pbehavior/timespans/form';
 import { convertDateToTimestampByTimezone, convertDateToMoment } from '@/helpers/date/date';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';

@@ -14,7 +14,7 @@
 <script>
 import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
-import { filterPatternsToForm } from '@/helpers/forms/filter';
+import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 
 import KpiFilterPatternsForm from '../form/kpi-filter-patterns-form.vue';
 

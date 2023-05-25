@@ -36,8 +36,8 @@ import {
   getAvailableActionsByEntities,
   getAvailableEntityActionsTypes,
   isActionTypeAvailableForEntity,
-} from '@/helpers/entities/entity';
-import { filterById, mapIds } from '@/helpers/entities';
+} from '@/helpers/entities/entity/actions';
+import { filterById, mapIds } from '@/helpers/array';
 
 import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
 

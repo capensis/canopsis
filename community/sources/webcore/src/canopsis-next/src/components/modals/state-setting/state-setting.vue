@@ -17,7 +17,7 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { stateSettingToForm, formToStateSetting } from '@/helpers/forms/state-setting';
+import { stateSettingToForm, formToStateSetting } from '@/helpers/entities/state-setting/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { authMixin } from '@/mixins/auth';
