@@ -145,7 +145,6 @@ export const USERS_PERMISSIONS = {
         fastCancel: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_fastRemoveAlarm`,
         changeState: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_changeState`,
         history: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_history`,
-        groupRequest: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_groupRequest`,
         manualMetaAlarmGroup: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_manualMetaAlarmGroup`,
         comment: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_comment`,
 
@@ -389,7 +388,6 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [ALARM_LIST_ACTIONS_TYPES.history]: USERS_PERMISSIONS.business.alarmsList.actions.history,
     [ALARM_LIST_ACTIONS_TYPES.variablesHelp]: USERS_PERMISSIONS.business.alarmsList.actions.variablesHelp,
     [ALARM_LIST_ACTIONS_TYPES.comment]: USERS_PERMISSIONS.business.alarmsList.actions.comment,
-    [ALARM_LIST_ACTIONS_TYPES.groupRequest]: USERS_PERMISSIONS.business.alarmsList.actions.groupRequest,
     [ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm]:
     USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
     [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm]:

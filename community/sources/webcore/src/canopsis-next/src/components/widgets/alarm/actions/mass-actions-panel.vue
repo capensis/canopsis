@@ -126,12 +126,6 @@ export default {
       if (!this.hasMetaAlarm) {
         actions.push(
           {
-            type: ALARM_LIST_ACTIONS_TYPES.groupRequest,
-            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.groupRequest),
-            title: this.$t('alarm.actions.titles.groupRequest'),
-            method: this.showCreateGroupRequestEventModal,
-          },
-          {
             type: ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm,
             icon: getEntityEventIcon(EVENT_ENTITY_TYPES.createManualMetaAlarm),
             title: this.$t('alarm.actions.titles.createManualMetaAlarm'),
@@ -182,7 +176,7 @@ export default {
         ...this.linksActions,
       ].map(action => ({
         ...action,
-        loading: this.isActionTypePending(action.type),
+        loading: this.isActionTypeInPending(action.type),
       }));
     },
 
@@ -254,10 +248,6 @@ export default {
 
     showCancelEventModal() {
       this.showCancelModalByAlarms(this.items);
-    },
-
-    showCreateGroupRequestEventModal() {
-      this.showCreateGroupRequestEventModalByAlarms(this.items);
     },
 
     showCreateManualMetaAlarmModal() {

@@ -6,7 +6,7 @@
       template(#text="")
         declare-ticket-events-form(
           v-model="form",
-          :alarms="items",
+          :alarms="config.items",
           :tickets-by-alarms="config.ticketsByAlarms",
           :alarms-by-tickets="config.alarmsByTickets",
           :hide-ticket-resource="!isAllComponentAlarms"
@@ -31,7 +31,6 @@ import { alarmsToDeclareTicketEventForm, formToDeclareTicketEvents } from '@/hel
 import { isEntityComponentType } from '@/helpers/entities/entity/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
-import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -51,7 +50,6 @@ export default {
   components: { DeclareTicketEventsForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
-    modalInnerItemsMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
@@ -64,7 +62,7 @@ export default {
   },
   computed: {
     isAllComponentAlarms() {
-      return this.items.every(({ entity }) => isEntityComponentType(entity.type));
+      return this.config.items.every(({ entity }) => isEntityComponentType(entity.type));
     },
   },
   methods: {

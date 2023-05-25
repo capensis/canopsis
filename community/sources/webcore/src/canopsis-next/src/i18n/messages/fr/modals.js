@@ -101,9 +101,6 @@ export default {
   createCancelEvent: {
     title: 'Annuler',
   },
-  createGroupRequestEvent: {
-    title: 'Proposition de regroupement pour méta-alarmes',
-  },
   createGroupEvent: {
     title: 'Créer une méta-alarme',
   },
