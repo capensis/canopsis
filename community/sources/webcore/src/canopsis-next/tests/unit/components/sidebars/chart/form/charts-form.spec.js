@@ -12,8 +12,7 @@ import { MODALS, WIDGET_TYPES } from '@/constants';
 
 const stubs = {
   'widget-settings-group': true,
-  'c-draggable-list-field': true,
-  'c-action-btn': true,
+  'field-draggable-list': true,
   'v-menu': createActivatorElementStub('v-menu'),
   'v-btn': createButtonStub('v-btn'),
   'v-list': true,
