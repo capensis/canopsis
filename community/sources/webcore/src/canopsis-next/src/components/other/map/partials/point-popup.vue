@@ -37,7 +37,7 @@ import { COLORS } from '@/config';
 import { USERS_PERMISSIONS } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
-import { getEntityColor } from '@/helpers/color';
+import { getEntityColor } from '@/helpers/entities/entity/color';
 
 import { authMixin } from '@/mixins/auth';
 

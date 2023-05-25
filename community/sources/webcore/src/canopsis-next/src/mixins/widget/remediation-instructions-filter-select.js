@@ -1,6 +1,6 @@
 import { get, omit } from 'lodash';
 
-import { prepareRemediationInstructionsFiltersToQuery } from '@/helpers/filter/remediation-instructions-filter';
+import { prepareRemediationInstructionsFiltersToQuery } from '@/helpers/entities/remediation/instruction-filter/query';
 
 export const widgetRemediationInstructionsFilterMixin = {
   computed: {

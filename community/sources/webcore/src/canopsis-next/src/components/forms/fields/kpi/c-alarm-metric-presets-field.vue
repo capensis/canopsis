@@ -31,8 +31,7 @@ import { omit } from 'lodash';
 
 import { ALARM_METRIC_PARAMETERS, AGGREGATE_FUNCTIONS } from '@/constants';
 
-import { metricPresetToForm } from '@/helpers/forms/metric';
-import { isRatioMetric, isTimeMetric } from '@/helpers/metrics';
+import { metricPresetToForm, isRatioMetric, isTimeMetric } from '@/helpers/entities/metric/form';
 
 import { formArrayMixin } from '@/mixins/form';
 

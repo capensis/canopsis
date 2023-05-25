@@ -18,7 +18,7 @@ import { find } from 'lodash';
 
 import { REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants';
 
-import { isInstructionExecutionIconInProgress } from '@/helpers/forms/remediation-instruction-execution';
+import { isInstructionExecutionIconInProgress } from '@/helpers/entities/remediation/instruction-execution/form';
 
 export default {
   props: {

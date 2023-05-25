@@ -30,8 +30,8 @@
 <script>
 import { EVENT_FILTER_TYPES } from '@/constants';
 
-import { externalDataToForm } from '@/helpers/forms/shared/external-data';
-import { eventFilterPatternToForm } from '@/helpers/forms/event-filter';
+import { externalDataToForm } from '@/helpers/entities/shared/external-data/form';
+import { eventFilterPatternToForm } from '@/helpers/entities/event-filter/rule/form';
 
 import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
 

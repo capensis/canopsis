@@ -7,10 +7,10 @@ import {
 } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
-import { mapIds } from '@/helpers/entities';
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/forms/widgets/common';
-import { createEntityIdPatternByValue } from '@/helpers/pattern';
-import { prepareEventsByAlarms } from '@/helpers/forms/event';
+import { mapIds } from '@/helpers/array';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
+import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
+import { prepareEventsByAlarms } from '@/helpers/entities/event/form';
 
 import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';

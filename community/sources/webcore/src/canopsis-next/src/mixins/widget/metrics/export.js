@@ -1,7 +1,7 @@
 import { KPI_RATING_METRICS_FILENAME_PREFIX } from '@/config';
 
 import { saveFile } from '@/helpers/file/files';
-import { getExportMetricDownloadFileUrl } from '@/helpers/file-url';
+import { getExportMetricDownloadFileUrl } from '@/helpers/entities/metric/url';
 
 import { exportMixinCreator } from '@/mixins/widget/export';
 

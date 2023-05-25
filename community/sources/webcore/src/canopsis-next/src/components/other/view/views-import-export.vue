@@ -35,7 +35,7 @@ import { MODALS } from '@/constants';
 
 import { saveJsonFile } from '@/helpers/file/files';
 import { getFileTextContent } from '@/helpers/file/file-select';
-import { getAllViewsFromGroups, exportedGroupsAndViewsToRequest } from '@/helpers/forms/view';
+import { getAllViewsFromGroups, exportedGroupsAndViewsToRequest } from '@/helpers/entities/view/form';
 
 import { entitiesViewMixin } from '@/mixins/entities/view';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';

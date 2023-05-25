@@ -36,7 +36,7 @@
 import { createNamespacedHelpers } from 'vuex';
 import { pick } from 'lodash';
 
-import { convertFilterToQuery } from '@/helpers/query';
+import { convertFilterToQuery } from '@/helpers/entities/shared/query';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';

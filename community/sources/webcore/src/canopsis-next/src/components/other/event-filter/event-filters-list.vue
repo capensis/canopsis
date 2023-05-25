@@ -52,7 +52,7 @@
 <script>
 import { OLD_PATTERNS_FIELDS } from '@/constants';
 
-import { isOldPattern } from '@/helpers/pattern';
+import { isOldPattern } from '@/helpers/entities/pattern/form';
 
 import PbehaviorsCreateActionBtn from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-create-action-btn.vue';
 import PbehaviorsListActionBtn from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-list-action-btn.vue';

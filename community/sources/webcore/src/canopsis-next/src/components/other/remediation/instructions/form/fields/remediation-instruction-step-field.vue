@@ -39,8 +39,8 @@
 </template>
 
 <script>
-import { remediationInstructionStepToForm } from '@/helpers/forms/remediation-instruction';
-import { isOmitEqual } from '@/helpers/equal';
+import { remediationInstructionStepToForm } from '@/helpers/entities/remediation/instruction/form';
+import { isOmitEqual } from '@/helpers/collection';
 import { toSeconds } from '@/helpers/date/duration';
 
 import { formMixin, validationChildrenMixin } from '@/mixins/form';

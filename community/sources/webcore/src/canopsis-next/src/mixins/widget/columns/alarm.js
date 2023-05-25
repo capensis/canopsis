@@ -3,7 +3,7 @@ import { COLOR_INDICATOR_TYPES } from '@/constants';
 import {
   getAlarmsListWidgetColumnValueFilter,
   getAlarmsListWidgetColumnComponentGetter,
-} from '@/helpers/widgets';
+} from '@/helpers/entities/widget/forms/alarm';
 
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
 

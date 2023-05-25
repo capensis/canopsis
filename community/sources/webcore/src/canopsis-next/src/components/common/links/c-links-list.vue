@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { harmonizeCategoryLinks, harmonizeCategoriesLinks } from '@/helpers/links';
+import { harmonizeCategoryLinks, harmonizeCategoriesLinks } from '@/helpers/entities/link/list';
 
 export default {
   props: {
