@@ -23,8 +23,10 @@ exports[`line-chart-widget-form Renders \`line-chart-widget-form\` widget settin
   <widget-settings-group-stub
     title="Advanced settings"
   >
-    <field-chart-title-stub
-      name="parameters.chart_title"
+    <field-title-stub
+      label="Header"
+      name="title"
+      placeholder="Header title"
       value="Chart title"
     />
     <field-quick-date-interval-type-stub
@@ -68,8 +70,10 @@ exports[`line-chart-widget-form Renders \`line-chart-widget-form\` widget settin
   <widget-settings-group-stub
     title="Advanced settings"
   >
-    <field-chart-title-stub
-      name="parameters.chart_title"
+    <field-title-stub
+      label="Header"
+      name="title"
+      placeholder="Header title"
       value=""
     />
     <field-quick-date-interval-type-stub

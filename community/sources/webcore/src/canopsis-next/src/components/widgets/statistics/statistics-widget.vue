@@ -39,9 +39,11 @@
 import { pick, find } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
+import { KPI_RATING_CRITERIA } from '@/constants';
+
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 import { convertFilterToQuery } from '@/helpers/query';
-import { isCustomCriteria } from '@/helpers/metrics';
+import { convertMetricValueToString, isCustomCriteria } from '@/helpers/metrics';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
@@ -53,9 +55,10 @@ import { permissionsWidgetsBarChartInterval } from '@/mixins/permissions/widgets
 import { permissionsWidgetsBarChartSampling } from '@/mixins/permissions/widgets/chart/bar/sampling';
 import { permissionsWidgetsBarChartFilters } from '@/mixins/permissions/widgets/chart/bar/filters';
 
-import StatisticsWidgetFilters from './partials/statistics-widget-filters.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import CProgressOverlay from '@/components/common/overlay/c-progress-overlay.vue';
+
+import StatisticsWidgetFilters from './partials/statistics-widget-filters.vue';
 
 const { mapActions } = createNamespacedHelpers('ratingSettings');
 
@@ -102,18 +105,29 @@ export default {
       return isCustomCriteria(this.mainParameter.criteria);
     },
 
+    firstColumnText() {
+      const criteriaObject = find(this.mainRatingSettings, {
+        id: this.mainParameter.criteria,
+      });
+
+      const labelsMap = {
+        [KPI_RATING_CRITERIA.user]: this.$t('common.username'),
+        [KPI_RATING_CRITERIA.role]: this.$tc('common.role'),
+        [KPI_RATING_CRITERIA.category]: this.$t('common.category'),
+        [KPI_RATING_CRITERIA.impactLevel]: this.$t('common.impactLevel'),
+      };
+
+      return this.mainParameter.columnName || labelsMap[criteriaObject?.label] || '';
+    },
+
     headers() {
       if (this.mainRatingSettingsPending) {
         return [];
       }
 
-      const criteriaObject = find(this.mainRatingSettings, {
-        id: this.mainParameter.criteria,
-      });
-
       return [
         {
-          text: this.mainParameter.columnName ?? criteriaObject?.label ?? '',
+          text: this.firstColumnText,
           value: 'title',
           sortable: false,
         },
@@ -133,10 +147,12 @@ export default {
     preparedGroupMetrics() {
       return this.groupMetrics.map(({ title, data = [] }) => {
         const preparedMetrics = Object.entries(data)
-          .reduce((acc, [key, value]) => {
-            acc[key] = value.reduce((secondAcc, item) => (
-              secondAcc + (item.title ? `${item.title}: ${item.value}\n` : item.value)
-            ), '');
+          .reduce((acc, [metric, value]) => {
+            acc[metric] = value.reduce((secondAcc, item) => {
+              const preparedValue = convertMetricValueToString(item.value, metric);
+
+              return secondAcc + (item.title ? `${item.title}: ${preparedValue}\n` : preparedValue);
+            }, '');
 
             return acc;
           }, {});
