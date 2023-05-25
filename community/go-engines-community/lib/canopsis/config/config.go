@@ -90,6 +90,7 @@ type ConsoleWriter struct {
 type SectionMetrics struct {
 	FlushInterval          string `toml:"FlushInterval"`
 	SliInterval            string `toml:"SliInterval"`
+	UserSessionGapInterval string `toml:"UserSessionGapInterval"`
 	EnabledInstructions    bool   `toml:"EnabledInstructions"`
 	EnabledNotAckedMetrics bool   `toml:"EnabledNotAckedMetrics"`
 }
