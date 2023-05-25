@@ -50,7 +50,7 @@
 <script>
 import { REMEDIATION_AUTO_INSTRUCTION_TRIGGERS } from '@/constants';
 
-import { isInstructionAuto, isInstructionSimpleManual } from '@/helpers/forms/remediation-instruction';
+import { isInstructionAuto, isInstructionSimpleManual } from '@/helpers/entities/remediation/instruction/form';
 
 import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
 import RemediationInstructionJobsForm from './remediation-instruction-jobs-form.vue';

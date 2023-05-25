@@ -10,7 +10,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { createEntityIdPatternByValue } from '@/helpers/pattern';
+import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
 

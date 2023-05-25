@@ -18,7 +18,7 @@
 <script>
 import flatten from 'flat';
 
-import { requestTemplateVariablesErrorsToForm } from '@/helpers/forms/shared/request';
+import { requestTemplateVariablesErrorsToForm } from '@/helpers/entities/shared/request/form';
 
 import { formMixin, validationErrorsMixinCreator } from '@/mixins/form';
 import { entitiesTemplateValidatorMixin } from '@/mixins/entities/template-validator';

@@ -22,7 +22,7 @@
 <script>
 import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
-import { formToSnooze, snoozeToForm } from '@/helpers/forms/snooze-event';
+import { formToSnooze, snoozeToForm } from '@/helpers/entities/event/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';

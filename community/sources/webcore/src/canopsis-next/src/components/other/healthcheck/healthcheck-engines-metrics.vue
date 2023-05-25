@@ -43,7 +43,7 @@
 <script>
 import { TECH_METRICS_EXPORT_STATUSES } from '@/constants';
 
-import { getTechMetricsDownloadFileUrl } from '@/helpers/file-url';
+import { getTechMetricsDownloadFileUrl } from '@/helpers/entities/metric/url';
 
 import { entitiesTechMetricsMixin } from '@/mixins/entities/tech-metrics';
 import { exportMixinCreator } from '@/mixins/widget/export';

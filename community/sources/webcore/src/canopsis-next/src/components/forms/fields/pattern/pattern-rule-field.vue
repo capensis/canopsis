@@ -81,7 +81,7 @@ import {
   isExtraInfosRuleType,
   isInfosRuleType,
   isOperatorHasValue,
-} from '@/helpers/pattern';
+} from '@/helpers/entities/pattern/form';
 
 import { formMixin } from '@/mixins/form';
 
