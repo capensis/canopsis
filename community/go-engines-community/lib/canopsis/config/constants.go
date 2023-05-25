@@ -23,9 +23,10 @@ const (
 	RemediationWaitJobCompleteRetriesInterval = 5 * time.Second
 	RemediationPauseManualInstructionInterval = 15 * time.Second
 
-	MetricsFlushInterval  = 10 * time.Second
-	MetricsSliInterval    = time.Hour
-	MetricsMaxSliInterval = time.Hour
+	MetricsFlushInterval          = 10 * time.Second
+	MetricsSliInterval            = time.Hour
+	MetricsMaxSliInterval         = time.Hour
+	MetricsUserSessionGapInterval = time.Hour
 
 	TechMetricsDumpKeepInterval = time.Hour
 
