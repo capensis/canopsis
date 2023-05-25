@@ -34,7 +34,7 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { mapIds } from '@/helpers/entities';
+import { mapIds } from '@/helpers/array';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';

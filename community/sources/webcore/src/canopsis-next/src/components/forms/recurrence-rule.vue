@@ -167,7 +167,7 @@
 import { RRule, rrulestr } from 'rrule';
 import { mapValues, pickBy } from 'lodash';
 
-import { recurrenceRuleToFormAdvancedOptions, recurrenceRuleToFormOptions } from '@/helpers/forms/recurrence-rule';
+import { recurrenceRuleToFormAdvancedOptions, recurrenceRuleToFormOptions } from '@/helpers/entities/shared/recurrence-rule/form';
 
 export default {
   inject: ['$validator'],

@@ -48,7 +48,7 @@ import { cloneDeep } from 'lodash';
 import { MODALS } from '@/constants';
 
 import { waitVuetifyAnimation } from '@/helpers/vuetify';
-import { mermaidPointToForm } from '@/helpers/forms/map';
+import { mermaidPointToForm } from '@/helpers/entities/map/form';
 
 import { formBaseMixin } from '@/mixins/form';
 

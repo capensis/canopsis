@@ -27,7 +27,7 @@
 <script>
 import { ENTITY_TYPES } from '@/constants';
 
-import { getMapEntityText } from '@/helpers/map';
+import { getMapEntityText } from '@/helpers/entities/map/list';
 
 import { formMixin } from '@/mixins/form';
 

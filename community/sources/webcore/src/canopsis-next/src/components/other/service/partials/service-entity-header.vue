@@ -39,7 +39,7 @@ import { get } from 'lodash';
 import { COLORS } from '@/config';
 import { ENTITIES_STATUSES, EVENT_ENTITY_TYPES } from '@/constants';
 
-import { getEntityEventIcon } from '@/helpers/icon';
+import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
 
 export default {
   props: {

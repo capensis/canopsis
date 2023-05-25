@@ -38,7 +38,7 @@ import {
   VALIDATION_DELAY,
 } from '@/constants';
 
-import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

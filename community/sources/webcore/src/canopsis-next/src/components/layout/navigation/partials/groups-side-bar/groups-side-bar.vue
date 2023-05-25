@@ -49,7 +49,7 @@ import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { groupSchema } from '@/store/schemas';
 
 import { isDeepOrderChanged } from '@/helpers/dragdrop';
-import { groupsWithViewsToPositions } from '@/helpers/forms/view';
+import { groupsWithViewsToPositions } from '@/helpers/entities/view/form';
 
 import { entitiesViewMixin } from '@/mixins/entities/view';
 import layoutNavigationGroupsBarMixin from '@/mixins/layout/navigation/groups-bar';

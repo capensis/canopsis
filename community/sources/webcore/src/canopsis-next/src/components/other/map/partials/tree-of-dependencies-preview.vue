@@ -29,9 +29,9 @@ import {
   ENTITY_TYPES,
 } from '@/constants';
 
-import { getEntityColor } from '@/helpers/color';
-import { generatePreparedDefaultContextWidget } from '@/helpers/forms/widgets/common';
-import { getMapEntityText, normalizeTreeOfDependenciesMapEntities } from '@/helpers/map';
+import { getEntityColor } from '@/helpers/entities/entity/color';
+import { generatePreparedDefaultContextWidget } from '@/helpers/entities/widget/form';
+import { getMapEntityText, normalizeTreeOfDependenciesMapEntities } from '@/helpers/entities/map/list';
 
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 

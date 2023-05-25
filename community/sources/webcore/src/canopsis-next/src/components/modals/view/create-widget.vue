@@ -26,8 +26,8 @@ import {
   WIDGET_ICONS,
 } from '@/constants';
 
-import { getNewWidgetGridParametersY } from '@/helpers/grid-layout';
-import { getEmptyWidgetByType } from '@/helpers/forms/widgets/common';
+import { getNewWidgetGridParametersY } from '@/helpers/entities/widget/layout';
+import { getEmptyWidgetByType } from '@/helpers/entities/widget/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesInfoMixin } from '@/mixins/entities/info';

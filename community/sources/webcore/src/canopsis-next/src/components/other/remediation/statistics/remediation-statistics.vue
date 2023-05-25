@@ -32,9 +32,10 @@ import {
   convertStartDateIntervalToTimestampByTimezone,
   convertStopDateIntervalToTimestampByTimezone,
 } from '@/helpers/date/date-intervals';
-import { isMetricsQueryChanged, convertMetricsToTimezone } from '@/helpers/metrics';
+import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
+import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
+import { getExportMetricDownloadFileUrl } from '@/helpers/entities/metric/url';
 import { saveFile } from '@/helpers/file/files';
-import { getExportMetricDownloadFileUrl } from '@/helpers/file-url';
 
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesRemediationStatisticMixin } from '@/mixins/entities/remediation/statistic';

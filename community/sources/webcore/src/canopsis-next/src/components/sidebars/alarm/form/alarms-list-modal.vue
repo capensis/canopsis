@@ -41,8 +41,8 @@ import { filter } from 'lodash';
 
 import { ALARM_FIELDS_TO_LABELS_KEYS, ALARM_UNSORTABLE_FIELDS, WIDGET_TEMPLATES_TYPES } from '@/constants';
 
-import { formToWidgetColumns } from '@/helpers/forms/shared/widget-column';
-import { getColumnLabel, getSortable } from '@/helpers/widgets';
+import { formToWidgetColumns } from '@/helpers/entities/widget/column/form';
+import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/list';
 
 import { formBaseMixin } from '@/mixins/form';
 import { alarmVariablesMixin } from '@/mixins/widget/variables/alarm';
@@ -102,12 +102,12 @@ export default {
       return formToWidgetColumns(this.form.widgetColumns).map(column => ({
         ...column,
 
-        text: getColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
+        text: getWidgetColumnLabel(column, ALARM_FIELDS_TO_LABELS_KEYS),
       }));
     },
 
     sortablePreparedWidgetColumns() {
-      return this.preparedWidgetColumns.filter(column => getSortable(column, ALARM_UNSORTABLE_FIELDS));
+      return this.preparedWidgetColumns.filter(column => getWidgetColumnSortable(column, ALARM_UNSORTABLE_FIELDS));
     },
   },
   methods: {

@@ -68,7 +68,7 @@
 <script>
 import { isArray } from 'lodash';
 
-import { isOldPattern } from '@/helpers/pattern';
+import { isOldPattern } from '@/helpers/entities/pattern/form';
 
 import { formArrayMixin } from '@/mixins/form';
 

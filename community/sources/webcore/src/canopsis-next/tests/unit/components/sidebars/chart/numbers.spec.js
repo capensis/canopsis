@@ -21,7 +21,7 @@ import {
 
 import ClickOutside from '@/services/click-outside';
 
-import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/forms/widgets/common';
+import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/entities/widget/form';
 
 import NumbersSettings from '@/components/sidebars/chart/numbers.vue';
 
