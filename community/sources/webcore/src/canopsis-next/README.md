@@ -148,9 +148,9 @@ export const WIDGET_TYPES_RULES = {
   [WIDGET_TYPES.counterCustom]: { edition: 'pro' },
 };
 ```
-9. Put the widget title and widget settings title in the i18n messages `i18n/messages/en.js` and `i18n/messages/fr.js` (the files must have the same structure):
+9. Put the widget title and widget settings title in the i18n messages `i18n/messages/en/modals.js` and `i18n/messages/fr/modals.js` (the files must have the same structure):
 ```js
-// file i18n/messages/en.js
+// file i18n/messages/en/modals.js
 import { WIDGET_TYPES, SIDE_BARS } from '../../constants';
 
 export default {
@@ -382,9 +382,9 @@ export default {
 ## Add widget directly into application source code
 Note: *We've added examples of `Counter` widget creation.*
 
-1. Put a new `WIDGET_TYPES` in the `src/constants/bar-line-pie-numbers-widget.js`:
+1. Put a new `WIDGET_TYPES` in the `src/constants/widget.js`:
 ```js
-// file src/constants/bar-line-pie-numbers-widget.js
+// file src/constants/widget.js
 
 export const WIDGET_TYPES = {
   // ...another widgets
@@ -392,9 +392,9 @@ export const WIDGET_TYPES = {
   counter: 'Counter', // <-- here. We are using camelCase for keys
 };
 ```
-2. Put a new icon for the widget type into `WIDGET_ICONS` in the `src/constants/bar-line-pie-numbers-widget.js`:
+2. Put a new icon for the widget type into `WIDGET_ICONS` in the `src/constants/widget.js`:
 ```js
-// file src/constants/bar-line-pie-numbers-widget.js
+// file src/constants/widget.js
 
 export const WIDGET_ICONS = {
   // ...another widgets icons
@@ -402,9 +402,9 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.counter]: 'view_module', // <-- here. 'view_module' is icon name from material UI
 };
 ```
-3. Put a new constant for the widget into `SIDE_BARS` in the `src/constants/bar-line-pie-numbers-widget.js`:
+3. Put a new constant for the widget into `SIDE_BARS` in the `src/constants/widget.js`:
 ```js
-// file src/constants/bar-line-pie-numbers-widget.js
+// file src/constants/widget.js
 
 export const SIDE_BARS = {
   // ...another widgets
@@ -412,9 +412,9 @@ export const SIDE_BARS = {
   counterSettings: 'counter-settings', // <-- here. This value should be equal to the component export name in the previous step but in the kebab-kase
 };
 ```
-4. Put a new map value into `SIDE_BARS_BY_WIDGET_TYPES` for the new `WIDGET_TYPE` and `SIDE_BARS` value in the `src/constants/bar-line-pie-numbers-widget.js`:
+4. Put a new map value into `SIDE_BARS_BY_WIDGET_TYPES` for the new `WIDGET_TYPE` and `SIDE_BARS` value in the `src/constants/widget.js`:
 ```js
-// file src/constants/bar-line-pie-numbers-widget.js
+// file src/constants/widget.js
 
 export const SIDE_BARS_BY_WIDGET_TYPES = {
   // ...another widgets
@@ -422,9 +422,9 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.counter]: SIDE_BARS.counterSettings, // <-- here
 };
 ```
-5. Create a new component for the widget settings in the `src/components/sidebars/settings`. Example: `counter.vue` for the `Counter` widget. Here you must import `src/mixins/widget/settings` mixin:
+5. Create a new component for the widget settings in the `src/components/sidebars`. Example: `counter.vue` for the `Counter` widget. Here you must import `src/mixins/widget/settings` mixin:
 ```js
-// file src/components/side-bars/settings/counter.vue
+// file src/components/sidebars/counter/counter.vue
 
 import { SIDE_BARS } from '@/constants';
    
@@ -450,7 +450,7 @@ export { default as CounterSettings } from './settings/counter.vue'; // <-- here
 ```
 7. Also, we can add special rule for the widget if we have dependency of the canopsis backend `edition`. Example for the `pro` edition:
 ```js
-// file src/constants/bar-line-pie-numbers-widget.js
+// file src/constants/widget.js
 
 export const WIDGET_TYPES_RULES = {
   // ...another widgets rules
@@ -458,7 +458,7 @@ export const WIDGET_TYPES_RULES = {
   [WIDGET_TYPES.statsCalendar]: { edition: CANOPSIS_EDITION.pro }, // <-- here. Example for the statsCalendar widget type
 };
 ```
-8. Put the widget title in the i18n messages `src/i18n/messages/en.js` and `src/i18n/messages/fr.js` (the files has the same structure):
+8. Put the widget title in the i18n messages `src/i18n/messages/en/modals.js` and `src/i18n/messages/fr/modals.js` (the files has the same structure):
 ```js
 export default {
   // ...another code
@@ -480,7 +480,7 @@ export default {
   },
 };
 ```
-9. We should put messages for the widget settings in the i18n messages: `src/i18n/messages/en.js` and `src/i18n/messages/fr.js`:
+9. We should put messages for the widget settings in the i18n messages: `src/i18n/messages/en/settings.js` and `src/i18n/messages/fr/settings.js`:
 ```js
 export default {
   // ...another code
@@ -494,9 +494,9 @@ export default {
 };
 ```
 10. If we need to put default parameters of the widget on creation then we must do the following steps:
-* Create new file `src/helpers/forms/widgets/widget.js` with parameters preparation
+* Create new file `src/helpers/entities/widget/forms/counter.js` with parameters preparation
 ```js
-   // file src/helpers/forms/widgets/widget.js
+   // file src/helpers/entities/widget/forms/counter.js
 export const counterWidgetParametersToForm = (parameters = {}) => ({ // <-- Special parameters preparation for our new widget type
   opened: isBoolean(opened) || isNull(opened) ? parameters.opened : true,
   blockTemplate: parameters.blockTemplate ?? DEFAULT_COUNTER_BLOCK_TEMPLATE,
@@ -518,11 +518,11 @@ export const counterWidgetParametersToForm = (parameters = {}) => ({ // <-- Spec
   alarmsList: alarmListBaseParametersToForm(parameters.alarmsList),
 });
  ```
-* Put this function call inside `src/helpers/forms/widgets/list.js`:
+* Put this function call inside `src/helpers/entities/widget/form.js`:
 ```js
-// file src/helpers/forms/widgets/list.js
+// file src/helpers/entities/widget/form.js
 
-import { counterWidgetParametersToForm } from './counter';
+import { counterWidgetParametersToForm } from './forms/counter';
 
 // ...another code
 
@@ -947,7 +947,7 @@ Allows us to add preparer for new widget type parameters or change exists prepar
 **We should define this function only if we need to put special preparation from `parameters` to `form`.**
 ```js
 // index.js
-import { counterWidgetParametersToForm } from './helpers/forms/widgets/counter-custom';
+import { counterWidgetParametersToForm } from './helpers/entities/widget/forms/counter-custom';
 
 // ...another code
 export default {
@@ -983,7 +983,7 @@ Allows us to add preparer for new widget type form or change exists preparer for
 **We should define this function if we need to put special preparation from `form` to `parameters`.**
 ```js
 // index.js
-import { formToCounterWidgetParameters } from './helpers/forms/widgets/counter-custom';
+import { formToCounterWidgetParameters } from './helpers/entities/widget/forms/counter-custom';
 
 // ...another code
 export default {
@@ -1351,7 +1351,7 @@ export default {
 Type: `Array<Object>`<br>
 Allows us to define mixins for `alarm-list-table` component. Inside mixin we can customize all functionality which we want (lifecycle methods, data, computed properties and etc.).
 ```js
-// file mixins/alarm-list-list.js
+// file mixins/alarm-list-table.js
 export const alarmListTableMixin = {
   // ...another code
   components: {},

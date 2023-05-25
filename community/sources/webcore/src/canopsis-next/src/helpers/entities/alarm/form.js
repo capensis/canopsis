@@ -134,8 +134,16 @@ import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
  * @param alarm - alarm entity
  * @returns {boolean}
  */
-export const isResolvedAlarmStatus = alarm => [ENTITIES_STATUSES.closed, ENTITIES_STATUSES.cancelled]
+export const isClosedAlarmStatus = alarm => [ENTITIES_STATUSES.closed, ENTITIES_STATUSES.cancelled]
   .includes(alarm.v.status.val);
+
+/**
+ * Checks if alarm is resolved
+ *
+ * @param alarm - alarm entity
+ * @returns {boolean}
+ */
+export const isResolvedAlarm = alarm => !!alarm.v.resolved;
 
 /**
  * Checks if alarm have critical state
