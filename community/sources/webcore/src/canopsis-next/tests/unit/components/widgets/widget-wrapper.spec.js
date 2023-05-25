@@ -19,6 +19,7 @@ const stubs = {
   'line-chart-widget': true,
   'pie-chart-widget': true,
   'numbers-widget': true,
+  'statistics-widget': true,
 };
 
 describe('widget-wrapper', () => {
