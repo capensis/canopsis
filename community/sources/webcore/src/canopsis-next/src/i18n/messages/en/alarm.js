@@ -47,7 +47,6 @@ export default {
       changeState: 'Change and lock severity',
       variablesHelp: 'List of available variables',
       history: 'History',
-      groupRequest: 'Suggest group request for meta alarm',
       createManualMetaAlarm: 'Manual meta alarm management',
       removeAlarmsFromManualMetaAlarm: 'Unlink alarm from manual meta alarm',
       comment: 'Comment',
