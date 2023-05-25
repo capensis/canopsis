@@ -52,7 +52,7 @@ export const widgetActionsPanelAlarmMixin = {
       bulkCreateAlarmChangestateEvent: 'bulkCreateAlarmChangestateEvent',
     }),
 
-    isActionTypePending(type) {
+    isActionTypeInPending(type) {
       return !!this.pendingByActionsTypes[type];
     },
 
@@ -277,22 +277,6 @@ export const widgetActionsPanelAlarmMixin = {
             });
 
             await this.afterSubmit();
-          },
-        },
-      });
-    },
-
-    showCreateGroupRequestEventModalByAlarms(alarms) {
-      this.$modals.show({
-        name: MODALS.createEvent,
-        config: {
-          items: alarms,
-
-          title: this.$t('modals.createGroupRequestEvent.title'),
-          action: () => {
-            /**
-             * TODO: Useless action, we need to discuss about it
-             */
           },
         },
       });

@@ -292,7 +292,7 @@ export default {
     preparedActions() {
       return this.filteredActions.map(action => ({
         ...action,
-        loading: this.isActionTypePending(action.type),
+        loading: this.isActionTypeInPending(action.type),
       }));
     },
   },
