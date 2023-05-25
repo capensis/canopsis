@@ -112,6 +112,7 @@ type DataStorageConfig struct {
 type MetricsConfig struct {
 	FlushInterval          time.Duration
 	SliInterval            time.Duration
+	UserSessionGapInterval time.Duration
 	EnabledInstructions    bool
 	EnabledNotAckedMetrics bool
 }
@@ -620,8 +621,9 @@ func (p *BaseTemplateConfigProvider) Get() SectionTemplate {
 
 func GetMetricsConfig(cfg CanopsisConf, logger zerolog.Logger) MetricsConfig {
 	return MetricsConfig{
-		FlushInterval: parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", "metrics", logger),
-		SliInterval:   parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
+		FlushInterval:          parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", "metrics", logger),
+		SliInterval:            parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
+		UserSessionGapInterval: parseTimeDurationByStr(cfg.Metrics.UserSessionGapInterval, MetricsUserSessionGapInterval, "UserSessionGapInterval", "metrics", logger),
 	}
 }
 
@@ -1205,6 +1207,7 @@ func NewMetricsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseMetr
 			EnabledInstructions:    parseBool(cfg.Metrics.EnabledInstructions, "EnabledInstructions", sectionName, logger),
 			FlushInterval:          parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", sectionName, logger),
 			SliInterval:            parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
+			UserSessionGapInterval: parseTimeDurationByStr(cfg.Metrics.UserSessionGapInterval, MetricsUserSessionGapInterval, "UserSessionGapInterval", "metrics", logger),
 		},
 		logger: logger,
 	}
@@ -1234,6 +1237,11 @@ func (p *BaseMetricsSettingsConfigProvider) Update(cfg CanopsisConf) {
 	d, ok = parseUpdatedTimeDurationByStrWithMax(cfg.Metrics.SliInterval, p.conf.SliInterval, MetricsMaxSliInterval, "SliInterval", sectionName, p.logger)
 	if ok {
 		p.conf.SliInterval = d
+	}
+
+	d, ok = parseUpdatedTimeDurationByStr(cfg.Metrics.UserSessionGapInterval, p.conf.UserSessionGapInterval, "UserSessionGapInterval", sectionName, p.logger)
+	if ok {
+		p.conf.UserSessionGapInterval = d
 	}
 }
 
