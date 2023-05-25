@@ -27,7 +27,6 @@ const stubs = {
   'field-preset': true,
   'field-alarm-metric-presets': true,
   'field-bar-graph-type': true,
-  'field-chart-title': true,
   'field-quick-date-interval-type': true,
   'field-sampling': true,
   'field-filters': true,
@@ -42,19 +41,18 @@ const snapshotStubs = {
   'field-preset': true,
   'field-alarm-metric-presets': true,
   'field-bar-graph-type': true,
-  'field-chart-title': true,
   'field-quick-date-interval-type': true,
   'field-sampling': true,
   'field-filters': true,
   'field-switcher': true,
 };
 
-const selectFieldTitle = wrapper => wrapper.find('field-title-stub');
+const selectFieldTitle = wrapper => wrapper.findAll('field-title-stub').at(0);
 const selectFieldPeriodicRefresh = wrapper => wrapper.find('field-periodic-refresh-stub');
 const selectFieldPreset = wrapper => wrapper.find('field-preset-stub');
 const selectFieldAlarmMetricPresets = wrapper => wrapper.find('field-alarm-metric-presets-stub');
 const selectFieldBarGraphType = wrapper => wrapper.find('field-bar-graph-type-stub');
-const selectFieldChartTitle = wrapper => wrapper.find('field-chart-title-stub');
+const selectFieldChartTitle = wrapper => wrapper.findAll('field-title-stub').at(1);
 const selectFieldQuickDateIntervalType = wrapper => wrapper.find('field-quick-date-interval-type-stub');
 const selectFieldSampling = wrapper => wrapper.find('field-sampling-stub');
 const selectFieldFilters = wrapper => wrapper.find('field-filters-stub');

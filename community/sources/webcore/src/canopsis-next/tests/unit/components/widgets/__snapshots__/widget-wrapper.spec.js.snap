@@ -94,6 +94,22 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with title and editing mode 1
 </div>
 `;
 
+exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmStatistics and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <statistics-widget-stub
+      tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
 exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmStatistics and core edition 1`] = `
 <div
   style="min-height: 40px;"
@@ -514,6 +530,22 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Text and core editi
       message="Stats widgets are not available with 'community' edition"
       tab-id="tab-id"
       value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type UserStatistics and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <statistics-widget-stub
+      tabid="tab-id"
       widget="[object Object]"
     />
   </div>

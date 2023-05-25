@@ -440,7 +440,7 @@ export const convertMetricDurationToString = (value) => {
  *
  * @param {number} value
  * @param {string} metric
- * @param {ExternalMetricUnit} unit
+ * @param {ExternalMetricUnit} [unit]
  * @returns {string}
  */
 export const convertMetricValueToString = (value, metric, unit) => {
