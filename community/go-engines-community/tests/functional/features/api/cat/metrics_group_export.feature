@@ -41,8 +41,8 @@ Feature: Get alarm metrics
     Then the response raw body should be:
     """csv
     metric,username,value
-    ack_alarms,test-user-to-group-metrics-get-1-username,3
-    ack_alarms,test-user-to-group-metrics-get-2-username,1
+    ack_alarms,test-user-to-group-metrics-get-1-username,0.75
+    ack_alarms,test-user-to-group-metrics-get-2-username,0.25
     average_ack,test-user-to-group-metrics-get-1-username,200
     average_ack,test-user-to-group-metrics-get-2-username,400
     max_ack,test-user-to-group-metrics-get-1-username,300
@@ -95,9 +95,9 @@ Feature: Get alarm metrics
     Then the response raw body should be:
     """csv
     infos.test-info-to-group-metrics-get,metric,username,value
-    value1,ack_alarms,test-user-to-group-metrics-get-1-username,2
-    value2,ack_alarms,test-user-to-group-metrics-get-1-username,1
-    value2,ack_alarms,test-user-to-group-metrics-get-2-username,1
+    value1,ack_alarms,test-user-to-group-metrics-get-1-username,0.5
+    value2,ack_alarms,test-user-to-group-metrics-get-1-username,0.25
+    value2,ack_alarms,test-user-to-group-metrics-get-2-username,0.25
     value1,average_ack,test-user-to-group-metrics-get-1-username,150
     value2,average_ack,test-user-to-group-metrics-get-1-username,300
     value2,average_ack,test-user-to-group-metrics-get-2-username,400
@@ -155,9 +155,9 @@ Feature: Get alarm metrics
     Then the response raw body should be:
     """csv
     infos.test-info-to-group-metrics-get,infos.test-info-to-group-metrics-get-2,infos.test-info-to-group-metrics-get-3,metric,username,value
-    value1,,,ack_alarms,test-user-to-group-metrics-get-1-username,2
-    value2,,,ack_alarms,test-user-to-group-metrics-get-1-username,1
-    value2,,,ack_alarms,test-user-to-group-metrics-get-2-username,1
+    value1,,,ack_alarms,test-user-to-group-metrics-get-1-username,0.5
+    value2,,,ack_alarms,test-user-to-group-metrics-get-1-username,0.25
+    value2,,,ack_alarms,test-user-to-group-metrics-get-2-username,0.25
     ,value1,,average_ack,test-user-to-group-metrics-get-1-username,150
     ,,,min_ack,test-user-to-group-metrics-get-1-username,100
     ,,,min_ack,test-user-to-group-metrics-get-2-username,400
@@ -246,8 +246,8 @@ Feature: Get alarm metrics
     Then the response raw body should be:
     """csv
     metric,pattern,value
-    ack_alarms,test2,3
-    ack_alarms,test1,1
+    ack_alarms,test2,0.75
+    ack_alarms,test1,0.25
     active_alarms,test2,1.25
     active_alarms,test1,0.5
     ack_active_alarms,test2,0.75
@@ -352,9 +352,9 @@ Feature: Get alarm metrics
     Then the response raw body should be:
     """csv
     infos.test-info-to-group-metrics-get,metric,pattern,value
-    value1,ack_alarms,test2,2
-    value2,ack_alarms,test2,1
-    value2,ack_alarms,test1,1
+    value1,ack_alarms,test2,0.5
+    value2,ack_alarms,test2,0.25
+    value2,ack_alarms,test1,0.25
     value1,active_alarms,test2,1
     value2,active_alarms,test2,0.25
     value2,active_alarms,test1,0.5
@@ -469,9 +469,9 @@ Feature: Get alarm metrics
     Then the response raw body should be:
     """csv
     infos.test-info-to-group-metrics-get,infos.test-info-to-group-metrics-get-2,infos.test-info-to-group-metrics-get-3,metric,pattern,value
-    value1,,,ack_alarms,test2,2
-    value2,,,ack_alarms,test2,1
-    value2,,,ack_alarms,test1,1
+    value1,,,ack_alarms,test2,0.5
+    value2,,,ack_alarms,test2,0.25
+    value2,,,ack_alarms,test1,0.25
     ,value1,,active_alarms,test2,1
     ,,,not_acked_alarms,test2,0.5
     ,,,not_acked_alarms,test1,0
