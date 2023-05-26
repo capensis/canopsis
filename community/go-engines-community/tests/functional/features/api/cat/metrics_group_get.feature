@@ -39,7 +39,7 @@ Feature: Get alarm metrics
             "ack_alarms": [
               {
                 "title": "",
-                "value": 0.75
+                "value": 3
               }
             ],
             "average_ack": [
@@ -68,7 +68,7 @@ Feature: Get alarm metrics
             "ack_alarms": [
               {
                 "title": "",
-                "value": 0.25
+                "value": 1
               }
             ],
             "average_ack": [
@@ -143,11 +143,11 @@ Feature: Get alarm metrics
             "ack_alarms": [
               {
                 "title": "value1",
-                "value": 0.5
+                "value": 2
               },
               {
                 "title": "value2",
-                "value": 0.25
+                "value": 1
               }
             ],
             "average_ack": [
@@ -189,7 +189,7 @@ Feature: Get alarm metrics
             "ack_alarms": [
               {
                 "title": "value2",
-                "value": 0.25
+                "value": 1
               }
             ],
             "average_ack": [
@@ -263,11 +263,11 @@ Feature: Get alarm metrics
             "ack_alarms": [
               {
                 "title": "value1",
-                "value": 0.5
+                "value": 2
               },
               {
                 "title": "value2",
-                "value": 0.25
+                "value": 1
               }
             ],
             "average_ack": [
@@ -297,7 +297,7 @@ Feature: Get alarm metrics
             "ack_alarms": [
               {
                 "title": "value2",
-                "value": 0.25
+                "value": 1
               }
             ],
             "average_ack": [],
@@ -351,7 +351,7 @@ Feature: Get alarm metrics
             "ack_alarms": [
               {
                 "title": "",
-                "value": 0.75
+                "value": 3
               }
             ]
           }
@@ -362,7 +362,7 @@ Feature: Get alarm metrics
             "ack_alarms": [
               {
                 "title": "",
-                "value": 0.25
+                "value": 1
               }
             ]
           }
@@ -403,11 +403,11 @@ Feature: Get alarm metrics
             "ack_alarms": [
               {
                 "title": "value1",
-                "value": 0.5
+                "value": 2
               },
               {
                 "title": "value2",
-                "value": 0.25
+                "value": 1
               }
             ]
           }
@@ -418,7 +418,7 @@ Feature: Get alarm metrics
             "ack_alarms": [
               {
                 "title": "value2",
-                "value": 0.25
+                "value": 1
               }
             ]
           }
