@@ -53,11 +53,16 @@
         template(#progress="")
           v-fade-transition
             v-progress-linear(color="primary", height="2", indeterminate)
-        template(#headerCell="{ header }")
+        template(#headerCell="{ header, index }")
           alarm-header-cell(
             :header="header",
             :selected-tag="selectedTag",
             @clear:tag="$emit('clear:tag')"
+          )
+          span.alarms-list-table__resize-handler(
+            v-if="header.value !== 'actions'",
+            @mousedown.prevent="startColumnResize(header.value)",
+            @click.stop=""
           )
         template(#items="props")
           alarms-list-row(
@@ -77,6 +82,7 @@
             :hide-actions="hideActions",
             :medium="isMediumHeight",
             :small="isSmallHeight",
+            @start:resize="startColumnResize",
             @select:tag="$emit('select:tag', $event)"
           )
         template(#expand="{ item, index }")
@@ -114,6 +120,7 @@ import { isClosedAlarmStatus } from '@/helpers/entities/alarm/form';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns/alarm';
+import { widgetResizeAlarmMixin } from '@/mixins/widget/columns/resize';
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
 import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
@@ -136,6 +143,7 @@ export default {
   mixins: [
     entitiesInfoMixin,
     widgetColumnsAlarmMixin,
+    widgetResizeAlarmMixin,
 
     ...featuresService.get('components.alarmListTable.mixins', []),
   ],
@@ -214,8 +222,13 @@ export default {
     },
   },
   data() {
+    setTimeout(() => {
+      this.resizable = true;
+    }, 5000);
+
     return {
       selecting: false,
+      resizable: false,
       selected: [],
     };
   },
@@ -247,7 +260,7 @@ export default {
       const headers = [...this.preparedColumns];
 
       if (!this.hideActions) {
-        headers.push({ text: this.$t('common.actionsLabel'), sortable: false });
+        headers.push({ text: this.$t('common.actionsLabel'), value: 'actions', sortable: false });
       }
 
       if ((this.expandable || this.hasInstructionsAlarms) && !this.selectable) {
@@ -257,7 +270,10 @@ export default {
         headers.unshift({ sortable: false });
       }
 
-      return headers;
+      return headers.map(header => ({
+        ...header,
+        width: `${this.getColumnWidthByField(header.value)}%`,
+      }));
     },
 
     vDataTableClass() {
@@ -356,6 +372,8 @@ export default {
       window.addEventListener('mousedown', this.mousedownHandler);
       window.addEventListener('mouseup', this.mouseupHandler);
     }
+
+    this.calculateColumnsWidthsByTable(this.tableHeader);
   },
   updated() {
     if (this.selecting) {
@@ -619,6 +637,31 @@ export default {
     }
   }
 
+  &__resize-handler {
+    cursor: col-resize;
+
+    display: flex;
+    justify-content: center;
+
+    width: 10px;
+
+    position: absolute;
+    right: -5px;
+    top: 0;
+
+    height: 100%;
+
+    z-index: 1;
+
+    &:after {
+      content: ' ';
+      background: rgba(0, 0, 0, 0.12);
+      position: absolute;
+      width: 2px;
+      height: 100%;
+    }
+  }
+
   .alarm-list-row {
     position: relative;
 
@@ -673,6 +716,7 @@ export default {
       }
 
       th {
+        position: relative;
         transition: none;
       }
     }
