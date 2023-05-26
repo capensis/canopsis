@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -42,6 +43,7 @@ func RunDummyHttpServer(ctx context.Context, addr string) error {
 
 func dummyHandler(dummyRoutes map[string]dummyResponse) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		dummyRoutesMx := sync.Mutex{}
 		response, ok := dummyRoutes[r.URL.Path]
 		if !ok {
 			http.Error(w, fmt.Sprintf("[%s][%+v]", r.URL.Path, dummyRoutes), http.StatusNotFound)
@@ -108,7 +110,9 @@ func dummyHandler(dummyRoutes map[string]dummyResponse) func(w http.ResponseWrit
 				response.BodySequenceIndex = 0
 			}
 
+			dummyRoutesMx.Lock()
 			dummyRoutes[r.URL.Path] = response
+			dummyRoutesMx.Unlock()
 		} else if response.Body != "" {
 			_, err := fmt.Fprintf(w, response.Body)
 			if err != nil {
@@ -314,11 +318,11 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Body:   "test-job-execution-params-succeeded-output",
 		},
 		// VTOM
-		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/test-job-succeeded/action": {
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_1/jobs/test-job-succeeded/action": {
 			Code:   http.StatusOK,
 			Method: http.MethodPost,
 		},
-		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/test-job-succeeded/status": {
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_1/jobs/test-job-succeeded/status": {
 			Code:   http.StatusOK,
 			Method: http.MethodGet,
 			BodySequence: map[int]string{
@@ -326,16 +330,16 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 				1: "{\"status\":\"Finished\"}",
 			},
 		},
-		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/test-job-succeeded/logs/last/stdout": {
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_1/jobs/test-job-succeeded/logs/last/stdout": {
 			Code:   http.StatusOK,
 			Method: http.MethodGet,
 			Body:   "test-job-execution-succeeded-output",
 		},
-		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/test-job-failed/action": {
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_1/jobs/test-job-failed/action": {
 			Code:   http.StatusOK,
 			Method: http.MethodPost,
 		},
-		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/test-job-failed/status": {
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_1/jobs/test-job-failed/status": {
 			Code:   http.StatusOK,
 			Method: http.MethodGet,
 			BodySequence: map[int]string{
@@ -343,7 +347,41 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 				1: "{\"status\":\"Error\"}",
 			},
 		},
-		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS/jobs/test-job-failed/logs/last/stderr": {
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_1/jobs/test-job-failed/logs/last/stderr": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "test-job-execution-failed-output",
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_2/jobs/test-job-succeeded/action": {
+			Code:   http.StatusOK,
+			Method: http.MethodPost,
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_2/jobs/test-job-succeeded/status": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			BodySequence: map[int]string{
+				0: "{\"status\":\"Waiting\"}",
+				1: "{\"status\":\"Finished\"}",
+			},
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_2/jobs/test-job-succeeded/logs/last/stdout": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "test-job-execution-succeeded-output",
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_2/jobs/test-job-failed/action": {
+			Code:   http.StatusOK,
+			Method: http.MethodPost,
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_2/jobs/test-job-failed/status": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			BodySequence: map[int]string{
+				0: "{\"status\":\"Waiting\"}",
+				1: "{\"status\":\"Error\"}",
+			},
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_2/jobs/test-job-failed/logs/last/stderr": {
 			Code:   http.StatusOK,
 			Method: http.MethodGet,
 			Body:   "test-job-execution-failed-output",
