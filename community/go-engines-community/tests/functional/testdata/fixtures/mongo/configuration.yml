@@ -52,7 +52,7 @@ configuration:
     metrics:
       flushinterval: 1s
       sliinterval: 1h
-      sessioninterval: 1h
+      usersessiongapinterval: 1h
       enabledinstructions: true
       enablednotackedmetrics: true
     tech_metrics:
