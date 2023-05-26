@@ -110,6 +110,7 @@ func GetWidgetTemplateParameters() map[string]map[string][]string {
 			WidgetTemplateTypeAlarmColumns: {
 				"widgetColumns",
 				"widgetGroupColumns",
+				"widgetExportColumns",
 			},
 			WidgetTemplateTypeEntityColumns: {
 				"serviceDependenciesColumns",
@@ -126,6 +127,7 @@ func GetWidgetTemplateParameters() map[string]map[string][]string {
 			WidgetTemplateTypeEntityColumns: {
 				"widgetColumns",
 				"serviceDependenciesColumns",
+				"widgetExportColumns",
 			},
 		},
 		WidgetTypeServiceWeather: {
