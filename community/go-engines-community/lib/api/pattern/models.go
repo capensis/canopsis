@@ -61,7 +61,15 @@ type CountRequest struct {
 	PbehaviorPattern pattern.PbehaviorInfo `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
 }
 
-type CountResponse struct {
+type CountAlarmsResponse struct {
+	AlarmPattern     Count `json:"alarm_pattern"`
+	EntityPattern    Count `json:"entity_pattern"`
+	PbehaviorPattern Count `json:"pbehavior_pattern"`
+	All              Count `json:"all"`
+	Entities         Count `json:"entities"`
+}
+
+type CountEntitiesResponse struct {
 	AlarmPattern     Count `json:"alarm_pattern"`
 	EntityPattern    Count `json:"entity_pattern"`
 	PbehaviorPattern Count `json:"pbehavior_pattern"`

@@ -1289,9 +1289,14 @@ func RegisterRoutes(
 			)
 		}
 		protected.POST(
-			"/patterns-count",
+			"/patterns-alarms-count",
 			middleware.OnlyAuth(),
-			patternAPI.Count,
+			patternAPI.CountAlarms,
+		)
+		protected.POST(
+			"/patterns-entities-count",
+			middleware.OnlyAuth(),
+			patternAPI.CountEntities,
 		)
 		protected.POST(
 			"/patterns-alarms",
