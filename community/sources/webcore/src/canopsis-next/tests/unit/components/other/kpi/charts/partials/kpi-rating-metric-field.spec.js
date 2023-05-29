@@ -1,7 +1,7 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
-import { ALARM_METRIC_PARAMETERS, KPI_RATING_CRITERIA } from '@/constants';
+import { ALARM_METRIC_PARAMETERS, KPI_RATING_SETTINGS_TYPES } from '@/constants';
 
 import KpiRatingMetricField from '@/components/other/kpi/charts/form/fields/kpi-rating-metric-field.vue';
 import CSelectField from '@/components/forms/fields/c-select-field';
@@ -24,10 +24,7 @@ describe('kpi-rating-metric-field', () => {
     const wrapper = factory({
       propsData: {
         value: ALARM_METRIC_PARAMETERS.ackAlarms,
-        criteria: {
-          id: 1,
-          label: KPI_RATING_CRITERIA.category,
-        },
+        type: KPI_RATING_SETTINGS_TYPES.entity,
       },
     });
 
@@ -47,10 +44,7 @@ describe('kpi-rating-metric-field', () => {
     const wrapper = snapshotFactory({
       propsData: {
         value: ALARM_METRIC_PARAMETERS.ackAlarms,
-        criteria: {
-          id: 1,
-          label: KPI_RATING_CRITERIA.user,
-        },
+        type: KPI_RATING_SETTINGS_TYPES.user,
       },
     });
 

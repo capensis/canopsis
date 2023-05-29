@@ -218,6 +218,8 @@ export const ALARM_OPTIONAL_METRIC_PARAMETERS = {
   notAckedInHourAlarms: 'not_acked_in_hour_alarms',
   notAckedInFourHoursAlarms: 'not_acked_in_four_hours_alarms',
   notAckedInDayAlarms: 'not_acked_in_day_alarms',
+  minResolve: 'min_resolve',
+  maxResolve: 'max_resolve',
 };
 
 export const ALARM_METRIC_PARAMETERS = {

@@ -17,6 +17,11 @@ export default {
   },
   metrics: {
     [USER_METRIC_PARAMETERS.totalUserActivity]: 'Durée totale de l\'activité',
+    [USER_METRIC_PARAMETERS.tickets]: 'Nombre de billets créés',
+    [USER_METRIC_PARAMETERS.ackAlarmWithoutCancel]: 'Nombre d\'accusés de réception excluant les accusés de réception annulés',
+    [USER_METRIC_PARAMETERS.averageUserSession]: 'Temps moyen d\'activité de l\'utilisateur',
+    [USER_METRIC_PARAMETERS.minUserSession]: 'Durée d\'activité minimale de l\'utilisateur',
+    [USER_METRIC_PARAMETERS.maxUserSession]: 'Durée d\'activité maximale de l\'utilisateur',
   },
   variables: {
     userEmail: 'Courriel de l\'utilisateur',
