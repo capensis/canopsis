@@ -42,8 +42,9 @@ func RunDummyHttpServer(ctx context.Context, addr string) error {
 }
 
 func dummyHandler(dummyRoutes map[string]dummyResponse) func(w http.ResponseWriter, r *http.Request) {
+	dummyRoutesMx := sync.Mutex{}
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		dummyRoutesMx := sync.Mutex{}
 		response, ok := dummyRoutes[r.URL.Path]
 		if !ok {
 			http.Error(w, fmt.Sprintf("[%s][%+v]", r.URL.Path, dummyRoutes), http.StatusNotFound)
