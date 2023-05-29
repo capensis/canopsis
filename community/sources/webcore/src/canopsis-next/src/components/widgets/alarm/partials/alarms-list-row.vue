@@ -27,6 +27,7 @@
         @select:tag="$emit('select:tag', $event)"
       )
       span.alarms-list-table__resize-handler(
+        v-if="resizing",
         @mousedown.prevent="$emit('start:resize', column.value)",
         @click.stop=""
       )
@@ -127,6 +128,10 @@ export default {
       default: false,
     },
     small: {
+      type: Boolean,
+      default: false,
+    },
+    resizing: {
       type: Boolean,
       default: false,
     },

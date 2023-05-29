@@ -37,7 +37,7 @@
         v-model="selected",
         :class="vDataTableClass",
         :items="alarms",
-        :headers="headers",
+        :headers="headersWithWidth",
         :total-items="totalItems",
         :pagination="pagination",
         :select-all="selectable",
@@ -57,13 +57,16 @@
           alarm-header-cell(
             :header="header",
             :selected-tag="selectedTag",
-            @clear:tag="$emit('clear:tag')"
+            :resizing="resizingMode",
+            @clear:tag="$emit('clear:tag')",
+            @resizing="toggleResizingMode"
           )
-          span.alarms-list-table__resize-handler(
-            v-if="header.value !== 'actions'",
-            @mousedown.prevent="startColumnResize(header.value)",
-            @click.stop=""
-          )
+          template(v-if="resizingMode && header.value !== 'actions'")
+            span.alarms-list-table__dragging-handler
+            span.alarms-list-table__resize-handler(
+              @mousedown.prevent="startColumnResize(header.value)",
+              @click.stop=""
+            )
         template(#items="props")
           alarms-list-row(
             v-model="props.selected",
@@ -82,6 +85,7 @@
             :hide-actions="hideActions",
             :medium="isMediumHeight",
             :small="isSmallHeight",
+            :resizing="resizingMode",
             @start:resize="startColumnResize",
             @select:tag="$emit('select:tag', $event)"
           )
@@ -270,10 +274,18 @@ export default {
         headers.unshift({ sortable: false });
       }
 
-      return headers.map(header => ({
-        ...header,
-        width: `${this.getColumnWidthByField(header.value)}%`,
-      }));
+      return headers;
+    },
+
+    headersWithWidth() {
+      return this.headers.map((header) => {
+        const width = this.getColumnWidthByField(header.value);
+
+        return {
+          ...header,
+          width: width && `${this.getColumnWidthByField(header.value)}%`,
+        };
+      });
     },
 
     vDataTableClass() {
@@ -372,8 +384,6 @@ export default {
       window.addEventListener('mousedown', this.mousedownHandler);
       window.addEventListener('mouseup', this.mouseupHandler);
     }
-
-    this.calculateColumnsWidthsByTable(this.tableHeader);
   },
   updated() {
     if (this.selecting) {
@@ -659,6 +669,34 @@ export default {
       position: absolute;
       width: 2px;
       height: 100%;
+    }
+  }
+
+  &__dragging-handler {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+
+    &:after {
+      content: ' ';
+      position: absolute;
+      transition: .3s cubic-bezier(.25, .8, .5,1);
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background: var(--v-secondary-base);
+      opacity: 0.0;
+    }
+
+    &:hover:after {
+      opacity: 0.2;
     }
   }
 
