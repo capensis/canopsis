@@ -44,12 +44,17 @@ import { convertDurationToMaxUnitDuration, convertDurationToString } from '@/hel
  */
 export const isTimeMetric = metric => [
   USER_METRIC_PARAMETERS.totalUserActivity,
+  USER_METRIC_PARAMETERS.minUserSession,
+  USER_METRIC_PARAMETERS.maxUserSession,
+  USER_METRIC_PARAMETERS.averageUserSession,
   ALARM_METRIC_PARAMETERS.averageAck,
   ALARM_METRIC_PARAMETERS.averageResolve,
   ALARM_METRIC_PARAMETERS.timeToAck,
   ALARM_METRIC_PARAMETERS.timeToResolve,
-  ALARM_METRIC_PARAMETERS.maxAck,
   ALARM_METRIC_PARAMETERS.minAck,
+  ALARM_METRIC_PARAMETERS.maxAck,
+  ALARM_METRIC_PARAMETERS.minResolve,
+  ALARM_METRIC_PARAMETERS.maxResolve,
 ].includes(metric);
 
 /**

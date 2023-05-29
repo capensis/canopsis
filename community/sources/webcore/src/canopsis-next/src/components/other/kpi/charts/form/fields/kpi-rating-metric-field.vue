@@ -43,9 +43,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    metrics: {
+      type: Array,
+      required: false,
+    },
   },
   computed: {
     availableMetrics() {
+      if (this.metrics) {
+        return this.metrics;
+      }
+
       const metrics = this.type === KPI_RATING_SETTINGS_TYPES.entity
         ? KPI_RATING_ENTITY_METRICS
         : KPI_RATING_USER_METRICS;
