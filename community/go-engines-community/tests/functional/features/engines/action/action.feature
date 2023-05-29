@@ -153,7 +153,7 @@ Feature: execute action on trigger
             },
             "ack": {
               "_t": "ack",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "m": "test-scenario-action-1-action-2-output test-resource-action-1-1 2"
             },
@@ -197,7 +197,7 @@ Feature: execute action on trigger
             },
             "ack": {
               "_t": "ack",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "m": "test-scenario-action-1-action-2-output test-resource-action-1-2 1"
             },
@@ -265,7 +265,7 @@ Feature: execute action on trigger
               },
               {
                 "_t": "ack",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "m": "test-scenario-action-1-action-2-output test-resource-action-1-1 2"
               },
@@ -314,7 +314,7 @@ Feature: execute action on trigger
               },
               {
                 "_t": "ack",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "m": "test-scenario-action-1-action-2-output test-resource-action-1-2 1"
               },
@@ -568,13 +568,13 @@ Feature: execute action on trigger
             "tickets": [
               {
                 "_t": "assocticket",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "ticket": "test-scenario-action-2-action-1-ticket"
               }
             ],
             "ticket": {
               "_t": "assocticket",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "ticket": "test-scenario-action-2-action-1-ticket"
             },
             "ack": {
@@ -626,7 +626,7 @@ Feature: execute action on trigger
               },
               {
                 "_t": "assocticket",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "ticket": "test-scenario-action-2-action-1-ticket"
               },
@@ -752,7 +752,7 @@ Feature: execute action on trigger
             },
             "ack": {
               "_t": "ack",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "m": "test-output-action-3-test-connector-action-3"
             },
@@ -805,7 +805,7 @@ Feature: execute action on trigger
               },
               {
                 "_t": "ack",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "m": "test-output-action-3-test-connector-action-3"
               }
@@ -860,7 +860,7 @@ Feature: execute action on trigger
           "v": {
             "ack": {
               "_t": "ack",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "m": "test-double-ack-alarm-1"
             },
@@ -939,7 +939,7 @@ Feature: execute action on trigger
           "v": {
             "ack": {
               "_t": "ack",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "m": "test-double-ack-alarm-1"
             },
