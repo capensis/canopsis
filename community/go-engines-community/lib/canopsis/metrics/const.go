@@ -15,6 +15,7 @@ const (
 
 	UserActivity = "user_activity"
 	UserSessions = "user_sessions"
+	TicketNumber = "ticket_number"
 
 	ManualInstructionAssignedAlarms = "manual_instruction_assigned_alarms"
 	ManualInstructionExecutedAlarms = "manual_instruction_executed_alarms"
