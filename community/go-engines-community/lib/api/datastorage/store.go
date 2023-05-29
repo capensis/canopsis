@@ -132,6 +132,7 @@ func (s *store) updateMetricsRetentionPolicy(ctx context.Context, data datastora
 		metrics.AckDuration,
 		metrics.ResolveDuration,
 		metrics.UserActivity,
+		metrics.UserSessions,
 		metrics.SliDuration,
 		metrics.ManualInstructionAssignedAlarms,
 		metrics.ManualInstructionExecutedAlarms,
