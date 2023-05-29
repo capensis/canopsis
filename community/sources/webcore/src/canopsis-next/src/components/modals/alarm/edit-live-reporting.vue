@@ -5,7 +5,7 @@
         span {{ $t('modals.liveReporting.editLiveReporting') }}
       template(#text="")
         h3 {{ $t('modals.liveReporting.dateInterval') }}
-        date-interval-selector(v-model="form")
+        date-interval-selector(v-model="form", :quick-ranges="quickRanges")
       template(#actions="")
         v-btn(
           flat,
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, LIVE_REPORTING_QUICK_RANGES } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -54,6 +54,11 @@ export default {
         time_field: config.time_field ?? '',
       },
     };
+  },
+  computed: {
+    quickRanges() {
+      return Object.values(LIVE_REPORTING_QUICK_RANGES);
+    },
   },
   methods: {
     async submit() {
