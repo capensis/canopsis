@@ -6,7 +6,10 @@
       v-field="form.parameters.mainParameter",
       :type="type"
     )
-    field-statistics-columns(v-model="form.parameters.widgetColumns")
+    field-statistics-columns(
+      v-model="form.parameters.widgetColumns",
+      :type="type"
+    )
     widget-settings-group(:title="$t('settings.advancedSettings')")
       field-title(
         v-field="form.parameters.table_title",
