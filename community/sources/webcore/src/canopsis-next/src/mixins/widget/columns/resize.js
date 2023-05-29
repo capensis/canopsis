@@ -1,15 +1,28 @@
+import { throttle } from 'lodash';
+
 export const widgetResizeAlarmMixin = {
   data() {
     return {
+      resizingMode: false,
       resizingColumnIndex: null,
       rowWidth: null,
       columnWidthByField: {},
+      aggregatedMovementX: 0,
     };
+  },
+  created() {
+    this.throttledResizeColumnByDiff = throttle(this.resizeColumnByDiff, 10);
   },
   beforeDestroy() {
     this.finishColumnResize();
   },
   methods: {
+    toggleResizingMode() {
+      this.resizingMode = !this.resizingMode;
+
+      this.calculateColumnsWidthsByTable(this.tableHeader);
+    },
+
     getColumnWidthByField(field) {
       return this.columnWidthByField[field];
     },
@@ -37,7 +50,9 @@ export const widgetResizeAlarmMixin = {
       return Math.max(newWidth, 8);
     },
 
-    resizeColumnByDiff(index, diff) {
+    resizeColumnByDiff(index) {
+      const diff = this.aggregatedMovementX;
+
       const toRight = diff > 0;
 
       const resizingLeftColumn = this.headers[index].value;
@@ -107,17 +122,20 @@ export const widgetResizeAlarmMixin = {
         [resizingLeftColumn]: newLeftColumnWidth,
         [resizingRightColumn]: newRightColumnWidth,
       };
+      this.aggregatedMovementX = 0;
     },
 
     handleColumnResize(event) {
       const diff = (event.movementX / this.rowWidth) * 100;
+      this.aggregatedMovementX += diff;
 
-      this.resizeColumnByDiff(this.resizingColumnIndex, diff);
+      this.throttledResizeColumnByDiff(this.resizingColumnIndex);
     },
 
     finishColumnResize() {
       document.body.removeEventListener('mousemove', this.handleColumnResize);
       document.body.removeEventListener('mouseup', this.finishColumnResize);
+      document.body.addEventListener('mouseleave', this.finishColumnResize);
     },
 
     startColumnResize(columnName) {
@@ -125,6 +143,7 @@ export const widgetResizeAlarmMixin = {
 
       document.body.addEventListener('mousemove', this.handleColumnResize);
       document.body.addEventListener('mouseup', this.finishColumnResize);
+      document.body.addEventListener('mouseleave', this.finishColumnResize);
     },
   },
 };
