@@ -10,6 +10,7 @@
         v-layout(column)
           kpi-rating-metric-field(
             v-field="columns[index].metric",
+            :metrics="availableMetrics",
             :type="type",
             :label="$tc('common.column')",
             :name="`column-${item.key}.column`",
@@ -34,7 +35,11 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { KPI_RATING_SETTINGS_TYPES } from '@/constants';
+import {
+  KPI_RATING_SETTINGS_TYPES,
+  STATISTICS_WIDGETS_ENTITY_METRICS,
+  STATISTICS_WIDGETS_USER_METRICS,
+} from '@/constants';
 
 import { statisticsWidgetColumnToForm } from '@/helpers/forms/widgets/statistics';
 
@@ -78,6 +83,31 @@ export default {
       ratingSettings: [],
       pending: false,
     };
+  },
+  computed: {
+    availableMetrics() {
+      const metrics = this.type === KPI_RATING_SETTINGS_TYPES.entity
+        ? STATISTICS_WIDGETS_ENTITY_METRICS
+        : STATISTICS_WIDGETS_USER_METRICS;
+
+      return metrics.map((value) => {
+        const kpiKey = `kpi.statisticsWidgets.metrics.${value}`;
+        const alarmKey = `alarm.metrics.${value}`;
+
+        let text;
+
+        if (this.$te(kpiKey)) {
+          text = this.$t(kpiKey);
+        } else if (this.$te(alarmKey)) {
+          text = this.$t(alarmKey);
+        }
+
+        return {
+          value,
+          text: text ?? this.$t(`user.metrics.${value}`),
+        };
+      });
+    },
   },
   watch: {
     columns() {

@@ -1,4 +1,4 @@
-import { ALARM_METRIC_PARAMETERS } from './alarm';
+import { ALARM_BASIC_METRIC_PARAMETERS, ALARM_METRIC_PARAMETERS } from './alarm';
 import { USER_METRIC_PARAMETERS } from './user';
 
 export const KPI_SLI_GRAPH_BAR_PERCENTAGE = 0.5;
@@ -24,7 +24,7 @@ export const KPI_RATING_CRITERIA = {
 
 export const KPI_RATING_USER_CRITERIA = [KPI_RATING_CRITERIA.user, KPI_RATING_CRITERIA.role];
 
-export const KPI_RATING_USER_METRICS = [ // TODO: add new metrics
+export const KPI_RATING_USER_METRICS = [
   ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
   ALARM_METRIC_PARAMETERS.ackAlarms,
   ALARM_METRIC_PARAMETERS.cancelAckAlarms,
@@ -33,7 +33,7 @@ export const KPI_RATING_USER_METRICS = [ // TODO: add new metrics
   USER_METRIC_PARAMETERS.totalUserActivity,
 ];
 
-export const KPI_RATING_ENTITY_METRICS = [ // TODO: add new metrics
+export const KPI_RATING_ENTITY_METRICS = [
   ALARM_METRIC_PARAMETERS.createdAlarms,
   ALARM_METRIC_PARAMETERS.instructionAlarms,
   ALARM_METRIC_PARAMETERS.pbehaviorAlarms,
@@ -99,3 +99,46 @@ export const KPI_RATING_SETTINGS_TYPES = {
 };
 
 export const KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA = Symbol('custom').toString();
+
+export const STATISTICS_WIDGETS_USER_METRICS = [
+  ALARM_METRIC_PARAMETERS.ackAlarms,
+  ALARM_METRIC_PARAMETERS.cancelAckAlarms,
+  ALARM_METRIC_PARAMETERS.minAck,
+  ALARM_METRIC_PARAMETERS.maxAck,
+  ALARM_METRIC_PARAMETERS.averageAck,
+  USER_METRIC_PARAMETERS.ackAlarmWithoutCancel,
+  USER_METRIC_PARAMETERS.tickets,
+  USER_METRIC_PARAMETERS.totalUserActivity,
+  USER_METRIC_PARAMETERS.averageUserSession,
+  USER_METRIC_PARAMETERS.minUserSession,
+  USER_METRIC_PARAMETERS.maxUserSession,
+];
+
+export const STATISTICS_WIDGETS_ENTITY_METRICS = [
+  ALARM_METRIC_PARAMETERS.createdAlarms,
+  ALARM_METRIC_PARAMETERS.activeAlarms,
+  ALARM_METRIC_PARAMETERS.instructionAlarms,
+  ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms,
+  ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms,
+  ALARM_METRIC_PARAMETERS.nonDisplayedAlarms,
+  ALARM_METRIC_PARAMETERS.pbehaviorAlarms,
+  ALARM_METRIC_PARAMETERS.correlationAlarms,
+  ALARM_METRIC_PARAMETERS.ackActiveAlarms,
+  ALARM_METRIC_PARAMETERS.notAckedAlarms,
+  ALARM_METRIC_PARAMETERS.notAckedInHourAlarms,
+  ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms,
+  ALARM_METRIC_PARAMETERS.notAckedInDayAlarms,
+  ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
+  ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms,
+  ALARM_METRIC_PARAMETERS.ratioCorrelation,
+  ALARM_METRIC_PARAMETERS.ratioInstructions,
+  ALARM_METRIC_PARAMETERS.ratioRemediatedAlarms,
+  ALARM_METRIC_PARAMETERS.ratioTickets,
+  ALARM_METRIC_PARAMETERS.ratioNonDisplayed,
+  ALARM_METRIC_PARAMETERS.timeToAck,
+  ALARM_METRIC_PARAMETERS.minAck,
+  ALARM_METRIC_PARAMETERS.maxAck,
+  ALARM_METRIC_PARAMETERS.averageResolve,
+  ALARM_BASIC_METRIC_PARAMETERS.minResolve,
+  ALARM_BASIC_METRIC_PARAMETERS.maxResolve,
+];

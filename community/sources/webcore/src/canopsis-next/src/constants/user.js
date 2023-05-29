@@ -1,5 +1,10 @@
 export const USER_METRIC_PARAMETERS = {
   totalUserActivity: 'total_user_activity',
+  tickets: 'tickets',
+  ackAlarmWithoutCancel: 'ack_alarms_without_cancel',
+  averageUserSession: 'average_user_session',
+  minUserSession: 'min_user_session',
+  maxUserSession: 'max_user_session',
 };
 
 export const USERS_TABS = {

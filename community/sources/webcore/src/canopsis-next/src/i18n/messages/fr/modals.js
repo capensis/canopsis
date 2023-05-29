@@ -277,6 +277,18 @@ export default {
       [WIDGET_TYPES.numbers]: {
         title: 'Nombres',
       },
+      [WIDGET_TYPES.userStatistics]: {
+        title: 'Statistiques des utilisateurs',
+      },
+      [WIDGET_TYPES.alarmStatistics]: {
+        title: 'Statistiques des alarmes',
+      },
+      chart: {
+        title: 'Graphique',
+      },
+      report: {
+        title: 'Rapport',
+      },
     },
   },
   manageHistogramGroups: {
