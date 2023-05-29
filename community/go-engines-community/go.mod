@@ -19,7 +19,7 @@ require (
 	github.com/beevik/etree v1.1.0
 	github.com/brianvoe/gofakeit/v6 v6.19.0
 	github.com/bsm/redislock v0.7.2
-	github.com/casbin/casbin/v2 v2.55.1
+	github.com/casbin/casbin/v2 v2.69.1
 	github.com/cucumber/godog v0.12.5
 	github.com/dlclark/regexp2 v1.7.0
 	github.com/gin-gonic/gin v1.8.1
