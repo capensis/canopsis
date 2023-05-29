@@ -1,8 +1,6 @@
 package author
 
 import (
-	"context"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -20,7 +18,6 @@ type Role struct {
 }
 
 type Provider interface {
-	Find(ctx context.Context, id string) (Author, error)
 	Pipeline() []bson.M
 	PipelineForField(field string) []bson.M
 	GetDisplayNameQuery(field string) bson.M
@@ -36,31 +33,6 @@ func NewProvider(client mongo.DbClient, configProvider config.ApiConfigProvider)
 type provider struct {
 	collection     mongo.DbCollection
 	configProvider config.ApiConfigProvider
-}
-
-func (p *provider) Find(ctx context.Context, id string) (Author, error) {
-	pipeline := []bson.M{
-		{"$match": bson.M{"_id": id}},
-		{"$addFields": bson.M{
-			"username": "$crecord_name",
-		}},
-		{"$addFields": bson.M{
-			"display_name": p.GetDisplayNameQuery(""),
-		}},
-	}
-	author := Author{}
-	cursor, err := p.collection.Aggregate(ctx, pipeline)
-	if err != nil {
-		return author, err
-	}
-	defer cursor.Close(ctx)
-
-	if cursor.Next(ctx) {
-		err = cursor.Decode(&author)
-		return author, err
-	}
-
-	return author, nil
 }
 
 func (p *provider) Pipeline() []bson.M {

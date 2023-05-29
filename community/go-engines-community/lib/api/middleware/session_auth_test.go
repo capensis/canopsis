@@ -2,7 +2,11 @@ package middleware
 
 import (
 	"fmt"
+	"net/http"
+	"testing"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -11,8 +15,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/gorilla/sessions"
-	"net/http"
-	"testing"
+	"github.com/rs/zerolog"
 )
 
 func TestSessionAuth_GivenAuthUser_ShouldReturnResponseAndSetUserDataToContext(t *testing.T) {
@@ -33,7 +36,7 @@ func TestSessionAuth_GivenAuthUser_ShouldReturnResponseAndSetUserDataToContext(t
 	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockDbCollection.
 		EXPECT().
-		Find(gomock.Any(), gomock.Any()).
+		Aggregate(gomock.Any(), gomock.Any()).
 		Return(mockUserCursor(ctrl, user), nil)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.
@@ -43,7 +46,7 @@ func TestSessionAuth_GivenAuthUser_ShouldReturnResponseAndSetUserDataToContext(t
 	router := gin.New()
 	router.GET(
 		okURL,
-		SessionAuth(mockDbClient, mockStore),
+		SessionAuth(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()), mockStore),
 		func(c *gin.Context) {
 			c.String(
 				expectedCode,
@@ -85,7 +88,7 @@ func TestSessionAuth_GivenNoSession_ShouldReturnResponse(t *testing.T) {
 	router := gin.New()
 	router.GET(
 		okURL,
-		SessionAuth(mockDbClient, mockStore),
+		SessionAuth(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()), mockStore),
 		okHandler,
 	)
 
@@ -110,7 +113,7 @@ func TestSessionAuth_GivenInvalidUserSession_ShouldReturnUnauthorizedError(t *te
 	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockDbCollection.
 		EXPECT().
-		Find(gomock.Any(), gomock.Any()).
+		Aggregate(gomock.Any(), gomock.Any()).
 		Return(mockUserCursor(ctrl, nil), nil)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.
@@ -120,7 +123,7 @@ func TestSessionAuth_GivenInvalidUserSession_ShouldReturnUnauthorizedError(t *te
 	router := gin.New()
 	router.GET(
 		okURL,
-		SessionAuth(mockDbClient, mockStore),
+		SessionAuth(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()), mockStore),
 		okHandler,
 	)
 
