@@ -300,3 +300,17 @@ $mobileBreakpoint: 450px;
    width: 100%;
  }
 }
+
+.widget-filters {
+  column-gap: 24px;
+
+  &__sampling {
+    max-width: 100px;
+  }
+
+  &__filter-selector, &__interval {
+    max-width: 200px;
+  }
+
+  //&__
+}

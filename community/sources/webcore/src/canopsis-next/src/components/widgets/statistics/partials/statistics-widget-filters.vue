@@ -1,14 +1,15 @@
 <template lang="pug">
-  v-layout(wrap)
-    c-quick-date-interval-field(
+  v-layout.widget-filters(wrap)
+    c-quick-date-interval-field.widget-filters__interval(
       v-if="showInterval",
       :interval="interval",
       :min="minIntervalDate",
       :quick-ranges="quickRanges",
+      short,
       @input="$emit('update:interval', $event)"
     )
     v-layout.ml-4(v-if="showFilter", row, align-end)
-      filter-selector.mr-4(
+      filter-selector.widget-filters__filter-selector.mr-4(
         :label="$t('settings.selectAFilter')",
         :filters="userFilters",
         :locked-filters="widgetFilters",
@@ -71,10 +72,6 @@ export default {
       required: false,
     },
     showFilter: {
-      type: Boolean,
-      default: false,
-    },
-    showSampling: {
       type: Boolean,
       default: false,
     },
