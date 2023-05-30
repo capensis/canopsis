@@ -93,6 +93,7 @@
       :hide-actions="hideActions",
       expandable,
       densable,
+      resizable,
       @select:tag="selectTag",
       @update:dense="updateDense",
       @update:page="updateQueryPage",
