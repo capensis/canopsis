@@ -16,6 +16,7 @@ import (
 
 // mongoProvider decorates request to mongo db.
 type mongoProvider struct {
+	client         libmongo.DbClient
 	collection     libmongo.DbCollection
 	configProvider config.ApiConfigProvider
 }
@@ -23,6 +24,7 @@ type mongoProvider struct {
 // NewMongoProvider creates new provider.
 func NewMongoProvider(db libmongo.DbClient, configProvider config.ApiConfigProvider) security.UserProvider {
 	return &mongoProvider{
+		client:         db,
 		collection:     db.Collection(libmongo.RightsMongoCollection),
 		configProvider: configProvider,
 	}
@@ -75,19 +77,29 @@ func (p *mongoProvider) Save(ctx context.Context, u *security.User) error {
 		u.AuthApiKey = utils.NewID()
 	}
 
-	m := transformUserToDbModel(u)
-	_, err := p.collection.UpdateOne(
-		ctx,
-		bson.M{"_id": m.ID},
-		bson.M{"$set": *m},
-		options.Update().SetUpsert(true),
-	)
+	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
+		m := transformUserToDbModel(u)
+		_, err := p.collection.UpdateOne(
+			ctx,
+			bson.M{"_id": m.ID},
+			bson.M{"$set": *m},
+			options.Update().SetUpsert(true),
+		)
 
-	if err != nil {
-		return err
-	}
+		if err != nil {
+			return err
+		}
 
-	return nil
+		newUser, err := p.findByFilter(ctx, bson.M{"_id": m.ID})
+		if err != nil {
+			return err
+		}
+
+		*u = *newUser
+		return nil
+	})
+
+	return err
 }
 
 // findByFilter returns User or nil if no user matches filter.
