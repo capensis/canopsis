@@ -4,6 +4,7 @@ package security
 type User struct {
 	ID             string `bson:"_id"`
 	Name           string `bson:"name"`
+	DisplayName    string `bson:"display_name,omitempty"`
 	Firstname      string `bson:"firstname"`
 	Lastname       string `bson:"lastname"`
 	Email          string `bson:"email"`
