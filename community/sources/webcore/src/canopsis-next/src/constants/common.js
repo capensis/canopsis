@@ -229,6 +229,27 @@ export const QUICK_RANGES = {
   },
 };
 
+export const LIVE_REPORTING_QUICK_RANGES = {
+  ...QUICK_RANGES,
+
+  [QUICK_RANGES.last2Days.value]: {
+    ...QUICK_RANGES.last2Days,
+    stop: 'now',
+  },
+  [QUICK_RANGES.last7Days.value]: {
+    ...QUICK_RANGES.last7Days,
+    stop: 'now',
+  },
+  [QUICK_RANGES.last30Days.value]: {
+    ...QUICK_RANGES.last30Days,
+    stop: 'now',
+  },
+  [QUICK_RANGES.last1Year.value]: {
+    ...QUICK_RANGES.last1Year,
+    stop: 'now',
+  },
+};
+
 export const METRICS_QUICK_RANGES = {
   [QUICK_RANGES.last2Days.value]: QUICK_RANGES.last2Days,
   [QUICK_RANGES.last7Days.value]: QUICK_RANGES.last7Days,
