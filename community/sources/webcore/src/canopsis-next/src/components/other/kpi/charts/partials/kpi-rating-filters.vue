@@ -23,7 +23,8 @@
 <script>
 import { KPI_RATING_SETTINGS_TYPES, METRICS_QUICK_RANGES, USER_METRIC_PARAMETERS } from '@/constants';
 
-import { isUserCriteria, getAvailableMetricByCriteria } from '@/helpers/metrics';
+import { isUserCriteria } from '@/helpers/entities/metric/form';
+import { getAvailableMetricByCriteria } from '@/helpers/entities/metric/list';
 
 import { formMixin } from '@/mixins/form';
 

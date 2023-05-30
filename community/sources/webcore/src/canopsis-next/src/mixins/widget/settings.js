@@ -1,6 +1,6 @@
 import { VALIDATION_DELAY } from '@/constants';
 
-import { widgetToForm, formToWidget } from '@/helpers/forms/widgets/common';
+import { widgetToForm, formToWidget } from '@/helpers/entities/widget/form';
 
 import { queryMixin } from '@/mixins/query';
 import { activeViewMixin } from '@/mixins/active-view';

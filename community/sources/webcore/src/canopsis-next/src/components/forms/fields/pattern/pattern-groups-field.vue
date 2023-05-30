@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { patternRulesToGroup } from '@/helpers/forms/pattern';
+import { patternRulesToGroup } from '@/helpers/entities/pattern/form';
 
 import { formArrayMixin } from '@/mixins/form';
 

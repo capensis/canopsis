@@ -27,7 +27,7 @@
 <script>
 import { MODALS, WIDGET_ICONS, WIDGET_TYPES } from '@/constants';
 
-import { addKeyInEntity } from '@/helpers/entities';
+import { addKeyInEntity } from '@/helpers/array';
 
 import { formArrayMixin } from '@/mixins/form';
 

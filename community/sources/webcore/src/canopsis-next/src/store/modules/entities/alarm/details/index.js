@@ -6,7 +6,7 @@ import { ENTITIES_TYPES } from '@/constants';
 
 import { alarmDetailsSchema } from '@/store/schemas';
 
-import { generateAlarmDetailsId, getAlarmDetailsDataPreparer } from '@/helpers/entities';
+import { generateAlarmDetailsId, getAlarmDetailsDataPreparer } from '@/helpers/entities/alarm/list';
 
 export const types = {
   FETCH_ITEM: 'FETCH_ITEM',

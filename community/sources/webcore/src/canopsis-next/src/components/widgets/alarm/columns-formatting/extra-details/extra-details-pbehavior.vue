@@ -24,7 +24,7 @@
 <script>
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { getMostReadableTextColor } from '@/helpers/color';
-import { getPbehaviorColor } from '@/helpers/entities/pbehavior';
+import { getPbehaviorColor } from '@/helpers/entities/pbehavior/form';
 
 export default {
   props: {

@@ -36,7 +36,7 @@ import { find, isString } from 'lodash';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { viewToForm, viewToRequest } from '@/helpers/forms/view';
+import { viewToForm, viewToRequest } from '@/helpers/entities/view/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { viewRouterMixin } from '@/mixins/view/router';

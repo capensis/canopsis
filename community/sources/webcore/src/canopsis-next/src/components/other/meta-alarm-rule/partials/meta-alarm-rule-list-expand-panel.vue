@@ -17,7 +17,7 @@
 import {
   isMetaAlarmRuleTypeHasTotalEntityPatterns,
   metaAlarmFilterPatternsToForm,
-} from '@/helpers/forms/meta-alarm-rule';
+} from '@/helpers/entities/meta-alarm/rule/form';
 
 import MetaAlarmRulePatternsForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-patterns-form.vue';
 

@@ -92,7 +92,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { PATTERN_CUSTOM_ITEM_VALUE, PATTERN_EDITOR_TABS } from '@/constants';
 
-import { formGroupsToPatternRules, patternsToGroups, patternToForm } from '@/helpers/forms/pattern';
+import { formGroupsToPatternRules, patternsToGroups, patternToForm } from '@/helpers/entities/pattern/form';
 
 import { formMixin, validationChildrenMixin } from '@/mixins/form';
 

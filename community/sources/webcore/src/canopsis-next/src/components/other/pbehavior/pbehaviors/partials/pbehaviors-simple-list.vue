@@ -53,7 +53,7 @@ import { MODALS } from '@/constants';
 
 import Observer from '@/services/observer';
 
-import { createEntityIdPatternByValue } from '@/helpers/pattern';
+import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
 const { mapActions } = createNamespacedHelpers('pbehavior');
 

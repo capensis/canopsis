@@ -16,10 +16,10 @@ import {
 
 import featuresService from '@/services/features';
 
-import { mapIds } from '@/helpers/entities';
-import { getEntityEventIcon } from '@/helpers/icon';
-import { createEntityIdPatternByValue } from '@/helpers/pattern';
-import { harmonizeAlarmsLinks, getLinkRuleLinkActionType } from '@/helpers/links';
+import { mapIds } from '@/helpers/array';
+import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
+import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
+import { harmonizeAlarmsLinks, getLinkRuleLinkActionType } from '@/helpers/entities/link/list';
 
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';

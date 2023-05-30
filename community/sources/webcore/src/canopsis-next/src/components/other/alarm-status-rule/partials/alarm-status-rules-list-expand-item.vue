@@ -23,7 +23,7 @@
 <script>
 import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
-import { filterPatternsToForm } from '@/helpers/forms/filter';
+import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 
 import AlarmStatusRulePatternsForm from '../form/alarm-status-rule-patterns-form.vue';
 

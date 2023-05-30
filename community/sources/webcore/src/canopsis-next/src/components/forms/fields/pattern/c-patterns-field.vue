@@ -102,8 +102,7 @@ import { isString } from 'lodash';
 import { PATTERNS_FIELDS } from '@/constants';
 import { COLORS } from '@/config';
 
-import { isValidPatternRule } from '@/helpers/pattern';
-import { formGroupsToPatternRules } from '@/helpers/forms/pattern';
+import { isValidPatternRule, formGroupsToPatternRules } from '@/helpers/entities/pattern/form';
 
 export default {
   inject: ['$validator'],
