@@ -4,6 +4,7 @@ package security
 type User struct {
 	ID             string
 	Name           string
+	DisplayName    string
 	Firstname      string
 	Lastname       string
 	Email          string
