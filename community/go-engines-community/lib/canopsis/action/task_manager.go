@@ -116,7 +116,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						return
 					}
 
-					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AckResources, task.AdditionalData, task.FifoAckEvent)
+					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AckResources, task.AdditionalData, task.FifoAckEvent, task.IsMetaAlarmUpdated)
 					return
 				}
 
@@ -142,18 +142,19 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 					}
 
 					e.taskChannel <- Task{
-						Source:         "input listener",
-						Action:         execution.ActionExecutions[step].Action,
-						Alarm:          task.Alarm,
-						Entity:         task.Entity,
-						Step:           step,
-						ExecutionID:    execution.ID,
-						ScenarioID:     execution.ScenarioID,
-						AckResources:   execution.AckResources,
-						Header:         execution.Header,
-						Response:       execution.Response,
-						ResponseMap:    execution.ResponseMap,
-						AdditionalData: task.AdditionalData,
+						Source:             "input listener",
+						Action:             execution.ActionExecutions[step].Action,
+						Alarm:              task.Alarm,
+						Entity:             task.Entity,
+						Step:               step,
+						ExecutionID:        execution.ID,
+						ScenarioID:         execution.ScenarioID,
+						AckResources:       execution.AckResources,
+						Header:             execution.Header,
+						Response:           execution.Response,
+						ResponseMap:        execution.ResponseMap,
+						AdditionalData:     task.AdditionalData,
+						IsMetaAlarmUpdated: execution.IsMetaAlarmUpdated,
 					}
 
 					return
@@ -396,18 +397,19 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 		additionalData := scenarioExecution.AdditionalData
 		additionalData.AlarmChangeType = taskRes.AlarmChangeType
 		nextTask := Task{
-			Source:         "process task func",
-			Action:         scenarioExecution.ActionExecutions[nextStep].Action,
-			Alarm:          taskRes.Alarm,
-			Entity:         scenarioExecution.Entity,
-			Step:           nextStep,
-			ExecutionID:    taskRes.ExecutionID,
-			ScenarioID:     scenarioExecution.ScenarioID,
-			AckResources:   scenarioExecution.AckResources,
-			Header:         scenarioExecution.Header,
-			Response:       scenarioExecution.Response,
-			ResponseMap:    scenarioExecution.ResponseMap,
-			AdditionalData: additionalData,
+			Source:             "process task func",
+			Action:             scenarioExecution.ActionExecutions[nextStep].Action,
+			Alarm:              taskRes.Alarm,
+			Entity:             scenarioExecution.Entity,
+			Step:               nextStep,
+			ExecutionID:        taskRes.ExecutionID,
+			ScenarioID:         scenarioExecution.ScenarioID,
+			AckResources:       scenarioExecution.AckResources,
+			Header:             scenarioExecution.Header,
+			Response:           scenarioExecution.Response,
+			ResponseMap:        scenarioExecution.ResponseMap,
+			AdditionalData:     additionalData,
+			IsMetaAlarmUpdated: scenarioExecution.IsMetaAlarmUpdated,
 		}
 
 		select {
@@ -443,7 +445,7 @@ func (e *redisBasedManager) processTriggers(ctx context.Context, task ExecuteSce
 	}
 
 	for _, scenario := range scenarios {
-		e.startExecution(ctx, scenario, task.Alarm, task.Entity, task.AckResources, task.AdditionalData, task.FifoAckEvent)
+		e.startExecution(ctx, scenario, task.Alarm, task.Entity, task.AckResources, task.AdditionalData, task.FifoAckEvent, task.IsMetaAlarmUpdated)
 	}
 
 	return true, nil
@@ -481,7 +483,7 @@ func (e *redisBasedManager) processEmittedTrigger(
 
 	for _, scenario := range scenarios {
 		e.startExecution(ctx, scenario, prevTaskRes.Alarm, prevScenarioExecution.Entity, prevScenarioExecution.AckResources,
-			additionalData, prevScenarioExecution.FifoAckEvent)
+			additionalData, prevScenarioExecution.FifoAckEvent, prevScenarioExecution.IsMetaAlarmUpdated)
 	}
 
 	return nil
@@ -495,6 +497,7 @@ func (e *redisBasedManager) startExecution(
 	ackResources bool,
 	data AdditionalData,
 	fifoAckEvent types.Event,
+	isMetaAlarmUpdated bool,
 ) {
 	e.logger.Debug().Msgf("Execute scenario = %s for alarm = %s", scenario.ID, alarm.ID)
 	var executions []Execution
@@ -509,14 +512,15 @@ func (e *redisBasedManager) startExecution(
 	}
 
 	executionID, err := e.executionStorage.Create(ctx, ScenarioExecution{
-		ScenarioID:       scenario.ID,
-		AlarmID:          alarm.ID,
-		Entity:           entity,
-		ActionExecutions: executions,
-		LastUpdate:       time.Now().Unix(),
-		AckResources:     ackResources,
-		AdditionalData:   data,
-		FifoAckEvent:     fifoAckEvent,
+		ScenarioID:         scenario.ID,
+		AlarmID:            alarm.ID,
+		Entity:             entity,
+		ActionExecutions:   executions,
+		LastUpdate:         time.Now().Unix(),
+		AckResources:       ackResources,
+		AdditionalData:     data,
+		FifoAckEvent:       fifoAckEvent,
+		IsMetaAlarmUpdated: isMetaAlarmUpdated,
 	})
 	if err != nil {
 		e.logger.Err(err).Msg("cannot save execution")
@@ -528,15 +532,16 @@ func (e *redisBasedManager) startExecution(
 	}
 
 	e.taskChannel <- Task{
-		Source:         "input listener",
-		Action:         scenario.Actions[0],
-		Alarm:          alarm,
-		Entity:         entity,
-		Step:           0,
-		ExecutionID:    executionID,
-		ScenarioID:     scenario.ID,
-		AckResources:   ackResources,
-		AdditionalData: data,
+		Source:             "input listener",
+		Action:             scenario.Actions[0],
+		Alarm:              alarm,
+		Entity:             entity,
+		Step:               0,
+		ExecutionID:        executionID,
+		ScenarioID:         scenario.ID,
+		AckResources:       ackResources,
+		AdditionalData:     data,
+		IsMetaAlarmUpdated: isMetaAlarmUpdated,
 	}
 
 }

@@ -24,18 +24,19 @@ const (
 )
 
 type Task struct {
-	Source         string
-	Action         Action
-	Alarm          types.Alarm
-	Entity         types.Entity
-	Step           int
-	ExecutionID    string
-	ScenarioID     string
-	AckResources   bool
-	Header         map[string]string
-	Response       map[string]interface{}
-	ResponseMap    map[string]interface{}
-	AdditionalData AdditionalData
+	Source             string
+	Action             Action
+	Alarm              types.Alarm
+	Entity             types.Entity
+	Step               int
+	ExecutionID        string
+	ScenarioID         string
+	AckResources       bool
+	Header             map[string]string
+	Response           map[string]interface{}
+	ResponseMap        map[string]interface{}
+	AdditionalData     AdditionalData
+	IsMetaAlarmUpdated bool
 }
 
 type TaskResult struct {
@@ -303,13 +304,14 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*types.RPCWeb
 	}
 
 	return &types.RPCWebhookEvent{
-		Parameters:   webhookParams,
-		Alarm:        &task.Alarm,
-		Entity:       &task.Entity,
-		AckResources: task.AckResources,
-		Header:       task.Header,
-		Response:     task.Response,
-		Message:      fmt.Sprintf("step %d of scenario %s", task.Step, task.ScenarioID),
+		Parameters:         webhookParams,
+		Alarm:              &task.Alarm,
+		Entity:             &task.Entity,
+		AckResources:       task.AckResources,
+		Header:             task.Header,
+		Response:           task.Response,
+		Message:            fmt.Sprintf("step %d of scenario %s", task.Step, task.ScenarioID),
+		IsMetaAlarmUpdated: task.IsMetaAlarmUpdated,
 	}, nil
 }
 
