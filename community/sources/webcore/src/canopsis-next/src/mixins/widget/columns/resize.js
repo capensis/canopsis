@@ -1,3 +1,4 @@
+import Sortable from 'sortablejs';
 import { throttle } from 'lodash';
 
 export const widgetResizeAlarmMixin = {
@@ -5,8 +6,9 @@ export const widgetResizeAlarmMixin = {
     return {
       resizingMode: false,
       resizingColumnIndex: null,
-      rowWidth: null,
+      percentsInPixel: null,
       columnWidthByField: {},
+      columnOrderByField: {},
       aggregatedMovementX: 0,
     };
   },
@@ -15,31 +17,87 @@ export const widgetResizeAlarmMixin = {
   },
   beforeDestroy() {
     this.finishColumnResize();
+    this.finishColumnSortable();
+  },
+  computed: {
+    tableRow() {
+      return this.tableHeader.querySelector('tr:first-of-type');
+    },
+
+    headerCells() {
+      return this.tableRow.querySelectorAll('th');
+    },
   },
   methods: {
     toggleResizingMode() {
       this.resizingMode = !this.resizingMode;
 
-      this.calculateColumnsWidthsByTable(this.tableHeader);
+      this.calculateColumnsWidths();
+      this.startColumnSortable();
+    },
+
+    calculateInitialSorting() {
+      this.columnOrderByField = this.headers.reduce((acc, { value }, index) => {
+        acc[value] = index;
+
+        return acc;
+      }, {});
+    },
+
+    getColumnPositionByField(field) {
+      return this.columnOrderByField[field];
+    },
+
+    handleColumnSort({ related, dragged }) {
+      const draggedItemIndex = this.headers.findIndex(({ value }) => value === dragged.dataset.value);
+      const relatedItemIndex = this.headers.findIndex(({ value }) => value === related.dataset.value);
+
+      const copiedHeaders = [...this.headers];
+
+      const [item] = copiedHeaders.splice(draggedItemIndex, 1);
+
+      copiedHeaders.splice(relatedItemIndex, 0, item);
+
+      this.columnOrderByField = copiedHeaders.reduce((acc, { value }, index) => {
+        acc[value] = index;
+
+        return acc;
+      }, {});
+    },
+
+    startColumnSortable() {
+      this.calculateInitialSorting();
+
+      this.sortableInstance = Sortable.create(this.tableRow, {
+        draggable: '.alarms-list-table__draggable-column',
+        onMove: this.handleColumnSort,
+        direction: 'horizontal',
+      });
+    },
+
+    finishColumnSortable() {
+      this.sortableInstance?.destroy();
+      this.sortableInstance = null;
     },
 
     getColumnWidthByField(field) {
       return this.columnWidthByField[field];
     },
 
-    calculateColumnsWidthsByTable(tableHeaderElement) {
-      const tableRow = tableHeaderElement.querySelector('tr:first-of-type');
-      const headerCells = tableRow.querySelectorAll('th');
+    setPercentsInPixel() {
+      const { width: rowWidth } = this.tableRow.getBoundingClientRect();
 
-      const { width: rowWidth } = tableRow.getBoundingClientRect();
+      this.percentsInPixel = 100 / rowWidth;
+    },
 
-      this.rowWidth = rowWidth;
+    calculateColumnsWidths() {
+      this.setPercentsInPixel();
 
-      this.columnWidthByField = [...headerCells].reduce((acc, headerElement) => {
+      this.columnWidthByField = [...this.headerCells].reduce((acc, headerElement) => {
         if (headerElement.dataset?.value) {
           const { width } = headerElement.getBoundingClientRect();
 
-          acc[headerElement.dataset.value] = (width / this.rowWidth) * 100;
+          acc[headerElement.dataset.value] = width * this.percentsInPixel;
         }
 
         return acc;
@@ -126,8 +184,7 @@ export const widgetResizeAlarmMixin = {
     },
 
     handleColumnResize(event) {
-      const diff = (event.movementX / this.rowWidth) * 100;
-      this.aggregatedMovementX += diff;
+      this.aggregatedMovementX += event.movementX * this.percentsInPixel;
 
       this.throttledResizeColumnByDiff(this.resizingColumnIndex);
     },

@@ -5,7 +5,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
   class="alarm-list-row"
 >
   <td
-    class="pr-0"
+    class="alarm-list-row__icons pr-0"
   >
     <div
       class="layout row align-center justify-space-between"
@@ -28,21 +28,27 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
       />
     </div>
   </td>
-  <td>
+  <td
+    class="alarm-list-row__cell"
+  >
     <alarm-column-value-stub
       alarm="[object Object]"
       column="[object Object]"
       selectedtag="tag"
       widget="[object Object]"
     />
+    <!---->
   </td>
-  <td>
+  <td
+    class="alarm-list-row__cell"
+  >
     <alarm-column-value-stub
       alarm="[object Object]"
       column="[object Object]"
       selectedtag="tag"
       widget="[object Object]"
     />
+    <!---->
   </td>
   <td>
     <actions-panel-stub
@@ -59,21 +65,27 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
   class="alarm-list-row"
 >
   <!---->
-  <td>
+  <td
+    class="alarm-list-row__cell"
+  >
     <alarm-column-value-stub
       alarm="[object Object]"
       column="[object Object]"
       selectedtag=""
       widget="[object Object]"
     />
+    <!---->
   </td>
-  <td>
+  <td
+    class="alarm-list-row__cell"
+  >
     <alarm-column-value-stub
       alarm="[object Object]"
       column="[object Object]"
       selectedtag=""
       widget="[object Object]"
     />
+    <!---->
   </td>
   <td>
     <actions-panel-stub
@@ -90,7 +102,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
   class="alarm-list-row"
 >
   <td
-    class="pr-0"
+    class="alarm-list-row__icons pr-0"
   >
     <div
       class="layout row align-center justify-space-between"
@@ -137,7 +149,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
   class="alarm-list-row"
 >
   <td
-    class="pr-0"
+    class="alarm-list-row__icons pr-0"
   >
     <div
       class="layout row align-center justify-space-between"
@@ -173,7 +185,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
   class="alarm-list-row"
 >
   <td
-    class="pr-0"
+    class="alarm-list-row__icons pr-0"
   >
     <div
       class="layout row align-center justify-space-between"
@@ -209,7 +221,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with resolved alarm 1`] = `
   class="alarm-list-row"
 >
   <td
-    class="pr-0"
+    class="alarm-list-row__icons pr-0"
   >
     <div
       class="layout row align-center justify-space-between"

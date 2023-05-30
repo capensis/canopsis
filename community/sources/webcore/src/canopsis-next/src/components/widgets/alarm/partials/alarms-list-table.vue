@@ -6,7 +6,7 @@
     c-empty-data-table-columns(v-if="!columns.length")
     div(v-else)
       v-layout.alarms-list-table__top-pagination.px-4.position-relative(
-        v-if="totalItems && (densable || !hideActions || !hidePagination)",
+        v-if="shownTopPagination",
         ref="actions",
         row,
         align-center
@@ -14,24 +14,25 @@
         v-flex.alarms-list-table__top-pagination--left(v-if="densable || !hideActions", xs6)
           v-layout(row, align-center, justify-start)
             c-density-btn-toggle(v-if="densable", :value="dense", @change="$emit('update:dense', $event)")
-            v-fade-transition
+            v-fade-transition(v-if="!hideActions")
               v-flex.px-1(v-show="unresolvedSelected.length")
                 mass-actions-panel(
-                  v-if="!hideActions",
                   :items="unresolvedSelected",
                   :widget="widget",
                   :refresh-alarms-list="refreshAlarmsList",
                   @clear:items="clearSelected"
                 )
-        v-flex.alarms-list-table__top-pagination--center-absolute(xs4)
+        v-flex.alarms-list-table__top-pagination--center-absolute(v-if="!hidePagination", xs4)
           c-pagination(
-            v-if="!hidePagination",
             :page="pagination.page",
             :limit="pagination.limit",
             :total="totalItems",
             type="top",
             @input="updateQueryPage"
           )
+        v-flex.alarms-list-table__top-pagination--right-absolute(v-if="resizable")
+          v-btn(icon, @click="toggleResizingMode")
+            v-icon {{ resizingMode ? 'lock_open' : 'lock_outline' }}
       v-data-table.alarms-list-table(
         ref="dataTable",
         v-model="selected",
@@ -58,13 +59,14 @@
             :header="header",
             :selected-tag="selectedTag",
             :resizing="resizingMode",
-            @clear:tag="$emit('clear:tag')",
-            @resizing="toggleResizingMode"
+            @clear:tag="$emit('clear:tag')"
           )
           template(v-if="resizingMode && header.value !== 'actions'")
-            span.alarms-list-table__dragging-handler
+            span.alarms-list-table__dragging-handler(
+              @click.stop=""
+            )
             span.alarms-list-table__resize-handler(
-              @mousedown.prevent="startColumnResize(header.value)",
+              @mousedown.stop.prevent="startColumnResize(header.value)",
               @click.stop=""
             )
         template(#items="props")
@@ -224,20 +226,23 @@ export default {
       type: Boolean,
       default: false,
     },
+    resizable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
-    setTimeout(() => {
-      this.resizable = true;
-    }, 5000);
-
     return {
       selecting: false,
-      resizable: false,
       selected: [],
     };
   },
 
   computed: {
+    shownTopPagination() {
+      return this.totalItems && (this.densable || !this.hideActions || !this.hidePagination);
+    },
+
     wrapperListeners() {
       return this.selectable
         ? { mousemove: this.throttledMousemoveHandler }
@@ -261,7 +266,10 @@ export default {
     },
 
     headers() {
-      const headers = [...this.preparedColumns];
+      const headers = [...this.preparedColumns].map(column => ({
+        ...column,
+        class: 'alarms-list-table__draggable-column',
+      }));
 
       if (!this.hideActions) {
         headers.push({ text: this.$t('common.actionsLabel'), value: 'actions', sortable: false });
@@ -645,6 +653,11 @@ export default {
       left: 50%;
       transform: translate(-50%, 0);
     }
+
+    &--right-absolute {
+      position: absolute;
+      right: 0;
+    }
   }
 
   &__resize-handler {
@@ -661,7 +674,7 @@ export default {
 
     height: 100%;
 
-    z-index: 1;
+    z-index: 2;
 
     &:after {
       content: ' ';
@@ -682,6 +695,7 @@ export default {
     align-items: center;
     justify-content: center;
     cursor: grab;
+    z-index: 1;
 
     &:after {
       content: ' ';
@@ -696,7 +710,7 @@ export default {
     }
 
     &:hover:after {
-      opacity: 0.2;
+      opacity: 0.1;
     }
   }
 

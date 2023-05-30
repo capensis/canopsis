@@ -11,13 +11,11 @@ import { ALARM_FIELDS } from '@/constants';
 
 import AlarmHeaderPriority from './alarm-header-priority.vue';
 import AlarmHeaderTag from './alarm-header-tag.vue';
-import AlarmHeaderActions from './alarm-header-actions.vue';
 
 export default {
   components: {
     AlarmHeaderPriority,
     AlarmHeaderTag,
-    AlarmHeaderActions,
   },
   props: {
     header: {
@@ -48,19 +46,6 @@ export default {
           },
           on: {
             clear: () => this.$emit('clear:tag'),
-          },
-        };
-      }
-
-      if (this.header.value === 'actions') {
-        return {
-          is: 'alarm-header-actions',
-          text: this.header.text,
-          bind: {
-            resizing: this.resizing,
-          },
-          on: {
-            resizing: () => this.$emit('resizing'),
           },
         };
       }
