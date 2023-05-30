@@ -42,8 +42,9 @@ import { createNamespacedHelpers } from 'vuex';
 import { KPI_RATING_CRITERIA } from '@/constants';
 
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
-import { convertFilterToQuery } from '@/helpers/query';
-import { convertMetricValueToString, isCustomCriteria } from '@/helpers/metrics';
+import { convertFilterToQuery } from '@/helpers/entities/shared/query';
+import { convertMetricValueToString } from '@/helpers/entities/metric/list';
+import { isCustomCriteria } from '@/helpers/entities/metric/form';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';

@@ -100,8 +100,8 @@ import { COLORS } from '@/config';
 import { MODALS } from '@/constants';
 
 import { uid } from '@/helpers/uid';
-import { geomapPointToForm } from '@/helpers/forms/map';
-import { getGeomapMarkerIconOptions } from '@/helpers/map';
+import { geomapPointToForm } from '@/helpers/entities/map/form';
+import { getGeomapMarkerIconOptions } from '@/helpers/entities/map/list';
 
 import { formMixin, validationChildrenMixin } from '@/mixins/form';
 

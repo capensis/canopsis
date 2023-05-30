@@ -19,7 +19,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { formGroupsToPatternRules } from '@/helpers/forms/pattern';
+import { formGroupsToPatternRules } from '@/helpers/entities/pattern/form';
 
 import { formMixin } from '@/mixins/form';
 

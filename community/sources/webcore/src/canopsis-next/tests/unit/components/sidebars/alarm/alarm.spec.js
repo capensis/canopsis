@@ -27,7 +27,7 @@ import {
 } from '@/constants';
 
 import ClickOutside from '@/services/click-outside';
-import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/forms/widgets/alarm';
+import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/entities/widget/forms/alarm';
 import {
   generateDefaultAlarmListWidget,
   widgetToForm,
@@ -35,8 +35,8 @@ import {
   getEmptyWidgetByType,
   widgetParametersToForm,
   formToWidgetParameters,
-} from '@/helpers/forms/widgets/common';
-import { formToWidgetColumns, widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
+} from '@/helpers/entities/widget/form';
+import { formToWidgetColumns, widgetColumnToForm } from '@/helpers/entities/widget/column/form';
 
 import AlarmSettings from '@/components/sidebars/alarm/alarm.vue';
 

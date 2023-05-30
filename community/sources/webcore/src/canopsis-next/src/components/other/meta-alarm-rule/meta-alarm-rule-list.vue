@@ -51,8 +51,8 @@
 <script>
 import { OLD_PATTERNS_FIELDS } from '@/constants';
 
-import { isOldPattern } from '@/helpers/pattern';
-import { isMetaAlarmRuleTypeHasPatterns } from '@/helpers/forms/meta-alarm-rule';
+import { isOldPattern } from '@/helpers/entities/pattern/form';
+import { isMetaAlarmRuleTypeHasPatterns } from '@/helpers/entities/meta-alarm/rule/form';
 
 import MetaAlarmRuleListExpandPanel from './partials/meta-alarm-rule-list-expand-panel.vue';
 

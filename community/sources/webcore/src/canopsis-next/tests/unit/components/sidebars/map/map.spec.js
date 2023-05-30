@@ -17,8 +17,8 @@ import { COLOR_INDICATOR_TYPES, SIDE_BARS, USERS_PERMISSIONS, WIDGET_TYPES } fro
 
 import ClickOutside from '@/services/click-outside';
 
-import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/forms/widgets/common';
-import { formToWidgetColumns, widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
+import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/entities/widget/form';
+import { formToWidgetColumns, widgetColumnToForm } from '@/helpers/entities/widget/column/form';
 
 import MapSettings from '@/components/sidebars/map/map.vue';
 
