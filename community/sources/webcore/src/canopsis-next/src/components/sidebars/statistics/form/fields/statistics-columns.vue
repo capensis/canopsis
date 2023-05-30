@@ -41,7 +41,7 @@ import {
   STATISTICS_WIDGETS_USER_METRICS,
 } from '@/constants';
 
-import { statisticsWidgetColumnToForm } from '@/helpers/forms/widgets/statistics';
+import { statisticsWidgetColumnToForm } from '@/helpers/entities/widget/forms/statistics';
 
 import { formArrayMixin } from '@/mixins/form';
 import { validationAttachRequiredMixin } from '@/mixins/form/validation-attach-required';
