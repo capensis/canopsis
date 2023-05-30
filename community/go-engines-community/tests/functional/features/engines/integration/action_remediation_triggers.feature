@@ -111,12 +111,14 @@ Feature: scenarios should be triggered by remediation triggers
               {},
               {
                 "_t": "instructionstart",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
                 "m": "Instruction test-instruction-action-remediation-triggers-1-name."
               },
               {
                 "_t": "instructionfail",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
                 "m": "Instruction test-instruction-action-remediation-triggers-1-name."
               },
               {
@@ -548,17 +550,20 @@ Feature: scenarios should be triggered by remediation triggers
     [
       {
         "_t": "instructionstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
+        "user_id": "root",
         "m": "Instruction test-instruction-action-remediation-triggers-4-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
+        "user_id": "root",
         "m": "Instruction test-instruction-action-remediation-triggers-4-name. Job test-job-action-remediation-triggers-2-name."
       },
       {
         "_t": "instructionjobfail",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
+        "user_id": "root",
         "m": "Instruction test-instruction-action-remediation-triggers-4-name. Job test-job-action-remediation-triggers-2-name."
       }
     ]
@@ -568,7 +573,8 @@ Feature: scenarios should be triggered by remediation triggers
     [
       {
         "_t": "instructionjobfail",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
+        "user_id": "root",
         "m": "Instruction test-instruction-action-remediation-triggers-4-name. Job test-job-action-remediation-triggers-2-name."
       },
       {
@@ -684,12 +690,14 @@ Feature: scenarios should be triggered by remediation triggers
               {},
               {
                 "_t": "instructionstart",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
                 "m": "Instruction test-instruction-action-remediation-triggers-5-name."
               },
               {
                 "_t": "instructioncomplete",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
                 "m": "Instruction test-instruction-action-remediation-triggers-5-name."
               },
               {
@@ -965,17 +973,20 @@ Feature: scenarios should be triggered by remediation triggers
               {},
               {
                 "_t": "instructionstart",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
                 "m": "Instruction test-instruction-action-remediation-triggers-7-name."
               },
               {
                 "_t": "instructionjobstart",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
                 "m": "Instruction test-instruction-action-remediation-triggers-7-name. Job test-job-action-remediation-triggers-3-name."
               },
               {
                 "_t": "instructionjobcomplete",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
                 "m": "Instruction test-instruction-action-remediation-triggers-7-name. Job test-job-action-remediation-triggers-3-name."
               },
               {
