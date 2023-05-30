@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout.py-2(column)
-    statistics-widget-filters.mx-3(
+    kpi-widget-filters.mx-3(
       :widget-id="widget._id",
       :user-filters="userPreference.filters",
       :widget-filters="widget.filters",
@@ -59,7 +59,7 @@ import { permissionsWidgetsBarChartFilters } from '@/mixins/permissions/widgets/
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import CProgressOverlay from '@/components/common/overlay/c-progress-overlay.vue';
 
-import StatisticsWidgetFilters from './partials/statistics-widget-filters.vue';
+import KpiWidgetFilters from '../partials/kpi-widget-filters.vue';
 
 const { mapActions } = createNamespacedHelpers('ratingSettings');
 
@@ -68,7 +68,7 @@ export default {
   components: {
     CProgressOverlay,
     CAdvancedDataTable,
-    StatisticsWidgetFilters,
+    KpiWidgetFilters,
   },
   mixins: [
     widgetFetchQueryMixin,
