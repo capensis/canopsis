@@ -22,7 +22,11 @@
             @update:objectValue="$emit('update:stopObjectValue', $event)"
           )
       v-flex.pl-1(xs6)
-        c-quick-date-interval-type-field(v-model="range", return-object)
+        c-quick-date-interval-type-field(
+          v-model="range",
+          :ranges="quickRanges",
+          return-object
+        )
         v-select(
           v-field="value.time_field",
           :items="intervalFields",
@@ -66,6 +70,10 @@ export default {
     tstartRules: {
       type: [String, Object],
       default: null,
+    },
+    quickRanges: {
+      type: Array,
+      required: false,
     },
   },
   computed: {
