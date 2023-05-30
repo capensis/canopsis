@@ -29,7 +29,7 @@ import {
   LINK_RULE_ACTIONS,
 } from '@/constants';
 
-import { harmonizeLinks, harmonizeCategoryLinks } from '@/helpers/links';
+import { harmonizeLinks, harmonizeCategoryLinks } from '@/helpers/entities/link/list';
 import { writeTextToClipboard } from '@/helpers/clipboard';
 
 import { authMixin } from '@/mixins/auth';

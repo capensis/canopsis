@@ -18,8 +18,8 @@
 <script>
 import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
-import { filterPatternsToForm } from '@/helpers/forms/filter';
-import { isIdleRuleEntityType } from '@/helpers/forms/idle-rule';
+import { filterPatternsToForm } from '@/helpers/entities/filter/form';
+import { isIdleRuleEntityType } from '@/helpers/entities/idle-rule/form';
 
 import IdleRulePatternsForm from '@/components/other/idle-rule/form/idle-rule-patterns-form.vue';
 

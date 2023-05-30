@@ -57,8 +57,8 @@
 </template>
 
 <script>
-import { isOmitEqual } from '@/helpers/equal';
-import { remediationInstructionStepOperationToForm } from '@/helpers/forms/remediation-instruction';
+import { isOmitEqual } from '@/helpers/collection';
+import { remediationInstructionStepOperationToForm } from '@/helpers/entities/remediation/instruction/form';
 
 import { formMixin, validationChildrenMixin } from '@/mixins/form';
 import { confirmableFormMixinCreator } from '@/mixins/confirmable-form';

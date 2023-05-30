@@ -15,7 +15,7 @@ import {
   WIDGET_TYPES,
 } from '@/constants';
 
-import { widgetToForm, formToWidget } from '@/helpers/forms/widgets/common';
+import { widgetToForm, formToWidget } from '@/helpers/entities/widget/form';
 
 import NumbersWidgetForm from '@/components/sidebars/chart/form/numbers-widget-form.vue';
 
