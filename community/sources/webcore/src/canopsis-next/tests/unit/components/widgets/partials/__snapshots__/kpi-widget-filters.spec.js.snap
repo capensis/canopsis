@@ -1,25 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`chart-widget-filters Renders \`chart-widget-filters\` with custom props 1`] = `
+exports[`kpi-widget-filters Renders 'kpi-widget-filters' with custom props 1`] = `
 <div
-  class="layout chart-widget-filters wrap"
+  class="layout kpi-widget-filters wrap"
 >
   <c-quick-date-interval-field-stub
-    class="chart-widget-filters__interval"
+    class="kpi-widget-filters__interval"
     interval="[object Object]"
     min="1633737600"
     quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     short="short"
   />
   <c-sampling-field-stub
-    class="chart-widget-filters__sampling"
+    class="kpi-widget-filters__sampling"
     value="month"
   />
   <div
     class="layout row align-end"
   >
     <filter-selector-stub
-      class="chart-widget-filters__filter-selector mr-4"
+      class="kpi-widget-filters__filter-selector mr-4"
       clearable="true"
       disabled="true"
       filters="[object Object],[object Object],[object Object]"
@@ -42,9 +42,9 @@ exports[`chart-widget-filters Renders \`chart-widget-filters\` with custom props
 </div>
 `;
 
-exports[`chart-widget-filters Renders \`chart-widget-filters\` with required props 1`] = `
+exports[`kpi-widget-filters Renders 'kpi-widget-filters' with required props 1`] = `
 <div
-  class="layout chart-widget-filters wrap"
+  class="layout kpi-widget-filters wrap"
 >
   <!---->
   <!---->
