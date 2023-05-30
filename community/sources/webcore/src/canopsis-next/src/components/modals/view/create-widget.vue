@@ -9,7 +9,7 @@
           v-on="on",
           :key="type"
         )
-          v-menu(top, offset-y, :disabled="!children")
+          v-menu(:disabled="!children", top, offset-y)
             template(#activator="{ on: menuOn }")
               v-card-title(v-on="menuOn", primary-title)
                 v-layout(wrap, justify-between)

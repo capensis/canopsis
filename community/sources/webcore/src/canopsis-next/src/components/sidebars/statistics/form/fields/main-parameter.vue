@@ -15,12 +15,11 @@
         v-radio.my-0(:value="id", :label="label", color="primary")
         c-help-icon(v-if="tooltip", :text="tooltip", icon="help", top)
     template(v-if="isCustomCriteria")
-      v-text-field(
+      c-name-field(
         v-field="form.columnName",
-        v-validate="'required'",
         :label="$t('settings.columnName')",
-        :error-messages="errors.collect('columnName')",
-        name="columnName"
+        name="columnName",
+        required
       )
       field-filters-list(
         v-field="form.patterns",
