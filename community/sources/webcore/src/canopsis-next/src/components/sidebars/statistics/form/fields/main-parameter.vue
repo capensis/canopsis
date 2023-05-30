@@ -40,7 +40,7 @@ import {
   KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA,
 } from '@/constants';
 
-import { isCustomCriteria } from '@/helpers/metrics';
+import { isCustomCriteria } from '@/helpers/entities/metric/form';
 
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 import FieldFiltersList from '@/components/sidebars/form/fields/filters-list.vue';
