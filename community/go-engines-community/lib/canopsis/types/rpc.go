@@ -98,13 +98,14 @@ func (e *RPCError) UnmarshalJSON(b []byte) error {
 }
 
 type RPCWebhookEvent struct {
-	Parameters   RPCWebhookParameters   `json:"parameters"`
-	Alarm        *Alarm                 `json:"alarm"`
-	Entity       *Entity                `json:"entity"`
-	AckResources bool                   `json:"ack_resources"`
-	Header       map[string]string      `json:"header,omitempty"`
-	Response     map[string]interface{} `json:"response,omitempty"`
-	Message      string                 `json:"message"`
+	Parameters         RPCWebhookParameters   `json:"parameters"`
+	Alarm              *Alarm                 `json:"alarm"`
+	Entity             *Entity                `json:"entity"`
+	AckResources       bool                   `json:"ack_resources"`
+	Header             map[string]string      `json:"header,omitempty"`
+	Response           map[string]interface{} `json:"response,omitempty"`
+	Message            string                 `json:"message"`
+	IsMetaAlarmUpdated bool                   `json:"is_meta_alarm_updated,omitempty"`
 }
 
 type RPCWebhookParameters struct {
