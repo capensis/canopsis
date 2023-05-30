@@ -90,7 +90,7 @@ func (p *mongoProvider) Save(ctx context.Context, u *security.User) error {
 			return err
 		}
 
-		u = newUser
+		*u = *newUser
 
 		return nil
 	})
