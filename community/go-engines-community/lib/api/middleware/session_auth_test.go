@@ -14,7 +14,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/gorilla/sessions"
-	"go.mongodb.org/mongo-driver/mongo"
 	"github.com/rs/zerolog"
 )
 
@@ -134,11 +133,12 @@ func TestSessionAuth_GivenInvalidUserSession_ShouldReturnUnauthorizedError(t *te
 	}
 }
 
-func mockUserSingleResult(ctrl *gomock.Controller, user *security.User) libmongo.SingleResultHelper {
-	mockSingleResult := mock_mongo.NewMockSingleResultHelper(ctrl)
+func mockUserCursor(ctrl *gomock.Controller, user *security.User) libmongo.Cursor {
+	mockCursor := mock_mongo.NewMockCursor(ctrl)
 
 	if user != nil {
-		mockSingleResult.
+		mockCursor.EXPECT().Next(gomock.Any()).Return(true)
+		mockCursor.
 			EXPECT().
 			Decode(gomock.Any()).
 			Do(func(val interface{}) {
@@ -148,8 +148,10 @@ func mockUserSingleResult(ctrl *gomock.Controller, user *security.User) libmongo
 			}).
 			Return(nil)
 	} else {
-		mockSingleResult.EXPECT().Decode(gomock.Any()).Return(mongo.ErrNoDocuments)
+		mockCursor.EXPECT().Next(gomock.Any()).Return(false)
 	}
 
-	return mockSingleResult
+	mockCursor.EXPECT().Close(gomock.Any())
+
+	return mockCursor
 }

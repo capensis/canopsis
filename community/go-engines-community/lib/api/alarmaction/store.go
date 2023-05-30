@@ -35,14 +35,14 @@ func NewStore(
 	logger zerolog.Logger,
 ) Store {
 	return &store{
-		dbClient:       dbClient,
-		dbCollection:   dbClient.Collection(mongo.AlarmMongoCollection),
-		amqpPublisher:  amqpPublisher,
-		exchange:       exchange,
-		queue:          queue,
-		encoder:        encoder,
-		contentType:    contentType,
-		logger:         logger,
+		dbClient:      dbClient,
+		dbCollection:  dbClient.Collection(mongo.AlarmMongoCollection),
+		amqpPublisher: amqpPublisher,
+		exchange:      exchange,
+		queue:         queue,
+		encoder:       encoder,
+		contentType:   contentType,
+		logger:        logger,
 	}
 }
 
