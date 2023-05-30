@@ -304,6 +304,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.Execution = string(in.String())
 		case "instruction":
 			out.Instruction = string(in.String())
+		case "ma_updated":
+			out.IsMetaAlarmUpdated = bool(in.Bool())
 		case "ticket":
 			out.Ticket = string(in.String())
 		case "ticket_url":
@@ -667,6 +669,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"instruction\":"
 		out.RawString(prefix)
 		out.String(string(in.Instruction))
+	}
+	if in.IsMetaAlarmUpdated {
+		const prefix string = ",\"ma_updated\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.IsMetaAlarmUpdated))
 	}
 	if in.Ticket != "" {
 		const prefix string = ",\"ticket\":"
