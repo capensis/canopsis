@@ -3,7 +3,6 @@ package userprovider
 
 import (
 	"context"
-	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -11,12 +10,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // mongoProvider decorates request to mongo db.
 type mongoProvider struct {
+	client         libmongo.DbClient
 	collection     libmongo.DbCollection
 	configProvider config.ApiConfigProvider
 }
@@ -24,6 +23,7 @@ type mongoProvider struct {
 // NewMongoProvider creates new provider.
 func NewMongoProvider(db libmongo.DbClient, configProvider config.ApiConfigProvider) security.UserProvider {
 	return &mongoProvider{
+		client:         db,
 		collection:     db.Collection(libmongo.UserCollection),
 		configProvider: configProvider,
 	}
@@ -73,18 +73,29 @@ func (p *mongoProvider) Save(ctx context.Context, u *security.User) error {
 	}
 
 	u.DisplayName = ""
-	_, err := p.collection.UpdateOne(
-		ctx,
-		bson.M{"_id": u.ID},
-		bson.M{"$set": u},
-		options.Update().SetUpsert(true),
-	)
+	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
+		_, err := p.collection.UpdateOne(
+			ctx,
+			bson.M{"_id": u.ID},
+			bson.M{"$set": u},
+			options.Update().SetUpsert(true),
+		)
 
-	if err != nil {
-		return err
-	}
+		if err != nil {
+			return err
+		}
 
-	return nil
+		newUser, err := p.findByFilter(ctx, bson.M{"_id": u.ID})
+		if err != nil {
+			return err
+		}
+
+		u = newUser
+
+		return nil
+	})
+
+	return err
 }
 
 // findByFilter returns User or nil if no user matches filter.
@@ -115,4 +126,18 @@ func (p *mongoProvider) findByFilter(ctx context.Context, match bson.M) (*securi
 	}
 
 	return nil, nil
+}
+
+func (p *mongoProvider) getDisplayNameQuery() bson.M {
+	authorScheme := p.configProvider.Get().AuthorScheme
+	concat := make([]any, len(authorScheme))
+	for i, v := range authorScheme {
+		if len(v) > 0 && v[0] == '$' {
+			concat[i] = bson.M{"$ifNull": bson.A{v, ""}}
+		} else {
+			concat[i] = v
+		}
+	}
+
+	return bson.M{"$concat": concat}
 }
