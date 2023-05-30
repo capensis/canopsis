@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	libauthor "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -17,14 +16,14 @@ import (
 )
 
 type Store interface {
-	Ack(ctx context.Context, id string, r AckRequest, userId string) (bool, error)
-	AckRemove(ctx context.Context, id string, r Request, userId string) (bool, error)
-	Snooze(ctx context.Context, id string, r SnoozeRequest, userId string) (bool, error)
-	Cancel(ctx context.Context, id string, r Request, userId string) (bool, error)
-	Uncancel(ctx context.Context, id string, r Request, userId string) (bool, error)
-	AssocTicket(ctx context.Context, id string, r AssocTicketRequest, userId string) (bool, error)
-	Comment(ctx context.Context, id string, r CommentRequest, userId string) (bool, error)
-	ChangeState(ctx context.Context, id string, r ChangeStateRequest, userId string) (bool, error)
+	Ack(ctx context.Context, id string, r AckRequest, userId, username string) (bool, error)
+	AckRemove(ctx context.Context, id string, r Request, userId, username string) (bool, error)
+	Snooze(ctx context.Context, id string, r SnoozeRequest, userId, username string) (bool, error)
+	Cancel(ctx context.Context, id string, r Request, userId, username string) (bool, error)
+	Uncancel(ctx context.Context, id string, r Request, userId, username string) (bool, error)
+	AssocTicket(ctx context.Context, id string, r AssocTicketRequest, userId, username string) (bool, error)
+	Comment(ctx context.Context, id string, r CommentRequest, userId, username string) (bool, error)
+	ChangeState(ctx context.Context, id string, r ChangeStateRequest, userId, username string) (bool, error)
 }
 
 func NewStore(
@@ -33,19 +32,17 @@ func NewStore(
 	exchange, queue string,
 	encoder encoding.Encoder,
 	contentType string,
-	authorProvider libauthor.Provider,
 	logger zerolog.Logger,
 ) Store {
 	return &store{
-		dbClient:       dbClient,
-		dbCollection:   dbClient.Collection(mongo.AlarmMongoCollection),
-		amqpPublisher:  amqpPublisher,
-		exchange:       exchange,
-		queue:          queue,
-		encoder:        encoder,
-		contentType:    contentType,
-		authorProvider: authorProvider,
-		logger:         logger,
+		dbClient:      dbClient,
+		dbCollection:  dbClient.Collection(mongo.AlarmMongoCollection),
+		amqpPublisher: amqpPublisher,
+		exchange:      exchange,
+		queue:         queue,
+		encoder:       encoder,
+		contentType:   contentType,
+		logger:        logger,
 	}
 }
 
@@ -56,19 +53,13 @@ type store struct {
 	exchange, queue string
 	encoder         encoding.Encoder
 	contentType     string
-	authorProvider  libauthor.Provider
 	logger          zerolog.Logger
 }
 
-func (s *store) Ack(ctx context.Context, id string, r AckRequest, userId string) (bool, error) {
+func (s *store) Ack(ctx context.Context, id string, r AckRequest, userId, username string) (bool, error) {
 	// Double ack can be enabled. Check in engine-axe.
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id})
 	if err != nil || alarm.Alarm.ID == "" {
-		return false, err
-	}
-
-	author, err := s.getAuthor(ctx, userId)
-	if err != nil {
 		return false, err
 	}
 
@@ -78,7 +69,7 @@ func (s *store) Ack(ctx context.Context, id string, r AckRequest, userId string)
 		Component: alarm.Alarm.Value.Component,
 		Resource:  alarm.Alarm.Value.Resource,
 		UserID:    userId,
-		Author:    author,
+		Author:    username,
 	}
 	err = s.sendEvent(ctx, event)
 	if err != nil {
@@ -87,7 +78,7 @@ func (s *store) Ack(ctx context.Context, id string, r AckRequest, userId string)
 
 	if r.AckResources && alarm.Entity.Type == types.EntityTypeComponent {
 		go func() {
-			err = s.ackResources(context.Background(), alarm.Entity.ID, r.Comment, userId, author)
+			err = s.ackResources(context.Background(), alarm.Entity.ID, r.Comment, userId, username)
 			if err != nil {
 				s.logger.Err(err).Msg("cannot ack resources")
 			}
@@ -97,7 +88,7 @@ func (s *store) Ack(ctx context.Context, id string, r AckRequest, userId string)
 	return true, nil
 }
 
-func (s *store) AckRemove(ctx context.Context, id string, r Request, userId string) (bool, error) {
+func (s *store) AckRemove(ctx context.Context, id string, r Request, userId, username string) (bool, error) {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id, "v.ack": bson.M{"$ne": nil}})
 	if err != nil || alarm.Alarm.ID == "" {
 		return false, err
@@ -109,6 +100,7 @@ func (s *store) AckRemove(ctx context.Context, id string, r Request, userId stri
 		Component: alarm.Alarm.Value.Component,
 		Resource:  alarm.Alarm.Value.Resource,
 		UserID:    userId,
+		Author:    username,
 	}
 	err = s.sendEvent(ctx, event)
 	if err != nil {
@@ -118,7 +110,7 @@ func (s *store) AckRemove(ctx context.Context, id string, r Request, userId stri
 	return true, nil
 }
 
-func (s *store) Snooze(ctx context.Context, id string, r SnoozeRequest, userId string) (bool, error) {
+func (s *store) Snooze(ctx context.Context, id string, r SnoozeRequest, userId, username string) (bool, error) {
 	d, err := r.Duration.To("s")
 	if err != nil {
 		return false, common.NewValidationError("duration", "Duration is invalid.")
@@ -136,6 +128,7 @@ func (s *store) Snooze(ctx context.Context, id string, r SnoozeRequest, userId s
 		Component: alarm.Alarm.Value.Component,
 		Resource:  alarm.Alarm.Value.Resource,
 		UserID:    userId,
+		Author:    username,
 	}
 	err = s.sendEvent(ctx, event)
 	if err != nil {
@@ -145,7 +138,7 @@ func (s *store) Snooze(ctx context.Context, id string, r SnoozeRequest, userId s
 	return true, nil
 }
 
-func (s *store) Cancel(ctx context.Context, id string, r Request, userId string) (bool, error) {
+func (s *store) Cancel(ctx context.Context, id string, r Request, userId, username string) (bool, error) {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id, "v.canceled": nil})
 	if err != nil || alarm.Alarm.ID == "" {
 		return false, err
@@ -157,6 +150,7 @@ func (s *store) Cancel(ctx context.Context, id string, r Request, userId string)
 		Component: alarm.Alarm.Value.Component,
 		Resource:  alarm.Alarm.Value.Resource,
 		UserID:    userId,
+		Author:    username,
 	}
 	err = s.sendEvent(ctx, event)
 	if err != nil {
@@ -166,7 +160,7 @@ func (s *store) Cancel(ctx context.Context, id string, r Request, userId string)
 	return true, nil
 }
 
-func (s *store) Uncancel(ctx context.Context, id string, r Request, userId string) (bool, error) {
+func (s *store) Uncancel(ctx context.Context, id string, r Request, userId, username string) (bool, error) {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id, "v.canceled": bson.M{"$ne": nil}})
 	if err != nil || alarm.Alarm.ID == "" {
 		return false, err
@@ -178,6 +172,7 @@ func (s *store) Uncancel(ctx context.Context, id string, r Request, userId strin
 		Component: alarm.Alarm.Value.Component,
 		Resource:  alarm.Alarm.Value.Resource,
 		UserID:    userId,
+		Author:    username,
 	}
 	err = s.sendEvent(ctx, event)
 	if err != nil {
@@ -187,14 +182,9 @@ func (s *store) Uncancel(ctx context.Context, id string, r Request, userId strin
 	return true, nil
 }
 
-func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest, userId string) (bool, error) {
+func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest, userId, username string) (bool, error) {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id})
 	if err != nil || alarm.Alarm.ID == "" {
-		return false, err
-	}
-
-	author, err := s.getAuthor(ctx, userId)
-	if err != nil {
 		return false, err
 	}
 
@@ -211,7 +201,7 @@ func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest
 		Component:  alarm.Alarm.Value.Component,
 		Resource:   alarm.Alarm.Value.Resource,
 		UserID:     userId,
-		Author:     author,
+		Author:     username,
 	}
 	err = s.sendEvent(ctx, event)
 	if err != nil {
@@ -220,7 +210,7 @@ func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest
 
 	if r.TicketResources && alarm.Entity.Type == types.EntityTypeComponent {
 		go func() {
-			err = s.ticketResources(context.Background(), alarm.Entity.ID, ticketInfo, userId, author)
+			err = s.ticketResources(context.Background(), alarm.Entity.ID, ticketInfo, userId, username)
 			if err != nil {
 				s.logger.Err(err).Msg("cannot ticket resources")
 			}
@@ -230,7 +220,7 @@ func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest
 	return true, nil
 }
 
-func (s *store) Comment(ctx context.Context, id string, r CommentRequest, userId string) (bool, error) {
+func (s *store) Comment(ctx context.Context, id string, r CommentRequest, userId, username string) (bool, error) {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id})
 	if err != nil || alarm.Alarm.ID == "" {
 		return false, err
@@ -242,6 +232,7 @@ func (s *store) Comment(ctx context.Context, id string, r CommentRequest, userId
 		Component: alarm.Alarm.Value.Component,
 		Resource:  alarm.Alarm.Value.Resource,
 		UserID:    userId,
+		Author:    username,
 	}
 	err = s.sendEvent(ctx, event)
 	if err != nil {
@@ -251,7 +242,7 @@ func (s *store) Comment(ctx context.Context, id string, r CommentRequest, userId
 	return true, nil
 }
 
-func (s *store) ChangeState(ctx context.Context, id string, r ChangeStateRequest, userId string) (bool, error) {
+func (s *store) ChangeState(ctx context.Context, id string, r ChangeStateRequest, userId, username string) (bool, error) {
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id})
 	if err != nil || alarm.Alarm.ID == "" {
 		return false, err
@@ -264,6 +255,7 @@ func (s *store) ChangeState(ctx context.Context, id string, r ChangeStateRequest
 		Component: alarm.Alarm.Value.Component,
 		Resource:  alarm.Alarm.Value.Resource,
 		UserID:    userId,
+		Author:    username,
 	}
 	err = s.sendEvent(ctx, event)
 	if err != nil {
@@ -312,14 +304,6 @@ func (s *store) findAlarm(ctx context.Context, match bson.M) (types.AlarmWithEnt
 }
 
 func (s *store) sendEvent(ctx context.Context, event types.Event) error {
-	if event.Author == "" && event.UserID != "" {
-		var err error
-		event.Author, err = s.getAuthor(ctx, event.UserID)
-		if err != nil {
-			return err
-		}
-	}
-
 	event.Connector = canopsis.ApiName
 	event.ConnectorName = canopsis.ApiName
 	event.Initiator = types.InitiatorUser
@@ -348,7 +332,7 @@ func (s *store) ackResources(
 	ctx context.Context,
 	component string,
 	comment string,
-	userId, author string,
+	userId, username string,
 ) error {
 	cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
@@ -393,7 +377,7 @@ func (s *store) ackResources(
 			Component: alarm.Alarm.Value.Component,
 			Resource:  alarm.Alarm.Value.Resource,
 			UserID:    userId,
-			Author:    author,
+			Author:    username,
 		}
 		err = s.sendEvent(ctx, event)
 		if err != nil {
@@ -408,7 +392,7 @@ func (s *store) ticketResources(
 	ctx context.Context,
 	component string,
 	ticketInfo types.TicketInfo,
-	userId, author string,
+	userId, username string,
 ) error {
 	cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
@@ -453,7 +437,7 @@ func (s *store) ticketResources(
 			Component:  alarm.Alarm.Value.Component,
 			Resource:   alarm.Alarm.Value.Resource,
 			UserID:     userId,
-			Author:     author,
+			Author:     username,
 		}
 		err = s.sendEvent(ctx, event)
 		if err != nil {
@@ -462,9 +446,4 @@ func (s *store) ticketResources(
 	}
 
 	return nil
-}
-
-func (s *store) getAuthor(ctx context.Context, id string) (string, error) {
-	author, err := s.authorProvider.Find(ctx, id)
-	return author.DisplayName, err
 }

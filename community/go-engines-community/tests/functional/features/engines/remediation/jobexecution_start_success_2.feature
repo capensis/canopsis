@@ -161,31 +161,31 @@ Feature: run a job
     [
       {
         "_t": "instructionstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-second-1-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-second-1-name. Job test-job-to-job-execution-start-second-1-name."
       },
       {
         "_t": "instructionjobcomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-second-1-name. Job test-job-to-job-execution-start-second-1-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-second-1-name. Job test-job-to-job-execution-start-second-1-name."
       },
       {
         "_t": "instructionjobcomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-second-1-name. Job test-job-to-job-execution-start-second-1-name."
       }
@@ -479,37 +479,37 @@ Feature: run a job
     [
       {
         "_t": "instructionstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-second-2-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-second-2-name. Job test-job-to-job-execution-start-second-2-name."
       },
       {
         "_t": "instructionjobcomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-second-2-name. Job test-job-to-job-execution-start-second-2-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-second-2-name. Job test-job-to-job-execution-start-second-2-name."
       },
       {
         "_t": "instructionjobcomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-second-2-name. Job test-job-to-job-execution-start-second-2-name."
       },
       {
         "_t": "instructioncomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-second-2-name."
       }
