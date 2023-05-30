@@ -4,11 +4,13 @@ import (
 	"context"
 	"testing"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -31,14 +33,9 @@ func TestMongoProvider_FindByUsername_GivenID_ShouldReturnUser(t *testing.T) {
 		HashedPassword: "testhash",
 	}
 	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	filter := bson.M{
-		"crecord_type": model.LineTypeSubject,
-		"_id":          username,
-		"source":       bson.M{"$in": bson.A{"", nil}},
-	}
 	mockDbCollection.
 		EXPECT().
-		Find(gomock.Any(), gomock.Eq(filter)).
+		Aggregate(gomock.Any(), gomock.Any()).
 		Return(mockUserCursor(ctrl, m), nil)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.
@@ -46,7 +43,7 @@ func TestMongoProvider_FindByUsername_GivenID_ShouldReturnUser(t *testing.T) {
 		Collection(gomock.Eq(libmongo.RightsMongoCollection)).
 		Return(mockDbCollection)
 
-	p := NewMongoProvider(mockDbClient)
+	p := NewMongoProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	user, err := p.FindByUsername(ctx, username)
 
 	if err != nil {
@@ -65,14 +62,9 @@ func TestMongoProvider_FindByUsername_GivenID_ShouldReturnNil(t *testing.T) {
 	defer cancel()
 	username := "testname"
 	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	filter := bson.M{
-		"crecord_type": model.LineTypeSubject,
-		"_id":          username,
-		"source":       bson.M{"$in": bson.A{"", nil}},
-	}
 	mockDbCollection.
 		EXPECT().
-		Find(gomock.Any(), gomock.Eq(filter)).
+		Aggregate(gomock.Any(), gomock.Any()).
 		Return(mockUserCursor(ctrl, nil), nil)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.
@@ -80,7 +72,7 @@ func TestMongoProvider_FindByUsername_GivenID_ShouldReturnNil(t *testing.T) {
 		Collection(gomock.Eq(libmongo.RightsMongoCollection)).
 		Return(mockDbCollection)
 
-	p := NewMongoProvider(mockDbClient)
+	p := NewMongoProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	user, err := p.FindByUsername(ctx, username)
 
 	if err != nil {
@@ -109,13 +101,9 @@ func TestMongoProvider_FindByAuthApiKey_GivenID_ShouldReturnUser(t *testing.T) {
 		HashedPassword: "testhash",
 	}
 	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	filter := bson.M{
-		"crecord_type": model.LineTypeSubject,
-		"authkey":      userApiKey,
-	}
 	mockDbCollection.
 		EXPECT().
-		Find(gomock.Any(), gomock.Eq(filter)).
+		Aggregate(gomock.Any(), gomock.Any()).
 		Return(mockUserCursor(ctrl, m), nil)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.
@@ -123,7 +111,7 @@ func TestMongoProvider_FindByAuthApiKey_GivenID_ShouldReturnUser(t *testing.T) {
 		Collection(gomock.Eq(libmongo.RightsMongoCollection)).
 		Return(mockDbCollection)
 
-	p := NewMongoProvider(mockDbClient)
+	p := NewMongoProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	user, err := p.FindByAuthApiKey(ctx, userApiKey)
 
 	if err != nil {
@@ -142,13 +130,9 @@ func TestMongoProvider_FindByAuthApiKey_GivenID_ShouldReturnNil(t *testing.T) {
 	defer cancel()
 	userApiKey := "testkey"
 	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	filter := bson.M{
-		"crecord_type": model.LineTypeSubject,
-		"authkey":      userApiKey,
-	}
 	mockDbCollection.
 		EXPECT().
-		Find(gomock.Any(), gomock.Eq(filter)).
+		Aggregate(gomock.Any(), gomock.Any()).
 		Return(mockUserCursor(ctrl, nil), nil)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.
@@ -156,7 +140,7 @@ func TestMongoProvider_FindByAuthApiKey_GivenID_ShouldReturnNil(t *testing.T) {
 		Collection(gomock.Eq(libmongo.RightsMongoCollection)).
 		Return(mockDbCollection)
 
-	p := NewMongoProvider(mockDbClient)
+	p := NewMongoProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	user, err := p.FindByAuthApiKey(ctx, userApiKey)
 
 	if err != nil {
@@ -185,13 +169,9 @@ func TestMongoProvider_FindByID_GivenID_ShouldReturnUser(t *testing.T) {
 		HashedPassword: "testhash",
 	}
 	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	filter := bson.M{
-		"crecord_type": model.LineTypeSubject,
-		"_id":          userID,
-	}
 	mockDbCollection.
 		EXPECT().
-		Find(gomock.Any(), gomock.Eq(filter)).
+		Aggregate(gomock.Any(), gomock.Any()).
 		Return(mockUserCursor(ctrl, m), nil)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.
@@ -199,7 +179,7 @@ func TestMongoProvider_FindByID_GivenID_ShouldReturnUser(t *testing.T) {
 		Collection(gomock.Eq(libmongo.RightsMongoCollection)).
 		Return(mockDbCollection)
 
-	p := NewMongoProvider(mockDbClient)
+	p := NewMongoProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	user, err := p.FindByID(ctx, userID)
 
 	if err != nil {
@@ -218,13 +198,9 @@ func TestMongoProvider_FindByID_GivenID_ShouldReturnNil(t *testing.T) {
 	defer cancel()
 	userID := "testid"
 	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	filter := bson.M{
-		"crecord_type": model.LineTypeSubject,
-		"_id":          userID,
-	}
 	mockDbCollection.
 		EXPECT().
-		Find(gomock.Any(), gomock.Eq(filter)).
+		Aggregate(gomock.Any(), gomock.Any()).
 		Return(mockUserCursor(ctrl, nil), nil)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.
@@ -232,7 +208,7 @@ func TestMongoProvider_FindByID_GivenID_ShouldReturnNil(t *testing.T) {
 		Collection(gomock.Eq(libmongo.RightsMongoCollection)).
 		Return(mockDbCollection)
 
-	p := NewMongoProvider(mockDbClient)
+	p := NewMongoProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	user, err := p.FindByID(ctx, userID)
 
 	if err != nil {
@@ -283,7 +259,7 @@ func TestMongoProvider_Save_GivenUser_ShouldUpdateUser(t *testing.T) {
 		Collection(gomock.Eq(libmongo.RightsMongoCollection)).
 		Return(mockDbCollection)
 
-	p := NewMongoProvider(mockDbClient)
+	p := NewMongoProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	err := p.Save(ctx, &user)
 
 	if err != nil {
