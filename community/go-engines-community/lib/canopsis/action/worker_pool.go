@@ -305,7 +305,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 			err := s.alarmCollection.FindOne(ctx, bson.M{
 				"d":          bson.M{"$in": task.Alarm.Value.Parents},
 				"v.resolved": nil,
-			}).Err()
+			}, options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
 			if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil, false, fmt.Errorf("cannot find parents: %w", err)
 			}
