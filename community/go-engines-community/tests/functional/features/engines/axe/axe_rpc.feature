@@ -205,7 +205,7 @@ Feature: update alarm by RPC stream
               },
               {
                 "_t": "ack",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "m": "test-output-axe-rpc-2",
                 "val": 0
               },
