@@ -21,7 +21,7 @@ import {
   formToRemediationInstruction,
   remediationInstructionErrorsToForm,
   remediationInstructionToForm,
-} from '@/helpers/forms/remediation-instruction';
+} from '@/helpers/entities/remediation/instruction/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';

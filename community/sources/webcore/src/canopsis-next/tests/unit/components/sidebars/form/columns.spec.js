@@ -2,7 +2,7 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { ENTITIES_TYPES } from '@/constants';
 
-import { widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
+import { widgetColumnToForm } from '@/helpers/entities/widget/column/form';
 
 import Columns from '@/components/sidebars/form/fields/columns.vue';
 

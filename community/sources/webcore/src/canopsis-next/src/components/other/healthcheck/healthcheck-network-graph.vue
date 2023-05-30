@@ -23,7 +23,7 @@ import {
 } from '@/constants';
 
 import { getHealthcheckNodeRenderedPositionDiff } from '@/helpers/charts/healthcheck';
-import { getHealthcheckNodeColor } from '@/helpers/color';
+import { getHealthcheckNodeColor } from '@/helpers/entities/healthcheck/color';
 import { convertDateToString } from '@/helpers/date/date';
 
 import { healthcheckNodesMixin } from '@/mixins/healthcheck/healthcheck-nodes';

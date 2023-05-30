@@ -59,14 +59,14 @@ import {
   COLOR_INDICATOR_TYPES,
 } from '@/constants';
 
-import { getIconByEntityType } from '@/helpers/entities/entity';
-import { getEntityColor } from '@/helpers/color';
+import { getIconByEntityType } from '@/helpers/entities/entity/icons';
+import { getEntityColor } from '@/helpers/entities/entity/color';
 import {
   dependencyToTreeviewDependency,
   normalizeDependencies,
   getLoadMoreDenormalizedChild,
   dependenciesDenormalize,
-} from '@/helpers/treeview/service-dependencies';
+} from '@/helpers/entities/service-dependencies/list';
 
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 

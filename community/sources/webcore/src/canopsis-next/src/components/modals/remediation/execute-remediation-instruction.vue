@@ -26,7 +26,7 @@ import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants'
 
 import Socket from '@/plugins/socket/services/socket';
 
-import { getEmptyRemediationJobExecution } from '@/helpers/forms/remediation-job';
+import { getEmptyRemediationJobExecution } from '@/helpers/entities/remediation/job/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesRemediationJobExecutionMixin } from '@/mixins/entities/remediation/job-execution';

@@ -4,7 +4,7 @@ import { generateRenderer } from '@unit/utils/vue';
 import { createCheckboxInputStub, createInputStub } from '@unit/stubs/input';
 import { randomArrayItem } from '@unit/utils/array';
 import { TIME_UNITS } from '@/constants';
-import { dataStorageSettingsToForm } from '@/helpers/forms/data-storage';
+import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
 
 import CInformationBlock from '@/components/common/block/c-information-block.vue';
 import StorageSettingsForm from '@/components/other/storage-setting/form/storage-settings-form';

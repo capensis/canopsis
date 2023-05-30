@@ -18,7 +18,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { messageToForm, formToMessage } from '@/helpers/forms/broadcast-message';
+import { messageToForm, formToMessage } from '@/helpers/entities/broadcast-message/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

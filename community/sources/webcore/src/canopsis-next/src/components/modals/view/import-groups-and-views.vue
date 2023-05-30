@@ -43,7 +43,7 @@ import {
   prepareImportedGroups,
   prepareCurrentGroupsForImporting,
   prepareViewGroupsForImportRequest,
-} from '@/helpers/forms/view';
+} from '@/helpers/entities/view/form';
 
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import { authMixin } from '@/mixins/auth';

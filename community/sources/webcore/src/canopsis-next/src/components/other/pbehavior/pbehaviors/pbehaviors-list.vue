@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { isOldPattern } from '@/helpers/pattern';
+import { isOldPattern } from '@/helpers/entities/pattern/form';
 
 import PbehaviorsMassActionsPanel from './actions/pbehaviors-mass-actions-panel.vue';
 import PbehaviorsListExpandItem from './partials/pbehaviors-list-expand-item.vue';

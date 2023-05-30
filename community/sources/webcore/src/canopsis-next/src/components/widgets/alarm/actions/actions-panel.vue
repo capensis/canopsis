@@ -16,11 +16,11 @@ import {
 
 import featuresService from '@/services/features';
 
-import { getEntityEventIcon } from '@/helpers/icon';
-import { isManualGroupMetaAlarmRuleType } from '@/helpers/forms/meta-alarm-rule';
-import { isInstructionExecutionIconInProgress } from '@/helpers/forms/remediation-instruction-execution';
-import { isInstructionManual } from '@/helpers/forms/remediation-instruction';
-import { harmonizeLinks, getLinkRuleLinkActionType } from '@/helpers/links';
+import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
+import { isManualGroupMetaAlarmRuleType } from '@/helpers/entities/meta-alarm/rule/form';
+import { isInstructionExecutionIconInProgress } from '@/helpers/entities/remediation/instruction-execution/form';
+import { isInstructionManual } from '@/helpers/entities/remediation/instruction/form';
+import { harmonizeLinks, getLinkRuleLinkActionType } from '@/helpers/entities/link/list';
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';

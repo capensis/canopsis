@@ -7,8 +7,8 @@ import {
   PATTERN_CONDITIONS,
 } from '@/constants';
 
-import { patternToForm } from '@/helpers/forms/pattern';
-import { filterPatternsToForm } from '@/helpers/forms/filter';
+import { patternToForm } from '@/helpers/entities/pattern/form';
+import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 
 import CPatternsField from '@/components/forms/fields/pattern/c-patterns-field.vue';
 

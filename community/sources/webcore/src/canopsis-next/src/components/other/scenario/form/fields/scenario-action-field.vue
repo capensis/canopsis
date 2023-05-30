@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { isPbehaviorActionType, isWebhookActionType } from '@/helpers/forms/action';
+import { isPbehaviorActionType, isWebhookActionType } from '@/helpers/entities/action';
 
 import { formMixin } from '@/mixins/form';
 import { confirmableFormMixinCreator } from '@/mixins/confirmable-form';

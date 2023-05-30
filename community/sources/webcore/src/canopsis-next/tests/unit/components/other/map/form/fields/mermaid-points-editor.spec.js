@@ -5,7 +5,7 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { mockModals } from '@unit/utils/mock-hooks';
 import MermaidPoints from '@/components/other/map/form/fields/mermaid-points-editor.vue';
-import { mermaidPointToForm } from '@/helpers/forms/map';
+import { mermaidPointToForm } from '@/helpers/entities/map/form';
 import { MODALS } from '@/constants';
 
 const stubs = {

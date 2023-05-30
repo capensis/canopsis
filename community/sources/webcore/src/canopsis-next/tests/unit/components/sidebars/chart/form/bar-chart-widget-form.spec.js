@@ -15,7 +15,7 @@ import {
   WIDGET_TYPES,
 } from '@/constants';
 
-import { widgetToForm, formToWidget } from '@/helpers/forms/widgets/common';
+import { widgetToForm, formToWidget } from '@/helpers/entities/widget/form';
 
 import BarChartWidgetForm from '@/components/sidebars/chart/form/bar-chart-widget-form.vue';
 

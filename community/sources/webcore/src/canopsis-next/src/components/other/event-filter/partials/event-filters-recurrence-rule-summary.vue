@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { exceptionsToForm, exdatesToForm } from '@/helpers/forms/planning-pbehavior';
+import { exceptionsToForm, exdatesToForm } from '@/helpers/entities/pbehavior/form';
 
 import RecurrenceRuleInformation from '@/components/common/reccurence-rule/recurrence-rule-information.vue';
 import PbehaviorExceptionsField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-exceptions-field.vue';
