@@ -10,7 +10,6 @@
 </template>
 
 <script>
-
 import { KPI_RATING_ENTITY_METRICS, KPI_RATING_SETTINGS_TYPES, KPI_RATING_USER_METRICS } from '@/constants';
 
 export default {
