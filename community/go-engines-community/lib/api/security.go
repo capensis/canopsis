@@ -168,7 +168,7 @@ func (s *security) RegisterCallbackRoutes(router gin.IRouter, client mongo.DbCli
 func (s *security) GetAuthMiddleware() []gin.HandlerFunc {
 	return []gin.HandlerFunc{
 		middleware.Auth(s.GetHttpAuthProviders()),
-		middleware.SessionAuth(s.dbClient, s.sessionStore),
+		middleware.SessionAuth(s.dbClient, s.apiConfigProvider, s.sessionStore),
 	}
 }
 
@@ -211,7 +211,7 @@ func (s *security) GetTokenGenerator() token.Generator {
 }
 
 func (s *security) newUserProvider() libsecurity.UserProvider {
-	return userprovider.NewMongoProvider(s.dbClient)
+	return userprovider.NewMongoProvider(s.dbClient, s.apiConfigProvider)
 }
 
 func (s *security) newBaseAuthProvider() libsecurity.Provider {

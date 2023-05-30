@@ -1,13 +1,14 @@
 Feature: get infos dictionary
   I need to be able to get infos dictionary
 
+  @concurrent
   Scenario: given requests should return entity infos dictionary
     Given I am admin
     When I wait the next periodical process
     When I do GET /api/v4/entity-infos-dictionary/keys?search=test-entity-infos-dictionary-key
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -31,7 +32,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/entity-infos-dictionary/keys?search=test-entity-infos-dictionary-key-2
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -49,7 +50,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-key-2
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -76,7 +77,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-key-2&search=test-entity-infos-dictionary-value-5
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -94,7 +95,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/entity-infos-dictionary/keys?search=test-entity-infos-dictionary-should-be-ignored
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -124,7 +125,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-should-be-ignored-key-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [],
       "meta": {
@@ -138,7 +139,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-should-be-ignored-key-2
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [],
       "meta": {
@@ -152,7 +153,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-should-be-ignored-key-3
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [],
       "meta": {
@@ -166,7 +167,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-should-be-ignored-key-4
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [],
       "meta": {
@@ -180,7 +181,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/entity-infos-dictionary/values?key=test-entity-infos-dictionary-should-be-ignored-key-5
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [],
       "meta": {
@@ -192,6 +193,7 @@ Feature: get infos dictionary
     }
     """
 
+  @concurrent
   Scenario: given requests should update entity infos dictionary
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
@@ -239,7 +241,7 @@ Feature: get infos dictionary
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-entity-infos-dictionary-1",
@@ -254,12 +256,11 @@ Feature: get infos dictionary
       "manager": "test-resource-entity-infos-dictionary-1-val-2"
     }
     """
-    When I wait the end of event processing
     When I wait the next periodical process
     When I do GET /api/v4/entity-infos-dictionary/keys?search=test-resource-entity-infos-dictionary
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -280,7 +281,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/entity-infos-dictionary/values?key=test-resource-entity-infos-dictionary-1-key-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -295,7 +296,7 @@ Feature: get infos dictionary
       }
     }
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-entity-infos-dictionary-1",
@@ -310,12 +311,11 @@ Feature: get infos dictionary
       "manager": "test-resource-entity-infos-dictionary-1-val-2"
     }
     """
-    When I wait the end of event processing
     When I wait the next periodical process
     When I do GET /api/v4/entity-infos-dictionary/keys?search=test-resource-entity-infos-dictionary
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -336,7 +336,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/entity-infos-dictionary/values?key=test-resource-entity-infos-dictionary-1-key-1
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -357,7 +357,7 @@ Feature: get infos dictionary
     When I do GET /api/v4/entity-infos-dictionary/keys?search=test-resource-entity-infos-dictionary
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [],
       "meta": {
