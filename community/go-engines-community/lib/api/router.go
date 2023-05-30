@@ -138,7 +138,7 @@ func RegisterRoutes(
 
 	sessionProtected := router.Group("")
 	{
-		sessionProtected.Use(middleware.SessionAuth(dbClient, sessionStore), middleware.OnlyAuth())
+		sessionProtected.Use(middleware.SessionAuth(dbClient, apiConfigProvider, sessionStore), middleware.OnlyAuth())
 		sessionProtected.GET("/logout", sessionauthApi.LogoutHandler())
 	}
 
@@ -253,7 +253,7 @@ func RegisterRoutes(
 		alarmStore := alarm.NewStore(dbClient, linkGenerator, timezoneConfigProvider, authorProvider, logger)
 		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, logger)
 		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(dbClient, amqpChannel, "",
-			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, authorProvider, logger), logger)
+			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, logger), logger)
 		alarmRouter := protected.Group("/alarms")
 		{
 			alarmRouter.GET(
