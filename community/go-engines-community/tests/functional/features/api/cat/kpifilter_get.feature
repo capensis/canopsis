@@ -14,7 +14,8 @@ Feature: Get a kpi filter
           "_id": "test-kpi-filter-to-get-1",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1619083733,
           "name": "test-kpi-filter-to-get-1-name",
@@ -36,7 +37,8 @@ Feature: Get a kpi filter
           "_id": "test-kpi-filter-to-get-2",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1619083733,
           "name": "test-kpi-filter-to-get-2-name",
@@ -67,7 +69,8 @@ Feature: Get a kpi filter
       "_id": "test-kpi-filter-to-get-1",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "created": 1619083733,
       "name": "test-kpi-filter-to-get-1-name",
