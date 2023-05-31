@@ -649,9 +649,7 @@ func parseUpdatedScheduledTime(
 	t, ok := stringToScheduledTime(v)
 	if !ok {
 		if oldVal != nil {
-			logger.Error().
-				Str("invalid", v).
-				Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+			logErrInvalidValueUsePrevious(logger, name, sectionName, oldVal.String(), v, nil)
 		}
 		return nil, false
 	}
@@ -664,10 +662,8 @@ func parseUpdatedScheduledTime(
 	if oldVal != nil {
 		oldValStr = oldVal.String()
 	}
-	logger.Info().
-		Str("previous", oldValStr).
-		Str("new", t.String()).
-		Msgf("%s of %s config section is loaded", name, sectionName)
+
+	logInfoNewValue(logger, name, sectionName, oldValStr, t.String())
 
 	return &t, true
 }
@@ -697,9 +693,7 @@ func parseTimeDurationByStr(
 ) time.Duration {
 	if v == "" {
 		if defaultVal > 0 {
-			logger.Warn().
-				Str("default", defaultVal.String()).
-				Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
+			logWarnUndefinedSection(logger, name, sectionName, defaultVal.String())
 		} else {
 			logger.Info().Msgf("%s of %s config section is not defined", name, sectionName)
 		}
@@ -710,10 +704,7 @@ func parseTimeDurationByStr(
 	d, err := time.ParseDuration(v)
 	if err != nil {
 		if defaultVal > 0 {
-			logger.Err(err).
-				Str("default", defaultVal.String()).
-				Str("invalid", v).
-				Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+			logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal.String(), v, err)
 		} else {
 			logger.Err(err).
 				Str("invalid", v).
@@ -737,20 +728,13 @@ func parseTimeDurationByStrWithMax(
 	logger zerolog.Logger,
 ) time.Duration {
 	if v == "" {
-		logger.Warn().
-			Str("default", defaultVal.String()).
-			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
-
+		logWarnUndefinedSection(logger, name, sectionName, defaultVal.String())
 		return defaultVal
 	}
 
 	d, err := time.ParseDuration(v)
 	if err != nil {
-		logger.Err(err).
-			Str("default", defaultVal.String()).
-			Str("invalid", v).
-			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
-
+		logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal.String(), v, err)
 		return defaultVal
 	}
 
@@ -778,20 +762,13 @@ func parseTimeDurationByStrWithMin(
 	logger zerolog.Logger,
 ) time.Duration {
 	if v == "" {
-		logger.Warn().
-			Str("default", defaultVal.String()).
-			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
-
+		logWarnUndefinedSection(logger, name, sectionName, defaultVal.String())
 		return defaultVal
 	}
 
 	d, err := time.ParseDuration(v)
 	if err != nil {
-		logger.Err(err).
-			Str("default", defaultVal.String()).
-			Str("invalid", v).
-			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
-
+		logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal.String(), v, err)
 		return defaultVal
 	}
 
@@ -831,10 +808,7 @@ func parseUpdatedTimeDurationByStrWithMax(
 	d, err := time.ParseDuration(v)
 	if err != nil {
 		if oldVal > 0 {
-			logger.Err(err).
-				Str("previous", oldVal.String()).
-				Str("invalid", v).
-				Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+			logErrInvalidValueUsePrevious(logger, name, sectionName, oldVal.String(), v, err)
 		}
 		return 0, false
 	}
@@ -853,10 +827,7 @@ func parseUpdatedTimeDurationByStrWithMax(
 		return 0, false
 	}
 
-	logger.Info().
-		Str("previous", oldVal.String()).
-		Str("new", d.String()).
-		Msgf("%s of %s config section is loaded", name, sectionName)
+	logInfoNewValue(logger, name, sectionName, oldVal.String(), d.String())
 
 	return d, true
 }
@@ -880,10 +851,7 @@ func parseUpdatedTimeDurationByStrWithMin(
 	d, err := time.ParseDuration(v)
 	if err != nil {
 		if oldVal > 0 {
-			logger.Err(err).
-				Str("previous", oldVal.String()).
-				Str("invalid", v).
-				Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+			logErrInvalidValueUsePrevious(logger, name, sectionName, oldVal.String(), v, err)
 		}
 		return 0, false
 	}
@@ -902,10 +870,7 @@ func parseUpdatedTimeDurationByStrWithMin(
 		return 0, false
 	}
 
-	logger.Info().
-		Str("previous", oldVal.String()).
-		Str("new", d.String()).
-		Msgf("%s of %s config section is loaded", name, sectionName)
+	logInfoNewValue(logger, name, sectionName, oldVal.String(), d.String())
 
 	return d, true
 }
@@ -928,10 +893,7 @@ func parseUpdatedTimeDurationByStr(
 	d, err := time.ParseDuration(v)
 	if err != nil {
 		if oldVal > 0 {
-			logger.Err(err).
-				Str("previous", oldVal.String()).
-				Str("invalid", v).
-				Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+			logErrInvalidValueUsePrevious(logger, name, sectionName, oldVal.String(), v, err)
 		}
 		return 0, false
 	}
@@ -940,10 +902,7 @@ func parseUpdatedTimeDurationByStr(
 		return 0, false
 	}
 
-	logger.Info().
-		Str("previous", oldVal.String()).
-		Str("new", d.String()).
-		Msgf("%s of %s config section is loaded", name, sectionName)
+	logInfoNewValue(logger, name, sectionName, oldVal.String(), d.String())
 
 	return d, true
 }
@@ -955,11 +914,7 @@ func parseTimeDurationBySeconds(
 	logger zerolog.Logger,
 ) time.Duration {
 	if v < 0 {
-		logger.Error().
-			Str("default", defaultVal.String()).
-			Int("invalid", v).
-			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
-
+		logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal.String(), v, nil)
 		return defaultVal
 	}
 
@@ -978,9 +933,7 @@ func parseUpdatedTimeDurationBySeconds(
 	logger zerolog.Logger,
 ) (time.Duration, bool) {
 	if v < 0 {
-		logger.Error().
-			Int("invalid", v).
-			Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		logErrInvalidValueUsePrevious(logger, name, sectionName, oldVal.String(), v, nil)
 		return 0, false
 	}
 
@@ -989,10 +942,7 @@ func parseUpdatedTimeDurationBySeconds(
 		return 0, false
 	}
 
-	logger.Info().
-		Str("previous", oldVal.String()).
-		Str("new", d.String()).
-		Msgf("%s of %s config section is loaded", name, sectionName)
+	logInfoNewValue(logger, name, sectionName, oldVal.String(), d.String())
 
 	return d, true
 }
@@ -1003,10 +953,7 @@ func parseInt(
 	logger zerolog.Logger,
 ) int {
 	if v < 0 {
-		logger.Error().
-			Int("default", defaultVal).
-			Int("invalid", v).
-			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+		logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal, v, nil)
 		return defaultVal
 	}
 
@@ -1039,10 +986,7 @@ func parseUpdatedInt(
 		return 0, false
 	}
 
-	logger.Info().
-		Int("previous", oldVal).
-		Int("new", v).
-		Msgf("%s of %s config section is loaded", name, sectionName)
+	logInfoNewValue(logger, name, sectionName, oldVal, v)
 
 	return v, true
 }
@@ -1057,10 +1001,8 @@ func parseTemplate(
 		if err != nil {
 			panic(fmt.Errorf("invalid contant %s: %w", name, err))
 		}
-		logger.Warn().
-			Str("default", defaultVal).
-			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
 
+		logWarnUndefinedSection(logger, name, sectionName, defaultVal)
 		return tpl, defaultVal
 	}
 
@@ -1071,10 +1013,7 @@ func parseTemplate(
 			panic(fmt.Errorf("invalid contant %s: %w", name, parseErr))
 		}
 
-		logger.Err(err).
-			Str("default", defaultVal).
-			Str("invalid", v).
-			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+		logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal, v, err)
 
 		return tpl, defaultVal
 	}
@@ -1103,16 +1042,11 @@ func parseUpdatedTemplate(
 
 	tpl, err := CreateDisplayNameTpl(v)
 	if err != nil {
-		logger.Err(err).
-			Str("invalid", v).
-			Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		logErrInvalidValueUsePrevious(logger, name, sectionName, oldVal, v, err)
 		return nil, "", false
 	}
 
-	logger.Info().
-		Str("previous", oldVal).
-		Str("new", v).
-		Msgf("%s of %s config section is loaded", name, sectionName)
+	logInfoNewValue(logger, name, sectionName, oldVal, v)
 
 	return tpl, v, true
 }
@@ -1137,10 +1071,8 @@ func parseUpdatedBool(
 	if v == oldVal {
 		return false, false
 	}
-	logger.Info().
-		Bool("previous", oldVal).
-		Bool("new", v).
-		Msgf("%s of %s config section is loaded", name, sectionName)
+
+	logInfoNewValue(logger, name, sectionName, oldVal, v)
 
 	return v, true
 }
@@ -1152,18 +1084,13 @@ func parseLocation(
 	logger zerolog.Logger,
 ) *time.Location {
 	if v == "" {
-		logger.Warn().
-			Str("default", defaultVal.String()).
-			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
+		logWarnUndefinedSection(logger, name, sectionName, defaultVal.String())
 		return defaultVal
 	}
 
 	location, err := time.LoadLocation(v)
 	if err != nil {
-		logger.Err(err).
-			Str("default", defaultVal.String()).
-			Str("invalid", v).
-			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+		logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal.String(), v, err)
 		return defaultVal
 	}
 
@@ -1187,9 +1114,7 @@ func parseUpdatedLocation(
 	}
 	location, err := time.LoadLocation(v)
 	if err != nil {
-		logger.Err(err).
-			Str("invalid", v).
-			Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		logErrInvalidValueUsePrevious(logger, name, sectionName, oldVal.String(), v, err)
 		return nil, false
 	}
 
@@ -1197,10 +1122,7 @@ func parseUpdatedLocation(
 		return nil, false
 	}
 
-	logger.Info().
-		Str("previous", oldVal.String()).
-		Str("new", location.String()).
-		Msgf("%s of %s config section is loaded", name, sectionName)
+	logInfoNewValue(logger, name, sectionName, oldVal.String(), location.String())
 
 	return location, true
 }
@@ -1212,20 +1134,13 @@ func parseJwtSigningMethod(
 	logger zerolog.Logger,
 ) jwt.SigningMethod {
 	if v == "" {
-		logger.Warn().
-			Str("default", defaultVal.Alg()).
-			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
-
+		logWarnUndefinedSection(logger, name, sectionName, defaultVal.Alg())
 		return defaultVal
 	}
 
 	m := jwt.GetSigningMethod(v)
 	if m == nil {
-		logger.Error().
-			Str("default", defaultVal.Alg()).
-			Str("invalid", v).
-			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
-
+		logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal.Alg(), v, nil)
 		return defaultVal
 	}
 
@@ -1253,10 +1168,7 @@ func parseUpdatedJwtSigningMethod(
 		return nil, false
 	}
 
-	logger.Info().
-		Str("previous", oldVal.Alg()).
-		Str("new", v).
-		Msgf("%s of %s config section is loaded", name, sectionName)
+	logInfoNewValue(logger, name, sectionName, oldVal.Alg(), v)
 
 	return m, true
 }
@@ -1313,4 +1225,49 @@ func (p *BaseMetricsSettingsConfigProvider) Get() MetricsConfig {
 	defer p.mx.RUnlock()
 
 	return p.conf
+}
+
+func logInfoNewValue(
+	logger zerolog.Logger,
+	name, sectionName string,
+	oldVal, newVal any,
+) {
+	logger.Info().
+		Any("previous", oldVal).
+		Any("new", newVal).
+		Msgf("%s of %s config section is loaded", name, sectionName)
+}
+
+func logWarnUndefinedSection(
+	logger zerolog.Logger,
+	name, sectionName string,
+	defaultVal any,
+) {
+	logger.Warn().
+		Any("default", defaultVal).
+		Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
+}
+
+func logErrInvalidValueUseDefault(
+	logger zerolog.Logger,
+	name, sectionName string,
+	defaultVal, invalidVal any,
+	err error,
+) {
+	logger.Error().Err(err).
+		Any("default", defaultVal).
+		Any("invalid", invalidVal).
+		Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+}
+
+func logErrInvalidValueUsePrevious(
+	logger zerolog.Logger,
+	name, sectionName string,
+	previousVal, invalidVal any,
+	err error,
+) {
+	logger.Error().Err(err).
+		Any("previous", previousVal).
+		Any("invalid", invalidVal).
+		Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
 }

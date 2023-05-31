@@ -45,11 +45,15 @@ func dummyHandler(dummyRoutes map[string]dummyResponse) func(w http.ResponseWrit
 	dummyRoutesMx := sync.Mutex{}
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		dummyRoutesMx.Lock()
 		response, ok := dummyRoutes[r.URL.Path]
 		if !ok {
 			http.Error(w, fmt.Sprintf("[%s][%+v]", r.URL.Path, dummyRoutes), http.StatusNotFound)
+			dummyRoutesMx.Unlock()
+
 			return
 		}
+		dummyRoutesMx.Unlock()
 
 		if response.Method != r.Method {
 			http.Error(w, r.Method, http.StatusNotFound)
