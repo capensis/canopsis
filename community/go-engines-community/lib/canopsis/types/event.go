@@ -213,6 +213,9 @@ type Event struct {
 
 	// TODO: should be refactored
 	IsEntityUpdated bool `bson:"-" json:"-"`
+
+	// IsMetaAlarmUpdated is true if an alarm is added to a meta alarm on an event.
+	IsMetaAlarmUpdated bool `bson:"ma_updated,omitempty" json:"ma_updated,omitempty"`
 }
 
 // Format an event
