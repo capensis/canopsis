@@ -1,5 +1,6 @@
 Feature: correlation feature - attribute rule
 
+  @concurrent
   Scenario: given meta alarm rule and events should trigger metaalarm by component event
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -23,7 +24,7 @@ Feature: correlation feature - attribute rule
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-relation-1",
@@ -38,8 +39,7 @@ Feature: correlation feature - attribute rule
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-relation-1",
@@ -54,8 +54,7 @@ Feature: correlation feature - attribute rule
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-relation-1",
@@ -70,8 +69,7 @@ Feature: correlation feature - attribute rule
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-relation-1",
@@ -85,10 +83,7 @@ Feature: correlation feature - attribute rule
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-relation-correlation-1&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-relation-correlation-1&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -101,6 +96,7 @@ Feature: correlation feature - attribute rule
             "component": "test-relation-correlation-1"
           },
           "is_meta_alarm": true,
+          "children": 3,
           "meta_alarm_rule": {
             "name": "test-relation-correlation-1"
           }
@@ -173,6 +169,7 @@ Feature: correlation feature - attribute rule
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule and events should trigger metaalarm by first resource event
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -196,7 +193,7 @@ Feature: correlation feature - attribute rule
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-relation-2",
@@ -210,8 +207,7 @@ Feature: correlation feature - attribute rule
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-relation-2",
@@ -226,8 +222,7 @@ Feature: correlation feature - attribute rule
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-relation-2",
@@ -242,10 +237,7 @@ Feature: correlation feature - attribute rule
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-relation-correlation-2&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-relation-correlation-2&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -258,6 +250,7 @@ Feature: correlation feature - attribute rule
             "component": "test-relation-correlation-2"
           },
           "is_meta_alarm": true,
+          "children": 2,
           "meta_alarm_rule": {
             "name": "test-relation-correlation-2"
           }
@@ -322,6 +315,7 @@ Feature: correlation feature - attribute rule
     ]
     """
 
+  @concurrent
   Scenario: given deleted meta alarm rule should delete meta alarm
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -345,7 +339,7 @@ Feature: correlation feature - attribute rule
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-relation-3",
@@ -357,8 +351,7 @@ Feature: correlation feature - attribute rule
       "state": 2
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-relation-3",
@@ -370,8 +363,7 @@ Feature: correlation feature - attribute rule
       "state": 2
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-relation-3",
@@ -382,10 +374,7 @@ Feature: correlation feature - attribute rule
       "state": 2
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-relation-correlation-3&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-relation-correlation-3&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
