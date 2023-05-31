@@ -1,5 +1,6 @@
 Feature: correlation feature - corel rule
 
+  @concurrent
   Scenario: given meta alarm rule and events should create meta alarm
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -43,7 +44,7 @@ Feature: correlation feature - corel rule
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-1",
@@ -58,8 +59,7 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-1",
@@ -74,10 +74,7 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-corel-1&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-corel-1&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -146,6 +143,7 @@ Feature: correlation feature - corel rule
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule and events shouldn't create meta alarm without a parent, after parent event metaalarm should contain all children
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -189,7 +187,7 @@ Feature: correlation feature - corel rule
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-2",
@@ -204,8 +202,7 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-2",
@@ -220,8 +217,7 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-2",
@@ -236,7 +232,6 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I do GET /api/v4/alarms?search=test-corel-2&correlation=true&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
@@ -267,7 +262,7 @@ Feature: correlation feature - corel rule
       }
     }
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-2",
@@ -282,15 +277,13 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-corel-2&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-corel-2&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 3,
           "meta_alarm_rule": {
             "name": "test-corel-2"
           },
@@ -367,6 +360,7 @@ Feature: correlation feature - corel rule
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule and events shouldn't create meta alarm without children, after children events metaalarm should be based only on first parent
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -410,7 +404,7 @@ Feature: correlation feature - corel rule
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-3",
@@ -425,9 +419,8 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I wait 1s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-3",
@@ -442,9 +435,8 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I wait 1s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-3",
@@ -459,7 +451,6 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I do GET /api/v4/alarms?search=test-corel-3&correlation=true&sort_by=v.resource&sort=asc until response code is 200 and body contains:
     """json
     {
@@ -488,7 +479,7 @@ Feature: correlation feature - corel rule
       }
     }
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-3",
@@ -503,8 +494,41 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I send an event:
+    When I do GET /api/v4/alarms?search=test-corel-3&correlation=true&multi_sort[]=v.meta,desc&multi_sort[]=v.resource,asc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 1,
+          "meta_alarm_rule": {
+            "name": "test-corel-3"
+          },
+          "v": {
+            "resource": "test-1",
+            "component": "parent-3"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-2"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-3"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 3
+      }
+    }
+    """
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-3",
@@ -519,15 +543,13 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-corel-3&correlation=true&multi_sort[]=v.meta,desc&multi_sort[]=v.resource,asc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-corel-3&correlation=true&multi_sort[]=v.meta,desc&multi_sort[]=v.resource,asc until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 2,
           "meta_alarm_rule": {
             "name": "test-corel-3"
           },
@@ -606,6 +628,7 @@ Feature: correlation feature - corel rule
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule and events after time interval should shift child interval
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -649,7 +672,7 @@ Feature: correlation feature - corel rule
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-4",
@@ -664,9 +687,8 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I wait 3s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-4",
@@ -681,9 +703,8 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I wait 3s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-4",
@@ -698,10 +719,7 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-corel-4&correlation=true&sort_by=v.meta&sort=desc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-corel-4&correlation=true&sort_by=v.meta&sort=desc until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -775,6 +793,7 @@ Feature: correlation feature - corel rule
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule and events after time interval should shift parent interval
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -818,7 +837,7 @@ Feature: correlation feature - corel rule
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-5",
@@ -833,9 +852,8 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I wait 3s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-5",
@@ -850,9 +868,8 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I wait 3s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-5",
@@ -867,10 +884,7 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-corel-5&correlation=true&sort_by=v.meta&sort=desc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-corel-5&correlation=true&sort_by=v.meta&sort=desc until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -944,6 +958,7 @@ Feature: correlation feature - corel rule
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule and events should create 2 meta alarm
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -987,7 +1002,7 @@ Feature: correlation feature - corel rule
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-6",
@@ -1002,8 +1017,7 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-6",
@@ -1018,9 +1032,18 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-corel-6&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 1
+        }
+      ]
+    }
+    """
     When I wait 5s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-6",
@@ -1035,8 +1058,7 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-6",
@@ -1051,10 +1073,7 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-corel-6&correlation=true&sort_by=t&sort=asc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-corel-6&correlation=true&sort_by=t&sort=asc until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1167,6 +1186,7 @@ Feature: correlation feature - corel rule
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule and events with different corel_id, should create 2 meta alarm without mixing
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -1210,7 +1230,7 @@ Feature: correlation feature - corel rule
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-7-1",
@@ -1225,8 +1245,7 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-7-2",
@@ -1241,9 +1260,8 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I wait 3s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-7-2",
@@ -1258,8 +1276,18 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I send an event:
+    When I do GET /api/v4/alarms?search=test-corel-7&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 1
+        },
+        {}
+      ]
+    }
+    """
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-7-1",
@@ -1274,10 +1302,7 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-corel-7&correlation=true&sort_by=t&sort=desc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-corel-7&correlation=true&sort_by=t&sort=desc until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1318,7 +1343,7 @@ Feature: correlation feature - corel rule
       }
     }
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-7-2",
@@ -1333,8 +1358,20 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I send an event:
+    When I do GET /api/v4/alarms?search=test-corel-7&correlation=true&sort_by=t&sort=desc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 2
+        },
+        {
+          "children": 1
+        }
+      ]
+    }
+    """
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-7-1",
@@ -1349,15 +1386,13 @@ Feature: correlation feature - corel rule
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-corel-7&correlation=true&sort_by=t&sort=desc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-corel-7&correlation=true&sort_by=t&sort=desc until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 2,
           "meta_alarm_rule": {
             "name": "test-corel-7"
           },
@@ -1369,6 +1404,7 @@ Feature: correlation feature - corel rule
         },
         {
           "is_meta_alarm": true,
+          "children": 2,
           "meta_alarm_rule": {
             "name": "test-corel-7"
           },
@@ -1477,6 +1513,7 @@ Feature: correlation feature - corel rule
     ]
     """
 
+  @concurrent
   Scenario: given deleted meta alarm rule should delete meta alarm
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -1520,7 +1557,7 @@ Feature: correlation feature - corel rule
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-1",
@@ -1532,8 +1569,7 @@ Feature: correlation feature - corel rule
       "state": 2
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-corel-1",
@@ -1545,16 +1581,12 @@ Feature: correlation feature - corel rule
       "state": 2
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-corel-8&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-corel-8&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
-          "children": 1,
           "meta_alarm_rule": {
             "name": "test-corel-8"
           },
