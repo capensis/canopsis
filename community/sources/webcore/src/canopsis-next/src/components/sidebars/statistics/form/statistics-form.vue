@@ -18,11 +18,12 @@
       )
       field-quick-date-interval-type(v-field="form.parameters.default_time_range")
       field-filters(
+        v-if="showFilter",
         v-field="form.parameters.mainFilter",
         :filters="form.filters",
         :widget-id="widget._id",
-        addable,
-        editable,
+        :addable="filterAddable",
+        :editable="filterEditable",
         with-entity,
         @update:filters="updateField('filters', $event)"
       )
@@ -69,6 +70,18 @@ export default {
     type: {
       type: Number,
       default: KPI_RATING_SETTINGS_TYPES.entity,
+    },
+    showFilter: {
+      type: Boolean,
+      default: false,
+    },
+    filterAddable: {
+      type: Boolean,
+      default: false,
+    },
+    filterEditable: {
+      type: Boolean,
+      default: false,
     },
   },
 };
