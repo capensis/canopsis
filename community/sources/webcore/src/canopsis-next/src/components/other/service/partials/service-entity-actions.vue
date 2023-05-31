@@ -5,7 +5,6 @@
         span(v-on="on")
           service-entity-alarm-instruction-menu(
             v-if="action.type === $constants.WEATHER_ACTIONS_TYPES.executeInstruction",
-            v-on="on",
             :icon="action.icon",
             :entity="entity",
             :assigned-instructions="assignedInstructions",
@@ -13,7 +12,6 @@
           )
           v-btn(
             v-else,
-            v-on="on",
             :disabled="action.disabled",
             :loading="action.loading",
             depressed,

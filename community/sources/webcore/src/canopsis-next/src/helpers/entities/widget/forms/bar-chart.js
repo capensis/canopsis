@@ -5,8 +5,7 @@ import {
 } from '@/constants';
 
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
-
-import { metricPresetsToForm, formToMetricPresets } from '../form';
+import { metricPresetsToForm, formToMetricPresets } from '@/helpers/entities/metric/form';
 
 /**
  * @typedef {Object} BarChartWidgetParameters

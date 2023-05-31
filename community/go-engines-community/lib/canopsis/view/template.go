@@ -23,6 +23,9 @@ var columnsByType = map[string][]string{
 		"v.ack.initiator",
 		"v.state.m",
 		"v.status.m",
+		"v.ticket.a",
+		"v.ticket.m",
+		"v.ticket.ticket",
 		"v.state.val",
 		"v.status.val",
 		"v.total_state_changes",
@@ -31,6 +34,7 @@ var columnsByType = map[string][]string{
 		"v.last_event_date",
 		"v.last_update_date",
 		"v.ack.t",
+		"v.ticket.t",
 		"v.state.t",
 		"v.status.t",
 		"v.resolved",
@@ -40,6 +44,7 @@ var columnsByType = map[string][]string{
 		"v.snooze_duration",
 		"v.pbh_inactive_duration",
 		"v.active_duration",
+		"v.events_count",
 		"tags",
 		"extra_details",
 		"impact_state",
@@ -105,6 +110,7 @@ func GetWidgetTemplateParameters() map[string]map[string][]string {
 			WidgetTemplateTypeAlarmColumns: {
 				"widgetColumns",
 				"widgetGroupColumns",
+				"widgetExportColumns",
 			},
 			WidgetTemplateTypeEntityColumns: {
 				"serviceDependenciesColumns",
@@ -121,6 +127,7 @@ func GetWidgetTemplateParameters() map[string]map[string][]string {
 			WidgetTemplateTypeEntityColumns: {
 				"widgetColumns",
 				"serviceDependenciesColumns",
+				"widgetExportColumns",
 			},
 		},
 		WidgetTypeServiceWeather: {

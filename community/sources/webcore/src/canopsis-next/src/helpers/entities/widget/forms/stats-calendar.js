@@ -10,8 +10,9 @@ import {
 
 import { setSeveralFields } from '@/helpers/immutable';
 
-import { getWidgetColumnLabel, getWidgetColumnSortable } from '../widget/list';
-import { openedToForm, alarmListBaseParametersToForm, formToAlarmListBaseParameters } from '../alarm/widget';
+import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
+
+import { openedToForm, alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './alarm';
 
 /**
  * @typedef {Object} StatsCalendarWidgetParameters
