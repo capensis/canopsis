@@ -107,14 +107,13 @@ func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.St
 		}
 	}
 	// Validate role
-	if r.Role != "" {
-		err := v.dbRoleCollection.FindOne(ctx, bson.M{"_id": r.Role}).Err()
+	if len(r.Roles) > 0 {
+		c, err := v.dbRoleCollection.CountDocuments(ctx, bson.M{"_id": bson.M{"$in": r.Roles}})
 		if err != nil {
-			if err == mongodriver.ErrNoDocuments {
-				sl.ReportError(r.Role, "Role", "Role", "not_exist", "")
-			} else {
-				panic(err)
-			}
+			panic(err)
+		}
+		if int(c) < len(r.Roles) {
+			sl.ReportError(r.Roles, "Roles", "Roles", "not_exist", "")
 		}
 	}
 }

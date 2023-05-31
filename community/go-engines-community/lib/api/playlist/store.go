@@ -233,16 +233,17 @@ func (s *store) createPermission(ctx context.Context, userID, playlistID, playli
 	}
 
 	user := struct {
-		Role string `json:"role"`
+		Roles []string `json:"roles"`
 	}{}
 	err = res.Decode(&user)
 	if err != nil {
 		return err
 	}
 
+	roles := append([]string{security.RoleAdmin}, user.Roles...)
 	_, err = s.roleCollection.UpdateMany(ctx,
 		bson.M{
-			"_id": bson.M{"$in": bson.A{user.Role, security.RoleAdmin}},
+			"_id": bson.M{"$in": roles},
 		},
 		bson.M{
 			"$set": bson.M{
