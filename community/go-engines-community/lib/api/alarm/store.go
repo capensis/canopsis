@@ -597,10 +597,10 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	for _, field := range t.Fields {
 		found := false
 		for anotherField := range project {
-			if strings.HasPrefix(field.Name, anotherField) {
+			if strings.HasPrefix(field.Name, anotherField+".") {
 				found = true
 				break
-			} else if strings.HasPrefix(anotherField, field.Name) {
+			} else if strings.HasPrefix(anotherField, field.Name+".") {
 				delete(project, anotherField)
 				break
 			}
