@@ -102,7 +102,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmStatistics and
   <div
     class="v-card__text pa-0 position-relative"
   >
-    <statistics-widget-stub
+    <alarm-statistics-widget-stub
       tabid="tab-id"
       widget="[object Object]"
     />
@@ -544,7 +544,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type UserStatistics and 
   <div
     class="v-card__text pa-0 position-relative"
   >
-    <statistics-widget-stub
+    <user-statistics-widget-stub
       tabid="tab-id"
       widget="[object Object]"
     />

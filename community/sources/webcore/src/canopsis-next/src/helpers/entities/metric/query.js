@@ -143,6 +143,7 @@ export function convertNumbersWidgetToQuery(widget) {
 export function convertStatisticsWidgetParametersToQuery(widget) {
   const {
     parameters: {
+      mainFilter,
       mainParameter = {},
       widgetColumns = [],
       default_time_range: defaultTimeRange,
@@ -166,6 +167,7 @@ export function convertStatisticsWidgetParametersToQuery(widget) {
       return parameter;
     }),
     entity_patterns: mainParameter.patterns.map(({ title, entity_pattern: pattern }) => ({ title, pattern })),
+    lockedFilter: mainFilter,
   };
 
   if (!isCustomCriteria(mainParameter.criteria)) {

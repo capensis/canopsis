@@ -4,14 +4,14 @@
       :widget-id="widget._id",
       :user-filters="userPreference.filters",
       :widget-filters="widget.filters",
-      :locked-value="lockedFilter",
-      :filters="mainFilter",
+      :locked-filter="lockedFilter",
+      :filters="query.filter",
       :interval="query.interval",
       :sampling="query.sampling",
       :min-interval-date="minAvailableDate",
       :show-interval="showInterval",
       :show-filter="showFilter",
-      :filter-disabled="!filterDisabled",
+      :filter-disabled="filterDisabled",
       :filter-addable="filterAddable",
       :filter-editable="filterEditable",
       @update:filters="updateSelectedFilter",
@@ -35,7 +35,7 @@ import { createNamespacedHelpers } from 'vuex';
 import { KPI_RATING_CRITERIA } from '@/constants';
 
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
-import { convertFilterToQuery } from '@/helpers/entities/shared/query';
+import { convertFiltersToQuery } from '@/helpers/entities/shared/query';
 import { convertMetricValueToString } from '@/helpers/entities/metric/list';
 import { isCustomCriteria } from '@/helpers/entities/metric/form';
 
@@ -201,10 +201,12 @@ export default {
     ...mapActions({ fetchRatingSettingsWithoutStore: 'fetchListWithoutStore' }),
 
     getQuery() {
+      const { filter, lockedFilter } = this.query;
+
       return {
         ...this.getIntervalQuery(),
         ...pick(this.query, ['parameters', 'criteria', 'entity_patterns', 'limit', 'page']),
-        widget_filters: convertFilterToQuery(this.query.filter),
+        widget_filters: convertFiltersToQuery(filter, lockedFilter),
       };
     },
 
