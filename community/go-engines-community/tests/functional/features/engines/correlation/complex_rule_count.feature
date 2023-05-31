@@ -1,5 +1,6 @@
 Feature: correlation feature - complex rule with threshold count
 
+  @concurrent
   Scenario: given meta alarm rule with threshold count and events should create meta alarm
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -30,7 +31,7 @@ Feature: correlation feature - complex rule with threshold count
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-1",
@@ -45,8 +46,7 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-1",
@@ -61,8 +61,7 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-1",
@@ -77,10 +76,7 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-complex-correlation-resource-1&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-complex-correlation-resource-1&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -158,6 +154,7 @@ Feature: correlation feature - complex rule with threshold count
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule with threshold count and events should create 2 meta alarms because of 2 separate time intervals
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -188,7 +185,7 @@ Feature: correlation feature - complex rule with threshold count
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-2",
@@ -203,8 +200,7 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-2",
@@ -219,8 +215,7 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-2",
@@ -235,9 +230,18 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-complex-correlation-resource-2&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 3
+        }
+      ]
+    }
+    """
     When I wait 4s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-2",
@@ -252,8 +256,7 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-2",
@@ -268,8 +271,7 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-2",
@@ -284,8 +286,20 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I send an event:
+    When I do GET /api/v4/alarms?search=test-complex-correlation-resource-2&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 3
+        },
+        {
+          "children": 3
+        }
+      ]
+    }
+    """
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-2",
@@ -300,21 +314,20 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-complex-correlation-resource-2&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-complex-correlation-resource-2&correlation=true&sort_by=t&sort=desc until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 4,
           "meta_alarm_rule": {
             "name": "test-complex-correlation-2"
           }
         },
         {
           "is_meta_alarm": true,
+          "children": 3,
           "meta_alarm_rule": {
             "name": "test-complex-correlation-2"
           }
@@ -442,6 +455,7 @@ Feature: correlation feature - complex rule with threshold count
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule with threshold count and events should create one single meta alarms because first group didn't reached threshold
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -472,7 +486,7 @@ Feature: correlation feature - complex rule with threshold count
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-3",
@@ -487,8 +501,7 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-3",
@@ -503,9 +516,8 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I wait 4s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-3",
@@ -520,8 +532,7 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-3",
@@ -536,8 +547,7 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-3",
@@ -552,15 +562,13 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-complex-correlation-resource-3&correlation=true&multi_sort[]=v.meta,desc&multi_sort[]=v.resource,asc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-complex-correlation-resource-3&correlation=true&multi_sort[]=v.meta,desc&multi_sort[]=v.resource,asc until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 3,
           "meta_alarm_rule": {
             "name": "test-complex-correlation-3"
           }
@@ -643,6 +651,7 @@ Feature: correlation feature - complex rule with threshold count
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule with threshold count and events should create one single meta alarm without first alarm, because interval shifting
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -673,7 +682,7 @@ Feature: correlation feature - complex rule with threshold count
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-4",
@@ -688,9 +697,8 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I wait 3s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-4",
@@ -705,9 +713,8 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I wait 3s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-4",
@@ -722,8 +729,7 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-4",
@@ -738,15 +744,13 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-complex-correlation-resource-4&correlation=true&sort_by=v.meta&sort=desc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-complex-correlation-resource-4&correlation=true&sort_by=v.meta&sort=desc until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 3,
           "meta_alarm_rule": {
             "name": "test-complex-correlation-4"
           }
@@ -824,9 +828,10 @@ Feature: correlation feature - complex rule with threshold count
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule with threshold count and events should create meta alarm
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-metaalarm-rule-backward-compatibility-connector-1",
@@ -841,8 +846,7 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-metaalarm-rule-backward-compatibility-connector-1",
@@ -857,8 +861,7 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-metaalarm-rule-backward-compatibility-connector-1",
@@ -873,15 +876,13 @@ Feature: correlation feature - complex rule with threshold count
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-metaalarm-rule-backward-compatibility-resource-1&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-metaalarm-rule-backward-compatibility-resource-1&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 3,
           "meta_alarm_rule": {
             "name": "test-metaalarm-rule-backward-compatibility-1-name"
           }
@@ -954,6 +955,7 @@ Feature: correlation feature - complex rule with threshold count
     ]
     """
 
+  @concurrent
   Scenario: given deleted meta alarm rule should delete meta alarms
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -984,7 +986,7 @@ Feature: correlation feature - complex rule with threshold count
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-5",
@@ -996,8 +998,7 @@ Feature: correlation feature - complex rule with threshold count
       "state": 2
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-5",
@@ -1009,9 +1010,18 @@ Feature: correlation feature - complex rule with threshold count
       "state": 2
     }
     """
-    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-complex-correlation-resource-5&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 2
+        }
+      ]
+    }
+    """
     When I wait 4s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-5",
@@ -1023,8 +1033,7 @@ Feature: correlation feature - complex rule with threshold count
       "state": 2
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-5",
@@ -1036,10 +1045,7 @@ Feature: correlation feature - complex rule with threshold count
       "state": 2
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-complex-correlation-resource-5&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-complex-correlation-resource-5&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
