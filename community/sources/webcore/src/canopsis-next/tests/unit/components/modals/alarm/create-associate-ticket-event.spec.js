@@ -61,12 +61,12 @@ describe('create-associate-ticket-event', () => {
   };
   const items = [alarm];
   const assocTicketEventData = {
-    ticket_comment: '',
+    comment: '',
     ticket: '',
-    ticket_data: {},
-    ticket_system_name: '',
+    data: {},
+    system_name: '',
     ticket_resources: false,
-    ticket_url: '',
+    url: '',
   };
 
   const createEvent = jest.fn();
@@ -150,12 +150,12 @@ describe('create-associate-ticket-event', () => {
     await flushPromises();
 
     expect(action).toBeCalledWith({
-      ticket_comment: '',
+      comment: '',
       ticket: '',
-      ticket_data: {},
-      ticket_system_name: '',
+      data: {},
+      system_name: '',
       ticket_resources: false,
-      ticket_url: '',
+      url: '',
     });
     expect($modals.hide).toBeCalledWith();
   });

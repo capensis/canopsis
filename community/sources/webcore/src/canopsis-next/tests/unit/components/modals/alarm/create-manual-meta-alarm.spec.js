@@ -6,7 +6,6 @@ import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
-import { createMockedStoreModules, createManualMetaAlarmModule } from '@unit/utils/store';
 import ClickOutside from '@/services/click-outside';
 import { ENTITIES_STATES } from '@/constants';
 
@@ -16,6 +15,7 @@ const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'alarm-general-table': true,
   'manual-meta-alarm-form': true,
+  'c-name-field': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
 };
@@ -59,14 +59,6 @@ describe('create-manual-meta-alarm', () => {
   const items = [alarm];
   const config = { items };
 
-  const {
-    manualMetaAlarmModule,
-    createManualMetaAlarm,
-    addAlarmsIntoManualMetaAlarm,
-  } = createManualMetaAlarmModule();
-
-  const store = createMockedStoreModules([manualMetaAlarmModule]);
-
   const factory = generateShallowRenderer(CreateManualMetaAlarm, {
     stubs,
     attachTo: document.body,
@@ -97,7 +89,6 @@ describe('create-manual-meta-alarm', () => {
 
   test('Default parameters applied to form', () => {
     const wrapper = factory({
-      store,
       mocks: {
         $modals,
       },
@@ -112,15 +103,14 @@ describe('create-manual-meta-alarm', () => {
   });
 
   test('Form submitted after trigger submit button', async () => {
-    const afterSubmit = jest.fn();
+    const action = jest.fn();
 
     const wrapper = factory({
-      store,
       propsData: {
         modal: {
           config: {
+            action,
             items,
-            afterSubmit,
           },
         },
       },
@@ -143,28 +133,23 @@ describe('create-manual-meta-alarm', () => {
 
     await flushPromises();
 
-    expect(createManualMetaAlarm).toBeCalledTimes(1);
-    expect(createManualMetaAlarm).toBeCalledWith(
-      expect.any(Object),
-      {
-        data: {
-          name: newData.metaAlarm,
-          alarms: [alarm._id],
-          comment: newData.comment,
-        },
-      },
-      undefined,
-    );
-    expect(afterSubmit).toBeCalled();
+    expect(action).toBeCalledWith({
+      name: newData.metaAlarm,
+      alarms: [alarm._id],
+      comment: newData.comment,
+    });
     expect($modals.hide).toBeCalledWith();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
+    const action = jest.fn();
     const wrapper = factory({
-      store,
       propsData: {
         modal: {
-          config,
+          config: {
+            ...config,
+            action,
+          },
         },
       },
       mocks: {
@@ -189,8 +174,7 @@ describe('create-manual-meta-alarm', () => {
 
     await flushPromises();
 
-    expect(createManualMetaAlarm).not.toBeCalled();
-    expect(addAlarmsIntoManualMetaAlarm).not.toBeCalled();
+    expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
 
     validator.detach('name');
@@ -198,7 +182,6 @@ describe('create-manual-meta-alarm', () => {
 
   test('Modal hidden after trigger cancel button', async () => {
     const wrapper = factory({
-      store,
       propsData: {
         modal: {
           config,
@@ -219,11 +202,14 @@ describe('create-manual-meta-alarm', () => {
   });
 
   test('Renders `create-manual-meta-alarm` with empty modal', () => {
+    const action = jest.fn();
     const wrapper = snapshotFactory({
-      store,
       propsData: {
         modal: {
-          config,
+          config: {
+            ...config,
+            action,
+          },
         },
       },
       mocks: {
