@@ -599,7 +599,7 @@ func (sp *serviceProvider) createUser(c *gin.Context, relayUrl *url.URL, asserti
 
 	user := &security.User{
 		Name:       sp.getAssocAttribute(assertionInfo.Values, "name", assertionInfo.NameID),
-		Role:       role,
+		Roles:      []string{role},
 		IsEnabled:  true,
 		ExternalID: assertionInfo.NameID,
 		Source:     security.SourceSaml,

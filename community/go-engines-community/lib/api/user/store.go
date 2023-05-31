@@ -3,17 +3,14 @@ package user
 import (
 	"context"
 	"fmt"
-	"math"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 type Store interface {
@@ -22,10 +19,6 @@ type Store interface {
 	Insert(ctx context.Context, r CreateRequest) (*User, error)
 	Update(ctx context.Context, r UpdateRequest) (*User, error)
 	Delete(ctx context.Context, id string) (bool, error)
-
-	BulkInsert(ctx context.Context, requests []CreateRequest) error
-	BulkUpdate(ctx context.Context, requests []BulkUpdateRequestItem) error
-	BulkDelete(ctx context.Context, ids []string) error
 }
 
 func NewStore(
@@ -46,7 +39,7 @@ func NewStore(
 		websocketStore:  websocketStore,
 		authorProvider:  authorProvider,
 
-		defaultSearchByFields: []string{"_id", "name", "firstname", "lastname", "role.name"},
+		defaultSearchByFields: []string{"_id", "name", "firstname", "lastname", "roles.name"},
 		defaultSortBy:         "name",
 	}
 }
@@ -79,7 +72,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	}
 
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
-	if len(filter) > 0 || r.Permission != "" || r.SortBy == "role.name" {
+	if len(filter) > 0 || r.Permission != "" {
 		pipeline = append(pipeline, getRolePipeline()...)
 	} else {
 		project = append(project, getRolePipeline()...)
@@ -90,7 +83,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	}
 
 	if r.Permission != "" {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{fmt.Sprintf("role.permissions.%s", r.Permission): bson.M{"$exists": true}}})
+		pipeline = append(pipeline, bson.M{"$match": bson.M{fmt.Sprintf("roles.permissions.%s", r.Permission): bson.M{"$exists": true}}})
 	}
 
 	project = append(project, getViewPipeline()...)
@@ -272,69 +265,6 @@ func (s *store) deleteShareTokens(ctx context.Context, id string) error {
 	return err
 }
 
-func (s *store) BulkInsert(ctx context.Context, requests []CreateRequest) error {
-	var err error
-	writeModels := make([]mongodriver.WriteModel, 0, int(math.Min(float64(canopsis.DefaultBulkSize), float64(len(requests)))))
-
-	for _, r := range requests {
-		writeModels = append(
-			writeModels,
-			mongodriver.NewInsertOneModel().SetDocument(r.getBson(s.passwordEncoder)),
-		)
-
-		if len(writeModels) == canopsis.DefaultBulkSize {
-			_, err = s.collection.BulkWrite(ctx, writeModels)
-			if err != nil {
-				return err
-			}
-
-			writeModels = writeModels[:0]
-		}
-	}
-
-	if len(writeModels) > 0 {
-		_, err = s.collection.BulkWrite(ctx, writeModels)
-	}
-
-	return err
-}
-
-func (s *store) BulkUpdate(ctx context.Context, requests []BulkUpdateRequestItem) error {
-	var err error
-	writeModels := make([]mongodriver.WriteModel, 0, int(math.Min(float64(canopsis.DefaultBulkSize), float64(len(requests)))))
-
-	for _, r := range requests {
-		writeModels = append(
-			writeModels,
-			mongodriver.
-				NewUpdateOneModel().
-				SetFilter(bson.M{"_id": r.ID}).
-				SetUpdate(bson.M{"$set": r.getBson(s.passwordEncoder)}),
-		)
-
-		if len(writeModels) == canopsis.DefaultBulkSize {
-			_, err = s.collection.BulkWrite(ctx, writeModels)
-			if err != nil {
-				return err
-			}
-
-			writeModels = writeModels[:0]
-		}
-	}
-
-	if len(writeModels) > 0 {
-		_, err = s.collection.BulkWrite(ctx, writeModels)
-	}
-
-	return err
-}
-
-func (s *store) BulkDelete(ctx context.Context, ids []string) error {
-	_, err := s.collection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
-
-	return err
-}
-
 func getNestedObjectsPipeline(authorProvider author.Provider) []bson.M {
 	pipeline := []bson.M{
 		{"$addFields": bson.M{
@@ -352,13 +282,37 @@ func getNestedObjectsPipeline(authorProvider author.Provider) []bson.M {
 
 func getRolePipeline() []bson.M {
 	return []bson.M{
+		{"$unwind": bson.M{"path": "$roles", "preserveNullAndEmptyArrays": true}},
 		{"$lookup": bson.M{
 			"from":         mongo.RoleCollection,
-			"localField":   "role",
+			"localField":   "roles",
 			"foreignField": "_id",
-			"as":           "role",
+			"as":           "roles",
 		}},
-		{"$unwind": bson.M{"path": "$role", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$roles", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.ViewMongoCollection,
+			"localField":   "roles.defaultview",
+			"foreignField": "_id",
+			"as":           "roles.defaultview",
+		}},
+		{"$unwind": bson.M{"path": "$roles.defaultview", "preserveNullAndEmptyArrays": true}},
+		{"$sort": bson.M{"role_index": 1}},
+		{"$group": bson.M{
+			"_id":  "$_id",
+			"data": bson.M{"$first": "$$ROOT"},
+			"roles": bson.M{"$push": bson.M{
+				"$cond": bson.M{
+					"if":   "$roles._id",
+					"then": "$roles",
+					"else": "$$REMOVE",
+				},
+			}},
+		}},
+		{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+			"$data",
+			bson.M{"roles": "$roles"},
+		}}}},
 	}
 }
 
@@ -371,12 +325,5 @@ func getViewPipeline() []bson.M {
 			"as":           "defaultview",
 		}},
 		{"$unwind": bson.M{"path": "$defaultview", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
-			"from":         mongo.ViewMongoCollection,
-			"localField":   "role.defaultview",
-			"foreignField": "_id",
-			"as":           "role.defaultview",
-		}},
-		{"$unwind": bson.M{"path": "$role.defaultview", "preserveNullAndEmptyArrays": true}},
 	}
 }

@@ -33,6 +33,10 @@ db.user.find().forEach(function (doc) {
     doc.crecord_type = "user";
     doc.shadowpasswd = doc.password;
     delete doc.password;
+    if (doc.roles && doc.roles.length > 0) {
+        doc.role = doc.roles[0];
+    }
+    delete doc.roles;
 
     db.default_rights.updateOne(
         {crecord_name: doc.name},
