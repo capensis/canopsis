@@ -17,13 +17,13 @@
       @update:filters="updateSelectedFilter",
       @update:interval="updateInterval"
     )
-    v-layout(column)
+    v-layout.kpi-widget.pa-3(column, align-center)
+      h4.kpi-widget__title {{ widget.parameters.table_title }}
       c-progress-overlay(:pending="mainRatingSettingsPending", transition)
-      c-advanced-data-table.pre-line(
+      c-advanced-data-table.kpi-widget__table.pre-line(
         :items="preparedGroupMetrics",
         :loading="groupMetricsPending",
         :headers="headers",
-        :total-items="groupMetricsMeta.total_count",
         no-pagination
       )
 </template>
