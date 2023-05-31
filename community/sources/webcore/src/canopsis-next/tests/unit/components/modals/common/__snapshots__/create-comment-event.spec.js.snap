@@ -24,45 +24,11 @@ exports[`create-comment-event Renders \`create-comment-event\` with empty modal 
         class="layout column"
       >
         <!---->
-        <div
-          class="v-input v-text-field theme--light"
-        >
-          <div
-            class="v-input__control"
-          >
-            <div
-              class="v-input__slot"
-            >
-              <div
-                class="v-text-field__slot"
-              >
-                <label
-                  aria-hidden="true"
-                  class="v-label theme--light"
-                  style="left: 0px; position: absolute;"
-                >
-                  Comment
-                </label>
-                <input
-                  aria-label="Comment"
-                  name="comment"
-                  type="text"
-                />
-              </div>
-            </div>
-            <div
-              class="v-text-field__details"
-            >
-              <div
-                class="v-messages theme--light"
-              >
-                <div
-                  class="v-messages__wrapper"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+        <c-name-field
+          label="Comment"
+          name="comment"
+          required="required"
+        />
       </div>
     </div>
      
@@ -123,45 +89,11 @@ exports[`create-comment-event Renders \`create-comment-event\` with items 1`] = 
         <hr
           class="my-3 v-divider theme--light"
         />
-        <div
-          class="v-input v-text-field theme--light"
-        >
-          <div
-            class="v-input__control"
-          >
-            <div
-              class="v-input__slot"
-            >
-              <div
-                class="v-text-field__slot"
-              >
-                <label
-                  aria-hidden="true"
-                  class="v-label theme--light"
-                  style="left: 0px; position: absolute;"
-                >
-                  Comment
-                </label>
-                <input
-                  aria-label="Comment"
-                  name="comment"
-                  type="text"
-                />
-              </div>
-            </div>
-            <div
-              class="v-text-field__details"
-            >
-              <div
-                class="v-messages theme--light"
-              >
-                <div
-                  class="v-messages__wrapper"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+        <c-name-field
+          label="Comment"
+          name="comment"
+          required="required"
+        />
       </div>
     </div>
      

@@ -32,7 +32,7 @@ export default {
     },
 
     userName() {
-      return this.currentUser.name || this.currentUser._id;
+      return this.currentUser.display_name || this.currentUser._id;
     },
   },
   methods: {

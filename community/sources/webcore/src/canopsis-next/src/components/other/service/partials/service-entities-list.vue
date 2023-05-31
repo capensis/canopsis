@@ -18,7 +18,6 @@
         :selected="isEntitySelected(serviceEntity)",
         @update:selected="updateSelected(serviceEntity, $event)",
         @remove:unavailable="removeEntityFromUnavailable(serviceEntity)",
-        @apply:action="$listeners['apply:action']",
         @refresh="$listeners.refresh"
       )
     c-table-pagination.mt-1(
