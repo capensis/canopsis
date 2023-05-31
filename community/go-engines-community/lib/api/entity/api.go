@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
@@ -17,9 +18,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog"
-	"github.com/valyala/fastjson"
 )
 
 type API interface {
@@ -239,59 +238,10 @@ func (a *api) GetContextGraph(c *gin.Context) {
 
 func (a *api) toggle(c *gin.Context, enabled bool) {
 	userId := c.MustGet(auth.UserKey).(string)
-
-	var ar fastjson.Arena
-
-	raw, err := c.GetRawData()
-	if err != nil {
-		panic(err)
-	}
-
-	jsonValue, err := fastjson.ParseBytes(raw)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	rawObjects, err := jsonValue.Array()
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	response := ar.NewArray()
-
-	for idx, rawObject := range rawObjects {
-		userObject, err := rawObject.Object()
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
-		}
-
-		var request BulkToggleRequestItem
-		err = json.Unmarshal(userObject.MarshalTo(nil), &request)
-		if err != nil {
-			a.logger.Err(err).Msg("cannot update entity")
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
-			continue
-		}
-
-		err = binding.Validator.ValidateStruct(request)
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
-			continue
-		}
-
+	bulk.Handler(c, func(request BulkToggleRequestItem) (string, error) {
 		isToggled, simplifiedEntity, err := a.store.Toggle(c, request.ID, enabled)
-		if err != nil {
-			a.logger.Err(err).Msg("cannot update entity")
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
-			continue
-		}
-
-		if simplifiedEntity.ID == "" {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
-			continue
+		if err != nil || simplifiedEntity.ID == "" {
+			return "", err
 		}
 
 		if isToggled {
@@ -308,8 +258,6 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 
 			a.sendChangeMessage(msg)
 		}
-
-		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, simplifiedEntity.ID, http.StatusOK, rawObject, nil))
 
 		entry := logger.LogEntry{
 			Action:    logger.ActionUpdate,
@@ -330,9 +278,9 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 		if isToggled && simplifiedEntity.Type == types.EntityTypeComponent {
 			a.metricMetaUpdater.UpdateById(c, simplifiedEntity.Resources...)
 		}
-	}
 
-	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+		return simplifiedEntity.ID, nil
+	}, a.logger)
 }
 
 func (a *api) sendChangeMessage(msg entityservice.ChangeEntityMessage) {

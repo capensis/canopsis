@@ -85,6 +85,7 @@ type TimezoneConfig struct {
 type ApiConfig struct {
 	TokenSigningMethod     jwt.SigningMethod
 	BulkMaxSize            int
+	AuthorScheme           []string
 	MetricsCacheExpiration time.Duration
 }
 
@@ -181,7 +182,7 @@ func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmC
 		AllowDoubleAck:                    parseBool(cfg.Alarm.AllowDoubleAck, "AllowDoubleAck", sectionName, logger),
 		ActivateAlarmAfterAutoRemediation: parseBool(cfg.Alarm.ActivateAlarmAfterAutoRemediation, "activate_after_auto_remediation_on_create", sectionName, logger),
 	}
-	conf.DisplayNameScheme, conf.displayNameSchemeText = parseTemplate(cfg.Alarm.DisplayNameScheme, AlarmDefaultNameScheme, "DisplayNameScheme", sectionName, logger)
+	conf.DisplayNameScheme, conf.displayNameSchemeText = parseTemplate(cfg.Alarm.DisplayNameScheme, AlarmDisplayNameScheme, "DisplayNameScheme", sectionName, logger)
 
 	if cfg.Alarm.OutputLength <= 0 {
 		logger.Warn().Msg("OutputLength of alarm config section is not set or less than 1: the event's output won't be truncated")
@@ -323,6 +324,19 @@ func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfi
 		MetricsCacheExpiration: parseTimeDurationByStr(cfg.API.MetricsCacheExpiration, ApiMetricsCacheExpiration, "MetricsCacheExpiration", sectionName, logger),
 	}
 
+	if len(cfg.API.AuthorScheme) == 0 {
+		conf.AuthorScheme = ApiAuthorScheme
+		logger.Error().
+			Strs("default", ApiAuthorScheme).
+			Strs("invalid", cfg.API.AuthorScheme).
+			Msgf("bad value AuthorScheme of %s config section, default value is used instead", sectionName)
+	} else {
+		conf.AuthorScheme = cfg.API.AuthorScheme
+		logger.Info().
+			Strs("value", cfg.API.AuthorScheme).
+			Msgf("AuthorScheme of %s config section is used", sectionName)
+	}
+
 	return &BaseApiConfigProvider{
 		conf:   conf,
 		logger: logger,
@@ -348,6 +362,18 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 	i, ok := parseUpdatedInt(cfg.API.BulkMaxSize, p.conf.BulkMaxSize, "BulkMaxSize", sectionName, p.logger)
 	if ok {
 		p.conf.BulkMaxSize = i
+	}
+
+	if len(cfg.API.AuthorScheme) == 0 {
+		p.logger.Error().
+			Strs("invalid", cfg.API.AuthorScheme).
+			Msgf("bad value AuthorScheme of %s config section, previous value is used", sectionName)
+	} else if !reflect.DeepEqual(cfg.API.AuthorScheme, p.conf.AuthorScheme) {
+		p.logger.Info().
+			Strs("previous", p.conf.AuthorScheme).
+			Strs("new", cfg.API.AuthorScheme).
+			Msgf("AuthorScheme of %s config section is loaded", sectionName)
+		p.conf.AuthorScheme = cfg.API.AuthorScheme
 	}
 
 	d, ok := parseUpdatedTimeDurationByStr(cfg.API.MetricsCacheExpiration, p.conf.MetricsCacheExpiration, "MetricsCacheExpiration", sectionName, p.logger)

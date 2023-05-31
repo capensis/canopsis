@@ -70,9 +70,10 @@ type SectionDataStorage struct {
 }
 
 type SectionApi struct {
-	TokenSigningMethod     string `toml:"TokenSigningMethod"`
-	BulkMaxSize            int    `toml:"BulkMaxSize"`
-	MetricsCacheExpiration string `toml:"MetricsCacheExpiration"`
+	TokenSigningMethod     string   `toml:"TokenSigningMethod"`
+	BulkMaxSize            int      `toml:"BulkMaxSize"`
+	AuthorScheme           []string `toml:"AuthorScheme"`
+	MetricsCacheExpiration string   `toml:"MetricsCacheExpiration"`
 }
 
 type SectionLogger struct {
