@@ -122,8 +122,8 @@ export default {
   },
   computed: {
     isMultiple: {
-      set(value) {
-        if (value) {
+      set(isMultiple) {
+        if (isMultiple) {
           this.updateModel(this.value ? [this.value] : []);
         } else {
           this.updateModel(this.value.length ? this.value[0] : undefined);
