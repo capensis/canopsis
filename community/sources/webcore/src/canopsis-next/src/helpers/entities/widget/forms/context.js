@@ -19,9 +19,9 @@ import {
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
 import { setSeveralFields } from '@/helpers/immutable';
 
-import { widgetColumnsToForm, formToWidgetColumns } from '../widget/column/form';
-import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget/template/form';
-import { getWidgetColumnLabel, getWidgetColumnSortable } from '../widget/list';
+import { widgetColumnsToForm, formToWidgetColumns } from '../column/form';
+import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../template/form';
+import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
 
 /**
  * @typedef {Object} ContextWidgetParameters
