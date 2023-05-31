@@ -1,8 +1,9 @@
 import { generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
-import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 import { CANOPSIS_EDITION, WIDGET_TYPES } from '@/constants';
+
+import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 
 const stubs = {
   'c-alert-overlay': true,
@@ -19,7 +20,8 @@ const stubs = {
   'line-chart-widget': true,
   'pie-chart-widget': true,
   'numbers-widget': true,
-  'statistics-widget': true,
+  'user-statistics-widget': true,
+  'alarm-statistics-widget': true,
 };
 
 describe('widget-wrapper', () => {
