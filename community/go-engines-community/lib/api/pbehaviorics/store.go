@@ -3,6 +3,7 @@ package pbehaviorics
 import (
 	"context"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	pbehaviorapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -16,18 +17,20 @@ type Store interface {
 	FindMinPriority(ctx context.Context) (int64, error)
 }
 
-func NewStore(dbClient mongo.DbClient) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
-		dbClient: dbClient,
+		dbClient:       dbClient,
+		authorProvider: authorProvider,
 	}
 }
 
 type store struct {
-	dbClient mongo.DbClient
+	dbClient       mongo.DbClient
+	authorProvider author.Provider
 }
 
 func (s *store) GetOneBy(ctx context.Context, id string) (*pbehaviorapi.Response, error) {
-	return pbehaviorapi.NewStore(s.dbClient, nil, nil, nil, nil).GetOneBy(ctx, id)
+	return pbehaviorapi.NewStore(s.dbClient, nil, nil, nil, nil, s.authorProvider).GetOneBy(ctx, id)
 }
 
 func (s *store) FindMaxPriority(ctx context.Context) (int64, error) {

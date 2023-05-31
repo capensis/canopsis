@@ -552,6 +552,367 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/ack:
+    put:
+      tags:
+        - alarms
+      summary: Ack alarm
+      description: |
+        Ack alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-ack
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.AckRequest'
+            examples:
+              ack:
+                summary: Ack
+                description: Ack an alarm.
+                value: {
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+              ack_resources:
+                summary: Ack with resources
+                description: Ack an alarm of a component and all alarms of related resources.
+                value: {
+                  "ack_resources": true,
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/ackremove:
+    put:
+      tags:
+        - alarms
+      summary: Remove ack alarm
+      description: |
+        Remove ack alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-ackremove
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.Request'
+            examples:
+              ackremove:
+                summary: Remove ack
+                description: Remove ack from an alarm.
+                value: {
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/assocticket:
+    put:
+      tags:
+        - alarms
+      summary: Assoc ticket alarm
+      description: |
+        Assoc ticket alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-assocticket
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.AssocTicketRequest'
+            examples:
+              assocticket:
+                summary: Associate ticket
+                description: Associate ticket with an alarm.
+                value: {
+                  "ticket": "ENV-116",
+                  "url": "https://jira.local/ENV-116",
+                  "system_name": "Jira",
+                  "data": {
+                    "priority": "high",
+                    "tag": "env"
+                  },
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+              assocticket_resources:
+                summary: Associate ticket with resources
+                description: Associate ticket with an alarm of a component and all alarms of related resources.
+                value: {
+                  "ticket_resources": true,
+                  "ticket": "ENV-116",
+                  "url": "https://jira.local/ENV-116",
+                  "system_name": "Jira",
+                  "data": {
+                    "priority": "high",
+                    "tag": "env"
+                  },
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/cancel:
+    put:
+      tags:
+        - alarms
+      summary: Cancel alarm
+      description: |
+        Cancel alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-cancel
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.Request'
+            examples:
+              cancel:
+                summary: Cancel
+                description: Cacnel an alarm.
+                value: {
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/changestate:
+    put:
+      tags:
+        - alarms
+      summary: Change state alarm
+      description: |
+        Change state alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-changestate
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.ChangeStateRequest'
+            examples:
+              changestate:
+                summary: Change state
+                description: Change a state of an alarm.
+                value: {
+                  "state": 3,
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/comment:
+    put:
+      tags:
+        - alarms
+      summary: Comment alarm
+      description: |
+        Comment alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-comment
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.CommentRequest'
+            examples:
+              comment:
+                summary: Comment
+                description: Comment an alarm.
+                value: {
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/snooze:
+    put:
+      tags:
+        - alarms
+      summary: Snooze alarm
+      description: |
+        Snooze alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-snooze
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.SnoozeRequest'
+            examples:
+              snooze:
+                summary: Snooze
+                description: Snooze an alarm.
+                value: {
+                  "duration": {
+                    "value": 15,
+                    "unit": "m"
+                  },
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/uncancel:
+    put:
+      tags:
+        - alarms
+      summary: Uncancel alarm
+      description: |
+        Uncancel alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-uncancel
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.Request'
+            examples:
+              uncancel:
+                summary: Uncancel
+                description: Uncancel an alarm.
+                value: {
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /app-info:
     get:
       tags:
@@ -812,6 +1173,422 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /bulk/alarms/ack:
+    put:
+      tags:
+        - alarms
+      summary: Ack alarms
+      description: |
+        Ack alarms.
+
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-bulk-ack
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkAckRequestItem'
+            examples:
+              ack:
+                summary: Ack
+                description: Ack alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "ack_resources": true,
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkAckRequestItem'
+  /bulk/alarms/ackremove:
+    put:
+      tags:
+        - alarms
+      summary: Remove ack alarms
+      description: |
+        Remove ack alarms.
+
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-bulk-ackremove
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkRequestItem'
+            examples:
+              ackremove:
+                summary: Remove ack
+                description: Remove ack from alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkRequestItem'
+  /bulk/alarms/assocticket:
+    put:
+      tags:
+        - alarms
+      summary: Assoc ticket alarms
+      description: |
+        Assoc ticket alarms.
+
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-bulk-assocticket
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkAssocTicketRequestItem'
+            examples:
+              assocticket:
+                summary: Associate ticket
+                description: Associate tickets with alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "ticket": "ENV-116",
+                    "url": "https://jira.local/ENV-116",
+                    "system_name": "Jira",
+                    "data": {
+                      "priority": "high",
+                      "tag": "env"
+                    },
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "ticket_resources": true,
+                    "ticket": "ENV-117",
+                    "url": "https://jira.local/ENV-117",
+                    "system_name": "Jira",
+                    "data": {
+                      "priority": "low",
+                      "tag": "env"
+                    },
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkAssocTicketRequestItem'
+  /bulk/alarms/cancel:
+    put:
+      tags:
+        - alarms
+      summary: Cancel alarms
+      description: |
+        Cancel alarms.
+
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-bulk-cancel
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkRequestItem'
+            examples:
+              cancel:
+                summary: Cancel
+                description: Cancel alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkRequestItem'
+  /bulk/alarms/changestate:
+    put:
+      tags:
+        - alarms
+      summary: Change state alarms
+      description: |
+        Change state alarms.
+
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-bulk-changestate
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkChangeStateRequestItem'
+            examples:
+              changestate:
+                summary: Change state
+                description: Change state of alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "state": 3,
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "state": 2,
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkChangeStateRequestItem'
+  /bulk/alarms/comment:
+    put:
+      tags:
+        - alarms
+      summary: Comment alarms
+      description: |
+        Comment alarms.
+
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-bulk-comment
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkCommentRequestItem'
+            examples:
+              comment:
+                summary: Comment
+                description: Comment alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkCommentRequestItem'
+  /bulk/alarms/snooze:
+    put:
+      tags:
+        - alarms
+      summary: Snooze alarms
+      description: |
+        Snooze alarms.
+
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-bulk-snooze
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkSnoozeRequestItem'
+            examples:
+              snooze:
+                summary: Snooze
+                description: Snooze alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "duration": {
+                      "value": 15,
+                      "unit": "m"
+                    },
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "duration": {
+                      "value": 30,
+                      "unit": "s"
+                    },
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkSnoozeRequestItem'
+  /bulk/alarms/uncancel:
+    put:
+      tags:
+        - alarms
+      summary: Uncancel alarms
+      description: |
+        Uncancel alarms.
+
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-bulk-uncancel
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkRequestItem'
+            examples:
+              uncancel:
+                summary: Uncancel
+                description: Uncancel alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkRequestItem'
   /bulk/entities/disable:
     put:
       tags:
