@@ -876,6 +876,56 @@ default_rights:
     _id: map_category
     crecord_name: <Current()._id>
     description: "Rights on map: Access to 'Category' action"
+  permission_userStatistics_interval:
+    <<: *permission
+    _id: userStatistics_interval
+    crecord_name: <Current()._id>
+    description: "Rights on user statistics: Interval"
+  permission_userStatistics_listFilters:
+    <<: *permission
+    _id: userStatistics_listFilters
+    crecord_name: <Current()._id>
+    description: "Rights on user statistics: List filters"
+  permission_userStatistics_editFilter:
+    <<: *permission
+    _id: userStatistics_editFilter
+    crecord_name: <Current()._id>
+    description: "Rights on user statistics: Edit filters"
+  permission_userStatistics_addFilter:
+    <<: *permission
+    _id: userStatistics_addFilter
+    crecord_name: <Current()._id>
+    description: "Rights on user statistics: Add filter"
+  permission_userStatistics_userFilter:
+    <<: *permission
+    _id: userStatistics_userFilter
+    crecord_name: <Current()._id>
+    description: "Rights on user statistics: User filter"
+  permission_alarmStatistics_interval:
+    <<: *permission
+    _id: alarmStatistics_interval
+    crecord_name: <Current()._id>
+    description: "Rights on alarm statistics: Interval"
+  permission_alarmStatistics_listFilters:
+    <<: *permission
+    _id: alarmStatistics_listFilters
+    crecord_name: <Current()._id>
+    description: "Rights on alarm statistics: List filters"
+  permission_alarmStatistics_editFilter:
+    <<: *permission
+    _id: alarmStatistics_editFilter
+    crecord_name: <Current()._id>
+    description: "Rights on alarm statistics: Edit filters"
+  permission_alarmStatistics_addFilter:
+    <<: *permission
+    _id: alarmStatistics_addFilter
+    crecord_name: <Current()._id>
+    description: "Rights on alarm statistics: Add filter"
+  permission_alarmStatistics_userFilter:
+    <<: *permission
+    _id: alarmStatistics_userFilter
+    crecord_name: <Current()._id>
+    description: "Rights on alarm statistics: User filter"
 
   # API permissions
   permission_api_alarm_read:
@@ -1509,6 +1559,26 @@ default_rights:
         checksum: 1
       "@permission_map_category":
         checksum: 1
+      "@permission_userStatistics_interval":
+        checksum: 1
+      "@permission_userStatistics_listFilters":
+        checksum: 1
+      "@permission_userStatistics_editFilter":
+        checksum: 1
+      "@permission_userStatistics_addFilter":
+        checksum: 1
+      "@permission_userStatistics_userFilter":
+        checksum: 1
+      "@permission_alarmStatistics_interval":
+        checksum: 1
+      "@permission_alarmStatistics_listFilters":
+        checksum: 1
+      "@permission_alarmStatistics_editFilter":
+        checksum: 1
+      "@permission_alarmStatistics_addFilter":
+        checksum: 1
+      "@permission_alarmStatistics_userFilter":
+        checksum: 1
       # API permissions
       "@permission_api_alarm_read":
         checksum: 1
@@ -1756,6 +1826,7 @@ default_rights:
       "@permission_numbers_userFilter":
         checksum: 15
         crecord_type: right
+
   user_admin:
     <<: *user
     _id: root
