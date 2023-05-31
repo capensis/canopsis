@@ -117,7 +117,7 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						return
 					}
 
-					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AdditionalData, task.FifoAckEvent)
+					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AdditionalData, task.FifoAckEvent, task.IsMetaAlarmUpdated)
 					return
 				}
 
@@ -148,20 +148,21 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						skipForChild = *action.Parameters.SkipForChild
 					}
 					e.taskChannel <- Task{
-						Source:            "input listener",
-						Action:            action,
-						Alarm:             task.Alarm,
-						Entity:            task.Entity,
-						Step:              step,
-						ExecutionID:       execution.ID,
-						ExecutionCacheKey: execution.GetCacheKey(),
-						ScenarioID:        execution.ScenarioID,
-						ScenarioName:      execution.ScenarioName,
-						SkipForChild:      skipForChild,
-						Header:            execution.Header,
-						Response:          execution.Response,
-						ResponseMap:       execution.ResponseMap,
-						AdditionalData:    task.AdditionalData,
+						Source:             "input listener",
+						Action:             action,
+						Alarm:              task.Alarm,
+						Entity:             task.Entity,
+						Step:               step,
+						ExecutionID:        execution.ID,
+						ExecutionCacheKey:  execution.GetCacheKey(),
+						ScenarioID:         execution.ScenarioID,
+						ScenarioName:       execution.ScenarioName,
+						SkipForChild:       skipForChild,
+						IsMetaAlarmUpdated: execution.IsMetaAlarmUpdated,
+						Header:             execution.Header,
+						Response:           execution.Response,
+						ResponseMap:        execution.ResponseMap,
+						AdditionalData:     task.AdditionalData,
 					}
 
 					return
@@ -421,20 +422,21 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 			skipForChild = *action.Parameters.SkipForChild
 		}
 		nextTask := Task{
-			Source:            "process task func",
-			Action:            action,
-			Alarm:             taskRes.Alarm,
-			Entity:            scenarioExecution.Entity,
-			Step:              nextStep,
-			ExecutionID:       scenarioExecution.ID,
-			ExecutionCacheKey: scenarioExecution.GetCacheKey(),
-			ScenarioID:        scenarioExecution.ScenarioID,
-			ScenarioName:      scenarioExecution.ScenarioName,
-			SkipForChild:      skipForChild,
-			Header:            scenarioExecution.Header,
-			Response:          scenarioExecution.Response,
-			ResponseMap:       scenarioExecution.ResponseMap,
-			AdditionalData:    additionalData,
+			Source:             "process task func",
+			Action:             action,
+			Alarm:              taskRes.Alarm,
+			Entity:             scenarioExecution.Entity,
+			Step:               nextStep,
+			ExecutionID:        scenarioExecution.ID,
+			ExecutionCacheKey:  scenarioExecution.GetCacheKey(),
+			ScenarioID:         scenarioExecution.ScenarioID,
+			ScenarioName:       scenarioExecution.ScenarioName,
+			SkipForChild:       skipForChild,
+			IsMetaAlarmUpdated: scenarioExecution.IsMetaAlarmUpdated,
+			Header:             scenarioExecution.Header,
+			Response:           scenarioExecution.Response,
+			ResponseMap:        scenarioExecution.ResponseMap,
+			AdditionalData:     additionalData,
 		}
 
 		select {
@@ -483,7 +485,7 @@ func (e *redisBasedManager) processTriggers(ctx context.Context, task ExecuteSce
 	for trigger, scenarios := range scenariosByTrigger {
 		additionalData.Trigger = trigger
 		for _, scenario := range scenarios {
-			e.startExecution(ctx, scenario, task.Alarm, task.Entity, additionalData, task.FifoAckEvent)
+			e.startExecution(ctx, scenario, task.Alarm, task.Entity, additionalData, task.FifoAckEvent, task.IsMetaAlarmUpdated)
 		}
 	}
 
@@ -529,7 +531,7 @@ func (e *redisBasedManager) processEmittedTrigger(
 		additionalData.Trigger = trigger
 		for _, scenario := range scenarios {
 			e.startExecution(ctx, scenario, prevTaskRes.Alarm, prevScenarioExecution.Entity, additionalData,
-				prevScenarioExecution.FifoAckEvent)
+				prevScenarioExecution.FifoAckEvent, prevScenarioExecution.IsMetaAlarmUpdated)
 		}
 	}
 
@@ -543,6 +545,7 @@ func (e *redisBasedManager) startExecution(
 	entity types.Entity,
 	data AdditionalData,
 	fifoAckEvent types.Event,
+	isMetaAlarmUpdated bool,
 ) {
 	e.logger.Debug().Msgf("Execute scenario = %s for alarm = %s", scenario.ID, alarm.ID)
 	var executions []Execution
@@ -559,15 +562,16 @@ func (e *redisBasedManager) startExecution(
 	data.RuleName = scenario.Name
 
 	execution := ScenarioExecution{
-		ID:               utils.NewID(),
-		ScenarioID:       scenario.ID,
-		ScenarioName:     scenario.Name,
-		AlarmID:          alarm.ID,
-		Entity:           entity,
-		ActionExecutions: executions,
-		LastUpdate:       time.Now().Unix(),
-		AdditionalData:   data,
-		FifoAckEvent:     fifoAckEvent,
+		ID:                 utils.NewID(),
+		ScenarioID:         scenario.ID,
+		ScenarioName:       scenario.Name,
+		AlarmID:            alarm.ID,
+		Entity:             entity,
+		ActionExecutions:   executions,
+		LastUpdate:         time.Now().Unix(),
+		AdditionalData:     data,
+		FifoAckEvent:       fifoAckEvent,
+		IsMetaAlarmUpdated: isMetaAlarmUpdated,
 	}
 	ok, err := e.executionStorage.Create(ctx, execution)
 	if err != nil {
@@ -585,16 +589,17 @@ func (e *redisBasedManager) startExecution(
 		skipForChild = *action.Parameters.SkipForChild
 	}
 	e.taskChannel <- Task{
-		Source:            "input listener",
-		Action:            action,
-		Alarm:             alarm,
-		Entity:            entity,
-		Step:              0,
-		ExecutionID:       execution.ID,
-		ExecutionCacheKey: execution.GetCacheKey(),
-		ScenarioID:        scenario.ID,
-		ScenarioName:      scenario.Name,
-		SkipForChild:      skipForChild,
-		AdditionalData:    data,
+		Source:             "input listener",
+		Action:             action,
+		Alarm:              alarm,
+		Entity:             entity,
+		Step:               0,
+		ExecutionID:        execution.ID,
+		ExecutionCacheKey:  execution.GetCacheKey(),
+		ScenarioID:         scenario.ID,
+		ScenarioName:       scenario.Name,
+		SkipForChild:       skipForChild,
+		IsMetaAlarmUpdated: execution.IsMetaAlarmUpdated,
+		AdditionalData:     data,
 	}
 }

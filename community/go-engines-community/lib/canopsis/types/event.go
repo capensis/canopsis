@@ -39,9 +39,7 @@ const (
 	EventTypeCancel      = "cancel"
 	EventTypeCheck       = "check"
 	EventTypeComment     = "comment"
-
 	EventTypeChangestate = "changestate"
-	EventTypeKeepstate   = "keepstate"
 	EventTypeSnooze      = "snooze"
 	EventTypeUnsnooze    = "unsnooze"
 	EventTypeUncancel    = "uncancel"
@@ -103,12 +101,6 @@ const (
 	EventTypeJunitTestSuiteUpdated = "junittestsuiteupdated"
 	// EventTypeJunitTestCaseUpdated is used to notify that test case is updated but state is not changed.
 	EventTypeJunitTestCaseUpdated = "junittestcaseeupdated"
-
-	EventTypeStateIncrease  = "stateinc"
-	EventTypeStateDecrease  = "statedec"
-	EventTypeStatusIncrease = "statusinc"
-	EventTypeStatusDecrease = "statusdec"
-
 	// EventTypeNoEvents is used to create alarm for entity by idle rule.
 	EventTypeNoEvents = "noevents"
 	// EventTypeTrigger is used in axe rpc to send auto and manual instruction triggers
@@ -149,12 +141,7 @@ type Event struct {
 	Timestamp         CpsTime   `bson:"timestamp" json:"timestamp"`
 	ReceivedTimestamp MicroTime `bson:"rt" json:"rt"`
 
-	RK string `bson:"routing_key" json:"routing_key"`
-	// AckResources is used to ack all resource alarms on ack component alarm.
-	AckResources bool `bson:"ack_resources,omitempty" json:"ack_resources,omitempty"`
-	// TicketResource is used to add ticket to all resource alarms on assoc ticket component alarm.
-	TicketResources bool `bson:"ticket_resources,omitempty" json:"ticket_resources,omitempty"`
-
+	RK          string                 `bson:"routing_key" json:"routing_key"`
 	Duration    CpsNumber              `bson:"duration,omitempty" json:"duration,omitempty"`
 	StatName    string                 `bson:"stat_name" json:"stat_name"`
 	Debug       bool                   `bson:"debug" json:"debug"`
@@ -204,6 +191,9 @@ type Event struct {
 
 	// TODO: should be refactored
 	IsEntityUpdated bool `bson:"-" json:"-"`
+
+	// IsMetaAlarmUpdated is true if an alarm is added to a meta alarm on an event.
+	IsMetaAlarmUpdated bool `bson:"ma_updated,omitempty" json:"ma_updated,omitempty"`
 }
 
 // Format an event
@@ -540,11 +530,6 @@ func isValidEventType(t string) bool {
 		EventTypeAlarmSkipped,
 		EventTypeJunitTestSuiteUpdated,
 		EventTypeJunitTestCaseUpdated,
-		EventTypeKeepstate,
-		EventTypeStateIncrease,
-		EventTypeStateDecrease,
-		EventTypeStatusIncrease,
-		EventTypeStatusDecrease,
 		EventTypeTrigger,
 		EventTypeAutoInstructionActivate:
 		return true

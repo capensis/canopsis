@@ -262,7 +262,8 @@ Feature: Get a scenario
       "name": "test-scenario-backward-compatibility-to-get-1",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "enabled": true,
       "disable_during_periods": null,
