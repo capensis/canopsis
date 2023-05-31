@@ -59,20 +59,21 @@ type TaskManager interface {
 }
 
 type ScenarioExecution struct {
-	ID               string                 `json:"_id"`
-	ScenarioID       string                 `json:"sid"`
-	ScenarioName     string                 `json:"sn"`
-	AlarmID          string                 `json:"aid"`
-	Entity           types.Entity           `json:"e"`
-	ActionExecutions []Execution            `json:"ae"`
-	LastUpdate       int64                  `json:"u"`
-	Tries            int64                  `json:"t"`
-	Header           map[string]string      `json:"h,omitempty"`
-	Response         map[string]interface{} `json:"r,omitempty"`
-	ResponseMap      map[string]interface{} `json:"rm,omitempty"`
-	ResponseCount    int                    `json:"rc"`
-	AdditionalData   AdditionalData         `json:"ad"`
-	FifoAckEvent     types.Event            `json:"fev"`
+	ID                 string                 `json:"_id"`
+	ScenarioID         string                 `json:"sid"`
+	ScenarioName       string                 `json:"sn"`
+	AlarmID            string                 `json:"aid"`
+	Entity             types.Entity           `json:"e"`
+	ActionExecutions   []Execution            `json:"ae"`
+	LastUpdate         int64                  `json:"u"`
+	Tries              int64                  `json:"t"`
+	Header             map[string]string      `json:"h,omitempty"`
+	Response           map[string]interface{} `json:"r,omitempty"`
+	ResponseMap        map[string]interface{} `json:"rm,omitempty"`
+	ResponseCount      int                    `json:"rc"`
+	AdditionalData     AdditionalData         `json:"ad"`
+	FifoAckEvent       types.Event            `json:"fev"`
+	IsMetaAlarmUpdated bool                   `json:"mau,omitempty"`
 }
 
 func (e ScenarioExecution) GetCacheKey() string {
@@ -87,12 +88,13 @@ type ScenarioResult struct {
 }
 
 type ExecuteScenariosTask struct {
-	Triggers          []string
-	DelayedScenarioID string
-	Entity            types.Entity
-	Alarm             types.Alarm
-	AdditionalData    AdditionalData
-	FifoAckEvent      types.Event
+	Triggers           []string
+	DelayedScenarioID  string
+	Entity             types.Entity
+	Alarm              types.Alarm
+	AdditionalData     AdditionalData
+	FifoAckEvent       types.Event
+	IsMetaAlarmUpdated bool
 
 	AbandonedExecutionCacheKey string
 }
