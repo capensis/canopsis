@@ -6,13 +6,7 @@ import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
-import { createMockedStoreModules } from '@unit/utils/store';
 import ClickOutside from '@/services/click-outside';
-import {
-  EVENT_DEFAULT_ORIGIN,
-  EVENT_ENTITY_TYPES,
-  EVENT_INITIATORS,
-} from '@/constants';
 
 import CreateChangeStateEvent from '@/components/modals/alarm/create-change-state-event.vue';
 
@@ -59,37 +53,11 @@ describe('create-change-state-event', () => {
     },
   };
   const items = [alarm];
-  const eventData = {
-    id: alarm._id,
-    component: alarm.v.component,
-    connector: alarm.v.connector,
-    connector_name: alarm.v.connector_name,
-    resource: alarm.v.resource,
-    crecord_type: EVENT_ENTITY_TYPES.changeState,
-    event_type: EVENT_ENTITY_TYPES.changeState,
-    initiator: EVENT_INITIATORS.user,
-    origin: EVENT_DEFAULT_ORIGIN,
-    ref_rk: `${alarm.v.resource}/${alarm.v.component}`,
-    source_type: alarm.entity.type,
-    state_type: alarm.v.status.val,
-    timestamp: timestamp / 1000,
-  };
   const changeStateEventData = {
-    ...eventData,
-
     state: alarm.v.state.val,
-    output: '',
+    comment: '',
   };
   const config = { items };
-
-  const createEvent = jest.fn();
-  const eventModule = {
-    name: 'event',
-    actions: {
-      create: createEvent,
-    },
-  };
-  const store = createMockedStoreModules([eventModule]);
 
   const factory = generateShallowRenderer(CreateChangeStateEvent, {
     stubs,
@@ -119,13 +87,8 @@ describe('create-change-state-event', () => {
     },
   });
 
-  afterEach(() => {
-    createEvent.mockClear();
-  });
-
   test('Default parameters applied to form', () => {
     const wrapper = factory({
-      store,
       propsData: {
         modal: {
           config,
@@ -139,21 +102,20 @@ describe('create-change-state-event', () => {
     const changeStateEventField = selectChangeStateField(wrapper);
 
     expect(changeStateEventField.vm.$attrs.value).toEqual({
-      output: '',
+      comment: '',
       state: alarm.v.state.val,
     });
   });
 
   test('Form submitted after trigger submit button', async () => {
-    const afterSubmit = jest.fn();
+    const action = jest.fn();
 
     const wrapper = factory({
-      store,
       propsData: {
         modal: {
           config: {
             items,
-            afterSubmit,
+            action,
           },
         },
       },
@@ -168,21 +130,13 @@ describe('create-change-state-event', () => {
 
     await flushPromises();
 
-    expect(createEvent).toBeCalledTimes(1);
-    expect(createEvent).toBeCalledWith(
-      expect.any(Object),
-      {
-        data: [changeStateEventData],
-      },
-      undefined,
-    );
-    expect(afterSubmit).toBeCalled();
+    expect(action).toBeCalledWith(changeStateEventData);
     expect($modals.hide).toBeCalledWith();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
+    const action = jest.fn();
     const wrapper = factory({
-      store,
       propsData: {
         modal: {
           config,
@@ -211,23 +165,26 @@ describe('create-change-state-event', () => {
 
     await flushPromises();
 
-    expect(createEvent).not.toBeCalled();
+    expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
 
     validator.detach('name');
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
+    const action = jest.fn();
     const formErrors = {
       state: 'State error',
-      output: 'Output error',
+      comment: 'Comment error',
     };
-    createEvent.mockRejectedValueOnce({ ...formErrors, unavailableField: 'Error' });
+    action.mockRejectedValueOnce({ ...formErrors, unavailableField: 'Error' });
     const wrapper = factory({
-      store,
       propsData: {
         modal: {
-          config,
+          config: {
+            ...config,
+            action,
+          },
         },
       },
       mocks: {
@@ -244,30 +201,26 @@ describe('create-change-state-event', () => {
     const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(formErrors).toEqual(addedErrors);
-    expect(createEvent).toBeCalledTimes(1);
-    expect(createEvent).toBeCalledWith(
-      expect.any(Object),
-      {
-        data: [changeStateEventData],
-      },
-      undefined,
-    );
+    expect(action).toBeCalledWith(changeStateEventData);
     expect($modals.hide).not.toBeCalledWith();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
+    const action = jest.fn();
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
     const errors = {
       unavailableField: 'Error',
       anotherUnavailableField: 'Second error',
     };
-    createEvent.mockRejectedValueOnce(errors);
+    action.mockRejectedValueOnce(errors);
 
     const wrapper = factory({
-      store,
       propsData: {
         modal: {
-          config,
+          config: {
+            ...config,
+            action,
+          },
         },
       },
       mocks: {
@@ -286,25 +239,21 @@ describe('create-change-state-event', () => {
     expect($popups.error).toBeCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(createEvent).toBeCalledTimes(1);
-    expect(createEvent).toBeCalledWith(
-      expect.any(Object),
-      {
-        data: [changeStateEventData],
-      },
-      undefined,
-    );
+    expect(action).toBeCalledWith(changeStateEventData);
     expect($modals.hide).not.toBeCalledWith();
 
     consoleErrorSpy.mockClear();
   });
 
   test('Modal submitted with correct data after trigger form', async () => {
+    const action = jest.fn();
     const wrapper = factory({
-      store,
       propsData: {
         modal: {
-          config,
+          config: {
+            ...config,
+            action,
+          },
         },
       },
       mocks: {
@@ -316,7 +265,7 @@ describe('create-change-state-event', () => {
 
     const newForm = {
       state: Faker.datatype.number(),
-      output: 'output',
+      comment: 'comment',
     };
 
     changeStateEventField.vm.$emit('input', newForm);
@@ -327,24 +276,16 @@ describe('create-change-state-event', () => {
 
     await flushPromises();
 
-    expect(createEvent).toBeCalledTimes(1);
-    expect(createEvent).toBeCalledWith(
-      expect.any(Object),
-      {
-        data: [{
-          ...changeStateEventData,
-          output: newForm.output,
-          state: newForm.state,
-        }],
-      },
-      undefined,
-    );
+    expect(action).toBeCalledWith({
+      ...changeStateEventData,
+      comment: newForm.comment,
+      state: newForm.state,
+    });
     expect($modals.hide).toBeCalled();
   });
 
   test('Modal hidden after trigger cancel button', async () => {
     const wrapper = factory({
-      store,
       propsData: {
         modal: {
           config,
@@ -366,7 +307,6 @@ describe('create-change-state-event', () => {
 
   test('Renders `create-change-state-event`', () => {
     const wrapper = snapshotFactory({
-      store,
       propsData: {
         modal: {
           config,
