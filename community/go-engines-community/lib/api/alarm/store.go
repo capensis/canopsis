@@ -40,19 +40,19 @@ const (
 const InstructionStatusApproved = 0
 
 type Store interface {
-	Find(ctx context.Context, r ListRequestWithPagination) (*AggregationResult, error)
+	Find(ctx context.Context, r ListRequestWithPagination, userId string) (*AggregationResult, error)
 	GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, error)
 	GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string, assignedInstructionsMap map[string][]AssignedInstruction) (map[string]ExecutionStatus, error)
 	Count(ctx context.Context, r FilterRequest) (*Count, error)
-	GetByID(ctx context.Context, id string) (*Alarm, error)
-	GetOpenByEntityID(ctx context.Context, id string) (*Alarm, bool, error)
-	FindByService(ctx context.Context, id string, r ListByServiceRequest) (*AggregationResult, error)
-	FindByComponent(ctx context.Context, r ListByComponentRequest) (*AggregationResult, error)
-	FindResolved(ctx context.Context, r ResolvedListRequest) (*AggregationResult, error)
-	GetDetails(ctx context.Context, r DetailsRequest) (*Details, error)
+	GetByID(ctx context.Context, id, userId string) (*Alarm, error)
+	GetOpenByEntityID(ctx context.Context, id, userId string) (*Alarm, bool, error)
+	FindByService(ctx context.Context, id string, r ListByServiceRequest, userId string) (*AggregationResult, error)
+	FindByComponent(ctx context.Context, r ListByComponentRequest, userId string) (*AggregationResult, error)
+	FindResolved(ctx context.Context, r ResolvedListRequest, userId string) (*AggregationResult, error)
+	GetDetails(ctx context.Context, r DetailsRequest, userId string) (*Details, error)
 	GetAssignedDeclareTicketsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedDeclareTicketRule, error)
 	Export(ctx context.Context, t export.Task) (export.DataCursor, error)
-	GetLinks(ctx context.Context, ruleId string, alarmIds []string) ([]link.Link, bool, error)
+	GetLinks(ctx context.Context, ruleId string, alarmIds []string, userId string) ([]link.Link, bool, error)
 }
 
 type store struct {
@@ -63,6 +63,7 @@ type store struct {
 	dbInstructionExecutionCollection mongo.DbCollection
 	dbEntityCollection               mongo.DbCollection
 	dbDeclareTicketCollection        mongo.DbCollection
+	dbUserCollection                 mongo.DbCollection
 
 	linkGenerator link.Generator
 
@@ -85,6 +86,7 @@ func NewStore(
 		dbInstructionExecutionCollection: dbClient.Collection(mongo.InstructionExecutionMongoCollection),
 		dbEntityCollection:               dbClient.Collection(mongo.EntityMongoCollection),
 		dbDeclareTicketCollection:        dbClient.Collection(mongo.DeclareTicketRuleMongoCollection),
+		dbUserCollection:                 dbClient.Collection(mongo.RightsMongoCollection),
 
 		linkGenerator: linkGenerator,
 
@@ -94,7 +96,7 @@ func NewStore(
 	}
 }
 
-func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*AggregationResult, error) {
+func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userId string) (*AggregationResult, error) {
 	collection := s.mainDbCollection
 	if r.GetOpenedFilter() == OnlyResolved {
 		collection = s.resolvedDbCollection
@@ -120,10 +122,10 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 		}
 	}
 
-	return &result, s.postProcessResult(ctx, &result, r.WithDeclareTickets, r.WithInstructions, r.WithLinks, r.OnlyParents)
+	return &result, s.postProcessResult(ctx, &result, r.WithDeclareTickets, r.WithInstructions, r.WithLinks, r.OnlyParents, userId)
 }
 
-func (s *store) GetByID(ctx context.Context, id string) (*Alarm, error) {
+func (s *store) GetByID(ctx context.Context, id, userId string) (*Alarm, error) {
 	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"_id": id}, types.NewCpsTime())
 	if err != nil {
 		return nil, err
@@ -162,10 +164,10 @@ func (s *store) GetByID(ctx context.Context, id string) (*Alarm, error) {
 		return nil, nil
 	}
 
-	return &result.Data[0], s.postProcessResult(ctx, &result, true, true, true, false)
+	return &result.Data[0], s.postProcessResult(ctx, &result, true, true, true, false, userId)
 }
 
-func (s *store) GetOpenByEntityID(ctx context.Context, entityID string) (*Alarm, bool, error) {
+func (s *store) GetOpenByEntityID(ctx context.Context, entityID, userId string) (*Alarm, bool, error) {
 	err := s.dbEntityCollection.FindOne(ctx, bson.M{
 		"_id":     entityID,
 		"enabled": true,
@@ -203,10 +205,10 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID string) (*Alarm,
 		return nil, true, nil
 	}
 
-	return &result.Data[0], true, s.postProcessResult(ctx, &result, true, true, true, false)
+	return &result.Data[0], true, s.postProcessResult(ctx, &result, true, true, true, false, userId)
 }
 
-func (s *store) FindByService(ctx context.Context, id string, r ListByServiceRequest) (*AggregationResult, error) {
+func (s *store) FindByService(ctx context.Context, id string, r ListByServiceRequest, userId string) (*AggregationResult, error) {
 	now := types.NewCpsTime()
 	service := types.Entity{}
 	err := s.dbEntityCollection.FindOne(ctx, bson.M{
@@ -255,10 +257,10 @@ func (s *store) FindByService(ctx context.Context, id string, r ListByServiceReq
 		}
 	}
 
-	return &result, s.postProcessResult(ctx, &result, true, true, true, false)
+	return &result, s.postProcessResult(ctx, &result, true, true, true, false, userId)
 }
 
-func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest) (*AggregationResult, error) {
+func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, userId string) (*AggregationResult, error) {
 	now := types.NewCpsTime()
 	component := types.Entity{}
 	err := s.dbEntityCollection.FindOne(ctx, bson.M{
@@ -296,10 +298,10 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest) (
 		}
 	}
 
-	return &result, s.postProcessResult(ctx, &result, true, true, true, false)
+	return &result, s.postProcessResult(ctx, &result, true, true, true, false, userId)
 }
 
-func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest) (*AggregationResult, error) {
+func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, userId string) (*AggregationResult, error) {
 	now := types.NewCpsTime()
 
 	err := s.dbEntityCollection.FindOne(ctx, bson.M{
@@ -338,7 +340,7 @@ func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest) (*Aggre
 		}
 	}
 
-	err = s.fillLinks(ctx, &result)
+	err = s.fillLinks(ctx, &result, userId)
 	if err != nil {
 		s.logger.Err(err).Msg("cannot fill links")
 	}
@@ -346,7 +348,7 @@ func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest) (*Aggre
 	return &result, nil
 }
 
-func (s *store) GetDetails(ctx context.Context, r DetailsRequest) (*Details, error) {
+func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string) (*Details, error) {
 	now := types.NewCpsTime()
 	match := bson.M{"_id": r.ID}
 	collection := s.mainDbCollection
@@ -439,7 +441,7 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest) (*Details, err
 				}
 			}
 
-			err = s.postProcessResult(ctx, &children, r.WithDeclareTickets, r.WithInstructions, true, false)
+			err = s.postProcessResult(ctx, &children, r.WithDeclareTickets, r.WithInstructions, true, false, userId)
 			if err != nil {
 				return nil, err
 			}
@@ -591,10 +593,10 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	for _, field := range t.Fields {
 		found := false
 		for anotherField := range project {
-			if strings.HasPrefix(field.Name, anotherField) {
+			if strings.HasPrefix(field.Name, anotherField+".") {
 				found = true
 				break
-			} else if strings.HasPrefix(anotherField, field.Name) {
+			} else if strings.HasPrefix(anotherField, field.Name+".") {
 				delete(project, anotherField)
 				break
 			}
@@ -614,8 +616,13 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	return export.NewMongoCursor(cursor, t.Fields.Fields(), transformExportField(common.GetRealFormatTime(r.TimeFormat), location)), nil
 }
 
-func (s *store) GetLinks(ctx context.Context, ruleId string, alarmIds []string) ([]link.Link, bool, error) {
-	links, err := s.linkGenerator.GenerateCombinedForAlarmsByRule(ctx, ruleId, alarmIds)
+func (s *store) GetLinks(ctx context.Context, ruleId string, alarmIds []string, userId string) ([]link.Link, bool, error) {
+	user, err := s.findUser(ctx, userId)
+	if err != nil {
+		return nil, false, err
+	}
+
+	links, err := s.linkGenerator.GenerateCombinedForAlarmsByRule(ctx, ruleId, alarmIds, user)
 	if err != nil {
 		if errors.Is(err, link.ErrNoRule) {
 			return nil, false, nil
@@ -1223,9 +1230,14 @@ func (s *store) fillChildrenInstructionsFlag(ctx context.Context, result *Aggreg
 }
 
 // fillLinks sends a request to API v2 and fills result with links from a response.
-func (s *store) fillLinks(ctx context.Context, result *AggregationResult) error {
+func (s *store) fillLinks(ctx context.Context, result *AggregationResult, userId string) error {
 	if result == nil || len(result.Data) == 0 {
 		return nil
+	}
+
+	user, err := s.findUser(ctx, userId)
+	if err != nil {
+		return err
 	}
 
 	ids := make([]string, len(result.Data))
@@ -1233,7 +1245,7 @@ func (s *store) fillLinks(ctx context.Context, result *AggregationResult) error 
 		ids[i] = v.ID
 	}
 
-	linksByAlarmId, err := s.linkGenerator.GenerateForAlarms(ctx, ids)
+	linksByAlarmId, err := s.linkGenerator.GenerateForAlarms(ctx, ids, user)
 	if err != nil || len(linksByAlarmId) == 0 {
 		return err
 	}
@@ -1329,6 +1341,25 @@ func (s *store) GetAssignedDeclareTicketsMap(ctx context.Context, alarmIds []str
 	return assignedRulesMap, err
 }
 
+func (s *store) findUser(ctx context.Context, id string) (link.User, error) {
+	user := link.User{}
+	cursor, err := s.dbUserCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"_id": id}},
+		{"$addFields": bson.M{"username": "$crecord_name"}},
+	})
+	if err != nil {
+		return user, err
+	}
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		err = cursor.Decode(&user)
+		return user, err
+	}
+
+	return user, errors.New("user not found")
+}
+
 func (s *store) processPipeline(
 	ctx context.Context,
 	alarmIDs []string,
@@ -1402,7 +1433,12 @@ func (s *store) processPipeline(
 	return nil
 }
 
-func (s *store) postProcessResult(ctx context.Context, result *AggregationResult, withDeclareTicket, withInstructions, withLinks, onlyParents bool) error {
+func (s *store) postProcessResult(
+	ctx context.Context,
+	result *AggregationResult,
+	withDeclareTicket, withInstructions, withLinks, onlyParents bool,
+	userId string,
+) error {
 	if withDeclareTicket {
 		err := s.fillAssignedDeclareTickets(ctx, result)
 		if err != nil {
@@ -1428,7 +1464,7 @@ func (s *store) postProcessResult(ctx context.Context, result *AggregationResult
 	}
 
 	if withLinks {
-		err := s.fillLinks(ctx, result)
+		err := s.fillLinks(ctx, result, userId)
 		if err != nil {
 			s.logger.Err(err).Msg("cannot fill links")
 		}

@@ -13,9 +13,9 @@ import {
 import { setSeveralFields } from '@/helpers/immutable';
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
-import { getWidgetColumnLabel, getWidgetColumnSortable } from '../widget/list';
-import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../widget/template/form';
-import { formToWidgetColumns, widgetColumnsToForm } from '../widget/column/form';
+import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
+import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../template/form';
+import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
 
 /**
  * @typedef {Object} MapWidgetParameters

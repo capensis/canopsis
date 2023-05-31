@@ -6,18 +6,18 @@ import featuresService from '@/services/features';
 
 import { uuid } from '@/helpers/uuid';
 
-import { counterWidgetParametersToForm, formToCounterWidgetParameters } from '../counter/widget';
-import { testingWeatherWidgetParametersToForm, formToTestingWeatherWidgetParameters } from '../junit/widget';
-import { statsCalendarWidgetParametersToForm, formToStatsCalendarWidgetParameters } from '../stats/widget';
-import { serviceWeatherWidgetParametersToForm, formToServiceWeatherWidgetParameters } from '../service-weather/widget';
-import { formToMapWidgetParameters, mapWidgetParametersToForm } from '../map/widget';
-import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from '../metric/widget/bar-widget';
-import { lineChartWidgetParametersToForm, formToLineChartWidgetParameters } from '../metric/widget/line-widget';
-import { pieChartWidgetParametersToForm, formToPieChartWidgetParameters } from '../metric/widget/pie-widget';
-import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from '../metric/widget/numbers-widget';
-import { prepareContextWidget, contextWidgetParametersToForm, formToContextWidgetParameters } from '../entity/widget';
-import { prepareAlarmListWidget, alarmListWidgetParametersToForm, formToAlarmListWidgetParameters } from '../alarm/widget';
-import { textWidgetParametersToForm } from '../text/widget';
+import { alarmListWidgetParametersToForm, formToAlarmListWidgetParameters, prepareAlarmListWidget } from './forms/alarm';
+import { counterWidgetParametersToForm, formToCounterWidgetParameters } from './forms/counter';
+import { testingWeatherWidgetParametersToForm, formToTestingWeatherWidgetParameters } from './forms/junit';
+import { statsCalendarWidgetParametersToForm, formToStatsCalendarWidgetParameters } from './forms/stats-calendar';
+import { serviceWeatherWidgetParametersToForm, formToServiceWeatherWidgetParameters } from './forms/service-weather';
+import { mapWidgetParametersToForm, formToMapWidgetParameters } from './forms/map';
+import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './forms/bar-chart';
+import { lineChartWidgetParametersToForm, formToLineChartWidgetParameters } from './forms/line-chart';
+import { pieChartWidgetParametersToForm, formToPieChartWidgetParameters } from './forms/pie-chart';
+import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './forms/numbers-chart';
+import { contextWidgetParametersToForm, formToContextWidgetParameters, prepareContextWidget } from './forms/context';
+import { textWidgetParametersToForm } from './forms/text';
 
 /**
  * @typedef {
