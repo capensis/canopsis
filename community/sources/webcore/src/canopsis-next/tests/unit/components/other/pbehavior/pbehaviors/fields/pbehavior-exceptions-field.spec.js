@@ -3,33 +3,41 @@ import Faker from 'faker';
 import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 
-import PbehaviorExceptionsField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-exceptions-field.vue';
 import { MODALS } from '@/constants';
+
+import PbehaviorRecurrenceRuleExceptionsField
+  from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-exceptions-field.vue';
 
 const localVue = createVueInstance();
 
 const stubs = {
-  'pbehavior-exception-list': true,
-  'pbehavior-exception-field': true,
+  'pbehavior-exceptions-list': true,
+  'pbehavior-exceptions-field': {
+    template: `
+    <div>
+      <slot name="no-data" />
+      <slot name="actions" />
+    </div>
+  `,
+  },
+  'c-alert': true,
 };
 
 const selectButtonByIndex = (wrapper, index) => wrapper.findAll('v-btn-stub').at(index);
-
-const selectExceptionFieldByIndex = (wrapper, index) => wrapper.findAll('pbehavior-exception-field-stub').at(index);
 const selectAddExceptionButton = wrapper => selectButtonByIndex(wrapper, 0);
 const selectChooseExceptionButton = wrapper => selectButtonByIndex(wrapper, 1);
 
-describe('pbehavior-exceptions-field', () => {
+describe('pbehavior-recurrence-rule-exceptions-field', () => {
   const nowTimestamp = 1386435500000;
   mockDateNow(nowTimestamp);
   const $modals = mockModals();
 
-  const factory = generateShallowRenderer(PbehaviorExceptionsField, {
+  const factory = generateShallowRenderer(PbehaviorRecurrenceRuleExceptionsField, {
     localVue,
     stubs,
     mocks: { $modals },
   });
-  const snapshotFactory = generateRenderer(PbehaviorExceptionsField, { localVue, stubs });
+  const snapshotFactory = generateRenderer(PbehaviorRecurrenceRuleExceptionsField, { localVue, stubs });
 
   test('Exception added after trigger create button', () => {
     const exdates = [{ key: 'exdate-1', begin: 1, end: 2, type: '' }];
@@ -82,50 +90,6 @@ describe('pbehavior-exceptions-field', () => {
     config.action(newExceptions);
 
     expect(wrapper).toEmit('update:exceptions', newExceptions);
-  });
-
-  test('Exception changed after trigger exception field', () => {
-    const exdates = [
-      { key: 'exdate-1', begin: 1, end: 2, type: 'type-1' },
-      { key: 'exdate-2', begin: 2, end: 3, type: 'type-2' },
-    ];
-    const wrapper = factory({
-      propsData: {
-        exdates,
-      },
-    });
-
-    const newExdate = {
-      key: Faker.datatype.string(),
-      begin: Faker.datatype.number(),
-      end: Faker.datatype.number(),
-      type: Faker.datatype.string(),
-    };
-
-    selectExceptionFieldByIndex(wrapper, 1).vm.$emit('input', newExdate);
-
-    expect(wrapper).toEmit('input', [
-      exdates[0],
-      newExdate,
-    ]);
-  });
-
-  test('Exception removed after trigger exception field', () => {
-    const exdates = [
-      { key: 'exdate-1', begin: 1, end: 2, type: 'type-1' },
-      { key: 'exdate-2', begin: 2, end: 3, type: 'type-2' },
-    ];
-    const wrapper = factory({
-      propsData: {
-        exdates,
-      },
-    });
-
-    selectExceptionFieldByIndex(wrapper, 1).vm.$emit('delete');
-
-    expect(wrapper).toEmit('input', [
-      exdates[0],
-    ]);
   });
 
   test('Renders `pbehavior-exceptions-field` with default props', () => {
