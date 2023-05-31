@@ -59,20 +59,21 @@ type TaskManager interface {
 }
 
 type ScenarioExecution struct {
-	ID               string                 `json:"-"`
-	ScenarioID       string                 `json:"-"`
-	AlarmID          string                 `json:"-"`
-	Entity           types.Entity           `json:"e"`
-	ActionExecutions []Execution            `json:"ae"`
-	LastUpdate       int64                  `json:"u"`
-	AckResources     bool                   `json:"ar"`
-	Tries            int64                  `json:"t"`
-	Header           map[string]string      `json:"h,omitempty"`
-	Response         map[string]interface{} `json:"r,omitempty"`
-	ResponseMap      map[string]interface{} `json:"rm,omitempty"`
-	ResponseCount    int                    `json:"rc"`
-	AdditionalData   AdditionalData         `json:"ad"`
-	FifoAckEvent     types.Event            `json:"fev"`
+	ID                 string                 `json:"-"`
+	ScenarioID         string                 `json:"-"`
+	AlarmID            string                 `json:"-"`
+	Entity             types.Entity           `json:"e"`
+	ActionExecutions   []Execution            `json:"ae"`
+	LastUpdate         int64                  `json:"u"`
+	AckResources       bool                   `json:"ar"`
+	Tries              int64                  `json:"t"`
+	Header             map[string]string      `json:"h,omitempty"`
+	Response           map[string]interface{} `json:"r,omitempty"`
+	ResponseMap        map[string]interface{} `json:"rm,omitempty"`
+	ResponseCount      int                    `json:"rc"`
+	AdditionalData     AdditionalData         `json:"ad"`
+	FifoAckEvent       types.Event            `json:"fev"`
+	IsMetaAlarmUpdated bool                   `json:"mau,omitempty"`
 }
 
 type ScenarioResult struct {
@@ -91,6 +92,7 @@ type ExecuteScenariosTask struct {
 	AckResources         bool
 	AdditionalData       AdditionalData
 	FifoAckEvent         types.Event
+	IsMetaAlarmUpdated   bool
 }
 
 type AdditionalData struct {
