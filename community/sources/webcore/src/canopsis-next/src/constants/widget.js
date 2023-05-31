@@ -51,8 +51,8 @@ export const COMPONENTS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.lineChart]: 'line-chart-widget',
   [WIDGET_TYPES.pieChart]: 'pie-chart-widget',
   [WIDGET_TYPES.numbers]: 'numbers-widget',
-  [WIDGET_TYPES.userStatistics]: 'statistics-widget',
-  [WIDGET_TYPES.alarmStatistics]: 'statistics-widget',
+  [WIDGET_TYPES.userStatistics]: 'user-statistics-widget',
+  [WIDGET_TYPES.alarmStatistics]: 'alarm-statistics-widget',
 
   ...featuresService.get('constants.COMPONENTS_BY_WIDGET_TYPES'),
 };

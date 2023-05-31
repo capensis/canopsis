@@ -3,7 +3,12 @@
     statistics-form(
       v-model="form",
       :widget="widget",
-      :type="$constants.KPI_RATING_SETTINGS_TYPES.user"
+      :type="$constants.KPI_RATING_SETTINGS_TYPES.user",
+      :show-filter="hasAccessToListFilters",
+      :show-interval="hasAccessToInterval",
+      :filter-disabled="!hasAccessToListFilters",
+      :filter-addable="hasAccessToAddFilter",
+      :filter-editable="hasAccessToEditFilter"
     )
 </template>
 
@@ -11,6 +16,8 @@
 import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
+import { permissionsWidgetsUserStatisticsInterval } from '@/mixins/permissions/widgets/statistics/user/interval';
+import { permissionsWidgetsUserStatisticsFilters } from '@/mixins/permissions/widgets/statistics/user/filters';
 
 import WidgetSettings from '../partials/widget-settings.vue';
 
@@ -22,6 +29,10 @@ export default {
     WidgetSettings,
     StatisticsForm,
   },
-  mixins: [widgetSettingsMixin],
+  mixins: [
+    widgetSettingsMixin,
+    permissionsWidgetsUserStatisticsInterval,
+    permissionsWidgetsUserStatisticsFilters,
+  ],
 };
 </script>
