@@ -1,7 +1,6 @@
 import { EVENT_ENTITY_TYPES, ALARM_METRIC_PARAMETERS } from '@/constants';
 
 export default {
-  eventsCount: 'Events count',
   liveReporting: 'Set a custom date range',
   ackAuthor: 'Ack author',
   lastCommentAuthor: 'Last comment author',
@@ -195,6 +194,7 @@ export default {
     ticketAuthor: 'Ticket submitter',
     ticketId: 'Ticket id',
     ticketMessage: 'Ticket message',
+    ticketCreatedAt: 'Ticket created at',
     entityId: 'Entity ID',
     entityName: 'Entity name',
     entityCategoryName: 'Entity category name',

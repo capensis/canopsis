@@ -36,5 +36,6 @@ type Request struct {
 	//   * `pattern` - export pattern collection
 	//   * `declare_ticket_rule` - export declare_ticket_rule collection
 	//   * `link_rule` - export link_rule collection
+	//   * `map` - export map collection
 	Exports []string `json:"export"`
 }

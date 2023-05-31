@@ -3,7 +3,7 @@ import { isEmpty, isUndefined, omit } from 'lodash';
 import { ALARMS_OPENED_VALUES, DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS, QUICK_RANGES, SORT_ORDERS } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
 
-import { isResolvedAlarmStatus } from '@/helpers/entities/alarm/form';
+import { isResolvedAlarm } from '@/helpers/entities/alarm/form';
 import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
 import { convertMultiSortToRequest } from '@/helpers/entities/shared/query';
 
@@ -118,7 +118,7 @@ export const prepareAlarmDetailsQuery = (alarm, widget) => {
     with_instructions: true,
     with_declare_tickets: true,
     with_links: true,
-    opened: isResolvedAlarmStatus(alarm) ? false : widget.parameters.opened,
+    opened: isResolvedAlarm(alarm) ? false : widget.parameters.opened,
     perf_data: convertWidgetChartsToPerfDataQuery(charts),
     steps: {
       reversed: true,
