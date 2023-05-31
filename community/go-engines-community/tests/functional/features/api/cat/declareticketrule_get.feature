@@ -14,7 +14,8 @@ Feature: Get a declare ticket rule
           "_id": "test-declare-ticket-rule-to-get-1",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1619083733,
           "updated": 1619083733,
@@ -130,7 +131,8 @@ Feature: Get a declare ticket rule
       "_id": "test-declare-ticket-rule-to-get-1",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "created": 1619083733,
       "updated": 1619083733,

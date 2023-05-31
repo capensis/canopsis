@@ -9,6 +9,8 @@ type Rbac struct {
 	ID   string   `bson:"_id,omitempty"`
 	Type LineType `bson:"crecord_type"`
 	Name string   `bson:"crecord_name"`
+	// DisplayName is computed field.
+	DisplayName string `bson:"display_name,omitempty"`
 	// ObjectType defines if object has can permission or CRUD permissions.
 	ObjectType string `bson:"type,omitempty"`
 	// Role is only for subject.

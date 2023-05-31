@@ -16,7 +16,8 @@ Feature: Get a share token
           "description": "test-share-token-to-get-1-description",
           "user": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "role": {
             "_id": "admin",

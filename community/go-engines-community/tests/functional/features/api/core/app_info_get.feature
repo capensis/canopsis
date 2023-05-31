@@ -2,14 +2,13 @@ Feature: Get application information
   I need to be able to get application information
   Only admin should be able to get this information
 
-  @standalone
   Scenario: given get request should return application information
     When I do GET /api/v4/app-info
     Then the response code should be 200
     Then the response body should be:
     """json
     {
-      "allow_change_severity_to_info": false,
+      "allow_change_severity_to_info": true,
       "app_title": "Canopsis Test",
       "edition": "pro",
       "footer": "Test footer",
