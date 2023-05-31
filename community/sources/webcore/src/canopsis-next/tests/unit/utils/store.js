@@ -716,26 +716,6 @@ export const createAlarmModule = () => {
   };
 };
 
-export const createEventModule = () => {
-  const createEvent = jest.fn();
-
-  afterEach(() => {
-    createEvent.mockClear();
-  });
-
-  const eventModule = {
-    name: 'event',
-    actions: {
-      create: createEvent,
-    },
-  };
-
-  return {
-    eventModule,
-    createEvent,
-  };
-};
-
 export const createWidgetTemplateModule = () => {
   const fetchWidgetTemplatesListWithoutStore = jest.fn()
     .mockReturnValue({
