@@ -1,5 +1,6 @@
 Feature: correlation feature - complex rule with threshold rate
 
+  @concurrent
   Scenario: given meta alarm rule with threshold rate and events should create meta alarm
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -30,7 +31,7 @@ Feature: correlation feature - complex rule with threshold rate
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-1-connector",
@@ -45,8 +46,7 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-1-connector",
@@ -61,8 +61,7 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-1-connector",
@@ -77,15 +76,13 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-complex-rule-rate-1-resource&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-1-resource&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 3,
           "meta_alarm_rule": {
             "name": "test-complex-correlation-threshold-rate-1"
           }
@@ -158,6 +155,7 @@ Feature: correlation feature - complex rule with threshold rate
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule with threshold rate and events shouldn't create meta alarm because rate was recomputed by the new entity event after, metaalarm should be create after reaching the new rate
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -188,7 +186,7 @@ Feature: correlation feature - complex rule with threshold rate
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-2-connector",
@@ -203,8 +201,7 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-2-connector",
@@ -219,8 +216,7 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-2-connector",
@@ -235,7 +231,6 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I do GET /api/v4/alarms?search=test-complex-rule-rate-2-resource&correlation=true&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
@@ -266,7 +261,7 @@ Feature: correlation feature - complex rule with threshold rate
       }
     }
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-2-connector",
@@ -281,15 +276,13 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-complex-rule-rate-2-resource&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-2-resource&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 4,
           "meta_alarm_rule": {
             "name": "test-complex-correlation-threshold-rate-2"
           }
@@ -370,6 +363,7 @@ Feature: correlation feature - complex rule with threshold rate
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule with threshold rate and events should create one single meta alarms because first group didn't reached threshold
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -400,7 +394,7 @@ Feature: correlation feature - complex rule with threshold rate
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-3-connector",
@@ -415,8 +409,7 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-3-connector",
@@ -431,9 +424,8 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I wait 4s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-3-connector",
@@ -448,8 +440,7 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-3-connector",
@@ -464,8 +455,7 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-3-connector",
@@ -480,15 +470,13 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-complex-rule-rate-3-resource&correlation=true&multi_sort[]=v.meta,desc&multi_sort[]=v.resource,asc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-3-resource&correlation=true&multi_sort[]=v.meta,desc&multi_sort[]=v.resource,asc until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 3,
           "meta_alarm_rule": {
             "name": "test-complex-correlation-threshold-rate-3"
           }
@@ -571,6 +559,7 @@ Feature: correlation feature - complex rule with threshold rate
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule with threshold rate and events should create 2 meta alarms because of 2 separate time intervals
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -601,7 +590,7 @@ Feature: correlation feature - complex rule with threshold rate
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-4-connector",
@@ -616,8 +605,7 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-4-connector",
@@ -632,9 +620,18 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-4-resource&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 2
+        }
+      ]
+    }
+    """
     When I wait 4s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-4-connector",
@@ -649,8 +646,7 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-4-connector",
@@ -665,8 +661,7 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-4-connector",
@@ -681,21 +676,20 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-complex-rule-rate-4-resource&correlation=true&sort_by=t&sort=asc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-4-resource&correlation=true&sort_by=t&sort=asc until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 2,
           "meta_alarm_rule": {
             "name": "test-complex-correlation-threshold-rate-4"
           }
         },
         {
           "is_meta_alarm": true,
+          "children": 2,
           "meta_alarm_rule": {
             "name": "test-complex-correlation-threshold-rate-4"
           }
@@ -799,6 +793,7 @@ Feature: correlation feature - complex rule with threshold rate
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule with threshold rate and events should create one single meta alarm without first alarm, because interval shifting
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -829,7 +824,7 @@ Feature: correlation feature - complex rule with threshold rate
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-5-connector",
@@ -844,9 +839,8 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I wait 3s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-5-connector",
@@ -861,9 +855,8 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I wait 3s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-5-connector",
@@ -878,8 +871,7 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-5-connector",
@@ -894,15 +886,13 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-complex-rule-rate-5-resource&correlation=true&sort_by=v.meta&sort=desc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-5-resource&correlation=true&sort_by=v.meta&sort=desc until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 3,
           "meta_alarm_rule": {
             "name": "test-complex-correlation-threshold-rate-5"
           }
@@ -980,6 +970,7 @@ Feature: correlation feature - complex rule with threshold rate
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule with threshold rate and events should create meta alarm regarding total entity pattern
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -1030,7 +1021,7 @@ Feature: correlation feature - complex rule with threshold rate
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-6-connector",
@@ -1045,8 +1036,7 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-6-connector",
@@ -1061,8 +1051,7 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-6-connector",
@@ -1077,7 +1066,6 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I do GET /api/v4/alarms?search=test-complex-rule-rate-6-resource&correlation=true&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
@@ -1108,7 +1096,7 @@ Feature: correlation feature - complex rule with threshold rate
       }
     }
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-6-connector",
@@ -1123,15 +1111,13 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-complex-rule-rate-6-resource&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-6-resource&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 4,
           "meta_alarm_rule": {
             "name": "test-complex-correlation-threshold-rate-6"
           }
@@ -1212,9 +1198,10 @@ Feature: correlation feature - complex rule with threshold rate
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule with threshold rate and old event patterns should create meta alarm
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-backward-compatibility-1-connector",
@@ -1229,8 +1216,7 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-backward-compatibility-1-connector",
@@ -1245,8 +1231,7 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-backward-compatibility-1-connector",
@@ -1261,10 +1246,7 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-complex-rule-rate-backward-compatibility-1&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-backward-compatibility-1&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1342,9 +1324,10 @@ Feature: correlation feature - complex rule with threshold rate
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule with threshold rate and old total event patterns should create meta alarm
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-backward-compatibility-2-connector",
@@ -1359,8 +1342,7 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-backward-compatibility-2-connector",
@@ -1375,8 +1357,7 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-backward-compatibility-2-connector",
@@ -1391,8 +1372,7 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-backward-compatibility-2-connector",
@@ -1407,7 +1387,6 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I do GET /api/v4/alarms?search=test-complex-rule-rate-backward-compatibility-2&correlation=true&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
@@ -1438,7 +1417,7 @@ Feature: correlation feature - complex rule with threshold rate
       }
     }
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-backward-compatibility-2-connector",
@@ -1453,15 +1432,13 @@ Feature: correlation feature - complex rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-complex-rule-rate-backward-compatibility-2&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-backward-compatibility-2&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 4,
           "meta_alarm_rule": {
             "name": "test-complex-rule-rate-backward-compatibility-2-name"
           }
@@ -1542,6 +1519,7 @@ Feature: correlation feature - complex rule with threshold rate
     ]
     """
 
+  @concurrent
   Scenario: given deleted meta alarm rule should delete meta alarm
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -1572,7 +1550,7 @@ Feature: correlation feature - complex rule with threshold rate
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-7-connector",
@@ -1584,8 +1562,7 @@ Feature: correlation feature - complex rule with threshold rate
       "state": 2
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-7-connector",
@@ -1597,8 +1574,7 @@ Feature: correlation feature - complex rule with threshold rate
       "state": 2
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-complex-rule-rate-7-connector",
@@ -1610,10 +1586,7 @@ Feature: correlation feature - complex rule with threshold rate
       "state": 2
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-complex-rule-rate-7-resource&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-complex-rule-rate-7-resource&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [

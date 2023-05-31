@@ -1,5 +1,6 @@
 Feature: correlation feature - attribute rule
 
+  @concurrent
   Scenario: given meta alarm rule and events should create meta alarm
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -23,7 +24,7 @@ Feature: correlation feature - attribute rule
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-attribute-1",
@@ -38,10 +39,7 @@ Feature: correlation feature - attribute rule
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-attribute-correlation-resource-1&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-attribute-correlation-resource-1&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -103,7 +101,7 @@ Feature: correlation feature - attribute rule
       }
     ]
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-attribute-1",
@@ -118,8 +116,7 @@ Feature: correlation feature - attribute rule
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do POST /api/v4/alarm-details:
+    When I save request:
     """json
     [
       {
@@ -132,8 +129,7 @@ Feature: correlation feature - attribute rule
       }
     ]
     """
-    Then the response code should be 207
-    Then the response body should contain:
+    When I do POST /api/v4/alarm-details until response code is 207 and body contains:
     """json
     [
       {
@@ -170,6 +166,7 @@ Feature: correlation feature - attribute rule
     ]
     """
 
+  @concurrent
   Scenario: given deleted meta alarm rule should delete meta alarm
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -193,7 +190,7 @@ Feature: correlation feature - attribute rule
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-attribute-2",
@@ -205,8 +202,17 @@ Feature: correlation feature - attribute rule
       "state": 2
     }
     """
-    When I wait the end of 2 events processing
-    When I send an event:
+    When I do GET /api/v4/alarms?search=test-attribute-correlation-resource-2&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 1
+        }
+      ]
+    }
+    """
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-attribute-2",
@@ -218,34 +224,7 @@ Feature: correlation feature - attribute rule
       "state": 2
     }
     """
-    When I wait the end of 2 events processing
-    When I send an event:
-    """json
-    {
-      "connector": "test-attribute-2",
-      "connector_name": "test-attribute-2-name",
-      "source_type": "resource",
-      "event_type": "cancel",
-      "component": "test-attribute-correlation-2",
-      "resource": "test-attribute-correlation-resource-2-2"
-    }
-    """
-    When I wait the end of event processing
-    When I send an event:
-    """json
-    {
-      "connector": "test-attribute-2",
-      "connector_name": "test-attribute-2-name",
-      "source_type": "resource",
-      "event_type": "resolve_cancel",
-      "component": "test-attribute-correlation-2",
-      "resource": "test-attribute-correlation-resource-2-2"
-    }
-    """
-    When I wait the end of event processing
-    When I do GET /api/v4/alarms?search=test-attribute-correlation-resource-2&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-attribute-correlation-resource-2&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -256,17 +235,33 @@ Feature: correlation feature - attribute rule
             "name": "test-attribute-correlation-2"
           }
         }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
+      ]
     }
     """
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
     When I save response metaAlarmEntityID={{ (index .lastResponse.data 0).entity._id }}
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-attribute-2",
+      "connector_name": "test-attribute-2-name",
+      "source_type": "resource",
+      "event_type": "cancel",
+      "component": "test-attribute-correlation-2",
+      "resource": "test-attribute-correlation-resource-2-2"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-attribute-2",
+      "connector_name": "test-attribute-2-name",
+      "source_type": "resource",
+      "event_type": "resolve_cancel",
+      "component": "test-attribute-correlation-2",
+      "resource": "test-attribute-correlation-resource-2-2"
+    }
+    """
     When I do DELETE /api/v4/cat/metaalarmrules/{{ .metaAlarmRuleID }}
     Then the response code should be 204
     When I do GET /api/v4/alarms/{{ .metaAlarmID }}
@@ -307,6 +302,7 @@ Feature: correlation feature - attribute rule
     }
     """
 
+  @concurrent
   Scenario: given deleted resolved meta alarm rule should delete meta alarm
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -331,7 +327,7 @@ Feature: correlation feature - attribute rule
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -354,8 +350,17 @@ Feature: correlation feature - attribute rule
       }
     ]
     """
-    When I wait the end of 4 events processing
-    When I send an event:
+    When I do GET /api/v4/alarms?search=test-attribute-correlation-resource-3&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 2
+        }
+      ]
+    }
+    """
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -376,8 +381,7 @@ Feature: correlation feature - attribute rule
       }
     ]
     """
-    When I wait the end of 2 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -398,7 +402,6 @@ Feature: correlation feature - attribute rule
       }
     ]
     """
-    When I wait the end of 2 events processing
     When I do GET /api/v4/alarms?search=test-attribute-correlation-resource-3&opened=false&correlation=true
     Then the response code should be 200
     Then the response body should contain:
