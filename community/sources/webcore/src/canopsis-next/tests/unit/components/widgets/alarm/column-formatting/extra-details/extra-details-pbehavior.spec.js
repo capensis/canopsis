@@ -15,7 +15,7 @@ describe('extra-details-pbehavior', () => {
     name: 'pbehavior-name',
     author: {
       _id: 'pbehavior-author',
-      name: 'pbehavior-author',
+      display_name: 'pbehavior-author',
     },
     tstart: prevDateStartTimestamp,
     tstop: prevDateStopTimestamp,
@@ -30,7 +30,7 @@ describe('extra-details-pbehavior', () => {
     last_comment: {
       _id: 'pbehavior-comment-1-id',
       author: {
-        name: 'pbehavior-comment-1-author',
+        display_name: 'pbehavior-comment-1-author',
       },
       message: 'pbehavior-comment-1-message',
     },

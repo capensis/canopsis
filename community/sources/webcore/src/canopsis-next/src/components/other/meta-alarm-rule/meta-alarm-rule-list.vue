@@ -127,7 +127,7 @@ export default {
         },
         {
           text: this.$t('common.author'),
-          value: 'author.name',
+          value: 'author.display_name',
         },
         {
           text: this.$t('common.created'),

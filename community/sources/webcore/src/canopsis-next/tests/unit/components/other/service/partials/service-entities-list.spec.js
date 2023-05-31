@@ -1,24 +1,32 @@
 import Faker from 'faker';
+import flushPromises from 'flush-promises';
 
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import {
   createAlarmModule,
-  createAuthModule, createDeclareTicketModule,
+  createAuthModule,
+  createDeclareTicketModule,
   createMockedStoreModules,
+  createPbehaviorModule,
   createPbehaviorTypesModule,
 } from '@unit/utils/store';
-import { mockModals } from '@unit/utils/mock-hooks';
-import flushPromises from 'flush-promises';
+import { uid } from '@/helpers/uid';
+import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 import {
   ENTITIES_STATES,
   MODALS,
+  PBEHAVIOR_ORIGINS,
   PBEHAVIOR_TYPE_TYPES,
   WEATHER_ACK_EVENT_OUTPUT,
   WEATHER_ACTIONS_TYPES,
+  WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE,
 } from '@/constants';
+import { COLORS } from '@/config';
 
 import ServiceEntitiesList from '@/components/other/service/partials/service-entities-list.vue';
+
+jest.mock('@/helpers/uid');
 
 const stubs = {
   'service-entity-actions': true,
@@ -40,6 +48,9 @@ const applyEntitiesAction = async (wrapper, type) => {
 };
 
 describe('service-entities-list', () => {
+  const nowTimestamp = 1386435600000;
+  mockDateNow(nowTimestamp);
+
   const $modals = mockModals();
   const service = {
     _id: 'service-id',
@@ -62,22 +73,35 @@ describe('service-entities-list', () => {
     },
   ];
   const { authModule } = createAuthModule();
-  const { alarmModule } = createAlarmModule();
+  const {
+    alarmModule,
+    bulkCreateAlarmAckEvent,
+    bulkCreateAlarmAckremoveEvent,
+    bulkCreateAlarmAssocticketEvent,
+    bulkCreateAlarmCommentEvent,
+    bulkCreateAlarmCancelEvent,
+    bulkCreateAlarmChangestateEvent,
+  } = createAlarmModule();
   const {
     declareTicketRuleModule,
     bulkCreateDeclareTicketExecution,
     fetchAssignedDeclareTicketsWithoutStore,
   } = createDeclareTicketModule();
   const { pbehaviorTypesModule, fetchPbehaviorTypesListWithoutStore } = createPbehaviorTypesModule();
+  const { pbehaviorModule, createEntityPbehaviors, removeEntityPbehaviors } = createPbehaviorModule();
 
-  const store = createMockedStoreModules([alarmModule, authModule, declareTicketRuleModule, pbehaviorTypesModule]);
+  const store = createMockedStoreModules([
+    alarmModule,
+    authModule,
+    declareTicketRuleModule,
+    pbehaviorTypesModule,
+    pbehaviorModule,
+  ]);
 
-  const applyAction = jest.fn();
   const refresh = jest.fn();
 
   const factory = generateShallowRenderer(ServiceEntitiesList, {
     store,
-
     stubs,
     mocks: {
       $modals,
@@ -87,7 +111,6 @@ describe('service-entities-list', () => {
       pagination: {},
     },
     listeners: {
-      'apply:action': applyAction,
       refresh,
     },
   });
@@ -101,7 +124,6 @@ describe('service-entities-list', () => {
       pagination: {},
     },
     listeners: {
-      'apply:action': applyAction,
       refresh,
     },
   });
@@ -136,41 +158,16 @@ describe('service-entities-list', () => {
     expect(wrapper.vm.selectedEntities).toEqual([]);
   });
 
-  test('Ack action applied after trigger mass ack action', async () => {
-    const entity = {
-      _id: Faker.datatype.string(),
-      ack: null,
-      pbehaviors: [],
-    };
-    const wrapper = factory({
-      propsData: {
-        serviceEntities: [
-          entity,
-        ],
-      },
-    });
-
-    await selectCheckboxFunctional(wrapper).vm.$emit('change', true);
-
-    await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityAck);
-
-    expect(wrapper).toEmit('apply:action', {
-      actionType: WEATHER_ACTIONS_TYPES.entityAck,
-      entities: [entity],
-    });
-  });
-
   test('Ack remove action applied after trigger mass ackremove  action', async () => {
     const entity = {
       _id: Faker.datatype.string(),
+      alarm_id: Faker.datatype.string(),
       ack: {},
       pbehaviors: [],
     };
     const wrapper = factory({
       propsData: {
-        serviceEntities: [
-          entity,
-        ],
+        serviceEntities: [entity],
       },
     });
 
@@ -184,7 +181,7 @@ describe('service-entities-list', () => {
         config: {
           title: 'Remove ack',
           field: {
-            name: 'output',
+            name: 'comment',
             label: 'Note',
             validationRules: 'required',
           },
@@ -193,16 +190,21 @@ describe('service-entities-list', () => {
       },
     );
 
-    const [modalArguments] = $modals.show.mock.calls[0];
-    const output = Faker.datatype.string();
+    const [{ config }] = $modals.show.mock.calls[0];
+    const comment = Faker.datatype.string();
 
-    modalArguments.config.action({ output });
+    await config.action({ comment });
 
-    expect(wrapper).toEmit('apply:action', {
-      actionType: WEATHER_ACTIONS_TYPES.entityAckRemove,
-      payload: { output },
-      entities: [entity],
-    });
+    expect(bulkCreateAlarmAckremoveEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: [{
+          _id: entity.alarm_id,
+          comment,
+        }],
+      },
+      undefined,
+    );
   });
 
   test('Associate ticket action applied after trigger mass associate ticket action', async () => {
@@ -213,9 +215,7 @@ describe('service-entities-list', () => {
     };
     const wrapper = factory({
       propsData: {
-        serviceEntities: [
-          entity,
-        ],
+        serviceEntities: [entity],
       },
     });
 
@@ -235,19 +235,24 @@ describe('service-entities-list', () => {
       },
     );
 
-    const [modalArguments] = $modals.show.mock.calls[0];
+    const [{ config }] = $modals.show.mock.calls[0];
     const event = {
       ticket: Faker.datatype.string(),
       ticket_url: Faker.datatype.string(),
     };
 
-    modalArguments.config.action(event);
+    await config.action(event);
 
-    expect(wrapper).toEmit('apply:action', {
-      actionType: WEATHER_ACTIONS_TYPES.entityAssocTicket,
-      payload: event,
-      entities: [entity],
-    });
+    expect(bulkCreateAlarmAssocticketEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: [{
+          _id: entity.alarm_id,
+          ...event,
+        }],
+      },
+      undefined,
+    );
   });
 
   test('Validate action applied after trigger mass validate action', async () => {
@@ -260,9 +265,7 @@ describe('service-entities-list', () => {
     };
     const wrapper = factory({
       propsData: {
-        serviceEntities: [
-          entity,
-        ],
+        serviceEntities: [entity],
       },
     });
 
@@ -270,10 +273,28 @@ describe('service-entities-list', () => {
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityValidate);
 
-    expect(wrapper).toEmit('apply:action', {
-      actionType: WEATHER_ACTIONS_TYPES.entityValidate,
-      entities: [entity],
-    });
+    expect(bulkCreateAlarmAckEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: [{
+          _id: entity.alarm_id,
+          comment: WEATHER_ACK_EVENT_OUTPUT.validateOk,
+        }],
+      },
+      undefined,
+    );
+
+    expect(bulkCreateAlarmChangestateEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: [{
+          _id: entity.alarm_id,
+          comment: WEATHER_ACK_EVENT_OUTPUT.validateOk,
+          state: ENTITIES_STATES.critical,
+        }],
+      },
+      undefined,
+    );
   });
 
   test('Invalidate action applied after trigger mass invalidate action', async () => {
@@ -286,9 +307,7 @@ describe('service-entities-list', () => {
     };
     const wrapper = factory({
       propsData: {
-        serviceEntities: [
-          entity,
-        ],
+        serviceEntities: [entity],
       },
     });
 
@@ -296,25 +315,41 @@ describe('service-entities-list', () => {
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityInvalidate);
 
-    expect(wrapper).toEmit('apply:action', {
-      actionType: WEATHER_ACTIONS_TYPES.entityInvalidate,
-      entities: [entity],
-      payload: {
-        output: WEATHER_ACK_EVENT_OUTPUT.ack,
+    expect(bulkCreateAlarmAckEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: [{
+          _id: entity.alarm_id,
+          comment: WEATHER_ACK_EVENT_OUTPUT.ack,
+        }],
       },
-    });
+      undefined,
+    );
+
+    expect(bulkCreateAlarmCancelEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: [{
+          _id: entity.alarm_id,
+          comment: WEATHER_ACK_EVENT_OUTPUT.validateCancel,
+        }],
+      },
+      undefined,
+    );
   });
 
   test('Pause action applied after trigger mass pause action', async () => {
+    const uniqId = Faker.datatype.string();
+
+    uid.mockReturnValueOnce(uniqId);
     const entity = {
       _id: Faker.datatype.string(),
+      name: Faker.datatype.string(),
       pbh_origin_icon: '',
     };
     const wrapper = factory({
       propsData: {
-        serviceEntities: [
-          entity,
-        ],
+        serviceEntities: [entity],
       },
     });
 
@@ -331,7 +366,7 @@ describe('service-entities-list', () => {
       },
     );
 
-    const [modalArguments] = $modals.show.mock.calls[0];
+    const [{ config }] = $modals.show.mock.calls[0];
     const comment = Faker.datatype.string();
     const reason = Faker.datatype.string();
 
@@ -343,17 +378,29 @@ describe('service-entities-list', () => {
       data: [pauseType],
     });
 
-    await modalArguments.config.action({ comment, reason });
+    await config.action({ comment, reason });
 
-    expect(wrapper).toEmit('apply:action', {
-      actionType: WEATHER_ACTIONS_TYPES.entityPause,
-      entities: [entity],
-      payload: {
-        comment,
-        reason,
-        type: pauseType,
+    expect(createEntityPbehaviors).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: [{
+          color: COLORS.secondary,
+          comment,
+          reason,
+          comments: [],
+          enabled: true,
+          entity: entity._id,
+          exceptions: [],
+          exdates: [],
+          name: `${WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE}-${entity.name}-${uniqId}`,
+          origin: PBEHAVIOR_ORIGINS.serviceWeather,
+          tstart: nowTimestamp / 1000,
+          tstop: null,
+          type: undefined,
+        }],
       },
-    });
+      undefined,
+    );
   });
 
   test('Play action applied after trigger mass play action', async () => {
@@ -367,9 +414,7 @@ describe('service-entities-list', () => {
     };
     const wrapper = factory({
       propsData: {
-        serviceEntities: [
-          entity,
-        ],
+        serviceEntities: [entity],
       },
     });
 
@@ -377,10 +422,16 @@ describe('service-entities-list', () => {
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityPlay);
 
-    expect(wrapper).toEmit('apply:action', {
-      actionType: WEATHER_ACTIONS_TYPES.entityPlay,
-      entities: [entity],
-    });
+    expect(removeEntityPbehaviors).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: [{
+          entity: entity._id,
+          origin: PBEHAVIOR_ORIGINS.serviceWeather,
+        }],
+      },
+      undefined,
+    );
   });
 
   test('Cancel action applied after trigger mass cancel action', async () => {
@@ -392,9 +443,7 @@ describe('service-entities-list', () => {
     };
     const wrapper = factory({
       propsData: {
-        serviceEntities: [
-          entity,
-        ],
+        serviceEntities: [entity],
       },
     });
 
@@ -412,17 +461,19 @@ describe('service-entities-list', () => {
       },
     );
 
-    const [modalArguments] = $modals.show.mock.calls[0];
+    const [{ config }] = $modals.show.mock.calls[0];
 
-    const output = Faker.datatype.string();
+    const comment = Faker.datatype.string();
 
-    await modalArguments.config.action(output);
+    await config.action(comment);
 
-    expect(wrapper).toEmit('apply:action', {
-      actionType: WEATHER_ACTIONS_TYPES.entityCancel,
-      entities: [entity],
-      payload: { output },
-    });
+    expect(bulkCreateAlarmCancelEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: [{ _id: entity.alarm_id, comment }],
+      },
+      undefined,
+    );
   });
 
   test('Comment action applied after trigger mass comment action', async () => {
@@ -432,9 +483,7 @@ describe('service-entities-list', () => {
     };
     const wrapper = factory({
       propsData: {
-        serviceEntities: [
-          entity,
-        ],
+        serviceEntities: [entity],
       },
     });
 
@@ -451,17 +500,19 @@ describe('service-entities-list', () => {
       },
     );
 
-    const [modalArguments] = $modals.show.mock.calls[0];
+    const [{ config }] = $modals.show.mock.calls[0];
 
-    const output = Faker.datatype.string();
+    const comment = Faker.datatype.string();
 
-    await modalArguments.config.action({ output });
+    await config.action({ comment });
 
-    expect(wrapper).toEmit('apply:action', {
-      actionType: WEATHER_ACTIONS_TYPES.entityComment,
-      entities: [entity],
-      payload: { output },
-    });
+    expect(bulkCreateAlarmCommentEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: [{ _id: entity.alarm_id, comment }],
+      },
+      undefined,
+    );
   });
 
   test('Declare ticket action applied after trigger mass declare ticket action', async () => {
@@ -495,9 +546,7 @@ describe('service-entities-list', () => {
 
     const wrapper = factory({
       propsData: {
-        serviceEntities: [
-          entity,
-        ],
+        serviceEntities: [entity],
       },
     });
 
@@ -548,9 +597,7 @@ describe('service-entities-list', () => {
     };
     const wrapper = factory({
       propsData: {
-        serviceEntities: [
-          entity,
-        ],
+        serviceEntities: [entity],
       },
     });
 
@@ -558,10 +605,11 @@ describe('service-entities-list', () => {
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityAck);
 
-    expect(wrapper).toEmit('apply:action', {
-      actionType: WEATHER_ACTIONS_TYPES.entityAck,
-      entities: [],
-    });
+    expect(bulkCreateAlarmAckEvent).toBeCalledWith(
+      expect.any(Object),
+      { data: [] },
+      undefined,
+    );
   });
 
   test('Unavailable action flag removed after trigger', async () => {
@@ -571,9 +619,7 @@ describe('service-entities-list', () => {
     };
     const wrapper = factory({
       propsData: {
-        serviceEntities: [
-          entity,
-        ],
+        serviceEntities: [entity],
       },
     });
 
@@ -582,18 +628,6 @@ describe('service-entities-list', () => {
     expect(wrapper.vm.unavailableEntitiesAction).toEqual({
       [entity._id]: false,
     });
-  });
-
-  test('Action applied after trigger apply on service entity', async () => {
-    const wrapper = factory({
-      propsData: {
-        serviceEntities,
-      },
-    });
-
-    await selectServiceEntityByIndex(wrapper, 0).vm.$emit('apply:action');
-
-    expect(applyAction).toHaveBeenCalled();
   });
 
   test('Entities list refreshed after trigger refresh on entity element', async () => {
