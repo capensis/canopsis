@@ -1,9 +1,10 @@
 Feature: send activation event on create
   I need to be able to trigger rule on alarm activation
 
+  @concurrent
   Scenario: given event for new alarm should set activation date
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-activation-event-1",
@@ -17,7 +18,6 @@ Feature: send activation event on create
     }
     """
     When I save response createTimestamp={{ now }}
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-action-activation-event-1
     Then the response code should be 200
     Then the response body should contain:
@@ -44,6 +44,7 @@ Feature: send activation event on create
     When I save response alarmActivationDate={{ (index .lastResponse.data 0).v.activation_date }}
     Then the difference between alarmActivationDate createTimestamp is in range -2,2
 
+  @concurrent
   Scenario: given event for new alarm and ack action should update activation date
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -76,7 +77,7 @@ Feature: send activation event on create
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-activation-event-2",
@@ -90,7 +91,6 @@ Feature: send activation event on create
     }
     """
     When I save response createTimestamp={{ now }}
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-action-activation-event-2
     Then the response code should be 200
     Then the response body should contain:
@@ -117,6 +117,7 @@ Feature: send activation event on create
     When I save response alarmActivationDate={{ (index .lastResponse.data 0).v.activation_date }}
     Then the difference between alarmActivationDate createTimestamp is in range -2,2
 
+  @concurrent
   Scenario: given event for new alarm and snooze action should not update activation date
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -154,7 +155,7 @@ Feature: send activation event on create
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-activation-event-3",
@@ -167,7 +168,6 @@ Feature: send activation event on create
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-action-activation-event-3
     Then the response code should be 200
     Then the response body should contain:
@@ -194,6 +194,7 @@ Feature: send activation event on create
     """
     Then the response key "data.0.v.activation_date" should not exist
 
+  @concurrent
   Scenario: given event for new alarm and pbehavior action with start=now should not update activation date
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -232,7 +233,7 @@ Feature: send activation event on create
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-activation-event-4",
@@ -245,7 +246,6 @@ Feature: send activation event on create
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-action-activation-event-4
     Then the response code should be 200
     Then the response body should contain:
@@ -274,12 +274,13 @@ Feature: send activation event on create
     """
     Then the response key "data.0.v.activation_date" should not exist
 
+  @concurrent
   Scenario: given event for new alarm and pbehavior action with start on trigger should not update activation date
     Given I am admin
     When I do POST /api/v4/scenarios:
     """json
     {
-      "name": "test-scenario-action-activation-1-name",
+      "name": "test-scenario-action-activation-5-name",
       "priority": 10035,
       "enabled": true,
       "triggers": ["create"],
@@ -315,7 +316,7 @@ Feature: send activation event on create
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-activation-event-5",
@@ -328,7 +329,6 @@ Feature: send activation event on create
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-action-activation-event-5
     Then the response code should be 200
     Then the response body should contain:
@@ -357,6 +357,7 @@ Feature: send activation event on create
     """
     Then the response key "data.0.v.activation_date" should not exist
 
+  @concurrent
   Scenario: given event for new alarm and pbehavior action with start in the future should update activation date
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -395,7 +396,7 @@ Feature: send activation event on create
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-activation-event-6",
@@ -409,7 +410,6 @@ Feature: send activation event on create
     }
     """
     When I save response createTimestamp={{ now }}
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-action-activation-event-6
     Then the response code should be 200
     Then the response body should contain:
@@ -436,6 +436,7 @@ Feature: send activation event on create
     When I save response alarmActivationDate={{ (index .lastResponse.data 0).v.activation_date }}
     Then the difference between alarmActivationDate createTimestamp is in range -2,2
 
+  @concurrent
   Scenario: given event for new alarm and pbehavior action with start and stop in the past should update activation date
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -474,7 +475,7 @@ Feature: send activation event on create
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-activation-event-7",
@@ -488,7 +489,6 @@ Feature: send activation event on create
     }
     """
     When I save response createTimestamp={{ now }}
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-action-activation-event-7
     Then the response code should be 200
     Then the response body should contain:
@@ -515,6 +515,7 @@ Feature: send activation event on create
     When I save response alarmActivationDate={{ (index .lastResponse.data 0).v.activation_date }}
     Then the difference between alarmActivationDate createTimestamp is in range -2,2
 
+  @concurrent
   Scenario: given event for new alarm and pbehavior action with start and stop in the past and rrule should not update activation date
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -554,7 +555,7 @@ Feature: send activation event on create
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-activation-event-8",
@@ -567,7 +568,6 @@ Feature: send activation event on create
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-action-activation-event-8
     Then the response code should be 200
     Then the response body should contain:

@@ -27,7 +27,7 @@ type Store interface {
 	UpdatePositions(ctx context.Context, tabs []Response) (bool, error)
 }
 
-func NewStore(dbClient mongo.DbClient, widgetStore widget.Store) Store {
+func NewStore(dbClient mongo.DbClient, widgetStore widget.Store, authorProvider author.Provider) Store {
 	return &store{
 		client:             dbClient,
 		collection:         dbClient.Collection(mongo.ViewTabMongoCollection),
@@ -35,6 +35,7 @@ func NewStore(dbClient mongo.DbClient, widgetStore widget.Store) Store {
 		filterCollection:   dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 		playlistCollection: dbClient.Collection(mongo.PlaylistMongoCollection),
 		userPrefCollection: dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		authorProvider:     authorProvider,
 
 		widgetStore: widgetStore,
 	}
@@ -47,6 +48,7 @@ type store struct {
 	filterCollection   mongo.DbCollection
 	playlistCollection mongo.DbCollection
 	userPrefCollection mongo.DbCollection
+	authorProvider     author.Provider
 
 	widgetStore widget.Store
 }
@@ -54,7 +56,7 @@ type store struct {
 func (s *store) Find(ctx context.Context, ids []string) ([]Response, error) {
 	tabs := make([]Response, 0)
 	pipeline := []bson.M{{"$match": bson.M{"_id": bson.M{"$in": ids}}}}
-	pipeline = append(pipeline, author.Pipeline()...)
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -92,7 +94,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 		}},
 		{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
 	}
-	pipeline = append(pipeline, author.PipelineForField("widgets.author")...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("widgets.author")...)
 	pipeline = append(pipeline,
 		bson.M{"$lookup": bson.M{
 			"from":         mongo.WidgetFiltersMongoCollection,
@@ -102,7 +104,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 		}},
 		bson.M{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
 	)
-	pipeline = append(pipeline, author.PipelineForField("filters.author")...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("filters.author")...)
 	pipeline = append(pipeline,
 		bson.M{"$sort": bson.M{"filters.position": 1}},
 		bson.M{"$group": bson.M{
@@ -138,7 +140,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			}}},
 		}}}},
 	)
-	pipeline = append(pipeline, author.Pipeline()...)
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err

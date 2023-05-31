@@ -58,7 +58,7 @@ func (e *cancelExecutor) Exec(
 		return types.AlarmChangeTypeCancel, nil
 	}
 
-	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, time, alarm.Value.Connector+"."+alarm.Value.ConnectorName, output, userID, role, initiator)
+	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, time, params.Author, output, userID, role, initiator)
 	newStepStatus.Value = newStatus
 	if alarm.Value.Status != nil && newStepStatus.Value < alarm.Value.Status.Value {
 		newStepStatus.Type = types.AlarmStepStatusDecrease
