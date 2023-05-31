@@ -9,14 +9,12 @@
       :interval="query.interval",
       :sampling="query.sampling",
       :min-interval-date="minAvailableDate",
-      :show-filter="hasAccessToUserFilter",
-      :show-interval="hasAccessToInterval",
-      :show-sampling="hasAccessToSampling",
-      :filter-disabled="!hasAccessToListFilters",
-      :filter-addable="hasAccessToAddFilter",
-      :filter-editable="hasAccessToEditFilter",
+      :show-interval="showInterval",
+      :show-filter="showFilter",
+      :filter-disabled="!filterDisabled",
+      :filter-addable="filterAddable",
+      :filter-editable="filterEditable",
       @update:filters="updateSelectedFilter",
-      @update:sampling="updateSampling",
       @update:interval="updateInterval"
     )
     v-layout(column)
@@ -27,11 +25,6 @@
         :headers="headers",
         :total-items="groupMetricsMeta.total_count",
         no-pagination
-      )
-      c-table-pagination(
-        :total-items="groupMetricsMeta.total_count",
-        :rows-per-page.sync="query.limit",
-        :page.sync="query.page"
       )
 </template>
 
@@ -49,17 +42,13 @@ import { isCustomCriteria } from '@/helpers/entities/metric/form';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
-import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { entitiesGroupMetricsMixin } from '@/mixins/entities/group-metrics';
-import { permissionsWidgetsBarChartInterval } from '@/mixins/permissions/widgets/chart/bar/interval';
-import { permissionsWidgetsBarChartSampling } from '@/mixins/permissions/widgets/chart/bar/sampling';
-import { permissionsWidgetsBarChartFilters } from '@/mixins/permissions/widgets/chart/bar/filters';
 
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import CProgressOverlay from '@/components/common/overlay/c-progress-overlay.vue';
 
-import KpiWidgetFilters from '../partials/kpi-widget-filters.vue';
+import KpiWidgetFilters from '../../partials/kpi-widget-filters.vue';
 
 const { mapActions } = createNamespacedHelpers('ratingSettings');
 
@@ -74,12 +63,8 @@ export default {
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
     metricsIntervalFilterMixin,
-    widgetSamplingFilterMixin,
     widgetPeriodicRefreshMixin,
     entitiesGroupMetricsMixin,
-    permissionsWidgetsBarChartInterval,
-    permissionsWidgetsBarChartSampling,
-    permissionsWidgetsBarChartFilters,
   ],
   props: {
     widget: {
@@ -89,6 +74,26 @@ export default {
     tabId: {
       type: String,
       default: '',
+    },
+    showInterval: {
+      type: Boolean,
+      default: false,
+    },
+    showFilter: {
+      type: Boolean,
+      default: false,
+    },
+    filterAddable: {
+      type: Boolean,
+      default: false,
+    },
+    filterEditable: {
+      type: Boolean,
+      default: false,
+    },
+    filterDisabled: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
