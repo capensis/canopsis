@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -64,6 +65,7 @@ type store struct {
 	dbEntityCollection               mongo.DbCollection
 	dbDeclareTicketCollection        mongo.DbCollection
 	dbUserCollection                 mongo.DbCollection
+	authorProvider                   author.Provider
 
 	linkGenerator link.Generator
 
@@ -78,6 +80,7 @@ func NewStore(
 	dbClient mongo.DbClient,
 	linkGenerator link.Generator,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	authorProvider author.Provider,
 	decoder encoding.Decoder,
 	logger zerolog.Logger,
 ) Store {
@@ -90,6 +93,7 @@ func NewStore(
 		dbEntityCollection:               dbClient.Collection(mongo.EntityMongoCollection),
 		dbDeclareTicketCollection:        dbClient.Collection(mongo.DeclareTicketRuleMongoCollection),
 		dbUserCollection:                 dbClient.Collection(mongo.RightsMongoCollection),
+		authorProvider:                   authorProvider,
 
 		linkGenerator: linkGenerator,
 
@@ -1268,7 +1272,7 @@ func (s *store) fillLinks(ctx context.Context, result *AggregationResult, userId
 }
 
 func (s *store) getQueryBuilder() *MongoQueryBuilder {
-	return NewMongoQueryBuilder(s.dbClient)
+	return NewMongoQueryBuilder(s.dbClient, s.authorProvider)
 }
 
 func (s *store) fillAssignedDeclareTickets(ctx context.Context, result *AggregationResult) error {

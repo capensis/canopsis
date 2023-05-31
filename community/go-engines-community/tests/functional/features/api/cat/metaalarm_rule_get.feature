@@ -22,7 +22,8 @@ Feature: Get a metaalarm-rule
           "name": "Test alarm get",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "type": "complex",
           "output_template": "{{ `Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}` }}",
@@ -56,7 +57,8 @@ Feature: Get a metaalarm-rule
           "name": "Test alarm get",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "type": "complex",
           "output_template": "{{ `Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}` }}",
@@ -106,7 +108,8 @@ Feature: Get a metaalarm-rule
       "name": "Test alarm get",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "type": "complex",
       "output_template": "{{ `Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}` }}",
