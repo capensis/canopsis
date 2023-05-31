@@ -192,7 +192,8 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 			Initiator:       event.Initiator,
 			Output:          event.Output,
 		},
-		FifoAckEvent: fifoAckEvent,
+		IsMetaAlarmUpdated: event.IsMetaAlarmUpdated,
+		FifoAckEvent:       fifoAckEvent,
 	}
 
 	return nil
@@ -236,6 +237,7 @@ func (s *service) ProcessAbandonedExecutions(ctx context.Context) error {
 			AbandonedExecutionID: execution.ID,
 			AdditionalData:       execution.AdditionalData,
 			FifoAckEvent:         execution.FifoAckEvent,
+			IsMetaAlarmUpdated:   execution.IsMetaAlarmUpdated,
 		}
 	}
 
