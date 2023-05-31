@@ -11,7 +11,10 @@ Feature: Create a user
       "firstname": "test-user-to-create-1-firstname",
       "lastname": "test-user-to-create-1-lastname",
       "email": "test-user-to-create-1-email@canopsis.net",
-      "role": "test-role-to-edit-user",
+      "roles": [
+        "test-role-to-user-edit-2",
+        "test-role-to-user-edit-1"
+      ],
       "ui_language": "fr",
       "ui_theme": "canopsis",
       "ui_groups_navigation_type": "top-bar",
@@ -35,64 +38,64 @@ Feature: Create a user
       "firstname": "test-user-to-create-1-firstname",
       "lastname": "test-user-to-create-1-lastname",
       "name": "test-user-to-create-1-name",
-      "role": {
-        "_id": "test-role-to-edit-user",
-        "name": "test-role-to-edit-user",
-        "defaultview": {
-          "_id": "test-view-to-edit-user",
-          "title": "test-view-to-edit-user-title"
+      "roles": [
+        {
+          "_id": "test-role-to-user-edit-2",
+          "name": "test-role-to-user-edit-2",
+          "defaultview": {
+            "_id": "test-view-to-edit-user",
+            "title": "test-view-to-edit-user-title"
+          }
+        },
+        {
+          "_id": "test-role-to-user-edit-1",
+          "name": "test-role-to-user-edit-1",
+          "defaultview": {
+            "_id": "test-view-to-edit-user",
+            "title": "test-view-to-edit-user-title"
+          }
         }
-      },
+      ],
       "source": "",
       "ui_groups_navigation_type": "top-bar",
       "ui_language": "fr",
       "ui_theme": "canopsis"
     }
     """
-
-  Scenario: given create request should return ok to get request
-    When I am admin
-    When I do POST /api/v4/users:
-    """json
-    {
-      "name": "test-user-to-create-2-name",
-      "firstname": "test-user-to-create-2-firstname",
-      "lastname": "test-user-to-create-2-lastname",
-      "email": "test-user-to-create-2-email@canopsis.net",
-      "role": "test-role-to-edit-user",
-      "ui_language": "fr",
-      "ui_theme": "canopsis",
-      "ui_groups_navigation_type": "top-bar",
-      "enable": true,
-      "defaultview": "test-view-to-edit-user",
-      "password": "test-password"
-    }
-    """
-    Then the response code should be 201
     When I do GET /api/v4/users/{{ .lastResponse._id}}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "test-user-to-create-2-name",
+      "_id": "test-user-to-create-1-name",
       "defaultview": {
         "_id": "test-view-to-edit-user",
         "title": "test-view-to-edit-user-title"
       },
-      "email": "test-user-to-create-2-email@canopsis.net",
+      "email": "test-user-to-create-1-email@canopsis.net",
       "enable": true,
       "external_id": "",
-      "firstname": "test-user-to-create-2-firstname",
-      "lastname": "test-user-to-create-2-lastname",
-      "name": "test-user-to-create-2-name",
-      "role": {
-        "_id": "test-role-to-edit-user",
-        "name": "test-role-to-edit-user",
-        "defaultview": {
-          "_id": "test-view-to-edit-user",
-          "title": "test-view-to-edit-user-title"
+      "firstname": "test-user-to-create-1-firstname",
+      "lastname": "test-user-to-create-1-lastname",
+      "name": "test-user-to-create-1-name",
+      "roles": [
+        {
+          "_id": "test-role-to-user-edit-2",
+          "name": "test-role-to-user-edit-2",
+          "defaultview": {
+            "_id": "test-view-to-edit-user",
+            "title": "test-view-to-edit-user-title"
+          }
+        },
+        {
+          "_id": "test-role-to-user-edit-1",
+          "name": "test-role-to-user-edit-1",
+          "defaultview": {
+            "_id": "test-view-to-edit-user",
+            "title": "test-view-to-edit-user-title"
+          }
         }
-      },
+      ],
       "source": "",
       "ui_groups_navigation_type": "top-bar",
       "ui_language": "fr",
@@ -109,7 +112,9 @@ Feature: Create a user
       "firstname": "test-user-to-create-3-firstname",
       "lastname": "test-user-to-create-3-lastname",
       "email": "test-user-to-create-3-email@canopsis.net",
-      "role": "test-role-to-edit-user",
+      "roles": [
+        "test-role-to-user-edit-1"
+      ],
       "ui_language": "fr",
       "ui_theme": "canopsis",
       "ui_groups_navigation_type": "top-bar",
@@ -139,7 +144,9 @@ Feature: Create a user
       "firstname": "test-user-to-create-4-firstname",
       "lastname": "test-user-to-create-4-lastname",
       "email": "test-user-to-create-4-email@canopsis.net",
-      "role": "test-role-to-edit-user",
+      "roles": [
+        "test-role-to-user-edit-1"
+      ],
       "ui_language": "fr",
       "ui_theme": "canopsis",
       "ui_groups_navigation_type": "top-bar",
@@ -181,7 +188,10 @@ Feature: Create a user
     When I do POST /api/v4/users:
     """json
     {
-      "role": "not-exist",
+      "roles": [
+        "test-role-to-user-edit-1",
+        "not-exist"
+      ],
       "defaultview": "not-exist"
     }
     """
@@ -195,7 +205,7 @@ Feature: Create a user
         "enable": "IsEnabled is missing.",
         "name": "Name is missing.",
         "password": "Password is missing.",
-        "role": "Role doesn't exist."
+        "roles": "Roles doesn't exist."
       }
     }
     """
@@ -263,7 +273,9 @@ Feature: Create a user
       "firstname": "test-user-to-create-5-firstname",
       "lastname": "test-user-to-create-5-lastname",
       "email": "test-user-to-create-5-email@canopsis.net",
-      "role": "test-role-to-edit-user",
+      "roles": [
+        "test-role-to-user-edit-1"
+      ],
       "ui_language": "fr",
       "ui_groups_navigation_type": "top-bar",
       "enable": true,
@@ -288,14 +300,16 @@ Feature: Create a user
       "firstname": "test-user-to-create-5-firstname",
       "lastname": "test-user-to-create-5-lastname",
       "name": "test-user-to-create-5-name",
-      "role": {
-        "_id": "test-role-to-edit-user",
-        "name": "test-role-to-edit-user",
-        "defaultview": {
-          "_id": "test-view-to-edit-user",
-          "title": "test-view-to-edit-user-title"
+      "roles": [
+        {
+          "_id": "test-role-to-user-edit-1",
+          "name": "test-role-to-user-edit-1",
+          "defaultview": {
+            "_id": "test-view-to-edit-user",
+            "title": "test-view-to-edit-user-title"
+          }
         }
-      },
+      ],
       "ui_groups_navigation_type": "top-bar",
       "ui_language": "fr",
       "source": "saml",
@@ -312,7 +326,9 @@ Feature: Create a user
       "firstname": "test-user-to-create-6-firstname",
       "lastname": "test-user-to-create-6-lastname",
       "email": "test-user-to-create-6-email@canopsis.net",
-      "role": "test-role-to-edit-user",
+      "roles": [
+        "test-role-to-user-edit-1"
+      ],
       "ui_language": "fr",
       "ui_groups_navigation_type": "top-bar",
       "enable": true,
@@ -339,7 +355,9 @@ Feature: Create a user
       "firstname": "test-user-to-create-6-firstname",
       "lastname": "test-user-to-create-6-lastname",
       "email": "test-user-to-create-6-email@canopsis.net",
-      "role": "test-role-to-edit-user",
+      "roles": [
+        "test-role-to-user-edit-1"
+      ],
       "ui_language": "fr",
       "ui_groups_navigation_type": "top-bar",
       "enable": true,
@@ -366,7 +384,9 @@ Feature: Create a user
       "firstname": "test-user-to-create-6-firstname",
       "lastname": "test-user-to-create-6-lastname",
       "email": "test-user-to-create-6-email@canopsis.net",
-      "role": "test-role-to-edit-user",
+      "roles": [
+        "test-role-to-user-edit-1"
+      ],
       "ui_language": "fr",
       "ui_groups_navigation_type": "top-bar",
       "enable": true,
@@ -394,15 +414,16 @@ Feature: Create a user
       "firstname": "test-user-to-create-6-firstname",
       "lastname": "test-user-to-create-6-lastname",
       "email": "test-user-to-create-6-email@canopsis.net",
-      "role": "test-role-to-edit-user",
+      "roles": [
+        "test-role-to-user-edit-1"
+      ],
       "ui_language": "fr",
       "ui_groups_navigation_type": "top-bar",
       "enable": true,
       "defaultview": "test-view-to-edit-user",
       "password": "test-password",
       "source": "some",
-      "external_id": "saml_id",
-      "password": "qwerty123"
+      "external_id": "saml_id"
     }
     """
     Then the response code should be 400
@@ -424,7 +445,9 @@ Feature: Create a user
       "firstname": "test-user-to-create-6-firstname",
       "lastname": "test-user-to-create-6-lastname",
       "email": "test-user-to-create-6-email@canopsis.net",
-      "role": "test-role-to-edit-user",
+      "roles": [
+        "test-role-to-user-edit-1"
+      ],
       "ui_language": "fr",
       "ui_groups_navigation_type": "top-bar",
       "enable": true,

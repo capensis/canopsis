@@ -44,8 +44,8 @@ type permission struct {
 }
 
 type user struct {
-	ID   string `bson:"_id"`
-	Role string `bson:"role"`
+	ID    string   `bson:"_id"`
+	Roles []string `bson:"roles"`
 }
 
 // LoadPolicy loads all policy rules from mongo collection.
@@ -171,7 +171,7 @@ func (a *adapter) loadRoles(
 
 // loadSubjects loads subjects from mongo collection and adds them to casbin policy.
 func (a *adapter) loadSubjects(ctx context.Context, model model.Model) (resErr error) {
-	cursor, err := a.userCollection.Find(ctx, bson.M{"role": bson.M{"$exists": true, "$ne": ""}})
+	cursor, err := a.userCollection.Find(ctx, bson.M{"roles": bson.M{"$exists": true, "$ne": ""}})
 	if err != nil {
 		return err
 	}
@@ -192,7 +192,9 @@ func (a *adapter) loadSubjects(ctx context.Context, model model.Model) (resErr e
 			return err
 		}
 
-		model.AddPolicy(sec, ptype, []string{u.ID, u.Role})
+		for _, r := range u.Roles {
+			model.AddPolicy(sec, ptype, []string{u.ID, r})
+		}
 	}
 
 	return nil
