@@ -357,3 +357,5 @@ export const CONTENT_TYPES = {
   javascript: 'application/javascript',
   xWwwFormUrlencoded: 'application/x-www-form-urlencoded',
 };
+
+export const MAX_SEARCH_ITEMS = 8;

@@ -1,15 +1,34 @@
 <template lang="pug">
   v-layout.c-search-field(row, align-end)
+    v-combobox(
+      v-if="combobox",
+      v-model="localValue",
+      :label="$t('common.search')",
+      :items="items",
+      append-icon="",
+      hide-details,
+      hide-no-data,
+      single-line,
+      @input="submit"
+    )
     v-text-field.ma-0(
-      :value="localValue",
+      v-else,
+      v-model="localValue",
       :label="$t('common.search')",
       hide-details,
       single-line,
-      @keydown.enter.prevent="submit",
-      @input="input"
+      @keydown.enter.prevent="submit"
     )
-    c-action-btn(:tooltip="$t('common.search')", icon="search", @click="submit")
-    c-action-btn(:tooltip="$t('common.clearSearch')", icon="clear", @click="clear")
+    c-action-btn(
+      :tooltip="$t('common.search')",
+      icon="search",
+      @click="submit"
+    )
+    c-action-btn(
+      :tooltip="$t('common.clearSearch')",
+      icon="clear",
+      @click="clear"
+    )
     slot
 </template>
 
@@ -22,6 +41,14 @@ export default {
     value: {
       type: String,
       default: '',
+    },
+    combobox: {
+      type: Boolean,
+      default: false,
+    },
+    items: {
+      type: Array,
+      required: false,
     },
   },
   data() {
@@ -37,19 +64,14 @@ export default {
     },
   },
   methods: {
-    input(value) {
-      this.localValue = value;
-
-      this.$emit('input', value);
-    },
     clear() {
       this.localValue = '';
 
-      this.$emit('input', '');
       this.$emit('clear');
     },
+
     submit() {
-      this.$emit('submit', this.localValue);
+      this.$emit('submit', this.localValue ?? '');
     },
   },
 };
