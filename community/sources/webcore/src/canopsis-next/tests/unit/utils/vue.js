@@ -81,6 +81,7 @@ const enhanceWrapper = (wrapper) => {
   wrapper.findMenu = () => wrapper.find('.v-menu__content');
   wrapper.findAllTooltips = () => wrapper.findAll('.v-tooltip__content');
   wrapper.findTooltip = () => wrapper.find('.v-tooltip__content');
+  wrapper.findRoot = () => wrapper.vm.$children[0];
   wrapper.clickOutside = () => {
     const elementZIndex = +document.body.style.zIndex;
 

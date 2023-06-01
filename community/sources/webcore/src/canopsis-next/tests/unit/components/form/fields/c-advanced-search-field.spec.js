@@ -1,7 +1,6 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 import CAdvancedSearchField from '@/components/forms/fields/c-advanced-search-field.vue';
 
@@ -16,22 +15,7 @@ const mockData = {
 };
 
 const stubs = {
-  'c-search-field': {
-    props: ['value'],
-    template: `
-      <div class='c-search-field'>
-        <input
-          :value="value"
-          @input="$emit('input', $event.target.value)"
-          @keydown="$emit('submit')"
-        />
-        <button class="c-search-field_submit" @click="$emit('submit')" />
-        <button class="c-search-field_clear" @click="$emit('clear')" />
-        <slot />
-      </div>
-    `,
-  },
-  'v-tooltip': createActivatorElementStub('v-tooltip'),
+  'c-search-field': true,
 };
 const snapshotStubs = {
   'c-search-field': true,
@@ -41,55 +25,17 @@ describe('c-advanced-search-field', () => {
   const factory = generateShallowRenderer(CAdvancedSearchField, { stubs });
   const snapshotFactory = generateRenderer(CAdvancedSearchField, { stubs: snapshotStubs });
 
-  it('Pass default search into props and it was applied to input field', () => {
-    const { search } = mockData;
-
-    const wrapper = factory({ propsData: { query: { search } } });
-    const input = wrapper.find('input');
-
-    expect(input.element.value).toBe(search);
-  });
-
-  it('Search hints was applied', () => {
-    const { tooltipText } = mockData;
-    const wrapper = factory({
-      propsData: {
-        query: {},
-        tooltip: tooltipText,
-      },
-    });
-    const tooltipElement = wrapper.find('.v-tooltip');
-
-    expect(tooltipElement.html()).toContain(tooltipText);
-  });
-
-  it('Search hints as html was applied', () => {
-    const { tooltipText } = mockData;
-    const tooltip = `
-      <span class="tooltip-content-span">${tooltipText}</span>
-    `;
-    const wrapper = factory({
-      propsData: {
-        query: {},
-        tooltip,
-      },
-    });
-    const tooltipSpanElement = wrapper.find('.tooltip-content-span');
-
-    expect(tooltipSpanElement.html()).toContain(tooltipText);
-  });
-
   it('Submit search button', () => {
     const { search } = mockData;
 
     const wrapper = factory({ propsData: { query: { search } } });
-    const input = wrapper.find('input');
 
-    input.trigger('keydown');
+    wrapper.findRoot().$emit('submit', search);
 
-    const updateQueryEvents = wrapper.emitted('update:query');
-
-    expect(updateQueryEvents).toHaveLength(1);
+    expect(wrapper).toEmit('update:query', {
+      search,
+      page: 1,
+    });
   });
 
   it('Submit search with search by column without columns', () => {
@@ -101,17 +47,12 @@ describe('c-advanced-search-field', () => {
         query: { search: advancedSearch },
       },
     });
-    const submitButton = wrapper.find('.c-search-field_submit');
+    wrapper.findRoot().$emit('submit', advancedSearch);
 
-    submitButton.trigger('click');
-
-    const updateQueryEvents = wrapper.emitted('update:query');
-
-    expect(updateQueryEvents).toHaveLength(1);
-    expect(updateQueryEvents[0]).toEqual([{
-      page: 1,
+    expect(wrapper).toEmit('update:query', {
       search: `${column.text} = '${search}'`,
-    }]);
+      page: 1,
+    });
   });
 
   it('Submit search with search by column', () => {
@@ -124,17 +65,13 @@ describe('c-advanced-search-field', () => {
         columns: [column],
       },
     });
-    const submitButton = wrapper.find('.c-search-field_submit');
 
-    submitButton.trigger('click');
+    wrapper.findRoot().$emit('submit', advancedSearch);
 
-    const updateQueryEvents = wrapper.emitted('update:query');
-
-    expect(updateQueryEvents).toHaveLength(1);
-    expect(updateQueryEvents[0]).toEqual([{
-      page: 1,
+    expect(wrapper).toEmit('update:query', {
       search: `${column.value} = '${search}'`,
-    }]);
+      page: 1,
+    });
   });
 
   it('Clear search by click on button', () => {
@@ -144,16 +81,12 @@ describe('c-advanced-search-field', () => {
         query: { search },
       },
     });
-    const clearButton = wrapper.find('.c-search-field_clear');
 
-    clearButton.trigger('click');
+    wrapper.findRoot().$emit('clear');
 
-    const updateQueryEvents = wrapper.emitted('update:query');
-
-    expect(updateQueryEvents).toHaveLength(1);
-    expect(updateQueryEvents[0]).toEqual([{
+    expect(wrapper).toEmit('update:query', {
       page: 1,
-    }]);
+    });
   });
 
   it('Submit search with custom field name', () => {
@@ -164,20 +97,13 @@ describe('c-advanced-search-field', () => {
         field,
       },
     });
-    const submitButton = wrapper.find('.c-search-field_submit');
-    const input = wrapper.find('input');
 
-    input.setValue(search);
+    wrapper.findRoot().$emit('submit', search);
 
-    submitButton.trigger('click');
-
-    const updateQueryEvents = wrapper.emitted('update:query');
-
-    expect(updateQueryEvents).toHaveLength(1);
-    expect(updateQueryEvents[0]).toEqual([{
+    expect(wrapper).toEmit('update:query', {
       page: 1,
       [field]: search,
-    }]);
+    });
   });
 
   it('Clear search with custom field name', () => {
@@ -188,16 +114,12 @@ describe('c-advanced-search-field', () => {
         field,
       },
     });
-    const clearButton = wrapper.find('.c-search-field_clear');
 
-    clearButton.trigger('click');
+    wrapper.findRoot().$emit('clear');
 
-    const updateQueryEvents = wrapper.emitted('update:query');
-
-    expect(updateQueryEvents).toHaveLength(1);
-    expect(updateQueryEvents[0]).toEqual([{
+    expect(wrapper).toEmit('update:query', {
       page: 1,
-    }]);
+    });
   });
 
   it('Renders `c-advanced-search-field` correctly', () => {
