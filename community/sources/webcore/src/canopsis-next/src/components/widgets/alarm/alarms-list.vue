@@ -10,9 +10,12 @@
     )
       v-flex
         c-advanced-search-field(
-          :query.sync="query",
+          :query="query",
           :columns="widget.parameters.widgetColumns",
-          :tooltip="$t('alarm.advancedSearch')"
+          :tooltip="$t('alarm.advancedSearch')",
+          :items="searches",
+          combobox,
+          @update:query="updateSearchQuery"
         )
       v-flex(v-if="hasAccessToCategory")
         c-entity-category-field.mr-3.mt-0(:category="query.category", hide-details, @input="updateCategory")
@@ -113,6 +116,7 @@ import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url'
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { exportMixinCreator } from '@/mixins/widget/export';
+import { widgetSearchMixin } from '@/mixins/widget/search';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetRemediationInstructionsFilterMixin } from '@/mixins/widget/remediation-instructions-filter-select';
@@ -152,6 +156,7 @@ export default {
   mixins: [
     authMixin,
     widgetFetchQueryMixin,
+    widgetSearchMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     widgetRemediationInstructionsFilterMixin,
@@ -257,6 +262,16 @@ export default {
       newQuery.page = 1;
 
       this.query = newQuery;
+    },
+
+    updateSearchQuery(query) {
+      this.query = query;
+
+      const newSearch = query?.search;
+
+      if (newSearch) {
+        this.updateSearchesInUserPreferences(newSearch);
+      }
     },
 
     updateCorrelation(correlation) {

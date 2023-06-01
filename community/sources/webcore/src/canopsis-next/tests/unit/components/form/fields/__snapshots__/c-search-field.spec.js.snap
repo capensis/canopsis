@@ -34,3 +34,43 @@ exports[`c-search-field Renders \`c-search-field\` correctly 1`] = `
   />
 </div>
 `;
+
+exports[`c-search-field Renders \`c-search-field\` correctly with combobox and items 1`] = `
+<div
+  class="layout c-search-field row align-end"
+>
+  <div
+    class="v-input v-text-field v-text-field--single-line v-select v-autocomplete v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-select__slot"
+        >
+          <input
+            aria-label="Search"
+            autocomplete="off"
+            role="combobox"
+            type="text"
+          />
+        </div>
+        <div
+          class="v-menu"
+        />
+      </div>
+    </div>
+  </div>
+  <c-action-btn-stub
+    icon="search"
+    tooltip="Search"
+  />
+  <c-action-btn-stub
+    icon="clear"
+    tooltip="Clear search input"
+  />
+</div>
+`;
