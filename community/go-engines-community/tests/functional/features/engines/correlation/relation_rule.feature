@@ -505,16 +505,19 @@ Feature: correlation feature - relation rule
         "connector_name": "test-connector-name-correlation-relation-4",
         "resource": "test-resource-correlation-relation-4-2",
         "source_type": "resource"
-      },
-      {
-        "event_type": "check",
-        "state": 3,
-        "component": "test-component-correlation-relation-4",
-        "connector": "test-connector-correlation-relation-4",
-        "connector_name": "test-connector-name-correlation-relation-4",
-        "source_type": "component"
       }
     ]
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 3,
+      "component": "test-component-correlation-relation-4",
+      "connector": "test-connector-correlation-relation-4",
+      "connector_name": "test-connector-name-correlation-relation-4",
+      "source_type": "component"
+    }
     """
     When I do GET /api/v4/alarms?search=test-resource-correlation-relation-4&correlation=true until response code is 200 and body contains:
     """json
@@ -730,16 +733,19 @@ Feature: correlation feature - relation rule
         "connector_name": "test-connector-name-correlation-relation-5",
         "resource": "test-resource-correlation-relation-5-2",
         "source_type": "resource"
-      },
-      {
-        "event_type": "check",
-        "state": 3,
-        "component": "test-component-correlation-relation-5",
-        "connector": "test-connector-correlation-relation-5",
-        "connector_name": "test-connector-name-correlation-relation-5",
-        "source_type": "component"
       }
     ]
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 3,
+      "component": "test-component-correlation-relation-5",
+      "connector": "test-connector-correlation-relation-5",
+      "connector_name": "test-connector-name-correlation-relation-5",
+      "source_type": "component"
+    }
     """
     When I do GET /api/v4/alarms?search=test-resource-correlation-relation-5&correlation=true until response code is 200 and body contains:
     """json
