@@ -1,4 +1,4 @@
-Feature: correlation feature - attribute rule
+Feature: correlation feature - relation rule
 
   @concurrent
   Scenario: given meta alarm rule and events should trigger metaalarm by component event
@@ -456,6 +456,424 @@ Feature: correlation feature - attribute rule
         "page_count": 1,
         "per_page": 10,
         "total_count": 3
+      }
+    }
+    """
+
+  @concurrent
+  Scenario: given meta alarm and removed child should update meta alarm
+    Given I am admin
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "name": "test-metaalarmrule-correlation-relation-4",
+      "type": "relation",
+      "output_template": "{{ `{{ .Count }}` }}",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-correlation-relation-4"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then I save response metaAlarmRuleID={{ .lastResponse._id }}
+    When I wait the next periodical process
+    When I send an event and wait the end of event processing:
+    """json
+    [
+      {
+        "event_type": "check",
+        "state": 2,
+        "component": "test-component-correlation-relation-4",
+        "connector": "test-connector-correlation-relation-4",
+        "connector_name": "test-connector-name-correlation-relation-4",
+        "resource": "test-resource-correlation-relation-4-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "check",
+        "state": 3,
+        "component": "test-component-correlation-relation-4",
+        "connector": "test-connector-correlation-relation-4",
+        "connector_name": "test-connector-name-correlation-relation-4",
+        "resource": "test-resource-correlation-relation-4-2",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "check",
+        "state": 3,
+        "component": "test-component-correlation-relation-4",
+        "connector": "test-connector-correlation-relation-4",
+        "connector_name": "test-connector-name-correlation-relation-4",
+        "source_type": "component"
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-correlation-relation-4&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 2,
+          "meta_alarm_rule": {
+            "name": "test-metaalarmrule-correlation-relation-4"
+          },
+          "v": {
+            "output": "2",
+            "state": {
+              "val": 3
+            },
+            "component": "test-component-correlation-relation-4",
+            "connector": "test-connector-correlation-relation-4",
+            "connector_name": "test-connector-name-correlation-relation-4"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I save response metaAlarmId={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmId }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "component": "test-component-correlation-relation-4",
+                  "connector": "test-connector-correlation-relation-4",
+                  "connector_name": "test-connector-name-correlation-relation-4",
+                  "resource": "test-resource-correlation-relation-4-1"
+                }
+              },
+              {
+                "v": {
+                  "component": "test-component-correlation-relation-4",
+                  "connector": "test-connector-correlation-relation-4",
+                  "connector_name": "test-connector-name-correlation-relation-4",
+                  "resource": "test-resource-correlation-relation-4-2"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      }
+    ]
+    """
+    When I save response childAlarmId2={{ (index (index .lastResponse 0).data.children.data 1)._id }}
+    When I do PUT /api/v4/cat/meta-alarms/{{ .metaAlarmId }}/remove:
+    """json
+    {
+      "comment": "test-metaalarmrule-correlation-relation-4-remove-comment",
+      "alarms": ["{{ .childAlarmId2 }}"]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/alarms?search=test-resource-correlation-relation-4&correlation=true&sort_by=v.meta&sort=desc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 1,
+          "meta_alarm_rule": {
+            "name": "test-metaalarmrule-correlation-relation-4"
+          },
+          "v": {
+            "output": "1",
+            "children": [
+              "test-resource-correlation-relation-4-1/test-component-correlation-relation-4"
+            ],
+            "state": {
+              "val": 2
+            }
+          }
+        },
+        {
+          "v": {
+            "component": "test-component-correlation-relation-4",
+            "connector": "test-connector-correlation-relation-4",
+            "connector_name": "test-connector-name-correlation-relation-4",
+            "resource": "test-resource-correlation-relation-4-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmId }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "component": "test-component-correlation-relation-4",
+                  "connector": "test-connector-correlation-relation-4",
+                  "connector_name": "test-connector-name-correlation-relation-4",
+                  "resource": "test-resource-correlation-relation-4-1"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 1
+            }
+          }
+        }
+      }
+    ]
+    """
+
+  @concurrent
+  Scenario: given meta alarm and removed child should not add child to meta alarm again
+    Given I am admin
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "name": "test-metaalarmrule-correlation-relation-5",
+      "type": "relation",
+      "output_template": "{{ `{{ .Count }}` }}",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-correlation-relation-5"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then I save response metaAlarmRuleID={{ .lastResponse._id }}
+    When I wait the next periodical process
+    When I send an event and wait the end of event processing:
+    """json
+    [
+      {
+        "event_type": "check",
+        "state": 2,
+        "component": "test-component-correlation-relation-5",
+        "connector": "test-connector-correlation-relation-5",
+        "connector_name": "test-connector-name-correlation-relation-5",
+        "resource": "test-resource-correlation-relation-5-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "check",
+        "state": 3,
+        "component": "test-component-correlation-relation-5",
+        "connector": "test-connector-correlation-relation-5",
+        "connector_name": "test-connector-name-correlation-relation-5",
+        "resource": "test-resource-correlation-relation-5-2",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "check",
+        "state": 3,
+        "component": "test-component-correlation-relation-5",
+        "connector": "test-connector-correlation-relation-5",
+        "connector_name": "test-connector-name-correlation-relation-5",
+        "source_type": "component"
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-correlation-relation-5&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 2,
+          "meta_alarm_rule": {
+            "name": "test-metaalarmrule-correlation-relation-5"
+          },
+          "v": {
+            "output": "2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I save response metaAlarmId={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmId }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    When I save response childAlarmId2={{ (index (index .lastResponse 0).data.children.data 1)._id }}
+    When I do PUT /api/v4/cat/meta-alarms/{{ .metaAlarmId }}/remove:
+    """json
+    {
+      "comment": "test-metaalarmrule-correlation-relation-5-remove-comment",
+      "alarms": ["{{ .childAlarmId2 }}"]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/alarms?search=test-resource-correlation-relation-5&correlation=true&sort_by=v.meta&sort=desc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 1,
+          "meta_alarm_rule": {
+            "name": "test-metaalarmrule-correlation-relation-5"
+          },
+          "v": {
+            "output": "1",
+            "children": [
+              "test-resource-correlation-relation-5-1/test-component-correlation-relation-5"
+            ],
+            "state": {
+              "val": 2
+            }
+          }
+        },
+        {
+          "v": {
+            "component": "test-component-correlation-relation-5",
+            "connector": "test-connector-correlation-relation-5",
+            "connector_name": "test-connector-name-correlation-relation-5",
+            "resource": "test-resource-correlation-relation-5-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 2,
+      "component": "test-component-correlation-relation-5",
+      "connector": "test-connector-correlation-relation-5",
+      "connector_name": "test-connector-name-correlation-relation-5",
+      "resource": "test-resource-correlation-relation-5-2",
+      "source_type": "resource"
+    }
+    """
+    When I wait 1s
+    When I do GET /api/v4/alarms?search=test-resource-correlation-relation-5&correlation=true&sort_by=v.meta&sort=desc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 1,
+          "meta_alarm_rule": {
+            "name": "test-metaalarmrule-correlation-relation-5"
+          },
+          "v": {
+            "output": "1",
+            "children": [
+              "test-resource-correlation-relation-5-1/test-component-correlation-relation-5"
+            ],
+            "state": {
+              "val": 2
+            }
+          }
+        },
+        {
+          "v": {
+            "component": "test-component-correlation-relation-5",
+            "connector": "test-connector-correlation-relation-5",
+            "connector_name": "test-connector-name-correlation-relation-5",
+            "resource": "test-resource-correlation-relation-5-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
       }
     }
     """

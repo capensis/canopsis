@@ -2205,3 +2205,644 @@ Feature: correlation feature - valuegroup rule with threshold count
       }
     }
     """
+
+  @concurrent
+  Scenario: given meta alarm and removed child should update meta alarm
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "description": "test-eventfilter-correlation-valuegroup-count-8",
+      "enabled": true,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-connector-correlation-valuegroup-count-8"
+            }
+          }
+        ]
+      ],
+      "config": {
+        "actions": [
+          {
+            "type" : "set_entity_info_from_template",
+            "name" : "test-info-correlation-valuegroup-count-8",
+            "value" : "{{ `{{ index .Event.ExtraInfos \"test-info-correlation-valuegroup-count-8\" }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "type" : "enrichment"
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "name": "test-metaalarmrule-correlation-valuegroup-count-8",
+      "type": "valuegroup",
+      "output_template": "{{ `{{ .Count }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 10,
+          "unit": "s"
+        },
+        "threshold_count": 2,
+        "value_paths": [
+          "entity.infos.test-info-correlation-valuegroup-count-8.value"
+        ]
+      }
+    }
+    """
+    Then the response code should be 201
+    Then I save response metaAlarmRuleId={{ .lastResponse._id }}
+    When I wait the next periodical process
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 2,
+      "test-info-correlation-valuegroup-count-8": "test",
+      "connector": "test-connector-correlation-valuegroup-count-8",
+      "connector_name": "test-connector-name-correlation-valuegroup-count-8",
+      "component":  "test-component-correlation-valuegroup-count-8",
+      "resource": "test-resource-correlation-valuegroup-count-8-1",
+      "source_type": "resource"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 3,
+      "test-info-correlation-valuegroup-count-8": "test",
+      "connector": "test-connector-correlation-valuegroup-count-8",
+      "connector_name": "test-connector-name-correlation-valuegroup-count-8",
+      "component":  "test-component-correlation-valuegroup-count-8",
+      "resource": "test-resource-correlation-valuegroup-count-8-2",
+      "source_type": "resource"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-correlation-valuegroup-count-8&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 2,
+          "meta_alarm_rule": {
+            "name": "test-metaalarmrule-correlation-valuegroup-count-8"
+          },
+          "v": {
+            "output": "2",
+            "state": {
+              "val": 3
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I save response metaAlarmId={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmId }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-connector-correlation-valuegroup-count-8",
+                  "connector_name": "test-connector-name-correlation-valuegroup-count-8",
+                  "component":  "test-component-correlation-valuegroup-count-8",
+                  "resource": "test-resource-correlation-valuegroup-count-8-1"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-connector-correlation-valuegroup-count-8",
+                  "connector_name": "test-connector-name-correlation-valuegroup-count-8",
+                  "component":  "test-component-correlation-valuegroup-count-8",
+                  "resource": "test-resource-correlation-valuegroup-count-8-2"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      }
+    ]
+    """
+    When I save response childAlarmId2={{ (index (index .lastResponse 0).data.children.data 1)._id }}
+    When I do PUT /api/v4/cat/meta-alarms/{{ .metaAlarmId }}/remove:
+    """json
+    {
+      "comment": "test-metaalarmrule-correlation-valuegroup-count-8-comment",
+      "alarms": ["{{ .childAlarmId2 }}"]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/alarms?search=test-resource-correlation-valuegroup-count-8&correlation=true&sort_by=v.meta&sort=desc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 1,
+          "meta_alarm_rule": {
+            "name": "test-metaalarmrule-correlation-valuegroup-count-8"
+          },
+          "v": {
+            "output": "1",
+            "state": {
+              "val": 2
+            }
+          }
+        },
+        {
+          "v": {
+            "connector": "test-connector-correlation-valuegroup-count-8",
+            "connector_name": "test-connector-name-correlation-valuegroup-count-8",
+            "component":  "test-component-correlation-valuegroup-count-8",
+            "resource": "test-resource-correlation-valuegroup-count-8-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmId }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-connector-correlation-valuegroup-count-8",
+                  "connector_name": "test-connector-name-correlation-valuegroup-count-8",
+                  "component":  "test-component-correlation-valuegroup-count-8",
+                  "resource": "test-resource-correlation-valuegroup-count-8-1"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 1
+            }
+          }
+        }
+      }
+    ]
+    """
+
+  @concurrent
+  Scenario: given meta alarm and removed child should not add child to meta alarm again but add to new meta alarm on change
+    Given I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "description": "test-eventfilter-correlation-valuegroup-count-9",
+      "enabled": true,
+      "event_pattern": [
+        [
+          {
+            "field": "connector",
+            "cond": {
+              "type": "eq",
+              "value": "test-connector-correlation-valuegroup-count-9"
+            }
+          }
+        ]
+      ],
+      "config": {
+        "actions": [
+          {
+            "type" : "set_entity_info_from_template",
+            "name" : "test-info-correlation-valuegroup-count-9",
+            "value" : "{{ `{{ index .Event.ExtraInfos \"test-info-correlation-valuegroup-count-9\" }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "type" : "enrichment"
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "name": "test-metaalarmrule-correlation-valuegroup-count-9",
+      "type": "valuegroup",
+      "output_template": "{{ `{{ .Count }}` }}",
+      "config": {
+        "time_interval": {
+          "value": 3,
+          "unit": "s"
+        },
+        "threshold_count": 2,
+        "value_paths": [
+          "entity.infos.test-info-correlation-valuegroup-count-9.value"
+        ]
+      }
+    }
+    """
+    Then the response code should be 201
+    Then I save response metaAlarmRuleId={{ .lastResponse._id }}
+    When I wait the next periodical process
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 2,
+      "test-info-correlation-valuegroup-count-9": "test-1",
+      "connector": "test-connector-correlation-valuegroup-count-9",
+      "connector_name": "test-connector-name-correlation-valuegroup-count-9",
+      "component":  "test-component-correlation-valuegroup-count-9",
+      "resource": "test-resource-correlation-valuegroup-count-9-1",
+      "source_type": "resource"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 3,
+      "test-info-correlation-valuegroup-count-9": "test-1",
+      "connector": "test-connector-correlation-valuegroup-count-9",
+      "connector_name": "test-connector-name-correlation-valuegroup-count-9",
+      "component":  "test-component-correlation-valuegroup-count-9",
+      "resource": "test-resource-correlation-valuegroup-count-9-2",
+      "source_type": "resource"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-correlation-valuegroup-count-9&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 2,
+          "meta_alarm_rule": {
+            "name": "test-metaalarmrule-correlation-valuegroup-count-9"
+          },
+          "v": {
+            "output": "2",
+            "state": {
+              "val": 3
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I save response metaAlarmId1={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmId1 }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    When I save response childAlarmId2={{ (index (index .lastResponse 0).data.children.data 1)._id }}
+    When I do PUT /api/v4/cat/meta-alarms/{{ .metaAlarmId1 }}/remove:
+    """json
+    {
+      "comment": "test-metaalarmrule-correlation-valuegroup-count-9-comment",
+      "alarms": ["{{ .childAlarmId2 }}"]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/alarms?search=test-resource-correlation-valuegroup-count-9&correlation=true&sort_by=v.meta&sort=desc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 1,
+          "meta_alarm_rule": {
+            "name": "test-metaalarmrule-correlation-valuegroup-count-9"
+          },
+          "v": {
+            "output": "1",
+            "state": {
+              "val": 2
+            }
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-correlation-valuegroup-count-9-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 2,
+      "test-info-correlation-valuegroup-count-9": "test-1",
+      "connector": "test-connector-correlation-valuegroup-count-9",
+      "connector_name": "test-connector-name-correlation-valuegroup-count-9",
+      "component": "test-component-correlation-valuegroup-count-9",
+      "resource": "test-resource-correlation-valuegroup-count-9-2",
+      "source_type": "resource"
+    }
+    """
+    When I wait 1s
+    When I do GET /api/v4/alarms?search=test-resource-correlation-valuegroup-count-9&correlation=true&sort_by=v.meta&sort=desc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 1,
+          "meta_alarm_rule": {
+            "name": "test-metaalarmrule-correlation-valuegroup-count-9"
+          },
+          "v": {
+            "output": "1",
+            "state": {
+              "val": 2
+            }
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-correlation-valuegroup-count-9-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 2,
+      "test-info-correlation-valuegroup-count-9": "test-1",
+      "connector": "test-connector-correlation-valuegroup-count-9",
+      "connector_name": "test-connector-name-correlation-valuegroup-count-9",
+      "component":  "test-component-correlation-valuegroup-count-9",
+      "resource": "test-resource-correlation-valuegroup-count-9-3",
+      "source_type": "resource"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-correlation-valuegroup-count-9&correlation=true&sort_by=v.meta&sort=desc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 2,
+          "meta_alarm_rule": {
+            "name": "test-metaalarmrule-correlation-valuegroup-count-9"
+          },
+          "v": {
+            "output": "2",
+            "state": {
+              "val": 2
+            }
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-correlation-valuegroup-count-9-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 3,
+      "test-info-correlation-valuegroup-count-9": "test-2",
+      "connector": "test-connector-correlation-valuegroup-count-9",
+      "connector_name": "test-connector-name-correlation-valuegroup-count-9",
+      "component":  "test-component-correlation-valuegroup-count-9",
+      "resource": "test-resource-correlation-valuegroup-count-9-2",
+      "source_type": "resource"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 2,
+      "test-info-correlation-valuegroup-count-9": "test-2",
+      "connector": "test-connector-correlation-valuegroup-count-9",
+      "connector_name": "test-connector-name-correlation-valuegroup-count-9",
+      "component":  "test-component-correlation-valuegroup-count-9",
+      "resource": "test-resource-correlation-valuegroup-count-9-4",
+      "source_type": "resource"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-correlation-valuegroup-count-9&correlation=true&sort_by=t&sort=desc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 2,
+          "meta_alarm_rule": {
+            "name": "test-metaalarmrule-correlation-valuegroup-count-9"
+          },
+          "v": {
+            "output": "2",
+            "state": {
+              "val": 3
+            }
+          }
+        },
+        {
+          "is_meta_alarm": true,
+          "children": 2,
+          "meta_alarm_rule": {
+            "name": "test-metaalarmrule-correlation-valuegroup-count-9"
+          },
+          "v": {
+            "output": "2",
+            "state": {
+              "val": 2
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I save response metaAlarmId2={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmId2 }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      },
+      {
+        "_id": "{{ .metaAlarmId1 }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "resource": "test-resource-correlation-valuegroup-count-9-2"
+                }
+              },
+              {
+                "v": {
+                  "resource": "test-resource-correlation-valuegroup-count-9-4"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "resource": "test-resource-correlation-valuegroup-count-9-1"
+                }
+              },
+              {
+                "v": {
+                  "resource": "test-resource-correlation-valuegroup-count-9-3"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      }
+    ]
+    """
