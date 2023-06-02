@@ -1653,3 +1653,251 @@ Feature: correlation feature - corel rule
       }
     }
     """
+
+  @concurrent
+  Scenario: given meta alarm and removed child should update meta alarm
+    Given I am admin
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "name": "test-metaalarmrule-correlation-corel-9",
+      "type": "corel",
+      "output_template": "{{ `{{ .Count }}` }}",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-correlation-corel-9-child"
+            }
+          }
+        ],
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-correlation-corel-9-parent"
+            }
+          }
+        ]
+      ],
+      "config": {
+        "time_interval": {
+          "value": 10,
+          "unit": "s"
+        },
+        "threshold_count": 2,
+        "corel_id": "{{ `{{ .Alarm.Value.Connector }}` }}",
+        "corel_status": "{{ `{{ .Entity.Component }}` }}",
+        "corel_parent": "test-component-correlation-corel-9-parent",
+        "corel_child":  "test-component-correlation-corel-9-child"
+      }
+    }
+    """
+    Then the response code should be 201
+    Then I save response metaAlarmRuleId={{ .lastResponse._id }}
+    When I wait the next periodical process
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 3,
+      "connector": "test-connector-correlation-corel-9",
+      "connector_name": "test-connector-name-correlation-corel-9",
+      "component": "test-component-correlation-corel-9-parent",
+      "resource": "test-resource-correlation-corel-9-1",
+      "source_type": "resource"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 2,
+      "connector": "test-connector-correlation-corel-9",
+      "connector_name": "test-connector-name-correlation-corel-9",
+      "component":  "test-component-correlation-corel-9-child",
+      "resource": "test-resource-correlation-corel-9-2",
+      "source_type": "resource"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 3,
+      "connector": "test-connector-correlation-corel-9",
+      "connector_name": "test-connector-name-correlation-corel-9",
+      "component":  "test-component-correlation-corel-9-child",
+      "resource": "test-resource-correlation-corel-9-3",
+      "source_type": "resource"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-correlation-corel-9&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 2,
+          "meta_alarm_rule": {
+            "name": "test-metaalarmrule-correlation-corel-9"
+          },
+          "v": {
+            "output": "2",
+            "state": {
+              "val": 3
+            },
+            "connector": "test-connector-correlation-corel-9",
+            "connector_name": "test-connector-name-correlation-corel-9",
+            "component":  "test-component-correlation-corel-9-parent",
+            "resource": "test-resource-correlation-corel-9-1"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I save response metaAlarmId={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmId }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-connector-correlation-corel-9",
+                  "connector_name": "test-connector-name-correlation-corel-9",
+                  "component":  "test-component-correlation-corel-9-child",
+                  "resource": "test-resource-correlation-corel-9-2"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-connector-correlation-corel-9",
+                  "connector_name": "test-connector-name-correlation-corel-9",
+                  "component":  "test-component-correlation-corel-9-child",
+                  "resource": "test-resource-correlation-corel-9-3"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      }
+    ]
+    """
+    When I save response childAlarmId2={{ (index (index .lastResponse 0).data.children.data 1)._id }}
+    When I do PUT /api/v4/cat/meta-alarms/{{ .metaAlarmId }}/remove:
+    """json
+    {
+      "comment": "test-metaalarmrule-correlation-corel-9-comment",
+      "alarms": ["{{ .childAlarmId2 }}"]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/alarms?search=test-resource-correlation-corel-9&correlation=true&sort_by=v.meta&sort=desc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 1,
+          "meta_alarm_rule": {
+            "name": "test-metaalarmrule-correlation-corel-9"
+          },
+          "v": {
+            "output": "1",
+            "state": {
+              "val": 2
+            }
+          }
+        },
+        {
+          "v": {
+            "connector": "test-connector-correlation-corel-9",
+            "connector_name": "test-connector-name-correlation-corel-9",
+            "component":  "test-component-correlation-corel-9-child",
+            "resource": "test-resource-correlation-corel-9-3"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmId }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-connector-correlation-corel-9",
+                  "connector_name": "test-connector-name-correlation-corel-9",
+                  "component":  "test-component-correlation-corel-9-child",
+                  "resource": "test-resource-correlation-corel-9-2"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 1
+            }
+          }
+        }
+      }
+    ]
+    """

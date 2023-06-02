@@ -55,8 +55,6 @@ const (
 	EventTypeAutoWebhookCompleted = "autowebhookcompleted"
 	EventTypeAutoWebhookFailed    = "autowebhookfailed"
 
-	EventTypeMetaAlarm          = "metaalarm"
-	EventTypeMetaAlarmUpdated   = "metaalarmupdated"
 	EventTypePbhEnter           = "pbhenter"
 	EventTypePbhLeaveAndEnter   = "pbhleaveandenter"
 	EventTypePbhLeave           = "pbhleave"
@@ -64,11 +62,15 @@ const (
 	EventTypeResolveClose       = "resolve_close"
 	EventTypeResolveDeleted     = "resolve_deleted"
 	EventTypeUpdateStatus       = "updatestatus"
-	EventManualMetaAlarmGroup   = "manual_metaalarm_group"
-	EventManualMetaAlarmUngroup = "manual_metaalarm_ungroup"
-	EventManualMetaAlarmUpdate  = "manual_metaalarm_update"
 	EventTypeActivate           = "activate"
 	EventTypeRunDelayedScenario = "run_delayed_scenario"
+
+	EventTypeMetaAlarm              = "metaalarm"
+	EventTypeMetaAlarmUpdated       = "metaalarmupdated"
+	EventTypeMetaAlarmUngroup       = "metaalarm_ungroup"
+	EventTypeManualMetaAlarmGroup   = "manual_metaalarm_group"
+	EventTypeManualMetaAlarmUngroup = "manual_metaalarm_ungroup"
+	EventTypeManualMetaAlarmUpdate  = "manual_metaalarm_update"
 
 	// Following event types are used to add manual instruction execution to alarm steps.
 	EventTypeInstructionStarted   = "instructionstarted"
@@ -535,9 +537,10 @@ func isValidEventType(t string) bool {
 		EventTypeUpdateStatus,
 		EventTypeMetaAlarm,
 		EventTypeMetaAlarmUpdated,
-		EventManualMetaAlarmGroup,
-		EventManualMetaAlarmUngroup,
-		EventManualMetaAlarmUpdate,
+		EventTypeMetaAlarmUngroup,
+		EventTypeManualMetaAlarmGroup,
+		EventTypeManualMetaAlarmUngroup,
+		EventTypeManualMetaAlarmUpdate,
 		EventTypeRecomputeEntityService,
 		EventTypeUpdateEntityService,
 		EventTypeEntityUpdated,
