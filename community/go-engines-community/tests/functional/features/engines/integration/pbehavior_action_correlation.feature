@@ -1,6 +1,7 @@
 Feature: update meta alarm on action
   I need to be able to update meta alarm on action
 
+  @concurrent
   Scenario: given meta alarm and pbehavior action should update meta alarm and not update children
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -24,7 +25,7 @@ Feature: update meta alarm on action
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-pbehavior-action-correlation-1",
@@ -37,9 +38,19 @@ Feature: update meta alarm on action
       "output": "test-output-pbehavior-action-correlation-1"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-resource-pbehavior-action-correlation-1&correlation=true
-    Then the response code should be 200
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-action-correlation-1&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 1
+        }
+      ],
+      "meta": {
+        "total_count": 1
+      }
+    }
+    """
     When I save response metalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
     When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
     When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
@@ -95,7 +106,27 @@ Feature: update meta alarm on action
       "output": "test-output-pbehavior-action-correlation-1"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "comment",
+        "connector": "{{ .metaAlarmConnector }}",
+        "connector_name": "{{ .metaAlarmConnectorName }}",
+        "component":  "{{ .metaAlarmComponent }}",
+        "resource": "{{ .metaAlarmResource }}",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "comment",
+        "connector": "test-connector-pbehavior-action-correlation-1",
+        "connector_name": "test-connector-name-pbehavior-action-correlation-1",
+        "component":  "test-component-pbehavior-action-correlation-1",
+        "resource": "test-resource-pbehavior-action-correlation-1",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-resource-pbehavior-action-correlation-1&correlation=true
     Then the response code should be 200
     Then the response body should contain:
