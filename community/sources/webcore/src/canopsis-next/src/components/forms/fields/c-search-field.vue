@@ -5,6 +5,7 @@
       v-model="localValue",
       :label="$t('common.search')",
       :items="items",
+      :menu-props="comboboxMenuProps",
       append-icon="",
       hide-details,
       hide-no-data,
@@ -56,6 +57,13 @@ export default {
       localValue: this.value,
     };
   },
+  computed: {
+    comboboxMenuProps() {
+      return {
+        contentClass: 'c-search-field__menu',
+      };
+    },
+  },
   watch: {
     value(newValue) {
       if (newValue !== this.localValue) {
@@ -85,8 +93,18 @@ export default {
     margin: 0 6px !important;
   }
 
-  &>:last-child .v-btn--icon {
+  & > :last-child .v-btn--icon {
     margin-right: -6px !important;
+  }
+
+  &__menu {
+    .v-list {
+      padding: 0;
+
+      .v-list__tile {
+        height: 32px;
+      }
+    }
   }
 }
 </style>
