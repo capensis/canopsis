@@ -28,7 +28,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-event-filter-che-event-filters-api-1-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [
@@ -120,7 +119,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-event-filter-che-event-filters-api-2-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [
@@ -216,7 +214,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-event-filter-che-event-filters-api-3-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [
@@ -300,8 +297,7 @@ Feature: modify event on event filter
           }
         ]
       ],
-      "description": "test-event-filter-che-event-filters-17-description",
-      "priority": 1,
+      "description": "test-event-filter-che-event-filters-4-description",
       "enabled": true,
       "config": {
         "actions": [
@@ -386,7 +382,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-resource-che-event-filters-api-5-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [
@@ -484,7 +479,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-resource-che-event-filters-api-6-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [

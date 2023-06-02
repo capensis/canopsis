@@ -77,7 +77,6 @@ Feature: Entities should be synchronized in metrics db
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "priority": 2,
       "description": "test-eventfilter-metrics-che-1-description",
       "enabled": true
     }
@@ -244,7 +243,6 @@ Feature: Entities should be synchronized in metrics db
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "priority": 2,
       "description": "test-eventfilter-metrics-che-2-description",
       "enabled": true
     }

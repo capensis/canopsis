@@ -30,7 +30,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-event-filter-che-event-filters-mongo-1-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [
@@ -115,7 +114,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-event-filter-che-event-filters-mongo-2-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [
@@ -229,7 +227,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-event-filter-che-event-filters-mongo-3-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [
@@ -341,7 +338,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-event-filter-che-event-filters-mongo-4-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [
@@ -454,7 +450,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-event-filter-che-event-filters-mongo-5-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [
