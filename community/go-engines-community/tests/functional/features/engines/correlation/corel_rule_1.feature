@@ -1560,8 +1560,8 @@ Feature: correlation feature - corel rule
     When I send an event and wait the end of event processing:
     """json
     {
-      "connector": "test-corel-1",
-      "connector_name": "test-corel-1-name",
+      "connector": "test-corel-8",
+      "connector_name": "test-corel-8-name",
       "source_type": "resource",
       "event_type": "check",
       "component":  "test-corel-8-parent",
@@ -1572,8 +1572,8 @@ Feature: correlation feature - corel rule
     When I send an event and wait the end of event processing:
     """json
     {
-      "connector": "test-corel-1",
-      "connector_name": "test-corel-1-name",
+      "connector": "test-corel-8",
+      "connector_name": "test-corel-8-name",
       "source_type": "resource",
       "event_type": "check",
       "component": "test-corel-8-child",
@@ -1623,8 +1623,8 @@ Feature: correlation feature - corel rule
             "_id": "test-corel-8-resource-1/test-corel-8-parent"
           },
           "v": {
-            "connector": "test-corel-1",
-            "connector_name": "test-corel-1-name",
+            "connector": "test-corel-8",
+            "connector_name": "test-corel-8-name",
             "component": "test-corel-8-parent",
             "resource": "test-corel-8-resource-1",
             "children": [],
@@ -1636,8 +1636,8 @@ Feature: correlation feature - corel rule
             "_id": "test-corel-8-resource-2/test-corel-8-child"
           },
           "v": {
-            "connector": "test-corel-1",
-            "connector_name": "test-corel-1-name",
+            "connector": "test-corel-8",
+            "connector_name": "test-corel-8-name",
             "component": "test-corel-8-child",
             "resource": "test-corel-8-resource-2",
             "children": [],

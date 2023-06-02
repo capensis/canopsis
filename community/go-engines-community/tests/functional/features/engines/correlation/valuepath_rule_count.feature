@@ -32,7 +32,6 @@ Feature: correlation feature - valuegroup rule with threshold count
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "priority" : 10001,
       "type" : "enrichment"
     }
     """
@@ -342,7 +341,6 @@ Feature: correlation feature - valuegroup rule with threshold count
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "priority" : 10001,
       "type" : "enrichment"
     }
     """
@@ -376,7 +374,6 @@ Feature: correlation feature - valuegroup rule with threshold count
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "priority" : 10001,
       "type" : "enrichment"
     }
     """
@@ -1213,7 +1210,6 @@ Feature: correlation feature - valuegroup rule with threshold count
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "priority" : 10001,
       "type" : "enrichment"
     }
     """
@@ -1462,7 +1458,6 @@ Feature: correlation feature - valuegroup rule with threshold count
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "priority" : 10001,
       "type" : "enrichment"
     }
     """
@@ -1644,7 +1639,6 @@ Feature: correlation feature - valuegroup rule with threshold count
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "priority" : 10001,
       "type" : "enrichment"
     }
     """
@@ -1851,7 +1845,6 @@ Feature: correlation feature - valuegroup rule with threshold count
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "priority" : 10001,
       "type" : "enrichment"
     }
     """
@@ -2031,7 +2024,6 @@ Feature: correlation feature - valuegroup rule with threshold count
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "priority" : 10001,
       "type" : "enrichment"
     }
     """
