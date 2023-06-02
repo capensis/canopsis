@@ -156,7 +156,6 @@ Feature: correlation feature - valuegroup rule with threshold rate
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "priority" : 10001,
       "type" : "enrichment"
     }
     """
@@ -1668,21 +1667,6 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "event_type": "check",
       "component":  "test-valuegroup-rule-rate-backward-compatibility-2-component",
       "resource": "test-valuegroup-rule-rate-backward-compatibility-2-resource-3",
-      "state": 2,
-      "output": "test",
-      "long_output": "test",
-      "author": "test-author"
-    }
-    """
-    When I send an event and wait the end of event processing:
-    """json
-    {
-      "connector": "test-valuegroup-rule-rate-backward-compatibility-1-connector",
-      "connector_name": "test-valuegroup-rule-rate-backward-compatibility-1-connectorname",
-      "source_type": "resource",
-      "event_type": "check",
-      "component":  "test-valuegroup-rule-rate-backward-compatibility-1-component",
-      "resource": "test-valuegroup-rule-rate-backward-compatibility-1-resource-4",
       "state": 2,
       "output": "test",
       "long_output": "test",
