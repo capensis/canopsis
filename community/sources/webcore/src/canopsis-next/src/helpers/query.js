@@ -1,19 +1,27 @@
-import { isUndefined, isEmpty } from 'lodash';
+import { isUndefined, isEmpty, omit, isArray, uniq } from 'lodash';
 
 import { PAGINATION_LIMIT, DEFAULT_WEATHER_LIMIT } from '@/config';
 import {
   WIDGET_TYPES,
   QUICK_RANGES,
-  ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP,
   SORT_ORDERS,
   ALARMS_OPENED_VALUES,
+  DATETIME_FORMATS,
+  DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
 } from '@/constants';
 
-import { prepareMainFilterToQueryFilter, getMainFilterAndCondition } from './filter';
+import featuresService from '@/services/features';
+
 import {
   prepareRemediationInstructionsFiltersToQuery,
   getRemediationInstructionsFilters,
 } from './filter/remediation-instructions-filter';
+import {
+  convertStartDateIntervalToTimestamp,
+  convertStopDateIntervalToTimestamp,
+} from './date/date-intervals';
+import { isResolvedAlarm } from './entities';
+import { isRatioMetric } from './metrics';
 
 /**
  * WIDGET CONVERTERS
@@ -33,6 +41,38 @@ export function convertSortToQuery({ parameters }) {
   }
 
   return { sortKey: null, sortDir: null };
+}
+
+/**
+ * Convert widget filter to query
+ *
+ * @param parameters
+ * @returns {{ lockedFilter?: string }}
+ */
+export function convertWidgetFilterToQuery({ parameters }) {
+  if (parameters.mainFilter) {
+    return {
+      lockedFilter: parameters.mainFilter,
+    };
+  }
+
+  return {};
+}
+
+/**
+ * Convert widget filter to query
+ *
+ * @param {AlarmChart[]} charts
+ * @returns {string[]}
+ */
+export function convertWidgetChartsToPerfDataQuery(charts) {
+  const allMetrics = charts.reduce((acc, chart) => {
+    acc.push(...chart.parameters.metrics.map(({ metric }) => metric));
+
+    return acc;
+  }, []);
+
+  return uniq(allMetrics);
 }
 
 /**
@@ -61,9 +101,10 @@ export function convertAlarmStateFilterToQuery({ parameters }) {
 export function convertAlarmWidgetToQuery(widget) {
   const {
     liveReporting = {},
-    widgetColumns,
+    widgetColumns = [],
     itemsPerPage,
     sort,
+    mainFilter,
     opened = ALARMS_OPENED_VALUES.opened,
   } = widget.parameters;
 
@@ -72,7 +113,10 @@ export function convertAlarmWidgetToQuery(widget) {
     page: 1,
     limit: itemsPerPage || PAGINATION_LIMIT,
     with_instructions: true,
+    with_declare_tickets: true,
+    with_links: true,
     multiSortBy: [],
+    lockedFilter: mainFilter,
   };
 
   if (!isEmpty(liveReporting)) {
@@ -83,12 +127,15 @@ export function convertAlarmWidgetToQuery(widget) {
     query.tstop = QUICK_RANGES.last30Days.stop;
   }
 
-  if (widgetColumns) {
-    query.active_columns = widgetColumns.map(v => (ALARMS_LIST_WIDGET_ACTIVE_COLUMNS_MAP[v.value] || v.value));
+  if (widgetColumns.length) {
+    query.active_columns = widgetColumns.map(v => v.value);
   }
 
   if (sort && sort.column && sort.order) {
-    query.multiSortBy.push({ sortBy: sort.column, descending: sort.order === SORT_ORDERS.desc });
+    query.multiSortBy.push({
+      sortBy: sort.column,
+      descending: sort.order === SORT_ORDERS.desc,
+    });
   }
 
   return query;
@@ -105,11 +152,15 @@ export function convertContextWidgetToQuery(widget) {
     itemsPerPage,
     selectedTypes,
     widgetColumns,
+    mainFilter,
+    charts = [],
   } = widget.parameters;
 
   const query = {
     page: 1,
     limit: itemsPerPage || PAGINATION_LIMIT,
+    lockedFilter: mainFilter,
+    perf_data: convertWidgetChartsToPerfDataQuery(charts),
   };
 
   if (widgetColumns) {
@@ -117,9 +168,7 @@ export function convertContextWidgetToQuery(widget) {
   }
 
   if (!isEmpty(selectedTypes)) {
-    query.typesFilter = {
-      $or: selectedTypes.map(type => ({ type })),
-    };
+    query.type = selectedTypes;
   }
 
   return { ...query, ...convertSortToQuery(widget) };
@@ -132,11 +181,12 @@ export function convertContextWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertWeatherWidgetToQuery(widget) {
-  const { limit } = widget.parameters;
+  const { limit, mainFilter } = widget.parameters;
 
   return {
     ...convertSortToQuery(widget),
     limit: limit || DEFAULT_WEATHER_LIMIT,
+    lockedFilter: mainFilter,
   };
 }
 
@@ -147,32 +197,105 @@ export function convertWeatherWidgetToQuery(widget) {
  * @returns {{}}
  */
 export function convertStatsCalendarWidgetToQuery(widget) {
-  const {
+  const { filters = [], parameters: { considerPbehaviors = false } } = widget;
+
+  return {
+    ...convertAlarmStateFilterToQuery(widget),
+
+    considerPbehaviors,
     filters,
-    considerPbehaviors,
-  } = widget.parameters;
-
-  const query = {
-    considerPbehaviors,
-    filters: filters || [],
+    time_field: 't',
   };
-
-  return { ...query, ...convertAlarmStateFilterToQuery(widget) };
 }
 
 /**
+ * This function converts widget with type 'counter' widget to query Object
  *
  * @param widget
  * @returns {{filters: *}}
  */
 export function convertCounterWidgetToQuery(widget) {
-  const { viewFilters = [], isCorrelationEnabled = false } = widget.parameters;
+  const { filters = [], parameters: { isCorrelationEnabled = false } } = widget;
 
   return {
     ...convertAlarmStateFilterToQuery(widget),
 
     correlation: isCorrelationEnabled,
-    filters: viewFilters.map(({ filter }) => filter),
+    filters: filters.map(({ _id: id }) => id),
+  };
+}
+
+/**
+ * This function converts chart widgets default parameters to query Object
+ *
+ * @param {Widget} widget
+ * @returns {{ sampling: string, interval: Object }}
+ */
+export function convertChartWidgetDefaultParametersToQuery(widget) {
+  const { parameters: { default_sampling: defaultSampling, default_time_range: defaultTimeRange } } = widget;
+
+  return {
+    sampling: defaultSampling,
+    interval: {
+      from: QUICK_RANGES[defaultTimeRange].start,
+      to: QUICK_RANGES[defaultTimeRange].stop,
+    },
+  };
+}
+
+/**
+ * This function converts bar chart widget to query Object
+ *
+ * @param {Widget} widget
+ * @returns {Object}
+ */
+export function convertChartWidgetToQuery(widget) {
+  const { parameters: { comparison = false, metrics = [] } } = widget;
+
+  return {
+    ...convertChartWidgetDefaultParametersToQuery(widget),
+
+    with_history: comparison,
+    parameters: metrics.map(({ metric, aggregate_func: aggregateFunc }) => ({ metric, aggregate_func: aggregateFunc })),
+  };
+}
+
+/**
+ * This function converts pie chart widget to query Object
+ *
+ * @param {Widget} widget
+ * @returns {Object}
+ */
+export function convertPieChartWidgetToQuery(widget) {
+  const { parameters: { metrics = [], aggregate_func: widgetAggregateFunc } } = widget;
+
+  return {
+    ...convertChartWidgetDefaultParametersToQuery(widget),
+
+    parameters: metrics.map(({ metric, aggregate_func: metricAggregateFunc }) => ({
+      metric,
+      aggregate_func: metricAggregateFunc || widgetAggregateFunc,
+    })),
+  };
+}
+
+/**
+ * This function converts numbers widget to query Object
+ *
+ * @param {Widget} widget
+ * @returns {Object}
+ */
+export function convertNumbersWidgetToQuery(widget) {
+  const { parameters: { metrics = [], show_trend: showTrend = false } } = widget;
+
+  return {
+    ...convertChartWidgetDefaultParametersToQuery(widget),
+
+    with_history: showTrend,
+    parameters: metrics.map(({ metric, aggregate_func: aggregateFunc }) => ({
+      metric,
+      aggregate_func: isRatioMetric(metric) ? undefined : aggregateFunc,
+    })),
   };
 }
 
@@ -190,11 +313,13 @@ export function convertAlarmUserPreferenceToQuery({ content }) {
   const {
     itemsPerPage,
     category,
+    mainFilter,
     isCorrelationEnabled = false,
   } = content;
 
   const query = {
     correlation: isCorrelationEnabled,
+    filter: mainFilter,
     category,
   };
 
@@ -212,10 +337,40 @@ export function convertAlarmUserPreferenceToQuery({ content }) {
  * @returns {{ category: string }}
  */
 export function convertWeatherUserPreferenceToQuery({ content }) {
-  const { category } = content;
+  const { category, mainFilter, hide_grey: hideGrey = false } = content;
 
-  return { category };
+  return { category, filter: mainFilter, hide_grey: hideGrey };
 }
+
+/**
+ * This function converts userPreference with widget type 'Map' to query Object
+ *
+ * @param {Object} userPreference
+ * @returns {{ category: string }}
+ */
+export const convertMapUserPreferenceToQuery = ({ content: { category } }) => ({ category });
+
+/**
+ * This function converts userPreference with widget type 'Map' to query Object
+ *
+ * @param {Object} userPreference
+ * @returns {{ sampling: string, interval: Object }}
+ */
+export const convertChartUserPreferenceToQuery = ({ content: { sampling, interval, mainFilter } }) => {
+  const query = {
+    filter: mainFilter,
+  };
+
+  if (sampling) {
+    query.sampling = sampling;
+  }
+
+  if (interval) {
+    query.interval = interval;
+  }
+
+  return query;
+};
 
 /**
  * This function converts userPreference with widgetXtype 'Context' to query Object
@@ -224,10 +379,11 @@ export function convertWeatherUserPreferenceToQuery({ content }) {
  * @returns {{ category: string }}
  */
 export function convertContextUserPreferenceToQuery({ content }) {
-  const { category, noEvents } = content;
+  const { category, noEvents, mainFilter } = content;
 
   return {
     category,
+    filter: mainFilter,
     no_events: noEvents,
   };
 }
@@ -244,16 +400,22 @@ export function convertContextUserPreferenceToQuery({ content }) {
  * @returns {Object}
  */
 export function convertUserPreferenceToQuery(userPreference, widgetType) {
-  switch (widgetType) {
-    case WIDGET_TYPES.alarmList:
-      return convertAlarmUserPreferenceToQuery(userPreference);
-    case WIDGET_TYPES.context:
-      return convertContextUserPreferenceToQuery(userPreference);
-    case WIDGET_TYPES.serviceWeather:
-      return convertWeatherUserPreferenceToQuery(userPreference);
-    default:
-      return {};
-  }
+  const convertersMap = {
+    [WIDGET_TYPES.alarmList]: convertAlarmUserPreferenceToQuery,
+    [WIDGET_TYPES.context]: convertContextUserPreferenceToQuery,
+    [WIDGET_TYPES.serviceWeather]: convertWeatherUserPreferenceToQuery,
+    [WIDGET_TYPES.map]: convertMapUserPreferenceToQuery,
+    [WIDGET_TYPES.barChart]: convertChartUserPreferenceToQuery,
+    [WIDGET_TYPES.lineChart]: convertChartUserPreferenceToQuery,
+    [WIDGET_TYPES.pieChart]: convertChartUserPreferenceToQuery,
+    [WIDGET_TYPES.numbers]: convertChartUserPreferenceToQuery,
+
+    ...featuresService.get('helpers.query.convertUserPreferenceToQuery.convertersMap'),
+  };
+
+  const converter = convertersMap[widgetType];
+
+  return converter ? converter(userPreference) : {};
 }
 
 /**
@@ -263,20 +425,23 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
  * @returns {{}}
  */
 export function convertWidgetToQuery(widget) {
-  switch (widget.type) {
-    case WIDGET_TYPES.alarmList:
-      return convertAlarmWidgetToQuery(widget);
-    case WIDGET_TYPES.context:
-      return convertContextWidgetToQuery(widget);
-    case WIDGET_TYPES.serviceWeather:
-      return convertWeatherWidgetToQuery(widget);
-    case WIDGET_TYPES.statsCalendar:
-      return convertStatsCalendarWidgetToQuery(widget);
-    case WIDGET_TYPES.counter:
-      return convertCounterWidgetToQuery(widget);
-    default:
-      return {};
-  }
+  const convertersMap = {
+    [WIDGET_TYPES.alarmList]: convertAlarmWidgetToQuery,
+    [WIDGET_TYPES.context]: convertContextWidgetToQuery,
+    [WIDGET_TYPES.serviceWeather]: convertWeatherWidgetToQuery,
+    [WIDGET_TYPES.statsCalendar]: convertStatsCalendarWidgetToQuery,
+    [WIDGET_TYPES.counter]: convertCounterWidgetToQuery,
+    [WIDGET_TYPES.barChart]: convertChartWidgetToQuery,
+    [WIDGET_TYPES.lineChart]: convertChartWidgetToQuery,
+    [WIDGET_TYPES.pieChart]: convertPieChartWidgetToQuery,
+    [WIDGET_TYPES.numbers]: convertNumbersWidgetToQuery,
+
+    ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
+  };
+
+  const converter = convertersMap[widget.type];
+
+  return converter ? converter(widget) : {};
 }
 
 /**
@@ -289,26 +454,11 @@ export function convertWidgetToQuery(widget) {
 export function prepareQuery(widget, userPreference) {
   const widgetQuery = convertWidgetToQuery(widget);
   const userPreferenceQuery = convertUserPreferenceToQuery(userPreference, widget.type);
+
   let query = {
     ...widgetQuery,
     ...userPreferenceQuery,
   };
-
-  const WIDGET_FILTER_KEYS_MAP = {
-    [WIDGET_TYPES.alarmList]: 'filter',
-    [WIDGET_TYPES.context]: 'mainFilter',
-    [WIDGET_TYPES.serviceWeather]: 'filter',
-  };
-
-  const filterKey = WIDGET_FILTER_KEYS_MAP[widget.type];
-
-  if (filterKey) {
-    const { mainFilter: activeMainFilter, condition } = getMainFilterAndCondition(widget, userPreference);
-
-    if (activeMainFilter) {
-      query[filterKey] = prepareMainFilterToQueryFilter(activeMainFilter, condition);
-    }
-  }
 
   const remediationInstructionsFilters = getRemediationInstructionsFilters(widget, userPreference);
 
@@ -321,3 +471,148 @@ export function prepareQuery(widget, userPreference) {
 
   return query;
 }
+
+/**
+ * Convert filter to query filters
+ *
+ * @param {string | string[]} filter
+ * @returns {string[]}
+ */
+export const convertFilterToQuery = filter => (isArray(filter) ? filter : [filter]).filter(Boolean);
+
+/**
+ * Convert locked filter and main filter to query filters
+ *
+ * @param {string | string[]} filter
+ * @param {string | string[]} lockedFilter
+ * @returns {string[]}
+ */
+const convertFiltersToQuery = (filter, lockedFilter) => [
+  ...convertFilterToQuery(filter),
+  ...convertFilterToQuery(lockedFilter),
+];
+
+/**
+ * Prepare query for alarm details fetching
+ *
+ * @param {Alarm} alarm
+ * @param {Widget} widget
+ * @returns {Object}
+ */
+export const prepareAlarmDetailsQuery = (alarm, widget) => {
+  const { sort = {}, widgetGroupColumns = [], charts = [] } = widget.parameters;
+  const columns = widgetGroupColumns.length > 0
+    ? widgetGroupColumns
+    : DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS;
+
+  const query = {
+    _id: alarm._id,
+    with_instructions: true,
+    with_declare_tickets: true,
+    with_links: true,
+    opened: isResolvedAlarm(alarm) ? false : widget.parameters.opened,
+    perf_data: convertWidgetChartsToPerfDataQuery(charts),
+    steps: {
+      reversed: true,
+      page: 1,
+      limit: PAGINATION_LIMIT,
+    },
+    children: {
+      page: 1,
+      limit: PAGINATION_LIMIT,
+      multiSortBy: [],
+    },
+  };
+
+  if (sort.column && sort.order && columns.some(({ value }) => value.endsWith(sort.column))) {
+    query.children.multiSortBy.push({ sortBy: sort.column, descending: sort.order === SORT_ORDERS.desc });
+  }
+
+  return query;
+};
+
+/**
+ * Convert multiSortBy query parameter to request
+ *
+ * @param {Object[]} multiSortBy
+ * @returns {string[]}
+ */
+export const convertMultiSortToRequest = (multiSortBy = []) => multiSortBy
+  .map(({ sortBy, descending }) => `${sortBy},${(descending ? SORT_ORDERS.desc : SORT_ORDERS.asc).toLowerCase()}`);
+
+/**
+ * Convert alarmDetails query to request
+ *
+ * @param {Object} query
+ * @returns {Object}
+ */
+export const convertAlarmDetailsQueryToRequest = query => ({
+  ...query,
+
+  children: {
+    ...omit(query.children, ['multiSortBy']),
+
+    multi_sort: convertMultiSortToRequest(query.children?.multiSortBy),
+  },
+});
+
+/**
+ * Convert widget query to request parameters
+ *
+ * @param {Object} query
+ * @returns {Object}
+ */
+export const convertWidgetQueryToRequest = (query) => {
+  const result = omit(query, [
+    'tstart',
+    'tstop',
+    'sortKey',
+    'sortDir',
+    'category',
+    'multiSortBy',
+    'limit',
+    'filter',
+    'lockedFilter',
+  ]);
+
+  const {
+    tstart,
+    tstop,
+    sortKey,
+    sortDir,
+    category,
+    filter,
+    lockedFilter,
+    multiSortBy = [],
+    limit = PAGINATION_LIMIT,
+  } = query;
+
+  if (lockedFilter || filter) {
+    result.filters = convertFiltersToQuery(filter, lockedFilter);
+  }
+
+  if (tstart) {
+    result.tstart = convertStartDateIntervalToTimestamp(tstart, DATETIME_FORMATS.dateTimePicker);
+  }
+
+  if (tstop) {
+    result.tstop = convertStopDateIntervalToTimestamp(tstop, DATETIME_FORMATS.dateTimePicker);
+  }
+
+  if (sortKey) {
+    result.sort_by = sortKey;
+    result.sort = sortDir.toLowerCase();
+  }
+
+  if (category) {
+    result.category = category;
+  }
+
+  if (multiSortBy.length) {
+    result.multi_sort = convertMultiSortToRequest(multiSortBy);
+  }
+
+  result.limit = limit;
+
+  return result;
+};

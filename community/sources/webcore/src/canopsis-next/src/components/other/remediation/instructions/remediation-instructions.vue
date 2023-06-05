@@ -5,8 +5,12 @@
       :pending="remediationInstructionsPending",
       :total-items="remediationInstructionsMeta.total_count",
       :pagination.sync="pagination",
+      :updatable="hasUpdateAnyRemediationInstructionAccess",
+      :removable="hasDeleteAnyRemediationInstructionAccess",
+      :duplicable="hasCreateAnyRemediationInstructionAccess",
       @remove-selected="showRemoveSelectedRemediationInstructionModal",
       @assign-patterns="showAssignPatternsModal",
+      @duplicate="showDuplicateRemediationInstructionModal",
       @remove="showRemoveRemediationInstructionModal",
       @approve="showApproveRemediationInstructionModal",
       @edit="showEditRemediationInstructionModal"
@@ -14,15 +18,17 @@
 </template>
 
 <script>
-import { isEqual } from 'lodash';
+import { isEqual, omit } from 'lodash';
 
 import { MODALS } from '@/constants';
 
 import { remediationInstructionToForm, formToRemediationInstruction } from '@/helpers/forms/remediation-instruction';
+import { isSeveralEqual } from '@/helpers/equal';
 
 import { authMixin } from '@/mixins/auth';
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediation/instruction';
+import { permissionsTechnicalRemediationInstructionMixin } from '@/mixins/permissions/technical/remediation-instruction';
 
 import RemediationInstructionsList from './remediation-instructions-list.vue';
 
@@ -32,6 +38,7 @@ export default {
     authMixin,
     localQueryMixin,
     entitiesRemediationInstructionMixin,
+    permissionsTechnicalRemediationInstructionMixin,
   ],
   mounted() {
     this.fetchList();
@@ -86,7 +93,7 @@ export default {
           name: MODALS.confirmation,
           dialogProps: { persistent: true },
           config: {
-            text: this.$t('remediationInstructions.errors.runningInstruction'),
+            text: this.$t('remediation.instruction.errors.runningInstruction'),
             action: async () => {
               try {
                 await action();
@@ -112,31 +119,35 @@ export default {
       }
     },
 
-    showAssignPatternsModal(remediationInstruction) {
-      const patterns = {
-        alarm_patterns: remediationInstruction.alarm_patterns || [],
-        entity_patterns: remediationInstruction.entity_patterns || [],
-        active_on_pbh: remediationInstruction.active_on_pbh || [],
-        disabled_on_pbh: remediationInstruction.disabled_on_pbh || [],
-      };
-
+    showAssignPatternsModal(instruction) {
       this.$modals.show({
         name: MODALS.remediationPatterns,
         config: {
-          patterns,
+          instruction,
 
-          action: async (newPatterns) => {
-            if (isEqual(patterns, newPatterns)) {
+          action: async (data) => {
+            const isPbehaviorsEqual = isSeveralEqual(instruction, data, [
+              'active_on_pbh',
+              'disabled_on_pbh',
+            ]);
+
+            const isAlarmPatternEqual = instruction.corporate_alarm_pattern === data.corporate_alarm_pattern
+              || isEqual(instruction.alarm_pattern, data.alarm_pattern);
+
+            const isEntityPatternEqual = instruction.corporate_entity_pattern === data.corporate_entity_pattern
+              || isEqual(instruction.entity_pattern, data.entity_pattern);
+
+            if (isPbehaviorsEqual && isAlarmPatternEqual && isEntityPatternEqual) {
               return;
             }
 
             const form = {
-              ...remediationInstructionToForm(remediationInstruction),
-              ...newPatterns,
+              ...remediationInstructionToForm(instruction),
+              ...data,
             };
 
             await this.updateRemediationInstructionWithConfirm(
-              remediationInstruction,
+              instruction,
               formToRemediationInstruction(form),
             );
             await this.fetchList();
@@ -150,10 +161,31 @@ export default {
         name: MODALS.confirmation,
         config: {
           text: remediationInstruction.running
-            ? this.$t('remediationInstructions.errors.runningInstruction')
+            ? this.$t('remediation.instruction.errors.runningInstruction')
             : undefined,
           action: async () => {
             await this.removeRemediationInstruction({ id: remediationInstruction._id });
+            await this.fetchList();
+          },
+        },
+      });
+    },
+
+    showDuplicateRemediationInstructionModal(remediationInstruction) {
+      this.$modals.show({
+        name: MODALS.createRemediationInstruction,
+        config: {
+          remediationInstruction: omit(remediationInstruction, ['_id']),
+          title: this.$t('modals.createRemediationInstruction.duplicate.title'),
+          action: async (instruction) => {
+            await this.createRemediationInstruction({ data: instruction });
+
+            this.$popups.success({
+              text: this.$t('modals.createRemediationInstruction.duplicate.popups.success', {
+                instructionName: remediationInstruction.name,
+              }),
+            });
+
             await this.fetchList();
           },
         },

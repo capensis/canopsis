@@ -7,7 +7,7 @@ Feature: Import entities
     """json
     {
       "name": "test-entityservice-import-partial-1-name",
-      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "output_template": "test-entityservice-import-partial-1-output",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -49,7 +49,29 @@ Feature: Import entities
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/entities?search=import-partial-1&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id=test-component-import-partial-1
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [],
+      "impact": [
+        "{{ .serviceID }}"
+      ]
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-component-import-partial-1"
+      ],
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/weather-services/{{ .serviceID }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -57,29 +79,18 @@ Feature: Import entities
       "data": [
         {
           "_id": "test-component-import-partial-1",
-          "depends": [],
-          "impact": [
-            "{{ .serviceID }}"
-          ],
-          "type": "component"
-        },
-        {
-          "_id": "{{ .serviceID }}",
-          "depends": [
-            "test-component-import-partial-1"
-          ],
-          "impact": [],
-          "type": "service"
+          "import_source": "test-import-partial-1-source"
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 1
       }
     }
     """
+    Then the response key "data.0.imported" should be greater than 0
 
   Scenario: given service and updated entity by import should update service
     When I am admin
@@ -100,7 +111,7 @@ Feature: Import entities
     """json
     {
       "name": "test-entityservice-import-partial-2-name",
-      "output_template": "All: {{ `{{.All}}` }}; Alarms: {{ `{{.Alarms}}` }}; Acknowledged: {{ `{{.Acknowledged}}` }}; NotAcknowledged: {{ `{{.NotAcknowledged}}` }}; StateCritical: {{ `{{.State.Critical}}` }}; StateMajor: {{ `{{.State.Major}}` }}; StateMinor: {{ `{{.State.Minor}}` }}; StateInfo: {{ `{{.State.Info}}` }}; Pbehaviors: {{ `{{.PbehaviorCounters}}` }};",
+      "output_template": "test-entityservice-import-partial-2-output",
       "impact_level": 1,
       "enabled": true,
       "entity_pattern": [
@@ -149,44 +160,34 @@ Feature: Import entities
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/entities?search=import-partial-2&sort_by=name
+    When I do GET /api/v4/entities/context-graph?_id=test-component-import-partial-2
+    Then the response array key "impact" should contain:
+    """json
+    [
+      "test-connector-import-partial-2/test-connector-name-import-partial-2",
+      "{{ .serviceID }}"
+    ]
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-connector-import-partial-2/test-connector-name-import-partial-2
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-component-import-partial-2",
-          "depends": [],
-          "impact": [
-            "test-connector-import-partial-2/test-connector-name-import-partial-2",
-            "{{ .serviceID }}"
-          ],
-          "type": "component"
-        },
-        {
-          "_id": "test-connector-import-partial-2/test-connector-name-import-partial-2",
-          "depends": [
-            "test-component-import-partial-2"
-          ],
-          "impact": [],
-          "type": "connector"
-        },
-        {
-          "_id": "{{ .serviceID }}",
-          "depends": [
-            "test-component-import-partial-2"
-          ],
-          "impact": [],
-          "type": "service"
-        }
+      "depends": [
+        "test-component-import-partial-2"
       ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 3
-      }
+      "impact": []
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id={{ .serviceID }}
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-component-import-partial-2"
+      ],
+      "impact": []
     }
     """
 

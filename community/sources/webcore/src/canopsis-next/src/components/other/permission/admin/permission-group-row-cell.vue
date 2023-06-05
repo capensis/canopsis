@@ -3,7 +3,7 @@
     v-checkbox(
       v-bind="checkbox.bind",
       v-on="checkbox.on",
-      :disabled="disabled",
+      :disabled="disabled || disabledForRole",
       color="primary",
       hideDetails
     )
@@ -38,6 +38,10 @@ export default {
     },
   },
   computed: {
+    disabledForRole() {
+      return !this.role.editable;
+    },
+
     checkbox() {
       const bind = this.group.permissions.reduce((acc, permission, index) => {
         const actions = getPermissionActions(permission);

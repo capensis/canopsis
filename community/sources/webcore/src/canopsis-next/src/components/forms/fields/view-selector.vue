@@ -1,10 +1,10 @@
 <template lang="pug">
   v-layout(align-center)
-    v-btn(
+    v-btn.ml-0(
       color="secondary",
       small,
       @click="showViewSelectModal"
-    ) {{ $t('users.selectDefaultView') }}
+    ) {{ $t('user.selectDefaultView') }}
     div {{ defaultViewTitle }}
     v-btn(
       v-if="value",

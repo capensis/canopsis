@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`field-counters-selector Renders \`field-counters-selector\` with custom props 1`] = `
+<widget-settings-item-stub
+  title="Counters"
+>
+  <div
+    class="layout column"
+  >
+    <c-enabled-field-stub
+      hide-details="hide-details"
+      label="Pbehavior counters"
+      value="true"
+    />
+    <c-pbehavior-type-field-stub
+      chips="chips"
+      max="3"
+      multiple="multiple"
+      required="true"
+      types="inactive,maintenance,pause"
+      value="pbh-type"
+    />
+    <c-enabled-field-stub
+      hide-details="hide-details"
+      label="Entity states counters"
+      value="true"
+    />
+    <c-service-weather-state-counter-field-stub
+      required="true"
+      value="state-type"
+    />
+  </div>
+</widget-settings-item-stub>
+`;
+
+exports[`field-counters-selector Renders \`field-counters-selector\` with disabled props 1`] = `
+<widget-settings-item-stub
+  title="Counters"
+>
+  <div
+    class="layout column"
+  >
+    <c-enabled-field-stub
+      hide-details="hide-details"
+      label="Pbehavior counters"
+    />
+    <c-pbehavior-type-field-stub
+      chips="chips"
+      disabled="true"
+      max="3"
+      multiple="multiple"
+      types="inactive,maintenance,pause"
+      value=""
+    />
+    <c-enabled-field-stub
+      hide-details="hide-details"
+      label="Entity states counters"
+    />
+    <c-service-weather-state-counter-field-stub
+      disabled="true"
+      value=""
+    />
+  </div>
+</widget-settings-item-stub>
+`;

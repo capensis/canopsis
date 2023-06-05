@@ -4,6 +4,7 @@
       v-btn(
         v-on="on",
         :input-value="isPeriodicRefreshEnabled",
+        :loading="pending",
         color="secondary",
         fab,
         dark,
@@ -179,3 +180,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.refresh-btn {
+  text-decoration: none;
+  text-transform: none;
+}
+</style>

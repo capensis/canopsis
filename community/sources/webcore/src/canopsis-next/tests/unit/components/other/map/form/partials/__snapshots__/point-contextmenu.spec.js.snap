@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`mermaid-contextmenu Renders \`mermaid-contextmenu\` with custom props 1`] = `
+<div
+  class="v-menu"
+>
+  <transition-stub
+    name="v-menu-transition"
+  />
+</div>
+`;
+
+exports[`mermaid-contextmenu Renders \`mermaid-contextmenu\` with required props 1`] = `
+<div
+  class="v-menu"
+>
+  <transition-stub
+    name="v-menu-transition"
+  />
+</div>
+`;

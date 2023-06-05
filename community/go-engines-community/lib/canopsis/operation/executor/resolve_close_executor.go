@@ -2,12 +2,13 @@ package executor
 
 import (
 	"context"
-	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-func NewResolveCloseExecutor() operationlib.Executor {
+func NewResolveCloseExecutor() operation.Executor {
 	return &resolveCloseExecutor{}
 }
 
@@ -18,13 +19,16 @@ func (e *resolveCloseExecutor) Exec(
 	_ context.Context,
 	_ types.Operation,
 	alarm *types.Alarm,
-	_ *types.Entity,
+	entity *types.Entity,
 	_ types.CpsTime,
 	_, _, _ string,
 ) (types.AlarmChangeType, error) {
 	if alarm.Value.Resolved != nil || !alarm.Closable(0*time.Second) {
 		return "", nil
 	}
+
+	entity.IdleSince = nil
+	entity.LastIdleRuleApply = ""
 
 	err := alarm.PartialUpdateResolve(types.CpsTime{Time: time.Now()})
 	if err != nil {

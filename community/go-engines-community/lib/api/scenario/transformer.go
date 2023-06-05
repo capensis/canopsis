@@ -44,7 +44,7 @@ func (modelTransformer) TransformEditRequestToModel(r EditRequest) libaction.Sce
 		DisableDuringPeriods: r.DisableDuringPeriods,
 		Triggers:             r.Triggers,
 		Actions:              actions,
-		Priority:             *r.Priority,
+		Priority:             r.Priority,
 		Delay:                r.Delay,
 	}
 }

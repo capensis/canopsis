@@ -1,42 +1,44 @@
 <template lang="pug">
-  c-advanced-data-table.white(
+  c-advanced-data-table(
     :headers="headers",
     :items="remediationConfigurations",
     :loading="pending",
     :total-items="totalItems",
     :pagination="pagination",
     :is-disabled-item="isDisabledConfiguration",
-    select-all,
+    :select-all="removable",
     search,
     advanced-pagination,
     @update:pagination="$emit('update:pagination', $event)"
   )
-    template(slot="toolbar", slot-scope="props")
-      v-flex(v-show="hasDeleteAnyRemediationConfigurationAccess && props.selected.length", xs4)
-        v-btn(@click="$emit('remove-selected', props.selected)", icon)
-          v-icon delete
-    template(slot="actions", slot-scope="props")
+    template(#mass-actions="{ selected }")
       c-action-btn(
-        v-if="hasUpdateAnyRemediationConfigurationAccess",
+        v-if="removable",
+        type="delete",
+        @click="$emit('remove-selected', selected)"
+      )
+    template(#actions="{ item, disabled }")
+      c-action-btn(
+        v-if="updatable",
         type="edit",
-        @click="$emit('edit', props.item)"
+        @click="$emit('edit', item)"
       )
       c-action-btn(
-        v-if="hasDeleteAnyRemediationConfigurationAccess",
-        :tooltip="props.disabled ? $t('remediationConfigurations.usingConfiguration') : $t('common.delete')",
-        :disabled="props.disabled",
+        v-if="duplicable",
+        type="duplicate",
+        @click="$emit('duplicate', item)"
+      )
+      c-action-btn(
+        v-if="removable",
+        :tooltip="disabled ? $t('remediation.configuration.usingConfiguration') : $t('common.delete')",
+        :disabled="disabled",
         type="delete",
-        @click="$emit('remove', props.item)"
+        @click="$emit('remove', item)"
       )
 </template>
 
 <script>
-import {
-  permissionsTechnicalRemediationConfigurationMixin,
-} from '@/mixins/permissions/technical/remediation-configuration';
-
 export default {
-  mixins: [permissionsTechnicalRemediationConfigurationMixin],
   props: {
     remediationConfigurations: {
       type: Array,
@@ -53,6 +55,18 @@ export default {
     pagination: {
       type: Object,
       required: true,
+    },
+    removable: {
+      type: Boolean,
+      default: false,
+    },
+    updatable: {
+      type: Boolean,
+      default: false,
+    },
+    duplicable: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -71,7 +85,7 @@ export default {
           value: 'type',
         },
         {
-          text: this.$t('remediationConfigurations.table.host'),
+          text: this.$t('remediation.configuration.host'),
           value: 'host',
         },
         {

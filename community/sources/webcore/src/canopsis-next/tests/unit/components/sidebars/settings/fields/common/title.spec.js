@@ -8,7 +8,12 @@ import Title from '@/components/sidebars/settings/fields/common/title.vue';
 const localVue = createVueInstance();
 
 const stubs = {
+  'widget-settings-item': true,
   'v-text-field': createInputStub('v-text-field'),
+};
+
+const snapshotStubs = {
+  'widget-settings-item': true,
 };
 
 const factory = (options = {}) => shallowMount(Title, {
@@ -20,6 +25,7 @@ const factory = (options = {}) => shallowMount(Title, {
 
 const snapshotFactory = (options = {}) => mount(Title, {
   localVue,
+  stubs: snapshotStubs,
   parentComponent: {
     provide: {
       list: {

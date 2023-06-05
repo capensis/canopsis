@@ -1,9 +1,9 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(:close="close", minimize)
-      template(slot="title")
+      template(#title="")
         span {{ config.assignedInstruction.name }}
-      template(slot="text")
+      template(#text="")
         v-fade-transition
           remediation-instruction-execute(
             v-if="instructionExecution",
@@ -82,7 +82,7 @@ export default {
         ].includes(instructionExecution.status);
 
         const type = isFailedExecution ? 'failed' : 'success';
-        const text = this.$t(`remediationInstructionExecute.popups.${type}`, {
+        const text = this.$t(`remediation.instructionExecute.popups.${type}`, {
           instructionName: instructionExecution.name,
         });
 
@@ -96,7 +96,7 @@ export default {
           await this.config.onComplete(instructionExecution);
         }
 
-        this.$modals.hide();
+        await this.closeModal();
       }
     },
   },
@@ -224,9 +224,9 @@ export default {
      */
     socketCloseHandler() {
       if (!this.$socket.isConnectionOpen) {
-        this.$modals.hide();
+        this.closeModal();
         this.$popups.error({
-          text: this.$t('remediationInstructionExecute.popups.connectionError'),
+          text: this.$t('remediation.instructionExecute.popups.connectionError'),
           autoClose: false,
         });
       }
@@ -236,9 +236,9 @@ export default {
      * Socket closeRoom event handler
      */
     socketCloseRoomHandler() {
-      this.$modals.hide();
+      this.closeModal();
       this.$popups.error({
-        text: this.$t('remediationInstructionExecute.popups.wasAborted', {
+        text: this.$t('remediation.instructionExecute.popups.wasAborted', {
           instructionName: this.instructionExecution?.name,
         }),
         autoClose: false,
@@ -311,12 +311,12 @@ export default {
           });
         }
 
-        if (this.config.onOpen) {
-          await this.config.onOpen();
+        if (this.config.onExecute) {
+          await this.config.onExecute();
         }
       } catch (err) {
         this.$popups.error({ text: err.error || this.$t('errors.default') });
-        this.$modals.hide();
+        this.closeModal();
       } finally {
         this.pending = false;
       }
@@ -327,7 +327,7 @@ export default {
      *
      * @return {Promise<void>}
      */
-    async confirmationHide() {
+    async closeModal() {
       if (this.config.onClose) {
         await this.config.onClose();
       }
@@ -343,10 +343,10 @@ export default {
         name: MODALS.confirmation,
         config: {
           hideTitle: true,
-          text: this.$t('remediationInstructionExecute.closeConfirmationText'),
+          text: this.$t('remediation.instructionExecute.closeConfirmationText'),
           action: async () => {
             await this.pauseRemediationInstructionExecution({ id: this.instructionExecutionId });
-            await this.confirmationHide();
+            await this.closeModal();
           },
           cancel: async (cancelled) => {
             if (!cancelled) {
@@ -354,7 +354,7 @@ export default {
             }
 
             await this.cancelRemediationInstructionExecution({ id: this.instructionExecutionId });
-            await this.confirmationHide();
+            await this.closeModal();
           },
         },
       });

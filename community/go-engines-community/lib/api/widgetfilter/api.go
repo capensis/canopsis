@@ -9,10 +9,16 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
 )
+
+type API interface {
+	common.CrudAPI
+	UpdatePositions(c *gin.Context)
+}
 
 type api struct {
 	store        Store
@@ -26,7 +32,7 @@ func NewApi(
 	enforcer security.Enforcer,
 	transformer PatternFieldsTransformer,
 	actionLogger logger.ActionLogger,
-) common.CrudAPI {
+) API {
 	return &api{
 		store:        store,
 		enforcer:     enforcer,
@@ -47,17 +53,17 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.checkAccessByWidget(c.Request.Context(), r.Widget, userId, model.PermissionRead)
+	ok, err := a.checkAccessByWidget(c, r.Widget, userId, model.PermissionRead)
 	if err != nil {
 		panic(err)
 	}
 
 	if !ok {
-		c.JSON(http.StatusForbidden, common.ForbiddenResponse)
+		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
 		return
 	}
 
-	users, err := a.store.Find(c.Request.Context(), r, userId)
+	users, err := a.store.Find(c, r, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -76,17 +82,17 @@ func (a *api) List(c *gin.Context) {
 func (a *api) Get(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
-	ok, err := a.checkAccess(c.Request.Context(), id, userId, model.PermissionRead)
+	ok, err := a.checkAccess(c, id, userId, model.PermissionRead)
 	if err != nil {
 		panic(err)
 	}
 
 	if !ok {
-		c.JSON(http.StatusForbidden, common.ForbiddenResponse)
+		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
 		return
 	}
 
-	filter, err := a.store.GetOneBy(c.Request.Context(), id, userId)
+	filter, err := a.store.GetOneBy(c, id, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -110,7 +116,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	err := a.transformEditRequest(c.Request.Context(), &request)
+	err := a.transformEditRequest(c, &request)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -120,17 +126,36 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	ok, err := a.checkAccessByWidget(c.Request.Context(), request.Widget, userId, model.PermissionUpdate)
-	if err != nil {
-		panic(err)
+	if request.IsPrivate != nil {
+		if !*request.IsPrivate {
+			ok, err := a.enforcer.Enforce(userId, apisecurity.ObjView, model.PermissionUpdate)
+			if err != nil {
+				panic(err)
+			}
+
+			if !ok {
+				c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+				return
+			}
+		}
+
+		var granted bool
+		if *request.IsPrivate {
+			granted, err = a.checkAccessByWidget(c, request.Widget, userId, model.PermissionRead)
+		} else {
+			granted, err = a.checkAccessByWidget(c, request.Widget, userId, model.PermissionUpdate)
+		}
+		if err != nil {
+			panic(err)
+		}
+
+		if !granted {
+			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+			return
+		}
 	}
 
-	if !ok {
-		c.JSON(http.StatusForbidden, common.ForbiddenResponse)
-		return
-	}
-
-	filter, err := a.store.Insert(c.Request.Context(), request)
+	filter, err := a.store.Insert(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -161,7 +186,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err := a.transformEditRequest(c.Request.Context(), &request)
+	err := a.transformEditRequest(c, &request)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -171,22 +196,41 @@ func (a *api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	ok, err := a.checkAccess(c.Request.Context(), request.ID, userId, model.PermissionUpdate)
-	if err != nil {
-		panic(err)
+	if request.IsPrivate != nil {
+		if !*request.IsPrivate {
+			ok, err := a.enforcer.Enforce(userId, apisecurity.ObjView, model.PermissionUpdate)
+			if err != nil {
+				panic(err)
+			}
+
+			if !ok {
+				c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+				return
+			}
+		}
+
+		var granted bool
+		if *request.IsPrivate {
+			granted, err = a.checkAccess(c, request.ID, userId, model.PermissionRead)
+		} else {
+			granted, err = a.checkAccess(c, request.ID, userId, model.PermissionUpdate)
+		}
+		if err != nil {
+			panic(err)
+		}
+
+		if !granted {
+			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+			return
+		}
 	}
 
-	if !ok {
-		c.JSON(http.StatusForbidden, common.ForbiddenResponse)
-		return
-	}
-
-	filter, err := a.store.GetOneBy(c.Request.Context(), request.ID, request.Author)
+	filter, err := a.store.GetOneBy(c, request.ID, request.Author)
 	if err != nil {
 		panic(err)
 	}
 	if filter == nil {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
@@ -200,7 +244,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	filter, err = a.store.Update(c.Request.Context(), request)
+	filter, err = a.store.Update(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -226,17 +270,45 @@ func (a *api) Delete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
 
-	ok, err := a.checkAccess(c.Request.Context(), id, userId, model.PermissionUpdate)
+	filter, err := a.store.GetOneBy(c, id, userId)
 	if err != nil {
 		panic(err)
 	}
-
-	if !ok {
-		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+	if filter == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
-	ok, err = a.store.Delete(c.Request.Context(), id, userId)
+	if filter.IsPrivate != nil {
+		if !*filter.IsPrivate {
+			ok, err := a.enforcer.Enforce(userId, apisecurity.ObjView, model.PermissionUpdate)
+			if err != nil {
+				panic(err)
+			}
+
+			if !ok {
+				c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+				return
+			}
+		}
+
+		var granted bool
+		if *filter.IsPrivate {
+			granted, err = a.checkAccess(c, id, userId, model.PermissionRead)
+		} else {
+			granted, err = a.checkAccess(c, id, userId, model.PermissionUpdate)
+		}
+		if err != nil {
+			panic(err)
+		}
+
+		if !granted {
+			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+			return
+		}
+	}
+
+	ok, err := a.store.Delete(c, id, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -253,6 +325,79 @@ func (a *api) Delete(c *gin.Context) {
 	})
 	if err != nil {
 		a.actionLogger.Err(err, "failed to log action")
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+func (a *api) UpdatePositions(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+	request := EditPositionRequest{}
+
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	if len(request.Items) == 0 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: map[string]string{"items": "Cannot be blank"}})
+		return
+	}
+
+	firstItem := request.Items[0]
+	firstFilter, err := a.store.GetOneBy(c, firstItem, userId)
+	if err != nil {
+		panic(err)
+	}
+	if firstFilter == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	isPrivate := false
+	if firstFilter.IsPrivate != nil {
+		isPrivate = *firstFilter.IsPrivate
+		if !*firstFilter.IsPrivate {
+			ok, err := a.enforcer.Enforce(userId, apisecurity.ObjView, model.PermissionUpdate)
+			if err != nil {
+				panic(err)
+			}
+
+			if !ok {
+				c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+				return
+			}
+		}
+
+		var granted bool
+		if *firstFilter.IsPrivate {
+			granted, err = a.checkAccess(c, firstItem, userId, model.PermissionRead)
+		} else {
+			granted, err = a.checkAccess(c, firstItem, userId, model.PermissionUpdate)
+		}
+		if err != nil {
+			panic(err)
+		}
+
+		if !granted {
+			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+			return
+		}
+	}
+
+	ok, err := a.store.UpdatePositions(c, request.Items, firstFilter.Widget, userId, isPrivate)
+	if err != nil {
+		valErr := ValidationErr{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: err.Error()})
+			return
+		}
+		panic(err)
+	}
+
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
 	}
 
 	c.Status(http.StatusNoContent)

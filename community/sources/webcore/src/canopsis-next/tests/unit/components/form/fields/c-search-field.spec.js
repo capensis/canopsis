@@ -1,6 +1,6 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import CSearchField from '@/components/forms/fields/c-search-field.vue';
 
@@ -12,16 +12,6 @@ const mockData = {
 };
 
 const stubs = {
-  'v-btn': {
-    template: `
-      <button
-        class="v-btn"
-        @click="$listeners.click"
-      >
-        <slot />
-      </button>
-    `,
-  },
   'v-text-field': {
     props: ['value'],
     template: `
@@ -33,15 +23,23 @@ const stubs = {
       />
     `,
   },
+  'c-action-btn': true,
 };
 
-const factory = (options = {}) => shallowMount(CSearchField, {
-  localVue,
-  stubs,
-  ...options,
-});
+const snapshotStubs = {
+  'c-action-btn': true,
+};
 
 describe('c-search-field', () => {
+  const factory = generateShallowRenderer(CSearchField, {
+    localVue,
+    stubs,
+  });
+  const snapshotFactory = generateRenderer(CSearchField, {
+    localVue,
+    stubs: snapshotStubs,
+  });
+
   it('Not empty value was pass into props and it was applied to input field', () => {
     const { search } = mockData;
 
@@ -107,32 +105,27 @@ describe('c-search-field', () => {
     const { search } = mockData;
 
     const wrapper = factory({ propsData: { value: search } });
-    const submitButton = wrapper.findAll('.v-btn').at(0);
-    const submitIcon = submitButton.find('v-icon-stub');
+    const submitButton = wrapper.findAll('c-action-btn-stub').at(0);
 
-    expect(submitIcon).toBeTruthy();
-    expect(submitIcon.text()).toBe('search');
+    expect(submitButton.attributes('icon')).toBe('search');
   });
 
   it('Clear search button is the second button', () => {
     const { search } = mockData;
 
     const wrapper = factory({ propsData: { value: search } });
-    const clearButton = wrapper.findAll('.v-btn').at(1);
+    const clearButton = wrapper.findAll('c-action-btn-stub').at(1);
 
-    const clearIcon = clearButton.find('v-icon-stub');
-
-    expect(clearIcon).toBeTruthy();
-    expect(clearIcon.text()).toBe('clear');
+    expect(clearButton.attributes('icon')).toBe('clear');
   });
 
   it('Click on submit button', () => {
     const { search } = mockData;
 
     const wrapper = factory({ propsData: { value: search } });
-    const submitButton = wrapper.findAll('.v-btn').at(0);
+    const submitButton = wrapper.findAll('c-action-btn-stub').at(0);
 
-    submitButton.trigger('click');
+    submitButton.vm.$emit('click');
 
     const submitEvents = wrapper.emitted('submit');
 
@@ -143,9 +136,9 @@ describe('c-search-field', () => {
     const { search } = mockData;
 
     const wrapper = factory({ propsData: { value: search } });
-    const clearButton = wrapper.findAll('.v-btn').at(1);
+    const clearButton = wrapper.findAll('c-action-btn-stub').at(1);
 
-    clearButton.trigger('click');
+    clearButton.vm.$emit('click');
 
     const inputEvents = wrapper.emitted('input');
     const clearEvents = wrapper.emitted('clear');
@@ -157,8 +150,7 @@ describe('c-search-field', () => {
   });
 
   it('Renders `c-search-field` correctly', () => {
-    const wrapper = mount(CSearchField, {
-      localVue,
+    const wrapper = snapshotFactory({
       propsData: { value: 'c-search-field' },
     });
 

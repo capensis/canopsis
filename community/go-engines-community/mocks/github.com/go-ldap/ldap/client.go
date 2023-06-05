@@ -176,6 +176,20 @@ func (mr *MockClientMockRecorder) ModifyWithResult(arg0 interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyWithResult", reflect.TypeOf((*MockClient)(nil).ModifyWithResult), arg0)
 }
 
+// NTLMUnauthenticatedBind mocks base method.
+func (m *MockClient) NTLMUnauthenticatedBind(arg0, arg1 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "NTLMUnauthenticatedBind", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// NTLMUnauthenticatedBind indicates an expected call of NTLMUnauthenticatedBind.
+func (mr *MockClientMockRecorder) NTLMUnauthenticatedBind(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NTLMUnauthenticatedBind", reflect.TypeOf((*MockClient)(nil).NTLMUnauthenticatedBind), arg0, arg1)
+}
+
 // PasswordModify mocks base method.
 func (m *MockClient) PasswordModify(arg0 *ldap.PasswordModifyRequest) (*ldap.PasswordModifyResult, error) {
 	m.ctrl.T.Helper()
@@ -274,6 +288,21 @@ func (mr *MockClientMockRecorder) StartTLS(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StartTLS", reflect.TypeOf((*MockClient)(nil).StartTLS), arg0)
 }
 
+// TLSConnectionState mocks base method.
+func (m *MockClient) TLSConnectionState() (tls.ConnectionState, bool) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TLSConnectionState")
+	ret0, _ := ret[0].(tls.ConnectionState)
+	ret1, _ := ret[1].(bool)
+	return ret0, ret1
+}
+
+// TLSConnectionState indicates an expected call of TLSConnectionState.
+func (mr *MockClientMockRecorder) TLSConnectionState() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TLSConnectionState", reflect.TypeOf((*MockClient)(nil).TLSConnectionState))
+}
+
 // UnauthenticatedBind mocks base method.
 func (m *MockClient) UnauthenticatedBind(arg0 string) error {
 	m.ctrl.T.Helper()
@@ -286,4 +315,18 @@ func (m *MockClient) UnauthenticatedBind(arg0 string) error {
 func (mr *MockClientMockRecorder) UnauthenticatedBind(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UnauthenticatedBind", reflect.TypeOf((*MockClient)(nil).UnauthenticatedBind), arg0)
+}
+
+// Unbind mocks base method.
+func (m *MockClient) Unbind() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Unbind")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Unbind indicates an expected call of Unbind.
+func (mr *MockClientMockRecorder) Unbind() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Unbind", reflect.TypeOf((*MockClient)(nil).Unbind))
 }

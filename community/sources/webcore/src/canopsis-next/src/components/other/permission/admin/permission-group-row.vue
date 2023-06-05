@@ -9,7 +9,7 @@
       :group="group",
       :role="role",
       :changed-role="changedRoles[role._id]",
-      :disabled="disabled",
+      :disabled="disabled || isEmptyPermissions",
       @change="change"
     )
 </template>
@@ -39,6 +39,11 @@ export default {
     expanded: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    isEmptyPermissions() {
+      return !this.group?.permissions?.length;
     },
   },
   methods: {

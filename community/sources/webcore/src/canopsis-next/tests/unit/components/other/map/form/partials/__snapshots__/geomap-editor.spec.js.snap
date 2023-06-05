@@ -1,0 +1,350 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`geomap-editor Renders \`geomap-editor\` with custom props 1`] = `
+<c-zoom-overlay-stub>
+  <div
+    class="layout geomap-editor column"
+  >
+    <div
+      class="geomap geomap-editor__map mb-2"
+      min-zoom="3"
+      options="[object Object]"
+    >
+      <geomap-control-zoom-stub
+        disableclickpropagation="true"
+        options="[object Object]"
+        position="topleft"
+      />
+      <geomap-control-layers-stub
+        autozindex="true"
+        collapsed="true"
+        options="[object Object]"
+        position="topright"
+      />
+      <div
+        class="geomap-contextmenu"
+        items="[object Object]"
+        marker-items="[object Object],[object Object]"
+      />
+      <geomap-control-stub
+        disableclickpropagation="true"
+        options="[object Object]"
+        position="topleft"
+      >
+        <span
+          class="v-tooltip v-tooltip--right"
+        >
+          <transition-stub
+            name="slide-x-transition"
+          />
+          <button
+            class="secondary ma-0 v-btn v-btn--icon theme--dark lighten-4"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--dark"
+              >
+                add_location
+              </i>
+            </div>
+          </button>
+        </span>
+      </geomap-control-stub>
+      <geomap-control-stub
+        disableclickpropagation="true"
+        options="[object Object]"
+        position="bottomright"
+      >
+        <c-help-icon-stub
+          color="secondary"
+          icon="help"
+          size="32"
+          text="Useful shortcuts:
+Ctrl + mouse wheel - zoom in/out
+Left mouse click + drag - pan the area"
+          top="top"
+        />
+      </geomap-control-stub>
+      <geomap-tile-layer-stub
+        layertype="base"
+        name="Open street map"
+        nowrap="true"
+        opacity="1"
+        options="[object Object]"
+        pane="tilePane"
+        subdomains="abc"
+        tilelayerclass="[Function]"
+        tilesize="256"
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        visible="true"
+        zindex="1"
+      />
+      <div
+        class="geomap-cluster-group"
+        layer-type="overlay"
+        name="Points"
+      >
+        <geomap-marker-stub
+          draggable="true"
+          icon="[object Object]"
+          latlng="[object Object]"
+          opacity="1"
+          options="[object Object]"
+          pane="markerPane"
+          visible="true"
+        >
+          <geomap-icon-stub
+            bgpos="0,0"
+            classname=""
+            iconanchor="6,6"
+            options="[object Object]"
+            popupanchor="0,0"
+            tooltipanchor="0,0"
+          >
+            <point-icon-stub
+              entity=""
+              size="12"
+              style="width: 12px; height: 12px; max-width: unset; max-height: unset;"
+            />
+          </geomap-icon-stub>
+        </geomap-marker-stub>
+      </div>
+      <!---->
+      <div
+        class="v-menu"
+        coordinates="coordinates"
+      >
+        <transition-stub
+          name="v-menu-transition"
+        />
+      </div>
+    </div>
+    <!---->
+  </div>
+</c-zoom-overlay-stub>
+`;
+
+exports[`geomap-editor Renders \`geomap-editor\` with form 1`] = `
+<c-zoom-overlay-stub>
+  <div
+    class="layout geomap-editor column"
+  >
+    <div
+      class="geomap geomap-editor__map mb-2"
+      min-zoom="2"
+      options="[object Object]"
+    >
+      <geomap-control-zoom-stub
+        disableclickpropagation="true"
+        options="[object Object]"
+        position="topleft"
+      />
+      <geomap-control-layers-stub
+        autozindex="true"
+        collapsed="true"
+        options="[object Object]"
+        position="topright"
+      />
+      <div
+        class="geomap-contextmenu"
+        items="[object Object]"
+        marker-items="[object Object],[object Object]"
+      />
+      <geomap-control-stub
+        disableclickpropagation="true"
+        options="[object Object]"
+        position="topleft"
+      >
+        <span
+          class="v-tooltip v-tooltip--right"
+        >
+          <transition-stub
+            name="slide-x-transition"
+          />
+          <button
+            class="secondary ma-0 v-btn v-btn--icon theme--dark lighten-4"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--dark"
+              >
+                add_location
+              </i>
+            </div>
+          </button>
+        </span>
+      </geomap-control-stub>
+      <geomap-control-stub
+        disableclickpropagation="true"
+        options="[object Object]"
+        position="bottomright"
+      >
+        <c-help-icon-stub
+          color="secondary"
+          icon="help"
+          size="32"
+          text="Useful shortcuts:
+Ctrl + mouse wheel - zoom in/out
+Left mouse click + drag - pan the area"
+          top="top"
+        />
+      </geomap-control-stub>
+      <geomap-tile-layer-stub
+        layertype="base"
+        name="Open street map"
+        nowrap="true"
+        opacity="1"
+        options="[object Object]"
+        pane="tilePane"
+        subdomains="abc"
+        tilelayerclass="[Function]"
+        tilesize="256"
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        visible="true"
+        zindex="1"
+      />
+      <div
+        class="geomap-cluster-group"
+        layer-type="overlay"
+        name="Points"
+      />
+      <!---->
+      <div
+        class="v-menu"
+        coordinates="coordinates"
+      >
+        <transition-stub
+          name="v-menu-transition"
+        />
+      </div>
+    </div>
+    <!---->
+  </div>
+</c-zoom-overlay-stub>
+`;
+
+exports[`geomap-editor Renders \`geomap-editor\` with validation errors  1`] = `
+<c-zoom-overlay-stub>
+  <div
+    class="layout geomap-editor column"
+  >
+    <div
+      class="geomap geomap-editor__map mb-2"
+      min-zoom="2"
+      options="[object Object]"
+      style="border-color: #ff5252;"
+    >
+      <geomap-control-zoom-stub
+        disableclickpropagation="true"
+        options="[object Object]"
+        position="topleft"
+      />
+      <geomap-control-layers-stub
+        autozindex="true"
+        collapsed="true"
+        options="[object Object]"
+        position="topright"
+      />
+      <div
+        class="geomap-contextmenu"
+        items="[object Object]"
+        marker-items="[object Object],[object Object]"
+      />
+      <geomap-control-stub
+        disableclickpropagation="true"
+        options="[object Object]"
+        position="topleft"
+      >
+        <button
+          class="secondary ma-0 v-btn v-btn--icon theme--dark lighten-4"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--dark"
+            >
+              add_location
+            </i>
+          </div>
+        </button>
+        <span
+          class="v-tooltip v-tooltip--right"
+        >
+          <transition-stub
+            name="slide-x-transition"
+          />
+        </span>
+      </geomap-control-stub>
+      <geomap-control-stub
+        disableclickpropagation="true"
+        options="[object Object]"
+        position="bottomright"
+      >
+        <c-help-icon-stub
+          color="secondary"
+          icon="help"
+          size="32"
+          text="Useful shortcuts:
+Ctrl + mouse wheel - zoom in/out
+Left mouse click + drag - pan the area"
+          top="top"
+        />
+      </geomap-control-stub>
+      <geomap-tile-layer-stub
+        layertype="base"
+        name="Open street map"
+        nowrap="true"
+        opacity="1"
+        options="[object Object]"
+        pane="tilePane"
+        subdomains="abc"
+        tilelayerclass="[Function]"
+        tilesize="256"
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        visible="true"
+        zindex="1"
+      />
+      <div
+        class="geomap-cluster-group"
+        layer-type="overlay"
+        name="Points"
+      />
+      <!---->
+      <div
+        class="v-menu"
+        coordinates="coordinates"
+      >
+        <transition-stub
+          name="v-menu-transition"
+        />
+      </div>
+    </div>
+    <div
+      class="v-messages theme--light error--text"
+    >
+      <transition-group-stub
+        class="v-messages__wrapper"
+        name="message-transition"
+        tag="div"
+      >
+        <div
+          class="v-messages__message"
+        >
+          The points must be added
+        </div>
+      </transition-group-stub>
+    </div>
+  </div>
+</c-zoom-overlay-stub>
+`;

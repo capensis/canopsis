@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 import CAdvancedSearchField from '@/components/forms/fields/c-advanced-search-field.vue';
 
@@ -32,13 +33,7 @@ const stubs = {
       </div>
     `,
   },
-  'v-tooltip': {
-    template: `
-      <div class='v-tooltip'>
-        <slot />
-      </div>
-    `,
-  },
+  'v-tooltip': createActivatorElementStub('v-tooltip'),
 };
 
 const factory = (options = {}) => shallowMount(CAdvancedSearchField, {
@@ -158,7 +153,9 @@ describe('c-advanced-search-field', () => {
     const updateQueryEvents = wrapper.emitted('update:query');
 
     expect(updateQueryEvents).toHaveLength(1);
-    expect(updateQueryEvents[0]).toEqual([{}]);
+    expect(updateQueryEvents[0]).toEqual([{
+      page: 1,
+    }]);
   });
 
   it('Submit search with custom field name', () => {
@@ -200,7 +197,9 @@ describe('c-advanced-search-field', () => {
     const updateQueryEvents = wrapper.emitted('update:query');
 
     expect(updateQueryEvents).toHaveLength(1);
-    expect(updateQueryEvents[0]).toEqual([{}]);
+    expect(updateQueryEvents[0]).toEqual([{
+      page: 1,
+    }]);
   });
 
   it('Renders `c-advanced-search-field` correctly', () => {

@@ -19,7 +19,6 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog"
 	"github.com/valyala/fastjson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 type API interface {
@@ -30,6 +29,7 @@ type API interface {
 	GetExport(c *gin.Context)
 	DownloadExport(c *gin.Context)
 	Clean(c *gin.Context)
+	GetContextGraph(c *gin.Context)
 }
 
 type api struct {
@@ -53,7 +53,7 @@ func NewApi(
 	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 ) API {
-	fields := []string{"_id", "name", "type", "enabled", "depends", "impact"}
+	fields := []string{"_id", "name", "type", "enabled", "connector", "component", "services"}
 	defaultExportFields := make(export.Fields, len(fields))
 	for i, field := range fields {
 		defaultExportFields[i] = export.Field{
@@ -86,7 +86,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	entities, err := a.store.Find(c.Request.Context(), query)
+	entities, err := a.store.Find(c, query)
 	if err != nil {
 		panic(err)
 	}
@@ -111,34 +111,21 @@ func (a *api) StartExport(c *gin.Context) {
 	}
 
 	separator := a.exportSeparators[r.Separator]
-	exportFields := r.Fields
-	if len(exportFields) == 0 {
-		exportFields = a.defaultExportFields
+	if len(r.Fields) == 0 {
+		r.Fields = a.defaultExportFields
 	}
 
-	fields := exportFields.Fields()
-	taskID, err := a.exportExecutor.StartExecute(c.Request.Context(), export.Task{
-		Filename:     "entities",
-		ExportFields: exportFields,
-		Separator:    separator,
-		DataFetcher: func(ctx context.Context, page, limit int64) ([]map[string]string, int64, error) {
-			res, err := a.store.Find(ctx, ListRequestWithPagination{
-				Query: pagination.Query{Paginate: true, Page: page, Limit: limit},
-				ListRequest: ListRequest{
-					BaseFilterRequest: r.BaseFilterRequest,
-					SearchBy:          fields,
-				},
-			})
-			if err != nil {
-				return nil, 0, err
-			}
-			data, err := export.ConvertToMap(res.Data, fields, "", nil)
-			if err != nil {
-				return nil, 0, err
-			}
+	params, err := json.Marshal(r.BaseFilterRequest)
+	if err != nil {
+		panic(err)
+	}
 
-			return data, res.TotalCount, err
-		},
+	task, err := a.exportExecutor.StartExecute(c, export.TaskParameters{
+		Type:           "entity",
+		Parameters:     string(params),
+		Fields:         r.Fields,
+		Separator:      separator,
+		FilenamePrefix: "entities",
 	})
 
 	if err != nil {
@@ -146,8 +133,8 @@ func (a *api) StartExport(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, ExportResponse{
-		ID:     taskID,
-		Status: export.TaskStatusRunning,
+		ID:     task.ID,
+		Status: task.Status,
 	})
 }
 
@@ -155,13 +142,13 @@ func (a *api) StartExport(c *gin.Context) {
 // @Success 200 {object} ExportResponse
 func (a *api) GetExport(c *gin.Context) {
 	id := c.Param("id")
-	t, err := a.exportExecutor.GetStatus(c.Request.Context(), id)
+	t, err := a.exportExecutor.Get(c, id)
 	if err != nil {
 		panic(err)
 	}
 
 	if t == nil {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
@@ -173,13 +160,13 @@ func (a *api) GetExport(c *gin.Context) {
 
 func (a *api) DownloadExport(c *gin.Context) {
 	id := c.Param("id")
-	t, err := a.exportExecutor.GetStatus(c.Request.Context(), id)
+	t, err := a.exportExecutor.Get(c, id)
 	if err != nil {
 		panic(err)
 	}
 
 	if t == nil || t.Status != export.TaskStatusSucceeded {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
@@ -190,6 +177,8 @@ func (a *api) DownloadExport(c *gin.Context) {
 	c.File(t.File)
 }
 
+// Clean
+// @Param body body CleanRequest true "body"
 func (a *api) Clean(c *gin.Context) {
 	var r CleanRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
@@ -222,6 +211,28 @@ func (a *api) BulkDisable(c *gin.Context) {
 	a.toggle(c, false)
 }
 
+// GetContextGraph
+// @Success 200 {object} ContextGraphResponse
+func (a *api) GetContextGraph(c *gin.Context) {
+	var r ContextGraphRequest
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+
+	res, err := a.store.GetContextGraph(c, r.ID)
+	if err != nil {
+		panic(err)
+	}
+
+	if res == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
 func (a *api) toggle(c *gin.Context, enabled bool) {
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -244,7 +255,6 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 		return
 	}
 
-	ctx := c.Request.Context()
 	response := ar.NewArray()
 
 	for idx, rawObject := range rawObjects {
@@ -268,24 +278,31 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 			continue
 		}
 
-		isToggled, simplifiedEntity, err := a.store.Toggle(ctx, request.ID, enabled)
+		isToggled, simplifiedEntity, err := a.store.Toggle(c, request.ID, enabled)
 		if err != nil {
-			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
-				continue
-			}
-
 			a.logger.Err(err).Msg("cannot update entity")
 			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
 			continue
 		}
 
+		if simplifiedEntity.ID == "" {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString("Not found")))
+			continue
+		}
+
 		if isToggled {
-			a.sendChangeMessage(entityservice.ChangeEntityMessage{
+			msg := entityservice.ChangeEntityMessage{
 				ID:         simplifiedEntity.ID,
 				EntityType: simplifiedEntity.Type,
 				IsToggled:  isToggled,
-			})
+			}
+
+			if !enabled && simplifiedEntity.Type == types.EntityTypeComponent {
+				msg.Resources = make([]string, len(simplifiedEntity.Resources))
+				copy(msg.Resources, simplifiedEntity.Resources)
+			}
+
+			a.sendChangeMessage(msg)
 		}
 
 		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, simplifiedEntity.ID, http.StatusOK, rawObject, nil))
@@ -305,7 +322,10 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 			a.actionLogger.Err(err, "failed to log action")
 		}
 
-		a.metricMetaUpdater.UpdateById(c.Request.Context(), simplifiedEntity.ID)
+		a.metricMetaUpdater.UpdateById(c, simplifiedEntity.ID)
+		if isToggled && simplifiedEntity.Type == types.EntityTypeComponent {
+			a.metricMetaUpdater.UpdateById(c, simplifiedEntity.Resources...)
+		}
 	}
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))

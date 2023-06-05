@@ -77,7 +77,7 @@ Feature: Get a scenario
                   "description": "test-type-to-edit-scenario-description",
                   "icon_name": "test-type-to-edit-scenario-icon",
                   "name": "test-type-to-edit-scenario-name",
-                  "priority": 24,
+                  "priority": 25,
                   "type": "maintenance"
                 },
                 "start_on_trigger": true,
@@ -145,7 +145,7 @@ Feature: Get a scenario
 
   Scenario: given sort request should return sorted scenarios
     When I am admin
-    When I do GET /api/v4/scenarios?search=test-scenario-to-get&sort_by=delay&sort=desc
+    When I do GET /api/v4/scenarios?search=test-scenario-to-get&sort_by=name&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -231,7 +231,7 @@ Feature: Get a scenario
               "description": "test-type-to-edit-scenario-description",
               "icon_name": "test-type-to-edit-scenario-icon",
               "name": "test-type-to-edit-scenario-name",
-              "priority": 24,
+              "priority": 25,
               "type": "maintenance"
             },
             "start_on_trigger": true,
@@ -260,7 +260,10 @@ Feature: Get a scenario
     {
       "_id": "test-scenario-backward-compatibility-to-get-1",
       "name": "test-scenario-backward-compatibility-to-get-1",
-      "author": "test-scenario-backward-compatibility-to-get-1-author",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": true,
       "disable_during_periods": null,
       "triggers": [

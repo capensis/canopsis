@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -79,6 +80,11 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 
 		for i := range res.Data {
 			fillRolePermissions(&res.Data[i])
+			if r.WithFlags {
+				isNotAdmin := res.Data[i].ID != security.RoleAdmin
+				res.Data[i].Editable = &isNotAdmin
+				res.Data[i].Deletable = &isNotAdmin
+			}
 		}
 	}
 
@@ -131,6 +137,8 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Role, error) {
 			"description":  r.Description,
 			"defaultview":  r.DefaultView,
 			"rights":       transformPermissionsToDoc(r.Permissions, types),
+
+			"auth_config": r.AuthConfig,
 		})
 		if err != nil {
 			return err
@@ -160,6 +168,8 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Role, er
 				"description": r.Description,
 				"defaultview": r.DefaultView,
 				"rights":      transformPermissionsToDoc(r.Permissions, types),
+
+				"auth_config": r.AuthConfig,
 			}},
 		)
 		if err != nil || res.MatchedCount == 0 {
@@ -230,7 +240,7 @@ func getNestedObjectsPipeline() []bson.M {
 				"in": bson.M{
 					"_id":         "$$each._id",
 					"name":        "$$each.crecord_name",
-					"description": "$$each.desc",
+					"description": "$$each.description",
 					"type":        "$$each.type",
 					"bitmask": bson.M{"$arrayElemAt": bson.A{
 						bson.M{"$map": bson.M{
@@ -257,6 +267,7 @@ func getNestedObjectsPipeline() []bson.M {
 			"description": bson.M{"$first": "$description"},
 			"defaultview": bson.M{"$first": "$defaultview"},
 			"permissions": bson.M{"$push": "$permissions"},
+			"auth_config": bson.M{"$first": "$auth_config"},
 		}},
 		{"$lookup": bson.M{
 			"from":         mongo.ViewMongoCollection,

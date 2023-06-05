@@ -5,7 +5,7 @@
       :pending="pbehaviorTypesPending",
       :totalItems="pbehaviorTypesMeta.total_count",
       :pagination.sync="pagination",
-      :deletable="hasDeleteAnyPbehaviorTypeAccess",
+      :removable="hasDeleteAnyPbehaviorTypeAccess",
       @remove-selected="showRemoveSelectedPbehaviorTypeModal",
       @remove="showRemovePbehaviorTypeModal",
       @edit="showEditPbehaviorTypeModal"
@@ -16,7 +16,7 @@
 import { MODALS } from '@/constants';
 
 import { permissionsTechnicalPbehaviorTypesMixin } from '@/mixins/permissions/technical/pbehavior-types';
-import { entitiesPbehaviorTypesMixin } from '@/mixins/entities/pbehavior/types';
+import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
 import { localQueryMixin } from '@/mixins/query-local/query';
 
 import PlanningTypesList from '@/components/other/pbehavior/types/pbehavior-types-list.vue';
@@ -25,7 +25,7 @@ export default {
   components: { PlanningTypesList },
   mixins: [
     permissionsTechnicalPbehaviorTypesMixin,
-    entitiesPbehaviorTypesMixin,
+    entitiesPbehaviorTypeMixin,
     localQueryMixin,
   ],
   props: {
@@ -41,6 +41,7 @@ export default {
     fetchList() {
       const params = this.getQuery();
       params.with_flags = true;
+      params.with_hidden = true;
 
       this.fetchPbehaviorTypesList({ params });
     },

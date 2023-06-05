@@ -1,9 +1,10 @@
 Feature: update alarm by RPC stream
   I need to be able to update alarm on RPC event
 
+  @concurrent
   Scenario: given ack event should update alarm
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -16,7 +17,6 @@ Feature: update alarm by RPC stream
       "output" : "test-output-axe-rpc-1"
     }
     """
-    When I wait the end of event processing
     When I call RPC to engine-axe with alarm test-resource-axe-rpc-1/test-component-axe-rpc-1:
 	"""
 	{
@@ -108,9 +108,10 @@ Feature: update alarm by RPC stream
     ]
     """
 
+  @concurrent
   Scenario: given remove ack event should update alarm
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -123,8 +124,7 @@ Feature: update alarm by RPC stream
       "output" : "test-output-axe-rpc-2"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "ack",
@@ -136,7 +136,6 @@ Feature: update alarm by RPC stream
       "output" : "test-output-axe-rpc-2"
     }
     """
-    When I wait the end of event processing
     When I call RPC to engine-axe with alarm test-resource-axe-rpc-2/test-component-axe-rpc-2:
 	"""
 	{
@@ -229,9 +228,10 @@ Feature: update alarm by RPC stream
     ]
     """
 
+  @concurrent
   Scenario: given cancel event should update alarm
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -244,7 +244,6 @@ Feature: update alarm by RPC stream
       "output" : "test-output-axe-rpc-3"
     }
     """
-    When I wait the end of event processing
     When I call RPC to engine-axe with alarm test-resource-axe-rpc-3/test-component-axe-rpc-3:
 	"""
 	{
@@ -345,9 +344,10 @@ Feature: update alarm by RPC stream
     ]
     """
 
+  @concurrent
   Scenario: given assoc ticket event should update alarm
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -360,17 +360,21 @@ Feature: update alarm by RPC stream
       "output" : "test-output-axe-rpc-4"
     }
     """
-    When I wait the end of event processing
     When I call RPC to engine-axe with alarm test-resource-axe-rpc-4/test-component-axe-rpc-4:
-	"""
-	{
-		"event_type": "assocticket",
-		"parameters": {
-		  "ticket": "testticket",
-          "output": "test-output-axe-rpc-4"
-        }
-	}
-	"""
+    """json
+    {
+      "event_type": "assocticket",
+      "parameters": {
+        "ticket": "test-ticket",
+        "ticket_url": "test-url",
+        "ticket_system_name": "test-system-name",
+        "ticket_data": {
+          "ticket_param_1": "ticket_value_1"
+        },
+        "ticket_comment": "test-comment"
+      }
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-axe-rpc-4
     Then the response code should be 200
     Then the response body should contain:
@@ -379,11 +383,31 @@ Feature: update alarm by RPC stream
       "data": [
         {
           "v": {
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "system",
+                "m": "Ticket ID: test-ticket. Ticket URL: test-url. Ticket ticket_param_1: ticket_value_1.",
+                "ticket": "test-ticket",
+                "ticket_url": "test-url",
+                "ticket_system_name": "test-system-name",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-comment"
+              }
+            ],
             "ticket": {
               "_t": "assocticket",
               "a": "system",
-              "m": "testticket",
-              "val": "testticket"
+              "m": "Ticket ID: test-ticket. Ticket URL: test-url. Ticket ticket_param_1: ticket_value_1.",
+              "ticket": "test-ticket",
+              "ticket_url": "test-url",
+              "ticket_system_name": "test-system-name",
+              "ticket_data": {
+                "ticket_param_1": "ticket_value_1"
+              },
+              "ticket_comment": "test-comment"
             },
             "component": "test-component-axe-rpc-4",
             "connector": "test-connector-axe-rpc-4",
@@ -437,8 +461,15 @@ Feature: update alarm by RPC stream
               {
                 "_t": "assocticket",
                 "a": "system",
-                "m": "testticket",
-                "val": 0
+                "val": 0,
+                "m": "Ticket ID: test-ticket. Ticket URL: test-url. Ticket ticket_param_1: ticket_value_1.",
+                "ticket": "test-ticket",
+                "ticket_url": "test-url",
+                "ticket_system_name": "test-system-name",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-comment"
               }
             ],
             "meta": {
@@ -453,9 +484,10 @@ Feature: update alarm by RPC stream
     ]
     """
 
+  @concurrent
   Scenario: given change state event should update alarm
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -468,7 +500,6 @@ Feature: update alarm by RPC stream
       "output" : "test-output-axe-rpc-5"
     }
     """
-    When I wait the end of event processing
     When I call RPC to engine-axe with alarm test-resource-axe-rpc-5/test-component-axe-rpc-5:
 	"""
 	{
@@ -558,9 +589,10 @@ Feature: update alarm by RPC stream
     ]
     """
 
+  @concurrent
   Scenario: given snooze event should update alarm
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -573,7 +605,6 @@ Feature: update alarm by RPC stream
       "output" : "test-output-axe-rpc-6"
     }
     """
-    When I wait the end of event processing
     When I call RPC to engine-axe with alarm test-resource-axe-rpc-6/test-component-axe-rpc-6:
 	"""
 	{
@@ -667,9 +698,10 @@ Feature: update alarm by RPC stream
     ]
     """
 
+  @concurrent
   Scenario: given change state event with ok status should update alarm status
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -682,7 +714,6 @@ Feature: update alarm by RPC stream
       "output" : "test-output-axe-rpc-7"
     }
     """
-    When I wait the end of event processing
     When I call RPC to engine-axe with alarm test-resource-axe-rpc-7/test-component-axe-rpc-7:
 	"""
 	{
@@ -781,9 +812,10 @@ Feature: update alarm by RPC stream
     ]
     """
 
+  @concurrent
   Scenario: given change state event with ok status should not update alarm anymore
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -796,7 +828,6 @@ Feature: update alarm by RPC stream
       "output" : "test-output-axe-rpc-8"
     }
     """
-    When I wait the end of event processing
     When I call RPC to engine-axe with alarm test-resource-axe-rpc-8/test-component-axe-rpc-8:
 	"""
 	{
@@ -807,7 +838,7 @@ Feature: update alarm by RPC stream
         }
 	}
 	"""
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -820,7 +851,6 @@ Feature: update alarm by RPC stream
       "output" : "test-output-axe-rpc-8"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-axe-rpc-8
     Then the response code should be 200
     Then the response body should contain:

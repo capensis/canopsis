@@ -2,10 +2,11 @@ package action
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"github.com/rs/zerolog"
 	"strings"
 	"sync"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"github.com/rs/zerolog"
 )
 
 type scenarioStorage struct {
@@ -29,12 +30,7 @@ func NewScenarioStorage(
 }
 
 func (s *scenarioStorage) ReloadScenarios(ctx context.Context) error {
-	s.scenariosMx.Lock()
-	defer s.scenariosMx.Unlock()
-
-	var err error
 	scenarios, err := s.adapter.GetEnabled(ctx)
-
 	if err != nil {
 		return err
 	}
@@ -47,21 +43,21 @@ func (s *scenarioStorage) ReloadScenarios(ctx context.Context) error {
 		for i, action := range scenario.Actions {
 			if !action.OldEntityPatterns.IsSet() && !action.OldAlarmPatterns.IsSet() &&
 				len(action.AlarmPattern) == 0 && len(action.EntityPattern) == 0 {
-				s.logger.Warn().Str("scenario", scenario.ID).Int("action number", i).Msg("action doesn't have patterns")
+				s.logger.Warn().Str("scenario", scenario.ID).Int("action_number", i).Msg("action doesn't have patterns")
 				valid = false
 
 				break
 			}
 
 			if !action.OldEntityPatterns.IsValid() {
-				s.logger.Warn().Str("scenario", scenario.ID).Int("action number", i).Msg("failed to parse entity patterns")
+				s.logger.Warn().Str("scenario", scenario.ID).Int("action_number", i).Msg("failed to parse entity patterns")
 				valid = false
 
 				break
 			}
 
 			if !action.OldAlarmPatterns.IsValid() {
-				s.logger.Warn().Str("scenario", scenario.ID).Int("action number", i).Msg("failed to parse alarm patterns")
+				s.logger.Warn().Str("scenario", scenario.ID).Int("action_number", i).Msg("failed to parse alarm patterns")
 				valid = false
 
 				break
@@ -74,6 +70,9 @@ func (s *scenarioStorage) ReloadScenarios(ctx context.Context) error {
 		}
 	}
 
+	s.scenariosMx.Lock()
+	defer s.scenariosMx.Unlock()
+
 	s.scenarios = validScenarios
 	s.logger.Debug().Str("scenarios", strings.Join(validScenariosIDs, ", ")).Int("number", len(s.scenarios)).Msg("Successfully loaded scenarios")
 
@@ -83,18 +82,19 @@ func (s *scenarioStorage) ReloadScenarios(ctx context.Context) error {
 func (s *scenarioStorage) GetTriggeredScenarios(
 	triggers []string,
 	alarm types.Alarm,
-) ([]Scenario, error) {
+) (map[string][]Scenario, error) {
 	s.scenariosMx.RLock()
 	defer s.scenariosMx.RUnlock()
 
-	triggeredScenarios := make([]Scenario, 0)
+	triggeredScenarios := make(map[string][]Scenario, 0)
 
 	for _, scenario := range s.scenarios {
 		if alarm.Value.PbehaviorInfo.OneOf(scenario.DisableDuringPeriods) {
 			continue
 		}
 
-		if !scenario.IsTriggered(triggers) {
+		trigger := scenario.IsTriggered(triggers)
+		if trigger == "" {
 			continue
 		}
 
@@ -102,7 +102,7 @@ func (s *scenarioStorage) GetTriggeredScenarios(
 			continue
 		}
 
-		triggeredScenarios = append(triggeredScenarios, scenario)
+		triggeredScenarios[trigger] = append(triggeredScenarios[trigger], scenario)
 	}
 
 	return triggeredScenarios, nil
@@ -123,7 +123,8 @@ func (s *scenarioStorage) RunDelayedScenarios(
 			continue
 		}
 
-		if !scenario.IsTriggered(triggers) {
+		trigger := scenario.IsTriggered(triggers)
+		if trigger == "" {
 			continue
 		}
 
@@ -145,6 +146,7 @@ func (s *scenarioStorage) RunDelayedScenarios(
 			}
 
 			if matched {
+				additionalData.Trigger = trigger
 				err := s.delayedScenarioManager.AddDelayedScenario(ctx, alarm, scenario, additionalData)
 				if err != nil {
 					return err

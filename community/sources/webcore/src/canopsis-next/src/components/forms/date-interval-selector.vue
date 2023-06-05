@@ -2,30 +2,31 @@
   div
     v-layout
       v-flex(xs6)
-        v-layout(align-center)
-          v-flex
-            date-time-picker-text-field(
-              v-field="value.tstart",
-              v-validate="tstartRules",
-              :label="$t('common.startDate')",
-              :date-object-preparer="startDateObjectPreparer",
-              :round-hours="roundHours",
-              name="tstart",
-              @update:objectValue="$emit('update:startObjectValue', $event)"
-            )
-        v-layout(align-center)
-          v-flex
-            date-time-picker-text-field(
-              v-field="value.tstop",
-              v-validate="tstopRules",
-              :label="$t('common.endDate')",
-              :date-object-preparer="stopDateObjectPreparer",
-              :round-hours="roundHours",
-              name="tstop",
-              @update:objectValue="$emit('update:stopObjectValue', $event)"
-            )
+        v-layout(column)
+          date-time-picker-text-field(
+            v-field="value.tstart",
+            v-validate="tstartRules",
+            :label="$t('common.startDate')",
+            :date-object-preparer="startDateObjectPreparer",
+            :round-hours="roundHours",
+            name="tstart",
+            @update:objectValue="$emit('update:startObjectValue', $event)"
+          )
+          date-time-picker-text-field(
+            v-field="value.tstop",
+            v-validate="tstopRules",
+            :label="$t('common.endDate')",
+            :date-object-preparer="stopDateObjectPreparer",
+            :round-hours="roundHours",
+            name="tstop",
+            @update:objectValue="$emit('update:stopObjectValue', $event)"
+          )
       v-flex.pl-1(xs6)
-        c-quick-date-interval-type-field(v-model="range")
+        c-quick-date-interval-type-field(
+          v-model="range",
+          :ranges="quickRanges",
+          return-object
+        )
         v-select(
           v-field="value.time_field",
           :items="intervalFields",
@@ -35,10 +36,9 @@
 </template>
 
 <script>
-import { TIME_UNITS, ALARM_INTERVAL_FIELDS, DATETIME_FORMATS, DATETIME_INTERVAL_TYPES } from '@/constants';
+import { TIME_UNITS, ALARM_INTERVAL_FIELDS, DATETIME_INTERVAL_TYPES, DATETIME_FORMATS } from '@/constants';
 
-import { convertDateIntervalToDateObject } from '@/helpers/date/date-intervals';
-import { convertDateToStartOfUnitString, subtractUnitFromDate } from '@/helpers/date/date';
+import { convertDateIntervalToDateObject, getValueFromQuickRange } from '@/helpers/date/date-intervals';
 
 import { formMixin } from '@/mixins/form';
 
@@ -64,12 +64,16 @@ export default {
       required: true,
     },
     tstopRules: {
-      type: [String, Array],
+      type: [String, Object],
       default: null,
     },
     tstartRules: {
-      type: [String, Array],
+      type: [String, Object],
       default: null,
+    },
+    quickRanges: {
+      type: Array,
+      required: false,
     },
   },
   computed: {
@@ -79,56 +83,46 @@ export default {
       },
       set(range) {
         if (range.value !== this.range.value) {
-          let newValue = {
-            tstart: range.start,
-            tstop: range.stop,
-          };
-
-          if (!newValue.tstop || !newValue.tstart) {
-            newValue = {
-              periodUnit: TIME_UNITS.hour,
-              periodValue: 1,
-
-              tstart: convertDateToStartOfUnitString(
-                subtractUnitFromDate(Date.now(), 1, TIME_UNITS.hour),
-                TIME_UNITS.hour,
-                DATETIME_FORMATS.dateTimePicker,
-              ),
-
-              tstop: convertDateToStartOfUnitString(
-                Date.now(),
-                TIME_UNITS.hour,
-                DATETIME_FORMATS.dateTimePicker,
-              ),
-            };
-          }
-
           this.updateModel({
             ...this.value,
-            ...newValue,
+            ...getValueFromQuickRange(range),
           });
         }
       },
     },
 
     intervalFields() {
+      const messages = this.$t('quickRanges.intervalFields');
+
       return Object.values(ALARM_INTERVAL_FIELDS).map(value => ({
         value,
-        text: value,
+        text: messages[value],
       }));
     },
 
     unit() {
-      return this.roundHours ? TIME_UNITS.hour : TIME_UNITS.minute;
+      return this.roundHours
+        ? TIME_UNITS.hour
+        : TIME_UNITS.minute;
     },
   },
   methods: {
-    stopDateObjectPreparer(date) {
-      return convertDateIntervalToDateObject(date, DATETIME_INTERVAL_TYPES.stop, this.unit);
+    startDateObjectPreparer(date) {
+      return convertDateIntervalToDateObject(
+        date,
+        DATETIME_INTERVAL_TYPES.start,
+        DATETIME_FORMATS.dateTimePicker,
+        this.unit,
+      );
     },
 
-    startDateObjectPreparer(date) {
-      return convertDateIntervalToDateObject(date, DATETIME_INTERVAL_TYPES.start, this.unit);
+    stopDateObjectPreparer(date) {
+      return convertDateIntervalToDateObject(
+        date,
+        DATETIME_INTERVAL_TYPES.stop,
+        DATETIME_FORMATS.dateTimePicker,
+        this.unit,
+      );
     },
   },
 };

@@ -6,7 +6,7 @@ Feature: Export entities
     When I do POST /api/v4/entity-export:
     """json
     {
-      "search": "test-entity-to-export",
+      "search": "test-resource-to-export",
       "fields": [
          {"name": "_id", "label": "ID"},
          {"name": "name", "label": "Name"},
@@ -28,8 +28,8 @@ Feature: Export entities
     Then the response raw body should be:
     """csv
     ID,Name,Type,Infos
-    test-entity-to-export-resource-1/test-entity-to-export-component,test-entity-to-export-resource-1,resource,"{""test-entity-to-export-resource-1-info-1"":{""name"":""test-entity-to-export-resource-1-info-1-name"",""description"":""test-entity-to-export-resource-1-info-1-description"",""value"":""test-entity-to-export-resource-1-info-1-value""}}"
-    test-entity-to-export-resource-2/test-entity-to-export-component,test-entity-to-export-resource-2,resource,{}
+    test-resource-to-export-1/test-component-default,test-resource-to-export-1,resource,"{""test-resource-to-export-1-info-1"":{""description"":""test-resource-to-export-1-info-1-description"",""name"":""test-resource-to-export-1-info-1-name"",""value"":""test-resource-to-export-1-info-1-value""}}"
+    test-resource-to-export-2/test-component-default,test-resource-to-export-2,resource,{}
 
     """
 

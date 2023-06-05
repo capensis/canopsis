@@ -40,6 +40,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -48,6 +49,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -85,8 +87,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	filterId := "test-filter"
 	filter := view.WidgetFilter{
+		ID: "test-filter",
 		AlarmPatternFields: savedpattern.AlarmPatternFields{
 			AlarmPattern: pattern.Alarm{
 				{
@@ -108,13 +110,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	mockDbClient := createMockDbClientWithFilterFetching(ctrl, filterId, filter)
+	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
-					Filter: filterId,
+					Filters: []string{filter.ID},
 				},
 			},
 		},
@@ -127,6 +129,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -135,6 +138,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -178,7 +182,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	filterId := "test-filter"
 	durationCond, err := pattern.NewDurationCondition(pattern.ConditionGT, types.DurationWithUnit{
 		Value: 10,
 		Unit:  "m",
@@ -187,6 +190,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		panic(err)
 	}
 	filter := view.WidgetFilter{
+		ID: "test-filter",
 		AlarmPatternFields: savedpattern.AlarmPatternFields{
 			AlarmPattern: pattern.Alarm{
 				{
@@ -202,13 +206,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	mockDbClient := createMockDbClientWithFilterFetching(ctrl, filterId, filter)
+	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
-					Filter: filterId,
+					Filters: []string{filter.ID},
 				},
 			},
 		},
@@ -221,6 +225,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -232,6 +237,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -274,8 +280,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	filterId := "test-filter"
 	filter := view.WidgetFilter{
+		ID: "test-filter",
 		AlarmPatternFields: savedpattern.AlarmPatternFields{
 			AlarmPattern: pattern.Alarm{
 				{
@@ -292,13 +298,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	mockDbClient := createMockDbClientWithFilterFetching(ctrl, filterId, filter)
+	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
-					Filter: filterId,
+					Filters: []string{filter.ID},
 				},
 			},
 		},
@@ -311,6 +317,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -319,6 +326,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -364,8 +372,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	filterId := "test-filter"
 	filter := view.WidgetFilter{
+		ID: "test-filter",
 		AlarmPatternFields: savedpattern.AlarmPatternFields{
 			AlarmPattern: pattern.Alarm{
 				{
@@ -397,13 +405,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			},
 		},
 	}
-	mockDbClient := createMockDbClientWithFilterFetching(ctrl, filterId, filter)
+	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
-					Filter: filterId,
+					Filters: []string{filter.ID},
 				},
 			},
 		},
@@ -416,6 +424,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -424,6 +433,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -470,19 +480,19 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	filterId := "test-filter"
 	filter := view.WidgetFilter{
+		ID: "test-filter",
 		OldMongoQuery: `{"$and": [
 			{"v.connector": "test-connector"}
 		]}`,
 	}
-	mockDbClient := createMockDbClientWithFilterFetching(ctrl, filterId, filter)
+	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
-					Filter: filterId,
+					Filters: []string{filter.ID},
 				},
 			},
 		},
@@ -495,6 +505,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -503,6 +514,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -544,8 +556,8 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	filterId := "test-filter"
 	filter := view.WidgetFilter{
+		ID: "test-filter",
 		OldMongoQuery: `{"$and": [
 			{"v.connector": "test-connector"},
 			{"v.duration": {"$gt": 600}},
@@ -554,13 +566,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			{"v.infos.*.info_name": 3}
 		]}`,
 	}
-	mockDbClient := createMockDbClientWithFilterFetching(ctrl, filterId, filter)
+	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
-					Filter: filterId,
+					Filters: []string{filter.ID},
 				},
 			},
 		},
@@ -573,6 +585,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -586,6 +599,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -660,6 +674,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -668,6 +683,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -772,12 +788,18 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 		}
 	}).AnyTimes()
 
+	hasRunningExecution := false
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
-					IncludeInstructions: []string{instructionId},
+					Instructions: []InstructionFilterRequest{
+						{
+							Running: &hasRunningExecution,
+							Include: []string{instructionId},
+						},
+					},
 				},
 			},
 		},
@@ -790,6 +812,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -801,6 +824,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -814,28 +838,33 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
 	}
 	expected = append(expected, getEntityLookup()...)
+	expected = append(expected, getInstructionExecutionLookup(false)...)
 	expected = append(expected,
 		bson.M{"$match": bson.M{"entity.enabled": true}},
 		bson.M{"$match": bson.M{"$and": []bson.M{
-			{"$or": []bson.M{
-				{"$and": []bson.M{
-					{"$or": []bson.M{{"$and": []bson.M{
-						{"v.duration": bson.M{"$gt": 600}},
-						{"$and": []bson.M{
-							{"v.infos_array.v.info_name": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
-							{"v.infos_array.v.info_name": bson.M{"$eq": 3}},
-						}},
-					}}}},
-					{"$or": []bson.M{{"$and": []bson.M{
-						{"entity.category": bson.M{"$eq": "test-category"}},
-					}}}},
-					{"v.pbehavior_info.type": bson.M{"$in": []string{"maintenance"}}},
-					{"v.pbehavior_info.type": bson.M{"$nin": []string{"pause"}}},
+			{"$and": []bson.M{
+				{"instruction_execution.instruction": bson.M{"$nin": []string{instructionId}}},
+				{"$or": []bson.M{
+					{"$and": []bson.M{
+						{"$or": []bson.M{{"$and": []bson.M{
+							{"v.duration": bson.M{"$gt": 600}},
+							{"$and": []bson.M{
+								{"v.infos_array.v.info_name": bson.M{"$type": bson.A{"long", "int", "decimal"}}},
+								{"v.infos_array.v.info_name": bson.M{"$eq": 3}},
+							}},
+						}}}},
+						{"$or": []bson.M{{"$and": []bson.M{
+							{"entity.category": bson.M{"$eq": "test-category"}},
+						}}}},
+						{"v.pbehavior_info.type": bson.M{"$in": []string{"maintenance"}}},
+						{"v.pbehavior_info.type": bson.M{"$nin": []string{"pause"}}},
+					}},
 				}},
 			}},
 		}}},
 		bson.M{"$project": bson.M{
-			"entity": 0,
+			"entity":                0,
+			"instruction_execution": 0,
 		}},
 		bson.M{"$facet": bson.M{
 			"data":        expectedDataPipeline,
@@ -862,20 +891,20 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	filterId := "test-filter"
 	filter := view.WidgetFilter{
+		ID: "test-filter",
 		OldMongoQuery: `{"$and": [
 			{"pbehavior._id": "test-pbehavior"},
 			{"entity.name": "test-entity"}
 		]}`,
 	}
-	mockDbClient := createMockDbClientWithFilterFetching(ctrl, filterId, filter)
+	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
-					Filter: filterId,
+					Filters: []string{filter.ID},
 				},
 			},
 			SortRequest: SortRequest{
@@ -896,6 +925,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 		{"$skip": 0},
 		{"$limit": 10},
 	}
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -904,6 +934,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -950,7 +981,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	filterId := "test-filter"
 	durationCond, err := pattern.NewDurationCondition(pattern.ConditionGT, types.DurationWithUnit{
 		Value: 10,
 		Unit:  "m",
@@ -959,6 +989,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 		panic(err)
 	}
 	filter := view.WidgetFilter{
+		ID: "test-filter",
 		AlarmPatternFields: savedpattern.AlarmPatternFields{
 			AlarmPattern: pattern.Alarm{
 				{
@@ -970,13 +1001,13 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 			},
 		},
 	}
-	mockDbClient := createMockDbClientWithFilterFetching(ctrl, filterId, filter)
+	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
-					Filter: filterId,
+					Filters: []string{filter.ID},
 				},
 			},
 			SortRequest: SortRequest{
@@ -999,6 +1030,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -1012,6 +1044,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -1078,6 +1111,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -1086,6 +1120,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -1164,6 +1199,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -1177,6 +1213,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -1246,6 +1283,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -1254,6 +1292,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -1316,6 +1355,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -1327,6 +1367,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -1390,6 +1431,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
@@ -1401,6 +1443,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	})
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
 		"$project": bson.M{
+			"entity.services":     0,
 			"v.steps":             0,
 			"pbehavior.comments":  0,
 			"pbehavior_info_type": 0,
@@ -1436,6 +1479,156 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	}
 }
 
+func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipleWidgetFilters_ShouldBuildQueryWithAllMatches(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	filter1 := view.WidgetFilter{
+		ID: "test-filter-1",
+		AlarmPatternFields: savedpattern.AlarmPatternFields{
+			AlarmPattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.resource",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-resource"),
+					},
+				},
+			},
+		},
+		PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
+			PbehaviorPattern: pattern.PbehaviorInfo{
+				{
+					{
+						Field:     "pbehavior_info.canonical_type",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "pause"),
+					},
+				},
+			},
+		},
+		EntityPatternFields: savedpattern.EntityPatternFields{
+			EntityPattern: pattern.Entity{
+				{
+					{
+						Field:     "category",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-category"),
+					},
+				},
+			},
+		},
+	}
+	filter2 := view.WidgetFilter{
+		ID: "test-filter-2",
+		AlarmPatternFields: savedpattern.AlarmPatternFields{
+			AlarmPattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.component",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-component"),
+					},
+				},
+			},
+		},
+		PbehaviorPatternFields: savedpattern.PbehaviorPatternFields{
+			PbehaviorPattern: pattern.PbehaviorInfo{
+				{
+					{
+						Field:     "pbehavior_info.id",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test-pbehavior"),
+					},
+				},
+			},
+		},
+		EntityPatternFields: savedpattern.EntityPatternFields{
+			EntityPattern: pattern.Entity{
+				{
+					{
+						Field:     "type",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "resource"),
+					},
+				},
+			},
+		},
+	}
+	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter1, filter2})
+	request := ListRequestWithPagination{
+		Query: pagination.GetDefaultQuery(),
+		ListRequest: ListRequest{
+			FilterRequest: FilterRequest{
+				BaseFilterRequest: BaseFilterRequest{
+					Filters: []string{filter1.ID, filter2.ID},
+				},
+			},
+		},
+	}
+	now := types.NewCpsTime()
+	expectedDataPipeline := []bson.M{
+		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
+		{"$skip": 0},
+		{"$limit": 10},
+	}
+	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": getComputedFields(now),
+	})
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$project": bson.M{
+			"v.steps":             0,
+			"pbehavior.comments":  0,
+			"pbehavior_info_type": 0,
+			"entity.services":     0,
+		},
+	})
+	expected := []bson.M{
+		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
+			{"v.resource": bson.M{"$eq": "test-resource"}},
+		}}}}},
+		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
+			{"v.pbehavior_info.canonical_type": bson.M{"$eq": "pause"}},
+		}}}}},
+		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
+			{"v.component": bson.M{"$eq": "test-component"}},
+		}}}}},
+		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
+			{"v.pbehavior_info.id": bson.M{"$eq": "test-pbehavior"}},
+		}}}}},
+		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
+	}
+	expected = append(expected, getEntityLookup()...)
+	expected = append(expected,
+		bson.M{"$match": bson.M{"entity.enabled": true}},
+		bson.M{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
+			{"entity.category": bson.M{"$eq": "test-category"}},
+		}}}}},
+		bson.M{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
+			{"entity.type": bson.M{"$eq": "resource"}},
+		}}}}},
+		bson.M{"$project": bson.M{"entity": 0}},
+		bson.M{"$facet": bson.M{
+			"data":        expectedDataPipeline,
+			"total_count": []bson.M{{"$count": "count"}},
+		}},
+		bson.M{"$addFields": bson.M{
+			"total_count": bson.M{"$sum": "$total_count.count"},
+		}},
+	)
+
+	b := NewMongoQueryBuilder(mockDbClient)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+	if diff := pretty.Compare(result, expected); diff != "" {
+		t.Errorf("unexpected result: %s", diff)
+	}
+}
+
 func createMockDbClient(ctrl *gomock.Controller) mongo.DbClient {
 	mockFilterDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockInstructionDbCollection := mock_mongo.NewMockDbCollection(ctrl)
@@ -1454,13 +1647,17 @@ func createMockDbClient(ctrl *gomock.Controller) mongo.DbClient {
 	return mockDbClient
 }
 
-func createMockDbClientWithFilterFetching(ctrl *gomock.Controller, filterId string, filter view.WidgetFilter) mongo.DbClient {
-	mockSingleResult := mock_mongo.NewMockSingleResultHelper(ctrl)
-	mockSingleResult.EXPECT().Decode(gomock.Any()).Do(func(v *view.WidgetFilter) {
-		*v = filter
-	})
+func createMockDbClientWithFilterFetching(ctrl *gomock.Controller, filters []view.WidgetFilter) mongo.DbClient {
 	mockFilterDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockFilterDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Eq(bson.M{"_id": filterId})).Return(mockSingleResult)
+	for _, v := range filters {
+		filter := v
+		mockSingleResult := mock_mongo.NewMockSingleResultHelper(ctrl)
+		mockSingleResult.EXPECT().Decode(gomock.Any()).Do(func(v *view.WidgetFilter) {
+			*v = filter
+		})
+		mockFilterDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Eq(bson.M{"_id": filter.ID})).Return(mockSingleResult)
+	}
+
 	mockInstructionDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.EXPECT().Collection(gomock.Any()).DoAndReturn(func(name string) mongo.DbCollection {

@@ -1,7 +1,7 @@
 <template lang="pug">
-  v-layout(align-center)
-    c-alarm-chip(:value="stateId", :badge-value="badgeValue")
-    v-icon(v-if="showIcon", color="purple") account_circle
+  v-layout(:class="classes", align-center)
+    c-alarm-chip(:value="stateId", :badge-value="badgeValue", :small="small")
+    v-icon.d-block(v-if="showIcon", :size="small ? 14 : undefined", color="purple") account_circle
 </template>
 
 <script>
@@ -23,8 +23,19 @@ export default {
       type: String,
       default: 'v.state.val',
     },
+    small: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
+    classes() {
+      return {
+        'alarm-column-value-state--badge': this.badgeValue,
+        'alarm-column-value-state--small': this.small,
+      };
+    },
+
     badgeValue() {
       return get(this.alarm, 'v.events_count');
     },
@@ -39,3 +50,15 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.alarm-column-value-state {
+  &--badge {
+    margin-top: 12px;
+  }
+
+  &--small {
+    margin-top: 8px;
+  }
+}
+</style>

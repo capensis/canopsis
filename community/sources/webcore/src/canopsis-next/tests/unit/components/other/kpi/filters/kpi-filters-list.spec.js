@@ -21,6 +21,11 @@ const snapshotFactory = (options = {}) => mount(KpiFiltersList, {
   ...options,
 });
 
+const selectExpandButtonByRow = (wrapper, index) => wrapper
+  .findAll('tbody > tr')
+  .at(index)
+  .find('c-expand-btn-stub');
+
 describe('kpi-filters-list', () => {
   const filtersItems = [
     {
@@ -139,12 +144,28 @@ describe('kpi-filters-list', () => {
       },
     });
 
-    const expandButton = wrapper
-      .findAll('tr > td')
-      .at(0)
-      .find('c-expand-btn-stub');
+    const expandButton = selectExpandButtonByRow(wrapper, 0);
 
     await expandButton.vm.$emit('expand');
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `kpi-filters-list` with updatable and old_entity_patterns', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        filters: filtersItems.map(item => ({ ...item, old_entity_patterns: true })),
+        pagination: {
+          page: 1,
+          rowsPerPage: 10,
+          search: '',
+          sortBy: '',
+          descending: false,
+        },
+        updatable: true,
+        totalItems: 50,
+      },
+    });
 
     expect(wrapper.element).toMatchSnapshot();
   });

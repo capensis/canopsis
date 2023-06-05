@@ -3,7 +3,7 @@
     v-flex(v-show="label", xs12)
       v-layout
         h4.subheading.grey--text.text--darken-2 {{ label }}
-        c-help-icon.storage-help-tooltip.ml-2(v-if="helpText", :text="helpText", right)
+        c-help-icon(v-if="helpText", :text="helpText", icon-class="ml-2 storage-help-tooltip", right)
     v-flex(xs12)
       v-layout(column)
         c-storage-field(

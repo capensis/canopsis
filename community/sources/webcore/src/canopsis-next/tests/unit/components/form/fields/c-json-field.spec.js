@@ -10,6 +10,11 @@ const localVue = createVueInstance();
 const stubs = {
   'v-textarea': createTextareaInputStub('v-textarea'),
   'v-btn': createButtonStub('v-btn'),
+  'c-help-icon': true,
+};
+
+const snapshotStubs = {
+  'c-help-icon': true,
 };
 
 const factory = (options = {}) => shallowMount(CJsonField, {
@@ -27,6 +32,7 @@ const factory = (options = {}) => shallowMount(CJsonField, {
 
 const snapshotFactory = (options = {}) => mount(CJsonField, {
   localVue,
+  stubs: snapshotStubs,
 
   parentComponent: {
     $_veeValidate: {
@@ -117,7 +123,7 @@ describe('c-json-field', () => {
     const textarea = wrapper.find('.v-textarea textarea');
 
     expect(textarea.element.value).toBe(defaultValue);
-    expect(popupErrorFn).toBeCalledWith({ text: 'errors.default' });
+    expect(popupErrorFn).toBeCalledWith({ text: 'Something went wrong...' });
   });
 
   it('v-validate works correctly on valid json', async () => {

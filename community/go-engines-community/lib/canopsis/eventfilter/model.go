@@ -44,8 +44,11 @@ type ExternalDataParameters struct {
 	// are used in mongo external data
 	Collection string            `json:"collection,omitempty" bson:"collection,omitempty"`
 	Select     map[string]string `json:"select,omitempty" bson:"select,omitempty"`
+	Regexp     map[string]string `json:"regexp,omitempty" bson:"regexp,omitempty"`
+	SortBy     string            `json:"sort_by,omitempty" bson:"sort_by,omitempty"`
+	Sort       string            `json:"sort,omitempty" bson:"sort,omitempty" binding:"oneoforempty=asc desc"`
 
-	//are used in api external data
+	// are used in api external data
 	RequestParameters *request.Parameters `bson:"request,omitempty" json:"request,omitempty"`
 }
 
@@ -54,7 +57,7 @@ type Rule struct {
 	Author       string                            `bson:"author" json:"author" swaggerignore:"true"`
 	Description  string                            `bson:"description" json:"description" binding:"required,max=255"`
 	Type         string                            `bson:"type" json:"type" binding:"required,oneof=break drop enrichment change_entity"`
-	Priority     int                               `bson:"priority" json:"priority"`
+	Priority     int64                             `bson:"priority" json:"priority"`
 	Enabled      bool                              `bson:"enabled" json:"enabled"`
 	OldPatterns  oldpattern.EventPatternList       `bson:"old_patterns,omitempty" json:"old_patterns,omitempty"`
 	Config       RuleConfig                        `bson:"config" json:"config"`
@@ -64,6 +67,24 @@ type Rule struct {
 
 	EventPattern                     pattern.Event `json:"event_pattern" bson:"event_pattern"`
 	savedpattern.EntityPatternFields `bson:",inline"`
+
+	RRule string         `json:"rrule" bson:"rrule"`
+	Start *types.CpsTime `json:"start,omitempty" bson:"start,omitempty"`
+	Stop  *types.CpsTime `json:"stop,omitempty" bson:"stop,omitempty"`
+
+	//ResolvedStart and ResolvedStop shows the current or the next time interval, where eventfilter rule is enabled
+	ResolvedStart *types.CpsTime `json:"-" bson:"resolved_start,omitempty"`
+	ResolvedStop  *types.CpsTime `json:"-" bson:"resolved_stop,omitempty"`
+
+	//NextResolvedStart and NextResolvedStop shows the next time interval after the one which is defined by ResolvedStart and ResolvedStop
+	NextResolvedStart *types.CpsTime `json:"-" bson:"next_resolved_start,omitempty"`
+	NextResolvedStop  *types.CpsTime `json:"-" bson:"next_resolved_stop,omitempty"`
+
+	Exdates    []types.Exdate `json:"exdates" bson:"exdates"`
+	Exceptions []string       `json:"exceptions" bson:"exceptions"`
+
+	// ResolvedExdates shows exdates if their interval intersects with [now(); now() + 2 che periodical processes] interval
+	ResolvedExdates []types.Exdate `json:"-" bson:"resolved_exdates"`
 }
 
 type RuleConfig struct {

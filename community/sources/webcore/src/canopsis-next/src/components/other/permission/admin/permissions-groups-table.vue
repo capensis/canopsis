@@ -6,7 +6,7 @@
     expand,
     hide-actions
   )
-    template(slot="items", slot-scope="props")
+    template(#items="props")
       permission-group-row(
         :expanded="props.expanded",
         :group="props.item",
@@ -16,12 +16,13 @@
         @change="$listeners.change",
         @expand="props.expanded = !props.expanded"
       )
-    template(slot="expand", slot-scope="{ item }")
+    template(#expand="{ item }")
       permissions-table.expand-permissions-table(
         :permissions="item.permissions",
         :roles="roles",
         :changed-roles="changedRoles",
         :disabled="disabled",
+        :sort-by="sortBy",
         @change="$listeners.change"
       )
 </template>
@@ -54,6 +55,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    sortBy: {
+      type: [Function, Array, String],
+      default: () => ['name'],
+    },
   },
   computed: {
     headers() {
@@ -65,11 +70,11 @@ export default {
     },
 
     groupsWithName() {
-      return this.groups.map(({ key, permissions }) => ({ permissions, name: this.$t(key) }));
+      return this.groups.map(({ key, name, permissions }) => ({ permissions, name: name ?? this.$tc(key) }));
     },
 
     sortedGroups() {
-      return sortBy(this.groupsWithName, ['name']);
+      return sortBy(this.groupsWithName, this.sortBy);
     },
   },
 };
@@ -78,7 +83,7 @@ export default {
 <style lang="scss" scoped>
   $titleLeftPadding: 36px;
 
-  .expand-permissions-table /deep/ .v-table__overflow {
+  .expand-permissions-table ::v-deep .v-table__overflow {
     tr td {
       &:first-child {
         padding-left: $titleLeftPadding;

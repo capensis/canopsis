@@ -27,6 +27,7 @@ Feature: get instruction statistics
       "ok_alarm_states": 1,
       "avg_complete_time": 316,
       "execution_count": 7,
+      "successful": 7,
       "last_executed_on": 1618280210,
       "last_modified": 1596712303,
       "created": 1596712203,
@@ -60,6 +61,7 @@ Feature: get instruction statistics
       "ok_alarm_states": 1,
       "avg_complete_time": 316,
       "execution_count": 7,
+      "successful": 7,
       "last_executed_on": 1618280210,
       "last_modified": 1596712303,
       "created": 1596712203,
@@ -93,6 +95,7 @@ Feature: get instruction statistics
       "ok_alarm_states": 0,
       "avg_complete_time": 0,
       "execution_count": 0,
+      "successful": 0,
       "last_executed_on": null,
       "last_modified": 1596712203,
       "created": 1596712203,
@@ -126,6 +129,7 @@ Feature: get instruction statistics
       "ok_alarm_states": 1,
       "avg_complete_time": 316,
       "execution_count": 7,
+      "successful": 7,
       "last_executed_on": 1618280210,
       "last_modified": 1596712303,
       "created": 1596712203,
@@ -156,5 +160,39 @@ Feature: get instruction statistics
     """
     {
       "error": "Not found"
+    }
+    """
+
+  Scenario: given request should return manual instruction stats
+    When I am admin
+    When I do GET /api/v4/cat/instruction-stats/test-instruction-to-stats-summary-get-4/summary
+    Then the response code should be 200
+    Then the response body should be:
+    """
+    {
+      "_id": "test-instruction-to-stats-summary-get-4",
+      "alarm_states": {
+        "critical": {
+          "from": 2,
+          "to": 1
+        },
+        "major": {
+          "from": 2,
+          "to": 2
+        },
+        "minor": {
+          "from": 1,
+          "to": 1
+        }
+      },
+      "ok_alarm_states": 1,
+      "avg_complete_time": 401,
+      "execution_count": 6,
+      "successful": 5,
+      "last_executed_on": 1596712209,
+      "last_modified": 1596712204,
+      "created": 1596712203,
+      "name": "test-instruction-to-stats-summary-get-4-name",
+      "type": 0
     }
     """

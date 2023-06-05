@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-advanced-data-table.white(
+  c-advanced-data-table(
     :headers="headers",
     :items="pbehaviorReasons",
     :loading="pending",
@@ -12,25 +12,29 @@
     advanced-pagination,
     @update:pagination="$emit('update:pagination', $event)"
   )
-    template(slot="toolbar", slot-scope="props")
-      v-flex(v-show="hasDeleteAnyPbehaviorReasonAccess && props.selected.length", xs4)
-        v-btn(@click="$emit('remove-selected', props.selected)", icon)
-          v-icon delete
-    template(slot="actions", slot-scope="props")
+    template(#mass-actions="{ selected }")
+      c-action-btn(
+        v-if="hasDeleteAnyPbehaviorReasonAccess",
+        type="delete",
+        @click="$emit('remove-selected', selected)"
+      )
+    template(#hidden="{ item }")
+      c-enabled(:value="item.hidden")
+    template(#actions="{ item }")
       c-action-btn(
         v-if="hasUpdateAnyPbehaviorReasonAccess",
         type="edit",
-        @click="$emit('edit', props.item)"
+        @click="$emit('edit', item)"
       )
       c-action-btn(
         v-if="hasDeleteAnyPbehaviorReasonAccess",
-        :tooltip="props.item.deletable ? $t('common.delete') : $t('pbehaviorReasons.usingReason')",
-        :disabled="!props.item.deletable",
+        :tooltip="item.deletable ? $t('common.delete') : $t('pbehavior.reasons.usingReason')",
+        :disabled="!item.deletable",
         type="delete",
-        @click="$emit('remove', props.item._id)"
+        @click="$emit('remove', item._id)"
       )
-    template(slot="expand", slot-scope="props")
-      pbehavior-reasons-list-expand-panel(:pbehaviorReason="props.item")
+    template(#expand="{ item }")
+      pbehavior-reasons-list-expand-panel(:pbehavior-reason="item")
 </template>
 
 <script>
@@ -67,6 +71,10 @@ export default {
         {
           text: this.$t('common.name'),
           value: 'name',
+        },
+        {
+          text: this.$t('common.hidden'),
+          value: 'hidden',
         },
         {
           text: this.$t('common.actionsLabel'),

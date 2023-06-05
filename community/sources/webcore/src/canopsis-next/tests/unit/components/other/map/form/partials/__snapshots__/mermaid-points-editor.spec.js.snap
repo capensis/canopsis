@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`mermaid-points-editor Renders \`mermaid-points-editor\` with custom props 1`] = `
+<div
+  class="mermaid-points mermaid-points--addable"
+>
+  <mermaid-point-marker-stub
+    class="mermaid-points__point"
+    entity=""
+    size="16"
+    x="100"
+    y="100"
+  />
+  <mermaid-point-marker-stub
+    class="mermaid-points__point"
+    entity=""
+    size="16"
+    x="150"
+    y="150"
+  />
+  <point-contextmenu-stub
+    positionx="0"
+    positiony="0"
+  />
+  <point-form-dialog-menu-stub
+    existsentities=","
+    positionx="0"
+    positiony="0"
+  />
+</div>
+`;
+
+exports[`mermaid-points-editor Renders \`mermaid-points-editor\` with required props 1`] = `
+<div
+  class="mermaid-points"
+>
+  <point-contextmenu-stub
+    positionx="0"
+    positiony="0"
+  />
+  <point-form-dialog-menu-stub
+    existsentities=""
+    positionx="0"
+    positiony="0"
+  />
+</div>
+`;

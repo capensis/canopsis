@@ -49,6 +49,7 @@ Feature: update meta alarm on action
     """json
     {
       "name": "test-scenario-pbehavior-action-correlation-1-name",
+      "priority": 10066,
       "enabled": true,
       "triggers": ["comment"],
       "actions": [

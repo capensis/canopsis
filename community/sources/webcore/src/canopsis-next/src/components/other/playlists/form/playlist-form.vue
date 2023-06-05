@@ -1,13 +1,6 @@
 <template lang="pug">
   div
-    v-layout(row)
-      v-text-field(
-        v-field="form.name",
-        v-validate="'required'",
-        :label="$t('common.name')",
-        :error-messages="errors.collect('name')",
-        name="name"
-      )
+    c-name-field(v-field="form.name", required)
     c-duration-field(v-field="form.interval")
     v-layout(row)
       c-enabled-field(v-field="form.enabled")
@@ -17,7 +10,7 @@
       v-layout(v-if="tabsPending", justify-center)
         v-progress-circular(color="primary", indeterminate)
       v-flex(v-else, xs12)
-        v-flex.text-xs-center.mb-2 {{ $t('modals.createPlaylist.result') }}
+        v-flex.text-xs-center.mb-2 {{ $t('common.result') }}
         draggable-playlist-tabs(v-field="form.tabs_list")
     v-layout
       v-alert(:value="errors.has('tabs')", type="error") {{ $t('modals.createPlaylist.errors.emptyTabs') }}
@@ -68,7 +61,6 @@ export default {
       name: 'tabs',
       rules: 'required:true',
       getter: () => this.form.tabs_list.length > 0,
-      context: () => this,
       vm: this,
     });
   },

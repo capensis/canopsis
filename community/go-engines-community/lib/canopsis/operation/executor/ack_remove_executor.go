@@ -2,14 +2,15 @@ package executor
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 // NewAckRemoveExecutor creates new executor.
-func NewAckRemoveExecutor(configProvider config.AlarmConfigProvider) operationlib.Executor {
+func NewAckRemoveExecutor(configProvider config.AlarmConfigProvider) operation.Executor {
 	return &ackRemoveExecutor{
 		configProvider: configProvider,
 	}
@@ -22,13 +23,13 @@ type ackRemoveExecutor struct {
 // Exec creates new ack remove step for alarm.
 func (e *ackRemoveExecutor) Exec(
 	_ context.Context,
-	operation types.Operation,
+	op types.Operation,
 	alarm *types.Alarm,
 	_ *types.Entity,
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	params := operation.Parameters
+	params := op.Parameters
 
 	if userID == "" {
 		userID = params.User

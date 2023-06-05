@@ -1,13 +1,13 @@
 <template lang="pug">
   v-toolbar-title.white--text.font-weight-regular.top-bar-title
-    span {{ title }}
+    span(v-html="compiledTitle")
     div.badge-wrapper(v-if="showBadge")
       v-tooltip(right)
         template(#activator="{ on, attrs }")
           v-btn.badge-button(
             v-on="on",
             v-bind="attrs",
-            color="red",
+            color="error",
             icon,
             small,
             @click="showInfoModal"
@@ -18,6 +18,8 @@
 
 <script>
 import { MODALS } from '@/constants';
+
+import { compile } from '@/helpers/handlebars';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
@@ -36,6 +38,17 @@ export default {
       showBadge: false,
     };
   },
+  asyncComputed: {
+    compiledTitle: {
+      async get() {
+        const compiledTitle = await compile(this.title);
+
+        return `<span>${compiledTitle}</span>`;
+      },
+      lazy: true,
+      default: '',
+    },
+  },
   created() {
     this.$socket.on(Socket.EVENTS_TYPES.networkError, this.socketNetworkErrorHandler);
   },
@@ -52,7 +65,7 @@ export default {
         name: MODALS.info,
         config: {
           title: this.$t('modals.webSocketError.title'),
-          text: this.isCatVersion
+          text: this.isProVersion
             ? this.$t('modals.webSocketError.text')
             : this.$t('modals.webSocketError.shortText'),
         },

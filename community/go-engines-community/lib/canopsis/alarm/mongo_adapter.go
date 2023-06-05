@@ -19,8 +19,6 @@ const (
 	AlarmCollectionName = libmongo.AlarmMongoCollection
 )
 
-const bulkMaxSize = 10000
-
 type mongoAdapter struct {
 	mainDbCollection     libmongo.DbCollection
 	resolvedDbCollection libmongo.DbCollection
@@ -138,16 +136,6 @@ func (a mongoAdapter) GetAlarmsWithCancelMark(ctx context.Context) ([]types.Alar
 	})
 }
 
-func (a mongoAdapter) GetAlarmsWithDoneMark(ctx context.Context) ([]types.Alarm, error) {
-	return a.getAlarms(ctx, bson.M{
-		"v.done": bson.M{"$ne": nil},
-		"$or": []bson.M{
-			{"v.resolved": nil},
-			{"v.resolved": bson.M{"$exists": false}},
-		},
-	})
-}
-
 func (a mongoAdapter) GetAlarmsWithSnoozeMark(ctx context.Context) ([]types.Alarm, error) {
 	return a.getAlarms(ctx, bson.M{
 		"v.snooze": bson.M{"$ne": nil},
@@ -217,12 +205,10 @@ func (a mongoAdapter) GetAlarmByAlarmId(ctx context.Context, id string) (types.A
 	})
 }
 
-func (a mongoAdapter) GetOpenedAlarm(ctx context.Context, connector, connectorName, id string) (types.Alarm, error) {
+func (a mongoAdapter) GetOpenedAlarm(ctx context.Context, entityId string) (types.Alarm, error) {
 	return a.getAlarmWithErr(ctx, bson.M{
-		"d":                id,
-		"v.connector":      connector,
-		"v.connector_name": connectorName,
-		"v.resolved":       nil,
+		"d":          entityId,
+		"v.resolved": nil,
 	})
 }
 
@@ -652,12 +638,6 @@ func (a mongoAdapter) DeleteResolvedAlarms(ctx context.Context, duration time.Du
 	return err
 }
 
-func (a mongoAdapter) DeleteArchivedResolvedAlarms(ctx context.Context, before types.CpsTime) (int64, error) {
-	return a.archivedDbCollection.DeleteMany(ctx, bson.M{
-		"v.resolved": bson.M{"$lte": before},
-	})
-}
-
 func (a *mongoAdapter) CopyAlarmToResolvedCollection(ctx context.Context, alarm types.Alarm) error {
 	_, err := a.resolvedDbCollection.UpdateOne(
 		ctx,
@@ -667,81 +647,6 @@ func (a *mongoAdapter) CopyAlarmToResolvedCollection(ctx context.Context, alarm 
 	)
 
 	return err
-}
-
-func (a *mongoAdapter) ArchiveResolvedAlarms(ctx context.Context, before types.CpsTime) (int64, error) {
-	writeModels := make([]mongo.WriteModel, 0, bulkMaxSize)
-	archivedIds := make([]string, 0, bulkMaxSize)
-
-	cursor, err := a.resolvedDbCollection.Find(ctx, bson.M{
-		"v.resolved": bson.M{"$lte": before},
-	})
-
-	if err != nil {
-		return 0, err
-	}
-
-	defer cursor.Close(ctx)
-
-	var archived int64
-
-	for cursor.Next(ctx) {
-		var alarm types.Alarm
-		err := cursor.Decode(&alarm)
-		if err != nil {
-			return 0, err
-		}
-
-		writeModels = append(
-			writeModels,
-			mongo.NewUpdateOneModel().
-				SetFilter(bson.M{"_id": alarm.ID}).
-				SetUpdate(bson.M{"$set": alarm}).
-				SetUpsert(true),
-		)
-
-		archivedIds = append(archivedIds, alarm.ID)
-
-		if len(writeModels) == bulkMaxSize {
-			res, err := a.archivedDbCollection.BulkWrite(ctx, writeModels)
-			if err != nil {
-				return 0, err
-			}
-
-			archived = archived + res.UpsertedCount
-
-			_, err = a.resolvedDbCollection.DeleteMany(
-				ctx,
-				bson.M{"_id": bson.M{"$in": archivedIds}},
-			)
-			if err != nil {
-				return 0, err
-			}
-
-			writeModels = writeModels[:0]
-			archivedIds = archivedIds[:0]
-		}
-	}
-
-	if len(writeModels) != 0 {
-		res, err := a.archivedDbCollection.BulkWrite(ctx, writeModels)
-		if err != nil {
-			return 0, err
-		}
-
-		archived = archived + res.UpsertedCount
-
-		_, err = a.resolvedDbCollection.DeleteMany(
-			ctx,
-			bson.M{"_id": bson.M{"$in": archivedIds}},
-		)
-
-		if err != nil {
-			return 0, err
-		}
-	}
-
-	return archived, nil
 }
 
 func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdBefore types.CpsTime, idsWithPbehaviors []string) (libmongo.Cursor, error) {

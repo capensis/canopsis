@@ -1,42 +1,25 @@
 <template lang="pug">
   v-layout(column)
-    v-text-field(
-      v-field="form.name",
-      v-validate="'required'",
-      :label="$t('common.name')",
-      :error-messages="errors.collect('name')",
-      name="name"
-    )
+    c-name-field(v-field="form.name", required)
     c-duration-field(v-field="form.duration", required)
-    c-priority-field(v-field="form.priority", required)
-    v-text-field(
+    c-priority-field(v-field="form.priority")
+    c-number-field(
       v-if="flapping",
-      v-field.number="form.freq_limit",
-      v-validate="'required|numeric|min_value:1'",
-      :label="$t('alarmStatusRules.frequencyLimit')",
-      :error-messages="errors.collect('freq_limit')",
+      v-field="form.freq_limit",
+      :label="$t('common.frequencyLimit')",
       :min="1",
-      name="freq_limit",
-      type="number"
+      name="freq_limit"
     )
-    v-textarea(
-      v-field="form.description",
-      v-validate="'required'",
-      :label="$t('common.description')",
-      :error-messages="errors.collect('description')",
-      name="description"
-    )
-    c-patterns-field(
-      v-field="form.patterns",
-      :some-required="flapping",
-      alarm,
-      entity
-    )
+    c-description-field(v-field="form.description", required)
+    alarm-status-rule-patterns-form.mt-2(v-field="form.patterns", :flapping="flapping")
 </template>
 
 <script>
+import AlarmStatusRulePatternsForm from './partials/alarm-status-rule-patterns-form.vue';
+
 export default {
   inject: ['$validator'],
+  components: { AlarmStatusRulePatternsForm },
   model: {
     prop: 'form',
     event: 'input',

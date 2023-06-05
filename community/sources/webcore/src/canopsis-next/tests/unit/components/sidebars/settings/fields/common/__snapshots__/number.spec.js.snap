@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`field-number Renders \`field-number\` with custom props 1`] = `
+<widget-settings-item-stub
+  optional="true"
+  title="Custom title"
+>
+  <c-number-field-stub
+    value="22"
+  />
+</widget-settings-item-stub>
+`;
+
+exports[`field-number Renders \`field-number\` with default props 1`] = `
+<widget-settings-item-stub
+  optional="true"
+  title=""
+>
+  <c-number-field-stub />
+</widget-settings-item-stub>
+`;

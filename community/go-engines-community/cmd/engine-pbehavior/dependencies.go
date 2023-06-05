@@ -12,8 +12,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"github.com/rs/zerolog"
@@ -55,6 +58,10 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		logger,
 	)
 
+	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
+	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
+
 	enginePbehavior := engine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
@@ -70,8 +77,8 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 
 			if count >= 0 {
 				logger.Info().
-					Time("interval from", newSpan.From()).
-					Time("interval to", newSpan.To()).
+					Time("interval_from", newSpan.From()).
+					Time("interval_to", newSpan.To()).
 					Int("count", count).
 					Msg("pbehaviors are recomputed")
 			}
@@ -106,6 +113,10 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	)
+	enginePbehavior.AddRoutine(func(ctx context.Context) error {
+		techMetricsSender.Run(ctx)
+		return nil
+	})
 	enginePbehavior.AddConsumer(engine.NewRPCServer(
 		canopsis.PBehaviorRPCConsumerName,
 		canopsis.PBehaviorRPCQueueServerName,
@@ -124,11 +135,39 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	))
+	enginePbehavior.AddConsumer(engine.NewConcurrentConsumer(
+		canopsis.PBehaviorConsumerName,
+		canopsis.PBehaviorQueueRecomputeName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
+		false,
+		"",
+		"",
+		"",
+		"",
+		amqpConnection,
+		&recomputeMessageProcessor{
+			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
+			PbhService:               pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
+			PbehaviorCollection:      dbClient.Collection(mongo.PbehaviorMongoCollection),
+			EntityCollection:         dbClient.Collection(mongo.EntityMongoCollection),
+			EventGenerator:           libevent.NewGenerator("engine", "pbehavior"),
+			EventManager:             eventManager,
+			Encoder:                  json.NewEncoder(),
+			Decoder:                  json.NewDecoder(),
+			Publisher:                amqpChannel,
+			Exchange:                 canopsis.FIFOExchangeName,
+			Queue:                    canopsis.FIFOQueueName,
+			Logger:                   logger,
+		},
+		logger,
+	))
 	enginePbehavior.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	enginePbehavior.AddPeriodicalWorker("alarms", engine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisSession),
 		redis.PbehaviorPeriodicalLockKey,
 		&periodicalWorker{
+			TechMetricsSender:      techMetricsSender,
 			ChannelPub:             amqpChannel,
 			PeriodicalInterval:     options.PeriodicalWaitTime,
 			PbhService:             pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
@@ -150,22 +189,17 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			TimezoneConfigProvider:    timezoneConfigProvider,
 			DataStorageConfigProvider: dataStorageConfigProvider,
 			LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
-			PbehaviorCleaner:          pbehavior.NewCleaner(dbClient, logger),
 			Logger:                    logger,
 		},
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker("tz config", engine.NewLoadConfigPeriodicalWorker(
+	enginePbehavior.AddPeriodicalWorker("config", engine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
+		logger,
 		timezoneConfigProvider,
-		logger,
-	))
-	enginePbehavior.AddPeriodicalWorker("data storage config", engine.NewLoadConfigPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		config.NewAdapter(dbClient),
 		dataStorageConfigProvider,
-		logger,
+		techMetricsConfigProvider,
 	))
 
 	return enginePbehavior

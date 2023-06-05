@@ -1,0 +1,384 @@
+# Guide de migration vers Canopsis 22.10.0
+
+Ce guide donne des instructions vous permettant de mettre à jour Canopsis 4.6 vers [la version 22.10.0](../22.10.0.md).
+
+
+!!! warning "Avertissement"
+
+    Seules les migrations en environnement Docker sont traitées dans ce guide.  
+    Les migrations en environnement Centos7 seront traitées dans un second temps
+
+## Prérequis
+
+L'ensemble de cette procédure doit être lu avant son exécution.
+
+Ce document ne prend en compte que Canopsis Community et Canopsis Pro : tout développement personnalisé dont vous pourriez bénéficier ne fait pas partie du cadre de ce Guide de migration.
+
+
+## Procédure de mise à jour
+
+### Réalisation d'une sauvegarde
+
+Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lors de modifications importantes.
+
+La restructuration apportée dans les bases de données pour cette version de Canopsis nous amène à insister d'autant plus sur ce point. Il est donc fortement recommandé de réaliser une **sauvegarde complète** des VM hébergeant vos services Canopsis, avant cette mise à jour.
+
+### Arrêt de l'environnement en cours de lancement
+
+Vous devez prévoir une interruption du service afin de procéder à la mise à jour qui va suivre.
+
+=== "Paquets CentOS 7"
+
+    ```sh
+    canoctl stop
+    ```
+
+=== "Docker Compose"
+
+    ```sh
+    docker-compose -f 00-data.docker-compose.yml -f 01-prov.docker-compose.yml -f 02-app.docker-compose.yml down
+    ```
+
+
+### Mise à jour de MongoDB
+
+Dans cette version de Canopsis, la base de données MongoDB passe de la version 4.2 à 4.4.
+
+Stopper mongodb
+
+=== "Paquets CentOS 7"
+
+    !!! important
+        Si vous utilisez un [Replica Set MongoDB](https://docs.mongodb.com/manual/replication/), vous devez obligatoirement suivre une procédure différente :
+
+        1. <https://docs.mongodb.com/manual/release-notes/4.4-upgrade-replica-set/>.
+
+
+    !!! warning "Vérification"
+    
+        Vous devez vérifier que la valeur de `featureCompatibilityVersion` est bien positionnée à **4.2**  
+        ```sh
+        mongo -u root -p root
+        > db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )
+        > exit
+        ```
+        
+        Le retour doit être de la forme `"featureCompatibilityVersion" : { "version" : "4.2" }`
+
+    Exécutez les commandes suivantes pour passer à MongoDB 4.4 :
+
+    ```sh
+    systemctl stop mongod
+
+    sed -i 's|4\.2|4.4|g' /etc/yum.repos.d/mongodb.repo
+
+    yum makecache -y
+    yum install mongodb-org-4.4.17-1.el7.x86_64
+
+    systemctl start mongod
+    ```
+
+    A ce stade, MongoDB a été mis à jour, il vous reste à positionner le paramètre `setFeatureCompatibilityVersion` sur `4.4`
+
+    ```sh
+    mongo -u root -p root
+    > db.adminCommand( { setFeatureCompatibilityVersion: "4.4" } )
+    > exit
+    ```
+
+    Le résultat doit être `{ "ok" : 1 }`
+
+=== "Docker Compose"
+
+    !!! warning "Vérification"
+    
+        Vous devez vérifier que la valeur de `featureCompatibilityVersion` est bien positionnée à **4.2**  
+        ```sh
+        docker-compose -f 00-data.docker-compose.yml exec mongodb bash
+        mongo -u root -p root
+        > db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )
+        > exit
+        ```
+        
+        Le retour doit être de la forme `"featureCompatibilityVersion" : { "version" : "4.2" }`
+
+    Modifiez la variable `MONGO_TAG` du fichier `.env` de cette façon :
+
+    ```diff
+    -MONGO_TAG=4.2.18-bionic
+    +MONGO_TAG=4.4.17-focal
+    ```
+
+    Puis relancez le conteneur `mongodb` :
+
+    ```sh
+    docker-compose -f 00-data.docker-compose.yml up -d mongodb
+    ```
+
+    Entrez ensuite à l'intérieur de ce conteneur, afin de compléter la mise à jour vers MongoDB 4.4 :
+
+    ```sh
+    docker-compose -f 00-data.docker-compose.yml exec mongodb bash
+    mongo -u root -p root
+    > db.adminCommand( { setFeatureCompatibilityVersion: "4.4" } )
+    exit
+    ```
+
+### Mise à jour de TimescaleDB
+
+Dans cette version de Canopsis, la base de données TimescaleDB passe de la version 2.5.1 à 2.7.2.
+
+
+=== "Paquets CentOS 7"
+
+    Exécutez les commandes suivantes pour passer à TimescaleDB 2.7.2 :
+
+    ```sh
+    yum install timescaledb-2-loader-postgresql-13-2.7.1-0.el7.x86_64 timescaledb-2-postgresql-13-2.7.1-0.el7.x86_64
+    sudo su - postgres -c "psql -X"
+    postgres=# \c canopsis
+    canopsis=# ALTER EXTENSION timescaledb UPDATE;
+    ```
+
+    La commande suivante 
+
+    ```
+    canopsis=# \dx timescaledb
+    ```
+
+    doit retourner le résultat suivant (notez la version 2.7.1) :
+
+    ``` 
+                                        List of installed extensions
+        Name     | Version | Schema |                            Description                            
+    -------------+---------+--------+-------------------------------------------------------------------
+     timescaledb | 2.7.1   | public | Enables scalable inserts and complex queries for time-series data
+    (1 row)
+    ```
+
+=== "Docker Compose"
+
+    Modifiez la variable `TIMESCALEDB_TAG` du fichier `.env` de cette façon :
+
+    ```diff
+    -TIMESCALEDB_TAG=2.5.1-pg13
+    +TIMESCALEDB_TAG=2.7.2-pg13
+    ```
+
+    Puis relancez le conteneur `timescaledb` :
+
+    ```sh
+    docker-compose -f 00-data.docker-compose.yml up -d timescaledb
+    ```
+
+### Suppression d'options de lancement de certains moteurs
+
+#### Suppression des options `-featureHideResources`, `-postProcessorsDirectory`, `-ignoreDefaultTomlConfig` dans **engine-axe**
+
+=== "Paquets CentOS 7"
+
+    Lancez la commande suivante afin de savoir si cette option est utilisée :
+
+    ```sh
+    grep -lr -E "featureHideResources|postProcessorsDirectory|ignoreDefaultTomlConfig" /etc/systemd/system/canopsis-engine-go@engine-axe.service.d/*
+    ```
+
+    Si cette commande affiche un résultat, éditez les fichiers qu'elle mentionne afin d'y retirer cette option.
+
+=== "Docker Compose"
+
+    Supprimez toute éventuelle utilisation des options citées dans vos fichiers de référence Docker Compose.
+
+
+#### Suppression des options `-dataSourceDirectory`, `enrichContext`, `enrichExclude`, `enrichInclude` dans **engine-che** 
+
+=== "Paquets CentOS 7"
+
+    Lancez la commande suivante afin de savoir si cette option est utilisée :
+
+    ```sh
+    grep -lr -E "dataSourceDirectory|enrichContext|enrichExclude|enrichInclude" /etc/systemd/system/canopsis-engine-go@engine-che.service.d/*
+    ```
+
+    Si cette commande affiche un résultat, éditez les fichiers qu'elle mentionne afin d'y retirer cette option.
+
+=== "Docker Compose"
+
+    Supprimez toute éventuelle utilisation des options citées dans vos fichiers de référence Docker Compose.
+
+
+#### Suppression des options `-dataSourceDirectory`, `enableMetaAlarmProcessing` dans **engine-fifo** 
+
+=== "Paquets CentOS 7"
+
+    Lancez la commande suivante afin de savoir si cette option est utilisée :
+
+    ```sh
+    grep -lr -E "dataSourceDirectory|enableMetaAlarmProcessing| /etc/systemd/system/canopsis-engine-go@engine-fifo.service.d/*
+    ```
+
+    Si cette commande affiche un résultat, éditez les fichiers qu'elle mentionne afin d'y retirer cette option.
+
+=== "Docker Compose"
+
+    Supprimez toute éventuelle utilisation des options citées dans vos fichiers de référence Docker Compose.
+
+#### Suppression des options `-publishQueue`, `-consumeQueue`, `-fifoAckExchange` dans **engine-pbehavior**
+
+=== "Paquets CentOS 7"
+
+    Lancez la commande suivante afin de savoir si cette option est utilisée :
+
+    ```sh
+    grep -lr -E "publishQueue|-consumeQueue|fifoAckExchange" /etc/systemd/system/canopsis-engine-go@engine-pbehavior.service.d/*
+    ```
+
+    Si cette commande affiche un résultat, éditez les fichiers qu'elle mentionne afin d'y retirer cette option.
+
+=== "Docker Compose"
+
+    Supprimez toute éventuelle utilisation des options citées dans vos fichiers de référence Docker Compos
+
+#### Suppression des options `-c` dans **engine-remediation**
+
+=== "Paquets CentOS 7"
+
+    Lancez la commande suivante afin de savoir si cette option est utilisée :
+
+    ```sh
+    grep -lr -E "-c" /etc/systemd/system/canopsis-engine-go@engine-remediation.service.d/*
+    ```
+
+    Si cette commande affiche un résultat, éditez les fichiers qu'elle mentionne afin d'y retirer cette option.
+
+=== "Docker Compose"
+
+    Supprimez toute éventuelle utilisation des options citées dans vos fichiers de référence Docker Compos
+
+
+### Mise à jour Canopsis
+
+!!! information "Information"
+
+    Canopsis 22.10 est livré avec un nouveau jeu de configurations de référence.
+    Vous devez télécharger ces configurations et y reporter vos personnalisations.  
+
+### Lancement du provisioning `canopsis-reconfigure`
+
+!!! important "Important"
+
+    Le système de provisioning (conteneur provisioning) de Canopsis 4.x disparait au profit du système `canopsis-reconfigure` qui existait déjà.  
+    Exécuter les scripts de migration MongoDB est à présent une des missions de `canopsis-reconfigure`
+
+#### Synchronisation du fichier de configuration `canopsis.toml`
+
+Vérifiez que votre fichier `canopsis.toml` soit bien à jour par rapport au fichier de référence, notamment dans le cas où vous auriez apporté des modifications locales à ce fichier :
+
+* [`canopsis.toml` pour Canopsis Community 22.10.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/22.10.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-community.toml)
+* [`canopsis.toml` pour Canopsis Pro 22.10.0](https://git.canopsis.net/canopsis/canopsis-community/-/blob/22.10.0/community/go-engines-community/cmd/canopsis-reconfigure/canopsis-pro.toml)
+
+!!! information "Information"
+
+    Pour éviter ce type de synchronisation fastidieuse, la bonne pratique est d'utiliser [un fichier de surcharge de cette configuration](../../../guide-administration/administration-avancee/modification-canopsis-toml/). 
+
+=== "Paquets CentOS 7"
+
+    Le fichier à synchroniser est `/opt/canopsis/etc/canopsis.toml`.
+
+=== "Docker Compose"
+
+    Si vous n'avez pas apporté de modification locale, ce fichier est directement intégré et mise à jour dans les conteneurs, et vous n'avez donc pas de modification à apporter.
+
+    Si vous modifiez ce fichier à l'aide d'un volume surchargeant `canopsis.toml`, c'est ce fichier local qui doit être synchronisé.
+
+
+#### Reconfiguration de Canopsis
+
+=== "Paquets CentOS 7"
+
+    Lancez `canopsis-reconfigure`. Attention, cette fois-ci de nouvelles options doivent lui être données :
+
+    ```bash
+    set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
+    /opt/canopsis/bin/canopsis-reconfigure -edition pro -migrate-postgres=true 
+    ```
+
+=== "Docker Compose"
+
+        !!! Attention
+        Si vous avez personnalisé la ligne de commande de l'outil `canopsis-reconfigure`, nous vous conseillons de supprimer cette persionnalisation.
+        L'outil est en effet pré paramétré pour fonctionner naturellement.
+
+    ```sh
+    CPS_EDITION=pro docker-compose up -d
+    ```
+
+### Moteur SNMP et Linkbuilder
+
+Toutes les parties Python de Canopsis ont été supprimées dans la version 22.10.  
+Les fonctionnalités SNMP et Linkbuilder n'ont pas encore été migrées en GO et réintégrées dans Canopsis.  
+Pour continuer à les utiliser, vous devez utiliser les packages des versions 4.x.  
+Cela est temporaire mais nécessaire.
+
+Que ce soit sur une installation par paquets RPM ou par image Docker, nous vous livrons des configurations à exécuter avec Docker.
+
+Voici la configuration à utiliser, notez que la référence au tag `4.6.2` est voulue.
+
+```yml
+---
+version: '3.7'
+
+networks:
+  canopsis-pro_default:
+    external: true
+
+services:
+  oldapi:
+    image: ${DOCKER_REPOSITORY}${PRO_BASE_PATH}canopsis-cat:4.6.2
+    networks:
+      - canopsis-pro_default
+    ports:
+      - "8081:8081"
+    env_file:
+      - compose.env
+    environment:
+      - CPS_OLD_API=1 # must not be moved to compose.env
+    restart: unless-stopped
+  snmp:
+    image: ${DOCKER_REPOSITORY}${PRO_BASE_PATH}canopsis-cat:4.6.2
+    networks:
+      - canopsis-pro_default
+    env_file:
+      - compose.env
+    environment:
+      - ENGINE_NAME=snmp
+      - ENGINE_MODULE=canopsis_cat.engines.snmp
+    volumes:
+      - "./files/snmp_custom/:/opt/canopsis/lib/python2.7/site-packages/canopsis_cat/snmp/custom_handler/"
+    restart: unless-stopped
+
+  cat-connector-snmp2canopsis:
+    image: ${DOCKER_REPOSITORY}${CPS_EDITION}/canopsis-pro-connector-snmp:${CPS_IMG_TAG_SNMP}
+    networks:
+      - canopsis-pro_default
+    env_file:
+      - compose.env
+    environment:
+      - SNMP_DEBUG=0
+    ports:
+      - 162:162/udp
+    volumes:
+      - "./files/snmp2canopsis/snmp2canopsis.conf:/connector-snmp2canopsis/etc/snmp2canopsis.conf"
+    restart: unless-stopped
+```
+
+!!! information "Information"
+
+    Si vous utilisez une installation Docker, veillez à adapter le nom du réseau en fonction de votre environnement Canopsis.  
+    Si vous utilisez une installation par paquet, faites tout simplement disparaitre la section `networks`de chaque service.  
+    Dans tous les cas, veillez à ajouter une variable `CPS_OLD_API_URL` dans le fichier `compose.env`.  
+    Exemple : `CPS_OLD_API_URL=http://oldapi:8081`
+
+```sh
+docker-compose -f stack_python.yml up -d 
+```

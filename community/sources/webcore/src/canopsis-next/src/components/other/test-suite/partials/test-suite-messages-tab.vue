@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout.pa-3(column)
+  v-layout(column)
     template(v-if="hasMessages")
       test-suite-message-panel.mb-2(
         v-if="testSuite.system_err",

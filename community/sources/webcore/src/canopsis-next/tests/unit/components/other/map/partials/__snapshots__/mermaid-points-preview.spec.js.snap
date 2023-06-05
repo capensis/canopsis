@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`mermaid-points-preview Renders \`mermaid-points-preview\` with custom props 1`] = `
+<div>
+  <mermaid-point-marker-stub
+    colorindicator="impact_state"
+    entity=""
+    pbehaviorenabled="true"
+    size="12"
+    x="1"
+    y="2"
+  />
+  <point-popup-dialog-stub
+    colorindicator="impact_state"
+    point="[object Object]"
+    popupactions="true"
+    popuptemplate="{{ entity.name }}"
+    positionx="5.5"
+    positiony="1"
+  />
+</div>
+`;
+
+exports[`mermaid-points-preview Renders \`mermaid-points-preview\` with required props 1`] = `
+<div>
+  <mermaid-point-marker-stub
+    entity=""
+    size="24"
+    x="1"
+    y="2"
+  />
+  <!---->
+</div>
+`;

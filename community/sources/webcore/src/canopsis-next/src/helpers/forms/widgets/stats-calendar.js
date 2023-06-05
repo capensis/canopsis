@@ -2,6 +2,7 @@ import { cloneDeep } from 'lodash';
 
 import { ALARM_LEVELS, ALARM_LEVELS_COLORS } from '@/constants';
 
+import { openedToForm } from './common';
 import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './alarm';
 
 /**
@@ -15,16 +16,21 @@ import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './
  */
 
 /**
+ * @typedef {StatsCalendarWidgetParameters} StatsCalendarWidgetParametersForm
+ * @property {AlarmListBaseParametersForm} alarmsList
+ */
+
+/**
  * Convert stats calendar widget parameters to form
  *
  * @param {StatsCalendarWidgetParameters} [parameters = {}]
- * @return {StatsCalendarWidgetParameters}
+ * @return {StatsCalendarWidgetParametersForm}
  */
 export const statsCalendarWidgetParametersToForm = (parameters = {}) => ({
   filters: parameters.filters
     ? cloneDeep(parameters.filters)
     : [],
-  opened: parameters.opened ?? false,
+  opened: openedToForm(parameters.opened),
   considerPbehaviors: parameters.considerPbehaviors ?? false,
   criticityLevels: parameters.criticityLevels
     ? { ...parameters.criticityLevels }
@@ -38,7 +44,7 @@ export const statsCalendarWidgetParametersToForm = (parameters = {}) => ({
 /**
  * Convert form to stats calendar widget parameters
  *
- * @param {StatsCalendarWidgetParameters} form
+ * @param {StatsCalendarWidgetParametersForm} form
  * @return {StatsCalendarWidgetParameters}
  */
 export const formToStatsCalendarWidgetParameters = form => ({

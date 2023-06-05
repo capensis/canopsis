@@ -15,4 +15,4 @@
 !community/docker/files/etc/nginx/*
 !community/docker/files/entrypoint-nginx.sh
 !community/deploy-ansible/playbook/roles/canopsis/templates/nginx/*.j2
-!community/go-engines-community/.env
+!community/.env

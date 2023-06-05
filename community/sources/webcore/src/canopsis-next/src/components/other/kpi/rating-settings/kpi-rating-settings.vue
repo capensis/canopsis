@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    span.pl-4.subheading.grey--text.text--darken-2 {{ $t('kpiRatingSettings.helpInformation') }}
+    span.pl-4.subheading {{ $t('kpi.ratingSettings.helpInformation') }}
     kpi-rating-settings-list(
       :pagination.sync="pagination",
       :rating-settings="ratingSettings",

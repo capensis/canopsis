@@ -5,7 +5,7 @@
 <script>
 import { get } from 'lodash';
 
-import { ENTITY_INFOS_TYPE } from '@/constants';
+import { ENTITY_INFOS_TYPE, ENTITY_FIELDS } from '@/constants';
 
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
@@ -45,7 +45,9 @@ export default {
 
     columnFilter() {
       const PROPERTIES_FILTERS_MAP = {
-        last_event_date: convertDateToStringWithFormatForToday,
+        [ENTITY_FIELDS.lastEventDate]: convertDateToStringWithFormatForToday,
+        [ENTITY_FIELDS.lastPbehaviorDate]: convertDateToStringWithFormatForToday,
+        [ENTITY_FIELDS.imported]: convertDateToStringWithFormatForToday,
 
         ...this.columnsFiltersMap,
       };

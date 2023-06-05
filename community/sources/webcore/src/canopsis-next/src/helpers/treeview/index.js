@@ -9,11 +9,11 @@ import { isObject, isArray } from 'lodash';
  * @param [isParentArray=false] - Is parent converted array into object
  * @return {{children: [string, any], name: *}}
  */
-export function convertObjectToTreeview(parent, parentKey, parentPath = '', isParentArray = false) {
+export const convertObjectToTreeview = (parent, parentKey, parentPath = '', isParentArray = false) => {
   const basePath = !parentPath ? parentKey : parentPath;
 
   const children = Object.entries(parent).reduce((acc, [key, value]) => {
-    const path = isParentArray ? `${basePath}.[${key}]` : `${basePath}.${key}`;
+    const path = [basePath, isParentArray ? `[${key}]` : key].filter(Boolean).join('.');
 
     if (isArray(value)) {
       acc.push({
@@ -35,60 +35,7 @@ export function convertObjectToTreeview(parent, parentKey, parentPath = '', isPa
   }, []);
 
   return { name: parentKey, children };
-}
-
-/**
- * Check if rule is simple value
- *
- * @param {string} rule
- * @returns {boolean}
- */
-export const isSimpleRule = (rule = '') => isArray(rule) || !isObject(rule);
-
-/**
- * Check if rule is value (not node with children)
- *
- * @param {string} rule
- * @param {Array} operators
- * @returns {number|boolean}
- */
-export function isValuePatternRule(rule = '', operators = []) {
-  if (isSimpleRule(rule)) {
-    return true;
-  }
-
-  const items = Object.entries(rule);
-
-  return !!items.length && items.every(([key, value]) => operators.includes(key) && !isObject(value));
-}
-
-/**
- * Convert pattern object to treeview items
- *
- * @param {Object} source
- * @param {Array} [operators = []]
- * @param {Array} [prevPath = []]
- */
-export function convertPatternToTreeview(source, operators = [], prevPath = []) {
-  return Object.entries(source).map(([field, value]) => {
-    const path = [...prevPath, field];
-    const item = {
-      path,
-
-      id: path.join('.'),
-      name: field,
-    };
-
-    if (isValuePatternRule(value, operators)) {
-      item.rule = { field, value };
-      item.isSimpleRule = isSimpleRule(value);
-    } else {
-      item.children = convertPatternToTreeview(value, operators, path);
-    }
-
-    return item;
-  }, []);
-}
+};
 
 /**
  * Convert tree array structure to flat array structure
@@ -111,4 +58,26 @@ export const convertTreeArrayToArray = (tree, itemChildren = 'children') => {
   });
 
   return result;
+};
+
+/**
+ * Convert treeview nodes to object
+ *
+ * @param {Object} node
+ * @returns {Object | undefined}
+ */
+export const convertTreeviewToObject = (node) => {
+  if (node.isArray) {
+    return node.children?.map(convertTreeviewToObject);
+  }
+
+  if (node.children) {
+    return node.children?.reduce((acc, item) => {
+      acc[item.name] = convertTreeviewToObject(item);
+
+      return acc;
+    }, {});
+  }
+
+  return node.value;
 };

@@ -1,14 +1,13 @@
 <template lang="pug">
-  v-form(data-test="createSnoozeEventModal", @submit.prevent="submit")
+  v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.createSnoozeEvent.title') }}
-      template(slot="text")
+      template(#text="")
         v-container
           snooze-event-form(v-model="form", :is-note-required="isNoteRequired")
-      template(slot="actions")
+      template(#actions="")
         v-btn(
-          data-test="createSnoozeEventCancelButton",
           depressed,
           flat,
           @click="$modals.hide"
@@ -16,7 +15,6 @@
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled",
-          data-test="createSnoozeEventSubmitButton",
           type="submit"
         ) {{ $t('common.saveChanges') }}
 </template>
@@ -26,7 +24,7 @@ import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
-import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 

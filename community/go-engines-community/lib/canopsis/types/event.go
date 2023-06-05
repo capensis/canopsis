@@ -14,14 +14,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
-//event initiators
+// event initiators
 const (
 	InitiatorUser     = "user"
 	InitiatorSystem   = "system"
 	InitiatorExternal = "external"
 )
 
-//Source types
+// Source types
 const (
 	SourceTypeResource  = "resource"
 	SourceTypeComponent = "component"
@@ -39,31 +39,29 @@ const (
 	EventTypeCancel      = "cancel"
 	EventTypeCheck       = "check"
 	EventTypeComment     = "comment"
-	// EventTypeDeclareTicket is used for manual declareticket trigger which is designed
-	// to trigger webhook with declare ticket parameter.
-	EventTypeDeclareTicket = "declareticket"
-	// EventTypeDeclareTicketWebhook is triggered after declare ticket creation by webhook.
-	EventTypeDeclareTicketWebhook = "declareticketwebhook"
 
-	EventTypeDone              = "done"
-	EventTypeChangestate       = "changestate"
-	EventTypeKeepstate         = "keepstate"
-	EventTypePerf              = "perf"
-	EventTypeSnooze            = "snooze"
-	EventTypeUnsnooze          = "unsnooze"
-	EventTypeStatCounterInc    = "statcounterinc"
-	EventTypeStatDuration      = "statduration"
-	EventTypeStatStateInterval = "statstateinterval"
-	EventTypeUncancel          = "uncancel"
+	EventTypeChangestate = "changestate"
+	EventTypeKeepstate   = "keepstate"
+	EventTypeSnooze      = "snooze"
+	EventTypeUnsnooze    = "unsnooze"
+	EventTypeUncancel    = "uncancel"
+
+	EventTypeDeclareTicketWebhook = "declareticketwebhook"
+	EventTypeWebhookStarted       = "webhookstarted"
+	EventTypeWebhookCompleted     = "webhookcompleted"
+	EventTypeWebhookFailed        = "webhookfailed"
+	EventTypeAutoWebhookStarted   = "autowebhookstarted"
+	EventTypeAutoWebhookCompleted = "autowebhookcompleted"
+	EventTypeAutoWebhookFailed    = "autowebhookfailed"
 
 	EventTypeMetaAlarm          = "metaalarm"
 	EventTypeMetaAlarmUpdated   = "metaalarmupdated"
 	EventTypePbhEnter           = "pbhenter"
 	EventTypePbhLeaveAndEnter   = "pbhleaveandenter"
 	EventTypePbhLeave           = "pbhleave"
-	EventTypeResolveDone        = "resolve_done"
 	EventTypeResolveCancel      = "resolve_cancel"
 	EventTypeResolveClose       = "resolve_close"
+	EventTypeResolveDeleted     = "resolve_deleted"
 	EventTypeUpdateStatus       = "updatestatus"
 	EventManualMetaAlarmGroup   = "manual_metaalarm_group"
 	EventManualMetaAlarmUngroup = "manual_metaalarm_ungroup"
@@ -87,7 +85,6 @@ const (
 	// the same for manual and auto instructions.
 	EventTypeInstructionJobStarted   = "instructionjobstarted"
 	EventTypeInstructionJobCompleted = "instructionjobcompleted"
-	EventTypeInstructionJobAborted   = "instructionjobaborted"
 	EventTypeInstructionJobFailed    = "instructionjobfailed"
 
 	// EventTypeRecomputeEntityService is used to recompute service context graph and state.
@@ -116,8 +113,10 @@ const (
 
 	// EventTypeNoEvents is used to create alarm for entity by idle rule.
 	EventTypeNoEvents = "noevents"
-	// EventTypeTrigger is used in axe rpc to send autoinstruction triggers
+	// EventTypeTrigger is used in axe rpc to send auto and manual instruction triggers
 	EventTypeTrigger = "trigger"
+	// EventTypeAutoInstructionActivate is used to activate alarm when an autoremediation triggered by create trigger is completed
+	EventTypeAutoInstructionActivate = "autoinstructionactivate"
 )
 
 const (
@@ -127,14 +126,8 @@ const (
 
 const MaxEventTimestampVariation = 24 * time.Hour
 
-//PerfData represents a perf data array
-type PerfData struct {
-	Metric string  `bson:"metric" json:"metric"`
-	Unit   string  `bson:"unit" json:"unit"`
-	Value  float64 `bson:"value" json:"value"`
-}
-
 // Event represents a canopsis event.
+//
 //easyjson:json
 type Event struct {
 	ID            *string    `bson:"_id" json:"_id"`
@@ -143,11 +136,8 @@ type Event struct {
 	EventType     string     `bson:"event_type" json:"event_type"`
 	Component     string     `bson:"component" json:"component"`
 	Resource      string     `bson:"resource" json:"resource"`
-	PerfData      *string    `bson:"perf_data" json:"perf_data"`
-	PerfDataArray []PerfData `bson:"perf_data_array" json:"perf_data_array"`
+	PerfData      string     `bson:"perf_data" json:"perf_data"`
 	Status        *CpsNumber `bson:"status" json:"status"`
-	Timestamp     CpsTime    `bson:"timestamp" json:"timestamp"`
-	StateType     *CpsNumber `bson:"state_type" json:"state_type"`
 	SourceType    string     `bson:"source_type" json:"source_type"`
 	LongOutput    string     `bson:"long_output" json:"long_output"`
 	State         CpsNumber  `bson:"state" json:"state"`
@@ -158,19 +148,27 @@ type Event struct {
 	Author string `bson:"author" json:"author"`
 	UserID string `bson:"user_id" json:"user_id"`
 
+	Timestamp         CpsTime   `bson:"timestamp" json:"timestamp"`
+	ReceivedTimestamp MicroTime `bson:"rt" json:"rt"`
+
 	RK string `bson:"routing_key" json:"routing_key"`
 	// AckResources is used to ack all resource alarms on ack component alarm.
-	// It also adds declare ticket to all resource alarms on ack webhook.
-	// It's still used by some old users but meta alarms must be used instead.
-	AckResources bool                   `json:"ack_resources"`
-	Duration     CpsNumber              `json:"duration"`
-	Ticket       string                 `bson:"ticket" json:"ticket"`
-	TicketData   map[string]string      `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
-	StatName     string                 `bson:"stat_name" json:"stat_name"`
-	Debug        bool                   `bson:"debug" json:"debug"`
-	Role         string                 `bson:"role,omitempty" json:"role,omitempty"`
-	ExtraInfos   map[string]interface{} `json:"extra"`
-	AlarmChange  *AlarmChange           `bson:"alarm_change" json:"alarm_change"`
+	AckResources bool `bson:"ack_resources,omitempty" json:"ack_resources,omitempty"`
+	// TicketResource is used to add ticket to all resource alarms on assoc ticket component alarm.
+	TicketResources bool `bson:"ticket_resources,omitempty" json:"ticket_resources,omitempty"`
+
+	Duration    CpsNumber              `bson:"duration,omitempty" json:"duration,omitempty"`
+	StatName    string                 `bson:"stat_name" json:"stat_name"`
+	Debug       bool                   `bson:"debug" json:"debug"`
+	Role        string                 `bson:"role,omitempty" json:"role,omitempty"`
+	ExtraInfos  map[string]interface{} `bson:"extra_infos" json:"extra"`
+	AlarmChange *AlarmChange           `bson:"alarm_change" json:"alarm_change"`
+
+	// Ticket related fields
+	TicketInfo `bson:",inline"`
+
+	// Tags contains external tags for alarm.
+	Tags map[string]string `bson:"tags" json:"tags"`
 
 	MetaAlarmRuleID    string `bson:"metaalarm_rule_id" json:"metaalarm_rule_id"`
 	MetaAlarmValuePath string `bson:"metaalarm_value_path" json:"metaalarm_value_path"`
@@ -203,61 +201,27 @@ type Event struct {
 	// Execution is used only for instruction events: EventTypeInstructionStarted, EventTypeInstructionCompleted, etc..
 	Execution string `bson:"execution,omitempty" json:"execution,omitempty"`
 
+	// Instruction is used only for manual instructions kpi metrics
+	Instruction string `bson:"instruction,omitempty" json:"instruction,omitempty"`
+
 	// TODO: should be refactored
 	IsEntityUpdated bool `bson:"-" json:"-"`
 }
 
-// ContextInformation regroup context values necessary for creating a new entity
-type ContextInformation struct {
-	ID      string // Entity ID
-	Name    string
-	Type    string
-	Impacts []string
-	Depends []string
-}
-
-// NewEventFromJSON create an Event from a raw json
-func NewEventFromJSON(body []byte) (Event, error) {
-	var event Event
-	err := json.Unmarshal(body, &event)
-	if err != nil {
-		return event, fmt.Errorf("NewEvent error: %v", err)
-	}
-	event.Format()
-
-	return event, nil
-}
-
-func NewEventFromAlarm(alarm Alarm) Event {
-	event := Event{
-		Connector:     alarm.Value.Connector,
-		ConnectorName: alarm.Value.ConnectorName,
-		Resource:      alarm.Value.Resource,
-		Component:     alarm.Value.Component,
-		Alarm:         &alarm,
-		Timestamp:     CpsTime{Time: time.Now()},
-	}
-	event.SourceType = event.DetectSourceType()
-
-	return event
-}
-
 // Format an event
-//  "timestamp" is fill with time.Now()
-//  "event_type" is fill with EventTypeCheck
-//  if "entity" is not null, "impacts" and "depends" are ensured to be initialized
+//
+//	"timestamp" is fill with time.Now()
+//	"event_type" is fill with EventTypeCheck
+//	if "entity" is not null, "impacts" and "depends" are ensured to be initialized
 func (e *Event) Format() {
 	//events can't be later or earlier than MaxEventTimestampVariation
 	now := NewCpsTime()
 	if e.Timestamp.IsZero() || e.Timestamp.Time.Before(now.Add(-MaxEventTimestampVariation)) || e.Timestamp.Time.After(now.Add(MaxEventTimestampVariation)) {
 		e.Timestamp = now
 	}
+	e.ReceivedTimestamp = NewMicroTime()
 	if e.EventType == "" {
 		e.EventType = EventTypeCheck
-	}
-	if e.StateType == nil {
-		statetype := CpsNumber(1)
-		e.StateType = &statetype
 	}
 	if e.Initiator == "" {
 		e.Initiator = InitiatorExternal
@@ -313,8 +277,8 @@ func (e *Event) InjectExtraInfos(source []byte) error {
 // IsContextable tells you if the given event can lead to context enrichment.
 func (e *Event) IsContextable() bool {
 	switch e.EventType {
-	case EventTypeCheck, EventTypeEntityToggled, EventTypePerf,
-		EventTypeEntityUpdated, EventTypeDeclareTicket, EventTypeMetaAlarm:
+	case EventTypeCheck, EventTypeMetaAlarm,
+		EventTypeEntityToggled, EventTypeEntityUpdated, EventTypeResolveDeleted:
 		return true
 	default:
 		return false
@@ -323,7 +287,7 @@ func (e *Event) IsContextable() bool {
 
 func (e *Event) IsOnlyServiceUpdate() bool {
 	switch e.EventType {
-	case EventTypeEntityToggled, EventTypeEntityUpdated:
+	case EventTypeEntityToggled, EventTypeEntityUpdated, EventTypeResolveDeleted:
 		return true
 	default:
 		return false
@@ -357,6 +321,9 @@ func (e Event) IsValid() error {
 			return errt.NewUnknownError(errors.New("missing component"))
 		}
 	case SourceTypeResource:
+		if e.Component == "" {
+			return errt.NewUnknownError(errors.New("missing component"))
+		}
 		if e.Resource == "" {
 			return errt.NewUnknownError(errors.New("missing resource"))
 		}
@@ -366,13 +333,6 @@ func (e Event) IsValid() error {
 
 	if !isValidEventType(e.EventType) {
 		return errt.NewUnknownError(fmt.Errorf("wrong event type: %v", e.EventType))
-	}
-
-	switch e.EventType {
-	case EventTypePerf:
-		if e.PerfData == nil || e.PerfDataArray == nil {
-			return errt.NewUnknownError(errors.New("perfdata without data"))
-		}
 	}
 
 	return nil
@@ -445,57 +405,12 @@ func (e *Event) GetRequiredKeys() []string {
 	return values
 }
 
-// GenerateContextInformations generate connector, component and resource entity informations.
-// First element is always connector
-// Second element is always component
-// Third element doesnt exists if event is not SourceTypeResource, otherwise it is resource
-func (e *Event) GenerateContextInformations() []ContextInformation {
-	connectorID := e.Connector + "/" + e.ConnectorName
-	componentID := e.Component
-
-	connector := ContextInformation{
-		ID:      connectorID,
-		Name:    e.ConnectorName,
-		Type:    EntityTypeConnector,
-		Impacts: []string{},
-		Depends: []string{componentID},
-	}
-
-	component := ContextInformation{
-		ID:      componentID,
-		Name:    e.Component,
-		Type:    EntityTypeComponent,
-		Impacts: []string{connectorID},
-		Depends: []string{},
-	}
-
-	if e.SourceType != SourceTypeResource {
-		return []ContextInformation{connector, component}
-	}
-
-	resourceID := e.Resource + "/" + e.Component
-
-	connector.Impacts = append(connector.Impacts, resourceID)
-	component.Depends = append(component.Depends, resourceID)
-
-	resource := ContextInformation{
-		ID:      resourceID,
-		Name:    e.Resource,
-		Type:    EntityTypeResource,
-		Impacts: []string{componentID},
-		Depends: []string{connectorID},
-	}
-
-	return []ContextInformation{connector, component, resource}
-}
-
 var cpsNumberType = reflect.TypeOf(CpsNumber(0))
 var cpsNumberPtrType = reflect.PtrTo(cpsNumberType)
 var cpsTimeType = reflect.TypeOf(CpsTime{})
 var stringType = reflect.TypeOf("")
 var stringPtrType = reflect.PtrTo(stringType)
 var boolType = reflect.TypeOf(false)
-var entityPtrType = reflect.PtrTo(reflect.TypeOf(Entity{}))
 
 // SetField sets the value of a field of an event given its name.
 func (e *Event) SetField(name string, value interface{}) (err error) {
@@ -567,13 +482,6 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 		}
 		field.Set(reflect.ValueOf(boolValue))
 
-	case entityPtrType:
-		entityValue, success := value.(Entity)
-		if !success {
-			return fmt.Errorf("value cannot be assigned to an entity: %+v", value)
-		}
-		field.Set(reflect.ValueOf(&entityValue))
-
 	default:
 		return fmt.Errorf("cannot set field %s of type %v", name, field.Type())
 	}
@@ -596,16 +504,14 @@ func isValidEventType(t string) bool {
 		EventTypeAssocTicket,
 		EventTypeCancel,
 		EventTypeComment,
-		EventTypeDeclareTicket,
 		EventTypeDeclareTicketWebhook,
-		EventTypeDone,
 		EventTypeChangestate,
 		EventTypeSnooze,
 		EventTypeUnsnooze,
 		EventTypeUncancel,
-		EventTypeResolveDone,
 		EventTypeResolveCancel,
 		EventTypeResolveClose,
+		EventTypeResolveDeleted,
 		EventTypePbhEnter,
 		EventTypePbhLeaveAndEnter,
 		EventTypePbhLeave,
@@ -632,18 +538,17 @@ func isValidEventType(t string) bool {
 		EventTypeAutoInstructionFailed,
 		EventTypeInstructionJobStarted,
 		EventTypeInstructionJobCompleted,
-		EventTypeInstructionJobAborted,
 		EventTypeInstructionJobFailed,
 		EventTypeAlarmSkipped,
 		EventTypeJunitTestSuiteUpdated,
 		EventTypeJunitTestCaseUpdated,
 		EventTypeKeepstate,
-		EventTypePerf,
 		EventTypeStateIncrease,
 		EventTypeStateDecrease,
 		EventTypeStatusIncrease,
 		EventTypeStatusDecrease,
-		EventTypeTrigger:
+		EventTypeTrigger,
+		EventTypeAutoInstructionActivate:
 		return true
 	}
 

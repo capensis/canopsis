@@ -4,6 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
+	"time"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -13,18 +16,19 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"strings"
-	"time"
 )
 
 type rpcPBehaviorClientMessageProcessor struct {
 	DbClient                 mongo.DbClient
 	MetricsSender            metrics.Sender
 	PublishCh                libamqp.Channel
+	RemediationRpc           engine.RPCClient
 	Executor                 operation.Executor
 	EntityAdapter            libentity.Adapter
 	AlarmAdapter             alarm.Adapter
@@ -46,12 +50,12 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 	routingKey := data[1]
 
 	var replyEvent []byte
-	var event types.RPCPBehaviorResultEvent
+	var event rpc.PbehaviorResultEvent
 	err := p.Decoder.Decode(msg.Body, &event)
 	if err != nil || event.Alarm == nil || event.Entity == nil {
 		p.logError(err, "RPC PBehavior Client: invalid event", msg.Body)
 
-		return p.publishResult(routingKey, correlationId, p.getErrRpcEvent(fmt.Errorf("invalid event")))
+		return p.publishResult(ctx, routingKey, correlationId, p.getErrRpcEvent(fmt.Errorf("invalid event")))
 	}
 
 	alarmChangeType := types.AlarmChangeTypeNone
@@ -123,13 +127,13 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 			}
 
 			p.logError(err, "RPC PBehavior Client: cannot update alarm", msg.Body)
-			return p.publishResult(routingKey, correlationId, p.getErrRpcEvent(fmt.Errorf("cannot update alarm: %v", err)))
+			return p.publishResult(ctx, routingKey, correlationId, p.getErrRpcEvent(fmt.Errorf("cannot update alarm: %v", err)))
 		}
 
 		// services alarms
 		go func() {
 			for servID, servInfo := range updatedServiceInfos {
-				err := p.StateCountersService.UpdateServiceState(servID, servInfo)
+				err := p.StateCountersService.UpdateServiceState(context.Background(), servID, servInfo)
 				if err != nil {
 					p.Logger.Err(err).Msg("failed to update service state")
 				}
@@ -148,9 +152,32 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 				"",
 			)
 		}()
+
+		if p.RemediationRpc != nil {
+			body, err := p.Encoder.Encode(types.RPCRemediationEvent{
+				Alarm:       event.Alarm,
+				Entity:      event.PbhEvent.Entity,
+				AlarmChange: alarmChange,
+			})
+			if err != nil {
+				p.logError(err, "RPC PBehavior Client: failed to encode rpc call to engine-remediation", msg.Body)
+			} else {
+				err = p.RemediationRpc.Call(ctx, engine.RPCMessage{
+					CorrelationID: utils.NewID(),
+					Body:          body,
+				})
+				if err != nil {
+					if engine.IsConnectionError(err) {
+						return err
+					}
+
+					p.logError(err, "RPC PBehavior Client: failed to send rpc call to engine-remediation", msg.Body)
+				}
+			}
+		}
 	}
 
-	replyEvent, err = p.getRpcEvent(types.RPCAxeResultEvent{
+	replyEvent, err = p.getRpcEvent(rpc.AxeResultEvent{
 		Alarm:           event.Alarm,
 		AlarmChangeType: alarmChangeType,
 		Error:           nil,
@@ -161,7 +188,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 		replyEvent = p.getErrRpcEvent(errors.New("failed to create rpc result event"))
 	}
 
-	err = p.publishResult(routingKey, correlationId, replyEvent)
+	err = p.publishResult(ctx, routingKey, correlationId, replyEvent)
 	if err != nil {
 		p.logError(err, "RPC PBehavior Client: cannot sent message result back to sender", msg.Body)
 
@@ -171,8 +198,9 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 	return nil
 }
 
-func (p *rpcPBehaviorClientMessageProcessor) publishResult(routingKey string, correlationID string, event []byte) error {
-	return p.PublishCh.Publish(
+func (p *rpcPBehaviorClientMessageProcessor) publishResult(ctx context.Context, routingKey string, correlationID string, event []byte) error {
+	return p.PublishCh.PublishWithContext(
+		ctx,
 		"",         // exchange
 		routingKey, // routing key
 		false,      // mandatory
@@ -195,11 +223,11 @@ func (p *rpcPBehaviorClientMessageProcessor) logError(err error, errMsg string, 
 }
 
 func (p *rpcPBehaviorClientMessageProcessor) getErrRpcEvent(err error) []byte {
-	msg, _ := p.getRpcEvent(types.RPCAxeResultEvent{Error: &types.RPCError{Error: err}})
+	msg, _ := p.getRpcEvent(rpc.AxeResultEvent{Error: &rpc.Error{Error: err}})
 	return msg
 }
 
-func (p *rpcPBehaviorClientMessageProcessor) getRpcEvent(event types.RPCAxeResultEvent) ([]byte, error) {
+func (p *rpcPBehaviorClientMessageProcessor) getRpcEvent(event rpc.AxeResultEvent) ([]byte, error) {
 	msg, err := p.Encoder.Encode(event)
 	if err != nil {
 		p.Logger.Err(err).Msg("cannot encode event")

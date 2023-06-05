@@ -3,12 +3,15 @@ package widget
 import (
 	"context"
 	"errors"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Store interface {
@@ -93,7 +96,7 @@ func (s *store) FindViewIdByTab(ctx context.Context, tabId string) (string, erro
 }
 
 func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
-	cursor, err := s.collection.Aggregate(ctx, []bson.M{
+	pipeline := []bson.M{
 		{"$match": bson.M{"_id": id}},
 		{"$lookup": bson.M{
 			"from":         mongo.WidgetFiltersMongoCollection,
@@ -102,20 +105,25 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			"as":           "filters",
 		}},
 		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
-		{"$sort": bson.M{"filters.title": 1}},
-		{"$group": bson.M{
+	}
+	pipeline = append(pipeline, author.PipelineForField("filters.author")...)
+	pipeline = append(pipeline,
+		bson.M{"$sort": bson.M{"filters.position": 1}},
+		bson.M{"$group": bson.M{
 			"_id":     nil,
 			"data":    bson.M{"$first": "$$ROOT"},
 			"filters": bson.M{"$push": "$filters"},
 		}},
-		{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+		bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
 			"$data",
 			bson.M{"filters": bson.M{"$filter": bson.M{
 				"input": "$filters",
 				"cond":  bson.M{"$eq": bson.A{"$$this.is_private", false}},
 			}}},
 		}}}},
-	})
+	)
+	pipeline = append(pipeline, author.Pipeline()...)
+	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -148,6 +156,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 		doc.ID = utils.NewID()
 		doc.Widget = widget.ID
 		doc.Author = widget.Author
+		doc.Position = int64(i)
 		doc.Created = now
 		doc.Updated = now
 		if widget.Parameters.MainFilter == filter.ID {
@@ -191,10 +200,11 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	widget.Updated = now
 
 	filters := make(map[string]view.WidgetFilter, len(r.Filters))
-	for _, filter := range r.Filters {
+	for i, filter := range r.Filters {
 		doc := transformFilterRequestToModel(filter)
 		doc.Widget = widget.ID
 		doc.Author = widget.Author
+		doc.Position = int64(i)
 		doc.Updated = now
 
 		filters[filter.ID] = doc
@@ -311,7 +321,7 @@ func (s *store) Copy(ctx context.Context, widget Response, r EditRequest) (*Resp
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 		var err error
-		response, err = s.copy(ctx, widget, r)
+		response, err = s.copy(ctx, widget.ID, r)
 		return err
 	})
 
@@ -319,7 +329,7 @@ func (s *store) Copy(ctx context.Context, widget Response, r EditRequest) (*Resp
 }
 
 func (s *store) CopyForTab(ctx context.Context, tabID, newTabID, author string) error {
-	cursor, err := s.collection.Find(ctx, bson.M{"tab": tabID})
+	cursor, err := s.collection.Find(ctx, bson.M{"tab": tabID}, options.Find().SetProjection(bson.M{"author": 0}))
 	if err != nil {
 		return err
 	}
@@ -332,7 +342,7 @@ func (s *store) CopyForTab(ctx context.Context, tabID, newTabID, author string) 
 			return err
 		}
 
-		_, err = s.copy(ctx, w, EditRequest{
+		_, err = s.copy(ctx, w.ID, EditRequest{
 			Tab:            newTabID,
 			Title:          w.Title,
 			Type:           w.Type,
@@ -348,7 +358,7 @@ func (s *store) CopyForTab(ctx context.Context, tabID, newTabID, author string) 
 	return nil
 }
 
-func (s *store) copy(ctx context.Context, widget Response, r EditRequest) (*Response, error) {
+func (s *store) copy(ctx context.Context, widgetID string, r EditRequest) (*Response, error) {
 	now := types.NewCpsTime()
 	newWidget := view.Widget{
 		ID:             utils.NewID(),
@@ -363,10 +373,10 @@ func (s *store) copy(ctx context.Context, widget Response, r EditRequest) (*Resp
 	}
 
 	cursor, err := s.filterCollection.Find(ctx, bson.M{
-		"widget":          widget.ID,
+		"widget":          widgetID,
 		"is_private":      false,
 		"old_mongo_query": nil, //do not copy old filters
-	})
+	}, options.Find().SetProjection(bson.M{"author": 0}))
 	if err != nil {
 		return nil, err
 	}

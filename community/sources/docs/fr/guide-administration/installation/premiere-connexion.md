@@ -4,11 +4,7 @@ Après une installation de Canopsis, ses différents composants utiliseront les 
 
 ## Accès à l'interface web de Canopsis
 
-Par défaut, l'interface web de Canopsis est disponible depuis votre navigateur à l'adresse suivante : <http://localhost>.
-
-Les identifiants de connexion par défaut sont `root` / `root`.
-
-Parcourez ensuite [le Guide d'utilisation](../../guide-utilisation/index.md) pour en apprendre davantage sur l'interface web de Canopsis.
+Voir [le Guide de premier accès](../../guide-utilisation/premier-acces/index.md).
 
 ## Accès aux composants internes de Canopsis
 

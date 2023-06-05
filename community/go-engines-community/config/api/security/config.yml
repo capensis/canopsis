@@ -2,17 +2,63 @@ security:
   # auth_providers defines enabled authentication methods.
   # Possible values:
   # - basic Auth by username-password.
-  # - apikey Auth by token.
-  # - ldap Auth using LDAP service. Define LDAP config in object collection by cservice.ldapconfig id.
-  # - cas Auth using CAS service. Define CAS config in object collection by cservice.casconfig id.
-  # - saml Auth using SAML service. Define SAML config below(commented saml section)
+  # - apikey Deprecated.
+  # - ldap Auth using LDAP service. Define LDAP config below.
+  # - cas Auth using CAS service. Define CAS config below.
+  # - saml Auth using SAML service. Define SAML config below.
   auth_providers:
     - basic
     - apikey
-    #- ldap
-    #- saml
+#    - ldap
+#    - cas
+#    - saml
 
+  basic:
+    inactivity_interval: 24h
+    expiration_interval: 1M
+
+#  ldap:
+#    inactivity_interval: 24h
+#    expiration_interval: 1M
+#    # url defines LDAP url.
+#    url: ldap://ldap.local
+#    admin_dn: uid=svccanopsis,ou=Special,dc=example,dc=com
+#    admin_passwd:
+#    user_dn: ou=People,dc=example,dc=com
+#    ufilter: uid=%s
+#    # username_attr defines attribute which is used to set username.
+#    username_attr: uid
+#    # attrs defines extra user's attributes.
+#    attrs:
+#      mail: mail
+#      firstname: givenName
+#      lastname: sn
+#    # default_role defines role of new users which are created on successful LDAP login.
+#    default_role: Visualisation
+#    # insecure_skip_verify controls whether a client verifies the server's
+#    #	certificate chain and host name. If true, crypto/tls
+#    #	accepts any certificate presented by the server and any host name in that
+#    #	certificate. In this mode, TLS is susceptible to machine-in-the-middle
+#    #	attacks unless custom verification is used.
+#    insecure_skip_verify: false
+#    max_tls_ver:
+#
+#  cas:
+#    inactivity_interval: 24h
+#    expiration_interval: 1M
+#    # title defines label of UI login form.
+#    title: Connexion
+#    # login_url defines CAS login url to which UI is redirected to authenticate.
+#    login_url: http://cas.local/login
+#    # validate_url defines CAS validate url which is used to validate received ticket.
+#    validate_url: http://cas.local/serviceValidate
+#    # default_role defines role of new users which are created on successful CAS login.
+#    default_role: Visualisation
+#
 #  saml:
+#    inactivity_interval: 24h
+#    expiration_interval: 1M
+#    title: Connexion
 #    x509_cert: /certs/saml.cert
 #    x509_key:  /certs/saml.key
 #    # sample with SimpleSamlPHP server
@@ -25,7 +71,13 @@ security:
 #       firstname: uid
 #       lastname: uid
 #    canopsis_saml_url: http://canopsis/api/v4/saml
-#    default_role: "admin"
+#    # default_role defines role of new users which are created on successful SAML login.
+#    default_role: Visualisation
+#    # insecure_skip_verify controls whether a client verifies the server's
+#    #	certificate chain and host name. If true, crypto/tls
+#    #	accepts any certificate presented by the server and any host name in that
+#    #	certificate. In this mode, TLS is susceptible to machine-in-the-middle
+#    #	attacks unless custom verification is used.
 #    insecure_skip_verify: false
 #    canopsis_sso_binding: redirect
 #    canopsis_acs_binding: redirect
@@ -34,9 +86,3 @@ security:
 #    skip_signature_validation: true
 #    acs_index: 1
 #    auto_user_registration: true
-
-session:
-  # stats_frame uses for session stats. Session stats are accumulated during frame period.
-  # New stats row will be created if duration between stats requests are more then frame.
-  stats_frame: 5m
-

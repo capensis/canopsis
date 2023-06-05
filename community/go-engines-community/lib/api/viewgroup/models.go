@@ -1,6 +1,7 @@
 package viewgroup
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -24,7 +25,7 @@ type EditRequest struct {
 type ViewGroup struct {
 	ID        string           `bson:"_id" json:"_id,omitempty"`
 	Title     string           `bson:"title" json:"title"`
-	Author    string           `bson:"author" json:"author,omitempty"`
+	Author    *author.Author   `bson:"author" json:"author,omitempty"`
 	Views     *[]view.Response `bson:"views,omitempty" json:"views,omitempty"`
 	Created   *types.CpsTime   `bson:"created" json:"created,omitempty" swaggertype:"integer"`
 	Updated   *types.CpsTime   `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`

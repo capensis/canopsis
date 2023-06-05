@@ -1,35 +1,52 @@
 <template lang="pug">
   div
-    v-layout.white(row, wrap, justify-space-between, align-center)
+    v-layout(
+      v-if="!hideToolbar",
+      :class="{ 'mb-4': !dense }",
+      row,
+      wrap,
+      justify-space-between,
+      align-end
+    )
       v-flex
         c-advanced-search-field(
           :query.sync="query",
-          :columns="columns",
-          :tooltip="$t('search.alarmAdvancedSearch')"
+          :columns="widget.parameters.widgetColumns",
+          :tooltip="$t('alarm.advancedSearch')"
         )
       v-flex(v-if="hasAccessToCategory")
-        c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
+        c-entity-category-field.mr-3.mt-0(:category="query.category", hide-details, @input="updateCategory")
       v-flex(v-if="hasAccessToCorrelation")
-        v-switch(
+        v-switch.mt-0(
           :value="query.correlation",
           :label="$t('common.correlation')",
           color="primary",
+          hide-details,
           @change="updateCorrelation"
         )
       v-flex
-        filter-selector(
-          :label="$t('settings.selectAFilter')",
-          :filters="viewFilters",
-          :locked-filters="widgetViewFilters",
-          :value="mainFilter",
-          :condition="mainFilterCondition",
-          :has-access-to-edit-filter="hasAccessToEditFilter",
-          :has-access-to-user-filter="hasAccessToUserFilter",
-          :has-access-to-list-filters="hasAccessToListFilters",
-          @input="updateSelectedFilter",
-          @update:condition="updateSelectedCondition",
-          @update:filters="updateFilters"
-        )
+        v-layout(v-if="hasAccessToUserFilter", row, align-end)
+          filter-selector(
+            :label="$t('settings.selectAFilter')",
+            :filters="userPreference.filters",
+            :locked-filters="widget.filters",
+            :locked-value="lockedFilter",
+            :value="mainFilter",
+            :disabled="!hasAccessToListFilters",
+            :clearable="!widget.parameters.clearFilterDisabled",
+            hide-details,
+            @input="updateSelectedFilter"
+          )
+          filters-list-btn(
+            v-if="hasAccessToAddFilter || hasAccessToEditFilter",
+            :widget-id="widget._id",
+            :addable="hasAccessToAddFilter",
+            :editable="hasAccessToEditFilter",
+            private,
+            with-alarm,
+            with-entity,
+            with-pbehavior
+          )
       v-flex
         alarms-list-remediation-instructions-filters(
           :filters.sync="remediationInstructionsFilters",
@@ -46,57 +63,49 @@
           @input="removeHistoryFilter"
         ) {{ $t(`quickRanges.types.${activeRange.value}`) }}
         c-action-btn(
-          :tooltip="$t('liveReporting.button')",
-          :color="activeRange ? 'primary' : 'black'",
+          :tooltip="$t('alarm.liveReporting')",
+          :color="activeRange ? 'primary' : ''",
           icon="schedule",
           @click="showEditLiveReportModal"
         )
       v-flex(v-if="hasAccessToExportAsCsv")
         c-action-btn(
-          :loading="!!alarmsExportPending",
+          :loading="downloading",
           :tooltip="$t('settings.exportAsCsv')",
           icon="cloud_download",
-          color="black",
           @click="exportAlarmsList"
         )
-    v-layout.alarms-list__top-pagination.white.px-4(row, wrap, align-center)
-      c-density-btn-toggle(:value="userPreference.content.dense", @change="updateDense")
-      c-pagination(
-        v-if="hasColumns",
-        :page="query.page",
-        :limit="query.limit",
-        :total="alarmsMeta.total_count",
-        type="top",
-        @input="updateQueryPage"
-      )
-    alarms-list-table(
+    alarms-list-table.mt-1(
       ref="alarmsTable",
       :widget="widget",
       :alarms="alarms",
       :total-items="alarmsMeta.total_count",
-      :pagination.sync="vDataTablePagination",
+      :pagination.sync="pagination",
       :loading="alarmsPending",
       :is-tour-enabled="isTourEnabled",
-      :hide-groups="!query.correlation",
-      :has-columns="hasColumns",
-      :columns="columns",
+      :hide-children="!query.correlation",
+      :columns="widget.parameters.widgetColumns",
       :sticky-header="widget.parameters.sticky_header",
       :dense="dense",
-      selectable,
-      expandable
+      :refresh-alarms-list="fetchList",
+      :selected-tag="query.tag",
+      :selectable="!hideMassSelection",
+      :hide-actions="hideActions",
+      expandable,
+      densable,
+      @select:tag="selectTag",
+      @update:dense="updateDense",
+      @update:page="updateQueryPage",
+      @update:rows-per-page="updateRecordsPerPage",
+      @clear:tag="clearTag"
     )
-      c-table-pagination(
-        :total-items="alarmsMeta.total_count",
-        :rows-per-page="query.limit",
-        :page="query.page",
-        @update:page="updateQueryPage",
-        @update:rows-per-page="updateRecordsPerPage"
-      )
     alarms-expand-panel-tour(v-if="isTourEnabled", :callbacks="tourCallbacks")
 </template>
 
 <script>
-import { omit, pick, isEmpty, isObject, isEqual } from 'lodash';
+import { omit, pick, isObject, isEqual } from 'lodash';
+
+import { API_HOST, API_ROUTES } from '@/config';
 
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
@@ -104,13 +113,13 @@ import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-
-import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns';
-import { exportCsvMixinCreator } from '@/mixins/widget/export';
+import { exportMixinCreator } from '@/mixins/widget/export';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
-import widgetRemediationInstructionsFilterMixin from '@/mixins/widget/remediation-instructions-filter-select';
-import entitiesAlarmMixin from '@/mixins/entities/alarm';
+import { widgetRemediationInstructionsFilterMixin } from '@/mixins/widget/remediation-instructions-filter-select';
+import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
+import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
+import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
 import { permissionsWidgetsAlarmsListCorrelation } from '@/mixins/permissions/widgets/alarms-list/correlation';
 import { permissionsWidgetsAlarmsListCategory } from '@/mixins/permissions/widgets/alarms-list/category';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
@@ -118,9 +127,10 @@ import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
   from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
+import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
 
 import AlarmsListTable from './partials/alarms-list-table.vue';
-import AlarmsExpandPanelTour from './partials/alarms-expand-panel-tour.vue';
+import AlarmsExpandPanelTour from './expand-panel/alarms-expand-panel-tour.vue';
 import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-remediation-instructions-filters.vue';
 
 /**
@@ -135,6 +145,7 @@ import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-rem
 export default {
   components: {
     FilterSelector,
+    FiltersListBtn,
     AlarmsListTable,
     AlarmsExpandPanelTour,
     AlarmsListRemediationInstructionsFilters,
@@ -142,19 +153,19 @@ export default {
   mixins: [
     authMixin,
     widgetFetchQueryMixin,
-    widgetColumnsAlarmMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     widgetRemediationInstructionsFilterMixin,
     entitiesAlarmMixin,
+    entitiesAlarmTagMixin,
+    entitiesAlarmDetailsMixin,
     permissionsWidgetsAlarmsListCategory,
     permissionsWidgetsAlarmsListCorrelation,
     permissionsWidgetsAlarmsListFilters,
     permissionsWidgetsAlarmsListRemediationInstructionsFilters,
-    exportCsvMixinCreator({
+    exportMixinCreator({
       createExport: 'createAlarmsListExport',
       fetchExport: 'fetchAlarmsListExport',
-      fetchExportFile: 'fetchAlarmsListCsvFile',
     }),
   ],
   props: {
@@ -166,10 +177,22 @@ export default {
       type: String,
       default: '',
     },
+    hideActions: {
+      type: Boolean,
+      default: false,
+    },
+    hideMassSelection: {
+      type: Boolean,
+      default: false,
+    },
+    hideToolbar: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
-      selected: [],
+      downloading: false,
     };
   },
   computed: {
@@ -220,6 +243,23 @@ export default {
       }
     },
 
+    selectTag(tag) {
+      this.query = {
+        ...this.query,
+
+        page: 1,
+        tag,
+      };
+    },
+
+    clearTag() {
+      const newQuery = omit(this.query, ['tag']);
+
+      newQuery.page = 1;
+
+      this.query = newQuery;
+    },
+
     updateCorrelation(correlation) {
       this.updateContentInUserPreference({
         isCorrelationEnabled: correlation,
@@ -228,6 +268,7 @@ export default {
       this.query = {
         ...this.query,
 
+        page: 1,
         correlation,
       };
     },
@@ -242,6 +283,7 @@ export default {
       this.query = {
         ...this.query,
 
+        page: 1,
         category: categoryId,
       };
     },
@@ -285,7 +327,11 @@ export default {
     },
 
     removeHistoryFilter() {
-      this.query = omit(this.query, ['tstart', 'tstop']);
+      const newQuery = omit(this.query, ['tstart', 'tstop']);
+
+      newQuery.page = 1;
+
+      this.query = newQuery;
     },
 
     showEditLiveReportModal() {
@@ -293,17 +339,24 @@ export default {
         name: MODALS.editLiveReporting,
         config: {
           ...pick(this.query, ['tstart', 'tstop', 'time_field']),
-          action: params => this.query = { ...this.query, ...params },
+          action: params => this.query = {
+            ...this.query,
+            ...params,
+
+            page: 1,
+          },
         },
       });
     },
 
-    async fetchList({ isPeriodicRefresh, isQueryNonceUpdate } = {}) {
-      if (this.hasColumns) {
+    async fetchList() {
+      if (this.widget.parameters.widgetColumns.length) {
         const params = this.getQuery();
 
-        if ((isPeriodicRefresh || isQueryNonceUpdate) && !isEmpty(this.$refs.alarmsTable.expanded)) {
-          params.with_steps = true;
+        this.fetchAlarmsDetailsList({ widgetId: this.widget._id });
+
+        if (!this.alarmTagsPending) {
+          this.fetchAlarmTagsList({ params: { paginate: false } });
         }
 
         if (!this.alarmsPending || !isEqual(params, this.alarmsFetchingParams)) {
@@ -317,7 +370,7 @@ export default {
       }
     },
 
-    exportAlarmsList() {
+    getExportQuery() {
       const query = this.getQuery();
       const {
         widgetExportColumns,
@@ -325,34 +378,39 @@ export default {
         exportCsvSeparator,
         exportCsvDatetimeFormat,
       } = this.widget.parameters;
-      const columns = widgetExportColumns?.length
-        ? widgetExportColumns
-        : widgetColumns;
+      const columns = widgetExportColumns?.length ? widgetExportColumns : widgetColumns;
 
-      this.exportAsCsv({
-        name: `${this.widget._id}-${new Date().toLocaleString()}`,
-        widgetId: this.widget._id,
-        data: {
-          ...pick(query, ['search', 'category', 'correlation', 'opened', 'tstart', 'tstop']),
+      return {
+        ...pick(query, ['search', 'category', 'correlation', 'opened', 'tstart', 'tstop']),
 
-          fields: columns.map(({ label, value }) => ({ label, name: value })),
-          filter: JSON.stringify(query.filter),
-          separator: exportCsvSeparator,
-          /**
-           * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
-           */
-          time_format: isObject(exportCsvDatetimeFormat)
-            ? exportCsvDatetimeFormat.value
-            : exportCsvDatetimeFormat,
-        },
-      });
+        fields: columns.map(({ value, text }) => ({ name: value, label: text })),
+        filters: query.filters,
+        separator: exportCsvSeparator,
+        /**
+         * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
+         */
+        time_format: isObject(exportCsvDatetimeFormat)
+          ? exportCsvDatetimeFormat.value
+          : exportCsvDatetimeFormat,
+      };
+    },
+
+    async exportAlarmsList() {
+      this.downloading = true;
+
+      try {
+        const fileData = await this.generateFile({
+          data: this.getExportQuery(),
+          widgetId: this.widget._id,
+        });
+
+        this.downloadFile(`${API_HOST}${API_ROUTES.alarmListExport}/${fileData._id}/download`);
+      } catch (err) {
+        this.$popups.error({ text: this.$t('alarm.popups.exportFailed') });
+      } finally {
+        this.downloading = false;
+      }
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.alarms-list__top-pagination {
-  min-height: 46px;
-}
-</style>

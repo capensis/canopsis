@@ -1,11 +1,11 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
+      template(#text="")
         scenario-form(v-model="form")
-      template(slot="actions")
+      template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled",
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { formToScenario, scenarioToForm, scenarioErrorToForm } from '@/helpers/forms/scenario';
 
@@ -33,6 +33,7 @@ export default {
   name: MODALS.createScenario,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   inject: ['$system'],
   components: {
@@ -53,67 +54,16 @@ export default {
   },
   computed: {
     title() {
-      return this.config.title || this.$t('modals.createScenario.create.title');
+      return this.config.title ?? this.$t('modals.createScenario.create.title');
     },
-
-    scenario() {
-      return this.config?.scenario ?? {};
-    },
-
-    originalPriority() {
-      return this.scenario.priority;
-    },
-
-    isNew() {
-      return !this.scenario._id;
-    },
-  },
-  mounted() {
-    if (this.isNew) {
-      this.setMinimalPriority();
-    }
   },
   methods: {
-    async setMinimalPriority() {
-      const { priority } = await this.fetchMinimalScenarioPriority();
-
-      this.form.priority = priority;
-    },
-
-    showConfirmScenarioPriorityChange(priority) {
-      return new Promise((resolve) => {
-        this.$modals.show({
-          name: MODALS.confirmation,
-          dialogProps: { persistent: true },
-          config: {
-            text: this.$t('scenario.errors.priorityExist', { priority }),
-            action: () => {
-              this.form.priority = priority;
-
-              resolve();
-            },
-            cancel: resolve,
-          },
-        });
-      });
-    },
-
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
         try {
           if (this.config.action) {
-            if (this.isNew || this.form.priority !== this.originalPriority) {
-              const { valid, recommended_priority: recommendedPriority } = await this.checkScenarioPriority({
-                data: { priority: this.form.priority },
-              });
-
-              if (!valid) {
-                await this.showConfirmScenarioPriorityChange(recommendedPriority);
-              }
-            }
-
             await this.config.action(formToScenario(this.form, this.$system.timezone));
           }
 

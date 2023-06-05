@@ -1,11 +1,11 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
+      template(#text="")
         playlist-form(v-model="form", :groups="playlistGroups", :tabs-pending="tabsPending")
-      template(slot="actions")
+      template(#actions="")
         v-btn(
           depressed,
           flat,
@@ -74,7 +74,7 @@ export default {
       this.tabsPending = true;
 
       const { data: groups } = await this.fetchGroupsListWithoutStore({
-        params: { limit: MAX_LIMIT, with_views: true },
+        params: { limit: MAX_LIMIT, with_views: true, with_tabs: true },
       });
 
       this.playlistGroups = groups;

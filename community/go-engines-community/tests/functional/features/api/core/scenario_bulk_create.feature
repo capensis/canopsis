@@ -89,18 +89,22 @@ Feature: Bulk create scenarios
                   "password": "test-scenario-to-bulk-create-1-action-2-password"
                 },
                 "headers": {"Content-Type": "application/json"},
-                "payload": "{\"test-scenario-to-bulk-create-1-action-2-payload\": \"test-scenario-to-bulk-create-1-action-2-paload-value\"}"
+                "payload": "{\"test-scenario-to-bulk-create-1-action-2-payload\": \"test-scenario-to-bulk-create-1-action-2-paload-value\"}",
+                "timeout": {
+                  "value": 1,
+                  "unit": "m"
+                },
+                "retry_count": 3,
+                "retry_delay": {
+                  "value": 3,
+                  "unit": "s"
+                }
               },
               "declare_ticket": {
                 "empty_response": false,
                 "is_regexp": false,
                 "ticket_id": "test-scenario-to-bulk-create-1-action-2-ticket",
                 "test-scenario-to-bulk-create-1-action-2-info": "test-scenario-to-bulk-create-1-action-2-info-value"
-              },
-              "retry_count": 3,
-              "retry_delay": {
-                "value": 3,
-                "unit": "s"
               }
             },
             "drop_scenario_if_not_matched": false,
@@ -219,18 +223,22 @@ Feature: Bulk create scenarios
                   "password": "test-scenario-to-bulk-create-1-action-2-password"
                 },
                 "headers": {"Content-Type": "application/json"},
-                "payload": "{\"test-scenario-to-bulk-create-1-action-2-payload\": \"test-scenario-to-bulk-create-1-action-2-paload-value\"}"
+                "payload": "{\"test-scenario-to-bulk-create-1-action-2-payload\": \"test-scenario-to-bulk-create-1-action-2-paload-value\"}",
+                "timeout": {
+                  "value": 1,
+                  "unit": "m"
+                },
+                "retry_count": 3,
+                "retry_delay": {
+                  "value": 3,
+                  "unit": "s"
+                }
               },
               "declare_ticket": {
                 "empty_response": false,
                 "is_regexp": false,
                 "ticket_id": "test-scenario-to-bulk-create-1-action-2-ticket",
                 "test-scenario-to-bulk-create-1-action-2-info": "test-scenario-to-bulk-create-1-action-2-info-value"
-              },
-              "retry_count": 3,
-              "retry_delay": {
-                "value": 3,
-                "unit": "s"
               }
             },
             "drop_scenario_if_not_matched": false,
@@ -280,48 +288,6 @@ Feature: Bulk create scenarios
       {
         "name": "test-scenario-to-check-unique-name-name",
         "enabled": true,
-        "triggers": ["create"],
-        "actions": [
-          {
-            "alarm_pattern": [
-              [
-                {
-                  "field": "v.component",
-                  "cond": {
-                    "type": "eq",
-                    "value": "test-scenario-to-bulk-create-4-alarm"
-                  }
-                }
-              ]
-            ],
-            "entity_pattern": [
-              [
-                {
-                  "field": "name",
-                  "cond": {
-                    "type": "eq",
-                    "value": "test-scenario-to-bulk-create-4-resource"
-                  }
-                }
-              ]
-            ],
-            "type": "snooze",
-            "parameters": {
-              "output": "test snooze",
-              "duration": {
-                "seconds": 3,
-                "unit": "s"
-              }
-            },
-            "drop_scenario_if_not_matched": false,
-            "emit_trigger": false
-          }
-        ]
-      },
-      {
-        "name": "test-scenario-to-bulk-create-4-name",
-        "enabled": true,
-        "priority": 2,
         "triggers": ["create"],
         "actions": [
           {
@@ -659,18 +625,22 @@ Feature: Bulk create scenarios
                   "password": "test-scenario-to-bulk-create-2-action-2-password"
                 },
                 "headers": {"Content-Type": "application/json"},
-                "payload": "{\"test-scenario-to-bulk-create-2-action-2-payload\": \"test-scenario-to-bulk-create-2-action-2-paload-value\"}"
+                "payload": "{\"test-scenario-to-bulk-create-2-action-2-payload\": \"test-scenario-to-bulk-create-2-action-2-paload-value\"}",
+                "timeout": {
+                  "value": 1,
+                  "unit": "m"
+                },
+                "retry_count": 3,
+                "retry_delay": {
+                  "value": 3,
+                  "unit": "s"
+                }
               },
               "declare_ticket": {
                 "empty_response": false,
                 "is_regexp": false,
                 "ticket_id": "test-scenario-to-bulk-create-2-action-2-ticket",
                 "test-scenario-to-bulk-create-2-action-2-info": "test-scenario-to-bulk-create-2-action-2-info-value"
-              },
-              "retry_count": 3,
-              "retry_delay": {
-                "value": 3,
-                "unit": "s"
               }
             },
             "drop_scenario_if_not_matched": false,
@@ -931,18 +901,22 @@ Feature: Bulk create scenarios
                     "password": "test-scenario-to-bulk-create-1-action-2-password"
                   },
                   "headers": {"Content-Type": "application/json"},
-                  "payload": "{\"test-scenario-to-bulk-create-1-action-2-payload\": \"test-scenario-to-bulk-create-1-action-2-paload-value\"}"
+                  "payload": "{\"test-scenario-to-bulk-create-1-action-2-payload\": \"test-scenario-to-bulk-create-1-action-2-paload-value\"}",
+                  "timeout": {
+                    "value": 1,
+                    "unit": "m"
+                  },
+                  "retry_count": 3,
+                  "retry_delay": {
+                    "value": 3,
+                    "unit": "s"
+                  }
                 },
                 "declare_ticket": {
                   "empty_response": false,
                   "is_regexp": false,
                   "ticket_id": "test-scenario-to-bulk-create-1-action-2-ticket",
                   "test-scenario-to-bulk-create-1-action-2-info": "test-scenario-to-bulk-create-1-action-2-info-value"
-                },
-                "retry_count": 3,
-                "retry_delay": {
-                  "value": 3,
-                  "unit": "s"
                 }
               },
               "drop_scenario_if_not_matched": false,
@@ -1064,18 +1038,22 @@ Feature: Bulk create scenarios
                     "password": "test-scenario-to-bulk-create-1-action-2-password"
                   },
                   "headers": {"Content-Type": "application/json"},
-                  "payload": "{\"test-scenario-to-bulk-create-1-action-2-payload\": \"test-scenario-to-bulk-create-1-action-2-paload-value\"}"
+                  "payload": "{\"test-scenario-to-bulk-create-1-action-2-payload\": \"test-scenario-to-bulk-create-1-action-2-paload-value\"}",
+                  "timeout": {
+                    "value": 1,
+                    "unit": "m"
+                  },
+                  "retry_count": 3,
+                  "retry_delay": {
+                    "value": 3,
+                    "unit": "s"
+                  }
                 },
                 "declare_ticket": {
                   "empty_response": false,
                   "is_regexp": false,
                   "ticket_id": "test-scenario-to-bulk-create-1-action-2-ticket",
                   "test-scenario-to-bulk-create-1-action-2-info": "test-scenario-to-bulk-create-1-action-2-info-value"
-                },
-                "retry_count": 3,
-                "retry_delay": {
-                  "value": 3,
-                  "unit": "s"
                 }
               },
               "drop_scenario_if_not_matched": false,
@@ -1172,54 +1150,6 @@ Feature: Bulk create scenarios
               "parameters": {
                 "output": "test snooze",
                   "duration": {
-                  "seconds": 3,
-                  "unit": "s"
-                }
-              },
-              "drop_scenario_if_not_matched": false,
-              "emit_trigger": false
-            }
-          ]
-        }
-      },
-      {
-        "status": 400,
-        "errors": {
-          "priority": "Priority already exists."
-        },
-        "item": {
-          "name": "test-scenario-to-bulk-create-4-name",
-          "enabled": true,
-          "priority": 2,
-          "triggers": ["create"],
-          "actions": [
-            {
-              "alarm_pattern": [
-                [
-                  {
-                    "field": "v.component",
-                    "cond": {
-                      "type": "eq",
-                      "value": "test-scenario-to-bulk-create-4-alarm"
-                    }
-                  }
-                ]
-              ],
-              "entity_pattern": [
-                [
-                  {
-                    "field": "name",
-                    "cond": {
-                      "type": "eq",
-                      "value": "test-scenario-to-bulk-create-4-resource"
-                    }
-                  }
-                ]
-              ],
-              "type": "snooze",
-              "parameters": {
-                "output": "test snooze",
-                "duration": {
                   "seconds": 3,
                   "unit": "s"
                 }
@@ -1584,18 +1514,22 @@ Feature: Bulk create scenarios
                     "password": "test-scenario-to-bulk-create-2-action-2-password"
                   },
                   "headers": {"Content-Type": "application/json"},
-                  "payload": "{\"test-scenario-to-bulk-create-2-action-2-payload\": \"test-scenario-to-bulk-create-2-action-2-paload-value\"}"
+                  "payload": "{\"test-scenario-to-bulk-create-2-action-2-payload\": \"test-scenario-to-bulk-create-2-action-2-paload-value\"}",
+                  "timeout": {
+                    "value": 1,
+                    "unit": "m"
+                  },
+                  "retry_count": 3,
+                  "retry_delay": {
+                    "value": 3,
+                    "unit": "s"
+                  }
                 },
                 "declare_ticket": {
                   "empty_response": false,
                   "is_regexp": false,
                   "ticket_id": "test-scenario-to-bulk-create-2-action-2-ticket",
                   "test-scenario-to-bulk-create-2-action-2-info": "test-scenario-to-bulk-create-2-action-2-info-value"
-                },
-                "retry_count": 3,
-                "retry_delay": {
-                  "value": 3,
-                  "unit": "s"
                 }
               },
               "drop_scenario_if_not_matched": false,
@@ -1797,7 +1731,10 @@ Feature: Bulk create scenarios
         {
           "_id": "bulk-create-scenario-1",
           "name": "test-scenario-to-bulk-create-1-name",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "enabled": true,
           "triggers": ["create"],
           "actions": [
@@ -1872,18 +1809,22 @@ Feature: Bulk create scenarios
                     "password": "test-scenario-to-bulk-create-1-action-2-password"
                   },
                   "headers": {"Content-Type": "application/json"},
-                  "payload": "{\"test-scenario-to-bulk-create-1-action-2-payload\": \"test-scenario-to-bulk-create-1-action-2-paload-value\"}"
+                  "payload": "{\"test-scenario-to-bulk-create-1-action-2-payload\": \"test-scenario-to-bulk-create-1-action-2-paload-value\"}",
+                  "timeout": {
+                    "value": 1,
+                    "unit": "m"
+                  },
+                  "retry_count": 3,
+                  "retry_delay": {
+                    "value": 3,
+                    "unit": "s"
+                  }
                 },
                 "declare_ticket": {
                   "empty_response": false,
                   "is_regexp": false,
                   "ticket_id": "test-scenario-to-bulk-create-1-action-2-ticket",
                   "test-scenario-to-bulk-create-1-action-2-info": "test-scenario-to-bulk-create-1-action-2-info-value"
-                },
-                "retry_count": 3,
-                "retry_delay": {
-                  "value": 3,
-                  "unit": "s"
                 }
               },
               "drop_scenario_if_not_matched": false,
@@ -1933,7 +1874,7 @@ Feature: Bulk create scenarios
                   "description": "test-type-to-edit-scenario-description",
                   "icon_name": "test-type-to-edit-scenario-icon",
                   "name": "test-type-to-edit-scenario-name",
-                  "priority": 24,
+                  "priority": 25,
                   "type": "maintenance"
                 }
               },
@@ -1945,7 +1886,10 @@ Feature: Bulk create scenarios
         {
           "_id": "bulk-create-scenario-2",
           "name": "test-scenario-to-bulk-create-2-name",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "enabled": true,
           "triggers": ["create"],
           "actions": [
@@ -2020,18 +1964,22 @@ Feature: Bulk create scenarios
                     "password": "test-scenario-to-bulk-create-2-action-2-password"
                   },
                   "headers": {"Content-Type": "application/json"},
-                  "payload": "{\"test-scenario-to-bulk-create-2-action-2-payload\": \"test-scenario-to-bulk-create-2-action-2-paload-value\"}"
+                  "payload": "{\"test-scenario-to-bulk-create-2-action-2-payload\": \"test-scenario-to-bulk-create-2-action-2-paload-value\"}",
+                  "timeout": {
+                    "value": 1,
+                    "unit": "m"
+                  },
+                  "retry_count": 3,
+                  "retry_delay": {
+                    "value": 3,
+                    "unit": "s"
+                  }
                 },
                 "declare_ticket": {
                   "empty_response": false,
                   "is_regexp": false,
                   "ticket_id": "test-scenario-to-bulk-create-2-action-2-ticket",
                   "test-scenario-to-bulk-create-2-action-2-info": "test-scenario-to-bulk-create-2-action-2-info-value"
-                },
-                "retry_count": 3,
-                "retry_delay": {
-                  "value": 3,
-                  "unit": "s"
                 }
               },
               "drop_scenario_if_not_matched": false,
@@ -2081,7 +2029,7 @@ Feature: Bulk create scenarios
                   "description": "test-type-to-edit-scenario-description",
                   "icon_name": "test-type-to-edit-scenario-icon",
                   "name": "test-type-to-edit-scenario-name",
-                  "priority": 24,
+                  "priority": 25,
                   "type": "maintenance"
                 }
               },
@@ -2093,7 +2041,10 @@ Feature: Bulk create scenarios
         {
           "_id": "bulk-create-scenario-3",
           "name": "test-scenario-to-bulk-create-3-name",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "enabled": true,
           "triggers": ["create"],
           "delay": {

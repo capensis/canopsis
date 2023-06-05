@@ -1,13 +1,13 @@
 <template lang="pug">
-  v-layout
+  v-layout.alarm-column-value-extra-details
     extra-details-ack(v-if="alarm.v.ack", :ack="alarm.v.ack")
     extra-details-last-comment(
       v-if="alarm.v.last_comment && alarm.v.last_comment.m",
       :last-comment="alarm.v.last_comment"
     )
     extra-details-ticket(
-      v-if="alarm.v.ticket",
-      :ticket="alarm.v.ticket"
+      v-if="hasTickets",
+      :tickets="alarm.v.tickets"
     )
     extra-details-canceled(
       v-if="alarm.v.canceled",
@@ -22,14 +22,15 @@
       :pbehavior="alarm.pbehavior",
       :pbehavior-info="alarm.v.pbehavior_info"
     )
-    extra-details-causes(
-      v-if="alarm.causes",
-      :causes="alarm.causes"
+    extra-details-parents(
+      v-if="alarm.parents",
+      :rules="alarm.meta_alarm_rules",
+      :total="alarm.parents"
     )
-    extra-details-consequences(
-      v-if="alarm.consequences",
-      :consequences="alarm.consequences",
-      :rule="alarm.rule"
+    extra-details-children(
+      v-if="alarm.children",
+      :total="alarm.children",
+      :rule="alarm.meta_alarm_rule"
     )
 </template>
 
@@ -40,8 +41,8 @@ import ExtraDetailsTicket from './extra-details/extra-details-ticket.vue';
 import ExtraDetailsCanceled from './extra-details/extra-details-canceled.vue';
 import ExtraDetailsSnooze from './extra-details/extra-details-snooze.vue';
 import ExtraDetailsPbehavior from './extra-details/extra-details-pbehavior.vue';
-import ExtraDetailsCauses from './extra-details/extra-details-causes.vue';
-import ExtraDetailsConsequences from './extra-details/extra-details-consequences.vue';
+import ExtraDetailsParents from './extra-details/extra-details-parents.vue';
+import ExtraDetailsChildren from './extra-details/extra-details-children.vue';
 
 /**
  * Component for the 'extra-details' column of the alarms list
@@ -58,8 +59,8 @@ export default {
     ExtraDetailsCanceled,
     ExtraDetailsSnooze,
     ExtraDetailsPbehavior,
-    ExtraDetailsCauses,
-    ExtraDetailsConsequences,
+    ExtraDetailsParents,
+    ExtraDetailsChildren,
   },
   props: {
     alarm: {
@@ -67,5 +68,16 @@ export default {
       required: true,
     },
   },
+  computed: {
+    hasTickets() {
+      return this.alarm.v.tickets?.length;
+    },
+  },
 };
 </script>
+
+<style lang="scss">
+.alarm-column-value-extra-details {
+  gap: 2px;
+}
+</style>

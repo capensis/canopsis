@@ -1,0 +1,144 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-id-field Renders \`c-id-field\` with custom props 1`] = `
+<div
+  class="v-input v-text-field v-input--is-label-active v-input--is-dirty v-input--is-disabled v-input--is-readonly theme--light"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-text-field__slot"
+      >
+        <label
+          aria-hidden="true"
+          class="v-label v-label--active v-label--is-disabled theme--light"
+          style="left: 0px; position: absolute;"
+        >
+          Custom label
+        </label>
+        <input
+          aria-label="Custom label"
+          disabled="disabled"
+          name="customName"
+          readonly="readonly"
+          type="text"
+        />
+      </div>
+      <div
+        class="v-input__append-inner"
+      >
+        <c-help-icon-stub
+          icon="help"
+          left="left"
+          text="helpText"
+        />
+      </div>
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <div
+          class="v-messages__wrapper"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-id-field Renders \`c-id-field\` with default props 1`] = `
+<div
+  class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-text-field__slot"
+      >
+        <label
+          aria-hidden="true"
+          class="v-label v-label--active theme--light"
+          style="left: 0px; position: absolute;"
+        >
+          Id
+        </label>
+        <input
+          aria-label="Id"
+          name="_id"
+          type="text"
+        />
+      </div>
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <div
+          class="v-messages__wrapper"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-id-field Renders \`c-id-field\` with errors 1`] = `
+<div
+  class="v-input v-text-field theme--light"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-text-field__slot"
+      >
+        <label
+          aria-hidden="true"
+          class="v-label theme--light"
+          style="left: 0px; position: absolute;"
+        >
+          Id
+        </label>
+        <input
+          aria-label="Id"
+          name="customName"
+          type="text"
+        />
+      </div>
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <div
+          class="v-messages__wrapper"
+        >
+          <div
+            class="v-messages__message message-transition-leave message-transition-leave-active"
+          >
+            Value error
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -78,7 +78,7 @@ Feature: resolve meta alarm
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true until response code is 200 and response key "data.0.v.resolved" is greater or equal than 1
+    When I do GET /api/v4/alarms?search=test-resource-axe-resolverule-correlation-1&correlation=true until response code is 200 and response key "data.0.v.resolved" is greater or equal than 1
     Then the response code should be 200
     Then the response body should contain:
     """

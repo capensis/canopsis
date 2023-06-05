@@ -1,30 +1,19 @@
 <template lang="pug">
-  div
-    v-layout(row)
-      v-text-field(
-        v-field="form.ticket",
-        :label="$t('modals.createAckEvent.fields.ticket')",
-        data-test="createAckEventTicket"
-      )
-    v-layout(row)
-      v-textarea(
-        v-field="form.output",
-        v-validate="isNoteRequired ? 'required' : ''",
-        :label="$t('common.output')",
-        :error-messages="errors.collect('output')",
-        name="output",
-        data-test="createAckEventNote"
-      )
-    v-layout(row)
-      v-tooltip(top)
+  v-layout(column)
+    v-tooltip(v-if="!hideAckResources", top)
+      template(#activator="{ on }")
         v-checkbox(
-          slot="activator",
+          v-on="on",
           v-field="form.ack_resources",
-          :label="$t('modals.createAckEvent.fields.ackResources')",
-          color="primary",
-          data-test="createAckEventResource"
+          :label="$t('alarm.ackResources')",
+          color="primary"
         )
-        span {{ $t('modals.createAckEvent.tooltips.ackResources') }}
+      span {{ $t('alarm.ackResourcesQuestion') }}
+    c-description-field(
+      v-field="form.output",
+      :label="$t('common.note')",
+      :required="isNoteRequired"
+    )
 </template>
 
 <script>
@@ -40,6 +29,10 @@ export default {
       default: () => ({}),
     },
     isNoteRequired: {
+      type: Boolean,
+      default: false,
+    },
+    hideAckResources: {
       type: Boolean,
       default: false,
     },

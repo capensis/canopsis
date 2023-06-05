@@ -1,17 +1,21 @@
 <template lang="pug">
-  v-tooltip.c-extra-details(top)
-    v-icon.purple.white--text.c-extra-details__badge(slot="activator", small) {{ icon }}
-    div.text-md-center
-      strong {{ $t('alarmList.actions.iconsTitles.ack') }}
-      div {{ $t('common.by') }} : {{ ack.a }}
-      div {{ $t('common.date') }} : {{ date }}
-      div(v-if="ack.initiator") {{ $t('common.initiator') }} : {{ ack.initiator }}
-      div.c-extra-details__message(v-if="ack.m") {{ $tc('common.comment') }} : {{ ack.m }}
+  div
+    v-tooltip.c-extra-details(top)
+      template(#activator="{ on }")
+        span.c-extra-details__badge.purple(v-on="on")
+          v-icon(color="white", small) {{ icon }}
+      div.text-md-center
+        strong {{ $t('alarm.actions.iconsTitles.ack') }}
+        div {{ $t('common.by') }} : {{ ack.a }}
+        div {{ $t('common.date') }} : {{ date }}
+        div(v-if="ack.initiator") {{ $t('common.initiator') }} : {{ ack.initiator }}
+        div.c-extra-details__message(v-if="ack.m") {{ $tc('common.comment') }} : {{ ack.m }}
 </template>
 
 <script>
-import { EVENT_ENTITY_STYLE, EVENT_ENTITY_TYPES } from '@/constants';
+import { EVENT_ENTITY_TYPES } from '@/constants';
 
+import { getEntityEventIcon } from '@/helpers/icon';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
 export default {
@@ -27,7 +31,7 @@ export default {
     },
 
     icon() {
-      return EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon;
+      return getEntityEventIcon(EVENT_ENTITY_TYPES.ack);
     },
   },
 };

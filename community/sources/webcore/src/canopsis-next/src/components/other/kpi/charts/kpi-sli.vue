@@ -9,9 +9,10 @@
       :downloading="downloading",
       :min-date="minDate",
       responsive,
-      @export:csv="exportSliMetricsAsCsv",
-      @export:png="exportSliMetricsAsPng"
+      @export:csv="exportMetricsAsCsv",
+      @export:png="exportMetricsAsPng"
     )
+    kpi-error-overlay(v-if="unavailable || fetchError")
 </template>
 
 <script>
@@ -23,35 +24,43 @@ import {
   DATETIME_FORMATS,
 } from '@/constants';
 
-import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
-import { convertDateToStartOfDayTimestamp, convertDateToString } from '@/helpers/date/date';
-import { saveFile } from '@/helpers/file/files';
+import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { convertDateToStartOfDayTimestampByTimezone, convertDateToString } from '@/helpers/date/date';
+import { convertMetricsToTimezone, isMetricsQueryChanged } from '@/helpers/metrics';
 
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';
-import { exportCsvMixinCreator } from '@/mixins/widget/export';
+import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
+import { metricsExportMixinCreator } from '@/mixins/widget/metrics/export';
 
 import KpiSliFilters from './partials/kpi-sli-filters.vue';
-import { isMetricsQueryChanged } from '@/helpers/metrics';
+import KpiErrorOverlay from './partials/kpi-error-overlay.vue';
 
 const KpiSliChart = () => import(/* webpackChunkName: "Charts" */ './partials/kpi-sli-chart.vue');
 
 export default {
-  components: { KpiSliFilters, KpiSliChart },
+  inject: ['$system'],
+  components: { KpiErrorOverlay, KpiSliFilters, KpiSliChart },
   mixins: [
     entitiesMetricsMixin,
     localQueryMixin,
-    exportCsvMixinCreator({
+    metricsIntervalFilterMixin,
+    metricsExportMixinCreator({
       createExport: 'createKpiSliExport',
       fetchExport: 'fetchMetricExport',
-      fetchExportFile: 'fetchMetricCsvFile',
     }),
   ],
+  props: {
+    unavailable: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       sliMetrics: [],
       pending: false,
-      downloading: false,
+      fetchError: false,
       minDate: null,
       query: {
         sampling: SAMPLINGS.day,
@@ -64,8 +73,23 @@ export default {
       },
     };
   },
-  mounted() {
-    this.fetchList();
+  computed: {
+    interval() {
+      return convertMetricIntervalToTimestamp({
+        interval: this.query.interval,
+        timezone: this.$system.timezone,
+      });
+    },
+  },
+  watch: {
+    unavailable: {
+      immediate: true,
+      handler(unavailable) {
+        if (!unavailable) {
+          this.fetchList();
+        }
+      },
+    },
   },
   methods: {
     customQueryCondition(query, oldQuery) {
@@ -73,30 +97,18 @@ export default {
     },
 
     getFileName() {
-      const fromTime = convertDateToString(
-        convertStartDateIntervalToTimestamp(this.query.interval.from),
-        DATETIME_FORMATS.short,
-      );
-      const toTime = convertDateToString(
-        convertStopDateIntervalToTimestamp(this.query.interval.to),
-        DATETIME_FORMATS.short,
-      );
+      const { from, to } = this.getIntervalQuery();
+
+      const fromTime = convertDateToString(from, DATETIME_FORMATS.short);
+      const toTime = convertDateToString(to, DATETIME_FORMATS.short);
 
       return [KPI_SLI_METRICS_FILENAME_PREFIX, fromTime, toTime, this.query.sampling].join('-');
     },
 
-    async exportSliMetricsAsPng(blob) {
-      try {
-        await saveFile(blob, this.getFileName());
-      } catch (err) {
-        this.$popups.error({ text: err.message || this.$t('errors.default') });
-      }
-    },
-
     getQuery() {
       return {
-        from: convertStartDateIntervalToTimestamp(this.query.interval.from),
-        to: convertStopDateIntervalToTimestamp(this.query.interval.to),
+        ...this.getIntervalQuery(),
+
         in_percents: this.query.type === KPI_SLI_GRAPH_DATA_TYPE.percent,
         sampling: this.query.sampling,
         filter: this.query.filter,
@@ -104,33 +116,28 @@ export default {
     },
 
     async fetchList() {
-      this.pending = true;
-      const params = this.getQuery();
+      try {
+        this.pending = true;
 
-      const {
-        data: sliMetrics,
-        meta: { min_date: minDate },
-      } = await this.fetchSliMetricsWithoutStore({ params });
+        const params = this.getQuery();
 
-      this.sliMetrics = sliMetrics;
-      this.minDate = convertDateToStartOfDayTimestamp(minDate);
+        const {
+          data: sliMetrics,
+          meta: { min_date: minDate },
+        } = await this.fetchSliMetricsWithoutStore({ params });
 
-      if (params.from < this.minDate) {
-        this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });
+        this.sliMetrics = convertMetricsToTimezone(sliMetrics, this.$system.timezone);
+        this.minDate = convertDateToStartOfDayTimestampByTimezone(minDate, this.$system.timezone);
+        this.fetchError = false;
+
+        if (params.from < this.minDate) {
+          this.updateQueryField('interval', { ...this.query.interval, from: this.minDate });
+        }
+      } catch (err) {
+        this.fetchError = true;
+      } finally {
+        this.pending = false;
       }
-
-      this.pending = false;
-    },
-
-    async exportSliMetricsAsCsv() {
-      this.downloading = true;
-
-      await this.exportAsCsv({
-        name: this.getFileName(),
-        data: this.getQuery(),
-      });
-
-      this.downloading = false;
     },
   },
 };

@@ -1,0 +1,22 @@
+[Unit]
+Description=Canopsis Go Engine Che
+PartOf=canopsis.service
+After=canopsis.service
+ReloadPropagatedFrom=canopsis.service
+After=network.target
+Documentation=https://doc.canopsis.net/guide-administration/moteurs/moteur-che/
+
+[Service]
+User=canopsis
+Group=canopsis
+WorkingDirectory=/opt/canopsis
+Environment=HOME=/opt/canopsis
+EnvironmentFile=/opt/canopsis/etc/go-engines-vars.conf
+ExecStart=/usr/bin/env /opt/canopsis/bin/engine-che
+PIDFile=/run/canopsis-engine-go-engine-che.pid
+Restart=always
+RestartSec=1
+StartLimitBurst=300
+
+[Install]
+WantedBy=canopsis.service

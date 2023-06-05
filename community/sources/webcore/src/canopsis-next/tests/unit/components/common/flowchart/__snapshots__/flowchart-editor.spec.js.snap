@@ -1,0 +1,907 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`flowchart-editor Renders \`flowchart-editor\` with all shapes 1`] = `
+<svg
+  height="100%"
+  viewBox="-425 -425 1000 1000"
+  width="100%"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <g>
+    <rect
+      cursor="move"
+      data-type="rect"
+      height="130"
+      width="130"
+      x="0"
+      y="0"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor"
+        style="top: 0px; left: 0px; width: 130px; height: 130px;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="width: 130px; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <path
+      d="M 0 100L 100 0"
+      data-type="line"
+      fill="transparent"
+      pointer-events="stroke"
+    />
+    <path
+      cursor="move"
+      d="M 0 100L 100 0"
+      fill="transparent"
+      pointer-events="stroke"
+      stroke-width="10"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor text-shape-editor--align-center text-shape-editor--justify-center"
+        style="top: -4px; left: 1px; width: 1px; height: 1em;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="text-align: center; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <marker
+      id="arrow-line-end"
+      markerHeight="60"
+      markerUnits="userSpaceOnUse"
+      markerWidth="60"
+      orient="auto"
+      refX="20"
+      refY="10"
+    >
+      <path
+        d="M0 0L5 10L0 20L20 10Z"
+      />
+    </marker>
+    <path
+      d="M 0 100L 100 0"
+      data-type="arrow-line"
+      fill="transparent"
+      marker-end="url(#arrow-line-end)"
+      pointer-events="stroke"
+    />
+    <path
+      cursor="move"
+      d="M 0 100L 100 0"
+      fill="transparent"
+      pointer-events="stroke"
+      stroke-width="10"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor text-shape-editor--align-center text-shape-editor--justify-center"
+        style="top: -2px; left: 3px; width: 1px; height: 1em;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="text-align: center; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <marker
+      id="bidirectional-arrow-line-end"
+      markerHeight="60"
+      markerUnits="userSpaceOnUse"
+      markerWidth="60"
+      orient="auto"
+      refX="20"
+      refY="10"
+    >
+      <path
+        d="M0 0L5 10L0 20L20 10Z"
+      />
+    </marker>
+    <marker
+      id="bidirectional-arrow-line-start"
+      markerHeight="60"
+      markerUnits="userSpaceOnUse"
+      markerWidth="60"
+      orient="auto-start-reverse"
+      refX="20"
+      refY="10"
+    >
+      <path
+        d="M0 0L5 10L0 20L20 10Z"
+      />
+    </marker>
+    <path
+      d="M 0 100L 100 0"
+      data-type="bidirectional-arrow-line"
+      fill="transparent"
+      marker-end="url(#bidirectional-arrow-line-end)"
+      marker-start="url(#bidirectional-arrow-line-start)"
+      pointer-events="stroke"
+    />
+    <path
+      cursor="move"
+      d="M 0 100L 100 0"
+      fill="transparent"
+      pointer-events="stroke"
+      stroke-width="10"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor text-shape-editor--align-center text-shape-editor--justify-center"
+        style="top: 0px; left: 5px; width: 1px; height: 1em;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="text-align: center; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <circle
+      cursor="move"
+      cx="100"
+      cy="100"
+      data-type="circle"
+      r="50"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor"
+        style="top: 50px; left: 50px; width: 100px; height: 100px;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="width: 100px; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <ellipse
+      cursor="move"
+      cx="65"
+      cy="65"
+      data-type="ellipse"
+      rx="65"
+      ry="65"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor"
+        style="top: 0px; left: 0px; width: 130px; height: 130px;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="width: 130px; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <path
+      cursor="move"
+      d="M0 65l65 -65l65 65l-65 65Z"
+      data-type="rhombus"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor"
+        style="top: 0px; left: 0px; width: 130px; height: 130px;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="width: 130px; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <path
+      cursor="move"
+      d="M50 0l80 0l-50,130l-80 0Z"
+      data-type="parallelogram"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor"
+        style="top: 0px; left: 0px; width: 130px; height: 130px;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="width: 130px; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <g>
+      <rect
+        cursor="move"
+        data-type="process"
+        height="130"
+        rx="20"
+        ry="20"
+        stroke-width="0"
+        width="130"
+        x="0"
+        y="0"
+      />
+      <path
+        d="M 20 0 v 130 M 110 0 v 130"
+        pointer-events="none"
+        stroke-width="0"
+      />
+    </g>
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor"
+        style="top: 0px; left: 0px; width: 130px; height: 130px;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="width: 130px; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <path
+      cursor="move"
+      d="M 0 0l 130 0l 0 120q -32.5 -20 -65 0q -32.5,20 -65 0Z"
+      data-type="document"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor"
+        style="top: 0px; left: 0px; width: 130px; height: 130px;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="width: 130px; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <path
+      cursor="move"
+      d="M 0 20a 65 20 0 1, 0 130, 0a 65 20 0 1, 0 -130, 0l 0 90a 65,20 0 1, 0 130, 0l 0 -90"
+      data-type="storage"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor"
+        style="top: 0px; left: 0px; width: 130px; height: 130px;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="width: 130px; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g
+    class="image-shape"
+  >
+    <rect
+      data-type="image"
+      height="40"
+      width="40"
+      x="0"
+      y="0"
+    />
+    <image
+      cursor="move"
+      height="40"
+      width="40"
+      x="0"
+      y="0"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor text-shape-editor--align-center text-shape-editor--justify-center"
+        style="top: 45px; left: 20px; width: 1px; height: 1em;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="text-align: center; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <!---->
+    <!---->
+  </g>
+  <!---->
+  <!---->
+  <!---->
+  <g>
+    <!---->
+    <!---->
+  </g>
+  <g>
+    <!---->
+    <!---->
+  </g>
+  <g>
+    <!---->
+    <!---->
+  </g>
+  <g>
+    <!---->
+    <!---->
+  </g>
+  <g>
+    <!---->
+    <!---->
+  </g>
+  <g>
+    <!---->
+    <!---->
+  </g>
+  <g>
+    <!---->
+    <!---->
+  </g>
+  <g>
+    <!---->
+    <!---->
+  </g>
+  <!---->
+</svg>
+`;
+
+exports[`flowchart-editor Renders \`flowchart-editor\` with custom props 1`] = `
+<svg
+  height="100%"
+  style="background-color: rgb(0, 0, 0); cursor: pointer;"
+  viewBox="-425 -425 1000 1000"
+  width="100%"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <g>
+    <rect
+      cursor=""
+      data-type="rect"
+      height="130"
+      width="130"
+      x="0"
+      y="0"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor"
+        style="top: 0px; left: 0px; width: 130px; height: 130px;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="width: 130px; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <path
+      d="M 0 100L 100 0"
+      data-type="line"
+      fill="transparent"
+      pointer-events="stroke"
+    />
+    <path
+      cursor=""
+      d="M 0 100L 100 0"
+      fill="transparent"
+      pointer-events="stroke"
+      stroke-width="10"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor text-shape-editor--align-center text-shape-editor--justify-center"
+        style="top: 2px; left: 7px; width: 1px; height: 1em;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="text-align: center; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <marker
+      id="arrow-line-end"
+      markerHeight="60"
+      markerUnits="userSpaceOnUse"
+      markerWidth="60"
+      orient="auto"
+      refX="20"
+      refY="10"
+    >
+      <path
+        d="M0 0L5 10L0 20L20 10Z"
+      />
+    </marker>
+    <path
+      d="M 0 100L 100 0"
+      data-type="arrow-line"
+      fill="transparent"
+      marker-end="url(#arrow-line-end)"
+      pointer-events="stroke"
+    />
+    <path
+      cursor=""
+      d="M 0 100L 100 0"
+      fill="transparent"
+      pointer-events="stroke"
+      stroke-width="10"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor text-shape-editor--align-center text-shape-editor--justify-center"
+        style="top: 4px; left: 9px; width: 1px; height: 1em;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="text-align: center; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <marker
+      id="bidirectional-arrow-line-end"
+      markerHeight="60"
+      markerUnits="userSpaceOnUse"
+      markerWidth="60"
+      orient="auto"
+      refX="20"
+      refY="10"
+    >
+      <path
+        d="M0 0L5 10L0 20L20 10Z"
+      />
+    </marker>
+    <marker
+      id="bidirectional-arrow-line-start"
+      markerHeight="60"
+      markerUnits="userSpaceOnUse"
+      markerWidth="60"
+      orient="auto-start-reverse"
+      refX="20"
+      refY="10"
+    >
+      <path
+        d="M0 0L5 10L0 20L20 10Z"
+      />
+    </marker>
+    <path
+      d="M 0 100L 100 0"
+      data-type="bidirectional-arrow-line"
+      fill="transparent"
+      marker-end="url(#bidirectional-arrow-line-end)"
+      marker-start="url(#bidirectional-arrow-line-start)"
+      pointer-events="stroke"
+    />
+    <path
+      cursor=""
+      d="M 0 100L 100 0"
+      fill="transparent"
+      pointer-events="stroke"
+      stroke-width="10"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor text-shape-editor--align-center text-shape-editor--justify-center"
+        style="top: 6px; left: 11px; width: 1px; height: 1em;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="text-align: center; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <circle
+      cursor=""
+      cx="100"
+      cy="100"
+      data-type="circle"
+      r="50"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor"
+        style="top: 50px; left: 50px; width: 100px; height: 100px;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="width: 100px; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <ellipse
+      cursor=""
+      cx="65"
+      cy="65"
+      data-type="ellipse"
+      rx="65"
+      ry="65"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor"
+        style="top: 0px; left: 0px; width: 130px; height: 130px;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="width: 130px; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <path
+      cursor=""
+      d="M0 65l65 -65l65 65l-65 65Z"
+      data-type="rhombus"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor"
+        style="top: 0px; left: 0px; width: 130px; height: 130px;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="width: 130px; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <path
+      cursor=""
+      d="M50 0l80 0l-50,130l-80 0Z"
+      data-type="parallelogram"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor"
+        style="top: 0px; left: 0px; width: 130px; height: 130px;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="width: 130px; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <g>
+      <rect
+        cursor=""
+        data-type="process"
+        height="130"
+        rx="20"
+        ry="20"
+        stroke-width="0"
+        width="130"
+        x="0"
+        y="0"
+      />
+      <path
+        d="M 20 0 v 130 M 110 0 v 130"
+        pointer-events="none"
+        stroke-width="0"
+      />
+    </g>
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor"
+        style="top: 0px; left: 0px; width: 130px; height: 130px;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="width: 130px; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <path
+      cursor=""
+      d="M 0 0l 130 0l 0 120q -32.5 -20 -65 0q -32.5,20 -65 0Z"
+      data-type="document"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor"
+        style="top: 0px; left: 0px; width: 130px; height: 130px;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="width: 130px; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g>
+    <path
+      cursor=""
+      d="M 0 20a 65 20 0 1, 0 130, 0a 65 20 0 1, 0 -130, 0l 0 90a 65,20 0 1, 0 130, 0l 0 -90"
+      data-type="storage"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor"
+        style="top: 0px; left: 0px; width: 130px; height: 130px;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="width: 130px; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <g
+    class="image-shape"
+  >
+    <rect
+      data-type="image"
+      height="40"
+      width="40"
+      x="0"
+      y="0"
+    />
+    <image
+      cursor=""
+      height="40"
+      width="40"
+      x="0"
+      y="0"
+    />
+    <foreignobject
+      fontColor="black"
+      pointer-events="none"
+      style="overflow: visible;"
+    >
+      <div
+        class="text-shape-editor text-shape-editor--align-center text-shape-editor--justify-center"
+        style="top: 45px; left: 20px; width: 1px; height: 1em;"
+      >
+        <div
+          class="text-shape-editor__wrapper"
+        >
+          <div
+            class="text-shape-editor__field"
+            contenteditable="false"
+            style="text-align: center; color: black; font-size: 12px;"
+          />
+        </div>
+      </div>
+    </foreignobject>
+  </g>
+  <!---->
+</svg>
+`;

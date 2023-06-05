@@ -46,6 +46,8 @@ const snapshotFactory = (options = {}) => mount(KpiFilters, {
   ...options,
 });
 
+const selectFiltersList = wrapper => wrapper.find('kpi-filters-list-stub');
+
 describe('kpi-filters', () => {
   it('Filters fetched after mount', async () => {
     const fetchFilters = jest.fn();
@@ -120,7 +122,7 @@ describe('kpi-filters', () => {
 
     fetchFilters.mockReset();
 
-    const kpiFiltersListElement = wrapper.find('kpi-filters-list-stub');
+    const kpiFiltersListElement = selectFiltersList(wrapper);
 
     const rowsPerPage = Faker.datatype.number({ max: initialRowsPerPage });
     const page = Faker.datatype.number();
@@ -179,25 +181,23 @@ describe('kpi-filters', () => {
 
     await flushPromises();
 
-    const kpiFiltersListElement = wrapper.find('kpi-filters-list-stub');
+    const kpiFiltersListElement = selectFiltersList(wrapper);
 
     const filter = {
       _id: Faker.datatype.string(),
       name: Faker.datatype.string(),
-      entity_patterns: [{}],
+      entity_pattern: [],
     };
     kpiFiltersListElement.vm.$emit('edit', filter);
 
     expect(showModal).toBeCalledTimes(1);
     expect(showModal).toBeCalledWith(
       {
-        name: MODALS.patterns,
+        name: MODALS.createKpiFilter,
         config: {
           action: expect.any(Function),
-          entity: true,
-          name: true,
-          patterns: filter,
-          title: 'modals.filter.edit.title',
+          filter,
+          title: 'Edit filter',
         },
       },
     );
@@ -206,7 +206,7 @@ describe('kpi-filters', () => {
 
     const newFilterData = {
       name: Faker.datatype.string(),
-      entity_patterns: [],
+      entity_pattern: [],
     };
 
     await modalArguments.config.action(newFilterData);
@@ -257,28 +257,26 @@ describe('kpi-filters', () => {
 
     await flushPromises();
 
-    const kpiFiltersListElement = wrapper.find('kpi-filters-list-stub');
+    const kpiFiltersListElement = selectFiltersList(wrapper);
 
     const filter = {
       _id: Faker.datatype.string(),
       name: Faker.datatype.string(),
-      entity_patterns: [{}],
+      entity_pattern: [[]],
     };
     kpiFiltersListElement.vm.$emit('duplicate', filter);
 
     expect(showModal).toBeCalledTimes(1);
     expect(showModal).toBeCalledWith(
       {
-        name: MODALS.patterns,
+        name: MODALS.createKpiFilter,
         config: {
           action: expect.any(Function),
-          entity: true,
-          name: true,
-          patterns: {
+          filter: {
             name: filter.name,
-            entity_patterns: filter.entity_patterns,
+            entity_pattern: filter.entity_pattern,
           },
-          title: 'modals.filter.duplicate.title',
+          title: 'Duplicate filter',
         },
       },
     );
@@ -287,7 +285,7 @@ describe('kpi-filters', () => {
 
     const newFilterData = {
       name: Faker.datatype.string(),
-      entity_patterns: [],
+      entity_pattern: [],
     };
 
     await modalArguments.config.action(newFilterData);
@@ -337,12 +335,12 @@ describe('kpi-filters', () => {
 
     await flushPromises();
 
-    const kpiFiltersListElement = wrapper.find('kpi-filters-list-stub');
+    const kpiFiltersListElement = selectFiltersList(wrapper);
 
     const filter = {
       _id: Faker.datatype.string(),
       name: Faker.datatype.string(),
-      entity_patterns: [{}],
+      entity_pattern: [],
     };
     kpiFiltersListElement.vm.$emit('remove', filter._id);
 

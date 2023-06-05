@@ -26,6 +26,15 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 1`] =
               rows="5"
             />
           </div>
+          <div
+            class="v-input__append-inner"
+          >
+            <c-help-icon-stub
+              icon="help"
+              left="left"
+              text=""
+            />
+          </div>
         </div>
         <div
           class="v-text-field__details"
@@ -54,7 +63,7 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 1`] =
       <div
         class="v-btn__content"
       >
-        common.parse
+        Parse
       </div>
     </button>
     <button
@@ -65,7 +74,7 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 1`] =
       <div
         class="v-btn__content"
       >
-        common.reset
+        Reset
       </div>
     </button>
   </div>
@@ -97,6 +106,15 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 2`] =
               name="json"
               readonly="readonly"
               rows="5"
+            />
+          </div>
+          <div
+            class="v-input__append-inner"
+          >
+            <c-help-icon-stub
+              icon="help"
+              left="left"
+              text=""
             />
           </div>
         </div>
@@ -157,21 +175,11 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 3`] =
           <div
             class="v-input__append-inner"
           >
-            <span
-              class="v-tooltip v-tooltip--left"
-            >
-              <transition-stub
-                name="slide-x-reverse-transition"
-              />
-              <span>
-                <i
-                  aria-hidden="true"
-                  class="v-icon material-icons theme--light"
-                >
-                  help
-                </i>
-              </span>
-            </span>
+            <c-help-icon-stub
+              icon="help"
+              left="left"
+              text="Test text"
+            />
           </div>
         </div>
         <div
@@ -201,7 +209,7 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 3`] =
       <div
         class="v-btn__content"
       >
-        common.parse
+        Parse
       </div>
     </button>
     <button
@@ -212,7 +220,7 @@ exports[`c-json-field Renders \`c-json-field\` with custom props correctly 3`] =
       <div
         class="v-btn__content"
       >
-        common.reset
+        Reset
       </div>
     </button>
   </div>
@@ -245,6 +253,15 @@ exports[`c-json-field Renders \`c-json-field\` with default props and changed va
               rows="5"
             />
           </div>
+          <div
+            class="v-input__append-inner"
+          >
+            <c-help-icon-stub
+              icon="help"
+              left="left"
+              text=""
+            />
+          </div>
         </div>
         <div
           class="v-text-field__details"
@@ -272,7 +289,7 @@ exports[`c-json-field Renders \`c-json-field\` with default props and changed va
       <div
         class="v-btn__content"
       >
-        common.parse
+        Parse
       </div>
     </button>
     <button
@@ -282,7 +299,7 @@ exports[`c-json-field Renders \`c-json-field\` with default props and changed va
       <div
         class="v-btn__content"
       >
-        common.reset
+        Reset
       </div>
     </button>
   </div>
@@ -315,6 +332,15 @@ exports[`c-json-field Renders \`c-json-field\` with default props and incorrect 
               rows="5"
             />
           </div>
+          <div
+            class="v-input__append-inner"
+          >
+            <c-help-icon-stub
+              icon="help"
+              left="left"
+              text=""
+            />
+          </div>
         </div>
         <div
           class="v-text-field__details"
@@ -330,7 +356,7 @@ exports[`c-json-field Renders \`c-json-field\` with default props and incorrect 
               <div
                 class="v-messages__message"
               >
-                errors.JSONNotValid
+                Invalid JSON
               </div>
             </transition-group-stub>
           </div>
@@ -366,6 +392,15 @@ exports[`c-json-field Renders \`c-json-field\` with default props correctly 1`] 
               data-vv-validate-on="none"
               name="json"
               rows="5"
+            />
+          </div>
+          <div
+            class="v-input__append-inner"
+          >
+            <c-help-icon-stub
+              icon="help"
+              left="left"
+              text=""
             />
           </div>
         </div>

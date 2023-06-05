@@ -3,17 +3,19 @@ package api
 import (
 	"context"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitybasic"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exdate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/linkrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
@@ -26,13 +28,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/resolverule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/scenario"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/serviceweather"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgettemplate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	libdatastorage "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	libidlerule "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
@@ -59,6 +61,10 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 		panic(err)
 	}
 	err = v.RegisterValidation("oneoforempty", common.ValidateOneOfOrEmpty)
+	if err != nil {
+		panic(err)
+	}
+	err = v.RegisterValidation("iscolororempty", common.ValidateColorOrEmpty)
 	if err != nil {
 		panic(err)
 	}
@@ -110,6 +116,7 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	v.RegisterStructValidationCtx(pbhValidator.ValidateEditRequest, pbehavior.EditRequest{})
 	v.RegisterStructValidationCtx(pbhValidator.ValidatePatchRequest, pbehavior.PatchRequest{})
 	v.RegisterStructValidation(pbhValidator.ValidateCalendarRequest, pbehavior.CalendarByEntityIDRequest{})
+	v.RegisterStructValidationCtx(pbhValidator.ValidateEntityCreateRequest, pbehavior.BulkEntityCreateRequestItem{})
 
 	pbhReasonUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "ID")
 	pbhReasonUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "Name")
@@ -121,15 +128,12 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 
 	pbhTypeUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorTypeMongoCollection, "ID")
 	pbhTypeUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorTypeMongoCollection, "Name")
-	pbhTypeUniquePriorityValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorTypeMongoCollection, "Priority")
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		pbhTypeUniqueIDValidator.Validate(ctx, sl)
 		pbhTypeUniqueNameValidator.Validate(ctx, sl)
-		pbhTypeUniquePriorityValidator.Validate(ctx, sl)
 	}, pbehaviortype.CreateRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		pbhTypeUniqueNameValidator.Validate(ctx, sl)
-		pbhTypeUniquePriorityValidator.Validate(ctx, sl)
 	}, pbehaviortype.UpdateRequest{})
 
 	pbhExceptionUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorExceptionMongoCollection, "ID")
@@ -139,28 +143,24 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 		pbhExceptionUniqueNameValidator.Validate(ctx, sl)
 	}, pbehaviorexception.CreateRequest{})
 	v.RegisterStructValidationCtx(pbhExceptionUniqueNameValidator.Validate, pbehaviorexception.UpdateRequest{})
-	v.RegisterStructValidation(pbehaviorexception.ValidateExdateRequest, pbehaviorexception.ExdateRequest{})
+	v.RegisterStructValidation(exdate.ValidateExdateRequest, exdate.Request{})
 
 	v.RegisterStructValidation(pbehaviortimespan.ValidateTimespansRequest, pbehaviortimespan.TimespansRequest{})
 
 	scenarioUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioMongoCollection, "Name")
-	scenarioUniquePriorityValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioMongoCollection, "Priority")
 	scenarioExistReasonValidator := common.NewExistFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "Reason")
 	scenarioExistTypeValidator := common.NewExistFieldValidator(client, mongo.PbehaviorTypeMongoCollection, "Type")
 	scenarioExistIdValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioMongoCollection, "ID")
 
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		scenarioUniqueNameValidator.Validate(ctx, sl)
-		scenarioUniquePriorityValidator.Validate(ctx, sl)
 		scenarioExistIdValidator.Validate(ctx, sl)
 	}, scenario.CreateRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		scenarioUniqueNameValidator.Validate(ctx, sl)
-		scenarioUniquePriorityValidator.Validate(ctx, sl)
 	}, scenario.UpdateRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		scenarioUniqueNameValidator.Validate(ctx, sl)
-		scenarioUniquePriorityValidator.Validate(ctx, sl)
 	}, scenario.BulkUpdateRequestItem{})
 
 	v.RegisterStructValidation(scenario.ValidateActionRequest, scenario.ActionRequest{})
@@ -169,10 +169,7 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 		scenarioExistTypeValidator.Validate(ctx, sl)
 	}, action.Parameters{})
 
-	v.RegisterStructValidation(serviceweather.ValidateRequest, serviceweather.ListRequest{})
-
 	entitybasicValidator := entitybasic.NewValidator(client)
-	v.RegisterStructValidation(entity.ValidateListRequest, entity.ListRequest{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		entitybasicValidator.ValidateEditRequest(ctx, sl)
 	}, entitybasic.EditRequest{})
@@ -209,8 +206,12 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	v.RegisterStructValidationCtx(roleValidator.ValidateEditRequest, role.EditRequest{})
 
 	userValidator := user.NewValidator(client)
-	v.RegisterStructValidationCtx(userValidator.ValidateRequest, user.Request{})
+	v.RegisterStructValidationCtx(userValidator.ValidateUpdateRequest, user.UpdateRequest{})
+	v.RegisterStructValidationCtx(userValidator.ValidateCreateRequest, user.CreateRequest{})
 	v.RegisterStructValidationCtx(userValidator.ValidateBulkUpdateRequestItem, user.BulkUpdateRequestItem{})
+
+	accountValidator := account.NewValidator(client)
+	v.RegisterStructValidationCtx(accountValidator.ValidateEditRequest, account.EditRequest{})
 
 	viewValidator := view.NewValidator(client)
 	v.RegisterStructValidationCtx(viewValidator.ValidateEditRequest, view.EditRequest{})
@@ -224,6 +225,8 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	v.RegisterStructValidationCtx(widgetValidator.ValidateFilterRequest, widget.FilterRequest{})
 
 	v.RegisterStructValidationCtx(widgetfilter.NewValidator(client).ValidateEditRequest, widgetfilter.EditRequest{})
+
+	v.RegisterStructValidation(widgettemplate.ValidateEditRequest, widgettemplate.EditRequest{})
 
 	playlistUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PlaylistMongoCollection, "Name")
 	v.RegisterStructValidationCtx(playlistUniqueNameValidator.Validate, playlist.EditRequest{})
@@ -299,4 +302,10 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	}, flappingrule.UpdateRequest{})
 
 	v.RegisterStructValidation(pattern.ValidateEditRequest, pattern.EditRequest{})
+
+	linkRuleUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.LinkRuleMongoCollection, "Name")
+	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
+		linkrule.ValidateEditRequest(sl)
+		linkRuleUniqueNameValidator.Validate(ctx, sl)
+	}, linkrule.EditRequest{})
 }

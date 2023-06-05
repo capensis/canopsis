@@ -410,7 +410,6 @@ Feature: Bulk create idlerules
           "duration.unit": "Unit is missing.",
           "enabled": "Enabled is missing.",
           "name": "Name is missing.",
-          "priority": "Priority is missing.",
           "type": "Type is missing."
         }
       },
@@ -482,7 +481,10 @@ Feature: Bulk create idlerules
         {
           "name": "test-idle-rule-to-bulk-create-1-name",
           "description": "test-idle-rule-to-bulk-create-1-description",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "type": "alarm",
           "alarm_condition": "last_event",
           "enabled": true,
@@ -527,7 +529,10 @@ Feature: Bulk create idlerules
         {
           "name": "test-idle-rule-to-bulk-create-2-name",
           "description": "test-idle-rule-to-bulk-create-2-description",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "type": "alarm",
           "alarm_condition": "last_event",
           "enabled": true,
@@ -572,7 +577,10 @@ Feature: Bulk create idlerules
         {
           "name": "test-idle-rule-to-bulk-create-3-name",
           "description": "test-idle-rule-to-bulk-create-3-description",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "type": "alarm",
           "alarm_condition": "last_event",
           "enabled": true,
@@ -622,7 +630,10 @@ Feature: Bulk create idlerules
           "_id": "test-idle-rule-to-bulk-create-6",
           "name": "test-idle-rule-to-bulk-create-6-name",
           "description": "test-idle-rule-to-bulk-create-6-description",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "type": "entity",
           "enabled": true,
           "duration": {

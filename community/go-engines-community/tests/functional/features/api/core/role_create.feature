@@ -5,7 +5,7 @@ Feature: Create a role
   Scenario: given create request should return ok
     When I am admin
     When I do POST /api/v4/roles:
-    """
+    """json
     {
       "name": "test-role-to-create-1-name",
       "description": "test-role-to-create-1-description",
@@ -14,12 +14,22 @@ Feature: Create a role
         "test-permission-to-edit-role-1": [],
         "test-permission-to-edit-role-2": ["create", "read", "update", "delete"],
         "test-permission-to-edit-role-3": ["read", "update", "delete"]
+      },
+      "auth_config": {
+        "expiration_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "inactivity_interval": {
+          "value": 8,
+          "unit": "h"
+        }
       }
     }
     """
     Then the response code should be 201
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-role-to-create-1-name",
       "defaultview": {
@@ -59,37 +69,31 @@ Feature: Create a role
           "name": "test-permission-to-edit-role-3",
           "type": "RW"
         }
-      ]
-    }
-    """
-
-  Scenario: given create request should return ok to get request
-    When I am admin
-    When I do POST /api/v4/roles:
-    """
-    {
-      "name": "test-role-to-create-2-name",
-      "description": "test-role-to-create-2-description",
-      "defaultview": "test-view-to-edit-role",
-      "permissions": {
-        "test-permission-to-edit-role-1": [],
-        "test-permission-to-edit-role-2": ["create", "read", "update", "delete"],
-        "test-permission-to-edit-role-3": ["read", "update", "delete"]
+      ],
+      "auth_config": {
+        "expiration_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "inactivity_interval": {
+          "value": 8,
+          "unit": "h"
+        }
       }
     }
     """
     When I do GET /api/v4/roles/{{ .lastResponse._id}}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
-      "_id": "test-role-to-create-2-name",
+      "_id": "test-role-to-create-1-name",
       "defaultview": {
         "_id": "test-view-to-edit-role",
         "title": "test-view-to-edit-role-title"
       },
-      "description": "test-role-to-create-2-description",
-      "name": "test-role-to-create-2-name",
+      "description": "test-role-to-create-1-description",
+      "name": "test-role-to-create-1-name",
       "permissions": [
         {
           "_id": "test-permission-to-edit-role-1",
@@ -121,7 +125,17 @@ Feature: Create a role
           "name": "test-permission-to-edit-role-3",
           "type": "RW"
         }
-      ]
+      ],
+      "auth_config": {
+        "expiration_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "inactivity_interval": {
+          "value": 8,
+          "unit": "h"
+        }
+      }
     }
     """
 
@@ -129,7 +143,7 @@ Feature: Create a role
     When I do POST /api/v4/roles
     Then the response code should be 401
 
-  Scenario: given create request and auth user by api key without permissions should not allow access
+  Scenario: given create request and auth user without permissions should not allow access
     When I am noperms
     When I do POST /api/v4/roles
     Then the response code should be 403
@@ -137,7 +151,20 @@ Feature: Create a role
   Scenario: given invalid create request should return errors
     When I am admin
     When I do POST /api/v4/roles:
+    """json
+    {}
     """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/roles:
+    """json
     {
       "permissions": {
         "not-exist": ["create"],
@@ -149,7 +176,7 @@ Feature: Create a role
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "name": "Name is missing.",
@@ -159,11 +186,33 @@ Feature: Create a role
       }
     }
     """
+    When I do POST /api/v4/roles:
+    """json
+    {
+      "auth_config": {
+        "expiration_interval": {},
+        "inactivity_interval": {}
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "name": "Name is missing.",
+        "auth_config.expiration_interval.unit": "Unit is missing.",
+        "auth_config.expiration_interval.value": "Value is missing.",
+        "auth_config.inactivity_interval.unit": "Unit is missing.",
+        "auth_config.inactivity_interval.value": "Value is missing."
+      }
+    }
+    """
 
   Scenario: given create request with already exists name should return error
     When I am admin
     When I do POST /api/v4/roles:
-    """
+    """json
     {
       "name": "test-role-to-check-unique-name",
       "description": "test-role-to-create-3-description",
@@ -173,7 +222,7 @@ Feature: Create a role
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
           "name": "Name already exists."

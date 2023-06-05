@@ -1,47 +1,73 @@
 <template lang="pug">
-  div.c-quick-interval
-    date-picker-field(
-      :value="intervalFromString",
-      :label="$t('common.from')",
-      :allowed-dates="isAllowedFromDate",
-      hide-details,
-      @input="updateFromDate"
-    )
-      v-icon(slot="append", color="black") calendar_today
-    date-picker-field.ml-4(
-      :value="intervalToString",
-      :label="$t('common.to')",
-      :allowed-dates="isAllowedToDate",
-      hide-details,
-      @input="updateToDate"
-    )
-      v-icon(slot="append", color="black") calendar_today
-    div.c-quick-interval__range
-      c-quick-date-interval-type-field.ml-4(
-        v-model="range",
-        :custom-filter="isAllowedQuickRange",
-        hide-details
+  div.c-quick-interval(:class="{ 'c-quick-interval--reverse': reverse, 'c-quick-interval--short': short }")
+    template(v-if="short")
+      v-menu(offset-y, :close-on-content-click="false")
+        template(#activator="{ on }")
+          v-text-field(
+            v-on="on",
+            :value="shortValue",
+            :label="$t('common.interval')",
+            readonly,
+            hide-details
+          )
+        v-card(width="400px")
+          v-card-text
+            c-information-block(:title="$t('common.interval')")
+              v-divider
+              v-layout.mt-2
+                c-date-interval-field(
+                  :value="intervalObject",
+                  :disabled="disabled",
+                  :is-allowed-from-date="isAllowedFromDate",
+                  :is-allowed-to-date="isAllowedToDate",
+                  column,
+                  @input="updateModel($event)"
+                )
+                c-quick-date-interval-type-field.c-quick-interval__range.ml-4(
+                  :value="range",
+                  :ranges="availableQuickRanges",
+                  :disabled="disabled",
+                  hide-details,
+                  return-object,
+                  @input="updateIntervalRange"
+                )
+    template(v-else)
+      c-date-interval-field(
+        :value="intervalObject",
+        :disabled="disabled",
+        :is-allowed-from-date="isAllowedFromDate",
+        :is-allowed-to-date="isAllowedToDate",
+        @input="updateModel($event)"
       )
+      div.c-quick-interval__range
+        c-quick-date-interval-type-field(
+          :value="range",
+          :ranges="availableQuickRanges",
+          :disabled="disabled",
+          hide-details,
+          return-object,
+          @input="updateIntervalRange"
+        )
 </template>
 
 <script>
 import { DATETIME_FORMATS, QUICK_RANGES } from '@/constants';
 
-import { convertDateToString, convertDateToTimestamp, getNowTimestamp, getWeekdayNumber } from '@/helpers/date/date';
 import {
-  findQuickRangeValue,
+  convertDateToString,
+  convertDateToTimestamp,
+  getNowTimestamp,
+  getWeekdayNumber,
+} from '@/helpers/date/date';
+import {
   convertStartDateIntervalToTimestamp,
   convertStopDateIntervalToTimestamp,
+  findQuickRangeValue,
 } from '@/helpers/date/date-intervals';
 
 import { formMixin } from '@/mixins/form';
 
-import DatePickerField from '@/components/forms/fields/date-picker/date-picker-field.vue';
-
 export default {
-  components: {
-    DatePickerField,
-  },
   mixins: [formMixin],
   model: {
     event: 'input',
@@ -50,7 +76,10 @@ export default {
   props: {
     interval: {
       type: Object,
-      default: () => ({}),
+      default: () => ({
+        from: 0,
+        to: 0,
+      }),
     },
     accumulatedBefore: {
       type: Number,
@@ -60,15 +89,36 @@ export default {
       type: Number,
       required: false,
     },
+    disabled: {
+      type: Boolean,
+      required: false,
+    },
+    reverse: {
+      type: Boolean,
+      default: false,
+    },
+    quickRanges: {
+      type: Array,
+      default: () => Object.values(QUICK_RANGES),
+    },
+    short: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
-    quickRanges() {
-      return Object.values(QUICK_RANGES)
-        .filter(this.isAllowedQuickRange)
-        .map(range => ({
-          ...range,
-          text: this.$t(`quickRanges.types.${range.value}`),
-        }));
+    shortValue() {
+      const range = findQuickRangeValue(this.range.start, this.range.stop, this.availableQuickRanges);
+
+      if (range.value === QUICK_RANGES.custom.value) {
+        return `${this.intervalFromString} - ${this.intervalToString}`;
+      }
+
+      return this.$t(`quickRanges.types.${range.value}`);
+    },
+
+    availableQuickRanges() {
+      return this.quickRanges.filter(this.isAllowedQuickRange);
     },
 
     intervalFromAsTimestamp() {
@@ -87,22 +137,18 @@ export default {
       return convertDateToString(this.intervalToAsTimestamp, DATETIME_FORMATS.datePicker);
     },
 
-    range: {
-      get() {
-        const range = findQuickRangeValue(this.interval.from, this.interval.to);
+    intervalObject() {
+      return {
+        from: this.intervalFromString,
+        to: this.intervalToString,
+      };
+    },
 
-        return this.quickRanges.find(({ value }) => value === range.value);
-      },
-
-      set({ start, stop }) {
-        if (start && stop) {
-          this.updateModel({
-            ...this.interval,
-            from: start,
-            to: stop,
-          });
-        }
-      },
+    range() {
+      return {
+        start: this.interval.from,
+        stop: this.interval.to,
+      };
     },
   },
   methods: {
@@ -168,7 +214,7 @@ export default {
       }
 
       const startTimestamp = convertStartDateIntervalToTimestamp(start);
-      const stopTimestamp = convertStopDateIntervalToTimestamp(start);
+      const stopTimestamp = convertStopDateIntervalToTimestamp(stop);
 
       return this.isGreaterMinDate(startTimestamp)
         && this.isAllowedAccumulatedFromDate(startTimestamp)
@@ -176,12 +222,14 @@ export default {
         && this.isAllowedAccumulatedToDate(stopTimestamp);
     },
 
-    updateFromDate(from) {
-      this.updateField('from', from);
-    },
-
-    updateToDate(to) {
-      this.updateField('to', to);
+    updateIntervalRange({ start, stop }) {
+      if (start && stop) {
+        this.updateModel({
+          ...this.interval,
+          from: start,
+          to: stop,
+        });
+      }
     },
   },
 };
@@ -190,10 +238,20 @@ export default {
 <style scoped lang="scss">
 .c-quick-interval {
   display: inline-flex;
+  flex-wrap: wrap;
+  column-gap: 24px;
 
   &__range {
     display: flex;
     max-width: 180px;
+  }
+
+  &--reverse {
+    flex-direction: row-reverse;
+  }
+
+  &--short {
+    column-gap: 0;
   }
 }
 </style>

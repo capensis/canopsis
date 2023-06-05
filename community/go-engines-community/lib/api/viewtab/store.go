@@ -3,6 +3,9 @@ package viewtab
 import (
 	"context"
 	"errors"
+	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
@@ -10,7 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"time"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Store interface {
@@ -50,7 +53,9 @@ type store struct {
 
 func (s *store) Find(ctx context.Context, ids []string) ([]Response, error) {
 	tabs := make([]Response, 0)
-	cursor, err := s.collection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
+	pipeline := []bson.M{{"$match": bson.M{"_id": bson.M{"$in": ids}}}}
+	pipeline = append(pipeline, author.Pipeline()...)
+	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +82,7 @@ func (s *store) Find(ctx context.Context, ids []string) ([]Response, error) {
 
 func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	tabs := make([]Response, 0)
-	cursor, err := s.collection.Aggregate(ctx, []bson.M{
+	pipeline := []bson.M{
 		{"$match": bson.M{"_id": id}},
 		{"$lookup": bson.M{
 			"from":         mongo.WidgetMongoCollection,
@@ -86,15 +91,21 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			"as":           "widgets",
 		}},
 		{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
+	}
+	pipeline = append(pipeline, author.PipelineForField("widgets.author")...)
+	pipeline = append(pipeline,
+		bson.M{"$lookup": bson.M{
 			"from":         mongo.WidgetFiltersMongoCollection,
 			"localField":   "widgets._id",
 			"foreignField": "widget",
 			"as":           "filters",
 		}},
-		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
-		{"$sort": bson.M{"filters.title": 1}},
-		{"$group": bson.M{
+		bson.M{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
+	)
+	pipeline = append(pipeline, author.PipelineForField("filters.author")...)
+	pipeline = append(pipeline,
+		bson.M{"$sort": bson.M{"filters.position": 1}},
+		bson.M{"$group": bson.M{
 			"_id": bson.M{
 				"_id":    "_id",
 				"widget": "$widgets._id",
@@ -103,30 +114,32 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			"widgets": bson.M{"$first": "$widgets"},
 			"filters": bson.M{"$push": "$filters"},
 		}},
-		{"$addFields": bson.M{
+		bson.M{"$addFields": bson.M{
 			"_id": "$_id._id",
 			"widgets.filters": bson.M{"$filter": bson.M{
 				"input": "$filters",
 				"cond":  bson.M{"$eq": bson.A{"$$this.is_private", false}},
 			}},
 		}},
-		{"$sort": bson.D{
+		bson.M{"$sort": bson.D{
 			{Key: "widgets.grid_parameters.desktop.y", Value: 1},
 			{Key: "widgets.grid_parameters.desktop.x", Value: 1},
 		}},
-		{"$group": bson.M{
+		bson.M{"$group": bson.M{
 			"_id":     "$_id",
 			"data":    bson.M{"$first": "$data"},
 			"widgets": bson.M{"$push": "$widgets"},
 		}},
-		{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+		bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
 			"$data",
 			bson.M{"widgets": bson.M{"$filter": bson.M{
 				"input": "$widgets",
 				"cond":  "$$this._id",
 			}}},
 		}}}},
-	})
+	)
+	pipeline = append(pipeline, author.Pipeline()...)
+	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -147,7 +160,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	var response *Response
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		count, err := s.collection.CountDocuments(ctx, bson.M{"view": r.View})
+		position, err := s.getNextPosition(ctx, r.View)
 		if err != nil {
 			return err
 		}
@@ -157,7 +170,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 			Title:    r.Title,
 			View:     r.View,
 			Author:   r.Author,
-			Position: count,
+			Position: position,
 			Created:  now,
 			Updated:  now,
 		}
@@ -235,7 +248,7 @@ func (s *store) Copy(ctx context.Context, tab Response, r EditRequest) (*Respons
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 		var err error
-		response, err = s.copy(ctx, tab, r)
+		response, err = s.copy(ctx, tab.ID, r)
 		return err
 	})
 
@@ -243,7 +256,7 @@ func (s *store) Copy(ctx context.Context, tab Response, r EditRequest) (*Respons
 }
 
 func (s *store) CopyForView(ctx context.Context, viewID, newViewID, author string) error {
-	cursor, err := s.collection.Find(ctx, bson.M{"view": viewID})
+	cursor, err := s.collection.Find(ctx, bson.M{"view": viewID}, options.Find().SetProjection(bson.M{"author": 0}))
 	if err != nil {
 		return err
 	}
@@ -256,7 +269,7 @@ func (s *store) CopyForView(ctx context.Context, viewID, newViewID, author strin
 			return err
 		}
 
-		_, err = s.copy(ctx, t, EditRequest{
+		_, err = s.copy(ctx, t.ID, EditRequest{
 			Title:  t.Title,
 			View:   newViewID,
 			Author: author,
@@ -269,8 +282,8 @@ func (s *store) CopyForView(ctx context.Context, viewID, newViewID, author strin
 	return nil
 }
 
-func (s *store) copy(ctx context.Context, tab Response, r EditRequest) (*Response, error) {
-	count, err := s.collection.CountDocuments(ctx, bson.M{"view": r.View})
+func (s *store) copy(ctx context.Context, tabID string, r EditRequest) (*Response, error) {
+	position, err := s.getNextPosition(ctx, r.View)
 	if err != nil {
 		return nil, err
 	}
@@ -280,7 +293,7 @@ func (s *store) copy(ctx context.Context, tab Response, r EditRequest) (*Respons
 		Title:    r.Title,
 		View:     r.View,
 		Author:   r.Author,
-		Position: count,
+		Position: position,
 		Created:  now,
 		Updated:  now,
 	}
@@ -290,7 +303,7 @@ func (s *store) copy(ctx context.Context, tab Response, r EditRequest) (*Respons
 		return nil, err
 	}
 
-	err = s.widgetStore.CopyForTab(ctx, tab.ID, newTab.ID, r.Author)
+	err = s.widgetStore.CopyForTab(ctx, tabID, newTab.ID, r.Author)
 	if err != nil {
 		return nil, err
 	}
@@ -382,4 +395,28 @@ func (s *store) deleteWidgets(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func (s *store) getNextPosition(ctx context.Context, view string) (int64, error) {
+	cursor, err := s.collection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"view": view}},
+		{"$group": bson.M{
+			"_id":      nil,
+			"position": bson.M{"$max": "$position"},
+		}},
+	})
+	if err != nil {
+		return 0, err
+	}
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		data := struct {
+			Position int64 `bson:"position"`
+		}{}
+		err = cursor.Decode(&data)
+		return data.Position + 1, err
+	}
+
+	return 0, nil
 }

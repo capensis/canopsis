@@ -1,11 +1,13 @@
-import { cloneDeep } from 'lodash';
+import { isNumber, omit } from 'lodash';
 
-import { ENTITIES_STATES } from '@/constants';
+import { ENTITIES_STATES, OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
 import { infosToArray } from './shared/common';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 
 /**
- * @typedef {Object} ServiceForm
+ * @typedef {FilterPatterns} Service
+ * @property {string} [_id]
  * @property {string} name
  * @property {string} category
  * @property {boolean} enabled
@@ -14,15 +16,13 @@ import { infosToArray } from './shared/common';
  * @property {Object|Array} infos
  * @property {Object} entity_patterns
  * @property {string} output_template
- */
-
-/**
- * @typedef {ServiceForm} Service
- * @property {string} _id
+ * @property {Object} [coordinates]
  */
 
 /**
  * @typedef {Service} ServiceForm
+ * @property {FilterPatternsForm} patterns
+ * @property {Object} category
  */
 
 /**
@@ -37,9 +37,17 @@ export const serviceToForm = (service = {}) => ({
   category: service.category ?? '',
   enabled: service.enabled ?? true,
   infos: infosToArray(service.infos),
-  entity_patterns: service.entity_patterns ? cloneDeep(service.entity_patterns) : [],
   output_template: service.output_template ?? '',
   sli_avail_state: service.sli_avail_state ?? ENTITIES_STATES.ok,
+  patterns: filterPatternsToForm(
+    service,
+    [PATTERNS_FIELDS.entity],
+    [OLD_PATTERNS_FIELDS.entity],
+  ),
+  coordinates: service.coordinates ?? {
+    lat: undefined,
+    lng: undefined,
+  },
 });
 
 /**
@@ -48,7 +56,16 @@ export const serviceToForm = (service = {}) => ({
  * @param {ServiceForm} [form = {}]
  * @returns {Service}
  */
-export const formToService = (form = {}) => ({
-  ...form,
-  category: form.category._id,
-});
+export const formToService = (form = {}) => {
+  const service = {
+    ...omit(form, ['patterns', 'coordinates']),
+    ...formFilterToPatterns(form.patterns, [PATTERNS_FIELDS.entity]),
+    category: form.category._id,
+  };
+
+  if (isNumber(form.coordinates.lat) && isNumber(form.coordinates.lng)) {
+    service.coordinates = form.coordinates;
+  }
+
+  return service;
+};

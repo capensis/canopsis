@@ -2,23 +2,23 @@ import Faker from 'faker';
 import { range } from 'lodash';
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
-import { createMockedStoreModules } from '@unit/utils/store';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { createAuthModule, createEventModule, createMockedStoreModules } from '@unit/utils/store';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 import {
   ALARM_LIST_ACTIONS_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   ENTITIES_STATUSES,
-  ENTITIES_TYPES,
+  ENTITY_PATTERN_FIELDS,
   EVENT_DEFAULT_ORIGIN,
   EVENT_ENTITY_TYPES,
   EVENT_INITIATORS,
   META_ALARMS_RULE_TYPES,
   MODALS,
+  PATTERN_CONDITIONS,
 } from '@/constants';
-import MassActionsPanel from '@/components/widgets/alarm/actions/mass-actions-panel.vue';
 
-const localVue = createVueInstance();
+import MassActionsPanel from '@/components/widgets/alarm/actions/mass-actions-panel.vue';
 
 const stubs = {
   'shared-mass-actions-panel': {
@@ -35,20 +35,6 @@ const stubs = {
   },
 };
 
-const factory = (options = {}) => shallowMount(MassActionsPanel, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(MassActionsPanel, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 const selectActionByType = (wrapper, type) => wrapper.find(`.action-${type}`);
 
 describe('mass-actions-panel', () => {
@@ -62,6 +48,12 @@ describe('mass-actions-panel', () => {
     entity: {
       _id: 'alarm-entity-id',
     },
+    assigned_declare_ticket_rules: [{}],
+    v: {
+      state: {},
+      status: {},
+      tickets: [],
+    },
   };
 
   const metaAlarm = {
@@ -70,8 +62,14 @@ describe('mass-actions-panel', () => {
     entity: {
       _id: 'meta-alarm-entity-id',
     },
+    assigned_declare_ticket_rules: [{}],
+    v: {
+      state: {},
+      status: {},
+      tickets: [],
+    },
   };
-  const fastAckAlarms = range(2).map(index => ({
+  const fastActionAlarms = range(2).map(index => ({
     _id: `alarm-id-${index}`,
     entity: {
       type: `entity-type-${index}`,
@@ -89,29 +87,40 @@ describe('mass-actions-panel', () => {
       },
     },
   }));
-  const fastAckEvents = fastAckAlarms.map(fastAckAlarm => ({
+  const fastAckEvents = fastActionAlarms.map(fastActionAlarm => ({
     timestamp: timestamp / 1000,
-    component: fastAckAlarm.v.component,
-    connector: fastAckAlarm.v.connector,
-    connector_name: fastAckAlarm.v.connector_name,
-    resource: fastAckAlarm.v.resource,
-    state: fastAckAlarm.v.state.val,
-    state_type: fastAckAlarm.v.status.val,
-    source_type: fastAckAlarm.entity.type,
+    component: fastActionAlarm.v.component,
+    connector: fastActionAlarm.v.connector,
+    connector_name: fastActionAlarm.v.connector_name,
+    resource: fastActionAlarm.v.resource,
+    state: fastActionAlarm.v.state.val,
+    state_type: fastActionAlarm.v.status.val,
+    source_type: fastActionAlarm.entity.type,
     crecord_type: 'ack',
     event_type: 'ack',
-    id: fastAckAlarm._id,
+    id: fastActionAlarm._id,
     initiator: EVENT_INITIATORS.user,
     origin: EVENT_DEFAULT_ORIGIN,
-    ref_rk: `${fastAckAlarm.v.resource}/${fastAckAlarm.v.component}`,
+    ref_rk: `${fastActionAlarm.v.resource}/${fastActionAlarm.v.component}`,
+  }));
+  const fastCancelEvents = fastActionAlarms.map(fastActionAlarm => ({
+    timestamp: timestamp / 1000,
+    component: fastActionAlarm.v.component,
+    connector: fastActionAlarm.v.connector,
+    connector_name: fastActionAlarm.v.connector_name,
+    resource: fastActionAlarm.v.resource,
+    state: fastActionAlarm.v.state.val,
+    state_type: fastActionAlarm.v.status.val,
+    source_type: fastActionAlarm.entity.type,
+    crecord_type: 'cancel',
+    event_type: 'cancel',
+    id: fastActionAlarm._id,
+    initiator: EVENT_INITIATORS.user,
+    origin: EVENT_DEFAULT_ORIGIN,
+    ref_rk: `${fastActionAlarm.v.resource}/${fastActionAlarm.v.component}`,
   }));
 
-  const authModule = {
-    name: 'auth',
-    getters: {
-      currentUserPermissionsById: {},
-    },
-  };
+  const { authModule } = createAuthModule();
   const authModuleWithAccess = {
     ...authModule,
     getters: {
@@ -122,26 +131,8 @@ describe('mass-actions-panel', () => {
         }), {}),
     },
   };
-  const entitiesModule = {
-    name: 'entities',
-    getters: {
-      getList: () => () => [alarm, metaAlarm],
-    },
-  };
-  const fetchAlarmsListWithPreviousParams = jest.fn();
-  const alarmModule = {
-    name: 'alarm',
-    actions: {
-      fetchListWithPreviousParams: fetchAlarmsListWithPreviousParams,
-    },
-  };
-  const createEvent = jest.fn();
-  const eventModule = {
-    name: 'event',
-    actions: {
-      create: createEvent,
-    },
-  };
+  const items = [alarm, metaAlarm];
+  const { eventModule, createEvent } = createEventModule();
 
   const widget = {
     parameters: {
@@ -156,13 +147,28 @@ describe('mass-actions-panel', () => {
     d: 'parent-d',
   };
 
+  const refreshAlarmsList = jest.fn();
+
+  const factory = generateShallowRenderer(MassActionsPanel, {
+    stubs,
+  });
+
+  const snapshotFactory = generateRenderer(MassActionsPanel, {
+    stubs,
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('Create pbehavior modal showed after trigger pbehavior add action', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        entitiesModule,
+        eventModule,
       ]),
       propsData: {
+        items,
         widget,
         parentAlarm,
       },
@@ -179,9 +185,13 @@ describe('mass-actions-panel', () => {
       {
         name: MODALS.pbehaviorPlanning,
         config: {
-          filter: {
-            _id: { $in: [alarm.entity._id, metaAlarm.entity._id] },
-          },
+          entityPattern: [[{
+            field: ENTITY_PATTERN_FIELDS.id,
+            cond: {
+              type: PATTERN_CONDITIONS.isOneOf,
+              value: [alarm.entity._id, metaAlarm.entity._id],
+            },
+          }]],
           afterSubmit: expect.any(Function),
         },
       },
@@ -196,7 +206,7 @@ describe('mass-actions-panel', () => {
     expect(clearItemsEvent).toHaveLength(1);
   });
 
-  it('Ack modal showed after trigger ack action', () => {
+  it('Ack modal showed after trigger ack action', async () => {
     const isNoteRequired = Faker.datatype.boolean();
     const widgetData = {
       _id: Faker.datatype.string(),
@@ -205,15 +215,14 @@ describe('mass-actions-panel', () => {
       },
     };
 
-    const itemsIds = [Faker.datatype.string(), Faker.datatype.string()];
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        entitiesModule,
-        alarmModule,
+        eventModule,
       ]),
       propsData: {
-        itemsIds,
+        items,
+        refreshAlarmsList,
         widget: widgetData,
       },
       mocks: {
@@ -230,26 +239,20 @@ describe('mass-actions-panel', () => {
         name: MODALS.createAckEvent,
         config: {
           isNoteRequired,
-          itemsIds,
-          itemsType: ENTITIES_TYPES.alarm,
-          afterSubmit: expect.any(Function),
+          items,
+          action: expect.any(Function),
         },
       },
     );
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    config.afterSubmit();
+    config.action({ output: 'OUTPUT', ack_resources: false }, {});
 
-    const clearItemsEvent = wrapper.emitted('clear:items');
+    await flushPromises();
 
-    expect(clearItemsEvent).toHaveLength(1);
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(wrapper).toEmit('clear:items');
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Fast ack event sent after trigger fast ack action', async () => {
@@ -267,16 +270,11 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        alarmModule,
         eventModule,
-        {
-          ...entitiesModule,
-          getters: {
-            getList: () => () => fastAckAlarms,
-          },
-        },
       ]),
       propsData: {
+        items: fastActionAlarms,
+        refreshAlarmsList,
         widget: widgetData,
       },
       mocks: {
@@ -304,12 +302,7 @@ describe('mass-actions-panel', () => {
     const clearItemsEvent = wrapper.emitted('clear:items');
 
     expect(clearItemsEvent).toHaveLength(1);
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Fast ack event sent after trigger fast ack action without parameters', async () => {
@@ -321,16 +314,11 @@ describe('mass-actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        alarmModule,
         eventModule,
-        {
-          ...entitiesModule,
-          getters: {
-            getList: () => () => fastAckAlarms,
-          },
-        },
       ]),
       propsData: {
+        items: fastActionAlarms,
+        refreshAlarmsList,
         widget: widgetData,
       },
       mocks: {
@@ -355,12 +343,7 @@ describe('mass-actions-panel', () => {
     const clearItemsEvent = wrapper.emitted('clear:items');
 
     expect(clearItemsEvent).toHaveLength(1);
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Ack remove modal showed after trigger ack remove action', () => {
@@ -369,15 +352,14 @@ describe('mass-actions-panel', () => {
       parameters: {},
     };
 
-    const itemsIds = [Faker.datatype.string(), Faker.datatype.string()];
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        alarmModule,
-        entitiesModule,
+        eventModule,
       ]),
       propsData: {
-        itemsIds,
+        items,
+        refreshAlarmsList,
         widget: widgetData,
       },
       mocks: {
@@ -393,10 +375,9 @@ describe('mass-actions-panel', () => {
       {
         name: MODALS.createEvent,
         config: {
-          title: 'modals.createAckRemove.title',
+          title: 'Remove ack',
           eventType: EVENT_ENTITY_TYPES.ackRemove,
-          itemsIds,
-          itemsType: ENTITIES_TYPES.alarm,
+          items,
           afterSubmit: expect.any(Function),
         },
       },
@@ -409,12 +390,7 @@ describe('mass-actions-panel', () => {
     const clearItemsEvent = wrapper.emitted('clear:items');
 
     expect(clearItemsEvent).toHaveLength(1);
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Cancel modal showed after trigger cancel action', () => {
@@ -423,15 +399,14 @@ describe('mass-actions-panel', () => {
       parameters: {},
     };
 
-    const itemsIds = [Faker.datatype.string(), Faker.datatype.string()];
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        entitiesModule,
-        alarmModule,
+        eventModule,
       ]),
       propsData: {
-        itemsIds,
+        items,
+        refreshAlarmsList,
         widget: widgetData,
       },
       mocks: {
@@ -447,10 +422,9 @@ describe('mass-actions-panel', () => {
       {
         name: MODALS.createEvent,
         config: {
-          itemsIds,
-          itemsType: ENTITIES_TYPES.alarm,
+          items,
           afterSubmit: expect.any(Function),
-          title: 'modals.createCancelEvent.title',
+          title: 'Cancel',
           eventType: EVENT_ENTITY_TYPES.cancel,
         },
       },
@@ -463,29 +437,29 @@ describe('mass-actions-panel', () => {
     const clearItemsEvent = wrapper.emitted('clear:items');
 
     expect(clearItemsEvent).toHaveLength(1);
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Associate ticket modal showed after trigger associate ticket action', () => {
+  it('Fast cancel event sent after trigger fast cancel action', async () => {
+    const output = Faker.datatype.string();
     const widgetData = {
       _id: Faker.datatype.string(),
-      parameters: {},
+      parameters: {
+        fastCancelOutput: {
+          enabled: true,
+          value: output,
+        },
+      },
     };
 
-    const itemsIds = [Faker.datatype.string(), Faker.datatype.string()];
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        entitiesModule,
-        alarmModule,
+        eventModule,
       ]),
       propsData: {
-        itemsIds,
+        items: fastActionAlarms,
+        refreshAlarmsList,
         widget: widgetData,
       },
       mocks: {
@@ -493,34 +467,158 @@ describe('mass-actions-panel', () => {
       },
     });
 
-    const associateTicketAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.associateTicket);
+    const fastCancelAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastCancel);
 
-    associateTicketAction.trigger('click');
+    fastCancelAction.trigger('click');
+
+    await flushPromises();
+
+    expect(createEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: fastCancelEvents.map(fastCancelEvent => ({
+          ...fastCancelEvent,
+          output,
+        })),
+      },
+      undefined,
+    );
+
+    const clearItemsEvent = wrapper.emitted('clear:items');
+
+    expect(clearItemsEvent).toHaveLength(1);
+    expect(refreshAlarmsList).toBeCalledTimes(1);
+  });
+
+  it('Fast cancel event sent after trigger fast cancel action without parameters', async () => {
+    const widgetData = {
+      _id: Faker.datatype.string(),
+      parameters: {},
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        eventModule,
+      ]),
+      propsData: {
+        items: fastActionAlarms,
+        refreshAlarmsList,
+        widget: widgetData,
+      },
+      mocks: {
+        $modals,
+      },
+    });
+
+    const fastCancelAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastCancel);
+
+    fastCancelAction.trigger('click');
+
+    await flushPromises();
+
+    expect(createEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: fastCancelEvents,
+      },
+      undefined,
+    );
+
+    const clearItemsEvent = wrapper.emitted('clear:items');
+
+    expect(clearItemsEvent).toHaveLength(1);
+    expect(refreshAlarmsList).toBeCalledTimes(1);
+  });
+
+  it('Associate ticket modal showed after trigger associate ticket action', async () => {
+    const widgetData = {
+      _id: Faker.datatype.string(),
+      parameters: {},
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        eventModule,
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        items: [alarm],
+        refreshAlarmsList,
+        widget: widgetData,
+      },
+      mocks: {
+        $modals,
+      },
+    });
+
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.associateTicket).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
         name: MODALS.createAssociateTicketEvent,
         config: {
-          itemsIds,
-          itemsType: ENTITIES_TYPES.alarm,
-          afterSubmit: expect.any(Function),
+          items: [alarm],
+          ignoreAck: false,
+          action: expect.any(Function),
         },
       },
     );
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    config.afterSubmit();
+    const event = {
+      ticket: Faker.datatype.string(),
+      ticket_url: Faker.datatype.string(),
+      ticket_system_name: Faker.datatype.string(),
+    };
 
-    const clearItemsEvent = wrapper.emitted('clear:items');
+    config.action(event);
 
-    expect(clearItemsEvent).toHaveLength(1);
+    await flushPromises();
 
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
+    expect(createEvent).toBeCalledWith(
       expect.any(Object),
-      { widgetId: widgetData._id },
+      {
+        data: [{
+          component: undefined,
+          connector: undefined,
+          connector_name: undefined,
+          crecord_type: EVENT_ENTITY_TYPES.ack,
+          event_type: EVENT_ENTITY_TYPES.ack,
+          id: alarm._id,
+          initiator: 'user',
+          origin: 'canopsis',
+          output: '',
+          ref_rk: 'undefined/undefined',
+          resource: undefined,
+          source_type: undefined,
+          state: undefined,
+          state_type: undefined,
+          timestamp: 1386435600,
+        }, {
+          component: undefined,
+          connector: undefined,
+          connector_name: undefined,
+          crecord_type: EVENT_ENTITY_TYPES.assocTicket,
+          event_type: EVENT_ENTITY_TYPES.assocTicket,
+          id: alarm._id,
+          initiator: 'user',
+          origin: 'canopsis',
+          ref_rk: 'undefined/undefined',
+          resource: undefined,
+          source_type: undefined,
+          state: undefined,
+          state_type: undefined,
+          timestamp: 1386435600,
+          ...event,
+        }],
+      },
       undefined,
     );
+
+    expect(wrapper).toEmit('clear:items');
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Snooze modal showed after trigger snooze action', () => {
@@ -532,15 +630,14 @@ describe('mass-actions-panel', () => {
       },
     };
 
-    const itemsIds = [Faker.datatype.string(), Faker.datatype.string()];
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        entitiesModule,
-        alarmModule,
+        eventModule,
       ]),
       propsData: {
-        itemsIds,
+        items,
+        refreshAlarmsList,
         widget: widgetData,
       },
       mocks: {
@@ -557,8 +654,7 @@ describe('mass-actions-panel', () => {
         name: MODALS.createSnoozeEvent,
         config: {
           isNoteRequired,
-          itemsIds,
-          itemsType: ENTITIES_TYPES.alarm,
+          items,
           afterSubmit: expect.any(Function),
         },
       },
@@ -571,12 +667,7 @@ describe('mass-actions-panel', () => {
     const clearItemsEvent = wrapper.emitted('clear:items');
 
     expect(clearItemsEvent).toHaveLength(1);
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Group alarm modal showed after trigger group alarm action', () => {
@@ -585,20 +676,14 @@ describe('mass-actions-panel', () => {
       parameters: {},
     };
 
-    const itemsIds = [Faker.datatype.string(), Faker.datatype.string()];
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        alarmModule,
-        {
-          ...entitiesModule,
-          getters: {
-            getList: () => () => [alarm],
-          },
-        },
+        eventModule,
       ]),
       propsData: {
-        itemsIds,
+        items,
+        refreshAlarmsList,
         widget: widgetData,
       },
       mocks: {
@@ -614,10 +699,9 @@ describe('mass-actions-panel', () => {
       {
         name: MODALS.createEvent,
         config: {
-          title: 'modals.createGroupRequestEvent.title',
+          title: 'Suggest group request for meta alarm',
           eventType: EVENT_ENTITY_TYPES.groupRequest,
-          itemsIds,
-          itemsType: ENTITIES_TYPES.alarm,
+          items,
           afterSubmit: expect.any(Function),
         },
       },
@@ -630,12 +714,7 @@ describe('mass-actions-panel', () => {
     const clearItemsEvent = wrapper.emitted('clear:items');
 
     expect(clearItemsEvent).toHaveLength(1);
-
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
-    );
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Manual meta alarm group modal showed after trigger manual meta alarm group action', () => {
@@ -644,20 +723,14 @@ describe('mass-actions-panel', () => {
       parameters: {},
     };
 
-    const itemsIds = [Faker.datatype.string(), Faker.datatype.string()];
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        alarmModule,
-        {
-          ...entitiesModule,
-          getters: {
-            getList: () => () => [alarm],
-          },
-        },
+        eventModule,
       ]),
       propsData: {
-        itemsIds,
+        items,
+        refreshAlarmsList,
         widget: widgetData,
       },
       mocks: {
@@ -665,7 +738,7 @@ describe('mass-actions-panel', () => {
       },
     });
 
-    const ackRemoveAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmGroup);
+    const ackRemoveAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm);
 
     ackRemoveAction.trigger('click');
 
@@ -673,9 +746,8 @@ describe('mass-actions-panel', () => {
       {
         name: MODALS.createManualMetaAlarm,
         config: {
-          title: 'modals.createManualMetaAlarm.title',
-          itemsIds,
-          itemsType: ENTITIES_TYPES.alarm,
+          title: 'Manual meta alarm management',
+          items,
           afterSubmit: expect.any(Function),
         },
       },
@@ -688,26 +760,63 @@ describe('mass-actions-panel', () => {
     const clearItemsEvent = wrapper.emitted('clear:items');
 
     expect(clearItemsEvent).toHaveLength(1);
+    expect(refreshAlarmsList).toBeCalledTimes(1);
+  });
 
-    expect(fetchAlarmsListWithPreviousParams).toBeCalledWith(
-      expect.any(Object),
-      { widgetId: widgetData._id },
-      undefined,
+  it('Comment modal showed after trigger snooze action', () => {
+    const widgetData = {
+      _id: Faker.datatype.string(),
+      parameters: {},
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        eventModule,
+      ]),
+      propsData: {
+        items,
+        refreshAlarmsList,
+        widget: widgetData,
+      },
+      mocks: {
+        $modals,
+      },
+    });
+
+    const commentAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.comment);
+
+    commentAction.trigger('click');
+
+    expect($modals.show).toBeCalledWith(
+      {
+        name: MODALS.createCommentEvent,
+        config: {
+          items,
+          afterSubmit: expect.any(Function),
+          action: expect.any(Function),
+        },
+      },
     );
+
+    const [{ config }] = $modals.show.mock.calls[0];
+
+    config.afterSubmit();
+
+    const clearItemsEvent = wrapper.emitted('clear:items');
+
+    expect(clearItemsEvent).toHaveLength(1);
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   it('Renders `mass-actions-panel` with empty items', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        {
-          ...entitiesModule,
-          getters: {
-            getList: () => () => [],
-          },
-        },
+        eventModule,
       ]),
       propsData: {
+        items,
         widget,
       },
     });
@@ -719,14 +828,9 @@ describe('mass-actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        {
-          ...entitiesModule,
-          getters: {
-            getList: () => () => [alarm, metaAlarm],
-          },
-        },
       ]),
       propsData: {
+        items,
         widget,
       },
     });

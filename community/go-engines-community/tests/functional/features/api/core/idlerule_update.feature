@@ -59,7 +59,10 @@ Feature: Update a idle rule
       "_id": "test-idle-rule-to-update-1",
       "name": "test-idle-rule-to-update-1-name",
       "description": "test-idle-rule-to-update-1-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -140,7 +143,10 @@ Feature: Update a idle rule
     {
       "name": "test-idle-rule-to-update-2-name",
       "description": "test-idle-rule-to-update-2-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -468,6 +474,16 @@ Feature: Update a idle rule
                 "unit": "m"
               }
             }
+          },
+          {
+            "field": "v.activation_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
           }
         ]
       ],      
@@ -642,7 +658,10 @@ Feature: Update a idle rule
     {
       "name": "test-idle-rule-to-update-4-name",
       "description": "test-idle-rule-to-update-4-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -677,6 +696,16 @@ Feature: Update a idle rule
         [
           {
             "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          },
+          {
+            "field": "v.activation_date",
             "cond": {
               "type": "absolute_time",
               "value": {
@@ -883,7 +912,10 @@ Feature: Update a idle rule
       "_id": "test-idle-rule-to-backward-compatibility-update-1",
       "name": "test-idle-rule-to-backward-compatibility-update-1-name",
       "description": "test-idle-rule-to-backward-compatibility-update-1-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -959,7 +991,10 @@ Feature: Update a idle rule
       "_id": "test-idle-rule-to-backward-compatibility-update-1",
       "name": "test-idle-rule-to-backward-compatibility-update-1-name",
       "description": "test-idle-rule-to-backward-compatibility-update-1-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -1053,7 +1088,10 @@ Feature: Update a idle rule
       "_id": "test-idle-rule-to-backward-compatibility-update-1",
       "name": "test-idle-rule-to-backward-compatibility-update-1-name",
       "description": "test-idle-rule-to-backward-compatibility-update-1-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -1137,7 +1175,10 @@ Feature: Update a idle rule
       "_id": "test-idle-rule-to-backward-compatibility-update-2",
       "name": "test-idle-rule-to-backward-compatibility-update-2-name",
       "description": "test-idle-rule-to-backward-compatibility-update-2-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -1213,7 +1254,10 @@ Feature: Update a idle rule
       "_id": "test-idle-rule-to-backward-compatibility-update-2",
       "name": "test-idle-rule-to-backward-compatibility-update-2-name",
       "description": "test-idle-rule-to-backward-compatibility-update-2-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -1288,7 +1332,10 @@ Feature: Update a idle rule
       "_id": "test-idle-rule-to-backward-compatibility-update-3",
       "name": "test-idle-rule-to-backward-compatibility-update-3-name",
       "description": "test-idle-rule-to-backward-compatibility-update-3-description-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "entity",
       "enabled": true,
       "priority": 3000,
@@ -1335,7 +1382,10 @@ Feature: Update a idle rule
       "_id": "test-idle-rule-to-backward-compatibility-update-3",
       "name": "test-idle-rule-to-backward-compatibility-update-3-name",
       "description": "test-idle-rule-to-backward-compatibility-update-3-description-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "entity",
       "enabled": true,
       "priority": 3000,
@@ -1383,7 +1433,10 @@ Feature: Update a idle rule
       "_id": "test-idle-rule-to-backward-compatibility-update-4",
       "name": "test-idle-rule-to-backward-compatibility-update-4-name",
       "description": "test-idle-rule-to-backward-compatibility-update-4-description-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "entity",
       "enabled": true,
       "priority": 3000,
@@ -1440,7 +1493,10 @@ Feature: Update a idle rule
       "_id": "test-idle-rule-to-backward-compatibility-update-5",
       "name": "test-idle-rule-to-backward-compatibility-update-5-name",
       "description": "test-idle-rule-to-backward-compatibility-update-5-description",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "entity",
       "enabled": true,
       "duration": {

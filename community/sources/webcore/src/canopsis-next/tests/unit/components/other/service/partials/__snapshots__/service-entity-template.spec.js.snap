@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`service-entity-template Renders \`service-entity-template\` with custom props 1`] = `
+<div>
+  service-id
+          
+  <c-links-list-stub
+    category="test"
+    links="[object Object]"
+  />
+</div>
+`;
+
+exports[`service-entity-template Renders \`service-entity-template\` with custom props without right 1`] = `
+<div>
+  service-id
+          
+  <c-links-list-stub
+    category="test"
+    links="[object Object]"
+  />
+</div>
+`;
+
+exports[`service-entity-template Renders \`service-entity-template\` with default props 1`] = `<div />`;

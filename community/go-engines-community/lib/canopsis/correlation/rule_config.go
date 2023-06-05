@@ -7,10 +7,10 @@ import (
 type RuleConfig struct {
 	TimeInterval *types.DurationWithUnit `bson:"time_interval,omitempty" json:"time_interval,omitempty"`
 	// ThresholdRate is malfunctioning entities rate threshold to trigger the rule
-	ThresholdRate *float64 `bson:"threshold_rate,omitempty" json:"threshold_rate,omitempty"`
+	ThresholdRate float64 `bson:"threshold_rate,omitempty" json:"threshold_rate,omitempty"`
 	// ThresholdCount is malfunctioning entities count threshold to trigger the rule
-	ThresholdCount *int64 `bson:"threshold_count,omitempty" json:"threshold_count,omitempty"`
-	//
+	ThresholdCount int64 `bson:"threshold_count,omitempty" json:"threshold_count,omitempty"`
+	// ValuePaths
 	ValuePaths []string `bson:"value_paths,omitempty" json:"value_paths,omitempty"`
 	// CorelID is an AlarmWithEntity template to mark that alarms are correlated
 	CorelID string `bson:"corel_id,omitempty" json:"corel_id,omitempty"`

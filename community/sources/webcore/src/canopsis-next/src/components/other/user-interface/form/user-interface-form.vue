@@ -22,45 +22,44 @@
         :label="$t('userInterface.language')"
       )
     v-layout(row)
-      v-text-field(
-        v-field.number="form.max_matched_items",
-        v-validate="'numeric|min_value:1'",
+      c-number-field(
+        v-field="form.max_matched_items",
         :label="$t('userInterface.maxMatchedItems')",
-        :error-messages="errors.collect('max_matched_items')",
         :min="1",
-        type="number",
         name="max_matched_items"
       )
-        c-help-icon(
-          slot="append",
-          :text="$t('userInterface.tooltips.maxMatchedItems')",
-          color="grey darken-1",
-          icon="help",
-          left
-        )
+        template(#append="")
+          c-help-icon(
+            :text="$t('userInterface.tooltips.maxMatchedItems')",
+            color="grey darken-1",
+            icon="help",
+            left
+          )
     v-layout(row)
-      v-text-field(
-        v-field.number="form.check_count_request_timeout",
-        v-validate="'numeric|min_value:1'",
+      c-number-field(
+        v-field="form.check_count_request_timeout",
         :label="$t('userInterface.checkCountRequestTimeout')",
-        :error-messages="errors.collect('check_count_request_timeout')",
         :min="1",
-        type="number",
         name="check_count_request_timeout"
       )
-        c-help-icon(
-          slot="append",
-          :text="$t('userInterface.tooltips.checkCountRequestTimeout')",
-          color="grey darken-1",
-          icon="help",
-          left
-        )
+        template(#append="")
+          c-help-icon(
+            :text="$t('userInterface.tooltips.checkCountRequestTimeout')",
+            color="grey darken-1",
+            icon="help",
+            left
+          )
     v-layout(row)
       c-timezone-field(v-field="form.timezone", disabled)
     v-layout(row)
       v-switch(
         v-field="form.allow_change_severity_to_info",
         :label="$t('userInterface.allowChangeSeverityToInfo')",
+        color="primary"
+      )
+      v-switch(
+        v-field="form.show_header_on_kiosk_mode",
+        :label="$t('userInterface.showHeaderOnKioskMode')",
         color="primary"
       )
     v-layout(row)
@@ -81,7 +80,7 @@
         )
     v-layout.mt-3(row)
       v-flex
-        span.theme--light.v-label.file-selector__label {{ $t('userInterface.logo') }}
+        span.v-label.file-selector__label {{ $t('userInterface.logo') }}
         v-layout(row)
           file-selector.mt-1(
             ref="fileSelector",

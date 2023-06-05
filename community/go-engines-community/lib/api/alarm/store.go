@@ -2,49 +2,57 @@ package alarm
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
-	"fmt"
 	"sort"
-	"time"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/perfdata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const (
-	InstructionExecutionStatusRunning    = 0
-	InstructionExecutionStatusPaused     = 1
-	InstructionExecutionStatusAborted    = 4
-	InstructionExecutionStatusFailed     = 4
-	InstructionExecutionStatusWaitResult = 5
-	InstructionTypeManual                = 0
-	InstructionTypeAuto                  = 1
-	InstructionStatusApproved            = 0
+	InstructionExecutionStatusRunning = iota
+	InstructionExecutionStatusPaused
+	InstructionExecutionStatusCompleted
+	InstructionExecutionStatusAborted
+	InstructionExecutionStatusFailed
+	InstructionExecutionStatusWaitResult
 )
 
-const linkFetchTimeout = 30 * time.Second
+const (
+	InstructionTypeManual = iota
+	InstructionTypeAuto
+	InstructionTypeSimplifiedManual
+)
 
-const manualMetaAlarmsLimit = 100
+const InstructionStatusApproved = 0
 
 type Store interface {
-	Find(ctx context.Context, apiKey string, r ListRequestWithPagination) (*AggregationResult, error)
+	Find(ctx context.Context, r ListRequestWithPagination, userId string) (*AggregationResult, error)
 	GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, error)
-	GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string) (map[string]ExecutionStatus, error)
+	GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string, assignedInstructionsMap map[string][]AssignedInstruction) (map[string]ExecutionStatus, error)
 	Count(ctx context.Context, r FilterRequest) (*Count, error)
-	GetByID(ctx context.Context, id, apiKey string) (*Alarm, error)
-	FindManual(ctx context.Context, search string) ([]ManualResponse, error)
-	FindByService(ctx context.Context, id, apiKey string, r ListByServiceRequest) (*AggregationResult, error)
-	FindByComponent(ctx context.Context, r ListByComponentRequest, apiKey string) (*AggregationResult, error)
-	FindResolved(ctx context.Context, r ResolvedListRequest, apiKey string) (*AggregationResult, error)
-	GetDetails(ctx context.Context, apiKey string, r DetailsRequest) (*Details, error)
+	GetByID(ctx context.Context, id, userId string) (*Alarm, error)
+	GetOpenByEntityID(ctx context.Context, id, userId string) (*Alarm, bool, error)
+	FindByService(ctx context.Context, id string, r ListByServiceRequest, userId string) (*AggregationResult, error)
+	FindByComponent(ctx context.Context, r ListByComponentRequest, userId string) (*AggregationResult, error)
+	FindResolved(ctx context.Context, r ResolvedListRequest, userId string) (*AggregationResult, error)
+	GetDetails(ctx context.Context, r DetailsRequest, userId string) (*Details, error)
+	GetAssignedDeclareTicketsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedDeclareTicketRule, error)
+	Export(ctx context.Context, t export.Task) (export.DataCursor, error)
+	GetLinks(ctx context.Context, ruleId string, alarmIds []string, userId string) ([]link.Link, bool, error)
 }
 
 type store struct {
@@ -54,15 +62,22 @@ type store struct {
 	dbInstructionCollection          mongo.DbCollection
 	dbInstructionExecutionCollection mongo.DbCollection
 	dbEntityCollection               mongo.DbCollection
+	dbDeclareTicketCollection        mongo.DbCollection
+	dbUserCollection                 mongo.DbCollection
 
-	queryBuilder *MongoQueryBuilder
+	linkGenerator link.Generator
 
-	links LinksFetcher
+	timezoneConfigProvider config.TimezoneConfigProvider
 
 	logger zerolog.Logger
 }
 
-func NewStore(dbClient mongo.DbClient, legacyURL string, logger zerolog.Logger) Store {
+func NewStore(
+	dbClient mongo.DbClient,
+	linkGenerator link.Generator,
+	timezoneConfigProvider config.TimezoneConfigProvider,
+	logger zerolog.Logger,
+) Store {
 	return &store{
 		dbClient:                         dbClient,
 		mainDbCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
@@ -70,23 +85,25 @@ func NewStore(dbClient mongo.DbClient, legacyURL string, logger zerolog.Logger) 
 		dbInstructionCollection:          dbClient.Collection(mongo.InstructionMongoCollection),
 		dbInstructionExecutionCollection: dbClient.Collection(mongo.InstructionExecutionMongoCollection),
 		dbEntityCollection:               dbClient.Collection(mongo.EntityMongoCollection),
+		dbDeclareTicketCollection:        dbClient.Collection(mongo.DeclareTicketRuleMongoCollection),
+		dbUserCollection:                 dbClient.Collection(mongo.RightsMongoCollection),
 
-		queryBuilder: NewMongoQueryBuilder(dbClient),
+		linkGenerator: linkGenerator,
 
-		links: NewLinksFetcher(legacyURL, linkFetchTimeout),
+		timezoneConfigProvider: timezoneConfigProvider,
 
 		logger: logger,
 	}
 }
 
-func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagination) (*AggregationResult, error) {
+func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userId string) (*AggregationResult, error) {
 	collection := s.mainDbCollection
 	if r.GetOpenedFilter() == OnlyResolved {
 		collection = s.resolvedDbCollection
 	}
 
 	now := types.NewCpsTime()
-	pipeline, err := s.queryBuilder.CreateListAggregationPipeline(ctx, r, now)
+	pipeline, err := s.getQueryBuilder().CreateListAggregationPipeline(ctx, r, now)
 	if err != nil {
 		return nil, err
 	}
@@ -105,35 +122,11 @@ func (s *store) Find(ctx context.Context, apiKey string, r ListRequestWithPagina
 		}
 	}
 
-	if r.WithInstructions {
-		anyInstructionMatch, err := s.fillAssignedInstructions(ctx, &result, now)
-		if err != nil {
-			return nil, err
-		}
-		err = s.fillInstructionFlags(ctx, &result)
-		if err != nil {
-			return nil, err
-		}
-		if r.OnlyParents {
-			err = s.fillChildrenInstructionsFlag(ctx, &result, anyInstructionMatch)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	if r.WithLinks {
-		err = s.fillLinks(ctx, apiKey, &result)
-		if err != nil {
-			s.logger.Err(err).Msg("cannot fill links")
-		}
-	}
-
-	return &result, nil
+	return &result, s.postProcessResult(ctx, &result, r.WithDeclareTickets, r.WithInstructions, r.WithLinks, r.OnlyParents, userId)
 }
 
-func (s *store) GetByID(ctx context.Context, id, apiKey string) (*Alarm, error) {
-	pipeline, err := s.queryBuilder.CreateGetAggregationPipeline(id, types.NewCpsTime())
+func (s *store) GetByID(ctx context.Context, id, userId string) (*Alarm, error) {
+	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"_id": id}, types.NewCpsTime())
 	if err != nil {
 		return nil, err
 	}
@@ -171,68 +164,51 @@ func (s *store) GetByID(ctx context.Context, id, apiKey string) (*Alarm, error) 
 		return nil, nil
 	}
 
-	_, err = s.fillAssignedInstructions(ctx, &result, types.NewCpsTime())
-	if err != nil {
-		return nil, err
-	}
-	err = s.fillInstructionFlags(ctx, &result)
-	if err != nil {
-		return nil, err
-	}
-
-	err = s.fillLinks(ctx, apiKey, &result)
-	if err != nil {
-		s.logger.Err(err).Msg("cannot fill links")
-	}
-
-	return &result.Data[0], nil
+	return &result.Data[0], s.postProcessResult(ctx, &result, true, true, true, false, userId)
 }
 
-func (s *store) FindManual(ctx context.Context, search string) ([]ManualResponse, error) {
-	pipeline := []bson.M{
-		{"$match": bson.M{
-			"v.meta":     bson.M{"$ne": nil},
-			"v.resolved": nil,
-		}},
+func (s *store) GetOpenByEntityID(ctx context.Context, entityID, userId string) (*Alarm, bool, error) {
+	err := s.dbEntityCollection.FindOne(ctx, bson.M{
+		"_id":     entityID,
+		"enabled": true,
+	}).Err()
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, false, nil
+		}
+		return nil, false, err
 	}
-	pipeline = append(pipeline, getMetaAlarmRuleLookup()...)
-	pipeline = append(pipeline, bson.M{"$match": bson.M{
-		"meta_alarm_rule.type": correlation.RuleManualGroup,
-	}})
-	if search != "" {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{
-			"v.display_name": primitive.Regex{
-				Pattern: fmt.Sprintf(".*%s.*", search),
-				Options: "i",
-			},
-		}})
+
+	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{
+		"d":          entityID,
+		"v.resolved": nil,
+	}, types.NewCpsTime())
+	if err != nil {
+		return nil, false, err
 	}
-	pipeline = append(pipeline,
-		common.GetSortQuery("v.display_name", common.SortAsc),
-		bson.M{"$limit": manualMetaAlarmsLimit},
-		bson.M{"$project": bson.M{
-			"name": "$v.display_name",
-		}},
-	)
 
 	cursor, err := s.mainDbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
-	var res []ManualResponse
-	err = cursor.All(ctx, &res)
-	if err != nil {
-		return nil, err
+	defer cursor.Close(ctx)
+
+	result := AggregationResult{}
+	if cursor.Next(ctx) {
+		err = cursor.Decode(&result)
+		if err != nil {
+			return nil, false, err
+		}
 	}
 
-	if res == nil {
-		res = make([]ManualResponse, 0)
+	if len(result.Data) == 0 {
+		return nil, true, nil
 	}
 
-	return res, nil
+	return &result.Data[0], true, s.postProcessResult(ctx, &result, true, true, true, false, userId)
 }
 
-func (s *store) FindByService(ctx context.Context, id, apiKey string, r ListByServiceRequest) (*AggregationResult, error) {
+func (s *store) FindByService(ctx context.Context, id string, r ListByServiceRequest, userId string) (*AggregationResult, error) {
 	now := types.NewCpsTime()
 	service := types.Entity{}
 	err := s.dbEntityCollection.FindOne(ctx, bson.M{
@@ -247,10 +223,22 @@ func (s *store) FindByService(ctx context.Context, id, apiKey string, r ListBySe
 		return nil, err
 	}
 
-	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(bson.M{
-		"d":          bson.M{"$in": service.Depends},
-		"v.resolved": nil,
-	}, r.Query, r.SortRequest, now)
+	entityMatch := bson.M{"entity.services": service.ID}
+	if r.WithService {
+		entityMatch = bson.M{"$or": []bson.M{
+			{"entity._id": service.ID},
+			entityMatch,
+		}}
+	}
+
+	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(
+		ctx,
+		bson.M{"v.resolved": nil},
+		entityMatch,
+		r.Query, r.SortRequest, FilterRequest{BaseFilterRequest: BaseFilterRequest{
+			Category: r.Category,
+			Search:   r.Search,
+		}}, now)
 	if err != nil {
 		return nil, err
 	}
@@ -269,24 +257,10 @@ func (s *store) FindByService(ctx context.Context, id, apiKey string, r ListBySe
 		}
 	}
 
-	_, err = s.fillAssignedInstructions(ctx, &result, now)
-	if err != nil {
-		return nil, err
-	}
-	err = s.fillInstructionFlags(ctx, &result)
-	if err != nil {
-		return nil, err
-	}
-
-	err = s.fillLinks(ctx, apiKey, &result)
-	if err != nil {
-		s.logger.Err(err).Msg("cannot fill links")
-	}
-
-	return &result, nil
+	return &result, s.postProcessResult(ctx, &result, true, true, true, false, userId)
 }
 
-func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, apiKey string) (*AggregationResult, error) {
+func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, userId string) (*AggregationResult, error) {
 	now := types.NewCpsTime()
 	component := types.Entity{}
 	err := s.dbEntityCollection.FindOne(ctx, bson.M{
@@ -301,10 +275,11 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, a
 		return nil, err
 	}
 
-	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(bson.M{
-		"d":          bson.M{"$in": component.Depends},
-		"v.resolved": nil,
-	}, r.Query, r.SortRequest, now)
+	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(
+		ctx,
+		bson.M{"v.resolved": nil},
+		bson.M{"entity.component": component.ID},
+		r.Query, r.SortRequest, FilterRequest{}, now)
 	if err != nil {
 		return nil, err
 	}
@@ -323,24 +298,10 @@ func (s *store) FindByComponent(ctx context.Context, r ListByComponentRequest, a
 		}
 	}
 
-	_, err = s.fillAssignedInstructions(ctx, &result, now)
-	if err != nil {
-		return nil, err
-	}
-	err = s.fillInstructionFlags(ctx, &result)
-	if err != nil {
-		return nil, err
-	}
-
-	err = s.fillLinks(ctx, apiKey, &result)
-	if err != nil {
-		s.logger.Err(err).Msg("cannot fill links")
-	}
-
-	return &result, nil
+	return &result, s.postProcessResult(ctx, &result, true, true, true, false, userId)
 }
 
-func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, apiKey string) (*AggregationResult, error) {
+func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, userId string) (*AggregationResult, error) {
 	now := types.NewCpsTime()
 
 	err := s.dbEntityCollection.FindOne(ctx, bson.M{
@@ -355,13 +316,12 @@ func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, apiKey 
 	}
 
 	match := bson.M{"d": r.ID}
-	if r.StartFrom != nil {
-		match[defaultTimeFieldResolved] = bson.M{"$gte": r.StartFrom}
-	}
-	if r.StartTo != nil {
-		match[defaultTimeFieldResolved] = bson.M{"$lte": r.StartTo}
-	}
-	pipeline, err := s.queryBuilder.CreateAggregationPipelineByMatch(match, r.Query, r.SortRequest, now)
+	opened := false
+	pipeline, err := s.getQueryBuilder().CreateAggregationPipelineByMatch(ctx, match, nil, r.Query, r.SortRequest, FilterRequest{BaseFilterRequest: BaseFilterRequest{
+		StartFrom: r.StartFrom,
+		StartTo:   r.StartTo,
+		Opened:    &opened,
+	}}, now)
 	if err != nil {
 		return nil, err
 	}
@@ -380,7 +340,7 @@ func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, apiKey 
 		}
 	}
 
-	err = s.fillLinks(ctx, apiKey, &result)
+	err = s.fillLinks(ctx, &result, userId)
 	if err != nil {
 		s.logger.Err(err).Msg("cannot fill links")
 	}
@@ -388,7 +348,7 @@ func (s *store) FindResolved(ctx context.Context, r ResolvedListRequest, apiKey 
 	return &result, nil
 }
 
-func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest) (*Details, error) {
+func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string) (*Details, error) {
 	now := types.NewCpsTime()
 	match := bson.M{"_id": r.ID}
 	collection := s.mainDbCollection
@@ -404,11 +364,29 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 		{"$addFields": bson.M{
 			"is_meta_alarm": bson.M{"$cond": bson.A{bson.M{"$not": bson.A{"$v.meta"}}, false, true}},
 		}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": "$entity"},
 	}
 
 	if r.Steps != nil {
+		var stepsArray any
+		if r.Steps.Reversed {
+			stepsArray = bson.M{"$reverseArray": "$v.steps"}
+		} else {
+			stepsArray = "$v.steps"
+		}
+
 		pipeline = append(pipeline, bson.M{"$addFields": bson.M{
-			"steps.data":  bson.M{"$slice": bson.A{"$v.steps", (r.Steps.Page - 1) * r.Steps.Limit, r.Steps.Limit}},
+			"steps.data": bson.M{"$slice": bson.A{
+				stepsArray,
+				(r.Steps.Page - 1) * r.Steps.Limit,
+				r.Steps.Limit},
+			},
 			"steps_count": bson.M{"$size": "$v.steps"},
 		}})
 	}
@@ -434,7 +412,7 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 	}
 
 	if r.Steps != nil {
-		details.Steps.Meta, err = common.NewPaginatedMeta(*r.Steps, details.StepsCount)
+		details.Steps.Meta, err = common.NewPaginatedMeta(r.Steps.Query, details.StepsCount)
 		if err != nil {
 			return nil, err
 		}
@@ -446,7 +424,7 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 		}
 
 		if details.IsMetaAlarm {
-			childrenPipeline, err := s.queryBuilder.CreateChildrenAggregationPipeline(*r.Children, r.GetOpenedFilter(), details.EntityID, now)
+			childrenPipeline, err := s.getQueryBuilder().CreateChildrenAggregationPipeline(*r.Children, r.GetOpenedFilter(), details.Entity.ID, now)
 			if err != nil {
 				return nil, err
 			}
@@ -463,20 +441,9 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 				}
 			}
 
-			if r.WithInstructions {
-				_, err = s.fillAssignedInstructions(ctx, &children, now)
-				if err != nil {
-					return nil, err
-				}
-				err = s.fillInstructionFlags(ctx, &children)
-				if err != nil {
-					return nil, err
-				}
-			}
-
-			err = s.fillLinks(ctx, apiKey, &children)
+			err = s.postProcessResult(ctx, &children, r.WithDeclareTickets, r.WithInstructions, true, false, userId)
 			if err != nil {
-				s.logger.Err(err).Msg("cannot fill links")
+				return nil, err
 			}
 		}
 
@@ -490,6 +457,11 @@ func (s *store) GetDetails(ctx context.Context, apiKey string, r DetailsRequest)
 		}
 	}
 
+	if len(r.PerfData) > 0 {
+		perfDataRe := perfdata.Parse(r.PerfData)
+		details.FilteredPerfData = perfdata.Filter(r.PerfData, perfDataRe, details.Entity.PerfData)
+	}
+
 	return &details, nil
 }
 
@@ -499,7 +471,7 @@ func (s *store) Count(ctx context.Context, r FilterRequest) (*Count, error) {
 		collection = s.resolvedDbCollection
 	}
 
-	pipeline, err := s.queryBuilder.CreateCountAggregationPipeline(ctx, r, types.NewCpsTime())
+	pipeline, err := s.getQueryBuilder().CreateCountAggregationPipeline(ctx, r, types.NewCpsTime())
 	if err != nil {
 		return nil, err
 	}
@@ -590,16 +562,94 @@ func (s *store) Count(ctx context.Context, r FilterRequest) (*Count, error) {
 }
 
 func (s *store) GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, error) {
-	m, _, err := s.getAssignedInstructionsMap(ctx, alarmIds, types.NewCpsTime())
+	m, _, err := s.getAssignedInstructionsMap(ctx, alarmIds)
 	return m, err
 }
 
-func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []string, now types.CpsTime) (map[string][]AssignedInstruction, bson.M, error) {
+func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, error) {
+	r := ExportFetchParameters{}
+	err := json.Unmarshal([]byte(t.Parameters), &r)
+	if err != nil {
+		return nil, err
+	}
+
+	collection := s.mainDbCollection
+	if r.GetOpenedFilter() == OnlyResolved {
+		collection = s.resolvedDbCollection
+	}
+
+	now := types.NewCpsTime()
+	pipeline, err := s.getQueryBuilder().CreateOnlyListAggregationPipeline(ctx, ListRequest{
+		FilterRequest: FilterRequest{
+			BaseFilterRequest: r.BaseFilterRequest,
+			SearchBy:          t.Fields.Fields(),
+		},
+	}, now)
+	if err != nil {
+		return nil, err
+	}
+
+	project := make(bson.M, len(t.Fields))
+	for _, field := range t.Fields {
+		found := false
+		for anotherField := range project {
+			if strings.HasPrefix(field.Name, anotherField+".") {
+				found = true
+				break
+			} else if strings.HasPrefix(anotherField, field.Name+".") {
+				delete(project, anotherField)
+				break
+			}
+		}
+		if !found {
+			project[field.Name] = 1
+		}
+	}
+
+	pipeline = append(pipeline, bson.M{"$project": project})
+	cursor, err := collection.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
+	if err != nil {
+		return nil, err
+	}
+
+	location := s.timezoneConfigProvider.Get().Location
+	return export.NewMongoCursor(cursor, t.Fields.Fields(), transformExportField(common.GetRealFormatTime(r.TimeFormat), location)), nil
+}
+
+func (s *store) GetLinks(ctx context.Context, ruleId string, alarmIds []string, userId string) ([]link.Link, bool, error) {
+	user, err := s.findUser(ctx, userId)
+	if err != nil {
+		return nil, false, err
+	}
+
+	links, err := s.linkGenerator.GenerateCombinedForAlarmsByRule(ctx, ruleId, alarmIds, user)
+	if err != nil {
+		if errors.Is(err, link.ErrNoRule) {
+			return nil, false, nil
+		}
+		if errors.Is(err, link.ErrNotMatchedAlarm) {
+			return nil, false, common.NewValidationError("ids", "Alarms aren't matched to rule.")
+		}
+		return nil, false, err
+	}
+
+	sort.Slice(links, func(i, j int) bool {
+		return links[i].Label < links[j].Label
+	})
+
+	if links == nil {
+		return []link.Link{}, true, nil
+	}
+
+	return links, true, nil
+}
+
+func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, bson.M, error) {
 	instructionCursor, err := s.dbInstructionCollection.Aggregate(
 		ctx,
 		[]bson.M{
 			{"$match": bson.M{
-				"type":   InstructionTypeManual,
+				"type":   bson.M{"$in": bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}},
 				"status": bson.M{"$in": bson.A{InstructionStatusApproved, nil}},
 			}},
 			{"$lookup": bson.M{
@@ -640,8 +690,9 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 
 	defer instructionCursor.Close(ctx)
 
-	instructionMap := make(map[string]InstructionWithExecutions)
-	instructionFiltersPipeline := bson.M{}
+	instructionMap := make(map[string]InstructionWithExecutions, canopsis.FacetLimit)
+	instructionFiltersPipeline := make(bson.M, canopsis.FacetLimit)
+	assignedInstructionsMap := make(map[string][]AssignedInstruction)
 	allInstructionMatches := make([]bson.M, 0)
 
 	for instructionCursor.Next(ctx) {
@@ -656,6 +707,16 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 			return nil, nil, err
 		}
 
+		if len(instructionFiltersPipeline) > canopsis.FacetLimit {
+			err = s.processInstructionFiltersPipeline(ctx, alarmIds, instructionMap, instructionFiltersPipeline, assignedInstructionsMap)
+			if err != nil {
+				return nil, nil, err
+			}
+
+			instructionMap = make(map[string]InstructionWithExecutions, canopsis.FacetLimit)
+			instructionFiltersPipeline = make(bson.M, canopsis.FacetLimit)
+		}
+
 		if q != nil {
 			instructionMap[instruction.ID] = instruction
 			instructionFiltersPipeline[instruction.ID] = []bson.M{{"$match": q}}
@@ -668,20 +729,26 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 		anyInstructionMatch = bson.M{"$or": allInstructionMatches}
 	}
 
-	if len(instructionMap) == 0 {
-		return nil, anyInstructionMatch, nil
+	if len(instructionFiltersPipeline) > 0 {
+		err = s.processInstructionFiltersPipeline(ctx, alarmIds, instructionMap, instructionFiltersPipeline, assignedInstructionsMap)
 	}
 
+	return assignedInstructionsMap, anyInstructionMatch, err
+}
+
+func (s *store) processInstructionFiltersPipeline(
+	ctx context.Context,
+	alarmIds []string,
+	instructionMap map[string]InstructionWithExecutions,
+	instructionFiltersPipeline bson.M,
+	assignedInstructionsMap map[string][]AssignedInstruction,
+) error {
 	pipeline := []bson.M{
 		{"$match": bson.M{"_id": bson.M{"$in": alarmIds}}},
 		{"$addFields": bson.M{
 			"v.infos_array": bson.M{"$objectToArray": "$v.infos"},
 			"v.duration": bson.M{"$subtract": bson.A{
-				bson.M{"$cond": bson.M{
-					"if":   "$v.resolved",
-					"then": "$v.resolved",
-					"else": now,
-				}},
+				types.NewCpsTime(),
 				"$v.creation_date",
 			}},
 		}},
@@ -720,17 +787,16 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 		pipeline,
 	)
 	if err != nil {
-		return nil, nil, err
+		return err
 	}
 
 	defer assignedInstructionsCursor.Close(ctx)
 
-	assignedInstructionsMap := make(map[string][]AssignedInstruction)
 	for assignedInstructionsCursor.Next(ctx) {
 		assignedInstructions := make(map[string][]string)
 		err = assignedInstructionsCursor.Decode(&assignedInstructions)
 		if err != nil {
-			return nil, nil, err
+			return err
 		}
 
 		for instructionId, alarmIds := range assignedInstructions {
@@ -739,98 +805,310 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 				assignedInstructionsMap[alarmId] = append(assignedInstructionsMap[alarmId], AssignedInstruction{
 					ID:        instructionId,
 					Name:      instructionMap[instructionId].Name,
+					Type:      instructionMap[instructionId].Type,
 					Execution: execution,
 				})
 			}
 		}
 	}
 
-	return assignedInstructionsMap, anyInstructionMatch, nil
+	return nil
 }
 
-func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string) (map[string]ExecutionStatus, error) {
+func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string, assignedInstructionsMap map[string][]AssignedInstruction) (map[string]ExecutionStatus, error) {
 	if len(alarmIDs) == 0 {
 		return nil, nil
 	}
+
+	leftAlarms := make(map[string]struct{}, len(alarmIDs))
+	for _, id := range alarmIDs {
+		leftAlarms[id] = struct{}{}
+	}
+
 	cursor, err := s.dbInstructionExecutionCollection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{
-			"alarm": bson.M{"$in": alarmIDs},
-		}},
-		{"$lookup": bson.M{
-			"from":         mongo.InstructionMongoCollection,
-			"localField":   "instruction",
-			"foreignField": "_id",
-			"as":           "instruction",
-		}},
-		{"$unwind": "$instruction"},
-		{"$group": bson.M{
-			"_id": "$alarm",
-			"auto_statuses": bson.M{"$addToSet": bson.M{"$cond": bson.M{
-				"if":   bson.M{"$eq": bson.A{"$instruction.type", InstructionTypeAuto}},
-				"then": "$status",
-				"else": "$$REMOVE",
-			}}},
-			"manual_statuses": bson.M{"$addToSet": bson.M{"$cond": bson.M{
-				"if":   bson.M{"$eq": bson.A{"$instruction.type", InstructionTypeManual}},
-				"then": "$status",
-				"else": "$$REMOVE",
-			}}},
-		}},
-		{"$addFields": bson.M{
-			"auto_running": bson.M{"$gt": bson.A{
-				bson.M{"$size": bson.M{"$filter": bson.M{
-					"input": "$auto_statuses",
-					"cond":  bson.M{"$in": bson.A{"$$this", []int{InstructionExecutionStatusRunning, InstructionExecutionStatusWaitResult}}},
-				}}},
-				0,
-			}},
-			"auto_failed": bson.M{"$gt": bson.A{
-				bson.M{"$size": bson.M{"$filter": bson.M{
-					"input": "$auto_statuses",
-					"cond":  bson.M{"$in": bson.A{"$$this", []int{InstructionExecutionStatusAborted, InstructionExecutionStatusFailed}}},
-				}}},
-				0,
-			}},
-			"manual_running": bson.M{"$gt": bson.A{
-				bson.M{"$size": bson.M{"$filter": bson.M{
-					"input": "$manual_statuses",
-					"cond":  bson.M{"$eq": bson.A{"$$this", InstructionExecutionStatusRunning}},
-				}}},
-				0,
-			}},
-			"manual_waiting_result": bson.M{"$gt": bson.A{
-				bson.M{"$size": bson.M{"$filter": bson.M{
-					"input": "$manual_statuses",
-					"cond":  bson.M{"$eq": bson.A{"$$this", InstructionExecutionStatusWaitResult}},
-				}}},
-				0,
-			}},
-		}},
-		{"$addFields": bson.M{
-			"auto_all_completed": bson.M{"$and": bson.A{
-				bson.M{"$not": "$auto_running"},
-				bson.M{"$gt": bson.A{bson.M{"$size": "$auto_statuses"}, 0}},
-			}},
-		}},
+		{
+			"$match": bson.M{
+				"alarm": bson.M{"$in": alarmIDs},
+			},
+		},
+		{
+			"$sort": bson.M{
+				"started_at": -1,
+			},
+		},
+		{
+			"$group": bson.M{
+				"_id": bson.M{
+					"alarm":       "$alarm",
+					"instruction": "$instruction",
+				},
+				"instruction_id":   bson.M{"$first": "$instruction"},
+				"instruction_name": bson.M{"$first": "$name"},
+				"instruction_type": bson.M{"$first": "$type"},
+				"status":           bson.M{"$first": "$status"},
+				"started_at":       bson.M{"$first": "$started_at"},
+			},
+		},
+		{
+			"$sort": bson.M{
+				"started_at": -1,
+			},
+		},
+		{
+			"$group": bson.M{
+				"_id": "$_id.alarm",
+				"all_failed": bson.M{
+					"$push": bson.M{
+						"$cond": bson.M{
+							"if": bson.M{
+								"$eq": bson.A{"$status", InstructionExecutionStatusFailed},
+							},
+							"then": "$instruction_type",
+							"else": "$$REMOVE",
+						},
+					},
+				},
+				"all_successful": bson.M{
+					"$push": bson.M{
+						"$cond": bson.M{
+							"if": bson.M{
+								"$eq": bson.A{"$status", InstructionExecutionStatusCompleted},
+							},
+							"then": "$instruction_type",
+							"else": "$$REMOVE",
+						},
+					},
+				},
+				"running_manual_instructions": bson.M{
+					"$push": bson.M{
+						"$cond": bson.M{
+							"if": bson.M{
+								"$and": bson.A{
+									bson.M{
+										"$in": bson.A{"$status", bson.A{InstructionExecutionStatusRunning, InstructionExecutionStatusWaitResult}},
+									},
+									bson.M{
+										"$in": bson.A{"$instruction_type", bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}},
+									},
+								},
+							},
+							"then": "$instruction_name",
+							"else": "$$REMOVE",
+						},
+					},
+				},
+				"running_auto_instructions": bson.M{
+					"$push": bson.M{
+						"$cond": bson.M{
+							"if": bson.M{
+								"$and": bson.A{
+									bson.M{
+										"$in": bson.A{"$status", bson.A{InstructionExecutionStatusRunning, InstructionExecutionStatusWaitResult}},
+									},
+									bson.M{
+										"$eq": bson.A{"$instruction_type", InstructionTypeAuto},
+									},
+								},
+							},
+							"then": "$instruction_name",
+							"else": "$$REMOVE",
+						},
+					},
+				},
+				"failed_manual_instructions": bson.M{
+					"$push": bson.M{
+						"$cond": bson.M{
+							"if": bson.M{
+								"$and": bson.A{
+									bson.M{
+										"$eq": bson.A{"$status", InstructionExecutionStatusFailed},
+									},
+									bson.M{
+										"$in": bson.A{"$instruction_type", bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}},
+									},
+								},
+							},
+							"then": "$instruction_name",
+							"else": "$$REMOVE",
+						},
+					},
+				},
+				"failed_auto_instructions": bson.M{
+					"$push": bson.M{
+						"$cond": bson.M{
+							"if": bson.M{
+								"$and": bson.A{
+									bson.M{
+										"$eq": bson.A{"$status", InstructionExecutionStatusFailed},
+									},
+									bson.M{
+										"$eq": bson.A{"$instruction_type", InstructionTypeAuto},
+									},
+								},
+							},
+							"then": "$instruction_name",
+							"else": "$$REMOVE",
+						},
+					},
+				},
+				"successful_manual_instructions": bson.M{
+					"$addToSet": bson.M{
+						"$cond": bson.M{
+							"if": bson.M{
+								"$and": bson.A{
+									bson.M{
+										"$eq": bson.A{"$status", InstructionExecutionStatusCompleted},
+									},
+									bson.M{
+										"$in": bson.A{"$instruction_type", bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}},
+									},
+								},
+							},
+							"then": "$instruction_name",
+							"else": "$$REMOVE",
+						},
+					},
+				},
+				"successful_auto_instructions": bson.M{
+					"$addToSet": bson.M{
+						"$cond": bson.M{
+							"if": bson.M{
+								"$and": bson.A{
+									bson.M{
+										"$eq": bson.A{"$status", InstructionExecutionStatusCompleted},
+									},
+									bson.M{
+										"$eq": bson.A{"$instruction_type", InstructionTypeAuto},
+									},
+								},
+							},
+							"then": "$instruction_name",
+							"else": "$$REMOVE",
+						},
+					},
+				},
+			},
+		},
+		{
+			"$addFields": bson.M{
+				"last_failed":     bson.M{"$arrayElemAt": bson.A{"$all_failed", 0}},
+				"last_successful": bson.M{"$arrayElemAt": bson.A{"$all_successful", 0}},
+			},
+		},
 	})
+
 	if err != nil {
 		return nil, err
 	}
 
-	executionStatuses := make([]ExecutionStatus, 0)
+	var executionStatuses []ExecutionStatus
 	err = cursor.All(ctx, &executionStatuses)
 	if err != nil {
 		return nil, err
 	}
 	statusesByAlarm := make(map[string]ExecutionStatus, len(executionStatuses))
 	for _, v := range executionStatuses {
+		delete(leftAlarms, v.ID)
+
+		v.Icon = getInstructionExecutionIcon(v, assignedInstructionsMap)
 		statusesByAlarm[v.ID] = v
+	}
+
+	for alarmID := range leftAlarms {
+		if _, ok := assignedInstructionsMap[alarmID]; ok {
+			statusesByAlarm[alarmID] = ExecutionStatus{
+				Icon: IconManualAvailable,
+			}
+		}
 	}
 
 	return statusesByAlarm, nil
 }
 
-func (s *store) fillAssignedInstructions(ctx context.Context, result *AggregationResult, now types.CpsTime) (bson.M, error) {
+func getInstructionExecutionIcon(status ExecutionStatus, assignedInstructionsMap map[string][]AssignedInstruction) int {
+	availableInstructionsMap := make(map[string]struct{}, len(assignedInstructionsMap[status.ID]))
+	for _, instr := range assignedInstructionsMap[status.ID] {
+		availableInstructionsMap[instr.Name] = struct{}{}
+	}
+
+	for _, name := range status.RunningManualInstructions {
+		delete(availableInstructionsMap, name)
+	}
+
+	for _, name := range status.FailedManualInstructions {
+		delete(availableInstructionsMap, name)
+	}
+
+	for _, name := range status.SuccessfulManualInstructions {
+		delete(availableInstructionsMap, name)
+	}
+
+	runningManualInstruction := len(status.RunningManualInstructions) != 0
+	runningAutoInstruction := len(status.RunningAutoInstructions) != 0
+	failedManualInstruction := len(status.FailedManualInstructions) != 0
+	failedAutoInstruction := len(status.FailedAutoInstructions) != 0
+	successfulManualInstruction := len(status.SuccessfulManualInstructions) != 0
+	successfulAutoInstruction := len(status.SuccessfulAutoInstructions) != 0
+	availableInstructions := len(availableInstructionsMap) != 0
+	lastFailed := status.LastFailed
+	lastSuccessful := status.LastSuccessful
+
+	if (failedManualInstruction || failedAutoInstruction) && lastFailed != nil {
+		if *lastFailed == InstructionTypeAuto {
+			if runningManualInstruction || runningAutoInstruction {
+				return IconAutoFailedOtherInProgress
+			} else if availableInstructions {
+				return IconAutoFailedManualAvailable
+			} else {
+				return IconAutoFailed
+			}
+		} else {
+			if runningManualInstruction || runningAutoInstruction {
+				return IconManualFailedOtherInProgress
+			} else if availableInstructions {
+				return IconManualFailedManualAvailable
+			} else {
+				return IconManualFailed
+			}
+		}
+	}
+
+	if (successfulManualInstruction || successfulAutoInstruction) && lastSuccessful != nil {
+		if *lastSuccessful == InstructionTypeAuto {
+			if runningManualInstruction || runningAutoInstruction {
+				return IconAutoSuccessfulOtherInProgress
+			} else if availableInstructions {
+				return IconAutoSuccessfulManualAvailable
+			} else {
+				return IconAutoSuccessful
+			}
+		} else {
+			if runningManualInstruction || runningAutoInstruction {
+				return IconManualSuccessfulOtherInProgress
+			} else if availableInstructions {
+				return IconManualSuccessfulManualAvailable
+			} else {
+				return IconManualSuccessful
+			}
+		}
+	}
+
+	if runningManualInstruction {
+		return IconManualInProgress
+	}
+
+	if runningAutoInstruction {
+		return IconAutoInProgress
+	}
+
+	if availableInstructions {
+		return IconManualAvailable
+	}
+
+	return NoIcon
+}
+
+func (s *store) fillAssignedInstructions(ctx context.Context, result *AggregationResult) (map[string][]AssignedInstruction, bson.M, error) {
 	var alarmIds []string
 	for _, item := range result.Data {
 		if item.Value.Resolved == nil {
@@ -839,12 +1117,12 @@ func (s *store) fillAssignedInstructions(ctx context.Context, result *Aggregatio
 	}
 
 	if len(alarmIds) == 0 {
-		return nil, nil
+		return nil, nil, nil
 	}
 
-	assignedInstructionsMap, anyInstructionMatch, err := s.getAssignedInstructionsMap(ctx, alarmIds, now)
+	assignedInstructionsMap, anyInstructionMatch, err := s.getAssignedInstructionsMap(ctx, alarmIds)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	for i, alarmDocument := range result.Data {
@@ -859,31 +1137,31 @@ func (s *store) fillAssignedInstructions(ctx context.Context, result *Aggregatio
 		result.Data[i].AssignedInstructions = &assignedInstructions
 	}
 
-	return anyInstructionMatch, nil
+	return assignedInstructionsMap, anyInstructionMatch, nil
 }
 
-func (s *store) fillInstructionFlags(ctx context.Context, result *AggregationResult) error {
+func (s *store) fillInstructionExecutionStatusesAndIcon(ctx context.Context, result *AggregationResult, assignedInstructions map[string][]AssignedInstruction) error {
 	alarmIDs := make([]string, len(result.Data))
 	for i, item := range result.Data {
-		if item.Value.Resolved == nil {
-			alarmIDs[i] = item.ID
-		}
+		alarmIDs[i] = item.ID
 	}
 	if len(alarmIDs) == 0 {
 		return nil
 	}
 
-	statusesByAlarm, err := s.GetInstructionExecutionStatuses(ctx, alarmIDs)
+	executionStatuses, err := s.GetInstructionExecutionStatuses(ctx, alarmIDs, assignedInstructions)
 	if err != nil {
 		return err
 	}
 
 	for i, v := range result.Data {
-		result.Data[i].IsAutoInstructionRunning = statusesByAlarm[v.ID].AutoRunning
-		result.Data[i].IsAllAutoInstructionsCompleted = statusesByAlarm[v.ID].AutoAllCompleted
-		result.Data[i].IsAutoInstructionFailed = statusesByAlarm[v.ID].AutoFailed
-		result.Data[i].IsManualInstructionRunning = statusesByAlarm[v.ID].ManualRunning
-		result.Data[i].IsManualInstructionWaitingResult = statusesByAlarm[v.ID].ManualWaitingResult
+		result.Data[i].InstructionExecutionIcon = executionStatuses[v.ID].Icon
+		result.Data[i].RunningManualInstructions = executionStatuses[v.ID].RunningManualInstructions
+		result.Data[i].RunningAutoInstructions = executionStatuses[v.ID].RunningAutoInstructions
+		result.Data[i].FailedManualInstructions = executionStatuses[v.ID].FailedManualInstructions
+		result.Data[i].FailedAutoInstructions = executionStatuses[v.ID].FailedAutoInstructions
+		result.Data[i].SuccessfulManualInstructions = executionStatuses[v.ID].SuccessfulManualInstructions
+		result.Data[i].SuccessfulAutoInstructions = executionStatuses[v.ID].SuccessfulAutoInstructions
 	}
 
 	return nil
@@ -952,35 +1230,243 @@ func (s *store) fillChildrenInstructionsFlag(ctx context.Context, result *Aggreg
 }
 
 // fillLinks sends a request to API v2 and fills result with links from a response.
-func (s *store) fillLinks(ctx context.Context, apiKey string, result *AggregationResult) error {
+func (s *store) fillLinks(ctx context.Context, result *AggregationResult, userId string) error {
 	if result == nil || len(result.Data) == 0 {
 		return nil
 	}
 
-	linksEntities := make([]AlarmEntity, len(result.Data))
-	alarmIndexes := make(map[string]int, len(result.Data))
-
-	for i, item := range result.Data {
-		linksEntities[i] = AlarmEntity{
-			AlarmID:  item.ID,
-			EntityID: item.Entity.ID,
-		}
-		alarmIndexes[item.ID] = i
-	}
-
-	res, err := s.links.Fetch(ctx, apiKey, linksEntities)
-	if err != nil || res == nil {
+	user, err := s.findUser(ctx, userId)
+	if err != nil {
 		return err
 	}
 
-	for _, rec := range res.Data {
-		if i, ok := alarmIndexes[rec.AlarmID]; ok && len(rec.Links) > 0 {
-			links := make(map[string]interface{}, len(rec.Links))
-			for category, link := range rec.Links {
-				links[category] = link
+	ids := make([]string, len(result.Data))
+	for i, v := range result.Data {
+		ids[i] = v.ID
+	}
+
+	linksByAlarmId, err := s.linkGenerator.GenerateForAlarms(ctx, ids, user)
+	if err != nil || len(linksByAlarmId) == 0 {
+		return err
+	}
+
+	for i, v := range result.Data {
+		result.Data[i].Links = linksByAlarmId[v.ID]
+		for _, links := range result.Data[i].Links {
+			sort.Slice(links, func(i, j int) bool {
+				return links[i].Label < links[j].Label
+			})
+		}
+	}
+
+	return nil
+}
+
+func (s *store) getQueryBuilder() *MongoQueryBuilder {
+	return NewMongoQueryBuilder(s.dbClient)
+}
+
+func (s *store) fillAssignedDeclareTickets(ctx context.Context, result *AggregationResult) error {
+	var alarmIDs []string
+	for _, item := range result.Data {
+		if item.Value.Resolved == nil {
+			alarmIDs = append(alarmIDs, item.ID)
+		}
+	}
+
+	if len(alarmIDs) == 0 {
+		return nil
+	}
+
+	assignedRulesMap, err := s.GetAssignedDeclareTicketsMap(ctx, alarmIDs)
+	if err != nil {
+		return err
+	}
+
+	for idx, v := range result.Data {
+		sort.Slice(assignedRulesMap[v.ID], func(i, j int) bool {
+			return assignedRulesMap[v.ID][i].Name < assignedRulesMap[v.ID][j].Name
+		})
+
+		result.Data[idx].AssignedDeclareTicketRules = assignedRulesMap[v.ID]
+	}
+
+	return nil
+}
+
+func (s *store) GetAssignedDeclareTicketsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedDeclareTicketRule, error) {
+	declareTicketCursor, err := s.dbDeclareTicketCollection.Find(ctx, bson.M{"enabled": true})
+	if err != nil {
+		return nil, err
+	}
+
+	defer declareTicketCursor.Close(ctx)
+
+	ruleMap := make(map[string]AssignedDeclareTicketRule, canopsis.FacetLimit)
+	rulePipeline := make(bson.M, canopsis.FacetLimit)
+	assignedRulesMap := make(map[string][]AssignedDeclareTicketRule)
+
+	for declareTicketCursor.Next(ctx) {
+		var rule DeclareTicketRule
+		err = declareTicketCursor.Decode(&rule)
+		if err != nil {
+			return nil, err
+		}
+
+		q, err := rule.getDeclareTicketQuery()
+		if err != nil {
+			return nil, err
+		}
+
+		if len(rulePipeline) == canopsis.FacetLimit {
+			err = s.processPipeline(ctx, alarmIds, ruleMap, rulePipeline, assignedRulesMap)
+			if err != nil {
+				return nil, err
 			}
 
-			result.Data[i].Links = links
+			ruleMap = make(map[string]AssignedDeclareTicketRule, canopsis.FacetLimit)
+			rulePipeline = make(bson.M, canopsis.FacetLimit)
+		}
+
+		if q != nil {
+			ruleMap[rule.ID] = AssignedDeclareTicketRule{ID: rule.ID, Name: rule.Name}
+			rulePipeline[rule.ID] = []bson.M{{"$match": q}}
+		}
+	}
+
+	if len(rulePipeline) > 0 {
+		err = s.processPipeline(ctx, alarmIds, ruleMap, rulePipeline, assignedRulesMap)
+	}
+
+	return assignedRulesMap, err
+}
+
+func (s *store) findUser(ctx context.Context, id string) (link.User, error) {
+	user := link.User{}
+	cursor, err := s.dbUserCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"_id": id}},
+		{"$addFields": bson.M{"username": "$crecord_name"}},
+	})
+	if err != nil {
+		return user, err
+	}
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		err = cursor.Decode(&user)
+		return user, err
+	}
+
+	return user, errors.New("user not found")
+}
+
+func (s *store) processPipeline(
+	ctx context.Context,
+	alarmIDs []string,
+	ruleMap map[string]AssignedDeclareTicketRule,
+	rulePipeline bson.M,
+	assignedRulesMap map[string][]AssignedDeclareTicketRule,
+) error {
+	pipeline := []bson.M{
+		{"$match": bson.M{"_id": bson.M{"$in": alarmIDs}}},
+		{"$addFields": bson.M{
+			"v.infos_array": bson.M{"$objectToArray": "$v.infos"},
+			"v.duration": bson.M{"$subtract": bson.A{
+				types.NewCpsTime(),
+				"$v.creation_date",
+			}},
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": bson.M{"path": "$entity", "preserveNullAndEmptyArrays": true}},
+		{"$facet": rulePipeline},
+		{"$addFields": bson.M{
+			"ids": bson.M{
+				"$arrayToObject": bson.M{
+					"$map": bson.M{
+						"input": bson.M{"$objectToArray": "$$ROOT"},
+						"as":    "each",
+						"in": bson.M{
+							"k": "$$each.k",
+							"v": bson.M{"$map": bson.M{
+								"input": "$$each.v",
+								"as":    "e",
+								"in":    "$$e._id",
+							}},
+						},
+					},
+				},
+			},
+		}},
+		{"$unwind": "$ids"},
+		{"$replaceRoot": bson.M{"newRoot": "$ids"}},
+	}
+
+	assignedRulesCursor, err := s.mainDbCollection.Aggregate(
+		ctx,
+		pipeline,
+	)
+	if err != nil {
+		return err
+	}
+
+	defer assignedRulesCursor.Close(ctx)
+
+	for assignedRulesCursor.Next(ctx) {
+		assignedRules := make(map[string][]string)
+		err = assignedRulesCursor.Decode(&assignedRules)
+		if err != nil {
+			return err
+		}
+
+		for ruleID, alarmIds := range assignedRules {
+			for _, alarmId := range alarmIds {
+				assignedRulesMap[alarmId] = append(assignedRulesMap[alarmId], ruleMap[ruleID])
+			}
+		}
+	}
+
+	return nil
+}
+
+func (s *store) postProcessResult(
+	ctx context.Context,
+	result *AggregationResult,
+	withDeclareTicket, withInstructions, withLinks, onlyParents bool,
+	userId string,
+) error {
+	if withDeclareTicket {
+		err := s.fillAssignedDeclareTickets(ctx, result)
+		if err != nil {
+			return err
+		}
+	}
+
+	if withInstructions {
+		assignedInstructionMap, anyInstructionMatch, err := s.fillAssignedInstructions(ctx, result)
+		if err != nil {
+			return err
+		}
+		err = s.fillInstructionExecutionStatusesAndIcon(ctx, result, assignedInstructionMap)
+		if err != nil {
+			return err
+		}
+		if onlyParents {
+			err = s.fillChildrenInstructionsFlag(ctx, result, anyInstructionMatch)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	if withLinks {
+		err := s.fillLinks(ctx, result, userId)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot fill links")
 		}
 	}
 

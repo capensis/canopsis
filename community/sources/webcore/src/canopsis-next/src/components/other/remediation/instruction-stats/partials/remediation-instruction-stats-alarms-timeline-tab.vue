@@ -5,20 +5,41 @@
     :loading="pending",
     :pagination.sync="pagination",
     :total-items="totalItems",
+    search,
     advanced-pagination
   )
+    template(#toolbar="")
+      v-layout(align-center)
+        c-enabled-field(
+          v-model="showFailed",
+          :label="$t('remediation.instructionStat.showFailedExecutions')",
+          hide-details
+        )
     template(#executed_on="{ item }")
-      span.c-nowrap {{ item.executed_on | date }}
-    template(#alarm._id="{ item }")
-      span {{ item.alarm | get('v.display_name') }}
+      span.c-nowrap {{ (item.alarm ? item.executed_on : item.instruction_modified_on) | date }}
+    template(#result="{ item }")
+      c-enabled(
+        v-if="item.alarm",
+        :value="item.status === $constants.REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed"
+      )
+    template(#duration="{ item }")
+      span {{ item.duration | duration }}
+    template(#resolved="{ item }")
+      span {{ item.alarm | get('v.resolved') | date }}
+    template(#timeout_after_execution="{ item }")
+      span {{ item.timeout_after_execution | duration }}
     template(#timeline="{ item }")
-      span.grey--text.text--darken-2(v-if="!item.alarm") {{ $t('remediationInstructionStats.instructionChanged') }}
+      span.grey--text.text--darken-2(v-if="!item.alarm") {{ $t('remediation.instructionStat.instructionChanged') }}
       alarm-horizontal-time-line.my-2(v-else, :alarm="item.alarm")
 </template>
 
 <script>
-import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
+import {
+  prepareRemediationInstructionExecutionsForAlarmTimeline,
+} from '@/helpers/entities/remediation-instruction-execution';
+
 import { localQueryMixin } from '@/mixins/query-local/query';
+import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
 
 import AlarmHorizontalTimeLine from '@/components/widgets/alarm/time-line/horizontal-time-line.vue';
 
@@ -39,6 +60,7 @@ export default {
     return {
       remediationInstructionExecutions: [],
       totalItems: 0,
+      showFailed: true,
       pending: false,
     };
   },
@@ -46,13 +68,33 @@ export default {
     headers() {
       return [
         {
-          text: this.$t('remediationInstructionStats.executedOn'),
+          text: this.$t('remediation.instructionStat.executedAt'),
           value: 'executed_on',
           sortable: false,
         },
         {
-          text: this.$t('remediationInstructionStats.alarmId'),
+          text: this.$t('common.alarmId'),
           value: 'alarm.v.display_name',
+          sortable: false,
+        },
+        {
+          text: this.$t('common.result'),
+          value: 'result',
+          sortable: false,
+        },
+        {
+          text: this.$t('remediation.instructionStat.remediationDuration'),
+          value: 'duration',
+          sortable: false,
+        },
+        {
+          text: this.$t('remediation.instructionStat.alarmResolvedDate'),
+          value: 'resolved',
+          sortable: false,
+        },
+        {
+          text: this.$t('remediation.instructionStat.timeoutAfterExecution'),
+          value: 'timeout_after_execution',
           sortable: false,
         },
         {
@@ -64,6 +106,7 @@ export default {
   },
   watch: {
     interval: 'fetchList',
+    showFailed: 'fetchList',
   },
   mounted() {
     this.fetchList();
@@ -76,6 +119,7 @@ export default {
 
       params.from = this.interval.from;
       params.to = this.interval.to;
+      params.show_failed = this.showFailed;
 
       const {
         data: remediationInstructionExecutions,
@@ -85,7 +129,9 @@ export default {
         id: this.remediationInstruction._id,
       });
 
-      this.remediationInstructionExecutions = remediationInstructionExecutions;
+      this.remediationInstructionExecutions = prepareRemediationInstructionExecutionsForAlarmTimeline(
+        remediationInstructionExecutions,
+      );
       this.totalItems = meta.total_count;
       this.pending = false;
     },

@@ -20,7 +20,6 @@ import (
 const (
 	DB                                = "canopsis"
 	ConfigurationMongoCollection      = "configuration"
-	ObjectMongoCollection             = "object"
 	RightsMongoCollection             = "default_rights"
 	SessionMongoCollection            = "session"
 	AlarmMongoCollection              = "periodical_alarm"
@@ -29,7 +28,6 @@ const (
 	PbehaviorTypeMongoCollection      = "pbehavior_type"
 	PbehaviorReasonMongoCollection    = "pbehavior_reason"
 	PbehaviorExceptionMongoCollection = "pbehavior_exception"
-	ScenarioMongoCollection           = "action_scenario"
 	FileMongoCollection               = "files"
 	MetaAlarmRulesMongoCollection     = "meta_alarm_rules"
 	IdleRuleMongoCollection           = "idle_rule"
@@ -47,11 +45,12 @@ const (
 	AssociativeTableCollection        = "default_associativetable"
 	NotificationMongoCollection       = "notification"
 
-	ViewMongoCollection          = "views"
-	ViewTabMongoCollection       = "viewtabs"
-	WidgetMongoCollection        = "widgets"
-	WidgetFiltersMongoCollection = "widget_filters"
-	ViewGroupMongoCollection     = "viewgroups"
+	ViewMongoCollection           = "views"
+	ViewTabMongoCollection        = "viewtabs"
+	WidgetMongoCollection         = "widgets"
+	WidgetFiltersMongoCollection  = "widget_filters"
+	WidgetTemplateMongoCollection = "widget_templates"
+	ViewGroupMongoCollection      = "viewgroups"
 
 	// Following collections are used for event statistics.
 	MessageRateStatsMinuteCollectionName = "message_rate_statistic_minute"
@@ -67,16 +66,18 @@ const (
 	JobConfigMongoCollection            = "job_config"
 	JobMongoCollection                  = "job"
 	JobHistoryMongoCollection           = "job_history"
-	// Instruction statistics collections
+	// InstructionWeekStatsMongoCollection
+	// Deprecated : keep for backward compatibility, remove in the next release
 	InstructionWeekStatsMongoCollection = "instruction_week_stats"
-	InstructionModStatsMongoCollection  = "instruction_mod_stats"
 	// Data storage alarm collections
 	ResolvedAlarmMongoCollection = "resolved_alarms"
 	ArchivedAlarmMongoCollection = "archived_alarms"
 	// Data storage entity collections
 	ArchivedEntitiesMongoCollection = "archived_entities"
 
-	TokenMongoCollection = "token"
+	TokenMongoCollection               = "token"
+	ShareTokenMongoCollection          = "share_token"
+	WebsocketConnectionMongoCollection = "websocket_connection"
 
 	ResolveRuleMongoCollection  = "resolve_rule"
 	FlappingRuleMongoCollection = "flapping_rule"
@@ -91,6 +92,20 @@ const (
 
 	EntityInfosDictionaryCollection  = "entity_infos_dictionary"
 	DynamicInfosDictionaryCollection = "dynamic_infos_dictionary"
+
+	MapMongoCollection = "map"
+
+	AlarmTagCollection = "alarm_tag"
+
+	ScenarioMongoCollection          = "action_scenario"
+	DeclareTicketRuleMongoCollection = "declare_ticket_rule"
+	WebhookHistoryMongoCollection    = "webhook_history"
+
+	LinkRuleMongoCollection = "link_rule"
+)
+
+const (
+	defaultClientTimeout = 15 * time.Second
 )
 
 type SingleResultHelper interface {
@@ -128,6 +143,8 @@ type DbCollection interface {
 		opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
 	UpdateOne(ctx context.Context, filter interface{}, update interface{},
 		opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
+	Watch(ctx context.Context, pipeline interface{},
+		opts ...*options.ChangeStreamOptions) (*mongo.ChangeStream, error)
 }
 
 // DbClient connected MongoDB client settings
@@ -138,6 +155,7 @@ type DbClient interface {
 	Ping(ctx context.Context, rp *readpref.ReadPref) error
 	WithTransaction(ctx context.Context, f func(context.Context) error) error
 	ListCollectionNames(ctx context.Context, filter interface{}, opts ...*options.ListCollectionsOptions) ([]string, error)
+	IsDistributed() bool
 }
 
 type dbClient struct {
@@ -146,7 +164,7 @@ type dbClient struct {
 	RetryCount      int
 	MinRetryTimeout time.Duration
 
-	TransactionEnabled bool
+	isDistributed bool
 }
 
 type dbCollection struct {
@@ -374,6 +392,11 @@ func (c *dbCollection) UpdateMany(ctx context.Context, filter interface{}, updat
 	return res, nil
 }
 
+func (c *dbCollection) Watch(ctx context.Context, pipeline interface{},
+	opts ...*options.ChangeStreamOptions) (*mongo.ChangeStream, error) {
+	return c.mongoCollection.Watch(ctx, pipeline, opts...)
+}
+
 func (c *dbCollection) UpdateOne(ctx context.Context, filter interface{}, update interface{},
 	opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
 	var res *mongo.UpdateResult
@@ -430,6 +453,9 @@ func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duratio
 	}
 
 	clientOptions := options.Client().ApplyURI(mongoURL)
+	if clientOptions.Timeout == nil {
+		clientOptions.SetTimeout(defaultClientTimeout)
+	}
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		return nil, err
@@ -459,7 +485,7 @@ func NewClientWithOptions(
 	retryCount int,
 	minRetryTimeout time.Duration,
 	serverSelectionTimeout time.Duration,
-	socketTimeout time.Duration,
+	clientTimeout time.Duration,
 	logger zerolog.Logger,
 ) (DbClient, error) {
 	mongoURL, dbName, err := getURL()
@@ -471,8 +497,15 @@ func NewClientWithOptions(
 	}
 
 	clientOptions := options.Client().ApplyURI(mongoURL)
-	clientOptions.SetServerSelectionTimeout(serverSelectionTimeout)
-	clientOptions.SetSocketTimeout(socketTimeout)
+	if serverSelectionTimeout > 0 {
+		clientOptions.SetServerSelectionTimeout(serverSelectionTimeout)
+	}
+	if clientTimeout > 0 {
+		clientOptions.SetTimeout(clientTimeout)
+	}
+	if clientOptions.Timeout == nil {
+		clientOptions.SetTimeout(defaultClientTimeout)
+	}
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		return nil, err
@@ -523,7 +556,7 @@ func (c *dbClient) SetRetry(count int, timeout time.Duration) {
 }
 
 func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) error) error {
-	if !c.TransactionEnabled {
+	if !c.isDistributed {
 		return f(ctx)
 	}
 
@@ -576,7 +609,13 @@ func (c *dbClient) checkTransactionEnabled(pCtx context.Context, logger zerolog.
 	}
 
 	logger.Info().Msg("MongoDB version supports transactions, transactions are enabled")
-	c.TransactionEnabled = true
+	c.isDistributed = true
+}
+
+// IsDistributed returns true if MongoDB is Replica Set or Sharded Cluster.
+// Use to check feature availability : Transactions, Change Streams, etc.
+func (c *dbClient) IsDistributed() bool {
+	return c.isDistributed
 }
 
 // getURL parses URL value in EnvURL environment variable

@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-stepper(v-model="stepper", non-linear)
+  v-stepper.dynamic-info-form(v-model="stepper", non-linear)
     v-stepper-header
       v-stepper-step.py-0(
         :complete="stepper > steps.GENERAL",
@@ -30,18 +30,20 @@
       v-stepper-content.pa-0(:step="steps.INFOS")
         dynamic-info-infos-form.pa-4(v-field="form.infos", ref="infosForm")
       v-stepper-content.pa-0(:step="steps.PATTERNS")
-        c-patterns-field.pa-4(v-field="form.patterns", ref="patternsForm", alarm, entity, some-required)
+        dynamic-info-patterns-form.pa-4(v-field="form.patterns", ref="patternsForm")
 </template>
 
 <script>
-import DynamicInfoGeneralForm from './partials/dynamic-info-general-form.vue';
-import DynamicInfoInfosForm from './partials/dynamic-info-infos-form.vue';
+import DynamicInfoGeneralForm from './fields/dynamic-info-general-form.vue';
+import DynamicInfoInfosForm from './fields/dynamic-info-infos-form.vue';
+import DynamicInfoPatternsForm from './fields/dynamic-info-patterns-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
     DynamicInfoGeneralForm,
     DynamicInfoInfosForm,
+    DynamicInfoPatternsForm,
   },
   model: {
     prop: 'form',
@@ -89,3 +91,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.dynamic-info-form {
+  background-color: transparent !important;
+}
+</style>

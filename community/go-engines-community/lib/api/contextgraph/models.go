@@ -1,28 +1,31 @@
 package contextgraph
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 )
 
 const (
-	statusPending = "pending"
-	statusOngoing = "ongoing"
-	statusFailed  = "failed"
-	statusDone    = "done"
+	StatusPending = "pending"
+	StatusOngoing = "ongoing"
+	StatusFailed  = "failed"
+	StatusDone    = "done"
 )
 
 type ImportJob struct {
-	ID       string    `bson:"_id" json:"_id"`
-	Creation time.Time `bson:"creation" json:"creation"`
-	Status   string    `bson:"status" json:"status"`
-	Info     string    `bson:"info,omitempty" json:"info"`
-	ExecTime string    `bson:"exec_time,omitempty" json:"exec_time"`
-	Source   string    `bson:"source" json:"source"`
+	ID       string     `bson:"_id" json:"_id"`
+	Creation time.Time  `bson:"creation" json:"creation"`
+	LastPing *time.Time `bson:"last_ping,omitempty" json:"last_ping"`
+	Status   string     `bson:"status" json:"status"`
+	Info     string     `bson:"info,omitempty" json:"info"`
+	ExecTime string     `bson:"exec_time,omitempty" json:"exec_time"`
+	Source   string     `bson:"source" json:"source"`
 
 	Stats importcontextgraph.Stats `bson:"stats" json:"stats"`
 
 	IsPartial bool `bson:"is_partial" json:"-"`
+	IsOld     bool `bson:"is_old" json:"-"`
 }
 
 type ImportResponse struct {

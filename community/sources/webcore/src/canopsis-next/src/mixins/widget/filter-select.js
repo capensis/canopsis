@@ -1,71 +1,36 @@
-import { FILTER_DEFAULT_VALUES } from '@/constants';
-
-import { prepareMainFilterToQueryFilter, getMainFilterAndCondition } from '@/helpers/filter';
+import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
 export const widgetFilterSelectMixin = {
+  mixins: [entitiesWidgetMixin],
   computed: {
-    mainFilterAndCondition() {
-      return getMainFilterAndCondition(this.widget, this.userPreference);
-    },
-
-    mainFilterCondition() {
-      const { condition } = this.mainFilterAndCondition;
-
-      return condition;
-    },
-
     mainFilter() {
-      const { mainFilter } = this.mainFilterAndCondition;
-
-      return mainFilter;
+      return this.userPreference.content.mainFilter;
     },
 
-    viewFilters() {
-      return this.userPreference.content.viewFilters || [];
-    },
-
-    widgetViewFilters() {
-      const { mainFilter, viewFilters } = this.widget.parameters;
-
-      if (!this.hasAccessToListFilters) {
-        return mainFilter ? [mainFilter] : [];
-      }
-
-      return viewFilters || [];
+    lockedFilter() {
+      return this.widget.parameters.mainFilter;
     },
   },
   methods: {
     updateFieldsInWidgetPreferences(fields = {}) {
       if (this.hasAccessToUserFilter) {
-        return this.updateContentInUserPreference({
-          ...fields,
-        });
+        return this.updateContentInUserPreference(fields);
       }
 
       return Promise.resolve();
     },
 
-    async updateFilters(viewFilters, mainFilter = this.mainFilter) {
-      await this.updateFieldsInWidgetPreferences({ viewFilters, mainFilter });
-      this.updateQueryBySelectedFilterAndCondition(mainFilter, this.mainFilterCondition);
+    async updateSelectedFilter(mainFilter = null) {
+      await this.updateFieldsInWidgetPreferences({ mainFilter });
+      this.updateQueryBySelectedFilter(mainFilter);
     },
 
-    async updateSelectedCondition(condition = FILTER_DEFAULT_VALUES.condition) {
-      await this.updateFieldsInWidgetPreferences({ mainFilterCondition: condition });
-      this.updateQueryBySelectedFilterAndCondition(this.mainFilter, condition);
-    },
-
-    async updateSelectedFilter(filterObject) {
-      await this.updateFieldsInWidgetPreferences({ mainFilter: filterObject || {}, mainFilterUpdatedAt: Date.now() });
-      this.updateQueryBySelectedFilterAndCondition(filterObject || {}, this.mainFilterCondition);
-    },
-
-    updateQueryBySelectedFilterAndCondition(filter, condition) {
+    updateQueryBySelectedFilter(filter) {
       this.query = {
         ...this.query,
 
+        filter,
         page: 1,
-        filter: prepareMainFilterToQueryFilter(filter, condition),
       };
     },
   },

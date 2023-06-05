@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import VRuntimeTemplate from 'v-runtime-template';
 
 import {
@@ -32,11 +33,13 @@ import {
   TEST_SUITE_COLORS,
 } from '@/constants';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 
 import { authMixin } from '@/mixins/auth';
 
 import TestSuiteStatistics from './test-suite-statistics.vue';
+
+const { mapActions } = createNamespacedHelpers('alarm');
 
 export default {
   components: {
@@ -64,6 +67,10 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      fetchComponentAlarmsListWithoutStore: 'fetchComponentAlarmsListWithoutStore',
+    }),
+
     showTestSuiteInformationModal() {
       this.$modals.show({
         name: MODALS.testSuite,
@@ -75,26 +82,20 @@ export default {
     },
 
     showAlarmListModal() {
-      const widget = generateDefaultAlarmListWidget();
-
-      const testSuiteFilter = {
-        title: this.testSuite.name,
-        filter: { $and: [{ 'entity.impact': this.testSuite._id }] },
-      };
-
-      widget.parameters = {
-        ...widget.parameters,
-        mainFilter: testSuiteFilter,
-        viewFilters: [testSuiteFilter],
-      };
-
-      this.$modals.show({
-        name: MODALS.alarmsList,
-        config: {
-          widget,
-          title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.testSuite.name }),
-        },
-      });
+      try {
+        this.$modals.show({
+          name: MODALS.alarmsList,
+          config: {
+            widget: generatePreparedDefaultAlarmListWidget(),
+            title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.testSuite.name }),
+            fetchList: params => this.fetchComponentAlarmsListWithoutStore({
+              params: { ...params, _id: this.testSuite.entity_id },
+            }),
+          },
+        });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('errors.default') });
+      }
     },
   },
 };

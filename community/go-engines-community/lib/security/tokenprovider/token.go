@@ -9,25 +9,30 @@ import (
 	"github.com/rs/zerolog"
 )
 
-type tokenProvider struct {
-	tokenService token.Service
-	tokenStore   token.Store
-	userProvider security.UserProvider
-	logger       zerolog.Logger
+type TokenStore interface {
+	Exists(ctx context.Context, id string) (bool, error)
+	Access(ctx context.Context, id string) error
 }
 
 func NewTokenProvider(
-	tokenService token.Service,
-	tokenStore token.Store,
+	tokenGenerator token.Generator,
+	tokenStore TokenStore,
 	userProvider security.UserProvider,
 	logger zerolog.Logger,
 ) security.TokenProvider {
 	return &tokenProvider{
-		tokenService: tokenService,
-		tokenStore:   tokenStore,
-		userProvider: userProvider,
-		logger:       logger,
+		tokenGenerator: tokenGenerator,
+		tokenStore:     tokenStore,
+		userProvider:   userProvider,
+		logger:         logger,
 	}
+}
+
+type tokenProvider struct {
+	tokenGenerator token.Generator
+	tokenStore     TokenStore
+	userProvider   security.UserProvider
+	logger         zerolog.Logger
 }
 
 func (p *tokenProvider) Auth(ctx context.Context, token string) (*security.User, error) {
@@ -36,7 +41,7 @@ func (p *tokenProvider) Auth(ctx context.Context, token string) (*security.User,
 		return nil, err
 	}
 
-	userID, err := p.tokenService.ValidateToken(token)
+	userID, err := p.tokenGenerator.Validate(token)
 	if err != nil {
 		p.logger.Debug().Err(err).Msg("invalid token")
 		return nil, nil
@@ -49,6 +54,11 @@ func (p *tokenProvider) Auth(ctx context.Context, token string) (*security.User,
 
 	if user == nil || !user.IsEnabled {
 		return nil, nil
+	}
+
+	err = p.tokenStore.Access(ctx, token)
+	if err != nil {
+		return nil, err
 	}
 
 	return user, nil

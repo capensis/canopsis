@@ -3,11 +3,8 @@ package types
 import (
 	"errors"
 	"fmt"
-	"text/template"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
 	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
@@ -327,68 +324,6 @@ func (r *OptionalRegexp) UnmarshalBSONValue(valueType bsontype.Type, b []byte) e
 func (r OptionalRegexp) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if r.Set {
 		return bson.MarshalValue(r.Value)
-	}
-
-	return bsontype.Undefined, nil, nil
-}
-
-// OptionalTemplate is a wrapper around template.Template that implements the
-// bson.Setter interface.
-//
-// Using this type in a struct allows to :
-//  - check whether the value was set or not in the bson document.
-//  - automatically compile a template.
-//  - raise an error when trying to unmarshal a value that is not a valid
-//    template.
-//
-// Note that when trying to unmarshal a value that is not a valid template,
-// UnmarshalBSONValue will raise an error that will not be handled by bson.Unmarshal. If
-// this error is not handled in the UnmarshalBSONValue method of an ancestor, calls to
-// MongoDB queries may fail.
-type OptionalTemplate struct {
-	// Set is a boolean indicating whether the value was set or not.
-	Set bool
-
-	// Value contains the value of the regular expression. It should only be
-	// taken into account if Set is true.
-	Value *template.Template
-
-	timezoneConfig *config.TimezoneConfig
-}
-
-func (t *OptionalTemplate) SetTimezoneConfig(cfg *config.TimezoneConfig) {
-	t.timezoneConfig = cfg
-}
-
-func (t *OptionalTemplate) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
-	var err error
-	switch valueType {
-	case bsontype.String:
-		value, _, ok := bsoncore.ReadString(b)
-		if !ok {
-			return errors.New("unable to parse template")
-		}
-
-		t.Value, err = template.New(value).Funcs(GetTemplateFunc(t.timezoneConfig)).Parse(value)
-		if err != nil {
-			return fmt.Errorf("unable to parse template: %v", err)
-		}
-
-		// This makes the template return an error when a missing key is used,
-		// instead of replacing its value with "<no value>". This is necessary for
-		// the event-filter's actions, which should fail in this case.
-		t.Value.Option("missingkey=error")
-	default:
-		return fmt.Errorf("unable to parse template")
-	}
-
-	t.Set = true
-	return nil
-}
-
-func (t OptionalTemplate) MarshalBSONValue() (bsontype.Type, []byte, error) {
-	if t.Set {
-		return bson.MarshalValue(t.Value.ParseName)
 	}
 
 	return bsontype.Undefined, nil, nil

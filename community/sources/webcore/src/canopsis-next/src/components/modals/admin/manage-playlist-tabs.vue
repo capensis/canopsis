@@ -1,11 +1,11 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.createPlaylist.manageTabs') }}
-      template(slot="text")
+      template(#text="")
         manage-playlist-tabs-form(v-model="form.selectedTabs", :groups="groups")
-      template(slot="actions")
+      template(#actions="")
         v-btn(
           depressed,
           flat,

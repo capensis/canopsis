@@ -1,0 +1,112 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`date-time-picker-text-field Renders \`date-time-picker-text-field\` with custom props 1`] = `
+<div>
+  <div
+    class="layout"
+  >
+    <div
+      class="flex"
+    >
+      <div
+        class="v-input v-text-field v-input--is-label-active v-input--is-dirty theme--light"
+      >
+        <div
+          class="v-input__control"
+        >
+          <div
+            class="v-input__slot"
+          >
+            <div
+              class="v-text-field__slot"
+            >
+              <label
+                aria-hidden="true"
+                class="v-label v-label--active theme--light"
+                style="left: 0px; position: absolute;"
+              >
+                label
+              </label>
+              <input
+                aria-label="label"
+                name="name"
+                type="text"
+              />
+            </div>
+          </div>
+          <div
+            class="v-text-field__details"
+          >
+            <div
+              class="v-messages theme--light"
+            >
+              <div
+                class="v-messages__wrapper"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex"
+    >
+      <date-time-picker-menu-stub
+        label="label"
+        roundhours="true"
+        value="Sat Dec 07 2013 18:00:00 GMT+0100 (Central European Standard Time)"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`date-time-picker-text-field Renders \`date-time-picker-text-field\` with default props 1`] = `
+<div>
+  <div
+    class="layout"
+  >
+    <div
+      class="flex"
+    >
+      <div
+        class="v-input v-text-field theme--light"
+      >
+        <div
+          class="v-input__control"
+        >
+          <div
+            class="v-input__slot"
+          >
+            <div
+              class="v-text-field__slot"
+            >
+              <input
+                type="text"
+              />
+            </div>
+          </div>
+          <div
+            class="v-text-field__details"
+          >
+            <div
+              class="v-messages theme--light"
+            >
+              <div
+                class="v-messages__wrapper"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex"
+    >
+      <date-time-picker-menu-stub
+        value="Sat Dec 07 2013 18:00:00 GMT+0100 (Central European Standard Time)"
+      />
+    </div>
+  </div>
+</div>
+`;

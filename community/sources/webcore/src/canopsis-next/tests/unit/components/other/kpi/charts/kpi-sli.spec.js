@@ -15,11 +15,17 @@ const stubs = {
   'c-progress-overlay': true,
   'kpi-sli-filters': true,
   'kpi-sli-chart': true,
+  'kpi-error-overlay': true,
 };
 
 const factory = (options = {}) => shallowMount(KpiSli, {
   localVue,
   stubs,
+  parentComponent: {
+    provide: {
+      $system: {},
+    },
+  },
 
   ...options,
 });
@@ -27,23 +33,27 @@ const factory = (options = {}) => shallowMount(KpiSli, {
 const snapshotFactory = (options = {}) => mount(KpiSli, {
   localVue,
   stubs,
+  parentComponent: {
+    provide: {
+      $system: {},
+    },
+  },
 
   ...options,
 });
 
 describe('kpi-sli', () => {
   const nowTimestamp = 1386435600000;
-  const nowUnix = nowTimestamp / 1000;
 
   mockDateNow(nowTimestamp);
 
   it('Metrics fetched after mount', async () => {
     const expectedDefaultParams = {
       /* now - 7d  */
-      from: 1385830800,
+      from: 1385852400,
       in_percents: true,
       sampling: SAMPLINGS.day,
-      to: nowUnix,
+      to: 1386370800,
       filter: null,
     };
     const fetchSliMetrics = jest.fn(() => ({
@@ -72,10 +82,10 @@ describe('kpi-sli', () => {
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedParamsAfterUpdate = {
       /* now - 7d  */
-      from: 1385830800,
+      from: 1385852400,
       in_percents: true,
       sampling: SAMPLINGS.day,
-      to: nowUnix,
+      to: 1386370800,
       filter: null,
     };
     const fetchSliMetrics = jest.fn(() => ({
@@ -145,6 +155,21 @@ describe('kpi-sli', () => {
             data: [],
             meta: { min_date: 1385830800 },
           })),
+        },
+      }]),
+    });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `kpi-sli` with fetching error', async () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([{
+        name: 'metrics',
+        actions: {
+          fetchSliMetricsWithoutStore: jest.fn().mockRejectedValue(),
         },
       }]),
     });

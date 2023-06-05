@@ -2,10 +2,12 @@ package pbehaviortype
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	libpriority "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -22,10 +24,12 @@ type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Type, error)
 	Update(ctx context.Context, id string, model *Type) (bool, error)
 	Delete(ctx context.Context, id string) (bool, error)
+	GetNextPriority(ctx context.Context) (int64, error)
 }
 
 type store struct {
 	db                    mongo.DbClient
+	dbCollection          mongo.DbCollection
 	defaultSearchByFields []string
 	defaultSortBy         string
 }
@@ -34,13 +38,10 @@ type store struct {
 func NewStore(db mongo.DbClient) Store {
 	return &store{
 		db:                    db,
+		dbCollection:          db.Collection(mongo.PbehaviorTypeMongoCollection),
 		defaultSearchByFields: []string{"_id", "name", "description", "type"},
 		defaultSortBy:         "name",
 	}
-}
-
-func (s *store) getCollection() mongo.DbCollection {
-	return s.db.Collection(mongo.PbehaviorTypeMongoCollection)
 }
 
 // Find pbehavior types according to query.
@@ -49,11 +50,23 @@ func (s *store) Find(ctx context.Context, r ListRequest) (pbhResult *Aggregation
 	if err != nil {
 		return nil, err
 	}
-	collection := s.getCollection()
+
+	match := bson.M{}
+	if !r.WithHidden {
+		match["hidden"] = bson.M{"$in": bson.A{false, nil}}
+	}
+
+	if r.OnlyDefault {
+		match["priority"] = bson.M{"$in": prioritiesOfDefaultTypes}
+	}
+
+	if len(r.Types) > 0 {
+		match["type"] = bson.M{"$in": r.Types}
+	}
 
 	pipeline := make([]bson.M, 0)
-	if r.OnlyDefault {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{"priority": bson.M{"$in": prioritiesOfDefaultTypes}}})
+	if len(match) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": match})
 	}
 
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
@@ -68,9 +81,9 @@ func (s *store) Find(ctx context.Context, r ListRequest) (pbhResult *Aggregation
 
 	var project []bson.M
 	if r.WithFlags {
-		project = getEditableAndDeletablePipeline(prioritiesOfDefaultTypes)
+		project = getDefaultAndDeletablePipeline(prioritiesOfDefaultTypes)
 	}
-	cursor, err := collection.Aggregate(
+	cursor, err := s.dbCollection.Aggregate(
 		ctx,
 		pagination.CreateAggregationPipeline(
 			r.Query,
@@ -97,9 +110,8 @@ func (s *store) Find(ctx context.Context, r ListRequest) (pbhResult *Aggregation
 // GetOneBy pbehavior type by id.
 func (s *store) GetOneBy(ctx context.Context, id string) (*Type, error) {
 	res := &Type{}
-	collection := s.getCollection()
 
-	if err := collection.FindOne(ctx, bson.M{"_id": id}).Decode(res); err != nil {
+	if err := s.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(res); err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return nil, nil
 		}
@@ -109,48 +121,128 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Type, error) {
 	return res, nil
 }
 
-// Create new pbehavior type.
+// Insert creates new pbehavior type.
 func (s *store) Insert(ctx context.Context, pt *Type) error {
-
 	if pt.ID == "" {
 		pt.ID = utils.NewID()
 	}
 
-	_, err := s.getCollection().InsertOne(ctx, pt)
+	prioritiesOfDefaultTypes, err := s.getPrioritiesOfDefaultTypes(ctx)
 	if err != nil {
-		if mongodriver.IsDuplicateKeyError(err) {
-			return ErrorDuplicatePriority
-		}
-
 		return err
 	}
 
-	return nil
+	for _, p := range prioritiesOfDefaultTypes {
+		if p == pt.Priority {
+			return common.NewValidationError("priority", "Priority is taken by default type.")
+		}
+	}
+
+	return s.db.WithTransaction(ctx, func(ctx context.Context) error {
+		err := libpriority.UpdateFollowing(ctx, s.dbCollection, pt.ID, pt.Priority)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.dbCollection.InsertOne(ctx, pt)
+		return err
+	})
 }
 
 // Update pbehavior type.
 func (s *store) Update(ctx context.Context, id string, pt *Type) (bool, error) {
-	isDefault, err := s.IsDefault(ctx, id)
+	prioritiesOfDefaultTypes, err := s.getPrioritiesOfDefaultTypes(ctx)
 	if err != nil {
 		return false, err
-	}
-	if isDefault {
-		return false, ErrDefaultType
 	}
 
-	if pt.ID != id {
-		pt.ID = id
-	}
-	result, err := s.getCollection().ReplaceOne(ctx, bson.M{"_id": id}, pt)
-	if err != nil {
-		return false, err
-	}
-	return result.ModifiedCount > 0 || result.MatchedCount > 0, nil
+	pt.ID = id
+	updated := false
+	err = s.db.WithTransaction(ctx, func(ctx context.Context) error {
+		updated = false
+
+		var oldType Type
+		err = s.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&oldType)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+			return err
+		}
+
+		isDefault := false
+		for _, priority := range prioritiesOfDefaultTypes {
+			if oldType.Priority == priority {
+				isDefault = true
+				break
+			}
+		}
+
+		if pt.IconName == "" && (!isDefault || pt.Type != pbehavior.TypeActive) {
+			return common.NewValidationError("icon_name", "IconName is missing.")
+		}
+
+		if isDefault {
+			filter := bson.M{
+				"_id":         id,
+				"name":        pt.Name,
+				"description": pt.Description,
+				"type":        pt.Type,
+				"priority":    pt.Priority,
+				"icon_name":   pt.IconName,
+			}
+			if pt.IconName == "" {
+				filter["icon_name"] = bson.M{"$in": bson.A{nil, ""}}
+			}
+
+			set := bson.M{"color": pt.Color}
+			unset := bson.M{}
+
+			if pt.Hidden == nil || !*pt.Hidden {
+				unset["hidden"] = ""
+			} else {
+				set["hidden"] = true
+			}
+
+			result, err := s.dbCollection.UpdateOne(ctx, filter, bson.M{"$set": set, "$unset": unset})
+			if err != nil {
+				return err
+			}
+
+			if result.MatchedCount == 0 {
+				return ErrDefaultType
+			}
+
+			updated = true
+			return nil
+		}
+
+		for _, priority := range prioritiesOfDefaultTypes {
+			if pt.Priority == priority {
+				return common.NewValidationError("priority", "Priority is taken by default type.")
+			}
+		}
+
+		err := libpriority.UpdateFollowing(ctx, s.dbCollection, pt.ID, pt.Priority)
+		if err != nil {
+			return err
+		}
+
+		result, err := s.dbCollection.ReplaceOne(ctx, bson.M{"_id": id}, pt)
+		if err != nil {
+			return err
+		}
+
+		updated = result.MatchedCount > 0
+		return nil
+	})
+
+	return updated, err
 }
 
 // Delete pbehavior type by id
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
-	isDefault, err := s.IsDefault(ctx, id)
+	isDefault, err := s.isDefault(ctx, id)
 	if err != nil {
 		return false, err
 	}
@@ -179,14 +271,38 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		return false, ErrLinkedToActionType
 	}
 
-	r, err := s.getCollection().DeleteOne(ctx, bson.M{"_id": id})
+	r, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
 
 	return r > 0, err
 }
 
+func (s *store) GetNextPriority(ctx context.Context) (int64, error) {
+	cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
+		{"$group": bson.M{
+			"_id":      nil,
+			"priority": bson.M{"$max": "$priority"},
+		}},
+	})
+	if err != nil {
+		return 0, err
+	}
+	defer cursor.Close(ctx)
+	res := struct {
+		Priority int64 `bson:"priority"`
+	}{}
+	if cursor.Next(ctx) {
+		err = cursor.Decode(&res)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	return res.Priority + 1, nil
+}
+
 // isLinkedToPbehavior checks if there is pbehavior with linked type.
 func (s *store) isLinkedToPbehavior(ctx context.Context, id string) (bool, error) {
-	pbhCollection := s.db.Collection(pbehavior.PBehaviorCollectionName)
+	pbhCollection := s.db.Collection(mongo.PbehaviorMongoCollection)
 	res := pbhCollection.FindOne(ctx, bson.M{"$or": []bson.M{
 		{"type_": id},
 		{"exdates.type": id},
@@ -202,7 +318,7 @@ func (s *store) isLinkedToPbehavior(ctx context.Context, id string) (bool, error
 
 // isLinkedToException checks if there is execption with linked type.
 func (s *store) isLinkedToException(ctx context.Context, id string) (bool, error) {
-	exceptionCollection := s.db.Collection(pbehavior.ExceptionCollectionName)
+	exceptionCollection := s.db.Collection(mongo.PbehaviorExceptionMongoCollection)
 	res := exceptionCollection.FindOne(ctx, bson.M{"exdates.type": id})
 	if err := res.Err(); err == nil {
 		return true, nil
@@ -233,35 +349,32 @@ func (s *store) isLinkedToAction(ctx context.Context, id string) (bool, error) {
 	return false, nil
 }
 
-func (s *store) IsDefault(ctx context.Context, id string) (bool, error) {
+func (s *store) isDefault(ctx context.Context, id string) (bool, error) {
 	prioritiesOfDefaultTypes, err := s.getPrioritiesOfDefaultTypes(ctx)
 	if err != nil {
 		return false, err
 	}
 
-	res := s.getCollection().FindOne(ctx, bson.M{"_id": id})
-	if err := res.Err(); err == nil {
-		var pbhType Type
-		err = res.Decode(&pbhType)
-		if err != nil {
-			return false, err
+	var pbhType Type
+	err = s.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&pbhType)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return false, nil
 		}
-
-		for _, priority := range prioritiesOfDefaultTypes {
-			if pbhType.Priority == priority {
-				return true, nil
-			}
-		}
-	} else if err != mongodriver.ErrNoDocuments {
 		return false, err
+	}
+
+	for _, priority := range prioritiesOfDefaultTypes {
+		if pbhType.Priority == priority {
+			return true, nil
+		}
 	}
 
 	return false, nil
 }
 
-func (s *store) getPrioritiesOfDefaultTypes(ctx context.Context) ([]int, error) {
-	collection := s.getCollection()
-	cursor, err := collection.Aggregate(ctx, []bson.M{
+func (s *store) getPrioritiesOfDefaultTypes(ctx context.Context) ([]int64, error) {
+	cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
 		{"$group": bson.M{
 			"_id":      "$type",
 			"priority": bson.M{"$min": "$priority"},
@@ -272,15 +385,14 @@ func (s *store) getPrioritiesOfDefaultTypes(ctx context.Context) ([]int, error) 
 	}
 
 	var doc []struct {
-		Type     string `bson:"_id"`
-		Priority int    `bson:"priority"`
+		Priority int64 `bson:"priority"`
 	}
 	err = cursor.All(ctx, &doc)
 	if err != nil {
 		return nil, err
 	}
 
-	res := make([]int, len(doc))
+	res := make([]int64, len(doc))
 	i := 0
 	for _, d := range doc {
 		res[i] = d.Priority
@@ -290,10 +402,10 @@ func (s *store) getPrioritiesOfDefaultTypes(ctx context.Context) ([]int, error) 
 	return res, nil
 }
 
-func getEditableAndDeletablePipeline(prioritiesOfDefaultTypes []int) []bson.M {
+func getDefaultAndDeletablePipeline(prioritiesOfDefaultTypes []int64) []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from":         pbehavior.PBehaviorCollectionName,
+			"from":         mongo.PbehaviorMongoCollection,
 			"localField":   "_id",
 			"foreignField": "type",
 			"as":           "pbhs",
@@ -305,7 +417,7 @@ func getEditableAndDeletablePipeline(prioritiesOfDefaultTypes []int) []bson.M {
 			"as":           "actions",
 		}},
 		{"$addFields": bson.M{
-			"editable": bson.M{"$not": bson.M{"$in": bson.A{"$priority", prioritiesOfDefaultTypes}}},
+			"default": bson.M{"$in": bson.A{"$priority", prioritiesOfDefaultTypes}},
 			"deletable": bson.M{"$and": []bson.M{
 				{"$not": bson.M{"$in": bson.A{"$priority", prioritiesOfDefaultTypes}}},
 				{"$eq": bson.A{bson.M{"$size": "$pbhs"}, 0}},

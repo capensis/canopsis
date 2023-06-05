@@ -1,9 +1,9 @@
 <template lang="pug">
-  v-form(data-test="createEventModal", @submit.prevent="submit")
+  v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ config.title }}
-      template(slot="text")
+      template(#text="")
         v-container
           v-layout(row)
             v-flex.text-xs-center
@@ -18,9 +18,8 @@
               :error-messages="errors.collect('output')",
               name="output"
             )
-      template(slot="actions")
+      template(#actions="")
         v-btn(
-          data-test="createEventCancelButton",
           depressed,
           flat,
           @click="$modals.hide"
@@ -28,8 +27,7 @@
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled",
-          type="submit",
-          data-test="createEventSubmitButton"
+          type="submit"
         ) {{ $t('common.saveChanges') }}
 </template>
 
@@ -38,7 +36,7 @@ import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
-import eventActionsAlarmMixin from '@/mixins/event-actions/alarm';
+import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -76,12 +74,8 @@ export default {
       if (isFormValid) {
         const data = { ...this.form };
 
-        switch (this.config.eventType) {
-          case EVENT_ENTITY_TYPES.cancel:
-            data.cancel = 1;
-            break;
-          case EVENT_ENTITY_TYPES.manualMetaAlarmUngroup:
-            data.ma_parents = this.config.parentsIds;
+        if (this.config.eventType === EVENT_ENTITY_TYPES.cancel) {
+          data.cancel = 1;
         }
 
         await this.createEvent(this.config.eventType, this.items, data);

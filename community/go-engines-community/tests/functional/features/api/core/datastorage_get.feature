@@ -14,15 +14,20 @@ Feature: Get and update data storage config
         }
       },
       "remediation": {
-        "accumulate_after": {
+        "delete_after": {
           "enabled": true,
           "value": 10,
           "unit": "d"
         },
-        "delete_after": {
+        "delete_stats_after": {
           "enabled": true,
-          "value": 20,
-          "unit": "d"
+          "value": 1,
+          "unit": "M"
+        },
+        "delete_mod_stats_after": {
+          "enabled": true,
+          "value": 1,
+          "unit": "y"
         }
       },
       "alarm": {
@@ -50,6 +55,28 @@ Feature: Get and update data storage config
           "value": 20,
           "unit": "d"
         }
+      },
+      "webhook": {
+        "log_credentials": true,
+        "delete_after": {
+          "enabled": true,
+          "value": 20,
+          "unit": "d"
+        }
+      },
+      "metrics": {
+        "delete_after": {
+          "enabled": true,
+          "value": 1,
+          "unit": "M"
+        }
+      },
+      "perf_data_metrics": {
+        "delete_after": {
+          "enabled": true,
+          "value": 1,
+          "unit": "M"
+        }
       }
     }
     """
@@ -66,15 +93,20 @@ Feature: Get and update data storage config
           }
         },
         "remediation": {
-          "accumulate_after": {
+          "delete_after": {
             "enabled": true,
             "value": 10,
             "unit": "d"
           },
-          "delete_after": {
+          "delete_stats_after": {
             "enabled": true,
-            "value": 20,
-            "unit": "d"
+            "value": 1,
+            "unit": "M"
+          },
+          "delete_mod_stats_after": {
+            "enabled": true,
+            "value": 1,
+            "unit": "y"
           }
         },
         "alarm": {
@@ -102,6 +134,28 @@ Feature: Get and update data storage config
             "value": 20,
             "unit": "d"
           }
+        },
+        "webhook": {
+          "log_credentials": true,
+          "delete_after": {
+            "enabled": true,
+            "value": 20,
+            "unit": "d"
+          }
+        },
+        "metrics": {
+          "delete_after": {
+            "enabled": true,
+            "value": 1,
+            "unit": "M"
+          }
+        },
+        "perf_data_metrics": {
+          "delete_after": {
+            "enabled": true,
+            "value": 1,
+            "unit": "M"
+          }
         }
       },
       "history": {
@@ -110,7 +164,8 @@ Feature: Get and update data storage config
         "alarm": null,
         "entity": null,
         "pbehavior": null,
-        "health_check": null
+        "health_check": null,
+        "webhook": null
       }
     }
     """
@@ -128,15 +183,20 @@ Feature: Get and update data storage config
           }
         },
         "remediation": {
-          "accumulate_after": {
+          "delete_after": {
             "enabled": true,
             "value": 10,
             "unit": "d"
           },
-          "delete_after": {
+          "delete_stats_after": {
             "enabled": true,
-            "value": 20,
-            "unit": "d"
+            "value": 1,
+            "unit": "M"
+          },
+          "delete_mod_stats_after": {
+            "enabled": true,
+            "value": 1,
+            "unit": "y"
           }
         },
         "alarm": {
@@ -164,6 +224,28 @@ Feature: Get and update data storage config
             "value": 20,
             "unit": "d"
           }
+        },
+        "webhook": {
+          "log_credentials": true,
+          "delete_after": {
+            "enabled": true,
+            "value": 20,
+            "unit": "d"
+          }
+        },
+        "metrics": {
+          "delete_after": {
+            "enabled": true,
+            "value": 1,
+            "unit": "M"
+          }
+        },
+        "perf_data_metrics": {
+          "delete_after": {
+            "enabled": true,
+            "value": 1,
+            "unit": "M"
+          }
         }
       },
       "history": {
@@ -172,7 +254,8 @@ Feature: Get and update data storage config
         "alarm": null,
         "entity": null,
         "pbehavior": null,
-        "health_check": null
+        "health_check": null,
+        "webhook": null
       }
     }
     """
@@ -189,8 +272,9 @@ Feature: Get and update data storage config
           "delete_after": null
         },
         "remediation": {
-          "accumulate_after": null,
-          "delete_after": null
+          "delete_after": null,
+          "delete_stats_after": null,
+          "delete_mod_stats_after": null
         },
         "alarm": {
           "archive_after": null,
@@ -201,6 +285,16 @@ Feature: Get and update data storage config
         },
         "health_check": {
           "delete_after": null
+        },
+        "webhook": {
+          "log_credentials": false,
+          "delete_after": null
+        },
+        "metrics": {
+          "delete_after": null
+        },
+        "perf_data_metrics": {
+          "delete_after": null
         }
       },
       "history": {
@@ -209,7 +303,8 @@ Feature: Get and update data storage config
         "alarm": null,
         "entity": null,
         "pbehavior": null,
-        "health_check": null
+        "health_check": null,
+        "webhook": null
       }
     }
     """
@@ -223,8 +318,9 @@ Feature: Get and update data storage config
           "delete_after": null
         },
         "remediation": {
-          "accumulate_after": null,
-          "delete_after": null
+          "delete_after": null,
+          "delete_stats_after": null,
+          "delete_mod_stats_after": null
         },
         "alarm": {
           "archive_after": null,
@@ -235,6 +331,16 @@ Feature: Get and update data storage config
         },
         "health_check": {
           "delete_after": null
+        },
+        "webhook": {
+          "log_credentials": false,
+          "delete_after": null
+        },
+        "metrics": {
+          "delete_after": null
+        },
+        "perf_data_metrics": {
+          "delete_after": null
         }
       },
       "history": {
@@ -243,7 +349,8 @@ Feature: Get and update data storage config
         "alarm": null,
         "entity": null,
         "pbehavior": null,
-        "health_check": null
+        "health_check": null,
+        "webhook": null
       }
     }
     """
@@ -254,12 +361,12 @@ Feature: Get and update data storage config
     """json
     {
       "remediation": {
-        "accumulate_after": {
+        "delete_after": {
           "value": 10,
           "unit": "d",
           "enabled": true
         },
-        "delete_after": {
+        "delete_stats_after": {
           "value": 10,
           "unit": "d",
           "enabled": true
@@ -272,7 +379,33 @@ Feature: Get and update data storage config
     """json
     {
       "errors": {
-        "remediation.delete_after": "DeleteAfter should be greater than AccumulateAfter."
+        "remediation.delete_stats_after": "DeleteStatsAfter should be greater than DeleteAfter."
+      }
+    }
+    """
+    When I do PUT /api/v4/data-storage:
+    """json
+    {
+      "remediation": {
+        "delete_stats_after": {
+          "value": 10,
+          "unit": "d",
+          "enabled": true
+        },
+        "delete_mod_stats_after": {
+          "value": 10,
+          "unit": "d",
+          "enabled": true
+        }
+      }
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "remediation.delete_mod_stats_after": "DeleteModStatsAfter should be greater than DeleteStatsAfter."
       }
     }
     """

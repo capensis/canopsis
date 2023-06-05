@@ -1,0 +1,133 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ack-event-form Renders \`ack-event-form\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <span
+    class="v-tooltip v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <div
+      class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <input
+              aria-checked="true"
+              aria-label="Ack resources"
+              role="checkbox"
+              type="checkbox"
+              value=""
+            />
+            <div
+              class="v-input--selection-controls__ripple primary--text"
+            />
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light primary--text"
+            >
+              check_box
+            </i>
+          </div>
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Ack resources
+          </label>
+        </div>
+        <div
+          class="v-messages theme--light"
+        >
+          <transition-group-stub
+            class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
+          />
+        </div>
+      </div>
+    </div>
+  </span>
+  <c-description-field-stub
+    label="Note"
+    required="true"
+    value="output"
+  />
+</div>
+`;
+
+exports[`ack-event-form Renders \`ack-event-form\` with default props 1`] = `
+<div
+  class="layout column"
+>
+  <span
+    class="v-tooltip v-tooltip--top"
+  >
+    <transition-stub
+      name="slide-y-reverse-transition"
+    />
+    <div
+      class="v-input v-input--selection-controls v-input--checkbox theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <input
+              aria-checked="false"
+              aria-label="Ack resources"
+              role="checkbox"
+              type="checkbox"
+              value=""
+            />
+            <div
+              class="v-input--selection-controls__ripple"
+            />
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              check_box_outline_blank
+            </i>
+          </div>
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Ack resources
+          </label>
+        </div>
+        <div
+          class="v-messages theme--light"
+        >
+          <transition-group-stub
+            class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
+          />
+        </div>
+      </div>
+    </div>
+  </span>
+  <c-description-field-stub
+    label="Note"
+  />
+</div>
+`;

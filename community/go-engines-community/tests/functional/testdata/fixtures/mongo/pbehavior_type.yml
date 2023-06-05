@@ -5,6 +5,7 @@ template:
     name: <UniqueName()>,
     description: <LoremIpsumSentence(3)>,
     icon_name: brightness_3,
+    color: "#979797",
     type: inactive
   }
   - &type_active {
@@ -13,6 +14,7 @@ template:
     name: <UniqueName()>,
     description: <LoremIpsumSentence(3)>,
     icon_name: brightness_3,
+    color: "#2FAB63",
     type: active
   }
   - &type_maintenance {
@@ -21,6 +23,7 @@ template:
     name: <UniqueName()>,
     description: <LoremIpsumSentence(3)>,
     icon_name: build,
+    color: "#BF360C",
     type: maintenance
   }
   - &type_pause {
@@ -29,6 +32,7 @@ template:
     name: <UniqueName()>,
     description: <LoremIpsumSentence(3)>,
     icon_name: pause,
+    color: "#5A6D80",
     type: pause
   }
 
@@ -44,7 +48,7 @@ pbehavior_type:
     <<: *type_active
     _id: test-default-active-type
     description: Default Type Active
-    icon_name: test-active-icon
+    icon_name:
     name: Default Type Active
 
   type_default_pause_type:
@@ -118,6 +122,13 @@ pbehavior_type:
     description: Exception edit 2 State type
     icon_name: test-to-exception-edit-2-icon
     name: Exception edit 2 State
+
+  type_to_exception_edit_3:
+    <<: *type_active
+    _id: test-type-to-exception-edit-3
+    description: Exception edit 3 State type
+    icon_name: test-to-exception-edit-3-icon
+    name: Exception edit 3 State
 
   type_type-to-delete-linked-to-pbh-1:
     <<: *type_active
@@ -206,3 +217,14 @@ pbehavior_type:
     _id: test-pause-type-to-engine
     description: Engine pause
     name: Engine pause
+
+  type_to_test_hidden_1:
+    <<: *type_maintenance
+    _id: test-type-to-test-hidden-1
+    name: test-type-to-test-hidden-1
+
+  type_to_test_hidden_2:
+    <<: *type_maintenance
+    _id: test-type-to-test-hidden-2
+    name: test-type-to-test-hidden-2
+    hidden: true

@@ -49,7 +49,10 @@ Feature: Update a dynamic infos
     """json
     {
       "_id": "test-dynamic-infos-to-update-1",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1581423405,
       "description": "test-dynamic-infos-to-update-1-description-updated",
       "disable_during_periods": null,

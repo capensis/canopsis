@@ -1,0 +1,346 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with custom props 1`] = `
+<div
+  class="v-tabs"
+>
+  <div
+    class="v-tabs__bar theme--light transparent"
+  >
+    <transition-stub
+      name="fade-transition"
+    />
+    <div
+      class="v-tabs__wrapper"
+    >
+      <div
+        class="v-tabs__container v-tabs__container--centered v-tabs__container--fixed-tabs"
+      >
+        <div
+          class="v-tabs__slider-wrapper"
+          style="transition: none;"
+        >
+          <div
+            class="v-tabs__slider primary"
+          />
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            General
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Pattern
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item v-tabs__item--active"
+          >
+            Test query
+          </a>
+        </div>
+      </div>
+    </div>
+    <transition-stub
+      name="fade-transition"
+    />
+  </div>
+  <div
+    class="v-window"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <declare-ticket-rule-general-form-stub
+            class="mt-2"
+            form="[object Object]"
+          />
+        </div>
+      </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <declare-ticket-rule-patterns-form-stub
+            class="mt-2"
+            form="[object Object]"
+          />
+        </div>
+      </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item"
+          style=""
+        >
+          <div
+            class="layout row"
+          >
+            <div
+              class="flex offset-xs1 xs10"
+            >
+              <declare-ticket-rule-test-query-stub
+                class="mt-2"
+                form="[object Object]"
+              />
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with default props 1`] = `
+<div
+  class="v-tabs"
+>
+  <div
+    class="v-tabs__bar theme--light transparent"
+  >
+    <transition-stub
+      name="fade-transition"
+    />
+    <div
+      class="v-tabs__wrapper"
+    >
+      <div
+        class="v-tabs__container v-tabs__container--centered v-tabs__container--fixed-tabs"
+      >
+        <div
+          class="v-tabs__slider-wrapper"
+          style="transition: none;"
+        >
+          <div
+            class="v-tabs__slider primary"
+          />
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            General
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Pattern
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item v-tabs__item--active"
+          >
+            Test query
+          </a>
+        </div>
+      </div>
+    </div>
+    <transition-stub
+      name="fade-transition"
+    />
+  </div>
+  <div
+    class="v-window"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <declare-ticket-rule-general-form-stub
+            class="mt-2"
+            form="[object Object]"
+          />
+        </div>
+      </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <declare-ticket-rule-patterns-form-stub
+            class="mt-2"
+            form="[object Object]"
+          />
+        </div>
+      </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item"
+          style=""
+        >
+          <div
+            class="layout row"
+          >
+            <div
+              class="flex offset-xs1 xs10"
+            >
+              <declare-ticket-rule-test-query-stub
+                class="mt-2"
+                form="[object Object]"
+              />
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with errors 1`] = `
+<div
+  class="v-tabs"
+>
+  <div
+    class="v-tabs__bar theme--light transparent"
+  >
+    <transition-stub
+      name="fade-transition"
+    />
+    <div
+      class="v-tabs__wrapper"
+    >
+      <div
+        class="v-tabs__container v-tabs__container--centered v-tabs__container--fixed-tabs"
+      >
+        <div
+          class="v-tabs__slider-wrapper"
+          style="transition: none;"
+        >
+          <div
+            class="v-tabs__slider primary"
+          />
+        </div>
+        <div
+          class="v-tabs__div error--text"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            General
+          </a>
+        </div>
+        <div
+          class="v-tabs__div error--text"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Pattern
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item v-tabs__item--active"
+          >
+            Test query
+          </a>
+        </div>
+      </div>
+    </div>
+    <transition-stub
+      name="fade-transition"
+    />
+  </div>
+  <div
+    class="v-window"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <declare-ticket-rule-general-form-stub
+            class="mt-2"
+            form="[object Object]"
+          />
+        </div>
+      </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <declare-ticket-rule-patterns-form-stub
+            class="mt-2"
+            form="[object Object]"
+          />
+        </div>
+      </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item"
+          style=""
+        >
+          <div
+            class="layout row"
+          >
+            <div
+              class="flex offset-xs1 xs10"
+            >
+              <declare-ticket-rule-test-query-stub
+                class="mt-2"
+                form="[object Object]"
+              />
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;

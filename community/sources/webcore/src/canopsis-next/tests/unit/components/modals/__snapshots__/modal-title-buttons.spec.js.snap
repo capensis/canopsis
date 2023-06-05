@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`modal-title-buttons Renders \`modal-title-buttons\` with custom props 1`] = `
+<div
+  class="modal-title-buttons close minimize"
+>
+  <div
+    class="modal-title-button__wrapper"
+  >
+    <div
+      class="v-tooltip"
+      left="left"
+    >
+      <button
+        class="v-btn--minimize my-0 v-btn v-btn--icon theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light white--text"
+            style="font-size: 36px;"
+          >
+            minimize
+          </i>
+        </div>
+      </button>
+       
+      <span>
+        You already have minimized modal window
+      </span>
+    </div>
+  </div>
+  <div
+    class="modal-title-button__wrapper"
+  >
+    <button
+      class="ma-0 v-btn v-btn--icon theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light white--text"
+          style="font-size: 36px;"
+        >
+          close
+        </i>
+      </div>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`modal-title-buttons Renders \`modal-title-buttons\` with default props 1`] = `
+<div
+  class="modal-title-buttons"
+>
+  <!---->
+  <!---->
+</div>
+`;
+
+exports[`modal-title-buttons Renders \`modal-title-buttons\` with minimized modal 1`] = `
+<div
+  class="modal-title-buttons minimize"
+>
+  <div
+    class="modal-title-button__wrapper"
+  >
+    <button
+      class="my-0 v-btn v-btn--icon v-btn--small theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light white--text"
+        >
+          maximize
+        </i>
+      </div>
+    </button>
+  </div>
+  <!---->
+</div>
+`;

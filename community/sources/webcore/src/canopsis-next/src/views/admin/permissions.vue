@@ -3,12 +3,12 @@
     c-page-header
     div.position-relative
       v-fade-transition
-        v-layout.white.progress(v-show="pending", column)
+        v-layout.progress(v-show="pending", column)
           v-progress-circular(indeterminate, color="primary")
       v-tabs(v-if="hasReadAnyRoleAccess", fixed-tabs, slider-color="primary")
         template(v-for="(permissions, groupKey) in groupedPermissions")
           v-tab(:key="`tab-${groupKey}`") {{ groupKey }}
-          v-tab-item.white(:key="`tab-item-${groupKey}`")
+          v-tab-item(:key="`tab-item-${groupKey}`")
             permissions-table-wrapper(
               :permissions="permissions",
               :roles="preparedRoles",
@@ -33,8 +33,6 @@ import { roleToForm, formToRole } from '@/helpers/forms/role';
 import { authMixin } from '@/mixins/auth';
 import { entitiesPermissionsMixin } from '@/mixins/entities/permission';
 import { entitiesRoleMixin } from '@/mixins/entities/role';
-import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
-import { entitiesPlaylistMixin } from '@/mixins/entities/playlist';
 import { permissionsTechnicalRoleMixin } from '@/mixins/permissions/technical/role';
 import { permissionsTechnicalPermissionMixin } from '@/mixins/permissions/technical/permission';
 
@@ -50,8 +48,6 @@ export default {
     authMixin,
     entitiesPermissionsMixin,
     entitiesRoleMixin,
-    entitiesViewGroupMixin,
-    entitiesPlaylistMixin,
     permissionsTechnicalRoleMixin,
     permissionsTechnicalPermissionMixin,
   ],
@@ -73,7 +69,13 @@ export default {
     },
 
     preparedRoles() {
-      return sortBy(this.roles, [({ _id: name }) => name.toLowerCase()]).map(roleToForm);
+      return sortBy(this.roles, [({ _id: name }) => name.toLowerCase()])
+        .map(role => ({
+          ...roleToForm(role),
+
+          editable: role.editable,
+          deletable: role.deletable,
+        }));
     },
   },
   mounted() {
@@ -148,7 +150,7 @@ export default {
           await this.fetchCurrentUser();
         }
 
-        await this.fetchRolesList({ params: { limit: MAX_LIMIT } });
+        await this.fetchRolesList({ params: { limit: MAX_LIMIT, with_flags: true } });
 
         this.$popups.success({ text: this.$t('success.default') });
 
@@ -231,12 +233,11 @@ export default {
 
       const [{ data: permissions }] = await Promise.all([
         this.fetchPermissionsListWithoutStore({ params: { limit: MAX_LIMIT } }),
-        this.fetchRolesList({ params: { limit: MAX_LIMIT } }),
+        this.fetchRolesList({ params: { limit: MAX_LIMIT, with_flags: true } }),
       ]);
 
-      const allViews = this.groups.reduce((acc, { views }) => acc.concat(views), []);
+      this.groupedPermissions = getGroupedPermissions(permissions);
 
-      this.groupedPermissions = getGroupedPermissions(permissions, allViews, this.playlists);
       this.pending = false;
     },
   },
@@ -249,7 +250,7 @@ export default {
     bottom: 10px;
   }
 
-  .admin-rights /deep/ {
+  .admin-rights ::v-deep {
     .v-window__container--is-active th {
       position: relative;
       top: 0;
@@ -265,7 +266,7 @@ export default {
     opacity: .4;
     z-index: 1;
 
-    & /deep/ .v-progress-circular {
+    & ::v-deep .v-progress-circular {
       top: 50%;
       left: 50%;
       margin-top: -16px;

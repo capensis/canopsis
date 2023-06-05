@@ -12,7 +12,17 @@ La commande `engine-axe -help` liste toutes les options acceptées par le moteur
 
 Il est possible, à partir de Canopsis 3.40.0, de lancer plusieurs instances du moteur `engine-axe`, afin d'améliorer sa performance de traitement et sa résilience.
 
-En environnement Docker, il vous suffit par exemple de lancer Docker Compose avec `docker-compose up -d --scale axe=2` pour que le moteur `engine-axe` soit lancé avec 2 instances.
+Modifier le ficher `docker-compose.yml` (ou en fonction de votre version`02-app.docker-compose.yml`) de la manière suivante :
+
+```yml
+  axe:
+    ...
+    deploy:
+      replicas: 2
+```
+
+Exécutez ensuite `docker-compose up -d` (ou `docker-compose -f 02-app.docker-compose.yml`) pour appliquer cette modification.
+
 
 Cette fonctionnalité sera aussi disponible en installation par paquets lors d'une prochaine mise à jour.
 

@@ -24,8 +24,10 @@ import TextSettings from '@/components/sidebars/settings/text.vue';
 const localVue = createVueInstance();
 
 const stubs = {
+  'widget-settings': true,
+  'widget-settings-item': true,
+  'widget-settings-group': true,
   'field-title': createInputStub('field-title'),
-  'field-filter-editor': createInputStub('field-filter-editor'),
   'field-text-editor': createInputStub('field-text-editor'),
   'field-stats-selector': createInputStub('field-stats-selector'),
   'field-date-interval': createInputStub('field-date-interval'),
@@ -33,8 +35,10 @@ const stubs = {
 };
 
 const snapshotStubs = {
+  'widget-settings': true,
+  'widget-settings-item': true,
+  'widget-settings-group': true,
   'field-title': true,
-  'field-filter-editor': true,
   'field-text-editor': true,
   'field-stats-selector': true,
   'field-date-interval': true,
@@ -81,11 +85,12 @@ describe('text', () => {
   const {
     createWidget,
     updateWidget,
-    copyWidget,
     fetchActiveView,
+    fetchUserPreference,
     activeViewModule,
     widgetModule,
     authModule,
+    userPreferenceModule,
   } = createSettingsMocks();
 
   const widget = {
@@ -106,13 +111,14 @@ describe('text', () => {
     activeViewModule,
     widgetModule,
     authModule,
+    userPreferenceModule,
   ]);
 
   afterEach(() => {
     createWidget.mockReset();
     updateWidget.mockReset();
-    copyWidget.mockReset();
     fetchActiveView.mockReset();
+    fetchUserPreference.mockReset();
   });
 
   it('Create widget with default parameters', async () => {
@@ -171,9 +177,8 @@ describe('text', () => {
     await submitWithExpects(wrapper, {
       fetchActiveView,
       hideSidebar: $sidebar.hide,
-      widgetMethod: copyWidget,
+      widgetMethod: createWidget,
       expectData: {
-        id: widget._id,
         data: omit(widget, ['_id']),
       },
     });

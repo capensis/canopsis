@@ -1,0 +1,106 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehavior-exceptions-field Renders \`pbehavior-exceptions-field\` with custom props 1`] = `
+<div>
+  <h3
+    class="my-3 grey--text"
+  >
+    Exception dates
+  </h3>
+  <hr
+    class="v-divider theme--light"
+  />
+  <pbehavior-exception-list-stub
+    exceptions="[object Object]"
+  />
+  <div
+    class="layout mt-3 column"
+  >
+    <div
+      class="flex xs12"
+    >
+      <!---->
+    </div>
+    <pbehavior-exception-field-stub
+      class="mb-3"
+      disabled="true"
+      value="[object Object]"
+      withtype="true"
+    />
+    <pbehavior-exception-field-stub
+      class="mb-3"
+      disabled="true"
+      value="[object Object]"
+      withtype="true"
+    />
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`pbehavior-exceptions-field Renders \`pbehavior-exceptions-field\` with default props 1`] = `
+<div>
+  <h3
+    class="my-3 grey--text"
+  >
+    Exception dates
+  </h3>
+  <hr
+    class="v-divider theme--light"
+  />
+  <!---->
+  <div
+    class="layout mt-3 column"
+  >
+    <div
+      class="flex xs12"
+    >
+      <div
+        class="v-alert info"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light v-alert__icon"
+        >
+          info
+        </i>
+        <div>
+          No exceptions added yet
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="layout row"
+  >
+    <div
+      class="flex"
+    >
+      <button
+        class="ml-0 v-btn v-btn--outline v-btn--depressed theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Add an exception date
+        </div>
+      </button>
+    </div>
+    <div
+      class="flex"
+    >
+      <button
+        class="mr-0 v-btn v-btn--outline v-btn--depressed theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Choose list of exceptions
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+`;

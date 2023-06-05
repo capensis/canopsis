@@ -23,7 +23,7 @@ Feature: Delete a role
     When I do DELETE /api/v4/roles/test-role-not-found
     Then the response code should be 404
     Then the response body should be:
-    """
+    """json
     {
       "error": "Not found"
     }
@@ -34,9 +34,19 @@ Feature: Delete a role
     When I do DELETE /api/v4/roles/test-role-to-delete-linked-to-user
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "error": "role is linked to user"
     }
     """
 
+  Scenario: given delete request for admin should return validation error
+    When I am admin
+    When I do DELETE /api/v4/roles/admin
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "error": "admin cannot be deleted"
+    }
+    """

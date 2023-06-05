@@ -12,45 +12,45 @@
           :disabled="disabledCommon",
           hide-details
         )
-    v-layout(row)
-      v-text-field(
-        v-field="form.name",
-        v-validate="'required'",
-        :label="$t('common.name')",
-        :error-messages="errors.collect('name')",
-        :disabled="disabledCommon",
-        name="name"
-      )
-    v-layout(row)
-      v-text-field(
-        v-field="form.description",
-        v-validate="'required'",
-        :label="$t('common.description')",
-        :error-messages="errors.collect('description')",
-        :disabled="disabledCommon",
-        name="description"
-      )
+    c-name-field(v-field="form.name", :disabled="disabledCommon")
+    v-text-field(
+      v-field="form.description",
+      v-validate="'required'",
+      :label="$t('common.description')",
+      :error-messages="errors.collect('description')",
+      :disabled="disabledCommon",
+      name="description"
+    )
     v-layout(row, justify-space-between, align-center)
       v-flex(xs7)
         c-duration-field(
           v-field="form.timeout_after_execution",
-          :label="$t('remediationInstructions.timeoutAfterExecution')",
+          :label="$t('remediation.instruction.timeoutAfterExecution')",
+          :units-label="$t('common.unit')",
           :disabled="disabled",
           name="timeout_after_execution",
           required
         )
-      v-flex.ml-2(v-if="!isManualType", xs3)
-        c-priority-field(v-model="form.priority", :disabled="disabled", required)
-    v-layout(v-if="isManualType", row)
-      remediation-instruction-steps-form(v-field="form.steps", :disabled="disabled")
-    v-layout(v-else, row)
-      remediation-instruction-jobs-form(v-model="form.jobs", :disabled="disabled")
-    v-layout(v-if="!disabledCommon", row)
-      remediation-instruction-approval-form(v-field="form.approval", :disabled="disabled")
+      v-flex.ml-2(v-if="isAutoType", xs3)
+        c-priority-field(v-field="form.priority", :disabled="disabled")
+    c-triggers-field(
+      v-if="isAutoType",
+      v-field="form.triggers",
+      :triggers="availableTriggers"
+    )
+    remediation-instruction-jobs-form(
+      v-if="isAutoType || isManualSimplified",
+      v-field="form.jobs",
+      :disabled="disabled"
+    )
+    remediation-instruction-steps-form(v-else, v-field="form.steps", :disabled="disabled")
+    remediation-instruction-approval-form(v-if="!disabledCommon", v-field="form.approval", :disabled="disabled")
 </template>
 
 <script>
-import { REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
+import { REMEDIATION_AUTO_INSTRUCTION_TRIGGERS } from '@/constants';
+
+import { isInstructionAuto, isInstructionSimpleManual } from '@/helpers/forms/remediation-instruction';
 
 import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
 import RemediationInstructionJobsForm from './remediation-instruction-jobs-form.vue';
@@ -82,8 +82,16 @@ export default {
     },
   },
   computed: {
-    isManualType() {
-      return this.form.type === REMEDIATION_INSTRUCTION_TYPES.manual;
+    isAutoType() {
+      return isInstructionAuto(this.form);
+    },
+
+    isManualSimplified() {
+      return isInstructionSimpleManual(this.form);
+    },
+
+    availableTriggers() {
+      return REMEDIATION_AUTO_INSTRUCTION_TRIGGERS;
     },
   },
 };

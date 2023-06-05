@@ -91,7 +91,8 @@ func (s *service) RecomputeAllServices(ctx context.Context) error {
 			return fmt.Errorf("unable to serialize service event: %w", err)
 		}
 
-		err = s.pubChannel.Publish(
+		err = s.pubChannel.PublishWithContext(
+			ctx,
 			s.pubExchangeName,
 			s.pubQueueName,
 			false,
@@ -109,7 +110,7 @@ func (s *service) RecomputeAllServices(ctx context.Context) error {
 	return nil
 }
 
-func (s *service) UpdateServiceState(serviceID string, serviceInfo UpdatedServicesInfo) error {
+func (s *service) UpdateServiceState(ctx context.Context, serviceID string, serviceInfo UpdatedServicesInfo) error {
 	event := types.Event{
 		EventType:     types.EventTypeCheck,
 		SourceType:    types.SourceTypeService,
@@ -126,7 +127,8 @@ func (s *service) UpdateServiceState(serviceID string, serviceInfo UpdatedServic
 		return fmt.Errorf("unable to serialize service event: %w", err)
 	}
 
-	err = s.pubChannel.Publish(
+	err = s.pubChannel.PublishWithContext(
+		ctx,
 		s.pubExchangeName,
 		s.pubQueueName,
 		false,
@@ -168,18 +170,18 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 		[]mongodriver.WriteModel,
 		0,
 		int(math.Min(
-			float64(len(entity.ImpactedServicesToRemove)+len(entity.ImpactedServices)),
+			float64(len(entity.ServicesToRemove)+len(entity.ImpactedServices)),
 			canopsis.DefaultBulkSize,
 		)),
 	)
 
-	serviceToRemove := make(map[string]bool, len(entity.ImpactedServicesToRemove))
-	for _, impServ := range entity.ImpactedServicesToRemove {
+	serviceToRemove := make(map[string]bool, len(entity.ServicesToRemove))
+	for _, impServ := range entity.ServicesToRemove {
 		serviceToRemove[impServ] = true
 	}
 
-	serviceToAdd := make(map[string]bool, len(entity.ImpactedServicesToAdd))
-	for _, impServ := range entity.ImpactedServicesToAdd {
+	serviceToAdd := make(map[string]bool, len(entity.ServicesToAdd))
+	for _, impServ := range entity.ServicesToAdd {
 		serviceToAdd[impServ] = true
 	}
 
@@ -188,9 +190,9 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 
 	var inSlice []string
 	if changeType == types.AlarmChangeTypeEnabled {
-		inSlice = entity.ImpactedServicesToAdd
+		inSlice = entity.ServicesToAdd
 	} else {
-		inSlice = append(entity.ImpactedServices, entity.ImpactedServicesToRemove...)
+		inSlice = append(entity.ImpactedServices, entity.ServicesToRemove...)
 	}
 
 	if len(inSlice) == 0 {
@@ -522,7 +524,7 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 		}
 	}
 
-	if len(entity.ImpactedServicesToAdd) > 0 || len(entity.ImpactedServicesToRemove) > 0 {
+	if len(entity.ServicesToAdd) > 0 || len(entity.ServicesToRemove) > 0 {
 		_, err = s.entityCollection.UpdateOne(
 			ctx, bson.M{"_id": entity.ID},
 			bson.M{"$unset": bson.M{"impacted_services_to_add": 1, "impacted_services_to_remove": 1}})
@@ -552,24 +554,24 @@ func (s *service) RecomputeEntityServiceCounters(ctx context.Context, event type
 		PbehaviorCounters: make(map[string]int64),
 	}
 
-	if len(event.Entity.Depends) == 0 {
-		output, err := s.getServiceOutput(counters)
-		if err != nil {
-			return nil, err
-		}
-
-		updatedServiceStates[event.Entity.ID] = UpdatedServicesInfo{
-			State:  counters.GetWorstState(),
-			Output: output,
-		}
-
-		_, err = s.serviceCountersCollection.UpdateOne(ctx, bson.M{"_id": event.GetEID()}, bson.M{"$set": counters}, options.Update().SetUpsert(true))
-		return updatedServiceStates, err
-	}
+	//if len(event.Entity.Depends) == 0 {
+	//	output, err := s.getServiceOutput(counters)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//
+	//	updatedServiceStates[event.Entity.ID] = UpdatedServicesInfo{
+	//		State:  counters.GetWorstState(),
+	//		Output: output,
+	//	}
+	//
+	//	_, err = s.serviceCountersCollection.UpdateOne(ctx, bson.M{"_id": event.GetEID()}, bson.M{"$set": counters}, options.Update().SetUpsert(true))
+	//	return updatedServiceStates, err
+	//}
 
 	cursor, err := s.entityCollection.Aggregate(ctx, []bson.M{
 		{
-			"$match": bson.M{"_id": bson.M{"$in": event.Entity.Depends}},
+			"$match": bson.M{"services": event.Entity.ID},
 		},
 		{
 			"$project": bson.M{

@@ -2,7 +2,11 @@ package amqp
 
 //go:generate mockgen -destination=../../mocks/lib/amqp/amqp.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp Connection,Channel,Publisher
 
-import amqp "github.com/rabbitmq/amqp091-go"
+import (
+	"context"
+
+	amqp "github.com/rabbitmq/amqp091-go"
+)
 
 // Connection is used to implement amqp connection.
 type Connection interface {
@@ -20,7 +24,8 @@ type Channel interface {
 	) (<-chan amqp.Delivery, error)
 	Ack(tag uint64, multiple bool) error
 	Nack(tag uint64, multiple bool, requeue bool) error
-	Publish(
+	PublishWithContext(
+		ctx context.Context,
 		exchange, key string,
 		mandatory, immediate bool,
 		msg amqp.Publishing,

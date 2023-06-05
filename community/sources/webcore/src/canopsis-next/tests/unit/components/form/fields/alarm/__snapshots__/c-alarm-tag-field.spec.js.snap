@@ -1,0 +1,535 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 1`] = `
+<div
+  class="v-input v-text-field v-select v-select--chips v-select--chips--small v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+  role="combobox"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-select__slot"
+      >
+        <label
+          aria-hidden="true"
+          class="v-label v-label--active v-label--is-disabled theme--light"
+          style="left: 0px; position: absolute;"
+        >
+          Custom label
+        </label>
+        <div
+          class="v-select__selections"
+        >
+          <c-alarm-action-chip-stub
+            closable="closable"
+            color="#444"
+          >
+            Tag 1
+          </c-alarm-action-chip-stub>
+          <input
+            aria-label="Custom label"
+            aria-readonly="false"
+            autocomplete="on"
+            disabled="disabled"
+            name="customName"
+            readonly="readonly"
+            type="text"
+          />
+        </div>
+        <div
+          class="v-input__append-inner"
+        >
+          <div
+            class="v-input__icon v-input__icon--clear"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon v-icon--disabled v-icon--link material-icons theme--light"
+            >
+              clear
+            </i>
+          </div>
+        </div>
+        <div
+          class="v-input__append-inner"
+        >
+          <div
+            class="v-input__icon v-input__icon--append"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon v-icon--disabled material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+          </div>
+        </div>
+      </div>
+      <div
+        class="v-menu"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 2`] = `
+<div
+  class="v-menu__content theme--light "
+  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+>
+  <div
+    class="v-select-list v-card theme--light"
+  >
+    <div
+      class="v-list v-list--dense theme--light"
+      role="list"
+    >
+      <div
+        class="primary--text"
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+        >
+          <div
+            class="v-list__tile__action"
+          >
+            <div
+              class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty theme--light"
+            >
+              <div
+                class="v-input__control"
+              >
+                <div
+                  class="v-input__slot"
+                >
+                  <div
+                    class="v-input--selection-controls__input"
+                  >
+                    <input
+                      aria-checked="true"
+                      role="checkbox"
+                      type="checkbox"
+                      value=""
+                    />
+                    <div
+                      class="v-input--selection-controls__ripple primary--text"
+                    />
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light primary--text"
+                    >
+                      check_box
+                    </i>
+                  </div>
+                </div>
+                <div
+                  class="v-messages theme--light"
+                >
+                  <div
+                    class="v-messages__wrapper"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Tag 1
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__action"
+          >
+            <div
+              class="v-input v-input--selection-controls v-input--checkbox theme--light"
+            >
+              <div
+                class="v-input__control"
+              >
+                <div
+                  class="v-input__slot"
+                >
+                  <div
+                    class="v-input--selection-controls__input"
+                  >
+                    <input
+                      aria-checked="false"
+                      role="checkbox"
+                      type="checkbox"
+                      value=""
+                    />
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      check_box_outline_blank
+                    </i>
+                  </div>
+                </div>
+                <div
+                  class="v-messages theme--light"
+                >
+                  <div
+                    class="v-messages__wrapper"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Tag 2
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__action"
+          >
+            <div
+              class="v-input v-input--selection-controls v-input--checkbox theme--light"
+            >
+              <div
+                class="v-input__control"
+              >
+                <div
+                  class="v-input__slot"
+                >
+                  <div
+                    class="v-input--selection-controls__input"
+                  >
+                    <input
+                      aria-checked="false"
+                      role="checkbox"
+                      type="checkbox"
+                      value=""
+                    />
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      check_box_outline_blank
+                    </i>
+                  </div>
+                </div>
+                <div
+                  class="v-messages theme--light"
+                >
+                  <div
+                    class="v-messages__wrapper"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Tag 3
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with default props 1`] = `
+<div
+  class="v-input v-text-field v-select v-select--chips v-select--chips--small v-input--hide-details theme--light"
+  role="combobox"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-select__slot"
+      >
+        <label
+          aria-hidden="true"
+          class="v-label theme--light"
+          style="left: 0px; position: absolute;"
+        >
+          Tag
+        </label>
+        <div
+          class="v-select__selections"
+        >
+          <input
+            aria-label="Tag"
+            aria-readonly="false"
+            autocomplete="on"
+            name="tag"
+            readonly="readonly"
+            type="text"
+          />
+        </div>
+        <div
+          class="v-input__append-inner"
+        >
+          <div
+            class="v-input__icon v-input__icon--"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon v-icon--link material-icons theme--light"
+            />
+          </div>
+        </div>
+        <div
+          class="v-input__append-inner"
+        >
+          <div
+            class="v-input__icon v-input__icon--append"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+          </div>
+        </div>
+      </div>
+      <div
+        class="v-menu"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with default props 2`] = `
+<div
+  class="v-menu__content theme--light "
+  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+>
+  <div
+    class="v-select-list v-card theme--light"
+  >
+    <div
+      class="v-list v-list--dense theme--light"
+      role="list"
+    >
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__action"
+          >
+            <div
+              class="v-input v-input--selection-controls v-input--checkbox theme--light"
+            >
+              <div
+                class="v-input__control"
+              >
+                <div
+                  class="v-input__slot"
+                >
+                  <div
+                    class="v-input--selection-controls__input"
+                  >
+                    <input
+                      aria-checked="false"
+                      role="checkbox"
+                      type="checkbox"
+                      value=""
+                    />
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      check_box_outline_blank
+                    </i>
+                  </div>
+                </div>
+                <div
+                  class="v-messages theme--light"
+                >
+                  <div
+                    class="v-messages__wrapper"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Tag 1
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__action"
+          >
+            <div
+              class="v-input v-input--selection-controls v-input--checkbox theme--light"
+            >
+              <div
+                class="v-input__control"
+              >
+                <div
+                  class="v-input__slot"
+                >
+                  <div
+                    class="v-input--selection-controls__input"
+                  >
+                    <input
+                      aria-checked="false"
+                      role="checkbox"
+                      type="checkbox"
+                      value=""
+                    />
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      check_box_outline_blank
+                    </i>
+                  </div>
+                </div>
+                <div
+                  class="v-messages theme--light"
+                >
+                  <div
+                    class="v-messages__wrapper"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Tag 2
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__action"
+          >
+            <div
+              class="v-input v-input--selection-controls v-input--checkbox theme--light"
+            >
+              <div
+                class="v-input__control"
+              >
+                <div
+                  class="v-input__slot"
+                >
+                  <div
+                    class="v-input--selection-controls__input"
+                  >
+                    <input
+                      aria-checked="false"
+                      role="checkbox"
+                      type="checkbox"
+                      value=""
+                    />
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      check_box_outline_blank
+                    </i>
+                  </div>
+                </div>
+                <div
+                  class="v-messages theme--light"
+                >
+                  <div
+                    class="v-messages__wrapper"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              Tag 3
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+`;

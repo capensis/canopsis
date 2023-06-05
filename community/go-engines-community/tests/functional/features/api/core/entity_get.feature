@@ -13,83 +13,50 @@ Feature: Get entities
           "_id": "test-component-to-entity-get",
           "category": {
             "_id": "test-category-to-entity-get-2",
-            "name": "test-category-to-entity-get-2-name",
-            "author": "test-category-to-entity-get-2-author",
-            "created": 1592215337,
-            "updated": 1592215337
+            "name": "test-category-to-entity-get-2-name"
           },
-          "depends": [
-            "test-resource-to-entity-get-1/test-component-to-entity-get",
-            "test-resource-to-entity-get-2/test-component-to-entity-get"
-          ],
-          "enable_history": [
-            1597030220
-          ],
           "enabled": true,
+          "old_entity_patterns": null,
           "connector": "test-connector-to-entity-get/test-connector-name-to-entity-get",
-          "impact": [
-            "test-connector-to-entity-get/test-connector-name-to-entity-get"
-          ],
           "impact_level": 2,
           "infos": {},
-          "measurements": null,
           "name": "test-component-to-entity-get",
           "component": "test-component-to-entity-get",
           "type": "component",
           "ok_events": 0,
           "ko_events": 0,
-          "state": 0
+          "state": 0,
+          "status": 0,
+          "impact_state": 0
         },
         {
           "_id": "test-connector-to-entity-get/test-connector-name-to-entity-get",
           "category": {
             "_id": "test-category-to-entity-get-1",
-            "name": "test-category-to-entity-get-1-name",
-            "author": "test-category-to-entity-get-1-author",
-            "created": 1592215337,
-            "updated": 1592215337
+            "name": "test-category-to-entity-get-1-name"
           },
-          "depends": [
-            "test-component-to-entity-get"
-          ],
-          "enable_history": [
-            1597030220
-          ],
           "enabled": true,
-          "impact": [
-            "test-resource-to-entity-get-1/test-component-to-entity-get",
-            "test-resource-to-entity-get-2/test-component-to-entity-get"
-          ],
+          "old_entity_patterns": null,
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-connector-name-to-entity-get",
           "connector_type": "test-connector-to-entity-get",
           "type": "connector",
           "ok_events": 0,
           "ko_events": 0,
-          "state": 0
+          "state": 0,
+          "status": 0,
+          "impact_state": 0
         },
         {
           "_id": "test-resource-to-entity-get-1/test-component-to-entity-get",
           "category": {
             "_id": "test-category-to-entity-get-2",
-            "name": "test-category-to-entity-get-2-name",
-            "author": "test-category-to-entity-get-2-author",
-            "created": 1592215337,
-            "updated": 1592215337
+            "name": "test-category-to-entity-get-2-name"
           },
-          "depends": [
-            "test-connector-to-entity-get/test-connector-name-to-entity-get"
-          ],
           "connector": "test-connector-to-entity-get/test-connector-name-to-entity-get",
-          "enable_history": [
-            1597030220
-          ],
           "enabled": true,
-          "impact": [
-            "test-component-to-entity-get"
-          ],
+          "old_entity_patterns": null,
           "component": "test-component-to-entity-get",
           "impact_level": 3,
           "infos": {
@@ -129,36 +96,35 @@ Feature: Get entities
               "value": "test-resource-to-entity-get-1-info-7-value"
             }
           },
-          "measurements": null,
+          "coordinates": {
+            "lat": 64.52269494598361,
+            "lng": 54.037685420804365
+          },
           "name": "test-resource-to-entity-get-1",
           "type": "resource",
           "ok_events": 0,
           "ko_events": 0,
-          "state": 3
+          "state": 3,
+          "status": 1,
+          "impact_state": 9,
+          "alarm_last_update_date": 1597030219
         },
         {
           "_id": "test-resource-to-entity-get-2/test-component-to-entity-get",
           "category": null,
-          "depends": [
-            "test-connector-to-entity-get/test-connector-name-to-entity-get"
-          ],
           "connector": "test-connector-to-entity-get/test-connector-name-to-entity-get",
-          "enable_history": [
-            1597030220
-          ],
           "enabled": true,
-          "impact": [
-            "test-component-to-entity-get"
-          ],
+          "old_entity_patterns": null,
           "component": "test-component-to-entity-get",
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-resource-to-entity-get-2",
           "type": "resource",
           "ok_events": 0,
           "ko_events": 0,
-          "state": 0
+          "state": 0,
+          "status": 0,
+          "impact_state": 0
         }
       ],
       "meta": {
@@ -200,7 +166,7 @@ Feature: Get entities
     }
     """
 
-  Scenario: given get all request should return entities with deletable field
+  Scenario: given get all request should return entities with deletable flag and counts
     When I am admin
     When I do GET /api/v4/entities?search=to-entity-get&with_flags=true
     Then the response code should be 200
@@ -210,19 +176,27 @@ Feature: Get entities
       "data": [
         {
           "_id": "test-component-to-entity-get",
-          "deletable": true
+          "deletable": true,
+          "impacts_count": 0,
+          "depends_count": 0
         },
         {
           "_id": "test-connector-to-entity-get/test-connector-name-to-entity-get",
-          "deletable": true
+          "deletable": true,
+          "impacts_count": 0,
+          "depends_count": 0
         },
         {
           "_id": "test-resource-to-entity-get-1/test-component-to-entity-get",
-          "deletable": false
+          "deletable": false,
+          "impacts_count": 0,
+          "depends_count": 0
         },
         {
           "_id": "test-resource-to-entity-get-2/test-component-to-entity-get",
-          "deletable": true
+          "deletable": true,
+          "impacts_count": 0,
+          "depends_count": 0
         }
       ],
       "meta": {
@@ -284,7 +258,7 @@ Feature: Get entities
 
   Scenario: given get filter request should return entities which are matched to the filter
     When I am admin
-    When I do GET /api/v4/entities?filter=test-widgetfilter-to-entity-get-1
+    When I do GET /api/v4/entities?filters[]=test-widgetfilter-to-entity-get-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -305,7 +279,7 @@ Feature: Get entities
 
   Scenario: given get filter request with old mongo query should return entities which are matched to the filter
     When I am admin
-    When I do GET /api/v4/entities?filter=test-widgetfilter-to-entity-get-2
+    When I do GET /api/v4/entities?filters[]=test-widgetfilter-to-entity-get-2
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -374,4 +348,34 @@ Feature: Get entities
   Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
     When I do GET /api/v4/entities
+    Then the response code should be 403
+
+  Scenario: given get context graph request should return context graph
+    When I am admin
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-to-entity-get-1/test-component-to-entity-get
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "depends": [
+        "test-connector-to-entity-get/test-connector-name-to-entity-get"
+      ],
+      "impact": [
+        "test-component-to-entity-get"
+      ]
+    }
+    """
+
+  Scenario: given get context graph request with not exist id should return not found error
+    When I am admin
+    When I do GET /api/v4/entities/context-graph?_id=test-entity-not-exist
+    Then the response code should be 404
+
+  Scenario: given get context graph unauth request should not allow access
+    When I do GET /api/v4/entities/context-graph
+    Then the response code should be 401
+
+  Scenario: given get context graph request and auth user without permissions should not allow access
+    When I am noperms
+    When I do GET /api/v4/entities/context-graph
     Then the response code should be 403

@@ -6,17 +6,17 @@
         v-card.ma-2
           v-tabs(v-model="activeTab", fixed-tabs, slider-color="primary")
             template(v-if="hasReadAnyPbehaviorTypeAccess")
-              v-tab(:href="`#${$constants.PLANNING_TABS.types}`") {{ $t('planning.tabs.type') }}
+              v-tab(:href="`#${$constants.PLANNING_TABS.types}`") {{ $t('pbehavior.tabs.type') }}
               v-tab-item(:value="$constants.PLANNING_TABS.types", lazy)
                 v-card-text
                   planning-types
             template(v-if="hasReadAnyPbehaviorReasonAccess")
-              v-tab(:href="`#${$constants.PLANNING_TABS.reasons}`") {{ $t('planning.tabs.reason') }}
+              v-tab(:href="`#${$constants.PLANNING_TABS.reasons}`") {{ $t('pbehavior.tabs.reason') }}
               v-tab-item(:value="$constants.PLANNING_TABS.reasons", lazy)
                 v-card-text
                   planning-reasons
             template(v-if="hasReadAnyPbehaviorExceptionAccess")
-              v-tab(:href="`#${$constants.PLANNING_TABS.exceptions}`") {{ $t('planning.tabs.exceptions') }}
+              v-tab(:href="`#${$constants.PLANNING_TABS.exceptions}`") {{ $t('pbehavior.tabs.exceptions') }}
               v-tab-item(:value="$constants.PLANNING_TABS.exceptions", lazy)
                 v-card-text
                   planning-exceptions
@@ -30,8 +30,8 @@ import { MODALS, PLANNING_TABS } from '@/constants';
 import { permissionsTechnicalPbehaviorTypesMixin } from '@/mixins/permissions/technical/pbehavior-types';
 import { permissionsTechnicalPbehaviorReasonsMixin } from '@/mixins/permissions/technical/pbehavior-reasons';
 import { permissionsTechnicalPbehaviorExceptionsMixin } from '@/mixins/permissions/technical/pbehavior-exceptions';
-import { entitiesPbehaviorTypesMixin } from '@/mixins/entities/pbehavior/types';
-import entitiesPbehaviorReasonsMixin from '@/mixins/entities/pbehavior/reasons';
+import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
+import { entitiesPbehaviorReasonMixin } from '@/mixins/entities/pbehavior/reasons';
 import entitiesPbehaviorExceptionsMixin from '@/mixins/entities/pbehavior/exceptions';
 
 import PlanningTypes from '@/components/other/pbehavior/types/planning-types.vue';
@@ -48,8 +48,8 @@ export default {
     permissionsTechnicalPbehaviorTypesMixin,
     permissionsTechnicalPbehaviorReasonsMixin,
     permissionsTechnicalPbehaviorExceptionsMixin,
-    entitiesPbehaviorTypesMixin,
-    entitiesPbehaviorReasonsMixin,
+    entitiesPbehaviorTypeMixin,
+    entitiesPbehaviorReasonMixin,
     entitiesPbehaviorExceptionsMixin,
   ],
   data() {

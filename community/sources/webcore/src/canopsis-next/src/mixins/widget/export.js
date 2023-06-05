@@ -1,59 +1,58 @@
 import { EXPORT_FETCHING_INTERVAL } from '@/config';
+
 import { EXPORT_STATUSES } from '@/constants';
 
-import { saveCsvFile } from '@/helpers/file/files';
+import { removeTrailingSlashes } from '@/helpers/url';
 
 /**
  * @typedef {Object} ExportCsvMixin
  * @property {Object} methods
- * @property {function} methods.exportAsCsv
+ * @property {function} methods.downloadFile
  * @property {function} methods.generateFile
- * @property {function} methods.waitGeneratingCsvFile
+ * @property {function} methods.waitGeneratingFile
  */
 
 /**
- * Mixin creator for exporting widget data
+ * Mixin creator for exporting files
  *
  * @param {string} createExport
- * @param {string} fetchExportFile
  * @param {string} fetchExport
+ * @param {number | string} completedStatus
+ * @param {number | string} failedStatus
  * @returns {ExportCsvMixin}
  */
-export const exportCsvMixinCreator = ({ createExport, fetchExport, fetchExportFile }) => ({
+export const exportMixinCreator = ({
+  createExport,
+  fetchExport,
+  completedStatus = EXPORT_STATUSES.completed,
+  failedStatus = EXPORT_STATUSES.failed,
+}) => ({
   methods: {
-    async generateFile({ data, ...params }) {
+    async generateFile({ data, ...params } = {}) {
       const { _id: id } = await this[createExport]({ data, ...params });
 
-      await this.waitGeneratingCsvFile({ id, ...params });
-
-      return this[fetchExportFile]({ id, ...params });
+      return this.waitGeneratingFile({ id, ...params });
     },
 
-    async exportAsCsv({ data, name, ...params }) {
-      try {
-        const file = await this.generateFile({ data, ...params });
-
-        saveCsvFile(file, name);
-      } catch (err) {
-        this.$popups.error({ text: err?.error ?? this.$t('errors.default') });
-      }
+    downloadFile(url) {
+      window.open(removeTrailingSlashes(url), '_blank');
     },
 
-    waitGeneratingCsvFile({ id, ...params }) {
+    waitGeneratingFile({ id, ...params }) {
       return new Promise((resolve, reject) => {
         setTimeout(async () => {
           try {
             const exportData = await this[fetchExport]({ id, ...params });
 
-            if (exportData.status === EXPORT_STATUSES.completed) {
+            if (exportData.status === completedStatus) {
               return resolve(exportData);
             }
 
-            if (exportData.status === EXPORT_STATUSES.failed) {
+            if (exportData.status === failedStatus) {
               return reject();
             }
 
-            return resolve(this.waitGeneratingCsvFile({ id, ...params }));
+            return resolve(this.waitGeneratingFile({ id, ...params }));
           } catch (err) {
             return reject(err);
           }

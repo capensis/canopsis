@@ -2,6 +2,7 @@ package pbehaviorics
 
 import (
 	"context"
+
 	pbehaviorapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -38,7 +39,7 @@ func (s *store) FindMinPriority(ctx context.Context) (int64, error) {
 }
 
 func (s *store) findPriority(ctx context.Context, desc bool) (int64, error) {
-	coll := s.dbClient.Collection(pbehavior.TypeCollectionName)
+	coll := s.dbClient.Collection(mongo.PbehaviorTypeMongoCollection)
 	sort := 1
 	if desc {
 		sort = -1

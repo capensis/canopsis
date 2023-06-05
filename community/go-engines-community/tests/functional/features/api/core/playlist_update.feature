@@ -8,7 +8,7 @@ Feature: Update an playlist
     """json
     {
       "fullscreen": false,
-      "name": "test-playlist-to-update",
+      "name": "test-playlist-to-update-name-updated",
       "tabs_list": [
         "test-tab-to-playlist-edit-1"
       ],
@@ -24,7 +24,10 @@ Feature: Update an playlist
     """json
     {
       "_id": "test-playlist-to-update",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1608284568,
       "enabled": false,
       "fullscreen": false,
@@ -32,10 +35,35 @@ Feature: Update an playlist
         "value": 120,
         "unit": "m"
       },
-      "name": "test-playlist-to-update",
+      "name": "test-playlist-to-update-name-updated",
       "tabs_list": [
         "test-tab-to-playlist-edit-1"
       ]
+    }
+    """
+    When I do GET /api/v4/permissions?search=test-playlist-to-update
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-playlist-to-update",
+          "name": "test-playlist-to-update",
+          "description": "Rights on playlist : test-playlist-to-update-name-updated",
+          "playlist": {
+            "_id": "test-playlist-to-update",
+            "name": "test-playlist-to-update-name-updated"
+          },
+          "type": "RW"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
     }
     """
 

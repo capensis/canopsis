@@ -51,10 +51,26 @@ func (e *engine) AddRoutine(v Routine) {
 	e.routines = append(e.routines, v)
 }
 
+func (e *engine) AddDeferFunc(deferFunc func(ctx context.Context)) {
+	if deferFunc == nil {
+		return
+	}
+	if e.deferFunc == nil {
+		e.deferFunc = deferFunc
+		return
+	}
+
+	prev := e.deferFunc
+	e.deferFunc = func(ctx context.Context) {
+		prev(ctx)
+		deferFunc(ctx)
+	}
+}
+
 func (e *engine) Run(ctx context.Context) error {
 	e.logger.Info().
 		Int("consumers", len(e.consumers)).
-		Int("periodical workers", len(e.periodicalWorkers)).
+		Int("periodical_workers", len(e.periodicalWorkers)).
 		Int("routines", len(e.routines)).
 		Msg("engine started")
 	defer e.logger.Info().Msg("engine stopped")
@@ -111,7 +127,20 @@ func (e *engine) Run(ctx context.Context) error {
 
 	for _, r := range e.routines {
 		routine := r
-		g.Go(func() error {
+		g.Go(func() (resErr error) {
+			defer func() {
+				if r := recover(); r != nil {
+					var err error
+					var ok bool
+					if err, ok = r.(error); !ok {
+						err = fmt.Errorf("%v", r)
+					}
+
+					e.logger.Err(err).Msgf("routine is recovered from panic\n%s\n", debug.Stack())
+					resErr = fmt.Errorf("routine is recovered from panic: %w", err)
+				}
+			}()
+
 			return routine(ctx)
 		})
 	}
@@ -156,7 +185,7 @@ func (e *engine) runPeriodicalWorker(
 					e.logger.Error().
 						Str("worker", name).
 						Time("start", start).
-						Str("spent time", time.Since(start).String()).
+						Str("spent_time", time.Since(start).String()).
 						Msg("previous run still in progress, skip periodical worker")
 				}
 
@@ -178,7 +207,7 @@ func (e *engine) runPeriodicalWorker(
 			e.logger.Info().
 				Str("worker", name).
 				Time("start", start).
-				Str("spent time", d.String()).
+				Str("spent_time", d.String()).
 				Msg("periodical worker continues to work properly")
 		}
 

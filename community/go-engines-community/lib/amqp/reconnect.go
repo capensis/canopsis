@@ -1,6 +1,7 @@
 package amqp
 
 import (
+	"context"
 	"fmt"
 	"sync"
 	"time"
@@ -285,15 +286,16 @@ func (ch *baseChannel) Consume(
 	return res, nil
 }
 
-// Publish sends a message.
+// PublishWithContext sends a message.
 // If connection or channel is closed it waits reconnection.
-func (ch *baseChannel) Publish(
+func (ch *baseChannel) PublishWithContext(
+	ctx context.Context,
 	exchange, key string,
 	mandatory, immediate bool,
 	msg amqp.Publishing,
 ) error {
 	return ch.retry(func() error {
-		return ch.amqpCh.Publish(exchange, key, mandatory, immediate, msg)
+		return ch.amqpCh.PublishWithContext(ctx, exchange, key, mandatory, immediate, msg)
 	})
 }
 

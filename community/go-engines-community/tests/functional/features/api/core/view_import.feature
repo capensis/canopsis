@@ -101,7 +101,10 @@ Feature: Import views
       "data": [
         {
           "title": "test-viewgroup-to-import-1-title",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "views": [
             {
               "title": "test-view-to-import-1-title",
@@ -115,13 +118,19 @@ Feature: Import views
               "tags": [
                 "test-view-to-import-1-tag"
               ],
-              "author": "root"
+              "author": {
+                "_id": "root",
+                "name": "root"
+              }
             }
           ]
         },
         {
           "title": "test-viewgroup-to-import-1-2-title",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "views": []
         }
       ],
@@ -150,7 +159,10 @@ Feature: Import views
       "tags": [
         "test-view-to-import-1-tag"
       ],
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "tabs": [
         {
           "title": "test-tab-to-import-1-title",
@@ -175,7 +187,10 @@ Feature: Import views
                 {
                   "title": "test-widgetfilter-to-import-1-title",
                   "is_private": false,
-                  "author": "root",
+                  "author": {
+                    "_id": "root",
+                    "name": "root"
+                  },
                   "alarm_pattern": [
                     [
                       {
@@ -191,7 +206,10 @@ Feature: Import views
                 {
                   "title": "test-widgetfilter-to-import-2-title",
                   "is_private": false,
-                  "author": "root",
+                  "author": {
+                    "_id": "root",
+                    "name": "root"
+                  },
                   "entity_pattern": [
                     [
                       {
@@ -205,14 +223,23 @@ Feature: Import views
                   ]
                 }
               ],
-              "author": "root"
+              "author": {
+                "_id": "root",
+                "name": "root"
+              }
             }
           ],
-          "author": "root"
+          "author": {
+            "_id": "root",
+            "name": "root"
+          }
         },
         {
           "title": "test-tab-to-import-1-2-title",
-          "author": "root"
+          "author": {
+            "_id": "root",
+            "name": "root"
+          }
         }
       ]
     }

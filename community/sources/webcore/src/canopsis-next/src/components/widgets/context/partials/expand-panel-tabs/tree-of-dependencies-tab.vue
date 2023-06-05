@@ -1,17 +1,9 @@
 <template lang="pug">
-  v-card.secondary.lighten-2(flat)
-    v-card-text
-      service-dependencies.pa-3(
-        :root="rootDependency",
-        :columns="widget.parameters.serviceDependenciesColumns",
-        openable-root
-      )
+  service-dependencies(:root="item", :columns="columns", openable-root)
 </template>
 
 <script>
-import ServiceDependencies from '@/components/other/service/table/service-dependencies.vue';
-
-import { serviceToServiceDependency } from '@/helpers/treeview/service-dependencies';
+import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';
 
 export default {
   components: {
@@ -22,14 +14,9 @@ export default {
       type: Object,
       required: true,
     },
-    widget: {
-      type: Object,
-      required: true,
-    },
-  },
-  computed: {
-    rootDependency() {
-      return serviceToServiceDependency(this.item);
+    columns: {
+      type: Array,
+      default: () => [],
     },
   },
 };

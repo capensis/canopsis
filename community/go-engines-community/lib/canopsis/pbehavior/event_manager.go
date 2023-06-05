@@ -54,7 +54,7 @@ func (r eventManager) GetEventType(resolveResult ResolveResult, curPbehaviorInfo
 			"Pbehavior %s. Type: %s. Reason: %s.",
 			curPbehaviorInfo.Name,
 			curPbehaviorInfo.TypeName,
-			curPbehaviorInfo.Reason,
+			curPbehaviorInfo.ReasonName,
 		)
 	} else {
 		if curPbehaviorInfo.IsDefaultActive() {
@@ -67,7 +67,7 @@ func (r eventManager) GetEventType(resolveResult ResolveResult, curPbehaviorInfo
 			"Pbehavior %s. Type: %s. Reason: %s.",
 			resolveResult.ResolvedPbhName,
 			resolvedType.Name,
-			resolveResult.ResolvedPbhReason,
+			resolveResult.ResolvedPbhReasonName,
 		)
 	}
 
@@ -87,7 +87,8 @@ func NewPBehaviorInfo(time types.CpsTime, result ResolveResult) types.PbehaviorI
 		Timestamp:     &time,
 		ID:            result.ResolvedPbhID,
 		Name:          result.ResolvedPbhName,
-		Reason:        result.ResolvedPbhReason,
+		ReasonName:    result.ResolvedPbhReasonName,
+		ReasonID:      result.ResolvedPbhReasonID,
 		TypeID:        result.ResolvedType.ID,
 		TypeName:      result.ResolvedType.Name,
 		CanonicalType: result.ResolvedType.Type,
