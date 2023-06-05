@@ -96,8 +96,8 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event typ
 		var childAlarms []types.Alarm
 		worstState := types.CpsNumber(types.AlarmStateMinor)
 
-		if event.MetaAlarmChildren != nil {
-			err := p.adapter.GetOpenedAlarmsByIDs(ctx, *event.MetaAlarmChildren, &childAlarms)
+		if len(event.MetaAlarmChildren) > 0 {
+			err := p.adapter.GetOpenedAlarmsByIDs(ctx, event.MetaAlarmChildren, &childAlarms)
 			if err != nil {
 				return fmt.Errorf("cannot fetch children alarms: %w", err)
 			}
