@@ -523,10 +523,14 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-second-3-name",
-      "config": "test-job-config-to-run-manual-vtom-job",
+      "config": "test-job-config-to-run-manual-vtom-job-1",
       "job_id": "test-job-succeeded",
       "payload": "{\"parameters\": [\"{{ `{{ .Alarm.Value.Resource }}` }}\",\"{{ `{{ .Entity.ID }}` }}\"]}",
-      "multiple_executions": false
+      "multiple_executions": false,
+      "job_wait_interval": {
+        "value": 8,
+        "unit": "s"
+      }
     }
     """
     Then the response code should be 201
@@ -651,10 +655,14 @@ Feature: run a job
     """json
     {
       "name": "test-job-to-job-execution-start-second-4-name",
-      "config": "test-job-config-to-run-manual-vtom-job",
+      "config": "test-job-config-to-run-manual-vtom-job-2",
       "job_id": "test-job-failed",
       "payload": "{\"parameters\": [\"{{ `{{ .Alarm.Value.Resource }}` }}\",\"{{ `{{ .Entity.ID }}` }}\"]}",
-      "multiple_executions": false
+      "multiple_executions": false,
+      "job_wait_interval": {
+        "value": 8,
+        "unit": "s"
+      }
     }
     """
     Then the response code should be 201
