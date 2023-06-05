@@ -4,11 +4,13 @@
     v-validate="rules",
     :is="component",
     :items="availableRoles",
-    :label="label || $tc('common.role')"
+    :label="label || $tc('common.role')",
     :loading="pending",
     :name="name",
     :error-messages="errors.collect(name)",
     :disabled="disabled",
+    :multiple="multiple",
+    :chips="chips",
     item-text="name",
     item-value="_id",
     return-object
@@ -27,7 +29,7 @@ export default {
   inject: ['$validator'],
   props: {
     value: {
-      type: [Object, String],
+      type: [Object, String, Array],
       required: false,
     },
     label: {
@@ -47,6 +49,14 @@ export default {
       default: false,
     },
     autocomplete: {
+      type: Boolean,
+      default: false,
+    },
+    multiple: {
+      type: Boolean,
+      default: false,
+    },
+    chips: {
       type: Boolean,
       default: false,
     },

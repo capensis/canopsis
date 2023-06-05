@@ -1,6 +1,8 @@
 import { THEMES_NAMES } from '@/config';
 import { GROUPS_NAVIGATION_TYPES } from '@/constants';
 
+import { mapIds } from '@/helpers/array';
+
 /**
  * @typedef {Object} DefaultView
  * @property {string} _id
@@ -13,12 +15,12 @@ import { GROUPS_NAVIGATION_TYPES } from '@/constants';
  * @property {string} firstname
  * @property {string} lastname
  * @property {string} password
- * @property {Role} role
+ * @property {Role[]} roles
  * @property {string} email
  * @property {boolean} enable
  * @property {Object} ui_tours
  * @property {DefaultView} defaultview
- * @property {string} groups_navigation_type
+ * @property {string} ui_groups_navigation_type
  * @property {string} ui_language
  * @property {string} ui_theme
  */
@@ -26,7 +28,11 @@ import { GROUPS_NAVIGATION_TYPES } from '@/constants';
 /**
  * @typedef {User} UserForm
  * @property {string} defaultview
- * @property {string} role
+ */
+
+/**
+ * @typedef {UserForm} UserRequest
+ * @property {string[]} roles
  */
 
 /**
@@ -42,7 +48,7 @@ export const userToForm = (user = {}) => ({
   lastname: user.lastname ?? '',
   email: user.email ?? '',
   password: user.password ?? '',
-  role: user.role,
+  roles: user.roles || [],
   enable: !!user.enable,
   defaultview: user.defaultview ? user.defaultview._id : '',
   ui_language: user.ui_language ?? '',
@@ -54,11 +60,11 @@ export const userToForm = (user = {}) => ({
 /**
  * Convert user form to user object
  *
- * @param {UserForm} [form = {}]
+ * @param {UserForm} form
  * @returns {User}
  */
-export const formToUser = (form = {}) => ({
+export const formToUserRequest = form => ({
   ...form,
 
-  role: form.role ? form.role._id : '',
+  roles: mapIds(form.roles),
 });
