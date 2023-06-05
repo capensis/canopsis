@@ -1,17 +1,10 @@
 import { COLORS } from '@/config';
 
-import { PBEHAVIOR_TYPE_TYPES, WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE } from '@/constants';
+import { PBEHAVIOR_ORIGINS, PBEHAVIOR_TYPE_TYPES, WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE } from '@/constants';
 
-import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
 import uid from '@/helpers/uid';
-
-/**
- * Check if pbehavior is active
- *
- * @param {Pbehavior} pbehavior
- * @return {boolean}
- */
-export const isActivePbehavior = pbehavior => pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.active;
+import { formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
+import { getNowTimestamp } from '@/helpers/date/date';
 
 /**
  * Check if pbehavior is paused
@@ -22,12 +15,16 @@ export const isActivePbehavior = pbehavior => pbehavior.type.type === PBEHAVIOR_
 export const isPausedPbehavior = pbehavior => pbehavior.type.type === PBEHAVIOR_TYPE_TYPES.pause;
 
 /**
- * Check if pbehaviors have a active type
+ * Check is not active pbehavior type
  *
- * @param {Pbehavior[]} pbehaviors
- * @return {boolean}
+ * @param {string} type
+ * @returns {boolean}
  */
-export const hasActivePbehavior = pbehaviors => pbehaviors.some(isActivePbehavior);
+export const isNotActivePbehaviorType = type => [
+  PBEHAVIOR_TYPE_TYPES.pause,
+  PBEHAVIOR_TYPE_TYPES.inactive,
+  PBEHAVIOR_TYPE_TYPES.maintenance,
+].includes(type);
 
 /**
  * Check if pbehaviors have a paused type
@@ -49,14 +46,18 @@ export const hasPausedPbehavior = pbehaviors => pbehaviors.some(isPausedPbehavio
 export const createDowntimePbehavior = ({ entity, reason, comment, type }) => pbehaviorToRequest(formToPbehavior({
   reason,
   type,
+  origin: PBEHAVIOR_ORIGINS.serviceWeather,
   color: COLORS.secondary,
   name: `${WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE}-${entity.name}-${uid()}`,
-  tstart: new Date(),
-  tstop: null,
-  comments: [{
-    message: comment,
-  }],
-  filter: {
-    _id: { $in: [entity._id] },
-  },
+  tstart: getNowTimestamp(),
+  comment,
+  entity: entity._id,
 }));
+
+/**
+ * Get color for pbehavior
+ *
+ * @param pbehavior
+ * @returns {string}
+ */
+export const getPbehaviorColor = (pbehavior = {}) => pbehavior.color || pbehavior.type?.color || COLORS.secondary;

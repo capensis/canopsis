@@ -1,6 +1,8 @@
 <template lang="pug">
   settings-button-field(
     :is-empty="isValueEmpty",
+    addable,
+    removable,
     @create="showEditLiveReportingModal",
     @edit="showEditLiveReportingModal",
     @delete="removeLiveReporting"

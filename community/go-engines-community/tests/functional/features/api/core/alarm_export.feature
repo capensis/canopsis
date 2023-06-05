@@ -6,11 +6,15 @@ Feature: Export alarms
     When I do POST /api/v4/alarm-export:
     """json
     {
-      "search": "test-alarm-to-export",
+      "search": "test-resource-to-alarm-export",
       "fields": [
          {"name": "_id", "label": "ID"},
          {"name": "entity._id", "label": "Entity"},
          {"name": "entity.notexist", "label": "Not found field"},
+         {"name": "v.connector", "label": "Connector"},
+         {"name": "v.connector_name", "label": "Connector name"},
+         {"name": "v.component", "label": "Component"},
+         {"name": "v.resource", "label": "Resource"},
          {"name": "v.state.val", "label": "State"},
          {"name": "v.status.val", "label": "Status"},
          {"name": "t", "label": "Date"},
@@ -34,9 +38,9 @@ Feature: Export alarms
     Then the response code should be 200
     Then the response raw body should be:
     """csv
-    ID,Entity,Not found field,State,Status,Date,Ack date,Infos,Not found infos,Not found links
-    test-alarm-to-export-2,test-entity-to-export-resource-2/test-entity-to-export-component,,minor,ongoing,10 Aug 2020 05:30 CEST,,{},,
-    test-alarm-to-export-1,test-entity-to-export-resource-1/test-entity-to-export-component,,critical,ongoing,09 Aug 2020 05:12 CEST,10 Aug 2020 06:17 CEST,"{""test-entity-to-export-resource-1-info-1"":{""name"":""test-entity-to-export-resource-1-info-1-name"",""description"":""test-entity-to-export-resource-1-info-1-description"",""value"":""test-entity-to-export-resource-1-info-1-value""}}",,
+    ID,Entity,Not found field,Connector,Connector name,Component,Resource,State,Status,Date,Ack date,Infos,Not found infos,Not found links
+    test-alarm-to-export-2,test-resource-to-alarm-export-2/test-component-default,,test-connector-default,test-connector-default-name,test-component-default,test-resource-to-alarm-export-2,minor,ongoing,10 Aug 2020 05:30 CEST,,{},,
+    test-alarm-to-export-1,test-resource-to-alarm-export-1/test-component-default,,test-connector-default,test-connector-default-name,test-component-default,test-resource-to-alarm-export-1,critical,ongoing,09 Aug 2020 05:12 CEST,10 Aug 2020 06:17 CEST,"{""test-resource-to-alarm-export-1-info-1"":{""description"":""test-resource-to-alarm-export-1-info-1-description"",""name"":""test-resource-to-alarm-export-1-info-1-name"",""value"":""test-resource-to-alarm-export-1-info-1-value""}}",,
 
     """
 

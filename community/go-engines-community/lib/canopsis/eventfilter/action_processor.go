@@ -1,24 +1,33 @@
 package eventfilter
 
 import (
-	"bytes"
+	"context"
 	"fmt"
-	"text/template"
+	"reflect"
+	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 type actionProcessor struct {
-	buf bytes.Buffer
+	templateExecutor  template.Executor
+	techMetricsSender techmetrics.Sender
 }
 
-func NewActionProcessor() ActionProcessor {
-	return &actionProcessor{buf: bytes.Buffer{}}
+func NewActionProcessor(
+	templateExecutor template.Executor,
+	sender techmetrics.Sender,
+) ActionProcessor {
+	return &actionProcessor{
+		templateExecutor:  templateExecutor,
+		techMetricsSender: sender,
+	}
 }
 
-func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWrapper RegexMatchWrapper, externalData map[string]interface{}, cfgTimezone *config.TimezoneConfig) (types.Event, error) {
+func (p *actionProcessor) Process(ctx context.Context, action Action, event types.Event, regexMatchWrapper RegexMatchWrapper, externalData map[string]interface{}) (types.Event, error) {
 	switch action.Type {
 	case ActionSetField:
 		err := event.SetField(action.Name, action.Value)
@@ -29,14 +38,13 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWr
 			return event, ErrShouldBeAString
 		}
 
-		value, err := p.executeTpl(
+		value, err := p.templateExecutor.Execute(
 			templateStr,
 			Template{
 				Event:             event,
 				RegexMatchWrapper: regexMatchWrapper,
 				ExternalData:      externalData,
-			},
-			cfgTimezone,
+			}.GetTemplate(),
 		)
 		if err != nil {
 			return event, err
@@ -52,7 +60,7 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWr
 			return event, types.ErrInvalidInfoType
 		}
 
-		*event.Entity, entityUpdated = setEntityInfo(*event.Entity, action.Value, action.Name, action.Description)
+		*event.Entity, entityUpdated = p.setEntityInfo(*event.Entity, action.Value, action.Name, action.Description)
 
 		event.IsEntityUpdated = event.IsEntityUpdated || entityUpdated
 
@@ -63,21 +71,20 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWr
 			return event, ErrShouldBeAString
 		}
 
-		value, err := p.executeTpl(
+		value, err := p.templateExecutor.Execute(
 			templateStr,
 			Template{
 				Event:             event,
 				RegexMatchWrapper: regexMatchWrapper,
 				ExternalData:      externalData,
-			},
-			cfgTimezone,
+			}.GetTemplate(),
 		)
 		if err != nil {
 			return event, err
 		}
 
 		entityUpdated := false
-		*event.Entity, entityUpdated = setEntityInfo(*event.Entity, value, action.Name, action.Description)
+		*event.Entity, entityUpdated = p.setEntityInfo(*event.Entity, value, action.Name, action.Description)
 
 		event.IsEntityUpdated = event.IsEntityUpdated || entityUpdated
 
@@ -133,7 +140,7 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWr
 		}
 
 		entityUpdated := false
-		*event.Entity, entityUpdated = setEntityInfo(*event.Entity, value, action.Name, action.Description)
+		*event.Entity, entityUpdated = p.setEntityInfo(*event.Entity, value, action.Name, action.Description)
 
 		event.IsEntityUpdated = event.IsEntityUpdated || entityUpdated
 
@@ -143,42 +150,26 @@ func (p *actionProcessor) Process(action Action, event types.Event, regexMatchWr
 	return event, fmt.Errorf("action type = %s is invalid", action.Type)
 }
 
-func (p *actionProcessor) executeTpl(tplText string, params TemplateGetter, cfgTimezone *config.TimezoneConfig) (string, error) {
-	tpl, err := template.New("tpl").Option("missingkey=error").Funcs(types.GetTemplateFunc(cfgTimezone)).Parse(tplText)
-	if err != nil {
-		return "", err
+func (p *actionProcessor) setEntityInfo(entity types.Entity, value interface{}, name, description string) (types.Entity, bool) {
+	if info, ok := entity.Infos[name]; ok {
+		if reflect.DeepEqual(info.Value, value) {
+			return entity, false
+		}
 	}
-
-	p.buf.Reset()
-
-	err = tpl.Execute(&p.buf, params.GetTemplate())
-	if err != nil {
-		return "", err
-	}
-
-	return p.buf.String(), nil
-}
-
-func setEntityInfo(entity types.Entity, value interface{}, name, description string) (types.Entity, bool) {
-	info, ok := entity.Infos[name]
-
-	entityUpdated := false
-	valueChanged := !ok || info.Value != value
-	if valueChanged {
-		entityUpdated = true
-	}
-
-	info.Name = name
-	info.Description = description
-	info.Value = value
 
 	if entity.Infos == nil {
-		entity.Infos = make(map[string]types.Info)
+		entity.Infos = make(map[string]types.Info, 1)
 	}
 
-	entity.Infos[name] = info
+	entity.Infos[name] = types.Info{
+		Name:        name,
+		Description: description,
+		Value:       value,
+	}
 
-	return entity, entityUpdated
+	p.techMetricsSender.SendCheEntityInfo(time.Now(), name)
+
+	return entity, true
 }
 
 var ErrShouldBeAString = fmt.Errorf("value should be a string")

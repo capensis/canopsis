@@ -1,0 +1,155 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`point-form-dialog Renders \`point-form-dialog\` with custom props 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="v-card v-sheet theme--light"
+    style="width: 400px;"
+  >
+    <div
+      class="v-card__title primary pa-2 white--text"
+    >
+      <div
+        class="layout justify-space-between align-center"
+      >
+        <h4>
+          Edit point
+        </h4>
+        <button
+          class="ma-0 ml-3 v-btn v-btn--icon v-btn--small theme--light"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light white--text"
+            >
+              close
+            </i>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div
+      class="v-card__text"
+    >
+      <point-form-stub
+        coordinates="true"
+        existsentities="[object Object]"
+        form="[object Object]"
+      />
+    </div>
+    <div
+      class="layout justify-end"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="v-btn v-btn--flat theme--light error--text"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Delete
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Submit
+        </div>
+      </button>
+    </div>
+  </div>
+</form>
+`;
+
+exports[`point-form-dialog Renders \`point-form-dialog\` with required props 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="v-card v-sheet theme--light"
+    style="width: 400px;"
+  >
+    <div
+      class="v-card__title primary pa-2 white--text"
+    >
+      <div
+        class="layout justify-space-between align-center"
+      >
+        <h4>
+          Add point
+        </h4>
+        <button
+          class="ma-0 ml-3 v-btn v-btn--icon v-btn--small theme--light"
+          type="button"
+        >
+          <div
+            class="v-btn__content"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light white--text"
+            >
+              close
+            </i>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div
+      class="v-card__text"
+    >
+      <point-form-stub
+        existsentities=""
+        form="[object Object]"
+      />
+    </div>
+    <div
+      class="layout justify-end"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <!---->
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Submit
+        </div>
+      </button>
+    </div>
+  </div>
+</form>
+`;

@@ -2,7 +2,7 @@ import { omit } from 'lodash';
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
 import { createInputStub } from '@unit/stubs/input';
@@ -19,6 +19,7 @@ import {
   EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_CSV_SEPARATORS,
   SORT_ORDERS,
+  TIME_UNITS,
   USERS_PERMISSIONS,
   SIDE_BARS,
   COLOR_INDICATOR_TYPES,
@@ -27,14 +28,21 @@ import {
 
 import ClickOutside from '@/services/click-outside';
 import { generateDefaultAlarmListWidget } from '@/helpers/entities';
-import { widgetToForm, formToWidget, getEmptyWidgetByType } from '@/helpers/forms/widgets/common';
-import { formWidgetColumnsToColumns } from '@/helpers/forms/widgets/alarm';
+import {
+  widgetToForm,
+  formToWidget,
+  getEmptyWidgetByType,
+  widgetParametersToForm, formToWidgetParameters,
+} from '@/helpers/forms/widgets/common';
+import { formToWidgetColumns, widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
 
 import AlarmSettings from '@/components/sidebars/settings/alarm.vue';
-
-const localVue = createVueInstance();
+import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/forms/widgets/alarm';
 
 const stubs = {
+  'widget-settings': true,
+  'widget-settings-item': true,
+  'widget-settings-group': true,
   'field-title': createInputStub('field-title'),
   'field-periodic-refresh': createInputStub('field-periodic-refresh'),
   'field-default-sort-column': createInputStub('field-default-sort-column'),
@@ -45,16 +53,21 @@ const stubs = {
   'field-remediation-instructions-filters': createInputStub('field-remediation-instructions-filters'),
   'field-live-reporting': createInputStub('field-live-reporting'),
   'field-info-popup': createInputStub('field-info-popup'),
-  'field-text-editor': createInputStub('field-text-editor'),
+  'field-text-editor-with-template': createInputStub('field-text-editor-with-template'),
   'field-grid-range-size': createInputStub('field-grid-range-size'),
   'field-switcher': createInputStub('field-switcher'),
-  'field-fast-ack-output': createInputStub('field-fast-ack-output'),
-  'field-enabled-limit': createInputStub('field-enabled-limit'),
+  'field-fast-action-output': createInputStub('field-fast-action-output'),
+  'field-number': createInputStub('field-number'),
+  'field-density': createInputStub('field-density'),
   'export-csv-form': createInputStub('export-csv-form'),
+  'charts-form': createInputStub('charts-form'),
   'v-btn': createButtonStub('v-btn'),
 };
 
 const snapshotStubs = {
+  'widget-settings': true,
+  'widget-settings-item': true,
+  'widget-settings-group': true,
   'field-title': true,
   'field-periodic-refresh': true,
   'field-default-sort-column': true,
@@ -65,37 +78,15 @@ const snapshotStubs = {
   'field-remediation-instructions-filters': true,
   'field-live-reporting': true,
   'field-info-popup': true,
-  'field-text-editor': true,
+  'field-text-editor-with-template': true,
   'field-grid-range-size': true,
   'field-switcher': true,
-  'field-fast-ack-output': true,
-  'field-enabled-limit': true,
+  'field-fast-action-output': true,
+  'field-number': true,
+  'field-density': true,
   'export-csv-form': true,
+  'charts-form': true,
 };
-
-const factory = (options = {}) => shallowMount(AlarmSettings, {
-  localVue,
-  stubs,
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(AlarmSettings, {
-  localVue,
-  stubs: snapshotStubs,
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
 
 const selectFieldTitle = wrapper => wrapper.find('input.field-title');
 const selectFieldPeriodicRefresh = wrapper => wrapper.find('input.field-periodic-refresh');
@@ -109,18 +100,40 @@ const selectFieldFilters = wrapper => wrapper.find('input.field-filters');
 const selectFieldRemediationInstructionsFilters = wrapper => wrapper.find('input.field-remediation-instructions-filters');
 const selectFieldLiveReporting = wrapper => wrapper.find('input.field-live-reporting');
 const selectFieldInfoPopups = wrapper => wrapper.find('input.field-info-popup');
-const selectFieldTextEditor = wrapper => wrapper.find('input.field-text-editor');
+const selectFieldTextEditorWithTemplate = wrapper => wrapper.find('input.field-text-editor-with-template');
 const selectFieldGridRangeSize = wrapper => wrapper.find('input.field-grid-range-size');
-const selectFieldHtmlEnabledSwitcher = wrapper => wrapper.findAll('input.field-switcher').at(0);
-const selectFieldAckNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(1);
-const selectFieldMultiAckEnabled = wrapper => wrapper.findAll('input.field-switcher').at(2);
-const selectFieldFastAckOutput = wrapper => wrapper.find('input.field-fast-ack-output');
-const selectFieldSnoozeNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(3);
-const selectFieldLinksCategoriesAsList = wrapper => wrapper.find('input.field-enabled-limit');
+const selectFieldClearFilterDisabled = wrapper => wrapper.findAll('input.field-switcher').at(0);
+const selectFieldHtmlEnabledSwitcher = wrapper => wrapper.findAll('input.field-switcher').at(1);
+const selectFieldAckNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(2);
+const selectFieldMultiAckEnabled = wrapper => wrapper.findAll('input.field-switcher').at(3);
+const selectFieldFastAckOutput = wrapper => wrapper.findAll('input.field-fast-action-output').at(0);
+const selectFieldFastCancelOutput = wrapper => wrapper.findAll('input.field-fast-action-output').at(1);
+const selectFieldSnoozeNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(4);
+const selectFieldInlineLinksCount = wrapper => wrapper.find('input.field-number');
 const selectFieldExportCsvForm = wrapper => wrapper.find('input.export-csv-form');
-const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher').at(5);
+const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher').at(6);
+const selectFieldKioskHideActions = wrapper => wrapper.findAll('input.field-switcher').at(7);
+const selectFieldKioskHideMassSelection = wrapper => wrapper.findAll('input.field-switcher').at(8);
+const selectFieldKioskHideToolbar = wrapper => wrapper.findAll('input.field-switcher').at(9);
+const selectChartsForm = wrapper => wrapper.findAll('input.charts-form').at(0);
 
 describe('alarm', () => {
+  const parentComponent = {
+    provide: {
+      $clickOutside: new ClickOutside(),
+    },
+  };
+
+  const factory = generateShallowRenderer(AlarmSettings, {
+    stubs,
+    parentComponent,
+  });
+
+  const snapshotFactory = generateRenderer(AlarmSettings, {
+    stubs: snapshotStubs,
+    parentComponent,
+  });
+
   const nowTimestamp = 1386435600000;
 
   mockDateNow(nowTimestamp);
@@ -130,16 +143,21 @@ describe('alarm', () => {
   const {
     createWidget,
     updateWidget,
-    copyWidget,
     fetchActiveView,
+    fetchUserPreference,
     activeViewModule,
     widgetModule,
     authModule,
+    userPreferenceModule,
+    widgetTemplateModule,
+    serviceModule,
+    infosModule,
   } = createSettingsMocks();
 
   const widget = {
     ...generateDefaultAlarmListWidget(),
 
+    _id: '3f8dba7c-f39e-42ae-912c-e78cb39669c5',
     tab: Faker.datatype.string(),
   };
 
@@ -154,17 +172,22 @@ describe('alarm', () => {
   const store = createMockedStoreModules([
     activeViewModule,
     widgetModule,
+    userPreferenceModule,
     authModule,
+    userPreferenceModule,
+    widgetTemplateModule,
+    serviceModule,
+    infosModule,
   ]);
 
   afterEach(() => {
     createWidget.mockReset();
     updateWidget.mockReset();
-    copyWidget.mockReset();
     fetchActiveView.mockReset();
+    fetchUserPreference.mockReset();
   });
 
-  it('Create widget with default parameters', async () => {
+  test('Create widget with default parameters', async () => {
     const localWidget = getEmptyWidgetByType(WIDGET_TYPES.alarmList);
 
     localWidget.tab = Faker.datatype.string();
@@ -199,7 +222,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Duplicate widget without changes', async () => {
+  test('Duplicate widget without changes', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -220,15 +243,14 @@ describe('alarm', () => {
     await submitWithExpects(wrapper, {
       fetchActiveView,
       hideSidebar: $sidebar.hide,
-      widgetMethod: copyWidget,
+      widgetMethod: createWidget,
       expectData: {
-        id: widget._id,
         data: omit(widget, ['_id']),
       },
     });
   });
 
-  it('Title changed after trigger field title', async () => {
+  test('Title changed after trigger field title', async () => {
     const newTitle = Faker.datatype.string();
 
     const wrapper = factory({
@@ -256,7 +278,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Periodic refresh changed after trigger field periodic refresh', async () => {
+  test('Periodic refresh changed after trigger field periodic refresh', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -288,7 +310,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Default sort column changed after trigger field default sort column', async () => {
+  test('Default sort column changed after trigger field default sort column', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -319,7 +341,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Widget columns changed after trigger field columns', async () => {
+  test('Widget columns changed after trigger field columns', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -333,7 +355,8 @@ describe('alarm', () => {
     const fieldColumns = selectFieldWidgetColumns(wrapper);
 
     const columns = [{
-      label: Faker.datatype.string(),
+      ...widgetColumnToForm(),
+
       value: Faker.datatype.string(),
     }];
 
@@ -345,12 +368,12 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetColumns', columns),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetColumns', formToWidgetColumns(columns)),
       },
     });
   });
 
-  it('Widget columns with `alarm.` prefix changed after trigger field columns', async () => {
+  test('Widget columns with `alarm.` prefix changed after trigger field columns', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -364,6 +387,8 @@ describe('alarm', () => {
     const fieldColumns = selectFieldWidgetColumns(wrapper);
 
     const columns = [{
+      ...widgetColumnToForm(),
+
       label: Faker.datatype.string(),
       value: `alarm.${Faker.datatype.string()}`,
       isHtml: false,
@@ -378,12 +403,12 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetColumns', formWidgetColumnsToColumns(columns)),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetColumns', formToWidgetColumns(columns)),
       },
     });
   });
 
-  it('Widget group columns changed after trigger field columns', async () => {
+  test('Widget group columns changed after trigger field columns', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -397,6 +422,8 @@ describe('alarm', () => {
     const fieldColumns = selectFieldWidgetGroupColumns(wrapper);
 
     const columns = [{
+      ...widgetColumnToForm(),
+
       label: Faker.datatype.string(),
       value: Faker.datatype.string(),
     }];
@@ -409,12 +436,12 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetGroupColumns', columns),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'widgetGroupColumns', formToWidgetColumns(columns)),
       },
     });
   });
 
-  it('Service dependencies columns changed after trigger field columns', async () => {
+  test('Service dependencies columns changed after trigger field columns', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -428,6 +455,8 @@ describe('alarm', () => {
     const fieldColumns = selectFieldServiceDependenciesColumns(wrapper);
 
     const columns = [{
+      ...widgetColumnToForm(),
+
       label: Faker.datatype.string(),
       value: Faker.datatype.string(),
     }];
@@ -440,12 +469,13 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'serviceDependenciesColumns', columns),
+        data:
+          getWidgetRequestWithNewParametersProperty(widget, 'serviceDependenciesColumns', formToWidgetColumns(columns)),
       },
     });
   });
 
-  it('Default elements per page changed after trigger field default elements per page', async () => {
+  test('Default elements per page changed after trigger field default elements per page', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -473,7 +503,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Opened changed after trigger opened and resolved field', async () => {
+  test('Opened changed after trigger opened and resolved field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -499,11 +529,63 @@ describe('alarm', () => {
     });
   });
 
-  it('Filters changed after trigger filters field', async () => {
+  test('Filters changed after trigger update:filters on filters field', async () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         activeViewModule,
         widgetModule,
+        userPreferenceModule,
+        widgetTemplateModule,
+        serviceModule,
+        infosModule,
+        {
+          ...authModule,
+          getters: {
+            currentUserPermissionsById: {
+              [USERS_PERMISSIONS.business.alarmsList.actions.listFilters]: {
+                actions: [],
+              },
+            },
+          },
+        },
+      ]),
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldFilters = selectFieldFilters(wrapper);
+
+    const filters = [{
+      title: Faker.datatype.string(),
+      filter: Faker.helpers.createTransaction(),
+    }];
+
+    fieldFilters.vm.$emit('update:filters', filters);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewProperty(widget, 'filters', filters),
+      },
+    });
+  });
+
+  test('Filter changed after trigger input on filters field', async () => {
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        activeViewModule,
+        widgetModule,
+        userPreferenceModule,
+        widgetTemplateModule,
+        serviceModule,
+        infosModule,
         {
           ...authModule,
           getters: {
@@ -538,21 +620,20 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewProperty(widget, 'parameters', {
-          ...widget.parameters,
-
-          mainFilterUpdatedAt: nowTimestamp,
-          mainFilter: filter,
-        }),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'mainFilter', filter),
       },
     });
   });
 
-  it('Instruction filters changed after trigger remediation instructions field', async () => {
+  test('Instruction filters changed after trigger remediation instructions field', async () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         activeViewModule,
         widgetModule,
+        userPreferenceModule,
+        widgetTemplateModule,
+        serviceModule,
+        infosModule,
         {
           ...authModule,
           getters: {
@@ -605,7 +686,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Live reporting changed after trigger live reporting field', async () => {
+  test('Live reporting changed after trigger live reporting field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -636,7 +717,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Info popup changed after trigger info popup field', async () => {
+  test('Info popup changed after trigger info popup field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -667,7 +748,7 @@ describe('alarm', () => {
     });
   });
 
-  it('More info template popup changed after trigger text field', async () => {
+  test('More info template changed after trigger text field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -678,11 +759,12 @@ describe('alarm', () => {
       },
     });
 
-    const fieldTextEditor = selectFieldTextEditor(wrapper);
+    const fieldTextEditor = selectFieldTextEditorWithTemplate(wrapper);
 
     const moreInfoTemplate = 'More info template';
+    const moreInfoTemplateTemplate = 'template-id';
 
-    fieldTextEditor.vm.$emit('input', moreInfoTemplate);
+    fieldTextEditor.vm.$emit('input', moreInfoTemplate, moreInfoTemplateTemplate);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -690,12 +772,20 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'moreInfoTemplate', moreInfoTemplate),
+        data: getWidgetRequestWithNewProperty(
+          widget,
+          'parameters',
+          {
+            ...widget.parameters,
+            moreInfoTemplate,
+            moreInfoTemplateTemplate,
+          },
+        ),
       },
     });
   });
 
-  it('Grid range changed after trigger grid range field', async () => {
+  test('Grid range changed after trigger grid range field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -723,7 +813,35 @@ describe('alarm', () => {
     });
   });
 
-  it('Html enabled on timeline changed after trigger switcher field', async () => {
+  test('Clear filter disabled changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldHtmlEnabledSwitcher = selectFieldClearFilterDisabled(wrapper);
+
+    const clearFilterDisabled = Faker.datatype.boolean();
+
+    fieldHtmlEnabledSwitcher.vm.$emit('input', clearFilterDisabled);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'clearFilterDisabled', clearFilterDisabled),
+      },
+    });
+  });
+
+  test('Html enabled on timeline changed after trigger switcher field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -751,7 +869,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Ack note required changed after trigger switcher field', async () => {
+  test('Ack note required changed after trigger switcher field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -779,7 +897,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Multi ack enabled changed after trigger switcher field', async () => {
+  test('Multi ack enabled changed after trigger switcher field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -807,7 +925,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Fast ack output changed after trigger fast ack output field', async () => {
+  test('Fast ack output changed after trigger fast ack output field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -818,14 +936,14 @@ describe('alarm', () => {
       },
     });
 
-    const fieldAckNoteRequired = selectFieldFastAckOutput(wrapper);
+    const fieldFastAckOutput = selectFieldFastAckOutput(wrapper);
 
     const fastAckOutput = {
       enabled: true,
       output: Faker.datatype.string(),
     };
 
-    fieldAckNoteRequired.vm.$emit('input', fastAckOutput);
+    fieldFastAckOutput.vm.$emit('input', fastAckOutput);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -838,7 +956,38 @@ describe('alarm', () => {
     });
   });
 
-  it('Snooze note required changed after trigger switcher field', async () => {
+  test('Fast cancel output changed after trigger fast cancel output field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldFastCancelOutput = selectFieldFastCancelOutput(wrapper);
+
+    const fastAckOutput = {
+      enabled: true,
+      output: Faker.datatype.string(),
+    };
+
+    fieldFastCancelOutput.vm.$emit('input', fastAckOutput);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'fastCancelOutput', fastAckOutput),
+      },
+    });
+  });
+
+  test('Snooze note required changed after trigger switcher field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -866,7 +1015,7 @@ describe('alarm', () => {
     });
   });
 
-  it('Link categories as list required changed after trigger links categories as list field', async () => {
+  test('Inline links count changed after trigger', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -877,14 +1026,10 @@ describe('alarm', () => {
       },
     });
 
-    const fieldLinksCategoriesAsList = selectFieldLinksCategoriesAsList(wrapper);
+    const fieldInlineLinksCount = selectFieldInlineLinksCount(wrapper);
+    const inlineLinksCount = 4;
 
-    const linksCategoriesAsList = {
-      enabled: Faker.datatype.boolean(),
-      limit: Faker.datatype.number(),
-    };
-
-    fieldLinksCategoriesAsList.vm.$emit('input', linksCategoriesAsList);
+    fieldInlineLinksCount.vm.$emit('input', inlineLinksCount);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -892,12 +1037,12 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'linksCategoriesAsList', linksCategoriesAsList),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'inlineLinksCount', inlineLinksCount),
       },
     });
   });
 
-  it('Export parameters changed after trigger export csv form', async () => {
+  test('Export parameters changed after trigger export csv form', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -911,7 +1056,7 @@ describe('alarm', () => {
     const fieldExportCsvForm = selectFieldExportCsvForm(wrapper);
 
     const exportProperties = {
-      ...widget.parameters,
+      ...widgetParametersToForm(widget),
       exportCsvSeparator: EXPORT_CSV_SEPARATORS.semicolon,
       exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
       widgetExportColumns: [],
@@ -925,12 +1070,20 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewProperty(widget, 'parameters', exportProperties),
+        data:
+          getWidgetRequestWithNewProperty(
+            widget,
+            'parameters',
+            formToWidgetParameters({
+              type: WIDGET_TYPES.alarmList,
+              parameters: exportProperties,
+            }),
+          ),
       },
     });
   });
 
-  it('Sticky header changed after trigger switcher field', async () => {
+  test('Sticky header changed after trigger switcher field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -958,7 +1111,117 @@ describe('alarm', () => {
     });
   });
 
-  it('Renders `alarm` widget settings with default props', async () => {
+  /**
+   * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/4390
+   */
+  test('Invalid periodic refresh converted to valid object', async () => {
+    const periodicRefresh = {
+      value: 1,
+      unit: {},
+      enabled: false,
+    };
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar: {
+          ...sidebar,
+
+          config: {
+            widget: {
+              ...widget,
+              parameters: {
+                ...widget.parameters,
+                periodic_refresh: periodicRefresh,
+              },
+            },
+          },
+        },
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'periodic_refresh', {
+          ...periodicRefresh,
+          unit: TIME_UNITS.second,
+        }),
+      },
+    });
+  });
+
+  test('Kiosk fields changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldKioskHideActions = selectFieldKioskHideActions(wrapper);
+    const fieldKioskHideMassSelection = selectFieldKioskHideMassSelection(wrapper);
+    const fieldKioskHideToolbar = selectFieldKioskHideToolbar(wrapper);
+
+    const hideActions = Faker.datatype.boolean();
+    const hideMassSelection = Faker.datatype.boolean();
+    const hideToolbar = Faker.datatype.boolean();
+
+    fieldKioskHideActions.vm.$emit('input', hideActions);
+    fieldKioskHideMassSelection.vm.$emit('input', hideMassSelection);
+    fieldKioskHideToolbar.vm.$emit('input', hideToolbar);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'kiosk', {
+          hideActions,
+          hideMassSelection,
+          hideToolbar,
+        }),
+      },
+    });
+  });
+
+  test('Charts fields changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const chartsForm = selectChartsForm(wrapper);
+    const newCharts = [formToAlarmListChart(alarmListChartToForm())];
+
+    chartsForm.vm.$emit('input', newCharts);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'charts', newCharts),
+      },
+    });
+  });
+
+  test('Renders `alarm` widget settings with default props', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -971,11 +1234,15 @@ describe('alarm', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarm` widget settings with all rights', async () => {
+  test('Renders `alarm` widget settings with all rights', async () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         activeViewModule,
         widgetModule,
+        userPreferenceModule,
+        widgetTemplateModule,
+        infosModule,
+        serviceModule,
         {
           ...authModule,
           getters: {
@@ -1010,7 +1277,7 @@ describe('alarm', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarm` widget settings with custom props', async () => {
+  test('Renders `alarm` widget settings with custom props', async () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -1037,7 +1304,6 @@ describe('alarm', () => {
                 periodic_refresh: { value: 30, unit: 's', enabled: true },
                 viewFilters: [],
                 mainFilter: null,
-                mainFilterUpdatedAt: 0,
                 liveReporting: {},
                 sort: { order: SORT_ORDERS.desc, column: 'connector' },
                 opened: true,

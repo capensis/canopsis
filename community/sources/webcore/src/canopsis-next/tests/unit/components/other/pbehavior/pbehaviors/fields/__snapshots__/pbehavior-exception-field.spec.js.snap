@@ -1,0 +1,158 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with custom props 1`] = `
+<div
+  class="layout row wrap justify-space-between"
+>
+  <div
+    class="flex xs6"
+  >
+    <date-time-splitted-range-picker-field-stub
+      disabled="true"
+      end="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)"
+      endlabel="End"
+      endrules="[object Object]"
+      name="dates"
+      start="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)"
+      startlabel="Begin"
+      startrules="[object Object]"
+    />
+  </div>
+  <div
+    class="flex pl-2 xs6"
+  >
+    <c-pbehavior-type-field-stub
+      disabled="true"
+      name="type"
+      return-object="return-object"
+      value=""
+    />
+  </div>
+  <!---->
+  <div
+    class="flex xs12"
+  >
+    <div
+      class="v-input mt-0 v-input--selection-controls v-input--checkbox v-input--hide-details v-input--is-disabled theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <input
+              aria-checked="false"
+              aria-label="Whole day"
+              disabled="disabled"
+              role="checkbox"
+              type="checkbox"
+              value=""
+            />
+            <div
+              class="v-input--selection-controls__ripple"
+            />
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              check_box_outline_blank
+            </i>
+          </div>
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Whole day
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with default props 1`] = `
+<div
+  class="layout row wrap justify-space-between"
+>
+  <div
+    class="flex xs6"
+  >
+    <date-time-splitted-range-picker-field-stub
+      endlabel="End"
+      endrules="[object Object]"
+      name="dates"
+      startlabel="Begin"
+      startrules="[object Object]"
+    />
+  </div>
+  <!---->
+  <div
+    class="flex xs1"
+  >
+    <button
+      class="v-btn v-btn--icon theme--light error"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
+          delete
+        </i>
+      </div>
+    </button>
+  </div>
+  <div
+    class="flex xs12"
+  >
+    <div
+      class="v-input mt-0 v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <input
+              aria-checked="false"
+              aria-label="Whole day"
+              role="checkbox"
+              type="checkbox"
+              value=""
+            />
+            <div
+              class="v-input--selection-controls__ripple"
+            />
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              check_box_outline_blank
+            </i>
+          </div>
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Whole day
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -1,42 +1,50 @@
 <template lang="pug">
   div
-    v-layout(align-center)
-      v-text-field(
-        v-field="form._id",
-        :label="$t('common.id')",
-        :error-messages="errors.collect('_id')",
-        :disabled="isDisabledIdField",
-        :readonly="isDisabledIdField",
-        name="_id",
-        @input="errors.remove('_id')"
-      )
-        v-tooltip(v-show="!isDisabledIdField", slot="append", left)
-          v-icon(slot="activator") help
-          span {{ $t('eventFilter.idHelp') }}
-    v-select(v-field="form.type", :items="ruleTypes", :label="$t('common.type')")
-    v-textarea(
-      v-field="form.description",
-      v-validate="'required'",
-      :label="$t('common.description')",
-      :error-messages="errors.collect('description')",
-      name="description"
-    )
-    c-priority-field(v-field="form.priority")
-    c-enabled-field(v-field="form.enabled")
-    patterns-list(v-field="form.patterns")
+    v-layout(row)
+      v-flex(xs8)
+        c-id-field.mr-3(
+          v-field="form._id",
+          :disabled="isDisabledIdField",
+          :help-text="$t('eventFilter.idHelp')"
+        )
+      v-flex(xs4)
+        c-event-filter-type-field.ml-3(v-field="form.type")
+    c-description-field(v-field="form.description", required)
+    v-layout(row, justify-space-between)
+      c-enabled-field(v-field="form.enabled")
+      c-priority-field(v-field="form.priority")
+    c-information-block(:title="$t('eventFilter.duringPeriod')")
+      event-filter-drop-intervals-field(v-field="form")
+    pbehavior-recurrence-rule-field.mb-3(v-field="form")
+    c-patterns-field(v-field="form.patterns", with-entity, with-event, some-required)
+
+    template(v-if="hasAdditionalOptions")
+      v-divider.my-3
+      c-information-block(v-if="isEnrichmentType", :title="$t('eventFilter.enrichmentOptions')")
+        event-filter-enrichment-form(v-field="form")
+      c-information-block(v-else-if="isChangeEntityType", :title="$t('eventFilter.changeEntityOptions')")
+        event-filter-change-entity-form(v-field="form.config")
 </template>
 
 <script>
-import { EVENT_FILTER_RULE_TYPES } from '@/constants';
+import { EVENT_FILTER_TYPES } from '@/constants';
 
-import { formMixin } from '@/mixins/form';
+import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
+import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-recurrence-rule-field.vue';
 
-import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
+import EventFilterEnrichmentForm from './partials/event-filter-enrichment-form.vue';
+import EventFilterChangeEntityForm from './partials/event-filter-change-entity-form.vue';
+import EventFilterDropIntervalsField from './partials/fields/event-filter-drop-intervals-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { PatternsList },
-  mixins: [formMixin],
+  components: {
+    EventFilterDropIntervalsField,
+    DateTimePickerField,
+    PbehaviorRecurrenceRuleField,
+    EventFilterEnrichmentForm,
+    EventFilterChangeEntityForm,
+  },
   model: {
     prop: 'form',
     event: 'input',
@@ -52,8 +60,16 @@ export default {
     },
   },
   computed: {
-    ruleTypes() {
-      return Object.values(EVENT_FILTER_RULE_TYPES);
+    isEnrichmentType() {
+      return this.form.type === EVENT_FILTER_TYPES.enrichment;
+    },
+
+    isChangeEntityType() {
+      return this.form.type === EVENT_FILTER_TYPES.changeEntity;
+    },
+
+    hasAdditionalOptions() {
+      return this.isEnrichmentType || this.isChangeEntityType;
     },
   },
 };

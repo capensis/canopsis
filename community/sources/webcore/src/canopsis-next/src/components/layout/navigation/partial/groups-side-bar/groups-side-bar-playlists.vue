@@ -1,15 +1,16 @@
 <template lang="pug">
   v-expansion-panel.sidebar-playlists(v-if="availablePlaylists.length", expand, focusable, dark)
     v-expansion-panel-content.secondary.lighten-1.white--text
-      div.panel-header(slot="header")
-        span {{ $t(`pageHeaders.${$constants.USERS_PERMISSIONS.technical.playlist}.title`) }}
+      template(#header="")
+        div.panel-header
+          span {{ $t(`pageHeaders.${$constants.USERS_PERMISSIONS.technical.playlist}.title`) }}
       router-link(
         v-for="playlist in availablePlaylists",
         :key="playlist._id",
         :title="playlist.name",
         :to="{ name: $constants.ROUTES_NAMES.playlist, params: { id: playlist._id } }"
       )
-        v-card.secondary.lighten-2
+        v-card.secondary.lighten-2.sidebar-playlists__button
           v-card-text
             v-layout(align-center, justify-space-between)
               v-flex
@@ -36,13 +37,17 @@ export default {
   .sidebar-playlists {
     padding: 10px;
     box-shadow: none;
+
+    &__button {
+      border-radius: 0;
+    }
   }
 
   a {
     color: inherit;
     text-decoration: none;
 
-  &.router-link-active /deep/ .v-card {
+  &.router-link-active ::v-deep .v-card {
      background-color: #73879a !important;
      border-color: #73879a !important;
    }

@@ -1,11 +1,11 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ config.title }}
-      template(slot="text")
+      template(#text="")
         alarm-status-rule-form(v-model="form", :flapping="config.flapping")
-      template(slot="actions")
+      template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled",
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { alarmStatusRuleToForm, formToAlarmStatusRule } from '@/helpers/forms/alarm-status-rule';
 
@@ -31,6 +31,7 @@ export default {
   name: MODALS.createAlarmStatusRule,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { AlarmStatusRuleForm, ModalWrapper },
   mixins: [

@@ -1,0 +1,71 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`mermaid-preview Renders \`mermaid-preview\` with custom props 1`] = `
+<c-zoom-overlay-stub
+  skip-alt="skip-alt"
+  skip-shift="skip-shift"
+>
+  <panzoom-stub
+    class="mermaid-preview"
+    helptext="Useful shortcuts:
+Ctrl + mouse wheel - zoom in/out
+Shift + mouse wheel - horizontal scroll
+Alt + mouse wheel - vertical scroll
+Ctrl + Left mouse click + drag - pan the area"
+    maxzoom="4"
+    minzoom="0.1"
+    movestep="20"
+    style="min-height: 20px;"
+    zoomstep="0.1"
+  >
+    <mermaid-code-preview-stub
+      class="mermaid-preview__preview"
+      config="[object Object]"
+      name="mermaid"
+      value="code"
+    />
+    <mermaid-points-preview-stub
+      class="mermaid-preview__points"
+      colorindicator="state"
+      iconsize="24"
+      pbehaviorenabled="true"
+      points="[object Object],[object Object]"
+      popupactions="true"
+      popuptemplate="template"
+    />
+  </panzoom-stub>
+</c-zoom-overlay-stub>
+`;
+
+exports[`mermaid-preview Renders \`mermaid-preview\` with required props 1`] = `
+<c-zoom-overlay-stub
+  skip-alt="skip-alt"
+  skip-shift="skip-shift"
+>
+  <panzoom-stub
+    class="mermaid-preview"
+    helptext="Useful shortcuts:
+Ctrl + mouse wheel - zoom in/out
+Shift + mouse wheel - horizontal scroll
+Alt + mouse wheel - vertical scroll
+Ctrl + Left mouse click + drag - pan the area"
+    maxzoom="4"
+    minzoom="0.1"
+    movestep="20"
+    style="min-height: 20px;"
+    zoomstep="0.1"
+  >
+    <mermaid-code-preview-stub
+      class="mermaid-preview__preview"
+      config="[object Object]"
+      name="mermaid"
+      value="code"
+    />
+    <mermaid-points-preview-stub
+      class="mermaid-preview__points"
+      iconsize="24"
+      points="[object Object],[object Object]"
+    />
+  </panzoom-stub>
+</c-zoom-overlay-stub>
+`;

@@ -14,12 +14,12 @@ export default {
     pending: false,
   },
   getters: {
-    getItemByWidget: (state, getters, rootState, rootGetters) => (widget) => {
-      const userPreference = rootGetters['entities/getItem'](ENTITIES_TYPES.userPreference, widget._id);
+    getItemByWidgetId: (state, getters, rootState, rootGetters) => (widgetId) => {
+      const userPreference = rootGetters['entities/getItem'](ENTITIES_TYPES.userPreference, widgetId);
 
       if (!userPreference) {
         return {
-          widget: widget._id,
+          widget: widgetId,
           content: {},
         };
       }

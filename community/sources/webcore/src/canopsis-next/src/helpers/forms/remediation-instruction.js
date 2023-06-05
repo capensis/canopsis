@@ -19,6 +19,12 @@ import { flattenErrorMap } from '@/helpers/forms/flatten-error-map';
 import { enabledToForm } from './shared/common';
 
 /**
+ * @typedef {
+ *   'stateinc' | 'statedec' | 'pbhenter' | 'pbhleave' | 'activate' | 'unsnooze'
+ * } RemediationInstructionAutoTrigger
+ */
+
+/**
  * @typedef {Object} RemediationInstructionStepOperation
  * @property {string} operation_id
  * @property {string} name
@@ -86,6 +92,7 @@ import { enabledToForm } from './shared/common';
 
 /**
  * @typedef {Object} RemediationInstructionAuto
+ * @property {RemediationInstructionAutoTrigger[]} triggers
  * @property {number} [priority]
  * @property {RemediationInstructionJob[]} [jobs]
  */
@@ -97,8 +104,8 @@ import { enabledToForm } from './shared/common';
  * @property {boolean} enabled
  * @property {string} description
  * @property {Duration} timeout_after_execution
- * @property {Array} [alarm_patterns]
- * @property {Array} [entity_patterns]
+ * @property {Array} [alarm_pattern]
+ * @property {Array} [entity_pattern]
  * @property {string[]} active_on_pbh
  * @property {string[]} disabled_on_pbh
  * @property {RemediationInstructionApproval} approval
@@ -117,6 +124,30 @@ import { enabledToForm } from './shared/common';
  * @property {string} [role]
  * @property {string} comment
  */
+
+/**
+ * Check instruction type is auto
+ *
+ * @param {RemediationInstruction} instruction
+ * @returns {boolean}
+ */
+export const isInstructionAuto = instruction => instruction.type === REMEDIATION_INSTRUCTION_TYPES.auto;
+
+/**
+ * Check instruction type is manual
+ *
+ * @param {RemediationInstruction} instruction
+ * @returns {boolean}
+ */
+export const isInstructionManual = instruction => instruction.type === REMEDIATION_INSTRUCTION_TYPES.manual;
+
+/**
+ * Check instruction type is simple manual
+ *
+ * @param {RemediationInstruction} instruction
+ * @returns {boolean}
+ */
+export const isInstructionSimpleManual = instruction => instruction.type === REMEDIATION_INSTRUCTION_TYPES.simpleManual;
 
 /**
  * Convert a remediation instruction step operation to form
@@ -205,29 +236,35 @@ const remediationInstructionJobsToForm = (jobs = [undefined]) => jobs.map(remedi
  * @param {RemediationInstruction} remediationInstruction
  * @returns {RemediationInstructionForm}
  */
-export const remediationInstructionToForm = (remediationInstruction = {}) => ({
-  name: remediationInstruction.name || '',
-  priority: remediationInstruction.priority || 0,
-  type: !isUndefined(remediationInstruction.type) ? remediationInstruction.type : REMEDIATION_INSTRUCTION_TYPES.manual,
-  enabled: enabledToForm(remediationInstruction.enabled),
-  timeout_after_execution: durationToForm(remediationInstruction.timeout_after_execution),
-  active_on_pbh: remediationInstruction.active_on_pbh
-    ? cloneDeep(remediationInstruction.active_on_pbh)
-    : [],
-  disabled_on_pbh: remediationInstruction.disabled_on_pbh
-    ? cloneDeep(remediationInstruction.disabled_on_pbh)
-    : [],
-  alarm_patterns: remediationInstruction.alarm_patterns
-    ? cloneDeep(remediationInstruction.alarm_patterns)
-    : [],
-  entity_patterns: remediationInstruction.entity_patterns
-    ? cloneDeep(remediationInstruction.entity_patterns)
-    : [],
-  description: remediationInstruction.description || '',
-  steps: remediationInstructionStepsToForm(remediationInstruction.steps),
-  approval: remediationInstructionApprovalToForm(remediationInstruction.approval),
-  jobs: remediationInstructionJobsToForm(remediationInstruction.jobs),
-});
+export const remediationInstructionToForm = (remediationInstruction = {}) => {
+  const form = {
+    name: remediationInstruction.name || '',
+    priority: remediationInstruction.priority,
+    type: !isUndefined(remediationInstruction.type)
+      ? remediationInstruction.type
+      : REMEDIATION_INSTRUCTION_TYPES.manual,
+    enabled: enabledToForm(remediationInstruction.enabled),
+    timeout_after_execution: durationToForm(remediationInstruction.timeout_after_execution),
+    active_on_pbh: remediationInstruction.active_on_pbh
+      ? cloneDeep(remediationInstruction.active_on_pbh)
+      : [],
+    disabled_on_pbh: remediationInstruction.disabled_on_pbh
+      ? cloneDeep(remediationInstruction.disabled_on_pbh)
+      : [],
+    alarm_pattern: remediationInstruction.alarm_pattern,
+    entity_pattern: remediationInstruction.entity_pattern,
+    description: remediationInstruction.description || '',
+    steps: remediationInstructionStepsToForm(remediationInstruction.steps),
+    approval: remediationInstructionApprovalToForm(remediationInstruction.approval),
+    jobs: remediationInstructionJobsToForm(remediationInstruction.jobs),
+  };
+
+  if (remediationInstruction.triggers) {
+    form.triggers = [...remediationInstruction.triggers];
+  }
+
+  return form;
+};
 
 /**
  * Convert a remediation instruction step operations form array to a API compatible operation array
@@ -295,20 +332,24 @@ const formApprovalToRemediationInstructionApproval = (approval) => {
  */
 export const formToRemediationInstruction = (form) => {
   const {
-    steps, jobs, priority, ...instruction
+    steps, jobs, priority, triggers, ...instruction
   } = form;
 
-  if (form.type === REMEDIATION_INSTRUCTION_TYPES.manual) {
+  if (isInstructionManual(form)) {
     instruction.steps = formStepsToRemediationInstructionSteps(steps);
   } else {
     instruction.jobs = formJobsToRemediationInstructionJobs(jobs);
-    instruction.priority = priority;
+
+    if (isInstructionAuto(form)) {
+      instruction.priority = priority;
+      instruction.triggers = triggers;
+    }
   }
 
   return {
     ...instruction,
-    alarm_patterns: form.alarm_patterns.length ? form.alarm_patterns : undefined,
-    entity_patterns: form.entity_patterns.length ? form.entity_patterns : undefined,
+    alarm_pattern: form.alarm_pattern,
+    entity_pattern: form.entity_pattern,
     approval: formApprovalToRemediationInstructionApproval(form.approval),
   };
 };

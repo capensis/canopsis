@@ -82,7 +82,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .v-chip-group /deep/ {
+  .v-chip-group ::v-deep {
     .v-subheader {
       height: 20px;
       font-size: 12px;

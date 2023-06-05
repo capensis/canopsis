@@ -2,7 +2,7 @@
 
 exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\` prop 1`] = `
 <div
-  class="white treeview-data-table"
+  class="treeview-data-table v-sheet theme--light"
 >
   <div
     class="layout row"
@@ -461,7 +461,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with \`openAll\
 
 exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom props 1`] = `
 <div
-  class="white treeview-data-table"
+  class="treeview-data-table v-sheet theme--light"
 >
   <div
     class="layout row"
@@ -724,7 +724,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
 
 exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom props and expand slots 1`] = `
 <div
-  class="white treeview-data-table"
+  class="treeview-data-table v-sheet theme--light"
 >
   <div
     class="layout row"
@@ -953,7 +953,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
 
 exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default and required props (changed headers) 1`] = `
 <div
-  class="white treeview-data-table"
+  class="treeview-data-table v-sheet theme--light"
 >
   <div
     class="layout row"
@@ -1156,7 +1156,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
 
 exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default and required props 1`] = `
 <div
-  class="white treeview-data-table"
+  class="treeview-data-table v-sheet theme--light"
 >
   <div
     class="layout row"
@@ -1385,7 +1385,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
 
 exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default and required props 2`] = `
 <div
-  class="white treeview-data-table"
+  class="treeview-data-table v-sheet theme--light"
 >
   <div
     class="layout row"
@@ -1614,7 +1614,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
 
 exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default and required props and trigger click 1`] = `
 <div
-  class="white treeview-data-table"
+  class="treeview-data-table v-sheet theme--light"
 >
   <div
     class="layout row"
@@ -2073,7 +2073,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default an
 
 exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default props and data-table \`items\` slot 1`] = `
 <div
-  class="white treeview-data-table"
+  class="treeview-data-table v-sheet theme--light"
 >
   <div
     class="layout row"
@@ -2269,7 +2269,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default pr
 
 exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with default props and data-table values slots 1`] = `
 <div
-  class="white treeview-data-table"
+  class="treeview-data-table v-sheet theme--light"
 >
   <div
     class="layout row"

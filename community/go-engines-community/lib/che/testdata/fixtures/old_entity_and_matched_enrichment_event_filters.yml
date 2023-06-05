@@ -1,0 +1,54 @@
+eventfilter:
+  eventfilter_{1..1000}:
+    _id: <UUID()>
+    priority: <RangeIndex()>
+    type: enrichment
+    description: <LoremIpsumSentence(3)>
+    enabled: true
+    author: root
+    config:
+      actions:
+        - name: <{info-<RangeIndex()>}>
+          type: set_field
+          value: <LoremIpsumWord()>
+      on_failure: pass
+      on_success: pass
+    created: <NowUnix()>
+    updated: <Current().created>
+    event_pattern:
+      - - field: resource
+          cond:
+            type: eq
+            value: test-resource
+
+default_entities:
+  resource:
+    _id: test-resource/test-component
+    name: test-resource
+    type: resource
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+    connector: test-connector/test-connector-name
+    component: test-component
+
+  connector:
+    _id: test-connector/test-connector-name
+    name: test-connector-name
+    type: connector
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+
+  component:
+    _id: test-component
+    name: <Current()._id>
+    component: <Current()._id>
+    type: component
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+    connector: test-connector/test-connector-name

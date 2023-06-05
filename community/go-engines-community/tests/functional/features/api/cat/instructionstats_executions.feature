@@ -12,20 +12,23 @@ Feature: get instruction statistics
       "data": [
         {
           "executed_on": 1618280210,
+          "instruction_modified_on": 1596712203,
+          "timeout_after_execution": {
+            "value": 2,
+            "unit": "s"
+          },
+          "status": 2,
           "alarm": {
             "_id": "test-alarm-to-stats-executions-get-1"
-          }
-        },
-        {
-          "executed_on": 1596712203,
-          "alarm": null
+          },
+          "duration": 600
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 1
       }
     }
     """
@@ -37,9 +40,16 @@ Feature: get instruction statistics
       "data": [
         {
           "executed_on": 1618280210,
+          "instruction_modified_on": 1596712203,
+          "timeout_after_execution": {
+            "value": 2,
+            "unit": "s"
+          },
+          "status": 2,
           "alarm": {
             "_id": "test-alarm-to-stats-executions-get-1"
-          }
+          },
+          "duration": 600
         }
       ],
       "meta": {
@@ -55,17 +65,12 @@ Feature: get instruction statistics
     Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "executed_on": 1596712203,
-          "alarm": null
-        }
-      ],
+      "data": [],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 0
       }
     }
     """
@@ -94,15 +99,21 @@ Feature: get instruction statistics
       "data": [
         {
           "executed_on": 1618280210,
+          "instruction_modified_on": 1596712203,
+          "status": 2,
           "alarm": {
             "_id": "test-alarm-to-stats-executions-get-with-resolved-alarms-1"
-          }
+          },
+          "duration": 600
         },
         {
           "executed_on": 1518280210,
+          "instruction_modified_on": 1596712203,
+          "status": 2,
           "alarm": {
             "_id": "test-alarm-to-stats-executions-get-with-resolved-alarms-resolved"
-          }
+          },
+          "duration": 0
         }
       ],
       "meta": {
@@ -121,9 +132,12 @@ Feature: get instruction statistics
       "data": [
         {
           "executed_on": 1518280210,
+          "instruction_modified_on": 1596712203,
+          "status": 2,
           "alarm": {
             "_id": "test-alarm-to-stats-executions-get-with-resolved-alarms-resolved"
-          }
+          },
+          "duration": 0
         }
       ],
       "meta": {
@@ -142,9 +156,12 @@ Feature: get instruction statistics
       "data": [
         {
           "executed_on": 1618280210,
+          "instruction_modified_on": 1596712203,
+          "status": 2,
           "alarm": {
             "_id": "test-alarm-to-stats-executions-get-with-resolved-alarms-1"
-          }
+          },
+          "duration": 600
         }
       ],
       "meta": {
@@ -166,20 +183,19 @@ Feature: get instruction statistics
       "data": [
         {
           "executed_on": 1618280210,
+          "instruction_modified_on": 1596712203,
+          "status": 2,
           "alarm": {
             "_id": "test-alarm-to-stats-executions-get-1"
-          }
-        },
-        {
-          "executed_on": 1596712203,
-          "alarm": null
+          },
+          "duration": 600
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 1
       }
     }
     """
@@ -231,7 +247,10 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280210
+          "executed_on": 1618280210,
+          "instruction_modified_on": 1596712203,
+          "status": 2,
+          "duration": 600
         }
       ],
       "meta": {
@@ -277,7 +296,10 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280210
+          "executed_on": 1618280210,
+          "instruction_modified_on": 1596712203,
+          "status": 2,
+          "duration": 600
         }
       ],
       "meta": {
@@ -331,7 +353,10 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280630
+          "executed_on": 1618280630,
+          "instruction_modified_on": 1596712203,
+          "status": 2,
+          "duration": 400
         },
         {
           "alarm": {
@@ -358,7 +383,10 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280210
+          "executed_on": 1618280210,
+          "instruction_modified_on": 1596712203,
+          "status": 2,
+          "duration": 600
         }
       ],
       "meta": {
@@ -409,7 +437,10 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280630
+          "executed_on": 1618280630,
+          "instruction_modified_on": 1596712203,
+          "status": 2,
+          "duration": 400
         },
         {
           "alarm": {
@@ -441,7 +472,10 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280210
+          "executed_on": 1618280210,
+          "instruction_modified_on": 1596712203,
+          "status": 2,
+          "duration": 600
         }
       ],
       "meta": {
@@ -483,7 +517,10 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280210
+          "executed_on": 1618280210,
+          "instruction_modified_on": 1596712203,
+          "status": 2,
+          "duration": 600
         }
       ],
       "meta": {
@@ -537,7 +574,10 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280630
+          "executed_on": 1618280630,
+          "instruction_modified_on": 1596712203,
+          "status": 2,
+          "duration": 400
         }
       ],
       "meta": {
@@ -583,7 +623,10 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280210
+          "executed_on": 1618280210,
+          "instruction_modified_on": 1596712203,
+          "status": 2,
+          "duration": 600
         }
       ],
       "meta": {
@@ -634,7 +677,10 @@ Feature: get instruction statistics
               ]
             }
           },
-          "executed_on": 1618280630
+          "executed_on": 1618280630,
+          "instruction_modified_on": 1596712203,
+          "status": 2,
+          "duration": 400
         }
       ],
       "meta": {
@@ -642,6 +688,112 @@ Feature: get instruction statistics
         "page_count": 1,
         "per_page": 10,
         "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/cat/instruction-stats/test-instruction-to-stats-executions-get-11/executions?show_failed=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "alarm": {
+            "_id": "test-alarm-to-stats-executions-get-11-2",
+            "v": {
+              "steps": [
+                {
+                  "_t": "stateinc",
+                  "t": 1596942720
+                },
+                {
+                  "_t": "statusinc",
+                  "t": 1596942720
+                },
+                {
+                  "_t": "instructionstart",
+                  "t": 1596942720
+                },
+                {
+                  "_t": "instructioncomplete",
+                  "t": 1596942720
+                }
+              ]
+            }
+          },
+          "duration": 0,
+          "status": 4,
+          "executed_on": 1618280220,
+          "instruction_modified_on": 1596712203
+        },
+        {
+          "alarm": {
+            "_id": "test-alarm-to-stats-executions-get-11-1",
+            "v": {
+              "steps": [
+                {
+                  "_t": "stateinc",
+                  "t": 1618280213
+                },
+                {
+                  "_t": "statusinc",
+                  "t": 1618280213
+                },
+                {
+                  "_t": "instructionstart",
+                  "t": 1618280213
+                },
+                {
+                  "_t": "instructioncomplete",
+                  "t": 1618280218
+                }
+              ]
+            }
+          },
+          "duration": 5,
+          "status": 2,
+          "executed_on": 1618280218,
+          "instruction_modified_on": 1596712203
+        }
+      ],
+      "meta": {
+          "page": 1,
+          "page_count": 1,
+          "per_page": 10,
+          "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/cat/instruction-stats/test-instruction-to-stats-get-1/executions
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+          {
+              "duration": 200,
+              "status": 2,
+              "executed_on": 1618394399,
+              "instruction_modified_on": 1617555600
+          },
+          {
+              "duration": 350,
+              "status": 2,
+              "executed_on": 1618307999,
+              "instruction_modified_on": 1617555600
+          },
+          {
+              "duration": 400,
+              "status": 2,
+              "executed_on": 1618221599,
+              "instruction_modified_on": 1617555600
+          }
+      ],
+      "meta": {
+          "page": 1,
+          "page_count": 1,
+          "per_page": 10,
+          "total_count": 3
       }
     }
     """
@@ -663,5 +815,29 @@ Feature: get instruction statistics
     """json
     {
       "error": "Not found"
+    }
+    """
+
+  Scenario: given get search request should return instruction stats
+    When I am admin
+    When I do GET /api/v4/cat/instruction-stats/test-instruction-to-stats-executions-get-with-resolved-alarms-1/executions?search=resolved-alarms-resolved
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "executed_on": 1518280210,
+          "alarm": {
+            "_id": "test-alarm-to-stats-executions-get-with-resolved-alarms-resolved"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
     }
     """

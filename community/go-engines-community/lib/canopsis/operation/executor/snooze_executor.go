@@ -3,14 +3,15 @@ package executor
 import (
 	"context"
 	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 // NewSnoozeExecutor creates new executor.
-func NewSnoozeExecutor(configProvider config.AlarmConfigProvider) operationlib.Executor {
+func NewSnoozeExecutor(configProvider config.AlarmConfigProvider) operation.Executor {
 	return &snoozeExecutor{configProvider: configProvider}
 }
 
@@ -21,13 +22,13 @@ type snoozeExecutor struct {
 // Exec creates new snooze step for alarm.
 func (e *snoozeExecutor) Exec(
 	_ context.Context,
-	operation types.Operation,
+	op types.Operation,
 	alarm *types.Alarm,
 	_ *types.Entity,
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	params := operation.Parameters
+	params := op.Parameters
 	if params.Duration == nil {
 		return "", fmt.Errorf("invalid parameters")
 	}

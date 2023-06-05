@@ -5,22 +5,21 @@
         c-draggable-step-number(
           :color="draggableStepNumberColor",
           disabled
-        ) {{ $t('remediationInstructions.endpointAvatar') }}
+        ) {{ $t('remediation.instruction.endpointAvatar') }}
       v-flex(xs11)
         v-layout(row)
           v-flex.px-1(xs11)
             v-text-field(
               v-field="value",
               v-validate="'required'",
-              :label="$t('remediationInstructions.endpoint')",
+              :label="$t('remediation.instruction.endpoint')",
               :name="name",
               :error-messages="errors.collect(name)",
               :disabled="disabled",
               box
             )
-              v-tooltip(slot="append", left)
-                v-icon(slot="activator") help
-                span {{ $t('remediationInstructions.tooltips.endpoint') }}
+              template(#append="")
+                c-help-icon(:text="$t('remediation.instruction.tooltips.endpoint')", icon="help", left)
           v-flex(xs1)
 </template>
 

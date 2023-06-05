@@ -8,11 +8,11 @@ import flatten from 'flat';
 /**
  * Map flatten errors object.
  *
- * @param {FlattenErrors} errors
- * @param {function} map
+ * @param {FlattenErrors} [errors = {}]
+ * @param {Function} [map = v => v]
  * @return {FlattenErrors}
  */
-export const flattenErrorMap = (errors = {}, map) => {
+export const flattenErrorMap = (errors = {}, map = v => v) => {
   const errorsKeys = Object.keys(errors);
   const errorsValues = Object.values(errors);
 

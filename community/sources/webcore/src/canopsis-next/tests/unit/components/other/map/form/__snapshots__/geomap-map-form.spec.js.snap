@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`geomap-map-form Renders \`geomap-map-form\` with form 1`] = `
+<div
+  class="layout column"
+>
+  <c-name-field-stub
+    required="required"
+    value="Geomap"
+  />
+  <geomap-editor-stub
+    form="[object Object]"
+    iconsize="24"
+    maxclusteringzoom="12"
+    minzoom="2"
+    name="parameters"
+  />
+</div>
+`;

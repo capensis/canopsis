@@ -1,14 +1,14 @@
 <template lang="pug">
-  modal-wrapper(data-test="colorPickerModal", close)
-    template(slot="title")
+  modal-wrapper(close)
+    template(#title="")
       span {{ title }}
-    template(slot="text")
+    template(#text="")
       v-layout
         v-flex
-          chrome(v-model="color", data-test="colorPickerChrome")
+          c-color-chrome-picker-field(v-model="color")
         v-flex
-          compact(v-model="color", data-test="colorPickerCompact")
-    template(slot="actions")
+          c-color-compact-picker-field(v-model="color")
+    template(#actions="")
       v-btn(
         data-test="colorPickerCancelButton",
         depressed,
@@ -24,8 +24,6 @@
 </template>
 
 <script>
-import { Chrome, Compact } from 'vue-color';
-
 import { MODALS } from '@/constants';
 
 import { colorToHex, colorToRgb, isValidColor } from '@/helpers/color';
@@ -38,8 +36,6 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.colorPicker,
   components: {
-    Chrome,
-    Compact,
     ModalWrapper,
   },
   mixins: [

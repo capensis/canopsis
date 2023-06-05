@@ -1,78 +1,86 @@
 <template lang="pug">
-  v-layout(align-center, row, wrap)
-    v-flex(v-show="!hideSelect", :xs12="long")
-      v-select(
-        v-field="value",
-        :items="preparedFilters",
-        :label="label",
-        :item-text="itemText",
-        :item-value="itemValue",
-        :multiple="isMultiple",
-        :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
-        return-object,
-        clearable
+  v-select.filter-selector(
+    v-field="value",
+    :items="preparedFilters",
+    :label="label",
+    :disabled="disabled",
+    :always-dirty="!!lockedItems.length",
+    :item-text="itemText",
+    :item-value="itemValue",
+    :item-disabled="isFilterItemDisabled",
+    :multiple="isMultiple",
+    :hide-details="hideDetails"
+  )
+    template(v-if="!hideMultiply", #prepend-item="")
+      c-enabled-field.mx-3(
+        v-model="isMultiple",
+        :label="$t('filter.selector.fields.mixFilters')",
+        hide-details
       )
-        template(#prepend-item="")
-          v-layout.pl-3
-            v-flex(v-show="!hideSelect", :xs6="long")
-              c-enabled-field(
-                :value="isMultiple",
-                :label="$t('filterSelector.fields.mixFilters')",
-                :disabled="!hasAccessToListFilters && !hasAccessToUserFilter",
-                hide-details,
-                @input="updateIsMultipleFlag"
-              )
-            v-flex(v-show="!hideSelect && isMultiple", :xs6="long")
-              c-operator-field(:value="condition", @input="updateCondition")
-          v-divider.mt-3
+      v-divider.mt-3
 
-        template(#item="{ parent, item, tile }")
-          v-list-tile-action(v-if="isMultiple", @click.stop="parent.$emit('select', item)")
-            v-checkbox(:input-value="tile.props.value", :color="parent.color")
-          v-list-tile-content
-            v-list-tile-title
-              span {{ item[itemText] }}
+    template(#selections="{ items }")
+      v-tooltip(
+        v-for="lockedItem in lockedItems",
+        :key="getItemValue(lockedItem)",
+        top
+      )
+        template(#activator="{ on }")
+          v-chip(v-on="on", small)
+            span {{ getItemText(lockedItem) }}
+            v-icon.ml-2(small) lock
+        span {{ $t('settings.lockedFilter') }}
+      v-chip(
+        v-for="(item, index) in items",
+        :key="getItemValue(item)",
+        :close="isChipRemovable",
+        small,
+        @input="removeFilter(index)"
+      ) {{ getItemText(item) }}
+
+    template(#item="{ parent, item, tile }")
+      v-list-tile(v-bind="tile.props", v-on="tile.on")
+        v-list-tile-action(v-if="isMultiple")
+          v-checkbox(
+            :input-value="item.active || tile.props.value",
+            :color="parent.color",
+            :disabled="tile.props.disabled"
+          )
+        v-list-tile-content
+          v-list-tile-title.v-list-badge__tile__title
+            span {{ item.title }}
+            v-badge(
+              :value="isOldPattern(item)",
+              color="error",
+              overlap
+            )
+              template(#badge="")
+                v-tooltip(top)
+                  template(#activator="{ on: badgeTooltipOn }")
+                    v-icon(v-on="badgeTooltipOn", color="white") priority_high
+                  span {{ $t('pattern.oldPatternTooltip') }}
               v-icon.ml-2(
-                v-show="!hideSelectIcon",
                 :color="tile.props.value ? parent.color : ''",
                 small
-              ) {{ item.locked ? 'lock' : 'person' }}
-
-    v-flex(v-if="hasAccessToUserFilter", :xs12="long")
-      c-action-btn(
-        v-if="!long",
-        :tooltip="$t('filterSelector.buttons.list')",
-        icon="filter_list",
-        small,
-        @click="showFiltersListModal"
-      )
-      filters-form(
-        v-else,
-        :filters="filtersWithSelected",
-        :entities-type="entitiesType",
-        @input="updateFilters"
-      )
+              ) {{ getItemIcon(item) }}
 </template>
 
 <script>
-import { isEmpty, omit } from 'lodash';
+import { isArray } from 'lodash';
 
-import { ENTITIES_TYPES, MODALS, FILTER_DEFAULT_VALUES } from '@/constants';
+import { isOldPattern } from '@/helpers/pattern';
 
-import { formMixin } from '@/mixins/form';
-
-import FiltersForm from '@/components/other/filter/form/filters-form.vue';
+import { formArrayMixin } from '@/mixins/form';
 
 export default {
-  components: { FiltersForm },
-  mixins: [formMixin],
+  mixins: [formArrayMixin],
   props: {
-    long: {
-      type: Boolean,
-      default: false,
-    },
     value: {
-      type: [Object, Array],
+      type: [String, Array],
+      default: () => null,
+    },
+    lockedValue: {
+      type: [String, Array],
       default: () => null,
     },
     filters: {
@@ -93,119 +101,132 @@ export default {
     },
     itemValue: {
       type: String,
-      default: 'title',
+      default: '_id',
     },
-    condition: {
-      type: String,
-      default: FILTER_DEFAULT_VALUES.condition,
-    },
-    hideSelect: {
+    disabled: {
       type: Boolean,
       default: false,
     },
-    hideSelectIcon: {
+    clearable: {
+      type: Boolean,
+      default: true,
+    },
+    hideMultiply: {
       type: Boolean,
       default: false,
     },
-    hasAccessToListFilters: {
+    hideDetails: {
       type: Boolean,
       default: false,
-    },
-    hasAccessToAddFilter: {
-      type: Boolean,
-      default: true,
-    },
-    hasAccessToEditFilter: {
-      type: Boolean,
-      default: true,
-    },
-    hasAccessToUserFilter: {
-      type: Boolean,
-      default: true,
-    },
-    entitiesType: {
-      type: String,
-      default: ENTITIES_TYPES.alarm,
-      validator: value => [ENTITIES_TYPES.alarm, ENTITIES_TYPES.entity].includes(value),
     },
   },
   computed: {
-    isMultiple() {
-      return Array.isArray(this.value);
+    isMultiple: {
+      set(value) {
+        if (value) {
+          this.updateModel(this.value ? [this.value] : []);
+        } else {
+          this.updateModel(this.value.length ? this.value[0] : undefined);
+        }
+      },
+      get() {
+        return isArray(this.value);
+      },
+    },
+
+    isOneValueSelected() {
+      return this.value.length === 1;
+    },
+
+    isChipRemovable() {
+      if (this.clearable) {
+        return true;
+      }
+
+      return this.isMultiple ? !this.isOneValueSelected : false;
+    },
+
+    lockedItems() {
+      return this.lockedFilters.filter(this.isLockedFilter);
     },
 
     preparedFilters() {
-      const preparedFilters = this.hasAccessToUserFilter ? [...this.filters] : [];
-      const preparedLockedFilters = this.lockedFilters.map(filter => ({ ...filter, locked: true }));
+      const preparedFilters = [...this.filters];
 
-      if (preparedFilters.length && preparedLockedFilters.length) {
-        return preparedFilters.concat({ divider: true }, preparedLockedFilters);
-      }
-
-      if (preparedFilters.length) {
+      if (!this.lockedFilters.length) {
         return preparedFilters;
       }
 
-      return preparedLockedFilters;
-    },
+      if (preparedFilters.length) {
+        preparedFilters.push({ divider: true });
+      }
 
-    filtersWithSelected() {
-      return this.filters.map((filter) => {
-        const selected = this.isMultiple
-          ? this.value.some(currentFilter => this.isFilterEqual(filter, currentFilter))
-          : !!this.value && this.isFilterEqual(filter, this.value);
+      preparedFilters.push(
+        ...this.lockedFilters.map(filter => ({
+          ...filter,
+          active: this.isLockedFilter(filter),
+        })),
+      );
 
-        return { ...filter, selected };
-      });
+      return preparedFilters;
     },
   },
   methods: {
-    updateIsMultipleFlag(checked) {
-      const isValueArray = Array.isArray(this.value);
+    getItemText(item) {
+      return item[this.itemText];
+    },
 
-      if (checked && !isValueArray) {
-        this.updateModel(!isEmpty(this.value) ? [this.value] : []);
-      } else if (!checked && isValueArray) {
-        this.updateModel(!isEmpty(this.value[0]) ? this.value[0] : null);
+    getItemValue(item) {
+      return item[this.itemValue];
+    },
+
+    getItemIcon(item) {
+      return item.is_private ? 'person' : 'lock';
+    },
+
+    isOldPattern(filter) {
+      return isOldPattern(filter);
+    },
+
+    isFilterItemDisabled(filter) {
+      if (this.isLockedFilter(filter)) {
+        return true;
       }
+
+      if (this.clearable) {
+        return false;
+      }
+
+      const value = this.getItemValue(filter);
+
+      if (this.isMultiple) {
+        return this.isOneValueSelected && this.value.includes(value);
+      }
+
+      return this.value === value;
     },
 
-    updateCondition(newCondition) {
-      this.$emit('update:condition', newCondition);
+    isLockedFilter(filter) {
+      const value = this.getItemValue(filter);
+
+      return this.isMultiple
+        ? this.lockedValue?.includes(value)
+        : this.lockedValue === value;
     },
 
-    updateFilters(filters) {
-      const removeSelectedProperty = filter => omit(filter, 'selected');
-
-      const selectedFilters = filters.reduce((acc, filter) => {
-        if (filter.selected) {
-          acc.push(removeSelectedProperty(filter));
-        }
-
-        return acc;
-      }, []);
-
-      const newValue = this.isMultiple ? selectedFilters : selectedFilters[0];
-
-      this.$emit('update:filters', filters.map(removeSelectedProperty), newValue);
-    },
-
-    isFilterEqual(firstFilter, secondFilter) {
-      return firstFilter.title === secondFilter.title && firstFilter.filter === secondFilter.filter;
-    },
-
-    showFiltersListModal() {
-      this.$modals.show({
-        name: MODALS.filtersList,
-        config: {
-          filters: this.filtersWithSelected,
-          hasAccessToAddFilter: this.hasAccessToUserFilter,
-          hasAccessToEditFilter: this.hasAccessToUserFilter,
-          entitiesType: this.entitiesType,
-          action: filters => this.updateFilters(filters),
-        },
-      });
+    removeFilter(index) {
+      if (this.isMultiple) {
+        this.removeItemFromArray(index);
+      } else {
+        this.updateModel('');
+      }
     },
   },
 };
 </script>
+
+<style lang="scss">
+.filter-selector {
+  max-width: 500px;
+}
+</style>

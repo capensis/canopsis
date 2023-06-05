@@ -1,9 +1,11 @@
 <template lang="pug">
   settings-button-field(
-    :isEmpty="isValueEmpty",
-    @create="openTextEditorModal",
-    @edit="openTextEditorModal",
-    @delete="deleteMoreInfoTemplate"
+    :is-empty="isValueEmpty",
+    addable,
+    removable,
+    @create="showTextEditorModal",
+    @edit="showTextEditorModal",
+    @delete="showRemoveTextConfirmationModal"
   )
     template(#title="")
       div.subheading {{ title }}
@@ -28,6 +30,10 @@ export default {
       type: String,
       default: '',
     },
+    variables: {
+      type: Array,
+      required: false,
+    },
   },
   computed: {
     isValueEmpty() {
@@ -35,17 +41,18 @@ export default {
     },
   },
   methods: {
-    openTextEditorModal() {
+    showTextEditorModal() {
       this.$modals.show({
         name: MODALS.textEditor,
         config: {
           text: this.value,
+          variables: this.variables,
           action: value => this.updateModel(value),
         },
       });
     },
 
-    deleteMoreInfoTemplate() {
+    showRemoveTextConfirmationModal() {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {

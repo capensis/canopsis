@@ -1,0 +1,940 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehaviors 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout row justify-end"
+  >
+    <c-action-fab-btn-stub
+      class="ma-0"
+      color="primary"
+      icon="add"
+      left="left"
+      small="small"
+      tooltip="Create periodical behavior"
+    />
+    <c-action-fab-btn-stub
+      class="ma-0"
+      color="secondary"
+      icon="calendar_today"
+      left="left"
+      small="small"
+      tooltip="Periodic behaviors"
+    />
+  </div>
+  <div
+    class="ma-0"
+  >
+    <div
+      class="v-table__overflow"
+    >
+      <table
+        class="v-datatable v-table theme--light"
+      >
+        <thead>
+          <tr>
+            <th
+              aria-label="Name: Sorted ascending. Activate to sort descending."
+              aria-sort="ascending"
+              class="column active asc sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Name
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Author: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Author
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Is enabled: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Is enabled
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Begins: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Begins
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Ends: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Ends
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Type: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Type
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Reason: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Reason
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Recurrence: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Recurrence
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Icon: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Icon
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Status: Not sorted."
+              aria-sort="none"
+              class="column text-xs-left"
+              role="columnheader"
+              scope="col"
+            >
+              Status
+            </th>
+            <th
+              aria-label="Actions: Not sorted."
+              aria-sort="none"
+              class="column text-xs-left"
+              role="columnheader"
+              scope="col"
+            >
+              Actions
+            </th>
+          </tr>
+          <tr
+            class="v-datatable__progress"
+          >
+            <th
+              class="column"
+              colspan="11"
+            />
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              name-0
+            </td>
+            <td>
+              author-0
+            </td>
+            <td>
+              <c-enabled-stub />
+            </td>
+            <td>
+              04/03/2021 13:30:00
+            </td>
+            <td>
+              04/03/2021 13:33:20
+            </td>
+            <td>
+              type-name-0
+            </td>
+            <td>
+              reason-name-0
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon type type-icon-name-0 theme--light primary--text"
+              />
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light primary--text"
+              >
+                $vuetify.icons.settings_sync
+              </i>
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <c-action-btn-stub
+                  disabled="true"
+                  tooltip="Cannot be modified"
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              name-1
+            </td>
+            <td>
+              author-1
+            </td>
+            <td>
+              <c-enabled-stub
+                value="true"
+              />
+            </td>
+            <td>
+              04/03/2021 13:30:01
+            </td>
+            <td>
+              04/03/2021 13:33:21
+            </td>
+            <td>
+              type-name-1
+            </td>
+            <td>
+              reason-name-1
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon type type-icon-name-1 theme--light primary--text"
+              />
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light error--text"
+              >
+                $vuetify.icons.settings_sync
+              </i>
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <c-action-btn-stub
+                  tooltip="Edit"
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              name-2
+            </td>
+            <td>
+              author-2
+            </td>
+            <td>
+              <c-enabled-stub />
+            </td>
+            <td>
+              04/03/2021 13:30:02
+            </td>
+            <td>
+              04/03/2021 13:33:22
+            </td>
+            <td>
+              type-name-2
+            </td>
+            <td>
+              reason-name-2
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon type type-icon-name-2 theme--light primary--text"
+              />
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light primary--text"
+              >
+                $vuetify.icons.settings_sync
+              </i>
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <c-action-btn-stub
+                  disabled="true"
+                  tooltip="Cannot be modified"
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              name-3
+            </td>
+            <td>
+              author-3
+            </td>
+            <td>
+              <c-enabled-stub
+                value="true"
+              />
+            </td>
+            <td>
+              04/03/2021 13:30:03
+            </td>
+            <td>
+              04/03/2021 13:33:23
+            </td>
+            <td>
+              type-name-3
+            </td>
+            <td>
+              reason-name-3
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon type type-icon-name-3 theme--light primary--text"
+              />
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light error--text"
+              >
+                $vuetify.icons.settings_sync
+              </i>
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <c-action-btn-stub
+                  tooltip="Edit"
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              name-4
+            </td>
+            <td>
+              author-4
+            </td>
+            <td>
+              <c-enabled-stub />
+            </td>
+            <td>
+              04/03/2021 13:30:04
+            </td>
+            <td>
+              04/03/2021 13:33:24
+            </td>
+            <td>
+              type-name-4
+            </td>
+            <td>
+              reason-name-4
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon type type-icon-name-4 theme--light primary--text"
+              />
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light primary--text"
+              >
+                $vuetify.icons.settings_sync
+              </i>
+            </td>
+            <td>
+              <div
+                class="layout row"
+              >
+                <c-action-btn-stub
+                  disabled="true"
+                  tooltip="Cannot be modified"
+                  type="edit"
+                />
+                <c-action-btn-stub
+                  type="delete"
+                />
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div
+      class="v-datatable v-table theme--light"
+    >
+      <div
+        class="v-datatable__actions"
+      >
+        <div
+          class="v-datatable__actions__select"
+        >
+          Rows per page:
+          <div
+            class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+            role="combobox"
+          >
+            <div
+              class="v-input__control"
+            >
+              <div
+                class="v-input__slot"
+              >
+                <div
+                  class="v-select__slot"
+                >
+                  <div
+                    class="v-select__selections"
+                  >
+                    <div
+                      class="v-select__selection v-select__selection--comma"
+                    >
+                      5
+                    </div>
+                    <input
+                      aria-label="Rows per page:"
+                      aria-readonly="false"
+                      autocomplete="on"
+                      readonly="readonly"
+                      type="text"
+                    />
+                  </div>
+                  <div
+                    class="v-input__append-inner"
+                  >
+                    <div
+                      class="v-input__icon v-input__icon--append"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light"
+                      >
+                        arrow_drop_down
+                      </i>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="v-menu"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-datatable__actions__range-controls"
+        >
+          <div
+            class="v-datatable__actions__pagination"
+          >
+            1-5 of 7
+          </div>
+          <button
+            aria-label="Previous page"
+            class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
+            disabled="disabled"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                chevron_left
+              </i>
+            </div>
+          </button>
+          <button
+            aria-label="Next page"
+            class="v-btn v-btn--flat v-btn--icon theme--light"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                chevron_right
+              </i>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbehaviors 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout row justify-end"
+  >
+    <!---->
+    <c-action-fab-btn-stub
+      class="ma-0"
+      color="secondary"
+      icon="calendar_today"
+      left="left"
+      small="small"
+      tooltip="Periodic behaviors"
+    />
+  </div>
+  <div
+    class="ma-0"
+  >
+    <div
+      class="v-table__overflow"
+    >
+      <table
+        class="v-datatable v-table theme--light"
+      >
+        <thead>
+          <tr>
+            <th
+              aria-label="Name: Sorted ascending. Activate to sort descending."
+              aria-sort="ascending"
+              class="column active asc sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Name
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Author: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Author
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Is enabled: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Is enabled
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Begins: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Begins
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Ends: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Ends
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Type: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Type
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Reason: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Reason
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Recurrence: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Recurrence
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Icon: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Icon
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+          </tr>
+          <tr
+            class="v-datatable__progress"
+          >
+            <th
+              class="column"
+              colspan="9"
+            />
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td
+              class="text-xs-center"
+              colspan="9"
+            >
+              No data available
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div
+      class="v-datatable v-table theme--light"
+    >
+      <div
+        class="v-datatable__actions"
+      >
+        <div
+          class="v-datatable__actions__select"
+        >
+          Rows per page:
+          <div
+            class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+            role="combobox"
+          >
+            <div
+              class="v-input__control"
+            >
+              <div
+                class="v-input__slot"
+              >
+                <div
+                  class="v-select__slot"
+                >
+                  <div
+                    class="v-select__selections"
+                  >
+                    <div
+                      class="v-select__selection v-select__selection--comma"
+                    >
+                      5
+                    </div>
+                    <input
+                      aria-label="Rows per page:"
+                      aria-readonly="false"
+                      autocomplete="on"
+                      readonly="readonly"
+                      type="text"
+                    />
+                  </div>
+                  <div
+                    class="v-input__append-inner"
+                  >
+                    <div
+                      class="v-input__icon v-input__icon--append"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="v-icon material-icons theme--light"
+                      >
+                        arrow_drop_down
+                      </i>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="v-menu"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-datatable__actions__range-controls"
+        >
+          <div
+            class="v-datatable__actions__pagination"
+          >
+            –
+          </div>
+          <button
+            aria-label="Previous page"
+            class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
+            disabled="disabled"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                chevron_left
+              </i>
+            </div>
+          </button>
+          <button
+            aria-label="Next page"
+            class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
+            disabled="disabled"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                chevron_right
+              </i>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

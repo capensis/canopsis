@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarms-expand-panel-children Renders \`alarms-expand-panel-children\` with causes alarms 1`] = `
+<alarms-list-table-with-pagination-stub
+  alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  expandable="true"
+  loading="true"
+  meta="[object Object]"
+  parentalarm="[object Object]"
+  query="[object Object]"
+  refreshalarmslist="[Function]"
+  widget="[object Object]"
+/>
+`;
+
+exports[`alarms-expand-panel-children Renders \`alarms-expand-panel-children\` with default props 1`] = `
+<alarms-list-table-with-pagination-stub
+  alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  expandable="true"
+  meta="[object Object]"
+  parentalarm="[object Object]"
+  query="[object Object]"
+  refreshalarmslist="[Function]"
+  widget="[object Object]"
+/>
+`;
+
+exports[`alarms-expand-panel-children Renders \`alarms-expand-panel-children\` with editing 1`] = `
+<alarms-list-table-with-pagination-stub
+  alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  editing="true"
+  expandable="true"
+  meta="[object Object]"
+  parentalarm="[object Object]"
+  query="[object Object]"
+  refreshalarmslist="[Function]"
+  widget="[object Object]"
+/>
+`;

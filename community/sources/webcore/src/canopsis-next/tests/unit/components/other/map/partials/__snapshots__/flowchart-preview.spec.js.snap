@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`flowchart-preview Renders \`flowchart-preview\` with custom props 1`] = `
+<div
+  class="flowchart-preview"
+>
+  <div
+    background-color="rgba(0, 231, 123, 0.9)"
+    class="flowchart"
+    readonly="readonly"
+    shapes="[object Object]"
+  >
+    <flowchart-points-preview-stub
+      colorindicator="state"
+      iconsize="24"
+      pbehaviorenabled="true"
+      points="[object Object],[object Object],[object Object],[object Object]"
+      popupactions="true"
+      popuptemplate="template"
+      shapes="[object Object]"
+    />
+     
+  </div>
+  <c-help-icon-stub
+    color="secondary"
+    icon="help"
+    icon-class="map-preview__help-icon"
+    size="32"
+    text="Useful shortcuts:
+Ctrl + mouse wheel - zoom in/out
+Ctrl + Left mouse click + drag - pan the area
+Middle mouse click + drag - pan the area
+Shift + mouse wheel - horizontal scroll
+Alt + mouse wheel - vertical scroll
+"
+    top="top"
+  />
+</div>
+`;
+
+exports[`flowchart-preview Renders \`flowchart-preview\` with required props 1`] = `
+<div
+  class="flowchart-preview"
+>
+  <div
+    background-color="rgba(0, 231, 123, 0.9)"
+    class="flowchart"
+    readonly="readonly"
+    shapes="[object Object]"
+  >
+    <flowchart-points-preview-stub
+      iconsize="24"
+      points="[object Object],[object Object],[object Object],[object Object]"
+      shapes="[object Object]"
+    />
+     
+  </div>
+  <c-help-icon-stub
+    color="secondary"
+    icon="help"
+    icon-class="map-preview__help-icon"
+    size="32"
+    text="Useful shortcuts:
+Ctrl + mouse wheel - zoom in/out
+Ctrl + Left mouse click + drag - pan the area
+Middle mouse click + drag - pan the area
+Shift + mouse wheel - horizontal scroll
+Alt + mouse wheel - vertical scroll
+"
+    top="top"
+  />
+</div>
+`;

@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`meta-alarm-rule-patterns-form Renders \`meta-alarm-rule-patterns-form\` with custom props 1`] = `
+<c-patterns-field-stub
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  disabled="true"
+  entity-attributes="[object Object]"
+  value="[object Object]"
+  with-alarm="with-alarm"
+  with-entity="with-entity"
+/>
+`;
+
+exports[`meta-alarm-rule-patterns-form Renders \`meta-alarm-rule-patterns-form\` with default props 1`] = `
+<c-patterns-field-stub
+  alarm-attributes="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  entity-attributes="[object Object]"
+  value="[object Object]"
+  with-alarm="with-alarm"
+  with-entity="with-entity"
+/>
+`;

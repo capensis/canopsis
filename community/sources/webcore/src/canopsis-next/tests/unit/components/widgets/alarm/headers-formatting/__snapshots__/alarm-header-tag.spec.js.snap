@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-header-tag Renders \`alarm-header-tag\` with selected tag 1`] = `
+<span>
+  <span
+    class="c-alarm-action-chip"
+    closable="closable"
+    color="color1"
+  />
+</span>
+`;
+
+exports[`alarm-header-tag Renders \`alarm-header-tag\` with selected tag and default slot 1`] = `
+<span>
+  Default text slot
+  <span
+    class="c-alarm-action-chip"
+    closable="closable"
+    color="color1"
+  />
+</span>
+`;
+
+exports[`alarm-header-tag Renders \`alarm-header-tag\` without selected tag 1`] = `
+<span>
+  <!---->
+</span>
+`;

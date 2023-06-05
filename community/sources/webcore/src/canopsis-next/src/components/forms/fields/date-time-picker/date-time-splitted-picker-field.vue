@@ -1,17 +1,8 @@
 <template lang="pug">
-  div
-    v-layout(row)
-      v-flex.pr-1(v-if="reverse && !fullDay", xs4)
-        time-picker-field(
-          :value="value | date('timePicker', null)",
-          :label="label",
-          :error="errors.has(name)",
-          :disabled="disabled",
-          hide-details,
-          @input="updateTime"
-        )
-      v-flex(:class="datePickerFlexClass")
-        date-picker-field(
+  v-layout.date-time-splitted-field(column)
+    v-layout(row, :reverse="reverse")
+      v-flex.date-time-splitted-field__date(:class="datePickerClass")
+        c-date-picker-field(
           :value="value | date('vuetifyDatePicker', null)",
           :label="!reverse || fullDay ? label : ''",
           :error="errors.has(name)",
@@ -21,32 +12,27 @@
           hide-details,
           @input="updateDate"
         )
-      v-flex.pr-1(v-if="!reverse && !fullDay", xs4)
-        time-picker-field(
-          :value="value | date('timePicker', null)",
-          :error="errors.has(name)",
-          :disabled="disabled",
-          hide-details,
-          @input="updateTime"
-        )
+      time-picker-field.date-time-splitted-field__time(
+        v-if="!fullDay",
+        :value="value | date('timePicker', null)",
+        :label="reverse ? label : ''",
+        :error="errors.has(name)",
+        :disabled="disabled",
+        hide-details,
+        @input="updateTime"
+      )
     div.v-text-field__details.mt-2
-      div.v-messages.theme--light.error--text
-        div.v-messages__wrapper
-          div.v-messages__message(
-            v-for="error in errors.collect(name)",
-            :key="error"
-          ) {{ error }}
+      v-messages(:value="errors.collect(name)", color="error")
 </template>
 
 <script>
 import { TIME_UNITS } from '@/constants';
 
 import { convertDateToStartOfUnitDateObject } from '@/helpers/date/date';
-import { updateTime, updateDate } from '@/helpers/date/date-time-picker';
+import { getDateObjectByTime, getDateObjectByDate } from '@/helpers/date/date-time-picker';
 
 import { formBaseMixin } from '@/mixins/form';
 
-import DatePickerField from '@/components/forms/fields/date-picker/date-picker-field.vue';
 import TimePickerField from '@/components/forms/fields/time-picker/time-picker-field.vue';
 
 export default {
@@ -64,7 +50,7 @@ export default {
     },
   },
   inject: ['$validator'],
-  components: { DatePickerField, TimePickerField },
+  components: { TimePickerField },
   mixins: [formBaseMixin],
   props: {
     value: {
@@ -101,22 +87,35 @@ export default {
     },
   },
   computed: {
-    datePickerFlexClass() {
-      return {
-        'pr-1': !this.reverse,
-        xs8: !this.fullDay,
-        xs12: this.fullDay,
-      };
+    datePickerClass() {
+      if (!this.fullDay) {
+        return this.reverse ? 'pl-1' : 'pr-1';
+      }
+
+      return '';
     },
   },
   methods: {
     updateTime(time) {
-      this.updateModel(updateTime(this.value, time));
+      this.updateModel(getDateObjectByTime(this.value, time));
     },
 
     updateDate(date) {
-      this.updateModel(updateDate(this.value, date));
+      this.updateModel(getDateObjectByDate(this.value, date));
     },
   },
 };
 </script>
+
+<style lang="scss">
+.date-time-splitted-field {
+  &__date {
+    flex: 1;
+  }
+
+  &__time {
+    width: 56px;
+    max-width: 56px;
+  }
+}
+</style>

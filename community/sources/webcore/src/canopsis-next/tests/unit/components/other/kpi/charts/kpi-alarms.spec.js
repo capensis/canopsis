@@ -15,11 +15,17 @@ const stubs = {
   'c-progress-overlay': true,
   'kpi-alarms-filters': true,
   'kpi-alarms-chart': true,
+  'kpi-error-overlay': true,
 };
 
 const factory = (options = {}) => shallowMount(KpiAlarms, {
   localVue,
   stubs,
+  parentComponent: {
+    provide: {
+      $system: {},
+    },
+  },
 
   ...options,
 });
@@ -27,24 +33,28 @@ const factory = (options = {}) => shallowMount(KpiAlarms, {
 const snapshotFactory = (options = {}) => mount(KpiAlarms, {
   localVue,
   stubs,
+  parentComponent: {
+    provide: {
+      $system: {},
+    },
+  },
 
   ...options,
 });
 
 describe('kpi-alarms', () => {
   const nowTimestamp = 1386435600000;
-  const nowUnix = nowTimestamp / 1000;
 
   mockDateNow(nowTimestamp);
 
-  it('Metrics fetched after mount', async () => {
+  test('Metrics fetched after mount', async () => {
     const expectedDefaultParams = {
       /* now - 7d  */
-      from: 1385830800,
-      parameters: [ALARM_METRIC_PARAMETERS.createdAlarms],
+      from: 1385852400,
+      parameters: [{ metric: ALARM_METRIC_PARAMETERS.createdAlarms }],
       sampling: SAMPLINGS.day,
       filter: null,
-      to: nowUnix,
+      to: 1386370800,
     };
     const fetchAlarmsMetrics = jest.fn(() => ({
       data: [],
@@ -68,15 +78,15 @@ describe('kpi-alarms', () => {
     );
   });
 
-  it('Metrics refreshed after change interval', async () => {
+  test('Metrics refreshed after change interval', async () => {
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedParamsAfterUpdate = {
       /* now - 2d  */
-      from: 1385830800,
-      parameters: [ALARM_METRIC_PARAMETERS.createdAlarms],
+      from: 1385852400,
+      parameters: [{ metric: ALARM_METRIC_PARAMETERS.createdAlarms }],
       sampling: SAMPLINGS.day,
       filter: null,
-      to: nowUnix,
+      to: 1386370800,
     };
     const fetchAlarmsMetrics = jest.fn(() => ({
       data: [],
@@ -114,7 +124,7 @@ describe('kpi-alarms', () => {
     );
   });
 
-  it('Metrics doesn\'t refreshed if min date less than from', async () => {
+  test('Metrics doesn\'t refreshed if min date less than from', async () => {
     const fetchAlarmsMetrics = jest.fn(() => ({
       data: [],
       meta: {
@@ -138,7 +148,7 @@ describe('kpi-alarms', () => {
     expect(fetchAlarmsMetrics).not.toHaveBeenCalled();
   });
 
-  it('Renders `kpi-alarms` without metrics', async () => {
+  test('Renders `kpi-alarms` without metrics', async () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([{
         name: 'metrics',
@@ -147,6 +157,21 @@ describe('kpi-alarms', () => {
             data: [],
             meta: { min_date: 1385830800 },
           })),
+        },
+      }]),
+    });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  test('Renders `kpi-alarms` with fetching error', async () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([{
+        name: 'metrics',
+        actions: {
+          fetchAlarmsMetricsWithoutStore: jest.fn().mockRejectedValue(),
         },
       }]),
     });

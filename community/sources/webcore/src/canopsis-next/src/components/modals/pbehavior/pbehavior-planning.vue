@@ -1,6 +1,6 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper(fill-height, close)
+    modal-wrapper(close)
       template(#title="")
         span {{ $t('modals.pbehaviorPlanning.title') }}
       template(#text="")
@@ -10,7 +10,7 @@
           :changed-pbehaviors-by-id.sync="form.changedPbehaviorsById",
           :removed-pbehaviors-by-id.sync="form.removedPbehaviorsById",
           :read-only="readOnly",
-          :filter="filter"
+          :entity-pattern="entityPattern"
         )
       template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
@@ -63,20 +63,23 @@ export default {
       return !!this.config.readOnly;
     },
 
-    filter() {
-      return this.config.filter;
+    entityPattern() {
+      return this.config.entityPattern;
     },
   },
   methods: {
     async submit() {
+      const { pbehaviors: originalPbehaviors } = this.config;
       const createdPbehaviors = Object.values(this.form.addedPbehaviorsById)
         .map(pbehavior => pbehaviorToRequest(omit(pbehavior, ['_id'])));
       const updatedPbehaviors = Object.values(this.form.changedPbehaviorsById).map(pbehaviorToRequest);
       const removedPbehaviors = Object.values(this.form.removedPbehaviorsById);
 
-      await this.createPbehaviorsWithComments(createdPbehaviors);
-      await this.updatePbehaviorsWithComments(updatedPbehaviors);
-      await this.removePbehaviors(removedPbehaviors);
+      await Promise.all([
+        createdPbehaviors.length && this.createPbehaviorsWithComments(createdPbehaviors),
+        updatedPbehaviors.length && this.updatePbehaviorsWithComments(updatedPbehaviors, originalPbehaviors),
+        removedPbehaviors.length && this.removePbehaviors(removedPbehaviors),
+      ]);
 
       if (this.config.afterSubmit) {
         await this.config.afterSubmit();

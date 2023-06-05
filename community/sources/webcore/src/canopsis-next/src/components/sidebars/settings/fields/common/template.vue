@@ -21,13 +21,19 @@ export default {
       type: String,
       required: true,
     },
+    variables: {
+      type: Array,
+      required: false,
+    },
   },
   methods: {
     showTextEditorModal() {
       this.$modals.show({
         name: MODALS.textEditor,
         config: {
+          title: this.title,
           text: this.value,
+          variables: this.variables,
           action: value => this.$emit('input', value),
         },
       });

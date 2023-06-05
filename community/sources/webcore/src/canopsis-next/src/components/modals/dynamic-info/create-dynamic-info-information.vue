@@ -1,31 +1,29 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.createDynamicInfoInformation.create.title') }}
-      template(slot="text")
+      template(#text="")
         div
           v-text-field(
             v-model="form.name",
-            v-validate="'required|unique-name'",
-            :label="$t('modals.createDynamicInfoInformation.fields.name')",
+            v-validate="nameRules",
+            :label="$t('common.name')",
             :error-messages="errors.collect('name')",
             name="name"
           )
           c-mixed-field(
             v-model="form.value",
-            :label="$t('modals.createDynamicInfoInformation.fields.value')",
-            :error-messages="errors.collect('value')",
-            name="value"
+            :label="$t('common.value')",
+            name="value",
+            required
           )
-      template(slot="actions")
+      template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.submit') }}
 </template>
 
 <script>
-import { get } from 'lodash';
-
 import { MODALS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
@@ -49,12 +47,12 @@ export default {
     confirmableModalMixinCreator(),
   ],
   data() {
-    const { info } = this.modal.config;
+    const { info = {} } = this.modal.config;
 
     return {
       form: {
-        name: get(info, 'name', ''),
-        value: get(info, 'value', ''),
+        name: info.name ?? '',
+        value: info.value ?? '',
       },
     };
   },
@@ -66,13 +64,16 @@ export default {
     existingNames() {
       return this.config.existingNames;
     },
-  },
-  created() {
-    this.$validator.extend('unique-name', {
-      getMessage: () => this.$t('validator.unique'),
-      validate: value => (this.initialName && this.initialName === value)
-        || !this.existingNames.find(name => name === value),
-    });
+
+    nameRules() {
+      return {
+        required: true,
+        unique: {
+          values: this.existingNames,
+          initialValue: this.initialName,
+        },
+      };
+    },
   },
   methods: {
     async submit() {

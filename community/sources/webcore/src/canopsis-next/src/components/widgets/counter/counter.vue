@@ -3,12 +3,13 @@
     v-fade-transition(v-if="countersPending", key="progress", mode="out-in")
       v-progress-linear.progress-linear-absolute--top(height="2", indeterminate)
     v-layout.fill-height(key="content", wrap)
-      v-alert(v-if="hasNoData", type="info", :value="true") {{ $t('tables.noData') }}
+      v-alert(v-if="hasNoData", type="info", :value="true") {{ $t('common.noData') }}
       template(v-else)
         v-flex(v-for="counter in countersWithFilters", :key="counter.filter.title", :class="flexSize")
           counter-item.weatherItem(
             :counter="counter",
-            :widget="widget"
+            :widget="widget",
+            :query="queryWithoutFilters"
           )
 </template>
 
@@ -38,11 +39,14 @@ export default {
   },
   computed: {
     flexSize() {
-      return [
-        `xs${this.widget.parameters.columnSM}`,
-        `md${this.widget.parameters.columnMD}`,
-        `lg${this.widget.parameters.columnLG}`,
-      ];
+      const columnsCount = {
+        m: this.widget.parameters.columnMobile,
+        t: this.widget.parameters.columnTablet,
+        l: this.widget.parameters.columnDesktop,
+        xl: this.widget.parameters.columnDesktop,
+      }[this.$mq];
+
+      return `xs${12 / columnsCount}`;
     },
 
     hasNoData() {
@@ -50,21 +54,21 @@ export default {
     },
 
     countersWithFilters() {
-      const { viewFilters } = this.widget.parameters;
+      const { filters } = this.widget;
 
-      return this.counters.map((counter, index) => ({ ...counter, filter: viewFilters[index] }));
+      return this.counters.map((counter, index) => ({ ...counter, filter: filters[index] }));
+    },
+
+    queryWithoutFilters() {
+      return omit(this.query, ['filters']);
     },
   },
   methods: {
-    getQuery() {
-      return omit(this.query, ['filters']);
-    },
-
     fetchList() {
       this.fetchCountersList({
         widgetId: this.widget._id,
         filters: this.query.filters,
-        params: this.getQuery(),
+        params: this.queryWithoutFilters,
       });
     },
   },

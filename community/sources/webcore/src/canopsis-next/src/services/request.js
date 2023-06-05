@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { get } from 'lodash';
 
-import { API_HOST, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
+import { API_HOST, LOCAL_STORAGE_ACCESS_TOKEN_KEY, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
 
 import localStorageService from '@/services/local-storage';
 
@@ -83,8 +83,21 @@ function errorResponseHandler(responseWithError) {
      * When we will receive 502 or 401 error we must remove cookie to avoid getting a infinity page refreshing
      */
     if ([502, 401].includes(response.status)) {
+      const queryParams = new URLSearchParams(window.location.search);
+      const hasAccessToken = localStorageService.has(LOCAL_STORAGE_ACCESS_TOKEN_KEY)
+        || queryParams.has(ROUTER_ACCESS_TOKEN_KEY);
+
+      queryParams.delete(ROUTER_ACCESS_TOKEN_KEY);
       localStorageService.remove(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
-      window.location.reload();
+
+      const { origin, pathname } = window.location;
+
+      const params = queryParams.toString();
+      const href = `${origin}${pathname}${params ? `?${params}` : ''}`;
+
+      if (hasAccessToken && window.location.href === href) {
+        window.location.replace(href);
+      }
     }
 
     if (config.fullResponse) {

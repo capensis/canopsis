@@ -1,7 +1,7 @@
 <template lang="pug">
-  v-runtime-template(v-if="column.template", :template="columnContent")
+  c-runtime-template(v-if="column.template", :template="columnContent")
   color-indicator-wrapper(
-    v-else,
+    v-else-if="column.colorIndicatorEnabled",
     :type="column.colorIndicator",
     :entity="alarm.entity",
     :alarm="alarm"
@@ -10,14 +10,25 @@
       :alarm="alarm",
       :widget="widget",
       :column="column",
-      :columns-filters="columnsFilters",
-      @activate="$emit('activate', $event)"
+      :small="small",
+      :selected-tag="selectedTag",
+      @activate="$emit('activate', $event)",
+      @select:tag="$emit('select:tag', $event)"
     )
+  alarm-column-cell(
+    v-else,
+    :alarm="alarm",
+    :widget="widget",
+    :column="column",
+    :small="small",
+    :selected-tag="selectedTag",
+    @activate="$emit('activate', $event)",
+    @select:tag="$emit('select:tag', $event)"
+  )
 </template>
 
 <script>
 import { get } from 'lodash';
-import VRuntimeTemplate from 'v-runtime-template';
 
 import { compile } from '@/helpers/handlebars';
 
@@ -28,7 +39,6 @@ import AlarmColumnCell from './alarm-column-cell.vue';
 export default {
   components: {
     ColorIndicatorWrapper,
-    VRuntimeTemplate,
     AlarmColumnCell,
   },
   props: {
@@ -44,9 +54,13 @@ export default {
       type: Object,
       required: true,
     },
-    columnsFilters: {
-      type: Array,
-      default: () => [],
+    selectedTag: {
+      type: String,
+      default: '',
+    },
+    small: {
+      type: Boolean,
+      default: false,
     },
   },
   asyncComputed: {

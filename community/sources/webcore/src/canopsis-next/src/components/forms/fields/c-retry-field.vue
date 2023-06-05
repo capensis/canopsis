@@ -1,36 +1,40 @@
 <template lang="pug">
-  v-layout
+  v-layout(row)
     v-flex.pr-3(xs4)
-      v-text-field(
-        v-field.number="retry.count",
-        v-validate="fieldValidateRules",
+      c-number-field(
+        v-field="value.retry_count",
         :label="$t('common.retryCount')",
-        :error-messages="errors.collect(countFieldName)",
-        :min="1",
+        :min="0",
         :name="countFieldName",
-        type="number"
+        :required="isRequired",
+        :disabled="disabled"
       )
     v-flex(xs8)
       c-duration-field(
-        v-field="retry",
+        :duration="value.retry_delay",
         :units-label="$t('common.unit')",
         :required="isRequired",
         :name="name",
-        clearable
+        :disabled="isDurationDisabled",
+        clearable,
+        @input="updateDelay"
       )
 </template>
 
 <script>
 import { isNumber } from 'lodash';
 
+import { formMixin } from '@/mixins/form';
+
 export default {
   inject: ['$validator'],
+  mixins: [formMixin],
   model: {
-    prop: 'retry',
+    prop: 'value',
     event: 'input',
   },
   props: {
-    retry: {
+    value: {
       type: Object,
       default: () => ({}),
     },
@@ -42,22 +46,40 @@ export default {
       type: String,
       default: 'retry',
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     countFieldName() {
       return `${this.name}.count`;
     },
 
-    isRequired() {
-      return this.required || isNumber(this.retry.count) || isNumber(this.retry.value) || Boolean(this.retry.unit);
+    isDurationDisabled() {
+      return this.disabled || this.value.retry_count === 0;
     },
 
-    fieldValidateRules() {
-      return {
-        required: this.isRequired,
-        numeric: true,
-        min_value: 1,
-      };
+    isRequired() {
+      const { retry_delay: retryDelay, retry_count: retryCount } = this.value;
+
+      return this.required
+        || isNumber(retryCount)
+        || isNumber(retryDelay?.value)
+        || Boolean(retryDelay?.unit);
+    },
+  },
+  methods: {
+    updateDelay(duration) {
+      if (duration.unit || duration.value) {
+        this.updateField('retry_delay', duration);
+      } else {
+        this.updateModel({
+          ...this.value,
+          retry_delay: duration,
+          retry_count: undefined,
+        });
+      }
     },
   },
 };

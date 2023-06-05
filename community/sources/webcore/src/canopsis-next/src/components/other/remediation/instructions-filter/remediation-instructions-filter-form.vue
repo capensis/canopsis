@@ -1,64 +1,87 @@
 <template lang="pug">
   div
-    v-layout(row)
-      v-radio-group(
-        v-field="form.with",
-        hide-details
+    v-radio-group(
+      v-field="form.with",
+      :label="$t('remediation.instructionsFilter.filterByInstructions')",
+      name="with",
+      hide-details
+    )
+      v-radio(
+        :label="$t('remediation.instructionsFilter.with')",
+        :value="true",
+        color="primary"
       )
-        v-radio(
-          :label="$t('remediationInstructionsFilters.fields.with')",
-          :value="true",
-          color="primary"
-        )
-        v-radio(
-          :label="$t('remediationInstructionsFilters.fields.without')",
-          :value="false",
-          color="primary"
-        )
-    v-layout(row)
-      v-switch(
-        :input-value="form.all",
-        :label="$t('remediationInstructionsFilters.fields.selectAll')",
-        :disabled="hasAnyAnotherOppositeFilter",
-        color="primary",
-        @change="changeSelectedAll"
+      v-radio(
+        :label="$t('remediation.instructionsFilter.without')",
+        :value="false",
+        color="primary"
       )
+    v-switch(
+      :input-value="form.all",
+      :label="$t('remediation.instructionsFilter.selectAll')",
+      :disabled="hasAnyAnotherOppositeFilter",
+      color="primary",
+      @change="changeSelectedAll"
+    )
     v-layout(row)
       v-flex(md3, xs6)
         v-checkbox(
           :input-value="form.auto",
-          :label="$t(`remediationInstructions.types.${$constants.REMEDIATION_INSTRUCTION_TYPES.auto}`)",
+          :label="$t(`remediation.instruction.types.${$constants.REMEDIATION_INSTRUCTION_TYPES.auto}`)",
           :disabled="form.all || hasAnyAnotherOppositeFilterWithAuto",
           color="primary",
           @change="changeType('auto', $event)"
         )
       v-checkbox(
         :input-value="form.manual",
-        :label="$t(`remediationInstructions.types.${$constants.REMEDIATION_INSTRUCTION_TYPES.manual}`)",
+        :label="$t(`remediation.instruction.types.${$constants.REMEDIATION_INSTRUCTION_TYPES.manual}`)",
         :disabled="form.all || hasAnyAnotherOppositeFilterWithManual",
         color="primary",
         @change="changeType('manual', $event)"
       )
-    v-layout(row)
-      v-select(
-        v-validate="selectValidationRules",
-        :value="form.instructions",
-        :items="preparedRemediationInstructions",
-        :loading="remediationInstructionsPending",
-        :disabled="isAll",
-        :label="$t('remediationInstructionsFilters.fields.selectedInstructions')",
-        :error-messages="errors.collect('instructions')",
-        item-text="name",
-        item-value="_id",
-        name="instructions",
-        multiple,
-        clearable,
-        return-object,
-        @change="changeInstructions"
+    v-select(
+      v-validate="selectValidationRules",
+      :value="form.instructions",
+      :items="preparedRemediationInstructions",
+      :loading="remediationInstructionsPending",
+      :disabled="isAll",
+      :label="$t('remediation.instructionsFilter.selectedInstructions')",
+      :error-messages="errors.collect('instructions')",
+      item-text="name",
+      item-value="_id",
+      name="instructions",
+      multiple,
+      clearable,
+      return-object,
+      @change="changeInstructions"
+    )
+      template(#append-outer="")
+        c-help-icon(
+          :text="$t('remediation.instructionsFilter.selectedInstructionsHelp')",
+          icon="help",
+          left
+        )
+    v-radio-group(
+      v-field="form.running",
+      :label="$t('remediation.instructionsFilter.alarmsListDisplay')",
+      name="with",
+      hide-details
+    )
+      v-radio(
+        :label="$t('remediation.instructionsFilter.allAlarms')",
+        :value="null",
+        color="primary"
       )
-        v-tooltip(slot="append-outer", left)
-          v-icon(slot="activator") help
-          div {{ $t('remediationInstructionsFilters.fields.selectedInstructionsHelp') }}
+      v-radio(
+        :label="showInProgressLabel",
+        :value="true",
+        color="primary"
+      )
+      v-radio(
+        :label="hideInProgressLabel",
+        :value="false",
+        color="primary"
+      )
 </template>
 
 <script>
@@ -128,6 +151,22 @@ export default {
 
         return acc;
       }, []);
+    },
+
+    showInProgressLabel() {
+      const key = this.form.with
+        ? 'remediation.instructionsFilter.showWithInProgress'
+        : 'remediation.instructionsFilter.showWithoutInProgress';
+
+      return this.$t(key);
+    },
+
+    hideInProgressLabel() {
+      const key = this.form.with
+        ? 'remediation.instructionsFilter.hideWithInProgress'
+        : 'remediation.instructionsFilter.hideWithoutInProgress';
+
+      return this.$t(key);
     },
   },
   mounted() {

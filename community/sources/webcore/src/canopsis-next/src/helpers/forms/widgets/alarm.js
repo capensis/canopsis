@@ -1,23 +1,47 @@
-import { isString, cloneDeep } from 'lodash';
+import { cloneDeep, omit } from 'lodash';
 
+import { PAGINATION_LIMIT } from '@/config';
 import {
   DEFAULT_ALARMS_WIDGET_COLUMNS,
-  DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
   DEFAULT_PERIODIC_REFRESH,
-  DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_CSV_SEPARATORS,
-  FILTER_DEFAULT_VALUES,
   GRID_SIZES,
   SORT_ORDERS,
+  TIME_UNITS,
+  DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
+  DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
+  ALARM_DENSE_TYPES,
+  DEFAULT_LINKS_INLINE_COUNT,
+  WIDGET_TYPES,
 } from '@/constants';
-import { DEFAULT_CATEGORIES_LIMIT, PAGINATION_LIMIT } from '@/config';
 
-import { defaultColumnsToColumns } from '@/helpers/entities';
-import { durationWithEnabledToForm } from '@/helpers/date/duration';
+import { durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
+import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/entities';
+
+import { widgetColumnsToForm, formToWidgetColumns } from '../shared/widget-column';
+import { kioskParametersToForm } from '../shared/kiosk';
+import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget-template';
+
+import { openedToForm } from './common';
+import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './bar-chart';
+import { lineChartWidgetParametersToForm, formToLineChartWidgetParameters } from './line-chart';
+import { numbersWidgetParametersToForm, formToNumbersWidgetParameters } from './numbers';
 
 /**
- * @typedef {Object} WidgetFastAckOutput
+ * @typedef {'BarChart', 'LineChart', 'Numbers'} AlarmChartType
+ */
+
+/**
+ * @typedef {Object} AlarmsListDataTableColumn
+ * @property {string} value
+ * @property {string} text
+ * @property {boolean} [isHtml]
+ * @property {boolean} [colorIndicator]
+ */
+
+/**
+ * @typedef {Object} WidgetFastActionOutput
  * @property {boolean} enabled
  * @property {string} value
  */
@@ -41,20 +65,69 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  */
 
 /**
+ * @typedef {Object} AlarmChartBarChartWidgetParameters
+ * @property {MetricPreset[]} metrics
+ * @property {boolean} stacked
+ * @property {string} chart_title
+ * @property {string} default_time_range
+ * @property {Sampling} default_sampling
+ * @property {boolean} comparison
+ */
+
+/**
+ * @typedef {Object} AlarmChartLineChartWidgetParameters
+ * @property {MetricPreset[]} metrics
+ * @property {string} chart_title
+ * @property {string} default_time_range
+ * @property {Sampling} default_sampling
+ * @property {boolean} comparison
+ */
+
+/**
+ * @typedef {Object} AlarmChartNumbersWidgetParameters
+ * @property {MetricPreset[]} metrics
+ * @property {string} chart_title
+ * @property {string} default_time_range
+ * @property {Sampling} default_sampling
+ * @property {string} show_trend
+ * @property {number} [font_size]
+ */
+
+/**
+ * @typedef {Object} AlarmChart
+ * @property {string} title
+ * @property {AlarmChartType} type
+ * @property {
+ *   AlarmChartBarChartWidgetParameters
+ *   | AlarmChartLineChartWidgetParameters
+ *   | AlarmChartNumbersWidgetParameters
+ * } parameters
+ */
+
+/**
  * @typedef {Object} AlarmListBaseParameters
  * @property {number} itemsPerPage
+ * @property {WidgetSort} sort
  * @property {string} moreInfoTemplate
+ * @property {string} moreInfoTemplateTemplate
  * @property {WidgetInfoPopup[]} infoPopups
+ * @property {string} widgetColumnsTemplate
  * @property {WidgetColumn[]} widgetColumns
  */
 
 /**
  * @typedef {Object} AlarmListWidgetDefaultParameters
- * @property {WidgetFastAckOutput} fastAckOutput
- * @property {WidgetLinksCategoriesAsList} linksCategoriesAsList
+ * @property {WidgetFastActionOutput} fastAckOutput
+ * @property {WidgetFastActionOutput} fastCancelOutput
+ * @property {number} inlineLinksCount
  * @property {number} itemsPerPage
  * @property {WidgetInfoPopup[]} infoPopups
  * @property {string} moreInfoTemplate
+ * @property {string} moreInfoTemplateTemplate
+ * @property {string} widgetColumnsTemplate
+ * @property {string} widgetGroupColumnsTemplate
+ * @property {string} widgetExportColumnsTemplate
+ * @property {string} serviceDependenciesColumnsTemplate
  * @property {WidgetColumn[]} widgetColumns
  * @property {WidgetColumn[]} widgetGroupColumns
  * @property {WidgetColumn[]} widgetExportColumns
@@ -71,44 +144,45 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
 /**
  * @typedef {AlarmListWidgetDefaultParameters} AlarmListWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
- * @property {WidgetFilter[]} viewFilters
  * @property {string | null} mainFilter
- * @property {number} mainFilterUpdatedAt
- * @property {WidgetFilterCondition} mainFilterCondition
  * @property {WidgetLiveReporting} liveReporting
  * @property {WidgetSort} sort
  * @property {boolean | null} opened
  * @property {number[]} expandGridRangeSize
  * @property {WidgetCsvSeparator} exportCsvSeparator
  * @property {string} exportCsvDatetimeFormat
+ * @property {boolean} clearFilterDisabled
+ * @property {WidgetKioskParameters} kiosk
+ * @property {AlarmChart[]} charts
  */
 
 /**
- * Add 'alarm.' prefix in column value
- *
- * @param {string} [value]
- * @returns {string}
+ * @typedef {AlarmListBaseParameters} AlarmListBaseParametersForm
+ * @property {string | Symbol} widgetColumnsTemplate
+ * @property {WidgetColumnForm[]} widgetColumns
  */
-export const columnValueToForm = value => (value && isString(value) ? value.replace(/^v\./, 'alarm.v.') : value);
 
 /**
- * Remove 'alarm.' prefix from column value
- *
- * @param {string} [value]
- * @returns {string}
+ * @typedef {AlarmChart} AlarmChartForm
+ * @property {string} key
  */
-export const formToColumnValue = value => (value && isString(value) ? value.replace(/^alarm\./, '') : value);
 
 /**
- * Convert columns parameters to form
- *
- * @param {WidgetColumn[]} [widgetColumns = []]
- * @return {WidgetColumn[]}
+ * @typedef {AlarmListWidgetDefaultParameters} AlarmListWidgetDefaultParametersForm
+ * @property {string | Symbol} widgetColumnsTemplate
+ * @property {string | Symbol} widgetGroupColumnsTemplate
+ * @property {string | Symbol} widgetExportColumnsTemplate
+ * @property {string | Symbol} serviceDependenciesColumnsTemplate
+ * @property {WidgetColumnForm[]} widgetColumns
+ * @property {WidgetColumnForm[]} widgetGroupColumns
+ * @property {WidgetColumnForm[]} widgetExportColumns
+ * @property {WidgetColumnForm[]} serviceDependenciesColumns
  */
-export const widgetColumnsToForm = (widgetColumns = []) => widgetColumns.map(column => ({
-  ...column,
-  value: columnValueToForm(column.value),
-}));
+
+/**
+ * @typedef {AlarmListWidgetDefaultParametersForm & AlarmListWidgetParameters} AlarmListWidgetParametersForm
+ * @property {AlarmChartForm[]} charts
+ */
 
 /**
  * Convert alarm list infoPopups parameters to form
@@ -116,10 +190,7 @@ export const widgetColumnsToForm = (widgetColumns = []) => widgetColumns.map(col
  * @param {WidgetInfoPopup[]} [infoPopups = []]
  * @return {WidgetInfoPopup[]}
  */
-export const infoPopupsToForm = (infoPopups = []) => infoPopups.map(infoPopup => ({
-  ...infoPopup,
-  column: columnValueToForm(infoPopup.column),
-}));
+export const infoPopupsToForm = (infoPopups = []) => infoPopups.map(infoPopup => ({ ...infoPopup }));
 
 /**
  * Convert widget sort parameters to form
@@ -128,156 +199,191 @@ export const infoPopupsToForm = (infoPopups = []) => infoPopups.map(infoPopup =>
  * @return {WidgetSort}
  */
 export const widgetSortToForm = (sort = {}) => ({
-  order: sort.order || SORT_ORDERS.asc,
-  column: sort.column ? columnValueToForm(sort.column) : '',
+  order: sort.order ?? SORT_ORDERS.asc,
+  column: sort.column ?? '',
 });
 
 /**
  * Convert alarm list base parameters (we are using it inside another widgets with alarmList) to form
  *
  * @param {AlarmListBaseParameters} [alarmListParameters = {}]
- * @return {AlarmListBaseParameters}
+ * @return {AlarmListBaseParametersForm}
  */
 export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
+  sort: widgetSortToForm(alarmListParameters.sort),
   itemsPerPage: alarmListParameters.itemsPerPage ?? PAGINATION_LIMIT,
   moreInfoTemplate: alarmListParameters.moreInfoTemplate ?? '',
+  moreInfoTemplateTemplate: widgetTemplateValueToForm(alarmListParameters.moreInfoTemplateTemplate),
   infoPopups: infoPopupsToForm(alarmListParameters.infoPopups),
-  widgetColumns: alarmListParameters.widgetColumns
-    ? widgetColumnsToForm(alarmListParameters.widgetColumns)
-    : defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_COLUMNS),
+  widgetColumnsTemplate: widgetTemplateValueToForm(alarmListParameters.widgetColumnsTemplate),
+  widgetColumns: widgetColumnsToForm(alarmListParameters.widgetColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
 });
+
+/**
+ * Convert widget periodic refresh to form duration
+ *
+ * @param {DurationWithEnabled} periodicRefresh
+ * @returns {DurationWithEnabled}
+ */
+export const periodicRefreshToDurationForm = (periodicRefresh = DEFAULT_PERIODIC_REFRESH) => {
+  /**
+   * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/4390
+   */
+  const unit = isValidUnit(periodicRefresh.unit)
+    ? periodicRefresh.unit
+    : TIME_UNITS.second;
+
+  return durationWithEnabledToForm({ ...periodicRefresh, unit });
+};
+
+/**
+ * Convert alarm list chart to form
+ *
+ * @param {AlarmChart} [chart = {}]
+ * @returns {AlarmChart}
+ */
+export const alarmListChartToForm = (chart = {}) => {
+  const convertersMap = {
+    [WIDGET_TYPES.barChart]: barChartWidgetParametersToForm,
+    [WIDGET_TYPES.lineChart]: lineChartWidgetParametersToForm,
+    [WIDGET_TYPES.numbers]: numbersWidgetParametersToForm,
+  };
+
+  const type = chart.type ?? WIDGET_TYPES.barChart;
+  const converter = convertersMap[type];
+
+  return {
+    type,
+    title: chart.title ?? '',
+    parameters: omit(converter ? converter(chart.parameters) : chart.parameters, ['periodic_refresh']),
+  };
+};
 
 /**
  * Convert alarm list widget parameters to form
  *
  * @param {AlarmListWidgetDefaultParameters} [parameters = {}]
- * @return {AlarmListWidgetDefaultParameters}
+ * @return {AlarmListWidgetDefaultParametersForm}
  */
 export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   itemsPerPage: parameters.itemsPerPage ?? PAGINATION_LIMIT,
   infoPopups: infoPopupsToForm(parameters.infoPopups),
   moreInfoTemplate: parameters.moreInfoTemplate ?? '',
+  moreInfoTemplateTemplate: widgetTemplateValueToForm(parameters.moreInfoTemplateTemplate),
   isAckNoteRequired: !!parameters.isAckNoteRequired,
   isSnoozeNoteRequired: !!parameters.isSnoozeNoteRequired,
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
   isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
   isHtmlEnabledOnTimeLine: !!parameters.isHtmlEnabledOnTimeLine,
   sticky_header: !!parameters.sticky_header,
-  dense: !!parameters.dense,
+  dense: parameters.dense ?? ALARM_DENSE_TYPES.large,
   fastAckOutput: parameters.fastAckOutput
     ? { ...parameters.fastAckOutput }
     : {
       enabled: false,
       value: 'auto ack',
     },
-  widgetColumns: parameters.widgetColumns
-    ? widgetColumnsToForm(parameters.widgetColumns)
-    : defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_COLUMNS),
-  widgetGroupColumns: parameters.widgetGroupColumns
-    ? widgetColumnsToForm(parameters.widgetGroupColumns)
-    : defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS),
-  serviceDependenciesColumns: parameters.serviceDependenciesColumns
-    ? widgetColumnsToForm(parameters.serviceDependenciesColumns)
-    : defaultColumnsToColumns(DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
-  linksCategoriesAsList: parameters.linksCategoriesAsList
-    ? { ...parameters.linksCategoriesAsList }
+  fastCancelOutput: parameters.fastCancelOutput
+    ? { ...parameters.fastCancelOutput }
     : {
       enabled: false,
-      limit: DEFAULT_CATEGORIES_LIMIT,
+      value: 'auto cancel',
     },
+  widgetColumnsTemplate: widgetTemplateValueToForm(parameters.widgetColumnsTemplate),
+  widgetGroupColumnsTemplate: widgetTemplateValueToForm(parameters.widgetGroupColumnsTemplate),
+  serviceDependenciesColumnsTemplate: widgetTemplateValueToForm(parameters.serviceDependenciesColumnsTemplate),
+  widgetExportColumnsTemplate: widgetTemplateValueToForm(parameters.widgetExportColumnsTemplate),
+  widgetColumns:
+    widgetColumnsToForm(parameters.widgetColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
+  widgetGroupColumns:
+    widgetColumnsToForm(parameters.widgetGroupColumns ?? DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS),
+  serviceDependenciesColumns:
+    widgetColumnsToForm(parameters.serviceDependenciesColumns ?? DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
+  widgetExportColumns:
+    widgetColumnsToForm(parameters.widgetExportColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
+  inlineLinksCount: parameters.inlineLinksCount ?? DEFAULT_LINKS_INLINE_COUNT,
 });
 
 /**
  * Convert alarm list widget parameters to form
  *
  * @param {AlarmListWidgetParameters} [parameters = {}]
- * @return {AlarmListWidgetParameters}
+ * @return {AlarmListWidgetParametersForm}
  */
 export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   ...parameters,
   ...alarmListWidgetDefaultParametersToForm(parameters),
 
-  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
-  viewFilters: parameters.viewFilters
-    ? cloneDeep(parameters.viewFilters)
-    : [],
+  periodic_refresh: periodicRefreshToDurationForm(parameters.periodic_refresh),
   mainFilter: parameters.mainFilter ?? null,
-  mainFilterCondition: parameters.mainFilterCondition ?? FILTER_DEFAULT_VALUES.condition,
-  mainFilterUpdatedAt: parameters.mainFilterUpdatedAt || 0,
+  clearFilterDisabled: parameters.clearFilterDisabled ?? false,
   liveReporting: parameters.liveReporting
     ? cloneDeep(parameters.liveReporting)
     : {},
   sort: widgetSortToForm(parameters.sort),
-  opened: parameters.opened ?? true,
+  opened: openedToForm(parameters.opened),
   expandGridRangeSize: parameters.expandGridRangeSize
     ? [...parameters.expandGridRangeSize]
     : [GRID_SIZES.min, GRID_SIZES.max],
   exportCsvSeparator: parameters.exportCsvSeparator ?? EXPORT_CSV_SEPARATORS.comma,
   exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
-  widgetExportColumns: parameters.widgetExportColumns
-    ? widgetColumnsToForm(parameters.widgetExportColumns)
-    : defaultColumnsToColumns(DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS),
+  kiosk: kioskParametersToForm(parameters.kiosk),
+  charts: addKeyInEntities(parameters.charts),
 });
-
-/**
- * Convert form sort parameters to widget sort
- *
- * @param {WidgetSort} sort
- * @return {WidgetSort}
- */
-export const formSortToWidgetSort = (sort = {}) => ({
-  order: sort.order,
-  column: formToColumnValue(sort.column),
-});
-
-/**
- * Convert form columns parameters to widget columns
- *
- * @param {WidgetColumn[]} widgetColumns
- * @return {WidgetColumn[]}
- */
-export const formWidgetColumnsToColumns = widgetColumns => widgetColumns.map(column => ({
-  ...column,
-  value: formToColumnValue(column.value),
-}));
-
-/**
- * Convert infoPopups parameters to alarm list
- *
- * @param {WidgetInfoPopup[]} infoPopups
- * @return {WidgetInfoPopup[]}
- */
-export const formInfoPopupsToInfoPopups = infoPopups => infoPopups.map(infoPopup => ({
-  ...infoPopup,
-  column: columnValueToForm(infoPopup.column),
-}));
 
 /**
  * Convert form to alarm list base parameters (we are using it inside another widgets with alarmList)
  *
- * @param {AlarmListBaseParameters} [form = {}]
+ * @param {AlarmListBaseParametersForm} [form = {}]
  * @return {AlarmListBaseParameters}
  */
 export const formToAlarmListBaseParameters = (form = {}) => ({
-  itemsPerPage: form.itemsPerPage,
-  moreInfoTemplate: form.moreInfoTemplate,
-  infoPopups: formInfoPopupsToInfoPopups(form.infoPopups),
-  widgetColumns: formWidgetColumnsToColumns(form.widgetColumns),
+  ...form,
+
+  moreInfoTemplateTemplate: formToWidgetTemplateValue(form.moreInfoTemplateTemplate),
+  widgetColumnsTemplate: formToWidgetTemplateValue(form.widgetColumnsTemplate),
+  widgetColumns: formToWidgetColumns(form.widgetColumns),
 });
+
+/**
+ * Convert form to alarm list chart
+ *
+ * @param {AlarmChartForm} chart
+ * @returns {AlarmChart}
+ */
+export const formToAlarmListChart = ({ type, title, parameters }) => {
+  const convertersMap = {
+    [WIDGET_TYPES.barChart]: formToBarChartWidgetParameters,
+    [WIDGET_TYPES.lineChart]: formToLineChartWidgetParameters,
+    [WIDGET_TYPES.numbers]: formToNumbersWidgetParameters,
+  };
+
+  const converter = convertersMap[type];
+
+  return {
+    type,
+    title,
+    parameters: omit(converter ? converter(parameters) : parameters, ['periodic_refresh']),
+  };
+};
 
 /**
  * Convert form parameters to alarm list widget parameters
  *
- * @param {AlarmListWidgetParameters} form
+ * @param {AlarmListWidgetParametersForm} form
  * @return {AlarmListWidgetParameters}
  */
 export const formToAlarmListWidgetParameters = form => ({
   ...form,
 
-  widgetColumns: formWidgetColumnsToColumns(form.widgetColumns),
-  widgetGroupColumns: formWidgetColumnsToColumns(form.widgetGroupColumns),
-  widgetExportColumns: formWidgetColumnsToColumns(form.widgetExportColumns),
-  serviceDependenciesColumns: formWidgetColumnsToColumns(form.serviceDependenciesColumns),
-  infoPopups: formInfoPopupsToInfoPopups(form.infoPopups),
-  sort: formSortToWidgetSort(form.sort),
+  moreInfoTemplateTemplate: formToWidgetTemplateValue(form.moreInfoTemplateTemplate),
+  widgetColumnsTemplate: formToWidgetTemplateValue(form.widgetColumnsTemplate),
+  widgetGroupColumnsTemplate: formToWidgetTemplateValue(form.widgetGroupColumnsTemplate),
+  serviceDependenciesColumnsTemplate: formToWidgetTemplateValue(form.serviceDependenciesColumnsTemplate),
+  widgetExportColumnsTemplate: formToWidgetTemplateValue(form.widgetExportColumnsTemplate),
+  widgetColumns: formToWidgetColumns(form.widgetColumns),
+  widgetGroupColumns: formToWidgetColumns(form.widgetGroupColumns),
+  widgetExportColumns: formToWidgetColumns(form.widgetExportColumns),
+  serviceDependenciesColumns: formToWidgetColumns(form.serviceDependenciesColumns),
+  charts: removeKeyFromEntities(form.charts),
 });

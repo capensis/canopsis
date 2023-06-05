@@ -7,7 +7,6 @@ package mock_postgres
 import (
 	context "context"
 	reflect "reflect"
-	time "time"
 
 	gomock "github.com/golang/mock/gomock"
 	pgconn "github.com/jackc/pgconn"
@@ -83,6 +82,20 @@ func (mr *MockBasePoolMockRecorder) Exec(arg0, arg1 interface{}, arg2 ...interfa
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Exec", reflect.TypeOf((*MockBasePool)(nil).Exec), varargs...)
+}
+
+// Ping mocks base method.
+func (m *MockBasePool) Ping(arg0 context.Context) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Ping", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Ping indicates an expected call of Ping.
+func (mr *MockBasePoolMockRecorder) Ping(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Ping", reflect.TypeOf((*MockBasePool)(nil).Ping), arg0)
 }
 
 // Query mocks base method.
@@ -207,6 +220,20 @@ func (mr *MockPoolMockRecorder) Exec(arg0, arg1 interface{}, arg2 ...interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Exec", reflect.TypeOf((*MockPool)(nil).Exec), varargs...)
 }
 
+// Ping mocks base method.
+func (m *MockPool) Ping(arg0 context.Context) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Ping", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Ping indicates an expected call of Ping.
+func (mr *MockPoolMockRecorder) Ping(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Ping", reflect.TypeOf((*MockPool)(nil).Ping), arg0)
+}
+
 // Query mocks base method.
 func (m *MockPool) Query(arg0 context.Context, arg1 string, arg2 ...interface{}) (pgx.Rows, error) {
 	m.ctrl.T.Helper()
@@ -258,32 +285,6 @@ func (m *MockPool) SendBatch(arg0 context.Context, arg1 *pgx.Batch) error {
 func (mr *MockPoolMockRecorder) SendBatch(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendBatch", reflect.TypeOf((*MockPool)(nil).SendBatch), arg0, arg1)
-}
-
-// SetRetry mocks base method.
-func (m *MockPool) SetRetry(arg0 int, arg1 time.Duration) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SetRetry", arg0, arg1)
-}
-
-// SetRetry indicates an expected call of SetRetry.
-func (mr *MockPoolMockRecorder) SetRetry(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetRetry", reflect.TypeOf((*MockPool)(nil).SetRetry), arg0, arg1)
-}
-
-// Stat mocks base method.
-func (m *MockPool) Stat() *pgxpool.Stat {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Stat")
-	ret0, _ := ret[0].(*pgxpool.Stat)
-	return ret0
-}
-
-// Stat indicates an expected call of Stat.
-func (mr *MockPoolMockRecorder) Stat() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Stat", reflect.TypeOf((*MockPool)(nil).Stat))
 }
 
 // WithTransaction mocks base method.

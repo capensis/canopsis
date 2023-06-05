@@ -1,7 +1,12 @@
 <template lang="pug">
-  v-app#app
-    v-layout(v-if="!pending")
-      the-navigation#main-navigation(v-if="shownNavigation")
+  v-app#app(:dark="system.dark")
+    c-progress-overlay(
+      :pending="wholePending",
+      :transition="false",
+      color="gray"
+    )
+    v-layout(v-if="!wholePending")
+      the-navigation#main-navigation(v-if="currentUser && shownHeader")
       v-content#main-content
         active-broadcast-message
         router-view(:key="routeViewKey")
@@ -28,6 +33,7 @@ import { authMixin } from '@/mixins/auth';
 import { systemMixin } from '@/mixins/system';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { entitiesUserMixin } from '@/mixins/entities/user';
+import { entitiesTemplateVarsMixin } from '@/mixins/entities/template-vars';
 
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
@@ -46,13 +52,19 @@ export default {
     systemMixin,
     entitiesInfoMixin,
     entitiesUserMixin,
+    entitiesTemplateVarsMixin,
   ],
   data() {
     return {
-      pending: true,
+      currentUserLocalPending: true,
+      appInfoLocalPending: true,
     };
   },
   computed: {
+    wholePending() {
+      return this.currentUserLocalPending || this.appInfoLocalPending || this.templateVarsPending;
+    },
+
     routeViewKey() {
       if (this.$route.name === ROUTES_NAMES.view) {
         return this.$route.path;
@@ -60,10 +72,10 @@ export default {
 
       return this.$route.fullPath;
     },
-
-    shownNavigation() {
-      return ![ROUTES_NAMES.login, ROUTES_NAMES.error].includes(this.$route.name);
-    },
+  },
+  watch: {
+    templateVars: 'setTitle',
+    currentUser: 'setTitle',
   },
   beforeCreate() {
     reloadPageWithTrailingSlashes();
@@ -71,10 +83,16 @@ export default {
   created() {
     this.registerCurrentUserOnceWatcher();
   },
-  mounted() {
+  async mounted() {
     this.socketConnectWithErrorHandling();
-    this.fetchCurrentUserWithErrorHandling();
     this.showLocalStorageWarningPopupMessage();
+
+    await Promise.all([
+      this.fetchCurrentUserWithErrorHandling(),
+      this.fetchTemplateVars(),
+    ]);
+
+    this.fetchAppInfoWithErrorHandling();
   },
   methods: {
     ...mapActions({
@@ -93,17 +111,10 @@ export default {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
           this.$socket.authenticate(localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY));
+          this.setTheme(currentUser.ui_theme);
 
-          await Promise.all([
-            this.fetchAppInfo(),
-            this.filesAccess(),
-          ]);
+          await this.filesAccess();
 
-          this.setSystemData({
-            timezone: this.timezone,
-          });
-
-          this.setTitle();
           this.showPausedExecutionsPopup();
 
           unwatch();
@@ -121,7 +132,7 @@ export default {
       }
 
       pausedExecutions.forEach((execution = {}) => this.$popups.info({
-        text: this.$t('remediationInstructionExecute.popups.wasPaused', {
+        text: this.$t('remediation.instructionExecute.popups.wasPaused', {
           instructionName: execution.instruction_name,
           alarmName: execution.alarm_name,
           date: convertDateToString(execution.paused),
@@ -157,7 +168,7 @@ export default {
 
     async fetchCurrentUserWithErrorHandling() {
       try {
-        this.pending = true;
+        this.currentUserLocalPending = true;
 
         await this.fetchCurrentUser();
       } catch (err) {
@@ -167,7 +178,30 @@ export default {
 
         console.error(err);
       } finally {
-        this.pending = false;
+        this.currentUserLocalPending = false;
+      }
+    },
+
+    async fetchAppInfoWithErrorHandling() {
+      try {
+        this.appInfoLocalPending = true;
+        await this.fetchAppInfo();
+
+        this.setSystemData({
+          timezone: this.timezone,
+        });
+
+        this.setTitle();
+      } catch (err) {
+        if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(err.status)) {
+          this.$router.push({
+            name: ROUTES_NAMES.error,
+          });
+        }
+
+        console.error(err);
+      } finally {
+        this.appInfoLocalPending = false;
       }
     },
   },

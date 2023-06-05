@@ -19,7 +19,7 @@ exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` with cu
           class="v-label v-label--active theme--light"
           style="left: 0px; position: absolute;"
         >
-          common.criteria
+          Criteria
         </label>
         <div
           class="v-select__selections"
@@ -30,7 +30,7 @@ exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` with cu
             Rating setting 2
           </div>
           <input
-            aria-label="common.criteria"
+            aria-label="Criteria"
             aria-readonly="false"
             autocomplete="on"
             readonly="readonly"
@@ -182,13 +182,13 @@ exports[`kpi-rating-criteria-field Renders \`kpi-rating-criteria-field\` without
           class="v-label theme--light"
           style="left: 0px; position: absolute;"
         >
-          common.criteria
+          Criteria
         </label>
         <div
           class="v-select__selections"
         >
           <input
-            aria-label="common.criteria"
+            aria-label="Criteria"
             aria-readonly="false"
             autocomplete="on"
             readonly="readonly"

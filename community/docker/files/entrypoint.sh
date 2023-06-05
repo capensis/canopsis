@@ -21,6 +21,7 @@ else
     if [ "${CPS_OLD_API}" = "1" ]; then
         /opt/canopsis/bin/canopsis-oldapi --access-logfile /opt/canopsis/var/log/oldapi-access.log -k gevent --limit-request-line ${LIMIT_REQUEST_LINE} -w ${WORKERS_SIZE} -b 0.0.0.0:8081
     else
-        /opt/canopsis/bin/engine-launcher -e $ENGINE_MODULE -n $ENGINE_NAME -w 1 -l ${CPS_LOGGING_LEVEL:-info}
+        echo "Launching Python engines is no longer supported" >&2
+        exit 1
     fi
 fi

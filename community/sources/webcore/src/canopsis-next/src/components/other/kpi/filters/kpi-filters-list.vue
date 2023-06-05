@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-advanced-data-table.white(
+  c-advanced-data-table(
     :pagination="pagination",
     :items="filters",
     :loading="pending",
@@ -17,6 +17,8 @@
       v-layout(row)
         c-action-btn(
           v-if="updatable",
+          :badge-value="isOldPattern(item)",
+          :badge-tooltip="$t('pattern.oldPatternTooltip')",
           type="edit",
           @click="$emit('edit', item)"
         )
@@ -35,6 +37,10 @@
 </template>
 
 <script>
+import { OLD_PATTERNS_FIELDS } from '@/constants';
+
+import { isOldPattern } from '@/helpers/pattern';
+
 import KpiFiltersExpandItem from './partials/kpi-filters-expand-item.vue';
 
 export default {
@@ -72,11 +78,16 @@ export default {
   computed: {
     headers() {
       return [
-        { text: this.$t('common.title'), value: 'name' },
+        { text: this.$t('common.name'), value: 'name' },
         { text: this.$t('common.created'), value: 'created' },
         { text: this.$t('common.lastModifiedOn'), value: 'updated' },
         { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
       ];
+    },
+  },
+  methods: {
+    isOldPattern(item) {
+      return isOldPattern(item, [OLD_PATTERNS_FIELDS.entity]);
     },
   },
 };

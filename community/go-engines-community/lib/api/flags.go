@@ -1,6 +1,11 @@
 package api
 
-import "flag"
+import (
+	"flag"
+	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+)
 
 const (
 	defaultPort      = 8082
@@ -13,8 +18,9 @@ func (f *Flags) ParseArgs() {
 	flag.StringVar(&f.ConfigDir, "c", defaultConfigDir, "Configuration files directory")
 	flag.BoolVar(&f.Debug, "d", false, "debug")
 	flag.BoolVar(&f.SecureSession, "secure", false, "Secure session")
-	flag.BoolVar(&f.Test, "test", false, "Set for functional tests")
 	flag.BoolVar(&f.EnableDocs, "docs", false, "Set to enable Swagger docs")
+	flag.DurationVar(&f.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
+	flag.DurationVar(&f.IntegrationPeriodicalWaitTime, "integrationPeriodicalWaitTime", 5*time.Second, "Duration to periodically check results of engines' tasks")
 	flag.BoolVar(&f.EnableSameServiceNames, "enableSameServiceNames", false, "Enable same service names, services have unique names by default")
 	flag.Parse()
 }
@@ -25,8 +31,11 @@ type Flags struct {
 	ConfigDir     string
 	Debug         bool
 	SecureSession bool
-	Test          bool
 	EnableDocs    bool
+
+	PeriodicalWaitTime            time.Duration
+	IntegrationPeriodicalWaitTime time.Duration
+
 	// EnableSameServiceNames affects entityservice Create/Update payload validation
 	EnableSameServiceNames bool
 }

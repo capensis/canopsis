@@ -9,7 +9,7 @@
           :key="group._id",
           hide-actions
         )
-          template(slot="title")
+          template(#title="")
             v-checkbox.group-checkbox.mt-0.pt-0(
               :input-value="selectedGroupsIds",
               :value="group._id",
@@ -29,20 +29,21 @@
             focusable
           )
             v-expansion-panel-content(hide-actions)
-              group-view-panel(slot="header", :view="view")
-                template(slot="title")
-                  v-layout(align-center, row, justify-space-between)
-                    v-checkbox.group-checkbox.mt-0.pt-0(
-                      :input-value="selectedViewsIds",
-                      :value="view._id",
-                      :disabled="isDisabledView(view)",
-                      color="primary",
-                      @change="selectViewHandler(view, $event)"
-                    )
-                    span.ellipsis {{ view.title }}
-                      span.ml-1(v-show="view.description") ({{ view.description }})
+              template(#header="")
+                group-view-panel(:view="view")
+                  template(#title="")
+                    v-layout(align-center, row, justify-space-between)
+                      v-checkbox.group-checkbox.mt-0.pt-0(
+                        :input-value="selectedViewsIds",
+                        :value="view._id",
+                        :disabled="isDisabledView(view)",
+                        color="primary",
+                        @change="selectViewHandler(view, $event)"
+                      )
+                      span.ellipsis {{ view.title }}
+                        span.ml-1(v-show="view.description") ({{ view.description }})
               tab-panel-content(v-for="tab in view.tabs", :key="tab._id", :tab="tab", hide-actions)
-                template(slot="title")
+                template(#title="")
                   v-layout.ml-5(align-center)
                     v-checkbox.tab-checkbox.group-checkbox(
                       :input-value="selectedTabsIds",
@@ -92,7 +93,7 @@ export default {
 
     selectedViewsIds() {
       return this.groups.reduce((acc, { views }) => {
-        views.forEach(({ _id: viewId, tabs }) => {
+        views.forEach(({ _id: viewId, tabs = [] }) => {
           if (tabs.length && tabs.every(({ _id: tabId }) => this.selectedTabsIds.includes(tabId))) {
             acc.push(viewId);
           }
@@ -151,7 +152,7 @@ export default {
     },
 
     isDisabledView(view) {
-      return !view.tabs.length;
+      return !view.tabs?.length;
     },
   },
 };
@@ -159,17 +160,17 @@ export default {
 
 <style lang="scss" scoped>
   .manage-playlist-tabs {
-    & /deep/ .panel-header {
+    & ::v-deep .panel-header {
       display: flex;
       flex: inherit;
       align-items: center;
     }
-    & /deep/ .v-expansion-panel__body {
+    & ::v-deep .v-expansion-panel__body {
       transition: none !important;
     }
   }
   .tabs-panel {
-    & /deep/ .v-expansion-panel__header {
+    & ::v-deep .v-expansion-panel__header {
       padding: 0;
       margin: 0;
     }

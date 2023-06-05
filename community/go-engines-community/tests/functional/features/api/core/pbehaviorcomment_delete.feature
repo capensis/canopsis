@@ -49,7 +49,10 @@ Feature: delete a PBehavior comment
       "comments": [
         {
           "_id": "test-pbehavior-to-delete-comment-2",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "message": "test-pbehavior-to-delete-comment-2-message",
           "ts": 1592215337
         }

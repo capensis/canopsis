@@ -1,9 +1,7 @@
 package scenario
 
 import (
-	"net/http"
 	"strconv"
-	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
@@ -126,31 +124,6 @@ func validateActionParametersRequest(sl validator.StructLevel, t string, params 
 	case types.ActionTypeWebhook:
 		if params.Request == nil {
 			sl.ReportError(params.Request, "Parameters.Request", "Request", "required", "")
-		} else if params.Request.Method != "" {
-			validMethods := []string{
-				http.MethodGet,
-				http.MethodHead,
-				http.MethodPost,
-				http.MethodPut,
-				http.MethodPatch,
-				http.MethodDelete,
-				http.MethodConnect,
-				http.MethodOptions,
-				http.MethodTrace,
-			}
-			param := strings.Join(validMethods, " ")
-
-			found := false
-			for _, v := range validMethods {
-				if v == strings.ToUpper(params.Request.Method) {
-					found = true
-					break
-				}
-			}
-
-			if !found {
-				sl.ReportError(params.Request.Method, "Parameters.Request.Method", "Method", "oneof", param)
-			}
 		}
 	}
 }

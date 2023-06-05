@@ -1,0 +1,158 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehavior-comments Renders \`pbehavior-comments\` with comments 1`] = `
+<div
+  class="v-list comments-list theme--light"
+  role="list"
+>
+  <!---->
+  <div
+    role="listitem"
+  >
+    <div
+      class="v-list__tile theme--light"
+    >
+      <div
+        class="v-list__tile__content"
+      >
+        <div
+          class="v-list__tile__title"
+        >
+          author-pbehavior-comment-0
+        </div>
+        <div
+          class="v-list__tile__sub-title"
+        >
+          message-pbehavior-comment-0
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr
+    class="v-divider theme--light"
+  />
+  <div
+    role="listitem"
+  >
+    <div
+      class="v-list__tile theme--light"
+    >
+      <div
+        class="v-list__tile__content"
+      >
+        <div
+          class="v-list__tile__title"
+        >
+          author-pbehavior-comment-1
+        </div>
+        <div
+          class="v-list__tile__sub-title"
+        >
+          message-pbehavior-comment-1
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr
+    class="v-divider theme--light"
+  />
+  <div
+    role="listitem"
+  >
+    <div
+      class="v-list__tile theme--light"
+    >
+      <div
+        class="v-list__tile__content"
+      >
+        <div
+          class="v-list__tile__title"
+        >
+          author-pbehavior-comment-2
+        </div>
+        <div
+          class="v-list__tile__sub-title"
+        >
+          message-pbehavior-comment-2
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr
+    class="v-divider theme--light"
+  />
+  <div
+    role="listitem"
+  >
+    <div
+      class="v-list__tile theme--light"
+    >
+      <div
+        class="v-list__tile__content"
+      >
+        <div
+          class="v-list__tile__title"
+        >
+          author-pbehavior-comment-3
+        </div>
+        <div
+          class="v-list__tile__sub-title"
+        >
+          message-pbehavior-comment-3
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr
+    class="v-divider theme--light"
+  />
+  <div
+    role="listitem"
+  >
+    <div
+      class="v-list__tile theme--light"
+    >
+      <div
+        class="v-list__tile__content"
+      >
+        <div
+          class="v-list__tile__title"
+        >
+          author-pbehavior-comment-4
+        </div>
+        <div
+          class="v-list__tile__sub-title"
+        >
+          message-pbehavior-comment-4
+        </div>
+      </div>
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`pbehavior-comments Renders \`pbehavior-comments\` without comments 1`] = `
+<div
+  class="v-list comments-list theme--light"
+  role="list"
+>
+  <div
+    role="listitem"
+  >
+    <div
+      class="v-list__tile theme--light"
+    >
+      <div
+        class="v-list__tile__content"
+      >
+        <div
+          class="v-list__tile__title"
+        >
+          No data
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

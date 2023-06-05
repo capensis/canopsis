@@ -91,9 +91,6 @@ export default {
           },
         },
         plugins: {
-          background: {
-            color: 'white',
-          },
           legend: {
             display: false,
           },

@@ -49,6 +49,18 @@ func (mr *MockEngineMockRecorder) AddConsumer(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddConsumer", reflect.TypeOf((*MockEngine)(nil).AddConsumer), arg0)
 }
 
+// AddDeferFunc mocks base method.
+func (m *MockEngine) AddDeferFunc(arg0 func(context.Context)) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "AddDeferFunc", arg0)
+}
+
+// AddDeferFunc indicates an expected call of AddDeferFunc.
+func (mr *MockEngineMockRecorder) AddDeferFunc(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddDeferFunc", reflect.TypeOf((*MockEngine)(nil).AddDeferFunc), arg0)
+}
+
 // AddPeriodicalWorker mocks base method.
 func (m *MockEngine) AddPeriodicalWorker(arg0 string, arg1 engine.PeriodicalWorker) {
 	m.ctrl.T.Helper()
@@ -235,17 +247,17 @@ func (m *MockRPCClient) EXPECT() *MockRPCClientMockRecorder {
 }
 
 // Call mocks base method.
-func (m *MockRPCClient) Call(arg0 engine.RPCMessage) error {
+func (m *MockRPCClient) Call(arg0 context.Context, arg1 engine.RPCMessage) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Call", arg0)
+	ret := m.ctrl.Call(m, "Call", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Call indicates an expected call of Call.
-func (mr *MockRPCClientMockRecorder) Call(arg0 interface{}) *gomock.Call {
+func (mr *MockRPCClientMockRecorder) Call(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Call", reflect.TypeOf((*MockRPCClient)(nil).Call), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Call", reflect.TypeOf((*MockRPCClient)(nil).Call), arg0, arg1)
 }
 
 // Consume mocks base method.

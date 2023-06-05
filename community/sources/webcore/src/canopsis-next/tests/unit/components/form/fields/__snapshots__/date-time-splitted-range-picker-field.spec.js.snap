@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`date-time-splitted-range-picker-field Renders \`date-time-splitted-range-picker-field\` with default props 1`] = `
+<div
+  class="layout date-time-splitted-range-picker-field row"
+>
+  <div
+    class="flex date-time-splitted-range-picker-field__start"
+  >
+    <date-time-splitted-picker-field-stub
+      label="Required start label"
+      name="date-range_start"
+    />
+  </div>
+  <div
+    class="date-time-splitted-range-picker-field__time-dash"
+  >
+    –
+  </div>
+  <div
+    class="flex date-time-splitted-range-picker-field__end"
+  >
+    <date-time-splitted-picker-field-stub
+      label="Required end label"
+      name="date-range_end"
+      reverse="true"
+    />
+  </div>
+</div>
+`;
+
+exports[`date-time-splitted-range-picker-field Renders \`date-time-splitted-range-picker-field\` with required props 1`] = `
+<div
+  class="layout date-time-splitted-range-picker-field row"
+>
+  <div
+    class="flex date-time-splitted-range-picker-field__start"
+  >
+    <date-time-splitted-picker-field-stub
+      disabled="true"
+      fullday="true"
+      label="Custom start label"
+      name="custom_name_start"
+      value="Sat Mar 03 2012 00:00:00 GMT+0100 (Central European Standard Time)"
+    />
+  </div>
+  <div
+    class="date-time-splitted-range-picker-field__time-dash"
+  >
+    –
+  </div>
+  <div
+    class="flex date-time-splitted-range-picker-field__end"
+  >
+    <date-time-splitted-picker-field-stub
+      disabled="true"
+      fullday="true"
+      label="Custom end label"
+      max="1970-01-03"
+      min="1970-01-02"
+      name="custom_name_end"
+      reverse="true"
+      value="Sun Mar 04 2012 00:00:00 GMT+0100 (Central European Standard Time)"
+    />
+  </div>
+</div>
+`;

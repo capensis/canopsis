@@ -10,7 +10,10 @@ Feature: Get an eventfilter
     """
     {
       "_id": "test-eventfilter-to-get-1",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "how it should have ended.",
       "type": "enrichment",
       "old_patterns": null,
@@ -55,7 +58,10 @@ Feature: Get an eventfilter
       "data": [
         {
           "_id": "test-eventfilter-to-get-1",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "description": "how it should have ended.",
           "type": "enrichment",
           "old_patterns": null,
@@ -90,7 +96,10 @@ Feature: Get an eventfilter
         },
         {
           "_id": "test-eventfilter-to-get-2",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "description": "drop filter",
           "type": "drop",
           "old_patterns": null,
@@ -110,7 +119,10 @@ Feature: Get an eventfilter
         },
         {
           "_id": "test-eventfilter-to-get-3",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "description": "break filter",
           "type": "break",
           "old_patterns": null,
@@ -175,7 +187,10 @@ Feature: Get an eventfilter
     """
     {
       "_id": "test-eventfilter-to-backward-compatibility-to-get",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "how it should have ended.",
       "type": "enrichment",
       "enabled": true,

@@ -2,15 +2,15 @@ package executor
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
-	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 // NewDeclareTicketWebhookExecutor creates new executor.
-func NewDeclareTicketWebhookExecutor(configProvider config.AlarmConfigProvider, metricsSender metrics.Sender) operationlib.Executor {
+func NewDeclareTicketWebhookExecutor(configProvider config.AlarmConfigProvider, metricsSender metrics.Sender) operation.Executor {
 	return &declareTicketWebhookExecutor{configProvider: configProvider, metricsSender: metricsSender}
 }
 
@@ -22,13 +22,13 @@ type declareTicketWebhookExecutor struct {
 // Exec creates new declare ticket step for alarm.
 func (e *declareTicketWebhookExecutor) Exec(
 	_ context.Context,
-	operation types.Operation,
+	op types.Operation,
 	alarm *types.Alarm,
 	_ *types.Entity,
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	params := operation.Parameters
+	params := op.Parameters
 
 	if userID == "" {
 		userID = params.User
@@ -37,24 +37,20 @@ func (e *declareTicketWebhookExecutor) Exec(
 	err := alarm.PartialUpdateDeclareTicket(
 		time,
 		params.Author,
-		utils.TruncateString(params.Output, e.configProvider.Get().OutputLength),
-		params.Ticket,
-		params.Data,
 		userID,
 		role,
 		initiator,
+		params.TicketInfo,
 	)
 	if err != nil {
 		return "", err
 	}
 
-	go func() {
-		metricsUserID := ""
-		if initiator == types.InitiatorUser {
-			metricsUserID = userID
-		}
-		e.metricsSender.SendTicket(context.Background(), *alarm, metricsUserID, time.Time)
-	}()
+	metricsUserID := ""
+	if initiator == types.InitiatorUser {
+		metricsUserID = userID
+	}
+	e.metricsSender.SendTicket(*alarm, metricsUserID, time.Time)
 
 	return types.AlarmChangeTypeDeclareTicketWebhook, nil
 }

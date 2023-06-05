@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`maps-list-expand-flowchart-item Renders \`maps-list-expand-flowchart-item\` with map 1`] = `
+<flowchart-preview-stub
+  map="[object Object]"
+/>
+`;

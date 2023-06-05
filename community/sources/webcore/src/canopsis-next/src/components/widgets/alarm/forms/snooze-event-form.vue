@@ -1,19 +1,16 @@
 <template lang="pug">
-  div
+  v-layout(column)
     c-duration-field(v-field="form.duration", required)
-    v-layout(row)
-      v-textarea(
-        v-field="form.output",
-        v-validate="isNoteRequired ? 'required' : ''",
-        :label="$t('common.output')",
-        :error-messages="errors.collect('output')",
-        name="output"
-      )
+    c-description-field(
+      v-field="form.output",
+      :label="$t('common.note')",
+      :required="isNoteRequired",
+      name="output"
+    )
 </template>
 
 <script>
 export default {
-  inject: ['$validator'],
   model: {
     prop: 'form',
     event: 'input',

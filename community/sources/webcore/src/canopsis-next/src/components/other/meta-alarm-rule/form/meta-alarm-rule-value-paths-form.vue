@@ -32,7 +32,6 @@ export default {
       name: 'value_paths',
       rules: 'required:true',
       getter: () => this.form.value_paths && this.form.value_paths.length > 0,
-      context: () => this,
     });
   },
   beforeDestroy() {

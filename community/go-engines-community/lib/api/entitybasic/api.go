@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -94,11 +95,18 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if entity.Enabled || isToggled {
-		a.sendChangeMessage(entityservice.ChangeEntityMessage{
+		msg := entityservice.ChangeEntityMessage{
 			ID:         entity.ID,
 			EntityType: entity.Type,
 			IsToggled:  isToggled,
-		})
+		}
+
+		if !entity.Enabled && entity.Type == types.EntityTypeComponent {
+			msg.Resources = make([]string, len(entity.Resources))
+			copy(msg.Resources, entity.Resources)
+		}
+
+		a.sendChangeMessage(msg)
 	}
 
 	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
@@ -111,6 +119,9 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	a.metricMetaUpdater.UpdateById(c, entity.ID)
+	if isToggled && entity.Type == types.EntityTypeComponent {
+		a.metricMetaUpdater.UpdateById(c, entity.Resources...)
+	}
 
 	c.JSON(http.StatusOK, entity)
 }
@@ -125,7 +136,7 @@ func (a *api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c, request.ID)
 
 	if err != nil {
-		if err == ErrLinkedEntityToAlarm {
+		if err == ErrLinkedEntityToAlarm || err == ErrComponent {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}

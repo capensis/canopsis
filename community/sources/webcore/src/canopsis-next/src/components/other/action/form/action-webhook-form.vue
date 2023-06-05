@@ -1,56 +1,41 @@
 <template lang="pug">
   v-layout(column)
-    c-request-url-field(
+    request-form(
       v-field="webhook.request",
-      :help-text="$t('scenario.urlHelp')",
-      :name="`${name}.request`"
+      :name="`${name}.request`",
+      :headers-variables="payloadVariables",
+      :payload-variables="payloadVariables",
+      :url-variables="payloadVariables"
     )
-    c-retry-field(v-field="webhook.retry")
-    c-enabled-field(v-model="webhook.request.skip_verify", :label="$t('scenario.skipVerify')")
-    c-enabled-field(v-model="withAuth", :label="$t('scenario.withAuth')")
-    v-layout(v-if="withAuth", row)
-      v-flex.pa-1(xs6)
-        v-text-field(
-          v-field="webhook.request.auth.username",
-          :label="$t('common.username')",
-          :name="`${name}.username`"
-        )
-      v-flex.pa-1(xs6)
-        v-text-field(
-          v-field="webhook.request.auth.password",
-          :label="$t('common.password')",
-          :name="`${name}.password`"
-        )
-    c-text-pairs-field(
-      v-field="webhook.request.headers",
-      :title="$t('scenario.headers')",
-      :text-label="$t('scenario.headerKey')",
-      :value-label="$t('scenario.headerValue')",
-      :name="name"
-    )
-    v-textarea(
-      v-field="webhook.request.payload",
-      :label="$t('common.payload')"
-    )
-      v-tooltip(slot="append", left)
-        v-icon(slot="activator") help
-        div(v-html="$t('scenario.payloadHelp')")
-    h4.ml-1 {{ $t('scenario.declareTicket') }}
-    c-enabled-field(v-model="webhook.empty_response", :label="$t('scenario.emptyResponse')")
-    c-enabled-field(v-model="webhook.is_regexp", :label="$t('scenario.isRegexp')")
-    c-text-pairs-field(
-      v-field="webhook.declare_ticket",
-      :text-label="$t('scenario.key')",
-      :name="name"
-    )
+    declare-ticket-rule-ticket-mapping-field(v-field="webhook.declare_ticket")
+    v-layout(row, justify-end)
+      v-btn.orange.white--text(
+        :loading="checking",
+        @click="validateTemplateVariables"
+      ) {{ $t('declareTicket.checkSyntax') }}
 </template>
 
 <script>
-import { formMixin } from '@/mixins/form';
+import flatten from 'flat';
+
+import { requestTemplateVariablesErrorsToForm } from '@/helpers/forms/shared/request';
+
+import { formMixin, validationErrorsMixinCreator } from '@/mixins/form';
+import { entitiesTemplateValidatorMixin } from '@/mixins/entities/template-validator';
+import { payloadVariablesMixin } from '@/mixins/payload/variables';
+
+import RequestForm from '@/components/forms/request/request-form.vue';
+import DeclareTicketRuleTicketMappingField from '@/components/other/declare-ticket/form/fields/declare-ticket-rule-ticket-mapping-field.vue';
 
 export default {
   inject: ['$validator'],
-  mixins: [formMixin],
+  components: { DeclareTicketRuleTicketMappingField, RequestForm },
+  mixins: [
+    formMixin,
+    payloadVariablesMixin,
+    entitiesTemplateValidatorMixin,
+    validationErrorsMixinCreator(),
+  ],
   model: {
     prop: 'webhook',
     event: 'input',
@@ -62,17 +47,84 @@ export default {
     },
     name: {
       type: String,
-      required: 'webhook',
+      required: true,
     },
   },
+  data() {
+    return {
+      checking: false,
+    };
+  },
   computed: {
-    withAuth: {
-      set(value) {
-        this.updateField('request.auth', value ? { username: '', password: '' } : undefined);
-      },
-      get() {
-        return !!this.webhook.request.auth;
-      },
+    payloadVariables() {
+      const variables = [
+        ...this.alarmPayloadVariables,
+      ];
+
+      if (this.hasPrevious) {
+        variables.push(...this.payloadVariablesFromPreviousStep);
+      }
+
+      variables.push(...this.additionalDataVariables);
+
+      return variables;
+    },
+  },
+  methods: {
+    validateRequestHeadersTemplates(headers) {
+      return Promise.all(
+        headers.map(({ value }) => this.validateScenariosVariables({ data: { text: value } })),
+      );
+    },
+
+    async validateRequestTemplates(request) {
+      const [url, payload, headers] = await Promise.all([
+        this.validateScenariosVariables({ data: { text: request.url } }),
+        this.validateScenariosVariables({ data: { text: request.payload } }),
+        this.validateRequestHeadersTemplates(request.headers),
+      ]);
+
+      return {
+        url,
+        payload,
+        headers,
+      };
+    },
+
+    async validateFormTemplates(webhook) {
+      return {
+        request: await this.validateRequestTemplates(webhook.request),
+      };
+    },
+
+    scenarioRequestErrorsRoForm({ request }) {
+      const flattenErrors = flatten({
+        request: requestTemplateVariablesErrorsToForm(request, this.webhook.request),
+      });
+
+      return Object.entries(flattenErrors).reduce((acc, [key, value]) => {
+        acc[`${this.name}.${key}`] = value;
+
+        return acc;
+      }, {});
+    },
+
+    async validateTemplateVariables() {
+      this.checking = true;
+
+      try {
+        const errors = await this.validateFormTemplates(this.webhook);
+
+        const wasSet = this.setFormErrors(this.scenarioRequestErrorsRoForm(errors, this.form));
+
+        if (!wasSet) {
+          this.$popups.success({ text: this.$t('declareTicket.syntaxIsValid') });
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.checking = false;
+      }
     },
   },
 };

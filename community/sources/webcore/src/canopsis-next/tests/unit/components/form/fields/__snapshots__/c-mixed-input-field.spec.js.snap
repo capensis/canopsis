@@ -1,0 +1,292 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with boolean type correctly 1`] = `
+<div
+  class="v-input c-mixed-input-field v-input--selection-controls v-input--switch v-input--hide-details theme--light ma-0 c-mixed-input-field__switch"
+  name="mixedFieldName"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-input--selection-controls__input"
+      >
+        <input
+          aria-checked="false"
+          aria-label="false"
+          name="mixedFieldName"
+          role="checkbox"
+          type="checkbox"
+          value=""
+        />
+        <div
+          class="v-input--selection-controls__ripple"
+        />
+        <div
+          class="v-input--switch__track theme--light"
+        />
+        <div
+          class="v-input--switch__thumb theme--light"
+        >
+          <transition-stub
+            mode="out-in"
+            name="fab-transition"
+          />
+        </div>
+      </div>
+      <label
+        aria-hidden="true"
+        class="v-label theme--light"
+        style="left: 0px; position: relative;"
+      >
+        false
+      </label>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with boolean type correctly 2`] = `undefined`;
+
+exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with custom props correctly 1`] = `
+<div
+  class="v-input c-mixed-input-field v-text-field v-text-field--single-line v-text-field--solo-flat v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light c-mixed-input-field__text"
+  errormessages="First error message,Second error message"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-text-field__slot"
+      >
+        <input
+          aria-label="Mixed field label"
+          dense="true"
+          disabled="disabled"
+          name="mixedFieldName"
+          type="text"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with custom props correctly 2`] = `undefined`;
+
+exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with default props correctly 1`] = `
+<div
+  class="v-input c-mixed-input-field v-text-field v-text-field--single-line theme--light c-mixed-input-field__text"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-text-field__slot"
+      >
+        <input
+          aria-label=""
+          dense="true"
+          name="value"
+          type="text"
+        />
+      </div>
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <div
+          class="v-messages__wrapper"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with default props correctly 2`] = `undefined`;
+
+exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with errors correctly 1`] = `
+<div
+  class="v-input c-mixed-input-field v-text-field v-text-field--single-line theme--light c-mixed-input-field__text"
+  errormessages="First error message,Second error message"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-text-field__slot"
+      >
+        <input
+          aria-label=""
+          dense="true"
+          name="value"
+          type="text"
+        />
+      </div>
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <div
+          class="v-messages__wrapper"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with errors correctly 2`] = `undefined`;
+
+exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type correctly 1`] = `
+<div
+  class="v-input c-mixed-input-field v-text-field v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-text-field__slot"
+      >
+        <input
+          disabled="disabled"
+          name="mixedFieldName"
+          type="text"
+        />
+      </div>
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <div
+          class="v-messages__wrapper"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type correctly 2`] = `undefined`;
+
+exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type correctly 3`] = `
+<c-array-text-field-stub
+  class="c-mixed-input-field"
+  name="mixedFieldName"
+  values="0,1,,false,"
+/>
+`;
+
+exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with null type correctly 4`] = `undefined`;
+
+exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with number type correctly 1`] = `
+<div
+  class="v-input c-mixed-input-field v-text-field v-text-field--single-line v-input--is-label-active v-input--is-dirty theme--light c-mixed-input-field__text"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-text-field__slot"
+      >
+        <input
+          aria-label="Mixed field with number type"
+          dense="true"
+          name="mixedFieldName"
+          type="number"
+        />
+      </div>
+    </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <div
+          class="v-messages__wrapper"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with number type correctly 2`] = `undefined`;
+
+exports[`c-mixed-input-field Renders \`c-mixed-input-field\` with string type and items correctly 1`] = `
+<div
+  class="v-input c-mixed-input-field v-input--selection-controls v-input--switch v-input--hide-details theme--light ma-0 c-mixed-input-field__switch"
+  name="mixedFieldName"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-input--selection-controls__input"
+      >
+        <input
+          aria-checked="false"
+          aria-label="false"
+          name="mixedFieldName"
+          role="checkbox"
+          type="checkbox"
+          value=""
+        />
+        <div
+          class="v-input--selection-controls__ripple"
+        />
+        <div
+          class="v-input--switch__track theme--light"
+        />
+        <div
+          class="v-input--switch__thumb theme--light"
+        >
+          <transition-stub
+            mode="out-in"
+            name="fab-transition"
+          />
+        </div>
+      </div>
+      <label
+        aria-hidden="true"
+        class="v-label theme--light"
+        style="left: 0px; position: relative;"
+      >
+        false
+      </label>
+    </div>
+  </div>
+</div>
+`;

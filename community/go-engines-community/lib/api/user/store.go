@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -18,24 +19,27 @@ import (
 type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*User, error)
-	Insert(ctx context.Context, r Request) (*User, error)
-	Update(ctx context.Context, r Request) (*User, error)
+	Insert(ctx context.Context, r CreateRequest) (*User, error)
+	Update(ctx context.Context, r UpdateRequest) (*User, error)
 	Delete(ctx context.Context, id string) (bool, error)
 
-	BulkInsert(ctx context.Context, requests []Request) error
+	BulkInsert(ctx context.Context, requests []CreateRequest) error
 	BulkUpdate(ctx context.Context, requests []BulkUpdateRequestItem) error
 	BulkDelete(ctx context.Context, ids []string) error
 }
 
-func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder) Store {
+func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder, websocketStore websocket.Store) Store {
 	return &store{
 		client:                 dbClient,
 		collection:             dbClient.Collection(mongo.RightsMongoCollection),
 		userPrefCollection:     dbClient.Collection(mongo.UserPreferencesMongoCollection),
 		patternCollection:      dbClient.Collection(mongo.PatternMongoCollection),
 		widgetFilterCollection: dbClient.Collection(mongo.WidgetFiltersMongoCollection),
+		shareTokenCollection:   dbClient.Collection(mongo.ShareTokenMongoCollection),
 
-		passwordEncoder:       passwordEncoder,
+		passwordEncoder: passwordEncoder,
+		websocketStore:  websocketStore,
+
 		defaultSearchByFields: []string{"_id", "crecord_name", "firstname", "lastname", "role.name"},
 		defaultSortBy:         "name",
 	}
@@ -47,8 +51,11 @@ type store struct {
 	userPrefCollection     mongo.DbCollection
 	patternCollection      mongo.DbCollection
 	widgetFilterCollection mongo.DbCollection
+	shareTokenCollection   mongo.DbCollection
 
-	passwordEncoder       password.Encoder
+	passwordEncoder password.Encoder
+	websocketStore  websocket.Store
+
 	defaultSearchByFields []string
 	defaultSortBy         string
 }
@@ -104,6 +111,20 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		}
 	}
 
+	ids := make([]string, len(res.Data))
+	for i, v := range res.Data {
+		ids[i] = v.ID
+	}
+	conns, err := s.websocketStore.GetConnections(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range res.Data {
+		activeConnects := conns[res.Data[i].ID]
+		res.Data[i].ActiveConnects = &activeConnects
+	}
+
 	return &res, nil
 }
 
@@ -135,11 +156,11 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, r Request) (*User, error) {
+func (s *store) Insert(ctx context.Context, r CreateRequest) (*User, error) {
 	var user *User
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
-		_, err := s.collection.InsertOne(ctx, r.getInsertBson(s.passwordEncoder))
+		_, err := s.collection.InsertOne(ctx, r.getBson(s.passwordEncoder))
 		if err != nil {
 			return err
 		}
@@ -154,13 +175,13 @@ func (s *store) Insert(ctx context.Context, r Request) (*User, error) {
 	return user, nil
 }
 
-func (s *store) Update(ctx context.Context, r Request) (*User, error) {
+func (s *store) Update(ctx context.Context, r UpdateRequest) (*User, error) {
 	var user *User
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
 		res, err := s.collection.UpdateOne(ctx,
 			bson.M{"_id": r.ID, "crecord_type": securitymodel.LineTypeSubject},
-			bson.M{"$set": r.getUpdateBson(s.passwordEncoder)},
+			bson.M{"$set": r.getBson(s.passwordEncoder)},
 		)
 		if err != nil || res.MatchedCount == 0 {
 			return err
@@ -204,6 +225,11 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		return false, err
 	}
 
+	err = s.deleteShareTokens(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
 	return true, nil
 }
 
@@ -233,14 +259,22 @@ func (s *store) deleteWidgetFilters(ctx context.Context, id string) error {
 	return err
 }
 
-func (s *store) BulkInsert(ctx context.Context, requests []Request) error {
+func (s *store) deleteShareTokens(ctx context.Context, id string) error {
+	_, err := s.shareTokenCollection.DeleteMany(ctx, bson.M{
+		"user": id,
+	})
+
+	return err
+}
+
+func (s *store) BulkInsert(ctx context.Context, requests []CreateRequest) error {
 	var err error
 	writeModels := make([]mongodriver.WriteModel, 0, int(math.Min(float64(canopsis.DefaultBulkSize), float64(len(requests)))))
 
 	for _, r := range requests {
 		writeModels = append(
 			writeModels,
-			mongodriver.NewInsertOneModel().SetDocument(r.getInsertBson(s.passwordEncoder)),
+			mongodriver.NewInsertOneModel().SetDocument(r.getBson(s.passwordEncoder)),
 		)
 
 		if len(writeModels) == canopsis.DefaultBulkSize {
@@ -270,7 +304,7 @@ func (s *store) BulkUpdate(ctx context.Context, requests []BulkUpdateRequestItem
 			mongodriver.
 				NewUpdateOneModel().
 				SetFilter(bson.M{"_id": r.ID, "crecord_type": securitymodel.LineTypeSubject}).
-				SetUpdate(bson.M{"$set": r.getUpdateBson(s.passwordEncoder)}),
+				SetUpdate(bson.M{"$set": r.getBson(s.passwordEncoder)}),
 		)
 
 		if len(writeModels) == canopsis.DefaultBulkSize {
@@ -348,10 +382,7 @@ func getViewPipeline() []bson.M {
 func getRenameFieldsPipeline() []bson.M {
 	return []bson.M{
 		{"$addFields": bson.M{
-			"name":                      "$crecord_name",
-			"email":                     "$mail",
-			"ui_groups_navigation_type": "$groupsNavigationType",
-			"ui_tours":                  "$tours",
+			"name": "$crecord_name",
 		}},
 	}
 }

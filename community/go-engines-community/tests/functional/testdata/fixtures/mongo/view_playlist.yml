@@ -27,7 +27,7 @@ view_playlist:
     updated: 1608285370
   view_playlist_3:
     _id: test-playlist-to-get-1
-    author: test-playlist-to-get-1-author
+    author: root
     created: 1608284568
     enabled: true
     fullscreen: true
@@ -40,7 +40,7 @@ view_playlist:
     updated: 1608285370
   view_playlist_4:
     _id: test-playlist-to-get-2
-    author: test-playlist-to-get-2-author
+    author: root
     created: 1608284568
     enabled: true
     fullscreen: true

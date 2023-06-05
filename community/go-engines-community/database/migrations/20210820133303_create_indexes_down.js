@@ -8,6 +8,7 @@ db.periodical_alarm.dropIndex("v.resolved_1");
 db.periodical_alarm.dropIndex("v.creation_date_1");
 db.periodical_alarm.dropIndex("v.last_event_date_1");
 db.periodical_alarm.dropIndex("v.last_update_date_1");
+db.periodical_alarm.dropIndex("v.parents_1");
 
 db.resolved_alarms.dropIndex("t_1");
 db.resolved_alarms.dropIndex("d_1");
@@ -44,6 +45,9 @@ db.default_rights.dropIndex("crecord_type_1_role_1");
 
 db.action_scenario.dropIndex("priority_1");
 
+db.action_log.dropIndex( { "action" : 1 })
+db.action_log.dropIndex( { "value_type" : 1 , "value_id" : 1 })
+
 db.entity_category.dropIndex("name_1");
 
 db.idle_rule.dropIndex("priority_1");
@@ -65,8 +69,6 @@ db.views.dropIndex("group_id_1");
 db.viewtabs.dropIndex("view_1");
 
 db.widgets.dropIndex("tab_1");
-
-db.widget_filters.dropIndex("widget_1");
 
 db.pbehavior_reason.drop();
 db.pbehavior_exception.drop();

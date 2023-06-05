@@ -19,6 +19,7 @@ import Error from '@/views/error.vue';
 
 const Home = () => import(/* webpackChunkName: "Home" */ '@/views/home.vue');
 const View = () => import(/* webpackChunkName: "View" */ '@/views/view.vue');
+const ViewKiosk = () => import(/* webpackChunkName: "View" */ '@/views/view-kiosk.vue');
 const Alarm = () => import(/* webpackChunkName: "Alarm" */ '@/views/alarm.vue');
 const AdminPermissions = () => import(/* webpackChunkName: "Permission" */ '@/views/admin/permissions.vue');
 const AdminUsers = () => import(/* webpackChunkName: "User" */ '@/views/admin/users.vue');
@@ -31,8 +32,9 @@ const AdminRemediation = () => import(/* webpackChunkName: "Remediation" */ '@/v
 const AdminEngines = () => import(/* webpackChunkName: "Engines" */ '@/views/admin/engines.vue');
 const AdminHealthcheck = () => import(/* webpackChunkName: "Healthcheck" */ '@/views/admin/healthcheck.vue');
 const AdminKPI = () => import(/* webpackChunkName: "KPI" */ '@/views/admin/kpi.vue');
+const AdminMaps = () => import(/* webpackChunkName: "Maps" */ '@/views/admin/maps.vue');
 const ExploitationPbehaviors = () => import(/* webpackChunkName: "Pbehavior" */ '@/views/exploitation/pbehaviors.vue');
-const ExploitationEventFilter = () => import(/* webpackChunkName: "EventFilter" */ '@/views/exploitation/event-filter.vue');
+const ExploitationEventFilters = () => import(/* webpackChunkName: "EventFilters" */ '@/views/exploitation/event-filters.vue');
 const ExploitationSnmpRules = () => import(/* webpackChunkName: "SnmpRule" */ '@/views/exploitation/snmp-rules.vue');
 const ExploitationDynamicInfos = () => import(/* webpackChunkName: "DynamicInfo" */ '@/views/exploitation/dynamic-infos.vue');
 const ExploitationMetaAlarmRules = () => import(/* webpackChunkName: "MetaAlarmRule" */ '@/views/exploitation/meta-alarm-rules.vue');
@@ -40,6 +42,9 @@ const ExploitationScenarios = () => import(/* webpackChunkName: "Scenario" */ '@
 const ExploitationIdleRules = () => import(/* webpackChunkName: "IdleRule" */ '@/views/exploitation/idle-rules.vue');
 const ExploitationFlappingRules = () => import(/* webpackChunkName: "AlarmStatusRule" */ '@/views/exploitation/flapping-rules.vue');
 const ExploitationResolveRules = () => import(/* webpackChunkName: "AlarmStatusRule" */ '@/views/exploitation/resolve-rules.vue');
+const ExploitationDeclareTicketRules = () => import(/* webpackChunkName: "DeclareTicketRule" */ '@/views/exploitation/declare-ticket-rules.vue');
+const ExploitationLinkRules = () => import(/* webpackChunkName: "LinkRule" */ '@/views/exploitation/link-rules.vue');
+const ProfilePatterns = () => import(/* webpackChunkName: "Pattern" */ '@/views/profile/patterns.vue');
 const Playlist = () => import(/* webpackChunkName: "Playlist" */ '@/views/playlist.vue');
 const NotificationInstructionStats = () => import(/* webpackChunkName: "InstructionStats" */ '@/views/notification/instruction-stats.vue');
 
@@ -51,6 +56,7 @@ const routes = [
     name: ROUTES_NAMES.login,
     component: Login,
     meta: {
+      hideHeader: true,
       requiresLogin: false,
     },
   },
@@ -73,6 +79,19 @@ const routes = [
       },
     },
     props: route => ({ id: route.params.id }),
+  },
+  {
+    path: ROUTES.viewKiosk,
+    name: ROUTES_NAMES.viewKiosk,
+    component: ViewKiosk,
+    meta: {
+      simpleNavigation: true,
+      requiresLogin: true,
+      requiresPermission: {
+        id: route => route.params.id,
+      },
+    },
+    props: route => ({ id: route.params.id, tabId: route.params.tabId }),
   },
   {
     path: ROUTES.alarms,
@@ -211,6 +230,17 @@ const routes = [
     },
   },
   {
+    path: ROUTES.adminMaps,
+    name: ROUTES_NAMES.adminMaps,
+    component: AdminMaps,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.map,
+      },
+    },
+  },
+  {
     path: ROUTES.exploitationPbehaviors,
     name: ROUTES_NAMES.exploitationPbehaviors,
     component: ExploitationPbehaviors,
@@ -222,9 +252,9 @@ const routes = [
     },
   },
   {
-    path: ROUTES.exploitationEventFilter,
-    name: ROUTES_NAMES.exploitationEventFilter,
-    component: ExploitationEventFilter,
+    path: ROUTES.exploitationEventFilters,
+    name: ROUTES_NAMES.exploitationEventFilters,
+    component: ExploitationEventFilters,
     meta: {
       requiresLogin: true,
       requiresPermission: {
@@ -323,6 +353,36 @@ const routes = [
     },
   },
   {
+    path: ROUTES.exploitationDeclareTicketRules,
+    name: ROUTES_NAMES.exploitationDeclareTicketRules,
+    component: ExploitationDeclareTicketRules,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.exploitation.declareTicketRule,
+      },
+    },
+  },
+  {
+    path: ROUTES.exploitationLinkRules,
+    name: ROUTES_NAMES.exploitationLinkRules,
+    component: ExploitationLinkRules,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.exploitation.linkRule,
+      },
+    },
+  },
+  {
+    path: ROUTES.profilePatterns,
+    name: ROUTES_NAMES.profilePatterns,
+    component: ProfilePatterns,
+    meta: {
+      requiresLogin: true,
+    },
+  },
+  {
     path: ROUTES.notificationInstructionStats,
     name: ROUTES_NAMES.notificationInstructionStats,
     component: NotificationInstructionStats,
@@ -337,6 +397,9 @@ const routes = [
     path: ROUTES.error,
     name: ROUTES_NAMES.error,
     component: Error,
+    meta: {
+      hideHeader: true,
+    },
     props: route => ({ message: route.query.message, redirect: route.query.redirect }),
   },
   {
@@ -365,6 +428,7 @@ router.beforeEach(async (to, from, next) => {
     await store.dispatch('auth/applyAccessToken', accessToken);
 
     return router.replace({
+      ...to,
       query: restQuery,
     });
   }

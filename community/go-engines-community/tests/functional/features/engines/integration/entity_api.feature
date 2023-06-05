@@ -204,7 +204,7 @@ Feature: test dynamic entity api fields
       "tstop": {{ nowAdd "1h" }},
       "color": "#FFFFFF",
       "type": "test-default-inactive-type",
-      "reason": "test-reason-1",
+      "reason": "test-reason-to-engine",
       "entity_pattern": [
         [
           {
@@ -350,7 +350,7 @@ Feature: test dynamic entity api fields
       "tstop": {{ nowAdd "1h" }},
       "color": "#FFFFFF",
       "type": "test-default-maintenance-type",
-      "reason": "test-reason-1",
+      "reason": "test-reason-to-engine",
       "entity_pattern": [
         [
           {

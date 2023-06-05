@@ -54,7 +54,10 @@ Feature: Update a scenario
     {
       "_id": "test-scenario-to-update-1",
       "name": "test-scenario-to-update-1-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": true,
       "delay": null,
       "priority": 6,
@@ -133,52 +136,6 @@ Feature: Update a scenario
     {
       "errors": {
         "name": "Name already exists."
-      }
-    }
-    """
-
-  Scenario: given update request with already exists priority should return error
-    When I am admin
-    When I do PUT /api/v4/scenarios/test-scenario-to-update-1:
-    """json
-    {
-      "name": "test-scenario-to-update-1-name",
-      "enabled": true,
-      "priority": 2,
-      "triggers": ["create","pbhenter"],
-      "actions": [
-        {
-          "alarm_pattern": [
-            [
-              {
-                "field": "v.component",
-                "cond": {
-                  "type": "eq",
-                  "value": "test-scenario-to-update-1-alarm-updated"
-                }
-              }
-            ]
-          ],
-          "type": "snooze",
-          "parameters": {
-            "output": "test snooze updated",
-            "duration": {
-              "value": 3,
-              "unit": "s"
-            }
-          },
-          "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
-        }
-      ]
-    }
-    """
-    Then the response code should be 400
-    Then the response body should be:
-    """json
-    {
-      "errors": {
-        "priority": "Priority already exists."
       }
     }
     """
@@ -361,7 +318,10 @@ Feature: Update a scenario
     """json
     {
       "name": "test-scenario-to-update-2-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": true,
       "triggers": ["create"],
       "delay": {
@@ -643,7 +603,10 @@ Feature: Update a scenario
     """json
     {
       "name": "test-scenario-to-update-3-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "enabled": true,
       "triggers": ["create"],
       "delay": {

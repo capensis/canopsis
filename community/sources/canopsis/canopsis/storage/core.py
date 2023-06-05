@@ -832,56 +832,6 @@ class Storage(DataBase):
 
         return result
 
-    def copy(self, target):
-        """Copy self content into target storage.
-
-        target type must implement the same class in cstorage packege as self.
-        If self implements directly cstorage.Storage, we don't care about
-        target type
-
-        :param target: target storage where copy content
-        :type target: same as self or any storage if type(self) is Storage
-        """
-
-        result = 0
-
-        from canopsis.storage.core import Storage
-        from canopsis.storage.periodic import PeriodicStorage
-        from canopsis.storage.timed import TimedStorage
-        from canopsis.storage.timedtyped import TimedTypedStorage
-        from canopsis.storage.typed import TypedStorage
-
-        storage_types = [
-            Storage,
-            PeriodicStorage,
-            TimedStorage,
-            TimedTypedStorage,
-            TypedStorage]
-
-        if isinstance(self, storage_types):
-            for _ in storage_types:
-                if isinstance(self, storage_types):
-                    if not isinstance(target, storage_types):
-                        raise Storage.StorageError(
-                            'Impossible to copy {0} content into {1}. \
-Storage types must be of the same type.'.format(self, target))
-                    else:
-                        self._copy(target)
-
-            result = -1
-
-        return result
-
-    def _copy(self, target):
-        """Called by Storage.copy(self, target) in order to ensure than target
-        type is the same as self.
-        """
-
-        for element in self.get_elements():
-            target.put_element(element=element)
-
-        raise NotImplementedError()
-
     def _element_id(self, element):
         """Get element id related to self behavior."""
 

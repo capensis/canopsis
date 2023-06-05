@@ -1,32 +1,30 @@
 <template lang="pug">
-  v-layout.mt-2(column)
-    v-layout(v-show="!actions.length", row)
-      v-flex
-        v-alert(:value="true", type="info") {{ $t('scenario.emptyActions') }}
-    draggable(v-field="actions", :options="draggableOptions")
-      scenario-action-field.mb-3.lighten-2(
-        v-for="(action, index) in actions",
-        v-field="actions[index]",
-        :name="`${name}.${action.key}`",
-        :key="action.key",
-        :action-number="index + 1",
-        @remove="removeItemFromArray(index)"
-      )
+  v-layout(column)
+    c-alert(v-show="!actions.length", type="info") {{ $t('scenario.emptyActions') }}
+    c-card-iterator-field.mb-2(
+      v-field="actions",
+      item-key="key",
+      :draggable-group="draggableGroup"
+    )
+      template(#item="{ item: action, index }")
+        scenario-action-field(
+          v-field="actions[index]",
+          :name="`${name}.${action.key}`",
+          :action-number="index + 1",
+          :has-previous-webhook="hasPreviousWebhook(index)",
+          @remove="removeItemFromArray(index)"
+        )
     v-layout(row, align-center)
       v-btn.ml-0(
-        outline,
         :color="hasActionsErrors ? 'error' : 'primary'",
+        outline,
         @click="addAction"
       ) {{ $t('scenario.addAction') }}
       span.error--text(v-show="hasActionsErrors") {{ $t('scenario.errors.actionRequired') }}
 </template>
 
 <script>
-import Draggable from 'vuedraggable';
-
-import { VUETIFY_ANIMATION_DELAY } from '@/config';
-
-import { actionToForm } from '@/helpers/forms/action';
+import { actionToForm, isWebhookActionType } from '@/helpers/forms/action';
 
 import { formArrayMixin, validationChildrenMixin } from '@/mixins/form';
 
@@ -34,7 +32,7 @@ import ScenarioActionField from './fields/scenario-action-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { ScenarioActionField, Draggable },
+  components: { ScenarioActionField },
   mixins: [formArrayMixin, validationChildrenMixin],
   model: {
     prop: 'actions',
@@ -59,15 +57,20 @@ export default {
       return this.errors.has(this.name);
     },
 
-    draggableOptions() {
+    draggableGroup() {
       return {
-        animation: VUETIFY_ANIMATION_DELAY,
-        handle: '.action-drag-handler',
-        ghostClass: 'grey',
-        group: {
-          name: 'scenarios-actions',
-        },
+        name: 'scenarios-actions',
       };
+    },
+
+    webhookIndexes() {
+      return this.actions.reduce((acc, action, index) => {
+        if (isWebhookActionType(action.type)) {
+          acc.push(index);
+        }
+
+        return acc;
+      }, []);
     },
   },
   watch: {
@@ -76,20 +79,31 @@ export default {
     },
   },
   created() {
-    this.$validator.attach({
-      name: this.name,
-      rules: 'min_value:1',
-      getter: () => this.actions.length,
-      context: () => this,
-      vm: this,
-    });
+    this.attachMinValueRule();
   },
   beforeDestroy() {
-    this.$validator.detach(this.name);
+    this.detachMinValueRule();
   },
   methods: {
+    attachMinValueRule() {
+      this.$validator.attach({
+        name: this.name,
+        rules: 'min_value:1',
+        getter: () => this.actions.length,
+        vm: this,
+      });
+    },
+
+    detachMinValueRule() {
+      this.$validator.detach(this.name);
+    },
+
     addAction() {
       this.addItemIntoArray(actionToForm());
+    },
+
+    hasPreviousWebhook(index) {
+      return this.webhookIndexes.indexOf(index) > 0;
     },
   },
 };

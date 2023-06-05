@@ -1,18 +1,19 @@
 package alarm
 
 import (
+	"context"
+
 	amqplib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 // ActivationService checks alarm and sends activation event
 // if alarm doesn't have active snooze and pbehavior.
 type ActivationService interface {
-	Process(*types.Alarm) (bool, error)
+	Process(ctx context.Context, alarm types.Alarm, eventReceivedTimestamp types.MicroTime) (bool, error)
 }
 
 type baseActivationService struct {
@@ -36,9 +37,9 @@ func NewActivationService(
 	}
 }
 
-func (s *baseActivationService) Process(alarm *types.Alarm) (bool, error) {
-	if !alarm.IsActivated() && !alarm.IsSnoozed() && alarm.Value.PbehaviorInfo.IsActive() {
-		err := s.sendActivationEvent(alarm)
+func (s *baseActivationService) Process(ctx context.Context, alarm types.Alarm, eventRealTimestamp types.MicroTime) (bool, error) {
+	if alarm.CanActivate() {
+		err := s.sendActivationEvent(ctx, alarm, eventRealTimestamp)
 
 		if err != nil {
 			return false, err
@@ -50,14 +51,15 @@ func (s *baseActivationService) Process(alarm *types.Alarm) (bool, error) {
 	return false, nil
 }
 
-func (s *baseActivationService) sendActivationEvent(alarm *types.Alarm) error {
+func (s *baseActivationService) sendActivationEvent(ctx context.Context, alarm types.Alarm, eventReceivedTimestamp types.MicroTime) error {
 	event := types.Event{
-		Connector:     alarm.Value.Connector,
-		ConnectorName: alarm.Value.ConnectorName,
-		Component:     alarm.Value.Component,
-		Resource:      alarm.Value.Resource,
-		Timestamp:     types.CpsTime{Time: time.Now()},
-		EventType:     types.EventTypeActivate,
+		Connector:         alarm.Value.Connector,
+		ConnectorName:     alarm.Value.ConnectorName,
+		Component:         alarm.Value.Component,
+		Resource:          alarm.Value.Resource,
+		Timestamp:         types.NewCpsTime(),
+		ReceivedTimestamp: eventReceivedTimestamp,
+		EventType:         types.EventTypeActivate,
 	}
 	event.SourceType = event.DetectSourceType()
 	body, err := s.encoder.Encode(event)
@@ -66,7 +68,8 @@ func (s *baseActivationService) sendActivationEvent(alarm *types.Alarm) error {
 		return err
 	}
 
-	err = s.publisher.Publish(
+	err = s.publisher.PublishWithContext(
+		ctx,
 		"",
 		s.queueName,
 		false,

@@ -1,18 +1,20 @@
-import { cloneDeep, omit, isEmpty } from 'lodash';
+import { omit } from 'lodash';
 
-import { ENTITIES_STATES, ACTION_TYPES } from '@/constants';
+import { ENTITIES_STATES, ACTION_TYPES, PATTERNS_FIELDS, OLD_PATTERNS_FIELDS } from '@/constants';
 
-import { objectToTextPairs, textPairsToObject } from '../text-pairs';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
+import {
+  declareTicketRuleWebhookDeclareTicketToForm,
+  formToDeclareTicketRuleWebhookDeclareTicket,
+} from '@/helpers/forms/declare-ticket-rule';
+import { eventToAssociateTicketForm, formToAssociateTicketEvent } from '@/helpers/forms/associate-ticket-event';
+
 import uid from '../uid';
 import { durationToForm } from '../date/duration';
 import { getLocaleTimezone } from '../date/date';
 
 import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning-pbehavior';
-
-/**
- * @typedef {Duration} RetryDuration
- * @property {number} count
- */
+import { requestToForm, formToRequest } from './shared/request';
 
 /**
  * @typedef {
@@ -28,10 +30,14 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  */
 
 /**
- * @typedef {Object} ActionDefaultParameters
- * @property {string} output
+ * @typedef {Object} ActionForwardAuthorParameters
  * @property {boolean} [forward_author]
  * @property {string} [author]
+ */
+
+/**
+ * @typedef {ActionForwardAuthorParameters} ActionDefaultParameters
+ * @property {string} output
  */
 
 /**
@@ -45,44 +51,22 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  */
 
 /**
- * @typedef {ActionDefaultParameters} ActionAssocTicketParameters
- * @property {string} ticket
- */
-
-/**
- * @typedef {Object} ActionWebhookRequestParameter
- * @property {string} method
- * @property {string} url
- * @property {{ username: string, password: string }} auth
- * @property {Object} headers
- * @property {string} payload
- * @property {boolean} skip_verify
- */
-
-/**
- * @typedef {ActionWebhookRequestParameter} ActionWebhookRequestFormParameter
- * @property {TextPairObject[]} headers
+ * @typedef {ActionDefaultParameters & AssociateTicketEvent} ActionAssocTicketParameters
  */
 
 /**
  * @typedef {Object} ActionWebhookParameters
- * @property {ActionWebhookRequestParameter} request
- * @property {?Object} [declare_ticket]
- * @property {boolean} declare_ticket.empty_response
- * @property {boolean} declare_ticket.is_regexp
- * @property {number} retry_count
- * @property {Duration} retry_delay
+ * @property {Request} request
+ * @property {?DeclareTicketRuleWebhookDeclareTicket} [declare_ticket]
  * @property {boolean} [forward_author]
+ * @property {boolean} skip_for_child
  * @property {string} [author]
  */
 
 /**
  * @typedef {ActionWebhookParameters} ActionWebhookFormParameters
- * @property {ActionWebhookRequestFormParameter} request
- * @property {RetryDuration} retry
- * @property {boolean} empty_response
- * @property {boolean} is_regexp
- * @property {TextPairObject[]} declare_ticket
+ * @property {RequestForm} request
+ * @property {DeclareTicketRuleWebhookDeclareTicketForm} declare_ticket
  */
 
 /**
@@ -97,14 +81,11 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
  */
 
 /**
- * @typedef {Object} Action
+ * @typedef {FilterPatterns} Action
  * @property {ActionType} type
  * @property {boolean} drop_scenario_if_not_matched
  * @property {boolean} emit_trigger
- * @property {Object} patterns
  * @property {string} comment
- * @property {Object[]} alarm_patterns
- * @property {Object[]} entity_patterns
  * @property {ActionParameters} parameters
  */
 
@@ -121,8 +102,7 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
 
 /**
  * @typedef {Action} ActionForm
- * @property {Object[]} patterns.alarm_patterns
- * @property {Object[]} patterns.entity_patterns
+ * @property {FilterPatternsForm} patterns
  * @property {Object.<ActionType, ActionFormParameters>} parameters
  */
 
@@ -135,30 +115,33 @@ import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from './planning
 export const isPbehaviorActionType = type => type === ACTION_TYPES.pbehavior;
 
 /**
+ * Check action type is webhook
+ *
+ * @param {ActionType} type
+ * @return {boolean}
+ */
+export const isWebhookActionType = type => type === ACTION_TYPES.webhook;
+
+/**
+ * Convert action parameters to form
+ *
+ * @param {ActionForwardAuthorParameters | {}} [parameters = {}]
+ * @returns {ActionForwardAuthorParameters}
+ */
+const defaultActionForwardAuthorToForm = (parameters = {}) => ({
+  forward_author: parameters.forward_author ?? true,
+  author: parameters.author ?? '',
+});
+
+/**
  * Convert action parameters to form
  *
  * @param {ActionDefaultParameters | {}} [parameters = {}]
  * @returns {ActionDefaultParameters}
  */
 const defaultActionParametersToForm = (parameters = {}) => ({
+  ...defaultActionForwardAuthorToForm(parameters),
   output: parameters.output ?? '',
-  forward_author: parameters.forward_author ?? true,
-  author: parameters.author ?? '',
-});
-
-/**
- * Convert webhook request field to form object
- *
- * @param {ActionWebhookRequestParameter} [request]
- * @return {ActionWebhookRequestFormParameter}
- */
-const webhookActionRequestParametersToForm = (request = {}) => ({
-  method: request.method || '',
-  url: request.url || '',
-  auth: request.auth,
-  headers: request.headers ? objectToTextPairs(request.headers) : [],
-  payload: request.payload || '{}',
-  skip_verify: !!request.skip_verify,
 });
 
 /**
@@ -167,21 +150,12 @@ const webhookActionRequestParametersToForm = (request = {}) => ({
  * @param {ActionWebhookParameters} [parameters = {}]
  * @returns {ActionWebhookFormParameters}
  */
-const webhookActionParametersToForm = (parameters = {}) => {
-  const { empty_response: emptyResponse, is_regexp: isRegexp, ...variables } = parameters.declare_ticket || {};
-
-  return {
-    forward_author: parameters.forward_author ?? true,
-    author: parameters.author ?? '',
-    declare_ticket: objectToTextPairs(variables),
-    empty_response: !!emptyResponse,
-    is_regexp: !!isRegexp,
-    retry: parameters.retry_delay
-      ? { count: parameters.retry_count, ...durationToForm(parameters.retry_delay) }
-      : { count: '', unit: '', value: '' },
-    request: webhookActionRequestParametersToForm(parameters.request),
-  };
-};
+const webhookActionParametersToForm = (parameters = {}) => ({
+  ...defaultActionForwardAuthorToForm(parameters),
+  declare_ticket: declareTicketRuleWebhookDeclareTicketToForm(parameters.declare_ticket),
+  request: requestToForm(parameters.request),
+  skip_for_child: parameters.skip_for_child ?? false,
+});
 
 /**
  * Convert action snooze parameters to form
@@ -213,7 +187,7 @@ const changeStateActionParametersToForm = (parameters = {}) => ({
  */
 const assocTicketActionParametersToForm = (parameters = {}) => ({
   ...defaultActionParametersToForm(parameters),
-  ticket: parameters.ticket ?? '',
+  ...omit(eventToAssociateTicketForm(parameters), ['ticket_comment']),
 });
 
 /**
@@ -266,13 +240,15 @@ export const actionParametersToForm = (action, timezone) => {
     [ACTION_TYPES.snooze]: snoozeActionParametersToForm,
     [ACTION_TYPES.webhook]: webhookActionParametersToForm,
     [ACTION_TYPES.pbehavior]: pbehaviorActionParametersToForm,
+    [ACTION_TYPES.assocticket]: assocTicketActionParametersToForm,
+    [ACTION_TYPES.changeState]: changeStateActionParametersToForm,
   };
 
   const prepareParametersToFormFunction = parametersPreparers[action.type];
 
   parameters[action.type] = prepareParametersToFormFunction
     ? prepareParametersToFormFunction(action.parameters, timezone)
-    : { ...action.parameters };
+    : defaultActionParametersToForm({ ...action.parameters });
 
   return parameters;
 };
@@ -284,22 +260,19 @@ export const actionParametersToForm = (action, timezone) => {
  * @param {string} [timezone = getLocaleTimezone()]
  * @returns {ActionForm}
  */
-export const actionToForm = (action = {}, timezone = getLocaleTimezone()) => {
-  const type = action.type || ACTION_TYPES.snooze;
-
-  return {
-    type,
-    key: uid(),
-    parameters: actionParametersToForm(action, timezone),
-    drop_scenario_if_not_matched: !!action.drop_scenario_if_not_matched,
-    emit_trigger: !!action.emit_trigger,
-    comment: action.comment || '',
-    patterns: {
-      alarm_patterns: action.alarm_patterns ? cloneDeep(action.alarm_patterns) : [],
-      entity_patterns: action.entity_patterns ? cloneDeep(action.entity_patterns) : [],
-    },
-  };
-};
+export const actionToForm = (action = {}, timezone = getLocaleTimezone()) => ({
+  type: action.type ?? ACTION_TYPES.snooze,
+  key: uid(),
+  parameters: actionParametersToForm(action, timezone),
+  drop_scenario_if_not_matched: !!action.drop_scenario_if_not_matched,
+  emit_trigger: !!action.emit_trigger,
+  comment: action.comment ?? '',
+  patterns: filterPatternsToForm(
+    action,
+    [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
+    [OLD_PATTERNS_FIELDS.alarm, OLD_PATTERNS_FIELDS.entity],
+  ),
+});
 
 /**
  * Convert pbehavior parameters to action
@@ -307,32 +280,11 @@ export const actionToForm = (action = {}, timezone = getLocaleTimezone()) => {
  * @param {ActionWebhookFormParameters | {}} [parameters = {}]
  * @return {ActionWebhookParameters}
  */
-export const formToWebhookActionParameters = (parameters = {}) => {
-  const webhook = {
-    declare_ticket: null,
-    request: {
-      ...parameters.request,
-      payload: parameters.request.payload,
-      headers: textPairsToObject(parameters.request.headers),
-    },
-  };
-
-  if (parameters.retry.value) {
-    webhook.retry_count = parameters.retry.count;
-    webhook.retry_delay = parameters.retry;
-  }
-
-  if (parameters.empty_response || parameters.is_regexp || !isEmpty(parameters.declare_ticket)) {
-    webhook.declare_ticket = {
-      empty_response: parameters.empty_response,
-      is_regexp: parameters.is_regexp,
-
-      ...textPairsToObject(parameters.declare_ticket),
-    };
-  }
-
-  return webhook;
-};
+export const formToWebhookActionParameters = (parameters = {}) => ({
+  declare_ticket: formToDeclareTicketRuleWebhookDeclareTicket(parameters.declare_ticket),
+  request: formToRequest(parameters.request),
+  skip_for_child: parameters.skip_for_child,
+});
 
 /**
  * Convert pbehavior parameters to action
@@ -360,23 +312,28 @@ export const formToPbehaviorActionParameters = (parameters = {}, timezone = getL
  * @returns {ActionParameters}
  */
 const formToActionParameters = (form, timezone) => {
-  const parametersByCurrentType = form.parameters[form.type];
+  const {
+    forward_author: forwardAuthor,
+    author,
+    ...parametersByCurrentType
+  } = form.parameters[form.type];
 
   const parametersPreparers = {
     [ACTION_TYPES.webhook]: formToWebhookActionParameters,
     [ACTION_TYPES.pbehavior]: formToPbehaviorActionParameters,
+    [ACTION_TYPES.assocticket]: formToAssociateTicketEvent,
   };
 
   const prepareParametersToAction = parametersPreparers[form.type];
   const parameters = prepareParametersToAction
     ? prepareParametersToAction(parametersByCurrentType, timezone)
-    : omit(parametersByCurrentType, ['author', 'forward_author']);
+    : parametersByCurrentType;
 
   if (!isPbehaviorActionType(form.type)) {
-    parameters.forward_author = parametersByCurrentType.forward_author;
+    parameters.forward_author = forwardAuthor;
 
-    if (!parameters.forward_author) {
-      parameters.author = parametersByCurrentType.author;
+    if (!forwardAuthor) {
+      parameters.author = author;
     }
   }
 
@@ -392,6 +349,6 @@ const formToActionParameters = (form, timezone) => {
  */
 export const formToAction = (form, timezone) => ({
   ...omit(form, ['key', 'patterns']),
-  ...form.patterns,
+  ...formFilterToPatterns(form.patterns, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
   parameters: formToActionParameters(form, timezone),
 });

@@ -13,12 +13,10 @@ Feature: Update a user
       "email": "test-user-to-update-1-email-updated@canopsis.net",
       "role": "test-role-to-edit-user",
       "ui_language": "fr",
+      "ui_theme": "canopsis",
       "ui_groups_navigation_type": "top-bar",
       "enable": true,
-      "defaultview": "test-view-to-edit-user",
-      "ui_tours": {
-        "test-tour-to-update-user-1": true
-      }
+      "defaultview": "test-view-to-edit-user"
     }
     """
     Then the response code should be 200
@@ -48,9 +46,7 @@ Feature: Update a user
       "source": "",
       "ui_groups_navigation_type": "top-bar",
       "ui_language": "fr",
-      "ui_tours": {
-        "test-tour-to-update-user-1": true
-      }
+      "ui_theme": "canopsis"
     }
     """
 
@@ -66,12 +62,10 @@ Feature: Update a user
       "email": "test-user-to-update-2-email-updated@canopsis.net",
       "role": "test-role-to-edit-user",
       "ui_language": "fr",
+      "ui_theme": "canopsis",
       "ui_groups_navigation_type": "top-bar",
       "enable": true,
-      "defaultview": "test-view-to-edit-user",
-      "ui_tours": {
-        "test-tour-to-update-user-2": true
-      }
+      "defaultview": "test-view-to-edit-user"
     }
     """
     When I am authenticated with username "test-user-to-update-2" and password "test-password-updated"
@@ -128,6 +122,7 @@ Feature: Update a user
       "email": "test-user-to-update-email-updated@canopsis.net",
       "role": "test-role-to-edit-user",
       "ui_language": "fr",
+      "ui_theme": "canopsis",
       "groups_navigation_type": "top-bar",
       "enable": true,
       "defaultview": "test-view-to-edit-user"
@@ -173,6 +168,82 @@ Feature: Update a user
     {
       "errors": {
           "name": "Name already exists."
+      }
+    }
+    """
+
+  Scenario: given update request with source and external_id shouldn't update these fields
+    When I am admin
+    Then I do PUT /api/v4/users/test-user-to-update-3:
+    """json
+    {
+      "name": "test-user-to-update-3-updated",
+      "firstname": "test-user-to-update-3-firstname-updated",
+      "lastname": "test-user-to-update-3-lastname-updated",
+      "email": "test-user-to-update-3-email-updated@canopsis.net",
+      "role": "test-role-to-edit-user",
+      "ui_language": "fr",
+      "ui_groups_navigation_type": "top-bar",
+      "enable": true,
+      "defaultview": "test-view-to-edit-user",
+      "source": "ldap",
+      "external_id": "ldap_id"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "_id": "test-user-to-update-3",
+      "authkey": "5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424",
+      "defaultview": {
+        "_id": "test-view-to-edit-user",
+        "title": "test-view-to-edit-user-title"
+      },
+      "email": "test-user-to-update-3-email-updated@canopsis.net",
+      "enable": true,
+      "firstname": "test-user-to-update-3-firstname-updated",
+      "lastname": "test-user-to-update-3-lastname-updated",
+      "name": "test-user-to-update-3-updated",
+      "role": {
+        "_id": "test-role-to-edit-user",
+        "name": "test-role-to-edit-user",
+        "defaultview": {
+          "_id": "test-view-to-edit-user",
+          "title": "test-view-to-edit-user-title"
+        }
+      },
+      "ui_theme": "",
+      "ui_groups_navigation_type": "top-bar",
+      "ui_language": "fr",
+      "source": "saml",
+      "external_id": "saml_id"
+    }
+    """
+
+  Scenario: given update request with bad password should return error
+    When I am admin
+    Then I do PUT /api/v4/users/test-user-to-update-4:
+    """json
+    {
+      "name": "test-user-to-update-4-updated",
+      "firstname": "test-user-to-update-4-firstname-updated",
+      "lastname": "test-user-to-update-4-lastname-updated",
+      "email": "test-user-to-update-4-email-updated@canopsis.net",
+      "role": "test-role-to-edit-user",
+      "ui_language": "fr",
+      "ui_groups_navigation_type": "top-bar",
+      "enable": true,
+      "defaultview": "test-view-to-edit-user",
+      "password": "123"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+          "password": "Password should be 8 or more."
       }
     }
     """

@@ -37,7 +37,7 @@ type ScenarioStorage interface {
 	GetTriggeredScenarios(
 		triggers []string,
 		alarm types.Alarm,
-	) (triggered []Scenario, err error)
+	) (map[string][]Scenario, error)
 
 	// RunDelayedScenarios starts delay timeout for scenarios which are triggered by triggers.
 	RunDelayedScenarios(
@@ -59,43 +59,53 @@ type TaskManager interface {
 }
 
 type ScenarioExecution struct {
-	ID               string                 `json:"-"`
-	ScenarioID       string                 `json:"-"`
-	AlarmID          string                 `json:"-"`
+	ID               string                 `json:"_id"`
+	ScenarioID       string                 `json:"sid"`
+	ScenarioName     string                 `json:"sn"`
+	AlarmID          string                 `json:"aid"`
 	Entity           types.Entity           `json:"e"`
 	ActionExecutions []Execution            `json:"ae"`
 	LastUpdate       int64                  `json:"u"`
-	AckResources     bool                   `json:"ar"`
 	Tries            int64                  `json:"t"`
 	Header           map[string]string      `json:"h,omitempty"`
 	Response         map[string]interface{} `json:"r,omitempty"`
 	ResponseMap      map[string]interface{} `json:"rm,omitempty"`
 	ResponseCount    int                    `json:"rc"`
 	AdditionalData   AdditionalData         `json:"ad"`
+	FifoAckEvent     types.Event            `json:"fev"`
+}
+
+func (e ScenarioExecution) GetCacheKey() string {
+	return e.AlarmID + "$$" + e.ScenarioID
 }
 
 type ScenarioResult struct {
 	Alarm            types.Alarm
 	Err              error
 	ActionExecutions []Execution
+	FifoAckEvent     types.Event
 }
 
 type ExecuteScenariosTask struct {
-	Triggers             []string
-	DelayedScenarioID    string
-	AbandonedExecutionID string
-	Entity               types.Entity
-	Alarm                types.Alarm
-	AckResources         bool
-	AdditionalData       AdditionalData
+	Triggers          []string
+	DelayedScenarioID string
+	Entity            types.Entity
+	Alarm             types.Alarm
+	AdditionalData    AdditionalData
+	FifoAckEvent      types.Event
+
+	AbandonedExecutionCacheKey string
 }
 
 type AdditionalData struct {
 	AlarmChangeType types.AlarmChangeType `json:"alarm_change_type"`
+	Trigger         string                `json:"trigger"`
 	Author          string                `json:"author"`
 	User            string                `json:"user"`
 	Initiator       string                `json:"initiator"`
 	Output          string                `json:"event_output"`
+
+	RuleName string `json:"rule_name"`
 }
 
 type Execution struct {
@@ -107,7 +117,7 @@ type RpcResult struct {
 	CorrelationID   string
 	Alarm           *types.Alarm
 	AlarmChangeType types.AlarmChangeType
-	Header          map[string]string
-	Response        map[string]interface{}
+	WebhookHeader   map[string]string
+	WebhookResponse map[string]interface{}
 	Error           error
 }

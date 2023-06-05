@@ -10,11 +10,14 @@
       span.instruction-filter__text
         v-icon(color="white", small) assignment
         v-icon.pl-1(v-if="filter.locked", color="white", small) lock
-        strong.pl-2 {{ conditionTypeMessage }}
+        strong.pl-2.text-uppercase {{ conditionTypeMessage }}
         span.pl-1(v-if="!isAll") {{ typesAndInstructionsMessage }}
+        strong.pl-1.text-uppercase(v-if="hasRunning") {{ $t('remediation.instructionsFilter.inProgress') }}
 </template>
 
 <script>
+import { isBoolean } from 'lodash';
+
 import { MODALS, REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
@@ -78,22 +81,36 @@ export default {
       return this.filter.instructions?.map(({ name }) => name) ?? [];
     },
 
-    conditionTypeMessage() {
-      const allMessage = this.isAll ? ` ${this.$t('remediationInstructionsFilters.chip.all')}` : ':';
-      const conditionMessage = this.$t(`remediationInstructionsFilters.chip.${this.filter.with ? 'with' : 'without'}`);
+    hasRunning() {
+      return isBoolean(this.filter.running);
+    },
 
-      return `${conditionMessage}${allMessage}`;
+    conditionalTypeMessagePrefix() {
+      if (!this.hasRunning) {
+        return '';
+      }
+
+      const message = this.filter.running ? this.$t('common.show') : this.$t('common.hide');
+
+      return `${message} `;
+    },
+
+    conditionTypeMessage() {
+      const allMessage = this.isAll ? ` ${this.$t('remediation.instructionsFilter.chip.all')}` : ':';
+      const conditionMessage = this.$t(`remediation.instructionsFilter.chip.${this.filter.with ? 'with' : 'without'}`);
+
+      return `${this.conditionalTypeMessagePrefix}${conditionMessage}${allMessage}`;
     },
 
     typesAndInstructionsMessage() {
       const types = [];
 
       if (this.filter.manual) {
-        types.push(this.$t(`remediationInstructions.types.${REMEDIATION_INSTRUCTION_TYPES.manual}`));
+        types.push(this.$t(`remediation.instruction.types.${REMEDIATION_INSTRUCTION_TYPES.manual}`));
       }
 
       if (this.filter.auto) {
-        types.push(this.$t(`remediationInstructions.types.${REMEDIATION_INSTRUCTION_TYPES.auto}`));
+        types.push(this.$t(`remediation.instruction.types.${REMEDIATION_INSTRUCTION_TYPES.auto}`));
       }
 
       return [...types, ...this.instructionsNames].join(', ');
@@ -124,7 +141,7 @@ export default {
 
 <style lang="scss">
 .instruction-filter {
-  & /deep/ .v-chip .v-chip__content {
+  & .v-chip .v-chip__content {
     min-height: 32px;
     height: auto;
   }

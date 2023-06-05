@@ -13,13 +13,11 @@
 </template>
 
 <script>
-import { get } from 'lodash';
-
 import { MODALS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 
-import ServiceDependenciesTable from '@/components/other/service/table/service-dependencies.vue';
+import ServiceDependenciesTable from '@/components/other/service/partials/service-dependencies.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -33,7 +31,7 @@ export default {
         ? 'impacts'
         : 'dependencies';
 
-      return this.$t(`modals.serviceDependencies.${type}.title`, { name: get(this.config.root, 'entity.name') });
+      return this.$t(`modals.serviceDependencies.${type}.title`, { name: this.config.root?.name });
     },
   },
 };

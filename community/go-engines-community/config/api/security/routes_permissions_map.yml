@@ -1,7 +1,6 @@
 map:
   /snmprule:
     POST: [api_snmprule,read]
-  /snmprule:
     DELETE: [api_snmprule,delete]
   /snmprule/put:
     POST: [api_snmprule,create]

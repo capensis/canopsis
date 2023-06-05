@@ -6,7 +6,7 @@
       template(v-if="testSuites.length")
         v-flex(v-for="testSuite in testSuites", :key="testSuite._id", xs6, md4, lg3)
           testing-weather-item(:test-suite="testSuite", :widget="widget")
-      v-alert(v-else, type="info", :value="true") {{ $t('tables.noData') }}
+      v-alert(v-else, type="info", :value="true") {{ $t('common.noData') }}
 </template>
 
 <script>
@@ -16,14 +16,11 @@ import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { entitiesTestSuitesMixin } from '@/mixins/entities/test-suite';
 
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
-
 import TestingWeatherItem from './testing-weather-item.vue';
 
 export default {
   components: {
     TestingWeatherItem,
-    FilterSelector,
   },
   mixins: [
     widgetPeriodicRefreshMixin,

@@ -74,8 +74,14 @@ $mobileBreakpoint: 450px;
   }
 }
 
-.cursor-pointer {
-  cursor: pointer !important;
+.cursor {
+  &-pointer {
+    cursor: pointer !important;
+  }
+
+  &-move {
+    cursor: move !important;
+  }
 }
 
 .weather-item {
@@ -193,6 +199,7 @@ $mobileBreakpoint: 450px;
 
 .c-extra-details {
   &__badge {
+    height: 22px;
     padding: 3px 7px;
     text-align: center;
     white-space: nowrap;
@@ -238,4 +245,58 @@ $mobileBreakpoint: 450px;
       word-wrap: break-word;
     }
   }
+}
+
+.border-radius-rounded {
+  border-radius: 50% !important;
+}
+
+.map-preview__help-icon {
+  cursor: pointer;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
+.alarm-counters {
+  background-color: rgba(0, 0, 0, .2);
+  flex-basis: 60px;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+@keyframes blink {
+  0% { opacity: 1 }
+  50% { opacity: 0.3 }
+}
+
+.blinking {
+  animation: blink 2s linear infinite;
+}
+
+.v-list__tile__title.v-list-badge__tile__title {
+  overflow: visible;
+
+  .v-badge__badge {
+    top: -5px;
+    right: -11px;
+    height: 16px;
+    width: 16px;
+
+    .v-icon {
+      font-size: 11px;
+    }
+  }
+}
+
+.chart-metrics-widget {
+  &__title {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+ &__chart {
+   width: 100%;
+ }
 }

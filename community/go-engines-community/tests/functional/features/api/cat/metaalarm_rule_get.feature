@@ -7,7 +7,7 @@ Feature: Get a metaalarm-rule
     When I do GET /api/v4/cat/metaalarmrules?search=test-metaalarm-to-get
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -20,7 +20,10 @@ Feature: Get a metaalarm-rule
             }
           },
           "name": "Test alarm get",
-          "author": "test-metaalarm-to-get-1-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "type": "complex",
           "output_template": "{{ `Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}` }}",
           "created": 1592215337,
@@ -51,7 +54,10 @@ Feature: Get a metaalarm-rule
             }
           },
           "name": "Test alarm get",
-          "author": "test-metaalarm-to-get-2-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "type": "complex",
           "output_template": "{{ `Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}` }}",
           "created": 1592215337,
@@ -87,7 +93,7 @@ Feature: Get a metaalarm-rule
     When I do GET /api/v4/cat/metaalarmrules/test-metaalarm-to-get-1
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-metaalarm-to-get-1",
       "auto_resolve": false,
@@ -98,7 +104,10 @@ Feature: Get a metaalarm-rule
         }
       },
       "name": "Test alarm get",
-      "author": "test-metaalarm-to-get-1-author",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "{{ `Rule: {{ .Rule.ID }}; Count: {{ .Count }}; Children: {{ .Children.Alarm.Value.Component }}` }}",
       "created": 1592215337,
@@ -126,7 +135,7 @@ Feature: Get a metaalarm-rule
     When I do GET /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-get
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-rule-backward-compatibility-to-get",
       "auto_resolve": false,
@@ -171,7 +180,7 @@ Feature: Get a metaalarm-rule
     When I do GET /api/v4/cat/metaalarmrules/test-metaalarm-rule-not-found
     Then the response code should be 404
     Then the response body should be:
-    """
+    """json
     {
       "error": "Not found"
     }

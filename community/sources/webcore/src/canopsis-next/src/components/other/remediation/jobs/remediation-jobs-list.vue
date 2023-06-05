@@ -1,40 +1,44 @@
 <template lang="pug">
-  c-advanced-data-table.white(
+  c-advanced-data-table(
     :headers="headers",
     :items="remediationJobs",
     :loading="pending",
     :total-items="totalItems",
     :pagination="pagination",
     :is-disabled-item="isDisabledJob",
-    select-all,
+    :select-all="removable",
     search,
     advanced-pagination,
     @update:pagination="$emit('update:pagination', $event)"
   )
-    template(slot="toolbar", slot-scope="props")
-      v-flex(v-show="hasDeleteAnyRemediationJobAccess && props.selected.length", xs4)
-        v-btn(@click="$emit('remove-selected', props.selected)", icon)
-          v-icon delete
-    template(slot="actions", slot-scope="props")
+    template(#mass-actions="{ selected }")
       c-action-btn(
-        v-if="hasUpdateAnyRemediationJobAccess",
+        v-if="removable",
+        type="delete",
+        @click="$emit('remove-selected', selected)"
+      )
+    template(#actions="{ item, disabled }")
+      c-action-btn(
+        v-if="updatable",
         type="edit",
-        @click="$emit('edit', props.item)"
+        @click="$emit('edit', item)"
       )
       c-action-btn(
-        v-if="hasDeleteAnyRemediationJobAccess",
-        :tooltip="props.disabled ? $t('remediationJobs.usingJob') : $t('common.delete')",
-        :disabled="props.disabled",
+        v-if="duplicable",
+        type="duplicate",
+        @click="$emit('duplicate', item)"
+      )
+      c-action-btn(
+        v-if="removable",
+        :tooltip="disabled ? $t('remediation.job.usingJob') : $t('common.delete')",
+        :disabled="disabled",
         type="delete",
-        @click="$emit('remove', props.item)"
+        @click="$emit('remove', item)"
       )
 </template>
 
 <script>
-import { permissionsTechnicalRemediationJobMixin } from '@/mixins/permissions/technical/remediation-job';
-
 export default {
-  mixins: [permissionsTechnicalRemediationJobMixin],
   props: {
     remediationJobs: {
       type: Array,
@@ -52,6 +56,18 @@ export default {
       type: Object,
       required: true,
     },
+    removable: {
+      type: Boolean,
+      default: false,
+    },
+    updatable: {
+      type: Boolean,
+      default: false,
+    },
+    duplicable: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     headers() {
@@ -65,11 +81,12 @@ export default {
           value: 'author.name',
         },
         {
-          text: this.$t('remediationJobs.table.configuration'),
+          text: this.$t('remediation.job.configuration'),
           value: 'config.name',
+          sortable: false,
         },
         {
-          text: this.$t('remediationJobs.table.jobId'),
+          text: this.$t('remediation.job.jobId'),
           value: 'job_id',
         },
         {

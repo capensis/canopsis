@@ -125,48 +125,6 @@ Feature: Bulk update a scenario
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "priority": 2,
-        "triggers": ["create"],
-        "actions": [
-          {
-            "alarm_pattern": [
-              [
-                {
-                  "field": "v.component",
-                  "cond": {
-                    "type": "eq",
-                    "value": "test-scenario-to-bulk-update-4-alarm"
-                  }
-                }
-              ]
-            ],
-            "entity_pattern": [
-              [
-                {
-                  "field": "name",
-                  "cond": {
-                    "type": "eq",
-                    "value": "test-scenario-to-bulk-update-4-resource"
-                  }
-                }
-              ]
-            ],
-            "type": "snooze",
-            "parameters": {
-              "output": "test snooze",
-              "duration": {
-                "seconds": 3,
-                "unit": "s"
-              }
-            },
-            "drop_scenario_if_not_matched": false,
-            "emit_trigger": false
-          }
-        ]
-      },
-      {
-        "name": "test-scenario-to-bulk-create-4-name",
-        "enabled": true,
         "triggers": ["create"],
         "actions": [{}]
       },
@@ -651,55 +609,6 @@ Feature: Bulk update a scenario
       {
         "status": 400,
         "errors": {
-          "priority": "Priority already exists.",
-          "_id": "ID is missing."
-        },
-        "item": {
-          "name": "test-scenario-to-bulk-create-4-name",
-          "enabled": true,
-          "priority": 2,
-          "triggers": ["create"],
-          "actions": [
-            {
-              "alarm_pattern": [
-                [
-                  {
-                    "field": "v.component",
-                    "cond": {
-                      "type": "eq",
-                      "value": "test-scenario-to-bulk-update-4-alarm"
-                    }
-                  }
-                ]
-              ],
-              "entity_pattern": [
-                [
-                  {
-                    "field": "name",
-                    "cond": {
-                      "type": "eq",
-                      "value": "test-scenario-to-bulk-update-4-resource"
-                    }
-                  }
-                ]
-              ],
-              "type": "snooze",
-              "parameters": {
-                "output": "test snooze",
-                "duration": {
-                  "seconds": 3,
-                  "unit": "s"
-                }
-              },
-              "drop_scenario_if_not_matched": false,
-              "emit_trigger": false
-            }
-          ]
-        }
-      },
-      {
-        "status": 400,
-        "errors": {
           "actions.0.drop_scenario_if_not_matched": "DropScenarioIfNotMatched is missing.",
           "actions.0.emit_trigger": "EmitTrigger is missing.",
           "actions.0.type": "Type is missing.",
@@ -1122,7 +1031,10 @@ Feature: Bulk update a scenario
         {
           "_id": "test-scenario-to-bulk-update-1",
           "name": "test-scenario-to-bulk-update-1-name-twice",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "enabled": true,
           "priority": 7,
           "delay": null,
@@ -1159,7 +1071,10 @@ Feature: Bulk update a scenario
         {
           "_id": "test-scenario-to-bulk-update-2",
           "name": "test-scenario-to-bulk-update-2-name",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "enabled": true,
           "priority": 8,
           "delay": null,
@@ -1196,7 +1111,10 @@ Feature: Bulk update a scenario
         {
           "_id": "test-scenario-to-bulk-update-3",
           "name": "test-scenario-to-bulk-update-3-name",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "enabled": true,
           "triggers": ["create"],
           "delay": {

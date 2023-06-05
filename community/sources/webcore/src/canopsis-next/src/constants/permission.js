@@ -36,26 +36,27 @@ export const CANOPSIS_STACK = {
 };
 
 export const CANOPSIS_EDITION = {
-  core: 'core',
-  cat: 'cat',
+  community: 'community',
+  pro: 'pro',
 };
 
 export const EXPLOITATION_PAGES_RULES = {
   eventFilter: { stack: CANOPSIS_STACK.go },
-  snmpRule: { edition: CANOPSIS_EDITION.cat },
-  dynamicInfo: { edition: CANOPSIS_EDITION.cat },
-  metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+  snmpRule: { edition: CANOPSIS_EDITION.pro },
+  dynamicInfo: { edition: CANOPSIS_EDITION.pro },
+  metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
   scenario: { stack: CANOPSIS_STACK.go },
+  declareTicketRule: { edition: CANOPSIS_EDITION.pro },
 };
 
 export const ADMIN_PAGES_RULES = {
-  remediation: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
-  healthcheck: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
-  kpi: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+  remediation: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
+  healthcheck: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
+  kpi: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
 };
 
 export const NOTIFICATIONS_PAGES_RULES = {
-  instructionStats: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.cat },
+  instructionStats: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
 };
 
 export const USER_PERMISSIONS_PREFIXES = {
@@ -63,6 +64,7 @@ export const USER_PERMISSIONS_PREFIXES = {
     admin: 'models',
     exploitation: 'models_exploitation',
     notification: 'models_notification',
+    profile: 'models_profile',
   },
   business: {
     common: 'common',
@@ -71,6 +73,11 @@ export const USER_PERMISSIONS_PREFIXES = {
     serviceWeather: 'serviceweather',
     testingWeather: 'testingweather',
     counter: 'counter',
+    map: 'map',
+    barChart: 'barchart',
+    lineChart: 'linechart',
+    pieChart: 'piechart',
+    numbers: 'numbers',
   },
   api: 'api',
 };
@@ -92,12 +99,18 @@ export const USERS_PERMISSIONS = {
     remediationInstruction: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationInstruction`,
     remediationJob: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationJob`,
     remediationConfiguration: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationConfiguration`,
+    remediationStatistic: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationStatistic`,
     healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheck`,
+    techmetrics: `${USER_PERMISSIONS_PREFIXES.technical.admin}_techmetrics`,
     engine: `${USER_PERMISSIONS_PREFIXES.technical.admin}_engine`,
     healthcheckStatus: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheckStatus`,
     kpi: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpi`,
     kpiFilters: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiFilters`,
     kpiRatingSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiRatingSettings`,
+    kpiCollectionSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiCollectionSettings`,
+    map: `${USER_PERMISSIONS_PREFIXES.technical.admin}_map`,
+    shareToken: `${USER_PERMISSIONS_PREFIXES.technical.admin}_shareToken`,
+    widgetTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningType`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -108,9 +121,14 @@ export const USERS_PERMISSIONS = {
       idleRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_idleRules`,
       flappingRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_flappingRules`,
       resolveRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_resolveRules`,
+      declareTicketRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_declareTicketRule`,
+      linkRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_linkRule`,
     },
     notification: {
       instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
+    },
+    profile: {
+      corporatePattern: `${USER_PERMISSIONS_PREFIXES.technical.profile}_corporatePattern`,
     },
   },
   business: {
@@ -124,6 +142,7 @@ export const USERS_PERMISSIONS = {
         declareTicket: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_declareanIncident`,
         associateTicket: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_assignTicketNumber`,
         cancel: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_removeAlarm`,
+        fastCancel: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_fastRemoveAlarm`,
         changeState: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_changeState`,
         history: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_history`,
         groupRequest: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_groupRequest`,
@@ -156,8 +175,6 @@ export const USERS_PERMISSIONS = {
 
         exportAsCsv: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_exportAsCsv`,
 
-        // TODO: USERS_RIGHTS Should be removed after create MR in all features
-        ...featuresService.get('constants.USERS_RIGHTS.business.alarmsList.actions'),
         ...featuresService.get('constants.USERS_PERMISSIONS.business.alarmsList.actions'),
       },
     },
@@ -208,8 +225,6 @@ export const USERS_PERMISSIONS = {
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_userFilter`,
 
         category: `${USER_PERMISSIONS_PREFIXES.business.serviceWeather}_category`,
-
-        variablesHelp: `${USER_PERMISSIONS_PREFIXES.business.common}_variablesHelp`,
       },
     },
     counter: {
@@ -222,6 +237,66 @@ export const USERS_PERMISSIONS = {
     testingWeather: {
       actions: {
         alarmsList: `${USER_PERMISSIONS_PREFIXES.business.testingWeather}_alarmsList`,
+      },
+    },
+    map: {
+      actions: {
+        alarmsList: `${USER_PERMISSIONS_PREFIXES.business.map}_alarmsList`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.map}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.map}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.map}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.map}_userFilter`,
+
+        category: `${USER_PERMISSIONS_PREFIXES.business.map}_category`,
+      },
+    },
+    barChart: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.barChart}_interval`,
+
+        sampling: `${USER_PERMISSIONS_PREFIXES.business.barChart}_sampling`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.barChart}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.barChart}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.barChart}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.barChart}_userFilter`,
+      },
+    },
+    lineChart: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_interval`,
+
+        sampling: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_sampling`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.lineChart}_userFilter`,
+      },
+    },
+    pieChart: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_interval`,
+
+        sampling: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_sampling`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.pieChart}_userFilter`,
+      },
+    },
+    numbers: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.numbers}_interval`,
+
+        sampling: `${USER_PERMISSIONS_PREFIXES.business.numbers}_sampling`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.numbers}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_userFilter`,
       },
     },
   },
@@ -244,10 +319,24 @@ export const USERS_PERMISSIONS = {
       stateSettings: `${USER_PERMISSIONS_PREFIXES.api}_state_settings`,
       files: `${USER_PERMISSIONS_PREFIXES.api}_file`,
       healthcheck: `${USER_PERMISSIONS_PREFIXES.api}_healthcheck`,
+      techmetrics: `${USER_PERMISSIONS_PREFIXES.api}_techmetrics`,
       contextgraph: `${USER_PERMISSIONS_PREFIXES.api}_contextgraph`,
       broadcastMessage: `${USER_PERMISSIONS_PREFIXES.api}_broadcast_message`,
       junit: `${USER_PERMISSIONS_PREFIXES.api}_junit`,
       notifications: `${USER_PERMISSIONS_PREFIXES.api}_notification`,
+      metrics: `${USER_PERMISSIONS_PREFIXES.api}_metrics`,
+      metricsSettings: `${USER_PERMISSIONS_PREFIXES.api}_metrics_settings`,
+      ratingSettings: `${USER_PERMISSIONS_PREFIXES.api}_rating_settings`,
+      filter: `${USER_PERMISSIONS_PREFIXES.api}_kpi_filter`,
+      corporatePattern: `${USER_PERMISSIONS_PREFIXES.api}_corporate_pattern`,
+      api: `${USER_PERMISSIONS_PREFIXES.api}_api`,
+      exportConfigurations: `${USER_PERMISSIONS_PREFIXES.api}_export_configurations`,
+      map: `${USER_PERMISSIONS_PREFIXES.api}_map`,
+      shareToken: `${USER_PERMISSIONS_PREFIXES.api}_share_token`,
+      declareTicketExecution: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_execution`,
+      widgetTemplate: `${USER_PERMISSIONS_PREFIXES.api}_widgettemplate`,
+
+      ...featuresService.get('constants.USERS_PERMISSIONS.api.general'),
     },
     rules: {
       action: `${USER_PERMISSIONS_PREFIXES.api}_action`,
@@ -260,6 +349,8 @@ export const USERS_PERMISSIONS = {
       resolveRule: `${USER_PERMISSIONS_PREFIXES.api}_resolve_rule`,
       snmpRule: `${USER_PERMISSIONS_PREFIXES.api}_snmprule`,
       snmpMib: `${USER_PERMISSIONS_PREFIXES.api}_snmpmib`,
+      declareTicketRule: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_rule`,
+      linkRule: `${USER_PERMISSIONS_PREFIXES.api}_link_rule`,
     },
     remediation: {
       instruction: `${USER_PERMISSIONS_PREFIXES.api}_instruction`,
@@ -275,9 +366,6 @@ export const USERS_PERMISSIONS = {
       pbehaviorReason: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorreason`,
       pbehaviorType: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviortype`,
     },
-    metrics: `${USER_PERMISSIONS_PREFIXES.api}_metrics`,
-    ratingSettings: `${USER_PERMISSIONS_PREFIXES.api}_rating_settings`,
-    filter: `${USER_PERMISSIONS_PREFIXES.api}_filter`,
   },
 };
 
@@ -296,16 +384,15 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [ALARM_LIST_ACTIONS_TYPES.declareTicket]: USERS_PERMISSIONS.business.alarmsList.actions.declareTicket,
     [ALARM_LIST_ACTIONS_TYPES.associateTicket]: USERS_PERMISSIONS.business.alarmsList.actions.associateTicket,
     [ALARM_LIST_ACTIONS_TYPES.cancel]: USERS_PERMISSIONS.business.alarmsList.actions.cancel,
+    [ALARM_LIST_ACTIONS_TYPES.fastCancel]: USERS_PERMISSIONS.business.alarmsList.actions.fastCancel,
     [ALARM_LIST_ACTIONS_TYPES.changeState]: USERS_PERMISSIONS.business.alarmsList.actions.changeState,
     [ALARM_LIST_ACTIONS_TYPES.history]: USERS_PERMISSIONS.business.alarmsList.actions.history,
     [ALARM_LIST_ACTIONS_TYPES.variablesHelp]: USERS_PERMISSIONS.business.alarmsList.actions.variablesHelp,
     [ALARM_LIST_ACTIONS_TYPES.comment]: USERS_PERMISSIONS.business.alarmsList.actions.comment,
     [ALARM_LIST_ACTIONS_TYPES.groupRequest]: USERS_PERMISSIONS.business.alarmsList.actions.groupRequest,
-    [ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmGroup]:
+    [ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm]:
     USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
-    [ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmUngroup]:
-    USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
-    [ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmUpdate]:
+    [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm]:
     USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
 
     [ALARM_LIST_ACTIONS_TYPES.links]: USERS_PERMISSIONS.business.alarmsList.actions.links,
@@ -325,10 +412,6 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
 
     [ALARM_LIST_ACTIONS_TYPES.executeInstruction]:
     USERS_PERMISSIONS.business.alarmsList.actions.executeInstruction,
-
-    // TODO: Should be removed after create MR in all features
-    ...featuresService.get('constants.BUSINESS_USER_RIGHTS_ACTIONS_MAP.alarmsList'),
-    ...featuresService.get('constants.BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.alarmsList'),
   },
 
   context: {
@@ -358,8 +441,6 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [WEATHER_ACTIONS_TYPES.entityPause]: USERS_PERMISSIONS.business.serviceWeather.actions.entityPause,
     [WEATHER_ACTIONS_TYPES.entityPlay]: USERS_PERMISSIONS.business.serviceWeather.actions.entityPlay,
     [WEATHER_ACTIONS_TYPES.entityCancel]: USERS_PERMISSIONS.business.serviceWeather.actions.entityCancel,
-    [WEATHER_ACTIONS_TYPES.entityManagePbehaviors]:
-      USERS_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors,
     [WEATHER_ACTIONS_TYPES.executeInstruction]:
       USERS_PERMISSIONS.business.serviceWeather.actions.executeInstruction,
 
@@ -368,7 +449,6 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [WEATHER_ACTIONS_TYPES.moreInfos]: USERS_PERMISSIONS.business.serviceWeather.actions.moreInfos,
     [WEATHER_ACTIONS_TYPES.alarmsList]: USERS_PERMISSIONS.business.serviceWeather.actions.alarmsList,
     [WEATHER_ACTIONS_TYPES.pbehaviorList]: USERS_PERMISSIONS.business.serviceWeather.actions.pbehaviorList,
-    [WEATHER_ACTIONS_TYPES.variablesHelp]: USERS_PERMISSIONS.business.serviceWeather.actions.variablesHelp,
     [WEATHER_ACTIONS_TYPES.entityComment]: USERS_PERMISSIONS.business.serviceWeather.actions.entityComment,
   },
 
@@ -394,6 +474,7 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: EXPLOITATION_PAGES_RULES.dynamicInfo,
   [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: EXPLOITATION_PAGES_RULES.metaAlarmRule,
   [USERS_PERMISSIONS.technical.exploitation.scenario]: EXPLOITATION_PAGES_RULES.scenario,
+  [USERS_PERMISSIONS.technical.exploitation.declareTicketRule]: EXPLOITATION_PAGES_RULES.declareTicketRule,
 
   /**
    * Notifications pages
@@ -405,13 +486,15 @@ export const DOCUMENTATION_LINKS = {
   /**
    * Exploitation
    */
-  [USERS_PERMISSIONS.technical.exploitation.eventFilter]: 'guide-administration/moteurs/moteur-che-event_filter/',
+  [USERS_PERMISSIONS.technical.exploitation.eventFilter]: 'guide-utilisation/menu-exploitation/filtres-evenements/',
   [USERS_PERMISSIONS.technical.exploitation.pbehavior]: 'guide-utilisation/cas-d-usage/comportements_periodiques/',
   [USERS_PERMISSIONS.technical.exploitation.snmpRule]: 'interconnexions/Supervision/SNMPtrap/',
-  // [USERS_PERMISSIONS.technical.exploitation.idleRules]: '', // TODO: TBD
-  [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: 'guide-administration/moteurs/moteur-dynamic-infos/',
-  [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: 'guide-administration/moteurs/moteur-correlation/',
-  [USERS_PERMISSIONS.technical.exploitation.scenario]: 'guide-administration/moteurs/moteur-action/',
+  [USERS_PERMISSIONS.technical.exploitation.idleRules]: 'guide-utilisation/menu-exploitation/regles-inactivite/',
+  [USERS_PERMISSIONS.technical.exploitation.resolveRules]: 'guide-utilisation/menu-exploitation/regles-resolution/',
+  [USERS_PERMISSIONS.technical.exploitation.flappingRules]: 'guide-utilisation/menu-exploitation/regles-bagot/',
+  [USERS_PERMISSIONS.technical.exploitation.dynamicInfo]: 'guide-utilisation/menu-exploitation/informations-dynamiques/',
+  [USERS_PERMISSIONS.technical.exploitation.metaAlarmRule]: 'guide-utilisation/menu-exploitation/regles-metaalarme/',
+  [USERS_PERMISSIONS.technical.exploitation.scenario]: 'guide-utilisation/menu-exploitation/scenarios/',
 
   /**
    * Admin

@@ -7,14 +7,12 @@ exports[`c-no-events-icon Renders \`c-no-events-icon\` with custom props correct
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light secondary--text"
-    >
-      sync_problem
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon d-block material-icons theme--light secondary--text"
+  >
+    sync_problem
+  </i>
 </span>
 `;
 
@@ -24,7 +22,7 @@ exports[`c-no-events-icon Renders \`c-no-events-icon\` with custom props correct
   style="left: 0px; max-width: 1120px; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
   <span>
-    icons.noEvents:{"duration":"2,476 days 0 hrs 2 mins 3 secs"}
+    No events received for 2,476 days 0 hrs 2 mins 3 secs by some of dependencies
   </span>
 </div>
 `;
@@ -40,14 +38,12 @@ exports[`c-no-events-icon Renders \`c-no-events-icon\` with value correctly 1`] 
   <transition-stub
     name=""
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light error--text"
-    >
-      sync_problem
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon d-block material-icons theme--light error--text"
+  >
+    sync_problem
+  </i>
 </span>
 `;
 
@@ -57,7 +53,7 @@ exports[`c-no-events-icon Renders \`c-no-events-icon\` with value correctly 2`] 
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
   <span>
-    icons.noEvents:{"duration":"2,476 days 0 hrs 2 mins 3 secs"}
+    No events received for 2,476 days 0 hrs 2 mins 3 secs by some of dependencies
   </span>
 </div>
 `;

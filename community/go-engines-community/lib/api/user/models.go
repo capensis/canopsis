@@ -14,57 +14,66 @@ type ListRequest struct {
 	Permission string `form:"permission"`
 }
 
-type Request struct {
+type CreateRequest struct {
+	EditRequest
+	Source     string `json:"source" binding:"oneoforempty=ldap cas saml"`
+	ExternalID string `json:"external_id"`
+}
+
+type UpdateRequest struct {
 	ID string `json:"-"`
 	EditRequest
 }
 
 type EditRequest struct {
-	Password               string          `json:"password"`
-	Name                   string          `json:"name" binding:"required,max=255"`
-	Firstname              string          `json:"firstname" binding:"max=255"`
-	Lastname               string          `json:"lastname" binding:"max=255"`
-	Email                  string          `json:"email" binding:"required,email"`
-	Role                   string          `json:"role" binding:"required"`
-	UILanguage             string          `json:"ui_language"`
-	UIGroupsNavigationType string          `json:"ui_groups_navigation_type"`
-	IsEnabled              *bool           `json:"enable" binding:"required"`
-	DefaultView            string          `json:"defaultview"`
-	UITours                map[string]bool `json:"ui_tours"`
+	Password               string `json:"password"`
+	Name                   string `json:"name" binding:"required,max=255"`
+	Firstname              string `json:"firstname" binding:"max=255"`
+	Lastname               string `json:"lastname" binding:"max=255"`
+	Email                  string `json:"email" binding:"required,email"`
+	Role                   string `json:"role" binding:"required"`
+	UILanguage             string `json:"ui_language" binding:"max=255"`
+	UIGroupsNavigationType string `json:"ui_groups_navigation_type" binding:"max=255"`
+	UITheme                string `json:"ui_theme" binding:"max=255"`
+	IsEnabled              *bool  `json:"enable" binding:"required"`
+	DefaultView            string `json:"defaultview"`
 }
 
-func (r EditRequest) getInsertBson(passwordEncoder password.Encoder) bson.M {
+func (r CreateRequest) getBson(passwordEncoder password.Encoder) bson.M {
 	bsonModel := bson.M{
-		"_id":                  r.Name,
-		"crecord_name":         r.Name,
-		"crecord_type":         securitymodel.LineTypeSubject,
-		"lastname":             r.Lastname,
-		"firstname":            r.Firstname,
-		"mail":                 r.Email,
-		"role":                 r.Role,
-		"shadowpasswd":         string(passwordEncoder.EncodePassword([]byte(r.Password))),
-		"ui_language":          r.UILanguage,
-		"groupsNavigationType": r.UIGroupsNavigationType,
-		"enable":               r.IsEnabled,
-		"defaultview":          r.DefaultView,
-		"authkey":              utils.NewID(),
+		"_id":                       r.Name,
+		"crecord_name":              r.Name,
+		"crecord_type":              securitymodel.LineTypeSubject,
+		"lastname":                  r.Lastname,
+		"firstname":                 r.Firstname,
+		"email":                     r.Email,
+		"role":                      r.Role,
+		"shadowpasswd":              string(passwordEncoder.EncodePassword([]byte(r.Password))),
+		"ui_language":               r.UILanguage,
+		"ui_theme":                  r.UITheme,
+		"ui_groups_navigation_type": r.UIGroupsNavigationType,
+		"enable":                    r.IsEnabled,
+		"defaultview":               r.DefaultView,
+		"authkey":                   utils.NewID(),
+		"source":                    r.Source,
+		"external_id":               r.ExternalID,
 	}
 
 	return bsonModel
 }
 
-func (r EditRequest) getUpdateBson(passwordEncoder password.Encoder) bson.M {
+func (r EditRequest) getBson(passwordEncoder password.Encoder) bson.M {
 	bsonModel := bson.M{
-		"crecord_name":         r.Name,
-		"lastname":             r.Lastname,
-		"firstname":            r.Firstname,
-		"mail":                 r.Email,
-		"role":                 r.Role,
-		"ui_language":          r.UILanguage,
-		"groupsNavigationType": r.UIGroupsNavigationType,
-		"enable":               r.IsEnabled,
-		"defaultview":          r.DefaultView,
-		"tours":                r.UITours,
+		"crecord_name":              r.Name,
+		"lastname":                  r.Lastname,
+		"firstname":                 r.Firstname,
+		"email":                     r.Email,
+		"role":                      r.Role,
+		"ui_language":               r.UILanguage,
+		"ui_theme":                  r.UITheme,
+		"ui_groups_navigation_type": r.UIGroupsNavigationType,
+		"enable":                    r.IsEnabled,
+		"defaultview":               r.DefaultView,
 	}
 	if r.Password != "" {
 		bsonModel["shadowpasswd"] = string(passwordEncoder.EncodePassword([]byte(r.Password)))
@@ -74,20 +83,22 @@ func (r EditRequest) getUpdateBson(passwordEncoder password.Encoder) bson.M {
 }
 
 type User struct {
-	ID                     string          `bson:"_id" json:"_id"`
-	Name                   string          `bson:"name" json:"name"`
-	Lastname               string          `bson:"lastname" json:"lastname"`
-	Firstname              string          `bson:"firstname" json:"firstname"`
-	Email                  string          `bson:"email" json:"email"`
-	Role                   Role            `bson:"role" json:"role"`
-	UILanguage             string          `bson:"ui_language" json:"ui_language"`
-	UITours                map[string]bool `bson:"ui_tours" json:"ui_tours"`
-	UIGroupsNavigationType string          `bson:"ui_groups_navigation_type" json:"ui_groups_navigation_type"`
-	IsEnabled              bool            `bson:"enable" json:"enable"`
-	DefaultView            *View           `bson:"defaultview" json:"defaultview"`
-	ExternalID             string          `bson:"external_id" json:"external_id"`
-	Source                 string          `bson:"source" json:"source"`
-	AuthApiKey             string          `bson:"authkey" json:"authkey"`
+	ID                     string `bson:"_id" json:"_id"`
+	Name                   string `bson:"name" json:"name"`
+	Lastname               string `bson:"lastname" json:"lastname"`
+	Firstname              string `bson:"firstname" json:"firstname"`
+	Email                  string `bson:"email" json:"email"`
+	Role                   Role   `bson:"role" json:"role"`
+	UILanguage             string `bson:"ui_language" json:"ui_language"`
+	UITheme                string `bson:"ui_theme" json:"ui_theme"`
+	UIGroupsNavigationType string `bson:"ui_groups_navigation_type" json:"ui_groups_navigation_type"`
+	Enabled                bool   `bson:"enable" json:"enable"`
+	DefaultView            *View  `bson:"defaultview" json:"defaultview"`
+	ExternalID             string `bson:"external_id" json:"external_id"`
+	Source                 string `bson:"source" json:"source"`
+	AuthApiKey             string `bson:"authkey" json:"authkey"`
+
+	ActiveConnects *int64 `bson:"-" json:"active_connects,omitempty"`
 }
 
 type Role struct {

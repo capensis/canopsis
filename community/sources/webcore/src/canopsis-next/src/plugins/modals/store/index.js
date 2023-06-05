@@ -21,7 +21,6 @@ export default {
   getters: {
     modals: state => state.allIds.map(id => state.byId[id]),
     hasMaximizedModal: state => state.allIds.some(id => !state.byId[id].minimized),
-    hasMinimizedModal: state => state.allIds.some(id => state.byId[id].minimized),
   },
   mutations: {
     [types.SHOW](state, {
@@ -95,6 +94,10 @@ export default {
     hide({ commit, state }, { id } = {}) {
       if (!id) {
         throw new Error('Missed required parameter');
+      }
+
+      if (!state.byId[id]) {
+        return;
       }
 
       commit(types.HIDE, { id });

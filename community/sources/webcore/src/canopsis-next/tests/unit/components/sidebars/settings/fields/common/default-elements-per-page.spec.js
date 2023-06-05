@@ -6,7 +6,12 @@ import DefaultElementsPerPage from '@/components/sidebars/settings/fields/common
 const localVue = createVueInstance();
 
 const stubs = {
+  'widget-settings-item': true,
   'v-select': createSelectInputStub('v-select'),
+};
+
+const snapshotStubs = {
+  'widget-settings-item': true,
 };
 
 const factory = (options = {}) => shallowMount(DefaultElementsPerPage, {
@@ -18,16 +23,7 @@ const factory = (options = {}) => shallowMount(DefaultElementsPerPage, {
 
 const snapshotFactory = (options = {}) => mount(DefaultElementsPerPage, {
   localVue,
-
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
+  stubs: snapshotStubs,
 
   ...options,
 });

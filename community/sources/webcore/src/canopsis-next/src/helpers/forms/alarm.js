@@ -1,11 +1,20 @@
 /**
- * @typedef {Object} AlarmLink
+ * @typedef {Object} AlarmOldLink
  * @property {string} label
  * @property {string} link
  */
 
 /**
- * @typedef {Object.<string, AlarmLink[] | string[]>} AlarmLinks
+ * @typedef {Object} AlarmLink
+ * @property {string} icon_name
+ * @property {string} label
+ * @property {string} url
+ * @property {string} [rule_id]
+ * @property {LinkRuleAction} [action]
+ */
+
+/**
+ * @typedef {Object<string, AlarmLink[] | AlarmOldLink[]>} AlarmLinks
  */
 
 /**
@@ -32,7 +41,7 @@
 /**
  * @typedef {Object} AlarmAssignedInstructionExecution
  * @property {string} _id
- * @property {string} status
+ * @property {number} status
  */
 
 /**
@@ -90,23 +99,30 @@
  */
 
 /**
+ * @typedef {Pbehavior} AlarmPbehavior
+ * @property {Comment} last_comment
+ */
+
+/**
  * @typedef {Object} Alarm
  * @property {string} _id
  * @property {Entity} entity
- * @property {boolean} metaalarm
+ * @property {boolean} is_meta_alarm
  * @property {AlarmAssignedInstruction[]} [assigned_instructions]
- * @property {boolean} [is_auto_instruction_failed]
- * @property {boolean} [is_auto_instruction_running]
- * @property {boolean} [is_manual_instruction_running]
- * @property {boolean} [is_manual_instruction_waiting_result]
- * @property {boolean} [is_all_auto_instructions_completed]
+ * @property {number} [instruction_execution_icon]
+ * @property {string[]} running_manual_instructions
+ * @property {string[]} running_auto_instructions
+ * @property {string[]} failed_manual_instructions
+ * @property {string[]} failed_auto_instructions
+ * @property {string[]} successful_manual_instructions
+ * @property {string[]} successful_auto_instructions
  * @property {boolean} [children_instructions]
  * @property {InfosObject} infos
  * @property {AlarmRule} rule
  * @property {Correlation} consequences
  * @property {Correlation} causes
- * @property {Pbehavior} pbehavior
- * @property {string} links
+ * @property {AlarmPbehavior} pbehavior
+ * @property {AlarmLinks} links
  * @property {number} t
  * @property {AlarmValue} v
  */

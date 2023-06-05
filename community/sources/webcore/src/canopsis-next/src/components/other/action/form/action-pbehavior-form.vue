@@ -1,9 +1,9 @@
 <template lang="pug">
-  pbehavior-form(v-field="value", no-filter, no-enabled, no-comments, with-start-on-trigger)
+  pbehavior-form(v-field="value", no-pattern, no-enabled, no-comments, with-start-on-trigger)
 </template>
 
 <script>
-import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehavior-form.vue';
+import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
 
 export default {
   components: { PbehaviorForm },

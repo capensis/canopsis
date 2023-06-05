@@ -41,7 +41,7 @@ export default {
           params: {
             ...params,
 
-            filter,
+            filters: [filter],
           },
         }));
 

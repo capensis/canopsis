@@ -2,7 +2,7 @@
   div
     v-layout(row)
       v-flex(xs12)
-        text-editor(
+        text-editor-field(
           v-field="form.message",
           v-validate="'required'",
           :label="$t('common.message')",
@@ -40,11 +40,11 @@ import { convertDateToString } from '@/helpers/date/date';
 import { formMixin } from '@/mixins/form';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
-import TextEditor from '@/components/common/text-editor/text-editor.vue';
+import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { TextEditor, DateTimePickerField },
+  components: { TextEditorField, DateTimePickerField },
   mixins: [formMixin],
   model: {
     prop: 'form',

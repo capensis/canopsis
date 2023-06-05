@@ -14,11 +14,14 @@ Feature: Update a metaalarmrule
   Scenario: given update request should update metaalarmrule
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-1:
-    """
+    """json
     {
       "name": "test-metaalarm-to-update-1-updated",
       "auto_resolve": false,
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "entity_pattern": [
         [
           {
@@ -34,13 +37,19 @@ Feature: Update a metaalarmrule
     """
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-to-update-1",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-1-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "old_entity_patterns": null,
       "old_total_entity_patterns": null,
       "old_alarm_patterns": null,
@@ -61,13 +70,19 @@ Feature: Update a metaalarmrule
     When I do GET /api/v4/cat/metaalarmrules/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-to-update-1",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-1-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "old_entity_patterns": null,
       "old_total_entity_patterns": null,
       "old_alarm_patterns": null,
@@ -89,11 +104,14 @@ Feature: Update a metaalarmrule
   Scenario: given update request with entity pattern should update metaalarmrule
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-2:
-    """
+    """json
     {
       "name": "test-metaalarm-to-update-2",
       "auto_resolve": false,
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "entity_pattern": [
         [
           {
@@ -109,13 +127,19 @@ Feature: Update a metaalarmrule
     """
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-to-update-2",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-2",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "old_entity_patterns": null,
       "old_total_entity_patterns": null,
       "old_alarm_patterns": null,
@@ -136,13 +160,19 @@ Feature: Update a metaalarmrule
     When I do GET /api/v4/cat/metaalarmrules/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-to-update-2",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-2",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "old_entity_patterns": null,
       "old_total_entity_patterns": null,
       "old_alarm_patterns": null,
@@ -164,11 +194,14 @@ Feature: Update a metaalarmrule
   Scenario: given update request with entity pattern should update metaalarmrule
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-3:
-    """
+    """json
     {
       "name": "test-metaalarm-to-update-3",
       "auto_resolve": false,
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "alarm_pattern": [
         [
           {
@@ -184,13 +217,19 @@ Feature: Update a metaalarmrule
     """
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-to-update-3",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-3",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "old_entity_patterns": null,
       "old_total_entity_patterns": null,
       "old_alarm_patterns": null,
@@ -211,13 +250,19 @@ Feature: Update a metaalarmrule
     When I do GET /api/v4/cat/metaalarmrules/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-to-update-3",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-3",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "old_entity_patterns": null,
       "old_total_entity_patterns": null,
       "old_alarm_patterns": null,
@@ -239,11 +284,14 @@ Feature: Update a metaalarmrule
   Scenario: given update request with both patterns should update metaalarmrule
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-4:
-    """
+    """json
     {
       "name": "test-metaalarm-to-update-4",
       "auto_resolve": false,
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "entity_pattern": [
         [
           {
@@ -270,13 +318,19 @@ Feature: Update a metaalarmrule
     """
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-to-update-4",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-4",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "old_entity_patterns": null,
       "old_total_entity_patterns": null,
       "old_alarm_patterns": null,
@@ -308,13 +362,19 @@ Feature: Update a metaalarmrule
     When I do GET /api/v4/cat/metaalarmrules/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-to-update-4",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-4",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "old_entity_patterns": null,
       "old_total_entity_patterns": null,
       "old_alarm_patterns": null,
@@ -347,11 +407,14 @@ Feature: Update a metaalarmrule
   Scenario: given update request with corporate pattern should update metaalarmrule
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-5:
-    """
+    """json
     {
       "name": "test-metaalarm-to-update-5",
       "auto_resolve": false,
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "entity_pattern": [
         [
           {
@@ -368,13 +431,19 @@ Feature: Update a metaalarmrule
     """
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-to-update-5",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-5",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "old_entity_patterns": null,
       "old_total_entity_patterns": null,
       "old_alarm_patterns": null,
@@ -408,13 +477,19 @@ Feature: Update a metaalarmrule
     When I do GET /api/v4/cat/metaalarmrules/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-to-update-5",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-5",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "old_entity_patterns": null,
       "old_total_entity_patterns": null,
       "old_alarm_patterns": null,
@@ -449,24 +524,33 @@ Feature: Update a metaalarmrule
   Scenario: given update request with both corporate patterns should update metaalarmrule
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-6:
-    """
+    """json
     {
       "name": "test-metaalarm-to-update-6",
       "auto_resolve": false,
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
       "corporate_alarm_pattern": "test-pattern-to-rule-edit-1"
     }
     """
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-to-update-6",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-6",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "old_entity_patterns": null,
       "old_total_entity_patterns": null,
       "old_alarm_patterns": null,
@@ -502,13 +586,19 @@ Feature: Update a metaalarmrule
     When I do GET /api/v4/cat/metaalarmrules/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-to-update-6",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-6",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "old_entity_patterns": null,
       "old_total_entity_patterns": null,
       "old_alarm_patterns": null,
@@ -545,11 +635,14 @@ Feature: Update a metaalarmrule
   Scenario: given update request with total entity patterns should be ok
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-6:
-    """
+    """json
     {
       "name": "test-metaalarm-to-update-6-updated",
       "auto_resolve": false,
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "entity_pattern": [
         [
           {
@@ -576,13 +669,19 @@ Feature: Update a metaalarmrule
     """
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-to-update-6",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-6-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "old_entity_patterns": null,
       "old_total_entity_patterns": null,
       "old_alarm_patterns": null,
@@ -614,13 +713,19 @@ Feature: Update a metaalarmrule
     When I do GET /api/v4/cat/metaalarmrules/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-to-update-6",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-6-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "old_entity_patterns": null,
       "old_total_entity_patterns": null,
       "old_alarm_patterns": null,
@@ -653,11 +758,14 @@ Feature: Update a metaalarmrule
   Scenario: given update request with corporate total entity patterns should be ok
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-7:
-    """
+    """json
     {
       "name": "test-metaalarm-to-update-7-updated",
       "auto_resolve": false,
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "entity_pattern": [
         [
           {
@@ -674,13 +782,19 @@ Feature: Update a metaalarmrule
     """
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-to-update-7",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-7-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "old_entity_patterns": null,
       "old_total_entity_patterns": null,
       "old_alarm_patterns": null,
@@ -714,13 +828,19 @@ Feature: Update a metaalarmrule
     When I do GET /api/v4/cat/metaalarmrules/{{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-to-update-7",
       "auto_resolve": false,
       "name": "test-metaalarm-to-update-7-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "old_entity_patterns": null,
       "old_total_entity_patterns": null,
       "old_alarm_patterns": null,
@@ -755,17 +875,20 @@ Feature: Update a metaalarmrule
   Scenario: given update request with absent alarm corporate pattern should return error
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
-    """
+    """json
     {
       "name": "test-metaalarm-to-update-8",
       "auto_resolve": false,
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "corporate_alarm_pattern": "test-pattern-not-exist"
     }
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "corporate_alarm_pattern": "CorporateAlarmPattern doesn't exist."
@@ -776,17 +899,20 @@ Feature: Update a metaalarmrule
   Scenario: given update request with absent entity corporate pattern should return error
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
-    """
+    """json
     {
       "name": "test-metaalarm-to-update-8",
       "auto_resolve": false,
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "corporate_entity_pattern": "test-pattern-not-exist"
     }
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "corporate_entity_pattern": "CorporateEntityPattern doesn't exist."
@@ -797,11 +923,14 @@ Feature: Update a metaalarmrule
   Scenario: given update request with absent total corporate pattern should return error
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
-    """
+    """json
     {
       "name": "test-metaalarm-to-update-8",
       "auto_resolve": false,
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "entity_pattern": [
         [
           {
@@ -818,7 +947,7 @@ Feature: Update a metaalarmrule
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "corporate_total_entity_pattern": "CorporateTotalEntityPattern doesn't exist."
@@ -829,7 +958,7 @@ Feature: Update a metaalarmrule
   Scenario: given update request with wrong alarm pattern should return error
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
-    """
+    """json
     {
       "name": "test-metaalarm-to-update-8",
       "auto_resolve": false,
@@ -849,7 +978,7 @@ Feature: Update a metaalarmrule
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "alarm_pattern": "AlarmPattern is invalid alarm pattern."
@@ -860,7 +989,7 @@ Feature: Update a metaalarmrule
   Scenario: given update request with wrong entity pattern should return error
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
-    """
+    """json
     {
       "name": "test-metaalarm-to-update-8",
       "auto_resolve": false,
@@ -880,7 +1009,7 @@ Feature: Update a metaalarmrule
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "entity_pattern": "EntityPattern is invalid entity pattern."
@@ -891,7 +1020,7 @@ Feature: Update a metaalarmrule
   Scenario: given update request with wrong total entity pattern should return error
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
-    """
+    """json
     {
       "name": "test-metaalarm-to-update-8",
       "auto_resolve": false,
@@ -922,7 +1051,7 @@ Feature: Update a metaalarmrule
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "total_entity_pattern": "TotalEntityPattern is invalid entity pattern."
@@ -933,7 +1062,7 @@ Feature: Update a metaalarmrule
   Scenario: given update request with wrong type should return bad request
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
-    """
+    """json
     {
       "name": "test-metaalarm-to-update-8",
       "auto_resolve": false,
@@ -953,7 +1082,7 @@ Feature: Update a metaalarmrule
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "type": "Type must be one of [relation timebased attribute complex valuegroup corel]."
@@ -964,7 +1093,7 @@ Feature: Update a metaalarmrule
   Scenario: given update request with wrong type should return bad request
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
-    """
+    """json
     {
       "name": "test-metaalarm-to-update-8",
       "auto_resolve": false,
@@ -992,7 +1121,7 @@ Feature: Update a metaalarmrule
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "config": "value_paths config can not be in type complex."
@@ -1003,11 +1132,14 @@ Feature: Update a metaalarmrule
   Scenario: given update request with not exist id should return error
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-not-exist:
-    """
+    """json
     {
       "name": "test-metaalarm-to-update-1-updated",
       "auto_resolve": false,
       "type": "complex",
+      "config": {
+        "threshold_count": 10
+      },
       "entity_pattern": [
         [
           {
@@ -1023,7 +1155,7 @@ Feature: Update a metaalarmrule
     """
     Then the response code should be 404
     Then the response body should contain:
-    """
+    """json
     {
       "error": "Not found"
     }
@@ -1032,7 +1164,7 @@ Feature: Update a metaalarmrule
   Scenario: given update request with empty patterns should return error
     When I am admin
     When I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-to-update-8:
-    """
+    """json
     {
       "auto_resolve": false,
       "name": "test-attribute-type-1",
@@ -1043,7 +1175,7 @@ Feature: Update a metaalarmrule
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "alarm_pattern": "AlarmPattern or EntityPattern is required.",
@@ -1056,7 +1188,7 @@ Feature: Update a metaalarmrule
             but should unset old patterns if new patterns are present
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-update:
-    """
+    """json
     {
       "name": "test-metaalarm-rule-backward-compatibility-to-update-name-updated",
       "auto_resolve": false,
@@ -1069,7 +1201,7 @@ Feature: Update a metaalarmrule
     Then the response code should be 200
     When I do GET /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-update
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-rule-backward-compatibility-to-update",
       "auto_resolve": false,
@@ -1109,7 +1241,7 @@ Feature: Update a metaalarmrule
     }
     """
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-update:
-    """
+    """json
     {
       "name": "test-metaalarm-rule-backward-compatibility-to-update-name-updated",
       "auto_resolve": false,
@@ -1133,7 +1265,7 @@ Feature: Update a metaalarmrule
     Then the response code should be 200
     When I do GET /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-update
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-rule-backward-compatibility-to-update",
       "auto_resolve": false,
@@ -1172,7 +1304,7 @@ Feature: Update a metaalarmrule
     }
     """
     Then I do PUT /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-update:
-    """
+    """json
     {
       "name": "test-metaalarm-rule-backward-compatibility-to-update-name-updated",
       "auto_resolve": false,
@@ -1218,7 +1350,7 @@ Feature: Update a metaalarmrule
     Then the response code should be 200
     When I do GET /api/v4/cat/metaalarmrules/test-metaalarm-rule-backward-compatibility-to-update
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-metaalarm-rule-backward-compatibility-to-update",
       "auto_resolve": false,
@@ -1439,6 +1571,16 @@ Feature: Update a metaalarmrule
                 "unit": "m"
               }
             }
+          },
+          {
+            "field": "v.activation_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 1,
+                "unit": "m"
+              }
+            }
           }
         ]
       ]
@@ -1622,7 +1764,10 @@ Feature: Update a metaalarmrule
     {
       "auto_resolve": true,
       "name": "complex-test-1",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "type": "complex",
       "output_template": "{{ `{{ .Children.Alarm.Value.State.Message }}` }}",
       "config": {
@@ -1669,6 +1814,16 @@ Feature: Update a metaalarmrule
             }
           },
           {
+            "field": "v.activation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          },
+          {
             "field": "v.ack.t",
             "cond": {
               "type": "absolute_time",
@@ -1702,7 +1857,7 @@ Feature: Update a metaalarmrule
             and all old patterns should be removed
     When I am admin
     Then I do PUT /api/v4/cat/metaalarmrules/test-valuegroup-rule-rate-backward-compatibility-to-update:
-    """
+    """json
     {
       "name": "test-valuegroup-rule-rate-backward-compatibility-to-update-1",
       "type": "valuegroup",
@@ -1721,7 +1876,7 @@ Feature: Update a metaalarmrule
     Then the response code should be 200
     When I do GET /api/v4/cat/metaalarmrules/test-valuegroup-rule-rate-backward-compatibility-to-update
     Then the response body should contain:
-    """
+    """json
     {
       "_id": "test-valuegroup-rule-rate-backward-compatibility-to-update",
       "old_alarm_patterns": null,

@@ -19,16 +19,11 @@ export const alarmSchema = new schema.Entity(ENTITIES_TYPES.alarm, {}, {
   processStrategy: parentProcessStrategy,
 });
 
-alarmSchema.define({
-  consequences: {
-    data: [alarmSchema],
-  },
-  causes: {
-    data: [alarmSchema],
-  },
-});
-
 alarmSchema.disabledCache = true;
+
+export const alarmDetailsSchema = new schema.Entity(ENTITIES_TYPES.alarmDetails, {}, {
+  idAttribute: '_id',
+});
 
 export const entitySchema = new schema.Entity(ENTITIES_TYPES.entity, {
   pbehaviors: [pbehaviorSchema],
@@ -73,6 +68,8 @@ export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
   mergeStrategy: childMergeStrategy,
 });
 
+viewSchema.disabledCache = true;
+
 export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, {
   views: [viewSchema],
 }, {
@@ -86,7 +83,7 @@ export const userSchema = new schema.Entity(ENTITIES_TYPES.user, {}, { idAttribu
 
 export const roleSchema = new schema.Entity(ENTITIES_TYPES.role, {}, { idAttribute: '_id' });
 
-export const eventFilterRuleSchema = new schema.Entity(ENTITIES_TYPES.eventFilterRule, {}, { idAttribute: '_id' });
+export const eventFilterSchema = new schema.Entity(ENTITIES_TYPES.eventFilter, {}, { idAttribute: '_id' });
 
 export const metaAlarmRuleSchema = new schema.Entity(ENTITIES_TYPES.metaAlarmRule, {}, { idAttribute: '_id' });
 
@@ -152,10 +149,25 @@ export const resolveRulesSchema = new schema.Entity(ENTITIES_TYPES.resolveRules,
 
 export const filterSchema = new schema.Entity(ENTITIES_TYPES.filter, {}, { idAttribute: '_id' });
 
-export const ratingSettingsSchema = new schema.Entity(ENTITIES_TYPES.ratingSettings, {}, { idAttribute: 'id' });
+export const ratingSettingsSchema = new schema.Entity(ENTITIES_TYPES.ratingSettings, {}, { idAttribute: 'label' });
+
+export const patternSchema = new schema.Entity(ENTITIES_TYPES.pattern, {}, { idAttribute: '_id' });
+
+export const mapSchema = new schema.Entity(ENTITIES_TYPES.map, {}, { idAttribute: '_id' });
+
+export const alarmTagSchema = new schema.Entity(ENTITIES_TYPES.alarmTag, {}, { idAttribute: '_id' });
+
+export const shareTokenSchema = new schema.Entity(ENTITIES_TYPES.shareToken, {}, { idAttribute: '_id' });
+
+export const widgetTemplateSchema = new schema.Entity(ENTITIES_TYPES.widgetTemplate, {}, { idAttribute: '_id' });
+
+export const declareTicketRuleSchema = new schema.Entity(ENTITIES_TYPES.declareTicketRule, {}, { idAttribute: '_id' });
+
+export const linkRuleSchema = new schema.Entity(ENTITIES_TYPES.linkRule, {}, { idAttribute: '_id' });
 
 export default {
   [ENTITIES_TYPES.alarm]: alarmSchema,
+  [ENTITIES_TYPES.alarmDetails]: alarmDetailsSchema,
   [ENTITIES_TYPES.entity]: entitySchema,
   [ENTITIES_TYPES.service]: serviceSchema,
   [ENTITIES_TYPES.weatherService]: weatherServiceSchema,
@@ -167,7 +179,7 @@ export default {
   [ENTITIES_TYPES.widget]: widgetSchema,
   [ENTITIES_TYPES.user]: userSchema,
   [ENTITIES_TYPES.role]: roleSchema,
-  [ENTITIES_TYPES.eventFilterRule]: eventFilterRuleSchema,
+  [ENTITIES_TYPES.eventFilter]: eventFilterSchema,
   [ENTITIES_TYPES.snmpRule]: snmpRuleSchema,
   [ENTITIES_TYPES.dynamicInfo]: dynamicInfoSchema,
   [ENTITIES_TYPES.broadcastMessage]: broadcastMessageSchema,
@@ -190,4 +202,11 @@ export default {
   [ENTITIES_TYPES.resolveRules]: resolveRulesSchema,
   [ENTITIES_TYPES.filter]: filterSchema,
   [ENTITIES_TYPES.ratingSettings]: ratingSettingsSchema,
+  [ENTITIES_TYPES.pattern]: patternSchema,
+  [ENTITIES_TYPES.map]: mapSchema,
+  [ENTITIES_TYPES.alarmTag]: alarmTagSchema,
+  [ENTITIES_TYPES.shareToken]: shareTokenSchema,
+  [ENTITIES_TYPES.widgetTemplate]: widgetTemplateSchema,
+  [ENTITIES_TYPES.declareTicketRule]: declareTicketRuleSchema,
+  [ENTITIES_TYPES.linkRule]: linkRuleSchema,
 };

@@ -1,0 +1,730 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`service-dependencies Renders \`service-dependencies\` with custom props 1`] = `
+<div
+  class="treeview-data-table service-dependencies v-sheet theme--light"
+  dark="true"
+  light="true"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="treeview-data-table--tree mr-4"
+    >
+      <div
+        class="v-treeview theme--light"
+      >
+        <div
+          class="v-treeview-node"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <i
+              aria-hidden="true"
+              class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light"
+            >
+              arrow_drop_down
+            </i>
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <button
+                  class="v-btn v-btn--icon theme--dark"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--dark"
+                    >
+                      person
+                    </i>
+                  </div>
+                </button>
+                <!---->
+                <div
+                  class="expand-append"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light"
+                  >
+                    arrow_right_alt
+                  </i>
+                  <span
+                    class="v-chip ma-0 theme--light white--text"
+                    tabindex="0"
+                  >
+                    <span
+                      class="v-chip__content"
+                    >
+                      <span
+                        class="px-2 body-2 font-weight-bold"
+                      >
+                        
+                      </span>
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex"
+    >
+      <div>
+        <div
+          class="v-table__overflow"
+        >
+          <table
+            class="v-datatable v-table theme--light"
+          >
+            <thead>
+              <tr>
+                <th
+                  aria-label=": Not sorted."
+                  aria-sort="none"
+                  class="column text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                />
+                <th
+                  aria-label="Custom name label: Not sorted."
+                  aria-sort="none"
+                  class="column text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                >
+                  Custom name label
+                </th>
+                <th
+                  aria-label="Custom type label: Not sorted."
+                  aria-sort="none"
+                  class="column text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                >
+                  Custom type label
+                </th>
+              </tr>
+              <tr
+                class="v-datatable__progress"
+              >
+                <th
+                  class="column"
+                  colspan="3"
+                />
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <c-no-events-icon-stub
+                    top="top"
+                  />
+                </td>
+                <td>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
+                </td>
+                <td>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`service-dependencies Renders \`service-dependencies\` with excluded root 1`] = `
+<div
+  class="treeview-data-table service-dependencies v-sheet theme--light"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="treeview-data-table--tree mr-4"
+    >
+      <div
+        class="v-treeview theme--light"
+      >
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <button
+                  class="v-btn v-btn--icon theme--dark"
+                  style="background-color: rgb(47, 171, 99); border-color: #2fab63;"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--dark"
+                    >
+                      $vuetify.icons.engineering
+                    </i>
+                  </div>
+                </button>
+                <!---->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <button
+                  class="v-btn v-btn--icon theme--dark"
+                  style="background-color: rgb(47, 171, 99); border-color: #2fab63;"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--dark"
+                    >
+                      $vuetify.icons.engineering
+                    </i>
+                  </div>
+                </button>
+                <!---->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <button
+                  class="v-btn v-btn--icon theme--dark"
+                  style="background-color: rgb(47, 171, 99); border-color: #2fab63;"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--dark"
+                    >
+                      person
+                    </i>
+                  </div>
+                </button>
+                <!---->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <button
+                  class="v-btn v-btn--icon theme--dark"
+                  style="background-color: rgb(47, 171, 99); border-color: #2fab63;"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--dark"
+                    >
+                      $vuetify.icons.engineering
+                    </i>
+                  </div>
+                </button>
+                <!---->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex"
+    >
+      <div>
+        <div
+          class="v-table__overflow"
+        >
+          <table
+            class="v-datatable v-table theme--light"
+          >
+            <thead>
+              <tr>
+                <th
+                  aria-label=": Not sorted."
+                  aria-sort="none"
+                  class="column text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                />
+                <th
+                  aria-label="Name: Not sorted."
+                  aria-sort="none"
+                  class="column text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                >
+                  Name
+                </th>
+                <th
+                  aria-label="Type: Not sorted."
+                  aria-sort="none"
+                  class="column text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                >
+                  Type
+                </th>
+              </tr>
+              <tr
+                class="v-datatable__progress"
+              >
+                <th
+                  class="column"
+                  colspan="3"
+                />
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <c-no-events-icon-stub
+                    top="top"
+                  />
+                </td>
+                <td>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
+                </td>
+                <td>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <c-no-events-icon-stub
+                    top="top"
+                  />
+                </td>
+                <td>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
+                </td>
+                <td>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <c-no-events-icon-stub
+                    top="top"
+                  />
+                </td>
+                <td>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
+                </td>
+                <td>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <c-no-events-icon-stub
+                    top="top"
+                  />
+                </td>
+                <td>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
+                </td>
+                <td>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = `
+<div
+  class="treeview-data-table service-dependencies v-sheet theme--light"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="treeview-data-table--tree mr-4"
+    >
+      <div
+        class="v-treeview theme--light"
+      >
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <button
+                  class="v-btn v-btn--icon theme--dark"
+                  style="background-color: rgb(47, 171, 99); border-color: #2fab63;"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--dark"
+                    >
+                      $vuetify.icons.engineering
+                    </i>
+                  </div>
+                </button>
+                <!---->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <button
+                  class="v-btn v-btn--icon theme--dark"
+                  style="background-color: rgb(47, 171, 99); border-color: #2fab63;"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--dark"
+                    >
+                      $vuetify.icons.engineering
+                    </i>
+                  </div>
+                </button>
+                <!---->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-treeview-node v-treeview-node--leaf"
+        >
+          <div
+            class="v-treeview-node__root"
+          >
+            <div
+              class="v-treeview-node__content"
+            >
+              <div
+                class="v-treeview-node__label"
+              >
+                <button
+                  class="v-btn v-btn--icon theme--light"
+                  type="button"
+                >
+                  <div
+                    class="v-btn__content"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      more_horiz
+                    </i>
+                  </div>
+                </button>
+                <span
+                  class="v-tooltip v-tooltip--right"
+                >
+                  <transition-stub
+                    name="slide-x-transition"
+                  />
+                </span>
+                <!---->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex"
+    >
+      <div>
+        <div
+          class="v-table__overflow"
+        >
+          <table
+            class="v-datatable v-table theme--light"
+          >
+            <thead>
+              <tr>
+                <th
+                  aria-label=": Not sorted."
+                  aria-sort="none"
+                  class="column text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                />
+                <th
+                  aria-label="Name: Not sorted."
+                  aria-sort="none"
+                  class="column text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                >
+                  Name
+                </th>
+                <th
+                  aria-label="Type: Not sorted."
+                  aria-sort="none"
+                  class="column text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                >
+                  Type
+                </th>
+              </tr>
+              <tr
+                class="v-datatable__progress"
+              >
+                <th
+                  class="column"
+                  colspan="3"
+                />
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <c-no-events-icon-stub
+                    top="top"
+                  />
+                </td>
+                <td>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
+                </td>
+                <td>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <c-no-events-icon-stub
+                    top="top"
+                  />
+                </td>
+                <td>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
+                </td>
+                <td>
+                  <service-dependencies-entity-cell-stub
+                    column="[object Object]"
+                    item="[object Object]"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`service-dependencies Renders \`service-dependencies\` with required props 1`] = `
+<div
+  class="treeview-data-table service-dependencies v-sheet theme--light"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="treeview-data-table--tree mr-4"
+    >
+      <div
+        class="v-treeview theme--light"
+      />
+    </div>
+    <div
+      class="flex"
+    >
+      <div>
+        <div
+          class="v-table__overflow"
+        >
+          <table
+            class="v-datatable v-table theme--light"
+          >
+            <thead>
+              <tr>
+                <th
+                  aria-label=": Not sorted."
+                  aria-sort="none"
+                  class="column text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                />
+                <th
+                  aria-label="Name: Not sorted."
+                  aria-sort="none"
+                  class="column text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                >
+                  Name
+                </th>
+                <th
+                  aria-label="Type: Not sorted."
+                  aria-sort="none"
+                  class="column text-xs-left"
+                  role="columnheader"
+                  scope="col"
+                >
+                  Type
+                </th>
+              </tr>
+              <tr
+                class="v-datatable__progress"
+              >
+                <th
+                  class="column"
+                  colspan="3"
+                />
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td
+                  class="text-xs-center"
+                  colspan="3"
+                >
+                  No data available
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

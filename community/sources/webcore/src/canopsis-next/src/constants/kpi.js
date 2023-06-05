@@ -1,5 +1,5 @@
-import { ALARM_METRIC_PARAMETERS } from '@/constants/alarm';
-import { USER_METRIC_PARAMETERS } from '@/constants/user';
+import { ALARM_METRIC_PARAMETERS } from './alarm';
+import { USER_METRIC_PARAMETERS } from './user';
 
 export const KPI_SLI_GRAPH_BAR_PERCENTAGE = 0.5;
 
@@ -8,6 +8,11 @@ export const KPI_ALARMS_GRAPH_BAR_PERCENTAGE = 0.75;
 export const KPI_SLI_GRAPH_DATA_TYPE = {
   percent: 'percent',
   time: 'time',
+};
+
+export const KPI_PIE_CHART_SHOW_MODS = {
+  percent: 'percent',
+  numbers: 'numbers',
 };
 
 export const KPI_RATING_CRITERIA = {
@@ -46,6 +51,44 @@ export const KPI_TABS = {
   graphs: 'graphs',
   filters: 'filters',
   ratingSettings: 'ratingSettings',
+  collectionSettings: 'collectionSettings',
 };
 
 export const KPI_METRICS_MAX_ALARM_YEAR_INTERVAL_DIFF_IN_YEARS = 1;
+
+export const AGGREGATE_FUNCTIONS = {
+  sum: 'sum',
+  avg: 'avg',
+  min: 'min',
+  max: 'max',
+  last: 'last',
+};
+
+export const Y_AXES_IDS = {
+  default: 'y',
+  percent: 'yPercent',
+  time: 'yTime',
+  bytes: 'yBytes',
+};
+
+export const EXTERNAL_METRIC_UNITS = {
+  millisecond: 'ms',
+  microsecond: 'us',
+  second: 's',
+  continuousCounter: 'c',
+  byte: 'B',
+  kilobyte: 'KB',
+  megabyte: 'MB',
+  gigabyte: 'GB',
+  terabyte: 'TB',
+  percent: '%',
+};
+
+export const X_AXES_IDS = {
+  default: 'x',
+  history: 'xHistory',
+};
+
+export const MAX_METRICS_DISPLAY_COUNT = 40;
+
+export const KPI_CHART_DEFAULT_HEIGHT = 560;

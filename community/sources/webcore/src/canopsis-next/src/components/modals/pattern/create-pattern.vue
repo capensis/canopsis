@@ -1,33 +1,29 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
-        span {{ $t('modals.eventFilterRule.editPattern') }}
-      template(slot="text")
-        pattern-form(
-          v-model="form",
-          :operators="operators",
-          :only-simple-rule="config.onlySimpleRule"
-        )
-      template(slot="actions")
+      template(#title="")
+        span {{ config.title }}
+      template(#text="")
+        pattern-form(v-model="form")
+      template(#actions="")
         v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
         v-btn.primary(
-          :disabled="isDisabled || patternWasChanged",
+          :disabled="isDisabled",
           :loading="submitting",
           type="submit"
         ) {{ $t('common.submit') }}
 </template>
 
 <script>
-import { cloneDeep, get } from 'lodash';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { MODALS, EVENT_FILTER_RULE_OPERATORS } from '@/constants';
+import { patternToForm, formToPattern } from '@/helpers/forms/pattern';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import PatternForm from '@/components/other/pattern/form/pattern-form.vue';
+import PatternForm from '@/components/forms/pattern-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -35,6 +31,7 @@ export default {
   name: MODALS.createPattern,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: {
     PatternForm,
@@ -46,21 +43,13 @@ export default {
     confirmableModalMixinCreator(),
   ],
   data() {
-    const { pattern = {} } = this.modal.config;
+    const form = patternToForm(this.modal.config.pattern);
 
-    return {
-      form: cloneDeep(pattern),
-      activeTab: 0,
-    };
-  },
-  computed: {
-    operators() {
-      return this.config.operators || EVENT_FILTER_RULE_OPERATORS;
-    },
+    if (this.modal.config.type) {
+      form.type = this.modal.config.type;
+    }
 
-    patternWasChanged() {
-      return get(this.fields, ['pattern', 'changed']);
-    },
+    return { form };
   },
   methods: {
     async submit() {
@@ -68,7 +57,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(this.form);
+          await this.config.action(formToPattern(this.form));
         }
 
         this.$modals.hide();

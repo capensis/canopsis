@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(column)
-    span.pl-4.subheading.grey--text.text--darken-2 {{ $t('kpiFilters.helpInformation') }}
+    span.pl-4 {{ $t('kpi.filters.helpInformation') }}
     kpi-filters-list(
       :pagination.sync="pagination",
       :filters="filters",
@@ -39,12 +39,10 @@ export default {
 
     showEditFilterModal(filter) {
       this.$modals.show({
-        name: MODALS.patterns,
+        name: MODALS.createKpiFilter,
         config: {
-          title: this.$t('modals.filter.edit.title'),
-          name: true,
-          entity: true,
-          patterns: filter,
+          filter,
+          title: this.$t('modals.createFilter.edit.title'),
           action: async (data) => {
             await this.updateFilter({ id: filter._id, data });
 
@@ -56,12 +54,10 @@ export default {
 
     showDuplicateFilterModal(filter) {
       this.$modals.show({
-        name: MODALS.patterns,
+        name: MODALS.createKpiFilter,
         config: {
-          title: this.$t('modals.filter.duplicate.title'),
-          name: true,
-          entity: true,
-          patterns: omit(filter, ['_id']),
+          filter: omit(filter, ['_id']),
+          title: this.$t('modals.createFilter.duplicate.title'),
           action: async (data) => {
             await this.createFilter({ data });
 

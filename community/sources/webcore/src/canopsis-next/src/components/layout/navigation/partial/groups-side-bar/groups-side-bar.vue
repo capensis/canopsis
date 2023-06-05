@@ -220,9 +220,7 @@ export default {
     justify-content: center;
     padding: 0.5em 0;
 
-    & /deep/ .logged-users-count {
-      position: absolute;
-      top: 0;
+    & ::v-deep .logged-users-count {
       right: 0;
     }
   }

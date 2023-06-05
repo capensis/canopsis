@@ -110,7 +110,7 @@ Feature: Job update
     When I do PUT /api/v4/cat/jobs/test-job-to-update:
     """json
     {
-      "name": "test-job-name-to-get",
+      "name": "test-job-to-check-unique-name",
       "config": "test-job-config-to-edit-job",
       "job_id": "test-job-id",
       "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",

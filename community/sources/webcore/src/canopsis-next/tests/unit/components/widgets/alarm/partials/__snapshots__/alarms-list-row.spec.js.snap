@@ -2,7 +2,7 @@
 
 exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
 <tr
-  class=""
+  class="alarm-list-row"
 >
   <td
     class="pr-0"
@@ -10,26 +10,29 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
     <div
       class="layout row align-center justify-space-between"
     >
-      <v-checkbox-functional-stub
-        hidedetails="true"
-        inputvalue="true"
-        label=""
-      />
-      <!---->
       <div
-        class="layout align-center ml-3"
+        class="layout alarm-list-row__checkbox"
       >
-        <c-expand-btn-stub
-          class="v-tour-alarmsExpandPanel-step-1"
+        <v-checkbox-functional-stub
+          class="ma-0"
+          hidedetails="true"
+          inputvalue="true"
+          label=""
         />
       </div>
+      <!---->
+      <alarms-expand-panel-btn-stub
+        alarm="[object Object]"
+        istourenabled="true"
+        widget="[object Object]"
+      />
     </div>
   </td>
   <td>
     <alarm-column-value-stub
       alarm="[object Object]"
       column="[object Object]"
-      columnsfilters="[object Object],[object Object]"
+      selectedtag="tag"
       widget="[object Object]"
     />
   </td>
@@ -37,13 +40,14 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
     <alarm-column-value-stub
       alarm="[object Object]"
       column="[object Object]"
-      columnsfilters="[object Object],[object Object]"
+      selectedtag="tag"
       widget="[object Object]"
     />
   </td>
   <td>
     <actions-panel-stub
       item="[object Object]"
+      refreshalarmslist="[Function]"
       widget="[object Object]"
     />
   </td>
@@ -52,14 +56,14 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
 
 exports[`alarms-list-row Renders \`alarms-list-row\` with default and required props 1`] = `
 <tr
-  class=""
+  class="alarm-list-row"
 >
   <!---->
   <td>
     <alarm-column-value-stub
       alarm="[object Object]"
       column="[object Object]"
-      columnsfilters=""
+      selectedtag=""
       widget="[object Object]"
     />
   </td>
@@ -67,13 +71,14 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
     <alarm-column-value-stub
       alarm="[object Object]"
       column="[object Object]"
-      columnsfilters=""
+      selectedtag=""
       widget="[object Object]"
     />
   </td>
   <td>
     <actions-panel-stub
       item="[object Object]"
+      refreshalarmslist="[Function]"
       widget="[object Object]"
     />
   </td>
@@ -82,7 +87,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
 
 exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
 <tr
-  class=""
+  class="alarm-list-row"
 >
   <td
     class="pr-0"
@@ -90,20 +95,22 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
     <div
       class="layout row align-center justify-space-between"
     >
-      <!---->
-      <!---->
       <div
-        class="layout align-center ml-3"
+        class="layout alarm-list-row__checkbox"
       >
-        <c-expand-btn-stub
-          class=""
-        />
+        <!---->
       </div>
+      <!---->
+      <alarms-expand-panel-btn-stub
+        alarm="[object Object]"
+        widget="[object Object]"
+      />
     </div>
   </td>
   <td>
     <actions-panel-stub
       item="[object Object]"
+      refreshalarmslist="[Function]"
       widget="[object Object]"
     />
   </td>
@@ -112,12 +119,13 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
 
 exports[`alarms-list-row Renders \`alarms-list-row\` with feature classes 1`] = `
 <tr
-  class="class-2"
+  class="alarm-list-row class-2"
 >
   <!---->
   <td>
     <actions-panel-stub
       item="[object Object]"
+      refreshalarmslist="[Function]"
       widget="[object Object]"
     />
   </td>
@@ -126,7 +134,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with feature classes 1`] = 
 
 exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in parent alarm 1`] = `
 <tr
-  class=""
+  class="alarm-list-row"
 >
   <td
     class="pr-0"
@@ -134,11 +142,15 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
     <div
       class="layout row align-center justify-space-between"
     >
-      <!---->
       <div
-        class="layout align-center"
+        class="layout alarm-list-row__checkbox"
       >
-        <alarm-list-row-icon-stub
+        <!---->
+      </div>
+      <div
+        class="layout align-center justify-center"
+      >
+        <alarms-list-row-icon-stub
           alarm="[object Object]"
         />
       </div>
@@ -149,6 +161,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
     <actions-panel-stub
       item="[object Object]"
       parentalarm="[object Object]"
+      refreshalarmslist="[Function]"
       widget="[object Object]"
     />
   </td>
@@ -157,7 +170,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
 
 exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
 <tr
-  class=""
+  class="alarm-list-row"
 >
   <td
     class="pr-0"
@@ -165,11 +178,15 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
     <div
       class="layout row align-center justify-space-between"
     >
-      <!---->
       <div
-        class="layout align-center"
+        class="layout alarm-list-row__checkbox"
       >
-        <alarm-list-row-icon-stub
+        <!---->
+      </div>
+      <div
+        class="layout align-center justify-center"
+      >
+        <alarms-list-row-icon-stub
           alarm="[object Object]"
         />
       </div>
@@ -180,6 +197,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
     <actions-panel-stub
       item="[object Object]"
       parentalarm="[object Object]"
+      refreshalarmslist="[Function]"
       widget="[object Object]"
     />
   </td>
@@ -188,7 +206,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
 
 exports[`alarms-list-row Renders \`alarms-list-row\` with resolved alarm 1`] = `
 <tr
-  class=""
+  class="alarm-list-row"
 >
   <td
     class="pr-0"
@@ -196,11 +214,15 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with resolved alarm 1`] = `
     <div
       class="layout row align-center justify-space-between"
     >
-      <v-checkbox-functional-stub
-        disabled="true"
-        hidedetails="true"
-        label=""
-      />
+      <div
+        class="layout alarm-list-row__checkbox"
+      >
+        <v-checkbox-functional-stub
+          disabled="true"
+          hidedetails="true"
+          label=""
+        />
+      </div>
       <!---->
       <!---->
     </div>
@@ -209,6 +231,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with resolved alarm 1`] = `
     <actions-panel-stub
       isresolvedalarm="true"
       item="[object Object]"
+      refreshalarmslist="[Function]"
       widget="[object Object]"
     />
   </td>

@@ -1,24 +1,23 @@
 <template lang="pug">
-  v-list-group
-    template(#activator="")
-      v-list-tile
-        div(:class="validationHeaderClass") {{ label }}
-    c-columns-field(
+  widget-settings-item(:title="label")
+    c-columns-with-template-field(
       v-field="columns",
+      :type="type",
+      :template="template",
+      :templates="templates",
+      :templates-pending="templatesPending",
       :with-template="withTemplate",
       :with-html="withHtml",
-      :with-color-indicator="withColorIndicator"
+      :with-color-indicator="withColorIndicator",
+      @update:template="updateTemplate"
     )
 </template>
 
 <script>
-import { formValidationHeaderMixin } from '@/mixins/form';
+import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
 
 export default {
-  inject: ['$validator'],
-  mixins: [
-    formValidationHeaderMixin,
-  ],
+  components: { WidgetSettingsItem },
   model: {
     prop: 'columns',
     event: 'input',
@@ -28,9 +27,25 @@ export default {
       type: String,
       required: true,
     },
+    type: {
+      type: String,
+      required: true,
+    },
     columns: {
-      type: [Array, Object],
+      type: Array,
       default: () => [],
+    },
+    template: {
+      type: [String, Symbol],
+      required: false,
+    },
+    templates: {
+      type: Array,
+      default: () => [],
+    },
+    templatesPending: {
+      type: Boolean,
+      default: false,
     },
     withTemplate: {
       type: Boolean,
@@ -43,6 +58,11 @@ export default {
     withColorIndicator: {
       type: Boolean,
       default: false,
+    },
+  },
+  methods: {
+    updateTemplate(...args) {
+      this.$emit('update:template', ...args);
     },
   },
 };

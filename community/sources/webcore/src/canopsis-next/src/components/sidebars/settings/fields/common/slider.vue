@@ -1,20 +1,20 @@
 <template lang="pug">
-  v-list-group
-    v-list-tile(slot="activator") {{ title }}
-    v-container
-      v-slider(
-        :value="value",
-        :max="max",
-        :min="min",
-        ticks="always",
-        @input="$emit('input', $event)",
-        always-dirty,
-        thumb-label
-      )
+  widget-settings-item(:title="title")
+    v-slider(
+      v-field="value",
+      :max="max",
+      :min="min",
+      ticks="always",
+      always-dirty,
+      thumb-label
+    )
 </template>
 
 <script>
+import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
+
 export default {
+  components: { WidgetSettingsItem },
   props: {
     title: {
       type: String,

@@ -2,48 +2,18 @@ package bdd
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
+	"io"
 	"net/http"
+	"strings"
 	"time"
 )
 
 func RunDummyHttpServer(ctx context.Context, addr string) error {
 	mux := http.NewServeMux()
-	dummyRoutes := getDummyRoutes(addr)
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		response, ok := dummyRoutes[r.URL.Path]
-		if !ok {
-			http.Error(w, fmt.Sprintf("[%s][%+v]", r.URL.Path, dummyRoutes), http.StatusNotFound)
-			return
-		}
-
-		if response.Timeout > 0 {
-			time.Sleep(response.Timeout)
-		}
-
-		if response.Method != r.Method {
-			http.Error(w, r.Method, http.StatusNotFound)
-			return
-		}
-
-		if response.Code != http.StatusOK && response.Code != http.StatusNoContent {
-			http.Error(w, response.Body, response.Code)
-			return
-		}
-
-		for k, v := range response.Headers {
-			w.Header().Set(k, v)
-		}
-
-		w.WriteHeader(response.Code)
-
-		if response.Body != "" {
-			_, err := fmt.Fprintf(w, response.Body)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-			}
-		}
-	})
+	dummyRoutes := getDummyRoutes("http://" + addr)
+	mux.HandleFunc("/", dummyHandler(dummyRoutes))
 
 	server := &http.Server{
 		Addr:    addr,
@@ -70,12 +40,95 @@ func RunDummyHttpServer(ctx context.Context, addr string) error {
 	return nil
 }
 
+func dummyHandler(dummyRoutes map[string]dummyResponse) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		response, ok := dummyRoutes[r.URL.Path]
+		if !ok {
+			http.Error(w, fmt.Sprintf("[%s][%+v]", r.URL.Path, dummyRoutes), http.StatusNotFound)
+			return
+		}
+
+		if response.Method != r.Method {
+			http.Error(w, r.Method, http.StatusNotFound)
+			return
+		}
+
+		if response.Timeout > 0 {
+			time.Sleep(response.Timeout)
+		}
+
+		if response.Code != http.StatusOK && response.Code != http.StatusNoContent {
+			http.Error(w, response.Body, response.Code)
+			return
+		}
+
+		if response.Username != "" && response.Password != "" {
+			header := r.Header.Get(headerAuthorization)
+			if len(header) <= len(basicPrefix) || header[0:len(basicPrefix)] != basicPrefix {
+				http.Error(w, r.Method, http.StatusUnauthorized)
+				return
+			}
+			header = strings.TrimSpace(header[len(basicPrefix):])
+			base, err := base64.StdEncoding.DecodeString(header)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			username, password, _ := strings.Cut(string(base), ":")
+			if username != response.Username || password != response.Password {
+				http.Error(w, r.Method, http.StatusUnauthorized)
+				return
+			}
+		}
+
+		if len(response.Headers) > 0 {
+			for k, v := range response.Headers {
+				w.Header().Set(k, v)
+			}
+		} else if response.ForwardRequestHeader {
+			for k, v := range r.Header {
+				if len(v) > 0 {
+					w.Header().Set(k, v[0])
+				}
+			}
+		}
+
+		w.WriteHeader(response.Code)
+
+		if response.Body != "" {
+			_, err := fmt.Fprintf(w, response.Body)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		} else if response.ForwardRequestBody {
+			body, err := io.ReadAll(r.Body)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			_, err = w.Write(body)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+	}
+}
+
 type dummyResponse struct {
 	Code    int
 	Method  string
 	Body    string
 	Headers map[string]string
 	Timeout time.Duration
+
+	ForwardRequestBody   bool
+	ForwardRequestHeader bool
+
+	Username string
+	Password string
 }
 
 func getDummyRoutes(addr string) map[string]dummyResponse {
@@ -173,6 +226,16 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Method: http.MethodGet,
 			Body:   "test-job-execution-long-failed-output",
 		},
+		"/api/35/job/test-job-running/run": {
+			Code:   http.StatusOK,
+			Method: http.MethodPost,
+			Body:   fmt.Sprintf("{\"id\":\"test-job-execution-running\",\"href\":\"/api/35/execution/test-job-execution-running\",\"permalink\":\"%s/rundeck/execution/show/test-job-execution-running\"}", addr),
+		},
+		"/api/35/execution/test-job-execution-running": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "{\"id\":\"test-job-execution-running\",\"status\":\"running\"}",
+		},
 		// AWX
 		"/api/v2/job_templates/test-job-succeeded/launch/": {
 			Code:   http.StatusOK,
@@ -234,21 +297,57 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Method: http.MethodGet,
 			Body:   "test-job-execution-params-succeeded-output",
 		},
-		// Webhook
-		"/webhook/ticket": {
-			Code:   http.StatusOK,
-			Method: http.MethodPost,
-			Body:   "{\"ticket_id\":\"testticket\",\"ticket_data\":\"testdata\"}",
-		},
+		// External data
 		"/api/external_data": {
 			Code:   http.StatusOK,
 			Method: http.MethodGet,
 			Body:   "{\"id\": 1,\"title\": \"test title\"}",
 		},
-		"/webhook/arrays": {
+		"/api/external_data_document_with_array": {
 			Code:   http.StatusOK,
 			Method: http.MethodGet,
-			Body:   "{\"array\":[{\"elem1\":\"test1\",\"elem2\":\"test2\"},{\"elem1\":\"test3\",\"elem2\":\"test4\"}]}",
+			Body:   "{\"array\":[{\"id\":\"1\",\"title\":\"test title 1\"},{\"id\":\"2\",\"title\":\"test title 2\"}]}",
+		},
+		"/api/external_data_response_is_array": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "[{\"id\":\"1\",\"title\":\"test title 1\"},{\"id\":\"2\",\"title\":\"test title 2\"}]",
+		},
+		"/api/external_data_response_is_nested_documents": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "{\"objects\":{\"server\":{\"code\":200,\"message\":\"test message\",\"fields\":{\"name\":\"test name\"}}},\"code\":400,\"message\":\"test message\"}",
+		},
+		// Webhook
+		"/webhook/request": {
+			Code:                 http.StatusOK,
+			Method:               http.MethodPost,
+			ForwardRequestBody:   true,
+			ForwardRequestHeader: true,
+		},
+		"/webhook/auth-request": {
+			Code:                 http.StatusOK,
+			Method:               http.MethodPost,
+			ForwardRequestBody:   true,
+			ForwardRequestHeader: true,
+			Username:             "test",
+			Password:             "test",
+		},
+		"/webhook/long-request": {
+			Code:                 http.StatusOK,
+			Method:               http.MethodPost,
+			ForwardRequestBody:   true,
+			ForwardRequestHeader: true,
+			Timeout:              2 * time.Second,
+		},
+		"/webhook/long-auth-request": {
+			Code:                 http.StatusOK,
+			Method:               http.MethodPost,
+			ForwardRequestBody:   true,
+			ForwardRequestHeader: true,
+			Username:             "test",
+			Password:             "test",
+			Timeout:              2 * time.Second,
 		},
 	}
 }

@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
 import VRuntimeTemplate from 'v-runtime-template';
 
 import {
@@ -33,10 +34,12 @@ import {
 } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { authMixin } from '@/mixins/auth';
+
+const { mapActions } = createNamespacedHelpers('alarm');
 
 export default {
   components: {
@@ -51,6 +54,10 @@ export default {
     widget: {
       type: Object,
       required: true,
+    },
+    query: {
+      type: Object,
+      default: () => ({}),
     },
   },
   asyncComputed: {
@@ -117,16 +124,16 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      fetchAlarmsListWithoutStore: 'fetchListWithoutStore',
+    }),
+
     async showAlarmListModal() {
-      const widget = generateDefaultAlarmListWidget();
+      const widget = generatePreparedDefaultAlarmListWidget();
 
       widget.parameters = {
         ...widget.parameters,
         ...this.widget.parameters.alarmsList,
-
-        opened: this.widget.parameters.opened,
-        mainFilter: this.counter.filter,
-        viewFilters: [this.counter.filter],
       };
 
       this.$modals.show({
@@ -134,6 +141,9 @@ export default {
         config: {
           widget,
           title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.counter.filter?.title }),
+          fetchList: params => this.fetchAlarmsListWithoutStore({
+            params: { ...this.query, ...params, filters: [this.counter.filter?._id] },
+          }),
         },
       });
     },

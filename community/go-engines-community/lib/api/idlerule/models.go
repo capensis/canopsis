@@ -1,6 +1,7 @@
 package idlerule
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
@@ -12,7 +13,7 @@ import (
 
 type FilteredQuery struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author duration created updated type priority"`
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name author.name created updated type priority"`
 }
 
 type EditRequest struct {
@@ -21,8 +22,9 @@ type EditRequest struct {
 	Author               string                 `json:"author" swaggerignore:"true"`
 	Enabled              *bool                  `json:"enabled" binding:"required"`
 	Type                 string                 `json:"type" binding:"required"`
-	Priority             *int64                 `json:"priority" binding:"required"`
+	Priority             int64                  `json:"priority" binding:"min=0"`
 	Duration             types.DurationWithUnit `json:"duration" binding:"required"`
+	Comment              string                 `json:"comment"`
 	DisableDuringPeriods []string               `json:"disable_during_periods"`
 	AlarmCondition       string                 `json:"alarm_condition"`
 	Operation            *OperationRequest      `json:"operation,omitempty"`
@@ -59,11 +61,12 @@ type Rule struct {
 	ID                string                       `bson:"_id,omitempty" json:"_id"`
 	Name              string                       `bson:"name" json:"name"`
 	Description       string                       `bson:"description" json:"description"`
-	Author            string                       `bson:"author" json:"author"`
+	Author            *author.Author               `bson:"author" json:"author"`
 	Enabled           bool                         `bson:"enabled" json:"enabled"`
 	Type              string                       `bson:"type" json:"type"`
 	Priority          int64                        `bson:"priority" json:"priority"`
 	Duration          types.DurationWithUnit       `bson:"duration" json:"duration"`
+	Comment           string                       `bson:"comment" json:"comment"`
 	OldEntityPatterns oldpattern.EntityPatternList `bson:"old_entity_patterns,omitempty" json:"old_entity_patterns,omitempty"`
 	// DisableDuringPeriods is an option that allows to disable the rule
 	// when entity is in listed periods due pbehavior schedule.
@@ -89,7 +92,10 @@ type Parameters struct {
 	// ChangeState
 	State *types.CpsNumber `json:"state,omitempty" bson:"state"`
 	// AssocTicket
-	Ticket string `json:"ticket,omitempty" bson:"ticket"`
+	Ticket           string            `json:"ticket,omitempty" bson:"ticket"`
+	TicketURL        string            `json:"ticket_url,omitempty" bson:"ticket_url"`
+	TicketSystemName string            `json:"ticket_system_name,omitempty" bson:"ticket_system_name"`
+	TicketData       map[string]string `json:"ticket_data,omitempty" bson:"ticket_data"`
 	// Snooze and Pbehavior
 	Duration *types.DurationWithUnit `json:"duration,omitempty" bson:"duration"`
 	// Pbehavior

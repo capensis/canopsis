@@ -7,7 +7,7 @@
         :instances="instances",
         :min-instances="minInstances",
         :optimal-instances="optimalInstances",
-        :is-cat-engine="isCatEngine"
+        :is-pro-engine="isProEngine"
       )
     p.pre-wrap(v-if="engine.is_queue_overflown")
       | {{ $t('healthcheck.queueOverflowed', { queueLength, maxQueueLength }) }}
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { CAT_ENGINES, HEALTHCHECK_ENGINES_NAMES } from '@/constants';
+import { PRO_ENGINES, HEALTHCHECK_ENGINES_NAMES, HEALTHCHECK_SERVICES_NAMES } from '@/constants';
 
 import { healthcheckNodesMixin } from '@/mixins/healthcheck/healthcheck-nodes';
 
@@ -39,8 +39,8 @@ export default {
       return this.getNodeName(this.engine.name);
     },
 
-    isCatEngine() {
-      return CAT_ENGINES.includes(this.engine.name);
+    isProEngine() {
+      return PRO_ENGINES.includes(this.engine.name);
     },
 
     queueLength() {
@@ -60,12 +60,12 @@ export default {
     },
 
     systemDownMessage() {
-      return this.$t(
-        this.engine.name === HEALTHCHECK_ENGINES_NAMES.fifo
-          ? 'healthcheck.engineDownOrSlow'
-          : 'healthcheck.engineDownOrSlow',
-        { name: this.name },
-      );
+      const messageKey = {
+        [HEALTHCHECK_ENGINES_NAMES.fifo]: 'healthcheck.engineDown',
+        [HEALTHCHECK_SERVICES_NAMES.timescaleDB]: 'healthcheck.timescaleDown',
+      }[this.engine.name] || 'healthcheck.engineDownOrSlow';
+
+      return this.$t(messageKey, { name: this.name });
     },
   },
 };

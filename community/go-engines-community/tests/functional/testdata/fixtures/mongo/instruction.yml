@@ -39,6 +39,7 @@ template:
         _id: <UUID()>,
         name: <LoremIpsumWord()>,
         endpoint: <LoremIpsumSentence(3)>,
+        stop_on_fail: true,
         operations: [
           {
             _id: <UUID()>,
@@ -47,8 +48,7 @@ template:
             time_to_complete: {
               value: 1,
               unit: s
-            },
-            stop_on_fail: true
+            }
           }
         ]
       }
@@ -57,6 +57,53 @@ template:
   - &instruction_auto {
     _id: <UUID()>,
     type: 1,
+    name: <UniqueName()>,
+    triggers: ["create"],
+    enabled: true,
+    description: <LoremIpsumSentence(3)>,
+    author: root,
+    created: <NowUnix()>,
+    last_modified: <Current().created>,
+    timeout_after_execution: {
+      value: 2,
+      unit: s
+    },
+    alarm_pattern: [
+      [
+        {
+          field: v.component,
+          cond: {
+            type: eq,
+            value: <LoremIpsumWord()>
+          }
+        }
+      ]
+    ],
+    entity_pattern: [
+      [
+        {
+          field: name,
+          cond: {
+            type: eq,
+            value: <LoremIpsumWord()>
+          }
+        }
+      ]
+    ],
+    priority: <Index()>,
+    jobs: [
+      {
+        job: test-job-to-instruction-edit-1,
+        stop_on_fail: true
+      },
+      {
+        job: test-job-to-instruction-edit-2
+      }
+    ]
+  }
+  - &instruction_manual_simplified {
+    _id: <UUID()>,
+    type: 2,
     name: <UniqueName()>,
     enabled: true,
     description: <LoremIpsumSentence(3)>,
@@ -240,6 +287,12 @@ instruction:
       - name: test-instruction-to-update-3-pattern
     alarm_pattern:
     entity_pattern:
+    created: 1596712203
+
+  instruction_to_update_4:
+    <<: *instruction_manual_simplified
+    _id: test-instruction-to-update-4
+    last_executed_on: 1596712203
     created: 1596712203
 
   instruction_to_update_with_approval_1:
@@ -514,93 +567,6 @@ instruction:
     <<: *instruction_manual
     _id: test-instruction-execution-running
 
-  instruction_to_cancel_execution_running:
-    <<: *instruction_manual
-    _id: test-instruction-cancel-execution-running-1
-
-  instruction_to_cancel_execution_running_2_1:
-    <<: *instruction_manual
-    _id: test-instruction-to-update-w-approval-should-cancel-execution
-    steps:
-      - _id: test-instruction-to-update-w-approval-should-cancel-execution-step-1
-        endpoint: test-instruction-to-update-w-approval-should-cancel-execution-step-1-endpoint
-        name: test-instruction-to-update-w-approval-should-cancel-execution-step-1-name
-        operations:
-          - _id: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1
-            description: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-description
-            jobs: [ ]
-            name: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-name
-            time_to_complete:
-              unit: s
-              value: 1
-        stop_on_fail: true
-
-  instruction_to_cancel_execution_running_2_2:
-    <<: *instruction_manual
-    _id: test-instruction-to-update-w-approval-should-cancel-execution-updated
-    approval:
-      comment: test
-      requested_by: root
-      user: approveruser
-    name: test-instruction-to-update-w-approval-should-cancel-execution-name
-    original_id: test-instruction-to-update-w-approval-should-cancel-execution
-    status: 2
-    steps:
-      - _id: test-instruction-to-update-w-approval-should-cancel-execution-step-1
-        endpoint: new endpoint
-        name: test-instruction-to-update-w-approval-should-cancel-execution-step-1-name
-        operations:
-          - _id: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1
-            description: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-description
-            jobs: [ ]
-            name: test-instruction-to-update-w-approval-should-cancel-execution-step-1-operation-1-name
-            time_to_complete:
-              unit: s
-              value: 1
-        stop_on_fail: true
-
-  instruction_to_delete_execution_running:
-    <<: *instruction_manual
-    _id: test-instruction-delete-execution-running
-
-  instruction_to_execution_resume:
-    <<: *instruction_manual
-    _id: test-instruction-execution-resume-1
-    description: test-instruction-execution-resume-1-description
-    name: test-instruction-execution-resume-1-name
-    steps:
-      - _id: test-instruction-execution-resume-1-step-1
-        endpoint: test-instruction-execution-resume-1-step-1-endpoint
-        name: test-instruction-execution-resume-1-step-1-name
-        operations:
-          - _id: test-instruction-execution-resume-1-step-1-operation-1
-            description: test-instruction-execution-resume-1-step-1-operation-1-description
-            jobs: [ ]
-            name: test-instruction-execution-resume-1-step-1-operation-1-name
-            time_to_complete:
-              unit: s
-              value: 1
-          - _id: test-instruction-execution-resume-1-step-1-operation-2
-            description: test-instruction-execution-resume-1-step-1-operation-2-description
-            jobs: [ ]
-            name: test-instruction-execution-resume-1-step-1-operation-2-name
-            time_to_complete:
-              unit: s
-              value: 3
-        stop_on_fail: true
-      - _id: test-instruction-execution-resume-1-step-2
-        endpoint: test-instruction-execution-resume-1-step-2-endpoint
-        name: test-instruction-execution-resume-1-step-2-name
-        operations:
-          - _id: test-instruction-execution-resume-1-step-2-operation-1
-            description: test-instruction-execution-resume-1-step-2-operation-1-description
-            jobs: [ ]
-            name: test-instruction-execution-resume-1-step-2-operation-1-name
-            time_to_complete:
-              unit: s
-              value: 6
-        stop_on_fail: true
-
   instruction_to_rate_1:
     <<: *instruction_manual
     _id: test-instruction-to-rate-1
@@ -680,6 +646,24 @@ instruction:
         stop_on_fail: false
     last_modified: 1596712203
     name: test-instruction-to-run-auto-instruction-1-2-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_run_auto_instruction_1_3:
+    <<: *instruction_auto
+    _id: test-instruction-to-run-auto-instruction-1-3
+    description: test-instruction-to-run-auto-instruction-1-3-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-1
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    name: test-instruction-to-run-auto-instruction-1-3-name
     timeout_after_execution:
       unit: s
       value: 2
@@ -945,6 +929,138 @@ instruction:
       seconds: 2
       unit: s
 
+  instruction_to_run_auto_instruction_9:
+    <<: *instruction_auto
+    _id: test-instruction-to-run-auto-instruction-9
+    created: 1596712203
+    description: test-instruction-to-run-auto-instruction-9-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-9
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-3
+        stop_on_fail: true
+      - job: test-job-to-run-auto-instruction-2
+        stop_on_fail: false
+      - job: test-job-to-run-auto-instruction-2
+        stop_on_fail: false        
+    last_modified: 1596712203
+    name: test-instruction-to-run-auto-instruction-9-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_run_auto_instruction_10_1:
+    <<: *instruction_auto
+    _id: test-instruction-to-run-auto-instruction-10-1
+    created: 1596712203
+    description: test-instruction-to-run-auto-instruction-10-1-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-10
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-3
+        stop_on_fail: true
+      - job: test-job-to-run-auto-instruction-2
+        stop_on_fail: false
+      - job: test-job-to-run-auto-instruction-2
+        stop_on_fail: false        
+    last_modified: 1596712203
+    name: test-instruction-to-run-auto-instruction-10-1-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_run_auto_instruction_10_2:
+    <<: *instruction_auto
+    _id: test-instruction-to-run-auto-instruction-10-2
+    created: 1596712203
+    description: test-instruction-to-run-auto-instruction-10-2-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-10
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    last_modified: 1596712203
+    name: test-instruction-to-run-auto-instruction-10-2-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_run_auto_instruction_11:
+    <<: *instruction_auto
+    _id: test-instruction-to-run-auto-instruction-11
+    created: 1596712203
+    description: test-instruction-to-run-auto-instruction-11-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-11
+    alarm_pattern:
+    last_modified: 1596712203
+    name: test-instruction-to-run-auto-instruction-11-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_run_auto_instruction_12_1:
+    <<: *instruction_auto
+    _id: test-instruction-to-run-auto-instruction-12-1
+    created: 1596712203
+    description: test-instruction-to-run-auto-instruction-12-1-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-12
+    alarm_pattern:
+      - - field: v.state.val
+          cond:
+            type: eq
+            value: 1
+    last_modified: 1596712203
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+      - job: test-job-to-run-auto-instruction-5
+        stop_on_fail: false
+    name: test-instruction-to-run-auto-instruction-12-1-name
+    timeout_after_execution:
+      unit: s
+      value: 1
+
+  instruction_to_run_auto_instruction_12_2:
+    <<: *instruction_auto
+    _id: test-instruction-to-run-auto-instruction-12-2
+    created: 1596712203
+    description: test-instruction-to-run-auto-instruction-12-2-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-auto-instruction-12
+    alarm_pattern:
+      - - field: v.state.val
+          cond:
+            type: eq
+            value: 1
+    last_modified: 1596712203
+    name: test-instruction-to-run-auto-instruction-12-2-name
+    timeout_after_execution:
+      unit: s
+      value: 1
+
   instruction_without_patterns:
     <<: *instruction_auto
     _id: test-instruction-without-patterns
@@ -1125,6 +1241,52 @@ instruction:
     last_executed_on: 1618280210
     last_modified: 1596712203
 
+  instruction_to_stats_executions_get_11:
+    <<: *instruction_manual
+    _id: test-instruction-to-stats-executions-get-11
+    created: 1596712203
+    last_executed_on: 1618280210
+    last_modified: 1596712203
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test filter
+    alarm_pattern:
+    steps:
+      - _id: test-instruction-to-stats-executions-get-11-step-1
+        name: test-instruction-to-stats-executions-get-11-step-1-name
+        operations:
+          - _id: test-instruction-to-stats-executions-get-11-step-1-operation-1
+            name: test-instruction-to-stats-executions-get-11-step-1-operation-1-name
+            time_to_complete:
+              value: 1
+              unit: s
+            description: test-instruction-to-stats-executions-get-11-step-1-operation-1-description
+          - _id: test-instruction-to-stats-executions-get-11-step-1-operation-2
+            name: test-instruction-to-stats-executions-get-11-step-1-operation-2-name
+            time_to_complete:
+              value: 3
+              unit: s
+            description: test-instruction-to-stats-executions-get-11-step-1-operation-2-description
+        endpoint: test-instruction-to-stats-executions-get-11-step-1-endpoint
+      - _id: test-instruction-to-stats-executions-get-11-step-2
+        name: test-instruction-to-stats-executions-get-11-step-2-name
+        operations:
+          - _id: test-instruction-to-stats-executions-get-11-step-2-operation-1
+            name: test-instruction-to-stats-executions-get-11-step-2-operation-1-name
+            time_to_complete:
+              value: 1
+              unit: s
+            description: test-instruction-to-stats-executions-get-11-step-2-operation-1-description
+          - _id: test-instruction-to-stats-executions-get-11-step-2-operation-2
+            name: test-instruction-to-stats-executions-get-11-step-2-operation-2-name
+            time_to_complete:
+              value: 3
+              unit: s
+            description: test-instruction-to-stats-executions-get-11-step-2-operation-2-description
+        endpoint: test-instruction-to-stats-executions-get-11-step-2-endpoint
+
   instruction_to_stats_executions_get_with_resolved_alarms_1:
     <<: *instruction_manual
     _id: test-instruction-to-stats-executions-get-with-resolved-alarms-1
@@ -1144,94 +1306,6 @@ instruction:
       value: 2
     users:
       - test-user-to-stats-instruction-get
-
-  instruction_metrics_axe_2_1:
-    <<: *instruction_auto
-    _id: test-instruction-metrics-axe-2-1
-    created: 1637904803
-    description: test-instruction-metrics-axe-2-1-description
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resource-metrics-axe-2-1
-      - - field: name
-          cond:
-            type: eq
-            value: test-resource-metrics-axe-2-2
-    alarm_pattern:
-    jobs:
-      - job: test-job-metrics-axe
-        stop_on_fail: false
-    last_modified: 1637904803
-    name: test-instruction-metrics-axe-2-1-name
-    timeout_after_execution:
-      unit: s
-      value: 1
-
-  instruction_metrics_axe_2_2:
-    <<: *instruction_auto
-    _id: test-instruction-metrics-axe-2-2
-    created: 1637904803
-    description: test-instruction-metrics-axe-2-2-description
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resource-metrics-axe-2-1
-      - - field: name
-          cond:
-            type: eq
-            value: test-resource-metrics-axe-2-2
-    alarm_pattern:
-    jobs:
-      - job: test-job-metrics-axe
-        stop_on_fail: false
-    last_modified: 1637904803
-    name: test-instruction-metrics-axe-2-2-name
-    timeout_after_execution:
-      unit: s
-      value: 1
-
-  instruction_metrics_axe_10:
-    <<: *instruction_auto
-    _id: test-instruction-metrics-axe-10
-    created: 1637904803
-    description: test-instruction-metrics-axe-10-description
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resource-metrics-axe-10
-    alarm_pattern:
-    jobs:
-      - job: test-job-metrics-axe
-        stop_on_fail: false
-    last_modified: 1637904803
-    name: test-instruction-metrics-axe-10-name
-    timeout_after_execution:
-      unit: s
-      value: 1
-
-  instruction_metrics_axe_11:
-    <<: *instruction_auto
-    _id: test-instruction-metrics-axe-11
-    created: 1637904803
-    description: test-instruction-metrics-axe-11-description
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resource-metrics-axe-11-1
-    alarm_pattern:
-    jobs:
-      - job: test-job-metrics-axe
-        stop_on_fail: false
-    last_modified: 1637904803
-    name: test-instruction-metrics-axe-11-name
-    timeout_after_execution:
-      unit: s
-      value: 1
 
   instruction_alarm_instruction_get_1_1:
     <<: *instruction_auto
@@ -1439,6 +1513,56 @@ instruction:
     entity_pattern:
     alarm_pattern:
 
+  instruction_alarm_instruction_get_11:
+    <<: *instruction_auto
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-11-1
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-auto-instruction-5
+        stop_on_fail: false
+
+  instruction_alarm_instruction_get_12:
+    <<: *instruction_manual
+    _id: test-instruction-to-alarm-instruction-get-12
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-12-1
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_13_1:
+    <<: *instruction_manual_simplified
+    _id: test-instruction-to-alarm-instruction-get-13-1
+    name: test-instruction-to-alarm-instruction-get-13-1-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-13
+    alarm_pattern:
+
+  instruction_alarm_instruction_get_13_2:
+    <<: *instruction_manual_simplified
+    _id: test-instruction-to-alarm-instruction-get-13-2
+    name: test-instruction-to-alarm-instruction-get-13-2-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-13
+    alarm_pattern:
+
   instruction_alarm_correlation_instruction_get_1_1:
     <<: *instruction_manual
     enabled: false
@@ -1612,3 +1736,1585 @@ instruction:
     jobs:
       - job: test-job-action-remediation-triggers-3
         stop_on_fail: false
+
+  instruction_action_remediation_triggers_7:
+    <<: *instruction_manual
+    _id: test-instruction-action-remediation-triggers-7
+    name: test-instruction-action-remediation-triggers-7-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-action-remediation-triggers-7
+    alarm_pattern:
+    timeout_after_execution:
+      value: 2
+      unit: s
+    steps:
+      - _id: test-instruction-action-remediation-triggers-7-step-1
+        endpoint: test-instruction-action-remediation-triggers-7-step-1-endpoint
+        name: test-instruction-action-remediation-triggers-7-step-1-name
+        operations:
+          - _id: test-instruction-action-remediation-triggers-7-step-1-operation-1
+            description: test-instruction-action-remediation-triggers-7-step-1-operation-1-description
+            name: test-instruction-action-remediation-triggers-7-step-1-operation-1-name
+            jobs:
+              - test-job-action-remediation-triggers-3
+            time_to_complete:
+              unit: s
+              value: 1
+        stop_on_fail: true
+
+  instruction_action_remediation_triggers_8:
+    <<: *instruction_auto
+    _id: test-instruction-action-remediation-triggers-8
+    name: test-instruction-action-remediation-triggers-8-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-action-remediation-triggers-8
+    alarm_pattern:
+    timeout_after_execution:
+      value: 2
+      unit: s
+    jobs:
+      - job: test-job-action-remediation-triggers-3
+        stop_on_fail: false
+
+  test-instruction-to-stats-summary-get-4:
+    <<: *instruction_manual
+    _id: test-instruction-to-stats-summary-get-4
+    name: test-instruction-to-stats-summary-get-4-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test filter
+    alarm_pattern:
+    description: test-instruction-to-stats-summary-get-4-description
+    jobs:
+      - job: test-job-to-instruction-edit-1
+        stop_on_fail: true
+      - job: test-job-to-instruction-edit-2
+    last_executed_on: 1596712209
+    last_modified: 1596712204
+    created: 1596712203
+    avg_complete_time: 401
+    timeout_after_execution:
+      unit: s
+      value: 2
+    priority: 16
+    author: test-user-author-1-id
+  
+  instruction_to_run_manual_simplified_instruction_1:
+    <<: *instruction_manual_simplified
+    _id: test-instruction-to-run-manual-simplified-instruction-1
+    created: 1596712203
+    description: test-instruction-to-run-manual-simplified-instruction-1-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-manual-simplified-instruction-1
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-1
+        stop_on_fail: false
+      - job: test-job-to-run-manual-simplified-instruction-2
+        stop_on_fail: false
+    last_modified: 1596712203
+    name: test-instruction-to-run-manual-simplified-instruction-1-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_run_manual_simplified_instruction_2:
+    <<: *instruction_manual_simplified
+    _id: test-instruction-to-run-manual-simplified-instruction-2
+    created: 1596712203
+    description: test-instruction-to-run-manual-simplified-instruction-2-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-manual-simplified-instruction-2
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-3
+        stop_on_fail: true
+      - job: test-job-to-run-manual-simplified-instruction-2
+        stop_on_fail: false
+      - job: test-job-to-run-manual-simplified-instruction-2
+        stop_on_fail: false        
+    last_modified: 1596712203
+    name: test-instruction-to-run-manual-simplified-instruction-2-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_run_manual_simplified_instruction_3:
+    <<: *instruction_manual_simplified
+    _id: test-instruction-to-run-manual-simplified-instruction-3
+    created: 1596712203
+    description: test-instruction-to-run-manual-simplified-instruction-3-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-manual-simplified-instruction-3
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-3
+        stop_on_fail: false
+      - job: test-job-to-run-manual-simplified-instruction-2
+        stop_on_fail: false
+    last_modified: 1596712203
+    name: test-instruction-to-run-manual-simplified-instruction-3-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_run_manual_simplified_instruction_4:
+    <<: *instruction_manual_simplified
+    _id: test-instruction-to-run-manual-simplified-instruction-4
+    created: 1596712203
+    description: test-instruction-to-run-manual-simplified-instruction-4-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-manual-simplified-instruction-4
+    alarm_pattern:
+    last_modified: 1596712203
+    name: test-instruction-to-run-manual-simplified-instruction-4-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_run_manual_simplified_instruction_5:
+    <<: *instruction_manual_simplified
+    _id: test-instruction-to-run-manual-simplified-instruction-5
+    description: test-instruction-to-run-manual-simplified-instruction-5-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-run-manual-simplified-instruction-5
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-1
+        stop_on_fail: false
+      - job: test-job-to-run-manual-simplified-instruction-4
+        stop_on_fail: false
+    name: test-instruction-to-run-manual-simplified-instruction-5-name
+    timeout_after_execution:
+      unit: s
+      value: 1
+
+  instruction_alarm_instruction_get_icons_1:
+    <<: *instruction_manual
+    _id: test-instruction-to-alarm-instruction-get-icons-1
+    name: test-instruction-to-alarm-instruction-get-icons-1-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-icons-1
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_2:
+    <<: *instruction_auto
+    _id: test-instruction-to-alarm-instruction-get-icons-2
+    name: test-instruction-to-alarm-instruction-get-icons-2-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-icons-2
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_3:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-3-name
+    _id: test-instruction-to-alarm-instruction-get-icons-3
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-icons-3
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_4_1:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-4-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-4-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-4
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_4_2:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-4-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-4-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-4
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+      
+  instruction_alarm_instruction_get_icons_5_1:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-5-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-5-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-5
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_5_2:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-5-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-5-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-5
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s      
+
+  instruction_alarm_instruction_get_icons_6:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-6-name
+    _id: test-instruction-to-alarm-instruction-get-icons-6
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-6
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_7_1:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-7-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-7-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-7
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_7_2:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-7-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-7-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-7
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_8_1:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-8-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-8-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-8
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_8_2:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-8-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-8-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-8
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_9_1:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-9-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-9-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-9
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_9_2:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-9-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-9-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-9
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_9_3:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-9-3-name
+    _id: test-instruction-to-alarm-instruction-get-icons-9-3
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-9
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_10_1:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-10-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-10-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-10
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_10_2:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-10-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-10-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-10
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+      
+  instruction_alarm_instruction_get_icons_11_1:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-11-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-11-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-11
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_11_2:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-11-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-11-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-11
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s 
+
+  instruction_alarm_instruction_get_icons_12_1:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-12-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-12-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-12
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_12_2:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-12-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-12-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-12
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+      
+  instruction_alarm_instruction_get_icons_13_1:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-13-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-13-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-13
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_13_2:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-13-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-13-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-13
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s      
+
+  instruction_alarm_instruction_get_icons_14_1:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-14-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-14-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-14
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_14_2:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-14-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-14-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-14
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_15:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-15-name
+    _id: test-instruction-to-alarm-instruction-get-icons-15
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-15
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_16:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-16-name
+    _id: test-instruction-to-alarm-instruction-get-icons-16
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-16
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_17:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-17-name
+    _id: test-instruction-to-alarm-instruction-get-icons-17
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-17
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_18_1:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-18-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-18-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-18
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+      
+  instruction_alarm_instruction_get_icons_18_2:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-18-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-18-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-18
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_19_1:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-19-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-19-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-19
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_19_2:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-19-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-19-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-19
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_20_1:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-20-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-20-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-20
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+  
+  instruction_alarm_instruction_get_icons_20_2:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-20-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-20-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-20
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+      
+  instruction_alarm_instruction_get_icons_21_1:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-21-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-21-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-21
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_21_2:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-21-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-21-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-21
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s      
+
+  instruction_alarm_instruction_get_icons_22:
+    <<: *instruction_manual_simplified
+    _id: test-instruction-to-alarm-instruction-get-icons-22
+    name: test-instruction-to-alarm-instruction-get-icons-22-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-icons-22
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-1
+        stop_on_fail: false
+
+  instruction_alarm_instruction_get_icons_23_1:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-23-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-23-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-23
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_23_2:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-instruction-get-icons-23-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-23-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-23
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-1
+        stop_on_fail: false
+
+  instruction_alarm_instruction_get_icons_24:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-instruction-get-icons-24-name
+    _id: test-instruction-to-alarm-instruction-get-icons-24
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-24
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-3
+        stop_on_fail: false
+        
+  instruction_alarm_instruction_get_icons_25_1:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-25-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-25-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-25
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false      
+
+  instruction_alarm_instruction_get_icons_25_2:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-instruction-get-icons-25-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-25-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-25
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-3
+        stop_on_fail: false
+        
+  instruction_alarm_instruction_get_icons_26_1:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-instruction-get-icons-26-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-26-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-26
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-3
+        stop_on_fail: false
+
+  instruction_alarm_instruction_get_icons_26_2:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-instruction-get-icons-26-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-26-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-26
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-1
+        stop_on_fail: false
+
+  instruction_alarm_instruction_get_icons_27_1:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-instruction-get-icons-27-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-27-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-27
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-3
+        stop_on_fail: false
+
+  instruction_alarm_instruction_get_icons_27_2:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-instruction-get-icons-27-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-27-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-27
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-1
+        stop_on_fail: false
+
+  instruction_alarm_instruction_get_icons_28_1:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-28-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-28-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-28
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_28_2:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-instruction-get-icons-28-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-28-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-28
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-1
+        stop_on_fail: false
+
+  instruction_alarm_instruction_get_icons_29_1:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-instruction-get-icons-29-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-29-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-29
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-3
+        stop_on_fail: false
+
+  instruction_alarm_instruction_get_icons_29_2:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-instruction-get-icons-29-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-29-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-29
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-1
+        stop_on_fail: false
+
+  instruction_alarm_instruction_get_icons_30_1:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-30-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-30-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-30
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_30_2:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-instruction-get-icons-30-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-30-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-30
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_31:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-instruction-get-icons-31-name
+    _id: test-instruction-to-alarm-instruction-get-icons-31
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-31
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+      
+  instruction_alarm_instruction_get_icons_32:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-instruction-get-icons-32-name
+    _id: test-instruction-to-alarm-instruction-get-icons-32
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-32
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-1
+        stop_on_fail: false
+        
+  instruction_alarm_instruction_get_icons_33_1:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-33-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-33-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-33
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+  
+  instruction_alarm_instruction_get_icons_33_2:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-instruction-get-icons-33-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-33-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-33
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s        
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-1
+        stop_on_fail: false      
+        
+  instruction_alarm_instruction_get_icons_34_1:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-instruction-get-icons-34-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-34-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-34
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-1
+        stop_on_fail: false
+  
+  instruction_alarm_instruction_get_icons_34_2:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-instruction-get-icons-34-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-34-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-34
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-1
+        stop_on_fail: false
+        
+  instruction_alarm_instruction_get_icons_35_1:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-35-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-35-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-35
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+  
+  instruction_alarm_instruction_get_icons_35_2:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-instruction-get-icons-35-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-35-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-35
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_36_1:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-instruction-get-icons-36-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-36-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-36
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-1
+        stop_on_fail: false
+
+  instruction_alarm_instruction_get_icons_36_2:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-instruction-get-icons-36-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-36-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-36
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-1
+        stop_on_fail: false
+
+  instruction_alarm_instruction_get_icons_37_1:
+    <<: *instruction_auto
+    name: test-instruction-to-alarm-instruction-get-icons-37-1-name
+    _id: test-instruction-to-alarm-instruction-get-icons-37-1
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-37
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_alarm_instruction_get_icons_37_2:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-instruction-get-icons-37-2-name
+    _id: test-instruction-to-alarm-instruction-get-icons-37-2
+    entity_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-to-alarm-instruction-get-icons-37
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-3
+        stop_on_fail: false
+
+  instruction_correlation_get_alarms_7_1:
+    <<: *instruction_manual
+    _id: test-instruction-to-alarm-correlation-get-7-1
+    name: test-instruction-to-alarm-correlation-get-7-1-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-correlation-get-7-1
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_correlation_get_alarms_7_2:
+    <<: *instruction_auto
+    _id: test-instruction-to-alarm-correlation-get-7-2
+    name: test-instruction-to-alarm-correlation-get-7-2-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-correlation-get-7-2
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+      
+  instruction_correlation_get_alarms_7_3:
+    <<: *instruction_auto
+    _id: test-instruction-to-alarm-correlation-get-7-3
+    name: test-instruction-to-alarm-correlation-get-7-3-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-correlation-get-7-3
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-3
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_correlation_get_alarms_7_4:
+    <<: *instruction_manual_simplified
+    _id: test-instruction-to-alarm-correlation-get-7-4
+    name: test-instruction-to-alarm-correlation-get-7-4-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-correlation-get-7-4
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_correlation_get_alarms_7_5:
+    <<: *instruction_manual_simplified
+    _id: test-instruction-to-alarm-correlation-get-7-5
+    name: test-instruction-to-alarm-correlation-get-7-5-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-correlation-get-7-5
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-3
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_instruction_service_weather_entity_7_1:
+    <<: *instruction_manual
+    _id: test-instruction-service-weather-entity-7-1
+    name: test-instruction-service-weather-entity-7-1-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-service-weather-entity-7-1
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_instruction_service_weather_entity_7_2:
+    <<: *instruction_auto
+    _id: test-instruction-service-weather-entity-7-2
+    name: test-instruction-service-weather-entity-7-2-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-service-weather-entity-7-2
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_instruction_service_weather_entity_7_3:
+    <<: *instruction_auto
+    _id: test-instruction-service-weather-entity-7-3
+    name: test-instruction-service-weather-entity-7-3-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-service-weather-entity-7-3
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-3
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_instruction_service_weather_entity_7_4:
+    <<: *instruction_manual_simplified
+    _id: test-instruction-service-weather-entity-7-4
+    name: test-instruction-service-weather-entity-7-4-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-service-weather-entity-7-4
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_instruction_service_weather_entity_7_5:
+    <<: *instruction_manual_simplified
+    _id: test-instruction-service-weather-entity-7-5
+    name: test-instruction-service-weather-entity-7-5-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-service-weather-entity-7-5
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-3
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_to_test_auto_instruction_activation_event_1:
+    <<: *instruction_auto
+    _id: test-instruction-to-test-auto-instruction-activate-event-1
+    created: 1596712203
+    description: test-instruction-to-test-auto-instruction-activate-event-1-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-test-auto-instruction-activate-event-1
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-test-auto-instruction-activate-event-1
+        stop_on_fail: false
+    last_modified: 1596712203
+    name: test-instruction-to-test-auto-instruction-activate-event-1-name
+    timeout_after_execution:
+      unit: s
+      value: 4
+
+  instruction_to_test_auto_instruction_activation_event_2:
+    <<: *instruction_auto
+    _id: test-instruction-to-test-auto-instruction-activate-event-2
+    created: 1596712203
+    description: test-instruction-to-test-auto-instruction-activate-event-2-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-test-auto-instruction-activate-event-2
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-test-auto-instruction-activate-event-2
+        stop_on_fail: false
+    last_modified: 1596712203
+    name: test-instruction-to-test-auto-instruction-activate-event-2-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_test_auto_instruction_activation_event_3_1:
+    <<: *instruction_auto
+    _id: test-instruction-to-test-auto-instruction-activate-event-3-1
+    created: 1596713303
+    description: test-instruction-to-test-auto-instruction-activate-event-3-1-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-test-auto-instruction-activate-event-3
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-test-auto-instruction-activate-event-3
+        stop_on_fail: false
+    last_modified: 1596713303
+    name: test-instruction-to-test-auto-instruction-activate-event-3-1-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_test_auto_instruction_activation_event_3_2:
+    <<: *instruction_auto
+    _id: test-instruction-to-test-auto-instruction-activate-event-3-2
+    created: 1596713303
+    description: test-instruction-to-test-auto-instruction-activate-event-3-2-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-test-auto-instruction-activate-event-3
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-test-auto-instruction-activate-event-3
+        stop_on_fail: false
+    last_modified: 1596713303
+    name: test-instruction-to-test-auto-instruction-activate-event-3-2-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_test_auto_instruction_activation_event_4_1:
+    <<: *instruction_auto
+    _id: test-instruction-to-test-auto-instruction-activate-event-4-1
+    created: 1596714404
+    description: test-instruction-to-test-auto-instruction-activate-event-4-1-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-test-auto-instruction-activate-event-4
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-test-auto-instruction-activate-event-4
+        stop_on_fail: false
+    last_modified: 1596714404
+    name: test-instruction-to-test-auto-instruction-activate-event-4-1-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_test_auto_instruction_activation_event_4_2:
+    <<: *instruction_auto
+    _id: test-instruction-to-test-auto-instruction-activate-event-4-2
+    created: 1596714404
+    description: test-instruction-to-test-auto-instruction-activate-event-4-2-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-test-auto-instruction-activate-event-4
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-test-auto-instruction-activate-event-4
+        stop_on_fail: false
+    last_modified: 1596714404
+    name: test-instruction-to-test-auto-instruction-activate-event-4-2-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_test_auto_instruction_activation_event_5:
+    <<: *instruction_auto
+    _id: test-instruction-to-test-auto-instruction-activate-event-5
+    created: 1596712203
+    description: test-instruction-to-test-auto-instruction-activate-event-5-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-test-auto-instruction-activate-event-5
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-test-auto-instruction-activate-event-5
+        stop_on_fail: false
+    last_modified: 1596712203
+    name: test-instruction-to-test-auto-instruction-activate-event-5-name
+    timeout_after_execution:
+      unit: s
+      value: 4
+
+  instruction_to_test_auto_instruction_activation_event_6:
+    <<: *instruction_auto
+    _id: test-instruction-to-test-auto-instruction-activate-event-6
+    created: 1596712203
+    description: test-instruction-to-test-auto-instruction-activate-event-6-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-test-auto-instruction-activate-event-6
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-test-auto-instruction-activate-event-6
+        stop_on_fail: false
+    last_modified: 1596712203
+    name: test-instruction-to-test-auto-instruction-activate-event-6-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_test_auto_instruction_activation_event_7_1:
+    <<: *instruction_auto
+    _id: test-instruction-to-test-auto-instruction-activate-event-7-1
+    created: 1596712203
+    description: test-instruction-to-test-auto-instruction-activate-event-7-1-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-test-auto-instruction-activate-event-7
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-test-auto-instruction-activate-event-7-1
+        stop_on_fail: false
+    last_modified: 1596712203
+    name: test-instruction-to-test-auto-instruction-activate-event-7-1-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_test_auto_instruction_activation_event_7_2:
+    <<: *instruction_auto
+    _id: test-instruction-to-test-auto-instruction-activate-event-7-2
+    created: 1596712203
+    description: test-instruction-to-test-auto-instruction-activate-event-7-2-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-test-auto-instruction-activate-event-7
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-test-auto-instruction-activate-event-7-2
+        stop_on_fail: false
+    last_modified: 1596712203
+    name: test-instruction-to-test-auto-instruction-activate-event-7-2-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_test_auto_instruction_activation_event_7_3:
+    <<: *instruction_auto
+    _id: test-instruction-to-test-auto-instruction-activate-event-7-3
+    created: 1596712203
+    description: test-instruction-to-test-auto-instruction-activate-event-7-3-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-test-auto-instruction-activate-event-7
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-test-auto-instruction-activate-event-7-3
+        stop_on_fail: false
+    last_modified: 1596712203
+    name: test-instruction-to-test-auto-instruction-activate-event-7-3-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_test_auto_instruction_activation_event_8:
+    <<: *instruction_auto
+    _id: test-instruction-to-test-auto-instruction-activate-event-8
+    created: 1896712203
+    description: test-instruction-to-test-auto-instruction-activate-event-8-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-test-auto-instruction-activate-event-8
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-test-auto-instruction-activate-event-8
+        stop_on_fail: false
+    last_modified: 1896712203
+    name: test-instruction-to-test-auto-instruction-activate-event-8-name
+    timeout_after_execution:
+      unit: s
+      value: 2
+
+  instruction_to_test_auto_instruction_activation_event_9:
+    <<: *instruction_auto
+    _id: test-instruction-to-test-auto-instruction-activate-event-9
+    created: 1599712203
+    description: test-instruction-to-test-auto-instruction-activate-event-9-description
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-test-auto-instruction-activate-event-9
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-test-auto-instruction-activate-event-9
+        stop_on_fail: false
+    last_modified: 1599712203
+    name: test-instruction-to-test-auto-instruction-activate-event-9-name
+    timeout_after_execution:
+      unit: s
+      value: 4

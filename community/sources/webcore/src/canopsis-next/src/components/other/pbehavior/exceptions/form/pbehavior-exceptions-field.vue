@@ -9,6 +9,7 @@
           v-field="exdates[index]",
           :key="exdate.key",
           :disabled="disabled",
+          with-type,
           @delete="removeItemFromArray(index)"
         )
     v-layout(v-if="!disabled", row)
@@ -24,7 +25,7 @@ import { convertDateToStartOfDayDateObject } from '@/helpers/date/date';
 
 import { formArrayMixin } from '@/mixins/form';
 
-import PbehaviorExceptionField from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-field.vue';
+import PbehaviorExceptionField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-exception-field.vue';
 
 export default {
   inject: ['$validator'],
@@ -49,7 +50,6 @@ export default {
       name: 'exdates',
       rules: 'required:true',
       getter: () => !!this.exdates.length,
-      context: () => this,
       vm: this,
     });
   },

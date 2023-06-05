@@ -12,16 +12,8 @@ export const ConfirmAckWithTicket = () => ({
   component: import(/* webpackChunkName: "Events" */ './alarm/confirm-ack-with-ticket.vue'),
   loading: LoaderOverlay,
 });
-export const CreateAssociateTicketEvent = () => ({
-  component: import(/* webpackChunkName: "Events" */ './alarm/create-associate-ticket-event.vue'),
-  loading: LoaderOverlay,
-});
 export const CreateChangeStateEvent = () => ({
   component: import(/* webpackChunkName: "Events" */ './alarm/create-change-state-event.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateDeclareTicketEvent = () => ({
-  component: import(/* webpackChunkName: "Events" */ './alarm/create-declare-ticket-event.vue'),
   loading: LoaderOverlay,
 });
 export const CreateSnoozeEvent = () => ({
@@ -52,12 +44,20 @@ export const CreateManualMetaAlarm = () => ({
   component: import(/* webpackChunkName: "Alarm" */ './alarm/create-manual-meta-alarm.vue'),
   loading: LoaderOverlay,
 });
+export const RemoveAlarmsFromManualMetaAlarm = () => ({
+  component: import(/* webpackChunkName: "Alarm" */ './alarm/remove-alarms-from-manual-meta-alarm.vue'),
+  loading: LoaderOverlay,
+});
 export const AlarmsList = () => ({
   component: import(/* webpackChunkName: "Alarm" */ './alarm/alarms-list.vue'),
   loading: LoaderOverlay,
 });
 export const CreateMetaAlarmRule = () => ({
   component: import(/* webpackChunkName: "Alarm" */ './meta-alarm-rule/create-meta-alarm-rule.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateAlarmChart = () => ({
+  component: import(/* webpackChunkName: "Alarm" */ './alarm/create-alarm-chart.vue'),
   loading: LoaderOverlay,
 });
 
@@ -105,6 +105,10 @@ export const CreatePbehaviorException = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/create-pbehavior-exception.vue'),
   loading: LoaderOverlay,
 });
+export const PbehaviorPatterns = () => ({
+  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-patterns.vue'),
+  loading: LoaderOverlay,
+});
 export const Confirmation = () => ({
   component: import(/* webpackChunkName: "Common" */ './common/confirmation.vue'),
   loading: LoaderOverlay,
@@ -119,6 +123,10 @@ export const ColorPicker = () => ({
 });
 export const TextEditor = () => ({
   component: import(/* webpackChunkName: "Common" */ './common/text-editor.vue'),
+  loading: LoaderOverlay,
+});
+export const TextEditorWithTemplate = () => ({
+  component: import(/* webpackChunkName: "Common" */ './common/text-editor-with-template.vue'),
   loading: LoaderOverlay,
 });
 export const TextFieldEditor = () => ({
@@ -143,6 +151,14 @@ export const Info = () => ({
 });
 export const CreateWidget = () => ({
   component: import(/* webpackChunkName: "Widget" */ './view/create-widget.vue'),
+  loading: LoaderOverlay,
+});
+export const SelectWidgetTemplateType = () => ({
+  component: import(/* webpackChunkName: "WidgetTemplate" */ './widget-template/select-widget-template-type.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateWidgetTemplate = () => ({
+  component: import(/* webpackChunkName: "WidgetTemplate" */ './widget-template/create-widget-template.vue'),
   loading: LoaderOverlay,
 });
 export const CreateService = () => ({
@@ -181,6 +197,10 @@ export const CreateView = () => ({
   component: import(/* webpackChunkName: "View" */ './view/create-view.vue'),
   loading: LoaderOverlay,
 });
+export const ShareView = () => ({
+  component: import(/* webpackChunkName: "View" */ './view/share-view.vue'),
+  loading: LoaderOverlay,
+});
 export const CreateGroup = () => ({
   component: import(/* webpackChunkName: "View" */ './view/create-group.vue'),
   loading: LoaderOverlay,
@@ -209,28 +229,12 @@ export const CreateBroadcastMessage = () => ({
   component: import(/* webpackChunkName: "BroadcastMessage" */ './admin/create-broadcast-message.vue'),
   loading: LoaderOverlay,
 });
-export const CreateEventFilterRule = () => ({
-  component: import(/* webpackChunkName: "EventFilter" */ './event-filter/create-event-filter-rule.vue'),
-  loading: LoaderOverlay,
-});
-export const EventFilterRuleActions = () => ({
-  component: import(/* webpackChunkName: "EventFilter" */ './event-filter/event-filter-rule-actions.vue'),
-  loading: LoaderOverlay,
-});
-export const EventFilterRuleExternalData = () => ({
-  component: import(/* webpackChunkName: "EventFilter" */ './event-filter/event-filter-rule-external-data.vue'),
-  loading: LoaderOverlay,
-});
-export const CreateEventFilterRuleAction = () => ({
-  component: import(/* webpackChunkName: "EventFilter" */ './event-filter/create-event-filter-rule-action.vue'),
+export const CreateEventFilter = () => ({
+  component: import(/* webpackChunkName: "EventFilters" */ './event-filter/create-event-filter.vue'),
   loading: LoaderOverlay,
 });
 export const CreatePattern = () => ({
   component: import(/* webpackChunkName: "Pattern" */ './pattern/create-pattern.vue'),
-  loading: LoaderOverlay,
-});
-export const CreatePatternRule = () => ({
-  component: import(/* webpackChunkName: "Pattern" */ './pattern/create-pattern-rule.vue'),
   loading: LoaderOverlay,
 });
 export const CreateSnmpRule = () => ({
@@ -277,6 +281,10 @@ export const ExecuteRemediationInstruction = () => ({
   component: import(/* webpackChunkName: "Remediation" */ './remediation/execute-remediation-instruction.vue'),
   loading: LoaderOverlay,
 });
+export const ExecuteRemediationSimpleInstruction = () => ({
+  component: import(/* webpackChunkName: "Remediation" */ './remediation/execute-remediation-simple-instruction.vue'),
+  loading: LoaderOverlay,
+});
 export const RemediationPatterns = () => ({
   component: import(/* webpackChunkName: "Remediation" */ './remediation/remediation-patterns.vue'),
   loading: LoaderOverlay,
@@ -287,10 +295,6 @@ export const RemediationInstructionApproval = () => ({
 });
 export const Rate = () => ({
   component: import(/* webpackChunkName: "Remediation" */ './common/rate.vue'),
-  loading: LoaderOverlay,
-});
-export const Patterns = () => ({
-  component: import(/* webpackChunkName: "Common" */ './common/patterns.vue'),
   loading: LoaderOverlay,
 });
 export const CreateRemediationInstructionsFilter = () => ({
@@ -323,5 +327,59 @@ export const CreateScenario = () => ({
 });
 export const CreateAlarmStatusRule = () => ({
   component: import(/* webpackChunkName: "AlarmStatusRule" */ './alarm-status-rule/create-alarm-status-rule.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateKpiFilter = () => ({
+  component: import(/* webpackChunkName: "KPI" */ './kpi/create-kpi-filter.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateMap = () => ({
+  component: import(/* webpackChunkName: "Maps" */ './map/create-map.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateGeoMap = () => ({
+  component: import(/* webpackChunkName: "Maps" */ './map/create-geo-map.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateFlowchartMap = () => ({
+  component: import(/* webpackChunkName: "Maps" */ './map/create-flowchart-map.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateMermaidMap = () => ({
+  component: import(/* webpackChunkName: "Maps" */ './map/create-mermaid-map.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateTreeOfDependenciesMap = () => ({
+  component: import(/* webpackChunkName: "Maps" */ './map/create-tree-of-dependencies-map.vue'),
+  loading: LoaderOverlay,
+});
+export const EntityDependenciesList = () => ({
+  component: import(/* webpackChunkName: "Map" */ './entity/entity-dependencies-list.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateShareToken = () => ({
+  component: import(/* webpackChunkName: "ShareToken" */ './share-token/create-share-token.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateDeclareTicketRule = () => ({
+  component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/create-declare-ticket-rule.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateDeclareTicketEvent = () => ({
+  component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/create-declare-ticket-event.vue'),
+  loading: LoaderOverlay,
+});
+export const ExecuteDeclareTickets = () => ({
+  component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/execute-declare-tickets-rule.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateAssociateTicketEvent = () => ({
+  component: import(/* webpackChunkName: "DeclareTicketRule" */ './declare-ticket/create-associate-ticket-event.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateLinkRule = () => ({
+  component: import(/* webpackChunkName: "LinkRule" */ './link-rule/create-link-rule.vue'),
   loading: LoaderOverlay,
 });

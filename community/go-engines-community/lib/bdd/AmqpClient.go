@@ -1,21 +1,21 @@
 package bdd
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
 	"math/rand"
-	"net/url"
-	"text/template"
+	"sync"
 	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/cucumber/godog"
+	"github.com/kylelemons/godebug/pretty"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
@@ -24,15 +24,33 @@ import (
 // stepTimeout is used to limit waiting time for wait steps.
 const stepTimeout = 10 * time.Second
 
+const (
+	consumePrefetchCount = 1000
+	consumePrefetchSize  = 0
+)
+
+var fifoAckEventFields = []string{
+	"event_type",
+	"source_type",
+	"connector",
+	"connector_name",
+	"component",
+	"resource",
+}
+
 // AmqpClient represents utility struct which implements AMQP steps to feature context.
 type AmqpClient struct {
-	amqpConnection    libamqp.Connection
-	mongoClient       mongo.DbClient
-	mainStreamAckMsgs <-chan amqp.Delivery
-	apiURL            *url.URL
-	encoder           encoding.Encoder
-	decoder           encoding.Decoder
-	eventLogger       zerolog.Logger
+	amqpConnection libamqp.Connection
+	mongoClient    mongo.DbClient
+	encoder        encoding.Encoder
+	decoder        encoding.Decoder
+	eventLogger    zerolog.Logger
+	exchange, key  string
+	templater      *Templater
+
+	ackConsumersMx   sync.Mutex
+	ackConsumers     []<-chan amqp.Delivery
+	freeAckConsumers []int
 }
 
 // NewAmqpClient creates new AMQP client.
@@ -43,170 +61,457 @@ func NewAmqpClient(
 	encoder encoding.Encoder,
 	decoder encoding.Decoder,
 	eventLogger zerolog.Logger,
-) (*AmqpClient, error) {
-	ch, err := amqpConnection.Channel()
+	templater *Templater,
+) *AmqpClient {
+	return &AmqpClient{
+		amqpConnection: amqpConnection,
+		mongoClient:    dbClient,
+		encoder:        encoder,
+		decoder:        decoder,
+		eventLogger:    eventLogger,
+		exchange:       exchange,
+		key:            key,
+		templater:      templater,
+
+		ackConsumers:     make([]<-chan amqp.Delivery, 0),
+		freeAckConsumers: make([]int, 0),
+	}
+}
+
+func (c *AmqpClient) BeforeScenario(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
+	c.ackConsumersMx.Lock()
+	defer c.ackConsumersMx.Unlock()
+
+	if len(c.freeAckConsumers) > 0 {
+		consumer := c.freeAckConsumers[0]
+		ctx = setConsumer(ctx, consumer)
+		c.freeAckConsumers = c.freeAckConsumers[1:]
+
+		for {
+			select {
+			case <-c.ackConsumers[consumer]:
+			default:
+				return ctx, nil
+			}
+		}
+	}
+
+	ch, err := c.amqpConnection.Channel()
 	if err != nil {
-		return nil, err
+		return ctx, err
 	}
 
 	// Declare queue to detect the end of event processing.
+	// Make test queues durable because sometimes CI jobs fail : events are sent to FIFO_ack queue but not to test queues.
+	// Check if durable=true helps.
 	q, err := ch.QueueDeclare(
-		"",    // name
-		false, // durable
-		false, // delete when unused
-		true,  // exclusive
-		false, // no-wait
-		nil,   // arguments
-	)
-	if err != nil {
-		return nil, fmt.Errorf("cannot declare queue: %v", err)
-	}
-
-	err = ch.QueueBind(
-		q.Name,
-		key,
-		exchange,
+		"",
+		true,
+		true,
+		true,
 		false,
 		nil,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("cannot bind queue: %v", err)
+		return ctx, fmt.Errorf("cannot declare queue: %v", err)
+	}
+
+	err = ch.QueueBind(
+		q.Name,
+		c.key,
+		c.exchange,
+		false,
+		nil,
+	)
+	if err != nil {
+		return ctx, fmt.Errorf("cannot bind queue: %v", err)
+	}
+
+	err = ch.Qos(consumePrefetchCount, consumePrefetchSize, false)
+	if err != nil {
+		return ctx, fmt.Errorf("cannot qos: %v", err)
 	}
 
 	msgs, err := ch.Consume(
-		q.Name, // queue
-		"",     // consumer
-		true,   // auto-ack
-		false,  // exclusive
-		false,  // no-local
-		false,  // no-wait
-		nil,    // args
+		q.Name,
+		"",
+		true,
+		false,
+		false,
+		false,
+		nil,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("cannot consume queue: %v", err)
+		return ctx, fmt.Errorf("cannot consume queue: %v", err)
 	}
 
-	apiURL, err := GetApiURL()
+	c.ackConsumers = append(c.ackConsumers, msgs)
+	ctx = setConsumer(ctx, len(c.ackConsumers)-1)
+
+	return ctx, nil
+}
+
+func (c *AmqpClient) AfterScenario(ctx context.Context, _ *godog.Scenario, _ error) (context.Context, error) {
+	c.ackConsumersMx.Lock()
+	defer c.ackConsumersMx.Unlock()
+
+	if i, ok := getConsumer(ctx); ok {
+		c.freeAckConsumers = append(c.freeAckConsumers, i)
+	}
+
+	return ctx, nil
+}
+
+// IWaitTheEndOfEventProcessing
+// Step example:
+//
+//	When I wait the end of event processing
+func (c *AmqpClient) IWaitTheEndOfEventProcessing(ctx context.Context) error {
+	return c.IWaitTheEndOfEventsProcessing(ctx, 1)
+}
+
+// IWaitTheEndOfEventsProcessing
+// Step example:
+//
+//	When I wait the end of 2 events processing
+func (c *AmqpClient) IWaitTheEndOfEventsProcessing(ctx context.Context, expectedCount int) error {
+	msgs, err := c.getMainStreamAckConsumer(ctx)
 	if err != nil {
-		return nil, err
+		return err
 	}
+	timer := time.NewTimer(stepTimeout)
+	defer timer.Stop()
+	caughtCount := 0
 
-	return &AmqpClient{
-		amqpConnection:    amqpConnection,
-		mongoClient:       dbClient,
-		mainStreamAckMsgs: msgs,
-		encoder:           encoder,
-		decoder:           decoder,
-		apiURL:            apiURL,
-		eventLogger:       eventLogger,
-	}, nil
-}
-
-func (c *AmqpClient) Reset(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
-	// Clear channel.
-	for {
-		select {
-		case <-c.mainStreamAckMsgs:
-		default:
-			return ctx, nil
-		}
-	}
-}
-
-/**
-Step example:
-	When I wait the end of event processing
-*/
-func (c *AmqpClient) IWaitTheEndOfEventProcessing() error {
-	return c.IWaitTheEndOfEventsProcessing(1)
-}
-
-/**
-Step example:
-	When I wait the end of 2 events processing
-*/
-func (c *AmqpClient) IWaitTheEndOfEventsProcessing(count int) error {
-	done := time.After(stepTimeout)
-	msgsCount := 0
+	scName, _ := GetScenarioName(ctx)
+	scUri, _ := GetScenarioUri(ctx)
 
 	for {
 		select {
-		case d, ok := <-c.mainStreamAckMsgs:
+		case d, ok := <-msgs:
 			if !ok {
 				return errors.New("consume chan is closed")
 			}
 
-			msgsCount++
+			caughtCount++
 
 			event := &types.Event{}
 			err := c.decoder.Decode(d.Body, event)
 			c.eventLogger.Info().Err(err).
 				Str("event_type", event.EventType).
 				Str("entity", event.GetEID()).
+				Str("file", scUri).
+				Str("scenario", scName).
 				RawJSON("body", d.Body).Msg("received event")
 
-			if count == msgsCount {
+			if expectedCount == caughtCount {
 				return nil
 			}
-		case <-done:
-			return fmt.Errorf("reached timeout: waiting for %d events, but got %d", count, msgsCount)
+		case <-timer.C:
+			return fmt.Errorf("reached timeout: caught %d events out of %d", caughtCount, expectedCount)
 		}
 	}
 }
 
-/**
+/*
+*
 Step example:
+
 	When I wait the end of 2-3 events processing
 */
 func (c *AmqpClient) IWaitTheEndOfMinMaxEvents(minCount int, maxCount int) error {
-	done := time.After(3 * time.Second)
-	msgsCount := 0
+	return nil
+	//done := time.After(3 * time.Second)
+	//msgsCount := 0
+
+	//for {
+	//	select {
+	//	case d, ok := <-c.mainStreamAckMsgs:
+	//		if !ok {
+	//			return errors.New("consume chan is closed")
+	//		}
+	//
+	//		msgsCount++
+	//
+	//		event := &types.Event{}
+	//		err := c.decoder.Decode(d.Body, event)
+	//		c.eventLogger.Info().Err(err).
+	//			Str("event_type", event.EventType).
+	//			Str("entity", event.GetEID()).
+	//			RawJSON("body", d.Body).Msg("received event")
+	//
+	//		if msgsCount == maxCount {
+	//			return nil
+	//		}
+	//	case <-done:
+	//		if msgsCount >= minCount {
+	//			return nil
+	//		}
+	//
+	//		return fmt.Errorf("reached timeout: waiting for at least %d events, but got %d", minCount, msgsCount)
+	//	}
+	//}
+}
+
+// IWaitTheEndOfEventProcessingWhichContains
+//
+// Step example:
+//
+//	When I wait the end of event processing which contains:
+//	  """
+//	  {
+//	    "event_type": "check"
+//	  }
+//	  """
+func (c *AmqpClient) IWaitTheEndOfEventProcessingWhichContains(ctx context.Context, doc string) error {
+	b, err := c.templater.Execute(ctx, doc)
+	if err != nil {
+		return err
+	}
+
+	expectedEvent := make(map[string]interface{})
+	err = c.decoder.Decode(b.Bytes(), &expectedEvent)
+	if err != nil {
+		return err
+	}
+
+	return c.catchEvents(ctx, []map[string]interface{}{expectedEvent})
+}
+
+// IWaitTheEndOfEventsProcessingWhichContain
+//
+// Step example:
+//
+//		When I wait the end of events processing which contain:
+//	   """
+//	   [
+//	     {
+//	       "event_type": "check"
+//	     },
+//	     {
+//	       "event_type": "check"
+//	     }
+//	   ]
+//	   """
+func (c *AmqpClient) IWaitTheEndOfEventsProcessingWhichContain(ctx context.Context, doc string) error {
+	b, err := c.templater.Execute(ctx, doc)
+	if err != nil {
+		return err
+	}
+
+	expectedEvents := make([]map[string]interface{}, 0)
+	err = c.decoder.Decode(b.Bytes(), &expectedEvents)
+	if err != nil {
+		return err
+	}
+
+	return c.catchEvents(ctx, expectedEvents)
+}
+
+// IWaitTheEndOfOneOfEventsProcessingWhichContain
+//
+// Step example:
+//
+//		When I wait the end of one of events processing which contain:
+//	   """
+//	   [
+//	     {
+//	       "event_type": "check"
+//	     },
+//	     {
+//	       "event_type": "activate"
+//	     }
+//	   ]
+//	   """
+func (c *AmqpClient) IWaitTheEndOfOneOfEventsProcessingWhichContain(ctx context.Context, doc string) error {
+	b, err := c.templater.Execute(ctx, doc)
+	if err != nil {
+		return err
+	}
+
+	expectedEvents := make([]map[string]interface{}, 0)
+	err = c.decoder.Decode(b.Bytes(), &expectedEvents)
+	if err != nil {
+		return err
+	}
+
+	if len(expectedEvents) == 0 {
+		return nil
+	}
+
+	caughtEvents := make([]map[string]interface{}, 0)
+	timer := time.NewTimer(stepTimeout)
+	defer timer.Stop()
+
+	msgs, err := c.getMainStreamAckConsumer(ctx)
+	if err != nil {
+		return err
+	}
+
+	scName, _ := GetScenarioName(ctx)
+	scUri, _ := GetScenarioUri(ctx)
 
 	for {
 		select {
-		case d, ok := <-c.mainStreamAckMsgs:
+		case d, ok := <-msgs:
 			if !ok {
 				return errors.New("consume chan is closed")
 			}
 
-			msgsCount++
+			event, eventMap, err := c.decodeEvent(d.Body)
+			if err != nil {
+				c.eventLogger.Err(err).
+					RawJSON("body", d.Body).
+					Str("file", scUri).
+					Str("scenario", scName).
+					Msg("received invalid event")
+				continue
+			}
 
-			event := &types.Event{}
-			err := c.decoder.Decode(d.Body, event)
-			c.eventLogger.Info().Err(err).
+			caughtEvents = append(caughtEvents, eventMap)
+			foundIndex := c.matchEvent(eventMap, expectedEvents)
+			c.eventLogger.Info().
 				Str("event_type", event.EventType).
 				Str("entity", event.GetEID()).
-				RawJSON("body", d.Body).Msg("received event")
+				Bool("matched", foundIndex >= 0).
+				RawJSON("body", d.Body).
+				Str("file", scUri).
+				Str("scenario", scName).
+				Msg("received event")
 
-			if msgsCount == maxCount {
+			if foundIndex >= 0 {
 				return nil
 			}
-		case <-done:
-			if msgsCount >= minCount {
-				return nil
-			}
-
-			return fmt.Errorf("reached timeout: waiting for at least %d events, but got %d", minCount, msgsCount)
+		case <-timer.C:
+			return fmt.Errorf("reached timeout: caught %d events but none of them matches to expected events\n%s\n",
+				len(caughtEvents), pretty.Compare(c.filterEventFields(caughtEvents), expectedEvents))
 		}
 	}
 }
 
-/**
-Step example:
-	When I call RPC request to engine-axe with alarm resource/component:
-	"""
-	{
-	  "event_type": "ack"
+func (c *AmqpClient) IWaitTheEndOfSentEventProcessing(ctx context.Context, doc string) error {
+	b, err := c.templater.Execute(ctx, doc)
+	if err != nil {
+		return err
 	}
-	"""
-*/
+
+	sentEvents := make([]map[string]interface{}, 0)
+	err = c.decoder.Decode(b.Bytes(), &sentEvents)
+	if err != nil {
+		sentEvent := make(map[string]interface{})
+		err = c.decoder.Decode(b.Bytes(), &sentEvent)
+		if err != nil {
+			return err
+		}
+		sentEvents = append(sentEvents, sentEvent)
+	}
+
+	if len(sentEvents) == 0 {
+		return nil
+	}
+
+	expectedFields := fifoAckEventFields
+	expectedEventsByIndex := make([][]map[string]interface{}, len(sentEvents))
+
+	for i, sentEvent := range sentEvents {
+		expectedEvent := make(map[string]interface{}, len(expectedFields))
+		for _, field := range expectedFields {
+			if v, ok := sentEvent[field]; ok {
+				expectedEvent[field] = v
+			}
+		}
+		expectedEvents := []map[string]interface{}{expectedEvent}
+
+		if t, ok := expectedEvent["event_type"].(string); ok && t == types.EventTypeCheck {
+			activateEvent := make(map[string]interface{}, len(expectedEvent))
+			for k, v := range expectedEvent {
+				activateEvent[k] = v
+			}
+			activateEvent["event_type"] = types.EventTypeActivate
+			expectedEvents = append(expectedEvents, activateEvent)
+		}
+
+		expectedEventsByIndex[i] = expectedEvents
+	}
+
+	caughtEvents := make([]map[string]interface{}, 0)
+	matched := make(map[int]bool, len(sentEvents))
+	timer := time.NewTimer(stepTimeout)
+	defer timer.Stop()
+
+	msgs, err := c.getMainStreamAckConsumer(ctx)
+	if err != nil {
+		return err
+	}
+
+	scName, _ := GetScenarioName(ctx)
+	scUri, _ := GetScenarioUri(ctx)
+
+	for {
+		select {
+		case d, ok := <-msgs:
+			if !ok {
+				return errors.New("consume chan is closed")
+			}
+
+			event, eventMap, err := c.decodeEvent(d.Body)
+			if err != nil {
+				c.eventLogger.Err(err).
+					RawJSON("body", d.Body).
+					Str("file", scUri).
+					Str("scenario", scName).
+					Msg("received invalid event")
+				continue
+			}
+
+			caughtEvents = append(caughtEvents, eventMap)
+			foundIndex := -1
+			for index, expectedEvents := range expectedEventsByIndex {
+				if matched[index] {
+					continue
+				}
+
+				foundIndex = c.matchEvent(eventMap, expectedEvents)
+				if foundIndex >= 0 {
+					matched[index] = true
+					break
+				}
+			}
+
+			c.eventLogger.Info().
+				Str("event_type", event.EventType).
+				Str("entity", event.GetEID()).
+				Bool("matched", foundIndex >= 0).
+				Str("file", scUri).
+				Str("scenario", scName).
+				RawJSON("body", d.Body).Msg("received event")
+
+			if len(matched) == len(sentEvents) {
+				return nil
+			}
+		case <-timer.C:
+			return fmt.Errorf("reached timeout: caught %d events out of %d\n%s\n", len(matched), len(sentEvents),
+				pretty.Compare(c.filterEventFields(caughtEvents), sentEvents))
+		}
+	}
+}
+
+// ICallRPCAxeRequest
+// Step example:
+//
+//	When I call RPC request to engine-axe with alarm resource/component:
+//	"""
+//	{
+//	  "event_type": "ack"
+//	}
+//	"""
 func (c *AmqpClient) ICallRPCAxeRequest(ctx context.Context, eid string, doc string) error {
 	alarm, err := c.findAlarm(ctx, eid)
 	if err != nil {
 		return err
 	}
 
-	var event types.RPCAxeEvent
+	var event rpc.AxeEvent
 	err = c.decoder.Decode([]byte(doc), &event)
 	if err != nil {
 		return err
@@ -219,66 +524,12 @@ func (c *AmqpClient) ICallRPCAxeRequest(ctx context.Context, eid string, doc str
 		return err
 	}
 
-	res, err := c.executeRPC(canopsis.AxeRPCQueueServerName, body)
+	res, err := c.executeRPC(ctx, canopsis.AxeRPCQueueServerName, body)
 	if err != nil {
 		return err
 	}
 
-	var resultEvent types.RPCAxeResultEvent
-	err = c.decoder.Decode(res, &resultEvent)
-	if err != nil {
-		return err
-	}
-
-	if resultEvent.Error != nil {
-		return resultEvent.Error.Error
-	}
-
-	return nil
-}
-
-/**
-Step example:
-	When I call RPC request to engine-webhook with alarm resource/component:
-	"""
-	{
-	  "request": {
-		  "method": "POST",
-		  "url": "http://test-url.com"
-		}
-	}
-	"""
-*/
-func (c *AmqpClient) ICallRPCWebhookRequest(ctx context.Context, eid string, doc string) error {
-	alarm, err := c.findAlarm(ctx, eid)
-	if err != nil {
-		return err
-	}
-
-	content, err := c.executeTemplate(doc)
-	if err != nil {
-		return err
-	}
-
-	var event types.RPCWebhookEvent
-	err = c.decoder.Decode(content.Bytes(), &event)
-	if err != nil {
-		return err
-	}
-
-	event.Alarm = &alarm.Alarm
-	event.Entity = &alarm.Entity
-	body, err := c.encoder.Encode(event)
-	if err != nil {
-		return err
-	}
-
-	res, err := c.executeRPC(canopsis.WebhookRPCQueueServerName, body)
-	if err != nil {
-		return err
-	}
-
-	var resultEvent types.RPCWebhookResultEvent
+	var resultEvent rpc.AxeResultEvent
 	err = c.decoder.Decode(res, &resultEvent)
 	if err != nil {
 		return err
@@ -326,7 +577,7 @@ func (c *AmqpClient) findAlarm(ctx context.Context, eid string) (*types.AlarmWit
 	return nil, fmt.Errorf("couldn't find an alarm for eid = %s", eid)
 }
 
-func (c *AmqpClient) executeRPC(queue string, body []byte) ([]byte, error) {
+func (c *AmqpClient) executeRPC(ctx context.Context, queue string, body []byte) ([]byte, error) {
 	publishCh, err := c.amqpConnection.Channel()
 	if err != nil {
 		return nil, err
@@ -368,7 +619,8 @@ func (c *AmqpClient) executeRPC(queue string, body []byte) ([]byte, error) {
 	}
 
 	corrID := fmt.Sprintf("test-%d", rand.Int())
-	err = publishCh.Publish(
+	err = publishCh.PublishWithContext(
+		ctx,
 		"",    // exchange
 		queue, // routing key
 		false, // mandatory
@@ -384,8 +636,11 @@ func (c *AmqpClient) executeRPC(queue string, body []byte) ([]byte, error) {
 		return nil, fmt.Errorf("cannot publish to queue: %v", err)
 	}
 
+	timer := time.NewTimer(stepTimeout)
+	defer timer.Stop()
+
 	select {
-	case <-time.After(stepTimeout):
+	case <-timer.C:
 		return nil, errors.New("reached timeout")
 	case d, ok := <-msgs:
 		if !ok {
@@ -400,20 +655,127 @@ func (c *AmqpClient) executeRPC(queue string, body []byte) ([]byte, error) {
 	}
 }
 
-func (c *AmqpClient) executeTemplate(tpl string) (*bytes.Buffer, error) {
-	t, err := template.New("tpl").Option("missingkey=error").Parse(tpl)
-	if err != nil {
-		return nil, err
+func (c *AmqpClient) catchEvents(ctx context.Context, expectedEvents []map[string]interface{}) error {
+	if len(expectedEvents) == 0 {
+		return nil
 	}
 
-	data := map[string]interface{}{
-		"apiUrl": c.apiURL,
-	}
-	buf := new(bytes.Buffer)
-	err = t.Execute(buf, data)
+	caughtEvents := make([]map[string]interface{}, 0)
+	matched := make(map[int]bool, len(expectedEvents))
+	timer := time.NewTimer(stepTimeout)
+	defer timer.Stop()
+
+	msgs, err := c.getMainStreamAckConsumer(ctx)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return buf, nil
+	scName, _ := GetScenarioName(ctx)
+	scUri, _ := GetScenarioUri(ctx)
+
+	for {
+		select {
+		case d, ok := <-msgs:
+			if !ok {
+				return errors.New("consume chan is closed")
+			}
+
+			event, eventMap, err := c.decodeEvent(d.Body)
+			if err != nil {
+				c.eventLogger.
+					Err(err).
+					RawJSON("body", d.Body).
+					Str("file", scUri).
+					Str("scenario", scName).
+					Msg("received invalid event")
+				continue
+			}
+
+			caughtEvents = append(caughtEvents, eventMap)
+			foundIndex := -1
+			for i, expectedEvent := range expectedEvents {
+				if matched[i] {
+					continue
+				}
+				m := true
+				for k, v := range expectedEvent {
+					if v != eventMap[k] {
+						m = false
+						break
+					}
+				}
+				if m {
+					matched[i] = true
+					foundIndex = i
+					break
+				}
+			}
+
+			c.eventLogger.Info().
+				Str("event_type", event.EventType).
+				Str("entity", event.GetEID()).
+				Bool("matched", foundIndex >= 0).
+				Str("file", scUri).
+				Str("scenario", scName).
+				RawJSON("body", d.Body).Msg("received event")
+
+			if len(matched) == len(expectedEvents) {
+				return nil
+			}
+		case <-timer.C:
+			return fmt.Errorf("reached timeout: caught %d events out of %d\n%s\n", len(matched), len(expectedEvents),
+				pretty.Compare(c.filterEventFields(caughtEvents), expectedEvents))
+		}
+	}
+}
+
+func (c *AmqpClient) getMainStreamAckConsumer(ctx context.Context) (<-chan amqp.Delivery, error) {
+	c.ackConsumersMx.Lock()
+	defer c.ackConsumersMx.Unlock()
+
+	if i, ok := getConsumer(ctx); ok {
+		return c.ackConsumers[i], nil
+	}
+
+	return nil, fmt.Errorf("scenario isn't started")
+}
+
+func (c *AmqpClient) decodeEvent(msg []byte) (types.Event, map[string]interface{}, error) {
+	event := types.Event{}
+	eventMap := make(map[string]interface{})
+	err := c.decoder.Decode(msg, &eventMap)
+	if err != nil {
+		return event, eventMap, err
+	}
+	err = c.decoder.Decode(msg, &event)
+	return event, eventMap, err
+}
+
+func (c *AmqpClient) matchEvent(event map[string]interface{}, expectedEvents []map[string]interface{}) int {
+	for i, expectedEvent := range expectedEvents {
+		matched := true
+		for k, v := range expectedEvent {
+			if v != event[k] {
+				matched = false
+				break
+			}
+		}
+		if matched {
+			return i
+		}
+	}
+
+	return -1
+}
+
+func (c *AmqpClient) filterEventFields(events []map[string]any) []map[string]any {
+	result := make([]map[string]any, len(events))
+	for i, event := range events {
+		filteredEvent := make(map[string]any, len(fifoAckEventFields))
+		for _, field := range fifoAckEventFields {
+			filteredEvent[field] = event[field]
+		}
+		result[i] = filteredEvent
+	}
+	return result
 }

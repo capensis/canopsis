@@ -1,13 +1,14 @@
 <template lang="pug">
-  shared-actions-panel(:actions="actions.inline", :drop-down-actions="actions.dropDown")
+  shared-actions-panel(:actions="actions")
 </template>
 
 <script>
 import { compact, pickBy } from 'lodash';
 
-import { MODALS, CONTEXT_ACTIONS_TYPES, ENTITY_TYPES } from '@/constants';
+import { MODALS, CONTEXT_ACTIONS_TYPES, ENTITY_TYPES, OLD_PATTERNS_FIELDS } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
+import { createEntityIdPatternByValue, isOldPattern } from '@/helpers/pattern';
 
 import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
 
@@ -19,7 +20,6 @@ import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.
  * @module context
  *
  * @prop {Object} item - Item of context entities lists
- * @prop {boolean} [editing=false] - Is editing mode enable on a view
  */
 export default {
   components: { SharedActionsPanel },
@@ -31,19 +31,17 @@ export default {
       type: Object,
       required: true,
     },
-    editing: {
-      type: Boolean,
-      default: false,
-    },
   },
-  data() {
-    return {
-      actionsMap: {
+  computed: {
+    actionsMap() {
+      return {
         editEntity: {
           type: CONTEXT_ACTIONS_TYPES.editEntity,
           icon: 'edit',
           iconColor: 'primary',
           title: this.$t('context.actions.titles.editEntity'),
+          badgeValue: isOldPattern(this.item, [OLD_PATTERNS_FIELDS.entity]),
+          badgeTooltip: this.$t('pattern.oldPatternTooltip'),
           method: this.showEditEntityModal,
         },
         duplicateEntity: {
@@ -71,10 +69,9 @@ export default {
           title: this.$t('context.actions.titles.variablesHelp'),
           method: this.showVariablesHelpModal,
         },
-      },
-    };
-  },
-  computed: {
+      };
+    },
+
     filteredActionsMap() {
       return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
     },
@@ -82,7 +79,7 @@ export default {
     actions() {
       const { filteredActionsMap } = this;
 
-      let actions = [
+      const actions = [
         filteredActionsMap.editEntity,
       ];
 
@@ -96,16 +93,7 @@ export default {
 
       actions.push(filteredActionsMap.pbehavior, filteredActionsMap.variablesHelp);
 
-      if (this.editing) {
-        actions.push(filteredActionsMap.variablesHelp);
-      }
-
-      actions = compact(actions);
-
-      return {
-        inline: actions.slice(0, 3),
-        dropDown: actions.slice(3),
-      };
+      return compact(actions);
     },
   },
   methods: {
@@ -128,12 +116,20 @@ export default {
           },
         });
       } else {
-        const basicEntity = await this.fetchBasicContextEntityWithoutStore({ id: this.item._id });
+        const [basicEntity, { impact, depends }] = await Promise.all([
+          this.fetchBasicContextEntityWithoutStore({ id: this.item._id }),
+          this.fetchContextEntityContextGraphWithoutStore({ id: this.item._id }),
+        ]);
 
         this.$modals.show({
           name: MODALS.createEntity,
           config: {
-            entity: basicEntity,
+            entity: {
+              ...basicEntity,
+
+              impact,
+              depends,
+            },
             title: this.$t('modals.createEntity.edit.title'),
             action: async (data) => {
               await this.updateContextEntityWithPopup({ id: basicEntity._id, data });
@@ -180,9 +176,7 @@ export default {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          filter: {
-            _id: { $in: [this.item._id] },
-          },
+          entityPattern: createEntityIdPatternByValue(this.item._id),
         },
       });
     },

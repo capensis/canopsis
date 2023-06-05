@@ -37,14 +37,16 @@ type typeComputer struct {
 // For example, for active daily periodical behavior at 10:00-12:00 and date 2020-06-01:
 // [2020-06-01T10:00, 2020-06-01T12:00] ActiveTypeID
 // [2020-06-01T00:00, 2020-06-02T00:00] InactiveTypeID
+//
 //easyjson:json
 type ComputedPbehavior struct {
-	Name    string         `json:"n"`
-	Reason  string         `json:"r"`
-	Filter  string         `json:"f"`
-	Types   []ComputedType `json:"t"`
-	Created int64          `json:"c"`
-	Color   string         `json:"-"`
+	Name       string         `json:"n"`
+	ReasonName string         `json:"rn"`
+	ReasonID   string         `json:"r"`
+	Filter     string         `json:"f"`
+	Types      []ComputedType `json:"t"`
+	Created    int64          `json:"c"`
+	Color      string         `json:"-"`
 
 	Pattern       pattern.Entity         `json:"p,omitempty"`
 	OldMongoQuery map[string]interface{} `json:"q,omitempty"`
@@ -219,36 +221,42 @@ func (c *typeComputer) runWorkers(
 	pbehaviorsByID map[string]PBehavior,
 	models models,
 ) (map[string]ComputedPbehavior, error) {
+	eventComputer := NewEventComputer(models.typesByID, models.defaultTypes)
 	resCh := make(chan pbhComputeResult)
-	workerChan := c.createWorkerCh(ctx, pbehaviorsByID)
+	workerCh := make(chan PBehavior)
 	g, ctx := errgroup.WithContext(ctx)
 
-	eventComputer := NewEventComputer(models.typesByID, models.defaultTypes)
+	g.Go(func() error {
+		defer close(workerCh)
+
+		for _, pbehavior := range pbehaviorsByID {
+			select {
+			case <-ctx.Done():
+				return nil
+			case workerCh <- pbehavior:
+			}
+		}
+
+		return nil
+	})
 
 	for worker := 0; worker < c.workerPoolSize; worker++ {
 		g.Go(func() error {
-			for {
-				select {
-				case <-ctx.Done():
-					return nil
-				case p, ok := <-workerChan:
-					if !ok {
-						return nil
-					}
+			for p := range workerCh {
+				res, err := c.computePbehavior(p, span, eventComputer, models)
+				if err != nil {
+					return fmt.Errorf("cannot compute pbehavior id=%q: %w", p.ID, err)
+				}
 
-					res, err := c.computePbehavior(p, span, eventComputer, models)
-					if err != nil {
-						return fmt.Errorf("cannot compute pbehavior id=%q: %w", p.ID, err)
-					}
-
-					if len(res.Types) > 0 {
-						resCh <- pbhComputeResult{
-							id:  p.ID,
-							res: res,
-						}
+				if len(res.Types) > 0 {
+					resCh <- pbhComputeResult{
+						id:  p.ID,
+						res: res,
 					}
 				}
 			}
+
+			return nil
 		})
 	}
 
@@ -267,26 +275,6 @@ func (c *typeComputer) runWorkers(
 	}
 
 	return res, nil
-}
-
-// createWorkerCh creates worker chan and fills it.
-func (c *typeComputer) createWorkerCh(ctx context.Context, pbehaviorsByID map[string]PBehavior) <-chan PBehavior {
-	workerChan := make(chan PBehavior)
-
-	go func() {
-		defer close(workerChan)
-
-		for _, pbehavior := range pbehaviorsByID {
-			select {
-			case <-ctx.Done():
-				return
-			default:
-				workerChan <- pbehavior
-			}
-		}
-	}()
-
-	return workerChan
 }
 
 // computePbehavior calculates Types for provided timespan.
@@ -314,12 +302,12 @@ func (c *typeComputer) computePbehavior(
 		Type:    pbehavior.Type,
 		Exdates: exdates,
 	}
-	compitedTypes, err := eventComputer.Compute(params, span)
+	computedTypes, err := eventComputer.Compute(params, span)
 	if err != nil {
 		return ComputedPbehavior{}, err
 	}
 
-	if len(compitedTypes) > 0 {
+	if len(computedTypes) > 0 {
 		reason, ok := models.reasonsByID[pbehavior.Reason]
 		reasonName := pbehavior.Reason
 		if ok {
@@ -335,11 +323,12 @@ func (c *typeComputer) computePbehavior(
 		}
 
 		return ComputedPbehavior{
-			Name:    pbehavior.Name,
-			Reason:  reasonName,
-			Types:   compitedTypes,
-			Created: pbehavior.Created.Unix(),
-			Color:   pbehavior.Color,
+			Name:       pbehavior.Name,
+			ReasonName: reasonName,
+			ReasonID:   reason.ID,
+			Types:      computedTypes,
+			Created:    pbehavior.Created.Unix(),
+			Color:      pbehavior.Color,
 
 			Pattern:       pbehavior.EntityPattern,
 			OldMongoQuery: oldMongoQuery,
@@ -359,9 +348,7 @@ func (c *typeComputer) getExdates(
 
 	for _, id := range pbehavior.Exceptions {
 		if exception, ok := models.exceptionsByID[id]; ok {
-			for i := range exception.Exdates {
-				res = append(res, exception.Exdates[i])
-			}
+			res = append(res, exception.Exdates...)
 		} else {
 			return nil, fmt.Errorf("unknown exception %v", id)
 		}
