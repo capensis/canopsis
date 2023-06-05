@@ -1,11 +1,12 @@
 package pbehavior_test
 
 import (
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/golang/mock/gomock"
-	"testing"
-	"time"
 )
 
 func TestGetEvent(t *testing.T) {
@@ -18,7 +19,8 @@ func TestGetEvent(t *testing.T) {
 	activeInfo := types.PbehaviorInfo{
 		ID:            "test-pbh-active",
 		Name:          "Pbh active",
-		Reason:        "Reason active",
+		ReasonID:      "Reason active",
+		ReasonName:    "Reason active name",
 		TypeID:        "test-type-active",
 		TypeName:      "Active type",
 		CanonicalType: pbehavior.TypeActive,
@@ -26,7 +28,8 @@ func TestGetEvent(t *testing.T) {
 	anotherActiveInfo := types.PbehaviorInfo{
 		ID:            "test-another-pbh-active",
 		Name:          "Another pbh active",
-		Reason:        "Another reason active",
+		ReasonID:      "Another reason active",
+		ReasonName:    "Another reason active name",
 		TypeID:        "test-another-type-active",
 		TypeName:      "Another active type",
 		CanonicalType: pbehavior.TypeActive,
@@ -34,7 +37,8 @@ func TestGetEvent(t *testing.T) {
 	maintenanceInfo := types.PbehaviorInfo{
 		ID:            "test-pbh-maintenance",
 		Name:          "Pbh maintenance",
-		Reason:        "Reason maintenance",
+		ReasonID:      "Reason maintenance",
+		ReasonName:    "Reason maintenance name",
 		TypeID:        "test-type-maintenance",
 		TypeName:      "Maintenance type",
 		CanonicalType: pbehavior.TypeMaintenance,
@@ -42,7 +46,8 @@ func TestGetEvent(t *testing.T) {
 	anotherMaintenanceInfo := types.PbehaviorInfo{
 		ID:            "test-another-pbh-maintenance",
 		Name:          "Another pbh maintenance",
-		Reason:        "Another reason maintenance",
+		ReasonID:      "Another reason maintenance",
+		ReasonName:    "Another reason maintenance name",
 		TypeID:        "test-another-type-maintenance",
 		TypeName:      "Another maintenance type",
 		CanonicalType: pbehavior.TypeMaintenance,
@@ -55,9 +60,10 @@ func TestGetEvent(t *testing.T) {
 			Name: "Active type",
 			Type: pbehavior.TypeActive,
 		},
-		ResolvedPbhID:     "test-pbh-active",
-		ResolvedPbhName:   "Pbh active",
-		ResolvedPbhReason: "Reason active",
+		ResolvedPbhID:         "test-pbh-active",
+		ResolvedPbhName:       "Pbh active",
+		ResolvedPbhReasonID:   "Reason active",
+		ResolvedPbhReasonName: "Reason active name",
 	}
 	resolvedAnotherActive := pbehavior.ResolveResult{
 		ResolvedType: pbehavior.Type{
@@ -65,9 +71,10 @@ func TestGetEvent(t *testing.T) {
 			Name: "Another active type",
 			Type: pbehavior.TypeActive,
 		},
-		ResolvedPbhID:     "test-another-pbh-active",
-		ResolvedPbhName:   "Another pbh active",
-		ResolvedPbhReason: "Another reason active",
+		ResolvedPbhID:         "test-another-pbh-active",
+		ResolvedPbhName:       "Another pbh active",
+		ResolvedPbhReasonID:   "Another reason active",
+		ResolvedPbhReasonName: "Another reason active name",
 	}
 	resolvedMaintenance := pbehavior.ResolveResult{
 		ResolvedType: pbehavior.Type{
@@ -75,9 +82,10 @@ func TestGetEvent(t *testing.T) {
 			Name: "Maintenance type",
 			Type: pbehavior.TypeMaintenance,
 		},
-		ResolvedPbhID:     "test-pbh-maintenance",
-		ResolvedPbhName:   "Pbh maintenance",
-		ResolvedPbhReason: "Reason maintenance",
+		ResolvedPbhID:         "test-pbh-maintenance",
+		ResolvedPbhName:       "Pbh maintenance",
+		ResolvedPbhReasonID:   "Reason maintenance",
+		ResolvedPbhReasonName: "Reason maintenance name",
 	}
 	resolvedAnotherMaintenance := pbehavior.ResolveResult{
 		ResolvedType: pbehavior.Type{
@@ -85,9 +93,10 @@ func TestGetEvent(t *testing.T) {
 			Name: "Another maintenance type",
 			Type: pbehavior.TypeMaintenance,
 		},
-		ResolvedPbhID:     "test-another-pbh-maintenance",
-		ResolvedPbhName:   "Another pbh maintenance",
-		ResolvedPbhReason: "Another reason maintenance",
+		ResolvedPbhID:         "test-another-pbh-maintenance",
+		ResolvedPbhName:       "Another pbh maintenance",
+		ResolvedPbhReasonID:   "Another reason maintenance",
+		ResolvedPbhReasonName: "Another reason maintenance name",
 	}
 
 	var dataSets = []struct {

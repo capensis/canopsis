@@ -1,11 +1,11 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ config.title }}
-      template(slot="text")
+      template(#text="")
         service-form(v-model="form")
-      template(slot="actions")
+      template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled || advancedJsonWasChanged",
@@ -17,7 +17,7 @@
 <script>
 import { get } from 'lodash';
 
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { serviceToForm, formToService } from '@/helpers/forms/service';
 
@@ -34,6 +34,7 @@ export default {
   name: MODALS.createService,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { ServiceForm, ModalWrapper },
   mixins: [

@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    v-layout.white.calender-wrapper
+    v-layout.calender-wrapper
       c-progress-overlay(:pending="pending")
       c-alert-overlay(
         :value="hasError",
@@ -29,11 +29,11 @@ import { get, isEmpty, omit } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Units } from 'dayspan';
 
-import { DATETIME_FORMATS, MODALS, MAX_LIMIT } from '@/constants';
+import { MODALS, MAX_LIMIT } from '@/constants';
 
-import { convertDateToString } from '@/helpers/date/date';
+import { convertDateToTimestamp } from '@/helpers/date/date';
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/calendar/dayspan';
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 
@@ -157,34 +157,41 @@ export default {
       this.showAlarmsListModal(meta);
     },
 
+    getCommonQuery() {
+      return omit(this.query, ['filters', 'considerPbehaviors']);
+    },
+
     showAlarmsListModal(meta) {
-      const widget = generateDefaultAlarmListWidget();
+      const widget = generatePreparedDefaultAlarmListWidget();
 
-      const widgetParameters = {
+      widget.parameters = {
+        ...widget.parameters,
         ...this.widget.parameters.alarmsList,
-
-        opened: this.widget.parameters.opened,
-        liveReporting: {
-          tstart: convertDateToString(meta.tstart, DATETIME_FORMATS.dateTimePicker),
-          tstop: convertDateToString(meta.tstop, DATETIME_FORMATS.dateTimePicker),
-        },
       };
-
-      if (!isEmpty(meta.filter)) {
-        widgetParameters.viewFilters = [meta.filter];
-        widgetParameters.mainFilter = meta.filter;
-      }
 
       this.$modals.show({
         name: MODALS.alarmsList,
         config: {
-          widget: {
-            ...widget,
+          widget,
+          title: this.$t('modals.alarmsList.prefixTitle', {
+            prefix: meta.filter.title,
+          }),
+          fetchList: (params) => {
+            const newParams = {
+              ...this.getCommonQuery(),
+              ...params,
 
-            parameters: {
-              ...widget.parameters,
-              ...widgetParameters,
-            },
+              tstart: convertDateToTimestamp(meta.tstart),
+              tstop: convertDateToTimestamp(meta.tstop),
+            };
+
+            if (meta.filter?._id) {
+              newParams.filters = [meta.filter._id];
+            }
+
+            return this.fetchAlarmsListWithoutStore({
+              params: newParams,
+            });
           },
         },
       });
@@ -196,10 +203,11 @@ export default {
 
     async fetchList() {
       try {
-        const query = omit(this.query, ['filters', 'considerPbehaviors']);
+        const { start, end } = this.calendar.filled;
+        const query = this.getCommonQuery();
 
-        query.tstart = this.calendar.start.date.unix();
-        query.tstop = this.calendar.end.date.unix();
+        query.tstart = start.date.unix();
+        query.tstop = end.date.unix();
         query.limit = MAX_LIMIT;
 
         this.pending = true;
@@ -217,10 +225,11 @@ export default {
           this.alarms = alarms;
           this.alarmsCollections = [];
         } else {
-          const results = await Promise.all(this.query.filters.map(({ filter }) => this.fetchAlarmsListWithoutStore({
+          const results = await Promise.all(this.query.filters.map(({ _id: id }) => this.fetchAlarmsListWithoutStore({
             params: {
               ...query,
-              filter,
+
+              filters: [id],
             },
           })));
 
@@ -248,11 +257,11 @@ export default {
   .calender-wrapper {
     position: relative;
 
-    & /deep/ .ds-calendar-event {
+    & ::v-deep .ds-calendar-event {
       font-size: 14px;
     }
 
-    & /deep/ .ds-calendar-app.stats-calendar-app {
+    & ::v-deep .ds-calendar-app.stats-calendar-app {
       .ds-calendar-event {
         cursor: pointer !important;
       }
@@ -296,7 +305,7 @@ export default {
       }
 
       &:not(.single) {
-        & /deep/ .ds-calendar-event-menu {
+        & ::v-deep .ds-calendar-event-menu {
           position: relative;
           height: 20px;
 
@@ -311,13 +320,13 @@ export default {
       }
     }
 
-    & /deep/ .ds-week-view {
+    & ::v-deep .ds-week-view {
       .ds-ev-title {
         display: block;
       }
     }
 
-    & /deep/ .ds-day {
+    & ::v-deep .ds-day {
       position: relative;
 
       .ds-dom {
@@ -329,6 +338,10 @@ export default {
 
         &.ds-today-dom {
           background-color: #4285f4;
+        }
+
+        .theme--dark & {
+          background-color: black;
         }
       }
 

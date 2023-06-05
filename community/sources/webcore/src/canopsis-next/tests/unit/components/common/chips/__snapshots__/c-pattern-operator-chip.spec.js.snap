@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-pattern-operator-chip Renders \`c-pattern-operator-chip\` 1`] = `
+<div
+  class="text-uppercase c-pattern-operator-chip bg-gray"
+>
+  <div
+    class="default-slot"
+  />
+</div>
+`;

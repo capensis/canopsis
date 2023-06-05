@@ -3,6 +3,7 @@ package datastorage
 import (
 	"context"
 	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -117,6 +118,22 @@ func (a *adapter) UpdateHistoryHealthCheck(ctx context.Context, t types.CpsTime)
 	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{
 		"$set": bson.M{
 			"history.health_check": t,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	if res.MatchedCount == 0 {
+		return fmt.Errorf("cannot find configuration _id=%s", ID)
+	}
+
+	return nil
+}
+
+func (a *adapter) UpdateHistoryWebhook(ctx context.Context, t types.CpsTime) error {
+	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{
+		"$set": bson.M{
+			"history.webhook": t,
 		},
 	})
 	if err != nil {

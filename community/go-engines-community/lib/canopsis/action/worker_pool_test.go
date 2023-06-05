@@ -8,15 +8,19 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
-	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_engine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/engine"
+	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
+	"github.com/rs/zerolog"
 )
 
 func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
@@ -59,12 +63,27 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 
 	axeRpcMock := mock_engine.NewMockRPCClient(ctrl)
 	webhookRpcMock := mock_engine.NewMockRPCClient(ctrl)
-	alarmAdapterMock := mock_alarm.NewMockAdapter(ctrl)
+	mongoClientMock := mock_mongo.NewMockDbClient(ctrl)
+	alarmCollectionMock := mock_mongo.NewMockDbCollection(ctrl)
+	webhookHistoryCollectionMock := mock_mongo.NewMockDbCollection(ctrl)
+
+	mongoClientMock.EXPECT().Collection(gomock.Any()).DoAndReturn(func(name string) mongo.DbCollection {
+		switch name {
+		case mongo.AlarmMongoCollection:
+			return alarmCollectionMock
+		case mongo.WebhookHistoryMongoCollection:
+			return webhookHistoryCollectionMock
+		}
+
+		return nil
+	}).AnyTimes()
 
 	taskChannel := make(chan action.Task)
 	defer close(taskChannel)
 
-	pool := action.NewWorkerPool(5, axeRpcMock, webhookRpcMock, alarmAdapterMock, json.NewEncoder(), log.NewLogger(true), nil)
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+
+	pool := action.NewWorkerPool(5, mongoClientMock, axeRpcMock, webhookRpcMock, json.NewEncoder(), zerolog.Nop(), tplExecutor)
 	resultChannel, err := pool.RunWorkers(ctx, taskChannel)
 	if err != nil {
 		t.Fatal("error shouldn't be raised")
@@ -101,8 +120,8 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 						},
 					},
 				},
-				ExecutionID: "execution_1",
-				Step:        2,
+				ExecutionCacheKey: "execution_1",
+				Step:              2,
 			},
 			expectedOutput: "output 1",
 			expectedAuthor: "author 1",
@@ -122,8 +141,8 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				Alarm: types.Alarm{
 					ID: "8",
 				},
-				ExecutionID: "execution_2",
-				Step:        1,
+				ExecutionCacheKey: "execution_2",
+				Step:              1,
 			},
 			expectedNotMatched: true,
 		},
@@ -151,8 +170,8 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 						},
 					},
 				},
-				ExecutionID: "execution_3",
-				Step:        4,
+				ExecutionCacheKey: "execution_3",
+				Step:              4,
 			},
 			expectedOutput: "output 3",
 			expectedAuthor: "author 3",
@@ -183,8 +202,8 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 						},
 					},
 				},
-				ExecutionID: "execution_1",
-				Step:        2,
+				ExecutionCacheKey: "execution_1",
+				Step:              2,
 			},
 			expectedOutput: "rendered output: test",
 			expectedAuthor: "rendered author: 9",
@@ -199,19 +218,19 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 			if !dataset.expectedNotMatched {
 				axeRpcMock.
 					EXPECT().
-					Call(gomock.Any()).
+					Call(gomock.Any(), gomock.Any()).
 					Times(1).
-					Do(func(val1 interface{}) {
+					Do(func(_ context.Context, val1 interface{}) {
 						decoder := json.NewDecoder()
 						message := val1.(engine.RPCMessage)
 						correlationID := message.CorrelationID
 
-						expectedCorrelationID := fmt.Sprintf("%s&&%d", dataset.task.ExecutionID, dataset.task.Step)
+						expectedCorrelationID := fmt.Sprintf("%s&&%d", dataset.task.ExecutionCacheKey, dataset.task.Step)
 						if expectedCorrelationID != correlationID {
 							t.Errorf("expected correlation_id = %s, got %s", expectedCorrelationID, correlationID)
 						}
 
-						var event types.RPCAxeEvent
+						var event rpc.AxeEvent
 						err := decoder.Decode(message.Body, &event)
 						if err != nil {
 							t.Error("failed to decode rpc axe event")
@@ -234,7 +253,7 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 				result := <-resultChannel
 				if result.Status == action.TaskNotMatched {
 					if !dataset.expectedNotMatched {
-						t.Errorf("Task for action executionID=%s should be matched", result.ExecutionID)
+						t.Errorf("Task for action executionCacheKey=%s should be matched", result.ExecutionCacheKey)
 					}
 				}
 			} else {
@@ -267,12 +286,25 @@ func TestPool_RunWorkers_GivenCancelContext_ShouldCancelTasks(t *testing.T) {
 
 	axeRpcMock := mock_engine.NewMockRPCClient(ctrl)
 	webhookRpcMock := mock_engine.NewMockRPCClient(ctrl)
-	alarmAdapterMock := mock_alarm.NewMockAdapter(ctrl)
+	mongoClientMock := mock_mongo.NewMockDbClient(ctrl)
+	alarmCollectionMock := mock_mongo.NewMockDbCollection(ctrl)
+	webhookHistoryCollectionMock := mock_mongo.NewMockDbCollection(ctrl)
+
+	mongoClientMock.EXPECT().Collection(gomock.Any()).DoAndReturn(func(name string) mongo.DbCollection {
+		switch name {
+		case mongo.AlarmMongoCollection:
+			return alarmCollectionMock
+		case mongo.WebhookHistoryMongoCollection:
+			return webhookHistoryCollectionMock
+		}
+
+		return nil
+	}).AnyTimes()
 
 	taskChannel := make(chan action.Task)
 
 	poolSize := 5
-	pool := action.NewWorkerPool(poolSize, axeRpcMock, webhookRpcMock, alarmAdapterMock, json.NewEncoder(), log.NewLogger(true), nil)
+	pool := action.NewWorkerPool(poolSize, mongoClientMock, axeRpcMock, webhookRpcMock, json.NewEncoder(), zerolog.Nop(), nil)
 	resultChannel, err := pool.RunWorkers(ctx, taskChannel)
 	if err != nil {
 		t.Fatal("error shouldn't be raised")

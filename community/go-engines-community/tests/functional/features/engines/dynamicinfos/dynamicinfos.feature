@@ -52,7 +52,7 @@ Feature: add infos to alarm
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?filter=test-widgetfilter-dynamic-infos-1
+    When I do GET /api/v4/alarms?filters[]=test-widgetfilter-dynamic-infos-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -219,7 +219,7 @@ Feature: add infos to alarm
     """
     When I save response ruleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I do GET /api/v4/alarms?filter=test-widgetfilter-dynamic-infos-3
+    When I do GET /api/v4/alarms?filters[]=test-widgetfilter-dynamic-infos-3
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -429,7 +429,7 @@ Feature: add infos to alarm
       "alarm_update": true
     }
     """
-    When I do GET /api/v4/alarms?filter=test-widgetfilter-dynamic-infos-5 until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?filters[]=test-widgetfilter-dynamic-infos-5 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -498,7 +498,7 @@ Feature: add infos to alarm
     When I wait the end of event processing
     When I do DELETE /api/v4/cat/dynamic-infos/{{ .ruleID }}
     Then the response code should be 204
-    When I do GET /api/v4/alarms?filter=test-widgetfilter-dynamic-infos-6 until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?filters[]=test-widgetfilter-dynamic-infos-6 until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -597,7 +597,7 @@ Feature: add infos to alarm
       "alarm_update": true
     }
     """
-    When I do GET /api/v4/alarms?filter=test-widgetfilter-dynamic-infos-7 until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?filters[]=test-widgetfilter-dynamic-infos-7 until response code is 200 and body contains:
     """json
     {
       "data": [

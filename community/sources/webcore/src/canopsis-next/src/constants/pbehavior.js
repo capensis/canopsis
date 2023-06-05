@@ -25,3 +25,21 @@ export const PBEHAVIOR_TYPE_TYPES = {
 };
 
 export const WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE = 'downtime';
+
+export const PBEHAVIOR_PATTERN_FIELDS = {
+  name: 'pbehavior_info.id',
+  reason: 'pbehavior_info.reason',
+  type: 'pbehavior_info.type',
+  canonicalType: 'pbehavior_info.canonical_type',
+};
+
+export const PBEHAVIOR_INFO_FIELDS = {
+  typeName: 'type_name',
+  reason: 'reason',
+  name: 'name',
+  canonicalType: 'canonical_type',
+};
+
+export const PBEHAVIOR_ORIGINS = {
+  serviceWeather: 'ServiceWeather',
+};

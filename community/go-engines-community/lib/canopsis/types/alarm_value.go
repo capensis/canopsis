@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	cps "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -11,6 +12,12 @@ import (
 const (
 	AlarmStepCropMinStates = 20
 	AlarmStepsHardLimit    = 2000
+)
+
+const (
+	TicketRuleNameScenarioPrefix          = "Scenario: "
+	TicketRuleNameIdleRulePrefix          = "Idle rule: "
+	TicketRuleNameDeclareTicketRulePrefix = "Ticket declaration rule: "
 )
 
 // AlarmStep represents a generic step used in an alarm.
@@ -25,8 +32,59 @@ type AlarmStep struct {
 	StateCounter           CropCounter `bson:"statecounter,omitempty" json:"statecounter,omitempty"`
 	PbehaviorCanonicalType string      `bson:"pbehavior_canonical_type,omitempty" json:"pbehavior_canonical_type,omitempty"`
 	Initiator              string      `bson:"initiator,omitempty" json:"initiator,omitempty"`
-	// Execution contains id if instruction execution for instruction steps only.
+	// Execution contains id
+	// - of instruction execution for instruction steps
+	// - of webhook execution for webhook steps
 	Execution string `bson:"exec,omitempty" json:"exec,omitempty"`
+
+	TicketInfo `bson:",inline"`
+}
+
+type TicketInfo struct {
+	Ticket            string            `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	TicketURL         string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
+	TicketComment     string            `bson:"ticket_comment,omitempty" json:"ticket_comment,omitempty"`
+	TicketSystemName  string            `bson:"ticket_system_name,omitempty" json:"ticket_system_name,omitempty"`
+	TicketMetaAlarmID string            `bson:"ticket_meta_alarm_id,omitempty" json:"ticket_meta_alarm_id,omitempty"`
+	TicketRuleID      string            `bson:"ticket_rule_id,omitempty" json:"ticket_rule_id,omitempty"`
+	TicketRuleName    string            `bson:"ticket_rule_name,omitempty" json:"ticket_rule_name,omitempty"`
+	TicketData        map[string]string `bson:"ticket_data,omitempty" json:"ticket_data,omitempty"`
+}
+
+func (t TicketInfo) GetStepMessage() string {
+	builder := strings.Builder{}
+	builder.WriteString(t.TicketRuleName)
+	extraData := false
+	if t.Ticket != "" {
+		if t.TicketRuleName != "" {
+			builder.WriteString(". ")
+		}
+		builder.WriteString("Ticket ID: ")
+		builder.WriteString(t.Ticket)
+		extraData = true
+	}
+	if t.TicketURL != "" {
+		if t.TicketRuleName != "" || extraData {
+			builder.WriteString(". ")
+		}
+		builder.WriteString("Ticket URL: ")
+		builder.WriteString(t.TicketURL)
+		extraData = true
+	}
+	for k, v := range t.TicketData {
+		if t.TicketRuleName != "" || extraData {
+			builder.WriteString(". ")
+		}
+		builder.WriteString("Ticket ")
+		builder.WriteString(k)
+		builder.WriteString(": ")
+		builder.WriteString(v)
+		extraData = true
+	}
+	if extraData {
+		builder.WriteRune('.')
+	}
+	return builder.String()
 }
 
 // NewAlarmStep returns an AlarmStep.
@@ -138,8 +196,9 @@ func (s *AlarmSteps) Add(step AlarmStep) error {
 
 // Crop steps by replacing stateinc and statedec steps after the current status with a statecounter step
 // Returns :
-// 	- the updated alarm steps
-// 	- True if it was updated, false else
+//   - the updated alarm steps
+//   - True if it was updated, false else
+//
 // param currentStatus: the current status of the alarm. The steps will be cropped from this status
 // param cropNum: crop only if we have at least cropNum steps with type AlarmStepStateIncrease or AlarmStepStateDecrease
 func (s AlarmSteps) Crop(currentStatus *AlarmStep, cropNum int) (AlarmSteps, bool) {
@@ -153,7 +212,7 @@ func (s AlarmSteps) Crop(currentStatus *AlarmStep, cropNum int) (AlarmSteps, boo
 		if step.Type == AlarmStepStateIncrease || step.Type == AlarmStepStateDecrease {
 			nbStepsToCrop += 1
 		}
-		if step == *currentStatus {
+		if step.Type == currentStatus.Type && step.Timestamp.Time.Equal(currentStatus.Timestamp.Time) {
 			currentStatusIdx = i
 		}
 	}
@@ -263,8 +322,10 @@ type PbehaviorInfo struct {
 	ID string `bson:"id" json:"id"`
 	// Name is Name of pbehavior.PBehavior.
 	Name string `bson:"name" json:"name"`
-	// Reason is Name of pbehavior.Reason.
-	Reason string `bson:"reason" json:"reason"`
+	// ReasonName is Name of pbehavior.Reason.
+	ReasonName string `bson:"reason_name" json:"reason_name"`
+	// ReasonID is ID of pbehavior.Reason.
+	ReasonID string `bson:"reason" json:"reason"`
 	// TypeID is ID of pbehavior.Type.
 	TypeID string `bson:"type" json:"type"`
 	// TypeName is Name of pbehavior.Type.
@@ -315,15 +376,16 @@ func (i PbehaviorInfo) Same(v PbehaviorInfo) bool {
 
 // AlarmValue represents a full description of an alarm.
 type AlarmValue struct {
-	ACK         *AlarmStep   `bson:"ack,omitempty" json:"ack,omitempty"`
-	Canceled    *AlarmStep   `bson:"canceled,omitempty" json:"canceled,omitempty"`
-	Done        *AlarmStep   `bson:"done,omitempty" json:"done,omitempty"`
-	Snooze      *AlarmStep   `bson:"snooze,omitempty" json:"snooze,omitempty"`
-	State       *AlarmStep   `bson:"state,omitempty" json:"state,omitempty"`
-	Status      *AlarmStep   `bson:"status,omitempty" json:"status,omitempty"`
-	LastComment *AlarmStep   `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
-	Ticket      *AlarmTicket `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	Steps       AlarmSteps   `bson:"steps" json:"steps"`
+	ACK         *AlarmStep  `bson:"ack,omitempty" json:"ack,omitempty"`
+	Canceled    *AlarmStep  `bson:"canceled,omitempty" json:"canceled,omitempty"`
+	Snooze      *AlarmStep  `bson:"snooze,omitempty" json:"snooze,omitempty"`
+	State       *AlarmStep  `bson:"state,omitempty" json:"state,omitempty"`
+	Status      *AlarmStep  `bson:"status,omitempty" json:"status,omitempty"`
+	LastComment *AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
+	Tickets     []AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
+	// Ticket contains the last created ticket
+	Ticket *AlarmStep `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	Steps  AlarmSteps `bson:"steps" json:"steps"`
 
 	Component         string        `bson:"component" json:"component"`
 	Connector         string        `bson:"connector" json:"connector"`
@@ -342,7 +404,6 @@ type AlarmValue struct {
 	Resource          string        `bson:"resource,omitempty" json:"resource,omitempty"`
 	Resolved          *CpsTime      `bson:"resolved,omitempty" json:"resolved,omitempty"`
 	PbehaviorInfo     PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
-	Tags              []string      `bson:"tags" json:"tags"`
 	Meta              string        `bson:"meta,omitempty" json:"meta,omitempty"`
 	MetaValuePath     string        `bson:"meta_value_path,omitempty" json:"meta_value_path,omitempty"`
 
@@ -385,30 +446,10 @@ func (v *AlarmValue) Transform() {
 	}
 }
 
-// AlarmTicket step is distinct from generic alarm step because value is a string
-// TODO: move string value to message (and in py and js too)
-type AlarmTicket struct {
-	Type      string  `bson:"_t" json:"_t"`
-	Timestamp CpsTime `bson:"t" json:"t"`
-	Author    string  `bson:"a" json:"a"`
-	UserID    string  `bson:"user_id" json:"user_id"`
-	Message   string  `bson:"m" json:"m"`
-	Role      string  `bson:"role,omitempty" json:"role,omitempty"`
-	Value     string  `bson:"val" json:"val"`
-	Data      map[string]string
-}
+func NewTicketStep(stepType string, timestamp CpsTime, author, msg, userID, role, initiator string, ticketInfo TicketInfo) AlarmStep {
+	s := NewAlarmStep(stepType, timestamp, author, msg, userID, role, initiator)
 
-// NewTicket creates a Ticket Step from a normal step
-// TODO: annihilate this heresy (Ticket has a distinct format from other classical steps !)
-func (s AlarmStep) NewTicket(value string, data map[string]string) AlarmTicket {
-	return AlarmTicket{
-		Author:    s.Author,
-		Message:   value,
-		Timestamp: s.Timestamp,
-		Type:      s.Type,
-		UserID:    s.UserID,
-		Value:     value,
-		Data:      data,
-		Role:      s.Role,
-	}
+	s.TicketInfo = ticketInfo
+
+	return s
 }

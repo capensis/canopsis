@@ -2,11 +2,11 @@
   v-layout.pa-4(column, align-center)
     div.kpi-charts
       c-information-block.mb-5(:title="$t('kpi.alarmMetrics')")
-        kpi-alarms
+        kpi-alarms(:unavailable="unavailable")
       c-information-block.mb-5(:title="$tc('common.rating', 2)")
-        kpi-rating
+        kpi-rating(:unavailable="unavailable")
       c-information-block.mb-5(:title="$t('kpi.sli')")
-        kpi-sli
+        kpi-sli(:unavailable="unavailable")
 </template>
 
 <script>
@@ -19,6 +19,12 @@ export default {
     KpiAlarms,
     KpiRating,
     KpiSli,
+  },
+  props: {
+    unavailable: {
+      type: Boolean,
+      default: false,
+    },
   },
 };
 </script>

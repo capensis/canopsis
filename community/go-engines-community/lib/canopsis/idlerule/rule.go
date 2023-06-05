@@ -30,6 +30,7 @@ type Rule struct {
 	Type              string                       `bson:"type" json:"type"`
 	Priority          int64                        `bson:"priority" json:"priority"`
 	Duration          types.DurationWithUnit       `bson:"duration" json:"duration"`
+	Comment           string                       `bson:"comment" json:"comment"`
 	OldEntityPatterns oldpattern.EntityPatternList `bson:"old_entity_patterns,omitempty" json:"old_entity_patterns,omitempty"`
 	// DisableDuringPeriods is an option that allows to disable the rule
 	// when entity is in listed periods due pbehavior schedule.
@@ -51,7 +52,14 @@ type Parameters struct {
 	// ChangeState
 	State *types.CpsNumber `json:"state" bson:"state,omitempty"`
 	// AssocTicket
-	Ticket string `json:"ticket" bson:"ticket,omitempty" binding:"max=255" `
+	// Ticket is used in assocticket action.
+	Ticket string `json:"ticket,omitempty" binding:"max=255" bson:"ticket,omitempty"`
+	// TicketURL is used in assocticket action.
+	TicketURL string `json:"ticket_url,omitempty" binding:"max=255" bson:"ticket_url,omitempty"`
+	// TicketSystemName is used in assocticket action.
+	TicketSystemName string `json:"ticket_system_name,omitempty" binding:"max=255" bson:"ticket_system_name,omitempty"`
+	// TicketData is used in assocticket action.
+	TicketData map[string]string `json:"ticket_data,omitempty" bson:"ticket_data,omitempty"`
 	// Snooze and Pbehavior
 	Duration *types.DurationWithUnit `json:"duration" bson:"duration,omitempty"`
 	// Pbehavior

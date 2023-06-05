@@ -1,12 +1,12 @@
 <template lang="pug">
-  v-tooltip(:left="leftTooltip", :top="topTooltip")
-    v-btn(
+  v-tooltip.view-fullscreen-btn(:left="leftTooltip", :top="topTooltip")
+    v-btn.view-fullscreen-btn__button(
       slot="activator",
-      v-model="fullscreen",
+      :value="value",
       :small="small",
       fab,
       dark,
-      @click.stop="toggleFullScreenMode"
+      @click.stop="toggleFullScreen"
     )
       v-icon fullscreen
       v-icon fullscreen_exit
@@ -17,9 +17,9 @@
 <script>
 export default {
   props: {
-    activeTab: {
-      type: Object,
-      required: false,
+    value: {
+      type: Boolean,
+      default: false,
     },
     small: {
       type: Boolean,
@@ -33,45 +33,24 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  data() {
-    return {
-      fullscreen: false,
-    };
-  },
-  created() {
-    document.addEventListener('keydown', this.keyDownListener);
-  },
-  beforeDestroy() {
-    this.$fullscreen.exit();
-    document.removeEventListener('keydown', this.keyDownListener);
-  },
-  methods: {
-    toggleFullScreenMode() {
-      if (!this.activeTab) {
-        this.$popups.warning({ text: this.$t('view.errors.emptyTabs') });
-        return;
-      }
-
-      const element = document.getElementById(`view-tab-${this.activeTab._id}`);
-
-      if (!element) {
-        return;
-      }
-
-      this.$fullscreen.toggle(element, {
-        fullscreenClass: 'full-screen',
-        background: 'white',
-        callback: value => this.fullscreen = value,
-      });
-    },
-
-    keyDownListener(event) {
-      if (event.key === 'Enter' && event.altKey) {
-        this.toggleFullScreenMode();
-        event.preventDefault();
-      }
+    toggleFullScreen: {
+      type: Function,
+      default: () => () => {},
     },
   },
 };
 </script>
+
+<style lang="scss">
+.view-fullscreen-btn {
+  &__button  {
+    border-color: #212121 !important;
+    background-color: #212121 !important;
+
+    .theme--dark & {
+      border-color: #979797 !important;
+      background-color: #979797 !important;
+    }
+  }
+}
+</style>

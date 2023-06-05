@@ -1,5 +1,3 @@
-import { find } from 'lodash';
-
 import {
   REQUEST_MESSAGES_TYPES,
   RESPONSE_MESSAGES_TYPES,
@@ -18,13 +16,13 @@ class Socket {
     this.token = '';
     this.url = '';
     this.protocols = '';
-    this.sendQueue = [];
+    this.messagesToSend = [];
     this.listeners = {};
     this.reconnecting = false;
     this.reconnectsCount = 0;
     this.lastPingedAt = 0;
     this.lastPongedAt = 0;
-    this.isReconnecting = true;
+    this.authenticated = false;
     this.baseOpenHandler = this.baseOpenHandler.bind(this);
     this.baseCloseHandler = this.baseCloseHandler.bind(this);
     this.baseErrorHandler = this.baseErrorHandler.bind(this);
@@ -88,12 +86,7 @@ class Socket {
     }
 
     this.connect(this.url, this.protocols);
-
-    if (this.token) {
-      this.authenticate();
-    }
-
-    Object.keys(this.rooms).forEach(name => this.join(name));
+    this.joinToActiveRooms();
 
     return this;
   }
@@ -155,16 +148,37 @@ class Socket {
   }
 
   /**
+   * Add new message to messagesToSend array
+   *
+   * @param {Object} message
+   * @returns {Socket}
+   */
+  addMessageToSend(message) {
+    const messageExists = this.messagesToSend
+      .find(({ data, authNeeded }) => message.data === data && message.authNeeded === authNeeded);
+
+    if (messageExists) {
+      return this;
+    }
+
+    this.messagesToSend.push(message);
+
+    return this;
+  }
+
+  /**
    * Send data to connection
    *
    * @param {Object} data
+   * @param {boolean} [authNeeded = false]
    * @returns {Socket}
    */
-  send(data) {
-    if (!this.isConnectionOpen) {
-      if (!find(this.sendQueue, data)) {
-        this.sendQueue.push(data);
-      }
+  send(data, authNeeded = false) {
+    if (!this.isConnectionOpen || (authNeeded && !this.authenticated)) {
+      this.addMessageToSend({
+        data,
+        authNeeded,
+      });
 
       return this;
     }
@@ -182,11 +196,12 @@ class Socket {
    * Join to a room
    *
    * @param {string} room
+   * @param {boolean} [authNeeded = true]
    * @returns {SocketRoom}
    */
-  join(room) {
+  join(room, authNeeded = true) {
     if (!this.rooms[room]) {
-      this.rooms[room] = new SocketRoom(room);
+      this.rooms[room] = new SocketRoom(room, authNeeded);
     } else {
       this.rooms[room].increment();
     }
@@ -194,7 +209,7 @@ class Socket {
     this.send({
       room,
       type: REQUEST_MESSAGES_TYPES.join,
-    });
+    }, authNeeded);
 
     return this.rooms[room];
   }
@@ -231,6 +246,10 @@ class Socket {
    * @return {Socket}
    */
   authenticate(token = this.token) {
+    if (this.authenticated && token === this.token) {
+      return this;
+    }
+
     this.token = token;
 
     this.send({
@@ -317,6 +336,53 @@ class Socket {
   }
 
   /**
+   * Joint to active rooms after reconnection
+   */
+  joinToActiveRooms() {
+    Object.entries(this.rooms).forEach(([name, room]) => {
+      room.decrement();
+
+      this.join(name, room.authNeeded);
+    });
+
+    return this;
+  }
+
+  /**
+   * Send messages which was added to messagesToSend array while connection was closed
+   *
+   * @returns {Socket}
+   */
+  sendMessagesToSend() {
+    if (!this.messagesToSend.length) {
+      return this;
+    }
+
+    const { toSend, toDelay } = this.messagesToSend.reduce((acc, message) => {
+      if (message.data.type === REQUEST_MESSAGES_TYPES.leave) {
+        return acc;
+      }
+
+      if (this.authenticated || !message.authNeeded) {
+        acc.toSend.push(message);
+      } else {
+        acc.toDelay.push(message);
+      }
+
+      return acc;
+    }, {
+      toSend: [],
+      toDelay: [],
+    });
+
+    toSend.forEach(({ data, authNeeded }) => this.send(data, authNeeded));
+
+    this.messagesToSend = toDelay;
+
+    return this;
+  }
+
+  /**
    * Stop reconnecting mechanism
    */
   stopReconnecting() {
@@ -332,12 +398,11 @@ class Socket {
   baseOpenHandler() {
     this.stopReconnecting();
 
-    if (this.sendQueue.length) {
-      this.sendQueue.forEach(data => this.send(data));
+    if (this.token) {
+      this.authenticate();
     }
 
-    this.sendQueue = [];
-
+    this.sendMessagesToSend();
     this.stopPinging();
     this.startPinging();
   }
@@ -346,6 +411,8 @@ class Socket {
    * Base handler for 'close' event
    */
   baseCloseHandler() {
+    this.authenticated = false;
+
     if (this.reconnecting) {
       return;
     }
@@ -365,6 +432,8 @@ class Socket {
 
       return;
     }
+
+    this.authenticated = false;
 
     if (this.reconnecting) {
       return;
@@ -399,6 +468,10 @@ class Socket {
         this.connection.dispatchEvent(
           new Event(EVENTS_TYPES.closeRoom),
         );
+        break;
+      case RESPONSE_MESSAGES_TYPES.authenticated:
+        this.authenticated = true;
+        this.sendMessagesToSend();
         break;
       default:
         this.connection.dispatchEvent(

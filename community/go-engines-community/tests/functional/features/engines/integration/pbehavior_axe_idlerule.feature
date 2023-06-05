@@ -82,7 +82,8 @@ Feature: update alarm on idle rule
             "pbehavior_info": {
               "canonical_type": "maintenance",
               "name": "test-pbehavior-pbehavior-axe-idlerule-1",
-              "reason": "Test Engine",
+              "reason": "test-reason-to-engine",
+              "reason_name": "Test Engine",
               "type": "test-maintenance-type-to-engine",
               "type_name": "Engine maintenance"
             },
@@ -259,7 +260,8 @@ Feature: update alarm on idle rule
             "pbehavior_info": {
               "canonical_type": "maintenance",
               "name": "test-pbehavior-pbehavior-axe-idlerule-2-name",
-              "reason": "Test Engine",
+              "reason": "test-reason-to-engine",
+              "reason_name": "Test Engine",
               "type": "test-maintenance-type-to-engine",
               "type_name": "Engine maintenance"
             },

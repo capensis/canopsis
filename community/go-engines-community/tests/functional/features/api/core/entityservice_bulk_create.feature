@@ -410,14 +410,9 @@ Feature: Bulk create entityservices
       "_id": "test-entityservice-to-bulk-create-1",
       "category": {
         "_id": "test-category-to-entityservice-edit",
-        "name": "test-category-to-entityservice-edit-name",
-        "author": "test-category-to-entityservice-edit-author",
-        "created": 1592215337,
-        "updated": 1592215337
+        "name": "test-category-to-entityservice-edit-name"
       },
-      "depends": [],
       "enabled": true,
-      "enable_history": [],
       "entity_pattern": [
         [
           {
@@ -429,7 +424,6 @@ Feature: Bulk create entityservices
           }
         ]
       ],
-      "impact": [],
       "impact_level": 1,
       "infos": {
         "test-entityservice-to-bulk-create-info-1-name": {
@@ -463,7 +457,6 @@ Feature: Bulk create entityservices
           "value": ["test-entityservice-to-bulk-create-info-6-value", false, 1022, 10.45, null]
         }
       },
-      "measurements": null,
       "name": "test-entityservice-to-bulk-create-1-name",
       "output_template": "test-entityservice-to-bulk-create-1-output",
       "sli_avail_state": 1,
@@ -478,14 +471,9 @@ Feature: Bulk create entityservices
       "_id": "test-entityservice-to-bulk-create-2",
       "category": {
         "_id": "test-category-to-entityservice-edit",
-        "name": "test-category-to-entityservice-edit-name",
-        "author": "test-category-to-entityservice-edit-author",
-        "created": 1592215337,
-        "updated": 1592215337
+        "name": "test-category-to-entityservice-edit-name"
       },
-      "depends": [],
       "enabled": true,
-      "enable_history": [],
       "entity_pattern": [
         [
           {
@@ -497,7 +485,6 @@ Feature: Bulk create entityservices
           }
         ]
       ],
-      "impact": [],
       "impact_level": 1,
       "infos": {
         "test-entityservice-to-bulk-create-info-1-name": {
@@ -531,7 +518,6 @@ Feature: Bulk create entityservices
           "value": ["test-entityservice-to-bulk-create-info-6-value", false, 1022, 10.45, null]
         }
       },
-      "measurements": null,
       "name": "test-entityservice-to-bulk-create-2-name",
       "output_template": "test-entityservice-to-bulk-create-2-output",
       "sli_avail_state": 1,

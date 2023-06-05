@@ -11,11 +11,17 @@ Feature: Get a view tab
     {
       "_id": "test-tab-to-get",
       "title": "test-tab-to-get-title",
-      "author": "test-author-to-tab-get",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "widgets": [
         {
           "_id": "test-widget-to-tab-get-1",
-          "author": "test-user-to-tab-get",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1611229670,
           "grid_parameters": {
             "desktop": {"x": 0,"y": 0}
@@ -35,7 +41,10 @@ Feature: Get a view tab
               "_id": "test-widgetfilter-to-tab-get-1",
               "title": "test-widgetfilter-to-tab-get-1-title",
               "is_private": false,
-              "author": "nopermsuser",
+              "author": {
+                "_id": "nopermsuser",
+                "name": "nopermsuser"
+              },
               "created": 1611229670,
               "updated": 1611229670,
               "alarm_pattern": [
@@ -57,7 +66,10 @@ Feature: Get a view tab
         },
         {
           "_id": "test-widget-to-tab-get-2",
-          "author": "test-user-to-tab-get",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1611229670,
           "grid_parameters": {
             "desktop": {"x": 0,"y": 1}
@@ -77,7 +89,10 @@ Feature: Get a view tab
               "_id": "test-widgetfilter-to-tab-get-2",
               "title": "test-widgetfilter-to-tab-get-2-title",
               "is_private": false,
-              "author": "root",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
               "created": 1611229670,
               "updated": 1611229670,
               "alarm_pattern": [

@@ -60,7 +60,7 @@ export const HEALTHCHECK_ENGINES_REFERENCE_EDGES = [
   },
 ];
 
-export const HEALTHCHECK_ENGINES_CAT_REFERENCE_EDGES = [
+export const HEALTHCHECK_ENGINES_PRO_REFERENCE_EDGES = [
   {
     from: HEALTHCHECK_ENGINES_NAMES.fifo,
     to: HEALTHCHECK_ENGINES_NAMES.che,
@@ -123,7 +123,7 @@ export const ENGINES_NAMES_TO_QUEUE_NAMES = {
   [ENGINES_QUEUE_NAMES.correlation]: HEALTHCHECK_ENGINES_NAMES.correlation,
 };
 
-export const CAT_ENGINES = [
+export const PRO_ENGINES = [
   HEALTHCHECK_ENGINES_NAMES.correlation,
   HEALTHCHECK_ENGINES_NAMES.dynamicInfos,
   HEALTHCHECK_ENGINES_NAMES.webhook,
@@ -145,3 +145,11 @@ export const MESSAGE_STATS_INTERVALS = {
 };
 
 export const HEALTHCHECK_HISTORY_GRAPH_RECEIVED_FACTOR = 1.2;
+
+export const TECH_METRICS_EXPORT_STATUSES = {
+  none: 0,
+  running: 1,
+  success: 2,
+  failed: 3,
+  disabled: 4,
+};

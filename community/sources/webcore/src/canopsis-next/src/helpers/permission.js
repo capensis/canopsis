@@ -1,4 +1,4 @@
-import { get, isUndefined, omit, sortBy, keyBy } from 'lodash';
+import { get, isUndefined, omit, sortBy } from 'lodash';
 import flatten from 'flat';
 
 import {
@@ -11,14 +11,11 @@ import {
 /**
  * Check user access for a permission
  *
- * @param {Object} permissionsById
- * @param {string} permissionId
+ * @param {Object} permission
  * @param {string} action
  * @returns {boolean}
  */
-export const checkUserAccess = (permissionsById, permissionId, action) => {
-  const permission = permissionsById[permissionId];
-
+export const checkUserAccess = (permission, action) => {
   if (permission && permission.actions) {
     const { actions } = permission;
 
@@ -67,11 +64,9 @@ export const getCheckboxValue = (
  * Get prepared grouped permissions for the permissions page
  *
  * @param {Array<Object>} permissions
- * @param {Array<Object>} [views = []]
- * @param {Array<Object>} [playlists = []]
  * @returns {*}
  */
-export const getGroupedPermissions = (permissions, views = [], playlists = []) => {
+export const getGroupedPermissions = (permissions) => {
   const allBusinessPermissionsIds = Object.values(flatten(USERS_PERMISSIONS.business));
   const generalApiPermissions = Object.values(USERS_PERMISSIONS.api.general);
   const rulesApiPermissions = Object.values(USERS_PERMISSIONS.api.rules);
@@ -81,22 +76,20 @@ export const getGroupedPermissions = (permissions, views = [], playlists = []) =
   const {
     exploitation: exploitationTechnicalPermissions,
     notification: notificationTechnicalPermissions,
+    profile: profileTechnicalPermissions,
     ...adminTechnicalPermissions
   } = USERS_PERMISSIONS.technical;
   const adminTechnicalPermissionsValues = Object.values(adminTechnicalPermissions);
   const exploitationTechnicalPermissionsValues = Object.values(exploitationTechnicalPermissions);
   const notificationTechnicalPermissionsValues = Object.values(notificationTechnicalPermissions);
-  const viewsById = keyBy(views, '_id');
-  const playlistsById = keyBy(playlists, '_id');
+  const profileTechnicalPermissionsValues = Object.values(profileTechnicalPermissions);
 
   const groupedPermissions = permissions.reduce((acc, permission) => {
-    const permissionId = String(permission._id, '\'');
-    const view = viewsById[permissionId];
-    const playlist = playlistsById[permissionId];
+    const permissionId = String(permission._id);
 
-    if (view) {
+    if (permission.view && permission.view_group) {
       acc.view.push(permission);
-    } else if (playlist) {
+    } else if (permission.playlist) {
       acc.playlist.push(permission);
     } else if (adminTechnicalPermissionsValues.includes(permissionId)) {
       acc.technical.admin.push(permission);
@@ -104,6 +97,8 @@ export const getGroupedPermissions = (permissions, views = [], playlists = []) =
       acc.technical.exploitation.push(permission);
     } else if (notificationTechnicalPermissionsValues.includes(permissionId)) {
       acc.technical.notification.push(permission);
+    } else if (profileTechnicalPermissionsValues.includes(permissionId)) {
+      acc.technical.profile.push(permission);
     } else if (
       allBusinessPermissionsIds.includes(permissionId)
       || NOT_COMPLETED_USER_PERMISSIONS.some(id => permissionId.startsWith(id))
@@ -132,6 +127,11 @@ export const getGroupedPermissions = (permissions, views = [], playlists = []) =
       [USER_PERMISSIONS_PREFIXES.business.serviceWeather]: [],
       [USER_PERMISSIONS_PREFIXES.business.counter]: [],
       [USER_PERMISSIONS_PREFIXES.business.testingWeather]: [],
+      [USER_PERMISSIONS_PREFIXES.business.map]: [],
+      [USER_PERMISSIONS_PREFIXES.business.barChart]: [],
+      [USER_PERMISSIONS_PREFIXES.business.lineChart]: [],
+      [USER_PERMISSIONS_PREFIXES.business.pieChart]: [],
+      [USER_PERMISSIONS_PREFIXES.business.numbers]: [],
     },
     view: [],
     playlist: [],
@@ -139,6 +139,7 @@ export const getGroupedPermissions = (permissions, views = [], playlists = []) =
       admin: [],
       exploitation: [],
       notification: [],
+      profile: [],
     },
     api: {
       general: [],
@@ -154,7 +155,7 @@ export const getGroupedPermissions = (permissions, views = [], playlists = []) =
    */
   groupedPermissions.business = Object.entries(groupedPermissions.business)
     .map(([key, groupPermissions]) => ({
-      key: `permissions.business.${key}`,
+      key: `permission.business.${key}`,
       permissions: sortBy(groupPermissions, ['description']),
     }));
 
@@ -163,7 +164,7 @@ export const getGroupedPermissions = (permissions, views = [], playlists = []) =
    */
   groupedPermissions.technical = Object.entries(groupedPermissions.technical)
     .map(([key, groupPermissions]) => ({
-      key: `permissions.technical.${key}`,
+      key: `permission.technical.${key}`,
       permissions: sortBy(groupPermissions, ['description']),
     }));
 
@@ -172,11 +173,35 @@ export const getGroupedPermissions = (permissions, views = [], playlists = []) =
    */
   groupedPermissions.api = Object.entries(groupedPermissions.api)
     .map(([key, groupPermissions]) => ({
-      key: `permissions.api.${key}`,
+      key: `permission.api.${key}`,
       permissions: sortBy(groupPermissions, ['description']),
     }));
 
-  groupedPermissions.view.push(...groupedPermissions.playlist);
+  const viewsPermissionsByGroupTitle = groupedPermissions.view.reduce((acc, permission) => {
+    const { view_group: viewGroup, ...rest } = permission;
+
+    if (!acc[viewGroup._id]) {
+      acc[viewGroup._id] = {
+        viewGroup,
+        permissions: [],
+      };
+    }
+
+    acc[viewGroup._id].permissions.push(rest);
+
+    return acc;
+  }, {});
+
+  groupedPermissions.view = sortBy(Object.values(viewsPermissionsByGroupTitle), ['viewGroup.position'])
+    .map(({ viewGroup, permissions: viewGroupPermissions }) => ({
+      name: viewGroup.title,
+      permissions: sortBy(viewGroupPermissions, ['view.position']),
+    }));
+
+  groupedPermissions.view.push({
+    key: 'common.playlist',
+    permissions: sortBy(groupedPermissions.playlist, ['playlist.name']),
+  });
 
   return omit(groupedPermissions, ['playlist']);
 };

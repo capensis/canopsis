@@ -15,11 +15,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type messageProcessor struct {
@@ -27,15 +29,20 @@ type messageProcessor struct {
 	DbClient                 mongo.DbClient
 	AlarmConfigProvider      config.AlarmConfigProvider
 	EventFilterService       eventfilter.Service
-	MetaUpdater              metrics.MetaUpdater
+	MetricsSender            metrics.Sender
+	TechMetricsSender        techmetrics.Sender
 	ContextGraphManager      contextgraph.Manager
 	AmqpPublisher            libamqp.Publisher
+	EntityCollection         mongo.DbCollection
 	Encoder                  encoding.Encoder
 	Decoder                  encoding.Decoder
 	Logger                   zerolog.Logger
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
+	eventMetric := techmetrics.CheEventMetric{}
+	eventMetric.Timestamp = time.Now()
+
 	ctx, task := trace.NewTask(parentCtx, "che.WorkerProcess")
 	defer task.End()
 
@@ -66,6 +73,23 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		p.logError(err, "invalid event", d.Body)
 		return nil, nil
 	}
+
+	//updatedEntityServices := libcontext.UpdatedEntityServices{}
+
+	defer func() {
+		if event.Entity != nil {
+			eventMetric.EntityType = event.Entity.Type
+			eventMetric.IsNewEntity = event.Entity.IsNew
+		}
+
+		eventMetric.IsInfosUpdated = event.IsEntityUpdated
+		//eventMetric.IsServicesUpdated = len(updatedEntityServices.AddedTo) > 0 || len(updatedEntityServices.RemovedFrom) > 0
+		eventMetric.Interval = time.Since(eventMetric.Timestamp)
+
+		p.TechMetricsSender.SendCheEvent(eventMetric)
+	}()
+
+	eventMetric.EventType = event.EventType
 
 	alarmConfig := p.AlarmConfigProvider.Get()
 	event.Output = utils.TruncateString(event.Output, alarmConfig.OutputLength)
@@ -167,7 +191,9 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		return nil, nil
 	}
 
-	go p.postProcessUpdatedEntities(event, updatedEntities)
+	go p.postProcessUpdatedEntities(ctx, event, updatedEntities)
+
+	p.handlePerfData(ctx, event)
 
 	event.Format()
 	body, err := p.Encoder.Encode(event)
@@ -179,13 +205,13 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	return body, nil
 }
 
-func (p *messageProcessor) postProcessUpdatedEntities(event types.Event, updatedEntities []types.Entity) {
+func (p *messageProcessor) postProcessUpdatedEntities(ctx context.Context, event types.Event, updatedEntities []types.Entity) {
 	entityIDs := make([]string, len(updatedEntities))
 
 	for idx, ent := range updatedEntities {
 		entityIDs[idx] = ent.ID
 
-		if (len(ent.ImpactedServicesToAdd) != 0 || len(ent.ImpactedServicesToRemove) != 0) && ent.ID != event.GetEID() && ent.Type != types.EntityTypeService {
+		if (len(ent.ServicesToAdd) != 0 || len(ent.ServicesToRemove) != 0) && ent.ID != event.GetEID() && ent.Type != types.EntityTypeService {
 			var updateCountersEvent types.Event
 
 			switch ent.Type {
@@ -226,7 +252,8 @@ func (p *messageProcessor) postProcessUpdatedEntities(event types.Event, updated
 				p.Logger.Err(err).Msg("unable to serialize event")
 			}
 
-			err = p.AmqpPublisher.Publish(
+			err = p.AmqpPublisher.PublishWithContext(
+				ctx,
 				"",
 				canopsis.AxeQueueName,
 				false,
@@ -242,7 +269,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(event types.Event, updated
 		}
 	}
 
-	p.MetaUpdater.UpdateById(context.Background(), entityIDs...)
+	//p.MetaUpdater.UpdateById(context.Background(), entityIDs...)
 }
 
 func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {
@@ -250,5 +277,31 @@ func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {
 		p.Logger.Err(err).Str("event", string(msg)).Msg(errMsg)
 	} else {
 		p.Logger.Err(err).Msg(errMsg)
+	}
+}
+
+func (p *messageProcessor) handlePerfData(ctx context.Context, event types.Event) {
+	if event.EventType != types.EventTypeCheck || event.Entity == nil {
+		return
+	}
+
+	perfData := event.GetPerfData()
+	now := time.Now()
+	names := make([]string, len(perfData))
+	for i, v := range perfData {
+		p.MetricsSender.SendPerfData(now, event.Entity.ID, v.Name, v.Value, v.Unit)
+		names[i] = v.Name
+	}
+
+	if len(names) > 0 {
+		go func() {
+			_, err := p.EntityCollection.UpdateOne(ctx, bson.M{"_id": event.Entity.ID}, bson.M{
+				"$addToSet": bson.M{"perf_data": bson.M{"$each": names}},
+				"$set":      bson.M{"perf_data_updated": types.CpsTime{Time: now}},
+			})
+			if err != nil {
+				p.Logger.Err(err).Str("entity", event.Entity.ID).Msg("cannot update entity perf data")
+			}
+		}()
 	}
 }

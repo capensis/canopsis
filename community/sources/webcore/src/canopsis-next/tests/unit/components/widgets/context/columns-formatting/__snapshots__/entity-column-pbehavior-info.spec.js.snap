@@ -26,14 +26,12 @@ exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` w
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light primary--text"
-    >
-      brightness_3
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon material-icons theme--light primary--text"
+  >
+    brightness_3
+  </i>
 </span>
 `;
 
@@ -55,14 +53,12 @@ exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` w
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light primary--text"
-    >
-      build
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon material-icons theme--light primary--text"
+  >
+    build
+  </i>
 </span>
 `;
 
@@ -84,13 +80,11 @@ exports[`entity-column-pbehavior-info Renders \`entity-column-pbehavior-info\` w
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light primary--text"
-    >
-      pause
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon material-icons theme--light primary--text"
+  >
+    pause
+  </i>
 </span>
 `;

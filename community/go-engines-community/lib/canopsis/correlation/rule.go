@@ -16,11 +16,11 @@ const (
 	// RuleTypeComplex for complex rules
 	RuleTypeComplex = "complex"
 
-	RuleValueGroup = "valuegroup"
+	RuleTypeValueGroup = "valuegroup"
 
-	RuleManualGroup = "manualgroup"
+	RuleTypeManualGroup = "manualgroup"
 
-	RuleCorel = "corel"
+	RuleTypeCorel = "corel"
 )
 
 type Rule struct {
@@ -54,10 +54,15 @@ type Rule struct {
 }
 
 func (r *Rule) Matches(event types.Event, alarmWithEntity types.AlarmWithEntity) (bool, error) {
-	if r.Type == RuleValueGroup && !r.OldEventPatterns.IsSet() &&
-		!r.OldEntityPatterns.IsSet() && !r.OldAlarmPatterns.IsSet() &&
+	if !r.OldEventPatterns.IsSet() && !r.OldEntityPatterns.IsSet() && !r.OldAlarmPatterns.IsSet() &&
 		len(r.EntityPattern) == 0 && len(r.AlarmPattern) == 0 {
-		return true, nil
+		switch r.Type {
+		case RuleTypeRelation,
+			RuleTypeTimeBased,
+			RuleTypeComplex,
+			RuleTypeValueGroup:
+			return true, nil
+		}
 	}
 
 	if r.OldEventPatterns.IsSet() {

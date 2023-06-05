@@ -1,0 +1,11 @@
+## Procédure de mise à jour
+
+Suivre la [procédure standard de mise à jour de Canopsis](../guide-administration/mise-a-jour/index.md).
+
+Le format des environnements Docker-compose ayant changé, une [procédure de mise
+à jour spécifique à cette version](./migration/migration-4.6.0.md) soit appliquée.
+
+### Liste des modifications
+
+* **Docker Compose:**
+	* Fusion des différents ficher YAML et ajout de HEALTHCHECK pour ordonner le démarrage des composants de Canopsis.

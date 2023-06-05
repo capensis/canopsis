@@ -1,6 +1,7 @@
 Feature: update alarm status on flapping rule
   I need to be able to update alarm status on flapping rule
 
+  @concurrent
   Scenario: given flapping rule should update alarm status
     Given I am admin
     When I do POST /api/v4/flapping-rules:
@@ -30,7 +31,7 @@ Feature: update alarm status on flapping rule
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -43,8 +44,7 @@ Feature: update alarm status on flapping rule
       "output" : "test-output-axe-flappingrule-1"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -57,8 +57,7 @@ Feature: update alarm status on flapping rule
       "output" : "test-output-axe-flappingrule-1"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -71,8 +70,7 @@ Feature: update alarm status on flapping rule
       "output" : "test-output-axe-flappingrule-1"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -85,8 +83,7 @@ Feature: update alarm status on flapping rule
       "output" : "test-output-axe-flappingrule-1"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type" : "check",
@@ -99,7 +96,6 @@ Feature: update alarm status on flapping rule
       "output" : "test-output-axe-flappingrule-1"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-axe-flappingrule-1
     Then the response code should be 200
     Then the response body should contain:
@@ -189,7 +185,17 @@ Feature: update alarm status on flapping rule
       }
     ]
     """
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type" : "updatestatus",
+      "connector" : "test-connector-axe-flappingrule-1",
+      "connector_name" : "test-connector-name-axe-flappingrule-1",
+      "source_type" : "resource",
+      "component" :  "test-component-axe-flappingrule-1",
+      "resource" : "test-resource-axe-flappingrule-1"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-axe-flappingrule-1
     Then the response code should be 200
     Then the response body should contain:

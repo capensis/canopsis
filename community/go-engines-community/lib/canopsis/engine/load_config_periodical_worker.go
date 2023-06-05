@@ -2,21 +2,22 @@ package engine
 
 import (
 	"context"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 func NewLoadConfigPeriodicalWorker(
 	periodicalInterval time.Duration,
 	adapter config.Adapter,
-	updater config.Updater,
 	logger zerolog.Logger,
+	updaters ...config.Updater,
 ) PeriodicalWorker {
 	return &loadConfigPeriodicalWorker{
 		periodicalInterval: periodicalInterval,
 		adapter:            adapter,
-		updater:            updater,
+		updaters:           updaters,
 		logger:             logger,
 	}
 }
@@ -25,7 +26,7 @@ type loadConfigPeriodicalWorker struct {
 	periodicalInterval time.Duration
 	adapter            config.Adapter
 	logger             zerolog.Logger
-	updater            config.Updater
+	updaters           []config.Updater
 }
 
 func (w *loadConfigPeriodicalWorker) GetInterval() time.Duration {
@@ -39,5 +40,7 @@ func (w *loadConfigPeriodicalWorker) Work(ctx context.Context) {
 		return
 	}
 
-	w.updater.Update(cfg)
+	for _, updater := range w.updaters {
+		updater.Update(cfg)
+	}
 }

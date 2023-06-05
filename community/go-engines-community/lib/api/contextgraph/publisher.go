@@ -1,6 +1,7 @@
 package contextgraph
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -33,11 +34,8 @@ func NewEventPublisher(
 	}
 }
 
-func (p *rmqPublisher) SendImportResultEvent(uuid string, execTime time.Duration, state types.CpsNumber) error {
-	stateType := new(types.CpsNumber)
-	*stateType = 1
-
-	return p.sendEvent(types.Event{
+func (p *rmqPublisher) SendImportResultEvent(ctx context.Context, uuid string, execTime time.Duration, state types.CpsNumber) error {
+	return p.sendEvent(ctx, types.Event{
 		Connector:     "taskhandler",
 		ConnectorName: "task_importctx",
 		Component:     "job",
@@ -46,7 +44,6 @@ func (p *rmqPublisher) SendImportResultEvent(uuid string, execTime time.Duration
 		Resource:      uuid,
 		Timestamp:     types.NewCpsTime(time.Now().Unix()),
 		State:         state,
-		StateType:     stateType,
 		Output:        fmt.Sprintf("Import %s failed.", uuid),
 		ExtraInfos: map[string]interface{}{
 			"execution_time": execTime,
@@ -54,11 +51,8 @@ func (p *rmqPublisher) SendImportResultEvent(uuid string, execTime time.Duration
 	})
 }
 
-func (p *rmqPublisher) SendPerfDataEvent(uuid string, stats importcontextgraph.Stats, state types.CpsNumber) error {
-	stateType := new(types.CpsNumber)
-	*stateType = 1
-
-	return p.sendEvent(types.Event{
+func (p *rmqPublisher) SendPerfDataEvent(ctx context.Context, uuid string, stats importcontextgraph.Stats, state types.CpsNumber) error {
+	return p.sendEvent(ctx, types.Event{
 		Connector:     "Taskhandler",
 		ConnectorName: "task_importctx",
 		Component:     uuid,
@@ -66,35 +60,19 @@ func (p *rmqPublisher) SendPerfDataEvent(uuid string, stats importcontextgraph.S
 		SourceType:    types.SourceTypeResource,
 		Resource:      "task_importctx/report",
 		State:         state,
-		StateType:     stateType,
 		Output:        fmt.Sprintf("execution : %f sec, updated ent : %d, deleted ent : %d", stats.ExecTime.Seconds(), stats.Updated, stats.Deleted),
-		PerfDataArray: []types.PerfData{
-			{
-				Metric: "execution_time",
-				Unit:   "GAUGE",
-				Value:  stats.ExecTime.Seconds(),
-			},
-			{
-				Metric: "ent_updated",
-				Unit:   "GAUGE",
-				Value:  float64(stats.Updated),
-			},
-			{
-				Metric: "ent_deleted",
-				Unit:   "GAUGE",
-				Value:  float64(stats.Deleted),
-			},
-		},
+		PerfData:      fmt.Sprintf("execution_time=%ds ent_updated=%d ent_deleted=%d", int64(stats.ExecTime.Seconds()), stats.Updated, stats.Deleted),
 	})
 }
 
-func (p *rmqPublisher) sendEvent(event types.Event) error {
+func (p *rmqPublisher) sendEvent(ctx context.Context, event types.Event) error {
 	bevent, err := p.encoder.Encode(event)
 	if err != nil {
 		return fmt.Errorf("error while encoding event %+v", err)
 	}
 
-	return p.amqpPublisher.Publish(
+	return p.amqpPublisher.PublishWithContext(
+		ctx,
 		p.exchange,
 		p.queue,
 		false,

@@ -63,7 +63,7 @@ export default {
 
 <style lang="scss" scoped>
   .views-panel {
-    & /deep/ .panel-item-content {
+    & ::v-deep .panel-item-content {
       cursor: move;
     }
 

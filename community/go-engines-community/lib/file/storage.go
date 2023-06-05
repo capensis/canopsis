@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"syscall"
@@ -116,7 +115,7 @@ func (s *storage) GetEtag(id, hashPath string) (etag string, resErr error) {
 		}
 	}()
 
-	b, err := ioutil.ReadAll(r)
+	b, err := io.ReadAll(r)
 	if err != nil {
 		return "", err
 	}

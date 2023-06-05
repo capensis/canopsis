@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule"
@@ -72,7 +71,7 @@ func (s *service) ResolveClosed(ctx context.Context) ([]types.Alarm, error) {
 		for _, rule := range rules {
 			matched, err := rule.Matches(alarmWithEntity)
 			if err != nil {
-				s.logger.Error().Err(err).Str("resolve rule", rule.ID).Msg("match resolve rule returned error, skip")
+				s.logger.Error().Err(err).Str("resolve_rule", rule.ID).Msg("match resolve rule returned error, skip")
 				continue
 			}
 
@@ -148,22 +147,4 @@ func (s *service) UpdateFlappingAlarms(ctx context.Context) ([]types.Alarm, erro
 	}
 
 	return updatedAlarms, nil
-}
-
-func (s *service) ResolveDone(ctx context.Context) ([]types.Alarm, error) {
-	doneAlarms := make([]types.Alarm, 0)
-
-	alarms, err := s.adapter.GetAlarmsWithDoneMark(ctx)
-	if err != nil {
-		return doneAlarms, fmt.Errorf("cannot fetch alarms: %w", err)
-	}
-
-	for _, alarm := range alarms {
-		delta := time.Since(alarm.Value.Done.Timestamp.Time)
-		if int(delta.Seconds()) >= canopsis.DoneAutosolveDelay {
-			doneAlarms = append(doneAlarms, alarm)
-		}
-	}
-
-	return doneAlarms, nil
 }

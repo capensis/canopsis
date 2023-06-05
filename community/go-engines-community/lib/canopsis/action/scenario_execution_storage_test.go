@@ -2,15 +2,16 @@ package action_test
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	redislib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
-	"reflect"
-	"testing"
-	"time"
 )
 
 func TestRedisScenarioExecutionStorage_GetAbandoned_GivenTooLongNotUpdatedExecutions_ShouldReturnThem(t *testing.T) {
@@ -49,11 +50,10 @@ func TestRedisScenarioExecutionStorage_GetAbandoned_GivenTooLongNotUpdatedExecut
 		LastUpdate: timestamp - 70,
 		Entity:     types.Entity{Created: zeroTime},
 	}
-	firstExecutionID, err := storage.Create(ctx, firstExecution)
+	_, err = storage.Create(ctx, firstExecution)
 	if err != nil {
 		t.Fatalf("Error %s is not expected", err.Error())
 	}
-	firstExecution.ID = firstExecutionID
 	firstExecution.Tries = 1
 	secondExecution := action.ScenarioExecution{
 		AlarmID:    "5",
@@ -61,8 +61,7 @@ func TestRedisScenarioExecutionStorage_GetAbandoned_GivenTooLongNotUpdatedExecut
 		LastUpdate: timestamp - 90,
 		Entity:     types.Entity{Created: zeroTime},
 	}
-	secondExecutionID, err := storage.Create(ctx, secondExecution)
-	secondExecution.ID = secondExecutionID
+	_, err = storage.Create(ctx, secondExecution)
 	secondExecution.Tries = 1
 	if err != nil {
 		t.Fatalf("Error %s is not expected", err.Error())
@@ -79,9 +78,12 @@ func TestRedisScenarioExecutionStorage_GetAbandoned_GivenTooLongNotUpdatedExecut
 
 	for _, exec := range abandonedExecutions {
 		exec.Entity.Created = zeroTime
-		if !reflect.DeepEqual(exec, firstExecution) && !reflect.DeepEqual(exec, secondExecution) {
-			t.Errorf("GetAbandoned should return %+v or %+v but got %v",
-				firstExecution, secondExecution, exec)
+		exec.FifoAckEvent = types.Event{}
+		diff1 := pretty.Compare(exec, firstExecution)
+		diff2 := pretty.Compare(exec, secondExecution)
+
+		if diff1 != "" && diff2 != "" {
+			t.Errorf("GetAbandoned should return\n%s\nor\b%s", diff1, diff2)
 		}
 
 		if exec.Tries != 1 {
@@ -95,19 +97,20 @@ func TestRedisScenarioExecutionStorage_GetAbandoned_GivenExecutionWithMaxRetries
 
 	timestamp := time.Now().Unix()
 	storage := createTestStorage()
-	executionID, err := storage.Create(ctx, action.ScenarioExecution{
+	execution := action.ScenarioExecution{
 		AlarmID:    "6",
 		ScenarioID: "6",
 		LastUpdate: timestamp - 90,
 		Tries:      action.MaxRetries,
-	})
+	}
+	_, err := storage.Create(ctx, execution)
 	if err != nil {
 		t.Fatalf("Error %s is not expected", err.Error())
 	}
 
 	_, _ = storage.GetAbandoned(ctx)
 
-	exec, err := storage.Get(ctx, executionID)
+	exec, err := storage.Get(ctx, execution.GetCacheKey())
 	if err != nil {
 		t.Fatalf("Error %s is not expected", err.Error())
 	}

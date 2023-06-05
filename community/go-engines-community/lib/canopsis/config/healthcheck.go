@@ -1,10 +1,21 @@
 package config
 
-import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+import (
+	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"github.com/rs/zerolog"
+)
 
 type HealthCheckConf struct {
 	EngineOrder []EngineOrder         `toml:"engine_order" bson:"engine_order" json:"engine_order"`
 	Parameters  HealthCheckParameters `toml:"-" bson:"parameters" json:"parameters"`
+	// UpdateInterval controls timer to load healthcheck info by API
+	UpdateInterval string `toml:"update_interval" bson:"update_interval" json:"update_interval"`
+}
+
+func (c HealthCheckConf) ParseUpdateInterval(logger zerolog.Logger) time.Duration {
+	return parseTimeDurationByStr(c.UpdateInterval, canopsis.PeriodicalWaitTime, "update_interval", "HealthCheck", logger)
 }
 
 type EngineOrder struct {
@@ -18,13 +29,14 @@ type EngineParameters struct {
 	Enabled bool `bson:"enabled" json:"enabled"`
 }
 
-type QueueParameters struct {
+type LimitParameters struct {
 	Limit   int  `bson:"limit" json:"limit"`
 	Enabled bool `bson:"enabled" json:"enabled"`
 }
 
 type HealthCheckParameters struct {
-	Queue        QueueParameters  `bson:"queue" json:"queue"`
+	Queue        LimitParameters  `bson:"queue" json:"queue"`
+	Messages     LimitParameters  `bson:"messages" json:"messages"`
 	Fifo         EngineParameters `bson:"engine-fifo" json:"engine-fifo"`
 	Che          EngineParameters `bson:"engine-che" json:"engine-che"`
 	PBehavior    EngineParameters `bson:"engine-pbehavior" json:"engine-pbehavior"`

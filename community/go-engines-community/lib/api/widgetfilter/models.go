@@ -3,6 +3,8 @@ package widgetfilter
 import (
 	"encoding/json"
 	"errors"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -41,7 +43,7 @@ type Response struct {
 	Widget    string         `bson:"widget" json:"-"`
 	Title     string         `bson:"title" json:"title"`
 	IsPrivate *bool          `bson:"is_private" json:"is_private,omitempty"`
-	Author    string         `bson:"author" json:"author,omitempty"`
+	Author    *author.Author `bson:"author" json:"author,omitempty"`
 	Created   *types.CpsTime `bson:"created" json:"created,omitempty" swaggertype:"integer"`
 	Updated   *types.CpsTime `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 
@@ -77,4 +79,16 @@ func (r *AggregationResult) GetData() interface{} {
 
 func (r *AggregationResult) GetTotal() int64 {
 	return r.TotalCount
+}
+
+type EditPositionRequest struct {
+	Items []string `json:"items" binding:"required,notblank,unique"`
+}
+
+func (r EditPositionRequest) MarshalJSON() ([]byte, error) {
+	return json.Marshal(r.Items)
+}
+
+func (r *EditPositionRequest) UnmarshalJSON(b []byte) error {
+	return json.Unmarshal(b, &r.Items)
 }

@@ -7,7 +7,6 @@ import {
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
   DEFAULT_PERIODIC_REFRESH,
-  FILTER_DEFAULT_VALUES,
   DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE,
   DEFAULT_SERVICE_WEATHER_MODAL_TEMPLATE,
   DEFAULT_SERVICE_WEATHER_ENTITY_TEMPLATE,
@@ -16,19 +15,12 @@ import {
 
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
-import { defaultColumnsToColumns } from '@/helpers/entities';
-
-import {
-  alarmListBaseParametersToForm,
-  formToAlarmListBaseParameters,
-} from './alarm';
+import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './alarm';
+import { widgetColumnsToForm, formToWidgetColumns } from '../shared/widget-column';
+import { widgetTemplateValueToForm, formToWidgetTemplateValue } from '../widget-template';
 
 /**
  * @typedef {'more-info' | 'alarm-list' | 'both'} ServiceWeatherWidgetModalType
- */
-
-/**
- * @typedef {'impact-state' | 'state'} ServiceWeatherWidgetColorIndicator
  */
 
 /**
@@ -40,19 +32,21 @@ import {
 /**
  * @typedef {Object} ServiceWeatherWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
- * @property {WidgetFilter[]} viewFilters
  * @property {string | null} mainFilter
- * @property {WidgetFilterCondition} mainFilterCondition
  * @property {WidgetSort} sort
+ * @property {string} blockTemplateTemplate
+ * @property {string} modalTemplateTemplate
+ * @property {string} entityTemplateTemplate
  * @property {string} blockTemplate
  * @property {string} modalTemplate
  * @property {string} entityTemplate
- * @property {number} columnSM
- * @property {number} columnMD
- * @property {number} columnLG
+ * @property {number} columnMobile
+ * @property {number} columnTablet
+ * @property {number} columnDesktop
  * @property {number} limit
- * @property {ServiceWeatherWidgetColorIndicator} colorIndicator
+ * @property {ColorIndicator} colorIndicator
  * @property {ServiceWeatherWidgetModalType} modalType
+ * @property {string} serviceDependenciesColumnsTemplate
  * @property {WidgetColumn[]} serviceDependenciesColumns
  * @property {WidgetMargin} margin
  * @property {ServiceWeatherWidgetCounters} counters
@@ -63,30 +57,35 @@ import {
  */
 
 /**
+ * @typedef {ServiceWeatherWidgetParameters} ServiceWeatherWidgetParametersForm
+ * @property {string | Symbol} serviceDependenciesColumnsTemplate
+ * @property {WidgetColumnForm[]} serviceDependenciesColumns
+ */
+
+/**
  * Convert service weather widget parameters to form
  *
  * @param {ServiceWeatherWidgetParameters} [parameters = {}]
- * @return {ServiceWeatherWidgetParameters}
+ * @return {ServiceWeatherWidgetParametersForm}
  */
 export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
   periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
-  viewFilters: parameters.viewFilters
-    ? cloneDeep(parameters.viewFilters)
-    : [],
   mainFilter: parameters.mainFilter ?? null,
-  mainFilterCondition: parameters.mainFilterCondition ?? FILTER_DEFAULT_VALUES.condition,
   sort: parameters.sort ? { ...parameters.sort } : { order: SORT_ORDERS.asc },
+  blockTemplateTemplate: widgetTemplateValueToForm(parameters.blockTemplateTemplate),
+  modalTemplateTemplate: widgetTemplateValueToForm(parameters.modalTemplateTemplate),
+  entityTemplateTemplate: widgetTemplateValueToForm(parameters.entityTemplateTemplate),
   blockTemplate: parameters.blockTemplate ?? DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE,
   modalTemplate: parameters.modalTemplate ?? DEFAULT_SERVICE_WEATHER_MODAL_TEMPLATE,
   entityTemplate: parameters.entityTemplate ?? DEFAULT_SERVICE_WEATHER_ENTITY_TEMPLATE,
-  columnSM: parameters.columnSM ?? 6,
-  columnMD: parameters.columnMD ?? 4,
-  columnLG: parameters.columnLG ?? 3,
+  columnMobile: parameters.columnMobile ?? 2,
+  columnTablet: parameters.columnTablet ?? 3,
+  columnDesktop: parameters.columnDesktop ?? 4,
   limit: parameters.limit ?? DEFAULT_WEATHER_LIMIT,
   colorIndicator: parameters.colorIndicator ?? COLOR_INDICATOR_TYPES.state,
-  serviceDependenciesColumns: parameters.serviceDependenciesColumns
-    ? cloneDeep(parameters.serviceDependenciesColumns)
-    : defaultColumnsToColumns(DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
+  serviceDependenciesColumnsTemplate: widgetTemplateValueToForm(parameters.serviceDependenciesColumnsTemplate),
+  serviceDependenciesColumns:
+    widgetColumnsToForm(parameters.serviceDependenciesColumns ?? DEFAULT_SERVICE_DEPENDENCIES_COLUMNS),
   margin: parameters.margin
     ? { ...parameters.margin }
     : { ...DEFAULT_WIDGET_MARGIN },
@@ -96,18 +95,28 @@ export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
   alarmsList: alarmListBaseParametersToForm(parameters.alarmsList),
   counters: parameters.counters
     ? cloneDeep(parameters.counters)
-    : { enabled: false, types: [] },
+    : {
+      pbehavior_enabled: false,
+      pbehavior_types: [],
+      state_enabled: false,
+      state_types: [],
+    },
   isPriorityEnabled: parameters.isPriorityEnabled ?? true,
 });
 
 /**
  * Convert form to service weather widget parameters
  *
- * @param {ServiceWeatherWidgetParameters} form
+ * @param {ServiceWeatherWidgetParametersForm} form
  * @return {ServiceWeatherWidgetParameters}
  */
 export const formToServiceWeatherWidgetParameters = form => ({
   ...form,
 
+  blockTemplateTemplate: formToWidgetTemplateValue(form.blockTemplateTemplate),
+  modalTemplateTemplate: formToWidgetTemplateValue(form.modalTemplateTemplate),
+  entityTemplateTemplate: formToWidgetTemplateValue(form.entityTemplateTemplate),
+  serviceDependenciesColumnsTemplate: formToWidgetTemplateValue(form.serviceDependenciesColumnsTemplate),
+  serviceDependenciesColumns: formToWidgetColumns(form.serviceDependenciesColumns),
   alarmsList: formToAlarmListBaseParameters(form.alarmsList),
 });

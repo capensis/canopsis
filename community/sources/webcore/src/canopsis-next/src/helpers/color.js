@@ -1,8 +1,8 @@
-import { get, camelCase } from 'lodash';
+import { get, camelCase, isNumber } from 'lodash';
 import tinycolor from 'tinycolor2';
 
 import { COLORS } from '@/config';
-import { CAT_ENGINES, COLOR_INDICATOR_TYPES, ENTITIES_STATES_STYLES, EVENT_ENTITY_COLORS_BY_TYPE } from '@/constants';
+import { PRO_ENGINES, COLOR_INDICATOR_TYPES, ENTITIES_STATES_STYLES, EVENT_ENTITY_COLORS_BY_TYPE } from '@/constants';
 
 /**
  * Get most readable text color ('white' or 'black')
@@ -21,6 +21,22 @@ export const getMostReadableTextColor = (color, options = {}) => {
 };
 
 /**
+ * Get color by entity impact state
+ *
+ * @param {number} value
+ * @returns {string}
+ */
+export const getImpactStateColor = value => COLORS.impactState[value];
+
+/**
+ * Get color by entity impact state
+ *
+ * @param {number} value
+ * @returns {string}
+ */
+export const getEntityStateColor = value => get(ENTITIES_STATES_STYLES, [value, 'color']);
+
+/**
  * Get color for a entity by colorIndicator and isGrey parameters
  *
  * @param {Service | Entity | {}} [entity = {}]
@@ -33,12 +49,12 @@ export const getEntityColor = (entity = {}, colorIndicator = COLOR_INDICATOR_TYP
   }
 
   if (colorIndicator === COLOR_INDICATOR_TYPES.state) {
-    const state = get(entity, 'state.val');
+    const state = isNumber(entity.state) ? entity.state : entity.state?.val;
 
-    return get(ENTITIES_STATES_STYLES, [state, 'color']);
+    return getEntityStateColor(state);
   }
 
-  return COLORS.impactState[entity.impact_state];
+  return getImpactStateColor(entity.impact_state);
 };
 
 /**
@@ -60,7 +76,7 @@ export const getHealthcheckNodeColor = (node = {}) => {
     return COLORS.healthcheck.warning;
   }
 
-  return CAT_ENGINES.includes(node.name) ? COLORS.secondary : COLORS.primary;
+  return PRO_ENGINES.includes(node.name) ? COLORS.secondary : COLORS.primary;
 };
 
 /**
@@ -99,13 +115,6 @@ export const colorToHex = color => tinycolor(color).toHexString();
 export const isValidColor = color => tinycolor(color).isValid();
 
 /**
- * Generate random hex color
- *
- * @return {string}
- */
-export const getRandomHexColor = () => tinycolor.random().toHexString();
-
-/**
  * Get color for metric
  *
  * @param {string} metric
@@ -118,3 +127,13 @@ export const getMetricColor = metric => COLORS.metrics[camelCase(metric)] || COL
  * @param {string} type
  */
 export const getEntityEventColor = type => EVENT_ENTITY_COLORS_BY_TYPE[type];
+
+/**
+ * Get darken color
+ *
+ * @param {string} color
+ * @param {number} amount
+ */
+export const getDarkenColor = (color, amount) => tinycolor(color)
+  .darken(amount)
+  .toString();

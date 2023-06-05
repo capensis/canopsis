@@ -7,22 +7,19 @@
     bottom,
     dark
   )
-    div.v-btn.v-btn--flat.theme--dark(
-      :data-test="`dropDownButton-group-${group._id}`",
-      slot="activator"
-    )
-      span {{ group.title }}
-      v-btn(
-        data-test="editGroupButton",
-        v-show="isNavigationEditingMode",
-        depressed,
-        small,
-        icon,
-        @click.stop="showEditGroupModal"
-      )
-        v-icon(small) edit
-      v-icon(dark) arrow_drop_down
-    v-list(:data-test="`dropDownZone-group-${group._id}`")
+    template(#activator="{ on }")
+      v-btn.group-item__dropdown-btn(v-on="on", flat, dark)
+        span {{ group.title }}
+        v-btn(
+          v-show="isNavigationEditingMode",
+          depressed,
+          small,
+          icon,
+          @click.stop="showEditGroupModal"
+        )
+          v-icon(small) edit
+        v-icon.ml-0(right, dark) arrow_drop_down
+    v-list
       groups-top-bar-group-view(
         v-for="view in group.views",
         :key="view._id",
@@ -40,3 +37,11 @@ export default {
   mixins: [layoutNavigationGroupsBarGroupMixin],
 };
 </script>
+
+<style lang="scss">
+.group-item {
+  &__dropdown-btn {
+    text-transform: none;
+  }
+}
+</style>

@@ -120,62 +120,6 @@ Feature: cancel a instruction execution
     When I do PUT /api/v4/cat/executions/{{ .lastResponse._id }}/cancel
     Then the response code should be 404
 
-  Scenario: given instruction should cancel running executions on instruction update
-    When I am admin
-    When I do GET /api/v4/cat/executions/test-instruction-cancel-execution-running-1
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "status": 0
-    }
-    """
-    When I do PUT /api/v4/cat/instructions/test-instruction-cancel-execution-running-1:
-    """json
-    {
-      "name": "test-instruction-cancel-execution-running-1-name",
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test filter"
-            }
-          }
-        ]
-      ],
-      "description": "test-instruction-cancel-execution-running-1-description",
-      "enabled": true,
-      "timeout_after_execution": {
-        "value": 10,
-        "unit": "s"
-      },
-      "steps": [
-        {
-          "name": "test-instruction-cancel-execution-running-1-step-1",
-          "operations": [
-            {
-              "name": "test-instruction-cancel-execution-running-1-step-1-operation-1",
-              "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-cancel-execution-running-1-step-1-operation-1-description"
-            },
-            {
-              "name": "test-instruction-cancel-execution-running-1-step-1-operation-2",
-              "time_to_complete": {"value": 3, "unit":"s"},
-              "description": "test-instruction-cancel-execution-running-1-step-1-operation-2-description"
-            }
-          ],
-          "stop_on_fail": true,
-          "endpoint": "test-instruction-cancel-execution-running-1-step-1-endpoint"
-        }
-      ]
-    }
-    """
-    Then the response code should be 200
-    When I do GET /api/v4/cat/executions/test-instruction-cancel-execution-running-1
-    Then the response code should be 410
-
   Scenario: given unauth request should not allow access
     When I do PUT /api/v4/cat/executions/notexist/cancel
     Then the response code should be 401
@@ -184,25 +128,3 @@ Feature: cancel a instruction execution
     When I am noperms
     When I do PUT /api/v4/cat/executions/notexist/cancel
     Then the response code should be 403
-
-  Scenario: given instruction approval should cancel running executions
-    When I am admin
-    When I do GET /api/v4/cat/executions/test-instruction-to-update-w-approval-should-cancel-execution-running-1
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "status": 0
-    }
-    """
-    When I am role-to-instruction-approve-1
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-w-approval-should-cancel-execution/approval:
-    """json
-    {
-      "approve": true
-    }
-    """
-    Then the response code should be 200
-    Then I am admin
-    When I do GET /api/v4/cat/executions/test-instruction-to-update-w-approval-should-cancel-execution-running-1
-    Then the response code should be 410

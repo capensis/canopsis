@@ -32,15 +32,34 @@ type Stats struct {
 }
 
 type EventPublisher interface {
-	SendEvent(event types.Event) error
+	SendEvent(ctx context.Context, event types.Event) error
+}
+
+type EntityConfiguration struct {
+	ID             string                `json:"-" bson:"_id"`
+	Name           string                `json:"name" bson:"name" binding:"required"`
+	Component      string                `json:"component" bson:"component,omitempty"`
+	Services       []string              `json:"-" bson:"services,omitempty"`
+	EnableHistory  []int64               `json:"-" bson:"enable_history"`
+	EntityPattern  pattern.Entity        `json:"entity_pattern" bson:"entity_pattern,omitempty"`
+	OutputTemplate string                `json:"output_template" bson:"output_template,omitempty"`
+	Infos          map[string]types.Info `json:"infos" bson:"infos"`
+	Type           string                `json:"type" bson:"type" binding:"required"`
+	CategoryName   string                `json:"category" bson:"-"`
+	CategoryID     string                `json:"-" bson:"category,omitempty"`
+	ImpactLevel    int64                 `json:"impact_level" bson:"impact_level,omitempty"`
+	Enabled        bool                  `json:"enabled" bson:"enabled,omitempty"`
+	Action         string                `json:"action" bson:"-"`
+	ImportSource   string                `json:"-" bson:"import_source"`
+	Imported       types.CpsTime         `json:"-" bson:"imported"`
 }
 
 type ConfigurationItem struct {
 	ID             string                 `json:"_id" bson:"-"`
 	Name           *string                `json:"name" bson:"name,omitempty"`
-	Depends        []string               `json:"-" bson:"depends"`
-	Impact         []string               `json:"-" bson:"impact"`
 	Component      string                 `json:"-" bson:"component,omitempty"`
+	Connector      string                 `json:"-" bson:"connector,omitempty"`
+	Services       []string               `json:"-" bson:"services,omitempty"`
 	EnableHistory  []int64                `json:"-" bson:"enable_history"`
 	Measurements   []interface{}          `json:"measurements" bson:"measurements"`
 	EntityPattern  pattern.Entity         `json:"entity_pattern,omitempty" bson:"entity_pattern"`

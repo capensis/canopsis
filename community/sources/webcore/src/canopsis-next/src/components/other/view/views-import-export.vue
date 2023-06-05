@@ -4,7 +4,7 @@
       v-flex.export-views-block.mr-0.ma-4(xs6)
         v-checkbox(
           v-model="isAllSelected",
-          :label="$t('importExportViews.selectAll')",
+          :label="$t('view.selectAll')",
           color="primary"
         )
         views-export-expansion-panel(v-model="selected", :groups="groups")
@@ -137,7 +137,7 @@ export default {
   .view-import-selector {
     display: inline-flex;
 
-    & /deep/ .file-selector-button-wrapper {
+    & ::v-deep .file-selector-button-wrapper {
       width: 100%;
     }
 
@@ -151,7 +151,7 @@ export default {
     overflow: auto;
   }
   .export-views-block {
-    & /deep/ .panel-header {
+    & ::v-deep .panel-header {
       display: flex;
       flex: inherit;
       align-items: center;

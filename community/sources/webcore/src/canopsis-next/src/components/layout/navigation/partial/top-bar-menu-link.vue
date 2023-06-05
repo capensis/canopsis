@@ -18,7 +18,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.top-bar-menu-link /deep/ a {
+.top-bar-menu-link ::v-deep a {
   text-decoration: none;
   color: inherit;
 }

@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-tooltip(left)
-    v-btn(
+  v-tooltip.view-editing-btn(left)
+    v-btn.view-editing-btn__button(
       slot="activator",
       :input-value="editing",
       :loading="editingProcess",
@@ -21,25 +21,19 @@ import { activeViewMixin } from '@/mixins/active-view';
 
 export default {
   mixins: [activeViewMixin],
-  props: {
-    updatable: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  created() {
-    document.addEventListener('keydown', this.keyDownListener);
-  },
-  beforeDestroy() {
-    document.removeEventListener('keydown', this.keyDownListener);
-  },
-  methods: {
-    keyDownListener(event) {
-      if (event.key === 'e' && event.ctrlKey && this.updatable) {
-        this.toggleEditing();
-        event.preventDefault();
-      }
-    },
-  },
 };
 </script>
+
+<style lang="scss">
+.view-editing-btn {
+  &__button  {
+    border-color: #212121 !important;
+    background-color: #212121 !important;
+
+    .theme--dark & {
+      border-color: #979797 !important;
+      background-color: #979797 !important;
+    }
+  }
+}
+</style>

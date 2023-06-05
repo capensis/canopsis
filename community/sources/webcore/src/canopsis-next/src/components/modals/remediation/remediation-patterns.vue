@@ -1,15 +1,19 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
-        c-patterns-field(v-model="form", alarm, entity)
-          template(slot="additionalTabs")
-            v-tab {{ $t('remediationPatterns.tabs.pbehaviorTypes.title') }}
-            v-tab-item
-              remediation-patterns-pbehavior-types-form(v-model="form")
-      template(slot="actions")
+      template(#text="")
+        c-patterns-field(
+          v-model="form",
+          :alarm-attributes="alarmAttributes",
+          :entity-attributes="entityAttributes",
+          with-alarm,
+          with-entity
+        )
+        c-collapse-panel.mt-3(:title="$t('remediation.pattern.tabs.pbehaviorTypes.title')")
+          remediation-patterns-pbehavior-types-form(v-model="form")
+      template(#actions="")
         v-btn(
           :disabled="submitting",
           depressed,
@@ -24,9 +28,17 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
+import {
+  ALARM_PATTERN_FIELDS,
+  ENTITY_PATTERN_FIELDS,
+  MODALS,
+  OLD_PATTERNS_FIELDS,
+  PATTERNS_FIELDS,
+  QUICK_RANGES,
+  VALIDATION_DELAY,
+} from '@/constants';
 
-import { MODALS } from '@/constants';
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -41,6 +53,7 @@ export default {
   name: MODALS.remediationPatterns,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: {
     RemediationPatternsPbehaviorTypesForm,
@@ -52,13 +65,67 @@ export default {
     confirmableModalMixinCreator(),
   ],
   data() {
+    const { instruction } = this.modal.config;
+
     return {
-      form: this.modal.config.patterns ? cloneDeep(this.modal.config.patterns) : {},
+      form: {
+        ...filterPatternsToForm(
+          instruction,
+          [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
+          [OLD_PATTERNS_FIELDS.alarm, OLD_PATTERNS_FIELDS.entity],
+        ),
+        active_on_pbh: instruction?.active_on_pbh ?? [],
+        disabled_on_pbh: instruction?.disabled_on_pbh ?? [],
+      },
     };
   },
   computed: {
     title() {
-      return this.config.title || this.$t('modals.patterns.title');
+      return this.config.title ?? this.$t('modals.patterns.title');
+    },
+
+    intervalOptions() {
+      return {
+        intervalRanges: [QUICK_RANGES.custom],
+      };
+    },
+
+    alarmAttributes() {
+      return [
+        {
+          value: ALARM_PATTERN_FIELDS.creationDate,
+          options: this.intervalOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.ackAt,
+          options: this.intervalOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.lastUpdateDate,
+          options: { disabled: true },
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.lastEventDate,
+          options: { disabled: true },
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.resolved,
+          options: { disabled: true },
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.activationDate,
+          options: { disabled: true },
+        },
+      ];
+    },
+
+    entityAttributes() {
+      return [
+        {
+          value: ENTITY_PATTERN_FIELDS.lastEventDate,
+          options: { disabled: true },
+        },
+      ];
     },
   },
   methods: {
@@ -67,7 +134,11 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(this.form);
+          await this.config.action({
+            ...formFilterToPatterns(this.form, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+            active_on_pbh: this.form.active_on_pbh,
+            disabled_on_pbh: this.form.disabled_on_pbh,
+          });
         }
 
         this.$modals.hide();

@@ -1,12 +1,16 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('modals.createRrule.title') }}
-      template(slot="text")
+      template(#text="")
         recurrence-rule-form(v-model="form.rrule")
-        pbehavior-exception-form(v-model="form.exdates", :exceptions.sync="form.exceptions")
-      template(slot="actions")
+        pbehavior-exceptions-field(
+          v-model="form.exdates",
+          :exceptions.sync="form.exceptions",
+          :with-exdate-type="config.withExdateType"
+        )
+      template(#actions="")
         v-btn(
           depressed,
           flat,
@@ -20,10 +24,10 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import RecurrenceRuleForm from '@/components/forms/recurrence-rule.vue';
-import PbehaviorExceptionForm from '@/components/other/pbehavior/calendar/partials/pbehavior-exception-form.vue';
+import PbehaviorExceptionsField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-exceptions-field.vue';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -35,10 +39,11 @@ export default {
   name: MODALS.createRecurrenceRule,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   inject: ['$system'],
   components: {
-    PbehaviorExceptionForm,
+    PbehaviorExceptionsField,
     RecurrenceRuleForm,
     ModalWrapper,
   },
@@ -52,9 +57,9 @@ export default {
 
     return {
       form: {
-        rrule: rrule || '',
-        exdates: exdates || [],
-        exceptions: exceptions || [],
+        rrule: rrule ?? '',
+        exdates: exdates ?? [],
+        exceptions: exceptions ?? [],
       },
     };
   },

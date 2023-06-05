@@ -38,7 +38,10 @@ Feature: create a PBehavior comment
     Then the response body should contain:
     """json
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "message": "Test message"
     }
     """
@@ -58,13 +61,22 @@ Feature: create a PBehavior comment
     {
       "comments": [
         {
-          "author": "root"
+          "author": {
+            "_id": "root",
+            "name": "root"
+          }
         },
         {
-          "author": "root"
+          "author": {
+            "_id": "root",
+            "name": "root"
+          }
         },
         {
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "message": "test-create-comment-message"
         }
       ]

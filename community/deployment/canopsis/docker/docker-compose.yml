@@ -1,0 +1,188 @@
+volumes:
+  mongodbdata:
+    driver: local
+  rabbitmqdata:
+    driver: local
+  dumpdata:
+    driver: local
+  timescaledata:
+    driver: local
+  junitsharedata:
+    driver: local
+  nginxcerts:
+    driver: local
+
+#
+# SERVICE FRAGMENTS (or templates)
+#
+
+x-service_base: &service_base
+  restart: unless-stopped
+  env_file:
+    - compose.env
+    - ${CPS_EDITION:?CPS_EDITION not set}.env
+
+x-inital_config_base: &inital_config_base
+  <<: *service_base
+  restart: "no"
+  depends_on:
+    timescaledb:
+      condition: service_healthy
+    mongodb:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+    rabbitmq:
+      condition: service_healthy
+
+x-app_service_base: &app_service_base
+  <<: *service_base
+  depends_on:
+    reconfigure:
+      condition: service_completed_successfully
+    migrate-metrics-meta:
+      condition: service_completed_successfully
+
+
+
+services:
+
+  #
+  # Data Stack
+  #
+
+  rabbitmq:
+    <<: *service_base
+    image: rabbitmq:${RABBITMQ_TAG}
+    # Prevent rabbit from loosing data on stack down and up
+    # See : https://git.canopsis.net/canopsis/canopsis-pro/-/issues/4005
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
+    #mem_limit: 2g
+    #mem_reservation: 2g
+    oom_score_adj: -1000
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  mongodb:
+    <<: *service_base
+    image: mongo:${MONGO_TAG}
+    ports:
+      - "27027:27017"
+    env_file:
+      - compose.env
+    volumes:
+      - mongodbdata:/data/db
+      - dumpdata:/dump/dumpdata
+      - "./files/mongo/:/docker-entrypoint-initdb.d"
+    #mem_limit: 3g
+    #mem_reservation: 3g
+    oom_score_adj: -1000
+    command: '--wiredTigerCacheSizeGB 2560'
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  redis:
+    image: redis:${REDIS_TAG}
+    ports:
+      - "6379:6379"
+    env_file:
+      - compose.env
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli --no-auth-warning -a $$REDIS_PASSWORD ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    command: /bin/sh -c "redis-server --requirepass $$REDIS_PASSWORD"
+
+  timescaledb:
+    <<: *service_base
+    image: timescale/timescaledb:${TIMESCALEDB_TAG}
+    ports:
+      - "5432:5432"
+    environment:
+      - TIMESCALEDB_TELEMETRY=off
+    volumes:
+      - timescaledata:/var/lib/postgresql/data
+    shm_size: 1g
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $$POSTGRES_DB -U $$POSTGRES_USER" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  #
+  # Initial configuration
+  #
+
+  reconfigure:
+    <<: *inital_config_base
+    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}canopsis-reconfigure:${CANOPSIS_IMAGE_TAG}
+    command: /canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -edition ${CPS_EDITION} -conf /canopsis-${CPS_EDITION}.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
+
+  migrate-metrics-meta:
+    <<: *inital_config_base
+    image: alpine:latest
+    entrypoint: /bin/true
+
+  #
+  # Canopsis Community components
+  #
+
+  action:
+    <<: *app_service_base
+    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}engine-action:${CANOPSIS_IMAGE_TAG}
+
+  axe:
+    <<: *app_service_base
+    image: ${DOCKER_REPOSITORY}${CPS_EDITION}/engine-axe:${CANOPSIS_IMAGE_TAG}
+
+  che:
+    <<: *app_service_base
+    image: ${DOCKER_REPOSITORY}${CPS_EDITION}/engine-che:${CANOPSIS_IMAGE_TAG}
+
+  fifo:
+    <<: *app_service_base
+    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}engine-fifo:${CANOPSIS_IMAGE_TAG}
+
+  nginx:
+    <<: *app_service_base
+    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}nginx:${CANOPSIS_IMAGE_TAG}
+    ports:
+      - "80:8080"
+      - "443:8443"
+    volumes:
+      - nginxcerts:/etc/nginx/ssl
+
+  pbehavior:
+    <<: *app_service_base
+    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}engine-pbehavior:${CANOPSIS_IMAGE_TAG}
+
+  service:
+    <<: *app_service_base
+    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}engine-service:${CANOPSIS_IMAGE_TAG}
+
+  api:
+    <<: *app_service_base
+    image: ${DOCKER_REPOSITORY}${CPS_EDITION}/canopsis-api-${CPS_EDITION}:${CANOPSIS_IMAGE_TAG}
+    volumes:
+      - junitsharedata:/tmp/canopsis/junit
+    ports:
+      - "8082:8082"
+    healthcheck:
+      test: /usr/bin/wget -q -O /dev/null http://localhost:8082/api/v4/app-info
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 3m

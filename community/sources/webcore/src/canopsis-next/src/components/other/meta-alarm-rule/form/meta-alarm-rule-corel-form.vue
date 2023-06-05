@@ -7,9 +7,8 @@
       :error-messages="errors.collect('corelId')",
       name="corelId"
     )
-      v-tooltip(slot="append", left)
-        v-icon(slot="activator") help
-        span(v-html="$t('metaAlarmRule.corelIdHelp')")
+      template(#append="")
+        c-help-icon(:text="$t('metaAlarmRule.corelIdHelp')", icon="help", left)
     v-text-field(
       v-field.number="config.corel_status",
       v-validate="'required'",
@@ -17,9 +16,8 @@
       :error-messages="errors.collect('corelStatus')",
       name="corelStatus"
     )
-      v-tooltip(slot="append", left)
-        v-icon(slot="activator") help
-        span(v-html="$t('metaAlarmRule.corelStatusHelp')")
+      template(#append="")
+        c-help-icon(:text="$t('metaAlarmRule.corelStatusHelp')", icon="help", left)
     v-text-field(
       v-field.number="config.corel_parent",
       v-validate="'required'",
@@ -34,14 +32,12 @@
       :error-messages="errors.collect('corelChild')",
       name="corelChild"
     )
-    v-text-field(
-      v-field.number="config.threshold_count",
-      v-validate="'required|numeric|min_value:0'",
+    c-number-field(
+      v-field="config.threshold_count",
       :label="$t('metaAlarmRule.thresholdCount')",
-      :error-messages="errors.collect('thresholdCount')",
       :min="0",
       name="thresholdCount",
-      type="number"
+      required
     )
 </template>
 

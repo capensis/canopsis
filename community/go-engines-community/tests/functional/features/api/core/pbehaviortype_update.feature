@@ -20,7 +20,8 @@ Feature: Update a pbehavior type
       "description": "Maintenance state type",
       "type": "maintenance",
       "priority": 399,
-      "icon_name": "exclamation-mark.png"
+      "icon_name": "exclamation-mark.png",
+      "color": "#FFFFFF"
     }
     """
     Then the response code should be 404
@@ -43,10 +44,29 @@ Feature: Update a pbehavior type
     {
       "errors": {
         "description": "Description is missing.",
-        "icon_name": "IconName is missing.",
+        "color": "Color is missing.",
         "name": "Name is missing.",
         "priority": "Priority is missing.",
         "type": "Type is missing."
+      }
+    }
+    """
+    When I do PUT /api/v4/pbehavior-types/test-type-to-update:
+    """json
+    {
+      "name": "test-type-to-update-name",
+      "description": "test-type-to-update-description",
+      "type": "active",
+      "priority": 399,
+      "color": "#FFFFFF"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "icon_name": "IconName is missing."
       }
     }
     """
@@ -75,7 +95,8 @@ Feature: Update a pbehavior type
       "description": "Maintenance state type",
       "type": "maintenance",
       "priority": 399,
-      "icon_name": "exclamation-mark.png"
+      "icon_name": "exclamation-mark.png",
+      "color": "#FFFFFF"
     }
     """
     Then the response code should be 200
@@ -87,17 +108,43 @@ Feature: Update a pbehavior type
       "description": "Maintenance state type",
       "type": "maintenance",
       "priority": 399,
-      "icon_name": "exclamation-mark.png"
+      "icon_name": "exclamation-mark.png",
+      "color": "#FFFFFF"
+    }
+    """
+    When I do PUT /api/v4/pbehavior-types/test-type-to-update:
+    """json
+    {
+      "name": "Maintenance State",
+      "description": "Maintenance state type",
+      "type": "maintenance",
+      "priority": 399,
+      "icon_name": "exclamation-mark.png",
+      "color": "#FFFFFF",
+      "hidden": true
+    }
+    """
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "_id": "test-type-to-update",
+      "name": "Maintenance State",
+      "description": "Maintenance state type",
+      "type": "maintenance",
+      "priority": 399,
+      "icon_name": "exclamation-mark.png",
+      "color": "#FFFFFF",
+      "hidden": true
     }
     """
 
-  Scenario: given update request with already exists priority and name should return error
+  Scenario: given update request with already name should return error
     When I am admin
     When I do PUT /api/v4/pbehavior-types/test-type-to-update:
     """json
     {
-      "name": "Some State",
-      "priority": 4
+      "name": "Some State"
     }
     """
     Then the response code should be 400
@@ -105,8 +152,165 @@ Feature: Update a pbehavior type
     """json
     {
       "errors": {
-        "name": "Name already exists.",
-        "priority": "Priority already exists."
+        "name": "Name already exists."
+      }
+    }
+    """
+
+  Scenario: given update request for default pause type with color should return ok
+    When I am admin
+    When I do PUT /api/v4/pbehavior-types/test-default-pause-type:
+    """json
+    {
+      "name": "Default Type Pause",
+      "description": "Default Type Pause",
+      "type": "pause",
+      "priority": 3,
+      "icon_name": "test-pause-icon",
+      "color": "#FFFFFF"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "_id": "test-default-pause-type",
+      "name": "Default Type Pause",
+      "description": "Default Type Pause",
+      "type": "pause",
+      "priority": 3,
+      "icon_name": "test-pause-icon",
+      "color": "#FFFFFF"
+    }
+    """
+
+  Scenario: given update request for default active type with color should return ok
+    When I am admin
+    When I do PUT /api/v4/pbehavior-types/test-default-active-type:
+    """json
+    {
+      "name": "Default Type Active",
+      "description": "Default Type Active",
+      "type": "active",
+      "priority": 2,
+      "icon_name": "",
+      "color": "#FFFFFF"
+    }
+    """
+    Then the response code should be 200
+    Then the response body should be:
+    """json
+    {
+      "_id": "test-default-active-type",
+      "name": "Default Type Active",
+      "description": "Default Type Active",
+      "type": "active",
+      "priority": 2,
+      "icon_name": "",
+      "color": "#FFFFFF"
+    }
+    """
+
+  Scenario: given update request for default active type with hidden should return ok
+    When I am admin
+    When I do PUT /api/v4/pbehavior-types/test-default-maintenance-type:
+    """json
+    {
+      "name": "Default Type Maintenance",
+      "description": "Default Type Maintenance",
+      "icon_name": "test-maintenance-icon",
+      "type": "maintenance",
+      "priority": 4,
+      "color": "#BF360C",
+      "hidden": true
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "name": "Default Type Maintenance",
+      "description": "Default Type Maintenance",
+      "icon_name": "test-maintenance-icon",
+      "type": "maintenance",
+      "priority": 4,
+      "color": "#BF360C",
+      "hidden": true
+    }
+    """
+    When I do GET /api/v4/pbehavior-types?types[]=maintenance&default=true&with_hidden=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-default-maintenance-type",
+          "hidden": true
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/pbehavior-types?types[]=maintenance&default=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 0
+      }
+    }
+    """
+    When I do PUT /api/v4/pbehavior-types/test-default-maintenance-type:
+    """json
+    {
+      "name": "Default Type Maintenance",
+      "description": "Default Type Maintenance",
+      "icon_name": "test-maintenance-icon",
+      "type": "maintenance",
+      "priority": 4,
+      "color": "#BF360C",
+      "hidden": false
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "name": "Default Type Maintenance",
+      "description": "Default Type Maintenance",
+      "icon_name": "test-maintenance-icon",
+      "type": "maintenance",
+      "priority": 4,
+      "color": "#BF360C",
+      "hidden": false
+    }
+    """
+    When I do GET /api/v4/pbehavior-types?types[]=maintenance&default=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-default-maintenance-type"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
       }
     }
     """
@@ -116,11 +320,12 @@ Feature: Update a pbehavior type
     When I do PUT /api/v4/pbehavior-types/test-default-pause-type:
     """json
     {
-      "name": "Default Type Pause",
-      "description": "Maintenance state type",
+      "name": "Default Type Pause updated",
+      "description": "Default Type Pause updated",
       "type": "maintenance",
       "priority": 3,
-      "icon_name": "exclamation-mark.png"
+      "icon_name": "exclamation-mark.png",
+      "color": "#FFFFFF"
     }
     """
     Then the response code should be 400
@@ -128,5 +333,24 @@ Feature: Update a pbehavior type
     """json
     {
       "error": "type is default"
+    }
+    """
+    When I do PUT /api/v4/pbehavior-types/test-default-pause-type:
+    """json
+    {
+      "name": "Default Type Pause",
+      "description": "Default Type Pause",
+      "type": "pause",
+      "priority": 3,
+      "color": "#FFFFFF"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should be:
+    """json
+    {
+      "errors": {
+        "icon_name": "IconName is missing."
+      }
     }
     """

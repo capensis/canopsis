@@ -78,6 +78,14 @@ func ValidateOneOfOrEmpty(fl validator.FieldLevel) bool {
 	return false
 }
 
+func ValidateColorOrEmpty(fl validator.FieldLevel) bool {
+	v := fl.Field().String()
+	if v == "" {
+		return true
+	}
+	return validator.New().Var(v, "iscolor") == nil
+}
+
 func ValidateID(fl validator.FieldLevel) bool {
 	v := fl.Field().String()
 	if v == "" {

@@ -12,7 +12,7 @@ exports[`c-empty-data-table-columns Renders \`c-empty-data-table-columns\` corre
         <td
           class="text-xs-center"
         >
-          tables.noColumns.message
+          You have to select at least 1 column
         </td>
       </tr>
     </tbody>

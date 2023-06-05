@@ -37,7 +37,10 @@ Feature: Get a idle rule
               }
             ]
           ],
-          "author": "test-idle-rule-to-get-1-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "description": "test-idle-rule-to-get-1-description",
           "disable_during_periods": [
             "pause"
@@ -62,7 +65,10 @@ Feature: Get a idle rule
         },
         {
           "_id": "test-idle-rule-to-get-2",
-          "author": "test-idle-rule-to-get-2-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "description": "test-idle-rule-to-get-2-description",
           "disable_during_periods": null,
           "duration": {
@@ -162,7 +168,10 @@ Feature: Get a idle rule
           }
         ]
       ],
-      "author": "test-idle-rule-to-get-1-author",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test-idle-rule-to-get-1-description",
       "disable_during_periods": [
         "pause"

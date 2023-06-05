@@ -3,6 +3,7 @@ package executor
 import (
 	"context"
 	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
@@ -30,13 +31,13 @@ type mongoUpdateExecutor struct {
 // Exec finds executor by operation and calls it.
 func (e *mongoUpdateExecutor) Exec(
 	ctx context.Context,
-	operation types.Operation,
+	op types.Operation,
 	alarm *types.Alarm,
 	entity *types.Entity,
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	changeType, err := e.executor.Exec(ctx, operation, alarm, entity, time, userID, role, initiator)
+	changeType, err := e.executor.Exec(ctx, op, alarm, entity, time, userID, role, initiator)
 	if err != nil {
 		return "", err
 	}

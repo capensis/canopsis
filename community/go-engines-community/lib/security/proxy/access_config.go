@@ -3,11 +3,11 @@ package proxy
 //go:generate mockgen -destination=../../../mocks/lib/security/proxy/proxy.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy AccessConfig
 
 import (
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 const configPath = "/api/security/routes_permissions_map.yml"
@@ -39,7 +39,7 @@ func (m *fileAccessConfig) Get(uri, method string) (string, string) {
 
 // LoadAccessConfig creates AccessConfig by config file.
 func LoadAccessConfig(configDir string) (AccessConfig, error) {
-	buf, err := ioutil.ReadFile(filepath.Join(configDir, configPath))
+	buf, err := os.ReadFile(filepath.Join(configDir, configPath))
 
 	if err != nil {
 		return nil, err

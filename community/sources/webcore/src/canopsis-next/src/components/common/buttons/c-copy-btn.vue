@@ -1,13 +1,15 @@
 <template lang="pug">
-  c-action-btn(:tooltip="tooltip")
-    v-btn(
-      slot="button",
-      v-clipboard:copy="value",
-      v-clipboard:success="onSuccessCopied",
-      v-clipboard:error="onErrorCopied",
-      icon
-    )
-      v-icon(:color="color") {{ icon }}
+  c-action-btn(v-bind="$attrs", :tooltip="tooltip")
+    template(#button="")
+      v-btn.mx-1.ma-0(
+        v-clipboard:copy="value",
+        v-clipboard:success="onSuccessCopied",
+        v-clipboard:error="onErrorCopied",
+        :small="small",
+        :fab="fab",
+        icon
+      )
+        v-icon(:color="color") {{ icon }}
 </template>
 
 <script>
@@ -28,6 +30,14 @@ export default {
     value: {
       type: String,
       required: true,
+    },
+    small: {
+      type: Boolean,
+      default: false,
+    },
+    fab: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {

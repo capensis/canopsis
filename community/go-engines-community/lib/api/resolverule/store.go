@@ -2,17 +2,17 @@ package resolverule
 
 import (
 	"context"
-	"errors"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 type Store interface {
@@ -37,7 +37,7 @@ func NewStore(
 		dbClient:     dbClient,
 		dbCollection: dbClient.Collection(mongo.ResolveRuleMongoCollection),
 
-		defaultSearchByFields: []string{"_id", "author", "name", "description"},
+		defaultSearchByFields: []string{"_id", "author.name", "name", "description"},
 	}
 }
 
@@ -67,7 +67,7 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 			return err
 		}
 
-		err = s.updateFollowingPriorities(ctx, id, request.Priority)
+		err = priority.UpdateFollowing(ctx, s.dbCollection, id, request.Priority)
 		if err != nil {
 			return err
 		}
@@ -83,7 +83,7 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 
 func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
-	pipeline = append(pipeline, s.authorPipeline()...)
+	pipeline = append(pipeline, author.Pipeline()...)
 
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
@@ -105,7 +105,7 @@ func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
 }
 
 func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
-	pipeline := make([]bson.M, 0)
+	pipeline := author.Pipeline()
 	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
@@ -120,7 +120,6 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 		query.Query,
 		pipeline,
 		common.GetSortQuery(sortBy, query.Sort),
-		s.authorPipeline(),
 	))
 
 	if err != nil {
@@ -160,16 +159,8 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	var res *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		res = nil
-		originalModel := resolverule.Rule{}
-		err := s.dbCollection.FindOne(ctx, bson.M{"_id": request.ID}).Decode(&originalModel)
-		if err != nil {
-			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil
-			}
-			return err
-		}
 
-		_, err = s.dbCollection.UpdateOne(
+		_, err := s.dbCollection.UpdateOne(
 			ctx,
 			bson.M{"_id": request.ID},
 			update,
@@ -178,14 +169,12 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 			return err
 		}
 
-		if originalModel.Priority != request.Priority {
-			err := s.updateFollowingPriorities(ctx, request.ID, request.Priority)
-			if err != nil {
-				return err
-			}
+		err = priority.UpdateFollowing(ctx, s.dbCollection, request.ID, request.Priority)
+		if err != nil {
+			return err
 		}
 
-		res, err = s.GetById(ctx, originalModel.ID)
+		res, err = s.GetById(ctx, request.ID)
 		return err
 	})
 	if err != nil {
@@ -205,43 +194,6 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	}
 
 	return deleted > 0, nil
-}
-
-func (s *store) updateFollowingPriorities(ctx context.Context, id string, priority int) error {
-	err := s.dbCollection.FindOne(ctx, bson.M{
-		"_id":      bson.M{"$ne": id},
-		"priority": priority,
-	}).Err()
-	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
-			return nil
-		}
-		return err
-	}
-
-	_, err = s.dbCollection.UpdateMany(
-		ctx,
-		bson.M{
-			"_id":      bson.M{"$ne": id},
-			"priority": bson.M{"$gte": priority},
-		},
-		bson.M{"$inc": bson.M{"priority": 1}},
-	)
-
-	return err
-}
-
-func (s *store) authorPipeline() []bson.M {
-	return []bson.M{
-		// Author
-		{"$lookup": bson.M{
-			"from":         mongo.RightsMongoCollection,
-			"localField":   "author",
-			"foreignField": "_id",
-			"as":           "author",
-		}},
-		{"$unwind": bson.M{"path": "$author", "preserveNullAndEmptyArrays": true}},
-	}
 }
 
 func (s *store) transformRequestToDocument(r EditRequest) resolverule.Rule {

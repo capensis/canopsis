@@ -3,6 +3,7 @@ export const ROUTES_NAMES = {
   error: 'error',
   login: 'login',
   view: 'view',
+  viewKiosk: 'view-kiosk',
   alarms: 'alarms',
   adminRights: 'admin-rights',
   adminUsers: 'admin-users',
@@ -15,8 +16,9 @@ export const ROUTES_NAMES = {
   adminHealthcheck: 'admin-healthcheck',
   adminEngines: 'admin-engines',
   adminKPI: 'admin-kpi',
+  adminMaps: 'admin-maps',
   exploitationPbehaviors: 'exploitation-pbehaviors',
-  exploitationEventFilter: 'exploitation-event-filter',
+  exploitationEventFilters: 'exploitation-event-filters',
   exploitationSnmpRules: 'exploitation-snmp-rules',
   exploitationDynamicInfos: 'exploitation-dynamic-infos',
   playlist: 'playlist',
@@ -25,7 +27,10 @@ export const ROUTES_NAMES = {
   exploitationIdleRules: 'exploitation-idle-rules',
   exploitationFlappingRules: 'exploitation-flapping-rules',
   exploitationResolveRules: 'exploitation-resolve-rules',
+  exploitationDeclareTicketRules: 'exploitation-declare-ticket-rules',
+  exploitationLinkRules: 'exploitation-link-rules',
   notificationInstructionStats: 'notification-instruction-stats',
+  profilePatterns: 'profile-patterns',
 };
 
 export const ROUTES = {
@@ -33,6 +38,7 @@ export const ROUTES = {
   login: '/login',
   error: '/error',
   view: '/view/:id',
+  viewKiosk: '/kiosk-views/:id/:tabId',
   alarms: '/alarms/:id',
   adminRights: '/admin/rights',
   adminUsers: '/admin/users',
@@ -45,8 +51,9 @@ export const ROUTES = {
   adminHealthcheck: '/admin/healthcheck',
   adminEngines: '/admin/engines',
   adminKPI: '/admin/kpi',
+  adminMaps: '/admin/maps',
   exploitationPbehaviors: '/exploitation/pbehaviors',
-  exploitationEventFilter: '/exploitation/event-filter',
+  exploitationEventFilters: '/exploitation/event-filters',
   exploitationSnmpRules: '/exploitation/snmp-rules',
   exploitationDynamicInfos: '/exploitation/dynamic-infos',
   playlist: '/playlist/:id',
@@ -55,7 +62,10 @@ export const ROUTES = {
   exploitationIdleRules: '/exploitation/idle-rules',
   exploitationFlappingRules: '/exploitation/flapping-rules',
   exploitationResolveRules: '/exploitation/resolve-rules',
+  exploitationDeclareTicketRules: '/exploitation/declare-ticket-rules',
+  exploitationLinkRules: '/exploitation/link-rules',
   notificationInstructionStats: '/notification/instruction-stats',
+  profilePatterns: '/filters',
 };
 
 export const GROUPS_NAVIGATION_TYPES = {
@@ -114,72 +124,14 @@ export const TOURS = {
 };
 
 export const QUICK_RANGES = {
-  custom: {
-    value: 'custom',
-  },
-  last2Days: {
-    value: 'last2Days',
-    start: 'now-2d',
+  last15Minutes: {
+    value: 'last15Minutes',
+    start: 'now-15m',
     stop: 'now',
   },
-  last7Days: {
-    value: 'last7Days',
-    start: 'now-7d',
-    stop: 'now',
-  },
-  last30Days: {
-    value: 'last30Days',
-    start: 'now-30d',
-    stop: 'now',
-  },
-  last1Year: {
-    value: 'last1Year',
-    start: 'now-1y',
-    stop: 'now',
-  },
-  yesterday: {
-    value: 'yesterday',
-    start: 'now-1d/d',
-    stop: 'now-1d/d',
-  },
-  previousWeek: {
-    value: 'previousWeek',
-    start: 'now-1w/w',
-    stop: 'now-1w/w',
-  },
-  previousMonth: {
-    value: 'previousMonth',
-    start: 'now-1m/m',
-    stop: 'now-1m/m',
-  },
-  today: {
-    value: 'today',
-    start: 'now/d',
-    stop: 'now/d',
-  },
-  todaySoFar: {
-    value: 'todaySoFar',
-    start: 'now/d',
-    stop: 'now',
-  },
-  thisWeek: {
-    value: 'thisWeek',
-    start: 'now/w',
-    stop: 'now/w',
-  },
-  thisWeekSoFar: {
-    value: 'thisWeekSoFar',
-    start: 'now/w',
-    stop: 'now',
-  },
-  thisMonth: {
-    value: 'thisMonth',
-    start: 'now/m',
-    stop: 'now/m',
-  },
-  thisMonthSoFar: {
-    value: 'thisMonthSoFar',
-    start: 'now/m',
+  last30Minutes: {
+    value: 'last30Minutes',
+    start: 'now-30m',
     stop: 'now',
   },
   last1Hour: {
@@ -207,6 +159,111 @@ export const QUICK_RANGES = {
     start: 'now-24h',
     stop: 'now',
   },
+  last2Days: {
+    value: 'last2Days',
+    start: 'today-2d',
+    stop: 'today',
+  },
+  last7Days: {
+    value: 'last7Days',
+    start: 'today-7d',
+    stop: 'today',
+  },
+  last30Days: {
+    value: 'last30Days',
+    start: 'today-30d',
+    stop: 'today',
+  },
+  last1Year: {
+    value: 'last1Year',
+    start: 'today-1y',
+    stop: 'today',
+  },
+  yesterday: {
+    value: 'yesterday',
+    start: 'today-1d/d',
+    stop: 'today-1d/d',
+  },
+  previousWeek: {
+    value: 'previousWeek',
+    start: 'today-1w/w',
+    stop: 'today-1w/w',
+  },
+  previousMonth: {
+    value: 'previousMonth',
+    start: 'today-1M/M',
+    stop: 'today-1M/M',
+  },
+  today: {
+    value: 'today',
+    start: 'today/d',
+    stop: 'today/d',
+  },
+  todaySoFar: {
+    value: 'todaySoFar',
+    start: 'today/d',
+    stop: 'now',
+  },
+  thisWeek: {
+    value: 'thisWeek',
+    start: 'today/w',
+    stop: 'today/w',
+  },
+  thisWeekSoFar: {
+    value: 'thisWeekSoFar',
+    start: 'today/w',
+    stop: 'now',
+  },
+  thisMonth: {
+    value: 'thisMonth',
+    start: 'today/M',
+    stop: 'today/M',
+  },
+  thisMonthSoFar: {
+    value: 'thisMonthSoFar',
+    start: 'today/M',
+    stop: 'now',
+  },
+  custom: {
+    value: 'custom',
+  },
+};
+
+export const LIVE_REPORTING_QUICK_RANGES = {
+  ...QUICK_RANGES,
+
+  [QUICK_RANGES.last2Days.value]: {
+    ...QUICK_RANGES.last2Days,
+    stop: 'now',
+  },
+  [QUICK_RANGES.last7Days.value]: {
+    ...QUICK_RANGES.last7Days,
+    stop: 'now',
+  },
+  [QUICK_RANGES.last30Days.value]: {
+    ...QUICK_RANGES.last30Days,
+    stop: 'now',
+  },
+  [QUICK_RANGES.last1Year.value]: {
+    ...QUICK_RANGES.last1Year,
+    stop: 'now',
+  },
+};
+
+export const METRICS_QUICK_RANGES = {
+  [QUICK_RANGES.last2Days.value]: QUICK_RANGES.last2Days,
+  [QUICK_RANGES.last7Days.value]: QUICK_RANGES.last7Days,
+  [QUICK_RANGES.last30Days.value]: QUICK_RANGES.last30Days,
+  [QUICK_RANGES.last1Year.value]: QUICK_RANGES.last1Year,
+  [QUICK_RANGES.yesterday.value]: QUICK_RANGES.yesterday,
+  [QUICK_RANGES.previousWeek.value]: QUICK_RANGES.previousWeek,
+  [QUICK_RANGES.previousMonth.value]: QUICK_RANGES.previousMonth,
+  [QUICK_RANGES.today.value]: QUICK_RANGES.today,
+  [QUICK_RANGES.thisWeek.value]: QUICK_RANGES.thisWeek,
+  [QUICK_RANGES.thisWeekSoFar.value]: QUICK_RANGES.thisWeekSoFar,
+  [QUICK_RANGES.thisMonth.value]: QUICK_RANGES.thisMonth,
+  [QUICK_RANGES.thisMonthSoFar.value]: QUICK_RANGES.thisMonthSoFar,
+  [QUICK_RANGES.custom.value]: QUICK_RANGES.custom,
 };
 
 export const GRID_SIZES = {
@@ -223,6 +280,8 @@ export const WORKFLOW_TYPES = {
 };
 
 export const PAYLOAD_VARIABLE_REGEXP = /({{(.){2,}}})/g;
+
+export const PAYLOAD_OPERATORS = ['range', 'end'];
 
 export const PATTERNS_TYPES = {
   alarm: 'alarm',
@@ -242,3 +301,59 @@ export const ASSOCIATIVE_TABLES_NAMES = {
 };
 
 export const DEFAULT_COLUMN_TEMPLATE_VALUE = '{{ value }}';
+
+export const VALIDATION_DELAY = 300;
+
+export const TRIGGERS = {
+  create: 'create',
+  stateinc: 'stateinc',
+  statedec: 'statedec',
+  changestate: 'changestate',
+  changestatus: 'changestatus',
+  ack: 'ack',
+  ackremove: 'ackremove',
+  cancel: 'cancel',
+  uncancel: 'uncancel',
+  comment: 'comment',
+  declareticket: 'declareticket',
+  declareticketwebhook: 'declareticketwebhook',
+  assocticket: 'assocticket',
+  snooze: 'snooze',
+  unsnooze: 'unsnooze',
+  resolve: 'resolve',
+  activate: 'activate',
+  pbhenter: 'pbhenter',
+  pbhleave: 'pbhleave',
+  instructionfail: 'instructionfail',
+  autoinstructionfail: 'autoinstructionfail',
+  instructionjobcomplete: 'instructionjobcomplete',
+  instructionjobfail: 'instructionjobfail',
+  instructioncomplete: 'instructioncomplete',
+  autoinstructioncomplete: 'autoinstructioncomplete',
+};
+
+export const PRO_TRIGGERS = [
+  TRIGGERS.declareticket,
+  TRIGGERS.declareticketwebhook,
+  TRIGGERS.instructionfail,
+  TRIGGERS.autoinstructionfail,
+  TRIGGERS.instructionjobcomplete,
+  TRIGGERS.instructionjobfail,
+  TRIGGERS.instructioncomplete,
+  TRIGGERS.autoinstructioncomplete,
+];
+
+export const DEPRECATED_TRIGGERS = [
+  TRIGGERS.declareticket,
+];
+
+export const HEADERS = {
+  authorization: 'Authorization',
+  contentType: 'Content-Type',
+};
+
+export const CONTENT_TYPES = {
+  json: 'application/json',
+  javascript: 'application/javascript',
+  xWwwFormUrlencoded: 'application/x-www-form-urlencoded',
+};

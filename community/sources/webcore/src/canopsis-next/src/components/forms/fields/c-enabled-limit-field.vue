@@ -9,22 +9,19 @@
         :name="enabledFieldName",
         color="primary"
       )
-        c-help-icon(v-if="helpText", slot="append", :text="helpText", max-width="300", top)
+        template(#append="")
+          c-help-icon(v-if="helpText", :text="helpText", max-width="300", color="info", top)
     v-flex(xs2)
-      v-text-field(
-        v-field.number="value.limit",
-        v-validate="'required'",
+      c-number-field(
+        v-field="value.limit",
         :label="fieldLabel",
         :name="limitFieldName",
         :disabled="!value.enabled",
         :required="value.enabled",
-        :error-messages="errors.collect(limitFieldName)",
-        type="number"
+        :min="min"
       )
     v-flex(xs9)
-      div.v-messages.theme--light.error--text
-        div.v-messages__wrapper
-          div.v-messages__message(v-for="error in errors.collect(name)", :key="error") {{ error }}
+      v-messages(:value="errors.collect(name)", color="error")
 </template>
 
 <script>
@@ -54,6 +51,10 @@ export default {
     name: {
       type: String,
       default: 'limit',
+    },
+    min: {
+      type: Number,
+      required: false,
     },
   },
   computed: {

@@ -10,7 +10,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog"
@@ -24,11 +23,13 @@ type API interface {
 	ListByEntityID(c *gin.Context)
 	CalendarByEntityID(c *gin.Context)
 	ListEntities(c *gin.Context)
+	BulkEntityCreate(c *gin.Context)
+	BulkEntityDelete(c *gin.Context)
 }
 
 type api struct {
 	store        Store
-	computeChan  chan<- pbehavior.ComputeTask
+	computeChan  chan<- []string
 	actionLogger logger.ActionLogger
 	logger       zerolog.Logger
 
@@ -37,7 +38,7 @@ type api struct {
 
 func NewApi(
 	store Store,
-	computeChan chan<- pbehavior.ComputeTask,
+	computeChan chan<- []string,
 	transformer common.PatternFieldsTransformer,
 	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
@@ -96,7 +97,7 @@ func (a *api) ListByEntityID(c *gin.Context) {
 		return
 	}
 
-	res, err := a.store.FindByEntityID(c.Request.Context(), *entity)
+	res, err := a.store.FindByEntityID(c.Request.Context(), *entity, r)
 	if err != nil {
 		panic(err)
 	}
@@ -219,9 +220,7 @@ func (a *api) Create(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorIds: []string{pbh.ID},
-	})
+	a.sendComputeTask([]string{pbh.ID})
 
 	c.JSON(http.StatusCreated, pbh)
 }
@@ -274,9 +273,7 @@ func (a *api) Update(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorIds: []string{pbh.ID},
-	})
+	a.sendComputeTask([]string{pbh.ID})
 
 	c.JSON(http.StatusOK, pbh)
 }
@@ -333,9 +330,7 @@ func (a *api) Patch(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorIds: []string{pbh.ID},
-	})
+	a.sendComputeTask([]string{pbh.ID})
 
 	c.JSON(http.StatusOK, pbh)
 }
@@ -361,9 +356,7 @@ func (a *api) Delete(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorIds: []string{id},
-	})
+	a.sendComputeTask([]string{id})
 	c.JSON(http.StatusNoContent, nil)
 }
 
@@ -395,9 +388,7 @@ func (a *api) DeleteByName(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorIds: []string{id},
-	})
+	a.sendComputeTask([]string{id})
 	c.JSON(http.StatusNoContent, nil)
 }
 
@@ -489,9 +480,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 		ids = append(ids, pbh.ID)
 	}
 
-	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorIds: ids,
-	})
+	a.sendComputeTask(ids)
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
@@ -589,9 +578,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		ids = append(ids, pbh.ID)
 	}
 
-	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorIds: ids,
-	})
+	a.sendComputeTask(ids)
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
@@ -670,15 +657,173 @@ func (a *api) BulkDelete(c *gin.Context) {
 		ids = append(ids, request.ID)
 	}
 
-	a.sendComputeTask(pbehavior.ComputeTask{
-		PbehaviorIds: ids,
-	})
+	a.sendComputeTask(ids)
 
 	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
-func (a *api) sendComputeTask(task pbehavior.ComputeTask) {
-	a.computeChan <- task
+// BulkEntityCreate
+// @Param body body []BulkEntityCreateRequestItem true "body"
+func (a *api) BulkEntityCreate(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+	var ar fastjson.Arena
+	raw, err := c.GetRawData()
+	if err != nil {
+		panic(err)
+	}
+
+	jsonValue, err := fastjson.ParseBytes(raw)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	rawObjects, err := jsonValue.Array()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	ctx := c.Request.Context()
+	response := ar.NewArray()
+	ids := make([]string, 0, len(rawObjects))
+
+	for idx, rawObject := range rawObjects {
+		object, err := rawObject.Object()
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		var request BulkEntityCreateRequestItem
+		err = json.Unmarshal(object.MarshalTo(nil), &request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		err = binding.Validator.ValidateStruct(request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		pbh, err := a.store.EntityInsert(ctx, request)
+		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
+				continue
+			}
+
+			a.logger.Err(err).Msg("cannot create pbehavior")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
+			continue
+		}
+
+		if pbh == nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
+			continue
+		}
+
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, pbh.ID, http.StatusOK, rawObject, nil))
+
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+			Action:    logger.ActionCreate,
+			ValueType: logger.ValueTypePbehavior,
+			ValueID:   pbh.ID,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+
+		ids = append(ids, pbh.ID)
+	}
+
+	a.sendComputeTask(ids)
+
+	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+}
+
+// BulkEntityDelete
+// @Param body body []BulkEntityDeleteRequestItem true "body"
+func (a *api) BulkEntityDelete(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+	var ar fastjson.Arena
+	raw, err := c.GetRawData()
+	if err != nil {
+		panic(err)
+	}
+
+	jsonValue, err := fastjson.ParseBytes(raw)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	rawObjects, err := jsonValue.Array()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	ctx := c.Request.Context()
+	response := ar.NewArray()
+	ids := make([]string, 0, len(rawObjects))
+
+	for idx, rawObject := range rawObjects {
+		object, err := rawObject.Object()
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		var request BulkEntityDeleteRequestItem
+		err = json.Unmarshal(object.MarshalTo(nil), &request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
+			continue
+		}
+
+		err = binding.Validator.ValidateStruct(request)
+		if err != nil {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
+			continue
+		}
+
+		id, err := a.store.EntityDelete(ctx, request)
+		if err != nil {
+			a.logger.Err(err).Msg("cannot delete pbehavior")
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
+			continue
+		}
+
+		if id == "" {
+			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
+			continue
+		}
+
+		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, id, http.StatusOK, rawObject, nil))
+
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+			Action:    logger.ActionDelete,
+			ValueType: logger.ValueTypePbehavior,
+			ValueID:   id,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+
+		ids = append(ids, id)
+	}
+
+	a.sendComputeTask(ids)
+
+	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+}
+
+func (a *api) sendComputeTask(ids []string) {
+	a.computeChan <- ids
 }
 
 func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {

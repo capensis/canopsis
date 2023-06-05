@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`filters-list Renders \`filters-list\` with custom props 1`] = `
+<div>
+  <div
+    class="v-alert info"
+    style="display: none;"
+  >
+    <i
+      aria-hidden="true"
+      class="v-icon material-icons theme--light v-alert__icon"
+    >
+      info
+    </i>
+    <div>
+      No filters added yet
+    </div>
+  </div>
+  <c-draggable-list-field-stub
+    handle=".action-drag-handler"
+    value="[object Object],[object Object]"
+  >
+    <filter-tile-stub
+      editable="true"
+      filter="[object Object]"
+    />
+    <filter-tile-stub
+      editable="true"
+      filter="[object Object]"
+    />
+  </c-draggable-list-field-stub>
+  <button
+    class="ml-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      Add filter
+    </div>
+  </button>
+</div>
+`;
+
+exports[`filters-list Renders \`filters-list\` with default props 1`] = `
+<div>
+  <div
+    class="v-alert info"
+  >
+    <i
+      aria-hidden="true"
+      class="v-icon material-icons theme--light v-alert__icon"
+    >
+      info
+    </i>
+    <div>
+      No filters added yet
+    </div>
+  </div>
+  <c-draggable-list-field-stub
+    handle=".action-drag-handler"
+    value=""
+  />
+  <button
+    class="ml-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
+    type="button"
+  >
+    <div
+      class="v-btn__content"
+    >
+      Add filter
+    </div>
+  </button>
+</div>
+`;

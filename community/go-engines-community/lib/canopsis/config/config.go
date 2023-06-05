@@ -2,6 +2,8 @@ package config
 
 import (
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 // Some default values related to configuration
@@ -11,6 +13,7 @@ const (
 	VersionKeyName       = "canopsis_version"
 	RemediationKeyName   = "remediation"
 	HealthCheckName      = "health_check"
+	AlarmTagColorKeyName = "alarm_tag_color"
 )
 
 // SectionAlarm ...
@@ -26,14 +29,17 @@ type SectionAlarm struct {
 	// TimeToKeepResolvedAlarms defines how long resolved alarms will be kept in main alarm collection
 	TimeToKeepResolvedAlarms string `toml:"TimeToKeepResolvedAlarms"`
 	AllowDoubleAck           bool   `toml:"AllowDoubleAck"`
+	// ActivateAlarmAfterAutoRemediation if is set then alarm will be activated only after auto remediation execution
+	ActivateAlarmAfterAutoRemediation bool `toml:"ActivateAlarmAfterAutoRemediation"`
 }
 
 // SectionGlobal ...
 type SectionGlobal struct {
-	PrefetchCount                int `toml:"PrefetchCount"`
-	PrefetchSize                 int `toml:"PrefetchSize"`
-	ReconnectTimeoutMilliseconds int `toml:"ReconnectTimeoutMilliseconds"`
-	ReconnectRetries             int `toml:"ReconnectRetries"`
+	PrefetchCount                int   `toml:"PrefetchCount"`
+	PrefetchSize                 int   `toml:"PrefetchSize"`
+	ReconnectTimeoutMilliseconds int   `toml:"ReconnectTimeoutMilliseconds"`
+	ReconnectRetries             int   `toml:"ReconnectRetries"`
+	MaxExternalResponseSize      int64 `toml:"MaxExternalResponseSize"`
 }
 
 func (s *SectionGlobal) GetReconnectTimeout() time.Duration {
@@ -58,11 +64,12 @@ type SectionFile struct {
 }
 
 type SectionDataStorage struct {
-	TimeToExecute string `toml:"TimeToExecute"`
+	TimeToExecute      string `toml:"TimeToExecute"`
+	MaxUpdates         int    `toml:"MaxUpdates"`
+	MongoClientTimeout string `toml:"MongoClientTimeout"`
 }
 
 type SectionApi struct {
-	TokenExpiration    string `toml:"TokenExpiration"`
 	TokenSigningMethod string `toml:"TokenSigningMethod"`
 	BulkMaxSize        int    `toml:"BulkMaxSize"`
 }
@@ -80,7 +87,19 @@ type ConsoleWriter struct {
 }
 
 type SectionMetrics struct {
-	SliInterval string `toml:"SliInterval"`
+	FlushInterval          string `toml:"FlushInterval"`
+	SliInterval            string `toml:"SliInterval"`
+	EnabledInstructions    bool   `toml:"EnabledInstructions"`
+	EnabledNotAckedMetrics bool   `toml:"EnabledNotAckedMetrics"`
+}
+
+type SectionTechMetrics struct {
+	Enabled          bool   `toml:"Enabled"`
+	DumpKeepInterval string `toml:"DumpKeepInterval"`
+}
+
+type SectionTemplate struct {
+	Vars map[string]any `toml:"vars"`
 }
 
 // CanopsisConf represents a generic configuration object.
@@ -95,6 +114,8 @@ type CanopsisConf struct {
 	Logger      SectionLogger      `bson:"logger" toml:"logger"`
 	API         SectionApi         `bson:"api" toml:"api"`
 	Metrics     SectionMetrics     `bson:"metrics" toml:"metrics"`
+	TechMetrics SectionTechMetrics `bson:"tech_metrics" toml:"tech_metrics"`
+	Template    SectionTemplate    `bson:"template" toml:"template"`
 }
 
 // UserInterfaceConf represents a user interface configuration object.
@@ -108,5 +129,7 @@ type UserInterfaceConf struct {
 type VersionConf struct {
 	Edition string `bson:"edition"`
 	Stack   string `bson:"stack"`
-	Version string `bson:"version"`
+
+	Version        string         `bson:"version"`
+	VersionUpdated *types.CpsTime `bson:"version_updated,omitempty"`
 }

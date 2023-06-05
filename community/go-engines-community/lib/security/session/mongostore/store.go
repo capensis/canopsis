@@ -4,14 +4,15 @@ package mongostore
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"net/http"
-	"time"
 )
 
 // NewStore creates new mongo store.

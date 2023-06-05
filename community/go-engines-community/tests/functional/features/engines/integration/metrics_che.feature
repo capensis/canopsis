@@ -1,6 +1,7 @@
 Feature: Entities should be synchronized in metrics db
   I need to be able to see metrics.
 
+  @concurrent
   Scenario: given updated entity should get metrics by updated entity
     Given I am admin
     When I do POST /api/v4/cat/kpi-filters:
@@ -84,21 +85,32 @@ Feature: Entities should be synchronized in metrics db
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
+      "event_type": "check",
+      "state": 1,
+      "client": "test-client-metrics-che-1",
       "connector": "test-connector-metrics-che-1",
       "connector_name": "test-connector-name-metrics-che-1",
-      "source_type": "resource",
-      "event_type": "check",
       "component": "test-component-metrics-che-1",
       "resource": "test-resource-metrics-che-1",
-      "state": 1,
-      "client": "test-client-metrics-che-1"
+      "source_type": "resource"
     }
     """
-    When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "created_alarms"}
+      ],
+      "filter": "{{ .filter1ID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -106,7 +118,7 @@ Feature: Entities should be synchronized in metrics db
           "title": "created_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -114,21 +126,32 @@ Feature: Entities should be synchronized in metrics db
       ]
     }
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
+      "event_type": "check",
+      "state": 1,
+      "client": "test-client-metrics-che-1-updated",
       "connector": "test-connector-metrics-che-1",
       "connector_name": "test-connector-name-metrics-che-1",
-      "source_type": "resource",
-      "event_type": "check",
       "component": "test-component-metrics-che-1",
       "resource": "test-resource-metrics-che-1",
-      "state": 1,
-      "client": "test-client-metrics-che-1-updated"
+      "source_type": "resource"
     }
     """
-    When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter2ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "created_alarms"}
+      ],
+      "filter": "{{ .filter2ID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -136,7 +159,7 @@ Feature: Entities should be synchronized in metrics db
           "title": "created_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -144,7 +167,19 @@ Feature: Entities should be synchronized in metrics db
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "created_alarms"}
+      ],
+      "filter": "{{ .filter1ID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -152,7 +187,7 @@ Feature: Entities should be synchronized in metrics db
           "title": "created_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 0
             }
           ]
@@ -161,6 +196,7 @@ Feature: Entities should be synchronized in metrics db
     }
     """
 
+  @concurrent
   Scenario: given updated component should get metrics by updated resource
     Given I am admin
     When I do POST /api/v4/cat/kpi-filters:
@@ -251,34 +287,44 @@ Feature: Entities should be synchronized in metrics db
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
+      "event_type": "check",
+      "state": 0,
+      "client": "test-client-metrics-che-2",
       "connector": "test-connector-metrics-che-2",
       "connector_name": "test-connector-name-metrics-che-2",
-      "source_type": "component",
-      "event_type": "check",
       "component": "test-component-metrics-che-2",
-      "state": 0,
-      "client": "test-client-metrics-che-2"
+      "source_type": "component"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
+      "event_type": "check",
+      "state": 1,
+      "client": "test-client-metrics-che-2",
       "connector": "test-connector-metrics-che-2",
       "connector_name": "test-connector-name-metrics-che-2",
-      "source_type": "resource",
-      "event_type": "check",
       "component": "test-component-metrics-che-2",
       "resource": "test-resource-metrics-che-2",
-      "state": 1,
-      "client": "test-client-metrics-che-2"
+      "source_type": "resource"
     }
     """
-    When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "created_alarms"}
+      ],
+      "filter": "{{ .filter1ID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -286,7 +332,7 @@ Feature: Entities should be synchronized in metrics db
           "title": "created_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -297,17 +343,48 @@ Feature: Entities should be synchronized in metrics db
     When I send an event:
     """json
     {
+      "event_type": "check",
+      "state": 0,
+      "client": "test-client-metrics-che-2-updated",
       "connector": "test-connector-metrics-che-2",
       "connector_name": "test-connector-name-metrics-che-2",
-      "source_type": "component",
-      "event_type": "check",
       "component": "test-component-metrics-che-2",
-      "state": 0,
-      "client": "test-client-metrics-che-2-updated"
+      "source_type": "component"
     }
     """
-    When I wait the end of event processing
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter2ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "check",
+        "connector": "test-connector-metrics-che-2",
+        "connector_name": "test-connector-name-metrics-che-2",
+        "component": "test-component-metrics-che-2",
+        "source_type": "component"
+      },
+      {
+        "event_type": "entityupdated",
+        "connector": "test-connector-metrics-che-2",
+        "connector_name": "test-connector-name-metrics-che-2",
+        "component": "test-component-metrics-che-2",
+        "resource": "test-resource-metrics-che-2",
+        "source_type": "resource"
+      }
+    ]
+    """
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "created_alarms"}
+      ],
+      "filter": "{{ .filter2ID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -315,7 +392,7 @@ Feature: Entities should be synchronized in metrics db
           "title": "created_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 1
             }
           ]
@@ -323,7 +400,19 @@ Feature: Entities should be synchronized in metrics db
       ]
     }
     """
-    When I do GET /api/v4/cat/metrics/alarm?filter={{ .filter1ID }}&parameters[]=created_alarms&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and body contains:
+    When I save request:
+    """json
+    {
+      "parameters": [
+        {"metric": "created_alarms"}
+      ],
+      "filter": "{{ .filter1ID }}",
+      "sampling": "day",
+      "from": {{ nowDateTz }},
+      "to": {{ nowDateTz }}
+    }
+    """
+    When I do POST /api/v4/cat/metrics/alarm until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -331,7 +420,7 @@ Feature: Entities should be synchronized in metrics db
           "title": "created_alarms",
           "data": [
             {
-              "timestamp": {{ nowDate }},
+              "timestamp": {{ nowDateTz }},
               "value": 0
             }
           ]

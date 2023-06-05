@@ -29,18 +29,19 @@
           div.drag-handler
             v-layout.controls
               v-tooltip(bottom)
+                template(#activator="{ on }")
+                  v-btn.ma-0.mr-1(
+                    v-on="on",
+                    :color="layoutItem.autoHeight ? 'grey lighten-1' : 'transparent'",
+                    icon,
+                    small,
+                    @click="toggleAutoHeight(index)"
+                  )
+                    v-icon(
+                      :color="layoutItem.autoHeight ? 'black' : 'grey darken-1'",
+                      small
+                    ) lock
                 span {{ $t('view.autoHeightButton') }}
-                v-btn.ma-0.mr-1(
-                  slot="activator",
-                  :color="layoutItem.autoHeight ? 'grey lighten-1' : 'transparent'",
-                  icon,
-                  small,
-                  @click="toggleAutoHeight(index)"
-                )
-                  v-icon(
-                    :color="layoutItem.autoHeight ? 'black' : 'grey darken-1'",
-                    small
-                  ) lock
               widget-wrapper-menu(
                 :widget="layoutItem.widget",
                 :tab="tab"
@@ -154,12 +155,12 @@ export default {
   .grid-layout-wrapper {
     padding-bottom: 500px;
 
-    & /deep/ .vue-grid-layout {
+    & ::v-deep .vue-grid-layout {
       margin: auto;
       background-color: rgba(60, 60, 60, .05);
     }
 
-    & /deep/ .vue-grid-item {
+    & ::v-deep .vue-grid-item {
       overflow: hidden;
       transition: none !important;
 
@@ -206,7 +207,7 @@ export default {
       }
     }
 
-    & /deep/ .v-card {
+    & ::v-deep .v-card {
       position: relative;
       min-height: 100%;
     }

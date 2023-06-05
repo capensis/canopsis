@@ -12,6 +12,7 @@ export default {
   methods: {
     ...mapActions({
       fetchEntityCategoriesList: 'fetchList',
+      fetchEntityCategoriesListWithoutStore: 'fetchListWithoutStore',
       updateEntityCategory: 'update',
       createEntityCategory: 'create',
       removeEntityCategory: 'remove',

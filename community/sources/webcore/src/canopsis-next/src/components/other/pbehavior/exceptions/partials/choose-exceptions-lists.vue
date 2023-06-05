@@ -12,11 +12,11 @@
       item-key="_id",
       select-all
     )
-      template(slot="items", slot-scope="props")
+      template(#items="{ selected, item }")
         tr
           td
-            v-checkbox-functional(v-model="props.selected", primary, hide-details)
-          td {{ props.item.name }}
+            v-checkbox-functional(v-model="selected", primary, hide-details)
+          td {{ item.name }}
 </template>
 
 <script>

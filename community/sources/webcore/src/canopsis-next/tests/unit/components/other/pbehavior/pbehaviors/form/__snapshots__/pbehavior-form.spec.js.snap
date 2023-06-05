@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehavior-form Renders \`pbehavior-form\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <pbehavior-general-form-stub
+    form="[object Object]"
+    noenabled="true"
+    withstartontrigger="true"
+  />
+  <!---->
+  <!---->
+  <pbehavior-recurrence-rule-field-stub
+    form="[object Object]"
+    withexdatetype="true"
+  />
+  <c-enabled-color-picker-field-stub
+    label="Use special color for this event?"
+  />
+</div>
+`;
+
+exports[`pbehavior-form Renders \`pbehavior-form\` with required props 1`] = `
+<div
+  class="layout column"
+>
+  <pbehavior-general-form-stub
+    form="[object Object]"
+  />
+  <pbehavior-comments-field-stub
+    comments=""
+  />
+  <pbehavior-filter-field-stub
+    patterns="[object Object]"
+    patternsfieldname="patterns"
+  />
+  <pbehavior-recurrence-rule-field-stub
+    form="[object Object]"
+    withexdatetype="true"
+  />
+  <c-enabled-color-picker-field-stub
+    label="Use special color for this event?"
+  />
+</div>
+`;

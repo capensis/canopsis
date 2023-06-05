@@ -1,0 +1,77 @@
+import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { createSelectInputStub } from '@unit/stubs/input';
+import { PATTERN_FIELD_TYPES } from '@/constants';
+
+import CInputTypeField from '@/components/forms/fields/c-input-type-field.vue';
+
+const localVue = createVueInstance();
+
+const stubs = {
+  'v-select': createSelectInputStub('v-select'),
+};
+
+const factory = (options = {}) => shallowMount(CInputTypeField, {
+  localVue,
+  stubs,
+
+  ...options,
+});
+
+const snapshotFactory = (options = {}) => mount(CInputTypeField, {
+  localVue,
+
+  ...options,
+});
+
+const selectTextField = wrapper => wrapper.find('select.v-select');
+
+describe('c-input-type-field', () => {
+  it('Input type changed after trigger select field', () => {
+    const wrapper = factory({
+      propsData: {
+        value: PATTERN_FIELD_TYPES.string,
+      },
+    });
+
+    const textField = selectTextField(wrapper);
+
+    textField.vm.$emit('input', PATTERN_FIELD_TYPES.number);
+
+    const inputEvents = wrapper.emitted('input');
+
+    expect(inputEvents).toHaveLength(1);
+
+    const [eventData] = inputEvents[0];
+    expect(eventData).toBe(PATTERN_FIELD_TYPES.number);
+  });
+
+  it('Renders `c-input-type-field` with default props', () => {
+    const wrapper = snapshotFactory();
+
+    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchMenuSnapshot();
+  });
+
+  it('Renders `c-input-type-field` with custom props', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        value: PATTERN_FIELD_TYPES.number,
+        label: 'Custom label',
+        name: 'name',
+        disabled: true,
+        flat: true,
+        errorMessages: ['Message'],
+        types: [
+          { value: PATTERN_FIELD_TYPES.number },
+          { value: PATTERN_FIELD_TYPES.string },
+          { value: PATTERN_FIELD_TYPES.stringArray },
+          { value: PATTERN_FIELD_TYPES.null },
+          { text: 'Custom boolean', value: PATTERN_FIELD_TYPES.boolean },
+        ],
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper).toMatchMenuSnapshot();
+  });
+});

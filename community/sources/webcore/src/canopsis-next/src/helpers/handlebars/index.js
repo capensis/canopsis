@@ -1,6 +1,8 @@
 import promisedHandlebars from 'promised-handlebars';
 import HandlebarsLib from 'handlebars';
 
+import store from '@/store';
+
 import * as helpers from './helpers';
 
 const Handlebars = promisedHandlebars(HandlebarsLib);
@@ -9,12 +11,19 @@ const Handlebars = promisedHandlebars(HandlebarsLib);
  * Compile template
  *
  * @param {string} template
- * @param {Object} context
+ * @param {Object} [context = {}]
  * @returns {Promise}
  */
-export async function compile(template, context) {
+export async function compile(template, context = {}) {
   const handleBarFunction = Handlebars.compile(template ?? '');
-  const result = await handleBarFunction(context);
+  const preparedContext = {
+    env: store.getters['templateVars/items'] ?? {},
+    user: store.getters['auth/currentUser'] ?? {},
+
+    ...context,
+  };
+
+  const result = await handleBarFunction(preparedContext);
 
   const element = document.createElement('div');
 
@@ -31,7 +40,11 @@ export async function compile(template, context) {
  * @returns {*}
  */
 export function registerHelper(name, helper) {
-  return Handlebars.registerHelper(name, helper);
+  if (Handlebars.helpers[name]) {
+    return;
+  }
+
+  Handlebars.registerHelper(name, helper);
 }
 
 /**
@@ -41,7 +54,7 @@ export function registerHelper(name, helper) {
  * @returns {*}
  */
 export function unregisterHelper(name) {
-  return Handlebars.unregisterHelper(name);
+  Handlebars.unregisterHelper(name);
 }
 
 /**
@@ -49,6 +62,7 @@ export function unregisterHelper(name) {
  */
 registerHelper('duration', helpers.durationHelper);
 registerHelper('state', helpers.alarmStateHelper);
+registerHelper('tags', helpers.alarmTagsHelper);
 registerHelper('request', helpers.requestHelper);
 registerHelper('timestamp', helpers.timestampHelper);
 registerHelper('internal-link', helpers.internalLinkHelper);
@@ -63,3 +77,4 @@ registerHelper('capitalize-all', helpers.capitalizeAllHelper);
 registerHelper('lowercase', helpers.lowercaseHelper);
 registerHelper('uppercase', helpers.uppercaseHelper);
 registerHelper('replace', helpers.replaceHelper);
+registerHelper('copy', helpers.copyHelper);

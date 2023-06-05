@@ -13,7 +13,7 @@ const localVue = createVueInstance();
 
 const stubs = {
   'c-quick-date-interval-field': true,
-  'c-filters-field': true,
+  'c-filter-field': true,
   'c-sampling-field': true,
   'c-alarm-metric-parameters-field': true,
 };
@@ -47,7 +47,7 @@ describe('kpi-alarms-filters', () => {
   /**
    * Year ago date
    */
-  const nowSubtractYearTimestamp = 1354899600;
+  const nowSubtractYearTimestamp = 1354834800;
 
   it('Query changed after trigger a quick interval field', async () => {
     const wrapper = factory({
@@ -217,7 +217,7 @@ describe('kpi-alarms-filters', () => {
       },
     });
 
-    const filtersField = wrapper.find('c-filters-field-stub');
+    const filtersField = wrapper.find('c-filter-field-stub');
 
     filtersField.vm.$emit('input', expectedFilter);
 

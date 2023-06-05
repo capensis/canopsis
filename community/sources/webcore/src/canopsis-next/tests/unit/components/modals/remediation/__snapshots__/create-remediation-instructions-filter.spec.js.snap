@@ -1,0 +1,163 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`create-remediation-instructions-filter Renders \`create-remediation-instructions-filter\` with empty modal 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close="close"
+  >
+    <div
+      class="title"
+    >
+      <span>
+        Filters
+      </span>
+    </div>
+     
+    <div
+      class="text"
+    >
+      <remediation-instructions-filter-form-stub
+        filters=""
+        form="[object Object]"
+      />
+    </div>
+     
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Submit
+        </div>
+      </button>
+    </div>
+  </div>
+</form>
+`;
+
+exports[`create-remediation-instructions-filter Renders \`create-remediation-instructions-filter\` with filter 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close="close"
+  >
+    <div
+      class="title"
+    >
+      <span>
+        Filters
+      </span>
+    </div>
+     
+    <div
+      class="text"
+    >
+      <remediation-instructions-filter-form-stub
+        filters=""
+        form="[object Object]"
+      />
+    </div>
+     
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Submit
+        </div>
+      </button>
+    </div>
+  </div>
+</form>
+`;
+
+exports[`create-remediation-instructions-filter Renders \`create-remediation-instructions-filter\` with hidden title 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close="close"
+  >
+    <div
+      class="title"
+    >
+      <span>
+        Filters
+      </span>
+    </div>
+     
+    <div
+      class="text"
+    >
+      <remediation-instructions-filter-form-stub
+        filters=""
+        form="[object Object]"
+      />
+    </div>
+     
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Submit
+        </div>
+      </button>
+    </div>
+  </div>
+</form>
+`;

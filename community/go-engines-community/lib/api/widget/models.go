@@ -2,6 +2,8 @@ package widget
 
 import (
 	"encoding/json"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
@@ -48,7 +50,7 @@ type Response struct {
 	Type           string                 `bson:"type" json:"type"`
 	GridParameters map[string]interface{} `bson:"grid_parameters" json:"grid_parameters"`
 	Parameters     view.Parameters        `bson:"parameters" json:"parameters"`
-	Author         string                 `bson:"author" json:"author,omitempty"`
+	Author         *author.Author         `bson:"author" json:"author,omitempty"`
 	Created        *types.CpsTime         `bson:"created" json:"created,omitempty" swaggertype:"integer"`
 	Updated        *types.CpsTime         `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 

@@ -1,0 +1,80 @@
+import {
+  EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
+  EVENT_FILTER_TYPES,
+} from '@/constants';
+
+export default {
+  externalData: 'Données externes',
+  actionsRequired: 'Veuillez ajouter au moins une action',
+  configRequired: 'No configuration defined. Please add at least one config parameter',
+  idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
+  editPattern: 'Éditer le modèle',
+  advanced: 'Avancée',
+  addAField: 'Ajouter un champ',
+  simpleEditor: 'Éditeur simple',
+  field: 'Champ',
+  value: 'Valeur',
+  advancedEditor: 'Éditeur avancé',
+  comparisonRules: 'Règles de comparaison',
+  editActions: 'Actions',
+  addAction: 'Ajouter une action',
+  editAction: 'Éditer une action',
+  actions: 'Actions',
+  onSuccess: 'En cas de succès',
+  onFailure: 'En cas d\'échec',
+  configuration: 'Configuration',
+  resource: 'ID de ressource ou modèle',
+  component: 'ID de composant ou modèle',
+  connector: 'ID ou modèle de connecteur',
+  connectorName: 'Nom ou modèle de connecteur',
+  duringPeriod: 'Appliqué pendant cette période uniquement',
+  enrichmentOptions: 'Options d\'enrichissement',
+  changeEntityOptions: 'Modifier les options d\'entité',
+  types: {
+    [EVENT_FILTER_TYPES.drop]: 'Drop',
+    [EVENT_FILTER_TYPES.break]: 'Break',
+    [EVENT_FILTER_TYPES.enrichment]: 'Enrichment',
+    [EVENT_FILTER_TYPES.changeEntity]: 'Change entity',
+  },
+  tooltips: {
+    addValueRuleField: 'Ajouter une règle',
+    editValueRuleField: 'Éditer la règle',
+    addObjectRuleField: 'Ajouter un groupe de règles',
+    editObjectRuleField: 'Éditer le groupe de règles',
+    removeRuleField: 'Supprimer le groupe/la règle',
+    copyFromHelp: '<p>Les variables accessibles sont: <strong>Event</strong></p>'
+      + '<i>Quelques exemples:</i> <span>"Event.ExtraInfos.datecustom"</span>',
+  },
+  actionsTypes: {
+    [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
+      text: 'Copier une valeur d\'un champ d\'événement à un autre',
+      message: 'Cette action est utilisée pour copier la valeur d\'un contrôle dans un événement.',
+      description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description.\n- valeur : le nom du champ dont la valeur doit être copiée. Il peut s\'agir d\'un champ d\'événement, d\'un sous-groupe d\'une expression régulière ou d\'une donnée externe.\n- nom : le nom du champ événement dans lequel la valeur doit être copiée.',
+    },
+    [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo]: {
+      text: 'Copier une valeur d\'un champ d\'un événement vers une information d\'une entité',
+      message: 'Cette action est utilisée pour copier la valeur du champ d\'un événement dans le champ d\'une entité.',
+      description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description.\n- nom : le nom du champ d\'une entité.\n- valeur : le nom du champ dont la valeur doit être copiée. Il peut s\'agir d\'un champ d\'événement, d\'un sous-groupe d\'une expression régulière ou d\'une donnée externe.',
+    },
+    [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfo]: {
+      text: 'Définir une information d\'une entité sur une constante',
+      message: 'Cette action permet de définir les informations dynamiques d\'une entité correspondant à l\'événement.',
+      description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description.\n- nom : le nom du champ.\n- valeur : la valeur d\'un champ.',
+    },
+    [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate]: {
+      text: 'Définir une chaîne d\'informations sur une entité à l\'aide d\'un modèle',
+      message: 'Cette action permet de modifier les informations dynamiques d\'une entité correspondant à l\'événement.',
+      description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description\n- nom : le nom du champ.\n- valeur : le modèle utilisé pour déterminer la valeur de la donnée.\nDes modèles {{.Event.NomDuChamp}}, des expressions régulières ou des données externes peuvent être utilisés.',
+    },
+    [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField]: {
+      text: 'Définir un champ d\'un événement sur une constante',
+      message: 'Cette action peut être utilisée pour modifier un champ de l\'événement.',
+      description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description\n- nom : le nom du champ.\n- valeur : la nouvelle valeur du champ.',
+    },
+    [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate]: {
+      text: 'Définir un champ de chaîne d\'un événement à l\'aide d\'un modèle',
+      message: 'Cette action vous permet de modifier un champ d\'événement à partir d\'un modèle.',
+      description: 'Les paramètres de l\'action sont :\n- description (optionnel) : la description\n- nom : le nom du champ.\n- valeur : le modèle utilisé pour déterminer la valeur du champ.\n  Des modèles {{.Event.NomDuChamp}}, des expressions régulières ou des données externes peuvent être utilisés.',
+    },
+  },
+};

@@ -5,7 +5,9 @@ import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-commun
 type VersionConf struct {
 	Edition string `json:"edition" bson:"edition"`
 	Stack   string `json:"stack" bson:"stack"`
-	Version string `json:"version" bson:"version"`
+
+	Version        string         `json:"version" bson:"version"`
+	VersionUpdated *types.CpsTime `json:"version_updated" bson:"version_updated" swaggertype:"integer"`
 }
 
 type PopupTimeout struct {
@@ -23,6 +25,7 @@ type UserInterfaceConf struct {
 	AllowChangeSeverityToInfo bool          `json:"allow_change_severity_to_info" bson:"allow_change_severity_to_info"`
 	MaxMatchedItems           int64         `json:"max_matched_items" bson:"max_matched_items" binding:"gt=0"`
 	CheckCountRequestTimeout  int64         `json:"check_count_request_timeout" bson:"check_count_request_timeout" binding:"gt=0"`
+	ShowHeaderOnKioskMode     bool          `json:"show_header_on_kiosk_mode" bson:"show_header_on_kiosk_mode"`
 }
 
 type GlobalConf struct {

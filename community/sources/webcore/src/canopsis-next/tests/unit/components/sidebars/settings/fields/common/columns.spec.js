@@ -1,13 +1,16 @@
-import flushPromises from 'flush-promises';
-
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+
+import { ENTITIES_TYPES } from '@/constants';
+
+import { widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
 
 import Columns from '@/components/sidebars/settings/fields/common/columns.vue';
 
 const localVue = createVueInstance();
 
 const stubs = {
-  'c-columns-field': true,
+  'widget-settings-item': true,
+  'c-columns-with-template-field': true,
 };
 
 const factory = (options = {}) => shallowMount(Columns, {
@@ -21,25 +24,16 @@ const snapshotFactory = (options = {}) => mount(Columns, {
   localVue,
   stubs,
 
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
-
   ...options,
 });
 
-const selectColumnsField = wrapper => wrapper.find('c-columns-field-stub');
+const selectColumnsField = wrapper => wrapper.find('c-columns-with-template-field-stub');
 
 describe('columns', () => {
   it('Columns changed after trigger columns field', () => {
     const wrapper = factory({
       propsData: {
+        type: ENTITIES_TYPES.alarm,
         columns: [],
         label: '',
       },
@@ -48,6 +42,8 @@ describe('columns', () => {
     const columnsField = selectColumnsField(wrapper);
 
     const columns = [{
+      ...widgetColumnToForm(),
+
       label: 'Column label',
       value: 'column.property',
       isHtml: false,
@@ -66,6 +62,7 @@ describe('columns', () => {
   it('Renders `columns` with default and required props', () => {
     const wrapper = snapshotFactory({
       propsData: {
+        type: ENTITIES_TYPES.alarm,
         label: 'Custom label',
       },
     });
@@ -76,45 +73,13 @@ describe('columns', () => {
   it('Renders `columns` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
+        type: ENTITIES_TYPES.alarm,
         label: 'Custom label',
         columns: [],
         withHtml: true,
         withColorIndicator: true,
       },
     });
-
-    expect(wrapper.element).toMatchSnapshot();
-  });
-
-  it('Renders `columns` with errors', async () => {
-    const name = 'custom-name';
-    const wrapper = snapshotFactory({
-      propsData: {
-        label: 'Custom label',
-        columns: [],
-        withHtml: true,
-        withColorIndicator: true,
-      },
-    });
-
-    const validator = wrapper.getValidator();
-
-    const columnsField = selectColumnsField(wrapper);
-
-    validator.attach({
-      name,
-      rules: 'required:true',
-      getter: () => true,
-      context: () => columnsField.vm,
-      vm: columnsField.vm,
-    });
-
-    validator.errors.add({
-      field: name,
-      msg: 'error-message',
-    });
-
-    await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
   });

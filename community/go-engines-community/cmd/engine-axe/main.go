@@ -20,19 +20,6 @@ func main() {
 	}
 
 	logger := log.NewLogger(opts.ModeDebug)
-
-	if opts.FeatureHideResources {
-		logger.Info().Msg("featureHideResources option is deprecated")
-	}
-
-	if opts.PostProcessorsDirectory != "." {
-		logger.Info().Msg("postProcessorsDirectory option is deprecated")
-	}
-
-	if opts.IgnoreDefaultTomlConfig {
-		logger.Info().Msg("ignoreDefaultTomlConfig option is deprecated")
-	}
-
 	trace := debug.Start(logger)
 	// Graceful shutdown.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)

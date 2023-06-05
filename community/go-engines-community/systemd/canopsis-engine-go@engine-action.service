@@ -1,0 +1,22 @@
+[Unit]
+Description=Canopsis Go Engine Action
+PartOf=canopsis.service
+After=canopsis.service
+ReloadPropagatedFrom=canopsis.service
+After=network.target
+Documentation=https://doc.canopsis.net/guide-administration/moteurs/moteur-action/
+
+[Service]
+User=canopsis
+Group=canopsis
+WorkingDirectory=/opt/canopsis
+Environment=HOME=/opt/canopsis
+EnvironmentFile=/opt/canopsis/etc/go-engines-vars.conf
+ExecStart=/usr/bin/env /opt/canopsis/bin/engine-action -withWebhook
+PIDFile=/run/canopsis-engine-go-engine-action.pid
+Restart=always
+RestartSec=1
+StartLimitBurst=300
+
+[Install]
+WantedBy=canopsis.service

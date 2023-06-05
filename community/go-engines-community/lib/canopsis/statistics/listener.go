@@ -2,16 +2,18 @@ package statistics
 
 import (
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"strconv"
 	"sync"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-redis/redis/v8"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const secondsInMinute = 60
@@ -288,10 +290,11 @@ func fillEmptyIds(
 
 // getLastID fetches max id from collection.
 func getLastID(ctx context.Context, collection mongo.DbCollection) (int64, error) {
-	cursor, err := collection.Aggregate(ctx, []bson.M{{"$group": bson.M{
-		"_id": nil,
-		"max": bson.M{"$max": "$_id"},
-	}}})
+	cursor, err := collection.Find(ctx, bson.M{}, options.Find().SetSort(bson.D{
+		{Key: "_id", Value: -1},
+	}).SetLimit(1).SetProjection(bson.D{
+		{Key: "_id", Value: 1},
+	}))
 	if err != nil {
 		return 0, err
 	}
@@ -299,7 +302,7 @@ func getLastID(ctx context.Context, collection mongo.DbCollection) (int64, error
 	defer cursor.Close(ctx)
 
 	res := struct {
-		Max int64 `bson:"max"`
+		ID int64 `bson:"_id"`
 	}{}
 
 	if cursor.Next(ctx) {
@@ -309,5 +312,5 @@ func getLastID(ctx context.Context, collection mongo.DbCollection) (int64, error
 		}
 	}
 
-	return res.Max, nil
+	return res.ID, nil
 }

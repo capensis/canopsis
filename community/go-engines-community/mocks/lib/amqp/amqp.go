@@ -5,6 +5,7 @@
 package mock_amqp
 
 import (
+	context "context"
 	reflect "reflect"
 
 	amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -172,18 +173,18 @@ func (mr *MockChannelMockRecorder) Nack(arg0, arg1, arg2 interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Nack", reflect.TypeOf((*MockChannel)(nil).Nack), arg0, arg1, arg2)
 }
 
-// Publish mocks base method.
-func (m *MockChannel) Publish(arg0, arg1 string, arg2, arg3 bool, arg4 amqp091.Publishing) error {
+// PublishWithContext mocks base method.
+func (m *MockChannel) PublishWithContext(arg0 context.Context, arg1, arg2 string, arg3, arg4 bool, arg5 amqp091.Publishing) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Publish", arg0, arg1, arg2, arg3, arg4)
+	ret := m.ctrl.Call(m, "PublishWithContext", arg0, arg1, arg2, arg3, arg4, arg5)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// Publish indicates an expected call of Publish.
-func (mr *MockChannelMockRecorder) Publish(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
+// PublishWithContext indicates an expected call of PublishWithContext.
+func (mr *MockChannelMockRecorder) PublishWithContext(arg0, arg1, arg2, arg3, arg4, arg5 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Publish", reflect.TypeOf((*MockChannel)(nil).Publish), arg0, arg1, arg2, arg3, arg4)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PublishWithContext", reflect.TypeOf((*MockChannel)(nil).PublishWithContext), arg0, arg1, arg2, arg3, arg4, arg5)
 }
 
 // Qos mocks base method.
@@ -282,16 +283,16 @@ func (m *MockPublisher) EXPECT() *MockPublisherMockRecorder {
 	return m.recorder
 }
 
-// Publish mocks base method.
-func (m *MockPublisher) Publish(arg0, arg1 string, arg2, arg3 bool, arg4 amqp091.Publishing) error {
+// PublishWithContext mocks base method.
+func (m *MockPublisher) PublishWithContext(arg0 context.Context, arg1, arg2 string, arg3, arg4 bool, arg5 amqp091.Publishing) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Publish", arg0, arg1, arg2, arg3, arg4)
+	ret := m.ctrl.Call(m, "PublishWithContext", arg0, arg1, arg2, arg3, arg4, arg5)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// Publish indicates an expected call of Publish.
-func (mr *MockPublisherMockRecorder) Publish(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
+// PublishWithContext indicates an expected call of PublishWithContext.
+func (mr *MockPublisherMockRecorder) PublishWithContext(arg0, arg1, arg2, arg3, arg4, arg5 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Publish", reflect.TypeOf((*MockPublisher)(nil).Publish), arg0, arg1, arg2, arg3, arg4)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PublishWithContext", reflect.TypeOf((*MockPublisher)(nil).PublishWithContext), arg0, arg1, arg2, arg3, arg4, arg5)
 }

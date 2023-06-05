@@ -1,14 +1,14 @@
 package auth
 
-type loginRequest struct {
+type LoginRequest struct {
 	Username string `form:"username" json:"username" binding:"required"`
 	Password string `form:"password" json:"password" binding:"required"`
 }
 
-type loginResponse struct {
+type LoginResponse struct {
 	AccessToken string `json:"access_token"`
 }
 
-type loggedUserCountResponse struct {
+type LoggedUserCountResponse struct {
 	Count int64 `json:"count"`
 }

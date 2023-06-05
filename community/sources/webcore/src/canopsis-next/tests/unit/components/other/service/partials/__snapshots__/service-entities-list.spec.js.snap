@@ -1,0 +1,147 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`service-entities-list Renders \`service-entities-list\` with custom props 1`] = `
+<div>
+  <div
+    class="layout d-inline-flex align-center row"
+  >
+    <div
+      class="v-input v-input--selection-controls v-input--checkbox ml-3 pa-0 theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <input
+              aria-checked="false"
+              class="hidden"
+              role="checkbox"
+              type="checkbox"
+            />
+            <div
+              class="v-input--selection-controls__ripple primary--text"
+            />
+            <i
+              class="v-icon material-icons theme--light"
+            >
+              check_box_outline_blank
+            </i>
+          </div>
+          <label
+            class="v-label theme--light"
+            style="display: none;"
+          >
+            
+          </label>
+        </div>
+      </div>
+    </div>
+    <!---->
+  </div>
+  <div
+    class="mt-2"
+  >
+    <service-entity-stub
+      entity="[object Object]"
+      entitynamefield="custom-entity-name"
+      service-id="service-id"
+      widgetparameters="[object Object]"
+    />
+  </div>
+  <div
+    class="mt-2"
+  >
+    <service-entity-stub
+      entity="[object Object]"
+      entitynamefield="custom-entity-name"
+      service-id="service-id"
+      widgetparameters="[object Object]"
+    />
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`service-entities-list Renders \`service-entities-list\` with default props 1`] = `
+<div>
+  <!---->
+  <!---->
+</div>
+`;
+
+exports[`service-entities-list Renders \`service-entities-list\` with selected entities 1`] = `
+<div>
+  <div
+    class="layout d-inline-flex align-center row"
+  >
+    <div
+      class="v-input v-input--selection-controls v-input--checkbox ml-3 pa-0 theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <input
+              aria-checked="false"
+              class="hidden"
+              role="checkbox"
+              type="checkbox"
+            />
+            <div
+              class="v-input--selection-controls__ripple primary--text"
+            />
+            <i
+              class="v-icon material-icons theme--light"
+            >
+              check_box_outline_blank
+            </i>
+          </div>
+          <label
+            class="v-label theme--light"
+            style="display: none;"
+          >
+            
+          </label>
+        </div>
+      </div>
+    </div>
+    <service-entity-actions-stub
+      actions="[object Object],[object Object]"
+      assignedinstructions=""
+      entity="[object Object]"
+    />
+  </div>
+  <div
+    class="mt-2"
+  >
+    <service-entity-stub
+      entity="[object Object]"
+      entitynamefield="custom-entity-name"
+      selected="true"
+      service-id="service-id"
+      widgetparameters="[object Object]"
+    />
+  </div>
+  <div
+    class="mt-2"
+  >
+    <service-entity-stub
+      entity="[object Object]"
+      entitynamefield="custom-entity-name"
+      service-id="service-id"
+      widgetparameters="[object Object]"
+    />
+  </div>
+  <!---->
+</div>
+`;

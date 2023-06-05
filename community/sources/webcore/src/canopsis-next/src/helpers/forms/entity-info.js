@@ -1,7 +1,3 @@
-import { isArray } from 'lodash';
-
-import uid from '../uid';
-
 /**
  * @typedef {string | number | boolean | null} ContextEntityInfoValuePrimitive
  */
@@ -15,7 +11,7 @@ import uid from '../uid';
 
 /**
  * @typedef {ContextEntityInfo} ContextEntityInfoForm
- * @property {Array<{ key: string, value: ContextEntityInfoValuePrimitive }> | ContextEntityInfoValuePrimitive} value
+ * @property {ContextEntityInfoValuePrimitive} value
  */
 
 /**
@@ -30,22 +26,6 @@ export const entityInfoToForm = (entityInfo = {}) => {
   return {
     name,
     description,
-    value: isArray(value) ? value.map(v => ({ key: uid(), value: v })) : value,
-  };
-};
-
-/**
- * Convert form to entity info object
- *
- * @param {ContextEntityInfoForm} form
- * @returns {ContextEntityInfo}
- */
-export const formToEntityInfo = (form) => {
-  const { name = '', description = '', value = '' } = form;
-
-  return {
-    name,
-    description,
-    value: isArray(value) ? value.map(item => item.value) : value,
+    value,
   };
 };

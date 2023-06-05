@@ -84,9 +84,14 @@ job_config:
     created: 1596550518
     name: test-job-config-to-run-auto-instruction-name
 
-  job_config_to_run_manual_job:
+  job_config_to_run_manual_job_1:
     <<: *condig_dummy_rundeck
-    _id: test-job-config-to-run-manual-job
+    _id: test-job-config-to-run-manual-job-1
+
+  job_config_to_run_manual_job_2:
+    <<: *condig_dummy_rundeck
+    _id: test-job-config-to-run-manual-job-2
+    host: "http://not-exist"
 
   job_config_to_run_manual_jenkins_job:
     <<: *condig_dummy_jenkins
@@ -96,6 +101,6 @@ job_config:
     <<: *condig_dummy_awx
     _id: test-job-config-to-run-manual-awx-job
   
-  job_config_metrics-axe:
+  job_config_metrics_axe:
     <<: *condig_dummy_rundeck
     _id: test-job-config-metrics-axe

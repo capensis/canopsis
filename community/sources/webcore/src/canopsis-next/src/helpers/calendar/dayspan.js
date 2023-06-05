@@ -95,8 +95,8 @@ export function convertEventsToGroupedEvents({ events, groupByValue = 'hour', ge
  * @returns {Schedule}
  */
 export function getScheduleForSpan(span) {
-  const SECONDS_IN_DAY = Constants.MINUTES_IN_DAY * Constants.SECOND_MAX;
-  const SECONDS_IN_HOUR = Constants.MINUTES_IN_HOUR * Constants.SECOND_MAX;
+  const SECONDS_IN_DAY = Constants.MINUTES_IN_DAY * 60;
+  const SECONDS_IN_HOUR = Constants.MINUTES_IN_HOUR * 60;
   const { start } = span;
   const seconds = span.seconds(Op.UP);
 

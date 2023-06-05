@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout.pa-3
+  v-layout
     v-flex(xs12)
       test-suite-details(:test-suite="testSuite")
 </template>

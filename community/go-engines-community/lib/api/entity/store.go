@@ -2,10 +2,15 @@ package entity
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"strings"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/perfdata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,21 +18,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const bulkMaxSize = 10000
-
 type Store interface {
 	Find(ctx context.Context, r ListRequestWithPagination) (*AggregationResult, error)
-	ArchiveDisabledEntities(ctx context.Context, archiveDeps bool) (int64, error)
-	DeleteArchivedEntities(ctx context.Context) (int64, error)
 	Toggle(ctx context.Context, id string, enabled bool) (bool, SimplifiedEntity, error)
+	GetContextGraph(ctx context.Context, id string) (*ContextGraphResponse, error)
+	Export(ctx context.Context, t export.Task) (export.DataCursor, error)
 }
 
 type store struct {
-	db                 mongo.DbClient
-	mainCollection     mongo.DbCollection
-	archivedCollection mongo.DbCollection
-
-	queryBuilder           *MongoQueryBuilder
+	db                     mongo.DbClient
+	mainCollection         mongo.DbCollection
+	archivedCollection     mongo.DbCollection
 	timezoneConfigProvider config.TimezoneConfigProvider
 }
 
@@ -36,7 +37,6 @@ func NewStore(db mongo.DbClient, timezoneConfigProvider config.TimezoneConfigPro
 		db:                     db,
 		mainCollection:         db.Collection(mongo.EntityMongoCollection),
 		archivedCollection:     db.Collection(mongo.ArchivedEntitiesMongoCollection),
-		queryBuilder:           NewMongoQueryBuilder(db),
 		timezoneConfigProvider: timezoneConfigProvider,
 	}
 }
@@ -45,7 +45,7 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 	location := s.timezoneConfigProvider.Get().Location
 	now := types.CpsTime{Time: time.Now().In(location)}
 
-	pipeline, err := s.queryBuilder.CreateListAggregationPipeline(ctx, r, now)
+	pipeline, err := s.getQueryBuilder().CreateListAggregationPipeline(ctx, r, now)
 	if err != nil {
 		return nil, err
 	}
@@ -67,166 +67,9 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 	}
 
 	s.fillConnectorType(&res)
+	s.fillPerfData(&res, r.PerfData)
 
 	return &res, nil
-}
-
-func (s *store) ArchiveDisabledEntities(ctx context.Context, archiveDeps bool) (int64, error) {
-	var totalArchived int64
-
-	archived, err := s.archiveEntitiesByType(ctx, types.EntityTypeConnector, archiveDeps)
-	if err != nil {
-		return 0, err
-	}
-
-	totalArchived += archived
-
-	archived, err = s.archiveEntitiesByType(ctx, types.EntityTypeComponent, archiveDeps)
-	if err != nil {
-		return 0, err
-	}
-
-	totalArchived += archived
-
-	archived, err = s.archiveEntitiesByType(ctx, types.EntityTypeResource, archiveDeps)
-	if err != nil {
-		return 0, err
-	}
-
-	totalArchived += archived
-
-	return totalArchived, nil
-}
-
-func (s *store) archiveEntitiesByType(ctx context.Context, eType string, archiveDeps bool) (int64, error) {
-	models := make([]mongodriver.WriteModel, 0, bulkMaxSize)
-	ids := make([]string, 0, bulkMaxSize)
-
-	cursor, err := s.mainCollection.Find(
-		ctx,
-		bson.M{
-			"enabled": bson.M{"$in": bson.A{false, nil}},
-			"type":    eType,
-		},
-	)
-	if err != nil {
-		return 0, err
-	}
-
-	totalArchived, err := s.processCursor(ctx, cursor, &models, &ids, archiveDeps)
-	if err != nil {
-		return 0, err
-	}
-
-	if len(models) != 0 {
-		archived, err := s.bulkArchive(ctx, &models, &ids)
-		if err != nil {
-			return 0, err
-		}
-
-		totalArchived += archived
-	}
-
-	return totalArchived, cursor.Close(ctx)
-}
-
-func (s *store) processCursor(ctx context.Context, cursor mongo.Cursor, models *[]mongodriver.WriteModel, ids *[]string, archiveDeps bool) (int64, error) {
-	var totalArchived int64
-
-	for cursor.Next(ctx) {
-		var entity types.Entity
-
-		err := cursor.Decode(&entity)
-		if err != nil {
-			return 0, err
-		}
-
-		if archiveDeps {
-			switch entity.Type {
-			case types.EntityTypeConnector:
-				archived, err := s.archiveDependencies(ctx, append(entity.Impacts, entity.Depends...), models, ids)
-				if err != nil {
-					return 0, err
-				}
-
-				totalArchived += archived
-			case types.EntityTypeComponent:
-				archived, err := s.archiveDependencies(ctx, entity.Depends, models, ids)
-				if err != nil {
-					return 0, err
-				}
-
-				totalArchived += archived
-			case types.EntityTypeResource:
-			default:
-				continue
-			}
-		}
-
-		*ids = append(*ids, entity.ID)
-		*models = append(
-			*models,
-			mongodriver.NewUpdateOneModel().
-				SetFilter(bson.M{"_id": entity.ID}).
-				SetUpdate(bson.M{"$set": entity}).
-				SetUpsert(true),
-		)
-
-		if len(*models) == bulkMaxSize {
-			archived, err := s.bulkArchive(ctx, models, ids)
-			if err != nil {
-				return 0, err
-			}
-
-			totalArchived += archived
-		}
-	}
-
-	return totalArchived, nil
-}
-
-func (s *store) archiveDependencies(ctx context.Context, depIds []string, models *[]mongodriver.WriteModel, ids *[]string) (int64, error) {
-	cursor, err := s.mainCollection.Find(
-		ctx,
-		bson.M{"_id": bson.M{"$in": depIds}},
-	)
-	if err != nil {
-		return 0, err
-	}
-
-	// do not archive dependencies' dependencies
-	archived, err := s.processCursor(ctx, cursor, models, ids, false)
-	if err != nil {
-		return 0, err
-	}
-
-	return archived, cursor.Close(ctx)
-}
-
-func (s *store) bulkArchive(ctx context.Context, models *[]mongodriver.WriteModel, ids *[]string) (int64, error) {
-	res, err := s.archivedCollection.BulkWrite(ctx, *models)
-	if err != nil {
-		return 0, err
-	}
-
-	_, err = s.mainCollection.DeleteMany(
-		ctx,
-		bson.M{"_id": bson.M{"$in": ids}},
-	)
-	if err != nil {
-		return 0, err
-	}
-
-	*models = (*models)[:0]
-	*ids = (*ids)[:0]
-
-	return res.UpsertedCount, err
-}
-
-func (s *store) DeleteArchivedEntities(ctx context.Context) (int64, error) {
-	deleted, err := s.archivedCollection.DeleteMany(ctx, bson.M{})
-
-	return deleted, err
 }
 
 func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, SimplifiedEntity, error) {
@@ -237,15 +80,37 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 		isToggled = false
 		oldSimplifiedEntity = SimplifiedEntity{}
 
-		err := s.mainCollection.FindOneAndUpdate(
-			ctx,
-			bson.M{"_id": id},
-			bson.M{"$set": bson.M{"enabled": enabled}},
-			options.
-				FindOneAndUpdate().
-				SetProjection(bson.M{"_id": 1, "enabled": 1, "type": 1}).
-				SetReturnDocument(options.Before),
-		).Decode(&oldSimplifiedEntity)
+		cursor, err := s.mainCollection.Aggregate(ctx, []bson.M{
+			{"$match": bson.M{"_id": id}},
+			{"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$_id",
+				"connectFromField":        "_id",
+				"connectToField":          "component",
+				"as":                      "resources",
+				"restrictSearchWithMatch": bson.M{"type": types.EntityTypeResource},
+				"maxDepth":                0,
+			}},
+			{"$project": bson.M{
+				"_id":       1,
+				"enabled":   1,
+				"type":      1,
+				"resources": bson.M{"$map": bson.M{"input": "$resources", "in": "$$this._id"}},
+			}},
+		})
+		if err != nil {
+			return err
+		}
+		if cursor.Next(ctx) {
+			err = cursor.Decode(&oldSimplifiedEntity)
+			if err != nil {
+				return err
+			}
+		} else {
+			return nil
+		}
+
+		_, err = s.mainCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"enabled": enabled}})
 		if err != nil {
 			return err
 		}
@@ -254,16 +119,287 @@ func (s *store) Toggle(ctx context.Context, id string, enabled bool) (bool, Simp
 		return nil
 	})
 
+	if oldSimplifiedEntity.ID == "" {
+		return false, SimplifiedEntity{}, nil
+	}
+
+	if isToggled && !enabled && oldSimplifiedEntity.Type == types.EntityTypeComponent {
+		depLen := len(oldSimplifiedEntity.Resources)
+		from := 0
+
+		for to := canopsis.DefaultBulkSize; to <= depLen; to += canopsis.DefaultBulkSize {
+			_, err = s.mainCollection.UpdateMany(
+				ctx,
+				bson.M{"_id": bson.M{"$in": oldSimplifiedEntity.Resources[from:to]}},
+				bson.M{"$set": bson.M{"enabled": enabled}},
+			)
+			if err != nil {
+				return isToggled, oldSimplifiedEntity, err
+			}
+
+			from = to
+		}
+
+		if from < depLen {
+			_, err = s.mainCollection.UpdateMany(
+				ctx,
+				bson.M{"_id": bson.M{"$in": oldSimplifiedEntity.Resources[from:depLen]}},
+				bson.M{"$set": bson.M{"enabled": enabled}},
+			)
+			if err != nil {
+				return isToggled, oldSimplifiedEntity, err
+			}
+		}
+	}
+
 	return isToggled, oldSimplifiedEntity, err
+}
+
+func (s *store) GetContextGraph(ctx context.Context, id string) (*ContextGraphResponse, error) {
+	entity := Entity{}
+	err := s.mainCollection.
+		FindOne(ctx, bson.M{"_id": id}, options.FindOne().SetProjection(bson.M{"type": 1})).
+		Decode(&entity)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
+	switch entity.Type {
+	case types.EntityTypeResource:
+		pipeline = append(pipeline, []bson.M{
+			{"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$component",
+				"connectFromField":        "component",
+				"connectToField":          "_id",
+				"as":                      "component",
+				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
+				"maxDepth":                0,
+			}},
+			{"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$connector",
+				"connectFromField":        "connector",
+				"connectToField":          "_id",
+				"as":                      "connector",
+				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
+				"maxDepth":                0,
+			}},
+			{"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$services",
+				"connectFromField":        "services",
+				"connectToField":          "_id",
+				"as":                      "services",
+				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
+				"maxDepth":                0,
+			}},
+			{"$addFields": bson.M{
+				"impact": bson.M{"$concatArrays": bson.A{
+					bson.M{"$map": bson.M{"input": "$component", "in": "$$this._id"}},
+					bson.M{"$map": bson.M{"input": "$services", "in": "$$this._id"}},
+				}},
+				"depends": bson.M{"$map": bson.M{"input": "$connector", "in": "$$this._id"}},
+			}},
+		}...)
+	case types.EntityTypeComponent:
+		pipeline = append(pipeline, []bson.M{
+			{"$graphLookup": bson.M{
+				"from":             mongo.EntityMongoCollection,
+				"startWith":        "$_id",
+				"connectFromField": "_id",
+				"connectToField":   "component",
+				"as":               "resources",
+				"restrictSearchWithMatch": bson.M{
+					"type":         types.EntityTypeResource,
+					"soft_deleted": bson.M{"$exists": false},
+				},
+				"maxDepth": 0,
+			}},
+			{"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$connector",
+				"connectFromField":        "connector",
+				"connectToField":          "_id",
+				"as":                      "connector",
+				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
+				"maxDepth":                0,
+			}},
+			{"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$services",
+				"connectFromField":        "services",
+				"connectToField":          "_id",
+				"as":                      "services",
+				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
+				"maxDepth":                0,
+			}},
+			{"$addFields": bson.M{
+				"impact": bson.M{"$concatArrays": bson.A{
+					bson.M{"$map": bson.M{"input": "$connector", "in": "$$this._id"}},
+					bson.M{"$map": bson.M{"input": "$services", "in": "$$this._id"}},
+				}},
+				"depends": bson.M{"$map": bson.M{"input": "$resources", "in": "$$this._id"}},
+			}},
+		}...)
+	case types.EntityTypeConnector:
+		pipeline = append(pipeline, []bson.M{
+			{"$graphLookup": bson.M{
+				"from":             mongo.EntityMongoCollection,
+				"startWith":        "$_id",
+				"connectFromField": "_id",
+				"connectToField":   "connector",
+				"as":               "resources",
+				"restrictSearchWithMatch": bson.M{
+					"type":         types.EntityTypeResource,
+					"soft_deleted": bson.M{"$exists": false},
+				},
+				"maxDepth": 0,
+			}},
+			{"$graphLookup": bson.M{
+				"from":             mongo.EntityMongoCollection,
+				"startWith":        "$_id",
+				"connectFromField": "_id",
+				"connectToField":   "connector",
+				"as":               "components",
+				"restrictSearchWithMatch": bson.M{
+					"type":         types.EntityTypeComponent,
+					"soft_deleted": bson.M{"$exists": false},
+				},
+				"maxDepth": 0,
+			}},
+			{"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$services",
+				"connectFromField":        "services",
+				"connectToField":          "_id",
+				"as":                      "services",
+				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
+				"maxDepth":                0,
+			}},
+			{"$addFields": bson.M{
+				"impact": bson.M{"$concatArrays": bson.A{
+					bson.M{"$map": bson.M{"input": "$resources", "in": "$$this._id"}},
+					bson.M{"$map": bson.M{"input": "$services", "in": "$$this._id"}},
+				}},
+				"depends": bson.M{"$map": bson.M{"input": "$components", "in": "$$this._id"}},
+			}},
+		}...)
+	case types.EntityTypeService:
+		pipeline = append(pipeline, []bson.M{
+			{"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$_id",
+				"connectFromField":        "_id",
+				"connectToField":          "services",
+				"as":                      "depends",
+				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
+				"maxDepth":                0,
+			}},
+			{"$graphLookup": bson.M{
+				"from":                    mongo.EntityMongoCollection,
+				"startWith":               "$services",
+				"connectFromField":        "services",
+				"connectToField":          "_id",
+				"as":                      "impact",
+				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
+				"maxDepth":                0,
+			}},
+			{"$addFields": bson.M{
+				"impact":  bson.M{"$map": bson.M{"input": "$impact", "in": "$$this._id"}},
+				"depends": bson.M{"$map": bson.M{"input": "$depends", "in": "$$this._id"}},
+			}},
+		}...)
+	}
+
+	pipeline = append(pipeline, bson.M{"$project": bson.M{
+		"impact":  1,
+		"depends": 1,
+	}})
+	cursor, err := s.mainCollection.Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		res := ContextGraphResponse{}
+		err = cursor.Decode(&res)
+		if err != nil {
+			return nil, err
+		}
+		return &res, nil
+	}
+
+	return nil, nil
+}
+
+func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, error) {
+	r := BaseFilterRequest{}
+	err := json.Unmarshal([]byte(t.Parameters), &r)
+	if err != nil {
+		return nil, err
+	}
+
+	now := types.NewCpsTime()
+	pipeline, err := s.getQueryBuilder().CreateOnlyListAggregationPipeline(ctx, ListRequest{
+		BaseFilterRequest: r,
+		SearchBy:          t.Fields.Fields(),
+	}, now)
+	if err != nil {
+		return nil, err
+	}
+
+	project := make(bson.M, len(t.Fields))
+	for _, field := range t.Fields {
+		found := false
+		for anotherField := range project {
+			if strings.HasPrefix(field.Name, anotherField+".") {
+				found = true
+				break
+			} else if strings.HasPrefix(anotherField, field.Name+".") {
+				delete(project, anotherField)
+				break
+			}
+		}
+		if !found {
+			project[field.Name] = 1
+		}
+	}
+	pipeline = append(pipeline, bson.M{"$project": project})
+
+	cursor, err := s.mainCollection.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
+	if err != nil {
+		return nil, err
+	}
+
+	return export.NewMongoCursor(cursor, t.Fields.Fields(), nil), nil
 }
 
 func (s *store) fillConnectorType(result *AggregationResult) {
 	if result == nil {
 		return
 	}
-	for i, v := range result.Data {
-		if v.Type == types.EntityTypeConnector {
-			result.Data[i].ConnectorType = strings.TrimSuffix(v.ID, "/"+v.Name)
-		}
+	for i := range result.Data {
+		result.Data[i].fillConnectorType()
+	}
+}
+
+func (s *store) getQueryBuilder() *MongoQueryBuilder {
+	return NewMongoQueryBuilder(s.db)
+}
+
+func (s *store) fillPerfData(result *AggregationResult, perfData []string) {
+	if len(perfData) == 0 {
+		return
+	}
+
+	perfDataRe := perfdata.Parse(perfData)
+	for i, entity := range result.Data {
+		result.Data[i].FilteredPerfData = perfdata.Filter(perfData, perfDataRe, entity.PerfData)
 	}
 }

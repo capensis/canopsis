@@ -3,6 +3,7 @@ package widgetfilter
 import (
 	"context"
 	"errors"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"

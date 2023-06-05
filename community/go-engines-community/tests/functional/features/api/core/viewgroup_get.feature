@@ -13,14 +13,20 @@ Feature: Get a view group
         {
           "_id": "test-viewgroup-to-get-1",
           "title": "test-viewgroup-to-get-1-title",
-          "author": "test-viewgroup-to-get-1-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1611229670,
           "updated": 1611229670
         },
         {
           "_id": "test-viewgroup-to-get-2",
           "title": "test-viewgroup-to-get-2-title",
-          "author": "test-viewgroup-to-get-2-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1611229670,
           "updated": 1611229670
         }
@@ -43,7 +49,10 @@ Feature: Get a view group
     {
       "_id": "test-viewgroup-to-get-1",
       "title": "test-viewgroup-to-get-1-title",
-      "author": "test-viewgroup-to-get-1-author",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1611229670,
       "updated": 1611229670
     }
@@ -60,17 +69,26 @@ Feature: Get a view group
         {
           "_id": "test-viewgroup-to-get-1",
           "title": "test-viewgroup-to-get-1-title",
-          "author": "test-viewgroup-to-get-1-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "views": [
             {
               "_id": "test-view-to-viewgroup-get-2",
-              "author": "test-view-to-viewgroup-get-2-author",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
               "created": 1611229670,
               "description": "test-view-to-viewgroup-get-2-description",
               "enabled": true,
               "group": {
                 "_id": "test-viewgroup-to-get-1",
-                "author": "test-viewgroup-to-get-1-author",
+                "author": {
+                  "_id": "root",
+                  "name": "root"
+                },
                 "created": 1611229670,
                 "title": "test-viewgroup-to-get-1-title",
                 "updated": 1611229670
@@ -88,13 +106,19 @@ Feature: Get a view group
             },
             {
               "_id": "test-view-to-viewgroup-get-1",
-              "author": "test-view-to-viewgroup-get-1-author",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
               "created": 1611229670,
               "description": "test-view-to-viewgroup-get-1-description",
               "enabled": true,
               "group": {
                 "_id": "test-viewgroup-to-get-1",
-                "author": "test-viewgroup-to-get-1-author",
+                "author": {
+                  "_id": "root",
+                  "name": "root"
+                },
                 "created": 1611229670,
                 "title": "test-viewgroup-to-get-1-title",
                 "updated": 1611229670
@@ -117,7 +141,10 @@ Feature: Get a view group
         {
           "_id": "test-viewgroup-to-get-2",
           "title": "test-viewgroup-to-get-2-title",
-          "author": "test-viewgroup-to-get-2-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "views": [],
           "created": 1611229670,
           "updated": 1611229670
@@ -140,17 +167,26 @@ Feature: Get a view group
         {
           "_id": "test-viewgroup-to-get-1",
           "title": "test-viewgroup-to-get-1-title",
-          "author": "test-viewgroup-to-get-1-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "views": [
             {
               "_id": "test-view-to-viewgroup-get-2",
-              "author": "test-view-to-viewgroup-get-2-author",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
               "created": 1611229670,
               "description": "test-view-to-viewgroup-get-2-description",
               "enabled": true,
               "group": {
                 "_id": "test-viewgroup-to-get-1",
-                "author": "test-viewgroup-to-get-1-author",
+                "author": {
+                  "_id": "root",
+                  "name": "root"
+                },
                 "created": 1611229670,
                 "title": "test-viewgroup-to-get-1-title",
                 "updated": 1611229670
@@ -169,13 +205,19 @@ Feature: Get a view group
             },
             {
               "_id": "test-view-to-viewgroup-get-1",
-              "author": "test-view-to-viewgroup-get-1-author",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
               "created": 1611229670,
               "description": "test-view-to-viewgroup-get-1-description",
               "enabled": true,
               "group": {
                 "_id": "test-viewgroup-to-get-1",
-                "author": "test-viewgroup-to-get-1-author",
+                "author": {
+                  "_id": "root",
+                  "name": "root"
+                },
                 "created": 1611229670,
                 "title": "test-viewgroup-to-get-1-title",
                 "updated": 1611229670
@@ -193,14 +235,20 @@ Feature: Get a view group
                 {
                   "_id": "test-tab-to-viewgroup-get-1",
                   "title": "test-tab-to-viewgroup-get-1-title",
-                  "author": "test-user-to-viewgroup-get",
+                  "author": {
+                    "_id": "root",
+                    "name": "root"
+                  },
                   "created": 1611229670,
                   "updated": 1611229670
                 },
                 {
                   "_id": "test-tab-to-viewgroup-get-2",
                   "title": "test-tab-to-viewgroup-get-2-title",
-                  "author": "test-user-to-viewgroup-get",
+                  "author": {
+                    "_id": "root",
+                    "name": "root"
+                  },
                   "created": 1611229670,
                   "updated": 1611229670
                 }
@@ -214,7 +262,10 @@ Feature: Get a view group
         {
           "_id": "test-viewgroup-to-get-2",
           "title": "test-viewgroup-to-get-2-title",
-          "author": "test-viewgroup-to-get-2-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "views": [],
           "created": 1611229670,
           "updated": 1611229670
@@ -237,17 +288,26 @@ Feature: Get a view group
         {
           "_id": "test-viewgroup-to-get-1",
           "title": "test-viewgroup-to-get-1-title",
-          "author": "test-viewgroup-to-get-1-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "views": [
             {
               "_id": "test-view-to-viewgroup-get-2",
-              "author": "test-view-to-viewgroup-get-2-author",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
               "created": 1611229670,
               "description": "test-view-to-viewgroup-get-2-description",
               "enabled": true,
               "group": {
                 "_id": "test-viewgroup-to-get-1",
-                "author": "test-viewgroup-to-get-1-author",
+                "author": {
+                  "_id": "root",
+                  "name": "root"
+                },
                 "created": 1611229670,
                 "title": "test-viewgroup-to-get-1-title",
                 "updated": 1611229670
@@ -266,13 +326,19 @@ Feature: Get a view group
             },
             {
               "_id": "test-view-to-viewgroup-get-1",
-              "author": "test-view-to-viewgroup-get-1-author",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
               "created": 1611229670,
               "description": "test-view-to-viewgroup-get-1-description",
               "enabled": true,
               "group": {
                 "_id": "test-viewgroup-to-get-1",
-                "author": "test-viewgroup-to-get-1-author",
+                "author": {
+                  "_id": "root",
+                  "name": "root"
+                },
                 "created": 1611229670,
                 "title": "test-viewgroup-to-get-1-title",
                 "updated": 1611229670
@@ -290,11 +356,17 @@ Feature: Get a view group
                 {
                   "_id": "test-tab-to-viewgroup-get-1",
                   "title": "test-tab-to-viewgroup-get-1-title",
-                  "author": "test-user-to-viewgroup-get",
+                  "author": {
+                    "_id": "root",
+                    "name": "root"
+                  },
                   "widgets": [
                     {
                       "_id": "test-widget-to-viewgroup-get-1",
-                      "author": "test-user-to-viewgroup-get",
+                      "author": {
+                        "_id": "root",
+                        "name": "root"
+                      },
                       "created": 1611229670,
                       "updated": 1611229670,
                       "grid_parameters": {
@@ -315,7 +387,10 @@ Feature: Get a view group
                           "_id": "test-widgetfilter-to-viewgroup-get-1",
                           "title": "test-widgetfilter-to-viewgroup-get-1-title",
                           "is_private": false,
-                          "author": "nopermsuser",
+                          "author": {
+                            "_id": "nopermsuser",
+                            "name": "nopermsuser"
+                          },
                           "created": 1611229670,
                           "updated": 1611229670,
                           "alarm_pattern": [
@@ -334,7 +409,10 @@ Feature: Get a view group
                           "_id": "test-widgetfilter-to-viewgroup-get-2",
                           "title": "test-widgetfilter-to-viewgroup-get-2-title",
                           "is_private": false,
-                          "author": "root",
+                          "author": {
+                            "_id": "root",
+                            "name": "root"
+                          },
                           "created": 1611229670,
                           "updated": 1611229670,
                           "alarm_pattern": [
@@ -355,7 +433,10 @@ Feature: Get a view group
                     },
                     {
                       "_id": "test-widget-to-viewgroup-get-2",
-                      "author": "test-user-to-viewgroup-get",
+                      "author": {
+                        "_id": "root",
+                        "name": "root"
+                      },
                       "created": 1611229670,
                       "updated": 1611229670,
                       "grid_parameters": {
@@ -373,7 +454,10 @@ Feature: Get a view group
                 {
                   "_id": "test-tab-to-viewgroup-get-2",
                   "title": "test-tab-to-viewgroup-get-2-title",
-                  "author": "test-user-to-viewgroup-get",
+                  "author": {
+                    "_id": "root",
+                    "name": "root"
+                  },
                   "widgets": [],
                   "created": 1611229670,
                   "updated": 1611229670
@@ -388,7 +472,10 @@ Feature: Get a view group
         {
           "_id": "test-viewgroup-to-get-2",
           "title": "test-viewgroup-to-get-2-title",
-          "author": "test-viewgroup-to-get-2-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "views": [],
           "created": 1611229670,
           "updated": 1611229670
@@ -437,18 +524,27 @@ Feature: Get a view group
         {
           "_id": "test-viewgroup-to-get-1",
           "title": "test-viewgroup-to-get-1-title",
-          "author": "test-viewgroup-to-get-1-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "deletable": false,
           "views": [
             {
               "_id": "test-view-to-viewgroup-get-2",
-              "author": "test-view-to-viewgroup-get-2-author",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
               "created": 1611229670,
               "description": "test-view-to-viewgroup-get-2-description",
               "enabled": true,
               "group": {
                 "_id": "test-viewgroup-to-get-1",
-                "author": "test-viewgroup-to-get-1-author",
+                "author": {
+                  "_id": "root",
+                  "name": "root"
+                },
                 "created": 1611229670,
                 "title": "test-viewgroup-to-get-1-title",
                 "updated": 1611229670
@@ -466,13 +562,19 @@ Feature: Get a view group
             },
             {
               "_id": "test-view-to-viewgroup-get-1",
-              "author": "test-view-to-viewgroup-get-1-author",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
               "created": 1611229670,
               "description": "test-view-to-viewgroup-get-1-description",
               "enabled": true,
               "group": {
                 "_id": "test-viewgroup-to-get-1",
-                "author": "test-viewgroup-to-get-1-author",
+                "author": {
+                  "_id": "root",
+                  "name": "root"
+                },
                 "created": 1611229670,
                 "title": "test-viewgroup-to-get-1-title",
                 "updated": 1611229670
@@ -495,7 +597,10 @@ Feature: Get a view group
         {
           "_id": "test-viewgroup-to-get-2",
           "title": "test-viewgroup-to-get-2-title",
-          "author": "test-viewgroup-to-get-2-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "deletable": true,
           "views": [],
           "created": 1611229670,

@@ -208,7 +208,7 @@ l'ordonnanceur au moment de l'exécution d'un job.
 !!! Note
     Vous avez accès aux variables `.Alarm` et `.Entity` dans ce payload.
 
-    Les différentes valeurs sont [documentées ici](../architecture-interne/templates-golang/).
+    Les différentes valeurs sont [documentées ici](../../../guide-utilisation/templates-go/).
 
 Cette section décrit la manière de procéder pour Rundeck, AWX, et Jenkins.
 
@@ -495,5 +495,5 @@ présenté si l'option « HTML activé dans la chronologie ? » est cochée da
 paramètres avancés du [widget bac à alarmes][baa].
 
 [remed-index]: ../../guide-utilisation/remediation/index.md
-[mise-en-oeuvre]: ../../guide-utilisation/remediation/mise-en-oeuvre.md
+[mise-en-oeuvre]: ../../guide-utilisation/menu-administration/consignes.md
 [baa]: ../../guide-utilisation/interface/widgets/bac-a-alarmes/#parametres-du-widget

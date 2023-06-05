@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -30,9 +31,10 @@ type MongoQueryBuilder struct {
 	filterCollection      mongo.DbCollection
 	instructionCollection mongo.DbCollection
 
-	defaultSearchByFields []string
-	defaultSortBy         string
-	defaultSort           string
+	defaultSearchByFields   []string
+	availableSearchByFields map[string]struct{}
+	defaultSortBy           string
+	defaultSort             string
 
 	fieldsAliases        map[string]string
 	fieldsAliasesByRegex map[string]string
@@ -42,7 +44,8 @@ type MongoQueryBuilder struct {
 	// additionalMatch is match after some lookups
 	additionalMatch []bson.M
 	// lookupsForAdditionalMatch is required for match and for result
-	lookupsForAdditionalMatch map[string]bool
+	lookupsForAdditionalMatch     map[string]bool
+	lookupsOnlyForAdditionalMatch map[string]bool
 	// lookupsForSort is required for sort and for result
 	lookupsForSort map[string]bool
 	// excludeLookupsBeforeSort is used to remove data from pipeline to decrease sorted data.
@@ -74,6 +77,14 @@ func NewMongoQueryBuilder(client mongo.DbClient) *MongoQueryBuilder {
 			"v.component",
 			"v.resource",
 		},
+		availableSearchByFields: map[string]struct{}{
+			"v.connector":      {},
+			"v.connector_name": {},
+			"v.component":      {},
+			"v.resource":       {},
+			"v.display_name":   {},
+			"v.output":         {},
+		},
 		defaultSortBy: "t",
 		defaultSort:   common.SortDesc,
 
@@ -89,7 +100,7 @@ func NewMongoQueryBuilder(client mongo.DbClient) *MongoQueryBuilder {
 			"snooze":         "v.snooze",
 			"ack":            "v.ack",
 			"cancel":         "v.cancel",
-			"ticket":         "v.ticket.val",
+			"ticket":         "v.ticket.ticket",
 			"output":         "v.output",
 			"opened":         "t",
 			"resolved":       "v.resolved",
@@ -106,11 +117,13 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 	q.additionalMatch = []bson.M{{"$match": bson.M{"entity.enabled": true}}}
 
 	q.lookupsForAdditionalMatch = map[string]bool{"entity": true}
+	q.lookupsOnlyForAdditionalMatch = make(map[string]bool)
 	q.lookupsForSort = make(map[string]bool)
 	q.excludeLookupsBeforeSort = make([]string, 0)
 	q.lookups = []lookupWithKey{
 		{key: "entity", pipeline: getEntityLookup()},
 		{key: "entity.category", pipeline: getEntityCategoryLookup()},
+		{key: "entity.impacts_counts", pipeline: getImpactsCountPipeline()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup()},
 		{key: "pbehavior.type", pipeline: getPbehaviorTypeLookup()},
 		{key: "v.pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
@@ -121,13 +134,17 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 	q.computedFieldsForAlarmMatch = make(map[string]bool)
 	q.computedFieldsForSort = make(map[string]bool)
 	q.computedFields = getComputedFields(now)
-	q.excludedFields = []string{"v.steps", "pbehavior.comments", "pbehavior_info_type"}
+	q.excludedFields = []string{"v.steps", "pbehavior.comments", "pbehavior_info_type", "entity.services"}
 }
 
 func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequestWithPagination, now types.CpsTime) ([]bson.M, error) {
 	q.clear(now)
 
 	err := q.handleWidgetFilter(ctx, r.FilterRequest)
+	if err != nil {
+		return nil, err
+	}
+	err = q.handlePatterns(r.FilterRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -161,13 +178,13 @@ func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, 
 }
 
 func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
-	id string,
+	match bson.M,
 	now types.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now)
 
 	q.alarmMatch = append(q.alarmMatch,
-		bson.M{"$match": bson.M{"_id": id}},
+		bson.M{"$match": match},
 	)
 
 	query := pagination.Query{
@@ -178,14 +195,29 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 }
 
 func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
-	match bson.M,
+	ctx context.Context,
+	alarmMatch bson.M,
+	entityMatch bson.M,
 	paginationQuery pagination.Query,
 	sortRequest SortRequest,
+	filterRequest FilterRequest,
 	now types.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now)
-	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
-	err := q.handleSort(sortRequest)
+	if len(alarmMatch) > 0 {
+		q.alarmMatch = append(q.alarmMatch, bson.M{"$match": alarmMatch})
+	}
+	if len(entityMatch) > 0 {
+		q.lookupsForAdditionalMatch["entity"] = true
+		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": entityMatch})
+	}
+
+	err := q.handleFilter(ctx, filterRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	err = q.handleSort(sortRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -260,6 +292,32 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
 
+func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(
+	ctx context.Context,
+	r ListRequest,
+	now types.CpsTime,
+) ([]bson.M, error) {
+	q.clear(now)
+
+	err := q.handleWidgetFilter(ctx, r.FilterRequest)
+	if err != nil {
+		return nil, err
+	}
+	err = q.handleFilter(ctx, r.FilterRequest)
+	if err != nil {
+		return nil, err
+	}
+	err = q.handleSort(r.SortRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	beforeLimit, afterLimit := q.createAggregationPipeline()
+	pipeline := append(beforeLimit, q.sort)
+	pipeline = append(pipeline, afterLimit...)
+	return pipeline, nil
+}
+
 func (q *MongoQueryBuilder) createPaginationAggregationPipeline(query pagination.Query) []bson.M {
 	beforeLimit, afterLimit := q.createAggregationPipeline()
 
@@ -280,6 +338,7 @@ func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 	beforeLimit = append(beforeLimit, q.alarmMatch...)
 
 	q.addLookupsToPipeline(q.lookupsForAdditionalMatch, addedLookups, &beforeLimit)
+	q.addLookupsToPipeline(q.lookupsOnlyForAdditionalMatch, addedLookups, &beforeLimit)
 	beforeLimit = append(beforeLimit, q.additionalMatch...)
 
 	if len(q.excludeLookupsBeforeSort) > 0 {
@@ -297,7 +356,7 @@ func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 	afterLimit := make([]bson.M, 0)
 
 	for _, lookup := range q.lookups {
-		if !addedLookups[lookup.key] {
+		if !addedLookups[lookup.key] && !q.lookupsOnlyForAdditionalMatch[lookup.key] {
 			afterLimit = append(afterLimit, lookup.pipeline...)
 		}
 	}
@@ -358,6 +417,7 @@ func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest) e
 	q.addStartFromFilter(r, &alarmMatch)
 	q.addStartToFilter(r, &alarmMatch)
 	q.addOnlyParentsFilter(r, &alarmMatch)
+	q.addTagFilter(r, &alarmMatch)
 	searchMarch, withLookups, err := q.addSearchFilter(r)
 	if err != nil {
 		return err
@@ -389,91 +449,158 @@ func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest) e
 }
 
 func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequest) error {
-	if r.Filter == "" {
+	if len(r.Filters) == 0 {
 		return nil
 	}
 
-	filter := view.WidgetFilter{}
-	err := q.filterCollection.FindOne(ctx, bson.M{"_id": r.Filter}).Decode(&filter)
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return common.NewValidationError("filter", errors.New("Filter doesn't exist."))
+	for _, v := range r.Filters {
+		filter := view.WidgetFilter{}
+		err := q.filterCollection.FindOne(ctx, bson.M{"_id": v}).Decode(&filter)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return common.NewValidationError("filter", "Filter doesn't exist.")
+			}
+			return fmt.Errorf("cannot fetch widget filter: %w", err)
 		}
-		return fmt.Errorf("cannot fetch widget filter: %w", err)
+
+		err = q.handleAlarmPattern(filter.AlarmPattern)
+		if err != nil {
+			return fmt.Errorf("invalid alarm pattern in widget filter id=%q: %w", filter.ID, err)
+		}
+
+		err = q.handlePbehaviorPattern(filter.PbehaviorPattern)
+		if err != nil {
+			return fmt.Errorf("invalid pbehavior pattern in widget filter id=%q: %w", filter.ID, err)
+		}
+
+		err = q.handleEntityPattern(filter.EntityPattern)
+		if err != nil {
+			return fmt.Errorf("invalid entity pattern in widget filter id=%q: %w", filter.ID, err)
+		}
+
+		if len(r.AlarmPattern) == 0 && len(r.PbehaviorPattern) == 0 && len(r.EntityPattern) == 0 &&
+			len(filter.OldMongoQuery) > 0 {
+			var query map[string]any
+			err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)
+			if err != nil {
+				return fmt.Errorf("cannot unmarshal old mongo query: %w", err)
+			}
+
+			q.computedFieldsForAlarmMatch["v.infos_array"] = true
+			q.computedFields["v.infos_array"] = bson.M{"$objectToArray": "$v.infos"}
+			resolvedQuery := q.resolveAliasesInQuery(query)
+			extraLookups := false
+
+			for _, lookup := range q.lookups {
+				if strings.Contains(filter.OldMongoQuery, lookup.key+".") {
+					extraLookups = true
+					q.lookupsForAdditionalMatch[lookup.key] = true
+				}
+			}
+
+			if extraLookups {
+				q.additionalMatch = append(q.additionalMatch, bson.M{"$match": resolvedQuery})
+			} else {
+				q.alarmMatch = append(q.alarmMatch, bson.M{"$match": resolvedQuery})
+			}
+
+			for field := range q.computedFields {
+				if strings.Contains(filter.OldMongoQuery, field) {
+					q.computedFieldsForAlarmMatch[field] = true
+				}
+			}
+		}
 	}
 
-	alarmPatternQuery, err := filter.AlarmPattern.ToMongoQuery("")
+	return nil
+}
+
+func (q *MongoQueryBuilder) handlePatterns(r FilterRequest) error {
+	if r.AlarmPattern != "" {
+		var alarmPattern pattern.Alarm
+		err := json.Unmarshal([]byte(r.AlarmPattern), &alarmPattern)
+		if err != nil {
+			return common.NewValidationError("alarm_pattern", "AlarmPattern is invalid.")
+		}
+		err = q.handleAlarmPattern(alarmPattern)
+		if err != nil {
+			return common.NewValidationError("alarm_pattern", "AlarmPattern is invalid.")
+		}
+	}
+
+	if r.PbehaviorPattern != "" {
+		var pbehaviorPattern pattern.PbehaviorInfo
+		err := json.Unmarshal([]byte(r.PbehaviorPattern), &pbehaviorPattern)
+		if err != nil {
+			return common.NewValidationError("pbehavior_pattern", "PbehaviorPattern is invalid.")
+		}
+		err = q.handlePbehaviorPattern(pbehaviorPattern)
+		if err != nil {
+			return common.NewValidationError("pbehavior_pattern", "PbehaviorPattern is invalid.")
+		}
+	}
+
+	if r.EntityPattern != "" {
+		var entityPattern pattern.Entity
+		err := json.Unmarshal([]byte(r.EntityPattern), &entityPattern)
+		if err != nil {
+			return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
+		}
+		err = q.handleEntityPattern(entityPattern)
+		if err != nil {
+			return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
+		}
+	}
+
+	return nil
+}
+
+func (q *MongoQueryBuilder) handleAlarmPattern(alarmPattern pattern.Alarm) error {
+	alarmPatternQuery, err := alarmPattern.ToMongoQuery("")
 	if err != nil {
-		return fmt.Errorf("invalid alarm pattern in widget filter id=%q: %w", filter.ID, err)
+		return err
 	}
 
 	if len(alarmPatternQuery) > 0 {
 		q.alarmMatch = append(q.alarmMatch, bson.M{"$match": alarmPatternQuery})
 
-		if filter.AlarmPattern.HasInfosField() {
+		if alarmPattern.HasInfosField() {
 			q.computedFieldsForAlarmMatch["v.infos_array"] = true
 			q.computedFields["v.infos_array"] = bson.M{"$objectToArray": "$v.infos"}
 		}
 
 		for field := range q.computedFields {
-			if filter.AlarmPattern.HasField(field) {
+			if alarmPattern.HasField(field) {
 				q.computedFieldsForAlarmMatch[field] = true
 			}
 		}
 	}
 
-	pbhPatternQuery, err := filter.PbehaviorPattern.ToMongoQuery("v")
+	return nil
+}
+
+func (q *MongoQueryBuilder) handlePbehaviorPattern(pbehaviorPattern pattern.PbehaviorInfo) error {
+	pbhPatternQuery, err := pbehaviorPattern.ToMongoQuery("v")
 	if err != nil {
-		return fmt.Errorf("invalid pbehavior pattern in widget filter id=%q: %w", filter.ID, err)
+		return err
 	}
 
 	if len(pbhPatternQuery) > 0 {
 		q.alarmMatch = append(q.alarmMatch, bson.M{"$match": pbhPatternQuery})
 	}
 
-	entityPatternQuery, err := filter.EntityPattern.ToMongoQuery("entity")
+	return nil
+}
+
+func (q *MongoQueryBuilder) handleEntityPattern(entityPattern pattern.Entity) error {
+	entityPatternQuery, err := entityPattern.ToMongoQuery("entity")
 	if err != nil {
-		return fmt.Errorf("invalid entity pattern in widget filter id=%q: %w", filter.ID, err)
+		return err
 	}
 
 	if len(entityPatternQuery) > 0 {
 		q.lookupsForAdditionalMatch["entity"] = true
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": entityPatternQuery})
-	}
-
-	if len(alarmPatternQuery) == 0 && len(pbhPatternQuery) == 0 && len(entityPatternQuery) == 0 &&
-		len(filter.OldMongoQuery) > 0 {
-		var query map[string]interface{}
-		err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)
-		if err != nil {
-			return fmt.Errorf("cannot unmarshal old mongo query: %w", err)
-		}
-
-		q.computedFieldsForAlarmMatch["v.infos_array"] = true
-		q.computedFields["v.infos_array"] = bson.M{"$objectToArray": "$v.infos"}
-		resolvedQuery := q.resolveAliasesInQuery(query)
-		extraLookups := false
-
-		for _, lookup := range q.lookups {
-			if strings.Contains(filter.OldMongoQuery, lookup.key+".") {
-				extraLookups = true
-				q.lookupsForAdditionalMatch[lookup.key] = true
-			}
-		}
-
-		if extraLookups {
-			q.additionalMatch = append(q.additionalMatch, bson.M{"$match": resolvedQuery})
-		} else {
-			q.alarmMatch = append(q.alarmMatch, bson.M{"$match": resolvedQuery})
-		}
-
-		for field := range q.computedFields {
-			if strings.Contains(filter.OldMongoQuery, field) {
-				q.computedFieldsForAlarmMatch[field] = true
-			}
-		}
-
-		return nil
 	}
 
 	return nil
@@ -517,7 +644,12 @@ func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (match bson.M, with
 		Options: "i",
 	}
 
-	searchBy := r.SearchBy
+	searchBy := make([]string, 0, len(r.SearchBy))
+	for _, f := range r.SearchBy {
+		if _, ok := q.availableSearchByFields[f]; ok {
+			searchBy = append(searchBy, f)
+		}
+	}
 	if len(searchBy) == 0 {
 		searchBy = q.defaultSearchByFields
 	}
@@ -600,6 +732,14 @@ func (q *MongoQueryBuilder) addCategoryFilter(r FilterRequest, match *[]bson.M) 
 	*match = append(*match, bson.M{"entity.category": bson.M{"$eq": r.Category}})
 }
 
+func (q *MongoQueryBuilder) addTagFilter(r FilterRequest, match *[]bson.M) {
+	if r.Tag == "" {
+		return
+	}
+
+	*match = append(*match, bson.M{"tags": r.Tag})
+}
+
 func (q *MongoQueryBuilder) addOnlyParentsFilter(r FilterRequest, match *[]bson.M) {
 	if !r.OnlyParents {
 		*match = append(*match, bson.M{"v.meta": nil})
@@ -619,60 +759,144 @@ func (q *MongoQueryBuilder) addOnlyParentsFilter(r FilterRequest, match *[]bson.
 }
 
 func (q *MongoQueryBuilder) addInstructionsFilter(ctx context.Context, r FilterRequest, match *[]bson.M) error {
-	added := false
+	withMatch := false
+	withExecution := false
+	withExecutionType := false
 
-	if len(r.ExcludeInstructions) > 0 {
-		filters, err := q.getInstructionsFilters(ctx, bson.M{"_id": bson.M{"$in": r.ExcludeInstructions}})
-		if err != nil {
-			return err
+	for _, instructionFilter := range r.Instructions {
+		if len(instructionFilter.Exclude) > 0 {
+			if instructionFilter.Running != nil && *instructionFilter.Running {
+				withExecution = true
+				*match = append(*match, bson.M{"instruction_execution.instruction": bson.M{"$nin": instructionFilter.Exclude}})
+				continue
+			}
+
+			filters, err := q.getInstructionsFilters(
+				ctx,
+				bson.M{"_id": bson.M{"$in": instructionFilter.Exclude}},
+			)
+			if err != nil {
+				return err
+			}
+			if len(filters) > 0 {
+				if instructionFilter.Running == nil {
+					withMatch = true
+					*match = append(*match, bson.M{"$nor": filters})
+				} else {
+					withExecution = true
+					withMatch = true
+					*match = append(*match, bson.M{"instruction_execution.instruction": bson.M{"$or": []bson.M{
+						{"$in": instructionFilter.Exclude},
+						{"$nor": filters},
+					}}})
+				}
+			}
+			continue
 		}
-		if len(filters) > 0 {
-			added = true
-			*match = append(*match, bson.M{"$nor": filters})
+
+		if len(instructionFilter.ExcludeTypes) > 0 {
+			if instructionFilter.Running != nil && *instructionFilter.Running {
+				withExecutionType = true
+				*match = append(*match, bson.M{"instruction_execution.type": bson.M{"$nin": instructionFilter.ExcludeTypes}})
+				continue
+			}
+
+			filters, err := q.getInstructionsFilters(
+				ctx,
+				bson.M{"type": bson.M{"$in": instructionFilter.ExcludeTypes}},
+			)
+			if err != nil {
+				return err
+			}
+			if len(filters) > 0 {
+				if instructionFilter.Running == nil {
+					withMatch = true
+					*match = append(*match, bson.M{"$nor": filters})
+				} else {
+					withExecutionType = true
+					withMatch = true
+					*match = append(*match, bson.M{"$or": []bson.M{
+						{"instruction_execution.type": bson.M{"$in": instructionFilter.ExcludeTypes}},
+						{"$nor": filters},
+					}})
+				}
+			}
+			continue
+		}
+
+		if len(instructionFilter.Include) > 0 {
+			if instructionFilter.Running != nil && *instructionFilter.Running {
+				withExecution = true
+				*match = append(*match, bson.M{"instruction_execution.instruction": bson.M{"$in": instructionFilter.Include}})
+				continue
+			}
+
+			filters, err := q.getInstructionsFilters(
+				ctx,
+				bson.M{"_id": bson.M{"$in": instructionFilter.Include}},
+			)
+			if err != nil {
+				return err
+			}
+			if len(filters) > 0 {
+				if instructionFilter.Running == nil {
+					withMatch = true
+					*match = append(*match, bson.M{"$or": filters})
+				} else {
+					withMatch = true
+					withExecution = true
+					*match = append(*match, bson.M{"$and": []bson.M{
+						{"instruction_execution.instruction": bson.M{"$nin": instructionFilter.Include}},
+						{"$or": filters},
+					}})
+				}
+			} else {
+				*match = append(*match, bson.M{"$nor": []bson.M{{}}})
+			}
+			continue
+		}
+
+		if len(instructionFilter.IncludeTypes) > 0 {
+			if instructionFilter.Running != nil && *instructionFilter.Running {
+				withExecutionType = true
+				*match = append(*match, bson.M{"instruction_execution.type": bson.M{"$in": instructionFilter.IncludeTypes}})
+				continue
+			}
+
+			filters, err := q.getInstructionsFilters(
+				ctx,
+				bson.M{"type": bson.M{"$in": instructionFilter.IncludeTypes}},
+			)
+			if err != nil {
+				return err
+			}
+			if len(filters) > 0 {
+				if instructionFilter.Running == nil {
+					withMatch = true
+					*match = append(*match, bson.M{"$or": filters})
+				} else {
+					withMatch = true
+					withExecutionType = true
+					*match = append(*match, bson.M{"$and": []bson.M{
+						{"instruction_execution.type": bson.M{"$nin": instructionFilter.IncludeTypes}},
+						{"$or": filters},
+					}})
+				}
+			} else {
+				*match = append(*match, bson.M{"$nor": []bson.M{{}}})
+			}
+			continue
 		}
 	}
 
-	if len(r.ExcludeInstructionTypes) > 0 {
-		filters, err := q.getInstructionsFilters(ctx, bson.M{"type": bson.M{"$in": r.ExcludeInstructionTypes}})
-		if err != nil {
-			return err
-		}
-		if len(filters) > 0 {
-			added = true
-			*match = append(*match, bson.M{"$nor": filters})
-		}
-	}
-
-	if len(r.IncludeInstructions) > 0 {
-		filters, err := q.getInstructionsFilters(ctx, bson.M{"_id": bson.M{"$in": r.IncludeInstructions}})
-		if err != nil {
-			return err
-		}
-		if len(filters) > 0 {
-			added = true
-			*match = append(*match, bson.M{"$or": filters})
-		} else {
-			*match = append(*match, bson.M{"$nor": []bson.M{{}}})
-		}
-	}
-
-	if len(r.IncludeInstructionTypes) > 0 {
-		filters, err := q.getInstructionsFilters(ctx, bson.M{"type": bson.M{"$in": r.IncludeInstructionTypes}})
-		if err != nil {
-			return err
-		}
-		if len(filters) > 0 {
-			added = true
-			*match = append(*match, bson.M{"$or": filters})
-		} else {
-			*match = append(*match, bson.M{"$nor": []bson.M{{}}})
-		}
-	}
-
-	if added {
+	if withMatch {
 		q.computedFieldsForAlarmMatch["v.duration"] = true
 		q.computedFieldsForAlarmMatch["v.infos_array"] = true
 		q.computedFields["v.infos_array"] = bson.M{"$objectToArray": "$v.infos"}
+	}
+	if withExecution || withExecutionType {
+		q.lookupsOnlyForAdditionalMatch["instruction_execution"] = true
+		q.lookups = append(q.lookups, lookupWithKey{key: "instruction_execution", pipeline: getInstructionExecutionLookup(withExecutionType)})
 	}
 
 	return nil
@@ -783,6 +1007,10 @@ func (q *MongoQueryBuilder) adjustLookupsForSort(sortFields []string) {
 		}
 	}
 
+	for lookup := range q.lookupsOnlyForAdditionalMatch {
+		q.excludeLookupsBeforeSort = append(q.excludeLookupsBeforeSort, lookup)
+	}
+
 	for _, lookup := range q.lookups {
 		for _, sortField := range sortFields {
 			if strings.HasPrefix(sortField, lookup.key) {
@@ -793,7 +1021,7 @@ func (q *MongoQueryBuilder) adjustLookupsForSort(sortFields []string) {
 	}
 }
 
-func (q *MongoQueryBuilder) resolveAliasesInQuery(query interface{}) interface{} {
+func (q *MongoQueryBuilder) resolveAliasesInQuery(query any) any {
 	res := query
 	val := reflect.ValueOf(res)
 
@@ -872,7 +1100,7 @@ func getEntityCategoryLookup() []bson.M {
 }
 
 func getPbehaviorLookup() []bson.M {
-	return []bson.M{
+	pipeline := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorMongoCollection,
 			"foreignField": "_id",
@@ -884,13 +1112,6 @@ func getPbehaviorLookup() []bson.M {
 			"pbehavior.last_comment": bson.M{"$arrayElemAt": bson.A{"$pbehavior.comments", -1}},
 		}},
 		{"$lookup": bson.M{
-			"from":         mongo.RightsMongoCollection,
-			"foreignField": "_id",
-			"localField":   "pbehavior.author",
-			"as":           "pbehavior.author",
-		}},
-		{"$unwind": bson.M{"path": "$pbehavior.author", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorReasonMongoCollection,
 			"foreignField": "_id",
 			"localField":   "pbehavior.reason",
@@ -898,6 +1119,19 @@ func getPbehaviorLookup() []bson.M {
 		}},
 		{"$unwind": bson.M{"path": "$pbehavior.reason", "preserveNullAndEmptyArrays": true}},
 	}
+
+	pipeline = append(pipeline, author.PipelineForField("pbehavior.author")...)
+	pipeline = append(pipeline, author.PipelineForField("pbehavior.last_comment.author")...)
+	pipeline = append(pipeline, bson.M{"$addFields": bson.M{
+		"pbehavior.last_comment": bson.M{
+			"$cond": bson.M{
+				"if":   "$pbehavior.last_comment._id",
+				"then": "$pbehavior.last_comment",
+				"else": "$$REMOVE",
+			},
+		},
+	}})
+	return pipeline
 }
 
 func getPbehaviorTypeLookup() []bson.M {
@@ -1000,6 +1234,38 @@ func getFilteredChildrenLookup(childrenCollection string, childrenMatch bson.M) 
 	}
 }
 
+func getInstructionExecutionLookup(withType bool) []bson.M {
+	pipeline := []bson.M{
+		{"$lookup": bson.M{
+			"from": mongo.InstructionExecutionMongoCollection,
+			"let":  bson.M{"alarm": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$and": []bson.M{
+					{"$expr": bson.M{"$eq": bson.A{"$$alarm", "$alarm"}}},
+					{"status": bson.M{"$in": bson.A{InstructionExecutionStatusRunning, InstructionExecutionStatusWaitResult}}},
+				}}},
+			},
+			"as": "instruction_execution",
+		}},
+		{"$unwind": bson.M{"path": "$instruction_execution", "preserveNullAndEmptyArrays": true}},
+	}
+	if withType {
+		pipeline = append(pipeline, []bson.M{
+			{"$lookup": bson.M{
+				"from":         mongo.InstructionMongoCollection,
+				"localField":   "instruction_execution.instruction",
+				"foreignField": "_id",
+				"as":           "instruction_execution.type",
+			}},
+			{"$unwind": bson.M{"path": "$instruction_execution.type", "preserveNullAndEmptyArrays": true}},
+			{"$addFields": bson.M{
+				"instruction_execution.type": "$instruction_execution.type.type",
+			}},
+		}...)
+	}
+	return pipeline
+}
+
 func getComputedFields(now types.CpsTime) bson.M {
 	return bson.M{
 		"infos":        "$v.infos",
@@ -1080,4 +1346,26 @@ func getInstructionQuery(instruction Instruction) (bson.M, error) {
 	}
 
 	return bson.M{"$and": and}, nil
+}
+
+func getImpactsCountPipeline() []bson.M {
+	return []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity.services",
+			"foreignField": "_id",
+			"as":           "service_impacts",
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "entity._id",
+			"foreignField": "services",
+			"as":           "depends",
+		}},
+		{"$addFields": bson.M{
+			"entity.depends_count": bson.M{"$size": "$depends"},
+			"entity.impacts_count": bson.M{"$size": "$service_impacts"},
+		}},
+		{"$project": bson.M{"service_impacts": 0}},
+	}
 }

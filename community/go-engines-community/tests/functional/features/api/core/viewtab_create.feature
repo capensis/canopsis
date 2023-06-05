@@ -16,7 +16,10 @@ Feature: Create a view tab
     """json
     {
       "title": "test-tab-to-create-1-title",
-      "author": "root"
+      "author": {
+        "_id": "root",
+        "name": "root"
+      }
     }
     """
     When I do GET /api/v4/view-tabs/{{ .lastResponse._id}}
@@ -25,7 +28,10 @@ Feature: Create a view tab
     """json
     {
       "title": "test-tab-to-create-1-title",
-      "author": "root"
+      "author": {
+        "_id": "root",
+        "name": "root"
+      }
     }
     """
 

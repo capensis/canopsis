@@ -2,10 +2,10 @@ import { get, isFunction, isNumber, isObject, unescape, isString } from 'lodash'
 import Handlebars from 'handlebars';
 import axios from 'axios';
 
-import { DATETIME_FORMATS } from '@/constants';
+import { DATETIME_FORMATS, MAX_LIMIT } from '@/constants';
 
 import { convertDurationToString } from '@/helpers/date/duration';
-import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
+import { convertDateToStringWithFormatForToday, convertDateToString } from '@/helpers/date/date';
 
 import i18n from '@/i18n';
 
@@ -25,19 +25,23 @@ function prepareAttributes(attributes) {
 /**
  * Convert date to long format
  *
- * Example: {{date 1000000}} -> 12/01/1970 20:46:40
+ * First example: {{timestamp 1673932037}} -> 07:07:17 (it's today time)
+ * Second example: {{timestamp 1673932037 format='long'}} -> 17/01/2023 07:07:17
  *
  * @param {string|number} date
+ * @param {Object} options
  * @returns {string}
  */
-export function timestampHelper(date) {
-  let result = '';
+export function timestampHelper(date, options = {}) {
+  const { format } = options.hash;
 
-  if (date) {
-    result = convertDateToStringWithFormatForToday(date);
+  if (!date) {
+    return '';
   }
 
-  return result;
+  return format === 'long'
+    ? convertDateToString(date)
+    : convertDateToStringWithFormatForToday(date);
 }
 
 /**
@@ -81,17 +85,32 @@ export function alarmStateHelper(state) {
 }
 
 /**
+ * Return tags chips (we can use it only on alarms list table)
+ *
+ * Example: {{tags}}
+ *
+ * @return {string}
+ */
+export function alarmTagsHelper() {
+  return new Handlebars.SafeString(`<c-alarm-tags-chips :alarm="alarm" inline-count="${MAX_LIMIT}"></c-alarm-tags-chips>`);
+}
+
+/**
  * Pass response of a request to the child block
  *
  * Example:
- * {{#request method="get" url="https://test.com" path="data.users" variable="users"
- * username="test" password="test" headers='{ "test": "test2" }'}}
- *   {{#each users}}
- *     <li>{{login}}</li>
+ * {{#request
+ *  method="post"
+ *  url="https://jsonplaceholder.typicode.com/todos"
+ *  variable="post"
+ *  headers='{ "Content-Type": "application/json" }'
+ *  data='{ "userId": "1", "title": "test", "completed": false }'}}
+ *   {{#each post}}
+ *       <li><strong>{{@key}}</strong>: {{this}}</li>
  *   {{/each}}
  * {{/request}}
  *
- * @param options
+ * @param {Object} options
  * @returns {Promise<string|*>}
  */
 export async function requestHelper(options) {
@@ -100,6 +119,7 @@ export async function requestHelper(options) {
     url,
     headers,
     path,
+    data,
     variable,
     username,
     password,
@@ -123,10 +143,14 @@ export async function requestHelper(options) {
       axiosOptions.auth = { username, password };
     }
 
-    const { data } = await axios(axiosOptions);
+    if (data) {
+      axiosOptions.data = JSON.parse(data);
+    }
+
+    const { data: responseData } = await axios(axiosOptions);
 
     if (isFunction(options.fn)) {
-      const value = path ? get(data, path) : data;
+      const value = path ? get(responseData, path) : responseData;
       const context = variable ? { [variable]: value } : value;
 
       return options.fn(context);
@@ -403,4 +427,21 @@ export function replaceHelper(source, pattern, replacement, options = {}) {
   const regex = new RegExp(String(pattern), flags);
 
   return String(source).replace(regex, replacement);
+}
+
+/**
+ * Copy value to clipboard helper
+ *
+ * Example: {{#copy 'some string'}}CLICK TO COPY{{/copy}}
+ *
+ * @param {string|number|null} [value = '']
+ * @param {Object} options
+ * @returns {*}
+ */
+export function copyHelper(value = '', options = {}) {
+  if (!isFunction(options.fn)) {
+    throw new Error('handlebars helper {{copy}} expects options.fn');
+  }
+
+  return new Handlebars.SafeString(`<c-copy-wrapper value="${value}" />${options.fn(this)}</c-copy-wrapper>`);
 }

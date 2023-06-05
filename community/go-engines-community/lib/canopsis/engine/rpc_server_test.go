@@ -43,7 +43,7 @@ func TestRpcServer_Consume_GivenMessage_ShouldProcessIt(t *testing.T) {
 	mockChannel.EXPECT().Close().AnyTimes()
 	mockChannel.EXPECT().Consume(gomock.Any(), gomock.Any(), gomock.Any(),
 		gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(msgs, nil)
-	mockChannel.EXPECT().Publish(gomock.Any(), gomock.Eq(replyTo), gomock.Any(),
+	mockChannel.EXPECT().PublishWithContext(gomock.Any(), gomock.Any(), gomock.Eq(replyTo), gomock.Any(),
 		gomock.Any(), gomock.Any())
 
 	mockMessageProcessor.EXPECT().Process(gomock.Any(), gomock.Eq(d)).Return(body, nil)
@@ -88,7 +88,7 @@ func TestRpcServer_Consume_GivenProcessedMessage_ShouldPublishResultMessageToBac
 		gomock.Any(), gomock.Any(), gomock.Any()).Return(msgs, nil)
 
 	mockMessageProcessor.EXPECT().Process(gomock.Any(), gomock.Any()).Return(resultBody, nil)
-	mockChannel.EXPECT().Publish(
+	mockChannel.EXPECT().PublishWithContext(gomock.Any(),
 		gomock.Eq(""),
 		gomock.Eq(backQueue),
 		gomock.Any(),
@@ -131,7 +131,7 @@ func TestRpcServer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *testing.T) 
 	mockChannel.EXPECT().Close().AnyTimes()
 	mockChannel.EXPECT().Consume(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(),
 		gomock.Any(), gomock.Any(), gomock.Any()).Return(msgs, nil)
-	mockChannel.EXPECT().Publish(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(),
+	mockChannel.EXPECT().PublishWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(),
 		gomock.Any()).Times(0)
 	mockChannel.EXPECT().Ack(gomock.Any(), gomock.Any()).Times(0)
 	mockChannel.EXPECT().Nack(gomock.Any(), gomock.Any(), gomock.Any())

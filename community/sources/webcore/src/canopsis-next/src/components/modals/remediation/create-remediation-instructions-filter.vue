@@ -1,14 +1,14 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ $t('common.filters') }}
-      template(slot="text")
+      template(#text="")
         remediation-instructions-filter-form(
           v-model="form",
           :filters="config.filters"
         )
-      template(slot="actions")
+      template(#actions="")
         v-btn(
           :disabled="submitting",
           depressed,
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { remediationInstructionFilterToForm } from '@/helpers/forms/remediation-instruction-filter';
 
@@ -40,6 +40,7 @@ export default {
   name: MODALS.createRemediationInstructionsFilter,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: { RemediationInstructionsFilterForm, ModalWrapper },
   mixins: [

@@ -4,29 +4,43 @@
     v-field="value",
     :items="availableTriggers",
     :disabled="disabled",
-    :label="label || $t('common.triggers')",
-    :error-messages="errors.collect(name)",
+    :label="label || $tc('common.trigger', 2)",
+    :error-messages="errorMessages",
     :name="name",
+    item-disabled="deprecated",
     multiple,
     chips
   )
+    template(#selection="{ item, index }")
+      v-tooltip(:disabled="!item.deprecated", top)
+        template(#activator="{ on }")
+          v-chip(
+            v-on="on",
+            :class="{ 'error--text': item.deprecated }",
+            :close="item.deprecated",
+            @input="removeItemFromArray(index)"
+          ) {{ item.text }}
+        span {{ $t('common.deprecatedTrigger') }}
     template(#item="{ item, tile, parent }")
       v-list-tile(v-bind="tile.props", v-on="tile.on")
         v-list-tile-action
           v-checkbox(:input-value="tile.props.value", :color="parent.color")
         v-list-tile-content {{ item.text }}
         v-list-tile-action(v-if="item.helpText")
-          c-help-icon(:text="item.helpText", size="20", top)
+          c-help-icon(:text="item.helpText", color="info", size="20", top)
 </template>
 
 <script>
-import { SCENARIO_TRIGGERS, CAT_SCENARIO_TRIGGERS } from '@/constants';
+import { TRIGGERS, PRO_TRIGGERS } from '@/constants';
+
+import { isDeprecatedTrigger } from '@/helpers/entities/scenarios';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { formArrayMixin } from '@/mixins/form';
 
 export default {
   inject: ['$validator'],
-  mixins: [entitiesInfoMixin],
+  mixins: [formArrayMixin, entitiesInfoMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -34,7 +48,7 @@ export default {
   props: {
     value: {
       type: Array,
-      required: true,
+      default: () => [],
     },
     label: {
       type: String,
@@ -48,23 +62,67 @@ export default {
       type: Boolean,
       default: false,
     },
+    triggers: {
+      type: Array,
+      default: () => Object.values(TRIGGERS),
+    },
   },
   computed: {
     availableTriggers() {
-      return Object.values(SCENARIO_TRIGGERS)
+      return Object.values(this.triggers)
         .reduce((acc, type) => {
-          if (!CAT_SCENARIO_TRIGGERS.includes(type) || this.isCatVersion) {
-            const { text, helpText } = this.$t(`common.scenarioTriggers.${type}`);
+          if (!PRO_TRIGGERS.includes(type) || this.isProVersion) {
+            const { text, helpText } = this.$t(`common.triggers.${type}`);
 
             acc.push({
               text,
               helpText,
               value: type,
+              deprecated: isDeprecatedTrigger(type),
             });
           }
 
           return acc;
         }, []);
+    },
+
+    deprecatedValues() {
+      return this.value.filter(isDeprecatedTrigger);
+    },
+
+    errorMessages() {
+      return this.errors.collect(this.name, null, false)
+        .map((item) => {
+          const messageMap = {
+            max_value: this.$tc(
+              'errors.triggerMustNotUsed',
+              this.deprecatedValues.length,
+              { field: this.deprecatedValues.join(', ') },
+            ),
+          };
+
+          return messageMap[item.rule] ?? item.msg;
+        });
+    },
+  },
+  created() {
+    this.attachMaxValueRule();
+  },
+  beforeDestroy() {
+    this.detachRules();
+  },
+  methods: {
+    attachMaxValueRule() {
+      this.$validator.attach({
+        name: this.name,
+        rules: 'max_value:0',
+        getter: () => this.deprecatedValues.length,
+        vm: this,
+      });
+    },
+
+    detachRules() {
+      this.$validator.detach(this.name);
     },
   },
 };

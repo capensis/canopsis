@@ -1,8 +1,5 @@
 <template lang="pug">
-  v-card(
-    :class="{ 'fill-min-height': fillHeight }",
-    :data-test="$attrs['data-test']"
-  )
+  v-card(:class="{ 'fill-min-height': fillHeight }")
     v-card-title.white--text(v-if="$slots.title", :style="titleStyle")
       div.modal-wrapper__title.headline
         div
@@ -23,8 +20,6 @@
 </template>
 
 <script>
-import { COLORS } from '@/config';
-
 import ModalTitleButtons from './modal-title-buttons.vue';
 
 export default {
@@ -45,7 +40,7 @@ export default {
     },
     titleColor: {
       type: String,
-      default: COLORS.primary,
+      default: 'var(--v-primary-base)',
     },
     textClass: {
       type: String,

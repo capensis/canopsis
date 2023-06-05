@@ -16,11 +16,17 @@ const stubs = {
   'c-progress-overlay': true,
   'kpi-rating-filters': true,
   'kpi-rating-chart': true,
+  'kpi-error-overlay': true,
 };
 
 const factory = (options = {}) => shallowMount(KpiRating, {
   localVue,
   stubs,
+  parentComponent: {
+    provide: {
+      $system: {},
+    },
+  },
 
   ...options,
 });
@@ -28,6 +34,11 @@ const factory = (options = {}) => shallowMount(KpiRating, {
 const snapshotFactory = (options = {}) => mount(KpiRating, {
   localVue,
   stubs,
+  parentComponent: {
+    provide: {
+      $system: {},
+    },
+  },
 
   ...options,
 });
@@ -99,7 +110,14 @@ describe('kpi-rating', () => {
     expect(fetchRatingMetrics).toBeCalledTimes(1);
     expect(fetchRatingMetrics).toBeCalledWith(
       expect.any(Object),
-      { params: expectedDefaultParams },
+      {
+        params: {
+          ...expectedDefaultParams,
+
+          from: 1383778800,
+          to: 1386370800,
+        },
+      },
       undefined,
     );
   });
@@ -158,12 +176,12 @@ describe('kpi-rating', () => {
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedParamsAfterUpdate = {
       /* now - 30d  */
-      from: 1386262800,
+      from: 1386284400,
       criteria: 1,
       filter: Faker.datatype.string(),
       metric: ALARM_METRIC_PARAMETERS.ticketActiveAlarms,
       limit: 10,
-      to: nowUnix,
+      to: 1386370800,
     };
     const fetchRatingMetrics = jest.fn(() => ({
       data: [],
@@ -210,11 +228,11 @@ describe('kpi-rating', () => {
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedParamsAfterUpdate = {
       /* now - 30d  */
-      from: 1386262800,
+      from: 1386284400,
       criteria: 1,
       metric: USER_METRIC_PARAMETERS.totalUserActivity,
       limit: 10,
-      to: nowUnix,
+      to: 1386370800,
     };
     const fetchRatingMetrics = jest.fn(() => ({
       data: [],
@@ -266,6 +284,21 @@ describe('kpi-rating', () => {
             data: [],
             meta: {},
           })),
+        },
+      }]),
+    });
+
+    await flushPromises();
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  test('Renders `kpi-rating` with fetching error', async () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([{
+        name: 'metrics',
+        actions: {
+          fetchRatingMetricsWithoutStore: jest.fn().mockRejectedValue(),
         },
       }]),
     });

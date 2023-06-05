@@ -1,10 +1,6 @@
 <template lang="pug">
-  div.test-suite-history
-    v-expansion-panel
-      v-expansion-panel-content(:style="{ backgroundColor: color }", lazy)
-        v-icon(slot="actions", color="white") $vuetify.icons.expand
-        span.white--text(slot="header") {{ title }}
-        test-suite-tabs(:test-suite-id="testSuite._id")
+  c-collapse-panel(:title="title", :color="color", lazy)
+    test-suite-tabs(:test-suite-id="testSuite._id")
 </template>
 
 <script>
@@ -33,12 +29,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.test-suite-history {
-  & /deep/ .v-expansion-panel {
-    border-radius: 5px;
-    overflow: hidden;
-  }
-}
-</style>

@@ -7,12 +7,13 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 )
 
 type Adapter interface {
-	// Insert insert an alarm
+	// Insert inserts an alarm
 	Insert(ctx context.Context, alarm types.Alarm) error
 
 	// Update update an alarm
@@ -27,9 +28,6 @@ type Adapter interface {
 
 	// GetAlarmsWithCancelMark returns all alarms where v.cancel is not null
 	GetAlarmsWithCancelMark(ctx context.Context) ([]types.Alarm, error)
-
-	// GetAlarmsWithDoneMark returns all alarms where v.done is not null
-	GetAlarmsWithDoneMark(ctx context.Context) ([]types.Alarm, error)
 
 	// GetAlarmsWithSnoozeMark returns all alarms where v.snooze is not null
 	GetAlarmsWithSnoozeMark(ctx context.Context) ([]types.Alarm, error)
@@ -53,7 +51,7 @@ type Adapter interface {
 
 	// GetOpenedAlarm find one opened alarm with his entity id.
 	// Note : a control is added to prevent fetching future alarms.
-	GetOpenedAlarm(ctx context.Context, connector, connectorName, id string) (types.Alarm, error)
+	GetOpenedAlarm(ctx context.Context, entityId string) (types.Alarm, error)
 
 	GetOpenedMetaAlarm(ctx context.Context, ruleId string, valuePath string) (types.Alarm, error)
 	GetOpenedMetaAlarmWithEntity(ctx context.Context, ruleId string, valuePath string) (types.AlarmWithEntity, error)
@@ -88,14 +86,8 @@ type Adapter interface {
 	// DeleteResolvedAlarms deletes resolved alarms from resolved collection after some duration
 	DeleteResolvedAlarms(ctx context.Context, duration time.Duration) error
 
-	// DeleteArchivedResolvedAlarms deletes resolved alarms from archived collection after some time.
-	DeleteArchivedResolvedAlarms(ctx context.Context, before types.CpsTime) (int64, error)
-
 	// CopyAlarmToResolvedCollection copies alarm to resolved alarm collection
 	CopyAlarmToResolvedCollection(ctx context.Context, alarm types.Alarm) error
-
-	// ArchiveResolvedAlarms archives alarm to archived alarm collection.
-	ArchiveResolvedAlarms(ctx context.Context, before types.CpsTime) (int64, error)
 
 	FindToCheckPbehaviorInfo(ctx context.Context, createdBefore types.CpsTime, idsWithPbehaviors []string) (mongo.Cursor, error)
 
@@ -116,13 +108,13 @@ type MetaAlarmEventProcessor interface {
 	// Process handles related meta alarm parents and children after alarm change.
 	Process(ctx context.Context, event types.Event) error
 	// ProcessAxeRpc handles related meta alarm parents and children after alarm change.
-	ProcessAxeRpc(ctx context.Context, event types.RPCAxeEvent, eventRes types.RPCAxeResultEvent) error
-	// ProcessWebhookRpc handles related meta alarm parents and children after alarm change.
-	ProcessWebhookRpc(ctx context.Context, event types.RPCWebhookEvent, ticketId string, ticketData map[string]string) error
+	ProcessAxeRpc(ctx context.Context, event rpc.AxeEvent, eventRes rpc.AxeResultEvent) error
 	// CreateMetaAlarm creates meta alarm by event.
 	CreateMetaAlarm(ctx context.Context, event types.Event) (*types.Alarm, error)
 	// ProcessAckResources ackes resource after component ack.
 	ProcessAckResources(ctx context.Context, event types.Event) error
+	// ProcessTicketResources add ticket to resource after component assoc ticket.
+	ProcessTicketResources(ctx context.Context, event types.Event) error
 }
 
 type Service interface {
@@ -131,9 +123,6 @@ type Service interface {
 
 	// ResolveCancels close canceled alarms when time has expired
 	ResolveCancels(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error)
-
-	// ResolveDone close one alarms when time has expired
-	ResolveDone(ctx context.Context) ([]types.Alarm, error)
 
 	// ResolveSnoozes remove snooze state when snooze time has expired
 	ResolveSnoozes(ctx context.Context, alarmConfig config.AlarmConfig) ([]types.Alarm, error)

@@ -10,6 +10,7 @@ import (
 	time "time"
 
 	config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	rpc "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	gomock "github.com/golang/mock/gomock"
@@ -36,21 +37,6 @@ func NewMockAdapter(ctrl *gomock.Controller) *MockAdapter {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockAdapter) EXPECT() *MockAdapterMockRecorder {
 	return m.recorder
-}
-
-// ArchiveResolvedAlarms mocks base method.
-func (m *MockAdapter) ArchiveResolvedAlarms(arg0 context.Context, arg1 types.CpsTime) (int64, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ArchiveResolvedAlarms", arg0, arg1)
-	ret0, _ := ret[0].(int64)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ArchiveResolvedAlarms indicates an expected call of ArchiveResolvedAlarms.
-func (mr *MockAdapterMockRecorder) ArchiveResolvedAlarms(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ArchiveResolvedAlarms", reflect.TypeOf((*MockAdapter)(nil).ArchiveResolvedAlarms), arg0, arg1)
 }
 
 // CopyAlarmToResolvedCollection mocks base method.
@@ -80,21 +66,6 @@ func (m *MockAdapter) CountResolvedAlarm(arg0 context.Context, arg1 []string) (i
 func (mr *MockAdapterMockRecorder) CountResolvedAlarm(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountResolvedAlarm", reflect.TypeOf((*MockAdapter)(nil).CountResolvedAlarm), arg0, arg1)
-}
-
-// DeleteArchivedResolvedAlarms mocks base method.
-func (m *MockAdapter) DeleteArchivedResolvedAlarms(arg0 context.Context, arg1 types.CpsTime) (int64, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteArchivedResolvedAlarms", arg0, arg1)
-	ret0, _ := ret[0].(int64)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// DeleteArchivedResolvedAlarms indicates an expected call of DeleteArchivedResolvedAlarms.
-func (mr *MockAdapterMockRecorder) DeleteArchivedResolvedAlarms(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteArchivedResolvedAlarms", reflect.TypeOf((*MockAdapter)(nil).DeleteArchivedResolvedAlarms), arg0, arg1)
 }
 
 // DeleteResolvedAlarms mocks base method.
@@ -169,21 +140,6 @@ func (m *MockAdapter) GetAlarmsWithCancelMark(arg0 context.Context) ([]types.Ala
 func (mr *MockAdapterMockRecorder) GetAlarmsWithCancelMark(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAlarmsWithCancelMark", reflect.TypeOf((*MockAdapter)(nil).GetAlarmsWithCancelMark), arg0)
-}
-
-// GetAlarmsWithDoneMark mocks base method.
-func (m *MockAdapter) GetAlarmsWithDoneMark(arg0 context.Context) ([]types.Alarm, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAlarmsWithDoneMark", arg0)
-	ret0, _ := ret[0].([]types.Alarm)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetAlarmsWithDoneMark indicates an expected call of GetAlarmsWithDoneMark.
-func (mr *MockAdapterMockRecorder) GetAlarmsWithDoneMark(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAlarmsWithDoneMark", reflect.TypeOf((*MockAdapter)(nil).GetAlarmsWithDoneMark), arg0)
 }
 
 // GetAlarmsWithFlappingStatus mocks base method.
@@ -307,18 +263,18 @@ func (mr *MockAdapterMockRecorder) GetLastAlarmWithEntity(arg0, arg1, arg2, arg3
 }
 
 // GetOpenedAlarm mocks base method.
-func (m *MockAdapter) GetOpenedAlarm(arg0 context.Context, arg1, arg2, arg3 string) (types.Alarm, error) {
+func (m *MockAdapter) GetOpenedAlarm(arg0 context.Context, arg1 string) (types.Alarm, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOpenedAlarm", arg0, arg1, arg2, arg3)
+	ret := m.ctrl.Call(m, "GetOpenedAlarm", arg0, arg1)
 	ret0, _ := ret[0].(types.Alarm)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetOpenedAlarm indicates an expected call of GetOpenedAlarm.
-func (mr *MockAdapterMockRecorder) GetOpenedAlarm(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+func (mr *MockAdapterMockRecorder) GetOpenedAlarm(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedAlarm", reflect.TypeOf((*MockAdapter)(nil).GetOpenedAlarm), arg0, arg1, arg2, arg3)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedAlarm", reflect.TypeOf((*MockAdapter)(nil).GetOpenedAlarm), arg0, arg1)
 }
 
 // GetOpenedAlarmByAlarmId mocks base method.
@@ -649,21 +605,6 @@ func (mr *MockServiceMockRecorder) ResolveClosed(arg0 interface{}) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ResolveClosed", reflect.TypeOf((*MockService)(nil).ResolveClosed), arg0)
 }
 
-// ResolveDone mocks base method.
-func (m *MockService) ResolveDone(arg0 context.Context) ([]types.Alarm, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ResolveDone", arg0)
-	ret0, _ := ret[0].([]types.Alarm)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ResolveDone indicates an expected call of ResolveDone.
-func (mr *MockServiceMockRecorder) ResolveDone(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ResolveDone", reflect.TypeOf((*MockService)(nil).ResolveDone), arg0)
-}
-
 // ResolveSnoozes mocks base method.
 func (m *MockService) ResolveSnoozes(arg0 context.Context, arg1 config.AlarmConfig) ([]types.Alarm, error) {
 	m.ctrl.T.Helper()
@@ -756,18 +697,18 @@ func (m *MockActivationService) EXPECT() *MockActivationServiceMockRecorder {
 }
 
 // Process mocks base method.
-func (m *MockActivationService) Process(arg0 *types.Alarm) (bool, error) {
+func (m *MockActivationService) Process(arg0 context.Context, arg1 types.Alarm, arg2 types.MicroTime) (bool, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Process", arg0)
+	ret := m.ctrl.Call(m, "Process", arg0, arg1, arg2)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Process indicates an expected call of Process.
-func (mr *MockActivationServiceMockRecorder) Process(arg0 interface{}) *gomock.Call {
+func (mr *MockActivationServiceMockRecorder) Process(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Process", reflect.TypeOf((*MockActivationService)(nil).Process), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Process", reflect.TypeOf((*MockActivationService)(nil).Process), arg0, arg1, arg2)
 }
 
 // MockMetaAlarmEventProcessor is a mock of MetaAlarmEventProcessor interface.
@@ -837,7 +778,7 @@ func (mr *MockMetaAlarmEventProcessorMockRecorder) ProcessAckResources(arg0, arg
 }
 
 // ProcessAxeRpc mocks base method.
-func (m *MockMetaAlarmEventProcessor) ProcessAxeRpc(arg0 context.Context, arg1 types.RPCAxeEvent, arg2 types.RPCAxeResultEvent) error {
+func (m *MockMetaAlarmEventProcessor) ProcessAxeRpc(arg0 context.Context, arg1 rpc.AxeEvent, arg2 rpc.AxeResultEvent) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ProcessAxeRpc", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
@@ -850,16 +791,16 @@ func (mr *MockMetaAlarmEventProcessorMockRecorder) ProcessAxeRpc(arg0, arg1, arg
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessAxeRpc", reflect.TypeOf((*MockMetaAlarmEventProcessor)(nil).ProcessAxeRpc), arg0, arg1, arg2)
 }
 
-// ProcessWebhookRpc mocks base method.
-func (m *MockMetaAlarmEventProcessor) ProcessWebhookRpc(arg0 context.Context, arg1 types.RPCWebhookEvent, arg2 string, arg3 map[string]string) error {
+// ProcessTicketResources mocks base method.
+func (m *MockMetaAlarmEventProcessor) ProcessTicketResources(arg0 context.Context, arg1 types.Event) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ProcessWebhookRpc", arg0, arg1, arg2, arg3)
+	ret := m.ctrl.Call(m, "ProcessTicketResources", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// ProcessWebhookRpc indicates an expected call of ProcessWebhookRpc.
-func (mr *MockMetaAlarmEventProcessorMockRecorder) ProcessWebhookRpc(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+// ProcessTicketResources indicates an expected call of ProcessTicketResources.
+func (mr *MockMetaAlarmEventProcessorMockRecorder) ProcessTicketResources(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessWebhookRpc", reflect.TypeOf((*MockMetaAlarmEventProcessor)(nil).ProcessWebhookRpc), arg0, arg1, arg2, arg3)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessTicketResources", reflect.TypeOf((*MockMetaAlarmEventProcessor)(nil).ProcessTicketResources), arg0, arg1)
 }

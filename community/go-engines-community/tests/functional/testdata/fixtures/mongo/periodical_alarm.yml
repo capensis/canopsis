@@ -1,4 +1,11 @@
 template:
+  - &alarm_step {
+    a: root,
+    m: <LoremIpsumSentence(3)>,
+    t: <NowUnix()>,
+    initiator: external,
+    val: 0
+  }
   - &alarm_value {
     component: test-component-default,
     connector: test-connector-default,
@@ -17,7 +24,6 @@ template:
     initial_output: <LoremIpsumSentence(3)>,
     parents: [ ],
     children: [ ],
-    tags: [ ],
     total_state_changes: 1,
     inactive_duration: 0,
     snooze_duration: 0,
@@ -60,11 +66,13 @@ template:
   - &alarm {
     _id: <UUID()>,
     t: <NowUnix()>,
+    tags: [],
     v: *alarm_value
   }
   - &resolved_alarm {
     _id: <UUID()>,
     t: <NowUnix()>,
+    tags: [],
     v: {
        <<: *alarm_value,
        resolved: <NowUnix()>,
@@ -191,6 +199,8 @@ periodical_alarm:
     _id: test-alarm-to-get-2
     d: test-resource-to-alarm-get-2/test-component-to-alarm-get
     t: 1597030220
+    tags:
+      - test-tag-to-alarm-get-1
     v:
       <<: *alarm_value
       connector: test-connector-default
@@ -414,6 +424,7 @@ periodical_alarm:
       connector_name: test-connector-name-to-entity-get
       component: test-component-to-entity-get
       resource: test-resource-to-entity-get-1
+      last_update_date: 1597030219
       state:
         _t: stateinc
         a: test-connector-to-entity-get.test-connector-name-to-entity-get
@@ -442,6 +453,410 @@ periodical_alarm:
           initiator: external
           val: 1
 
+  alarm_to_stats_executions_get_1:
+    <<: *alarm
+    _id: test-alarm-to-stats-executions-get-1
+    d: test-resource-to-stats-executions-get-1/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-stats-executions-get-1
+  alarm_to_stats_executions_get_2:
+    <<: *alarm
+    _id: test-alarm-to-stats-executions-get-2
+    d: test-resource-to-stats-executions-get-2/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-stats-executions-get-2
+  alarm_to_stats_executions_get_3:
+    <<: *alarm
+    _id: test-alarm-to-stats-executions-get-3
+    d: test-resource-to-stats-executions-get-3/test-component-default
+    t: 1618279310
+    v:
+      <<: *alarm_value
+      creation_date: 1618279310
+      resource: test-resource-to-stats-executions-get-3
+      state:
+        <<: *alarm_step
+        _t: statedec
+        a: "test-connector-default.test-connector-default-name"
+        t: 1618280220
+        val: 1
+      status:
+        <<: *alarm_step
+        _t: statusinc
+        a: "test-connector-default.test-connector-default-name"
+        t: 1618279310
+        val: 1
+      steps:
+        - <<: *alarm_step
+          _t: stateinc
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618279310
+          val: 2
+        - <<: *alarm_step
+          _t: statusinc
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618279310
+          val: 1
+        - <<: *alarm_step
+          _t: stateinc
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618279510
+          val: 3
+        - <<: *alarm_step
+          _t: comment
+          t: 1618279511
+        - <<: *alarm_step
+          _t: instructionstart
+          exec: test-instruction-execution-to-stats-executions-get-3
+          t: 1618279610
+        - <<: *alarm_step
+          _t: instructioncomplete
+          exec: test-instruction-execution-to-stats-executions-get-3
+          t: 1618280210
+        - <<: *alarm_step
+          _t: ack
+          t: 1618280219
+        - <<: *alarm_step
+          _t: statedec
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618280220
+          val: 1
+        - <<: *alarm_step
+          _t: ack
+          t: 1618280221
+  alarm_to_stats_executions_get_4:
+    <<: *alarm
+    _id: test-alarm-to-stats-executions-get-4
+    d: test-resource-to-stats-executions-get-4/test-component-default
+    t: 1618279310
+    v:
+      <<: *alarm_value
+      creation_date: 1618279310
+      resource: test-resource-to-stats-executions-get-4
+      state:
+        <<: *alarm_step
+        _t: statedec
+        a: "test-connector-default.test-connector-default-name"
+        t: 1618280220
+        val: 2
+      status:
+        <<: *alarm_step
+        _t: statusinc
+        a: "test-connector-default.test-connector-default-name"
+        t: 1618279310
+        val: 1
+      steps:
+        - <<: *alarm_step
+          _t: stateinc
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618279310
+          val: 2
+        - <<: *alarm_step
+          _t: statusinc
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618279310
+          val: 1
+        - <<: *alarm_step
+          _t: stateinc
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618279510
+          val: 3
+        - <<: *alarm_step
+          _t: comment
+          t: 1618279511
+        - <<: *alarm_step
+          _t: instructionstart
+          exec: test-instruction-execution-to-stats-executions-get-4
+          t: 1618279610
+        - <<: *alarm_step
+          _t: instructioncomplete
+          exec: test-instruction-execution-to-stats-executions-get-4
+          t: 1618280210
+        - <<: *alarm_step
+          _t: ack
+          t: 1618280220
+        - <<: *alarm_step
+          _t: statedec
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618280221
+          val: 2
+  alarm_to_stats_executions_get_5:
+    <<: *alarm
+    _id: test-alarm-to-stats-executions-get-5
+    d: test-resource-to-stats-executions-get-5/test-component-default
+    t: 1618279310
+    v:
+      <<: *alarm_value
+      creation_date: 1618279310
+      resource: test-resource-to-stats-executions-get-5
+      state:
+        <<: *alarm_step
+        _t: stateinc
+        a: "test-connector-default.test-connector-default-name"
+        t: 1618279510
+        val: 3
+      status:
+        <<: *alarm_step
+        _t: statusinc
+        a: "test-connector-default.test-connector-default-name"
+        t: 1618279310
+        val: 1
+      steps:
+        - <<: *alarm_step
+          _t: stateinc
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618279310
+          val: 2
+        - <<: *alarm_step
+          _t: statusinc
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618279310
+          val: 1
+        - <<: *alarm_step
+          _t: stateinc
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618279510
+          val: 3
+        - <<: *alarm_step
+          _t: instructionstart
+          exec: test-instruction-execution-to-stats-executions-get-5-1
+          t: 1618279610
+        - <<: *alarm_step
+          _t: instructioncomplete
+          exec: test-instruction-execution-to-stats-executions-get-5-1
+          t: 1618280210
+        - <<: *alarm_step
+          _t: ack
+          t: 1618280220
+        - <<: *alarm_step
+          _t: instructionstart
+          exec: test-instruction-execution-to-stats-executions-get-5-2
+          t: 1618280230
+        - <<: *alarm_step
+          _t: instructioncomplete
+          exec: test-instruction-execution-to-stats-executions-get-5-2
+          t: 1618280630
+        - <<: *alarm_step
+          _t: comment
+          t: 1618280650
+        - <<: *alarm_step
+          _t: comment
+          t: 1618280651
+  alarm_to_stats_executions_get_6:
+    <<: *alarm
+    _id: test-alarm-to-stats-executions-get-6
+    d: test-resource-to-stats-executions-get-6/test-component-default
+    t: 1618279310
+    v:
+      <<: *alarm_value
+      creation_date: 1618279310
+      resource: test-resource-to-stats-executions-get-6
+      state:
+        <<: *alarm_step
+        _t: statedec
+        a: "test-connector-default.test-connector-default-name"
+        t: 1618280650
+        val: 1
+      status:
+        <<: *alarm_step
+        _t: statusinc
+        a: "test-connector-default.test-connector-default-name"
+        t: 1618279310
+        val: 1
+      steps:
+        - <<: *alarm_step
+          _t: stateinc
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618279310
+          val: 2
+        - <<: *alarm_step
+          _t: statusinc
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618279310
+          val: 1
+        - <<: *alarm_step
+          _t: stateinc
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618279510
+          val: 3
+        - <<: *alarm_step
+          _t: instructionstart
+          exec: test-instruction-execution-to-stats-executions-get-6-1
+          t: 1618279610
+        - <<: *alarm_step
+          _t: instructioncomplete
+          exec: test-instruction-execution-to-stats-executions-get-6-1
+          t: 1618280210
+        - <<: *alarm_step
+          _t: ack
+          t: 1618280221
+        - <<: *alarm_step
+          _t: statedec
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618280222
+          val: 2
+        - <<: *alarm_step
+          _t: comment
+          t: 1618280223
+        - <<: *alarm_step
+          _t: instructionstart
+          exec: test-instruction-execution-to-stats-executions-get-6-2
+          t: 1618280230
+        - <<: *alarm_step
+          _t: instructioncomplete
+          exec: test-instruction-execution-to-stats-executions-get-6-2
+          t: 1618280630
+        - <<: *alarm_step
+          _t: comment
+          t: 1618280640
+        - <<: *alarm_step
+          _t: statedec
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618280650
+          val: 1
+        - <<: *alarm_step
+          _t: comment
+          t: 1618280651
+  alarm_to_stats_executions_get_7:
+    <<: *alarm
+    _id: test-alarm-to-stats-executions-get-7
+    d: test-resource-to-stats-executions-get-7/test-component-default
+    t: 1618279310
+    v:
+      <<: *alarm_value
+      creation_date: 1618279310
+      resource: test-resource-to-stats-executions-get-7
+      state:
+        <<: *alarm_step
+        _t: stateinc
+        a: "test-connector-default.test-connector-default-name"
+        t: 1618279510
+        val: 3
+      status:
+        <<: *alarm_step
+        _t: statusinc
+        a: "test-connector-default.test-connector-default-name"
+        t: 1618279310
+        val: 1
+      steps:
+        - <<: *alarm_step
+          _t: stateinc
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618279310
+          val: 2
+        - <<: *alarm_step
+          _t: statusinc
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618279310
+          val: 1
+        - <<: *alarm_step
+          _t: stateinc
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618279510
+          val: 3
+        - <<: *alarm_step
+          _t: instructionstart
+          exec: test-instruction-execution-to-stats-executions-get-7-1
+          t: 1618279610
+        - <<: *alarm_step
+          _t: instructioncomplete
+          exec: test-instruction-execution-to-stats-executions-get-7-1
+          t: 1618280210
+        - <<: *alarm_step
+          _t: ack
+          t: 1618280220
+        - <<: *alarm_step
+          _t: instructionstart
+          exec: test-instruction-execution-to-stats-executions-get-7-2
+          t: 1618280230
+        - <<: *alarm_step
+          _t: instructioncomplete
+          exec: test-instruction-execution-to-stats-executions-get-7-2
+          t: 1618280630
+        - <<: *alarm_step
+          _t: comment
+          t: 1618280650
+        - <<: *alarm_step
+          _t: comment
+          t: 1618280651
+  alarm_to_stats_executions_get_8:
+    <<: *alarm
+    _id: test-alarm-to-stats-executions-get-8
+    d: test-resource-to-stats-executions-get-8/test-component-default
+    t: 1618279310
+    v:
+      <<: *alarm_value
+      creation_date: 1618279310
+      resource: test-resource-to-stats-executions-get-8
+      state:
+        <<: *alarm_step
+        _t: statedec
+        a: "test-connector-default.test-connector-default-name"
+        t: 1618280650
+        val: 1
+      status:
+        <<: *alarm_step
+        _t: statusinc
+        a: "test-connector-default.test-connector-default-name"
+        t: 1618279310
+        val: 1
+      steps:
+        - <<: *alarm_step
+          _t: stateinc
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618279310
+          val: 2
+        - <<: *alarm_step
+          _t: statusinc
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618279310
+          val: 1
+        - <<: *alarm_step
+          _t: stateinc
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618279510
+          val: 3
+        - <<: *alarm_step
+          _t: instructionstart
+          a: "root"
+          exec: test-instruction-execution-to-stats-executions-get-8-1
+          t: 1618279610
+        - <<: *alarm_step
+          _t: instructioncomplete
+          exec: test-instruction-execution-to-stats-executions-get-8-1
+          t: 1618280210
+        - <<: *alarm_step
+          _t: ack
+          t: 1618280220
+        - <<: *alarm_step
+          _t: statedec
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618280222
+          val: 2
+        - <<: *alarm_step
+          _t: comment
+          t: 1618280223
+        - <<: *alarm_step
+          _t: instructionstart
+          exec: test-instruction-execution-to-stats-executions-get-8-2
+          t: 1618280230
+        - <<: *alarm_step
+          _t: instructioncomplete
+          exec: test-instruction-execution-to-stats-executions-get-8-2
+          t: 1618280630
+        - <<: *alarm_step
+          _t: comment
+          t: 1618280640
+        - <<: *alarm_step
+          _t: statedec
+          a: "test-connector-default.test-connector-default-name"
+          t: 1618280650
+          val: 1
+        - <<: *alarm_step
+          _t: comment
+          t: 1618280651
   alarm_to_stats_executions_get_with_resolved_alarms_1:
     <<: *alarm
     _id: test-alarm-to-stats-executions-get-with-resolved-alarms-1
@@ -449,6 +864,161 @@ periodical_alarm:
     v:
       <<: *alarm_value
       resource: test-resource-to-stats-executions-get-with-resolved-alarms-1
+
+  alarm_to_map_state_get_1:
+    <<: *alarm
+    _id: test-alarm-to-map-state-get-1
+    d: test-resource-to-map-state-get-1/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-map-state-get-1
+      last_update_date: 1605263992
+      state:
+        _t: stateinc
+        a: test-connector-default/test-connector-default-name
+        m: test-alarm-to-map-state-get-1-state-message
+        t: 1605263992
+        initiator: external
+        val: 3
+      status:
+        _t: stateinc
+        a: test-connector-default/test-connector-default-name
+        m: test-alarm-to-map-state-get-1-status-message
+        t: 1605263992
+        initiator: external
+        val: 1
+      ack:
+        _t: ack
+        a: root
+        user_id: root
+        m: test-alarm-to-map-state-get-1-ack-message
+        t: 1605263992
+        initiator: user
+        val: 0
+
+  alarm_to_instruction_execution_next_step_1:
+    <<: *alarm
+    _id: test-alarm-instruction-execution-next-step-1
+    d: test-resource-to-instruction-execution-next-step-1/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-instruction-execution-next-step-1
+  alarm_to_instruction_execution_next_step_2:
+    <<: *alarm
+    _id: test-alarm-instruction-execution-next-step-2
+    d: test-resource-to-instruction-execution-next-step-2/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-instruction-execution-next-step-2
+  alarm_to_instruction_execution_next_step_3:
+    <<: *alarm
+    _id: test-alarm-instruction-execution-next-step-3
+    d: test-resource-to-instruction-execution-next-step-3/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-instruction-execution-next-step-3
+  alarm_to_instruction_execution_next_step_4:
+    <<: *alarm
+    _id: test-alarm-instruction-execution-next-step-4
+    d: test-resource-to-instruction-execution-next-step-4/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-instruction-execution-next-step-4
+  alarm_to_instruction_execution_next_step_5:
+    <<: *alarm
+    _id: test-alarm-instruction-execution-next-step-5
+    d: test-resource-to-instruction-execution-next-step-5/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-instruction-execution-next-step-5
+  alarm_to_instruction_execution_next_step_6:
+    <<: *alarm
+    _id: test-alarm-instruction-execution-next-step-6
+    d: test-resource-to-instruction-execution-next-step-6/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-instruction-execution-next-step-6
+  alarm_to_instruction_execution_next_step_7:
+    <<: *alarm
+    _id: test-alarm-instruction-execution-next-step-7
+    d: test-resource-to-instruction-execution-next-step-7/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-instruction-execution-next-step-7
+
+  alarm_to_export_1:
+    <<: *alarm
+    _id: test-alarm-to-export-1
+    d: test-resource-to-alarm-export-1/test-component-default
+    t: 1596942720
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-alarm-export-1
+      creation_date: 1596942720
+      last_event_date: 1596942720
+      last_update_date: 1596942720
+      ack:
+        _t: ack
+        a: system
+        initiator: user
+        m: test-alarm-to-export-ack
+        role: admin
+        t: 1597033041
+        val: 0
+      state:
+        <<: *alarm_step
+        _t: stateinc
+        t: 1596942720
+        val: 3
+      status:
+        <<: *alarm_step
+        _t: statusinc
+        t: 1596942720
+        val: 1
+      steps:
+        - <<: *alarm_step
+          _t: stateinc
+          t: 1596942720
+          val: 3
+        - <<: *alarm_step
+          _t: statusinc
+          t: 1596942720
+          val: 1
+        - <<: *alarm_step
+          _t: ack
+          a: system
+          initiator: user
+          t: 1597033041
+  alarm_to_export_2:
+    <<: *alarm
+    _id: test-alarm-to-export-2
+    d: test-resource-to-alarm-export-2/test-component-default
+    t: 1597030219
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-alarm-export-2
+      creation_date: 1597030219
+      last_event_date: 1597030219
+      last_update_date: 1597030219
+      state:
+        <<: *alarm_step
+        _t: stateinc
+        t: 1597030219
+        val: 1
+      status:
+        <<: *alarm_step
+        _t: statusinc
+        t: 1597030219
+        val: 1
+      steps:
+        - <<: *alarm_step
+          _t: stateinc
+          t: 1597030219
+          val: 1
+        - <<: *alarm_step
+          _t: statusinc
+          t: 1597030219
+          val: 1
 
   periodical_alarm_18:
     _id: test-instruction-execution-next-1
@@ -504,7 +1074,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_19:
     _id: test-instruction-execution-next-2
@@ -560,343 +1129,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
-      total_state_changes: 1
-  periodical_alarm_20:
-    _id: test-instruction-execution-next-step-1
-    d: test-instruction-execution-next-step-resource-1/test-instruction-execution-next-step-component
-    t: 1596942720
-    v:
-      <<: *alarm_value
-      children: [ ]
-      component: test-instruction-execution-next-step-component
-      connector: test-instruction-execution-next-step-connector
-      connector_name: test-instruction-execution-next-step-connectorname
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-instruction-execution-next-step alarm
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: test-instruction-execution-next-step-correlation-search
-      long_output_history:
-        - ""
-      output: test-instruction-execution-next-step alarm
-      parents: [ ]
-      resource: test-instruction-execution-next-step-resource-1
-      state:
-        _t: stateinc
-        a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-        m: test-instruction-execution-next-step alarm
-        t: 1596942720
-        val: 3
-      status:
-        _t: statusinc
-        a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-        m: test-instruction-execution-next-step alarm
-        t: 1596942720
-        val: 1
-      steps:
-        - _t: stateinc
-          a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-          m: test-instruction-execution-next-step alarm
-          t: 1596942720
-          val: 3
-        - _t: statusinc
-          a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-          m: test-instruction-execution-next-step alarm
-          t: 1596942720
-          val: 1
-        - _t: comment
-          a: system
-          initiator: user
-          m: comment test-instruction-execution-next-step
-          role: admin
-          t: 1597033041
-          val: 0
-      tags: [ ]
-      total_state_changes: 1
-  periodical_alarm_21:
-    _id: test-instruction-execution-next-step-2
-    d: test-instruction-execution-next-step-resource-2/test-instruction-execution-next-step-component
-    t: 1596942720
-    v:
-      <<: *alarm_value
-      children: [ ]
-      component: test-instruction-execution-next-step-component
-      connector: test-instruction-execution-next-step-connector
-      connector_name: test-instruction-execution-next-step-connectorname
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-instruction-execution-next-step alarm
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: test-instruction-execution-next-step-correlation-search
-      long_output_history:
-        - ""
-      output: test-instruction-execution-next-step alarm
-      parents: [ ]
-      resource: test-instruction-execution-next-step-resource-2
-      state:
-        _t: stateinc
-        a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-        m: test-instruction-execution-next-step alarm
-        t: 1596942720
-        val: 3
-      status:
-        _t: statusinc
-        a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-        m: test-instruction-execution-next-step alarm
-        t: 1596942720
-        val: 1
-      steps:
-        - _t: stateinc
-          a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-          m: test-instruction-execution-next-step alarm
-          t: 1596942720
-          val: 3
-        - _t: statusinc
-          a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-          m: test-instruction-execution-next-step alarm
-          t: 1596942720
-          val: 1
-        - _t: comment
-          a: system
-          initiator: user
-          m: comment test-instruction-execution-next-step
-          role: admin
-          t: 1597033041
-          val: 0
-      tags: [ ]
-      total_state_changes: 1
-  periodical_alarm_22:
-    _id: test-instruction-execution-next-step-3
-    d: test-instruction-execution-next-step-resource-3/test-instruction-execution-next-step-component
-    t: 1596942720
-    v:
-      <<: *alarm_value
-      children: [ ]
-      component: test-instruction-execution-next-step-component
-      connector: test-instruction-execution-next-step-connector
-      connector_name: test-instruction-execution-next-step-connectorname
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-instruction-execution-next-step alarm
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: test-instruction-execution-next-step-correlation-search
-      long_output_history:
-        - ""
-      output: test-instruction-execution-next-step alarm
-      parents: [ ]
-      resource: test-instruction-execution-next-step-resource-3
-      state:
-        _t: stateinc
-        a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-        m: test-instruction-execution-next-step alarm
-        t: 1596942720
-        val: 3
-      status:
-        _t: statusinc
-        a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-        m: test-instruction-execution-next-step alarm
-        t: 1596942720
-        val: 1
-      steps:
-        - _t: stateinc
-          a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-          m: test-instruction-execution-next-step alarm
-          t: 1596942720
-          val: 3
-        - _t: statusinc
-          a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-          m: test-instruction-execution-next-step alarm
-          t: 1596942720
-          val: 1
-        - _t: comment
-          a: system
-          initiator: user
-          m: comment test-instruction-execution-next-step
-          role: admin
-          t: 1597033041
-          val: 0
-      tags: [ ]
-      total_state_changes: 1
-  periodical_alarm_23:
-    _id: test-instruction-execution-next-step-4
-    d: test-instruction-execution-next-step-resource-4/test-instruction-execution-next-step-component
-    t: 1596942720
-    v:
-      <<: *alarm_value
-      children: [ ]
-      component: test-instruction-execution-next-step-component
-      connector: test-instruction-execution-next-step-connector
-      connector_name: test-instruction-execution-next-step-connectorname
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-instruction-execution-next-step alarm
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: test-instruction-execution-next-step-correlation-search
-      long_output_history:
-        - ""
-      output: test-instruction-execution-next-step alarm
-      parents: [ ]
-      resource: test-instruction-execution-next-step-resource-4
-      state:
-        _t: stateinc
-        a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-        m: test-instruction-execution-next-step alarm
-        t: 1596942720
-        val: 3
-      status:
-        _t: statusinc
-        a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-        m: test-instruction-execution-next-step alarm
-        t: 1596942720
-        val: 1
-      steps:
-        - _t: stateinc
-          a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-          m: test-instruction-execution-next-step alarm
-          t: 1596942720
-          val: 3
-        - _t: statusinc
-          a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-          m: test-instruction-execution-next-step alarm
-          t: 1596942720
-          val: 1
-        - _t: comment
-          a: system
-          initiator: user
-          m: comment test-instruction-execution-next-step
-          role: admin
-          t: 1597033041
-          val: 0
-      tags: [ ]
-      total_state_changes: 1
-  periodical_alarm_24:
-    _id: test-instruction-execution-next-step-5
-    d: test-instruction-execution-next-step-resource-5/test-instruction-execution-next-step-component
-    t: 1596942720
-    v:
-      <<: *alarm_value
-      children: [ ]
-      component: test-instruction-execution-next-step-component
-      connector: test-instruction-execution-next-step-connector
-      connector_name: test-instruction-execution-next-step-connectorname
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-instruction-execution-next-step alarm
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: test-instruction-execution-next-step-correlation-search
-      long_output_history:
-        - ""
-      output: test-instruction-execution-next-step alarm
-      parents: [ ]
-      resource: test-instruction-execution-next-step-resource-5
-      state:
-        _t: stateinc
-        a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-        m: test-instruction-execution-next-step alarm
-        t: 1596942720
-        val: 3
-      status:
-        _t: statusinc
-        a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-        m: test-instruction-execution-next-step alarm
-        t: 1596942720
-        val: 1
-      steps:
-        - _t: stateinc
-          a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-          m: test-instruction-execution-next-step alarm
-          t: 1596942720
-          val: 3
-        - _t: statusinc
-          a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-          m: test-instruction-execution-next-step alarm
-          t: 1596942720
-          val: 1
-        - _t: comment
-          a: system
-          initiator: user
-          m: comment test-instruction-execution-next-step
-          role: admin
-          t: 1597033041
-          val: 0
-      tags: [ ]
-      total_state_changes: 1
-  periodical_alarm_25:
-    _id: test-instruction-execution-next-step-6
-    d: test-instruction-execution-next-step-resource-6/test-instruction-execution-next-step-component
-    t: 1596942720
-    v:
-      <<: *alarm_value
-      children: [ ]
-      component: test-instruction-execution-next-step-component
-      connector: test-instruction-execution-next-step-connector
-      connector_name: test-instruction-execution-next-step-connectorname
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-instruction-execution-next-step alarm
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: test-instruction-execution-next-step-correlation-search
-      long_output_history:
-        - ""
-      output: test-instruction-execution-next-step alarm
-      parents: [ ]
-      resource: test-instruction-execution-next-step-resource-6
-      state:
-        _t: stateinc
-        a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-        m: test-instruction-execution-next-step alarm
-        t: 1596942720
-        val: 3
-      status:
-        _t: statusinc
-        a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-        m: test-instruction-execution-next-step alarm
-        t: 1596942720
-        val: 1
-      steps:
-        - _t: stateinc
-          a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-          m: test-instruction-execution-next-step alarm
-          t: 1596942720
-          val: 3
-        - _t: statusinc
-          a: test-instruction-execution-next-step-connector.test-instruction-execution-next-step-connectorname
-          m: test-instruction-execution-next-step alarm
-          t: 1596942720
-          val: 1
-        - _t: comment
-          a: system
-          initiator: user
-          m: comment test-instruction-execution-next-step
-          role: admin
-          t: 1597033041
-          val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_26:
     _id: test-instruction-execution-previous-1
@@ -952,7 +1184,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_27:
     _id: test-instruction-execution-previous-2
@@ -1008,7 +1239,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_28:
     _id: test-instruction-execution-previous-3
@@ -1064,7 +1294,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_29:
     _id: test-instruction-execution-previous-4
@@ -1120,7 +1349,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_30:
     _id: test-instruction-execution-cancel-1
@@ -1176,7 +1404,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_31:
     _id: test-instruction-execution-cancel-2
@@ -1232,7 +1459,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_32:
     _id: test-instruction-execution-pause-1
@@ -1281,7 +1507,6 @@ periodical_alarm:
           m: test-instruction-execution-pause alarm
           t: 1596942720
           val: 1
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_33:
     _id: test-instruction-execution-pause-2
@@ -1330,7 +1555,6 @@ periodical_alarm:
           m: test-instruction-execution-pause alarm
           t: 1596942720
           val: 1
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_34:
     _id: test-instruction-execution-pause-3
@@ -1379,7 +1603,6 @@ periodical_alarm:
           m: test-instruction-execution-pause alarm
           t: 1596942720
           val: 1
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_35:
     _id: test-instruction-execution-pause-4
@@ -1428,7 +1651,6 @@ periodical_alarm:
           m: test-instruction-execution-pause alarm
           t: 1596942720
           val: 1
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_36:
     _id: test-instruction-execution-resume-1
@@ -1477,7 +1699,6 @@ periodical_alarm:
           m: test-instruction-execution-resume alarm
           t: 1596942720
           val: 1
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_41:
     _id: test-instruction-execution-get-1
@@ -1533,7 +1754,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_42:
     _id: test-instruction-execution-get-2
@@ -1589,7 +1809,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_43:
     _id: test-instruction-execution-get-3
@@ -1645,7 +1864,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_44:
     _id: test-instruction-execution-get-4
@@ -1701,7 +1919,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_46:
     _id: test-alarm-to-check-deletable-entity
@@ -1727,7 +1944,6 @@ periodical_alarm:
       output: test-alarm-to-check-deletable-entity-output
       parents: [ ]
       resource: test-entity-to-check-deletable-resource
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_47:
     _id: test-alarm-to-delete-entity-linked-to-alarm
@@ -1753,120 +1969,6 @@ periodical_alarm:
       output: test-alarm-to-delete-entity-linked-to-alarm-output
       parents: [ ]
       resource: test-entitybasic-to-delete-linked-to-alarm-resource
-      tags: [ ]
-      total_state_changes: 1
-  periodical_alarm_50:
-    _id: test-alarm-to-export-1
-    d: test-entity-to-export-resource-1/test-entity-to-export-component
-    t: 1596942720
-    v:
-      <<: *alarm_value
-      ack:
-        _t: ack
-        a: system
-        initiator: user
-        m: test-alarm-to-export-ack
-        role: admin
-        t: 1597033041
-        val: 0
-      children: [ ]
-      component: test-alarm-to-export-component
-      connector: test-alarm-to-export-connector
-      connector_name: test-alarm-to-export-connector-name
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-alarm-to-export-output
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: ""
-      long_output_history:
-        - ""
-      output: test-alarm-to-export-output
-      parents: [ ]
-      resource: test-alarm-to-export-resource-1
-      state:
-        _t: stateinc
-        a: test-alarm-to-export-connector.test-alarm-to-export-connector-name
-        m: test-alarm-to-export-output
-        t: 1596942720
-        val: 3
-      status:
-        _t: statusinc
-        a: test-alarm-to-export-connector.test-alarm-to-export-connector-name
-        m: test-alarm-to-export-output
-        t: 1596942720
-        val: 1
-      steps:
-        - _t: stateinc
-          a: test-alarm-to-export-connector.test-alarm-to-export-connectorname
-          m: test-alarm-to-export-output
-          t: 1596942720
-          val: 3
-        - _t: statusinc
-          a: test-alarm-to-export-connector.test-alarm-to-export-connectorname
-          m: test-alarm-to-export-output
-          t: 1596942720
-          val: 1
-        - _t: ack
-          a: system
-          initiator: user
-          m: test-alarm-to-export-ack
-          role: admin
-          t: 1597033041
-          val: 0
-      tags: [ ]
-      total_state_changes: 1
-  periodical_alarm_51:
-    _id: test-alarm-to-export-2
-    d: test-entity-to-export-resource-2/test-entity-to-export-component
-    t: 1597030219
-    v:
-      <<: *alarm_value
-      children: [ ]
-      component: test-alarm-to-export-component
-      connector: test-alarm-to-export-connector
-      connector_name: test-alarm-to-export-connector-name
-      creation_date: 1597030219
-      display_name: PU-YA-QB
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: test-alarm-to-export-output
-      last_event_date: 1597030219
-      last_update_date: 1597030219
-      long_output: ""
-      long_output_history:
-        - ""
-      output: test-alarm-to-export-output
-      parents: [ ]
-      resource: test-alarm-to-export-resource-2
-      state:
-        _t: stateinc
-        a: test-alarm-to-export-connector.test-alarm-to-export-connectorname
-        m: test-alarm-to-export-output
-        t: 1597030219
-        val: 1
-      status:
-        _t: statusinc
-        a: test-alarm-to-export-connector.test-alarm-to-export-connectorname
-        m: test-alarm-to-export-output
-        t: 1597030219
-        val: 1
-      steps:
-        - _t: stateinc
-          a: test-alarm-to-export-connector.test-alarm-to-export-connectorname
-          m: test-alarm-to-export-output
-          t: 1597030219
-          val: 1
-        - _t: statusinc
-          a: test-alarm-to-export-connector.test-alarm-to-export-connectorname
-          m: test-alarm-to-export-output
-          t: 1597030219
-          val: 1
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_57:
     _id: test-alarm-to-not-run-auto-instruction-manually
@@ -1915,149 +2017,23 @@ periodical_alarm:
           m: ""
           t: 1596942720
           val: 1
-      tags: [ ]
       total_state_changes: 1
-  periodical_alarm_58:
-    _id: test-alarm-to-stats-executions-get-1
-    d: test-resource-to-stats-executions-get-1/test-component-to-stats-executions-get-1
-    t: 1596942720
-    v:
-      <<: *alarm_value
-      children: [ ]
-      component: test-component-to-stats-executions-get-1
-      connector: test-connector-to-stats-executions-get-1
-      connector_name: test-connector-name-to-stats-executions-get-1
-      creation_date: 1596942720
-      display_name: RC-KC_tW
-      infos: { }
-      infos_rule_version: { }
-      initial_long_output: ""
-      initial_output: ""
-      last_event_date: 1596942720
-      last_update_date: 1596942720
-      long_output: ""
-      long_output_history:
-        - ""
-      output: ""
-      parents: [ ]
-      resource: test-resource-to-stats-executions-get-1
-      state:
-        _t: stateinc
-        a: ""
-        m: ""
-        t: 1596942720
-        val: 3
-      status:
-        _t: statusinc
-        a: ""
-        m: ""
-        t: 1596942720
-        val: 1
-      steps:
-        - _t: stateinc
-          a: ""
-          m: ""
-          t: 1596942720
-          val: 3
-        - _t: statusinc
-          a: ""
-          m: ""
-          t: 1596942720
-          val: 1
-        - _t: instructionstart
-          a: ""
-          m: ""
-          t: 1596942720
-          val: 1
-        - _t: instructioncomplete
-          a: ""
-          m: ""
-          t: 1596942720
-          val: 1
-      tags: [ ]
-      total_state_changes: 1
-  periodical_alarm_59:
-    _id: test-alarm-to-stats-executions-get-3
-    d: test-resource-to-stats-executions-get-3/test-component-to-stats-executions-get-3
+  periodical_alarm_65:
+    _id: test-alarm-to-stats-executions-get-9
+    d: test-resource-to-stats-executions-get-9/test-component-to-stats-executions-get-9
     t: 1618279310
     v:
       <<: *alarm_value
-      component: test-component-to-stats-executions-get-3
-      connector: test-connector-to-stats-executions-get-3
-      connector_name: test-connector-name-to-stats-executions-get-3
+      component: test-component-to-stats-executions-get-9
+      connector: test-connector-to-stats-executions-get-9
+      connector_name: test-connector-name-to-stats-executions-get-9
       creation_date: 1618279310
-      resource: test-resource-to-stats-executions-get-3
+      resource: test-resource-to-stats-executions-get-9
       state:
         _t: statedec
         a: ""
         m: ""
-        t: 1618280220
-        val: 1
-      status:
-        _t: statusinc
-        a: ""
-        m: ""
-        t: 1618279310
-        val: 1
-      steps:
-        - _t: stateinc
-          a: ""
-          m: ""
-          t: 1618279310
-          val: 2
-        - _t: statusinc
-          a: ""
-          m: ""
-          t: 1618279310
-          val: 1
-        - _t: stateinc
-          a: ""
-          m: ""
-          t: 1618279510
-          val: 3
-        - _t: comment
-          a: ""
-          m: ""
-          t: 1618279511
-        - _t: instructionstart
-          a: ""
-          exec: test-instruction-execution-to-stats-executions-get-3
-          m: ""
-          t: 1618279610
-        - _t: instructioncomplete
-          a: ""
-          exec: test-instruction-execution-to-stats-executions-get-3
-          m: ""
-          t: 1618280210
-        - _t: ack
-          a: ""
-          m: ""
-          t: 1618280219
-        - _t: statedec
-          a: ""
-          m: ""
-          t: 1618280220
-          val: 1
-        - _t: ack
-          a: ""
-          m: ""
-          t: 1618280221
-  periodical_alarm_60:
-    _id: test-alarm-to-stats-executions-get-4
-    d: test-resource-to-stats-executions-get-4/test-component-to-stats-executions-get-4
-    t: 1618279310
-    v:
-      <<: *alarm_value
-      component: test-component-to-stats-executions-get-4
-      connector: test-connector-to-stats-executions-get-4
-      connector_name: test-connector-name-to-stats-executions-get-4
-      creation_date: 1618279310
-      resource: test-resource-to-stats-executions-get-4
-      state:
-        _t: statedec
-        a: ""
-        m: ""
-        t: 1618280220
+        t: 1618280650
         val: 2
       status:
         _t: statusinc
@@ -2085,299 +2061,15 @@ periodical_alarm:
           a: ""
           m: ""
           t: 1618279511
-        - _t: instructionstart
-          a: ""
-          exec: test-instruction-execution-to-stats-executions-get-4
-          m: ""
-          t: 1618279610
-        - _t: instructioncomplete
-          a: ""
-          exec: test-instruction-execution-to-stats-executions-get-4
-          m: ""
-          t: 1618280210
-        - _t: ack
-          a: ""
-          m: ""
-          t: 1618280220
-        - _t: statedec
-          a: ""
-          m: ""
-          t: 1618280221
-          val: 2
-  periodical_alarm_61:
-    _id: test-alarm-to-stats-executions-get-5
-    d: test-resource-to-stats-executions-get-5/test-component-to-stats-executions-get-5
-    t: 1618279310
-    v:
-      <<: *alarm_value
-      component: test-component-to-stats-executions-get-5
-      connector: test-connector-to-stats-executions-get-5
-      connector_name: test-connector-name-to-stats-executions-get-5
-      creation_date: 1618279310
-      resource: test-resource-to-stats-executions-get-5
-      state:
-        _t: stateinc
-        a: ""
-        m: ""
-        t: 1618279510
-        val: 3
-      status:
-        _t: statusinc
-        a: ""
-        m: ""
-        t: 1618279310
-        val: 1
-      steps:
-        - _t: stateinc
-          a: ""
-          m: ""
-          t: 1618279310
-          val: 2
-        - _t: statusinc
-          a: ""
-          m: ""
-          t: 1618279310
-          val: 1
-        - _t: stateinc
-          a: ""
-          m: ""
-          t: 1618279510
           val: 3
         - _t: instructionstart
           a: ""
-          exec: test-instruction-execution-to-stats-executions-get-5-1
+          exec: test-auto-instruction-execution-to-get-stats-4
           m: ""
           t: 1618279610
-        - _t: instructioncomplete
+        - _t: instructionfail
           a: ""
-          exec: test-instruction-execution-to-stats-executions-get-5-1
-          m: ""
-          t: 1618280210
-        - _t: ack
-          a: ""
-          m: ""
-          t: 1618280220
-        - _t: instructionstart
-          a: ""
-          exec: test-instruction-execution-to-stats-executions-get-5-2
-          m: ""
-          t: 1618280230
-        - _t: instructioncomplete
-          a: ""
-          exec: test-instruction-execution-to-stats-executions-get-5-2
-          m: ""
-          t: 1618280630
-        - _t: comment
-          a: ""
-          m: ""
-          t: 1618280650
-        - _t: comment
-          a: ""
-          m: ""
-          t: 1618280651
-  periodical_alarm_62:
-    _id: test-alarm-to-stats-executions-get-6
-    d: test-resource-to-stats-executions-get-6/test-component-to-stats-executions-get-6
-    t: 1618279310
-    v:
-      <<: *alarm_value
-      component: test-component-to-stats-executions-get-6
-      connector: test-connector-to-stats-executions-get-6
-      connector_name: test-connector-name-to-stats-executions-get-6
-      creation_date: 1618279310
-      resource: test-resource-to-stats-executions-get-6
-      state:
-        _t: statedec
-        a: ""
-        m: ""
-        t: 1618280650
-        val: 1
-      status:
-        _t: statusinc
-        a: ""
-        m: ""
-        t: 1618279310
-        val: 1
-      steps:
-        - _t: stateinc
-          a: ""
-          m: ""
-          t: 1618279310
-          val: 2
-        - _t: statusinc
-          a: ""
-          m: ""
-          t: 1618279310
-          val: 1
-        - _t: stateinc
-          a: ""
-          m: ""
-          t: 1618279510
-          val: 3
-        - _t: instructionstart
-          a: ""
-          exec: test-instruction-execution-to-stats-executions-get-6-1
-          m: ""
-          t: 1618279610
-        - _t: instructioncomplete
-          a: ""
-          exec: test-instruction-execution-to-stats-executions-get-6-1
-          m: ""
-          t: 1618280210
-        - _t: ack
-          a: ""
-          m: ""
-          t: 1618280221
-        - _t: statedec
-          a: ""
-          m: ""
-          t: 1618280222
-          val: 2
-        - _t: comment
-          a: ""
-          m: ""
-          t: 1618280223
-        - _t: instructionstart
-          a: ""
-          exec: test-instruction-execution-to-stats-executions-get-6-2
-          m: ""
-          t: 1618280230
-        - _t: instructioncomplete
-          a: ""
-          exec: test-instruction-execution-to-stats-executions-get-6-2
-          m: ""
-          t: 1618280630
-        - _t: comment
-          a: ""
-          m: ""
-          t: 1618280640
-        - _t: statedec
-          a: ""
-          m: ""
-          t: 1618280650
-          val: 1
-        - _t: comment
-          a: ""
-          m: ""
-          t: 1618280651
-  periodical_alarm_63:
-    _id: test-alarm-to-stats-executions-get-7
-    d: test-resource-to-stats-executions-get-7/test-component-to-stats-executions-get-7
-    t: 1618279310
-    v:
-      <<: *alarm_value
-      component: test-component-to-stats-executions-get-7
-      connector: test-connector-to-stats-executions-get-7
-      connector_name: test-connector-name-to-stats-executions-get-7
-      creation_date: 1618279310
-      resource: test-resource-to-stats-executions-get-7
-      state:
-        _t: stateinc
-        a: ""
-        m: ""
-        t: 1618279510
-        val: 3
-      status:
-        _t: statusinc
-        a: ""
-        m: ""
-        t: 1618279310
-        val: 1
-      steps:
-        - _t: stateinc
-          a: ""
-          m: ""
-          t: 1618279310
-          val: 2
-        - _t: statusinc
-          a: ""
-          m: ""
-          t: 1618279310
-          val: 1
-        - _t: stateinc
-          a: ""
-          m: ""
-          t: 1618279510
-          val: 3
-        - _t: instructionstart
-          a: ""
-          exec: test-instruction-execution-to-stats-executions-get-7-1
-          m: ""
-          t: 1618279610
-        - _t: instructioncomplete
-          a: ""
-          exec: test-instruction-execution-to-stats-executions-get-7-1
-          m: ""
-          t: 1618280210
-        - _t: ack
-          a: ""
-          m: ""
-          t: 1618280220
-        - _t: instructionstart
-          a: ""
-          exec: test-instruction-execution-to-stats-executions-get-7-2
-          m: ""
-          t: 1618280230
-        - _t: instructioncomplete
-          a: ""
-          exec: test-instruction-execution-to-stats-executions-get-7-2
-          m: ""
-          t: 1618280630
-        - _t: comment
-          a: ""
-          m: ""
-          t: 1618280650
-        - _t: comment
-          a: ""
-          m: ""
-          t: 1618280651
-  periodical_alarm_64:
-    _id: test-alarm-to-stats-executions-get-8
-    d: test-resource-to-stats-executions-get-8/test-component-to-stats-executions-get-8
-    t: 1618279310
-    v:
-      <<: *alarm_value
-      component: test-component-to-stats-executions-get-8
-      connector: test-connector-to-stats-executions-get-8
-      connector_name: test-connector-name-to-stats-executions-get-8
-      creation_date: 1618279310
-      resource: test-resource-to-stats-executions-get-8
-      state:
-        _t: statedec
-        a: ""
-        m: ""
-        t: 1618280650
-        val: 1
-      status:
-        _t: statusinc
-        a: ""
-        m: ""
-        t: 1618279310
-        val: 1
-      steps:
-        - _t: stateinc
-          a: ""
-          m: ""
-          t: 1618279310
-          val: 2
-        - _t: statusinc
-          a: ""
-          m: ""
-          t: 1618279310
-          val: 1
-        - _t: stateinc
-          a: ""
-          m: ""
-          t: 1618279510
-          val: 3
-        - _t: instructionstart
-          a: ""
-          exec: test-instruction-execution-to-stats-executions-get-8-1
-          m: ""
-          t: 1618279610
-        - _t: instructioncomplete
-          a: ""
-          exec: test-instruction-execution-to-stats-executions-get-8-1
+          exec: test-auto-instruction-execution-to-get-stats-4
           m: ""
           t: 1618280210
         - _t: ack
@@ -2389,33 +2081,114 @@ periodical_alarm:
           m: ""
           t: 1618280222
           val: 2
-        - _t: comment
+  periodical_alarm_66:
+    _id: test-alarm-to-stats-executions-get-11-1
+    d: test-resource-to-stats-executions-get-11-1/test-component-to-stats-executions-get-11-1
+    t: 1618280213
+    v:
+      <<: *alarm_value
+      component: test-component-to-stats-executions-get-11-1
+      connector: test-connector-to-stats-executions-get-11-1
+      connector_name: test-connector-name-to-stats-executions-get-11-1
+      creation_date: 1596942720
+      resource: test-resource-to-stats-executions-get-11-1
+      display_name: RC-yN_tW
+      initial_output: ""
+      output: ""
+      initial_long_output: ""
+      long_output: ""
+      long_output_history:
+        - ""
+      last_update_date": 1596942720
+      last_event_date": 1596942720
+      total_state_changes: 1
+      state:
+        _t: stateinc
+        a: ""
+        m: ""
+        t: 1618280213
+        val: 3
+      status:
+        _t: statusinc
+        a: ""
+        m: ""
+        t: 1618280213
+        val: 1
+      steps:
+        - _t: stateinc
           a: ""
           m: ""
-          t: 1618280223
+          t: 1618280213
+          val: 3
+        - _t: statusinc
+          a: ""
+          m: ""
+          t: 1618280213
+          val: 1
         - _t: instructionstart
           a: ""
-          exec: test-instruction-execution-to-stats-executions-get-8-2
+          val: 1
           m: ""
-          t: 1618280230
+          t: 1618280213
         - _t: instructioncomplete
           a: ""
-          exec: test-instruction-execution-to-stats-executions-get-8-2
-          m: ""
-          t: 1618280630
-        - _t: comment
-          a: ""
-          m: ""
-          t: 1618280640
-        - _t: statedec
-          a: ""
-          m: ""
-          t: 1618280650
           val: 1
-        - _t: comment
+          m: ""
+          t: 1618280218
+  periodical_alarm_67:
+    _id: test-alarm-to-stats-executions-get-11-2
+    d: test-resource-to-stats-executions-get-11-2/test-component-to-stats-executions-get-11-2
+    t: 1596942720
+    v:
+      <<: *alarm_value
+      component: test-component-to-stats-executions-get-11-2
+      connector: test-connector-to-stats-executions-get-11-2
+      connector_name: test-connector-name-to-stats-executions-get-11-2
+      creation_date: 1596942720
+      resource: test-resource-to-stats-executions-get-11-2
+      display_name: pO-MT_t1
+      initial_output: ""
+      output: ""
+      initial_long_output: ""
+      long_output: ""
+      long_output_history:
+        - ""
+      last_update_date": 1596942720
+      last_event_date": 1596942720
+      total_state_changes: 1
+      state:
+        _t: stateinc
+        a: ""
+        m: ""
+        t: 1596942720
+        val: 3
+      status:
+        _t: statusinc
+        a: ""
+        m: ""
+        t: 1596942720
+        val: 1
+      steps:
+        - _t: stateinc
           a: ""
           m: ""
-          t: 1618280651
+          t: 1596942720
+          val: 3
+        - _t: statusinc
+          a: ""
+          m: ""
+          t: 1596942720
+          val: 1
+        - _t: instructionstart
+          a: ""
+          val: 1
+          m: ""
+          t: 1596942720
+        - _t: instructioncomplete
+          a: ""
+          val: 1
+          m: ""
+          t: 1596942720
   periodical_alarm_84:
     _id: test-alarm-time-fields-search-get-1
     d: test-alarm-time-fields-search-get-resource-1/test-alarm-time-fields-search-get-component
@@ -2471,7 +2244,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_85:
     _id: test-alarm-time-fields-search-get-2
@@ -2528,7 +2300,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_86:
     _id: test-alarm-time-fields-search-get-3
@@ -2585,7 +2356,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_87:
     _id: test-alarm-time-fields-search-get-4
@@ -2643,7 +2413,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_88:
     _id: test-alarm-time-fields-search-get-5
@@ -2701,7 +2470,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
   periodical_alarm_89:
     _id: test-alarm-time-fields-search-get-6
@@ -2759,7 +2527,6 @@ periodical_alarm:
           role: admin
           t: 1597033041
           val: 0
-      tags: [ ]
       total_state_changes: 1
 
   test-alarm-to-dynamic-infos-dictionary-1:
@@ -2819,6 +2586,188 @@ periodical_alarm:
           test-dynamic-infos-dictionary-should-be-ignored-key-5:
             a: b
             c: d
+
+  alarm_to_test_tag_filter_1:
+    <<: *alarm
+    _id: test-alarm-to-test-tag-filter-1
+    d: test-resource-to-alarm-test-tag-filter-1/test-component-to-alarm-test-tag-filter
+    t: 1597030220
+    tags:
+      - test-tag-filter-1
+    v:
+      <<: *alarm_value
+      connector: test-connector-default
+      connector_name: test-connector-default-name
+      component: test-component-to-alarm-get
+      resource: test-resource-to-alarm-test-tag-filter-1
+
+  alarm_to_test_tag_filter_2:
+    <<: *alarm
+    _id: test-alarm-to-test-tag-filter-2
+    d: test-resource-to-alarm-test-tag-filter-2/test-component-to-alarm-test-tag-filter
+    tags:
+      - test-tag-filter-1
+      - test-tag-filter-2
+    v:
+      <<: *alarm_value
+      connector: test-connector-to-alarm-test-tag-filter
+      connector_name: test-connector-to-alarm-test-tag-filter-name
+      component: test-component-to-alarm-test-tag-filter
+      resource: test-resource-to-alarm-test-tag-filter-2
+
+  alarm_to_test_tag_filter_3:
+    <<: *alarm
+    _id: test-alarm-to-test-tag-filter-3
+    d: test-resource-to-alarm-test-tag-filter-3/test-component-to-alarm-test-tag-filter
+    tags:
+      - test-tag-filter-2
+    v:
+      <<: *alarm_value
+      connector: test-connector-to-alarm-test-tag-filter
+      connector_name: test-connector-to-alarm-test-tag-filter-name
+      component: test-component-to-alarm-test-tag-filter
+      resource: test-resource-to-alarm-test-tag-filter-3
+
+  alarm_to_test_not_acked_metrics_axe_2:
+    <<: *alarm
+    _id: test-alarm-to-test-not-acked-metrics-axe-2
+    d: test-resource-not-acked-metrics-axe-2/test-component-not-acked-metrics-axe
+    not_acked_since: <NowUnixAdd(-1h)>
+    v:
+      <<: *alarm_value
+      connector: test-connector-not-acked-metrics-axe
+      connector_name: test-connector-name-not-acked-metrics-axe
+      component: test-component-not-acked-metrics-axe
+      resource: test-resource-not-acked-metrics-axe-2
+  alarm_to_test_not_acked_metrics_axe_3:
+    <<: *alarm
+    _id: test-alarm-to-test-not-acked-metrics-axe-3
+    d: test-resource-not-acked-metrics-axe-3/test-component-not-acked-metrics-axe
+    not_acked_since: <NowUnixAdd(-4h)>
+    v:
+      <<: *alarm_value
+      connector: test-connector-not-acked-metrics-axe
+      connector_name: test-connector-name-not-acked-metrics-axe
+      component: test-component-not-acked-metrics-axe
+      resource: test-resource-not-acked-metrics-axe-3
+  alarm_to_test_not_acked_metrics_axe_4:
+    <<: *alarm
+    _id: test-alarm-to-test-not-acked-metrics-axe-4
+    d: test-resource-not-acked-metrics-axe-4/test-component-not-acked-metrics-axe
+    not_acked_since: <NowUnixAdd(-24h)>
+    v:
+      <<: *alarm_value
+      connector: test-connector-not-acked-metrics-axe
+      connector_name: test-connector-name-not-acked-metrics-axe
+      component: test-component-not-acked-metrics-axe
+      resource: test-resource-not-acked-metrics-axe-4
+  alarm_to_test_not_acked_metrics_axe_5:
+    <<: *alarm
+    _id: test-alarm-to-test-not-acked-metrics-axe-5
+    d: test-resource-not-acked-metrics-axe-5/test-component-not-acked-metrics-axe
+    not_acked_since: <NowUnixAdd(-4h)>
+    not_acked_metric_type: not_acked_in_hour_alarms
+    not_acked_metric_send_time: <NowUnixAdd(-3h)>
+    v:
+      <<: *alarm_value
+      connector: test-connector-not-acked-metrics-axe
+      connector_name: test-connector-name-not-acked-metrics-axe
+      component: test-component-not-acked-metrics-axe
+      resource: test-resource-not-acked-metrics-axe-5
+  alarm_to_test_not_acked_metrics_axe_6:
+    <<: *alarm
+    _id: test-alarm-to-test-not-acked-metrics-axe-6
+    d: test-resource-not-acked-metrics-axe-6/test-component-not-acked-metrics-axe
+    not_acked_since: <NowUnixAdd(-24h)>
+    not_acked_metric_type: not_acked_in_four_hours_alarms
+    not_acked_metric_send_time: <NowUnixAdd(-20h)>
+    v:
+      <<: *alarm_value
+      connector: test-connector-not-acked-metrics-axe
+      connector_name: test-connector-name-not-acked-metrics-axe
+      component: test-component-not-acked-metrics-axe
+      resource: test-resource-not-acked-metrics-axe-6
+  alarm_to_test_not_acked_metrics_axe_7:
+    <<: *alarm
+    _id: test-alarm-to-test-not-acked-metrics-axe-7
+    d: test-resource-not-acked-metrics-axe-7/test-component-not-acked-metrics-axe
+    not_acked_since: <NowUnixAdd(-2h)>
+    not_acked_metric_type: not_acked_in_hour_alarms
+    not_acked_metric_send_time: <NowUnixAdd(-1h)>
+    v:
+      <<: *alarm_value
+      connector: test-connector-not-acked-metrics-axe
+      connector_name: test-connector-name-not-acked-metrics-axe
+      component: test-component-not-acked-metrics-axe
+      resource: test-resource-not-acked-metrics-axe-7
+      activation_date: <NowUnixAdd(-2h)>
+  alarm_to_test_not_acked_metrics_axe_8:
+    <<: *alarm
+    _id: test-alarm-to-test-not-acked-metrics-axe-8
+    d: test-resource-not-acked-metrics-axe-8/test-component-not-acked-metrics-axe
+    not_acked_since: <NowUnixAdd(-2h)>
+    not_acked_metric_type: not_acked_in_hour_alarms
+    not_acked_metric_send_time: <NowUnixAdd(-1h)>
+    v:
+      <<: *alarm_value
+      connector: test-connector-not-acked-metrics-axe
+      connector_name: test-connector-name-not-acked-metrics-axe
+      component: test-component-not-acked-metrics-axe
+      resource: test-resource-not-acked-metrics-axe-8
+      activation_date: <NowUnixAdd(-2h)>
+  alarm_to_test_not_acked_metrics_axe_9:
+    <<: *alarm
+    _id: test-alarm-to-test-not-acked-metrics-axe-9
+    d: test-resource-not-acked-metrics-axe-9/test-component-not-acked-metrics-axe
+    not_acked_since: <NowUnixAdd(-2h)>
+    not_acked_metric_type: not_acked_in_hour_alarms
+    not_acked_metric_send_time: <NowUnixAdd(-1h)>
+    v:
+      <<: *alarm_value
+      connector: test-connector-not-acked-metrics-axe
+      connector_name: test-connector-name-not-acked-metrics-axe
+      component: test-component-not-acked-metrics-axe
+      resource: test-resource-not-acked-metrics-axe-9
+      activation_date: <NowUnixAdd(-2h)>
+  alarm_to_test_not_acked_metrics_axe_10:
+    <<: *alarm
+    _id: test-alarm-to-test-not-acked-metrics-axe-10
+    d: test-resource-not-acked-metrics-axe-10/test-component-not-acked-metrics-axe
+    not_acked_since: <NowUnixAdd(-2h)>
+    not_acked_metric_type: not_acked_in_hour_alarms
+    not_acked_metric_send_time: <NowUnixAdd(-1h)>
+    v:
+      <<: *alarm_value
+      connector: test-connector-not-acked-metrics-axe
+      connector_name: test-connector-name-not-acked-metrics-axe
+      component: test-component-not-acked-metrics-axe
+      resource: test-resource-not-acked-metrics-axe-10
+      activation_date: <NowUnixAdd(-2h)>
+
+  alarm_manual_correlation_fail_1:
+    <<: *alarm
+    _id: test-alarm-manual-correlation-fail-1
+    d: test-resource-manual-correlation-fail-1/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-manual-correlation-fail-1
+
+  alarm_to_link_get_1:
+    <<: *alarm
+    _id: test-alarm-to-link-get-1
+    d: test-resource-to-alarm-link-get-1/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-alarm-link-get-1
+      output: test-output-to-alarm-link-get-1
+  alarm_to_link_get_2:
+    <<: *alarm
+    _id: test-alarm-to-link-get-2
+    d: test-resource-to-alarm-link-get-2/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-to-alarm-link-get-2
+      output: test-output-to-alarm-link-get-2
 
 resolved_alarms:
   alarm_to_get_3:
@@ -2894,3 +2843,11 @@ resolved_alarms:
     v:
       <<: *alarm_value
       resource: test-resource-to-stats-executions-get-with-resolved-alarms-resolved
+
+  alarm_manual_correlation_fail_2:
+    <<: *resolved_alarm
+    _id: test-alarm-manual-correlation-fail-2
+    d: test-resource-manual-correlation-fail-1/test-component-default
+    v:
+      <<: *alarm_value
+      resource: test-resource-manual-correlation-fail-1

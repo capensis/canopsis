@@ -8,6 +8,7 @@
     :filter="filter",
     :label="label",
     :disabled="disabled",
+    :error="error",
     placeholder="−−:−−",
     append-icon="",
     hide-details,
@@ -42,6 +43,10 @@ export default {
       default: false,
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    error: {
       type: Boolean,
       default: false,
     },
@@ -87,13 +92,9 @@ export default {
 
       const activeTile = elements[index === -1 ? elements.length - 1 : index];
 
-      if (activeTile) {
-        const newScrollTop = (activeTile.offsetTop - (el.offsetHeight / 2)) + (activeTile.offsetHeight / 2);
+      const newScrollTop = (activeTile.offsetTop - (el.offsetHeight / 2)) + (activeTile.offsetHeight / 2);
 
-        return Math.min(maxScrollTop, Math.max(0, newScrollTop));
-      }
-
-      return el.scrollTop;
+      return Math.min(maxScrollTop, Math.max(0, newScrollTop));
     },
 
     filter(item, queryText, itemText) {
@@ -134,7 +135,7 @@ export default {
     background: #686868;
   }
 
-  & /deep/ {
+  & ::v-deep {
     .v-select__slot {
       padding: 0 5px;
     }

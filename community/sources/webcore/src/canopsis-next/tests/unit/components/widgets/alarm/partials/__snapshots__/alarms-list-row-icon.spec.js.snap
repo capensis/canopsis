@@ -7,15 +7,13 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with all auto ins
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon instruction-icon material-icons theme--light black--text"
-      style="font-size: 16px;"
-    >
-      warning
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon instruction-icon material-icons theme--light instruction-icon--completed"
+    style="font-size: 22px;"
+  >
+    assignment
+  </i>
 </span>
 `;
 
@@ -24,9 +22,9 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with all auto ins
   class="v-tooltip__content"
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
-  <span>
-    alarmList.tooltips.allAutoInstructionExecuted
-  </span>
+  <span
+    class="pre-wrap"
+  />
 </div>
 `;
 
@@ -37,15 +35,13 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with auto instruc
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon instruction-icon material-icons theme--light black--text error--text"
-      style="font-size: 16px;"
-    >
-      assignment_late
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon instruction-icon material-icons theme--light instruction-icon--failed"
+    style="font-size: 22px;"
+  >
+    assignment
+  </i>
 </span>
 `;
 
@@ -54,9 +50,9 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with auto instruc
   class="v-tooltip__content"
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
-  <span>
-    alarmList.tooltips.autoInstructionsFailed
-  </span>
+  <span
+    class="pre-wrap"
+  />
 </div>
 `;
 
@@ -67,15 +63,13 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with auto instruc
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon instruction-icon material-icons theme--light black--text instruction-icon--auto-running"
-      style="font-size: 16px;"
-    >
-      assignment
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon instruction-icon material-icons theme--light instruction-icon--failed"
+    style="font-size: 22px;"
+  >
+    assignment
+  </i>
 </span>
 `;
 
@@ -84,9 +78,9 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with auto instruc
   class="v-tooltip__content"
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
-  <span>
-    alarmList.tooltips.hasAutoInstructionInRunning
-  </span>
+  <span
+    class="pre-wrap"
+  />
 </div>
 `;
 
@@ -97,15 +91,13 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with instruction 
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon instruction-icon material-icons theme--light black--text"
-      style="font-size: 16px;"
-    >
-      assignment
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon instruction-icon material-icons theme--light"
+    style="font-size: 22px;"
+  >
+    $vuetify.icons.manual_instruction
+  </i>
 </span>
 `;
 
@@ -114,9 +106,9 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with instruction 
   class="v-tooltip__content"
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
-  <span>
-    alarmList.tooltips.hasInstruction
-  </span>
+  <span
+    class="pre-wrap"
+  />
 </div>
 `;
 
@@ -127,15 +119,13 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with manual instr
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon instruction-icon material-icons theme--light black--text instruction-icon--auto-running"
-      style="font-size: 16px;"
-    >
-      assignment
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon instruction-icon material-icons theme--light blinking instruction-icon--dotted"
+    style="font-size: 22px;"
+  >
+    $vuetify.icons.manual_instruction
+  </i>
 </span>
 `;
 
@@ -144,9 +134,9 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with manual instr
   class="v-tooltip__content"
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
-  <span>
-    alarmList.tooltips.hasManualInstructionInRunning
-  </span>
+  <span
+    class="pre-wrap"
+  />
 </div>
 `;
 
@@ -157,15 +147,13 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with manual instr
   <transition-stub
     name="slide-y-reverse-transition"
   />
-  <span>
-    <i
-      aria-hidden="true"
-      class="v-icon instruction-icon material-icons theme--light black--text instruction-icon--auto-running"
-      style="font-size: 16px;"
-    >
-      assignment
-    </i>
-  </span>
+  <i
+    aria-hidden="true"
+    class="v-icon instruction-icon material-icons theme--light instruction-icon--failed"
+    style="font-size: 22px;"
+  >
+    $vuetify.icons.manual_instruction
+  </i>
 </span>
 `;
 
@@ -174,8 +162,8 @@ exports[`alarms-list-row-icon Renders \`alarms-list-row-icon\` with manual instr
   class="v-tooltip__content"
   style="left: 0px; max-width: auto; opacity: 0; top: 12px; z-index: 0; display: none;"
 >
-  <span>
-    alarmList.tooltips.awaitingInstructionComplete
-  </span>
+  <span
+    class="pre-wrap"
+  />
 </div>
 `;

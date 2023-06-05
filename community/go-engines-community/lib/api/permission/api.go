@@ -1,10 +1,11 @@
 package permission
 
 import (
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type API interface {
@@ -34,7 +35,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	permissions, err := a.store.Find(c.Request.Context(), query)
+	permissions, err := a.store.Find(c, query)
 	if err != nil {
 		panic(err)
 	}

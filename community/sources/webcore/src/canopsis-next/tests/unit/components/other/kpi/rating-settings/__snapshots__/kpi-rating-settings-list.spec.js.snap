@@ -2,7 +2,7 @@
 
 exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after updated rating settings prop 1`] = `
 <div
-  class="c-advanced-data-table white white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"
@@ -46,13 +46,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
               
             </th>
             <th
-              aria-label="common.criteria: Not sorted."
+              aria-label="Criteria: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
               role="columnheader"
               scope="col"
             >
-              common.criteria
+              Criteria
             </th>
           </tr>
           <tr
@@ -72,7 +72,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -93,12 +93,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -112,15 +113,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
               Rating setting
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -128,7 +120,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -149,12 +141,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -168,15 +161,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
               Rating setting 2
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -184,7 +168,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -205,12 +189,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -224,15 +209,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
               Rating setting 3
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -240,7 +216,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -267,6 +243,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -280,15 +257,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
               Rating setting 4
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -296,7 +264,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -323,6 +291,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -336,15 +305,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
               Rating setting 5
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -352,7 +312,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -379,6 +339,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -392,15 +353,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
               Rating setting 6
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -408,7 +360,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -435,6 +387,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -448,15 +401,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
               Rating setting 7
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -464,7 +408,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -491,6 +435,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -504,15 +449,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
               Rating setting 8
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -520,7 +456,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -547,6 +483,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -560,15 +497,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
               Rating setting 9
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -576,7 +504,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -597,12 +525,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -616,15 +545,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
               Rating setting 10
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -632,7 +552,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -653,12 +573,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -671,15 +592,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
             <td>
               Rating setting 11
             </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
           </tr>
         </tbody>
       </table>
@@ -695,7 +607,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
 
 exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with custom props 1`] = `
 <div
-  class="c-advanced-data-table white white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"
@@ -739,13 +651,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
               
             </th>
             <th
-              aria-label="common.criteria: Not sorted."
+              aria-label="Criteria: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
               role="columnheader"
               scope="col"
             >
-              common.criteria
+              Criteria
             </th>
           </tr>
           <tr
@@ -799,7 +711,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -820,12 +732,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -839,15 +752,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
               Rating setting
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -855,7 +759,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -876,12 +780,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -895,15 +800,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
               Rating setting 2
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -911,7 +807,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -932,12 +828,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -951,15 +848,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
               Rating setting 3
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -967,7 +855,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -994,6 +882,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1007,15 +896,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
               Rating setting 4
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -1023,7 +903,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1050,6 +930,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1063,15 +944,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
               Rating setting 5
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -1079,7 +951,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1106,6 +978,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1119,15 +992,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
               Rating setting 6
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -1135,7 +999,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1162,6 +1026,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1175,15 +1040,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
               Rating setting 7
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -1191,7 +1047,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1218,6 +1074,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1231,15 +1088,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
               Rating setting 8
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -1247,7 +1095,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1274,6 +1122,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1287,15 +1136,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
               Rating setting 9
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -1303,7 +1143,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1324,12 +1164,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1343,15 +1184,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
               Rating setting 10
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -1359,7 +1191,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1380,12 +1212,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1398,15 +1231,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
             <td>
               Rating setting 11
             </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
           </tr>
         </tbody>
       </table>
@@ -1422,7 +1246,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
 
 exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with default props 1`] = `
 <div
-  class="c-advanced-data-table white white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"
@@ -1464,13 +1288,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with defa
               
             </th>
             <th
-              aria-label="common.criteria: Not sorted."
+              aria-label="Criteria: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
               role="columnheader"
               scope="col"
             >
-              common.criteria
+              Criteria
             </th>
           </tr>
           <tr
@@ -1501,7 +1325,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with defa
 
 exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enable rating 1`] = `
 <div
-  class="c-advanced-data-table white white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"
@@ -1530,7 +1354,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <div
               class="v-btn__content"
             >
-              common.cancel
+              Cancel
             </div>
           </button>
           <button
@@ -1540,7 +1364,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <div
               class="v-btn__content"
             >
-              common.submit
+              Submit
             </div>
           </button>
         </div>
@@ -1568,13 +1392,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               
             </th>
             <th
-              aria-label="common.criteria: Not sorted."
+              aria-label="Criteria: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
               role="columnheader"
               scope="col"
             >
-              common.criteria
+              Criteria
             </th>
           </tr>
           <tr
@@ -1594,7 +1418,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1621,6 +1445,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1634,15 +1459,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -1650,7 +1466,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1671,12 +1487,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1690,15 +1507,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting 2
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -1706,7 +1514,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1727,12 +1535,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1746,15 +1555,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting 3
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -1762,7 +1562,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1789,6 +1589,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1802,15 +1603,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting 4
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -1818,7 +1610,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1845,6 +1637,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1858,15 +1651,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting 5
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -1874,7 +1658,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1901,6 +1685,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1914,15 +1699,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting 6
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -1930,7 +1706,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -1957,6 +1733,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -1970,15 +1747,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting 7
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -1986,7 +1754,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2013,6 +1781,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2026,15 +1795,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting 8
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -2042,7 +1802,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2069,6 +1829,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2082,15 +1843,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting 9
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -2098,7 +1850,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2119,12 +1871,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2138,15 +1891,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting 10
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -2154,7 +1898,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2175,12 +1919,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2193,15 +1938,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td>
               Rating setting 11
             </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
           </tr>
         </tbody>
       </table>
@@ -2217,7 +1953,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
 
 exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enable rating 2`] = `
 <div
-  class="c-advanced-data-table white white"
+  class="c-advanced-data-table"
 >
   <div
     class="layout row wrap"
@@ -2261,13 +1997,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               
             </th>
             <th
-              aria-label="common.criteria: Not sorted."
+              aria-label="Criteria: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
               role="columnheader"
               scope="col"
             >
-              common.criteria
+              Criteria
             </th>
           </tr>
           <tr
@@ -2287,7 +2023,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2308,12 +2044,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2327,15 +2064,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -2343,7 +2071,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2364,12 +2092,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2383,15 +2112,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting 2
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -2399,7 +2119,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2420,12 +2140,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2439,15 +2160,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting 3
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -2455,7 +2167,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2482,6 +2194,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2495,15 +2208,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting 4
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -2511,7 +2215,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2538,6 +2242,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2551,15 +2256,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting 5
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -2567,7 +2263,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2594,6 +2290,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2607,15 +2304,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting 6
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -2623,7 +2311,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2650,6 +2338,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2663,15 +2352,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting 7
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -2679,7 +2359,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2706,6 +2386,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2719,15 +2400,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting 8
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -2735,7 +2407,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2762,6 +2434,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2775,15 +2448,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting 9
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -2791,7 +2455,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2812,12 +2476,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2831,15 +2496,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               Rating setting 10
             </td>
           </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
-          </tr>
           <tr>
             <!---->
             <td>
@@ -2847,7 +2503,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                 class="layout row align-center"
               >
                 <div
-                  class="v-input v-input--selection-controls v-input--checkbox theme--light v-input--hide-details"
+                  class="v-input v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
                 >
                   <div
                     class="v-input__control"
@@ -2868,12 +2524,13 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
                           class="v-input--selection-controls__ripple primary--text"
                         />
                         <i
-                          class="v-icon material-icons theme--light primary--text"
+                          class="v-icon material-icons primary--text theme--light"
                         >
                           check_box
                         </i>
                       </div>
                       <label
+                        class="v-label theme--light"
                         style="display: none;"
                       >
                         
@@ -2886,15 +2543,6 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
             <td>
               Rating setting 11
             </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="2"
-              tag="td"
-            />
           </tr>
         </tbody>
       </table>

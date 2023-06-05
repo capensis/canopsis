@@ -1,30 +1,44 @@
 <template lang="pug">
-  v-list-group
-    template(#activator="")
-      v-list-tile {{ title }}
-        div.font-italic.caption.ml-1 ({{ $t('common.optional') }})
-    v-container
-      v-text-field(
-        v-field="value",
-        :placeholder="$t('settings.widgetTitle')"
-      )
+  widget-settings-item(:title="$t('common.title')", :optional="!required")
+    v-text-field(
+      v-field="value",
+      v-validate="rules",
+      :placeholder="$t('settings.widgetTitle')",
+      :name="name",
+      :error-messages="errors.collect(name)"
+    )
 </template>
 
 <script>
+import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
+
 /**
  * Component to set the title of a widget
  *
  * @prop {String} [value] - Value of the title
  */
 export default {
+  inject: ['$validator'],
+  components: { WidgetSettingsItem },
   props: {
     value: {
       type: String,
       required: false,
     },
-    title: {
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    name: {
       type: String,
-      required: false,
+      default: 'title',
+    },
+  },
+  computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
     },
   },
 };

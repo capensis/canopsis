@@ -1,53 +1,48 @@
 <template lang="pug">
   div.ds-expand.ds-calendar-app
-    v-layout.pa-3.white
-      slot(
-        name="today",
-        v-bind="{ setToday, todayDate, calendar }"
-      )
+    v-layout.pa-3
+      slot(name="today", v-bind="{ setToday, todayDate, calendar }")
         v-flex
           v-tooltip(bottom)
-            v-btn.ds-skinny-button.ds-calendar-app-action(
-              slot="activator",
-              :icon="$vuetify.breakpoint.smAndDown",
-              depressed,
-              @click="setToday"
-            )
-              span(v-if="$vuetify.breakpoint.mdAndUp") {{ labels.today }}
-              v-icon(v-else) {{ labels.todayIcon }}
+            template(#activator="{ on }")
+              v-btn.ds-skinny-button.ds-calendar-app-action(
+                v-on="on",
+                :icon="$vuetify.breakpoint.smAndDown",
+                depressed,
+                @click="setToday"
+              )
+                span(v-if="$vuetify.breakpoint.mdAndUp") {{ labels.today }}
+                v-icon(v-else) {{ labels.todayIcon }}
             span {{ todayDate }}
-      slot(
-        name="pagination",
-        v-bind="{ prev, prevLabel, next, nextLabel, summary, calendar }"
-      )
+      slot(name="pagination", v-bind="{ prev, prevLabel, next, nextLabel, summary, calendar }")
         v-flex.text-sm-center
-          v-tooltip.mx-2(bottom)
-            v-btn.ds-light-forecolor.ds-skinny-button.ds-calendar-app-action(
-              slot="activator",
-              icon,
-              depressed,
-              @click="prev"
-            )
-              v-icon keyboard_arrow_left
+          v-tooltip(bottom)
+            template(#activator="{ on }")
+              v-btn.mx-2.ds-light-forecolor.ds-calendar-app-action(
+                v-on="on",
+                icon,
+                depressed,
+                @click="prev"
+              )
+                v-icon keyboard_arrow_left
             span {{ prevLabel }}
-          span.subheading {{ summary }}
-          v-tooltip.mx-2(bottom)
-            v-btn.ds-light-forecolor.ds-skinny-button.ds-calendar-app-action(
-              slot="activator",
-              icon,
-              depressed,
-              @click="next"
-            )
-              v-icon keyboard_arrow_right
+          calendar-app-period-picker(:calendar="calendar", @change="selectPeriod")
+          v-tooltip(bottom)
+            template(#activator="{ on }")
+              v-btn.mx-2.ds-light-forecolor.ds-calendar-app-action(
+                v-on="on",
+                icon,
+                depressed,
+                @click="next"
+              )
+                v-icon keyboard_arrow_right
             span {{ nextLabel }}
-      slot(
-        name="view",
-        v-bind="{ currentType, types }"
-      )
+      slot(name="view", v-bind="{ currentType, types }")
         v-flex.text-sm-right
           v-menu
-            v-btn.ds-calendar-app-action(flat, slot="activator") {{ currentType.label }}
-              v-icon arrow_drop_down
+            template(#activator="{ on }")
+              v-btn.ds-calendar-app-action(v-on="on", flat) {{ currentType.label }}
+                v-icon arrow_drop_down
             v-list
               v-list-tile(
                 v-for="type in types",
@@ -77,10 +72,7 @@
                 @view-day="viewDay"
               )
           div.ds-expand(v-else)
-            slot(
-              name="calendarAppCalendar",
-              v-bind="{ $scopedSlots, $listeners, calendar, viewDay }"
-            )
+            slot(name="calendarAppCalendar", v-bind="{ $scopedSlots, $listeners, calendar, viewDay }")
               ds-calendar(
                 ref="calendar",
                 v-bind="{ $scopedSlots }",
@@ -102,7 +94,10 @@ import { Calendar, Sorts } from 'dayspan';
 
 import calendarOptionsMixin from '../mixins/calendar-options';
 
+import CalendarAppPeriodPicker from './calendar-app-period-picker.vue';
+
 export default {
+  components: { CalendarAppPeriodPicker },
   mixins: [calendarOptionsMixin],
   props: {
     events: {
@@ -316,6 +311,16 @@ export default {
       this.setState(input, ignoreTriggerChange);
     },
 
+    selectPeriod(diff) {
+      if (this.removeEventsBeforeMove) {
+        this.calendar.removeEvents(null, true);
+      }
+
+      this.calendar.move(diff);
+
+      this.triggerChange();
+    },
+
     next() {
       if (this.removeEventsBeforeMove) {
         this.calendar.removeEvents(null, true);
@@ -379,6 +384,10 @@ export default {
     position: relative !important;
     overflow: hidden;
     max-height: 75vh;
+
+    .ds-week-header .ds-day {
+      border-top: #e0e0e0 1px solid;
+    }
   }
 
   .ds-day {
@@ -387,6 +396,28 @@ export default {
 
     .ds-month & {
       padding-bottom: 22px;
+    }
+  }
+
+  .ds-day:first-child, .ds-week-header-day:first-child {
+    border-left: #e0e0e0 1px solid;
+  }
+
+  .ds-week-header-day {
+    border-top: #e0e0e0 1px solid;
+  }
+
+  .theme--dark {
+    .ds-month {
+      background: var(--v-secondary) !important;
+    }
+
+    .ds-week-header-day,
+    .ds-dom,
+    .ds-week-date,
+    .ds-week-weekday,
+    .ds-hour-text {
+      color: white !important;
     }
   }
 </style>

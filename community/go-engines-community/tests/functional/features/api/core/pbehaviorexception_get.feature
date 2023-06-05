@@ -6,7 +6,7 @@ Feature: Get pbehavior exception
     When I do GET /api/v4/pbehavior-exceptions?search=test-exception-to-get
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -21,6 +21,7 @@ Feature: Get pbehavior exception
                 "_id": "test-type-to-exception-edit-2",
                 "description": "Exception edit 2 State type",
                 "icon_name": "test-to-exception-edit-2-icon",
+                "color": "#2FAB63",
                 "name": "Exception edit 2 State",
                 "priority": 14,
                 "type": "active"
@@ -41,8 +42,30 @@ Feature: Get pbehavior exception
                 "_id": "test-type-to-exception-edit-2",
                 "description": "Exception edit 2 State type",
                 "icon_name": "test-to-exception-edit-2-icon",
+                "color": "#2FAB63",
                 "name": "Exception edit 2 State",
                 "priority": 14,
+                "type": "active"
+              }
+            }
+          ],
+          "created": 1592215037
+        },
+        {
+          "_id": "test-exception-to-get-3",
+          "name": "test-exception-to-get-3-name",
+          "description": "test-exception-to-get-3-description",
+          "exdates": [
+            {
+              "begin": 1591164001,
+              "end": 1591167601,
+              "type": {
+                "_id": "test-type-to-exception-edit-3",
+                "description": "Exception edit 3 State type",
+                "icon_name": "test-to-exception-edit-3-icon",
+                "color": "#2FAB63",
+                "name": "Exception edit 3 State",
+                "priority": 15,
                 "type": "active"
               }
             }
@@ -54,7 +77,7 @@ Feature: Get pbehavior exception
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 3
       }
     }
     """
@@ -64,7 +87,7 @@ Feature: Get pbehavior exception
     When I do GET /api/v4/pbehavior-exceptions?search=test-exception-to-get&with_flags=true
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -74,13 +97,17 @@ Feature: Get pbehavior exception
         {
           "_id": "test-exception-to-get-2",
           "deletable": false
+        },
+        {
+          "_id": "test-exception-to-get-3",
+          "deletable": false
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 2
+        "total_count": 3
       }
     }
     """
@@ -95,7 +122,7 @@ Feature: Get pbehavior exception
     When I do GET /api/v4/pbehavior-exceptions/test-exception-to-get-1
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-exception-to-get-1",
       "name": "test-exception-to-get-1-name",
@@ -108,6 +135,7 @@ Feature: Get pbehavior exception
             "_id": "test-type-to-exception-edit-2",
             "description": "Exception edit 2 State type",
             "icon_name": "test-to-exception-edit-2-icon",
+            "color": "#2FAB63",
             "name": "Exception edit 2 State",
             "priority": 14,
             "type": "active"

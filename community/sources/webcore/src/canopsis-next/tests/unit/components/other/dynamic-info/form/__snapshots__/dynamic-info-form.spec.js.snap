@@ -1,0 +1,385 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`dynamic-info-form Renders \`dynamic-info-form\` with custom props 1`] = `
+<div
+  class="dynamic-info-form v-stepper v-stepper--non-linear theme--light"
+>
+  <div
+    class="v-stepper__header"
+  >
+    <div
+      class="py-0 v-stepper__step v-stepper__step--editable v-stepper__step--inactive"
+    >
+      <span
+        class="v-stepper__step__step"
+      >
+        1
+      </span>
+      <div
+        class="v-stepper__label"
+      >
+        General
+        <!---->
+      </div>
+    </div>
+    <hr
+      class="v-divider theme--light"
+    />
+    <div
+      class="py-0 v-stepper__step v-stepper__step--editable v-stepper__step--inactive"
+    >
+      <span
+        class="v-stepper__step__step"
+      >
+        2
+      </span>
+      <div
+        class="v-stepper__label"
+      >
+        Informations
+        <!---->
+      </div>
+    </div>
+    <hr
+      class="v-divider theme--light"
+    />
+    <div
+      class="py-0 v-stepper__step v-stepper__step--editable v-stepper__step--inactive"
+    >
+      <span
+        class="v-stepper__step__step"
+      >
+        3
+      </span>
+      <div
+        class="v-stepper__label"
+      >
+        Patterns
+        <!---->
+      </div>
+    </div>
+  </div>
+  <div
+    class="v-stepper__items"
+  >
+    <transition-stub
+      class="pa-0"
+      name="tab-transition"
+    >
+      <div
+        class="v-stepper__content"
+        style="display: none;"
+      >
+        <div
+          class="v-stepper__wrapper"
+        >
+          <dynamic-info-general-form-stub
+            class="pa-4"
+            form="[object Object]"
+          />
+        </div>
+      </div>
+    </transition-stub>
+    <transition-stub
+      class="pa-0"
+      name="tab-transition"
+    >
+      <div
+        class="v-stepper__content"
+        style="display: none;"
+      >
+        <div
+          class="v-stepper__wrapper"
+        >
+          <dynamic-info-infos-form-stub
+            class="pa-4"
+            form="[object Object]"
+            name="infos"
+          />
+        </div>
+      </div>
+    </transition-stub>
+    <transition-stub
+      class="pa-0"
+      name="tab-transition"
+    >
+      <div
+        class="v-stepper__content"
+        style="display: none;"
+      >
+        <div
+          class="v-stepper__wrapper"
+        >
+          <dynamic-info-patterns-form-stub
+            class="pa-4"
+            form="[object Object]"
+          />
+        </div>
+      </div>
+    </transition-stub>
+  </div>
+</div>
+`;
+
+exports[`dynamic-info-form Renders \`dynamic-info-form\` with default props 1`] = `
+<div
+  class="dynamic-info-form v-stepper v-stepper--non-linear theme--light"
+>
+  <div
+    class="v-stepper__header"
+  >
+    <div
+      class="py-0 v-stepper__step v-stepper__step--editable v-stepper__step--inactive"
+    >
+      <span
+        class="v-stepper__step__step"
+      >
+        1
+      </span>
+      <div
+        class="v-stepper__label"
+      >
+        General
+        <!---->
+      </div>
+    </div>
+    <hr
+      class="v-divider theme--light"
+    />
+    <div
+      class="py-0 v-stepper__step v-stepper__step--editable v-stepper__step--inactive"
+    >
+      <span
+        class="v-stepper__step__step"
+      >
+        2
+      </span>
+      <div
+        class="v-stepper__label"
+      >
+        Informations
+        <!---->
+      </div>
+    </div>
+    <hr
+      class="v-divider theme--light"
+    />
+    <div
+      class="py-0 v-stepper__step v-stepper__step--editable v-stepper__step--inactive"
+    >
+      <span
+        class="v-stepper__step__step"
+      >
+        3
+      </span>
+      <div
+        class="v-stepper__label"
+      >
+        Patterns
+        <!---->
+      </div>
+    </div>
+  </div>
+  <div
+    class="v-stepper__items"
+  >
+    <transition-stub
+      class="pa-0"
+      name="tab-transition"
+    >
+      <div
+        class="v-stepper__content"
+        style="display: none;"
+      >
+        <div
+          class="v-stepper__wrapper"
+        >
+          <dynamic-info-general-form-stub
+            class="pa-4"
+            form="[object Object]"
+          />
+        </div>
+      </div>
+    </transition-stub>
+    <transition-stub
+      class="pa-0"
+      name="tab-transition"
+    >
+      <div
+        class="v-stepper__content"
+        style="display: none;"
+      >
+        <div
+          class="v-stepper__wrapper"
+        >
+          <dynamic-info-infos-form-stub
+            class="pa-4"
+            form="[object Object]"
+            name="infos"
+          />
+        </div>
+      </div>
+    </transition-stub>
+    <transition-stub
+      class="pa-0"
+      name="tab-transition"
+    >
+      <div
+        class="v-stepper__content"
+        style="display: none;"
+      >
+        <div
+          class="v-stepper__wrapper"
+        >
+          <dynamic-info-patterns-form-stub
+            class="pa-4"
+            form="[object Object]"
+          />
+        </div>
+      </div>
+    </transition-stub>
+  </div>
+</div>
+`;
+
+exports[`dynamic-info-form Renders \`dynamic-info-form\` with errors 1`] = `
+<div
+  class="dynamic-info-form v-stepper v-stepper--non-linear theme--light"
+>
+  <div
+    class="v-stepper__header"
+  >
+    <div
+      class="py-0 v-stepper__step v-stepper__step--active v-stepper__step--editable v-stepper__step--error error--text"
+    >
+      <span
+        class="v-stepper__step__step"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
+          warning
+        </i>
+      </span>
+      <div
+        class="v-stepper__label"
+      >
+        General
+        <small>
+          Invalid
+        </small>
+      </div>
+    </div>
+    <hr
+      class="v-divider theme--light"
+    />
+    <div
+      class="py-0 v-stepper__step v-stepper__step--editable v-stepper__step--inactive v-stepper__step--error error--text"
+    >
+      <span
+        class="v-stepper__step__step"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
+          warning
+        </i>
+      </span>
+      <div
+        class="v-stepper__label"
+      >
+        Informations
+        <small>
+          Invalid
+        </small>
+      </div>
+    </div>
+    <hr
+      class="v-divider theme--light"
+    />
+    <div
+      class="py-0 v-stepper__step v-stepper__step--editable v-stepper__step--inactive v-stepper__step--error error--text"
+    >
+      <span
+        class="v-stepper__step__step"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
+          warning
+        </i>
+      </span>
+      <div
+        class="v-stepper__label"
+      >
+        Patterns
+        <small>
+          Invalid
+        </small>
+      </div>
+    </div>
+  </div>
+  <div
+    class="v-stepper__items"
+  >
+    <transition-stub
+      class="pa-0"
+      name="tab-transition"
+    >
+      <div
+        class="v-stepper__content"
+        style=""
+      >
+        <div
+          class="v-stepper__wrapper"
+        >
+          <dynamic-info-general-form-stub
+            class="pa-4"
+            form="[object Object]"
+          />
+        </div>
+      </div>
+    </transition-stub>
+    <transition-stub
+      class="pa-0"
+      name="tab-transition"
+    >
+      <div
+        class="v-stepper__content"
+        style="display: none;"
+      >
+        <div
+          class="v-stepper__wrapper"
+        >
+          <dynamic-info-infos-form-stub
+            class="pa-4"
+            form="[object Object]"
+            name="infos"
+          />
+        </div>
+      </div>
+    </transition-stub>
+    <transition-stub
+      class="pa-0"
+      name="tab-transition"
+    >
+      <div
+        class="v-stepper__content"
+        style="display: none;"
+      >
+        <div
+          class="v-stepper__wrapper"
+        >
+          <dynamic-info-patterns-form-stub
+            class="pa-4"
+            form="[object Object]"
+          />
+        </div>
+      </div>
+    </transition-stub>
+  </div>
+</div>
+`;

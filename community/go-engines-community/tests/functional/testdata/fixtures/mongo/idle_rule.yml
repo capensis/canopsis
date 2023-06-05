@@ -94,7 +94,7 @@ idle_rule:
           cond:
             type: eq
             value: test-idle-rule-to-get-1-resource
-    author: test-idle-rule-to-get-1-author
+    author: root
     description: test-idle-rule-to-get-1-description
     disable_during_periods:
     - pause
@@ -111,7 +111,7 @@ idle_rule:
   idle_rule_3:
     <<: *idle_rule_entity
     _id: test-idle-rule-to-get-2
-    author: test-idle-rule-to-get-2-author
+    author: root
     description: test-idle-rule-to-get-2-description
     entity_pattern:
       - - field: name
@@ -474,29 +474,3 @@ idle_rule:
           value: 3
         output: test-idle-rule-to-bulk-update-3-operation-output
       type: snooze
-  idle_rule_20:
-    <<: *idle_rule_alarm
-    _id: test-idle-rule-axe-12
-    alarm_pattern:
-      - - field: v.ticket
-          cond:
-            type: exist
-            value: false
-    author: test-author-metrics-axe-12
-    description: test-idle-rule-axe-12-description
-    duration:
-      unit: s
-      value: 1
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resource-metrics-axe-12-4
-    name: test-idle-rule-axe-12-name
-    operation:
-      parameters:
-        author: test-author-metrics-axe-12
-        output: test-scenario-metrics-axe-12-output
-        ticket: test-scenario-metrics-axe-12-ticket
-        user: test-user-metrics-axe-12
-      type: assocticket

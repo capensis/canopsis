@@ -1,15 +1,16 @@
 package httpprovider
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
-	mock_http "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/http"
-	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
-	"github.com/golang/mock/gomock"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
 	"testing"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	mock_http "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/http"
+	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
+	"github.com/golang/mock/gomock"
 )
 
 func TestCasProvider_Auth_GivenTicketByQueryParam_ShouldAuthUser(t *testing.T) {
@@ -25,7 +26,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParam_ShouldAuthUser(t *testing.T) {
 		IsEnabled:  true,
 	}
 	service := "http://test-service"
-	config := &security.CasConfig{
+	config := security.CasConfig{
 		ValidateUrl: "http://test-validate",
 	}
 	mockDoer := mock_http.NewMockDoer(ctrl)
@@ -39,24 +40,19 @@ func TestCasProvider_Auth_GivenTicketByQueryParam_ShouldAuthUser(t *testing.T) {
 </cas:serviceResponse>`
 	casResponse := &http.Response{
 		StatusCode: 200,
-		Body:       ioutil.NopCloser(strings.NewReader(casBody)),
+		Body:       io.NopCloser(strings.NewReader(casBody)),
 	}
 	mockDoer.
 		EXPECT().
 		Do(gomock.Eq(casRequest)).
 		Return(casResponse, nil)
-	mockConfigProvider := mock_security.NewMockConfigProvider(ctrl)
-	mockConfigProvider.
-		EXPECT().
-		LoadCasConfig(gomock.Any()).
-		Return(config, nil)
 	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
 	mockUserProvider.
 		EXPECT().
 		FindByExternalSource(gomock.Any(), gomock.Eq(externalID), gomock.Eq(security.SourceCas)).
 		Return(expectedUser, nil)
 
-	p := NewCasProvider(mockDoer, mockConfigProvider, mockUserProvider)
+	p := NewCasProvider(mockDoer, config, mockUserProvider)
 	r := newRequest()
 	r.URL.Host = "test-service"
 	r.Host = "test-service"
@@ -87,18 +83,13 @@ func TestCasProvider_Auth_GivenNoQueryParam_ShouldReturnNil(t *testing.T) {
 		EXPECT().
 		Do(gomock.Any()).
 		Times(0)
-	mockConfigProvider := mock_security.NewMockConfigProvider(ctrl)
-	mockConfigProvider.
-		EXPECT().
-		LoadCasConfig(gomock.Any()).
-		Times(0)
 	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
 	mockUserProvider.
 		EXPECT().
 		FindByExternalSource(gomock.Any(), gomock.Any(), gomock.Any()).
 		Times(0)
 
-	p := NewCasProvider(mockDoer, mockConfigProvider, mockUserProvider)
+	p := NewCasProvider(mockDoer, security.CasConfig{}, mockUserProvider)
 	r := newRequest()
 	user, err, ok := p.Auth(r)
 
@@ -120,7 +111,7 @@ func TestCasProvider_Auth_GivenInvalidTicketInQueryParam_ShouldReturnNil(t *test
 	defer ctrl.Finish()
 	ticket := "testticket"
 	service := "http://test-service"
-	config := &security.CasConfig{
+	config := security.CasConfig{
 		ValidateUrl: "http://test-validate",
 	}
 	mockDoer := mock_http.NewMockDoer(ctrl)
@@ -134,24 +125,19 @@ func TestCasProvider_Auth_GivenInvalidTicketInQueryParam_ShouldReturnNil(t *test
 	</cas:serviceResponse>`
 	casResponse := &http.Response{
 		StatusCode: 200,
-		Body:       ioutil.NopCloser(strings.NewReader(casBody)),
+		Body:       io.NopCloser(strings.NewReader(casBody)),
 	}
 	mockDoer.
 		EXPECT().
 		Do(gomock.Eq(casRequest)).
 		Return(casResponse, nil)
-	mockConfigProvider := mock_security.NewMockConfigProvider(ctrl)
-	mockConfigProvider.
-		EXPECT().
-		LoadCasConfig(gomock.Any()).
-		Return(config, nil)
 	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
 	mockUserProvider.
 		EXPECT().
 		FindByExternalSource(gomock.Any(), gomock.Any(), gomock.Any()).
 		Times(0)
 
-	p := NewCasProvider(mockDoer, mockConfigProvider, mockUserProvider)
+	p := NewCasProvider(mockDoer, config, mockUserProvider)
 	r := newRequest()
 	r.URL.Host = "test-service"
 	r.Host = "test-service"
@@ -186,7 +172,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParamAndNoUserInStore_ShouldCreateNe
 		IsEnabled:  true,
 	}
 	service := "http://test-service"
-	config := &security.CasConfig{
+	config := security.CasConfig{
 		ValidateUrl: "http://test-validate",
 	}
 	mockDoer := mock_http.NewMockDoer(ctrl)
@@ -200,17 +186,12 @@ func TestCasProvider_Auth_GivenTicketByQueryParamAndNoUserInStore_ShouldCreateNe
 </cas:serviceResponse>`
 	casResponse := &http.Response{
 		StatusCode: 200,
-		Body:       ioutil.NopCloser(strings.NewReader(casBody)),
+		Body:       io.NopCloser(strings.NewReader(casBody)),
 	}
 	mockDoer.
 		EXPECT().
 		Do(gomock.Eq(casRequest)).
 		Return(casResponse, nil)
-	mockConfigProvider := mock_security.NewMockConfigProvider(ctrl)
-	mockConfigProvider.
-		EXPECT().
-		LoadCasConfig(gomock.Any()).
-		Return(config, nil)
 	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
 	mockUserProvider.
 		EXPECT().
@@ -221,7 +202,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParamAndNoUserInStore_ShouldCreateNe
 		Save(gomock.Any(), gomock.Eq(expectedUser)).
 		Return(nil)
 
-	p := NewCasProvider(mockDoer, mockConfigProvider, mockUserProvider)
+	p := NewCasProvider(mockDoer, config, mockUserProvider)
 	r := newRequest()
 	r.URL.RawQuery = url.Values{
 		security.QueryParamCasTicket:  []string{ticket},
@@ -243,7 +224,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParamAndUserInStore_ShouldNotUpdateU
 		IsEnabled:  true,
 	}
 	service := "http://test-service"
-	config := &security.CasConfig{
+	config := security.CasConfig{
 		ValidateUrl: "http://test-validate",
 	}
 	mockDoer := mock_http.NewMockDoer(ctrl)
@@ -257,17 +238,12 @@ func TestCasProvider_Auth_GivenTicketByQueryParamAndUserInStore_ShouldNotUpdateU
 </cas:serviceResponse>`
 	casResponse := &http.Response{
 		StatusCode: 200,
-		Body:       ioutil.NopCloser(strings.NewReader(casBody)),
+		Body:       io.NopCloser(strings.NewReader(casBody)),
 	}
 	mockDoer.
 		EXPECT().
 		Do(gomock.Eq(casRequest)).
 		Return(casResponse, nil)
-	mockConfigProvider := mock_security.NewMockConfigProvider(ctrl)
-	mockConfigProvider.
-		EXPECT().
-		LoadCasConfig(gomock.Any()).
-		Return(config, nil)
 	mockUserProvider := mock_security.NewMockUserProvider(ctrl)
 	mockUserProvider.
 		EXPECT().
@@ -278,7 +254,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParamAndUserInStore_ShouldNotUpdateU
 		Save(gomock.Any(), gomock.Any()).
 		Times(0)
 
-	p := NewCasProvider(mockDoer, mockConfigProvider, mockUserProvider)
+	p := NewCasProvider(mockDoer, config, mockUserProvider)
 	r := newRequest()
 	r.URL.RawQuery = url.Values{
 		security.QueryParamCasTicket:  []string{ticket},

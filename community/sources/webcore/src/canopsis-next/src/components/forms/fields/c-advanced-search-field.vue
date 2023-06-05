@@ -1,8 +1,9 @@
 <template lang="pug">
   c-search-field(v-model="searchingText", @submit="submit", @clear="clear")
     v-tooltip(v-if="tooltip", bottom)
-      v-btn(slot="activator", icon)
-        v-icon help_outline
+      template(#activator="{ on }")
+        v-btn(v-on="on", icon)
+          v-icon help_outline
       div(v-html="tooltip")
 </template>
 
@@ -54,9 +55,12 @@ export default {
     },
 
     clear() {
-      this.searchingText = '';
+      const newQuery = omit(this.query, [this.field]);
 
-      this.$emit('update:query', omit(this.query, [this.field]));
+      newQuery.page = 1;
+
+      this.searchingText = '';
+      this.$emit('update:query', newQuery);
     },
 
     submit() {

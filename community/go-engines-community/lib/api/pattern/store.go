@@ -4,6 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"reflect"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
@@ -14,11 +17,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/sync/errgroup"
-	"reflect"
 )
+
+const matchedAlarmsLimit = 100
 
 type Store interface {
 	Insert(ctx context.Context, r EditRequest) (*Response, error)
@@ -27,6 +32,7 @@ type Store interface {
 	Update(ctx context.Context, r EditRequest) (*Response, error)
 	Delete(ctx context.Context, pattern Response) (bool, error)
 	Count(ctx context.Context, r CountRequest, maxCount int64) (CountResponse, error)
+	GetAlarms(ctx context.Context, r GetAlarmsRequest) (GetAlarmsResponse, error)
 }
 
 type store struct {
@@ -38,7 +44,7 @@ type store struct {
 	defaultSearchByFields []string
 	defaultSortBy         string
 
-	pbhComputeChan chan<- pbehavior.ComputeTask
+	pbhComputeChan chan<- []string
 
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage
 
@@ -47,7 +53,7 @@ type store struct {
 
 func NewStore(
 	dbClient mongo.DbClient,
-	pbhComputeChan chan<- pbehavior.ComputeTask,
+	pbhComputeChan chan<- []string,
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage,
 	logger zerolog.Logger,
 ) Store {
@@ -55,7 +61,7 @@ func NewStore(
 		client:     dbClient,
 		collection: dbClient.Collection(mongo.PatternMongoCollection),
 
-		defaultSearchByFields: []string{"_id", "author", "title"},
+		defaultSearchByFields: []string{"_id", "author.name", "title"},
 		defaultSortBy:         "created",
 
 		linkedCollections: []string{
@@ -70,6 +76,8 @@ func NewStore(
 			mongo.DynamicInfosRulesMongoCollection,
 			mongo.FlappingRuleMongoCollection,
 			mongo.KpiFilterMongoCollection,
+			mongo.DeclareTicketRuleMongoCollection,
+			mongo.LinkRuleMongoCollection,
 		},
 
 		pbhComputeChan: pbhComputeChan,
@@ -110,7 +118,7 @@ func (s *store) GetById(ctx context.Context, id, userId string) (*Response, erro
 			{"is_corporate": true},
 		},
 	}}}
-	pipeline = append(pipeline, getAuthorPipeline()...)
+	pipeline = append(pipeline, author.Pipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -153,6 +161,7 @@ func (s *store) Find(ctx context.Context, request ListRequest, userId string) (*
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": match}})
 	}
 
+	pipeline = append(pipeline, author.Pipeline()...)
 	filter := common.GetSearchQuery(request.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
@@ -167,7 +176,6 @@ func (s *store) Find(ctx context.Context, request ListRequest, userId string) (*
 		request.Query,
 		pipeline,
 		common.GetSortQuery(sortBy, request.Sort),
-		getAuthorPipeline(),
 	))
 
 	if err != nil {
@@ -239,9 +247,7 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 	})
 
 	if len(pbhIds) > 0 {
-		s.pbhComputeChan <- pbehavior.ComputeTask{
-			PbehaviorIds: pbhIds,
-		}
+		s.pbhComputeChan <- pbhIds
 	}
 
 	if len(serviceIds) > 0 {
@@ -593,18 +599,6 @@ func (s *store) findEntityServices(ctx context.Context, pattern Response) ([]str
 	return ids, nil
 }
 
-func getAuthorPipeline() []bson.M {
-	return []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.RightsMongoCollection,
-			"localField":   "author",
-			"foreignField": "_id",
-			"as":           "author",
-		}},
-		{"$unwind": bson.M{"path": "$author", "preserveNullAndEmptyArrays": true}},
-	}
-}
-
 func transformRequestToModel(request EditRequest) savedpattern.SavedPattern {
 	model := savedpattern.SavedPattern{
 		Title:       request.Title,
@@ -623,4 +617,115 @@ func transformRequestToModel(request EditRequest) savedpattern.SavedPattern {
 	}
 
 	return model
+}
+
+func (s *store) GetAlarms(ctx context.Context, r GetAlarmsRequest) (GetAlarmsResponse, error) {
+	res := GetAlarmsResponse{
+		Alarms: make([]MatchedAlarm, 0),
+	}
+
+	alarmPatternQuery, err := r.AlarmPattern.ToMongoQuery("")
+	if err != nil {
+		return res, fmt.Errorf("invalid alarm pattern: %w", err)
+	}
+
+	entityPatternQuery, err := r.EntityPattern.ToMongoQuery("")
+	if err != nil {
+		return res, fmt.Errorf("invalid entity pattern: %w", err)
+	}
+
+	pbhPatternQuery, err := r.PbehaviorPattern.ToMongoQuery("v")
+	if err != nil {
+		return res, fmt.Errorf("invalid pbehavior pattern: %w", err)
+	}
+
+	if len(alarmPatternQuery) == 0 && len(entityPatternQuery) == 0 && len(pbhPatternQuery) == 0 {
+		return res, nil
+	}
+
+	var pipeline []bson.M
+
+	if r.Search != "" {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{
+			"v.display_name": primitive.Regex{
+				Pattern: fmt.Sprintf(".*%s.*", r.Search),
+				Options: "i",
+			},
+		}})
+	}
+
+	pipeline = append(
+		pipeline,
+		bson.M{
+			"$project": bson.M{
+				"v.steps": 0,
+			},
+		},
+		bson.M{
+			"$addFields": bson.M{
+				"v.infos_array": bson.M{"$objectToArray": "$v.infos"},
+				"v.duration": bson.M{"$subtract": bson.A{
+					types.NewCpsTime(),
+					"$v.creation_date",
+				}},
+			},
+		},
+	)
+
+	if len(alarmPatternQuery) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": alarmPatternQuery})
+	}
+
+	if len(pbhPatternQuery) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": pbhPatternQuery})
+	}
+
+	if len(entityPatternQuery) > 0 {
+		pipeline = append(
+			pipeline,
+			bson.M{
+				"$lookup": bson.M{
+					"from": mongo.EntityMongoCollection,
+					"let":  bson.M{"entity_id": "$d"},
+					"pipeline": []bson.M{
+						{
+							"$match": bson.M{
+								"$and": []bson.M{
+									{"$expr": bson.M{"$eq": bson.A{"$$entity_id", "$_id"}}},
+									entityPatternQuery,
+								},
+							},
+						},
+						{
+							"$project": bson.M{
+								"_id": 1,
+							},
+						},
+					},
+					"as": "entity",
+				},
+			},
+			bson.M{
+				"$match": bson.M{
+					"$expr": bson.M{"$gt": bson.A{bson.M{"$size": "$entity"}, 0}},
+				},
+			},
+		)
+	}
+
+	pipeline = append(
+		pipeline,
+		common.GetSortQuery("v.display_name", common.SortAsc),
+		bson.M{"$limit": matchedAlarmsLimit},
+		bson.M{"$project": bson.M{
+			"name": "$v.display_name",
+		}},
+	)
+
+	cursor, err := s.client.Collection(mongo.AlarmMongoCollection).Aggregate(ctx, pipeline)
+	if err != nil {
+		return res, err
+	}
+
+	return res, cursor.All(ctx, &res.Alarms)
 }

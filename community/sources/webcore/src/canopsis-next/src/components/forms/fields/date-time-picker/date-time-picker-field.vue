@@ -2,25 +2,27 @@
   v-menu(
     ref="menu",
     v-model="opened",
+    :close-on-content-click="false",
+    :disabled="disabled",
     content-class="date-time-picker",
     transition="slide-y-transition",
     max-width="290px",
-    :close-on-content-click="false",
     right,
     lazy-with-unmount,
     lazy
   )
-    div(slot="activator")
-      v-text-field(
-        :label="label",
-        :error-messages="errors.collect(name)",
-        :value="value | date('dateTimePicker')",
-        :append-icon="clearable ? 'close' : ''",
-        readonly,
-        @click:append="clear"
-      )
+    template(#activator="{ on }")
+      div(v-on="on")
+        v-text-field(
+          :label="label",
+          :error-messages="errors.collect(name)",
+          :value="dateTextValue",
+          :append-icon="clearable ? 'close' : ''",
+          :disabled="disabled",
+          readonly,
+          @click:append="clear"
+        )
     date-time-picker(
-      data-test="dateTimePickerCalendar",
       :value="value",
       :label="label",
       :round-hours="roundHours",
@@ -30,9 +32,9 @@
 </template>
 
 <script>
-import { TIME_UNITS } from '@/constants';
+import { DATETIME_FORMATS, TIME_UNITS } from '@/constants';
 
-import { convertDateToStartOfUnitDateObject } from '@/helpers/date/date';
+import { convertDateToStartOfUnitDateObject, convertDateToString } from '@/helpers/date/date';
 
 import DateTimePicker from './date-time-picker.vue';
 
@@ -86,11 +88,20 @@ export default {
       type: Boolean,
       default: false,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       opened: false,
     };
+  },
+  computed: {
+    dateTextValue() {
+      return convertDateToString(this.value, DATETIME_FORMATS.dateTimePicker);
+    },
   },
   methods: {
     close() {

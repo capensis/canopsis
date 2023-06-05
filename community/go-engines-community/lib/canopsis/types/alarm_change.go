@@ -23,7 +23,6 @@ const (
 	AlarmChangeTypeSnooze            AlarmChangeType = "snooze"
 	AlarmChangeTypeUnsnooze          AlarmChangeType = "unsnooze"
 	AlarmChangeTypeResolve           AlarmChangeType = "resolve"
-	AlarmChangeTypeDone              AlarmChangeType = "done"
 	AlarmChangeTypeComment           AlarmChangeType = "comment"
 	AlarmChangeTypeChangeState       AlarmChangeType = "changestate"
 	AlarmChangeTypePbhEnter          AlarmChangeType = "pbhenter"
@@ -32,11 +31,16 @@ const (
 	AlarmChangeTypeUpdateStatus      AlarmChangeType = "changestatus"
 	AlarmChangeTypeActivate          AlarmChangeType = "activate"
 
-	// AlarmChangeTypeDeclareTicket is used for manual declareticket trigger which is designed
-	// to trigger webhook with declare ticket parameter.
-	AlarmChangeTypeDeclareTicket AlarmChangeType = "declareticket"
-	// AlarmChangeTypeDeclareTicketWebhook is triggered after declare ticket creation by webhook.
-	AlarmChangeTypeDeclareTicketWebhook AlarmChangeType = "declareticketwebhook"
+	AlarmChangeTypeWebhookStart                 AlarmChangeType = "webhookstart"
+	AlarmChangeTypeWebhookComplete              AlarmChangeType = "webhookcomplete"
+	AlarmChangeTypeWebhookFail                  AlarmChangeType = "webhookfail"
+	AlarmChangeTypeDeclareTicketWebhook         AlarmChangeType = "declareticketwebhook"
+	AlarmChangeTypeDeclareTicketWebhookFail     AlarmChangeType = "declareticketwebhookfail"
+	AlarmChangeTypeAutoWebhookStart             AlarmChangeType = "autowebhookstart"
+	AlarmChangeTypeAutoWebhookComplete          AlarmChangeType = "autowebhookcomplete"
+	AlarmChangeTypeAutoWebhookFail              AlarmChangeType = "autowebhookfail"
+	AlarmChangeTypeAutoDeclareTicketWebhook     AlarmChangeType = "autodeclareticketwebhook"
+	AlarmChangeTypeAutoDeclareTicketWebhookFail AlarmChangeType = "autodeclareticketwebhookfail"
 
 	// Following change types are used for manual instruction execution.
 	AlarmChangeTypeInstructionStart    AlarmChangeType = "instructionstart"
@@ -53,7 +57,6 @@ const (
 	// Following change types are used for job execution.
 	AlarmChangeTypeInstructionJobStart    AlarmChangeType = "instructionjobstart"
 	AlarmChangeTypeInstructionJobComplete AlarmChangeType = "instructionjobcomplete"
-	AlarmChangeTypeInstructionJobAbort    AlarmChangeType = "instructionjobabort"
 	AlarmChangeTypeInstructionJobFail     AlarmChangeType = "instructionjobfail"
 
 	// Following change types are used for junit.
@@ -61,6 +64,9 @@ const (
 	AlarmChangeTypeJunitTestCaseUpdate  AlarmChangeType = "junittestcaseupdate"
 
 	AlarmChangeTypeEnabled AlarmChangeType = "enabled"
+
+	// AlarmChangeTypeAutoInstructionActivate is used to activate alarm when an autoremediation triggered by create trigger is completed
+	AlarmChangeTypeAutoInstructionActivate AlarmChangeType = "autoinstructionactivate"
 )
 
 // AlarmChange is a struct containing the type of change that occured on an
@@ -87,19 +93,36 @@ func NewAlarmChange() AlarmChange {
 }
 
 func (ac *AlarmChange) GetTriggers() []string {
+	return GetTriggers(ac.Type)
+}
+
+func GetTriggers(t AlarmChangeType) []string {
 	var triggers []string
 
-	switch ac.Type {
+	switch t {
 	case AlarmChangeTypeCreateAndPbhEnter:
 		triggers = append(triggers, string(AlarmChangeTypeCreate), string(AlarmChangeTypePbhEnter))
 	case AlarmChangeTypePbhLeaveAndEnter:
 		triggers = append(triggers, string(AlarmChangeTypePbhEnter), string(AlarmChangeTypePbhLeave))
 	case AlarmChangeTypeDoubleAck:
 		triggers = append(triggers, string(AlarmChangeTypeAck))
+	case AlarmChangeTypeWebhookStart,
+		AlarmChangeTypeWebhookComplete,
+		AlarmChangeTypeWebhookFail,
+		AlarmChangeTypeDeclareTicketWebhookFail,
+		AlarmChangeTypeAutoWebhookStart,
+		AlarmChangeTypeAutoWebhookComplete,
+		AlarmChangeTypeAutoWebhookFail,
+		AlarmChangeTypeAutoDeclareTicketWebhookFail,
+		AlarmChangeTypeAutoInstructionActivate:
+		// not a trigger
+	case AlarmChangeTypeDeclareTicketWebhook,
+		AlarmChangeTypeAutoDeclareTicketWebhook:
+		triggers = append(triggers, string(AlarmChangeTypeDeclareTicketWebhook))
 	default:
-		t := string(ac.Type)
-		if t != "" {
-			triggers = append(triggers, t)
+		trigger := string(t)
+		if trigger != "" {
+			triggers = append(triggers, trigger)
 		}
 	}
 

@@ -1,41 +1,26 @@
 import { omit } from 'lodash';
 import flushPromises from 'flush-promises';
 
-export const createSettingsMocks = () => {
-  const createWidget = jest.fn();
-  const updateWidget = jest.fn();
-  const copyWidget = jest.fn();
-  const fetchActiveView = jest.fn();
+import {
+  createActiveViewModule,
+  createAuthModule,
+  createServiceModule,
+  createUserPreferenceModule,
+  createWidgetModule,
+  createWidgetTemplateModule,
+  createInfosModule,
+} from '@unit/utils/store';
 
-  return {
-    createWidget,
-    updateWidget,
-    copyWidget,
-    fetchActiveView,
-    activeViewModule: {
-      name: 'activeView',
-      actions: {
-        fetch: fetchActiveView,
-      },
-    },
-
-    widgetModule: {
-      name: 'view/widget',
-      actions: {
-        create: createWidget,
-        update: updateWidget,
-        copy: copyWidget,
-      },
-    },
-
-    authModule: {
-      name: 'auth',
-      getters: {
-        currentUserPermissionsById: {},
-      },
-    },
-  };
-};
+export const createSettingsMocks = () => ({
+  ...createAuthModule(),
+  ...createUserPreferenceModule(),
+  ...createWidgetModule(),
+  ...createServiceModule(),
+  ...createActiveViewModule(),
+  ...createWidgetTemplateModule(),
+  ...createServiceModule(),
+  ...createInfosModule(),
+});
 
 export const getWidgetRequestWithNewProperty = (widget, key, value) => ({
   ...omit(widget, ['_id']),
@@ -54,9 +39,9 @@ export const getWidgetRequestWithNewParametersProperty = (widget, key, value) =>
 });
 
 export const submitWithExpects = async (wrapper, { fetchActiveView, hideSidebar, widgetMethod, expectData }) => {
-  const submitButton = wrapper.find('button.v-btn');
+  const widgetSettings = wrapper.vm.$children[0];
 
-  submitButton.trigger('click');
+  widgetSettings.$emit('submit');
 
   await flushPromises();
 

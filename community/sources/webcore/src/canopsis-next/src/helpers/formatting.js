@@ -1,5 +1,3 @@
-import { COLORS } from '@/config';
-
 import { ENTITIES_STATES_STYLES, ENTITY_STATUS_STYLES, UNKNOWN_VALUE_STYLE } from '@/constants';
 
 import { getEntityEventColor } from '@/helpers/color';
@@ -16,23 +14,6 @@ export function formatState(value) {
   }
 
   return ENTITIES_STATES_STYLES[value];
-}
-
-/**
- * Return object that contains the state style
- *
- * @param {number} value - The state value
- * @returns {*} Object with the color, icon and text associated
- */
-export function formatImpactState(value) { // TODO: refactor the function
-  if (!COLORS.impactState[value]) {
-    return UNKNOWN_VALUE_STYLE;
-  }
-
-  return {
-    color: COLORS.impactState[value],
-    text: `${value} of ${COLORS.impactState.length - 1}`,
-  };
 }
 
 /**

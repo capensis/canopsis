@@ -1,12 +1,12 @@
 <template lang="pug">
   modal-wrapper(:title-color="color", close)
-    template(slot="title")
+    template(#title="")
       span {{ testSuite.name }}
-    template(slot="text")
+    template(#text="")
       v-layout(v-if="testSuiteHistoryPending", justify-center)
         v-progress-circular(color="primary", indeterminate)
       test-suite-history(v-else, :test-suite-history="testSuiteHistory")
-    template(slot="actions")
+    template(#actions="")
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
 </template>
 

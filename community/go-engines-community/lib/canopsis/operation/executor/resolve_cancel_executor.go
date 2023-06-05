@@ -3,11 +3,11 @@ package executor
 import (
 	"context"
 
-	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-func NewResolveCancelExecutor() operationlib.Executor {
+func NewResolveCancelExecutor() operation.Executor {
 	return &resolveCancelExecutor{}
 }
 

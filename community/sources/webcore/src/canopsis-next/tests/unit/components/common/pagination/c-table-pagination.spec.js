@@ -28,6 +28,7 @@ const stubs = {
 
 const snapshotStubs = {
   'c-records-per-page-field': true,
+  'c-pagination': true,
 };
 
 const factory = (options = {}) => shallowMount(CTablePagination, {

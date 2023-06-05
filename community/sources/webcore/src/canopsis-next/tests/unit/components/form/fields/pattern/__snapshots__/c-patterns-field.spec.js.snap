@@ -1,0 +1,112 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
+<div
+  class="layout c-patterns-field column"
+>
+  <c-collapse-panel-stub
+    outline-color="#ff5252"
+    title="Alarm patterns"
+  >
+    <c-alarm-patterns-field-stub
+      check-count-name="alarm_pattern"
+      disabled="true"
+      name="name.alarm_pattern"
+      readonly="true"
+      required="true"
+      value="[object Object]"
+      with-type="with-type"
+    />
+  </c-collapse-panel-stub>
+  <c-collapse-panel-stub
+    outline-color="#ff5252"
+    title="Entity patterns"
+  >
+    <c-entity-patterns-field-stub
+      check-count-name="entity_pattern"
+      disabled="true"
+      name="name.entity_pattern"
+      readonly="true"
+      required="true"
+      value="[object Object]"
+      with-type="with-type"
+    />
+  </c-collapse-panel-stub>
+  <c-collapse-panel-stub
+    outline-color="#ff5252"
+    title="Pbehavior patterns"
+  >
+    <c-pbehavior-patterns-field-stub
+      check-count-name="pbehavior_pattern"
+      disabled="true"
+      name="name.pbehavior_pattern"
+      readonly="true"
+      required="true"
+      value="[object Object]"
+      with-type="with-type"
+    />
+  </c-collapse-panel-stub>
+  <c-collapse-panel-stub
+    outline-color="#ff5252"
+    title="Event patterns"
+  >
+    <c-event-filter-patterns-field-stub
+      disabled="true"
+      name="name.event_pattern"
+      readonly="true"
+      required="true"
+    />
+  </c-collapse-panel-stub>
+  <c-collapse-panel-stub
+    outline-color="#ff5252"
+    title="Total entity patterns"
+  >
+    <c-entity-patterns-field-stub
+      disabled="true"
+      name="name.total_entity_pattern"
+      readonly="true"
+      required="true"
+      with-type="with-type"
+    />
+  </c-collapse-panel-stub>
+  <c-collapse-panel-stub
+    outline-color="#ff5252"
+    title="Service weather patterns"
+  >
+    <c-service-weather-patterns-field-stub
+      disabled="true"
+      name="name.weather_service_pattern"
+      required="true"
+    />
+  </c-collapse-panel-stub>
+  <div
+    class="v-messages theme--light error--text"
+  >
+    <transition-group-stub
+      class="v-messages__wrapper"
+      name="message-transition"
+      tag="div"
+    >
+      <div
+        class="v-messages__message"
+      >
+        At least one pattern has to be defined. Please define filter patterns for rule
+      </div>
+    </transition-group-stub>
+  </div>
+</div>
+`;
+
+exports[`c-patterns-field Renders \`c-patterns-field\` with default props 1`] = `
+<div
+  class="layout c-patterns-field column"
+>
+  <!---->
+  <!---->
+  <!---->
+  <!---->
+  <!---->
+  <!---->
+  <!---->
+</div>
+`;

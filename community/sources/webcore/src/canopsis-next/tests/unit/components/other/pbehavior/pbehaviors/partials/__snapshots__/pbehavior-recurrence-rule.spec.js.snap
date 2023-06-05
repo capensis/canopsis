@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehavior-recurrence-rule Renders \`pbehavior-recurrence-rule\` with pbehavior 1`] = `
+<div
+  class="layout row"
+>
+  <div
+    class="flex offset-xs3 xs6"
+  >
+    <recurrence-rule-information-stub
+      rrule="RRULE"
+    />
+    <pbehavior-recurrence-rule-periods-stub
+      class="mt-2"
+      pbehavior="[object Object]"
+    />
+  </div>
+</div>
+`;

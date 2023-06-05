@@ -20,6 +20,7 @@ export const entitiesUserMixin = {
       fetchUsersListWithPreviousParams: 'fetchListWithPreviousParams',
       createUser: 'create',
       updateUser: 'update',
+      updateCurrentUser: 'updateCurrentUser',
       removeUser: 'remove',
     }),
 

@@ -124,7 +124,10 @@ export default {
             value: tab.title,
             validationRules: 'required',
           },
-          action: title => this.updateViewTabAndFetch({ id: tab._id, data: { ...tab, title } }),
+          action: title => this.updateViewTabAndFetch({
+            id: tab._id,
+            data: { ...tab, view: this.view._id, title },
+          }),
         },
       });
     },
@@ -213,7 +216,7 @@ export default {
 
 <style lang="scss" scoped>
   .view-tabs.hidden {
-    & /deep/ > .v-tabs__bar {
+    & ::v-deep > .v-tabs__bar {
       display: none;
     }
   }
@@ -225,12 +228,12 @@ export default {
     .tabs-editing & {
       cursor: move;
 
-      & /deep/ .v-tabs__item {
+      & ::v-deep .v-tabs__item {
         cursor: move;
       }
     }
 
-    & /deep/ .v-tabs__item--disabled {
+    & ::v-deep .v-tabs__item--disabled {
       color: #fff;
       opacity: 1;
 

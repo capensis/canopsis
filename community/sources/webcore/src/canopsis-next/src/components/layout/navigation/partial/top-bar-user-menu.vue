@@ -1,11 +1,16 @@
 <template lang="pug">
   v-menu(bottom, offset-y, offset-x)
-    v-btn.white--text(slot="activator", flat) {{ userName }}
+    template(#activator="{ on }")
+      v-btn.white--text(v-on="on", flat) {{ userName }}
     v-list.py-0
       v-list-tile(@click="showEditUserModal")
         v-list-tile-avatar
-          v-icon(color="black") person
-        v-list-tile-title.text-uppercase.body-2 {{ $t('users.seeProfile') }}
+          v-icon person
+        v-list-tile-title.text-uppercase.body-2 {{ $t('user.seeProfile') }}
+      v-list-tile(:to="profilePatternsLink", active-class="")
+        v-list-tile-avatar
+          v-icon filter_list
+        v-list-tile-title.text-uppercase.body-2 {{ $t('pattern.patterns') }}
       v-list-tile.logout-btn(@click="logoutHandler")
         v-list-tile-avatar
           v-icon(color="error") exit_to_app
@@ -19,8 +24,13 @@ import { authMixin } from '@/mixins/auth';
 import { entitiesUserMixin } from '@/mixins/entities/user';
 
 export default {
+  inject: ['$system'],
   mixins: [authMixin, entitiesUserMixin],
   computed: {
+    profilePatternsLink() {
+      return { name: ROUTES_NAMES.profilePatterns };
+    },
+
     userName() {
       return this.currentUser.name || this.currentUser._id;
     },
@@ -34,26 +44,24 @@ export default {
           user: this.currentUser,
           onlyUserPrefs: true,
           action: async (data) => {
-            await this.updateUserWithPopup({ data, id: this.currentUser._id });
+            await this.updateCurrentUser({ data });
+
+            this.$popups.success({ text: this.$t('success.default', data.ui_language) });
 
             await this.fetchCurrentUser();
+
+            this.$system.setTheme(this.currentUser.ui_theme);
           },
         },
       });
     },
 
-    logoutHandler() {
-      return this.logout({ redirectTo: { name: ROUTES_NAMES.login } });
-    },
+    async logoutHandler() {
+      await this.logout({
+        redirect: () => this.$router.replaceAsync({ name: ROUTES_NAMES.login }),
+      });
 
-    async updateUserWithPopup({ data, id }) {
-      try {
-        await this.updateUser({ data, id });
-
-        this.$popups.success({ text: this.$t('success.default', data.ui_language) });
-      } catch (err) {
-        this.$popups.error({ text: this.$t('errors.default') });
-      }
+      this.$system.setTheme();
     },
   },
 };

@@ -10,7 +10,8 @@ Ces API ont connu 4 versions différentes. L'APIv4 est la version actuelle.
 
 ### APIv4
 
-La documentation des nouvelles APIv4 est disponible [par le biais de Swagger](./swagger).
+La documentation des APIv4 `edition community` est disponible [par le biais de Swagger-community](./swagger-community/).  
+La documentation des APIv4 `edition pro` est disponible [par le biais de Swagger-pro](./swagger-pro/).
 
 Ces nouvelles API suivent l'[OpenAPI Specification 2.0](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/2.0.md).
 
@@ -18,6 +19,10 @@ Ces nouvelles API suivent l'[OpenAPI Specification 2.0](https://github.com/OAI/
     Les API REST imposent aux clients de respecter la spécification HTTP, et notamment de prendre en charge toute [redirection HTTP](https://www.rfc-editor.org/rfc/rfc7231#section-6.4) qui serait envoyée par l'API.
 
     Une erreur courante, par exemple avec l'outil `curl` (est sa bibliothèque), est que certains clients HTTP n'activent pas la prise en charge des redirections HTTP par défaut, ce qui est incorrect. Veillez donc à toujours utiliser les options de type `curl -L` en ligne de commande (ou l'option `CURLOPT_FOLLOWLOCATION` dans sa bibliothèque) afin de vous interfacer correctement avec l'ensemble des API REST.
+
+!!! note "Note"
+    Il est possible d'activer la documentation swagger de la version installée en ajoutant l'option `-docs` aux options de démarrage du binaire `canopsis-api`. 
+    Une url `/swagger/index.html` sera ainsi accessible et disponible derrière le port d'écoute de l'api ( par défaut TCP/8082 )
 
 ### Anciennes API
 
@@ -40,9 +45,83 @@ Si l'API est interrogée via un navigateur (Firefox, Chrome, Safari, etc) ou un 
 
 L'usage de l'URL du moteur `canopsis-api` est possible pour des requêtes dites "classiques", par exemple via des scripts, via l'outil `curl` ou encore via des webhooks de solutions externes.
 
+
+### Authentification
+
+#### Authentification basique HTTP
+
+L'API Canopsis supporte l'authentification [basique HTTP](https://fr.wikipedia.org/wiki/Authentification_HTTP).  
+Exemple : 
+
+```
+curl -X GET -u "user:mdp" -H "Content-Type: application/json" "http://localhost:8082/api/v4/cat/healthcheck/status"
+```
+
+#### Authentification par token
+
+Il est possible d'utiliser un jeton (token) d'authentification pour manipuler l'API.  
+Ce jeton s'obtient grâce à une authentification sur la route `/api/v4/login`.  
+Le jeton est ensuite passé dans un entête `Authorization:Bearer {{ token }}`.  
+
+Exemple :
+
+Obtention du jeton
+
+```
+curl -X POST -H "Content-Type: application/json" -d '{"username" : "mon_user", "password" : "mon_pass"}' "http://localhost:8082/api/v4/login"
+{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJjYW5vcHNpcyIsImlzcyI6ImNhbm9wc2lzIiwiZXhwIjoxNjc2MTk2Nzk5LCJpYXQiOjE2NzM1MTgzOTksImp0aSI6ImFiNWM3MTllLWY2YzktNGI1ZS05MTQ4LWZkZWRjN2NkMjM3YiJ9.5tV7L9K-sBswjyXjO8aOQFMwor_LqoGacvg5RuBF51A"}
+```
+
+Utilisation du jeton
+
+```
+curl -X GET -H "Content-Type: application/json" -H "Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJjYW5vcHNpcyIsImlzcyI6ImNhbm9wc2lzIiwiZXhwIjoxNjc2MTk2Nzk5LCJpYXQiOjE2NzM1MTgzOTksImp0aSI6ImFiNWM3MTllLWY2YzktNGI1ZS05MTQ4LWZkZWRjN2NkMjM3YiJ9.5tV7L9K-sBswjyXjO8aOQFMwor_LqoGacvg5RuBF51A" "http://localhost:8082/api/v4/cat/healthcheck/status"
+```
+
+!!! note "Note"
+
+    Le jeton peut être soumis à un délai d'expiration.  
+    RDV dans le profil de l'utilisateur dont vous souhaitez utiliser le jeton.  
+    ![token1](./img/token1.png)
+
+#### Clé d'authentification / Authkey
+
+Canopsis permet une authentification à l'API par `authkey`.
+Cette `authkey`, disponible pour tout utilisateur enregistré dans Canopsis, est utilisable directement dans l'URL d'API appelée ou
+en tant qu'entête d'une requête vers l'API.
+
+!!! note "Note"
+
+    Vous pouvez récupérer la clé d'authentification d'un utilisateur depuis l'interface graphique.
+    ![authkey1](./img/authkey1.png)
+    ![authkey1](./img/authkey2.png)
+
+**Dans l'URL / querystring**
+
+Dans ce cas, il vous suffit d'ajouter le paramètre `authkey` dans l'URL.
+Exemple avec la commande cURL :  
+
+```
+curl -X GET -H "Content-Type: application/json" "http://localhost:8082/api/v4/cat/healthcheck/status?authkey=5ba7537d-132d-49e1-8581-8c057de2b558"
+```
+
+**Entête (headers)**
+
+La clé d'authentification peut également être passée en tant qu'entête de la requête HTTP à l'API.
+Le nom de l'entête est dans ce cas `x-canopsis-authkey`.
+Exemple avec la commande cURL :
+
+```
+curl -X GET -H "Content-Type: application/json" -H "x-canopsis-authkey: 5ba7537d-132d-49e1-8581-8c057de2b558" "http://localhost:8082/api/v4/cat/healthcheck/status"
+```
+
+## Filtres
+
+* [Langage utilisé par les filtres](filtres/index.md)
+
 ## Structure des évènements
 
-* [Structure des évènements](struct-event.md)
+* [Structure des évènements](structures/index.md)
 
 ## Collections de base de données
 
@@ -51,4 +130,4 @@ L'usage de l'URL du moteur `canopsis-api` est possible pour des requêtes dites 
 
 ## Aides au développement
 
-* [Développement d'un linkbuilder](dev-linkbuilder.md)
+* [Développement d'un linkbuilder](linkbuilder/index.md)

@@ -2,6 +2,7 @@ package types
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"html/template"
@@ -17,6 +18,16 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
 	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
+)
+
+const (
+	DurationUnitSecond = "s"
+	DurationUnitMinute = "m"
+	DurationUnitHour   = "h"
+	DurationUnitDay    = "d"
+	DurationUnitWeek   = "w"
+	DurationUnitMonth  = "M"
+	DurationUnitYear   = "y"
 )
 
 // CpsNumber is here for compatibility with old python engines.
@@ -66,6 +77,10 @@ func NewCpsTime(timestamp ...int64) CpsTime {
 // MarshalJSON converts from CpsTime to timestamp as bytes
 func (t CpsTime) MarshalJSON() ([]byte, error) {
 	ts := t.Time.Unix()
+	if ts <= 0 {
+		return []byte("null"), nil
+	}
+
 	stamp := fmt.Sprint(ts)
 
 	return []byte(stamp), nil
@@ -73,6 +88,9 @@ func (t CpsTime) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON converts from string to CpsTime
 func (t *CpsTime) UnmarshalJSON(b []byte) error {
+	if string(b) == "null" {
+		return nil
+	}
 	if nl := bytes.TrimPrefix(b, []byte("{\"$numberLong\":\"")); len(nl) < len(b) {
 		// json value can be recorded as "tstop":{"$numberLong":"4733481300"}
 		nl = bytes.TrimSuffix(nl, []byte("\"}"))
@@ -151,29 +169,68 @@ func (t CpsTime) EqualDay(u CpsTime) bool {
 	return t.Time.In(time.UTC).Format(dateFormat) == u.Time.In(time.UTC).Format(dateFormat)
 }
 
+type MicroTime struct {
+	time.Time
+}
+
+func NewMicroTime() MicroTime {
+	return MicroTime{Time: time.Now()}
+}
+
+func (t MicroTime) MarshalJSON() ([]byte, error) {
+	unixMicro := t.Time.UnixMicro()
+	if unixMicro <= 0 {
+		return json.Marshal(nil)
+	}
+
+	return json.Marshal(unixMicro)
+}
+
+func (t *MicroTime) UnmarshalJSON(b []byte) error {
+	var unixMicro int64
+	err := json.Unmarshal(b, &unixMicro)
+	if err != nil {
+		return err
+	}
+	if unixMicro <= 0 {
+		*t = MicroTime{}
+		return nil
+	}
+
+	*t = MicroTime{Time: time.UnixMicro(unixMicro)}
+	return nil
+}
+
 // DurationWithUnit represent duration with user-preferred units
 type DurationWithUnit struct {
 	Value int64  `bson:"value" json:"value" binding:"required,min=1"`
 	Unit  string `bson:"unit" json:"unit" binding:"required,oneof=s m h d w M y"`
 }
 
+func NewDurationWithUnit(value int64, unit string) DurationWithUnit {
+	return DurationWithUnit{
+		Value: value,
+		Unit:  unit,
+	}
+}
+
 func (d DurationWithUnit) AddTo(t CpsTime) CpsTime {
 	var r time.Time
 
 	switch d.Unit {
-	case "s":
+	case DurationUnitSecond:
 		r = t.Add(time.Duration(d.Value) * time.Second)
-	case "m":
+	case DurationUnitMinute:
 		r = t.Add(time.Duration(d.Value) * time.Minute)
-	case "h":
+	case DurationUnitHour:
 		r = t.Add(time.Duration(d.Value) * time.Hour)
-	case "d":
+	case DurationUnitDay:
 		r = t.AddDate(0, 0, int(d.Value))
-	case "w":
+	case DurationUnitWeek:
 		r = t.AddDate(0, 0, 7*int(d.Value))
-	case "M":
+	case DurationUnitMonth:
 		r = t.AddDate(0, int(d.Value), 0)
-	case "y":
+	case DurationUnitYear:
 		r = t.AddDate(int(d.Value), 0, 0)
 	default:
 		r = t.Add(time.Duration(d.Value) * time.Second)
@@ -186,19 +243,19 @@ func (d DurationWithUnit) SubFrom(t CpsTime) CpsTime {
 	var r time.Time
 
 	switch d.Unit {
-	case "s":
+	case DurationUnitSecond:
 		r = t.Add(-time.Duration(d.Value) * time.Second)
-	case "m":
+	case DurationUnitMinute:
 		r = t.Add(-time.Duration(d.Value) * time.Minute)
-	case "h":
+	case DurationUnitHour:
 		r = t.Add(-time.Duration(d.Value) * time.Hour)
-	case "d":
+	case DurationUnitDay:
 		r = t.AddDate(0, 0, -int(d.Value))
-	case "w":
+	case DurationUnitWeek:
 		r = t.AddDate(0, 0, -7*int(d.Value))
-	case "M":
+	case DurationUnitMonth:
 		r = t.AddDate(0, -int(d.Value), 0)
-	case "y":
+	case DurationUnitYear:
 		r = t.AddDate(-int(d.Value), 0, 0)
 	default:
 		r = t.Add(-time.Duration(d.Value) * time.Second)
@@ -220,35 +277,35 @@ func (d DurationWithUnit) To(unit string) (DurationWithUnit, error) {
 	in := int64(0)
 
 	switch d.Unit {
-	case "m":
-		if unit == "s" {
+	case DurationUnitMinute:
+		if unit == DurationUnitSecond {
 			in = 60
 		}
-	case "h":
+	case DurationUnitHour:
 		switch unit {
-		case "m":
+		case DurationUnitMinute:
 			in = 60
-		case "s":
+		case DurationUnitSecond:
 			in = 60 * 60
 		}
-	case "d":
+	case DurationUnitDay:
 		switch unit {
-		case "h":
+		case DurationUnitHour:
 			in = 24
-		case "m":
+		case DurationUnitMinute:
 			in = 24 * 60
-		case "s":
+		case DurationUnitSecond:
 			in = 24 * 60 * 60
 		}
-	case "w":
+	case DurationUnitWeek:
 		switch unit {
-		case "d":
+		case DurationUnitDay:
 			in = 7
-		case "h":
+		case DurationUnitHour:
 			in = 7 * 24
-		case "m":
+		case DurationUnitMinute:
 			in = 7 * 24 * 60
-		case "s":
+		case DurationUnitSecond:
 			in = 7 * 24 * 60 * 60
 		}
 	}
@@ -263,6 +320,10 @@ func (d DurationWithUnit) To(unit string) (DurationWithUnit, error) {
 
 func (d DurationWithUnit) String() string {
 	return fmt.Sprintf("%d%s", d.Value, d.Unit)
+}
+
+func (d DurationWithUnit) IsZero() bool {
+	return d == DurationWithUnit{}
 }
 
 func ParseDurationWithUnit(str string) (DurationWithUnit, error) {
@@ -295,6 +356,23 @@ func ParseDurationWithUnit(str string) (DurationWithUnit, error) {
 type DurationWithEnabled struct {
 	DurationWithUnit `bson:",inline"`
 	Enabled          *bool `bson:"enabled" json:"enabled" binding:"required"`
+}
+
+func NewDurationWithEnabled(value int64, unit string, enabled *bool) DurationWithEnabled {
+	return DurationWithEnabled{
+		DurationWithUnit: DurationWithUnit{
+			Value: value,
+			Unit:  unit,
+		},
+		Enabled: enabled,
+	}
+}
+
+func IsDurationEnabledAndValid(durationWithEnabled *DurationWithEnabled) bool {
+	return durationWithEnabled != nil &&
+		durationWithEnabled.Enabled != nil &&
+		*durationWithEnabled.Enabled &&
+		durationWithEnabled.Value > 0
 }
 
 func listOfInterfaceToString(v []interface{}) (string, error) {
@@ -375,21 +453,50 @@ func InterfaceToStringSlice(v interface{}) ([]string, error) {
 // a unix timestamp is returned).
 func AsInteger(value interface{}) (int64, bool) {
 	switch typedValue := value.(type) {
+	case float32:
+		return int64(math.Round(float64(typedValue))), true
 	case float64:
-		return int64(math.Round(value.(float64))), true
-	case int64:
-		return typedValue, true
-	case uint64:
-		return int64(typedValue), true
+		return int64(math.Round(typedValue)), true
 	case int:
 		return int64(typedValue), true
+	case int8:
+		return int64(typedValue), true
+	case int16:
+		return int64(typedValue), true
+	case int32:
+		return int64(typedValue), true
+	case int64:
+		return typedValue, true
 	case uint:
+		return int64(typedValue), true
+	case uint8:
+		return int64(typedValue), true
+	case uint16:
+		return int64(typedValue), true
+	case uint32:
+		return int64(typedValue), true
+	case uint64:
 		return int64(typedValue), true
 	case CpsNumber:
 		return int64(typedValue), true
+	case *CpsNumber:
+		if typedValue == nil {
+			return 0, false
+		}
+		return int64(*typedValue), true
 	case time.Time:
 		return typedValue.Unix(), true
+	case *time.Time:
+		if typedValue == nil {
+			return 0, false
+		}
+		return typedValue.Unix(), true
 	case CpsTime:
+		return typedValue.Unix(), true
+	case *CpsTime:
+		if typedValue == nil {
+			return 0, false
+		}
 		return typedValue.Unix(), true
 	default:
 		return 0, false

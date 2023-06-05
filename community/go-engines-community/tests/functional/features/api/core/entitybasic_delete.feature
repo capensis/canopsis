@@ -39,3 +39,11 @@ Feature: Delete a entity basic
       "error": "entity is linked to alarm"
     }
     """
+
+  Scenario: given delete request should delete entity with type connector and unlink from component
+    When I am admin
+    When I do DELETE /api/v4/entitybasics?_id=test-entitybasic-to-delete-connector/test-entitybasic-to-delete-connector-name
+    Then the response code should be 204
+    When I do GET /api/v4/entitybasics?_id=test-entitybasic-component-to-link-with-deleted-connector
+    Then the response code should be 200
+    Then the response key "connector" should not exist

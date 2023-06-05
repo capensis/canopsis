@@ -7,13 +7,13 @@
         :color="hasChildrenError ? 'error' : 'primary'"
       ) {{ operationNumber }}
     v-flex(xs11)
-      v-layout(row)
+      v-layout(row, justify-space-between)
         v-flex(xs11)
           v-layout(row)
             c-expand-btn.operation-expand(
               v-if="!disabled",
               v-model="expanded",
-              :color="!expanded && hasChildrenError ? 'error' : 'grey darken-3'"
+              :color="!expanded && hasChildrenError ? 'error' : ''"
             )
             v-layout(column)
               v-text-field(
@@ -52,13 +52,12 @@
                     :jobs="operation.jobs"
                   )
                   jobs-select(v-if="!disabled", v-field="operation.jobs")
-        v-flex.mt-1(xs1)
-          v-layout(justify-center)
-            c-action-btn(v-if="!disabled", type="delete", @click="$emit('remove')")
+        span
+          c-action-btn.mt-1(v-if="!disabled", type="delete", @click="$emit('remove')")
 </template>
 
 <script>
-import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
+import { isOmitEqual } from '@/helpers/equal';
 
 import { remediationInstructionStepOperationToForm } from '@/helpers/forms/remediation-instruction';
 

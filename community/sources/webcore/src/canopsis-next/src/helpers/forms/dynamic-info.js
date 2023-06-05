@@ -1,30 +1,24 @@
-import { enabledToForm } from '@/helpers/forms/shared/common';
+import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
+
+import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/forms/filter';
 
 /**
  * @typedef { 'maintenance' | 'pause' } DisableDuringPeriods
  */
 
 /**
- * @typedef {Object} DynamicInfo
+ * @typedef {FilterPatterns} DynamicInfo
  * @property {string} _id
  * @property {boolean} enabled
  * @property {string} name
  * @property {string} description
  * @property {DisableDuringPeriods[]} disable_during_periods
  * @property {Infos[]} infos
- * @property {Object[]} alarm_patterns
- * @property {Object[]} entity_patterns
- */
-
-/**
- * @typedef {Object} DynamicInfoPatternsForm
- * @property {Object[]} alarm_patterns
- * @property {Object[]} entity_patterns
  */
 
 /**
  * @typedef {DynamicInfo} DynamicInfoForm
- * @property {DynamicInfoPatternsForm} patterns
+ * @property {FilterPatternsForm} patterns
  */
 
 /**
@@ -34,16 +28,17 @@ import { enabledToForm } from '@/helpers/forms/shared/common';
  * @returns {DynamicInfoForm}
  */
 export const dynamicInfoToForm = (dynamicInfo = {}) => ({
-  _id: dynamicInfo._id || '',
-  name: dynamicInfo.name || '',
-  enabled: enabledToForm(dynamicInfo.enabled),
-  description: dynamicInfo.description || '',
-  disable_during_periods: dynamicInfo.disable_during_periods || [],
+  _id: dynamicInfo._id ?? '',
+  name: dynamicInfo.name ?? '',
+  enabled: dynamicInfo.enabled ?? true,
+  description: dynamicInfo.description ?? '',
+  disable_during_periods: dynamicInfo.disable_during_periods ?? [],
   infos: dynamicInfo.infos ? [...dynamicInfo.infos] : [],
-  patterns: {
-    alarm_patterns: dynamicInfo.alarm_patterns || [],
-    entity_patterns: dynamicInfo.entity_patterns || [],
-  },
+  patterns: filterPatternsToForm(
+    dynamicInfo,
+    [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
+    [OLD_PATTERNS_FIELDS.alarm, OLD_PATTERNS_FIELDS.entity],
+  ),
 });
 
 /**
@@ -57,6 +52,6 @@ export const formToDynamicInfo = (form) => {
 
   return {
     ...dynamicInfo,
-    ...patterns,
+    ...formFilterToPatterns(patterns, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
   };
 };
