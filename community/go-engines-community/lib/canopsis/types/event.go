@@ -179,13 +179,13 @@ type Event struct {
 	// Tags contains external tags for alarm.
 	Tags map[string]string `bson:"tags" json:"tags"`
 
-	MetaAlarmRuleID    string `bson:"metaalarm_rule_id" json:"metaalarm_rule_id"`
-	MetaAlarmValuePath string `bson:"metaalarm_value_path" json:"metaalarm_value_path"`
+	MetaAlarmRuleID    string `bson:"metaalarm_rule_id,omitempty" json:"metaalarm_rule_id,omitempty"`
+	MetaAlarmValuePath string `bson:"metaalarm_value_path,omitempty" json:"metaalarm_value_path,omitempty"`
 
-	MetaAlarmParents  *[]string `bson:"ma_parents" json:"ma_parents"`
-	MetaAlarmChildren *[]string `bson:"ma_children" json:"ma_children"`
+	MetaAlarmParents  []string `bson:"ma_parents,omitempty" json:"ma_parents,omitempty"`
+	MetaAlarmChildren []string `bson:"ma_children,omitempty" json:"ma_children,omitempty"`
 	// DisplayName is used for manual meta alarms.
-	DisplayName string `bson:"display_name" json:"display_name"`
+	DisplayName string `bson:"display_name,omitempty" json:"display_name,omitempty"`
 
 	PbehaviorInfo PbehaviorInfo `bson:"pbehavior_info" json:"pbehavior_info"`
 
