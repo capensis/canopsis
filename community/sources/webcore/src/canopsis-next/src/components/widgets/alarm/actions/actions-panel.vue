@@ -1,5 +1,5 @@
 <template lang="pug">
-  shared-actions-panel(:actions="actions", :small="small")
+  shared-actions-panel(:actions="actions", :small="small", :wrap="wrap")
 </template>
 
 <script>
@@ -61,6 +61,10 @@ export default {
       default: false,
     },
     small: {
+      type: Boolean,
+      default: false,
+    },
+    wrap: {
       type: Boolean,
       default: false,
     },

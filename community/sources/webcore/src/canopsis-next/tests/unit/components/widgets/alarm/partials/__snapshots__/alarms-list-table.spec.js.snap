@@ -84,6 +84,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
                   selectedtag="tag"
                 />
                 <!---->
+                <!---->
                 <i
                   aria-hidden="true"
                   class="v-icon material-icons theme--light"
@@ -305,6 +306,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   selectedtag=""
                 />
                 <!---->
+                <!---->
                 <i
                   aria-hidden="true"
                   class="v-icon material-icons theme--light"
@@ -420,6 +422,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
                 <!---->
                 <i
                   aria-hidden="true"
@@ -539,6 +542,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   selectedtag=""
                 />
                 <!---->
+                <!---->
                 <i
                   aria-hidden="true"
                   class="v-icon material-icons theme--light"
@@ -657,6 +661,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                   selectedtag=""
                 />
                 <!---->
+                <!---->
               </th>
               <th
                 aria-label=""
@@ -671,6 +676,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
                 <!---->
                 <i
                   aria-hidden="true"

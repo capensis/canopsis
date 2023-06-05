@@ -1,23 +1,32 @@
-import Sortable from 'sortablejs';
 import { throttle } from 'lodash';
 
-export const widgetResizeAlarmMixin = {
+export const widgetColumnResizingAlarmMixin = {
+  props: {
+    resizingColumnThrottleDelay: {
+      type: Number,
+      default: 10,
+    },
+  },
   data() {
     return {
       resizingMode: false,
       resizingColumnIndex: null,
       percentsInPixel: null,
-      columnWidthByField: {},
-      columnOrderByField: {},
+      columnsWidthByField: {},
+      columnsMinWidthByField: {},
       aggregatedMovementX: 0,
     };
   },
   created() {
-    this.throttledResizeColumnByDiff = throttle(this.resizeColumnByDiff, 10);
+    this.throttledResizeColumnByDiff = throttle(this.resizeColumnByDiff, this.resizingColumnThrottleDelay);
   },
   beforeDestroy() {
     this.finishColumnResize();
-    this.finishColumnSortable();
+  },
+  watch: {
+    resizingMode() {
+      this.calculateColumnsWidths();
+    },
   },
   computed: {
     tableRow() {
@@ -29,59 +38,28 @@ export const widgetResizeAlarmMixin = {
     },
   },
   methods: {
+    enableResizingMode() {
+      this.resizingMode = true;
+    },
+
+    disableResizingMode() {
+      this.resizingMode = false;
+    },
+
     toggleResizingMode() {
-      this.resizingMode = !this.resizingMode;
-
-      this.calculateColumnsWidths();
-      this.startColumnSortable();
+      return this.resizingMode ? this.disableResizingMode() : this.enableResizingMode();
     },
 
-    calculateInitialSorting() {
-      this.columnOrderByField = this.headers.reduce((acc, { value }, index) => {
-        acc[value] = index;
-
-        return acc;
-      }, {});
-    },
-
-    getColumnPositionByField(field) {
-      return this.columnOrderByField[field];
-    },
-
-    handleColumnSort({ related, dragged }) {
-      const draggedItemIndex = this.headers.findIndex(({ value }) => value === dragged.dataset.value);
-      const relatedItemIndex = this.headers.findIndex(({ value }) => value === related.dataset.value);
-
-      const copiedHeaders = [...this.headers];
-
-      const [item] = copiedHeaders.splice(draggedItemIndex, 1);
-
-      copiedHeaders.splice(relatedItemIndex, 0, item);
-
-      this.columnOrderByField = copiedHeaders.reduce((acc, { value }, index) => {
-        acc[value] = index;
-
-        return acc;
-      }, {});
-    },
-
-    startColumnSortable() {
-      this.calculateInitialSorting();
-
-      this.sortableInstance = Sortable.create(this.tableRow, {
-        draggable: '.alarms-list-table__draggable-column',
-        onMove: this.handleColumnSort,
-        direction: 'horizontal',
-      });
-    },
-
-    finishColumnSortable() {
-      this.sortableInstance?.destroy();
-      this.sortableInstance = null;
+    setColumnsWidth(columnsWidth) {
+      this.columnsWidthByField = { ...columnsWidth };
     },
 
     getColumnWidthByField(field) {
-      return this.columnWidthByField[field];
+      return this.columnsWidthByField[field];
+    },
+
+    getColumnMinWidthByField(field) {
+      return this.columnsMinWidthByField[field];
     },
 
     setPercentsInPixel() {
@@ -93,19 +71,34 @@ export const widgetResizeAlarmMixin = {
     calculateColumnsWidths() {
       this.setPercentsInPixel();
 
-      this.columnWidthByField = [...this.headerCells].reduce((acc, headerElement) => {
+      const { columnsWidthByField, columnsMinWidthByField } = [...this.headerCells].reduce((acc, headerElement) => {
         if (headerElement.dataset?.value) {
-          const { width } = headerElement.getBoundingClientRect();
+          const { value } = headerElement.dataset;
+          const { width: headerWidth } = headerElement.getBoundingClientRect();
+          const headerContentElement = headerElement.querySelector('span');
+          const { width: contentWidth } = headerContentElement.getBoundingClientRect();
 
-          acc[headerElement.dataset.value] = width * this.percentsInPixel;
+          acc.columnsWidthByField[value] = headerWidth * this.percentsInPixel;
+          /**
+           * 24 - max padding size
+           * 22 - max sort position icon width
+           * 16 - max sort direction icon width
+           */
+          acc.columnsMinWidthByField[value] = (24 + 22 + 16 + contentWidth) * this.percentsInPixel;
         }
 
         return acc;
-      }, {});
+      }, {
+        columnsWidthByField: {},
+        columnsMinWidthByField: {},
+      });
+
+      this.columnsWidthByField = columnsWidthByField;
+      this.columnsMinWidthByField = columnsMinWidthByField;
     },
 
-    getNormalizedWidth(newWidth) {
-      return Math.max(newWidth, 8);
+    getNormalizedWidth(field, newWidth) {
+      return Math.max(newWidth, this.getColumnMinWidthByField(field));
     },
 
     resizeColumnByDiff(index) {
@@ -119,8 +112,8 @@ export const widgetResizeAlarmMixin = {
       const previousLeftColumnWidth = this.getColumnWidthByField(resizingLeftColumn);
       const previousRightColumnWidth = this.getColumnWidthByField(resizingRightColumn);
 
-      let newLeftColumnWidth = this.getNormalizedWidth(previousLeftColumnWidth + diff);
-      let newRightColumnWidth = this.getNormalizedWidth(previousRightColumnWidth - diff);
+      let newLeftColumnWidth = this.getNormalizedWidth(resizingLeftColumn, previousLeftColumnWidth + diff);
+      let newRightColumnWidth = this.getNormalizedWidth(resizingRightColumn, previousRightColumnWidth - diff);
 
       const resultLeftDiff = Math.abs(newLeftColumnWidth - previousLeftColumnWidth);
       const resultRightDiff = Math.abs(newRightColumnWidth - previousRightColumnWidth);
@@ -150,7 +143,7 @@ export const widgetResizeAlarmMixin = {
            */
           if (value) {
             const affectedHeaderWidth = this.getColumnWidthByField(value);
-            const newAffectedHeaderWidth = this.getNormalizedWidth(affectedHeaderWidth - remainderDiff);
+            const newAffectedHeaderWidth = this.getNormalizedWidth(value, affectedHeaderWidth - remainderDiff);
 
             affectedHeadersWidths[value] = newAffectedHeaderWidth;
 
@@ -174,8 +167,8 @@ export const widgetResizeAlarmMixin = {
         }
       }
 
-      this.columnWidthByField = {
-        ...this.columnWidthByField,
+      this.columnsWidthByField = {
+        ...this.columnsWidthByField,
         ...affectedHeadersWidths,
         [resizingLeftColumn]: newLeftColumnWidth,
         [resizingRightColumn]: newRightColumnWidth,
