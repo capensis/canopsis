@@ -1782,6 +1782,57 @@ instruction:
       - job: test-job-action-remediation-triggers-3
         stop_on_fail: false
 
+  instruction_action_remediation_triggers_9:
+    <<: *instruction_auto
+    _id: test-instruction-action-remediation-triggers-9
+    name: test-instruction-action-remediation-triggers-9-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-action-remediation-triggers-9
+    alarm_pattern:
+    timeout_after_execution:
+      value: 2
+      unit: s
+    jobs:
+      - job: test-job-action-remediation-triggers-3
+        stop_on_fail: false
+
+  instruction_action_remediation_triggers_second_1:
+    <<: *instruction_auto
+    _id: test-instruction-action-remediation-triggers-second-1
+    name: test-instruction-action-remediation-triggers-second-1-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-action-remediation-triggers-second-1
+    alarm_pattern:
+    timeout_after_execution:
+      value: 2
+      unit: s
+    jobs:
+      - job: test-job-action-remediation-triggers-2
+        stop_on_fail: false
+
+  instruction_action_remediation_triggers_second_2:
+    <<: *instruction_auto
+    _id: test-instruction-action-remediation-triggers-second-2
+    name: test-instruction-action-remediation-triggers-second-2-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-action-remediation-triggers-second-2
+    alarm_pattern:
+    timeout_after_execution:
+      value: 2
+      unit: s
+    jobs:
+      - job: test-job-action-remediation-triggers-3
+        stop_on_fail: false
+
   test-instruction-to-stats-summary-get-4:
     <<: *instruction_manual
     _id: test-instruction-to-stats-summary-get-4
