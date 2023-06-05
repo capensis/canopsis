@@ -1,4 +1,4 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
@@ -16,18 +16,26 @@ const stubs = {
   'text-widget': true,
   'counter-widget': true,
   'testing-weather-widget': true,
+  'map-widget': true,
+  'bar-chart-widget': true,
+  'line-chart-widget': true,
+  'pie-chart-widget': true,
+  'numbers-widget': true,
 };
-
-const snapshotFactory = (options = {}) => mount(WidgetWrapper, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 describe('widget-wrapper', () => {
   const types = Object.values(WIDGET_TYPES);
   const tabId = 'tab-id';
+
+  const snapshotFactory = generateRenderer(WidgetWrapper, {
+    localVue,
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   it('Renders `widget-wrapper` with default props', () => {
     const wrapper = snapshotFactory({
@@ -43,7 +51,7 @@ describe('widget-wrapper', () => {
       store: createMockedStoreModules([{
         name: 'info',
         getters: {
-          edition: CANOPSIS_EDITION.cat,
+          edition: CANOPSIS_EDITION.pro,
         },
       }]),
     });
@@ -65,7 +73,7 @@ describe('widget-wrapper', () => {
       store: createMockedStoreModules([{
         name: 'info',
         getters: {
-          edition: CANOPSIS_EDITION.core,
+          edition: CANOPSIS_EDITION.community,
         },
       }]),
     });
@@ -87,7 +95,7 @@ describe('widget-wrapper', () => {
       store: createMockedStoreModules([{
         name: 'info',
         getters: {
-          edition: CANOPSIS_EDITION.cat,
+          edition: CANOPSIS_EDITION.pro,
         },
       }]),
     });
@@ -95,7 +103,7 @@ describe('widget-wrapper', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `widget-wrapper` with widget title ', () => {
+  it('Renders `widget-wrapper` with widget title', () => {
     const wrapper = snapshotFactory({
       propsData: {
         widget: {
@@ -110,7 +118,7 @@ describe('widget-wrapper', () => {
       store: createMockedStoreModules([{
         name: 'info',
         getters: {
-          edition: CANOPSIS_EDITION.cat,
+          edition: CANOPSIS_EDITION.pro,
         },
       }]),
     });
@@ -118,7 +126,7 @@ describe('widget-wrapper', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `widget-wrapper` with editing mode ', () => {
+  it('Renders `widget-wrapper` with editing mode', () => {
     const wrapper = snapshotFactory({
       propsData: {
         widget: {
@@ -132,7 +140,7 @@ describe('widget-wrapper', () => {
       store: createMockedStoreModules([{
         name: 'info',
         getters: {
-          edition: CANOPSIS_EDITION.cat,
+          edition: CANOPSIS_EDITION.pro,
         },
       }]),
     });
@@ -140,7 +148,7 @@ describe('widget-wrapper', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `widget-wrapper` with title and editing mode ', () => {
+  it('Renders `widget-wrapper` with title and editing mode', () => {
     const wrapper = snapshotFactory({
       propsData: {
         widget: {
@@ -155,7 +163,7 @@ describe('widget-wrapper', () => {
       store: createMockedStoreModules([{
         name: 'info',
         getters: {
-          edition: CANOPSIS_EDITION.cat,
+          edition: CANOPSIS_EDITION.pro,
         },
       }]),
     });

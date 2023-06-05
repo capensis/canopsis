@@ -13,19 +13,26 @@ const stubs = {
   'v-textarea': createTextareaInputStub('v-textarea'),
 };
 
+const snapshotStubs = {
+  'state-criticity-field': true,
+};
+
 const factory = (options = {}) => shallowMount(CChangeStateField, {
   localVue,
   stubs,
+
   ...options,
 });
 
 const snapshotFactory = (options = {}) => mount(CChangeStateField, {
   localVue,
+  stubs: snapshotStubs,
   parentComponent: {
     $_veeValidate: {
       validator: 'new',
     },
   },
+
   ...options,
 });
 

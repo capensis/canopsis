@@ -2,14 +2,14 @@ package action_test
 
 import (
 	"context"
-	"fmt"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_action "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/action"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
-	"testing"
-	"time"
 )
 
 func TestTaskManager_Run_GiveTask_ShouldSendResult(t *testing.T) {
@@ -33,10 +33,9 @@ func TestTaskManager_Run_GiveTask_ShouldSendResult(t *testing.T) {
 		}
 	}(timerCtx)
 	task := action.ExecuteScenariosTask{
-		Triggers:     []string{"create"},
-		Entity:       types.Entity{ID: "test-entity"},
-		Alarm:        types.Alarm{ID: "test-alarm"},
-		AckResources: false,
+		Triggers: []string{"create"},
+		Entity:   types.Entity{ID: "test-entity"},
+		Alarm:    types.Alarm{ID: "test-alarm"},
 	}
 	scenario := action.Scenario{
 		ID:   "test-scenario",
@@ -47,9 +46,7 @@ func TestTaskManager_Run_GiveTask_ShouldSendResult(t *testing.T) {
 			},
 		},
 	}
-	executionID := "test-alarm&&test-scenario"
 	execution := action.ScenarioExecution{
-		ID:         executionID,
 		ScenarioID: scenario.ID,
 		AlarmID:    task.Alarm.ID,
 		Entity:     task.Entity,
@@ -74,11 +71,11 @@ func TestTaskManager_Run_GiveTask_ShouldSendResult(t *testing.T) {
 				case <-ctx.Done():
 				case task := <-taskCh:
 					taskResultCh <- action.TaskResult{
-						Source:      "test",
-						Alarm:       task.Alarm,
-						Step:        task.Step,
-						ExecutionID: task.ExecutionID,
-						Status:      action.TaskNotMatched,
+						Source:            "test",
+						Alarm:             task.Alarm,
+						Step:              task.Step,
+						ExecutionCacheKey: task.ExecutionCacheKey,
+						Status:            action.TaskNotMatched,
 					}
 				}
 			}()
@@ -87,14 +84,14 @@ func TestTaskManager_Run_GiveTask_ShouldSendResult(t *testing.T) {
 	mockExecutionStorage := mock_action.NewMockScenarioExecutionStorage(ctrl)
 	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(true)).Return(int64(1), nil)
 	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(-1)), gomock.Eq(false)).Return(int64(0), nil)
-	mockExecutionStorage.EXPECT().Create(gomock.Any(), gomock.Any()).Return(executionID, nil)
-	mockExecutionStorage.EXPECT().Get(gomock.Any(), executionID).Return(&execution, nil)
+	mockExecutionStorage.EXPECT().Create(gomock.Any(), gomock.Any()).Return(true, nil)
+	mockExecutionStorage.EXPECT().Get(gomock.Any(), gomock.Eq(execution.GetCacheKey())).Return(&execution, nil)
 	mockExecutionStorage.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil)
-	mockExecutionStorage.EXPECT().Del(gomock.Any(), executionID).Return(nil)
+	mockExecutionStorage.EXPECT().Del(gomock.Any(), gomock.Eq(execution.GetCacheKey())).Return(nil)
 	mockScenarioStorage := mock_action.NewMockScenarioStorage(ctrl)
 	mockScenarioStorage.EXPECT().
 		GetTriggeredScenarios(gomock.Eq(task.Triggers), gomock.Eq(task.Alarm)).
-		Return([]action.Scenario{scenario}, nil)
+		Return(map[string][]action.Scenario{"create": {scenario}}, nil)
 	mockScenarioStorage.EXPECT().
 		RunDelayedScenarios(gomock.Any(), gomock.Eq(task.Triggers), gomock.Eq(task.Alarm), gomock.Eq(task.Entity), gomock.Eq(task.AdditionalData)).
 		Return(nil)
@@ -144,10 +141,9 @@ func TestTaskManager_Run_GiveTaskWithEmitTrigger_ShouldSendResult(t *testing.T) 
 		}
 	}(timerCtx)
 	task := action.ExecuteScenariosTask{
-		Triggers:     []string{"create"},
-		Entity:       types.Entity{ID: "test-entity"},
-		Alarm:        types.Alarm{ID: "test-alarm"},
-		AckResources: false,
+		Triggers: []string{"create"},
+		Entity:   types.Entity{ID: "test-entity"},
+		Alarm:    types.Alarm{ID: "test-alarm"},
 	}
 	firstScenario := action.Scenario{
 		ID:   "test-scenario-1",
@@ -168,9 +164,7 @@ func TestTaskManager_Run_GiveTaskWithEmitTrigger_ShouldSendResult(t *testing.T) 
 			},
 		},
 	}
-	firstExecutionID := "test-alarm&&test-scenario-1"
 	firstExecution := action.ScenarioExecution{
-		ID:         firstExecutionID,
 		ScenarioID: firstScenario.ID,
 		AlarmID:    task.Alarm.ID,
 		Entity:     task.Entity,
@@ -181,9 +175,7 @@ func TestTaskManager_Run_GiveTaskWithEmitTrigger_ShouldSendResult(t *testing.T) 
 			},
 		},
 	}
-	secondExecutionID := "test-alarm&&test-scenario-2"
 	secondExecution := action.ScenarioExecution{
-		ID:         secondExecutionID,
 		ScenarioID: secondScenario.ID,
 		AlarmID:    task.Alarm.ID,
 		Entity:     task.Entity,
@@ -210,12 +202,12 @@ func TestTaskManager_Run_GiveTaskWithEmitTrigger_ShouldSendResult(t *testing.T) 
 						return
 					case task := <-taskCh:
 						taskResultCh <- action.TaskResult{
-							Source:          "test",
-							Alarm:           task.Alarm,
-							Step:            task.Step,
-							ExecutionID:     task.ExecutionID,
-							AlarmChangeType: types.AlarmChangeType(task.Action.Type),
-							Status:          action.TaskNotMatched,
+							Source:            "test",
+							Alarm:             task.Alarm,
+							Step:              task.Step,
+							ExecutionCacheKey: task.ExecutionCacheKey,
+							AlarmChangeType:   types.AlarmChangeType(task.Action.Type),
+							Status:            action.TaskNotMatched,
 						}
 					}
 				}
@@ -226,30 +218,28 @@ func TestTaskManager_Run_GiveTaskWithEmitTrigger_ShouldSendResult(t *testing.T) 
 	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(true)).
 		Return(int64(1), nil).Times(1)
 	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(false)).
-		Return(int64(1), nil).Times(1)
-	decCall := int64(2)
+		Return(int64(2), nil).Times(1)
 	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(-1)), gomock.Eq(false)).
-		DoAndReturn(func(_ context.Context, _ string, _ int64, _ bool) (int64, error) {
-			decCall--
-			return decCall, nil
-		}).Times(2)
+		Return(int64(1), nil).Times(1)
+	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(-1)), gomock.Eq(false)).
+		Return(int64(0), nil).Times(1)
 	createCall := 0
-	mockExecutionStorage.EXPECT().Create(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, _ action.ScenarioExecution) (string, error) {
+	mockExecutionStorage.EXPECT().Create(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, _ action.ScenarioExecution) (bool, error) {
 		createCall++
-		return fmt.Sprintf("test-alarm&&test-scenario-%d", createCall), nil
+		return true, nil
 	}).Times(2)
-	mockExecutionStorage.EXPECT().Get(gomock.Any(), firstExecutionID).Return(&firstExecution, nil)
-	mockExecutionStorage.EXPECT().Get(gomock.Any(), secondExecutionID).Return(&secondExecution, nil)
+	mockExecutionStorage.EXPECT().Get(gomock.Any(), firstExecution.GetCacheKey()).Return(&firstExecution, nil)
+	mockExecutionStorage.EXPECT().Get(gomock.Any(), secondExecution.GetCacheKey()).Return(&secondExecution, nil)
 	mockExecutionStorage.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil).Times(2)
-	mockExecutionStorage.EXPECT().Del(gomock.Any(), firstExecutionID).Return(nil)
-	mockExecutionStorage.EXPECT().Del(gomock.Any(), secondExecutionID).Return(nil)
+	mockExecutionStorage.EXPECT().Del(gomock.Any(), firstExecution.GetCacheKey()).Return(nil)
+	mockExecutionStorage.EXPECT().Del(gomock.Any(), secondExecution.GetCacheKey()).Return(nil)
 	mockScenarioStorage := mock_action.NewMockScenarioStorage(ctrl)
 	mockScenarioStorage.EXPECT().
 		GetTriggeredScenarios(gomock.Eq(task.Triggers), gomock.Eq(task.Alarm)).
-		Return([]action.Scenario{firstScenario}, nil)
+		Return(map[string][]action.Scenario{"create": {firstScenario}}, nil)
 	mockScenarioStorage.EXPECT().
 		GetTriggeredScenarios(gomock.Eq([]string{firstScenario.Actions[0].Type}), gomock.Eq(task.Alarm)).
-		Return([]action.Scenario{secondScenario}, nil)
+		Return(map[string][]action.Scenario{"create": {secondScenario}}, nil)
 	mockScenarioStorage.EXPECT().
 		RunDelayedScenarios(gomock.Any(), gomock.Eq(task.Triggers), gomock.Eq(task.Alarm), gomock.Eq(task.Entity), gomock.Eq(task.AdditionalData)).
 		Return(nil)
@@ -314,11 +304,8 @@ func TestTaskManager_Run_GiveDelayedTask_ShouldSendResult(t *testing.T) {
 		DelayedScenarioID: scenario.ID,
 		Entity:            types.Entity{ID: "test-entity"},
 		Alarm:             types.Alarm{ID: "test-alarm"},
-		AckResources:      false,
 	}
-	executionID := "test-alarm&&test-scenario"
 	execution := action.ScenarioExecution{
-		ID:         executionID,
 		ScenarioID: scenario.ID,
 		AlarmID:    task.Alarm.ID,
 		Entity:     task.Entity,
@@ -343,11 +330,11 @@ func TestTaskManager_Run_GiveDelayedTask_ShouldSendResult(t *testing.T) {
 				case <-ctx.Done():
 				case task := <-taskCh:
 					taskResultCh <- action.TaskResult{
-						Source:      "test",
-						Alarm:       task.Alarm,
-						Step:        task.Step,
-						ExecutionID: task.ExecutionID,
-						Status:      action.TaskNotMatched,
+						Source:            "test",
+						Alarm:             task.Alarm,
+						Step:              task.Step,
+						ExecutionCacheKey: task.ExecutionCacheKey,
+						Status:            action.TaskNotMatched,
 					}
 				}
 			}()
@@ -356,10 +343,10 @@ func TestTaskManager_Run_GiveDelayedTask_ShouldSendResult(t *testing.T) {
 	mockExecutionStorage := mock_action.NewMockScenarioExecutionStorage(ctrl)
 	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(1)), gomock.Eq(true)).Return(int64(1), nil)
 	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Eq(int64(-1)), gomock.Eq(false)).Return(int64(0), nil)
-	mockExecutionStorage.EXPECT().Create(gomock.Any(), gomock.Any()).Return(executionID, nil)
-	mockExecutionStorage.EXPECT().Get(gomock.Any(), executionID).Return(&execution, nil)
+	mockExecutionStorage.EXPECT().Create(gomock.Any(), gomock.Any()).Return(true, nil)
+	mockExecutionStorage.EXPECT().Get(gomock.Any(), execution.GetCacheKey()).Return(&execution, nil)
 	mockExecutionStorage.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil)
-	mockExecutionStorage.EXPECT().Del(gomock.Any(), executionID).Return(nil)
+	mockExecutionStorage.EXPECT().Del(gomock.Any(), execution.GetCacheKey()).Return(nil)
 	mockScenarioStorage := mock_action.NewMockScenarioStorage(ctrl)
 	mockScenarioStorage.EXPECT().
 		GetScenario(gomock.Eq(task.DelayedScenarioID)).
@@ -409,12 +396,11 @@ func TestTaskManager_Run_GiveAbandonedTask_ShouldSendResult(t *testing.T) {
 			panic("workers or test are deadlocked")
 		}
 	}(timerCtx)
-	executionID := "test-alarm&&test-scenario"
+	executionCacheKey := "test-alarm$$test-scenario"
 	task := action.ExecuteScenariosTask{
-		AbandonedExecutionID: executionID,
-		Entity:               types.Entity{ID: "test-entity"},
-		Alarm:                types.Alarm{ID: "test-alarm"},
-		AckResources:         false,
+		AbandonedExecutionCacheKey: executionCacheKey,
+		Entity:                     types.Entity{ID: "test-entity"},
+		Alarm:                      types.Alarm{ID: "test-alarm"},
 	}
 	scenario := action.Scenario{
 		ID:   "test-scenario",
@@ -426,7 +412,6 @@ func TestTaskManager_Run_GiveAbandonedTask_ShouldSendResult(t *testing.T) {
 		},
 	}
 	execution := action.ScenarioExecution{
-		ID:         executionID,
 		ScenarioID: scenario.ID,
 		AlarmID:    task.Alarm.ID,
 		Entity:     task.Entity,
@@ -453,11 +438,11 @@ func TestTaskManager_Run_GiveAbandonedTask_ShouldSendResult(t *testing.T) {
 				case <-ctx.Done():
 				case task := <-taskCh:
 					taskResultCh <- action.TaskResult{
-						Source:      "test",
-						Alarm:       task.Alarm,
-						Step:        task.Step,
-						ExecutionID: task.ExecutionID,
-						Status:      action.TaskNotMatched,
+						Source:            "test",
+						Alarm:             task.Alarm,
+						Step:              task.Step,
+						ExecutionCacheKey: task.ExecutionCacheKey,
+						Status:            action.TaskNotMatched,
 					}
 				}
 			}()
@@ -465,9 +450,9 @@ func TestTaskManager_Run_GiveAbandonedTask_ShouldSendResult(t *testing.T) {
 		Return(taskResultCh, nil)
 	mockExecutionStorage := mock_action.NewMockScenarioExecutionStorage(ctrl)
 	mockExecutionStorage.EXPECT().Inc(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(0)
-	mockExecutionStorage.EXPECT().Get(gomock.Any(), executionID).Return(&execution, nil).Times(2)
+	mockExecutionStorage.EXPECT().Get(gomock.Any(), gomock.Eq(execution.GetCacheKey())).Return(&execution, nil).Times(2)
 	mockExecutionStorage.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil)
-	mockExecutionStorage.EXPECT().Del(gomock.Any(), executionID).Return(nil)
+	mockExecutionStorage.EXPECT().Del(gomock.Any(), gomock.Eq(execution.GetCacheKey())).Return(nil)
 	mockScenarioStorage := mock_action.NewMockScenarioStorage(ctrl)
 	logger := zerolog.Logger{}
 	manager := action.NewTaskManager(mockWorkerPool, mockExecutionStorage, mockScenarioStorage, logger)

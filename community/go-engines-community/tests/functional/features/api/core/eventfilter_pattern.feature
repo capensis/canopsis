@@ -34,7 +34,10 @@ Feature: Update and delete corporate pattern should affect eventfilter models
     Then the response body should contain:
     """
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test create 4",
       "type": "enrichment",
       "corporate_entity_pattern": "test-pattern-to-rule-eventfilter-corporate-update-1",
@@ -95,7 +98,10 @@ Feature: Update and delete corporate pattern should affect eventfilter models
     Then the response body should contain:
     """
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test create 4",
       "type": "enrichment",
       "corporate_entity_pattern": "test-pattern-to-rule-eventfilter-corporate-update-1",
@@ -138,7 +144,10 @@ Feature: Update and delete corporate pattern should affect eventfilter models
     Then the response body should contain:
     """
     {
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test create 4",
       "type": "enrichment",
       "entity_pattern": [

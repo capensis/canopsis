@@ -13,6 +13,7 @@ Feature: Update instruction
       "description": "test-instruction-to-pattern-1-description",
       "enabled": true,
       "priority": 24,
+      "triggers": ["create"],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -56,6 +57,16 @@ Feature: Update instruction
         [
           {
             "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263992,
+                "to": 1605264992
+              }
+            }
+          },
+          {
+            "field": "v.activation_date",
             "cond": {
               "type": "absolute_time",
               "value": {
@@ -167,6 +178,16 @@ Feature: Update instruction
             }
           },
           {
+            "field": "v.activation_date",
+            "cond": {
+              "type": "relative_time",
+              "value": {
+                "value": 2,
+                "unit": "m"
+              }
+            }
+          },
+          {
             "field": "v.ack.t",
             "cond": {
               "type": "relative_time",
@@ -180,6 +201,16 @@ Feature: Update instruction
         [
           {
             "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263993,
+                "to": 1605264993
+              }
+            }
+          },
+          {
+            "field": "v.activation_date",
             "cond": {
               "type": "absolute_time",
               "value": {
@@ -245,6 +276,16 @@ Feature: Update instruction
             }
           },
           {
+            "field": "v.activation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263993,
+                "to": 1605264993
+              }
+            }
+          },
+          {
             "field": "v.ack.t",
             "cond": {
               "type": "absolute_time",
@@ -291,6 +332,16 @@ Feature: Update instruction
         [
           {
             "field": "v.creation_date",
+            "cond": {
+              "type": "absolute_time",
+              "value": {
+                "from": 1605263993,
+                "to": 1605264993
+              }
+            }
+          },
+          {
+            "field": "v.activation_date",
             "cond": {
               "type": "absolute_time",
               "value": {

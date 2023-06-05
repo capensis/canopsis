@@ -29,15 +29,16 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
           lock
         </i>
         <strong
-          class="pl-2"
+          class="pl-2 text-uppercase"
         >
-          remediationInstructionsFilters.chip.with:
+          WITH:
         </strong>
         <span
           class="pl-1"
         >
-          remediationInstructions.types.0
+          Manual
         </span>
+        <!---->
       </span>
       <div
         class="v-chip__close"
@@ -77,16 +78,135 @@ exports[`remediation-instructions-filters-item Renders \`remediation-instruction
         </i>
         <!---->
         <strong
-          class="pl-2"
+          class="pl-2 text-uppercase"
         >
-          remediationInstructionsFilters.chip.without:
+          WITHOUT:
         </strong>
         <span
           class="pl-1"
         >
           
         </span>
+        <!---->
       </span>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`remediation-instructions-filters-item Renders \`remediation-instructions-filters-item\` with filter in progress 1`] = `
+<div
+  class="instruction-filter"
+>
+  <span
+    class="v-chip white--text v-chip--label v-chip--removable theme--light grey"
+    tabindex="0"
+  >
+    <span
+      class="v-chip__content"
+    >
+      <span
+        class="instruction-filter__text"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light white--text"
+          style="font-size: 16px;"
+        >
+          assignment
+        </i>
+        <i
+          aria-hidden="true"
+          class="v-icon pl-1 material-icons theme--light white--text"
+          style="font-size: 16px;"
+        >
+          lock
+        </i>
+        <strong
+          class="pl-2 text-uppercase"
+        >
+          Show WITH:
+        </strong>
+        <span
+          class="pl-1"
+        >
+          Manual
+        </span>
+        <strong
+          class="pl-1 text-uppercase"
+        >
+          In progress
+        </strong>
+      </span>
+      <div
+        class="v-chip__close"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
+          check_box_outline_blank
+        </i>
+      </div>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`remediation-instructions-filters-item Renders \`remediation-instructions-filters-item\` with filter instruction in progress 1`] = `
+<div
+  class="instruction-filter"
+>
+  <span
+    class="v-chip white--text v-chip--label v-chip--removable theme--light grey"
+    tabindex="0"
+  >
+    <span
+      class="v-chip__content"
+    >
+      <span
+        class="instruction-filter__text"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light white--text"
+          style="font-size: 16px;"
+        >
+          assignment
+        </i>
+        <i
+          aria-hidden="true"
+          class="v-icon pl-1 material-icons theme--light white--text"
+          style="font-size: 16px;"
+        >
+          lock
+        </i>
+        <strong
+          class="pl-2 text-uppercase"
+        >
+          Show WITH:
+        </strong>
+        <span
+          class="pl-1"
+        >
+          Manual
+        </span>
+        <strong
+          class="pl-1 text-uppercase"
+        >
+          In progress
+        </strong>
+      </span>
+      <div
+        class="v-chip__close"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
+          check_box_outline_blank
+        </i>
+      </div>
     </span>
   </span>
 </div>

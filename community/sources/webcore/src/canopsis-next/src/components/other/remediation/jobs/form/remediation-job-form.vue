@@ -1,43 +1,40 @@
 <template lang="pug">
   v-layout(column)
-    v-layout(row)
-      c-enabled-field(v-field="form.enabled")
-      c-enabled-field(
-        v-field="form.multiple_executions",
-        :label="$t('modals.createRemediationJob.fields.multipleExecutions')"
-      )
-    v-text-field(
-      v-field="form.name",
-      v-validate="'required'",
-      :label="$t('common.name')",
-      :error-messages="errors.collect('name')",
-      name="name"
-    )
+    c-enabled-field(v-field="form.multiple_executions", :label="$t('remediation.job.multipleExecutions')")
+    c-name-field(v-field="form.name", required)
     remediation-job-configuration-field(v-field="form.config")
-    v-text-field(
+    c-id-field(
       v-field="form.job_id",
-      v-validate="'required'",
-      :label="$t('modals.createRemediationJob.fields.jobId')",
-      :error-messages="errors.collect('job_id')",
-      name="job_id"
+      :label="$t('remediation.job.jobId')",
+      name="job_id",
+      required
     )
+    v-layout(row)
+      v-flex.pr-3(xs6)
+        c-number-field(v-field="form.retry_amount", :label="$t('remediation.job.retryAmount')")
+      v-flex(xs6)
+        c-duration-field(
+          v-field="form.retry_interval",
+          :label="$t('remediation.job.retryInterval')",
+          clearable
+        )
     v-layout(row)
       v-btn.ml-0(
         v-if="!form.payload",
         color="primary",
         outline,
         @click="addPayload"
-      ) {{ $t('modals.createRemediationJob.addPayload') }}
+      ) {{ $t('remediation.job.addPayload') }}
       template(v-else)
         c-json-field(
           v-field="form.payload",
           :label="$t('common.payload')",
-          :help-text="$t('modals.createRemediationJob.payloadHelp')",
+          :help-text="$t('remediation.job.payloadHelp')",
           name="payload",
           variables
         )
         c-action-btn(
-          :tooltip="$t('modals.createRemediationJob.deletePayload')",
+          :tooltip="$t('remediation.job.deletePayload')",
           icon="delete",
           color="error",
           bottom,
@@ -45,10 +42,11 @@
         )
     c-text-pairs-field(
       v-field="form.query",
-      :title="$t('modals.createRemediationJob.fields.query')",
+      :title="$t('remediation.job.query')",
       :text-label="$t('common.field')",
       :value-label="$t('common.value')",
-      name="query"
+      name="query",
+      text-required
     )
 </template>
 

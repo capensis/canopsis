@@ -13,9 +13,9 @@ import (
 )
 
 var (
-	ErrNotExistCorporateAlarmPattern     = ValidationError{field: "corporate_alarm_pattern", err: errors.New("CorporateAlarmPattern doesn't exist.")}
-	ErrNotExistCorporateEntityPattern    = ValidationError{field: "corporate_entity_pattern", err: errors.New("CorporateEntityPattern doesn't exist.")}
-	ErrNotExistCorporatePbehaviorPattern = ValidationError{field: "corporate_pbehavior_pattern", err: errors.New("CorporatePbehaviorPattern doesn't exist.")}
+	ErrNotExistCorporateAlarmPattern     = ValidationError{field: "corporate_alarm_pattern", errMsg: "CorporateAlarmPattern doesn't exist."}
+	ErrNotExistCorporateEntityPattern    = ValidationError{field: "corporate_entity_pattern", errMsg: "CorporateEntityPattern doesn't exist."}
+	ErrNotExistCorporatePbehaviorPattern = ValidationError{field: "corporate_pbehavior_pattern", errMsg: "CorporatePbehaviorPattern doesn't exist."}
 )
 
 type AlarmPatternFieldsRequest struct {
@@ -205,7 +205,7 @@ func ValidateEventPattern(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	return p.Validate(nil)
+	return p.Validate()
 }
 
 func ValidateEntityPattern(fl validator.FieldLevel) bool {
@@ -231,7 +231,7 @@ func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
 		return false
 	}
 
-	return p.Validate(nil)
+	return p.Validate()
 }
 
 func GetForbiddenFieldsInEntityPattern(collection string) []string {
@@ -246,7 +246,9 @@ func GetForbiddenFieldsInEntityPattern(collection string) []string {
 		mongo.ResolveRuleMongoCollection,
 		mongo.ScenarioMongoCollection,
 		mongo.InstructionMongoCollection,
-		mongo.KpiFilterMongoCollection:
+		mongo.KpiFilterMongoCollection,
+		mongo.DeclareTicketRuleMongoCollection,
+		mongo.LinkRuleMongoCollection:
 		return []string{"last_event_date"}
 	default:
 		return nil
@@ -261,7 +263,9 @@ func GetForbiddenFieldsInAlarmPattern(collection string) []string {
 		mongo.FlappingRuleMongoCollection,
 		mongo.ResolveRuleMongoCollection,
 		mongo.ScenarioMongoCollection,
-		mongo.InstructionMongoCollection:
+		mongo.InstructionMongoCollection,
+		mongo.DeclareTicketRuleMongoCollection,
+		mongo.LinkRuleMongoCollection:
 		return []string{"v.last_event_date", "v.last_update_date", "v.resolved"}
 	default:
 		return nil
@@ -276,8 +280,10 @@ func GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection string) []string {
 		mongo.FlappingRuleMongoCollection,
 		mongo.ResolveRuleMongoCollection,
 		mongo.ScenarioMongoCollection,
-		mongo.InstructionMongoCollection:
-		return []string{"v.creation_date", "v.ack.t"}
+		mongo.InstructionMongoCollection,
+		mongo.DeclareTicketRuleMongoCollection,
+		mongo.LinkRuleMongoCollection:
+		return []string{"v.creation_date", "v.ack.t", "v.activation_date"}
 	default:
 		return nil
 	}

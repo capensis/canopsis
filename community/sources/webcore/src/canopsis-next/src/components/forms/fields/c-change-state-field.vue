@@ -9,7 +9,7 @@
       v-textarea(
         v-field="value.output",
         v-validate="'required'",
-        :label="label || $t('common.output')",
+        :label="label || $t('common.note')",
         :error-messages="errors.collect(outputFieldName)",
         :name="outputFieldName"
       )

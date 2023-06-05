@@ -1,17 +1,16 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
-    modal-wrapper(data-test="textFieldEditorModal", close)
-      template(slot="title")
+    modal-wrapper(close)
+      template(#title="")
         span {{ config.title }}
-      template(slot="text")
+      template(#text="")
         v-text-field(
-          data-test="textField",
           v-model="text",
           v-validate="field.validationRules",
           v-bind="fieldProps",
           :error-messages="errors.collect(field.name)"
         )
-      template(slot="actions")
+      template(#actions="")
         v-btn(
           depressed,
           flat,
@@ -20,8 +19,7 @@
         v-btn.primary(
           type="submit",
           :disabled="isDisabled",
-          :loading="submitting",
-          data-test="submitButton"
+          :loading="submitting"
         ) {{ $t('common.submit') }}
 </template>
 
@@ -50,15 +48,15 @@ export default {
     validationErrorsMixinCreator(),
   ],
   data() {
-    const field = this.modal.config.field || {};
+    const field = this.modal.config.field ?? {};
 
     return {
-      text: field.value || '',
+      text: field.value ?? '',
     };
   },
   computed: {
     field() {
-      return this.config.field || { name: 'text', label: 'Text' };
+      return this.config.field ?? { name: 'text', label: 'Text' };
     },
 
     fieldProps() {

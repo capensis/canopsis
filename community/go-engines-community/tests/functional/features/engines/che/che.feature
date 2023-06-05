@@ -28,32 +28,18 @@ Feature: create entities on event
           "category": null,
           "connector": "test-connector-che-1/test-connector-name-che-1",
           "component": "test-component-che-1",
-          "depends": [
-            "test-resource-che-1/test-component-che-1"
-          ],
           "enabled": true,
-          "impact": [
-            "test-connector-che-1/test-connector-name-che-1"
-          ],
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-component-che-1",
           "type": "component"
         },
         {
           "_id": "test-connector-che-1/test-connector-name-che-1",
           "category": null,
-          "depends": [
-            "test-component-che-1"
-          ],
           "enabled": true,
-          "impact": [
-            "test-resource-che-1/test-component-che-1"
-          ],
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-connector-name-che-1",
           "connector_type": "test-connector-che-1",
           "type": "connector"
@@ -63,16 +49,9 @@ Feature: create entities on event
           "category": null,
           "connector": "test-connector-che-1/test-connector-name-che-1",
           "component": "test-component-che-1",
-          "depends": [
-            "test-connector-che-1/test-connector-name-che-1"
-          ],
           "enabled": true,
-          "impact": [
-            "test-component-che-1"
-          ],
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-resource-che-1",
           "type": "resource"
         }
@@ -83,6 +62,45 @@ Feature: create entities on event
         "per_page": 10,
         "total_count": 3
       }
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-component-che-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "depends": [
+        "test-resource-che-1/test-component-che-1"
+      ],
+      "impact": [
+        "test-connector-che-1/test-connector-name-che-1"
+      ]
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-connector-che-1/test-connector-name-che-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "depends": [
+        "test-component-che-1"
+      ],
+      "impact": [
+        "test-resource-che-1/test-component-che-1"
+      ]
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-1/test-component-che-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "depends": [
+        "test-connector-che-1/test-connector-name-che-1"
+      ],
+      "impact": [
+        "test-component-che-1"
+      ]
     }
     """
 
@@ -112,28 +130,18 @@ Feature: create entities on event
           "category": null,
           "connector": "test-connector-che-2/test-connector-name-che-2",
           "component": "test-component-che-2",
-          "depends": [],
           "enabled": true,
-          "impact": [
-            "test-connector-che-2/test-connector-name-che-2"
-          ],
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-component-che-2",
           "type": "component"
         },
         {
           "_id": "test-connector-che-2/test-connector-name-che-2",
           "category": null,
-          "depends": [
-            "test-component-che-2"
-          ],
           "enabled": true,
-          "impact": [],
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-connector-name-che-2",
           "type": "connector"
         }
@@ -144,6 +152,28 @@ Feature: create entities on event
         "per_page": 10,
         "total_count": 2
       }
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-component-che-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "depends": [],
+      "impact": [
+        "test-connector-che-2/test-connector-name-che-2"
+      ]
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-connector-che-2/test-connector-name-che-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "depends": [
+        "test-component-che-2"
+      ],
+      "impact": []
     }
     """
 
@@ -161,7 +191,6 @@ Feature: create entities on event
       "output": "test-output-che-3"
     }
     """
-    When I save response createComponentTimestamp={{ now }}
     When I wait the end of event processing
     When I send an event:
     """json
@@ -176,7 +205,6 @@ Feature: create entities on event
       "output": "test-output-che-3"
     }
     """
-    When I save response createResourceTimestamp={{ now }}
     When I wait the end of event processing
     When I do GET /api/v4/entities?search=che-3
     Then the response code should be 200
@@ -189,38 +217,18 @@ Feature: create entities on event
           "category": null,
           "connector": "test-connector-che-3/test-connector-name-che-3",
           "component": "test-component-che-3",
-          "depends": [
-            "test-resource-che-3/test-component-che-3"
-          ],
-          "enable_history": [
-            {{ .createComponentTimestamp }}
-          ],
           "enabled": true,
-          "impact": [
-            "test-connector-che-3/test-connector-name-che-3"
-          ],
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-component-che-3",
           "type": "component"
         },
         {
           "_id": "test-connector-che-3/test-connector-name-che-3",
           "category": null,
-          "depends": [
-            "test-component-che-3"
-          ],
-          "enable_history": [
-            {{ .createComponentTimestamp }}
-          ],
           "enabled": true,
-          "impact": [
-            "test-resource-che-3/test-component-che-3"
-          ],
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-connector-name-che-3",
           "type": "connector"
         },
@@ -229,19 +237,9 @@ Feature: create entities on event
           "category": null,
           "connector": "test-connector-che-3/test-connector-name-che-3",
           "component": "test-component-che-3",
-          "depends": [
-            "test-connector-che-3/test-connector-name-che-3"
-          ],
-          "enable_history": [
-            {{ .createResourceTimestamp }}
-          ],
           "enabled": true,
-          "impact": [
-            "test-component-che-3"
-          ],
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-resource-che-3",
           "type": "resource"
         }
@@ -252,6 +250,45 @@ Feature: create entities on event
         "per_page": 10,
         "total_count": 3
       }
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-component-che-3
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "depends": [
+        "test-resource-che-3/test-component-che-3"
+      ],
+      "impact": [
+        "test-connector-che-3/test-connector-name-che-3"
+      ]
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-connector-che-3/test-connector-name-che-3
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "depends": [
+        "test-component-che-3"
+      ],
+      "impact": [
+        "test-resource-che-3/test-component-che-3"
+      ]
+    }
+    """
+    When I do GET /api/v4/entities/context-graph?_id=test-resource-che-3/test-component-che-3
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "depends": [
+        "test-connector-che-3/test-connector-name-che-3"
+      ],
+      "impact": [
+        "test-component-che-3"
+      ]
     }
     """
 
@@ -283,12 +320,6 @@ Feature: create entities on event
           "name": "test-component-che-8-info-1-name",
           "value": "test-component-che-8-info-1-value"
         }
-      ],
-      "impact": [
-        "test-connector-che-8/test-connector-name-che-8"
-      ],
-      "depends": [
-        "test-resource-che-8/test-component-che-8"
       ]
     }
     """
@@ -301,66 +332,26 @@ Feature: create entities on event
       "data": [
         {
           "_id": "test-component-che-8",
-          "category": null,
-          "component": "test-component-che-8",
-          "depends": [
-            "test-resource-che-8/test-component-che-8"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-connector-che-8/test-connector-name-che-8"
-          ],
-          "impact_level": 1,
           "infos": {
             "test-component-che-8-info-1-name": {
               "description": "test-component-che-8-info-1-description",
               "name": "test-component-che-8-info-1-name",
               "value": "test-component-che-8-info-1-value"
             }
-          },
-          "measurements": null,
-          "name": "test-component-che-8",
-          "type": "component"
+          }
         },
         {
-          "_id": "test-connector-che-8/test-connector-name-che-8",
-          "category": null,
-          "depends": [
-            "test-component-che-8"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-resource-che-8/test-component-che-8"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-connector-name-che-8",
-          "type": "connector"
+          "_id": "test-connector-che-8/test-connector-name-che-8"
         },
         {
           "_id": "test-resource-che-8/test-component-che-8",
-          "category": null,
-          "component": "test-component-che-8",
           "component_infos": {
             "test-component-che-8-info-1-name": {
               "description": "test-component-che-8-info-1-description",
               "name": "test-component-che-8-info-1-name",
               "value": "test-component-che-8-info-1-value"
             }
-          },
-          "depends": [
-            "test-connector-che-8/test-connector-name-che-8"
-          ],
-          "enabled": true,
-          "impact": [
-            "test-component-che-8"
-          ],
-          "impact_level": 1,
-          "infos": {},
-          "measurements": null,
-          "name": "test-resource-che-8",
-          "type": "resource"
+          }
         }
       ],
       "meta": {
@@ -427,16 +418,9 @@ Feature: create entities on event
           "category": null,
           "connector": "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1",
           "component": "test-context-graph-build-component-che-1",
-          "depends": [
-            "test-context-graph-build-resource-che-1/test-context-graph-build-component-che-1"
-          ],
           "enabled": true,
-          "impact": [
-            "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1"
-          ],
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-context-graph-build-component-che-1",
           "type": "component"
         },
@@ -445,16 +429,9 @@ Feature: create entities on event
           "category": null,
           "connector": "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1",
           "component": "test-context-graph-build-component-che-2",
-          "depends": [
-            "test-context-graph-build-resource-che-1/test-context-graph-build-component-che-2"
-          ],
           "enabled": true,
-          "impact": [
-            "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1"
-          ],
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-context-graph-build-component-che-2",
           "type": "component"
         },
@@ -463,36 +440,18 @@ Feature: create entities on event
           "category": null,
           "connector": "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1",
           "component": "test-context-graph-build-component-che-3",
-          "depends": [
-            "test-context-graph-build-resource-che-1/test-context-graph-build-component-che-3"
-          ],
           "enabled": true,
-          "impact": [
-            "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1"
-          ],
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-context-graph-build-component-che-3",
           "type": "component"
         },        
         {
           "_id": "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1",
           "category": null,
-          "depends": [
-            "test-context-graph-build-component-che-1",
-            "test-context-graph-build-component-che-2",
-            "test-context-graph-build-component-che-3"
-          ],
           "enabled": true,
-          "impact": [
-            "test-context-graph-build-resource-che-1/test-context-graph-build-component-che-1",
-            "test-context-graph-build-resource-che-1/test-context-graph-build-component-che-2",
-            "test-context-graph-build-resource-che-1/test-context-graph-build-component-che-3"
-          ],
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-context-graph-build-connector-name-che-1",
           "connector_type": "test-context-graph-build-connector-che-1",
           "type": "connector"
@@ -502,16 +461,9 @@ Feature: create entities on event
           "category": null,
           "connector": "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1",
           "component": "test-context-graph-build-component-che-1",
-          "depends": [
-            "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1"
-          ],
           "enabled": true,
-          "impact": [
-            "test-context-graph-build-component-che-1"
-          ],
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-context-graph-build-resource-che-1",
           "type": "resource"
         },
@@ -520,16 +472,9 @@ Feature: create entities on event
           "category": null,
           "connector": "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1",
           "component": "test-context-graph-build-component-che-2",
-          "depends": [
-            "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1"
-          ],
           "enabled": true,
-          "impact": [
-            "test-context-graph-build-component-che-2"
-          ],
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-context-graph-build-resource-che-1",
           "type": "resource"
         },
@@ -538,16 +483,9 @@ Feature: create entities on event
           "category": null,
           "connector": "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1",
           "component": "test-context-graph-build-component-che-3",
-          "depends": [
-            "test-context-graph-build-connector-che-1/test-context-graph-build-connector-name-che-1"
-          ],
           "enabled": true,
-          "impact": [
-            "test-context-graph-build-component-che-3"
-          ],
           "impact_level": 1,
           "infos": {},
-          "measurements": null,
           "name": "test-context-graph-build-resource-che-1",
           "type": "resource"
         }

@@ -11,7 +11,7 @@ export const tourBaseMixin = {
   methods: {
     ...authMapActions(['fetchCurrentUser']),
     ...userMapActions({
-      updateUser: 'update',
+      updateCurrentUser: 'updateCurrentUser',
     }),
 
     async finishTourByName(tourName) {
@@ -25,10 +25,7 @@ export const tourBaseMixin = {
         },
       });
 
-      await this.updateUser({
-        data: user,
-        id: this.currentUser._id,
-      });
+      await this.updateCurrentUser({ data: user });
 
       this.fetchCurrentUser();
     },

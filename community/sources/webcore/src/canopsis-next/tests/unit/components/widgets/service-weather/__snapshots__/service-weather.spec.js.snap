@@ -1,0 +1,173 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`service-weather Renders \`service-weather\` with default props 1`] = `
+<div
+  class="pa-2"
+>
+  <div
+    class="layout mx-1 wrap"
+  >
+    <!---->
+    <div
+      class="flex xs5"
+    >
+      <div
+        class="layout row align-center"
+      >
+        <!---->
+        <c-enabled-field-stub
+          class="ml-3"
+          label="Hide gray"
+        />
+      </div>
+    </div>
+  </div>
+  <!---->
+  <div
+    class="layout fill-height wrap"
+  >
+    <div
+      class="v-alert info"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light v-alert__icon"
+      >
+        info
+      </i>
+      <div>
+        No data
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`service-weather Renders \`service-weather\` with default props 2`] = `undefined`;
+
+exports[`service-weather Renders \`service-weather\` with errors 1`] = `
+<div
+  class="pa-2"
+>
+  <div
+    class="layout mx-1 wrap"
+  >
+    <!---->
+    <div
+      class="flex xs5"
+    >
+      <div
+        class="layout row align-center"
+      >
+        <!---->
+        <c-enabled-field-stub
+          class="ml-3"
+          label="Hide gray"
+        />
+      </div>
+    </div>
+  </div>
+  <!---->
+  <div
+    class="layout fill-height wrap"
+  >
+    <div
+      class="v-alert error"
+    >
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light v-alert__icon"
+      >
+        warning
+      </i>
+      <div>
+        <div
+          class="layout align-center"
+        >
+          <div
+            class="mr-4"
+          >
+            Something went wrong...
+          </div>
+          <c-help-icon-stub
+            icon="help"
+            top="top"
+          >
+            <div>
+              Name: Service name error
+            </div>
+            <div>
+              Description: Service description error
+            </div>
+          </c-help-icon-stub>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`service-weather Renders \`service-weather\` with errors 2`] = `undefined`;
+
+exports[`service-weather Renders \`service-weather\` with full access 1`] = `
+<div
+  class="pa-2"
+>
+  <div
+    class="layout mx-1 wrap"
+  >
+    <div
+      class="flex xs3"
+    >
+      <c-entity-category-field-stub
+        class="mr-3"
+      />
+    </div>
+    <div
+      class="flex xs5"
+    >
+      <div
+        class="layout row align-center"
+      >
+        <filter-selector-stub
+          clearable="true"
+          disabled="true"
+          filters=""
+          itemtext="title"
+          itemvalue="_id"
+          label="Select a filter"
+          lockedfilters=""
+        />
+        <filters-list-btn-stub
+          addable="true"
+          editable="true"
+          entitytypes="service"
+          private="true"
+          widgetid="service-weather-widget-id"
+          withentity="true"
+          withserviceweather="true"
+        />
+        <c-enabled-field-stub
+          class="ml-3"
+          label="Hide gray"
+        />
+      </div>
+    </div>
+  </div>
+  <!---->
+  <div
+    class="layout fill-height wrap"
+  >
+    <div
+      class="flex xs6"
+    >
+      <service-weather-item-stub
+        service="[object Object]"
+        widget="[object Object]"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`service-weather Renders \`service-weather\` with full access 2`] = `undefined`;

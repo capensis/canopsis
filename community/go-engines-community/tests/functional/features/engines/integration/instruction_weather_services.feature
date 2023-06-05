@@ -254,7 +254,8 @@ Feature: get service entities with assigned instructions
           "job": "test-job-to-run-auto-instruction-7"
         }
       ],
-      "priority": 30
+      "priority": 30,
+      "triggers": ["create"]
     }
     """
     Then the response code should be 201
@@ -285,7 +286,8 @@ Feature: get service entities with assigned instructions
           "job": "test-job-to-run-auto-instruction-7"
         }
       ],
-      "priority": 31
+      "priority": 31,
+      "triggers": ["create"]
     }
     """
     Then the response code should be 201
@@ -311,9 +313,7 @@ Feature: get service entities with assigned instructions
     {
       "data": [
         {
-          "is_auto_instruction_running": true,
-          "is_all_auto_instructions_completed": false,
-          "is_auto_instruction_failed": false
+          "instruction_execution_icon": 2
         }
       ]
     }
@@ -351,9 +351,7 @@ Feature: get service entities with assigned instructions
       "data": [
         {
           "_id": "test-alarm-weather-widget-instructions-resource-5/test-alarm-weather-widget-instructions-component-1",
-          "is_auto_instruction_running": true,
-          "is_all_auto_instructions_completed": false,
-          "is_auto_instruction_failed": false
+          "instruction_execution_icon": 2
         }
       ],
       "meta": {
@@ -373,9 +371,7 @@ Feature: get service entities with assigned instructions
       "data": [
         {
           "_id": "test-alarm-weather-widget-instructions-resource-5/test-alarm-weather-widget-instructions-component-1",
-          "is_auto_instruction_running": true,
-          "is_all_auto_instructions_completed": false,
-          "is_auto_instruction_failed": false
+          "instruction_execution_icon": 12
         }
       ],
       "meta": {
@@ -386,16 +382,14 @@ Feature: get service entities with assigned instructions
       }
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of 4 events processing
     When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-2?with_instructions=true until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "_id": "test-alarm-weather-widget-instructions-resource-5/test-alarm-weather-widget-instructions-component-1",
-          "is_auto_instruction_running": false,
-          "is_all_auto_instructions_completed": true,
-          "is_auto_instruction_failed": false
+          "instruction_execution_icon": 10
         }
       ],
       "meta": {
@@ -510,8 +504,7 @@ Feature: get service entities with assigned instructions
     {
       "data": [
         {
-          "is_manual_instruction_running": true,
-          "is_manual_instruction_waiting_result": false
+          "instruction_execution_icon": 1
         }
       ]
     }
@@ -526,8 +519,7 @@ Feature: get service entities with assigned instructions
     {
       "data": [
         {
-          "is_manual_instruction_running": false,
-          "is_manual_instruction_waiting_result": true
+          "instruction_execution_icon": 1
         }
       ]
     }
@@ -537,8 +529,7 @@ Feature: get service entities with assigned instructions
     {
       "data": [
         {
-          "is_manual_instruction_running": false,
-          "is_manual_instruction_waiting_result": false
+          "instruction_execution_icon": 11
         }
       ]
     }
@@ -573,7 +564,8 @@ Feature: get service entities with assigned instructions
           "job": "test-job-to-run-auto-instruction-6"
         }
       ],
-      "priority": 32
+      "priority": 32,
+      "triggers": ["create"]
     }
     """
     Then the response code should be 201
@@ -604,7 +596,8 @@ Feature: get service entities with assigned instructions
           "job": "test-job-to-run-auto-instruction-7"
         }
       ],
-      "priority": 33
+      "priority": 33,
+      "triggers": ["create"]
     }
     """
     Then the response code should be 201
@@ -630,9 +623,7 @@ Feature: get service entities with assigned instructions
     {
       "data": [
         {
-          "is_auto_instruction_running": true,
-          "is_all_auto_instructions_completed": false,
-          "is_auto_instruction_failed": false
+          "instruction_execution_icon": 2
         }
       ]
     }
@@ -670,9 +661,7 @@ Feature: get service entities with assigned instructions
       "data": [
         {
           "_id": "test-alarm-weather-widget-instructions-resource-7/test-alarm-weather-widget-instructions-component-1",
-          "is_auto_instruction_running": true,
-          "is_all_auto_instructions_completed": false,
-          "is_auto_instruction_failed": false
+          "instruction_execution_icon": 2
         }
       ],
       "meta": {
@@ -683,16 +672,14 @@ Feature: get service entities with assigned instructions
       }
     }
     """
-    When I wait the end of 3 events processing
+    When I wait the end of 4 events processing
     When I do GET /api/v4/weather-services/test-entity-instruction-weather-services-4?with_instructions=true until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "_id": "test-alarm-weather-widget-instructions-resource-7/test-alarm-weather-widget-instructions-component-1",
-          "is_auto_instruction_running": true,
-          "is_all_auto_instructions_completed": false,
-          "is_auto_instruction_failed": true
+          "instruction_execution_icon": 6
         }
       ],
       "meta": {
@@ -709,9 +696,7 @@ Feature: get service entities with assigned instructions
       "data": [
         {
           "_id": "test-alarm-weather-widget-instructions-resource-7/test-alarm-weather-widget-instructions-component-1",
-          "is_auto_instruction_running": false,
-          "is_all_auto_instructions_completed": true,
-          "is_auto_instruction_failed": true
+          "instruction_execution_icon": 3
         }
       ],
       "meta": {

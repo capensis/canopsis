@@ -1,6 +1,8 @@
 package pattern
 
 import (
+	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -30,7 +32,7 @@ func (p PbehaviorInfo) Match(pbhInfo types.PbehaviorInfo) (bool, error) {
 			}
 
 			if err != nil {
-				return false, err
+				return false, fmt.Errorf("invalid condition for %q field: %w", f, err)
 			}
 
 			if !matched {
@@ -46,12 +48,8 @@ func (p PbehaviorInfo) Match(pbhInfo types.PbehaviorInfo) (bool, error) {
 	return false, nil
 }
 
-func (p PbehaviorInfo) Validate(forbiddenFields []string) bool {
+func (p PbehaviorInfo) Validate() bool {
 	emptyPbhInfo := types.PbehaviorInfo{}
-	forbiddenFieldsMap := make(map[string]bool, len(forbiddenFields))
-	for _, field := range forbiddenFields {
-		forbiddenFieldsMap[field] = true
-	}
 
 	for _, group := range p {
 		if len(group) == 0 {
@@ -62,10 +60,6 @@ func (p PbehaviorInfo) Validate(forbiddenFields []string) bool {
 			f := v.Field
 			cond := v.Condition
 			var err error
-
-			if forbiddenFieldsMap[f] {
-				return false
-			}
 
 			if str, ok := getPbehaviorInfoStringField(emptyPbhInfo, f); ok {
 				_, _, err = cond.MatchString(str)
@@ -91,25 +85,26 @@ func (p PbehaviorInfo) ToMongoQuery(prefix string) (bson.M, error) {
 		prefix += "."
 	}
 
+	emptyPbhInfo := types.PbehaviorInfo{}
 	groupQueries := make([]bson.M, len(p))
 	var err error
 
 	for i, group := range p {
 		condQueries := make([]bson.M, len(group))
 		for j, fieldCond := range group {
-			f := prefix + fieldCond.Field
+			mongoField := prefix + fieldCond.Field
 			cond := fieldCond.Condition
 
 			if fieldCond.Field == "pbehavior_info.canonical_type" {
 				switch cond.Type {
 				case ConditionEqual:
 					if cond.valueStr != nil && *cond.valueStr == pbhCanonicalTypeActive {
-						condQueries[j] = bson.M{f: bson.M{"$in": bson.A{nil, *cond.valueStr}}}
+						condQueries[j] = bson.M{mongoField: bson.M{"$in": bson.A{nil, *cond.valueStr}}}
 						continue
 					}
 				case ConditionNotEqual:
 					if cond.valueStr != nil && *cond.valueStr == pbhCanonicalTypeActive {
-						condQueries[j] = bson.M{f: bson.M{"$nin": bson.A{nil, *cond.valueStr}}}
+						condQueries[j] = bson.M{mongoField: bson.M{"$nin": bson.A{nil, *cond.valueStr}}}
 						continue
 					}
 				case ConditionIsOneOf:
@@ -127,7 +122,7 @@ func (p PbehaviorInfo) ToMongoQuery(prefix string) (bson.M, error) {
 							values[k] = s
 						}
 						values[len(values)-1] = nil
-						condQueries[j] = bson.M{f: bson.M{"$in": values}}
+						condQueries[j] = bson.M{mongoField: bson.M{"$in": values}}
 						continue
 					}
 				case ConditionIsNotOneOf:
@@ -145,15 +140,19 @@ func (p PbehaviorInfo) ToMongoQuery(prefix string) (bson.M, error) {
 							values[k] = s
 						}
 						values[len(values)-1] = nil
-						condQueries[j] = bson.M{f: bson.M{"$nin": values}}
+						condQueries[j] = bson.M{mongoField: bson.M{"$nin": values}}
 						continue
 					}
 				}
 			}
 
-			condQueries[j], err = cond.ToMongoQuery(f)
+			if _, ok := getPbehaviorInfoStringField(emptyPbhInfo, fieldCond.Field); ok {
+				condQueries[j], err = cond.StringToMongoQuery(mongoField)
+			} else {
+				err = ErrUnsupportedField
+			}
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("invalid condition for %q field: %w", fieldCond.Field, err)
 			}
 		}
 
@@ -187,7 +186,7 @@ func getPbehaviorInfoStringField(pbhInfo types.PbehaviorInfo, f string) (string,
 		}
 		return pbhInfo.CanonicalType, true
 	case "pbehavior_info.reason":
-		return pbhInfo.Reason, true
+		return pbhInfo.ReasonID, true
 	default:
 		return "", false
 	}

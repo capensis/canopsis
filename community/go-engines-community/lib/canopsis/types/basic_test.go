@@ -2,38 +2,14 @@ package types_test
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"testing"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	. "github.com/smartystreets/goconvey/convey"
 	"go.mongodb.org/mongo-driver/bson"
 )
-
-func TestFailOnError(t *testing.T) {
-	panicfunc := func() {
-		msg := "I want to panic"
-		err := errors.New("because i'm crazy")
-		utils.FailOnError(err, msg)
-	}
-
-	coolfunc := func() {
-		var err error
-		msg := "you don't see meeeee"
-		utils.FailOnError(err, msg)
-	}
-
-	Convey("Must panic if err is not nil", t, func() {
-		So(panicfunc, ShouldPanicWith, "I want to panic: because i'm crazy")
-	})
-
-	Convey("Must not panic if err is nil", t, func() {
-		So(coolfunc, ShouldNotPanic)
-	})
-}
 
 func TestInterfaceToString(t *testing.T) {
 	Convey("Given some values to convert", t, func() {

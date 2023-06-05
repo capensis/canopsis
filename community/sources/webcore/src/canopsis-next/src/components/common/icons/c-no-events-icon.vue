@@ -1,6 +1,7 @@
 <template lang="pug">
   v-tooltip(v-if="value", :max-width="maxWidth", :top="top", :right="right", :bottom="bottom", :left="left")
-    v-icon(slot="activator", :color="color", :size="size") sync_problem
+    template(#activator="{ on }")
+      v-icon.d-block(v-on="on", :color="color", :size="size") sync_problem
     span {{ message }}
 </template>
 
@@ -39,7 +40,7 @@ export default {
       required: false,
     },
     size: {
-      type: String,
+      type: [String, Number],
       required: false,
     },
   },
@@ -49,7 +50,7 @@ export default {
     },
 
     message() {
-      return this.$t('icons.noEvents', {
+      return this.$t('common.noReceivedEvents', {
         duration: convertDurationToString(this.durationDiff),
       });
     },

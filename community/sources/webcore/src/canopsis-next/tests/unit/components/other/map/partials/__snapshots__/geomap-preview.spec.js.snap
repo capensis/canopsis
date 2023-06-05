@@ -1,0 +1,673 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`geomap-preview Renders \`geomap-preview\` with all point types and color indicator impact state 1`] = `
+<c-zoom-overlay-stub>
+  <div
+    class="geomap geomap-preview"
+    min-zoom="2"
+  >
+    <geomap-control-zoom-stub
+      disableclickpropagation="true"
+      options="[object Object]"
+      position="topleft"
+    />
+    <geomap-control-layers-stub
+      autozindex="true"
+      collapsed="true"
+      options="[object Object]"
+      position="topright"
+    />
+    <geomap-tile-layer-stub
+      layertype="base"
+      name="Open street map"
+      nowrap="true"
+      opacity="1"
+      options="[object Object]"
+      pane="tilePane"
+      subdomains="abc"
+      tilelayerclass="[Function]"
+      tilesize="256"
+      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      visible="true"
+      zindex="1"
+    />
+    <geomap-control-stub
+      disableclickpropagation="true"
+      options="[object Object]"
+      position="bottomright"
+    >
+      <c-help-icon-stub
+        color="secondary"
+        icon="help"
+        size="32"
+        text="Useful shortcuts:
+Ctrl + mouse wheel - zoom in/out
+Left mouse click + drag - pan the area"
+        top="top"
+      />
+    </geomap-control-stub>
+    <geomap-cluster-group-stub
+      clusterstyle="[object Object]"
+      layertype="overlay"
+      name="Impact level: 1"
+      pane="overlayPane"
+      visible="true"
+    >
+      <geomap-marker-stub
+        icon="[object Object]"
+        latlng="1,1"
+        opacity="1"
+        options="[object Object]"
+        pane="markerPane"
+        visible="true"
+      >
+        <geomap-icon-stub
+          bgpos="0,0"
+          classname=""
+          iconanchor="12,24"
+          options="[object Object]"
+          popupanchor="0,0"
+          tooltipanchor="0,0"
+        >
+          <point-icon-stub
+            colorindicator="impact_state"
+            entity="[object Object]"
+            size="24"
+            style="width: 24px; height: 24px; max-width: unset; max-height: unset;"
+          />
+        </geomap-icon-stub>
+      </geomap-marker-stub>
+    </geomap-cluster-group-stub>
+    <geomap-cluster-group-stub
+      clusterstyle="[object Object]"
+      layertype="overlay"
+      name="Impact level: 2"
+      pane="overlayPane"
+      visible="true"
+    >
+      <geomap-marker-stub
+        icon="[object Object]"
+        latlng="2,2"
+        opacity="1"
+        options="[object Object]"
+        pane="markerPane"
+        visible="true"
+      >
+        <geomap-icon-stub
+          bgpos="0,0"
+          classname=""
+          iconanchor="12,24"
+          options="[object Object]"
+          popupanchor="0,0"
+          tooltipanchor="0,0"
+        >
+          <point-icon-stub
+            colorindicator="impact_state"
+            entity="[object Object]"
+            size="24"
+            style="width: 24px; height: 24px; max-width: unset; max-height: unset;"
+          />
+        </geomap-icon-stub>
+      </geomap-marker-stub>
+      <geomap-marker-stub
+        icon="[object Object]"
+        latlng="4,4"
+        opacity="1"
+        options="[object Object]"
+        pane="markerPane"
+        visible="true"
+      >
+        <geomap-icon-stub
+          bgpos="0,0"
+          classname=""
+          iconanchor="12,24"
+          options="[object Object]"
+          popupanchor="0,0"
+          tooltipanchor="0,0"
+        >
+          <point-icon-stub
+            colorindicator="impact_state"
+            entity="[object Object]"
+            size="24"
+            style="width: 24px; height: 24px; max-width: unset; max-height: unset;"
+          />
+        </geomap-icon-stub>
+      </geomap-marker-stub>
+    </geomap-cluster-group-stub>
+    <geomap-cluster-group-stub
+      layertype="overlay"
+      name="Map"
+      pane="overlayPane"
+      visible="true"
+    >
+      <geomap-marker-stub
+        icon="[object Object]"
+        latlng="3,3"
+        opacity="1"
+        options="[object Object]"
+        pane="markerPane"
+        visible="true"
+      >
+        <geomap-icon-stub
+          bgpos="0,0"
+          classname=""
+          iconanchor="12,12"
+          options="[object Object]"
+          popupanchor="0,0"
+          tooltipanchor="0,0"
+        >
+          <point-icon-stub
+            colorindicator="impact_state"
+            size="24"
+            style="width: 24px; height: 24px; max-width: unset; max-height: unset;"
+          />
+        </geomap-icon-stub>
+      </geomap-marker-stub>
+    </geomap-cluster-group-stub>
+    <!---->
+  </div>
+</c-zoom-overlay-stub>
+`;
+
+exports[`geomap-preview Renders \`geomap-preview\` with all point types and color indicator state 1`] = `
+<c-zoom-overlay-stub>
+  <div
+    class="geomap geomap-preview"
+    min-zoom="2"
+  >
+    <geomap-control-zoom-stub
+      disableclickpropagation="true"
+      options="[object Object]"
+      position="topleft"
+    />
+    <geomap-control-layers-stub
+      autozindex="true"
+      collapsed="true"
+      options="[object Object]"
+      position="topright"
+    />
+    <geomap-tile-layer-stub
+      layertype="base"
+      name="Open street map"
+      nowrap="true"
+      opacity="1"
+      options="[object Object]"
+      pane="tilePane"
+      subdomains="abc"
+      tilelayerclass="[Function]"
+      tilesize="256"
+      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      visible="true"
+      zindex="1"
+    />
+    <geomap-control-stub
+      disableclickpropagation="true"
+      options="[object Object]"
+      position="bottomright"
+    >
+      <c-help-icon-stub
+        color="secondary"
+        icon="help"
+        size="32"
+        text="Useful shortcuts:
+Ctrl + mouse wheel - zoom in/out
+Left mouse click + drag - pan the area"
+        top="top"
+      />
+    </geomap-control-stub>
+    <geomap-cluster-group-stub
+      clusterstyle="[object Object]"
+      layertype="overlay"
+      name="Ok"
+      pane="overlayPane"
+      visible="true"
+    >
+      <geomap-marker-stub
+        icon="[object Object]"
+        latlng="4,4"
+        opacity="1"
+        options="[object Object]"
+        pane="markerPane"
+        visible="true"
+      >
+        <geomap-icon-stub
+          bgpos="0,0"
+          classname=""
+          iconanchor="12,24"
+          options="[object Object]"
+          popupanchor="0,0"
+          tooltipanchor="0,0"
+        >
+          <point-icon-stub
+            colorindicator="state"
+            entity="[object Object]"
+            size="24"
+            style="width: 24px; height: 24px; max-width: unset; max-height: unset;"
+          />
+        </geomap-icon-stub>
+      </geomap-marker-stub>
+    </geomap-cluster-group-stub>
+    <geomap-cluster-group-stub
+      clusterstyle="[object Object]"
+      layertype="overlay"
+      name="Minor"
+      pane="overlayPane"
+      visible="true"
+    >
+      <geomap-marker-stub
+        icon="[object Object]"
+        latlng="1,1"
+        opacity="1"
+        options="[object Object]"
+        pane="markerPane"
+        visible="true"
+      >
+        <geomap-icon-stub
+          bgpos="0,0"
+          classname=""
+          iconanchor="12,24"
+          options="[object Object]"
+          popupanchor="0,0"
+          tooltipanchor="0,0"
+        >
+          <point-icon-stub
+            colorindicator="state"
+            entity="[object Object]"
+            size="24"
+            style="width: 24px; height: 24px; max-width: unset; max-height: unset;"
+          />
+        </geomap-icon-stub>
+      </geomap-marker-stub>
+    </geomap-cluster-group-stub>
+    <geomap-cluster-group-stub
+      clusterstyle="[object Object]"
+      layertype="overlay"
+      name="Critical"
+      pane="overlayPane"
+      visible="true"
+    >
+      <geomap-marker-stub
+        icon="[object Object]"
+        latlng="2,2"
+        opacity="1"
+        options="[object Object]"
+        pane="markerPane"
+        visible="true"
+      >
+        <geomap-icon-stub
+          bgpos="0,0"
+          classname=""
+          iconanchor="12,24"
+          options="[object Object]"
+          popupanchor="0,0"
+          tooltipanchor="0,0"
+        >
+          <point-icon-stub
+            colorindicator="state"
+            entity="[object Object]"
+            size="24"
+            style="width: 24px; height: 24px; max-width: unset; max-height: unset;"
+          />
+        </geomap-icon-stub>
+      </geomap-marker-stub>
+    </geomap-cluster-group-stub>
+    <geomap-cluster-group-stub
+      layertype="overlay"
+      name="Map"
+      pane="overlayPane"
+      visible="true"
+    >
+      <geomap-marker-stub
+        icon="[object Object]"
+        latlng="3,3"
+        opacity="1"
+        options="[object Object]"
+        pane="markerPane"
+        visible="true"
+      >
+        <geomap-icon-stub
+          bgpos="0,0"
+          classname=""
+          iconanchor="12,12"
+          options="[object Object]"
+          popupanchor="0,0"
+          tooltipanchor="0,0"
+        >
+          <point-icon-stub
+            colorindicator="state"
+            size="24"
+            style="width: 24px; height: 24px; max-width: unset; max-height: unset;"
+          />
+        </geomap-icon-stub>
+      </geomap-marker-stub>
+    </geomap-cluster-group-stub>
+    <!---->
+  </div>
+</c-zoom-overlay-stub>
+`;
+
+exports[`geomap-preview Renders \`geomap-preview\` with all point types and pbehavior enabled 1`] = `
+<c-zoom-overlay-stub>
+  <div
+    class="geomap geomap-preview"
+    min-zoom="2"
+  >
+    <geomap-control-zoom-stub
+      disableclickpropagation="true"
+      options="[object Object]"
+      position="topleft"
+    />
+    <geomap-control-layers-stub
+      autozindex="true"
+      collapsed="true"
+      options="[object Object]"
+      position="topright"
+    />
+    <geomap-tile-layer-stub
+      layertype="base"
+      name="Open street map"
+      nowrap="true"
+      opacity="1"
+      options="[object Object]"
+      pane="tilePane"
+      subdomains="abc"
+      tilelayerclass="[Function]"
+      tilesize="256"
+      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      visible="true"
+      zindex="1"
+    />
+    <geomap-control-stub
+      disableclickpropagation="true"
+      options="[object Object]"
+      position="bottomright"
+    >
+      <c-help-icon-stub
+        color="secondary"
+        icon="help"
+        size="32"
+        text="Useful shortcuts:
+Ctrl + mouse wheel - zoom in/out
+Left mouse click + drag - pan the area"
+        top="top"
+      />
+    </geomap-control-stub>
+    <geomap-cluster-group-stub
+      clusterstyle="[object Object]"
+      layertype="overlay"
+      name="Impact level: 1"
+      pane="overlayPane"
+      visible="true"
+    >
+      <geomap-marker-stub
+        icon="[object Object]"
+        latlng="1,1"
+        opacity="1"
+        options="[object Object]"
+        pane="markerPane"
+        visible="true"
+      >
+        <geomap-icon-stub
+          bgpos="0,0"
+          classname=""
+          iconanchor="12,24"
+          options="[object Object]"
+          popupanchor="0,0"
+          tooltipanchor="0,0"
+        >
+          <point-icon-stub
+            entity="[object Object]"
+            pbehaviorenabled="true"
+            size="24"
+            style="width: 24px; height: 24px; max-width: unset; max-height: unset;"
+          />
+        </geomap-icon-stub>
+      </geomap-marker-stub>
+    </geomap-cluster-group-stub>
+    <geomap-cluster-group-stub
+      clusterstyle="[object Object]"
+      layertype="overlay"
+      name="Impact level: 2"
+      pane="overlayPane"
+      visible="true"
+    >
+      <geomap-marker-stub
+        icon="[object Object]"
+        latlng="2,2"
+        opacity="1"
+        options="[object Object]"
+        pane="markerPane"
+        visible="true"
+      >
+        <geomap-icon-stub
+          bgpos="0,0"
+          classname=""
+          iconanchor="12,24"
+          options="[object Object]"
+          popupanchor="0,0"
+          tooltipanchor="0,0"
+        >
+          <point-icon-stub
+            entity="[object Object]"
+            pbehaviorenabled="true"
+            size="24"
+            style="width: 24px; height: 24px; max-width: unset; max-height: unset;"
+          />
+        </geomap-icon-stub>
+      </geomap-marker-stub>
+    </geomap-cluster-group-stub>
+    <geomap-cluster-group-stub
+      layertype="overlay"
+      name="Map"
+      pane="overlayPane"
+      visible="true"
+    >
+      <geomap-marker-stub
+        icon="[object Object]"
+        latlng="3,3"
+        opacity="1"
+        options="[object Object]"
+        pane="markerPane"
+        visible="true"
+      >
+        <geomap-icon-stub
+          bgpos="0,0"
+          classname=""
+          iconanchor="12,12"
+          options="[object Object]"
+          popupanchor="0,0"
+          tooltipanchor="0,0"
+        >
+          <point-icon-stub
+            pbehaviorenabled="true"
+            size="24"
+            style="width: 24px; height: 24px; max-width: unset; max-height: unset;"
+          />
+        </geomap-icon-stub>
+      </geomap-marker-stub>
+    </geomap-cluster-group-stub>
+    <geomap-cluster-group-stub
+      layertype="overlay"
+      name="Pbehavior"
+      pane="overlayPane"
+      visible="true"
+    >
+      <geomap-marker-stub
+        icon="[object Object]"
+        latlng="4,4"
+        opacity="1"
+        options="[object Object]"
+        pane="markerPane"
+        visible="true"
+      >
+        <geomap-icon-stub
+          bgpos="0,0"
+          classname=""
+          iconanchor="12,24"
+          options="[object Object]"
+          popupanchor="0,0"
+          tooltipanchor="0,0"
+        >
+          <point-icon-stub
+            entity="[object Object]"
+            pbehaviorenabled="true"
+            size="24"
+            style="width: 24px; height: 24px; max-width: unset; max-height: unset;"
+          />
+        </geomap-icon-stub>
+      </geomap-marker-stub>
+    </geomap-cluster-group-stub>
+    <!---->
+  </div>
+</c-zoom-overlay-stub>
+`;
+
+exports[`geomap-preview Renders \`geomap-preview\` with custom props 1`] = `
+<c-zoom-overlay-stub>
+  <div
+    class="geomap geomap-preview"
+    disabled="disabled"
+    min-zoom="2"
+  >
+    <geomap-control-zoom-stub
+      disableclickpropagation="true"
+      disabled="true"
+      options="[object Object]"
+      position="topleft"
+    />
+    <geomap-control-layers-stub
+      autozindex="true"
+      collapsed="true"
+      disabled="true"
+      options="[object Object]"
+      position="topright"
+    />
+    <geomap-tile-layer-stub
+      layertype="base"
+      name="Open street map"
+      nowrap="true"
+      opacity="1"
+      options="[object Object]"
+      pane="tilePane"
+      subdomains="abc"
+      tilelayerclass="[Function]"
+      tilesize="256"
+      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      visible="true"
+      zindex="1"
+    />
+    <geomap-control-stub
+      disableclickpropagation="true"
+      options="[object Object]"
+      position="bottomright"
+    >
+      <c-help-icon-stub
+        color="secondary"
+        icon="help"
+        size="32"
+        text="Useful shortcuts:
+Ctrl + mouse wheel - zoom in/out
+Left mouse click + drag - pan the area"
+        top="top"
+      />
+    </geomap-control-stub>
+    <geomap-cluster-group-stub
+      layertype="overlay"
+      name="Map"
+      pane="overlayPane"
+      visible="true"
+    >
+      <geomap-marker-stub
+        icon="[object Object]"
+        latlng="0,0"
+        opacity="1"
+        options="[object Object]"
+        pane="markerPane"
+        visible="true"
+      >
+        <geomap-icon-stub
+          bgpos="0,0"
+          classname=""
+          iconanchor="6,6"
+          options="[object Object]"
+          popupanchor="0,0"
+          tooltipanchor="0,0"
+        >
+          <point-icon-stub
+            colorindicator="impact_state"
+            entity=""
+            pbehaviorenabled="true"
+            size="12"
+            style="width: 12px; height: 12px; max-width: unset; max-height: unset;"
+          />
+        </geomap-icon-stub>
+      </geomap-marker-stub>
+    </geomap-cluster-group-stub>
+    <point-popup-dialog-stub
+      colorindicator="impact_state"
+      point="[object Object]"
+      popupactions="true"
+      popuptemplate="{{ entity.name }}"
+      positionx="5.5"
+      positiony="1"
+    />
+  </div>
+</c-zoom-overlay-stub>
+`;
+
+exports[`geomap-preview Renders \`geomap-preview\` with required props 1`] = `
+<c-zoom-overlay-stub>
+  <div
+    class="geomap geomap-preview"
+    min-zoom="2"
+  >
+    <geomap-control-zoom-stub
+      disableclickpropagation="true"
+      options="[object Object]"
+      position="topleft"
+    />
+    <geomap-control-layers-stub
+      autozindex="true"
+      collapsed="true"
+      options="[object Object]"
+      position="topright"
+    />
+    <geomap-tile-layer-stub
+      layertype="base"
+      name="Open street map"
+      nowrap="true"
+      opacity="1"
+      options="[object Object]"
+      pane="tilePane"
+      subdomains="abc"
+      tilelayerclass="[Function]"
+      tilesize="256"
+      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      visible="true"
+      zindex="1"
+    />
+    <geomap-control-stub
+      disableclickpropagation="true"
+      options="[object Object]"
+      position="bottomright"
+    >
+      <c-help-icon-stub
+        color="secondary"
+        icon="help"
+        size="32"
+        text="Useful shortcuts:
+Ctrl + mouse wheel - zoom in/out
+Left mouse click + drag - pan the area"
+        top="top"
+      />
+    </geomap-control-stub>
+    <geomap-cluster-group-stub
+      layertype="overlay"
+      name="Points"
+      pane="overlayPane"
+      visible="true"
+    />
+    <!---->
+  </div>
+</c-zoom-overlay-stub>
+`;

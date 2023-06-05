@@ -73,7 +73,10 @@ Feature: Create an dynamic-infos
         ]
       ],
       "name": "test-dynamic-infos-to-create-1-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test-dynamic-infos-to-create-1-description",
       "enabled": true,
       "infos": [
@@ -117,7 +120,10 @@ Feature: Create an dynamic-infos
         ]
       ],
       "name": "test-dynamic-infos-to-create-1-name",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "description": "test-dynamic-infos-to-create-1-description",
       "enabled": true,
       "infos": [

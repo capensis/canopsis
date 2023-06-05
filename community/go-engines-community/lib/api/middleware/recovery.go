@@ -13,11 +13,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 var (
-	MissingUserKeyPanicMsg     = "Key \"" + auth.UserKey + "\" does not exist"
-	MissingUsernameKeyPanicMsg = "Key \"" + auth.Username + "\" does not exist"
+	MissingUserKeyPanicMsg  = "Key \"" + auth.UserKey + "\" does not exist"
+	MissingUsernamePanicMsg = "Key \"" + auth.Username + "\" does not exist"
+	MissingApiKeyPanicMsg   = "Key \"" + auth.ApiKey + "\" does not exist"
 )
 
 // Recovery recovers from any panics and if there was one it logs error and writes InternalServerError response.
@@ -47,19 +49,21 @@ func Recovery(logger zerolog.Logger) gin.HandlerFunc {
 
 				if errMsg, ok := r.(string); ok {
 					// Handle unauth response
-					if errMsg == MissingUserKeyPanicMsg {
-						c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
-						return
-					}
-
-					if errMsg == MissingUsernameKeyPanicMsg {
+					switch errMsg {
+					case MissingUserKeyPanicMsg, MissingUsernamePanicMsg, MissingApiKeyPanicMsg:
 						c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 						return
 					}
 				}
 
-				if err != nil && (errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded)) {
-					logger.Warn().Err(err).Msgf("panic recovered")
+				if err != nil && errors.Is(err, context.Canceled) {
+					logger.Warn().Err(err).Msg("panic recovered")
+					c.AbortWithStatusJSON(http.StatusRequestTimeout, common.RequestTimeoutResponse)
+					return
+				}
+
+				if err != nil && (errors.Is(err, context.DeadlineExceeded) || mongodriver.IsTimeout(err)) {
+					logger.Err(err).Msg("panic recovered")
 					c.AbortWithStatusJSON(http.StatusRequestTimeout, common.RequestTimeoutResponse)
 					return
 				}

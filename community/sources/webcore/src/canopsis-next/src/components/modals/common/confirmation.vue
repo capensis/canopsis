@@ -6,7 +6,11 @@
       span.subheading {{ config.text }}
     template(#actions="")
       v-layout(wrap, justify-center)
-        v-btn.error(@click="cancel") {{ $t('common.no') }}
+        v-btn(
+          :outline="$system.dark",
+          color="error",
+          @click="cancel"
+        ) {{ $t('common.no') }}
         v-btn.primary(
           :loading="submitting",
           :disabled="isDisabled",
@@ -27,6 +31,7 @@ import ModalWrapper from '../modal-wrapper.vue';
  */
 export default {
   name: MODALS.confirmation,
+  inject: ['$system'],
   components: { ModalWrapper },
   mixins: [
     modalInnerMixin,

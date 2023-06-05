@@ -8,6 +8,7 @@ db.periodical_alarm.createIndex({"v.resolved": 1}, {name: "v.resolved_1"});
 db.periodical_alarm.createIndex({"v.creation_date": 1}, {name: "v.creation_date_1"});
 db.periodical_alarm.createIndex({"v.last_event_date": 1}, {name: "v.last_event_date_1"});
 db.periodical_alarm.createIndex({"v.last_update_date": 1}, {name: "v.last_update_date_1"});
+db.periodical_alarm.createIndex({"v.parents": 1}, {name: "v.parents_1"});
 
 db.resolved_alarms.createIndex({t: 1}, {name: "t_1"});
 db.resolved_alarms.createIndex({d: 1}, {name: "d_1"});
@@ -65,6 +66,9 @@ db.default_rights.createIndex({
 
 db.action_scenario.createIndex({priority: 1}, {name: "priority_1"});
 
+db.action_log.createIndex({"action": 1})
+db.action_log.createIndex({"value_type": 1, "value_id": 1})
+
 db.entity_category.createIndex({name: 1}, {name: "name_1"});
 
 db.idle_rule.createIndex({priority: 1}, {name: "priority_1"});
@@ -86,8 +90,6 @@ db.views.createIndex({group_id: 1}, {name: "group_id_1"});
 db.viewtabs.createIndex({view: 1}, {name: "view_1"});
 
 db.widgets.createIndex({tab: 1}, {name: "tab_1"});
-
-db.widget_filters.createIndex({widget: 1}, {name: "widget_1"});
 
 // Can be removed if index is added
 db.createCollection("pbehavior_reason");

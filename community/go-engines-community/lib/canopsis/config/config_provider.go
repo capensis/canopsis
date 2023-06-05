@@ -1,6 +1,6 @@
 package config
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/config/config.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config AlarmConfigProvider,TimezoneConfigProvider,RemediationConfigProvider,UserInterfaceConfigProvider,DataStorageConfigProvider
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/config/config.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config AlarmConfigProvider,TimezoneConfigProvider,RemediationConfigProvider,UserInterfaceConfigProvider,DataStorageConfigProvider,TechMetricsConfigProvider,TemplateConfigProvider
 
 import (
 	"fmt"
@@ -51,6 +51,18 @@ type UserInterfaceConfigProvider interface {
 	Get() UserInterfaceConf
 }
 
+type TechMetricsConfigProvider interface {
+	Get() TechMetricsConfig
+}
+
+type MetricsConfigProvider interface {
+	Get() MetricsConfig
+}
+
+type TemplateConfigProvider interface {
+	Get() SectionTemplate
+}
+
 type AlarmConfig struct {
 	StealthyInterval      time.Duration
 	EnableLastEventDate   bool
@@ -60,9 +72,10 @@ type AlarmConfig struct {
 	OutputLength          int
 	LongOutputLength      int
 	// DisableActionSnoozeDelayOnPbh ignores Pbh state to resolve snoozed with Action alarm while is True
-	DisableActionSnoozeDelayOnPbh bool
-	TimeToKeepResolvedAlarms      time.Duration
-	AllowDoubleAck                bool
+	DisableActionSnoozeDelayOnPbh     bool
+	TimeToKeepResolvedAlarms          time.Duration
+	AllowDoubleAck                    bool
+	ActivateAlarmAfterAutoRemediation bool
 }
 
 type TimezoneConfig struct {
@@ -70,7 +83,6 @@ type TimezoneConfig struct {
 }
 
 type ApiConfig struct {
-	TokenExpiration    time.Duration
 	TokenSigningMethod jwt.SigningMethod
 	BulkMaxSize        int
 }
@@ -85,8 +97,22 @@ type RemediationConfig struct {
 	ExternalAPI                    map[string]ExternalApiConfig
 }
 
+type TechMetricsConfig struct {
+	Enabled          bool
+	DumpKeepInterval time.Duration
+}
+
 type DataStorageConfig struct {
-	TimeToExecute *ScheduledTime
+	TimeToExecute      *ScheduledTime
+	MaxUpdates         int
+	MongoClientTimeout time.Duration
+}
+
+type MetricsConfig struct {
+	FlushInterval          time.Duration
+	SliInterval            time.Duration
+	EnabledInstructions    bool
+	EnabledNotAckedMetrics bool
 }
 
 type ScheduledTime struct {
@@ -98,15 +124,60 @@ func (t ScheduledTime) String() string {
 	return fmt.Sprintf("%v,%v", t.Weekday, t.Hour)
 }
 
+type BaseTechMetricsConfigProvider struct {
+	conf   TechMetricsConfig
+	mx     sync.RWMutex
+	logger zerolog.Logger
+}
+
+func NewTechMetricsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseTechMetricsConfigProvider {
+	sectionName := "tech_metrics"
+	conf := TechMetricsConfig{
+		Enabled:          parseBool(cfg.TechMetrics.Enabled, "Enabled", sectionName, logger),
+		DumpKeepInterval: parseTimeDurationByStr(cfg.TechMetrics.DumpKeepInterval, TechMetricsDumpKeepInterval, "DumpKeepInterval", sectionName, logger),
+	}
+
+	return &BaseTechMetricsConfigProvider{
+		conf:   conf,
+		mx:     sync.RWMutex{},
+		logger: logger,
+	}
+}
+
+func (p *BaseTechMetricsConfigProvider) Update(cfg CanopsisConf) {
+	p.mx.Lock()
+	defer p.mx.Unlock()
+
+	sectionName := "tech_metrics"
+
+	b, ok := parseUpdatedBool(cfg.TechMetrics.Enabled, p.conf.Enabled, "Enabled", sectionName, p.logger)
+	if ok {
+		p.conf.Enabled = b
+	}
+
+	d, ok := parseUpdatedTimeDurationByStr(cfg.TechMetrics.DumpKeepInterval, p.conf.DumpKeepInterval, "DumpKeepInterval", sectionName, p.logger)
+	if ok {
+		p.conf.DumpKeepInterval = d
+	}
+}
+
+func (p *BaseTechMetricsConfigProvider) Get() TechMetricsConfig {
+	p.mx.RLock()
+	defer p.mx.RUnlock()
+
+	return p.conf
+}
+
 func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmConfigProvider {
 	sectionName := "alarm"
 	conf := AlarmConfig{
-		StealthyInterval:              parseTimeDurationBySeconds(cfg.Alarm.StealthyInterval, 0, "StealthyInterval", sectionName, logger),
-		EnableLastEventDate:           parseBool(cfg.Alarm.EnableLastEventDate, "EnableLastEventDate", sectionName, logger),
-		CancelAutosolveDelay:          parseTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, AlarmCancelAutosolveDelay, "CancelAutosolveDelay", sectionName, logger),
-		DisableActionSnoozeDelayOnPbh: parseBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, logger),
-		TimeToKeepResolvedAlarms:      parseTimeDurationByStr(cfg.Alarm.TimeToKeepResolvedAlarms, 0, "TimeToKeepResolvedAlarms", sectionName, logger),
-		AllowDoubleAck:                parseBool(cfg.Alarm.AllowDoubleAck, "AllowDoubleAck", sectionName, logger),
+		StealthyInterval:                  parseTimeDurationBySeconds(cfg.Alarm.StealthyInterval, 0, "StealthyInterval", sectionName, logger),
+		EnableLastEventDate:               parseBool(cfg.Alarm.EnableLastEventDate, "EnableLastEventDate", sectionName, logger),
+		CancelAutosolveDelay:              parseTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, AlarmCancelAutosolveDelay, "CancelAutosolveDelay", sectionName, logger),
+		DisableActionSnoozeDelayOnPbh:     parseBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, logger),
+		TimeToKeepResolvedAlarms:          parseTimeDurationByStr(cfg.Alarm.TimeToKeepResolvedAlarms, 0, "TimeToKeepResolvedAlarms", sectionName, logger),
+		AllowDoubleAck:                    parseBool(cfg.Alarm.AllowDoubleAck, "AllowDoubleAck", sectionName, logger),
+		ActivateAlarmAfterAutoRemediation: parseBool(cfg.Alarm.ActivateAlarmAfterAutoRemediation, "activate_after_auto_remediation_on_create", sectionName, logger),
 	}
 	conf.DisplayNameScheme, conf.displayNameSchemeText = parseTemplate(cfg.Alarm.DisplayNameScheme, AlarmDefaultNameScheme, "DisplayNameScheme", sectionName, logger)
 
@@ -196,6 +267,11 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) {
 	if ok {
 		p.conf.AllowDoubleAck = b
 	}
+
+	b, ok = parseUpdatedBool(cfg.Alarm.ActivateAlarmAfterAutoRemediation, p.conf.ActivateAlarmAfterAutoRemediation, "ActivateAlarmAfterAutoRemediation", sectionName, p.logger)
+	if ok {
+		p.conf.ActivateAlarmAfterAutoRemediation = b
+	}
 }
 
 func (p *BaseAlarmConfigProvider) Get() AlarmConfig {
@@ -240,7 +316,6 @@ func (p *BaseTimezoneConfigProvider) Get() TimezoneConfig {
 func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfigProvider {
 	sectionName := "api"
 	conf := ApiConfig{
-		TokenExpiration:    parseTimeDurationByStr(cfg.API.TokenExpiration, ApiTokenExpiration, "TokenExpiration", sectionName, logger),
 		TokenSigningMethod: parseJwtSigningMethod(cfg.API.TokenSigningMethod, jwt.GetSigningMethod(ApiTokenSigningMethod), "TokenSigningMethod", sectionName, logger),
 		BulkMaxSize:        parseInt(cfg.API.BulkMaxSize, ApiBulkMaxSize, "BulkMaxSize", sectionName, logger),
 	}
@@ -262,11 +337,6 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 	defer p.mx.Unlock()
 
 	sectionName := "api"
-	d, ok := parseUpdatedTimeDurationByStr(cfg.API.TokenExpiration, p.conf.TokenExpiration, "TokenExpiration", sectionName, p.logger)
-	if ok {
-		p.conf.TokenExpiration = d
-	}
-
 	m, ok := parseUpdatedJwtSigningMethod(cfg.API.TokenSigningMethod, p.conf.TokenSigningMethod, "TokenSigningMethod", sectionName, p.logger)
 	if ok {
 		p.conf.TokenSigningMethod = m
@@ -374,13 +444,10 @@ type BaseUserInterfaceConfigProvider struct {
 	logger zerolog.Logger
 }
 
-const DefaultMaxMatchedItems = 10000
-const DefaultCheckCountRequestTimeout = 30
-
 func NewUserInterfaceConfigProvider(cfg UserInterfaceConf, logger zerolog.Logger) *BaseUserInterfaceConfigProvider {
 	maxMatchedItems := 0
 	if cfg.MaxMatchedItems <= 0 {
-		maxMatchedItems = DefaultMaxMatchedItems
+		maxMatchedItems = UserInterfaceMaxMatchedItems
 		logger.Error().
 			Int("default", maxMatchedItems).
 			Int("invalid", cfg.MaxMatchedItems).
@@ -394,7 +461,7 @@ func NewUserInterfaceConfigProvider(cfg UserInterfaceConf, logger zerolog.Logger
 
 	checkCountRequestTimeout := 0
 	if cfg.CheckCountRequestTimeout <= 0 {
-		checkCountRequestTimeout = DefaultCheckCountRequestTimeout
+		checkCountRequestTimeout = UserInterfaceCheckCountRequestTimeout
 		logger.Error().
 			Int("default", checkCountRequestTimeout).
 			Int("invalid", cfg.CheckCountRequestTimeout).
@@ -468,10 +535,15 @@ func (p *BaseUserInterfaceConfigProvider) Get() UserInterfaceConf {
 }
 
 func NewDataStorageConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseDataStorageConfigProvider {
+	sectionName := "data_storage"
 	return &BaseDataStorageConfigProvider{
 		conf: DataStorageConfig{
-			TimeToExecute: parseScheduledTime(cfg.DataStorage.TimeToExecute,
-				"TimeToExecute", "data_storage", logger, "data archive and delete are disabled"),
+			TimeToExecute: parseScheduledTime(cfg.DataStorage.TimeToExecute, "TimeToExecute", sectionName, logger,
+				"data archive and delete are disabled"),
+			MaxUpdates: parseInt(cfg.DataStorage.MaxUpdates, DataStorageMaxUpdates, "MaxUpdates", sectionName,
+				logger),
+			MongoClientTimeout: parseTimeDurationByStr(cfg.DataStorage.MongoClientTimeout, 0,
+				"MongoClientTimeout", sectionName, logger),
 		},
 		logger: logger,
 	}
@@ -487,10 +559,22 @@ func (p *BaseDataStorageConfigProvider) Update(cfg CanopsisConf) {
 	p.mx.Lock()
 	defer p.mx.Unlock()
 
-	t, ok := parseUpdatedScheduledTime(cfg.DataStorage.TimeToExecute, p.conf.TimeToExecute,
-		"TimeToExecute", "data_storage", p.logger)
+	sectionName := "data_storage"
+	t, ok := parseUpdatedScheduledTime(cfg.DataStorage.TimeToExecute, p.conf.TimeToExecute, "TimeToExecute",
+		sectionName, p.logger)
 	if ok {
 		p.conf.TimeToExecute = t
+	}
+
+	i, ok := parseUpdatedInt(cfg.DataStorage.MaxUpdates, p.conf.MaxUpdates, "MaxUpdates", sectionName, p.logger)
+	if ok {
+		p.conf.MaxUpdates = i
+	}
+
+	d, ok := parseUpdatedTimeDurationByStr(cfg.DataStorage.MongoClientTimeout, p.conf.MongoClientTimeout,
+		"MongoClientTimeout", sectionName, p.logger)
+	if ok {
+		p.conf.MongoClientTimeout = d
 	}
 }
 
@@ -499,6 +583,39 @@ func (p *BaseDataStorageConfigProvider) Get() DataStorageConfig {
 	defer p.mx.RUnlock()
 
 	return p.conf
+}
+
+type BaseTemplateConfigProvider struct {
+	conf SectionTemplate
+	mx   sync.RWMutex
+}
+
+func NewTemplateConfigProvider(cfg CanopsisConf) *BaseTemplateConfigProvider {
+	return &BaseTemplateConfigProvider{
+		conf: cfg.Template,
+		mx:   sync.RWMutex{},
+	}
+}
+
+func (p *BaseTemplateConfigProvider) Update(cfg CanopsisConf) {
+	p.mx.Lock()
+	defer p.mx.Unlock()
+
+	p.conf = cfg.Template
+}
+
+func (p *BaseTemplateConfigProvider) Get() SectionTemplate {
+	p.mx.RLock()
+	defer p.mx.RUnlock()
+
+	return p.conf
+}
+
+func GetMetricsConfig(cfg CanopsisConf, logger zerolog.Logger) MetricsConfig {
+	return MetricsConfig{
+		FlushInterval: parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", "metrics", logger),
+		SliInterval:   parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
+	}
 }
 
 func parseScheduledTime(
@@ -536,17 +653,18 @@ func parseUpdatedScheduledTime(
 ) (*ScheduledTime, bool) {
 	if v == "" {
 		if oldVal != nil {
-			logger.Error().
-				Str("invalid", v).
+			logger.Warn().
 				Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
 		}
 		return nil, false
 	}
 	t, ok := stringToScheduledTime(v)
 	if !ok {
-		logger.Error().
-			Str("invalid", v).
-			Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		if oldVal != nil {
+			logger.Error().
+				Str("invalid", v).
+				Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		}
 		return nil, false
 	}
 
@@ -572,7 +690,7 @@ func stringToScheduledTime(v string) (ScheduledTime, bool) {
 	if len(split) == 2 {
 		if d, ok := weekdays[split[0]]; ok {
 			h, err := strconv.Atoi(split[1])
-			if err == nil {
+			if err == nil && h >= 0 && h <= 24 {
 				t.Weekday = d
 				t.Hour = h
 				return t, true
@@ -590,9 +708,49 @@ func parseTimeDurationByStr(
 	logger zerolog.Logger,
 ) time.Duration {
 	if v == "" {
-		logger.Error().
+		if defaultVal > 0 {
+			logger.Warn().
+				Str("default", defaultVal.String()).
+				Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
+		} else {
+			logger.Info().Msgf("%s of %s config section is not defined", name, sectionName)
+		}
+
+		return defaultVal
+	}
+
+	d, err := time.ParseDuration(v)
+	if err != nil {
+		if defaultVal > 0 {
+			logger.Err(err).
+				Str("default", defaultVal.String()).
+				Str("invalid", v).
+				Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+		} else {
+			logger.Err(err).
+				Str("invalid", v).
+				Msgf("bad value %s of %s config section", name, sectionName)
+		}
+
+		return defaultVal
+	}
+
+	logger.Info().
+		Str("value", d.String()).
+		Msgf("%s of %s config section is used", name, sectionName)
+
+	return d
+}
+
+func parseTimeDurationByStrWithMax(
+	v string,
+	defaultVal, maxVal time.Duration,
+	name, sectionName string,
+	logger zerolog.Logger,
+) time.Duration {
+	if v == "" {
+		logger.Warn().
 			Str("default", defaultVal.String()).
-			Str("invalid", v).
 			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
 
 		return defaultVal
@@ -608,6 +766,16 @@ func parseTimeDurationByStr(
 		return defaultVal
 	}
 
+	if d > maxVal {
+		logger.Err(err).
+			Str("default", defaultVal.String()).
+			Str("max", maxVal.String()).
+			Str("invalid", v).
+			Msgf("%s of %s config section is greater than max value, default value is used instead", name, sectionName)
+
+		return defaultVal
+	}
+
 	logger.Info().
 		Str("value", d.String()).
 		Msgf("%s of %s config section is used", name, sectionName)
@@ -615,16 +783,65 @@ func parseTimeDurationByStr(
 	return d
 }
 
-func parseUpdatedTimeDurationByStr(
-	v string, oldVal time.Duration,
+func parseUpdatedTimeDurationByStrWithMax(
+	v string,
+	oldVal, maxVal time.Duration,
 	name, sectionName string,
 	logger zerolog.Logger,
 ) (time.Duration, bool) {
 	if v == "" {
 		if oldVal > 0 {
-			logger.Error().
+			logger.Warn().
+				Str("previous", oldVal.String()).
+				Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
+		}
+
+		return 0, false
+	}
+
+	d, err := time.ParseDuration(v)
+	if err != nil {
+		if oldVal > 0 {
+			logger.Err(err).
 				Str("previous", oldVal.String()).
 				Str("invalid", v).
+				Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		}
+		return 0, false
+	}
+
+	if d > maxVal {
+		logger.Err(err).
+			Str("previous", oldVal.String()).
+			Str("max", maxVal.String()).
+			Str("invalid", v).
+			Msgf("%s of %s config section is greater than max value, previous value is used instead", name, sectionName)
+
+		return 0, false
+	}
+
+	if d == oldVal {
+		return 0, false
+	}
+
+	logger.Info().
+		Str("previous", oldVal.String()).
+		Str("new", d.String()).
+		Msgf("%s of %s config section is loaded", name, sectionName)
+
+	return d, true
+}
+
+func parseUpdatedTimeDurationByStr(
+	v string,
+	oldVal time.Duration,
+	name, sectionName string,
+	logger zerolog.Logger,
+) (time.Duration, bool) {
+	if v == "" {
+		if oldVal > 0 {
+			logger.Warn().
+				Str("previous", oldVal.String()).
 				Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
 		}
 		return 0, false
@@ -632,10 +849,12 @@ func parseUpdatedTimeDurationByStr(
 
 	d, err := time.ParseDuration(v)
 	if err != nil {
-		logger.Err(err).
-			Str("previous", oldVal.String()).
-			Str("invalid", v).
-			Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		if oldVal > 0 {
+			logger.Err(err).
+				Str("previous", oldVal.String()).
+				Str("invalid", v).
+				Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		}
 		return 0, false
 	}
 
@@ -760,9 +979,8 @@ func parseTemplate(
 		if err != nil {
 			panic(fmt.Errorf("invalid contant %s: %w", name, err))
 		}
-		logger.Error().
+		logger.Warn().
 			Str("default", defaultVal).
-			Str("invalid", v).
 			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
 
 		return tpl, defaultVal
@@ -796,8 +1014,7 @@ func parseUpdatedTemplate(
 	logger zerolog.Logger,
 ) (*template.Template, string, bool) {
 	if v == "" {
-		logger.Error().
-			Str("invalid", v).
+		logger.Warn().
 			Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
 		return nil, "", false
 	}
@@ -857,9 +1074,8 @@ func parseLocation(
 	logger zerolog.Logger,
 ) *time.Location {
 	if v == "" {
-		logger.Error().
+		logger.Warn().
 			Str("default", defaultVal.String()).
-			Str("invalid", v).
 			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
 		return defaultVal
 	}
@@ -887,8 +1103,7 @@ func parseUpdatedLocation(
 	logger zerolog.Logger,
 ) (*time.Location, bool) {
 	if v == "" {
-		logger.Error().
-			Str("invalid", v).
+		logger.Warn().
 			Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
 		return nil, false
 	}
@@ -919,9 +1134,8 @@ func parseJwtSigningMethod(
 	logger zerolog.Logger,
 ) jwt.SigningMethod {
 	if v == "" {
-		logger.Error().
+		logger.Warn().
 			Str("default", defaultVal.Alg()).
-			Str("invalid", v).
 			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
 
 		return defaultVal
@@ -951,8 +1165,7 @@ func parseUpdatedJwtSigningMethod(
 	logger zerolog.Logger,
 ) (jwt.SigningMethod, bool) {
 	if v == "" {
-		logger.Error().
-			Str("invalid", v).
+		logger.Warn().
 			Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
 		return nil, false
 	}
@@ -968,4 +1181,58 @@ func parseUpdatedJwtSigningMethod(
 		Msgf("%s of %s config section is loaded", name, sectionName)
 
 	return m, true
+}
+
+type BaseMetricsSettingsConfigProvider struct {
+	conf   MetricsConfig
+	mx     sync.RWMutex
+	logger zerolog.Logger
+}
+
+func NewMetricsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseMetricsSettingsConfigProvider {
+	sectionName := "metrics"
+
+	return &BaseMetricsSettingsConfigProvider{
+		conf: MetricsConfig{
+			EnabledNotAckedMetrics: parseBool(cfg.Metrics.EnabledNotAckedMetrics, "EnabledNotAckedMetrics", sectionName, logger),
+			EnabledInstructions:    parseBool(cfg.Metrics.EnabledInstructions, "EnabledInstructions", sectionName, logger),
+			FlushInterval:          parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", sectionName, logger),
+			SliInterval:            parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
+		},
+		logger: logger,
+	}
+}
+
+func (p *BaseMetricsSettingsConfigProvider) Update(cfg CanopsisConf) {
+	p.mx.Lock()
+	defer p.mx.Unlock()
+
+	sectionName := "metrics"
+
+	b, ok := parseUpdatedBool(cfg.Metrics.EnabledNotAckedMetrics, p.conf.EnabledNotAckedMetrics, "EnabledNotAckedMetrics", sectionName, p.logger)
+	if ok {
+		p.conf.EnabledNotAckedMetrics = b
+	}
+
+	b, ok = parseUpdatedBool(cfg.Metrics.EnabledInstructions, p.conf.EnabledInstructions, "EnabledInstructions", sectionName, p.logger)
+	if ok {
+		p.conf.EnabledInstructions = b
+	}
+
+	d, ok := parseUpdatedTimeDurationByStr(cfg.Metrics.FlushInterval, p.conf.FlushInterval, "FlushInterval", sectionName, p.logger)
+	if ok {
+		p.conf.FlushInterval = d
+	}
+
+	d, ok = parseUpdatedTimeDurationByStrWithMax(cfg.Metrics.SliInterval, p.conf.SliInterval, MetricsMaxSliInterval, "SliInterval", sectionName, p.logger)
+	if ok {
+		p.conf.SliInterval = d
+	}
+}
+
+func (p *BaseMetricsSettingsConfigProvider) Get() MetricsConfig {
+	p.mx.RLock()
+	defer p.mx.RUnlock()
+
+	return p.conf
 }

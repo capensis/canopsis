@@ -13,14 +13,12 @@ type Validator interface {
 }
 
 type baseValidator struct {
-	dbClient     mongo.DbClient
-	dbCollection mongo.DbCollection
+	dbClient mongo.DbClient
 }
 
 func NewValidator(dbClient mongo.DbClient) Validator {
 	return &baseValidator{
-		dbClient:     dbClient,
-		dbCollection: dbClient.Collection(mongo.RightsMongoCollection),
+		dbClient: dbClient,
 	}
 }
 

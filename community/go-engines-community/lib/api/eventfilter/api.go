@@ -40,7 +40,7 @@ func NewApi(
 
 // Create
 // @Param body body CreateRequest true "body"
-// @Success 201 {object} eventfilter.Rule
+// @Success 201 {object} Response
 func (a api) Create(c *gin.Context) {
 	var request CreateRequest
 	var err error
@@ -80,7 +80,7 @@ func (a api) Create(c *gin.Context) {
 }
 
 // List
-// @Success 200 {object} common.PaginatedListResponse{data=[]eventfilter.Rule}
+// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
 func (a api) List(c *gin.Context) {
 	var query FilteredQuery
 	query.Query = pagination.GetDefaultQuery()
@@ -105,7 +105,7 @@ func (a api) List(c *gin.Context) {
 }
 
 // Get
-// @Success 200 {object} eventfilter.Rule
+// @Success 200 {object} Response
 func (a api) Get(c *gin.Context) {
 	evf, err := a.store.GetById(c.Request.Context(), c.Param("id"))
 
@@ -123,7 +123,7 @@ func (a api) Get(c *gin.Context) {
 
 // Update
 // @Param body body UpdateRequest true "body"
-// @Success 200 {object} eventfilter.Rule
+// @Success 200 {object} Response
 func (a api) Update(c *gin.Context) {
 	request := UpdateRequest{
 		ID: c.Param("id"),

@@ -17,7 +17,10 @@ Feature: Update a view tab
     {
       "_id": "test-tab-to-update",
       "title": "test-tab-to-update-title-updated",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1611229670
     }
     """

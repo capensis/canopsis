@@ -1,9 +1,10 @@
 <template lang="pug">
   v-form.pa-3.pbehavior-form(v-click-outside.zIndex="clickOutsideDirective", @submit.prevent="submitHandler")
-    pbehavior-form(v-model="form", :no-filter="!!filter")
+    pbehavior-form(v-model="form", :no-pattern="!!entityPattern")
     v-layout(row, justify-end)
       v-btn.error(
         v-show="pbehavior",
+        :outline="$system.dark",
         @click="remove"
       ) {{ $t('common.delete') }}
       v-btn.mr-0.mb-0(
@@ -11,7 +12,11 @@
         flat,
         @click="cancel"
       ) {{ $t('common.cancel') }}
-      v-btn.mr-0.mb-0.primary.white--text(type="submit") {{ $t('common.submit') }}
+      v-btn.mr-0.mb-0(
+        :disabled="errors.any()",
+        color="primary",
+        type="submit"
+      ) {{ $t('common.submit') }}
 </template>
 
 <script>
@@ -25,10 +30,10 @@ import {
 
 import { MODALS } from '@/constants';
 
-import { isOmitEqual } from '@/helpers/validators/is-omit-equal';
+import { isOmitEqual } from '@/helpers/equal';
 import { getMenuClassByCalendarEvent } from '@/helpers/calendar/dayspan';
 
-import PbehaviorForm from '@/components/other/pbehavior/calendar/partials/pbehavior-form.vue';
+import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
 
 export default {
   $_veeValidate: {
@@ -42,15 +47,15 @@ export default {
       type: Object,
       required: false,
     },
-    filter: {
-      type: Object,
+    entityPattern: {
+      type: Array,
       required: false,
     },
   },
   data() {
     return {
       manualClose: false,
-      form: calendarEventToPbehaviorForm(this.calendarEvent, this.filter, this.$system.timezone),
+      form: calendarEventToPbehaviorForm(this.calendarEvent, this.entityPattern, this.$system.timezone),
     };
   },
   computed: {
@@ -78,6 +83,7 @@ export default {
   },
   beforeDestroy() {
     if (this.manualClose) {
+      // eslint-disable-next-line vue/no-mutating-props
       delete this.calendarEvent.data.cachedForm;
     } else {
       this.cacheForm();
@@ -85,6 +91,7 @@ export default {
   },
   methods: {
     cacheForm() {
+      // eslint-disable-next-line vue/no-mutating-props
       this.calendarEvent.data.cachedForm = cloneDeep(this.form);
     },
 

@@ -4,11 +4,16 @@ import { createSelectInputStub } from '@unit/stubs/input';
 import { ALARM_METRIC_PARAMETERS, KPI_RATING_CRITERIA } from '@/constants';
 
 import KpiRatingMetricField from '@/components/other/kpi/charts/partials/kpi-rating-metric-field';
+import CSelectField from '@/components/forms/fields/c-select-field';
 
 const localVue = createVueInstance();
 
 const stubs = {
-  'v-select': createSelectInputStub('v-select'),
+  'c-select-field': createSelectInputStub('c-select-field'),
+};
+
+const snapshotStubs = {
+  'c-select-field': CSelectField,
 };
 
 const factory = (options = {}) => shallowMount(KpiRatingMetricField, {
@@ -20,9 +25,12 @@ const factory = (options = {}) => shallowMount(KpiRatingMetricField, {
 
 const snapshotFactory = (options = {}) => mount(KpiRatingMetricField, {
   localVue,
+  stubs: snapshotStubs,
 
   ...options,
 });
+
+const selectSelectField = wrapper => wrapper.find('.c-select-field');
 
 describe('kpi-rating-metric-field', () => {
   it('Metric changed after trigger select field', () => {
@@ -36,7 +44,7 @@ describe('kpi-rating-metric-field', () => {
       },
     });
 
-    const valueElement = wrapper.find('select.v-select');
+    const valueElement = selectSelectField(wrapper);
 
     valueElement.setValue(ALARM_METRIC_PARAMETERS.instructionAlarms);
 
@@ -56,9 +64,6 @@ describe('kpi-rating-metric-field', () => {
           id: 1,
           label: KPI_RATING_CRITERIA.user,
         },
-      },
-      mocks: {
-        $te: path => path.includes('users'),
       },
     });
 

@@ -7,7 +7,7 @@ Feature: Get a role
     When I do GET /api/v4/roles?search=test-role-to-get
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -46,7 +46,17 @@ Feature: Get a role
               "name": "test-permission-to-edit-role-3",
               "type": "RW"
             }
-          ]
+          ],
+          "auth_config": {
+            "expiration_interval": {
+              "value": 1,
+              "unit": "m"
+            },
+            "inactivity_interval": {
+              "value": 8,
+              "unit": "h"
+            }
+          }
         },
         {
           "_id": "test-role-to-get-2",
@@ -78,7 +88,11 @@ Feature: Get a role
               "name": "test-permission-to-edit-role-3",
               "type": "RW"
             }
-          ]
+          ],
+          "auth_config": {
+            "expiration_interval": null,
+            "inactivity_interval": null
+          }
         }
       ],
       "meta": {
@@ -92,10 +106,10 @@ Feature: Get a role
 
   Scenario: given search request should return roles with permission
     When I am admin
-    When I do GET /api/v4/roles?permission=api_instruction_approve&search=ap
+    When I do GET /api/v4/roles?permission=api_instruction_approve&search=approve
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -119,7 +133,7 @@ Feature: Get a role
     When I do GET /api/v4/roles/test-role-to-get-1
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-role-to-get-1",
       "defaultview": null,
@@ -156,7 +170,17 @@ Feature: Get a role
           "name": "test-permission-to-edit-role-3",
           "type": "RW"
         }
-      ]
+      ],
+      "auth_config": {
+        "expiration_interval": {
+          "value": 1,
+          "unit": "m"
+        },
+        "inactivity_interval": {
+          "value": 8,
+          "unit": "h"
+        }
+      }
     }
     """
 
@@ -165,7 +189,7 @@ Feature: Get a role
     When I do GET /api/v4/roles?search=test-role-to-get&sort=desc&sort_by=name
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
@@ -184,6 +208,54 @@ Feature: Get a role
     }
     """
 
+  Scenario: given with flags request should return flags
+    When I am admin
+    When I do GET /api/v4/roles?search=test-role-to-get&with_flags=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-role-to-get-1",
+          "editable": true,
+          "deletable": true
+        },
+        {
+          "_id": "test-role-to-get-2",
+          "editable": true,
+          "deletable": true
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/roles?search=admin&with_flags=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "admin",
+          "editable": false,
+          "deletable": false
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
   Scenario: given get all request and no auth user should not allow access
     When I do GET /api/v4/roles
     Then the response code should be 401
@@ -197,7 +269,7 @@ Feature: Get a role
     When I do GET /api/v4/roles/test-role-to-get-1
     Then the response code should be 401
 
-  Scenario: given get request and auth user by api key without permissions should not allow access
+  Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
     When I do GET /api/v4/roles/test-role-to-get-1
     Then the response code should be 403
@@ -207,7 +279,7 @@ Feature: Get a role
     When I do GET /api/v4/roles/test-role-not-found
     Then the response code should be 404
     Then the response body should be:
-    """
+    """json
     {
       "error": "Not found"
     }

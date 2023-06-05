@@ -134,3 +134,17 @@ func (mr *MockAdapterMockRecorder) UpdateHistoryRemediation(arg0, arg1 interface
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHistoryRemediation", reflect.TypeOf((*MockAdapter)(nil).UpdateHistoryRemediation), arg0, arg1)
 }
+
+// UpdateHistoryWebhook mocks base method.
+func (m *MockAdapter) UpdateHistoryWebhook(arg0 context.Context, arg1 types.CpsTime) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateHistoryWebhook", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateHistoryWebhook indicates an expected call of UpdateHistoryWebhook.
+func (mr *MockAdapterMockRecorder) UpdateHistoryWebhook(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHistoryWebhook", reflect.TypeOf((*MockAdapter)(nil).UpdateHistoryWebhook), arg0, arg1)
+}

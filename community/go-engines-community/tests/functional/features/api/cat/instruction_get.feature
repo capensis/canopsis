@@ -305,6 +305,7 @@ Feature: get a instruction
             }
           ],
           "priority": 2,
+          "triggers": ["create"],
           "timeout_after_execution": {
             "value": 2,
             "unit": "s"
@@ -363,6 +364,7 @@ Feature: get a instruction
             }
           ],
           "priority": 3,
+          "triggers": ["create"],
           "timeout_after_execution": {
             "value": 2,
             "unit": "s"

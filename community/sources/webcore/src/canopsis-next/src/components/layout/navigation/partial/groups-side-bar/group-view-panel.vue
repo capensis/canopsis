@@ -96,7 +96,7 @@ export default {
       max-width: 100%;
     }
 
-    & /deep/ .v-btn:not(:last-child) {
+    & ::v-deep .v-btn:not(:last-child) {
       margin-right: 0;
     }
   }

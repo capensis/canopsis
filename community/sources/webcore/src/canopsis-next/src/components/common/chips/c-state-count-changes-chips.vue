@@ -1,7 +1,7 @@
 <template lang="pug">
   span.d-inline-flex.align-center
     span.c-state-count-changes-chip(:style="style") {{ affect.from }}
-    v-icon(color="black", size="16") arrow_forward
+    v-icon(size="16") arrow_forward
     span.c-state-count-changes-chip(:style="style") {{ affect.to }}
 </template>
 

@@ -62,7 +62,7 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -81,14 +81,29 @@ Feature: update service weather on event
           "snooze": null,
           "output": "test-service-weather-1-output",
           "infos": {},
-          "icon": "major",
+          "icon": "person",
           "secondary_icon": "",
           "category": {
             "_id": "test-category-service-weather"
           },
           "is_grey": false,
           "is_action_required": true,
-          "alarm_counters": [],
+          "counters": {
+            "depends": 1,
+            "all": 1,
+            "active": 1,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 1,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 1,
+            "acked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          },
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -195,7 +210,7 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -211,14 +226,29 @@ Feature: update service weather on event
           "ack": null,
           "snooze": null,
           "infos": {},
-          "icon": "critical",
+          "icon": "wb_cloudy",
           "category": {
             "_id": "test-category-service-weather"
           },
           "secondary_icon": "",
           "is_grey": false,
           "is_action_required": true,
-          "alarm_counters": [],
+          "counters": {
+            "depends": 3,
+            "all": 3,
+            "active": 3,
+            "state": {
+              "ok": 0,
+              "minor": 1,
+              "major": 1,
+              "critical": 1
+            },
+            "acked": 0,
+            "unacked": 3,
+            "acked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          },
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -293,7 +323,7 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -314,11 +344,26 @@ Feature: update service weather on event
           "category": {
             "_id": "test-category-service-weather"
           },
-          "icon": "ok",
+          "icon": "wb_sunny",
           "secondary_icon": "",
           "is_grey": false,
           "is_action_required": false,
-          "alarm_counters": [],
+          "counters": {
+            "depends": 1,
+            "all": 0,
+            "active": 0,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 0,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 0,
+            "acked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          },
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -437,7 +482,7 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -456,11 +501,26 @@ Feature: update service weather on event
           "category": {
             "_id": "test-category-service-weather"
           },
-          "icon": "critical",
+          "icon": "wb_cloudy",
           "secondary_icon": "",
           "is_grey": false,
           "is_action_required": false,
-          "alarm_counters": [],
+          "counters": {
+            "depends": 2,
+            "all": 2,
+            "active": 2,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 1,
+              "critical": 1
+            },
+            "acked": 2,
+            "unacked": 0,
+            "acked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          },
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -535,7 +595,7 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -551,7 +611,7 @@ Feature: update service weather on event
           "ack": null,
           "snooze": null,
           "infos": {},
-          "icon": "major",
+          "icon": "person",
           "impact_level": 5,
           "impact_state": 10,
           "secondary_icon": "",
@@ -560,7 +620,22 @@ Feature: update service weather on event
             "_id": "test-category-service-weather"
           },
           "is_action_required": true,
-          "alarm_counters": [],
+          "counters": {
+            "depends": 1,
+            "all": 1,
+            "active": 1,
+            "state": {
+              "ok": 0,
+              "minor": 0,
+              "major": 1,
+              "critical": 0
+            },
+            "acked": 0,
+            "unacked": 1,
+            "acked_under_pbh": 0,
+            "under_pbh": 0,
+            "pbh_types": []
+          },
           "pbehavior_info": null,
           "pbehaviors": []
         }
@@ -686,7 +761,7 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -738,7 +813,7 @@ Feature: update service weather on event
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/weather-services?filter={{ .lastResponse._id }}
+    When I do GET /api/v4/weather-services?filters[]={{ .lastResponse._id }}
     Then the response code should be 200
     Then the response body should contain:
     """json

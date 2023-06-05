@@ -140,7 +140,6 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		eventType == types.EventTypeMetaAlarm ||
 		eventType == types.EventTypeChangestate ||
 		eventType == types.EventTypeKeepstate ||
-		eventType == types.EventTypeStatStateInterval ||
 		eventType == types.EventTypeJunitTestSuiteUpdated {
 		state, isNotInt, err := getIntField(value, "state")
 
@@ -167,8 +166,6 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		eventType == types.EventTypeCancel ||
 		eventType == types.EventTypeComment ||
 		eventType == types.EventTypeUncancel ||
-		eventType == types.EventTypeDeclareTicket ||
-		eventType == types.EventTypeDone ||
 		eventType == types.EventTypeAssocTicket ||
 		eventType == types.EventTypeChangestate ||
 		eventType == types.EventTypeKeepstate ||
@@ -286,13 +283,14 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 	}
 
 	var alarm types.Alarm
-	err = api.alarmCollection.FindOne(c.Request.Context(), bson.M{"d": eid}).Decode(&alarm)
+	err = api.alarmCollection.FindOne(c, bson.M{"d": eid}).Decode(&alarm)
 	if err != nil && err != mongodriver.ErrNoDocuments {
 		api.logger.Err(err).Str("event", string(value.MarshalTo(nil))).Msg("Failed to get alarm from mongo")
 		return false
 	}
 
-	err = api.publisher.Publish(
+	err = api.publisher.PublishWithContext(
+		c,
 		canopsis.CanopsisEventsExchange,
 		"",
 		false,

@@ -668,114 +668,6 @@ Feature: Get alarms
     ]
     """
 
-  Scenario: given get manual meta alarms request should return only manual meta alarms
-    When I am admin
-    When I send an event:
-    """json
-    [
-      {
-        "connector": "test-connector-to-alarm-correlation-get-3",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-3",
-        "source_type": "resource",
-        "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-3",
-        "resource": "test-resource-to-alarm-correlation-get-3-1",
-        "state": 1,
-        "output": "test-output-to-alarm-correlation-get-3"
-      },
-      {
-        "connector": "test-connector-to-alarm-correlation-get-3",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-3",
-        "source_type": "resource",
-        "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-3",
-        "resource": "test-resource-to-alarm-correlation-get-3-2",
-        "state": 1,
-        "output": "test-output-to-alarm-correlation-get-3"
-      },
-      {
-        "connector": "test-connector-to-alarm-correlation-get-3",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-3",
-        "source_type": "resource",
-        "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-3",
-        "resource": "test-resource-to-alarm-correlation-get-3-3",
-        "state": 1,
-        "output": "test-output-to-alarm-correlation-get-3"
-      },
-      {
-        "connector": "test-connector-to-alarm-correlation-get-3",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-3",
-        "source_type": "resource",
-        "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-3",
-        "resource": "test-resource-to-alarm-correlation-get-3-4",
-        "state": 1,
-        "output": "test-output-to-alarm-correlation-get-3"
-      }
-    ]
-    """
-    When I wait the end of 5 events processing
-    When I send an event:
-    """json
-    [
-      {
-        "connector": "engine",
-        "connector_name": "correlation",
-        "source_type": "component",
-        "event_type": "manual_metaalarm_group",
-        "component":  "metaalarm",
-        "display_name": "test-metalarm-to-alarm-correlation-get-3-1",
-        "ma_children": [
-          "test-resource-to-alarm-correlation-get-3-2/test-component-to-alarm-correlation-get-3"
-        ]
-      },
-      {
-        "connector": "engine",
-        "connector_name": "correlation",
-        "source_type": "component",
-        "event_type": "manual_metaalarm_group",
-        "component":  "metaalarm",
-        "display_name": "test-metalarm-to-alarm-correlation-get-3-2",
-        "ma_children": [
-          "test-resource-to-alarm-correlation-get-3-3/test-component-to-alarm-correlation-get-3"
-        ]
-      }
-    ]
-    """
-    When I wait the end of 4 events processing
-    When I do GET /api/v4/manual-meta-alarms?search=test-metalarm-to-alarm-correlation-get-3
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    [
-      {
-        "name": "test-metalarm-to-alarm-correlation-get-3-1"
-      },
-      {
-        "name": "test-metalarm-to-alarm-correlation-get-3-2"
-      }
-    ]
-    """
-
-  Scenario: given get manual meta alarm request with not exist search should return empty response
-    When I am admin
-    When I do GET /api/v4/manual-meta-alarms?search=not-exist
-    Then the response code should be 200
-    Then the response body should be:
-    """json
-    []
-    """
-
-  Scenario: given get manual meta alarm unauth request should not allow access
-    When I do GET /api/v4/manual-meta-alarms
-    Then the response code should be 401
-
-  Scenario: given get manual meta alarm request and auth user without permissions should not allow access
-    When I am noperms
-    When I do GET /api/v4/manual-meta-alarms
-    Then the response code should be 403
-
   Scenario: given get search correlation request should return filtered children
     When I am admin
     When I send an event:
@@ -1374,3 +1266,469 @@ Feature: Get alarms
       }
     ]
     """
+
+  Scenario: given alarms which are matched to metaalarm should return instruction statuses and icons
+    When I am admin
+    When I send an event:
+    """json
+    [
+      {
+        "connector": "test-connector-to-alarm-correlation-get-7",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-7",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-7",
+        "resource": "test-resource-to-alarm-correlation-get-7-1",
+        "state": 1,
+        "output": "test-output-to-alarm-correlation-get-7"
+      },
+      {
+        "connector": "test-connector-to-alarm-correlation-get-7",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-7",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-7",
+        "resource": "test-resource-to-alarm-correlation-get-7-2",
+        "state": 1,
+        "output": "test-output-to-alarm-correlation-get-7"
+      },
+      {
+        "connector": "test-connector-to-alarm-correlation-get-7",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-7",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-7",
+        "resource": "test-resource-to-alarm-correlation-get-7-3",
+        "state": 1,
+        "output": "test-output-to-alarm-correlation-get-7"
+      },
+      {
+        "connector": "test-connector-to-alarm-correlation-get-7",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-7",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-7",
+        "resource": "test-resource-to-alarm-correlation-get-7-4",
+        "state": 1,
+        "output": "test-output-to-alarm-correlation-get-7"
+      },
+      {
+        "connector": "test-connector-to-alarm-correlation-get-7",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-7",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-7",
+        "resource": "test-resource-to-alarm-correlation-get-7-5",
+        "state": 1,
+        "output": "test-output-to-alarm-correlation-get-7"
+      }
+    ]
+    """
+    When I wait the end of 14 events processing
+    When I do GET /api/v4/alarms?correlation=false&search=test-resource-to-alarm-correlation-get-7&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-correlation-get-7-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-correlation-get-7-2"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-correlation-get-7-3"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-correlation-get-7-4"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-to-alarm-correlation-get-7-5"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 5
+      }
+    }
+    """
+    When I save response childAlarmID1={{ (index .lastResponse.data 0)._id }}
+    When I save response childAlarmID2={{ (index .lastResponse.data 1)._id }}
+    When I save response childAlarmID3={{ (index .lastResponse.data 2)._id }}
+    When I save response childAlarmID4={{ (index .lastResponse.data 3)._id }}
+    When I save response childAlarmID5={{ (index .lastResponse.data 4)._id }}
+    When I do GET /api/v4/alarms?correlation=true&search=test-resource-to-alarm-correlation-get-7&multi_sort[]=v.component,asc&multi_sort[]=meta_alarm_rule.name,asc
+    Then the response code should be 200
+    When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .childAlarmID4 }}",
+      "instruction": "test-instruction-to-alarm-correlation-get-7-4"
+    }
+    """
+    Then the response code should be 200
+    When I do POST /api/v4/cat/executions:
+    """json
+    {
+      "alarm": "{{ .childAlarmID5 }}",
+      "instruction": "test-instruction-to-alarm-correlation-get-7-5"
+    }
+    """
+    Then the response code should be 200
+    When I wait the end of 4 events processing
+    When I wait 3s
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmID }}",
+        "with_instructions": true,
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-7-1"
+                },
+                "instruction_execution_icon": 9
+              },
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-7-2"
+                },
+                "instruction_execution_icon": 10,
+                "successful_auto_instructions": [
+                  "test-instruction-to-alarm-correlation-get-7-2-name"
+                ]
+              },
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-7-3"
+                },
+                "instruction_execution_icon": 3,
+                "failed_auto_instructions": [
+                  "test-instruction-to-alarm-correlation-get-7-3-name"
+                ]
+              },
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-7-4"
+                },
+                "instruction_execution_icon": 11,
+                "successful_manual_instructions": [
+                  "test-instruction-to-alarm-correlation-get-7-4-name"
+                ]
+              },
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-7-5"
+                },
+                "instruction_execution_icon": 4,
+                "failed_manual_instructions": [
+                  "test-instruction-to-alarm-correlation-get-7-5-name"
+                ]
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 5
+            }
+          }
+        }
+      }
+    ]
+    """
+
+  Scenario: given get correlation request should return assigned_declare_ticket_rules for children
+    When I am admin
+    When I send an event:
+    """json
+    [
+      {
+        "connector": "test-connector-to-alarm-correlation-get-8",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-8",
+        "resource": "test-resource-to-alarm-correlation-get-8-1",
+        "state": 1,
+        "output": "test-output-to-alarm-correlation-get-8"
+      },
+      {
+        "connector": "test-connector-to-alarm-correlation-get-8",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-8",
+        "resource": "test-resource-to-alarm-correlation-get-8-2",
+        "state": 1,
+        "output": "test-output-to-alarm-correlation-get-8"
+      },
+      {
+        "connector": "test-connector-to-alarm-correlation-get-8",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-8",
+        "resource": "test-resource-to-alarm-correlation-get-8-3",
+        "state": 1,
+        "output": "test-output-to-alarm-correlation-get-8"
+      },
+      {
+        "connector": "test-connector-to-alarm-correlation-get-8",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-8",
+        "resource": "test-resource-to-alarm-correlation-get-8-4",
+        "state": 1,
+        "output": "test-output-to-alarm-correlation-get-8"
+      }
+    ]
+    """
+    When I wait the end of 4 events processing
+    When I send an event:
+    """json
+    [
+      {
+        "connector": "engine",
+        "connector_name": "correlation",
+        "source_type": "component",
+        "event_type": "manual_metaalarm_group",
+        "component":  "metaalarm",
+        "output": "test-output-to-alarm-correlation-get-8",
+        "display_name": "test-metalarm-to-alarm-correlation-get-8-1",
+        "ma_children": [
+          "test-resource-to-alarm-correlation-get-8-1/test-component-to-alarm-correlation-get-8",
+          "test-resource-to-alarm-correlation-get-8-2/test-component-to-alarm-correlation-get-8"
+        ]
+      },
+      {
+        "connector": "engine",
+        "connector_name": "correlation",
+        "source_type": "component",
+        "event_type": "manual_metaalarm_group",
+        "component":  "metaalarm",
+        "output": "test-output-to-alarm-correlation-get-8",
+        "display_name": "test-metalarm-to-alarm-correlation-get-8-2",
+        "ma_children": [
+          "test-resource-to-alarm-correlation-get-8-3/test-component-to-alarm-correlation-get-8",
+          "test-resource-to-alarm-correlation-get-8-4/test-component-to-alarm-correlation-get-8"
+        ]
+      }
+    ]
+    """
+    When I wait the end of 4 events processing
+    When I do POST /api/v4/cat/declare-ticket-rules:
+    """json
+    {
+      "name": "test-alarm-correlation-rule-8",
+      "system_name": "test-alarm-correlation-rule-8-name",
+      "enabled": true,
+      "emit_trigger": true,
+      "webhooks": [
+        {
+          "request": {
+            "url": "https://canopsis-test.com",
+            "method": "GET",
+            "auth": {
+              "username": "test",
+              "password": "test"
+            },
+            "skip_verify": true,
+            "timeout": {
+              "value": 30,
+              "unit": "s"
+            },
+            "retry_count": 3,
+            "retry_delay": {
+              "value": 1,
+              "unit": "s"
+            }
+          },
+          "declare_ticket": {
+            "is_regexp": false,
+            "ticket_id": "_id",
+            "ticket_url": "url",
+            "ticket_custom": "custom",
+            "empty_response": false
+          },
+          "stop_on_fail": true
+        }
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-alarm-correlation-get-8-2"
+            }
+          }
+        ],
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-to-alarm-correlation-get-8-3"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then I save response ruleID={{ .lastResponse._id }}
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-8&correlation=true&with_instructions=true&sort_by=v.display_name&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "v": {
+            "display_name": "test-metalarm-to-alarm-correlation-get-8-1"
+          }
+        },
+        {
+          "is_meta_alarm": true,
+          "v": {
+            "display_name": "test-metalarm-to-alarm-correlation-get-8-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "with_declare_tickets": true,
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 1)._id }}",
+        "with_declare_tickets": true,
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-8-1",
+                  "state": {
+                    "val": 1
+                  }
+                }
+              },
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-8-2"
+                },
+                "assigned_declare_ticket_rules": [
+                  {
+                    "_id": "{{ .ruleID }}",
+                    "name": "test-alarm-correlation-rule-8"
+                  }
+                ]
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-8-3"
+                },
+                "assigned_declare_ticket_rules": [
+                  {
+                    "_id": "{{ .ruleID }}",
+                    "name": "test-alarm-correlation-rule-8"
+                  }
+                ]
+              },
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-8-4"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      }
+    ]
+    """
+    Then the response key "0.data.children.data.0.assigned_declare_ticket_rules" should not exist
+    Then the response key "1.data.children.data.1.assigned_declare_ticket_rules" should not exist

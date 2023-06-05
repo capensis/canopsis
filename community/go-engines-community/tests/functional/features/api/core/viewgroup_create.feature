@@ -15,7 +15,10 @@ Feature: Create a view group
     """
     {
       "title": "test-viewgroup-to-create-1-title",
-      "author": "root"
+      "author": {
+        "_id": "root",
+        "name": "root"
+      }
     }
     """
 
@@ -33,7 +36,10 @@ Feature: Create a view group
     """
     {
       "title": "test-viewgroup-to-create-2-title",
-      "author": "root"
+      "author": {
+        "_id": "root",
+        "name": "root"
+      }
     }
     """
 

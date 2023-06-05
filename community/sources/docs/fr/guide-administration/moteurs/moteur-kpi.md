@@ -3,6 +3,9 @@
 !!! info
     Disponible uniquement en édition Pro.
 
+!!! attention
+    Ne sera plus maintenu au-delà de Canopsis 4.5.
+
 Le moteur `kpi` copie certaines données depuis la base MongoDB de Canopsis vers
 une base de données relationnelle PostgreSQL.
 
@@ -47,15 +50,17 @@ La routine de synchronisation des données comprend :
 
 La base de données maintenue par le moteur `kpi` comporte ces tables :
 
-|      Nom       |                                          Description                                              |
-| -------------- | ------------------------------------------------------------------------------------------------- |
-| alarms         | Table des alarmes, informations prises et calculées depuis la collection MongoDB periodical_alarm |
-| entities       | Table des entités, importées de la collection MongoDB default_entities                            |
-| entities_infos | Données de la structure "infos" pour chaque entité                                                |
-| sessions       | Table des statistiques de session utilisateur, de la collection MongoDB default_session           |
-| sessions_views | Table de liaison n-n sessions/views, avec le temps passé dans la vue                              |
-| viewgroups     | Table des groupes de vues de l'UI Canopsis, reprend la collection MongoDB viewgroups              |
-| views          | Table des vues de l'UI Canopsis, reprend la collection MongoDB views                              |
+| Nom            | Description                                                                                          |
+| -------------- | ---------------------------------------------------------------------------------------------------- |
+| alarms         | Table des alarmes, informations prises et calculées depuis les collections MongoDB des alarmes *(a)* |
+| entities       | Table des entités, importées de la collection MongoDB default_entities                               |
+| entities_infos | Données de la structure "infos" pour chaque entité                                                   |
+| sessions       | Table des statistiques de session utilisateur, de la collection MongoDB default_session              |
+| sessions_views | Table de liaison n-n sessions/views, avec le temps passé dans la vue                                 |
+| viewgroups     | Table des groupes de vues de l'UI Canopsis, reprend la collection MongoDB viewgroups                 |
+| views          | Table des vues de l'UI Canopsis, reprend la collection MongoDB views                                 |
+
+*(a)* : collections periodical_alarm et resolved_alarms.
 
 Le diagramme ci-dessous représente les relations entre les tables :
 
@@ -224,7 +229,7 @@ première exécution type :
 [...] INFO kpi [kpi 350] Sync entities infos...
 [...] INFO kpi [kpi 364] Sync entities done! (8 entities)
 [...] INFO kpi [kpi 234] Syncing alarms
-[...] INFO kpi [kpi 261] Since the beginning
+[...] INFO kpi [kpi 342] Resolved alarms will be fetched since the beginning
 [...] INFO kpi [kpi 322] Done syncing alarms! (3 alarms)
 [...] INFO kpi [kpi 138] Sync user session stats related data
 [...] INFO kpi [kpi 166] Syncing viewgroups
@@ -246,7 +251,7 @@ Et à chaque synchronisation suivante :
 [...] INFO kpi [kpi 350] Sync entities infos...
 [...] INFO kpi [kpi 364] Sync entities done! (8 entities)
 [...] INFO kpi [kpi 234] Syncing alarms
-[...] INFO kpi [kpi 261] Since 1601459553.0
+[...] INFO kpi [kpi 342] Resolved alarms will be fetched since 1661983200.0
 [...] INFO kpi [kpi 322] Done syncing alarms! (0 alarms)
 [...] INFO kpi [kpi 138] Sync user session stats related data
 [...] INFO kpi [kpi 166] Syncing viewgroups
@@ -297,6 +302,23 @@ cohérence dans les données (à la source, dans la base de données MongoDB) :
     L'info indiquée contenue dans l'entité, une fois transformée en chaîne de
     caractères, dépasse la taille de la colonne `value` dans le modèle de
     données défini sur PostgreSQL (3000).
+
+- Id ou nom d'entité trop long
+
+    ```
+    Skipping entity with _id too long: "{}"
+    ```
+
+    ou
+
+    ```
+    Skipping entity with name too long: "{}" in entity id "{}"
+    ```
+
+    L'id ou le nom de l'entité dépasse la taille de la colonne associée dans le
+    modèle de données défini sur PostgreSQL (200 caractères).
+
+    L'entité entière sera ignorée par `kpi`.
 
 ## Exploitation des données
 

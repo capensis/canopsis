@@ -15,5 +15,9 @@ export default createEntityModule({
     fetchListWithoutStore(context, { params }) {
       return request.get(API_ROUTES.pbehavior.types, { params });
     },
+
+    fetchNextPriority() {
+      return request.get(API_ROUTES.pbehavior.nextTypesPriority);
+    },
   },
 });

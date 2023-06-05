@@ -1,15 +1,20 @@
 <template lang="pug">
-  v-container
+  div
     c-page-header
-    roles-list(
-      :roles="roles",
-      :pending="rolesPending",
-      :pagination.sync="pagination",
-      :total-items="rolesMeta.total_count",
-      @edit="showEditRoleModal",
-      @remove="showRemoveRoleModal",
-      @remove-selected="showRemoveSelectedRolesModal"
-    )
+    v-card.ma-4.mt-0
+      roles-list(
+        :roles="roles",
+        :pending="rolesPending",
+        :pagination.sync="pagination",
+        :total-items="rolesMeta.total_count",
+        :removable="hasDeleteAnyRoleAccess",
+        :duplicable="hasCreateAnyRoleAccess",
+        :updatable="hasUpdateAnyRoleAccess",
+        @edit="showEditRoleModal",
+        @remove="showRemoveRoleModal",
+        @duplicate="showDuplicateRoleModal",
+        @remove-selected="showRemoveSelectedRolesModal"
+      )
     c-fab-btn(
       :has-access="hasCreateAnyRoleAccess",
       @refresh="fetchList",
@@ -19,13 +24,15 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import { entitiesRoleMixin } from '@/mixins/entities/role';
 import { permissionsTechnicalRoleMixin } from '@/mixins/permissions/technical/role';
 import { localQueryMixin } from '@/mixins/query-local/query';
 
-import RolesList from '@/components/other/roles/roles-list.vue';
+import RolesList from '@/components/other/role/roles-list.vue';
 
 export default {
   components: {
@@ -94,6 +101,23 @@ export default {
       });
     },
 
+    showDuplicateRoleModal(role) {
+      this.$modals.show({
+        name: MODALS.createRole,
+        config: {
+          role: omit(role, ['_id']),
+          title: this.$t('modals.createRole.duplicate.title'),
+          action: async (data) => {
+            await this.createRole({ data });
+
+            this.$popups.success({ text: this.$t('success.default') });
+
+            return this.fetchList();
+          },
+        },
+      });
+    },
+
     showCreateRoleModal() {
       this.$modals.show({
         name: MODALS.createRole,
@@ -103,14 +127,18 @@ export default {
 
             this.$popups.success({ text: this.$t('success.default') });
 
-            await this.fetchList();
+            return this.fetchList();
           },
         },
       });
     },
 
     fetchList() {
-      this.fetchRolesList({ params: this.getQuery() });
+      const params = this.getQuery();
+
+      params.with_flags = true;
+
+      return this.fetchRolesList({ params });
     },
   },
 };

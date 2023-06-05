@@ -1,10 +1,12 @@
 package docs
 
 import (
-	"github.com/gin-gonic/gin"
-	"gopkg.in/yaml.v3"
 	"net/http"
 	"strings"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"github.com/gin-gonic/gin"
+	"gopkg.in/yaml.v3"
 )
 
 func GetHandler(generatedSchemasContent []byte, contents ...[]byte) func(c *gin.Context) {
@@ -64,6 +66,13 @@ func GetHandler(generatedSchemasContent []byte, contents ...[]byte) func(c *gin.
 					mergedComponents["schemas"] = schemas
 				}
 			}
+		}
+
+		if info, ok := mergedContent["info"].(map[string]interface{}); ok {
+			buildInfo := canopsis.GetBuildInfo()
+
+			info["version"] = buildInfo.Version
+			mergedContent["info"] = info
 		}
 
 		c.YAML(http.StatusOK, mergedContent)

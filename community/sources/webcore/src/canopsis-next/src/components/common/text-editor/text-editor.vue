@@ -1,14 +1,20 @@
 <template lang="pug">
-  div
-    span.theme--light.v-label.text-editor__label.mb-2(
-      v-show="label"
-    ) {{ label }}
+  div.text-editor
+    v-label(v-show="label") {{ label }}
     div.text-editor(:class="{ 'error--text': hasError }", @blur="$emit('blur', $event)")
       div(ref="textEditor")
+      variables-menu(
+        v-if="variables",
+        :variables="variables",
+        :visible="variablesShown",
+        :value="variablesMenuValue",
+        :position-x="variablesMenuPosition.x",
+        :position-y="variablesMenuPosition.y",
+        @input="pasteVariable",
+        @close="closeVariablesMenu"
+      )
       div.text-editor__details
-        div.v-messages.theme--light.error--text
-          div.v-messages__wrapper
-            div.v-messages__message(v-for="errorMessage in errorMessages") {{ errorMessage }}
+        v-messages(:value="errorMessages", color="error")
 </template>
 
 <script>
@@ -19,7 +25,11 @@ import 'jodit/build/jodit.min.css';
 
 import { BASE_URL, FILE_BASE_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
 
+import { matchPayloadVariableBySelection } from '@/helpers/payload-json';
+
 import localStorageService from '@/services/local-storage';
+
+import VariablesMenu from './variables-menu.vue';
 
 const {
   modules: {
@@ -42,7 +52,9 @@ Ajax.prototype.send = function send(...args) {
       this.options.data.forEach(fileValidator);
     }
 
-    delete this.options.headers['X-REQUESTED-WITH'];
+    if (this.options.headers?.['X-REQUESTED-WITH']) {
+      delete this.options.headers['X-REQUESTED-WITH'];
+    }
 
     return originalSend.call(this, ...args);
   } catch (err) {
@@ -51,6 +63,7 @@ Ajax.prototype.send = function send(...args) {
 };
 
 export default {
+  components: { VariablesMenu },
   props: {
     value: {
       type: String,
@@ -61,7 +74,14 @@ export default {
     },
     buttons: {
       type: Array,
-      default: () => [],
+      default: () => [
+        'source', '|',
+        'bold', 'italic', 'strikethrough', 'underline', '|',
+        'ul', 'ol', '|',
+        'font', 'fontsize', 'brush', 'paragraph', '|',
+        'image', 'table', 'link', '|',
+        'align', 'undo', 'redo', '|',
+      ],
     },
     public: {
       type: Boolean,
@@ -83,10 +103,43 @@ export default {
       type: Number,
       required: false,
     },
+    variables: {
+      type: Array,
+      required: false,
+    },
+    dark: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      variablesShown: false,
+      variablesMenuValue: '',
+      variablesMenuPosition: {
+        x: 0,
+        y: 0,
+      },
+    };
   },
   computed: {
     hasError() {
       return this.errorMessages.length;
+    },
+
+    variablesButton() {
+      return {
+        name: 'variables',
+        mode: 3,
+        getContent: () => {
+          const controlButton = document.createElement('span');
+
+          controlButton.classList.add('text-editor__variables-button');
+          controlButton.addEventListener('click', this.showVariablesMenu);
+
+          return controlButton;
+        },
+      };
     },
 
     editorConfig() {
@@ -113,8 +166,18 @@ export default {
         config.buttonsXS = this.buttons;
       }
 
+      if (this.dark && !this.config.theme) {
+        config.theme = 'dark';
+      }
+
+      config.extraButtons = [];
+
+      if (this.variables) {
+        config.extraButtons.push(this.variablesButton);
+      }
+
       if (this.extraButtons.length) {
-        config.extraButtons = this.extraButtons;
+        config.extraButtons.push(...this.extraButtons);
       }
 
       return config;
@@ -154,6 +217,10 @@ export default {
     },
   },
   watch: {
+    editorConfig() {
+      this.destroyJodit();
+      this.createJodit();
+    },
     value(newValue) {
       if (this.$editor.value !== newValue) {
         this.$editor.setEditorValue(newValue);
@@ -161,17 +228,110 @@ export default {
     },
   },
   mounted() {
-    this.$editor = new Jodit(this.$refs.textEditor, this.editorConfig);
-    this.$editor.setEditorValue(this.value);
-    this.$editor.events.on('change', this.onChange);
+    this.createJodit();
   },
   beforeDestroy() {
-    this.$editor.events.off('change', this.onChange);
-    this.$editor.destruct();
-
-    delete this.$editor;
+    this.destroyJodit();
   },
   methods: {
+    createJodit() {
+      this.$editor = new Jodit(this.$refs.textEditor, this.editorConfig);
+      this.$editor.setEditorValue(this.value);
+      this.$editor.events.on('change', this.onChange);
+    },
+
+    destroyJodit() {
+      this.$editor.events.off('change', this.onChange);
+      this.$editor.destruct();
+
+      delete this.$editor;
+    },
+
+    selectVariableValueByCursor() {
+      const selection = this.$editor.selection.sel;
+      const { anchorNode, anchorOffset, focusOffset } = selection;
+
+      if (!anchorNode) {
+        return;
+      }
+
+      const [selectionStart, selectionEnd] = [anchorOffset, focusOffset].sort();
+      const variableGroup = matchPayloadVariableBySelection(anchorNode.nodeValue, selectionStart, selectionEnd);
+
+      if (!variableGroup) {
+        this.variablesMenuValue = undefined;
+        return;
+      }
+
+      const [variable] = variableGroup;
+      this.variablesMenuValue = this.getVariableValueFromGroup(variableGroup);
+
+      const [currentStart, currentEnd] = [anchorOffset, focusOffset].sort();
+      const start = variableGroup.index;
+      const end = variableGroup.index + variable.length;
+
+      if (currentStart !== start || currentEnd !== end) {
+        const range = document.createRange();
+
+        range.setStart(anchorNode, start);
+        range.setEnd(anchorNode, end);
+
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    },
+
+    showVariablesMenu(event) {
+      this.selectVariableValueByCursor();
+
+      const { left, top, height } = event.target.getBoundingClientRect();
+
+      this.variablesMenuPosition = {
+        x: left,
+        y: top + height,
+      };
+      this.variablesShown = true;
+
+      document.addEventListener('selectionchange', this.selectVariableValueByCursor);
+    },
+
+    closeVariablesMenu() {
+      this.variablesShown = false;
+
+      document.removeEventListener('selectionchange', this.selectVariableValueByCursor);
+    },
+
+    getVariableValueFromGroup(group) {
+      const [,, content] = group;
+
+      const parts = content.trim().split(' ');
+
+      return parts.length > 1 ? parts[1] : parts[0];
+    },
+
+    pasteVariable(variable) {
+      this.selectVariableValueByCursor();
+
+      const selection = this.$editor.selection.sel;
+      const { anchorNode } = selection;
+
+      const { anchorOffset, focusOffset } = selection;
+      const [selectionStart, selectionEnd] = [anchorOffset, focusOffset].sort();
+
+      const variableGroup = matchPayloadVariableBySelection(anchorNode.nodeValue, selectionStart, selectionEnd);
+
+      if (variableGroup) {
+        const [oldVariable] = variableGroup;
+        const oldValue = this.getVariableValueFromGroup(variableGroup);
+
+        this.$editor.selection.insertHTML(oldVariable.replace(oldValue, variable));
+      } else {
+        this.$editor.selection.insertHTML(`{{ ${variable} }}`);
+      }
+
+      this.closeVariablesMenu();
+    },
+
     /**
      * Editor change event handler
      *
@@ -396,7 +556,9 @@ export default {
         close();
       };
 
-      const imgElements = current instanceof HTMLDocument ? [...current.querySelectorAll('img')] : [];
+      const imgElements = current instanceof HTMLDocument
+        ? [...current.querySelectorAll('img')]
+        : [];
       const isImage = current.tagName === 'IMG';
       let sourceImage = null;
 
@@ -425,17 +587,39 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .jodit_fullsize_box {
   z-index: 100000 !important;
+}
+
+.text-editor {
+  &__variables-button {
+    display: flex;
+    width: 100%;
+    height: 100%;
+
+    &:after {
+      content: '(x)';
+      display: block;
+      width: 100%;
+      height: 100%;
+      color: black;
+      font-size: 15px;
+
+      .jodit_dark_theme & {
+        color: silver;
+      }
+    }
+  }
 }
 </style>
 
 <style lang="scss" scoped>
 .text-editor {
-  &__label {
+  .v-label {
     font-size: .85em;
     display: block;
+    margin-bottom: 8px;
   }
 
   &__details {
@@ -449,7 +633,7 @@ export default {
     overflow: hidden;
   }
 
-  &.error--text /deep/ .jodit_container {
+  &.error--text ::v-deep .jodit_container {
     margin-bottom: 8px;
 
     .jodit_workplace {
@@ -457,11 +641,11 @@ export default {
     }
   }
 
-  & /deep/ .jodit_toolbar_popup {
+  & ::v-deep .jodit_toolbar_popup {
     z-index: 25;
   }
 
-  & /deep/ .jodit_error_box_for_messages .error {
+  & ::v-deep .jodit_error_box_for_messages .error {
      color: white;
   }
 }

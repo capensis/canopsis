@@ -6,10 +6,12 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
@@ -17,16 +19,22 @@ import (
 
 type messageProcessor struct {
 	FeaturePrintEventOnError bool
-	EventProcessor           alarm.EventProcessor
-	RemediationRpcClient     engine.RPCClient
-	TimezoneConfigProvider   config.TimezoneConfigProvider
-	Encoder                  encoding.Encoder
-	Decoder                  encoding.Decoder
-	Logger                   zerolog.Logger
-	PbehaviorAdapter         pbehavior.Adapter
+
+	EventProcessor         alarm.EventProcessor
+	TechMetricsSender      techmetrics.Sender
+	RemediationRpcClient   engine.RPCClient
+	TimezoneConfigProvider config.TimezoneConfigProvider
+	Encoder                encoding.Encoder
+	Decoder                encoding.Decoder
+	Logger                 zerolog.Logger
+	PbehaviorAdapter       pbehavior.Adapter
+	TagUpdater             alarmtag.Updater
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
+	eventMetric := techmetrics.AxeEventMetric{}
+	eventMetric.Timestamp = time.Now()
+
 	ctx, task := trace.NewTask(parentCtx, "axe.WorkerProcess")
 	defer task.End()
 
@@ -38,7 +46,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		err = p.Decoder.Decode(msg, &event)
 	})
 	if err != nil {
-		p.logError(err, "cannot decode event", msg)
+		p.logError(err, "cannot decode event", "", msg)
 		return nil, nil
 	}
 
@@ -50,23 +58,43 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	trace.Log(ctx, "event.component", event.Component)
 	trace.Log(ctx, "event.resource", event.Resource)
 
+	defer func() {
+		eventMetric.EventType = event.EventType
+		if event.AlarmChange != nil {
+			eventMetric.AlarmChangeType = string(event.AlarmChange.Type)
+		}
+		if event.Entity != nil {
+			eventMetric.EntityType = event.Entity.Type
+		}
+
+		eventMetric.Interval = time.Since(eventMetric.Timestamp)
+		p.TechMetricsSender.SendAxeEvent(eventMetric)
+	}()
+
 	alarmChange, err := p.EventProcessor.Process(ctx, &event)
+
+	alarmID := ""
+	if event.Alarm != nil {
+		alarmID = event.Alarm.ID
+	}
+
 	if err != nil {
 		if engine.IsConnectionError(err) {
 			return nil, err
 		}
 
-		p.logError(err, "cannot process event", msg)
+		p.logError(err, "cannot process event", alarmID, msg)
 		return nil, nil
 	}
 	event.AlarmChange = &alarmChange
 
-	err = p.handleRemediation(event, msg)
+	err = p.handleRemediation(ctx, event, msg)
 	if err != nil {
 		return nil, err
 	}
 
 	p.updatePbhLastAlarmDate(ctx, event)
+	p.updateTags(event)
 
 	// there is nothing to do with those kinds of event in the next engines.
 	if event.EventType == types.EventTypeRecomputeEntityService ||
@@ -80,7 +108,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		bevent, err = p.Encoder.Encode(event)
 	})
 	if err != nil {
-		p.logError(err, "cannot encode event", msg)
+		p.logError(err, "cannot encode event", alarmID, msg)
 		return nil, nil
 	}
 
@@ -103,17 +131,30 @@ func (p *messageProcessor) updatePbhLastAlarmDate(ctx context.Context, event typ
 	}()
 }
 
-func (p *messageProcessor) handleRemediation(event types.Event, msg []byte) error {
-	if p.RemediationRpcClient == nil {
+func (p *messageProcessor) handleRemediation(ctx context.Context, event types.Event, msg []byte) error {
+	if p.RemediationRpcClient == nil || event.Alarm == nil || event.Entity == nil || event.AlarmChange == nil {
 		return nil
 	}
 
 	switch event.AlarmChange.Type {
-	case types.AlarmChangeTypeCreate, types.AlarmChangeTypeCreateAndPbhEnter,
-		types.AlarmChangeTypeResolve, types.AlarmChangeTypeStateDecrease,
-		types.AlarmChangeTypeChangeState:
+	case types.AlarmChangeTypeCreate,
+		types.AlarmChangeTypeCreateAndPbhEnter,
+		types.AlarmChangeTypeStateIncrease,
+		types.AlarmChangeTypeStateDecrease,
+		types.AlarmChangeTypeChangeState,
+		types.AlarmChangeTypeUnsnooze,
+		types.AlarmChangeTypeActivate,
+		types.AlarmChangeTypePbhEnter,
+		types.AlarmChangeTypePbhLeave,
+		types.AlarmChangeTypePbhLeaveAndEnter,
+		types.AlarmChangeTypeResolve:
 	default:
 		return nil
+	}
+
+	alarmID := ""
+	if event.Alarm != nil {
+		alarmID = event.Alarm.ID
 	}
 
 	body, err := p.Encoder.Encode(types.RPCRemediationEvent{
@@ -122,11 +163,11 @@ func (p *messageProcessor) handleRemediation(event types.Event, msg []byte) erro
 		AlarmChange: *event.AlarmChange,
 	})
 	if err != nil {
-		p.logError(err, "cannot encode remediation event", msg)
+		p.logError(err, "cannot encode remediation event", alarmID, msg)
 		return nil
 	}
 
-	err = p.RemediationRpcClient.Call(engine.RPCMessage{
+	err = p.RemediationRpcClient.Call(ctx, engine.RPCMessage{
 		CorrelationID: event.Alarm.ID,
 		Body:          body,
 	})
@@ -135,16 +176,22 @@ func (p *messageProcessor) handleRemediation(event types.Event, msg []byte) erro
 			return err
 		}
 
-		p.logError(err, "cannot send rpc call to remediation", msg)
+		p.logError(err, "cannot send rpc call to remediation", alarmID, msg)
 	}
 
 	return nil
 }
 
-func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {
+func (p *messageProcessor) updateTags(event types.Event) {
+	if event.EventType == types.EventTypeCheck {
+		p.TagUpdater.Add(event.Tags)
+	}
+}
+
+func (p *messageProcessor) logError(err error, errMsg string, alarmID string, msg []byte) {
 	if p.FeaturePrintEventOnError {
-		p.Logger.Err(err).Str("event", string(msg)).Msg(errMsg)
+		p.Logger.Err(err).Str("event", string(msg)).Str("alarm_id", alarmID).Msg(errMsg)
 	} else {
-		p.Logger.Err(err).Msg(errMsg)
+		p.Logger.Err(err).Str("alarm_id", alarmID).Msg(errMsg)
 	}
 }

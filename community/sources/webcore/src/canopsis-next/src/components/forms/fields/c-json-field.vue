@@ -16,9 +16,8 @@
         :error-messages="errors.collect(name)",
         data-vv-validate-on="none"
       )
-        v-tooltip(v-if="helpText", slot="append", left)
-          v-icon(slot="activator") help
-          div(v-html="helpText")
+        template(#append="")
+          c-help-icon(icon="help", :text="helpText", left)
     v-flex(v-if="!validateOnBlur && !readonly", xs12)
       v-btn.ml-0(
         :disabled="errors.has(name) || !wasChanged",
@@ -53,7 +52,7 @@ export default {
   },
   props: {
     value: {
-      type: [Object, String],
+      type: [Object, Array, String],
       default: () => ({}),
     },
     label: {

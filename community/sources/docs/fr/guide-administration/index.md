@@ -11,7 +11,7 @@ Ce guide vous accompagne dans vos tâches d'administration de Canopsis.
 
 ### Installation et mise à jour
 
-*  [Installation de Canopsis](installation/index.md) : installation par paquets CentOS 7 ou avec Docker Compose
+*  [Installation de Canopsis](installation/index.md) : installation par paquets RHEL 8 ou avec Docker Compose
 *  [Mise à jour de Canopsis](mise-a-jour/index.md)
 *  [Exemples d'interconnexions à Canopsis](exemples-interconnexions/index.md)
 
@@ -23,7 +23,7 @@ Ce guide vous accompagne dans vos tâches d'administration de Canopsis.
 
 ### Administration quotidienne
 
-*  [Stockage des données](stockage-donnees/index.md)
+*  [Stockage des données](../guide-utilisation/menu-administration/parametres#parametres-de-stockage)
 *  [Gestion des composants](gestion-composants/index.md)
 *  [Administration avancée de Canopsis](administration-avancee/index.md)
 *  [Guide de dépannage (Troubleshooting)](../guide-de-depannage/index.md)

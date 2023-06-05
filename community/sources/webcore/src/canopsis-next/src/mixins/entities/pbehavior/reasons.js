@@ -5,7 +5,7 @@ const { mapGetters, mapActions } = createNamespacedHelpers('pbehaviorReasons');
 /**
  * @mixin
  */
-export default {
+export const entitiesPbehaviorReasonMixin = {
   computed: {
     ...mapGetters({
       pbehaviorReasons: 'items',

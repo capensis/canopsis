@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout.pa-3
+  v-layout
     test-suite-screenshots(:screenshots="testSuite.screenshots")
 </template>
 

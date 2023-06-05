@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-metric-presets Renders \`alarm-metric-presets\` with custom props 1`] = `
+<widget-settings-item-stub
+  title="Select metrics"
+>
+  <c-alarm-metric-presets-field-stub
+    value="[object Object]"
+    with-aggregate-function="true"
+    with-color="true"
+  />
+</widget-settings-item-stub>
+`;
+
+exports[`alarm-metric-presets Renders \`alarm-metric-presets\` with default props 1`] = `
+<widget-settings-item-stub
+  title="Select metrics"
+>
+  <c-alarm-metric-presets-field-stub
+    value=""
+  />
+</widget-settings-item-stub>
+`;

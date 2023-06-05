@@ -2,7 +2,7 @@ import { isEqual, isEmpty } from 'lodash';
 
 import { prepareQuery } from '@/helpers/query';
 
-import queryWidgetMixin from '@/mixins/widget/query';
+import { queryWidgetMixin } from '@/mixins/widget/query';
 
 /**
  * @mixin Add query logic with fetch
@@ -21,14 +21,14 @@ export const widgetFetchQueryMixin = {
         this.fetchList();
       }
     },
+
     tabQueryNonce(value, oldValue) {
       if (!this.editing && value > oldValue) {
-        this.fetchList({ isQueryNonceUpdate: true });
+        this.fetchList();
       }
     },
-    widget() {
-      this.setQuery();
-    },
+
+    widget: 'setQuery',
   },
   async mounted() {
     if (!this.editing) {
@@ -39,7 +39,13 @@ export const widgetFetchQueryMixin = {
   },
   methods: {
     setQuery() {
-      this.query = prepareQuery(this.widget, this.userPreference);
+      const { search = '' } = this.query;
+
+      this.query = {
+        ...prepareQuery(this.widget, this.userPreference),
+
+        search,
+      };
     },
   },
 };

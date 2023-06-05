@@ -1,0 +1,117 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <c-name-field-stub
+    required="required"
+    value="pbehavior"
+  />
+  <!---->
+  <div
+    class="flex mt-3 xs12"
+  >
+    <c-enabled-field-stub
+      class="mt-0 mb-1"
+      hide-details="hide-details"
+      label="Start on trigger"
+      value="true"
+    />
+    <c-duration-field-stub
+      required="required"
+      value="[object Object]"
+    />
+  </div>
+  <c-pbehavior-reason-field-stub
+    required="required"
+    return-object="return-object"
+    value="[object Object]"
+  />
+  <c-pbehavior-type-field-stub
+    required="required"
+    return-object="return-object"
+    value="[object Object]"
+  />
+</div>
+`;
+
+exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required props 1`] = `
+<div
+  class="layout column"
+>
+  <c-name-field-stub
+    required="required"
+    value="pbehavior"
+  />
+  <c-enabled-field-stub
+    hide-details="hide-details"
+  />
+  <div
+    class="flex mt-3 xs12"
+  >
+    <!---->
+    <date-time-splitted-range-picker-field-stub
+      end="Thu Mar 04 2021 13:33:20 GMT+0100 (Central European Standard Time)"
+      endlabel="End"
+      endmax="2026-03-04"
+      endmin="2021-03-04"
+      endrules="[object Object]"
+      name="date-range"
+      start="Thu Mar 04 2021 13:30:00 GMT+0100 (Central European Standard Time)"
+      startlabel="Start"
+      startrules="[object Object]"
+    />
+    <div
+      class="v-input mt-0 v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <input
+              aria-checked="false"
+              aria-label="Whole day"
+              role="checkbox"
+              type="checkbox"
+              value=""
+            />
+            <div
+              class="v-input--selection-controls__ripple"
+            />
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              check_box_outline_blank
+            </i>
+          </div>
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Whole day
+          </label>
+        </div>
+      </div>
+    </div>
+    <!---->
+  </div>
+  <c-pbehavior-reason-field-stub
+    required="required"
+    return-object="return-object"
+    value="[object Object]"
+  />
+  <c-pbehavior-type-field-stub
+    required="required"
+    return-object="return-object"
+    value="[object Object]"
+  />
+</div>
+`;

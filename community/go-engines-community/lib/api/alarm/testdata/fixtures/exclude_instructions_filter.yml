@@ -1,0 +1,108 @@
+instruction:
+  instruction_{1..1000}:
+    _id: <UUID()>
+    name: <{instruction-<RangeIndex()>}>
+    type: 0
+    alarm_pattern:
+      - - field: v.state.val
+          cond:
+            type: eq
+            value: 3
+    entity_pattern:
+      - - field: _id
+          cond:
+            type: eq
+            value: <{test-resource-<RangeIndex()>/test-component}>
+    created: <NowUnix()>
+    last_modified: <NowUnix()>
+    steps:
+      - _id: <UUID()>
+        name: <LoremIpsumWord()>
+        endpoint: <LoremIpsumWord()>
+        stop_on_fail: true
+        operations:
+          - _id: <UUID()>
+            name: <LoremIpsumWord()>
+            description: <LoremIpsumWord()>
+            time_to_complete:
+              value: 1
+              unit: m
+    timeout_after_execution:
+      value: 2
+      unit: m
+
+periodical_alarm:
+  alarm_{1..1000}:
+    _id: <UUID()>
+    d: <{test-resource-<RangeIndex()>/test-component}>
+    t: <NowUnix()>
+    v:
+      connector: test-connector
+      connector_name: test-connector-name
+      component: test-component
+      resource: <{test-resource-<RangeIndex()>}>
+      display_name: <UniqueName()>
+      creation_date: <NowUnix()>
+      last_event_date: <NowUnix()>
+      last_update_date: <NowUnix()>
+      initial_output: <LoremIpsumWord()>
+      output: <LoremIpsumWord()>
+      state:
+        _t: stateinc
+        a: test-connector.test-connector-name
+        m: <LoremIpsumWord()>
+        t: <NowUnix()>
+        initiator: external
+        val: 3
+      status:
+        _t: statusinc
+        a: test-connector.test-connector-name
+        m: <LoremIpsumWord()>
+        t: <NowUnix()>
+        initiator: external
+        val: 1
+      steps:
+        - _t: stateinc
+          a: test-connector.test-connector-name
+          m: <LoremIpsumWord()>
+          t: <NowUnix()>
+          initiator: external
+          val: 3
+        - _t: statusinc
+          a: test-connector.test-connector-name
+          m: <LoremIpsumWord()>
+          t: <NowUnix()>
+          initiator: external
+          val: 1
+
+default_entities:
+  resource_{1..1000}:
+    _id: <{test-resource-<RangeIndex()>/test-component}>
+    name: <{test-resource-<RangeIndex()>}>
+    type: resource
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+    connector: test-connector/test-connector-name
+    component: test-component
+
+  connector:
+    _id: test-connector/test-connector-name
+    name: test-connector-name
+    type: connector
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+
+  component:
+    _id: test-component
+    name: <Current()._id>
+    component: <Current()._id>
+    type: component
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+    connector: test-connector/test-connector-name

@@ -18,24 +18,18 @@
               multiple,
               @change="changeRecurrenceRuleOption"
             )
-            v-text-field(
-              v-model.number="form.recurrenceRuleOptions.count",
-              v-validate="'numeric|min_value:1'",
+            c-number-field(
+              v-model="form.recurrenceRuleOptions.count",
               :label="$t('recurrenceRule.count')",
-              :error-messages="errors.collect('count')",
-              type="number",
+              :min="1",
               name="count",
-              min="1",
               @input="changeRecurrenceRuleOption"
             )
-            v-text-field(
-              v-model.number="form.recurrenceRuleOptions.interval",
-              v-validate="'numeric|min_value:1'",
+            c-number-field(
+              v-model="form.recurrenceRuleOptions.interval",
               :label="$t('recurrenceRule.interval')",
-              :error-messages="errors.collect('interval')",
-              type="number",
+              :min="1",
               name="interval",
-              min="1",
               @input="changeRecurrenceRuleOption"
             )
 
@@ -56,9 +50,10 @@
               chips,
               @input="changeRecurrenceRuleOption"
             )
-            v-tooltip(left, max-width="250")
-              div(slot="activator")
+            v-tooltip(max-width="250", left)
+              template(#activator="{ on }")
                 v-text-field(
+                  v-on="on",
                   v-model="form.advancedRecurrenceRuleOptions.bysetpos",
                   v-validate="{ regex: advancedFieldRegex }",
                   :label="$t('recurrenceRule.bysetpos')",
@@ -69,9 +64,10 @@
                   @input="changeRecurrenceRuleOption"
                 )
               span {{ $t('recurrenceRule.tooltips.bysetpos') }}
-            v-tooltip(left, max-width="250")
-              div(slot="activator")
+            v-tooltip(max-width="250", left)
+              template(#activator="{ on }")
                 v-text-field(
+                  v-on="on",
                   v-model="form.advancedRecurrenceRuleOptions.bymonthday",
                   v-validate="{ regex: advancedFieldRegex }",
                   :label="$t('recurrenceRule.bymonthday')",
@@ -82,9 +78,10 @@
                   @input="changeRecurrenceRuleOption"
                 )
               span {{ $t('recurrenceRule.tooltips.bymonthday') }}
-            v-tooltip(left, max-width="250")
-              div(slot="activator")
+            v-tooltip(max-width="250", left)
+              template(#activator="{ on }")
                 v-text-field(
+                  v-on="on",
                   v-model="form.advancedRecurrenceRuleOptions.byyearday",
                   v-validate="{ regex: advancedFieldRegex }",
                   :label="$t('recurrenceRule.byyearday')",
@@ -95,9 +92,10 @@
                   @input="changeRecurrenceRuleOption"
                 )
               span {{ $t('recurrenceRule.tooltips.byyearday') }}
-            v-tooltip(left, max-width="250")
-              div(slot="activator")
+            v-tooltip(max-width="250", left)
+              template(#activator="{ on }")
                 v-text-field(
+                  v-on="on",
                   v-model="form.advancedRecurrenceRuleOptions.byweekno",
                   v-validate="{ regex: advancedFieldRegex }",
                   :label="$t('recurrenceRule.byweekno')",
@@ -108,9 +106,10 @@
                   @input="changeRecurrenceRuleOption"
                 )
               span {{ $t('recurrenceRule.tooltips.byweekno') }}
-            v-tooltip(left, max-width="250")
-              div(slot="activator")
+            v-tooltip(max-width="250", left)
+              template(#activator="{ on }")
                 v-text-field(
+                  v-on="on",
                   v-model="form.advancedRecurrenceRuleOptions.byhour",
                   v-validate="{ regex: advancedFieldRegex }",
                   :label="$t('recurrenceRule.byhour')",
@@ -121,9 +120,10 @@
                   @input="changeRecurrenceRuleOption"
                 )
               span {{ $t('recurrenceRule.tooltips.byhour') }}div
-            v-tooltip(left, max-width="250")
-              div(slot="activator")
+            v-tooltip(max-width="250", left)
+              template(#activator="{ on }")
                 v-text-field(
+                  v-on="on",
                   v-model="form.advancedRecurrenceRuleOptions.byminute",
                   v-validate="{ regex: advancedFieldRegex }",
                   :label="$t('recurrenceRule.byminute')",
@@ -134,9 +134,10 @@
                   @input="changeRecurrenceRuleOption"
                 )
               span {{ $t('recurrenceRule.tooltips.byminute') }}
-            v-tooltip(left, max-width="250")
-              div(slot="activator")
+            v-tooltip(max-width="250", left)
+              template(#activator="{ on }")
                 v-text-field(
+                  v-on="on",
                   v-model="form.advancedRecurrenceRuleOptions.bysecond",
                   v-validate="{ regex: advancedFieldRegex }",
                   :label="$t('recurrenceRule.bysecond')",

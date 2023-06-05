@@ -26,6 +26,9 @@
     "no-return-assign": "off",
     "no-underscore-dangle": ["error", { "allow": ["_id", "_embedded", "_t", "_filter", "type_", "_original"] }],
     "no-bitwise": ["error", { "allow": ["&"] }],
+    "vue/multi-word-component-names": "off",
+    "vue/no-use-computed-property-like-method": "off",
+    "vue/component-definition-name-casing": "off",
     "vue/require-default-prop": "off",
     "vue/require-prop-types": "error",
     "vue/order-in-components": ["error", {
@@ -53,6 +56,7 @@
       ]
     }],
     "import/no-cycle": "off", // TODO: We have a lot of cycle deps. Should be fixed.
-    "import/prefer-default-export": "off"
+    "import/prefer-default-export": "off",
+    "no-unused-expressions": "off"
   }
 }

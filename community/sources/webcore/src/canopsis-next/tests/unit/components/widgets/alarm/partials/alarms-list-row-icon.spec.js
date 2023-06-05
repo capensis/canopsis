@@ -1,4 +1,5 @@
 import { mount, createVueInstance } from '@unit/utils/vue';
+import { INSTRUCTION_EXECUTION_ICONS } from '@/constants';
 
 import AlarmsListRowIcon from '@/components/widgets/alarm/partials/alarms-list-row-icon.vue';
 
@@ -6,6 +7,7 @@ const localVue = createVueInstance();
 
 const snapshotFactory = (options = {}) => mount(AlarmsListRowIcon, {
   localVue,
+  attachTo: document.body,
 
   ...options,
 });
@@ -26,7 +28,7 @@ describe('alarms-list-row-icon', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
-          is_all_auto_instructions_completed: true,
+          instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.autoSuccessful,
         },
       },
     });
@@ -39,7 +41,7 @@ describe('alarms-list-row-icon', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
-          is_auto_instruction_failed: true,
+          instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.autoFailed,
         },
       },
     });
@@ -52,7 +54,7 @@ describe('alarms-list-row-icon', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
-          is_auto_instruction_running: true,
+          instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.autoFailed,
         },
       },
     });
@@ -65,7 +67,7 @@ describe('alarms-list-row-icon', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
-          is_manual_instruction_waiting_result: true,
+          instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.manualFailed,
         },
       },
     });
@@ -78,7 +80,7 @@ describe('alarms-list-row-icon', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
-          is_manual_instruction_running: true,
+          instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.manualInProgress,
         },
       },
     });

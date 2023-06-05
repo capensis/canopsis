@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`flowchart-map-form Renders \`flowchart-map-form\` with form 1`] = `
+<div
+  class="layout geomap-map-form column"
+>
+  <c-name-field-stub
+    required="required"
+    value="Mermaid"
+  />
+  <flowchart-editor-stub
+    form="[object Object]"
+    name="parameters"
+  />
+</div>
+`;

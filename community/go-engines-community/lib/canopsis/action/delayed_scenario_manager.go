@@ -170,7 +170,7 @@ func (m *delayedScenarioManager) checkExpiredTimeoutScenario(ctx context.Context
 		go m.waitAlmostExpiredTimeoutScenario(ctx, delayedScenario)
 	}
 
-	m.logger.Debug().Int("expired", len(expired)).Int("almost expired", len(almostExpired)).Msg("checked expired timeout delayed actions")
+	m.logger.Debug().Int("expired", len(expired)).Int("almost_expired", len(almostExpired)).Msg("checked expired timeout delayed actions")
 }
 
 func (m *delayedScenarioManager) waitAlmostExpiredTimeoutScenario(ctx context.Context, scenario DelayedScenario) {

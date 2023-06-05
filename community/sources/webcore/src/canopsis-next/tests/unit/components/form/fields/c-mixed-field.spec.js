@@ -1,134 +1,133 @@
 import Faker from 'faker';
-import { Validator } from 'vee-validate';
 
 import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
-import { createInputStub, createSelectInputStub } from '@unit/stubs/input';
-import { FILTER_INPUT_TYPES } from '@/constants';
+import { PATTERN_FIELD_TYPES } from '@/constants';
 
 import CMixedField from '@/components/forms/fields/c-mixed-field.vue';
 
 const localVue = createVueInstance();
 
 const stubs = {
-  'v-select': createSelectInputStub('v-select'),
-  'v-text-field': createInputStub('v-text-field'),
-  'v-combobox': createInputStub('v-combobox'),
-  'c-array-mixed-field': true,
-};
-
-const snapshotStubs = {
-  'c-array-mixed-field': true,
+  'c-input-type-field': true,
+  'c-mixed-input-field': true,
 };
 
 const factory = (options = {}) => shallowMount(CMixedField, {
   localVue,
   stubs,
-  provide: {
-    $validator: new Validator(),
+
+  parentComponent: {
+    $_veeValidate: {
+      validator: 'new',
+    },
   },
+
   ...options,
 });
 
+const snapshotFactory = (options = {}) => mount(CMixedField, {
+  localVue,
+  stubs,
+
+  ...options,
+});
+
+const selectInputTypeField = wrapper => wrapper.find('c-input-type-field-stub');
+
 describe('c-mixed-field', () => {
-  it('Value set into select', () => {
-    const value = Faker.datatype.number();
+  it('Input type changed after trigger input type field with string value', () => {
     const wrapper = factory({
       propsData: {
-        value,
+        value: 12,
       },
     });
 
-    const selectElement = wrapper.find('select.v-select');
+    const inputTypeField = selectInputTypeField(wrapper);
 
-    expect(selectElement.element.value).toBe(FILTER_INPUT_TYPES.number);
-  });
-
-  it('Value changed after change the type select to string', () => {
-    const value = Faker.datatype.number();
-    const wrapper = factory({
-      propsData: {
-        value,
-      },
-    });
-    const selectElement = wrapper.find('select.v-select');
-
-    selectElement.setValue(FILTER_INPUT_TYPES.string);
+    inputTypeField.vm.$emit('input', PATTERN_FIELD_TYPES.string);
 
     const inputEvents = wrapper.emitted('input');
+
     expect(inputEvents).toHaveLength(1);
 
-    const [inputEventData] = inputEvents[0];
-    expect(inputEventData).toEqual(`${value}`);
+    const [eventData] = inputEvents[0];
+    expect(eventData).toBe('12');
   });
 
-  it('Value changed after change the type select to number', () => {
-    const number = Faker.datatype.number();
+  it('Input type changed after trigger input type field with number value', () => {
     const wrapper = factory({
       propsData: {
-        value: `${number}`,
+        value: '12',
       },
     });
-    const selectElement = wrapper.find('select.v-select');
 
-    selectElement.setValue(FILTER_INPUT_TYPES.number);
+    const inputTypeField = selectInputTypeField(wrapper);
+
+    inputTypeField.vm.$emit('input', PATTERN_FIELD_TYPES.number);
 
     const inputEvents = wrapper.emitted('input');
+
     expect(inputEvents).toHaveLength(1);
 
-    const [inputEventData] = inputEvents[0];
-    expect(inputEventData).toEqual(number);
+    const [eventData] = inputEvents[0];
+    expect(eventData).toBe(12);
   });
 
-  it('Value changed after change the type select to boolean', () => {
+  it('Input type changed after trigger input type field with null value', () => {
     const wrapper = factory({
       propsData: {
-        value: Faker.datatype.string(),
+        value: '12',
       },
     });
-    const selectElement = wrapper.find('select.v-select');
 
-    selectElement.setValue(FILTER_INPUT_TYPES.boolean);
+    const inputTypeField = selectInputTypeField(wrapper);
+
+    inputTypeField.vm.$emit('input', PATTERN_FIELD_TYPES.null);
 
     const inputEvents = wrapper.emitted('input');
+
     expect(inputEvents).toHaveLength(1);
 
-    const [inputEventData] = inputEvents[0];
-    expect(inputEventData).toEqual(true);
+    const [eventData] = inputEvents[0];
+    expect(eventData).toBe(null);
   });
 
-  it('Value changed after change the type select to null', () => {
+  it('Input type changed after trigger input type field with boolean value', () => {
     const wrapper = factory({
       propsData: {
-        value: Faker.datatype.string(),
+        value: 12,
       },
     });
-    const selectElement = wrapper.find('select.v-select');
 
-    selectElement.setValue(FILTER_INPUT_TYPES.null);
+    const inputTypeField = selectInputTypeField(wrapper);
+
+    inputTypeField.vm.$emit('input', PATTERN_FIELD_TYPES.boolean);
 
     const inputEvents = wrapper.emitted('input');
+
     expect(inputEvents).toHaveLength(1);
 
-    const [inputEventData] = inputEvents[0];
-    expect(inputEventData).toEqual(null);
+    const [eventData] = inputEvents[0];
+    expect(eventData).toBe(true);
   });
 
-  it('Value changed after change the type select to array', () => {
-    const value = Faker.datatype.string();
+  it('Input type changed after trigger input type field with array value', () => {
     const wrapper = factory({
       propsData: {
-        value,
+        value: 12,
       },
     });
-    const selectElement = wrapper.find('select.v-select');
 
-    selectElement.setValue(FILTER_INPUT_TYPES.array);
+    const inputTypeField = selectInputTypeField(wrapper);
+
+    inputTypeField.vm.$emit('input', PATTERN_FIELD_TYPES.stringArray);
 
     const inputEvents = wrapper.emitted('input');
+
     expect(inputEvents).toHaveLength(1);
 
-    const [inputEventData] = inputEvents[0];
-    expect(inputEventData).toEqual([value]);
+    const [eventData] = inputEvents[0];
+    expect(eventData).toEqual(['12']);
   });
 
   it('Value changed on the first field after remove selected type', async () => {
@@ -137,17 +136,17 @@ describe('c-mixed-field', () => {
       propsData: {
         value,
         types: [
-          { value: FILTER_INPUT_TYPES.string },
-          { value: FILTER_INPUT_TYPES.boolean },
-          { value: FILTER_INPUT_TYPES.number },
+          { value: PATTERN_FIELD_TYPES.string },
+          { value: PATTERN_FIELD_TYPES.boolean },
+          { value: PATTERN_FIELD_TYPES.number },
         ],
       },
     });
 
     await wrapper.setProps({
       types: [
-        { value: FILTER_INPUT_TYPES.string },
-        { value: FILTER_INPUT_TYPES.boolean },
+        { value: PATTERN_FIELD_TYPES.string },
+        { value: PATTERN_FIELD_TYPES.boolean },
       ],
     });
 
@@ -164,9 +163,9 @@ describe('c-mixed-field', () => {
       propsData: {
         value,
         types: [
-          { value: FILTER_INPUT_TYPES.string },
-          { value: FILTER_INPUT_TYPES.boolean },
-          { value: FILTER_INPUT_TYPES.number },
+          { value: PATTERN_FIELD_TYPES.string },
+          { value: PATTERN_FIELD_TYPES.boolean },
+          { value: PATTERN_FIELD_TYPES.number },
         ],
       },
     });
@@ -182,295 +181,33 @@ describe('c-mixed-field', () => {
     expect(inputEventData).toEqual(undefined);
   });
 
-  it('Value changed to empty string after trigger the input with null value', () => {
-    const wrapper = factory({
-      propsData: {
-        value: 'Value',
-      },
-    });
-    const inputElement = wrapper.find('input.v-text-field');
-
-    inputElement.vm.$emit('input', null);
-
-    const inputEvents = wrapper.emitted('input');
-    expect(inputEvents).toHaveLength(1);
-
-    const [inputEventData] = inputEvents[0];
-    expect(inputEventData).toEqual('');
-  });
-
-  it('Value changed after trigger the input with number value', () => {
-    const newNumber = Faker.datatype.number();
-    const wrapper = factory({
-      propsData: {
-        value: 12,
-      },
-    });
-    const inputElement = wrapper.find('input.v-text-field');
-
-    inputElement.setValue(`${newNumber}`);
-
-    const inputEvents = wrapper.emitted('input');
-    expect(inputEvents).toHaveLength(1);
-
-    const [inputEventData] = inputEvents[0];
-    expect(inputEventData).toEqual(newNumber);
-  });
-
-  it('Value changed after trigger the mixed field with array value', () => {
-    const newValue = Faker.datatype.array();
-    const wrapper = factory({
-      propsData: {
-        value: [],
-      },
-    });
-    const arrayMixedFieldElement = wrapper.find('c-array-mixed-field-stub');
-
-    arrayMixedFieldElement.vm.$emit('change', newValue);
-
-    const inputEvents = wrapper.emitted('input');
-    expect(inputEvents).toHaveLength(1);
-
-    const [inputEventData] = inputEvents[0];
-    expect(inputEventData).toEqual(newValue);
-  });
-
-  it('Value changed after trigger the select with items', () => {
-    const item = {
-      text: Faker.datatype.string(),
-      value: Faker.datatype.string(),
-    };
-    const wrapper = factory({
-      propsData: {
-        value: '',
-        items: [item],
-      },
-    });
-    const comboboxInputElement = wrapper.find('input.v-combobox');
-
-    comboboxInputElement.setValue(item.value);
-
-    const inputEvents = wrapper.emitted('input');
-    expect(inputEvents).toHaveLength(1);
-
-    const [inputEventData] = inputEvents[0];
-    expect(inputEventData).toEqual(item.value);
-  });
-
-  it('v-validate works correctly with component', async () => {
-    const name = Faker.datatype.string();
-    const value = Faker.datatype.string();
-    const validator = new Validator();
-
-    mount({
-      inject: ['$validator'],
-      components: {
-        CMixedField,
-      },
-      props: ['name', 'value'],
-      template: `
-        <c-mixed-field v-validate="'required'" :name="name" :value="value" />
-      `,
-    }, {
-      localVue,
-      stubs,
-      mocks: { $t: () => {} },
-      provide: {
-        $validator: validator,
-      },
-      propsData: {
-        value,
-        name,
-      },
-    });
-
-    await validator.validateAll();
-
-    expect(validator.fields.find({ name })).toBeTruthy();
-  });
-
-  it('Renders `c-mixed-field` with default props correctly', () => {
-    const wrapper = mount(CMixedField, {
-      localVue,
-      stubs: snapshotStubs,
-      provide: {
-        $validator: new Validator(),
-      },
-    });
-
-    const menuContent = wrapper.findMenu();
+  it('Renders `c-mixed-field` with default props', () => {
+    const wrapper = snapshotFactory();
 
     expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
   });
 
-  it('Renders `c-mixed-field` with errors correctly', () => {
-    const validator = new Validator();
-
-    const wrapper = mount(CMixedField, {
-      localVue,
-      provide: {
-        $validator: validator,
-      },
-      stubs: snapshotStubs,
+  it('Renders `c-mixed-field` with custom props', () => {
+    const wrapper = snapshotFactory({
       propsData: {
-        errorMessages: ['First error message', 'Second error message'],
-      },
-    });
-
-    const menuContent = wrapper.findMenu();
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
-  });
-
-  it('Renders `c-mixed-field` with custom props correctly', () => {
-    const validator = new Validator();
-
-    const wrapper = mount(CMixedField, {
-      localVue,
-      provide: {
-        $validator: validator,
-      },
-      stubs: snapshotStubs,
-      propsData: {
-        value: 'Value',
-        name: 'mixedFieldName',
-        label: 'Mixed field label',
+        value: 123,
+        name: 'customName',
+        label: 'Custom label',
         disabled: true,
-        soloInverted: true,
         flat: true,
         hideDetails: true,
-        errorMessages: ['First error message', 'Second error message'],
+        errorMessages: ['Message'],
+        items: [{ value2: 'value', text2: 'Value' }],
+        itemText: 'text2',
+        itemValue: 'value2',
         types: [
-          { value: FILTER_INPUT_TYPES.string, text: 'Custom string' },
-          { value: FILTER_INPUT_TYPES.number },
-          { value: FILTER_INPUT_TYPES.boolean },
+          { value: PATTERN_FIELD_TYPES.string },
+          { value: PATTERN_FIELD_TYPES.number },
+          { value: PATTERN_FIELD_TYPES.stringArray },
         ],
       },
     });
 
-    const menuContent = wrapper.findMenu();
-
     expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
-  });
-
-  it('Renders `c-mixed-field` with string type and items correctly', () => {
-    const validator = new Validator();
-
-    const wrapper = mount(CMixedField, {
-      localVue,
-      provide: {
-        $validator: validator,
-      },
-      stubs: snapshotStubs,
-      propsData: {
-        value: false,
-        name: 'mixedFieldName',
-        label: 'Mixed field with boolean type',
-        items: [{
-          customText: 'Custom item text',
-          customValue: 'Custom item value',
-        }],
-        itemText: 'customText',
-        itemValue: 'customValue',
-      },
-    });
-
-    const menuContents = wrapper.findAllMenus();
-
-    expect(wrapper.element).toMatchSnapshot();
-    menuContents.wrappers.forEach((menuContent) => {
-      expect(menuContent.element).toMatchSnapshot();
-    });
-  });
-
-  it('Renders `c-mixed-field` with boolean type correctly', () => {
-    const validator = new Validator();
-
-    const wrapper = mount(CMixedField, {
-      localVue,
-      provide: {
-        $validator: validator,
-      },
-      stubs: snapshotStubs,
-      propsData: {
-        value: false,
-        name: 'mixedFieldName',
-        label: 'Mixed field with boolean type',
-      },
-    });
-
-    const menuContent = wrapper.findMenu();
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
-  });
-
-  it('Renders `c-mixed-field` with number type correctly', () => {
-    const validator = new Validator();
-
-    const wrapper = mount(CMixedField, {
-      localVue,
-      provide: {
-        $validator: validator,
-      },
-      stubs: snapshotStubs,
-      propsData: {
-        value: 222,
-        name: 'mixedFieldName',
-        label: 'Mixed field with number type',
-      },
-    });
-
-    const menuContent = wrapper.findMenu();
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
-  });
-
-  it('Renders `c-mixed-field` with null type correctly', () => {
-    const validator = new Validator();
-
-    const wrapper = mount(CMixedField, {
-      localVue,
-      provide: {
-        $validator: validator,
-      },
-      stubs: snapshotStubs,
-      propsData: {
-        value: null,
-        name: 'mixedFieldName',
-        label: 'Mixed field with null type',
-      },
-    });
-
-    const menuContent = wrapper.findMenu();
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
-  });
-
-  it('Renders `c-mixed-field` with null type correctly', () => {
-    const validator = new Validator();
-
-    const wrapper = mount(CMixedField, {
-      localVue,
-      provide: {
-        $validator: validator,
-      },
-      stubs: snapshotStubs,
-      propsData: {
-        value: [0, '1', null, false, []],
-        name: 'mixedFieldName',
-        label: 'Mixed field with null type',
-      },
-    });
-
-    const menuContent = wrapper.findMenu();
-
-    expect(wrapper.element).toMatchSnapshot();
-    expect(menuContent.element).toMatchSnapshot();
   });
 });

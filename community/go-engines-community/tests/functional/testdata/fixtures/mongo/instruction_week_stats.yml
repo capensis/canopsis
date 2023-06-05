@@ -2,6 +2,7 @@ template:
   - &week_stats {
     _id: <UUID()>,
     execution_count: 0,
+    successful: 0,
     init_critical: 0,
     init_major: 0,
     init_minor: 0,
@@ -17,6 +18,7 @@ instruction_week_stats:
     instruction: test-instruction-to-stats-get-1
     date: 1617555600
     execution_count: 6
+    successful: 6
     init_critical: 3
     init_major: 2
     init_minor: 1
@@ -29,6 +31,7 @@ instruction_week_stats:
     instruction: test-instruction-to-stats-get-1
     date: 1616950800
     execution_count: 1
+    successful: 1
     init_critical: 1
     res_ok: 1
 
@@ -37,6 +40,7 @@ instruction_week_stats:
     instruction: test-instruction-to-stats-get-2
     date: 1617555600
     execution_count: 6
+    successful: 6
     init_critical: 3
     init_major: 2
     init_minor: 1
@@ -49,5 +53,6 @@ instruction_week_stats:
     instruction: test-instruction-to-stats-get-2
     date: 1616950800
     execution_count: 1
+    successful: 1
     init_critical: 1
     res_ok: 1

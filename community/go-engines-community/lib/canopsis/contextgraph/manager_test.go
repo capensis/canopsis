@@ -50,7 +50,6 @@ func TestCheckServices(t *testing.T) {
 					ID:        "id-1",
 					Component: "component-1",
 					Enabled:   true,
-					Impacts:   []string{"component-1"},
 				},
 			},
 			services: []entityservice.EntityService{
@@ -58,7 +57,6 @@ func TestCheckServices(t *testing.T) {
 					Entity: types.Entity{
 						ID:      "serv-1",
 						Enabled: true,
-						Depends: []string{},
 					},
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: [][]pattern.FieldCondition{
@@ -74,17 +72,15 @@ func TestCheckServices(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:                    "id-1",
-					Component:             "component-1",
-					Enabled:               true,
-					ImpactedServicesToAdd: []string{"serv-1"},
-					ImpactedServices:      []string{"serv-1"},
-					Impacts:               []string{"component-1", "serv-1"},
+					ID:            "id-1",
+					Component:     "component-1",
+					Enabled:       true,
+					ServicesToAdd: []string{"serv-1"},
+					Services:      []string{"serv-1"},
 				},
 				{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{"id-1"},
 					Type:    types.EntityTypeService,
 				},
 			},
@@ -96,7 +92,6 @@ func TestCheckServices(t *testing.T) {
 					ID:        "id-1",
 					Component: "component-1",
 					Enabled:   true,
-					Impacts:   []string{"component-1"},
 				},
 			},
 			services: []entityservice.EntityService{
@@ -135,22 +130,19 @@ func TestCheckServices(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:                    "id-1",
-					Component:             "component-1",
-					Enabled:               true,
-					ImpactedServicesToAdd: []string{"serv-1", "serv-2"},
-					ImpactedServices:      []string{"serv-1", "serv-2"},
-					Impacts:               []string{"component-1", "serv-1", "serv-2"},
+					ID:            "id-1",
+					Component:     "component-1",
+					Enabled:       true,
+					ServicesToAdd: []string{"serv-1", "serv-2"},
+					Services:      []string{"serv-1", "serv-2"},
 				},
 				{
 					ID:      "serv-1",
-					Depends: []string{"id-1"},
 					Enabled: true,
 					Type:    types.EntityTypeService,
 				},
 				{
 					ID:      "serv-2",
-					Depends: []string{"id-1"},
 					Enabled: true,
 					Type:    types.EntityTypeService,
 				},
@@ -160,12 +152,11 @@ func TestCheckServices(t *testing.T) {
 			name: "one entity is added to multiple services impacted services to add/remove should be updated",
 			entities: []types.Entity{
 				{
-					ID:                       "id-1",
-					Component:                "component-1",
-					Enabled:                  true,
-					Impacts:                  []string{"component-1"},
-					ImpactedServicesToAdd:    []string{"serv-4"},
-					ImpactedServicesToRemove: []string{"serv-0", "serv-2", "serv-3"},
+					ID:               "id-1",
+					Component:        "component-1",
+					Enabled:          true,
+					ServicesToAdd:    []string{"serv-4"},
+					ServicesToRemove: []string{"serv-0", "serv-2", "serv-3"},
 				},
 			},
 			services: []entityservice.EntityService{
@@ -204,24 +195,21 @@ func TestCheckServices(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:                       "id-1",
-					Component:                "component-1",
-					Enabled:                  true,
-					ImpactedServicesToAdd:    []string{"serv-1", "serv-2", "serv-4"},
-					ImpactedServicesToRemove: []string{"serv-0", "serv-3"},
-					ImpactedServices:         []string{"serv-1", "serv-2"},
-					Impacts:                  []string{"component-1", "serv-1", "serv-2"},
+					ID:               "id-1",
+					Component:        "component-1",
+					Enabled:          true,
+					ServicesToAdd:    []string{"serv-1", "serv-2", "serv-4"},
+					ServicesToRemove: []string{"serv-0", "serv-3"},
+					Services:         []string{"serv-1", "serv-2"},
 				},
 				{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{"id-1"},
 					Type:    types.EntityTypeService,
 				},
 				{
 					ID:      "serv-2",
 					Enabled: true,
-					Depends: []string{"id-1"},
 					Type:    types.EntityTypeService,
 				},
 			},
@@ -230,11 +218,10 @@ func TestCheckServices(t *testing.T) {
 			name: "one entity is removed from a single service",
 			entities: []types.Entity{
 				{
-					ID:               "id-1",
-					Component:        "component-1",
-					Enabled:          true,
-					ImpactedServices: []string{"serv-1"},
-					Impacts:          []string{"component-1", "serv-1"},
+					ID:        "id-1",
+					Component: "component-1",
+					Enabled:   true,
+					Services:  []string{"serv-1"},
 				},
 			},
 			services: []entityservice.EntityService{
@@ -242,7 +229,6 @@ func TestCheckServices(t *testing.T) {
 					Entity: types.Entity{
 						ID:      "serv-1",
 						Enabled: true,
-						Depends: []string{"id-1"},
 					},
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: [][]pattern.FieldCondition{
@@ -258,17 +244,15 @@ func TestCheckServices(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:                       "id-1",
-					Component:                "component-1",
-					Enabled:                  true,
-					ImpactedServices:         []string{},
-					ImpactedServicesToRemove: []string{"serv-1"},
-					Impacts:                  []string{"component-1"},
+					ID:               "id-1",
+					Component:        "component-1",
+					Enabled:          true,
+					Services:         []string{},
+					ServicesToRemove: []string{"serv-1"},
 				},
 				{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{},
 					Type:    types.EntityTypeService,
 				},
 			},
@@ -277,11 +261,10 @@ func TestCheckServices(t *testing.T) {
 			name: "one entity is removed from multiple services",
 			entities: []types.Entity{
 				{
-					ID:               "id-1",
-					Enabled:          true,
-					Component:        "component-1",
-					ImpactedServices: []string{"serv-1", "serv-2"},
-					Impacts:          []string{"component-1", "serv-1", "serv-2"},
+					ID:        "id-1",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1", "serv-2"},
 				},
 			},
 			services: []entityservice.EntityService{
@@ -289,7 +272,6 @@ func TestCheckServices(t *testing.T) {
 					Entity: types.Entity{
 						ID:      "serv-1",
 						Enabled: true,
-						Depends: []string{"id-1"},
 					},
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: [][]pattern.FieldCondition{
@@ -306,7 +288,6 @@ func TestCheckServices(t *testing.T) {
 					Entity: types.Entity{
 						ID:      "serv-2",
 						Enabled: true,
-						Depends: []string{"id-1"},
 					},
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: [][]pattern.FieldCondition{
@@ -322,22 +303,19 @@ func TestCheckServices(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:                       "id-1",
-					Component:                "component-1",
-					Enabled:                  true,
-					ImpactedServices:         []string{},
-					ImpactedServicesToRemove: []string{"serv-1", "serv-2"},
-					Impacts:                  []string{"component-1"},
+					ID:               "id-1",
+					Component:        "component-1",
+					Enabled:          true,
+					Services:         []string{},
+					ServicesToRemove: []string{"serv-1", "serv-2"},
 				},
 				{
 					ID:      "serv-1",
-					Depends: []string{},
 					Enabled: true,
 					Type:    types.EntityTypeService,
 				},
 				{
 					ID:      "serv-2",
-					Depends: []string{},
 					Enabled: true,
 					Type:    types.EntityTypeService,
 				},
@@ -347,11 +325,10 @@ func TestCheckServices(t *testing.T) {
 			name: "one entity is moved from one service to another",
 			entities: []types.Entity{
 				{
-					ID:               "id-1",
-					Component:        "component-1",
-					Enabled:          true,
-					ImpactedServices: []string{"serv-1", "serv-2"},
-					Impacts:          []string{"component-1", "serv-1", "serv-2"},
+					ID:        "id-1",
+					Component: "component-1",
+					Enabled:   true,
+					Services:  []string{"serv-1", "serv-2"},
 				},
 			},
 			services: []entityservice.EntityService{
@@ -359,7 +336,6 @@ func TestCheckServices(t *testing.T) {
 					Entity: types.Entity{
 						ID:      "serv-1",
 						Enabled: true,
-						Depends: []string{"id-1"},
 					},
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: [][]pattern.FieldCondition{
@@ -376,7 +352,6 @@ func TestCheckServices(t *testing.T) {
 					Entity: types.Entity{
 						ID:      "serv-2",
 						Enabled: true,
-						Depends: []string{"id-1"},
 					},
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: [][]pattern.FieldCondition{
@@ -408,23 +383,20 @@ func TestCheckServices(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:                       "id-1",
-					Component:                "component-1",
-					Enabled:                  true,
-					Impacts:                  []string{"component-1", "serv-1", "serv-3"},
-					ImpactedServices:         []string{"serv-1", "serv-3"},
-					ImpactedServicesToAdd:    []string{"serv-3"},
-					ImpactedServicesToRemove: []string{"serv-2"},
+					ID:               "id-1",
+					Component:        "component-1",
+					Enabled:          true,
+					Services:         []string{"serv-1", "serv-3"},
+					ServicesToAdd:    []string{"serv-3"},
+					ServicesToRemove: []string{"serv-2"},
 				},
 				{
 					ID:      "serv-2",
-					Depends: []string{},
 					Enabled: true,
 					Type:    types.EntityTypeService,
 				},
 				{
 					ID:      "serv-3",
-					Depends: []string{"id-1"},
 					Enabled: true,
 					Type:    types.EntityTypeService,
 				},
@@ -437,13 +409,11 @@ func TestCheckServices(t *testing.T) {
 					ID:        "id-1",
 					Component: "component-1",
 					Enabled:   true,
-					Impacts:   []string{"component-1"},
 				},
 				{
 					ID:        "id-2",
 					Component: "component-1",
 					Enabled:   true,
-					Impacts:   []string{"component-1"},
 				},
 			},
 			services: []entityservice.EntityService{
@@ -466,25 +436,22 @@ func TestCheckServices(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:                    "id-1",
-					Component:             "component-1",
-					Enabled:               true,
-					ImpactedServicesToAdd: []string{"serv-1"},
-					ImpactedServices:      []string{"serv-1"},
-					Impacts:               []string{"component-1", "serv-1"},
+					ID:            "id-1",
+					Component:     "component-1",
+					Enabled:       true,
+					ServicesToAdd: []string{"serv-1"},
+					Services:      []string{"serv-1"},
 				},
 				{
-					ID:                    "id-2",
-					Component:             "component-1",
-					Enabled:               true,
-					ImpactedServicesToAdd: []string{"serv-1"},
-					ImpactedServices:      []string{"serv-1"},
-					Impacts:               []string{"component-1", "serv-1"},
+					ID:            "id-2",
+					Component:     "component-1",
+					Enabled:       true,
+					ServicesToAdd: []string{"serv-1"},
+					Services:      []string{"serv-1"},
 				},
 				{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{"id-1", "id-2"},
 					Type:    types.EntityTypeService,
 				},
 			},
@@ -496,13 +463,11 @@ func TestCheckServices(t *testing.T) {
 					ID:        "id-1",
 					Component: "component-1",
 					Enabled:   true,
-					Impacts:   []string{"component-1"},
 				},
 				{
 					ID:        "id-2",
 					Component: "component-1",
 					Enabled:   true,
-					Impacts:   []string{"component-1"},
 				},
 			},
 			services: []entityservice.EntityService{
@@ -541,31 +506,27 @@ func TestCheckServices(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:                    "id-1",
-					Component:             "component-1",
-					Enabled:               true,
-					ImpactedServicesToAdd: []string{"serv-1", "serv-2"},
-					ImpactedServices:      []string{"serv-1", "serv-2"},
-					Impacts:               []string{"component-1", "serv-1", "serv-2"},
+					ID:            "id-1",
+					Component:     "component-1",
+					Enabled:       true,
+					ServicesToAdd: []string{"serv-1", "serv-2"},
+					Services:      []string{"serv-1", "serv-2"},
 				},
 				{
-					ID:                    "id-2",
-					Component:             "component-1",
-					Enabled:               true,
-					ImpactedServicesToAdd: []string{"serv-1", "serv-2"},
-					ImpactedServices:      []string{"serv-1", "serv-2"},
-					Impacts:               []string{"component-1", "serv-1", "serv-2"},
+					ID:            "id-2",
+					Component:     "component-1",
+					Enabled:       true,
+					ServicesToAdd: []string{"serv-1", "serv-2"},
+					Services:      []string{"serv-1", "serv-2"},
 				},
 				{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{"id-1", "id-2"},
 					Type:    types.EntityTypeService,
 				},
 				{
 					ID:      "serv-2",
 					Enabled: true,
-					Depends: []string{"id-1", "id-2"},
 					Type:    types.EntityTypeService,
 				},
 			},
@@ -574,18 +535,16 @@ func TestCheckServices(t *testing.T) {
 			name: "multiple firstFindCallEntities is removed from a single service",
 			entities: []types.Entity{
 				{
-					ID:               "id-1",
-					Enabled:          true,
-					Component:        "component-1",
-					ImpactedServices: []string{"serv-1"},
-					Impacts:          []string{"component-1", "serv-1"},
+					ID:        "id-1",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1"},
 				},
 				{
-					ID:               "id-2",
-					Enabled:          true,
-					Component:        "component-1",
-					ImpactedServices: []string{"serv-1"},
-					Impacts:          []string{"component-1", "serv-1"},
+					ID:        "id-2",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1"},
 				},
 			},
 			services: []entityservice.EntityService{
@@ -593,7 +552,6 @@ func TestCheckServices(t *testing.T) {
 					Entity: types.Entity{
 						ID:      "serv-1",
 						Enabled: true,
-						Depends: []string{"id-1"},
 					},
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: [][]pattern.FieldCondition{
@@ -609,25 +567,22 @@ func TestCheckServices(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:                       "id-1",
-					Enabled:                  true,
-					Component:                "component-1",
-					Impacts:                  []string{"component-1"},
-					ImpactedServices:         []string{},
-					ImpactedServicesToRemove: []string{"serv-1"},
+					ID:               "id-1",
+					Enabled:          true,
+					Component:        "component-1",
+					Services:         []string{},
+					ServicesToRemove: []string{"serv-1"},
 				},
 				{
-					ID:                       "id-2",
-					Enabled:                  true,
-					Component:                "component-1",
-					Impacts:                  []string{"component-1"},
-					ImpactedServices:         []string{},
-					ImpactedServicesToRemove: []string{"serv-1"},
+					ID:               "id-2",
+					Enabled:          true,
+					Component:        "component-1",
+					Services:         []string{},
+					ServicesToRemove: []string{"serv-1"},
 				},
 				{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{},
 					Type:    types.EntityTypeService,
 				},
 			},
@@ -636,18 +591,16 @@ func TestCheckServices(t *testing.T) {
 			name: "multiple firstFindCallEntities is removed from multiple services",
 			entities: []types.Entity{
 				{
-					ID:               "id-1",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-1", "serv-2"},
-					ImpactedServices: []string{"serv-1", "serv-2"},
+					ID:        "id-1",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1", "serv-2"},
 				},
 				{
-					ID:               "id-2",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-1", "serv-2"},
-					ImpactedServices: []string{"serv-1", "serv-2"},
+					ID:        "id-2",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1", "serv-2"},
 				},
 			},
 			services: []entityservice.EntityService{
@@ -655,7 +608,6 @@ func TestCheckServices(t *testing.T) {
 					Entity: types.Entity{
 						ID:      "serv-1",
 						Enabled: true,
-						Depends: []string{"id-1", "id-2"},
 					},
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: [][]pattern.FieldCondition{
@@ -672,7 +624,6 @@ func TestCheckServices(t *testing.T) {
 					Entity: types.Entity{
 						ID:      "serv-2",
 						Enabled: true,
-						Depends: []string{"id-1", "id-2"},
 					},
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: [][]pattern.FieldCondition{
@@ -688,31 +639,27 @@ func TestCheckServices(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:                       "id-1",
-					Enabled:                  true,
-					Component:                "component-1",
-					Impacts:                  []string{"component-1"},
-					ImpactedServices:         []string{},
-					ImpactedServicesToRemove: []string{"serv-1", "serv-2"},
+					ID:               "id-1",
+					Enabled:          true,
+					Component:        "component-1",
+					Services:         []string{},
+					ServicesToRemove: []string{"serv-1", "serv-2"},
 				},
 				{
-					ID:                       "id-2",
-					Enabled:                  true,
-					Component:                "component-1",
-					Impacts:                  []string{"component-1"},
-					ImpactedServices:         []string{},
-					ImpactedServicesToRemove: []string{"serv-1", "serv-2"},
+					ID:               "id-2",
+					Enabled:          true,
+					Component:        "component-1",
+					Services:         []string{},
+					ServicesToRemove: []string{"serv-1", "serv-2"},
 				},
 				{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{},
 					Type:    types.EntityTypeService,
 				},
 				{
 					ID:      "serv-2",
 					Enabled: true,
-					Depends: []string{},
 					Type:    types.EntityTypeService,
 				},
 			},
@@ -721,18 +668,16 @@ func TestCheckServices(t *testing.T) {
 			name: "multiple firstFindCallEntities is moved from one service to another",
 			entities: []types.Entity{
 				{
-					ID:               "id-1",
-					Enabled:          true,
-					Component:        "component-1",
-					ImpactedServices: []string{"serv-1", "serv-2"},
-					Impacts:          []string{"component-1", "serv-1", "serv-2"},
+					ID:        "id-1",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1", "serv-2"},
 				},
 				{
-					ID:               "id-2",
-					Enabled:          true,
-					Component:        "component-1",
-					ImpactedServices: []string{"serv-2", "serv-3"},
-					Impacts:          []string{"component-1", "serv-2", "serv-3"},
+					ID:        "id-2",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-2", "serv-3"},
 				},
 			},
 			services: []entityservice.EntityService{
@@ -740,7 +685,6 @@ func TestCheckServices(t *testing.T) {
 					Entity: types.Entity{
 						ID:      "serv-1",
 						Enabled: true,
-						Depends: []string{"id-1"},
 					},
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: [][]pattern.FieldCondition{
@@ -757,7 +701,6 @@ func TestCheckServices(t *testing.T) {
 					Entity: types.Entity{
 						ID:      "serv-2",
 						Enabled: true,
-						Depends: []string{"id-1", "id-2"},
 					},
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: [][]pattern.FieldCondition{
@@ -774,7 +717,6 @@ func TestCheckServices(t *testing.T) {
 					Entity: types.Entity{
 						ID:      "serv-3",
 						Enabled: true,
-						Depends: []string{"id-2"},
 					},
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: [][]pattern.FieldCondition{
@@ -790,39 +732,34 @@ func TestCheckServices(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:                       "id-1",
-					Enabled:                  true,
-					Component:                "component-1",
-					Impacts:                  []string{"component-1", "serv-1", "serv-3"},
-					ImpactedServices:         []string{"serv-1", "serv-3"},
-					ImpactedServicesToAdd:    []string{"serv-3"},
-					ImpactedServicesToRemove: []string{"serv-2"},
+					ID:               "id-1",
+					Enabled:          true,
+					Component:        "component-1",
+					Services:         []string{"serv-1", "serv-3"},
+					ServicesToAdd:    []string{"serv-3"},
+					ServicesToRemove: []string{"serv-2"},
 				},
 				{
-					ID:                       "id-2",
-					Enabled:                  true,
-					Component:                "component-1",
-					Impacts:                  []string{"component-1", "serv-1", "serv-3"},
-					ImpactedServices:         []string{"serv-1", "serv-3"},
-					ImpactedServicesToAdd:    []string{"serv-1"},
-					ImpactedServicesToRemove: []string{"serv-2"},
+					ID:               "id-2",
+					Enabled:          true,
+					Component:        "component-1",
+					Services:         []string{"serv-1", "serv-3"},
+					ServicesToAdd:    []string{"serv-1"},
+					ServicesToRemove: []string{"serv-2"},
 				},
 				{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{"id-1", "id-2"},
 					Type:    types.EntityTypeService,
 				},
 				{
 					ID:      "serv-2",
 					Enabled: true,
-					Depends: []string{},
 					Type:    types.EntityTypeService,
 				},
 				{
 					ID:      "serv-3",
 					Enabled: true,
-					Depends: []string{"id-1", "id-2"},
 					Type:    types.EntityTypeService,
 				},
 			},
@@ -831,18 +768,16 @@ func TestCheckServices(t *testing.T) {
 			name: "no changes",
 			entities: []types.Entity{
 				{
-					ID:               "id-1",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-1", "serv-2"},
-					ImpactedServices: []string{"serv-1", "serv-2"},
+					ID:        "id-1",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1", "serv-2"},
 				},
 				{
-					ID:               "id-2",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-1", "serv-2"},
-					ImpactedServices: []string{"serv-1", "serv-2"},
+					ID:        "id-2",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1", "serv-2"},
 				},
 			},
 			services: []entityservice.EntityService{
@@ -850,7 +785,6 @@ func TestCheckServices(t *testing.T) {
 					Entity: types.Entity{
 						ID:      "serv-1",
 						Enabled: true,
-						Depends: []string{"id-1", "id-2"},
 					},
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: [][]pattern.FieldCondition{
@@ -867,7 +801,6 @@ func TestCheckServices(t *testing.T) {
 					Entity: types.Entity{
 						ID:      "serv-2",
 						Enabled: true,
-						Depends: []string{"id-1", "id-2"},
 					},
 					EntityPatternFields: savedpattern.EntityPatternFields{
 						EntityPattern: [][]pattern.FieldCondition{
@@ -883,18 +816,16 @@ func TestCheckServices(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:               "id-1",
-					Enabled:          true,
-					Component:        "component-1",
-					ImpactedServices: []string{"serv-1", "serv-2"},
-					Impacts:          []string{"component-1", "serv-1", "serv-2"},
+					ID:        "id-1",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1", "serv-2"},
 				},
 				{
-					ID:               "id-2",
-					Enabled:          true,
-					Component:        "component-1",
-					ImpactedServices: []string{"serv-1", "serv-2"},
-					Impacts:          []string{"component-1", "serv-1", "serv-2"},
+					ID:        "id-2",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1", "serv-2"},
 				},
 			},
 		},
@@ -916,46 +847,30 @@ func TestCheckServices(t *testing.T) {
 			})
 
 			for idx := range result {
-				sort.Slice(result[idx].ImpactedServices, func(i, j int) bool {
-					return result[idx].ImpactedServices[i] < result[idx].ImpactedServices[j]
+				sort.Slice(result[idx].Services, func(i, j int) bool {
+					return result[idx].Services[i] < result[idx].Services[j]
 				})
 
-				sort.Slice(result[idx].ImpactedServicesToAdd, func(i, j int) bool {
-					return result[idx].ImpactedServicesToAdd[i] < result[idx].ImpactedServicesToAdd[j]
+				sort.Slice(result[idx].ServicesToAdd, func(i, j int) bool {
+					return result[idx].ServicesToAdd[i] < result[idx].ServicesToAdd[j]
 				})
 
-				sort.Slice(result[idx].ImpactedServicesToRemove, func(i, j int) bool {
-					return result[idx].ImpactedServicesToRemove[i] < result[idx].ImpactedServicesToRemove[j]
-				})
-
-				sort.Slice(result[idx].Impacts, func(i, j int) bool {
-					return result[idx].Impacts[i] < result[idx].Impacts[j]
-				})
-
-				sort.Slice(result[idx].Depends, func(i, j int) bool {
-					return result[idx].Depends[i] < result[idx].Depends[j]
+				sort.Slice(result[idx].ServicesToRemove, func(i, j int) bool {
+					return result[idx].ServicesToRemove[i] < result[idx].ServicesToRemove[j]
 				})
 			}
 
 			for idx := range dataset.expectedResult {
-				sort.Slice(dataset.expectedResult[idx].ImpactedServices, func(i, j int) bool {
-					return dataset.expectedResult[idx].ImpactedServices[i] < dataset.expectedResult[idx].ImpactedServices[j]
+				sort.Slice(dataset.expectedResult[idx].Services, func(i, j int) bool {
+					return dataset.expectedResult[idx].Services[i] < dataset.expectedResult[idx].Services[j]
 				})
 
-				sort.Slice(dataset.expectedResult[idx].ImpactedServicesToAdd, func(i, j int) bool {
-					return dataset.expectedResult[idx].ImpactedServicesToAdd[i] < dataset.expectedResult[idx].ImpactedServicesToAdd[j]
+				sort.Slice(dataset.expectedResult[idx].ServicesToAdd, func(i, j int) bool {
+					return dataset.expectedResult[idx].ServicesToAdd[i] < dataset.expectedResult[idx].ServicesToAdd[j]
 				})
 
-				sort.Slice(dataset.expectedResult[idx].ImpactedServicesToRemove, func(i, j int) bool {
-					return dataset.expectedResult[idx].ImpactedServicesToRemove[i] < dataset.expectedResult[idx].ImpactedServicesToRemove[j]
-				})
-
-				sort.Slice(dataset.expectedResult[idx].Impacts, func(i, j int) bool {
-					return dataset.expectedResult[idx].Impacts[i] < dataset.expectedResult[idx].Impacts[j]
-				})
-
-				sort.Slice(dataset.expectedResult[idx].Depends, func(i, j int) bool {
-					return dataset.expectedResult[idx].Depends[i] < dataset.expectedResult[idx].Depends[j]
+				sort.Slice(dataset.expectedResult[idx].ServicesToRemove, func(i, j int) bool {
+					return dataset.expectedResult[idx].ServicesToRemove[i] < dataset.expectedResult[idx].ServicesToRemove[j]
 				})
 			}
 
@@ -1004,16 +919,16 @@ func BenchmarkCenterCheckServices(b *testing.B) {
 
 	entities := make([]types.Entity, 100)
 	for i := 0; i < 100; i++ {
-		impactedServices := make([]string, 50)
+		Services := make([]string, 50)
 		for j := 0; j < 50; j++ {
-			impactedServices[j] = fmt.Sprintf("serv-%d", rand.Intn(1000))
+			Services[j] = fmt.Sprintf("serv-%d", rand.Intn(1000))
 		}
 
 		entities[i] = types.Entity{
-			ID:               fmt.Sprintf("id-%d", i),
-			Enabled:          true,
-			Component:        fmt.Sprintf("component-%d", i),
-			ImpactedServices: impactedServices,
+			ID:        fmt.Sprintf("id-%d", i),
+			Enabled:   true,
+			Component: fmt.Sprintf("component-%d", i),
+			Services:  Services,
 		}
 	}
 
@@ -1054,50 +969,44 @@ func TestRecomputeService(t *testing.T) {
 			serviceName: "serv-1",
 			firstFindCallEntities: []types.Entity{
 				{
-					ID:               "id-1",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-1"},
-					ImpactedServices: []string{"serv-1"},
+					ID:        "id-1",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1"},
 				},
 				{
-					ID:               "id-2",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-0", "serv-1", "serv-2"},
-					ImpactedServices: []string{"serv-0", "serv-1", "serv-2"},
+					ID:        "id-2",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-0", "serv-1", "serv-2"},
 				},
 				{
-					ID:                    "id-3",
-					Enabled:               true,
-					Component:             "component-1",
-					Impacts:               []string{"component-1", "serv-0", "serv-1", "serv-2"},
-					ImpactedServices:      []string{"serv-0", "serv-1", "serv-2"},
-					ImpactedServicesToAdd: []string{"serv-1"},
+					ID:            "id-3",
+					Enabled:       true,
+					Component:     "component-1",
+					Services:      []string{"serv-0", "serv-1", "serv-2"},
+					ServicesToAdd: []string{"serv-1"},
 				},
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:               "id-1",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1"},
-					ImpactedServices: []string{},
+					ID:        "id-1",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{},
 				},
 				{
-					ID:               "id-2",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-0", "serv-2"},
-					ImpactedServices: []string{"serv-0", "serv-2"},
+					ID:        "id-2",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-0", "serv-2"},
 				},
 				{
-					ID:                    "id-3",
-					Enabled:               true,
-					Component:             "component-1",
-					Impacts:               []string{"component-1", "serv-0", "serv-2"},
-					ImpactedServices:      []string{"serv-0", "serv-2"},
-					ImpactedServicesToAdd: []string{},
+					ID:            "id-3",
+					Enabled:       true,
+					Component:     "component-1",
+					Services:      []string{"serv-0", "serv-2"},
+					ServicesToAdd: []string{},
 				},
 			},
 		},
@@ -1105,8 +1014,7 @@ func TestRecomputeService(t *testing.T) {
 			name: "service is disabled",
 			service: entityservice.EntityService{
 				Entity: types.Entity{
-					ID:      "serv-1",
-					Depends: []string{"id-1", "id-2", "id-3"},
+					ID: "serv-1",
 				},
 				EntityPatternFields: savedpattern.EntityPatternFields{
 					EntityPattern: [][]pattern.FieldCondition{
@@ -1122,54 +1030,47 @@ func TestRecomputeService(t *testing.T) {
 			serviceName: "serv-1",
 			firstFindCallEntities: []types.Entity{
 				{
-					ID:               "id-1",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-1"},
-					ImpactedServices: []string{"serv-1"},
+					ID:        "id-1",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1"},
 				},
 				{
-					ID:               "id-2",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-0", "serv-1", "serv-2"},
-					ImpactedServices: []string{"serv-0", "serv-1", "serv-2"},
+					ID:        "id-2",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-0", "serv-1", "serv-2"},
 				},
 				{
-					ID:                    "id-3",
-					Enabled:               true,
-					Component:             "component-1",
-					Impacts:               []string{"component-1", "serv-0", "serv-1", "serv-2"},
-					ImpactedServices:      []string{"serv-0", "serv-1", "serv-2"},
-					ImpactedServicesToAdd: []string{"serv-1"},
+					ID:            "id-3",
+					Enabled:       true,
+					Component:     "component-1",
+					Services:      []string{"serv-0", "serv-1", "serv-2"},
+					ServicesToAdd: []string{"serv-1"},
 				},
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:               "id-1",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1"},
-					ImpactedServices: []string{},
+					ID:        "id-1",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{},
 				},
 				{
-					ID:               "id-2",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-0", "serv-2"},
-					ImpactedServices: []string{"serv-0", "serv-2"},
+					ID:        "id-2",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-0", "serv-2"},
 				},
 				{
-					ID:                    "id-3",
-					Enabled:               true,
-					Component:             "component-1",
-					Impacts:               []string{"component-1", "serv-0", "serv-2"},
-					ImpactedServices:      []string{"serv-0", "serv-2"},
-					ImpactedServicesToAdd: []string{},
+					ID:            "id-3",
+					Enabled:       true,
+					Component:     "component-1",
+					Services:      []string{"serv-0", "serv-2"},
+					ServicesToAdd: []string{},
 				},
 				{
-					ID:      "serv-1",
-					Depends: []string{},
+					ID: "serv-1",
 				},
 			},
 		},
@@ -1191,53 +1092,47 @@ func TestRecomputeService(t *testing.T) {
 					},
 				},
 			},
-			serviceName: "serv-1",
-			firstFindCallEntities: []types.Entity{
+			serviceName:           "serv-1",
+			firstFindCallEntities: []types.Entity{},
+			secondFindCallEntities: []types.Entity{
 				{
 					ID:        "id-1",
 					Enabled:   true,
 					Component: "component-1",
-					Impacts:   []string{"component-1"},
 				},
 				{
 					ID:        "id-2",
 					Enabled:   true,
 					Component: "component-1",
-					Impacts:   []string{"component-1"},
 				},
 				{
 					ID:        "id-3",
 					Enabled:   true,
 					Component: "component-1",
-					Impacts:   []string{"component-1"},
 				},
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:               "id-1",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-1"},
-					ImpactedServices: []string{"serv-1"},
+					ID:        "id-1",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1"},
 				},
 				{
-					ID:               "id-2",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-1"},
-					ImpactedServices: []string{"serv-1"},
+					ID:        "id-2",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1"},
 				},
 				{
-					ID:               "id-3",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-1"},
-					ImpactedServices: []string{"serv-1"},
+					ID:        "id-3",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1"},
 				},
 				{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{"id-1", "id-2", "id-3"},
 				},
 			},
 		},
@@ -1259,56 +1154,50 @@ func TestRecomputeService(t *testing.T) {
 					},
 				},
 			},
-			serviceName: "serv-1",
-			firstFindCallEntities: []types.Entity{
+			serviceName:           "serv-1",
+			firstFindCallEntities: []types.Entity{},
+			secondFindCallEntities: []types.Entity{
 				{
-					ID:               "id-1",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-0", "serv-2"},
-					ImpactedServices: []string{"serv-0", "serv-2"},
+					ID:        "id-1",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-0", "serv-2"},
 				},
 				{
-					ID:               "id-2",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-0", "serv-2"},
-					ImpactedServices: []string{"serv-0", "serv-2"},
+					ID:        "id-2",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-0", "serv-2"},
 				},
 				{
-					ID:               "id-3",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-0", "serv-2"},
-					ImpactedServices: []string{"serv-0", "serv-2"},
+					ID:        "id-3",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-0", "serv-2"},
 				},
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:               "id-1",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-0", "serv-2", "serv-1"},
-					ImpactedServices: []string{"serv-1", "serv-0", "serv-2"},
+					ID:        "id-1",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1", "serv-0", "serv-2"},
 				},
 				{
-					ID:               "id-2",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-0", "serv-2", "serv-1"},
-					ImpactedServices: []string{"serv-1", "serv-0", "serv-2"},
+					ID:        "id-2",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1", "serv-0", "serv-2"},
 				},
 				{
-					ID:               "id-3",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-0", "serv-2", "serv-1"},
-					ImpactedServices: []string{"serv-1", "serv-0", "serv-2"},
+					ID:        "id-3",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1", "serv-0", "serv-2"},
 				},
 				{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{"id-1", "id-2", "id-3"},
 				},
 			},
 		},
@@ -1318,7 +1207,6 @@ func TestRecomputeService(t *testing.T) {
 				Entity: types.Entity{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{"id-1", "id-2", "id-3"},
 				},
 				EntityPatternFields: savedpattern.EntityPatternFields{
 					EntityPattern: [][]pattern.FieldCondition{
@@ -1334,18 +1222,16 @@ func TestRecomputeService(t *testing.T) {
 			serviceName: "serv-1",
 			firstFindCallEntities: []types.Entity{
 				{
-					ID:               "id-2",
-					Enabled:          true,
-					Component:        "component-2",
-					Impacts:          []string{"component-2", "serv-1"},
-					ImpactedServices: []string{"serv-1"},
+					ID:        "id-2",
+					Enabled:   true,
+					Component: "component-2",
+					Services:  []string{"serv-1"},
 				},
 				{
-					ID:               "id-3",
-					Enabled:          true,
-					Component:        "component-2",
-					Impacts:          []string{"component-2", "serv-1"},
-					ImpactedServices: []string{"serv-1"},
+					ID:        "id-3",
+					Enabled:   true,
+					Component: "component-2",
+					Services:  []string{"serv-1"},
 				},
 			},
 			secondFindCallEntities: []types.Entity{
@@ -1353,35 +1239,30 @@ func TestRecomputeService(t *testing.T) {
 					ID:        "id-4",
 					Enabled:   true,
 					Component: "component-1",
-					Impacts:   []string{"component-1"},
 				},
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:               "id-2",
-					Enabled:          true,
-					Component:        "component-2",
-					Impacts:          []string{"component-2"},
-					ImpactedServices: []string{},
+					ID:        "id-2",
+					Enabled:   true,
+					Component: "component-2",
+					Services:  []string{},
 				},
 				{
-					ID:               "id-3",
-					Enabled:          true,
-					Component:        "component-2",
-					Impacts:          []string{"component-2"},
-					ImpactedServices: []string{},
+					ID:        "id-3",
+					Enabled:   true,
+					Component: "component-2",
+					Services:  []string{},
 				},
 				{
-					ID:               "id-4",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-1"},
-					ImpactedServices: []string{"serv-1"},
+					ID:        "id-4",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1"},
 				},
 				{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{"id-1", "id-4"},
 				},
 			},
 		},
@@ -1391,7 +1272,6 @@ func TestRecomputeService(t *testing.T) {
 				Entity: types.Entity{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{"id-1", "id-2", "id-3"},
 				},
 				EntityPatternFields: savedpattern.EntityPatternFields{
 					EntityPattern: [][]pattern.FieldCondition{
@@ -1407,55 +1287,48 @@ func TestRecomputeService(t *testing.T) {
 			serviceName: "serv-1",
 			firstFindCallEntities: []types.Entity{
 				{
-					ID:               "id-2",
-					Enabled:          true,
-					Component:        "component-2",
-					Impacts:          []string{"component-2", "serv-0", "serv-1", "serv-2"},
-					ImpactedServices: []string{"serv-0", "serv-1", "serv-2"},
+					ID:        "id-2",
+					Enabled:   true,
+					Component: "component-2",
+					Services:  []string{"serv-0", "serv-1", "serv-2"},
 				},
 				{
-					ID:               "id-3",
-					Enabled:          true,
-					Component:        "component-2",
-					Impacts:          []string{"component-2", "serv-0", "serv-1", "serv-2"},
-					ImpactedServices: []string{"serv-0", "serv-1", "serv-2"},
+					ID:        "id-3",
+					Enabled:   true,
+					Component: "component-2",
+					Services:  []string{"serv-0", "serv-1", "serv-2"},
 				},
 			},
 			secondFindCallEntities: []types.Entity{
 				{
-					ID:               "id-4",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-0", "serv-2"},
-					ImpactedServices: []string{"serv-0", "serv-2"},
+					ID:        "id-4",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-0", "serv-2"},
 				},
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:               "id-2",
-					Enabled:          true,
-					Component:        "component-2",
-					Impacts:          []string{"component-2", "serv-0", "serv-2"},
-					ImpactedServices: []string{"serv-0", "serv-2"},
+					ID:        "id-2",
+					Enabled:   true,
+					Component: "component-2",
+					Services:  []string{"serv-0", "serv-2"},
 				},
 				{
-					ID:               "id-3",
-					Enabled:          true,
-					Component:        "component-2",
-					Impacts:          []string{"component-2", "serv-0", "serv-2"},
-					ImpactedServices: []string{"serv-0", "serv-2"},
+					ID:        "id-3",
+					Enabled:   true,
+					Component: "component-2",
+					Services:  []string{"serv-0", "serv-2"},
 				},
 				{
-					ID:               "id-4",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-0", "serv-1", "serv-2"},
-					ImpactedServices: []string{"serv-0", "serv-1", "serv-2"},
+					ID:        "id-4",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-0", "serv-1", "serv-2"},
 				},
 				{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{"id-1", "id-4"},
 				},
 			},
 		},
@@ -1465,7 +1338,6 @@ func TestRecomputeService(t *testing.T) {
 				Entity: types.Entity{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{"id-1", "id-2", "id-3"},
 				},
 				EntityPatternFields: savedpattern.EntityPatternFields{
 					EntityPattern: [][]pattern.FieldCondition{
@@ -1481,20 +1353,18 @@ func TestRecomputeService(t *testing.T) {
 			serviceName: "serv-1",
 			firstFindCallEntities: []types.Entity{
 				{
-					ID:                    "id-2",
-					Enabled:               true,
-					Component:             "component-2",
-					Impacts:               []string{"component-2", "serv-1"},
-					ImpactedServices:      []string{"serv-1"},
-					ImpactedServicesToAdd: []string{"serv-1"},
+					ID:            "id-2",
+					Enabled:       true,
+					Component:     "component-2",
+					Services:      []string{"serv-1"},
+					ServicesToAdd: []string{"serv-1"},
 				},
 				{
-					ID:                    "id-3",
-					Enabled:               true,
-					Component:             "component-2",
-					Impacts:               []string{"component-2", "serv-1"},
-					ImpactedServices:      []string{"serv-1"},
-					ImpactedServicesToAdd: []string{"serv-1"},
+					ID:            "id-3",
+					Enabled:       true,
+					Component:     "component-2",
+					Services:      []string{"serv-1"},
+					ServicesToAdd: []string{"serv-1"},
 				},
 			},
 			secondFindCallEntities: []types.Entity{
@@ -1502,37 +1372,32 @@ func TestRecomputeService(t *testing.T) {
 					ID:        "id-4",
 					Enabled:   true,
 					Component: "component-1",
-					Impacts:   []string{"component-1"},
 				},
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:                    "id-2",
-					Enabled:               true,
-					Component:             "component-2",
-					Impacts:               []string{"component-2"},
-					ImpactedServices:      []string{},
-					ImpactedServicesToAdd: []string{},
+					ID:            "id-2",
+					Enabled:       true,
+					Component:     "component-2",
+					Services:      []string{},
+					ServicesToAdd: []string{},
 				},
 				{
-					ID:                    "id-3",
-					Enabled:               true,
-					Component:             "component-2",
-					Impacts:               []string{"component-2"},
-					ImpactedServices:      []string{},
-					ImpactedServicesToAdd: []string{},
+					ID:            "id-3",
+					Enabled:       true,
+					Component:     "component-2",
+					Services:      []string{},
+					ServicesToAdd: []string{},
 				},
 				{
-					ID:               "id-4",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-1"},
-					ImpactedServices: []string{"serv-1"},
+					ID:        "id-4",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1"},
 				},
 				{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{"id-1", "id-4"},
 				},
 			},
 		},
@@ -1542,7 +1407,6 @@ func TestRecomputeService(t *testing.T) {
 				Entity: types.Entity{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{"id-1", "id-2", "id-3"},
 				},
 				EntityPatternFields: savedpattern.EntityPatternFields{
 					EntityPattern: [][]pattern.FieldCondition{
@@ -1558,20 +1422,18 @@ func TestRecomputeService(t *testing.T) {
 			serviceName: "serv-1",
 			firstFindCallEntities: []types.Entity{
 				{
-					ID:                    "id-2",
-					Enabled:               true,
-					Component:             "component-2",
-					Impacts:               []string{"component-2", "serv-0", "serv-1", "serv-2"},
-					ImpactedServices:      []string{"serv-0", "serv-1", "serv-2"},
-					ImpactedServicesToAdd: []string{"serv-0", "serv-1", "serv-2"},
+					ID:            "id-2",
+					Enabled:       true,
+					Component:     "component-2",
+					Services:      []string{"serv-0", "serv-1", "serv-2"},
+					ServicesToAdd: []string{"serv-0", "serv-1", "serv-2"},
 				},
 				{
-					ID:                    "id-3",
-					Enabled:               true,
-					Component:             "component-2",
-					Impacts:               []string{"component-2", "serv-0", "serv-1", "serv-2", "serv-3"},
-					ImpactedServices:      []string{"serv-0", "serv-1", "serv-2", "serv-3"},
-					ImpactedServicesToAdd: []string{"serv-0", "serv-1", "serv-2"},
+					ID:            "id-3",
+					Enabled:       true,
+					Component:     "component-2",
+					Services:      []string{"serv-0", "serv-1", "serv-2", "serv-3"},
+					ServicesToAdd: []string{"serv-0", "serv-1", "serv-2"},
 				},
 			},
 			secondFindCallEntities: []types.Entity{
@@ -1579,37 +1441,32 @@ func TestRecomputeService(t *testing.T) {
 					ID:        "id-4",
 					Enabled:   true,
 					Component: "component-1",
-					Impacts:   []string{"component-1"},
 				},
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:                    "id-2",
-					Enabled:               true,
-					Component:             "component-2",
-					Impacts:               []string{"component-2", "serv-0", "serv-2"},
-					ImpactedServices:      []string{"serv-0", "serv-2"},
-					ImpactedServicesToAdd: []string{"serv-0", "serv-2"},
+					ID:            "id-2",
+					Enabled:       true,
+					Component:     "component-2",
+					Services:      []string{"serv-0", "serv-2"},
+					ServicesToAdd: []string{"serv-0", "serv-2"},
 				},
 				{
-					ID:                    "id-3",
-					Enabled:               true,
-					Component:             "component-2",
-					Impacts:               []string{"component-2", "serv-0", "serv-2", "serv-3"},
-					ImpactedServices:      []string{"serv-0", "serv-2", "serv-3"},
-					ImpactedServicesToAdd: []string{"serv-0", "serv-2"},
+					ID:            "id-3",
+					Enabled:       true,
+					Component:     "component-2",
+					Services:      []string{"serv-0", "serv-2", "serv-3"},
+					ServicesToAdd: []string{"serv-0", "serv-2"},
 				},
 				{
-					ID:               "id-4",
-					Enabled:          true,
-					Component:        "component-1",
-					Impacts:          []string{"component-1", "serv-1"},
-					ImpactedServices: []string{"serv-1"},
+					ID:        "id-4",
+					Enabled:   true,
+					Component: "component-1",
+					Services:  []string{"serv-1"},
 				},
 				{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{"id-1", "id-4"},
 				},
 			},
 		},
@@ -1619,7 +1476,6 @@ func TestRecomputeService(t *testing.T) {
 				Entity: types.Entity{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{"id-1", "id-4"},
 				},
 				EntityPatternFields: savedpattern.EntityPatternFields{
 					EntityPattern: [][]pattern.FieldCondition{
@@ -1642,43 +1498,38 @@ func TestRecomputeService(t *testing.T) {
 			firstFindCallEntities: []types.Entity{},
 			secondFindCallEntities: []types.Entity{
 				{
-					ID:                       "id-2",
-					Enabled:                  true,
-					Component:                "component-2",
-					Impacts:                  []string{"component-2"},
-					ImpactedServices:         []string{},
-					ImpactedServicesToRemove: []string{"serv-1"},
+					ID:               "id-2",
+					Enabled:          true,
+					Component:        "component-2",
+					Services:         []string{},
+					ServicesToRemove: []string{"serv-1"},
 				},
 				{
-					ID:                       "id-3",
-					Enabled:                  true,
-					Component:                "component-2",
-					Impacts:                  []string{"component-2"},
-					ImpactedServices:         []string{},
-					ImpactedServicesToRemove: []string{"serv-1"},
+					ID:               "id-3",
+					Enabled:          true,
+					Component:        "component-2",
+					Services:         []string{},
+					ServicesToRemove: []string{"serv-1"},
 				},
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:                       "id-2",
-					Enabled:                  true,
-					Component:                "component-2",
-					Impacts:                  []string{"component-2", "serv-1"},
-					ImpactedServices:         []string{"serv-1"},
-					ImpactedServicesToRemove: []string{},
+					ID:               "id-2",
+					Enabled:          true,
+					Component:        "component-2",
+					Services:         []string{"serv-1"},
+					ServicesToRemove: []string{},
 				},
 				{
-					ID:                       "id-3",
-					Enabled:                  true,
-					Component:                "component-2",
-					Impacts:                  []string{"component-2", "serv-1"},
-					ImpactedServices:         []string{"serv-1"},
-					ImpactedServicesToRemove: []string{},
+					ID:               "id-3",
+					Enabled:          true,
+					Component:        "component-2",
+					Services:         []string{"serv-1"},
+					ServicesToRemove: []string{},
 				},
 				{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{"id-1", "id-2", "id-3", "id-4"},
 				},
 			},
 		},
@@ -1688,7 +1539,6 @@ func TestRecomputeService(t *testing.T) {
 				Entity: types.Entity{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{"id-1", "id-4"},
 				},
 				EntityPatternFields: savedpattern.EntityPatternFields{
 					EntityPattern: [][]pattern.FieldCondition{
@@ -1711,43 +1561,38 @@ func TestRecomputeService(t *testing.T) {
 			firstFindCallEntities: []types.Entity{},
 			secondFindCallEntities: []types.Entity{
 				{
-					ID:                       "id-2",
-					Enabled:                  true,
-					Component:                "component-2",
-					Impacts:                  []string{"component-2", "serv-3"},
-					ImpactedServices:         []string{"serv-3"},
-					ImpactedServicesToRemove: []string{"serv-0", "serv-1", "serv-2"},
+					ID:               "id-2",
+					Enabled:          true,
+					Component:        "component-2",
+					Services:         []string{"serv-3"},
+					ServicesToRemove: []string{"serv-0", "serv-1", "serv-2"},
 				},
 				{
-					ID:                       "id-3",
-					Enabled:                  true,
-					Component:                "component-2",
-					Impacts:                  []string{"component-2", "serv-3", "serv-4"},
-					ImpactedServices:         []string{"serv-3", "serv-4"},
-					ImpactedServicesToRemove: []string{"serv-0", "serv-1", "serv-2"},
+					ID:               "id-3",
+					Enabled:          true,
+					Component:        "component-2",
+					Services:         []string{"serv-3", "serv-4"},
+					ServicesToRemove: []string{"serv-0", "serv-1", "serv-2"},
 				},
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:                       "id-2",
-					Enabled:                  true,
-					Component:                "component-2",
-					Impacts:                  []string{"component-2", "serv-1", "serv-3"},
-					ImpactedServices:         []string{"serv-1", "serv-3"},
-					ImpactedServicesToRemove: []string{"serv-0", "serv-2"},
+					ID:               "id-2",
+					Enabled:          true,
+					Component:        "component-2",
+					Services:         []string{"serv-1", "serv-3"},
+					ServicesToRemove: []string{"serv-0", "serv-2"},
 				},
 				{
-					ID:                       "id-3",
-					Enabled:                  true,
-					Component:                "component-2",
-					Impacts:                  []string{"component-2", "serv-1", "serv-3", "serv-4"},
-					ImpactedServices:         []string{"serv-1", "serv-3", "serv-4"},
-					ImpactedServicesToRemove: []string{"serv-0", "serv-2"},
+					ID:               "id-3",
+					Enabled:          true,
+					Component:        "component-2",
+					Services:         []string{"serv-1", "serv-3", "serv-4"},
+					ServicesToRemove: []string{"serv-0", "serv-2"},
 				},
 				{
 					ID:      "serv-1",
 					Enabled: true,
-					Depends: []string{"id-1", "id-2", "id-3", "id-4"},
 				},
 			},
 		},
@@ -1787,46 +1632,30 @@ func TestRecomputeService(t *testing.T) {
 			})
 
 			for idx := range result {
-				sort.Slice(result[idx].ImpactedServices, func(i, j int) bool {
-					return result[idx].ImpactedServices[i] < result[idx].ImpactedServices[j]
+				sort.Slice(result[idx].Services, func(i, j int) bool {
+					return result[idx].Services[i] < result[idx].Services[j]
 				})
 
-				sort.Slice(result[idx].ImpactedServicesToAdd, func(i, j int) bool {
-					return result[idx].ImpactedServicesToAdd[i] < result[idx].ImpactedServicesToAdd[j]
+				sort.Slice(result[idx].ServicesToAdd, func(i, j int) bool {
+					return result[idx].ServicesToAdd[i] < result[idx].ServicesToAdd[j]
 				})
 
-				sort.Slice(result[idx].ImpactedServicesToRemove, func(i, j int) bool {
-					return result[idx].ImpactedServicesToRemove[i] < result[idx].ImpactedServicesToRemove[j]
-				})
-
-				sort.Slice(result[idx].Impacts, func(i, j int) bool {
-					return result[idx].Impacts[i] < result[idx].Impacts[j]
-				})
-
-				sort.Slice(result[idx].Depends, func(i, j int) bool {
-					return result[idx].Depends[i] < result[idx].Depends[j]
+				sort.Slice(result[idx].ServicesToRemove, func(i, j int) bool {
+					return result[idx].ServicesToRemove[i] < result[idx].ServicesToRemove[j]
 				})
 			}
 
 			for idx := range dataset.expectedResult {
-				sort.Slice(dataset.expectedResult[idx].ImpactedServices, func(i, j int) bool {
-					return dataset.expectedResult[idx].ImpactedServices[i] < dataset.expectedResult[idx].ImpactedServices[j]
+				sort.Slice(dataset.expectedResult[idx].Services, func(i, j int) bool {
+					return dataset.expectedResult[idx].Services[i] < dataset.expectedResult[idx].Services[j]
 				})
 
-				sort.Slice(dataset.expectedResult[idx].ImpactedServicesToAdd, func(i, j int) bool {
-					return dataset.expectedResult[idx].ImpactedServicesToAdd[i] < dataset.expectedResult[idx].ImpactedServicesToAdd[j]
+				sort.Slice(dataset.expectedResult[idx].ServicesToAdd, func(i, j int) bool {
+					return dataset.expectedResult[idx].ServicesToAdd[i] < dataset.expectedResult[idx].ServicesToAdd[j]
 				})
 
-				sort.Slice(dataset.expectedResult[idx].ImpactedServicesToRemove, func(i, j int) bool {
-					return dataset.expectedResult[idx].ImpactedServicesToRemove[i] < dataset.expectedResult[idx].ImpactedServicesToRemove[j]
-				})
-
-				sort.Slice(dataset.expectedResult[idx].Impacts, func(i, j int) bool {
-					return dataset.expectedResult[idx].Impacts[i] < dataset.expectedResult[idx].Impacts[j]
-				})
-
-				sort.Slice(dataset.expectedResult[idx].Depends, func(i, j int) bool {
-					return dataset.expectedResult[idx].Depends[i] < dataset.expectedResult[idx].Depends[j]
+				sort.Slice(dataset.expectedResult[idx].ServicesToRemove, func(i, j int) bool {
+					return dataset.expectedResult[idx].ServicesToRemove[i] < dataset.expectedResult[idx].ServicesToRemove[j]
 				})
 			}
 
@@ -1851,11 +1680,10 @@ func BenchmarkRecomputeServicesRemoveAll(b *testing.B) {
 	for i := 0; i < 1000; i++ {
 		eID := fmt.Sprintf("id-%d", i)
 		entities = append(entities, types.Entity{
-			ID:               eID,
-			Enabled:          true,
-			Component:        "component-1",
-			Impacts:          []string{"component-1", "serv-1"},
-			ImpactedServices: []string{"serv-1"},
+			ID:        eID,
+			Enabled:   true,
+			Component: "component-1",
+			Services:  []string{"serv-1"},
 		})
 
 		dependsIds = append(dependsIds, eID)
@@ -1879,7 +1707,6 @@ func BenchmarkRecomputeServicesRemoveAll(b *testing.B) {
 		Entity: types.Entity{
 			ID:      "serv-1",
 			Enabled: true,
-			Depends: dependsIds,
 		},
 		EntityPatternFields: savedpattern.EntityPatternFields{
 			EntityPattern: [][]pattern.FieldCondition{
@@ -1913,7 +1740,6 @@ func BenchmarkRecomputeServicesAddAll(b *testing.B) {
 			ID:        eID,
 			Enabled:   true,
 			Component: "component-1",
-			Impacts:   []string{"component-1"},
 		})
 	}
 
@@ -1972,11 +1798,10 @@ func BenchmarkRecomputeServicesMixed(b *testing.B) {
 	for i := 0; i < 500; i++ {
 		eID := fmt.Sprintf("id-%d", i)
 		entitiesToRemove = append(entitiesToRemove, types.Entity{
-			ID:               eID,
-			Enabled:          true,
-			Component:        "component-1",
-			Impacts:          []string{"component-1", "serv-1"},
-			ImpactedServices: []string{"serv-1"},
+			ID:        eID,
+			Enabled:   true,
+			Component: "component-1",
+			Services:  []string{"serv-1"},
 		})
 
 		dependsIds = append(dependsIds, eID)
@@ -1989,7 +1814,6 @@ func BenchmarkRecomputeServicesMixed(b *testing.B) {
 			ID:        eID,
 			Enabled:   true,
 			Component: "component-1",
-			Impacts:   []string{"component-1"},
 		})
 	}
 
@@ -2021,7 +1845,6 @@ func BenchmarkRecomputeServicesMixed(b *testing.B) {
 		Entity: types.Entity{
 			ID:      "serv-1",
 			Enabled: true,
-			Depends: dependsIds,
 		},
 		EntityPatternFields: savedpattern.EntityPatternFields{
 			EntityPattern: [][]pattern.FieldCondition{

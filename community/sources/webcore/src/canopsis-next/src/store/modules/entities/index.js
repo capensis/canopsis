@@ -12,13 +12,15 @@ import remediationConfigurationModule from './remediation-configuration';
 import remediationJobModule from './remediation-job';
 import remediationJobExecutionModule from './remediation-job-execution';
 import remediationInstructionStatsModule from './remediation-instruction-stats';
+import remediationStatisticModule from './remediation-statistic';
 import userPreferenceModule from './user-preference';
 import viewModule from './view';
 import roleModule from './role';
 import userModule from './user';
 import permissionModule from './permission';
-import eventFilterRuleModule from './event-filter-rule';
+import eventFilterModule from './event-filter';
 import infoModule from './info';
+import infosModule from './infos';
 import snmpRuleModule from './snmp/rule';
 import snmpMibModule from './snmp/mib';
 import dynamicInfoModule from './dynamic-info';
@@ -43,6 +45,20 @@ import messageRateStatsModule from './message-rate-stats';
 import metricsModule from './metrics';
 import filterModule from './filter';
 import ratingSettingsModule from './rating-settings';
+import patternModule from './pattern';
+import mapModule from './map';
+import alarmTagModule from './alarm-tag';
+import shareTokenModule from './share-token';
+import techMetricsModule from './tech-metrics';
+import widgetTemplateModule from './widget-template';
+import manualMetaAlarmModule from './manual-meta-alarm';
+import templateVarsModule from './template-vars';
+import declareTicketRuleModule from './declare-ticket-rule';
+import templateValidatorModule from './template-validator';
+import LinkRuleRuleModule from './links-rule';
+import metricsSettingsModule from './metrics-settings';
+import aggregatedMetricsModule from './aggregated-metrics';
+import vectorMetricsModule from './vector-metrics';
 
 export default {
   alarm: alarmModule,
@@ -58,8 +74,9 @@ export default {
   role: roleModule,
   user: userModule,
   permission: permissionModule,
-  eventFilterRule: eventFilterRuleModule,
+  eventFilter: eventFilterModule,
   info: infoModule,
+  infos: infosModule,
   snmpRule: snmpRuleModule,
   snmpMib: snmpMibModule,
   dynamicInfo: dynamicInfoModule,
@@ -74,6 +91,7 @@ export default {
   remediationInstructionExecution: remediationInstructionExecutionModule,
   remediationJobExecution: remediationJobExecutionModule,
   remediationInstructionStats: remediationInstructionStatsModule,
+  remediationStatistic: remediationStatisticModule,
   scenario: scenarioModule,
   entityCategory: entityCategoryModule,
   testSuite: testSuiteModule,
@@ -90,4 +108,18 @@ export default {
   metrics: metricsModule,
   filter: filterModule,
   ratingSettings: ratingSettingsModule,
+  pattern: patternModule,
+  map: mapModule,
+  alarmTag: alarmTagModule,
+  shareToken: shareTokenModule,
+  techMetrics: techMetricsModule,
+  widgetTemplate: widgetTemplateModule,
+  manualMetaAlarm: manualMetaAlarmModule,
+  templateVars: templateVarsModule,
+  declareTicketRule: declareTicketRuleModule,
+  templateValidator: templateValidatorModule,
+  linkRule: LinkRuleRuleModule,
+  metricsSettings: metricsSettingsModule,
+  aggregatedMetrics: aggregatedMetricsModule,
+  vectorMetrics: vectorMetricsModule,
 };

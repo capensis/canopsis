@@ -1,8 +1,27 @@
 definitions:
+  account.EditRequest:
+    properties:
+      defaultview:
+        type: string
+      password:
+        type: string
+      ui_groups_navigation_type:
+        type: string
+      ui_language:
+        type: string
+      ui_theme:
+        type: string
+      ui_tours:
+        additionalProperties:
+          type: boolean
+        type: object
+    type: object
   account.User:
     properties:
       _id:
         type: string
+      active_connects:
+        type: integer
       authkey:
         type: string
       defaultview:
@@ -31,6 +50,8 @@ definitions:
         type: string
       ui_language:
         type: string
+      ui_theme:
+        type: string
       ui_tours:
         additionalProperties:
           type: boolean
@@ -41,7 +62,7 @@ definitions:
       author:
         type: string
       declare_ticket:
-        $ref: '#/definitions/types.WebhookDeclareTicket'
+        $ref: '#/definitions/request.WebhookDeclareTicket'
         description: DeclareTicket is used in webhook action.
       duration:
         $ref: '#/definitions/types.DurationWithUnit'
@@ -59,18 +80,13 @@ definitions:
         description: Reason is used in pbehavior action.
         type: string
       request:
-        $ref: '#/definitions/types.WebhookRequest'
+        $ref: '#/definitions/request.Parameters'
         description: Request is used in webhook action.
-      retry_count:
-        description: RetryCount is used in webhook action.
-        minimum: 0
-        type: integer
-      retry_delay:
-        $ref: '#/definitions/types.DurationWithUnit'
-        description: RetryDelay is used in webhook action.
       rrule:
         description: RRule is used in pbehavior action.
         type: string
+      skip_for_child:
+        type: boolean
       start_on_trigger:
         description: StartOnTrigger is used in pbehavior action.
         type: boolean
@@ -84,6 +100,19 @@ definitions:
         type: integer
       ticket:
         description: Ticket is used in assocticket action.
+        maxLength: 255
+        type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        description: TicketData is used in assocticket action.
+        type: object
+      ticket_system_name:
+        description: TicketSystemName is used in assocticket and webhook action.
+        maxLength: 255
+        type: string
+      ticket_url:
+        description: TicketURL is used in assocticket action.
         maxLength: 255
         type: string
       tstart:
@@ -100,6 +129,10 @@ definitions:
     properties:
       _id:
         type: string
+      assigned_declare_ticket_rules:
+        items:
+          $ref: '#/definitions/alarm.AssignedDeclareTicketRule'
+        type: array
       assigned_instructions:
         items:
           $ref: '#/definitions/alarm.AssignedInstruction'
@@ -110,6 +143,14 @@ definitions:
         type: boolean
       entity:
         $ref: '#/definitions/entity.Entity'
+      failed_auto_instructions:
+        items:
+          type: string
+        type: array
+      failed_manual_instructions:
+        items:
+          type: string
+        type: array
       filtered_children:
         items:
           type: string
@@ -121,21 +162,12 @@ definitions:
           additionalProperties: true
           type: object
         type: object
-      is_all_auto_instructions_completed:
-        type: boolean
-      is_auto_instruction_failed:
-        type: boolean
-      is_auto_instruction_running:
-        type: boolean
-      is_manual_instruction_running:
-        type: boolean
-      is_manual_instruction_waiting_result:
-        type: boolean
+      instruction_execution_icon:
+        type: integer
       is_meta_alarm:
         type: boolean
       links:
-        additionalProperties: true
-        type: object
+        $ref: '#/definitions/link.LinksByCategory'
       meta_alarm_rule:
         $ref: '#/definitions/alarm.MetaAlarmRule'
         description: Meta alarm fields
@@ -148,59 +180,41 @@ definitions:
         type: integer
       pbehavior:
         $ref: '#/definitions/alarm.Pbehavior'
+      running_auto_instructions:
+        items:
+          type: string
+        type: array
+      running_manual_instructions:
+        items:
+          type: string
+        type: array
+      successful_auto_instructions:
+        items:
+          type: string
+        type: array
+      successful_manual_instructions:
+        items:
+          type: string
+        type: array
       t:
         type: integer
+      tags:
+        items:
+          type: string
+        type: array
       v:
         $ref: '#/definitions/alarm.AlarmValue'
-    type: object
-  alarm.AlarmStep:
-    properties:
-      _t:
-        type: string
-      a:
-        type: string
-      initiator:
-        type: string
-      m:
-        type: string
-      statecounter:
-        $ref: '#/definitions/types.CropCounter'
-      t:
-        type: integer
-      user_id:
-        type: string
-      val:
-        type: integer
-    type: object
-  alarm.AlarmTicket:
-    properties:
-      _t:
-        type: string
-      a:
-        type: string
-      data:
-        additionalProperties:
-          type: string
-        type: object
-      m:
-        type: string
-      t:
-        type: integer
-      user_id:
-        type: string
-      val:
-        type: string
     type: object
   alarm.AlarmValue:
     properties:
       ack:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       activation_date:
         type: integer
       active_duration:
         type: integer
       canceled:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       children:
         items:
           type: string
@@ -217,8 +231,6 @@ definitions:
         type: integer
       display_name:
         type: string
-      done:
-        $ref: '#/definitions/alarm.AlarmStep'
       duration:
         type: integer
       events_count:
@@ -237,7 +249,7 @@ definitions:
       initial_output:
         type: string
       last_comment:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       last_event_date:
         type: integer
       last_update_date:
@@ -265,27 +277,34 @@ definitions:
       resource:
         type: string
       snooze:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       snooze_duration:
         type: integer
       state:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       state_changes_since_status_update:
         type: integer
       status:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       steps:
         items:
-          $ref: '#/definitions/alarm.AlarmStep'
-        type: array
-      tags:
-        items:
-          type: string
+          $ref: '#/definitions/common.AlarmStep'
         type: array
       ticket:
-        $ref: '#/definitions/alarm.AlarmTicket'
+        $ref: '#/definitions/common.AlarmStep'
+      tickets:
+        items:
+          $ref: '#/definitions/common.AlarmStep'
+        type: array
       total_state_changes:
         type: integer
+    type: object
+  alarm.AssignedDeclareTicketRule:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
     type: object
   alarm.AssignedInstruction:
     properties:
@@ -295,6 +314,8 @@ definitions:
         $ref: '#/definitions/alarm.Execution'
       name:
         type: string
+      type:
+        type: integer
     type: object
   alarm.ChildDetailsRequest:
     properties:
@@ -341,6 +362,10 @@ definitions:
     properties:
       children:
         $ref: '#/definitions/alarm.ChildrenDetails'
+      filtered_perf_data:
+        items:
+          type: string
+        type: array
       steps:
         $ref: '#/definitions/alarm.StepDetails'
     type: object
@@ -352,8 +377,14 @@ definitions:
         $ref: '#/definitions/alarm.ChildDetailsRequest'
       opened:
         type: boolean
+      perf_data:
+        items:
+          type: string
+        type: array
       steps:
-        $ref: '#/definitions/pagination.Query'
+        $ref: '#/definitions/alarm.StepsRequest'
+      with_declare_tickets:
+        type: boolean
       with_instructions:
         type: boolean
     required:
@@ -383,37 +414,35 @@ definitions:
     type: object
   alarm.ExportRequest:
     properties:
+      alarm_pattern:
+        type: string
       category:
         type: string
       correlation:
         type: boolean
-      exclude_instruction_types:
-        items:
-          type: integer
-        type: array
-      exclude_instructions:
-        items:
-          type: string
-        type: array
+      entity_pattern:
+        type: string
       fields:
         items:
           $ref: '#/definitions/export.Field'
         type: array
-      filter:
-        type: string
-      include_instruction_types:
-        items:
-          type: integer
-        type: array
-      include_instructions:
+      filters:
         items:
           type: string
         type: array
+      instructions:
+        items:
+          $ref: '#/definitions/alarm.InstructionFilterRequest'
+        type: array
       opened:
         type: boolean
+      pbehavior_pattern:
+        type: string
       search:
         type: string
       separator:
+        type: string
+      tag:
         type: string
       time_field:
         type: string
@@ -429,14 +458,33 @@ definitions:
       _id:
         type: string
       status:
+        description: |-
+          Possible values.
+            * `0` - Running
+            * `1` - Succeeded
+            * `2` - Failed
         type: integer
     type: object
-  alarm.ManualResponse:
+  alarm.InstructionFilterRequest:
     properties:
-      _id:
-        type: string
-      name:
-        type: string
+      exclude:
+        items:
+          type: string
+        type: array
+      exclude_types:
+        items:
+          type: integer
+        type: array
+      include:
+        items:
+          type: string
+        type: array
+      include_types:
+        items:
+          type: integer
+        type: array
+      running:
+        type: boolean
     type: object
   alarm.MetaAlarmRule:
     properties:
@@ -444,15 +492,17 @@ definitions:
         type: string
       name:
         type: string
+      type:
+        type: string
     type: object
   alarm.Pbehavior:
     properties:
       _id:
         type: string
       author:
-        $ref: '#/definitions/common.User'
+        $ref: '#/definitions/author.Author'
       last_comment:
-        $ref: '#/definitions/pbehavior.Comment'
+        $ref: '#/definitions/pbehaviorcomment.Response'
       name:
         type: string
       reason:
@@ -470,10 +520,32 @@ definitions:
     properties:
       data:
         items:
-          $ref: '#/definitions/alarm.AlarmStep'
+          $ref: '#/definitions/common.AlarmStep'
         type: array
       meta:
         $ref: '#/definitions/common.PaginatedMeta'
+    type: object
+  alarm.StepsRequest:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      paginate:
+        type: boolean
+      reversed:
+        type: boolean
+    type: object
+  alarmtag.Response:
+    properties:
+      _id:
+        type: string
+      color:
+        type: string
+      created:
+        type: integer
+      value:
+        type: string
     type: object
   appinfo.AppInfoResponse:
     properties:
@@ -503,12 +575,16 @@ definitions:
         $ref: '#/definitions/appinfo.PopupTimeout'
       remediation:
         $ref: '#/definitions/appinfo.RemediationConf'
+      show_header_on_kiosk_mode:
+        type: boolean
       stack:
         type: string
       timezone:
         type: string
       version:
         type: string
+      version_updated:
+        type: integer
     type: object
   appinfo.JobConfigType:
     properties:
@@ -567,6 +643,8 @@ definitions:
         type: integer
       popup_timeout:
         $ref: '#/definitions/appinfo.PopupTimeout'
+      show_header_on_kiosk_mode:
+        type: boolean
     type: object
   associativetable.AssociativeTable:
     properties:
@@ -580,7 +658,12 @@ definitions:
     type: object
   associativetable.Content:
     type: object
-  auth.loginRequest:
+  auth.LoggedUserCountResponse:
+    properties:
+      count:
+        type: integer
+    type: object
+  auth.LoginRequest:
     properties:
       password:
         type: string
@@ -590,9 +673,23 @@ definitions:
     - password
     - username
     type: object
-  auth.loginResponse:
+  auth.LoginResponse:
     properties:
       access_token:
+        type: string
+    type: object
+  author.Author:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+    type: object
+  author.Role:
+    properties:
+      _id:
+        type: string
+      name:
         type: string
     type: object
   broadcastmessage.BroadcastMessage:
@@ -637,6 +734,43 @@ definitions:
     - message
     - start
     type: object
+  common.AlarmStep:
+    properties:
+      _t:
+        type: string
+      a:
+        type: string
+      initiator:
+        type: string
+      m:
+        type: string
+      statecounter:
+        $ref: '#/definitions/types.CropCounter'
+      t:
+        type: integer
+      ticket:
+        type: string
+      ticket_comment:
+        type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        type: object
+      ticket_meta_alarm_id:
+        type: string
+      ticket_rule_id:
+        type: string
+      ticket_rule_name:
+        type: string
+      ticket_system_name:
+        type: string
+      ticket_url:
+        type: string
+      user_id:
+        type: string
+      val:
+        type: integer
+    type: object
   common.ErrorResponse:
     properties:
       error:
@@ -659,13 +793,6 @@ definitions:
       total_count:
         type: integer
     type: object
-  common.User:
-    properties:
-      _id:
-        type: string
-      name:
-        type: string
-    type: object
   common.ValidationErrorResponse:
     properties:
       errors:
@@ -682,6 +809,8 @@ definitions:
       exec_time:
         type: string
       info:
+        type: string
+      last_ping:
         type: string
       source:
         type: string
@@ -728,17 +857,36 @@ definitions:
           delete_after:
             $ref: '#/definitions/types.DurationWithEnabled'
         type: object
+      metrics:
+        properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+        type: object
       pbehavior:
+        properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+        type: object
+      perf_data_metrics:
         properties:
           delete_after:
             $ref: '#/definitions/types.DurationWithEnabled'
         type: object
       remediation:
         properties:
-          accumulate_after:
-            $ref: '#/definitions/types.DurationWithEnabled'
           delete_after:
             $ref: '#/definitions/types.DurationWithEnabled'
+          delete_mod_stats_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+          delete_stats_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+        type: object
+      webhook:
+        properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+          log_credentials:
+            type: boolean
         type: object
     type: object
   datastorage.DataStorage:
@@ -762,6 +910,8 @@ definitions:
         type: integer
       remediation:
         type: integer
+      webhook:
+        type: integer
     type: object
   datastorage.HistoryWithCount:
     properties:
@@ -779,12 +929,43 @@ definitions:
     required:
     - _id
     type: object
+  entity.Category:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+    type: object
+  entity.CleanRequest:
+    properties:
+      archive:
+        type: boolean
+      archive_dependencies:
+        type: boolean
+    required:
+    - archive
+    type: object
+  entity.ContextGraphResponse:
+    properties:
+      depends:
+        items:
+          type: string
+        type: array
+      impact:
+        items:
+          type: string
+        type: array
+    type: object
   entity.Entity:
     properties:
       _id:
         type: string
+      ack:
+        $ref: '#/definitions/common.AlarmStep'
+      alarm_last_update_date:
+        type: integer
       category:
-        $ref: '#/definitions/entitycategory.Category'
+        $ref: '#/definitions/entity.Category'
       component:
         type: string
       component_infos:
@@ -794,25 +975,42 @@ definitions:
       connector_type:
         description: ConnectorType contains a part before "/" of connector id.
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
       deletable:
+        description: Flags
         type: boolean
-      depends:
-        items:
-          type: string
-        type: array
-      enable_history:
-        items:
-          type: integer
-        type: array
+      depends_count:
+        description: DependsCount contains only service's dependencies
+        type: integer
       enabled:
         type: boolean
-      idle_since:
-        type: integer
-      impact:
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      filtered_perf_data:
         items:
           type: string
         type: array
+      idle_since:
+        type: integer
       impact_level:
+        type: integer
+      impact_state:
+        type: integer
+      impacts_count:
+        description: ImpactsCount contains only services
+        type: integer
+      import_source:
+        type: string
+      imported:
         type: integer
       infos:
         $ref: '#/definitions/entity.Infos'
@@ -820,14 +1018,26 @@ definitions:
         type: integer
       last_event_date:
         type: integer
-      measurements: {}
+      last_pbehavior_date:
+        type: integer
+      links:
+        $ref: '#/definitions/link.LinksByCategory'
+        description: Links
       name:
         type: string
       ok_events:
+        description: Stats
         type: integer
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
+      snooze:
+        $ref: '#/definitions/common.AlarmStep'
       state:
+        description: Alarm fields
+        type: integer
+      status:
         type: integer
       type:
         type: string
@@ -840,8 +1050,10 @@ definitions:
         items:
           $ref: '#/definitions/export.Field'
         type: array
-      filter:
-        type: string
+      filters:
+        items:
+          type: string
+        type: array
       no_events:
         type: boolean
       search:
@@ -858,6 +1070,11 @@ definitions:
       _id:
         type: string
       status:
+        description: |-
+          Possible values.
+            * `0` - Running
+            * `1` - Succeeded
+            * `2` - Failed
         type: integer
     type: object
   entity.Info:
@@ -886,7 +1103,10 @@ definitions:
         description: Name is Name of pbehavior.PBehavior.
         type: string
       reason:
-        description: Reason is Name of pbehavior.Reason.
+        description: ReasonID is ID of pbehavior.Reason.
+        type: string
+      reason_name:
+        description: ReasonName is Name of pbehavior.Reason.
         type: string
       timestamp:
         description: |-
@@ -904,19 +1124,13 @@ definitions:
     properties:
       category:
         type: string
-      depends:
-        items:
-          type: string
-        type: array
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
       description:
         maxLength: 255
         type: string
       enabled:
         type: boolean
-      impact:
-        items:
-          type: string
-        type: array
       impact_level:
         maximum: 10
         minimum: 1
@@ -938,16 +1152,12 @@ definitions:
     properties:
       _id:
         type: string
+      ack:
+        $ref: '#/definitions/common.AlarmStep'
+      alarm_last_update_date:
+        type: integer
       category:
-        $ref: '#/definitions/entitycategory.Category'
-      changeable_depends:
-        items:
-          type: string
-        type: array
-      changeable_impact:
-        items:
-          type: string
-        type: array
+        $ref: '#/definitions/entity.Category'
       component:
         type: string
       component_infos:
@@ -957,27 +1167,44 @@ definitions:
       connector_type:
         description: ConnectorType contains a part before "/" of connector id.
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
       deletable:
+        description: Flags
         type: boolean
-      depends:
-        items:
-          type: string
-        type: array
+      depends_count:
+        description: DependsCount contains only service's dependencies
+        type: integer
       description:
         type: string
-      enable_history:
-        items:
-          type: integer
-        type: array
       enabled:
         type: boolean
-      idle_since:
-        type: integer
-      impact:
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      filtered_perf_data:
         items:
           type: string
         type: array
+      idle_since:
+        type: integer
       impact_level:
+        type: integer
+      impact_state:
+        type: integer
+      impacts_count:
+        description: ImpactsCount contains only services
+        type: integer
+      import_source:
+        type: string
+      imported:
         type: integer
       infos:
         $ref: '#/definitions/entity.Infos'
@@ -985,16 +1212,28 @@ definitions:
         type: integer
       last_event_date:
         type: integer
-      measurements: {}
+      last_pbehavior_date:
+        type: integer
+      links:
+        $ref: '#/definitions/link.LinksByCategory'
+        description: Links
       name:
         type: string
       ok_events:
+        description: Stats
         type: integer
+      old_entity_patterns:
+        $ref: '#/definitions/oldpattern.EntityPatternList'
       pbehavior_info:
         $ref: '#/definitions/entity.PbehaviorInfo'
       sli_avail_state:
         type: integer
+      snooze:
+        $ref: '#/definitions/common.AlarmStep'
       state:
+        description: Alarm fields
+        type: integer
+      status:
         type: integer
       type:
         type: string
@@ -1037,19 +1276,6 @@ definitions:
       value:
         type: string
     type: object
-  entityservice.AlarmWithEntity:
-    properties:
-      alarm:
-        $ref: '#/definitions/types.Alarm'
-      entity:
-        $ref: '#/definitions/entity.Entity'
-      has_dependencies:
-        type: boolean
-      has_impacts:
-        type: boolean
-      impact_state:
-        type: integer
-    type: object
   entityservice.BulkDeleteRequestItem:
     properties:
       _id:
@@ -1063,6 +1289,8 @@ definitions:
         type: string
       category:
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
       corporate_entity_pattern:
         type: string
       enabled:
@@ -1105,6 +1333,8 @@ definitions:
         type: string
       category:
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
       corporate_entity_pattern:
         type: string
       enabled:
@@ -1144,8 +1374,12 @@ definitions:
     properties:
       _id:
         type: string
+      ack:
+        $ref: '#/definitions/common.AlarmStep'
+      alarm_last_update_date:
+        type: integer
       category:
-        $ref: '#/definitions/entitycategory.Category'
+        $ref: '#/definitions/entity.Category'
       component:
         type: string
       component_infos:
@@ -1155,20 +1389,18 @@ definitions:
       connector_type:
         description: ConnectorType contains a part before "/" of connector id.
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
       corporate_entity_pattern:
         type: string
       corporate_entity_pattern_title:
         type: string
       deletable:
+        description: Flags
         type: boolean
-      depends:
-        items:
-          type: string
-        type: array
-      enable_history:
-        items:
-          type: integer
-        type: array
+      depends_count:
+        description: DependsCount contains only service's dependencies
+        type: integer
       enabled:
         type: boolean
       entity_pattern:
@@ -1177,13 +1409,22 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
-      idle_since:
-        type: integer
-      impact:
+      filtered_perf_data:
         items:
           type: string
         type: array
+      idle_since:
+        type: integer
       impact_level:
+        type: integer
+      impact_state:
+        type: integer
+      impacts_count:
+        description: ImpactsCount contains only services
+        type: integer
+      import_source:
+        type: string
+      imported:
         type: integer
       infos:
         $ref: '#/definitions/entity.Infos'
@@ -1191,10 +1432,15 @@ definitions:
         type: integer
       last_event_date:
         type: integer
-      measurements: {}
+      last_pbehavior_date:
+        type: integer
+      links:
+        $ref: '#/definitions/link.LinksByCategory'
+        description: Links
       name:
         type: string
       ok_events:
+        description: Stats
         type: integer
       old_entity_patterns:
         $ref: '#/definitions/oldpattern.EntityPatternList'
@@ -1204,7 +1450,12 @@ definitions:
         $ref: '#/definitions/entity.PbehaviorInfo'
       sli_avail_state:
         type: integer
+      snooze:
+        $ref: '#/definitions/common.AlarmStep'
       state:
+        description: Alarm fields
+        type: integer
+      status:
         type: integer
       type:
         type: string
@@ -1213,6 +1464,8 @@ definitions:
     properties:
       category:
         type: string
+      coordinates:
+        $ref: '#/definitions/types.Coordinates'
       corporate_entity_pattern:
         type: string
       enabled:
@@ -1273,8 +1526,6 @@ definitions:
         $ref: '#/definitions/eventfilter.RuleConfig'
       corporate_entity_pattern:
         type: string
-      created:
-        type: integer
       description:
         maxLength: 255
         type: string
@@ -1292,11 +1543,26 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/exdate.Request'
+        type: array
       external_data:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
       priority:
+        minimum: 0
+        type: integer
+      rrule:
+        type: string
+      start:
+        type: integer
+      stop:
         type: integer
       type:
         enum:
@@ -1305,8 +1571,6 @@ definitions:
         - enrichment
         - change_entity
         type: string
-      updated:
-        type: integer
     required:
     - _id
     - description
@@ -1320,8 +1584,6 @@ definitions:
         $ref: '#/definitions/eventfilter.RuleConfig'
       corporate_entity_pattern:
         type: string
-      created:
-        type: integer
       description:
         maxLength: 255
         type: string
@@ -1339,11 +1601,26 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/exdate.Request'
+        type: array
       external_data:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
       priority:
+        minimum: 0
+        type: integer
+      rrule:
+        type: string
+      start:
+        type: integer
+      stop:
         type: integer
       type:
         enum:
@@ -1352,17 +1629,34 @@ definitions:
         - enrichment
         - change_entity
         type: string
-      updated:
-        type: integer
     required:
     - description
     - type
+    type: object
+  eventfilter.Exception:
+    properties:
+      _id:
+        type: string
+      created:
+        type: integer
+      description:
+        type: string
+      exdates:
+        items:
+          $ref: '#/definitions/types.Exdate'
+        type: array
+      name:
+        type: string
     type: object
   eventfilter.ExternalDataParameters:
     properties:
       collection:
         description: are used in mongo external data
         type: string
+      regexp:
+        additionalProperties:
+          type: string
+        type: object
       request:
         $ref: '#/definitions/request.Parameters'
         description: are used in api external data
@@ -1370,10 +1664,14 @@ definitions:
         additionalProperties:
           type: string
         type: object
+      sort:
+        type: string
+      sort_by:
+        type: string
       type:
         type: string
     type: object
-  eventfilter.Rule:
+  eventfilter.Response:
     properties:
       _id:
         type: string
@@ -1386,7 +1684,6 @@ definitions:
       created:
         type: integer
       description:
-        maxLength: 255
         type: string
       enabled:
         type: boolean
@@ -1402,6 +1699,14 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      exceptions:
+        items:
+          $ref: '#/definitions/eventfilter.Exception'
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/types.Exdate'
+        type: array
       external_data:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
@@ -1410,18 +1715,16 @@ definitions:
         $ref: '#/definitions/oldpattern.EventPatternList'
       priority:
         type: integer
+      rrule:
+        type: string
+      start:
+        type: integer
+      stop:
+        type: integer
       type:
-        enum:
-        - break
-        - drop
-        - enrichment
-        - change_entity
         type: string
       updated:
         type: integer
-    required:
-    - description
-    - type
     type: object
   eventfilter.RuleConfig:
     properties:
@@ -1449,8 +1752,6 @@ definitions:
         $ref: '#/definitions/eventfilter.RuleConfig'
       corporate_entity_pattern:
         type: string
-      created:
-        type: integer
       description:
         maxLength: 255
         type: string
@@ -1468,11 +1769,26 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      exceptions:
+        items:
+          type: string
+        type: array
+      exdates:
+        items:
+          $ref: '#/definitions/exdate.Request'
+        type: array
       external_data:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
       priority:
+        minimum: 0
+        type: integer
+      rrule:
+        type: string
+      start:
+        type: integer
+      stop:
         type: integer
       type:
         enum:
@@ -1481,11 +1797,19 @@ definitions:
         - enrichment
         - change_entity
         type: string
-      updated:
-        type: integer
     required:
     - description
     - type
+    type: object
+  exdate.Request:
+    properties:
+      begin:
+        type: integer
+      end:
+        type: integer
+    required:
+    - begin
+    - end
     type: object
   export.Field:
     properties:
@@ -1493,6 +1817,48 @@ definitions:
         type: string
       name:
         type: string
+    type: object
+  exportconfiguration.Request:
+    properties:
+      export:
+        description: |-
+          Possible export values.
+            * `configuration` - export configuration collection
+            * `acl` - export default_rights collection
+            * `pbehavior` - export pbehavior collection
+            * `pbehavior_type` - export pbehavior_types collection
+            * `pbehavior_reason` - export pbehavior_reason collection
+            * `pbehavior_exception` - export pbehavior_exception collection
+            * `scenario` - export action_scenario collection
+            * `metaalarm` - export meta_alarm_rules collection
+            * `idle_rule` - export idle_rules collection
+            * `eventfilter` - export eventfilter collection
+            * `dynamic_infos` - export dynamic_infos collection
+            * `playlist` - export view_playlist collection
+            * `state_settings` - export state_settings collection
+            * `broadcast` - export broadcast_message collection
+            * `associative_table` - export default_associativetable collection
+            * `notification` - export notification collection
+            * `view` - export views collection
+            * `view_tab` - export viewtabs collection
+            * `widget` - export widgets collection
+            * `widget_filter` - export widget_filters collection
+            * `widget_template` - export widget_templates collection
+            * `view_group` - export viewgroups collection
+            * `instruction` - export instruction collection
+            * `job_config` - export job_config collection
+            * `job` - export job collection
+            * `resolve_rule` - export resolve_rule collection
+            * `flapping_rule` - export flapping rule collection
+            * `user_preferences` - export userpreferences collection
+            * `kpi_filter` - export kpi_filter collection
+            * `pattern` - export pattern collection
+            * `declare_ticket_rule` - export declare_ticket_rule collection
+            * `link_rule` - export link_rule collection
+            * `map` - export map collection
+        items:
+          type: string
+        type: array
     type: object
   file.File:
     properties:
@@ -1536,12 +1902,12 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
     required:
     - duration
     - freq_limit
     - name
-    - priority
     type: object
   flappingrule.Response:
     properties:
@@ -1554,7 +1920,7 @@ definitions:
           type: array
         type: array
       author:
-        $ref: '#/definitions/common.User'
+        $ref: '#/definitions/author.Author'
       corporate_alarm_pattern:
         type: string
       corporate_alarm_pattern_title:
@@ -1617,12 +1983,12 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
     required:
     - duration
     - freq_limit
     - name
-    - priority
     type: object
   idlerule.BulkDeleteRequestItem:
     properties:
@@ -1643,6 +2009,8 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      comment:
+        type: string
       corporate_alarm_pattern:
         type: string
       corporate_entity_pattern:
@@ -1670,6 +2038,7 @@ definitions:
       operation:
         $ref: '#/definitions/idlerule.OperationRequest'
       priority:
+        minimum: 0
         type: integer
       type:
         type: string
@@ -1678,7 +2047,6 @@ definitions:
     - duration
     - enabled
     - name
-    - priority
     - type
     type: object
   idlerule.CreateRequest:
@@ -1693,6 +2061,8 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      comment:
+        type: string
       corporate_alarm_pattern:
         type: string
       corporate_entity_pattern:
@@ -1720,6 +2090,7 @@ definitions:
       operation:
         $ref: '#/definitions/idlerule.OperationRequest'
       priority:
+        minimum: 0
         type: integer
       type:
         type: string
@@ -1727,7 +2098,6 @@ definitions:
     - duration
     - enabled
     - name
-    - priority
     - type
     type: object
   idlerule.EditRequest:
@@ -1740,6 +2110,8 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      comment:
+        type: string
       corporate_alarm_pattern:
         type: string
       corporate_entity_pattern:
@@ -1767,6 +2139,7 @@ definitions:
       operation:
         $ref: '#/definitions/idlerule.OperationRequest'
       priority:
+        minimum: 0
         type: integer
       type:
         type: string
@@ -1774,7 +2147,6 @@ definitions:
     - duration
     - enabled
     - name
-    - priority
     - type
     type: object
   idlerule.Operation:
@@ -1816,6 +2188,14 @@ definitions:
       ticket:
         description: AssocTicket
         type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        type: object
+      ticket_system_name:
+        type: string
+      ticket_url:
+        type: string
       tstart:
         type: integer
       tstop:
@@ -1836,6 +2216,8 @@ definitions:
           type: array
         type: array
       author:
+        $ref: '#/definitions/author.Author'
+      comment:
         type: string
       corporate_alarm_pattern:
         type: string
@@ -1925,6 +2307,38 @@ definitions:
         - service
         type: string
     type: object
+  importcontextgraph.EntityConfiguration:
+    properties:
+      action:
+        type: string
+      category:
+        type: string
+      component:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      impact_level:
+        type: integer
+      infos:
+        additionalProperties:
+          $ref: '#/definitions/types.Info'
+        type: object
+      name:
+        type: string
+      output_template:
+        type: string
+      type:
+        type: string
+    required:
+    - name
+    - type
+    type: object
   importcontextgraph.Link:
     properties:
       _id:
@@ -1949,6 +2363,183 @@ definitions:
     properties:
       deleted:
         type: integer
+      updated:
+        type: integer
+    type: object
+  link.ExternalDataParameters:
+    properties:
+      collection:
+        type: string
+      regexp:
+        additionalProperties:
+          type: string
+        type: object
+      select:
+        additionalProperties:
+          type: string
+        type: object
+      sort:
+        type: string
+      sort_by:
+        type: string
+      type:
+        enum:
+        - mongo
+        type: string
+    required:
+    - collection
+    - type
+    type: object
+  link.Link:
+    properties:
+      action:
+        type: string
+      icon_name:
+        type: string
+      label:
+        type: string
+      rule_id:
+        type: string
+      single:
+        type: boolean
+      url:
+        type: string
+    type: object
+  link.LinksByCategory:
+    additionalProperties:
+      items:
+        $ref: '#/definitions/link.Link'
+      type: array
+    type: object
+  link.Parameters:
+    properties:
+      action:
+        enum:
+        - open
+        - copy
+        type: string
+      category:
+        maxLength: 255
+        type: string
+      icon_name:
+        maxLength: 255
+        type: string
+      label:
+        maxLength: 255
+        type: string
+      single:
+        description: Single to mark links unavailable to multiple selected alarms
+        type: boolean
+      url:
+        maxLength: 1000
+        type: string
+    required:
+    - action
+    - icon_name
+    - label
+    - url
+    type: object
+  linkrule.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  linkrule.CategoryResponse:
+    properties:
+      categories:
+        items:
+          type: string
+        type: array
+    type: object
+  linkrule.EditRequest:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      external_data:
+        additionalProperties:
+          $ref: '#/definitions/link.ExternalDataParameters'
+        type: object
+      links:
+        items:
+          $ref: '#/definitions/link.Parameters'
+        type: array
+      name:
+        maxLength: 255
+        type: string
+      source_code:
+        type: string
+      type:
+        enum:
+        - alarm
+        - entity
+        type: string
+    required:
+    - enabled
+    - name
+    - type
+    type: object
+  linkrule.Response:
+    properties:
+      _id:
+        type: string
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      author:
+        $ref: '#/definitions/author.Author'
+      corporate_alarm_pattern:
+        type: string
+      corporate_alarm_pattern_title:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
+      created:
+        type: integer
+      enabled:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      external_data:
+        additionalProperties:
+          $ref: '#/definitions/link.ExternalDataParameters'
+        type: object
+      links:
+        items:
+          $ref: '#/definitions/link.Parameters'
+        type: array
+      name:
+        type: string
+      source_code:
+        type: string
+      type:
+        type: string
       updated:
         type: integer
     type: object
@@ -1991,15 +2582,6 @@ definitions:
   oldpattern.EntityPatternList:
     type: object
   oldpattern.EventPatternList:
-    type: object
-  pagination.Query:
-    properties:
-      limit:
-        type: integer
-      page:
-        type: integer
-      paginate:
-        type: boolean
     type: object
   pattern.BulkDeleteRequestItem:
     properties:
@@ -2097,6 +2679,43 @@ definitions:
         description: 'FieldType is only defined for custom fields, ex: infos.'
         type: string
     type: object
+  pattern.GetAlarmsRequest:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      pbehavior_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      search:
+        type: string
+    type: object
+  pattern.GetAlarmsResponse:
+    properties:
+      alarms:
+        items:
+          $ref: '#/definitions/pattern.MatchedAlarm'
+        type: array
+    type: object
+  pattern.MatchedAlarm:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+    type: object
   pattern.Response:
     properties:
       _id:
@@ -2108,7 +2727,7 @@ definitions:
           type: array
         type: array
       author:
-        $ref: '#/definitions/common.User'
+        $ref: '#/definitions/author.Author'
       created:
         type: integer
       entity_pattern:
@@ -2138,6 +2757,48 @@ definitions:
         type: string
     required:
     - _id
+    type: object
+  pbehavior.BulkEntityCreateRequestItem:
+    properties:
+      color:
+        type: string
+      comment:
+        type: string
+      entity:
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      origin:
+        maxLength: 255
+        type: string
+      reason:
+        type: string
+      rrule:
+        type: string
+      tstart:
+        type: integer
+      tstop:
+        type: integer
+      type:
+        type: string
+    required:
+    - entity
+    - name
+    - origin
+    - reason
+    - tstart
+    - type
+    type: object
+  pbehavior.BulkEntityDeleteRequestItem:
+    properties:
+      entity:
+        type: string
+      origin:
+        type: string
+    required:
+    - entity
+    - origin
     type: object
   pbehavior.BulkUpdateRequestItem:
     properties:
@@ -2178,7 +2839,6 @@ definitions:
         type: string
     required:
     - _id
-    - color
     - enabled
     - name
     - reason
@@ -2199,17 +2859,6 @@ definitions:
         type: integer
       type:
         $ref: '#/definitions/pbehavior.Type'
-    type: object
-  pbehavior.Comment:
-    properties:
-      _id:
-        type: string
-      author:
-        type: string
-      message:
-        type: string
-      ts:
-        type: integer
     type: object
   pbehavior.CreateRequest:
     properties:
@@ -2249,7 +2898,6 @@ definitions:
       type:
         type: string
     required:
-    - color
     - enabled
     - name
     - reason
@@ -2302,6 +2950,9 @@ definitions:
         type: integer
       description:
         type: string
+      hidden:
+        description: Hidden is used in API to hide documents from the list response
+        type: boolean
       name:
         type: string
     required:
@@ -2313,12 +2964,12 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       color:
         type: string
       comments:
         items:
-          $ref: '#/definitions/pbehavior.Comment'
+          $ref: '#/definitions/pbehaviorcomment.Response'
         type: array
       corporate_entity_pattern:
         type: string
@@ -2326,6 +2977,8 @@ definitions:
         type: string
       created:
         type: integer
+      editable:
+        type: boolean
       enabled:
         type: boolean
       entity_pattern:
@@ -2352,6 +3005,8 @@ definitions:
         type: string
       old_mongo_query:
         $ref: '#/definitions/pbehavior.OldMongoQuery'
+      origin:
+        type: string
       reason:
         $ref: '#/definitions/pbehaviorreason.Reason'
       rrule:
@@ -2368,6 +3023,8 @@ definitions:
   pbehavior.Type:
     properties:
       _id:
+        type: string
+      color:
         type: string
       description:
         type: string
@@ -2416,7 +3073,6 @@ definitions:
       type:
         type: string
     required:
-    - color
     - enabled
     - name
     - reason
@@ -2433,6 +3089,17 @@ definitions:
     required:
     - message
     - pbehavior
+    type: object
+  pbehaviorcomment.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      message:
+        type: string
+      ts:
+        type: integer
     type: object
   pbehaviorexception.Exception:
     properties:
@@ -2498,6 +3165,8 @@ definitions:
         type: boolean
       description:
         type: string
+      hidden:
+        type: boolean
       name:
         type: string
     type: object
@@ -2506,6 +3175,9 @@ definitions:
       description:
         maxLength: 255
         type: string
+      hidden:
+        description: Hidden is used in API to hide documents from the list response
+        type: boolean
       name:
         maxLength: 255
         type: string
@@ -2550,11 +3222,17 @@ definitions:
     - view_from
     - view_to
     type: object
-  pbehaviortype.EditRequest:
+  pbehaviortype.CreateRequest:
     properties:
+      _id:
+        type: string
+      color:
+        type: string
       description:
         maxLength: 255
         type: string
+      hidden:
+        type: boolean
       icon_name:
         maxLength: 255
         type: string
@@ -2562,6 +3240,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 1
         type: integer
       type:
         enum:
@@ -2571,21 +3250,32 @@ definitions:
         - pause
         type: string
     required:
+    - color
     - description
     - icon_name
     - name
     - priority
     - type
     type: object
+  pbehaviortype.PriorityResponse:
+    properties:
+      priority:
+        type: integer
+    type: object
   pbehaviortype.Type:
     properties:
       _id:
         type: string
+      color:
+        type: string
+      default:
+        type: boolean
       deletable:
         type: boolean
       description:
         type: string
-      editable:
+      hidden:
+        description: Hidden is used in API to hide documents from the list response
         type: boolean
       icon_name:
         type: string
@@ -2596,6 +3286,38 @@ definitions:
       type:
         type: string
     type: object
+  pbehaviortype.UpdateRequest:
+    properties:
+      color:
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      hidden:
+        type: boolean
+      icon_name:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      priority:
+        minimum: 1
+        type: integer
+      type:
+        enum:
+        - active
+        - inactive
+        - maintenance
+        - pause
+        type: string
+    required:
+    - color
+    - description
+    - name
+    - priority
+    - type
+    type: object
   permission.Permission:
     properties:
       _id:
@@ -2604,7 +3326,41 @@ definitions:
         type: string
       name:
         type: string
+      playlist:
+        $ref: '#/definitions/permission.Playlist'
+        description: Playlist is used only for playlist permissions.
       type:
+        type: string
+      view:
+        $ref: '#/definitions/permission.View'
+        description: View is used only for view permissions.
+      view_group:
+        $ref: '#/definitions/permission.ViewGroup'
+        description: ViewGroup is used only for view permissions.
+    type: object
+  permission.Playlist:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+    type: object
+  permission.View:
+    properties:
+      _id:
+        type: string
+      position:
+        type: integer
+      title:
+        type: string
+    type: object
+  permission.ViewGroup:
+    properties:
+      _id:
+        type: string
+      position:
+        type: integer
+      title:
         type: string
     type: object
   playlist.EditRequest:
@@ -2636,7 +3392,7 @@ definitions:
       author:
         type: string
       created:
-        type: integer
+        $ref: '#/definitions/types.CpsTime'
       enabled:
         type: boolean
       fullscreen:
@@ -2650,7 +3406,7 @@ definitions:
           type: string
         type: array
       updated:
-        type: integer
+        $ref: '#/definitions/types.CpsTime'
     type: object
   request.BasicAuth:
     properties:
@@ -2668,6 +3424,16 @@ definitions:
           type: string
         type: object
       method:
+        enum:
+        - GET
+        - HEAD
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
+        - CONNECT
+        - OPTIONS
+        - TRACE
         type: string
       payload:
         type: string
@@ -2677,7 +3443,27 @@ definitions:
         $ref: '#/definitions/types.DurationWithUnit'
       skip_verify:
         type: boolean
+      timeout:
+        $ref: '#/definitions/types.DurationWithUnit'
       url:
+        type: string
+    required:
+    - method
+    - url
+    type: object
+  request.WebhookDeclareTicket:
+    properties:
+      customFields:
+        additionalProperties:
+          type: string
+        type: object
+      empty_response:
+        type: boolean
+      is_regexp:
+        type: boolean
+      ticket_id:
+        type: string
+      ticket_url:
         type: string
     type: object
   resolverule.CreateRequest:
@@ -2709,6 +3495,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
     required:
     - duration
@@ -2726,7 +3513,7 @@ definitions:
           type: array
         type: array
       author:
-        $ref: '#/definitions/common.User'
+        $ref: '#/definitions/author.Author'
       corporate_alarm_pattern:
         type: string
       corporate_alarm_pattern_title:
@@ -2785,6 +3572,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
     required:
     - duration
@@ -2793,6 +3581,8 @@ definitions:
     type: object
   role.CreateRequest:
     properties:
+      auth_config:
+        $ref: '#/definitions/security.AuthMethodConf'
       defaultview:
         type: string
       description:
@@ -2812,6 +3602,8 @@ definitions:
     type: object
   role.EditRequest:
     properties:
+      auth_config:
+        $ref: '#/definitions/security.AuthMethodConf'
       defaultview:
         type: string
       description:
@@ -2843,21 +3635,29 @@ definitions:
     properties:
       _id:
         type: string
+      auth_config:
+        $ref: '#/definitions/security.AuthMethodConf'
       defaultview:
-        properties:
-          _id:
-            type: string
-          title:
-            type: string
-        type: object
+        $ref: '#/definitions/role.View'
+      deletable:
+        type: boolean
       description:
         type: string
+      editable:
+        type: boolean
       name:
         type: string
       permissions:
         items:
           $ref: '#/definitions/role.Permission'
         type: array
+    type: object
+  role.View:
+    properties:
+      _id:
+        type: string
+      title:
+        type: string
     type: object
   scenario.Action:
     properties:
@@ -2972,6 +3772,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
       triggers:
         description: |-
@@ -2986,8 +3787,6 @@ definitions:
             * `cancel` - Alarm has been cancelled
             * `uncancel` - Alarm has been uncancelled
             * `comment` - Alarm has been commented
-            * `done` - Alarm is "done"
-            * `declareticket` - Ticket has been declared by the UI action
             * `declareticketwebhook` - Ticket has been declared by the webhook
             * `assocticket` - Ticket has been associated with an alarm
             * `snooze` - Alarm has been snoozed
@@ -2999,6 +3798,7 @@ definitions:
             * `instructionfail` - Manual instruction has failed
             * `autoinstructionfail` - Auto instruction has failed
             * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
         items:
@@ -3011,20 +3811,6 @@ definitions:
     - enabled
     - name
     - triggers
-    type: object
-  scenario.CheckPriorityRequest:
-    properties:
-      priority:
-        type: integer
-    required:
-    - priority
-    type: object
-  scenario.CheckPriorityResponse:
-    properties:
-      recommended_priority:
-        type: integer
-      valid:
-        type: boolean
     type: object
   scenario.CreateRequest:
     properties:
@@ -3049,6 +3835,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
       triggers:
         description: |-
@@ -3063,8 +3850,6 @@ definitions:
             * `cancel` - Alarm has been cancelled
             * `uncancel` - Alarm has been uncancelled
             * `comment` - Alarm has been commented
-            * `done` - Alarm is "done"
-            * `declareticket` - Ticket has been declared by the UI action
             * `declareticketwebhook` - Ticket has been declared by the webhook
             * `assocticket` - Ticket has been associated with an alarm
             * `snooze` - Alarm has been snoozed
@@ -3076,6 +3861,7 @@ definitions:
             * `instructionfail` - Manual instruction has failed
             * `autoinstructionfail` - Auto instruction has failed
             * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
         items:
@@ -3109,6 +3895,7 @@ definitions:
         maxLength: 255
         type: string
       priority:
+        minimum: 0
         type: integer
       triggers:
         description: |-
@@ -3123,8 +3910,6 @@ definitions:
             * `cancel` - Alarm has been cancelled
             * `uncancel` - Alarm has been uncancelled
             * `comment` - Alarm has been commented
-            * `done` - Alarm is "done"
-            * `declareticket` - Ticket has been declared by the UI action
             * `declareticketwebhook` - Ticket has been declared by the webhook
             * `assocticket` - Ticket has been associated with an alarm
             * `snooze` - Alarm has been snoozed
@@ -3136,6 +3921,7 @@ definitions:
             * `instructionfail` - Manual instruction has failed
             * `autoinstructionfail` - Auto instruction has failed
             * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
         items:
@@ -3148,17 +3934,12 @@ definitions:
     - name
     - triggers
     type: object
-  scenario.GetMinimalPriorityResponse:
-    properties:
-      priority:
-        type: integer
-    type: object
   scenario.Parameters:
     properties:
       author:
         type: string
       declare_ticket:
-        $ref: '#/definitions/types.WebhookDeclareTicket'
+        $ref: '#/definitions/request.WebhookDeclareTicket'
       duration:
         $ref: '#/definitions/types.DurationWithUnit'
         description: Snooze and Pbehavior
@@ -3172,14 +3953,12 @@ definitions:
       reason:
         $ref: '#/definitions/pbehavior.Reason'
       request:
-        $ref: '#/definitions/types.WebhookRequest'
+        $ref: '#/definitions/request.Parameters'
         description: Webhook
-      retry_count:
-        type: integer
-      retry_delay:
-        $ref: '#/definitions/types.DurationWithUnit'
       rrule:
         type: string
+      skip_for_child:
+        type: boolean
       start_on_trigger:
         type: boolean
       state:
@@ -3187,6 +3966,15 @@ definitions:
         type: integer
       ticket:
         description: AssocTicket
+        type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        type: object
+      ticket_system_name:
+        description: AssocTicket and Webhook
+        type: string
+      ticket_url:
         type: string
       tstart:
         type: integer
@@ -3204,7 +3992,7 @@ definitions:
           $ref: '#/definitions/scenario.Action'
         type: array
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       created:
         type: integer
       delay:
@@ -3226,37 +4014,83 @@ definitions:
       updated:
         type: integer
     type: object
-  serviceweather.AlarmCounter:
+  security.AuthMethodConf:
     properties:
-      count:
+      expiration_interval:
+        $ref: '#/definitions/types.DurationWithUnit'
+      inactivity_interval:
+        $ref: '#/definitions/types.DurationWithUnit'
+    type: object
+  serviceweather.Counters:
+    properties:
+      acked:
         type: integer
-      type:
-        $ref: '#/definitions/pbehaviortype.Type'
+      acked_under_pbh:
+        type: integer
+      active:
+        type: integer
+      all:
+        type: integer
+      depends:
+        type: integer
+      pbh_types:
+        items:
+          $ref: '#/definitions/serviceweather.PbhTypeCounter'
+        type: array
+      state:
+        properties:
+          critical:
+            type: integer
+          major:
+            type: integer
+          minor:
+            type: integer
+          ok:
+            type: integer
+        type: object
+      unacked:
+        type: integer
+      under_pbh:
+        type: integer
     type: object
   serviceweather.Entity:
     properties:
       _id:
         type: string
       ack:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       alarm_creation_date:
         type: integer
       alarm_display_name:
         type: string
       alarm_id:
         type: string
+      assigned_declare_ticket_rules:
+        items:
+          $ref: '#/definitions/alarm.AssignedDeclareTicketRule'
+        type: array
       assigned_instructions:
         items:
           $ref: '#/definitions/alarm.AssignedInstruction'
         type: array
       category:
-        $ref: '#/definitions/entitycategory.Category'
+        $ref: '#/definitions/entity.Category'
       component:
         type: string
       connector:
         type: string
       connector_name:
         type: string
+      depends_count:
+        type: integer
+      failed_auto_instructions:
+        items:
+          type: string
+        type: array
+      failed_manual_instructions:
+        items:
+          type: string
+        type: array
       icon:
         type: string
       idle_since:
@@ -3265,28 +4099,22 @@ definitions:
         type: integer
       impact_state:
         type: integer
+      import_source:
+        type: string
+      imported:
+        type: integer
       infos:
         additionalProperties:
           $ref: '#/definitions/serviceweather.Info'
         type: object
-      is_all_auto_instructions_completed:
-        type: boolean
-      is_auto_instruction_failed:
-        type: boolean
-      is_auto_instruction_running:
-        type: boolean
+      instruction_execution_icon:
+        type: integer
       is_grey:
-        type: boolean
-      is_manual_instruction_running:
-        type: boolean
-      is_manual_instruction_waiting_result:
         type: boolean
       last_update_date:
         type: integer
-      linklist:
-        items:
-          $ref: '#/definitions/serviceweather.WeatherLink'
-        type: array
+      links:
+        $ref: '#/definitions/link.LinksByCategory'
       name:
         type: string
       pbehavior_info:
@@ -3295,20 +4123,42 @@ definitions:
         items:
           $ref: '#/definitions/alarm.Pbehavior'
         type: array
+      pbh_origin_icon:
+        type: string
       resource:
         type: string
+      running_auto_instructions:
+        items:
+          type: string
+        type: array
+      running_manual_instructions:
+        items:
+          type: string
+        type: array
       snooze:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       source_type:
         type: string
       state:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       stats:
         $ref: '#/definitions/statistics.EventStatistics'
       status:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
+      successful_auto_instructions:
+        items:
+          type: string
+        type: array
+      successful_manual_instructions:
+        items:
+          type: string
+        type: array
       ticket:
-        $ref: '#/definitions/alarm.AlarmTicket'
+        $ref: '#/definitions/common.AlarmStep'
+      tickets:
+        items:
+          $ref: '#/definitions/common.AlarmStep'
+        type: array
     type: object
   serviceweather.Info:
     properties:
@@ -3316,24 +4166,29 @@ definitions:
         type: string
       value: {}
     type: object
+  serviceweather.PbhTypeCounter:
+    properties:
+      count:
+        type: integer
+      type:
+        $ref: '#/definitions/pbehaviortype.Type'
+    type: object
   serviceweather.Service:
     properties:
       _id:
         type: string
       ack:
-        $ref: '#/definitions/alarm.AlarmStep'
-      alarm_counters:
-        items:
-          $ref: '#/definitions/serviceweather.AlarmCounter'
-        type: array
+        $ref: '#/definitions/common.AlarmStep'
       category:
-        $ref: '#/definitions/entitycategory.Category'
+        $ref: '#/definitions/entity.Category'
       component:
         type: string
       connector:
         type: string
       connector_name:
         type: string
+      counters:
+        $ref: '#/definitions/serviceweather.Counters'
       icon:
         type: string
       idle_since:
@@ -3352,10 +4207,6 @@ definitions:
         type: boolean
       last_update_date:
         type: integer
-      linklist:
-        items:
-          $ref: '#/definitions/serviceweather.WeatherLink'
-        type: array
       name:
         type: string
       output:
@@ -3371,17 +4222,38 @@ definitions:
       secondary_icon:
         type: string
       snooze:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       state:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
       status:
-        $ref: '#/definitions/alarm.AlarmStep'
+        $ref: '#/definitions/common.AlarmStep'
     type: object
-  serviceweather.WeatherLink:
+  sharetoken.EditRequest:
     properties:
-      cat_name:
+      description:
+        maxLength: 500
         type: string
-      links: {}
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+    type: object
+  sharetoken.Response:
+    properties:
+      _id:
+        type: string
+      accessed:
+        type: integer
+      created:
+        type: integer
+      description:
+        type: string
+      expired:
+        type: integer
+      role:
+        $ref: '#/definitions/author.Role'
+      user:
+        $ref: '#/definitions/author.Author'
+      value:
+        type: string
     type: object
   statesettings.JUnitThresholds:
     properties:
@@ -3452,187 +4324,47 @@ definitions:
       ok:
         type: integer
     type: object
-  types.Alarm:
+  techmetrics.ExportResponse:
     properties:
-      _id:
-        type: string
-      d:
-        type: string
-      t:
-        $ref: '#/definitions/types.CpsTime'
-      v:
-        $ref: '#/definitions/types.AlarmValue'
-    type: object
-  types.AlarmStep:
-    properties:
-      _t:
-        type: string
-      a:
-        type: string
-      exec:
-        description: Execution contains id if instruction execution for instruction
-          steps only.
-        type: string
-      initiator:
-        type: string
-      m:
-        type: string
-      pbehavior_canonical_type:
-        type: string
-      role:
-        type: string
-      statecounter:
-        $ref: '#/definitions/types.CropCounter'
-      t:
-        $ref: '#/definitions/types.CpsTime'
-      user_id:
-        type: string
-      val:
+      created:
         type: integer
-    type: object
-  types.AlarmTicket:
-    properties:
-      _t:
-        type: string
-      a:
-        type: string
-      data:
-        additionalProperties:
-          type: string
-        type: object
-      m:
-        type: string
-      role:
-        type: string
-      t:
-        $ref: '#/definitions/types.CpsTime'
-      user_id:
-        type: string
-      val:
-        type: string
-    type: object
-  types.AlarmValue:
-    properties:
-      ack:
-        $ref: '#/definitions/types.AlarmStep'
-      activation_date:
-        $ref: '#/definitions/types.CpsTime'
-      active_duration:
-        description: |-
-          ActiveDuration represents a duration when an alarm wasn't in snooze or in maintenance, pause, inactive pbehavior interval.
-          Keep omitempty.
-        type: integer
-      canceled:
-        $ref: '#/definitions/types.AlarmStep'
-      children:
-        items:
-          type: string
-        type: array
-      component:
-        type: string
-      connector:
-        type: string
-      connector_name:
-        type: string
-      creation_date:
-        $ref: '#/definitions/types.CpsTime'
-      current_state_duration:
-        description: |-
-          CurrentStateDuration represents a duration when an alarm was in current state.
-          Keep omitempty.
-        type: integer
-      display_name:
-        type: string
-      done:
-        $ref: '#/definitions/types.AlarmStep'
       duration:
-        description: |-
-          Duration represents a duration from creation date to resolve date.
-          Keep omitempty.
-        type: integer
-      events_count:
-        description: EventsCount accumulates count of check events.
-        type: integer
-      hard_limit:
-        type: integer
-      inactive_duration:
-        description: InactiveDuration represents a duration when an alarm was in snooze
-          or in maintenance, pause, inactive pbehavior interval.
-        type: integer
-      inactive_start:
-        $ref: '#/definitions/types.CpsTime'
-        description: |-
-          InactiveStart represents start of snooze or maintenance, pause, inactive pbehavior interval.
-          It's used only to compute InactiveDuration.
-      infos:
-        additionalProperties:
-          additionalProperties: true
-          type: object
-        type: object
-      initial_long_output:
-        type: string
-      initial_output:
-        type: string
-      last_comment:
-        $ref: '#/definitions/types.AlarmStep'
-      last_event_date:
-        $ref: '#/definitions/types.CpsTime'
-      last_update_date:
-        $ref: '#/definitions/types.CpsTime'
-      long_output:
-        type: string
-      long_output_history:
-        items:
-          type: string
-        type: array
-      meta:
-        type: string
-      meta_value_path:
-        type: string
-      output:
-        type: string
-      parents:
-        items:
-          type: string
-        type: array
-      pbehavior_info:
-        $ref: '#/definitions/types.PbehaviorInfo'
-      pbh_inactive_duration:
-        description: PbehaviorInactiveDuration represents a duration when an alarm
-          was in maintenance, pause, inactive pbehavior interval.
-        type: integer
-      resolved:
-        $ref: '#/definitions/types.CpsTime'
-      resource:
-        type: string
-      ruleVersion:
-        additionalProperties:
-          type: string
-        description: store version of dynamic-infos rule
-        type: object
-      snooze:
-        $ref: '#/definitions/types.AlarmStep'
-      snooze_duration:
-        description: SnoozeDuration represents a duration when an alarm was in snooze.
-        type: integer
-      state:
-        $ref: '#/definitions/types.AlarmStep'
-      state_changes_since_status_update:
         type: integer
       status:
-        $ref: '#/definitions/types.AlarmStep'
-      steps:
-        items:
-          $ref: '#/definitions/types.AlarmStep'
-        type: array
-      tags:
-        items:
-          type: string
-        type: array
-      ticket:
-        $ref: '#/definitions/types.AlarmTicket'
-      total_state_changes:
+        description: |-
+          Possible values.
+            * `0` - None
+            * `1` - Running
+            * `2` - Succeeded
+            * `3` - Failed
+            * `4` - Disabled
         type: integer
+    type: object
+  template.Request:
+    properties:
+      text:
+        type: string
+    type: object
+  template.Response:
+    properties:
+      err:
+        $ref: '#/definitions/validator.ErrReport'
+      is_valid:
+        type: boolean
+      warnings:
+        items:
+          $ref: '#/definitions/validator.WrnReport'
+        type: array
+    type: object
+  types.Coordinates:
+    properties:
+      lat:
+        type: number
+      lng:
+        type: number
+    required:
+    - lat
+    - lng
     type: object
   types.CpsTime:
     properties:
@@ -3697,71 +4429,20 @@ definitions:
     - unit
     - value
     type: object
-  types.PbehaviorInfo:
+  types.Exdate:
     properties:
-      canonical_type:
-        description: CanonicalType is Type of pbehavior.Type.
-        type: string
-      id:
-        description: ID is ID of pbehavior.PBehavior.
+      begin:
+        type: integer
+      end:
+        type: integer
+    type: object
+  types.Info:
+    properties:
+      description:
         type: string
       name:
-        description: Name is Name of pbehavior.PBehavior.
         type: string
-      reason:
-        description: Reason is Name of pbehavior.Reason.
-        type: string
-      timestamp:
-        description: |-
-          Timestamp is time when entity enters pbehavior.
-          Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
-        type: integer
-      type:
-        description: TypeID is ID of pbehavior.Type.
-        type: string
-      type_name:
-        description: TypeName is Name of pbehavior.Type.
-        type: string
-    type: object
-  types.WebhookBasicAuth:
-    properties:
-      password:
-        type: string
-      username:
-        type: string
-    type: object
-  types.WebhookDeclareTicket:
-    properties:
-      empty_response:
-        type: boolean
-      fields:
-        additionalProperties:
-          type: string
-        type: object
-      is_regexp:
-        type: boolean
-      ticket_id:
-        type: string
-    type: object
-  types.WebhookRequest:
-    properties:
-      auth:
-        $ref: '#/definitions/types.WebhookBasicAuth'
-      headers:
-        additionalProperties:
-          type: string
-        type: object
-      method:
-        type: string
-      payload:
-        type: string
-      skip_verify:
-        type: boolean
-      url:
-        type: string
-    required:
-    - method
-    - url
+      value: {}
     type: object
   user.BulkDeleteRequestItem:
     properties:
@@ -3794,13 +4475,14 @@ definitions:
       role:
         type: string
       ui_groups_navigation_type:
+        maxLength: 255
         type: string
       ui_language:
+        maxLength: 255
         type: string
-      ui_tours:
-        additionalProperties:
-          type: boolean
-        type: object
+      ui_theme:
+        maxLength: 255
+        type: string
     required:
     - _id
     - email
@@ -3808,7 +4490,7 @@ definitions:
     - name
     - role
     type: object
-  user.EditRequest:
+  user.CreateRequest:
     properties:
       defaultview:
         type: string
@@ -3816,6 +4498,8 @@ definitions:
         type: string
       enable:
         type: boolean
+      external_id:
+        type: string
       firstname:
         maxLength: 255
         type: string
@@ -3829,49 +4513,17 @@ definitions:
         type: string
       role:
         type: string
-      ui_groups_navigation_type:
-        type: string
-      ui_language:
-        type: string
-      ui_tours:
-        additionalProperties:
-          type: boolean
-        type: object
-    required:
-    - email
-    - enable
-    - name
-    - role
-    type: object
-  user.Request:
-    properties:
-      defaultview:
-        type: string
-      email:
-        type: string
-      enable:
-        type: boolean
-      firstname:
-        maxLength: 255
-        type: string
-      lastname:
-        maxLength: 255
-        type: string
-      name:
-        maxLength: 255
-        type: string
-      password:
-        type: string
-      role:
+      source:
         type: string
       ui_groups_navigation_type:
+        maxLength: 255
         type: string
       ui_language:
+        maxLength: 255
         type: string
-      ui_tours:
-        additionalProperties:
-          type: boolean
-        type: object
+      ui_theme:
+        maxLength: 255
+        type: string
     required:
     - email
     - enable
@@ -3887,10 +4539,48 @@ definitions:
       name:
         type: string
     type: object
+  user.UpdateRequest:
+    properties:
+      defaultview:
+        type: string
+      email:
+        type: string
+      enable:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      ui_groups_navigation_type:
+        maxLength: 255
+        type: string
+      ui_language:
+        maxLength: 255
+        type: string
+      ui_theme:
+        maxLength: 255
+        type: string
+    required:
+    - email
+    - enable
+    - name
+    - role
+    type: object
   user.User:
     properties:
       _id:
         type: string
+      active_connects:
+        type: integer
       authkey:
         type: string
       defaultview:
@@ -3915,10 +4605,8 @@ definitions:
         type: string
       ui_language:
         type: string
-      ui_tours:
-        additionalProperties:
-          type: boolean
-        type: object
+      ui_theme:
+        type: string
     type: object
   user.View:
     properties:
@@ -3948,6 +4636,37 @@ definitions:
           $ref: '#/definitions/widgetfilter.Response'
         type: array
       widget:
+        type: string
+    type: object
+  validator.ErrReport:
+    properties:
+      line:
+        type: integer
+      message:
+        type: string
+      type:
+        description: |-
+          Possible error type values.
+            * `0` - Undefined error
+            * `1` - Unexpected block
+            * `2` - Unexpected symbol
+            * `3` - Unexpected function
+            * `4` - Unexpected EOF
+        type: integer
+      var:
+        description: Var is defined only for template exec errors
+        type: string
+    type: object
+  validator.WrnReport:
+    properties:
+      message:
+        type: string
+      type:
+        description: |-
+          Possible warning type values.
+            * `0` - Might be unfinished variable block
+        type: integer
+      var:
         type: string
     type: object
   view.EditPositionItemRequest:
@@ -4021,7 +4740,7 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       created:
         type: integer
       title:
@@ -4038,7 +4757,7 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       created:
         type: integer
       title:
@@ -4058,6 +4777,9 @@ definitions:
         description: Junit
         type: boolean
       mainFilter:
+        type: string
+      map:
+        description: Map
         type: string
       report_fileregexp:
         type: string
@@ -4079,7 +4801,7 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       created:
         type: integer
       description:
@@ -4108,13 +4830,31 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       created:
         type: integer
       title:
         type: string
       updated:
         type: integer
+    type: object
+  view.WidgetColumn:
+    properties:
+      colorIndicator:
+        type: string
+      iconOnly:
+        type: boolean
+      isHtml:
+        type: boolean
+      label:
+        maxLength: 255
+        type: string
+      template:
+        type: string
+      value:
+        type: string
+    required:
+    - value
     type: object
   viewgroup.EditRequest:
     properties:
@@ -4129,7 +4869,7 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       created:
         type: integer
       deletable:
@@ -4159,7 +4899,7 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       created:
         $ref: '#/definitions/types.CpsTime'
       title:
@@ -4247,7 +4987,7 @@ definitions:
       _id:
         type: string
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       created:
         type: integer
       filters:
@@ -4324,7 +5064,7 @@ definitions:
           type: array
         type: array
       author:
-        type: string
+        $ref: '#/definitions/author.Author'
       corporate_alarm_pattern:
         type: string
       corporate_alarm_pattern_title:
@@ -4365,6 +5105,51 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+    type: object
+  widgettemplate.EditRequest:
+    properties:
+      columns:
+        items:
+          $ref: '#/definitions/view.WidgetColumn'
+        type: array
+      content:
+        type: string
+      title:
+        maxLength: 255
+        type: string
+      type:
+        enum:
+        - alarm_columns
+        - entity_columns
+        - alarm_more_infos
+        - weather_item
+        - weather_modal
+        - weather_entity
+        type: string
+    required:
+    - title
+    - type
+    type: object
+  widgettemplate.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      columns:
+        items:
+          $ref: '#/definitions/view.WidgetColumn'
+        type: array
+      content:
+        type: string
+      created:
+        type: integer
+      title:
+        type: string
+      type:
+        type: string
+      updated:
+        type: integer
     type: object
 info:
   contact: {}

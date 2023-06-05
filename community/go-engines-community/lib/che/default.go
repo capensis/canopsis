@@ -12,10 +12,12 @@ import (
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	communityimport "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
@@ -29,21 +31,18 @@ func NewEngine(
 	ctx context.Context,
 	options Options,
 	mongoClient mongo.DbClient,
-	pgPool postgres.Pool,
+	cfg config.CanopsisConf,
+	metricsSender metrics.Sender,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	externalDataContainer *eventfilter.ExternalDataContainer,
+	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
+	templateConfigProvider *config.BaseTemplateConfigProvider,
 	logger zerolog.Logger,
 ) libengine.Engine {
 	defer depmake.Catch(logger)
 
 	m := DependencyMaker{}
-	cfg := m.DepConfig(ctx, mongoClient)
-	config.SetDbClientRetry(mongoClient, cfg)
-	if pgPool != nil {
-		config.SetPgPoolRetry(pgPool, cfg)
-	}
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
-	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	entityAdapter := entity.NewAdapter(mongoClient)
@@ -51,18 +50,23 @@ func NewEngine(
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	serviceRedisSession := m.DepRedisSession(ctx, redis.EntityServiceStorage, logger, cfg)
 	periodicalLockClient := redis.NewLockClient(redisSession)
+	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 
 	contextGraphManager := contextgraph.NewManager(entityAdapter, mongoClient, contextgraph.NewEntityServiceStorage(mongoClient), metricsEntityMetaUpdater, logger)
 
+	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
+	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
+		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
+
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer))
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(externalDataContainer, eventfilter.NewActionProcessor()))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer, templateExecutor))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(externalDataContainer, eventfilter.NewActionProcessor(templateExecutor, techMetricsSender)))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeBreak, eventfilter.NewBreakApplicator())
 
 	ruleAdapter := eventfilter.NewRuleAdapter(mongoClient)
 
-	eventfilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, config.NewTimezoneConfigProvider(cfg, logger), logger)
+	eventfilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, logger)
 
 	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
@@ -79,20 +83,31 @@ func NewEngine(
 		logger,
 	)
 
+	eventfilterIntervalsWorker := NewEventfilterIntervalsWorker(mongoClient, timezoneConfigProvider, options.PeriodicalWaitTime, logger)
+	eventfilterIntervalsPeriodicalWorker := libengine.NewLockedPeriodicalWorker(
+		periodicalLockClient,
+		redis.CheEventFiltersIntervalsPeriodicalLockKey,
+		eventfilterIntervalsWorker,
+		logger,
+	)
+
 	engine := libengine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
+			eventfilterIntervalsWorker.Work(ctx)
 
 			// run in goroutine because it may take some time to process heavy dbs, don't want to slow down the engine startup
 			go infosDictLockedPeriodicalWorker.Work(ctx)
 
-			logger.Debug().Msg("Loading event filter rules")
-			err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
-			if err != nil {
-				return fmt.Errorf("unable to load rules: %w", err)
+			if !mongoClient.IsDistributed() {
+				logger.Debug().Msg("Loading event filter rules")
+				err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
+				if err != nil {
+					return fmt.Errorf("unable to load rules: %w", err)
+				}
 			}
 
-			_, err = periodicalLockClient.Obtain(ctx, redis.ChePeriodicalLockKey,
+			_, err := periodicalLockClient.Obtain(ctx, redis.ChePeriodicalLockKey,
 				options.PeriodicalWaitTime, &redislock.Options{
 					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
 				})
@@ -114,12 +129,7 @@ func NewEngine(
 			return nil
 		},
 		func(ctx context.Context) {
-			err := mongoClient.Disconnect(ctx)
-			if err != nil {
-				logger.Error().Err(err).Msg("failed to close mongo connection")
-			}
-
-			err = amqpConnection.Close()
+			err := amqpConnection.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close amqp connection")
 			}
@@ -138,13 +148,15 @@ func NewEngine(
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
-
-			if pgPool != nil {
-				pgPool.Close()
-			}
 		},
 		logger,
 	)
+
+	engine.AddRoutine(func(ctx context.Context) error {
+		techMetricsSender.Run(ctx)
+		return nil
+	})
+
 	engine.AddConsumer(libengine.NewDefaultConsumer(
 		canopsis.CheConsumerName,
 		options.ConsumeFromQueue,
@@ -157,16 +169,20 @@ func NewEngine(
 		canopsis.FIFOAckQueueName,
 		amqpConnection,
 		&messageProcessor{
-			FeaturePrintEventOnError: false,
+			FeaturePrintEventOnError: options.PrintEventOnError,
 			DbClient:                 mongoClient,
-			AlarmConfigProvider:      alarmConfigProvider,
-			EventFilterService:       eventfilterService,
-			ContextGraphManager:      contextGraphManager,
-			AmqpPublisher:            m.DepAMQPChannelPub(amqpConnection),
-			MetaUpdater:              metricsEntityMetaUpdater,
-			Encoder:                  json.NewEncoder(),
-			Decoder:                  json.NewDecoder(),
-			Logger:                   logger,
+
+			AlarmConfigProvider: alarmConfigProvider,
+			EventFilterService:  eventfilterService,
+			ContextGraphManager: contextGraphManager,
+			TechMetricsSender:   techMetricsSender,
+			MetricsSender:       metricsSender,
+			AmqpPublisher:       m.DepAMQPChannelPub(amqpConnection),
+			//MetaUpdater:              metricsEntityMetaUpdater,
+			EntityCollection: mongoClient.Collection(mongo.EntityMongoCollection),
+			Encoder:          json.NewEncoder(),
+			Decoder:          json.NewDecoder(),
+			Logger:           logger,
 		},
 		logger,
 	))
@@ -174,19 +190,30 @@ func NewEngine(
 		EventFilterService: eventfilterService,
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		Logger:             logger,
+		LoadRules:          !mongoClient.IsDistributed(),
 	})
-	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
-	engine.AddPeriodicalWorker("alarm config", libengine.NewLoadConfigPeriodicalWorker(
-		options.PeriodicalWaitTime,
-		config.NewAdapter(mongoClient),
-		alarmConfigProvider,
+	engine.AddPeriodicalWorker("soft delete", libengine.NewLockedPeriodicalWorker(
+		periodicalLockClient,
+		redis.CheSoftDeletePeriodicalLockKey,
+		&softDeletePeriodicalWorker{
+			collection:         mongoClient.Collection(mongo.EntityMongoCollection),
+			periodicalInterval: options.PeriodicalWaitTime,
+			eventPublisher:     communityimport.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
+			softDeleteWaitTime: options.SoftDeleteWaitTime,
+			logger:             logger,
+		},
 		logger,
 	))
-	engine.AddPeriodicalWorker("tz config", libengine.NewLoadConfigPeriodicalWorker(
+	engine.AddPeriodicalWorker("eventfilter intervals", eventfilterIntervalsPeriodicalWorker)
+	engine.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
+	engine.AddPeriodicalWorker("config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(mongoClient),
-		timezoneConfigProvider,
 		logger,
+		alarmConfigProvider,
+		timezoneConfigProvider,
+		techMetricsConfigProvider,
+		templateConfigProvider,
 	))
 	engine.AddPeriodicalWorker("impacted services", libengine.NewLockedPeriodicalWorker(
 		periodicalLockClient,
@@ -199,6 +226,25 @@ func NewEngine(
 		logger,
 	))
 	engine.AddPeriodicalWorker("entity infos dictionary", infosDictLockedPeriodicalWorker)
+	if mongoClient.IsDistributed() {
+		engine.AddRoutine(func(ctx context.Context) error {
+			w := eventfilter.NewRulesChangesWatcher(mongoClient, eventfilterService)
+
+			logger.Debug().Msg("Loading event filter rules")
+
+			for {
+				select {
+				case <-ctx.Done():
+					return nil
+				default:
+					err := w.Watch(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
+					if err != nil {
+						logger.Error().Err(err).Msg("failed to watch eventfilter collection")
+					}
+				}
+			}
+		})
+	}
 
 	return engine
 }

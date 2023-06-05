@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`variables-list Renders \`variables-list\` with custom props 1`] = `
+<div
+  class="v-list pa-0 v-list--dense theme--light"
+  role="list"
+>
+  <div
+    role="listitem"
+  >
+    <a
+      class="v-list__tile v-list__tile--link v-list__tile--active theme--light primary--text"
+    >
+      <div
+        class="v-list__tile__content"
+      >
+        <div
+          class="v-list__tile__title"
+        >
+          <div
+            class="layout row justify-space-between"
+          >
+            Entity
+            <!---->
+          </div>
+        </div>
+      </div>
+      <div
+        class="v-list__tile__action"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon material-icons theme--light"
+        >
+          arrow_right
+        </i>
+      </div>
+    </a>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`variables-list Renders \`variables-list\` with default props 1`] = `
+<div
+  class="v-list pa-0 v-list--dense theme--light"
+  role="list"
+/>
+`;

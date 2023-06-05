@@ -1,13 +1,30 @@
 <template lang="pug">
-  shared-mass-actions-panel(:actions="filteredActions")
+  shared-mass-actions-panel(:actions="preparedActions")
 </template>
 
 <script>
+import { difference, find, pick } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, ENTITIES_TYPES, EVENT_ENTITY_TYPES, EVENT_ENTITY_STYLE, ALARM_LIST_ACTIONS_TYPES } from '@/constants';
+import {
+  MODALS,
+  EVENT_ENTITY_TYPES,
+  ALARM_LIST_ACTIONS_TYPES,
+  LINK_RULE_ACTIONS,
+  BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
+} from '@/constants';
+
+import featuresService from '@/services/features';
+
+import { mapIds } from '@/helpers/entities';
+import { getEntityEventIcon } from '@/helpers/icon';
+import { createEntityIdPatternByValue } from '@/helpers/pattern';
+import { harmonizeAlarmsLinks, getLinkRuleLinkActionType } from '@/helpers/links';
 
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
+import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
+import { entitiesAlarmLinksMixin } from '@/mixins/entities/alarm/links';
+import { clipboardMixin } from '@/mixins/clipboard';
 
 import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
 
@@ -22,9 +39,14 @@ const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
  */
 export default {
   components: { SharedMassActionsPanel },
-  mixins: [widgetActionsPanelAlarmMixin],
+  mixins: [
+    widgetActionsPanelAlarmMixin,
+    entitiesDeclareTicketRuleMixin,
+    entitiesAlarmLinksMixin,
+    clipboardMixin,
+  ],
   props: {
-    itemsIds: {
+    items: {
       type: Array,
       default: () => [],
     },
@@ -32,6 +54,15 @@ export default {
       type: Object,
       required: true,
     },
+    refreshAlarmsList: {
+      type: Function,
+      default: () => {},
+    },
+  },
+  data() {
+    return {
+      pendingByActionsTypes: {},
+    };
   },
   computed: {
     ...entitiesMapGetters({
@@ -42,63 +73,103 @@ export default {
       const actions = [
         {
           type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.pbehaviorAdd].icon,
-          title: this.$t('alarmList.actions.titles.pbehavior'),
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.pbehaviorAdd),
+          title: this.$t('alarm.actions.titles.pbehavior'),
           method: this.showAddPbehaviorModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.ack,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ack].icon,
-          title: this.$t('alarmList.actions.titles.ack'),
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ack),
+          title: this.$t('alarm.actions.titles.ack'),
           method: this.showAckModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.fastAck,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.fastAck].icon,
-          title: this.$t('alarmList.actions.titles.fastAck'),
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.fastAck),
+          title: this.$t('alarm.actions.titles.fastAck'),
           method: this.createMassFastAckEvent,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.ackRemove,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.ackRemove].icon,
-          title: this.$t('alarmList.actions.titles.ackRemove'),
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ackRemove),
+          title: this.$t('alarm.actions.titles.ackRemove'),
           method: this.showAckRemoveModal,
         },
         {
           type: ALARM_LIST_ACTIONS_TYPES.cancel,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.delete].icon,
-          title: this.$t('alarmList.actions.titles.cancel'),
+          icon: '$vuetify.icons.list_delete',
+          title: this.$t('alarm.actions.titles.cancel'),
           method: this.showCancelEventModal,
         },
         {
-          type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.assocTicket].icon,
-          title: this.$t('alarmList.actions.titles.associateTicket'),
-          method: this.showCreateAssociateTicketEventModal,
+          type: ALARM_LIST_ACTIONS_TYPES.fastCancel,
+          icon: 'delete',
+          title: this.$t('alarm.actions.titles.fastCancel'),
+          method: this.createFastCancelEvent,
         },
         {
-          type: ALARM_LIST_ACTIONS_TYPES.snooze,
-          icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.snooze].icon,
-          title: this.$t('alarmList.actions.titles.snooze'),
-          method: this.showSnoozeModal,
+          type: ALARM_LIST_ACTIONS_TYPES.comment,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.comment),
+          title: this.$t('alarm.actions.titles.comment'),
+          method: this.showCreateCommentEventModal,
         },
       ];
+
+      if (this.hasAlarmsWithoutTickets || this.widget.parameters.isMultiDeclareTicketEnabled) {
+        if (this.alarmsWithAssignedDeclareTicketRules.length) {
+          actions.push({
+            type: ALARM_LIST_ACTIONS_TYPES.declareTicket,
+            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.declareTicket),
+            title: this.$t('alarm.actions.titles.declareTicket'),
+            loading: this.ticketsForAlarmsPending,
+            method: this.showCreateDeclareTicketModal,
+          });
+        }
+
+        actions.push({
+          type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.assocTicket),
+          title: this.$t('alarm.actions.titles.associateTicket'),
+          method: this.showCreateAssociateTicketModal,
+        });
+      }
+
+      actions.push(
+        {
+          type: ALARM_LIST_ACTIONS_TYPES.snooze,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.snooze),
+          title: this.$t('alarm.actions.titles.snooze'),
+          method: this.showSnoozeModal,
+        },
+      );
 
       if (!this.hasMetaAlarm) {
         actions.push(
           {
             type: ALARM_LIST_ACTIONS_TYPES.groupRequest,
-            icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.groupRequest].icon,
-            title: this.$t('alarmList.actions.titles.groupRequest'),
+            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.groupRequest),
+            title: this.$t('alarm.actions.titles.groupRequest'),
             method: this.showCreateGroupRequestEventModal,
           },
           {
-            type: ALARM_LIST_ACTIONS_TYPES.manualMetaAlarmGroup,
-            icon: EVENT_ENTITY_STYLE[EVENT_ENTITY_TYPES.manualMetaAlarmGroup].icon,
-            title: this.$t('alarmList.actions.titles.manualMetaAlarmGroup'),
+            type: ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm,
+            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.createManualMetaAlarm),
+            title: this.$t('alarm.actions.titles.createManualMetaAlarm'),
             method: this.showCreateManualMetaAlarmModal,
           },
         );
+      }
+
+      /**
+       * If we will have actions for resolved alarms in the features we should move this condition to
+       * the every features repositories
+       */
+      if (featuresService.has('components.alarmListMassActionsPanel.computed.actions')) {
+        const featuresActions = featuresService.call('components.alarmListMassActionsPanel.computed.actions', this, []);
+
+        if (featuresActions?.length) {
+          actions.push(...featuresActions);
+        }
       }
 
       return actions;
@@ -108,24 +179,62 @@ export default {
       return this.actions.filter(this.actionsAccessFilterHandler);
     },
 
-    items() {
-      return this.getEntitiesList(ENTITIES_TYPES.alarm, this.itemsIds);
+    linksActions() {
+      if (!this.checkAccess(BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.alarmsList[ALARM_LIST_ACTIONS_TYPES.links])) {
+        return [];
+      }
+
+      return harmonizeAlarmsLinks(this.items).map((link) => {
+        const type = getLinkRuleLinkActionType(link);
+
+        return {
+          type,
+          icon: link.icon_name,
+          title: this.$t('alarm.followLink', { title: link.label }),
+          loading: this.pendingByActionsTypes[type],
+          method: () => this.linkAction(link, type),
+        };
+      });
+    },
+
+    preparedActions() {
+      return [
+        ...this.filteredActions,
+        ...this.linksActions,
+      ];
+    },
+
+    alarmsWithAssignedDeclareTicketRules() {
+      return this.items.filter(item => item.assigned_declare_ticket_rules?.length);
+    },
+
+    alarmsWithTickets() {
+      return this.items.filter(item => item.v?.tickets?.length);
+    },
+
+    alarmsWithoutTickets() {
+      return difference(this.items, this.alarmsWithTickets);
+    },
+
+    hasAlarmsWithoutTickets() {
+      return !!this.alarmsWithoutTickets.length;
     },
 
     hasMetaAlarm() {
-      return this.items.some(item => item.metaalarm);
+      return this.items.some(item => item.is_meta_alarm);
     },
 
     modalConfig() {
       return {
-        itemsType: ENTITIES_TYPES.alarm,
-        itemsIds: this.itemsIds,
+        items: this.items,
         afterSubmit: this.afterSubmit,
       };
     },
   },
 
   methods: {
+    ...featuresService.get('components.alarmListMassActionsPanel.methods', {}),
+
     clearItems() {
       this.$emit('clear:items');
     },
@@ -133,30 +242,37 @@ export default {
     afterSubmit() {
       this.clearItems();
 
-      return this.fetchAlarmsListWithPreviousParams({ widgetId: this.widget._id });
+      return this.refreshAlarmsList();
     },
 
     showAddPbehaviorModal() {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          filter: {
-            _id: { $in: this.items.map(item => item.entity._id) },
-          },
+          entityPattern: createEntityIdPatternByValue(this.items.map(item => item.entity._id)),
           afterSubmit: this.clearItems,
         },
       });
     },
 
-    showCreateAssociateTicketEventModal() {
-      this.$modals.show({
-        name: MODALS.createAssociateTicketEvent,
-        config: {
-          ...this.modalConfig,
+    showCreateAssociateTicketModal() {
+      this.showAssociateTicketModalByAlarms(
+        this.widget.parameters.isMultiDeclareTicketEnabled
+          ? this.items
+          : this.alarmsWithoutTickets,
+      );
+    },
 
-          fastAckOutput: this.widget.parameters.fastAckOutput,
-        },
-      });
+    showCreateDeclareTicketModal() {
+      this.showDeclareTicketModalByAlarms(
+        this.widget.parameters.isMultiDeclareTicketEnabled
+          ? this.items
+          : this.alarmsWithoutTickets,
+      );
+    },
+
+    showAckModal() {
+      this.showAckModalByAlarms(this.items);
     },
 
     showCreateGroupRequestEventModal() {
@@ -183,15 +299,54 @@ export default {
     },
 
     async createMassFastAckEvent() {
-      let eventData = {};
-
-      if (this.widget.parameters.fastAckOutput && this.widget.parameters.fastAckOutput.enabled) {
-        eventData = { output: this.widget.parameters.fastAckOutput.value };
-      }
-
-      await this.createEvent(EVENT_ENTITY_TYPES.ack, this.items, eventData);
+      await this.createFastAckActionByAlarms(this.items);
 
       return this.afterSubmit();
+    },
+
+    async createFastCancelEvent() {
+      await this.createFastCancelActionByAlarms(this.items);
+
+      return this.afterSubmit();
+    },
+
+    showCreateCommentEventModal() {
+      this.$modals.show({
+        name: MODALS.createCommentEvent,
+        config: {
+          ...this.modalConfig,
+          action: data => this.createEvent(EVENT_ENTITY_TYPES.comment, this.items, data),
+        },
+      });
+    },
+
+    async linkAction(link, type) {
+      try {
+        this.$set(this.pendingByActionsTypes, type, true);
+
+        const links = await this.fetchAlarmLinkWithoutStore({
+          id: link.rule_id,
+          params: { ids: mapIds(this.items) },
+        });
+
+        const summaryLink = find(links, pick(link, ['icon_name', 'label']));
+
+        if (!summaryLink) {
+          return;
+        }
+
+        if (link.action === LINK_RULE_ACTIONS.copy) {
+          this.writeTextToClipboard(summaryLink.url);
+
+          return;
+        }
+
+        window.open(summaryLink.url, '_blank');
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.$set(this.pendingByActionsTypes, type, false);
+      }
     },
   },
 };

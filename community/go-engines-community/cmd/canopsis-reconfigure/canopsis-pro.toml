@@ -68,14 +68,6 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
-name = "Engine_action_webhook_rpc_client"
-durable = true
-autoDelete = false
-exclusive = false
-noWait = false
-# args =
-
-[[RabbitMQ.queues]]
 name = "Engine_axe"
 durable = true
 autoDelete = false
@@ -212,6 +204,14 @@ exclusive = false
 noWait = false
 # args =
 
+[[RabbitMQ.queues]]
+name = "Engine_pbehavior_recompute"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.
 [Canopsis.global]
@@ -219,6 +219,8 @@ PrefetchCount = 10000
 PrefetchSize = 0
 ReconnectTimeoutMilliseconds = 8
 ReconnectRetries = 3
+# MaxExternalResponseSize limits reading of a response of external API.
+MaxExternalResponseSize = 10485760 # 10Mb
 
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.
@@ -243,6 +245,8 @@ DisableActionSnoozeDelayOnPbh = false
 # TimeToKeepResolvedAlarms defines how long resolved alarms will be kept in main alarm collection
 TimeToKeepResolvedAlarms = "720h"
 AllowDoubleAck = false
+# ActivateAlarmAfterAutoRemediation if is set then alarm will be activated only after auto remediation execution
+ActivateAlarmAfterAutoRemediation = false
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.timezone]
@@ -252,6 +256,10 @@ Timezone = "Europe/Paris"
 [Canopsis.data_storage]
 # Time to execute data archive and delete. It's used by multiple engines since different engines handle different data.
 TimeToExecute = "Sunday,23"
+# MaxUpdates specifies the amount of items that be updated/removed for once.
+MaxUpdates = 100000
+# MongoClientTimeout specifies the amount of time that a single operation run on Mongo Client can execute before returning an error.
+MongoClientTimeout = "1m"
 
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.
@@ -262,8 +270,6 @@ FilePattern = "/tmp/import_%s.json"
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.api]
-# Auth token expiration ttl. It's used also used for session ttl (deprected).
-TokenExpiration = "24h"
 TokenSigningMethod = "HS256"
 BulkMaxSize = 10000
 
@@ -271,21 +277,37 @@ BulkMaxSize = 10000
 # to catch up following parameters.
 [Canopsis.logger]
 Writer = "stdout"
+# SystemD journalctl compatible format
+# Writer = "journald"
 
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.
 [Canopsis.logger.console_writer]
+# Enabled should be false here when Canopsis.logger.Writer configured as journald
 Enabled = true
 NoColor = false
 TimeFormat = "2006-01-02T15:04:05Z07:00"
 PartsOrder = ["time", "level", "caller", "message"]
+
 [Canopsis.metrics]
+# FlushInterval defines how often metrics are flushed from memory to TimescaleDB.
+FlushInterval = "10s"
 # Long SLI intervals are splitted to short intervals which are defined by SliInterval paramter.
 # Lower value provides more accurate metrics but requires more disk space.
 # Higher value provides less accurate metrics but requires less disk space.
 # 1h is recommended value since Canopsis UI lowest time sampling 1 hour.
 # Change value for external tools if more accurate metrics are required.
 SliInterval = "1h"
+
+[Canopsis.tech_metrics]
+Enabled = false
+# DumpKeepInterval defines how long dump with tech metrics should be kept before delete.
+DumpKeepInterval = "1h"
+
+# Template vars can be used in any template like this {{ .Env.Location }}.
+# Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
+[Canopsis.template.vars]
+#Location = "FR"
 
 # Remediation parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Remediation]
@@ -410,11 +432,16 @@ url_tpl = "{{ .responseUrl }}/api/json"
 method = "GET"
 response_id_key = "id"
 response_status_key = "result"
-statuses = { SUCCESS = "succeeded", FAIL = "failed", ERROR = "failed", FIXED = "failed", PASSED = "failed", REGRESSION = "failed", ABORTED = "aborted" }
+statuses = { SUCCESS = "succeeded", FAIL = "failed", FAILURE = "failed", ERROR = "failed", FIXED = "failed", PASSED = "failed", REGRESSION = "failed", ABORTED = "aborted" }
 [Remediation.external_api.jenkins.output_endpoint]
 url_tpl = "{{ .host }}/job/{{ .jobID }}/{{ .executionID }}/consoleText"
 method = "GET"
 
+# It's required to restart api after canopsis-reconfigure updates mongodb to catch up following parameter.
+[HealthCheck]
+update_interval = "10s"
+
+# Following engine_order parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [[HealthCheck.engine_order]]
 from = "engine-fifo"
 to = "engine-che"

@@ -43,7 +43,10 @@ Feature: update a PBehavior
     """json
     {
       "_id": "test-pbehavior-to-update-1",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1592215337,
       "color": "#FFFFFF",
       "enabled": true,
@@ -68,13 +71,19 @@ Feature: update a PBehavior
       "comments": [
         {
           "_id": "test-pbehavior-to-update-1-comment-1",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "ts": 1592215337,
           "message": "test-pbehavior-to-update-1-comment-1-message"
         },
         {
           "_id": "test-pbehavior-to-update-1-comment-2",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "ts": 1592215338,
           "message": "test-pbehavior-to-update-1-comment-2-message"
         }
@@ -104,7 +113,7 @@ Feature: update a PBehavior
       "name": "test-pbehavior-to-update-2-name",
       "tstart": 1591172881,
       "tstop": null,
-      "color": "#FFFFFF",
+      "color": "",
       "type": "test-type-to-pbh-edit-3",
       "reason": "test-reason-to-pbh-edit",
       "corporate_entity_pattern": "test-pattern-to-rule-edit-2"
@@ -115,8 +124,12 @@ Feature: update a PBehavior
     """json
     {
       "_id": "test-pbehavior-to-update-2",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1592215337,
+      "color": "",
       "enabled": true,
       "exceptions": [],
       "reason": {
@@ -154,9 +167,12 @@ Feature: update a PBehavior
     """json
     {
       "_id": "test-pbehavior-to-update-2",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1592215337,
-      "color": "#FFFFFF",
+      "color": "",
       "enabled": true,
       "exceptions": [],
       "reason": {
@@ -209,7 +225,10 @@ Feature: update a PBehavior
     """json
     {
       "_id": "test-pbehavior-to-update-3",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1592215337,
       "color": "#FFFFFF",
       "enabled": true,
@@ -254,7 +273,10 @@ Feature: update a PBehavior
     """json
     {
       "_id": "test-pbehavior-to-update-3",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1592215337,
       "enabled": true,
       "exceptions": [],
@@ -339,7 +361,6 @@ Feature: update a PBehavior
         "entity_pattern": "EntityPattern is missing.",
         "reason": "Reason is missing.",
         "tstart": "Start is missing.",
-        "color": "Color is missing.",
         "type": "Type is missing."
       }
     }

@@ -21,7 +21,7 @@ export default {
       type: Number,
       required: true,
     },
-    isCatEngine: {
+    isProEngine: {
       type: Boolean,
       default: false,
     },
@@ -29,7 +29,7 @@ export default {
   methods: {
     getInstanceColor(instanceNumber) {
       if (instanceNumber <= this.instances) {
-        return this.isCatEngine ? COLORS.secondary : COLORS.primary;
+        return this.isProEngine ? COLORS.secondary : COLORS.primary;
       }
 
       if (instanceNumber <= this.minInstances) {

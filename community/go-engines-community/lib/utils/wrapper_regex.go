@@ -49,6 +49,8 @@ func regexp2MatchTimeout() time.Duration {
 	return DefaultRegex2MatchTimeout
 }
 
+// NewRegexExpression
+// todo move to separate package
 func NewRegexExpression(expr string) (RegexExpression, error) {
 	if re, err := regexp.Compile(expr); err != nil {
 		if re2, err := regexp2.Compile(expr, regexp2.RE2); err != nil {
@@ -60,4 +62,8 @@ func NewRegexExpression(expr string) (RegexExpression, error) {
 	} else {
 		return WrapperBuiltInRegex{re}, nil
 	}
+}
+
+func EscapeRegex(v string) string {
+	return regexp2.Escape(v)
 }

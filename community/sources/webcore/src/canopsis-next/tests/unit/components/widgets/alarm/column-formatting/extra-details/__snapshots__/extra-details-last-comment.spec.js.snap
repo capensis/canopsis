@@ -5,13 +5,17 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
   class="c-clickable-tooltip c-extra-details"
 >
   <div>
-    <i
-      aria-hidden="true"
-      class="v-icon white--text purple lighten-2 c-extra-details__badge material-icons theme--light"
-      style="font-size: 16px;"
+    <span
+      class="c-extra-details__badge purple lighten-2"
     >
-      comment
-    </i>
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        comment
+      </i>
+    </span>
   </div>
   <span
     class="v-tooltip v-tooltip--top"
@@ -34,18 +38,18 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
       class="text-md-center"
     >
       <strong>
-        alarmList.actions.iconsTitles.comment
+        Comment
       </strong>
       <div>
-        common.by: lastComment-author
+        By: lastComment-author
       </div>
       <div>
-        common.date: 07/08/2013 19:00:00
+        Date: 07/08/2013 19:00:00
       </div>
       <div
         class="c-extra-details__message"
       >
-        common.comment:undefined: 
+        Comment: 
         <span>
           lastComment-message
         </span>
@@ -60,13 +64,17 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
   class="c-clickable-tooltip c-extra-details"
 >
   <div>
-    <i
-      aria-hidden="true"
-      class="v-icon white--text purple lighten-2 c-extra-details__badge material-icons theme--light"
-      style="font-size: 16px;"
+    <span
+      class="c-extra-details__badge purple lighten-2"
     >
-      comment
-    </i>
+      <i
+        aria-hidden="true"
+        class="v-icon material-icons theme--light white--text"
+        style="font-size: 16px;"
+      >
+        comment
+      </i>
+    </span>
   </div>
   <span
     class="v-tooltip v-tooltip--top"
@@ -89,18 +97,18 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
       class="text-md-center"
     >
       <strong>
-        alarmList.actions.iconsTitles.comment
+        Comment
       </strong>
       <div>
-        common.by: lastComment-author
+        By: lastComment-author
       </div>
       <div>
-        common.date: 6:00:00
+        Date: 6:00:00
       </div>
       <div
         class="c-extra-details__message"
       >
-        common.comment:undefined: 
+        Comment: 
         <span>
           lastComment-message
         </span>

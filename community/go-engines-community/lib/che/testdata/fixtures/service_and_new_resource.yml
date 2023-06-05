@@ -1,0 +1,45 @@
+default_entities:
+  resource_{1..50000}:
+    _id: <{test-resource-<RangeIndex()>/test-component}>
+    name: <{test-resource-<RangeIndex()>}>
+    type: resource
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+    connector: test-connector/test-connector-name
+    component: test-component
+
+  connector:
+    _id: test-connector/test-connector-name
+    name: test-connector-name
+    type: connector
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+
+  component:
+    _id: test-component
+    name: <Current()._id>
+    component: <Current()._id>
+    type: component
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+    connector: test-connector/test-connector-name
+
+  service:
+    _id: test-service
+    name: <Current()._id>
+    type: service
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+    entity_pattern:
+      - - field: type
+          cond:
+            type: eq
+            value: resource

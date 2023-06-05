@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snooze-event-form Renders \`snooze-event-form\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <c-duration-field-stub
+    required="required"
+    value="[object Object]"
+  />
+  <c-description-field-stub
+    label="Note"
+    name="output"
+    required="true"
+    value="output"
+  />
+</div>
+`;
+
+exports[`snooze-event-form Renders \`snooze-event-form\` with required props 1`] = `
+<div
+  class="layout column"
+>
+  <c-duration-field-stub
+    required="required"
+  />
+  <c-description-field-stub
+    label="Note"
+    name="output"
+  />
+</div>
+`;

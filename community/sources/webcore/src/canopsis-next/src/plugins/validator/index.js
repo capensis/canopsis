@@ -1,27 +1,58 @@
 import { isObject } from 'lodash';
 
-import VeeValidate, { Validator } from 'vee-validate';
+import VeeValidate, { Validator, Rules } from 'vee-validate';
 
 import { isValidJson } from './helpers/is-valid-json';
 import { isValidUrl } from './helpers/is-valid-url';
+import { isUniqueValue } from './helpers/is-unique-value';
 import { debounce } from './helpers/debounce';
 import { isEvent } from './helpers/is-event';
 import { findField } from './helpers/find-field';
+import { isValidPicker } from './helpers/is-valid-picker';
+
+const getParentValidatorOptions = (vnode) => {
+  const validateOptions = vnode.$options.$_veeValidate;
+
+  if (validateOptions?.validator === 'new') {
+    return validateOptions;
+  }
+
+  if (!vnode?.$parent) {
+    return {};
+  }
+
+  return getParentValidatorOptions(vnode.$parent);
+};
+
+Validator.prototype.remove = (name) => {
+  delete Rules[name];
+};
 
 export default {
   install(Vue, { i18n } = {}) {
-    Validator.extend('json', {
-      getMessage: () => i18n.t('errors.JSONNotValid'),
-      validate: isValidJson,
-    });
-
-    Validator.extend('url', { validate: isValidUrl });
-
     Vue.use(VeeValidate, {
       i18n,
       inject: false,
       silentTranslationWarn: false,
     });
+
+    Validator.extend('json', {
+      getMessage: () => i18n.t('errors.JSONNotValid'),
+      validate: isValidJson,
+    });
+    Validator.extend('unique', {
+      getMessage: () => i18n.t('errors.unique'),
+      validate: isUniqueValue,
+    }, {
+      paramNames: ['values', 'initialValue'],
+    });
+    Validator.extend('picker_format', {
+      getMessage: () => i18n.t('errors.endDateLessOrEqualStartDate'),
+      validate: isValidPicker,
+    }, {
+      paramNames: ['preparer'],
+    });
+    Validator.extend('url', { validate: isValidUrl });
 
     const sourceDirective = Vue.directive('validate');
 
@@ -30,9 +61,14 @@ export default {
 
       /* eslint-disable */
       bind(el, binding, vnode) {
+        const validatorOptions = getParentValidatorOptions(vnode.context)
         sourceDirective.bind.call(this, el, binding, vnode);
 
         const field = findField(el, vnode.context);
+
+        if (validatorOptions.delay) {
+          field.delay = validatorOptions.delay;
+        }
 
         if (field && isObject(field.initialValue)) {
           field.__proto__.addValueListeners = function addValueListeners() {

@@ -8,7 +8,7 @@ exports[`kpi-charts Renders \`kpi-charts\` with default props 1`] = `
     class="kpi-charts"
   >
     <div
-      class="layout column mb-5"
+      class="layout c-information-block column mb-5"
     >
       <div
         class="layout row"
@@ -16,7 +16,7 @@ exports[`kpi-charts Renders \`kpi-charts\` with default props 1`] = `
         <div
           class="subheading font-weight-bold"
         >
-          kpi.alarmMetrics
+          Alarm metrics
         </div>
         <!---->
       </div>
@@ -24,7 +24,7 @@ exports[`kpi-charts Renders \`kpi-charts\` with default props 1`] = `
       <kpi-alarms-stub />
     </div>
     <div
-      class="layout column mb-5"
+      class="layout c-information-block column mb-5"
     >
       <div
         class="layout row"
@@ -32,7 +32,7 @@ exports[`kpi-charts Renders \`kpi-charts\` with default props 1`] = `
         <div
           class="subheading font-weight-bold"
         >
-          common.rating:2
+          Ratings
         </div>
         <!---->
       </div>
@@ -40,7 +40,7 @@ exports[`kpi-charts Renders \`kpi-charts\` with default props 1`] = `
       <kpi-rating-stub />
     </div>
     <div
-      class="layout column mb-5"
+      class="layout c-information-block column mb-5"
     >
       <div
         class="layout row"
@@ -48,7 +48,7 @@ exports[`kpi-charts Renders \`kpi-charts\` with default props 1`] = `
         <div
           class="subheading font-weight-bold"
         >
-          kpi.sli
+          SLI
         </div>
         <!---->
       </div>

@@ -12,7 +12,8 @@
         @change="changeTabsOrdering"
       )
         tab-panel-content(v-for="tab in tabs", :tab="tab", hideActions, :key="tab._id")
-          playlist-tab-item(slot="title", :tab="tab")
+          template(#title="")
+            playlist-tab-item(:tab="tab")
 </template>
 
 <script>
@@ -63,7 +64,7 @@ export default {
 
 <style lang="scss" scoped>
   .tabs-draggable-panel {
-    &:not(.disabled) /deep/ .tab-panel-item {
+    &:not(.disabled) ::v-deep .tab-panel-item {
       cursor: move;
     }
 

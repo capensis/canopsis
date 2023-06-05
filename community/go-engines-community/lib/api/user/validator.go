@@ -2,19 +2,19 @@ package user
 
 import (
 	"context"
+	"strconv"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"strconv"
 )
 
-const minPasswordLength = 8
-const maxPasswordLength = 255
-
 type Validator interface {
-	ValidateRequest(ctx context.Context, sl validator.StructLevel)
+	ValidateCreateRequest(ctx context.Context, sl validator.StructLevel)
+	ValidateUpdateRequest(ctx context.Context, sl validator.StructLevel)
 	ValidateBulkUpdateRequestItem(ctx context.Context, sl validator.StructLevel)
 }
 
@@ -34,12 +34,38 @@ func (v *baseValidator) ValidateBulkUpdateRequestItem(ctx context.Context, sl va
 	r := sl.Current().Interface().(BulkUpdateRequestItem)
 
 	v.validateEditRequest(ctx, sl, r.ID, r.EditRequest)
+	v.validatePassword(sl, r.EditRequest, r.ID)
 }
 
-func (v *baseValidator) ValidateRequest(ctx context.Context, sl validator.StructLevel) {
-	r := sl.Current().Interface().(Request)
+func (v *baseValidator) ValidateCreateRequest(ctx context.Context, sl validator.StructLevel) {
+	r := sl.Current().Interface().(CreateRequest)
+
+	v.validateEditRequest(ctx, sl, "", r.EditRequest)
+
+	// Validate source and external_id
+	if r.Source == "" && r.ExternalID != "" {
+		sl.ReportError(r.Source, "Source", "Source", "required_with", "ExternalID")
+	}
+
+	if r.ExternalID == "" && r.Source != "" {
+		sl.ReportError(r.ExternalID, "ExternalID", "ExternalID", "required_with", "Source")
+	}
+
+	// Validate password
+	if r.Source != "" {
+		if r.Password != "" {
+			sl.ReportError(r.Source, "Source", "Source", "required_not_both", "Password")
+		}
+	} else {
+		v.validatePassword(sl, r.EditRequest, "")
+	}
+}
+
+func (v *baseValidator) ValidateUpdateRequest(ctx context.Context, sl validator.StructLevel) {
+	r := sl.Current().Interface().(UpdateRequest)
 
 	v.validateEditRequest(ctx, sl, r.ID, r.EditRequest)
+	v.validatePassword(sl, r.EditRequest, r.ID)
 }
 
 func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.StructLevel, id string, r EditRequest) {
@@ -67,19 +93,7 @@ func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.St
 			panic(err)
 		}
 	}
-	// Validate password
-	if r.Password == "" {
-		if id == "" {
-			sl.ReportError(r.Password, "Password", "Password", "required", "")
-		}
-	} else {
-		if len(r.Password) < minPasswordLength {
-			sl.ReportError(r.Password, "Password", "Password", "min", strconv.Itoa(minPasswordLength))
-		}
-		if len(r.Password) > maxPasswordLength {
-			sl.ReportError(r.Password, "Password", "Password", "max", strconv.Itoa(maxPasswordLength))
-		}
-	}
+
 	// Validate default view
 	if r.DefaultView != "" {
 		err := v.dbClient.Collection(mongo.ViewMongoCollection).FindOne(ctx, bson.M{"_id": r.DefaultView}).Err()
@@ -100,6 +114,21 @@ func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.St
 			} else {
 				panic(err)
 			}
+		}
+	}
+}
+
+func (v *baseValidator) validatePassword(sl validator.StructLevel, r EditRequest, id string) {
+	if r.Password == "" {
+		if id == "" {
+			sl.ReportError(r.Password, "Password", "Password", "required", "")
+		}
+	} else {
+		if len(r.Password) < password.MinLength {
+			sl.ReportError(r.Password, "Password", "Password", "min", strconv.Itoa(password.MinLength))
+		}
+		if len(r.Password) > password.MaxLength {
+			sl.ReportError(r.Password, "Password", "Password", "max", strconv.Itoa(password.MaxLength))
 		}
 	}
 }

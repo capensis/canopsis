@@ -2,14 +2,15 @@ package executor
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func NewUpdateStatusExecutor(configProvider config.AlarmConfigProvider, alarmStatusService alarmstatus.Service) operationlib.Executor {
+func NewUpdateStatusExecutor(configProvider config.AlarmConfigProvider, alarmStatusService alarmstatus.Service) operation.Executor {
 	return &updateStatusExecutor{configProvider: configProvider, alarmStatusService: alarmStatusService}
 }
 
@@ -20,13 +21,13 @@ type updateStatusExecutor struct {
 
 func (e *updateStatusExecutor) Exec(
 	_ context.Context,
-	operation types.Operation,
+	op types.Operation,
 	alarm *types.Alarm,
 	entity *types.Entity,
 	time types.CpsTime,
 	_, _, _ string,
 ) (types.AlarmChangeType, error) {
-	params := operation.Parameters
+	params := op.Parameters
 
 	currentStatus := alarm.Value.Status.Value
 	newStatus := e.alarmStatusService.ComputeStatus(*alarm, *entity)

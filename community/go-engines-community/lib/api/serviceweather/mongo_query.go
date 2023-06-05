@@ -7,14 +7,23 @@ import (
 	"fmt"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	pbehaviorlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+)
+
+const (
+	StateIconOk       = "wb_sunny"
+	StateIconMinor    = "person"
+	StateIconMajor    = "person"
+	StateIconCritical = "wb_cloudy"
 )
 
 type MongoQueryBuilder struct {
@@ -35,6 +44,8 @@ type MongoQueryBuilder struct {
 	sort    bson.M
 
 	computedFields bson.M
+	// excludedFields is used to remove redundant data from result
+	excludedFields []string
 }
 
 type lookupWithKey struct {
@@ -60,6 +71,7 @@ func (q *MongoQueryBuilder) clear() {
 
 	q.sort = bson.M{}
 	q.computedFields = bson.M{}
+	q.excludedFields = []string{"services"}
 }
 
 func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r ListRequest) ([]bson.M, error) {
@@ -73,10 +85,14 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 		{key: "category", pipeline: getCategoryLookup()},
 		{key: "alarm", pipeline: getAlarmLookup()},
 		{key: "pbehavior", pipeline: getPbehaviorLookup()},
-		{key: "alarm_counters", pipeline: getPbehaviorAlarmCountersLookup()},
 		{key: "pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
+		{key: "counters", pipeline: getPbehaviorAlarmCountersLookup()},
 	}
 	err := q.handleWidgetFilter(ctx, r)
+	if err != nil {
+		return nil, err
+	}
+	err = q.handlePatterns(r)
 	if err != nil {
 		return nil, err
 	}
@@ -86,12 +102,12 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
 
-func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(ids []string, r EntitiesListRequest, now types.CpsTime) ([]bson.M, error) {
+func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(id string, r EntitiesListRequest, now types.CpsTime) ([]bson.M, error) {
 	q.clear()
 
 	q.entityMatch = append(q.entityMatch, bson.M{"$match": bson.M{
-		"_id":     bson.M{"$in": ids},
-		"enabled": true,
+		"services": id,
+		"enabled":  true,
 	}})
 	q.lookups = []lookupWithKey{
 		{key: "category", pipeline: getCategoryLookup()},
@@ -99,15 +115,23 @@ func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(ids []stri
 		{key: "pbehavior", pipeline: getPbehaviorLookup()},
 		{key: "pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
 		{key: "stats", pipeline: getEventStatsLookup(now)},
+		{key: "depends_count", pipeline: getDependsCountPipeline()},
 	}
 	q.handleSort(r.SortBy, r.Sort)
 	q.computedFields = getListDependenciesComputedFields()
+
+	if r.PbhOrigin != "" {
+		q.lookups = append(q.lookups, lookupWithKey{key: "pbh_origin_icon", pipeline: getPbhOriginLookup(r.PbhOrigin)})
+	}
 
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
 
 func (q *MongoQueryBuilder) createPaginationAggregationPipeline(query pagination.Query) []bson.M {
 	beforeLimit, afterLimit := q.createAggregationPipeline()
+	if len(afterLimit) > 0 {
+		afterLimit = append(afterLimit, q.sort)
+	}
 
 	return pagination.CreateAggregationPipeline(
 		query,
@@ -143,6 +167,12 @@ func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 		afterLimit = append(afterLimit, bson.M{"$addFields": addFields})
 	}
 
+	project := bson.M{}
+	for _, v := range q.excludedFields {
+		project[v] = 0
+	}
+	afterLimit = append(afterLimit, bson.M{"$project": project})
+
 	return beforeLimit, afterLimit
 }
 
@@ -165,67 +195,123 @@ func (q *MongoQueryBuilder) handleFilter(r ListRequest) {
 	if len(entityMatch) > 0 {
 		q.entityMatch = append(q.entityMatch, bson.M{"$match": bson.M{"$and": entityMatch}})
 	}
+
+	additionalMatch := make([]bson.M, 0)
+	q.addHideGreyFilter(r, &additionalMatch)
+	if len(additionalMatch) > 0 {
+		q.lookupsForAdditionalMatch["alarm"] = true
+		q.lookupsForAdditionalMatch["pbehavior_info.icon_name"] = true
+		q.lookupsForAdditionalMatch["counters"] = true
+		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": bson.M{"$and": additionalMatch}})
+	}
 }
 
 func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListRequest) error {
-	if r.Filter == "" {
+	if len(r.Filters) == 0 {
 		return nil
 	}
 
-	filter := view.WidgetFilter{}
-	err := q.filterCollection.FindOne(ctx, bson.M{"_id": r.Filter}).Decode(&filter)
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return common.NewValidationError("filter", errors.New("Filter doesn't exist."))
+	for _, v := range r.Filters {
+		filter := view.WidgetFilter{}
+		err := q.filterCollection.FindOne(ctx, bson.M{"_id": v}).Decode(&filter)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return common.NewValidationError("filter", "Filter doesn't exist.")
+			}
+			return fmt.Errorf("cannot fetch widget filter: %w", err)
 		}
-		return fmt.Errorf("cannot fetch widget filter: %w", err)
+
+		if len(filter.EntityPattern) == 0 && len(filter.WeatherServicePattern) == 0 && len(filter.OldMongoQuery) == 0 ||
+			len(filter.AlarmPattern) > 0 ||
+			len(filter.PbehaviorPattern) > 0 {
+			return common.NewValidationError("filter", "Filter cannot be applied.")
+		}
+
+		err = q.handleEntityPattern(filter.EntityPattern)
+		if err != nil {
+			return fmt.Errorf("invalid entity pattern in widget filter id=%q: %w", filter.ID, err)
+		}
+
+		err = q.handleWeatherServicePattern(filter.WeatherServicePattern)
+		if err != nil {
+			return fmt.Errorf("invalid weather service pattern in widget filter id=%q: %w", filter.ID, err)
+		}
+
+		if len(filter.EntityPattern) == 0 && len(filter.WeatherServicePattern) == 0 && len(filter.OldMongoQuery) > 0 {
+			var query map[string]any
+			err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)
+			if err != nil {
+				return fmt.Errorf("cannot unmarshal old mongo query: %w", err)
+			}
+
+			for _, lookup := range q.lookups {
+				q.lookupsForAdditionalMatch[lookup.key] = true
+			}
+
+			q.additionalMatch = append(q.additionalMatch, bson.M{"$match": query})
+		}
 	}
 
-	if len(filter.EntityPattern) == 0 && len(filter.WeatherServicePattern) == 0 && len(filter.OldMongoQuery) == 0 ||
-		len(filter.AlarmPattern) > 0 ||
-		len(filter.PbehaviorPattern) > 0 {
-		return common.NewValidationError("filter", errors.New("Filter cannot be applied."))
+	return nil
+}
+
+func (q *MongoQueryBuilder) handlePatterns(r ListRequest) error {
+	if r.EntityPattern != "" {
+		var entityPattern pattern.Entity
+		err := json.Unmarshal([]byte(r.EntityPattern), &entityPattern)
+		if err != nil {
+			return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
+		}
+		err = q.handleEntityPattern(entityPattern)
+		if err != nil {
+			return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
+		}
 	}
 
-	entityPatternQuery, err := filter.EntityPattern.ToMongoQuery("")
+	if r.WeatherServicePattern != "" {
+		var weatherPattern view.WeatherServicePattern
+		err := json.Unmarshal([]byte(r.WeatherServicePattern), &weatherPattern)
+		if err != nil {
+			return common.NewValidationError("weather_service_pattern", "WeatherServicePattern is invalid.")
+		}
+		err = q.handleWeatherServicePattern(weatherPattern)
+		if err != nil {
+			return common.NewValidationError("weather_service_pattern", "WeatherServicePattern is invalid.")
+		}
+	}
+
+	return nil
+}
+
+func (q *MongoQueryBuilder) handleEntityPattern(entityPattern pattern.Entity) error {
+	entityPatternQuery, err := entityPattern.ToMongoQuery("")
 	if err != nil {
-		return fmt.Errorf("invalid entity pattern in widget filter id=%q: %w", filter.ID, err)
+		return err
 	}
 
 	if len(entityPatternQuery) > 0 {
 		q.entityMatch = append(q.entityMatch, bson.M{"$match": entityPatternQuery})
 	}
 
-	weatherPatternQuery, err := filter.WeatherServicePattern.ToMongoQuery("")
+	return nil
+}
+
+func (q *MongoQueryBuilder) handleWeatherServicePattern(weatherServicePattern view.WeatherServicePattern) error {
+	weatherPatternQuery, err := weatherServicePattern.ToMongoQuery("")
 	if err != nil {
-		return fmt.Errorf("invalid weather service pattern in widget filter id=%q: %w", filter.ID, err)
+		return err
 	}
+
 	if len(weatherPatternQuery) > 0 {
 		q.lookupsForAdditionalMatch["alarm"] = true
 
-		if filter.WeatherServicePattern.HasField("is_grey") ||
-			filter.WeatherServicePattern.HasField("icon") ||
-			filter.WeatherServicePattern.HasField("secondary_icon") {
-			q.lookupsForAdditionalMatch["alarm_counters"] = true
+		if weatherServicePattern.HasField("is_grey") ||
+			weatherServicePattern.HasField("icon") ||
+			weatherServicePattern.HasField("secondary_icon") {
+			q.lookupsForAdditionalMatch["pbehavior_info.icon_name"] = true
+			q.lookupsForAdditionalMatch["counters"] = true
 		}
 		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": weatherPatternQuery})
-	}
-
-	if len(entityPatternQuery) == 0 && len(weatherPatternQuery) == 0 &&
-		len(filter.OldMongoQuery) > 0 {
-		var query map[string]interface{}
-		err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)
-		if err != nil {
-			return fmt.Errorf("cannot unmarshal old mongo query: %w", err)
-		}
-
-		for _, lookup := range q.lookups {
-			q.lookupsForAdditionalMatch[lookup.key] = true
-		}
-
-		q.additionalMatch = append(q.additionalMatch, bson.M{"$match": query})
-
-		return nil
 	}
 
 	return nil
@@ -234,6 +320,12 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 func (q *MongoQueryBuilder) addCategoryFilter(r ListRequest, match *[]bson.M) {
 	if r.Category != "" {
 		*match = append(*match, bson.M{"category": bson.M{"$eq": r.Category}})
+	}
+}
+
+func (q *MongoQueryBuilder) addHideGreyFilter(r ListRequest, match *[]bson.M) {
+	if r.HideGrey {
+		*match = append(*match, bson.M{"is_grey": false})
 	}
 }
 
@@ -305,13 +397,14 @@ func getAlarmLookup() []bson.M {
 			"creation_date": "$alarm.v.creation_date",
 			"display_name":  "$alarm.v.display_name",
 			"ticket":        "$alarm.v.ticket",
+			"tickets":       "$alarm.v.tickets",
 		}},
 		{"$project": bson.M{"alarm": 0}},
 	}
 }
 
 func getPbehaviorLookup() []bson.M {
-	return []bson.M{
+	pipeline := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorMongoCollection,
 			"localField":   "pbehavior_info.id",
@@ -326,13 +419,6 @@ func getPbehaviorLookup() []bson.M {
 			"pbehavior.comments": 0,
 		}},
 		{"$lookup": bson.M{
-			"from":         mongo.RightsMongoCollection,
-			"foreignField": "_id",
-			"localField":   "pbehavior.author",
-			"as":           "pbehavior.author",
-		}},
-		{"$unwind": bson.M{"path": "$pbehavior.author", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorTypeMongoCollection,
 			"foreignField": "_id",
 			"localField":   "pbehavior.type_",
@@ -346,7 +432,28 @@ func getPbehaviorLookup() []bson.M {
 			"as":           "pbehavior.reason",
 		}},
 		{"$unwind": bson.M{"path": "$pbehavior.reason", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
+	}
+
+	pipeline = append(pipeline, author.PipelineForField("pbehavior.author")...)
+	pipeline = append(pipeline, author.PipelineForField("pbehavior.last_comment.author")...)
+	pipeline = append(pipeline,
+		bson.M{"$addFields": bson.M{
+			"pbehavior.last_comment": bson.M{
+				"$cond": bson.M{
+					"if":   "$pbehavior.last_comment._id",
+					"then": "$pbehavior.last_comment",
+					"else": "$$REMOVE",
+				},
+			}}},
+		bson.M{"$addFields": bson.M{
+			"pbehavior": bson.M{
+				"$cond": bson.M{
+					"if":   "$pbehavior._id",
+					"then": "$pbehavior",
+					"else": "$$REMOVE",
+				},
+			}}},
+		bson.M{"$addFields": bson.M{
 			// todo keep array for backward compatibility
 			"pbehaviors": bson.M{"$cond": bson.M{
 				"if":   "$pbehavior._id",
@@ -354,7 +461,8 @@ func getPbehaviorLookup() []bson.M {
 				"else": bson.A{},
 			}},
 		}},
-	}
+	)
+	return pipeline
 }
 
 func getPbehaviorInfoTypeLookup() []bson.M {
@@ -381,19 +489,19 @@ func getPbehaviorInfoTypeLookup() []bson.M {
 }
 
 func getPbehaviorAlarmCountersLookup() []bson.M {
-	defaultVal := types.AlarmStateTitleOK
+	defaultVal := StateIconOk
 	stateVals := []bson.M{
 		{
 			"case": bson.M{"$eq": bson.A{types.AlarmStateMinor, "$state.val"}},
-			"then": types.AlarmStateTitleMinor,
+			"then": StateIconMinor,
 		},
 		{
 			"case": bson.M{"$eq": bson.A{types.AlarmStateMajor, "$state.val"}},
-			"then": types.AlarmStateTitleMajor,
+			"then": StateIconMajor,
 		},
 		{
 			"case": bson.M{"$eq": bson.A{types.AlarmStateCritical, "$state.val"}},
-			"then": types.AlarmStateTitleCritical,
+			"then": StateIconCritical,
 		},
 	}
 
@@ -418,7 +526,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 		}}}},
 		{"$lookup": bson.M{
 			"from": mongo.PbehaviorTypeMongoCollection,
-			"as":   "alarm_counters",
+			"as":   "pbh_types_counters",
 			"let": bson.M{
 				"pbh_types":  "$pbh_types",
 				"cumulative": bson.M{"$objectToArray": "$entity_service_counters.pbehavior"},
@@ -442,93 +550,60 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 			},
 		}},
 		{"$project": bson.M{"pbh_types": 0}},
-		{"$project": bson.M{
-			"_id":            "$_id",
-			"alarm_counters": "$alarm_counters",
-			"data":           "$$ROOT",
+		{"$unwind": bson.M{"path": "$pbh_types_counters", "preserveNullAndEmptyArrays": true}},
+		{"$sort": bson.M{"pbh_types_counters.priority": -1}},
+		{"$group": bson.M{
+			"_id":                "$_id",
+			"pbh_types_counters": bson.M{"$push": "$pbh_types_counters"},
+			"data":               bson.M{"$first": "$$ROOT"},
 		}},
 		{"$replaceRoot": bson.M{
 			"newRoot": bson.M{"$mergeObjects": bson.A{
 				"$data",
-				bson.M{"alarm_counters": bson.M{"$filter": bson.M{
-					"input": "$alarm_counters",
-					"cond":  bson.M{"$gt": bson.A{"$$this.count", 0}},
+				bson.M{"counters": bson.M{"$mergeObjects": bson.A{
+					"$data.counters",
+					bson.M{"pbh_types": bson.M{"$filter": bson.M{
+						"input": "$pbh_types_counters",
+						"cond":  bson.M{"$gt": bson.A{"$$this.count", 0}},
+					}}},
 				}}},
 			}},
 		}},
+		{"$graphLookup": bson.M{
+			"from":             mongo.EntityMongoCollection,
+			"startWith":        "$_id",
+			"connectFromField": "_id",
+			"connectToField":   "services",
+			"as":               "depends",
+			"maxDepth":         0,
+		}},
 		{"$addFields": bson.M{
-			"depends_total": bson.M{"$size": "$depends"},
+			"counters.depends": bson.M{"$size": "$depends"},
 			"has_open_alarm": bson.M{"$cond": bson.M{
 				"if":   bson.M{"$gt": bson.A{"$entity_service_counters.unacked", 0}},
 				"then": true,
 				"else": false,
 			}},
-			"watched_inactive_count": bson.M{"$sum": bson.M{
+			"counters.under_pbh": bson.M{"$sum": bson.M{
 				"$map": bson.M{
-					"input": bson.M{
-						"$filter": bson.M{
-							"input": "$alarm_counters",
-							"cond":  bson.M{"$in": bson.A{"$$this.type.type", bson.A{pbehaviorlib.TypeMaintenance, pbehaviorlib.TypePause, pbehaviorlib.TypeInactive}}},
-						},
-					},
-					"in": "$$this.count",
+					"input": "$counters.pbh_types",
+					"in":    "$$this.count",
 				},
-			}},
-			"watched_pbehavior_type": bson.M{"$switch": bson.M{
-				"branches": []bson.M{
-					{
-						"case": bson.M{"$ne": bson.A{bson.A{}, bson.M{
-							"$filter": bson.M{
-								"input": "$alarm_counters",
-								"cond":  bson.M{"$eq": bson.A{"$$this.type.type", pbehaviorlib.TypeMaintenance}},
-							},
-						}}},
-						"then": pbehaviorlib.TypeMaintenance,
-					},
-					{
-						"case": bson.M{"$ne": bson.A{bson.A{}, bson.M{
-							"$filter": bson.M{
-								"input": "$alarm_counters",
-								"cond":  bson.M{"$eq": bson.A{"$$this.type.type", pbehaviorlib.TypePause}},
-							},
-						}}},
-						"then": pbehaviorlib.TypePause,
-					},
-					{
-						"case": bson.M{"$ne": bson.A{bson.A{}, bson.M{
-							"$filter": bson.M{
-								"input": "$alarm_counters",
-								"cond":  bson.M{"$eq": bson.A{"$$this.type.type", pbehaviorlib.TypeInactive}},
-							},
-						}}},
-						"then": pbehaviorlib.TypeInactive,
-					},
-				},
-				"default": "",
 			}},
 		}},
+		{"$project": bson.M{"depends": 0}},
 		{"$addFields": bson.M{
 			"icon": bson.M{"$switch": bson.M{
 				"branches": append(
 					[]bson.M{
-						// If service is not active return pbehavior type icon.
 						{
 							"case": bson.M{"$and": []bson.M{
 								{"$ifNull": bson.A{"$pbehavior_info", false}},
 								{"$ne": bson.A{"$pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
 							}},
-							"then": "$pbehavior_info.canonical_type",
-						},
-						// If all watched alarms are not active return most priority pbehavior type of watched alarms.
-						{
-							"case": bson.M{"$and": []bson.M{
-								{"$gt": bson.A{"$watched_inactive_count", 0}},
-								{"$eq": bson.A{"$watched_inactive_count", "$depends_total"}},
-							}},
-							"then": "$watched_pbehavior_type",
+							"then": "$pbehavior_info.icon_name",
 						},
 					},
-					// Else return state icon.
 					stateVals...,
 				),
 				"default": defaultVal,
@@ -544,8 +619,8 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 					},
 					{
 						"case": bson.M{"$and": []bson.M{
-							{"$gt": bson.A{"$watched_inactive_count", 0}},
-							{"$eq": bson.A{"$watched_inactive_count", "$depends_total"}},
+							{"$gt": bson.A{"$counters.under_pbh", 0}},
+							{"$eq": bson.A{"$counters.under_pbh", "$counters.depends"}},
 						}},
 						"then": true,
 					},
@@ -555,22 +630,47 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 			"secondary_icon": bson.M{"$switch": bson.M{
 				"branches": []bson.M{
 					{
-						// If only some watched alarms are not active return most priority pbehavior type of watched alarms.
-						"case": bson.M{"$and": []bson.M{
-							{"$gt": bson.A{"$watched_inactive_count", 0}},
-							{"$lt": bson.A{"$watched_inactive_count", "$depends_total"}},
+						"case": bson.M{"$gt": bson.A{"$counters.under_pbh", 0}},
+						"then": bson.M{"$arrayElemAt": bson.A{
+							bson.M{"$map": bson.M{
+								"input": "$counters.pbh_types",
+								"in":    "$$this.type.icon_name",
+							}},
+							0,
 						}},
-						"then": "$watched_pbehavior_type",
 					},
 				},
 				"default": "",
 			}},
 		}},
-		{"$project": bson.M{
-			"watched_inactive_count": 0,
-			"watched_pbehavior_type": 0,
-			"alarms_cumulative_data": 0,
+	}
+}
+
+func getPbhOriginLookup(origin string) []bson.M {
+	return []bson.M{
+		{"$lookup": bson.M{
+			"from": mongo.PbehaviorMongoCollection,
+			"let":  bson.M{"id": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$and": []bson.M{
+					{"$expr": bson.M{"$eq": bson.A{"$$id", "$entity"}}},
+					{"origin": origin},
+				}}},
+			},
+			"as": "pbh_origin",
 		}},
+		{"$unwind": bson.M{"path": "$pbh_origin", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.PbehaviorTypeMongoCollection,
+			"localField":   "pbh_origin.type_",
+			"foreignField": "_id",
+			"as":           "pbh_origin.type",
+		}},
+		{"$unwind": bson.M{"path": "$pbh_origin.type", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"pbh_origin_icon": "$pbh_origin.type.icon_name",
+		}},
+		{"$project": bson.M{"pbh_origin": 0}},
 	}
 }
 
@@ -603,19 +703,19 @@ func getEventStatsLookup(now types.CpsTime) []bson.M {
 }
 
 func getListDependenciesComputedFields() bson.M {
-	defaultVal := types.AlarmStateTitleOK
+	defaultVal := StateIconOk
 	stateVals := []bson.M{
 		{
 			"case": bson.M{"$eq": bson.A{types.AlarmStateMinor, "$state.val"}},
-			"then": types.AlarmStateTitleMinor,
+			"then": StateIconMinor,
 		},
 		{
 			"case": bson.M{"$eq": bson.A{types.AlarmStateMajor, "$state.val"}},
-			"then": types.AlarmStateTitleMajor,
+			"then": StateIconMajor,
 		},
 		{
 			"case": bson.M{"$eq": bson.A{types.AlarmStateCritical, "$state.val"}},
-			"then": types.AlarmStateTitleCritical,
+			"then": StateIconCritical,
 		},
 	}
 
@@ -626,18 +726,33 @@ func getListDependenciesComputedFields() bson.M {
 		}},
 		"icon": bson.M{"$switch": bson.M{
 			"branches": append(
-				// If service is not active return pbehavior type icon.
 				[]bson.M{{
 					"case": bson.M{"$and": []bson.M{
 						{"$ifNull": bson.A{"$pbehavior_info", false}},
 						{"$ne": bson.A{"$pbehavior_info.canonical_type", pbehaviorlib.TypeActive}},
 					}},
-					"then": "$pbehavior_info.canonical_type",
+					"then": "$pbehavior_info.icon_name",
 				}},
-				// Else return state icon.
 				stateVals...,
 			),
 			"default": defaultVal,
 		}},
+	}
+}
+
+func getDependsCountPipeline() []bson.M {
+	return []bson.M{
+		{"$graphLookup": bson.M{
+			"from":             mongo.EntityMongoCollection,
+			"startWith":        "$_id",
+			"connectFromField": "_id",
+			"connectToField":   "services",
+			"as":               "depends",
+			"maxDepth":         0,
+		}},
+		{"$addFields": bson.M{
+			"depends_count": bson.M{"$size": "$depends"},
+		}},
+		{"$project": bson.M{"depends": 0}},
 	}
 }

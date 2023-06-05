@@ -2,23 +2,30 @@ package account
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Store interface {
 	GetOneBy(ctx context.Context, id string) (*User, error)
+	Update(ctx context.Context, r EditRequest) (*User, error)
 }
 
 type store struct {
-	collection mongo.DbCollection
+	client          mongo.DbClient
+	collection      mongo.DbCollection
+	passwordEncoder password.Encoder
 }
 
-func NewStore(db mongo.DbClient) Store {
+func NewStore(db mongo.DbClient, passwordEncoder password.Encoder) Store {
 	return &store{
-		collection: db.Collection(mongo.RightsMongoCollection),
+		client:          db,
+		collection:      db.Collection(mongo.RightsMongoCollection),
+		passwordEncoder: passwordEncoder,
 	}
 }
 
@@ -68,7 +75,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 				"in": bson.M{
 					"_id":         "$$each._id",
 					"name":        "$$each.crecord_name",
-					"description": "$$each.desc",
+					"description": "$$each.description",
 					"type":        "$$each.type",
 					"bitmask": bson.M{"$arrayElemAt": bson.A{
 						bson.M{"$map": bson.M{
@@ -94,11 +101,12 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 			"name":                      bson.M{"$first": "$crecord_name"},
 			"lastname":                  bson.M{"$first": "$lastname"},
 			"firstname":                 bson.M{"$first": "$firstname"},
-			"email":                     bson.M{"$first": "$mail"},
+			"email":                     bson.M{"$first": "$email"},
 			"role":                      bson.M{"$first": "$role"},
 			"ui_language":               bson.M{"$first": "$ui_language"},
-			"ui_tours":                  bson.M{"$first": "$tours"},
-			"ui_groups_navigation_type": bson.M{"$first": "$groupsNavigationType"},
+			"ui_theme":                  bson.M{"$first": "$ui_theme"},
+			"ui_tours":                  bson.M{"$first": "$ui_tours"},
+			"ui_groups_navigation_type": bson.M{"$first": "$ui_groups_navigation_type"},
 			"enable":                    bson.M{"$first": "$enable"},
 			"defaultview":               bson.M{"$first": "$defaultview"},
 			"external_id":               bson.M{"$first": "$external_id"},
@@ -145,4 +153,26 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 	}
 
 	return nil, nil
+}
+
+func (s *store) Update(ctx context.Context, r EditRequest) (*User, error) {
+	var user *User
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		user = nil
+		res, err := s.collection.UpdateOne(ctx,
+			bson.M{"_id": r.ID, "crecord_type": model.LineTypeSubject},
+			bson.M{"$set": r.getUpdateBson(s.passwordEncoder)},
+		)
+		if err != nil || res.MatchedCount == 0 {
+			return err
+		}
+
+		user, err = s.GetOneBy(ctx, r.ID)
+		return err
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }

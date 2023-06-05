@@ -1,13 +1,18 @@
+import { VALIDATION_DELAY } from '@/constants';
+
 import { widgetToForm, formToWidget } from '@/helpers/forms/widgets/common';
 
 import { queryMixin } from '@/mixins/query';
 import { activeViewMixin } from '@/mixins/active-view';
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
+import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { submittableMixinCreator } from '@/mixins/submittable';
 
 export const widgetSettingsMixin = {
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   props: {
     sidebar: {
@@ -19,7 +24,9 @@ export const widgetSettingsMixin = {
     queryMixin,
     activeViewMixin,
     entitiesWidgetMixin,
+    entitiesUserPreferenceMixin,
     confirmableModalMixinCreator({ field: 'form', closeMethod: '$sidebar.hide' }),
+    submittableMixinCreator(),
   ],
   data() {
     return {
@@ -41,37 +48,46 @@ export const widgetSettingsMixin = {
   },
   methods: {
     /**
-     * Update main filter updated at value. We are using this value for checking which filter was changed later
-     */
-    updateMainFilterUpdatedAt() {
-      this.form.parameters.mainFilterUpdatedAt = Date.now();
-    },
-
-    /**
      * Submit settings form
      *
      * @returns {Promise<void>}
      */
     async submit() {
-      const isFormValid = await this.$validator.validateAll();
+      try {
+        this.submitting = true;
 
-      if (isFormValid) {
-        const { _id: widgetId, tab: tabId } = this.widget;
-        const data = formToWidget(this.form);
+        const isFormValid = await this.$validator.validateAll();
 
-        data.tab = tabId;
+        if (isFormValid) {
+          const { _id: widgetId, tab: tabId } = this.widget;
+          const data = formToWidget(this.form);
 
-        if (this.duplicate) {
-          await this.copyWidget({ id: widgetId, data });
-        } else if (widgetId) {
-          await this.updateWidget({ id: widgetId, data });
-        } else {
-          await this.createWidget({ data });
+          data.tab = tabId;
+
+          if (this.duplicate) {
+            await this.createWidget({ data });
+          } else if (widgetId) {
+            await this.updateWidget({ id: widgetId, data });
+          } else {
+            await this.createWidget({ data });
+          }
+
+          if (data.parameters.mainFilter && this.userPreference.content.mainFilter === data.parameters.mainFilter) {
+            await this.updateContentInUserPreference({ mainFilter: null });
+          }
+
+          if (widgetId) {
+            await this.fetchUserPreference({ id: widgetId });
+          }
+
+          await this.fetchActiveView();
+
+          this.$sidebar.hide();
         }
-
-        await this.fetchActiveView();
-
-        this.$sidebar.hide();
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.submitting = false;
       }
     },
   },

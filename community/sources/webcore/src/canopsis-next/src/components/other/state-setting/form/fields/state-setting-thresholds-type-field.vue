@@ -7,7 +7,7 @@
     color="primary"
   )
     v-radio(
-      :label="$t('variableTypes.number')",
+      :label="$t('common.variableTypes.number')",
       :value="numberValue",
       color="primary"
     )

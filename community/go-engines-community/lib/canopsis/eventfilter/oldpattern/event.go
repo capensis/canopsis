@@ -23,7 +23,6 @@ type EventPattern struct {
 	PerfData      StringRefPattern            `bson:"perf_data"`
 	Status        IntegerRefPattern           `bson:"status"`
 	Timestamp     TimePattern                 `bson:"timestamp"`
-	StateType     IntegerRefPattern           `bson:"state_type"`
 	SourceType    StringPattern               `bson:"source_type"`
 	LongOutput    StringPattern               `bson:"long_output"`
 	State         IntegerPattern              `bson:"state"`
@@ -80,10 +79,9 @@ func (p EventPattern) Matches(event types.Event, matches *EventRegexMatches) boo
 		p.EventType.Matches(event.EventType, &matches.EventType) &&
 		p.Component.Matches(event.Component, &matches.Component) &&
 		p.Resource.Matches(event.Resource, &matches.Resource) &&
-		p.PerfData.Matches(event.PerfData, &matches.PerfData) &&
+		p.PerfData.Matches(&event.PerfData, &matches.PerfData) &&
 		p.Status.Matches(event.Status) &&
 		p.Timestamp.Matches(event.Timestamp) &&
-		p.StateType.Matches(event.StateType) &&
 		p.SourceType.Matches(event.SourceType, &matches.SourceType) &&
 		p.LongOutput.Matches(event.LongOutput, &matches.LongOutput) &&
 		p.State.Matches(event.State) &&
@@ -92,7 +90,7 @@ func (p EventPattern) Matches(event types.Event, matches *EventRegexMatches) boo
 		p.RK.Matches(event.RK, &matches.RK) &&
 		p.AckResources.Matches(event.AckResources) &&
 		p.Duration.Matches(event.Duration) &&
-		p.Ticket.Matches(event.Ticket, &matches.Ticket) &&
+		p.Ticket.Matches(event.TicketInfo.Ticket, &matches.Ticket) &&
 		p.StatName.Matches(event.StatName, &matches.StatName) &&
 		p.Debug.Matches(event.Debug) &&
 		p.Entity.Matches(event.Entity, &matches.Entity)
@@ -311,15 +309,6 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		resultBson[bsonFieldName] = p.SourceType
 	}
 
-	if p.StateType.IsSet() {
-		bsonFieldName, err := GetFieldBsonName(p, "StateType", "statetype")
-		if err != nil {
-			return bsontype.Undefined, nil, err
-		}
-
-		resultBson[bsonFieldName] = p.StateType
-	}
-
 	if p.StatName.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "StatName", "statname")
 		if err != nil {
@@ -338,7 +327,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 // EventPatterns.
 // The zero value of an EventPatternList (i.e. an EventPatternList that has not
 // been set) is considered valid, and matches all events.
-//Deprecated : community/go-engines-community/lib/canopsis/pattern/Event
+// Deprecated : community/go-engines-community/lib/canopsis/pattern/Event
 type EventPatternList struct {
 	Patterns []EventPattern `swaggerignore:"true"`
 

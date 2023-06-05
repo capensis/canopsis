@@ -2,20 +2,34 @@ package view
 
 import (
 	"encoding/json"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"go.mongodb.org/mongo-driver/bson"
 	"reflect"
 	"strings"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 const (
-	WidgetTypeJunit = "Junit"
+	WidgetTypeAlarmsList          = "AlarmsList"
+	WidgetTypeContextExplorer     = "Context"
+	WidgetTypeServiceWeather      = "ServiceWeather"
+	WidgetTypeAlarmsCounter       = "Counter"
+	WidgetTypeAlarmsStatsCalendar = "StatsCalendar"
+	WidgetTypeJunit               = "Junit"
+	WidgetTypeMap                 = "Map"
 
 	WidgetInternalParamJunitTestSuites = "test_suites"
 
 	JunitReportFileRegexpSubexpName = "name"
+)
+
+const (
+	WidgetTemplateTypeAlarmColumns         = "alarm_columns"
+	WidgetTemplateTypeEntityColumns        = "entity_columns"
+	WidgetTemplateTypeAlarmMoreInfos       = "alarm_more_infos"
+	WidgetTemplateTypeServiceWeatherItem   = "weather_item"
+	WidgetTemplateTypeServiceWeatherModal  = "weather_modal"
+	WidgetTemplateTypeServiceWeatherEntity = "weather_entity"
 )
 
 type Group struct {
@@ -52,16 +66,16 @@ type Tab struct {
 }
 
 type Widget struct {
-	ID                 string                 `bson:"_id" json:"_id,omitempty"`
-	Tab                string                 `bson:"tab" json:"-"`
-	Title              string                 `bson:"title" json:"title"`
-	Type               string                 `bson:"type" json:"type"`
-	GridParameters     map[string]interface{} `bson:"grid_parameters" json:"grid_parameters"`
-	Parameters         Parameters             `bson:"parameters" json:"parameters"`
-	InternalParameters InternalParameters     `bson:"internal_parameters,omitempty" json:"-"`
-	Author             string                 `bson:"author" json:"author,omitempty"`
-	Created            types.CpsTime          `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated            types.CpsTime          `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	ID                 string             `bson:"_id" json:"_id,omitempty"`
+	Tab                string             `bson:"tab" json:"-"`
+	Title              string             `bson:"title" json:"title"`
+	Type               string             `bson:"type" json:"type"`
+	GridParameters     map[string]any     `bson:"grid_parameters" json:"grid_parameters"`
+	Parameters         Parameters         `bson:"parameters" json:"parameters"`
+	InternalParameters InternalParameters `bson:"internal_parameters,omitempty" json:"-"`
+	Author             string             `bson:"author" json:"author,omitempty"`
+	Created            types.CpsTime      `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated            types.CpsTime      `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 }
 
 type Parameters struct {
@@ -76,7 +90,10 @@ type Parameters struct {
 	ScreenshotFilemask    string   `bson:"screenshot_filemask,omitempty" json:"screenshot_filemask,omitempty"`
 	VideoFilemask         string   `bson:"video_filemask,omitempty" json:"video_filemask,omitempty"`
 
-	RemainParameters map[string]interface{} `bson:",inline" json:"-"`
+	// Map
+	Map string `bson:"map,omitempty" json:"map,omitempty"`
+
+	RemainParameters map[string]any `bson:",inline" json:"-"`
 }
 
 func (p Parameters) MarshalJSON() ([]byte, error) {
@@ -86,7 +103,7 @@ func (p Parameters) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 
-	m := make(map[string]interface{})
+	m := make(map[string]any)
 	err = json.Unmarshal(b, &m)
 	if err != nil {
 		return nil, err
@@ -105,7 +122,7 @@ func (p *Parameters) UnmarshalJSON(b []byte) error {
 	if err != nil {
 		return err
 	}
-	m := make(map[string]interface{})
+	m := make(map[string]any)
 	err = json.Unmarshal(b, &m)
 	if err != nil {
 		return err
@@ -130,7 +147,7 @@ type InternalParameters struct {
 	// Junit
 	TestSuites []string `bson:"test_suites,omitempty"`
 
-	RemainParameters map[string]interface{} `bson:",inline"`
+	RemainParameters map[string]any `bson:",inline"`
 }
 
 func (p InternalParameters) IsZero() bool {
@@ -144,6 +161,7 @@ type WidgetFilter struct {
 	Widget    string        `bson:"widget"`
 	IsPrivate bool          `bson:"is_private"`
 	Author    string        `bson:"author"`
+	Position  int64         `bson:"position"`
 	Created   types.CpsTime `bson:"created,omitempty"`
 	Updated   types.CpsTime `bson:"updated,omitempty"`
 
@@ -157,77 +175,22 @@ type WidgetFilter struct {
 	WeatherServicePattern WeatherServicePattern `bson:"weather_service_pattern,omitempty"`
 }
 
-type WeatherServicePattern [][]pattern.FieldCondition
-
-func (p WeatherServicePattern) Validate() bool {
-	for _, group := range p {
-		if len(group) == 0 {
-			return false
-		}
-
-		for _, v := range group {
-			f := v.Field
-			cond := v.Condition
-			var err error
-
-			switch f {
-			case "is_grey":
-				_, err = cond.MatchBool(true)
-			case "icon":
-				_, _, err = cond.MatchString("")
-			case "secondary_icon":
-				_, _, err = cond.MatchString("")
-			case "state.val":
-				_, err = cond.MatchInt(0)
-			default:
-				err = pattern.ErrUnsupportedField
-			}
-
-			if err != nil {
-				return false
-			}
-		}
-	}
-
-	return true
+type WidgetTemplate struct {
+	ID      string         `bson:"_id,omitempty"`
+	Title   string         `bson:"title"`
+	Type    string         `bson:"type"`
+	Columns []WidgetColumn `bson:"columns,omitempty"`
+	Content string         `bson:"content,omitempty"`
+	Author  string         `bson:"author"`
+	Created types.CpsTime  `bson:"created,omitempty"`
+	Updated types.CpsTime  `bson:"updated,omitempty"`
 }
 
-func (p WeatherServicePattern) ToMongoQuery(prefix string) (bson.M, error) {
-	if len(p) == 0 {
-		return nil, nil
-	}
-
-	if prefix != "" {
-		prefix += "."
-	}
-
-	groupQueries := make([]bson.M, len(p))
-	var err error
-
-	for i, group := range p {
-		condQueries := make([]bson.M, len(group))
-		for j, cond := range group {
-			f := prefix + cond.Field
-			condQueries[j], err = cond.Condition.ToMongoQuery(f)
-			if err != nil {
-				return nil, err
-			}
-		}
-
-		groupQueries[i] = bson.M{"$and": condQueries}
-	}
-
-	return bson.M{"$or": groupQueries}, nil
-}
-
-func (p WeatherServicePattern) HasField(field string) bool {
-	for _, group := range p {
-		for _, condition := range group {
-			if condition.Field == field {
-				return true
-			}
-		}
-	}
-
-	return false
+type WidgetColumn struct {
+	Value          string `bson:"value," json:"value" binding:"required"`
+	Label          string `bson:"label,omitempty" json:"label,omitempty" binding:"max=255"`
+	IsHtml         bool   `bson:"isHtml,omitempty" json:"isHtml,omitempty"`
+	IconOnly       bool   `bson:"iconOnly,omitempty" json:"iconOnly,omitempty"`
+	ColorIndicator string `bson:"colorIndicator,omitempty" json:"colorIndicator,omitempty"`
+	Template       string `bson:"template,omitempty" json:"template,omitempty"`
 }

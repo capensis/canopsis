@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
@@ -98,7 +99,8 @@ func (c *rpcServer) processMessage(ctx context.Context, d amqp.Delivery, consume
 	}
 
 	if body != nil && d.ReplyTo != "" {
-		err = publishCh.Publish(
+		err = publishCh.PublishWithContext(
+			ctx,
 			"",        // exchange
 			d.ReplyTo, // routing key
 			false,     // mandatory

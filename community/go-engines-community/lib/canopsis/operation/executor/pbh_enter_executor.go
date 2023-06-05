@@ -3,8 +3,9 @@ package executor
 import (
 	"context"
 	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
@@ -13,19 +14,19 @@ type pbhEnterExecutor struct {
 	configProvider config.AlarmConfigProvider
 }
 
-func NewPbhEnterExecutor(configProvider config.AlarmConfigProvider) operationlib.Executor {
+func NewPbhEnterExecutor(configProvider config.AlarmConfigProvider) operation.Executor {
 	return &pbhEnterExecutor{configProvider: configProvider}
 }
 
 func (e *pbhEnterExecutor) Exec(
 	_ context.Context,
-	operation types.Operation,
+	op types.Operation,
 	alarm *types.Alarm,
 	entity *types.Entity,
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	params := operation.Parameters
+	params := op.Parameters
 	if params.PbehaviorInfo == nil {
 		return "", fmt.Errorf("invalid parameters")
 	}

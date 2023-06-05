@@ -13,14 +13,20 @@ Feature: Get a entity category
         {
           "_id": "test-category-to-get-1",
           "name": "test-category-to-get-1-name",
-          "author": "test-category-to-get-1-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1592215337,
           "updated": 1592215337
         },
         {
           "_id": "test-category-to-get-2",
           "name": "test-category-to-get-2-name",
-          "author": "test-category-to-get-2-author",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "created": 1592215337,
           "updated": 1592215337
         }
@@ -43,7 +49,10 @@ Feature: Get a entity category
     {
       "_id": "test-category-to-get-1",
       "name": "test-category-to-get-1-name",
-      "author": "test-category-to-get-1-author",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1592215337,
       "updated": 1592215337
     }

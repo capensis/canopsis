@@ -437,7 +437,10 @@ Feature: Bulk update eventfilters
       "data": [
         {
           "_id": "test-eventfilter-bulk-update-1",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "description": "drop filter updated",
           "type": "drop",
           "event_pattern": [
@@ -455,7 +458,10 @@ Feature: Bulk update eventfilters
         },
         {
           "_id": "test-eventfilter-bulk-update-2",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "description": "drop filter",
           "type": "drop",
           "event_pattern": [
@@ -484,7 +490,10 @@ Feature: Bulk update eventfilters
         },
         {
           "_id": "test-eventfilter-bulk-update-3",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "description": "drop filter",
           "type": "drop",
           "event_pattern": [
@@ -513,7 +522,10 @@ Feature: Bulk update eventfilters
         },
         {
           "_id": "test-eventfilter-bulk-update-4",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "description": "drop filter",
           "type": "drop",
           "event_pattern": [
@@ -544,7 +556,10 @@ Feature: Bulk update eventfilters
         },
         {
           "_id": "test-eventfilter-bulk-update-5",
-          "author": "root",
+          "author": {
+            "_id": "root",
+            "name": "root"
+          },
           "description": "break filter",
           "enabled": true,
           "event_pattern": [

@@ -13,8 +13,9 @@
         slot(:item="item") {{ getValue(item) }}
 
     v-menu(v-if="shownMenu", bottom, offset-y)
-      v-btn.ma-1(slot="activator", icon, small)
-        v-icon(small, color="white") more_vert
+      template(#activator="{ on }")
+        v-btn.ma-1(v-on="on", icon, small)
+          v-icon(small, color="white") more_vert
       div.white(v-for="item in hiddenItems", :key="item.key")
         slot(:item="item") {{ getValue(item) }}
 </template>

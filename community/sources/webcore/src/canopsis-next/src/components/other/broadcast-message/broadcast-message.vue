@@ -3,7 +3,6 @@
     :style="{ backgroundColor: color }",
     :title="message"
   )
-    v-icon.broadcast-message__icon.mr-1(small) $vuetify.icons.bullhorn
     span.broadcast-message__text(v-html="message")
 </template>
 
@@ -32,19 +31,15 @@ export default {
     justify-content: center;
 
     &__text {
+      width: 100%;
       text-align: center;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
 
-      & /deep/ p {
+      & ::v-deep p {
         margin: 0 !important;
       }
-    }
-
-    &__icon {
-      min-width: 16px;
-      color: inherit !important;
     }
   }
 </style>

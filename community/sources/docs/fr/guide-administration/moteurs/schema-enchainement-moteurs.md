@@ -30,15 +30,16 @@ Dans le fichier `amqp2engines.conf` il y a `event.processing` et `beat.processin
 graph TD
 linkStyle default interpolate basis
 sup[Supervision] -- connecteurs :<br />centreon2canopsis<br />zabbix2canopsis<br />shinken2canopsis<br />etc--> exch.events{canopsis.events}
-exch.events --> heart["engine-heartbeat"]
 exch.events --> fifo["engine-fifo (failover)"]
 fifo --> che["engine-che (multi-instanciable)"]
-che --> pbh["engine-pbehavior (multi-instanciable)"]
-pbh --> axe["engine-axe (multi-instanciable)"]
+che --> axe["engine-axe (multi-instanciable)"]
+axe --> pbh["engine-pbehavior (multi-instanciable)"]
 axe --> correl["engine-correlation (multi-instanciable)"]
+axe --> remediation["engine-remediation (multi-instanciable)"]
 correl --> service["engine-service (multi-instanciable)"]
 service --> info["engine-dynamic-infos"]
 info --> action["engine-action"]
+action --> webhook["engine-webhook"]
 
 click snmp "https://doc.canopsis.net/guide-administration/moteurs/moteur-snmp/"
 click heart "https://doc.canopsis.net/guide-administration/moteurs/moteur-heartbeat/"
@@ -56,8 +57,8 @@ classDef community-green font-weight:normal,font-size:12pt,color:#fff,fill:#2fab
 classDef pro-blue font-weight:normal,font-size:12pt,color:#fff,fill:#2b3e4f,color:#fff,stroke:#222,stroke-width:3px;
 classDef rabbit-orange font-weight:normal,font-size:12pt,color:#fff,fill:#ff6600,color:#fff,stroke:#222,stroke-width:3px;
 class sup grey
-class heart,fifo,che,filter,pbh,axe,service,action community-green
-class snmp,kpi,correl,info pro-blue
+class fifo,che,filter,pbh,axe,service,action community-green
+class snmp,kpi,correl,info,remediation,webhook pro-blue
 class exch.snmp,exch.events rabbit-orange
 ```
 

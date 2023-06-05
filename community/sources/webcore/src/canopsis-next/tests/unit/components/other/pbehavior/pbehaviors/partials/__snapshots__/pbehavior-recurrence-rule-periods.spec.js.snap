@@ -1,0 +1,574 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehavior-recurrence-rule-periods Renders \`pbehavior-recurrence-rule-periods\` with entities 1`] = `
+<div>
+  <div
+    class="layout justify-space-between align-center"
+  >
+    <div
+      class="layout justify-center"
+    >
+      <span
+        class="title"
+      >
+        Periods
+      </span>
+    </div>
+    <c-action-btn-stub
+      icon="event_note"
+      tooltip="Calendar with periods"
+    />
+  </div>
+  <div
+    class="layout mt-2"
+  >
+    <div
+      class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
+      role="combobox"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-select__slot"
+          >
+            <label
+              aria-hidden="true"
+              class="v-label v-label--active theme--light"
+              style="left: 0px; position: absolute;"
+            >
+              Range
+            </label>
+            <div
+              class="v-select__selections"
+            >
+              <div
+                class="v-select__selection v-select__selection--comma"
+              >
+                This week
+              </div>
+              <input
+                aria-label="Range"
+                aria-readonly="false"
+                autocomplete="on"
+                readonly="readonly"
+                type="text"
+              />
+            </div>
+            <div
+              class="v-input__append-inner"
+            >
+              <div
+                class="v-input__icon v-input__icon--append"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_drop_down
+                </i>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-menu"
+          />
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <div
+              class="v-messages__wrapper"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="layout"
+  >
+    <div
+      class="data-iterator v-data-iterator theme--light"
+    >
+      <div>
+        <div
+          class="flex"
+        >
+          <transition-stub
+            name="fade-transition"
+          >
+            <div
+              aria-valuemax="100"
+              aria-valuemin="0"
+              class="v-progress-linear progress ma-0"
+              role="progressbar"
+              style="height: 3px; display: none;"
+            >
+              <div
+                class="v-progress-linear__background primary"
+                style="height: 3px; opacity: 0.3; width: 100%;"
+              />
+              <div
+                class="v-progress-linear__bar"
+              >
+                <transition-stub
+                  name="fade-transition"
+                >
+                  <div
+                    class="v-progress-linear__bar__indeterminate v-progress-linear__bar__indeterminate--active"
+                  >
+                    <div
+                      class="v-progress-linear__bar__indeterminate long primary"
+                    />
+                    <div
+                      class="v-progress-linear__bar__indeterminate short primary"
+                    />
+                  </div>
+                </transition-stub>
+                <transition-stub
+                  name="slide-x-transition"
+                />
+              </div>
+            </div>
+          </transition-stub>
+        </div>
+      </div>
+      <div>
+        <div
+          class="flex"
+          style=""
+        >
+          <div
+            class="v-card v-sheet theme--light"
+          >
+            <div
+              class="v-card__title"
+            >
+              04/03/2021 13:43:08 — 04/03/2021 13:59:48
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex"
+        >
+          <div
+            class="v-card v-sheet theme--light"
+          >
+            <div
+              class="v-card__title"
+            >
+              04/03/2021 13:43:09 — 04/03/2021 13:59:49
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex"
+        >
+          <div
+            class="v-card v-sheet theme--light"
+          >
+            <div
+              class="v-card__title"
+            >
+              04/03/2021 13:43:10 — 04/03/2021 13:59:50
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex"
+        >
+          <div
+            class="v-card v-sheet theme--light"
+          >
+            <div
+              class="v-card__title"
+            >
+              04/03/2021 13:43:11 — 04/03/2021 13:59:51
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex"
+        >
+          <div
+            class="v-card v-sheet theme--light"
+          >
+            <div
+              class="v-card__title"
+            >
+              04/03/2021 13:43:12 — 04/03/2021 13:59:52
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div
+          class="v-data-iterator__actions"
+        >
+          <div
+            class="v-data-iterator__actions__select"
+          >
+            Items per page:
+            <div
+              class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+              role="combobox"
+            >
+              <div
+                class="v-input__control"
+              >
+                <div
+                  class="v-input__slot"
+                >
+                  <div
+                    class="v-select__slot"
+                  >
+                    <div
+                      class="v-select__selections"
+                    >
+                      <div
+                        class="v-select__selection v-select__selection--comma"
+                      >
+                        5
+                      </div>
+                      <input
+                        aria-label="Items per page:"
+                        aria-readonly="false"
+                        autocomplete="on"
+                        readonly="readonly"
+                        type="text"
+                      />
+                    </div>
+                    <div
+                      class="v-input__append-inner"
+                    >
+                      <div
+                        class="v-input__icon v-input__icon--append"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light"
+                        >
+                          arrow_drop_down
+                        </i>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="v-menu"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-data-iterator__actions__range-controls"
+          >
+            <div
+              class="v-data-iterator__actions__pagination"
+            >
+              1-5 of 11
+            </div>
+            <button
+              aria-label="Previous page"
+              class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
+              disabled="disabled"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  chevron_left
+                </i>
+              </div>
+            </button>
+            <button
+              aria-label="Next page"
+              class="v-btn v-btn--flat v-btn--icon theme--light"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  chevron_right
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`pbehavior-recurrence-rule-periods Renders \`pbehavior-recurrence-rule-periods\` without entities 1`] = `
+<div>
+  <div
+    class="layout justify-space-between align-center"
+  >
+    <div
+      class="layout justify-center"
+    >
+      <span
+        class="title"
+      >
+        Periods
+      </span>
+    </div>
+    <c-action-btn-stub
+      icon="event_note"
+      tooltip="Calendar with periods"
+    />
+  </div>
+  <div
+    class="layout mt-2"
+  >
+    <div
+      class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
+      role="combobox"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-select__slot"
+          >
+            <label
+              aria-hidden="true"
+              class="v-label v-label--active theme--light"
+              style="left: 0px; position: absolute;"
+            >
+              Range
+            </label>
+            <div
+              class="v-select__selections"
+            >
+              <div
+                class="v-select__selection v-select__selection--comma"
+              >
+                This week
+              </div>
+              <input
+                aria-label="Range"
+                aria-readonly="false"
+                autocomplete="on"
+                readonly="readonly"
+                type="text"
+              />
+            </div>
+            <div
+              class="v-input__append-inner"
+            >
+              <div
+                class="v-input__icon v-input__icon--append"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  arrow_drop_down
+                </i>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-menu"
+          />
+        </div>
+        <div
+          class="v-text-field__details"
+        >
+          <div
+            class="v-messages theme--light"
+          >
+            <div
+              class="v-messages__wrapper"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="layout"
+  >
+    <div
+      class="data-iterator v-data-iterator theme--light"
+    >
+      <div>
+        <div
+          class="flex"
+        >
+          <transition-stub
+            name="fade-transition"
+          >
+            <div
+              aria-valuemax="100"
+              aria-valuemin="0"
+              class="v-progress-linear progress ma-0"
+              role="progressbar"
+              style="height: 3px; display: none;"
+            >
+              <div
+                class="v-progress-linear__background primary"
+                style="height: 3px; opacity: 0.3; width: 100%;"
+              />
+              <div
+                class="v-progress-linear__bar"
+              >
+                <transition-stub
+                  name="fade-transition"
+                >
+                  <div
+                    class="v-progress-linear__bar__indeterminate v-progress-linear__bar__indeterminate--active"
+                  >
+                    <div
+                      class="v-progress-linear__bar__indeterminate long primary"
+                    />
+                    <div
+                      class="v-progress-linear__bar__indeterminate short primary"
+                    />
+                  </div>
+                </transition-stub>
+                <transition-stub
+                  name="slide-x-transition"
+                />
+              </div>
+            </div>
+          </transition-stub>
+        </div>
+      </div>
+      <div>
+        <div
+          class="text-xs-center"
+          style="width: 100%;"
+        >
+          No data available
+        </div>
+      </div>
+      <div>
+        <div
+          class="v-data-iterator__actions"
+        >
+          <div
+            class="v-data-iterator__actions__select"
+          >
+            Items per page:
+            <div
+              class="v-input v-text-field v-select v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+              role="combobox"
+            >
+              <div
+                class="v-input__control"
+              >
+                <div
+                  class="v-input__slot"
+                >
+                  <div
+                    class="v-select__slot"
+                  >
+                    <div
+                      class="v-select__selections"
+                    >
+                      <div
+                        class="v-select__selection v-select__selection--comma"
+                      >
+                        5
+                      </div>
+                      <input
+                        aria-label="Items per page:"
+                        aria-readonly="false"
+                        autocomplete="on"
+                        readonly="readonly"
+                        type="text"
+                      />
+                    </div>
+                    <div
+                      class="v-input__append-inner"
+                    >
+                      <div
+                        class="v-input__icon v-input__icon--append"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="v-icon material-icons theme--light"
+                        >
+                          arrow_drop_down
+                        </i>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="v-menu"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="v-data-iterator__actions__range-controls"
+          >
+            <div
+              class="v-data-iterator__actions__pagination"
+            >
+              –
+            </div>
+            <button
+              aria-label="Previous page"
+              class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
+              disabled="disabled"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  chevron_left
+                </i>
+              </div>
+            </button>
+            <button
+              aria-label="Next page"
+              class="v-btn v-btn--disabled v-btn--flat v-btn--icon theme--light"
+              disabled="disabled"
+              type="button"
+            >
+              <div
+                class="v-btn__content"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                >
+                  chevron_right
+                </i>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -19,66 +19,35 @@
 # ---------------------------------
 
 from __future__ import unicode_literals
+from canopsis.common import root_path
+from canopsis.old.storage import get_storage
+from canopsis.old.account import Account
+from canopsis.logger import Logger
+from canopsis.confng import Configuration, Ini
+from canopsis.common.amqp import AmqpPublisher
+from canopsis.common.amqp import get_default_connection as \
+    get_default_amqp_connection
+from bottle import default_app as BottleApplication
+from signal import SIGTERM, SIGINT
+import bottle
+import sys
+import os
+import importlib
+import gevent
 
 # DO NOT EVER MODIFY THE 2 LINES BELOW OR UNDESIRED BEHAVIOR ***WILL** HAPPEN.
 from gevent import monkey
 monkey.patch_all()
 
-import beaker
-import gevent
-import importlib
-import os
-import sys
 
-import bottle
-
-from signal import SIGTERM, SIGINT
-from bottle import default_app as BottleApplication, HTTPError
-from beaker.middleware import SessionMiddleware
-
-from canopsis.common.amqp import get_default_connection as \
-    get_default_amqp_connection
-from canopsis.common.amqp import AmqpPublisher
-from canopsis.confng import Configuration, Ini
-from canopsis.confng.helpers import cfg_to_array
-from canopsis.logger import Logger
-from canopsis.old.account import Account
 # TODO: replace with canopsis.mongo.MongoStorage
-from canopsis.old.storage import get_storage
-from canopsis.webcore.services import session as session_module
-from canopsis.common import root_path
-from canopsis.common.middleware import SetSameSiteCookie
-from canopsis.vendor import mongodb_beaker
 
 DEFAULT_DEBUG = False
 DEFAULT_ECSE = False
 DEFAULT_ROOT_DIR = '~/var/www/src/'
-DEFAULT_COOKIES_EXPIRE = 300
-DEFAULT_SECRET = 'canopsis'
 DEFAULT_DATA_DIR = '~/var/cache/canopsis/webcore/'
 
 bottle.BaseRequest.MEMFILE_MAX = 1024*1024*1024
-
-
-class EnsureAuthenticated(object):
-    name = 'EnsureAuthenticated'
-    handle_logout = False
-
-    def __init__(self, ws, *args, **kwargs):
-        super(EnsureAuthenticated, self).__init__(*args, **kwargs)
-
-        self.ws = ws
-        self.session = session_module
-
-    def apply(self, callback, context):
-        def decorated(*args, **kwargs):
-            s = self.session.get()
-            if not s.get('auth_on', False):
-                return HTTPError(401, 'Not authorized')
-
-            return callback(*args, **kwargs)
-
-        return decorated
 
 
 class OldApi():
@@ -118,20 +87,6 @@ class OldApi():
         self.root_directory = os.path.expanduser(
             server.get('root_directory', DEFAULT_ROOT_DIR))
 
-        auth = self.config.get('auth', {})
-        self.providers = cfg_to_array(auth.get('providers', ''))
-        if len(self.providers) == 0:
-            self.logger.critical(
-                'Missing providers. Cannot launch webcore module.')
-            raise RuntimeError('Missing providers')
-
-        session = self.config.get('session', {})
-        self.secure_cookie = session.get('secure_cookie', 'false') == 'true'
-        self.cookie_expires = int(session.get('cookie_expires',
-                                              DEFAULT_COOKIES_EXPIRE))
-        self.secret = session.get('secret', DEFAULT_SECRET)
-        self.data_dir = os.path.expanduser(session.get('data_dir', DEFAULT_DATA_DIR))
-
         self.webservices = self.config.get('webservices', {})
 
         # TODO: Replace with MongoStorage
@@ -148,9 +103,7 @@ class OldApi():
         self.logger.info('Initialize WSGI Application')
         self.app = BottleApplication()
 
-        self.load_auth_backends()
         self.load_webservices()
-        self.load_session()
 
         self.logger.info('WSGI fully loaded.')
         return self
@@ -199,59 +152,6 @@ class OldApi():
 
         self.logger.info(u'Service loading completed.')
 
-    def _load_auth_backend(self, modname):
-        if modname in self.auth_backends:
-            return True
-
-        self.logger.info('Load authentication backend: {0}'.format(modname))
-
-        try:
-            mod = importlib.import_module(modname)
-
-        except ImportError as err:
-            self.logger.error(
-                'Impossible to load authentication backend {}: {}'.format(
-                    modname, err
-                )
-            )
-
-            return False
-
-        else:
-            backend = mod.get_backend(self)
-            self.auth_backends[backend.name] = backend
-            self.app.install(backend)
-
-        return True
-
-    def load_auth_backends(self):
-        for provider in self.providers:
-            self._load_auth_backend(provider)
-
-        # Always add this backend which returns 401 when the login fails
-        backend = EnsureAuthenticated(self)
-        self.auth_backends[backend.name] = backend
-        self.app.install(backend)
-
-    def load_session(self):
-        # Since we vendor mongodb_beaker because of broken dep on pypi.python.org
-        # we need to setup the beaker class map manually.
-        beaker.cache.clsmap['mongodb'] = mongodb_beaker.MongoDBNamespaceManager
-        self.app = SessionMiddleware(self.app, {
-            'session.type': 'mongodb',
-            'session.cookie_expires': self.cookie_expires,
-            'session.url': self.beaker_url,
-            'session.secret': self.secret,
-            'session.lock_dir': self.data_dir
-        })
-        self.app = SetSameSiteCookie(self.app, secure=self.secure_cookie)
-
-    def unload_session(self):
-        pass
-
-    def unload_auth_backends(self):
-        pass
-
     def unload_webservices(self):
         pass
 
@@ -259,9 +159,7 @@ class OldApi():
         if not self.stopping:
             self.stopping = True
 
-            self.unload_session()
             self.unload_webservices()
-            self.unload_auth_backends()
             self.amqp_pub.connection.disconnect()
 
             sys.exit(0)

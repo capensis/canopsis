@@ -1,3 +1,5 @@
+import { createNamespacedHelpers } from 'vuex';
+
 import {
   MODALS,
   WEATHER_ACK_EVENT_OUTPUT,
@@ -6,21 +8,33 @@ import {
   PBEHAVIOR_TYPE_TYPES,
 } from '@/constants';
 
+import { mapIds } from '@/helpers/entities';
 import { isActionTypeAvailableForEntity } from '@/helpers/entities/entity';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
-import { entitiesPbehaviorTypesMixin } from '@/mixins/entities/pbehavior/types';
+import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
+import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
+
+const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
 
 export const widgetActionPanelServiceEntityMixin = {
   mixins: [
     authMixin,
-    entitiesPbehaviorTypesMixin,
+    entitiesPbehaviorTypeMixin,
     entitiesPbehaviorMixin,
+    entitiesPbehaviorTypeMixin,
+    entitiesDeclareTicketRuleMixin,
+    entitiesDeclareTicketRuleMixin,
   ],
   data() {
     return {
       unavailableEntitiesAction: {},
+      pendingByActionType: Object.values(WEATHER_ACTIONS_TYPES).reduce((acc, type) => {
+        acc[type] = false;
+
+        return acc;
+      }, {}),
     };
   },
   computed: {
@@ -29,7 +43,8 @@ export const widgetActionPanelServiceEntityMixin = {
      */
     actionsMethodsMap() {
       return {
-        [WEATHER_ACTIONS_TYPES.entityAck]: this.addAckActionToQueue,
+        [WEATHER_ACTIONS_TYPES.entityAck]: this.applyAckAction,
+        [WEATHER_ACTIONS_TYPES.entityAckRemove]: this.showAckRemoveModal,
         [WEATHER_ACTIONS_TYPES.entityAssocTicket]: this.showCreateAssociateTicketModal,
         [WEATHER_ACTIONS_TYPES.entityValidate]: this.addValidateActionToQueue,
         [WEATHER_ACTIONS_TYPES.entityInvalidate]: this.addInvalidateActionToQueue,
@@ -42,11 +57,23 @@ export const widgetActionPanelServiceEntityMixin = {
     },
   },
   methods: {
+    ...mapAlarmActions({ fetchAlarmItemWithoutStore: 'fetchItemWithoutStore' }),
+
+    fetchAlarmsByEntities(entities) {
+      return Promise.all(
+        entities.map(({ alarm_id: alarmId }) => this.fetchAlarmItemWithoutStore({ id: alarmId })),
+      );
+    },
+
+    setActionPendingByType(type, value) {
+      this.pendingByActionType[type] = value;
+    },
+
     removeEntityFromUnavailable(entity) {
       this.unavailableEntitiesAction[entity._id] = false;
     },
 
-    addActionToQueue(action) {
+    applyAction(action) {
       const {
         availableEntities,
         unavailableEntities,
@@ -69,13 +96,13 @@ export const widgetActionPanelServiceEntityMixin = {
         return acc;
       }, {});
 
-      this.$emit('add:action', {
+      this.$emit('apply:action', {
         ...action,
         entities: availableEntities,
       });
     },
 
-    addEntityAction(actionType, entities) {
+    applyEntityAction(actionType, entities) {
       const handler = this.actionsMethodsMap[actionType];
 
       if (handler) {
@@ -97,39 +124,102 @@ export const widgetActionPanelServiceEntityMixin = {
         : true;
     },
 
-    addAckActionToQueue(entities) {
-      this.addActionToQueue({
+    applyAckAction(entities) {
+      this.applyAction({
         entities,
         actionType: WEATHER_ACTIONS_TYPES.entityAck,
       });
     },
 
-    showCreateAssociateTicketModal(entities) {
+    showAckRemoveModal(entities) {
       this.$modals.show({
         name: MODALS.textFieldEditor,
         config: {
-          title: this.$t('modals.createAssociateTicket.title'),
+          title: this.$t('modals.createAckRemove.title'),
           field: {
-            name: 'ticket',
-            label: this.$t('modals.createAssociateTicket.fields.ticket'),
+            name: 'output',
+            label: this.$t('common.note'),
             validationRules: 'required',
           },
-          action: (ticket) => {
-            this.addActionToQueue({
+          action: ({ output }) => {
+            this.applyAction({
               entities,
-              actionType: WEATHER_ACTIONS_TYPES.entityAssocTicket,
-              payload: { ticket },
+              payload: { output },
+              actionType: WEATHER_ACTIONS_TYPES.entityAckRemove,
             });
           },
         },
       });
     },
 
-    showCreateDeclareTicketModal(entities) {
-      this.addActionToQueue({
-        actionType: WEATHER_ACTIONS_TYPES.declareTicket,
-        entities,
-      });
+    async showCreateAssociateTicketModal(entities) {
+      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityAssocTicket, true);
+
+      try {
+        const alarms = await this.fetchAlarmsByEntities(entities);
+
+        this.$modals.show({
+          name: MODALS.createAssociateTicketEvent,
+          config: {
+            items: alarms,
+            action: (event) => {
+              this.applyAction({
+                entities,
+                actionType: WEATHER_ACTIONS_TYPES.entityAssocTicket,
+                payload: event,
+              });
+            },
+          },
+        });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityAssocTicket, false);
+      }
+    },
+
+    async showCreateDeclareTicketModal(entities) {
+      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.declareTicket, true);
+
+      try {
+        const alarms = await this.fetchAlarmsByEntities(entities);
+
+        const {
+          by_rules: alarmsByTickets,
+          by_alarms: ticketsByAlarms,
+        } = await this.fetchAssignedDeclareTicketsWithoutStore({
+          params: {
+            alarms: mapIds(alarms),
+          },
+        });
+
+        this.$modals.show({
+          name: MODALS.createDeclareTicketEvent,
+          config: {
+            items: alarms,
+            alarmsByTickets,
+            ticketsByAlarms,
+            action: (events) => {
+              this.$modals.show({
+                name: MODALS.executeDeclareTickets,
+                config: {
+                  executions: events,
+                  tickets: events.map(({ _id: id }) => ({
+                    _id: id,
+                    name: alarmsByTickets[id].name,
+                  })),
+                  alarms,
+                  onExecute: () => this.$emit('refresh'),
+                },
+              });
+            },
+          },
+        });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.setActionPendingByType(WEATHER_ACTIONS_TYPES.declareTicket, false);
+      }
     },
 
     showCreateCommentEventModal(entities) {
@@ -137,7 +227,7 @@ export const widgetActionPanelServiceEntityMixin = {
         name: MODALS.createCommentEvent,
         config: {
           action: ({ output }) => {
-            this.addActionToQueue({
+            this.applyAction({
               entities,
               actionType: WEATHER_ACTIONS_TYPES.entityComment,
               payload: { output },
@@ -148,14 +238,14 @@ export const widgetActionPanelServiceEntityMixin = {
     },
 
     addValidateActionToQueue(entities) {
-      this.addActionToQueue({
+      this.applyAction({
         actionType: WEATHER_ACTIONS_TYPES.entityValidate,
         entities,
       });
     },
 
     addInvalidateActionToQueue(entities) {
-      this.addActionToQueue({
+      this.applyAction({
         entities,
         actionType: WEATHER_ACTIONS_TYPES.entityInvalidate,
         payload: {
@@ -173,7 +263,7 @@ export const widgetActionPanelServiceEntityMixin = {
 
             const pauseType = defaultPbehaviorTypes.find(({ type }) => type === PBEHAVIOR_TYPE_TYPES.pause);
 
-            this.addActionToQueue({
+            this.applyAction({
               entities,
               actionType: WEATHER_ACTIONS_TYPES.entityPause,
               payload: {
@@ -188,7 +278,7 @@ export const widgetActionPanelServiceEntityMixin = {
     },
 
     addPlayActionToQueue(entities) {
-      this.addActionToQueue({
+      this.applyAction({
         entities,
         actionType: WEATHER_ACTIONS_TYPES.entityPlay,
       });
@@ -198,9 +288,9 @@ export const widgetActionPanelServiceEntityMixin = {
       this.$modals.show({
         name: MODALS.textFieldEditor,
         config: {
-          title: this.$t('common.output'),
+          title: this.$t('common.note'),
           action: (output) => {
-            this.addActionToQueue({
+            this.applyAction({
               entities,
               actionType: WEATHER_ACTIONS_TYPES.entityCancel,
               payload: { output },

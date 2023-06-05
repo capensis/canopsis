@@ -56,7 +56,7 @@ Voici la configuration qui correspond aux captures d'écran visibles au début d
 
 ### Linkbuilder personnalisé
 
-Un [guide de développement](../../guide-developpement/dev-linkbuilder.md)
+Un [guide de développement](../../guide-developpement/linkbuilder/index.md)
 traite de la conception de linkbuilders personnalisés.
 
 ### Mise en œuvre backend

@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`patterns-form Renders \`patterns-form\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <input
+    class="v-text-field"
+    error-messages=""
+    label="Title"
+    name="title"
+  />
+  <c-patterns-field-stub
+    class="mt-2"
+    some-required="some-required"
+    value="[object Object]"
+    with-alarm="true"
+    with-entity="true"
+    with-event="true"
+    with-pbehavior="true"
+  />
+</div>
+`;
+
+exports[`patterns-form Renders \`patterns-form\` with default props 1`] = `
+<div
+  class="layout column"
+>
+  <!---->
+  <c-patterns-field-stub
+    class="mt-2"
+    some-required="some-required"
+    value="[object Object]"
+  />
+</div>
+`;

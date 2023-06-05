@@ -1,0 +1,174 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`mermaid-editor Renders \`mermaid-editor\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout mermaid-editor mb-2"
+    style="min-height: 500px;"
+  >
+    <div
+      class="flex mermaid-editor__sidebar"
+    >
+      <mermaid-code-editor-stub
+        class="fill-height"
+        value=""
+      />
+    </div>
+    <div
+      class="flex mermaid-editor__content"
+    >
+      <div
+        class="layout mermaid-editor__toolbar px-2 row align-center justify-end"
+      >
+        <add-location-btn-stub
+          class="mr-2"
+        />
+        <mermaid-theme-field-stub
+          class="mermaid-editor__theme-picker"
+          label=""
+          name="type"
+          value="base"
+        />
+      </div>
+      <div
+        class="mermaid-editor__preview"
+      >
+        <mermaid-code-preview-stub
+          config="[object Object]"
+          name="mermaid"
+          theme="base"
+          value=""
+        />
+        <mermaid-points-editor-stub
+          class="mermaid-editor__points"
+          markersize="24"
+          points=""
+        />
+      </div>
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`mermaid-editor Renders \`mermaid-editor\` with form 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout mermaid-editor mb-2"
+    style="min-height: 500px;"
+  >
+    <div
+      class="flex mermaid-editor__sidebar"
+    >
+      <mermaid-code-editor-stub
+        class="fill-height"
+        value=""
+      />
+    </div>
+    <div
+      class="flex mermaid-editor__content"
+    >
+      <div
+        class="layout mermaid-editor__toolbar px-2 row align-center justify-end"
+      >
+        <add-location-btn-stub
+          class="mr-2"
+        />
+        <mermaid-theme-field-stub
+          class="mermaid-editor__theme-picker"
+          label=""
+          name="type"
+          value="base"
+        />
+      </div>
+      <div
+        class="mermaid-editor__preview"
+      >
+        <mermaid-code-preview-stub
+          config="[object Object]"
+          name="mermaid"
+          theme="base"
+          value=""
+        />
+        <mermaid-points-editor-stub
+          class="mermaid-editor__points"
+          markersize="24"
+          points=""
+        />
+      </div>
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`mermaid-editor Renders \`mermaid-editor\` with validation errors  1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout mermaid-editor mb-2"
+    style="min-height: 500px; border-color: #ff5252;"
+  >
+    <div
+      class="flex mermaid-editor__sidebar"
+    >
+      <mermaid-code-editor-stub
+        class="fill-height"
+        value=""
+      />
+    </div>
+    <div
+      class="flex mermaid-editor__content"
+    >
+      <div
+        class="layout mermaid-editor__toolbar px-2 row align-center justify-end"
+      >
+        <add-location-btn-stub
+          class="mr-2"
+        />
+        <mermaid-theme-field-stub
+          class="mermaid-editor__theme-picker"
+          label=""
+          name="type"
+          value="base"
+        />
+      </div>
+      <div
+        class="mermaid-editor__preview"
+      >
+        <mermaid-code-preview-stub
+          config="[object Object]"
+          name="mermaid"
+          theme="base"
+          value=""
+        />
+        <mermaid-points-editor-stub
+          class="mermaid-editor__points"
+          markersize="24"
+          points=""
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="v-messages theme--light error--text"
+  >
+    <transition-group-stub
+      class="v-messages__wrapper"
+      name="message-transition"
+      tag="div"
+    >
+      <div
+        class="v-messages__message"
+      >
+        The diagram and points must be added
+      </div>
+    </transition-group-stub>
+  </div>
+</div>
+`;

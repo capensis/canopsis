@@ -33,7 +33,7 @@ Feature: create and update meta alarm
     """
     When I wait the end of 2 events processing
     When I save response createTimestamp={{ now }}
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-1&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -268,7 +268,7 @@ Feature: create and update meta alarm
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-2&correlation=true
     Then the response code should be 200
     When I save response metaAlarmEntityID={{ (index .lastResponse.data 0).entity._id }}
     When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
@@ -406,7 +406,7 @@ Feature: create and update meta alarm
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-3&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -437,7 +437,7 @@ Feature: create and update meta alarm
       }
     }
     """
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-3&correlation=true
     Then the response code should be 200
     When I do POST /api/v4/alarm-details:
     """json
@@ -501,7 +501,7 @@ Feature: create and update meta alarm
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-4&correlation=true
     Then the response code should be 200
     When I save response metaAlarmEntityID={{ (index .lastResponse.data 0).entity._id }}
     When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
@@ -654,7 +654,7 @@ Feature: create and update meta alarm
     """
     When I save response resolveTimestamp={{ now }}
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true until response code is 200 and response key "data.0.v.resolved" is greater or equal than 1
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-5&correlation=true until response code is 200 and response key "data.0.v.resolved" is greater or equal than 1
 
   Scenario: given meta alarm child and check with inc state event should update parent state
     Given I am admin
@@ -686,7 +686,7 @@ Feature: create and update meta alarm
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-6&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -717,7 +717,7 @@ Feature: create and update meta alarm
       }
     }
     """
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-6&correlation=true
     Then the response code should be 200
     When I do POST /api/v4/alarm-details:
     """json
@@ -795,7 +795,7 @@ Feature: create and update meta alarm
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-7&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -826,7 +826,7 @@ Feature: create and update meta alarm
       }
     }
     """
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-7&correlation=true
     Then the response code should be 200
     When I do POST /api/v4/alarm-details:
     """json
@@ -890,7 +890,7 @@ Feature: create and update meta alarm
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-8&correlation=true
     Then the response code should be 200
     When I save response metaAlarmEntityID={{ (index .lastResponse.data 0).entity._id }}
     When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
@@ -1034,7 +1034,7 @@ Feature: create and update meta alarm
     ]
     """
     When I wait the end of 4 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-9&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1238,7 +1238,7 @@ Feature: create and update meta alarm
     ]
     """
     When I wait the end of 4 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-10&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1469,7 +1469,7 @@ Feature: create and update meta alarm
     ]
     """
     When I wait the end of 3 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-11&correlation=true
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1614,7 +1614,7 @@ Feature: create and update meta alarm
     }
     """
     When I wait the end of 3 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID1 }}&active_columns[]=v.meta&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-12&correlation=true&sort_by=v.output&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1639,22 +1639,43 @@ Feature: create and update meta alarm
               "val": 1
             }
           }
+        },
+        {
+          "v": {
+            "output": "Rule: test-metaalarmrule-axe-correlation-12-2; Count: 1; Children: test-component-axe-correlation-12",
+            "children": [
+              "test-resource-axe-correlation-12/test-component-axe-correlation-12"
+            ],
+            "component": "metaalarm",
+            "connector": "engine",
+            "connector_name": "correlation",
+            "meta": "{{ .metaAlarmRuleID2 }}",
+            "state": {
+              "_t": "stateinc",
+              "val": 3
+            },
+            "status": {
+              "_t": "statusinc",
+              "val": 1
+            }
+          }
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 2
       }
     }
     """
-    When I save response metaAlarmEntityID1={{ (index .lastResponse.data 0).entity._id }}
+    When I save response metaAlarmID1={{ (index .lastResponse.data 0)._id }}
+    When I save response metaAlarmID2={{ (index .lastResponse.data 1)._id }}
     When I do POST /api/v4/alarm-details:
     """json
     [
       {
-        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "_id": "{{ .metaAlarmID1 }}",
         "children": {
           "page": 1,
           "sort_by": "v.resource",
@@ -1692,47 +1713,11 @@ Feature: create and update meta alarm
       }
     ]
     """
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID2 }}&active_columns[]=v.meta&with_consequences=true&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "v": {
-            "output": "Rule: test-metaalarmrule-axe-correlation-12-2; Count: 1; Children: test-component-axe-correlation-12",
-            "children": [
-              "test-resource-axe-correlation-12/test-component-axe-correlation-12"
-            ],
-            "component": "metaalarm",
-            "connector": "engine",
-            "connector_name": "correlation",
-            "meta": "{{ .metaAlarmRuleID2 }}",
-            "state": {
-              "_t": "stateinc",
-              "val": 3
-            },
-            "status": {
-              "_t": "statusinc",
-              "val": 1
-            }
-          }
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
-    When I save response metaAlarmEntityID2={{ (index .lastResponse.data 0).entity._id }}
     When I do POST /api/v4/alarm-details:
     """json
     [
       {
-        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "_id": "{{ .metaAlarmID2 }}",
         "children": {
           "page": 1,
           "sort_by": "v.resource",
@@ -1851,7 +1836,7 @@ Feature: create and update meta alarm
     }
     """
     When I wait the end of 3 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID1 }}&active_columns[]=v.meta&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-13&correlation=true&sort_by=v.output&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1873,22 +1858,40 @@ Feature: create and update meta alarm
               "val": 1
             }
           }
+        },
+        {
+          "v": {
+            "output": "Rule: test-metaalarmrule-axe-correlation-13-2; Count: 2; Children: test-component-axe-correlation-13",
+            "component": "metaalarm",
+            "connector": "engine",
+            "connector_name": "correlation",
+            "meta": "{{ .metaAlarmRuleID2 }}",
+            "state": {
+              "_t": "stateinc",
+              "val": 3
+            },
+            "status": {
+              "_t": "statusinc",
+              "val": 1
+            }
+          }
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 2
       }
     }
     """
-    When I save response metaAlarmEntityID1={{ (index .lastResponse.data 0).entity._id }}
+    When I save response metaAlarmID1={{ (index .lastResponse.data 0)._id }}
+    When I save response metaAlarmID2={{ (index .lastResponse.data 1)._id }}
     When I do POST /api/v4/alarm-details:
     """json
     [
       {
-        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "_id": "{{ .metaAlarmID1 }}",
         "children": {
           "page": 1,
           "sort_by": "v.resource",
@@ -1934,44 +1937,11 @@ Feature: create and update meta alarm
       }
     ]
     """
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID2 }}&active_columns[]=v.meta&with_consequences=true&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "v": {
-            "output": "Rule: test-metaalarmrule-axe-correlation-13-2; Count: 2; Children: test-component-axe-correlation-13",
-            "component": "metaalarm",
-            "connector": "engine",
-            "connector_name": "correlation",
-            "meta": "{{ .metaAlarmRuleID2 }}",
-            "state": {
-              "_t": "stateinc",
-              "val": 3
-            },
-            "status": {
-              "_t": "statusinc",
-              "val": 1
-            }
-          }
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
-    When I save response metaAlarmEntityID2={{ (index .lastResponse.data 0).entity._id }}
     When I do POST /api/v4/alarm-details:
     """json
     [
       {
-        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "_id": "{{ .metaAlarmID2 }}",
         "children": {
           "page": 1,
           "sort_by": "v.resource",
@@ -2120,7 +2090,7 @@ Feature: create and update meta alarm
     }
     """
     When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-14&correlation=true
     Then the response code should be 200
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
     When I save response metaAlarmEntityID={{ (index .lastResponse.data 0).entity._id }}
@@ -2304,7 +2274,7 @@ Feature: create and update meta alarm
     When I do GET /api/v4/alarms?search=test-resource-axe-correlation-15-1
     Then the response code should be 200
     When I save response metaAlarmEntityID={{ (index (index .lastResponse.data 0).v.parents 0) }}
-    When I do GET /api/v4/alarms?search={{ .metaAlarmEntityID }}&active_columns[]=d&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-15&correlation=true&sort_by=v.meta&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -2312,7 +2282,7 @@ Feature: create and update meta alarm
       "data": [
         {
           "v": {
-            "output": "",
+            "output": "test-output-axe-correlation-15",
             "component": "metaalarm",
             "connector": "engine",
             "connector_name": "correlation",
@@ -2326,13 +2296,18 @@ Feature: create and update meta alarm
               "val": 1
             }
           }
+        },
+        {
+          "v": {
+            "resource": "test-resource-axe-correlation-15-3"
+          }
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 2
       }
     }
     """
@@ -2628,7 +2603,7 @@ Feature: create and update meta alarm
     }
     """
     When I wait the end of event processing
-    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID }}&active_columns[]=v.meta&with_consequences=true&correlation=true
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-16&correlation=true
     Then the response code should be 200
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
     When I save response metaalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
@@ -2827,6 +2802,809 @@ Feature: create and update meta alarm
               "page_count": 1,
               "per_page": 10,
               "total_count": 5
+            }
+          }
+        }
+      }
+    ]
+    """
+
+  Scenario: given meta alarm child and cancel event should update parent state
+    Given I am admin
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "name": "test-metaalarmrule-axe-correlation-17-1",
+      "type": "attribute",
+      "auto_resolve": false,
+      "output_template": "{{ `{{ .Rule.ID }}` }}",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-axe-correlation-17"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then I save response metaAlarmRuleID1={{ .lastResponse._id }}
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "name": "test-metaalarmrule-axe-correlation-17-2",
+      "type": "attribute",
+      "auto_resolve": true,
+      "output_template": "{{ `{{ .Rule.ID }}` }}",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-axe-correlation-17"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then I save response metaAlarmRuleID2={{ .lastResponse._id }}
+    When I wait the next periodical process
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-axe-correlation-17",
+      "connector_name": "test-connector-name-axe-correlation-17",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-axe-correlation-17",
+      "resource": "test-resource-axe-correlation-17",
+      "state": 2,
+      "output": "test-output-axe-correlation-17"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-17&correlation=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "v": {
+            "children": [
+              "test-resource-axe-correlation-17/test-component-axe-correlation-17"
+            ],
+            "component": "metaalarm",
+            "connector": "engine",
+            "connector_name": "correlation",
+            "state": {
+              "val": 2
+            },
+            "status": {
+              "val": 1
+            }
+          }
+        },
+        {
+          "is_meta_alarm": true,
+          "v": {
+            "children": [
+              "test-resource-axe-correlation-17/test-component-axe-correlation-17"
+            ],
+            "component": "metaalarm",
+            "connector": "engine",
+            "connector_name": "correlation",
+            "state": {
+              "val": 2
+            },
+            "status": {
+              "val": 1
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-axe-correlation-17",
+      "connector_name": "test-connector-name-axe-correlation-17",
+      "source_type": "resource",
+      "event_type": "cancel",
+      "component":  "test-component-axe-correlation-17",
+      "resource": "test-resource-axe-correlation-17",
+      "output": "test-output-axe-correlation-17"
+    }
+    """
+    When I wait the end of event processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-axe-correlation-17",
+      "connector_name": "test-connector-name-axe-correlation-17",
+      "source_type": "resource",
+      "event_type": "resolve_cancel",
+      "component":  "test-component-axe-correlation-17",
+      "resource": "test-resource-axe-correlation-17",
+      "output": "test-output-axe-correlation-17"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID1 }}&active_columns[]=v.output&correlation=true&opened=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "v": {
+            "children": [
+              "test-resource-axe-correlation-17/test-component-axe-correlation-17"
+            ],
+            "component": "metaalarm",
+            "connector": "engine",
+            "connector_name": "correlation",
+            "meta": "{{ .metaAlarmRuleID1 }}",
+            "state": {
+              "val": 0
+            },
+            "status": {
+              "val": 0
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?search={{ .metaAlarmRuleID2 }}&active_columns[]=v.output&correlation=true&opened=false until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "v": {
+            "children": [
+              "test-resource-axe-correlation-17/test-component-axe-correlation-17"
+            ],
+            "component": "metaalarm",
+            "connector": "engine",
+            "connector_name": "correlation",
+            "meta": "{{ .metaAlarmRuleID2 }}",
+            "state": {
+              "val": 2
+            },
+            "status": {
+              "val": 1
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  Scenario: given meta alarm and assoc ticket event should ticket to children
+    Given I am admin
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "name": "test-metaalarmrule-axe-correlation-18",
+      "type": "attribute",
+      "auto_resolve": true,
+      "output_template": "some",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-axe-correlation-18"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    Then I save response metaAlarmRuleID={{ .lastResponse._id }}
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-axe-correlation-18",
+      "connector_name": "test-connector-name-axe-correlation-18",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-axe-correlation-18",
+      "resource": "test-resource-axe-correlation-18-1",
+      "state": 2,
+      "output": "test-output-axe-correlation-18"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I send an event:
+    """json
+    {
+      "connector": "test-connector-axe-correlation-18",
+      "connector_name": "test-connector-name-axe-correlation-18",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-axe-correlation-18",
+      "resource": "test-resource-axe-correlation-18-2",
+      "state": 2,
+      "output": "test-output-axe-correlation-18"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-18&correlation=true
+    Then the response code should be 200
+    When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
+    When I save response metaAlarmEntityID={{ (index .lastResponse.data 0).entity._id }}
+    When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
+    When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
+    When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
+    When I save response metaAlarmResource={{ (index .lastResponse.data 0).v.resource }}
+    When I send an event:
+    """json
+    {
+      "connector": "{{ .metaAlarmConnector }}",
+      "connector_name": "{{ .metaAlarmConnectorName }}",
+      "source_type": "resource",
+      "event_type": "assocticket",
+      "component":  "{{ .metaAlarmComponent }}",
+      "resource": "{{ .metaAlarmResource }}",
+      "author": "test-author-axe-correlation-18",
+      "initiator": "user",
+      "ticket": "test-ticket-axe-correlation-18",
+      "ticket_url": "test-url-axe-correlation-18",
+      "ticket_system_name": "test-system-name-axe-correlation-18",
+      "ticket_data": {
+        "ticket_param_1": "ticket_value_1"
+      },
+      "ticket_comment": "test-comment-axe-correlation-18"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-18-1
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "test-author-axe-correlation-18",
+                "user_id": "root",
+                "initiator": "system",
+                "m": "Ticket ID: test-ticket-axe-correlation-18. Ticket URL: test-url-axe-correlation-18. Ticket ticket_param_1: ticket_value_1.",
+                "ticket": "test-ticket-axe-correlation-18",
+                "ticket_url": "test-url-axe-correlation-18",
+                "ticket_system_name": "test-system-name-axe-correlation-18",
+                "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-comment-axe-correlation-18"
+              }
+            ],
+            "ticket": {
+              "_t": "assocticket",
+              "a": "test-author-axe-correlation-18",
+              "user_id": "root",
+              "initiator": "system",
+              "m": "Ticket ID: test-ticket-axe-correlation-18. Ticket URL: test-url-axe-correlation-18. Ticket ticket_param_1: ticket_value_1.",
+              "ticket": "test-ticket-axe-correlation-18",
+              "ticket_url": "test-url-axe-correlation-18",
+              "ticket_system_name": "test-system-name-axe-correlation-18",
+              "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
+              "ticket_data": {
+                "ticket_param_1": "ticket_value_1"
+              },
+              "ticket_comment": "test-comment-axe-correlation-18"
+            },
+            "children": [],
+            "component": "test-component-axe-correlation-18",
+            "connector": "test-connector-axe-correlation-18",
+            "connector_name": "test-connector-name-axe-correlation-18",
+            "parents": [
+              "{{ .metaAlarmEntityID }}"
+            ],
+            "resource": "test-resource-axe-correlation-18-1",
+            "state": {
+              "val": 2
+            },
+            "status": {
+              "val": 1
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc",
+                "val": 2
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "metaalarmattach"
+              },
+              {
+                "_t": "assocticket",
+                "a": "test-author-axe-correlation-18",
+                "user_id": "root",
+                "initiator": "system",
+                "m": "Ticket ID: test-ticket-axe-correlation-18. Ticket URL: test-url-axe-correlation-18. Ticket ticket_param_1: ticket_value_1.",
+                "ticket": "test-ticket-axe-correlation-18",
+                "ticket_url": "test-url-axe-correlation-18",
+                "ticket_system_name": "test-system-name-axe-correlation-18",
+                "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-comment-axe-correlation-18"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
+          }
+        }
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-18-2
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "tickets": [
+              {
+                "_t": "assocticket",
+                "a": "test-author-axe-correlation-18",
+                "user_id": "root",
+                "initiator": "system",
+                "m": "Ticket ID: test-ticket-axe-correlation-18. Ticket URL: test-url-axe-correlation-18. Ticket ticket_param_1: ticket_value_1.",
+                "ticket": "test-ticket-axe-correlation-18",
+                "ticket_url": "test-url-axe-correlation-18",
+                "ticket_system_name": "test-system-name-axe-correlation-18",
+                "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-comment-axe-correlation-18"
+              }
+            ],
+            "ticket": {
+              "_t": "assocticket",
+              "a": "test-author-axe-correlation-18",
+              "user_id": "root",
+              "initiator": "system",
+              "m": "Ticket ID: test-ticket-axe-correlation-18. Ticket URL: test-url-axe-correlation-18. Ticket ticket_param_1: ticket_value_1.",
+              "ticket": "test-ticket-axe-correlation-18",
+              "ticket_url": "test-url-axe-correlation-18",
+              "ticket_system_name": "test-system-name-axe-correlation-18",
+              "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
+              "ticket_data": {
+                "ticket_param_1": "ticket_value_1"
+              },
+              "ticket_comment": "test-comment-axe-correlation-18"
+            },
+            "children": [],
+            "component": "test-component-axe-correlation-18",
+            "connector": "test-connector-axe-correlation-18",
+            "connector_name": "test-connector-name-axe-correlation-18",
+            "parents": [
+              "{{ .metaAlarmEntityID }}"
+            ],
+            "resource": "test-resource-axe-correlation-18-2",
+            "state": {
+              "val": 2
+            },
+            "status": {
+              "val": 1
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc",
+                "val": 2
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "metaalarmattach"
+              },
+              {
+                "_t": "assocticket",
+                "a": "test-author-axe-correlation-18",
+                "user_id": "root",
+                "initiator": "system",
+                "m": "Ticket ID: test-ticket-axe-correlation-18. Ticket URL: test-url-axe-correlation-18. Ticket ticket_param_1: ticket_value_1.",
+                "ticket": "test-ticket-axe-correlation-18",
+                "ticket_url": "test-url-axe-correlation-18",
+                "ticket_system_name": "test-system-name-axe-correlation-18",
+                "ticket_meta_alarm_id": "{{ .metaAlarmID }}",
+                "ticket_data": {
+                  "ticket_param_1": "ticket_value_1"
+                },
+                "ticket_comment": "test-comment-axe-correlation-18"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
+          }
+        }
+      }
+    ]
+    """
+
+  Scenario: given manual meta alarm and added child should inherit metaalarm actions
+    Given I am admin
+    When I send an event:
+    """json
+    [
+      {
+        "connector": "test-connector-axe-correlation-19",
+        "connector_name": "test-connector-name-axe-correlation-19",
+        "source_type": "resource",
+        "event_type": "check",
+        "component":  "test-component-axe-correlation-19",
+        "resource": "test-resource-axe-correlation-19-1",
+        "state": 1,
+        "output": "test-output-axe-correlation-19"
+      },
+      {
+        "connector": "test-connector-axe-correlation-19",
+        "connector_name": "test-connector-name-axe-correlation-19",
+        "source_type": "resource",
+        "event_type": "check",
+        "component":  "test-component-axe-correlation-19",
+        "resource": "test-resource-axe-correlation-19-2",
+        "state": 2,
+        "output": "test-output-axe-correlation-19"
+      },
+      {
+        "connector": "test-connector-axe-correlation-19",
+        "connector_name": "test-connector-name-axe-correlation-19",
+        "source_type": "resource",
+        "event_type": "check",
+        "component":  "test-component-axe-correlation-19",
+        "resource": "test-resource-axe-correlation-19-3",
+        "state": 3,
+        "output": "test-output-axe-correlation-19"
+      }
+    ]
+    """
+    When I wait the end of 3 events processing
+    When I send an event:
+    """json
+    {
+      "connector": "engine",
+      "connector_name": "correlation",
+      "source_type": "component",
+      "event_type": "manual_metaalarm_group",
+      "component":  "metaalarm",
+      "output": "test-output-axe-correlation-19",
+      "display_name": "test-metaAlarm-axe-correlation-19",
+      "ma_children": [
+        "test-resource-axe-correlation-19-1/test-component-axe-correlation-19",
+        "test-resource-axe-correlation-19-2/test-component-axe-correlation-19"
+      ]
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-19-1&correlation=true
+    Then the response code should be 200
+    When I save response metaAlarmEntityID={{ (index .lastResponse.data 0).entity._id }}
+    When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
+    When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
+    When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
+    When I save response metaAlarmResource={{ (index .lastResponse.data 0).v.resource }}
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-19&correlation=true&sort_by=v.meta&sort=desc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "output": "test-output-axe-correlation-19",
+            "component": "metaalarm",
+            "connector": "engine",
+            "connector_name": "correlation",
+            "display_name": "test-metaAlarm-axe-correlation-19",
+            "state": {
+              "_t": "stateinc",
+              "val": 2
+            },
+            "status": {
+              "_t": "statusinc",
+              "val": 1
+            }
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-axe-correlation-19-3"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
+    When I send an event:
+    """json
+    {
+      "connector": "{{ .metaAlarmConnector }}",
+      "connector_name": "{{ .metaAlarmConnectorName }}",
+      "source_type": "resource",
+      "event_type": "ack",
+      "component":  "{{ .metaAlarmComponent }}",
+      "resource": "{{ .metaAlarmResource }}",
+      "output": "test-ack-19"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I send an event:
+    """json
+    {
+      "connector": "{{ .metaAlarmConnector }}",
+      "connector_name": "{{ .metaAlarmConnectorName }}",
+      "source_type": "resource",
+      "event_type": "assocticket",
+      "component":  "{{ .metaAlarmComponent }}",
+      "resource": "{{ .metaAlarmResource }}",
+      "ticket": "ticket-19"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I send an event:
+    """json
+    {
+      "connector": "{{ .metaAlarmConnector }}",
+      "connector_name": "{{ .metaAlarmConnectorName }}",
+      "source_type": "resource",
+      "event_type": "comment",
+      "component":  "{{ .metaAlarmComponent }}",
+      "resource": "{{ .metaAlarmResource }}",
+      "output": "comment-19"
+    }
+    """
+    When I wait the end of 3 events processing
+    When I send an event:
+    """json
+    {
+      "connector": "{{ .metaAlarmConnector }}",
+      "connector_name": "{{ .metaAlarmConnectorName }}",
+      "source_type": "resource",
+      "event_type": "snooze",
+      "component":  "{{ .metaAlarmComponent }}",
+      "resource": "{{ .metaAlarmResource }}",
+      "duration": 3600
+    }
+    """
+    When I wait the end of 3 events processing
+    When I send an event:
+    """json
+    {
+      "connector": "engine",
+      "connector_name": "correlation",
+      "source_type": "component",
+      "event_type": "manual_metaalarm_update",
+      "component":  "metaalarm",
+      "output": "test-output-axe-correlation-19",
+      "ma_parents": [ "{{ .metaAlarmEntityID }}" ],
+      "ma_children": [
+        "test-resource-axe-correlation-19-3/test-component-axe-correlation-19"
+      ]
+    }
+    """
+    When I wait the end of 6 events processing
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmID }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "component": "test-component-axe-correlation-19",
+                  "connector": "test-connector-axe-correlation-19",
+                  "connector_name": "test-connector-name-axe-correlation-19",
+                  "resource": "test-resource-axe-correlation-19-1",
+                  "parents": ["{{ .metaAlarmEntityID }}"],
+                  "ack": {
+                    "a": "root",
+                    "m": "test-ack-19"
+                  },
+                  "ticket": {
+                    "a": "root",
+                    "m": "Ticket ID: ticket-19."
+                  },
+                  "last_comment": {
+                    "a": "root",
+                    "m": "comment-19"
+                  },
+                  "snooze": {
+                    "a": "root"
+                  }
+                }
+              },
+              {
+                "v": {
+                  "component": "test-component-axe-correlation-19",
+                  "connector": "test-connector-axe-correlation-19",
+                  "connector_name": "test-connector-name-axe-correlation-19",
+                  "resource": "test-resource-axe-correlation-19-2",
+                  "parents": ["{{ .metaAlarmEntityID }}"],
+                  "ack": {
+                    "a": "root",
+                    "m": "test-ack-19"
+                  },
+                  "ticket": {
+                    "a": "root",
+                    "m": "Ticket ID: ticket-19."
+                  },
+                  "last_comment": {
+                    "a": "root",
+                    "m": "comment-19"
+                  },
+                  "snooze": {
+                    "a": "root"
+                  }
+                }
+              },
+              {
+                "v": {
+                  "component": "test-component-axe-correlation-19",
+                  "connector": "test-connector-axe-correlation-19",
+                  "connector_name": "test-connector-name-axe-correlation-19",
+                  "resource": "test-resource-axe-correlation-19-3",
+                  "parents": ["{{ .metaAlarmEntityID }}"],
+                  "ack": {
+                    "a": "root",
+                    "m": "test-ack-19"
+                  },
+                  "ticket": {
+                    "a": "root",
+                    "m": "Ticket ID: ticket-19."
+                  },
+                  "last_comment": {
+                    "a": "root",
+                    "m": "comment-19"
+                  },
+                  "snooze": {
+                    "a": "root"
+                  }
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
             }
           }
         }

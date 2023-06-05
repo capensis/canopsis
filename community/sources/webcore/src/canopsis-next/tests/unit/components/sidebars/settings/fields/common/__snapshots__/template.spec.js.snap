@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`field-template Renders \`field-template\` with custom props 1`] = `
+<div
+  class="container pa-3 fluid"
+>
+  <div
+    class="layout align-center justify-space-between"
+  >
+    <div
+      class="subheading"
+    >
+      Custom title
+    </div>
+    <button
+      class="primary v-btn v-btn--small theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        Show/Edit
+      </div>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`field-template Renders \`field-template\` with required props 1`] = `
+<div
+  class="container pa-3 fluid"
+>
+  <div
+    class="layout align-center justify-space-between"
+  >
+    <div
+      class="subheading"
+    >
+      Custom required title
+    </div>
+    <button
+      class="primary v-btn v-btn--small theme--light"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        Show/Edit
+      </div>
+    </button>
+  </div>
+</div>
+`;

@@ -45,6 +45,17 @@ pbehavior_exception:
         type: test-type-to-exception-edit-2
     name: test-exception-to-get-2-name
 
+  exception_to_get_3:
+    <<: *exception
+    _id: test-exception-to-get-3
+    created: 1592215037
+    description: test-exception-to-get-3-description
+    exdates:
+      - begin: 1591164001
+        end: 1591167601
+        type: test-type-to-exception-edit-3
+    name: test-exception-to-get-3-name
+
   exception_to_delete_used_by_pbehavior:
     <<: *exception
     _id: test-exception-to-delete-used-by-pbehavior

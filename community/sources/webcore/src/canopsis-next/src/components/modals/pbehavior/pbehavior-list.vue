@@ -10,8 +10,6 @@
         template(#tstop="{ item }") {{ item.tstop | timezone($system.timezone) }}
         template(#rrule="{ item }")
           v-icon {{ item.rrule ? 'check' : 'clear' }}
-        template(#expand="{ item }")
-          pbehaviors-list-expand-item(:pbehavior="item")
         template(#actions="{ item }")
           v-layout(row)
             c-action-btn(
@@ -26,6 +24,8 @@
             )
         template(#is_active_status="{ item }")
           v-icon(:color="item.is_active_status ? 'primary' : 'error'") $vuetify.icons.settings_sync
+        template(#expand="{ item }")
+          pbehaviors-list-expand-item(:pbehavior="item")
       v-layout(justify-end)
         c-action-fab-btn(
           :tooltip="$t('modals.pbehaviorsCalendar.title')",
@@ -51,10 +51,12 @@
 <script>
 import { MODALS, CRUD_ACTIONS } from '@/constants';
 
+import { createEntityIdPatternByValue } from '@/helpers/pattern';
+
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 
-import PbehaviorsListExpandItem from '@/components/other/pbehavior/exploitation/pbehaviors-list-expand-item.vue';
+import PbehaviorsListExpandItem from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-list-expand-item.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -73,19 +75,19 @@ export default {
     headers() {
       return [
         { text: this.$t('common.name'), value: 'name' },
-        { text: this.$t('common.author'), value: 'author' },
-        { text: this.$t('pbehaviors.isEnabled'), value: 'enabled' },
-        { text: this.$t('pbehaviors.begins'), value: 'tstart' },
-        { text: this.$t('pbehaviors.ends'), value: 'tstop' },
-        { text: this.$t('pbehaviors.type'), value: 'type.name' },
-        { text: this.$t('pbehaviors.reason'), value: 'reason.name' },
-        { text: this.$t('pbehaviors.rrule'), value: 'rrule' },
+        { text: this.$t('common.author'), value: 'author.name' },
+        { text: this.$t('pbehavior.isEnabled'), value: 'enabled' },
+        { text: this.$t('pbehavior.begins'), value: 'tstart' },
+        { text: this.$t('pbehavior.ends'), value: 'tstop' },
+        { text: this.$t('common.type'), value: 'type.name' },
+        { text: this.$t('common.reason'), value: 'reason.name' },
+        { text: this.$t('common.recurrence'), value: 'rrule' },
         { text: this.$t('common.status'), value: 'is_active_status', sortable: false },
         { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
       ];
     },
     availableActions() {
-      return this.modal.config.availableActions || [];
+      return this.modal.config.availableActions ?? [];
     },
 
     hasAccessToEditPbehavior() {
@@ -108,7 +110,9 @@ export default {
     },
   },
   mounted() {
-    this.fetchPbehaviorsByEntityId({ id: this.modal.config.entityId });
+    this.fetchPbehaviorsByEntityId({
+      params: { _id: this.modal.config.entityId },
+    });
   },
   methods: {
     showRemovePbehaviorModal(pbehaviorId) {
@@ -124,9 +128,7 @@ export default {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          filter: {
-            _id: { $in: [this.modal.config.entityId] },
-          },
+          entityPattern: createEntityIdPatternByValue(this.modal.config.entityId),
         },
       });
     },
@@ -136,7 +138,7 @@ export default {
         name: MODALS.createPbehavior,
         config: {
           pbehavior,
-          noFilter: true,
+          noPattern: true,
           timezone: this.$system.timezone,
           action: data => this.updatePbehavior({ data, id: pbehavior._id }),
         },

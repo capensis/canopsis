@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"log"
 	"os"
 	"strconv"
 	"time"
@@ -22,41 +20,40 @@ const (
 	DefaultWaitFirstAttempt = 10
 )
 
-func getValue(paramName string, defaultValue int) int {
-	value := os.Getenv(paramName)
+func GracefulStart(ctx context.Context, withPostgres, withTechPostgres bool, logger zerolog.Logger) error {
+	maxRetry := getEnv(EnvCpsStartMaxRetry, DefaultMaxRetry, logger)
+	retryDelay := time.Second * time.Duration(getEnv(EnvCpsStartRetryDelay, DefaultRetryDelay, logger))
+	waitFirstAttempt := time.Second * time.Duration(getEnv(EnvCpsStartWaitFirst, DefaultWaitFirstAttempt, logger))
 
+	logger.Info().Msgf("waiting %s before first attempt", waitFirstAttempt.String())
+	t := time.NewTimer(waitFirstAttempt)
+	defer t.Stop()
+
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-t.C:
+	}
+
+	return ready.CheckAll(ctx, retryDelay, maxRetry, withPostgres, withTechPostgres, logger)
+}
+
+func getEnv(paramName string, defaultValue int, logger zerolog.Logger) int {
+	value := os.Getenv(paramName)
 	if value == "" {
 		return defaultValue
 	}
 
 	res, err := strconv.Atoi(value)
 	if err != nil {
-		log.Fatalf("graceful start: getValue: %s=%v: %v", paramName, value, err)
+		logger.Warn().Err(err).Msgf("%q must be an integer, use default value instead", paramName)
+		return defaultValue
 	}
+
+	if res <= 0 {
+		logger.Warn().Err(err).Msgf("%q must be greater than zero, use default value instead", paramName)
+		return defaultValue
+	}
+
 	return res
-}
-
-// GracefullStart will try to initialize every
-func GracefullStart(ctx context.Context, logger zerolog.Logger) error {
-	maxRetry := getValue(EnvCpsStartMaxRetry, DefaultMaxRetry)
-	retryDelay, err := time.ParseDuration(fmt.Sprintf("%ds", getValue(EnvCpsStartRetryDelay, DefaultRetryDelay)))
-
-	if err != nil {
-		return fmt.Errorf("retry delay: %v", err)
-	}
-
-	waitFirstAttempt, err := time.ParseDuration(fmt.Sprintf("%ds", getValue(EnvCpsStartWaitFirst, DefaultWaitFirstAttempt)))
-	if err != nil {
-		return fmt.Errorf("wait first attempt: %v", err)
-	}
-
-	logger.Info().Msgf("waiting %s before first attempt", waitFirstAttempt.String())
-	time.Sleep(waitFirstAttempt)
-
-	logger.Info().Msg("checking")
-	ready.Abort(ready.Check(ctx, ready.CheckRedis, "redis", retryDelay, maxRetry))
-	ready.Abort(ready.Check(ctx, ready.CheckMongo, "mongo", retryDelay, maxRetry))
-	ready.Abort(ready.Check(ctx, ready.CheckAMQP, "amqp", retryDelay, maxRetry))
-
-	return nil
 }

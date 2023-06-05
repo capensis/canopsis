@@ -1,0 +1,137 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-pattern-rules-field Renders \`c-pattern-rules-field\` with custom props 1`] = `
+<div
+  class="layout column"
+  required="required"
+>
+  <div
+    class="layout row justify-space-between align-center"
+  >
+    <div
+      class="flex"
+    >
+      <c-pattern-rule-field-stub
+        attributes="[object Object]"
+        disabled="true"
+        name="key 1"
+        operators="equal,not_equal,contains,not_contains,begins_with,not_begin_with,ends_with,not_end_with,regexp"
+        rule="[object Object]"
+      />
+    </div>
+    <c-action-btn-stub
+      disabled="true"
+      tooltip="Remove rule"
+      type="delete"
+    />
+  </div>
+  <div
+    class="layout row justify-space-between align-center"
+  >
+    <div
+      class="flex"
+    >
+      <c-pattern-rule-field-stub
+        attributes="[object Object]"
+        disabled="true"
+        name="key 2"
+        operators="equal,not_equal,contains,not_contains,begins_with,not_begin_with,ends_with,not_end_with,regexp"
+        rule="[object Object]"
+      />
+    </div>
+    <c-action-btn-stub
+      disabled="true"
+      tooltip="Remove rule"
+      type="delete"
+    />
+  </div>
+  <div
+    class="layout row justify-space-between align-center"
+  >
+    <div
+      class="flex"
+    >
+      <c-pattern-rule-field-stub
+        attributes="[object Object]"
+        disabled="true"
+        name="key 3"
+        operators="equal,not_equal,contains,not_contains,begins_with,not_begin_with,ends_with,not_end_with,regexp"
+        rule="[object Object]"
+      />
+    </div>
+    <c-action-btn-stub
+      disabled="true"
+      tooltip="Remove rule"
+      type="delete"
+    />
+  </div>
+  <div
+    class="layout row justify-space-between align-center"
+  >
+    <div
+      class="flex"
+    >
+      <c-pattern-rule-field-stub
+        attributes="[object Object]"
+        customprop="customPropValue"
+        disabled="true"
+        operators="not_equal"
+        rule="[object Object]"
+      />
+    </div>
+    <c-action-btn-stub
+      disabled="true"
+      tooltip="Remove rule"
+      type="delete"
+    />
+  </div>
+  <div
+    class="layout row align-center"
+  >
+    <button
+      class="ml-0 v-btn v-btn--disabled v-btn--outline v-btn--depressed theme--light primary--text"
+      disabled="disabled"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        Add rule
+      </div>
+    </button>
+    <span
+      class="error--text"
+      style="display: none;"
+    >
+      The rules include excluded rule.
+    </span>
+  </div>
+</div>
+`;
+
+exports[`c-pattern-rules-field Renders \`c-pattern-rules-field\` with default props 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout row align-center"
+  >
+    <button
+      class="ml-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        Add rule
+      </div>
+    </button>
+    <span
+      class="error--text"
+      style="display: none;"
+    >
+      The rules include excluded rule.
+    </span>
+  </div>
+</div>
+`;

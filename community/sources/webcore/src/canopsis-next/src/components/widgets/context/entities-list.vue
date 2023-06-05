@@ -1,142 +1,99 @@
 <template lang="pug">
-  div
-    c-empty-data-table-columns(v-if="!hasColumns")
-    c-advanced-data-table(
-      v-else,
-      :items="contextEntities",
-      :headers="headers",
-      :loading="contextEntitiesPending || columnsFiltersPending",
-      :total-items="contextEntitiesMeta.total_count",
-      :pagination.sync="vDataTablePagination",
-      :toolbar-props="toolbarProps",
-      select-all,
-      expand,
-      no-pagination
-    )
-      template(#toolbar="")
-        v-flex
-          c-advanced-search-field(
-            :query.sync="query",
-            :columns="columns",
-            :tooltip="$t('search.contextAdvancedSearch')"
-          )
-        v-flex(v-if="hasAccessToCategory")
-          c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
-        v-flex
+  entities-list-table-with-pagination(
+    :widget="widget",
+    :entities="contextEntities",
+    :pending="contextEntitiesPending",
+    :meta="contextEntitiesMeta",
+    :query.sync="query",
+    :columns="widget.parameters.widgetColumns",
+    selectable
+  )
+    template(#toolbar="")
+      v-flex
+        c-advanced-search-field(
+          :query.sync="query",
+          :columns="widget.parameters.widgetColumns",
+          :tooltip="$t('context.advancedSearch')"
+        )
+      v-flex(v-if="hasAccessToCategory")
+        c-entity-category-field.mr-3(:category="query.category", @input="updateCategory")
+      v-flex
+        v-layout(v-if="hasAccessToUserFilter", row, align-center)
           filter-selector(
             :label="$t('settings.selectAFilter')",
-            :filters="viewFilters",
-            :locked-filters="widgetViewFilters",
+            :filters="userPreference.filters",
+            :locked-filters="widget.filters",
             :value="mainFilter",
-            :condition="mainFilterCondition",
-            :has-access-to-edit-filter="hasAccessToEditFilter",
-            :has-access-to-user-filter="hasAccessToUserFilter",
-            :has-access-to-list-filters="hasAccessToListFilters",
-            :entities-type="$constants.ENTITIES_TYPES.entity",
-            @input="updateSelectedFilter",
-            @update:condition="updateSelectedCondition",
-            @update:filters="updateFilters"
+            :locked-value="lockedFilter",
+            :disabled="!hasAccessToListFilters",
+            @input="updateSelectedFilter"
           )
-        v-flex
-          v-checkbox(
-            :input-value="query.no_events",
-            :label="$t('context.noEventsFilter')",
-            color="primary",
-            @change="updateNoEvents"
+          filters-list-btn(
+            v-if="hasAccessToAddFilter || hasAccessToEditFilter",
+            :widget-id="widget._id",
+            :addable="hasAccessToAddFilter",
+            :editable="hasAccessToEditFilter",
+            private,
+            with-alarm,
+            with-entity,
+            with-pbehavior
           )
-        v-flex(v-if="hasAccessToCreateEntity")
-          context-fab
-        v-flex(v-if="hasAccessToExportAsCsv")
-          c-action-btn(
-            :loading="!!contextExportPending",
-            :tooltip="$t('settings.exportAsCsv')",
-            icon="cloud_download",
-            color="black",
-            @click="exportContextList"
-          )
-        v-flex(v-if="hasColumns", xs12)
-          v-layout(row, wrap, align-center)
-            c-pagination(
-              :page="query.page",
-              :limit="query.rowsPerPage",
-              :total="contextEntitiesMeta.total_count",
-              type="top",
-              @input="updateQueryPage"
-            )
-      template(v-for="column in columns", :slot="column.value", slot-scope="props")
-        entity-column-cell(
-          :entity="props.item",
-          :column="column",
-          :columns-filters="columnsFilters"
+      v-flex
+        v-checkbox.pt-2(
+          :input-value="query.no_events",
+          :label="$t('context.noEventsFilter')",
+          color="primary",
+          @change="updateNoEvents"
         )
-      template(#actions="{ item }")
-        actions-panel(:item="item", :editing="editing")
-      template(#expand="{ item }")
-        entities-list-expand-panel(
-          :item="item",
-          :widget="widget",
-          :tab-id="tabId",
-          :columns-filters="columnsFilters"
+      v-flex(v-if="hasAccessToCreateEntity")
+        context-fab
+      v-flex(v-if="hasAccessToExportAsCsv")
+        c-action-btn(
+          :loading="downloading",
+          :tooltip="$t('settings.exportAsCsv')",
+          icon="cloud_download",
+          @click="exportContextList"
         )
-      template(#mass-actions="{ selected, clearSelected }")
-        mass-actions-panel.ml-3(:items="selected", @clear:items="clearSelected")
-
-    c-table-pagination(
-      :total-items="contextEntitiesMeta.total_count",
-      :rows-per-page="query.limit",
-      :page="query.page",
-      @update:page="updateQueryPage",
-      @update:rows-per-page="updateRecordsPerPage"
-    )
 </template>
 
 <script>
-import { omit, isString, isObject } from 'lodash';
+import { isObject } from 'lodash';
+
+import { API_HOST, API_ROUTES } from '@/config';
 
 import { USERS_PERMISSIONS } from '@/constants';
 
-import { prepareMainFilterToQueryFilter } from '@/helpers/filter';
-
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
-import { widgetColumnsContextMixin } from '@/mixins/widget/columns';
-import { exportCsvMixinCreator } from '@/mixins/widget/export';
+import { exportMixinCreator } from '@/mixins/widget/export';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
-import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
 import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
 import { permissionsWidgetsContextCategory } from '@/mixins/permissions/widgets/context/category';
 
 import FilterSelector from '@/components/other/filter/filter-selector.vue';
+import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
 
-import EntityColumnCell from './columns-formatting/entity-column-cell.vue';
-import EntitiesListExpandPanel from './partials/entities-list-expand-panel.vue';
 import ContextFab from './actions/context-fab.vue';
-import ActionsPanel from './actions/actions-panel.vue';
-import MassActionsPanel from './actions/mass-actions-panel.vue';
+import EntitiesListTableWithPagination from './partials/entities-list-table-with-pagination.vue';
 
 export default {
   components: {
     FilterSelector,
-    EntitiesListExpandPanel,
+    FiltersListBtn,
     ContextFab,
-    EntityColumnCell,
-    ActionsPanel,
-    MassActionsPanel,
+    EntitiesListTableWithPagination,
   },
   mixins: [
     authMixin,
     widgetFetchQueryMixin,
-    widgetColumnsContextMixin,
     widgetFilterSelectMixin,
     entitiesContextEntityMixin,
-    entitiesAlarmColumnsFiltersMixin,
     permissionsWidgetsContextFilters,
     permissionsWidgetsContextCategory,
-    exportCsvMixinCreator({
+    exportMixinCreator({
       createExport: 'createContextExport',
       fetchExport: 'fetchContextExport',
-      fetchExportFile: 'fetchContextCsvFile',
     }),
   ],
   props: {
@@ -144,36 +101,13 @@ export default {
       type: Object,
       required: true,
     },
-    editing: {
-      type: Boolean,
-      required: true,
-    },
   },
   data() {
     return {
-      columnsFilters: [],
-      columnsFiltersPending: false,
+      downloading: false,
     };
   },
   computed: {
-    toolbarProps() {
-      return {
-        'justify-space-between': true,
-        'align-center': true,
-      };
-    },
-
-    headers() {
-      if (this.hasColumns) {
-        return [
-          ...this.columns,
-          { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
-        ];
-      }
-
-      return [];
-    },
-
     hasAccessToCreateEntity() {
       return this.checkAccess(USERS_PERMISSIONS.business.context.actions.createEntity);
     },
@@ -181,11 +115,6 @@ export default {
     hasAccessToExportAsCsv() {
       return this.checkAccess(USERS_PERMISSIONS.business.context.actions.exportAsCsv);
     },
-  },
-  async mounted() {
-    this.columnsFiltersPending = true;
-    this.columnsFilters = await this.fetchAlarmColumnsFiltersList();
-    this.columnsFiltersPending = false;
   },
   methods: {
     updateNoEvents(noEvents) {
@@ -196,6 +125,7 @@ export default {
       this.query = {
         ...this.query,
 
+        page: 1,
         no_events: noEvents,
       };
     },
@@ -210,55 +140,15 @@ export default {
       this.query = {
         ...this.query,
 
+        page: 1,
         category: categoryId,
       };
     },
 
-    updateQueryBySelectedFilterAndCondition(filter, condition) {
-      this.query = {
-        ...this.query,
-
-        page: 1,
-        mainFilter: prepareMainFilterToQueryFilter(filter, condition),
-      };
-    },
-
-    getQuery() {
-      const query = omit(this.query, [
-        'sortKey',
-        'sortDir',
-        'mainFilter',
-        'searchFilter',
-        'typesFilter',
-      ]);
-
-      if (this.query.sortKey) {
-        query.sort = this.query.sortDir.toLowerCase();
-        query.sort_by = this.query.sortKey;
-      }
-
-      const filters = ['mainFilter', 'typesFilter'].reduce((acc, filterKey) => {
-        const queryFilter = isString(this.query[filterKey]) ? JSON.parse(this.query[filterKey]) : this.query[filterKey];
-
-        if (queryFilter) {
-          acc.push(queryFilter);
-        }
-
-        return acc;
-      }, []);
-
-      if (filters.length) {
-        query.filter = {
-          $and: filters,
-        };
-      }
-
-      return query;
-    },
-
     fetchList() {
-      if (this.hasColumns) {
+      if (this.widget.parameters.widgetColumns.length) {
         const params = this.getQuery();
+
         params.with_flags = true;
 
         this.fetchContextEntitiesList({
@@ -268,7 +158,7 @@ export default {
       }
     },
 
-    exportContextList() {
+    getExportQuery() {
       const query = this.getQuery();
       const {
         widgetExportColumns,
@@ -276,25 +166,36 @@ export default {
         exportCsvSeparator,
         exportCsvDatetimeFormat,
       } = this.widget.parameters;
-      const columns = widgetExportColumns && widgetExportColumns.length
-        ? widgetExportColumns
-        : widgetColumns;
+      const columns = widgetExportColumns?.length ? widgetExportColumns : widgetColumns;
 
-      this.exportAsCsv({
-        name: `${this.widget._id}-${new Date().toLocaleString()}`,
-        widgetId: this.widget._id,
-        data: {
-          fields: columns.map(({ label, value }) => ({ label, name: value })),
-          search: query.search,
-          category: query.category,
-          filter: JSON.stringify(query.filter),
-          separator: exportCsvSeparator,
-          /**
-           * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
-           */
-          time_format: isObject(exportCsvDatetimeFormat) ? exportCsvDatetimeFormat.value : exportCsvDatetimeFormat,
-        },
-      });
+      return {
+        fields: columns.map(({ value, text }) => ({ name: value, label: text })),
+        search: query.search,
+        category: query.category,
+        filters: query.filters,
+        separator: exportCsvSeparator,
+        /**
+         * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/3997
+         */
+        time_format: isObject(exportCsvDatetimeFormat) ? exportCsvDatetimeFormat.value : exportCsvDatetimeFormat,
+      };
+    },
+
+    async exportContextList() {
+      this.downloading = true;
+
+      try {
+        const fileData = await this.generateFile({
+          widgetId: this.widget._id,
+          data: this.getExportQuery(),
+        });
+
+        this.downloadFile(`${API_HOST}${API_ROUTES.contextExport}/${fileData._id}/download`);
+      } catch (err) {
+        this.$popups.error({ text: this.$t('context.popups.exportFailed') });
+      } finally {
+        this.downloading = false;
+      }
     },
   },
 };

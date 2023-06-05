@@ -1,6 +1,7 @@
 package entitycategory
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -24,8 +25,16 @@ type Category struct {
 	Updated *types.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
 }
 
+type Response struct {
+	ID      string         `bson:"_id" json:"_id"`
+	Name    string         `bson:"name" json:"name"`
+	Author  *author.Author `bson:"author" json:"author"`
+	Created *types.CpsTime `bson:"created" json:"created"`
+	Updated *types.CpsTime `bson:"updated" json:"updated"`
+}
+
 type AggregationResult struct {
-	Data       []Category `bson:"data" json:"data"`
+	Data       []Response `bson:"data" json:"data"`
 	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 

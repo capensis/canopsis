@@ -10,6 +10,7 @@ export const RESPONSE_MESSAGES_TYPES = {
   ok: 1,
   error: 2,
   close: 3,
+  authenticated: 4,
 };
 
 export const MAX_RECONNECTS_COUNT = 10;

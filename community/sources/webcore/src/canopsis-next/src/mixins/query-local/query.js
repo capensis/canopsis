@@ -86,5 +86,3 @@ export const localQueryMixin = {
 
   fetchList() {},
 };
-
-export default localQueryMixin;

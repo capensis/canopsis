@@ -2,6 +2,7 @@ package executor
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -31,7 +32,6 @@ func NewInstructionExecutor(metricsSender metrics.Sender) operation.Executor {
 			// Job
 			types.EventTypeInstructionJobStarted:   types.AlarmStepInstructionJobStart,
 			types.EventTypeInstructionJobCompleted: types.AlarmStepInstructionJobComplete,
-			types.EventTypeInstructionJobAborted:   types.AlarmStepInstructionJobAbort,
 			types.EventTypeInstructionJobFailed:    types.AlarmStepInstructionJobFail,
 		},
 		alarmChangeTypeMap: map[string]types.AlarmChangeType{
@@ -50,7 +50,6 @@ func NewInstructionExecutor(metricsSender metrics.Sender) operation.Executor {
 			// Job
 			types.EventTypeInstructionJobStarted:   types.AlarmChangeTypeInstructionJobStart,
 			types.EventTypeInstructionJobCompleted: types.AlarmChangeTypeInstructionJobComplete,
-			types.EventTypeInstructionJobAborted:   types.AlarmChangeTypeInstructionJobAbort,
 			types.EventTypeInstructionJobFailed:    types.AlarmChangeTypeInstructionJobFail,
 		},
 		metricsSender: metricsSender,
@@ -59,24 +58,24 @@ func NewInstructionExecutor(metricsSender metrics.Sender) operation.Executor {
 
 func (e *instructionExecutor) Exec(
 	_ context.Context,
-	operation types.Operation,
+	op types.Operation,
 	alarm *types.Alarm,
 	_ *types.Entity,
 	time types.CpsTime,
 	userID, role, initiator string,
 ) (types.AlarmChangeType, error) {
-	params := operation.Parameters
+	params := op.Parameters
 
 	if userID == "" {
 		userID = params.User
 	}
 
-	alarmStepType, ok := e.alarmStepTypeMap[operation.Type]
+	alarmStepType, ok := e.alarmStepTypeMap[op.Type]
 	if !ok {
 		return "", nil
 	}
 
-	alarmChangeType, ok := e.alarmChangeTypeMap[operation.Type]
+	alarmChangeType, ok := e.alarmChangeTypeMap[op.Type]
 	if !ok {
 		return "", nil
 	}
@@ -95,9 +94,45 @@ func (e *instructionExecutor) Exec(
 		return "", err
 	}
 
+	instrID := params.Instruction
 	switch alarmChangeType {
+	case types.AlarmStepInstructionComplete, types.AlarmStepInstructionFail:
+		assigned := false
+		for _, assignedInstr := range alarm.KpiAssignedInstructions {
+			if assignedInstr == instrID {
+				assigned = true
+				break
+			}
+		}
+
+		if !assigned {
+			break
+		}
+
+		executed := false
+		for _, executedInstr := range alarm.KpiExecutedInstructions {
+			if executedInstr == instrID {
+				executed = true
+				break
+			}
+		}
+
+		if executed {
+			break
+		}
+
+		alarm.PartialUpdateAddExecutedInstruction(instrID)
+
+		if len(alarm.KpiExecutedInstructions) == 0 {
+			e.metricsSender.SendInstructionExecutionForAlarm(alarm.EntityID, time.Time)
+		}
+
+		e.metricsSender.SendInstructionExecutionForInstruction(instrID, time.Time)
 	case types.AlarmStepAutoInstructionStart:
-		go e.metricsSender.SendAutoInstructionStart(context.Background(), *alarm, time.Time)
+		e.metricsSender.SendAutoInstructionExecutionStart(*alarm, time.Time)
+	case types.AlarmStepAutoInstructionComplete, types.AlarmStepAutoInstructionFail:
+		alarm.PartialUpdateAddExecutedAutoInstruction(instrID)
+		e.metricsSender.SendAutoInstructionExecutionForInstruction(instrID, time.Time)
 	}
 
 	return alarmChangeType, nil

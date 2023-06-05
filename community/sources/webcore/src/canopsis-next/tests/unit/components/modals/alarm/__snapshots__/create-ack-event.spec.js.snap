@@ -1,0 +1,308 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`create-ack-event Renders \`create-ack-event\` with config data 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close="close"
+  >
+    <div
+      class="title"
+    >
+      <span>
+        Ack
+      </span>
+    </div>
+     
+    <div
+      class="text"
+    >
+      <div
+        class="layout column"
+      >
+        <alarm-general-table-stub
+          items="[object Object]"
+        />
+        <hr
+          class="v-divider theme--light"
+        />
+        <ack-event-form-stub
+          form="[object Object]"
+          hideackresources="true"
+          isnoterequired="true"
+        />
+        <div
+          class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+              style="height: auto;"
+            >
+              <div
+                class="v-input--radio-group__input"
+                role="radiogroup"
+              >
+                <label
+                  aria-hidden="true"
+                  class="v-label theme--light"
+                  style="left: 0px; position: relative;"
+                >
+                  Actions required
+                </label>
+                <div
+                  class="v-radio theme--light"
+                >
+                  <div
+                    class="v-input--selection-controls__input"
+                  >
+                    <input
+                      aria-checked="false"
+                      aria-label="Acknowledge"
+                      name="actionType"
+                      role="radio"
+                      type="radio"
+                      value="0"
+                    />
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      radio_button_unchecked
+                    </i>
+                  </div>
+                  <label
+                    aria-hidden="true"
+                    class="v-label theme--light"
+                    style="left: 0px; position: relative;"
+                  >
+                    Acknowledge
+                  </label>
+                </div>
+                <div
+                  class="v-radio theme--light"
+                >
+                  <div
+                    class="v-input--selection-controls__input"
+                  >
+                    <input
+                      aria-checked="false"
+                      aria-label="Acknowledge and associate ticket"
+                      name="actionType"
+                      role="radio"
+                      type="radio"
+                      value="1"
+                    />
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      radio_button_unchecked
+                    </i>
+                  </div>
+                  <label
+                    aria-hidden="true"
+                    class="v-label theme--light"
+                    style="left: 0px; position: relative;"
+                  >
+                    Acknowledge and associate ticket
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Submit
+        </div>
+      </button>
+    </div>
+  </div>
+</form>
+`;
+
+exports[`create-ack-event Renders \`create-ack-event\` with empty modal 1`] = `
+<form
+  class="v-form"
+  novalidate="novalidate"
+>
+  <div
+    class="modal-wrapper"
+    close="close"
+  >
+    <div
+      class="title"
+    >
+      <span>
+        Ack
+      </span>
+    </div>
+     
+    <div
+      class="text"
+    >
+      <div
+        class="layout column"
+      >
+        <alarm-general-table-stub
+          items="[object Object]"
+        />
+        <hr
+          class="v-divider theme--light"
+        />
+        <ack-event-form-stub
+          form="[object Object]"
+          hideackresources="true"
+        />
+        <div
+          class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details theme--light"
+        >
+          <div
+            class="v-input__control"
+          >
+            <div
+              class="v-input__slot"
+              style="height: auto;"
+            >
+              <div
+                class="v-input--radio-group__input"
+                role="radiogroup"
+              >
+                <label
+                  aria-hidden="true"
+                  class="v-label theme--light"
+                  style="left: 0px; position: relative;"
+                >
+                  Actions required
+                </label>
+                <div
+                  class="v-radio theme--light"
+                >
+                  <div
+                    class="v-input--selection-controls__input"
+                  >
+                    <input
+                      aria-checked="false"
+                      aria-label="Acknowledge"
+                      name="actionType"
+                      role="radio"
+                      type="radio"
+                      value="0"
+                    />
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      radio_button_unchecked
+                    </i>
+                  </div>
+                  <label
+                    aria-hidden="true"
+                    class="v-label theme--light"
+                    style="left: 0px; position: relative;"
+                  >
+                    Acknowledge
+                  </label>
+                </div>
+                <div
+                  class="v-radio theme--light"
+                >
+                  <div
+                    class="v-input--selection-controls__input"
+                  >
+                    <input
+                      aria-checked="false"
+                      aria-label="Acknowledge and associate ticket"
+                      name="actionType"
+                      role="radio"
+                      type="radio"
+                      value="1"
+                    />
+                    <div
+                      class="v-input--selection-controls__ripple"
+                    />
+                    <i
+                      aria-hidden="true"
+                      class="v-icon material-icons theme--light"
+                    >
+                      radio_button_unchecked
+                    </i>
+                  </div>
+                  <label
+                    aria-hidden="true"
+                    class="v-label theme--light"
+                    style="left: 0px; position: relative;"
+                  >
+                    Acknowledge and associate ticket
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+     
+    <div
+      class="actions"
+    >
+      <button
+        class="v-btn v-btn--flat theme--light"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Cancel
+        </div>
+      </button>
+      <button
+        class="primary v-btn theme--light"
+        type="submit"
+      >
+        <div
+          class="v-btn__content"
+        >
+          Submit
+        </div>
+      </button>
+    </div>
+  </div>
+</form>
+`;

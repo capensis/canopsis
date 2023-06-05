@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Store interface {
@@ -119,18 +120,14 @@ func (s store) Delete(ctx context.Context, id string) (bool, error) {
 
 func (s store) GetActive(ctx context.Context) ([]BroadcastMessage, error) {
 	now := time.Now().Unix()
-	cursor, err := s.dbCollection.Find(ctx, bson.M{"$and": bson.A{
-		bson.M{
-			"start": bson.M{
-				"$lte": now,
-			},
+	cursor, err := s.dbCollection.Find(ctx, bson.M{
+		"start": bson.M{
+			"$lte": now,
 		},
-		bson.M{
-			"end": bson.M{
-				"$gte": now,
-			},
+		"end": bson.M{
+			"$gte": now,
 		},
-	}})
+	}, options.Find().SetSort(bson.D{{Key: "start", Value: -1}, {Key: "_id", Value: 1}}))
 	if err != nil {
 		return nil, err
 	}

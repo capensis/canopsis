@@ -1,42 +1,31 @@
 <template lang="pug">
-  div
-    div
-      v-layout(wrap, justify-center)
-        v-flex
-          v-text-field(
-            v-field="form.name",
-            v-validate="'required'",
-            :label="$t('common.name')",
-            :error-messages="errors.collect('name')",
-            name="name"
-          )
-      v-layout
-        v-flex.pr-3(xs6)
-          c-entity-category-field(v-field="form.category", addable, required)
-        v-flex.pr-3(xs4)
-          c-state-type-field(
-            v-field="form.sli_avail_state",
-            :label="$t('service.availabilityState')",
-            required
-          )
-        v-flex(xs2)
-          c-impact-level-field(v-field="form.impact_level", required)
-      v-layout(wrap, justify-center)
-        v-flex
-          v-textarea(
-            v-field="form.output_template",
-            v-validate="'required'",
-            :label="$t('service.outputTemplate')",
-            :error-messages="errors.collect('output_template')",
-            name="output_template"
-          )
-      v-layout(wrap, justify-center)
-        v-flex
-          c-enabled-field(v-field="form.enabled")
+  v-layout(column)
+    c-name-field(v-field="form.name", required)
+    v-layout
+      v-flex.pr-3(xs6)
+        c-entity-category-field(v-field="form.category", addable, required)
+      v-flex.pr-3(xs4)
+        c-entity-state-field(
+          v-field="form.sli_avail_state",
+          :label="$t('service.availabilityState')",
+          required
+        )
+      v-flex(xs2)
+        c-impact-level-field(v-field="form.impact_level", required)
+    c-coordinates-field(v-field="form.coordinates", row)
+    text-editor-field(
+      v-validate="'required'",
+      v-field="form.output_template",
+      :label="$t('service.outputTemplate')",
+      :error-messages="errors.collect('output_template')",
+      :variables="outputVariables",
+      name="output_template"
+    )
+    c-enabled-field(v-field="form.enabled")
     v-tabs(slider-color="primary", centered)
       v-tab(:class="{ 'error--text': errors.has('entity_patterns') }") {{ $t('common.entityPatterns') }}
       v-tab-item
-        patterns-list(v-field="form.entity_patterns", v-validate="'required'", name="entity_patterns")
+        c-patterns-field.mt-2(v-field="form.patterns", :entity-attributes="entityAttributes", with-entity)
       v-tab.validation-header(:disabled="advancedJsonWasChanged") {{ $t('entity.manageInfos') }}
       v-tab-item
         manage-infos(v-field="form.infos")
@@ -45,15 +34,19 @@
 <script>
 import { get } from 'lodash';
 
-import FilterEditor from '@/components/other/filter/editor/filter-editor.vue';
-import PatternsList from '@/components/common/patterns-list/patterns-list.vue';
+import {
+  ENTITY_PATTERN_FIELDS,
+  SERVICE_WEATHER_STATE_COUNTERS,
+  SERVICE_WEATHER_TEMPLATE_COUNTERS_BY_STATE_COUNTERS,
+} from '@/constants';
+
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
+import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    FilterEditor,
-    PatternsList,
+    TextEditorField,
     ManageInfos,
   },
   model: {
@@ -67,12 +60,34 @@ export default {
     },
   },
   computed: {
-    hasFilterEditorAnyError() {
-      return this.errors.has('advancedJson') || this.errors.has('filter');
+    outputVariables() {
+      const messages = this.$t('serviceWeather.stateCounters');
+
+      return Object.values(SERVICE_WEATHER_STATE_COUNTERS).map(field => ({
+        text: messages[field],
+        value: SERVICE_WEATHER_TEMPLATE_COUNTERS_BY_STATE_COUNTERS[field],
+      }));
     },
 
     advancedJsonWasChanged() {
       return get(this.fields, ['advancedJson', 'changed']);
+    },
+
+    entityAttributes() {
+      return [
+        {
+          value: ENTITY_PATTERN_FIELDS.lastEventDate,
+          options: { disabled: true },
+        },
+        {
+          value: ENTITY_PATTERN_FIELDS.connector,
+          options: { disabled: true },
+        },
+        {
+          value: ENTITY_PATTERN_FIELDS.componentInfos,
+          options: { disabled: true },
+        },
+      ];
     },
   },
 };

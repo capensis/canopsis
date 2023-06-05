@@ -1,12 +1,11 @@
 <template lang="pug">
-  v-select.kpi-rating-metric-field(
+  c-select-field(
     v-field="value",
     :items="availableMetrics",
-    :label="$t('kpiMetrics.parameter')",
+    :label="$t('kpi.metrics.parameter')",
+    name="metric",
     hide-details
   )
-    template(#selection="{ item }")
-      span.ellipsis {{ item.text }}
 </template>
 
 <script>
@@ -31,25 +30,14 @@ export default {
     availableMetrics() {
       return getAvailableMetricsByCriteria(this.criteria?.label)
         .map((value) => {
-          const alarmKey = `alarmList.metrics.${value}`;
+          const alarmKey = `alarm.metrics.${value}`;
 
           return {
             value,
-            text: this.$te(alarmKey) ? this.$t(alarmKey) : this.$t(`users.metrics.${value}`),
+            text: this.$te(alarmKey) ? this.$t(alarmKey) : this.$t(`user.metrics.${value}`),
           };
         });
     },
   },
 };
 </script>
-
-<style lang="scss">
-$selectIconWidth: 24px;
-
-.kpi-rating-metric-field {
-  .v-select__selections {
-    width: calc(100% - #{$selectIconWidth});
-    flex-wrap: nowrap;
-  }
-}
-</style>

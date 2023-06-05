@@ -19,7 +19,7 @@ type Rbac struct {
 		Bitmask int `bson:"checksum"`
 	} `bson:"rights,omitempty"`
 	// Following fields contains extra data for subject.
-	Email          string `bson:"mail,omitempty"`
+	Email          string `bson:"email,omitempty"`
 	Lastname       string `bson:"lastname,omitempty"`
 	Firstname      string `bson:"firstname,omitempty"`
 	HashedPassword string `bson:"shadowpasswd,omitempty"`

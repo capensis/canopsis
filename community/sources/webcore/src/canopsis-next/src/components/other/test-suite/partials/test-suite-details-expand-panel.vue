@@ -29,14 +29,15 @@
                   :value="testSuiteDetail.line"
                 )
                 c-information-block-row(
-                  :label="$t('testSuite.timeTaken')"
+                  :label="$t('common.timeTaken')"
                 ) {{ testSuiteDetail.time | fixed }}{{ $constants.TIME_UNITS.second }}
                 system-message(
                   v-if="testSuiteDetail.message",
                   :value="testSuiteDetail.message",
                   :file-name="testSuiteDetail.file || testSuiteDetail.name"
                 )
-                  span.font-weight-bold.subheading(slot="label") {{ $t('testSuite.failureMessage') }}
+                  template(#label="")
+                    span.font-weight-bold.subheading {{ $t('testSuite.failureMessage') }}
     template(v-if="hasScreenshots")
       v-tab {{ $t('testSuite.tabs.screenshots') }}
       v-tab-item

@@ -1,13 +1,9 @@
 <template lang="pug">
   div
     span(@click.stop="textClicked") {{ shortenedText }}
-    v-menu(
-      v-if="!isShort",
-      v-model="isFullTextMenuOpen",
-      :close-on-content-click="false",
-      :open-on-click="false"
-    )
-      span.ml-1(slot="activator", @click.stop="openFullTextMenu") ...
+    v-menu(v-if="!isShort", :close-on-content-click="false")
+      template(#activator="{ on }")
+        span.ml-1(v-on="on") ...
       v-card(dark)
         v-card-title.pre-wrap {{ text }}
 </template>
@@ -22,33 +18,30 @@ export default {
       default: EXPAND_DEFAULT_MAX_LETTERS,
     },
     text: {
-      type: String,
+      type: [String, Number],
       default: '',
     },
   },
-  data() {
-    return {
-      isFullTextMenuOpen: false,
-    };
-  },
   computed: {
-    isShort() {
-      return this.text.length <= this.maxLetters;
+    preparedText() {
+      return String(this.text);
     },
+
+    isShort() {
+      return this.preparedText.length <= this.maxLetters;
+    },
+
     shortenedText() {
       if (this.isShort) {
-        return this.text;
+        return this.preparedText;
       }
 
-      return this.text.substr(0, this.maxLetters);
+      return this.preparedText.substring(0, this.maxLetters);
     },
   },
   methods: {
     textClicked() {
       this.$emit('textClicked');
-    },
-    openFullTextMenu() {
-      this.isFullTextMenuOpen = true;
     },
   },
 };

@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <c-name-field-stub
+    required="required"
+    value="name"
+  />
+  <c-duration-field-stub
+    required="required"
+    value="[object Object]"
+  />
+  <c-priority-field-stub
+    value="2"
+  />
+  <c-number-field-stub
+    label="Frequency limit"
+    min="1"
+    name="freq_limit"
+    value="3"
+  />
+  <c-description-field-stub
+    required="required"
+    value="description"
+  />
+  <alarm-status-rule-patterns-form-stub
+    class="mt-2"
+    flapping="true"
+    form="[object Object]"
+  />
+</div>
+`;
+
+exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with default props 1`] = `
+<div
+  class="layout column"
+>
+  <c-name-field-stub
+    required="required"
+  />
+  <c-duration-field-stub
+    required="required"
+  />
+  <c-priority-field-stub />
+  <!---->
+  <c-description-field-stub
+    required="required"
+  />
+  <alarm-status-rule-patterns-form-stub
+    class="mt-2"
+    form="[object Object]"
+  />
+</div>
+`;

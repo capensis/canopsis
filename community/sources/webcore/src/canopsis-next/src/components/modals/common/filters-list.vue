@@ -1,30 +1,33 @@
 <template lang="pug">
-  v-form(@submit.prevent="submit")
-    modal-wrapper(data-test="filtersListModal", close)
-      template(slot="title")
-        span {{ $t('common.filters') }}
-      template(slot="text")
-        filters-form(
-          v-model="form.filters",
-          :entities-type="config.entitiesType",
-          :has-access-to-add-filter="config.hasAccessToAddFilter",
-          :has-access-to-edit-filter="config.hasAccessToEditFilter"
-        )
-      template(slot="actions")
-        v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.primary(:disabled="isDisabled", type="submit") {{ $t('common.submit') }}
+  modal-wrapper(close)
+    template(#title="")
+      span {{ $t('common.filters') }}
+    template(#text="")
+      c-progress-overlay(:pending="pending")
+      filters-list-component(
+        :filters="filters",
+        :pending="pending",
+        :addable="config.addable",
+        :editable="config.editable",
+        @input="updateFiltersPositions",
+        @add="showCreateFilterModal",
+        @edit="showEditFilterModal",
+        @delete="showDeleteFilterModal"
+      )
 </template>
 
 <script>
+import { pick } from 'lodash';
+
 import { MODALS } from '@/constants';
 
+import { mapIds } from '@/helpers/entities';
+
 import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
+import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 
-import { filtersToForm, formToFilters } from '@/helpers/forms/filter';
-
-import FiltersForm from '@/components/other/filter/form/filters-form.vue';
+import FiltersListComponent from '@/components/other/filter/filters-list.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -33,28 +36,134 @@ import ModalWrapper from '../modal-wrapper.vue';
  */
 export default {
   name: MODALS.filtersList,
-  components: { FiltersForm, ModalWrapper },
+  components: { FiltersListComponent, ModalWrapper },
   mixins: [
     modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
+    entitiesWidgetMixin,
+    entitiesUserPreferenceMixin,
   ],
   data() {
-    const { filters = [] } = this.modal.config;
-
     return {
-      form: {
-        filters: filtersToForm(filters),
-      },
+      pending: true,
+      filters: [],
     };
   },
-  methods: {
-    async submit() {
-      if (this.config.action) {
-        await this.config.action(formToFilters(this.form.filters));
-      }
+  computed: {
+    widgetId() {
+      return this.config.widgetId;
+    },
 
-      this.$modals.hide();
+    userPreference() {
+      return this.getUserPreferenceByWidgetId(this.widgetId);
+    },
+
+    modalConfig() {
+      return {
+        ...pick(this.config, ['withAlarm', 'withEntity', 'withPbehavior', 'withServiceWeather', 'entityTypes']),
+
+        withTitle: true,
+      };
+    },
+  },
+  watch: {
+    'userPreference.filters': function handler(filters) {
+      this.setFilters(filters);
+    },
+  },
+  mounted() {
+    this.refreshFilters();
+  },
+  methods: {
+    setFilters(filters = []) {
+      this.filters = filters;
+    },
+
+    async refreshFilters() {
+      this.pending = true;
+
+      await this.fetchUserPreference({ id: this.config.widgetId });
+
+      this.pending = false;
+    },
+
+    showCreateFilterModal() {
+      this.$modals.show({
+        name: MODALS.createFilter,
+        config: {
+          ...this.modalConfig,
+
+          title: this.$t('modals.createFilter.create.title'),
+          corporate: true,
+          action: async (newFilter) => {
+            await this.createWidgetFilter({
+              data: {
+                ...newFilter,
+
+                widget: this.widgetId,
+                is_private: true,
+              },
+            });
+
+            return this.refreshFilters();
+          },
+        },
+      });
+    },
+
+    showEditFilterModal(filter) {
+      this.$modals.show({
+        name: MODALS.createFilter,
+        config: {
+          ...this.modalConfig,
+
+          filter,
+          title: this.$t('modals.createFilter.edit.title'),
+          corporate: true,
+          action: async (newFilter) => {
+            await this.updateWidgetFilter({
+              id: filter._id,
+              data: {
+                ...newFilter,
+
+                widget: this.widgetId,
+              },
+            });
+
+            return this.refreshFilters();
+          },
+        },
+      });
+    },
+
+    showDeleteFilterModal(filter) {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          action: async () => {
+            await this.removeWidgetFilter({
+              id: filter._id,
+            });
+
+            return this.refreshFilters();
+          },
+        },
+      });
+    },
+
+    async updateFiltersPositions(filters) {
+      const oldFilters = this.filters;
+
+      try {
+        this.setFilters(filters);
+
+        await this.updateWidgetFiltersPositions({
+          data: mapIds(filters),
+        });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('errors.default') });
+
+        this.setFilters(oldFilters);
+      }
     },
   },
 };

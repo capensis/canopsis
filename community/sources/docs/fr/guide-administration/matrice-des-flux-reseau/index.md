@@ -5,11 +5,12 @@
 Composant     | Description                                 | Port                  |
 --------------|---------------------------------------------|-----------------------|
 MongoDB       | Base de données                             | TCP/27017             |
+Nginx         | Accès à l'interface web et API              | TCP/80,443 (installation via Docker) ou TCP/8080,8443 (via paquets) |
 RabbitMQ      | Passage de messages                         | TCP/5672              |
 RabbitMQ UI   | Interface web de RabbitMQ                   | TCP/15672             |
 API Canopsis  | API REST de Canopsis                        | TCP/8082              |
-Nginx         | Accès à l'interface web et API              | TCP/80,443            |
 Redis         | Serveur de cache                            | TCP/6739              |
+Redis Sentinel| Supervision et basculement de Redis (optionnel) | TCP/26739         |
 SNMP          | Passage des traps SNMP                      | UDP/162               |
 PostgreSQL    | Base de données, métriques (TimescaleDB)    | TCP/5432              |
 
@@ -21,16 +22,19 @@ Certains flux de cette liste sont nécessaires pour l'installation ou la mise à
 
 Source | Destination | Port | Description |
 -------|-------------|------|-------------|
-Canopsis | `git.canopsis.net`, `repositories.canopsis.net`, `docker.canopsis.net`, `hub.docker.com` | TCP/443 | Récupération des paquets d'installation (Utilisation possible à travers un proxy) |
-Utilisateurs | Canopsis | TCP/80,443 | Accès à l'interface web et API de Canopsis |
-Administrateurs | Canopsis, MongoDB | TCP/22 | Accès aux systèmes via SSH |
+Canopsis | `git.canopsis.net`, `nexus.canopsis.net`, `docker.canopsis.net` | TCP/443 | Récupération des paquets d'installation (Utilisation possible à travers un proxy) |
+Utilisateurs | Canopsis | TCP/80,443 ou TCP/8080,8443 | Accès à l'interface web et API de Canopsis |
+Administrateurs | Canopsis, MongoDB, PostgreSQL, RabbitMQ, Redis | TCP/22 | Accès aux systèmes via SSH |
 Administrateurs | Canopsis | TCP/15672 | Accès à l'interface web du bus AMQP. Permet de suivre l'activité des files d'attente |
 Sources d'événements AMQP | Canopsis | TCP/5672 | Permet la publication d'événements dans le bus de données |
-Sources d'événements API | Canopsis | TCP/80,443 ou TCP/8082 | Permet la publication d'événements dans l'API |
+Sources d'événements API | Canopsis | TCP/80,443 ou TCP/8080,8443 | Permet la publication d'événements dans l'API |
 Sources d'événements trap SNMP | Canopsis | UDP/162 | Permet la publication de trap SNMP vers Canopsis |
 Canopsis | LDAP | TCP/389,636 | Permet l'authentification à Canopsis via un identifiant LDAP |
 Canopsis | MongoDB | TCP/27017 | Permet l'accès à la base de données MongoDB depuis Canopsis |
 Canopsis | PostgreSQL | TCP/5432 | Permet l'accès à la base de données PostgreSQL depuis Canopsis |
+Canopsis | RabbitMQ | TCP/5672 | Permet l'accès à l'agent de messages RabbitMQ depuis Canopsis |
+Canopsis | Redis | TCP/6739 | Permet l'accès à la base de données Redis depuis Canopsis |
+Canopsis | Redis Sentinel | TCP/26739 | Permet l'accès à la supervision Redis Sentinel depuis Canopsis (optionnel) |
 
 Définition des objets:
 
@@ -39,4 +43,4 @@ Définition des objets:
  * Sources d'événements : Machines qui produisent des événements au format AMQP/JSON (supervision, scripts, curl, etc)
  * Sources d'événements trap SNMP : Machines qui produisent des événements au format Trap SNMP
  * Canopsis : Machine qui héberge Canopsis
- * MongoDB : Machine(s) qui héberge(nt) MongoDB
+ * MongoDB, PostgreSQL, RabbitMQ, Redis : Machine(s) qui héberge(nt) MongoDB, PostgreSQL, RabbitMQ et Redis

@@ -16,7 +16,10 @@ Feature: Update a view group
     {
       "_id": "test-viewgroup-to-update",
       "title": "test-viewgroup-to-update-title",
-      "author": "root",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
       "created": 1611229670
     }
     """

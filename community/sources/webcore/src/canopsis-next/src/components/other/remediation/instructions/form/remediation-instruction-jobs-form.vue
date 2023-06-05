@@ -2,9 +2,15 @@
   v-layout.mt-2(column)
     v-layout(row)
       v-flex(v-if="!jobs.length", xs12)
-        v-alert(:value="true", type="info") {{ $t('remediationInstructions.emptyJobs') }}
-    h3.subheading.font-weight-bold {{ $t('remediationInstructions.listJobs') }}
-    draggable(v-field="jobs", :options="draggableOptions")
+        v-alert(:value="true", type="info") {{ $t('remediation.instruction.emptyJobs') }}
+    h3.subheading.font-weight-bold {{ $t('remediation.instruction.listJobs') }}
+    c-draggable-list-field(
+      v-field="jobs",
+      :disabled="disabled",
+      :group="draggableGroup",
+      handle=".job-drag-handler",
+      ghost-class="white"
+    )
       v-card.my-2(v-for="(job, index) in jobs", :key="job.key")
         v-card-text
           remediation-instruction-job-field.py-1(
@@ -21,15 +27,12 @@
         :disabled="disabled",
         outline,
         @click="addJob"
-      ) {{ $t('remediationInstructions.addJob') }}
-      span.error--text(v-show="hasJobsErrors") {{ $t('remediationInstructions.errors.jobRequired') }}
+      ) {{ $t('remediation.instruction.addJob') }}
+      span.error--text(v-show="hasJobsErrors") {{ $t('remediation.instruction.errors.jobRequired') }}
 </template>
 
 <script>
-import Draggable from 'vuedraggable';
-
 import { MAX_LIMIT } from '@/constants';
-import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 import { remediationInstructionJobToForm } from '@/helpers/forms/remediation-instruction';
 
@@ -41,7 +44,6 @@ import RemediationInstructionJobField from './fields/remediation-instruction-job
 export default {
   inject: ['$validator'],
   components: {
-    Draggable,
     RemediationInstructionJobField,
   },
   mixins: [formArrayMixin, entitiesRemediationJobMixin],
@@ -74,17 +76,11 @@ export default {
       return this.errors.has(this.name);
     },
 
-    draggableOptions() {
+    draggableGroup() {
       return {
-        disabled: this.disabled,
-        animation: VUETIFY_ANIMATION_DELAY,
-        handle: '.job-drag-handler',
-        ghostClass: 'white',
-        group: {
-          name: 'remediation-instruction-jobs',
-          pull: false,
-          put: false,
-        },
+        name: 'remediation-instruction-jobs',
+        pull: false,
+        put: false,
       };
     },
   },
@@ -101,7 +97,6 @@ export default {
       name: this.name,
       rules: 'min_value:1',
       getter: () => this.jobs.length,
-      context: () => this,
       vm: this,
     });
   },

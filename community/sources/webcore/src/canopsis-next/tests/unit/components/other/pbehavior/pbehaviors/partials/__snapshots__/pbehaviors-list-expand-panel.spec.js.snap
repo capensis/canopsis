@@ -1,0 +1,661 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` with custom props 1`] = `
+<div
+  class="v-tabs"
+>
+  <div
+    class="v-tabs__bar theme--dark secondary lighten-1"
+  >
+    <transition-stub
+      name="fade-transition"
+    />
+    <div
+      class="v-tabs__wrapper"
+    >
+      <div
+        class="v-tabs__container v-tabs__container--centered"
+      >
+        <div
+          class="v-tabs__slider-wrapper"
+          style="transition: none;"
+        >
+          <div
+            class="v-tabs__slider primary"
+          />
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item v-tabs__item--active"
+          >
+            Patterns
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Entities
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Comments
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Recurrence
+          </a>
+        </div>
+      </div>
+    </div>
+    <transition-stub
+      name="fade-transition"
+    />
+  </div>
+  <div
+    class="v-window"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+        >
+          <div
+            class="layout py-3 row"
+          >
+            <div
+              class="flex xs12 sm10 offset-sm1"
+            >
+              <div
+                class="v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <pbehavior-patterns-form-stub
+                    form="[object Object]"
+                    readonly="true"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        />
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        />
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        />
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` with default props 1`] = `
+<div
+  class="v-tabs"
+>
+  <div
+    class="v-tabs__bar theme--dark secondary lighten-1"
+  >
+    <transition-stub
+      name="fade-transition"
+    />
+    <div
+      class="v-tabs__wrapper"
+    >
+      <div
+        class="v-tabs__container v-tabs__container--centered"
+      >
+        <div
+          class="v-tabs__slider-wrapper"
+          style="transition: none;"
+        >
+          <div
+            class="v-tabs__slider primary"
+          />
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item v-tabs__item--active"
+          >
+            Patterns
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Entities
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Comments
+          </a>
+        </div>
+        <!---->
+      </div>
+    </div>
+    <transition-stub
+      name="fade-transition"
+    />
+  </div>
+  <div
+    class="v-window"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+        >
+          <div
+            class="layout py-3 row"
+          >
+            <div
+              class="flex xs12 sm10 offset-sm1"
+            >
+              <div
+                class="v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <pbehavior-patterns-form-stub
+                    form="[object Object]"
+                    readonly="true"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        />
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        />
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` with opened comments tab 1`] = `
+<div
+  class="v-tabs"
+>
+  <div
+    class="v-tabs__bar theme--dark secondary lighten-1"
+  >
+    <transition-stub
+      name="fade-transition"
+    />
+    <div
+      class="v-tabs__wrapper"
+    >
+      <div
+        class="v-tabs__container v-tabs__container--centered"
+      >
+        <div
+          class="v-tabs__slider-wrapper"
+          style="transition: none;"
+        >
+          <div
+            class="v-tabs__slider primary"
+          />
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Patterns
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Entities
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item v-tabs__item--active"
+          >
+            Comments
+          </a>
+        </div>
+        <!---->
+      </div>
+    </div>
+    <transition-stub
+      name="fade-transition"
+    />
+  </div>
+  <div
+    class="v-window"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout py-3 row"
+          >
+            <div
+              class="flex xs12 sm10 offset-sm1"
+            >
+              <div
+                class="v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <pbehavior-patterns-form-stub
+                    form="[object Object]"
+                    readonly="true"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        />
+      </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item"
+          style=""
+        >
+          <div
+            class="layout py-3 row"
+          >
+            <div
+              class="flex xs12 sm10 offset-sm1"
+            >
+              <div
+                class="v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text pa-0"
+                >
+                  <pbehavior-comments-stub
+                    comments="[object Object],[object Object],[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` with opened entities tab 1`] = `
+<div
+  class="v-tabs"
+>
+  <div
+    class="v-tabs__bar theme--dark secondary lighten-1"
+  >
+    <transition-stub
+      name="fade-transition"
+    />
+    <div
+      class="v-tabs__wrapper"
+    >
+      <div
+        class="v-tabs__container v-tabs__container--centered"
+      >
+        <div
+          class="v-tabs__slider-wrapper"
+          style="transition: none;"
+        >
+          <div
+            class="v-tabs__slider primary"
+          />
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Patterns
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item v-tabs__item--active"
+          >
+            Entities
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Comments
+          </a>
+        </div>
+        <!---->
+      </div>
+    </div>
+    <transition-stub
+      name="fade-transition"
+    />
+  </div>
+  <div
+    class="v-window"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout py-3 row"
+          >
+            <div
+              class="flex xs12 sm10 offset-sm1"
+            >
+              <div
+                class="v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <pbehavior-patterns-form-stub
+                    form="[object Object]"
+                    readonly="true"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item"
+          style=""
+        >
+          <div
+            class="layout py-3 row"
+          >
+            <div
+              class="flex xs12 sm10 offset-sm1"
+            >
+              <div
+                class="v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <pbehavior-entities-stub
+                    pbehavior="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        />
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` with opened recurrence rule tab 1`] = `
+<div
+  class="v-tabs"
+>
+  <div
+    class="v-tabs__bar theme--dark secondary lighten-1"
+  >
+    <transition-stub
+      name="fade-transition"
+    />
+    <div
+      class="v-tabs__wrapper"
+    >
+      <div
+        class="v-tabs__container v-tabs__container--centered"
+      >
+        <div
+          class="v-tabs__slider-wrapper"
+          style="transition: none;"
+        >
+          <div
+            class="v-tabs__slider primary"
+          />
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Patterns
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Entities
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item"
+          >
+            Comments
+          </a>
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item v-tabs__item--active"
+          >
+            Recurrence
+          </a>
+        </div>
+      </div>
+    </div>
+    <transition-stub
+      name="fade-transition"
+    />
+  </div>
+  <div
+    class="v-window"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <div
+            class="layout py-3 row"
+          >
+            <div
+              class="flex xs12 sm10 offset-sm1"
+            >
+              <div
+                class="v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <pbehavior-patterns-form-stub
+                    form="[object Object]"
+                    readonly="true"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        />
+      </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        />
+      </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item"
+          style=""
+        >
+          <div
+            class="layout py-3 row"
+          >
+            <div
+              class="flex xs12 sm10 offset-sm1"
+            >
+              <div
+                class="v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <pbehavior-recurrence-rule-stub
+                    pbehavior="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;

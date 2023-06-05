@@ -26,7 +26,7 @@
 <script>
 import { isEqual } from 'lodash';
 
-import { getIdFromEntity } from '@/helpers/entities';
+import { mapIds } from '@/helpers/entities';
 
 import { activeViewMixin } from '@/mixins/active-view';
 import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
@@ -80,7 +80,7 @@ export default {
 
     async submit() {
       await this.updateViewTabPositions({
-        data: this.tabs.map(tab => getIdFromEntity(tab)),
+        data: mapIds(this.tabs),
       });
 
       return this.fetchActiveView();

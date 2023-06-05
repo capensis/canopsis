@@ -9,7 +9,6 @@
           v-icon.mx-2(
             v-if="groupIndex !== groupedSteps.length - 1 || stepIndex !== group.steps.length - 1",
             :key="`arrow-${stepIndex}`",
-            color="black",
             size="16"
           ) arrow_forward
 </template>
@@ -29,9 +28,7 @@ export default {
   },
   computed: {
     groupedSteps() {
-      const orderedSteps = [...this.alarm.v.steps].reverse();
-
-      return Object.entries(groupAlarmSteps(orderedSteps)).map(([day, steps]) => ({
+      return Object.entries(groupAlarmSteps(this.alarm.v.steps)).map(([day, steps]) => ({
         day,
         steps,
       }));

@@ -1,15 +1,24 @@
 package eventfilter_test
 
 import (
+	"context"
 	"reflect"
 	"testing"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	mock_techmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/techmetrics"
+	"github.com/golang/mock/gomock"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func TestActionProcessor(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
 	dataSets := []struct {
 		testName      string
 		action        eventfilter.Action
@@ -1185,13 +1194,16 @@ func TestActionProcessor(t *testing.T) {
 		},
 	}
 
-	processor := eventfilter.NewActionProcessor()
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	mockTechMetricsSender := mock_techmetrics.NewMockSender(ctrl)
+	mockTechMetricsSender.EXPECT().SendCheEntityInfo(gomock.Any(), gomock.Any()).AnyTimes()
+	processor := eventfilter.NewActionProcessor(tplExecutor, mockTechMetricsSender)
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			resultEvent, resultErr := processor.Process(dataset.action, dataset.event, eventfilter.RegexMatchWrapper{
+			resultEvent, resultErr := processor.Process(context.Background(), dataset.action, dataset.event, eventfilter.RegexMatchWrapper{
 				BackwardCompatibility: false,
 				RegexMatch:            dataset.regexMatches,
-			}, dataset.externalData, nil)
+			}, dataset.externalData)
 			if !reflect.DeepEqual(resultEvent, dataset.expectedEvent) {
 				t.Errorf("expected an event = %v, but got %v", dataset.expectedEvent, resultEvent)
 			}

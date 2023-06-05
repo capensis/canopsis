@@ -22,7 +22,10 @@ Feature: Get user preferences
           "_id": "test-widgetfilter-to-user-preferences-get-1",
           "title": "test-widgetfilter-to-user-preferences-get-1-title",
           "is_private": true,
-          "author": "test-user-to-user-preferences-edit",
+          "author": {
+            "_id": "test-user-to-user-preferences-edit",
+            "name": "test-user-to-user-preferences-edit"
+          },
           "created": 1611229670,
           "updated": 1611229670,
           "alarm_pattern": [
@@ -41,7 +44,10 @@ Feature: Get user preferences
           "_id": "test-widgetfilter-to-user-preferences-get-2",
           "title": "test-widgetfilter-to-user-preferences-get-2-title",
           "is_private": true,
-          "author": "test-user-to-user-preferences-edit",
+          "author": {
+            "_id": "test-user-to-user-preferences-edit",
+            "name": "test-user-to-user-preferences-edit"
+          },
           "created": 1611229670,
           "updated": 1611229670,
           "alarm_pattern": [

@@ -1,14 +1,11 @@
 <template lang="pug">
   v-form(@submit.prevent="submit")
     modal-wrapper(close)
-      template(slot="title")
+      template(#title="")
         span {{ title }}
-      template(slot="text")
-        meta-alarm-rule-form(
-          v-model="form",
-          :is-disabled-id-field="isDisabledIdField"
-        )
-      template(slot="actions")
+      template(#text="")
+        meta-alarm-rule-form(v-model="form", :is-disabled-id-field="config.isDisabledIdField")
+      template(#actions="")
         v-btn(@click="$modals.hide", depressed, flat) {{ $t('common.cancel') }}
         v-btn.primary(
           :disabled="isDisabled",
@@ -18,7 +15,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { formToMetaAlarmRule, metaAlarmRuleToForm } from '@/helpers/forms/meta-alarm-rule';
 
@@ -34,6 +31,7 @@ export default {
   name: MODALS.createMetaAlarmRule,
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   components: {
     MetaAlarmRuleForm,
@@ -51,11 +49,7 @@ export default {
   },
   computed: {
     title() {
-      return this.config.title || this.$t('modals.metaAlarmRule.create.title');
-    },
-
-    isDisabledIdField() {
-      return this.config.isDisabledIdField;
+      return this.config.title ?? this.$t('modals.metaAlarmRule.create.title');
     },
   },
   methods: {

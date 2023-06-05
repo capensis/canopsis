@@ -1,33 +1,33 @@
 <template lang="pug">
-  v-menu.ds-calendar-event-menu(
-    :class="classWithKey",
+  v-menu(
     :content-class="contentClass",
     :disabled="!hasPopover",
     v-model="menu",
     v-bind="popoverProps"
   )
-    div.ds-calendar-event(
-      slot="activator",
-      :style="style",
-      @click.stop="editCheck",
-      @mouseenter="mouseEnterEvent",
-      @mouseleave="mouseLeaveEvent",
-      @mousedown="mouseDownEvent",
-      @mouseup="mouseUpEvent"
-    )
-      span(v-if="showName")
-        slot(name="eventTitle", v-bind="{ calendarEvent, hasPrefix, getPrefix, details }")
-          v-icon.ds-ev-icon.pr-1(
-            v-if="hasIcon",
-            size="14",
-            :style="{ color: details.forecolor }"
-          ) {{ details.icon }}
-          span(v-if="hasPrefix") {{ getPrefix }}
-          strong.ds-ev-title {{ details.title }}
-          span.ds-ev-description {{ details.description }}
-      span(v-else)
-        slot(name="eventEmpty", v-bind="{ calendarEvent, details }") &nbsp;
-      div.ds-calendar-event-resize(v-show="canResize", @mousedown="resizeStartHandler")
+    template(#activator="{ on }")
+      div.ds-calendar-event-menu(:class="classWithKey")
+        div.ds-calendar-event(
+          :style="style",
+          @click.stop="editCheck",
+          @mouseenter="mouseEnterEvent",
+          @mouseleave="mouseLeaveEvent",
+          @mousedown="mouseDownEvent",
+          @mouseup="mouseUpEvent"
+        )
+          span(v-if="showName")
+            slot(name="eventTitle", v-bind="{ calendarEvent, hasPrefix, getPrefix, details }")
+              v-icon.ds-ev-icon.pr-1(
+                v-if="hasIcon",
+                size="14",
+                :style="{ color: details.forecolor }"
+              ) {{ details.icon }}
+              span(v-if="hasPrefix") {{ getPrefix }}
+              strong.ds-ev-title {{ details.title }}
+              span.ds-ev-description {{ details.description }}
+          span(v-else)
+            slot(name="eventEmpty", v-bind="{ calendarEvent, details }") &nbsp;
+          div.ds-calendar-event-resize(v-show="canResize", @mousedown="resizeStartHandler")
     slot(
       name="eventPopover",
       v-if="isShownPopover",

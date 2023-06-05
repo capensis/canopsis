@@ -2,20 +2,8 @@
   v-layout(column)
     template(v-if="!isEntityType")
       idle-rule-alarm-type-field.mb-2(v-field="form.alarm_condition", :label="$t('common.type')")
-    v-text-field(
-      v-field="form.name",
-      v-validate="'required'",
-      :label="$t('common.name')",
-      :error-messages="errors.collect('name')",
-      name="name"
-    )
-    v-textarea(
-      v-field="form.description",
-      v-validate="'required'",
-      :label="$t('common.description')",
-      :error-messages="errors.collect('description')",
-      name="description"
-    )
+    c-name-field(v-field="form.name", required)
+    c-description-field(v-field="form.description", required)
     v-layout(row, justify-space-between)
       v-flex(xs7)
         c-duration-field(
@@ -24,29 +12,33 @@
           required
         )
       v-flex(xs3)
-        c-priority-field(v-field="form.priority", required)
+        c-priority-field(v-field="form.priority")
     c-disable-during-periods-field(v-field="form.disable_during_periods")
     template(v-if="!isEntityType")
       c-action-type-field(v-field="form.operation.type", :types="actionTypes", name="operation.type")
-      action-author-field(v-if="!isPbehaviorOperation", v-model="parameters")
       action-parameters-form(v-model="parameters", :type="form.operation.type", name="operation.parameters")
+      c-description-field(
+        v-if="isAssociateTicketAction",
+        v-field="form.comment",
+        :label="$tc('common.comment')",
+        name="comment"
+      )
 </template>
 
 <script>
 import { ACTION_TYPES } from '@/constants';
 
-import { isPbehaviorActionType } from '@/helpers/forms/action';
+import { isAssociateTicketActionType } from '@/helpers/entities/action';
 
 import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 
 import ActionParametersForm from '@/components/other/action/form/action-parameters-form.vue';
-import ActionAuthorField from '@/components/other/action/form/partials/action-author-field.vue';
 
 import IdleRuleAlarmTypeField from './idle-rule-alarm-type-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { ActionAuthorField, IdleRuleAlarmTypeField, ActionParametersForm },
+  components: { IdleRuleAlarmTypeField, ActionParametersForm },
   mixins: [formMixin, formValidationHeaderMixin],
   model: {
     prop: 'form',
@@ -63,10 +55,6 @@ export default {
     },
   },
   computed: {
-    isPbehaviorOperation() {
-      return isPbehaviorActionType(this.form.operation.type);
-    },
-
     parameters: {
       get() {
         const { type, parameters } = this.form.operation;
@@ -77,6 +65,10 @@ export default {
       set(value) {
         this.updateField(`operation.parameters.${this.form.operation.type}`, value);
       },
+    },
+
+    isAssociateTicketAction() {
+      return isAssociateTicketActionType(this.form.operation.type);
     },
 
     actionTypes() {

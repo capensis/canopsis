@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehavior-patterns-form Renders \`pbehavior-patterns-form\` with custom props 1`] = `
+<c-patterns-field-stub
+  entity-attributes="[object Object]"
+  readonly="true"
+  required="required"
+  value="[object Object]"
+  with-entity="with-entity"
+/>
+`;
+
+exports[`pbehavior-patterns-form Renders \`pbehavior-patterns-form\` with required props 1`] = `
+<c-patterns-field-stub
+  entity-attributes="[object Object]"
+  required="required"
+  value="[object Object]"
+  with-entity="with-entity"
+/>
+`;

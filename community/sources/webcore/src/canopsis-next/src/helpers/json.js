@@ -1,4 +1,4 @@
-import { isObject } from 'lodash';
+import { isObject, isString } from 'lodash';
 
 /**
  * Convert JSON into JSON with indents
@@ -35,5 +35,21 @@ export const stringifyJsonFilter = (json, indents = 4, defaultValue = '{}') => {
     console.error(err);
 
     return defaultValue;
+  }
+};
+
+/**
+ * Json string validation check
+ *
+ * @param {string} json
+ * @returns {boolean}
+ */
+export const isValidJsonData = (json) => {
+  try {
+    const data = JSON.parse(json);
+
+    return !isString(data);
+  } catch (err) {
+    return false;
   }
 };

@@ -1,0 +1,57 @@
+# Args defined here are only available to FROM commands
+# See https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
+ARG NGINX_VERSION
+ARG NODE_VERSION
+
+FROM node:${NODE_VERSION} AS build
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y make && rm -rf /var/lib/apt/lists/*
+
+# Copy only files needed to build the frontend
+COPY ./community/.env /app/community/.env
+COPY ./community/sources/webcore/src/canopsis-next /app/community/sources/webcore/src/canopsis-next
+WORKDIR /app/community/sources/webcore/src/canopsis-next
+RUN make
+
+# Avoid rebuilding the frontend when only files in community/docker have changed
+#COPY ./community/docker /app/community/docker
+#COPY ./community/deploy-ansible /app/community/deploy-ansible
+RUN make install DESTDIR=/installroot
+
+#
+# OpenShift-compatible NGINX Container
+#
+
+FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} as nginx-openshift
+
+# Put the nginx certificates in a volume
+RUN mkdir -m 750 -p /etc/nginx/ssl && \
+	chown -R nginx /etc/nginx/ssl
+VOLUME /etc/nginx/ssl
+
+COPY --from=build /installroot/ /
+
+COPY community/sources/webcore/src/canopsis-next/docker/files/entrypoint-nginx.sh /entrypoint.sh
+
+USER root
+RUN chmod +x /entrypoint.sh
+USER nginx
+
+ENV NGINX_OPENSHIFT=1
+ENTRYPOINT /entrypoint.sh
+
+#
+# Default NGINX Container
+#
+
+FROM nginx:${NGINX_VERSION}
+
+RUN mkdir -p -m 0750 /etc/nginx/ssl
+
+COPY --from=build /installroot/ /
+
+COPY community/sources/webcore/src/canopsis-next/docker/files/entrypoint-nginx.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENV NGINX_OPENSHIFT=0
+ENTRYPOINT /entrypoint.sh

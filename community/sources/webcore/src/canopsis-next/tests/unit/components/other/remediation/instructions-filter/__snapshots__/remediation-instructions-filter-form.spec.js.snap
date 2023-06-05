@@ -1,0 +1,918 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`remediation-instructions-filter-form Renders \`remediation-instructions-filter-form\` with custom props 1`] = `
+<div>
+  <div
+    class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+        style="height: auto;"
+      >
+        <div
+          class="v-input--radio-group__input"
+          role="radiogroup"
+        >
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            For alarms by instructions
+          </label>
+          <div
+            class="v-radio theme--light"
+          >
+            <div
+              class="v-input--selection-controls__input"
+            >
+              <input
+                aria-checked="false"
+                aria-label="Show alarms with selected instructions"
+                name="with"
+                role="radio"
+                type="radio"
+                value="true"
+              />
+              <div
+                class="v-input--selection-controls__ripple"
+              />
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
+            </div>
+            <label
+              aria-hidden="true"
+              class="v-label theme--light"
+              style="left: 0px; position: relative;"
+            >
+              Show alarms with selected instructions
+            </label>
+          </div>
+          <div
+            class="v-radio theme--light"
+          >
+            <div
+              class="v-input--selection-controls__input"
+            >
+              <input
+                aria-checked="false"
+                aria-label="Show alarms without selected instructions"
+                name="with"
+                role="radio"
+                type="radio"
+                value="false"
+              />
+              <div
+                class="v-input--selection-controls__ripple"
+              />
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
+            </div>
+            <label
+              aria-hidden="true"
+              class="v-label theme--light"
+              style="left: 0px; position: relative;"
+            >
+              Show alarms without selected instructions
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="v-input v-input--selection-controls v-input--switch v-input--is-label-active v-input--is-dirty theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-input--selection-controls__input"
+        >
+          <input
+            aria-checked="true"
+            aria-label="Select all"
+            role="checkbox"
+            type="checkbox"
+            value=""
+          />
+          <div
+            class="v-input--selection-controls__ripple primary--text"
+          />
+          <div
+            class="v-input--switch__track theme--light primary--text"
+          />
+          <div
+            class="v-input--switch__thumb theme--light primary--text"
+          >
+            <transition-stub
+              mode="out-in"
+              name="fab-transition"
+            />
+          </div>
+        </div>
+        <label
+          aria-hidden="true"
+          class="v-label theme--light"
+          style="left: 0px; position: relative;"
+        >
+          Select all
+        </label>
+      </div>
+      <div
+        class="v-messages theme--light"
+      >
+        <transition-group-stub
+          class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="layout row"
+  >
+    <div
+      class="flex md3 xs6"
+    >
+      <div
+        class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+      >
+        <div
+          class="v-input__control"
+        >
+          <div
+            class="v-input__slot"
+          >
+            <div
+              class="v-input--selection-controls__input"
+            >
+              <input
+                aria-checked="true"
+                aria-label="Automatic"
+                disabled="disabled"
+                role="checkbox"
+                type="checkbox"
+                value=""
+              />
+              <div
+                class="v-input--selection-controls__ripple primary--text"
+              />
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light primary--text"
+              >
+                check_box
+              </i>
+            </div>
+            <label
+              aria-hidden="true"
+              class="v-label theme--light"
+              style="left: 0px; position: relative;"
+            >
+              Automatic
+            </label>
+          </div>
+          <div
+            class="v-messages theme--light"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="v-input v-input--selection-controls v-input--checkbox v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <input
+              aria-checked="true"
+              aria-label="Manual"
+              disabled="disabled"
+              role="checkbox"
+              type="checkbox"
+              value=""
+            />
+            <div
+              class="v-input--selection-controls__ripple primary--text"
+            />
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light primary--text"
+            >
+              check_box
+            </i>
+          </div>
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Manual
+          </label>
+        </div>
+        <div
+          class="v-messages theme--light"
+        >
+          <transition-group-stub
+            class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="v-input v-text-field v-select v-input--is-disabled theme--light"
+    role="combobox"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-select__slot"
+        >
+          <label
+            aria-hidden="true"
+            class="v-label v-label--is-disabled theme--light"
+            style="left: 0px; position: absolute;"
+          >
+            Selected instructions
+          </label>
+          <div
+            class="v-select__selections"
+          >
+            <input
+              aria-label="Selected instructions"
+              aria-readonly="false"
+              autocomplete="on"
+              disabled="disabled"
+              name="instructions"
+              readonly="readonly"
+              type="text"
+            />
+          </div>
+          <div
+            class="v-input__append-inner"
+          >
+            <div
+              class="v-input__icon v-input__icon--"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon v-icon--disabled v-icon--link material-icons theme--light"
+              />
+            </div>
+          </div>
+          <div
+            class="v-input__append-inner"
+          >
+            <div
+              class="v-input__icon v-input__icon--append"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon v-icon--disabled material-icons theme--light"
+              >
+                arrow_drop_down
+              </i>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-menu"
+        />
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <div
+            class="v-messages__wrapper"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      class="v-input__append-outer"
+    >
+      <c-help-icon-stub
+        icon="help"
+        left="left"
+        text="Instructions of selected type are excluded from the list"
+      />
+    </div>
+  </div>
+  <div
+    class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+        style="height: auto;"
+      >
+        <div
+          class="v-input--radio-group__input"
+          role="radiogroup"
+        >
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Alarms list display
+          </label>
+          <div
+            class="v-radio theme--light"
+          >
+            <div
+              class="v-input--selection-controls__input"
+            >
+              <input
+                aria-checked="false"
+                aria-label="Show all filtered alarms"
+                name="with"
+                role="radio"
+                type="radio"
+                value=""
+              />
+              <div
+                class="v-input--selection-controls__ripple"
+              />
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
+            </div>
+            <label
+              aria-hidden="true"
+              class="v-label theme--light"
+              style="left: 0px; position: relative;"
+            >
+              Show all filtered alarms
+            </label>
+          </div>
+          <div
+            class="v-radio theme--light"
+          >
+            <div
+              class="v-input--selection-controls__input"
+            >
+              <input
+                aria-checked="false"
+                aria-label="Show filtered alarms with instructions in progress"
+                name="with"
+                role="radio"
+                type="radio"
+                value="true"
+              />
+              <div
+                class="v-input--selection-controls__ripple"
+              />
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
+            </div>
+            <label
+              aria-hidden="true"
+              class="v-label theme--light"
+              style="left: 0px; position: relative;"
+            >
+              Show filtered alarms with instructions in progress
+            </label>
+          </div>
+          <div
+            class="v-radio theme--light"
+          >
+            <div
+              class="v-input--selection-controls__input"
+            >
+              <input
+                aria-checked="false"
+                aria-label="Hide filtered alarms with instructions in progress"
+                name="with"
+                role="radio"
+                type="radio"
+                value="false"
+              />
+              <div
+                class="v-input--selection-controls__ripple"
+              />
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
+            </div>
+            <label
+              aria-hidden="true"
+              class="v-label theme--light"
+              style="left: 0px; position: relative;"
+            >
+              Hide filtered alarms with instructions in progress
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`remediation-instructions-filter-form Renders \`remediation-instructions-filter-form\` with default props 1`] = `
+<div>
+  <div
+    class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+        style="height: auto;"
+      >
+        <div
+          class="v-input--radio-group__input"
+          role="radiogroup"
+        >
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            For alarms by instructions
+          </label>
+          <div
+            class="v-radio theme--light"
+          >
+            <div
+              class="v-input--selection-controls__input"
+            >
+              <input
+                aria-checked="false"
+                aria-label="Show alarms with selected instructions"
+                name="with"
+                role="radio"
+                type="radio"
+                value="true"
+              />
+              <div
+                class="v-input--selection-controls__ripple"
+              />
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
+            </div>
+            <label
+              aria-hidden="true"
+              class="v-label theme--light"
+              style="left: 0px; position: relative;"
+            >
+              Show alarms with selected instructions
+            </label>
+          </div>
+          <div
+            class="v-radio theme--light"
+          >
+            <div
+              class="v-input--selection-controls__input"
+            >
+              <input
+                aria-checked="false"
+                aria-label="Show alarms without selected instructions"
+                name="with"
+                role="radio"
+                type="radio"
+                value="false"
+              />
+              <div
+                class="v-input--selection-controls__ripple"
+              />
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
+            </div>
+            <label
+              aria-hidden="true"
+              class="v-label theme--light"
+              style="left: 0px; position: relative;"
+            >
+              Show alarms without selected instructions
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="v-input v-input--selection-controls v-input--switch theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-input--selection-controls__input"
+        >
+          <input
+            aria-checked="false"
+            aria-label="Select all"
+            role="checkbox"
+            type="checkbox"
+            value=""
+          />
+          <div
+            class="v-input--selection-controls__ripple"
+          />
+          <div
+            class="v-input--switch__track theme--light"
+          />
+          <div
+            class="v-input--switch__thumb theme--light"
+          >
+            <transition-stub
+              mode="out-in"
+              name="fab-transition"
+            />
+          </div>
+        </div>
+        <label
+          aria-hidden="true"
+          class="v-label theme--light"
+          style="left: 0px; position: relative;"
+        >
+          Select all
+        </label>
+      </div>
+      <div
+        class="v-messages theme--light"
+      >
+        <transition-group-stub
+          class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="layout row"
+  >
+    <div
+      class="flex md3 xs6"
+    >
+      <div
+        class="v-input v-input--selection-controls v-input--checkbox theme--light"
+      >
+        <div
+          class="v-input__control"
+        >
+          <div
+            class="v-input__slot"
+          >
+            <div
+              class="v-input--selection-controls__input"
+            >
+              <input
+                aria-checked="false"
+                aria-label="Automatic"
+                role="checkbox"
+                type="checkbox"
+                value=""
+              />
+              <div
+                class="v-input--selection-controls__ripple"
+              />
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                check_box_outline_blank
+              </i>
+            </div>
+            <label
+              aria-hidden="true"
+              class="v-label theme--light"
+              style="left: 0px; position: relative;"
+            >
+              Automatic
+            </label>
+          </div>
+          <div
+            class="v-messages theme--light"
+          >
+            <transition-group-stub
+              class="v-messages__wrapper"
+              name="message-transition"
+              tag="div"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="v-input v-input--selection-controls v-input--checkbox theme--light"
+    >
+      <div
+        class="v-input__control"
+      >
+        <div
+          class="v-input__slot"
+        >
+          <div
+            class="v-input--selection-controls__input"
+          >
+            <input
+              aria-checked="false"
+              aria-label="Manual"
+              role="checkbox"
+              type="checkbox"
+              value=""
+            />
+            <div
+              class="v-input--selection-controls__ripple"
+            />
+            <i
+              aria-hidden="true"
+              class="v-icon material-icons theme--light"
+            >
+              check_box_outline_blank
+            </i>
+          </div>
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Manual
+          </label>
+        </div>
+        <div
+          class="v-messages theme--light"
+        >
+          <transition-group-stub
+            class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="v-input v-text-field v-select theme--light"
+    role="combobox"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-select__slot"
+        >
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: absolute;"
+          >
+            Selected instructions
+          </label>
+          <div
+            class="v-select__selections"
+          >
+            <input
+              aria-label="Selected instructions"
+              aria-readonly="false"
+              autocomplete="on"
+              name="instructions"
+              readonly="readonly"
+              type="text"
+            />
+          </div>
+          <div
+            class="v-input__append-inner"
+          >
+            <div
+              class="v-input__icon v-input__icon--"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon v-icon--link material-icons theme--light"
+              />
+            </div>
+          </div>
+          <div
+            class="v-input__append-inner"
+          >
+            <div
+              class="v-input__icon v-input__icon--append"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                arrow_drop_down
+              </i>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-menu"
+        />
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <div
+            class="v-messages__wrapper"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      class="v-input__append-outer"
+    >
+      <c-help-icon-stub
+        icon="help"
+        left="left"
+        text="Instructions of selected type are excluded from the list"
+      />
+    </div>
+  </div>
+  <div
+    class="v-input v-input--selection-controls v-input--radio-group v-input--radio-group--column v-input--hide-details theme--light"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+        style="height: auto;"
+      >
+        <div
+          class="v-input--radio-group__input"
+          role="radiogroup"
+        >
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: relative;"
+          >
+            Alarms list display
+          </label>
+          <div
+            class="v-radio theme--light"
+          >
+            <div
+              class="v-input--selection-controls__input"
+            >
+              <input
+                aria-checked="false"
+                aria-label="Show all filtered alarms"
+                name="with"
+                role="radio"
+                type="radio"
+                value=""
+              />
+              <div
+                class="v-input--selection-controls__ripple"
+              />
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
+            </div>
+            <label
+              aria-hidden="true"
+              class="v-label theme--light"
+              style="left: 0px; position: relative;"
+            >
+              Show all filtered alarms
+            </label>
+          </div>
+          <div
+            class="v-radio theme--light"
+          >
+            <div
+              class="v-input--selection-controls__input"
+            >
+              <input
+                aria-checked="false"
+                aria-label="Show filtered alarms without instructions in progress"
+                name="with"
+                role="radio"
+                type="radio"
+                value="true"
+              />
+              <div
+                class="v-input--selection-controls__ripple"
+              />
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
+            </div>
+            <label
+              aria-hidden="true"
+              class="v-label theme--light"
+              style="left: 0px; position: relative;"
+            >
+              Show filtered alarms without instructions in progress
+            </label>
+          </div>
+          <div
+            class="v-radio theme--light"
+          >
+            <div
+              class="v-input--selection-controls__input"
+            >
+              <input
+                aria-checked="false"
+                aria-label="Hide filtered alarms without instructions in progress"
+                name="with"
+                role="radio"
+                type="radio"
+                value="false"
+              />
+              <div
+                class="v-input--selection-controls__ripple"
+              />
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                radio_button_unchecked
+              </i>
+            </div>
+            <label
+              aria-hidden="true"
+              class="v-label theme--light"
+              style="left: 0px; position: relative;"
+            >
+              Hide filtered alarms without instructions in progress
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

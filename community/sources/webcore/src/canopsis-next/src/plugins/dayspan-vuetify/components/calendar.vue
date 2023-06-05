@@ -605,13 +605,13 @@ export default {
 <style lang="scss" scoped>
 .ds-calendar {
   &.resizing, &.adding {
-    & /deep/ .ds-week-view .ds-day {
+    & ::v-deep .ds-week-view .ds-day {
       &, * {
         cursor: ns-resize !important;
       }
     }
 
-    & /deep/ .ds-month-view .ds-day {
+    & ::v-deep .ds-month-view .ds-day {
       &, * {
         cursor: ew-resize !important;
       }
@@ -619,14 +619,14 @@ export default {
   }
 
   &.moving {
-    & /deep/ .ds-day {
+    & ::v-deep .ds-day {
       &, * {
         cursor: grabbing !important;
       }
     }
   }
 
-  & /deep/ .v-menu__activator {
+  & ::v-deep .v-menu__activator {
     &--disabled {
       cursor: inherit !important;
 
@@ -636,7 +636,7 @@ export default {
     }
   }
 
-  & /deep/ .ds-month-view .ds-dom {
+  & ::v-deep .ds-month-view .ds-dom {
     display: inline-block;
   }
 }
