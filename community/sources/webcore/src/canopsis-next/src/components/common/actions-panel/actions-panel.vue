@@ -1,6 +1,6 @@
 <template lang="pug">
   div.actions-panel(:class="{ 'actions-panel--small': small }")
-    v-layout(row, align-center)
+    v-layout(:wrap="wrap", row, align-center)
       c-action-btn(
         v-for="(action, index) in preparedActions.inline",
         :key="index",
@@ -52,6 +52,10 @@ export default {
       default: 3,
     },
     small: {
+      type: Boolean,
+      default: false,
+    },
+    wrap: {
       type: Boolean,
       default: false,
     },

@@ -4,6 +4,7 @@ import {
   SIDE_BARS,
   ALARMS_OPENED_VALUES,
   CHART_WIDGET_PRESET_TYPES,
+  ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
 } from '@/constants';
 
 export default {
@@ -255,5 +256,15 @@ export default {
     hideActions: 'Hide actions',
     hideMassSelection: 'Hide mass selection',
     hideToolbar: 'Hide toolbar',
+  },
+  columnsSettings: {
+    title: 'Columns settings',
+    dragging: 'Drag columns',
+    resizing: 'Resize columns',
+    cellsContentBehavior: 'Cells content',
+    cellsContentBehaviors: {
+      [ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap]: 'Wrapped',
+      [ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate]: 'Truncated',
+    },
   },
 };

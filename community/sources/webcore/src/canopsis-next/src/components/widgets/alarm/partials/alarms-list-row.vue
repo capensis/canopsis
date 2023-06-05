@@ -38,7 +38,8 @@
         :is-resolved-alarm="isClosedAlarmStatus",
         :parent-alarm="parentAlarm",
         :refresh-alarms-list="refreshAlarmsList",
-        :small="small"
+        :small="small",
+        :wrap="wrapActions"
       )
 </template>
 
@@ -132,6 +133,10 @@ export default {
       default: false,
     },
     resizing: {
+      type: Boolean,
+      default: false,
+    },
+    wrapActions: {
       type: Boolean,
       default: false,
     },
