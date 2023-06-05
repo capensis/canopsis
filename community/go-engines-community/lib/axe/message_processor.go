@@ -29,6 +29,7 @@ type messageProcessor struct {
 	Logger                 zerolog.Logger
 	PbehaviorAdapter       pbehavior.Adapter
 	TagUpdater             alarmtag.Updater
+	AutoInstructionMatcher AutoInstructionMatcher
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
@@ -95,6 +96,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 	p.updatePbhLastAlarmDate(ctx, event)
 	p.updateTags(event)
+	event.IsInstructionMatched = p.isInstructionMatched(event, msg)
 
 	// Encode and publish the event to the next engine
 	var bevent []byte
@@ -180,6 +182,24 @@ func (p *messageProcessor) updateTags(event types.Event) {
 	if event.EventType == types.EventTypeCheck {
 		p.TagUpdater.Add(event.Tags)
 	}
+}
+
+func (p *messageProcessor) isInstructionMatched(event types.Event, msg []byte) (res bool) {
+	if event.Alarm == nil || event.Entity == nil || event.AlarmChange == nil {
+		return false
+	}
+	triggers := types.GetTriggers(event.AlarmChange.Type)
+	if len(triggers) == 0 {
+		return false
+	}
+
+	matched, err := p.AutoInstructionMatcher.Match(triggers, types.AlarmWithEntity{Alarm: *event.Alarm, Entity: *event.Entity})
+	if err != nil {
+		p.logError(err, "cannot match auto instructions", event.Alarm.ID, msg)
+		return false
+	}
+
+	return matched
 }
 
 func (p *messageProcessor) logError(err error, errMsg string, alarmID string, msg []byte) {

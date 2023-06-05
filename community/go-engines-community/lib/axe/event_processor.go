@@ -310,7 +310,7 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (t
 	}
 
 	if s.alarmConfigProvider.Get().ActivateAlarmAfterAutoRemediation {
-		matched, err := s.autoInstructionMatcher.Match(types.AlarmWithEntity{Alarm: alarm, Entity: entity})
+		matched, err := s.autoInstructionMatcher.Match(types.GetTriggers(changeType), types.AlarmWithEntity{Alarm: alarm, Entity: entity})
 		if err != nil {
 			return changeType, err
 		}
