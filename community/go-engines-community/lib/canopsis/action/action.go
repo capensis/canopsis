@@ -89,8 +89,11 @@ type Parameters struct {
 	// StartOnTrigger is used in pbehavior action.
 	StartOnTrigger *bool `json:"start_on_trigger,omitempty" bson:"start_on_trigger,omitempty"`
 	// Request is used in webhook action.
-	Request      *request.Parameters `json:"request,omitempty" bson:"request,omitempty"`
-	SkipForChild *bool               `json:"skip_for_child,omitempty" bson:"skip_for_child,omitempty"`
+	Request *request.Parameters `json:"request,omitempty" bson:"request,omitempty"`
+	// SkipForChild is used in webhook action.
+	SkipForChild *bool `json:"skip_for_child,omitempty" bson:"skip_for_child,omitempty"`
+	// SkipForInstruction is used in webhook action.
+	SkipForInstruction *bool `json:"skip_for_instruction,omitempty" bson:"skip_for_instruction,omitempty"`
 	// DeclareTicket is used in webhook action.
 	DeclareTicket *request.WebhookDeclareTicket `json:"declare_ticket,omitempty" bson:"declare_ticket,omitempty"`
 }

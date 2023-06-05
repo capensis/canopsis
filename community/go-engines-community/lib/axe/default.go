@@ -264,6 +264,7 @@ func NewEngine(
 			Logger:                 logger,
 			PbehaviorAdapter:       pbehavior.NewAdapter(dbClient),
 			TagUpdater:             tagUpdater,
+			AutoInstructionMatcher: autoInstructionMatcher,
 		},
 		logger,
 	))
