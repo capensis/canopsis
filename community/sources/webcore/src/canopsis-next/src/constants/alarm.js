@@ -186,6 +186,11 @@ export const ALARMS_OPENED_VALUES = {
   resolved: false,
 };
 
+export const ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS = {
+  wrap: 'wrap',
+  truncate: 'truncate',
+};
+
 export const ALARM_BASIC_METRIC_PARAMETERS = {
   activeAlarms: 'active_alarms',
   createdAlarms: 'created_alarms',
