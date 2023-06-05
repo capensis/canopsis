@@ -22,6 +22,8 @@
     template(#active="{ item }")
       c-enabled(:value="item.active_connects > 0")
     template(#source="{ item }") {{ item.source || $constants.AUTH_METHODS.local }}
+    template(#roles="{ item }")
+      v-chip-group(:items="item.roles", item-text="name", item-value="_id")
     template(#actions="{ item }")
       v-layout(row)
         c-action-btn(
@@ -82,8 +84,8 @@ export default {
           sortable: false,
         },
         {
-          text: this.$tc('common.role'),
-          value: 'role.name',
+          text: this.$tc('common.role', 2),
+          value: 'roles',
         },
         {
           text: this.$t('user.active'),
