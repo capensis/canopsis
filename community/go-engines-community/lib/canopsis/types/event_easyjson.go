@@ -216,62 +216,46 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				in.Skip()
 				out.MetaAlarmParents = nil
 			} else {
+				in.Delim('[')
 				if out.MetaAlarmParents == nil {
-					out.MetaAlarmParents = new([]string)
-				}
-				if in.IsNull() {
-					in.Skip()
-					*out.MetaAlarmParents = nil
-				} else {
-					in.Delim('[')
-					if *out.MetaAlarmParents == nil {
-						if !in.IsDelim(']') {
-							*out.MetaAlarmParents = make([]string, 0, 4)
-						} else {
-							*out.MetaAlarmParents = []string{}
-						}
+					if !in.IsDelim(']') {
+						out.MetaAlarmParents = make([]string, 0, 4)
 					} else {
-						*out.MetaAlarmParents = (*out.MetaAlarmParents)[:0]
+						out.MetaAlarmParents = []string{}
 					}
-					for !in.IsDelim(']') {
-						var v4 string
-						v4 = string(in.String())
-						*out.MetaAlarmParents = append(*out.MetaAlarmParents, v4)
-						in.WantComma()
-					}
-					in.Delim(']')
+				} else {
+					out.MetaAlarmParents = (out.MetaAlarmParents)[:0]
 				}
+				for !in.IsDelim(']') {
+					var v4 string
+					v4 = string(in.String())
+					out.MetaAlarmParents = append(out.MetaAlarmParents, v4)
+					in.WantComma()
+				}
+				in.Delim(']')
 			}
 		case "ma_children":
 			if in.IsNull() {
 				in.Skip()
 				out.MetaAlarmChildren = nil
 			} else {
+				in.Delim('[')
 				if out.MetaAlarmChildren == nil {
-					out.MetaAlarmChildren = new([]string)
-				}
-				if in.IsNull() {
-					in.Skip()
-					*out.MetaAlarmChildren = nil
-				} else {
-					in.Delim('[')
-					if *out.MetaAlarmChildren == nil {
-						if !in.IsDelim(']') {
-							*out.MetaAlarmChildren = make([]string, 0, 4)
-						} else {
-							*out.MetaAlarmChildren = []string{}
-						}
+					if !in.IsDelim(']') {
+						out.MetaAlarmChildren = make([]string, 0, 4)
 					} else {
-						*out.MetaAlarmChildren = (*out.MetaAlarmChildren)[:0]
+						out.MetaAlarmChildren = []string{}
 					}
-					for !in.IsDelim(']') {
-						var v5 string
-						v5 = string(in.String())
-						*out.MetaAlarmChildren = append(*out.MetaAlarmChildren, v5)
-						in.WantComma()
-					}
-					in.Delim(']')
+				} else {
+					out.MetaAlarmChildren = (out.MetaAlarmChildren)[:0]
 				}
+				for !in.IsDelim(']') {
+					var v5 string
+					v5 = string(in.String())
+					out.MetaAlarmChildren = append(out.MetaAlarmChildren, v5)
+					in.WantComma()
+				}
+				in.Delim(']')
 			}
 		case "display_name":
 			out.DisplayName = string(in.String())
@@ -603,57 +587,45 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawByte('}')
 		}
 	}
-	{
+	if in.MetaAlarmRuleID != "" {
 		const prefix string = ",\"metaalarm_rule_id\":"
 		out.RawString(prefix)
 		out.String(string(in.MetaAlarmRuleID))
 	}
-	{
+	if in.MetaAlarmValuePath != "" {
 		const prefix string = ",\"metaalarm_value_path\":"
 		out.RawString(prefix)
 		out.String(string(in.MetaAlarmValuePath))
 	}
-	{
+	if len(in.MetaAlarmParents) != 0 {
 		const prefix string = ",\"ma_parents\":"
 		out.RawString(prefix)
-		if in.MetaAlarmParents == nil {
-			out.RawString("null")
-		} else {
-			if *in.MetaAlarmParents == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-				out.RawString("null")
-			} else {
-				out.RawByte('[')
-				for v13, v14 := range *in.MetaAlarmParents {
-					if v13 > 0 {
-						out.RawByte(',')
-					}
-					out.String(string(v14))
+		{
+			out.RawByte('[')
+			for v13, v14 := range in.MetaAlarmParents {
+				if v13 > 0 {
+					out.RawByte(',')
 				}
-				out.RawByte(']')
+				out.String(string(v14))
 			}
+			out.RawByte(']')
 		}
 	}
-	{
+	if len(in.MetaAlarmChildren) != 0 {
 		const prefix string = ",\"ma_children\":"
 		out.RawString(prefix)
-		if in.MetaAlarmChildren == nil {
-			out.RawString("null")
-		} else {
-			if *in.MetaAlarmChildren == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-				out.RawString("null")
-			} else {
-				out.RawByte('[')
-				for v15, v16 := range *in.MetaAlarmChildren {
-					if v15 > 0 {
-						out.RawByte(',')
-					}
-					out.String(string(v16))
+		{
+			out.RawByte('[')
+			for v15, v16 := range in.MetaAlarmChildren {
+				if v15 > 0 {
+					out.RawByte(',')
 				}
-				out.RawByte(']')
+				out.String(string(v16))
 			}
+			out.RawByte(']')
 		}
 	}
-	{
+	if in.DisplayName != "" {
 		const prefix string = ",\"display_name\":"
 		out.RawString(prefix)
 		out.String(string(in.DisplayName))
