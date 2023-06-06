@@ -1,10 +1,11 @@
 <template lang="pug">
   c-search-field(
-    :value="query[field]",
     :combobox="combobox",
     :items="items",
     @submit="submit",
-    @clear="clear"
+    @clear="clear",
+    @toggle-pin="togglePin",
+    @remove="remove"
   )
     v-tooltip(v-if="tooltip", bottom)
       template(#activator="{ on }")
@@ -63,6 +64,14 @@ export default {
       return preparedSearch;
     },
 
+    remove(search) {
+      this.$emit('remove', search);
+    },
+
+    togglePin(search) {
+      this.$emit('toggle-pin', search);
+    },
+
     clear() {
       const newQuery = omit(this.query, [this.field]);
 
@@ -73,6 +82,8 @@ export default {
 
     submit(search) {
       const requestData = this.prepareRequestData(search);
+
+      this.$emit('submit', search);
 
       if (requestData || this.query[this.field]) {
         this.$emit('update:query', {

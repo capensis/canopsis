@@ -122,6 +122,34 @@ describe('c-advanced-search-field', () => {
     });
   });
 
+  it('Toggle pin event works ', () => {
+    const { search, field } = mockData;
+    const wrapper = factory({
+      propsData: {
+        query: { [field]: search },
+        field,
+      },
+    });
+
+    wrapper.findRoot().$emit('toggle-pin', search);
+
+    expect(wrapper).toEmit('toggle-pin', search);
+  });
+
+  it('Remove event works ', () => {
+    const { search, field } = mockData;
+    const wrapper = factory({
+      propsData: {
+        query: { [field]: search },
+        field,
+      },
+    });
+
+    wrapper.findRoot().$emit('remove', search);
+
+    expect(wrapper).toEmit('remove', search);
+  });
+
   it('Renders `c-advanced-search-field` correctly', () => {
     const tooltip = `
       <span>Tooltip content</span>
