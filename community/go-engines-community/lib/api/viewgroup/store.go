@@ -22,11 +22,12 @@ type Store interface {
 	Delete(ctx context.Context, id string) (bool, error)
 }
 
-func NewStore(dbClient mongo.DbClient) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
 		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.ViewGroupMongoCollection),
 		dbViewCollection:      dbClient.Collection(mongo.ViewMongoCollection),
+		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "title"},
 		defaultSortBy:         "position",
 	}
@@ -36,6 +37,7 @@ type store struct {
 	dbClient              mongo.DbClient
 	dbCollection          mongo.DbCollection
 	dbViewCollection      mongo.DbCollection
+	authorProvider        author.Provider
 	defaultSearchByFields []string
 	defaultSortBy         string
 }
@@ -48,7 +50,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 	}
 
 	sort := common.GetSortQuery(s.defaultSortBy, common.SortAsc)
-	project := author.Pipeline()
+	project := s.authorProvider.Pipeline()
 
 	if r.WithFlags || r.WithViews {
 		project = append(project,
@@ -84,7 +86,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 				"views.group": "$group",
 			}},
 		)
-		project = append(project, author.PipelineForField("views.author")...)
+		project = append(project, s.authorProvider.PipelineForField("views.author")...)
 
 		if r.WithTabs {
 			project = append(project,
@@ -96,7 +98,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 				}},
 				bson.M{"$unwind": bson.M{"path": "$tabs", "preserveNullAndEmptyArrays": true}},
 			)
-			project = append(project, author.PipelineForField("tabs.author")...)
+			project = append(project, s.authorProvider.PipelineForField("tabs.author")...)
 
 			if r.WithWidgets {
 				project = append(project,
@@ -108,7 +110,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 					}},
 					bson.M{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
 				)
-				project = append(project, author.PipelineForField("widgets.author")...)
+				project = append(project, s.authorProvider.PipelineForField("widgets.author")...)
 				project = append(project,
 					bson.M{"$lookup": bson.M{
 						"from":         mongo.WidgetFiltersMongoCollection,
@@ -118,7 +120,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 					}},
 					bson.M{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
 				)
-				project = append(project, author.PipelineForField("filters.author")...)
+				project = append(project, s.authorProvider.PipelineForField("filters.author")...)
 				project = append(project,
 					bson.M{"$sort": bson.M{"filters.position": 1}},
 					bson.M{"$group": bson.M{
@@ -241,7 +243,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 
 func (s *store) GetOneBy(ctx context.Context, id string) (*ViewGroup, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
-	pipeline = append(pipeline, author.Pipeline()...)
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err

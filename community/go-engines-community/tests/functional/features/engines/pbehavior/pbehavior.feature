@@ -98,11 +98,17 @@ Feature: update alarm on pbehavior
           "pbehavior": {
             "name": "test-pbehavior-1",
             "last_comment": {
-              "message": "Second comment"
+              "message": "Second comment",
+              "author": {
+                "_id": "root",
+                "name": "root",
+                "display_name": "root John Doe admin@canopsis.net"
+              }
             },
             "author": {
               "_id": "root",
-              "name": "root"
+              "name": "root",
+              "display_name": "root John Doe admin@canopsis.net"
             },
             "reason": {
               "_id": "test-reason-to-engine",
@@ -851,7 +857,8 @@ Feature: update alarm on pbehavior
             "last_comment": null,
             "author": {
               "_id": "root",
-              "name": "root"
+              "name": "root",
+              "display_name": "root John Doe admin@canopsis.net"
             },
             "reason": {
               "_id": "test-reason-to-engine",
@@ -1093,7 +1100,8 @@ Feature: update alarm on pbehavior
             "name": "test-pbehavior-11",
             "author": {
               "_id": "root",
-              "name": "root"
+              "name": "root",
+              "display_name": "root John Doe admin@canopsis.net"
             },
             "reason": {
               "_id": "test-reason-to-engine",
@@ -1457,7 +1465,8 @@ Feature: update alarm on pbehavior
             "name": "test-pbehavior-13",
             "author": {
               "_id": "root",
-              "name": "root"
+              "name": "root",
+              "display_name": "root John Doe admin@canopsis.net"
             },
             "reason": {
               "_id": "test-reason-to-engine",

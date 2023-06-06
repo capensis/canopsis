@@ -80,6 +80,12 @@ func NewEngine(
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
+	userInterfaceAdapter := config.NewUserInterfaceAdapter(dbClient)
+	userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
+	if err != nil {
+		panic(fmt.Errorf("dependency error: %s: %v", "can't get user interface config", err))
+	}
+	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	lockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
@@ -139,11 +145,12 @@ func NewEngine(
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
 		&rpcPBehaviorClientMessageProcessor{
-			DbClient:                 dbClient,
-			MetricsSender:            metricsSender,
-			PublishCh:                amqpChannel,
-			RemediationRpc:           remediationRpcClient,
-			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
+			DbClient:       dbClient,
+			MetricsSender:  metricsSender,
+			PublishCh:      amqpChannel,
+			RemediationRpc: remediationRpcClient,
+			Executor: m.depOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider,
+				alarmStatusService, metricsSender),
 			EntityAdapter:            entityAdapter,
 			AlarmAdapter:             alarmAdapter,
 			PbehaviorAdapter:         pbehavior.NewAdapter(dbClient),
@@ -166,12 +173,13 @@ func NewEngine(
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			PublishCh:                amqpChannel,
 			RemediationRpc:           remediationRpcClient,
-			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
-			EntityAdapter:            entity.NewAdapter(dbClient),
-			PbehaviorAdapter:         pbehavior.NewAdapter(dbClient),
-			Decoder:                  json.NewDecoder(),
-			Encoder:                  json.NewEncoder(),
-			Logger:                   logger,
+			Executor: m.depOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider,
+				alarmStatusService, metricsSender),
+			EntityAdapter:    entity.NewAdapter(dbClient),
+			PbehaviorAdapter: pbehavior.NewAdapter(dbClient),
+			Decoder:          json.NewDecoder(),
+			Encoder:          json.NewEncoder(),
+			Logger:           logger,
 		},
 		amqpChannel,
 		logger,
@@ -277,7 +285,7 @@ func NewEngine(
 				entity.NewAdapter(dbClient),
 				correlation.NewRuleAdapter(dbClient),
 				alarmConfigProvider,
-				m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
+				m.depOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider, alarmStatusService, metricsSender),
 				alarmStatusService,
 				metricsSender,
 				metaAlarmEventProcessor,
@@ -304,14 +312,15 @@ func NewEngine(
 		cfg.Global.PrefetchSize,
 		amqpConnection,
 		&rpcMessageProcessor{
-			DbClient:                 dbClient,
-			MetricsSender:            metricsSender,
-			EntityAdapter:            entityAdapter,
-			AlarmAdapter:             alarmAdapter,
-			RMQChannel:               amqpChannel,
-			PbhRpc:                   pbhRpcClient,
-			RemediationRpc:           remediationRpcClient,
-			Executor:                 m.depOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
+			DbClient:       dbClient,
+			MetricsSender:  metricsSender,
+			EntityAdapter:  entityAdapter,
+			AlarmAdapter:   alarmAdapter,
+			RMQChannel:     amqpChannel,
+			PbhRpc:         pbhRpcClient,
+			RemediationRpc: remediationRpcClient,
+			Executor: m.depOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider,
+				alarmStatusService, metricsSender),
 			ActionRpc:                actionRpcClient,
 			MetaAlarmEventProcessor:  metaAlarmEventProcessor,
 			StateCountersService:     stateCountersService,
@@ -390,6 +399,13 @@ func NewEngine(
 		dataStorageConfigProvider,
 	))
 
+	engineAxe.AddPeriodicalWorker("user_interface_config", libengine.NewLoadUserInterfaceConfigPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		userInterfaceAdapter,
+		logger,
+		userInterfaceConfigProvider,
+	))
+
 	return engineAxe
 }
 
@@ -400,6 +416,7 @@ type DependencyMaker struct {
 func (m DependencyMaker) depOperationExecutor(
 	dbClient mongo.DbClient,
 	configProvider config.AlarmConfigProvider,
+	userInterfaceConfigProvider config.UserInterfaceConfigProvider,
 	alarmStatusService alarmstatus.Service,
 	metricsSender metrics.Sender,
 ) operation.Executor {
@@ -410,17 +427,17 @@ func (m DependencyMaker) depOperationExecutor(
 	container.Set(types.EventTypeActivate, executor.NewActivateExecutor())
 	container.Set(types.EventTypeAssocTicket, executor.NewAssocTicketExecutor(metricsSender))
 	container.Set(types.EventTypeCancel, executor.NewCancelExecutor(configProvider, alarmStatusService))
-	container.Set(types.EventTypeChangestate, executor.NewChangeStateExecutor(configProvider, alarmStatusService))
+	container.Set(types.EventTypeChangestate, executor.NewChangeStateExecutor(configProvider, userInterfaceConfigProvider,
+		alarmStatusService))
 	container.Set(types.EventTypeComment, executor.NewCommentExecutor(configProvider))
 	container.Set(types.EventTypeDeclareTicketWebhook, executor.NewDeclareTicketWebhookExecutor(configProvider, metricsSender))
-	container.Set(types.EventTypeKeepstate, executor.NewChangeStateExecutor(configProvider, alarmStatusService))
-	container.Set(types.EventTypePbhEnter, executor.NewPbhEnterExecutor(configProvider))
-	container.Set(types.EventTypePbhLeave, executor.NewPbhLeaveExecutor(configProvider))
-	container.Set(types.EventTypePbhLeaveAndEnter, executor.NewPbhLeaveAndEnterExecutor(configProvider))
-	container.Set(types.EventTypeResolveCancel, executor.NewResolveStatExecutor(executor.NewResolveCancelExecutor(), entityAdapter))
-	container.Set(types.EventTypeResolveClose, executor.NewResolveStatExecutor(executor.NewResolveCloseExecutor(), entityAdapter))
-	container.Set(types.EventTypeResolveDeleted, executor.NewResolveStatExecutor(executor.NewResolveDeletedExecutor(), entityAdapter))
-	container.Set(types.EventTypeEntityToggled, executor.NewResolveStatExecutor(executor.NewResolveDisabledExecutor(), entityAdapter))
+	container.Set(types.EventTypePbhEnter, executor.NewPbhEnterExecutor(configProvider, metricsSender))
+	container.Set(types.EventTypePbhLeave, executor.NewPbhLeaveExecutor(configProvider, metricsSender))
+	container.Set(types.EventTypePbhLeaveAndEnter, executor.NewPbhLeaveAndEnterExecutor(configProvider, metricsSender))
+	container.Set(types.EventTypeResolveCancel, executor.NewResolveStatExecutor(executor.NewResolveCancelExecutor(), entityAdapter, metricsSender))
+	container.Set(types.EventTypeResolveClose, executor.NewResolveStatExecutor(executor.NewResolveCloseExecutor(), entityAdapter, metricsSender))
+	container.Set(types.EventTypeResolveDeleted, executor.NewResolveStatExecutor(executor.NewResolveDeletedExecutor(), entityAdapter, metricsSender))
+	container.Set(types.EventTypeEntityToggled, executor.NewResolveStatExecutor(executor.NewResolveDisabledExecutor(), entityAdapter, metricsSender))
 	container.Set(types.EventTypeSnooze, executor.NewSnoozeExecutor(configProvider))
 	container.Set(types.EventTypeUncancel, executor.NewUncancelExecutor(configProvider, alarmStatusService))
 	container.Set(types.EventTypeUnsnooze, executor.NewUnsnoozeExecutor())
