@@ -37,6 +37,7 @@
         ref="dataTable",
         v-model="selected",
         :class="vDataTableClass",
+        :style="vDataTableStyle",
         :items="alarms",
         :headers="headersWithWidth",
         :total-items="totalItems",
@@ -286,6 +287,14 @@ export default {
       return this.preparedColumns;
     },
 
+    needToAddLeftActionsCell() {
+      return (this.expandable || this.hasInstructionsAlarms) && !this.selectable;
+    },
+
+    hasLeftActions() {
+      return this.selectable || this.needToAddLeftActionsCell;
+    },
+
     headers() {
       const headers = this.sortedColumns.map(column => ({
         ...column,
@@ -296,7 +305,7 @@ export default {
         headers.push({ text: this.$t('common.actionsLabel'), value: 'actions', sortable: false });
       }
 
-      if ((this.expandable || this.hasInstructionsAlarms) && !this.selectable) {
+      if (this.needToAddLeftActionsCell) {
         /**
          * We need it for the expand panel open button
          */
@@ -341,6 +350,22 @@ export default {
         'alarms-list-table--truncated': this.isCellContentTruncated,
         'alarms-list-table--fixed': this.resizableColumn || this.draggableColumn,
       };
+    },
+
+    columnsWidth() {
+      return Object.values(this.columnsWidthByField).reduce((acc, width) => acc + width, 0);
+    },
+
+    vDataTableStyle() {
+      if (this.resizableColumn) {
+        const actionsWidth = this.hasLeftActions ? 82 : 0;
+
+        return {
+          '--alarms-list-table-width': `calc(${actionsWidth}px + ${this.columnsWidth}%)`,
+        };
+      }
+
+      return {};
     },
 
     rowListeners() {
@@ -589,6 +614,10 @@ export default {
   &--fixed {
     & > .v-table__overflow > table {
       table-layout: fixed;
+      /* TODO: Should be used v-bind later */
+      width: var(--alarms-list-table-width);
+      max-width: unset;
+      min-width: 100%;
     }
   }
 
