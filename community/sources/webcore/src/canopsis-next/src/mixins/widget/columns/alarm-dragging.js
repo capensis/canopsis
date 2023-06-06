@@ -22,13 +22,13 @@ export const widgetColumnDraggingAlarmMixin = {
   },
   methods: {
     enableDraggingMode() {
-      this.draggingMode = !this.draggingMode;
+      this.draggingMode = true;
 
       this.startColumnDragging();
     },
 
     disableDraggingMode() {
-      this.draggingMode = !this.draggingMode;
+      this.draggingMode = false;
 
       this.finishColumnDragging();
     },

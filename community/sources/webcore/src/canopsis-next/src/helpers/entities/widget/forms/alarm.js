@@ -72,8 +72,8 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
 
 /**
  * @typedef {Object} WidgetColumnsParameters
- * @property {boolean} dragging
- * @property {boolean} resizing
+ * @property {boolean} draggable
+ * @property {boolean} resizable
  * @property {AlarmsResizingBehaviors} cells_content_behavior
  */
 
@@ -230,8 +230,8 @@ export const openedToForm = (opened) => {
  * @returns {WidgetColumnsParametersForm}
  */
 export const columnsParametersToForm = (columns = {}) => ({
-  dragging: columns.dragging ?? false,
-  resizing: columns.resizing ?? false,
+  draggable: columns.draggable ?? false,
+  resizable: columns.resizable ?? false,
   cells_content_behavior: columns.cells_content_behavior ?? ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap,
 });
 

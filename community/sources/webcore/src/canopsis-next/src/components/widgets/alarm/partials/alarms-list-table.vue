@@ -414,8 +414,12 @@ export default {
     },
 
     editing() {
-      this.disableDraggingMode();
-      this.disableResizingMode();
+      if (this.resizingMode || this.draggingMode) {
+        this.updateColumnsSettings();
+
+        this.disableDraggingMode();
+        this.disableResizingMode();
+      }
     },
 
     columnsSettings: {
@@ -435,16 +439,25 @@ export default {
 
   methods: {
     updateColumnsSettings() {
-      this.$emit('update:columns-settings', {
-        columns_width: this.columnsWidthByField,
-        columns_position: this.columnsPositionByField,
-      });
+      if (!this.resizingMode && !this.draggingMode) {
+        return;
+      }
+
+      const settings = {};
+
+      if (this.resizingMode) {
+        settings.columns_width = this.columnsWidthByField;
+      }
+
+      if (this.draggingMode) {
+        settings.columns_position = this.columnsPositionByField;
+      }
+
+      this.$emit('update:columns-settings', settings);
     },
 
     toggleColumnEditingMode() {
-      if (this.resizingMode || this.draggingMode) {
-        this.updateColumnsSettings();
-      }
+      this.updateColumnsSettings();
 
       if (this.resizableColumn) {
         this.toggleResizingMode();
@@ -621,7 +634,10 @@ export default {
   &--fixed {
     & > .v-table__overflow > table {
       table-layout: fixed;
-      /* TODO: Should be used v-bind later */
+      /**
+       * TODO: Should be used v-bind later. We should update compiler.
+       * Current compiler cannot to handle script setup and v-bind
+       */
       width: var(--alarms-list-table-width);
       max-width: unset;
       min-width: 100%;
