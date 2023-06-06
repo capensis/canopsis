@@ -230,7 +230,7 @@ func NewEngine(
 		canopsis.FIFOAckExchangeName,
 		canopsis.FIFOAckQueueName,
 		amqpConnection,
-		&messageProcessor{
+		&MessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			TechMetricsSender:        techMetricsSender,
 			EventProcessor: NewEventProcessor(
