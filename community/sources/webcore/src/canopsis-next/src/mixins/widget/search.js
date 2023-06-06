@@ -1,5 +1,7 @@
 import { MAX_SEARCH_ITEMS } from '@/constants';
 
+import { immutableSortPinnedSearches } from '@/helpers/search/sorting';
+
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 
 export const widgetSearchMixin = {
@@ -10,14 +12,40 @@ export const widgetSearchMixin = {
     },
   },
   methods: {
-    updateSearchesInUserPreferences(search) {
-      const newSearches = [
-        search,
-        ...this.searches.filter(item => item !== search),
-      ].slice(0, MAX_SEARCH_ITEMS);
+    togglePinSearchInUserPreferences(search) {
+      const searchItem = this.searches.find(item => item.search === search);
 
-      return this.updateContentInUserPreference({
-        searches: newSearches,
+      if (!searchItem) {
+        return;
+      }
+
+      const newSearches = this.searches.filter(item => item.search !== search);
+
+      newSearches.push({ ...searchItem, pinned: !searchItem.pinned });
+
+      this.updateContentInUserPreference({
+        searches: immutableSortPinnedSearches(newSearches, search),
+      });
+    },
+
+    updateSearchesInUserPreferences(search) {
+      if (!search) {
+        return;
+      }
+
+      const searchItem = this.searches.find(item => item.search === search) ?? { search, pinned: false };
+      const newSearches = this.searches.filter(item => item.search !== search);
+
+      newSearches.push(searchItem);
+
+      this.updateContentInUserPreference({
+        searches: immutableSortPinnedSearches(newSearches, search).slice(0, MAX_SEARCH_ITEMS),
+      });
+    },
+
+    removeSearchFromUserPreferences(search) {
+      this.updateContentInUserPreference({
+        searches: this.searches.filter(item => item.search !== search),
       });
     },
   },
