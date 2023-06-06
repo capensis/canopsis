@@ -74,3 +74,134 @@ exports[`c-search-field Renders \`c-search-field\` correctly with combobox and i
   />
 </div>
 `;
+
+exports[`c-search-field Renders \`c-search-field\` correctly with combobox and items 2`] = `
+<div
+  class="v-menu__content theme--light v-autocomplete__content c-search-field__menu"
+  style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
+>
+  <div
+    class="v-select-list v-card theme--light"
+  >
+    <div
+      class="v-list theme--light"
+      role="list"
+    >
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              item 1
+            </div>
+          </div>
+          <div
+            class="v-list__tile__action"
+          >
+            <div
+              class="layout row"
+            >
+              <button
+                class="ma-0 v-btn v-btn--icon v-btn--small theme--light"
+                type="button"
+              >
+                <div
+                  class="v-btn__content"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light grey--text"
+                    style="font-size: 16px;"
+                  >
+                    delete
+                  </i>
+                </div>
+              </button>
+              <button
+                class="ma-0 v-btn v-btn--icon v-btn--small theme--light c-search-field__item__pinned"
+                type="button"
+              >
+                <div
+                  class="v-btn__content"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light inherit--text"
+                    style="font-size: 16px;"
+                  >
+                    lock
+                  </i>
+                </div>
+              </button>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div
+        role="listitem"
+      >
+        <a
+          class="v-list__tile v-list__tile--link theme--light"
+        >
+          <div
+            class="v-list__tile__content"
+          >
+            <div
+              class="v-list__tile__title"
+            >
+              item 2
+            </div>
+          </div>
+          <div
+            class="v-list__tile__action"
+          >
+            <div
+              class="layout row"
+            >
+              <button
+                class="ma-0 v-btn v-btn--icon v-btn--small theme--light"
+                type="button"
+              >
+                <div
+                  class="v-btn__content"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light grey--text"
+                    style="font-size: 16px;"
+                  >
+                    delete
+                  </i>
+                </div>
+              </button>
+              <button
+                class="ma-0 v-btn v-btn--icon v-btn--small theme--light"
+                type="button"
+              >
+                <div
+                  class="v-btn__content"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="v-icon material-icons theme--light grey--text"
+                    style="font-size: 16px;"
+                  >
+                    lock
+                  </i>
+                </div>
+              </button>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+`;

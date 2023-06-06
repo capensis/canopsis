@@ -6,12 +6,33 @@
       :label="$t('common.search')",
       :items="items",
       :menu-props="comboboxMenuProps",
+      :return-object="false",
       append-icon="",
+      item-text="search",
+      item-value="search",
       hide-details,
       hide-no-data,
       single-line,
       @input="submit"
     )
+      template(#item="{ item }")
+        v-list-tile-content
+          v-list-tile-title {{ item.search }}
+        v-list-tile-action
+          v-layout(row)
+            v-btn.ma-0(
+              small,
+              icon,
+              @click.stop="$emit('remove', item.search)"
+            )
+              v-icon(color="grey", small) delete
+            v-btn.ma-0(
+              :class="{ 'c-search-field__item__pinned': item.pinned }",
+              small,
+              icon,
+              @click.stop="$emit('toggle-pin', item.search)"
+            )
+              v-icon(:color="item.pinned ? 'inherit' : 'grey'", small) lock
     v-text-field.ma-0(
       v-else,
       v-model="localValue",
@@ -79,7 +100,7 @@ export default {
     },
 
     submit() {
-      this.$emit('submit', this.localValue ?? '');
+      this.$emit('submit', this.localValue ? this.localValue.trim() : '');
     },
   },
 };
@@ -103,6 +124,14 @@ export default {
 
       .v-list__tile {
         height: 32px;
+
+        .v-btn:not(.c-search-field__item__pinned) {
+          opacity: 0;
+        }
+
+        &:hover .v-btn {
+          opacity: 1;
+        }
       }
     }
   }
