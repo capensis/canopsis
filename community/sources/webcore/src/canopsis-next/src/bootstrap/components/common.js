@@ -8,6 +8,7 @@ export { default as CInformationBlock } from '@/components/common/block/c-inform
 export { default as CInformationBlockRow } from '@/components/common/block/c-information-block-row.vue';
 export { default as CResponsiveList } from '@/components/common/responsive-list/c-responsive-list.vue';
 export { default as CRuntimeTemplate } from '@/components/common/runtime-template/c-runtime-template.vue';
+export { default as CCompiledTemplate } from '@/components/common/runtime-template/c-compiled-template.vue';
 export { default as CCopyWrapper } from '@/components/common/runtime-template/c-copy-wrapper.vue';
 export { default as CLinksList } from '@/components/common/links/c-links-list.vue';
 export { default as CRequestTextInformation } from '@/components/common/request/c-request-text-information.vue';
