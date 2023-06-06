@@ -78,13 +78,16 @@ export const widgetColumnResizingAlarmMixin = {
           const headerContentElement = headerElement.querySelector('span');
           const { width: contentWidth } = headerContentElement.getBoundingClientRect();
 
-          acc.columnsWidthByField[value] = headerWidth * this.percentsInPixel;
+          const minWidth = (24 + 22 + 16 + contentWidth) * this.percentsInPixel;
+          const width = headerWidth * this.percentsInPixel;
+
+          acc.columnsWidthByField[value] = Math.max(minWidth, width);
           /**
            * 24 - max padding size
            * 22 - max sort position icon width
            * 16 - max sort direction icon width
            */
-          acc.columnsMinWidthByField[value] = (24 + 22 + 16 + contentWidth) * this.percentsInPixel;
+          acc.columnsMinWidthByField[value] = minWidth;
         }
 
         return acc;
