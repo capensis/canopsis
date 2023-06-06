@@ -170,7 +170,7 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 		[]mongodriver.WriteModel,
 		0,
 		int(math.Min(
-			float64(len(entity.ServicesToRemove)+len(entity.ImpactedServices)),
+			float64(len(entity.ServicesToRemove)+len(entity.Services)),
 			canopsis.DefaultBulkSize,
 		)),
 	)
@@ -192,7 +192,7 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 	if changeType == types.AlarmChangeTypeEnabled {
 		inSlice = entity.ServicesToAdd
 	} else {
-		inSlice = append(entity.ImpactedServices, entity.ServicesToRemove...)
+		inSlice = append(entity.Services, entity.ServicesToRemove...)
 	}
 
 	if len(inSlice) == 0 {
