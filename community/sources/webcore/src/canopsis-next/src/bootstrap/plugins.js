@@ -50,6 +50,7 @@ import PlaylistBuildIcon from '@/components/icons/playlist-build.vue';
 import ManualInstruction from '@/components/icons/manual_instruction.vue';
 import RestartAltIcon from '@/components/icons/restart_alt.vue';
 import ListDeleteIcon from '@/components/icons/list_delete.vue';
+import PushPinIcon from '@/components/icons/push_pin.vue';
 import * as modalsComponents from '@/components/modals';
 import * as sidebarsComponents from '@/components/sidebars';
 
@@ -118,6 +119,9 @@ export const bootstrapApplicationPlugins = (Vue) => {
       },
       list_delete: {
         component: ListDeleteIcon,
+      },
+      push_pin: {
+        component: PushPinIcon,
       },
     },
   });

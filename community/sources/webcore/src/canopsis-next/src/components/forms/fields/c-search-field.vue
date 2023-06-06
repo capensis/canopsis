@@ -17,7 +17,7 @@
     )
       template(#item="{ item }")
         v-list-tile-content
-          v-list-tile-title {{ item.search }}
+          v-list-tile-title.pr-2 {{ item.search }}
         v-list-tile-action
           v-layout(row)
             v-btn.ma-0(
@@ -32,7 +32,7 @@
               icon,
               @click.stop="$emit('toggle-pin', item.search)"
             )
-              v-icon(:color="item.pinned ? 'inherit' : 'grey'", small) lock
+              v-icon(:color="item.pinned ? 'inherit' : 'grey'", small) $vuetify.icons.push_pin
     v-text-field.ma-0(
       v-else,
       v-model="localValue",
