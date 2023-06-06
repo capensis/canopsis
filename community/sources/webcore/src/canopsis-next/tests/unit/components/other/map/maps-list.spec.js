@@ -34,7 +34,7 @@ describe('maps-list', () => {
     _id: `map-id-${index}`,
     type: types[index % 3],
     author: {
-      name: `author-${index}`,
+      display_name: `author-${index}`,
     },
     deletable: true,
     updated: 1614861888 + index,

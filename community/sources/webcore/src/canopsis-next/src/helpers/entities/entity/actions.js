@@ -4,20 +4,8 @@ import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
   ENTITY_EVENT_BY_ACTION_TYPE,
-  WEATHER_ACK_EVENT_OUTPUT,
   WEATHER_ACTIONS_TYPES,
 } from '@/constants';
-
-import {
-  createAckEventByEntity,
-  createAssociateTicketEventByEntity,
-  createCancelEventByEntity,
-  createCommentEventByEntity,
-  createDeclareTicketEventByEntity,
-  createInvalidateEventByEntity,
-  createRemoveAckEventByEntity,
-  createValidateEventByEntity,
-} from '@/helpers/entities/event/form';
 
 import { getEntityEventIcon } from './icons';
 import { getEntityEventColor } from './color';
@@ -160,54 +148,4 @@ export const getAvailableActionsByEntities = (
   );
 
   return uniq(types).map(convertEntityActionTypeToAction);
-};
-
-/**
- * Convert action to events by type
- *
- * @param {string} actionType
- * @param {Entity} entity
- * @param {Object} payload
- * @return {Event[]}
- */
-export const convertActionToEvents = ({ actionType, entity, payload }) => {
-  switch (actionType) {
-    case WEATHER_ACTIONS_TYPES.entityAck:
-      return [
-        createAckEventByEntity({ entity, output: WEATHER_ACK_EVENT_OUTPUT.ack }),
-      ];
-    case WEATHER_ACTIONS_TYPES.entityAckRemove:
-      return [
-        createRemoveAckEventByEntity({ entity, output: payload.output }),
-      ];
-    case WEATHER_ACTIONS_TYPES.entityComment:
-      return [
-        createCommentEventByEntity({ entity, output: payload.output }),
-      ];
-    case WEATHER_ACTIONS_TYPES.entityCancel:
-      return [
-        createCancelEventByEntity({ entity, output: payload.output }),
-      ];
-    case WEATHER_ACTIONS_TYPES.entityAssocTicket:
-      return [
-        createAckEventByEntity({ entity, output: WEATHER_ACK_EVENT_OUTPUT.ack }),
-        createAssociateTicketEventByEntity({ entity, ...payload }),
-      ];
-    case WEATHER_ACTIONS_TYPES.entityValidate:
-      return [
-        createAckEventByEntity({ entity, output: WEATHER_ACK_EVENT_OUTPUT.validateOk }),
-        createValidateEventByEntity({ entity }),
-      ];
-    case WEATHER_ACTIONS_TYPES.entityInvalidate:
-      return [
-        createAckEventByEntity({ entity, output: WEATHER_ACK_EVENT_OUTPUT.ack }),
-        createInvalidateEventByEntity({ entity }),
-      ];
-    case WEATHER_ACTIONS_TYPES.declareTicket:
-      return [
-        createDeclareTicketEventByEntity({ entity }),
-      ];
-  }
-
-  return [];
 };

@@ -96,7 +96,7 @@ export default {
 
         this.flapping && { text: this.$t('common.frequencyLimit'), value: 'freq_limit' },
 
-        { text: this.$t('common.author'), value: 'author.name' },
+        { text: this.$t('common.author'), value: 'author.display_name' },
         {
           text: this.$t('common.actionsLabel'),
           value: 'actions',

@@ -3,7 +3,6 @@ import Faker from 'faker';
 
 import { generateRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
-import { WEATHER_ACTIONS_TYPES } from '@/constants';
 
 import ServiceTemplate from '@/components/other/service/partials/service-template.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
@@ -37,31 +36,6 @@ describe('service-template', () => {
       service,
       pagination: {},
     },
-  });
-
-  test('Action applied after triggers entities list', async () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        serviceEntities: [{}, {}],
-        widgetParameters: {
-          modalTemplate,
-        },
-      },
-    });
-
-    await flushPromises();
-
-    const entitiesList = selectEntitiesList(wrapper);
-
-    const action = {
-      entities: [{}],
-      payload: { output: Faker.datatype.string() },
-      actionType: WEATHER_ACTIONS_TYPES.entityAck,
-    };
-
-    await entitiesList.vm.$emit('apply:action', action);
-
-    expect(wrapper).toEmit('apply:action', action);
   });
 
   test('Refresh applied after triggers entities list', async () => {
