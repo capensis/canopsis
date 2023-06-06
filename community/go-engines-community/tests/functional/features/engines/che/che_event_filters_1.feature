@@ -586,14 +586,6 @@ Feature: modify event on event filter
         "connector_name": "test-connector-name-che-event-filters-5",
         "component": "test-component-che-event-filters-5",
         "source_type": "component"
-      },
-      {
-        "event_type": "entityupdated",
-        "connector": "test-connector-che-event-filters-5",
-        "connector_name": "test-connector-name-che-event-filters-5",
-        "component": "test-component-che-event-filters-5",
-        "resource": "test-resource-che-event-filters-5",
-        "source_type": "resource"
       }
     ]
     """
@@ -658,7 +650,13 @@ Feature: modify event on event filter
       "enabled": false,
       "impact_level": 1,
       "sli_avail_state": 0,
-      "infos": []
+      "infos": [],
+      "impact": [
+        "test-component-che-event-filters-6"
+      ],
+      "depends": [
+        "test-connector-che-event-filters-6/test-connector-name-che-event-filters-6"
+      ]
     }
     """
     Then the response code should be 200
@@ -737,36 +735,47 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-6"
     }
     """
-    When I do GET /api/v4/entities?search=test-resource-che-event-filters-6
+    When I do GET /api/v4/entities?search=che-event-filters-6
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
         {
-          "_id": "test-resource-che-event-filters-6/test-component-che-event-filters-6",
-          "infos": {},
-          "name": "test-resource-che-event-filters-6",
-          "type": "resource",
+          "_id": "test-component-che-event-filters-6",
           "category": null,
           "component": "test-component-che-event-filters-6",
-          "connector": "test-connector-che-event-filters-6/test-connector-name-che-event-filters-6",
-          "enabled": false,
-          "old_entity_patterns": null,
+          "enabled": true,
           "impact_level": 1,
-          "impact_state": 0,
-          "last_event_date": {{ (index .lastResponse.data 0).last_event_date }},
-          "ko_events": 1,
-          "ok_events": 0,
-          "state": 0,
-          "status": 0
+          "infos": {},
+          "name": "test-component-che-event-filters-6",
+          "type": "component"
+        },
+        {
+          "_id": "test-connector-che-event-filters-6/test-connector-name-che-event-filters-6",
+          "category": null,
+          "enabled": true,
+          "impact_level": 1,
+          "infos": {},
+          "name": "test-connector-name-che-event-filters-6",
+          "type": "connector"
+        },
+        {
+          "_id": "test-resource-che-event-filters-6/test-component-che-event-filters-6",
+          "category": null,
+          "component": "test-component-che-event-filters-6",
+          "enabled": false,
+          "impact_level": 1,
+          "infos": {},
+          "name": "test-resource-che-event-filters-6",
+          "type": "resource"
         }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 3
       }
     }
     """

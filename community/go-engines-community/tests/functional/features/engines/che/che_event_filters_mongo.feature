@@ -263,31 +263,12 @@ Feature: modify event on event filter
     Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-resource-che-event-filters-mongo-3/test-eventfilter-mongo-data-not-exist-2-customer",
-          "infos": {},
-          "name": "test-resource-che-event-filters-mongo-3",
-          "type": "resource",
-          "category": null,
-          "component": "test-eventfilter-mongo-data-not-exist-2-customer",
-          "connector": "test-connector-che-event-filters-mongo-3/test-connector-name-che-event-filters-mongo-3",
-          "enabled": true,
-          "old_entity_patterns": null,
-          "impact_level": 1,
-          "impact_state": 0,
-          "last_event_date": {{ (index .lastResponse.data 0).last_event_date }},
-          "ko_events": 0,
-          "ok_events": 0,
-          "state": 0,
-          "status": 0
-        }
-      ],
+      "data": [],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 0
       }
     }
     """
