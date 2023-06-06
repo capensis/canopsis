@@ -292,10 +292,6 @@ export default {
       this.updateContentInUserPreference({ columns_settings: columnsSettings });
     },
 
-    updateSearchQuery(query) {
-      this.query = query;
-    },
-
     updateCorrelation(correlation) {
       this.updateContentInUserPreference({
         isCorrelationEnabled: correlation,
