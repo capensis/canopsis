@@ -1,3 +1,5 @@
+import { ENTITIES_STATES, ENTITIES_STATUSES, TIME_UNITS } from '@/constants';
+
 /**
  * @typedef {Object} AlarmOldLink
  * @property {string} label
@@ -127,7 +129,16 @@
  * @property {AlarmValue} v
  */
 
-import { ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
+/**
+ * @typedef {Object} SnoozeAction
+ * @property {number} duration
+ * @property {string} comment
+ */
+
+/**
+ * @typedef {SnoozeAction} SnoozeActionForm
+ * @property {Duration} duration
+ */
 
 /**
  * Checks if alarm is resolved
@@ -152,3 +163,17 @@ export const isResolvedAlarm = alarm => !!alarm.v.resolved;
  * @returns {boolean}
  */
 export const isAlarmStateNotOk = alarm => ENTITIES_STATES.ok !== alarm.v.state.val;
+
+/**
+ * Convert snooze object to form snooze
+ *
+ * @param {SnoozeAction} snooze
+ * @returns {SnoozeActionForm}
+ */
+export const snoozeToForm = (snooze = {}) => ({
+  duration: {
+    unit: snooze.duration?.unit ?? TIME_UNITS.minute,
+    value: snooze.duration?.seconds ?? 1,
+  },
+  comment: snooze.comment ?? '',
+});

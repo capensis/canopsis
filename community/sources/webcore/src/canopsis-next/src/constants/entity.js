@@ -64,7 +64,6 @@ export const EVENT_ENTITY_TYPES = {
   invalidate: 'invalidate',
   pause: 'pause',
   play: 'play',
-  groupRequest: 'groupRequest',
   group: 'group',
   pbhenter: 'pbhenter',
   pbhleave: 'pbhleave',
@@ -254,7 +253,6 @@ export const EVENT_ENTITY_ICONS_BY_TYPE = {
   [EVENT_ENTITY_TYPES.invalidate]: 'thumb_down',
   [EVENT_ENTITY_TYPES.pause]: 'pause',
   [EVENT_ENTITY_TYPES.play]: 'play_arrow',
-  [EVENT_ENTITY_TYPES.groupRequest]: 'note_add',
   [EVENT_ENTITY_TYPES.pbhenter]: 'pause',
   [EVENT_ENTITY_TYPES.pbhleave]: 'play_arrow',
   [EVENT_ENTITY_TYPES.comment]: 'comment',
@@ -319,8 +317,6 @@ export const SERVICE_WEATHER_WIDGET_MODAL_TYPES = {
   alarmList: 'alarm-list',
   both: 'both',
 };
-
-export const WEATHER_EVENT_DEFAULT_ENTITY = 'engine';
 
 export const WEATHER_ACK_EVENT_OUTPUT = {
   ack: 'MDS_ACKNOWLEDGE',

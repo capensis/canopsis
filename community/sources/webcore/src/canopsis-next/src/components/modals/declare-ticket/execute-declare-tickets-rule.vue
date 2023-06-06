@@ -105,6 +105,12 @@ export default {
       return this.alarmExecutions.every(isDeclareTicketExecutionFailed);
     },
 
+    isExecutionsFinished() {
+      return this.alarmExecutions.every(
+        execution => isDeclareTicketExecutionSucceeded(execution) || isDeclareTicketExecutionFailed(execution),
+      );
+    },
+
     failReason() {
       return Object.values(this.executionsStatusesById).map(execution => execution.fail_reason).join('\n');
     },
@@ -121,7 +127,7 @@ export default {
   },
   watch: {
     alarmExecutions(value) {
-      if (value.length && (this.isExecutionsFailed || this.isExecutionsSucceeded)) {
+      if (value.length && this.isExecutionsFinished) {
         this.config.onExecute?.();
       }
     },

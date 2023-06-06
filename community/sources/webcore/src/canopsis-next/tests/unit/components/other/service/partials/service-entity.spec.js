@@ -7,7 +7,6 @@ import {
   MODALS,
   PBEHAVIOR_TYPE_TYPES,
   USERS_PERMISSIONS,
-  WEATHER_ACTIONS_TYPES,
 } from '@/constants';
 
 import ServiceEntity from '@/components/other/service/partials/service-entity.vue';
@@ -100,21 +99,6 @@ describe('service-entity', () => {
     await header.vm.$emit('remove:unavailable');
 
     expect(removeUnavailable).toHaveBeenCalled();
-  });
-
-  test('Action applied after trigger entity info tab', async () => {
-    const wrapper = factory();
-
-    const info = selectServiceEntityInfoTab(wrapper);
-
-    await info.vm.$emit('apply', {
-      type: WEATHER_ACTIONS_TYPES.entityAck,
-    });
-
-    expect(wrapper).toEmit('apply:action', {
-      actionType: WEATHER_ACTIONS_TYPES.entityAck,
-      entities: [entity],
-    });
   });
 
   test('Instruction executed after trigger entity info tab', async () => {

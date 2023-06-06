@@ -71,7 +71,7 @@ export default {
     return {
       actionType: ACK_MODAL_ACTIONS_TYPES.ack,
       form: {
-        output: '',
+        comment: '',
         ack_resources: false,
       },
     };
