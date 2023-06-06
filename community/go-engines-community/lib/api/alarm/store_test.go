@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
@@ -82,7 +83,9 @@ func benchmarkStoreFind(b *testing.B, fixturesPath string, request alarm.ListReq
 		}
 	})
 	userId := "test"
-	s := alarm.NewStore(dbClient, nil, config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()), zerolog.Nop())
+	authorProvider := author.NewProvider(dbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	s := alarm.NewStore(dbClient, nil, config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()),
+		authorProvider, zerolog.Nop())
 
 	b.ResetTimer()
 

@@ -271,6 +271,7 @@ export default {
   hidden: 'Hidden',
   numberField: 'Number field',
   chart: 'Chart | Charts',
+  chooseFile: 'Choose file',
   variableTypes: {
     string: 'String',
     number: 'Number',

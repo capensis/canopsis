@@ -69,6 +69,7 @@ import {
 
 import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
 import { entitiesPbehaviorReasonMixin } from '@/mixins/entities/pbehavior/reasons';
+import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
 
 import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
 
@@ -81,6 +82,7 @@ export default {
     formMixin,
     formValidationHeaderMixin,
     entitiesPbehaviorReasonMixin,
+    entitiesFieldPbehaviorFieldTypeMixin,
   ],
   model: {
     prop: 'form',
@@ -183,6 +185,9 @@ export default {
         this.noEnding = false;
       }
     },
+  },
+  mounted() {
+    this.fetchFieldPbehaviorTypesList();
   },
   methods: {
     updateTStop(tstop) {
