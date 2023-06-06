@@ -11,7 +11,7 @@
  * @param {string} activeSearch
  * @returns {Search[]}
  */
-export const immutableSortPinnedSearches = (searches, activeSearch) => [...searches].sort((a, b) => {
+export const sortPinnedSearches = (searches, activeSearch) => [...searches].sort((a, b) => {
   const aFactor = Number(a.search === activeSearch) + Number(a.pinned);
   const bFactor = Number(b.search === activeSearch) + Number(b.pinned);
 
