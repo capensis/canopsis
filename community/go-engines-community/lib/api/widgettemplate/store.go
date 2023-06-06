@@ -23,11 +23,12 @@ type Store interface {
 	Delete(ctx context.Context, id string) (bool, error)
 }
 
-func NewStore(dbClient mongo.DbClient) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
 		client:           dbClient,
 		collection:       dbClient.Collection(mongo.WidgetTemplateMongoCollection),
 		widgetCollection: dbClient.Collection(mongo.WidgetMongoCollection),
+		authorProvider:   authorProvider,
 
 		widgetParameters: view.GetWidgetTemplateParameters(),
 
@@ -40,6 +41,7 @@ type store struct {
 	client           mongo.DbClient
 	collection       mongo.DbCollection
 	widgetCollection mongo.DbCollection
+	authorProvider   author.Provider
 
 	widgetParameters map[string]map[string][]string
 
@@ -52,7 +54,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	if r.Type != "" {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"type": r.Type}})
 	}
-	pipeline = append(pipeline, author.Pipeline()...)
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
@@ -89,7 +91,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 
 func (s *store) GetOneById(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
-	pipeline = append(pipeline, author.Pipeline()...)
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err

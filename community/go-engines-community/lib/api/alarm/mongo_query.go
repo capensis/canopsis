@@ -30,6 +30,7 @@ const (
 type MongoQueryBuilder struct {
 	filterCollection      mongo.DbCollection
 	instructionCollection mongo.DbCollection
+	authorProvider        author.Provider
 
 	defaultSearchByFields   []string
 	availableSearchByFields map[string]struct{}
@@ -66,10 +67,11 @@ type lookupWithKey struct {
 	pipeline []bson.M
 }
 
-func NewMongoQueryBuilder(client mongo.DbClient) *MongoQueryBuilder {
+func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider) *MongoQueryBuilder {
 	return &MongoQueryBuilder{
 		filterCollection:      client.Collection(mongo.WidgetFiltersMongoCollection),
 		instructionCollection: client.Collection(mongo.InstructionMongoCollection),
+		authorProvider:        authorProvider,
 
 		defaultSearchByFields: []string{
 			"v.connector",
@@ -124,7 +126,7 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 		{key: "entity", pipeline: getEntityLookup()},
 		{key: "entity.category", pipeline: getEntityCategoryLookup()},
 		{key: "entity.impacts_counts", pipeline: getImpactsCountPipeline()},
-		{key: "pbehavior", pipeline: getPbehaviorLookup()},
+		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
 		{key: "pbehavior.type", pipeline: getPbehaviorTypeLookup()},
 		{key: "v.pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
 	}
@@ -1099,7 +1101,7 @@ func getEntityCategoryLookup() []bson.M {
 	}
 }
 
-func getPbehaviorLookup() []bson.M {
+func getPbehaviorLookup(authorProvider author.Provider) []bson.M {
 	pipeline := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorMongoCollection,
@@ -1120,8 +1122,8 @@ func getPbehaviorLookup() []bson.M {
 		{"$unwind": bson.M{"path": "$pbehavior.reason", "preserveNullAndEmptyArrays": true}},
 	}
 
-	pipeline = append(pipeline, author.PipelineForField("pbehavior.author")...)
-	pipeline = append(pipeline, author.PipelineForField("pbehavior.last_comment.author")...)
+	pipeline = append(pipeline, authorProvider.PipelineForField("pbehavior.author")...)
+	pipeline = append(pipeline, authorProvider.PipelineForField("pbehavior.last_comment.author")...)
 	pipeline = append(pipeline, bson.M{"$addFields": bson.M{
 		"pbehavior.last_comment": bson.M{
 			"$cond": bson.M{

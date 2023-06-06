@@ -14,18 +14,21 @@ import (
 
 // NewChangeStateExecutor creates new executor.
 func NewChangeStateExecutor(
-	configProvider config.AlarmConfigProvider,
+	alarmConfigProvider config.AlarmConfigProvider,
+	userInterfaceConfigProvider config.UserInterfaceConfigProvider,
 	alarmStatusService alarmstatus.Service,
 ) operation.Executor {
 	return &changeStateExecutor{
-		configProvider:     configProvider,
-		alarmStatusService: alarmStatusService,
+		alarmConfigProvider:         alarmConfigProvider,
+		userInterfaceConfigProvider: userInterfaceConfigProvider,
+		alarmStatusService:          alarmStatusService,
 	}
 }
 
 type changeStateExecutor struct {
-	configProvider     config.AlarmConfigProvider
-	alarmStatusService alarmstatus.Service
+	alarmConfigProvider         config.AlarmConfigProvider
+	userInterfaceConfigProvider config.UserInterfaceConfigProvider
+	alarmStatusService          alarmstatus.Service
 }
 
 // Exec emits change state event.
@@ -55,7 +58,11 @@ func (e *changeStateExecutor) Exec(
 		return "", nil
 	}
 
-	conf := e.configProvider.Get()
+	if *params.State == types.AlarmStateOK && !e.userInterfaceConfigProvider.Get().IsAllowChangeSeverityToInfo {
+		return "", fmt.Errorf("cannot change to ok state")
+	}
+
+	conf := e.alarmConfigProvider.Get()
 	output := utils.TruncateString(params.Output, conf.OutputLength)
 
 	newStep := types.NewAlarmStep(types.AlarmStepChangeState, time, params.Author, output, userID, role, initiator)
