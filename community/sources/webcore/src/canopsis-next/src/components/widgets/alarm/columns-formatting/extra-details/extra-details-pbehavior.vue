@@ -8,7 +8,7 @@
         strong {{ $t('alarm.actions.iconsTitles.pbehaviors') }}
         div
           div.mt-2.font-weight-bold {{ pbehavior.name }}
-          div(v-if="pbehavior.author") {{ $t('common.author') }}: {{ pbehavior.author.name }}
+          div(v-if="pbehavior.author") {{ $t('common.author') }}: {{ pbehavior.author.display_name }}
           div(v-if="pbehaviorInfo.type_name") {{ $t('common.type') }}: {{ pbehaviorInfo.type_name }}
           div(v-if="pbehavior.reason") {{ $t('common.reason') }}: {{ pbehavior.reason.name }}
           div {{ tstart }}
@@ -16,7 +16,7 @@
           div(v-if="pbehavior.rrule") {{ pbehavior.rrule }}
           div(v-if="pbehavior.last_comment") {{ $t('alarm.fields.lastComment') }}:
             div.ml-2 -&nbsp;
-              template(v-if="pbehavior.last_comment.author") {{ pbehavior.last_comment.author.name }}:&nbsp;
+              template(v-if="pbehavior.last_comment.author") {{ pbehavior.last_comment.author.display_name }}:&nbsp;
               | {{ pbehavior.last_comment.message }}
           v-divider
 </template>
