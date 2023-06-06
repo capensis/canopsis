@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 	"testing"
-
-	"go.mongodb.org/mongo-driver/bson"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
@@ -18,39 +18,39 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func BenchmarkMessageProcessor_Process_GivenNewAlarm(b *testing.B) {
 	now := types.NewCpsTime()
-	entity := &types.Entity{
-		ID:        "test-resource/test-component",
-		Name:      "test-resource",
-		Enabled:   true,
-		Type:      types.EntityTypeResource,
-		Created:   now,
-		Impacts:   []string{"test-component"},
-		Depends:   []string{"test-connector/test-connector-name"},
-		Connector: "test-connector/test-connector-name",
-		Component: "test-component",
-	}
 	benchmarkMessageProcessor(b, "./testdata/fixtures/new_alarm.yml", func(i int) types.Event {
 		return types.Event{
 			EventType:     types.EventTypeCheck,
 			Connector:     "test-connector",
-			ConnectorName: fmt.Sprintf("test-connector-name-%d", i),
+			ConnectorName: "test-connector-name",
 			Component:     "test-component",
-			Resource:      "test-resource",
+			Resource:      fmt.Sprintf("test-resource-%d", i),
 			SourceType:    types.SourceTypeResource,
 			State:         types.AlarmStateCritical,
-			Entity:        entity,
+			Entity: &types.Entity{
+				ID:        fmt.Sprintf("test-resource-%d/test-component", i),
+				Name:      fmt.Sprintf("test-resource-%d", i),
+				Enabled:   true,
+				Type:      types.EntityTypeResource,
+				Created:   now,
+				Connector: "test-connector/test-connector-name",
+				Component: "test-component",
+			},
 		}
 	})
 }
@@ -63,8 +63,6 @@ func BenchmarkMessageProcessor_Process_GivenOldAlarm(b *testing.B) {
 		Enabled:   true,
 		Type:      types.EntityTypeResource,
 		Created:   now,
-		Impacts:   []string{"test-component"},
-		Depends:   []string{"test-connector/test-connector-name"},
 		Connector: "test-connector/test-connector-name",
 		Component: "test-component",
 	}
@@ -90,8 +88,6 @@ func BenchmarkMessageProcessor_Process_GivenNoAlarm(b *testing.B) {
 		Enabled:   true,
 		Type:      types.EntityTypeResource,
 		Created:   now,
-		Impacts:   []string{"test-component"},
-		Depends:   []string{"test-connector/test-connector-name"},
 		Connector: "test-connector/test-connector-name",
 		Component: "test-component",
 	}
@@ -129,8 +125,6 @@ func BenchmarkMessageProcessor_Process_GivenNewAlarmState(b *testing.B) {
 				Enabled:   true,
 				Type:      types.EntityTypeResource,
 				Created:   now,
-				Impacts:   []string{"test-component"},
-				Depends:   []string{"test-connector/test-connector-name"},
 				Connector: "test-connector/test-connector-name",
 				Component: "test-component",
 			},
@@ -157,8 +151,6 @@ func BenchmarkMessageProcessor_Process_GivenNewComment(b *testing.B) {
 				Enabled:   true,
 				Type:      types.EntityTypeResource,
 				Created:   now,
-				Impacts:   []string{"test-component"},
-				Depends:   []string{"test-connector/test-connector-name"},
 				Connector: "test-connector/test-connector-name",
 				Component: "test-component",
 			},
@@ -215,8 +207,6 @@ func BenchmarkMessageProcessor_Process_GivenManyAlarmSteps(b *testing.B) {
 				Enabled:   true,
 				Type:      types.EntityTypeResource,
 				Created:   now,
-				Impacts:   []string{"test-component"},
-				Depends:   []string{"test-connector/test-connector-name"},
 				Connector: "test-connector/test-connector-name",
 				Component: "test-component",
 			},
@@ -286,33 +276,49 @@ func benchmarkMessageProcessor(
 	metricsSender := metrics.NewNullSender()
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	tzConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
+	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
+	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(config.UserInterfaceConf{}, logger)
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
-	metaAlarmEventProcessor := alarm.NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
+	metaAlarmEventProcessor := NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
 		alarmStatusService, alarmConfigProvider, json.NewEncoder(), nil, canopsis.FIFOExchangeName, canopsis.FIFOQueueName,
 		metricsSender, logger)
+	pbhRedisSession, err := redis.NewSession(ctx, redis.PBehaviorLockStorage, logger, 0, 0)
+	if err != nil {
+		b.Fatalf("unexpected error %v", err)
+	}
+	pbhLockClient := redis.NewLockClient(pbhRedisSession)
+	pbhStore := pbehavior.NewStore(redisClient, json.NewEncoder(), json.NewDecoder())
+	_, _, err = pbehavior.NewService(dbClient, pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient), json.NewDecoder()), pbhStore, pbhLockClient, logger).
+		Compute(ctx, timespan.New(time.Now(), time.Now().Add(time.Hour)))
+	if err != nil {
+		b.Fatalf("unexpected error %v", err)
+	}
 
-	p := messageProcessor{
+	p := MessageProcessor{
 		FeaturePrintEventOnError: true,
-		EventProcessor: alarm.NewEventProcessor(
+		EventProcessor: NewEventProcessor(
 			dbClient,
 			alarm.NewAdapter(dbClient),
 			libentity.NewAdapter(dbClient),
 			correlation.NewRuleAdapter(dbClient),
 			alarmConfigProvider,
-			DependencyMaker{}.DepOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
+			DependencyMaker{}.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider, alarmStatusService, metricsSender),
 			alarmStatusService,
 			metrics.NewNullSender(),
 			metaAlarmEventProcessor,
 			statistics.NewEventStatisticsSender(dbClient, logger, tzConfigProvider),
-			pbehavior.NewEntityTypeResolver(pbehavior.NewStore(redisClient, json.NewEncoder(), json.NewDecoder()), pbehavior.NewEntityMatcher(dbClient), logger),
+			pbehavior.NewEntityTypeResolver(pbhStore, pbehavior.NewEntityMatcher(dbClient), logger),
+			NewNullAutoInstructionMatcher(),
 			logger,
 		),
-		RemediationRpcClient:   nil,
+		TechMetricsSender:      techmetrics.NewSender(techMetricsConfigProvider, time.Minute, 0, 0, logger),
 		TimezoneConfigProvider: tzConfigProvider,
-		PbehaviorAdapter:       pbehavior.NewAdapter(dbClient),
 		Encoder:                json.NewEncoder(),
 		Decoder:                json.NewDecoder(),
 		Logger:                 logger,
+		PbehaviorAdapter:       pbehavior.NewAdapter(dbClient),
+		TagUpdater:             alarmtag.NewUpdater(dbClient),
+		AutoInstructionMatcher: NewNullAutoInstructionMatcher(),
 	}
 
 	encoder := json.NewEncoder()
