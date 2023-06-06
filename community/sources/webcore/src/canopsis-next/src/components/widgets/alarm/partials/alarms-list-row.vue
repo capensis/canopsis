@@ -26,7 +26,7 @@
         @activate="activateRow",
         @select:tag="$emit('select:tag', $event)"
       )
-      span.alarms-list-table__resize-handler.alarm-list-row__resize-handler(
+      span.alarms-list-table__resize-handler(
         v-if="resizing",
         @mousedown.prevent="$emit('start:resize', column.value)",
         @click.stop=""
@@ -230,10 +230,6 @@ export default {
 
   &__icons {
     width: 82px;
-  }
-
-  &__resize-handler {
-    z-index: unset !important;
   }
 
   &__cell {
