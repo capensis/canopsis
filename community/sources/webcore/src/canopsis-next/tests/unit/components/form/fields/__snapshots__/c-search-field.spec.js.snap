@@ -97,7 +97,7 @@ exports[`c-search-field Renders \`c-search-field\` correctly with combobox and i
             class="v-list__tile__content"
           >
             <div
-              class="v-list__tile__title"
+              class="v-list__tile__title pr-2"
             >
               item 1
             </div>
@@ -136,7 +136,7 @@ exports[`c-search-field Renders \`c-search-field\` correctly with combobox and i
                     class="v-icon material-icons theme--light inherit--text"
                     style="font-size: 16px;"
                   >
-                    lock
+                    $vuetify.icons.push_pin
                   </i>
                 </div>
               </button>
@@ -154,7 +154,7 @@ exports[`c-search-field Renders \`c-search-field\` correctly with combobox and i
             class="v-list__tile__content"
           >
             <div
-              class="v-list__tile__title"
+              class="v-list__tile__title pr-2"
             >
               item 2
             </div>
@@ -193,7 +193,7 @@ exports[`c-search-field Renders \`c-search-field\` correctly with combobox and i
                     class="v-icon material-icons theme--light grey--text"
                     style="font-size: 16px;"
                   >
-                    lock
+                    $vuetify.icons.push_pin
                   </i>
                 </div>
               </button>
