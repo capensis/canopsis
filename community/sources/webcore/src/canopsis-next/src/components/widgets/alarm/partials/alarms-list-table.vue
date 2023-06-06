@@ -356,9 +356,16 @@ export default {
       return Object.values(this.columnsWidthByField).reduce((acc, width) => acc + width, 0);
     },
 
+    leftActionsWidth() {
+      /**
+       * left expand/instruction icon/select actions width
+       */
+      return this.isMediumHeight || this.isSmallHeight ? 82 : 100;
+    },
+
     vDataTableStyle() {
       if (this.resizableColumn) {
-        const actionsWidth = this.hasLeftActions ? 82 : 0;
+        const actionsWidth = this.hasLeftActions ? this.leftActionsWidth : 0;
 
         return {
           '--alarms-list-table-width': `calc(${actionsWidth}px + ${this.columnsWidth}%)`,
