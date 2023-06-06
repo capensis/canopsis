@@ -69,7 +69,7 @@ export default {
       return [
         {
           text: this.$t('common.username'),
-          value: 'display_name',
+          value: 'name',
         },
         {
           text: this.$t('user.firstName'),
