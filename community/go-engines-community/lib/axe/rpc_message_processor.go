@@ -281,6 +281,7 @@ func (p *rpcMessageProcessor) sendTriggerEvent(
 		Resource:      event.Alarm.Value.Resource,
 		SourceType:    event.Entity.Type,
 		AlarmChange:   &alarmChange,
+		AlarmID:       event.Alarm.ID,
 	})
 	if err != nil {
 		p.logError(err, "RPC Message Processor: failed to encode a trigger event to engine-fifo", msg)
