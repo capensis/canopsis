@@ -30,7 +30,6 @@ Feature: modify event on event filter
         "on_failure": "pass"
       },
       "description": "test-event-filter-che-event-filters-second-1-description",
-      "priority": 1,
       "enabled": true
     }
     """
@@ -128,7 +127,6 @@ Feature: modify event on event filter
         }
       ]],
       "description": "test-event-filter-che-event-filters-second-3-description",
-      "priority": 1,
       "enabled": true
     }
     """
@@ -268,7 +266,6 @@ Feature: modify event on event filter
         }
       ]],
       "description": "test-event-filter-che-event-filters-second-4-description",
-      "priority": 1,
       "enabled": true
     }
     """
@@ -329,7 +326,6 @@ Feature: modify event on event filter
         }
       ]],
       "description": "test-event-filter-che-event-filters-second-5-description",
-      "priority": 1,
       "enabled": true
     }
     """
@@ -429,7 +425,6 @@ Feature: modify event on event filter
         }
       ],
       "description": "test-event-filter-che-event-filters-second-6-description",
-      "priority": 1,
       "enabled": true
     }
     """
@@ -549,7 +544,6 @@ Feature: modify event on event filter
         "test-eventfilter-22"
       ],
       "description": "test-event-filter-che-event-filters-second-7-description",
-      "priority": 1,
       "enabled": true
     }
     """
@@ -630,7 +624,6 @@ Feature: modify event on event filter
     When I do POST /api/v4/eventfilter/rules:
     """json
     {
-      "_id": "test-eventfilter-23",
       "type": "drop",
       "event_pattern":[[
         {
@@ -649,11 +642,11 @@ Feature: modify event on event filter
         }
       ]],
       "description": "test-event-filter-che-event-filters-second-8-description",
-      "priority": 1,
       "enabled": true
     }
     """
     Then the response code should be 201
+    Then I save response eventFilterId={{ .lastResponse._id }}
     When I wait the next periodical process
     When I send an event and wait the end of event processing:
     """json
@@ -682,7 +675,7 @@ Feature: modify event on event filter
       }
     }
     """
-    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-23:
+    When I do PUT /api/v4/eventfilter/rules/{{ .eventFilterId }}:
     """json
     {
       "type": "drop",
@@ -705,7 +698,6 @@ Feature: modify event on event filter
         }
       ]],
       "description": "test-event-filter-che-event-filters-second-8-description",
-      "priority": 1,
       "enabled": true
     }
     """
@@ -750,7 +742,6 @@ Feature: modify event on event filter
     When I do POST /api/v4/eventfilter/rules:
     """json
     {
-      "_id": "test-eventfilter-24",
       "start": {{ now }},
       "stop": {{ nowAdd "1m"}},
       "type": "drop",
@@ -777,11 +768,11 @@ Feature: modify event on event filter
         }
       ],
       "description": "test-event-filter-che-event-filters-second-9-description",
-      "priority": 1,
       "enabled": true
     }
     """
     Then the response code should be 201
+    Then I save response eventFilterId={{ .lastResponse._id }}
     When I wait the next periodical process
     When I wait the next periodical process
     When I send an event and wait the end of event processing:
@@ -817,7 +808,7 @@ Feature: modify event on event filter
       }
     }
     """
-    When I do PUT /api/v4/eventfilter/rules/test-eventfilter-24:
+    When I do PUT /api/v4/eventfilter/rules/{{ .eventFilterId }}:
     """json
     {
       "type": "drop",

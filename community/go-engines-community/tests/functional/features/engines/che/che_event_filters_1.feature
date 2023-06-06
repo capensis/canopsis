@@ -25,7 +25,6 @@ Feature: modify event on event filter
         }
       ]],
       "description": "test-event-filter-che-event-filters-1-description",
-      "priority": 1,
       "enabled": true
     }
     """
@@ -82,8 +81,8 @@ Feature: modify event on event filter
           }
         }
       ]],
-      "description": "test-event-filter-che-event-filters-2-description",
-      "priority": 1,
+      "description": "test-event-filter-che-event-filters-2-1-description",
+      "priority": 1001,
       "enabled": true
     }
     """
@@ -108,8 +107,8 @@ Feature: modify event on event filter
           }
         }
       ]],
-      "description": "test-event-filter-che-event-filters-1-description",
-      "priority": 2,
+      "description": "test-event-filter-che-event-filters-2-2-description",
+      "priority": 1002,
       "enabled": true
     }
     """
@@ -195,9 +194,9 @@ Feature: modify event on event filter
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "description": "test-event-filter-che-event-filters-3-description",
+      "description": "test-event-filter-che-event-filters-3-1-description",
       "enabled": true,
-      "priority": 2
+      "priority": 1003
     }
     """
     Then the response code should be 201
@@ -225,9 +224,9 @@ Feature: modify event on event filter
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "description": "test-event-filter-che-event-filters-3-description",
+      "description": "test-event-filter-che-event-filters-3-2-description",
       "enabled": true,
-      "priority": 3
+      "priority": 1004
     }
     """
     Then the response code should be 201
@@ -263,9 +262,9 @@ Feature: modify event on event filter
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "description": "test-event-filter-che-event-filters-3-description",
+      "description": "test-event-filter-che-event-filters-3-3-description",
       "enabled": true,
-      "priority": 4
+      "priority": 1005
     }
     """
     Then the response code should be 201
@@ -423,8 +422,7 @@ Feature: modify event on event filter
         "on_failure": "pass"
       },
       "description": "test-event-filter-che-event-filters-4-description",
-      "enabled": true,
-      "priority": 2
+      "enabled": true
     }
     """
     Then the response code should be 201
@@ -549,8 +547,7 @@ Feature: modify event on event filter
         "on_failure": "pass"
       },
       "description": "test-event-filter-che-event-filters-5-description",
-      "enabled": true,
-      "priority": 2
+      "enabled": true
     }
     """
     Then the response code should be 201
@@ -722,8 +719,7 @@ Feature: modify event on event filter
         "on_failure": "pass"
       },
       "description": "test-event-filter-che-event-filters-6-description",
-      "enabled": true,
-      "priority": 2
+      "enabled": true
     }
     """
     Then the response code should be 201
@@ -824,9 +820,8 @@ Feature: modify event on event filter
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "description": "test-event-filter-che-event-filters-7-2-description",
-      "enabled": true,
-      "priority": 2
+      "description": "test-event-filter-che-event-filters-7-description",
+      "enabled": true
     }
     """
     Then the response code should be 201
@@ -938,9 +933,9 @@ Feature: modify event on event filter
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "description": "test-event-filter-che-event-filters-8-2-description",
+      "description": "test-event-filter-che-event-filters-8-1-description",
       "enabled": true,
-      "priority": 2
+      "priority": 1006
     }
     """
     Then the response code should be 201
@@ -977,9 +972,9 @@ Feature: modify event on event filter
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "description": "test-event-filter-che-event-filters-8-3-description",
+      "description": "test-event-filter-che-event-filters-8-2-description",
       "enabled": true,
-      "priority": 3
+      "priority": 1007
     }
     """
     Then the response code should be 201
@@ -1028,8 +1023,8 @@ Feature: modify event on event filter
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "priority": 4,
-      "description": "test-event-filter-che-event-filters-8-4-description",
+      "priority": 1008,
+      "description": "test-event-filter-che-event-filters-8-3-description",
       "enabled": true
     }
     """
@@ -1120,7 +1115,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-event-filter-che-event-filters-9-description",
-      "priority": 1,
       "enabled": true
     }
     """
