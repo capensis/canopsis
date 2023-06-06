@@ -7,30 +7,58 @@ Feature: create and update meta alarm
     When I save response metaAlarmRuleID=test-metaalarmrule-axe-correlation-1
     When I send an event and wait the end of event processing:
     """json
-    [
-      {
-        "connector": "test-connector-axe-correlation-1",
-        "connector_name": "test-connector-name-axe-correlation-1",
-        "source_type": "resource",
-        "event_type": "check",
-        "component": "test-component-axe-correlation-1",
-        "resource": "test-resource-axe-correlation-1-1",
-        "state": 2,
-        "output": "test-output-axe-correlation-1"
-      },
-      {
-        "connector": "test-connector-axe-correlation-1",
-        "connector_name": "test-connector-name-axe-correlation-1",
-        "source_type": "resource",
-        "event_type": "check",
-        "component": "test-component-axe-correlation-1",
-        "resource": "test-resource-axe-correlation-1-2",
-        "state": 3,
-        "output": "test-output-axe-correlation-1"
-      }
-    ]
+    {
+      "connector": "test-connector-axe-correlation-1",
+      "connector_name": "test-connector-name-axe-correlation-1",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-axe-correlation-1",
+      "resource": "test-resource-axe-correlation-1-1",
+      "state": 2,
+      "output": "test-output-axe-correlation-1"
+    }
     """
     When I save response createTimestamp={{ now }}
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-1&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "output": "Rule: test-metaalarmrule-axe-correlation-1; Count: 1; Children: test-component-axe-correlation-1",
+            "component": "metaalarm",
+            "connector": "engine",
+            "connector_name": "correlation",
+            "meta": "{{ .metaAlarmRuleID }}",
+            "state": {
+              "_t": "stateinc",
+              "val": 2
+            },
+            "status": {
+              "_t": "statusinc",
+              "val": 1
+            }
+          }
+        }
+      ],
+      "meta": {
+        "total_count": 1
+      }
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-axe-correlation-1",
+      "connector_name": "test-connector-name-axe-correlation-1",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-axe-correlation-1",
+      "resource": "test-resource-axe-correlation-1-2",
+      "state": 3,
+      "output": "test-output-axe-correlation-1"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-axe-correlation-1&correlation=true until response code is 200 and body contains:
     """json
     {
