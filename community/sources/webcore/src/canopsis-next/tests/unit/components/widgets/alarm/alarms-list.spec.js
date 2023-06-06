@@ -1747,6 +1747,18 @@ describe('alarms-list', () => {
             },
           },
         },
+        {
+          ...userPreferenceModule,
+          getters: {
+            getItemByWidgetId: () => () => ({
+              content: {
+                ...userPreferences,
+
+                searches: ['item 1', 'item 2'],
+              },
+            }),
+          },
+        },
       ]),
     });
 
