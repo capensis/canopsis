@@ -773,7 +773,7 @@ func (m *manager) FillResourcesWithInfos(ctx context.Context, component types.En
 		return nil, nil
 	}
 
-	cursor, err := m.collection.Find(ctx, bson.M{"component": component.ID})
+	cursor, err := m.collection.Find(ctx, bson.M{"component": component.ID, "type": bson.M{"$ne": types.EntityTypeComponent}})
 	if err != nil {
 		return nil, err
 	}
