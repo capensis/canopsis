@@ -13,7 +13,7 @@
         :badge-tooltip="action.badgeTooltip",
         @click="action.method"
       )
-      span.ml-1(v-if="preparedActions.dropDown.length")
+      span(v-if="preparedActions.dropDown.length")
         v-menu(
           key="dropdown-menu",
           bottom,
