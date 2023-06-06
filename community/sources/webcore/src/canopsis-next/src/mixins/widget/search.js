@@ -1,6 +1,6 @@
 import { MAX_SEARCH_ITEMS } from '@/constants';
 
-import { immutableSortPinnedSearches } from '@/helpers/search/sorting';
+import { sortPinnedSearches } from '@/helpers/search/sorting';
 
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 
@@ -24,7 +24,7 @@ export const widgetSearchMixin = {
       newSearches.push({ ...searchItem, pinned: !searchItem.pinned });
 
       this.updateContentInUserPreference({
-        searches: immutableSortPinnedSearches(newSearches, search),
+        searches: sortPinnedSearches(newSearches, search),
       });
     },
 
@@ -39,7 +39,7 @@ export const widgetSearchMixin = {
       newSearches.push(searchItem);
 
       this.updateContentInUserPreference({
-        searches: immutableSortPinnedSearches(newSearches, search).slice(0, MAX_SEARCH_ITEMS),
+        searches: sortPinnedSearches(newSearches, search).slice(0, MAX_SEARCH_ITEMS),
       });
     },
 
