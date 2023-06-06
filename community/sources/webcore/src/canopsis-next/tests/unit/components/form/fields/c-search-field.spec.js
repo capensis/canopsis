@@ -1,6 +1,7 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { createSelectInputStub } from '@unit/stubs/input';
 
 import CSearchField from '@/components/forms/fields/c-search-field.vue';
 
@@ -21,12 +22,18 @@ const stubs = {
       />
     `,
   },
+  'v-combobox': createSelectInputStub('v-combobox'),
   'c-action-btn': true,
 };
 
 const snapshotStubs = {
   'c-action-btn': true,
 };
+
+const selectTextInput = wrapper => wrapper.find('input.v-text-field');
+const selectCombobox = wrapper => wrapper.find('select.v-combobox');
+const selectSubmitButton = wrapper => wrapper.findAll('c-action-btn-stub').at(0);
+const selectClearButton = wrapper => wrapper.findAll('c-action-btn-stub').at(1);
 
 describe('c-search-field', () => {
   const factory = generateShallowRenderer(CSearchField, { stubs });
@@ -36,7 +43,7 @@ describe('c-search-field', () => {
     const { search } = mockData;
 
     const wrapper = factory({ propsData: { value: search } });
-    const input = wrapper.find('input.v-text-field');
+    const input = selectTextInput(wrapper);
 
     expect(input.element.value).toBe(search);
   });
@@ -48,7 +55,7 @@ describe('c-search-field', () => {
 
     await wrapper.setProps({ value: newSearch });
 
-    const input = wrapper.find('input.v-text-field');
+    const input = selectTextInput(wrapper);
 
     expect(input.element.value).toBe(newSearch);
   });
@@ -57,47 +64,41 @@ describe('c-search-field', () => {
     const { search } = mockData;
 
     const wrapper = factory();
-    const input = wrapper.find('input.v-text-field');
+    const input = selectTextInput(wrapper);
 
     input.setValue(search);
 
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-    expect(inputEvents[0]).toEqual([search]);
+    expect(wrapper.vm.localValue).toEqual(search);
   });
 
   it('Keyup without enter key on input element', () => {
-    const { search } = mockData;
+    const { search, newSearch } = mockData;
 
     const wrapper = factory({ propsData: { value: search } });
-    const input = wrapper.find('input.v-text-field');
+    const input = selectTextInput(wrapper);
 
+    input.setValue(newSearch);
     input.trigger('keyup');
 
-    const submitEvents = wrapper.emitted('submit');
-
-    expect(submitEvents).toBeUndefined();
+    expect(wrapper).not.toEmit('submit');
   });
 
   it('Keyup with enter key on input element', async () => {
     const { search } = mockData;
 
     const wrapper = factory({ propsData: { value: search } });
-    const input = wrapper.find('input.v-text-field');
+    const input = selectTextInput(wrapper);
 
     await input.trigger('keydown.enter');
 
-    const submitEvents = wrapper.emitted('submit');
-
-    expect(submitEvents).toHaveLength(1);
+    expect(wrapper).toEmit('submit', search);
   });
 
   it('Submit search button is the first button', () => {
     const { search } = mockData;
 
     const wrapper = factory({ propsData: { value: search } });
-    const submitButton = wrapper.findAll('c-action-btn-stub').at(0);
+    const submitButton = selectSubmitButton(wrapper);
 
     expect(submitButton.attributes('icon')).toBe('search');
   });
@@ -106,7 +107,7 @@ describe('c-search-field', () => {
     const { search } = mockData;
 
     const wrapper = factory({ propsData: { value: search } });
-    const clearButton = wrapper.findAll('c-action-btn-stub').at(1);
+    const clearButton = selectClearButton(wrapper);
 
     expect(clearButton.attributes('icon')).toBe('clear');
   });
@@ -115,30 +116,42 @@ describe('c-search-field', () => {
     const { search } = mockData;
 
     const wrapper = factory({ propsData: { value: search } });
-    const submitButton = wrapper.findAll('c-action-btn-stub').at(0);
+    const submitButton = selectSubmitButton(wrapper);
 
     submitButton.vm.$emit('click');
 
-    const submitEvents = wrapper.emitted('submit');
-
-    expect(submitEvents).toHaveLength(1);
+    expect(wrapper).toEmit('submit', search);
   });
 
   it('Click on clear button', () => {
     const { search } = mockData;
 
     const wrapper = factory({ propsData: { value: search } });
-    const clearButton = wrapper.findAll('c-action-btn-stub').at(1);
+    const clearButton = selectClearButton(wrapper);
 
     clearButton.vm.$emit('click');
 
-    const inputEvents = wrapper.emitted('input');
-    const clearEvents = wrapper.emitted('clear');
+    expect(wrapper).toEmit('clear');
+  });
 
-    expect(inputEvents).toHaveLength(1);
-    expect(inputEvents[0]).toEqual(['']);
+  it('Set value into combobox element', () => {
+    const items = [
+      { search: Faker.lorem.words(), pinned: false },
+      { search: Faker.lorem.words(), pinned: false },
+    ];
 
-    expect(clearEvents).toHaveLength(1);
+    const wrapper = factory({
+      propsData: {
+        combobox: true,
+        items,
+      },
+    });
+
+    const combobox = selectCombobox(wrapper);
+
+    combobox.setValue(items[0].search);
+
+    expect(wrapper).toEmit('submit', items[0].search);
   });
 
   it('Renders `c-search-field` correctly', () => {
@@ -147,5 +160,23 @@ describe('c-search-field', () => {
     });
 
     expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `c-search-field` correctly with combobox and items', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        value: 'c-search-field',
+        combobox: true,
+        items: [
+          { search: 'item 1', pinned: true },
+          { search: 'item 2', pinned: false },
+        ],
+      },
+    });
+
+    const menuContent = wrapper.findMenu();
+
+    expect(wrapper.element).toMatchSnapshot();
+    expect(menuContent.element).toMatchSnapshot();
   });
 });
