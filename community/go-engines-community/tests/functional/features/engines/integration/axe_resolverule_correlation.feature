@@ -1,10 +1,11 @@
 Feature: resolve meta alarm
   I need to be able to resolve meta alarm
 
+  @concurrent
   Scenario: given meta alarm and resolved child should auto resolve meta alarm
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
-    """
+    """json
     {
       "name": "test-metaalarmrule-axe-resolverule-correlation-1",
       "type": "attribute",
@@ -50,8 +51,8 @@ Feature: resolve meta alarm
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
-    """
+    When I send an event and wait the end of event processing:
+    """json
     {
       "connector": "test-connector-axe-resolverule-correlation-1",
       "connector_name": "test-connector-name-axe-resolverule-correlation-1",
@@ -63,9 +64,34 @@ Feature: resolve meta alarm
       "output": "test-output-axe-resolverule-correlation-1"
     }
     """
-    When I wait the end of 2 events processing
-    When I send an event:
+    When I do GET /api/v4/alarms?search=test-resource-axe-resolverule-correlation-1&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "component": "metaalarm",
+            "connector": "engine",
+            "connector_name": "correlation",
+            "state": {
+              "val": 2
+            },
+            "status": {
+              "val": 1
+            }
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
     """
+    When I send an event and wait the end of event processing:
+    """json
     {
       "connector": "test-connector-axe-resolverule-correlation-1",
       "connector_name": "test-connector-name-axe-resolverule-correlation-1",
@@ -77,11 +103,9 @@ Feature: resolve meta alarm
       "output": "test-output-axe-resolverule-correlation-1"
     }
     """
-    When I wait the end of 2 events processing
     When I do GET /api/v4/alarms?search=test-resource-axe-resolverule-correlation-1&correlation=true until response code is 200 and response key "data.0.v.resolved" is greater or equal than 1
-    Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {
