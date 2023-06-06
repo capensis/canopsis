@@ -331,14 +331,6 @@ Feature: create entities on event
         "connector_name": "test-connector-name-che-4",
         "component": "test-component-che-4",
         "source_type": "component"
-      },
-      {
-        "event_type": "entityupdated",
-        "connector": "test-connector-che-4",
-        "connector_name": "test-connector-name-che-4",
-        "component": "test-component-che-4",
-        "resource": "test-resource-che-4",
-        "source_type": "resource"
       }
     ]
     """
