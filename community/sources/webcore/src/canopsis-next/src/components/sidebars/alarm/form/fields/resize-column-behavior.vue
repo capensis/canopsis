@@ -5,15 +5,15 @@
     v-container
       v-layout(column)
         c-enabled-field(
-          v-model="value.dragging",
+          v-model="value.draggable",
           :label="$t('settings.columnsSettings.dragging')"
         )
         c-enabled-field(
-          v-model="value.resizing",
+          v-model="value.resizable",
           :label="$t('settings.columnsSettings.resizing')"
         )
         v-radio-group.mt-0(
-          v-if="value.resizing",
+          v-if="value.resizable",
           v-field="value.cells_content_behavior",
           :label="$t('settings.columnsSettings.cellsContentBehavior')",
           name="opened",

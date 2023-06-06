@@ -249,7 +249,7 @@ export default {
     },
 
     resizableColumn() {
-      return !!this.widget.parameters?.columns?.resizing;
+      return !!this.widget.parameters?.columns?.resizable;
     },
 
     cellsContentBehavior() {
@@ -257,7 +257,7 @@ export default {
     },
 
     draggableColumn() {
-      return !!this.widget.parameters?.columns?.dragging;
+      return !!this.widget.parameters?.columns?.draggable;
     },
   },
   methods: {
