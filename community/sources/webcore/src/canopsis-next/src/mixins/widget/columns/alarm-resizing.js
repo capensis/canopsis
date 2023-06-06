@@ -107,6 +107,10 @@ export const widgetColumnResizingAlarmMixin = {
     resizeColumnByDiff(index) {
       const diff = this.aggregatedMovementX;
 
+      if (!diff) {
+        return;
+      }
+
       const toRight = diff > 0;
 
       const resizingLeftColumn = this.headers[index].value;
@@ -170,6 +174,10 @@ export const widgetColumnResizingAlarmMixin = {
         }
       }
 
+      if (newLeftColumnWidth === previousLeftColumnWidth && newRightColumnWidth === previousRightColumnWidth) {
+        return;
+      }
+
       this.columnsWidthByField = {
         ...this.columnsWidthByField,
         ...affectedHeadersWidths,
@@ -186,6 +194,8 @@ export const widgetColumnResizingAlarmMixin = {
     },
 
     finishColumnResize() {
+      this.aggregatedMovementX = 0;
+
       document.body.removeEventListener('mousemove', this.handleColumnResize);
       document.body.removeEventListener('mouseup', this.finishColumnResize);
       document.body.addEventListener('mouseleave', this.finishColumnResize);
