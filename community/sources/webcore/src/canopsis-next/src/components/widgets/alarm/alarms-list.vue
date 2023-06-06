@@ -10,12 +10,14 @@
     )
       v-flex
         c-advanced-search-field(
-          :query="query",
+          :query.sync="query",
           :columns="widget.parameters.widgetColumns",
           :tooltip="$t('alarm.advancedSearch')",
           :items="searches",
           combobox,
-          @update:query="updateSearchQuery"
+          @submit="updateSearchesInUserPreferences",
+          @toggle-pin="togglePinSearchInUserPreferences",
+          @remove="removeSearchFromUserPreferences"
         )
       v-flex(v-if="hasAccessToCategory")
         c-entity-category-field.mr-3.mt-0(:category="query.category", hide-details, @input="updateCategory")
@@ -266,12 +268,6 @@ export default {
 
     updateSearchQuery(query) {
       this.query = query;
-
-      const newSearch = query?.search;
-
-      if (newSearch) {
-        this.updateSearchesInUserPreferences(newSearch);
-      }
     },
 
     updateCorrelation(correlation) {

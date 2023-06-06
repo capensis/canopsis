@@ -135,7 +135,10 @@ describe('c-search-field', () => {
   });
 
   it('Set value into combobox element', () => {
-    const items = [Faker.lorem.words(), Faker.lorem.words()];
+    const items = [
+      { search: Faker.lorem.words(), pinned: false },
+      { search: Faker.lorem.words(), pinned: false },
+    ];
 
     const wrapper = factory({
       propsData: {
@@ -146,9 +149,9 @@ describe('c-search-field', () => {
 
     const combobox = selectCombobox(wrapper);
 
-    combobox.setValue(items[0]);
+    combobox.setValue(items[0].search);
 
-    expect(wrapper).toEmit('submit', items[0]);
+    expect(wrapper).toEmit('submit', items[0].search);
   });
 
   it('Renders `c-search-field` correctly', () => {
@@ -164,10 +167,16 @@ describe('c-search-field', () => {
       propsData: {
         value: 'c-search-field',
         combobox: true,
-        items: ['item 1', 'item 2'],
+        items: [
+          { search: 'item 1', pinned: true },
+          { search: 'item 2', pinned: false },
+        ],
       },
     });
 
+    const menuContent = wrapper.findMenu();
+
     expect(wrapper.element).toMatchSnapshot();
+    expect(menuContent.element).toMatchSnapshot();
   });
 });
