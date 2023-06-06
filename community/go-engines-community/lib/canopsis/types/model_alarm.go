@@ -334,6 +334,16 @@ func (a *Alarm) HasParentByEID(parentEID string) bool {
 	return false
 }
 
+func (a *Alarm) HasUnlinkedParentByEID(parentEID string) bool {
+	for _, parent := range a.Value.UnlinkedParents {
+		if parent == parentEID {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (a *Alarm) AddChild(childEID string) {
 	if a.HasChildByEID(childEID) {
 		return
@@ -389,7 +399,9 @@ func (a *Alarm) RemoveParent(parentEID string) bool {
 	}
 
 	a.parentsRemove = append(a.parentsRemove, parentEID)
+	a.Value.UnlinkedParents = append(a.Value.UnlinkedParents, parentEID)
 	a.AddUpdate("$pull", bson.M{"v.parents": bson.M{"$in": a.parentsRemove}})
+	a.AddUpdate("$push", bson.M{"v.unlinked_parents": parentEID})
 	return true
 }
 
