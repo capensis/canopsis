@@ -7,6 +7,7 @@ import (
 	"sort"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -44,6 +45,7 @@ type store struct {
 	dbCollection       mongo.DbCollection
 	entityDbCollection mongo.DbCollection
 
+	authorProvider         author.Provider
 	entityMatcher          pbehavior.EntityMatcher
 	entityTypeResolver     pbehavior.EntityTypeResolver
 	pbhTypeComputer        pbehavior.TypeComputer
@@ -60,6 +62,7 @@ func NewStore(
 	entityTypeResolver pbehavior.EntityTypeResolver,
 	pbhTypeComputer pbehavior.TypeComputer,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	authorProvider author.Provider,
 ) Store {
 	return &store{
 		dbClient:                      dbClient,
@@ -69,6 +72,7 @@ func NewStore(
 		entityTypeResolver:            entityTypeResolver,
 		pbhTypeComputer:               pbhTypeComputer,
 		timezoneConfigProvider:        timezoneConfigProvider,
+		authorProvider:                authorProvider,
 		defaultSortBy:                 "created",
 		entitiesDefaultSearchByFields: []string{"_id", "name", "type"},
 		entitiesDefaultSortBy:         "_id",
@@ -112,7 +116,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
-	mongoQuery := CreateMongoQuery(s.dbClient)
+	mongoQuery := CreateMongoQuery(s.dbClient, s.authorProvider)
 	pipeline, err := mongoQuery.CreateAggregationPipeline(ctx, r)
 	if err != nil {
 		return nil, err
@@ -149,7 +153,7 @@ func (s *store) FindByEntityID(ctx context.Context, entity libtypes.Entity, r Fi
 	}
 
 	pipeline := []bson.M{{"$match": bson.M{"_id": bson.M{"$in": pbhIDs}}}}
-	pipeline = append(pipeline, GetNestedObjectsPipeline()...)
+	pipeline = append(pipeline, GetNestedObjectsPipeline(s.authorProvider)...)
 	pipeline = append(pipeline, common.GetSortQuery("created", common.SortAsc))
 	if r.WithFlags {
 		pipeline = append(pipeline, bson.M{"$addFields": bson.M{
@@ -215,7 +219,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{
 		{"$match": bson.M{"_id": id}},
 	}
-	pipeline = append(pipeline, GetNestedObjectsPipeline()...)
+	pipeline = append(pipeline, GetNestedObjectsPipeline(s.authorProvider)...)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 
 	if err != nil {

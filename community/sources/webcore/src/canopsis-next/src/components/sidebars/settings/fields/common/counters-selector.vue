@@ -11,7 +11,6 @@
         :required="value.pbehavior_enabled",
         :disabled="!value.pbehavior_enabled",
         :max="$constants.PBEHAVIOR_COUNTERS_LIMIT",
-        :types="pbehaviorTypeTypes",
         chips,
         multiple
       )
@@ -30,20 +29,31 @@
 <script>
 import { PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
+import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
+
 import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
 
 export default {
   components: { WidgetSettingsItem },
+  mixins: [entitiesFieldPbehaviorFieldTypeMixin],
   props: {
     value: {
       type: Object,
       required: false,
     },
   },
-  computed: {
-    pbehaviorTypeTypes() {
-      return [PBEHAVIOR_TYPE_TYPES.inactive, PBEHAVIOR_TYPE_TYPES.maintenance, PBEHAVIOR_TYPE_TYPES.pause];
-    },
+  mounted() {
+    this.fetchFieldPbehaviorTypesList({
+      params: {
+        paginate: false,
+        with_hidden: true,
+        types: [
+          PBEHAVIOR_TYPE_TYPES.inactive,
+          PBEHAVIOR_TYPE_TYPES.maintenance,
+          PBEHAVIOR_TYPE_TYPES.pause,
+        ],
+      },
+    });
   },
 };
 </script>

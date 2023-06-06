@@ -13,13 +13,13 @@
         v-flex(xs12)
           v-card
             v-card-text
-              pbehavior-exceptions-field(:exdates="preparedPbehaviorExceptionExdates", disabled)
+              pbehavior-exceptions-field(:exdates="preparedPbehaviorExceptionExdates", with-exdate-type, disabled)
 </template>
 
 <script>
 import { pbehaviorExceptionToForm } from '@/helpers/forms/exceptions-pbehavior';
 
-import PbehaviorExceptionsField from '../form/pbehavior-exceptions-field.vue';
+import PbehaviorExceptionsField from '../fields/pbehavior-exceptions-field.vue';
 
 export default {
   components: { PbehaviorExceptionsField },

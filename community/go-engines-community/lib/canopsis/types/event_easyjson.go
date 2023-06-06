@@ -114,10 +114,6 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 		case "routing_key":
 			out.RK = string(in.String())
-		case "ack_resources":
-			out.AckResources = bool(in.Bool())
-		case "ticket_resources":
-			out.TicketResources = bool(in.Bool())
 		case "duration":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.Duration).UnmarshalJSON(data))
@@ -304,6 +300,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.Execution = string(in.String())
 		case "instruction":
 			out.Instruction = string(in.String())
+		case "ma_updated":
+			out.IsMetaAlarmUpdated = bool(in.Bool())
 		case "ticket":
 			out.Ticket = string(in.String())
 		case "ticket_url":
@@ -462,16 +460,6 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"routing_key\":"
 		out.RawString(prefix)
 		out.String(string(in.RK))
-	}
-	if in.AckResources {
-		const prefix string = ",\"ack_resources\":"
-		out.RawString(prefix)
-		out.Bool(bool(in.AckResources))
-	}
-	if in.TicketResources {
-		const prefix string = ",\"ticket_resources\":"
-		out.RawString(prefix)
-		out.Bool(bool(in.TicketResources))
 	}
 	if in.Duration != 0 {
 		const prefix string = ",\"duration\":"
@@ -667,6 +655,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"instruction\":"
 		out.RawString(prefix)
 		out.String(string(in.Instruction))
+	}
+	if in.IsMetaAlarmUpdated {
+		const prefix string = ",\"ma_updated\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.IsMetaAlarmUpdated))
 	}
 	if in.Ticket != "" {
 		const prefix string = ",\"ticket\":"

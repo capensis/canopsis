@@ -250,12 +250,6 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		}
 	}()
 
-	go func() {
-		if err = s.processResources(context.Background(), *event); err != nil {
-			s.logger.Err(err).Msg("cannot update resources")
-		}
-	}()
-
 	return alarmChange, nil
 }
 
@@ -532,7 +526,7 @@ func (s *eventProcessor) createOperationFromEvent(event *types.Event) types.Oper
 			Value: int64(event.Duration),
 			Unit:  "s",
 		}
-	case types.EventTypeChangestate, types.EventTypeKeepstate:
+	case types.EventTypeChangestate:
 		parameters.State = &event.State
 	case types.EventTypePbhEnter, types.EventTypePbhLeave, types.EventTypePbhLeaveAndEnter:
 		parameters.PbehaviorInfo = &event.PbehaviorInfo
@@ -548,18 +542,6 @@ func (s *eventProcessor) createOperationFromEvent(event *types.Event) types.Oper
 		Type:       t,
 		Parameters: parameters,
 	}
-}
-
-func (s *eventProcessor) processResources(ctx context.Context, event types.Event) error {
-	if event.AckResources {
-		return s.metaAlarmEventProcessor.ProcessAckResources(ctx, event)
-	}
-
-	if event.TicketResources {
-		return s.metaAlarmEventProcessor.ProcessTicketResources(ctx, event)
-	}
-
-	return nil
 }
 
 func (s *eventProcessor) resolveAlarmForDisabledEntity(ctx context.Context, event *types.Event) (types.AlarmChange, error) {
