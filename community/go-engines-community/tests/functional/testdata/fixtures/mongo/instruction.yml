@@ -1833,6 +1833,48 @@ instruction:
       - job: test-job-action-remediation-triggers-3
         stop_on_fail: false
 
+  instruction_action_remediation_triggers_second_3:
+    <<: *instruction_auto
+    _id: test-instruction-action-remediation-triggers-second-3
+    name: test-instruction-action-remediation-triggers-second-3-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-action-remediation-triggers-second-3
+    alarm_pattern:
+      - - field: v.state.val
+          cond:
+            type: eq
+            value: 1
+    timeout_after_execution:
+      value: 2
+      unit: s
+    jobs:
+      - job: test-job-action-remediation-triggers-3
+        stop_on_fail: false
+
+  instruction_action_remediation_triggers_second_4:
+    <<: *instruction_auto
+    _id: test-instruction-action-remediation-triggers-second-4
+    name: test-instruction-action-remediation-triggers-second-4-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-action-remediation-triggers-second-4
+    alarm_pattern:
+      - - field: v.state.val
+          cond:
+            type: eq
+            value: 1
+    timeout_after_execution:
+      value: 2
+      unit: s
+    jobs:
+      - job: test-job-action-remediation-triggers-3
+        stop_on_fail: false
+
   test-instruction-to-stats-summary-get-4:
     <<: *instruction_manual
     _id: test-instruction-to-stats-summary-get-4
