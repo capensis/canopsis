@@ -9,7 +9,18 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
  */
 
 /**
- * Convert user to form object
+ * Convert meta alarm rule to patterns
+ *
+ * @param {AlarmTag} tag
+ * @return {FilterPatterns}
+ */
+export const tagFilterPatternsToForm = tag => filterPatternsToForm(
+  tag,
+  [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
+);
+
+/**
+ * Convert tag to form object
  *
  * @param {AlarmTag} [tag = {}]
  * @returns {AlarmTagForm}
@@ -17,14 +28,22 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
 export const tagToForm = (tag = {}) => ({
   name: tag.name ?? '',
   color: tag.color ?? COLORS.secondary,
-  patterns: filterPatternsToForm(
-    tag,
-    [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
-  ),
+  patterns: tagFilterPatternsToForm(tag),
 });
 
 /**
- * Convert user form to user object
+ * Convert form patterns to tag patterns
+ *
+ * @param {FilterPatternsForm} patterns
+ * @returns {FilterPatterns}
+ */
+const formPatternsToTagPatterns = patterns => formFilterToPatterns(
+  patterns,
+  [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
+);
+
+/**
+ * Convert tag form to user object
  *
  * @param {AlarmTagForm} [form = {}]
  * @returns {AlarmTag}
@@ -32,5 +51,5 @@ export const tagToForm = (tag = {}) => ({
 export const formToTag = (form = {}) => ({
   name: form.name,
   color: form.color,
-  ...formFilterToPatterns(form.patterns, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+  ...formPatternsToTagPatterns(form.patterns),
 });

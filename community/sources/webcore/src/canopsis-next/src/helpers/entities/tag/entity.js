@@ -1,4 +1,4 @@
-import { TAG_TYPES } from '@/constants/tag';
+import { TAG_TYPES } from '@/constants';
 
 /**
  * @typedef { 'imported' | 'created' } TagTypes
@@ -18,3 +18,11 @@ import { TAG_TYPES } from '@/constants/tag';
  * @returns {boolean}
  */
 export const isImportedTag = tag => tag?.type === TAG_TYPES.imported;
+
+/**
+ * Check tag is created
+ *
+ * @param {AlarmTag} tag
+ * @returns {boolean}
+ */
+export const isCreatedTag = tag => tag?.type === TAG_TYPES.created;
