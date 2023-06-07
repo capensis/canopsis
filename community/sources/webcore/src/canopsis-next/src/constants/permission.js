@@ -53,6 +53,7 @@ export const ADMIN_PAGES_RULES = {
   remediation: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
   healthcheck: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
   kpi: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
+  tag: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
 };
 
 export const NOTIFICATIONS_PAGES_RULES = {
@@ -111,6 +112,7 @@ export const USERS_PERMISSIONS = {
     map: `${USER_PERMISSIONS_PREFIXES.technical.admin}_map`,
     shareToken: `${USER_PERMISSIONS_PREFIXES.technical.admin}_shareToken`,
     widgetTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningType`,
+    tag: `${USER_PERMISSIONS_PREFIXES.technical.admin}_tag`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -464,6 +466,7 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USERS_PERMISSIONS.technical.remediation]: ADMIN_PAGES_RULES.remediation,
   [USERS_PERMISSIONS.technical.healthcheck]: ADMIN_PAGES_RULES.healthcheck,
   [USERS_PERMISSIONS.technical.kpi]: ADMIN_PAGES_RULES.kpi,
+  [USERS_PERMISSIONS.technical.tag]: ADMIN_PAGES_RULES.tag,
 
   /**
    * Exploitation pages
