@@ -325,6 +325,9 @@ func benchmarkMessageProcessor(
 
 	for _, f := range adjustFixtures {
 		err = f(ctx, dbClient)
+		if err != nil {
+			b.Fatalf("unexpected error %v", err)
+		}
 	}
 
 	b.ResetTimer()
