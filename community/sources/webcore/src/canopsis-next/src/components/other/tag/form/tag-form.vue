@@ -1,21 +1,17 @@
 <template lang="pug">
   v-layout(column)
-    c-name-field(v-field="form.name", :disabled="isImported", required)
+    c-name-field(v-field="form.name", :disabled="isImported", :max-length="maxTagNameLength", required)
     c-color-picker-field(v-field="form.color")
-    c-patterns-field.mt-2(
-      v-if="!isImported",
-      v-field="form.patterns",
-      with-alarm,
-      with-entity,
-      some-required
-    )
+    tag-patterns-form(v-field="form.patterns")
 </template>
 
 <script>
-import CColorPickerField from '@/components/forms/fields/color/c-color-picker-field.vue';
+import { MAX_TAG_NAME_LENGTH } from '@/constants';
+
+import TagPatternsForm from '@/components/other/tag/form/fields/tag-patterns-form.vue';
 
 export default {
-  components: { CColorPickerField },
+  components: { TagPatternsForm },
   model: {
     prop: 'form',
     event: 'input',
@@ -28,6 +24,10 @@ export default {
     isImported: {
       type: Boolean,
       default: false,
+    },
+    maxTagNameLength: {
+      type: Number,
+      default: MAX_TAG_NAME_LENGTH,
     },
   },
 };
