@@ -155,13 +155,6 @@ export const SERVICE_STATES = {
   pause: 'pause',
 };
 
-export const SERVICE_STATES_COLORS = {
-  [SERVICE_STATES.ok]: ENTITIES_STATES_STYLES[ENTITIES_STATES.ok].color,
-  [SERVICE_STATES.minor]: ENTITIES_STATES_STYLES[ENTITIES_STATES.minor].color,
-  [SERVICE_STATES.major]: ENTITIES_STATES_STYLES[ENTITIES_STATES.major].color,
-  [SERVICE_STATES.critical]: ENTITIES_STATES_STYLES[ENTITIES_STATES.critical].color,
-};
-
 export const COUNTER_STATES_ICONS = {
   [ENTITIES_STATES_KEYS.ok]: 'wb_sunny',
   [ENTITIES_STATES_KEYS.minor]: 'person',
