@@ -1,4 +1,4 @@
-import { TAG_TYPES } from '@/constants/tag';
+import { TAG_TYPES } from '@/constants';
 
 export default {
   importedTag: 'La balise est importée',

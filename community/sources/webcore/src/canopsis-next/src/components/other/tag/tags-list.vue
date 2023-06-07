@@ -6,7 +6,8 @@
     :total-items="totalItems",
     :pagination="pagination",
     :select-all="removable",
-    :is-disabled-item="isDisabledMap",
+    :is-disabled-item="isDisabledTag",
+    :is-expandable-item="isCreatedTag",
     advanced-pagination,
     expand,
     search,
@@ -43,10 +44,17 @@
           type="delete",
           @click="$emit('remove', item._id)"
         )
+    template(#expand="{ item }")
+      tags-list-expand-panel(:tag="item")
 </template>
 
 <script>
+import { isCreatedTag } from '@/helpers/entities/tag/entity';
+
+import TagsListExpandPanel from './partials/tags-list-expand-panel.vue';
+
 export default {
+  components: { TagsListExpandPanel },
   props: {
     tags: {
       type: Array,
@@ -109,8 +117,12 @@ export default {
     },
   },
   methods: {
-    isDisabledMap({ deletable }) {
+    isDisabledTag({ deletable }) {
       return !deletable;
+    },
+
+    isCreatedTag(tag) {
+      return isCreatedTag(tag);
     },
   },
 };
