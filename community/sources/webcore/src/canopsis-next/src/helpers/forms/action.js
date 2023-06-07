@@ -60,6 +60,7 @@ import { requestToForm, formToRequest } from './shared/request';
  * @property {?DeclareTicketRuleWebhookDeclareTicket} [declare_ticket]
  * @property {boolean} [forward_author]
  * @property {boolean} skip_for_child
+ * @property {boolean} skip_for_instruction
  * @property {string} [author]
  */
 
@@ -155,6 +156,7 @@ const webhookActionParametersToForm = (parameters = {}) => ({
   declare_ticket: declareTicketRuleWebhookDeclareTicketToForm(parameters.declare_ticket),
   request: requestToForm(parameters.request),
   skip_for_child: parameters.skip_for_child ?? false,
+  skip_for_instruction: parameters.skip_for_instruction ?? false,
 });
 
 /**
@@ -284,6 +286,7 @@ export const formToWebhookActionParameters = (parameters = {}) => ({
   declare_ticket: formToDeclareTicketRuleWebhookDeclareTicket(parameters.declare_ticket),
   request: formToRequest(parameters.request),
   skip_for_child: parameters.skip_for_child,
+  skip_for_instruction: parameters.skip_for_instruction,
 });
 
 /**
