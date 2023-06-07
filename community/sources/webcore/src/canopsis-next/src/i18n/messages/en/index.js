@@ -55,6 +55,7 @@ import declareTicket from './declare-ticket';
 import linkRule from './link-rule';
 import externalData from './external-data';
 import popups from './popups';
+import tag from './tag';
 
 export default {
   common,
@@ -114,4 +115,5 @@ export default {
   linkRule,
   externalData,
   popups,
+  tag,
 };

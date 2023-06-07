@@ -116,6 +116,11 @@ export default {
           icon: 'edit_location',
           permission: USERS_PERMISSIONS.technical.map,
         },
+        {
+          route: { name: ROUTES_NAMES.adminTags },
+          icon: 'local_offer',
+          permission: USERS_PERMISSIONS.technical.tag,
+        },
       ];
 
       const enginesLink = this.isProVersion

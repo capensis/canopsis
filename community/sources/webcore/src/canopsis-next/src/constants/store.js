@@ -46,4 +46,5 @@ export const ENTITIES_TYPES = {
   shareToken: 'shareToken',
   declareTicketRule: 'declareTicketRule',
   linkRule: 'linkRule',
+  tag: 'tag',
 };

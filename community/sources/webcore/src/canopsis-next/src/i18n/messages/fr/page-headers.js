@@ -102,6 +102,10 @@ export default {
     title: 'Cartographie',
     message: '', // TODO: add correct message
   },
+  [USERS_PERMISSIONS.technical.tag]: {
+    title: 'Gestion des balises',
+    message: '', // TODO: add correct message
+  },
 
   /**
    * Admin general
