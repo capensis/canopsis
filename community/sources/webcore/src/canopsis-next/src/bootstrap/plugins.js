@@ -249,6 +249,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.executeDeclareTickets]: { maxWidth: 920 },
       [MODALS.createLinkRule]: { maxWidth: 920 },
       [MODALS.createAlarmChart]: { maxWidth: 500 },
+      [MODALS.createTag]: { maxWidth: 920 },
 
       ...featuresService.get('components.modals.dialogPropsMap'),
     },

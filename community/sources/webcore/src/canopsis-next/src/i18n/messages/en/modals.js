@@ -941,4 +941,15 @@ export default {
       },
     },
   },
+  createTag: {
+    create: {
+      title: 'Create a tag',
+    },
+    edit: {
+      title: 'Edit a tag',
+    },
+    duplicate: {
+      title: 'Duplicate a tag',
+    },
+  },
 };
