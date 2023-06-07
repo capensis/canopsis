@@ -277,7 +277,6 @@ func benchmarkMessageProcessor(
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	tzConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
-	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(config.UserInterfaceConf{}, logger)
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
 	metaAlarmEventProcessor := NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
 		alarmStatusService, alarmConfigProvider, json.NewEncoder(), nil, canopsis.FIFOExchangeName, canopsis.FIFOQueueName,
@@ -302,7 +301,7 @@ func benchmarkMessageProcessor(
 			libentity.NewAdapter(dbClient),
 			correlation.NewRuleAdapter(dbClient),
 			alarmConfigProvider,
-			DependencyMaker{}.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider, alarmStatusService, metricsSender),
+			DependencyMaker{}.DepOperationExecutor(dbClient, alarmConfigProvider, alarmStatusService, metricsSender),
 			alarmStatusService,
 			metrics.NewNullSender(),
 			metaAlarmEventProcessor,
@@ -325,6 +324,9 @@ func benchmarkMessageProcessor(
 
 	for _, f := range adjustFixtures {
 		err = f(ctx, dbClient)
+		if err != nil {
+			b.Fatalf("unexpected error %v", err)
+		}
 	}
 
 	b.ResetTimer()
