@@ -270,6 +270,7 @@ export const API_ROUTES = {
     declareTicketExecution: '/api/v4/cat/declare-ticket-executions',
     bulkDeclareTicket: '/api/v4/cat/bulk/declare-ticket-executions',
   },
+  tags: '/api/v4/cat/tags',
 };
 
 export const COLORS = {
