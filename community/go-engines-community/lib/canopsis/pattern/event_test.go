@@ -21,7 +21,15 @@ func TestEvent_Match(t *testing.T) {
 
 	for name, data := range dataSets {
 		t.Run(name, func(t *testing.T) {
-			ok, _, err := data.pattern.Match(data.event)
+			ok, err := data.pattern.Match(data.event)
+			if !errors.Is(err, data.matchErr) {
+				t.Errorf("expected error %v but got %v", data.matchErr, err)
+			}
+			if ok != data.matchResult {
+				t.Errorf("expected result %v but got %v", data.matchResult, ok)
+			}
+
+			ok, _, err = data.pattern.MatchWithRegexMatches(data.event)
 			if !errors.Is(err, data.matchErr) {
 				t.Errorf("expected error %v but got %v", data.matchErr, err)
 			}
@@ -155,7 +163,7 @@ func benchmarkEventMatch(b *testing.B, fieldCond pattern.FieldCondition, event t
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_, _, err := p.Match(event)
+		_, err := p.Match(event)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}
@@ -186,7 +194,7 @@ func benchmarkEventUnmarshalBsonAndMatch(b *testing.B, fieldCond pattern.FieldCo
 			b.Fatalf("unexpected error %v", err)
 		}
 
-		_, _, err = w.Pattern.Match(event)
+		_, err = w.Pattern.Match(event)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}
