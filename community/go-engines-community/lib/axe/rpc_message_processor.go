@@ -166,15 +166,7 @@ func (p *rpcMessageProcessor) processPbehaviorEvent(ctx context.Context, event r
 
 func (p *rpcMessageProcessor) executeOperation(ctx context.Context, event rpc.AxeEvent) (types.AlarmChange, error) {
 	alarm := event.Alarm
-	alarmChange := types.AlarmChange{
-		PreviousState:                   alarm.Value.State.Value,
-		PreviousStateChange:             alarm.Value.State.Timestamp,
-		PreviousStatus:                  alarm.Value.Status.Value,
-		PreviousStatusChange:            alarm.Value.Status.Timestamp,
-		PreviousPbehaviorTypeID:         alarm.Value.PbehaviorInfo.TypeID,
-		PreviousPbehaviorCannonicalType: alarm.Value.PbehaviorInfo.CanonicalType,
-		PreviousPbehaviorTime:           alarm.Value.PbehaviorInfo.Timestamp,
-	}
+	alarmChange := types.NewAlarmChangeByAlarm(*alarm)
 
 	now := time.Now()
 
@@ -309,6 +301,7 @@ func (p *rpcMessageProcessor) sendTriggerEvent(
 		Resource:      event.Alarm.Value.Resource,
 		SourceType:    event.Entity.Type,
 		AlarmChange:   &alarmChange,
+		AlarmID:       event.Alarm.ID,
 	})
 	if err != nil {
 		p.logError(err, "RPC Message Processor: failed to encode a trigger event to engine-fifo", msg)
