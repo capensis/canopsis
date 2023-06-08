@@ -174,7 +174,7 @@ func BenchmarkMessageProcessor_Process_GivenNewMetaAlarm(b *testing.B) {
 			ConnectorName:     "correlation",
 			Resource:          resource,
 			SourceType:        types.SourceTypeResource,
-			MetaAlarmChildren: &children,
+			MetaAlarmChildren: children,
 			MetaAlarmRuleID:   "test-metaalarm-rule",
 			Entity: &types.Entity{
 				ID:      fmt.Sprintf("%s/metaalarm", resource),
