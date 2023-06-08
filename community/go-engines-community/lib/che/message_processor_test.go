@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"testing"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
@@ -253,32 +253,14 @@ func benchmarkMessageProcessorWithConfig(
 	}
 
 	p := messageProcessor{
-		FeatureContextCreation:   true,
-		FeatureEventProcessing:   true,
 		FeaturePrintEventOnError: true,
-
-		AlarmConfigProvider: config.NewAlarmConfigProvider(cfg, zerolog.Nop()),
-		EnrichmentCenter: libcontext.NewEnrichmentCenter(
-			entity.NewAdapter(dbClient),
-			dbClient,
-			entityservice.NewManager(
-				entityservice.NewAdapter(dbClient),
-				entityservice.NewStorage(
-					entityservice.NewAdapter(dbClient),
-					redisClient,
-					json.NewEncoder(),
-					json.NewDecoder(),
-					zerolog.Nop(),
-				),
-				zerolog.Nop(),
-			),
-			metrics.NewNullMetaUpdater(),
-		),
-		EventFilterService: ruleService,
-		TechMetricsSender:  techMetricsSender,
-		Encoder:            json.NewEncoder(),
-		Decoder:            json.NewDecoder(),
-		Logger:             zerolog.Nop(),
+		AlarmConfigProvider:      config.NewAlarmConfigProvider(cfg, zerolog.Nop()),
+		ContextGraphManager:      contextgraph.NewManager(entity.NewAdapter(dbClient), dbClient, contextgraph.NewEntityServiceStorage(dbClient), metrics.NewNullMetaUpdater(), zerolog.Nop()),
+		EventFilterService:       ruleService,
+		TechMetricsSender:        techMetricsSender,
+		Encoder:                  json.NewEncoder(),
+		Decoder:                  json.NewDecoder(),
+		Logger:                   zerolog.Nop(),
 	}
 
 	encoder := json.NewEncoder()

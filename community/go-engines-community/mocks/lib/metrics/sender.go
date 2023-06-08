@@ -144,6 +144,18 @@ func (mr *MockSenderMockRecorder) SendCreateAndPbhEnter(arg0, arg1 interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCreateAndPbhEnter", reflect.TypeOf((*MockSender)(nil).SendCreateAndPbhEnter), arg0, arg1)
 }
 
+// SendEventMetrics mocks base method.
+func (m *MockSender) SendEventMetrics(arg0 context.Context, arg1 types.Alarm, arg2 types.Entity, arg3 types.AlarmChange, arg4 time.Time, arg5, arg6 string) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendEventMetrics", arg0, arg1, arg2, arg3, arg4, arg5, arg6)
+}
+
+// SendEventMetrics indicates an expected call of SendEventMetrics.
+func (mr *MockSenderMockRecorder) SendEventMetrics(arg0, arg1, arg2, arg3, arg4, arg5, arg6 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendEventMetrics", reflect.TypeOf((*MockSender)(nil).SendEventMetrics), arg0, arg1, arg2, arg3, arg4, arg5, arg6)
+}
+
 // SendInstructionAssignForAlarm mocks base method.
 func (m *MockSender) SendInstructionAssignForAlarm(arg0 string, arg1 time.Time) {
 	m.ctrl.T.Helper()
@@ -289,7 +301,7 @@ func (mr *MockSenderMockRecorder) SendNotAckedInHourInc(arg0, arg1 interface{}) 
 }
 
 // SendPbhEnter mocks base method.
-func (m *MockSender) SendPbhEnter(arg0 *types.Alarm, arg1 types.Entity) {
+func (m *MockSender) SendPbhEnter(arg0 types.Alarm, arg1 types.Entity) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SendPbhEnter", arg0, arg1)
 }
@@ -313,7 +325,7 @@ func (mr *MockSenderMockRecorder) SendPbhLeave(arg0, arg1, arg2, arg3 interface{
 }
 
 // SendPbhLeaveAndEnter mocks base method.
-func (m *MockSender) SendPbhLeaveAndEnter(arg0 *types.Alarm, arg1 types.Entity, arg2 string, arg3 time.Time) {
+func (m *MockSender) SendPbhLeaveAndEnter(arg0 types.Alarm, arg1 types.Entity, arg2 string, arg3 time.Time) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SendPbhLeaveAndEnter", arg0, arg1, arg2, arg3)
 }
