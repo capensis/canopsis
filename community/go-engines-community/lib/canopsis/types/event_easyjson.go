@@ -131,6 +131,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes3(in, out.Entity)
 			}
+		case "aid":
+			out.AlarmID = string(in.String())
 		case "author":
 			out.Author = string(in.String())
 		case "user_id":
@@ -490,6 +492,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		} else {
 			easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes3(out, *in.Entity)
 		}
+	}
+	if in.AlarmID != "" {
+		const prefix string = ",\"aid\":"
+		out.RawString(prefix)
+		out.String(string(in.AlarmID))
 	}
 	{
 		const prefix string = ",\"author\":"
