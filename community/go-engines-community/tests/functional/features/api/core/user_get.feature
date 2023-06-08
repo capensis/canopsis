@@ -23,6 +23,7 @@ Feature: Get a user
           "firstname": "test-user-to-get-1-firstname",
           "lastname": "test-user-to-get-1-lastname",
           "name": "test-user-to-get-1",
+          "display_name": "test-user-to-get-1 test-user-to-get-1-firstname test-user-to-get-1-lastname test-user-to-get-1-email@canopsis.net",
           "role": {
             "_id": "test-role-to-user-get-1",
             "name": "test-role-to-user-get-1",
@@ -50,6 +51,7 @@ Feature: Get a user
           "firstname": "test-user-to-get-2-firstname",
           "lastname": "test-user-to-get-2-lastname",
           "name": "test-user-to-get-2",
+          "display_name": "test-user-to-get-2 test-user-to-get-2-firstname test-user-to-get-2-lastname test-user-to-get-2-email@canopsis.net",
           "role": {
             "_id": "test-role-to-user-get-2",
             "name": "test-role-to-user-get-2",
@@ -135,6 +137,7 @@ Feature: Get a user
       "firstname": "test-user-to-get-1-firstname",
       "lastname": "test-user-to-get-1-lastname",
       "name": "test-user-to-get-1",
+      "display_name": "test-user-to-get-1 test-user-to-get-1-firstname test-user-to-get-1-lastname test-user-to-get-1-email@canopsis.net",
       "role": {
         "_id": "test-role-to-user-get-1",
         "name": "test-role-to-user-get-1",

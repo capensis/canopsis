@@ -26,13 +26,14 @@ type Store interface {
 	UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error)
 }
 
-func NewStore(dbClient mongo.DbClient) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
 		client:             dbClient,
 		collection:         dbClient.Collection(mongo.WidgetMongoCollection),
 		tabCollection:      dbClient.Collection(mongo.ViewTabMongoCollection),
 		filterCollection:   dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 		userPrefCollection: dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		authorProvider:     authorProvider,
 	}
 }
 
@@ -42,6 +43,7 @@ type store struct {
 	tabCollection      mongo.DbCollection
 	filterCollection   mongo.DbCollection
 	userPrefCollection mongo.DbCollection
+	authorProvider     author.Provider
 }
 
 func (s *store) FindViewIds(ctx context.Context, ids []string) (map[string]string, error) {
@@ -106,7 +108,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 		}},
 		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
 	}
-	pipeline = append(pipeline, author.PipelineForField("filters.author")...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("filters.author")...)
 	pipeline = append(pipeline,
 		bson.M{"$sort": bson.M{"filters.position": 1}},
 		bson.M{"$group": bson.M{
@@ -122,7 +124,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			}}},
 		}}}},
 	)
-	pipeline = append(pipeline, author.Pipeline()...)
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
@@ -28,7 +29,12 @@ type Store interface {
 	BulkDelete(ctx context.Context, ids []string) error
 }
 
-func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder, websocketStore websocket.Store) Store {
+func NewStore(
+	dbClient mongo.DbClient,
+	passwordEncoder password.Encoder,
+	websocketStore websocket.Store,
+	authorProvider author.Provider,
+) Store {
 	return &store{
 		client:                 dbClient,
 		collection:             dbClient.Collection(mongo.RightsMongoCollection),
@@ -39,6 +45,7 @@ func NewStore(dbClient mongo.DbClient, passwordEncoder password.Encoder, websock
 
 		passwordEncoder: passwordEncoder,
 		websocketStore:  websocketStore,
+		authorProvider:  authorProvider,
 
 		defaultSearchByFields: []string{"_id", "crecord_name", "firstname", "lastname", "role.name"},
 		defaultSortBy:         "name",
@@ -55,6 +62,7 @@ type store struct {
 
 	passwordEncoder password.Encoder
 	websocketStore  websocket.Store
+	authorProvider  author.Provider
 
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -64,7 +72,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	pipeline := []bson.M{
 		{"$match": bson.M{"crecord_type": securitymodel.LineTypeSubject}},
 	}
-	pipeline = append(pipeline, getRenameFieldsPipeline()...)
+	pipeline = append(pipeline, getRenameFieldsPipeline(s.authorProvider)...)
 	project := make([]bson.M, 0)
 
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
@@ -135,7 +143,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 			"crecord_type": securitymodel.LineTypeSubject,
 		}},
 	}
-	pipeline = append(pipeline, getNestedObjectsPipeline()...)
+	pipeline = append(pipeline, getNestedObjectsPipeline(s.authorProvider)...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -330,8 +338,8 @@ func (s *store) BulkDelete(ctx context.Context, ids []string) error {
 	return err
 }
 
-func getNestedObjectsPipeline() []bson.M {
-	pipeline := getRenameFieldsPipeline()
+func getNestedObjectsPipeline(authorProvider author.Provider) []bson.M {
+	pipeline := getRenameFieldsPipeline(authorProvider)
 	pipeline = append(pipeline, getRolePipeline()...)
 	pipeline = append(pipeline, getViewPipeline()...)
 
@@ -379,10 +387,14 @@ func getViewPipeline() []bson.M {
 	}
 }
 
-func getRenameFieldsPipeline() []bson.M {
+func getRenameFieldsPipeline(authorProvider author.Provider) []bson.M {
 	return []bson.M{
 		{"$addFields": bson.M{
-			"name": "$crecord_name",
+			"username": "$crecord_name",
+		}},
+		{"$addFields": bson.M{
+			"name":         "$crecord_name",
+			"display_name": authorProvider.GetDisplayNameQuery(""),
 		}},
 	}
 }

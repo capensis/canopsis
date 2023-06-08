@@ -941,4 +941,7 @@ export default {
       },
     },
   },
+  importPbehaviorException: {
+    title: 'Import exception dates',
+  },
 };
