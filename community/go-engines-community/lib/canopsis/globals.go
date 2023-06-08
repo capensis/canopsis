@@ -16,7 +16,6 @@ const (
 
 	AxeEngineName                  = "engine-axe"
 	AxeQueueName                   = "Engine_axe"
-	AxeServiceRPCClientQueueName   = "Engine_axe_service_rpc_client"
 	AxePbehaviorRPCClientQueueName = "Engine_axe_pbehavior_rpc_client"
 	AxeRPCQueueServerName          = "Engine_axe_rpc_server"
 	AxeConsumerName                = "axe"
@@ -42,12 +41,6 @@ const (
 	PBehaviorQueueRecomputeName = "Engine_pbehavior_recompute"
 	PBehaviorRPCConsumerName    = "pbehavior_rpc"
 	PBehaviorConsumerName       = "pbehavior"
-
-	ServiceEngineName         = "engine-service"
-	ServiceQueueName          = "Engine_service"
-	ServiceRPCQueueServerName = "Engine_service_rpc_server"
-	ServiceConsumerName       = "service"
-	ServiceRPCConsumerName    = "service_rpc"
 
 	WebhookEngineName         = "engine-webhook"
 	WebhookRPCQueueServerName = "Engine_webhook_rpc_server"

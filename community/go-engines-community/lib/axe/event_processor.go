@@ -155,6 +155,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 			alarmChange.Type = types.AlarmChangeTypeCreate
 		case types.EventTypeTrigger:
 			if event.AlarmChange == nil {
+				alarmChange = types.NewAlarmChange()
 				return nil
 			}
 
@@ -172,6 +173,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 			}
 
 			if event.Alarm == nil {
+				alarmChange = types.NewAlarmChange()
 				return nil
 			}
 
