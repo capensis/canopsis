@@ -59,7 +59,7 @@ Feature: Get entities
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    When I wait the end of 3 events processing
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -87,7 +87,7 @@ Feature: Get entities
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    When I wait the end of 3 events processing
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -115,7 +115,7 @@ Feature: Get entities
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    When I wait the end of 3 events processing
     When I send an event:
     """json
     {
@@ -167,7 +167,7 @@ Feature: Get entities
       "state": 0
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 3 events processing
     When I send an event:
     """json
     {
@@ -180,7 +180,7 @@ Feature: Get entities
       "state": 0
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 3 events processing
     When I send an event:
     """json
     {
@@ -193,7 +193,7 @@ Feature: Get entities
       "state": 0
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 3 events processing
     When I do GET /api/v4/entityservice-dependencies?_id=test-service-entity-get-1&with_flags=true&sort_by=impact_state&sort=desc
     Then the response code should be 200
     Then the response body should contain:
@@ -209,7 +209,7 @@ Feature: Get entities
           "impact_state": 6,
           "status": 1,
           "enabled": true,
-          "ko_events": 1,
+          "ko_events": 2,
           "ok_events": 1,
           "deletable": true,
           "depends_count": 2,
@@ -242,7 +242,7 @@ Feature: Get entities
           "status": 0,
           "enabled": true,
           "ko_events": 0,
-          "ok_events": 1,
+          "ok_events": 3,
           "deletable": true,
           "depends_count": 2,
           "impacts_count": 1,
@@ -429,8 +429,8 @@ Feature: Get entities
           "impact_state": 3,
           "status": 1,
           "enabled": true,
-          "ko_events": 3,
-          "ok_events": 1,
+          "ko_events": 6,
+          "ok_events": 4,
           "deletable": true,
           "depends_count": 3,
           "impacts_count": 0,
@@ -460,8 +460,8 @@ Feature: Get entities
           "impact_state": 3,
           "status": 1,
           "enabled": true,
-          "ko_events": 3,
-          "ok_events": 1,
+          "ko_events": 6,
+          "ok_events": 4,
           "deletable": true,
           "depends_count": 3,
           "impacts_count": 0,
@@ -491,8 +491,8 @@ Feature: Get entities
           "impact_state": 3,
           "status": 1,
           "enabled": true,
-          "ko_events": 3,
-          "ok_events": 1,
+          "ko_events": 6,
+          "ok_events": 4,
           "deletable": true,
           "depends_count": 3,
           "impacts_count": 0,
@@ -553,7 +553,7 @@ Feature: Get entities
           "impact_state": 6,
           "status": 1,
           "enabled": true,
-          "ko_events": 1,
+          "ko_events": 2,
           "ok_events": 1,
           "deletable": true,
           "depends_count": 2,
@@ -585,7 +585,7 @@ Feature: Get entities
           "status": 0,
           "enabled": true,
           "ko_events": 0,
-          "ok_events": 1,
+          "ok_events": 3,
           "deletable": true,
           "depends_count": 2,
           "impacts_count": 1,

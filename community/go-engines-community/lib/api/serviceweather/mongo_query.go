@@ -513,15 +513,15 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 				"from":         mongo.EntityServiceCountersMongoCollection,
 				"localField":   "_id",
 				"foreignField": "_id",
-				"as":           "entity_service_counters",
+				"as":           "counters",
 			},
 		},
 		{
-			"$unwind": "$entity_service_counters",
+			"$unwind": "$counters",
 		},
 		{"$addFields": bson.M{"pbh_types": bson.M{"$ifNull": bson.A{
 			bson.M{"$map": bson.M{
-				"input": bson.M{"$objectToArray": "$entity_service_counters.pbehavior"},
+				"input": bson.M{"$objectToArray": "$counters.pbehavior"},
 				"in":    "$$this.k",
 			}},
 			[]int{-1},
@@ -531,7 +531,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 			"as":   "pbh_types_counters",
 			"let": bson.M{
 				"pbh_types":  "$pbh_types",
-				"cumulative": bson.M{"$objectToArray": "$entity_service_counters.pbehavior"},
+				"cumulative": bson.M{"$objectToArray": "$counters.pbehavior"},
 			},
 			"pipeline": []bson.M{
 				{"$match": bson.M{"$expr": bson.M{"$in": []string{"$_id", "$$pbh_types"}}}},
@@ -582,7 +582,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 		{"$addFields": bson.M{
 			"counters.depends": bson.M{"$size": "$depends"},
 			"has_open_alarm": bson.M{"$cond": bson.M{
-				"if":   bson.M{"$gt": bson.A{"$entity_service_counters.unacked", 0}},
+				"if":   bson.M{"$gt": bson.A{"$counters.unacked", 0}},
 				"then": true,
 				"else": false,
 			}},

@@ -30,6 +30,7 @@ type messageProcessor struct {
 	AlarmConfigProvider      config.AlarmConfigProvider
 	EventFilterService       eventfilter.Service
 	MetricsSender            metrics.Sender
+	MetaUpdater              metrics.MetaUpdater
 	TechMetricsSender        techmetrics.Sender
 	ContextGraphManager      contextgraph.Manager
 	AmqpPublisher            libamqp.Publisher
@@ -269,7 +270,7 @@ func (p *messageProcessor) postProcessUpdatedEntities(ctx context.Context, event
 		}
 	}
 
-	//p.MetaUpdater.UpdateById(context.Background(), entityIDs...)
+	p.MetaUpdater.UpdateById(context.Background(), entityIDs...)
 }
 
 func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {

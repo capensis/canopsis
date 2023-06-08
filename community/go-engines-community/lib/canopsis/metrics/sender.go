@@ -19,9 +19,9 @@ type Sender interface {
 	SendCreateAndPbhEnter(alarm types.Alarm, timestamp time.Time)
 	SendCorrelation(timestamp time.Time, child types.Alarm)
 	SendUserActivity(timestamp time.Time, username string, value int64)
-	SendPbhEnter(alarm *types.Alarm, entity types.Entity)
+	SendPbhEnter(alarm types.Alarm, entity types.Entity)
 	SendPbhLeave(entity types.Entity, timestamp time.Time, prevCanonicalType string, prevTimestamp time.Time)
-	SendPbhLeaveAndEnter(alarm *types.Alarm, entity types.Entity, prevCanonicalType string, prevTimestamp time.Time)
+	SendPbhLeaveAndEnter(alarm types.Alarm, entity types.Entity, prevCanonicalType string, prevTimestamp time.Time)
 	SendUpdateState(alarm types.Alarm, entity types.Entity, previousState types.CpsNumber)
 
 	SendAutoInstructionExecutionStart(alarm types.Alarm, timestamp time.Time)
@@ -92,7 +92,7 @@ func (s *nullSender) SendCorrelation(_ time.Time, _ types.Alarm) {
 func (s *nullSender) SendUserActivity(_ time.Time, _ string, _ int64) {
 }
 
-func (s *nullSender) SendPbhEnter(_ *types.Alarm, _ types.Entity) {
+func (s *nullSender) SendPbhEnter(_ types.Alarm, _ types.Entity) {
 
 }
 
@@ -100,7 +100,7 @@ func (s *nullSender) SendPbhLeave(_ types.Entity, _ time.Time, _ string, _ time.
 
 }
 
-func (s *nullSender) SendPbhLeaveAndEnter(_ *types.Alarm, _ types.Entity, _ string, _ time.Time) {
+func (s *nullSender) SendPbhLeaveAndEnter(_ types.Alarm, _ types.Entity, _ string, _ time.Time) {
 
 }
 
