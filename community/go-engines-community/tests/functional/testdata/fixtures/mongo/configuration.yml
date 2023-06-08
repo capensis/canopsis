@@ -183,8 +183,6 @@ configuration:
     - from: engine-axe
       to: engine-remediation
     - from: engine-correlation
-      to: engine-service
-    - from: engine-service
       to: engine-dynamic-infos
     - from: engine-dynamic-infos
       to: engine-action

@@ -48,11 +48,6 @@ Feature: to get and update healthcheck parameters
         "minimal": 0,
         "optimal": 0
       },
-      "engine-service": {
-        "enabled": false,
-        "minimal": 0,
-        "optimal": 0
-      },
       "engine-action": {
         "enabled": false,
         "minimal": 0,
@@ -109,11 +104,6 @@ Feature: to get and update healthcheck parameters
         "optimal": 0
       },
       "engine-pbehavior": {
-        "enabled": false,
-        "minimal": 0,
-        "optimal": 0
-      },
-      "engine-service": {
         "enabled": false,
         "minimal": 0,
         "optimal": 0
@@ -176,11 +166,6 @@ Feature: to get and update healthcheck parameters
         "minimal": 1,
         "optimal": 2
       },
-      "engine-service": {
-        "enabled": true,
-        "minimal": 1,
-        "optimal": 3
-      },
       "engine-action": {
         "enabled": false
       },
@@ -237,11 +222,6 @@ Feature: to get and update healthcheck parameters
         "enabled": true,
         "minimal": 1,
         "optimal": 2
-      },
-      "engine-service": {
-        "enabled": true,
-        "minimal": 1,
-        "optimal": 3
       },
       "engine-action": {
         "enabled": false,
@@ -302,11 +282,6 @@ Feature: to get and update healthcheck parameters
         "enabled": true,
         "minimal": 1,
         "optimal": 2
-      },
-      "engine-service": {
-        "enabled": true,
-        "minimal": 1,
-        "optimal": 3
       },
       "engine-action": {
         "enabled": false,
@@ -368,11 +343,6 @@ Feature: to get and update healthcheck parameters
         "enabled": true,
         "minimal": 1,
         "optimal": 2
-      },
-      "engine-service": {
-        "enabled": true,
-        "minimal": 1,
-        "optimal": 3
       },
       "engine-action": {
         "enabled": true,
@@ -442,11 +412,6 @@ Feature: to get and update healthcheck parameters
         "minimal": 1,
         "optimal": 2
       },
-      "engine-service": {
-        "enabled": true,
-        "minimal": 1,
-        "optimal": 3
-      },
       "engine-action": {
         "enabled": true,
         "minimal": 2,
@@ -509,11 +474,6 @@ Feature: to get and update healthcheck parameters
         "enabled": true,
         "minimal": 1,
         "optimal": 2
-      },
-      "engine-service": {
-        "enabled": true,
-        "minimal": 1,
-        "optimal": 3
       },
       "engine-action": {
         "enabled": true,
