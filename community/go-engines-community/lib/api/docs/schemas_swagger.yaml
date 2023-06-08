@@ -3963,6 +3963,8 @@ definitions:
             * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
+            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
+            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
           type: string
         type: array
@@ -4026,6 +4028,8 @@ definitions:
             * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
+            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
+            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
           type: string
         type: array
@@ -4086,6 +4090,8 @@ definitions:
             * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
+            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
+            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
           type: string
         type: array
