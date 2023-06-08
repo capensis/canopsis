@@ -1675,7 +1675,6 @@ func BenchmarkRecomputeServicesRemoveAll(b *testing.B) {
 	ctrl := gomock.NewController(b)
 	defer ctrl.Finish()
 
-	var dependsIds []string
 	var entities []types.Entity
 	for i := 0; i < 1000; i++ {
 		eID := fmt.Sprintf("id-%d", i)
@@ -1685,8 +1684,6 @@ func BenchmarkRecomputeServicesRemoveAll(b *testing.B) {
 			Component: "component-1",
 			Services:  []string{"serv-1"},
 		})
-
-		dependsIds = append(dependsIds, eID)
 	}
 
 	cursor := mock_mongo.NewMockCursor(ctrl)
@@ -1793,7 +1790,6 @@ func BenchmarkRecomputeServicesMixed(b *testing.B) {
 	ctrl := gomock.NewController(b)
 	defer ctrl.Finish()
 
-	var dependsIds []string
 	var entitiesToRemove []types.Entity
 	for i := 0; i < 500; i++ {
 		eID := fmt.Sprintf("id-%d", i)
@@ -1803,8 +1799,6 @@ func BenchmarkRecomputeServicesMixed(b *testing.B) {
 			Component: "component-1",
 			Services:  []string{"serv-1"},
 		})
-
-		dependsIds = append(dependsIds, eID)
 	}
 
 	var entitiesToAdd []types.Entity
