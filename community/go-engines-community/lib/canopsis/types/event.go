@@ -39,9 +39,7 @@ const (
 	EventTypeCancel      = "cancel"
 	EventTypeCheck       = "check"
 	EventTypeComment     = "comment"
-
 	EventTypeChangestate = "changestate"
-	EventTypeKeepstate   = "keepstate"
 	EventTypeSnooze      = "snooze"
 	EventTypeUnsnooze    = "unsnooze"
 	EventTypeUncancel    = "uncancel"
@@ -54,8 +52,6 @@ const (
 	EventTypeAutoWebhookCompleted = "autowebhookcompleted"
 	EventTypeAutoWebhookFailed    = "autowebhookfailed"
 
-	EventTypeMetaAlarm          = "metaalarm"
-	EventTypeMetaAlarmUpdated   = "metaalarmupdated"
 	EventTypePbhEnter           = "pbhenter"
 	EventTypePbhLeaveAndEnter   = "pbhleaveandenter"
 	EventTypePbhLeave           = "pbhleave"
@@ -63,11 +59,15 @@ const (
 	EventTypeResolveClose       = "resolve_close"
 	EventTypeResolveDeleted     = "resolve_deleted"
 	EventTypeUpdateStatus       = "updatestatus"
-	EventManualMetaAlarmGroup   = "manual_metaalarm_group"
-	EventManualMetaAlarmUngroup = "manual_metaalarm_ungroup"
-	EventManualMetaAlarmUpdate  = "manual_metaalarm_update"
 	EventTypeActivate           = "activate"
 	EventTypeRunDelayedScenario = "run_delayed_scenario"
+
+	EventTypeMetaAlarm              = "metaalarm"
+	EventTypeMetaAlarmUpdated       = "metaalarmupdated"
+	EventTypeMetaAlarmUngroup       = "metaalarm_ungroup"
+	EventTypeManualMetaAlarmGroup   = "manual_metaalarm_group"
+	EventTypeManualMetaAlarmUngroup = "manual_metaalarm_ungroup"
+	EventTypeManualMetaAlarmUpdate  = "manual_metaalarm_update"
 
 	// Following event types are used to add manual instruction execution to alarm steps.
 	EventTypeInstructionStarted   = "instructionstarted"
@@ -103,12 +103,6 @@ const (
 	EventTypeJunitTestSuiteUpdated = "junittestsuiteupdated"
 	// EventTypeJunitTestCaseUpdated is used to notify that test case is updated but state is not changed.
 	EventTypeJunitTestCaseUpdated = "junittestcaseeupdated"
-
-	EventTypeStateIncrease  = "stateinc"
-	EventTypeStateDecrease  = "statedec"
-	EventTypeStatusIncrease = "statusinc"
-	EventTypeStatusDecrease = "statusdec"
-
 	// EventTypeNoEvents is used to create alarm for entity by idle rule.
 	EventTypeNoEvents = "noevents"
 	// EventTypeTrigger is used in axe rpc to send auto and manual instruction triggers
@@ -149,12 +143,7 @@ type Event struct {
 	Timestamp         CpsTime   `bson:"timestamp" json:"timestamp"`
 	ReceivedTimestamp MicroTime `bson:"rt" json:"rt"`
 
-	RK string `bson:"routing_key" json:"routing_key"`
-	// AckResources is used to ack all resource alarms on ack component alarm.
-	AckResources bool `bson:"ack_resources,omitempty" json:"ack_resources,omitempty"`
-	// TicketResource is used to add ticket to all resource alarms on assoc ticket component alarm.
-	TicketResources bool `bson:"ticket_resources,omitempty" json:"ticket_resources,omitempty"`
-
+	RK          string                 `bson:"routing_key" json:"routing_key"`
 	Duration    CpsNumber              `bson:"duration,omitempty" json:"duration,omitempty"`
 	StatName    string                 `bson:"stat_name" json:"stat_name"`
 	Debug       bool                   `bson:"debug" json:"debug"`
@@ -168,13 +157,13 @@ type Event struct {
 	// Tags contains external tags for alarm.
 	Tags map[string]string `bson:"tags" json:"tags"`
 
-	MetaAlarmRuleID    string `bson:"metaalarm_rule_id" json:"metaalarm_rule_id"`
-	MetaAlarmValuePath string `bson:"metaalarm_value_path" json:"metaalarm_value_path"`
+	MetaAlarmRuleID    string `bson:"metaalarm_rule_id,omitempty" json:"metaalarm_rule_id,omitempty"`
+	MetaAlarmValuePath string `bson:"metaalarm_value_path,omitempty" json:"metaalarm_value_path,omitempty"`
 
-	MetaAlarmParents  *[]string `bson:"ma_parents" json:"ma_parents"`
-	MetaAlarmChildren *[]string `bson:"ma_children" json:"ma_children"`
+	MetaAlarmParents  []string `bson:"ma_parents,omitempty" json:"ma_parents,omitempty"`
+	MetaAlarmChildren []string `bson:"ma_children,omitempty" json:"ma_children,omitempty"`
 	// DisplayName is used for manual meta alarms.
-	DisplayName string `bson:"display_name" json:"display_name"`
+	DisplayName string `bson:"display_name,omitempty" json:"display_name,omitempty"`
 
 	PbehaviorInfo PbehaviorInfo `bson:"pbehavior_info" json:"pbehavior_info"`
 
@@ -519,9 +508,10 @@ func isValidEventType(t string) bool {
 		EventTypeUpdateStatus,
 		EventTypeMetaAlarm,
 		EventTypeMetaAlarmUpdated,
-		EventManualMetaAlarmGroup,
-		EventManualMetaAlarmUngroup,
-		EventManualMetaAlarmUpdate,
+		EventTypeMetaAlarmUngroup,
+		EventTypeManualMetaAlarmGroup,
+		EventTypeManualMetaAlarmUngroup,
+		EventTypeManualMetaAlarmUpdate,
 		EventTypeRecomputeEntityService,
 		EventTypeUpdateEntityService,
 		EventTypeEntityUpdated,
@@ -543,11 +533,6 @@ func isValidEventType(t string) bool {
 		EventTypeAlarmSkipped,
 		EventTypeJunitTestSuiteUpdated,
 		EventTypeJunitTestCaseUpdated,
-		EventTypeKeepstate,
-		EventTypeStateIncrease,
-		EventTypeStateDecrease,
-		EventTypeStatusIncrease,
-		EventTypeStatusDecrease,
 		EventTypeTrigger,
 		EventTypeAutoInstructionActivate:
 		return true

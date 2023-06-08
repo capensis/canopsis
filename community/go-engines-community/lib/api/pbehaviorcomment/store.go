@@ -21,14 +21,16 @@ type Store interface {
 }
 
 type store struct {
-	dbClient     mongo.DbClient
-	dbCollection mongo.DbCollection
+	dbClient       mongo.DbClient
+	dbCollection   mongo.DbCollection
+	authorProvider author.Provider
 }
 
-func NewStore(dbClient mongo.DbClient) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
-		dbClient:     dbClient,
-		dbCollection: dbClient.Collection(mongo.PbehaviorMongoCollection),
+		dbClient:       dbClient,
+		dbCollection:   dbClient.Collection(mongo.PbehaviorMongoCollection),
+		authorProvider: authorProvider,
 	}
 }
 
@@ -71,7 +73,7 @@ func (s *store) Insert(ctx context.Context, r Request) (*Response, error) {
 			{"$match": bson.M{"comments._id": doc.ID}},
 			{"$replaceRoot": bson.M{"newRoot": "$comments"}},
 		}
-		pipeline = append(pipeline, author.Pipeline()...)
+		pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 		cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 		if err != nil {
 			return err

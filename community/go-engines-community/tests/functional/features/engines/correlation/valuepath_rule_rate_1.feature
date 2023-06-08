@@ -1,5 +1,6 @@
 Feature: correlation feature - valuegroup rule with threshold rate
 
+  @concurrent
   Scenario: given meta alarm rule with threshold rate and events should create meta alarm
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -22,7 +23,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-1-connector",
@@ -37,8 +38,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-1-connector",
@@ -53,15 +53,13 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-1-resource&correlation=true&sort_by=t&sort=asc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-1-resource&correlation=true&sort_by=t&sort=asc until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 2,
           "meta_alarm_rule": {
             "name": "test-valuegroup-correlation-rate-1"
           }
@@ -126,6 +124,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule with threshold rate and events shouldn't create meta alarm because rate was recomputed by the new entity event after, metaalarm should be create after reaching the new rate
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
@@ -157,7 +156,6 @@ Feature: correlation feature - valuegroup rule with threshold rate
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "priority" : 10001,
       "type" : "enrichment"
     }
     """
@@ -182,7 +180,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-2-connector",
@@ -197,8 +195,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-2-connector",
@@ -214,7 +211,6 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-2-resource&correlation=true&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
@@ -240,7 +236,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       }
     }
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-2-connector",
@@ -255,15 +251,13 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-2-resource&correlation=true&sort_by=t&sort=asc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-2-resource&correlation=true&sort_by=t&sort=asc until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 3,
           "meta_alarm_rule": {
             "name": "test-valuegroup-correlation-rate-2"
           }
@@ -336,6 +330,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule with threshold rate and events should create one single meta alarms because first group didn't reached threshold
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -358,7 +353,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-3-connector",
@@ -373,9 +368,8 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I wait 4s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-3-connector",
@@ -390,8 +384,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-3-connector",
@@ -406,15 +399,13 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-3-resource&correlation=true&sort_by=v.meta&sort=desc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-3-resource&correlation=true&sort_by=v.meta&sort=desc until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 2,
           "meta_alarm_rule": {
             "name": "test-valuegroup-correlation-rate-3"
           }
@@ -484,6 +475,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule with threshold rate and events should create 2 meta alarms because of 2 separate time intervals
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -506,7 +498,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-4-connector",
@@ -521,8 +513,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-4-connector",
@@ -537,9 +528,18 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-4-resource&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 2
+        }
+      ]
+    }
+    """
     When I wait 4s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-4-connector",
@@ -554,8 +554,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-4-connector",
@@ -570,21 +569,20 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-4-resource&correlation=true&sort_by=t&sort=asc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-4-resource&correlation=true&sort_by=t&sort=asc until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 2,
           "meta_alarm_rule": {
             "name": "test-valuegroup-correlation-rate-4"
           }
         },
         {
           "is_meta_alarm": true,
+          "children": 2,
           "meta_alarm_rule": {
             "name": "test-valuegroup-correlation-rate-4"
           }
@@ -688,6 +686,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule with threshold rate and events should create one single meta alarm without first alarm, because interval shifting
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -710,7 +709,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-5-connector",
@@ -725,9 +724,8 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I wait 3s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-5-connector",
@@ -742,9 +740,8 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I wait 3s
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-5-connector",
@@ -759,8 +756,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-5-connector",
@@ -775,15 +771,13 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-5-resource&correlation=true&sort_by=v.meta&sort=desc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-5-resource&correlation=true&sort_by=v.meta&sort=desc until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 3,
           "meta_alarm_rule": {
             "name": "test-valuegroup-correlation-rate-5"
           }
@@ -861,6 +855,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule with threshold rate and events should create meta alarm regarding total entity pattern
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -903,7 +898,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-6-connector",
@@ -918,8 +913,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-6-connector",
@@ -934,8 +928,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-6-connector",
@@ -950,8 +943,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-6-connector",
@@ -966,7 +958,6 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
     When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-6-resource&correlation=true&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
@@ -1002,7 +993,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       }
     }
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-6-connector",
@@ -1017,15 +1008,13 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-6-resource&correlation=true&sort_by=t&sort=asc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-6-resource&correlation=true&sort_by=t&sort=asc until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 5,
           "meta_alarm_rule": {
             "name": "test-valuegroup-correlation-rate-6"
           }
@@ -1114,6 +1103,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule with threshold rate and events should create 4 meta alarm regarding total counted by valuepath combinations
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -1137,7 +1127,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-8-connector",
@@ -1152,8 +1142,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-8-connector",
@@ -1169,8 +1158,17 @@ Feature: correlation feature - valuegroup rule with threshold rate
     }
     """
     When I wait 1s
-    When I wait the end of 2 events processing
-    When I send an event:
+    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-8-resource&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 2
+        }
+      ]
+    }
+    """
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-8-connector",
@@ -1185,8 +1183,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-8-connector",
@@ -1202,8 +1199,20 @@ Feature: correlation feature - valuegroup rule with threshold rate
     }
     """
     When I wait 1s
-    When I wait the end of 2 events processing
-    When I send an event:
+    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-8-resource&correlation=true&sort_by=t&sort=desc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 2
+        },
+        {
+          "children": 2
+        }
+      ]
+    }
+    """
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-8-connector",
@@ -1218,8 +1227,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-8-connector",
@@ -1235,8 +1243,23 @@ Feature: correlation feature - valuegroup rule with threshold rate
     }
     """
     When I wait 1s
-    When I wait the end of 2 events processing
-    When I send an event:
+    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-8-resource&correlation=true&sort_by=t&sort=desc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 2
+        },
+        {
+          "children": 2
+        },
+        {
+          "children": 2
+        }
+      ]
+    }
+    """
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-8-connector",
@@ -1251,8 +1274,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-8-connector",
@@ -1267,34 +1289,34 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait 1s
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-8-resource&correlation=true&sort_by=t&sort=asc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-8-resource&correlation=true&sort_by=t&sort=asc until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 2,
           "meta_alarm_rule": {
             "name": "test-valuegroup-correlation-rate-8"
           }
         },
         {
           "is_meta_alarm": true,
+          "children": 2,
           "meta_alarm_rule": {
             "name": "test-valuegroup-correlation-rate-8"
           }
         },
         {
           "is_meta_alarm": true,
+          "children": 2,
           "meta_alarm_rule": {
             "name": "test-valuegroup-correlation-rate-8"
           }
         },
         {
           "is_meta_alarm": true,
+          "children": 2,
           "meta_alarm_rule": {
             "name": "test-valuegroup-correlation-rate-8"
           }
@@ -1476,9 +1498,10 @@ Feature: correlation feature - valuegroup rule with threshold rate
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule with threshold rate and old event patterns should create meta alarm
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-backward-compatibility-1-connector",
@@ -1493,8 +1516,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-backward-compatibility-1-connector",
@@ -1509,8 +1531,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-backward-compatibility-1-connector",
@@ -1525,15 +1546,13 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-backward-compatibility-1&correlation=true&sort_by=t&sort=asc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-backward-compatibility-1&correlation=true&sort_by=t&sort=asc until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 3,
           "meta_alarm_rule": {
             "name": "test-valuegroup-rule-rate-backward-compatibility-1-name"
           }
@@ -1606,9 +1625,10 @@ Feature: correlation feature - valuegroup rule with threshold rate
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm rule with threshold rate and old total event patterns should create meta alarm
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-backward-compatibility-2-connector",
@@ -1623,8 +1643,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-backward-compatibility-2-connector",
@@ -1639,8 +1658,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-backward-compatibility-2-connector",
@@ -1655,23 +1673,6 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 1 events processing
-    When I send an event:
-    """json
-    {
-      "connector": "test-valuegroup-rule-rate-backward-compatibility-1-connector",
-      "connector_name": "test-valuegroup-rule-rate-backward-compatibility-1-connectorname",
-      "source_type": "resource",
-      "event_type": "check",
-      "component":  "test-valuegroup-rule-rate-backward-compatibility-1-component",
-      "resource": "test-valuegroup-rule-rate-backward-compatibility-1-resource-4",
-      "state": 2,
-      "output": "test",
-      "long_output": "test",
-      "author": "test-author"
-    }
-    """
-    When I wait the end of 1 events processing
     When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-backward-compatibility-2&correlation=true&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
@@ -1702,7 +1703,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
       }
     }
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-valuegroup-rule-rate-backward-compatibility-2-connector",
@@ -1717,15 +1718,13 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "author": "test-author"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-backward-compatibility-2&correlation=true&sort_by=t&sort=asc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-valuegroup-rule-rate-backward-compatibility-2&correlation=true&sort_by=t&sort=asc until response code is 200 and body contains:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
+          "children": 4,
           "meta_alarm_rule": {
             "name": "test-valuegroup-rule-rate-backward-compatibility-2-name"
           }
