@@ -63,8 +63,6 @@ func (h HealthCheckParameters) GetEngineParameters(name string) EngineParameters
 		return h.Correlation
 	case canopsis.RemediationEngineName:
 		return h.Remediation
-	case canopsis.ServiceEngineName:
-		return h.Service
 	case canopsis.DynamicInfosEngineName:
 		return h.DynamicInfos
 	case canopsis.ActionEngineName:
