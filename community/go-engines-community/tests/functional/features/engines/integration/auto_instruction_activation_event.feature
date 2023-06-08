@@ -20,7 +20,43 @@ Feature: send activation event on unsnooze
       "output": "test-output-to-test-auto-instruction-activate-event-1"
     }
     """
-    When I wait the end of 4 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "check",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-1",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-1",
+        "component": "test-component-to-test-auto-instruction-activate-event-1",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-1",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-1",
+        "component": "test-component-to-test-auto-instruction-activate-event-1",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-1",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-1",
+        "component": "test-component-to-test-auto-instruction-activate-event-1",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "activate",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-1",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-1",
+        "component": "test-component-to-test-auto-instruction-activate-event-1",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-1",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-resource-to-test-auto-instruction-activate-event-1&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -96,7 +132,43 @@ Feature: send activation event on unsnooze
       "output": "test-output-to-test-auto-instruction-activate-event-2"
     }
     """
-    When I wait the end of 4 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "check",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-2",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-2",
+        "component": "test-component-to-test-auto-instruction-activate-event-2",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-2",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-2",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-2",
+        "component": "test-component-to-test-auto-instruction-activate-event-2",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-2",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-2",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-2",
+        "component": "test-component-to-test-auto-instruction-activate-event-2",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-2",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "activate",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-2",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-2",
+        "component": "test-component-to-test-auto-instruction-activate-event-2",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-2",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-resource-to-test-auto-instruction-activate-event-2&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -172,7 +244,59 @@ Feature: send activation event on unsnooze
       "output": "test-output-to-test-auto-instruction-activate-event-3"
     }
     """
-    When I wait the end of 6 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "check",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-3",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-3",
+        "component": "test-component-to-test-auto-instruction-activate-event-3",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-3",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-3",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-3",
+        "component": "test-component-to-test-auto-instruction-activate-event-3",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-3",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-3",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-3",
+        "component": "test-component-to-test-auto-instruction-activate-event-3",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-3",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-3",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-3",
+        "component": "test-component-to-test-auto-instruction-activate-event-3",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-3",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-3",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-3",
+        "component": "test-component-to-test-auto-instruction-activate-event-3",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-3",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "activate",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-3",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-3",
+        "component": "test-component-to-test-auto-instruction-activate-event-3",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-3",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-resource-to-test-auto-instruction-activate-event-3&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -268,7 +392,59 @@ Feature: send activation event on unsnooze
       "output": "test-output-to-test-auto-instruction-activate-event-4"
     }
     """
-    When I wait the end of 6 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "check",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-4",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-4",
+        "component": "test-component-to-test-auto-instruction-activate-event-4",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-4",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-4",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-4",
+        "component": "test-component-to-test-auto-instruction-activate-event-4",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-4",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-4",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-4",
+        "component": "test-component-to-test-auto-instruction-activate-event-4",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-4",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-4",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-4",
+        "component": "test-component-to-test-auto-instruction-activate-event-4",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-4",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-4",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-4",
+        "component": "test-component-to-test-auto-instruction-activate-event-4",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-4",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "activate",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-4",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-4",
+        "component": "test-component-to-test-auto-instruction-activate-event-4",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-4",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-resource-to-test-auto-instruction-activate-event-4&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -397,7 +573,51 @@ Feature: send activation event on unsnooze
       "output": "test-output-to-test-auto-instruction-activate-event-5"
     }
     """
-    When I wait the end of 5 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "check",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-5",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-5",
+        "component": "test-component-to-test-auto-instruction-activate-event-5",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-5",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "unsnooze",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-5",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-5",
+        "component": "test-component-to-test-auto-instruction-activate-event-5",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-5",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-5",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-5",
+        "component": "test-component-to-test-auto-instruction-activate-event-5",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-5",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-5",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-5",
+        "component": "test-component-to-test-auto-instruction-activate-event-5",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-5",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "activate",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-5",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-5",
+        "component": "test-component-to-test-auto-instruction-activate-event-5",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-5",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-resource-to-test-auto-instruction-activate-event-5&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -499,7 +719,51 @@ Feature: send activation event on unsnooze
       "output": "test-output-to-test-auto-instruction-activate-event-6"
     }
     """
-    When I wait the end of 5 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "check",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-6",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-6",
+        "component": "test-component-to-test-auto-instruction-activate-event-6",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-6",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-6",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-6",
+        "component": "test-component-to-test-auto-instruction-activate-event-6",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-6",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-6",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-6",
+        "component": "test-component-to-test-auto-instruction-activate-event-6",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-6",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "autoinstructionactivate",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-6",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-6",
+        "component": "test-component-to-test-auto-instruction-activate-event-6",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-6",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "activate",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-6",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-6",
+        "component": "test-component-to-test-auto-instruction-activate-event-6",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-6",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-resource-to-test-auto-instruction-activate-event-6&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -579,7 +843,75 @@ Feature: send activation event on unsnooze
       "output": "test-output-to-test-auto-instruction-activate-event-7"
     }
     """
-    When I wait the end of 8 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "check",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-7",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-7",
+        "component": "test-component-to-test-auto-instruction-activate-event-7",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-7",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-7",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-7",
+        "component": "test-component-to-test-auto-instruction-activate-event-7",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-7",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-7",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-7",
+        "component": "test-component-to-test-auto-instruction-activate-event-7",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-7",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-7",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-7",
+        "component": "test-component-to-test-auto-instruction-activate-event-7",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-7",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-7",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-7",
+        "component": "test-component-to-test-auto-instruction-activate-event-7",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-7",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-7",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-7",
+        "component": "test-component-to-test-auto-instruction-activate-event-7",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-7",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-7",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-7",
+        "component": "test-component-to-test-auto-instruction-activate-event-7",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-7",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "activate",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-7",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-7",
+        "component": "test-component-to-test-auto-instruction-activate-event-7",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-7",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-resource-to-test-auto-instruction-activate-event-7&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -728,7 +1060,51 @@ Feature: send activation event on unsnooze
       "output": "test-output-to-test-auto-instruction-activate-event-8"
     }
     """
-    When I wait the end of 5 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "check",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-8",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-8",
+        "component": "test-component-to-test-auto-instruction-activate-event-8",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-8",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-8",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-8",
+        "component": "test-component-to-test-auto-instruction-activate-event-8",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-8",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "autoinstructionactivate",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-8",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-8",
+        "component": "test-component-to-test-auto-instruction-activate-event-8",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-8",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-8",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-8",
+        "component": "test-component-to-test-auto-instruction-activate-event-8",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-8",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "activate",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-8",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-8",
+        "component": "test-component-to-test-auto-instruction-activate-event-8",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-8",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-resource-to-test-auto-instruction-activate-event-8&with_instructions=true until response code is 200 and body contains:
     """json
     {
@@ -830,7 +1206,51 @@ Feature: send activation event on unsnooze
       "output": "test-output-to-test-auto-instruction-activate-event-9"
     }
     """
-    When I wait the end of 5 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "check",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-9",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-9",
+        "component": "test-component-to-test-auto-instruction-activate-event-9",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-9",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-9",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-9",
+        "component": "test-component-to-test-auto-instruction-activate-event-9",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-9",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-9",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-9",
+        "component": "test-component-to-test-auto-instruction-activate-event-9",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-9",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "pbhleave",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-9",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-9",
+        "component": "test-component-to-test-auto-instruction-activate-event-9",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-9",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "activate",
+        "connector": "test-connector-to-test-auto-instruction-activate-event-9",
+        "connector_name": "test-connector-name-to-test-auto-instruction-activate-event-9",
+        "component": "test-component-to-test-auto-instruction-activate-event-9",
+        "resource": "test-resource-to-test-auto-instruction-activate-event-9",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-resource-to-test-auto-instruction-activate-event-9&with_instructions=true until response code is 200 and body contains:
     """json
     {
