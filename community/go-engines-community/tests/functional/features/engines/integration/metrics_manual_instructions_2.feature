@@ -171,7 +171,7 @@ Feature: Metrics should be added on alarm changes
   Scenario: given manual instruction and new events should not count executed instruction metric if an alarm wasn't assigned before
     When I am admin
     When I do POST /api/v4/eventfilter/rules:
-    """
+    """json
     {
       "description": "test manual instruction metrics 11",
       "type": "enrichment",
@@ -186,7 +186,6 @@ Feature: Metrics should be added on alarm changes
           }
         ]
       ],
-      "priority": 0,
       "enabled": true,
       "config": {
         "actions": [

@@ -271,6 +271,7 @@ export default {
   hidden: 'Caché',
   numberField: 'Champ numérique',
   chart: 'Graphique | Graphiques',
+  chooseFile: 'Choisir le fichier',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
