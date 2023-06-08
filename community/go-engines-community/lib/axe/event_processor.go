@@ -744,6 +744,7 @@ func newAlarm(event types.Event, alarmConfig config.AlarmConfig) types.Alarm {
 			Resource:          event.Resource,
 			Parents:           []string{},
 			Children:          []string{},
+			UnlinkedParents:   []string{},
 			Infos:             map[string]map[string]interface{}{},
 			RuleVersion:       map[string]string{},
 		},
