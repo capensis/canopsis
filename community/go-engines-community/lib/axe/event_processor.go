@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
@@ -28,7 +28,7 @@ import (
 
 type eventProcessor struct {
 	dbClient            mongo.DbClient
-	adapter             alarm.Adapter
+	adapter             libalarm.Adapter
 	entityAdapter       libentity.Adapter
 	ruleAdapter         correlation.RulesAdapter
 	alarmConfigProvider config.AlarmConfigProvider
@@ -37,7 +37,7 @@ type eventProcessor struct {
 	logger              zerolog.Logger
 	metricsSender       metrics.Sender
 
-	metaAlarmEventProcessor alarm.MetaAlarmEventProcessor
+	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
 
 	statisticsSender statistics.EventStatisticsSender
 
@@ -50,20 +50,20 @@ type eventProcessor struct {
 
 func NewEventProcessor(
 	dbClient mongo.DbClient,
-	adapter alarm.Adapter,
+	adapter libalarm.Adapter,
 	entityAdapter libentity.Adapter,
 	ruleAdapter correlation.RulesAdapter,
 	alarmConfigProvider config.AlarmConfigProvider,
 	executor liboperation.Executor,
 	alarmStatusService alarmstatus.Service,
 	metricsSender metrics.Sender,
-	metaAlarmEventProcessor alarm.MetaAlarmEventProcessor,
+	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	statisticsSender statistics.EventStatisticsSender,
 	stateCountersService statecounters.StateCountersService,
 	pbhTypeResolver pbehavior.EntityTypeResolver,
 	autoInstructionMatcher AutoInstructionMatcher,
 	logger zerolog.Logger,
-) alarm.EventProcessor {
+) libalarm.EventProcessor {
 	return &eventProcessor{
 		dbClient:            dbClient,
 		adapter:             adapter,
@@ -119,6 +119,10 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 			return fmt.Errorf("cannot fetch alarm: %w", err)
 		}
 
+		if event.AlarmID != "" && event.AlarmID != alarm.ID {
+			alarmNotFound = true
+		}
+
 		if !alarmNotFound {
 			event.Alarm = &alarm
 		}
@@ -150,9 +154,28 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 			event.Alarm, err = s.metaAlarmEventProcessor.CreateMetaAlarm(tCtx, *event)
 			alarmChange.Type = types.AlarmChangeTypeCreate
 		case types.EventTypeTrigger:
-			if event.AlarmChange != nil && event.Alarm != nil {
-				alarmChange = *event.AlarmChange
+			if event.AlarmChange == nil {
+				return nil
 			}
+
+			if event.Alarm == nil && event.AlarmID != "" {
+				alarm, err := s.adapter.GetAlarmByAlarmId(ctx, event.AlarmID)
+				if err != nil {
+					if _, ok := err.(errt.NotFound); !ok {
+						return fmt.Errorf("cannot fetch alarm: %w", err)
+					}
+				}
+
+				if alarm.ID != "" {
+					event.Alarm = &alarm
+				}
+			}
+
+			if event.Alarm == nil {
+				return nil
+			}
+
+			alarmChange = *event.AlarmChange
 		default:
 			if event.Entity == nil {
 				return nil

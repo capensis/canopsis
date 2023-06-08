@@ -54,6 +54,9 @@ const (
 	AlarmChangeTypeAutoInstructionStart    AlarmChangeType = "autoinstructionstart"
 	AlarmChangeTypeAutoInstructionComplete AlarmChangeType = "autoinstructioncomplete"
 	AlarmChangeTypeAutoInstructionFail     AlarmChangeType = "autoinstructionfail"
+	// Following change types are used for auto instruction triggers.
+	AlarmChangeTypeAutoInstructionResultOk   AlarmChangeType = "autoinstructionresultok"
+	AlarmChangeTypeAutoInstructionResultFail AlarmChangeType = "autoinstructionresultfail"
 	// Following change types are used for job execution.
 	AlarmChangeTypeInstructionJobStart    AlarmChangeType = "instructionjobstart"
 	AlarmChangeTypeInstructionJobComplete AlarmChangeType = "instructionjobcomplete"
@@ -89,6 +92,23 @@ func NewAlarmChange() AlarmChange {
 		PreviousStateChange:  CpsTime{Time: time.Now()},
 		PreviousStatus:       AlarmStatusOff,
 		PreviousStatusChange: CpsTime{Time: time.Now()},
+	}
+}
+
+func NewAlarmChangeByAlarm(alarm Alarm, t ...AlarmChangeType) AlarmChange {
+	alarmChangeType := AlarmChangeTypeNone
+	if len(t) > 0 {
+		alarmChangeType = t[0]
+	}
+
+	return AlarmChange{
+		Type:                            alarmChangeType,
+		PreviousState:                   alarm.Value.State.Value,
+		PreviousStateChange:             alarm.Value.State.Timestamp,
+		PreviousStatus:                  alarm.Value.Status.Value,
+		PreviousStatusChange:            alarm.Value.Status.Timestamp,
+		PreviousPbehaviorTypeID:         alarm.Value.PbehaviorInfo.TypeID,
+		PreviousPbehaviorCannonicalType: alarm.Value.PbehaviorInfo.CanonicalType,
 	}
 }
 
