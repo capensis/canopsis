@@ -153,13 +153,13 @@ Feature: update service when alarm is updated by action pbehavior
               {
                 "_t": "statedec",
                 "a": "service.service",
-                "m": "All: 1; Active: 0; Acknowledged: 0; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[test-maintenance-type-to-engine:1]; UnderPbehavior: 1;",
+                "m": "All: 1; Active: 0; Acknowledged: 0; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 1; Pbehaviors: map[test-maintenance-type-to-engine:1]; UnderPbehavior: 1;",
                 "val": 0
               },
               {
                 "_t": "statusdec",
                 "a": "service.service",
-                "m": "All: 1; Active: 0; Acknowledged: 0; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 0; Pbehaviors: map[test-maintenance-type-to-engine:1]; UnderPbehavior: 1;",
+                "m": "All: 1; Active: 0; Acknowledged: 0; NotAcknowledged: 0; AcknowledgedUnderPbh: 0; StateCritical: 0; StateMajor: 0; StateMinor: 0; StateOk: 1; Pbehaviors: map[test-maintenance-type-to-engine:1]; UnderPbehavior: 1;",
                 "val": 0
               }
             ],

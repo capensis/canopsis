@@ -8,18 +8,21 @@ type StateCounters struct {
 	Critical int64 `bson:"critical"`
 	Major    int64 `bson:"major"`
 	Minor    int64 `bson:"minor"`
-	Info     int64 `bson:"info"`
+	Ok       int64 `bson:"ok"`
 }
 
 type EntityServiceCounters struct {
-	ID                string           `bson:"_id"`
-	All               int              `bson:"all"`
-	Alarms            int              `bson:"active"`
-	State             StateCounters    `bson:"state"`
-	Acknowledged      int              `bson:"acked"`
-	NotAcknowledged   int              `bson:"unacked"`
-	PbehaviorCounters map[string]int64 `bson:"pbehavior,omitempty"`
-	OutputTemplate    string           `bson:"output_template,omitempty"`
+	ID                   string         `bson:"_id"`
+	All                  int            `bson:"all"`
+	Active               int            `bson:"active"`
+	State                StateCounters  `bson:"state"`
+	Acknowledged         int            `bson:"acked"`
+	AcknowledgedUnderPbh int            `bson:"acked_under_pbh"`
+	NotAcknowledged      int            `bson:"unacked"`
+	PbehaviorCounters    map[string]int `bson:"pbehavior,omitempty"`
+	UnderPbehavior       int            `bson:"under_pbh"`
+	Depends              int            `bson:"depends"`
+	OutputTemplate       string         `bson:"output_template,omitempty"`
 }
 
 func (s EntityServiceCounters) GetWorstState() int {
@@ -41,7 +44,7 @@ func (s EntityServiceCounters) GetWorstState() int {
 func (s *EntityServiceCounters) IncrementState(state int) {
 	switch state {
 	case types.AlarmStateOK:
-		s.State.Info++
+		s.State.Ok++
 	case types.AlarmStateMinor:
 		s.State.Minor++
 	case types.AlarmStateMajor:
@@ -54,7 +57,7 @@ func (s *EntityServiceCounters) IncrementState(state int) {
 func (s *EntityServiceCounters) DecrementState(state int) {
 	switch state {
 	case types.AlarmStateOK:
-		s.State.Info--
+		s.State.Ok--
 	case types.AlarmStateMinor:
 		s.State.Minor--
 	case types.AlarmStateMajor:
@@ -64,34 +67,8 @@ func (s *EntityServiceCounters) DecrementState(state int) {
 	}
 }
 
-func (s *EntityServiceCounters) AddEntityToCounters(entity types.Entity, alarm *types.Alarm) {
-	if alarm != nil {
-		s.All++
-		if alarm.IsInActivePeriod() {
-			s.IncrementAlarmCounters(int(alarm.CurrentState()), alarm.IsAck())
-		} else {
-			s.PbehaviorCounters[alarm.Value.PbehaviorInfo.TypeID]++
-		}
-	} else if !entity.PbehaviorInfo.IsActive() {
-		s.PbehaviorCounters[entity.PbehaviorInfo.TypeID]++
-	}
-}
-
-func (s *EntityServiceCounters) RemoveEntityFromCounters(entity types.Entity, alarm *types.Alarm) {
-	if alarm != nil {
-		s.All--
-		if alarm.IsInActivePeriod() {
-			s.DecrementAlarmCounters(int(alarm.CurrentState()), alarm.IsAck())
-		} else {
-			s.PbehaviorCounters[alarm.Value.PbehaviorInfo.TypeID]--
-		}
-	} else if !entity.PbehaviorInfo.IsActive() {
-		s.PbehaviorCounters[entity.PbehaviorInfo.TypeID]--
-	}
-}
-
 func (s *EntityServiceCounters) IncrementAlarmCounters(state int, acked bool) {
-	s.Alarms++
+	s.Active++
 	s.IncrementState(state)
 	if acked {
 		s.Acknowledged++
@@ -101,7 +78,7 @@ func (s *EntityServiceCounters) IncrementAlarmCounters(state int, acked bool) {
 }
 
 func (s *EntityServiceCounters) DecrementAlarmCounters(state int, acked bool) {
-	s.Alarms--
+	s.Active--
 	s.DecrementState(state)
 	if acked {
 		s.Acknowledged--
