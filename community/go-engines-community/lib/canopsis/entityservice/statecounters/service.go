@@ -218,12 +218,21 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 		}
 
 		if counters.PbehaviorCounters == nil {
-			counters.PbehaviorCounters = make(map[string]int64)
+			counters.PbehaviorCounters = make(map[string]int)
+		}
+
+		if serviceToAdd[counters.ID] {
+			counters.Depends++
+		}
+
+		if serviceToRemove[counters.ID] {
+			counters.Depends--
 		}
 
 		switch changeType {
 		case types.AlarmChangeTypeEnabled:
 			if !serviceToRemove[counters.ID] && !entity.PbehaviorInfo.IsActive() {
+				counters.UnderPbehavior++
 				counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]++
 			}
 		case types.AlarmChangeTypeNone:
@@ -232,10 +241,17 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 					counters.All--
 					if isActive {
 						counters.DecrementAlarmCounters(curState, acked)
+					} else {
+						if acked {
+							counters.AcknowledgedUnderPbh--
+						}
+
+						counters.DecrementState(types.AlarmStateOK)
 					}
 				}
 
 				if !isActive {
+					counters.UnderPbehavior--
 					counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]--
 				}
 
@@ -247,10 +263,17 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 					counters.All++
 					if isActive {
 						counters.IncrementAlarmCounters(curState, acked)
+					} else {
+						if acked {
+							counters.AcknowledgedUnderPbh++
+						}
+
+						counters.IncrementState(types.AlarmStateOK)
 					}
 				}
 
 				if !isActive {
+					counters.UnderPbehavior++
 					counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]++
 				}
 			}
@@ -262,8 +285,16 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 			counters.All++
 			if isActive {
 				counters.IncrementAlarmCounters(curState, acked)
-			} else if alarmChange.PreviousPbehaviorTypeID != alarm.Value.PbehaviorInfo.TypeID {
-				counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]++
+			} else {
+				if acked {
+					counters.AcknowledgedUnderPbh++
+				}
+
+				counters.IncrementState(types.AlarmStateOK)
+				if alarmChange.PreviousPbehaviorTypeID != alarm.Value.PbehaviorInfo.TypeID {
+					counters.UnderPbehavior++
+					counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]++
+				}
 			}
 		case types.AlarmChangeTypePbhEnter:
 			if serviceToRemove[counters.ID] && alarm != nil {
@@ -278,32 +309,50 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 					counters.All++
 					if isActive {
 						counters.IncrementAlarmCounters(curState, acked)
+					} else {
+						if acked {
+							counters.AcknowledgedUnderPbh++
+						}
+
+						counters.IncrementState(types.AlarmStateOK)
 					}
 				}
 
 				if !isActive {
+					counters.UnderPbehavior++
 					counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]++
 				}
 
 				break
 			}
 
-			if alarm != nil && !isActive {
-				counters.DecrementAlarmCounters(curState, acked)
+			if !isActive {
+				counters.UnderPbehavior++
 				counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]++
-			} else if !isActive {
-				counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]++
+				if alarm != nil {
+					counters.DecrementAlarmCounters(curState, acked)
+					counters.IncrementState(types.AlarmStateOK)
+					if acked {
+						counters.AcknowledgedUnderPbh++
+					}
+				}
 			}
 		case types.AlarmChangeTypePbhLeaveAndEnter:
 			if serviceToRemove[counters.ID] {
 				if alarm != nil {
 					counters.All--
 					if alarmChange.PreviousPbehaviorCannonicalType != pbehavior.TypeActive {
+						counters.DecrementState(types.AlarmStateOK)
+						if acked {
+							counters.AcknowledgedUnderPbh--
+						}
+					} else {
 						counters.DecrementAlarmCounters(curState, acked)
 					}
 				}
 
 				if alarmChange.PreviousPbehaviorCannonicalType != pbehavior.TypeActive {
+					counters.UnderPbehavior--
 					counters.PbehaviorCounters[alarmChange.PreviousPbehaviorTypeID]--
 				}
 
@@ -315,10 +364,16 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 					counters.All++
 					if isActive {
 						counters.IncrementAlarmCounters(curState, acked)
+					} else {
+						counters.IncrementState(types.AlarmStateOK)
+						if acked {
+							counters.AcknowledgedUnderPbh++
+						}
 					}
 				}
 
 				if !isActive {
+					counters.UnderPbehavior++
 					counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]++
 				}
 
@@ -326,6 +381,7 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 			}
 
 			if alarmChange.PreviousPbehaviorCannonicalType != pbehavior.TypeActive {
+				counters.UnderPbehavior--
 				counters.PbehaviorCounters[alarmChange.PreviousPbehaviorTypeID]--
 			}
 
@@ -333,15 +389,24 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 				if isActive {
 					if alarmChange.PreviousPbehaviorCannonicalType != pbehavior.TypeActive {
 						counters.IncrementAlarmCounters(curState, acked)
+						counters.DecrementState(types.AlarmStateOK)
+						if acked {
+							counters.AcknowledgedUnderPbh--
+						}
 					}
 				} else {
 					if alarmChange.PreviousPbehaviorCannonicalType == pbehavior.TypeActive {
 						counters.DecrementAlarmCounters(curState, acked)
+						counters.IncrementState(types.AlarmStateOK)
+						if acked {
+							counters.AcknowledgedUnderPbh++
+						}
 					}
 				}
 			}
 
 			if !isActive {
+				counters.UnderPbehavior++
 				counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]++
 			}
 		case types.AlarmChangeTypePbhLeave:
@@ -355,7 +420,14 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 						counters.DecrementAlarmCounters(curState, acked)
 					}
 				} else {
+					counters.UnderPbehavior--
 					counters.PbehaviorCounters[alarmChange.PreviousPbehaviorTypeID]--
+					if alarm != nil {
+						counters.DecrementState(types.AlarmStateOK)
+						if acked {
+							counters.AcknowledgedUnderPbh--
+						}
+					}
 				}
 
 				break
@@ -373,8 +445,13 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 			if alarmChange.PreviousPbehaviorCannonicalType != pbehavior.TypeActive {
 				if alarm != nil {
 					counters.IncrementAlarmCounters(curState, acked)
+					counters.DecrementState(types.AlarmStateOK)
+					if acked {
+						counters.AcknowledgedUnderPbh--
+					}
 				}
 
+				counters.UnderPbehavior--
 				counters.PbehaviorCounters[alarmChange.PreviousPbehaviorTypeID]--
 			}
 		case types.AlarmChangeTypeStateIncrease,
@@ -385,6 +462,12 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 				if isActive {
 					counters.DecrementAlarmCounters(prevState, acked)
 				} else {
+					counters.DecrementState(types.AlarmStateOK)
+					if acked {
+						counters.AcknowledgedUnderPbh--
+					}
+
+					counters.UnderPbehavior--
 					counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]--
 				}
 
@@ -396,6 +479,12 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 				if isActive {
 					counters.IncrementAlarmCounters(curState, acked)
 				} else {
+					counters.IncrementState(types.AlarmStateOK)
+					if acked {
+						counters.AcknowledgedUnderPbh++
+					}
+
+					counters.UnderPbehavior++
 					counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]++
 				}
 
@@ -414,8 +503,16 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 			counters.All--
 			if isActive {
 				counters.DecrementAlarmCounters(curState, acked)
-			} else if serviceToRemove[counters.ID] || !entity.Enabled {
-				counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]--
+			} else {
+				counters.DecrementState(types.AlarmStateOK)
+				if acked {
+					counters.AcknowledgedUnderPbh--
+				}
+
+				if serviceToRemove[counters.ID] || !entity.Enabled {
+					counters.UnderPbehavior--
+					counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]--
+				}
 			}
 		case types.AlarmChangeTypeAck:
 			if serviceToRemove[counters.ID] {
@@ -423,6 +520,12 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 					counters.DecrementState(curState)
 					counters.NotAcknowledged--
 				} else {
+					counters.DecrementState(types.AlarmStateOK)
+					if acked {
+						counters.AcknowledgedUnderPbh--
+					}
+
+					counters.UnderPbehavior--
 					counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]--
 				}
 
@@ -434,20 +537,36 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 					counters.IncrementState(curState)
 					counters.Acknowledged++
 				} else {
+					counters.IncrementState(types.AlarmStateOK)
+					if acked {
+						counters.AcknowledgedUnderPbh++
+					}
+
+					counters.UnderPbehavior++
 					counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]++
 				}
 
 				break
 			}
 
-			counters.Acknowledged++
-			counters.NotAcknowledged--
+			if isActive {
+				counters.Acknowledged++
+				counters.NotAcknowledged--
+			} else {
+				counters.AcknowledgedUnderPbh++
+			}
 		case types.AlarmChangeTypeAckremove:
 			if serviceToRemove[counters.ID] {
 				if isActive {
 					counters.DecrementState(curState)
 					counters.Acknowledged--
 				} else {
+					counters.DecrementState(types.AlarmStateOK)
+					if acked {
+						counters.AcknowledgedUnderPbh--
+					}
+
+					counters.UnderPbehavior--
 					counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]--
 				}
 
@@ -459,14 +578,20 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 					counters.IncrementState(curState)
 					counters.NotAcknowledged++
 				} else {
+					counters.IncrementState(types.AlarmStateOK)
+					counters.UnderPbehavior++
 					counters.PbehaviorCounters[entity.PbehaviorInfo.TypeID]++
 				}
 
 				break
 			}
 
-			counters.NotAcknowledged++
-			counters.Acknowledged--
+			if isActive {
+				counters.Acknowledged--
+				counters.NotAcknowledged++
+			} else {
+				counters.AcknowledgedUnderPbh--
+			}
 		}
 
 		output, err := s.getServiceOutput(counters)
@@ -527,7 +652,7 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 	if len(entity.ServicesToAdd) > 0 || len(entity.ServicesToRemove) > 0 {
 		_, err = s.entityCollection.UpdateOne(
 			ctx, bson.M{"_id": entity.ID},
-			bson.M{"$unset": bson.M{"impacted_services_to_add": 1, "impacted_services_to_remove": 1}})
+			bson.M{"$unset": bson.M{"services_to_add": 1, "services_to_remove": 1}})
 		if err != nil {
 			return nil, err
 		}
@@ -551,7 +676,7 @@ func (s *service) RecomputeEntityServiceCounters(ctx context.Context, event type
 	counters = EntityServiceCounters{
 		ID:                event.Entity.ID,
 		OutputTemplate:    counters.OutputTemplate,
-		PbehaviorCounters: make(map[string]int64),
+		PbehaviorCounters: make(map[string]int),
 	}
 
 	//if len(event.Entity.Depends) == 0 {
@@ -619,6 +744,8 @@ func (s *service) RecomputeEntityServiceCounters(ctx context.Context, event type
 			return nil, err
 		}
 
+		counters.Depends++
+
 		if depEnt.Alarm.ID != "" {
 			if depEnt.Alarm.IsResolved() {
 				continue
@@ -628,10 +755,12 @@ func (s *service) RecomputeEntityServiceCounters(ctx context.Context, event type
 			if depEnt.Alarm.IsInActivePeriod() {
 				counters.IncrementAlarmCounters(int(depEnt.Alarm.CurrentState()), depEnt.Alarm.IsAck())
 			} else {
+				counters.UnderPbehavior++
 				counters.PbehaviorCounters[depEnt.Alarm.Value.PbehaviorInfo.TypeID]++
 			}
 		} else {
 			if !depEnt.Entity.PbehaviorInfo.IsActive() {
+				counters.UnderPbehavior++
 				counters.PbehaviorCounters[depEnt.Entity.PbehaviorInfo.TypeID]++
 			}
 		}

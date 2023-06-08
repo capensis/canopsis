@@ -429,7 +429,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 		return types.Entity{}, nil, err
 	}
 
-	if !event.IsContextable() || event.IsOnlyServiceUpdate() {
+	if !event.IsContextable() || event.IsOnlyServiceUpdate() || eventEntity.SoftDeleted != nil {
 		if isNew {
 			return types.Entity{}, nil, fmt.Errorf("entity %s doesn't exist", event.GetEID())
 		}
