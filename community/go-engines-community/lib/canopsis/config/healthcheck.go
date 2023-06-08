@@ -43,7 +43,6 @@ type HealthCheckParameters struct {
 	Axe          EngineParameters `bson:"engine-axe" json:"engine-axe"`
 	Correlation  EngineParameters `bson:"engine-correlation" json:"engine-correlation"`
 	Remediation  EngineParameters `bson:"engine-remediation" json:"engine-remediation"`
-	Service      EngineParameters `bson:"engine-service" json:"engine-service"`
 	DynamicInfos EngineParameters `bson:"engine-dynamic-infos" json:"engine-dynamic-infos"`
 	Action       EngineParameters `bson:"engine-action" json:"engine-action"`
 	Webhook      EngineParameters `bson:"engine-webhook" json:"engine-webhook"`
