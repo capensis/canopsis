@@ -12,7 +12,7 @@ La commande `engine-che -help` liste toutes les options acceptées par le moteur
 
 Il est possible, à partir de Canopsis 3.39.0, de lancer plusieurs instances du moteur `engine-che`, afin d'améliorer sa performance de traitement et sa résilience.
 
-En environnement Docker, il vous suffit par exemple de lancer Docker Compose avec `docker-compose up -d --scale che=2` pour que le moteur `engine-che` soit lancé avec 2 instances.
+En environnement Docker, il vous suffit par exemple de lancer Docker Compose avec `docker compose up -d --scale che=2` pour que le moteur `engine-che` soit lancé avec 2 instances.
 
 Cette fonctionnalité sera aussi disponible en installation par paquets lors d'une prochaine mise à jour.
 

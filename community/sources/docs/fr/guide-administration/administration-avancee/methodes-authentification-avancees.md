@@ -82,12 +82,12 @@ Vous devez ensuite **obligatoirement** redémarrer le service API.
 
 === "Canopsis Pro"
 	```sh
-	CPS_EDITION=pro docker-compose restart api
+	CPS_EDITION=pro docker compose restart api
 	```
 
 === "Canopsis Community"
 	```sh
-	CPS_EDITION=community docker-compose restart api
+	CPS_EDITION=community docker compose restart api
 	```
 
 * Installation Paquets
@@ -148,12 +148,12 @@ Vous devez ensuite **obligatoirement** redémarrer le service API.
 
 === "Canopsis Pro"
 	```sh
-	CPS_EDITION=pro docker-compose restart api
+	CPS_EDITION=pro docker compose restart api
 	```
 
 === "Canopsis Community"
 	```sh
-	CPS_EDITION=community docker-compose restart api
+	CPS_EDITION=community docker compose restart api
 	```
 
 * Installation Paquets
@@ -243,12 +243,12 @@ Vous devez ensuite **obligatoirement** redémarrer le service API.
 
 === "Canopsis Pro"
 	```sh
-	CPS_EDITION=pro docker-compose restart api
+	CPS_EDITION=pro docker compose restart api
 	```
 
 === "Canopsis Community"
 	```sh
-	CPS_EDITION=community docker-compose restart api
+	CPS_EDITION=community docker compose restart api
 	```
 
 * Installation Paquets
@@ -274,12 +274,12 @@ Redémarrer le service `api` de Canopsis
 * Installation via Docker Compose
 === "Canopsis Pro"
 	```sh
-	CPS_EDITION=pro docker-compose logs -f api
+	CPS_EDITION=pro docker compose logs -f api
 	```
 
 === "Canopsis Community"
 	```sh
-	CPS_EDITION=community docker-compose logs -f api
+	CPS_EDITION=community docker compose logs -f api
 	```
 
 * Installation Paquets
