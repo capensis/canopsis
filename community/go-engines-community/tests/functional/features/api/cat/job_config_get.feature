@@ -19,7 +19,8 @@ Feature: get a job's config
           "type": "rundeck",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           }
         }
       ],
@@ -79,7 +80,8 @@ Feature: get a job's config
       "type": "rundeck",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       }
     }
     """

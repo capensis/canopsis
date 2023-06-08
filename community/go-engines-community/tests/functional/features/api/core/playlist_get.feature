@@ -14,7 +14,8 @@ Feature: Get a playlist
           "_id": "test-playlist-to-get-1",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1608284568,
           "enabled": true,
@@ -33,7 +34,8 @@ Feature: Get a playlist
           "_id": "test-playlist-to-get-2",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1608284568,
           "enabled": true,
@@ -68,7 +70,8 @@ Feature: Get a playlist
       "_id": "test-playlist-to-get-1",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "created": 1608284568,
       "enabled": true,

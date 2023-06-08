@@ -22,15 +22,18 @@ type store struct {
 	client           mongo.DbClient
 	collection       mongo.DbCollection
 	filterCollection mongo.DbCollection
+	authorProvider   author.Provider
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
+	authorProvider author.Provider,
 ) Store {
 	return &store{
 		client:           dbClient,
 		collection:       dbClient.Collection(mongo.UserPreferencesMongoCollection),
 		filterCollection: dbClient.Collection(mongo.WidgetFiltersMongoCollection),
+		authorProvider:   authorProvider,
 	}
 }
 
@@ -53,7 +56,7 @@ func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, e
 		}},
 		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
 	}
-	pipeline = append(pipeline, author.PipelineForField("filters.author")...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("filters.author")...)
 	pipeline = append(pipeline,
 		bson.M{"$sort": bson.M{"filters.position": 1}},
 		bson.M{"$group": bson.M{
@@ -93,7 +96,7 @@ func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, e
 			}},
 			{"$sort": bson.M{"position": 1}},
 		}
-		pipeline = append(pipeline, author.Pipeline()...)
+		pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 		filterCursor, err := s.filterCollection.Aggregate(ctx, pipeline)
 		if err != nil {
 			return nil, err

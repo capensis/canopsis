@@ -10,7 +10,7 @@ import (
 // Default config values
 const (
 	AlarmCancelAutosolveDelay = 60 * 60 * time.Second
-	AlarmDefaultNameScheme    = "{{ rand_string 2 }}-{{ rand_string 2 }}-{{ rand_string 2 }}"
+	AlarmDisplayNameScheme    = "{{ rand_string 2 }}-{{ rand_string 2 }}-{{ rand_string 2 }}"
 
 	ApiTokenSigningMethod = "HS256"
 	ApiBulkMaxSize        = 10000
@@ -33,6 +33,8 @@ const (
 
 	DataStorageMaxUpdates = 100000
 )
+
+var ApiAuthorScheme = []string{"$username"}
 
 func CreateDisplayNameTpl(text string) (*template.Template, error) {
 	return template.New("displayname_gen_scheme").

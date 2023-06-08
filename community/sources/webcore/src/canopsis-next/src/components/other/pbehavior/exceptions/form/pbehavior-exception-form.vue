@@ -8,7 +8,7 @@
       :error-messages="errors.collect('description')",
       name="description"
     )
-    pbehavior-exceptions-field(v-model="form.exdates")
+    pbehavior-exceptions-field(v-model="form.exdates", with-exdate-type)
       template(#no-data="")
         v-alert(:value="true", type="info") {{ $t('modals.createPbehaviorException.emptyExdates') }}
 </template>
@@ -16,7 +16,7 @@
 <script>
 import { formMixin, formArrayMixin } from '@/mixins/form';
 
-import PbehaviorExceptionsField from './fields/pbehavior-exceptions-field.vue';
+import PbehaviorExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-exceptions-field.vue';
 
 export default {
   inject: ['$validator'],
