@@ -84,7 +84,7 @@ func (r *typeResolver) Resolve(
 	}
 	pbhRes, err := r.getPbehaviorIntervals(ctx, t, func(id string, computed ComputedPbehavior) bool {
 		if len(computed.Pattern) > 0 {
-			matched, _, err := computed.Pattern.Match(entity)
+			matched, err := computed.Pattern.Match(entity)
 			if err != nil {
 				r.logger.Err(err).Str("pbehavior", id).Msg("pbehavior has invalid pattern")
 				return false

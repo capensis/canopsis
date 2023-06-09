@@ -482,6 +482,12 @@ export default {
     [TRIGGERS.autoinstructioncomplete]: {
       text: 'Consigne automatique terminée',
     },
+    [TRIGGERS.autoinstructionresultok]: {
+      text: 'L\'alarme est en état OK après toutes les instructions automatiques',
+    },
+    [TRIGGERS.autoinstructionresultfail]: {
+      text: 'L\'alarme n\'est pas dans l\'état OK après toutes les instructions automatiques',
+    },
   },
   themes: {
     [THEMES_NAMES.canopsis]: 'Canopsis',
