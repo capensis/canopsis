@@ -18,8 +18,6 @@ build_docker_archive:
   artifacts:
     paths:
       - ${CANOPSIS_EDITION}/${DOCKER_ARCHIVE_BUILD}/
-  rules:
-    - if: $CI_COMMIT_TAG
 
 publish_docker_archive:
   extends: .common
@@ -29,5 +27,3 @@ publish_docker_archive:
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
            --upload-file "${DOCKER_ARCHIVE_PATH}" \
            "${DOCKER_ARCHIVE_PACKAGE}"
-  rules:
-    - if: $CI_COMMIT_TAG
