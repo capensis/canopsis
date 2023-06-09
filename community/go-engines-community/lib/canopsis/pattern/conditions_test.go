@@ -117,7 +117,16 @@ func TestCondition_MatchString(t *testing.T) {
 
 	for _, data := range dataSet {
 		t.Run(data.testName, func(t *testing.T) {
-			result, _, err := data.cond.MatchString(data.value)
+			result, err := data.cond.MatchString(data.value)
+			if result != data.expectedResult {
+				t.Errorf("expected %t but got %t", data.expectedResult, result)
+			}
+
+			if data.expectedErr != err {
+				t.Errorf("expected error %v but got %v", data.expectedErr, err)
+			}
+
+			result, _, err = data.cond.MatchStringWithRegexpMatches(data.value)
 			if result != data.expectedResult {
 				t.Errorf("expected %t but got %t", data.expectedResult, result)
 			}
@@ -326,7 +335,15 @@ func TestCondition_UnmarshalAndMatchString(t *testing.T) {
 				t.Errorf("expected no error but got %v", err)
 			}
 
-			result, _, err := w.Cond.MatchString(data.value)
+			result, err := w.Cond.MatchString(data.value)
+			if err != nil {
+				t.Errorf("expected no error but got %v", err)
+			}
+			if result != data.expectedResult {
+				t.Errorf("expected %t but got %t", data.expectedResult, result)
+			}
+
+			result, _, err = w.Cond.MatchStringWithRegexpMatches(data.value)
 			if err != nil {
 				t.Errorf("expected no error but got %v", err)
 			}
@@ -345,7 +362,15 @@ func TestCondition_UnmarshalAndMatchString(t *testing.T) {
 				t.Errorf("expected no error but got %v", err)
 			}
 
-			result, _, err = w.Cond.MatchString(data.value)
+			result, err = w.Cond.MatchString(data.value)
+			if err != nil {
+				t.Errorf("expected no error but got %v", err)
+			}
+			if result != data.expectedResult {
+				t.Errorf("expected %t but got %t", data.expectedResult, result)
+			}
+
+			result, _, err = w.Cond.MatchStringWithRegexpMatches(data.value)
 			if err != nil {
 				t.Errorf("expected no error but got %v", err)
 			}
