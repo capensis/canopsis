@@ -147,7 +147,67 @@ func NewDurationCondition(t string, d types.DurationWithUnit) (Condition, error)
 	}, nil
 }
 
-func (c *Condition) MatchString(value string) (bool, RegexMatches, error) {
+func (c *Condition) MatchString(value string) (bool, error) {
+	switch c.Type {
+	case ConditionEqual:
+		if c.valueStr == nil {
+			return false, ErrWrongConditionValue
+		}
+
+		return value == *c.valueStr, nil
+	case ConditionNotEqual:
+		if c.valueStr == nil {
+			return false, ErrWrongConditionValue
+		}
+
+		return value != *c.valueStr, nil
+	case ConditionIsOneOf:
+		if len(c.valueStrArray) == 0 {
+			return false, ErrWrongConditionValue
+		}
+		for _, item := range c.valueStrArray {
+			if item == value {
+				return true, nil
+			}
+		}
+
+		return false, nil
+	case ConditionIsNotOneOf:
+		if len(c.valueStrArray) == 0 {
+			return false, ErrWrongConditionValue
+		}
+
+		for _, item := range c.valueStrArray {
+			if item == value {
+				return false, nil
+			}
+		}
+
+		return true, nil
+	case ConditionRegexp,
+		ConditionContain,
+		ConditionNotContain,
+		ConditionBeginWith,
+		ConditionNotBeginWith,
+		ConditionEndWith,
+		ConditionNotEndWith:
+		if c.valueRegexp == nil {
+			return false, ErrWrongConditionValue
+		}
+
+		return utils.MatchWithRegexExpression(c.valueRegexp, value), nil
+	case ConditionExist:
+		if c.valueBool == nil {
+			return false, ErrWrongConditionValue
+		}
+
+		return *c.valueBool == (value != ""), nil
+	}
+
+	return false, ErrUnsupportedConditionType
+}
+
+func (c *Condition) MatchStringWithRegexpMatches(value string) (bool, RegexMatches, error) {
 	switch c.Type {
 	case ConditionEqual:
 		if c.valueStr == nil {
