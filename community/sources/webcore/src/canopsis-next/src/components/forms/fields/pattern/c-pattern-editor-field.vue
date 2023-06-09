@@ -64,7 +64,7 @@
           color="primary",
           @click="updatePatternToCustom"
         ) {{ $t('common.edit') }}
-        v-messages.text-right(
+        v-messages.text-xs-right(
           v-if="checked",
           :value="[$tc('common.itemFound', count, { count })]",
           :color="count === 0 ? 'error' : ''"
