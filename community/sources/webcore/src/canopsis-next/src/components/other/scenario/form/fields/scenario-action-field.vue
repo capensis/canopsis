@@ -6,13 +6,16 @@
     v-layout(row)
       v-flex(xs6)
         c-enabled-field(v-field="action.emit_trigger", :label="$t('common.emitTrigger')")
+        action-author-field(v-if="!isPbehaviorAction", v-model="parameters")
       v-flex(v-if="isWebhookActionType", xs6)
         c-enabled-field(
-          :value="parameters.skip_for_child",
-          :label="$t('scenario.skipForChild')",
-          @input="updateSkipForChild"
+          v-field="parameters.skip_for_child",
+          :label="$t('scenario.skipForChild')"
         )
-    action-author-field(v-if="!isPbehaviorAction", v-model="parameters")
+        c-enabled-field.mt-0(
+          v-field="parameters.skip_for_instruction",
+          :label="$t('scenario.skipForInstruction')"
+        )
     c-workflow-field(
       v-field="action.drop_scenario_if_not_matched",
       :label="$t('scenario.workflow')",
@@ -127,13 +130,6 @@ export default {
     });
   },
   methods: {
-    updateSkipForChild(value) {
-      this.parameters = {
-        ...this.parameters,
-        skip_for_child: value,
-      };
-    },
-
     removeAction() {
       this.$emit('remove');
     },

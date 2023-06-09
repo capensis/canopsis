@@ -17,7 +17,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-type messageProcessor struct {
+type MessageProcessor struct {
 	FeaturePrintEventOnError bool
 
 	EventProcessor         alarm.EventProcessor
@@ -29,9 +29,10 @@ type messageProcessor struct {
 	Logger                 zerolog.Logger
 	PbehaviorAdapter       pbehavior.Adapter
 	TagUpdater             alarmtag.Updater
+	AutoInstructionMatcher AutoInstructionMatcher
 }
 
-func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
+func (p *MessageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
 	eventMetric := techmetrics.AxeEventMetric{}
 	eventMetric.Timestamp = time.Now()
 
@@ -95,6 +96,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 	p.updatePbhLastAlarmDate(ctx, event)
 	p.updateTags(event)
+	event.IsInstructionMatched = p.isInstructionMatched(event, msg)
 
 	// there is nothing to do with those kinds of event in the next engines.
 	if event.EventType == types.EventTypeRecomputeEntityService ||
@@ -116,7 +118,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 }
 
 // updatePbhLastAlarmDate updates last time in pbehavior when it was applied on alarm.
-func (p *messageProcessor) updatePbhLastAlarmDate(ctx context.Context, event types.Event) {
+func (p *MessageProcessor) updatePbhLastAlarmDate(ctx context.Context, event types.Event) {
 	if event.AlarmChange.Type != types.AlarmChangeTypeCreateAndPbhEnter &&
 		event.AlarmChange.Type != types.AlarmChangeTypePbhEnter &&
 		event.AlarmChange.Type != types.AlarmChangeTypePbhLeaveAndEnter {
@@ -131,7 +133,7 @@ func (p *messageProcessor) updatePbhLastAlarmDate(ctx context.Context, event typ
 	}()
 }
 
-func (p *messageProcessor) handleRemediation(ctx context.Context, event types.Event, msg []byte) error {
+func (p *MessageProcessor) handleRemediation(ctx context.Context, event types.Event, msg []byte) error {
 	if p.RemediationRpcClient == nil || event.Alarm == nil || event.Entity == nil || event.AlarmChange == nil {
 		return nil
 	}
@@ -182,13 +184,31 @@ func (p *messageProcessor) handleRemediation(ctx context.Context, event types.Ev
 	return nil
 }
 
-func (p *messageProcessor) updateTags(event types.Event) {
+func (p *MessageProcessor) updateTags(event types.Event) {
 	if event.EventType == types.EventTypeCheck {
 		p.TagUpdater.Add(event.Tags)
 	}
 }
 
-func (p *messageProcessor) logError(err error, errMsg string, alarmID string, msg []byte) {
+func (p *MessageProcessor) isInstructionMatched(event types.Event, msg []byte) (res bool) {
+	if event.Alarm == nil || event.Entity == nil || event.AlarmChange == nil {
+		return false
+	}
+	triggers := types.GetTriggers(event.AlarmChange.Type)
+	if len(triggers) == 0 {
+		return false
+	}
+
+	matched, err := p.AutoInstructionMatcher.Match(triggers, types.AlarmWithEntity{Alarm: *event.Alarm, Entity: *event.Entity})
+	if err != nil {
+		p.logError(err, "cannot match auto instructions", event.Alarm.ID, msg)
+		return false
+	}
+
+	return matched
+}
+
+func (p *MessageProcessor) logError(err error, errMsg string, alarmID string, msg []byte) {
 	if p.FeaturePrintEventOnError {
 		p.Logger.Err(err).Str("event", string(msg)).Str("alarm_id", alarmID).Msg(errMsg)
 	} else {
