@@ -103,7 +103,7 @@
       )
         span {{ $t('pattern.errors.countOverLimit', { count: allCount }) }}
     v-layout(row, justify-end, align-center)
-      v-messages.text-right(
+      v-messages.text-xs-right(
         :value="checkFilterMessages",
         :color="hasError ? 'error' : ''"
       )
