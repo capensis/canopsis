@@ -197,13 +197,13 @@ func (p *rpcMessageProcessor) executeOperation(ctx context.Context, event rpc.Ax
 		op := types.Operation{
 			Type: event.EventType,
 			Parameters: types.OperationParameters{
-				Output: event.Parameters.Output,
-				Author: event.Parameters.Author,
-				User:   event.Parameters.User,
-
-				Duration:  event.Parameters.Duration,
-				State:     event.Parameters.State,
-				Execution: event.Parameters.Execution, Instruction: event.Parameters.Instruction,
+				Output:            event.Parameters.Output,
+				Author:            event.Parameters.Author,
+				User:              event.Parameters.User,
+				Duration:          event.Parameters.Duration,
+				State:             event.Parameters.State,
+				Execution:         event.Parameters.Execution,
+				Instruction:       event.Parameters.Instruction,
 				TicketInfo:        event.Parameters.TicketInfo,
 				WebhookRequest:    event.Parameters.WebhookRequest,
 				WebhookFailReason: event.Parameters.WebhookFailReason,
@@ -236,6 +236,23 @@ func (p *rpcMessageProcessor) executeOperation(ctx context.Context, event rpc.Ax
 				p.Logger.Err(err).Msg("failed to update service state")
 			}
 		}
+	}()
+
+	// send metrics
+	go func() {
+		if alarm == nil || event.Entity == nil {
+			return
+		}
+
+		p.MetricsSender.SendEventMetrics(
+			*alarm,
+			*event.Entity,
+			alarmChange,
+			now,
+			types.InitiatorSystem,
+			"",
+			event.Parameters.Instruction,
+		)
 	}()
 
 	return alarmChange, nil

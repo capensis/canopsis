@@ -322,7 +322,7 @@ func benchmarkMessageProcessor(
 			libentity.NewAdapter(dbClient),
 			correlation.NewRuleAdapter(dbClient),
 			alarmConfigProvider,
-			DependencyMaker{}.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider, alarmStatusService, metricsSender),
+			DependencyMaker{}.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider, alarmStatusService),
 			alarmStatusService,
 			metrics.NewNullSender(),
 			metaAlarmEventProcessor,
