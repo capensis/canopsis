@@ -145,12 +145,11 @@ func NewEngine(
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
 		&rpcPBehaviorClientMessageProcessor{
-			DbClient:       dbClient,
-			MetricsSender:  metricsSender,
-			PublishCh:      amqpChannel,
-			RemediationRpc: remediationRpcClient,
-			Executor: m.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider,
-				alarmStatusService, metricsSender),
+			DbClient:                 dbClient,
+			MetricsSender:            metricsSender,
+			PublishCh:                amqpChannel,
+			RemediationRpc:           remediationRpcClient,
+			Executor:                 m.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider, alarmStatusService),
 			EntityAdapter:            entityAdapter,
 			AlarmAdapter:             alarmAdapter,
 			PbehaviorAdapter:         pbehavior.NewAdapter(dbClient),
@@ -173,13 +172,12 @@ func NewEngine(
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			PublishCh:                amqpChannel,
 			RemediationRpc:           remediationRpcClient,
-			Executor: m.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider,
-				alarmStatusService, metricsSender),
-			EntityAdapter:    entity.NewAdapter(dbClient),
-			PbehaviorAdapter: pbehavior.NewAdapter(dbClient),
-			Decoder:          json.NewDecoder(),
-			Encoder:          json.NewEncoder(),
-			Logger:           logger,
+			Executor:                 m.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider, alarmStatusService),
+			EntityAdapter:            entity.NewAdapter(dbClient),
+			PbehaviorAdapter:         pbehavior.NewAdapter(dbClient),
+			Decoder:                  json.NewDecoder(),
+			Encoder:                  json.NewEncoder(),
+			Logger:                   logger,
 		},
 		amqpChannel,
 		logger,
@@ -285,7 +283,7 @@ func NewEngine(
 				entity.NewAdapter(dbClient),
 				correlation.NewRuleAdapter(dbClient),
 				alarmConfigProvider,
-				m.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider, alarmStatusService, metricsSender),
+				m.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider, alarmStatusService),
 				alarmStatusService,
 				metricsSender,
 				metaAlarmEventProcessor,
@@ -313,15 +311,14 @@ func NewEngine(
 		cfg.Global.PrefetchSize,
 		amqpConnection,
 		&rpcMessageProcessor{
-			DbClient:       dbClient,
-			MetricsSender:  metricsSender,
-			EntityAdapter:  entityAdapter,
-			AlarmAdapter:   alarmAdapter,
-			RMQChannel:     amqpChannel,
-			PbhRpc:         pbhRpcClient,
-			RemediationRpc: remediationRpcClient,
-			Executor: m.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider,
-				alarmStatusService, metricsSender),
+			DbClient:                 dbClient,
+			MetricsSender:            metricsSender,
+			EntityAdapter:            entityAdapter,
+			AlarmAdapter:             alarmAdapter,
+			RMQChannel:               amqpChannel,
+			PbhRpc:                   pbhRpcClient,
+			RemediationRpc:           remediationRpcClient,
+			Executor:                 m.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider, alarmStatusService),
 			ActionRpc:                actionRpcClient,
 			MetaAlarmEventProcessor:  metaAlarmEventProcessor,
 			StateCountersService:     stateCountersService,
@@ -419,19 +416,18 @@ func (m DependencyMaker) DepOperationExecutor(
 	configProvider config.AlarmConfigProvider,
 	userInterfaceConfigProvider config.UserInterfaceConfigProvider,
 	alarmStatusService alarmstatus.Service,
-	metricsSender metrics.Sender,
 ) operation.Executor {
 	entityAdapter := entity.NewAdapter(dbClient)
 	container := operation.NewExecutorContainer()
 	container.Set(types.EventTypeAck, executor.NewAckExecutor(configProvider))
 	container.Set(types.EventTypeAckremove, executor.NewAckRemoveExecutor(configProvider))
 	container.Set(types.EventTypeActivate, executor.NewActivateExecutor())
-	container.Set(types.EventTypeAssocTicket, executor.NewAssocTicketExecutor(metricsSender))
+	container.Set(types.EventTypeAssocTicket, executor.NewAssocTicketExecutor())
 	container.Set(types.EventTypeCancel, executor.NewCancelExecutor(configProvider, alarmStatusService))
 	container.Set(types.EventTypeChangestate, executor.NewChangeStateExecutor(configProvider, userInterfaceConfigProvider,
 		alarmStatusService))
 	container.Set(types.EventTypeComment, executor.NewCommentExecutor(configProvider))
-	container.Set(types.EventTypeDeclareTicketWebhook, executor.NewDeclareTicketWebhookExecutor(configProvider, metricsSender))
+	container.Set(types.EventTypeDeclareTicketWebhook, executor.NewDeclareTicketWebhookExecutor(configProvider))
 	container.Set(types.EventTypePbhEnter, executor.NewPbhEnterExecutor(configProvider))
 	container.Set(types.EventTypePbhLeave, executor.NewPbhLeaveExecutor(configProvider))
 	container.Set(types.EventTypePbhLeaveAndEnter, executor.NewPbhLeaveAndEnterExecutor(configProvider))
@@ -444,23 +440,23 @@ func (m DependencyMaker) DepOperationExecutor(
 	container.Set(types.EventTypeUnsnooze, executor.NewUnsnoozeExecutor())
 	container.Set(types.EventTypeUpdateStatus, executor.NewUpdateStatusExecutor(configProvider, alarmStatusService))
 	container.Set(types.EventTypeWebhookStarted, executor.NewWebhookStartExecutor())
-	container.Set(types.EventTypeWebhookCompleted, executor.NewWebhookCompleteExecutor(metricsSender))
+	container.Set(types.EventTypeWebhookCompleted, executor.NewWebhookCompleteExecutor())
 	container.Set(types.EventTypeWebhookFailed, executor.NewWebhookFailExecutor())
 	container.Set(types.EventTypeAutoWebhookStarted, executor.NewAutoWebhookStartExecutor())
-	container.Set(types.EventTypeAutoWebhookCompleted, executor.NewAutoWebhookCompleteExecutor(metricsSender))
+	container.Set(types.EventTypeAutoWebhookCompleted, executor.NewAutoWebhookCompleteExecutor())
 	container.Set(types.EventTypeAutoWebhookFailed, executor.NewAutoWebhookFailExecutor())
-	container.Set(types.EventTypeInstructionStarted, executor.NewInstructionExecutor(metricsSender))
-	container.Set(types.EventTypeInstructionPaused, executor.NewInstructionExecutor(metricsSender))
-	container.Set(types.EventTypeInstructionResumed, executor.NewInstructionExecutor(metricsSender))
-	container.Set(types.EventTypeInstructionCompleted, executor.NewInstructionExecutor(metricsSender))
-	container.Set(types.EventTypeInstructionAborted, executor.NewInstructionExecutor(metricsSender))
-	container.Set(types.EventTypeInstructionFailed, executor.NewInstructionExecutor(metricsSender))
-	container.Set(types.EventTypeAutoInstructionStarted, executor.NewInstructionExecutor(metricsSender))
-	container.Set(types.EventTypeAutoInstructionCompleted, executor.NewInstructionExecutor(metricsSender))
-	container.Set(types.EventTypeAutoInstructionFailed, executor.NewInstructionExecutor(metricsSender))
-	container.Set(types.EventTypeInstructionJobStarted, executor.NewInstructionExecutor(metricsSender))
-	container.Set(types.EventTypeInstructionJobCompleted, executor.NewInstructionExecutor(metricsSender))
-	container.Set(types.EventTypeInstructionJobFailed, executor.NewInstructionExecutor(metricsSender))
+	container.Set(types.EventTypeInstructionStarted, executor.NewInstructionExecutor())
+	container.Set(types.EventTypeInstructionPaused, executor.NewInstructionExecutor())
+	container.Set(types.EventTypeInstructionResumed, executor.NewInstructionExecutor())
+	container.Set(types.EventTypeInstructionCompleted, executor.NewInstructionExecutor())
+	container.Set(types.EventTypeInstructionAborted, executor.NewInstructionExecutor())
+	container.Set(types.EventTypeInstructionFailed, executor.NewInstructionExecutor())
+	container.Set(types.EventTypeAutoInstructionStarted, executor.NewInstructionExecutor())
+	container.Set(types.EventTypeAutoInstructionCompleted, executor.NewInstructionExecutor())
+	container.Set(types.EventTypeAutoInstructionFailed, executor.NewInstructionExecutor())
+	container.Set(types.EventTypeInstructionJobStarted, executor.NewInstructionExecutor())
+	container.Set(types.EventTypeInstructionJobCompleted, executor.NewInstructionExecutor())
+	container.Set(types.EventTypeInstructionJobFailed, executor.NewInstructionExecutor())
 	container.Set(types.EventTypeAutoInstructionActivate, executor.NewAutoInstructionActivateExecutor())
 	container.Set(types.EventTypeJunitTestSuiteUpdated, executor.NewJunitExecutor())
 	container.Set(types.EventTypeJunitTestCaseUpdated, executor.NewJunitExecutor())

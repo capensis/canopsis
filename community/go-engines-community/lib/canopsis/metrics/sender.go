@@ -45,7 +45,7 @@ type Sender interface {
 
 	SendPerfData(timestamp time.Time, entityID, name string, value float64, unit string)
 
-	SendEventMetrics(ctx context.Context, alarm types.Alarm, entity types.Entity, alarmChange types.AlarmChange, timestamp time.Time, initiator string, userID string)
+	SendEventMetrics(alarm types.Alarm, entity types.Entity, alarmChange types.AlarmChange, timestamp time.Time, initiator, userID, instructionID string)
 }
 
 type nullSender struct{}
@@ -164,6 +164,6 @@ func (s *nullSender) SendPerfData(_ time.Time, _, _ string, _ float64, _ string)
 
 }
 
-func (s *nullSender) SendEventMetrics(_ context.Context, _ types.Alarm, _ types.Entity, _ types.AlarmChange, _ time.Time, _ string, _ string) {
+func (s *nullSender) SendEventMetrics(_ types.Alarm, _ types.Entity, _ types.AlarmChange, _ time.Time, _, _, _ string) {
 
 }
