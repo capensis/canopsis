@@ -26,10 +26,6 @@ export default createEntityModule({
       return request.delete(API_ROUTES.pattern.bulkList, { data });
     },
 
-    checkPatternsCount(context, { data }) {
-      return request.post(API_ROUTES.pattern.count, data);
-    },
-
     checkPatternsEntitiesCount(context, { data }) {
       return request.post(API_ROUTES.pattern.entitiesCount, data);
     },
