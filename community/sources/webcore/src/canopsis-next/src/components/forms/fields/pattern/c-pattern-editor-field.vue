@@ -72,7 +72,7 @@
       v-flex
         v-alert.pre-wrap(v-if="errorMessage", value="true") {{ errorMessage }}
         v-alert(
-          :value="checked && overLimit",
+          :value="overLimit",
           type="warning",
           transition="fade-transition"
         )
@@ -81,7 +81,6 @@
 
 <script>
 import { isEqual, isEmpty } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
 
 import { PATTERN_CUSTOM_ITEM_VALUE, PATTERN_EDITOR_TABS } from '@/constants';
 
@@ -90,8 +89,6 @@ import { formGroupsToPatternRules, patternsToGroups, patternToForm } from '@/hel
 import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
 import PatternAdvancedEditorField from './pattern-advanced-editor-field.vue';
-
-const { mapActions } = createNamespacedHelpers('pattern');
 
 export default {
   inject: ['$validator'],
@@ -216,10 +213,6 @@ export default {
     this.$validator.detach(this.name);
   },
   methods: {
-    ...mapActions({
-      checkPatternsCount: 'checkPatternsCount',
-    }),
-
     discardPattern() {
       this.updateModel(patternToForm({ id: PATTERN_CUSTOM_ITEM_VALUE }));
     },
