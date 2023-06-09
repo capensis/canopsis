@@ -59,7 +59,14 @@ export default {
 
     modalConfig() {
       return {
-        ...pick(this.config, ['withAlarm', 'withEntity', 'withPbehavior', 'withServiceWeather', 'entityTypes']),
+        ...pick(this.config, [
+          'withAlarm',
+          'withEntity',
+          'withPbehavior',
+          'withServiceWeather',
+          'entityTypes',
+          'entityCountsType',
+        ]),
 
         withTitle: true,
       };
