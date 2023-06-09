@@ -145,7 +145,7 @@ func (mr *MockSenderMockRecorder) SendCreateAndPbhEnter(arg0, arg1 interface{}) 
 }
 
 // SendEventMetrics mocks base method.
-func (m *MockSender) SendEventMetrics(arg0 context.Context, arg1 types.Alarm, arg2 types.Entity, arg3 types.AlarmChange, arg4 time.Time, arg5, arg6 string) {
+func (m *MockSender) SendEventMetrics(arg0 types.Alarm, arg1 types.Entity, arg2 types.AlarmChange, arg3 time.Time, arg4, arg5, arg6 string) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SendEventMetrics", arg0, arg1, arg2, arg3, arg4, arg5, arg6)
 }
