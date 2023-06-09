@@ -8,7 +8,7 @@ import (
 
 type AutoInstructionMatcher interface {
 	Load(ctx context.Context) error
-	Match(alarmWithEntity types.AlarmWithEntity) (bool, error)
+	Match(triggers []string, alarmWithEntity types.AlarmWithEntity) (bool, error)
 }
 
 type nullAutoInstructionMatcher struct{}
@@ -21,6 +21,6 @@ func (_ nullAutoInstructionMatcher) Load(_ context.Context) error {
 	return nil
 }
 
-func (_ nullAutoInstructionMatcher) Match(_ types.AlarmWithEntity) (bool, error) {
+func (_ nullAutoInstructionMatcher) Match(_ []string, _ types.AlarmWithEntity) (bool, error) {
 	return false, nil
 }

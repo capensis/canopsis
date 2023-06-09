@@ -154,6 +154,9 @@ type Event struct {
 	Alarm         *Alarm     `bson:"current_alarm" json:"current_alarm"`
 	Entity        *Entity    `bson:"current_entity" json:"current_entity"`
 
+	// AlarmID is used if an event is emitted for the specific alarm.
+	AlarmID string `bson:"aid,omitempty" json:"aid,omitempty"`
+
 	Author string `bson:"author" json:"author"`
 	UserID string `bson:"user_id" json:"user_id"`
 
@@ -218,6 +221,8 @@ type Event struct {
 
 	// IsMetaAlarmUpdated is true if an alarm is added to a meta alarm on an event.
 	IsMetaAlarmUpdated bool `bson:"ma_updated,omitempty" json:"ma_updated,omitempty"`
+	// IsInstructionMatched is true if an alarm is matched to an auto instruction on an event.
+	IsInstructionMatched bool `bson:"instr_matched,omitempty" json:"instr_matched,omitempty"`
 }
 
 // Format an event

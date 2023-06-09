@@ -131,6 +131,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes3(in, out.Entity)
 			}
+		case "aid":
+			out.AlarmID = string(in.String())
 		case "author":
 			out.Author = string(in.String())
 		case "user_id":
@@ -321,6 +323,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.Instruction = string(in.String())
 		case "ma_updated":
 			out.IsMetaAlarmUpdated = bool(in.Bool())
+		case "instr_matched":
+			out.IsInstructionMatched = bool(in.Bool())
 		case "ticket":
 			out.Ticket = string(in.String())
 		case "ticket_url":
@@ -474,6 +478,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		} else {
 			easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes3(out, *in.Entity)
 		}
+	}
+	if in.AlarmID != "" {
+		const prefix string = ",\"aid\":"
+		out.RawString(prefix)
+		out.String(string(in.AlarmID))
 	}
 	{
 		const prefix string = ",\"author\":"
@@ -697,6 +706,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"ma_updated\":"
 		out.RawString(prefix)
 		out.Bool(bool(in.IsMetaAlarmUpdated))
+	}
+	if in.IsInstructionMatched {
+		const prefix string = ",\"instr_matched\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.IsInstructionMatched))
 	}
 	if in.Ticket != "" {
 		const prefix string = ",\"ticket\":"

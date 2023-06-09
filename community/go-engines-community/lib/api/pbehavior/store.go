@@ -606,7 +606,7 @@ func (s *store) getMatchedPbhIDs(ctx context.Context, entity libtypes.Entity) ([
 		}
 
 		if len(pbh.EntityPattern) > 0 {
-			matched, _, err := pbh.EntityPattern.Match(entity)
+			matched, err := pbh.EntityPattern.Match(entity)
 			if err != nil {
 				return nil, err
 			}
