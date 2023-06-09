@@ -201,6 +201,8 @@ type Event struct {
 
 	// IsMetaAlarmUpdated is true if an alarm is added to a meta alarm on an event.
 	IsMetaAlarmUpdated bool `bson:"ma_updated,omitempty" json:"ma_updated,omitempty"`
+	// IsInstructionMatched is true if an alarm is matched to an auto instruction on an event.
+	IsInstructionMatched bool `bson:"instr_matched,omitempty" json:"instr_matched,omitempty"`
 }
 
 // Format an event
