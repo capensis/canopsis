@@ -23,7 +23,8 @@
               :entity-types="[$constants.ENTITY_TYPES.service]",
               with-entity,
               with-service-weather,
-              private
+              private,
+              entity-counters-type
             )
           c-enabled-field.ml-3(
             :value="query.hide_grey",

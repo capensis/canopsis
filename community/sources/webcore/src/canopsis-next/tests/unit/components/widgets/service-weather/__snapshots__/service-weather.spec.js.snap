@@ -141,6 +141,7 @@ exports[`service-weather Renders \`service-weather\` with full access 1`] = `
         <filters-list-btn-stub
           addable="true"
           editable="true"
+          entity-counters-type="entity-counters-type"
           entitytypes="service"
           private="true"
           widgetid="service-weather-widget-id"
