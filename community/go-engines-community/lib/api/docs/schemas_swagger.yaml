@@ -5012,13 +5012,13 @@ definitions:
     properties:
       colorIndicator:
         type: string
-      iconOnly:
-        type: boolean
       isHtml:
         type: boolean
       label:
         maxLength: 255
         type: string
+      onlyIcon:
+        type: boolean
       template:
         type: string
       value:
