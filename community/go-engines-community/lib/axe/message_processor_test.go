@@ -6,6 +6,10 @@ import (
 	"testing"
 	"time"
 
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
@@ -271,6 +275,22 @@ func benchmarkMessageProcessor(
 		}
 	})
 
+	amqpConnection, err := libamqp.NewConnection(zerolog.Nop(), 0, 0)
+	if err != nil {
+		b.Fatalf("unexpected error %v", err)
+	}
+	b.Cleanup(func() {
+		err := amqpConnection.Close()
+		if err != nil {
+			b.Errorf("unexpected error %v", err)
+		}
+	})
+
+	amqpChannel, err := amqpConnection.Channel()
+	if err != nil {
+		b.Fatalf("unexpected error %v", err)
+	}
+
 	cfg := config.CanopsisConf{}
 	logger := zerolog.Nop()
 	metricsSender := metrics.NewNullSender()
@@ -307,6 +327,7 @@ func benchmarkMessageProcessor(
 			metrics.NewNullSender(),
 			metaAlarmEventProcessor,
 			statistics.NewEventStatisticsSender(dbClient, logger, tzConfigProvider),
+			statecounters.NewStateCountersService(dbClient, amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), logger),
 			pbehavior.NewEntityTypeResolver(pbhStore, pbehavior.NewEntityMatcher(dbClient), logger),
 			NewNullAutoInstructionMatcher(),
 			logger,

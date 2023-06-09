@@ -428,7 +428,8 @@ func (c *dbCollection) retry(ctx context.Context, f func(context.Context) error)
 			return
 		}
 
-		if !IsConnectionError(err) {
+		// @todo: check mongo.IsDuplicateKeyError probably should be optional
+		if !IsConnectionError(err) && !mongo.IsDuplicateKeyError(err) {
 			return
 		}
 

@@ -167,7 +167,7 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 			match := false
 			if len(serv.EntityPattern) > 0 {
 				var err error
-				match, _, err = serv.EntityPattern.Match(ent)
+				match, err = serv.EntityPattern.Match(ent)
 				if err != nil {
 					m.logger.Err(err).Str("service", serv.ID).Msgf("service has invalid pattern")
 				}
