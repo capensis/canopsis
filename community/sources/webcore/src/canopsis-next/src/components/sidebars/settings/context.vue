@@ -59,7 +59,8 @@
           :editable="hasAccessToEditFilter",
           with-alarm,
           with-entity,
-          with-pbehavior
+          with-pbehavior,
+          entity-counters-type
         )
         v-divider
       field-context-entities-types-filter(v-model="form.parameters.selectedTypes")
