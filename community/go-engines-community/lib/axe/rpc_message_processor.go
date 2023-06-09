@@ -239,11 +239,7 @@ func (p *rpcMessageProcessor) executeOperation(ctx context.Context, event rpc.Ax
 	}()
 
 	// send metrics
-	go func() {
-		if alarm == nil || event.Entity == nil {
-			return
-		}
-
+	if alarm != nil && event.Entity != nil {
 		p.MetricsSender.SendEventMetrics(
 			*alarm,
 			*event.Entity,
@@ -253,7 +249,7 @@ func (p *rpcMessageProcessor) executeOperation(ctx context.Context, event rpc.Ax
 			"",
 			event.Parameters.Instruction,
 		)
-	}()
+	}
 
 	return alarmChange, nil
 }
