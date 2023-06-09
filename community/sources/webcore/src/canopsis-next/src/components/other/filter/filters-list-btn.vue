@@ -47,6 +47,10 @@ export default {
       type: Array,
       required: false,
     },
+    entityCountsType: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     showFiltersListModal() {
@@ -62,6 +66,7 @@ export default {
           withPbehavior: this.withPbehavior,
           withServiceWeather: this.withServiceWeather,
           entityTypes: this.entityTypes,
+          entityCountsType: this.entityCountsType,
         },
       });
     },

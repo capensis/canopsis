@@ -5,7 +5,8 @@
     :readonly="readonly",
     :name="name",
     :required="required",
-    :attributes="eventFilterAttributes"
+    :attributes="eventFilterAttributes",
+    :counter="counter"
   )
 </template>
 
@@ -47,6 +48,10 @@ export default {
     readonly: {
       type: Boolean,
       default: false,
+    },
+    counter: {
+      type: Object,
+      required: false,
     },
   },
   computed: {
