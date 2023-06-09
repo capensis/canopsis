@@ -48,7 +48,132 @@ func (m *EntityRegexMatches) SetComponentInfoRegexMatches(fieldName string, matc
 	m.ComponentInfos[fieldName] = matches
 }
 
-func (p Entity) Match(entity types.Entity) (bool, EntityRegexMatches, error) {
+func (p Entity) Match(entity types.Entity) (bool, error) {
+	if len(p) == 0 {
+		return true, nil
+	}
+
+	for _, group := range p {
+		matched := false
+
+		for _, v := range group {
+			f := v.Field
+			cond := v.Condition
+			var err error
+			matched = false
+
+			if infoName := getEntityInfoName(f); infoName != "" {
+				infoVal, ok := getEntityInfoVal(entity, infoName)
+				if v.FieldType == "" {
+					matched, err = cond.MatchRef(infoVal)
+				} else if ok {
+					switch v.FieldType {
+					case FieldTypeString:
+						var s string
+						if s, err = getStringValue(infoVal); err == nil {
+							matched, err = cond.MatchString(s)
+						}
+					case FieldTypeInt:
+						var i int64
+						if i, err = getIntValue(infoVal); err == nil {
+							matched, err = cond.MatchInt(i)
+						}
+					case FieldTypeBool:
+						var b bool
+						if b, err = getBoolValue(infoVal); err == nil {
+							matched, err = cond.MatchBool(b)
+						}
+					case FieldTypeStringArray:
+						var a []string
+						if a, err = getStringArrayValue(infoVal); err == nil {
+							matched, err = cond.MatchStringArray(a)
+						}
+					default:
+						return false, fmt.Errorf("invalid field type for %q field: %s", f, v.FieldType)
+					}
+				}
+
+				if err != nil {
+					return false, fmt.Errorf("invalid condition for %q field: %w", f, err)
+				}
+
+				if !matched {
+					break
+				}
+
+				continue
+			}
+
+			if infoName := getEntityComponentInfoName(f); infoName != "" {
+				infoVal, ok := getEntityComponentInfoVal(entity, infoName)
+				if v.FieldType == "" {
+					matched, err = cond.MatchRef(infoVal)
+				} else if ok {
+					switch v.FieldType {
+					case FieldTypeString:
+						var s string
+						if s, err = getStringValue(infoVal); err == nil {
+							matched, err = cond.MatchString(s)
+						}
+					case FieldTypeInt:
+						var i int64
+						if i, err = getIntValue(infoVal); err == nil {
+							matched, err = cond.MatchInt(i)
+						}
+					case FieldTypeBool:
+						var b bool
+						if b, err = getBoolValue(infoVal); err == nil {
+							matched, err = cond.MatchBool(b)
+						}
+					case FieldTypeStringArray:
+						var a []string
+						if a, err = getStringArrayValue(infoVal); err == nil {
+							matched, err = cond.MatchStringArray(a)
+						}
+					default:
+						return false, fmt.Errorf("invalid field type for %q field: %s", f, v.FieldType)
+					}
+				}
+
+				if err != nil {
+					return false, fmt.Errorf("invalid condition for %q field: %w", f, err)
+				}
+
+				if !matched {
+					break
+				}
+
+				continue
+			}
+
+			if str, ok := getEntityStringField(entity, f); ok {
+				matched, err = cond.MatchString(str)
+			} else if i, ok := getEntityIntField(entity, f); ok {
+				matched, err = cond.MatchInt(i)
+			} else if t, ok := getEntityTimeField(entity, f); ok {
+				matched, err = cond.MatchTime(t)
+			} else {
+				err = ErrUnsupportedField
+			}
+
+			if err != nil {
+				return false, fmt.Errorf("invalid condition for %q field: %w", f, err)
+			}
+
+			if !matched {
+				break
+			}
+		}
+
+		if matched {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
+func (p Entity) MatchWithRegexMatches(entity types.Entity) (bool, EntityRegexMatches, error) {
 	entityRegexMatches := NewEntityRegexMatches()
 
 	if len(p) == 0 {
@@ -75,7 +200,7 @@ func (p Entity) Match(entity types.Entity) (bool, EntityRegexMatches, error) {
 					case FieldTypeString:
 						var s string
 						if s, err = getStringValue(infoVal); err == nil {
-							matched, regexMatches, err = cond.MatchString(s)
+							matched, regexMatches, err = cond.MatchStringWithRegexpMatches(s)
 							if matched {
 								entityRegexMatches.SetInfoRegexMatches(infoName, regexMatches)
 							}
@@ -120,7 +245,7 @@ func (p Entity) Match(entity types.Entity) (bool, EntityRegexMatches, error) {
 					case FieldTypeString:
 						var s string
 						if s, err = getStringValue(infoVal); err == nil {
-							matched, regexMatches, err = cond.MatchString(s)
+							matched, regexMatches, err = cond.MatchStringWithRegexpMatches(s)
 							if matched {
 								entityRegexMatches.SetComponentInfoRegexMatches(infoName, regexMatches)
 							}
@@ -157,7 +282,7 @@ func (p Entity) Match(entity types.Entity) (bool, EntityRegexMatches, error) {
 			}
 
 			if str, ok := getEntityStringField(entity, f); ok {
-				matched, regexMatches, err = cond.MatchString(str)
+				matched, regexMatches, err = cond.MatchStringWithRegexpMatches(str)
 				if matched {
 					entityRegexMatches.SetRegexMatches(f, regexMatches)
 				}
@@ -210,7 +335,7 @@ func (p Entity) Validate(forbiddenFields []string) bool {
 			if infoName := getEntityInfoName(f); infoName != "" {
 				switch v.FieldType {
 				case FieldTypeString:
-					_, _, err = cond.MatchString("")
+					_, err = cond.MatchString("")
 				case FieldTypeInt:
 					_, err = cond.MatchInt(0)
 				case FieldTypeBool:
@@ -233,7 +358,7 @@ func (p Entity) Validate(forbiddenFields []string) bool {
 			if infoName := getEntityComponentInfoName(f); infoName != "" {
 				switch v.FieldType {
 				case FieldTypeString:
-					_, _, err = cond.MatchString("")
+					_, err = cond.MatchString("")
 				case FieldTypeInt:
 					_, err = cond.MatchInt(0)
 				case FieldTypeBool:
@@ -254,7 +379,7 @@ func (p Entity) Validate(forbiddenFields []string) bool {
 			}
 
 			if str, ok := getEntityStringField(emptyEntity, f); ok {
-				_, _, err = cond.MatchString(str)
+				_, err = cond.MatchString(str)
 			} else if i, ok := getEntityIntField(emptyEntity, f); ok {
 				_, err = cond.MatchInt(i)
 			} else if t, ok := getEntityTimeField(emptyEntity, f); ok {
