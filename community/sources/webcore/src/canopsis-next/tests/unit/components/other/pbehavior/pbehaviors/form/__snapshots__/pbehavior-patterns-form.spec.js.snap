@@ -3,6 +3,7 @@
 exports[`pbehavior-patterns-form Renders \`pbehavior-patterns-form\` with custom props 1`] = `
 <c-patterns-field-stub
   entity-attributes="[object Object]"
+  entity-counters-type="entity-counters-type"
   readonly="true"
   required="required"
   value="[object Object]"
@@ -13,6 +14,7 @@ exports[`pbehavior-patterns-form Renders \`pbehavior-patterns-form\` with custom
 exports[`pbehavior-patterns-form Renders \`pbehavior-patterns-form\` with required props 1`] = `
 <c-patterns-field-stub
   entity-attributes="[object Object]"
+  entity-counters-type="entity-counters-type"
   required="required"
   value="[object Object]"
   with-entity="with-entity"
