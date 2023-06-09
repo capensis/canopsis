@@ -8,10 +8,6 @@
       :url-variables="payloadVariables"
     )
     declare-ticket-rule-ticket-mapping-field(v-field="webhook.declare_ticket")
-    c-enabled-field(
-      v-field="webhook.skip_for_instruction",
-      :label="$t('scenario.skipForInstruction')"
-    )
     v-layout(row, justify-end)
       v-btn.orange.white--text(
         :loading="checking",
