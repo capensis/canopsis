@@ -196,7 +196,6 @@ export const API_ROUTES = {
   pattern: {
     list: '/api/v4/patterns',
     bulkList: '/api/v4/bulk/patterns',
-    count: '/api/v4/patterns-count',
     entitiesCount: '/api/v4/patterns-entities-count',
     alarmsCount: '/api/v4/patterns-alarms-count',
   },
