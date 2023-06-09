@@ -36,7 +36,8 @@
             private,
             with-alarm,
             with-entity,
-            with-pbehavior
+            with-pbehavior,
+            entity-counters-type
           )
       v-flex
         v-checkbox.pt-2(
