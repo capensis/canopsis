@@ -149,7 +149,7 @@ func NewEngine(
 			MetricsSender:  metricsSender,
 			PublishCh:      amqpChannel,
 			RemediationRpc: remediationRpcClient,
-			Executor: m.depOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider,
+			Executor: m.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider,
 				alarmStatusService, metricsSender),
 			EntityAdapter:            entityAdapter,
 			AlarmAdapter:             alarmAdapter,
@@ -173,7 +173,7 @@ func NewEngine(
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			PublishCh:                amqpChannel,
 			RemediationRpc:           remediationRpcClient,
-			Executor: m.depOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider,
+			Executor: m.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider,
 				alarmStatusService, metricsSender),
 			EntityAdapter:    entity.NewAdapter(dbClient),
 			PbehaviorAdapter: pbehavior.NewAdapter(dbClient),
@@ -276,7 +276,7 @@ func NewEngine(
 		options.FifoAckExchange,
 		canopsis.FIFOAckQueueName,
 		amqpConnection,
-		&messageProcessor{
+		&MessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
 			TechMetricsSender:        techMetricsSender,
 			EventProcessor: NewEventProcessor(
@@ -285,7 +285,7 @@ func NewEngine(
 				entity.NewAdapter(dbClient),
 				correlation.NewRuleAdapter(dbClient),
 				alarmConfigProvider,
-				m.depOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider, alarmStatusService, metricsSender),
+				m.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider, alarmStatusService, metricsSender),
 				alarmStatusService,
 				metricsSender,
 				metaAlarmEventProcessor,
@@ -302,6 +302,7 @@ func NewEngine(
 			Logger:                 logger,
 			PbehaviorAdapter:       pbehavior.NewAdapter(dbClient),
 			TagUpdater:             tagUpdater,
+			AutoInstructionMatcher: autoInstructionMatcher,
 		},
 		logger,
 	))
@@ -319,7 +320,7 @@ func NewEngine(
 			RMQChannel:     amqpChannel,
 			PbhRpc:         pbhRpcClient,
 			RemediationRpc: remediationRpcClient,
-			Executor: m.depOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider,
+			Executor: m.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider,
 				alarmStatusService, metricsSender),
 			ActionRpc:                actionRpcClient,
 			MetaAlarmEventProcessor:  metaAlarmEventProcessor,
@@ -413,7 +414,7 @@ type DependencyMaker struct {
 	depmake.DependencyMaker
 }
 
-func (m DependencyMaker) depOperationExecutor(
+func (m DependencyMaker) DepOperationExecutor(
 	dbClient mongo.DbClient,
 	configProvider config.AlarmConfigProvider,
 	userInterfaceConfigProvider config.UserInterfaceConfigProvider,
