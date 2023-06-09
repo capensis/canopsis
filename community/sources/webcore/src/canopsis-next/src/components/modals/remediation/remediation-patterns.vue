@@ -9,7 +9,8 @@
           :alarm-attributes="alarmAttributes",
           :entity-attributes="entityAttributes",
           with-alarm,
-          with-entity
+          with-entity,
+          both-counters
         )
         c-collapse-panel.mt-3(:title="$t('remediation.pattern.tabs.pbehaviorTypes.title')")
           remediation-patterns-pbehavior-types-form(v-model="form")

@@ -8,7 +8,7 @@
     :required="required",
     :attributes="availableEntityAttributes",
     :with-type="withType",
-    :check-count-name="checkCountName"
+    :counter="counter"
   )
 </template>
 
@@ -70,6 +70,10 @@ export default {
     readonly: {
       type: Boolean,
       default: false,
+    },
+    counter: {
+      type: Object,
+      required: false,
     },
   },
   data() {
