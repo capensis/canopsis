@@ -80,11 +80,22 @@ export default {
       type: Array,
       required: false,
     },
+    entityCountersType: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     modalConfig() {
       return {
-        ...pick(this, ['withAlarm', 'withEntity', 'withPbehavior', 'withServiceWeather', 'entityTypes']),
+        ...pick(this, [
+          'withAlarm',
+          'withEntity',
+          'withPbehavior',
+          'withServiceWeather',
+          'entityTypes',
+          'entityCountersType',
+        ]),
 
         withTitle: true,
       };
