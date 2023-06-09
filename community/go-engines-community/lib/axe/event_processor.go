@@ -227,22 +227,20 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 
 	if event.EventType != types.EventTypeTrigger {
 		// metrics
-		go func() {
-			alarm := types.Alarm{}
-			if event.Alarm != nil {
-				alarm = *event.Alarm
-			}
+		alarm := types.Alarm{}
+		if event.Alarm != nil {
+			alarm = *event.Alarm
+		}
 
-			s.metricsSender.SendEventMetrics(
-				alarm,
-				*event.Entity,
-				alarmChange,
-				event.Timestamp.Time,
-				event.Initiator,
-				event.UserID,
-				event.Instruction,
-			)
-		}()
+		s.metricsSender.SendEventMetrics(
+			alarm,
+			*event.Entity,
+			alarmChange,
+			event.Timestamp.Time,
+			event.Initiator,
+			event.UserID,
+			event.Instruction,
+		)
 	}
 
 	if event.EventType == types.EventTypeCheck {
