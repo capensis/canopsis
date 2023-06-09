@@ -103,7 +103,10 @@
       )
         span {{ $t('pattern.errors.countOverLimit', { count: allCount }) }}
     v-layout(row, justify-end, align-center)
-      v-messages.text-right(v-bind="messagesProps")
+      v-messages.text-right(
+        :value="checkFilterMessages",
+        :color="hasError ? 'error' : ''"
+      )
       v-btn.mr-0.ml-4(
         :disabled="!hasPatterns",
         :loading="countersPending",
@@ -292,19 +295,6 @@ export default {
       }
 
       return [this.$t('pattern.alarmsCount', { alarmsCount: this.counters?.all?.count ?? 0 })];
-    },
-
-    messagesProps() {
-      const props = {
-        value: this.checkFilterMessages,
-        color: this.hasError ? 'error' : undefined,
-      };
-
-      if (this.hasError) {
-        props.color = 'error';
-      }
-
-      return props;
     },
 
     patternsFields() {
