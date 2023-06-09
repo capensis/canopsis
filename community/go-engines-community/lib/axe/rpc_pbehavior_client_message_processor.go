@@ -132,18 +132,15 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 			}
 		}()
 
-		// send metrics
-		go func() {
-			p.MetricsSender.SendEventMetrics(
-				context.Background(),
-				*event.Alarm,
-				*event.Entity,
-				alarmChange,
-				event.PbhEvent.Timestamp.Time,
-				types.InitiatorSystem,
-				"",
-			)
-		}()
+		p.MetricsSender.SendEventMetrics(
+			*event.Alarm,
+			*event.Entity,
+			alarmChange,
+			event.PbhEvent.Timestamp.Time,
+			types.InitiatorSystem,
+			"",
+			"",
+		)
 
 		if p.RemediationRpc != nil {
 			body, err := p.Encoder.Encode(types.RPCRemediationEvent{
