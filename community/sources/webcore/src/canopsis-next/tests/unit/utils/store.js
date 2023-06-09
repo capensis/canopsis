@@ -943,3 +943,27 @@ export const createMetricsModule = () => {
     fetchEntityAggregateMetricsWithoutStore,
   };
 };
+
+export const createPatternModule = () => {
+  const checkPatternsEntitiesCount = jest.fn().mockResolvedValue({});
+  const checkPatternsAlarmsCount = jest.fn().mockResolvedValue({});
+
+  afterEach(() => {
+    checkPatternsEntitiesCount.mockClear();
+    checkPatternsAlarmsCount.mockClear();
+  });
+
+  const patternModule = {
+    name: 'pattern',
+    actions: {
+      checkPatternsEntitiesCount,
+      checkPatternsAlarmsCount,
+    },
+  };
+
+  return {
+    patternModule,
+    checkPatternsEntitiesCount,
+    checkPatternsAlarmsCount,
+  };
+};

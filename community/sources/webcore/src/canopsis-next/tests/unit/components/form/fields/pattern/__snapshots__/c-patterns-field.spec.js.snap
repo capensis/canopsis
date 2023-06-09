@@ -104,7 +104,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
     class="layout row justify-end align-center"
   >
     <div
-      class="v-messages text-right theme--light error--text"
+      class="v-messages text-xs-right theme--light error--text"
     >
       <transition-group-stub
         class="v-messages__wrapper"
@@ -171,7 +171,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with default props 1`] = 
     class="layout row justify-end align-center"
   >
     <div
-      class="v-messages text-right theme--light"
+      class="v-messages text-xs-right theme--light"
     >
       <transition-group-stub
         class="v-messages__wrapper"
