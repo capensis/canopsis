@@ -12,7 +12,7 @@
 <script>
 import { tagFilterPatternsToForm } from '@/helpers/entities/tag/form';
 
-import TagPatternsForm from '@/components/other/tag/form/fields/tag-patterns-form.vue';
+import TagPatternsForm from '@/components/other/tag/form/tag-patterns-form.vue';
 
 export default {
   components: { TagPatternsForm },

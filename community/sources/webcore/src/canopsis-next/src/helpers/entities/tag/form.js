@@ -9,7 +9,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
  */
 
 /**
- * Convert meta alarm rule to patterns
+ * Convert tag to patterns
  *
  * @param {AlarmTag} tag
  * @return {FilterPatterns}
