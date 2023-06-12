@@ -8,7 +8,7 @@
 <script>
 import { MAX_TAG_NAME_LENGTH } from '@/constants';
 
-import TagPatternsForm from '@/components/other/tag/form/fields/tag-patterns-form.vue';
+import TagPatternsForm from './tag-patterns-form.vue';
 
 export default {
   components: { TagPatternsForm },
