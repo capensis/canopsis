@@ -722,7 +722,7 @@ Feature: Get entities
     }
     """
     Then the response code should be 200
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
     When I do GET /api/v4/entityservice-dependencies?_id=test-service-entity-get-2-1&category=test-category-to-entityservice-entity-get-2
     Then the response code should be 200
     Then the response body should contain:
