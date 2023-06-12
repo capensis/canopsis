@@ -162,7 +162,13 @@ exports[`service-weather Renders \`service-weather\` with full access 1`] = `
       class="flex xs6"
     >
       <service-weather-item-stub
+        actionrequiredblinking="true"
+        counterssettings="[object Object]"
+        heightfactor="0"
+        margin="[object Object]"
+        priorityenabled="true"
         service="[object Object]"
+        template=""
         widget="[object Object]"
       />
     </div>

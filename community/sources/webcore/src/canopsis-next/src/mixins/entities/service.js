@@ -4,7 +4,7 @@ import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('service');
 
-export default {
+export const entitiesServiceMixin = {
   mixins: [entitiesInfoMixin],
   computed: {
     ...mapGetters({
@@ -28,6 +28,7 @@ export default {
   },
   methods: {
     ...mapActions({
+      fetchServiceAlarmsWithoutStore: 'fetchAlarmsWithoutStore',
       fetchServiceItemWithoutStore: 'fetchItemWithoutStore',
       fetchServicesList: 'fetchList',
       createService: 'create',
