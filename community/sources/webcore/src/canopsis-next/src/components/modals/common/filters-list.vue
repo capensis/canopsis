@@ -65,7 +65,7 @@ export default {
           'withPbehavior',
           'withServiceWeather',
           'entityTypes',
-          'entityCountsType',
+          'entityCountersType',
         ]),
 
         withTitle: true,
