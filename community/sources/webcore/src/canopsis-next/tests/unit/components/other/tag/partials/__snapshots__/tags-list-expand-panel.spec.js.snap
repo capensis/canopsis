@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`tags-list-expand-panel Renders \`tags-list-expand-panel\` with default props 1`] = `
+exports[`tags-list-expand-panel Renders \`tags-list-expand-panel\` with patterns 1`] = `
 <div
   class="v-tabs"
 >
