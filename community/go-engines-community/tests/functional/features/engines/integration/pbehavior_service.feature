@@ -541,7 +541,7 @@ Feature: no update service when entity is inactive
       }
     }
     """
-    When I do POST /api/v4/alarm-details:
+    When I save request:
     """json
     [
       {
@@ -552,8 +552,7 @@ Feature: no update service when entity is inactive
       }
     ]
     """
-    Then the response code should be 207
-    Then the response body should contain:
+    When I do POST /api/v4/alarm-details until response code is 207 and body contains:
     """json
     [
       {
