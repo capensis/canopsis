@@ -78,7 +78,6 @@ Feature: Entities and users should be synchronized in metrics db
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "priority": 2,
       "description": "test-eventfilter-metrics-api-1-description",
       "enabled": true
     }
