@@ -941,4 +941,15 @@ export default {
       },
     },
   },
+  createTag: {
+    create: {
+      title: 'Créer une balise',
+    },
+    edit: {
+      title: 'Modifier une balise',
+    },
+    duplicate: {
+      title: 'Dupliquer une balise',
+    },
+  },
 };
