@@ -25,7 +25,7 @@ type EntityServiceCounters struct {
 	OutputTemplate       string         `bson:"output_template,omitempty"`
 }
 
-func (s EntityServiceCounters) GetWorstState() int {
+func (s *EntityServiceCounters) GetWorstState() int {
 	if s.State.Critical > 0 {
 		return types.AlarmStateCritical
 	}
@@ -67,22 +67,54 @@ func (s *EntityServiceCounters) DecrementState(state int) {
 	}
 }
 
-func (s *EntityServiceCounters) IncrementAlarmCounters(state int, acked bool) {
-	s.Active++
-	s.IncrementState(state)
-	if acked {
-		s.Acknowledged++
+func (s *EntityServiceCounters) IncrementAlarmCounters(state int, acked, isActive bool) {
+	if isActive {
+		s.Active++
+		s.IncrementState(state)
 	} else {
+		s.IncrementState(types.AlarmStateOK)
+	}
+
+	if acked && isActive {
+		s.Acknowledged++
+	}
+
+	if acked && !isActive {
+		s.AcknowledgedUnderPbh++
+	}
+
+	if !acked && isActive {
 		s.NotAcknowledged++
 	}
 }
 
-func (s *EntityServiceCounters) DecrementAlarmCounters(state int, acked bool) {
-	s.Active--
-	s.DecrementState(state)
-	if acked {
-		s.Acknowledged--
+func (s *EntityServiceCounters) DecrementAlarmCounters(state int, acked, isActive bool) {
+	if isActive {
+		s.Active--
+		s.DecrementState(state)
 	} else {
+		s.DecrementState(types.AlarmStateOK)
+	}
+
+	if acked && isActive {
+		s.Acknowledged--
+	}
+
+	if acked && !isActive {
+		s.AcknowledgedUnderPbh--
+	}
+
+	if !acked && isActive {
 		s.NotAcknowledged--
 	}
+}
+
+func (s *EntityServiceCounters) IncrementPbhCounters(typeID string) {
+	s.UnderPbehavior++
+	s.PbehaviorCounters[typeID]++
+}
+
+func (s *EntityServiceCounters) DecrementPbhCounters(typeID string) {
+	s.UnderPbehavior--
+	s.PbehaviorCounters[typeID]--
 }
