@@ -250,6 +250,12 @@ export default {
       [CHART_WIDGET_PRESET_TYPES.numberOfCreatedAlarms]: 'Total number of created alarms',
     },
   },
+  actionRequiredSettings: {
+    title: 'Action required state settings',
+    isBlinking: 'Blinking on',
+    customColor: 'Custom color',
+    customIcon: 'Custom icon',
+  },
   kioskMode: 'Kiosk mode',
   kiosk: {
     hideActions: 'Hide actions',
