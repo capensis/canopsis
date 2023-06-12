@@ -496,3 +496,5 @@ export const ENTITY_PAYLOADS_VARIABLES = {
   name: '.Name',
   infosValue: '(index .Infos "%infos_name%").Value',
 };
+
+export const SERVICE_WEATHER_DEFAULT_EM_HEIGHT = 4;
