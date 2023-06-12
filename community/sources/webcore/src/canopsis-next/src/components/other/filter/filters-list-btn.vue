@@ -47,7 +47,7 @@ export default {
       type: Array,
       required: false,
     },
-    entityCountsType: {
+    entityCountersType: {
       type: Boolean,
       default: false,
     },
@@ -66,7 +66,7 @@ export default {
           withPbehavior: this.withPbehavior,
           withServiceWeather: this.withServiceWeather,
           entityTypes: this.entityTypes,
-          entityCountsType: this.entityCountsType,
+          entityCountersType: this.entityCountersType,
         },
       });
     },
