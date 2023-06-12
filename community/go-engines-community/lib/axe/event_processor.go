@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
@@ -27,7 +27,7 @@ import (
 
 type eventProcessor struct {
 	dbClient            mongo.DbClient
-	adapter             alarm.Adapter
+	adapter             libalarm.Adapter
 	entityAdapter       entity.Adapter
 	ruleAdapter         correlation.RulesAdapter
 	alarmConfigProvider config.AlarmConfigProvider
@@ -36,7 +36,7 @@ type eventProcessor struct {
 	logger              zerolog.Logger
 	metricsSender       metrics.Sender
 
-	metaAlarmEventProcessor alarm.MetaAlarmEventProcessor
+	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
 
 	statisticsSender statistics.EventStatisticsSender
 
@@ -47,19 +47,19 @@ type eventProcessor struct {
 
 func NewEventProcessor(
 	dbClient mongo.DbClient,
-	adapter alarm.Adapter,
+	adapter libalarm.Adapter,
 	entityAdapter entity.Adapter,
 	ruleAdapter correlation.RulesAdapter,
 	alarmConfigProvider config.AlarmConfigProvider,
 	executor liboperation.Executor,
 	alarmStatusService alarmstatus.Service,
 	metricsSender metrics.Sender,
-	metaAlarmEventProcessor alarm.MetaAlarmEventProcessor,
+	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	statisticsSender statistics.EventStatisticsSender,
 	pbhTypeResolver pbehavior.EntityTypeResolver,
 	autoInstructionMatcher AutoInstructionMatcher,
 	logger zerolog.Logger,
-) alarm.EventProcessor {
+) libalarm.EventProcessor {
 	return &eventProcessor{
 		dbClient:            dbClient,
 		adapter:             adapter,
@@ -108,6 +108,10 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		alarmNotFound = true
 	} else if err != nil {
 		return alarmChange, fmt.Errorf("cannot fetch alarm: %w", err)
+	}
+
+	if event.AlarmID != "" && event.AlarmID != alarm.ID {
+		alarmNotFound = true
 	}
 
 	if !alarmNotFound {
@@ -159,7 +163,24 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		alarmChange.Type = types.AlarmChangeTypeEntityToggled
 		return alarmChange, nil
 	case types.EventTypeTrigger:
-		if event.AlarmChange == nil || event.Alarm == nil {
+		if event.AlarmChange == nil {
+			return types.NewAlarmChange(), nil
+		}
+
+		if event.Alarm == nil && event.AlarmID != "" {
+			alarm, err := s.adapter.GetAlarmByAlarmId(ctx, event.AlarmID)
+			if err != nil {
+				if _, ok := err.(errt.NotFound); !ok {
+					return alarmChange, fmt.Errorf("cannot fetch alarm: %w", err)
+				}
+			}
+
+			if alarm.ID != "" {
+				event.Alarm = &alarm
+			}
+		}
+
+		if event.Alarm == nil {
 			return types.NewAlarmChange(), nil
 		}
 
@@ -289,7 +310,7 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (t
 	}
 
 	if s.alarmConfigProvider.Get().ActivateAlarmAfterAutoRemediation {
-		matched, err := s.autoInstructionMatcher.Match(types.AlarmWithEntity{Alarm: alarm, Entity: entity})
+		matched, err := s.autoInstructionMatcher.Match(types.GetTriggers(changeType), types.AlarmWithEntity{Alarm: alarm, Entity: entity})
 		if err != nil {
 			return changeType, err
 		}
@@ -723,6 +744,7 @@ func newAlarm(event types.Event, alarmConfig config.AlarmConfig) types.Alarm {
 			Resource:          event.Resource,
 			Parents:           []string{},
 			Children:          []string{},
+			UnlinkedParents:   []string{},
 			Infos:             map[string]map[string]interface{}{},
 			RuleVersion:       map[string]string{},
 		},

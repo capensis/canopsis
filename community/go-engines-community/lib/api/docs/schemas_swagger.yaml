@@ -88,6 +88,10 @@ definitions:
         description: RRule is used in pbehavior action.
         type: string
       skip_for_child:
+        description: SkipForChild is used in webhook action.
+        type: boolean
+      skip_for_instruction:
+        description: SkipForInstruction is used in webhook action.
         type: boolean
       start_on_trigger:
         description: StartOnTrigger is used in pbehavior action.
@@ -3965,6 +3969,8 @@ definitions:
             * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
+            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
+            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
           type: string
         type: array
@@ -4028,6 +4034,8 @@ definitions:
             * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
+            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
+            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
           type: string
         type: array
@@ -4088,6 +4096,8 @@ definitions:
             * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
+            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
+            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
           type: string
         type: array
@@ -4122,6 +4132,8 @@ definitions:
       rrule:
         type: string
       skip_for_child:
+        type: boolean
+      skip_for_instruction:
         type: boolean
       start_on_trigger:
         type: boolean
@@ -5008,13 +5020,13 @@ definitions:
     properties:
       colorIndicator:
         type: string
-      iconOnly:
-        type: boolean
       isHtml:
         type: boolean
       label:
         maxLength: 255
         type: string
+      onlyIcon:
+        type: boolean
       template:
         type: string
       value:
