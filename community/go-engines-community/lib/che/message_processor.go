@@ -75,7 +75,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		return nil, nil
 	}
 
-	//updatedEntityServices := libcontext.UpdatedEntityServices{}
+	isServicesUpdated := false
 
 	defer func() {
 		if event.Entity != nil {
@@ -84,7 +84,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		}
 
 		eventMetric.IsInfosUpdated = event.IsEntityUpdated
-		//eventMetric.IsServicesUpdated = len(updatedEntityServices.AddedTo) > 0 || len(updatedEntityServices.RemovedFrom) > 0
+		eventMetric.IsServicesUpdated = isServicesUpdated
 		eventMetric.Interval = time.Since(eventMetric.Timestamp)
 
 		p.TechMetricsSender.SendCheEvent(eventMetric)
@@ -167,6 +167,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			}
 
 			event.Entity = &eventEntity
+			isServicesUpdated = len(eventEntity.ServicesToAdd) > 0 || len(eventEntity.ServicesToRemove) > 0
 		}
 
 		if !eventEntity.IsNew && !event.IsEntityUpdated && event.Entity.LastEventDate != nil {

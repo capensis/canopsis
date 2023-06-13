@@ -46,7 +46,7 @@ type Entity struct {
 	Component string   `bson:"component,omitempty" json:"component,omitempty"`
 	Services  []string `bson:"services" json:"services,omitempty"`
 	// ImpactedServices field is only for connectors, see entity service RecomputeIdleSince method.
-	ImpactedServices []string `bson:"impacted_services,omitempty" json:"impacted_services,omitempty"`
+	ImpactedServices []string `bson:"impacted_services" json:"-"`
 
 	// LastIdleRuleApply is used to mark entity if some idle rule was applied.
 	LastIdleRuleApply string `bson:"last_idle_rule_apply,omitempty" json:"last_idle_rule_apply,omitempty"`
