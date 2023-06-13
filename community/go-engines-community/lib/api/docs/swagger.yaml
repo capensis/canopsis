@@ -359,13 +359,13 @@ paths:
   /alarm-tags:
     get:
       tags:
-        - alarms
-      summary: Get alarms' tags
+        - alarm-tags
+      summary: Get alarm tags
       description: |
-        Get paginated list of alarms' tags.
+        Get paginated list of alarm tags.
         
-        -  PERMISSIONS: `api_alarm_read`
-      operationId: alarms-tags-get
+        -  PERMISSIONS: `api_alarm_tag:read`
+      operationId: alarm-tags-get
       parameters:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
@@ -392,6 +392,182 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+    post:
+      tags:
+        - alarm-tags
+      summary: Create an internal alarm tag
+      description: |
+        Create an internal alarm tag.
+        
+        -  PERMISSIONS: `api_alarm_tag:create`
+      operationId: alarm-tags-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmtag.CreateRequest'
+            examples:
+              create:
+                summary: Create a tag
+                description: Create a tag
+                value: {
+                  "value": "cloud",
+                  "color": "#AABBCC",
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.state.val",
+                        "cond": {
+                          "type": "eq",
+                          "value": 3
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmtag.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarm-tags/{id}:
+    get:
+      tags:
+        - alarm-tags
+      summary: Get an alarm tag by id
+      description: |
+        Get an alarm tag by id.
+
+        -  PERMISSIONS: `api_alarm_tag:read`
+      operationId: alarm-tags-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmtag.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - alarm-tags
+      summary: Update an alarm tag by id
+      description: |
+        Update an alarm tag by id.
+
+        -  PERMISSIONS: `api_alarm_tag:update`
+      operationId: alarm-tags-update-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmtag.UpdateRequest'
+            examples:
+              internal:
+                summary: Update an internal tag
+                description: Update an internal tag
+                value: {
+                  "color": "#AABBCC",
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.state.val",
+                        "cond": {
+                          "type": "eq",
+                          "value": 3
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              external:
+                summary: Update an external tag
+                description: Update an external tag
+                value: {
+                  "color": "#AABBCC"
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmtag.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - alarm-tags
+      summary: Delete an alarm tag by id
+      description: |
+        Delete an alarm tag by id.
+
+        -  PERMISSIONS: `api_alarm_tag:delete`
+      operationId: alarm-tags-delete-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /alarms:
     get:
       tags:

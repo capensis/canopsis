@@ -1330,6 +1330,11 @@ permission:
     _id: api_link_rule
     name: <Current()._id>
     description: Link rule
+  permission_api_alarm_tag:
+    <<: *permission_crud
+    _id: api_alarm_tag
+    name: <Current()._id>
+    description: Alarm tag
 
   # Views permissions
   permission_view_open_alarms:
@@ -1557,6 +1562,7 @@ role:
       "@permission_api_declare_ticket_rule": 15
       "@permission_api_declare_ticket_execution": 1
       "@permission_api_link_rule": 15
+      "@permission_api_alarm_tag": 15
       # Views permissions
       "@permission_view_open_alarms": 15
       "@permission_view_resolved_alarms": 15
