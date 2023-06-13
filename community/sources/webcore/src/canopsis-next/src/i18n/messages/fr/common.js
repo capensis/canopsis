@@ -271,6 +271,7 @@ export default {
   hidden: 'Caché',
   numberField: 'Champ numérique',
   chart: 'Graphique | Graphiques',
+  seeAlarms: 'Voir les alarmes',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
