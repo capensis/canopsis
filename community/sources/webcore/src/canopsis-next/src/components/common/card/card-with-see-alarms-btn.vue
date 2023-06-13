@@ -9,7 +9,7 @@
       v-if="showButton",
       flat,
       @click.stop="$emit('show:alarms')"
-    ) {{ $t('serviceWeather.seeAlarms') }}
+    ) {{ $t('common.seeAlarms') }}
 </template>
 
 <script>
