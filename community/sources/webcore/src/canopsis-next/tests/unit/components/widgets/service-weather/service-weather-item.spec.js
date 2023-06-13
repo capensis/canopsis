@@ -17,9 +17,10 @@ const stubs = {
   'impact-state-indicator': true,
   'alarm-pbehavior-counters': true,
   'alarm-state-counters': true,
+  'card-with-see-alarms-btn': true,
 };
 
-const selectButton = wrapper => wrapper.find('v-btn-stub');
+const selectCard = wrapper => wrapper.find('card-with-see-alarms-btn-stub');
 
 describe('service-weather-item', () => {
   const service = {
@@ -52,7 +53,7 @@ describe('service-weather-item', () => {
       },
     });
 
-    selectButton(wrapper).vm.$emit('click', new MouseEvent('click'));
+    selectCard(wrapper).vm.$emit('show:alarms', new MouseEvent('click'));
 
     expect(wrapper).toEmit('show:alarms');
   });
