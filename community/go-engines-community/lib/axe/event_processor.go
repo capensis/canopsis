@@ -722,12 +722,14 @@ func (s *eventProcessor) resolvePbehaviorInfo(ctx context.Context, entity types.
 
 func newAlarm(event types.Event, alarmConfig config.AlarmConfig) types.Alarm {
 	now := types.CpsTime{Time: time.Now()}
+	tags := types.TransformEventTags(event.Tags)
 
 	return types.Alarm{
-		EntityID: event.GetEID(),
-		ID:       utils.NewID(),
-		Time:     now,
-		Tags:     types.TransformEventTags(event.Tags),
+		EntityID:     event.GetEID(),
+		ID:           utils.NewID(),
+		Time:         now,
+		Tags:         tags,
+		ExternalTags: tags,
 		Value: types.AlarmValue{
 			Component:         event.Component,
 			Connector:         event.Connector,

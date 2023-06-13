@@ -61,4 +61,6 @@ const (
 	PermTechMetrics = "api_techmetrics"
 
 	ObjLinkRule = "api_link_rule"
+
+	ObjAlarmTag = "api_alarm_tag"
 )

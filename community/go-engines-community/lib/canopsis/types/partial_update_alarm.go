@@ -523,8 +523,8 @@ func (a *Alarm) PartialUpdateAddStepWithStep(newStep AlarmStep) error {
 }
 
 func (a *Alarm) PartialUpdateTags(eventTags map[string]string) {
-	exists := make(map[string]struct{}, len(a.Tags))
-	for _, tag := range a.Tags {
+	exists := make(map[string]struct{}, len(a.ExternalTags))
+	for _, tag := range a.ExternalTags {
 		exists[tag] = struct{}{}
 	}
 
@@ -541,8 +541,10 @@ func (a *Alarm) PartialUpdateTags(eventTags map[string]string) {
 	}
 	tags = tags[:k]
 	a.Tags = append(a.Tags, tags...)
+	a.ExternalTags = append(a.ExternalTags, tags...)
 	a.AddUpdate("$addToSet", bson.M{
-		"tags": bson.M{"$each": tags},
+		"tags":          bson.M{"$each": tags},
+		"external_tags": bson.M{"$each": tags},
 	})
 }
 

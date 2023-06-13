@@ -1,24 +1,36 @@
 package alarmtag
 
 import (
+	"context"
+	"errors"
 	"net/http"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"github.com/gin-gonic/gin"
 )
 
-type API interface {
-	List(c *gin.Context)
-}
-
 type api struct {
-	store Store
+	store        Store
+	transformer  common.PatternFieldsTransformer
+	actionLogger logger.ActionLogger
+	ch           chan<- alarmtag.WatchMessage
 }
 
-func NewApi(store Store) API {
+func NewApi(
+	store Store,
+	transformer common.PatternFieldsTransformer,
+	ch chan<- alarmtag.WatchMessage,
+	actionLogger logger.ActionLogger,
+) common.CrudAPI {
 	return &api{
-		store: store,
+		store:        store,
+		transformer:  transformer,
+		ch:           ch,
+		actionLogger: actionLogger,
 	}
 }
 
@@ -45,4 +57,205 @@ func (a *api) List(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+// Get
+// @Success 200 {object} Response
+func (a *api) Get(c *gin.Context) {
+	response, err := a.store.GetByID(c, c.Param("id"))
+	if err != nil {
+		panic(err)
+	}
+
+	if response == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+// Create
+// @Param body body CreateRequest true "body"
+// @Success 201 {object} Response
+func (a *api) Create(c *gin.Context) {
+	request := CreateRequest{}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	err := a.transformCreateRequest(c, &request)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
+	response, err := a.store.Create(c, request)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+
+		panic(err)
+	}
+
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
+		Action:    logger.ActionCreate,
+		ValueType: logger.ValueTypeAlarmTag,
+		ValueID:   response.ID,
+	})
+	if err != nil {
+		a.actionLogger.Err(err, "failed to log action")
+	}
+
+	a.sendWatchMessage(c, *response, alarmtag.WatchMessageTypeInsert)
+
+	c.JSON(http.StatusCreated, response)
+}
+
+// Update
+// @Param body body UpdateRequest true "body"
+// @Success 200 {object} Response
+func (a *api) Update(c *gin.Context) {
+	request := UpdateRequest{
+		ID: c.Param("id"),
+	}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	ctx := c
+
+	err := a.transformUpdateRequest(ctx, &request)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
+	response, err := a.store.Update(ctx, request)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+
+		panic(err)
+	}
+
+	if response == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
+		Action:    logger.ActionUpdate,
+		ValueType: logger.ValueTypeAlarmTag,
+		ValueID:   response.ID,
+	})
+	if err != nil {
+		a.actionLogger.Err(err, "failed to log action")
+	}
+
+	a.sendWatchMessage(c, *response, alarmtag.WatchMessageTypeUpdate)
+
+	c.JSON(http.StatusOK, response)
+}
+
+func (a *api) Delete(c *gin.Context) {
+	id := c.Param("id")
+
+	tag, err := a.store.GetByID(c, id)
+	if err != nil {
+		panic(err)
+	}
+
+	if tag == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	ok, err := a.store.Delete(c, id)
+	if err != nil {
+		panic(err)
+	}
+
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	err = a.actionLogger.Action(context.Background(), c.MustGet(auth.UserKey).(string), logger.LogEntry{
+		Action:    logger.ActionDelete,
+		ValueType: logger.ValueTypeAlarmTag,
+		ValueID:   id,
+	})
+	if err != nil {
+		a.actionLogger.Err(err, "failed to log action")
+	}
+
+	a.sendWatchMessage(c, *tag, alarmtag.WatchMessageTypeDelete)
+
+	c.JSON(http.StatusNoContent, nil)
+}
+
+func (a *api) transformCreateRequest(ctx context.Context, request *CreateRequest) error {
+	var err error
+	request.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(ctx, request.AlarmPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *api) transformUpdateRequest(ctx context.Context, request *UpdateRequest) error {
+	var err error
+	request.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(ctx, request.AlarmPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *api) sendWatchMessage(ctx context.Context, response Response, t int) {
+	select {
+	case <-ctx.Done():
+	case a.ch <- alarmtag.WatchMessage{
+		Tags: []alarmtag.AlarmTag{
+			{
+				ID:                  response.ID,
+				Type:                response.Type,
+				Value:               response.Value,
+				Color:               response.Color,
+				Created:             response.Created,
+				Updated:             response.Updated,
+				EntityPatternFields: response.EntityPatternFields,
+				AlarmPatternFields:  response.AlarmPatternFields,
+			},
+		},
+		Type: t,
+	}:
+	}
 }
