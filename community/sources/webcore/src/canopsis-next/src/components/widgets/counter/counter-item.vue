@@ -124,7 +124,7 @@ export default {
       fetchAlarmsListWithoutStore: 'fetchListWithoutStore',
     }),
 
-    async showAlarmListModal() {
+    showAlarmListModal() {
       const widget = generatePreparedDefaultAlarmListWidget();
 
       widget.parameters = {
