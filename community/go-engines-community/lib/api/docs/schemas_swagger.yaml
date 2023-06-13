@@ -702,16 +702,92 @@ definitions:
     required:
     - duration
     type: object
+  alarmtag.CreateRequest:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      color:
+        type: string
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      value:
+        maxLength: 255
+        type: string
+    required:
+    - color
+    - value
+    type: object
   alarmtag.Response:
     properties:
       _id:
         type: string
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      author:
+        $ref: '#/definitions/author.Author'
       color:
+        type: string
+      corporate_alarm_pattern:
+        type: string
+      corporate_alarm_pattern_title:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
         type: string
       created:
         type: integer
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      type:
+        type: integer
+      updated:
+        type: integer
       value:
         type: string
+    type: object
+  alarmtag.UpdateRequest:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      color:
+        type: string
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+    required:
+    - color
     type: object
   appinfo.AppInfoResponse:
     properties:

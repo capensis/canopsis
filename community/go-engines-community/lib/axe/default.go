@@ -33,6 +33,8 @@ import (
 	"github.com/rs/zerolog"
 )
 
+const chanBuff = 100
+
 type Options struct {
 	Version                  bool
 	FeaturePrintEventOnError bool
@@ -182,7 +184,9 @@ func NewEngine(
 		alarmStatusService, alarmConfigProvider, json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName,
 		metricsSender, logger)
 
-	tagUpdater := alarmtag.NewUpdater(dbClient)
+	externalTagsUpdater := alarmtag.NewExternalUpdater(dbClient)
+	internalTagsUpdater := alarmtag.NewInternalUpdater(dbClient, logger)
+	internalTagsCh := make(chan string, chanBuff)
 
 	engineAxe := libengine.New(
 		func(ctx context.Context) error {
@@ -196,6 +200,8 @@ func NewEngine(
 			return autoInstructionMatcher.Load(ctx)
 		},
 		func(ctx context.Context) {
+			close(internalTagsCh)
+
 			err := amqpConnection.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close amqp connection")
@@ -263,7 +269,8 @@ func NewEngine(
 			Decoder:                json.NewDecoder(),
 			Logger:                 logger,
 			PbehaviorAdapter:       pbehavior.NewAdapter(dbClient),
-			TagUpdater:             tagUpdater,
+			ExternalTagsUpdater:    externalTagsUpdater,
+			InternalTagsCh:         internalTagsCh,
 			AutoInstructionMatcher: autoInstructionMatcher,
 		},
 		logger,
@@ -299,10 +306,13 @@ func NewEngine(
 		AutoInstructionMatcher: autoInstructionMatcher,
 		Logger:                 logger,
 	})
-	engineAxe.AddPeriodicalWorker("tags", &tagPeriodicalWorker{
+	engineAxe.AddPeriodicalWorker("external_tags", &tagPeriodicalWorker{
 		PeriodicalInterval: options.TagsPeriodicalWaitTime,
-		TagUpdater:         tagUpdater,
+		TagUpdater:         externalTagsUpdater,
 		Logger:             logger,
+	})
+	engineAxe.AddRoutine(func(ctx context.Context) error {
+		return internalTagsUpdater.Update(ctx, internalTagsCh)
 	})
 	engineAxe.AddPeriodicalWorker("alarms", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),

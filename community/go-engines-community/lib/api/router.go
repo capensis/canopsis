@@ -66,6 +66,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgettemplate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	libalarmtag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -102,6 +103,7 @@ func RegisterRoutes(
 	pbhComputeChan chan<- []string,
 	entityPublChan chan<- libentityservice.ChangeEntityMessage,
 	entityCleanerTaskChan chan<- entity.CleanTask,
+	alarmTagChan chan<- libalarmtag.WatchMessage,
 	runInfoManager engine.RunInfoManager,
 	exportExecutor export.TaskExecutor,
 	techMetricsTaskExecutor techmetrics.TaskExecutor,
@@ -1271,8 +1273,8 @@ func RegisterRoutes(
 			)
 		}
 
-		patternAPI := pattern.NewApi(pattern.NewStore(dbClient, pbhComputeChan, entityPublChan, authorProvider, logger), userInterfaceConfig,
-			enforcer, actionLogger, logger)
+		patternAPI := pattern.NewApi(pattern.NewStore(dbClient, pbhComputeChan, entityPublChan, alarmTagChan, authorProvider, logger),
+			userInterfaceConfig, enforcer, actionLogger, logger)
 		patternRouter := protected.Group("/patterns")
 		{
 			patternRouter.Use(middleware.OnlyAuth())
@@ -1717,11 +1719,38 @@ func RegisterRoutes(
 
 		alarmTagRouter := protected.Group("/alarm-tags")
 		{
-			alarmTagAPI := alarmtag.NewApi(alarmtag.NewStore(dbClient))
+			alarmTagAPI := alarmtag.NewApi(
+				alarmtag.NewStore(dbClient, authorProvider),
+				common.NewPatternFieldsTransformer(dbClient),
+				alarmTagChan,
+				actionLogger,
+			)
 			alarmTagRouter.GET(
 				"",
 				middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
 				alarmTagAPI.List,
+			)
+			alarmTagRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionCreate, enforcer),
+				middleware.SetAuthor(),
+				alarmTagAPI.Create,
+			)
+			alarmTagRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionRead, enforcer),
+				alarmTagAPI.Get,
+			)
+			alarmTagRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				alarmTagAPI.Update,
+			)
+			alarmTagRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionDelete, enforcer),
+				alarmTagAPI.Delete,
 			)
 		}
 
