@@ -18,12 +18,14 @@ import { getEntityEventIcon } from '@/helpers/icon';
 
 import featuresService from '@/services/features';
 
-import { isManualGroupMetaAlarmRuleType } from '@/helpers/forms/meta-alarm-rule';
+import { isManualGroupMetaAlarmRuleType, isAutoMetaAlarmRuleType } from '@/helpers/forms/meta-alarm-rule';
 import { isInstructionExecutionIconInProgress } from '@/helpers/forms/remediation-instruction-execution';
 import { isInstructionManual } from '@/helpers/forms/remediation-instruction';
 import { harmonizeLinks, getLinkRuleLinkActionType } from '@/helpers/links';
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
+import { entitiesMetaAlarmMixin } from '@/mixins/entities/meta-alarm';
+import { entitiesManualMetaAlarmMixin } from '@/mixins/entities/manual-meta-alarm';
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { clipboardMixin } from '@/mixins/clipboard';
 
@@ -41,6 +43,8 @@ export default {
   components: { SharedActionsPanel },
   mixins: [
     entitiesAlarmMixin,
+    entitiesMetaAlarmMixin,
+    entitiesManualMetaAlarmMixin,
     widgetActionsPanelAlarmMixin,
     clipboardMixin,
   ],
@@ -165,6 +169,12 @@ export default {
           title: this.$t('alarm.actions.titles.removeAlarmsFromManualMetaAlarm'),
           method: this.showRemoveAlarmsFromManualMetaAlarmModal,
         },
+        removeAlarmsFromAutoMetaAlarm: {
+          type: ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromAutoMetaAlarm,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.removeAlarmsFromAutoMetaAlarm),
+          title: this.$t('alarm.actions.titles.removeAlarmsFromAutoMetaAlarm'),
+          method: this.showRemoveAlarmsFromAutoMetaAlarmModal,
+        },
         executeInstruction: {
           type: ALARM_LIST_ACTIONS_TYPES.executeInstruction,
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.executeInstruction),
@@ -176,6 +186,10 @@ export default {
 
     isParentAlarmManualMetaAlarm() {
       return isManualGroupMetaAlarmRuleType(this.parentAlarm?.meta_alarm_rule?.type);
+    },
+
+    isParentAlarmAutoMetaAlarm() {
+      return isAutoMetaAlarmRuleType(this.parentAlarm?.meta_alarm_rule?.type);
     },
 
     filteredActionsMap() {
@@ -236,6 +250,10 @@ export default {
 
       if (this.isParentAlarmManualMetaAlarm) {
         actions.push(filteredActionsMap.removeAlarmsFromManualMetaAlarm);
+      }
+
+      if (this.isParentAlarmAutoMetaAlarm) {
+        actions.push(filteredActionsMap.removeAlarmsFromAutoMetaAlarm);
       }
 
       /**
@@ -367,12 +385,30 @@ export default {
 
     showRemoveAlarmsFromManualMetaAlarmModal() {
       this.$modals.show({
-        name: MODALS.removeAlarmsFromManualMetaAlarm,
+        name: MODALS.removeAlarmsFromMetaAlarm,
         config: {
           ...this.modalConfig,
 
           title: this.$t('alarm.actions.titles.removeAlarmsFromManualMetaAlarm'),
-          parentAlarm: this.parentAlarm,
+          action: async (data) => {
+            await this.removeAlarmsFromManualMetaAlarm({ id: this.parentAlarm?._id, data });
+            await this.afterSubmit();
+          },
+        },
+      });
+    },
+
+    showRemoveAlarmsFromAutoMetaAlarmModal() {
+      this.$modals.show({
+        name: MODALS.removeAlarmsFromMetaAlarm,
+        config: {
+          ...this.modalConfig,
+
+          title: this.$t('alarm.actions.titles.removeAlarmsFromAutoMetaAlarm'),
+          action: async (data) => {
+            await this.removeAlarmsFromMetaAlarm({ id: this.parentAlarm?._id, data });
+            await this.afterSubmit();
+          },
         },
       });
     },
