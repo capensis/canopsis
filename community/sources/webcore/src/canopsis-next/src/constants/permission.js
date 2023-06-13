@@ -147,6 +147,7 @@ export const USERS_PERMISSIONS = {
         history: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_history`,
         groupRequest: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_groupRequest`,
         manualMetaAlarmGroup: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_manualMetaAlarmGroup`,
+        metaAlarmGroup: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_metaAlarmGroup`,
         comment: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_comment`,
 
         listFilters: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_listFilters`,
@@ -393,6 +394,8 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm]:
     USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
     [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm]:
+    USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
+    [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromAutoMetaAlarm]:
     USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
 
     [ALARM_LIST_ACTIONS_TYPES.links]: USERS_PERMISSIONS.business.alarmsList.actions.links,
