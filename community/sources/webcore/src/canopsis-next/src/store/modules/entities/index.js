@@ -52,6 +52,7 @@ import shareTokenModule from './share-token';
 import techMetricsModule from './tech-metrics';
 import widgetTemplateModule from './widget-template';
 import manualMetaAlarmModule from './manual-meta-alarm';
+import metaAlarmModule from './meta-alarm';
 import templateVarsModule from './template-vars';
 import declareTicketRuleModule from './declare-ticket-rule';
 import templateValidatorModule from './template-validator';
@@ -115,6 +116,7 @@ export default {
   techMetrics: techMetricsModule,
   widgetTemplate: widgetTemplateModule,
   manualMetaAlarm: manualMetaAlarmModule,
+  metaAlarm: metaAlarmModule,
   templateVars: templateVarsModule,
   declareTicketRule: declareTicketRuleModule,
   templateValidator: templateValidatorModule,
