@@ -2,23 +2,23 @@ import { range } from 'lodash';
 
 import { generateRenderer } from '@unit/utils/vue';
 
-import PbehaviorExceptionList from '@/components/other/pbehavior/pbehaviors/partials/pbehavior-exception-list.vue';
+import PbehaviorExceptionsList from '@/components/other/pbehavior/pbehaviors/partials/pbehavior-exceptions-list.vue';
 
-describe('pbehavior-exception-list', () => {
+describe('pbehavior-exceptions-list', () => {
   const totalItems = 5;
   const exceptions = range(totalItems).map(index => ({
     name: `exception-${index}`,
   }));
 
-  const snapshotFactory = generateRenderer(PbehaviorExceptionList);
+  const snapshotFactory = generateRenderer(PbehaviorExceptionsList);
 
-  test('Renders `pbehavior-exception-list` without exceptions', () => {
+  test('Renders `pbehavior-exceptions-list` without exceptions', () => {
     const wrapper = snapshotFactory();
 
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `pbehavior-exception-list` with exceptions', () => {
+  test('Renders `pbehavior-exceptions-list` with exceptions', () => {
     const wrapper = snapshotFactory({
       propsData: {
         exceptions,

@@ -3,6 +3,7 @@ package account
 import (
 	"context"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -19,13 +20,15 @@ type store struct {
 	client          mongo.DbClient
 	collection      mongo.DbCollection
 	passwordEncoder password.Encoder
+	authorProvider  author.Provider
 }
 
-func NewStore(db mongo.DbClient, passwordEncoder password.Encoder) Store {
+func NewStore(db mongo.DbClient, passwordEncoder password.Encoder, authorProvider author.Provider) Store {
 	return &store{
 		client:          db,
 		collection:      db.Collection(mongo.RightsMongoCollection),
 		passwordEncoder: passwordEncoder,
+		authorProvider:  authorProvider,
 	}
 }
 
@@ -130,6 +133,12 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 			"as":           "role.defaultview",
 		}},
 		{"$unwind": bson.M{"path": "$role.defaultview", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"username": "$name",
+		}},
+		{"$addFields": bson.M{
+			"display_name": s.authorProvider.GetDisplayNameQuery(""),
+		}},
 	})
 
 	if err != nil {

@@ -26,22 +26,24 @@ type store struct {
 	dbClient              mongo.DbClient
 	collection            mongo.DbCollection
 	transformer           ModelTransformer
+	authorProvider        author.Provider
 	defaultSearchByFields []string
 	defaultSortBy         string
 }
 
-func NewStore(db mongo.DbClient) Store {
+func NewStore(db mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
 		dbClient:              db,
 		collection:            db.Collection(mongo.ScenarioMongoCollection),
 		transformer:           NewModelTransformer(),
+		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "name", "author.name"},
 		defaultSortBy:         "created",
 	}
 }
 
 func (s *store) Find(ctx context.Context, r FilteredQuery) (*AggregationResult, error) {
-	pipeline := author.Pipeline()
+	pipeline := s.authorProvider.Pipeline()
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
@@ -74,7 +76,7 @@ func (s *store) Find(ctx context.Context, r FilteredQuery) (*AggregationResult, 
 func (s *store) GetOneBy(ctx context.Context, id string) (*Scenario, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
-	pipeline = append(pipeline, author.Pipeline()...)
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
