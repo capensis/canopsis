@@ -943,12 +943,63 @@ describe('actions-panel', () => {
 
     expect($modals.show).toBeCalledWith(
       {
-        name: MODALS.removeAlarmsFromManualMetaAlarm,
+        name: MODALS.removeAlarmsFromMetaAlarm,
         config: {
           items: [alarm],
           afterSubmit: expect.any(Function),
+          action: expect.any(Function),
           title: 'Unlink alarm from manual meta alarm',
-          parentAlarm,
+        },
+      },
+    );
+
+    const [{ config }] = $modals.show.mock.calls[0];
+
+    config.afterSubmit();
+
+    expect(refreshAlarmsList).toBeCalledTimes(1);
+  });
+
+  it('Remove alarms from auto meta alarm modal showed after trigger remove alarms from auto meta alarm action', () => {
+    const widgetData = {
+      _id: Faker.datatype.string(),
+      parameters: {},
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        alarmModule,
+        eventModule,
+      ]),
+      propsData: {
+        item: alarm,
+        widget: widgetData,
+        parentAlarm: {
+          meta_alarm_rule: {
+            type: META_ALARMS_RULE_TYPES.attribute,
+          },
+          d: 'parent-d',
+        },
+        refreshAlarmsList,
+      },
+    });
+
+    const manualMetaAlarmUngroupAction = selectActionByType(
+      wrapper,
+      ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromAutoMetaAlarm,
+    );
+
+    manualMetaAlarmUngroupAction.trigger('click');
+
+    expect($modals.show).toBeCalledWith(
+      {
+        name: MODALS.removeAlarmsFromMetaAlarm,
+        config: {
+          items: [alarm],
+          afterSubmit: expect.any(Function),
+          action: expect.any(Function),
+          title: 'Unlink alarm from meta alarm',
         },
       },
     );
@@ -1294,6 +1345,26 @@ describe('actions-panel', () => {
           },
         },
         widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `actions-panel` with parentAlarm with auto meta alarm', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: alarm,
+        widget,
+        parentAlarm: {
+          meta_alarm_rule: {
+            type: META_ALARMS_RULE_TYPES.attribute,
+          },
+          d: 'parent-d',
+        },
       },
     });
 
