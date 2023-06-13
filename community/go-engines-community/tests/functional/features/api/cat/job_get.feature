@@ -15,7 +15,8 @@ Feature: get a job
           "name": "test-job-name-to-get-1",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "config": {
             "_id": "test-job-config-to-edit-job",
@@ -24,7 +25,8 @@ Feature: get a job
             "host": "http://example.com",
             "author": {
               "_id": "root",
-              "name": "root"
+              "name": "root",
+              "display_name": "root John Doe admin@canopsis.net"
             },
             "auth_username": "",
             "auth_token": "test-auth-token"
@@ -39,7 +41,8 @@ Feature: get a job
           "name": "test-job-name-to-get-2",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "config": {
             "_id": "test-job-config-to-edit-job",
@@ -48,7 +51,8 @@ Feature: get a job
             "host": "http://example.com",
             "author": {
               "_id": "root",
-              "name": "root"
+              "name": "root",
+              "display_name": "root John Doe admin@canopsis.net"
             },
             "auth_username": "",
             "auth_token": "test-auth-token"
@@ -124,7 +128,8 @@ Feature: get a job
       "name": "test-job-name-to-get-1",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "config": {
         "_id": "test-job-config-to-edit-job",
@@ -133,7 +138,8 @@ Feature: get a job
         "host": "http://example.com",
         "author": {
           "_id": "root",
-          "name": "root"
+          "name": "root",
+          "display_name": "root John Doe admin@canopsis.net"
         },
         "auth_username": "",
         "auth_token": "test-auth-token"

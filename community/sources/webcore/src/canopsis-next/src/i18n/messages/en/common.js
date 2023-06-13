@@ -271,6 +271,7 @@ export default {
   hidden: 'Hidden',
   numberField: 'Number field',
   chart: 'Chart | Charts',
+  chooseFile: 'Choose file',
   seeAlarms: 'See alarms',
   variableTypes: {
     string: 'String',
