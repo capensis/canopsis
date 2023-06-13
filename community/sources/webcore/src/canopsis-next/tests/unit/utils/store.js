@@ -382,16 +382,32 @@ export const createPbehaviorTypesModule = () => {
     data: [],
   });
 
+  const fieldPbehaviorTypes = jest.fn()
+    .mockReturnValue([]);
+
+  const fieldPbehaviorTypesPending = jest.fn()
+    .mockReturnValue(false);
+
+  const fetchFieldPbehaviorTypes = jest.fn();
+
   const pbehaviorTypesModule = {
     name: 'pbehaviorTypes',
+    getters: {
+      fieldItems: fieldPbehaviorTypes,
+      fieldPending: fieldPbehaviorTypesPending,
+    },
     actions: {
       fetchListWithoutStore: fetchPbehaviorTypesListWithoutStore,
+      fetchFieldList: fetchFieldPbehaviorTypes,
     },
   };
 
   return {
     pbehaviorTypesModule,
+    fieldPbehaviorTypes,
+    fieldPbehaviorTypesPending,
     fetchPbehaviorTypesListWithoutStore,
+    fetchFieldPbehaviorTypes,
   };
 };
 

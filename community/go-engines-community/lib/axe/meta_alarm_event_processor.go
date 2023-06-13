@@ -96,8 +96,8 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event typ
 		var childAlarms []types.Alarm
 		worstState := types.CpsNumber(types.AlarmStateMinor)
 
-		if event.MetaAlarmChildren != nil {
-			err := p.adapter.GetOpenedAlarmsByIDs(ctx, *event.MetaAlarmChildren, &childAlarms)
+		if len(event.MetaAlarmChildren) > 0 {
+			err := p.adapter.GetOpenedAlarmsByIDs(ctx, event.MetaAlarmChildren, &childAlarms)
 			if err != nil {
 				return fmt.Errorf("cannot fetch children alarms: %w", err)
 			}
@@ -188,92 +188,6 @@ func (p *metaAlarmEventProcessor) ProcessAxeRpc(ctx context.Context, event rpc.A
 
 	if alarm.IsMetaChildren() {
 		return p.processChildRpc(ctx, eventRes)
-	}
-
-	return nil
-}
-
-func (p *metaAlarmEventProcessor) ProcessAckResources(ctx context.Context, event types.Event) error {
-	if !event.AckResources || event.Alarm == nil || event.AlarmChange == nil ||
-		event.AlarmChange.Type != types.AlarmChangeTypeAck || event.SourceType != types.SourceTypeComponent {
-		return nil
-	}
-
-	alarms, err := p.adapter.GetUnacknowledgedAlarmsByComponent(ctx, event.Component)
-	if err != nil {
-		return fmt.Errorf("cannot fetch alarms: %w", err)
-	}
-
-	for _, alarm := range alarms {
-		if alarm.Entity.Type != types.EntityTypeResource {
-			continue
-		}
-
-		resourceEvent := types.Event{
-			EventType:     event.EventType,
-			Connector:     alarm.Alarm.Value.Connector,
-			ConnectorName: alarm.Alarm.Value.ConnectorName,
-			Resource:      alarm.Alarm.Value.Resource,
-			Component:     alarm.Alarm.Value.Component,
-			Timestamp:     event.Timestamp,
-			TicketInfo:    event.TicketInfo,
-			Output:        event.Output,
-			LongOutput:    event.LongOutput,
-			Author:        event.Author,
-			UserID:        event.UserID,
-			Debug:         event.Debug,
-			Role:          event.Role,
-			Initiator:     types.InitiatorSystem,
-		}
-		resourceEvent.SourceType = resourceEvent.DetectSourceType()
-
-		err = p.sendToFifo(ctx, resourceEvent)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (p *metaAlarmEventProcessor) ProcessTicketResources(ctx context.Context, event types.Event) error {
-	if !event.TicketResources || event.Alarm == nil || event.AlarmChange == nil ||
-		event.AlarmChange.Type != types.AlarmChangeTypeAssocTicket || event.SourceType != types.SourceTypeComponent {
-		return nil
-	}
-
-	alarms, err := p.adapter.GetAlarmsWithoutTicketByComponent(ctx, event.Component)
-	if err != nil {
-		return fmt.Errorf("cannot fetch alarms: %w", err)
-	}
-
-	for _, alarm := range alarms {
-		if alarm.Entity.Type != types.EntityTypeResource {
-			continue
-		}
-
-		resourceEvent := types.Event{
-			EventType:     event.EventType,
-			Connector:     alarm.Alarm.Value.Connector,
-			ConnectorName: alarm.Alarm.Value.ConnectorName,
-			Resource:      alarm.Alarm.Value.Resource,
-			Component:     alarm.Alarm.Value.Component,
-			Timestamp:     event.Timestamp,
-			TicketInfo:    event.TicketInfo,
-			Output:        event.Output,
-			LongOutput:    event.LongOutput,
-			Author:        event.Author,
-			UserID:        event.UserID,
-			Debug:         event.Debug,
-			Role:          event.Role,
-			Initiator:     types.InitiatorSystem,
-		}
-		resourceEvent.SourceType = resourceEvent.DetectSourceType()
-
-		err = p.sendToFifo(ctx, resourceEvent)
-		if err != nil {
-			return err
-		}
 	}
 
 	return nil

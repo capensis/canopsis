@@ -1,6 +1,7 @@
 Feature: modify event on event filter
   I need to be able to modify event on event filter
 
+  @concurrent
   Scenario: given check event and enrichment event filter should enrich from external api data
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
@@ -28,7 +29,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-event-filter-che-event-filters-api-1-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [
@@ -46,7 +46,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-che-event-filters-api-1",
@@ -59,7 +59,6 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-api-1"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/entities?search=test-resource-che-event-filters-api-1
     Then the response code should be 200
     Then the response body should contain:
@@ -86,6 +85,7 @@ Feature: modify event on event filter
     }
     """
 
+  @concurrent
   Scenario: given check event and enrichment event filter should enrich from external api data and mongo
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
@@ -120,7 +120,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-event-filter-che-event-filters-api-2-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [
@@ -144,7 +143,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-che-event-filters-api-2",
@@ -157,7 +156,6 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-api-2"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/entities?search=test-resource-che-event-filters-api-2
     Then the response code should be 200
     Then the response body should contain:
@@ -189,6 +187,7 @@ Feature: modify event on event filter
     }
     """
 
+  @concurrent
   Scenario: given check event and enrichment event filter should enrich from external api data where response is a document with an array
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
@@ -216,7 +215,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-event-filter-che-event-filters-api-3-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [
@@ -234,7 +232,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-che-event-filters-api-3",
@@ -247,7 +245,6 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-api-3"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/entities?search=test-resource-che-event-filters-api-3
     Then the response code should be 200
     Then the response body should contain:
@@ -274,6 +271,7 @@ Feature: modify event on event filter
     }
     """
 
+  @concurrent
   Scenario: given check event and enrichment event filter should enrich from external api data where response is an array
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
@@ -300,8 +298,7 @@ Feature: modify event on event filter
           }
         ]
       ],
-      "description": "test-event-filter-che-event-filters-17-description",
-      "priority": 1,
+      "description": "test-event-filter-che-event-filters-4-description",
       "enabled": true,
       "config": {
         "actions": [
@@ -319,7 +316,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-che-event-filters-api-4",
@@ -332,7 +329,6 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-api-4"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/entities?search=test-resource-che-event-filters-api-4
     Then the response code should be 200
     Then the response body should contain:
@@ -359,6 +355,7 @@ Feature: modify event on event filter
     }
     """
 
+  @concurrent
   Scenario: given check event and enrichment event filter should enrich by regexp from external api data
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
@@ -386,7 +383,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-resource-che-event-filters-api-5-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [
@@ -404,7 +400,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-che-event-filters-api-5",
@@ -417,7 +413,6 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-api-5"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/entities?search=test-resource-che-event-filters-api-5
     Then the response code should be 200
     Then the response body should contain:
@@ -444,6 +439,7 @@ Feature: modify event on event filter
     }
     """
 
+  @concurrent
   Scenario: given check event and enrichment event filter should execute templates in payload
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
@@ -484,7 +480,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-resource-che-event-filters-api-6-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [
@@ -502,7 +497,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-che-event-filters-api-6",
@@ -515,7 +510,6 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-api-6"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/entities?search=test-resource-che-event-filters-api-6
     Then the response code should be 200
     Then the response body should contain:
