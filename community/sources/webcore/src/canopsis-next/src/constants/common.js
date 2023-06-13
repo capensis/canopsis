@@ -330,6 +330,8 @@ export const TRIGGERS = {
   instructionjobfail: 'instructionjobfail',
   instructioncomplete: 'instructioncomplete',
   autoinstructioncomplete: 'autoinstructioncomplete',
+  autoinstructionresultok: 'autoinstructionresultok',
+  autoinstructionresultfail: 'autoinstructionresultfail',
 };
 
 export const PRO_TRIGGERS = [
@@ -341,6 +343,8 @@ export const PRO_TRIGGERS = [
   TRIGGERS.instructionjobfail,
   TRIGGERS.instructioncomplete,
   TRIGGERS.autoinstructioncomplete,
+  TRIGGERS.autoinstructionresultok,
+  TRIGGERS.autoinstructionresultfail,
 ];
 
 export const DEPRECATED_TRIGGERS = [
