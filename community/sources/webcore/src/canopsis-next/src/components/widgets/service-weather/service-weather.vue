@@ -159,7 +159,7 @@ export default {
       });
     },
 
-    async showAlarmListModal(service) {
+    showAlarmListModal(service) {
       try {
         const widget = generatePreparedDefaultAlarmListWidget();
 
