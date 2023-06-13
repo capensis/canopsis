@@ -17,7 +17,6 @@ exports[`field-counters-selector Renders \`field-counters-selector\` with custom
       max="3"
       multiple="multiple"
       required="true"
-      types="inactive,maintenance,pause"
       value="pbh-type"
     />
     <c-enabled-field-stub
@@ -49,7 +48,6 @@ exports[`field-counters-selector Renders \`field-counters-selector\` with disabl
       disabled="true"
       max="3"
       multiple="multiple"
-      types="inactive,maintenance,pause"
       value=""
     />
     <c-enabled-field-stub

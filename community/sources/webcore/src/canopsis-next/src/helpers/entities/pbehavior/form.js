@@ -17,6 +17,7 @@ import {
   convertDateToTimestampByTimezone,
   getLocaleTimezone,
   getNowTimestamp,
+  isStartOfDay,
 } from '@/helpers/date/date';
 import { addKeyInEntities, getIdFromEntity, removeKeyFromEntities } from '@/helpers/array';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
@@ -159,7 +160,7 @@ export const exdateToForm = (exdate, timezone = getLocaleTimezone()) => ({
   ...exdate,
   key: uid(),
   begin: convertDateToDateObjectByTimezone(exdate.begin, timezone),
-  end: convertDateToDateObjectByTimezone(exdate.end, timezone),
+  end: convertDateToDateObjectByTimezone(isStartOfDay(exdate.end) ? exdate.end - 1 : exdate.end, timezone),
 });
 
 /**

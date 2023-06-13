@@ -301,6 +301,8 @@ FilePattern = "/tmp/import_%s.json"
 [Canopsis.api]
 TokenSigningMethod = "HS256"
 BulkMaxSize = 10000
+AuthorScheme = ["$username"]
+#AuthorScheme = ["$username", " ", "$firstname", " ", "$lastname", " ", "$email", " ", "$_id"]
 
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.

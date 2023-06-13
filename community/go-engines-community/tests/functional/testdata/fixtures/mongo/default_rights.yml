@@ -42,6 +42,11 @@ default_rights:
     _id: api_alarm_read
     crecord_name: <Current()._id>
     description: Read alarms
+  permission_api_alarm_update:
+    <<: *permission
+    _id: api_alarm_update
+    crecord_name: <Current()._id>
+    description: Update alarms
   permission_api_idlerule:
     <<: *permission_crud
     _id: api_idlerule
@@ -1155,6 +1160,9 @@ default_rights:
       "@permission_api_alarm_read":
         checksum: 1
         crecord_type: right
+      "@permission_api_alarm_update":
+        checksum: 1
+        crecord_type: right
       "@permission_api_idlerule":
         checksum: 15
         crecord_type: right
@@ -1408,6 +1416,8 @@ default_rights:
       address: 30 Rue du Triez 59290 Wasquehal France
       name: John Doe
     email: admin@canopsis.net
+    firstname: John
+    lastname: Doe
     role: "@role_admin"
 
   role_to_widget_filter_edit_1:
