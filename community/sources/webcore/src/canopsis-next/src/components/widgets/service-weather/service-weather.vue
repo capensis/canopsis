@@ -48,7 +48,6 @@
         )
           service-weather-item(
             :service="service",
-            :widget="widget",
             :action-required-blinking="actionRequiredSettings.is_blinking",
             :action-required-color="actionRequiredSettings.color",
             :action-required-icon="actionRequiredSettings.icon_name",
