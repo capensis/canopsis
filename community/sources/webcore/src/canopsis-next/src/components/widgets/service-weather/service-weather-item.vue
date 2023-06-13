@@ -1,22 +1,23 @@
 <template lang="pug">
-  v-card.cursor-pointer.weather-item(
+  card-with-see-alarms-btn.cursor-pointer.service-weather-item(
     :class="itemClasses",
+    :show-button="showAlarmsButton",
     :style="itemStyle",
-    tile,
-    @click.native="handleCardClick"
+    @click.native="handleCardClick",
+    @show:alarms="$emit('show:alarms')"
   )
-    v-layout.fill-height.weather-item__content(row, justify-space-between)
+    v-layout.fill-height.service-weather-item__content(row, justify-space-between)
       v-flex.position-relative.fill-height
         v-layout(:class="{ 'blinking': isBlinking }", justify-start)
-          c-compiled-template.weather-item__service-name.pa-3(
+          c-compiled-template.service-weather-item__template.pa-3(
             :template="template",
             :context="templateContext"
           )
-        v-layout.weather-item__toolbar.pt-1.pr-1(row, align-center)
+        v-layout.service-weather-item__toolbar.pt-1.pr-1(row, align-center)
           c-no-events-icon(:value="service.idle_since", :color="color", top)
           impact-state-indicator.mr-1(v-if="priorityEnabled", :value="service.impact_state")
-        v-icon.weather-item__background(size="5em", :color="color") {{ backgroundIcon }}
-        v-icon.weather-item__secondary-icon.mb-1.mr-1(
+        v-icon.service-weather-item__background(size="5em", :color="color") {{ backgroundIcon }}
+        v-icon.service-weather-item__secondary-icon.mb-1.mr-1(
           v-if="service.secondary_icon",
           :color="color"
         ) {{ service.secondary_icon }}
@@ -30,11 +31,6 @@
         :counters="counters",
         :types="stateCountersTypes"
       )
-    v-btn.see-alarms-btn(
-      v-if="showAlarmsButton",
-      flat,
-      @click.stop="$emit('show:alarms')"
-    ) {{ $t('serviceWeather.seeAlarms') }}
 </template>
 
 <script>
@@ -43,12 +39,15 @@ import { SERVICE_WEATHER_DEFAULT_EM_HEIGHT } from '@/constants';
 import { getEntityColor } from '@/helpers/entities/entity/color';
 import { getMostReadableTextColor } from '@/helpers/color';
 
+import CardWithSeeAlarmsBtn from '@/components/common/card/card-with-see-alarms-btn.vue';
+
 import AlarmPbehaviorCounters from './alarm-pbehavior-counters.vue';
 import AlarmStateCounters from './alarm-state-counters.vue';
 import ImpactStateIndicator from './impact-state-indicator.vue';
 
 export default {
   components: {
+    CardWithSeeAlarmsBtn,
     AlarmPbehaviorCounters,
     AlarmStateCounters,
     ImpactStateIndicator,
@@ -142,18 +141,12 @@ export default {
     },
 
     itemClasses() {
-      const classes = [
+      return [
         `mt-${this.margin.top}`,
         `mr-${this.margin.right}`,
         `mb-${this.margin.bottom}`,
         `ml-${this.margin.left}`,
       ];
-
-      if (this.showAlarmsButton) {
-        classes.push('v-card__with-see-alarms-btn');
-      }
-
-      return classes;
     },
 
     itemHeight() {
@@ -207,7 +200,35 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.weather-item {
+.service-weather-item {
+  &__content > * {
+    margin-right: 2px;
+
+    &:first-child, &:last-child {
+      margin: 0;
+    }
+  }
+
+  &__template {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2em;
+
+    &, & a {
+      color: white;
+    }
+  }
+
+  &__background {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 10px;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
   &__toolbar {
     position: absolute;
     top: 0;
@@ -223,14 +244,6 @@ export default {
 
     &:hover, &:focus {
       position: absolute;
-    }
-  }
-
-  &__content > * {
-    margin-right: 2px;
-
-    &:first-child, &:last-child {
-      margin: 0;
     }
   }
 }
