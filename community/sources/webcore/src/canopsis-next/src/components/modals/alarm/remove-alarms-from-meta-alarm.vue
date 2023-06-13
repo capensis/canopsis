@@ -38,7 +38,6 @@ import { mapIds } from '@/helpers/entities';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
-import { entitiesManualMetaAlarmMixin } from '@/mixins/entities/manual-meta-alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -50,7 +49,7 @@ import ModalWrapper from '../modal-wrapper.vue';
  * Modal to remove alarms from meta alarm
  */
 export default {
-  name: MODALS.removeAlarmsFromManualMetaAlarm,
+  name: MODALS.removeAlarmsFromMetaAlarm,
   $_veeValidate: {
     validator: 'new',
     delay: VALIDATION_DELAY,
@@ -59,7 +58,6 @@ export default {
   mixins: [
     modalInnerMixin,
     modalInnerItemsMixin,
-    entitiesManualMetaAlarmMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
@@ -81,11 +79,7 @@ export default {
           alarms: mapIds(this.items),
         };
 
-        await this.removeAlarmsFromManualMetaAlarm({ id: this.config.parentAlarm?._id, data });
-
-        if (this.config.afterSubmit) {
-          await this.config.afterSubmit();
-        }
+        await this.config?.action(data);
 
         this.$modals.hide();
       }
