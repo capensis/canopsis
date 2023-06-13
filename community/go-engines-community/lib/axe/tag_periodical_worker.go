@@ -10,7 +10,7 @@ import (
 
 type tagPeriodicalWorker struct {
 	PeriodicalInterval time.Duration
-	TagUpdater         alarmtag.Updater
+	TagUpdater         alarmtag.ExternalUpdater
 	Logger             zerolog.Logger
 }
 

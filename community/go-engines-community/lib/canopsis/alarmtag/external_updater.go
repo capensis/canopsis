@@ -5,38 +5,42 @@ import (
 	"errors"
 	"sync"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type Updater interface {
+type ExternalUpdater interface {
 	Add(tags map[string]string)
 	Update(ctx context.Context) error
 }
 
-func NewUpdater(client mongo.DbClient) Updater {
-	return &updater{
+func NewExternalUpdater(client mongo.DbClient) ExternalUpdater {
+	return &externalUpdater{
 		client:           client,
 		collection:       client.Collection(mongo.AlarmTagCollection),
 		configCollection: client.Collection(mongo.ConfigurationMongoCollection),
+		alarmCollection:  client.Collection(mongo.AlarmMongoCollection),
 		tags:             make(map[string]string),
 	}
 }
 
-type updater struct {
+type externalUpdater struct {
 	client           mongo.DbClient
 	collection       mongo.DbCollection
 	configCollection mongo.DbCollection
+	alarmCollection  mongo.DbCollection
 
 	tagsMx sync.Mutex
 	tags   map[string]string
 }
 
-func (u *updater) Add(eventTags map[string]string) {
+func (u *externalUpdater) Add(eventTags map[string]string) {
 	u.tagsMx.Lock()
 	defer u.tagsMx.Unlock()
 	for k, v := range eventTags {
@@ -47,7 +51,7 @@ func (u *updater) Add(eventTags map[string]string) {
 	}
 }
 
-func (u *updater) Update(ctx context.Context) error {
+func (u *externalUpdater) Update(ctx context.Context) error {
 	u.tagsMx.Lock()
 	tags := u.tags
 	u.tags = make(map[string]string, len(u.tags))
@@ -56,7 +60,7 @@ func (u *updater) Update(ctx context.Context) error {
 	return u.update(ctx, tags)
 }
 
-func (u *updater) update(ctx context.Context, tags map[string]string) error {
+func (u *externalUpdater) update(ctx context.Context, tags map[string]string) error {
 	if len(tags) == 0 {
 		return nil
 	}
@@ -69,8 +73,13 @@ func (u *updater) update(ctx context.Context, tags map[string]string) error {
 	now := types.NewCpsTime()
 
 	return u.client.WithTransaction(ctx, func(ctx context.Context) error {
-		err := u.keepNewTags(ctx, tags)
+		internalTagsToRemove, err := u.keepNewTags(ctx, tags)
 		if err != nil || len(tags) == 0 {
+			return err
+		}
+
+		err = u.removeInternalTags(ctx, internalTagsToRemove)
+		if err != nil {
 			return err
 		}
 
@@ -95,12 +104,14 @@ func (u *updater) update(ctx context.Context, tags map[string]string) error {
 				k++
 			}
 
-			models[i] = types.AlarmTag{
+			models[i] = AlarmTag{
 				ID:      utils.NewID(),
+				Type:    TypeExternal,
 				Value:   t,
 				Label:   label,
 				Color:   color,
 				Created: now,
+				Updated: now,
 			}
 			i++
 		}
@@ -110,34 +121,41 @@ func (u *updater) update(ctx context.Context, tags map[string]string) error {
 	})
 }
 
-func (u *updater) keepNewTags(ctx context.Context, tags map[string]string) error {
+func (u *externalUpdater) keepNewTags(ctx context.Context, tags map[string]string) ([]string, error) {
 	values := make([]string, len(tags))
 	i := 0
 	for t := range tags {
 		values[i] = t
 		i++
 	}
+	internalTagsToRemove := make([]string, 0)
 	cursor, err := u.collection.Find(ctx, bson.M{"value": bson.M{"$in": values}})
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer cursor.Close(ctx)
 	for cursor.Next(ctx) {
 		tag := struct {
+			Type  int64  `bson:"type"`
 			Value string `bson:"value"`
 		}{}
 		err = cursor.Decode(&tag)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
-		delete(tags, tag.Value)
+		switch tag.Type {
+		case TypeExternal:
+			delete(tags, tag.Value)
+		case TypeInternal:
+			internalTagsToRemove = append(internalTagsToRemove, tag.Value)
+		}
 	}
 
-	return nil
+	return internalTagsToRemove, nil
 }
 
-func (u *updater) getLabelColors(ctx context.Context, newTags map[string]string) (map[string]string, error) {
+func (u *externalUpdater) getLabelColors(ctx context.Context, newTags map[string]string) (map[string]string, error) {
 	newLabels := make([]string, len(newTags))
 	i := 0
 	for _, label := range newTags {
@@ -145,7 +163,17 @@ func (u *updater) getLabelColors(ctx context.Context, newTags map[string]string)
 		i++
 	}
 
-	cursor, err := u.collection.Find(ctx, bson.M{"label": bson.M{"$in": newLabels}})
+	cursor, err := u.collection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"label": bson.M{"$in": newLabels}}},
+		{"$group": bson.M{
+			"_id":   "$label",
+			"color": bson.M{"$first": "$color"},
+		}},
+		{"$project": bson.M{
+			"label": "$_id",
+			"color": 1,
+		}},
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -167,7 +195,7 @@ func (u *updater) getLabelColors(ctx context.Context, newTags map[string]string)
 	return colors, nil
 }
 
-func (u *updater) getLabelsCount(ctx context.Context) (int, error) {
+func (u *externalUpdater) getLabelsCount(ctx context.Context) (int, error) {
 	cursor, err := u.collection.Aggregate(ctx, []bson.M{
 		{"$group": bson.M{
 			"_id": "$label",
@@ -193,7 +221,7 @@ func (u *updater) getLabelsCount(ctx context.Context) (int, error) {
 	return 0, nil
 }
 
-func (u *updater) getColors(ctx context.Context) ([]string, error) {
+func (u *externalUpdater) getColors(ctx context.Context) ([]string, error) {
 	v := struct {
 		Colors []string `bson:"colors"`
 	}{}
@@ -206,4 +234,85 @@ func (u *updater) getColors(ctx context.Context) ([]string, error) {
 	}
 
 	return v.Colors, nil
+}
+
+func (u *externalUpdater) removeInternalTags(ctx context.Context, tags []string) error {
+	if len(tags) == 0 {
+		return nil
+	}
+
+	_, err := u.collection.DeleteMany(ctx, bson.M{
+		"type":  TypeInternal,
+		"value": bson.M{"$in": tags},
+	})
+	if err != nil {
+		return err
+	}
+
+	match := make([]bson.M, len(tags))
+	unset := bson.M{}
+	for i, tag := range tags {
+		match[i] = bson.M{"internal_tags." + tag: bson.M{"$ne": nil}}
+		unset["internal_tags."+tag] = ""
+	}
+	cursor, err := u.alarmCollection.Find(ctx, bson.M{
+		"v.resolved": nil,
+		"$or":        match,
+	}, options.Find().SetProjection(bson.M{
+		"_id":           1,
+		"external_tags": 1,
+	}))
+	if err != nil {
+		return err
+	}
+	defer cursor.Close(ctx)
+	writeModels := make([]mongodriver.WriteModel, 0, canopsis.DefaultBulkSize)
+	for cursor.Next(ctx) {
+		var alarm types.Alarm
+		err = cursor.Decode(&alarm)
+		if err != nil {
+			return err
+		}
+
+		internalTags := make([]string, 0, len(tags))
+		for _, tag := range tags {
+			found := false
+			for _, externalTag := range alarm.ExternalTags {
+				if tag == externalTag {
+					found = true
+					break
+				}
+			}
+			if !found {
+				internalTags = append(internalTags, tag)
+			}
+		}
+
+		writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
+			SetFilter(bson.M{
+				"_id":        alarm.ID,
+				"v.resolved": nil,
+			}).
+			SetUpdate(bson.M{
+				"$pullAll": bson.M{"tags": internalTags},
+				"$unset":   unset,
+			}))
+		if len(writeModels) == canopsis.DefaultBulkSize {
+			_, err = u.alarmCollection.BulkWrite(ctx, writeModels)
+			if err != nil {
+				return err
+			}
+
+			writeModels = writeModels[:0]
+		}
+	}
+
+	if len(writeModels) > 0 {
+		_, err = u.alarmCollection.BulkWrite(ctx, writeModels)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
