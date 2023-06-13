@@ -4,14 +4,13 @@ import (
 	"context"
 	"fmt"
 	"math"
-	"strings"
-	"text/template"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libamqp "github.com/rabbitmq/amqp091-go"
@@ -27,6 +26,7 @@ type service struct {
 	entityCollection          mongo.DbCollection
 	encoder                   encoding.Encoder
 	pubChannel                amqp.Publisher
+	templateExecutor          template.Executor
 	logger                    zerolog.Logger
 	pubExchangeName           string
 	pubQueueName              string
@@ -42,6 +42,7 @@ func NewStateCountersService(
 	pubChannel amqp.Publisher,
 	pubExchangeName, pubQueueName string,
 	encoder encoding.Encoder,
+	templateExecutor template.Executor,
 	logger zerolog.Logger,
 ) StateCountersService {
 	return &service{
@@ -53,6 +54,7 @@ func NewStateCountersService(
 		logger:                    logger,
 		pubExchangeName:           pubExchangeName,
 		pubQueueName:              pubQueueName,
+		templateExecutor:          templateExecutor,
 	}
 }
 
@@ -474,7 +476,7 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 			}
 		}
 
-		output, err := s.getServiceOutput(counters)
+		output, err := s.templateExecutor.Execute(counters.OutputTemplate, counters)
 		if err != nil {
 			return nil, err
 		}
@@ -631,7 +633,7 @@ func (s *service) RecomputeEntityServiceCounters(ctx context.Context, event type
 		return nil, err
 	}
 
-	output, err := s.getServiceOutput(counters)
+	output, err := s.templateExecutor.Execute(counters.OutputTemplate, counters)
 	if err != nil {
 		return nil, err
 	}
@@ -642,22 +644,4 @@ func (s *service) RecomputeEntityServiceCounters(ctx context.Context, event type
 	}
 
 	return updatedServiceStates, nil
-}
-
-func (s *service) getServiceOutput(counters EntityServiceCounters) (string, error) {
-	tpl, err := template.New("template").Parse(counters.OutputTemplate)
-	if err != nil {
-		return "", fmt.Errorf(
-			"unable to parse output template for service %s: %w", counters.OutputTemplate, err)
-	}
-
-	b := strings.Builder{}
-	err = tpl.Execute(&b, counters)
-	if err != nil {
-		return "", fmt.Errorf(
-			"unable to execute output template for service %s: %w",
-			counters.OutputTemplate, err)
-	}
-
-	return b.String(), nil
 }

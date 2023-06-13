@@ -285,7 +285,6 @@ func InitializeScenario(
 
 			return ctx, amqpClient.IWaitTheEndOfSentEventProcessing(ctx, doc)
 		})
-		scenarioCtx.Step(`^I wait the end of (\d+)-(\d+) events processing`, amqpClient.IWaitTheEndOfMinMaxEvents)
 		scenarioCtx.Step(`^I call RPC to engine-axe with alarm ([^:]+):$`, amqpClient.ICallRPCAxeRequest)
 		scenarioCtx.Step(`^I connect to websocket$`, websocketClient.IConnect)
 		scenarioCtx.Step(`^I send message to websocket:$`, websocketClient.ISend)

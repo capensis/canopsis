@@ -213,46 +213,6 @@ func (c *AmqpClient) IWaitTheEndOfEventsProcessing(ctx context.Context, expected
 	}
 }
 
-/*
-*
-Step example:
-
-	When I wait the end of 2-3 events processing
-*/
-func (c *AmqpClient) IWaitTheEndOfMinMaxEvents(minCount int, maxCount int) error {
-	return nil
-	//done := time.After(3 * time.Second)
-	//msgsCount := 0
-
-	//for {
-	//	select {
-	//	case d, ok := <-c.mainStreamAckMsgs:
-	//		if !ok {
-	//			return errors.New("consume chan is closed")
-	//		}
-	//
-	//		msgsCount++
-	//
-	//		event := &types.Event{}
-	//		err := c.decoder.Decode(d.Body, event)
-	//		c.eventLogger.Info().Err(err).
-	//			Str("event_type", event.EventType).
-	//			Str("entity", event.GetEID()).
-	//			RawJSON("body", d.Body).Msg("received event")
-	//
-	//		if msgsCount == maxCount {
-	//			return nil
-	//		}
-	//	case <-done:
-	//		if msgsCount >= minCount {
-	//			return nil
-	//		}
-	//
-	//		return fmt.Errorf("reached timeout: waiting for at least %d events, but got %d", minCount, msgsCount)
-	//	}
-	//}
-}
-
 // IWaitTheEndOfEventProcessingWhichContains
 //
 // Step example:
