@@ -484,6 +484,12 @@ export default {
     [TRIGGERS.autoinstructioncomplete]: {
       text: 'Auto instruction is completed',
     },
+    [TRIGGERS.autoinstructionresultok]: {
+      text: 'Alarm is in OK state after all auto instructions',
+    },
+    [TRIGGERS.autoinstructionresultfail]: {
+      text: 'Alarm is in not OK state after all auto instructions',
+    },
   },
   themes: {
     [THEMES_NAMES.canopsis]: 'Canopsis',
