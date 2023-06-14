@@ -1,40 +1,28 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { PATTERN_FIELD_TYPES } from '@/constants';
 
 import CMixedField from '@/components/forms/fields/c-mixed-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-input-type-field': true,
   'c-mixed-input-field': true,
 };
 
-const factory = (options = {}) => shallowMount(CMixedField, {
-  localVue,
-  stubs,
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CMixedField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 const selectInputTypeField = wrapper => wrapper.find('c-input-type-field-stub');
 
 describe('c-mixed-field', () => {
+  const factory = generateShallowRenderer(CMixedField, {
+    stubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(CMixedField, { stubs });
+
   it('Input type changed after trigger input type field with string value', () => {
     const wrapper = factory({
       propsData: {

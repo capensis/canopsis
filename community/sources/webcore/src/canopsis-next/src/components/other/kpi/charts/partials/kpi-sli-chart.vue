@@ -16,7 +16,7 @@ import {
 
 import { colorToRgba } from '@/helpers/color';
 import { convertDurationToString, fromSeconds } from '@/helpers/date/duration';
-import { getDateLabelBySampling } from '@/helpers/metrics';
+import { getDateLabelBySampling } from '@/helpers/entities/metric/list';
 
 import BarChart from '@/components/common/chart/bar-chart.vue';
 

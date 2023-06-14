@@ -36,13 +36,12 @@ import { isEqual } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { SOCKET_ROOMS } from '@/config';
-
 import { USERS_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 
-import HealthcheckNetworkGraph from '@/components/other/healthcheck/exploitation/healthcheck-network-graph.vue';
-import HealthcheckGraphs from '@/components/other/healthcheck/exploitation/healthcheck-graphs.vue';
+import HealthcheckNetworkGraph from '@/components/other/healthcheck/healthcheck-network-graph.vue';
+import HealthcheckGraphs from '@/components/other/healthcheck/healthcheck-graphs.vue';
 import HealthcheckParameters from '@/components/other/healthcheck/healthcheck-parameters.vue';
 import HealthcheckEnginesMetrics from '@/components/other/healthcheck/healthcheck-engines-metrics.vue';
 

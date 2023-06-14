@@ -1,23 +1,15 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
-import { createMockedStoreModules } from '@unit/utils/store';
 import ClickOutside from '@/services/click-outside';
-import {
-  EVENT_DEFAULT_ORIGIN,
-  EVENT_ENTITY_TYPES,
-  EVENT_INITIATORS,
-  TIME_UNITS,
-} from '@/constants';
+import { TIME_UNITS } from '@/constants';
 
 import CreateSnoozeEvent from '@/components/modals/alarm/create-snooze-event.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
@@ -30,43 +22,6 @@ const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'snooze-event-form': true,
 };
-
-const factory = (options = {}) => shallowMount(CreateSnoozeEvent, {
-  localVue,
-  stubs,
-  attachTo: document.body,
-  propsData: {
-    modal: {
-      config: {},
-    },
-  },
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CreateSnoozeEvent, {
-  localVue,
-  stubs: snapshotStubs,
-  propsData: {
-    modal: {
-      config: {},
-    },
-  },
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
 
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
 const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
@@ -99,45 +54,45 @@ describe('create-snooze-event', () => {
     },
   };
   const items = [alarm];
-  const eventData = {
-    id: alarm._id,
-    component: alarm.v.component,
-    connector: alarm.v.connector,
-    connector_name: alarm.v.connector_name,
-    resource: alarm.v.resource,
-    crecord_type: EVENT_ENTITY_TYPES.snooze,
-    event_type: EVENT_ENTITY_TYPES.snooze,
-    initiator: EVENT_INITIATORS.user,
-    origin: EVENT_DEFAULT_ORIGIN,
-    ref_rk: `${alarm.v.resource}/${alarm.v.component}`,
-    source_type: alarm.entity.type,
-    state: alarm.v.state.val,
-    timestamp: timestamp / 1000,
-  };
   const snoozeEventData = {
-    ...eventData,
-
-    duration: 60,
-    output: '',
+    duration: {
+      unit: TIME_UNITS.minute,
+      value: 1,
+    },
+    comment: '',
   };
   const config = { items };
 
-  const createEvent = jest.fn();
-  const eventModule = {
-    name: 'event',
-    actions: {
-      create: createEvent,
+  const factory = generateShallowRenderer(CreateSnoozeEvent, {
+    stubs,
+    attachTo: document.body,
+    propsData: {
+      modal: {
+        config: {},
+      },
     },
-  };
-  const store = createMockedStoreModules([eventModule]);
-
-  afterEach(() => {
-    createEvent.mockClear();
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(CreateSnoozeEvent, {
+    stubs: snapshotStubs,
+    propsData: {
+      modal: {
+        config: {},
+      },
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
   });
 
   test('Default parameters applied to form', () => {
     const wrapper = factory({
-      store,
       mocks: {
         $modals,
       },
@@ -146,7 +101,7 @@ describe('create-snooze-event', () => {
     const snoozeEventForm = selectSnoozeEventForm(wrapper);
 
     expect(snoozeEventForm.vm.form).toEqual({
-      output: '',
+      comment: '',
       duration: {
         unit: TIME_UNITS.minute,
         value: 1,
@@ -155,15 +110,14 @@ describe('create-snooze-event', () => {
   });
 
   test('Form submitted after trigger submit button', async () => {
-    const afterSubmit = jest.fn();
+    const action = jest.fn();
 
     const wrapper = factory({
-      store,
       propsData: {
         modal: {
           config: {
             items,
-            afterSubmit,
+            action,
           },
         },
       },
@@ -178,24 +132,19 @@ describe('create-snooze-event', () => {
 
     await flushPromises();
 
-    expect(createEvent).toBeCalledTimes(1);
-    expect(createEvent).toBeCalledWith(
-      expect.any(Object),
-      {
-        data: [snoozeEventData],
-      },
-      undefined,
-    );
-    expect(afterSubmit).toBeCalled();
+    expect(action).toBeCalledWith(snoozeEventData);
     expect($modals.hide).toBeCalledWith();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
+    const action = jest.fn();
     const wrapper = factory({
-      store,
       propsData: {
         modal: {
-          config,
+          config: {
+            ...config,
+            action,
+          },
         },
       },
       mocks: {
@@ -221,23 +170,25 @@ describe('create-snooze-event', () => {
 
     await flushPromises();
 
-    expect(createEvent).not.toBeCalled();
-    expect($modals.hide).not.toBeCalled();
+    expect(action).not.toBeCalled();
 
     validator.detach('name');
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
+    const action = jest.fn();
     const formErrors = {
       duration: 'Ticket error',
-      output: 'Output error',
+      comment: 'Comment error',
     };
-    createEvent.mockRejectedValueOnce({ ...formErrors, unavailableField: 'Error' });
+    action.mockRejectedValueOnce({ ...formErrors, unavailableField: 'Error' });
     const wrapper = factory({
-      store,
       propsData: {
         modal: {
-          config,
+          config: {
+            ...config,
+            action,
+          },
         },
       },
       mocks: {
@@ -254,30 +205,28 @@ describe('create-snooze-event', () => {
     const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(formErrors).toEqual(addedErrors);
-    expect(createEvent).toBeCalledTimes(1);
-    expect(createEvent).toBeCalledWith(
-      expect.any(Object),
-      {
-        data: [snoozeEventData],
-      },
-      undefined,
-    );
+    expect(action).toBeCalledWith(snoozeEventData);
     expect($modals.hide).not.toBeCalledWith();
+
+    action.mockClear();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
+    const action = jest.fn();
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
     const errors = {
       unavailableField: 'Error',
       anotherUnavailableField: 'Second error',
     };
-    createEvent.mockRejectedValueOnce(errors);
+    action.mockRejectedValueOnce(errors);
 
     const wrapper = factory({
-      store,
       propsData: {
         modal: {
-          config,
+          config: {
+            ...config,
+            action,
+          },
         },
       },
       mocks: {
@@ -296,25 +245,22 @@ describe('create-snooze-event', () => {
     expect($popups.error).toBeCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(createEvent).toBeCalledTimes(1);
-    expect(createEvent).toBeCalledWith(
-      expect.any(Object),
-      {
-        data: [snoozeEventData],
-      },
-      undefined,
-    );
+    expect(action).toBeCalledWith(snoozeEventData);
     expect($modals.hide).not.toBeCalledWith();
 
     consoleErrorSpy.mockClear();
+    action.mockClear();
   });
 
   test('Modal submitted with correct data after trigger form', async () => {
+    const action = jest.fn();
     const wrapper = factory({
-      store,
       propsData: {
         modal: {
-          config,
+          config: {
+            ...config,
+            action,
+          },
         },
       },
       mocks: {
@@ -327,9 +273,9 @@ describe('create-snooze-event', () => {
     const newForm = {
       duration: {
         unit: TIME_UNITS.hour,
-        value: 1,
+        value: 2,
       },
-      output: 'output',
+      comment: 'comment',
     };
 
     snoozeEventForm.vm.$emit('input', newForm);
@@ -340,24 +286,12 @@ describe('create-snooze-event', () => {
 
     await flushPromises();
 
-    expect(createEvent).toBeCalledTimes(1);
-    expect(createEvent).toBeCalledWith(
-      expect.any(Object),
-      {
-        data: [{
-          ...snoozeEventData,
-          duration: 3600,
-          output: newForm.output,
-        }],
-      },
-      undefined,
-    );
+    expect(action).toBeCalledWith(newForm);
     expect($modals.hide).toBeCalled();
   });
 
   test('Modal hidden after trigger cancel button', async () => {
     const wrapper = factory({
-      store,
       propsData: {
         modal: {
           config,
@@ -379,7 +313,6 @@ describe('create-snooze-event', () => {
 
   test('Renders `create-snooze-event` with empty modal', () => {
     const wrapper = snapshotFactory({
-      store,
       propsData: {
         modal: {
           config,
@@ -395,7 +328,6 @@ describe('create-snooze-event', () => {
 
   test('Renders `create-snooze-event` with config data', () => {
     const wrapper = snapshotFactory({
-      store,
       propsData: {
         modal: {
           config: {

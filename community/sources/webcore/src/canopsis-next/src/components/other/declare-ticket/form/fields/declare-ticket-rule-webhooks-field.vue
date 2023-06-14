@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { declareTicketRuleWebhookToForm } from '@/helpers/forms/declare-ticket-rule';
+import { declareTicketRuleWebhookToForm } from '@/helpers/entities/declare-ticket/rule/form';
 
 import { formArrayMixin } from '@/mixins/form';
 

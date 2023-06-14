@@ -13,7 +13,7 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { formToPbehaviorException, pbehaviorExceptionToForm } from '@/helpers/forms/exceptions-pbehavior';
+import { formToPbehaviorException, pbehaviorExceptionToForm } from '@/helpers/entities/pbehavior/exception/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
