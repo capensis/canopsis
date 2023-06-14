@@ -1,12 +1,10 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
 import { TIME_UNITS } from '@/constants';
 
 import AlarmStatusRuleForm from '@/components/other/alarm-status-rule/form/alarm-status-rule-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-name-field': true,
@@ -27,20 +25,6 @@ const snapshotStubs = {
   'alarm-status-rule-patterns-form': true,
 };
 
-const factory = (options = {}) => shallowMount(AlarmStatusRuleForm, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(AlarmStatusRuleForm, {
-  localVue,
-  stubs: snapshotStubs,
-
-  ...options,
-});
-
 const selectNameField = wrapper => wrapper.find('c-name-field-stub');
 const selectDurationField = wrapper => wrapper.find('c-duration-field-stub');
 const selectPriorityField = wrapper => wrapper.find('c-priority-field-stub');
@@ -49,6 +33,9 @@ const selectDescriptionField = wrapper => wrapper.find('c-description-field-stub
 const selectAlarmStatusRulePatternsForm = wrapper => wrapper.find('alarm-status-rule-patterns-form-stub');
 
 describe('alarm-status-rule-form', () => {
+  const factory = generateShallowRenderer(AlarmStatusRuleForm, { stubs });
+  const snapshotFactory = generateRenderer(AlarmStatusRuleForm, { stubs: snapshotStubs });
+
   test('Name changed after trigger text field', () => {
     const wrapper = factory({
       propsData: {

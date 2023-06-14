@@ -25,7 +25,6 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import VRuntimeTemplate from 'v-runtime-template';
 
 import {
   MODALS,
@@ -33,7 +32,7 @@ import {
   TEST_SUITE_COLORS,
 } from '@/constants';
 
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
 import { authMixin } from '@/mixins/auth';
 
@@ -43,7 +42,6 @@ const { mapActions } = createNamespacedHelpers('alarm');
 
 export default {
   components: {
-    VRuntimeTemplate,
     TestSuiteStatistics,
   },
   mixins: [authMixin],

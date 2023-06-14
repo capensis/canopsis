@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pattern-operator-information Renders \`pattern-operator-information\` 1`] = `
+<div
+  class="layout pattern-operator-information row align-center"
+>
+  <c-pattern-operator-chip-stub
+    class="mr-4"
+  >
+    <div
+      class="default-slot"
+    />
+  </c-pattern-operator-chip-stub>
+  <div
+    class="pattern-operator-information__bracket"
+  />
+</div>
+`;

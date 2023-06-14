@@ -1,12 +1,10 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createCheckboxInputStub } from '@unit/stubs/input';
 
 import PbehaviorExceptionField from '@/components/other/pbehavior/exceptions/fields/pbehavior-exception-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'date-time-splitted-range-picker-field': true,
@@ -32,11 +30,11 @@ const selectFullDayCheckbox = wrapper => wrapper.find('.v-checkbox');
 
 describe('pbehavior-exception-field', () => {
   const factory = generateShallowRenderer(PbehaviorExceptionField, {
-    localVue,
+
     stubs,
   });
   const snapshotFactory = generateRenderer(PbehaviorExceptionField, {
-    localVue,
+
     stubs: snapshotStubs,
   });
 

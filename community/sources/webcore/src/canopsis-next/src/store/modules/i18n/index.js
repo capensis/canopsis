@@ -1,10 +1,10 @@
 import Vue from 'vue';
 
-import { setDateLocale } from '@/helpers/date/date';
-
 import { DEFAULT_LOCALE, LOCALE_PRIORITIES } from '@/config';
 
 import i18n from '@/i18n';
+
+import { setDateLocale } from '@/helpers/date/date';
 
 export const types = {
   SET_LOCALE_PRIORITY: 'SET_LOCALE_PRIORITY',

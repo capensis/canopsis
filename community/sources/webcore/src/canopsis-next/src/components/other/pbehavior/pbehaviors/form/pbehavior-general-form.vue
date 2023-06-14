@@ -51,7 +51,6 @@
 import { get } from 'lodash';
 
 import { MAX_PBEHAVIOR_DATES_DIFF_YEARS } from '@/config';
-
 import { DATETIME_FORMATS, PBEHAVIOR_TYPE_TYPES, TIME_UNITS } from '@/constants';
 
 import {

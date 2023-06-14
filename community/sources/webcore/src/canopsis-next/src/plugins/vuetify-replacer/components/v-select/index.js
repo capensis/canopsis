@@ -4,7 +4,6 @@ import VCombobox from 'vuetify/es5/components/VCombobox';
 import VAutocomplete from 'vuetify/es5/components/VAutocomplete';
 import VOverflowBtn from 'vuetify/es5/components/VOverflowBtn';
 import { deprecate } from 'vuetify/es5/util/console';
-
 import VSelectOriginal from 'vuetify/es5/components/VSelect/VSelect';
 
 const VSelect = VSelectOriginal.extend({

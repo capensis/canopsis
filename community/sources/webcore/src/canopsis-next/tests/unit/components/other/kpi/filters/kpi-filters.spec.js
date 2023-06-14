@@ -1,13 +1,11 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { CRUD_ACTIONS, MODALS, USERS_PERMISSIONS } from '@/constants';
 
 import KpiFilters from '@/components/other/kpi/filters/kpi-filters.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'kpi-filters-list': true,
@@ -32,23 +30,12 @@ const defaultStore = createMockedStoreModules([{
   },
 }]);
 
-const factory = (options = {}) => shallowMount(KpiFilters, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(KpiFilters, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 const selectFiltersList = wrapper => wrapper.find('kpi-filters-list-stub');
 
 describe('kpi-filters', () => {
+  const factory = generateShallowRenderer(KpiFilters, { stubs });
+  const snapshotFactory = generateRenderer(KpiFilters, { stubs });
+
   it('Filters fetched after mount', async () => {
     const fetchFilters = jest.fn();
     factory({

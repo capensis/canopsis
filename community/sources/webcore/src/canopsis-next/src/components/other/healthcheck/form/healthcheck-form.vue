@@ -30,7 +30,7 @@
 <script>
 import { HEALTHCHECK_ENGINES_NAMES } from '@/constants';
 
-import HealthcheckEngineInstanceField from './partials/healthcheck-engine-instance-field.vue';
+import HealthcheckEngineInstanceField from './fields/healthcheck-engine-instance-field.vue';
 
 export default {
   inject: ['$validator'],

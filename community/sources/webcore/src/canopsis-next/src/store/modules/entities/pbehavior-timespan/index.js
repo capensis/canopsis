@@ -1,6 +1,6 @@
-import request from '@/services/request';
-
 import { API_ROUTES } from '@/config';
+
+import request from '@/services/request';
 
 export default {
   namespaced: true,

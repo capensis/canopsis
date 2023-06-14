@@ -1,6 +1,7 @@
 <script>
 import { debounce } from 'lodash';
 import { GridItem } from 'vue-grid-layout';
+
 import { createCoreData, getControlPosition } from '../helpers/draggable-utils';
 
 export default {

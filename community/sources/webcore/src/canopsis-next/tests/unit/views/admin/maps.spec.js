@@ -2,34 +2,18 @@ import Faker from 'faker';
 import { omit } from 'lodash';
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
 import { CRUD_ACTIONS, MAP_TYPES, MODALS, USERS_PERMISSIONS } from '@/constants';
 import Maps from '@/views/admin/maps.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'c-page-header': true,
   'maps-list': true,
   'c-fab-btn': true,
 };
-
-const factory = (options = {}) => shallowMount(Maps, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(Maps, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectFabButton = wrapper => wrapper.find('c-fab-btn-stub');
 const selectMapsList = wrapper => wrapper.find('maps-list-stub');
@@ -79,6 +63,9 @@ describe('maps', () => {
     authModule,
     mapModule,
   ]);
+
+  const factory = generateShallowRenderer(Maps, { stubs });
+  const snapshotFactory = generateRenderer(Maps, { stubs });
 
   afterEach(() => {
     currentUserPermissionsById.mockClear();

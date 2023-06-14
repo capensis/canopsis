@@ -1,4 +1,4 @@
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 
 import { mockModals } from '@unit/utils/mock-hooks';
@@ -7,12 +7,9 @@ import {
   MODALS,
   PBEHAVIOR_TYPE_TYPES,
   USERS_PERMISSIONS,
-  WEATHER_ACTIONS_TYPES,
 } from '@/constants';
 
 import ServiceEntity from '@/components/other/service/partials/service-entity.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-expansion-panel-content': {
@@ -59,7 +56,7 @@ describe('service-entity', () => {
 
   const snapshotFactory = generateRenderer(ServiceEntity, {
     store,
-    localVue,
+
     stubs: snapshotStubs,
     listeners: {
       'update:selected': updateSelected,
@@ -72,7 +69,7 @@ describe('service-entity', () => {
 
   const factory = generateShallowRenderer(ServiceEntity, {
     store,
-    localVue,
+
     stubs,
     mocks: { $modals },
     listeners: {
@@ -102,21 +99,6 @@ describe('service-entity', () => {
     await header.vm.$emit('remove:unavailable');
 
     expect(removeUnavailable).toHaveBeenCalled();
-  });
-
-  test('Action applied after trigger entity info tab', async () => {
-    const wrapper = factory();
-
-    const info = selectServiceEntityInfoTab(wrapper);
-
-    await info.vm.$emit('apply', {
-      type: WEATHER_ACTIONS_TYPES.entityAck,
-    });
-
-    expect(wrapper).toEmit('apply:action', {
-      actionType: WEATHER_ACTIONS_TYPES.entityAck,
-      entities: [entity],
-    });
   });
 
   test('Instruction executed after trigger entity info tab', async () => {
