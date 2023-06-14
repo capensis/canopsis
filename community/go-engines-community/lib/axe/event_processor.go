@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"runtime/trace"
+	"strings"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -783,7 +784,7 @@ func UpdateAlarmState(alarm *types.Alarm, entity types.Entity, timestamp types.C
 		}
 
 		// Create new Step to keep track of the alarm history
-		newStep := types.NewAlarmStep(types.AlarmStepStateIncrease, timestamp, alarm.Value.Connector+"."+alarm.Value.ConnectorName, output, "", "", "")
+		newStep := types.NewAlarmStep(types.AlarmStepStateIncrease, timestamp, strings.Replace(entity.Connector, "/", ".", 1), output, "", "", "")
 		newStep.Value = state
 
 		if state < currentState {
@@ -819,7 +820,7 @@ func UpdateAlarmState(alarm *types.Alarm, entity types.Entity, timestamp types.C
 	}
 
 	// Create new Step to keep track of the alarm history
-	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, timestamp, alarm.Value.Connector+"."+alarm.Value.ConnectorName, output, "", "", "")
+	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, timestamp, strings.Replace(entity.Connector, "/", ".", 1), output, "", "", "")
 	newStepStatus.Value = newStatus
 
 	if newStatus < currentStatus {
