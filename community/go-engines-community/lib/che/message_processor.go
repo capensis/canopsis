@@ -128,7 +128,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}
 
 	// Process event by event filters.
-	if p.FeatureEventProcessing {
+	if p.FeatureEventProcessing && event.Entity.Enabled {
 		event, err = p.EventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
 			if errors.Is(err, eventfilter.ErrDropOutcome) {
