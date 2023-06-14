@@ -1,10 +1,8 @@
 import Faker from 'faker';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'pbehavior-general-form': true,
@@ -21,8 +19,8 @@ const selectPbehaviorRruleField = wrapper => wrapper.find('pbehavior-recurrence-
 const selectEnabledColorPickerField = wrapper => wrapper.find('c-enabled-color-picker-field-stub');
 
 describe('pbehavior-form', () => {
-  const factory = generateShallowRenderer(PbehaviorForm, { localVue, stubs });
-  const snapshotFactory = generateRenderer(PbehaviorForm, { localVue, stubs });
+  const factory = generateShallowRenderer(PbehaviorForm, { stubs });
+  const snapshotFactory = generateRenderer(PbehaviorForm, { stubs });
 
   test('General options updated after trigger general pbehavior form', () => {
     const form = {

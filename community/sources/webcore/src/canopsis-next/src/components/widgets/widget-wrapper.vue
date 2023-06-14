@@ -26,15 +26,13 @@ import {
   COMPONENTS_BY_WIDGET_TYPES,
 } from '@/constants';
 
-import {
-  prepareAlarmListWidget,
-  prepareContextWidget,
-  prepareServiceWeatherWidget,
-  prepareStatsCalendarAndCounterWidget,
-  prepareMapWidget,
-} from '@/helpers/widgets';
-
 import featuresService from '@/services/features';
+
+import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
+import { prepareContextWidget } from '@/helpers/entities/widget/forms/context';
+import { prepareServiceWeatherWidget } from '@/helpers/entities/widget/forms/service-weather';
+import { prepareStatsCalendarAndCounterWidget } from '@/helpers/entities/widget/forms/stats-calendar';
+import { prepareMapWidget } from '@/helpers/entities/widget/forms/map';
 
 import AlarmsListWidget from './alarm/alarms-list.vue';
 import EntitiesListWidget from './context/entities-list.vue';

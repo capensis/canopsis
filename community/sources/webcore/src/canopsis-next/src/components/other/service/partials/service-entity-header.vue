@@ -12,7 +12,7 @@
       v-icon(color="white", small) {{ entity.icon }}
     v-flex.pl-1.white--text.subheading(xs12)
       v-layout(align-center)
-        div.mr-1.entity-name(v-resize-text="{ maxFontSize: '16px' }") {{ entityName }}
+        div.mr-1.entity-name {{ entityName }}
         v-btn.mx-1(
           v-for="icon in extraIcons",
           :key="icon.icon",
@@ -37,10 +37,9 @@
 import { get } from 'lodash';
 
 import { COLORS } from '@/config';
-
 import { ENTITIES_STATUSES, EVENT_ENTITY_TYPES } from '@/constants';
 
-import { getEntityEventIcon } from '@/helpers/icon';
+import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
 
 export default {
   props: {

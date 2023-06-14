@@ -100,7 +100,7 @@ import {
   ALARM_FIELDS,
 } from '@/constants';
 
-import { isLinksWidgetColumn } from '@/helpers/forms/shared/widget-column';
+import { isLinksWidgetColumn } from '@/helpers/entities/widget/column/form';
 
 import { formMixin } from '@/mixins/form';
 import { entitiesInfosMixin } from '@/mixins/entities/infos';

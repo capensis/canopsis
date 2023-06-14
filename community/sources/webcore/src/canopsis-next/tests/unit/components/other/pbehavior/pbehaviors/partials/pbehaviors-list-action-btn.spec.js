@@ -1,6 +1,6 @@
 import Faker from 'faker';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { CRUD_ACTIONS, MODALS, USERS_PERMISSIONS } from '@/constants';
@@ -11,8 +11,6 @@ const stubs = {
   'c-action-btn': true,
 };
 
-const localVue = createVueInstance();
-
 const selectActionButtonNode = wrapper => wrapper.vm.$children[0];
 
 describe('pbehaviors-list-action-btn', () => {
@@ -22,12 +20,12 @@ describe('pbehaviors-list-action-btn', () => {
   const store = createMockedStoreModules([authModule]);
 
   const factory = generateShallowRenderer(PbehaviorsListActionBtn, {
-    localVue,
+
     stubs,
     mocks: { $modals },
   });
   const snapshotFactory = generateRenderer(PbehaviorsListActionBtn, {
-    localVue,
+
     stubs,
     mocks: { $modals },
   });

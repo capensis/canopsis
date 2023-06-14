@@ -1,12 +1,10 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 
 import InfoPopupForm from '@/components/widgets/alarm/forms/info-popup-form.vue';
 import { ALARM_FIELDS } from '@/constants';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
@@ -17,24 +15,13 @@ const snapshotStubs = {
   'text-editor-field': true,
 };
 
-const factory = (options = {}) => shallowMount(InfoPopupForm, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(InfoPopupForm, {
-  localVue,
-  stubs: snapshotStubs,
-
-  ...options,
-});
-
 const selectColumnField = wrapper => wrapper.find('.v-select');
 const selectTextEditorField = wrapper => wrapper.find('text-editor-field-stub');
 
 describe('info-popup-form', () => {
+  const factory = generateShallowRenderer(InfoPopupForm, { stubs });
+  const snapshotFactory = generateRenderer(InfoPopupForm, { stubs: snapshotStubs });
+
   test('Column changed after trigger select field', () => {
     const columns = [
       { value: Faker.datatype.string() },

@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { externalDataItemToForm } from '@/helpers/forms/shared/external-data';
+import { externalDataItemToForm } from '@/helpers/entities/shared/external-data/form';
 
 import { formArrayMixin } from '@/mixins/form';
 

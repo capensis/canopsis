@@ -17,7 +17,7 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { eventFilterToForm, formToEventFilter } from '@/helpers/forms/event-filter';
+import { eventFilterToForm, formToEventFilter } from '@/helpers/entities/event-filter/rule/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

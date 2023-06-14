@@ -1,34 +1,21 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import GeomapMapForm from '@/components/other/map/form/geomap-map-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-name-field': true,
   'geomap-editor': true,
 };
 
-const factory = (options = {}) => shallowMount(GeomapMapForm, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(GeomapMapForm, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 const selectNameField = wrapper => wrapper.find('c-name-field-stub');
 const selectGeomapEditor = wrapper => wrapper.find('geomap-editor-stub');
 
 describe('geomap-map-form', () => {
+  const factory = generateShallowRenderer(GeomapMapForm, { stubs });
+  const snapshotFactory = generateRenderer(GeomapMapForm, { stubs });
+
   test('Name changed after trigger name field', () => {
     const form = {
       name: '',
