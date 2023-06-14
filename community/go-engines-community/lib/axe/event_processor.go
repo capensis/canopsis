@@ -784,7 +784,13 @@ func UpdateAlarmState(alarm *types.Alarm, entity types.Entity, timestamp types.C
 		}
 
 		// Create new Step to keep track of the alarm history
-		newStep := types.NewAlarmStep(types.AlarmStepStateIncrease, timestamp, strings.Replace(entity.Connector, "/", ".", 1), output, "", "", "")
+		var newStep types.AlarmStep
+		if entity.Type != types.EntityTypeService {
+			newStep = types.NewAlarmStep(types.AlarmStepStateIncrease, timestamp, strings.Replace(entity.Connector, "/", ".", 1), output, "", "", "")
+		} else {
+			newStep = types.NewAlarmStep(types.AlarmStepStateIncrease, timestamp, alarm.Value.Connector+"."+alarm.Value.ConnectorName, output, "", "", "")
+		}
+
 		newStep.Value = state
 
 		if state < currentState {
@@ -820,7 +826,12 @@ func UpdateAlarmState(alarm *types.Alarm, entity types.Entity, timestamp types.C
 	}
 
 	// Create new Step to keep track of the alarm history
-	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, timestamp, strings.Replace(entity.Connector, "/", ".", 1), output, "", "", "")
+	var newStepStatus types.AlarmStep
+	if entity.Type != types.EntityTypeService {
+		newStepStatus = types.NewAlarmStep(types.AlarmStepStatusIncrease, timestamp, strings.Replace(entity.Connector, "/", ".", 1), output, "", "", "")
+	} else {
+		newStepStatus = types.NewAlarmStep(types.AlarmStepStatusIncrease, timestamp, alarm.Value.Connector+"."+alarm.Value.ConnectorName, output, "", "", "")
+	}
 	newStepStatus.Value = newStatus
 
 	if newStatus < currentStatus {
