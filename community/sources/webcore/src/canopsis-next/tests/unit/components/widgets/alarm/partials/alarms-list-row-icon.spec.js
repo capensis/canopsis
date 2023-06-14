@@ -1,18 +1,13 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { INSTRUCTION_EXECUTION_ICONS } from '@/constants';
 
 import AlarmsListRowIcon from '@/components/widgets/alarm/partials/alarms-list-row-icon.vue';
 
-const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(AlarmsListRowIcon, {
-  localVue,
-  attachTo: document.body,
-
-  ...options,
-});
-
 describe('alarms-list-row-icon', () => {
+  const snapshotFactory = generateRenderer(AlarmsListRowIcon, {
+    attachTo: document.body,
+  });
+
   it('Renders `alarms-list-row-icon` with instruction', () => {
     const wrapper = snapshotFactory({
       propsData: {

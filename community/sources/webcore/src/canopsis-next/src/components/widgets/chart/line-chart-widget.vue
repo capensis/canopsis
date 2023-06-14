@@ -38,8 +38,8 @@ import { createNamespacedHelpers } from 'vuex';
 import { pick } from 'lodash';
 
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
-import { convertFilterToQuery } from '@/helpers/query';
-import { convertMetricsToTimezone } from '@/helpers/metrics';
+import { convertFilterToQuery } from '@/helpers/entities/shared/query';
+import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';

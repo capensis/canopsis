@@ -42,7 +42,7 @@ import {
   NUMBERS_CHART_MIN_AUTO_FONT_SIZE,
 } from '@/constants';
 
-import { convertFilterToQuery } from '@/helpers/query';
+import { convertFilterToQuery } from '@/helpers/entities/shared/query';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';

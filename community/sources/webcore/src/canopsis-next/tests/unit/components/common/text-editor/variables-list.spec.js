@@ -1,28 +1,12 @@
 import Faker from 'faker';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
-import VariablesList from '@/components/common/text-editor/variables-list.vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-const localVue = createVueInstance();
+import VariablesList from '@/components/common/text-editor/variables-list.vue';
 
 const stubs = {
   'variables-list': true,
 };
-
-const factory = (options = {}) => shallowMount(VariablesList, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(VariablesList, {
-  localVue,
-  attachTo: document.body,
-  stubs,
-
-  ...options,
-});
 
 const selectVariableTiles = wrapper => wrapper.findAll('v-list-tile-stub');
 const selectVariableTileByIndex = (wrapper, index) => selectVariableTiles(wrapper).at(index);
@@ -30,6 +14,12 @@ const selectMenu = wrapper => wrapper.find('v-menu-stub');
 const selectVariablesList = wrapper => wrapper.find('variables-list-stub');
 
 describe('variables-list', () => {
+  const factory = generateShallowRenderer(VariablesList, { stubs });
+  const snapshotFactory = generateRenderer(VariablesList, {
+    attachTo: document.body,
+    stubs,
+  });
+
   test('Variable selected after click on tile', () => {
     const value = Faker.datatype.string();
 

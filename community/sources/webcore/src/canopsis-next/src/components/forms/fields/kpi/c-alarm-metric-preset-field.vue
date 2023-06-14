@@ -46,8 +46,8 @@
 </template>
 
 <script>
-import { getMetricColor } from '@/helpers/color';
-import { getAggregateFunctionsByMetric, getDefaultAggregateFunctionByMetric } from '@/helpers/metrics';
+import { getMetricColor } from '@/helpers/entities/metric/color';
+import { getAggregateFunctionsByMetric, getDefaultAggregateFunctionByMetric } from '@/helpers/entities/metric/list';
 
 import { formMixin } from '@/mixins/form';
 

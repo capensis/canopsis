@@ -50,7 +50,7 @@ import { payloadVariablesMixin } from '@/mixins/payload/variables';
 
 import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
 
-import LinkRuleLinksForm from './partials/link-rule-links-form.vue';
+import LinkRuleLinksForm from './fields/link-rule-links-form.vue';
 
 export default {
   inject: ['$validator'],

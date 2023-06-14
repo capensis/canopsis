@@ -11,7 +11,7 @@ import { sortBy } from 'lodash';
 
 import { ENGINES_NAMES_TO_QUEUE_NAMES } from '@/constants';
 
-import HealthcheckNetworkGraph from '@/components/other/healthcheck/exploitation/healthcheck-network-graph.vue';
+import HealthcheckNetworkGraph from '@/components/other/healthcheck/healthcheck-network-graph.vue';
 
 export default {
   components: { HealthcheckNetworkGraph },
