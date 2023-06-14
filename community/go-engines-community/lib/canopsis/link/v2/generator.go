@@ -630,12 +630,13 @@ func (g *generator) getLinksWithCategoryByTpl(
 		res[i] = linkWithCategory{
 			Category: linkTpl.Category,
 			Link: liblink.Link{
-				RuleID:   id,
-				Label:    linkTpl.Label,
-				IconName: linkTpl.IconName,
-				Url:      url,
-				Single:   linkTpl.Single,
-				Action:   linkTpl.Action,
+				RuleID:     id,
+				Label:      linkTpl.Label,
+				IconName:   linkTpl.IconName,
+				Url:        url,
+				Action:     linkTpl.Action,
+				Single:     linkTpl.Single,
+				HideInMenu: linkTpl.HideInMenu,
 			},
 		}
 	}
@@ -656,11 +657,12 @@ func (g *generator) getLinksByTpl(
 		}
 
 		res[i] = liblink.Link{
-			Label:    linkTpl.Label,
-			IconName: linkTpl.IconName,
-			Url:      url,
-			Single:   linkTpl.Single,
-			Action:   linkTpl.Action,
+			Label:      linkTpl.Label,
+			IconName:   linkTpl.IconName,
+			Url:        url,
+			Action:     linkTpl.Action,
+			Single:     linkTpl.Single,
+			HideInMenu: linkTpl.HideInMenu,
 		}
 	}
 
@@ -715,6 +717,9 @@ func (g *generator) getLinksWithCategoryByCode(
 		if single, ok := item["single"].(bool); ok {
 			res[i].Link.Single = single
 		}
+		if hideInMenu, ok := item["hide_in_menu"].(bool); ok {
+			res[i].Link.HideInMenu = hideInMenu
+		}
 	}
 
 	return res, nil
@@ -761,6 +766,9 @@ func (g *generator) getLinksByCode(
 		}
 		if single, ok := item["single"].(bool); ok {
 			res[i].Single = single
+		}
+		if hideInMenu, ok := item["hide_in_menu"].(bool); ok {
+			res[i].HideInMenu = hideInMenu
 		}
 	}
 
