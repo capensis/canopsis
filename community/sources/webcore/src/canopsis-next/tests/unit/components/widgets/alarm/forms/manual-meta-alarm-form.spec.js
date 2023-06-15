@@ -1,31 +1,16 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import ManualMetaAlarmForm from '@/components/widgets/alarm/forms/manual-meta-alarm-form.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'v-combobox': createInputStub('v-combobox'),
   'v-text-field': createInputStub('v-text-field'),
 };
-
-const factory = (options = {}) => shallowMount(ManualMetaAlarmForm, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(ManualMetaAlarmForm, {
-  localVue,
-
-  ...options,
-});
 
 const selectTextField = wrapper => wrapper.find('.v-text-field');
 const selectComboboxField = wrapper => wrapper.find('.v-combobox');
@@ -41,6 +26,9 @@ describe('manual-meta-alarm-form', () => {
   const store = createMockedStoreModules([
     alarmModule,
   ]);
+
+  const factory = generateShallowRenderer(ManualMetaAlarmForm, { stubs });
+  const snapshotFactory = generateRenderer(ManualMetaAlarmForm);
 
   test('Alarms fetched after mount', () => {
     factory({

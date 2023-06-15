@@ -1,12 +1,10 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
 import { PATTERN_FIELD_TYPES } from '@/constants';
 
 import CMixedInputField from '@/components/forms/fields/c-mixed-input-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-text-field': createInputStub('v-text-field'),
@@ -18,36 +16,27 @@ const snapshotStubs = {
   'c-array-text-field': true,
 };
 
-const factory = (options = {}) => shallowMount(CMixedInputField, {
-  localVue,
-  stubs,
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CMixedInputField, {
-  localVue,
-  stubs: snapshotStubs,
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-
-  ...options,
-});
-
 const selectTextField = wrapper => wrapper.find('input.v-text-field');
 const selectCombobox = wrapper => wrapper.find('input.v-combobox');
 
 describe('c-mixed-input-field', () => {
+  const factory = generateShallowRenderer(CMixedInputField, {
+    stubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(CMixedInputField, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+
   it('Value changed to empty string after trigger the input with null value', () => {
     const wrapper = factory({
       propsData: {

@@ -12,15 +12,14 @@
 
 <script>
 import { debounce } from 'lodash';
+
 import {
   KPI_ALARMS_GRAPH_BAR_PERCENTAGE,
   SAMPLINGS,
   TIME_UNITS,
 } from '@/constants';
 
-import { fromSeconds } from '@/helpers/date/duration';
-import { isTimeMetric } from '@/helpers/metrics';
-import { getMetricColor } from '@/helpers/color';
+import { getMetricColor } from '@/helpers/entities/metric/color';
 import { convertDateToStartOfUnitTimestamp, getNowTimestamp } from '@/helpers/date/date';
 
 import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';
@@ -80,7 +79,7 @@ export default {
         label: this.$t(`alarm.metrics.${metric}`),
         data: data.map(({ timestamp, value }) => ({
           x: timestamp * 1000,
-          y: this.convertValueByMetricType(value, metric),
+          y: value,
         })),
       }));
     },
@@ -163,14 +162,6 @@ export default {
 
     updateInterval(interval) {
       this.$emit('zoom', interval);
-    },
-
-    convertValueByMetricType(value, metric) {
-      if (isTimeMetric(metric)) {
-        return fromSeconds(value, this.maxTimeDuration.unit);
-      }
-
-      return value;
     },
   },
 };

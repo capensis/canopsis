@@ -10,6 +10,7 @@ import (
 	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
@@ -270,7 +271,7 @@ func Default(
 	}
 
 	api.AddRouter(func(router gin.IRouter) {
-		router.Use(middleware.Cache())
+		router.Use(middleware.CacheControl())
 
 		router.Use(func(c *gin.Context) {
 			start := time.Now()
@@ -293,6 +294,8 @@ func Default(
 			linkGenerator,
 			dbClient,
 			pgPoolProvider,
+			amqpChannel,
+			p.ApiConfigProvider,
 			p.TimezoneConfigProvider,
 			p.TemplateConfigProvider,
 			pbhEntityTypeResolver,
@@ -311,6 +314,7 @@ func Default(
 			broadcastMessageChan,
 			metricsEntityMetaUpdater,
 			metricsUserMetaUpdater,
+			author.NewProvider(dbClient, p.ApiConfigProvider),
 			logger,
 		)
 	})

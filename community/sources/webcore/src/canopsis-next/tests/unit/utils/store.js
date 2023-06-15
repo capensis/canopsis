@@ -382,16 +382,32 @@ export const createPbehaviorTypesModule = () => {
     data: [],
   });
 
+  const fieldPbehaviorTypes = jest.fn()
+    .mockReturnValue([]);
+
+  const fieldPbehaviorTypesPending = jest.fn()
+    .mockReturnValue(false);
+
+  const fetchFieldPbehaviorTypes = jest.fn();
+
   const pbehaviorTypesModule = {
     name: 'pbehaviorTypes',
+    getters: {
+      fieldItems: fieldPbehaviorTypes,
+      fieldPending: fieldPbehaviorTypesPending,
+    },
     actions: {
       fetchListWithoutStore: fetchPbehaviorTypesListWithoutStore,
+      fetchFieldList: fetchFieldPbehaviorTypes,
     },
   };
 
   return {
     pbehaviorTypesModule,
+    fieldPbehaviorTypes,
+    fieldPbehaviorTypesPending,
     fetchPbehaviorTypesListWithoutStore,
+    fetchFieldPbehaviorTypes,
   };
 };
 
@@ -607,23 +623,31 @@ export const createPbehaviorEntitiesModule = () => {
 export const createPbehaviorModule = () => {
   const fetchPbehaviorsByEntityIdWithoutStore = jest.fn().mockResolvedValue([]);
   const removePbehavior = jest.fn();
+  const createEntityPbehaviors = jest.fn();
+  const removeEntityPbehaviors = jest.fn();
 
   const pbehaviorModule = {
     name: 'pbehavior',
     actions: {
       fetchListByEntityIdWithoutStore: fetchPbehaviorsByEntityIdWithoutStore,
       removeWithoutStore: removePbehavior,
+      bulkCreateEntityPbehaviors: createEntityPbehaviors,
+      bulkRemoveEntityPbehaviors: removeEntityPbehaviors,
     },
   };
 
   afterEach(() => {
     removePbehavior.mockClear();
     fetchPbehaviorsByEntityIdWithoutStore.mockClear();
+    createEntityPbehaviors.mockClear();
+    removeEntityPbehaviors.mockClear();
   });
 
   return {
     removePbehavior,
     fetchPbehaviorsByEntityIdWithoutStore,
+    createEntityPbehaviors,
+    removeEntityPbehaviors,
     pbehaviorModule,
   };
 };
@@ -652,11 +676,27 @@ export const createAlarmModule = () => {
   const fetchAlarmItem = jest.fn();
   const fetchOpenAlarmsListWithoutStore = jest.fn();
   const fetchAlarmItemWithoutStore = jest.fn().mockResolvedValue({});
+  const bulkCreateAlarmAckEvent = jest.fn();
+  const bulkCreateAlarmAckremoveEvent = jest.fn();
+  const bulkCreateAlarmSnoozeEvent = jest.fn();
+  const bulkCreateAlarmAssocticketEvent = jest.fn();
+  const bulkCreateAlarmCommentEvent = jest.fn();
+  const bulkCreateAlarmCancelEvent = jest.fn();
+  const bulkCreateAlarmUncancelEvent = jest.fn();
+  const bulkCreateAlarmChangestateEvent = jest.fn();
 
   afterEach(() => {
     fetchAlarmItem.mockClear();
     fetchAlarmItemWithoutStore.mockClear();
     fetchOpenAlarmsListWithoutStore.mockClear();
+    bulkCreateAlarmAckEvent.mockClear();
+    bulkCreateAlarmAckremoveEvent.mockClear();
+    bulkCreateAlarmSnoozeEvent.mockClear();
+    bulkCreateAlarmAssocticketEvent.mockClear();
+    bulkCreateAlarmCommentEvent.mockClear();
+    bulkCreateAlarmCancelEvent.mockClear();
+    bulkCreateAlarmUncancelEvent.mockClear();
+    bulkCreateAlarmChangestateEvent.mockClear();
   });
 
   const alarmModule = {
@@ -665,6 +705,14 @@ export const createAlarmModule = () => {
       fetchItem: fetchAlarmItem,
       fetchItemWithoutStore: fetchAlarmItemWithoutStore,
       fetchOpenAlarmsListWithoutStore,
+      bulkCreateAlarmAckEvent,
+      bulkCreateAlarmAckremoveEvent,
+      bulkCreateAlarmSnoozeEvent,
+      bulkCreateAlarmAssocticketEvent,
+      bulkCreateAlarmCommentEvent,
+      bulkCreateAlarmCancelEvent,
+      bulkCreateAlarmUncancelEvent,
+      bulkCreateAlarmChangestateEvent,
     },
   };
 
@@ -672,27 +720,15 @@ export const createAlarmModule = () => {
     fetchAlarmItem,
     fetchAlarmItemWithoutStore,
     fetchOpenAlarmsListWithoutStore,
+    bulkCreateAlarmAckEvent,
+    bulkCreateAlarmAckremoveEvent,
+    bulkCreateAlarmSnoozeEvent,
+    bulkCreateAlarmAssocticketEvent,
+    bulkCreateAlarmCommentEvent,
+    bulkCreateAlarmCancelEvent,
+    bulkCreateAlarmUncancelEvent,
+    bulkCreateAlarmChangestateEvent,
     alarmModule,
-  };
-};
-
-export const createEventModule = () => {
-  const createEvent = jest.fn();
-
-  afterEach(() => {
-    createEvent.mockClear();
-  });
-
-  const eventModule = {
-    name: 'event',
-    actions: {
-      create: createEvent,
-    },
-  };
-
-  return {
-    eventModule,
-    createEvent,
   };
 };
 
@@ -846,12 +882,16 @@ export const createAggregatedMetricsModule = () => {
   const getAggregatedMetricsPendingByWidgetId = jest.fn().mockReturnValue(() => []);
   const getAggregatedMetricsMetaByWidgetId = jest.fn().mockReturnValue(() => ({}));
   const fetchAggregatedMetricsList = jest.fn();
+  const fetchAggregatedMetricsWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+  });
 
   afterEach(() => {
     getAggregatedMetricsListByWidgetId.mockClear();
     getAggregatedMetricsPendingByWidgetId.mockClear();
     getAggregatedMetricsMetaByWidgetId.mockClear();
     fetchAggregatedMetricsList.mockClear();
+    fetchAggregatedMetricsWithoutStore.mockClear();
   });
 
   const aggregatedMetricsModule = {
@@ -863,6 +903,7 @@ export const createAggregatedMetricsModule = () => {
     },
     actions: {
       fetchList: fetchAggregatedMetricsList,
+      fetchListWithoutStore: fetchAggregatedMetricsWithoutStore,
     },
   };
 
@@ -872,5 +913,53 @@ export const createAggregatedMetricsModule = () => {
     getAggregatedMetricsPendingByWidgetId,
     getAggregatedMetricsMetaByWidgetId,
     fetchAggregatedMetricsList,
+    fetchAggregatedMetricsWithoutStore,
+  };
+};
+
+export const createMetricsModule = () => {
+  const fetchExternalMetricsList = jest.fn();
+  const fetchAlarmsMetricsWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+  });
+  const fetchEntityAlarmsMetricsWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+  });
+  const fetchEntityAggregateMetricsWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+  });
+  const externalMetrics = jest.fn().mockReturnValue([]);
+  const pending = jest.fn().mockReturnValue(false);
+
+  afterEach(() => {
+    fetchExternalMetricsList.mockClear();
+    fetchAlarmsMetricsWithoutStore.mockClear();
+    externalMetrics.mockClear();
+    pending.mockClear();
+    fetchEntityAlarmsMetricsWithoutStore.mockClear();
+    fetchEntityAggregateMetricsWithoutStore.mockClear();
+  });
+
+  const metricsModule = {
+    name: 'metrics',
+    getters: {
+      externalMetrics,
+      pending,
+    },
+    actions: {
+      fetchExternalMetricsList,
+      fetchAlarmsMetricsWithoutStore,
+      fetchEntityAlarmsMetricsWithoutStore,
+      fetchEntityAggregateMetricsWithoutStore,
+    },
+  };
+
+  return {
+    metricsModule,
+    externalMetrics,
+    fetchExternalMetricsList,
+    fetchAlarmsMetricsWithoutStore,
+    fetchEntityAlarmsMetricsWithoutStore,
+    fetchEntityAggregateMetricsWithoutStore,
   };
 };

@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout.py-2(column)
-    chart-widget-filters.px-3(
+    kpi-widget-filters.px-3(
       :widget-id="widget._id",
       :user-filters="userPreference.filters",
       :widget-filters="widget.filters",
@@ -22,8 +22,8 @@
       chart-loader(v-if="aggregatedMetricsPending", :has-metrics="hasMetrics")
       pie-chart-metrics(
         v-if="hasMetrics",
-        :metrics="aggregatedMetrics",
-        :colors-by-metrics="colorsByMetrics",
+        :chart-id="widget._id",
+        :metrics="preparedMetrics",
         :title="widget.parameters.chart_title",
         :show-mode="widget.parameters.show_mode",
         :downloading="downloading",
@@ -36,7 +36,7 @@
 import { createNamespacedHelpers } from 'vuex';
 import { pick } from 'lodash';
 
-import { convertFilterToQuery } from '@/helpers/query';
+import { convertFilterToQuery } from '@/helpers/entities/shared/query';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
@@ -44,12 +44,13 @@ import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
 import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
+import { widgetChartMetricsMap } from '@/mixins/widget/chart/metrics-map';
 import { entitiesAggregatedMetricsMixin } from '@/mixins/entities/aggregated-metrics';
 import { permissionsWidgetsPieChartInterval } from '@/mixins/permissions/widgets/chart/pie/interval';
 import { permissionsWidgetsPieChartSampling } from '@/mixins/permissions/widgets/chart/pie/sampling';
 import { permissionsWidgetsPieChartFilters } from '@/mixins/permissions/widgets/chart/pie/filters';
 
-import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
+import KpiWidgetFilters from '../partials/kpi-widget-filters.vue';
 
 import ChartLoader from './partials/chart-loader.vue';
 import PieChartMetrics from './partials/pie-chart-metrics.vue';
@@ -59,7 +60,7 @@ const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
 export default {
   inject: ['$system'],
   components: {
-    ChartWidgetFilters,
+    KpiWidgetFilters,
     ChartLoader,
     PieChartMetrics,
   },
@@ -69,6 +70,7 @@ export default {
     metricsIntervalFilterMixin,
     widgetSamplingFilterMixin,
     widgetPeriodicRefreshMixin,
+    widgetChartMetricsMap,
     entitiesAggregatedMetricsMixin,
     permissionsWidgetsPieChartInterval,
     permissionsWidgetsPieChartSampling,
@@ -88,20 +90,31 @@ export default {
       default: '',
     },
   },
+  data() {
+    return {
+      widgetMetricsMap: {},
+    };
+  },
   computed: {
     hasMetrics() {
       return !!this.aggregatedMetrics.length;
     },
 
-    colorsByMetrics() {
-      return this.widget.parameters.metrics.reduce((acc, { color, metric }) => {
-        if (color) {
-          acc[metric] = color;
-        }
+    preparedMetrics() {
+      return this.aggregatedMetrics.map((metric) => {
+        const parameters = this.widgetMetricsMap[metric.title] ?? {};
 
-        return acc;
-      }, {});
+        return {
+          ...metric,
+
+          color: parameters.color,
+          label: parameters.label,
+        };
+      });
     },
+  },
+  created() {
+    this.setWidgetMetricsMap();
   },
   methods: {
     ...mapMetricsActions({
@@ -117,8 +130,13 @@ export default {
       };
     },
 
-    fetchList() {
-      this.fetchAggregatedMetricsList({ widgetId: this.widget._id, params: this.getQuery() });
+    async fetchList() {
+      await this.fetchAggregatedMetricsList({
+        widgetId: this.widget._id,
+        params: this.getQuery(),
+      });
+
+      this.setWidgetMetricsMap();
     },
   },
 };

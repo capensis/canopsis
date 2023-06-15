@@ -1,4 +1,4 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
@@ -7,12 +7,10 @@ import {
   PATTERN_CONDITIONS,
 } from '@/constants';
 
-import { patternToForm } from '@/helpers/forms/pattern';
-import { filterPatternsToForm } from '@/helpers/forms/filter';
+import { patternToForm } from '@/helpers/entities/pattern/form';
+import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 
 import CPatternsField from '@/components/forms/fields/pattern/c-patterns-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-collapse-panel': true,
@@ -23,20 +21,6 @@ const stubs = {
   'c-event-filter-patterns-field': true,
 };
 
-const factory = (options = {}) => shallowMount(CPatternsField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CPatternsField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 const selectAlarmPatternsField = wrapper => wrapper.find('c-alarm-patterns-field-stub');
 const selectEntityPatternsField = wrapper => wrapper.find('c-entity-patterns-field-stub');
 const selectPbehaviorPatternsField = wrapper => wrapper.find('c-pbehavior-patterns-field-stub');
@@ -44,6 +28,9 @@ const selectEventFilterPatternsField = wrapper => wrapper.find('c-event-filter-p
 
 describe('c-patterns-field', () => {
   const patterns = filterPatternsToForm();
+
+  const factory = generateShallowRenderer(CPatternsField, { stubs });
+  const snapshotFactory = generateRenderer(CPatternsField, { stubs });
 
   test('Alarm pattern changed after trigger alarm patterns field', () => {
     const wrapper = factory({

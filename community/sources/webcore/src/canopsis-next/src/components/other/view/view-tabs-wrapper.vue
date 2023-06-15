@@ -26,7 +26,7 @@
 <script>
 import { isEqual } from 'lodash';
 
-import { mapIds } from '@/helpers/entities';
+import { mapIds } from '@/helpers/array';
 
 import { activeViewMixin } from '@/mixins/active-view';
 import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';

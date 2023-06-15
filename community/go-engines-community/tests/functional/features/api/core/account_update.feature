@@ -32,6 +32,7 @@ Feature: Update an account
       "firstname": "test-user-to-account-update-1-firstname",
       "lastname": "test-user-to-account-update-1-lastname",
       "name": "test-user-to-account-update-1",
+      "display_name": "test-user-to-account-update-1 test-user-to-account-update-1-firstname test-user-to-account-update-1-lastname test-user-to-account-update-1-email@canopsis.net",
       "role": {
         "_id": "test-role-to-account-update-1",
         "name": "test-role-to-account-update-1",

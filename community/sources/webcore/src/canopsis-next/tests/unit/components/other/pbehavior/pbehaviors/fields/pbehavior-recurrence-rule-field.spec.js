@@ -1,10 +1,8 @@
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { MODALS } from '@/constants';
 
 import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-recurrence-rule-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-action-btn': true,
@@ -17,12 +15,12 @@ describe('pbehavior-recurrence-rule-field', () => {
   const $modals = mockModals();
 
   const factory = generateShallowRenderer(PbehaviorRecurrenceRuleField, {
-    localVue,
+
     stubs,
     mocks: { $modals },
   });
   const snapshotFactory = generateRenderer(PbehaviorRecurrenceRuleField, {
-    localVue,
+
     stubs,
   });
 

@@ -1,22 +1,12 @@
 import Faker from 'faker';
 import AxiosMockAdapter from 'axios-mock-adapter';
 
-import { shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer } from '@unit/utils/vue';
 
 import { API_ROUTES } from '@/config';
 import request from '@/services/request';
 import store from '@/store';
 import { entitiesCorporatePatternsMixin } from '@/mixins/entities/pattern/corporate';
-
-const localVue = createVueInstance();
-
-const factory = () => shallowMount({
-  render() {},
-  mixins: [entitiesCorporatePatternsMixin],
-}, {
-  localVue,
-  store,
-});
 
 describe('Entities corporate pattern mixin', () => {
   const axiosMockAdapter = new AxiosMockAdapter(request);
@@ -30,6 +20,11 @@ describe('Entities corporate pattern mixin', () => {
   const meta = {
     total_count: totalCount,
   };
+
+  const factory = generateShallowRenderer({
+    render() {},
+    mixins: [entitiesCorporatePatternsMixin],
+  }, { store });
 
   beforeEach(() => {
     axiosMockAdapter.reset();

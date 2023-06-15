@@ -45,4 +45,5 @@ const (
 
 	ApiCleanEntitiesLockKey      = "api-clean-entities-lock-key"
 	ApiUserActivityMetricLockKey = "api-user-activity-metric"
+	ApiCacheRequestKey           = "api-cache-request"
 )

@@ -54,15 +54,7 @@ func (p *rpcPBehaviorClientMessageProcessor) Process(ctx context.Context, msg en
 	alarmChangeType := types.AlarmChangeTypeNone
 
 	if event.PbhEvent.EventType != "" {
-		alarmChange := types.AlarmChange{
-			Type:                            types.AlarmChangeTypeNone,
-			PreviousState:                   event.Alarm.Value.State.Value,
-			PreviousStateChange:             event.Alarm.Value.State.Timestamp,
-			PreviousStatus:                  event.Alarm.Value.Status.Value,
-			PreviousStatusChange:            event.Alarm.Value.Status.Timestamp,
-			PreviousPbehaviorTypeID:         event.Alarm.Value.PbehaviorInfo.TypeID,
-			PreviousPbehaviorCannonicalType: event.Alarm.Value.PbehaviorInfo.CanonicalType,
-		}
+		alarmChange := types.NewAlarmChangeByAlarm(*event.Alarm)
 		alarmChangeType, err = p.Executor.Exec(
 			ctx,
 			types.Operation{

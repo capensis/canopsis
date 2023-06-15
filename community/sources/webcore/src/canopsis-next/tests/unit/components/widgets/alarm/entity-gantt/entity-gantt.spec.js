@@ -1,30 +1,14 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createMockedStoreModules } from '@unit/utils/store';
 import flushPromises from 'flush-promises';
 import { mockPopups } from '@unit/utils/mock-hooks';
 import EntityGantt from '@/components/widgets/alarm/entity-gantt/entity-gantt.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'c-progress-overlay': true,
   'junit-gantt-chart': true,
 };
-
-const factory = (options = {}) => shallowMount(EntityGantt, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(EntityGantt, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectJunitGanttChart = wrapper => wrapper.find('junit-gantt-chart-stub');
 
@@ -53,6 +37,9 @@ describe('entity-gantt', () => {
       _id: 'entity-id',
     },
   };
+
+  const factory = generateShallowRenderer(EntityGantt, { stubs });
+  const snapshotFactory = generateRenderer(EntityGantt, { stubs });
 
   afterEach(() => {
     fetchItemGanttIntervalsWithoutStore.mockClear();

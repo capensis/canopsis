@@ -49,7 +49,6 @@
 import { cloneDeep, isEqual, omit } from 'lodash';
 
 import { COLORS } from '@/config';
-
 import { FLOWCHART_KEY_CODES, SHAPES } from '@/constants';
 
 import { roundByStep } from '@/helpers/flowchart/round';
