@@ -8,16 +8,14 @@ import { uid } from '@/helpers/uid';
  */
 
 /**
- * @typedef {ServiceDependency} ServiceTreeviewDependency
+ * @typedef {ServiceDependency & ObjectKey} ServiceTreeviewDependency
  * @property {string} _id
- * @property {string} key
  * @property {string[]} [children]
  */
 
 /**
- * @typedef {Object} LoadMoreTreeviewDependencyChild
+ * @typedef {Object & ObjectKey} LoadMoreTreeviewDependencyChild
  * @property {string} _id
- * @property {string} key
  * @property {string} [parentKey]
  * @property {string} [parentId]
  */

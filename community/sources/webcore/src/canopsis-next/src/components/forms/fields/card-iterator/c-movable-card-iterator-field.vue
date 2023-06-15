@@ -17,6 +17,7 @@
       v-btn.mr-2.mx-0(
         v-if="addable",
         color="primary",
+        outline,
         @click.prevent="$emit('add')"
       ) {{ $t('common.add') }}
       slot(name="actions")

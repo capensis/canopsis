@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-layout.chart-widget-filters(wrap)
-    c-quick-date-interval-field.chart-widget-filters__interval(
+  v-layout.kpi-widget-filters(wrap)
+    c-quick-date-interval-field.kpi-widget-filters__interval(
       v-if="showInterval",
       :interval="interval",
       :min="minIntervalDate",
@@ -8,13 +8,13 @@
       short,
       @input="$emit('update:interval', $event)"
     )
-    c-sampling-field.chart-widget-filters__sampling(
+    c-sampling-field.kpi-widget-filters__sampling(
       v-if="showSampling",
       :value="sampling",
       @input="$emit('update:sampling', $event)"
     )
     v-layout(v-if="showFilter", row, align-end)
-      filter-selector.chart-widget-filters__filter-selector.mr-4(
+      filter-selector.kpi-widget-filters__filter-selector.mr-4(
         :label="$t('settings.selectAFilter')",
         :filters="userFilters",
         :locked-filters="widgetFilters",
@@ -109,8 +109,8 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.chart-widget-filters {
+<style lang="scss" scoped>
+.kpi-widget-filters {
   column-gap: 24px;
 
   &__sampling {

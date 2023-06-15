@@ -17,8 +17,9 @@ exports[`filters Renders \`filters\` with custom props 1`] = `
       lockedfilters=""
       value="filter-id-1"
     />
-    <filters-list-stub
+    <field-filters-list-stub
       filters="[object Object],[object Object]"
+      name="filters"
     />
   </div>
 </widget-settings-item-stub>
@@ -40,8 +41,9 @@ exports[`filters Renders \`filters\` with default and required props 1`] = `
       label="Default filter"
       lockedfilters=""
     />
-    <filters-list-stub
+    <field-filters-list-stub
       filters=""
+      name="filters"
     />
   </div>
 </widget-settings-item-stub>
