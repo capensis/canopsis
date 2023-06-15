@@ -38,7 +38,6 @@ type Entity struct {
 	Type           string          `bson:"type" json:"type"`
 	Category       string          `bson:"category" json:"category"`
 	ImpactLevel    int64           `bson:"impact_level" json:"impact_level"`
-	IsNew          bool            `bson:"-" json:"-"`
 	Created        CpsTime         `bson:"created" json:"created"`
 	LastEventDate  *CpsTime        `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
 
@@ -70,6 +69,10 @@ type Entity struct {
 
 	PerfData        []string `bson:"perf_data,omitempty" json:"-"`
 	PerfDataUpdated *CpsTime `bson:"perf_data_updated,omitempty" json:"-"`
+
+	// IsNew and IsUpdated used in engine che in entity creation and eventfilter
+	IsNew     bool `bson:"-" json:"-"`
+	IsUpdated bool `bson:"-" json:"-"`
 }
 
 type Coordinates struct {
