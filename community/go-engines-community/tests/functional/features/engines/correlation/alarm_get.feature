@@ -1324,7 +1324,7 @@ Feature: Get alarms
       }
     ]
     """
-    When I wait the end of 14 events processing
+    When I wait the end of 16 events processing
     When I do GET /api/v4/alarms?correlation=false&search=test-resource-to-alarm-correlation-get-7&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
@@ -1389,7 +1389,7 @@ Feature: Get alarms
     }
     """
     Then the response code should be 200
-    When I wait the end of 4 events processing
+    When I wait the end of 6 events processing
     When I wait 3s
     When I do POST /api/v4/alarm-details:
     """json
