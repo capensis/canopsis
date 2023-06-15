@@ -676,6 +676,7 @@ Feature: no update service when entity is inactive
     }
     """
     Then the response code should be 201
+    Then I wait 1s
     When I do POST /api/v4/pbehaviors:
     """json
     {
