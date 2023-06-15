@@ -22,8 +22,8 @@ import { isEqual, omit } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { remediationInstructionToForm, formToRemediationInstruction } from '@/helpers/forms/remediation-instruction';
-import { isSeveralEqual } from '@/helpers/equal';
+import { remediationInstructionToForm, formToRemediationInstruction } from '@/helpers/entities/remediation/instruction/form';
+import { isSeveralEqual } from '@/helpers/collection';
 
 import { authMixin } from '@/mixins/auth';
 import { localQueryMixin } from '@/mixins/query-local/query';

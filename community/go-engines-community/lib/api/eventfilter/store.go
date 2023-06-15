@@ -26,16 +26,19 @@ type Store interface {
 type store struct {
 	dbClient              mongo.DbClient
 	dbCollection          mongo.DbCollection
+	authorProvider        author.Provider
 	defaultSearchByFields []string
 	defaultSortBy         string
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
+	authorProvider author.Provider,
 ) Store {
 	return &store{
 		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.EventFilterRulesMongoCollection),
+		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "author.name", "description", "type"},
 		defaultSortBy:         "created",
 	}
@@ -86,7 +89,7 @@ func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
 			},
 		},
 	}
-	pipeline = append(pipeline, author.Pipeline()...)
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
@@ -109,7 +112,7 @@ func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
 }
 
 func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
-	pipeline := author.Pipeline()
+	pipeline := s.authorProvider.Pipeline()
 	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})

@@ -1,14 +1,12 @@
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
 import { mockRequestAnimationFrame, mockModals, mockSidebar } from '@unit/utils/mock-hooks';
 import { SIDE_BARS } from '@/constants';
 
 import SidebarWrapper from '@/plugins/sidebar/components/sidebar-wrapper.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-btn': createButtonStub('v-btn'),
@@ -31,35 +29,6 @@ const stubs = {
   },
 };
 
-const factory = (options = {}) => shallowMount(SidebarWrapper, {
-  parentComponent: {
-    provide: {
-      $clickOutside: {
-        call: jest.fn(),
-      },
-    },
-  },
-
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(SidebarWrapper, {
-  parentComponent: {
-    provide: {
-      $clickOutside: {
-        call: jest.fn(),
-      },
-    },
-  },
-
-  localVue,
-
-  ...options,
-});
-
 describe('sidebar-wrapper', () => {
   mockRequestAnimationFrame();
 
@@ -80,6 +49,27 @@ describe('sidebar-wrapper', () => {
     config: {},
     hidden: false,
   };
+
+  const factory = generateShallowRenderer(SidebarWrapper, {
+    parentComponent: {
+      provide: {
+        $clickOutside: {
+          call: jest.fn(),
+        },
+      },
+    },
+
+    stubs,
+  });
+  const snapshotFactory = generateRenderer(SidebarWrapper, {
+    parentComponent: {
+      provide: {
+        $clickOutside: {
+          call: jest.fn(),
+        },
+      },
+    },
+  });
 
   it('Sidebar hidden trigger drawer', async () => {
     const wrapper = factory({

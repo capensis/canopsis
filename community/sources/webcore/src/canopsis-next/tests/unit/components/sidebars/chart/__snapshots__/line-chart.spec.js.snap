@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`line-chart Renders \`line-chart\` widget settings with custom props and permissions 1`] = `
+<widget-settings-stub
+  divider="true"
+>
+  <line-chart-widget-form-stub
+    form="[object Object]"
+    withperiodicrefresh="true"
+  />
+</widget-settings-stub>
+`;
+
+exports[`line-chart Renders \`line-chart\` widget settings with default props 1`] = `
+<widget-settings-stub
+  divider="true"
+>
+  <line-chart-widget-form-stub
+    form="[object Object]"
+    withperiodicrefresh="true"
+  />
+</widget-settings-stub>
+`;

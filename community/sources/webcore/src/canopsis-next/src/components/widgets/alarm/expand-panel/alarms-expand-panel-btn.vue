@@ -11,7 +11,7 @@
 import { TOURS } from '@/constants';
 
 import { getStepClass } from '@/helpers/tour';
-import { prepareAlarmDetailsQuery, convertAlarmDetailsQueryToRequest } from '@/helpers/query';
+import { prepareAlarmDetailsQuery, convertAlarmDetailsQueryToRequest } from '@/helpers/entities/alarm/query';
 
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
 

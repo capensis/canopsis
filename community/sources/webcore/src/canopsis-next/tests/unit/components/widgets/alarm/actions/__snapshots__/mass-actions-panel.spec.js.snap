@@ -55,11 +55,6 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with empty items 1`] 
     Snooze alarm|alarm|snooze
   </button>
   <button
-    class="action-groupRequest"
-  >
-    Suggest group request for meta alarm|note_add|groupRequest
-  </button>
-  <button
     class="action-createManualMetaAlarm"
   >
     Manual meta alarm management|center_focus_strong|createManualMetaAlarm
@@ -120,11 +115,6 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta alarm 1`] =
     class="action-snooze"
   >
     Snooze alarm|alarm|snooze
-  </button>
-  <button
-    class="action-groupRequest"
-  >
-    Suggest group request for meta alarm|note_add|groupRequest
   </button>
   <button
     class="action-createManualMetaAlarm"

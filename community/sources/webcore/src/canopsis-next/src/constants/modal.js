@@ -25,6 +25,7 @@ export const MODALS = {
   createWidgetTemplate: 'create-widget-template',
   createFilter: 'create-filter',
   alarmsList: 'alarms-list',
+  createAlarmChart: 'create-alarm-chart',
   colorPicker: 'color-picker',
   textEditor: 'text-editor',
   textEditorWithTemplate: 'text-editor-with-template',
@@ -63,6 +64,7 @@ export const MODALS = {
   createPbehaviorType: 'create-pbehavior-type',
   createPbehaviorReason: 'create-pbehavior-reason',
   createPbehaviorException: 'create-pbehavior-exception',
+  importPbehaviorException: 'import-pbehavior-exception',
 
   createManualMetaAlarm: 'create-manual-meta-alarm',
   removeAlarmsFromManualMetaAlarm: 'remove-alarms-from-manual-meta-alarm',

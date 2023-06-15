@@ -40,6 +40,10 @@ export const ALARM_FIELDS = {
   impactState: 'impact_state',
   infos: 'v.infos',
   links: 'links',
+  ticketAuthor: 'v.ticket.a',
+  ticketMessage: 'v.ticket.m',
+  ticketValue: 'v.ticket.ticket',
+  ticketCreatedAt: 'v.ticket.t',
   entityId: 'entity._id',
   entityName: 'entity.name',
   entityCategoryName: 'entity.category.name',
@@ -101,7 +105,6 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   changeState: 'changeState',
   variablesHelp: 'variablesHelp',
   history: 'history',
-  groupRequest: 'groupRequest',
   createManualMetaAlarm: 'createManualMetaAlarm',
   removeAlarmsFromManualMetaAlarm: 'removeAlarmsFromManualMetaAlarm',
   updateManualMetaAlarm: 'updateManualMetaAlarm',
@@ -218,6 +221,8 @@ export const ALARM_OPTIONAL_METRIC_PARAMETERS = {
   notAckedInHourAlarms: 'not_acked_in_hour_alarms',
   notAckedInFourHoursAlarms: 'not_acked_in_four_hours_alarms',
   notAckedInDayAlarms: 'not_acked_in_day_alarms',
+  minResolve: 'min_resolve',
+  maxResolve: 'max_resolve',
 };
 
 export const ALARM_METRIC_PARAMETERS = {
@@ -353,6 +358,10 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.impactState]: 'common.impactState',
   [ALARM_FIELDS.infos]: 'common.infos',
   [ALARM_FIELDS.links]: 'common.link',
+  [ALARM_FIELDS.ticketAuthor]: 'alarm.fields.ticketAuthor',
+  [ALARM_FIELDS.ticketMessage]: 'alarm.fields.ticketMessage',
+  [ALARM_FIELDS.ticketValue]: 'alarm.fields.ticketId',
+  [ALARM_FIELDS.ticketCreatedAt]: 'alarm.fields.ticketCreatedAt',
   [ALARM_FIELDS.entityId]: 'alarm.fields.entityId',
   [ALARM_FIELDS.entityName]: 'alarm.fields.entityName',
   [ALARM_FIELDS.entityCategoryName]: 'alarm.fields.entityCategoryName',
@@ -428,4 +437,5 @@ export const ALARMS_EXPAND_PANEL_TABS = {
   trackSource: 'trackSource',
   impactChain: 'impactChain',
   entityGantt: 'entityGantt',
+  charts: 'charts',
 };

@@ -16,7 +16,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { roleToForm, formToRole } from '@/helpers/forms/role';
+import { roleToForm, formToRole } from '@/helpers/entities/role/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

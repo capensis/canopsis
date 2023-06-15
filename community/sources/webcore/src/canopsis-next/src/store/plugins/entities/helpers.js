@@ -1,7 +1,8 @@
 import { get, merge } from 'lodash';
 
-import schemas from '@/store/schemas';
 import { SCHEMA_EMBEDDED_KEY } from '@/config';
+
+import schemas from '@/store/schemas';
 
 /**
  * Helper for entities preparation for delete

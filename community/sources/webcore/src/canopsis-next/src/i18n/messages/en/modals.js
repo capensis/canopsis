@@ -101,9 +101,6 @@ export default {
   createCancelEvent: {
     title: 'Cancel',
   },
-  createGroupRequestEvent: {
-    title: 'Suggest group request for meta alarm',
-  },
   createGroupEvent: {
     title: 'Create meta alarm',
   },
@@ -277,6 +274,18 @@ export default {
       [WIDGET_TYPES.numbers]: {
         title: 'Numbers',
       },
+      [WIDGET_TYPES.userStatistics]: {
+        title: 'User statistics',
+      },
+      [WIDGET_TYPES.alarmStatistics]: {
+        title: 'Alarm statistics',
+      },
+      chart: {
+        title: 'Chart',
+      },
+      report: {
+        title: 'Report',
+      },
     },
   },
   manageHistogramGroups: {
@@ -317,6 +326,9 @@ export default {
     },
     edit: {
       title: 'Edit role',
+    },
+    duplicate: {
+      title: 'Duplicate role',
     },
   },
   createEventFilter: {
@@ -914,5 +926,34 @@ export default {
     edit: {
       title: 'Edit link generator',
     },
+  },
+  createAlarmChart: {
+    [WIDGET_TYPES.barChart]: {
+      create: {
+        title: 'Create bar chart',
+      },
+      edit: {
+        title: 'Edit bar chart',
+      },
+    },
+    [WIDGET_TYPES.lineChart]: {
+      create: {
+        title: 'Create line chart',
+      },
+      edit: {
+        title: 'Edit line chart',
+      },
+    },
+    [WIDGET_TYPES.numbers]: {
+      create: {
+        title: 'Create numbers chart',
+      },
+      edit: {
+        title: 'Edit numbers chart',
+      },
+    },
+  },
+  importPbehaviorException: {
+    title: 'Import exception dates',
   },
 };

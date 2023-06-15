@@ -1,37 +1,25 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 
 import CEventFilterTypeField from '@/components/forms/fields/c-event-filter-type-field.vue';
 import { EVENT_FILTER_TYPES } from '@/constants';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = (options = {}) => shallowMount(CEventFilterTypeField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CEventFilterTypeField, {
-  localVue,
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-
-  ...options,
-});
-
 const selectSelectField = wrapper => wrapper.find('select.v-select');
 
 describe('c-event-filter-type-field', () => {
+  const factory = generateShallowRenderer(CEventFilterTypeField, { stubs });
+  const snapshotFactory = generateRenderer(CEventFilterTypeField, {
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+
   test('Value changed after trigger the text field', () => {
     const wrapper = factory({
       propsData: {
