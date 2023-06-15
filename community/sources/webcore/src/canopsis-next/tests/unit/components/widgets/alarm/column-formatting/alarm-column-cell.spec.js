@@ -1,15 +1,13 @@
 import flushPromises from 'flush-promises';
 
-import { generateShallowRenderer, generateRenderer, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { ALARM_FIELDS, DATETIME_FORMATS } from '@/constants';
 
 import { convertDateToString } from '@/helpers/date/date';
-import { getAlarmsListWidgetColumnComponentGetter, getAlarmsListWidgetColumnValueFilter } from '@/helpers/widgets';
+import { getAlarmsListWidgetColumnComponentGetter, getAlarmsListWidgetColumnValueFilter } from '@/helpers/entities/widget/forms/alarm';
 
 import AlarmColumnCell from '@/components/widgets/alarm/columns-formatting/alarm-column-cell.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'alarm-column-cell-popup-body': true,
@@ -34,12 +32,12 @@ describe('alarm-column-cell', () => {
   };
 
   const factory = generateShallowRenderer(AlarmColumnCell, {
-    localVue,
+
     stubs,
     attachTo: document.body,
   });
   const snapshotFactory = generateRenderer(AlarmColumnCell, {
-    localVue,
+
     stubs,
     attachTo: document.body,
   });

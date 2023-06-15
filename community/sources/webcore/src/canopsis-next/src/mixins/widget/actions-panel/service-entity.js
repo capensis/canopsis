@@ -1,4 +1,5 @@
 import { createNamespacedHelpers } from 'vuex';
+import { isEmpty, pick } from 'lodash';
 
 import {
   MODALS,
@@ -6,10 +7,13 @@ import {
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   WEATHER_ACTIONS_TYPES,
   PBEHAVIOR_TYPE_TYPES,
+  PBEHAVIOR_ORIGINS,
+  ENTITIES_STATES,
 } from '@/constants';
 
-import { mapIds } from '@/helpers/entities';
-import { isActionTypeAvailableForEntity } from '@/helpers/entities/entity';
+import { mapIds } from '@/helpers/array';
+import { isActionTypeAvailableForEntity } from '@/helpers/entities/entity/actions';
+import { createDowntimePbehavior } from '@/helpers/entities/pbehavior/form';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
@@ -46,10 +50,10 @@ export const widgetActionPanelServiceEntityMixin = {
         [WEATHER_ACTIONS_TYPES.entityAck]: this.applyAckAction,
         [WEATHER_ACTIONS_TYPES.entityAckRemove]: this.showAckRemoveModal,
         [WEATHER_ACTIONS_TYPES.entityAssocTicket]: this.showCreateAssociateTicketModal,
-        [WEATHER_ACTIONS_TYPES.entityValidate]: this.addValidateActionToQueue,
-        [WEATHER_ACTIONS_TYPES.entityInvalidate]: this.addInvalidateActionToQueue,
+        [WEATHER_ACTIONS_TYPES.entityValidate]: this.applyValidateAction,
+        [WEATHER_ACTIONS_TYPES.entityInvalidate]: this.applyInvalidateAction,
         [WEATHER_ACTIONS_TYPES.entityPause]: this.showCreateServicePauseEventModal,
-        [WEATHER_ACTIONS_TYPES.entityPlay]: this.addPlayActionToQueue,
+        [WEATHER_ACTIONS_TYPES.entityPlay]: this.applyPlayAction,
         [WEATHER_ACTIONS_TYPES.entityCancel]: this.showCancelModal,
         [WEATHER_ACTIONS_TYPES.entityComment]: this.showCreateCommentEventModal,
         [WEATHER_ACTIONS_TYPES.declareTicket]: this.showCreateDeclareTicketModal,
@@ -57,7 +61,20 @@ export const widgetActionPanelServiceEntityMixin = {
     },
   },
   methods: {
-    ...mapAlarmActions({ fetchAlarmItemWithoutStore: 'fetchItemWithoutStore' }),
+    ...mapAlarmActions({
+      fetchAlarmItemWithoutStore: 'fetchItemWithoutStore',
+      bulkCreateAlarmAckEvent: 'bulkCreateAlarmAckEvent',
+      bulkCreateAlarmAckremoveEvent: 'bulkCreateAlarmAckremoveEvent',
+      bulkCreateAlarmSnoozeEvent: 'bulkCreateAlarmSnoozeEvent',
+      bulkCreateAlarmAssocticketEvent: 'bulkCreateAlarmAssocticketEvent',
+      bulkCreateAlarmCommentEvent: 'bulkCreateAlarmCommentEvent',
+      bulkCreateAlarmCancelEvent: 'bulkCreateAlarmCancelEvent',
+      bulkCreateAlarmChangestateEvent: 'bulkCreateAlarmChangestateEvent',
+    }),
+
+    refreshEntities() {
+      this.$emit('refresh');
+    },
 
     fetchAlarmsByEntities(entities) {
       return Promise.all(
@@ -73,12 +90,12 @@ export const widgetActionPanelServiceEntityMixin = {
       this.unavailableEntitiesAction[entity._id] = false;
     },
 
-    applyAction(action) {
+    getAvailableEntitiesByActionType(type, entities) {
       const {
         availableEntities,
         unavailableEntities,
-      } = action.entities.reduce((acc, entity) => {
-        if (isActionTypeAvailableForEntity(action.actionType, entity)) {
+      } = entities.reduce((acc, entity) => {
+        if (isActionTypeAvailableForEntity(type, entity)) {
           acc.availableEntities.push(entity);
         } else {
           acc.unavailableEntities.push(entity);
@@ -96,10 +113,7 @@ export const widgetActionPanelServiceEntityMixin = {
         return acc;
       }, {});
 
-      this.$emit('apply:action', {
-        ...action,
-        entities: availableEntities,
-      });
+      return availableEntities;
     },
 
     applyEntityAction(actionType, entities) {
@@ -108,6 +122,38 @@ export const widgetActionPanelServiceEntityMixin = {
       if (handler) {
         handler(entities);
       }
+    },
+
+    showPbehaviorResponseErrorPopups(response) {
+      if (response?.length) {
+        response.forEach(({ error, errors }) => {
+          if (error || !isEmpty(errors)) {
+            this.$popups.error({ text: error || Object.values(errors).join('\n') });
+          }
+        });
+      }
+    },
+
+    async createPauseEvent(entities, payload) {
+      const response = await this.createEntityPbehaviors({
+        data: entities.map(entity => createDowntimePbehavior({
+          entity,
+          ...pick(payload, ['comment', 'reason', 'type']),
+        }), []),
+      });
+
+      this.showPbehaviorResponseErrorPopups(response);
+    },
+
+    async createPlayEvent(entities) {
+      const response = await this.removeEntityPbehaviors({
+        data: entities.map(({ _id: id }) => ({
+          entity: id,
+          origin: PBEHAVIOR_ORIGINS.serviceWeather,
+        })),
+      });
+
+      this.showPbehaviorResponseErrorPopups(response);
     },
 
     /**
@@ -124,11 +170,20 @@ export const widgetActionPanelServiceEntityMixin = {
         : true;
     },
 
-    applyAckAction(entities) {
-      this.applyAction({
-        entities,
-        actionType: WEATHER_ACTIONS_TYPES.entityAck,
-      });
+    async applyAckAction(entities) {
+      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityAck, true);
+
+      const availableEntities = this.getAvailableEntitiesByActionType(WEATHER_ACTIONS_TYPES.entityAck, entities);
+
+      const preparedRequestData = availableEntities.map(
+        ({ alarm_id: alarmId }) => ({ _id: alarmId, comment: WEATHER_ACK_EVENT_OUTPUT.ack }),
+      );
+
+      await this.bulkCreateAlarmAckEvent({ data: preparedRequestData });
+
+      this.refreshEntities();
+
+      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityAck, false);
     },
 
     showAckRemoveModal(entities) {
@@ -137,16 +192,23 @@ export const widgetActionPanelServiceEntityMixin = {
         config: {
           title: this.$t('modals.createAckRemove.title'),
           field: {
-            name: 'output',
+            name: 'comment',
             label: this.$t('common.note'),
             validationRules: 'required',
           },
-          action: ({ output }) => {
-            this.applyAction({
+          action: async ({ comment }) => {
+            const availableEntities = this.getAvailableEntitiesByActionType(
+              WEATHER_ACTIONS_TYPES.entityAckRemove,
               entities,
-              payload: { output },
-              actionType: WEATHER_ACTIONS_TYPES.entityAckRemove,
-            });
+            );
+
+            const preparedRequestData = availableEntities.map(
+              ({ alarm_id: alarmId }) => ({ _id: alarmId, comment }),
+            );
+
+            await this.bulkCreateAlarmAckremoveEvent({ data: preparedRequestData });
+
+            this.refreshEntities();
           },
         },
       });
@@ -162,12 +224,25 @@ export const widgetActionPanelServiceEntityMixin = {
           name: MODALS.createAssociateTicketEvent,
           config: {
             items: alarms,
-            action: (event) => {
-              this.applyAction({
+            action: async (event) => {
+              const availableEntities = this.getAvailableEntitiesByActionType(
+                WEATHER_ACTIONS_TYPES.entityAssocTicket,
                 entities,
-                actionType: WEATHER_ACTIONS_TYPES.entityAssocTicket,
-                payload: event,
+              );
+
+              await this.bulkCreateAlarmAckEvent({
+                data: availableEntities.map(
+                  ({ alarm_id: alarmId }) => ({ _id: alarmId, comment: WEATHER_ACK_EVENT_OUTPUT.ack }),
+                ),
               });
+
+              await this.bulkCreateAlarmAssocticketEvent({
+                data: availableEntities.map(
+                  ({ alarm_id: alarmId }) => ({ _id: alarmId, ...event }),
+                ),
+              });
+
+              this.refreshEntities();
             },
           },
         });
@@ -209,7 +284,7 @@ export const widgetActionPanelServiceEntityMixin = {
                     name: alarmsByTickets[id].name,
                   })),
                   alarms,
-                  onExecute: () => this.$emit('refresh'),
+                  onExecute: () => this.refreshEntities(),
                 },
               });
             },
@@ -226,32 +301,73 @@ export const widgetActionPanelServiceEntityMixin = {
       this.$modals.show({
         name: MODALS.createCommentEvent,
         config: {
-          action: ({ output }) => {
-            this.applyAction({
+          action: async ({ comment }) => {
+            const availableEntities = this.getAvailableEntitiesByActionType(
+              WEATHER_ACTIONS_TYPES.entityComment,
               entities,
-              actionType: WEATHER_ACTIONS_TYPES.entityComment,
-              payload: { output },
-            });
+            );
+
+            const preparedRequestData = availableEntities.map(({ alarm_id: alarmId }) => ({ _id: alarmId, comment }));
+
+            await this.bulkCreateAlarmCommentEvent({ data: preparedRequestData });
+
+            this.refreshEntities();
           },
         },
       });
     },
 
-    addValidateActionToQueue(entities) {
-      this.applyAction({
-        actionType: WEATHER_ACTIONS_TYPES.entityValidate,
+    async applyValidateAction(entities) {
+      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityValidate, true);
+
+      const availableEntities = this.getAvailableEntitiesByActionType(
+        WEATHER_ACTIONS_TYPES.entityValidate,
         entities,
+      );
+
+      await this.bulkCreateAlarmAckEvent({
+        data: availableEntities.map(
+          ({ alarm_id: alarmId }) => ({ _id: alarmId, comment: WEATHER_ACK_EVENT_OUTPUT.validateOk }),
+        ),
       });
+      await this.bulkCreateAlarmChangestateEvent({
+        data: availableEntities.map(
+          ({ alarm_id: alarmId }) => ({
+            _id: alarmId,
+            state: ENTITIES_STATES.critical,
+            comment: WEATHER_ACK_EVENT_OUTPUT.validateOk,
+          }),
+        ),
+      });
+
+      this.refreshEntities();
+
+      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityInvalidate, false);
     },
 
-    addInvalidateActionToQueue(entities) {
-      this.applyAction({
-        entities,
-        actionType: WEATHER_ACTIONS_TYPES.entityInvalidate,
-        payload: {
-          output: WEATHER_ACK_EVENT_OUTPUT.ack,
-        },
+    async applyInvalidateAction(entities) {
+      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityInvalidate, true);
+
+      const availableEntities = this.getAvailableEntitiesByActionType(WEATHER_ACTIONS_TYPES.entityInvalidate, entities);
+
+      await this.bulkCreateAlarmAckEvent({
+        data: availableEntities.map(
+          ({ alarm_id: alarmId }) => ({ _id: alarmId, comment: WEATHER_ACK_EVENT_OUTPUT.ack }),
+        ),
       });
+
+      await this.bulkCreateAlarmCancelEvent({
+        data: availableEntities.map(
+          ({ alarm_id: alarmId }) => ({
+            _id: alarmId,
+            comment: WEATHER_ACK_EVENT_OUTPUT.validateCancel,
+          }),
+        ),
+      });
+
+      this.refreshEntities();
+
+      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityInvalidate, false);
     },
 
     showCreateServicePauseEventModal(entities) {
@@ -263,25 +379,26 @@ export const widgetActionPanelServiceEntityMixin = {
 
             const pauseType = defaultPbehaviorTypes.find(({ type }) => type === PBEHAVIOR_TYPE_TYPES.pause);
 
-            this.applyAction({
-              entities,
-              actionType: WEATHER_ACTIONS_TYPES.entityPause,
-              payload: {
-                comment: pause.comment,
-                reason: pause.reason,
-                type: pauseType,
-              },
+            await this.createPauseEvent(entities, {
+              comment: pause.comment,
+              reason: pause.reason,
+              type: pauseType,
             });
+
+            this.refreshEntities();
           },
         },
       });
     },
 
-    addPlayActionToQueue(entities) {
-      this.applyAction({
-        entities,
-        actionType: WEATHER_ACTIONS_TYPES.entityPlay,
-      });
+    async applyPlayAction(entities) {
+      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityPlay, true);
+
+      await this.createPlayEvent(entities);
+
+      this.refreshEntities();
+
+      this.setActionPendingByType(WEATHER_ACTIONS_TYPES.entityPlay, false);
     },
 
     showCancelModal(entities) {
@@ -289,12 +406,19 @@ export const widgetActionPanelServiceEntityMixin = {
         name: MODALS.textFieldEditor,
         config: {
           title: this.$t('common.note'),
-          action: (output) => {
-            this.applyAction({
+          action: async (comment) => {
+            const availableEntities = this.getAvailableEntitiesByActionType(
+              WEATHER_ACTIONS_TYPES.entityCancel,
               entities,
-              actionType: WEATHER_ACTIONS_TYPES.entityCancel,
-              payload: { output },
-            });
+            );
+
+            const preparedRequestData = availableEntities.map(
+              ({ alarm_id: alarmId }) => ({ _id: alarmId, comment }),
+            );
+
+            await this.bulkCreateAlarmCancelEvent({ data: preparedRequestData });
+
+            this.refreshEntities();
           },
         },
       });

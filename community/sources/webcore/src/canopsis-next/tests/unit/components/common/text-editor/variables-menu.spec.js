@@ -1,33 +1,23 @@
 import Faker from 'faker';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
-import VariablesMenu from '@/components/common/text-editor/variables-menu.vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-const localVue = createVueInstance();
+import VariablesMenu from '@/components/common/text-editor/variables-menu.vue';
 
 const stubs = {
   'variables-list': true,
 };
 
-const factory = (options = {}) => shallowMount(VariablesMenu, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(VariablesMenu, {
-  localVue,
-  attachTo: document.body,
-  stubs,
-
-  ...options,
-});
-
 const selectMenuNode = wrapper => wrapper.vm.$children[0];
 const selectVariablesList = wrapper => wrapper.find('variables-list-stub');
 
 describe('variables-menu', () => {
+  const factory = generateShallowRenderer(VariablesMenu, { stubs });
+  const snapshotFactory = generateRenderer(VariablesMenu, {
+    attachTo: document.body,
+    stubs,
+  });
+
   test('Input event emitted after trigger variables', () => {
     const wrapper = factory();
 

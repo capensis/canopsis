@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import FlowchartEditor from './partials/flowchart-editor.vue';
+import FlowchartEditor from './fields/flowchart-editor.vue';
 
 export default {
   inject: ['$validator'],

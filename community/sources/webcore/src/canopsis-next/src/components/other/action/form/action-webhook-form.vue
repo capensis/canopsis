@@ -18,7 +18,7 @@
 <script>
 import flatten from 'flat';
 
-import { requestTemplateVariablesErrorsToForm } from '@/helpers/forms/shared/request';
+import { requestTemplateVariablesErrorsToForm } from '@/helpers/entities/shared/request/form';
 
 import { formMixin, validationErrorsMixinCreator } from '@/mixins/form';
 import { entitiesTemplateValidatorMixin } from '@/mixins/entities/template-validator';
@@ -97,7 +97,7 @@ export default {
       };
     },
 
-    scenarioRequestErrorsRoForm({ request }) {
+    scenarioRequestErrorsToForm({ request }) {
       const flattenErrors = flatten({
         request: requestTemplateVariablesErrorsToForm(request, this.webhook.request),
       });
@@ -115,7 +115,7 @@ export default {
       try {
         const errors = await this.validateFormTemplates(this.webhook);
 
-        const wasSet = this.setFormErrors(this.scenarioRequestErrorsRoForm(errors, this.form));
+        const wasSet = this.setFormErrors(this.scenarioRequestErrorsToForm(errors));
 
         if (!wasSet) {
           this.$popups.success({ text: this.$t('declareTicket.syntaxIsValid') });

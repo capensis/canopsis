@@ -188,7 +188,7 @@ describe('Entities alarm module', () => {
 
   it('Fetch alarms without saving in store and without params. Action: fetchListWithoutStore', async () => {
     axiosMockAdapter
-      .onGet(API_ROUTES.alarmList)
+      .onGet(API_ROUTES.alarms.list)
       .reply(200, mockData.alarmsResponse);
 
     const result = await actions.fetchListWithoutStore({}, {});
@@ -200,7 +200,7 @@ describe('Entities alarm module', () => {
     const { params } = mockData;
 
     axiosMockAdapter
-      .onGet(API_ROUTES.alarmList, { params })
+      .onGet(API_ROUTES.alarms.list, { params })
       .reply(200, mockData.alarmsResponse);
 
     const result = await actions.fetchListWithoutStore({}, { params });

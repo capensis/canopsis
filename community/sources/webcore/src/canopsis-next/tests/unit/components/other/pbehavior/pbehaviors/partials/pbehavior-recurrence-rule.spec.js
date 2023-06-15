@@ -1,8 +1,6 @@
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import PbehaviorRecurrenceRule from '@/components/other/pbehavior/pbehaviors/partials/pbehavior-recurrence-rule.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'recurrence-rule-information': true,
@@ -15,7 +13,7 @@ describe('pbehavior-recurrence-rule', () => {
     rrule: 'RRULE',
   };
 
-  const snapshotFactory = generateRenderer(PbehaviorRecurrenceRule, { localVue, stubs });
+  const snapshotFactory = generateRenderer(PbehaviorRecurrenceRule, { stubs });
 
   test('Renders `pbehavior-recurrence-rule` with pbehavior', () => {
     const wrapper = snapshotFactory({

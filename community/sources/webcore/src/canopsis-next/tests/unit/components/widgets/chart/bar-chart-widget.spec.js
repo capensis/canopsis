@@ -19,7 +19,7 @@ import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS, WIDGET_TYPES } from '
 import BarChartWidget from '@/components/widgets/chart/bar-chart-widget.vue';
 
 const stubs = {
-  'chart-widget-filters': true,
+  'kpi-widget-filters': true,
 };
 
 describe('bar-chart-widget', () => {

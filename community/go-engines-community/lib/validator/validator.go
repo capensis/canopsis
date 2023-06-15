@@ -55,12 +55,6 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("required_or", fe.StructField(), fe.Param())
 		return t
 	})
-	_ = v.RegisterTranslation("required_not_both", trans, func(ut ut.Translator) error {
-		return ut.Add("required_not_both", "Can't be present both {0} and {1}.", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("required_not_both", fe.StructField(), fe.Param())
-		return t
-	})
 	_ = v.RegisterTranslation("notblank", trans, func(ut ut.Translator) error {
 		return ut.Add("notblank", "{0} should not be blank.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {

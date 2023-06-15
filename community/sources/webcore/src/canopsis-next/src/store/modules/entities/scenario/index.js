@@ -1,5 +1,4 @@
 import { API_ROUTES } from '@/config';
-
 import { ENTITIES_TYPES } from '@/constants';
 
 import { createEntityModule } from '@/store/plugins/entities';

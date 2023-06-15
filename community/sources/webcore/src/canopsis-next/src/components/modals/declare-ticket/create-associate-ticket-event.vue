@@ -15,9 +15,9 @@
           )
           associate-ticket-event-form.mt-3(v-model="form")
           c-description-field(
-            v-model="form.ticket_comment",
+            v-model="form.comment",
             :label="$tc('common.comment')",
-            name="ticket_comment"
+            name="comment"
           )
           c-alert(v-if="itemsWithoutAck.length", type="info") {{ alertMessage }}
       template(#actions="")
@@ -36,8 +36,8 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { eventToAssociateTicketForm, formToAssociateTicketEvent } from '@/helpers/forms/associate-ticket-event';
-import { isEntityComponentType } from '@/helpers/entities/entity';
+import { eventToAssociateTicketForm, formToAssociateTicketEvent } from '@/helpers/entities/associate-ticket/event/form';
+import { isEntityComponentType } from '@/helpers/entities/entity/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

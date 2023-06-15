@@ -289,14 +289,34 @@ $mobileBreakpoint: 450px;
   }
 }
 
-.chart-metrics-widget {
+.kpi-widget {
   &__title {
     font-size: 18px;
     font-weight: 500;
     margin-bottom: 16px;
   }
 
- &__chart {
-   width: 100%;
- }
+  &__chart, &__table {
+    width: 100%;
+  }
+
+  &__list {
+    gap: 50px;
+  }
+
+  &__actions {
+    width: 100%;
+  }
+}
+
+.widget-filters {
+  column-gap: 24px;
+
+  &__sampling {
+    max-width: 100px;
+  }
+
+  &__filter-selector, &__interval {
+    max-width: 200px;
+  }
 }

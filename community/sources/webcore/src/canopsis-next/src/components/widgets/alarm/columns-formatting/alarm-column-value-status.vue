@@ -9,7 +9,7 @@
 <script>
 import { ENTITIES_STATUSES } from '@/constants';
 
-import { formatState, formatStatus } from '@/helpers/formatting';
+import { formatState, formatStatus } from '@/helpers/entities/entity/formatting';
 
 export default {
   props: {

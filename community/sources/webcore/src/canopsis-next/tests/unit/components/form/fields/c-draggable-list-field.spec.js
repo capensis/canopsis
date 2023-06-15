@@ -1,10 +1,8 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import CDraggableListField from '@/components/forms/fields/list/c-draggable-list-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   draggable: {
@@ -18,20 +16,6 @@ const snapshotStubs = {
   draggable: true,
 };
 
-const factory = (options = {}) => shallowMount(CDraggableListField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CDraggableListField, {
-  localVue,
-  stubs: snapshotStubs,
-
-  ...options,
-});
-
 const selectDraggable = wrapper => wrapper.find('.draggable');
 
 describe('c-draggable-list-field', () => {
@@ -40,6 +24,9 @@ describe('c-draggable-list-field', () => {
     { title: 'Item 2' },
     { title: 'Item 3' },
   ];
+
+  const factory = generateShallowRenderer(CDraggableListField, { stubs });
+  const snapshotFactory = generateRenderer(CDraggableListField, { stubs: snapshotStubs });
 
   it('Item position changed after trigger draggable with moved event', () => {
     const wrapper = factory({

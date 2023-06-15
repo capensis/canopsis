@@ -46,7 +46,6 @@ export default {
       changeState: 'Change and lock severity',
       variablesHelp: 'List of available variables',
       history: 'History',
-      groupRequest: 'Suggest group request for meta alarm',
       createManualMetaAlarm: 'Manual meta alarm management',
       removeAlarmsFromManualMetaAlarm: 'Unlink alarm from manual meta alarm',
       comment: 'Comment',
@@ -167,6 +166,8 @@ export default {
     [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]: 'Number of not acked alarms with duration 1-4h',
     [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]: 'Number of not acked alarms with duration 4-24h',
     [ALARM_METRIC_PARAMETERS.notAckedInDayAlarms]: 'Number of not acked alarms older than 24h',
+    [ALARM_METRIC_PARAMETERS.minResolve]: 'Min time to resolve alarms',
+    [ALARM_METRIC_PARAMETERS.maxResolve]: 'Max time to resolve alarms',
   },
   fields: {
     displayName: 'Display name',
