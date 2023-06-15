@@ -7,6 +7,7 @@ export default {
   activeAlarm: 'Active alarm',
   impactDepends: 'Impact/Depends',
   treeOfDependencies: 'Tree of dependencies',
+  charts: 'Charts',
   infosSearchLabel: 'Search infos',
   eventStatisticsMessage: '{ok} OK events\n{ko} KO Events',
   eventStatistics: 'Event statistics',

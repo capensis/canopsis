@@ -597,7 +597,7 @@ Feature: run an auto instruction
       },
       {
         "_t": "instructionstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "m": "Instruction test-instruction-to-run-auto-instruction-trigger-2-1-name."
       },
       {
@@ -606,7 +606,7 @@ Feature: run an auto instruction
       },
       {
         "_t": "instructioncomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "m": "Instruction test-instruction-to-run-auto-instruction-trigger-2-1-name."
       },
       {
@@ -644,7 +644,7 @@ Feature: run an auto instruction
       },
       {
         "_t": "instructionstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "m": "Instruction test-instruction-to-run-auto-instruction-trigger-2-1-name."
       },
       {
@@ -653,7 +653,7 @@ Feature: run an auto instruction
       },
       {
         "_t": "instructioncomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "m": "Instruction test-instruction-to-run-auto-instruction-trigger-2-1-name."
       },
       {
@@ -837,12 +837,12 @@ Feature: run an auto instruction
       },
       {
         "_t": "instructionstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "m": "Instruction test-instruction-to-run-auto-instruction-trigger-3-1-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "m": "Instruction test-instruction-to-run-auto-instruction-trigger-3-1-name. Job test-job-to-run-auto-instruction-5-name."
       },
       {
@@ -851,12 +851,12 @@ Feature: run an auto instruction
       },
       {
         "_t": "instructionjobcomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "m": "Instruction test-instruction-to-run-auto-instruction-trigger-3-1-name. Job test-job-to-run-auto-instruction-5-name."
       },
       {
         "_t": "instructioncomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "m": "Instruction test-instruction-to-run-auto-instruction-trigger-3-1-name."
       },
       {
@@ -894,7 +894,7 @@ Feature: run an auto instruction
       },
       {
         "_t": "instructionstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "m": "Instruction test-instruction-to-run-auto-instruction-trigger-3-1-name."
       },
       {
@@ -903,7 +903,7 @@ Feature: run an auto instruction
       },
       {
         "_t": "instructioncomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "m": "Instruction test-instruction-to-run-auto-instruction-trigger-3-1-name."
       },
       {

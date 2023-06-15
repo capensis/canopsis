@@ -17,7 +17,7 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { formToRemediationJob, remediationJobToForm } from '@/helpers/forms/remediation-job';
+import { formToRemediationJob, remediationJobToForm } from '@/helpers/entities/remediation/job/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

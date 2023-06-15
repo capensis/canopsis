@@ -20,7 +20,33 @@
               v-tab-item(:value="$constants.PLANNING_TABS.exceptions", lazy)
                 v-card-text
                   planning-exceptions
-    c-fab-btn(@create="create", @refresh="refresh", :has-access="hasCreateAccess")
+    c-fab-expand-btn(
+      v-if="isExceptionTab",
+      :has-access="hasCreateAccess",
+      @refresh="refresh"
+    )
+      c-action-fab-btn(
+        :tooltip="$t('modals.importPbehaviorException.title')",
+        color="indigo",
+        icon="upload_file",
+        small,
+        top,
+        @click="showImportExceptionsModal"
+      )
+      c-action-fab-btn(
+        :tooltip="$t('modals.createPbehaviorException.title')",
+        color="deep-purple",
+        icon="event",
+        small,
+        top,
+        @click="showCreateExceptionModal"
+      )
+    c-fab-btn(
+      v-else,
+      :has-access="hasCreateAccess",
+      @create="create",
+      @refresh="refresh"
+    )
       span {{ tooltipText }}
 </template>
 
@@ -32,7 +58,7 @@ import { permissionsTechnicalPbehaviorReasonsMixin } from '@/mixins/permissions/
 import { permissionsTechnicalPbehaviorExceptionsMixin } from '@/mixins/permissions/technical/pbehavior-exceptions';
 import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
 import { entitiesPbehaviorReasonMixin } from '@/mixins/entities/pbehavior/reasons';
-import entitiesPbehaviorExceptionsMixin from '@/mixins/entities/pbehavior/exceptions';
+import { entitiesPbehaviorExceptionMixin } from '@/mixins/entities/pbehavior/exceptions';
 
 import PlanningTypes from '@/components/other/pbehavior/types/planning-types.vue';
 import PlanningReasons from '@/components/other/pbehavior/reasons/planning-reasons.vue';
@@ -50,7 +76,7 @@ export default {
     permissionsTechnicalPbehaviorExceptionsMixin,
     entitiesPbehaviorTypeMixin,
     entitiesPbehaviorReasonMixin,
-    entitiesPbehaviorExceptionsMixin,
+    entitiesPbehaviorExceptionMixin,
   ],
   data() {
     return {
@@ -72,6 +98,10 @@ export default {
         [PLANNING_TABS.reasons]: this.hasCreateAnyPbehaviorReasonAccess,
         [PLANNING_TABS.exceptions]: this.hasCreateAnyPbehaviorExceptionAccess,
       }[this.activeTab];
+    },
+
+    isExceptionTab() {
+      return this.activeTab === PLANNING_TABS.exceptions;
     },
   },
   methods: {
@@ -96,9 +126,6 @@ export default {
           break;
         case PLANNING_TABS.reasons:
           this.showCreateReasonModal();
-          break;
-        case PLANNING_TABS.exceptions:
-          this.showCreateExceptionModal();
           break;
       }
     },
@@ -150,6 +177,19 @@ export default {
         },
       });
     },
+
+    showImportExceptionsModal() {
+      this.$modals.show({
+        name: MODALS.importPbehaviorException,
+        config: {
+          action: async (data) => {
+            await this.importPbehaviorException({ data });
+            await this.fetchExceptionsList();
+          },
+        },
+      });
+    },
+
   },
 };
 </script>

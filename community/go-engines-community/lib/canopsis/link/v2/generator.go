@@ -93,29 +93,29 @@ func (g *generator) Load(ctx context.Context) error {
 	return nil
 }
 
-func (g *generator) GenerateForAlarms(ctx context.Context, ids []string) (map[string]liblink.LinksByCategory, error) {
+func (g *generator) GenerateForAlarms(ctx context.Context, ids []string, user liblink.User) (map[string]liblink.LinksByCategory, error) {
 	alarms, err := g.getAlarms(ctx, ids)
 	if err != nil || len(alarms) == 0 {
 		return nil, err
 	}
 
 	return g.runWorkers(ctx, func(ctx context.Context, rule parsedRule) (map[string][]linkWithCategory, error) {
-		return g.generateLinksByAlarms(ctx, rule, alarms)
+		return g.generateLinksByAlarms(ctx, rule, alarms, user)
 	})
 }
 
-func (g *generator) GenerateForEntities(ctx context.Context, ids []string) (map[string]liblink.LinksByCategory, error) {
+func (g *generator) GenerateForEntities(ctx context.Context, ids []string, user liblink.User) (map[string]liblink.LinksByCategory, error) {
 	entities, err := g.getEntities(ctx, ids)
 	if err != nil || len(entities) == 0 {
 		return nil, err
 	}
 
 	return g.runWorkers(ctx, func(ctx context.Context, rule parsedRule) (map[string][]linkWithCategory, error) {
-		return g.generateLinksByEntities(ctx, rule, entities)
+		return g.generateLinksByEntities(ctx, rule, entities, user)
 	})
 }
 
-func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId string, alarmIds []string) ([]liblink.Link, error) {
+func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId string, alarmIds []string, user liblink.User) ([]liblink.Link, error) {
 	rule := g.getRule(ruleId)
 	if rule.ID == "" {
 		return nil, liblink.ErrNoRule
@@ -138,7 +138,7 @@ func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId 
 			return nil, liblink.ErrNotMatchedAlarm
 		}
 
-		ok, _, err = rule.EntityPattern.Match(alarm.Entity)
+		ok, err = rule.EntityPattern.Match(alarm.Entity)
 		if err != nil {
 			return nil, fmt.Errorf("invalid entity pattern linkrule=%s: %w", rule.ID, err)
 		}
@@ -152,43 +152,17 @@ func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId 
 		entities[i] = entityWithData{Entity: alarm.Entity}
 	}
 
-	switch rule.Type {
-	case liblink.TypeAlarm:
-		err := g.addExternalDataToAlarms(ctx, rule.ExternalData, rule.ExternalDataTpl, alarms)
-		if err != nil {
-			return nil, err
-		}
-	case liblink.TypeEntity:
-		err := g.addExternalDataToEntities(ctx, rule.ExternalData, rule.ExternalDataTpl, entities)
-		if err != nil {
-			return nil, err
-		}
+	err = g.addExternalData(ctx, rule, alarms, entities)
+	if err != nil {
+		return nil, err
 	}
 
 	if rule.CodeExecutor != nil {
-		var arg any
-		switch rule.Type {
-		case liblink.TypeAlarm:
-			arg = alarms
-		case liblink.TypeEntity:
-			arg = entities
-		}
-
-		return g.getLinksByCode(ctx, rule.CodeExecutor, arg)
+		args := g.getCodeArgs(rule, alarms, entities, user)
+		return g.getLinksByCode(ctx, rule.CodeExecutor, args)
 	}
 
-	var data map[string]any
-	switch rule.Type {
-	case liblink.TypeAlarm:
-		data = map[string]any{
-			"Alarms": alarms,
-		}
-	case liblink.TypeEntity:
-		data = map[string]any{
-			"Entities": entities,
-		}
-	}
-
+	data := g.getTplData(rule, alarms, entities, user)
 	return g.getLinksByTpl(rule.Links, rule.LinkTpls, data)
 }
 
@@ -392,7 +366,7 @@ func (g *generator) getEntities(ctx context.Context, ids []string) ([]entityWith
 	return entities, err
 }
 
-func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, alarms []alarmWithData) (map[string][]linkWithCategory, error) {
+func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, alarms []alarmWithData, user liblink.User) (map[string][]linkWithCategory, error) {
 	res := make(map[string][]linkWithCategory, len(alarms))
 	for _, alarm := range alarms {
 		ok, err := rule.AlarmPattern.Match(alarm.Alarm)
@@ -403,7 +377,7 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 			continue
 		}
 
-		ok, _, err = rule.EntityPattern.Match(alarm.Entity)
+		ok, err = rule.EntityPattern.Match(alarm.Entity)
 		if err != nil {
 			return nil, fmt.Errorf("invalid entity pattern linkrule=%s: %w", rule.ID, err)
 		}
@@ -411,26 +385,16 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 			continue
 		}
 
-		var arg any
-		switch rule.Type {
-		case liblink.TypeAlarm:
-			v := []alarmWithData{alarm}
-			err := g.addExternalDataToAlarms(ctx, rule.ExternalData, rule.ExternalDataTpl, v)
-			if err != nil {
-				return nil, err
-			}
-			arg = v
-		case liblink.TypeEntity:
-			v := []entityWithData{{Entity: alarm.Entity}}
-			err := g.addExternalDataToEntities(ctx, rule.ExternalData, rule.ExternalDataTpl, v)
-			if err != nil {
-				return nil, err
-			}
-			arg = v
+		argAlarms := []alarmWithData{alarm}
+		argEntities := []entityWithData{{Entity: alarm.Entity}}
+		err = g.addExternalData(ctx, rule, argAlarms, argEntities)
+		if err != nil {
+			return nil, err
 		}
 
 		if rule.CodeExecutor != nil {
-			res[alarm.ID], err = g.getLinksWithCategoryByCode(ctx, rule.ID, rule.CodeExecutor, arg)
+			args := g.getCodeArgs(rule, argAlarms, argEntities, user)
+			res[alarm.ID], err = g.getLinksWithCategoryByCode(ctx, rule.ID, rule.CodeExecutor, args)
 			if err != nil {
 				g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process alarm")
 			}
@@ -438,18 +402,7 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 			continue
 		}
 
-		var data map[string]any
-		switch rule.Type {
-		case liblink.TypeAlarm:
-			data = map[string]any{
-				"Alarms": arg,
-			}
-		case liblink.TypeEntity:
-			data = map[string]any{
-				"Entities": arg,
-			}
-		}
-
+		data := g.getTplData(rule, argAlarms, argEntities, user)
 		res[alarm.ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.LinkTpls, data)
 		if err != nil {
 			g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process alarm")
@@ -459,14 +412,14 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 	return res, nil
 }
 
-func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule, entities []entityWithData) (map[string][]linkWithCategory, error) {
+func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule, entities []entityWithData, user liblink.User) (map[string][]linkWithCategory, error) {
 	if rule.Type != liblink.TypeEntity {
 		return nil, nil
 	}
 
 	res := make(map[string][]linkWithCategory, len(entities))
 	for _, entity := range entities {
-		ok, _, err := rule.EntityPattern.Match(entity.Entity)
+		ok, err := rule.EntityPattern.Match(entity.Entity)
 		if err != nil {
 			return nil, fmt.Errorf("invalid entity pattern linkrule=%s: %w", rule.ID, err)
 		}
@@ -474,14 +427,15 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 			continue
 		}
 
-		arg := []entityWithData{entity}
-		err = g.addExternalDataToEntities(ctx, rule.ExternalData, rule.ExternalDataTpl, arg)
+		argsEntities := []entityWithData{entity}
+		err = g.addExternalDataToEntities(ctx, rule.ExternalData, rule.ExternalDataTpl, argsEntities)
 		if err != nil {
 			return nil, err
 		}
 
 		if rule.CodeExecutor != nil {
-			res[entity.ID], err = g.getLinksWithCategoryByCode(ctx, rule.ID, rule.CodeExecutor, arg)
+			args := g.getCodeArgs(rule, nil, argsEntities, user)
+			res[entity.ID], err = g.getLinksWithCategoryByCode(ctx, rule.ID, rule.CodeExecutor, args)
 			if err != nil {
 				g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process entity")
 				continue
@@ -490,9 +444,8 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 			continue
 		}
 
-		res[entity.ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.LinkTpls, map[string]any{
-			"Entities": arg,
-		})
+		data := g.getTplData(rule, nil, argsEntities, user)
+		res[entity.ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.LinkTpls, data)
 		if err != nil {
 			g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process entity")
 		}
@@ -511,6 +464,22 @@ func (g *generator) getRule(id string) parsedRule {
 	}
 
 	return parsedRule{}
+}
+
+func (g *generator) addExternalData(
+	ctx context.Context,
+	rule parsedRule,
+	alarms []alarmWithData,
+	entities []entityWithData,
+) error {
+	switch rule.Type {
+	case liblink.TypeAlarm:
+		return g.addExternalDataToAlarms(ctx, rule.ExternalData, rule.ExternalDataTpl, alarms)
+	case liblink.TypeEntity:
+		return g.addExternalDataToEntities(ctx, rule.ExternalData, rule.ExternalDataTpl, entities)
+	}
+
+	return nil
 }
 
 func (g *generator) addExternalDataToAlarms(
@@ -702,9 +671,9 @@ func (g *generator) getLinksWithCategoryByCode(
 	ctx context.Context,
 	id string,
 	codeExecutor js.Executor,
-	arg any,
+	args []any,
 ) ([]linkWithCategory, error) {
-	r, err := codeExecutor.ExecuteFunc(ctx, jsFuncName, arg)
+	r, err := codeExecutor.ExecuteFunc(ctx, jsFuncName, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -754,9 +723,9 @@ func (g *generator) getLinksWithCategoryByCode(
 func (g *generator) getLinksByCode(
 	ctx context.Context,
 	codeExecutor js.Executor,
-	arg any,
+	args []any,
 ) ([]liblink.Link, error) {
-	r, err := codeExecutor.ExecuteFunc(ctx, jsFuncName, arg)
+	r, err := codeExecutor.ExecuteFunc(ctx, jsFuncName, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -796,4 +765,44 @@ func (g *generator) getLinksByCode(
 	}
 
 	return res, nil
+}
+
+func (g *generator) getTplData(
+	rule parsedRule,
+	alarms []alarmWithData,
+	entities []entityWithData,
+	user liblink.User,
+) map[string]any {
+	var data map[string]any
+	switch rule.Type {
+	case liblink.TypeAlarm:
+		data = map[string]any{
+			"Alarms": alarms,
+			"User":   user,
+		}
+	case liblink.TypeEntity:
+		data = map[string]any{
+			"Entities": entities,
+			"User":     user,
+		}
+	}
+
+	return data
+}
+
+func (g *generator) getCodeArgs(
+	rule parsedRule,
+	alarms []alarmWithData,
+	entities []entityWithData,
+	user liblink.User,
+) []any {
+	var items any
+	switch rule.Type {
+	case liblink.TypeAlarm:
+		items = alarms
+	case liblink.TypeEntity:
+		items = entities
+	}
+
+	return []any{items, user}
 }

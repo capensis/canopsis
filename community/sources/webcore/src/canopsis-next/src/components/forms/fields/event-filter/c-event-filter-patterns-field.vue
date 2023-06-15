@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-pattern-editor-field(
+  pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
     :readonly="readonly",
@@ -20,7 +20,11 @@ import {
   PATTERN_RULE_TYPES,
 } from '@/constants';
 
+import CEntityOldStateField from '@/components/forms/fields/entity/c-entity-old-state-field.vue';
+import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
+
 export default {
+  components: { PatternEditorField },
   model: {
     prop: 'patterns',
     event: 'input',
@@ -207,7 +211,7 @@ export default {
         ],
         defaultValue: ENTITIES_STATES.ok,
         valueField: {
-          is: 'c-entity-state-field',
+          is: CEntityOldStateField,
         },
       };
     },

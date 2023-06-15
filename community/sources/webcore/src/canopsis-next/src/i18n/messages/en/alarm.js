@@ -1,7 +1,6 @@
 import { EVENT_ENTITY_TYPES, ALARM_METRIC_PARAMETERS } from '@/constants';
 
 export default {
-  eventsCount: 'Events count',
   liveReporting: 'Set a custom date range',
   ackAuthor: 'Ack author',
   lastCommentAuthor: 'Last comment author',
@@ -47,7 +46,6 @@ export default {
       changeState: 'Change and lock severity',
       variablesHelp: 'List of available variables',
       history: 'History',
-      groupRequest: 'Suggest group request for meta alarm',
       createManualMetaAlarm: 'Manual meta alarm management',
       removeAlarmsFromManualMetaAlarm: 'Unlink alarm from manual meta alarm',
       comment: 'Comment',
@@ -118,6 +116,7 @@ export default {
   tabs: {
     moreInfos: 'More infos',
     timeLine: 'Timeline',
+    charts: 'Charts',
     alarmsChildren: 'Alarms consequences',
     trackSource: 'Track source',
     impactChain: 'Impact chain',
@@ -167,6 +166,8 @@ export default {
     [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]: 'Number of not acked alarms with duration 1-4h',
     [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]: 'Number of not acked alarms with duration 4-24h',
     [ALARM_METRIC_PARAMETERS.notAckedInDayAlarms]: 'Number of not acked alarms older than 24h',
+    [ALARM_METRIC_PARAMETERS.minResolve]: 'Min time to resolve alarms',
+    [ALARM_METRIC_PARAMETERS.maxResolve]: 'Max time to resolve alarms',
   },
   fields: {
     displayName: 'Display name',
@@ -195,6 +196,7 @@ export default {
     ticketAuthor: 'Ticket submitter',
     ticketId: 'Ticket id',
     ticketMessage: 'Ticket message',
+    ticketCreatedAt: 'Ticket created at',
     entityId: 'Entity ID',
     entityName: 'Entity name',
     entityCategoryName: 'Entity category name',

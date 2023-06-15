@@ -24,27 +24,18 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 ### Dernières versions
 
 <!-- du plus récent au plus ancien -->
+*  [Canopsis 23.04.1](notes-de-version/23.04.1.md), publié le 23 mai 2023.
+*  [Canopsis 22.10.9](notes-de-version/22.10.9.md), publié le 2 mai 2023.
+*  [Canopsis 23.04.0](notes-de-version/23.04.0.md), publié le 27 avril 2023. Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-23.04.0.md)
 *  [Canopsis 22.10.8](notes-de-version/22.10.8.md), publié le 30 mars 2023.
 *  [Canopsis 22.10.7](notes-de-version/22.10.7.md), publié le 1 mars 2023.
 *  [Canopsis 22.10.6](notes-de-version/22.10.6.md), publié le 26 janvier 2023.
 *  [Canopsis 22.10.5](notes-de-version/22.10.5.md), publié le 24 janvier 2023. (**Attention** : authentifications LDAP et SAML impossibles sur cette version. Veuillez utiliser Canopsis 22.10.6)
-*  [Canopsis 4.6.3](notes-de-version/4.6.3.md), publié le 23 janvier 2023.
 *  [Canopsis 22.10.4](notes-de-version/22.10.4.md), publié le 13 janvier 2023.
-*  [Canopsis 4.5.13](notes-de-version/4.5.13.md), publié le 9 janvier 2023.
 *  [Canopsis 22.10.3](notes-de-version/22.10.3.md), publié le 16 décembre 2022.
 *  [Canopsis 22.10.2](notes-de-version/22.10.2.md), publié le 8 décembre 2022.
 *  [Canopsis 22.10.1](notes-de-version/22.10.1.md), publié le 29 novembre 2022.
-*  [Canopsis 4.5.11](notes-de-version/4.5.11.md), publié le 28 novembre 2022.
 *  [Canopsis 22.10.0](notes-de-version/22.10.0.md), publié le 17 novembre 2022. Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-22.10.0.md)
-*  [Canopsis 4.6.2](notes-de-version/4.6.2.md), publié le 26 octobre 2022.
-*  [Canopsis 4.6.1](notes-de-version/4.6.1.md), publié le 16 septembre 2022.
-*  [Canopsis 4.6.0](notes-de-version/4.6.0.md), publié le 29 juillet 2022. Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-4.6.0.md)
-*  [Canopsis 4.5.10](notes-de-version/4.5.10.md), publié le 16 septembre 2022.
-*  [Canopsis 4.5.9](notes-de-version/4.5.9.md), publié le 31 août 2022.
-*  [Canopsis 4.5.8](notes-de-version/4.5.8.md), publié le 2 juin 2022.
-*  [Canopsis 4.5.7](notes-de-version/4.5.7.md), publié le 12 mai 2022.
-*  [Canopsis 4.5.6](notes-de-version/4.5.6.md), publié le 21 avril 2022.
-*  [Canopsis 4.5.5](notes-de-version/4.5.5.md), publié le 13 avril 2022.
 
 
 ??? note "Anciennes versions"
@@ -53,6 +44,11 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
     
     | | | | | | |
     |-:|-|-|-|-|-|
+    | *mai 2023* | [4.5.14](notes-de-version/4.5.14.md) | | | | |
+    | *janvier 2023* | [4.6.3](notes-de-version/4.6.3.md) | [4.5.13](notes-de-version/4.5.13.md) | | | |
+    | *octobre-novembre 2022* | [4.6.2](notes-de-version/4.6.2.md) | [4.5.11](notes-de-version/4.5.11.md) | | | |
+    | *jullet-aout-septembre 2022* | [4.6.1](notes-de-version/4.6.1.md) | [4.6.0](notes-de-version/4.6.0.md) |[4.5.10](notes-de-version/4.5.10.md) |[4.5.9](notes-de-version/4.5.9.md) | |
+    | *avril-mai-juin 2022* | [4.5.8](notes-de-version/4.5.8.md) | [4.5.7](notes-de-version/4.5.7.md) |[4.5.6](notes-de-version/4.5.6.md) |[4.5.5](notes-de-version/4.5.5.md) | |
     | *mars 2022* | [4.5.4](notes-de-version/4.5.4.md) | [4.5.3](notes-de-version/4.5.3.md) |[4.5.2](notes-de-version/4.5.2.md) |[4.5.1](notes-de-version/4.5.1.md) | [4.5.0](notes-de-version/4.5.0.md) |
     | *janvier–mars 2022* | [4.4.1](notes-de-version/4.4.1.md) | [4.3.8](notes-de-version/4.3.8.md) | [4.3.7](notes-de-version/4.3.7.md) | |
     | *novembre–décembre 2021* | [4.4.0](notes-de-version/4.4.0.md) | [4.3.6](notes-de-version/4.3.6.md) | [4.3.5](notes-de-version/4.3.5.md) | [4.3.4](notes-de-version/4.3.4.md) |

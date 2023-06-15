@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"testing"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -14,6 +16,7 @@ import (
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
 	"github.com/kylelemons/godebug/pretty"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -25,6 +28,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	defer cancel()
 
 	mockDbClient := createMockDbClient(ctrl)
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
 		Query: pagination.Query{
 			Page:     2,
@@ -41,7 +45,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -71,7 +75,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -111,6 +115,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		},
 	}
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
@@ -130,7 +135,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -166,7 +171,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -207,6 +212,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		},
 	}
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
@@ -226,7 +232,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	fields := getComputedFields(now)
@@ -264,7 +270,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -299,6 +305,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		},
 	}
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
@@ -318,7 +325,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -356,7 +363,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -406,6 +413,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		},
 	}
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
@@ -425,7 +433,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -464,7 +472,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -487,6 +495,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		]}`,
 	}
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
@@ -506,7 +515,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -540,7 +549,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -567,6 +576,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		]}`,
 	}
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
@@ -586,7 +596,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	fields := getComputedFields(now)
@@ -615,7 +625,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected, getEntityCategoryLookup()...)
-	expected = append(expected, getPbehaviorLookup()...)
+	expected = append(expected, getPbehaviorLookup(authorProvider)...)
 	expected = append(expected,
 		bson.M{"$match": bson.M{"entity.enabled": true}},
 		bson.M{"$match": bson.M{"$and": []bson.M{
@@ -639,7 +649,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -656,6 +666,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 	defer cancel()
 
 	mockDbClient := createMockDbClient(ctrl)
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
@@ -675,7 +686,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -710,7 +721,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -787,6 +798,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 			return nil
 		}
 	}).AnyTimes()
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 
 	hasRunningExecution := false
 	request := ListRequestWithPagination{
@@ -813,7 +825,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	fields := getComputedFields(now)
@@ -875,7 +887,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -899,6 +911,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 		]}`,
 	}
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
@@ -926,7 +939,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 		{"$limit": 10},
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -945,7 +958,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
 	}
 	expected = append(expected, getEntityLookup()...)
-	expected = append(expected, getPbehaviorLookup()...)
+	expected = append(expected, getPbehaviorLookup(authorProvider)...)
 	expected = append(expected,
 		bson.M{"$match": bson.M{"entity.enabled": true}},
 		bson.M{"$match": bson.M{"$and": []bson.M{
@@ -965,7 +978,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -1002,6 +1015,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 		},
 	}
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter})
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
@@ -1031,7 +1045,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	fields := getComputedFields(now)
@@ -1071,7 +1085,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -1088,6 +1102,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	defer cancel()
 
 	mockDbClient := createMockDbClient(ctrl)
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	search := "test-search"
 	searchRegexp := primitive.Regex{
 		Pattern: fmt.Sprintf(".*%s.*", search),
@@ -1112,7 +1127,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -1150,7 +1165,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -1167,6 +1182,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 	defer cancel()
 
 	mockDbClient := createMockDbClient(ctrl)
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	search := "test-search"
 	searchRegexp := primitive.Regex{
 		Pattern: fmt.Sprintf(".*%s.*", search),
@@ -1200,7 +1216,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getMetaAlarmRuleLookup()...)
@@ -1248,7 +1264,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -1265,6 +1281,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	defer cancel()
 
 	mockDbClient := createMockDbClient(ctrl)
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
@@ -1284,7 +1301,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -1320,7 +1337,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -1337,6 +1354,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	defer cancel()
 
 	mockDbClient := createMockDbClient(ctrl)
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
@@ -1356,7 +1374,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	fields := getComputedFields(now)
@@ -1396,7 +1414,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -1413,6 +1431,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	defer cancel()
 
 	mockDbClient := createMockDbClient(ctrl)
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
@@ -1432,7 +1451,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	fields := getComputedFields(now)
@@ -1469,7 +1488,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 		}},
 	}...)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -1552,6 +1571,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 		},
 	}
 	mockDbClient := createMockDbClientWithFilterFetching(ctrl, []view.WidgetFilter{filter1, filter2})
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
@@ -1571,7 +1591,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
-	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -1619,7 +1639,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 		}},
 	)
 
-	b := NewMongoQueryBuilder(mockDbClient)
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
 	result, err := b.CreateListAggregationPipeline(ctx, request, now)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)

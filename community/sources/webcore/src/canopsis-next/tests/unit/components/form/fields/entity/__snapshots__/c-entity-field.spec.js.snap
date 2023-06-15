@@ -240,13 +240,18 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 1`] = `
         >
           Custom label
         </label>
-        <input
-          aria-label="Custom label"
-          autocomplete="off"
-          name="customName"
-          role="combobox"
-          type="text"
-        />
+        <div
+          class="v-select__selections"
+        >
+          Text 3
+          <input
+            aria-label="Custom label"
+            autocomplete="off"
+            name="customName"
+            role="combobox"
+            type="text"
+          />
+        </div>
         <div
           class="v-input__append-inner"
         >
@@ -380,13 +385,17 @@ exports[`c-entity-field Renders \`c-entity-field\` with default props 1`] = `
         >
           Entity
         </label>
-        <input
-          aria-label="Entity"
-          autocomplete="off"
-          name="entities"
-          role="combobox"
-          type="text"
-        />
+        <div
+          class="v-select__selections"
+        >
+          <input
+            aria-label="Entity"
+            autocomplete="off"
+            name="entities"
+            role="combobox"
+            type="text"
+          />
+        </div>
         <div
           class="v-input__append-inner"
         >

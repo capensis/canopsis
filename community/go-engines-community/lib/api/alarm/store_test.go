@@ -5,8 +5,10 @@ import (
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
@@ -81,13 +83,15 @@ func benchmarkStoreFind(b *testing.B, fixturesPath string, request alarm.ListReq
 			b.Errorf("unexpected error %v", err)
 		}
 	})
-
-	s := alarm.NewStore(dbClient, nil, config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()), zerolog.Nop())
+	userId := "test"
+	authorProvider := author.NewProvider(dbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	s := alarm.NewStore(dbClient, nil, config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()),
+		authorProvider, json.NewDecoder(), zerolog.Nop())
 
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_, err := s.Find(ctx, request)
+		_, err := s.Find(ctx, request, userId)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}

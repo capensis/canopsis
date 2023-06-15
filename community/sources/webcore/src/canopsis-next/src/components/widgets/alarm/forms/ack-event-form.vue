@@ -10,9 +10,10 @@
         )
       span {{ $t('alarm.ackResourcesQuestion') }}
     c-description-field(
-      v-field="form.output",
+      v-field="form.comment",
       :label="$t('common.note')",
-      :required="isNoteRequired"
+      :required="isNoteRequired",
+      name="comment"
     )
 </template>
 

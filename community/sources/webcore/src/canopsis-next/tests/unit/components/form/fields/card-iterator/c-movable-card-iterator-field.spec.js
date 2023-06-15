@@ -125,6 +125,7 @@ describe('c-movable-card-iterator-field', () => {
           { id: 'id-2', text: 'text-2' },
         ],
         itemKey: 'id',
+        addable: true,
       },
     });
 
@@ -139,6 +140,7 @@ describe('c-movable-card-iterator-field', () => {
           { id: 'id-2', text: 'text-2' },
         ],
         itemKey: 'id',
+        addable: true,
       },
       slots: {
         prepend: '<div class="prepend-slot" />',

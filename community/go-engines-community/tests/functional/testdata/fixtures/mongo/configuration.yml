@@ -14,6 +14,7 @@ configuration:
     loader_no_update: true
     login_page_description: Test login
     max_matched_items: 4
+    allow_change_severity_to_info: true
 
   configuration_global:
     _id: global_config
@@ -32,6 +33,7 @@ configuration:
     api:
       bulkmaxsize: 10000
       tokensigningmethod: HS256
+      authorscheme: ["$username", " ", "$firstname", " ", "$lastname", " ", "$email"]
     data_storage:
       timetoexecute: ""
     file:
@@ -52,6 +54,7 @@ configuration:
     metrics:
       flushinterval: 1s
       sliinterval: 1h
+      usersessiongapinterval: 1h
       enabledinstructions: true
       enablednotackedmetrics: true
     tech_metrics:

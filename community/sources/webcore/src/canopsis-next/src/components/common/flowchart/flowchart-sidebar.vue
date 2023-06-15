@@ -50,7 +50,6 @@
 
 <script>
 import { COLORS } from '@/config';
-
 import { LINE_TYPES } from '@/constants';
 
 import { getFileDataUrlContent } from '@/helpers/file/file-select';
@@ -95,7 +94,6 @@ import ProcessShapeIcon from './icons/process-shape.vue';
 import DocumentShapeIcon from './icons/document-shape.vue';
 import TextShapeIcon from './icons/text-shape.vue';
 import TextboxShapeIcon from './icons/textbox-shape.vue';
-
 import assetGroups from './assets';
 
 export default {

@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout.py-2(column)
-    chart-widget-filters.mx-3(
+    kpi-widget-filters.mx-3(
       :widget-id="widget._id",
       :user-filters="userPreference.filters",
       :widget-filters="widget.filters",
@@ -23,7 +23,8 @@
       chart-loader(v-if="vectorMetricsPending", :has-metrics="hasMetrics")
       bar-chart-metrics(
         v-if="hasMetrics",
-        :metrics="preparedVectorMetrics",
+        :chart-id="widget._id",
+        :metrics="preparedMetrics",
         :title="widget.parameters.chart_title",
         :sampling="query.sampling",
         :stacked="widget.parameters.stacked",
@@ -35,11 +36,11 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { pick, keyBy } from 'lodash';
+import { pick } from 'lodash';
 
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
-import { convertFilterToQuery } from '@/helpers/query';
-import { convertMetricsToTimezone } from '@/helpers/metrics';
+import { convertFilterToQuery } from '@/helpers/entities/shared/query';
+import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
@@ -47,12 +48,13 @@ import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
 import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
+import { widgetChartMetricsMap } from '@/mixins/widget/chart/metrics-map';
 import { entitiesVectorMetricsMixin } from '@/mixins/entities/vector-metrics';
 import { permissionsWidgetsBarChartInterval } from '@/mixins/permissions/widgets/chart/bar/interval';
 import { permissionsWidgetsBarChartSampling } from '@/mixins/permissions/widgets/chart/bar/sampling';
 import { permissionsWidgetsBarChartFilters } from '@/mixins/permissions/widgets/chart/bar/filters';
 
-import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
+import KpiWidgetFilters from '../partials/kpi-widget-filters.vue';
 
 import ChartLoader from './partials/chart-loader.vue';
 import BarChartMetrics from './partials/bar-chart-metrics.vue';
@@ -62,7 +64,7 @@ const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
 export default {
   inject: ['$system'],
   components: {
-    ChartWidgetFilters,
+    KpiWidgetFilters,
     ChartLoader,
     BarChartMetrics,
   },
@@ -72,6 +74,7 @@ export default {
     metricsIntervalFilterMixin,
     widgetSamplingFilterMixin,
     widgetPeriodicRefreshMixin,
+    widgetChartMetricsMap,
     entitiesVectorMetricsMixin,
     permissionsWidgetsBarChartInterval,
     permissionsWidgetsBarChartSampling,
@@ -91,11 +94,6 @@ export default {
       default: '',
     },
   },
-  data() {
-    return {
-      widgetMetricsMap: {},
-    };
-  },
   computed: {
     hasMetrics() {
       return !!this.vectorMetrics.length;
@@ -109,12 +107,17 @@ export default {
         : null;
     },
 
-    preparedVectorMetrics() {
-      return convertMetricsToTimezone(this.vectorMetrics, this.$system.timezone).map(metric => ({
-        ...metric,
+    preparedMetrics() {
+      return convertMetricsToTimezone(this.vectorMetrics, this.$system.timezone).map((metric) => {
+        const parameters = this.widgetMetricsMap[metric.title] ?? {};
 
-        color: this.widgetMetricsMap[metric.title].color,
-      }));
+        return {
+          ...metric,
+
+          color: parameters.color,
+          label: parameters.label,
+        };
+      });
     },
   },
   watch: {
@@ -132,9 +135,6 @@ export default {
       }
     },
   },
-  created() {
-    this.setWidgetMetricsMap();
-  },
   methods: {
     ...mapMetricsActions({
       createKpiAlarmExport: 'createKpiAlarmExport',
@@ -149,12 +149,11 @@ export default {
       };
     },
 
-    setWidgetMetricsMap() {
-      this.widgetMetricsMap = keyBy(this.widget.parameters?.metrics ?? [], 'metric');
-    },
-
     async fetchList() {
-      await this.fetchVectorMetricsList({ params: this.getQuery(), widgetId: this.widget._id });
+      await this.fetchVectorMetricsList({
+        widgetId: this.widget._id,
+        params: this.getQuery(),
+      });
 
       this.setWidgetMetricsMap();
     },

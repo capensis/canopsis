@@ -35,7 +35,9 @@ Feature: Bulk delete maps
         }
       },
       {
-        "error": "map is linked with widget",
+        "errors": {
+          "_id": "map is linked with widget"
+        },
         "status": 400,
         "item": {
           "_id": "test-map-to-bulk-delete-2"

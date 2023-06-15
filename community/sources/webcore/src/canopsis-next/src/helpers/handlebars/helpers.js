@@ -4,10 +4,10 @@ import axios from 'axios';
 
 import { DATETIME_FORMATS, MAX_LIMIT } from '@/constants';
 
+import i18n from '@/i18n';
+
 import { convertDurationToString } from '@/helpers/date/duration';
 import { convertDateToStringWithFormatForToday, convertDateToString } from '@/helpers/date/date';
-
-import i18n from '@/i18n';
 
 /**
  * Prepare object attributes from `{ key: value, keySecond: valueSecond }` format
@@ -27,6 +27,7 @@ function prepareAttributes(attributes) {
  *
  * First example: {{timestamp 1673932037}} -> 07:07:17 (it's today time)
  * Second example: {{timestamp 1673932037 format='long'}} -> 17/01/2023 07:07:17
+ * Third example: {{timestamp 1673932037 format='MMMM Do YYYY, h:mm:ss a'}} -> January 17th 2023, 07:07:17 am
  *
  * @param {string|number} date
  * @param {Object} options
@@ -39,8 +40,8 @@ export function timestampHelper(date, options = {}) {
     return '';
   }
 
-  return format === 'long'
-    ? convertDateToString(date)
+  return format
+    ? convertDateToString(date, format)
     : convertDateToStringWithFormatForToday(date);
 }
 

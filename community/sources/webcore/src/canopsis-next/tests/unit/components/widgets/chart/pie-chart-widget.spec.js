@@ -19,7 +19,7 @@ import { AGGREGATE_FUNCTIONS, ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS, 
 import PieChartWidget from '@/components/widgets/chart/pie-chart-widget.vue';
 
 const stubs = {
-  'chart-widget-filters': true,
+  'kpi-widget-filters': true,
 };
 
 describe('pie-chart-widget', () => {

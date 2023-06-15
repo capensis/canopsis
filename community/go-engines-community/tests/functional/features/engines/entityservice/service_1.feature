@@ -474,8 +474,7 @@ Feature: update service on event
         "on_failure": "pass"
       },
       "description": "test-eventfilter-service-3-description",
-      "enabled": true,
-      "priority": 2
+      "enabled": true
     }
     """
     Then the response code should be 201
