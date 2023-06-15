@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout.py-2(column)
-    chart-widget-filters.mx-3(
+    kpi-widget-filters.mx-3(
       :interval="query.interval",
       :min-interval-date="minAvailableDate",
       :sampling="query.sampling",
@@ -35,7 +35,7 @@ import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { entitiesVectorMetricsMixin } from '@/mixins/entities/vector-metrics';
 import { widgetChartMetricsMap } from '@/mixins/widget/chart/metrics-map';
 
-import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
+import KpiWidgetFilters from '@/components/widgets/partials/kpi-widget-filters.vue';
 import ChartLoader from '@/components/widgets/chart/partials/chart-loader.vue';
 import BarChartMetrics from '@/components/widgets/chart/partials/bar-chart-metrics.vue';
 import LineChartMetrics from '@/components/widgets/chart/partials/line-chart-metrics.vue';
@@ -47,7 +47,7 @@ export default {
   inject: ['$system'],
   components: {
     ChartLoader,
-    ChartWidgetFilters,
+    KpiWidgetFilters,
     BarChartMetrics,
     LineChartMetrics,
     NumbersMetrics,

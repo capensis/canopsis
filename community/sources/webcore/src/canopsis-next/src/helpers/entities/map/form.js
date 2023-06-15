@@ -123,8 +123,7 @@ import { addKeyInEntities, mapIds, removeKeyFromEntities } from '@/helpers/array
  */
 
 /**
- * @typedef {MapTreeOfDependenciesEntity} MapTreeOfDependenciesEntityForm
- * @property {string} key
+ * @typedef {MapTreeOfDependenciesEntity & ObjectKey} MapTreeOfDependenciesEntityForm
  * @property {Entity} entity
  * @property {Entity[]} pinned
  */

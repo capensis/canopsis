@@ -16,8 +16,7 @@ import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
  */
 
 /**
- * @typedef {PbehaviorException} PbehaviorExceptionForm
- * @property {string} key
+ * @typedef {PbehaviorException & ObjectKey} PbehaviorExceptionForm
  */
 
 /**

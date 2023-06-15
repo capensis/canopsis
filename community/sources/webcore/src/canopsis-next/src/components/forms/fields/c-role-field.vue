@@ -4,7 +4,7 @@
     v-validate="rules",
     :is="component",
     :items="availableRoles",
-    :label="label || $tc('common.role')"
+    :label="label || $tc('common.role')",
     :loading="pending",
     :name="name",
     :error-messages="errors.collect(name)",

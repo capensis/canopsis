@@ -39,8 +39,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
  */
 
 /**
- * @typedef {PbehaviorComment} PbehaviorCommentForm
- * @property {string} key
+ * @typedef {PbehaviorComment & ObjectKey} PbehaviorCommentForm
  */
 
 /**
@@ -57,8 +56,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
  */
 
 /**
- * @typedef {PbehaviorExdate} PbehaviorExdateForm
- * @property {string} key
+ * @typedef {PbehaviorExdate & ObjectKey} PbehaviorExdateForm
  * @property {Date} begin
  * @property {Date} end
  */
