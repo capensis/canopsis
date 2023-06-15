@@ -88,6 +88,8 @@ func (m *manager) UpdateEntities(ctx context.Context, eventEntityID string, enti
 				set["services_to_remove"] = ent.ServicesToRemove
 			}
 
+			set["connector"] = ent.Connector
+
 			newModel = mongo.NewUpdateOneModel().
 				SetFilter(bson.M{"_id": ent.ID}).
 				SetUpdate(bson.M{"$set": set})
@@ -514,6 +516,9 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 		}
 
 		if !connectorExist {
+			eventEntity.Connector = connectorID
+			eventEntity.IsUpdated = true
+
 			contextGraphEntities = []types.Entity{
 				{
 					ID:            connectorID,
@@ -649,6 +654,9 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 	}
 
 	if !connectorExist {
+		eventEntity.Connector = connectorID
+		eventEntity.IsUpdated = true
+
 		contextGraphEntities = append(contextGraphEntities, types.Entity{
 			ID:            connectorID,
 			Name:          connectorName,

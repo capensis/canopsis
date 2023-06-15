@@ -508,3 +508,165 @@ Feature: create entities on event
       }
     }
     """
+
+  @concurrent
+  Scenario: given resource event with a new connector should change connector field in the entity
+    Given I am admin
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-che-5",
+      "connector_name": "test-connector-name-che-5",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-che-5",
+      "resource": "test-resource-che-5",
+      "state": 2,
+      "output": "test-output-che-5"
+    }
+    """
+    When I do GET /api/v4/entities?search=test-resource-che-5
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-5/test-component-che-5",
+          "category": null,
+          "connector": "test-connector-che-5/test-connector-name-che-5",
+          "component": "test-component-che-5",
+          "enabled": true,
+          "impact_level": 1,
+          "infos": {},
+          "name": "test-resource-che-5",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-che-5",
+      "connector_name": "test-connector-name-che-5-new",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-che-5",
+      "resource": "test-resource-che-5",
+      "state": 2,
+      "output": "test-output-che-5"
+    }
+    """
+    When I do GET /api/v4/entities?search=test-resource-che-5
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-resource-che-5/test-component-che-5",
+          "category": null,
+          "connector": "test-connector-che-5/test-connector-name-che-5-new",
+          "component": "test-component-che-5",
+          "enabled": true,
+          "impact_level": 1,
+          "infos": {},
+          "name": "test-resource-che-5",
+          "type": "resource"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+
+  @concurrent
+  Scenario: given component event with a new connector should change connector field in the entity
+    Given I am admin
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-che-6",
+      "connector_name": "test-connector-name-che-6",
+      "source_type": "component",
+      "event_type": "check",
+      "component": "test-component-che-6",
+      "state": 2,
+      "output": "test-output-che-6"
+    }
+    """
+    When I do GET /api/v4/entities?search=test-component-che-6
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-component-che-6",
+          "category": null,
+          "connector": "test-connector-che-6/test-connector-name-che-6",
+          "component": "test-component-che-6",
+          "enabled": true,
+          "impact_level": 1,
+          "infos": {},
+          "name": "test-component-che-6",
+          "type": "component"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-che-6",
+      "connector_name": "test-connector-name-che-6-new",
+      "source_type": "component",
+      "event_type": "check",
+      "component": "test-component-che-6",
+      "state": 2,
+      "output": "test-output-che-6"
+    }
+    """
+    When I do GET /api/v4/entities?search=test-component-che-6
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-component-che-6",
+          "category": null,
+          "connector": "test-connector-che-6/test-connector-name-che-6-new",
+          "component": "test-component-che-6",
+          "enabled": true,
+          "impact_level": 1,
+          "infos": {},
+          "name": "test-component-che-6",
+          "type": "component"
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
