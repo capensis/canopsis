@@ -28,9 +28,9 @@
 </template>
 
 <script>
-import { formArrayMixin } from '@/mixins/form';
+import { generateTemplateFormName } from '@/helpers/entities/dynamic-info/template/form';
 
-import { generateTemplateFormName } from '@/helpers/forms/dynamic-info-template';
+import { formArrayMixin } from '@/mixins/form';
 
 export default {
   inject: ['$validator'],

@@ -1,14 +1,12 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { CRUD_ACTIONS, MODALS, PATTERN_TABS, PATTERN_TYPES, USERS_PERMISSIONS } from '@/constants';
 
 import Patterns from '@/views/profile/patterns.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-page-header': true,
@@ -17,20 +15,6 @@ const stubs = {
   'corporate-patterns': true,
   patterns: true,
 };
-
-const factory = (options = {}) => shallowMount(Patterns, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(Patterns, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectFabExpandButton = wrapper => wrapper.find('c-fab-expand-btn-stub');
 const selectPatterns = wrapper => wrapper.find('patterns-stub');
@@ -78,6 +62,9 @@ describe('patterns', () => {
     patternModule,
     corporatePatternModule,
   ]);
+
+  const factory = generateShallowRenderer(Patterns, { stubs });
+  const snapshotFactory = generateRenderer(Patterns, { stubs });
 
   afterEach(() => {
     currentUserPermissionsById.mockClear();

@@ -2,10 +2,10 @@
   v-layout(column)
     c-duration-field(v-field="form.duration", required)
     c-description-field(
-      v-field="form.output",
+      v-field="form.comment",
       :label="$t('common.note')",
       :required="isNoteRequired",
-      name="output"
+      name="comment"
     )
 </template>
 

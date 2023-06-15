@@ -62,8 +62,8 @@ import { LatLngBounds, LatLng } from 'leaflet';
 
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 
-import { getGeomapMarkerIconOptions } from '@/helpers/map';
-import { getEntityColor } from '@/helpers/color';
+import { getGeomapMarkerIconOptions } from '@/helpers/entities/map/list';
+import { getEntityColor } from '@/helpers/entities/entity/color';
 
 import { mapInformationPopupMixin } from '@/mixins/map/map-information-popup-mixin';
 

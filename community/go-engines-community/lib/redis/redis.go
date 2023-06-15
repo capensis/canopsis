@@ -23,7 +23,7 @@ const (
 
 	LockStorage
 	QueueStorage
-	CacheQueue
+	ApiCacheQueue
 	AxePeriodicalLockStorage
 	RuleTotalEntitiesStorage
 	AlarmGroupStorage

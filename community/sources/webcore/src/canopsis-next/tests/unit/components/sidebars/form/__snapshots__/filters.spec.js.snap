@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`filters Renders \`filters\` with custom props 1`] = `
+<widget-settings-item-stub
+  title="Filters"
+>
+  <div
+    class="layout column"
+  >
+    <filter-selector-stub
+      clearable="true"
+      filters="[object Object],[object Object]"
+      hidemultiply="true"
+      itemtext="title"
+      itemvalue="_id"
+      label="Default filter"
+      lockedfilters=""
+      value="filter-id-1"
+    />
+    <field-filters-list-stub
+      filters="[object Object],[object Object]"
+      name="filters"
+    />
+  </div>
+</widget-settings-item-stub>
+`;
+
+exports[`filters Renders \`filters\` with default and required props 1`] = `
+<widget-settings-item-stub
+  title="Filters"
+>
+  <div
+    class="layout column"
+  >
+    <filter-selector-stub
+      clearable="true"
+      filters=""
+      hidemultiply="true"
+      itemtext="title"
+      itemvalue="_id"
+      label="Default filter"
+      lockedfilters=""
+    />
+    <field-filters-list-stub
+      filters=""
+      name="filters"
+    />
+  </div>
+</widget-settings-item-stub>
+`;

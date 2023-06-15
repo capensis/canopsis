@@ -1,10 +1,8 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import CTablePagination from '@/components/common/pagination/c-table-pagination.vue';
-
-const localVue = createVueInstance();
 
 const mockData = {
   page: Faker.datatype.number(),
@@ -31,21 +29,10 @@ const snapshotStubs = {
   'c-pagination': true,
 };
 
-const factory = (options = {}) => shallowMount(CTablePagination, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CTablePagination, {
-  localVue,
-  stubs: snapshotStubs,
-
-  ...options,
-});
-
 describe('c-table-pagination', () => {
+  const factory = generateShallowRenderer(CTablePagination, { stubs });
+  const snapshotFactory = generateRenderer(CTablePagination, { stubs: snapshotStubs });
+
   it('Pagination hidden without items', () => {
     const { falseTotalItems: totalItems } = mockData;
     const wrapper = factory({ propsData: { totalItems } });
