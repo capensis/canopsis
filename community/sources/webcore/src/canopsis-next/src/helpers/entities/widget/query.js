@@ -12,6 +12,8 @@ import {
   convertChartWidgetToQuery,
   convertNumbersWidgetToQuery,
   convertPieChartWidgetToQuery,
+  convertStatisticsUserPreferenceToQuery,
+  convertStatisticsWidgetParametersToQuery,
 } from '../metric/query';
 import { convertContextUserPreferenceToQuery, convertContextWidgetToQuery } from '../entity/query';
 import { convertWeatherUserPreferenceToQuery, convertWeatherWidgetToQuery } from '../service-weather/query';
@@ -36,6 +38,8 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
     [WIDGET_TYPES.lineChart]: convertChartUserPreferenceToQuery,
     [WIDGET_TYPES.pieChart]: convertChartUserPreferenceToQuery,
     [WIDGET_TYPES.numbers]: convertChartUserPreferenceToQuery,
+    [WIDGET_TYPES.userStatistics]: convertStatisticsUserPreferenceToQuery,
+    [WIDGET_TYPES.alarmStatistics]: convertStatisticsUserPreferenceToQuery,
 
     ...featuresService.get('helpers.query.convertUserPreferenceToQuery.convertersMap'),
   };
@@ -62,6 +66,8 @@ export function convertWidgetToQuery(widget) {
     [WIDGET_TYPES.lineChart]: convertChartWidgetToQuery,
     [WIDGET_TYPES.pieChart]: convertPieChartWidgetToQuery,
     [WIDGET_TYPES.numbers]: convertNumbersWidgetToQuery,
+    [WIDGET_TYPES.userStatistics]: convertStatisticsWidgetParametersToQuery,
+    [WIDGET_TYPES.alarmStatistics]: convertStatisticsWidgetParametersToQuery,
 
     ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
   };

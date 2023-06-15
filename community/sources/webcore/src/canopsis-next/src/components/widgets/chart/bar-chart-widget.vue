@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout.py-2(column)
-    chart-widget-filters.mx-3(
+    kpi-widget-filters.mx-3(
       :widget-id="widget._id",
       :user-filters="userPreference.filters",
       :widget-filters="widget.filters",
@@ -54,7 +54,7 @@ import { permissionsWidgetsBarChartInterval } from '@/mixins/permissions/widgets
 import { permissionsWidgetsBarChartSampling } from '@/mixins/permissions/widgets/chart/bar/sampling';
 import { permissionsWidgetsBarChartFilters } from '@/mixins/permissions/widgets/chart/bar/filters';
 
-import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
+import KpiWidgetFilters from '../partials/kpi-widget-filters.vue';
 
 import ChartLoader from './partials/chart-loader.vue';
 import BarChartMetrics from './partials/bar-chart-metrics.vue';
@@ -64,7 +64,7 @@ const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
 export default {
   inject: ['$system'],
   components: {
-    ChartWidgetFilters,
+    KpiWidgetFilters,
     ChartLoader,
     BarChartMetrics,
   },

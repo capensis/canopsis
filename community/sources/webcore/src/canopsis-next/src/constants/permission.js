@@ -78,6 +78,8 @@ export const USER_PERMISSIONS_PREFIXES = {
     lineChart: 'linechart',
     pieChart: 'piechart',
     numbers: 'numbers',
+    userStatistics: 'userStatistics',
+    alarmStatistics: 'alarmStatistics',
   },
   api: 'api',
 };
@@ -296,6 +298,26 @@ export const USERS_PERMISSIONS = {
         editFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_editFilter`,
         addFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_addFilter`,
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_userFilter`,
+      },
+    },
+    userStatistics: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_interval`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_userFilter`,
+      },
+    },
+    alarmStatistics: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_interval`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_userFilter`,
       },
     },
   },

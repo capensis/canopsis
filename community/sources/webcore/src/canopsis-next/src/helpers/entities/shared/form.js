@@ -4,7 +4,23 @@ import flatten from 'flat';
 import { uid } from '@/helpers/uid';
 
 /**
+ * @typedef {Object} ObjectKey
+ * @property {string} key
+ */
+
+/**
  * @typedef {Object.<string, string | string[]>} FlattenErrors
+ */
+
+/**
+ * @typedef {Object} Infos
+ * @property {string} name
+ * @property {string} description
+ * @property {string|string[]} value
+ */
+
+/**
+ * @typedef {Object.<string, { description: string, value: string|string[] }>} InfosObject
  */
 
 /**
@@ -22,17 +38,6 @@ export const flattenErrorMap = (errors = {}, map = v => v) => {
 
   return flatten(map(errorsObject));
 };
-
-/**
- * @typedef {Object} Infos
- * @property {string} name
- * @property {string} description
- * @property {string|string[]} value
- */
-
-/**
- * @typedef {Object.<string, { description: string, value: string|string[] }>} InfosObject
- */
 
 /**
  * Convert array with primitive values to form object

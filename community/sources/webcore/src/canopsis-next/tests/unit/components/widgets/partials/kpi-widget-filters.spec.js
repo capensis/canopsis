@@ -1,9 +1,10 @@
 import Faker from 'faker';
 
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+
 import { QUICK_RANGES, SAMPLINGS } from '@/constants';
 
-import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
+import KpiWidgetFilters from '@/components/widgets/partials/kpi-widget-filters.vue';
 
 const stubs = {
   'c-quick-date-interval-field': true,
@@ -16,9 +17,9 @@ const selectQuickDateIntervalField = wrapper => wrapper.find('c-quick-date-inter
 const selectSamplingField = wrapper => wrapper.find('c-sampling-field-stub');
 const selectFilterSelector = wrapper => wrapper.find('filter-selector-stub');
 
-describe('chart-widget-filters', () => {
-  const factory = generateShallowRenderer(ChartWidgetFilters, { stubs });
-  const snapshotFactory = generateRenderer(ChartWidgetFilters, { stubs });
+describe('kpi-widget-filters', () => {
+  const factory = generateShallowRenderer(KpiWidgetFilters, { stubs });
+  const snapshotFactory = generateRenderer(KpiWidgetFilters, { stubs });
 
   test('Date interval changed after trigger quick date interval field', () => {
     const wrapper = factory({
@@ -71,7 +72,7 @@ describe('chart-widget-filters', () => {
     expect(wrapper).toEmit('update:filters', newFilters);
   });
 
-  test('Renders `chart-widget-filters` with required props', async () => {
+  test('Renders \'kpi-widget-filters\' with required props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         widgetId: 'widget-id',
@@ -81,7 +82,7 @@ describe('chart-widget-filters', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  test('Renders `chart-widget-filters` with custom props', async () => {
+  test('Renders \'kpi-widget-filters\' with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         widgetId: 'id',
