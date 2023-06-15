@@ -3,7 +3,7 @@ import { uniq } from 'lodash';
 import { QUICK_RANGES } from '@/constants';
 
 import { isOmitEqual } from '@/helpers/collection';
-import { isRatioMetric } from '@/helpers/entities/metric/form';
+import { isRatioMetric, isCustomCriteria } from '@/helpers/entities/metric/form';
 
 /**
  * Check query is changed with interval
@@ -133,3 +133,64 @@ export function convertNumbersWidgetToQuery(widget) {
     })),
   };
 }
+
+/**
+ * This function converts statistics widgets default parameters to query Object
+ *
+ * @param {Widget} widget
+ * @returns {Object}
+ */
+export function convertStatisticsWidgetParametersToQuery(widget) {
+  const {
+    parameters: {
+      mainFilter,
+      mainParameter = {},
+      widgetColumns = [],
+      default_time_range: defaultTimeRange,
+    },
+  } = widget;
+
+  const query = {
+    interval: {
+      from: QUICK_RANGES[defaultTimeRange].start,
+      to: QUICK_RANGES[defaultTimeRange].stop,
+    },
+    parameters: widgetColumns.map(({ metric, criteria }) => {
+      const parameter = {
+        metric,
+      };
+
+      if (criteria) {
+        parameter.criteria = criteria;
+      }
+
+      return parameter;
+    }),
+    entity_patterns: mainParameter.patterns.map(({ title, entity_pattern: pattern }) => ({ title, pattern })),
+    lockedFilter: mainFilter,
+  };
+
+  if (!isCustomCriteria(mainParameter.criteria)) {
+    query.criteria = mainParameter.criteria;
+  }
+
+  return query;
+}
+
+/**
+ * This function converts userPreference with widget statistics type to query Object
+ *
+ * @param {Object} userPreference
+ * @returns {Object}
+ */
+export const convertStatisticsUserPreferenceToQuery = ({ content: { interval, mainFilter } }) => {
+  const query = {
+    filter: mainFilter,
+  };
+
+  if (interval) {
+    query.interval = interval;
+  }
+
+  return query;
+};

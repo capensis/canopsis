@@ -5,16 +5,23 @@
     template(#text="")
       v-layout(column)
         v-card.my-1.cursor-pointer(
-          v-for="{ type, text, icon } in availableTypes",
-          :key="type",
-          @click="selectType(type)"
+          v-for="{ type, text, icon, on, children } in availableTypes",
+          v-on="on",
+          :key="type"
         )
-          v-card-title(primary-title)
-            v-layout(wrap, justify-between)
-              v-flex(xs11)
-                div.subheading {{ text }}
-              v-flex
-                v-icon {{ icon }}
+          v-menu(:disabled="!children", top, offset-y)
+            template(#activator="{ on: menuOn }")
+              v-card-title(v-on="menuOn", primary-title)
+                v-layout(wrap, justify-between)
+                  v-flex(xs11)
+                    div.subheading {{ text }}
+                  v-flex
+                    v-icon {{ icon }}
+            v-list
+              v-list-tile(v-for="child in children", v-on="child.on", :key="child.type")
+                v-list-tile-avatar
+                  v-icon {{ child.icon }}
+                v-list-tile-title {{ child.text }}
 </template>
 
 <script>
@@ -24,6 +31,7 @@ import {
   SIDE_BARS_BY_WIDGET_TYPES,
   WIDGET_TYPES_RULES,
   WIDGET_ICONS,
+  TOP_LEVEL_WIDGET_TYPES,
 } from '@/constants';
 
 import { getNewWidgetGridParametersY } from '@/helpers/entities/widget/layout';
@@ -49,19 +57,63 @@ export default {
      * @return {Array}
      */
     availableTypes() {
-      return Object.values(WIDGET_TYPES).filter((type) => {
-        const rules = WIDGET_TYPES_RULES[type];
-
-        if (!rules) {
-          return true;
-        }
-
-        return rules.edition && rules.edition === this.edition;
-      }).map(type => ({
+      const widgetTypePreparer = type => ({
         type,
         text: this.$t(`modals.createWidget.types.${type}.title`),
         icon: WIDGET_ICONS[type],
-      }));
+        on: {
+          click: () => this.selectType(type),
+        },
+      });
+
+      const types = TOP_LEVEL_WIDGET_TYPES.map(widgetTypePreparer);
+
+      types.push({
+        type: 'chart',
+        text: this.$t('modals.createWidget.types.chart.title'),
+        icon: 'stacked_bar_chart',
+        children: [
+          WIDGET_TYPES.barChart,
+          WIDGET_TYPES.lineChart,
+          WIDGET_TYPES.pieChart,
+          WIDGET_TYPES.numbers,
+        ].map(widgetTypePreparer),
+      }, {
+        type: 'report',
+        text: this.$t('modals.createWidget.types.report.title'),
+        icon: 'table_chart',
+        children: [
+          WIDGET_TYPES.userStatistics,
+          WIDGET_TYPES.alarmStatistics,
+        ].map(widgetTypePreparer),
+      });
+
+      return types.reduce((acc, type) => {
+        if (!type.children) {
+          const rule = WIDGET_TYPES_RULES[type];
+
+          if (!rule?.edition || rule?.edition === this.edition) {
+            acc.push(type);
+          }
+
+          return acc;
+        }
+
+        const filteredChildren = type.children.filter((child) => {
+          const rule = WIDGET_TYPES_RULES[child.type];
+
+          return !rule?.edition || rule?.edition === this.edition;
+        });
+
+        if (filteredChildren.length) {
+          acc.push({
+            ...type,
+            children: filteredChildren,
+          });
+        }
+
+        return acc;
+      }, []);
     },
   },
   methods: {

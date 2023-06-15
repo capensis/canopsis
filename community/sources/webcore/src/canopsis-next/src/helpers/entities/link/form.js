@@ -43,8 +43,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
  */
 
 /**
- * @typedef {LinkRuleLink} LinkRuleLinkForm
- * @property {string} key
+ * @typedef {LinkRuleLink & ObjectKey} LinkRuleLinkForm
  */
 
 /**
