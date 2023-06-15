@@ -7,7 +7,7 @@ Feature: Get a entity category
     When I do GET /api/v4/entity-categories?search=test-category-to-get
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "data": [
         {
@@ -15,7 +15,8 @@ Feature: Get a entity category
           "name": "test-category-to-get-1-name",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1592215337,
           "updated": 1592215337
@@ -25,7 +26,8 @@ Feature: Get a entity category
           "name": "test-category-to-get-2-name",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1592215337,
           "updated": 1592215337
@@ -45,13 +47,14 @@ Feature: Get a entity category
     When I do GET /api/v4/entity-categories/test-category-to-get-1
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "_id": "test-category-to-get-1",
       "name": "test-category-to-get-1-name",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "created": 1592215337,
       "updated": 1592215337

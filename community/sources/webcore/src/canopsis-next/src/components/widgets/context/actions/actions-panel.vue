@@ -8,7 +8,7 @@ import { compact, pickBy } from 'lodash';
 import { MODALS, CONTEXT_ACTIONS_TYPES, ENTITY_TYPES, OLD_PATTERNS_FIELDS } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
-import { createEntityIdPatternByValue, isOldPattern } from '@/helpers/pattern';
+import { createEntityIdPatternByValue, isOldPattern } from '@/helpers/entities/pattern/form';
 
 import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
 

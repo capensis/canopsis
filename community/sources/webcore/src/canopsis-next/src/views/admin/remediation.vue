@@ -37,11 +37,6 @@
 <script>
 import { MODALS, REMEDIATION_TABS } from '@/constants';
 
-import RemediationInstructions from '@/components/other/remediation/instructions/remediation-instructions.vue';
-import RemediationConfigurations from '@/components/other/remediation/configurations/remediation-configurations.vue';
-import RemediationJobs from '@/components/other/remediation/jobs/remediation-jobs.vue';
-import RemediationStatistics from '@/components/other/remediation/statistics/remediation-statistics.vue';
-
 import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediation/instruction';
 import { entitiesRemediationConfigurationMixin } from '@/mixins/entities/remediation/configuration';
 import { entitiesRemediationJobMixin } from '@/mixins/entities/remediation/job';
@@ -54,6 +49,11 @@ import {
 } from '@/mixins/permissions/technical/remediation-configuration';
 import { permissionsTechnicalRemediationJobMixin } from '@/mixins/permissions/technical/remediation-job';
 import { permissionsTechnicalRemediationStatisticMixin } from '@/mixins/permissions/technical/remediation-statistic';
+
+import RemediationStatistics from '@/components/other/remediation/statistics/remediation-statistics.vue';
+import RemediationJobs from '@/components/other/remediation/jobs/remediation-jobs.vue';
+import RemediationConfigurations from '@/components/other/remediation/configurations/remediation-configurations.vue';
+import RemediationInstructions from '@/components/other/remediation/instructions/remediation-instructions.vue';
 
 export default {
   components: {

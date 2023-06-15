@@ -24,7 +24,7 @@ import { CUSTOM_WIDGET_TEMPLATE } from '@/constants';
 
 import { formBaseMixin } from '@/mixins/form';
 
-import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
   components: { WidgetSettingsItem },

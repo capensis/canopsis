@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"net/http"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -36,6 +38,7 @@ type api struct {
 	exportExecutor      export.TaskExecutor
 	defaultExportFields export.Fields
 	exportSeparators    map[string]rune
+	encoder             encoding.Encoder
 
 	logger zerolog.Logger
 }
@@ -43,6 +46,7 @@ type api struct {
 func NewApi(
 	store Store,
 	executor export.TaskExecutor,
+	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) API {
 	fields := []string{"_id", "v.connector", "v.connector_name", "v.component",
@@ -61,7 +65,8 @@ func NewApi(
 		defaultExportFields: defaultExportFields,
 		exportSeparators: map[string]rune{"comma": ',', "semicolon": ';',
 			"tab": '	', "space": ' '},
-		logger: logger,
+		encoder: encoder,
+		logger:  logger,
 	}
 }
 
@@ -76,7 +81,8 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.Find(c, r)
+	userId := c.MustGet(auth.UserKey).(string)
+	aggregationResult, err := a.store.Find(c, r, userId)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -98,7 +104,8 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Alarm
 func (a *api) Get(c *gin.Context) {
-	alarm, err := a.store.GetByID(c, c.Param("id"))
+	userId := c.MustGet(auth.UserKey).(string)
+	alarm, err := a.store.GetByID(c, c.Param("id"), userId)
 	if err != nil {
 		panic(err)
 	}
@@ -119,7 +126,9 @@ func (a *api) GetOpen(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
 		return
 	}
-	alarm, ok, err := a.store.GetOpenByEntityID(c, r.ID)
+
+	userId := c.MustGet(auth.UserKey).(string)
+	alarm, ok, err := a.store.GetOpenByEntityID(c, r.ID, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -160,6 +169,7 @@ func (a *api) GetDetails(c *gin.Context) {
 
 	defaultQuery := pagination.GetDefaultQuery()
 	response := make([]DetailsResponse, len(rawObjects))
+	userId := c.MustGet(auth.UserKey).(string)
 
 	for idx, rawObject := range rawObjects {
 		object, err := rawObject.Object()
@@ -210,7 +220,7 @@ func (a *api) GetDetails(c *gin.Context) {
 			continue
 		}
 
-		details, err := a.store.GetDetails(c, request)
+		details, err := a.store.GetDetails(c, request, userId)
 		if err != nil {
 			response[idx].ID = request.ID
 			response[idx].Status = http.StatusInternalServerError
@@ -245,7 +255,8 @@ func (a *api) ListByService(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.FindByService(c, c.Param("id"), r)
+	userId := c.MustGet(auth.UserKey).(string)
+	aggregationResult, err := a.store.FindByService(c, c.Param("id"), r, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -275,7 +286,8 @@ func (a *api) ListByComponent(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.FindByComponent(c, r)
+	userId := c.MustGet(auth.UserKey).(string)
+	aggregationResult, err := a.store.FindByComponent(c, r, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -305,7 +317,8 @@ func (a *api) ResolvedList(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.FindResolved(c, r)
+	userId := c.MustGet(auth.UserKey).(string)
+	aggregationResult, err := a.store.FindResolved(c, r, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -357,7 +370,7 @@ func (a *api) StartExport(c *gin.Context) {
 		r.Fields = a.defaultExportFields
 	}
 
-	params, err := json.Marshal(r.ExportFetchParameters)
+	params, err := a.encoder.Encode(r.ExportFetchParameters)
 	if err != nil {
 		panic(err)
 	}
@@ -427,7 +440,8 @@ func (a *api) GetLinks(c *gin.Context) {
 		return
 	}
 
-	links, ok, err := a.store.GetLinks(c, c.Param("id"), r.Ids)
+	userId := c.MustGet(auth.UserKey).(string)
+	links, ok, err := a.store.GetLinks(c, c.Param("id"), r.Ids, userId)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {

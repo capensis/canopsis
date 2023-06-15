@@ -13,9 +13,9 @@ import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
-import { formMixin } from '@/mixins/form';
-
 import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
+
+import { formMixin } from '@/mixins/form';
 
 export default {
   components: { Draggable },

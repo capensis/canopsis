@@ -21,6 +21,7 @@ exports[`filters-list Renders \`filters-list\` with all parameters 1`] = `
       addable="true"
       editable="true"
       filters="[object Object],[object Object],[object Object],[object Object]"
+      name="filters"
     />
   </div>
    
@@ -51,6 +52,7 @@ exports[`filters-list Renders \`filters-list\` with empty modal 1`] = `
       addable="true"
       editable="true"
       filters=""
+      name="filters"
     />
   </div>
    

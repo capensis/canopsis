@@ -1,9 +1,7 @@
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import CLinksList from '@/components/common/links/c-links-list.vue';
 import { LINK_RULE_ACTIONS } from '@/constants';
-
-const localVue = createVueInstance();
 
 const snapshotStubs = {
   'c-copy-wrapper': true,
@@ -24,7 +22,7 @@ describe('c-links-list', () => {
   };
 
   const snapshotFactory = generateRenderer(CLinksList, {
-    localVue,
+
     stubs: snapshotStubs,
   });
 

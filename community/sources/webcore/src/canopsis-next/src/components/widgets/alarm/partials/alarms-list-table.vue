@@ -108,9 +108,9 @@ import { differenceBy, throttle } from 'lodash';
 import { TOP_BAR_HEIGHT } from '@/config';
 import { ALARM_DENSE_TYPES, ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
 
-import { isResolvedAlarm } from '@/helpers/entities';
-
 import featuresService from '@/services/features';
+
+import { isClosedAlarmStatus } from '@/helpers/entities/alarm/form';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns/alarm';
@@ -232,7 +232,7 @@ export default {
     },
 
     unresolvedSelected() {
-      return this.selected.filter(item => !isResolvedAlarm(item));
+      return this.selected.filter(item => !isClosedAlarmStatus(item));
     },
 
     expanded() {

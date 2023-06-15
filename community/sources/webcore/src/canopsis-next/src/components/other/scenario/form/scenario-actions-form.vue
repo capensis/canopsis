@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { actionToForm, isWebhookActionType } from '@/helpers/forms/action';
+import { actionToForm, isWebhookActionType } from '@/helpers/entities/action';
 
 import { formArrayMixin, validationChildrenMixin } from '@/mixins/form';
 
