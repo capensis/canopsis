@@ -81,9 +81,9 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		if event.Entity != nil {
 			eventMetric.EntityType = event.Entity.Type
 			eventMetric.IsNewEntity = event.Entity.IsNew
+			eventMetric.IsInfosUpdated = event.Entity.IsUpdated
 		}
 
-		eventMetric.IsInfosUpdated = event.IsEntityUpdated
 		eventMetric.IsServicesUpdated = isServicesUpdated
 		eventMetric.Interval = time.Since(eventMetric.Timestamp)
 
@@ -129,14 +129,16 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		event.Entity = &eventEntity
 
 		// Process event by event filters.
-		event, err = p.EventFilterService.ProcessEvent(tCtx, event)
-		if err != nil {
-			return err
+		if event.Entity != nil && event.Entity.Enabled {
+			event, err = p.EventFilterService.ProcessEvent(tCtx, event)
+			if err != nil {
+				return err
+			}
 		}
 
 		eventEntity = *event.Entity
 		if eventEntity.IsNew ||
-			event.IsEntityUpdated ||
+			eventEntity.IsUpdated ||
 			event.EventType == types.EventTypeEntityUpdated ||
 			event.EventType == types.EventTypeEntityToggled ||
 			event.SourceType == types.SourceTypeService {
@@ -152,7 +154,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 				return fmt.Errorf("cannot check services: %w", err)
 			}
 
-			if event.IsEntityUpdated || event.EventType == types.EventTypeEntityUpdated && eventEntity.Type == types.EntityTypeComponent {
+			if eventEntity.IsUpdated || event.EventType == types.EventTypeEntityUpdated && eventEntity.Type == types.EntityTypeComponent {
 				resources, err := p.ContextGraphManager.FillResourcesWithInfos(tCtx, eventEntity)
 				if err != nil {
 					return fmt.Errorf("cannot update entity infos: %w", err)
@@ -170,7 +172,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 			isServicesUpdated = len(eventEntity.ServicesToAdd) > 0 || len(eventEntity.ServicesToRemove) > 0
 		}
 
-		if !eventEntity.IsNew && !event.IsEntityUpdated && event.Entity.LastEventDate != nil {
+		if !eventEntity.IsNew && !eventEntity.IsUpdated && event.Entity.LastEventDate != nil {
 			err := p.ContextGraphManager.UpdateLastEventDate(tCtx, event.EventType, event.Entity.ID, *event.Entity.LastEventDate)
 			if err != nil {
 				return err
