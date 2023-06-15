@@ -454,8 +454,10 @@ func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duratio
 	}
 
 	clientOptions := options.Client().ApplyURI(mongoURL)
+	fmt.Printf("client options timeout = %v\n", clientOptions.Timeout)
 	if clientOptions.Timeout == nil {
 		clientOptions.SetTimeout(defaultClientTimeout)
+		fmt.Printf("client options timeout if nil %v\n", clientOptions.Timeout)
 	}
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
