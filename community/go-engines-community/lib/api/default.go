@@ -271,7 +271,7 @@ func Default(
 	}
 
 	api.AddRouter(func(router gin.IRouter) {
-		router.Use(middleware.Cache())
+		router.Use(middleware.CacheControl())
 
 		router.Use(func(c *gin.Context) {
 			start := time.Now()
