@@ -14,7 +14,7 @@
     div
       v-layout(justify-start)
         v-icon.px-3.py-2.white--text(size="2em") {{ icon }}
-        v-runtime-template.weather-item__service-name.pt-3(:template="compiledTemplate")
+        c-runtime-template.weather-item__service-name.pt-3(:template="compiledTemplate")
         v-btn.see-alarms-btn(
           v-if="hasAlarmsListAccess",
           flat,
@@ -24,7 +24,6 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import VRuntimeTemplate from 'v-runtime-template';
 
 import {
   MODALS,
@@ -34,7 +33,7 @@ import {
 } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { authMixin } from '@/mixins/auth';
@@ -42,9 +41,6 @@ import { authMixin } from '@/mixins/auth';
 const { mapActions } = createNamespacedHelpers('alarm');
 
 export default {
-  components: {
-    VRuntimeTemplate,
-  },
   mixins: [authMixin],
   props: {
     counter: {

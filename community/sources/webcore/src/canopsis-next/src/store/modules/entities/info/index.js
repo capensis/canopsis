@@ -2,6 +2,7 @@ import { API_ROUTES } from '@/config';
 import { POPUP_TYPES } from '@/constants';
 
 import request from '@/services/request';
+
 import { durationToSeconds } from '@/helpers/date/duration';
 
 const types = {

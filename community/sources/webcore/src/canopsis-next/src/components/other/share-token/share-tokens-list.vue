@@ -60,7 +60,7 @@ export default {
         { text: this.$t('common.id'), value: '_id', sortable: false },
         { text: this.$t('common.description'), value: 'description' },
         { text: this.$t('common.value'), value: 'value', sortable: false },
-        { text: this.$tc('common.user'), value: 'user.name' },
+        { text: this.$tc('common.user'), value: 'user.display_name' },
         { text: this.$tc('common.role'), value: 'role.name', sortable: false },
         { text: this.$t('common.created'), value: 'created' },
         { text: this.$t('common.expired'), value: 'expired' },

@@ -78,6 +78,8 @@ export const USER_PERMISSIONS_PREFIXES = {
     lineChart: 'linechart',
     pieChart: 'piechart',
     numbers: 'numbers',
+    userStatistics: 'userStatistics',
+    alarmStatistics: 'alarmStatistics',
   },
   api: 'api',
 };
@@ -145,7 +147,6 @@ export const USERS_PERMISSIONS = {
         fastCancel: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_fastRemoveAlarm`,
         changeState: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_changeState`,
         history: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_history`,
-        groupRequest: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_groupRequest`,
         manualMetaAlarmGroup: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_manualMetaAlarmGroup`,
         comment: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_comment`,
 
@@ -299,12 +300,33 @@ export const USERS_PERMISSIONS = {
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_userFilter`,
       },
     },
+    userStatistics: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_interval`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_userFilter`,
+      },
+    },
+    alarmStatistics: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_interval`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_userFilter`,
+      },
+    },
   },
   api: {
     general: {
       acl: `${USER_PERMISSIONS_PREFIXES.api}_acl`,
       appInfoRead: `${USER_PERMISSIONS_PREFIXES.api}_app_info_read`,
       alarmRead: `${USER_PERMISSIONS_PREFIXES.api}_alarm_read`,
+      alarmUpdate: `${USER_PERMISSIONS_PREFIXES.api}_alarm_update`,
       entity: `${USER_PERMISSIONS_PREFIXES.api}_entity`,
       entityservice: `${USER_PERMISSIONS_PREFIXES.api}_entityservice`,
       entitycategory: `${USER_PERMISSIONS_PREFIXES.api}_entitycategory`,
@@ -389,7 +411,6 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [ALARM_LIST_ACTIONS_TYPES.history]: USERS_PERMISSIONS.business.alarmsList.actions.history,
     [ALARM_LIST_ACTIONS_TYPES.variablesHelp]: USERS_PERMISSIONS.business.alarmsList.actions.variablesHelp,
     [ALARM_LIST_ACTIONS_TYPES.comment]: USERS_PERMISSIONS.business.alarmsList.actions.comment,
-    [ALARM_LIST_ACTIONS_TYPES.groupRequest]: USERS_PERMISSIONS.business.alarmsList.actions.groupRequest,
     [ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm]:
     USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
     [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm]:

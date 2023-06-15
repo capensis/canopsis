@@ -1,45 +1,36 @@
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import { mockModals } from '@unit/utils/mock-hooks';
 import Confirmation from '@/components/modals/common/confirmation.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'modal-wrapper': true,
 };
-
-const factory = (options = {}) => shallowMount(Confirmation, {
-  localVue,
-  stubs,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(Confirmation, {
-  localVue,
-  stubs,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-
-  ...options,
-});
 
 const selectSubmitButton = wrapper => wrapper.findAll('v-btn-stub').at(1);
 const selectCancelButton = wrapper => wrapper.findAll('v-btn-stub').at(0);
 
 describe('confirmation', () => {
   const $modals = mockModals();
+
+  const factory = generateShallowRenderer(Confirmation, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(Confirmation, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   test('Submit action called after trigger submit button', async () => {
     const cancel = jest.fn();

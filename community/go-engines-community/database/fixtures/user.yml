@@ -870,6 +870,56 @@ permission:
     _id: map_category
     name: <Current()._id>
     description: "Rights on map: Access to 'Category' action"
+  permission_userStatistics_interval:
+    <<: *permission
+    _id: userStatistics_interval
+    name: <Current()._id>
+    description: "Rights on user statistics: Interval"
+  permission_userStatistics_listFilters:
+    <<: *permission
+    _id: userStatistics_listFilters
+    name: <Current()._id>
+    description: "Rights on user statistics: List filters"
+  permission_userStatistics_editFilter:
+    <<: *permission
+    _id: userStatistics_editFilter
+    name: <Current()._id>
+    description: "Rights on user statistics: Edit filters"
+  permission_userStatistics_addFilter:
+    <<: *permission
+    _id: userStatistics_addFilter
+    name: <Current()._id>
+    description: "Rights on user statistics: Add filter"
+  permission_userStatistics_userFilter:
+    <<: *permission
+    _id: userStatistics_userFilter
+    name: <Current()._id>
+    description: "Rights on user statistics: User filter"
+  permission_alarmStatistics_interval:
+    <<: *permission
+    _id: alarmStatistics_interval
+    name: <Current()._id>
+    description: "Rights on alarm statistics: Interval"
+  permission_alarmStatistics_listFilters:
+    <<: *permission
+    _id: alarmStatistics_listFilters
+    name: <Current()._id>
+    description: "Rights on alarm statistics: List filters"
+  permission_alarmStatistics_editFilter:
+    <<: *permission
+    _id: alarmStatistics_editFilter
+    name: <Current()._id>
+    description: "Rights on alarm statistics: Edit filters"
+  permission_alarmStatistics_addFilter:
+    <<: *permission
+    _id: alarmStatistics_addFilter
+    name: <Current()._id>
+    description: "Rights on alarm statistics: Add filter"
+  permission_alarmStatistics_userFilter:
+    <<: *permission
+    _id: alarmStatistics_userFilter
+    name: <Current()._id>
+    description: "Rights on alarm statistics: User filter"
   permission_models_remediation_statistics:
     <<: *permission
     _id: models_remediationStatistic
@@ -1400,6 +1450,16 @@ role:
       "@permission_map_addFilter": 1
       "@permission_map_userFilter": 1
       "@permission_map_category": 1
+      "@permission_userStatistics_interval": 1
+      "@permission_userStatistics_listFilters": 1
+      "@permission_userStatistics_editFilter": 1
+      "@permission_userStatistics_addFilter": 1
+      "@permission_userStatistics_userFilter": 1
+      "@permission_alarmStatistics_interval": 1
+      "@permission_alarmStatistics_listFilters": 1
+      "@permission_alarmStatistics_editFilter": 1
+      "@permission_alarmStatistics_addFilter": 1
+      "@permission_alarmStatistics_userFilter": 1
       "@permission_models_remediation_statistics": 1
       "@permission_barchart_interval": 1
       "@permission_barchart_sampling": 1
