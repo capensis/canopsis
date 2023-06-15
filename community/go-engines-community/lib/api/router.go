@@ -250,8 +250,8 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(dbClient, linkGenerator, timezoneConfigProvider, authorProvider, logger)
-		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, logger)
+		alarmStore := alarm.NewStore(dbClient, linkGenerator, timezoneConfigProvider, authorProvider, json.NewDecoder(), logger)
+		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, json.NewEncoder(), logger)
 		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(dbClient, amqpChannel, "",
 			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, logger), logger)
 		alarmRouter := protected.Group("/alarms")
@@ -370,7 +370,7 @@ func RegisterRoutes(
 			exportConfigurationAPI.Export,
 		)
 
-		entityStore := entity.NewStore(dbClient, timezoneConfigProvider)
+		entityStore := entity.NewStore(dbClient, timezoneConfigProvider, json.NewDecoder())
 		entityAPI := entity.NewApi(
 			entityStore,
 			exportExecutor,
@@ -378,6 +378,7 @@ func RegisterRoutes(
 			entityPublChan,
 			metricsEntityMetaUpdater,
 			actionLogger,
+			json.NewEncoder(),
 			logger,
 		)
 

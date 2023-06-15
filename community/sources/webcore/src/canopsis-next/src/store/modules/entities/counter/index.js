@@ -1,10 +1,11 @@
 import Vue from 'vue';
 import { get } from 'lodash';
 
-import request from '@/services/request';
-import i18n from '@/i18n';
-
 import { API_ROUTES } from '@/config';
+
+import request from '@/services/request';
+
+import i18n from '@/i18n';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',

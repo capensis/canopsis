@@ -16,7 +16,7 @@ import { MODALS } from '@/constants';
 import {
   templateToForm,
   formToTemplate,
-} from '@/helpers/forms/dynamic-info-template';
+} from '@/helpers/entities/dynamic-info/template/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

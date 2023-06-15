@@ -1,11 +1,9 @@
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import ViewTabWidgets from '@/components/other/view/view-tab-widgets.vue';
-
-const localVue = createVueInstance();
 
 const createWidgetsGridStub = className => ({
   template: `
@@ -20,20 +18,6 @@ const stubs = {
   'grid-edit-widgets': createWidgetsGridStub('grid-edit-widgets'),
   'widget-wrapper': true,
 };
-
-const factory = (options = {}) => shallowMount(ViewTabWidgets, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(ViewTabWidgets, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 describe('view-tab-widgets', () => {
   const removeQuery = jest.fn();
@@ -78,6 +62,9 @@ describe('view-tab-widgets', () => {
     { title: 'Widget 1', _id: 'id' },
     { title: 'Widget 2', _id: 'id2' },
   ];
+
+  const factory = generateShallowRenderer(ViewTabWidgets, { stubs });
+  const snapshotFactory = generateRenderer(ViewTabWidgets, { stubs });
 
   afterEach(() => {
     removeQuery.mockReset();

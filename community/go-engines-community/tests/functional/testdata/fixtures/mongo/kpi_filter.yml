@@ -144,3 +144,17 @@ kpi_filter:
           cond:
             type: eq
             value: test-entity-to-sli-metrics-get-2-infos-val
+
+  filter_to_group_metrics_get:
+    <<: *filter
+    _id: test-kpi-filter-to-group-metrics-get
+    entity_pattern:
+      - - field: _id
+          cond:
+            type: is_one_of
+            value:
+              - test-entity-to-group-metrics-get-1
+              - test-entity-to-group-metrics-get-2
+              - test-entity-to-group-metrics-get-3
+              - test-entity-to-group-metrics-get-4
+              - test-entity-to-group-metrics-get-5

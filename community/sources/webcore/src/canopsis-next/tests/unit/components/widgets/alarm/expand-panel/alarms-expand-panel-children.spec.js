@@ -1,6 +1,6 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { fakeStaticAlarms, fakeAlarm } from '@unit/data/alarm';
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
+import { generateDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
 import AlarmsExpandPanelChildren from '@/components/widgets/alarm/expand-panel/alarms-expand-panel-children.vue';
 
@@ -8,18 +8,9 @@ jest.mock('file-saver', () => ({
   saveAs: jest.fn(),
 }));
 
-const localVue = createVueInstance();
-
 const stubs = {
   'alarms-list-table-with-pagination': true,
 };
-
-const snapshotFactory = (options = {}) => mount(AlarmsExpandPanelChildren, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 describe('alarms-expand-panel-children', () => {
   const nowTimestamp = 1386435600000;
@@ -44,6 +35,8 @@ describe('alarms-expand-panel-children', () => {
   };
 
   const widget = generateDefaultAlarmListWidget();
+
+  const snapshotFactory = generateRenderer(AlarmsExpandPanelChildren, { stubs });
 
   it('Renders `alarms-expand-panel-children` with default props', () => {
     const wrapper = snapshotFactory({

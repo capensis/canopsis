@@ -1,7 +1,7 @@
 <template lang="pug">
-  v-layout.chart-metrics-widget(column, align-center)
-    h4.chart-metrics-widget__title {{ title }}
-    pie-chart.pie-chart-metrics__chart.chart-metrics-widget__chart(
+  v-layout.kpi-widget(column, align-center)
+    h4.kpi-widget__title {{ title }}
+    pie-chart.pie-chart-metrics__chart.kpi-widget__chart(
       :chart-id="chartId",
       :datasets="datasets",
       :labels="labels",
@@ -15,10 +15,10 @@
 
 <script>
 import { COLORS } from '@/config';
-
 import { KPI_PIE_CHART_SHOW_MODS } from '@/constants';
 
-import { getMetricColor, getMostReadableTextColor } from '@/helpers/color';
+import { getMostReadableTextColor } from '@/helpers/color';
+import { getMetricColor } from '@/helpers/entities/metric/color';
 import { convertNumberToRoundedPercentString } from '@/helpers/string';
 
 import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';

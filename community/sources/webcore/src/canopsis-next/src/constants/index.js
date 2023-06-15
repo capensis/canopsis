@@ -4,7 +4,6 @@ export * from './alarm';
 export * from './broadcast-message';
 export * from './date';
 export * from './dynamic-info';
-export * from './event';
 export * from './event-filter';
 export * from './pattern';
 export * from './healthcheck';

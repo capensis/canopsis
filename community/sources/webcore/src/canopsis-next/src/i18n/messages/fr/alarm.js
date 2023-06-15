@@ -46,7 +46,6 @@ export default {
       changeState: 'Changer et verrouiller la criticité',
       variablesHelp: 'Liste des variables disponibles',
       history: 'Historique',
-      groupRequest: 'Proposition de regroupement pour méta-alarmes',
       createManualMetaAlarm: 'Gestion manuelle des méta-alarmes',
       removeAlarmsFromManualMetaAlarm: 'Dissocier l\'alarme de la méta-alarme manuelle',
       comment: 'Commenter l\'alarme',
@@ -167,6 +166,8 @@ export default {
     [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]: 'Nombre d\'alarmes non acquittées avec durée 1-4h',
     [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]: 'Nombre d\'alarmes non acquittées avec durée 4-24h',
     [ALARM_METRIC_PARAMETERS.notAckedInDayAlarms]: 'Nombre d\'alarmes non acquittées de plus de 24h',
+    [ALARM_METRIC_PARAMETERS.minResolve]: 'Temps minimum pour résoudre les alarmes',
+    [ALARM_METRIC_PARAMETERS.maxResolve]: 'Temps max pour résoudre les alarmes',
   },
   fields: {
     displayName: 'Nom simplifié (DisplayName)',

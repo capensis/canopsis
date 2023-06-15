@@ -38,7 +38,7 @@
 <script>
 import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
-import { filterPatternsToForm } from '@/helpers/forms/filter';
+import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 
 import ScenarioInfoItem from './scenario-info-item.vue';
 import ScenarioActionCardGeneralTab from './scenario-action-card-general-tab.vue';

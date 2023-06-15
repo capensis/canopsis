@@ -16,6 +16,7 @@ import { GridLayout } from 'vue-grid-layout';
 import { uniq } from 'lodash';
 
 import { bottom } from '../helpers/bottom';
+
 import GridItem from './grid-item.vue';
 
 export default {

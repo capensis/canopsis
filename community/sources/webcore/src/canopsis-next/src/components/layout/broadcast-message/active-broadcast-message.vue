@@ -13,7 +13,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { SOCKET_ROOMS } from '@/config';
 
-import BroadcastMessage from '@/components/other/broadcast-message/broadcast-message.vue';
+import BroadcastMessage from '@/components/other/broadcast-message/partials/broadcast-message.vue';
 
 const { mapActions } = createNamespacedHelpers('broadcastMessage');
 

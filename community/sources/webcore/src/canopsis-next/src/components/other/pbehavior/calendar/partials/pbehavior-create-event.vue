@@ -23,14 +23,13 @@
 import { get, cloneDeep } from 'lodash';
 import dependentMixin from 'vuetify/es5/mixins/dependent';
 
+import { MODALS } from '@/constants';
+
 import {
   calendarEventToPbehaviorForm,
   formToCalendarEvent,
-} from '@/helpers/forms/planning-pbehavior';
-
-import { MODALS } from '@/constants';
-
-import { isOmitEqual } from '@/helpers/equal';
+} from '@/helpers/entities/pbehavior/form';
+import { isOmitEqual } from '@/helpers/collection';
 import { getMenuClassByCalendarEvent } from '@/helpers/calendar/dayspan';
 
 import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
