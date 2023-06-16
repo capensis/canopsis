@@ -1,6 +1,7 @@
 Feature: update meta alarm on pbehavior
   I need to be able to update meta alarm on pbehavior
 
+  @concurrent
   Scenario: given meta alarm and pbehavior should update meta alarm and not update children
     Given I am admin
     When I do POST /api/v4/cat/metaalarmrules:
@@ -24,7 +25,7 @@ Feature: update meta alarm on pbehavior
     Then the response code should be 201
     Then I save response metaAlarmRuleID={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-pbehavior-axe-correlation-1",
@@ -37,10 +38,24 @@ Feature: update meta alarm on pbehavior
       "output": "test-output-pbehavior-axe-correlation-1"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-resource-pbehavior-axe-correlation-1&correlation=true
-    Then the response code should be 200
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-axe-correlation-1&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 1
+        }
+      ],
+      "meta": {
+        "total_count": 1
+      }
+    }
+    """
     When I save response metalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
+    When I save response metaAlarmConnector={{ (index .lastResponse.data 0).v.connector }}
+    When I save response metaAlarmConnectorName={{ (index .lastResponse.data 0).v.connector_name }}
+    When I save response metaAlarmComponent={{ (index .lastResponse.data 0).v.component }}
+    When I save response metaAlarmResource={{ (index .lastResponse.data 0).v.resource }}
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -65,7 +80,17 @@ Feature: update meta alarm on pbehavior
     }
     """
     Then the response code should be 201
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "pbhenter",
+      "connector": "{{ .metaAlarmConnector }}",
+      "connector_name": "{{ .metaAlarmConnectorName }}",
+      "component":  "{{ .metaAlarmComponent }}",
+      "resource": "{{ .metaAlarmResource }}",
+      "source_type": "resource"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-pbehavior-axe-correlation-1&correlation=true
     Then the response code should be 200
     Then the response body should contain:
