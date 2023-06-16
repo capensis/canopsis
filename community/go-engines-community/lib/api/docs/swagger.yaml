@@ -10440,6 +10440,7 @@ paths:
       operationId: linkrules-categories
       parameters:
         - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
         - name: type
           in: query
           description: id
