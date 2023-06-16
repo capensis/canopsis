@@ -28,8 +28,9 @@
 <script>
 import { keyBy } from 'lodash';
 
-import { getDarkenColor, getEntityColor } from '@/helpers/color';
-import { isNotActivePbehaviorType } from '@/helpers/entities/pbehavior';
+import { getDarkenColor } from '@/helpers/color';
+import { getEntityColor } from '@/helpers/entities/entity/color';
+import { isNotActivePbehaviorType } from '@/helpers/entities/pbehavior/form';
 
 import Flowchart from '@/components/common/flowchart/flowchart.vue';
 

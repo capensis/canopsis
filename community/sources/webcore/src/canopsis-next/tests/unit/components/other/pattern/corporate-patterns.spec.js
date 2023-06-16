@@ -1,30 +1,14 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import CorporatePatterns from '@/components/other/pattern/corporate-patterns.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'patterns-list': true,
 };
-
-const factory = (options = {}) => shallowMount(CorporatePatterns, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CorporatePatterns, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectPattersListNode = wrapper => wrapper.vm.$children[0];
 
@@ -59,6 +43,9 @@ describe('corporate-patterns', () => {
     remove,
     'remove-selected': removeSelected,
   };
+
+  const factory = generateShallowRenderer(CorporatePatterns, { stubs });
+  const snapshotFactory = generateRenderer(CorporatePatterns, { stubs });
 
   afterEach(() => {
     fetchPatternsList.mockClear();

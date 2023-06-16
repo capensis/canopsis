@@ -1,11 +1,14 @@
 import Vue from 'vue';
 import { get } from 'lodash';
 
-import request, { useRequestCancelling } from '@/services/request';
-import i18n from '@/i18n';
-import { alarmSchema } from '@/store/schemas';
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
+
+import request, { useRequestCancelling } from '@/services/request';
+
+import i18n from '@/i18n';
+
+import { alarmSchema } from '@/store/schemas';
 
 import detailsModule from './details';
 import linksModule from './links';
@@ -75,7 +78,7 @@ export default {
     },
 
     fetchListWithoutStore(context, { params }) {
-      return request.get(API_ROUTES.alarmList, { params });
+      return request.get(API_ROUTES.alarms.list, { params });
     },
 
     async fetchList({ commit, dispatch }, { widgetId, params, withoutPending } = {}) {
@@ -86,7 +89,7 @@ export default {
           }
 
           await dispatch('entities/fetch', {
-            route: API_ROUTES.alarmList,
+            route: API_ROUTES.alarms.list,
             schema: [alarmSchema],
             params,
             cancelToken: source.token,
@@ -109,21 +112,85 @@ export default {
 
     fetchItem({ dispatch }, { id }) {
       return dispatch('entities/fetch', {
-        route: `${API_ROUTES.alarmList}/${id}`,
+        route: `${API_ROUTES.alarms.list}/${id}`,
         schema: alarmSchema,
       }, { root: true });
     },
 
     fetchItemWithoutStore(context, { id }) {
-      return request.get(`${API_ROUTES.alarmList}/${id}`);
+      return request.get(`${API_ROUTES.alarms.list}/${id}`);
+    },
+
+    fetchAlarmsListExport(context, { params, id }) {
+      return request.get(`${API_ROUTES.alarmListExport}/${id}`, { params });
     },
 
     async createAlarmsListExport(context, { data = {} }) {
       return request.post(API_ROUTES.alarmListExport, data);
     },
 
-    fetchAlarmsListExport(context, { params, id }) {
-      return request.get(`${API_ROUTES.alarmListExport}/${id}`, { params });
+    createAlarmAckEvent(context, { id, data }) {
+      return request.put(`${API_ROUTES.alarms.list}/${id}/ack`, data);
+    },
+
+    bulkCreateAlarmAckEvent(context, { data }) {
+      return request.put(`${API_ROUTES.alarms.bulkList}/ack`, data);
+    },
+
+    createAlarmAckremoveEvent(context, { id, data }) {
+      return request.put(`${API_ROUTES.alarms.list}/${id}/ackremove`, data);
+    },
+
+    bulkCreateAlarmAckremoveEvent(context, { data }) {
+      return request.put(`${API_ROUTES.alarms.bulkList}/ackremove`, data);
+    },
+
+    createAlarmSnoozeEvent(context, { id, data }) {
+      return request.put(`${API_ROUTES.alarms.list}/${id}/snooze`, data);
+    },
+
+    bulkCreateAlarmSnoozeEvent(context, { data }) {
+      return request.put(`${API_ROUTES.alarms.bulkList}/snooze`, data);
+    },
+
+    createAlarmAssocticketEvent(context, { id, data }) {
+      return request.put(`${API_ROUTES.alarms.list}/${id}/assocticket`, data);
+    },
+
+    bulkCreateAlarmAssocticketEvent(context, { data }) {
+      return request.put(`${API_ROUTES.alarms.bulkList}/assocticket`, data);
+    },
+
+    createAlarmCommentEvent(context, { id, data }) {
+      return request.put(`${API_ROUTES.alarms.list}/${id}/comment`, data);
+    },
+
+    bulkCreateAlarmCommentEvent(context, { data }) {
+      return request.put(`${API_ROUTES.alarms.bulkList}/comment`, data);
+    },
+
+    createAlarmCancelEvent(context, { id, data }) {
+      return request.put(`${API_ROUTES.alarms.list}/${id}/cancel`, data);
+    },
+
+    bulkCreateAlarmCancelEvent(context, { data }) {
+      return request.put(`${API_ROUTES.alarms.bulkList}/cancel`, data);
+    },
+
+    createAlarmUncancelEvent(context, { id, data }) {
+      return request.put(`${API_ROUTES.alarms.list}/${id}/uncancel`, data);
+    },
+
+    bulkCreateAlarmUncancelEvent(context, { data }) {
+      return request.put(`${API_ROUTES.alarms.bulkList}/uncancel`, data);
+    },
+
+    createAlarmChangestateEvent(context, { id, data }) {
+      return request.put(`${API_ROUTES.alarms.list}/${id}/changestate`, data);
+    },
+
+    bulkCreateAlarmChangestateEvent(context, { data }) {
+      return request.put(`${API_ROUTES.alarms.bulkList}/changestate`, data);
     },
   },
 };

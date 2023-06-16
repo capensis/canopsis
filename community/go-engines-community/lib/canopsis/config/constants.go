@@ -12,8 +12,9 @@ const (
 	AlarmCancelAutosolveDelay = 60 * 60 * time.Second
 	AlarmDisplayNameScheme    = "{{ rand_string 2 }}-{{ rand_string 2 }}-{{ rand_string 2 }}"
 
-	ApiTokenSigningMethod = "HS256"
-	ApiBulkMaxSize        = 10000
+	ApiTokenSigningMethod     = "HS256"
+	ApiBulkMaxSize            = 10000
+	ApiMetricsCacheExpiration = 24 * time.Hour
 
 	RemediationHttpTimeout                    = 30 * time.Second
 	RemediationLaunchJobRetriesAmount         = 3
@@ -22,9 +23,10 @@ const (
 	RemediationWaitJobCompleteRetriesInterval = 5 * time.Second
 	RemediationPauseManualInstructionInterval = 15 * time.Second
 
-	MetricsFlushInterval  = 10 * time.Second
-	MetricsSliInterval    = time.Hour
-	MetricsMaxSliInterval = time.Hour
+	MetricsFlushInterval          = 10 * time.Second
+	MetricsSliInterval            = time.Hour
+	MetricsMaxSliInterval         = time.Hour
+	MetricsUserSessionGapInterval = time.Hour
 
 	TechMetricsDumpKeepInterval = time.Hour
 

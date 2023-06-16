@@ -18,7 +18,6 @@
 import { isUndefined } from 'lodash';
 
 import { KPI_RATING_METRICS_FILENAME_PREFIX } from '@/config';
-
 import {
   QUICK_RANGES,
   ALARM_METRIC_PARAMETERS,
@@ -27,7 +26,8 @@ import {
 } from '@/constants';
 
 import { convertDateToStartOfDayTimestampByTimezone, convertDateToString } from '@/helpers/date/date';
-import { convertMetricsToTimezone, isMetricsQueryChanged } from '@/helpers/metrics';
+import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
+import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';

@@ -31,7 +31,16 @@
               @click.stop="action.method"
             )
               v-list-tile-title
+                v-progress-circular.actions-panel__menu-item-loader(
+                  v-if="action.loading",
+                  :color="action.iconColor",
+                  size="16",
+                  width="2",
+                  left,
+                  indeterminate
+                )
                 v-icon.pr-3(
+                  v-else,
                   :color="action.iconColor",
                   :disabled="action.disabled",
                   left,
@@ -76,6 +85,10 @@ export default {
 
 <style lang="scss">
 .actions-panel {
+  &__menu-item-loader {
+    margin-right: 32px;
+  }
+
   &--small {
     .v-btn--icon {
       width: 24px;

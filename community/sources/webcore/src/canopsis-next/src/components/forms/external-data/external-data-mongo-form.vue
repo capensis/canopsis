@@ -44,7 +44,7 @@
 <script>
 import { SORT_ORDERS } from '@/constants';
 
-import { externalDataItemConditionAttributeToForm } from '@/helpers/forms/shared/external-data';
+import { externalDataItemConditionAttributeToForm } from '@/helpers/entities/shared/external-data/form';
 
 import { formMixin } from '@/mixins/form';
 

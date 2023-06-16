@@ -26,7 +26,8 @@ import {
 
 import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
 import { convertDateToStartOfDayTimestampByTimezone, convertDateToString } from '@/helpers/date/date';
-import { convertMetricsToTimezone, isMetricsQueryChanged } from '@/helpers/metrics';
+import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
+import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';

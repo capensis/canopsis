@@ -22,7 +22,7 @@
 <script>
 import { isArray, isObject, isEmpty } from 'lodash';
 
-import { mapIds } from '@/helpers/entities';
+import { mapIds } from '@/helpers/array';
 
 import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
 
