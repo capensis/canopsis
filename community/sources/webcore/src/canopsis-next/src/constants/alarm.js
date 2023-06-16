@@ -100,7 +100,6 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   snooze: 'snooze',
   declareTicket: 'declareTicket',
   associateTicket: 'associateTicket',
-  cancel: 'cancel',
   fastCancel: 'fastCancel',
   changeState: 'changeState',
   variablesHelp: 'variablesHelp',
@@ -109,6 +108,9 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   removeAlarmsFromManualMetaAlarm: 'removeAlarmsFromManualMetaAlarm',
   updateManualMetaAlarm: 'updateManualMetaAlarm',
   comment: 'comment',
+
+  cancel: 'cancel',
+  unCancel: 'unCancel',
 
   links: 'links',
 
