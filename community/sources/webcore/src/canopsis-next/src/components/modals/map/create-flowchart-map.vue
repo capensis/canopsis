@@ -21,7 +21,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { formToMap, mapToForm } from '@/helpers/forms/map';
+import { formToMap, mapToForm } from '@/helpers/entities/map/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

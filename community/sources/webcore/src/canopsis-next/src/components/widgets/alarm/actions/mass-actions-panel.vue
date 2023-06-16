@@ -3,28 +3,18 @@
 </template>
 
 <script>
-import { difference, find, pick } from 'lodash';
+import { difference } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import {
-  MODALS,
-  EVENT_ENTITY_TYPES,
-  ALARM_LIST_ACTIONS_TYPES,
-  LINK_RULE_ACTIONS,
-  BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
-} from '@/constants';
+import { EVENT_ENTITY_TYPES, ALARM_LIST_ACTIONS_TYPES, BUSINESS_USER_PERMISSIONS_ACTIONS_MAP } from '@/constants';
 
 import featuresService from '@/services/features';
 
-import { mapIds } from '@/helpers/entities';
-import { getEntityEventIcon } from '@/helpers/icon';
-import { createEntityIdPatternByValue } from '@/helpers/pattern';
-import { harmonizeAlarmsLinks, getLinkRuleLinkActionType } from '@/helpers/links';
+import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
+import { harmonizeAlarmsLinks, getLinkRuleLinkActionType } from '@/helpers/entities/link/list';
 
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
-import { entitiesAlarmLinksMixin } from '@/mixins/entities/alarm/links';
-import { clipboardMixin } from '@/mixins/clipboard';
 
 import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
 
@@ -42,8 +32,6 @@ export default {
   mixins: [
     widgetActionsPanelAlarmMixin,
     entitiesDeclareTicketRuleMixin,
-    entitiesAlarmLinksMixin,
-    clipboardMixin,
   ],
   props: {
     items: {
@@ -59,15 +47,8 @@ export default {
       default: () => {},
     },
   },
-  data() {
-    return {
-      pendingByActionsTypes: {},
-    };
-  },
   computed: {
-    ...entitiesMapGetters({
-      getEntitiesList: 'getList',
-    }),
+    ...entitiesMapGetters({ getEntitiesList: 'getList' }),
 
     actions() {
       const actions = [
@@ -121,7 +102,6 @@ export default {
             type: ALARM_LIST_ACTIONS_TYPES.declareTicket,
             icon: getEntityEventIcon(EVENT_ENTITY_TYPES.declareTicket),
             title: this.$t('alarm.actions.titles.declareTicket'),
-            loading: this.ticketsForAlarmsPending,
             method: this.showCreateDeclareTicketModal,
           });
         }
@@ -146,12 +126,6 @@ export default {
       if (!this.hasMetaAlarm) {
         actions.push(
           {
-            type: ALARM_LIST_ACTIONS_TYPES.groupRequest,
-            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.groupRequest),
-            title: this.$t('alarm.actions.titles.groupRequest'),
-            method: this.showCreateGroupRequestEventModal,
-          },
-          {
             type: ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm,
             icon: getEntityEventIcon(EVENT_ENTITY_TYPES.createManualMetaAlarm),
             title: this.$t('alarm.actions.titles.createManualMetaAlarm'),
@@ -161,8 +135,8 @@ export default {
       }
 
       /**
-       * If we will have actions for resolved alarms in the features we should move this condition to
-       * the every features repositories
+       * If we have actions for resolved alarms in the features we should move this condition to
+       * the every feature's repositories
        */
       if (featuresService.has('components.alarmListMassActionsPanel.computed.actions')) {
         const featuresActions = featuresService.call('components.alarmListMassActionsPanel.computed.actions', this, []);
@@ -191,7 +165,6 @@ export default {
           type,
           icon: link.icon_name,
           title: this.$t('alarm.followLink', { title: link.label }),
-          loading: this.pendingByActionsTypes[type],
           method: () => this.linkAction(link, type),
         };
       });
@@ -201,7 +174,10 @@ export default {
       return [
         ...this.filteredActions,
         ...this.linksActions,
-      ];
+      ].map(action => ({
+        ...action,
+        loading: this.isActionTypeInPending(action.type),
+      }));
     },
 
     alarmsWithAssignedDeclareTicketRules() {
@@ -223,13 +199,6 @@ export default {
     hasMetaAlarm() {
       return this.items.some(item => item.is_meta_alarm);
     },
-
-    modalConfig() {
-      return {
-        items: this.items,
-        afterSubmit: this.afterSubmit,
-      };
-    },
   },
 
   methods: {
@@ -245,14 +214,12 @@ export default {
       return this.refreshAlarmsList();
     },
 
+    showSnoozeModal() {
+      this.showSnoozeModalByAlarms(this.items);
+    },
+
     showAddPbehaviorModal() {
-      this.$modals.show({
-        name: MODALS.pbehaviorPlanning,
-        config: {
-          entityPattern: createEntityIdPatternByValue(this.items.map(item => item.entity._id)),
-          afterSubmit: this.clearItems,
-        },
-      });
+      this.showAddPbehaviorModalByAlarms(this.items);
     },
 
     showCreateAssociateTicketModal() {
@@ -275,78 +242,32 @@ export default {
       this.showAckModalByAlarms(this.items);
     },
 
-    showCreateGroupRequestEventModal() {
-      this.$modals.show({
-        name: MODALS.createEvent,
-        config: {
-          ...this.modalConfig,
+    showAckRemoveModal() {
+      this.showAckRemoveModalByAlarms(this.items);
+    },
 
-          title: this.$t('modals.createGroupRequestEvent.title'),
-          eventType: EVENT_ENTITY_TYPES.groupRequest,
-        },
-      });
+    showCancelEventModal() {
+      this.showCancelModalByAlarms(this.items);
     },
 
     showCreateManualMetaAlarmModal() {
-      this.$modals.show({
-        name: MODALS.createManualMetaAlarm,
-        config: {
-          ...this.modalConfig,
-
-          title: this.$t('modals.createManualMetaAlarm.title'),
-        },
-      });
+      this.showCreateManualMetaAlarmModalByAlarms(this.items);
     },
 
-    async createMassFastAckEvent() {
-      await this.createFastAckActionByAlarms(this.items);
-
-      return this.afterSubmit();
+    createMassFastAckEvent() {
+      this.createFastAckActionByAlarms(this.items);
     },
 
-    async createFastCancelEvent() {
-      await this.createFastCancelActionByAlarms(this.items);
-
-      return this.afterSubmit();
+    createFastCancelEvent() {
+      this.createFastCancelActionByAlarms(this.items);
     },
 
     showCreateCommentEventModal() {
-      this.$modals.show({
-        name: MODALS.createCommentEvent,
-        config: {
-          ...this.modalConfig,
-          action: data => this.createEvent(EVENT_ENTITY_TYPES.comment, this.items, data),
-        },
-      });
+      this.showCreateCommentModalByAlarms(this.items);
     },
 
-    async linkAction(link, type) {
-      try {
-        this.$set(this.pendingByActionsTypes, type, true);
-
-        const links = await this.fetchAlarmLinkWithoutStore({
-          id: link.rule_id,
-          params: { ids: mapIds(this.items) },
-        });
-
-        const summaryLink = find(links, pick(link, ['icon_name', 'label']));
-
-        if (!summaryLink) {
-          return;
-        }
-
-        if (link.action === LINK_RULE_ACTIONS.copy) {
-          this.writeTextToClipboard(summaryLink.url);
-
-          return;
-        }
-
-        window.open(summaryLink.url, '_blank');
-      } catch (err) {
-        console.error(err);
-      } finally {
-        this.$set(this.pendingByActionsTypes, type, false);
-      }
+    linkAction(link, type) {
+      this.handleLinkClickActionByAlarms(this.items, link, type);
     },
   },
 };

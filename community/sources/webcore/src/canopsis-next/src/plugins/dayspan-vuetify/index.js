@@ -1,5 +1,4 @@
 import { Calendar, Identifier, Constants } from 'dayspan';
-
 import DaySpanVuetify from 'dayspan-vuetify/src/plugin';
 
 import DsDay from './components/day.vue';

@@ -55,8 +55,77 @@
         "renderError"
       ]
     }],
-    "import/no-cycle": "off", // TODO: We have a lot of cycle deps. Should be fixed.
+    "import/no-cycle": "error",
     "import/prefer-default-export": "off",
-    "no-unused-expressions": "off"
+    "import/order": ["error", {
+      "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+      "pathGroups": [
+        {
+          "pattern": "@/+(config|constants)",
+          "group": "internal",
+          "position": "before"
+        },
+        {
+          "pattern": "@/plugins/**",
+          "group": "internal",
+          "position": "before"
+        },
+        {
+          "pattern": "@/services/**",
+          "group": "internal",
+          "position": "before"
+        },
+        {
+          "pattern": "@/+(store|i18n|filters|router)",
+          "group": "internal",
+          "position": "before"
+        },
+        {
+          "pattern": "@/store/**",
+          "group": "internal",
+          "position": "before"
+        },
+        {
+          "pattern": "@/helpers/**",
+          "group": "internal",
+          "position": "before"
+        },
+        {
+          "pattern": "@/mixins/**",
+          "group": "internal",
+          "position": "before"
+        },
+        {
+          "pattern": "@/components/**",
+          "group": "internal",
+          "position": "before"
+        }
+      ],
+      "newlines-between": "always"
+    }],
+    "no-unused-expressions": "off",
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "Program > VariableDeclaration CallExpression[callee.name='generateShallowRenderer']",
+        "message": "generateShallowRenderer should be used inside describe."
+      },
+      {
+        "selector": "Program > VariableDeclaration CallExpression[callee.name='generateRenderer']",
+        "message": "generateRenderer should be used inside describe."
+      },
+      {
+        "selector": "ImportDeclaration[source.value=/form\\u002Fpartials/]",
+        "message": "All fields should be moved inside `/form/fields/`."
+      },
+      {
+        "selector": "ImportDeclaration[source.value=/\\u002Fpartial\\u002F/]",
+        "message": "`partial` folder deprecated. Please, rename to `partials`."
+      },
+      {
+        "selector": "ImportDeclaration[source.value=/\\u002Ffield\\u002F/]",
+        "message": "`field` folder deprecated. Please, rename to `field`."
+      }
+    ]
   }
 }

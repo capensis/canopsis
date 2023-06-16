@@ -1,12 +1,10 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 import CActionBtn from '@/components/common/buttons/c-action-btn.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-btn': {
@@ -22,22 +20,13 @@ const stubs = {
   'v-tooltip': createActivatorElementStub('v-tooltip'),
 };
 
-const factory = (options = {}) => shallowMount(CActionBtn, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CActionBtn, {
-  localVue,
-  stubs,
-  attachTo: document.body,
-
-  ...options,
-});
-
 describe('c-action-btn', () => {
+  const factory = generateShallowRenderer(CActionBtn, { stubs });
+  const snapshotFactory = generateRenderer(CActionBtn, {
+    stubs,
+    attachTo: document.body,
+  });
+
   it('Action button with default type and custom icon.', () => {
     const icon = Faker.datatype.string();
     const wrapper = factory({ propsData: { icon, type: 'edit' } });

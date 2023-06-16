@@ -20,6 +20,8 @@ export default {
     [SIDE_BARS.lineChartSettings]: 'Line chart settings',
     [SIDE_BARS.pieChartSettings]: 'Pie chart settings',
     [SIDE_BARS.numbersSettings]: 'Numbers settings',
+    [SIDE_BARS.userStatisticsSettings]: 'User statistics settings',
+    [SIDE_BARS.alarmStatisticsSettings]: 'Alarm statistics settings',
   },
   openedTypes: {
     [ALARMS_OPENED_VALUES.opened]: 'Opened alarms',
@@ -250,10 +252,26 @@ export default {
       [CHART_WIDGET_PRESET_TYPES.numberOfCreatedAlarms]: 'Total number of created alarms',
     },
   },
+  actionRequiredSettings: {
+    title: 'Action required state settings',
+    isBlinking: 'Blinking on',
+    customColor: 'Custom color',
+    customIcon: 'Custom icon',
+  },
   kioskMode: 'Kiosk mode',
   kiosk: {
     hideActions: 'Hide actions',
     hideMassSelection: 'Hide mass selection',
     hideToolbar: 'Hide toolbar',
+  },
+  mainParameter: {
+    title: 'Main parameter',
+    custom: {
+      label: 'Custom filtered data',
+      tooltip: 'Show reports for filtered sets of alarms',
+    },
+  },
+  statisticsWidgetColumn: {
+    split: 'Split data by value path',
   },
 };
