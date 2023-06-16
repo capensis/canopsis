@@ -48,6 +48,7 @@ export default {
       history: 'Historique',
       createManualMetaAlarm: 'Gestion manuelle des méta-alarmes',
       removeAlarmsFromManualMetaAlarm: 'Dissocier l\'alarme de la méta-alarme manuelle',
+      removeAlarmsFromAutoMetaAlarm: 'Dissocier l\'alarme de la méta-alarme',
       comment: 'Commenter l\'alarme',
     },
     iconsTitles: {

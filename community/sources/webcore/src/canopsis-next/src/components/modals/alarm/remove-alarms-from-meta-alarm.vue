@@ -46,7 +46,7 @@ import ModalWrapper from '../modal-wrapper.vue';
  * Modal to remove alarms from meta alarm
  */
 export default {
-  name: MODALS.removeAlarmsFromManualMetaAlarm,
+  name: MODALS.removeAlarmsFromMetaAlarm,
   $_veeValidate: {
     validator: 'new',
     delay: VALIDATION_DELAY,
