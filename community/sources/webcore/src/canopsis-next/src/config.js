@@ -264,6 +264,7 @@ export const API_ROUTES = {
   bulkMaps: '/api/v4/cat/maps/bulk',
   mapState: '/api/v4/cat/map-state',
   manualMetaAlarm: '/api/v4/cat/manual-meta-alarms',
+  metaAlarm: '/api/v4/cat/meta-alarms',
   declareTicket: {
     rules: '/api/v4/cat/declare-ticket-rules',
     bulkRules: '/api/v4/cat/bulk/declare-ticket-rules',
