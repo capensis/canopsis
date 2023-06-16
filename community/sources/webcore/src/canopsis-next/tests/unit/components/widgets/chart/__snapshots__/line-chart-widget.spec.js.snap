@@ -4,7 +4,7 @@ exports[`line-chart-widget Renders \`line-chart-widget\` with custom props 1`] =
 <div
   class="layout py-2 column"
 >
-  <chart-widget-filters-stub
+  <kpi-widget-filters-stub
     class="mx-3"
     filterdisabled="true"
     widgetfilters=""
@@ -53,7 +53,7 @@ exports[`line-chart-widget Renders \`line-chart-widget\` with required props 1`]
 <div
   class="layout py-2 column"
 >
-  <chart-widget-filters-stub
+  <kpi-widget-filters-stub
     class="mx-3"
     filterdisabled="true"
     widgetfilters=""

@@ -8,7 +8,9 @@ import {
   ROUTES,
   USERS_PERMISSIONS,
 } from '@/constants';
+
 import store from '@/store';
+
 import {
   checkAppInfoAccessForRoute,
   checkUserAccessForRoute,

@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { formatStep } from '@/helpers/formatting';
+import { formatStep } from '@/helpers/entities/entity/formatting';
 
 import { widgetExpandPanelAlarmTimelineCard } from '@/mixins/widget/expand-panel/alarm/timeline-card';
 

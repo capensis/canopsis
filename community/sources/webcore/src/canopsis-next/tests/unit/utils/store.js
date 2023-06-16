@@ -623,23 +623,31 @@ export const createPbehaviorEntitiesModule = () => {
 export const createPbehaviorModule = () => {
   const fetchPbehaviorsByEntityIdWithoutStore = jest.fn().mockResolvedValue([]);
   const removePbehavior = jest.fn();
+  const createEntityPbehaviors = jest.fn();
+  const removeEntityPbehaviors = jest.fn();
 
   const pbehaviorModule = {
     name: 'pbehavior',
     actions: {
       fetchListByEntityIdWithoutStore: fetchPbehaviorsByEntityIdWithoutStore,
       removeWithoutStore: removePbehavior,
+      bulkCreateEntityPbehaviors: createEntityPbehaviors,
+      bulkRemoveEntityPbehaviors: removeEntityPbehaviors,
     },
   };
 
   afterEach(() => {
     removePbehavior.mockClear();
     fetchPbehaviorsByEntityIdWithoutStore.mockClear();
+    createEntityPbehaviors.mockClear();
+    removeEntityPbehaviors.mockClear();
   });
 
   return {
     removePbehavior,
     fetchPbehaviorsByEntityIdWithoutStore,
+    createEntityPbehaviors,
+    removeEntityPbehaviors,
     pbehaviorModule,
   };
 };
@@ -668,11 +676,27 @@ export const createAlarmModule = () => {
   const fetchAlarmItem = jest.fn();
   const fetchOpenAlarmsListWithoutStore = jest.fn();
   const fetchAlarmItemWithoutStore = jest.fn().mockResolvedValue({});
+  const bulkCreateAlarmAckEvent = jest.fn();
+  const bulkCreateAlarmAckremoveEvent = jest.fn();
+  const bulkCreateAlarmSnoozeEvent = jest.fn();
+  const bulkCreateAlarmAssocticketEvent = jest.fn();
+  const bulkCreateAlarmCommentEvent = jest.fn();
+  const bulkCreateAlarmCancelEvent = jest.fn();
+  const bulkCreateAlarmUncancelEvent = jest.fn();
+  const bulkCreateAlarmChangestateEvent = jest.fn();
 
   afterEach(() => {
     fetchAlarmItem.mockClear();
     fetchAlarmItemWithoutStore.mockClear();
     fetchOpenAlarmsListWithoutStore.mockClear();
+    bulkCreateAlarmAckEvent.mockClear();
+    bulkCreateAlarmAckremoveEvent.mockClear();
+    bulkCreateAlarmSnoozeEvent.mockClear();
+    bulkCreateAlarmAssocticketEvent.mockClear();
+    bulkCreateAlarmCommentEvent.mockClear();
+    bulkCreateAlarmCancelEvent.mockClear();
+    bulkCreateAlarmUncancelEvent.mockClear();
+    bulkCreateAlarmChangestateEvent.mockClear();
   });
 
   const alarmModule = {
@@ -681,6 +705,14 @@ export const createAlarmModule = () => {
       fetchItem: fetchAlarmItem,
       fetchItemWithoutStore: fetchAlarmItemWithoutStore,
       fetchOpenAlarmsListWithoutStore,
+      bulkCreateAlarmAckEvent,
+      bulkCreateAlarmAckremoveEvent,
+      bulkCreateAlarmSnoozeEvent,
+      bulkCreateAlarmAssocticketEvent,
+      bulkCreateAlarmCommentEvent,
+      bulkCreateAlarmCancelEvent,
+      bulkCreateAlarmUncancelEvent,
+      bulkCreateAlarmChangestateEvent,
     },
   };
 
@@ -688,27 +720,15 @@ export const createAlarmModule = () => {
     fetchAlarmItem,
     fetchAlarmItemWithoutStore,
     fetchOpenAlarmsListWithoutStore,
+    bulkCreateAlarmAckEvent,
+    bulkCreateAlarmAckremoveEvent,
+    bulkCreateAlarmSnoozeEvent,
+    bulkCreateAlarmAssocticketEvent,
+    bulkCreateAlarmCommentEvent,
+    bulkCreateAlarmCancelEvent,
+    bulkCreateAlarmUncancelEvent,
+    bulkCreateAlarmChangestateEvent,
     alarmModule,
-  };
-};
-
-export const createEventModule = () => {
-  const createEvent = jest.fn();
-
-  afterEach(() => {
-    createEvent.mockClear();
-  });
-
-  const eventModule = {
-    name: 'event',
-    actions: {
-      create: createEvent,
-    },
-  };
-
-  return {
-    eventModule,
-    createEvent,
   };
 };
 
@@ -768,13 +788,13 @@ export const createManualMetaAlarmModule = () => {
   const fetchManualMetaAlarmsListWithoutStore = jest.fn().mockResolvedValue([]);
   const createManualMetaAlarm = jest.fn().mockResolvedValue([]);
   const addAlarmsIntoManualMetaAlarm = jest.fn().mockResolvedValue([]);
-  const removeAlarmsIntoManualMetaAlarm = jest.fn().mockResolvedValue([]);
+  const removeAlarmsFromManualMetaAlarm = jest.fn().mockResolvedValue([]);
 
   afterEach(() => {
     fetchManualMetaAlarmsListWithoutStore.mockClear();
     createManualMetaAlarm.mockClear();
     addAlarmsIntoManualMetaAlarm.mockClear();
-    removeAlarmsIntoManualMetaAlarm.mockClear();
+    removeAlarmsFromManualMetaAlarm.mockClear();
   });
 
   const manualMetaAlarmModule = {
@@ -783,7 +803,7 @@ export const createManualMetaAlarmModule = () => {
       fetchListWithoutStore: fetchManualMetaAlarmsListWithoutStore,
       create: createManualMetaAlarm,
       addAlarms: addAlarmsIntoManualMetaAlarm,
-      removeAlarms: removeAlarmsIntoManualMetaAlarm,
+      removeAlarms: removeAlarmsFromManualMetaAlarm,
     },
   };
 
@@ -791,8 +811,28 @@ export const createManualMetaAlarmModule = () => {
     fetchManualMetaAlarmsListWithoutStore,
     createManualMetaAlarm,
     addAlarmsIntoManualMetaAlarm,
-    removeAlarmsIntoManualMetaAlarm,
+    removeAlarmsFromManualMetaAlarm,
     manualMetaAlarmModule,
+  };
+};
+
+export const createMetaAlarmModule = () => {
+  const removeAlarmsFromMetaAlarm = jest.fn().mockResolvedValue([]);
+
+  afterEach(() => {
+    removeAlarmsFromMetaAlarm.mockClear();
+  });
+
+  const metaAlarmModule = {
+    name: 'metaAlarm',
+    actions: {
+      removeAlarms: removeAlarmsFromMetaAlarm,
+    },
+  };
+
+  return {
+    removeAlarmsFromMetaAlarm,
+    metaAlarmModule,
   };
 };
 

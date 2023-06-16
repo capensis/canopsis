@@ -18,7 +18,7 @@ import { isUndefined, lowerFirst } from 'lodash';
 
 import { AGGREGATE_FUNCTIONS, DATETIME_FORMATS, NUMBERS_CHART_DEFAULT_FONT_SIZE } from '@/constants';
 
-import { convertMetricValueByUnit, convertMetricValueToString } from '@/helpers/metrics';
+import { convertMetricValueByUnit, convertMetricValueToString } from '@/helpers/entities/metric/list';
 import { convertDateToTimezoneDateString } from '@/helpers/date/date';
 
 export default {
