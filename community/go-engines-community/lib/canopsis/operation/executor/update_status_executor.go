@@ -37,13 +37,15 @@ func (e *updateStatusExecutor) Exec(
 		return "", nil
 	}
 
-	// Create new Step to keep track of the alarm history
-	var newStep types.AlarmStep
+	author := ""
 	if entity.Type != types.EntityTypeService {
-		newStep = types.NewAlarmStep(types.AlarmStepStatusIncrease, time, strings.Replace(entity.Connector, "/", ".", 1), params.Output, "", "", "")
+		author = strings.Replace(entity.Connector, "/", ".", 1)
 	} else {
-		newStep = types.NewAlarmStep(types.AlarmStepStatusIncrease, time, alarm.Value.Connector+"."+alarm.Value.ConnectorName, params.Output, "", "", "")
+		author = alarm.Value.Connector + "." + alarm.Value.ConnectorName
 	}
+
+	// Create new Step to keep track of the alarm history
+	newStep := types.NewAlarmStep(types.AlarmStepStatusIncrease, time, author, params.Output, "", "", "")
 	newStep.Value = newStatus
 
 	if newStatus < currentStatus {
