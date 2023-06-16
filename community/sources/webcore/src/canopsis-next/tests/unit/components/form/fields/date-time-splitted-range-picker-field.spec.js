@@ -1,8 +1,6 @@
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import DateTimeSplittedRangePickerField from '@/components/forms/fields/date-time-splitted-range-picker-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'date-time-splitted-picker-field': true,
@@ -17,7 +15,7 @@ const selectEndDateTimeSplittedPickerFields = wrapper => selectDateTimeSplittedP
 
 describe('date-time-splitted-range-picker-field', () => {
   const factory = generateShallowRenderer(DateTimeSplittedRangePickerField, {
-    localVue,
+
     stubs,
 
     parentComponent: {
@@ -28,7 +26,7 @@ describe('date-time-splitted-range-picker-field', () => {
   });
 
   const snapshotFactory = generateRenderer(DateTimeSplittedRangePickerField, {
-    localVue,
+
     stubs,
 
     parentComponent: {

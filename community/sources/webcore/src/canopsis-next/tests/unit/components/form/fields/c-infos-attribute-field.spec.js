@@ -1,31 +1,21 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 
 import CInfosAttributeField from '@/components/forms/fields/c-infos-attribute-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
   'v-combobox': createSelectInputStub('v-combobox'),
 };
 
-const factory = (options = {}) => shallowMount(CInfosAttributeField, {
-  localVue,
-  stubs,
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CInfosAttributeField, {
-  localVue,
-  ...options,
-});
-
 const selectDictionarySelect = wrapper => wrapper.find('select.v-combobox');
 const selectFieldSelect = wrapper => wrapper.find('select.v-select');
 
 describe('c-infos-attribute-field', () => {
+  const factory = generateShallowRenderer(CInfosAttributeField, { stubs });
+  const snapshotFactory = generateRenderer(CInfosAttributeField);
+
   it('Dictionary changed after trigger the dictionary select', () => {
     const value = {
       dictionary: 'test',

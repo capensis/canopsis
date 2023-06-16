@@ -3,9 +3,9 @@ import { ENTITIES_TYPES } from '@/constants';
 
 import request from '@/services/request';
 
-import { convertObjectToFormData } from '@/helpers/request';
-
 import { createEntityModule } from '@/store/plugins/entities';
+
+import { convertObjectToFormData } from '@/helpers/request';
 
 export default createEntityModule({
   route: API_ROUTES.pbehavior.exceptions,

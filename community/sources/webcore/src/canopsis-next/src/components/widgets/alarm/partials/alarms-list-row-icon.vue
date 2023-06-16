@@ -14,7 +14,7 @@ import {
   isInstructionExecutionIconInProgress,
   isInstructionExecutionIconSuccess,
   isInstructionExecutionManual,
-} from '@/helpers/forms/remediation-instruction-execution';
+} from '@/helpers/entities/remediation/instruction-execution/form';
 
 export default {
   props: {

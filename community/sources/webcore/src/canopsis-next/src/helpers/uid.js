@@ -1,7 +1,7 @@
-import uid from 'uid';
+import baseUid from 'uid';
 
-export default (prefix, suffix) => {
-  let result = uid();
+export const uid = (prefix, suffix) => {
+  let result = baseUid();
 
   if (prefix) {
     result = `${prefix}-${result}`;

@@ -11,13 +11,13 @@ import {
   createUserPreferenceModule,
 } from '@unit/utils/store';
 import { mockDateNow } from '@unit/utils/mock-hooks';
-import { widgetToForm } from '@/helpers/forms/widgets/common';
+import { widgetToForm } from '@/helpers/entities/widget/form';
 import { AGGREGATE_FUNCTIONS, ALARM_METRIC_PARAMETERS, SAMPLINGS, WIDGET_TYPES } from '@/constants';
 
 import EntityChartWidget from '@/components/widgets/chart/entity-chart-widget.vue';
 
 const stubs = {
-  'chart-widget-filters': true,
+  'kpi-widget-filters': true,
   'chart-loader': true,
   'bar-chart-metrics': true,
   'line-chart-metrics': true,

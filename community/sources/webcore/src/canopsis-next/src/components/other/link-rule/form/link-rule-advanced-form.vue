@@ -7,7 +7,7 @@
 <script>
 import { formValidationHeaderMixin } from '@/mixins/form/validation-header';
 
-import JavaScriptCodeEditor from './partials/javascript-code-editor.vue';
+import JavaScriptCodeEditor from './fields/javascript-code-editor.vue';
 
 export default {
   components: { JavaScriptCodeEditor },

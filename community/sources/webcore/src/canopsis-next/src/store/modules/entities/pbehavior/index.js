@@ -1,9 +1,9 @@
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 
-import i18n from '@/i18n';
-
 import request from '@/services/request';
+
+import i18n from '@/i18n';
 
 import schemas from '@/store/schemas';
 

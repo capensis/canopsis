@@ -1,9 +1,7 @@
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import Flowchart from '@/components/common/flowchart/flowchart.vue';
 import { circleShapeToForm, rectShapeToForm } from '@/helpers/flowchart/shapes';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-zoom-overlay': true,
@@ -12,25 +10,14 @@ const stubs = {
   'flowchart-properties': true,
 };
 
-const factory = (options = {}) => shallowMount(Flowchart, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(Flowchart, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 const selectFlowchartSidebar = wrapper => wrapper.find('flowchart-sidebar-stub');
 const selectFlowchartEditor = wrapper => wrapper.find('flowchart-editor-stub');
 const selectFlowchartProperties = wrapper => wrapper.find('flowchart-properties-stub');
 
 describe('flowchart', () => {
+  const factory = generateShallowRenderer(Flowchart, { stubs });
+  const snapshotFactory = generateRenderer(Flowchart, { stubs });
+
   test('Shapes added after trigger flowchart sidebar', () => {
     const wrapper = factory({
       propsData: {

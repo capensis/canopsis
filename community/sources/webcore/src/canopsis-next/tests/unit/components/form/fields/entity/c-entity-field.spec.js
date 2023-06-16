@@ -1,6 +1,6 @@
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { BASIC_ENTITY_TYPES } from '@/constants';
@@ -9,8 +9,6 @@ import { PAGINATION_LIMIT } from '@/config';
 import CEntityField from '@/components/forms/fields/entity/c-entity-field.vue';
 import CSelectField from '@/components/forms/fields/c-select-field';
 import CLazySearchField from '@/components/forms/fields/c-lazy-search-field';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-lazy-search-field': CLazySearchField,
@@ -21,22 +19,6 @@ const snapshotStubs = {
   'c-lazy-search-field': CLazySearchField,
   'c-select-field': CSelectField,
 };
-
-const factory = (options = {}) => shallowMount(CEntityField, {
-  localVue,
-  stubs,
-  attachTo: document.body,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CEntityField, {
-  localVue,
-  stubs: snapshotStubs,
-  attachTo: document.body,
-
-  ...options,
-});
 
 const selectAutocomplete = wrapper => wrapper.find('.c-select-field');
 
@@ -78,6 +60,15 @@ describe('c-entity-field', () => {
       },
     },
   ]);
+
+  const factory = generateShallowRenderer(CEntityField, {
+    stubs,
+    attachTo: document.body,
+  });
+  const snapshotFactory = generateRenderer(CEntityField, {
+    stubs: snapshotStubs,
+    attachTo: document.body,
+  });
 
   afterEach(() => {
     fetchListWithoutStore.mockClear();

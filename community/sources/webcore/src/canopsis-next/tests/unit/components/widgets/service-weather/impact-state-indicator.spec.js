@@ -1,19 +1,18 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import ImpactStateIndicator from '@/components/widgets/service-weather/impact-state-indicator.vue';
 
-const localVue = createVueInstance();
-
 describe('impact-state-indicator', () => {
+  const snapshotFactory = generateRenderer(ImpactStateIndicator);
+
   it('Renders `impact-state-indicator` with default props correctly', () => {
-    const wrapper = mount(ImpactStateIndicator, { localVue });
+    const wrapper = snapshotFactory();
 
     expect(wrapper.element).toMatchSnapshot();
   });
 
   it('Renders `impact-state-indicator` with custom props correctly', () => {
-    const wrapper = mount(ImpactStateIndicator, {
-      localVue,
+    const wrapper = snapshotFactory({
       propsData: {
         value: 8,
       },

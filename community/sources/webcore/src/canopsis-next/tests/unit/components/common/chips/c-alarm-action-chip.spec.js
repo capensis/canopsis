@@ -1,8 +1,6 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import CAlarmActionChip from '@/components/common/chips/c-alarm-action-chip.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-icon': {
@@ -10,22 +8,12 @@ const stubs = {
   },
 };
 
-const factory = (options = {}) => shallowMount(CAlarmActionChip, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CAlarmActionChip, {
-  localVue,
-
-  ...options,
-});
-
 const selectCloseIcon = wrapper => wrapper.find('.v-icon');
 
 describe('c-alarm-action-chip', () => {
+  const factory = generateShallowRenderer(CAlarmActionChip, { stubs });
+  const snapshotFactory = generateRenderer(CAlarmActionChip);
+
   test('Renders `c-alarm-tag-chip` with default props', () => {
     const wrapper = factory({
       propsData: {

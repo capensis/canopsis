@@ -83,9 +83,10 @@ type TimezoneConfig struct {
 }
 
 type ApiConfig struct {
-	TokenSigningMethod jwt.SigningMethod
-	BulkMaxSize        int
-	AuthorScheme       []string
+	TokenSigningMethod     jwt.SigningMethod
+	BulkMaxSize            int
+	AuthorScheme           []string
+	MetricsCacheExpiration time.Duration
 }
 
 type RemediationConfig struct {
@@ -112,6 +113,7 @@ type DataStorageConfig struct {
 type MetricsConfig struct {
 	FlushInterval          time.Duration
 	SliInterval            time.Duration
+	UserSessionGapInterval time.Duration
 	EnabledInstructions    bool
 	EnabledNotAckedMetrics bool
 }
@@ -317,8 +319,9 @@ func (p *BaseTimezoneConfigProvider) Get() TimezoneConfig {
 func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfigProvider {
 	sectionName := "api"
 	conf := ApiConfig{
-		TokenSigningMethod: parseJwtSigningMethod(cfg.API.TokenSigningMethod, jwt.GetSigningMethod(ApiTokenSigningMethod), "TokenSigningMethod", sectionName, logger),
-		BulkMaxSize:        parseInt(cfg.API.BulkMaxSize, ApiBulkMaxSize, "BulkMaxSize", sectionName, logger),
+		TokenSigningMethod:     parseJwtSigningMethod(cfg.API.TokenSigningMethod, jwt.GetSigningMethod(ApiTokenSigningMethod), "TokenSigningMethod", sectionName, logger),
+		BulkMaxSize:            parseInt(cfg.API.BulkMaxSize, ApiBulkMaxSize, "BulkMaxSize", sectionName, logger),
+		MetricsCacheExpiration: parseTimeDurationByStr(cfg.API.MetricsCacheExpiration, ApiMetricsCacheExpiration, "MetricsCacheExpiration", sectionName, logger),
 	}
 
 	if len(cfg.API.AuthorScheme) == 0 {
@@ -371,6 +374,11 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 			Strs("new", cfg.API.AuthorScheme).
 			Msgf("AuthorScheme of %s config section is loaded", sectionName)
 		p.conf.AuthorScheme = cfg.API.AuthorScheme
+	}
+
+	d, ok := parseUpdatedTimeDurationByStr(cfg.API.MetricsCacheExpiration, p.conf.MetricsCacheExpiration, "MetricsCacheExpiration", sectionName, p.logger)
+	if ok {
+		p.conf.MetricsCacheExpiration = d
 	}
 }
 
@@ -639,8 +647,9 @@ func (p *BaseTemplateConfigProvider) Get() SectionTemplate {
 
 func GetMetricsConfig(cfg CanopsisConf, logger zerolog.Logger) MetricsConfig {
 	return MetricsConfig{
-		FlushInterval: parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", "metrics", logger),
-		SliInterval:   parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
+		FlushInterval:          parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", "metrics", logger),
+		SliInterval:            parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
+		UserSessionGapInterval: parseTimeDurationByStr(cfg.Metrics.UserSessionGapInterval, MetricsUserSessionGapInterval, "UserSessionGapInterval", "metrics", logger),
 	}
 }
 
@@ -1224,6 +1233,7 @@ func NewMetricsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseMetr
 			EnabledInstructions:    parseBool(cfg.Metrics.EnabledInstructions, "EnabledInstructions", sectionName, logger),
 			FlushInterval:          parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", sectionName, logger),
 			SliInterval:            parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
+			UserSessionGapInterval: parseTimeDurationByStr(cfg.Metrics.UserSessionGapInterval, MetricsUserSessionGapInterval, "UserSessionGapInterval", "metrics", logger),
 		},
 		logger: logger,
 	}
@@ -1253,6 +1263,11 @@ func (p *BaseMetricsSettingsConfigProvider) Update(cfg CanopsisConf) {
 	d, ok = parseUpdatedTimeDurationByStrWithMax(cfg.Metrics.SliInterval, p.conf.SliInterval, MetricsMaxSliInterval, "SliInterval", sectionName, p.logger)
 	if ok {
 		p.conf.SliInterval = d
+	}
+
+	d, ok = parseUpdatedTimeDurationByStr(cfg.Metrics.UserSessionGapInterval, p.conf.UserSessionGapInterval, "UserSessionGapInterval", sectionName, p.logger)
+	if ok {
+		p.conf.UserSessionGapInterval = d
 	}
 }
 

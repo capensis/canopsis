@@ -29,7 +29,7 @@ import {
   formToDeclareTicketRule,
   declareTicketRuleErrorsToForm,
   declareTicketRuleTemplateVariablesErrorsToForm,
-} from '@/helpers/forms/declare-ticket-rule';
+} from '@/helpers/entities/declare-ticket/rule/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
