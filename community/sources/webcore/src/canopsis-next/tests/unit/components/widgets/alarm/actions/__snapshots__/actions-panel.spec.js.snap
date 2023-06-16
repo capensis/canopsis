@@ -349,6 +349,94 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
 </div>
 `;
 
+exports[`actions-panel Renders \`actions-panel\` with parentAlarm with auto meta alarm 1`] = `
+<div
+  class="shared-actions-panel"
+>
+  <button
+    class="action-declareTicket"
+  >
+    Declare ticket|report_problem|declareTicket
+  </button>
+  <button
+    class="action-associateTicket"
+  >
+    Associate ticket|local_play|associateTicket
+  </button>
+  <button
+    class="action-cancel"
+  >
+    Cancel alarm|$vuetify.icons.list_delete|cancel
+  </button>
+  <button
+    class="action-fastCancel"
+  >
+    Fast cancel|delete|fastCancel
+  </button>
+  <button
+    class="action-ackRemove"
+  >
+    Cancel ack|not_interested|ackRemove
+  </button>
+  <button
+    class="action-changeState"
+  >
+    Change and lock severity|thumbs_up_down|changeState
+  </button>
+  <button
+    class="action-ack"
+  >
+    Ack|playlist_add_check|ack
+  </button>
+  <button
+    class="action-snooze"
+  >
+    Snooze alarm|alarm|snooze
+  </button>
+  <button
+    class="action-pbehaviorAdd"
+  >
+    Periodical behavior|pause|pbehaviorAdd
+  </button>
+  <button
+    class="action-comment"
+  >
+    Comment|comment|comment
+  </button>
+  <button
+    class="action-history"
+  >
+    History|history|history
+  </button>
+  <button
+    class="action-variablesHelp"
+  >
+    List of available variables|help|variablesHelp
+  </button>
+  <button
+    class="action-removeAlarmsFromAutoMetaAlarm"
+  >
+    Unlink alarm from meta alarm|link_off|removeAlarmsFromAutoMetaAlarm
+  </button>
+  <button
+    class="action-executeInstruction"
+  >
+    Running instruction in progress...|assignment|executeInstruction
+  </button>
+  <button
+    class="action-executeInstruction"
+    disabled="disabled"
+  >
+    Execute New instruction|assignment|executeInstruction
+  </button>
+  <button
+    class="action-executeInstruction"
+  >
+    Resume Paused instruction|assignment|executeInstruction
+  </button>
+</div>
+`;
+
 exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 1`] = `
 <div
   class="shared-actions-panel"
