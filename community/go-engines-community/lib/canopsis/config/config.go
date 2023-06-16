@@ -70,9 +70,10 @@ type SectionDataStorage struct {
 }
 
 type SectionApi struct {
-	TokenSigningMethod string   `toml:"TokenSigningMethod"`
-	BulkMaxSize        int      `toml:"BulkMaxSize"`
-	AuthorScheme       []string `toml:"AuthorScheme"`
+	TokenSigningMethod     string   `toml:"TokenSigningMethod"`
+	BulkMaxSize            int      `toml:"BulkMaxSize"`
+	AuthorScheme           []string `toml:"AuthorScheme"`
+	MetricsCacheExpiration string   `toml:"MetricsCacheExpiration"`
 }
 
 type SectionLogger struct {
@@ -90,6 +91,7 @@ type ConsoleWriter struct {
 type SectionMetrics struct {
 	FlushInterval          string `toml:"FlushInterval"`
 	SliInterval            string `toml:"SliInterval"`
+	UserSessionGapInterval string `toml:"UserSessionGapInterval"`
 	EnabledInstructions    bool   `toml:"EnabledInstructions"`
 	EnabledNotAckedMetrics bool   `toml:"EnabledNotAckedMetrics"`
 }

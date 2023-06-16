@@ -34,7 +34,7 @@ import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
-import { remediationInstructionStepOperationToForm } from '@/helpers/forms/remediation-instruction';
+import { remediationInstructionStepOperationToForm } from '@/helpers/entities/remediation/instruction/form';
 import { getLetterByIndex } from '@/helpers/string';
 
 import { formArrayMixin } from '@/mixins/form';

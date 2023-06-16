@@ -1,14 +1,12 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createCheckboxInputStub } from '@unit/stubs/input';
 import { createMockedStoreModules, createPbehaviorTypesModule } from '@unit/utils/store';
 import { PBEHAVIOR_TYPE_TYPES, TIME_UNITS } from '@/constants';
 
 import PbehaviorGeneralForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-general-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-name-field': true,
@@ -63,11 +61,14 @@ describe('pbehavior-general-form', () => {
     color: Faker.internet.color(),
   };
 
-  const factory = generateShallowRenderer(PbehaviorGeneralForm, { localVue, stubs, store });
-  const snapshotFactory = generateRenderer(PbehaviorGeneralForm, {
-    localVue,
+  const factory = generateShallowRenderer(PbehaviorGeneralForm, {
+    stubs,
     store,
+  });
+
+  const snapshotFactory = generateRenderer(PbehaviorGeneralForm, {
     stubs: snapshotStubs,
+    store,
   });
 
   test('Name changed after trigger name field', () => {

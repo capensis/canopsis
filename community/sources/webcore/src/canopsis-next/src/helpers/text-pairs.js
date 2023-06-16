@@ -1,11 +1,9 @@
-import uid from './uid';
+import { uid } from './uid';
 
 /**
- * @typedef {Object} TextPairObject
- *
+ * @typedef {ObjectKey} TextPairObject
  * @property {string} text
  * @property {string} value
- * @property {string} key
  */
 
 /**

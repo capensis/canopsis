@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`service-weather-item Renders \`service-weather-item\` with custom props 1`] = `
-<div
-  class="white--text cursor-pointer weather-item v-card v-sheet v-sheet--tile theme--light mt-1 mr-3 mb-5 ml-7"
-  style="height: 16em; background-color: rgb(220, 231, 117);"
+<card-with-see-alarms-btn-stub
+  class="cursor-pointer service-weather-item mt-0 mr-0 mb-0 ml-0"
+  style="height: 4em; color: white;"
 >
   <div
-    class="layout fill-height weather-item__content row justify-space-between"
+    class="layout fill-height service-weather-item__content row justify-space-between"
   >
     <div
       class="flex position-relative fill-height"
@@ -15,31 +15,11 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
         class="layout justify-start blinking"
       >
         <div
-          class="weather-item__service-name pa-3"
-        >
-          <p>
-            <strong>
-              <span
-                style="font-size: 18px;"
-              >
-                Service
-              </span>
-            </strong>
-          </p>
-           
-          <hr
-            id="null"
-          />
-           
-          <p />
-           
-          <p>
-             Dernière mise à jour : 18/03/2005 2:58:31
-          </p>
-        </div>
+          class="service-weather-item__template pa-3"
+        />
       </div>
       <div
-        class="layout weather-item__toolbar pt-1 pr-1 row align-center"
+        class="layout service-weather-item__toolbar pt-1 pr-1 row align-center"
       >
         <c-no-events-icon-stub
           color="white"
@@ -52,31 +32,24 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
       </div>
       <i
         aria-hidden="true"
-        class="v-icon weather-item__background white--text material-icons theme--light"
+        class="v-icon service-weather-item__background material-icons theme--light white--text"
         style="font-size: 5em;"
       />
       <!---->
     </div>
-    <alarm-pbehavior-counters-stub
-      counters="[object Object]"
-      types="pbh-type"
-    />
-    <alarm-state-counters-stub
-      counters="[object Object]"
-      types="state-types"
-    />
+    <!---->
+    <!---->
   </div>
-  <!---->
-</div>
+</card-with-see-alarms-btn-stub>
 `;
 
 exports[`service-weather-item Renders \`service-weather-item\` with full access 1`] = `
-<div
-  class="white--text cursor-pointer weather-item v-card v-sheet v-sheet--tile theme--light mt-1 mr-3 mb-5 ml-7 v-card__with-see-alarms-btn"
-  style="height: 16em;"
+<card-with-see-alarms-btn-stub
+  class="cursor-pointer service-weather-item mt-1 mr-3 mb-5 ml-7"
+  style="height: 16em; color: white;"
 >
   <div
-    class="layout fill-height weather-item__content row justify-space-between"
+    class="layout fill-height service-weather-item__content row justify-space-between"
   >
     <div
       class="flex position-relative fill-height"
@@ -85,7 +58,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
         class="layout justify-start"
       >
         <div
-          class="weather-item__service-name pa-3"
+          class="service-weather-item__template pa-3"
         >
           <p>
             <strong>
@@ -107,7 +80,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
         </div>
       </div>
       <div
-        class="layout weather-item__toolbar pt-1 pr-1 row align-center"
+        class="layout service-weather-item__toolbar pt-1 pr-1 row align-center"
       >
         <c-no-events-icon-stub
           color="white"
@@ -120,7 +93,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
       </div>
       <i
         aria-hidden="true"
-        class="v-icon weather-item__background white--text material-icons theme--light"
+        class="v-icon service-weather-item__background material-icons theme--light white--text"
         style="font-size: 5em;"
       />
       <!---->
@@ -131,15 +104,5 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
       types="state-types"
     />
   </div>
-  <button
-    class="see-alarms-btn v-btn v-btn--flat theme--light"
-    type="button"
-  >
-    <div
-      class="v-btn__content"
-    >
-      See alarms
-    </div>
-  </button>
-</div>
+</card-with-see-alarms-btn-stub>
 `;

@@ -17,7 +17,7 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { pbehaviorToForm, formToPbehavior, pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
+import { pbehaviorToForm, formToPbehavior, pbehaviorToRequest } from '@/helpers/entities/pbehavior/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { authMixin } from '@/mixins/auth';
