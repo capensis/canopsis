@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-pattern-editor-field(
+  pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
     :readonly="readonly",
@@ -22,11 +22,14 @@ import {
   PBEHAVIOR_TYPE_TYPES,
 } from '@/constants';
 
+import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
+
 const { mapActions: pbehaviorMapActions } = createNamespacedHelpers('pbehavior');
 const { mapActions: pbehaviorReasonMapActions } = createNamespacedHelpers('pbehaviorReasons');
 const { mapActions: pbehaviorTypeMapActions } = createNamespacedHelpers('pbehaviorTypes');
 
 export default {
+  components: { PatternEditorField },
   model: {
     prop: 'patterns',
     event: 'input',

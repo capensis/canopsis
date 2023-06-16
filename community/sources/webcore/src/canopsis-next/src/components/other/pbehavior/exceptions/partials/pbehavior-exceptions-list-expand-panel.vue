@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { pbehaviorExceptionToForm } from '@/helpers/forms/exceptions-pbehavior';
+import { pbehaviorExceptionToForm } from '@/helpers/entities/pbehavior/exception/form';
 
 import PbehaviorExceptionsField from '../fields/pbehavior-exceptions-field.vue';
 

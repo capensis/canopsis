@@ -19,7 +19,7 @@
 import {
   isDeclareTicketExecutionRunning,
   isDeclareTicketExecutionSucceeded,
-} from '@/helpers/forms/declare-ticket-rule';
+} from '@/helpers/entities/declare-ticket/rule/form';
 
 import ProgressCell from '@/components/common/table/progress-cell.vue';
 

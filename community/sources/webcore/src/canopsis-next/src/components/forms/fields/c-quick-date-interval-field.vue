@@ -161,7 +161,7 @@ export default {
     },
 
     isLessToDate(dateTimestamp) {
-      return dateTimestamp < this.intervalToAsTimestamp;
+      return this.interval.to && dateTimestamp < this.intervalToAsTimestamp;
     },
 
     isLessNowDate(dateTimestamp) {

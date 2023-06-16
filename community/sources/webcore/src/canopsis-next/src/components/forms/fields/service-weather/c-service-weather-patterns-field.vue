@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-pattern-editor-field(
+  pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
     :name="name",
@@ -18,7 +18,10 @@ import {
   ENTITIES_STATES,
 } from '@/constants';
 
+import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
+
 export default {
+  components: { PatternEditorField },
   model: {
     prop: 'patterns',
     event: 'input',

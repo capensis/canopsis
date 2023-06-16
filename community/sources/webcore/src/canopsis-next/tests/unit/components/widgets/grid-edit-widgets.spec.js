@@ -1,11 +1,9 @@
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
 
 import GridEditWidgets from '@/components/widgets/grid-edit-widgets.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   portal: true,
@@ -32,14 +30,14 @@ const selectGridItems = wrapper => wrapper.findAll('grid-item-stub');
 
 describe('grid-edit-widgets', () => {
   const factory = generateShallowRenderer(GridEditWidgets, {
-    localVue,
+
     stubs,
     mocks: {
       $mq: 'l',
     },
   });
   const snapshotFactory = generateRenderer(GridEditWidgets, {
-    localVue,
+
     stubs: snapshotStubs,
     mocks: {
       $mq: 'l',

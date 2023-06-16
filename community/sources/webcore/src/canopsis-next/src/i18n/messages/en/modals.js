@@ -101,9 +101,6 @@ export default {
   createCancelEvent: {
     title: 'Cancel',
   },
-  createGroupRequestEvent: {
-    title: 'Suggest group request for meta alarm',
-  },
   createGroupEvent: {
     title: 'Create meta alarm',
   },
@@ -276,6 +273,18 @@ export default {
       },
       [WIDGET_TYPES.numbers]: {
         title: 'Numbers',
+      },
+      [WIDGET_TYPES.userStatistics]: {
+        title: 'User statistics',
+      },
+      [WIDGET_TYPES.alarmStatistics]: {
+        title: 'Alarm statistics',
+      },
+      chart: {
+        title: 'Chart',
+      },
+      report: {
+        title: 'Report',
       },
     },
   },

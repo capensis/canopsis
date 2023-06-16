@@ -1,5 +1,7 @@
 package alarm
 
+//go:generate easyjson -no_std_marshalers
+
 import (
 	"fmt"
 
@@ -193,6 +195,8 @@ type ExportRequest struct {
 	Separator string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
 }
 
+// ExportFetchParameters
+// easyjson:json
 type ExportFetchParameters struct {
 	BaseFilterRequest
 	TimeFormat string `json:"time_format" binding:"time_format"`
