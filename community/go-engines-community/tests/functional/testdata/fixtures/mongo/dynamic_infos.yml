@@ -141,3 +141,16 @@ dynamic_infos:
   dynamic_infos_to_update_7:
     <<: *rule
     _id: test-dynamic-infos-to-update-7
+
+  dynamic_infos_to_alarm_export:
+    <<: *rule
+    _id: test-dynamic-infos-to-alarm_export
+    alarm_pattern:
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-export-1-info-1
+    infos:
+      - name: test-dynamic-infos-to-alarm-export-info-name
+        value: test-dynamic-infos-to-alarm-export-info-value
