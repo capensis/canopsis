@@ -277,6 +277,7 @@ export const EVENT_ENTITY_ICONS_BY_TYPE = {
   [EVENT_ENTITY_TYPES.junitTestSuiteUpdate]: 'keyboard_arrow_up',
   [EVENT_ENTITY_TYPES.junitTestCaseUpdate]: 'keyboard_arrow_up',
   [EVENT_ENTITY_TYPES.cancel]: 'delete',
+  [EVENT_ENTITY_TYPES.uncancel]: 'delete_forever',
   groupChildren: 'center_focus_strong',
   groupParents: 'center_focus_weak',
 };
