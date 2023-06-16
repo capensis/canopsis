@@ -233,8 +233,7 @@ Feature: get infos dictionary
         "on_failure": "pass"
       },
       "description": "test-event-filter-che-event-filters-3-description",
-      "enabled": true,
-      "priority": 2
+      "enabled": true
     }
     """
     Then the response code should be 201
