@@ -575,7 +575,18 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	}
 
 	project := make(bson.M, len(t.Fields))
+	withInstructions := false
+	withLinks := false
 	for _, field := range t.Fields {
+		if field.Name == "assigned_instructions" {
+			withInstructions = true
+			continue
+		}
+		if field.Name == "links" || strings.HasPrefix(field.Name, "links.") {
+			withLinks = true
+			continue
+		}
+
 		found := false
 		for anotherField := range project {
 			if strings.HasPrefix(field.Name, anotherField+".") {
@@ -591,6 +602,28 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 		}
 	}
 
+	if withInstructions || withLinks {
+		project["model"] = bson.M{
+			"alarm":  "$$ROOT",
+			"entity": "$entity",
+		}
+	}
+
+	var instructions []Instruction
+	if withInstructions {
+		cursor, err := s.dbInstructionCollection.Find(ctx, bson.M{
+			"type":   bson.M{"$in": bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}},
+			"status": bson.M{"$in": bson.A{InstructionStatusApproved, nil}},
+		}, options.Find().SetProjection(bson.M{"steps": 0}))
+		if err != nil {
+			return nil, err
+		}
+		err = cursor.All(ctx, &instructions)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	pipeline = append(pipeline, bson.M{"$project": project})
 	cursor, err := collection.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
 	if err != nil {
@@ -598,7 +631,13 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	}
 
 	location := s.timezoneConfigProvider.Get().Location
-	return export.NewMongoCursor(cursor, t.Fields.Fields(), transformExportField(common.GetRealFormatTime(r.TimeFormat), location)), nil
+	var linkGenerator link.Generator
+	if withLinks {
+		linkGenerator = s.linkGenerator
+	}
+	exportCursor := newExportCursor(cursor, t.Fields.Fields(), common.GetRealFormatTime(r.TimeFormat), location,
+		instructions, linkGenerator, s.logger)
+	return exportCursor, nil
 }
 
 func (s *store) GetLinks(ctx context.Context, ruleId string, alarmIds []string) ([]link.Link, bool, error) {

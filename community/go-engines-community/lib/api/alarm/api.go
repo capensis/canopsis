@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -368,6 +369,7 @@ func (a *api) StartExport(c *gin.Context) {
 		Fields:         r.Fields,
 		Separator:      separator,
 		FilenamePrefix: "alarms",
+		UserID:         c.MustGet(auth.UserKey).(string),
 	})
 	if err != nil {
 		panic(err)
