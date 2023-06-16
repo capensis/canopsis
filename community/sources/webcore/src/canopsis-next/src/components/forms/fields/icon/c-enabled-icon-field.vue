@@ -4,13 +4,14 @@
       v-model="enabled",
       :label="label",
       color="primary",
-      @input="updateColor"
+      @input="updateIcon"
     )
-    c-color-picker-field(
-      v-field="color",
-      :disabled="!enabled",
-      :required="enabled",
-      :name="name"
+    c-icon-field(
+      v-if="enabled",
+      v-field="icon",
+      :label="$t('common.icon')",
+      :name="name",
+      required
     )
 </template>
 
@@ -18,14 +19,13 @@
 import { formBaseMixin } from '@/mixins/form';
 
 export default {
-  inject: ['$validator'],
   mixins: [formBaseMixin],
   model: {
-    prop: 'color',
+    prop: 'icon',
     event: 'input',
   },
   props: {
-    color: {
+    icon: {
       type: String,
       required: false,
     },
@@ -35,16 +35,16 @@ export default {
     },
     name: {
       type: String,
-      default: 'color',
+      default: 'icon',
     },
   },
   data() {
     return {
-      enabled: !!this.color,
+      enabled: !!this.icon,
     };
   },
   methods: {
-    updateColor(value) {
+    updateIcon(value) {
       if (!value) {
         this.updateModel('');
       }

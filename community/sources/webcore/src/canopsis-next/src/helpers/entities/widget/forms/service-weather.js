@@ -37,6 +37,13 @@ import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './
  */
 
 /**
+ * @typedef {Object} ServiceWeatherActionRequiredSettings
+ * @property {string} color
+ * @property {string} icon_name
+ * @property {boolean} is_blinking
+ */
+
+/**
  * @typedef {Object} ServiceWeatherWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
  * @property {string | null} mainFilter
@@ -61,6 +68,7 @@ import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './
  * @property {number} modalItemsPerPage
  * @property {boolean} isPriorityEnabled
  * @property {AlarmListBaseParameters} alarmsList
+ * @property {ServiceWeatherActionRequiredSettings} actionRequiredSettings
  */
 
 /**
@@ -68,6 +76,18 @@ import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './
  * @property {string | Symbol} serviceDependenciesColumnsTemplate
  * @property {WidgetColumnForm[]} serviceDependenciesColumns
  */
+
+/**
+ * Convert service weather widget action settings to form
+ *
+ * @param {ServiceWeatherActionRequiredSettings} actionRequiredSettings
+ * @returns {ServiceWeatherActionRequiredSettings}
+ */
+export const actionRequiredSettingsToForm = (actionRequiredSettings = {}) => ({
+  is_blinking: actionRequiredSettings.is_blinking ?? true,
+  color: actionRequiredSettings.color ?? '',
+  icon_name: actionRequiredSettings.icon_name ?? '',
+});
 
 /**
  * Convert service weather widget parameters to form
@@ -109,6 +129,7 @@ export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
       state_types: [],
     },
   isPriorityEnabled: parameters.isPriorityEnabled ?? true,
+  actionRequiredSettings: actionRequiredSettingsToForm(parameters.actionRequiredSettings),
 });
 
 /**
