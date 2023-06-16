@@ -64,7 +64,7 @@ export default {
       ];
 
       if (this.corporate) {
-        headers.push({ text: this.$t('common.lastModifiedBy'), value: 'author.name' });
+        headers.push({ text: this.$t('common.lastModifiedBy'), value: 'author.display_name' });
       }
 
       headers.push({

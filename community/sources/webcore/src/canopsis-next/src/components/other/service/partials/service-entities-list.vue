@@ -18,7 +18,6 @@
         :selected="isEntitySelected(serviceEntity)",
         @update:selected="updateSelected(serviceEntity, $event)",
         @remove:unavailable="removeEntityFromUnavailable(serviceEntity)",
-        @apply:action="$listeners['apply:action']",
         @refresh="$listeners.refresh"
       )
     c-table-pagination.mt-1(
@@ -36,8 +35,8 @@ import {
   getAvailableActionsByEntities,
   getAvailableEntityActionsTypes,
   isActionTypeAvailableForEntity,
-} from '@/helpers/entities/entity';
-import { filterById, mapIds } from '@/helpers/entities';
+} from '@/helpers/entities/entity/actions';
+import { filterById, mapIds } from '@/helpers/array';
 
 import { widgetActionPanelServiceEntityMixin } from '@/mixins/widget/actions-panel/service-entity';
 

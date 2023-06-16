@@ -1,10 +1,8 @@
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import ExtraDetailsParents from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-parents.vue';
-
-const localVue = createVueInstance();
 
 describe('extra-details-parents', () => {
   const total = 3;
@@ -24,7 +22,7 @@ describe('extra-details-parents', () => {
   ];
 
   const snapshotFactory = generateRenderer(ExtraDetailsParents, {
-    localVue,
+
     attachTo: document.body,
   });
 

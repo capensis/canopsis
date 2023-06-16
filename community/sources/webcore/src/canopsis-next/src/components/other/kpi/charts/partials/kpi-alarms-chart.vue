@@ -12,13 +12,14 @@
 
 <script>
 import { debounce } from 'lodash';
+
 import {
   KPI_ALARMS_GRAPH_BAR_PERCENTAGE,
   SAMPLINGS,
   TIME_UNITS,
 } from '@/constants';
 
-import { getMetricColor } from '@/helpers/color';
+import { getMetricColor } from '@/helpers/entities/metric/color';
 import { convertDateToStartOfUnitTimestamp, getNowTimestamp } from '@/helpers/date/date';
 
 import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';

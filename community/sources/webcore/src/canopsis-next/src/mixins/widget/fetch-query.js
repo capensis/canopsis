@@ -1,6 +1,6 @@
 import { isEqual, isEmpty } from 'lodash';
 
-import { prepareQuery } from '@/helpers/query';
+import { prepareWidgetQuery } from '@/helpers/entities/widget/query';
 
 import { queryWidgetMixin } from '@/mixins/widget/query';
 
@@ -42,7 +42,7 @@ export const widgetFetchQueryMixin = {
       const { search = '' } = this.query;
 
       this.query = {
-        ...prepareQuery(this.widget, this.userPreference),
+        ...prepareWidgetQuery(this.widget, this.userPreference),
 
         search,
       };

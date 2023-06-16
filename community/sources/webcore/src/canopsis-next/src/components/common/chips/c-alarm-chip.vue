@@ -9,7 +9,7 @@
 <script>
 import { ENTITY_INFOS_TYPE } from '@/constants';
 
-import { formatState, formatStatus } from '@/helpers/formatting';
+import { formatState, formatStatus } from '@/helpers/entities/entity/formatting';
 
 /**
  * Chips for the state/status of the alarm on timeline

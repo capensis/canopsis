@@ -203,8 +203,9 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 			Initiator:       event.Initiator,
 			Output:          event.Output,
 		},
-		IsMetaAlarmUpdated: event.IsMetaAlarmUpdated,
-		FifoAckEvent:       fifoAckEvent,
+		IsMetaAlarmUpdated:   event.IsMetaAlarmUpdated,
+		IsInstructionMatched: event.IsInstructionMatched,
+		FifoAckEvent:         fifoAckEvent,
 	}
 
 	return nil
@@ -244,11 +245,12 @@ func (s *service) ProcessAbandonedExecutions(ctx context.Context) error {
 
 		s.logger.Debug().Str("execution", execution.GetCacheKey()).Msg("continue abandoned scenario")
 		s.scenarioInputChannel <- ExecuteScenariosTask{
-			Alarm:              alarm,
-			Entity:             execution.Entity,
-			AdditionalData:     execution.AdditionalData,
-			FifoAckEvent:       execution.FifoAckEvent,
-			IsMetaAlarmUpdated: execution.IsMetaAlarmUpdated,
+			Alarm:                alarm,
+			Entity:               execution.Entity,
+			AdditionalData:       execution.AdditionalData,
+			FifoAckEvent:         execution.FifoAckEvent,
+			IsMetaAlarmUpdated:   execution.IsMetaAlarmUpdated,
+			IsInstructionMatched: execution.IsInstructionMatched,
 
 			AbandonedExecutionCacheKey: execution.GetCacheKey(),
 		}

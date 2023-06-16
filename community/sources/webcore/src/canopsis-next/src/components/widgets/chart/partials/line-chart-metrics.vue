@@ -1,7 +1,7 @@
 <template lang="pug">
-  v-layout.chart-metrics-widget(column, align-center)
-    h4.chart-metrics-widget__title {{ title }}
-    line-chart.chart-metrics-widget__chart(
+  v-layout.kpi-widget(column, align-center)
+    h4.kpi-widget__title {{ title }}
+    line-chart.kpi-widget__chart(
       :chart-id="chartId",
       :options="chartOptions",
       :datasets="datasets",
@@ -16,8 +16,9 @@
 <script>
 import { X_AXES_IDS, SAMPLINGS, KPI_CHART_DEFAULT_HEIGHT } from '@/constants';
 
-import { colorToRgba, getMetricColor } from '@/helpers/color';
-import { convertMetricValueByUnit } from '@/helpers/metrics';
+import { colorToRgba } from '@/helpers/color';
+import { getMetricColor } from '@/helpers/entities/metric/color';
+import { convertMetricValueByUnit } from '@/helpers/entities/metric/list';
 
 import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';
 
