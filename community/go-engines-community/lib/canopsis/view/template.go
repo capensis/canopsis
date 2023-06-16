@@ -59,6 +59,8 @@ var columnsByType = map[string][]string{
 		"entity.ko_events",
 		"entity.ok_events",
 		"entity.last_pbehavior_date",
+		// Only for export
+		"assigned_instructions",
 	},
 	WidgetTemplateTypeEntityColumns: {
 		"_id",
