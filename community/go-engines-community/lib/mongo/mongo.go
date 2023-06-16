@@ -454,10 +454,8 @@ func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duratio
 	}
 
 	clientOptions := options.Client().ApplyURI(mongoURL)
-	fmt.Printf("client options timeout = %v\n", clientOptions.Timeout)
 	if clientOptions.Timeout == nil {
 		clientOptions.SetTimeout(defaultClientTimeout)
-		fmt.Printf("client options timeout if nil %v\n", clientOptions.Timeout)
 	}
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
@@ -579,7 +577,7 @@ func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) 
 }
 
 func (c *dbClient) checkTransactionEnabled(pCtx context.Context, logger zerolog.Logger) {
-	ctx, cancel := context.WithTimeout(pCtx, time.Second)
+	ctx, cancel := context.WithTimeout(pCtx, time.Second*3)
 	defer cancel()
 
 	session, err := c.Client.StartSession()
