@@ -229,7 +229,6 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with resolved alarm 1`] = `
   </td>
   <td>
     <actions-panel-stub
-      isresolvedalarm="true"
       item="[object Object]"
       refreshalarmslist="[Function]"
       widget="[object Object]"
