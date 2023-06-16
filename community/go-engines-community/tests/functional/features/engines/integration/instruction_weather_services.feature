@@ -663,7 +663,8 @@ Feature: get service entities with assigned instructions
           "job": "test-job-to-run-auto-instruction-6"
         }
       ],
-      "triggers": ["create"]
+      "triggers": ["create"],
+      "priority": 2000
     }
     """
     Then the response code should be 201
@@ -686,7 +687,7 @@ Feature: get service entities with assigned instructions
       "description": "test-instruction-get-assigned-instruction-in-weather-api-4-2-description",
       "enabled": true,
       "timeout_after_execution": {
-        "value": 1,
+        "value": 3,
         "unit": "s"
       },
       "jobs": [
@@ -694,7 +695,8 @@ Feature: get service entities with assigned instructions
           "job": "test-job-to-run-auto-instruction-7"
         }
       ],
-      "triggers": ["create"]
+      "triggers": ["create"],
+      "priority": 2001
     }
     """
     Then the response code should be 201

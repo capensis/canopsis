@@ -1,11 +1,9 @@
-import { createVueInstance, mount, shallowMount } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createTextareaInputStub } from '@unit/stubs/input';
 import { createButtonStub } from '@unit/stubs/button';
 
 import CJsonField from '@/components/forms/fields/c-json-field.vue';
 import { stringifyJson } from '@/helpers/json';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-textarea': createTextareaInputStub('v-textarea'),
@@ -16,32 +14,6 @@ const stubs = {
 const snapshotStubs = {
   'c-help-icon': true,
 };
-
-const factory = (options = {}) => shallowMount(CJsonField, {
-  localVue,
-  stubs,
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CJsonField, {
-  localVue,
-  stubs: snapshotStubs,
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-
-  ...options,
-});
 
 describe('c-json-field', () => {
   const name = 'jsonField';
@@ -64,6 +36,23 @@ describe('c-json-field', () => {
         "entity_id": {{ .Entity.ID }
     }
 }`;
+
+  const factory = generateShallowRenderer(CJsonField, {
+    stubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(CJsonField, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
 
   it('Object value as prop', () => {
     const wrapper = factory({

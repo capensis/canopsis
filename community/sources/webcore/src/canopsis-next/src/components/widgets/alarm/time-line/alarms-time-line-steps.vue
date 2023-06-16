@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { groupAlarmSteps } from '@/helpers/entities';
+import { groupAlarmSteps } from '@/helpers/entities/alarm/list';
 
 import AlarmsTimeLineFlag from './alarms-time-line-flag.vue';
 

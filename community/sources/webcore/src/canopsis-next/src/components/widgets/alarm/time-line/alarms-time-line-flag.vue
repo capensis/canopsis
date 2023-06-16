@@ -8,7 +8,7 @@
 <script>
 import { EVENT_ENTITY_TYPES } from '@/constants';
 
-import { formatStep } from '@/helpers/formatting';
+import { formatStep } from '@/helpers/entities/entity/formatting';
 
 /**
  * Component for the flag on the alarms list's timeline

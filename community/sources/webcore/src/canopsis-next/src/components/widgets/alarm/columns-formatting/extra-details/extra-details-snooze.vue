@@ -16,7 +16,7 @@
 <script>
 import { EVENT_ENTITY_TYPES } from '@/constants';
 
-import { getEntityEventIcon } from '@/helpers/icon';
+import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 
 export default {

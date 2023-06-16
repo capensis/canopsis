@@ -60,6 +60,7 @@ import LinkRuleRuleModule from './links-rule';
 import metricsSettingsModule from './metrics-settings';
 import aggregatedMetricsModule from './aggregated-metrics';
 import vectorMetricsModule from './vector-metrics';
+import groupMetricsModule from './group-metrics';
 
 export default {
   alarm: alarmModule,
@@ -124,4 +125,5 @@ export default {
   metricsSettings: metricsSettingsModule,
   aggregatedMetrics: aggregatedMetricsModule,
   vectorMetrics: vectorMetricsModule,
+  groupMetrics: groupMetricsModule,
 };

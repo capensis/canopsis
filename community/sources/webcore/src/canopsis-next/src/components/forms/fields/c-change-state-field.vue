@@ -18,11 +18,11 @@
 <script>
 import { omit } from 'lodash';
 
+import { ENTITIES_STATES } from '@/constants';
+
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
-
-import { ENTITIES_STATES } from '@/constants';
 
 export default {
   inject: ['$validator'],

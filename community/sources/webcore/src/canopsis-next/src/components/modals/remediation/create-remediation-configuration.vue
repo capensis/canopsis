@@ -20,7 +20,7 @@ import { MODALS, VALIDATION_DELAY } from '@/constants';
 import {
   formToRemediationConfiguration,
   remediationConfigurationToForm,
-} from '@/helpers/forms/remediation-configuration';
+} from '@/helpers/entities/remediation/configuration/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

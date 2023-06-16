@@ -2,8 +2,6 @@
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 96 960 960"
-    height="48"
-    width="48"
     class="list-delete-icon"
   >
     <path
