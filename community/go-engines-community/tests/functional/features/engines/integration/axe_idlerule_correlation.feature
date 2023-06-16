@@ -1,10 +1,11 @@
 Feature: update meta alarm on idle rule
   I need to be able to update meta alarm on idle rule
 
+  @concurrent
   Scenario: given meta alarm and entity idle rule should update meta alarm
     Given I am admin
     When I save response metaAlarmRuleID=test-metaalarmrule-axe-idlerule-correlation-1
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-axe-idlerule-correlation-1",
@@ -17,9 +18,19 @@ Feature: update meta alarm on idle rule
       "output": "test-output-axe-idlerule-correlation-1"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-correlation-1&correlation=true
-    Then the response code should be 200
+    When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-correlation-1&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 1
+        }
+      ],
+      "meta": {
+        "total_count": 1
+      }
+    }
+    """
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
     When I do POST /api/v4/idle-rules:
     """json
@@ -47,7 +58,17 @@ Feature: update meta alarm on idle rule
     """
     Then the response code should be 201
     Then I save response ruleID={{ .lastResponse._id }}
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "noevents",
+      "connector": "test-connector-axe-idlerule-correlation-1",
+      "connector_name": "test-connector-name-axe-idlerule-correlation-1",
+      "component":  "test-component-axe-idlerule-correlation-1",
+      "resource": "test-resource-axe-idlerule-correlation-1",
+      "source_type": "resource"
+    }
+    """
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -177,7 +198,7 @@ Feature: update meta alarm on idle rule
     """
     When I do DELETE /api/v4/idle-rules/{{ .ruleID }}
     Then the response code should be 204
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-axe-idlerule-correlation-1",
@@ -190,7 +211,6 @@ Feature: update meta alarm on idle rule
       "output": "test-output-axe-idlerule-correlation-1"
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -288,10 +308,11 @@ Feature: update meta alarm on idle rule
     ]
     """
 
+  @concurrent
   Scenario: given meta alarm and alarm idle rule should update meta alarm
     Given I am admin
     When I save response metaAlarmRuleID=test-metaalarmrule-axe-idlerule-correlation-2
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-axe-idlerule-correlation-2",
@@ -304,9 +325,19 @@ Feature: update meta alarm on idle rule
       "output": "test-output-axe-idlerule-correlation-2"
     }
     """
-    When I wait the end of 2 events processing
-    When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-correlation-2&correlation=true
-    Then the response code should be 200
+    When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-correlation-2&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 1
+        }
+      ],
+      "meta": {
+        "total_count": 1
+      }
+    }
+    """
     When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
     When I do POST /api/v4/idle-rules:
     """json
@@ -340,7 +371,17 @@ Feature: update meta alarm on idle rule
     }
     """
     Then the response code should be 201
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "changestate",
+      "connector": "test-connector-axe-idlerule-correlation-2",
+      "connector_name": "test-connector-name-axe-idlerule-correlation-2",
+      "component":  "test-component-axe-idlerule-correlation-2",
+      "resource": "test-resource-axe-idlerule-correlation-2",
+      "source_type": "resource"
+    }
+    """
     When I do POST /api/v4/alarm-details:
     """json
     [
