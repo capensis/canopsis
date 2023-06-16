@@ -122,7 +122,7 @@ func (a *api) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, rule)
 }
 
-// Get categories by link type
+// GetCategories
 // @Success 200 {object} CategoryResponse
 func (a *api) GetCategories(c *gin.Context) {
 	var r CategoriesRequest
@@ -131,7 +131,7 @@ func (a *api) GetCategories(c *gin.Context) {
 		return
 	}
 
-	categories, err := a.store.GetCategories(c, r.Type, r.Limit)
+	categories, err := a.store.GetCategories(c, r)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
