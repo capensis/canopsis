@@ -957,6 +957,9 @@ periodical_alarm:
       creation_date: 1596942720
       last_event_date: 1596942720
       last_update_date: 1596942720
+      infos:
+        test-dynamic-infos-to-alarm_export:
+          test-dynamic-infos-to-alarm-export-info-name: test-dynamic-infos-to-alarm-export-info-value
       ack:
         _t: ack
         a: system
