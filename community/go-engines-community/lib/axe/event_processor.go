@@ -93,7 +93,8 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	if event.Entity == nil ||
 		!event.Entity.Enabled &&
 			event.EventType != types.EventTypeEntityToggled &&
-			event.EventType != types.EventTypeRecomputeEntityService {
+			event.EventType != types.EventTypeRecomputeEntityService &&
+			event.EventType != types.EventTypeResolveDeleted {
 		return alarmChange, nil
 	}
 
