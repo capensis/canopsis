@@ -108,6 +108,7 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   groupRequest: 'groupRequest',
   createManualMetaAlarm: 'createManualMetaAlarm',
   removeAlarmsFromManualMetaAlarm: 'removeAlarmsFromManualMetaAlarm',
+  removeAlarmsFromAutoMetaAlarm: 'removeAlarmsFromAutoMetaAlarm',
   updateManualMetaAlarm: 'updateManualMetaAlarm',
   comment: 'comment',
 
