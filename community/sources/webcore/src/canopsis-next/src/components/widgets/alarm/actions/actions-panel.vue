@@ -74,8 +74,12 @@ export default {
       return isManualGroupMetaAlarmRuleType(this.parentAlarm?.meta_alarm_rule?.type);
     },
 
+    visibleLinks() {
+      return harmonizeLinks(this.item.links).filter(link => !link.hide_in_menu);
+    },
+
     linksActions() {
-      return harmonizeLinks(this.item.links).map((link) => {
+      return this.visibleLinks.map((link) => {
         const type = getLinkRuleLinkActionType(link);
 
         return {

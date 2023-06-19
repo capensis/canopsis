@@ -1283,6 +1283,13 @@ describe('actions-panel', () => {
           links: {
             cat: [
               {
+                hide_in_menu: true,
+                icon_name: 'hidden_link_icon',
+                label: 'Hidden link label',
+                url: 'Hidden link URL',
+                rule_id: 'Hidden link RuleId',
+              },
+              {
                 icon_name: 'icon',
                 label: 'Label',
                 url: 'URL',
