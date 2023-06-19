@@ -1578,6 +1578,7 @@ role_template:
       "@permission_listalarm_assignTicketNumber": 1
       "@permission_listalarm_removeAlarm": 1
       "@permission_listalarm_fastRemoveAlarm": 1
+      "@permission_listalarm_unCancel": 1
       "@permission_listalarm_changeState": 1
       "@permission_listalarm_history": 1
       "@permission_listalarm_groupRequest": 1
