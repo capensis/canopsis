@@ -304,12 +304,30 @@ export const widgetActionsPanelAlarmMixin = {
 
     showRemoveAlarmsFromManualMetaAlarmModalByAlarms(alarms) {
       this.$modals.show({
-        name: MODALS.removeAlarmsFromManualMetaAlarm,
+        name: MODALS.removeAlarmsFromMetaAlarm,
         config: {
           items: alarms,
           title: this.$t('alarm.actions.titles.removeAlarmsFromManualMetaAlarm'),
           action: async (removeAlarmsFromMetaAlarmEvent) => {
             await this.removeAlarmsFromManualMetaAlarm({
+              id: this.parentAlarm?._id,
+              data: removeAlarmsFromMetaAlarmEvent,
+            });
+
+            await this.afterSubmit();
+          },
+        },
+      });
+    },
+
+    showRemoveAlarmsFromAutoMetaAlarmModalByAlarms(alarms) {
+      this.$modals.show({
+        name: MODALS.removeAlarmsFromMetaAlarm,
+        config: {
+          items: alarms,
+          title: this.$t('alarm.actions.titles.removeAlarmsFromAutoMetaAlarm'),
+          action: async (removeAlarmsFromMetaAlarmEvent) => {
+            await this.removeAlarmsFromMetaAlarm({
               id: this.parentAlarm?._id,
               data: removeAlarmsFromMetaAlarmEvent,
             });
