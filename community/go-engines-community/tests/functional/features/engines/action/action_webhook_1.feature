@@ -640,7 +640,7 @@ Feature: execute action on trigger
       {
         "_t": "declareticket",
         "ticket_data": {
-          "name": "test-scenario-action-webhook-6-1-action-1 [create] [root] [user] [root] [test-scenario-action-webhook-6-1-name]"
+          "name": "test-scenario-action-webhook-6-1-action-1 [create] [root John Doe admin@canopsis.net] [user] [root] [test-scenario-action-webhook-6-1-name]"
         }
       },
       {
@@ -687,7 +687,7 @@ Feature: execute action on trigger
       },
       {
         "_t": "webhookstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Scenario: test-scenario-action-webhook-6-1-name"
       },
@@ -699,15 +699,15 @@ Feature: execute action on trigger
       },
       {
         "_t": "webhookcomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Scenario: test-scenario-action-webhook-6-1-name"
       },
       {
         "_t": "declareticket",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
-        "m": "Scenario: test-scenario-action-webhook-6-1-name. Ticket ID: test-ticket-action-webhook-6-1-action-1. Ticket URL: https://test/test-ticket-action-webhook-6-1-action-1. Ticket name: test-scenario-action-webhook-6-1-action-1 [create] [root] [user] [root] [test-scenario-action-webhook-6-1-name]."
+        "m": "Scenario: test-scenario-action-webhook-6-1-name. Ticket ID: test-ticket-action-webhook-6-1-action-1. Ticket URL: https://test/test-ticket-action-webhook-6-1-action-1. Ticket name: test-scenario-action-webhook-6-1-action-1 [create] [root John Doe admin@canopsis.net] [user] [root] [test-scenario-action-webhook-6-1-name]."
       },
       {
         "_t": "webhookcomplete",
@@ -764,7 +764,7 @@ Feature: execute action on trigger
     [
       {
         "_t": "declareticket",
-        "m": "Scenario: test-scenario-action-webhook-6-1-name. Ticket ID: test-ticket-action-webhook-6-1-action-1. Ticket URL: https://test/test-ticket-action-webhook-6-1-action-1. Ticket name: test-scenario-action-webhook-6-1-action-1 [create] [root] [user] [root] [test-scenario-action-webhook-6-1-name]."
+        "m": "Scenario: test-scenario-action-webhook-6-1-name. Ticket ID: test-ticket-action-webhook-6-1-action-1. Ticket URL: https://test/test-ticket-action-webhook-6-1-action-1. Ticket name: test-scenario-action-webhook-6-1-action-1 [create] [root John Doe admin@canopsis.net] [user] [root] [test-scenario-action-webhook-6-1-name]."
       },
       {
         "_t": "declareticket",
@@ -1481,12 +1481,12 @@ Feature: execute action on trigger
             "tickets": [
               {
                 "_t": "declareticket",
-                "a": "root"
+                "a": "root John Doe admin@canopsis.net"
               }
             ],
             "ticket": {
               "_t": "declareticket",
-              "a": "root"
+              "a": "root John Doe admin@canopsis.net"
             },
             "connector": "test-connector-action-webhook-5",
             "connector_name": "test-connector-name-action-webhook-5",
@@ -1526,19 +1526,19 @@ Feature: execute action on trigger
       },
       {
         "_t": "webhookstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Scenario: test-scenario-action-webhook-5-name"
       },
       {
         "_t": "webhookcomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Scenario: test-scenario-action-webhook-5-name"
       },
       {
         "_t": "declareticket",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Scenario: test-scenario-action-webhook-5-name. Ticket ID: test-ticket-action-webhook-5."
       }

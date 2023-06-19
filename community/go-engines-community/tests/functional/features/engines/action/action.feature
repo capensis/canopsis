@@ -1,6 +1,7 @@
 Feature: execute action on trigger
   I need to be able to trigger action on event
 
+  @concurrent
   Scenario: given scenario and check event should update alarm
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -87,7 +88,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -112,7 +113,6 @@ Feature: execute action on trigger
       }
     ]
     """
-    When I wait the end of 2 events processing
     When I do GET /api/v4/alarms?search=test-component-action-1&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
@@ -153,7 +153,7 @@ Feature: execute action on trigger
             },
             "ack": {
               "_t": "ack",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "m": "test-scenario-action-1-action-2-output test-resource-action-1-1 2"
             },
@@ -197,7 +197,7 @@ Feature: execute action on trigger
             },
             "ack": {
               "_t": "ack",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "m": "test-scenario-action-1-action-2-output test-resource-action-1-2 1"
             },
@@ -265,7 +265,7 @@ Feature: execute action on trigger
               },
               {
                 "_t": "ack",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "m": "test-scenario-action-1-action-2-output test-resource-action-1-1 2"
               },
@@ -314,7 +314,7 @@ Feature: execute action on trigger
               },
               {
                 "_t": "ack",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "m": "test-scenario-action-1-action-2-output test-resource-action-1-2 1"
               },
@@ -338,6 +338,7 @@ Feature: execute action on trigger
     ]
     """
 
+  @concurrent
   Scenario: given scenario and check event should not update alarm
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -395,7 +396,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-negative-1",
@@ -408,7 +409,6 @@ Feature: execute action on trigger
       "output" : "test-output-action-negative-1"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-component-action-negative-1&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
@@ -471,6 +471,7 @@ Feature: execute action on trigger
     ]
     """
 
+  @concurrent
   Scenario: given delayed scenario and check event should update alarm
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -532,7 +533,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-2",
@@ -545,7 +546,17 @@ Feature: execute action on trigger
       "output" : "test-output-action-2"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "run_delayed_scenario",
+      "connector": "test-connector-action-2",
+      "connector_name": "test-connector-name-action-2",
+      "component": "test-component-action-2",
+      "resource": "test-resource-action-2",
+      "source_type": "resource"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-action-2
     Then the response code should be 200
     Then the response body should contain:
@@ -557,13 +568,13 @@ Feature: execute action on trigger
             "tickets": [
               {
                 "_t": "assocticket",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "ticket": "test-scenario-action-2-action-1-ticket"
               }
             ],
             "ticket": {
               "_t": "assocticket",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "ticket": "test-scenario-action-2-action-1-ticket"
             },
             "ack": {
@@ -615,7 +626,7 @@ Feature: execute action on trigger
               },
               {
                 "_t": "assocticket",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "ticket": "test-scenario-action-2-action-1-ticket"
               },
@@ -638,6 +649,7 @@ Feature: execute action on trigger
     ]
     """
 
+  @concurrent
   Scenario: given scenario with emit trigger and check event should update alarm
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -705,7 +717,7 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-action-3",
@@ -718,7 +730,6 @@ Feature: execute action on trigger
       "output" : "test-output-action-3"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-action-3
     Then the response code should be 200
     Then the response body should contain:
@@ -741,7 +752,7 @@ Feature: execute action on trigger
             },
             "ack": {
               "_t": "ack",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "m": "test-output-action-3-test-connector-action-3"
             },
@@ -794,7 +805,7 @@ Feature: execute action on trigger
               },
               {
                 "_t": "ack",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "m": "test-output-action-3-test-connector-action-3"
               }
@@ -811,10 +822,11 @@ Feature: execute action on trigger
     ]
     """
 
+  @concurrent
   Scenario: given scenario and ack already acked alarm should trigger scenario
     Given I am admin
-    When I send an event:
-    """
+    When I send an event and wait the end of event processing:
+    """json
     {
       "connector" : "test-connector-double-ack-alarm-1",
       "connector_name" : "test-connector-name-double-ack-alarm-1",
@@ -826,9 +838,8 @@ Feature: execute action on trigger
       "output" : "test-double-ack-alarm-1"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
-    """
+    When I send an event and wait the end of event processing:
+    """json
     {
       "connector" : "test-connector-double-ack-alarm-1",
       "connector_name" : "test-connector-name-double-ack-alarm-1",
@@ -839,7 +850,6 @@ Feature: execute action on trigger
       "output" : "test-double-ack-alarm-1"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-component-double-ack-alarm-1
     Then the response code should be 200
     Then the response body should contain:
@@ -850,7 +860,7 @@ Feature: execute action on trigger
           "v": {
             "ack": {
               "_t": "ack",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "m": "test-double-ack-alarm-1"
             },
@@ -907,8 +917,8 @@ Feature: execute action on trigger
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
-    """
+    When I send an event and wait the end of event processing:
+    """json
     {
       "connector" : "test-connector-double-ack-alarm-1",
       "connector_name" : "test-connector-name-double-ack-alarm-1",
@@ -919,7 +929,6 @@ Feature: execute action on trigger
       "output" : "test-double-ack-alarm-1"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-component-double-ack-alarm-1
     Then the response code should be 200
     Then the response body should contain:
@@ -930,7 +939,7 @@ Feature: execute action on trigger
           "v": {
             "ack": {
               "_t": "ack",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "user_id": "root",
               "m": "test-double-ack-alarm-1"
             },
@@ -953,9 +962,10 @@ Feature: execute action on trigger
     }
     """
 
+  @concurrent
   Scenario: given scenario with old patterns should update alarm with backward compatibility
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-scenario-backward-compatibility-actions-connector",
@@ -967,7 +977,6 @@ Feature: execute action on trigger
       "state" : 2
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-scenario-backward-compatibility-actions-resource&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:

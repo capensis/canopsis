@@ -38,10 +38,6 @@ type Adapter interface {
 	// GetAllOpenedResourceAlarmsByComponent returns all ongoing alarms for component
 	GetAllOpenedResourceAlarmsByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error)
 
-	// GetUnacknowledgedAlarmsByComponent returns all ongoing alarms which have
-	// not been acknowledged, given a component's name.
-	GetUnacknowledgedAlarmsByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error)
-
 	// GetAlarmsWithoutTicketByComponent returns all ongoing alarms which do
 	// not have a ticket, given a component's name.
 	GetAlarmsWithoutTicketByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error)
@@ -111,10 +107,6 @@ type MetaAlarmEventProcessor interface {
 	ProcessAxeRpc(ctx context.Context, event rpc.AxeEvent, eventRes rpc.AxeResultEvent) error
 	// CreateMetaAlarm creates meta alarm by event.
 	CreateMetaAlarm(ctx context.Context, event types.Event) (*types.Alarm, error)
-	// ProcessAckResources ackes resource after component ack.
-	ProcessAckResources(ctx context.Context, event types.Event) error
-	// ProcessTicketResources add ticket to resource after component assoc ticket.
-	ProcessTicketResources(ctx context.Context, event types.Event) error
 }
 
 type Service interface {

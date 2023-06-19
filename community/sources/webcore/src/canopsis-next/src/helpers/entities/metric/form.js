@@ -3,6 +3,7 @@ import {
   EXTERNAL_METRIC_UNITS,
   KPI_RATING_USER_CRITERIA,
   USER_METRIC_PARAMETERS,
+  KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA,
 } from '@/constants';
 
 import { uid } from '@/helpers/uid';
@@ -42,8 +43,7 @@ import { uid } from '@/helpers/uid';
  */
 
 /**
- * @typedef {MetricPreset} MetricPresetForm
- * @property {string} key
+ * @typedef {MetricPreset & ObjectKey} MetricPresetForm
  */
 
 /**
@@ -63,12 +63,17 @@ import { uid } from '@/helpers/uid';
  */
 export const isTimeMetric = metric => [
   USER_METRIC_PARAMETERS.totalUserActivity,
+  USER_METRIC_PARAMETERS.minUserSession,
+  USER_METRIC_PARAMETERS.maxUserSession,
+  USER_METRIC_PARAMETERS.averageUserSession,
   ALARM_METRIC_PARAMETERS.averageAck,
   ALARM_METRIC_PARAMETERS.averageResolve,
   ALARM_METRIC_PARAMETERS.timeToAck,
   ALARM_METRIC_PARAMETERS.timeToResolve,
-  ALARM_METRIC_PARAMETERS.maxAck,
   ALARM_METRIC_PARAMETERS.minAck,
+  ALARM_METRIC_PARAMETERS.maxAck,
+  ALARM_METRIC_PARAMETERS.minResolve,
+  ALARM_METRIC_PARAMETERS.maxResolve,
 ].includes(metric);
 
 /**
@@ -92,6 +97,14 @@ export const isRatioMetric = metric => [
  * @returns {boolean}
  */
 export const isUserCriteria = criteria => KPI_RATING_USER_CRITERIA.includes(criteria);
+
+/**
+ * Check is custom criteria
+ *
+ * @param {string} criteria
+ * @returns {boolean}
+ */
+export const isCustomCriteria = criteria => criteria === KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA;
 
 /**
  * Check is external percent metric unit

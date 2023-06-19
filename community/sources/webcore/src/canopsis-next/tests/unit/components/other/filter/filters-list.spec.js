@@ -8,11 +8,13 @@ import FiltersList from '@/components/other/filter/filters-list.vue';
 const stubs = {
   'c-draggable-list-field': true,
   'filter-tile': true,
+  'c-alert': true,
 };
 
 const snapshotStubs = {
   'c-draggable-list-field': true,
   'filter-tile': true,
+  'c-alert': true,
 };
 
 const selectAddButton = wrapper => wrapper.find('v-btn-stub');
@@ -65,13 +67,12 @@ describe('filters-list', () => {
 
     const editedIndex = 1;
     const filterTile = selectFilterTiles(wrapper).at(editedIndex);
-
     filterTile.vm.$emit('edit');
 
     const editEvents = wrapper.emitted('edit');
 
     expect(editEvents).toHaveLength(1);
-    expect(editEvents[0]).toEqual([filters[editedIndex]]);
+    expect(editEvents[0]).toEqual([filters[editedIndex], editedIndex]);
   });
 
   it('Confirmation modal opened after trigger delete button', () => {
@@ -94,7 +95,7 @@ describe('filters-list', () => {
     const deleteEvents = wrapper.emitted('delete');
 
     expect(deleteEvents).toHaveLength(1);
-    expect(deleteEvents[0]).toEqual([filters[deleteIndex]]);
+    expect(deleteEvents[0]).toEqual([filters[deleteIndex], deleteIndex]);
   });
 
   it('Should send updated filters array on dragging', () => {
