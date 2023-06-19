@@ -382,16 +382,32 @@ export const createPbehaviorTypesModule = () => {
     data: [],
   });
 
+  const fieldPbehaviorTypes = jest.fn()
+    .mockReturnValue([]);
+
+  const fieldPbehaviorTypesPending = jest.fn()
+    .mockReturnValue(false);
+
+  const fetchFieldPbehaviorTypes = jest.fn();
+
   const pbehaviorTypesModule = {
     name: 'pbehaviorTypes',
+    getters: {
+      fieldItems: fieldPbehaviorTypes,
+      fieldPending: fieldPbehaviorTypesPending,
+    },
     actions: {
       fetchListWithoutStore: fetchPbehaviorTypesListWithoutStore,
+      fetchFieldList: fetchFieldPbehaviorTypes,
     },
   };
 
   return {
     pbehaviorTypesModule,
+    fieldPbehaviorTypes,
+    fieldPbehaviorTypesPending,
     fetchPbehaviorTypesListWithoutStore,
+    fetchFieldPbehaviorTypes,
   };
 };
 
@@ -777,13 +793,13 @@ export const createManualMetaAlarmModule = () => {
   const fetchManualMetaAlarmsListWithoutStore = jest.fn().mockResolvedValue([]);
   const createManualMetaAlarm = jest.fn().mockResolvedValue([]);
   const addAlarmsIntoManualMetaAlarm = jest.fn().mockResolvedValue([]);
-  const removeAlarmsIntoManualMetaAlarm = jest.fn().mockResolvedValue([]);
+  const removeAlarmsFromManualMetaAlarm = jest.fn().mockResolvedValue([]);
 
   afterEach(() => {
     fetchManualMetaAlarmsListWithoutStore.mockClear();
     createManualMetaAlarm.mockClear();
     addAlarmsIntoManualMetaAlarm.mockClear();
-    removeAlarmsIntoManualMetaAlarm.mockClear();
+    removeAlarmsFromManualMetaAlarm.mockClear();
   });
 
   const manualMetaAlarmModule = {
@@ -792,7 +808,7 @@ export const createManualMetaAlarmModule = () => {
       fetchListWithoutStore: fetchManualMetaAlarmsListWithoutStore,
       create: createManualMetaAlarm,
       addAlarms: addAlarmsIntoManualMetaAlarm,
-      removeAlarms: removeAlarmsIntoManualMetaAlarm,
+      removeAlarms: removeAlarmsFromManualMetaAlarm,
     },
   };
 
@@ -800,8 +816,28 @@ export const createManualMetaAlarmModule = () => {
     fetchManualMetaAlarmsListWithoutStore,
     createManualMetaAlarm,
     addAlarmsIntoManualMetaAlarm,
-    removeAlarmsIntoManualMetaAlarm,
+    removeAlarmsFromManualMetaAlarm,
     manualMetaAlarmModule,
+  };
+};
+
+export const createMetaAlarmModule = () => {
+  const removeAlarmsFromMetaAlarm = jest.fn().mockResolvedValue([]);
+
+  afterEach(() => {
+    removeAlarmsFromMetaAlarm.mockClear();
+  });
+
+  const metaAlarmModule = {
+    name: 'metaAlarm',
+    actions: {
+      removeAlarms: removeAlarmsFromMetaAlarm,
+    },
+  };
+
+  return {
+    removeAlarmsFromMetaAlarm,
+    metaAlarmModule,
   };
 };
 

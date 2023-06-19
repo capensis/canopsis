@@ -7,143 +7,11 @@ exports[`charts-form Renders \`charts-form\` with custom props 1`] = `
   <div
     class="layout pa-3 column"
   >
-    <c-draggable-list-field-stub
-      handle=".chart-drag-handler"
-      value="[object Object],[object Object],[object Object]"
-    >
-      <div
-        class="layout row align-center"
-      >
-        <div
-          class="flex xs1"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon draggable material-icons theme--light chart-drag-handler"
-          >
-            drag_indicator
-          </i>
-        </div>
-        <div
-          class="flex xs8"
-        >
-          <div
-            class="layout row align-center"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-              style="font-size: 36px;"
-            >
-              stacked_bar_chart
-            </i>
-            <span
-              class="ml-3"
-            >
-              
-            </span>
-          </div>
-        </div>
-        <div
-          class="flex xs3"
-        >
-          <c-action-btn-stub
-            type="edit"
-          />
-          <c-action-btn-stub
-            type="delete"
-          />
-        </div>
-      </div>
-      <div
-        class="layout row align-center"
-      >
-        <div
-          class="flex xs1"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon draggable material-icons theme--light chart-drag-handler"
-          >
-            drag_indicator
-          </i>
-        </div>
-        <div
-          class="flex xs8"
-        >
-          <div
-            class="layout row align-center"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-              style="font-size: 36px;"
-            >
-              stacked_bar_chart
-            </i>
-            <span
-              class="ml-3"
-            >
-              
-            </span>
-          </div>
-        </div>
-        <div
-          class="flex xs3"
-        >
-          <c-action-btn-stub
-            type="edit"
-          />
-          <c-action-btn-stub
-            type="delete"
-          />
-        </div>
-      </div>
-      <div
-        class="layout row align-center"
-      >
-        <div
-          class="flex xs1"
-        >
-          <i
-            aria-hidden="true"
-            class="v-icon draggable material-icons theme--light chart-drag-handler"
-          >
-            drag_indicator
-          </i>
-        </div>
-        <div
-          class="flex xs8"
-        >
-          <div
-            class="layout row align-center"
-          >
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-              style="font-size: 36px;"
-            >
-              stacked_bar_chart
-            </i>
-            <span
-              class="ml-3"
-            >
-              
-            </span>
-          </div>
-        </div>
-        <div
-          class="flex xs3"
-        >
-          <c-action-btn-stub
-            type="edit"
-          />
-          <c-action-btn-stub
-            type="delete"
-          />
-        </div>
-      </div>
-    </c-draggable-list-field-stub>
+    <field-draggable-list-stub
+      itemkey="key"
+      items="[object Object],[object Object],[object Object]"
+      itemtext="text"
+    />
     <v-menu-stub
       bottom="true"
       closedelay="0"
@@ -223,9 +91,10 @@ exports[`charts-form Renders \`charts-form\` with default props 1`] = `
   <div
     class="layout pa-3 column"
   >
-    <c-draggable-list-field-stub
-      handle=".chart-drag-handler"
-      value=""
+    <field-draggable-list-stub
+      itemkey="key"
+      items=""
+      itemtext="text"
     />
     <v-menu-stub
       bottom="true"

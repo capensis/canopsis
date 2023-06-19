@@ -95,8 +95,7 @@ import {
  */
 
 /**
- * @typedef {Object} PatternRuleForm
- * @property {string} key
+ * @typedef {Object & ObjectKey} PatternRuleForm
  * @property {string} attribute
  * @property {string} operator
  * @property {string} field
@@ -107,9 +106,8 @@ import {
  */
 
 /**
- * @typedef {Object} PatternGroupForm
+ * @typedef {Object & ObjectKey} PatternGroupForm
  * @property {PatternRuleForm[]} rules
- * @property {string} key
  */
 
 /**

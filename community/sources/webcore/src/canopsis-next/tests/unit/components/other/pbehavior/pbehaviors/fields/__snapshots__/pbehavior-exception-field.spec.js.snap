@@ -2,157 +2,193 @@
 
 exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with custom props 1`] = `
 <div
-  class="layout row wrap justify-space-between"
+  class="layout column"
 >
   <div
-    class="flex xs6"
-  >
-    <date-time-splitted-range-picker-field-stub
-      disabled="true"
-      end="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)"
-      endlabel="End"
-      endrules="[object Object]"
-      name="dates"
-      start="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)"
-      startlabel="Begin"
-      startrules="[object Object]"
-    />
-  </div>
-  <div
-    class="flex pl-2 xs6"
-  >
-    <c-pbehavior-type-field-stub
-      disabled="true"
-      name="type"
-      return-object="return-object"
-      value=""
-    />
-  </div>
-  <!---->
-  <div
-    class="flex xs12"
+    class="layout row justify-space-between"
   >
     <div
-      class="v-input mt-0 v-input--selection-controls v-input--checkbox v-input--hide-details v-input--is-disabled theme--light"
+      class="flex xs6"
     >
-      <div
-        class="v-input__control"
-      >
-        <div
-          class="v-input__slot"
-        >
-          <div
-            class="v-input--selection-controls__input"
-          >
-            <input
-              aria-checked="false"
-              aria-label="Whole day"
-              disabled="disabled"
-              role="checkbox"
-              type="checkbox"
-              value=""
-            />
-            <div
-              class="v-input--selection-controls__ripple"
-            />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              check_box_outline_blank
-            </i>
-          </div>
-          <label
-            aria-hidden="true"
-            class="v-label theme--light"
-            style="left: 0px; position: relative;"
-          >
-            Whole day
-          </label>
-        </div>
-      </div>
+      <date-time-splitted-range-picker-field-stub
+        disabled="true"
+        end="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)"
+        endlabel="End"
+        endrules="[object Object]"
+        name="dates"
+        start="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)"
+        startlabel="Begin"
+        startrules="[object Object]"
+      />
     </div>
+    <div
+      class="flex pl-2"
+    >
+      <c-pbehavior-type-field-stub
+        disabled="true"
+        name="type"
+        return-object="return-object"
+        value=""
+      />
+    </div>
+    <!---->
+  </div>
+  <div
+    class="layout row"
+  >
+    <v-checkbox-stub
+      backgroundcolor=""
+      class="mt-0"
+      color="primary"
+      disabled="true"
+      errorcount="1"
+      errormessages=""
+      hidedetails="true"
+      indeterminateicon="$vuetify.icons.checkboxIndeterminate"
+      label="Whole day"
+      messages=""
+      officon="$vuetify.icons.checkboxOff"
+      onicon="$vuetify.icons.checkboxOn"
+      ripple="true"
+      rules=""
+      successmessages=""
+      valuecomparator="[Function]"
+    />
+  </div>
+</div>
+`;
+
+exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with custom props with defined type 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout row justify-space-between"
+  >
+    <div
+      class="flex xs6"
+    >
+      <date-time-splitted-range-picker-text-stub
+        end="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)"
+        endlabel="End"
+        start="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)"
+        startlabel="Begin"
+      />
+    </div>
+    <div
+      class="flex pl-2"
+    >
+      <c-pbehavior-type-text-stub
+        value="type"
+      />
+    </div>
+    <!---->
+  </div>
+  <div
+    class="layout row"
+  >
+    <v-checkbox-stub
+      backgroundcolor=""
+      class="mt-0"
+      color="primary"
+      disabled="true"
+      errorcount="1"
+      errormessages=""
+      hidedetails="true"
+      indeterminateicon="$vuetify.icons.checkboxIndeterminate"
+      label="Whole day"
+      messages=""
+      officon="$vuetify.icons.checkboxOff"
+      onicon="$vuetify.icons.checkboxOn"
+      ripple="true"
+      rules=""
+      successmessages=""
+      valuecomparator="[Function]"
+    />
   </div>
 </div>
 `;
 
 exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with default props 1`] = `
 <div
-  class="layout row wrap justify-space-between"
+  class="layout column"
 >
   <div
-    class="flex xs6"
-  >
-    <date-time-splitted-range-picker-field-stub
-      endlabel="End"
-      endrules="[object Object]"
-      name="dates"
-      startlabel="Begin"
-      startrules="[object Object]"
-    />
-  </div>
-  <!---->
-  <div
-    class="flex xs1"
-  >
-    <button
-      class="v-btn v-btn--icon theme--light error"
-      type="button"
-    >
-      <div
-        class="v-btn__content"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light"
-        >
-          delete
-        </i>
-      </div>
-    </button>
-  </div>
-  <div
-    class="flex xs12"
+    class="layout row justify-space-between"
   >
     <div
-      class="v-input mt-0 v-input--selection-controls v-input--checkbox v-input--hide-details theme--light"
+      class="flex xs6"
     >
-      <div
-        class="v-input__control"
+      <date-time-splitted-range-picker-field-stub
+        endlabel="End"
+        endrules="[object Object]"
+        name="dates"
+        startlabel="Begin"
+        startrules="[object Object]"
+      />
+    </div>
+    <!---->
+    <div
+      class="flex exception-field-item--actions"
+    >
+      <button
+        class="btn--editing v-btn v-btn--active v-btn--floating v-btn--icon theme--light"
+        type="button"
       >
         <div
-          class="v-input__slot"
+          class="v-btn__content"
         >
-          <div
-            class="v-input--selection-controls__input"
-          >
-            <input
-              aria-checked="false"
-              aria-label="Whole day"
-              role="checkbox"
-              type="checkbox"
-              value=""
-            />
-            <div
-              class="v-input--selection-controls__ripple"
-            />
-            <i
-              aria-hidden="true"
-              class="v-icon material-icons theme--light"
-            >
-              check_box_outline_blank
-            </i>
-          </div>
-          <label
+          <i
             aria-hidden="true"
-            class="v-label theme--light"
-            style="left: 0px; position: relative;"
+            class="v-icon material-icons theme--light"
           >
-            Whole day
-          </label>
+            edit
+          </i>
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light primary--text"
+          >
+            check
+          </i>
         </div>
-      </div>
+      </button>
+      <button
+        class="mx-0 v-btn v-btn--icon theme--light error"
+        type="button"
+      >
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            delete
+          </i>
+        </div>
+      </button>
     </div>
+  </div>
+  <div
+    class="layout row"
+  >
+    <v-checkbox-stub
+      backgroundcolor=""
+      class="mt-0"
+      color="primary"
+      errorcount="1"
+      errormessages=""
+      hidedetails="true"
+      indeterminateicon="$vuetify.icons.checkboxIndeterminate"
+      label="Whole day"
+      messages=""
+      officon="$vuetify.icons.checkboxOff"
+      onicon="$vuetify.icons.checkboxOn"
+      ripple="true"
+      rules=""
+      successmessages=""
+      valuecomparator="[Function]"
+    />
   </div>
 </div>
 `;

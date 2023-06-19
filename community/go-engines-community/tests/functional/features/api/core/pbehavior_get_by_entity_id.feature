@@ -13,7 +13,8 @@ Feature: get a pbehavior by entity id
         "_id": "test-pbehavior-to-get-by-entity-id-1",
         "author": {
           "_id": "root",
-          "name": "root"
+          "name": "root",
+          "display_name": "root John Doe admin@canopsis.net"
         },
         "comments": [],
         "color": "#FFFFFF",
@@ -64,7 +65,8 @@ Feature: get a pbehavior by entity id
         "_id": "test-pbehavior-to-get-by-entity-id-2",
         "author": {
           "_id": "root",
-          "name": "root"
+          "name": "root",
+          "display_name": "root John Doe admin@canopsis.net"
         },
         "comments": [],
         "color": "#FFFFFF",
