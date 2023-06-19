@@ -179,6 +179,9 @@ export default {
   createAckRemove: {
     title: 'Annuler l\'acquittement',
   },
+  createUnCancel: {
+    title: 'Créer en uncanccel',
+  },
   liveReporting: {
     editLiveReporting: 'Suivi personnalisé',
     dateInterval: 'Intervalle de dates',

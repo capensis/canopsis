@@ -181,7 +181,7 @@ export default {
       return request.put(`${API_ROUTES.alarms.list}/${id}/uncancel`, data);
     },
 
-    bulkCreateAlarmUncancelEvent(context, { data }) {
+    bulkCreateAlarmUnCancelEvent(context, { data }) {
       return request.put(`${API_ROUTES.alarms.bulkList}/uncancel`, data);
     },
 
