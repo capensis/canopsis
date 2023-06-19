@@ -23,7 +23,6 @@
 
 <script>
 import { Validator } from 'vee-validate';
-
 import { isArray, isFunction, isObject } from 'lodash';
 
 export default {
