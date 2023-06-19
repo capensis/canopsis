@@ -163,6 +163,14 @@ export const isCorelMetaAlarmRuleType = type => type === META_ALARMS_RULE_TYPES.
 export const isManualGroupMetaAlarmRuleType = type => type === META_ALARMS_RULE_TYPES.manualgroup;
 
 /**
+ * Check meta alarm type is auto
+ *
+ * @param {MetaAlarmRuleType} type
+ * @return {boolean}
+ */
+export const isAutoMetaAlarmRuleType = type => type && type !== META_ALARMS_RULE_TYPES.manualgroup;
+
+/**
  * Check meta alarm type has a patterns
  *
  * @param {MetaAlarmRuleType} type
