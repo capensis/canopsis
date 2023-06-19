@@ -21,6 +21,11 @@ import { isManualGroupMetaAlarmRuleType, isAutoMetaAlarmRuleType } from '@/helpe
 import { isInstructionExecutionIconInProgress } from '@/helpers/entities/remediation/instruction-execution/form';
 import { isInstructionManual } from '@/helpers/entities/remediation/instruction/form';
 import { harmonizeLinks, getLinkRuleLinkActionType } from '@/helpers/entities/link/list';
+import {
+  isCancelledAlarmStatus,
+  isClosedAlarmStatus,
+  isResolvedAlarm,
+} from '@/helpers/entities/alarm/form';
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { entitiesMetaAlarmMixin } from '@/mixins/entities/meta-alarm';
@@ -60,10 +65,6 @@ export default {
       type: Object,
       default: null,
     },
-    isResolvedAlarm: {
-      type: Boolean,
-      default: false,
-    },
     small: {
       type: Boolean,
       default: false,
@@ -74,6 +75,18 @@ export default {
     },
   },
   computed: {
+    isCancelledAlarm() {
+      return isCancelledAlarmStatus(this.item);
+    },
+
+    isClosedAlarm() {
+      return isClosedAlarmStatus(this.item);
+    },
+
+    isResolvedAlarm() {
+      return isResolvedAlarm(this.item);
+    },
+
     isParentAlarmManualMetaAlarm() {
       return isManualGroupMetaAlarmRuleType(this.parentAlarm?.meta_alarm_rule?.type);
     },
@@ -174,11 +187,22 @@ export default {
         method: this.showVariablesHelperModal,
       };
 
-      if (this.isResolvedAlarm) {
-        return [
+      if (this.isCancelledAlarm || this.isClosedAlarm) {
+        const actions = [
           ...this.linksActions,
           variablesHelpAction,
         ];
+
+        if (this.isCancelledAlarm && !this.isResolvedAlarm) {
+          actions.unshift({
+            type: ALARM_LIST_ACTIONS_TYPES.unCancel,
+            icon: 'delete_forever',
+            title: this.$t('alarm.actions.titles.unCancel'),
+            method: this.showUnCancelModal,
+          });
+        }
+
+        return actions;
       }
 
       const actions = [
@@ -352,6 +376,10 @@ export default {
 
     showCancelModal() {
       this.showCancelModalByAlarms([this.item]);
+    },
+
+    showUnCancelModal() {
+      this.showUnCancelModalByAlarms([this.item]);
     },
 
     createFastCancel() {
