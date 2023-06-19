@@ -48,7 +48,7 @@ export const widgetActionsPanelAlarmMixin = {
       bulkCreateAlarmAssocticketEvent: 'bulkCreateAlarmAssocticketEvent',
       bulkCreateAlarmCommentEvent: 'bulkCreateAlarmCommentEvent',
       bulkCreateAlarmCancelEvent: 'bulkCreateAlarmCancelEvent',
-      bulkCreateAlarmUncancelEvent: 'bulkCreateAlarmUncancelEvent',
+      bulkCreateAlarmUnCancelEvent: 'bulkCreateAlarmUnCancelEvent',
       bulkCreateAlarmChangestateEvent: 'bulkCreateAlarmChangestateEvent',
     }),
 
@@ -274,6 +274,23 @@ export const widgetActionsPanelAlarmMixin = {
           action: async (ackRemoveEvent) => {
             await this.bulkCreateAlarmAckremoveEvent({
               data: alarms.map(alarm => ({ ...ackRemoveEvent, _id: alarm._id })),
+            });
+
+            await this.afterSubmit();
+          },
+        },
+      });
+    },
+
+    showUnCancelModalByAlarms(alarms) {
+      this.$modals.show({
+        name: MODALS.createEvent,
+        config: {
+          items: alarms,
+          title: this.$t('modals.createUnCancel.title'),
+          action: async (unCancelEvent) => {
+            await this.bulkCreateAlarmUnCancelEvent({
+              data: alarms.map(alarm => ({ ...unCancelEvent, _id: alarm._id })),
             });
 
             await this.afterSubmit();
