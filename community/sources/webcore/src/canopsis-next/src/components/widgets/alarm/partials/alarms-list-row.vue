@@ -4,7 +4,7 @@
       v-layout(row, align-center, justify-space-between)
         v-layout.alarm-list-row__checkbox
           template(v-if="selectable")
-            v-checkbox-functional.ma-0(v-if="!isClosedAlarmStatus", v-field="selected", hide-details)
+            v-checkbox-functional.ma-0(v-if="isAlarmSelectable", v-field="selected", hide-details)
             v-checkbox-functional(v-else, disabled, hide-details)
         v-layout(v-if="hasAlarmInstruction", align-center, justify-center)
           alarms-list-row-icon(:alarm="alarm")
@@ -30,7 +30,6 @@
       actions-panel(
         :item="alarm",
         :widget="widget",
-        :is-resolved-alarm="isClosedAlarmStatus",
         :parent-alarm="parentAlarm",
         :refresh-alarms-list="refreshAlarmsList",
         :small="small"
@@ -42,7 +41,7 @@ import { flow, isNumber } from 'lodash';
 
 import featuresService from '@/services/features';
 
-import { isClosedAlarmStatus } from '@/helpers/entities/alarm/form';
+import { isActionAvailableForAlarm } from '@/helpers/entities/alarm/form';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -154,8 +153,8 @@ export default {
       return hasAssignedInstructions || isNumber(this.alarm.instruction_execution_icon);
     },
 
-    isClosedAlarmStatus() {
-      return isClosedAlarmStatus(this.alarm);
+    isAlarmSelectable() {
+      return isActionAvailableForAlarm(this.alarm);
     },
 
     isNotFiltered() {
