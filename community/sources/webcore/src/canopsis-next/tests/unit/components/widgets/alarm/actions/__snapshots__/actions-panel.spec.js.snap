@@ -186,7 +186,7 @@ exports[`actions-panel Renders \`actions-panel\` with links in resolved alarm 1`
   <button
     class="action-unCancel"
   >
-    Un cancel alarm|delete_forever|unCancel
+    Uncancel alarm|delete_forever|unCancel
   </button>
   <button
     class="action-RuleId.icon.Label"
