@@ -206,6 +206,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       form="[object Object]"
       templates=""
       type="alarm"
+      withinstructions="true"
     />
     <hr
       class="v-divider theme--light"
@@ -440,6 +441,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       form="[object Object]"
       templates=""
       type="alarm"
+      withinstructions="true"
     />
     <hr
       class="v-divider theme--light"
@@ -671,6 +673,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       form="[object Object]"
       templates=""
       type="alarm"
+      withinstructions="true"
     />
     <hr
       class="v-divider theme--light"
