@@ -70,6 +70,9 @@ template:
   - &role {
     _id: <UUID()>
   }
+  - &role_tpl {
+    _id: <UUID()>
+  }
   - &user {
     _id: <UUID()>,
     authkey: <UUID()>,
@@ -1343,6 +1346,7 @@ permission:
 role:
   role_admin:
     <<: *role
+    _id: admin
     name: admin
     defaultview: "@view_open_alarms"
     permissions:
@@ -1433,6 +1437,7 @@ role:
       "@permission_serviceweather_userFilter": 1
       "@permission_serviceweather_category": 1
       "@permission_serviceweather_executeInstruction": 1
+      "@permission_crudcontext_createEntity": 1
       "@permission_crudcontext_edit": 1
       "@permission_crudcontext_duplicate": 1
       "@permission_crudcontext_delete": 1
@@ -1495,7 +1500,6 @@ role:
       "@permission_api_alarm_read": 1
       "@permission_api_alarm_update": 1
       "@permission_api_idlerule": 15
-      "@permission_crudcontext_createEntity": 1
       "@permission_api_eventfilter": 15
       "@permission_api_action": 15
       "@permission_api_metaalarmrule": 15
@@ -1551,6 +1555,143 @@ role:
       "@permission_view_open_alarms": 15
       "@permission_view_resolved_alarms": 15
       "@permission_view_context_explorer": 15
+
+role_template:
+  tpl_pilot:
+    <<: *role_tpl
+    name: pilot
+    permissions:
+      # UI permissions
+      "@permission_listalarm_ack": 1
+      "@permission_listalarm_fastAck": 1
+      "@permission_listalarm_cancelAck": 1
+      "@permission_listalarm_pbehavior": 1
+      "@permission_listalarm_snoozeAlarm": 1
+      "@permission_listalarm_listPbehavior": 1
+      "@permission_listalarm_declareanIncident": 1
+      "@permission_listalarm_assignTicketNumber": 1
+      "@permission_listalarm_removeAlarm": 1
+      "@permission_listalarm_fastRemoveAlarm": 1
+      "@permission_listalarm_changeState": 1
+      "@permission_listalarm_history": 1
+      "@permission_listalarm_groupRequest": 1
+      "@permission_listalarm_manualMetaAlarmGroup": 1
+      "@permission_listalarm_metaAlarmGroup": 1
+      "@permission_listalarm_comment": 1
+      "@permission_listalarm_listFilters": 1
+      "@permission_listalarm_editFilter": 1
+      "@permission_listalarm_addFilter": 1
+      "@permission_listalarm_userFilter": 1
+      "@permission_listalarm_listRemediationInstructionsFilters": 1
+      "@permission_listalarm_editRemediationInstructionsFilter": 1
+      "@permission_listalarm_addRemediationInstructionsFilter": 1
+      "@permission_listalarm_userRemediationInstructionsFilter": 1
+      "@permission_listalarm_links": 1
+      "@permission_listalarm_correlation": 1
+      "@permission_listalarm_executeInstruction": 1
+      "@permission_listalarm_category": 1
+      "@permission_listalarm_exportAsCsv": 1
+      "@permission_serviceweather_entityAck": 1
+      "@permission_serviceweather_entityAssocTicket": 1
+      "@permission_serviceweather_entityValidate": 1
+      "@permission_serviceweather_entityInvalidate": 1
+      "@permission_serviceweather_entityPause": 1
+      "@permission_serviceweather_entityPlay": 1
+      "@permission_serviceweather_entityCancel": 1
+      "@permission_serviceweather_entityManagePbehaviors": 1
+      "@permission_serviceweather_entityLinks": 1
+      "@permission_serviceweather_entityComment": 1
+      "@permission_serviceweather_moreInfos": 1
+      "@permission_serviceweather_alarmsList": 1
+      "@permission_serviceweather_pbehaviorList": 1
+      "@permission_serviceweather_listFilters": 1
+      "@permission_serviceweather_editFilter": 1
+      "@permission_serviceweather_addFilter": 1
+      "@permission_serviceweather_userFilter": 1
+      "@permission_serviceweather_category": 1
+      "@permission_serviceweather_executeInstruction": 1
+      "@permission_crudcontext_createEntity": 1
+      "@permission_crudcontext_edit": 1
+      "@permission_crudcontext_duplicate": 1
+      "@permission_crudcontext_delete": 1
+      "@permission_crudcontext_pbehavior": 1
+      "@permission_crudcontext_listPbehavior": 1
+      "@permission_crudcontext_deletePbehavior": 1
+      "@permission_crudcontext_listFilters": 1
+      "@permission_crudcontext_editFilter": 1
+      "@permission_crudcontext_addFilter": 1
+      "@permission_crudcontext_userFilter": 1
+      "@permission_crudcontext_category": 1
+      "@permission_crudcontext_exportAsCsv": 1
+      "@permission_crudcontext_massEnable": 1
+      "@permission_crudcontext_massDisable": 1
+      "@permission_common_variablesHelp": 1
+      "@permission_counter_alarmsList": 1
+      "@permission_testingweather_alarmsList": 1
+      "@permission_map_alarmsList": 1
+      "@permission_map_listFilters": 1
+      "@permission_map_editFilter": 1
+      "@permission_map_addFilter": 1
+      "@permission_map_userFilter": 1
+      "@permission_map_category": 1
+      "@permission_userStatistics_interval": 1
+      "@permission_userStatistics_listFilters": 1
+      "@permission_userStatistics_editFilter": 1
+      "@permission_userStatistics_addFilter": 1
+      "@permission_userStatistics_userFilter": 1
+      "@permission_alarmStatistics_interval": 1
+      "@permission_alarmStatistics_listFilters": 1
+      "@permission_alarmStatistics_editFilter": 1
+      "@permission_alarmStatistics_addFilter": 1
+      "@permission_alarmStatistics_userFilter": 1
+      "@permission_models_remediation_statistics": 1
+      "@permission_barchart_interval": 1
+      "@permission_barchart_sampling": 1
+      "@permission_barchart_listFilters": 1
+      "@permission_barchart_editFilter": 1
+      "@permission_barchart_addFilter": 1
+      "@permission_barchart_userFilter": 1
+      "@permission_linechart_interval": 1
+      "@permission_linechart_sampling": 1
+      "@permission_linechart_listFilters": 1
+      "@permission_linechart_editFilter": 1
+      "@permission_linechart_addFilter": 1
+      "@permission_linechart_userFilter": 1
+      "@permission_piechart_interval": 1
+      "@permission_piechart_sampling": 1
+      "@permission_piechart_listFilters": 1
+      "@permission_piechart_editFilter": 1
+      "@permission_piechart_addFilter": 1
+      "@permission_piechart_userFilter": 1
+      "@permission_numbers_interval": 1
+      "@permission_numbers_sampling": 1
+      "@permission_numbers_listFilters": 1
+      "@permission_numbers_editFilter": 1
+      "@permission_numbers_addFilter": 1
+      "@permission_numbers_userFilter": 1
+      # API permissions
+      "@permission_api_alarm_read": 1
+      "@permission_api_alarm_update": 1
+      "@permission_api_playlist": 1
+      "@permission_api_entitycategory": 1
+      "@permission_api_viewgroup": 1
+      "@permission_api_view": 1
+      "@permission_api_pbehavior": 15
+      "@permission_api_pbehaviortype": 1
+      "@permission_api_pbehaviorreason": 1
+      "@permission_api_pbehaviorexception": 1
+      "@permission_api_event": 1
+      "@permission_api_execution": 1
+      "@permission_api_file": 1
+      "@permission_api_entity": 1
+      "@permission_api_associative_table": 1
+      "@permission_api_junit": 1
+      "@permission_api_map": 1
+      "@permission_api_declare_ticket_execution": 1
+      # Views permissions
+      "@permission_view_open_alarms": 1
+      "@permission_view_resolved_alarms": 1
+      "@permission_view_context_explorer": 1
 
 user:
   user_admin:
