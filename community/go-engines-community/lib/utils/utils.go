@@ -42,7 +42,19 @@ func NewID() string {
 	return uuid.New().String()
 }
 
-// FindStringSubmatchMap returns a map containing the values of the named
+func MatchWithRegexExpression(re RegexExpression, s string) bool {
+	switch uthRegex := re.(type) {
+	case WrapperBuiltInRegex:
+		return uthRegex.MatchString(s)
+	case WrapperRegex2:
+		match, _ := uthRegex.MatchString(s)
+		return match
+	}
+
+	return false
+}
+
+// FindStringSubmatchMapWithRegexExpression returns a map containing the values of the named
 // subexpressions of the lefmost match of the regular expression re in s. A
 // return value of nil indicates no match.
 func FindStringSubmatchMapWithRegexExpression(re RegexExpression, s string) map[string]string {

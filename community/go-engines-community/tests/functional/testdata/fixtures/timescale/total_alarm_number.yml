@@ -79,3 +79,27 @@
 - time: '2021-11-23'
   entity_id: 6
   value: 1
+- time: '2021-11-23'
+  entity_id: 19
+  value: 1
+- time: '2021-11-24'
+  entity_id: 19
+  value: -1
+- time: '2021-11-24'
+  entity_id: 20
+  value: 1
+- time: '2021-11-24'
+  entity_id: 21
+  value: 1
+- time: '2021-11-25'
+  entity_id: 22
+  value: 1
+- time: '2021-11-25'
+  entity_id: 20
+  value: -1
+- time: '2021-11-25'
+  entity_id: 21
+  value: -1
+- time: '2021-11-25'
+  entity_id: 23
+  value: 1

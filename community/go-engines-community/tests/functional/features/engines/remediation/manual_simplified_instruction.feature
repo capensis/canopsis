@@ -1,9 +1,10 @@
 Feature: run an manual simplified instruction
   I need to be able to run an manual simplified instruction
 
+  @concurrent
   Scenario: given new alarm should run manual simplified instructions
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-run-manual-simplified-instruction-1",
@@ -16,7 +17,6 @@ Feature: run an manual simplified instruction
       "output": "test-output-to-run-manual-simplified-instruction-1"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-manual-simplified-instruction-1
     Then the response code should be 200
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
@@ -87,7 +87,26 @@ Feature: run an manual simplified instruction
       ]
     }
     """
-    When I wait the end of 3 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "instructionstarted",
+        "resource": "test-resource-to-run-manual-simplified-instruction-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "resource": "test-resource-to-run-manual-simplified-instruction-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "resource": "test-resource-to-run-manual-simplified-instruction-1",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -106,46 +125,47 @@ Feature: run an manual simplified instruction
     [
       {
         "_t": "instructionstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-1-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-1-name. Job test-job-to-run-manual-simplified-instruction-1-name."
       },
       {
         "_t": "instructionjobcomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-1-name. Job test-job-to-run-manual-simplified-instruction-1-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-1-name. Job test-job-to-run-manual-simplified-instruction-2-name."
       },
       {
         "_t": "instructionjobcomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-1-name. Job test-job-to-run-manual-simplified-instruction-2-name."
       },
       {
         "_t": "instructioncomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-1-name."
       }
     ]
     """
 
+  @concurrent
   Scenario: given new alarm should run manual instruction, instruction jobs should be stopped because of stopOnFail flag
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-run-manual-simplified-instruction-2",
@@ -158,7 +178,6 @@ Feature: run an manual simplified instruction
       "output": "test-output-to-run-manual-simplified-instruction-2"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-manual-simplified-instruction-2
     Then the response code should be 200
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
@@ -170,7 +189,21 @@ Feature: run an manual simplified instruction
     }
     """
     Then the response code should be 200
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "instructionstarted",
+        "resource": "test-resource-to-run-manual-simplified-instruction-2",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "resource": "test-resource-to-run-manual-simplified-instruction-2",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -189,34 +222,35 @@ Feature: run an manual simplified instruction
     [
       {
         "_t": "instructionstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-2-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-2-name. Job test-job-to-run-manual-simplified-instruction-3-name."
       },
       {
         "_t": "instructionjobfail",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-2-name. Job test-job-to-run-manual-simplified-instruction-3-name."
       },
       {
         "_t": "instructionfail",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-2-name."
       }
     ]
     """
 
+  @concurrent
   Scenario: given new alarm should run manual instruction, instruction jobs shouldn't stopped because of stopOnFail flag
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-run-manual-simplified-instruction-3",
@@ -229,7 +263,6 @@ Feature: run an manual simplified instruction
       "output": "test-output-to-run-manual-simplified-instruction-3"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-manual-simplified-instruction-3
     Then the response code should be 200
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
@@ -241,7 +274,26 @@ Feature: run an manual simplified instruction
     }
     """
     Then the response code should be 200
-    When I wait the end of 3 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "instructionstarted",
+        "resource": "test-resource-to-run-manual-simplified-instruction-3",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "resource": "test-resource-to-run-manual-simplified-instruction-3",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "resource": "test-resource-to-run-manual-simplified-instruction-3",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -260,46 +312,47 @@ Feature: run an manual simplified instruction
     [
       {
         "_t": "instructionstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-3-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-3-name. Job test-job-to-run-manual-simplified-instruction-3-name."
       },
       {
         "_t": "instructionjobfail",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-3-name. Job test-job-to-run-manual-simplified-instruction-3-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-3-name. Job test-job-to-run-manual-simplified-instruction-2-name."
       },
       {
         "_t": "instructionjobcomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-3-name. Job test-job-to-run-manual-simplified-instruction-2-name."
       },
       {
         "_t": "instructioncomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-3-name."
       }
     ]
     """
 
+  @concurrent
   Scenario: given new alarm should run manual instruction with failed jobs, instruction jobs should be stopped because of stopOnFail flag
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-run-manual-simplified-instruction-4",
@@ -312,7 +365,6 @@ Feature: run an manual simplified instruction
       "output": "test-output-to-run-manual-simplified-instruction-4"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-manual-simplified-instruction-4
     Then the response code should be 200
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
@@ -324,7 +376,21 @@ Feature: run an manual simplified instruction
     }
     """
     Then the response code should be 200
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "instructionstarted",
+        "resource": "test-resource-to-run-manual-simplified-instruction-4",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "resource": "test-resource-to-run-manual-simplified-instruction-4",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -343,34 +409,35 @@ Feature: run an manual simplified instruction
     [
       {
         "_t": "instructionstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-4-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-4-name. Job test-job-to-instruction-edit-1-name."
       },
       {
         "_t": "instructionjobfail",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-4-name. Job test-job-to-instruction-edit-1-name."
       },
       {
         "_t": "instructionfail",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-4-name."
       }
     ]
     """
 
+  @concurrent
   Scenario: given manual simplified instructions should not add steps to resolved alarm and new alarm
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-run-manual-simplified-instruction-5",
@@ -383,7 +450,6 @@ Feature: run an manual simplified instruction
       "output": "test-output-to-run-manual-simplified-instruction-5"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-to-run-manual-simplified-instruction-5
     Then the response code should be 200
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
@@ -395,8 +461,22 @@ Feature: run an manual simplified instruction
     }
     """
     Then the response code should be 200
-    When I wait the end of 2 events processing
-    When I send an event:
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "instructionstarted",
+        "resource": "test-resource-to-run-manual-simplified-instruction-5",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "resource": "test-resource-to-run-manual-simplified-instruction-5",
+        "source_type": "resource"
+      }
+    ]
+    """
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-run-manual-simplified-instruction-5",
@@ -407,8 +487,7 @@ Feature: run an manual simplified instruction
       "resource": "test-resource-to-run-manual-simplified-instruction-5"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-run-manual-simplified-instruction-5",
@@ -419,8 +498,7 @@ Feature: run an manual simplified instruction
       "resource": "test-resource-to-run-manual-simplified-instruction-5"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-to-run-manual-simplified-instruction-5",
@@ -433,7 +511,6 @@ Feature: run an manual simplified instruction
       "output": "test-output-to-run-manual-simplified-instruction-5"
     }
     """
-    When I wait the end of event processing
     When I wait 5s
     When I do POST /api/v4/alarm-details:
     """json
@@ -461,25 +538,25 @@ Feature: run an manual simplified instruction
       },
       {
         "_t": "instructionstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-5-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-5-name. Job test-job-to-run-manual-simplified-instruction-1-name."
       },
       {
         "_t": "instructionjobcomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-5-name. Job test-job-to-run-manual-simplified-instruction-1-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-run-manual-simplified-instruction-5-name. Job test-job-to-run-manual-simplified-instruction-4-name."
       },

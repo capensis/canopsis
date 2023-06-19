@@ -2,15 +2,16 @@ package alarm
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"sort"
 	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/perfdata"
@@ -64,10 +65,13 @@ type store struct {
 	dbEntityCollection               mongo.DbCollection
 	dbDeclareTicketCollection        mongo.DbCollection
 	dbUserCollection                 mongo.DbCollection
+	authorProvider                   author.Provider
 
 	linkGenerator link.Generator
 
 	timezoneConfigProvider config.TimezoneConfigProvider
+
+	decoder encoding.Decoder
 
 	logger zerolog.Logger
 }
@@ -76,6 +80,8 @@ func NewStore(
 	dbClient mongo.DbClient,
 	linkGenerator link.Generator,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	authorProvider author.Provider,
+	decoder encoding.Decoder,
 	logger zerolog.Logger,
 ) Store {
 	return &store{
@@ -87,10 +93,13 @@ func NewStore(
 		dbEntityCollection:               dbClient.Collection(mongo.EntityMongoCollection),
 		dbDeclareTicketCollection:        dbClient.Collection(mongo.DeclareTicketRuleMongoCollection),
 		dbUserCollection:                 dbClient.Collection(mongo.RightsMongoCollection),
+		authorProvider:                   authorProvider,
 
 		linkGenerator: linkGenerator,
 
 		timezoneConfigProvider: timezoneConfigProvider,
+
+		decoder: decoder,
 
 		logger: logger,
 	}
@@ -568,7 +577,7 @@ func (s *store) GetAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 
 func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, error) {
 	r := ExportFetchParameters{}
-	err := json.Unmarshal([]byte(t.Parameters), &r)
+	err := s.decoder.Decode([]byte(t.Parameters), &r)
 	if err != nil {
 		return nil, err
 	}
@@ -1263,7 +1272,7 @@ func (s *store) fillLinks(ctx context.Context, result *AggregationResult, userId
 }
 
 func (s *store) getQueryBuilder() *MongoQueryBuilder {
-	return NewMongoQueryBuilder(s.dbClient)
+	return NewMongoQueryBuilder(s.dbClient, s.authorProvider)
 }
 
 func (s *store) fillAssignedDeclareTickets(ctx context.Context, result *AggregationResult) error {

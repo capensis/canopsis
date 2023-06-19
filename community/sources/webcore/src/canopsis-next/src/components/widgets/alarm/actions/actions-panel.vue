@@ -17,12 +17,14 @@ import {
 import featuresService from '@/services/features';
 
 import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
-import { isManualGroupMetaAlarmRuleType } from '@/helpers/entities/meta-alarm/rule/form';
+import { isManualGroupMetaAlarmRuleType, isAutoMetaAlarmRuleType } from '@/helpers/entities/meta-alarm/rule/form';
 import { isInstructionExecutionIconInProgress } from '@/helpers/entities/remediation/instruction-execution/form';
 import { isInstructionManual } from '@/helpers/entities/remediation/instruction/form';
 import { harmonizeLinks, getLinkRuleLinkActionType } from '@/helpers/entities/link/list';
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
+import { entitiesMetaAlarmMixin } from '@/mixins/entities/meta-alarm';
+import { entitiesManualMetaAlarmMixin } from '@/mixins/entities/manual-meta-alarm';
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { clipboardMixin } from '@/mixins/clipboard';
 
@@ -40,6 +42,8 @@ export default {
   components: { SharedActionsPanel },
   mixins: [
     entitiesAlarmMixin,
+    entitiesMetaAlarmMixin,
+    entitiesManualMetaAlarmMixin,
     widgetActionsPanelAlarmMixin,
     clipboardMixin,
   ],
@@ -76,6 +80,10 @@ export default {
   computed: {
     isParentAlarmManualMetaAlarm() {
       return isManualGroupMetaAlarmRuleType(this.parentAlarm?.meta_alarm_rule?.type);
+    },
+
+    isParentAlarmAutoMetaAlarm() {
+      return isAutoMetaAlarmRuleType(this.parentAlarm?.meta_alarm_rule?.type);
     },
 
     linksActions() {
@@ -218,6 +226,15 @@ export default {
         });
       }
 
+      if (this.isParentAlarmAutoMetaAlarm) {
+        actions.push({
+          type: ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromAutoMetaAlarm,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.removeAlarmsFromAutoMetaAlarm),
+          title: this.$t('alarm.actions.titles.removeAlarmsFromAutoMetaAlarm'),
+          method: this.showRemoveAlarmsFromAutoMetaAlarmModal,
+        });
+      }
+
       /**
        * If we will have actions for resolved alarms in the features we should move this condition to
        * the every features repositories
@@ -347,6 +364,10 @@ export default {
 
     showRemoveAlarmsFromManualMetaAlarmModal() {
       this.showRemoveAlarmsFromManualMetaAlarmModalByAlarms([this.item]);
+    },
+
+    showRemoveAlarmsFromAutoMetaAlarmModal() {
+      this.showRemoveAlarmsFromAutoMetaAlarmModalByAlarms([this.item]);
     },
 
     showVariablesHelperModal() {

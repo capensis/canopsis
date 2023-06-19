@@ -78,6 +78,8 @@ export const USER_PERMISSIONS_PREFIXES = {
     lineChart: 'linechart',
     pieChart: 'piechart',
     numbers: 'numbers',
+    userStatistics: 'userStatistics',
+    alarmStatistics: 'alarmStatistics',
   },
   api: 'api',
 };
@@ -146,6 +148,7 @@ export const USERS_PERMISSIONS = {
         changeState: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_changeState`,
         history: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_history`,
         manualMetaAlarmGroup: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_manualMetaAlarmGroup`,
+        metaAlarmGroup: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_metaAlarmGroup`,
         comment: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_comment`,
 
         listFilters: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_listFilters`,
@@ -298,6 +301,26 @@ export const USERS_PERMISSIONS = {
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_userFilter`,
       },
     },
+    userStatistics: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_interval`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_userFilter`,
+      },
+    },
+    alarmStatistics: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_interval`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_userFilter`,
+      },
+    },
   },
   api: {
     general: {
@@ -393,6 +416,8 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
     [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm]:
     USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
+    [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromAutoMetaAlarm]:
+    USERS_PERMISSIONS.business.alarmsList.actions.metaAlarmGroup,
 
     [ALARM_LIST_ACTIONS_TYPES.links]: USERS_PERMISSIONS.business.alarmsList.actions.links,
     [ALARM_LIST_ACTIONS_TYPES.correlation]: USERS_PERMISSIONS.business.alarmsList.actions.correlation,
