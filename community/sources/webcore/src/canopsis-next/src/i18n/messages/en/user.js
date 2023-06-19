@@ -17,6 +17,11 @@ export default {
   },
   metrics: {
     [USER_METRIC_PARAMETERS.totalUserActivity]: 'Total activity time',
+    [USER_METRIC_PARAMETERS.tickets]: 'Number of tickets created',
+    [USER_METRIC_PARAMETERS.ackAlarmWithoutCancel]: 'Number of acks excluding canceled acks',
+    [USER_METRIC_PARAMETERS.averageUserSession]: 'Average user activity time',
+    [USER_METRIC_PARAMETERS.minUserSession]: 'Min user activity time',
+    [USER_METRIC_PARAMETERS.maxUserSession]: 'Max user activity time',
   },
   variables: {
     userEmail: 'User email',

@@ -10,7 +10,7 @@
       c-information-block-row(v-if="eventFilter.start", :label="$t('common.start')") {{ eventFilter.start | date }}
       c-information-block-row(v-if="eventFilter.stop", :label="$t('common.stop')") {{ eventFilter.stop | date }}
       recurrence-rule-information(v-if="eventFilter.rrule", :rrule="eventFilter.rrule")
-      pbehavior-exceptions-field(
+      pbehavior-recurrence-rule-exceptions-field(
         v-if="hasExdatesOrExceptions",
         :exdates="exdates",
         :exceptions="exceptions",
@@ -22,11 +22,15 @@
 import { exceptionsToForm, exdatesToForm } from '@/helpers/entities/pbehavior/form';
 
 import RecurrenceRuleInformation from '@/components/common/reccurence-rule/recurrence-rule-information.vue';
-import PbehaviorExceptionsField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-exceptions-field.vue';
+import PbehaviorRecurrenceRuleExceptionsField
+  from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-exceptions-field.vue';
 
 export default {
   inject: ['$system'],
-  components: { PbehaviorExceptionsField, RecurrenceRuleInformation },
+  components: {
+    RecurrenceRuleInformation,
+    PbehaviorRecurrenceRuleExceptionsField,
+  },
   props: {
     eventFilter: {
       type: Object,

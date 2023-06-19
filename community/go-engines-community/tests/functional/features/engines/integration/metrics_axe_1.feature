@@ -966,7 +966,7 @@ Feature: Metrics should be added on alarm changes
     """
 
   @concurrent
-  Scenario: given alarm with ticket should add ticket_active_alarms and without_ticket_active_alarms metrics
+  Scenario: given alarm with ticket should add ticket_active_alarms, without_ticket_active_alarms, tickets metrics
     Given I am admin
     When I do POST /api/v4/cat/kpi-filters:
     """json
@@ -1042,6 +1042,7 @@ Feature: Metrics should be added on alarm changes
     {
       "parameters": [
         {"metric": "ticket_active_alarms"},
+        {"metric": "tickets"},
         {"metric": "without_ticket_active_alarms"}
       ],
       "filter": "{{ .filterID }}",
@@ -1060,6 +1061,15 @@ Feature: Metrics should be added on alarm changes
             {
               "timestamp": {{ nowDateTz }},
               "value": 1
+            }
+          ]
+        },
+        {
+          "title": "tickets",
+          "data": [
+            {
+              "timestamp": {{ nowDateTz }},
+              "value": 2
             }
           ]
         },

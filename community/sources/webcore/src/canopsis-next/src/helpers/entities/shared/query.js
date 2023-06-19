@@ -45,7 +45,7 @@ export const convertFilterToQuery = filter => (isArray(filter) ? filter : [filte
  * @param {string | string[]} lockedFilter
  * @returns {string[]}
  */
-const convertFiltersToQuery = (filter, lockedFilter) => [
+export const convertFiltersToQuery = (filter, lockedFilter) => [
   ...convertFilterToQuery(filter),
   ...convertFilterToQuery(lockedFilter),
 ];
