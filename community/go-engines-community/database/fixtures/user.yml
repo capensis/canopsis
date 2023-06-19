@@ -565,6 +565,11 @@ permission:
     _id: listalarm_fastRemoveAlarm
     name: <Current()._id>
     description: "Rights on listalarm: fast remove alarm"
+  permission_listalarm_unCancel:
+    <<: *permission
+    _id: listalarm_unCancel
+    name: <Current()._id>
+    description: "Rights on listalarm: uncancel alarm"
   permission_listalarm_changeState:
     <<: *permission
     _id: listalarm_changeState
@@ -1395,6 +1400,7 @@ role:
       "@permission_listalarm_assignTicketNumber": 1
       "@permission_listalarm_removeAlarm": 1
       "@permission_listalarm_fastRemoveAlarm": 1
+      "@permission_listalarm_unCancel": 1
       "@permission_listalarm_changeState": 1
       "@permission_listalarm_history": 1
       "@permission_listalarm_groupRequest": 1
