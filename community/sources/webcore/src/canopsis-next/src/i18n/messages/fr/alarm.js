@@ -172,6 +172,7 @@ export default {
   },
   fields: {
     displayName: 'Nom simplifié (DisplayName)',
+    assignedInstructions: 'Consignes assignées',
     initialOutput: 'Sortie initiale longue',
     initialLongOutput: 'Sortie longue initiale',
     lastComment: 'Dernier commentaire',

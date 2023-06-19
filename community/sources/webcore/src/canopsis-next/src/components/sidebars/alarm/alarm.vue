@@ -147,7 +147,8 @@
         :type="$constants.ENTITIES_TYPES.alarm",
         :templates="alarmColumnsWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
-        datetime-format
+        datetime-format,
+        with-instructions
       )
       v-divider
       field-switcher(
