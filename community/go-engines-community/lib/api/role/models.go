@@ -24,7 +24,7 @@ type EditRequest struct {
 	AuthConfig security.AuthMethodConf `json:"auth_config"`
 }
 
-type Role struct {
+type Response struct {
 	ID          string       `bson:"_id" json:"_id"`
 	Name        string       `bson:"name" json:"name"`
 	Description string       `bson:"description" json:"description"`
@@ -51,8 +51,8 @@ type View struct {
 }
 
 type AggregationResult struct {
-	Data       []Role `bson:"data" json:"data"`
-	TotalCount int64  `bson:"total_count" json:"total_count"`
+	Data       []Response `bson:"data" json:"data"`
+	TotalCount int64      `bson:"total_count" json:"total_count"`
 }
 
 func (r *AggregationResult) GetData() interface{} {
@@ -61,4 +61,14 @@ func (r *AggregationResult) GetData() interface{} {
 
 func (r *AggregationResult) GetTotal() int64 {
 	return r.TotalCount
+}
+
+type Template struct {
+	ID          string       `bson:"_id" json:"_id"`
+	Name        string       `bson:"name" json:"name"`
+	Permissions []Permission `bson:"permissions" json:"permissions"`
+}
+
+type TemplateResponse struct {
+	Date []Template `json:"date"`
 }

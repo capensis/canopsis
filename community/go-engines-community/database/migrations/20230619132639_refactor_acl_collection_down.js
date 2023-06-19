@@ -48,3 +48,4 @@ db.user.find().forEach(function (doc) {
 db.permission.drop();
 db.role.drop();
 db.user.drop();
+db.role_template.drop();
