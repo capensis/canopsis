@@ -186,6 +186,6 @@ func (a *api) ListTemplates(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, TemplateResponse{
-		Date: tpls,
+		Data: tpls,
 	})
 }

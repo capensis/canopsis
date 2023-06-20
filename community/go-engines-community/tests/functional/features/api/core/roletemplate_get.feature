@@ -9,7 +9,7 @@ Feature: Get role templates
     Then the response body should be:
     """json
     {
-      "date": [
+      "data": [
         {
           "_id": "pilot",
           "name": "pilot",

@@ -70,5 +70,5 @@ type Template struct {
 }
 
 type TemplateResponse struct {
-	Date []Template `json:"date"`
+	Data []Template `json:"data"`
 }
