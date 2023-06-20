@@ -32,7 +32,7 @@ export const widgetColumnResizingAlarmMixin = {
       return this.tableRow.querySelectorAll('th');
     },
 
-    columnsWidth() {
+    sumOfColumnsWidth() {
       return this.calculateFullColumnsWidth(this.columnsWidthByField);
     },
   },

@@ -357,7 +357,7 @@ export default {
       return {
         [`columns-${label}`]: true,
         'alarms-list-table__selecting': this.selecting,
-        'alarms-list-table__grid': this.resizingMode || this.draggingMode,
+        'alarms-list-table__grid': this.isColumnsChanging,
         'alarms-list-table__dragging': this.draggingMode,
         'alarms-list-table--wrapped': this.isCellContentWrapped,
         'alarms-list-table--truncated': this.isCellContentTruncated,
@@ -377,7 +377,7 @@ export default {
         const actionsWidth = this.hasLeftActions ? this.leftActionsWidth : 0;
 
         return {
-          '--alarms-list-table-width': `calc(${actionsWidth}px + ${this.columnsWidth}%)`,
+          '--alarms-list-table-width': `calc(${actionsWidth}px + ${this.sumOfColumnsWidth}%)`,
         };
       }
 
@@ -423,7 +423,7 @@ export default {
     },
 
     editing() {
-      if (this.resizingMode || this.draggingMode) {
+      if (this.isColumnsChanging) {
         this.updateColumnsSettings();
 
         this.disableDraggingMode();
@@ -462,7 +462,7 @@ export default {
     },
 
     toggleColumnEditingMode() {
-      if (this.resizingMode || this.draggingMode) {
+      if (this.isColumnsChanging) {
         this.updateColumnsSettings();
       }
 
