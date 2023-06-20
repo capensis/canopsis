@@ -23,11 +23,6 @@ export const widgetColumnResizingAlarmMixin = {
   beforeDestroy() {
     this.finishColumnResize();
   },
-  watch: {
-    resizingMode() {
-      this.calculateColumnsWidths();
-    },
-  },
   computed: {
     tableRow() {
       return this.tableHeader.querySelector('tr:first-of-type');
@@ -36,10 +31,16 @@ export const widgetColumnResizingAlarmMixin = {
     headerCells() {
       return this.tableRow.querySelectorAll('th');
     },
+
+    columnsWidth() {
+      return this.calculateFullColumnsWidth(this.columnsWidthByField);
+    },
   },
   methods: {
     enableResizingMode() {
       this.resizingMode = true;
+
+      this.calculateColumnsWidths();
     },
 
     disableResizingMode() {
@@ -68,10 +69,17 @@ export const widgetColumnResizingAlarmMixin = {
       this.percentsInPixel = 100 / rowWidth;
     },
 
+    calculateFullColumnsWidth(columnsWidth) {
+      return Object.values(columnsWidth).reduce((acc, width) => acc + width, 0);
+    },
+
     calculateColumnsWidths() {
       this.setPercentsInPixel();
 
-      const { columnsWidthByField, columnsMinWidthByField } = [...this.headerCells].reduce((acc, headerElement) => {
+      const {
+        columnsWidthByField,
+        columnsMinWidthByField,
+      } = [...this.headerCells].reduce((acc, headerElement, index, headers) => {
         if (headerElement.dataset?.value) {
           const { value } = headerElement.dataset;
           const { width: headerWidth } = headerElement.getBoundingClientRect();
@@ -88,6 +96,19 @@ export const widgetColumnResizingAlarmMixin = {
            * 16 - max sort direction icon width
            */
           acc.columnsMinWidthByField[value] = minWidth;
+
+          if (headers.length - 1 === index) {
+            const resultFullWidth = this.calculateFullColumnsWidth(acc.columnsWidthByField);
+            const leftActionsWidth = this.leftActionsWidth ?? 0;
+            const leftActionsPercentWidth = this.percentsInPixel * leftActionsWidth;
+
+            if (resultFullWidth + leftActionsPercentWidth < 100) {
+              /**
+               * If all columns width less than 100%, we will add rest to last columns
+               */
+              acc.columnsWidthByField[value] += (100 - resultFullWidth) - leftActionsPercentWidth;
+            }
+          }
         }
 
         return acc;
