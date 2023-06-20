@@ -31,8 +31,17 @@
             @input="updateQueryPage"
           )
         v-flex.alarms-list-table__top-pagination--right-absolute(v-if="resizableColumn || draggableColumn")
-          v-btn(icon, @click="toggleColumnEditingMode")
-            v-icon {{ resizingMode || draggingMode ? 'lock_open' : 'lock_outline' }}
+          c-action-btn(
+            v-if="isColumnsChanging",
+            :tooltip="$t('alarm.tooltips.resetChangeColumns')",
+            icon="$vuetify.icons.restart_alt",
+            @click="resetColumnsSettings"
+          )
+          c-action-btn(
+            :icon="isColumnsChanging ? 'lock_open' : 'lock_outline'",
+            :tooltip="$t(`alarm.tooltips.${isColumnsChanging ? 'finishChangeColumns' : 'startChangeColumns'}`)",
+            @click="toggleColumnEditingMode"
+          )
       v-data-table.alarms-list-table(
         ref="dataTable",
         v-model="selected",
@@ -266,6 +275,10 @@ export default {
       return this.$refs.dataTable.expanded;
     },
 
+    isColumnsChanging() {
+      return this.resizingMode || this.draggingMode;
+    },
+
     hasInstructionsAlarms() {
       return this.alarms.some(alarm => alarm.assigned_instructions?.length);
     },
@@ -352,10 +365,6 @@ export default {
       };
     },
 
-    columnsWidth() {
-      return Object.values(this.columnsWidthByField).reduce((acc, width) => acc + width, 0);
-    },
-
     leftActionsWidth() {
       /**
        * left expand/instruction icon/select actions width
@@ -439,10 +448,6 @@ export default {
 
   methods: {
     updateColumnsSettings() {
-      if (!this.resizingMode && !this.draggingMode) {
-        return;
-      }
-
       const settings = {};
 
       if (this.resizingMode) {
@@ -457,7 +462,9 @@ export default {
     },
 
     toggleColumnEditingMode() {
-      this.updateColumnsSettings();
+      if (this.resizingMode || this.draggingMode) {
+        this.updateColumnsSettings();
+      }
 
       if (this.resizableColumn) {
         this.toggleResizingMode();
@@ -465,6 +472,17 @@ export default {
 
       if (this.draggableColumn) {
         this.toggleDraggingMode();
+      }
+    },
+
+    resetColumnsSettings() {
+      if (this.resizableColumn) {
+        this.setColumnsPosition({});
+      }
+
+      if (this.draggableColumn) {
+        this.setColumnsWidth({});
+        this.$nextTick(this.calculateColumnsWidths);
       }
     },
 
