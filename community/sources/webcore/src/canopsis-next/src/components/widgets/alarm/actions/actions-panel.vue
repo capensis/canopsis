@@ -17,12 +17,19 @@ import {
 import featuresService from '@/services/features';
 
 import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
-import { isManualGroupMetaAlarmRuleType } from '@/helpers/entities/meta-alarm/rule/form';
+import { isManualGroupMetaAlarmRuleType, isAutoMetaAlarmRuleType } from '@/helpers/entities/meta-alarm/rule/form';
 import { isInstructionExecutionIconInProgress } from '@/helpers/entities/remediation/instruction-execution/form';
 import { isInstructionManual } from '@/helpers/entities/remediation/instruction/form';
 import { harmonizeLinks, getLinkRuleLinkActionType } from '@/helpers/entities/link/list';
+import {
+  isCancelledAlarmStatus,
+  isClosedAlarmStatus,
+  isResolvedAlarm,
+} from '@/helpers/entities/alarm/form';
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
+import { entitiesMetaAlarmMixin } from '@/mixins/entities/meta-alarm';
+import { entitiesManualMetaAlarmMixin } from '@/mixins/entities/manual-meta-alarm';
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { clipboardMixin } from '@/mixins/clipboard';
 
@@ -40,6 +47,8 @@ export default {
   components: { SharedActionsPanel },
   mixins: [
     entitiesAlarmMixin,
+    entitiesMetaAlarmMixin,
+    entitiesManualMetaAlarmMixin,
     widgetActionsPanelAlarmMixin,
     clipboardMixin,
   ],
@@ -56,10 +65,6 @@ export default {
       type: Object,
       default: null,
     },
-    isResolvedAlarm: {
-      type: Boolean,
-      default: false,
-    },
     small: {
       type: Boolean,
       default: false,
@@ -70,8 +75,24 @@ export default {
     },
   },
   computed: {
+    isCancelledAlarm() {
+      return isCancelledAlarmStatus(this.item);
+    },
+
+    isClosedAlarm() {
+      return isClosedAlarmStatus(this.item);
+    },
+
+    isResolvedAlarm() {
+      return isResolvedAlarm(this.item);
+    },
+
     isParentAlarmManualMetaAlarm() {
       return isManualGroupMetaAlarmRuleType(this.parentAlarm?.meta_alarm_rule?.type);
+    },
+
+    isParentAlarmAutoMetaAlarm() {
+      return isAutoMetaAlarmRuleType(this.parentAlarm?.meta_alarm_rule?.type);
     },
 
     linksActions() {
@@ -166,11 +187,22 @@ export default {
         method: this.showVariablesHelperModal,
       };
 
-      if (this.isResolvedAlarm) {
-        return [
+      if (this.isCancelledAlarm || this.isClosedAlarm) {
+        const actions = [
           ...this.linksActions,
           variablesHelpAction,
         ];
+
+        if (this.isCancelledAlarm && !this.isResolvedAlarm) {
+          actions.unshift({
+            type: ALARM_LIST_ACTIONS_TYPES.unCancel,
+            icon: 'delete_forever',
+            title: this.$t('alarm.actions.titles.unCancel'),
+            method: this.showUnCancelModal,
+          });
+        }
+
+        return actions;
       }
 
       const actions = [
@@ -211,6 +243,15 @@ export default {
           icon: getEntityEventIcon(EVENT_ENTITY_TYPES.removeAlarmsFromManualMetaAlarm),
           title: this.$t('alarm.actions.titles.removeAlarmsFromManualMetaAlarm'),
           method: this.showRemoveAlarmsFromManualMetaAlarmModal,
+        });
+      }
+
+      if (this.isParentAlarmAutoMetaAlarm) {
+        actions.push({
+          type: ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromAutoMetaAlarm,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.removeAlarmsFromAutoMetaAlarm),
+          title: this.$t('alarm.actions.titles.removeAlarmsFromAutoMetaAlarm'),
+          method: this.showRemoveAlarmsFromAutoMetaAlarmModal,
         });
       }
 
@@ -337,12 +378,20 @@ export default {
       this.showCancelModalByAlarms([this.item]);
     },
 
+    showUnCancelModal() {
+      this.showUnCancelModalByAlarms([this.item]);
+    },
+
     createFastCancel() {
       this.createFastCancelActionByAlarms([this.item]);
     },
 
     showRemoveAlarmsFromManualMetaAlarmModal() {
       this.showRemoveAlarmsFromManualMetaAlarmModalByAlarms([this.item]);
+    },
+
+    showRemoveAlarmsFromAutoMetaAlarmModal() {
+      this.showRemoveAlarmsFromAutoMetaAlarmModalByAlarms([this.item]);
     },
 
     showVariablesHelperModal() {

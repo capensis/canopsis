@@ -272,6 +272,7 @@ export default {
   numberField: 'Champ numérique',
   chart: 'Graphique | Graphiques',
   chooseFile: 'Choisir le fichier',
+  seeAlarms: 'Voir les alarmes',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
