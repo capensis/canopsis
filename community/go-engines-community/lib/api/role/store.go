@@ -13,12 +13,15 @@ import (
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
+const tplLimit = 100
+
 type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
-	GetOneBy(ctx context.Context, id string) (*Role, error)
-	Insert(ctx context.Context, r CreateRequest) (*Role, error)
-	Update(ctx context.Context, id string, r EditRequest) (*Role, error)
+	GetOneBy(ctx context.Context, id string) (*Response, error)
+	Insert(ctx context.Context, r CreateRequest) (*Response, error)
+	Update(ctx context.Context, id string, r EditRequest) (*Response, error)
 	Delete(ctx context.Context, id string) (bool, error)
+	GetTemplates(ctx context.Context) ([]Template, error)
 }
 
 func NewStore(dbClient mongo.DbClient) Store {
@@ -27,6 +30,7 @@ func NewStore(dbClient mongo.DbClient) Store {
 		dbCollection:           dbClient.Collection(mongo.RoleCollection),
 		dbPermissionCollection: dbClient.Collection(mongo.PermissionCollection),
 		dbUserCollection:       dbClient.Collection(mongo.UserCollection),
+		dbTemplateCollection:   dbClient.Collection(mongo.RoleTemplateCollection),
 		defaultSearchByFields:  []string{"_id", "name", "description"},
 		defaultSortBy:          "name",
 	}
@@ -37,6 +41,7 @@ type store struct {
 	dbCollection           mongo.DbCollection
 	dbPermissionCollection mongo.DbCollection
 	dbUserCollection       mongo.DbCollection
+	dbTemplateCollection   mongo.DbCollection
 	defaultSearchByFields  []string
 	defaultSortBy          string
 }
@@ -90,7 +95,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	return &res, nil
 }
 
-func (s *store) GetOneBy(ctx context.Context, id string) (*Role, error) {
+func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{
 		{"$match": bson.M{"_id": id}},
 	}
@@ -103,7 +108,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Role, error) {
 	defer cursor.Close(ctx)
 
 	if cursor.Next(ctx) {
-		role := &Role{}
+		role := &Response{}
 		err := cursor.Decode(role)
 		if err != nil {
 			return nil, err
@@ -117,13 +122,13 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Role, error) {
 	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, r CreateRequest) (*Role, error) {
+func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
 	types, err := getTypes(ctx, s.dbPermissionCollection, r.Permissions)
 	if err != nil {
 		return nil, err
 	}
 
-	var role *Role
+	var role *Response
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		role = nil
 		_, err = s.dbCollection.InsertOne(ctx, bson.M{
@@ -147,13 +152,13 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Role, error) {
 	return role, nil
 }
 
-func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Role, error) {
+func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response, error) {
 	types, err := getTypes(ctx, s.dbPermissionCollection, r.Permissions)
 	if err != nil {
 		return nil, err
 	}
 
-	var role *Role
+	var role *Response
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		role = nil
 		res, err := s.dbCollection.UpdateOne(ctx,
@@ -196,6 +201,56 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	return delCount > 0, nil
 }
 
+func (s *store) GetTemplates(ctx context.Context) ([]Template, error) {
+	cursor, err := s.dbTemplateCollection.Aggregate(ctx, []bson.M{
+		{"$addFields": bson.M{
+			"permissions": bson.M{"$objectToArray": "$permissions"},
+		}},
+		{"$unwind": bson.M{"path": "$permissions", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.PermissionCollection,
+			"localField":   "permissions.k",
+			"foreignField": "_id",
+			"as":           "permissions.model",
+		}},
+		{"$unwind": bson.M{"path": "$permissions.model", "preserveNullAndEmptyArrays": true}},
+		{"$sort": bson.M{"permissions.model.name": 1}},
+		{"$group": bson.M{
+			"_id":  "$_id",
+			"name": bson.M{"$first": "$name"},
+			"permissions": bson.M{"$push": bson.M{"$cond": bson.M{
+				"if": "$permissions.model",
+				"then": bson.M{"$mergeObjects": bson.A{
+					"$permissions.model",
+					bson.M{"bitmask": "$permissions.v"},
+				}},
+				"else": "$$REMOVE",
+			}}},
+		}},
+		{"$limit": tplLimit},
+	})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	tpls := make([]Template, 0)
+	for cursor.Next(ctx) {
+		var tpl Template
+		err := cursor.Decode(&tpl)
+		if err != nil {
+			return nil, err
+		}
+
+		for i := range tpl.Permissions {
+			tpl.Permissions[i].Actions = TransformBitmaskToActions(tpl.Permissions[i].Bitmask, tpl.Permissions[i].Type)
+		}
+		tpls = append(tpls, tpl)
+	}
+
+	return tpls, nil
+}
+
 func getNestedObjectsPipeline() []bson.M {
 	return []bson.M{
 		{"$addFields": bson.M{
@@ -235,7 +290,7 @@ func getNestedObjectsPipeline() []bson.M {
 	}
 }
 
-func fillRolePermissions(role *Role) {
+func fillRolePermissions(role *Response) {
 	for i := range role.Permissions {
 		role.Permissions[i].Actions = TransformBitmaskToActions(role.Permissions[i].Bitmask, role.Permissions[i].Type)
 	}

@@ -8998,6 +8998,23 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /role-templates:
+    get:
+      tags:
+        - roles
+      summary: Get role templates
+      description: |
+        Get list of role templates.
+
+        -  PERMISSIONS: `api_acl:read`
+      operationId: roles-get-templates
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/role.TemplateResponse'
   /roles:
     get:
       tags:
@@ -9031,7 +9048,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/role.Role'
+                          $ref: 'schemas_swagger.yaml#/definitions/role.Response'
         400:
           description: Bad Request
           content:
@@ -9060,7 +9077,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/role.Role'
+                $ref: 'schemas_swagger.yaml#/definitions/role.Response'
         400:
           description: Bad Request
           content:
@@ -9096,7 +9113,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/role.Role'
+                $ref: 'schemas_swagger.yaml#/definitions/role.Response'
         404:
           description: Not Found
           content:
@@ -9132,7 +9149,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/role.Role'
+                $ref: 'schemas_swagger.yaml#/definitions/role.Response'
         400:
           description: Bad Request
           content:
