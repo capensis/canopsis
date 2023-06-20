@@ -12,6 +12,7 @@ import featuresService from '@/services/features';
 
 import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
 import { harmonizeAlarmsLinks, getLinkRuleLinkActionType } from '@/helpers/entities/link/list';
+import { isCancelledAlarmStatus, isClosedAlarmStatus, isResolvedAlarm } from '@/helpers/entities/alarm/form';
 
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
@@ -50,7 +51,54 @@ export default {
   computed: {
     ...entitiesMapGetters({ getEntitiesList: 'getList' }),
 
+    openedAlarms() {
+      return this.items.filter(item => !isCancelledAlarmStatus(item) && !isClosedAlarmStatus(item));
+    },
+
+    cancelledAndUnResolvedAlarms() {
+      return this.items.filter(alarm => isCancelledAlarmStatus(alarm) && !isResolvedAlarm(alarm));
+    },
+
+    alarmsWithAssignedDeclareTicketRules() {
+      return this.openedAlarms.filter(item => item.assigned_declare_ticket_rules?.length);
+    },
+
+    alarmsWithTickets() {
+      return this.openedAlarms.filter(item => item.v?.tickets?.length);
+    },
+
+    alarmsWithoutTickets() {
+      return difference(this.openedAlarms, this.alarmsWithTickets);
+    },
+
+    hasOpenedAlarms() {
+      return !!this.openedAlarms.length;
+    },
+
+    hasCancelledAndUnResolvedAlarms() {
+      return !!this.cancelledAndUnResolvedAlarms.length;
+    },
+
+    hasAlarmsWithoutTickets() {
+      return !!this.alarmsWithoutTickets.length;
+    },
+
+    hasMetaAlarm() {
+      return this.openedAlarms.some(item => item.is_meta_alarm);
+    },
+
     actions() {
+      const unCancelAction = {
+        type: ALARM_LIST_ACTIONS_TYPES.unCancel,
+        icon: getEntityEventIcon(EVENT_ENTITY_TYPES.uncancel),
+        title: this.$t('alarm.actions.titles.unCancel'),
+        method: this.showUnCancelEventModal,
+      };
+
+      if (!this.hasOpenedAlarms) {
+        return [unCancelAction];
+      }
+
       const actions = [
         {
           type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
@@ -88,13 +136,18 @@ export default {
           title: this.$t('alarm.actions.titles.fastCancel'),
           method: this.createFastCancelEvent,
         },
-        {
-          type: ALARM_LIST_ACTIONS_TYPES.comment,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.comment),
-          title: this.$t('alarm.actions.titles.comment'),
-          method: this.showCreateCommentEventModal,
-        },
       ];
+
+      if (this.hasCancelledAndUnResolvedAlarms) {
+        actions.push(unCancelAction);
+      }
+
+      actions.push({
+        type: ALARM_LIST_ACTIONS_TYPES.comment,
+        icon: getEntityEventIcon(EVENT_ENTITY_TYPES.comment),
+        title: this.$t('alarm.actions.titles.comment'),
+        method: this.showCreateCommentEventModal,
+      });
 
       if (this.hasAlarmsWithoutTickets || this.widget.parameters.isMultiDeclareTicketEnabled) {
         if (this.alarmsWithAssignedDeclareTicketRules.length) {
@@ -158,7 +211,7 @@ export default {
         return [];
       }
 
-      return harmonizeAlarmsLinks(this.items).map((link) => {
+      return harmonizeAlarmsLinks(this.openedAlarms).map((link) => {
         const type = getLinkRuleLinkActionType(link);
 
         return {
@@ -179,26 +232,6 @@ export default {
         loading: this.isActionTypeInPending(action.type),
       }));
     },
-
-    alarmsWithAssignedDeclareTicketRules() {
-      return this.items.filter(item => item.assigned_declare_ticket_rules?.length);
-    },
-
-    alarmsWithTickets() {
-      return this.items.filter(item => item.v?.tickets?.length);
-    },
-
-    alarmsWithoutTickets() {
-      return difference(this.items, this.alarmsWithTickets);
-    },
-
-    hasAlarmsWithoutTickets() {
-      return !!this.alarmsWithoutTickets.length;
-    },
-
-    hasMetaAlarm() {
-      return this.items.some(item => item.is_meta_alarm);
-    },
   },
 
   methods: {
@@ -215,17 +248,17 @@ export default {
     },
 
     showSnoozeModal() {
-      this.showSnoozeModalByAlarms(this.items);
+      this.showSnoozeModalByAlarms(this.openedAlarms);
     },
 
     showAddPbehaviorModal() {
-      this.showAddPbehaviorModalByAlarms(this.items);
+      this.showAddPbehaviorModalByAlarms(this.openedAlarms);
     },
 
     showCreateAssociateTicketModal() {
       this.showAssociateTicketModalByAlarms(
         this.widget.parameters.isMultiDeclareTicketEnabled
-          ? this.items
+          ? this.openedAlarms
           : this.alarmsWithoutTickets,
       );
     },
@@ -233,41 +266,45 @@ export default {
     showCreateDeclareTicketModal() {
       this.showDeclareTicketModalByAlarms(
         this.widget.parameters.isMultiDeclareTicketEnabled
-          ? this.items
+          ? this.openedAlarms
           : this.alarmsWithoutTickets,
       );
     },
 
     showAckModal() {
-      this.showAckModalByAlarms(this.items);
+      this.showAckModalByAlarms(this.openedAlarms);
     },
 
     showAckRemoveModal() {
-      this.showAckRemoveModalByAlarms(this.items);
+      this.showAckRemoveModalByAlarms(this.openedAlarms);
     },
 
     showCancelEventModal() {
-      this.showCancelModalByAlarms(this.items);
+      this.showCancelModalByAlarms(this.openedAlarms);
+    },
+
+    showUnCancelEventModal() {
+      this.showUnCancelModalByAlarms(this.cancelledAndUnResolvedAlarms);
     },
 
     showCreateManualMetaAlarmModal() {
-      this.showCreateManualMetaAlarmModalByAlarms(this.items);
+      this.showCreateManualMetaAlarmModalByAlarms(this.openedAlarms);
     },
 
     createMassFastAckEvent() {
-      this.createFastAckActionByAlarms(this.items);
+      this.createFastAckActionByAlarms(this.openedAlarms);
     },
 
     createFastCancelEvent() {
-      this.createFastCancelActionByAlarms(this.items);
+      this.createFastCancelActionByAlarms(this.openedAlarms);
     },
 
     showCreateCommentEventModal() {
-      this.showCreateCommentModalByAlarms(this.items);
+      this.showCreateCommentModalByAlarms(this.openedAlarms);
     },
 
     linkAction(link, type) {
-      this.handleLinkClickActionByAlarms(this.items, link, type);
+      this.handleLinkClickActionByAlarms(this.openedAlarms, link, type);
     },
   },
 };
