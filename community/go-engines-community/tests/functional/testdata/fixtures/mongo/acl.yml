@@ -1261,3 +1261,27 @@ user:
     name: <Current()._id>
     roles:
       - "@role_to_websocket_connect"
+
+role_template:
+  tpl_pilot:
+    _id: pilot
+    name: pilot
+    permissions:
+      "@permission_api_alarm_read": 1
+      "@permission_api_alarm_update": 1
+      "@permission_api_playlist": 1
+      "@permission_api_entitycategory": 1
+      "@permission_api_viewgroup": 1
+      "@permission_api_view": 1
+      "@permission_api_pbehavior": 15
+      "@permission_api_pbehaviortype": 1
+      "@permission_api_pbehaviorreason": 1
+      "@permission_api_pbehaviorexception": 1
+      "@permission_api_event": 1
+      "@permission_api_execution": 1
+      "@permission_api_file": 1
+      "@permission_api_entity": 1
+      "@permission_api_associative_table": 1
+      "@permission_api_junit": 1
+      "@permission_api_map": 1
+      "@permission_api_declare_ticket_execution": 1
