@@ -92,23 +92,27 @@ export const ALARM_LEVELS_COLORS = {
 };
 
 export const ALARM_LIST_ACTIONS_TYPES = {
-  ack: 'ack',
-  fastAck: 'fastAck',
-  ackRemove: 'ackRemove',
   pbehaviorAdd: 'pbehaviorAdd',
   moreInfos: 'moreInfos',
   snooze: 'snooze',
   declareTicket: 'declareTicket',
   associateTicket: 'associateTicket',
-  cancel: 'cancel',
-  fastCancel: 'fastCancel',
   changeState: 'changeState',
   variablesHelp: 'variablesHelp',
   history: 'history',
   createManualMetaAlarm: 'createManualMetaAlarm',
   removeAlarmsFromManualMetaAlarm: 'removeAlarmsFromManualMetaAlarm',
+  removeAlarmsFromAutoMetaAlarm: 'removeAlarmsFromAutoMetaAlarm',
   updateManualMetaAlarm: 'updateManualMetaAlarm',
   comment: 'comment',
+
+  ack: 'ack',
+  fastAck: 'fastAck',
+  ackRemove: 'ackRemove',
+
+  cancel: 'cancel',
+  fastCancel: 'fastCancel',
+  unCancel: 'unCancel',
 
   links: 'links',
 

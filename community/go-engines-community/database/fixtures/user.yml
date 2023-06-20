@@ -571,6 +571,11 @@ default_rights:
     _id: listalarm_fastRemoveAlarm
     crecord_name: <Current()._id>
     description: "Rights on listalarm: fast remove alarm"
+  permission_listalarm_unCancel:
+    <<: *permission
+    _id: listalarm_unCancel
+    crecord_name: <Current()._id>
+    description: "Rights on listalarm: uncancel alarm"
   permission_listalarm_changeState:
     <<: *permission
     _id: listalarm_changeState
@@ -591,6 +596,11 @@ default_rights:
     _id: listalarm_manualMetaAlarmGroup
     crecord_name: <Current()._id>
     description: "Rights on listalarm: Manual meta alarm actions"
+  permission_listalarm_metaAlarmGroup:
+    <<: *permission
+    _id: listalarm_metaAlarmGroup
+    crecord_name: <Current()._id>
+    description: "Rights on listalarm: Meta alarm actions"
   permission_listalarm_comment:
     <<: *permission
     _id: listalarm_comment
@@ -1444,6 +1454,8 @@ default_rights:
         checksum: 1
       "@permission_listalarm_fastRemoveAlarm":
         checksum: 1
+      "@permission_listalarm_unCancel":
+        checksum: 1
       "@permission_listalarm_changeState":
         checksum: 1
       "@permission_listalarm_history":
@@ -1451,6 +1463,8 @@ default_rights:
       "@permission_listalarm_groupRequest":
         checksum: 1
       "@permission_listalarm_manualMetaAlarmGroup":
+        checksum: 1
+      "@permission_listalarm_metaAlarmGroup":
         checksum: 1
       "@permission_listalarm_comment":
         checksum: 1
