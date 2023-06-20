@@ -3835,7 +3835,7 @@ definitions:
     type: object
   role.TemplateResponse:
     properties:
-      date:
+      data:
         items:
           $ref: '#/definitions/role.Template'
         type: array
