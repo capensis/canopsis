@@ -231,21 +231,22 @@ func (c *mongoCursor) getInt64(v any) (int64, bool) {
 
 func (c *mongoCursor) matchInstructions(model types.AlarmWithEntity) []string {
 	names := make([]string, 0)
-
+	alarmPbhType := model.Alarm.Value.PbehaviorInfo.TypeID
 	for _, instruction := range c.instructions {
 		match, err := pattern.Match(model.Entity, model.Alarm, instruction.EntityPattern, instruction.AlarmPattern,
 			instruction.OldEntityPatterns, instruction.OldAlarmPatterns)
 		if err != nil || !match {
 			continue
 		}
+
 		found := false
-		alarmPbhType := model.Alarm.Value.PbehaviorInfo.TypeID
 		for _, pbhType := range instruction.DisabledOnPbh {
 			if alarmPbhType == pbhType {
 				found = true
 				break
 			}
 		}
+
 		if found {
 			continue
 		}
