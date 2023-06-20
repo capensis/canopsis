@@ -48,7 +48,7 @@ export const widgetActionsPanelAlarmMixin = {
       bulkCreateAlarmAssocticketEvent: 'bulkCreateAlarmAssocticketEvent',
       bulkCreateAlarmCommentEvent: 'bulkCreateAlarmCommentEvent',
       bulkCreateAlarmCancelEvent: 'bulkCreateAlarmCancelEvent',
-      bulkCreateAlarmUncancelEvent: 'bulkCreateAlarmUncancelEvent',
+      bulkCreateAlarmUnCancelEvent: 'bulkCreateAlarmUnCancelEvent',
       bulkCreateAlarmChangestateEvent: 'bulkCreateAlarmChangestateEvent',
     }),
 
@@ -282,6 +282,23 @@ export const widgetActionsPanelAlarmMixin = {
       });
     },
 
+    showUnCancelModalByAlarms(alarms) {
+      this.$modals.show({
+        name: MODALS.createEvent,
+        config: {
+          items: alarms,
+          title: this.$t('modals.createUnCancel.title'),
+          action: async (unCancelEvent) => {
+            await this.bulkCreateAlarmUnCancelEvent({
+              data: alarms.map(alarm => ({ ...unCancelEvent, _id: alarm._id })),
+            });
+
+            await this.afterSubmit();
+          },
+        },
+      });
+    },
+
     showCreateManualMetaAlarmModalByAlarms(alarms) {
       this.$modals.show({
         name: MODALS.createManualMetaAlarm,
@@ -304,12 +321,30 @@ export const widgetActionsPanelAlarmMixin = {
 
     showRemoveAlarmsFromManualMetaAlarmModalByAlarms(alarms) {
       this.$modals.show({
-        name: MODALS.removeAlarmsFromManualMetaAlarm,
+        name: MODALS.removeAlarmsFromMetaAlarm,
         config: {
           items: alarms,
           title: this.$t('alarm.actions.titles.removeAlarmsFromManualMetaAlarm'),
           action: async (removeAlarmsFromMetaAlarmEvent) => {
             await this.removeAlarmsFromManualMetaAlarm({
+              id: this.parentAlarm?._id,
+              data: removeAlarmsFromMetaAlarmEvent,
+            });
+
+            await this.afterSubmit();
+          },
+        },
+      });
+    },
+
+    showRemoveAlarmsFromAutoMetaAlarmModalByAlarms(alarms) {
+      this.$modals.show({
+        name: MODALS.removeAlarmsFromMetaAlarm,
+        config: {
+          items: alarms,
+          title: this.$t('alarm.actions.titles.removeAlarmsFromAutoMetaAlarm'),
+          action: async (removeAlarmsFromMetaAlarmEvent) => {
+            await this.removeAlarmsFromMetaAlarm({
               id: this.parentAlarm?._id,
               data: removeAlarmsFromMetaAlarmEvent,
             });
