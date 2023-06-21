@@ -52,7 +52,7 @@ export default {
       return [
         { text: '', sortable: false },
 
-        ...this.roles.map(role => ({ text: role._id, sortable: false })),
+        ...this.roles.map(role => ({ text: role.name, sortable: false })),
       ];
     },
 

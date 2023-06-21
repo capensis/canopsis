@@ -1,6 +1,15 @@
 <template lang="pug">
   tr
-    td {{ permission.description }}
+    td
+      v-layout(align-center)
+        span.mr-1 {{ permissionName }}
+        c-help-icon(
+          v-if="permissionNameHelpText",
+          :text="permissionNameHelpText",
+          icon="help",
+          size="18",
+          top
+        )
     permission-row-cell(
       v-for="role in roles",
       :key="`role-permission-${role._id}`",
@@ -33,6 +42,15 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    permissionName() {
+      return this.permission.name;
+    },
+
+    permissionNameHelpText() {
+      return this.permission.description;
     },
   },
 };
