@@ -11,6 +11,7 @@
     :disabled="disabled",
     :multiple="multiple",
     :chips="chips",
+    :small-chips="chips",
     item-text="name",
     item-value="_id",
     return-object

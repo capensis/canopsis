@@ -56,7 +56,7 @@ import { durationToForm } from '@/helpers/date/duration';
  * @param {Permission[]} [permissions = []]
  * @return {PermissionsForm}
  */
-const rolePermissionsToForm = (permissions = []) => permissions.reduce((acc, { _id: id, actions }) => {
+export const rolePermissionsToForm = (permissions = []) => permissions.reduce((acc, { _id: id, actions }) => {
   if (actions.length === 0) {
     acc[id] = [CRUD_ACTIONS.can];
   } else {
