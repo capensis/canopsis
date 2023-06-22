@@ -1,11 +1,9 @@
-import { shallowMount, mount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { deleteAction, editAction, fakeAction } from '@unit/data/actions-panel';
 import { createButtonStub } from '@unit/stubs/button';
 
 import MassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-action-btn': createButtonStub('c-action-btn'),
@@ -16,19 +14,10 @@ const snapshotStubs = {
   'c-action-btn': true,
 };
 
-const factory = (options = {}) => shallowMount(MassActionsPanel, {
-  localVue,
-  stubs,
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(MassActionsPanel, {
-  localVue,
-  stubs: snapshotStubs,
-  ...options,
-});
-
 describe('mass-actions-panel', () => {
+  const factory = generateShallowRenderer(MassActionsPanel, { stubs });
+  const snapshotFactory = generateRenderer(MassActionsPanel, { stubs: snapshotStubs });
+
   it('Method into list called after trigger click on action item button. On the large size.', () => {
     const actions = [
       fakeAction(),

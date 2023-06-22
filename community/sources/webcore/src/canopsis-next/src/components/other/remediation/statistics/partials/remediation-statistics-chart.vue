@@ -14,7 +14,7 @@ import {
 } from '@/constants';
 
 import { colorToRgba } from '@/helpers/color';
-import { getDateLabelBySampling } from '@/helpers/metrics';
+import { getDateLabelBySampling } from '@/helpers/entities/metric/list';
 
 import BarChart from '@/components/common/chart/bar-chart.vue';
 import KpiChartExportActions from '@/components/other/kpi/charts/partials/kpi-chart-export-actions.vue';

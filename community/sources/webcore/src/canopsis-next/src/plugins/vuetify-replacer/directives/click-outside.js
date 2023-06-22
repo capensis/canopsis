@@ -1,5 +1,4 @@
 import { getZIndex } from 'vuetify/es5/util/helpers';
-
 import { get } from 'lodash';
 
 import { MIN_CLICK_OUTSIDE_DELAY_AFTER_REGISTERED } from '@/config';

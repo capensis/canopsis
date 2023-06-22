@@ -36,7 +36,7 @@ import { find, isString } from 'lodash';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { viewToForm, viewToRequest } from '@/helpers/forms/view';
+import { viewToForm, viewToRequest } from '@/helpers/entities/view/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { viewRouterMixin } from '@/mixins/view/router';
@@ -46,7 +46,7 @@ import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/vi
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import ViewForm from '@/components/other/view/view-form.vue';
+import ViewForm from '@/components/other/view/form/view-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

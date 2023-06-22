@@ -1,30 +1,14 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 import { fakeTimestamp } from '@unit/data/date';
 import { ALARM_INTERVAL_FIELDS, QUICK_RANGES, TIME_UNITS } from '@/constants';
 
 import DateIntervalSelector from '@/components/forms/date-interval-selector.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'date-time-picker-text-field': true,
   'c-quick-date-interval-type-field': true,
 };
-
-const factory = (options = {}) => shallowMount(DateIntervalSelector, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(DateIntervalSelector, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectDateTimePickerTextFields = wrapper => wrapper.findAll('date-time-picker-text-field-stub');
 const selectTstartField = wrapper => selectDateTimePickerTextFields(wrapper).at(0);
@@ -40,6 +24,9 @@ describe('date-interval-selector', () => {
     tstop: QUICK_RANGES.last3Hour.stop,
     time_field: ALARM_INTERVAL_FIELDS.timestamp,
   };
+
+  const factory = generateShallowRenderer(DateIntervalSelector, { stubs });
+  const snapshotFactory = generateRenderer(DateIntervalSelector, { stubs });
 
   test('Start time updated after trigger tstart field', () => {
     const wrapper = factory({

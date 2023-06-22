@@ -11,7 +11,7 @@ import {
   TIME_UNITS,
 } from '@/constants';
 
-import { formRuleToPatternRule, patternRuleToForm } from '@/helpers/forms/pattern';
+import { formRuleToPatternRule, patternRuleToForm } from '@/helpers/entities/pattern/form';
 import { durationToForm } from '@/helpers/date/duration';
 
 describe('pattern form converters', () => {

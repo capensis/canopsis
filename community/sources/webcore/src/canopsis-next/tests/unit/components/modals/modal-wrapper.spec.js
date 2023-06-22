@@ -1,43 +1,32 @@
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import ModalWrapper from '@/components/modals/modal-wrapper.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'modal-title-buttons': true,
 };
 
-const factory = (options = {}) => shallowMount(ModalWrapper, {
-  localVue,
-  stubs,
-
-  parentComponent: {
-    provide: {
-      $modal: {},
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(ModalWrapper, {
-  localVue,
-  stubs,
-  attachTo: document.body,
-
-  parentComponent: {
-    provide: {
-      $modal: {},
-    },
-  },
-
-  ...options,
-});
-
 const selectModalTitleButtons = wrapper => wrapper.find('modal-title-buttons-stub');
 
 describe('modal-wrapper', () => {
+  const factory = generateShallowRenderer(ModalWrapper, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $modal: {},
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(ModalWrapper, {
+    stubs,
+    attachTo: document.body,
+    parentComponent: {
+      provide: {
+        $modal: {},
+      },
+    },
+  });
+
   test('Close handler called after trigger close in the title', () => {
     const close = jest.fn();
     const wrapper = factory({
