@@ -17,7 +17,7 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { patternToForm, formToPattern } from '@/helpers/forms/pattern';
+import { patternToForm, formToPattern } from '@/helpers/entities/pattern/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

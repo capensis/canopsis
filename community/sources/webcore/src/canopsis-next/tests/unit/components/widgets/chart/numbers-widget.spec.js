@@ -25,7 +25,7 @@ import {
 import NumbersWidget from '@/components/widgets/chart/numbers-widget.vue';
 
 const stubs = {
-  'chart-widget-filters': true,
+  'kpi-widget-filters': true,
 };
 
 describe('numbers-widget', () => {

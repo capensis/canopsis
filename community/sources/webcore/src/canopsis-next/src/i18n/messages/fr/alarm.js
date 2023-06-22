@@ -1,7 +1,6 @@
 import { EVENT_ENTITY_TYPES, ALARM_METRIC_PARAMETERS } from '@/constants';
 
 export default {
-  eventsCount: 'Les événements comptent',
   liveReporting: 'Définir un intervalle de dates',
   ackAuthor: 'Confirmer l\'auteur',
   lastCommentAuthor: 'Auteur du dernier commentaire',
@@ -43,13 +42,14 @@ export default {
       declareTicket: 'Déclarer un incident',
       associateTicket: 'Associer un ticket',
       cancel: 'Annuler l\'alarme',
+      unCancel: 'Uncancel l\'alarme',
       fastCancel: 'Annulation rapide',
       changeState: 'Changer et verrouiller la criticité',
       variablesHelp: 'Liste des variables disponibles',
       history: 'Historique',
-      groupRequest: 'Proposition de regroupement pour méta-alarmes',
       createManualMetaAlarm: 'Gestion manuelle des méta-alarmes',
       removeAlarmsFromManualMetaAlarm: 'Dissocier l\'alarme de la méta-alarme manuelle',
+      removeAlarmsFromAutoMetaAlarm: 'Dissocier l\'alarme de la méta-alarme',
       comment: 'Commenter l\'alarme',
     },
     iconsTitles: {
@@ -168,6 +168,8 @@ export default {
     [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]: 'Nombre d\'alarmes non acquittées avec durée 1-4h',
     [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]: 'Nombre d\'alarmes non acquittées avec durée 4-24h',
     [ALARM_METRIC_PARAMETERS.notAckedInDayAlarms]: 'Nombre d\'alarmes non acquittées de plus de 24h',
+    [ALARM_METRIC_PARAMETERS.minResolve]: 'Temps minimum pour résoudre les alarmes',
+    [ALARM_METRIC_PARAMETERS.maxResolve]: 'Temps max pour résoudre les alarmes',
   },
   fields: {
     displayName: 'Nom simplifié (DisplayName)',
@@ -191,11 +193,12 @@ export default {
     snoozeDuration: 'Durée de sommeil',
     pbhInactiveDuration: 'Pbehavior durée d\'inactivité',
     activeDuration: 'Durée active',
-    eventsCount: 'Les événements comptent',
+    eventsCount: 'Compteur d\'événements',
     extraDetails: 'Détails supplémentaires',
     ticketAuthor: 'Auteur du ticket',
     ticketId: 'ID du ticket',
     ticketMessage: 'Message du ticket',
+    ticketCreatedAt: 'Ticket créé à',
     entityId: 'ID d\'entité',
     entityName: 'Nom de l\'entité',
     entityCategoryName: 'Nom de la catégorie d\'entité',

@@ -11,8 +11,11 @@ const (
 	CancelAckAlarmNumber    = "cancel_ack_alarm_number"
 	AckDuration             = "ack_duration"
 	ResolveDuration         = "resolve_duration"
-	UserActivity            = "user_activity"
 	SliDuration             = "sli_duration"
+
+	UserActivity = "user_activity"
+	UserSessions = "user_sessions"
+	TicketNumber = "ticket_number"
 
 	ManualInstructionAssignedAlarms = "manual_instruction_assigned_alarms"
 	ManualInstructionExecutedAlarms = "manual_instruction_executed_alarms"

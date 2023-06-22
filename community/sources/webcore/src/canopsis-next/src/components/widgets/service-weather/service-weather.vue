@@ -46,19 +46,39 @@
           :key="service._id",
           :class="flexSize"
         )
-          service-weather-item(:service="service", :widget="widget")
+          service-weather-item(
+            :service="service",
+            :action-required-blinking="actionRequiredSettings.is_blinking",
+            :action-required-color="actionRequiredSettings.color",
+            :action-required-icon="actionRequiredSettings.icon_name",
+            :show-alarms-button="isBothModalType && hasAlarmsListAccess",
+            :template="widget.parameters.blockTemplate",
+            :height-factor="widget.parameters.heightFactor",
+            :color-indicator="widget.parameters.colorIndicator",
+            :priority-enabled="widget.parameters.isPriorityEnabled",
+            :counters-settings="widget.parameters.counters",
+            :margin="widget.parameters.margin",
+            @show:service="showAdditionalInfoModal(service)",
+            @show:alarms="showAlarmListModal(service)"
+          )
 </template>
 
 <script>
+import { MODALS, SERVICE_WEATHER_WIDGET_MODAL_TYPES, USERS_PERMISSIONS } from '@/constants';
+
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
+import { getEntityColor } from '@/helpers/entities/entity/color';
+
 import { permissionsWidgetsServiceWeatherFilters } from '@/mixins/permissions/widgets/service-weather/filters';
 import { permissionsWidgetsServiceWeatherCategory } from '@/mixins/permissions/widgets/service-weather/category';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
-import entitiesServiceMixin from '@/mixins/entities/service';
+import { entitiesServiceMixin } from '@/mixins/entities/service';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
+import { authMixin } from '@/mixins/auth';
 
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
-import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
+import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
+import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 
 import ServiceWeatherItem from './service-weather-item.vue';
 
@@ -75,6 +95,7 @@ export default {
     widgetFilterSelectMixin,
     entitiesServiceMixin,
     widgetFetchQueryMixin,
+    authMixin,
   ],
   props: {
     widget: {
@@ -97,8 +118,71 @@ export default {
     hasNoData() {
       return this.services.length === 0;
     },
+
+    hasMoreInfosAccess() {
+      return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.moreInfos);
+    },
+
+    hasAlarmsListAccess() {
+      return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.alarmsList);
+    },
+
+    actionRequiredSettings() {
+      return this.widget.parameters.actionRequiredSettings ?? {};
+    },
+
+    isBothModalType() {
+      return this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.both;
+    },
+
+    isAlarmListModalType() {
+      return this.widget.parameters.modalType === SERVICE_WEATHER_WIDGET_MODAL_TYPES.alarmList;
+    },
   },
   methods: {
+    showAdditionalInfoModal(service) {
+      if (this.isAlarmListModalType && this.hasAlarmsListAccess) {
+        this.showAlarmListModal(service);
+      } else if (!this.isAlarmListModalType && this.hasMoreInfosAccess) {
+        this.showMainInfoModal(service);
+      }
+    },
+
+    showMainInfoModal(service) {
+      this.$modals.show({
+        name: MODALS.serviceEntities,
+        config: {
+          color: getEntityColor(service, this.widget.parameters.colorIndicator),
+          service,
+          widgetParameters: this.widget.parameters,
+        },
+      });
+    },
+
+    showAlarmListModal(service) {
+      try {
+        const widget = generatePreparedDefaultAlarmListWidget();
+
+        widget.parameters = {
+          ...widget.parameters,
+          ...this.widget.parameters.alarmsList,
+
+          serviceDependenciesColumns: this.widget.parameters.serviceDependenciesColumns,
+        };
+
+        this.$modals.show({
+          name: MODALS.alarmsList,
+          config: {
+            widget,
+            title: this.$t('modals.alarmsList.prefixTitle', { prefix: service.name }),
+            fetchList: params => this.fetchServiceAlarmsWithoutStore({ id: service._id, params }),
+          },
+        });
+      } catch (err) {
+        this.$popups.error({ text: this.$t('errors.default') });
+      }
+    },
+
     updateHideGray(hideGrey) {
       this.updateContentInUserPreference({
         hide_grey: hideGrey,

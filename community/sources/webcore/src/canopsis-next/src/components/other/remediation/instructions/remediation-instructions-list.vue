@@ -70,7 +70,7 @@
 <script>
 import { OLD_PATTERNS_FIELDS } from '@/constants';
 
-import { isOldPattern } from '@/helpers/pattern';
+import { isOldPattern } from '@/helpers/entities/pattern/form';
 
 import { authMixin } from '@/mixins/auth';
 
@@ -115,7 +115,7 @@ export default {
         },
         {
           text: this.$t('common.author'),
-          value: 'author.name',
+          value: 'author.display_name',
         },
         {
           text: this.$t('common.enabled'),

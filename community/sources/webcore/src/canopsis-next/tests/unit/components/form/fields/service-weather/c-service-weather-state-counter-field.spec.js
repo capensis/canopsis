@@ -1,31 +1,19 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { SERVICE_WEATHER_STATE_COUNTERS } from '@/constants';
 
 import CServiceWeatherStateCounterField from '@/components/forms/fields/service-weather/c-service-weather-state-counter-field.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = (options = {}) => shallowMount(CServiceWeatherStateCounterField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CServiceWeatherStateCounterField, {
-  localVue,
-
-  ...options,
-});
-
 const selectSelectField = wrapper => wrapper.find('.v-select');
 
 describe('c-service-weather-state-counter-field', () => {
+  const factory = generateShallowRenderer(CServiceWeatherStateCounterField, { stubs });
+  const snapshotFactory = generateRenderer(CServiceWeatherStateCounterField);
+
   it('Value changed after trigger the input', () => {
     const wrapper = factory();
 

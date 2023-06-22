@@ -1,34 +1,21 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import FlowchartMapForm from '@/components/other/map/form/flowchart-map-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-name-field': true,
   'flowchart-editor': true,
 };
 
-const factory = (options = {}) => shallowMount(FlowchartMapForm, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(FlowchartMapForm, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 const selectNameField = wrapper => wrapper.find('c-name-field-stub');
 const selectFlowchartEditor = wrapper => wrapper.find('flowchart-editor-stub');
 
 describe('flowchart-map-form', () => {
+  const factory = generateShallowRenderer(FlowchartMapForm, { stubs });
+  const snapshotFactory = generateRenderer(FlowchartMapForm, { stubs });
+
   test('Name changed after trigger name field', () => {
     const form = {
       name: '',
