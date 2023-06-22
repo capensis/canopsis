@@ -13,6 +13,7 @@ Feature: Get role templates
         {
           "_id": "pilot",
           "name": "pilot",
+          "description": "Pilots of the operations centers",
           "permissions": [
             {
               "_id": "api_alarm_read",

@@ -57,6 +57,7 @@ if (!db.role_template.findOne({})) {
         {
             "_id": genID(),
             "name": "pilot",
+            "description": "Pilots of the operations centers",
             "permissions": {
                 "serviceweather_entityManagePbehaviors": 1,
                 "userStatistics_userFilter": 1,
