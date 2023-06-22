@@ -646,11 +646,6 @@ export default {
           height: 100%;
         }
       }
-
-      & > thead > tr > th {
-        word-break: break-all;
-        white-space: pre-wrap;
-      }
     }
   }
 
@@ -664,6 +659,11 @@ export default {
       width: var(--alarms-list-table-width);
       max-width: unset;
       min-width: 100%;
+
+      & > thead > tr > th {
+        word-break: break-all;
+        white-space: pre-wrap;
+      }
     }
   }
 
