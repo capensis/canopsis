@@ -6,7 +6,7 @@
         v-layout.progress(v-show="pending", column)
           v-progress-circular(indeterminate, color="primary")
       v-tabs(v-if="hasReadAnyRoleAccess", fixed-tabs, slider-color="primary")
-        template(v-for="(permissions, groupKey) in groupedPermissions")
+        template(v-for="(permissions, groupKey) in preparedPermissionsGroups")
           v-tab(:key="`tab-${groupKey}`") {{ groupKey }}
           v-tab-item(:key="`tab-item-${groupKey}`")
             permissions-table-wrapper(
@@ -54,18 +54,91 @@ export default {
   data() {
     return {
       pending: false,
-      groupedPermissions: {
-        business: [],
-        view: [],
-        technical: [],
-        api: [],
-      },
+      permissions: [],
       changedRoles: {},
     };
   },
   computed: {
     hasChanges() {
       return !isEmpty(this.changedRoles);
+    },
+
+    groupedPermissions() {
+      return getGroupedPermissions(this.permissions);
+    },
+
+    businessPermissionsGroup() {
+      const { business } = this.groupedPermissions;
+
+      return Object.entries(business).map(([key, groupPermissions]) => ({
+        key: `permission.business.${key}`,
+        permissions: sortBy(groupPermissions, ['description']),
+      }));
+    },
+
+    technicalPermissionsGroup() {
+      const { technical } = this.groupedPermissions;
+
+      return Object.entries(technical).map(([key, groupPermissions]) => ({
+        key: `permission.technical.${key}`,
+        permissions: this.prepareGroupPermissions(groupPermissions),
+      }));
+    },
+
+    apiPermissionsGroup() {
+      const { api } = this.groupedPermissions;
+
+      return Object.entries(api).map(([key, groupPermissions]) => ({
+        key: `permission.api.${key}`,
+        permissions: this.prepareGroupPermissions(groupPermissions),
+      }));
+    },
+
+    viewPermissionsGroup() {
+      const { view, playlist } = this.groupedPermissions;
+
+      const viewsPermissionsByGroupTitle = view.reduce((acc, permission) => {
+        const { view_group: viewGroup, ...rest } = permission;
+
+        if (!acc[viewGroup._id]) {
+          acc[viewGroup._id] = {
+            viewGroup,
+            permissions: [],
+          };
+        }
+
+        acc[viewGroup._id].permissions.push(rest);
+
+        return acc;
+      }, {});
+
+      const viewPermissionsGroup = sortBy(Object.values(viewsPermissionsByGroupTitle), ['viewGroup.position'])
+        .map(({ viewGroup, permissions: viewGroupPermissions }) => ({
+          name: viewGroup.title,
+          permissions: sortBy(viewGroupPermissions, ['view.position']).map(({ description, name, ...permission }) => ({
+            name: description,
+            ...permission,
+          })),
+        }));
+
+      viewPermissionsGroup.push({
+        key: 'common.playlist',
+        permissions: sortBy(playlist, ['playlist.name']).map(({ description, name, ...permission }) => ({
+          name: description,
+          ...permission,
+        })),
+      });
+
+      return viewPermissionsGroup;
+    },
+
+    preparedPermissionsGroups() {
+      return {
+        business: this.businessPermissionsGroup,
+        view: this.viewPermissionsGroup,
+        technical: this.technicalPermissionsGroup,
+        api: this.apiPermissionsGroup,
+      };
     },
 
     preparedRoles() {
@@ -82,6 +155,25 @@ export default {
     this.fetchList();
   },
   methods: {
+    prepareGroupPermissions(groupPermissions) {
+      const preparedPermissions = groupPermissions.map((permission) => {
+        const messageKey = `permission.permissions.${permission._id}`;
+        const { name, description } = this.$te(messageKey) ? this.$t(messageKey) : {};
+
+        return ({
+          ...permission,
+          name: name ?? permission.description,
+          description: description ?? '',
+        });
+      });
+
+      /**
+       * We are using order which one we've defined on the reduce accumulator initial value.
+       * For not `number`/`number string` object keys ordering is staying like we define
+       */
+      return sortBy(preparedPermissions, ['name']);
+    },
+
     /**
      * Clear changed roles
      *
@@ -236,7 +328,7 @@ export default {
         this.fetchRolesList({ params: { limit: MAX_LIMIT, with_flags: true } }),
       ]);
 
-      this.groupedPermissions = getGroupedPermissions(permissions);
+      this.permissions = permissions;
 
       this.pending = false;
     },
