@@ -22,14 +22,11 @@
         :roles="roles",
         :changed-roles="changedRoles",
         :disabled="disabled",
-        :sort-by="sortBy",
         @change="$listeners.change"
       )
 </template>
 
 <script>
-import { sortBy } from 'lodash';
-
 import PermissionsTable from './permissions-table.vue';
 import PermissionGroupRow from './permission-group-row.vue';
 
@@ -55,17 +52,13 @@ export default {
       type: Boolean,
       default: false,
     },
-    sortBy: {
-      type: [Function, Array, String],
-      default: () => ['name'],
-    },
   },
   computed: {
     headers() {
       return [
         { text: '', sortable: false },
 
-        ...this.roles.map(role => ({ text: role._id, sortable: false })),
+        ...this.roles.map(role => ({ text: role.name, sortable: false })),
       ];
     },
 
@@ -74,7 +67,7 @@ export default {
     },
 
     sortedGroups() {
-      return sortBy(this.groupsWithName, this.sortBy);
+      return this.groupsWithName;
     },
   },
 };
