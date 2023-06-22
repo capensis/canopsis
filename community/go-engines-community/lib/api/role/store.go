@@ -216,8 +216,9 @@ func (s *store) GetTemplates(ctx context.Context) ([]Template, error) {
 		{"$unwind": bson.M{"path": "$permissions.model", "preserveNullAndEmptyArrays": true}},
 		{"$sort": bson.M{"permissions.model.name": 1}},
 		{"$group": bson.M{
-			"_id":  "$_id",
-			"name": bson.M{"$first": "$name"},
+			"_id":         "$_id",
+			"name":        bson.M{"$first": "$name"},
+			"description": bson.M{"$first": "$description"},
 			"permissions": bson.M{"$push": bson.M{"$cond": bson.M{
 				"if": "$permissions.model",
 				"then": bson.M{"$mergeObjects": bson.A{

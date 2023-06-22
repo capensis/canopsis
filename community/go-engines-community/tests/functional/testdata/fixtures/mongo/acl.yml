@@ -1266,6 +1266,7 @@ role_template:
   tpl_pilot:
     _id: pilot
     name: pilot
+    description: Pilots of the operations centers
     permissions:
       "@permission_api_alarm_read": 1
       "@permission_api_alarm_update": 1
