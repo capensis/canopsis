@@ -66,6 +66,7 @@ func (r *AggregationResult) GetTotal() int64 {
 type Template struct {
 	ID          string       `bson:"_id" json:"_id"`
 	Name        string       `bson:"name" json:"name"`
+	Description string       `bson:"description" json:"description"`
 	Permissions []Permission `bson:"permissions" json:"permissions"`
 }
 
