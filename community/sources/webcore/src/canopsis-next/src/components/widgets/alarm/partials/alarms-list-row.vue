@@ -41,6 +41,11 @@
         :small="small",
         :wrap="wrapActions"
       )
+      span.alarms-list-table__resize-handler(
+        v-if="resizing",
+        @mousedown.prevent="$emit('start:resize', 'actions')",
+        @click.stop=""
+      )
 </template>
 
 <script>
