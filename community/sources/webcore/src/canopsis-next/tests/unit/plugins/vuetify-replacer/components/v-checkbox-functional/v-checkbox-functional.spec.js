@@ -1,25 +1,14 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import VCheckboxFunctional from '@/plugins/vuetify-replacer/components/v-checkbox-functional/v-checkbox-functional.vue';
-
-const localVue = createVueInstance();
-
-const factory = (options = {}) => shallowMount(VCheckboxFunctional, {
-  localVue,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(VCheckboxFunctional, {
-  localVue,
-
-  ...options,
-});
 
 const selectControlField = wrapper => wrapper.find('.v-input--selection-controls__input');
 const selectLabel = wrapper => wrapper.find('label');
 
 describe('v-checkbox-functional', () => {
+  const factory = generateShallowRenderer(VCheckboxFunctional);
+  const snapshotFactory = generateRenderer(VCheckboxFunctional);
+
   it('Value changed after click on the control element', () => {
     const wrapper = factory({
       propsData: {

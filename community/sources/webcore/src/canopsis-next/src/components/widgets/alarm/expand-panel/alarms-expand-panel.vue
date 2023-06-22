@@ -148,10 +148,11 @@ import {
   JUNIT_ALARM_CONNECTOR,
 } from '@/constants';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 import { getStepClass } from '@/helpers/tour';
-import { alarmToServiceDependency } from '@/helpers/treeview/service-dependencies';
-import { convertAlarmDetailsQueryToRequest, convertWidgetChartsToPerfDataQuery } from '@/helpers/query';
+import { alarmToServiceDependency } from '@/helpers/entities/service-dependencies/list';
+import { convertAlarmDetailsQueryToRequest } from '@/helpers/entities/alarm/query';
+import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
@@ -164,6 +165,7 @@ import EntityCharts from '@/components/widgets/chart/entity-charts.vue';
 
 import AlarmsTimeLine from '../time-line/alarms-time-line.vue';
 import EntityGantt from '../entity-gantt/entity-gantt.vue';
+
 import AlarmsExpandPanelMoreInfos from './alarms-expand-panel-more-infos.vue';
 import AlarmsExpandPanelChildren from './alarms-expand-panel-children.vue';
 

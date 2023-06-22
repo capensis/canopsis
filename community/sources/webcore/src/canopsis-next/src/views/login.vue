@@ -1,7 +1,7 @@
 <template lang="pug">
   div.mainContainer.secondary
     div.description
-      div(v-html="description")
+      c-compiled-template(:template="description")
     div.loginContainer
       base-login
       cas-login.mt-2(v-if="isCASAuthEnabled", key="cas")
@@ -10,7 +10,6 @@
 </template>
 
 <script>
-
 import { authMixin } from '@/mixins/auth';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 

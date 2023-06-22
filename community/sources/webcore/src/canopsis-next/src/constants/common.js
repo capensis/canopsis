@@ -229,6 +229,27 @@ export const QUICK_RANGES = {
   },
 };
 
+export const LIVE_REPORTING_QUICK_RANGES = {
+  ...QUICK_RANGES,
+
+  [QUICK_RANGES.last2Days.value]: {
+    ...QUICK_RANGES.last2Days,
+    stop: 'now',
+  },
+  [QUICK_RANGES.last7Days.value]: {
+    ...QUICK_RANGES.last7Days,
+    stop: 'now',
+  },
+  [QUICK_RANGES.last30Days.value]: {
+    ...QUICK_RANGES.last30Days,
+    stop: 'now',
+  },
+  [QUICK_RANGES.last1Year.value]: {
+    ...QUICK_RANGES.last1Year,
+    stop: 'now',
+  },
+};
+
 export const METRICS_QUICK_RANGES = {
   [QUICK_RANGES.last2Days.value]: QUICK_RANGES.last2Days,
   [QUICK_RANGES.last7Days.value]: QUICK_RANGES.last7Days,
@@ -309,6 +330,8 @@ export const TRIGGERS = {
   instructionjobfail: 'instructionjobfail',
   instructioncomplete: 'instructioncomplete',
   autoinstructioncomplete: 'autoinstructioncomplete',
+  autoinstructionresultok: 'autoinstructionresultok',
+  autoinstructionresultfail: 'autoinstructionresultfail',
 };
 
 export const PRO_TRIGGERS = [
@@ -320,6 +343,8 @@ export const PRO_TRIGGERS = [
   TRIGGERS.instructionjobfail,
   TRIGGERS.instructioncomplete,
   TRIGGERS.autoinstructioncomplete,
+  TRIGGERS.autoinstructionresultok,
+  TRIGGERS.autoinstructionresultfail,
 ];
 
 export const DEPRECATED_TRIGGERS = [
@@ -336,3 +361,5 @@ export const CONTENT_TYPES = {
   javascript: 'application/javascript',
   xWwwFormUrlencoded: 'application/x-www-form-urlencoded',
 };
+
+export const MAX_SEARCH_ITEMS = 8;

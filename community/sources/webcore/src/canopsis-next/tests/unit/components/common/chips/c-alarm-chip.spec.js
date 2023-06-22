@@ -1,17 +1,12 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import { ENTITIES_STATUSES, ENTITY_INFOS_TYPE, EVENT_ENTITY_TYPES } from '@/constants';
+
 import CAlarmChip from '@/components/common/chips/c-alarm-chip.vue';
 
-const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(CAlarmChip, {
-  localVue,
-
-  ...options,
-});
-
 describe('c-alarm-chip', () => {
+  const snapshotFactory = generateRenderer(CAlarmChip);
+
   it('Renders `c-alarm-chip` with default props', () => {
     const wrapper = snapshotFactory();
 

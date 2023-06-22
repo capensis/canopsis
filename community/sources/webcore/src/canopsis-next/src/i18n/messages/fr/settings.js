@@ -20,6 +20,8 @@ export default {
     [SIDE_BARS.lineChartSettings]: 'Paramètres du graphique en courbes',
     [SIDE_BARS.pieChartSettings]: 'Paramètres du graphique à secteurs',
     [SIDE_BARS.numbersSettings]: 'Paramètres des nombres',
+    [SIDE_BARS.userStatisticsSettings]: 'Paramètres des statistiques utilisateur',
+    [SIDE_BARS.alarmStatisticsSettings]: 'Paramètres des statistiques d\'alarme',
   },
   openedTypes: {
     [ALARMS_OPENED_VALUES.opened]: 'Alarmes ouvertes',
@@ -251,10 +253,26 @@ export default {
       [CHART_WIDGET_PRESET_TYPES.numberOfCreatedAlarms]: 'Nombre total d\'alarmes créées',
     },
   },
+  actionRequiredSettings: {
+    title: 'Paramètres d\'état d\'action requise',
+    isBlinking: 'Clignotant',
+    customColor: 'Couleur personnalisée',
+    customIcon: 'Icône personnalisée',
+  },
   kioskMode: 'Mode kiosque',
   kiosk: {
     hideActions: 'Masquer les actions',
     hideMassSelection: 'Masquer la sélection en masse',
     hideToolbar: 'Masquer la barre de tâches',
+  },
+  mainParameter: {
+    title: 'Paramètre principal',
+    custom: {
+      label: 'Données filtrées personnalisées',
+      tooltip: 'Afficher les rapports pour les ensembles d\'alarmes filtrés',
+    },
+  },
+  statisticsWidgetColumn: {
+    split: 'Diviser les données par chemin de valeur',
   },
 };

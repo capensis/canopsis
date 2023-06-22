@@ -78,6 +78,8 @@ export const USER_PERMISSIONS_PREFIXES = {
     lineChart: 'linechart',
     pieChart: 'piechart',
     numbers: 'numbers',
+    userStatistics: 'userStatistics',
+    alarmStatistics: 'alarmStatistics',
   },
   api: 'api',
 };
@@ -142,11 +144,12 @@ export const USERS_PERMISSIONS = {
         declareTicket: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_declareanIncident`,
         associateTicket: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_assignTicketNumber`,
         cancel: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_removeAlarm`,
+        unCancel: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_unCancel`,
         fastCancel: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_fastRemoveAlarm`,
         changeState: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_changeState`,
         history: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_history`,
-        groupRequest: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_groupRequest`,
         manualMetaAlarmGroup: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_manualMetaAlarmGroup`,
+        metaAlarmGroup: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_metaAlarmGroup`,
         comment: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_comment`,
 
         listFilters: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_listFilters`,
@@ -299,12 +302,33 @@ export const USERS_PERMISSIONS = {
         userFilter: `${USER_PERMISSIONS_PREFIXES.business.numbers}_userFilter`,
       },
     },
+    userStatistics: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_interval`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.userStatistics}_userFilter`,
+      },
+    },
+    alarmStatistics: {
+      actions: {
+        interval: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_interval`,
+
+        listFilters: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_listFilters`,
+        editFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_editFilter`,
+        addFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_addFilter`,
+        userFilter: `${USER_PERMISSIONS_PREFIXES.business.alarmStatistics}_userFilter`,
+      },
+    },
   },
   api: {
     general: {
       acl: `${USER_PERMISSIONS_PREFIXES.api}_acl`,
       appInfoRead: `${USER_PERMISSIONS_PREFIXES.api}_app_info_read`,
       alarmRead: `${USER_PERMISSIONS_PREFIXES.api}_alarm_read`,
+      alarmUpdate: `${USER_PERMISSIONS_PREFIXES.api}_alarm_update`,
       entity: `${USER_PERMISSIONS_PREFIXES.api}_entity`,
       entityservice: `${USER_PERMISSIONS_PREFIXES.api}_entityservice`,
       entitycategory: `${USER_PERMISSIONS_PREFIXES.api}_entitycategory`,
@@ -334,6 +358,7 @@ export const USERS_PERMISSIONS = {
       map: `${USER_PERMISSIONS_PREFIXES.api}_map`,
       shareToken: `${USER_PERMISSIONS_PREFIXES.api}_share_token`,
       declareTicketExecution: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_execution`,
+      widgetTemplate: `${USER_PERMISSIONS_PREFIXES.api}_widgettemplate`,
 
       ...featuresService.get('constants.USERS_PERMISSIONS.api.general'),
     },
@@ -383,16 +408,18 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [ALARM_LIST_ACTIONS_TYPES.declareTicket]: USERS_PERMISSIONS.business.alarmsList.actions.declareTicket,
     [ALARM_LIST_ACTIONS_TYPES.associateTicket]: USERS_PERMISSIONS.business.alarmsList.actions.associateTicket,
     [ALARM_LIST_ACTIONS_TYPES.cancel]: USERS_PERMISSIONS.business.alarmsList.actions.cancel,
+    [ALARM_LIST_ACTIONS_TYPES.unCancel]: USERS_PERMISSIONS.business.alarmsList.actions.unCancel,
     [ALARM_LIST_ACTIONS_TYPES.fastCancel]: USERS_PERMISSIONS.business.alarmsList.actions.fastCancel,
     [ALARM_LIST_ACTIONS_TYPES.changeState]: USERS_PERMISSIONS.business.alarmsList.actions.changeState,
     [ALARM_LIST_ACTIONS_TYPES.history]: USERS_PERMISSIONS.business.alarmsList.actions.history,
     [ALARM_LIST_ACTIONS_TYPES.variablesHelp]: USERS_PERMISSIONS.business.alarmsList.actions.variablesHelp,
     [ALARM_LIST_ACTIONS_TYPES.comment]: USERS_PERMISSIONS.business.alarmsList.actions.comment,
-    [ALARM_LIST_ACTIONS_TYPES.groupRequest]: USERS_PERMISSIONS.business.alarmsList.actions.groupRequest,
     [ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm]:
     USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
     [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm]:
     USERS_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup,
+    [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromAutoMetaAlarm]:
+    USERS_PERMISSIONS.business.alarmsList.actions.metaAlarmGroup,
 
     [ALARM_LIST_ACTIONS_TYPES.links]: USERS_PERMISSIONS.business.alarmsList.actions.links,
     [ALARM_LIST_ACTIONS_TYPES.correlation]: USERS_PERMISSIONS.business.alarmsList.actions.correlation,

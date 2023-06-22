@@ -8,17 +8,19 @@ import {
 
 import { fromSeconds } from '@/helpers/date/duration';
 import {
-  convertDataSizeValueToTickString,
-  getDateLabelBySampling,
-  getMaxTimeDurationForMetrics,
-  hasHistoryData,
   isRatioMetric,
   isTimeMetric,
   isExternalDataSizeMetricUnit,
   isExternalPercentMetricUnit,
   isExternalTimeMetricUnit,
+} from '@/helpers/entities/metric/form';
+import {
+  convertDataSizeValueToTickString,
+  getDateLabelBySampling,
+  getMaxTimeDurationForMetrics,
+  hasHistoryData,
   convertMetricValueToString,
-} from '@/helpers/metrics';
+} from '@/helpers/entities/metric/list';
 import {
   convertDateToEndOfUnitTimestamp,
   convertDateToStartOfDayTimestamp,

@@ -1,7 +1,7 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
@@ -10,8 +10,6 @@ import { createMockedStoreModules } from '@unit/utils/store';
 import ClickOutside from '@/services/click-outside';
 
 import CreateAssociateTicketEvent from '@/components/modals/declare-ticket/create-associate-ticket-event.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
@@ -63,12 +61,12 @@ describe('create-associate-ticket-event', () => {
   };
   const items = [alarm];
   const assocTicketEventData = {
-    ticket_comment: '',
+    comment: '',
     ticket: '',
-    ticket_data: {},
-    ticket_system_name: '',
+    data: {},
+    system_name: '',
     ticket_resources: false,
-    ticket_url: '',
+    url: '',
   };
 
   const createEvent = jest.fn();
@@ -81,7 +79,7 @@ describe('create-associate-ticket-event', () => {
   const store = createMockedStoreModules([eventModule]);
 
   const factory = generateShallowRenderer(CreateAssociateTicketEvent, {
-    localVue,
+
     stubs,
     attachTo: document.body,
     propsData: {
@@ -103,7 +101,7 @@ describe('create-associate-ticket-event', () => {
   });
 
   const snapshotFactory = generateRenderer(CreateAssociateTicketEvent, {
-    localVue,
+
     stubs: snapshotStubs,
     propsData: {
       modal: {
@@ -152,12 +150,12 @@ describe('create-associate-ticket-event', () => {
     await flushPromises();
 
     expect(action).toBeCalledWith({
-      ticket_comment: '',
+      comment: '',
       ticket: '',
-      ticket_data: {},
-      ticket_system_name: '',
+      data: {},
+      system_name: '',
       ticket_resources: false,
-      ticket_url: '',
+      url: '',
     });
     expect($modals.hide).toBeCalledWith();
   });

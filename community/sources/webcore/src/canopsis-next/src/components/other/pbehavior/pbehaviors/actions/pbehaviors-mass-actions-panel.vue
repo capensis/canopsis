@@ -5,8 +5,8 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { pickIds } from '@/helpers/entities';
-import { pbehaviorToRequest } from '@/helpers/forms/planning-pbehavior';
+import { pickIds } from '@/helpers/array';
+import { pbehaviorToRequest } from '@/helpers/entities/pbehavior/form';
 
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 

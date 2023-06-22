@@ -138,7 +138,7 @@ func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId 
 			return nil, liblink.ErrNotMatchedAlarm
 		}
 
-		ok, _, err = rule.EntityPattern.Match(alarm.Entity)
+		ok, err = rule.EntityPattern.Match(alarm.Entity)
 		if err != nil {
 			return nil, fmt.Errorf("invalid entity pattern linkrule=%s: %w", rule.ID, err)
 		}
@@ -377,7 +377,7 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 			continue
 		}
 
-		ok, _, err = rule.EntityPattern.Match(alarm.Entity)
+		ok, err = rule.EntityPattern.Match(alarm.Entity)
 		if err != nil {
 			return nil, fmt.Errorf("invalid entity pattern linkrule=%s: %w", rule.ID, err)
 		}
@@ -419,7 +419,7 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 
 	res := make(map[string][]linkWithCategory, len(entities))
 	for _, entity := range entities {
-		ok, _, err := rule.EntityPattern.Match(entity.Entity)
+		ok, err := rule.EntityPattern.Match(entity.Entity)
 		if err != nil {
 			return nil, fmt.Errorf("invalid entity pattern linkrule=%s: %w", rule.ID, err)
 		}

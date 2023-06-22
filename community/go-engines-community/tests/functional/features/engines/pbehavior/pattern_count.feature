@@ -2,9 +2,10 @@ Feature: Count matches
   I need to be able to count matches by patterns
   Only admin should be able to count matches by patterns
 
+  @standalone
   Scenario: given count request should return counts
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -49,7 +50,6 @@ Feature: Count matches
       }
     ]
     """
-    When I wait the end of 4 events processing
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -82,7 +82,43 @@ Feature: Count matches
     """
     Then the response code should be 201
     When I save response pbehaviorID={{ .lastResponse._id }}
-    When I wait the end of 4 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "pbhenter",
+        "connector": "test-connector-pbehavior-pattern-count-1",
+        "connector_name": "test-connector-name-pbehavior-pattern-count-1",
+        "component": "test-component-pbehavior-pattern-count-1",
+        "resource": "test-resource-pbehavior-pattern-count-1-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "pbhenter",
+        "connector": "test-connector-pbehavior-pattern-count-1",
+        "connector_name": "test-connector-name-pbehavior-pattern-count-1",
+        "component": "test-component-pbehavior-pattern-count-1",
+        "resource": "test-resource-pbehavior-pattern-count-1-2",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "pbhenter",
+        "connector": "test-connector-pbehavior-pattern-count-1",
+        "connector_name": "test-connector-name-pbehavior-pattern-count-1",
+        "component": "test-component-pbehavior-pattern-count-1",
+        "resource": "test-resource-pbehavior-pattern-count-1-3",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "pbhenter",
+        "connector": "test-connector-pbehavior-pattern-count-1",
+        "connector_name": "test-connector-name-pbehavior-pattern-count-1",
+        "component": "test-component-pbehavior-pattern-count-1",
+        "resource": "test-resource-pbehavior-pattern-count-1-4",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do PUT /api/v4/internal/user_interface:
     """json
     {
@@ -155,9 +191,10 @@ Feature: Count matches
     }
     """
 
+  @concurrent
   Scenario: given count requests for pbh reasons
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -182,7 +219,6 @@ Feature: Count matches
       }
     ]
     """
-    When I wait the end of 2 events processing
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -216,7 +252,27 @@ Feature: Count matches
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "pbhenter",
+        "connector": "test-connector-pbehavior-pattern-count-2",
+        "connector_name": "test-connector-name-pbehavior-pattern-count-2",
+        "component": "test-component-pbehavior-pattern-count-2",
+        "resource": "test-resource-pbehavior-pattern-count-2-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "pbhenter",
+        "connector": "test-connector-pbehavior-pattern-count-2",
+        "connector_name": "test-connector-name-pbehavior-pattern-count-2",
+        "component": "test-component-pbehavior-pattern-count-2",
+        "resource": "test-resource-pbehavior-pattern-count-2-2",
+        "source_type": "resource"
+      }
+    ]
+    """
     Then I wait 2s
     When I do POST /api/v4/patterns-count:
     """json

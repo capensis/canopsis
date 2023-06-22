@@ -1,8 +1,8 @@
 import { isObject } from 'lodash';
 
-import uid from '@/helpers/uid';
-
 import { PAYLOAD_OPERATORS, PAYLOAD_VARIABLE_REGEXP } from '@/constants';
+
+import { uid } from '@/helpers/uid';
 
 /**
  * Convert payload string to JSON with indents
