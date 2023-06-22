@@ -402,9 +402,7 @@ Feature: correlation feature - attribute rule
       }
     ]
     """
-    When I do GET /api/v4/alarms?search=test-attribute-correlation-resource-3&opened=false&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-attribute-correlation-resource-3&opened=false&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
