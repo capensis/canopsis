@@ -87,7 +87,7 @@ Feature: run an manual simplified instruction
       ]
     }
     """
-    When I wait the end of 3 events processing
+    When I wait the end of 4 events processing
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -170,7 +170,7 @@ Feature: run an manual simplified instruction
     }
     """
     Then the response code should be 200
-    When I wait the end of 2 events processing
+    When I wait the end of 3 events processing
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -241,7 +241,7 @@ Feature: run an manual simplified instruction
     }
     """
     Then the response code should be 200
-    When I wait the end of 3 events processing
+    When I wait the end of 4 events processing
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -324,7 +324,7 @@ Feature: run an manual simplified instruction
     }
     """
     Then the response code should be 200
-    When I wait the end of 2 events processing
+    When I wait the end of 3 events processing
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -433,7 +433,7 @@ Feature: run an manual simplified instruction
       "output": "test-output-to-run-manual-simplified-instruction-5"
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
     When I wait 5s
     When I do POST /api/v4/alarm-details:
     """json
