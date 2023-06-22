@@ -2,10 +2,10 @@
   tr
     td
       v-layout(align-center)
-        span.mr-1 {{ permissionName }}
+        span.mr-1 {{ permission.name }}
         c-help-icon(
-          v-if="permissionNameHelpText",
-          :text="permissionNameHelpText",
+          v-if="permission.description",
+          :text="permission.description",
           icon="help",
           size="18",
           top
@@ -42,15 +42,6 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
-    },
-  },
-  computed: {
-    permissionName() {
-      return this.permission.name;
-    },
-
-    permissionNameHelpText() {
-      return this.permission.description;
     },
   },
 };
