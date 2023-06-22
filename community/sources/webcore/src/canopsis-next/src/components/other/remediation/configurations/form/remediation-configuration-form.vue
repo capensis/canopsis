@@ -41,7 +41,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { isJobTypeIncludesUserName } from '@/helpers/forms/remediation-configuration';
+import { isJobTypeIncludesUserName } from '@/helpers/entities/remediation/configuration/form';
 
 import { formMixin } from '@/mixins/form';
 

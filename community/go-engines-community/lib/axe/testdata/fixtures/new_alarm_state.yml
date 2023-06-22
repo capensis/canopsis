@@ -1,0 +1,87 @@
+periodical_alarm:
+  alarm_{1..1000}:
+    _id: <UUID()>
+    d: <{test-resource-<RangeIndex()>/test-component}>
+    t: <NowUnix()>
+    v:
+      connector: test-connector
+      connector_name: test-connector-name
+      component: test-component
+      resource: <{test-resource-<RangeIndex()>}>
+      display_name: <UniqueName()>
+      creation_date: <NowUnix()>
+      last_event_date: <NowUnix()>
+      last_update_date: <NowUnix()>
+      output: <LoremIpsumSentence(3)>
+      initial_output: <LoremIpsumSentence(3)>
+      infos: { }
+      infos_rule_version: { }
+      long_output: ""
+      initial_long_output: ""
+      long_output_history: [ "" ]
+      parents: [ ]
+      children: [ ]
+      tags: [ ]
+      total_state_changes: 1
+      inactive_duration: 0
+      snooze_duration: 0
+      pbh_inactive_duration: 0
+      state:
+        _t: stateinc
+        a: test-connector.test-connector-name
+        m: <LoremIpsumSentence(3)>
+        t: <NowUnix()>
+        initiator: external
+        val: 3
+      status:
+        _t: statusinc
+        a: test-connector.test-connector-name
+        m: <LoremIpsumSentence(3)>
+        t: <NowUnix()>
+        initiator: external
+        val: 1
+      steps:
+        - _t: stateinc
+          a: test-connector.test-connector-name
+          m: <LoremIpsumSentence(3)>
+          t: <NowUnix()>
+          initiator: external
+          val: 3
+        - _t: statusinc
+          a: test-connector.test-connector-name
+          m: <LoremIpsumSentence(3)>
+          t: <NowUnix()>
+          initiator: external
+          val: 1
+
+default_entities:
+  resource_{1..1000}:
+    _id: <{test-resource-<RangeIndex()>/test-component}>
+    name: <{test-resource-<RangeIndex()>}>
+    type: resource
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+    connector: test-connector/test-connector-name
+    component: test-component
+
+  connector:
+    _id: test-connector/test-connector-name
+    name: test-connector-name
+    type: connector
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+
+  component:
+    _id: test-component
+    name: <Current()._id>
+    component: <Current()._id>
+    type: component
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+    connector: test-connector/test-connector-name

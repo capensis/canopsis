@@ -33,7 +33,7 @@
 <script>
 import { TRIGGERS, PRO_TRIGGERS } from '@/constants';
 
-import { isDeprecatedTrigger } from '@/helpers/entities/scenarios';
+import { isDeprecatedTrigger } from '@/helpers/entities/scenario/form';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { formArrayMixin } from '@/mixins/form';

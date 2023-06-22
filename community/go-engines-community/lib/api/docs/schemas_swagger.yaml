@@ -26,6 +26,8 @@ definitions:
         type: string
       defaultview:
         $ref: '#/definitions/user.View'
+      display_name:
+        type: string
       email:
         type: string
       enable:
@@ -86,6 +88,10 @@ definitions:
         description: RRule is used in pbehavior action.
         type: string
       skip_for_child:
+        description: SkipForChild is used in webhook action.
+        type: boolean
+      skip_for_instruction:
+        description: SkipForInstruction is used in webhook action.
         type: boolean
       start_on_trigger:
         description: StartOnTrigger is used in pbehavior action.
@@ -536,6 +542,164 @@ definitions:
       reversed:
         type: boolean
     type: object
+  alarmaction.AckRequest:
+    properties:
+      ack_resources:
+        type: boolean
+      comment:
+        maxLength: 255
+        type: string
+    type: object
+  alarmaction.AssocTicketRequest:
+    properties:
+      comment:
+        maxLength: 255
+        type: string
+      data:
+        additionalProperties:
+          type: string
+        type: object
+      system_name:
+        maxLength: 255
+        type: string
+      ticket:
+        type: string
+      ticket_resources:
+        type: boolean
+      url:
+        maxLength: 255
+        type: string
+    required:
+    - ticket
+    type: object
+  alarmaction.BulkAckRequestItem:
+    properties:
+      _id:
+        type: string
+      ack_resources:
+        type: boolean
+      comment:
+        maxLength: 255
+        type: string
+    required:
+    - _id
+    type: object
+  alarmaction.BulkAssocTicketRequestItem:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+      data:
+        additionalProperties:
+          type: string
+        type: object
+      system_name:
+        maxLength: 255
+        type: string
+      ticket:
+        type: string
+      ticket_resources:
+        type: boolean
+      url:
+        maxLength: 255
+        type: string
+    required:
+    - _id
+    - ticket
+    type: object
+  alarmaction.BulkChangeStateRequestItem:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+      state:
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        type: integer
+    required:
+    - _id
+    - state
+    type: object
+  alarmaction.BulkCommentRequestItem:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+    required:
+    - _id
+    - comment
+    type: object
+  alarmaction.BulkRequestItem:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+    required:
+    - _id
+    type: object
+  alarmaction.BulkSnoozeRequestItem:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+    required:
+    - _id
+    - duration
+    type: object
+  alarmaction.ChangeStateRequest:
+    properties:
+      comment:
+        maxLength: 255
+        type: string
+      state:
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        type: integer
+    required:
+    - state
+    type: object
+  alarmaction.CommentRequest:
+    properties:
+      comment:
+        maxLength: 255
+        type: string
+    required:
+    - comment
+    type: object
+  alarmaction.Request:
+    properties:
+      comment:
+        maxLength: 255
+        type: string
+    type: object
+  alarmaction.SnoozeRequest:
+    properties:
+      comment:
+        maxLength: 255
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+    required:
+    - duration
+    type: object
   alarmtag.Response:
     properties:
       _id:
@@ -681,6 +845,8 @@ definitions:
   author.Author:
     properties:
       _id:
+        type: string
+      display_name:
         type: string
       name:
         type: string
@@ -1855,6 +2021,7 @@ definitions:
             * `pattern` - export pattern collection
             * `declare_ticket_rule` - export declare_ticket_rule collection
             * `link_rule` - export link_rule collection
+            * `map` - export map collection
         items:
           type: string
         type: array
@@ -3800,6 +3967,8 @@ definitions:
             * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
+            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
+            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
           type: string
         type: array
@@ -3863,6 +4032,8 @@ definitions:
             * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
+            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
+            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
           type: string
         type: array
@@ -3923,6 +4094,8 @@ definitions:
             * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
+            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
+            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
           type: string
         type: array
@@ -3957,6 +4130,8 @@ definitions:
       rrule:
         type: string
       skip_for_child:
+        type: boolean
+      skip_for_instruction:
         type: boolean
       start_on_trigger:
         type: boolean
@@ -4584,6 +4759,8 @@ definitions:
         type: string
       defaultview:
         $ref: '#/definitions/user.View'
+      display_name:
+        type: string
       email:
         type: string
       enable:
@@ -4841,13 +5018,13 @@ definitions:
     properties:
       colorIndicator:
         type: string
-      iconOnly:
-        type: boolean
       isHtml:
         type: boolean
       label:
         maxLength: 255
         type: string
+      onlyIcon:
+        type: boolean
       template:
         type: string
       value:

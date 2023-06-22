@@ -48,7 +48,7 @@ export default {
         },
         {
           text: this.$t('common.username'),
-          value: 'user.name',
+          value: 'user.display_name',
           sortable: false,
         },
         {

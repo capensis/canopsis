@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { isOldPattern } from '@/helpers/pattern';
+import { isOldPattern } from '@/helpers/entities/pattern/form';
 
 export default {
   props: {

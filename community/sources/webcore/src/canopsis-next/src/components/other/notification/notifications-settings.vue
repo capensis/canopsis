@@ -16,7 +16,7 @@
 <script>
 import { VALIDATION_DELAY } from '@/constants';
 
-import { notificationsSettingsToForm } from '@/helpers/forms/notification';
+import { notificationsSettingsToForm } from '@/helpers/entities/notification/form';
 
 import { entitiesNotificationSettingsMixin } from '@/mixins/entities/notification-settings';
 import { submittableMixinCreator } from '@/mixins/submittable';

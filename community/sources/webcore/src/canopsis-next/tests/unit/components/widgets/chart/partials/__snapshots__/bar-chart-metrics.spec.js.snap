@@ -2,10 +2,10 @@
 
 exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with default props 1`] = `
 <div
-  class="layout chart-metrics-widget column align-center"
+  class="layout kpi-widget column align-center"
 >
   <h4
-    class="chart-metrics-widget__title"
+    class="kpi-widget__title"
   >
     
   </h4>
@@ -15,15 +15,15 @@ exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with default props 1`] 
 
 exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with empty data 1`] = `
 <div
-  class="layout chart-metrics-widget column align-center"
+  class="layout kpi-widget column align-center"
 >
   <h4
-    class="chart-metrics-widget__title"
+    class="kpi-widget__title"
   >
     
   </h4>
   <div
-    class="chart-metrics-widget__chart"
+    class="kpi-widget__chart"
   >
     <div
       class=""
@@ -45,15 +45,15 @@ exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with empty data 1`] = `
 
 exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with history data 1`] = `
 <div
-  class="layout chart-metrics-widget column align-center"
+  class="layout kpi-widget column align-center"
 >
   <h4
-    class="chart-metrics-widget__title"
+    class="kpi-widget__title"
   >
     
   </h4>
   <div
-    class="chart-metrics-widget__chart"
+    class="kpi-widget__chart"
   >
     <div
       class=""
@@ -75,15 +75,15 @@ exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with history data 1`] =
 
 exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with metrics 1`] = `
 <div
-  class="layout chart-metrics-widget column align-center"
+  class="layout kpi-widget column align-center"
 >
   <h4
-    class="chart-metrics-widget__title"
+    class="kpi-widget__title"
   >
     Custom title
   </h4>
   <div
-    class="chart-metrics-widget__chart"
+    class="kpi-widget__chart"
   >
     <div
       class=""
@@ -105,15 +105,15 @@ exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with metrics 1`] = `
 
 exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with stacked history data 1`] = `
 <div
-  class="layout chart-metrics-widget column align-center"
+  class="layout kpi-widget column align-center"
 >
   <h4
-    class="chart-metrics-widget__title"
+    class="kpi-widget__title"
   >
     
   </h4>
   <div
-    class="chart-metrics-widget__chart"
+    class="kpi-widget__chart"
   >
     <div
       class=""
@@ -135,15 +135,15 @@ exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with stacked history da
 
 exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with stacked metrics 1`] = `
 <div
-  class="layout chart-metrics-widget column align-center"
+  class="layout kpi-widget column align-center"
 >
   <h4
-    class="chart-metrics-widget__title"
+    class="kpi-widget__title"
   >
     Custom title
   </h4>
   <div
-    class="chart-metrics-widget__chart"
+    class="kpi-widget__chart"
   >
     <div
       class=""

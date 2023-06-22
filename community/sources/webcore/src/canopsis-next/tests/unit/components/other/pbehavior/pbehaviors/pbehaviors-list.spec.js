@@ -1,11 +1,9 @@
 import { range } from 'lodash';
 
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import PbehaviorsList from '@/components/other/pbehavior/pbehaviors/pbehaviors-list.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
@@ -44,7 +42,7 @@ describe('pbehaviors-list', () => {
   }));
 
   const snapshotFactory = generateRenderer(PbehaviorsList, {
-    localVue,
+
     stubs,
     parentComponent: {
       provide: {

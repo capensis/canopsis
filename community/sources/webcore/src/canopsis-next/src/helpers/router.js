@@ -8,7 +8,7 @@ import {
 import store from '@/store';
 import i18n from '@/i18n';
 
-import { checkUserAccess } from '@/helpers/permission';
+import { checkUserAccess } from '@/helpers/entities/permissions/list';
 
 /**
  * Get app info value promise by key

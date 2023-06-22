@@ -75,7 +75,7 @@ export default {
         { text: this.$t('common.enabled'), value: 'enabled' },
         { text: this.$t('common.created'), value: 'created' },
         { text: this.$t('common.lastModifiedOn'), value: 'updated' },
-        { text: this.$t('common.lastModifiedBy'), value: 'author.name' },
+        { text: this.$t('common.lastModifiedBy'), value: 'author.display_name' },
         {
           text: this.$t('common.actionsLabel'),
           value: 'actions',

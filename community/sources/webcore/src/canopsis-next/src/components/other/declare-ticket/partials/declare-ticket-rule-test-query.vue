@@ -41,8 +41,8 @@ import {
   isDeclareTicketExecutionRunning,
   isDeclareTicketExecutionSucceeded,
   isDeclareTicketExecutionWaiting,
-} from '@/helpers/forms/declare-ticket-rule';
-import { formFilterToPatterns } from '@/helpers/forms/filter';
+} from '@/helpers/entities/declare-ticket/rule/form';
+import { formFilterToPatterns } from '@/helpers/entities/filter/form';
 
 import { validationErrorsMixinCreator } from '@/mixins/form';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';

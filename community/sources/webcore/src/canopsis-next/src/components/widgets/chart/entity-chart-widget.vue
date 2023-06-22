@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout.py-2(column)
-    chart-widget-filters.mx-3(
+    kpi-widget-filters.mx-3(
       :interval="query.interval",
       :min-interval-date="minAvailableDate",
       :sampling="query.sampling",
@@ -26,8 +26,8 @@ import { pick } from 'lodash';
 import { WIDGET_TYPES } from '@/constants';
 
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
-import { convertWidgetToQuery } from '@/helpers/query';
-import { convertMetricsToTimezone } from '@/helpers/metrics';
+import { convertWidgetToQuery } from '@/helpers/entities/widget/query';
+import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
 
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
@@ -35,7 +35,7 @@ import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { entitiesVectorMetricsMixin } from '@/mixins/entities/vector-metrics';
 import { widgetChartMetricsMap } from '@/mixins/widget/chart/metrics-map';
 
-import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
+import KpiWidgetFilters from '@/components/widgets/partials/kpi-widget-filters.vue';
 import ChartLoader from '@/components/widgets/chart/partials/chart-loader.vue';
 import BarChartMetrics from '@/components/widgets/chart/partials/bar-chart-metrics.vue';
 import LineChartMetrics from '@/components/widgets/chart/partials/line-chart-metrics.vue';
@@ -47,7 +47,7 @@ export default {
   inject: ['$system'],
   components: {
     ChartLoader,
-    ChartWidgetFilters,
+    KpiWidgetFilters,
     BarChartMetrics,
     LineChartMetrics,
     NumbersMetrics,
