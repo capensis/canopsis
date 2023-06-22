@@ -72,7 +72,7 @@
             :resizing="resizingMode",
             @clear:tag="$emit('clear:tag')"
           )
-          template(v-if="header.value !== 'actions'")
+          template
             span.alarms-list-table__dragging-handler(v-if="draggingMode", @click.stop="")
             span.alarms-list-table__resize-handler(
               v-if="resizingMode",
@@ -632,8 +632,8 @@ export default {
 
   &__grid {
     & > .v-table__overflow > table {
-      & > tbody > tr > td:not(:last-of-type),
-      & > thead > tr > th:not(:last-of-type) {
+      & > tbody > tr > td,
+      & > thead > tr > th {
         position: relative;
 
         &:after {
@@ -645,6 +645,11 @@ export default {
           width: 2px;
           height: 100%;
         }
+      }
+
+      & > thead > tr > th {
+        word-break: break-all;
+        white-space: pre-wrap;
       }
     }
   }

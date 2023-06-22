@@ -6,6 +6,10 @@ export const widgetColumnResizingAlarmMixin = {
       type: Number,
       default: 10,
     },
+    minColumnWidth: {
+      type: Number,
+      default: 10,
+    },
   },
   data() {
     return {
@@ -13,8 +17,7 @@ export const widgetColumnResizingAlarmMixin = {
       resizingColumnIndex: null,
       percentsInPixel: null,
       columnsWidthByField: {},
-      columnsMinWidthByField: {},
-      aggregatedMovementX: 0,
+      aggregatedMovementDiff: 0,
     };
   },
   created() {
@@ -34,6 +37,15 @@ export const widgetColumnResizingAlarmMixin = {
 
     sumOfColumnsWidth() {
       return this.calculateFullColumnsWidth(this.columnsWidthByField);
+    },
+
+    minColumnsWidthInPercent() {
+      /**
+       * 24 - max padding size
+       * 22 - max sort position icon width
+       * 16 - max sort direction icon width
+       */
+      return (24 + 22 + 16 + this.minColumnWidth) * this.percentsInPixel;
     },
   },
   methods: {
@@ -59,10 +71,6 @@ export const widgetColumnResizingAlarmMixin = {
       return this.columnsWidthByField[field];
     },
 
-    getColumnMinWidthByField(field) {
-      return this.columnsMinWidthByField[field];
-    },
-
     setPercentsInPixel() {
       const { width: rowWidth } = this.tableRow.getBoundingClientRect();
 
@@ -76,146 +84,53 @@ export const widgetColumnResizingAlarmMixin = {
     calculateColumnsWidths() {
       this.setPercentsInPixel();
 
-      const {
-        columnsWidthByField,
-        columnsMinWidthByField,
-      } = [...this.headerCells].reduce((acc, headerElement, index, headers) => {
+      this.columnsWidthByField = [...this.headerCells].reduce((acc, headerElement) => {
         if (headerElement.dataset?.value) {
           const { value } = headerElement.dataset;
           const { width: headerWidth } = headerElement.getBoundingClientRect();
-          const headerContentElement = headerElement.querySelector('span');
-          const { width: contentWidth } = headerContentElement.getBoundingClientRect();
 
-          const minWidth = (24 + 22 + 16 + contentWidth) * this.percentsInPixel;
           const width = headerWidth * this.percentsInPixel;
 
-          acc.columnsWidthByField[value] = Math.max(minWidth, width);
-          /**
-           * 24 - max padding size
-           * 22 - max sort position icon width
-           * 16 - max sort direction icon width
-           */
-          acc.columnsMinWidthByField[value] = minWidth;
-
-          if (headers.length - 1 === index) {
-            const resultFullWidth = this.calculateFullColumnsWidth(acc.columnsWidthByField);
-            const leftActionsWidth = this.leftActionsWidth ?? 0;
-            const leftActionsPercentWidth = this.percentsInPixel * leftActionsWidth;
-
-            if (resultFullWidth + leftActionsPercentWidth < 100) {
-              /**
-               * If all columns width less than 100%, we will add rest to last columns
-               */
-              acc.columnsWidthByField[value] += (100 - resultFullWidth) - leftActionsPercentWidth;
-            }
-          }
+          acc[value] = Math.max(this.minColumnsWidthInPercent, width);
         }
 
         return acc;
-      }, {
-        columnsWidthByField: {},
-        columnsMinWidthByField: {},
-      });
-
-      this.columnsWidthByField = columnsWidthByField;
-      this.columnsMinWidthByField = columnsMinWidthByField;
+      }, {});
     },
 
     getNormalizedWidth(field, newWidth) {
-      return Math.max(newWidth, this.getColumnMinWidthByField(field));
+      return Math.max(newWidth, this.minColumnsWidthInPercent);
     },
 
     resizeColumnByDiff(index) {
-      const diff = this.aggregatedMovementX;
+      const diff = this.aggregatedMovementDiff;
 
       if (!diff) {
         return;
       }
 
-      const toRight = diff > 0;
-
       const resizingLeftColumn = this.headers[index].value;
-      const resizingRightColumn = this.headers[index + 1].value;
-
       const previousLeftColumnWidth = this.getColumnWidthByField(resizingLeftColumn);
-      const previousRightColumnWidth = this.getColumnWidthByField(resizingRightColumn);
-
-      let newLeftColumnWidth = this.getNormalizedWidth(resizingLeftColumn, previousLeftColumnWidth + diff);
-      let newRightColumnWidth = this.getNormalizedWidth(resizingRightColumn, previousRightColumnWidth - diff);
-
-      const resultLeftDiff = Math.abs(newLeftColumnWidth - previousLeftColumnWidth);
-      const resultRightDiff = Math.abs(newRightColumnWidth - previousRightColumnWidth);
-
-      let remainderDiff = Math.abs(resultLeftDiff - resultRightDiff);
-
-      const affectedHeadersWidths = {};
-
-      if (remainderDiff > 0) {
-        const affectedHeaders = toRight
-          /**
-           * We need check each column from right cell to last
-           */
-          ? this.headers.slice(this.resizingColumnIndex + 2)
-          /**
-           * We need check each column from first to current column
-           */
-          : this.headers.slice(0, this.resizingColumnIndex).reverse();
-
-        /**
-         * Try to find free space for remaining diff
-         */
-        for (const { value } of affectedHeaders) {
-          /**
-           * We can have first header for expand button and remediation icon.
-           * This header doesn't have value and cannot to resize.
-           */
-          if (value) {
-            const affectedHeaderWidth = this.getColumnWidthByField(value);
-            const newAffectedHeaderWidth = this.getNormalizedWidth(value, affectedHeaderWidth - remainderDiff);
-
-            affectedHeadersWidths[value] = newAffectedHeaderWidth;
-
-            remainderDiff -= (affectedHeaderWidth - newAffectedHeaderWidth);
-
-            if (remainderDiff <= 0) {
-              break;
-            }
-          }
-        }
-      }
-
-      /**
-       * Normalize width, if we don't have available space
-       */
-      if (remainderDiff) {
-        if (toRight) {
-          newLeftColumnWidth -= remainderDiff;
-        } else {
-          newRightColumnWidth -= remainderDiff;
-        }
-      }
-
-      if (newLeftColumnWidth === previousLeftColumnWidth && newRightColumnWidth === previousRightColumnWidth) {
-        return;
-      }
+      const newLeftColumnWidth = this.getNormalizedWidth(resizingLeftColumn, previousLeftColumnWidth + diff);
 
       this.columnsWidthByField = {
         ...this.columnsWidthByField,
-        ...affectedHeadersWidths,
         [resizingLeftColumn]: newLeftColumnWidth,
-        [resizingRightColumn]: newRightColumnWidth,
       };
-      this.aggregatedMovementX = 0;
+
+      if (newLeftColumnWidth !== previousLeftColumnWidth) {
+        this.aggregatedMovementDiff = 0;
+      }
     },
 
     handleColumnResize(event) {
-      this.aggregatedMovementX += event.movementX * this.percentsInPixel;
+      this.aggregatedMovementDiff += event.movementX * this.percentsInPixel;
 
       this.throttledResizeColumnByDiff(this.resizingColumnIndex);
     },
 
     finishColumnResize() {
-      this.aggregatedMovementX = 0;
+      this.aggregatedMovementDiff = 0;
 
       document.body.removeEventListener('mousemove', this.handleColumnResize);
       document.body.removeEventListener('mouseup', this.finishColumnResize);
