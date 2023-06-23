@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"sync"
 	"time"
+
+	"github.com/rs/zerolog"
 )
 
 type Handler struct {
@@ -12,12 +14,14 @@ type Handler struct {
 	inProgress   bool
 	checker      Checker
 	waitInterval time.Duration
+	logger       zerolog.Logger
 }
 
-func NewHandler(checker Checker) http.Handler {
+func NewHandler(checker Checker, logger zerolog.Logger) http.Handler {
 	return &Handler{
 		checker:      checker,
 		waitInterval: 10 * time.Second,
+		logger:       logger,
 	}
 }
 
@@ -27,10 +31,13 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	defer h.unsetInProgress()
+
 	ctx, cancel := context.WithTimeout(r.Context(), h.waitInterval)
 	defer cancel()
 	err := h.checker.Check(ctx)
 	if err != nil {
+		h.logger.Err(err).Msg("cannot process healthcheck event")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -47,4 +54,10 @@ func (h *Handler) setInProgress() bool {
 
 	h.inProgress = true
 	return true
+}
+
+func (h *Handler) unsetInProgress() {
+	h.inProgressMx.Lock()
+	defer h.inProgressMx.Unlock()
+	h.inProgress = false
 }
