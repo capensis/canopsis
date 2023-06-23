@@ -72,7 +72,7 @@ export default {
 
       return Object.entries(business).map(([key, groupPermissions]) => ({
         key: `permission.business.${key}`,
-        permissions: sortBy(groupPermissions, ['description']),
+        permissions: this.prepareGroupPermissions(groupPermissions),
       }));
     },
 
