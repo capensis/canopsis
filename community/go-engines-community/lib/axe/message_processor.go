@@ -13,8 +13,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type MessageProcessor struct {
@@ -30,6 +32,7 @@ type MessageProcessor struct {
 	PbehaviorAdapter       pbehavior.Adapter
 	TagUpdater             alarmtag.Updater
 	AutoInstructionMatcher AutoInstructionMatcher
+	AlarmCollection        mongo.DbCollection
 }
 
 func (p *MessageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
@@ -89,14 +92,21 @@ func (p *MessageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}
 	event.AlarmChange = &alarmChange
 
-	err = p.handleRemediation(ctx, event, msg)
-	if err != nil {
-		return nil, err
-	}
+	if event.Healtcheck {
+		_, err := p.AlarmCollection.DeleteMany(ctx, bson.M{"healthcheck": true})
+		if err != nil {
+			p.logError(err, "cannot delete temporary alarm", alarmID, d.Body)
+		}
+	} else {
+		err = p.handleRemediation(ctx, event, msg)
+		if err != nil {
+			return nil, err
+		}
 
-	p.updatePbhLastAlarmDate(ctx, event)
-	p.updateTags(event)
-	event.IsInstructionMatched = p.isInstructionMatched(event, msg)
+		p.updatePbhLastAlarmDate(ctx, event)
+		p.updateTags(event)
+		event.IsInstructionMatched = p.isInstructionMatched(event, msg)
+	}
 
 	// Encode and publish the event to the next engine
 	var bevent []byte

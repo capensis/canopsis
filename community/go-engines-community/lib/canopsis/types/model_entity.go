@@ -67,6 +67,8 @@ type Entity struct {
 
 	PerfData        []string `bson:"perf_data,omitempty" json:"-"`
 	PerfDataUpdated *CpsTime `bson:"perf_data_updated,omitempty" json:"-"`
+
+	Healthcheck bool `bson:"healthcheck,omitempty" json:"-"`
 }
 
 type Coordinates struct {

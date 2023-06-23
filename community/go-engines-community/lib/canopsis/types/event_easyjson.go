@@ -290,6 +290,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.IsMetaAlarmUpdated = bool(in.Bool())
 		case "instr_matched":
 			out.IsInstructionMatched = bool(in.Bool())
+		case "healtcheck":
+			out.Healtcheck = bool(in.Bool())
 		case "ticket":
 			out.Ticket = string(in.String())
 		case "ticket_url":
@@ -646,6 +648,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"instr_matched\":"
 		out.RawString(prefix)
 		out.Bool(bool(in.IsInstructionMatched))
+	}
+	if in.Healtcheck {
+		const prefix string = ",\"healtcheck\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.Healtcheck))
 	}
 	if in.Ticket != "" {
 		const prefix string = ",\"ticket\":"

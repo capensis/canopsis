@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
 	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
@@ -41,7 +42,7 @@ func ParseOptions() Options {
 	flag.StringVar(&opts.ConsumeFromQueue, "consumeQueue", canopsis.FIFOQueueName, "Consume events from this queue.")
 	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
 	flag.BoolVar(&opts.PrintEventOnError, "printEventOnError", false, "Print event on processing error")
-	flag.IntVar(&opts.LockTtl, "lockTtl", 10, "Redis lock ttl time in seconds")
+	flag.IntVar(&opts.LockTtl, "lockTtl", 60, "Redis lock ttl time in seconds")
 	flag.DurationVar(&opts.EventsStatsFlushInterval, "eventsStatsFlushInterval", 60*time.Second, "Interval between saving statistics from redis to mongo")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.DurationVar(&opts.ExternalDataApiTimeout, "externalDataApiTimeout", 30*time.Second, "External API HTTP Request Timeout.")
@@ -171,6 +172,16 @@ func Default(
 		return nil
 	})
 
+	mainMessageProcessor := &messageProcessor{
+		FeaturePrintEventOnError: options.PrintEventOnError,
+
+		EventFilterService: eventfilterService,
+		TechMetricsSender:  techMetricsSender,
+		Scheduler:          scheduler,
+		StatsSender:        statsSender,
+		Decoder:            json.NewDecoder(),
+		Logger:             logger,
+	}
 	engine.AddConsumer(libengine.NewDefaultConsumer(
 		canopsis.FIFOConsumerName,
 		options.ConsumeFromQueue,
@@ -182,16 +193,7 @@ func Default(
 		"",
 		"",
 		amqpConnection,
-		&messageProcessor{
-			FeaturePrintEventOnError: options.PrintEventOnError,
-
-			EventFilterService: eventfilterService,
-			TechMetricsSender:  techMetricsSender,
-			Scheduler:          scheduler,
-			StatsSender:        statsSender,
-			Decoder:            json.NewDecoder(),
-			Logger:             logger,
-		},
+		mainMessageProcessor,
 		logger,
 	))
 	engine.AddConsumer(libengine.NewDefaultConsumer(
@@ -262,6 +264,14 @@ func Default(
 			Logger:             logger,
 		})
 	}
+
+	healthcheck.Start(ctx, healthcheck.NewChecker(
+		"fifo",
+		mainMessageProcessor,
+		json.NewEncoder(),
+		false,
+		false,
+	), logger)
 
 	return engine
 }
