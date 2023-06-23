@@ -126,6 +126,9 @@ func (c *checker) createEvent() types.Event {
 			Healthcheck: true,
 		}
 		event.Alarm = &alarm
+		event.AlarmChange = &types.AlarmChange{
+			Type: types.AlarmChangeTypeNone,
+		}
 	}
 
 	return event

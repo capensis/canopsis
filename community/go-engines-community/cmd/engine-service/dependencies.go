@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
@@ -176,6 +177,14 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		return nil
 	})
 
+	mainMessageProcessor := &messageProcessor{
+		TechMetricsSender:        techMetricsSender,
+		FeaturePrintEventOnError: options.FeaturePrintEventOnError,
+		EntityServiceService:     entityServicesService,
+		Encoder:                  json.NewEncoder(),
+		Decoder:                  json.NewDecoder(),
+		Logger:                   logger,
+	}
 	engineService.AddConsumer(engine.NewDefaultConsumer(
 		canopsis.ServiceConsumerName,
 		canopsis.ServiceQueueName,
@@ -187,14 +196,7 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		canopsis.FIFOAckExchangeName,
 		canopsis.FIFOAckQueueName,
 		amqpConnection,
-		&messageProcessor{
-			TechMetricsSender:        techMetricsSender,
-			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
-			EntityServiceService:     entityServicesService,
-			Encoder:                  json.NewEncoder(),
-			Decoder:                  json.NewDecoder(),
-			Logger:                   logger,
-		},
+		mainMessageProcessor,
 		logger,
 	))
 	engineService.AddConsumer(engine.NewRPCServer(
@@ -243,6 +245,14 @@ func NewEngine(ctx context.Context, options Options, logger zerolog.Logger) engi
 		timezoneConfigProvider,
 		templateConfigProvider,
 	))
+
+	healthcheck.Start(ctx, healthcheck.NewChecker(
+		"service",
+		mainMessageProcessor,
+		json.NewEncoder(),
+		true,
+		true,
+	), logger)
 
 	return engineService
 }
