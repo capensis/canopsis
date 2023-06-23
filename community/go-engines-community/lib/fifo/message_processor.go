@@ -78,14 +78,16 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		return nil, nil
 	}
 
-	event, err = p.EventFilterService.ProcessEvent(ctx, event)
-	if err != nil {
-		if errors.Is(err, eventfilter.ErrDropOutcome) {
+	if !event.Healtcheck {
+		event, err = p.EventFilterService.ProcessEvent(ctx, event)
+		if err != nil {
+			if errors.Is(err, eventfilter.ErrDropOutcome) {
+				return nil, nil
+			}
+
+			p.logError(err, "cannot process event by eventfilter service", msg)
 			return nil, nil
 		}
-
-		p.logError(err, "cannot process event by eventfilter service", msg)
-		return nil, nil
 	}
 
 	p.Logger.Debug().Str("event", fmt.Sprintf("%+v", event)).Msg("sent to scheduler")

@@ -17,6 +17,7 @@ import (
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -228,6 +229,34 @@ func NewEngine(
 		return nil
 	})
 
+	mainMessageProcessor := &MessageProcessor{
+		FeaturePrintEventOnError: options.FeaturePrintEventOnError,
+		TechMetricsSender:        techMetricsSender,
+		EventProcessor: NewEventProcessor(
+			dbClient,
+			alarm.NewAdapter(dbClient),
+			entity.NewAdapter(dbClient),
+			correlation.NewRuleAdapter(dbClient),
+			alarmConfigProvider,
+			m.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider, alarmStatusService, metricsSender),
+			alarmStatusService,
+			metricsSender,
+			metaAlarmEventProcessor,
+			statistics.NewEventStatisticsSender(dbClient, logger, timezoneConfigProvider),
+			pbehavior.NewEntityTypeResolver(pbehavior.NewStore(pbhRedisClient, json.NewEncoder(), json.NewDecoder()), pbehavior.NewEntityMatcher(dbClient), logger),
+			autoInstructionMatcher,
+			logger,
+		),
+		RemediationRpcClient:   remediationRpcClient,
+		TimezoneConfigProvider: timezoneConfigProvider,
+		Encoder:                json.NewEncoder(),
+		Decoder:                json.NewDecoder(),
+		Logger:                 logger,
+		PbehaviorAdapter:       pbehavior.NewAdapter(dbClient),
+		TagUpdater:             tagUpdater,
+		AutoInstructionMatcher: autoInstructionMatcher,
+		AlarmCollection:        dbClient.Collection(mongo.AlarmMongoCollection),
+	}
 	engineAxe.AddConsumer(libengine.NewDefaultConsumer(
 		canopsis.AxeConsumerName,
 		canopsis.AxeQueueName,
@@ -239,33 +268,7 @@ func NewEngine(
 		canopsis.FIFOAckExchangeName,
 		canopsis.FIFOAckQueueName,
 		amqpConnection,
-		&MessageProcessor{
-			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
-			TechMetricsSender:        techMetricsSender,
-			EventProcessor: NewEventProcessor(
-				dbClient,
-				alarm.NewAdapter(dbClient),
-				entity.NewAdapter(dbClient),
-				correlation.NewRuleAdapter(dbClient),
-				alarmConfigProvider,
-				m.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider, alarmStatusService, metricsSender),
-				alarmStatusService,
-				metricsSender,
-				metaAlarmEventProcessor,
-				statistics.NewEventStatisticsSender(dbClient, logger, timezoneConfigProvider),
-				pbehavior.NewEntityTypeResolver(pbehavior.NewStore(pbhRedisClient, json.NewEncoder(), json.NewDecoder()), pbehavior.NewEntityMatcher(dbClient), logger),
-				autoInstructionMatcher,
-				logger,
-			),
-			RemediationRpcClient:   remediationRpcClient,
-			TimezoneConfigProvider: timezoneConfigProvider,
-			Encoder:                json.NewEncoder(),
-			Decoder:                json.NewDecoder(),
-			Logger:                 logger,
-			PbehaviorAdapter:       pbehavior.NewAdapter(dbClient),
-			TagUpdater:             tagUpdater,
-			AutoInstructionMatcher: autoInstructionMatcher,
-		},
+		mainMessageProcessor,
 		logger,
 	))
 	engineAxe.AddConsumer(libengine.NewRPCServer(
@@ -355,6 +358,14 @@ func NewEngine(
 		logger,
 		userInterfaceConfigProvider,
 	))
+
+	healthcheck.Start(ctx, healthcheck.NewChecker(
+		"axe",
+		mainMessageProcessor,
+		json.NewEncoder(),
+		true,
+		false,
+	), logger)
 
 	return engineAxe
 }

@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	communityimport "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
@@ -174,6 +175,23 @@ func NewEngine(
 		return nil
 	})
 
+	mainMessageProcessor := &messageProcessor{
+		FeaturePrintEventOnError: options.PrintEventOnError,
+		FeatureEventProcessing:   options.FeatureEventProcessing,
+		FeatureContextCreation:   options.FeatureContextCreation,
+
+		AlarmConfigProvider: alarmConfigProvider,
+		EventFilterService:  eventfilterService,
+		EnrichmentCenter:    enrichmentCenter,
+		TechMetricsSender:   techMetricsSender,
+		MetricsSender:       metricsSender,
+		AmqpPublisher:       m.DepAMQPChannelPub(amqpConnection),
+		AlarmAdapter:        alarm.NewAdapter(mongoClient),
+		EntityCollection:    mongoClient.Collection(mongo.EntityMongoCollection),
+		Encoder:             json.NewEncoder(),
+		Decoder:             json.NewDecoder(),
+		Logger:              logger,
+	}
 	engine.AddConsumer(libengine.NewDefaultConsumer(
 		canopsis.CheConsumerName,
 		options.ConsumeFromQueue,
@@ -185,23 +203,7 @@ func NewEngine(
 		options.FifoAckExchange,
 		canopsis.FIFOAckQueueName,
 		amqpConnection,
-		&messageProcessor{
-			FeaturePrintEventOnError: options.PrintEventOnError,
-			FeatureEventProcessing:   options.FeatureEventProcessing,
-			FeatureContextCreation:   options.FeatureContextCreation,
-
-			AlarmConfigProvider: alarmConfigProvider,
-			EventFilterService:  eventfilterService,
-			EnrichmentCenter:    enrichmentCenter,
-			TechMetricsSender:   techMetricsSender,
-			MetricsSender:       metricsSender,
-			AmqpPublisher:       m.DepAMQPChannelPub(amqpConnection),
-			AlarmAdapter:        alarm.NewAdapter(mongoClient),
-			EntityCollection:    mongoClient.Collection(mongo.EntityMongoCollection),
-			Encoder:             json.NewEncoder(),
-			Decoder:             json.NewDecoder(),
-			Logger:              logger,
-		},
+		mainMessageProcessor,
 		logger,
 	))
 	engine.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
@@ -264,6 +266,14 @@ func NewEngine(
 			}
 		})
 	}
+
+	healthcheck.Start(ctx, healthcheck.NewChecker(
+		"che",
+		mainMessageProcessor,
+		json.NewEncoder(),
+		false,
+		false,
+	), logger)
 
 	return engine
 }

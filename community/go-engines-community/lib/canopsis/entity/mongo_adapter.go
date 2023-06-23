@@ -114,6 +114,9 @@ func (a *mongoAdapter) UpsertMany(ctx context.Context, entities []types.Entity) 
 			"created":         entity.Created,
 			"last_event_date": entity.LastEventDate,
 		}
+		if entity.Healthcheck {
+			insert["healthcheck"] = true
+		}
 		if entity.Connector != "" {
 			insert["connector"] = entity.Connector
 		}
