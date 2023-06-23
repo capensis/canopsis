@@ -99,13 +99,15 @@ func (c *center) Handle(ctx context.Context, event types.Event) (*types.Entity, 
 		entities = append(entities, *eventEntity)
 	}
 
-	added, removed, err := c.entityServiceManager.UpdateServices(ctx, entities)
-	if err != nil {
-		return nil, updatedServices, err
-	}
+	if !event.Healtcheck {
+		added, removed, err := c.entityServiceManager.UpdateServices(ctx, entities)
+		if err != nil {
+			return nil, updatedServices, err
+		}
 
-	updatedServices.AddedTo = added[event.GetEID()]
-	updatedServices.RemovedFrom = removed[event.GetEID()]
+		updatedServices.AddedTo = added[event.GetEID()]
+		updatedServices.RemovedFrom = removed[event.GetEID()]
+	}
 
 	return eventEntity, updatedServices, nil
 }
@@ -359,6 +361,7 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 		ImpactLevel:   types.EntityDefaultImpactLevel,
 		Created:       now,
 		LastEventDate: &now,
+		Healthcheck:   event.Healtcheck,
 	}
 	component := types.Entity{
 		ID:            componentID,
@@ -372,6 +375,7 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 		Infos:         map[string]types.Info{},
 		ImpactLevel:   types.EntityDefaultImpactLevel,
 		Created:       now,
+		Healthcheck:   event.Healtcheck,
 	}
 	if resourceID == "" {
 		component.LastEventDate = &now
@@ -406,6 +410,7 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 				IsNew:         true,
 				Created:       now,
 				LastEventDate: &now,
+				Healthcheck:   event.Healtcheck,
 			}
 
 			entity = &resource
