@@ -61,7 +61,10 @@ func NewMongoQueryBuilder(client mongo.DbClient) *MongoQueryBuilder {
 }
 
 func (q *MongoQueryBuilder) clear(now types.CpsTime) {
-	q.entityMatch = []bson.M{{"$match": bson.M{"soft_deleted": bson.M{"$exists": false}}}}
+	q.entityMatch = []bson.M{{"$match": bson.M{
+		"soft_deleted": bson.M{"$exists": false},
+		"healthcheck":  bson.M{"$in": bson.A{nil, false}},
+	}}}
 	q.additionalMatch = make([]bson.M, 0)
 
 	q.lookupsForAdditionalMatch = make(map[string]bool)

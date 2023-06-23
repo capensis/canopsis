@@ -125,16 +125,18 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	switch event.EventType {
 	case types.EventTypeCheck:
 		changeType, err := s.storeAlarm(ctx, event)
-		if err == nil {
-			go s.sendEventStatistics(ctx, *event)
-		}
-
-		go func() {
-			err := s.metaAlarmEventProcessor.Process(context.Background(), *event)
-			if err != nil {
-				s.logger.Err(err).Msg("cannot process meta alarm")
+		if !event.Healtcheck {
+			if err == nil {
+				go s.sendEventStatistics(ctx, *event)
 			}
-		}()
+
+			go func() {
+				err := s.metaAlarmEventProcessor.Process(context.Background(), *event)
+				if err != nil {
+					s.logger.Err(err).Msg("cannot process meta alarm")
+				}
+			}()
+		}
 
 		alarmChange.Type = changeType
 		return alarmChange, err
@@ -748,6 +750,7 @@ func newAlarm(event types.Event, alarmConfig config.AlarmConfig) types.Alarm {
 			Infos:             map[string]map[string]interface{}{},
 			RuleVersion:       map[string]string{},
 		},
+		Healthcheck: event.Healtcheck,
 	}
 }
 
