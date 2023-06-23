@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-select(
+  v-select.role-template-field(
     v-validate,
     :value="value",
     :label="label || $t('role.selectTemplate')",
@@ -14,6 +14,10 @@
     clearable,
     @input="updatePermissions"
   )
+    template(#item="{ item }")
+      v-layout(justify-space-between)
+        | {{ item.name }}
+        span.role-template-field__item-description {{ item.description }}
 </template>
 
 <script>
@@ -92,3 +96,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.role-template-field {
+  &__item-description {
+    opacity: 0.7;
+  }
+}
+</style>
