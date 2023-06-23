@@ -418,9 +418,6 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [CONTEXT_ACTIONS_TYPES.duplicateEntity]: USERS_PERMISSIONS.business.context.actions.duplicateEntity,
     [CONTEXT_ACTIONS_TYPES.deleteEntity]: USERS_PERMISSIONS.business.context.actions.deleteEntity,
     [CONTEXT_ACTIONS_TYPES.pbehaviorAdd]: USERS_PERMISSIONS.business.context.actions.pbehaviorAdd,
-    [CONTEXT_ACTIONS_TYPES.pbehaviorList]: USERS_PERMISSIONS.business.context.actions.pbehaviorList,
-    [CONTEXT_ACTIONS_TYPES.pbehaviorDelete]: USERS_PERMISSIONS.business.context.actions.pbehaviorDelete,
-    [CONTEXT_ACTIONS_TYPES.pbehaviorDelete]: USERS_PERMISSIONS.business.context.actions.pbehaviorDelete,
     [CONTEXT_ACTIONS_TYPES.massEnable]: USERS_PERMISSIONS.business.context.actions.massEnable,
     [CONTEXT_ACTIONS_TYPES.massDisable]: USERS_PERMISSIONS.business.context.actions.massDisable,
 
