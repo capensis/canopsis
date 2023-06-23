@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
@@ -186,6 +187,13 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		return nil
 	})
 
+	mainMessageProcessor := &messageProcessor{
+		TechMetricsSender:        techMetricsSender,
+		FeaturePrintEventOnError: options.FeaturePrintEventOnError,
+		ActionService:            actionService,
+		Decoder:                  json.NewDecoder(),
+		Logger:                   logger,
+	}
 	engineAction.AddConsumer(engine.NewDefaultConsumer(
 		canopsis.ActionConsumerName,
 		canopsis.ActionQueueName,
@@ -197,13 +205,7 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		"",
 		"",
 		amqpConnection,
-		&messageProcessor{
-			TechMetricsSender:        techMetricsSender,
-			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
-			ActionService:            actionService,
-			Decoder:                  json.NewDecoder(),
-			Logger:                   logger,
-		},
+		mainMessageProcessor,
 		logger,
 	))
 	engineAction.AddConsumer(axeRpcClient)
@@ -231,6 +233,14 @@ func NewEngineAction(ctx context.Context, options Options, logger zerolog.Logger
 		techMetricsConfigProvider,
 		templateConfigProvider,
 	))
+
+	healthcheck.Start(ctx, healthcheck.NewChecker(
+		"action",
+		mainMessageProcessor,
+		json.NewEncoder(),
+		true,
+		true,
+	), logger)
 
 	return engineAction
 }
