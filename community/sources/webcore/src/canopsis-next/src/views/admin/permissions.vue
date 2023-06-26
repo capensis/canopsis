@@ -71,7 +71,7 @@ export default {
       const { business } = this.groupedPermissions;
 
       return Object.entries(business).map(([key, groupPermissions]) => ({
-        key: `permission.business.${key}`,
+        name: this.$tc(`permission.business.${key}`),
         permissions: this.prepareGroupPermissions(groupPermissions),
       }));
     },
@@ -80,7 +80,7 @@ export default {
       const { technical } = this.groupedPermissions;
 
       return Object.entries(technical).map(([key, groupPermissions]) => ({
-        key: `permission.technical.${key}`,
+        name: this.$tc(`permission.technical.${key}`),
         permissions: this.prepareGroupPermissions(groupPermissions),
       }));
     },
@@ -89,7 +89,7 @@ export default {
       const { api } = this.groupedPermissions;
 
       return Object.entries(api).map(([key, groupPermissions]) => ({
-        key: `permission.api.${key}`,
+        name: this.$tc(`permission.api.${key}`),
         permissions: this.prepareGroupPermissions(groupPermissions),
       }));
     },
@@ -122,7 +122,7 @@ export default {
         }));
 
       viewPermissionsGroup.push({
-        key: 'common.playlist',
+        name: this.$tc('common.playlist'),
         permissions: sortBy(playlist, ['playlist.name']).map(({ description, name, ...permission }) => ({
           name: description,
           ...permission,
@@ -212,7 +212,7 @@ export default {
     },
 
     /**
-     * Send request for update changedRoles and fetchCurrentUser if it needed
+     * Send request for update changedRoles
      *
      * @returns void
      */
@@ -234,13 +234,6 @@ export default {
             data: formToRole(roleForm),
           });
         }));
-
-        /**
-         * If current user role changed
-         */
-        if (this.changedRoles[this.currentUser.role._id]) {
-          await this.fetchCurrentUser();
-        }
 
         await this.fetchRolesList({ params: { limit: MAX_LIMIT, with_flags: true } });
 
