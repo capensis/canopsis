@@ -50,6 +50,7 @@ export default {
   filterEditor: 'Filter',
   isAckNoteRequired: 'Note field required when ack?',
   isSnoozeNoteRequired: 'Note field required when snooze?',
+  isRemoveAlarmsFromMetaAlarmCommentRequired: 'Comment field required when remove alarms from manual meta alarm?',
   inlineLinksCount: 'Inline links count',
   isMultiAckEnabled: 'Multiple ack',
   isMultiDeclareTicketEnabled: 'Multiple declare ticket',
