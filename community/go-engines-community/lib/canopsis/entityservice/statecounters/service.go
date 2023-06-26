@@ -219,6 +219,12 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 			return nil, err
 		}
 
+		oldCounters := counters
+		oldCounters.PbehaviorCounters = make(map[string]int, len(counters.PbehaviorCounters))
+		for k, v := range counters.PbehaviorCounters {
+			oldCounters.PbehaviorCounters[k] = v
+		}
+
 		if counters.PbehaviorCounters == nil {
 			counters.PbehaviorCounters = make(map[string]int)
 		}
@@ -269,11 +275,9 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 
 			counters.All++
 
-			counters.IncrementAlarmCounters(curState, acked, isActive)
-			if !isActive {
-				if alarmChange.PreviousPbehaviorTypeID != alarm.Value.PbehaviorInfo.TypeID {
-					counters.IncrementPbhCounters(pbhTypeID)
-				}
+			counters.IncrementAlarmCounters(curState, false, isActive)
+			if !isActive && alarmChange.PreviousPbehaviorTypeID != alarm.Value.PbehaviorInfo.TypeID {
+				counters.IncrementPbhCounters(pbhTypeID)
 			}
 		case types.AlarmChangeTypePbhEnter:
 			if servicesToRemove[counters.ID] && alarm != nil {
@@ -432,7 +436,8 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 
 			if servicesToAdd[counters.ID] {
 				counters.All++
-				counters.IncrementAlarmCounters(curState, acked, isActive)
+				counters.IncrementAlarmCounters(curState, true, isActive)
+
 				if !isActive {
 					counters.IncrementPbhCounters(pbhTypeID)
 				}
@@ -460,7 +465,7 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 
 			if servicesToAdd[counters.ID] {
 				counters.All++
-				counters.IncrementAlarmCounters(curState, acked, isActive)
+				counters.IncrementAlarmCounters(curState, false, isActive)
 				if !isActive {
 					counters.IncrementPbhCounters(pbhTypeID)
 				}
@@ -489,7 +494,7 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 		newModel = mongodriver.
 			NewUpdateOneModel().
 			SetFilter(bson.M{"_id": counters.ID}).
-			SetUpdate(bson.M{"$set": counters}).
+			SetUpdate(bson.M{"$inc": counters.Sub(oldCounters)}).
 			SetUpsert(true)
 
 		b, err := bson.Marshal(newModel)
