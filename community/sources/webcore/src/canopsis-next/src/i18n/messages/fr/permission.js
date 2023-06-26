@@ -67,7 +67,7 @@ export default {
       description: 'Les utilisateurs disposant de cette autorisation peuvent associer un ticket',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.cancel]: {
-      name: 'Droits sur la liste des alarmes : annulation',
+      name: 'Droits sur la liste des alarmes : annuler l\'alarme',
       description: 'Les utilisateurs disposant de cette autorisation peuvent annuler les alarmes',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.fastCancel]: {
@@ -167,12 +167,12 @@ export default {
       description: 'Les utilisateurs disposant de cette autorisation peuvent accéder à l\'action "Comportement périodique" et modifier les comportements PB pour les entités',
     },
     [USERS_PERMISSIONS.business.context.actions.massEnable]: {
-      name: 'Droits sur le contexte : activer l\'action en masse',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent accéder à l\'action "Activer" pour les entités',
+      name: 'Droits sur l\'explorateur de contexte : action d\'activation en masse',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent effectuer une action en masse pour activer les entités sélectionnées',
     },
     [USERS_PERMISSIONS.business.context.actions.massDisable]: {
-      name: 'Droits sur le contexte : action de désactivation en masse',
-      description: 'Les utilisateurs disposant de cette autorisation peuvent accéder à l\'action "Désactiver" pour les entités',
+      name: 'Droits sur l\'explorateur de contexte : action de désactivation en masse',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent effectuer une action en masse pour désactiver les entités sélectionnées',
     },
     [USERS_PERMISSIONS.business.context.actions.listFilters]: {
       name: 'Droits sur l\'explorateur de contexte : afficher les filtres',
@@ -255,8 +255,8 @@ export default {
       description: 'Les utilisateurs disposant de cette autorisation peuvent ouvrir la liste des alarmes disponibles pour chaque service',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.pbehaviorList]: {
-      name: '',
-      description: '',
+      name: 'Service météo : accès à la liste des comportements du service',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent accéder à la liste de tous les PBhaviors des services (dans le sous-onglet des fenêtres modales des entités de service)',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.listFilters]: {
       name: 'Droits sur le service météo : Afficher les filtres',
@@ -512,7 +512,7 @@ export default {
     },
     [USERS_PERMISSIONS.technical.engine]: {
       name: 'Moteurs',
-      description: '',
+      description: 'Cette autorisation définit l\'accès à la configuration des moteurs',
     },
     [USERS_PERMISSIONS.technical.healthcheckStatus]: {
       name: 'État de la vérification de l\'état',
@@ -620,7 +620,7 @@ export default {
     },
     [USERS_PERMISSIONS.api.general.appInfoRead]: {
       name: 'Lire les informations sur l\'application',
-      description: '',
+      description: 'Accès à la route API pour lire les informations sur l\'application',
     },
     [USERS_PERMISSIONS.api.general.alarmRead]: {
       name: 'Lire les alarmes',

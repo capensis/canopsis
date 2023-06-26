@@ -67,8 +67,8 @@ export default {
       description: 'Users with this permission can associate a ticket',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.cancel]: {
-      name: 'Rights on alarm list: cancelation',
-      description: 'Users with this permission can do alarms cancelation',
+      name: 'Rights on alarm list: cancel alarm',
+      description: 'Users with this permission can cancel alarms',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.fastCancel]: {
       name: 'Rights on alarm list: fast alarm cancelation',
@@ -167,12 +167,12 @@ export default {
       description: 'Users with this permission can access to the action "Periodical behavior" and edit PBehaviors for entities',
     },
     [USERS_PERMISSIONS.business.context.actions.massEnable]: {
-      name: 'Rights on context: Mass enable action',
-      description: 'Users with this permission can access to the action "Enable" for entities',
+      name: 'Rights on context explorer: Mass enable action',
+      description: 'Users with this permission can perform mass action to enable selected entities',
     },
     [USERS_PERMISSIONS.business.context.actions.massDisable]: {
-      name: 'Rights on context: Mass disable action',
-      description: 'Users with this permission can access to the action "Disable" for entities',
+      name: 'Rights on context explorer: Mass disable action',
+      description: 'Users with this permission can perform mass action to disable selected entities',
     },
     [USERS_PERMISSIONS.business.context.actions.listFilters]: {
       name: 'Rights on context explorer: view filters',
@@ -255,8 +255,8 @@ export default {
       description: 'Users with this permission can open the list of alarms available for each service',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.pbehaviorList]: {
-      name: '',
-      description: '',
+      name: 'Service weather: Access to service pbehavior list',
+      description: 'Users with this permission can access the list of all PBehaviors of services (in the subtab in the service entities modal windows)',
     },
     [USERS_PERMISSIONS.business.serviceWeather.actions.listFilters]: {
       name: 'Rights on service weather: View filters',
@@ -512,7 +512,7 @@ export default {
     },
     [USERS_PERMISSIONS.technical.engine]: {
       name: 'Engines',
-      description: '',
+      description: 'This permission defines the access to the Engines configuration',
     },
     [USERS_PERMISSIONS.technical.healthcheckStatus]: {
       name: 'Healthcheck status',
@@ -620,7 +620,7 @@ export default {
     },
     [USERS_PERMISSIONS.api.general.appInfoRead]: {
       name: 'Read app information',
-      description: '',
+      description: 'Access to API route to read app information',
     },
     [USERS_PERMISSIONS.api.general.alarmRead]: {
       name: 'Read alarms',
