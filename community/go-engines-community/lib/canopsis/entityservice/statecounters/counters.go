@@ -5,10 +5,10 @@ import (
 )
 
 type StateCounters struct {
-	Critical int64 `bson:"critical"`
-	Major    int64 `bson:"major"`
-	Minor    int64 `bson:"minor"`
-	Ok       int64 `bson:"ok"`
+	Critical int `bson:"critical"`
+	Major    int `bson:"major"`
+	Minor    int `bson:"minor"`
+	Ok       int `bson:"ok"`
 }
 
 type EntityServiceCounters struct {
@@ -117,4 +117,26 @@ func (s *EntityServiceCounters) IncrementPbhCounters(typeID string) {
 func (s *EntityServiceCounters) DecrementPbhCounters(typeID string) {
 	s.UnderPbehavior--
 	s.PbehaviorCounters[typeID]--
+}
+
+func (s *EntityServiceCounters) Sub(o EntityServiceCounters) map[string]int {
+	diff := make(map[string]int)
+
+	diff["all"] = s.All - o.All
+	diff["active"] = s.Active - o.Active
+	diff["state.ok"] = s.State.Ok - o.State.Ok
+	diff["state.minor"] = s.State.Minor - o.State.Minor
+	diff["state.major"] = s.State.Major - o.State.Major
+	diff["state.critical"] = s.State.Critical - o.State.Critical
+	diff["acked"] = s.Acknowledged - o.Acknowledged
+	diff["acked_under_pbh"] = s.AcknowledgedUnderPbh - o.AcknowledgedUnderPbh
+	diff["unacked"] = s.NotAcknowledged - o.NotAcknowledged
+	diff["under_pbh"] = s.UnderPbehavior - o.UnderPbehavior
+	diff["depends"] = s.Depends - o.Depends
+
+	for k, v := range s.PbehaviorCounters {
+		diff["pbehavior."+k] = v - o.PbehaviorCounters[k]
+	}
+
+	return diff
 }
