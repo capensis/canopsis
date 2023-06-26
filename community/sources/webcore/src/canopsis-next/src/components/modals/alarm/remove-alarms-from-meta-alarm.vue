@@ -13,8 +13,8 @@
           c-name-field(
             v-model="form.comment",
             :label="$tc('common.comment')",
-            name="comment",
-            required
+            :required="config.isCommentRequired",
+            name="comment"
           )
       template(#actions="")
         v-btn(
