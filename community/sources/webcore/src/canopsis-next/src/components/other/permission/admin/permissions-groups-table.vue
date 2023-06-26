@@ -1,6 +1,6 @@
 <template lang="pug">
   v-data-table(
-    :items="sortedGroups",
+    :items="groups",
     :headers="headers",
     item-key="name",
     expand,
@@ -60,14 +60,6 @@ export default {
 
         ...this.roles.map(role => ({ text: role.name, sortable: false })),
       ];
-    },
-
-    groupsWithName() {
-      return this.groups.map(({ key, name, permissions }) => ({ permissions, name: name ?? this.$tc(key) }));
-    },
-
-    sortedGroups() {
-      return this.groupsWithName;
     },
   },
 };
