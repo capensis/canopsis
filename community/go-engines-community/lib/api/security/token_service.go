@@ -37,7 +37,7 @@ func NewTokenService(
 ) TokenService {
 	return &tokenService{
 		config:           config,
-		dbRoleCollection: client.Collection(mongo.RightsMongoCollection),
+		dbRoleCollection: client.Collection(mongo.RoleCollection),
 		tokenGenerator:   generator,
 		tokenStore:       store,
 	}
@@ -138,23 +138,26 @@ func (s *tokenService) DeleteBy(ctx context.Context, user, provider string) erro
 func (s *tokenService) getIntervals(ctx context.Context, user security.User, provider string) (types.DurationWithUnit, types.DurationWithUnit, error) {
 	var expirationInterval, inactivityInterval types.DurationWithUnit
 	roleConf := AuthMethodConf{}
-	cursor, err := s.dbRoleCollection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{"_id": user.Role}},
-		{"$project": bson.M{
-			"expiration_interval": "$auth_config.expiration_interval",
-			"inactivity_interval": "$auth_config.inactivity_interval",
-		}},
-	})
-	if err != nil {
-		return expirationInterval, inactivityInterval, err
-	}
-	defer cursor.Close(ctx)
-	if cursor.Next(ctx) {
-		err = cursor.Decode(&roleConf)
+	if len(user.Roles) > 0 {
+		cursor, err := s.dbRoleCollection.Aggregate(ctx, []bson.M{
+			{"$match": bson.M{"_id": user.Roles[0]}},
+			{"$project": bson.M{
+				"expiration_interval": "$auth_config.expiration_interval",
+				"inactivity_interval": "$auth_config.inactivity_interval",
+			}},
+		})
 		if err != nil {
 			return expirationInterval, inactivityInterval, err
 		}
+		defer cursor.Close(ctx)
+		if cursor.Next(ctx) {
+			err = cursor.Decode(&roleConf)
+			if err != nil {
+				return expirationInterval, inactivityInterval, err
+			}
+		}
 	}
+
 	if roleConf.ExpirationInterval != nil {
 		expirationInterval = *roleConf.ExpirationInterval
 	}
