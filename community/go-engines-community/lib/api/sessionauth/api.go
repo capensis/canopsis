@@ -71,7 +71,7 @@ func (a *api) LoginHandler() gin.HandlerFunc {
 		response.Contact.Address = user.Contact.Address
 		response.Name = user.Name
 		response.Email = user.Email
-		response.Role = user.Role
+		response.Roles = user.Roles
 
 		session.Values["user"] = user.ID
 		err = session.Save(c.Request, c.Writer)
