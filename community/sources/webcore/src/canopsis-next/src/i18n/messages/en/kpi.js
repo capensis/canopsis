@@ -102,7 +102,6 @@ export default {
       [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: 'Average number of non-displayed alarms',
       [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: 'Average number of alarms with PBehavior',
       [ALARM_METRIC_PARAMETERS.correlationAlarms]: 'Average number of alarms with correlation',
-      [ALARM_METRIC_PARAMETERS.ackAlarms]: 'Average number of active alarms with acks',
       [ALARM_METRIC_PARAMETERS.notAckedAlarms]: 'Average number of not acked alarms',
       [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]: 'Average number of not acked alarms with duration 1-4h',
       [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]: 'Average number of not acked alarms with duration 4-24h',
