@@ -751,12 +751,12 @@ describe('actions-panel', () => {
     const alarmData = {
       _id: Faker.datatype.string(),
       entity,
+      pbehavior,
       v: {
         status: {
-          val: ENTITIES_STATUSES.ongoing,
+          val: ENTITIES_STATUSES.closed,
         },
       },
-      pbehavior,
     };
 
     const wrapper = factory({
@@ -792,18 +792,16 @@ describe('actions-panel', () => {
                 { name: '_id', path: 'alarm._id', value: alarmData._id },
                 {
                   name: 'v',
-                  children: [
-                    {
-                      name: 'status',
-                      children: [
-                        {
-                          name: 'val',
-                          path: 'alarm.v.status.val',
-                          value: 0,
-                        },
-                      ],
-                    },
-                  ],
+                  children: [{
+                    name: 'status',
+                    children: [
+                      {
+                        name: 'val',
+                        path: 'alarm.v.status.val',
+                        value: 0,
+                      },
+                    ],
+                  }],
                 },
               ],
             },
@@ -1344,20 +1342,21 @@ describe('actions-panel', () => {
   });
 
   it('Renders `actions-panel` with resolved alarm', () => {
+    const resolvedAlarmData = {
+      ...alarm,
+      v: {
+        status: {
+          val: ENTITIES_STATUSES.closed,
+        },
+      },
+    };
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
         manualMetaAlarmModule,
       ]),
       propsData: {
-        item: {
-          ...alarm,
-          v: {
-            status: {
-              val: ENTITIES_STATUSES.closed,
-            },
-          },
-        },
+        item: resolvedAlarmData,
         widget,
         parentAlarm,
       },
@@ -1431,6 +1430,38 @@ describe('actions-panel', () => {
         item: {
           ...alarm,
 
+          links: {
+            cat: [
+              {
+                icon_name: 'icon',
+                label: 'Label',
+                url: 'URL',
+                rule_id: 'RuleId',
+              },
+            ],
+          },
+        },
+        widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `actions-panel` with links in resolved alarm', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: {
+          ...alarm,
+
+          v: {
+            status: {
+              val: ENTITIES_STATUSES.closed,
+            },
+          },
           links: {
             cat: [
               {
