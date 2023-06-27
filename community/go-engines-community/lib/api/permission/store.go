@@ -6,7 +6,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -17,8 +16,8 @@ type Store interface {
 func NewStore(dbClient mongo.DbClient) Store {
 	return &store{
 		dbClient:              dbClient,
-		dbCollection:          dbClient.Collection(mongo.RightsMongoCollection),
-		defaultSearchByFields: []string{"_id", "crecord_name", "description"},
+		dbCollection:          dbClient.Collection(mongo.PermissionCollection),
+		defaultSearchByFields: []string{"_id", "name", "description"},
 		defaultSortBy:         "name",
 	}
 }
@@ -31,13 +30,7 @@ type store struct {
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
-	pipeline := []bson.M{
-		{"$match": bson.M{"crecord_type": securitymodel.LineTypeObject}},
-		{"$addFields": bson.M{
-			"name": "$crecord_name",
-		}},
-	}
-
+	pipeline := make([]bson.M, 0)
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})

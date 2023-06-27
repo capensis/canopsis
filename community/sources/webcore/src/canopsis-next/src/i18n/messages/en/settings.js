@@ -54,6 +54,7 @@ export default {
   inlineLinksCount: 'Inline links count',
   isMultiAckEnabled: 'Multiple ack',
   isMultiDeclareTicketEnabled: 'Multiple declare ticket',
+  isActionsAllowWithOkState: 'Actions allowed when state OK?',
   fastAckOutput: 'Fast-ack output',
   fastCancelOutput: 'Fast-cancel output',
   isHtmlEnabledOnTimeLine: 'HTML enabled on timeline?',
