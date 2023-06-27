@@ -106,6 +106,7 @@ export function convertAlarmWidgetToQuery(widget) {
   if (!isEmpty(liveReporting)) {
     query.tstart = liveReporting.tstart;
     query.tstop = liveReporting.tstop;
+    query.time_field = liveReporting.time_field;
   } else if (query.opened === ALARMS_OPENED_VALUES.resolved) {
     query.tstart = QUICK_RANGES.last30Days.start;
     query.tstop = QUICK_RANGES.last30Days.stop;
