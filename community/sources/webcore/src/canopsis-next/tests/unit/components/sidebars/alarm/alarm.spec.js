@@ -117,7 +117,7 @@ const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher
 const selectFieldKioskHideActions = wrapper => wrapper.findAll('input.field-switcher').at(8);
 const selectFieldKioskHideMassSelection = wrapper => wrapper.findAll('input.field-switcher').at(9);
 const selectFieldKioskHideToolbar = wrapper => wrapper.findAll('input.field-switcher').at(10);
-const selectFieldActionsAllowWithOkState = wrapper => wrapper.findAll('input.field-switcher').at(10);
+const selectFieldActionsAllowWithOkState = wrapper => wrapper.findAll('input.field-switcher').at(11);
 const selectChartsForm = wrapper => wrapper.findAll('input.charts-form').at(0);
 
 describe('alarm', () => {
