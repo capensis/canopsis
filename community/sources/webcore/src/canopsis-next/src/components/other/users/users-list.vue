@@ -17,6 +17,7 @@
         type="delete",
         @click="$emit('remove-selected', selected)"
       )
+    template(#name="{ item }") {{ item.display_name }}
     template(#enable="{ item }")
       c-enabled(:value="item.enable")
     template(#active="{ item }")
@@ -71,7 +72,7 @@ export default {
       return [
         {
           text: this.$t('common.username'),
-          value: 'display_name',
+          value: 'name',
         },
         {
           text: this.$t('user.firstName'),
@@ -86,6 +87,7 @@ export default {
         {
           text: this.$tc('common.role', 2),
           value: 'roles',
+          sortable: false,
         },
         {
           text: this.$t('user.active'),
