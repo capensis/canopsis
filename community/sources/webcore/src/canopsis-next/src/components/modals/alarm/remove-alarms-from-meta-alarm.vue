@@ -13,7 +13,7 @@
           c-name-field(
             v-model="form.comment",
             :label="$tc('common.comment')",
-            :required="config.isCommentRequired",
+            :required="isCommentRequired",
             name="comment"
           )
       template(#actions="")
@@ -63,6 +63,11 @@ export default {
         comment: '',
       },
     };
+  },
+  computed: {
+    isCommentRequired() {
+      return this.config.isCommentRequired ?? true;
+    },
   },
   methods: {
     async submit() {
