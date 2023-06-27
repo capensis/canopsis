@@ -19,10 +19,12 @@ Feature: Get a share token
             "name": "root",
             "display_name": "root John Doe admin@canopsis.net"
           },
-          "role": {
-            "_id": "admin",
-            "name": "admin"
-          },
+          "roles": [
+            {
+              "_id": "admin",
+              "name": "admin"
+            }
+          ],
           "created": 1619083733,
           "accessed": 1619083733,
           "expired": null

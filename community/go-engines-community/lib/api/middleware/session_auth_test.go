@@ -9,7 +9,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	mock_sessions "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/gorilla/sessions"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/gin-gonic/gin"
@@ -22,7 +21,7 @@ func TestSessionAuth_GivenAuthUser_ShouldReturnResponseAndSetUserDataToContext(t
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	expectedCode := http.StatusOK
-	user := &model.Rbac{
+	user := &security.User{
 		ID:         "testid",
 		AuthApiKey: "testkey",
 	}
@@ -41,7 +40,7 @@ func TestSessionAuth_GivenAuthUser_ShouldReturnResponseAndSetUserDataToContext(t
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.
 		EXPECT().
-		Collection(gomock.Eq(libmongo.RightsMongoCollection)).
+		Collection(gomock.Eq(libmongo.UserCollection)).
 		Return(mockDbCollection)
 	router := gin.New()
 	router.GET(
@@ -134,7 +133,7 @@ func TestSessionAuth_GivenInvalidUserSession_ShouldReturnUnauthorizedError(t *te
 	}
 }
 
-func mockUserCursor(ctrl *gomock.Controller, user *model.Rbac) libmongo.Cursor {
+func mockUserCursor(ctrl *gomock.Controller, user *security.User) libmongo.Cursor {
 	mockCursor := mock_mongo.NewMockCursor(ctrl)
 
 	if user != nil {
@@ -143,7 +142,7 @@ func mockUserCursor(ctrl *gomock.Controller, user *model.Rbac) libmongo.Cursor {
 			EXPECT().
 			Decode(gomock.Any()).
 			Do(func(val interface{}) {
-				if u, ok := val.(*model.Rbac); ok {
+				if u, ok := val.(*security.User); ok {
 					*u = *user
 				}
 			}).

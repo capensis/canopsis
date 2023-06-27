@@ -146,7 +146,7 @@ func (s *security) RegisterCallbackRoutes(router gin.IRouter, client mongo.DbCli
 			router.GET("/api/v4/cas/login", cas.LoginHandler(casConfig))
 			router.GET("/api/v4/cas/loggedin", cas.CallbackHandler(p, s.enforcer, s.GetTokenService()))
 		case libsecurity.AuthMethodSaml:
-			sp, err := saml.NewServiceProvider(s.newUserProvider(), client.Collection(mongo.RightsMongoCollection), s.sessionStore,
+			sp, err := saml.NewServiceProvider(s.newUserProvider(), client.Collection(mongo.RoleCollection), s.sessionStore,
 				s.enforcer, s.config, s.GetTokenService(), s.logger)
 			if err != nil {
 				s.logger.Err(err).Msg("RegisterCallbackRoutes: NewServiceProvider error")
