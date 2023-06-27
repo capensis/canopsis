@@ -175,6 +175,11 @@
           v-model="form.parameters.kiosk.hideToolbar",
           :title="$t('settings.kiosk.hideToolbar')"
         )
+      v-divider
+      field-switcher(
+        v-model="form.parameters.isActionsAllowWithOkState",
+        :title="$t('settings.isActionsAllowWithOkState')"
+      )
     v-divider
     charts-form(v-model="form.parameters.charts")
     v-divider

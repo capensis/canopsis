@@ -6,6 +6,6 @@ const (
 	Username = "username"
 	// ApiKey is the context name for user api key.
 	ApiKey = "api_key"
-	// RoleKey is the context name for user's role
-	RoleKey = "role"
+	// RolesKey is the context name for user's roles
+	RolesKey = "roles"
 )
