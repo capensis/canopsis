@@ -20,7 +20,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { isObject } from 'lodash';
+import { isArray, isObject } from 'lodash';
 
 import { MAX_LIMIT } from '@/constants';
 
@@ -78,7 +78,17 @@ export default {
     },
 
     availableRoles() {
-      return !this.items.length && isObject(this.value) ? [this.value] : this.items;
+      if (!this.items.length) {
+        if (isArray(this.value)) {
+          return this.value;
+        }
+
+        if (isObject(this.value)) {
+          return [this.value];
+        }
+      }
+
+      return this.items;
     },
 
     rules() {
