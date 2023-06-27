@@ -242,6 +242,12 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
         title="Hide toolbar"
       />
     </widget-settings-group-stub>
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="Actions allowed when state OK?"
+    />
   </widget-settings-group-stub>
   <hr
     class="v-divider theme--light"
@@ -484,6 +490,12 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
         title="Hide toolbar"
       />
     </widget-settings-group-stub>
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="Actions allowed when state OK?"
+    />
   </widget-settings-group-stub>
   <hr
     class="v-divider theme--light"
@@ -721,6 +733,12 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
         title="Hide toolbar"
       />
     </widget-settings-group-stub>
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
+      title="Actions allowed when state OK?"
+    />
   </widget-settings-group-stub>
   <hr
     class="v-divider theme--light"

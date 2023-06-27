@@ -109,7 +109,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 		bson.M{"$sort": bson.M{"filters.position": 1}},
 		bson.M{"$group": bson.M{
 			"_id": bson.M{
-				"_id":    "_id",
+				"_id":    "$_id",
 				"widget": "$widgets._id",
 			},
 			"data":    bson.M{"$first": "$$ROOT"},
