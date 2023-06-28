@@ -450,29 +450,27 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 			entity.Impacts = append(entity.Impacts, connectorID)
 			entities = []types.Entity{connector, *entity}
 		}
-	} else {
+	} else if resourceID == "" {
 		entity = &component
-		if resourceID != "" {
-			resource := types.Entity{
-				ID:            resourceID,
-				Name:          event.Resource,
-				Impacts:       []string{componentID},
-				Depends:       []string{connectorID},
-				EnableHistory: []types.CpsTime{now},
-				Enabled:       true,
-				Type:          types.EntityTypeResource,
-				Connector:     connectorID,
-				Component:     componentID,
-				Infos:         map[string]types.Info{},
-				ImpactLevel:   types.EntityDefaultImpactLevel,
-				IsNew:         true,
-				Created:       now,
-				LastEventDate: &now,
-			}
-
-			entity = &resource
+		entities = []types.Entity{connector, *entity}
+	} else {
+		resource := types.Entity{
+			ID:            resourceID,
+			Name:          event.Resource,
+			Impacts:       []string{componentID},
+			Depends:       []string{connectorID},
+			EnableHistory: []types.CpsTime{now},
+			Enabled:       true,
+			Type:          types.EntityTypeResource,
+			Connector:     connectorID,
+			Component:     componentID,
+			Infos:         map[string]types.Info{},
+			ImpactLevel:   types.EntityDefaultImpactLevel,
+			IsNew:         true,
+			Created:       now,
+			LastEventDate: &now,
 		}
-
+		entity = &resource
 		entities = []types.Entity{connector, component, *entity}
 	}
 
