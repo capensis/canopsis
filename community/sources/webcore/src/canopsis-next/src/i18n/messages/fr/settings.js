@@ -50,6 +50,7 @@ export default {
   filterEditor: 'Éditeur de filtre',
   isAckNoteRequired: 'Champ \'Note\' requis lors d\'un acquittement ?',
   isSnoozeNoteRequired: 'Champ \'Note\' requis lors d\'une mise en veille ?',
+  isRemoveAlarmsFromMetaAlarmCommentRequired: 'Champ \'Commentaire\' requis lors de la suppression des alarmes de la méta-alarme manuelle ?',
   inlineLinksCount: 'Nombre de liens en ligne',
   isMultiAckEnabled: 'Acquittement multiple',
   isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
