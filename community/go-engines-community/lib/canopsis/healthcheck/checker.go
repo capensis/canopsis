@@ -66,7 +66,7 @@ func (c *checker) createEvent() types.Event {
 		Author:        "healthcheck",
 		Timestamp:     now,
 		Initiator:     types.InitiatorSystem,
-		Healtcheck:    true,
+		Healthcheck:   true,
 	}
 	if c.eventWithEntity {
 		entity := types.Entity{

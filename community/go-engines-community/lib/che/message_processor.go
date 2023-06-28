@@ -133,7 +133,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}
 
 	// Process event by event filters.
-	if p.FeatureEventProcessing && !event.Healtcheck {
+	if p.FeatureEventProcessing && !event.Healthcheck {
 		event, err = p.EventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
 			if errors.Is(err, eventfilter.ErrDropOutcome) {
@@ -210,7 +210,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		return nil, nil
 	}
 
-	if event.Healtcheck {
+	if event.Healthcheck {
 		_, err := p.EntityCollection.DeleteMany(ctx, bson.M{"healthcheck": true})
 		if err != nil {
 			p.logError(err, "cannot delete temporary entity", d.Body)
