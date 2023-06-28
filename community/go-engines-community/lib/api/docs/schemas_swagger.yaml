@@ -2564,6 +2564,8 @@ definitions:
     properties:
       action:
         type: string
+      hide_in_menu:
+        type: boolean
       icon_name:
         type: string
       label:
@@ -2591,6 +2593,8 @@ definitions:
       category:
         maxLength: 255
         type: string
+      hide_in_menu:
+        type: boolean
       icon_name:
         maxLength: 255
         type: string
