@@ -55,7 +55,7 @@ func NewStore(db mongo.DbClient, linkGenerator link.Generator, logger zerolog.Lo
 		alarmDbCollection:         db.Collection(mongo.AlarmMongoCollection),
 		resolvedAlarmDbCollection: db.Collection(mongo.ResolvedAlarmMongoCollection),
 		serviceCountersCollection: db.Collection(mongo.EntityServiceCountersMongoCollection),
-		userDbCollection:          db.Collection(mongo.RightsMongoCollection),
+		userDbCollection:          db.Collection(mongo.UserCollection),
 
 		linkGenerator: linkGenerator,
 
@@ -368,7 +368,7 @@ func (s *store) findUser(ctx context.Context, id string) (link.User, error) {
 	user := link.User{}
 	cursor, err := s.userDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"_id": id}},
-		{"$addFields": bson.M{"username": "$crecord_name"}},
+		{"$addFields": bson.M{"username": "$name"}},
 	})
 	if err != nil {
 		return user, err

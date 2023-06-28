@@ -130,6 +130,46 @@ import { ENTITIES_STATES, ENTITIES_STATUSES, TIME_UNITS } from '@/constants';
  */
 
 /**
+ * Check alarm state is ok
+ *
+ * @param {Alarm} alarm
+ * @returns {boolean}
+ */
+export const isAlarmStateOk = alarm => alarm.v?.state?.val === ENTITIES_STATES.ok;
+
+/**
+ * Check alarm status is closed
+ *
+ * @param {Alarm} alarm
+ * @returns {boolean}
+ */
+export const isAlarmStatusClosed = alarm => alarm.v?.status?.val === ENTITIES_STATUSES.closed;
+
+/**
+ * Check alarm status is cancelled
+ *
+ * @param {Alarm} alarm
+ * @returns {boolean}
+ */
+export const isAlarmStatusCancelled = alarm => alarm.v?.status?.val === ENTITIES_STATUSES.cancelled;
+
+/**
+ * Check alarm status is ongoing
+ *
+ * @param {Alarm} alarm
+ * @returns {boolean}
+ */
+export const isAlarmStatusOngoing = alarm => alarm.v?.status?.val === ENTITIES_STATUSES.ongoing;
+
+/**
+ * Check alarm status is flapping
+ *
+ * @param {Alarm} alarm
+ * @returns {boolean}
+ */
+export const isAlarmStatusFlapping = alarm => alarm.v?.status?.val === ENTITIES_STATUSES.flapping;
+
+/**
  * @typedef {Object} SnoozeAction
  * @property {number} duration
  * @property {string} comment
@@ -141,12 +181,20 @@ import { ENTITIES_STATES, ENTITIES_STATUSES, TIME_UNITS } from '@/constants';
  */
 
 /**
- * Checks if alarm is resolved
- * @param alarm - alarm entity
+ * Checks if alarm is cancelled
+ *
+ * @param {Alarm} alarm - alarm entity
  * @returns {boolean}
  */
-export const isClosedAlarmStatus = alarm => [ENTITIES_STATUSES.closed, ENTITIES_STATUSES.cancelled]
-  .includes(alarm.v.status.val);
+export const isCancelledAlarmStatus = alarm => alarm.v.status.val === ENTITIES_STATUSES.cancelled;
+
+/**
+ * Checks if alarm is closed
+ *
+ * @param {Alarm} alarm - alarm entity
+ * @returns {boolean}
+ */
+export const isClosedAlarmStatus = alarm => alarm.v.status.val === ENTITIES_STATUSES.closed;
 
 /**
  * Checks if alarm is resolved
@@ -155,6 +203,15 @@ export const isClosedAlarmStatus = alarm => [ENTITIES_STATUSES.closed, ENTITIES_
  * @returns {boolean}
  */
 export const isResolvedAlarm = alarm => !!alarm.v.resolved;
+
+/**
+ * Checks if action available for alarm
+ *
+ * @param alarm - alarm entity
+ * @returns {boolean}
+ */
+export const isActionAvailableForAlarm = alarm => !isClosedAlarmStatus(alarm)
+  && !(isCancelledAlarmStatus(alarm) && isResolvedAlarm(alarm));
 
 /**
  * Checks if alarm have critical state

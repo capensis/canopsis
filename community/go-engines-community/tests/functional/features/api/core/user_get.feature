@@ -24,14 +24,24 @@ Feature: Get a user
           "lastname": "test-user-to-get-1-lastname",
           "name": "test-user-to-get-1",
           "display_name": "test-user-to-get-1 test-user-to-get-1-firstname test-user-to-get-1-lastname test-user-to-get-1-email@canopsis.net",
-          "role": {
-            "_id": "test-role-to-user-get-1",
-            "name": "test-role-to-user-get-1",
-            "defaultview": {
-              "_id": "test-view-to-edit-user",
-              "title": "test-view-to-edit-user-title"
+          "roles": [
+            {
+              "_id": "test-role-to-user-edit-2",
+              "name": "test-role-to-user-edit-2",
+              "defaultview": {
+                "_id": "test-view-to-edit-user",
+                "title": "test-view-to-edit-user-title"
+              }
+            },
+            {
+              "_id": "test-role-to-user-edit-1",
+              "name": "test-role-to-user-edit-1",
+              "defaultview": {
+                "_id": "test-view-to-edit-user",
+                "title": "test-view-to-edit-user-title"
+              }
             }
-          },
+          ],
           "source": "",
           "ui_groups_navigation_type": "side-bar",
           "ui_language": "en",
@@ -52,14 +62,16 @@ Feature: Get a user
           "lastname": "test-user-to-get-2-lastname",
           "name": "test-user-to-get-2",
           "display_name": "test-user-to-get-2 test-user-to-get-2-firstname test-user-to-get-2-lastname test-user-to-get-2-email@canopsis.net",
-          "role": {
-            "_id": "test-role-to-user-get-2",
-            "name": "test-role-to-user-get-2",
-            "defaultview": {
-              "_id": "test-view-to-edit-user",
-              "title": "test-view-to-edit-user-title"
+          "roles": [
+            {
+              "_id": "test-role-to-user-edit-3",
+              "name": "test-role-to-user-edit-3",
+              "defaultview": {
+                "_id": "test-view-to-edit-user",
+                "title": "test-view-to-edit-user-title"
+              }
             }
-          },
+          ],
           "source": "",
           "ui_groups_navigation_type": "side-bar",
           "ui_language": "en",
@@ -99,14 +111,14 @@ Feature: Get a user
 
   Scenario: given search by role request should return users
     When I am admin
-    When I do GET /api/v4/users?search=test-role-to-user-get-1
+    When I do GET /api/v4/users?search=test-role-to-user-edit-3
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
       "data": [
         {
-          "_id": "test-user-to-get-1"
+          "_id": "test-user-to-get-2"
         }
       ],
       "meta": {
@@ -138,14 +150,24 @@ Feature: Get a user
       "lastname": "test-user-to-get-1-lastname",
       "name": "test-user-to-get-1",
       "display_name": "test-user-to-get-1 test-user-to-get-1-firstname test-user-to-get-1-lastname test-user-to-get-1-email@canopsis.net",
-      "role": {
-        "_id": "test-role-to-user-get-1",
-        "name": "test-role-to-user-get-1",
-        "defaultview": {
-          "_id": "test-view-to-edit-user",
-          "title": "test-view-to-edit-user-title"
+      "roles": [
+        {
+          "_id": "test-role-to-user-edit-2",
+          "name": "test-role-to-user-edit-2",
+          "defaultview": {
+            "_id": "test-view-to-edit-user",
+            "title": "test-view-to-edit-user-title"
+          }
+        },
+        {
+          "_id": "test-role-to-user-edit-1",
+          "name": "test-role-to-user-edit-1",
+          "defaultview": {
+            "_id": "test-view-to-edit-user",
+            "title": "test-view-to-edit-user-title"
+          }
         }
-      },
+      ],
       "source": "",
       "ui_groups_navigation_type": "side-bar",
       "ui_language": "en",
