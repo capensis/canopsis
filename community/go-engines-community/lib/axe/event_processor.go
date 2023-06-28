@@ -125,7 +125,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	switch event.EventType {
 	case types.EventTypeCheck:
 		changeType, err := s.storeAlarm(ctx, event)
-		if !event.Healtcheck {
+		if !event.Healthcheck {
 			if err == nil {
 				go s.sendEventStatistics(ctx, *event)
 			}
@@ -750,7 +750,7 @@ func newAlarm(event types.Event, alarmConfig config.AlarmConfig) types.Alarm {
 			Infos:             map[string]map[string]interface{}{},
 			RuleVersion:       map[string]string{},
 		},
-		Healthcheck: event.Healtcheck,
+		Healthcheck: event.Healthcheck,
 	}
 }
 
