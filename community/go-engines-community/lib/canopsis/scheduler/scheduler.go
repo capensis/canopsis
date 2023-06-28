@@ -119,7 +119,7 @@ func (s *scheduler) ProcessEvent(ctx context.Context, event types.Event) error {
 		return err
 	}
 
-	if event.Healtcheck {
+	if event.Healthcheck {
 		_, err := s.queueLock.PopOrUnlock(ctx, lockID, false)
 		return err
 	}
