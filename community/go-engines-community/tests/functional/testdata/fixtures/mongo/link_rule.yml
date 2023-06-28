@@ -176,6 +176,7 @@ link_rule:
         url: http://test-link-rule-to-alarm-link-get-1-link-3-url.com?{{ range .Alarms }}resources[]={{ .Entity.ID }}&{{ end }}
         action: open
         single: true
+        hide_in_menu: true
     external_data:
       component:
         type: mongo
