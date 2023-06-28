@@ -139,10 +139,19 @@ export default {
         },
 
         ...this.widget.parameters.widgetColumns.map(({ metric }) => {
+          const kpiKey = `kpi.statisticsWidgets.metrics.${metric}`;
           const alarmKey = `alarm.metrics.${metric}`;
 
+          let text;
+
+          if (this.$te(kpiKey)) {
+            text = this.$t(kpiKey);
+          } else if (this.$te(alarmKey)) {
+            text = this.$t(alarmKey);
+          }
+
           return {
-            text: this.$te(alarmKey) ? this.$t(alarmKey) : this.$t(`user.metrics.${metric}`),
+            text: text ?? this.$t(`user.metrics.${metric}`),
             value: metric,
             sortable: false,
           };

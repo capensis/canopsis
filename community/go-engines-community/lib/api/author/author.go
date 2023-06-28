@@ -25,7 +25,7 @@ type Provider interface {
 
 func NewProvider(client mongo.DbClient, configProvider config.ApiConfigProvider) Provider {
 	return &provider{
-		collection:     client.Collection(mongo.RightsMongoCollection),
+		collection:     client.Collection(mongo.UserCollection),
 		configProvider: configProvider,
 	}
 }
@@ -42,17 +42,16 @@ func (p *provider) Pipeline() []bson.M {
 func (p *provider) PipelineForField(field string) []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from":         mongo.RightsMongoCollection,
+			"from":         mongo.UserCollection,
 			"localField":   field,
 			"foreignField": "_id",
 			"as":           field,
 		}},
 		{"$unwind": bson.M{"path": "$" + field, "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
-			field + ".username": "$" + field + ".crecord_name",
+			field + ".username": "$" + field + ".name",
 		}},
 		{"$addFields": bson.M{
-			field + ".name":         "$" + field + ".crecord_name",
 			field + ".display_name": p.GetDisplayNameQuery(field),
 		}},
 		{"$addFields": bson.M{
