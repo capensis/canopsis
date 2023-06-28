@@ -179,6 +179,9 @@ export default {
   createAckRemove: {
     title: 'Remove ack',
   },
+  createUnCancel: {
+    title: 'Create uncancel event',
+  },
   liveReporting: {
     editLiveReporting: 'Live reporting',
     dateInterval: 'Date interval',

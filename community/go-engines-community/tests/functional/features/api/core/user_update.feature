@@ -11,7 +11,10 @@ Feature: Update a user
       "firstname": "test-user-to-update-1-firstname-updated",
       "lastname": "test-user-to-update-1-lastname-updated",
       "email": "test-user-to-update-1-email-updated@canopsis.net",
-      "role": "test-role-to-edit-user",
+      "roles": [
+        "test-role-to-user-edit-2",
+        "test-role-to-user-edit-1"
+      ],
       "ui_language": "fr",
       "ui_theme": "canopsis",
       "ui_groups_navigation_type": "top-bar",
@@ -36,14 +39,24 @@ Feature: Update a user
       "lastname": "test-user-to-update-1-lastname-updated",
       "name": "test-user-to-update-1-updated",
       "display_name": "test-user-to-update-1-updated test-user-to-update-1-firstname-updated test-user-to-update-1-lastname-updated test-user-to-update-1-email-updated@canopsis.net",
-      "role": {
-        "_id": "test-role-to-edit-user",
-        "name": "test-role-to-edit-user",
-        "defaultview": {
-          "_id": "test-view-to-edit-user",
-          "title": "test-view-to-edit-user-title"
+      "roles": [
+        {
+          "_id": "test-role-to-user-edit-2",
+          "name": "test-role-to-user-edit-2",
+          "defaultview": {
+            "_id": "test-view-to-edit-user",
+            "title": "test-view-to-edit-user-title"
+          }
+        },
+        {
+          "_id": "test-role-to-user-edit-1",
+          "name": "test-role-to-user-edit-1",
+          "defaultview": {
+            "_id": "test-view-to-edit-user",
+            "title": "test-view-to-edit-user-title"
+          }
         }
-      },
+      ],
       "source": "",
       "ui_groups_navigation_type": "top-bar",
       "ui_language": "fr",
@@ -61,7 +74,9 @@ Feature: Update a user
       "firstname": "test-user-to-update-2-firstname-updated",
       "lastname": "test-user-to-update-2-lastname-updated",
       "email": "test-user-to-update-2-email-updated@canopsis.net",
-      "role": "test-role-to-edit-user",
+      "roles": [
+        "test-role-to-user-edit-1"
+      ],
       "ui_language": "fr",
       "ui_theme": "canopsis",
       "ui_groups_navigation_type": "top-bar",
@@ -94,7 +109,10 @@ Feature: Update a user
     When I do PUT /api/v4/users/test-user-to-update:
     """json
     {
-      "role": "not-exist",
+      "roles": [
+        "test-role-to-user-edit-1",
+        "not-exist"
+      ],
       "defaultview": "not-exist"
     }
     """
@@ -107,7 +125,7 @@ Feature: Update a user
         "email": "Email is missing.",
         "enable": "IsEnabled is missing.",
         "name": "Name is missing.",
-        "role": "Role doesn't exist."
+        "roles": "Roles doesn't exist."
       }
     }
     """
@@ -121,7 +139,9 @@ Feature: Update a user
       "firstname": "test-user-to-update-firstname-updated",
       "lastname": "test-user-to-update-lastname-updated",
       "email": "test-user-to-update-email-updated@canopsis.net",
-      "role": "test-role-to-edit-user",
+      "roles": [
+        "test-role-to-user-edit-1"
+      ],
       "ui_language": "fr",
       "ui_theme": "canopsis",
       "groups_navigation_type": "top-bar",
@@ -182,7 +202,9 @@ Feature: Update a user
       "firstname": "test-user-to-update-3-firstname-updated",
       "lastname": "test-user-to-update-3-lastname-updated",
       "email": "test-user-to-update-3-email-updated@canopsis.net",
-      "role": "test-role-to-edit-user",
+      "roles": [
+        "test-role-to-user-edit-1"
+      ],
       "ui_language": "fr",
       "ui_groups_navigation_type": "top-bar",
       "enable": true,
@@ -207,14 +229,16 @@ Feature: Update a user
       "lastname": "test-user-to-update-3-lastname-updated",
       "name": "test-user-to-update-3-updated",
       "display_name": "test-user-to-update-3-updated test-user-to-update-3-firstname-updated test-user-to-update-3-lastname-updated test-user-to-update-3-email-updated@canopsis.net",
-      "role": {
-        "_id": "test-role-to-edit-user",
-        "name": "test-role-to-edit-user",
-        "defaultview": {
-          "_id": "test-view-to-edit-user",
-          "title": "test-view-to-edit-user-title"
+      "roles": [
+        {
+          "_id": "test-role-to-user-edit-1",
+          "name": "test-role-to-user-edit-1",
+          "defaultview": {
+            "_id": "test-view-to-edit-user",
+            "title": "test-view-to-edit-user-title"
+          }
         }
-      },
+      ],
       "ui_theme": "",
       "ui_groups_navigation_type": "top-bar",
       "ui_language": "fr",
@@ -232,7 +256,9 @@ Feature: Update a user
       "firstname": "test-user-to-update-4-firstname-updated",
       "lastname": "test-user-to-update-4-lastname-updated",
       "email": "test-user-to-update-4-email-updated@canopsis.net",
-      "role": "test-role-to-edit-user",
+      "roles": [
+        "test-role-to-user-edit-1"
+      ],
       "ui_language": "fr",
       "ui_groups_navigation_type": "top-bar",
       "enable": true,
