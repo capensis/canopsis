@@ -791,7 +791,8 @@ Feature: Get alarms
                 "label": "test-link-rule-to-alarm-link-get-1-link-3-label",
                 "icon_name": "test-link-rule-to-alarm-link-get-1-link-3-icon",
                 "url": "http://test-link-rule-to-alarm-link-get-1-link-3-url.com?resources[]=test-resource-to-alarm-link-get-1/test-component-default&",
-                "single": true
+                "single": true,
+                "hide_in_menu": true
               },
               {
                 "rule_id": "test-link-rule-to-alarm-link-get-2",
