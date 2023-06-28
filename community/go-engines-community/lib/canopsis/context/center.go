@@ -381,6 +381,8 @@ func (c *center) createEntities(ctx context.Context, event types.Event) (*types.
 
 	if entity != nil {
 		if event.SourceType == types.SourceTypeResource && (entity.SoftDeleted != nil || entity.Connector != connectorID) {
+			// save old connector for the component
+			component.Connector = entity.Connector
 			entity.Connector = connectorID
 			entities = []types.Entity{connector, component, *entity}
 		}
