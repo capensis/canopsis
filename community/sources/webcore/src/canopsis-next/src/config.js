@@ -135,7 +135,10 @@ export const API_ROUTES = {
   widgetTemplate: '/api/v4/widget-templates',
   permissions: '/api/v4/permissions',
   users: '/api/v4/users',
-  roles: '/api/v4/roles',
+  roles: {
+    list: '/api/v4/roles',
+    templates: '/api/v4/role-templates',
+  },
   eventFilter: {
     rules: '/api/v4/eventfilter/rules',
   },

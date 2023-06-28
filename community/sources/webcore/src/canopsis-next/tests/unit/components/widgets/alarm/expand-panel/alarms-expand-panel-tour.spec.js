@@ -22,7 +22,7 @@ const currentUser = {
   lastname: Faker.name.lastName(),
   name: Faker.name.firstName(),
   password: Faker.datatype.string(),
-  role: '',
+  roles: [],
   ui_groups_navigation_type: GROUPS_NAVIGATION_TYPES.sideBar,
   ui_language: DEFAULT_LOCALE,
   ui_tours: tours,

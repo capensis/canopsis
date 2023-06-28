@@ -1,6 +1,6 @@
 <template lang="pug">
   v-data-table(
-    :items="sortedGroups",
+    :items="groups",
     :headers="headers",
     item-key="name",
     expand,
@@ -22,14 +22,11 @@
         :roles="roles",
         :changed-roles="changedRoles",
         :disabled="disabled",
-        :sort-by="sortBy",
         @change="$listeners.change"
       )
 </template>
 
 <script>
-import { sortBy } from 'lodash';
-
 import PermissionsTable from './permissions-table.vue';
 import PermissionGroupRow from './permission-group-row.vue';
 
@@ -55,26 +52,14 @@ export default {
       type: Boolean,
       default: false,
     },
-    sortBy: {
-      type: [Function, Array, String],
-      default: () => ['name'],
-    },
   },
   computed: {
     headers() {
       return [
         { text: '', sortable: false },
 
-        ...this.roles.map(role => ({ text: role._id, sortable: false })),
+        ...this.roles.map(role => ({ text: role.name, sortable: false })),
       ];
-    },
-
-    groupsWithName() {
-      return this.groups.map(({ key, name, permissions }) => ({ permissions, name: name ?? this.$tc(key) }));
-    },
-
-    sortedGroups() {
-      return sortBy(this.groupsWithName, this.sortBy);
     },
   },
 };
