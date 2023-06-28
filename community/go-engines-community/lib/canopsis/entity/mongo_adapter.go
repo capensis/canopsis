@@ -114,8 +114,9 @@ func (a *mongoAdapter) UpsertMany(ctx context.Context, entities []types.Entity) 
 			"created":         entity.Created,
 			"last_event_date": entity.LastEventDate,
 		}
+		update := bson.M{}
 		if entity.Connector != "" {
-			insert["connector"] = entity.Connector
+			update["connector"] = entity.Connector
 		}
 		if entity.Component != "" {
 			insert["component"] = entity.Component
@@ -123,7 +124,7 @@ func (a *mongoAdapter) UpsertMany(ctx context.Context, entities []types.Entity) 
 
 		insertModels = append(insertModels, mongodriver.NewUpdateOneModel().
 			SetFilter(bson.M{"_id": entity.ID}).
-			SetUpdate(bson.M{"$setOnInsert": insert, "$unset": bson.M{"soft_deleted": ""}}).
+			SetUpdate(bson.M{"$setOnInsert": insert, "$set": update, "$unset": bson.M{"soft_deleted": ""}}).
 			SetUpsert(true))
 	}
 	res, err := a.dbCollection.BulkWrite(ctx, insertModels)
