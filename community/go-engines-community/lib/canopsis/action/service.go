@@ -260,7 +260,7 @@ func (s *service) ProcessAbandonedExecutions(ctx context.Context) error {
 }
 
 func (s *service) sendEventToFifoAck(ctx context.Context, event types.Event) {
-	if event.Healtcheck {
+	if event.Healthcheck {
 		return
 	}
 

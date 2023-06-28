@@ -202,7 +202,7 @@ type Event struct {
 	// IsInstructionMatched is true if an alarm is matched to an auto instruction on an event.
 	IsInstructionMatched bool `bson:"instr_matched,omitempty" json:"instr_matched,omitempty"`
 
-	Healtcheck bool `bson:"healtcheck,omitempty" json:"healtcheck,omitempty"`
+	Healthcheck bool `bson:"healthcheck,omitempty" json:"healthcheck,omitempty"`
 }
 
 // Format an event

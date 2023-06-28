@@ -78,7 +78,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		return nil, nil
 	}
 
-	if !event.Healtcheck {
+	if !event.Healthcheck {
 		event, err = p.EventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
 			if errors.Is(err, eventfilter.ErrDropOutcome) {
