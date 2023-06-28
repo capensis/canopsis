@@ -3,12 +3,12 @@
     v-item-group(v-model="selected", :multiple="multiple")
       v-subheader(v-show="label") {{ label }}
       v-item(v-for="item in items", :key="item[itemValue]")
-        v-chip(
-          slot-scope="{ active, toggle }",
-          :selected="active",
-          :outline="outline",
-          @click="toggle"
-        ) {{ item[itemText] }}
+        template(#default="{ active, toggle }")
+          v-chip(
+            :selected="active",
+            :outline="outline",
+            @click="toggle"
+          ) {{ item[itemText] }}
 </template>
 
 <script>
