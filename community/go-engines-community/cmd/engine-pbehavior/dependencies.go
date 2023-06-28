@@ -13,8 +13,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -117,22 +120,23 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		techMetricsSender.Run(ctx)
 		return nil
 	})
+	rpcMessageProcessor := &rpcServerMessageProcessor{
+		FeaturePrintEventOnError: options.FeaturePrintEventOnError,
+		DbClient:                 dbClient,
+		PbhService:               pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
+		EventManager:             pbehavior.NewEventManager(),
+		TimezoneConfigProvider:   timezoneConfigProvider,
+		Decoder:                  json.NewDecoder(),
+		Encoder:                  json.NewEncoder(),
+		Logger:                   logger,
+	}
 	enginePbehavior.AddConsumer(engine.NewRPCServer(
 		canopsis.PBehaviorRPCConsumerName,
 		canopsis.PBehaviorRPCQueueServerName,
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
 		amqpConnection,
-		&rpcServerMessageProcessor{
-			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
-			DbClient:                 dbClient,
-			PbhService:               pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
-			EventManager:             pbehavior.NewEventManager(),
-			TimezoneConfigProvider:   timezoneConfigProvider,
-			Decoder:                  json.NewDecoder(),
-			Encoder:                  json.NewEncoder(),
-			Logger:                   logger,
-		},
+		rpcMessageProcessor,
 		logger,
 	))
 	enginePbehavior.AddConsumer(engine.NewConcurrentConsumer(
@@ -201,6 +205,19 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		dataStorageConfigProvider,
 		techMetricsConfigProvider,
 	))
+
+	healthcheck.Start(ctx, healthcheck.NewRpcChecker(
+		"pbehavior",
+		rpcMessageProcessor,
+		json.NewEncoder(),
+		func(entity types.Entity, alarm types.Alarm) any {
+			return rpc.PbehaviorEvent{
+				Alarm:       &alarm,
+				Entity:      &entity,
+				Healthcheck: true,
+			}
+		},
+	), logger)
 
 	return enginePbehavior
 }

@@ -10,6 +10,12 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
+const (
+	eventComponent = "healthcheck"
+	eventAuthor    = "healthcheck"
+	eventState     = types.AlarmStateCritical
+)
+
 type Checker interface {
 	Check(ctx context.Context) error
 }
@@ -27,7 +33,6 @@ func NewChecker(
 		engine:          engine,
 		eventWithEntity: eventWithEntity,
 		eventWithAlarm:  eventWithAlarm,
-		state:           types.AlarmStateCritical,
 	}
 }
 
@@ -37,7 +42,6 @@ type checker struct {
 	engine          string
 	eventWithEntity bool
 	eventWithAlarm  bool
-	state           types.CpsNumber
 }
 
 func (c *checker) Check(ctx context.Context) error {
@@ -56,14 +60,14 @@ func (c *checker) createEvent() types.Event {
 	now := types.NewCpsTime()
 	event := types.Event{
 		EventType:     types.EventTypeCheck,
-		State:         c.state,
+		State:         eventState,
 		Connector:     c.engine,
 		ConnectorName: c.engine,
-		Component:     "healthcheck",
+		Component:     eventComponent,
 		Resource:      utils.NewID(),
 		SourceType:    types.SourceTypeResource,
 		Output:        "check engine-" + c.engine,
-		Author:        "healthcheck",
+		Author:        eventAuthor,
 		Timestamp:     now,
 		Initiator:     types.InitiatorSystem,
 		Healthcheck:   true,

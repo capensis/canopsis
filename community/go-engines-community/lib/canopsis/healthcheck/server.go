@@ -2,6 +2,7 @@ package healthcheck
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"os"
 	"strconv"
@@ -71,5 +72,10 @@ func runHttpServer(
 		}
 	}()
 
-	return server.ListenAndServe()
+	err := server.ListenAndServe()
+	if err != nil && !errors.Is(err, http.ErrServerClosed) {
+		return err
+	}
+
+	return nil
 }
