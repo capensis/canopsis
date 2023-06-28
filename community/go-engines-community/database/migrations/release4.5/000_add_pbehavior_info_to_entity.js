@@ -7,6 +7,8 @@ db.periodical_alarm.find({"v.pbehavior_info.id": {$nin: ["", null]}}).forEach(fu
         }
     }
 
+    var pbehaviorInfo = doc.v.pbehavior_info;
+
     if (timestamp) {
         db.periodical_alarm.updateOne({_id: doc._id}, {$set: {"v.pbehavior_info.timestamp": timestamp}});
 
