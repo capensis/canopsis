@@ -10,3 +10,5 @@ export { default as BarChartSettings } from './chart/bar-chart.vue';
 export { default as LineChartSettings } from './chart/line-chart.vue';
 export { default as PieChartSettings } from './chart/pie-chart.vue';
 export { default as NumbersSettings } from './chart/numbers.vue';
+export { default as UserStatisticsSettings } from './statistics/user-statistics.vue';
+export { default as AlarmStatisticsSettings } from './statistics/alarm-statistics.vue';

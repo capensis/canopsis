@@ -179,6 +179,9 @@ export default {
   createAckRemove: {
     title: 'Remove ack',
   },
+  createUnCancel: {
+    title: 'Create uncancel event',
+  },
   liveReporting: {
     editLiveReporting: 'Live reporting',
     dateInterval: 'Date interval',
@@ -273,6 +276,18 @@ export default {
       },
       [WIDGET_TYPES.numbers]: {
         title: 'Numbers',
+      },
+      [WIDGET_TYPES.userStatistics]: {
+        title: 'User statistics',
+      },
+      [WIDGET_TYPES.alarmStatistics]: {
+        title: 'Alarm statistics',
+      },
+      chart: {
+        title: 'Chart',
+      },
+      report: {
+        title: 'Report',
       },
     },
   },
@@ -940,6 +955,9 @@ export default {
         title: 'Edit numbers chart',
       },
     },
+  },
+  importPbehaviorException: {
+    title: 'Import exception dates',
   },
   createTag: {
     create: {

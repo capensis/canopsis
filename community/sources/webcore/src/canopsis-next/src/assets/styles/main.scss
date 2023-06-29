@@ -84,60 +84,6 @@ $mobileBreakpoint: 450px;
   }
 }
 
-.weather-item {
-  min-height: unset !important;
-
-  &.v-card__with-see-alarms-btn {
-    padding-bottom: $seeAlarmBtnHeight;
-
-    .see-alarms-btn {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      font-size: .6em;
-      height: $seeAlarmBtnHeight;
-      color: white;
-      margin: 0;
-      background-color: rgba(0, 0, 0, .2);
-
-      &.v-btn--active:before, &.v-btn:focus:before, &.v-btn:hover:before {
-        background-color: rgba(0, 0, 0, .5);
-      }
-    }
-  }
-
-  &__service-name {
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.2em;
-
-    &, & a {
-      color: white;
-    }
-  }
-
-  .helpBtn {
-    position: absolute;
-    right: 0.2em;
-    top: 0;
-    z-index: 1;
-
-    &:hover, &:focus {
-      position: absolute;
-    }
-  }
-
-  &__background {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 10px;
-    pointer-events: none;
-    opacity: 0.5;
-  }
-}
-
 .pre {
   white-space: pre;
 }
@@ -289,14 +235,34 @@ $mobileBreakpoint: 450px;
   }
 }
 
-.chart-metrics-widget {
+.kpi-widget {
   &__title {
     font-size: 18px;
     font-weight: 500;
     margin-bottom: 16px;
   }
 
- &__chart {
-   width: 100%;
- }
+  &__chart, &__table {
+    width: 100%;
+  }
+
+  &__list {
+    gap: 50px;
+  }
+
+  &__actions {
+    width: 100%;
+  }
+}
+
+.widget-filters {
+  column-gap: 24px;
+
+  &__sampling {
+    max-width: 100px;
+  }
+
+  &__filter-selector, &__interval {
+    max-width: 200px;
+  }
 }

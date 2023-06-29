@@ -45,6 +45,7 @@ const stubs = {
   'field-counters-selector': true,
   'field-switcher': true,
   'field-modal-type': true,
+  'field-action-required-settings': true,
 };
 
 const generateDefaultServiceWeatherWidget = () => ({
@@ -74,6 +75,7 @@ const selectFieldSlider = wrapper => wrapper.find('field-slider-stub');
 const selectFieldCounters = wrapper => wrapper.find('field-counters-selector-stub');
 const selectFieldSwitcher = wrapper => wrapper.find('field-switcher-stub');
 const selectFieldModalType = wrapper => wrapper.find('field-modal-type-stub');
+const selectFieldActionRequiredSettingsType = wrapper => wrapper.find('field-action-required-settings-stub');
 
 describe('service-weather', () => {
   const nowTimestamp = 1386435600000;
@@ -640,6 +642,28 @@ describe('service-weather', () => {
     });
   });
 
+  test('Action required settings changed after trigger action required settings field', async () => {
+    const wrapper = factory();
+
+    const newValue = {
+      is_blinking: Faker.datatype.boolean(),
+      icon_name: Faker.datatype.string(),
+      color: Faker.internet.color(),
+    };
+
+    selectFieldActionRequiredSettingsType(wrapper).vm.$emit('input', newValue);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'actionRequiredSettings', newValue),
+      },
+    });
+  });
+
   test('Renders `service-weather` widget settings with default props', async () => {
     const wrapper = snapshotFactory();
 
@@ -683,6 +707,11 @@ describe('service-weather', () => {
                 counters: {},
                 isPriorityEnabled: true,
                 modalType: SERVICE_WEATHER_WIDGET_MODAL_TYPES.both,
+                actionRequiredSettings: {
+                  is_blinking: true,
+                  icon_name: 'menu',
+                  color: '#123',
+                },
               },
             },
           },

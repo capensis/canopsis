@@ -92,6 +92,8 @@
       field-switcher(v-model="form.parameters.isPriorityEnabled", :title="$t('settings.isPriorityEnabled')")
       v-divider
       field-modal-type(v-model="form.parameters.modalType")
+      v-divider
+      field-action-required-settings(v-model="form.parameters.actionRequiredSettings")
     v-divider
 </template>
 
@@ -124,6 +126,7 @@ import WidgetSettingsGroup from '../partials/widget-settings-group.vue';
 import FieldCountersSelector from './form/fields/counters-selector.vue';
 import FieldSortColumn from './form/fields/sort-column.vue';
 import FieldModalType from './form/fields/modal-type.vue';
+import FieldActionRequiredSettings from './form/fields/field-action-required-settings.vue';
 
 export default {
   name: SIDE_BARS.serviceWeatherSettings,
@@ -145,6 +148,7 @@ export default {
     FieldColorIndicator,
     AlarmsListModalForm,
     MarginsForm,
+    FieldActionRequiredSettings,
     WidgetSettings,
     WidgetSettingsGroup,
   },

@@ -4,7 +4,6 @@ import Faker from 'faker';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorTypesModule } from '@unit/utils/store';
 import { createSelectInputStub } from '@unit/stubs/input';
-import { MAX_LIMIT } from '@/constants';
 
 import CPbehaviorTypeField from '@/components/forms/fields/pbehavior/c-pbehavior-type-field.vue';
 
@@ -15,7 +14,7 @@ const stubs = {
 const selectSelectField = wrapper => wrapper.find('select.v-select');
 
 describe('c-pbehavior-type-field', () => {
-  const { pbehaviorTypesModule, fetchPbehaviorTypesListWithoutStore } = createPbehaviorTypesModule();
+  const { pbehaviorTypesModule, fieldPbehaviorTypes } = createPbehaviorTypesModule();
   const store = createMockedStoreModules([
     pbehaviorTypesModule,
   ]);
@@ -23,29 +22,12 @@ describe('c-pbehavior-type-field', () => {
   const factory = generateShallowRenderer(CPbehaviorTypeField, { stubs, store });
   const snapshotFactory = generateRenderer(CPbehaviorTypeField, { store });
 
-  test('Types fetched after mount', async () => {
-    factory({
-      store,
-      propsData: {},
-    });
-
-    await flushPromises();
-
-    expect(fetchPbehaviorTypesListWithoutStore).toBeCalledWith(
-      expect.any(Object),
-      { params: { limit: MAX_LIMIT } },
-      undefined,
-    );
-  });
-
   test('Type changed after trigger select field', () => {
     const type = {
       _id: Faker.datatype.string(),
       name: Faker.datatype.string(),
     };
-    fetchPbehaviorTypesListWithoutStore.mockResolvedValueOnce({
-      data: [type],
-    });
+    fieldPbehaviorTypes.mockReturnValueOnce([type]);
 
     const wrapper = factory({
       propsData: {
@@ -59,20 +41,22 @@ describe('c-pbehavior-type-field', () => {
   });
 
   test('Renders `c-pbehavior-type-field` with default props', () => {
-    const wrapper = snapshotFactory();
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        pbehaviorTypesModule,
+      ]),
+    });
 
     expect(wrapper.element).toMatchSnapshot();
     expect(wrapper).toMatchMenuSnapshot();
   });
 
   test('Renders `c-pbehavior-type-field` with custom props', async () => {
-    fetchPbehaviorTypesListWithoutStore.mockResolvedValueOnce({
-      data: [
-        { _id: 'type-id-1', name: 'type-name-1' },
-        { _id: 'type-id-2', name: 'type-name-2' },
-        { _id: 'type-id-3', name: 'type-name-3' },
-      ],
-    });
+    fieldPbehaviorTypes.mockReturnValueOnce([
+      { _id: 'type-id-1', name: 'type-name-1' },
+      { _id: 'type-id-2', name: 'type-name-2' },
+      { _id: 'type-id-3', name: 'type-name-3' },
+    ]);
 
     const wrapper = snapshotFactory({
       propsData: {
@@ -85,6 +69,9 @@ describe('c-pbehavior-type-field', () => {
         returnObject: true,
         required: true,
       },
+      store: createMockedStoreModules([
+        pbehaviorTypesModule,
+      ]),
     });
 
     await flushPromises();
@@ -94,19 +81,20 @@ describe('c-pbehavior-type-field', () => {
   });
 
   test('Renders `c-pbehavior-type-field` with max prop', async () => {
-    fetchPbehaviorTypesListWithoutStore.mockResolvedValueOnce({
-      data: [
-        { _id: 'type-id-1', name: 'type-name-1' },
-        { _id: 'type-id-2', name: 'type-name-2' },
-        { _id: 'type-id-3', name: 'type-name-3' },
-      ],
-    });
+    fieldPbehaviorTypes.mockReturnValueOnce([
+      { _id: 'type-id-1', name: 'type-name-1' },
+      { _id: 'type-id-2', name: 'type-name-2' },
+      { _id: 'type-id-3', name: 'type-name-3' },
+    ]);
 
     const wrapper = snapshotFactory({
       propsData: {
         value: 'type-id-1',
         max: 1,
       },
+      store: createMockedStoreModules([
+        pbehaviorTypesModule,
+      ]),
     });
 
     await flushPromises();

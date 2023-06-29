@@ -1,4 +1,4 @@
-import { get, isUndefined, omit, sortBy } from 'lodash';
+import { get, isUndefined } from 'lodash';
 import flatten from 'flat';
 
 import {
@@ -85,7 +85,7 @@ export const getGroupedPermissions = (permissions) => {
   const notificationTechnicalPermissionsValues = Object.values(notificationTechnicalPermissions);
   const profileTechnicalPermissionsValues = Object.values(profileTechnicalPermissions);
 
-  const groupedPermissions = permissions.reduce((acc, permission) => {
+  return permissions.reduce((acc, permission) => {
     const permissionId = String(permission._id);
 
     if (permission.view && permission.view_group) {
@@ -149,60 +149,4 @@ export const getGroupedPermissions = (permissions) => {
       pbehavior: [],
     },
   });
-
-  /**
-   * We are using order which one we've defined on the reduce accumulator initial value.
-   * For not `number`/`number string` object keys ordering is staying like we define
-   */
-  groupedPermissions.business = Object.entries(groupedPermissions.business)
-    .map(([key, groupPermissions]) => ({
-      key: `permission.business.${key}`,
-      permissions: sortBy(groupPermissions, ['description']),
-    }));
-
-  /**
-   * Ordering behavior have the same behavior as for `business`
-   */
-  groupedPermissions.technical = Object.entries(groupedPermissions.technical)
-    .map(([key, groupPermissions]) => ({
-      key: `permission.technical.${key}`,
-      permissions: sortBy(groupPermissions, ['description']),
-    }));
-
-  /**
-   * Ordering behavior have the same behavior as for `api`
-   */
-  groupedPermissions.api = Object.entries(groupedPermissions.api)
-    .map(([key, groupPermissions]) => ({
-      key: `permission.api.${key}`,
-      permissions: sortBy(groupPermissions, ['description']),
-    }));
-
-  const viewsPermissionsByGroupTitle = groupedPermissions.view.reduce((acc, permission) => {
-    const { view_group: viewGroup, ...rest } = permission;
-
-    if (!acc[viewGroup._id]) {
-      acc[viewGroup._id] = {
-        viewGroup,
-        permissions: [],
-      };
-    }
-
-    acc[viewGroup._id].permissions.push(rest);
-
-    return acc;
-  }, {});
-
-  groupedPermissions.view = sortBy(Object.values(viewsPermissionsByGroupTitle), ['viewGroup.position'])
-    .map(({ viewGroup, permissions: viewGroupPermissions }) => ({
-      name: viewGroup.title,
-      permissions: sortBy(viewGroupPermissions, ['view.position']),
-    }));
-
-  groupedPermissions.view.push({
-    key: 'common.playlist',
-    permissions: sortBy(groupedPermissions.playlist, ['playlist.name']),
-  });
-
-  return omit(groupedPermissions, ['playlist']);
 };

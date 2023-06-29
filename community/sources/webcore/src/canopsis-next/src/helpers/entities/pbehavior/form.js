@@ -17,6 +17,7 @@ import {
   convertDateToTimestampByTimezone,
   getLocaleTimezone,
   getNowTimestamp,
+  isStartOfDay,
 } from '@/helpers/date/date';
 import { addKeyInEntities, getIdFromEntity, removeKeyFromEntities } from '@/helpers/array';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
@@ -38,8 +39,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
  */
 
 /**
- * @typedef {PbehaviorComment} PbehaviorCommentForm
- * @property {string} key
+ * @typedef {PbehaviorComment & ObjectKey} PbehaviorCommentForm
  */
 
 /**
@@ -56,8 +56,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
  */
 
 /**
- * @typedef {PbehaviorExdate} PbehaviorExdateForm
- * @property {string} key
+ * @typedef {PbehaviorExdate & ObjectKey} PbehaviorExdateForm
  * @property {Date} begin
  * @property {Date} end
  */
@@ -159,7 +158,7 @@ export const exdateToForm = (exdate, timezone = getLocaleTimezone()) => ({
   ...exdate,
   key: uid(),
   begin: convertDateToDateObjectByTimezone(exdate.begin, timezone),
-  end: convertDateToDateObjectByTimezone(exdate.end, timezone),
+  end: convertDateToDateObjectByTimezone(isStartOfDay(exdate.end) ? exdate.end - 1 : exdate.end, timezone),
 });
 
 /**

@@ -30,23 +30,20 @@ type API interface {
 }
 
 type api struct {
-	publisher                   libamqp.Publisher
-	alarmCollection             mongo.DbCollection
-	isAllowChangeSeverityToInfo bool
-	logger                      zerolog.Logger
+	publisher       libamqp.Publisher
+	alarmCollection mongo.DbCollection
+	logger          zerolog.Logger
 }
 
 func NewApi(
 	publisher libamqp.Publisher,
 	client mongo.DbClient,
-	isAllowChangeSeverityToInfo bool,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		publisher:                   publisher,
-		isAllowChangeSeverityToInfo: isAllowChangeSeverityToInfo,
-		alarmCollection:             client.Collection(mongo.AlarmMongoCollection),
-		logger:                      logger,
+		publisher:       publisher,
+		alarmCollection: client.Collection(mongo.AlarmMongoCollection),
+		logger:          logger,
 	}
 }
 
@@ -139,7 +136,6 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 	if eventType == types.EventTypeCheck ||
 		eventType == types.EventTypeMetaAlarm ||
 		eventType == types.EventTypeChangestate ||
-		eventType == types.EventTypeKeepstate ||
 		eventType == types.EventTypeJunitTestSuiteUpdated {
 		state, isNotInt, err := getIntField(value, "state")
 
@@ -152,13 +148,6 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 			var a fastjson.Arena
 			value.Set("state", a.NewNumberInt(state))
 		}
-
-		if (eventType == types.EventTypeChangestate || eventType == types.EventTypeKeepstate) && state == 0 {
-			if !api.isAllowChangeSeverityToInfo {
-				api.logger.Err(fmt.Errorf("cannot set state to info with changestate/keepstate")).Str("event", string(value.MarshalTo(nil))).Msg("Event API error")
-				return false
-			}
-		}
 	}
 
 	if eventType == types.EventTypeAck ||
@@ -168,20 +157,19 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		eventType == types.EventTypeUncancel ||
 		eventType == types.EventTypeAssocTicket ||
 		eventType == types.EventTypeChangestate ||
-		eventType == types.EventTypeKeepstate ||
-		eventType == types.EventTypeSnooze ||
-		eventType == types.EventTypeStatusIncrease ||
-		eventType == types.EventTypeStatusDecrease ||
-		eventType == types.EventTypeStateIncrease ||
-		eventType == types.EventTypeStateDecrease {
+		eventType == types.EventTypeSnooze {
 
-		role, ok := c.Get(auth.RoleKey)
-		if !ok {
-			role = ""
+		roles, ok := c.Get(auth.RolesKey)
+		role := ""
+		if ok {
+			if s, ok := roles.([]string); ok && len(s) > 0 {
+				role = s[0]
+			}
+		} else {
 			api.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msg("Cannot retrieve role from user")
 		}
 
-		value.Set("role", fastjson.MustParse(fmt.Sprintf("%q", role.(string))))
+		value.Set("role", fastjson.MustParse(fmt.Sprintf("%q", role)))
 		api.logger.Info().Str("event", string(value.MarshalTo(nil))).Msgf("Role added to the event. event_type = %s, role = %s", eventType, role)
 	}
 
@@ -282,8 +270,7 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		}
 	}
 
-	var alarm types.Alarm
-	err = api.alarmCollection.FindOne(c, bson.M{"d": eid}).Decode(&alarm)
+	err = api.alarmCollection.FindOne(c, bson.M{"d": eid}).Err()
 	if err != nil && err != mongodriver.ErrNoDocuments {
 		api.logger.Err(err).Str("event", string(value.MarshalTo(nil))).Msg("Failed to get alarm from mongo")
 		return false

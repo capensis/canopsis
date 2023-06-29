@@ -52,6 +52,7 @@ import shareTokenModule from './share-token';
 import techMetricsModule from './tech-metrics';
 import widgetTemplateModule from './widget-template';
 import manualMetaAlarmModule from './manual-meta-alarm';
+import metaAlarmModule from './meta-alarm';
 import templateVarsModule from './template-vars';
 import declareTicketRuleModule from './declare-ticket-rule';
 import templateValidatorModule from './template-validator';
@@ -59,6 +60,7 @@ import LinkRuleRuleModule from './links-rule';
 import metricsSettingsModule from './metrics-settings';
 import aggregatedMetricsModule from './aggregated-metrics';
 import vectorMetricsModule from './vector-metrics';
+import groupMetricsModule from './group-metrics';
 import tagModule from './tag';
 
 export default {
@@ -116,6 +118,7 @@ export default {
   techMetrics: techMetricsModule,
   widgetTemplate: widgetTemplateModule,
   manualMetaAlarm: manualMetaAlarmModule,
+  metaAlarm: metaAlarmModule,
   templateVars: templateVarsModule,
   declareTicketRule: declareTicketRuleModule,
   templateValidator: templateValidatorModule,
@@ -123,5 +126,6 @@ export default {
   metricsSettings: metricsSettingsModule,
   aggregatedMetrics: aggregatedMetricsModule,
   vectorMetrics: vectorMetricsModule,
+  groupMetrics: groupMetricsModule,
   tag: tagModule,
 };

@@ -64,7 +64,6 @@ Feature: update connector alarm
         "on_success": "pass",
         "on_failure": "pass"
       },
-      "priority": 2,
       "enabled": true,
       "description": "test-eventfilter-axe-idlerule-connector-1-description"
     }

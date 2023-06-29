@@ -271,6 +271,8 @@ export default {
   hidden: 'Caché',
   numberField: 'Champ numérique',
   chart: 'Graphique | Graphiques',
+  chooseFile: 'Choisir le fichier',
+  seeAlarms: 'Voir les alarmes',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
@@ -482,6 +484,12 @@ export default {
     },
     [TRIGGERS.autoinstructioncomplete]: {
       text: 'Consigne automatique terminée',
+    },
+    [TRIGGERS.autoinstructionresultok]: {
+      text: 'L\'alarme est en état OK après toutes les instructions automatiques',
+    },
+    [TRIGGERS.autoinstructionresultfail]: {
+      text: 'L\'alarme n\'est pas dans l\'état OK après toutes les instructions automatiques',
     },
   },
   themes: {

@@ -29,7 +29,7 @@
       @click.stop=""
     )
     div.mt-2(v-if="!hideDetails")
-      div.error--text(v-for="error in errorMessages", :key="error") {{ error }}
+      v-messages(:value="errorMessages", color="error")
 </template>
 
 <script>
@@ -87,7 +87,7 @@ export default {
   },
   computed: {
     fullDisabled() {
-      return this.loading || this.disabled || (!this.multiple && Boolean(this.files.length));
+      return this.loading || this.disabled;
     },
 
     hasActivatorSlot() {
@@ -118,7 +118,10 @@ export default {
     },
 
     change(e) {
-      this.files = union(this.files, Object.values(e.target.files));
+      const files = Object.values(e.target.files);
+      this.files = this.multiple
+        ? union(this.files, files)
+        : files;
 
       this.$emit('change', this.files);
     },

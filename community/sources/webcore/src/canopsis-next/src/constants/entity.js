@@ -70,6 +70,7 @@ export const EVENT_ENTITY_TYPES = {
   comment: 'comment',
   createManualMetaAlarm: 'createManualMetaAlarm',
   removeAlarmsFromManualMetaAlarm: 'removeAlarmsFromManualMetaAlarm',
+  removeAlarmsFromAutoMetaAlarm: 'removeAlarmsFromAutoMetaAlarm',
   stateinc: 'stateinc',
   statedec: 'statedec',
   statusinc: 'statusinc',
@@ -251,6 +252,7 @@ export const EVENT_ENTITY_ICONS_BY_TYPE = {
   [EVENT_ENTITY_TYPES.comment]: 'comment',
   [EVENT_ENTITY_TYPES.createManualMetaAlarm]: 'center_focus_strong',
   [EVENT_ENTITY_TYPES.removeAlarmsFromManualMetaAlarm]: 'link_off',
+  [EVENT_ENTITY_TYPES.removeAlarmsFromAutoMetaAlarm]: 'link_off',
   [EVENT_ENTITY_TYPES.metaalarmattach]: 'center_focus_weak',
   [EVENT_ENTITY_TYPES.executeInstruction]: 'assignment',
   [EVENT_ENTITY_TYPES.instructionStart]: 'assignment',
@@ -270,6 +272,7 @@ export const EVENT_ENTITY_ICONS_BY_TYPE = {
   [EVENT_ENTITY_TYPES.junitTestSuiteUpdate]: 'keyboard_arrow_up',
   [EVENT_ENTITY_TYPES.junitTestCaseUpdate]: 'keyboard_arrow_up',
   [EVENT_ENTITY_TYPES.cancel]: 'delete',
+  [EVENT_ENTITY_TYPES.uncancel]: 'delete_forever',
   groupChildren: 'center_focus_strong',
   groupParents: 'center_focus_weak',
 };
@@ -489,3 +492,5 @@ export const ENTITY_PAYLOADS_VARIABLES = {
   name: '.Name',
   infosValue: '(index .Infos "%infos_name%").Value',
 };
+
+export const SERVICE_WEATHER_DEFAULT_EM_HEIGHT = 4;
