@@ -2617,7 +2617,7 @@ Feature: correlation feature - valuegroup rule with threshold count
       "source_type": "resource"
     }
     """
-    When I wait 100ms
+    When I wait 1s
     When I do GET /api/v4/alarms?search=test-resource-correlation-valuegroup-count-9&correlation=true&sort_by=v.meta&sort=desc
     Then the response code should be 200
     Then the response body should contain:

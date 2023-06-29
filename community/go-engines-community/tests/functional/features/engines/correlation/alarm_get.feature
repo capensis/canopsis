@@ -1819,7 +1819,7 @@ Feature: Get alarms
     Then the response key "1.data.children.data.1.assigned_declare_ticket_rules" should not exist
 
   @concurrent
-  Scenario: given get search correlation request should return filtered children
+  Scenario: given get search correlation request should return consistent opened/closed children values
     When I am admin
     When I send an event and wait the end of event processing:
     """json
