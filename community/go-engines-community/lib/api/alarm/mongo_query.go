@@ -1215,6 +1215,8 @@ func getChildrenCountLookup() []bson.M {
 				bson.M{"$size": "$children"},
 				bson.M{"$size": "$resolved_children"},
 			}},
+			"opened_children": bson.M{"$size": "$children"},
+			"closed_children": bson.M{"$size": "$resolved_children"},
 		}},
 	}
 }

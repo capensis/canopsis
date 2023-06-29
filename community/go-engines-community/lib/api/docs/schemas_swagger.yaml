@@ -149,6 +149,8 @@ definitions:
         type: integer
       children_instructions:
         type: boolean
+      closed_children:
+        type: integer
       entity:
         $ref: '#/definitions/entity.Entity'
       failed_auto_instructions:
@@ -183,6 +185,8 @@ definitions:
         items:
           $ref: '#/definitions/alarm.MetaAlarmRule'
         type: array
+      opened_children:
+        type: integer
       parents:
         description: Meta alarm child fields
         type: integer
