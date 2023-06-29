@@ -1,9 +1,9 @@
 <template lang="pug">
-  widget-settings-item(:title="$t('common.title')", :optional="!required")
+  widget-settings-item(:title="label || $t('common.title')", :optional="!required")
     v-text-field(
       v-field="value",
       v-validate="rules",
-      :placeholder="$t('settings.widgetTitle')",
+      :placeholder="placeholder || $t('settings.widgetTitle')",
       :name="name",
       :error-messages="errors.collect(name)"
     )
@@ -32,6 +32,14 @@ export default {
     name: {
       type: String,
       default: 'title',
+    },
+    label: {
+      type: String,
+      required: false,
+    },
+    placeholder: {
+      type: String,
+      required: false,
     },
   },
   computed: {

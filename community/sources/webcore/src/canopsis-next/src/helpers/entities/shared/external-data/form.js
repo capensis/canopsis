@@ -32,16 +32,14 @@ import { formToRequest, requestToForm } from '../request/form';
  */
 
 /**
- * @typedef {Object} ExternalDataConditionForm
- * @property {string} key
+ * @typedef {Object & ObjectKey} ExternalDataConditionForm
  * @property {ExternalDataConditionType} type
  * @property {string} attribute
  * @property {string} value
  */
 
 /**
- * @typedef {Object} ExternalDataItemForm
- * @property {string} key
+ * @typedef {Object & ObjectKey} ExternalDataItemForm
  * @property {RequestForm} request
  * @property {string} reference
  * @property {ExternalDataType} type

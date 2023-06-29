@@ -1,4 +1,8 @@
-import { ALARM_METRIC_PARAMETERS, USER_METRIC_PARAMETERS, AGGREGATE_FUNCTIONS } from '@/constants';
+import {
+  ALARM_METRIC_PARAMETERS,
+  USER_METRIC_PARAMETERS,
+  AGGREGATE_FUNCTIONS,
+} from '@/constants';
 
 export default {
   alarmMetrics: 'Alarm metrics',
@@ -86,5 +90,24 @@ export default {
     optionalMetrics: 'Optional metrics',
     manualInstructions: 'Number of alarms with manual instructions',
     notAckedMetrics: 'Number of active not acked alarms of different durations',
+  },
+
+  statisticsWidgets: {
+    metrics: {
+      [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Average number of created alarms',
+      [ALARM_METRIC_PARAMETERS.activeAlarms]: 'Average number of active alarms',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Average number of alarms with auto remediation',
+      [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: 'Average number of active alarms with manual instructions',
+      [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: 'Average number of manually remediated alarms',
+      [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: 'Average number of non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: 'Average number of alarms with PBehavior',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: 'Average number of alarms with correlation',
+      [ALARM_METRIC_PARAMETERS.notAckedAlarms]: 'Average number of not acked alarms',
+      [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]: 'Average number of not acked alarms with duration 1-4h',
+      [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]: 'Average number of not acked alarms with duration 4-24h',
+      [ALARM_METRIC_PARAMETERS.notAckedInDayAlarms]: 'Average number of not acked alarms older than 24h',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Average number of active alarms with tickets created',
+      [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: 'Average number of active alarms with no tickets created',
+    },
   },
 };

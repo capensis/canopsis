@@ -1,17 +1,15 @@
 <template lang="pug">
   widget-settings-group(:title="$tc('common.chart', 2)")
     v-layout.pa-3(column)
-      c-draggable-list-field(v-field="charts", :handle="`.${chartHandleClass}`")
-        v-layout(v-for="(chart, index) in charts", :key="chart.key", row, align-center)
-          v-flex(xs1)
-            v-icon.draggable(:class="chartHandleClass") drag_indicator
-          v-flex(xs8)
-            v-layout(row, align-center)
-              v-icon(large) {{ $constants.WIDGET_ICONS[chart.type] }}
-              span.ml-3 {{ chart.title }}
-          v-flex(xs3)
-            c-action-btn(type="edit", @click="showEditChartModal(chart, index)")
-            c-action-btn(type="delete", @click="showRemoveChartModal(index)")
+      field-draggable-list(
+        v-field="charts",
+        @edit="showEditChartModal",
+        @remove="showRemoveChartModal"
+      )
+        template(#title="{ item }")
+          v-layout(row, align-center)
+            v-icon(large) {{ $constants.WIDGET_ICONS[item.type] }}
+            span.ml-3 {{ item.title }}
       v-menu(bottom)
         template(#activator="{ on }")
           v-flex
@@ -34,9 +32,10 @@ import { addKeyInEntity } from '@/helpers/array';
 import { formArrayMixin } from '@/mixins/form';
 
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
+import FieldDraggableList from '@/components/sidebars/form/fields/draggable-list.vue';
 
 export default {
-  components: { WidgetSettingsGroup },
+  components: { WidgetSettingsGroup, FieldDraggableList },
   mixins: [formArrayMixin],
   model: {
     prop: 'charts',
@@ -49,10 +48,6 @@ export default {
     },
   },
   computed: {
-    chartHandleClass() {
-      return 'chart-drag-handler';
-    },
-
     chartTypes() {
       return [
         WIDGET_TYPES.barChart,
@@ -90,7 +85,7 @@ export default {
       });
     },
 
-    showRemoveChartModal(index) {
+    showRemoveChartModal(chart, index) {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {

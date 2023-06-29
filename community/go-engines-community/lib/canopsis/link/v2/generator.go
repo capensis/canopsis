@@ -138,7 +138,7 @@ func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId 
 			return nil, liblink.ErrNotMatchedAlarm
 		}
 
-		ok, _, err = rule.EntityPattern.Match(alarm.Entity)
+		ok, err = rule.EntityPattern.Match(alarm.Entity)
 		if err != nil {
 			return nil, fmt.Errorf("invalid entity pattern linkrule=%s: %w", rule.ID, err)
 		}
@@ -254,15 +254,26 @@ func (g *generator) getRules(ctx context.Context) ([]parsedRule, error) {
 			for k, v := range params.Select {
 				externalDataTpl[ref]["select"][k], err = g.tplExecutor.Parse(v)
 				if err != nil {
-					return nil, fmt.Errorf("invalid template linkrule=%s: %w", rule.ID, err)
+					g.logger.Err(err).Str("rule", rule.ID).Msg("invalid template in link rule")
+					break
 				}
+			}
+			if err != nil {
+				break
 			}
 			for k, v := range params.Regexp {
 				externalDataTpl[ref]["regexp"][k], err = g.tplExecutor.Parse(v)
 				if err != nil {
-					return nil, fmt.Errorf("invalid template linkrule=%s: %w", rule.ID, err)
+					g.logger.Err(err).Str("rule", rule.ID).Msg("invalid template in link rule")
+					break
 				}
 			}
+			if err != nil {
+				break
+			}
+		}
+		if err != nil {
+			continue
 		}
 
 		pr := parsedRule{
@@ -277,7 +288,8 @@ func (g *generator) getRules(ctx context.Context) ([]parsedRule, error) {
 		if rule.SourceCode != "" {
 			pr.CodeExecutor, err = js.Compile(rule.ID, rule.SourceCode)
 			if err != nil {
-				return nil, fmt.Errorf("invalid source code linkrule=%s: %w", rule.ID, err)
+				g.logger.Err(err).Str("rule", rule.ID).Msg("invalid source code in link rule")
+				continue
 			}
 
 			parsedRules = append(parsedRules, pr)
@@ -289,8 +301,12 @@ func (g *generator) getRules(ctx context.Context) ([]parsedRule, error) {
 		for i, link := range rule.Links {
 			pr.LinkTpls[i], err = g.tplExecutor.Parse(link.Url)
 			if err != nil {
-				return nil, fmt.Errorf("invalid template linkrule=%s: %w", rule.ID, err)
+				g.logger.Err(err).Str("rule", rule.ID).Msg("invalid template in link rule")
+				break
 			}
+		}
+		if err != nil {
+			continue
 		}
 
 		parsedRules = append(parsedRules, pr)
@@ -371,15 +387,17 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 	for _, alarm := range alarms {
 		ok, err := rule.AlarmPattern.Match(alarm.Alarm)
 		if err != nil {
-			return nil, fmt.Errorf("invalid alarm pattern linkrule=%s: %w", rule.ID, err)
+			g.logger.Err(err).Str("rule", rule.ID).Msg("invalid alarm pattern in link rule")
+			continue
 		}
 		if !ok {
 			continue
 		}
 
-		ok, _, err = rule.EntityPattern.Match(alarm.Entity)
+		ok, err = rule.EntityPattern.Match(alarm.Entity)
 		if err != nil {
-			return nil, fmt.Errorf("invalid entity pattern linkrule=%s: %w", rule.ID, err)
+			g.logger.Err(err).Str("rule", rule.ID).Msg("invalid entity pattern in link rule")
+			continue
 		}
 		if !ok {
 			continue
@@ -389,7 +407,8 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 		argEntities := []entityWithData{{Entity: alarm.Entity}}
 		err = g.addExternalData(ctx, rule, argAlarms, argEntities)
 		if err != nil {
-			return nil, err
+			g.logger.Err(err).Str("rule", rule.ID).Msg("cannot get external data by link rule")
+			continue
 		}
 
 		if rule.CodeExecutor != nil {
@@ -419,9 +438,10 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 
 	res := make(map[string][]linkWithCategory, len(entities))
 	for _, entity := range entities {
-		ok, _, err := rule.EntityPattern.Match(entity.Entity)
+		ok, err := rule.EntityPattern.Match(entity.Entity)
 		if err != nil {
-			return nil, fmt.Errorf("invalid entity pattern linkrule=%s: %w", rule.ID, err)
+			g.logger.Err(err).Str("rule", rule.ID).Msg("invalid entity pattern in link rule")
+			continue
 		}
 		if !ok {
 			continue
@@ -430,7 +450,8 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 		argsEntities := []entityWithData{entity}
 		err = g.addExternalDataToEntities(ctx, rule.ExternalData, rule.ExternalDataTpl, argsEntities)
 		if err != nil {
-			return nil, err
+			g.logger.Err(err).Str("rule", rule.ID).Msg("cannot get external data by link rule")
+			continue
 		}
 
 		if rule.CodeExecutor != nil {
@@ -438,7 +459,6 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 			res[entity.ID], err = g.getLinksWithCategoryByCode(ctx, rule.ID, rule.CodeExecutor, args)
 			if err != nil {
 				g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process entity")
-				continue
 			}
 
 			continue
@@ -630,12 +650,13 @@ func (g *generator) getLinksWithCategoryByTpl(
 		res[i] = linkWithCategory{
 			Category: linkTpl.Category,
 			Link: liblink.Link{
-				RuleID:   id,
-				Label:    linkTpl.Label,
-				IconName: linkTpl.IconName,
-				Url:      url,
-				Single:   linkTpl.Single,
-				Action:   linkTpl.Action,
+				RuleID:     id,
+				Label:      linkTpl.Label,
+				IconName:   linkTpl.IconName,
+				Url:        url,
+				Action:     linkTpl.Action,
+				Single:     linkTpl.Single,
+				HideInMenu: linkTpl.HideInMenu,
 			},
 		}
 	}
@@ -656,11 +677,12 @@ func (g *generator) getLinksByTpl(
 		}
 
 		res[i] = liblink.Link{
-			Label:    linkTpl.Label,
-			IconName: linkTpl.IconName,
-			Url:      url,
-			Single:   linkTpl.Single,
-			Action:   linkTpl.Action,
+			Label:      linkTpl.Label,
+			IconName:   linkTpl.IconName,
+			Url:        url,
+			Action:     linkTpl.Action,
+			Single:     linkTpl.Single,
+			HideInMenu: linkTpl.HideInMenu,
 		}
 	}
 
@@ -715,6 +737,9 @@ func (g *generator) getLinksWithCategoryByCode(
 		if single, ok := item["single"].(bool); ok {
 			res[i].Link.Single = single
 		}
+		if hideInMenu, ok := item["hide_in_menu"].(bool); ok {
+			res[i].Link.HideInMenu = hideInMenu
+		}
 	}
 
 	return res, nil
@@ -761,6 +786,9 @@ func (g *generator) getLinksByCode(
 		}
 		if single, ok := item["single"].(bool); ok {
 			res[i].Single = single
+		}
+		if hideInMenu, ok := item["hide_in_menu"].(bool); ok {
+			res[i].HideInMenu = hideInMenu
 		}
 	}
 

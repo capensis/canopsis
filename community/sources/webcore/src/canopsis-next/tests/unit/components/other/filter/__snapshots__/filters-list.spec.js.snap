@@ -2,20 +2,11 @@
 
 exports[`filters-list Renders \`filters-list\` with custom props 1`] = `
 <div>
-  <div
-    class="v-alert info"
-    style="display: none;"
+  <c-alert-stub
+    type="info"
   >
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light v-alert__icon"
-    >
-      info
-    </i>
-    <div>
-      No filters added yet
-    </div>
-  </div>
+    No filters added yet
+  </c-alert-stub>
   <c-draggable-list-field-stub
     handle=".action-drag-handler"
     value="[object Object],[object Object]"
@@ -44,19 +35,12 @@ exports[`filters-list Renders \`filters-list\` with custom props 1`] = `
 
 exports[`filters-list Renders \`filters-list\` with default props 1`] = `
 <div>
-  <div
-    class="v-alert info"
+  <c-alert-stub
+    type="info"
+    value="true"
   >
-    <i
-      aria-hidden="true"
-      class="v-icon material-icons theme--light v-alert__icon"
-    >
-      info
-    </i>
-    <div>
-      No filters added yet
-    </div>
-  </div>
+    No filters added yet
+  </c-alert-stub>
   <c-draggable-list-field-stub
     handle=".action-drag-handler"
     value=""
