@@ -762,6 +762,56 @@ export const createWidgetTemplateModule = () => {
   };
 };
 
+export const createTagModule = () => {
+  const tagsPending = jest.fn().mockReturnValue(false);
+  const tags = jest.fn().mockReturnValue([]);
+  const tagsMeta = jest.fn().mockReturnValue({});
+
+  const fetchTagsList = jest.fn();
+  const createTag = jest.fn();
+  const updateTag = jest.fn();
+  const removeTag = jest.fn();
+  const bulkRemoveTags = jest.fn();
+
+  afterEach(() => {
+    fetchTagsList.mockClear();
+    createTag.mockClear();
+    updateTag.mockClear();
+    removeTag.mockClear();
+    bulkRemoveTags.mockClear();
+  });
+
+  const tagModule = {
+    name: 'tag',
+    getters: {
+      items: tags,
+      pending: tagsPending,
+      meta: tagsMeta,
+    },
+    actions: {
+      fetchList: fetchTagsList,
+      create: createTag,
+      update: updateTag,
+      remove: removeTag,
+      bulkRemove: bulkRemoveTags,
+    },
+  };
+
+  return {
+    tagModule,
+
+    tags,
+    tagsMeta,
+    tagsPending,
+
+    fetchTagsList,
+    createTag,
+    updateTag,
+    removeTag,
+    bulkRemoveTags,
+  };
+};
+
 export const createInfosModule = () => {
   const fetchItems = jest.fn();
 
