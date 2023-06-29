@@ -7,6 +7,7 @@ import {
   createAuthModule,
   createDeclareTicketModule,
   createManualMetaAlarmModule,
+  createMetaAlarmModule,
   createMockedStoreModules,
 } from '@unit/utils/store';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
@@ -76,7 +77,8 @@ describe('actions-panel', () => {
     bulkCreateAlarmCancelEvent,
     bulkCreateAlarmChangestateEvent,
   } = createAlarmModule();
-  const { manualMetaAlarmModule, removeAlarmsIntoManualMetaAlarm } = createManualMetaAlarmModule();
+  const { manualMetaAlarmModule, removeAlarmsFromManualMetaAlarm } = createManualMetaAlarmModule();
+  const { metaAlarmModule, removeAlarmsFromMetaAlarm } = createMetaAlarmModule();
   const {
     declareTicketRuleModule,
     fetchAssignedDeclareTicketsWithoutStore,
@@ -84,6 +86,7 @@ describe('actions-panel', () => {
 
   const store = createMockedStoreModules([
     manualMetaAlarmModule,
+    metaAlarmModule,
     authModule,
     alarmModule,
     declareTicketRuleModule,
@@ -749,6 +752,11 @@ describe('actions-panel', () => {
       _id: Faker.datatype.string(),
       entity,
       pbehavior,
+      v: {
+        status: {
+          val: ENTITIES_STATUSES.closed,
+        },
+      },
     };
 
     const wrapper = factory({
@@ -758,10 +766,16 @@ describe('actions-panel', () => {
         manualMetaAlarmModule,
       ]),
       propsData: {
-        item: alarmData,
+        item: {
+          ...alarmData,
+          v: {
+            status: {
+              val: ENTITIES_STATUSES.closed,
+            },
+          },
+        },
         widget: widgetData,
         parentAlarm,
-        isResolvedAlarm: true,
       },
     });
 
@@ -774,7 +788,22 @@ describe('actions-panel', () => {
           variables: [
             {
               name: 'alarm',
-              children: [{ name: '_id', path: 'alarm._id', value: alarmData._id }],
+              children: [
+                { name: '_id', path: 'alarm._id', value: alarmData._id },
+                {
+                  name: 'v',
+                  children: [{
+                    name: 'status',
+                    children: [
+                      {
+                        name: 'val',
+                        path: 'alarm.v.status.val',
+                        value: 0,
+                      },
+                    ],
+                  }],
+                },
+              ],
             },
             {
               name: 'entity',
@@ -939,7 +968,7 @@ describe('actions-panel', () => {
 
     expect($modals.show).toBeCalledWith(
       {
-        name: MODALS.removeAlarmsFromManualMetaAlarm,
+        name: MODALS.removeAlarmsFromMetaAlarm,
         config: {
           items: [alarm],
           action: expect.any(Function),
@@ -957,7 +986,121 @@ describe('actions-panel', () => {
 
     await config.action(newRemoveAlarmsEvent);
 
-    expect(removeAlarmsIntoManualMetaAlarm).toBeCalledWith(
+    expect(removeAlarmsFromManualMetaAlarm).toBeCalledWith(
+      expect.any(Object),
+      {
+        id: parentAlarm?._id,
+        data: newRemoveAlarmsEvent,
+      },
+      undefined,
+    );
+
+    expect(refreshAlarmsList).toBeCalledTimes(1);
+  });
+
+  it('Remove alarms from manual meta alarm modal showed after trigger remove alarms from manual meta alarm action', async () => {
+    const widgetData = {
+      _id: Faker.datatype.string(),
+      parameters: {},
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        alarmModule,
+        manualMetaAlarmModule,
+      ]),
+      propsData: {
+        item: alarm,
+        widget: widgetData,
+        parentAlarm,
+        refreshAlarmsList,
+      },
+    });
+
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm).trigger('click');
+
+    expect($modals.show).toBeCalledWith(
+      {
+        name: MODALS.removeAlarmsFromMetaAlarm,
+        config: {
+          items: [alarm],
+          action: expect.any(Function),
+          title: 'Unlink alarm from manual meta alarm',
+        },
+      },
+    );
+
+    const [{ config }] = $modals.show.mock.calls[0];
+
+    const newRemoveAlarmsEvent = {
+      comment: Faker.datatype.string(),
+      alarms: [Faker.datatype.string()],
+    };
+
+    await config.action(newRemoveAlarmsEvent);
+
+    expect(removeAlarmsFromManualMetaAlarm).toBeCalledWith(
+      expect.any(Object),
+      {
+        id: parentAlarm?._id,
+        data: newRemoveAlarmsEvent,
+      },
+      undefined,
+    );
+
+    expect(refreshAlarmsList).toBeCalledTimes(1);
+  });
+
+  it('Remove alarms from auto meta alarm modal showed after trigger remove alarms from auto meta alarm action', async () => {
+    const widgetData = {
+      _id: Faker.datatype.string(),
+      parameters: {},
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        alarmModule,
+        manualMetaAlarmModule,
+        metaAlarmModule,
+      ]),
+      propsData: {
+        item: alarm,
+        widget: widgetData,
+        parentAlarm: {
+          meta_alarm_rule: {
+            type: META_ALARMS_RULE_TYPES.attribute,
+          },
+          d: 'parent-d',
+        },
+        refreshAlarmsList,
+      },
+    });
+
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromAutoMetaAlarm).trigger('click');
+
+    expect($modals.show).toBeCalledWith(
+      {
+        name: MODALS.removeAlarmsFromMetaAlarm,
+        config: {
+          items: [alarm],
+          action: expect.any(Function),
+          title: 'Unlink alarm from meta alarm',
+        },
+      },
+    );
+
+    const [{ config }] = $modals.show.mock.calls[0];
+
+    const newRemoveAlarmsEvent = {
+      comment: Faker.datatype.string(),
+      alarms: [Faker.datatype.string()],
+    };
+
+    await config.action(newRemoveAlarmsEvent);
+
+    expect(removeAlarmsFromMetaAlarm).toBeCalledWith(
       expect.any(Object),
       {
         id: parentAlarm?._id,
@@ -1199,16 +1342,23 @@ describe('actions-panel', () => {
   });
 
   it('Renders `actions-panel` with resolved alarm', () => {
+    const resolvedAlarmData = {
+      ...alarm,
+      v: {
+        status: {
+          val: ENTITIES_STATUSES.closed,
+        },
+      },
+    };
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
         manualMetaAlarmModule,
       ]),
       propsData: {
-        item: alarm,
+        item: resolvedAlarmData,
         widget,
         parentAlarm,
-        isResolvedAlarm: true,
       },
     });
 
@@ -1283,6 +1433,13 @@ describe('actions-panel', () => {
           links: {
             cat: [
               {
+                hide_in_menu: true,
+                icon_name: 'hidden_link_icon',
+                label: 'Hidden link label',
+                url: 'Hidden link URL',
+                rule_id: 'Hidden link RuleId',
+              },
+              {
                 icon_name: 'icon',
                 label: 'Label',
                 url: 'URL',
@@ -1324,6 +1481,58 @@ describe('actions-panel', () => {
           },
         },
         widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `actions-panel` with links in resolved alarm', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: {
+          ...alarm,
+
+          v: {
+            status: {
+              val: ENTITIES_STATUSES.cancelled,
+            },
+          },
+          links: {
+            cat: [
+              {
+                icon_name: 'icon',
+                label: 'Label',
+                url: 'URL',
+                rule_id: 'RuleId',
+              },
+            ],
+          },
+        },
+        widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `actions-panel` with parentAlarm with auto meta alarm', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: alarm,
+        widget,
+        parentAlarm: {
+          meta_alarm_rule: {
+            type: META_ALARMS_RULE_TYPES.attribute,
+          },
+          d: 'parent-d',
+        },
       },
     });
 

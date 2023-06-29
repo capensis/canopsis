@@ -1,11 +1,12 @@
 package middleware
 
 import (
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 // Auth middleware uses http providers to authenticate user.
@@ -26,9 +27,9 @@ func Auth(providers []security.HttpProvider) gin.HandlerFunc {
 
 				// The user credentials was found, set user's id to key UserKey in this context,
 				// the user's id can be read later using c.MustGet(auth.UserKey).
-				c.Set(auth.Username, user.Name)
+				c.Set(auth.Username, user.DisplayName)
 				c.Set(auth.UserKey, user.ID)
-				c.Set(auth.RoleKey, user.Role)
+				c.Set(auth.RolesKey, user.Roles)
 				c.Set(auth.ApiKey, user.AuthApiKey)
 				break
 			}

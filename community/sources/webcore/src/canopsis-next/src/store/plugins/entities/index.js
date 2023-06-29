@@ -386,6 +386,7 @@ export const types = {
 };
 
 export { default as createEntityModule } from './create-entity-module';
+export { default as createWidgetModule } from './create-widget-module';
 
 export default (store) => {
   store.registerModule(entitiesModuleName, entitiesModule);

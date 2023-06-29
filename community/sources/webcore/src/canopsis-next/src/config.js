@@ -135,7 +135,10 @@ export const API_ROUTES = {
   widgetTemplate: '/api/v4/widget-templates',
   permissions: '/api/v4/permissions',
   users: '/api/v4/users',
-  roles: '/api/v4/roles',
+  roles: {
+    list: '/api/v4/roles',
+    templates: '/api/v4/role-templates',
+  },
   eventFilter: {
     rules: '/api/v4/eventfilter/rules',
   },
@@ -165,6 +168,7 @@ export const API_ROUTES = {
   pbehavior: {
     timespan: '/api/v4/pbehavior-timespans',
     exceptions: '/api/v4/pbehavior-exceptions',
+    exceptionImport: '/api/v4/pbehavior-exception-import',
     types: '/api/v4/pbehavior-types',
     nextTypesPriority: '/api/v4/pbehavior-types/next-priority',
     pbehaviors: '/api/v4/pbehaviors',
@@ -256,11 +260,14 @@ export const API_ROUTES = {
     perfDataMetrics: '/api/v4/cat/perf-data-metrics',
     entityAlarmMetrics: '/api/v4/cat/entity-metrics/alarm',
     entityAggregateMetrics: '/api/v4/cat/entity-metrics/aggregate',
+    group: '/api/v4/cat/metrics/group',
+    exportGroup: '/api/v4/cat/metrics-export/group',
   },
   maps: '/api/v4/cat/maps',
   bulkMaps: '/api/v4/cat/maps/bulk',
   mapState: '/api/v4/cat/map-state',
   manualMetaAlarm: '/api/v4/cat/manual-meta-alarms',
+  metaAlarm: '/api/v4/cat/meta-alarms',
   declareTicket: {
     rules: '/api/v4/cat/declare-ticket-rules',
     bulkRules: '/api/v4/cat/bulk/declare-ticket-rules',
