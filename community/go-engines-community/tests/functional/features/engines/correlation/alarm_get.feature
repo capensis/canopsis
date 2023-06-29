@@ -1817,3 +1817,219 @@ Feature: Get alarms
     """
     Then the response key "0.data.children.data.0.assigned_declare_ticket_rules" should not exist
     Then the response key "1.data.children.data.1.assigned_declare_ticket_rules" should not exist
+
+  @concurrent
+  Scenario: given get search correlation request should return filtered children
+    When I am admin
+    When I send an event and wait the end of event processing:
+    """json
+    [
+      {
+        "connector": "test-connector-to-alarm-correlation-get-8",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-8",
+        "resource": "test-resource-to-alarm-correlation-get-8-1",
+        "state": 1,
+        "output": "test-output-to-alarm-correlation-get-8"
+      },
+      {
+        "connector": "test-connector-to-alarm-correlation-get-8",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-8",
+        "resource": "test-resource-to-alarm-correlation-get-8-2",
+        "state": 1,
+        "output": "test-resource-to-alarm-correlation-get-8-search"
+      },
+      {
+        "connector": "test-connector-to-alarm-correlation-get-8",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-8",
+        "resource": "test-resource-to-alarm-correlation-get-8-3",
+        "state": 1,
+        "output": "test-resource-to-alarm-correlation-get-8-search"
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-8&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    When I save response childAlarmID1={{ (index .lastResponse.data 0)._id }}
+    When I save response childAlarmID2={{ (index .lastResponse.data 1)._id }}
+    When I save response childAlarmID3={{ (index .lastResponse.data 2)._id }}
+    When I do POST /api/v4/cat/manual-meta-alarms:
+    """json
+    {
+      "name": "test-metalarm-to-alarm-correlation-get-8-1",
+      "comment": "test-metalarm-to-alarm-correlation-get-8-1-comment",
+      "alarms": [
+        "{{ .childAlarmID1 }}",
+        "{{ .childAlarmID2 }}",
+        "{{ .childAlarmID3 }}"
+      ]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-8&correlation=true&sort_by=v.output&sort=asc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 3,
+          "opened_children": 3
+        }
+      ]
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-to-alarm-correlation-get-8",
+      "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+      "source_type": "resource",
+      "event_type": "cancel",
+      "component": "test-component-to-alarm-correlation-get-8",
+      "resource": "test-resource-to-alarm-correlation-get-8-3"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-to-alarm-correlation-get-8",
+      "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+      "source_type": "resource",
+      "event_type": "resolve_cancel",
+      "component": "test-component-to-alarm-correlation-get-8",
+      "resource": "test-resource-to-alarm-correlation-get-8-3"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-8&correlation=true&sort_by=v.output&sort=asc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 3,
+          "opened_children": 2,
+          "closed_children": 1
+        }
+      ]
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-to-alarm-correlation-get-8",
+      "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+      "source_type": "resource",
+      "event_type": "cancel",
+      "component": "test-component-to-alarm-correlation-get-8",
+      "resource": "test-resource-to-alarm-correlation-get-8-1"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-to-alarm-correlation-get-8",
+      "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+      "source_type": "resource",
+      "event_type": "resolve_cancel",
+      "component": "test-component-to-alarm-correlation-get-8",
+      "resource": "test-resource-to-alarm-correlation-get-8-1"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-to-alarm-correlation-get-8",
+      "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+      "source_type": "resource",
+      "event_type": "cancel",
+      "component": "test-component-to-alarm-correlation-get-8",
+      "resource": "test-resource-to-alarm-correlation-get-8-2"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-to-alarm-correlation-get-8",
+      "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+      "source_type": "resource",
+      "event_type": "resolve_cancel",
+      "component": "test-component-to-alarm-correlation-get-8",
+      "resource": "test-resource-to-alarm-correlation-get-8-2"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-8&correlation=true&sort_by=v.output&sort=asc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 3,
+          "opened_children": 0,
+          "closed_children": 3
+        }
+      ]
+    }
+    """
+    When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-to-alarm-correlation-get-8",
+      "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-to-alarm-correlation-get-8",
+      "resource": "test-resource-to-alarm-correlation-get-8-4",
+      "state": 1,
+      "output": "test-resource-to-alarm-correlation-get-8-search"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-8-4&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    When I save response childAlarmID4={{ (index .lastResponse.data 0)._id }}
+    When I do PUT /api/v4/cat/manual-meta-alarms/{{ .metaAlarmID }}/add:
+    """json
+    {
+      "comment": "test-metalarm-to-alarm-correlation-get-8-1-comment",
+      "alarms": ["{{ .childAlarmID4 }}"]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-8&correlation=true&sort_by=v.output&sort=asc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 4,
+          "opened_children": 1,
+          "closed_children": 3
+        }
+      ]
+    }
+    """
+    When I do PUT /api/v4/cat/manual-meta-alarms/{{ .metaAlarmID }}/remove:
+    """json
+    {
+      "comment": "test-metalarm-to-alarm-correlation-get-8-1-comment",
+      "alarms": ["{{ .childAlarmID4 }}"]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-8&correlation=true&sort_by=v.output&sort=asc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 3,
+          "opened_children": 0,
+          "closed_children": 3
+        },
+        {}
+      ]
+    }
+    """

@@ -44,19 +44,16 @@ func (a mongoAdapter) Save(ctx context.Context, rule Rule) error {
 	return err
 }
 
-func (a mongoAdapter) GetManualRule(ctx context.Context) (Rule, error) {
+func (a mongoAdapter) GetManualRule(ctx context.Context, autoResolve bool) (Rule, error) {
 	var rule Rule
 
 	err := a.dbCollection.FindOne(ctx, bson.M{
-		"type": bson.M{
-			"$eq": RuleTypeManualGroup,
-		},
+		"type":         RuleTypeManualGroup,
+		"auto_resolve": autoResolve,
 	}).Decode(&rule)
 
-	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
-			return rule, nil
-		}
+	if err != nil && err == mongodriver.ErrNoDocuments {
+		return rule, nil
 	}
 
 	return rule, err
