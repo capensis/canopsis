@@ -22,8 +22,7 @@ import { uid } from '@/helpers/uid';
  */
 
 /**
- * @typedef {Object} WidgetColumnForm
- * @property {string} key
+ * @typedef {Object & ObjectKey} WidgetColumnForm
  * @property {string} column
  * @property {string} [rule]
  * @property {string} [dictionary]

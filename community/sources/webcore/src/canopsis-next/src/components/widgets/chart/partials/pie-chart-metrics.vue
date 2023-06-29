@@ -1,7 +1,7 @@
 <template lang="pug">
-  v-layout.chart-metrics-widget(column, align-center)
-    h4.chart-metrics-widget__title {{ title }}
-    pie-chart.pie-chart-metrics__chart.chart-metrics-widget__chart(
+  v-layout.kpi-widget(column, align-center)
+    h4.kpi-widget__title {{ title }}
+    pie-chart.pie-chart-metrics__chart.kpi-widget__chart(
       :chart-id="chartId",
       :datasets="datasets",
       :labels="labels",

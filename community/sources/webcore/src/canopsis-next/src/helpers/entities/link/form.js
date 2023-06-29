@@ -26,6 +26,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
  * @property {string} icon_name
  * @property {string} label
  * @property {string} url
+ * @property {boolean} [hide_in_menu]
  * @property {boolean} [single]
  * @property {string} [rule_id]
  * @property {string} [category]
@@ -43,8 +44,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
  */
 
 /**
- * @typedef {LinkRuleLink} LinkRuleLinkForm
- * @property {string} key
+ * @typedef {LinkRuleLink & ObjectKey} LinkRuleLinkForm
  */
 
 /**
@@ -70,6 +70,7 @@ export const linkRuleLinkToForm = (link = {}) => ({
   icon_name: link.icon_name ?? '',
   url: link.url ?? '',
   single: link.single ?? false,
+  hide_in_menu: link.hide_in_menu ?? false,
   category: link.category ?? '',
   action: link.action ?? LINK_RULE_ACTIONS.open,
 });
@@ -114,7 +115,7 @@ export const isDefaultSourceCode = (code = '') => (
  */
 export const formToLinkRuleLink = ({ key, ...form }, type = LINK_RULE_TYPES.alarm) => (
   type === LINK_RULE_TYPES.entity
-    ? omit(form, ['single'])
+    ? omit(form, ['single', 'hide_in_menu'])
     : form
 );
 

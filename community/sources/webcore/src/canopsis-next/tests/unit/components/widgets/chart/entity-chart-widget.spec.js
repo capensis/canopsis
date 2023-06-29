@@ -17,7 +17,7 @@ import { AGGREGATE_FUNCTIONS, ALARM_METRIC_PARAMETERS, SAMPLINGS, WIDGET_TYPES }
 import EntityChartWidget from '@/components/widgets/chart/entity-chart-widget.vue';
 
 const stubs = {
-  'chart-widget-filters': true,
+  'kpi-widget-filters': true,
   'chart-loader': true,
   'bar-chart-metrics': true,
   'line-chart-metrics': true,

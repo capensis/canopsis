@@ -179,6 +179,9 @@ export default {
   createAckRemove: {
     title: 'Annuler l\'acquittement',
   },
+  createUnCancel: {
+    title: 'Créer en uncanccel',
+  },
   liveReporting: {
     editLiveReporting: 'Suivi personnalisé',
     dateInterval: 'Intervalle de dates',
@@ -273,6 +276,18 @@ export default {
       },
       [WIDGET_TYPES.numbers]: {
         title: 'Nombres',
+      },
+      [WIDGET_TYPES.userStatistics]: {
+        title: 'Statistiques des utilisateurs',
+      },
+      [WIDGET_TYPES.alarmStatistics]: {
+        title: 'Statistiques des alarmes',
+      },
+      chart: {
+        title: 'Graphique',
+      },
+      report: {
+        title: 'Rapport',
       },
     },
   },
@@ -940,6 +955,9 @@ export default {
         title: 'Modifier le tableau des nombres',
       },
     },
+  },
+  importPbehaviorException: {
+    title: 'Importer des dates d\'exception',
   },
   createTag: {
     create: {

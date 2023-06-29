@@ -141,9 +141,11 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {WidgetColumn[]} serviceDependenciesColumns
  * @property {boolean} isAckNoteRequired
  * @property {boolean} isSnoozeNoteRequired
+ * @property {boolean} isRemoveAlarmsFromMetaAlarmCommentRequired
  * @property {boolean} isMultiAckEnabled
  * @property {boolean} isMultiDeclareTicketEnabled
  * @property {boolean} isHtmlEnabledOnTimeLine
+ * @property {boolean} isActionsAllowWithOkState
  * @property {boolean} sticky_header
  * @property {boolean} dense
  */
@@ -170,8 +172,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  */
 
 /**
- * @typedef {AlarmChart} AlarmChartForm
- * @property {string} key
+ * @typedef {AlarmChart & ObjectKey} AlarmChartForm
  */
 
 /**
@@ -293,9 +294,11 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   moreInfoTemplateTemplate: widgetTemplateValueToForm(parameters.moreInfoTemplateTemplate),
   isAckNoteRequired: !!parameters.isAckNoteRequired,
   isSnoozeNoteRequired: !!parameters.isSnoozeNoteRequired,
+  isRemoveAlarmsFromMetaAlarmCommentRequired: parameters.isRemoveAlarmsFromMetaAlarmCommentRequired ?? true,
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
   isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
   isHtmlEnabledOnTimeLine: !!parameters.isHtmlEnabledOnTimeLine,
+  isActionsAllowWithOkState: !!parameters.isActionsAllowWithOkState,
   sticky_header: !!parameters.sticky_header,
   dense: parameters.dense ?? ALARM_DENSE_TYPES.large,
   fastAckOutput: parameters.fastAckOutput

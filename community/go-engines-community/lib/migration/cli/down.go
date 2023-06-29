@@ -49,7 +49,14 @@ func (c *downCmd) Exec(ctx context.Context) error {
 		_, err := os.Stat(file)
 		if err != nil {
 			if os.IsNotExist(err) {
-				return fmt.Errorf("not found down migration script %q", file)
+				c.logger.Error().Msgf("not found down migration script %q", file)
+
+				_, err = c.collection.DeleteOne(ctx, bson.M{"_id": id})
+				if err != nil {
+					return fmt.Errorf("cannot update migration history: %w", err)
+				}
+
+				continue
 			}
 
 			return fmt.Errorf("cannot check file exist: %w", err)

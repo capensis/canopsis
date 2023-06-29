@@ -382,16 +382,32 @@ export const createPbehaviorTypesModule = () => {
     data: [],
   });
 
+  const fieldPbehaviorTypes = jest.fn()
+    .mockReturnValue([]);
+
+  const fieldPbehaviorTypesPending = jest.fn()
+    .mockReturnValue(false);
+
+  const fetchFieldPbehaviorTypes = jest.fn();
+
   const pbehaviorTypesModule = {
     name: 'pbehaviorTypes',
+    getters: {
+      fieldItems: fieldPbehaviorTypes,
+      fieldPending: fieldPbehaviorTypesPending,
+    },
     actions: {
       fetchListWithoutStore: fetchPbehaviorTypesListWithoutStore,
+      fetchFieldList: fetchFieldPbehaviorTypes,
     },
   };
 
   return {
     pbehaviorTypesModule,
+    fieldPbehaviorTypes,
+    fieldPbehaviorTypesPending,
     fetchPbehaviorTypesListWithoutStore,
+    fetchFieldPbehaviorTypes,
   };
 };
 
@@ -666,7 +682,7 @@ export const createAlarmModule = () => {
   const bulkCreateAlarmAssocticketEvent = jest.fn();
   const bulkCreateAlarmCommentEvent = jest.fn();
   const bulkCreateAlarmCancelEvent = jest.fn();
-  const bulkCreateAlarmUncancelEvent = jest.fn();
+  const bulkCreateAlarmUnCancelEvent = jest.fn();
   const bulkCreateAlarmChangestateEvent = jest.fn();
 
   afterEach(() => {
@@ -679,7 +695,7 @@ export const createAlarmModule = () => {
     bulkCreateAlarmAssocticketEvent.mockClear();
     bulkCreateAlarmCommentEvent.mockClear();
     bulkCreateAlarmCancelEvent.mockClear();
-    bulkCreateAlarmUncancelEvent.mockClear();
+    bulkCreateAlarmUnCancelEvent.mockClear();
     bulkCreateAlarmChangestateEvent.mockClear();
   });
 
@@ -695,7 +711,7 @@ export const createAlarmModule = () => {
       bulkCreateAlarmAssocticketEvent,
       bulkCreateAlarmCommentEvent,
       bulkCreateAlarmCancelEvent,
-      bulkCreateAlarmUncancelEvent,
+      bulkCreateAlarmUnCancelEvent,
       bulkCreateAlarmChangestateEvent,
     },
   };
@@ -710,7 +726,7 @@ export const createAlarmModule = () => {
     bulkCreateAlarmAssocticketEvent,
     bulkCreateAlarmCommentEvent,
     bulkCreateAlarmCancelEvent,
-    bulkCreateAlarmUncancelEvent,
+    bulkCreateAlarmUnCancelEvent,
     bulkCreateAlarmChangestateEvent,
     alarmModule,
   };
@@ -772,13 +788,13 @@ export const createManualMetaAlarmModule = () => {
   const fetchManualMetaAlarmsListWithoutStore = jest.fn().mockResolvedValue([]);
   const createManualMetaAlarm = jest.fn().mockResolvedValue([]);
   const addAlarmsIntoManualMetaAlarm = jest.fn().mockResolvedValue([]);
-  const removeAlarmsIntoManualMetaAlarm = jest.fn().mockResolvedValue([]);
+  const removeAlarmsFromManualMetaAlarm = jest.fn().mockResolvedValue([]);
 
   afterEach(() => {
     fetchManualMetaAlarmsListWithoutStore.mockClear();
     createManualMetaAlarm.mockClear();
     addAlarmsIntoManualMetaAlarm.mockClear();
-    removeAlarmsIntoManualMetaAlarm.mockClear();
+    removeAlarmsFromManualMetaAlarm.mockClear();
   });
 
   const manualMetaAlarmModule = {
@@ -787,7 +803,7 @@ export const createManualMetaAlarmModule = () => {
       fetchListWithoutStore: fetchManualMetaAlarmsListWithoutStore,
       create: createManualMetaAlarm,
       addAlarms: addAlarmsIntoManualMetaAlarm,
-      removeAlarms: removeAlarmsIntoManualMetaAlarm,
+      removeAlarms: removeAlarmsFromManualMetaAlarm,
     },
   };
 
@@ -795,8 +811,28 @@ export const createManualMetaAlarmModule = () => {
     fetchManualMetaAlarmsListWithoutStore,
     createManualMetaAlarm,
     addAlarmsIntoManualMetaAlarm,
-    removeAlarmsIntoManualMetaAlarm,
+    removeAlarmsFromManualMetaAlarm,
     manualMetaAlarmModule,
+  };
+};
+
+export const createMetaAlarmModule = () => {
+  const removeAlarmsFromMetaAlarm = jest.fn().mockResolvedValue([]);
+
+  afterEach(() => {
+    removeAlarmsFromMetaAlarm.mockClear();
+  });
+
+  const metaAlarmModule = {
+    name: 'metaAlarm',
+    actions: {
+      removeAlarms: removeAlarmsFromMetaAlarm,
+    },
+  };
+
+  return {
+    removeAlarmsFromMetaAlarm,
+    metaAlarmModule,
   };
 };
 
