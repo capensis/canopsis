@@ -99,6 +99,8 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	var updatedEntities []types.Entity
 
 	err = p.DbClient.WithTransaction(ctx, func(tCtx context.Context) error {
+		updatedEntities = make([]types.Entity, 0, len(updatedEntities))
+
 		if event.EventType == types.EventTypeManualMetaAlarmGroup ||
 			event.EventType == types.EventTypeManualMetaAlarmUngroup ||
 			event.EventType == types.EventTypeManualMetaAlarmUpdate {
