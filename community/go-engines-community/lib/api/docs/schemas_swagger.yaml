@@ -3639,6 +3639,8 @@ definitions:
         type: string
       ticket_url:
         type: string
+      ticket_url_tpl:
+        type: string
     type: object
   resolverule.CreateRequest:
     properties:
