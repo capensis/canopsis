@@ -112,6 +112,7 @@ export default {
     border-radius: 4px;
     padding: 2px;
     cursor: pointer;
+    word-wrap: break-word;
 
     &:hover {
       background: rgba(0, 0, 0, 0.1);
