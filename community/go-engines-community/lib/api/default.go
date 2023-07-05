@@ -23,7 +23,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
@@ -220,9 +219,6 @@ func Default(
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(techMetricsConfigProvider, logger)
 
-	internalTagsWatcher := alarmtag.NewInternalWatcher(dbClient, logger)
-	alarmTagChan := make(chan alarmtag.WatchMessage, chanBuf)
-
 	// Create api.
 	api := New(
 		fmt.Sprintf(":%d", flags.Port),
@@ -231,7 +227,6 @@ func Default(
 			close(entityPublChan)
 			close(entityCleanerTaskChan)
 			close(broadcastMessageChan)
-			close(alarmTagChan)
 
 			err := dbClient.Disconnect(ctx)
 			if err != nil {
@@ -307,7 +302,6 @@ func Default(
 			pbhComputeChan,
 			entityPublChan,
 			entityCleanerTaskChan,
-			alarmTagChan,
 			engine.NewRunInfoManager(engineRedisSession),
 			exportExecutor,
 			techMetricsTaskExecutor,
@@ -412,12 +406,6 @@ func Default(
 					logger.Err(err).Msg("cannot load links")
 				}
 			}
-		}
-	})
-	api.AddWorker("alarm_tag", func(ctx context.Context) {
-		err := internalTagsWatcher.Update(ctx, alarmTagChan)
-		if err != nil {
-			logger.Err(err).Msg("cannot update tags")
 		}
 	})
 

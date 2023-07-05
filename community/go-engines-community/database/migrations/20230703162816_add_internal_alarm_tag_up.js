@@ -21,6 +21,8 @@ db.alarm_tag.find({type: null}).forEach(function (doc) {
     });
 });
 
+db.periodical_alarm.createIndex({internal_tags: 1, internal_tags_updated: 1}, {name: "internal_tags_1_internal_tags_updated_1"});
+
 if (!db.permission.findOne({_id: "api_alarm_tag"})) {
     db.permission.insertOne({
         _id: "api_alarm_tag",

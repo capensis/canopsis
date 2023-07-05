@@ -9,7 +9,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,19 +16,16 @@ type api struct {
 	store        Store
 	transformer  common.PatternFieldsTransformer
 	actionLogger logger.ActionLogger
-	ch           chan<- alarmtag.WatchMessage
 }
 
 func NewApi(
 	store Store,
 	transformer common.PatternFieldsTransformer,
-	ch chan<- alarmtag.WatchMessage,
 	actionLogger logger.ActionLogger,
 ) common.CrudAPI {
 	return &api{
 		store:        store,
 		transformer:  transformer,
-		ch:           ch,
 		actionLogger: actionLogger,
 	}
 }
@@ -115,8 +111,6 @@ func (a *api) Create(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendWatchMessage(c, *response, alarmtag.WatchMessageTypeInsert)
-
 	c.JSON(http.StatusCreated, response)
 }
 
@@ -169,8 +163,6 @@ func (a *api) Update(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendWatchMessage(c, *response, alarmtag.WatchMessageTypeUpdate)
-
 	c.JSON(http.StatusOK, response)
 }
 
@@ -206,8 +198,6 @@ func (a *api) Delete(c *gin.Context) {
 		a.actionLogger.Err(err, "failed to log action")
 	}
 
-	a.sendWatchMessage(c, *tag, alarmtag.WatchMessageTypeDelete)
-
 	c.JSON(http.StatusNoContent, nil)
 }
 
@@ -237,25 +227,4 @@ func (a *api) transformUpdateRequest(ctx context.Context, request *UpdateRequest
 	}
 
 	return nil
-}
-
-func (a *api) sendWatchMessage(ctx context.Context, response Response, t int) {
-	select {
-	case <-ctx.Done():
-	case a.ch <- alarmtag.WatchMessage{
-		Tags: []alarmtag.AlarmTag{
-			{
-				ID:                  response.ID,
-				Type:                response.Type,
-				Value:               response.Value,
-				Color:               response.Color,
-				Created:             response.Created,
-				Updated:             response.Updated,
-				EntityPatternFields: response.EntityPatternFields,
-				AlarmPatternFields:  response.AlarmPatternFields,
-			},
-		},
-		Type: t,
-	}:
-	}
 }
