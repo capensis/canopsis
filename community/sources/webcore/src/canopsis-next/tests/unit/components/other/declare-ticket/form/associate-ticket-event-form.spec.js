@@ -8,13 +8,13 @@ const stubs = {
   'c-information-block': true,
   'c-name-field': true,
   'declare-ticket-rule-ticket-id-field': true,
-  'declare-ticket-rule-ticket-url-field': true,
+  'declare-ticket-rule-ticket-url-text-field': true,
   'declare-ticket-rule-ticket-custom-fields-field': true,
 };
 
 const selectSystemNameField = wrapper => wrapper.find('c-name-field-stub');
 const selectDeclareTicketRuleTicketIdField = wrapper => wrapper.find('declare-ticket-rule-ticket-id-field-stub');
-const selectDeclareTicketRuleTicketUrlField = wrapper => wrapper.find('declare-ticket-rule-ticket-url-field-stub');
+const selectDeclareTicketRuleTicketUrlTextField = wrapper => wrapper.find('declare-ticket-rule-ticket-url-text-field-stub');
 const selectDeclareTicketRuleTicketCustomFieldsField = wrapper => wrapper.find('declare-ticket-rule-ticket-custom-fields-field-stub');
 
 describe('associate-ticket-event-form', () => {
@@ -77,7 +77,7 @@ describe('associate-ticket-event-form', () => {
 
     const newTicketUrl = Faker.datatype.string();
 
-    selectDeclareTicketRuleTicketUrlField(wrapper).vm.$emit('input', newTicketUrl);
+    selectDeclareTicketRuleTicketUrlTextField(wrapper).vm.$emit('input', newTicketUrl);
 
     expect(wrapper).toEmit('input', {
       ...form,
