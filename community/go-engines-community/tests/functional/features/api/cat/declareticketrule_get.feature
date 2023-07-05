@@ -72,6 +72,7 @@ Feature: Get a declare ticket rule
                 "is_regexp": false,
                 "ticket_id": "_id",
                 "ticket_url": "url",
+                "ticket_url_tpl": "",
                 "ticket_custom": "custom",
                 "empty_response": false
               }
@@ -189,6 +190,7 @@ Feature: Get a declare ticket rule
             "is_regexp": false,
             "ticket_id": "_id",
             "ticket_url": "url",
+            "ticket_url_tpl": "",
             "ticket_custom": "custom",
             "empty_response": false
           }
