@@ -11,6 +11,7 @@ type WebhookDeclareTicket struct {
 	IsRegexp      bool              `bson:"is_regexp" json:"is_regexp"`
 	TicketID      string            `bson:"ticket_id,omitempty" json:"ticket_id"`
 	TicketUrl     string            `bson:"ticket_url,omitempty" json:"ticket_url"`
+	TicketUrlTpl  string            `bson:"ticket_url_tpl,omitempty" json:"ticket_url_tpl"`
 	CustomFields  map[string]string `bson:",inline"`
 }
 
@@ -47,6 +48,8 @@ func (t *WebhookDeclareTicket) UnmarshalJSON(b []byte) error {
 				t.TicketID = strVal
 			case "ticket_url":
 				t.TicketUrl = strVal
+			case "ticket_url_tpl":
+				t.TicketUrlTpl = strVal
 			default:
 				customFields[k] = strVal
 			}
@@ -65,6 +68,7 @@ func (t WebhookDeclareTicket) MarshalJSON() ([]byte, error) {
 		"is_regexp":      t.IsRegexp,
 		"ticket_id":      t.TicketID,
 		"ticket_url":     t.TicketUrl,
+		"ticket_url_tpl": t.TicketUrlTpl,
 	}
 
 	for k, v := range t.CustomFields {
