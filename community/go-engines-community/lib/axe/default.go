@@ -33,8 +33,6 @@ import (
 	"github.com/rs/zerolog"
 )
 
-const chanBuff = 100
-
 type Options struct {
 	Version                  bool
 	FeaturePrintEventOnError bool
@@ -184,9 +182,8 @@ func NewEngine(
 		alarmStatusService, alarmConfigProvider, json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName,
 		metricsSender, logger)
 
-	externalTagsUpdater := alarmtag.NewExternalUpdater(dbClient)
-	internalTagsUpdater := alarmtag.NewInternalUpdater(dbClient, logger)
-	internalTagsCh := make(chan string, chanBuff)
+	externalTagUpdater := alarmtag.NewExternalUpdater(dbClient)
+	internalTagAlarmMatcher := alarmtag.NewInternalTagAlarmMatcher(dbClient)
 
 	engineAxe := libengine.New(
 		func(ctx context.Context) error {
@@ -200,8 +197,6 @@ func NewEngine(
 			return autoInstructionMatcher.Load(ctx)
 		},
 		func(ctx context.Context) {
-			close(internalTagsCh)
-
 			err := amqpConnection.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close amqp connection")
@@ -261,6 +256,7 @@ func NewEngine(
 				statistics.NewEventStatisticsSender(dbClient, logger, timezoneConfigProvider),
 				pbehavior.NewEntityTypeResolver(pbehavior.NewStore(pbhRedisClient, json.NewEncoder(), json.NewDecoder()), pbehavior.NewEntityMatcher(dbClient), logger),
 				autoInstructionMatcher,
+				internalTagAlarmMatcher,
 				logger,
 			),
 			RemediationRpcClient:   remediationRpcClient,
@@ -269,8 +265,7 @@ func NewEngine(
 			Decoder:                json.NewDecoder(),
 			Logger:                 logger,
 			PbehaviorAdapter:       pbehavior.NewAdapter(dbClient),
-			ExternalTagsUpdater:    externalTagsUpdater,
-			InternalTagsCh:         internalTagsCh,
+			TagUpdater:             externalTagUpdater,
 			AutoInstructionMatcher: autoInstructionMatcher,
 		},
 		logger,
@@ -299,21 +294,30 @@ func NewEngine(
 	))
 	engineAxe.AddConsumer(serviceRpcClient)
 	engineAxe.AddConsumer(pbhRpcClient)
-	engineAxe.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
-	engineAxe.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
-		PeriodicalInterval:     options.PeriodicalWaitTime,
-		AlarmStatusService:     alarmStatusService,
-		AutoInstructionMatcher: autoInstructionMatcher,
-		Logger:                 logger,
+	engineAxe.AddPeriodicalWorker("run_info", runInfoPeriodicalWorker)
+	engineAxe.AddPeriodicalWorker("local_cache", &reloadLocalCachePeriodicalWorker{
+		PeriodicalInterval:      options.PeriodicalWaitTime,
+		AlarmStatusService:      alarmStatusService,
+		AutoInstructionMatcher:  autoInstructionMatcher,
+		InternalTagAlarmMatcher: internalTagAlarmMatcher,
+		Logger:                  logger,
 	})
-	engineAxe.AddPeriodicalWorker("external_tags", &tagPeriodicalWorker{
+	engineAxe.AddPeriodicalWorker("external_tags", &externalTagPeriodicalWorker{
 		PeriodicalInterval: options.TagsPeriodicalWaitTime,
-		TagUpdater:         externalTagsUpdater,
+		ExternalTagUpdater: externalTagUpdater,
 		Logger:             logger,
 	})
-	engineAxe.AddRoutine(func(ctx context.Context) error {
-		return internalTagsUpdater.Update(ctx, internalTagsCh)
-	})
+	engineAxe.AddPeriodicalWorker("internal_tags", libengine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(lockRedisClient),
+		redis.AxeInternalTagsPeriodicalLockKey,
+		&internalTagPeriodicalWorker{
+			PeriodicalInterval: options.PeriodicalWaitTime,
+			Logger:             logger,
+			TagCollection:      dbClient.Collection(mongo.AlarmTagCollection),
+			AlarmCollection:    dbClient.Collection(mongo.AlarmMongoCollection),
+		},
+		logger,
+	))
 	engineAxe.AddPeriodicalWorker("alarms", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.AxePeriodicalLockKey,
@@ -337,7 +341,7 @@ func NewEngine(
 		},
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker("resolve archiver", libengine.NewLockedPeriodicalWorker(
+	engineAxe.AddPeriodicalWorker("resolve_archiver", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.AxeResolvedArchiverPeriodicalLockKey,
 		&resolvedArchiverWorker{
