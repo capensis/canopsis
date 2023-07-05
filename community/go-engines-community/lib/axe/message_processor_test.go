@@ -294,15 +294,6 @@ func benchmarkMessageProcessor(
 		b.Fatalf("unexpected error %v", err)
 	}
 
-	internalTagsCh := make(chan string, 100)
-	go func() {
-		for range internalTagsCh {
-		}
-	}()
-	b.Cleanup(func() {
-		close(internalTagsCh)
-	})
-
 	p := MessageProcessor{
 		FeaturePrintEventOnError: true,
 		EventProcessor: NewEventProcessor(
@@ -318,6 +309,7 @@ func benchmarkMessageProcessor(
 			statistics.NewEventStatisticsSender(dbClient, logger, tzConfigProvider),
 			pbehavior.NewEntityTypeResolver(pbhStore, pbehavior.NewEntityMatcher(dbClient), logger),
 			NewNullAutoInstructionMatcher(),
+			alarmtag.NewInternalTagAlarmMatcher(dbClient),
 			logger,
 		),
 		TechMetricsSender:      techmetrics.NewSender(techMetricsConfigProvider, time.Minute, 0, 0, logger),
@@ -326,8 +318,7 @@ func benchmarkMessageProcessor(
 		Decoder:                json.NewDecoder(),
 		Logger:                 logger,
 		PbehaviorAdapter:       pbehavior.NewAdapter(dbClient),
-		ExternalTagsUpdater:    alarmtag.NewExternalUpdater(dbClient),
-		InternalTagsCh:         internalTagsCh,
+		TagUpdater:             alarmtag.NewExternalUpdater(dbClient),
 		AutoInstructionMatcher: NewNullAutoInstructionMatcher(),
 	}
 

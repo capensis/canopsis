@@ -28,8 +28,7 @@ type MessageProcessor struct {
 	Decoder                encoding.Decoder
 	Logger                 zerolog.Logger
 	PbehaviorAdapter       pbehavior.Adapter
-	ExternalTagsUpdater    alarmtag.ExternalUpdater
-	InternalTagsCh         chan<- string
+	TagUpdater             alarmtag.ExternalUpdater
 	AutoInstructionMatcher AutoInstructionMatcher
 }
 
@@ -181,10 +180,7 @@ func (p *MessageProcessor) handleRemediation(ctx context.Context, event types.Ev
 
 func (p *MessageProcessor) updateTags(event types.Event) {
 	if event.EventType == types.EventTypeCheck {
-		p.ExternalTagsUpdater.Add(event.Tags)
-	}
-	if event.AlarmChange != nil && event.AlarmChange.Type != types.AlarmChangeTypeNone {
-		p.InternalTagsCh <- event.Alarm.ID
+		p.TagUpdater.Add(event.Tags)
 	}
 }
 

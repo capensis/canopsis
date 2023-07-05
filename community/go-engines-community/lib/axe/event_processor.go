@@ -9,9 +9,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	liboperation "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
@@ -28,13 +29,14 @@ import (
 type eventProcessor struct {
 	dbClient            mongo.DbClient
 	adapter             libalarm.Adapter
-	entityAdapter       entity.Adapter
+	entityAdapter       libentity.Adapter
 	ruleAdapter         correlation.RulesAdapter
 	alarmConfigProvider config.AlarmConfigProvider
 	executor            liboperation.Executor
 	alarmStatusService  alarmstatus.Service
 	logger              zerolog.Logger
 	metricsSender       metrics.Sender
+	alarmMatcher        alarmtag.InternalTagAlarmMatcher
 
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
 
@@ -48,7 +50,7 @@ type eventProcessor struct {
 func NewEventProcessor(
 	dbClient mongo.DbClient,
 	adapter libalarm.Adapter,
-	entityAdapter entity.Adapter,
+	entityAdapter libentity.Adapter,
 	ruleAdapter correlation.RulesAdapter,
 	alarmConfigProvider config.AlarmConfigProvider,
 	executor liboperation.Executor,
@@ -58,6 +60,7 @@ func NewEventProcessor(
 	statisticsSender statistics.EventStatisticsSender,
 	pbhTypeResolver pbehavior.EntityTypeResolver,
 	autoInstructionMatcher AutoInstructionMatcher,
+	alarmMatcher alarmtag.InternalTagAlarmMatcher,
 	logger zerolog.Logger,
 ) libalarm.EventProcessor {
 	return &eventProcessor{
@@ -71,6 +74,7 @@ func NewEventProcessor(
 		metricsSender:       metricsSender,
 		statisticsSender:    statisticsSender,
 		pbhTypeResolver:     pbhTypeResolver,
+		alarmMatcher:        alarmMatcher,
 		logger:              logger,
 
 		metaAlarmEventProcessor: metaAlarmEventProcessor,
@@ -317,6 +321,10 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (t
 
 		alarm.InactiveAutoInstructionInProgress = matched
 	}
+
+	alarm.InternalTags = s.alarmMatcher.Match(entity, alarm)
+	alarm.InternalTagsUpdated = types.NewMicroTime()
+	alarm.Tags = append(alarm.Tags, alarm.InternalTags...)
 
 	err = s.adapter.Insert(ctx, alarm)
 	if err != nil {

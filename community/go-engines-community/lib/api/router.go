@@ -66,7 +66,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgettemplate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	libalarmtag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -103,7 +102,6 @@ func RegisterRoutes(
 	pbhComputeChan chan<- []string,
 	entityPublChan chan<- libentityservice.ChangeEntityMessage,
 	entityCleanerTaskChan chan<- entity.CleanTask,
-	alarmTagChan chan<- libalarmtag.WatchMessage,
 	runInfoManager engine.RunInfoManager,
 	exportExecutor export.TaskExecutor,
 	techMetricsTaskExecutor techmetrics.TaskExecutor,
@@ -1273,7 +1271,7 @@ func RegisterRoutes(
 			)
 		}
 
-		patternAPI := pattern.NewApi(pattern.NewStore(dbClient, pbhComputeChan, entityPublChan, alarmTagChan, authorProvider, logger),
+		patternAPI := pattern.NewApi(pattern.NewStore(dbClient, pbhComputeChan, entityPublChan, authorProvider, logger),
 			userInterfaceConfig, enforcer, actionLogger, logger)
 		patternRouter := protected.Group("/patterns")
 		{
@@ -1722,7 +1720,6 @@ func RegisterRoutes(
 			alarmTagAPI := alarmtag.NewApi(
 				alarmtag.NewStore(dbClient, authorProvider),
 				common.NewPatternFieldsTransformer(dbClient),
-				alarmTagChan,
 				actionLogger,
 			)
 			alarmTagRouter.GET(

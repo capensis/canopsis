@@ -9,7 +9,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -50,8 +49,6 @@ type store struct {
 
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage
 
-	alarmTagChan chan<- alarmtag.WatchMessage
-
 	logger zerolog.Logger
 }
 
@@ -59,7 +56,6 @@ func NewStore(
 	dbClient mongo.DbClient,
 	pbhComputeChan chan<- []string,
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage,
-	alarmTagChan chan<- alarmtag.WatchMessage,
 	authorProvider author.Provider,
 	logger zerolog.Logger,
 ) Store {
@@ -91,8 +87,6 @@ func NewStore(
 		pbhComputeChan: pbhComputeChan,
 
 		serviceChangeListener: serviceChangeListener,
-
-		alarmTagChan: alarmTagChan,
 
 		logger: logger,
 	}
@@ -212,7 +206,6 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 
 	var response *Response
 	var pbhIds, serviceIds []string
-	var alarmTags []alarmtag.AlarmTag
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 		pbhIds = nil
@@ -253,14 +246,6 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 			}
 		}
 
-		if !reflect.DeepEqual(response.AlarmPattern, prevPattern.AlarmPattern) ||
-			!reflect.DeepEqual(response.EntityPattern, prevPattern.EntityPattern) {
-			alarmTags, err = s.findAlarmTags(ctx, *response)
-			if err != nil {
-				return err
-			}
-		}
-
 		return nil
 	})
 
@@ -275,13 +260,6 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 				EntityType:              types.EntityTypeService,
 				IsServicePatternChanged: true,
 			}
-		}
-	}
-
-	if len(alarmTags) > 0 {
-		s.alarmTagChan <- alarmtag.WatchMessage{
-			Tags: alarmTags,
-			Type: alarmtag.WatchMessageTypeUpdate,
 		}
 	}
 
@@ -622,39 +600,6 @@ func (s *store) findEntityServices(ctx context.Context, pattern Response) ([]str
 	}
 
 	return ids, nil
-}
-
-func (s *store) findAlarmTags(ctx context.Context, pattern Response) ([]alarmtag.AlarmTag, error) {
-	match := bson.M{
-		"type": alarmtag.TypeInternal,
-	}
-	switch pattern.Type {
-	case savedpattern.TypeAlarm:
-		match["corporate_alarm_pattern"] = pattern.ID
-	case savedpattern.TypeEntity:
-		match["corporate_entity_pattern"] = pattern.ID
-	default:
-		return nil, nil
-	}
-
-	cursor, err := s.client.Collection(mongo.AlarmTagCollection).Find(ctx, match)
-	if err != nil {
-		return nil, err
-	}
-	defer cursor.Close(ctx)
-
-	tags := make([]alarmtag.AlarmTag, 0)
-	for cursor.Next(ctx) {
-		tag := alarmtag.AlarmTag{}
-		err := cursor.Decode(&tag)
-		if err != nil {
-			s.logger.Err(err).Msg("cannot decode alarm tag")
-			continue
-		}
-		tags = append(tags, tag)
-	}
-
-	return tags, nil
 }
 
 func transformRequestToModel(request EditRequest) savedpattern.SavedPattern {
