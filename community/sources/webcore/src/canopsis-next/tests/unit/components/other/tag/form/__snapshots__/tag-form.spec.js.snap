@@ -4,10 +4,12 @@ exports[`tag-form Renders \`tag-form\` with custom props 1`] = `
 <div
   class="layout column"
 >
-  <c-name-field-stub
-    disabled="true"
+  <input
+    class="v-text-field"
+    disabled="disabled"
+    error-messages=""
     max-length="11"
-    required="required"
+    name="value"
   />
   <c-color-picker-field-stub
     value="#2b3e4f"
@@ -22,9 +24,11 @@ exports[`tag-form Renders \`tag-form\` with default props 1`] = `
 <div
   class="layout column"
 >
-  <c-name-field-stub
+  <input
+    class="v-text-field"
+    error-messages=""
     max-length="20"
-    required="required"
+    name="value"
   />
   <c-color-picker-field-stub />
   <tag-patterns-form-stub
