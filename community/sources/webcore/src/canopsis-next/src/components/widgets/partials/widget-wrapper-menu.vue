@@ -22,7 +22,7 @@
 <script>
 import { MODALS, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
-import { getNewWidgetGridParametersY } from '@/helpers/grid-layout';
+import { getNewWidgetGridParametersY } from '@/helpers/entities/widget/layout';
 import { setSeveralFields } from '@/helpers/immutable';
 
 import { activeViewMixin } from '@/mixins/active-view';

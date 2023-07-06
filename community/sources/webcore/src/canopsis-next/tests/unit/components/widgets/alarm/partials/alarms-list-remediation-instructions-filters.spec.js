@@ -1,6 +1,6 @@
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
@@ -8,8 +8,6 @@ import { createActivatorElementStub } from '@unit/stubs/vuetify';
 import { MODALS } from '@/constants';
 
 import AlarmsListRemediationInstructionsFilters from '@/components/widgets/alarm/partials/alarms-list-remediation-instructions-filters.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'remediation-instructions-filters-list': true,
@@ -23,34 +21,6 @@ const snapshotStubs = {
 
 const updateFilters = jest.fn();
 const updateLockedFilters = jest.fn();
-
-const factory = (options = {}) => shallowMount(
-  AlarmsListRemediationInstructionsFilters,
-  {
-    localVue,
-    stubs,
-    listeners: {
-      'update:filters': updateFilters,
-      'update:lockedFilters': updateLockedFilters,
-    },
-
-    ...options,
-  },
-);
-
-const snapshotFactory = (options = {}) => mount(
-  AlarmsListRemediationInstructionsFilters,
-  {
-    localVue,
-    stubs: snapshotStubs,
-    listeners: {
-      'update:filters': updateFilters,
-      'update:lockedFilters': updateLockedFilters,
-    },
-
-    ...options,
-  },
-);
 
 const selectLockedRemediationInstructionsFiltersList = wrapper => wrapper.findAll('remediation-instructions-filters-list-stub').at(0);
 const selectRemediationInstructionsFiltersList = wrapper => wrapper.findAll('remediation-instructions-filters-list-stub').at(1);
@@ -79,6 +49,27 @@ describe('alarms-list-remediation-instructions-filters', () => {
       _id: 'ID filter 2',
     },
   ];
+
+  const factory = generateShallowRenderer(
+    AlarmsListRemediationInstructionsFilters,
+    {
+      stubs,
+      listeners: {
+        'update:filters': updateFilters,
+        'update:lockedFilters': updateLockedFilters,
+      },
+    },
+  );
+  const snapshotFactory = generateRenderer(
+    AlarmsListRemediationInstructionsFilters,
+    {
+      stubs: snapshotStubs,
+      listeners: {
+        'update:filters': updateFilters,
+        'update:lockedFilters': updateLockedFilters,
+      },
+    },
+  );
 
   afterEach(() => {
     updateFilters.mockReset();

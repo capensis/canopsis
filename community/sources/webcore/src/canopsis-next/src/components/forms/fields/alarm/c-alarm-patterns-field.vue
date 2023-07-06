@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-pattern-editor-field(
+  pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
     :readonly="readonly",
@@ -32,9 +32,12 @@ import {
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
+import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
+
 const { mapActions: dynamicInfoMapActions } = createNamespacedHelpers('dynamicInfo');
 
 export default {
+  components: { PatternEditorField },
   mixins: [entitiesInfoMixin],
   model: {
     prop: 'patterns',

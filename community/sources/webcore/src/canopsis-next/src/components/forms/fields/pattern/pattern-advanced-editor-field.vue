@@ -13,7 +13,7 @@
 <script>
 import { isArray } from 'lodash';
 
-import { isExtraInfosRuleType, isInfosRuleType, isValidPatternRule } from '@/helpers/pattern';
+import { isExtraInfosRuleType, isInfosRuleType, isValidPatternRule } from '@/helpers/entities/pattern/form';
 
 import { formMixin } from '@/mixins/form';
 

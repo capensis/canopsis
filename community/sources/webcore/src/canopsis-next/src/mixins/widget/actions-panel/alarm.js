@@ -1,52 +1,200 @@
 import { createNamespacedHelpers } from 'vuex';
+import { find, isArray, pick } from 'lodash';
 
 import {
   MODALS,
-  EVENT_ENTITY_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
+  LINK_RULE_ACTIONS,
+  ALARM_LIST_ACTIONS_TYPES,
 } from '@/constants';
 
 import { convertObjectToTreeview } from '@/helpers/treeview';
-
-import { generatePreparedDefaultAlarmListWidget, mapIds } from '@/helpers/entities';
-import { createEntityIdPatternByValue } from '@/helpers/pattern';
-import { prepareEventsByAlarms } from '@/helpers/forms/event';
+import { mapIds } from '@/helpers/array';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
+import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
 import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';
-import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
+import { entitiesManualMetaAlarmMixin } from '@/mixins/entities/manual-meta-alarm';
+import { entitiesAlarmLinksMixin } from '@/mixins/entities/alarm/links';
+import { clipboardMixin } from '@/mixins/clipboard';
 
-const { mapActions } = createNamespacedHelpers('alarm');
+const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
 
 export const widgetActionsPanelAlarmMixin = {
   mixins: [
     authMixin,
     queryMixin,
-    eventActionsAlarmMixin,
+    clipboardMixin,
     entitiesPbehaviorMixin,
+    entitiesAlarmLinksMixin,
+    entitiesManualMetaAlarmMixin,
     entitiesDeclareTicketRuleMixin,
   ],
   data() {
     return {
       ticketsForAlarmsPending: false,
+      pendingByActionsTypes: {},
     };
   },
   methods: {
-    ...mapActions({
+    ...mapAlarmActions({
       fetchResolvedAlarmsListWithoutStore: 'fetchResolvedAlarmsListWithoutStore',
+      bulkCreateAlarmAckEvent: 'bulkCreateAlarmAckEvent',
+      bulkCreateAlarmAckremoveEvent: 'bulkCreateAlarmAckremoveEvent',
+      bulkCreateAlarmSnoozeEvent: 'bulkCreateAlarmSnoozeEvent',
+      bulkCreateAlarmAssocticketEvent: 'bulkCreateAlarmAssocticketEvent',
+      bulkCreateAlarmCommentEvent: 'bulkCreateAlarmCommentEvent',
+      bulkCreateAlarmCancelEvent: 'bulkCreateAlarmCancelEvent',
+      bulkCreateAlarmUnCancelEvent: 'bulkCreateAlarmUnCancelEvent',
+      bulkCreateAlarmChangestateEvent: 'bulkCreateAlarmChangestateEvent',
     }),
 
-    showActionModal(name) {
-      return () => this.$modals.show({
-        name,
-        config: this.modalConfig,
+    isActionTypeInPending(type) {
+      return !!this.pendingByActionsTypes[type];
+    },
+
+    setActionPending(type, value) {
+      this.$set(this.pendingByActionsTypes, type, value);
+    },
+
+    showCreateChangeStateEventModalByAlarms(alarms) {
+      this.$modals.show({
+        name: MODALS.createChangeStateEvent,
+        config: {
+          items: alarms,
+          action: async (changeStateEvent) => {
+            await this.bulkCreateAlarmChangestateEvent({
+              data: alarms.map(alarm => ({ ...changeStateEvent, _id: alarm._id })),
+            });
+
+            await this.afterSubmit();
+          },
+        },
+      });
+    },
+
+    showAckModalByAlarms(alarms) {
+      this.$modals.show({
+        name: MODALS.createAckEvent,
+        config: {
+          items: alarms,
+          isNoteRequired: this.widget.parameters.isAckNoteRequired,
+          action: async (ackEvent, { needDeclareTicket, needAssociateTicket }) => {
+            await this.bulkCreateAlarmAckEvent({
+              data: alarms.map(alarm => ({ ...ackEvent, _id: alarm._id })),
+            });
+
+            await this.afterSubmit();
+
+            if (needAssociateTicket) {
+              this.showAssociateTicketModalByAlarms(alarms, true);
+            } else if (needDeclareTicket) {
+              const alarmsWithRules = alarms.filter(
+                ({ assigned_declare_ticket_rules: assignedDeclareTicketRules }) => assignedDeclareTicketRules?.length,
+              );
+              await this.showDeclareTicketModalByAlarms(alarmsWithRules);
+            }
+          },
+        },
+      });
+    },
+
+    async createFastAckActionByAlarms(alarms) {
+      this.setActionPending(ALARM_LIST_ACTIONS_TYPES.fastAck, true);
+
+      try {
+        const { fastAckOutput } = this.widget.parameters;
+
+        const ackEvent = { comment: fastAckOutput?.enabled ? fastAckOutput.value : '' };
+
+        await this.bulkCreateAlarmAckEvent({
+          data: alarms.map(alarm => ({ ...ackEvent, _id: alarm._id })),
+        });
+
+        await this.afterSubmit();
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.fastAck, false);
+      }
+    },
+
+    async createFastCancelActionByAlarms(alarms) {
+      this.setActionPending(ALARM_LIST_ACTIONS_TYPES.fastCancel, true);
+
+      try {
+        const { fastCancelOutput } = this.widget.parameters;
+
+        const cancelEvent = { comment: fastCancelOutput?.enabled ? fastCancelOutput.value : '' };
+
+        await this.bulkCreateAlarmCancelEvent({
+          data: alarms.map(alarm => ({ ...cancelEvent, _id: alarm._id })),
+        });
+
+        this.afterSubmit();
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.fastCancel, false);
+      }
+    },
+
+    showCancelModalByAlarms(alarms) {
+      this.$modals.show({
+        name: MODALS.createEvent,
+        config: {
+          items: alarms,
+
+          title: this.$t('modals.createCancelEvent.title'),
+          action: async (cancelEvent) => {
+            await this.bulkCreateAlarmCancelEvent({
+              data: alarms.map(alarm => ({ ...cancelEvent, _id: alarm._id })),
+            });
+
+            await this.afterSubmit();
+          },
+        },
+      });
+    },
+
+    showSnoozeModalByAlarms(alarms) {
+      this.$modals.show({
+        name: MODALS.createSnoozeEvent,
+        config: {
+          items: alarms,
+          isNoteRequired: this.widget.parameters.isSnoozeNoteRequired,
+          action: async (snoozeEvent) => {
+            await this.bulkCreateAlarmSnoozeEvent({
+              data: alarms.map(alarm => ({ ...snoozeEvent, _id: alarm._id })),
+            });
+
+            await this.afterSubmit();
+          },
+        },
+      });
+    },
+
+    showCreateCommentModalByAlarms(alarms) {
+      this.$modals.show({
+        name: MODALS.createCommentEvent,
+        config: {
+          items: alarms,
+          action: async (commentEvent) => {
+            await this.bulkCreateAlarmCommentEvent({
+              data: alarms.map(alarm => ({ ...commentEvent, _id: alarm._id })),
+            });
+
+            await this.afterSubmit();
+          },
+        },
       });
     },
 
     async showDeclareTicketModalByAlarms(alarms) {
-      this.ticketsForAlarmsPending = true;
+      this.setActionPending(ALARM_LIST_ACTIONS_TYPES.declareTicket, true);
 
       try {
         const {
@@ -83,7 +231,7 @@ export const widgetActionsPanelAlarmMixin = {
       } catch (err) {
         console.error(err);
       } finally {
-        this.ticketsForAlarmsPending = false;
+        this.setActionPending(ALARM_LIST_ACTIONS_TYPES.declareTicket, false);
       }
     },
 
@@ -93,24 +241,23 @@ export const widgetActionsPanelAlarmMixin = {
         config: {
           items: alarms,
           ignoreAck,
-          action: async (event) => {
-            const events = [];
-
+          action: async (associateEvent) => {
             if (!ignoreAck) {
               const itemsWithoutAck = alarms.filter(alarm => !alarm.v.ack);
 
               const { fastAckOutput } = this.widget.parameters;
 
-              events.push(...prepareEventsByAlarms(
-                EVENT_ENTITY_TYPES.ack,
-                itemsWithoutAck,
-                { output: fastAckOutput?.enabled ? fastAckOutput.value : '' },
-              ));
+              await this.bulkCreateAlarmAckEvent({
+                data: itemsWithoutAck.map(alarm => ({
+                  comment: fastAckOutput?.enabled ? fastAckOutput.value : '',
+                  _id: alarm._id,
+                })),
+              });
             }
 
-            events.push(...prepareEventsByAlarms(EVENT_ENTITY_TYPES.assocTicket, alarms, event));
-
-            await this.createEventAction({ data: events });
+            await this.bulkCreateAlarmAssocticketEvent({
+              data: alarms.map(alarm => ({ ...associateEvent, _id: alarm._id })),
+            });
 
             this.afterSubmit();
           },
@@ -118,82 +265,133 @@ export const widgetActionsPanelAlarmMixin = {
       });
     },
 
-    showSnoozeModal() {
+    showAckRemoveModalByAlarms(alarms) {
       this.$modals.show({
-        name: MODALS.createSnoozeEvent,
-        config: {
-          ...this.modalConfig,
-          isNoteRequired: this.widget.parameters.isSnoozeNoteRequired,
-        },
-      });
-    },
-
-    showAckModal() {
-      this.showAckModalByAlarms([this.item]);
-    },
-
-    showAckModalByAlarms(alarms) {
-      this.$modals.show({
-        name: MODALS.createAckEvent,
+        name: MODALS.createEvent,
         config: {
           items: alarms,
-          isNoteRequired: this.widget.parameters.isAckNoteRequired,
-          action: async (event, { needDeclareTicket, needAssociateTicket }) => {
-            const ackEvents = prepareEventsByAlarms(
-              EVENT_ENTITY_TYPES.ack,
-              alarms,
-              event,
-            );
+          title: this.$t('modals.createAckRemove.title'),
+          action: async (ackRemoveEvent) => {
+            await this.bulkCreateAlarmAckremoveEvent({
+              data: alarms.map(alarm => ({ ...ackRemoveEvent, _id: alarm._id })),
+            });
 
-            await this.createEventAction({ data: ackEvents });
-
-            await this.$emit('clear:items');
-            await this.refreshAlarmsList();
-
-            if (needAssociateTicket) {
-              this.showAssociateTicketModalByAlarms(alarms, true);
-            } else if (needDeclareTicket) {
-              const alarmsWithRules = alarms.filter(
-                ({ assigned_declare_ticket_rules: assignedDeclareTicketRules }) => assignedDeclareTicketRules?.length,
-              );
-              await this.showDeclareTicketModalByAlarms(alarmsWithRules);
-            }
+            await this.afterSubmit();
           },
         },
       });
     },
 
-    showCancelEventModal() {
+    showUnCancelModalByAlarms(alarms) {
       this.$modals.show({
         name: MODALS.createEvent,
         config: {
-          ...this.modalConfig,
+          items: alarms,
+          title: this.$t('modals.createUnCancel.title'),
+          action: async (unCancelEvent) => {
+            await this.bulkCreateAlarmUnCancelEvent({
+              data: alarms.map(alarm => ({ ...unCancelEvent, _id: alarm._id })),
+            });
 
-          title: this.$t('modals.createCancelEvent.title'),
-          eventType: EVENT_ENTITY_TYPES.cancel,
+            await this.afterSubmit();
+          },
         },
       });
     },
 
-    showAckRemoveModal() {
+    showCreateManualMetaAlarmModalByAlarms(alarms) {
       this.$modals.show({
-        name: MODALS.createEvent,
+        name: MODALS.createManualMetaAlarm,
         config: {
-          ...this.modalConfig,
+          items: alarms,
 
-          title: this.$t('modals.createAckRemove.title'),
-          eventType: EVENT_ENTITY_TYPES.ackRemove,
+          title: this.$t('modals.createManualMetaAlarm.title'),
+          action: async (manualMetaAlarmEvent) => {
+            if (manualMetaAlarmEvent.id) {
+              await this.addAlarmsIntoManualMetaAlarm({ id: manualMetaAlarmEvent.id, data: manualMetaAlarmEvent });
+            } else {
+              await this.createManualMetaAlarm({ data: manualMetaAlarmEvent });
+            }
+
+            await this.afterSubmit();
+          },
         },
       });
     },
 
-    showVariablesHelperModal() {
-      const {
-        entity,
-        pbehavior,
-        infos,
-        ...alarm
-      } = this.item;
+    showRemoveAlarmsFromManualMetaAlarmModalByAlarms(alarms) {
+      this.$modals.show({
+        name: MODALS.removeAlarmsFromMetaAlarm,
+        config: {
+          items: alarms,
+          title: this.$t('alarm.actions.titles.removeAlarmsFromManualMetaAlarm'),
+          isCommentRequired: this.widget.parameters.isRemoveAlarmsFromMetaAlarmCommentRequired,
+          action: async (removeAlarmsFromMetaAlarmEvent) => {
+            await this.removeAlarmsFromManualMetaAlarm({
+              id: this.parentAlarm?._id,
+              data: removeAlarmsFromMetaAlarmEvent,
+            });
+
+            await this.afterSubmit();
+          },
+        },
+      });
+    },
+
+    showRemoveAlarmsFromAutoMetaAlarmModalByAlarms(alarms) {
+      this.$modals.show({
+        name: MODALS.removeAlarmsFromMetaAlarm,
+        config: {
+          items: alarms,
+          title: this.$t('alarm.actions.titles.removeAlarmsFromAutoMetaAlarm'),
+          isCommentRequired: this.widget.parameters.isRemoveAlarmsFromMetaAlarmCommentRequired,
+          action: async (removeAlarmsFromMetaAlarmEvent) => {
+            await this.removeAlarmsFromMetaAlarm({
+              id: this.parentAlarm?._id,
+              data: removeAlarmsFromMetaAlarmEvent,
+            });
+
+            await this.afterSubmit();
+          },
+        },
+      });
+    },
+
+    async handleLinkClickActionByAlarms(alarms, link, type) {
+      try {
+        this.setActionPending(type, true);
+
+        const links = await this.fetchAlarmLinkWithoutStore({
+          id: link.rule_id,
+          params: { ids: mapIds(alarms) },
+        });
+
+        const summaryLink = find(links, pick(link, ['icon_name', 'label']));
+
+        if (!summaryLink) {
+          return;
+        }
+
+        if (link.action === LINK_RULE_ACTIONS.copy) {
+          this.writeTextToClipboard(summaryLink.url);
+
+          return;
+        }
+
+        window.open(summaryLink.url, '_blank');
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.setActionPending(type, false);
+      }
+    },
+
+    showVariablesHelperModalByAlarm({
+      entity,
+      pbehavior,
+      infos,
+      ...alarm
+    }) {
       const variables = [];
 
       variables.push(convertObjectToTreeview(alarm, 'alarm'));
@@ -209,23 +407,26 @@ export const widgetActionsPanelAlarmMixin = {
       this.$modals.show({
         name: MODALS.variablesHelp,
         config: {
-          ...this.modalConfig,
-
           variables,
         },
       });
     },
 
-    showAddPbehaviorModal() {
+    showAddPbehaviorModalByAlarms(alarmOrAlarms) {
       this.$modals.show({
         name: MODALS.pbehaviorPlanning,
         config: {
-          entityPattern: createEntityIdPatternByValue(this.item.entity._id),
+          entityPattern: createEntityIdPatternByValue(
+            isArray(alarmOrAlarms)
+              ? alarmOrAlarms.map(item => item.entity._id)
+              : alarmOrAlarms.entity._id,
+          ),
+          afterSubmit: this.afterSubmit,
         },
       });
     },
 
-    showHistoryModal() {
+    showHistoryModalByAlarm(alarm) {
       const widget = generatePreparedDefaultAlarmListWidget();
 
       widget.parameters.widgetColumns = this.widget.parameters.widgetColumns;
@@ -236,32 +437,12 @@ export const widgetActionsPanelAlarmMixin = {
         name: MODALS.alarmsList,
         config: {
           widget,
-          title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.item.entity._id }),
+          title: this.$t('modals.alarmsList.prefixTitle', { prefix: alarm.entity._id }),
           fetchList: params => this.fetchResolvedAlarmsListWithoutStore({
-            params: { ...params, _id: this.item.entity._id },
+            params: { ...params, _id: alarm.entity._id },
           }),
         },
       });
-    },
-
-    createFastAckActionByAlarms(alarms) {
-      let eventData = {};
-
-      if (this.widget.parameters.fastAckOutput?.enabled) {
-        eventData = { output: this.widget.parameters.fastAckOutput.value };
-      }
-
-      return this.createEvent(EVENT_ENTITY_TYPES.ack, alarms, eventData);
-    },
-
-    createFastCancelActionByAlarms(alarms) {
-      let eventData = {};
-
-      if (this.widget.parameters.fastCancelOutput?.enabled) {
-        eventData = { output: this.widget.parameters.fastCancelOutput.value };
-      }
-
-      return this.createEvent(EVENT_ENTITY_TYPES.cancel, alarms, eventData);
     },
 
     actionsAccessFilterHandler({ type }) {

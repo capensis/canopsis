@@ -273,6 +273,7 @@ export default {
   numberField: 'Number field',
   chart: 'Chart | Charts',
   chooseFile: 'Choose file',
+  seeAlarms: 'See alarms',
   variableTypes: {
     string: 'String',
     number: 'Number',
@@ -484,6 +485,12 @@ export default {
     },
     [TRIGGERS.autoinstructioncomplete]: {
       text: 'Auto instruction is completed',
+    },
+    [TRIGGERS.autoinstructionresultok]: {
+      text: 'Alarm is in OK state after all auto instructions',
+    },
+    [TRIGGERS.autoinstructionresultfail]: {
+      text: 'Alarm is in not OK state after all auto instructions',
     },
   },
   themes: {

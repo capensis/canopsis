@@ -21,7 +21,7 @@ import { pick } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { mapIds } from '@/helpers/entities';
+import { mapIds } from '@/helpers/array';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';

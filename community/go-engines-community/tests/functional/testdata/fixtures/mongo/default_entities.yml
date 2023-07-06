@@ -162,6 +162,10 @@ default_entities:
     <<: *resource
     _id: test-resource-to-pattern-count-4/test-component-default
     name: test-resource-to-pattern-count-4
+  entity_to_pattern_count_5:
+    <<: *resource
+    _id: test-resource-to-pattern-count-5/test-component-default
+    name: test-resource-to-pattern-count-5
 
   entity_to_pbehavior_get_by_entity_id_1:
     <<: *resource

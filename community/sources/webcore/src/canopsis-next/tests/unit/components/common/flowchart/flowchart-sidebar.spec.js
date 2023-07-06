@@ -1,10 +1,10 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createActivatorElementStub } from '@unit/stubs/vuetify';
 import { LINE_TYPES } from '@/constants';
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 import {
   arrowLineShapeToForm,
   bidirectionalArrowLineShapeToForm,
@@ -23,8 +23,6 @@ import { getFileDataUrlContent } from '@/helpers/file/file-select';
 import { getImageProperties } from '@/helpers/file/image';
 
 import FlowchartSidebar from '@/components/common/flowchart/flowchart-sidebar.vue';
-
-const localVue = createVueInstance();
 
 jest.mock('@/helpers/uid');
 jest.mock('@/helpers/file/file-select', () => ({
@@ -56,20 +54,6 @@ const snapshotStubs = {
   'file-selector': true,
   'image-shape-icon': true,
 };
-
-const factory = (options = {}) => shallowMount(FlowchartSidebar, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(FlowchartSidebar, {
-  localVue,
-  stubs: snapshotStubs,
-
-  ...options,
-});
 
 const selectButtons = wrapper => wrapper.findAll('v-btn-stub');
 const selectButtonByIndex = (wrapper, index) => selectButtons(wrapper).at(index);
@@ -108,6 +92,9 @@ describe('flowchart-sidebar', () => {
   const y = 435;
   const width = 150;
   const height = 150;
+
+  const factory = generateShallowRenderer(FlowchartSidebar, { stubs });
+  const snapshotFactory = generateRenderer(FlowchartSidebar, { stubs: snapshotStubs });
 
   test('Rect shape added after trigger button', async () => {
     const id = Faker.datatype.string();

@@ -205,7 +205,7 @@ func (p *ldapProvider) saveUser(
 	if user == nil {
 		user = &security.User{
 			Name:       username,
-			Role:       p.config.DefaultRole,
+			Roles:      []string{p.config.DefaultRole},
 			IsEnabled:  true,
 			ExternalID: ldapID,
 			Source:     security.SourceLdap,

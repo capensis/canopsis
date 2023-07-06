@@ -1,34 +1,12 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 import { DATETIME_FORMATS } from '@/constants';
 
 import DateTimePicker from '@/components/forms/fields/date-time-picker/date-time-picker.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'time-picker-field': true,
 };
-
-const factory = (options = {}) => shallowMount(DateTimePicker, {
-  localVue,
-  stubs,
-  listeners: {
-    close: jest.fn(),
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(DateTimePicker, {
-  localVue,
-  stubs,
-  listeners: {
-    close: jest.fn(),
-  },
-
-  ...options,
-});
 
 const selectButtons = wrapper => wrapper.findAll('v-btn-stub');
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
@@ -41,6 +19,19 @@ describe('date-time-picker', () => {
   const nowDate = new Date(nowTimestamp);
 
   mockDateNow(nowTimestamp);
+
+  const factory = generateShallowRenderer(DateTimePicker, {
+    stubs,
+    listeners: {
+      close: jest.fn(),
+    },
+  });
+  const snapshotFactory = generateRenderer(DateTimePicker, {
+    stubs,
+    listeners: {
+      close: jest.fn(),
+    },
+  });
 
   test('Time updated after trigger time picker field', async () => {
     const wrapper = factory({

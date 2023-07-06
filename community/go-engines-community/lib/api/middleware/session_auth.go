@@ -51,7 +51,7 @@ func SessionAuth(db mongo.DbClient, configProvider config.ApiConfigProvider, sto
 				// the user's id can be read later using c.MustGet(auth.UserKey).
 				c.Set(auth.UserKey, user.ID)
 				c.Set(auth.Username, user.DisplayName)
-				c.Set(auth.RoleKey, user.Role)
+				c.Set(auth.RolesKey, user.Roles)
 				c.Set(auth.ApiKey, user.AuthApiKey)
 			} else {
 				panic("user key is not string")

@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-pattern-editor-field(
+  pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
     :readonly="readonly",
@@ -26,10 +26,13 @@ import {
   PATTERN_RULE_TYPES,
 } from '@/constants';
 
+import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
+
 const { mapActions: entityCategoryMapActions } = createNamespacedHelpers('entityCategory');
 const { mapActions: serviceMapActions } = createNamespacedHelpers('service');
 
 export default {
+  components: { PatternEditorField },
   model: {
     prop: 'patterns',
     event: 'input',
