@@ -1355,6 +1355,43 @@ func RegisterRoutes(
 			)
 		}
 
+		alarmTagAPI := alarmtag.NewApi(
+			alarmtag.NewStore(dbClient, authorProvider),
+			common.NewPatternFieldsTransformer(dbClient),
+			actionLogger,
+			logger,
+		)
+		alarmTagRouter := protected.Group("/alarm-tags")
+		{
+			alarmTagRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
+				alarmTagAPI.List,
+			)
+			alarmTagRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionCreate, enforcer),
+				middleware.SetAuthor(),
+				alarmTagAPI.Create,
+			)
+			alarmTagRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionRead, enforcer),
+				alarmTagAPI.Get,
+			)
+			alarmTagRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				alarmTagAPI.Update,
+			)
+			alarmTagRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionDelete, enforcer),
+				alarmTagAPI.Delete,
+			)
+		}
+
 		bulkRouter := protected.Group("/bulk")
 		{
 			patternRouter := bulkRouter.Group("/patterns")
@@ -1583,6 +1620,16 @@ func RegisterRoutes(
 					alarmActionAPI.BulkChangeState,
 				)
 			}
+
+			alarmTagRouter := bulkRouter.Group("/alarm-tags")
+			{
+				alarmTagRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionDelete, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					alarmTagAPI.BulkDelete,
+				)
+			}
 		}
 
 		dateStorageRouter := protected.Group("data-storage")
@@ -1714,42 +1761,6 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer),
 			entityInfoDictionaryApi.ListValues,
 		)
-
-		alarmTagRouter := protected.Group("/alarm-tags")
-		{
-			alarmTagAPI := alarmtag.NewApi(
-				alarmtag.NewStore(dbClient, authorProvider),
-				common.NewPatternFieldsTransformer(dbClient),
-				actionLogger,
-			)
-			alarmTagRouter.GET(
-				"",
-				middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
-				alarmTagAPI.List,
-			)
-			alarmTagRouter.POST(
-				"",
-				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionCreate, enforcer),
-				middleware.SetAuthor(),
-				alarmTagAPI.Create,
-			)
-			alarmTagRouter.GET(
-				"/:id",
-				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionRead, enforcer),
-				alarmTagAPI.Get,
-			)
-			alarmTagRouter.PUT(
-				"/:id",
-				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionUpdate, enforcer),
-				middleware.SetAuthor(),
-				alarmTagAPI.Update,
-			)
-			alarmTagRouter.DELETE(
-				"/:id",
-				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionDelete, enforcer),
-				alarmTagAPI.Delete,
-			)
-		}
 
 		techMetricsRouter := protected.Group("/tech-metrics-export")
 		{
