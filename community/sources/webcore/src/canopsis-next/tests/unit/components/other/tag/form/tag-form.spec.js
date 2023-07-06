@@ -1,39 +1,45 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { createInputStub } from '@unit/stubs/input';
+
+import { COLORS } from '@/config';
 import { IDLE_RULE_TYPES } from '@/constants';
 
 import TagForm from '@/components/other/tag/form/tag-form.vue';
-import { COLORS } from '@/config';
 
 const stubs = {
-  'c-name-field': true,
+  'v-text-field': createInputStub('v-text-field'),
   'c-color-picker-field': true,
   'tag-patterns-form': true,
 };
 
-const selectNameField = wrapper => wrapper.find('c-name-field-stub');
+const selectValueField = wrapper => wrapper.find('input.v-text-field');
 const selectColorPickerField = wrapper => wrapper.find('c-color-picker-field-stub');
 const selectTagPatternsForm = wrapper => wrapper.find('tag-patterns-form-stub');
 
 describe('tag-form', () => {
-  const factory = generateShallowRenderer(TagForm, { stubs });
-  const snapshotFactory = generateRenderer(TagForm, { stubs });
+  const factory = generateShallowRenderer(TagForm, {
+    stubs,
+  });
+  const snapshotFactory = generateRenderer(TagForm, {
+    stubs,
+  });
 
-  test('Name changed after trigger name field', () => {
+  test('Value changed after trigger name field', () => {
     const wrapper = factory({
       propsData: {
         form: {
-          name: '',
+          value: '',
         },
       },
     });
 
     const newValue = Faker.datatype.string();
 
-    selectNameField(wrapper).vm.$emit('input', newValue);
+    selectValueField(wrapper).vm.$emit('input', newValue);
 
-    expect(wrapper).toEmit('input', { name: newValue });
+    expect(wrapper).toEmit('input', { value: newValue });
   });
 
   test('Color changed after trigger color picker field', () => {
@@ -56,7 +62,7 @@ describe('tag-form', () => {
     const wrapper = factory({
       propsData: {
         form: {
-          name: 'Name',
+          value: 'Value',
           patterns: {},
         },
       },
@@ -70,7 +76,7 @@ describe('tag-form', () => {
     selectTagPatternsForm(wrapper).vm.$emit('input', newPatterns);
 
     expect(wrapper).toEmit('input', {
-      name: 'Name',
+      value: 'Value',
       patterns: newPatterns,
     });
   });

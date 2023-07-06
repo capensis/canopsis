@@ -762,53 +762,53 @@ export const createWidgetTemplateModule = () => {
   };
 };
 
-export const createTagModule = () => {
-  const tagsPending = jest.fn().mockReturnValue(false);
-  const tags = jest.fn().mockReturnValue([]);
-  const tagsMeta = jest.fn().mockReturnValue({});
+export const createAlarmTagModule = () => {
+  const alarmTags = jest.fn().mockReturnValue([]);
+  const alarmTagsPending = jest.fn().mockReturnValue(false);
+  const alarmTagsMeta = jest.fn().mockReturnValue({});
 
-  const fetchTagsList = jest.fn();
-  const createTag = jest.fn();
-  const updateTag = jest.fn();
-  const removeTag = jest.fn();
-  const bulkRemoveTags = jest.fn();
+  const fetchAlarmTagsList = jest.fn();
+  const createAlarmTag = jest.fn();
+  const updateAlarmTag = jest.fn();
+  const removeAlarmTag = jest.fn();
+  const bulkRemoveAlarmTags = jest.fn();
 
   afterEach(() => {
-    fetchTagsList.mockClear();
-    createTag.mockClear();
-    updateTag.mockClear();
-    removeTag.mockClear();
-    bulkRemoveTags.mockClear();
+    fetchAlarmTagsList.mockClear();
+    createAlarmTag.mockClear();
+    updateAlarmTag.mockClear();
+    removeAlarmTag.mockClear();
+    bulkRemoveAlarmTags.mockClear();
   });
 
-  const tagModule = {
-    name: 'tag',
+  const alarmTagModule = {
+    name: 'alarmTag',
     getters: {
-      items: tags,
-      pending: tagsPending,
-      meta: tagsMeta,
+      items: alarmTags,
+      pending: alarmTagsPending,
+      meta: alarmTagsMeta,
     },
     actions: {
-      fetchList: fetchTagsList,
-      create: createTag,
-      update: updateTag,
-      remove: removeTag,
-      bulkRemove: bulkRemoveTags,
+      fetchList: fetchAlarmTagsList,
+      create: createAlarmTag,
+      update: updateAlarmTag,
+      remove: removeAlarmTag,
+      bulkRemove: bulkRemoveAlarmTags,
     },
   };
 
   return {
-    tagModule,
+    alarmTagModule,
 
-    tags,
-    tagsMeta,
-    tagsPending,
+    alarmTags,
+    alarmTagsPending,
+    alarmTagsMeta,
 
-    fetchTagsList,
-    createTag,
-    updateTag,
-    removeTag,
-    bulkRemoveTags,
+    fetchAlarmTagsList,
+    createAlarmTag,
+    updateAlarmTag,
+    removeAlarmTag,
+    bulkRemoveAlarmTags,
   };
 };
 

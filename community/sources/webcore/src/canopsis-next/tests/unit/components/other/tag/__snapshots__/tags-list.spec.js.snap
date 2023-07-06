@@ -224,7 +224,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-0
+                pattern-value-0
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -233,7 +233,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               </span>
             </td>
             <td>
-              1614851888
+              04/03/2021 10:58:08
             </td>
             <td>
               04/03/2021 13:44:48
@@ -294,7 +294,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-1
+                pattern-value-1
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -303,7 +303,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               </span>
             </td>
             <td>
-              1614851889
+              04/03/2021 10:58:09
             </td>
             <td>
               04/03/2021 13:44:49
@@ -354,7 +354,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-2
+                pattern-value-2
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -363,7 +363,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               </span>
             </td>
             <td>
-              1614851890
+              04/03/2021 10:58:10
             </td>
             <td>
               04/03/2021 13:44:50
@@ -412,7 +412,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-3
+                pattern-value-3
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -421,7 +421,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               </span>
             </td>
             <td>
-              1614851891
+              04/03/2021 10:58:11
             </td>
             <td>
               04/03/2021 13:44:51
@@ -472,7 +472,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-4
+                pattern-value-4
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -481,7 +481,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               </span>
             </td>
             <td>
-              1614851892
+              04/03/2021 10:58:12
             </td>
             <td>
               04/03/2021 13:44:52
@@ -530,7 +530,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-5
+                pattern-value-5
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -539,7 +539,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               </span>
             </td>
             <td>
-              1614851893
+              04/03/2021 10:58:13
             </td>
             <td>
               04/03/2021 13:44:53
@@ -590,7 +590,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-6
+                pattern-value-6
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -599,7 +599,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               </span>
             </td>
             <td>
-              1614851894
+              04/03/2021 10:58:14
             </td>
             <td>
               04/03/2021 13:44:54
@@ -648,7 +648,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-7
+                pattern-value-7
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -657,7 +657,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               </span>
             </td>
             <td>
-              1614851895
+              04/03/2021 10:58:15
             </td>
             <td>
               04/03/2021 13:44:55
@@ -708,7 +708,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-8
+                pattern-value-8
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -717,7 +717,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               </span>
             </td>
             <td>
-              1614851896
+              04/03/2021 10:58:16
             </td>
             <td>
               04/03/2021 13:44:56
@@ -766,7 +766,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-9
+                pattern-value-9
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -775,7 +775,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               </span>
             </td>
             <td>
-              1614851897
+              04/03/2021 10:58:17
             </td>
             <td>
               04/03/2021 13:44:57
@@ -826,7 +826,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-10
+                pattern-value-10
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -835,7 +835,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
               </span>
             </td>
             <td>
-              1614851898
+              04/03/2021 10:58:18
             </td>
             <td>
               04/03/2021 13:44:58
@@ -1041,7 +1041,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-0
+                pattern-value-0
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -1050,7 +1050,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               </span>
             </td>
             <td>
-              1614851888
+              04/03/2021 10:58:08
             </td>
             <td>
               04/03/2021 13:44:48
@@ -1088,7 +1088,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-1
+                pattern-value-1
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -1097,7 +1097,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               </span>
             </td>
             <td>
-              1614851889
+              04/03/2021 10:58:09
             </td>
             <td>
               04/03/2021 13:44:49
@@ -1137,7 +1137,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-10
+                pattern-value-10
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -1146,7 +1146,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               </span>
             </td>
             <td>
-              1614851898
+              04/03/2021 10:58:18
             </td>
             <td>
               04/03/2021 13:44:58
@@ -1186,7 +1186,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-2
+                pattern-value-2
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -1195,7 +1195,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               </span>
             </td>
             <td>
-              1614851890
+              04/03/2021 10:58:10
             </td>
             <td>
               04/03/2021 13:44:50
@@ -1233,7 +1233,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-3
+                pattern-value-3
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -1242,7 +1242,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               </span>
             </td>
             <td>
-              1614851891
+              04/03/2021 10:58:11
             </td>
             <td>
               04/03/2021 13:44:51
@@ -1282,7 +1282,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-4
+                pattern-value-4
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -1291,7 +1291,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               </span>
             </td>
             <td>
-              1614851892
+              04/03/2021 10:58:12
             </td>
             <td>
               04/03/2021 13:44:52
@@ -1329,7 +1329,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-5
+                pattern-value-5
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -1338,7 +1338,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               </span>
             </td>
             <td>
-              1614851893
+              04/03/2021 10:58:13
             </td>
             <td>
               04/03/2021 13:44:53
@@ -1378,7 +1378,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-6
+                pattern-value-6
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -1387,7 +1387,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               </span>
             </td>
             <td>
-              1614851894
+              04/03/2021 10:58:14
             </td>
             <td>
               04/03/2021 13:44:54
@@ -1425,7 +1425,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-7
+                pattern-value-7
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -1434,7 +1434,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               </span>
             </td>
             <td>
-              1614851895
+              04/03/2021 10:58:15
             </td>
             <td>
               04/03/2021 13:44:55
@@ -1474,7 +1474,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-8
+                pattern-value-8
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -1483,7 +1483,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               </span>
             </td>
             <td>
-              1614851896
+              04/03/2021 10:58:16
             </td>
             <td>
               04/03/2021 13:44:56
@@ -1521,7 +1521,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             </td>
             <td>
               <c-alarm-action-chip-stub>
-                pattern-name-9
+                pattern-value-9
               </c-alarm-action-chip-stub>
             </td>
             <td>
@@ -1530,7 +1530,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
               </span>
             </td>
             <td>
-              1614851897
+              04/03/2021 10:58:17
             </td>
             <td>
               04/03/2021 13:44:57
