@@ -111,7 +111,10 @@ export const API_ROUTES = {
   entityInfosKeys: '/api/v4/entity-infos-dictionary/keys',
   weatherService: '/api/v4/weather-services',
   alarmListExport: '/api/v4/alarm-export',
-  alarmTags: '/api/v4/alarm-tags',
+  alarmTag: {
+    list: '/api/v4/alarm-tags',
+    bulkList: '/api/v4/bulk/alarm-tags',
+  },
   contextExport: '/api/v4/entity-export',
   event: '/api/v4/event',
   userPreferences: '/api/v4/user-preferences',
