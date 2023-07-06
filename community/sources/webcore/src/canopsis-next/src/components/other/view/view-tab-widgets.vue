@@ -8,7 +8,8 @@
         widget-wrapper(
           :widget="widget",
           :tab="tab",
-          :kiosk="kiosk"
+          :kiosk="kiosk",
+          :editing="editing"
         )
     grid-edit-widgets(
       v-if="editing",

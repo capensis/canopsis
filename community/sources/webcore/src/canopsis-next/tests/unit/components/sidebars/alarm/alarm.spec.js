@@ -87,6 +87,7 @@ const snapshotStubs = {
   'field-density': true,
   'export-csv-form': true,
   'charts-form': true,
+  'field-resize-column-behavior': true,
 };
 
 const selectFieldTitle = wrapper => wrapper.find('input.field-title');
