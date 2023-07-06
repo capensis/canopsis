@@ -267,7 +267,7 @@ export default {
   },
   columnsSettings: {
     title: 'Paramètres des colonnes',
-    dragging: 'Faites glisser les colonnes',
+    dragging: 'Glisser/déposer les colonnes',
     resizing: 'Redimensionner les colonnes',
     cellsContentBehavior: 'Contenu des cellules',
     cellsContentBehaviors: {
