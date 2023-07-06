@@ -2777,6 +2777,30 @@ definitions:
       over_limit:
         type: boolean
     type: object
+  pattern.CountAlarmsResponse:
+    properties:
+      alarm_pattern:
+        $ref: '#/definitions/pattern.Count'
+      all:
+        $ref: '#/definitions/pattern.Count'
+      entities:
+        $ref: '#/definitions/pattern.Count'
+      entity_pattern:
+        $ref: '#/definitions/pattern.Count'
+      pbehavior_pattern:
+        $ref: '#/definitions/pattern.Count'
+    type: object
+  pattern.CountEntitiesResponse:
+    properties:
+      alarm_pattern:
+        $ref: '#/definitions/pattern.Count'
+      all:
+        $ref: '#/definitions/pattern.Count'
+      entity_pattern:
+        $ref: '#/definitions/pattern.Count'
+      pbehavior_pattern:
+        $ref: '#/definitions/pattern.Count'
+    type: object
   pattern.CountRequest:
     properties:
       alarm_pattern:
@@ -2797,15 +2821,6 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
-    type: object
-  pattern.CountResponse:
-    properties:
-      alarm_pattern:
-        $ref: '#/definitions/pattern.Count'
-      entity_pattern:
-        $ref: '#/definitions/pattern.Count'
-      pbehavior_pattern:
-        $ref: '#/definitions/pattern.Count'
     type: object
   pattern.EditRequest:
     properties:
