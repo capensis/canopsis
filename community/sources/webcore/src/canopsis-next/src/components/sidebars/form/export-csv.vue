@@ -23,6 +23,7 @@
           :templates-pending="templatesPending",
           :label="$t('settings.exportColumnNames')",
           :type="type",
+          :with-instructions="withInstructions",
           @update:template="updateTemplate"
         )
 </template>
@@ -62,6 +63,10 @@ export default {
       default: false,
     },
     datetimeFormat: {
+      type: Boolean,
+      default: false,
+    },
+    withInstructions: {
       type: Boolean,
       default: false,
     },
