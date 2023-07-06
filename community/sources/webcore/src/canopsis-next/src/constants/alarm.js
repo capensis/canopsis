@@ -2,6 +2,7 @@ import { COLORS } from '@/config';
 
 export const ALARM_FIELDS = {
   id: '_id',
+  assignedInstructions: 'assigned_instructions',
   displayName: 'v.display_name',
   output: 'v.output',
   longOutput: 'v.long_output',
@@ -329,6 +330,7 @@ export const ALARM_TEMPLATE_FIELDS = {
 
 export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.id]: 'common.id',
+  [ALARM_FIELDS.assignedInstructions]: 'alarm.fields.assignedInstructions',
   [ALARM_FIELDS.displayName]: 'alarm.fields.displayName',
   [ALARM_FIELDS.output]: 'common.output',
   [ALARM_FIELDS.longOutput]: 'common.longOutput',
