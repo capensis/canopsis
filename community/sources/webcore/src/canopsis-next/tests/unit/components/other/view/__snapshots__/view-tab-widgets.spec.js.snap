@@ -47,6 +47,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with editing mode 2`] = `
     tab="[object Object]"
   >
     <widget-wrapper-stub
+      editing="true"
       tab="[object Object]"
       widget="[object Object]"
     />
@@ -93,6 +94,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets with editing
     tab="[object Object]"
   >
     <widget-wrapper-stub
+      editing="true"
       tab="[object Object]"
       widget="[object Object]"
     />
