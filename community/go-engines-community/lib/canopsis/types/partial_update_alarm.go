@@ -543,8 +543,8 @@ func (a *Alarm) PartialUpdateTags(eventTags map[string]string) {
 	a.Tags = append(a.Tags, tags...)
 	a.ExternalTags = append(a.ExternalTags, tags...)
 	a.AddUpdate("$addToSet", bson.M{
-		"tags":          bson.M{"$each": tags},
-		"external_tags": bson.M{"$each": tags},
+		"tags":  bson.M{"$each": tags},
+		"etags": bson.M{"$each": tags},
 	})
 }
 

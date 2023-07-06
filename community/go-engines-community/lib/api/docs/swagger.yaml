@@ -1349,6 +1349,56 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /bulk/alarm-tags:
+    delete:
+      tags:
+        - alarm-tags
+      summary: Bulk delete alarm tags
+      description: |
+        Bulk delete alarm tags.
+
+        -  PERMISSIONS: `api_alarm_tag:delete`
+      operationId: alarm-tags-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmtag.BulkDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete tags
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmtag.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /bulk/alarms/ack:
     put:
       tags:
