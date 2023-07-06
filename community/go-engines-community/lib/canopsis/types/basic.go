@@ -204,7 +204,7 @@ func (t *MicroTime) UnmarshalJSON(b []byte) error {
 func (t MicroTime) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	unixMicro := t.Time.UnixMicro()
 	if unixMicro <= 0 {
-		return bson.MarshalValue(nil)
+		return bsontype.Null, nil, nil
 	}
 
 	return bson.MarshalValue(unixMicro)
