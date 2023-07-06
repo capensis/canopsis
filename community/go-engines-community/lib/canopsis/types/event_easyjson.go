@@ -1425,7 +1425,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				in.Delim(']')
 			}
-		case "external_tags":
+		case "etags":
 			if in.IsNull() {
 				in.Skip()
 				out.ExternalTags = nil
@@ -1448,7 +1448,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				in.Delim(']')
 			}
-		case "internal_tags":
+		case "itags":
 			if in.IsNull() {
 				in.Skip()
 				out.InternalTags = nil
@@ -1471,7 +1471,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				in.Delim(']')
 			}
-		case "internal_tags_updated":
+		case "itags_upd":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.InternalTagsUpdated).UnmarshalJSON(data))
 			}
@@ -1617,7 +1617,7 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		}
 	}
 	{
-		const prefix string = ",\"external_tags\":"
+		const prefix string = ",\"etags\":"
 		out.RawString(prefix)
 		if in.ExternalTags == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 			out.RawString("null")
@@ -1633,7 +1633,7 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		}
 	}
 	{
-		const prefix string = ",\"internal_tags\":"
+		const prefix string = ",\"itags\":"
 		out.RawString(prefix)
 		if in.InternalTags == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 			out.RawString("null")
@@ -1649,7 +1649,7 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		}
 	}
 	{
-		const prefix string = ",\"internal_tags_updated\":"
+		const prefix string = ",\"itags_upd\":"
 		out.RawString(prefix)
 		out.Raw((in.InternalTagsUpdated).MarshalJSON())
 	}

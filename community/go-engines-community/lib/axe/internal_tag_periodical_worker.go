@@ -31,23 +31,24 @@ func (w *internalTagPeriodicalWorker) Work(ctx context.Context) {
 		return
 	}
 
-	now := types.NewMicroTime()
+	secNow := types.NewCpsTime()
+	microNow := types.NewMicroTime()
 	existedTags := make([]string, len(tags))
 	for i, tag := range tags {
 		existedTags[i] = tag.Value
-		err = w.addTag(ctx, tag, tags, now)
+		err = w.addTag(ctx, tag, tags, secNow, microNow)
 		if err != nil {
 			w.Logger.Err(err).Str("tag", tag.Value).Msg("cannot update alarms")
 			return
 		}
-		err = w.removeTag(ctx, tag, tags, now)
+		err = w.removeTag(ctx, tag, tags, secNow, microNow)
 		if err != nil {
 			w.Logger.Err(err).Str("tag", tag.Value).Msg("cannot update alarms")
 			return
 		}
 	}
 
-	err = w.removeTags(ctx, existedTags, tags, now)
+	err = w.removeTags(ctx, existedTags, tags, secNow, microNow)
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot update alarms")
 		return
@@ -69,12 +70,13 @@ func (w *internalTagPeriodicalWorker) addTag(
 	ctx context.Context,
 	tag alarmtag.AlarmTag,
 	tags []alarmtag.AlarmTag,
-	now types.MicroTime,
+	secNow types.CpsTime,
+	microNow types.MicroTime,
 ) error {
 	alarmMatch := bson.M{
-		"t":                     bson.M{"$lt": now},
-		"internal_tags_updated": bson.M{"$lt": now},
-		"internal_tags":         bson.M{"$nin": bson.A{tag.Value}},
+		"t":         bson.M{"$lt": secNow},
+		"itags_upd": bson.M{"$lt": microNow},
+		"itags":     bson.M{"$nin": bson.A{tag.Value}},
 	}
 	if len(tag.AlarmPattern) > 0 {
 		q, err := tag.AlarmPattern.ToMongoQuery("")
@@ -110,19 +112,20 @@ func (w *internalTagPeriodicalWorker) addTag(
 		return err
 	}
 
-	return w.updateByCursor(ctx, cursor, tags, now)
+	return w.updateByCursor(ctx, cursor, tags, microNow)
 }
 
 func (w *internalTagPeriodicalWorker) removeTag(
 	ctx context.Context,
 	tag alarmtag.AlarmTag,
 	tags []alarmtag.AlarmTag,
-	now types.MicroTime,
+	secNow types.CpsTime,
+	microNow types.MicroTime,
 ) error {
 	alarmMatch := bson.M{
-		"t":                     bson.M{"$lt": now},
-		"internal_tags_updated": bson.M{"$lt": now},
-		"internal_tags":         tag.Value,
+		"t":         bson.M{"$lt": secNow},
+		"itags_upd": bson.M{"$lt": microNow},
+		"itags":     tag.Value,
 	}
 	if len(tag.AlarmPattern) > 0 && len(tag.EntityPattern) == 0 {
 		q, err := tag.AlarmPattern.ToNegativeMongoQuery("")
@@ -171,20 +174,21 @@ func (w *internalTagPeriodicalWorker) removeTag(
 		return err
 	}
 
-	return w.updateByCursor(ctx, cursor, tags, now)
+	return w.updateByCursor(ctx, cursor, tags, microNow)
 }
 
 func (w *internalTagPeriodicalWorker) removeTags(
 	ctx context.Context,
 	existedTags []string,
 	tags []alarmtag.AlarmTag,
-	now types.MicroTime,
+	secNow types.CpsTime,
+	microNow types.MicroTime,
 ) error {
 	cursor, err := w.AlarmCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
-			"t":                     bson.M{"$lt": now},
-			"internal_tags_updated": bson.M{"$lt": now},
-			"internal_tags": bson.M{"$elemMatch": bson.M{
+			"t":         bson.M{"$lt": secNow},
+			"itags_upd": bson.M{"$lt": microNow},
+			"itags": bson.M{"$elemMatch": bson.M{
 				"$nin": existedTags,
 			}},
 		}},
@@ -204,14 +208,14 @@ func (w *internalTagPeriodicalWorker) removeTags(
 		return err
 	}
 
-	return w.updateByCursor(ctx, cursor, tags, now)
+	return w.updateByCursor(ctx, cursor, tags, microNow)
 }
 
 func (w *internalTagPeriodicalWorker) updateByCursor(
 	ctx context.Context,
 	cursor mongo.Cursor,
 	tags []alarmtag.AlarmTag,
-	now types.MicroTime,
+	microNow types.MicroTime,
 ) error {
 	defer cursor.Close(ctx)
 
@@ -226,15 +230,15 @@ func (w *internalTagPeriodicalWorker) updateByCursor(
 		matchedTags := w.matchAlarm(alarm.Entity, alarm.Alarm, tags)
 		writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
 			SetFilter(bson.M{
-				"_id":                   alarm.Alarm.ID,
-				"internal_tags_updated": bson.M{"$lt": now},
+				"_id":       alarm.Alarm.ID,
+				"itags_upd": bson.M{"$lt": microNow},
 			}).
 			SetUpdate([]bson.M{
 				{"$set": bson.M{
-					"internal_tags_updated": now,
-					"internal_tags":         matchedTags,
+					"itags_upd": microNow,
+					"itags":     matchedTags,
 					"tags": bson.M{"$concatArrays": bson.A{
-						"$external_tags",
+						"$etags",
 						matchedTags,
 					}},
 				}},

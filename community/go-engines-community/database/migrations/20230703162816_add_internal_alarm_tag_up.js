@@ -1,12 +1,12 @@
 db.periodical_alarm.find({
     "v.resolved": null,
     tags: {$ne: null},
-    external_tags: null,
-    internal_tags: null,
+    etags: null,
+    itags: null,
 }).forEach(function (doc) {
     db.periodical_alarm.updateOne({_id: doc._id}, {
         $set: {
-            external_tags: doc.tags,
+            etags: doc.tags,
         }
     });
 });
@@ -21,7 +21,7 @@ db.alarm_tag.find({type: null}).forEach(function (doc) {
     });
 });
 
-db.periodical_alarm.createIndex({internal_tags: 1, internal_tags_updated: 1}, {name: "internal_tags_1_internal_tags_updated_1"});
+db.periodical_alarm.createIndex({itags: 1, itags_upd: 1}, {name: "itags_1_itags_upd_1"});
 
 if (!db.permission.findOne({_id: "api_alarm_tag"})) {
     db.permission.insertOne({

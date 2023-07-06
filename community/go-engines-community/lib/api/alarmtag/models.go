@@ -58,3 +58,7 @@ func (r *AggregationResult) GetData() interface{} {
 func (r *AggregationResult) GetTotal() int64 {
 	return r.TotalCount
 }
+
+type BulkDeleteRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+}

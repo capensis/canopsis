@@ -702,6 +702,13 @@ definitions:
     required:
     - duration
     type: object
+  alarmtag.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
   alarmtag.CreateRequest:
     properties:
       alarm_pattern:

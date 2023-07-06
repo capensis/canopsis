@@ -95,3 +95,15 @@ alarm_tag:
   alarm_tag_to_delete_2:
     <<: *alarm_tag_external
     _id: test-alarm-tag-to-delete-2
+
+  alarm_tag_to_bulk_delete_1:
+    <<: *alarm_tag_internal
+    _id: test-alarm-tag-to-bulk-delete-1
+
+  alarm_tag_to_bulk_delete_2:
+    <<: *alarm_tag_internal
+    _id: test-alarm-tag-to-bulk-delete-2
+
+  alarm_tag_to_bulk_delete_3:
+    <<: *alarm_tag_external
+    _id: test-alarm-tag-to-bulk-delete-3
