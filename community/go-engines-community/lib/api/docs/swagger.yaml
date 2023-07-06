@@ -6839,13 +6839,13 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-  /patterns-count:
+  /patterns-alarms-count:
     post:
       tags:
         - saved-patterns
-      summary: Count matches
-      description: Count matches of pattern.
-      operationId: saved-patterns-count
+      summary: Count alarm matches
+      description: Count alarm matches of pattern.
+      operationId: saved-patterns-alarms-count
       requestBody:
         description: body
         content:
@@ -6855,7 +6855,7 @@ paths:
             examples:
               count:
                 summary: Count
-                description: Count matches of patterns.
+                description: Count alarm matches of patterns.
                 value: {
                   "alarm_pattern": [
                     [
@@ -6898,7 +6898,73 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pattern.CountResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.CountAlarmsResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /patterns-entities-count:
+    post:
+      tags:
+        - saved-patterns
+      summary: Count entity matches
+      description: Count entity matches of pattern.
+      operationId: saved-patterns-entities-count
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pattern.CountRequest'
+            examples:
+              count:
+                summary: Count
+                description: Count entity matches of patterns.
+                value: {
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "pbehavior_pattern": [
+                    [
+                      {
+                        "field": "pbehavior_info.type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "default_maintenance"
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.CountEntitiesResponse'
         400:
           description: Bad Request
           content:
