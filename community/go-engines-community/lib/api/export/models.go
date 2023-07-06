@@ -14,6 +14,7 @@ type TaskParameters struct {
 	Fields         Fields
 	Separator      rune
 	FilenamePrefix string
+	UserID         string
 }
 
 type Task struct {
@@ -26,6 +27,7 @@ type Task struct {
 	File       string         `bson:"file,omitempty"`
 	Filename   string         `bson:"filename"`
 	FailReason string         `bson:"fail_reason,omitempty"`
+	User       string         `bson:"user"`
 	Created    types.CpsTime  `bson:"created"`
 	Launched   *types.CpsTime `bson:"launched,omitempty"`
 	Completed  *types.CpsTime `bson:"completed,omitempty"`
