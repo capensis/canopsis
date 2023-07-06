@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 func NewGenerator(generators ...link.Generator) link.Generator {
@@ -25,6 +26,26 @@ func (g *generator) Load(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func (g *generator) GenerateForAlarm(ctx context.Context, alarm types.Alarm, entity types.Entity, user link.User) (link.LinksByCategory, error) {
+	var res link.LinksByCategory
+	for _, v := range g.generators {
+		linksByCategory, err := v.GenerateForAlarm(ctx, alarm, entity, user)
+		if err != nil {
+			return nil, err
+		}
+
+		if res == nil {
+			res = linksByCategory
+		} else {
+			for category, links := range linksByCategory {
+				res[category] = append(res[category], links...)
+			}
+		}
+	}
+
+	return res, nil
 }
 
 func (g *generator) GenerateForAlarms(ctx context.Context, ids []string, user link.User) (map[string]link.LinksByCategory, error) {

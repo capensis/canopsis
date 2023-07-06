@@ -93,6 +93,22 @@ func (g *generator) Load(ctx context.Context) error {
 	return nil
 }
 
+func (g *generator) GenerateForAlarm(ctx context.Context, alarm types.Alarm, entity types.Entity, user liblink.User) (liblink.LinksByCategory, error) {
+	res, err := g.runWorkers(ctx, func(ctx context.Context, rule parsedRule) (map[string][]linkWithCategory, error) {
+		return g.generateLinksByAlarms(ctx, rule, []alarmWithData{
+			{
+				Alarm:  alarm,
+				Entity: entity,
+			},
+		}, user)
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return res[alarm.ID], nil
+}
+
 func (g *generator) GenerateForAlarms(ctx context.Context, ids []string, user liblink.User) (map[string]liblink.LinksByCategory, error) {
 	alarms, err := g.getAlarms(ctx, ids)
 	if err != nil || len(alarms) == 0 {
