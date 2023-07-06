@@ -6,17 +6,17 @@
     @create="showCreateTagModal"
   )
     tags-list(
-      :tags="tags",
-      :pending="tagsPending",
+      :tags="alarmTags",
+      :pending="alarmTagsPending",
       :pagination.sync="pagination",
-      :total-items="tagsMeta.total_count",
+      :total-items="alarmTagsMeta.total_count",
       :updatable="hasUpdateAnyTagAccess",
       :removable="hasDeleteAnyTagAccess",
       :duplicable="hasCreateAnyTagAccess",
       @edit="showEditTagModal",
-      @remove="showRemoveTagModal",
       @duplicate="showDuplicateTagModal",
-      @remove-selected="showDeleteSelectedTagsModal"
+      @remove="showRemoveTagModal",
+      @remove-selected="showRemoveSelectedTagsModal"
     )
 </template>
 
@@ -29,9 +29,9 @@ import { isImportedTag } from '@/helpers/entities/tag/entity';
 import { mapIds } from '@/helpers/array';
 
 import { authMixin } from '@/mixins/auth';
-import { permissionsTechnicalTagMixin } from '@/mixins/permissions/technical/tag';
-import { entitiesTagMixin } from '@/mixins/entities/tag';
 import { localQueryMixin } from '@/mixins/query-local/query';
+import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
+import { permissionsTechnicalTagMixin } from '@/mixins/permissions/technical/tag';
 
 import TagsList from '@/components/other/tag/tags-list.vue';
 
@@ -42,8 +42,8 @@ export default {
   mixins: [
     authMixin,
     localQueryMixin,
+    entitiesAlarmTagMixin,
     permissionsTechnicalTagMixin,
-    entitiesTagMixin,
   ],
   mounted() {
     this.fetchList();
@@ -54,7 +54,7 @@ export default {
         name: MODALS.createTag,
         config: {
           action: async (newTag) => {
-            await this.createTag({ data: newTag });
+            await this.createAlarmTag({ data: newTag });
 
             return this.fetchList();
           },
@@ -70,7 +70,7 @@ export default {
           tag,
           isImported: isImportedTag(tag),
           action: async (newTag) => {
-            await this.updateTag({ id: tag._id, data: newTag });
+            await this.updateAlarmTag({ id: tag._id, data: newTag });
 
             return this.fetchList();
           },
@@ -85,7 +85,7 @@ export default {
           title: this.$t('modals.createTag.duplicate.title'),
           tag: omit(tag, ['_id']),
           action: async (newTag) => {
-            await this.createTag({ data: newTag });
+            await this.createAlarmTag({ data: newTag });
 
             return this.fetchList();
           },
@@ -97,8 +97,9 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
+          text: this.$tc('tag.deleteConfirmation'),
           action: async () => {
-            await this.removeTag({ id });
+            await this.removeAlarmTag({ id });
 
             return this.fetchList();
           },
@@ -106,12 +107,13 @@ export default {
       });
     },
 
-    showDeleteSelectedTagsModal(selected) {
+    showRemoveSelectedTagsModal(selected = []) {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
+          text: this.$tc('tag.deleteConfirmation', selected.length),
           action: async () => {
-            await this.bulkRemoveTags({ data: mapIds(selected) });
+            await this.bulkRemoveAlarmTag({ data: mapIds(selected) });
 
             return this.fetchList();
           },
@@ -120,7 +122,7 @@ export default {
     },
 
     fetchList() {
-      return this.fetchTagsList({ params: this.getQuery() });
+      return this.fetchAlarmTagsList({ params: this.getQuery() });
     },
   },
 };
