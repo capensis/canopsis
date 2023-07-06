@@ -1,5 +1,5 @@
 <template lang="pug">
-  shared-actions-panel(:actions="preparedActions", :small="small")
+  shared-actions-panel(:actions="preparedActions", :small="small", :wrap="wrap")
 </template>
 
 <script>
@@ -70,6 +70,10 @@ export default {
       default: null,
     },
     small: {
+      type: Boolean,
+      default: false,
+    },
+    wrap: {
       type: Boolean,
       default: false,
     },

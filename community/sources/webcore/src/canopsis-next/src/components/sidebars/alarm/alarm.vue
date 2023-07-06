@@ -24,6 +24,8 @@
         @update:template="updateWidgetColumnsTemplate"
       )
       v-divider
+      field-resize-column-behavior(v-model="form.parameters.columns")
+      v-divider
       field-columns(
         v-model="form.parameters.widgetGroupColumns",
         :template="form.parameters.widgetGroupColumnsTemplate",
@@ -220,6 +222,7 @@ import FieldLiveReporting from './form/fields/live-reporting.vue';
 import FieldFastActionOutput from './form/fields/fast-action-output.vue';
 import FieldOpenedResolvedFilter from './form/fields/opened-resolved-filter.vue';
 import FieldInfoPopup from './form/fields/info-popup.vue';
+import FieldResizeColumnBehavior from './form/fields/resize-column-behavior.vue';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -247,6 +250,7 @@ export default {
     FieldNumber,
     ExportCsvForm,
     ChartsForm,
+    FieldResizeColumnBehavior,
   },
   mixins: [
     widgetSettingsMixin,

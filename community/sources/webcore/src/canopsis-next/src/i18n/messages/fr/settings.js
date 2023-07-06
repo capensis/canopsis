@@ -4,6 +4,7 @@ import {
   SIDE_BARS,
   ALARMS_OPENED_VALUES,
   CHART_WIDGET_PRESET_TYPES,
+  ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
 } from '@/constants';
 
 export default {
@@ -265,6 +266,16 @@ export default {
     hideActions: 'Masquer les actions',
     hideMassSelection: 'Masquer la sélection en masse',
     hideToolbar: 'Masquer la barre de tâches',
+  },
+  columnsSettings: {
+    title: 'Paramètres des colonnes',
+    dragging: 'Glisser/déposer les colonnes',
+    resizing: 'Redimensionner les colonnes',
+    cellsContentBehavior: 'Contenu des cellules',
+    cellsContentBehaviors: {
+      [ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap]: 'Enveloppé',
+      [ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate]: 'Tronquée',
+    },
   },
   mainParameter: {
     title: 'Paramètre principal',
