@@ -6,7 +6,7 @@ import { TAG_TYPES } from '@/constants';
 
 /**
  * @typedef {Object & FilterPatterns} AlarmTag
- * @property {string} name
+ * @property {string} value
  * @property {string} color
  * @property {TagTypes} [type]
  */

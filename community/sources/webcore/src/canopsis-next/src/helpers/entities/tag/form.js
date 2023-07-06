@@ -26,7 +26,7 @@ export const tagFilterPatternsToForm = tag => filterPatternsToForm(
  * @returns {AlarmTagForm}
  */
 export const tagToForm = (tag = {}) => ({
-  name: tag.name ?? '',
+  value: tag.value ?? '',
   color: tag.color ?? COLORS.secondary,
   patterns: tagFilterPatternsToForm(tag),
 });
@@ -49,7 +49,7 @@ const formPatternsToTagPatterns = patterns => formFilterToPatterns(
  * @returns {AlarmTag}
  */
 export const formToTag = (form = {}) => ({
-  name: form.name,
+  value: form.value,
   color: form.color,
   ...formPatternsToTagPatterns(form.patterns),
 });
