@@ -19,11 +19,11 @@
         type="delete",
         @click="$emit('remove-selected', selected)"
       )
-    template(#name="{ item }")
-      c-alarm-action-chip(:color="item.color") {{ item.name }}
+    template(#value="{ item }")
+      c-alarm-action-chip(:color="item.color") {{ item.value }}
     template(#type="{ item }")
       span {{ $t(`tag.types.${item.type}`) }}
-    template(#updated="{ item }") {{ item.created | date }}
+    template(#created="{ item }") {{ item.created | date }}
     template(#updated="{ item }") {{ item.updated | date }}
     template(#actions="{ item }")
       v-layout(row)
@@ -90,7 +90,7 @@ export default {
       return [
         {
           text: this.$t('common.name'),
-          value: 'name',
+          value: 'value',
         },
         {
           text: this.$t('common.type'),

@@ -1,6 +1,11 @@
 <template lang="pug">
   v-layout(column)
-    c-name-field(v-field="form.name", :disabled="isImported", :max-length="maxTagNameLength", required)
+    c-name-field(
+      v-field="form.value",
+      :disabled="isImported",
+      :max-length="maxTagNameLength",
+      required
+    )
     c-color-picker-field(v-field="form.color")
     tag-patterns-form(v-field="form.patterns")
 </template>
