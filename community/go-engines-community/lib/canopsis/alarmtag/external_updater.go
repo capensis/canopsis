@@ -252,15 +252,15 @@ func (u *externalUpdater) removeInternalTags(ctx context.Context, tags []string)
 	match := make([]bson.M, len(tags))
 	unset := bson.M{}
 	for i, tag := range tags {
-		match[i] = bson.M{"internal_tags." + tag: bson.M{"$ne": nil}}
-		unset["internal_tags."+tag] = ""
+		match[i] = bson.M{"itags." + tag: bson.M{"$ne": nil}}
+		unset["itags."+tag] = ""
 	}
 	cursor, err := u.alarmCollection.Find(ctx, bson.M{
 		"v.resolved": nil,
 		"$or":        match,
 	}, options.Find().SetProjection(bson.M{
-		"_id":           1,
-		"external_tags": 1,
+		"_id":   1,
+		"etags": 1,
 	}))
 	if err != nil {
 		return err
