@@ -1,21 +1,14 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import GridOverviewWidget from '@/components/widgets/grid-overview-widget.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'grid-overview-item': true,
 };
 
-const snapshotFactory = (options = {}) => mount(GridOverviewWidget, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 describe('grid-overview-widget', () => {
+  const snapshotFactory = generateRenderer(GridOverviewWidget, { stubs });
+
   it('Renders `grid-overview-widget` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {

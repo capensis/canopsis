@@ -2,7 +2,6 @@ import Vue from 'vue';
 import theme from 'vuetify/es5/components/Vuetify/mixins/theme';
 
 import { THEMES, THEMES_NAMES } from '@/config';
-
 import { DEFAULT_TIMEZONE } from '@/constants';
 
 export const systemMixin = {

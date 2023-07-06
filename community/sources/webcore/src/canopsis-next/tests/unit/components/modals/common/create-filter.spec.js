@@ -1,6 +1,6 @@
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
@@ -15,8 +15,6 @@ import {
 import CreateFilter from '@/components/modals/common/create-filter.vue';
 import ClickOutside from '@/services/click-outside';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'patterns-form': true,
@@ -28,33 +26,6 @@ const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'patterns-form': true,
 };
-
-const factory = (options = {}) => shallowMount(CreateFilter, {
-  localVue,
-  stubs,
-  attachTo: document.body,
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CreateFilter, {
-  localVue,
-  stubs: snapshotStubs,
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
 
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
 const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
@@ -79,6 +50,24 @@ describe('create-filter', () => {
       value: 'component',
     },
   };
+
+  const factory = generateShallowRenderer(CreateFilter, {
+    stubs,
+    attachTo: document.body,
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(CreateFilter, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
 
   test('Form submitted without fields after trigger submit button', async () => {
     const action = jest.fn();

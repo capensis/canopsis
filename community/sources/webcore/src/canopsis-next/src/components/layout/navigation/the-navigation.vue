@@ -7,8 +7,8 @@
 <script>
 import { authMixin } from '@/mixins/auth';
 
-import TopBar from './partial/top-bar.vue';
-import GroupsSideBar from './partial/groups-side-bar/groups-side-bar.vue';
+import TopBar from './partials/top-bar.vue';
+import GroupsSideBar from './partials/groups-side-bar/groups-side-bar.vue';
 
 export default {
   components: {

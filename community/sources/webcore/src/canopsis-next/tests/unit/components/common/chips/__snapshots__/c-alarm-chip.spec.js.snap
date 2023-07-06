@@ -601,36 +601,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: group 1`] = `
 </div>
 `;
 
-exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: groupRequest 1`] = `
-<div
-  class="chip-container"
->
-  <span
-    class="v-badge v-badge--overlap"
-  >
-    <span
-      class="chip"
-      style="background-color: black;"
-    >
-      Invalid val
-    </span>
-    <transition-stub
-      name="fab-transition"
-    >
-      <span
-        class="v-badge__badge secondary"
-      >
-        <span
-          class="px-1"
-        >
-          groupRequest20
-        </span>
-      </span>
-    </transition-stub>
-  </span>
-</div>
-`;
-
 exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionAbort 1`] = `
 <div
   class="chip-container"
@@ -1224,6 +1194,36 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: play 1`] = `
           class="px-1"
         >
           play20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: removeAlarmsFromAutoMetaAlarm 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="px-1"
+        >
+          removeAlarmsFromAutoMetaAlarm20
         </span>
       </span>
     </transition-stub>

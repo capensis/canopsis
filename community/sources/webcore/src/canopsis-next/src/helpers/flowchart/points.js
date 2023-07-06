@@ -1,6 +1,6 @@
 import { SHAPES } from '@/constants';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 
 /**
  * @typedef {Object} Point

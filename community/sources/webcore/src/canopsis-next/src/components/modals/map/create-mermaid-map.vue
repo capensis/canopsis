@@ -21,7 +21,7 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { mapToForm, formToMap } from '@/helpers/forms/map';
+import { mapToForm, formToMap } from '@/helpers/entities/map/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

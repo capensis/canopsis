@@ -1,9 +1,7 @@
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
-import { createEntityIdPatternByValue } from '@/helpers/pattern';
+import { generateRenderer } from '@unit/utils/vue';
+import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
 import PbehaviorsListExpandItem from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-list-expand-item.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'pbehavior-patterns-form': true,
@@ -17,7 +15,7 @@ const selectTabItemByIndex = (wrapper, index) => selectTabItems(wrapper).at(inde
 
 describe('pbehaviors-list-expand-item', () => {
   const snapshotFactory = generateRenderer(PbehaviorsListExpandItem, {
-    localVue,
+
     stubs,
   });
 

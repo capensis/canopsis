@@ -1,29 +1,39 @@
 <template lang="pug">
-  shared-actions-panel(:actions="actions", :small="small")
+  shared-actions-panel(:actions="preparedActions", :small="small", :wrap="wrap")
 </template>
 
 <script>
-import { pickBy, compact, find } from 'lodash';
+import { find } from 'lodash';
 
 import {
   MODALS,
-  ENTITIES_STATUSES,
   EVENT_ENTITY_TYPES,
   ALARM_LIST_ACTIONS_TYPES,
   LINK_RULE_ACTIONS,
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
 } from '@/constants';
 
-import { getEntityEventIcon } from '@/helpers/icon';
-
 import featuresService from '@/services/features';
 
-import { isManualGroupMetaAlarmRuleType } from '@/helpers/forms/meta-alarm-rule';
-import { isInstructionExecutionIconInProgress } from '@/helpers/forms/remediation-instruction-execution';
-import { isInstructionManual } from '@/helpers/forms/remediation-instruction';
-import { harmonizeLinks, getLinkRuleLinkActionType } from '@/helpers/links';
+import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
+import { isManualGroupMetaAlarmRuleType, isAutoMetaAlarmRuleType } from '@/helpers/entities/meta-alarm/rule/form';
+import { isInstructionExecutionIconInProgress } from '@/helpers/entities/remediation/instruction-execution/form';
+import { isInstructionManual } from '@/helpers/entities/remediation/instruction/form';
+import { harmonizeLinks, getLinkRuleLinkActionType } from '@/helpers/entities/link/list';
+import {
+  isCancelledAlarmStatus,
+  isClosedAlarmStatus,
+  isResolvedAlarm,
+  isAlarmStateOk,
+  isAlarmStatusCancelled,
+  isAlarmStatusClosed,
+  isAlarmStatusFlapping,
+  isAlarmStatusOngoing,
+} from '@/helpers/entities/alarm/form';
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
+import { entitiesMetaAlarmMixin } from '@/mixins/entities/meta-alarm';
+import { entitiesManualMetaAlarmMixin } from '@/mixins/entities/manual-meta-alarm';
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { clipboardMixin } from '@/mixins/clipboard';
 
@@ -41,6 +51,8 @@ export default {
   components: { SharedActionsPanel },
   mixins: [
     entitiesAlarmMixin,
+    entitiesMetaAlarmMixin,
+    entitiesManualMetaAlarmMixin,
     widgetActionsPanelAlarmMixin,
     clipboardMixin,
   ],
@@ -57,11 +69,11 @@ export default {
       type: Object,
       default: null,
     },
-    isResolvedAlarm: {
+    small: {
       type: Boolean,
       default: false,
     },
-    small: {
+    wrap: {
       type: Boolean,
       default: false,
     },
@@ -71,119 +83,64 @@ export default {
     },
   },
   computed: {
-    actionsMap() {
-      /**
-       * !!!IMPORTANT!!! TODO: We need check all features
-       */
-      const featuresActionsMap = featuresService.has('components.alarmListActionPanel.computed.actionsMap')
-        ? featuresService.call('components.alarmListActionPanel.computed.actionsMap', this, [])
-        : {};
+    isCancelledAlarm() {
+      return isCancelledAlarmStatus(this.item);
+    },
 
-      return {
-        ack: {
-          type: ALARM_LIST_ACTIONS_TYPES.ack,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ack),
-          title: this.$t('alarm.actions.titles.ack'),
-          method: this.showAckModal,
-        },
-        fastAck: {
-          type: ALARM_LIST_ACTIONS_TYPES.fastAck,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.fastAck),
-          title: this.$t('alarm.actions.titles.fastAck'),
-          method: this.createFastAckEvent,
-        },
-        ackRemove: {
-          type: ALARM_LIST_ACTIONS_TYPES.ackRemove,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ackRemove),
-          title: this.$t('alarm.actions.titles.ackRemove'),
-          method: this.showAckRemoveModal,
-        },
-        pbehaviorAdd: {
-          type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.pbehaviorAdd),
-          title: this.$t('alarm.actions.titles.pbehavior'),
-          method: this.showAddPbehaviorModal,
-        },
-        snooze: {
-          type: ALARM_LIST_ACTIONS_TYPES.snooze,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.snooze),
-          title: this.$t('alarm.actions.titles.snooze'),
-          method: this.showSnoozeModal,
-        },
-        declareTicket: {
-          type: ALARM_LIST_ACTIONS_TYPES.declareTicket,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.declareTicket),
-          title: this.$t('alarm.actions.titles.declareTicket'),
-          loading: this.ticketsForAlarmsPending,
-          method: this.showDeclareTicketModal,
-        },
-        associateTicket: {
-          type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.assocTicket),
-          title: this.$t('alarm.actions.titles.associateTicket'),
-          method: this.showAssociateTicketModal,
-        },
-        cancel: {
-          type: ALARM_LIST_ACTIONS_TYPES.cancel,
-          icon: '$vuetify.icons.list_delete',
-          title: this.$t('alarm.actions.titles.cancel'),
-          method: this.showCancelEventModal,
-        },
-        fastCancel: {
-          type: ALARM_LIST_ACTIONS_TYPES.fastCancel,
-          icon: 'delete',
-          title: this.$t('alarm.actions.titles.fastCancel'),
-          method: this.createFastCancelEvent,
-        },
-        changeState: {
-          type: ALARM_LIST_ACTIONS_TYPES.changeState,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.changeState),
-          title: this.$t('alarm.actions.titles.changeState'),
-          method: this.showActionModal(MODALS.createChangeStateEvent),
-        },
-        variablesHelp: {
-          type: ALARM_LIST_ACTIONS_TYPES.variablesHelp,
-          icon: 'help',
-          title: this.$t('alarm.actions.titles.variablesHelp'),
-          method: this.showVariablesHelperModal,
-        },
-        history: {
-          type: ALARM_LIST_ACTIONS_TYPES.history,
-          icon: 'history',
-          title: this.$t('alarm.actions.titles.history'),
-          method: this.showHistoryModal,
-        },
-        comment: {
-          type: ALARM_LIST_ACTIONS_TYPES.comment,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.comment),
-          title: this.$t('alarm.actions.titles.comment'),
-          method: this.showCreateCommentEventModal,
-        },
-        removeAlarmsFromManualMetaAlarm: {
-          type: ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.removeAlarmsFromManualMetaAlarm),
-          title: this.$t('alarm.actions.titles.removeAlarmsFromManualMetaAlarm'),
-          method: this.showRemoveAlarmsFromManualMetaAlarmModal,
-        },
-        executeInstruction: {
-          type: ALARM_LIST_ACTIONS_TYPES.executeInstruction,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.executeInstruction),
-          method: this.showExecuteInstructionModal,
-        },
-        ...featuresActionsMap,
-      };
+    isClosedAlarm() {
+      return isClosedAlarmStatus(this.item);
+    },
+
+    isResolvedAlarm() {
+      return isResolvedAlarm(this.item);
+    },
+
+    isAlarmStatusClosed() {
+      return isAlarmStatusClosed(this.item);
+    },
+
+    isAlarmStatusCancelled() {
+      return isAlarmStatusCancelled(this.item);
+    },
+
+    isAlarmStatusOngoing() {
+      return isAlarmStatusOngoing(this.item);
+    },
+
+    isAlarmStatusFlapping() {
+      return isAlarmStatusFlapping(this.item);
+    },
+
+    isOpenedAlarm() {
+      return !this.isAlarmStatusClosed && !this.isAlarmStatusCancelled;
+    },
+
+    isAlarmStateOk() {
+      return isAlarmStateOk(this.item);
+    },
+
+    isActionsAllowWithOkState() {
+      return this.widget.parameters.isActionsAllowWithOkState && this.isAlarmStateOk;
+    },
+
+    isAlarmOpenedOrActionAllowedWithStateOk() {
+      return this.isOpenedAlarm || this.isActionsAllowWithOkState;
     },
 
     isParentAlarmManualMetaAlarm() {
       return isManualGroupMetaAlarmRuleType(this.parentAlarm?.meta_alarm_rule?.type);
     },
 
-    filteredActionsMap() {
-      return pickBy(this.actionsMap, this.actionsAccessFilterHandler);
+    isParentAlarmAutoMetaAlarm() {
+      return isAutoMetaAlarmRuleType(this.parentAlarm?.meta_alarm_rule?.type);
+    },
+
+    visibleLinks() {
+      return harmonizeLinks(this.item.links).filter(link => !link.hide_in_menu);
     },
 
     linksActions() {
-      return harmonizeLinks(this.item.links).map((link) => {
+      return this.visibleLinks.map((link) => {
         const type = getLinkRuleLinkActionType(link);
 
         return {
@@ -197,97 +154,16 @@ export default {
       });
     },
 
-    modalConfig() {
-      return {
-        items: [this.item],
-        afterSubmit: this.afterSubmit,
-      };
-    },
-
-    resolvedActions() {
-      const { pbehaviorList, variablesHelp } = this.filteredActionsMap;
-
-      return [
-        pbehaviorList,
-        ...this.linksActions,
-        variablesHelp,
-      ];
-    },
-
-    unresolvedActions() {
-      const { filteredActionsMap } = this;
+    instructionsActions() {
       const {
         assigned_instructions: assignedInstructions = [],
-        assigned_declare_ticket_rules: assignedDeclareTicketRules = [],
       } = this.item;
 
-      const actions = [
-        filteredActionsMap.snooze,
-        filteredActionsMap.pbehaviorAdd,
-        filteredActionsMap.pbehaviorList,
-        filteredActionsMap.comment,
-      ];
-
-      if (this.item.entity) {
-        actions.push(filteredActionsMap.history);
-      }
-
-      actions.push(filteredActionsMap.variablesHelp);
-
-      if (this.isParentAlarmManualMetaAlarm) {
-        actions.push(filteredActionsMap.removeAlarmsFromManualMetaAlarm);
-      }
-
-      /**
-       * If we will have actions for resolved alarms in the features we should move this condition to
-       * the every features repositories
-       */
-      if (featuresService.has('components.alarmListActionPanel.computed.actions')) {
-        const featuresActions = featuresService.call('components.alarmListActionPanel.computed.actions', this, []);
-
-        if (featuresActions?.length) {
-          actions.unshift(...featuresActions);
-        }
-      }
-
-      if ([ENTITIES_STATUSES.ongoing, ENTITIES_STATUSES.flapping].includes(this.item.v.status.val)) {
-        if (this.item.v.ack) {
-          if (this.widget.parameters.isMultiAckEnabled) {
-            actions.unshift(filteredActionsMap.ack);
-          }
-
-          actions.unshift(
-            filteredActionsMap.cancel,
-            filteredActionsMap.fastCancel,
-            filteredActionsMap.ackRemove,
-            filteredActionsMap.changeState,
-          );
-
-          if (!this.item.v?.tickets?.length || this.widget.parameters.isMultiDeclareTicketEnabled) {
-            actions.unshift(filteredActionsMap.associateTicket);
-
-            if (assignedDeclareTicketRules.length) {
-              actions.unshift(filteredActionsMap.declareTicket);
-            }
-          }
-        } else {
-          actions.unshift(
-            filteredActionsMap.ack,
-            filteredActionsMap.fastAck,
-          );
-        }
-      }
-
-      actions.push(...this.linksActions);
-
-      /**
-       * Add actions for available instructions
-       */
-      if (assignedInstructions.length && filteredActionsMap.executeInstruction) {
+      if (assignedInstructions.length) {
         const pausedInstructions = assignedInstructions.filter(instruction => instruction.execution);
         const hasRunningInstruction = isInstructionExecutionIconInProgress(this.item.instruction_execution_icon);
 
-        assignedInstructions.forEach((instruction) => {
+        return assignedInstructions.map((instruction) => {
           const { execution } = instruction;
           let titlePrefix = 'execute';
           let cssClass = '';
@@ -302,31 +178,294 @@ export default {
           }
 
           const action = {
-            ...filteredActionsMap.executeInstruction,
-
             cssClass,
+            type: ALARM_LIST_ACTIONS_TYPES.executeInstruction,
+            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.executeInstruction),
             disabled: hasRunningInstruction
               || (Boolean(pausedInstructions.length) && !find(pausedInstructions, { _id: instruction._id })),
             title: this.$t(`remediation.instruction.${titlePrefix}Instruction`, {
               instructionName: instruction.name,
             }),
-            method: () => filteredActionsMap.executeInstruction.method(instruction),
+            method: () => this.showExecuteInstructionModal(instruction),
           };
 
-          actions.push(action);
+          return action;
         });
+      }
+
+      return [];
+    },
+
+    ticketsActions() {
+      const actions = [];
+      const {
+        assigned_declare_ticket_rules: assignedDeclareTicketRules = [],
+      } = this.item;
+
+      if (!this.item.v?.tickets?.length || this.widget.parameters.isMultiDeclareTicketEnabled) {
+        actions.unshift({
+          type: ALARM_LIST_ACTIONS_TYPES.associateTicket,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.assocTicket),
+          title: this.$t('alarm.actions.titles.associateTicket'),
+          method: this.showAssociateTicketModal,
+        });
+
+        if (assignedDeclareTicketRules.length) {
+          actions.unshift({
+            type: ALARM_LIST_ACTIONS_TYPES.declareTicket,
+            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.declareTicket),
+            title: this.$t('alarm.actions.titles.declareTicket'),
+            method: this.showDeclareTicketModal,
+          });
+        }
       }
 
       return actions;
     },
 
     actions() {
-      return compact(this.isResolvedAlarm ? this.resolvedActions : this.unresolvedActions);
+      const actions = [];
+      const variablesHelpAction = {
+        type: ALARM_LIST_ACTIONS_TYPES.variablesHelp,
+        icon: 'help',
+        title: this.$t('alarm.actions.titles.variablesHelp'),
+        method: this.showVariablesHelperModal,
+      };
+
+      if (this.isCancelledAlarm && !this.isResolvedAlarm) {
+        actions.unshift({
+          type: ALARM_LIST_ACTIONS_TYPES.unCancel,
+          icon: 'delete_forever',
+          title: this.$t('alarm.actions.titles.unCancel'),
+          method: this.showUnCancelModal,
+        });
+      }
+
+      if (this.isOpenedAlarm) {
+        actions.push(
+          {
+            type: ALARM_LIST_ACTIONS_TYPES.snooze,
+            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.snooze),
+            title: this.$t('alarm.actions.titles.snooze'),
+            method: this.showSnoozeModal,
+          },
+          {
+            type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
+            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.pbehaviorAdd),
+            title: this.$t('alarm.actions.titles.pbehavior'),
+            method: this.showAddPbehaviorModal,
+          },
+        );
+      }
+
+      if (this.isAlarmOpenedOrActionAllowedWithStateOk) {
+        actions.push(
+          {
+            type: ALARM_LIST_ACTIONS_TYPES.comment,
+            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.comment),
+            title: this.$t('alarm.actions.titles.comment'),
+            method: this.showCreateCommentEventModal,
+          },
+        );
+      }
+
+      if (this.isOpenedAlarm && this.item.entity) {
+        actions.push({
+          type: ALARM_LIST_ACTIONS_TYPES.history,
+          icon: 'history',
+          title: this.$t('alarm.actions.titles.history'),
+          method: this.showHistoryModal,
+        });
+      }
+
+      if (this.isOpenedAlarm) {
+        actions.push(variablesHelpAction);
+      }
+
+      if (this.isAlarmOpenedOrActionAllowedWithStateOk && this.isParentAlarmManualMetaAlarm) {
+        actions.push({
+          type: ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.removeAlarmsFromManualMetaAlarm),
+          title: this.$t('alarm.actions.titles.removeAlarmsFromManualMetaAlarm'),
+          method: this.showRemoveAlarmsFromManualMetaAlarmModal,
+        });
+      }
+
+      if (this.isAlarmOpenedOrActionAllowedWithStateOk && this.isParentAlarmAutoMetaAlarm) {
+        actions.push({
+          type: ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromAutoMetaAlarm,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.removeAlarmsFromAutoMetaAlarm),
+          title: this.$t('alarm.actions.titles.removeAlarmsFromAutoMetaAlarm'),
+          method: this.showRemoveAlarmsFromAutoMetaAlarmModal,
+        });
+      }
+
+      /**
+       * If we will have actions for resolved alarms in the features we should move this condition to
+       * the every features repositories
+       */
+      if (this.isOpenedAlarm
+        && featuresService.has('components.alarmListActionPanel.computed.actions')
+      ) {
+        const featuresActions = featuresService.call('components.alarmListActionPanel.computed.actions', this, []);
+
+        if (featuresActions?.length) {
+          actions.unshift(...featuresActions);
+        }
+      }
+
+      if (
+        (this.isAlarmStatusClosed && this.isActionsAllowWithOkState)
+        || this.isAlarmStatusOngoing
+        || this.isAlarmStatusFlapping
+      ) {
+        const ackAction = {
+          type: ALARM_LIST_ACTIONS_TYPES.ack,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ack),
+          title: this.$t('alarm.actions.titles.ack'),
+          method: this.showAckModal,
+        };
+
+        if (this.item.v.ack) {
+          if (this.widget.parameters.isMultiAckEnabled) {
+            actions.unshift(ackAction);
+          }
+
+          actions.unshift(
+            {
+              type: ALARM_LIST_ACTIONS_TYPES.ackRemove,
+              icon: getEntityEventIcon(EVENT_ENTITY_TYPES.ackRemove),
+              title: this.$t('alarm.actions.titles.ackRemove'),
+              method: this.showAckRemoveModal,
+            },
+            {
+              type: ALARM_LIST_ACTIONS_TYPES.changeState,
+              icon: getEntityEventIcon(EVENT_ENTITY_TYPES.changeState),
+              title: this.$t('alarm.actions.titles.changeState'),
+              method: this.showCreateChangeStateEventModal,
+            },
+          );
+
+          if (!this.isAlarmStateOk) {
+            actions.unshift(
+              {
+                type: ALARM_LIST_ACTIONS_TYPES.cancel,
+                icon: '$vuetify.icons.list_delete',
+                title: this.$t('alarm.actions.titles.cancel'),
+                method: this.showCancelModal,
+              },
+              {
+                type: ALARM_LIST_ACTIONS_TYPES.fastCancel,
+                icon: 'delete',
+                title: this.$t('alarm.actions.titles.fastCancel'),
+                method: this.createFastCancel,
+              },
+            );
+          }
+
+          actions.unshift(...this.ticketsActions);
+        } else {
+          actions.unshift(
+            ackAction,
+            {
+              type: ALARM_LIST_ACTIONS_TYPES.fastAck,
+              icon: getEntityEventIcon(EVENT_ENTITY_TYPES.fastAck),
+              title: this.$t('alarm.actions.titles.fastAck'),
+              method: this.createFastAckEvent,
+            },
+          );
+        }
+      }
+
+      actions.push(...this.linksActions);
+
+      if (this.isOpenedAlarm) {
+        actions.push(...this.instructionsActions);
+      } else {
+        actions.push(variablesHelpAction);
+      }
+
+      return actions;
+    },
+
+    filteredActions() {
+      return this.actions.filter(this.actionsAccessFilterHandler);
+    },
+
+    preparedActions() {
+      return this.filteredActions.map(action => ({
+        ...action,
+        loading: this.isActionTypeInPending(action.type),
+      }));
     },
   },
   methods: {
     afterSubmit() {
       this.refreshAlarmsList();
+    },
+
+    showCreateChangeStateEventModal() {
+      this.showCreateChangeStateEventModalByAlarms([this.item]);
+    },
+
+    showSnoozeModal() {
+      this.showSnoozeModalByAlarms([this.item]);
+    },
+
+    showAckModal() {
+      this.showAckModalByAlarms([this.item]);
+    },
+
+    createFastAckEvent() {
+      this.createFastAckActionByAlarms([this.item]);
+    },
+
+    showAssociateTicketModal() {
+      this.showAssociateTicketModalByAlarms([this.item]);
+    },
+
+    showDeclareTicketModal() {
+      this.showDeclareTicketModalByAlarms([this.item]);
+    },
+
+    showCreateCommentEventModal() {
+      this.showCreateCommentModalByAlarms([this.item]);
+    },
+
+    showAckRemoveModal() {
+      this.showAckRemoveModalByAlarms([this.item]);
+    },
+
+    showCancelModal() {
+      this.showCancelModalByAlarms([this.item]);
+    },
+
+    showUnCancelModal() {
+      this.showUnCancelModalByAlarms([this.item]);
+    },
+
+    createFastCancel() {
+      this.createFastCancelActionByAlarms([this.item]);
+    },
+
+    showRemoveAlarmsFromManualMetaAlarmModal() {
+      this.showRemoveAlarmsFromManualMetaAlarmModalByAlarms([this.item]);
+    },
+
+    showRemoveAlarmsFromAutoMetaAlarmModal() {
+      this.showRemoveAlarmsFromAutoMetaAlarmModalByAlarms([this.item]);
+    },
+
+    showVariablesHelperModal() {
+      this.showVariablesHelperModalByAlarm(this.item);
+    },
+
+    showAddPbehaviorModal() {
+      this.showAddPbehaviorModalByAlarms(this.item);
+    },
+
+    showHistoryModal() {
+      this.showHistoryModalByAlarm(this.item);
     },
 
     showExecuteInstructionModal(assignedInstruction) {
@@ -345,48 +484,6 @@ export default {
           onExecute: refreshAlarm,
         },
       });
-    },
-
-    showAssociateTicketModal() {
-      this.showAssociateTicketModalByAlarms([this.item]);
-    },
-
-    showDeclareTicketModal() {
-      this.showDeclareTicketModalByAlarms([this.item]);
-    },
-
-    showCreateCommentEventModal() {
-      this.$modals.show({
-        name: MODALS.createCommentEvent,
-        config: {
-          ...this.modalConfig,
-          action: data => this.createEvent(EVENT_ENTITY_TYPES.comment, this.item, data),
-        },
-      });
-    },
-
-    showRemoveAlarmsFromManualMetaAlarmModal() {
-      this.$modals.show({
-        name: MODALS.removeAlarmsFromManualMetaAlarm,
-        config: {
-          ...this.modalConfig,
-
-          title: this.$t('alarm.actions.titles.removeAlarmsFromManualMetaAlarm'),
-          parentAlarm: this.parentAlarm,
-        },
-      });
-    },
-
-    async createFastAckEvent() {
-      await this.createFastAckActionByAlarms([this.item]);
-
-      return this.refreshAlarmsList();
-    },
-
-    async createFastCancelEvent() {
-      await this.createFastCancelActionByAlarms([this.item]);
-
-      return this.refreshAlarmsList();
     },
   },
 };

@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { remediationInstructionToForm } from '@/helpers/forms/remediation-instruction';
+import { remediationInstructionToForm } from '@/helpers/entities/remediation/instruction/form';
 
 import RemediationInstructionForm from '../form/remediation-instruction-form.vue';
 
