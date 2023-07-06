@@ -1,14 +1,12 @@
 <template lang="pug">
-  div.more-infos()
-    v-runtime-template(v-if="template", :template="compiledTemplate")
+  div.more-infos
+    c-runtime-template(v-if="template", :template="compiledTemplate")
     v-layout(v-else, justify-center)
       v-icon(color="info") infos
       p.ma-0 {{ $t('alarm.moreInfos.defineATemplate') }}
 </template>
 
 <script>
-import VRuntimeTemplate from 'v-runtime-template';
-
 import { USERS_PERMISSIONS } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
@@ -16,7 +14,6 @@ import { compile } from '@/helpers/handlebars';
 import { handlebarsLinksHelperCreator } from '@/mixins/handlebars/links-helper-creator';
 
 export default {
-  components: { VRuntimeTemplate },
   mixins: [
     handlebarsLinksHelperCreator(
       'alarm.links',

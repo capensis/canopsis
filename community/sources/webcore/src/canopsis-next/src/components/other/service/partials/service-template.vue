@@ -63,7 +63,6 @@ export default {
           :total-items="totalItems"
           entity-name-field="${entityNameField}"
           @refresh="refreshEntities"
-          @apply:action="applyAction"
           @update:pagination="updatePagination"
         ></service-entities-list>
       `);
@@ -73,10 +72,6 @@ export default {
     unregisterHelper('entities');
   },
   methods: {
-    applyAction(action) {
-      this.$emit('apply:action', action);
-    },
-
     updatePagination(pagination) {
       this.$emit('update:pagination', pagination);
     },

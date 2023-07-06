@@ -251,7 +251,7 @@ func (m *manager) processService(ctx context.Context, data ServiceData, entities
 		match := false
 		if len(data.EntityPattern) > 0 {
 			var err error
-			match, _, err = data.EntityPattern.Match(e)
+			match, err = data.EntityPattern.Match(e)
 			if err != nil {
 				m.logger.Err(err).Str("service", data.ID).Msgf("service has invalid pattern")
 			}

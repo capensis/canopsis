@@ -122,9 +122,8 @@ import { createNamespacedHelpers } from 'vuex';
 import { COLORS } from '@/config';
 import { PATTERNS_FIELDS } from '@/constants';
 
-import { isValidPatternRule } from '@/helpers/pattern';
-import { formGroupsToPatternRules } from '@/helpers/forms/pattern';
-import { formFilterToPatterns } from '@/helpers/forms/filter';
+import { isValidPatternRule, formGroupsToPatternRules } from '@/helpers/entities/pattern/form';
+import { formFilterToPatterns } from '@/helpers/entities/filter/form';
 
 const { mapActions } = createNamespacedHelpers('pattern');
 

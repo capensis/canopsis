@@ -2,7 +2,6 @@ package entity
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -13,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -40,6 +40,7 @@ type api struct {
 	entityChangeListener chan<- entityservice.ChangeEntityMessage
 	metricMetaUpdater    metrics.MetaUpdater
 	actionLogger         logger.ActionLogger
+	encoder              encoding.Encoder
 	logger               zerolog.Logger
 }
 
@@ -50,6 +51,7 @@ func NewApi(
 	entityChangeListener chan<- entityservice.ChangeEntityMessage,
 	metricMetaUpdater metrics.MetaUpdater,
 	actionLogger logger.ActionLogger,
+	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) API {
 	fields := []string{"_id", "name", "type", "enabled", "connector", "component", "services"}
@@ -71,6 +73,7 @@ func NewApi(
 		entityChangeListener: entityChangeListener,
 		metricMetaUpdater:    metricMetaUpdater,
 		actionLogger:         actionLogger,
+		encoder:              encoder,
 		logger:               logger,
 	}
 }
@@ -114,7 +117,7 @@ func (a *api) StartExport(c *gin.Context) {
 		r.Fields = a.defaultExportFields
 	}
 
-	params, err := json.Marshal(r.BaseFilterRequest)
+	params, err := a.encoder.Encode(r.BaseFilterRequest)
 	if err != nil {
 		panic(err)
 	}
@@ -125,6 +128,7 @@ func (a *api) StartExport(c *gin.Context) {
 		Fields:         r.Fields,
 		Separator:      separator,
 		FilenamePrefix: "entities",
+		UserID:         c.MustGet(auth.UserKey).(string),
 	})
 
 	if err != nil {

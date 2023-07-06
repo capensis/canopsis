@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -37,6 +38,7 @@ type api struct {
 	exportExecutor      export.TaskExecutor
 	defaultExportFields export.Fields
 	exportSeparators    map[string]rune
+	encoder             encoding.Encoder
 
 	logger zerolog.Logger
 }
@@ -44,6 +46,7 @@ type api struct {
 func NewApi(
 	store Store,
 	executor export.TaskExecutor,
+	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) API {
 	fields := []string{"_id", "v.connector", "v.connector_name", "v.component",
@@ -62,7 +65,8 @@ func NewApi(
 		defaultExportFields: defaultExportFields,
 		exportSeparators: map[string]rune{"comma": ',', "semicolon": ';',
 			"tab": '	', "space": ' '},
-		logger: logger,
+		encoder: encoder,
+		logger:  logger,
 	}
 }
 
@@ -366,7 +370,7 @@ func (a *api) StartExport(c *gin.Context) {
 		r.Fields = a.defaultExportFields
 	}
 
-	params, err := json.Marshal(r.ExportFetchParameters)
+	params, err := a.encoder.Encode(r.ExportFetchParameters)
 	if err != nil {
 		panic(err)
 	}
@@ -377,6 +381,7 @@ func (a *api) StartExport(c *gin.Context) {
 		Fields:         r.Fields,
 		Separator:      separator,
 		FilenamePrefix: "alarms",
+		UserID:         c.MustGet(auth.UserKey).(string),
 	})
 	if err != nil {
 		panic(err)

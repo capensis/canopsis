@@ -1,30 +1,18 @@
-import { createVueInstance, mount, shallowMount } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 import { ENTITIES_STATES } from '@/constants';
 
 import CEntityStateField from '@/components/forms/fields/entity/c-entity-state-field.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = (options = {}) => shallowMount(CEntityStateField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CEntityStateField, {
-  localVue,
-
-  ...options,
-});
-
 describe('c-entity-state-field', () => {
+  const factory = generateShallowRenderer(CEntityStateField, { stubs });
+  const snapshotFactory = generateRenderer(CEntityStateField);
+
   it('State type changed after trigger select field', () => {
     const wrapper = factory({
       propsData: {

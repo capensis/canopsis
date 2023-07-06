@@ -17,7 +17,7 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { formToScenario, scenarioToForm, scenarioErrorToForm } from '@/helpers/forms/scenario';
+import { formToScenario, scenarioToForm, scenarioErrorToForm } from '@/helpers/entities/scenario/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesScenarioMixin } from '@/mixins/entities/scenario';

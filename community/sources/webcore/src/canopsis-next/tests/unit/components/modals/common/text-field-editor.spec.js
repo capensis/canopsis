@@ -1,7 +1,7 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
@@ -11,8 +11,6 @@ import { createInputStub } from '@unit/stubs/input';
 import ClickOutside from '@/services/click-outside';
 
 import TextFieldEditor from '@/components/modals/common/text-field-editor.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
@@ -25,43 +23,6 @@ const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
 };
 
-const factory = (options = {}) => shallowMount(TextFieldEditor, {
-  localVue,
-  stubs,
-  attachTo: document.body,
-  propsData: {
-    modal: {
-      config: {},
-    },
-  },
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(TextFieldEditor, {
-  localVue,
-  stubs: snapshotStubs,
-  propsData: {
-    modal: {
-      config: {},
-    },
-  },
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
 const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
@@ -70,6 +31,34 @@ const selectTextField = wrapper => wrapper.find('.v-text-field');
 describe('text-field-editor', () => {
   const $modals = mockModals();
   const $popups = mockPopups();
+
+  const factory = generateShallowRenderer(TextFieldEditor, {
+    stubs,
+    attachTo: document.body,
+    propsData: {
+      modal: {
+        config: {},
+      },
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(TextFieldEditor, {
+    stubs: snapshotStubs,
+    propsData: {
+      modal: {
+        config: {},
+      },
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
 
   test('Form submitted with empty string after trigger submit button', async () => {
     const action = jest.fn();

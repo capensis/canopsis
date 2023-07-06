@@ -199,9 +199,9 @@ func RegisterRoutes(
 				userApi.Delete,
 			)
 		}
+		roleApi := role.NewApi(role.NewStore(dbClient), actionLogger)
 		roleRouter := protected.Group("/roles")
 		{
-			roleApi := role.NewApi(role.NewStore(dbClient), actionLogger)
 			roleRouter.POST("",
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer),
 				roleApi.Create,
@@ -224,6 +224,10 @@ func RegisterRoutes(
 				roleApi.Delete,
 			)
 		}
+		protected.GET("/role-templates",
+			middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
+			roleApi.ListTemplates,
+		)
 		permissionRouter := protected.Group("/permissions")
 		{
 			permissionApi := permission.NewApi(permission.NewStore(dbClient))
@@ -250,8 +254,8 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(dbClient, linkGenerator, timezoneConfigProvider, authorProvider, logger)
-		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, logger)
+		alarmStore := alarm.NewStore(dbClient, linkGenerator, timezoneConfigProvider, authorProvider, json.NewDecoder(), logger)
+		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, json.NewEncoder(), logger)
 		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(dbClient, amqpChannel, "",
 			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, logger), logger)
 		alarmRouter := protected.Group("/alarms")
@@ -370,7 +374,7 @@ func RegisterRoutes(
 			exportConfigurationAPI.Export,
 		)
 
-		entityStore := entity.NewStore(dbClient, timezoneConfigProvider)
+		entityStore := entity.NewStore(dbClient, timezoneConfigProvider, json.NewDecoder())
 		entityAPI := entity.NewApi(
 			entityStore,
 			exportExecutor,
@@ -378,6 +382,7 @@ func RegisterRoutes(
 			entityPublChan,
 			metricsEntityMetaUpdater,
 			actionLogger,
+			json.NewEncoder(),
 			logger,
 		)
 
@@ -1295,9 +1300,14 @@ func RegisterRoutes(
 			)
 		}
 		protected.POST(
-			"/patterns-count",
+			"/patterns-alarms-count",
 			middleware.OnlyAuth(),
-			patternAPI.Count,
+			patternAPI.CountAlarms,
+		)
+		protected.POST(
+			"/patterns-entities-count",
+			middleware.OnlyAuth(),
+			patternAPI.CountEntities,
 		)
 		protected.POST(
 			"/patterns-alarms",

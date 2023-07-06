@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { isOldPattern } from '@/helpers/pattern';
+import { isOldPattern } from '@/helpers/entities/pattern/form';
 
 import PbehaviorsMassActionsPanel from './actions/pbehaviors-mass-actions-panel.vue';
 import PbehaviorsListExpandItem from './partials/pbehaviors-list-expand-item.vue';
@@ -113,7 +113,7 @@ export default {
     headers() {
       return [
         { text: this.$t('common.name'), value: 'name' },
-        { text: this.$t('common.author'), value: 'author.name' },
+        { text: this.$t('common.author'), value: 'author.display_name' },
         { text: this.$t('pbehavior.isEnabled'), value: 'enabled' },
         { text: this.$t('pbehavior.begins'), value: 'tstart' },
         { text: this.$t('pbehavior.ends'), value: 'tstop' },

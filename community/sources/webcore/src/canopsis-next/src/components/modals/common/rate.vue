@@ -17,11 +17,11 @@
 </template>
 
 <script>
+import { MODALS } from '@/constants';
+
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-
-import { MODALS } from '@/constants';
 
 import RateForm from '@/components/forms/rate.vue';
 
