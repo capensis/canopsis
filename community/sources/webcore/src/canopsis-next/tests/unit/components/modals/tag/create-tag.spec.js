@@ -73,7 +73,7 @@ describe('create-tag', () => {
     await flushPromises();
 
     expect(action).toBeCalledWith({
-      name: '',
+      value: '',
       alarm_pattern: [],
       entity_pattern: [],
       color: COLORS.secondary,
@@ -101,7 +101,7 @@ describe('create-tag', () => {
     const validator = wrapper.getValidator();
 
     validator.attach({
-      name: 'name',
+      name: 'value',
       rules: 'required:true',
       getter: () => false,
       context: () => tagForm.vm,
@@ -141,7 +141,7 @@ describe('create-tag', () => {
 
   test('Errors added after trigger submit button with action errors', async () => {
     const formErrors = {
-      name: 'Name error',
+      value: 'Value error',
       color: 'Color error',
       patterns: 'Patterns error',
     };
@@ -169,7 +169,7 @@ describe('create-tag', () => {
 
     expect(formErrors).toEqual(addedErrors);
     expect(action).toBeCalledWith({
-      name: '',
+      value: '',
       color: COLORS.secondary,
       alarm_pattern: [],
       entity_pattern: [],
@@ -186,7 +186,7 @@ describe('create-tag', () => {
     };
     const action = jest.fn().mockRejectedValue(errors);
     const customTag = {
-      name: Faker.datatype.string(),
+      value: Faker.datatype.string(),
       color: Faker.internet.color(),
       alarm_pattern: [],
       entity_pattern: [],
@@ -220,7 +220,7 @@ describe('create-tag', () => {
       entity_pattern: customTag.entity_pattern,
       alarm_pattern: customTag.alarm_pattern,
       color: customTag.color,
-      name: customTag.name,
+      value: customTag.value,
     });
     expect($modals.hide).not.toBeCalledWith();
 
@@ -243,7 +243,7 @@ describe('create-tag', () => {
     });
 
     const newForm = {
-      name: Faker.datatype.string(),
+      value: Faker.datatype.string(),
       color: Faker.internet.color(),
     };
 
@@ -292,7 +292,7 @@ describe('create-tag', () => {
 
   test('Renders `create-tag` with tag', () => {
     const tag = {
-      name: 'Name',
+      value: 'Value',
       color: COLORS.primary,
       alarm_pattern: [],
       entity_pattern: [],
