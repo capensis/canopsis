@@ -31,7 +31,7 @@
 <script>
 import { MAX_LIMIT, OLD_PATTERNS_FIELDS } from '@/constants';
 
-import { isOldPattern } from '@/helpers/pattern';
+import { isOldPattern } from '@/helpers/entities/pattern/form';
 
 import { entitiesFilterMixin } from '@/mixins/entities/filter';
 

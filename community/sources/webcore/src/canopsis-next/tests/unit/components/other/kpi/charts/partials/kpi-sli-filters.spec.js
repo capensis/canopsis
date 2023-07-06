@@ -1,7 +1,7 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
@@ -9,28 +9,12 @@ import { KPI_SLI_GRAPH_DATA_TYPE, QUICK_RANGES, SAMPLINGS } from '@/constants';
 
 import KpiSliFilters from '@/components/other/kpi/charts/partials/kpi-sli-filters';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'c-quick-date-interval-field': true,
   'c-filter-field': true,
   'c-sampling-field': true,
   'kpi-sli-show-mode-field': true,
 };
-
-const factory = (options = {}) => shallowMount(KpiSliFilters, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(KpiSliFilters, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 describe('kpi-sli-filters', () => {
   const nowTimestamp = 1386435600000;
@@ -45,6 +29,9 @@ describe('kpi-sli-filters', () => {
   };
 
   mockDateNow(nowTimestamp);
+
+  const factory = generateShallowRenderer(KpiSliFilters, { stubs });
+  const snapshotFactory = generateRenderer(KpiSliFilters, { stubs });
 
   it('Query changed after trigger a quick interval field', async () => {
     const wrapper = factory({

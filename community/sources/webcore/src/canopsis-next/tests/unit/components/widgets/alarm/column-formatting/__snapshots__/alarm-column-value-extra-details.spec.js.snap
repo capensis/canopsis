@@ -2,7 +2,7 @@
 
 exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-details\` with empty alarm 1`] = `
 <div
-  class="layout alarm-column-value-extra-details"
+  class="layout alarm-column-value-extra-details wrap"
 >
   <!---->
   <!---->
@@ -17,7 +17,7 @@ exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-det
 
 exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-details\` with full alarm (only children) 1`] = `
 <div
-  class="layout alarm-column-value-extra-details"
+  class="layout alarm-column-value-extra-details wrap"
 >
   <extra-details-ack-stub
     ack="[object Object]"
@@ -49,7 +49,7 @@ exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-det
 
 exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-details\` with full alarm (only parent) 1`] = `
 <div
-  class="layout alarm-column-value-extra-details"
+  class="layout alarm-column-value-extra-details wrap"
 >
   <extra-details-ack-stub
     ack="[object Object]"

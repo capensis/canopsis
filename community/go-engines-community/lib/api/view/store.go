@@ -47,7 +47,9 @@ func NewStore(dbClient mongo.DbClient, tabStore viewtab.Store, authorProvider au
 		widgetCollection:      dbClient.Collection(mongo.WidgetMongoCollection),
 		filterCollection:      dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 		groupCollection:       dbClient.Collection(mongo.ViewGroupMongoCollection),
-		aclCollection:         dbClient.Collection(mongo.RightsMongoCollection),
+		userCollection:        dbClient.Collection(mongo.UserCollection),
+		roleCollection:        dbClient.Collection(mongo.RoleCollection),
+		permissionCollection:  dbClient.Collection(mongo.PermissionCollection),
 		userPrefCollection:    dbClient.Collection(mongo.UserPreferencesMongoCollection),
 		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "title", "description"},
@@ -64,7 +66,9 @@ type store struct {
 	widgetCollection      mongo.DbCollection
 	filterCollection      mongo.DbCollection
 	groupCollection       mongo.DbCollection
-	aclCollection         mongo.DbCollection
+	userCollection        mongo.DbCollection
+	roleCollection        mongo.DbCollection
+	permissionCollection  mongo.DbCollection
 	userPrefCollection    mongo.DbCollection
 	authorProvider        author.Provider
 	defaultSearchByFields []string
@@ -824,43 +828,37 @@ func (s *store) createPermissions(ctx context.Context, userID string, views map[
 	setRole := bson.M{}
 	for viewId, viewTitle := range views {
 		newPermissions = append(newPermissions, bson.M{
-			"_id":          viewId,
-			"crecord_name": viewId,
-			"crecord_type": securitymodel.LineTypeObject,
-			"description":  fmt.Sprintf("%s %s", permissionPrefix, viewTitle),
-			"type":         securitymodel.LineObjectTypeRW,
+			"_id":         viewId,
+			"name":        viewId,
+			"description": fmt.Sprintf("%s %s", permissionPrefix, viewTitle),
+			"type":        securitymodel.ObjectTypeRW,
 		})
-		setRole["rights."+viewId] = bson.M{
-			"checksum": securitymodel.PermissionBitmaskRead |
-				securitymodel.PermissionBitmaskUpdate |
-				securitymodel.PermissionBitmaskDelete,
-		}
+		setRole["permissions."+viewId] = securitymodel.PermissionBitmaskRead |
+			securitymodel.PermissionBitmaskUpdate |
+			securitymodel.PermissionBitmaskDelete
 	}
-	_, err := s.aclCollection.InsertMany(ctx, newPermissions)
+	_, err := s.permissionCollection.InsertMany(ctx, newPermissions)
 	if err != nil {
 		return err
 	}
 
-	res := s.aclCollection.FindOne(ctx, bson.M{
-		"_id":          userID,
-		"crecord_type": securitymodel.LineTypeSubject,
-	})
+	res := s.userCollection.FindOne(ctx, bson.M{"_id": userID})
 	if err := res.Err(); err != nil {
 		return err
 	}
 
 	user := struct {
-		Role string `json:"role"`
+		Roles []string `json:"roles"`
 	}{}
 	err = res.Decode(&user)
 	if err != nil {
 		return err
 	}
 
-	_, err = s.aclCollection.UpdateMany(ctx,
+	roles := append([]string{security.RoleAdmin}, user.Roles...)
+	_, err = s.roleCollection.UpdateMany(ctx,
 		bson.M{
-			"_id":          bson.M{"$in": bson.A{user.Role, security.RoleAdmin}},
-			"crecord_type": securitymodel.LineTypeRole,
+			"_id": bson.M{"$in": roles},
 		},
 		bson.M{"$set": setRole},
 	)
@@ -872,11 +870,8 @@ func (s *store) createPermissions(ctx context.Context, userID string, views map[
 }
 
 func (s *store) updatePermissions(ctx context.Context, view Response) error {
-	_, err := s.aclCollection.UpdateOne(ctx,
-		bson.M{
-			"_id":          view.ID,
-			"crecord_type": securitymodel.LineTypeObject,
-		},
+	_, err := s.permissionCollection.UpdateOne(ctx,
+		bson.M{"_id": view.ID},
 		bson.M{"$set": bson.M{
 			"description": fmt.Sprintf("%s %s", permissionPrefix, view.Title),
 		}},
@@ -886,21 +881,19 @@ func (s *store) updatePermissions(ctx context.Context, view Response) error {
 }
 
 func (s *store) deletePermissions(ctx context.Context, viewID string) error {
-	_, err := s.aclCollection.UpdateMany(ctx,
-		bson.M{"crecord_type": securitymodel.LineTypeRole},
+	_, err := s.roleCollection.UpdateMany(ctx,
+		bson.M{
+			"permissions." + viewID: bson.M{"$exists": true},
+		},
 		bson.M{"$unset": bson.M{
-			"rights." + viewID: "",
+			"permissions." + viewID: "",
 		}},
 	)
 	if err != nil {
 		return err
 	}
 
-	_, err = s.aclCollection.DeleteOne(ctx, bson.M{
-		"_id":          viewID,
-		"crecord_type": securitymodel.LineTypeObject,
-	})
-
+	_, err = s.permissionCollection.DeleteOne(ctx, bson.M{"_id": viewID})
 	return err
 }
 

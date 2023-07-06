@@ -1,13 +1,11 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { CRUD_ACTIONS, USERS_PERMISSIONS } from '@/constants';
 
 import KpiRatingSettings from '@/components/other/kpi/rating-settings/kpi-rating-settings.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'kpi-rating-settings-list': true,
@@ -32,21 +30,10 @@ const defaultStore = createMockedStoreModules([{
   },
 }]);
 
-const factory = (options = {}) => shallowMount(KpiRatingSettings, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(KpiRatingSettings, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 describe('kpi-rating-settings', () => {
+  const factory = generateShallowRenderer(KpiRatingSettings, { stubs });
+  const snapshotFactory = generateRenderer(KpiRatingSettings, { stubs });
+
   it('Rating settings fetched after mount', async () => {
     const fetchRatingSettings = jest.fn();
     factory({

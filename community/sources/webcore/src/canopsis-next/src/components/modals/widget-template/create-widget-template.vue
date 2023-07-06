@@ -26,7 +26,7 @@
 <script>
 import { COLUMNS_WIDGET_TEMPLATES_TYPES, MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { widgetTemplateToForm, formToWidgetTemplate } from '@/helpers/forms/widget-template';
+import { widgetTemplateToForm, formToWidgetTemplate } from '@/helpers/entities/widget/template/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesInfosMixin } from '@/mixins/entities/infos';

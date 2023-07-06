@@ -6,6 +6,7 @@ import { SCHEMA_EMBEDDED_KEY } from '@/config';
 import { REQUEST_METHODS } from '@/constants';
 
 import request from '@/services/request';
+
 import schemas from '@/store/schemas';
 
 import { prepareEntitiesToDelete, cloneSchemaWithEmbedded } from './helpers';
@@ -385,6 +386,7 @@ export const types = {
 };
 
 export { default as createEntityModule } from './create-entity-module';
+export { default as createWidgetModule } from './create-widget-module';
 
 export default (store) => {
   store.registerModule(entitiesModuleName, entitiesModule);

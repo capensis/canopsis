@@ -330,6 +330,8 @@ export const TRIGGERS = {
   instructionjobfail: 'instructionjobfail',
   instructioncomplete: 'instructioncomplete',
   autoinstructioncomplete: 'autoinstructioncomplete',
+  autoinstructionresultok: 'autoinstructionresultok',
+  autoinstructionresultfail: 'autoinstructionresultfail',
 };
 
 export const PRO_TRIGGERS = [
@@ -341,6 +343,8 @@ export const PRO_TRIGGERS = [
   TRIGGERS.instructionjobfail,
   TRIGGERS.instructioncomplete,
   TRIGGERS.autoinstructioncomplete,
+  TRIGGERS.autoinstructionresultok,
+  TRIGGERS.autoinstructionresultfail,
 ];
 
 export const DEPRECATED_TRIGGERS = [
@@ -357,3 +361,5 @@ export const CONTENT_TYPES = {
   javascript: 'application/javascript',
   xWwwFormUrlencoded: 'application/x-www-form-urlencoded',
 };
+
+export const MAX_SEARCH_ITEMS = 8;

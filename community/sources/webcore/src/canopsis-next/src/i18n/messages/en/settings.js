@@ -4,6 +4,7 @@ import {
   SIDE_BARS,
   ALARMS_OPENED_VALUES,
   CHART_WIDGET_PRESET_TYPES,
+  ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
 } from '@/constants';
 
 export default {
@@ -20,6 +21,8 @@ export default {
     [SIDE_BARS.lineChartSettings]: 'Line chart settings',
     [SIDE_BARS.pieChartSettings]: 'Pie chart settings',
     [SIDE_BARS.numbersSettings]: 'Numbers settings',
+    [SIDE_BARS.userStatisticsSettings]: 'User statistics settings',
+    [SIDE_BARS.alarmStatisticsSettings]: 'Alarm statistics settings',
   },
   openedTypes: {
     [ALARMS_OPENED_VALUES.opened]: 'Opened alarms',
@@ -48,9 +51,11 @@ export default {
   filterEditor: 'Filter',
   isAckNoteRequired: 'Note field required when ack?',
   isSnoozeNoteRequired: 'Note field required when snooze?',
+  isRemoveAlarmsFromMetaAlarmCommentRequired: 'Comment field required when remove alarms from manual meta alarm?',
   inlineLinksCount: 'Inline links count',
   isMultiAckEnabled: 'Multiple ack',
   isMultiDeclareTicketEnabled: 'Multiple declare ticket',
+  isActionsAllowWithOkState: 'Actions allowed when state OK?',
   fastAckOutput: 'Fast-ack output',
   fastCancelOutput: 'Fast-cancel output',
   isHtmlEnabledOnTimeLine: 'HTML enabled on timeline?',
@@ -250,10 +255,36 @@ export default {
       [CHART_WIDGET_PRESET_TYPES.numberOfCreatedAlarms]: 'Total number of created alarms',
     },
   },
+  actionRequiredSettings: {
+    title: 'Action required state settings',
+    isBlinking: 'Blinking on',
+    customColor: 'Custom color',
+    customIcon: 'Custom icon',
+  },
   kioskMode: 'Kiosk mode',
   kiosk: {
     hideActions: 'Hide actions',
     hideMassSelection: 'Hide mass selection',
     hideToolbar: 'Hide toolbar',
+  },
+  columnsSettings: {
+    title: 'Columns settings',
+    dragging: 'Drag columns',
+    resizing: 'Resize columns',
+    cellsContentBehavior: 'Cells content',
+    cellsContentBehaviors: {
+      [ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap]: 'Wrapped',
+      [ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate]: 'Truncated',
+    },
+  },
+  mainParameter: {
+    title: 'Main parameter',
+    custom: {
+      label: 'Custom filtered data',
+      tooltip: 'Show reports for filtered sets of alarms',
+    },
+  },
+  statisticsWidgetColumn: {
+    split: 'Split data by value path',
   },
 };
