@@ -2,7 +2,7 @@ import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { createAuthModule, createMockedStoreModules, createTagModule } from '@unit/utils/store';
+import { createAuthModule, createMockedStoreModules, createAlarmTagModule } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
 import { CRUD_ACTIONS, MODALS, TAG_TYPES, USERS_PERMISSIONS } from '@/constants';
@@ -23,20 +23,20 @@ describe('tags', () => {
 
   const { authModule, currentUserPermissionsById } = createAuthModule();
   const {
-    tagModule,
+    alarmTagModule,
 
-    tags,
-    tagsMeta,
-    tagsPending,
+    alarmTags,
+    alarmTagsMeta,
+    alarmTagsPending,
 
-    fetchTagsList,
-    createTag,
-    updateTag,
-    removeTag,
-    bulkRemoveTags,
-  } = createTagModule();
+    fetchAlarmTagsList,
+    createAlarmTag,
+    updateAlarmTag,
+    removeAlarmTag,
+    bulkRemoveAlarmTags,
+  } = createAlarmTagModule();
   const store = createMockedStoreModules([
-    tagModule,
+    alarmTagModule,
     authModule,
   ]);
 
@@ -50,7 +50,7 @@ describe('tags', () => {
 
     await flushPromises();
 
-    expect(fetchTagsList).toBeCalledWith(
+    expect(fetchAlarmTagsList).toBeCalledWith(
       expect.any(Object),
       {
         params: {
@@ -67,13 +67,13 @@ describe('tags', () => {
 
     await flushPromises();
 
-    fetchTagsList.mockClear();
+    fetchAlarmTagsList.mockClear();
 
     selectPageNode(wrapper).$emit('refresh');
 
     await flushPromises();
 
-    expect(fetchTagsList).toBeCalledWith(
+    expect(fetchAlarmTagsList).toBeCalledWith(
       expect.any(Object),
       {
         params: {
@@ -109,21 +109,21 @@ describe('tags', () => {
     const [modalArguments] = $modals.show.mock.calls[0];
 
     const newTag = {
-      name: Faker.datatype.string(),
+      value: Faker.datatype.string(),
     };
 
     modalArguments.config.action(newTag);
 
     await flushPromises();
 
-    expect(createTag).toBeCalledWith(
+    expect(createAlarmTag).toBeCalledWith(
       expect.any(Object),
       {
         data: newTag,
       },
       undefined,
     );
-    expect(fetchTagsList).toBeCalled();
+    expect(fetchAlarmTagsList).toBeCalled();
   });
 
   test('Update tag modal showed after trigger edit button', async () => {
@@ -157,7 +157,7 @@ describe('tags', () => {
     const [modalArguments] = $modals.show.mock.calls[0];
 
     const newTag = {
-      name: Faker.datatype.string(),
+      value: Faker.datatype.string(),
       type: TAG_TYPES.imported,
     };
 
@@ -165,7 +165,7 @@ describe('tags', () => {
 
     await flushPromises();
 
-    expect(updateTag).toBeCalledWith(
+    expect(updateAlarmTag).toBeCalledWith(
       expect.any(Object),
       {
         data: newTag,
@@ -173,7 +173,7 @@ describe('tags', () => {
       },
       undefined,
     );
-    expect(fetchTagsList).toBeCalled();
+    expect(fetchAlarmTagsList).toBeCalled();
   });
 
   test('Duplicate tag modal showed after trigger duplicate button', async () => {
@@ -206,7 +206,7 @@ describe('tags', () => {
     const [modalArguments] = $modals.show.mock.calls[0];
 
     const newTag = {
-      name: Faker.datatype.string(),
+      value: Faker.datatype.string(),
       type: TAG_TYPES.imported,
     };
 
@@ -214,14 +214,14 @@ describe('tags', () => {
 
     await flushPromises();
 
-    expect(createTag).toBeCalledWith(
+    expect(createAlarmTag).toBeCalledWith(
       expect.any(Object),
       {
         data: newTag,
       },
       undefined,
     );
-    expect(fetchTagsList).toBeCalled();
+    expect(fetchAlarmTagsList).toBeCalled();
   });
 
   test('Confirmation modal showed after trigger remove tag button', async () => {
@@ -244,6 +244,7 @@ describe('tags', () => {
       {
         name: MODALS.confirmation,
         config: {
+          text: expect.any(String),
           action: expect.any(Function),
         },
       },
@@ -254,14 +255,14 @@ describe('tags', () => {
 
     await flushPromises();
 
-    expect(removeTag).toBeCalledWith(
+    expect(removeAlarmTag).toBeCalledWith(
       expect.any(Object),
       {
         id: tag._id,
       },
       undefined,
     );
-    expect(fetchTagsList).toBeCalled();
+    expect(fetchAlarmTagsList).toBeCalled();
   });
 
   test('Confirmation modal showed after trigger remove selected tags button', async () => {
@@ -284,6 +285,7 @@ describe('tags', () => {
       {
         name: MODALS.confirmation,
         config: {
+          text: expect.any(String),
           action: expect.any(Function),
         },
       },
@@ -294,14 +296,14 @@ describe('tags', () => {
 
     await flushPromises();
 
-    expect(bulkRemoveTags).toBeCalledWith(
+    expect(bulkRemoveAlarmTags).toBeCalledWith(
       expect.any(Object),
       {
         data: [tag._id],
       },
       undefined,
     );
-    expect(fetchTagsList).toBeCalled();
+    expect(fetchAlarmTagsList).toBeCalled();
   });
 
   test('Renders `tags` without permissions', () => {
@@ -322,17 +324,17 @@ describe('tags', () => {
       },
     }));
 
-    tags.mockReturnValueOnce([
+    alarmTags.mockReturnValueOnce([
       { _id: 'first-tag' },
       { _id: 'second-tag' },
     ]);
-    tagsMeta.mockReturnValueOnce({
+    alarmTagsMeta.mockReturnValueOnce({
       total_count: 2,
     });
-    tagsPending.mockReturnValueOnce(true);
+    alarmTagsPending.mockReturnValueOnce(true);
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
-        tagModule,
+        alarmTagModule,
         authModule,
       ]),
     });

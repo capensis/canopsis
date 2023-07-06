@@ -22,7 +22,6 @@ const stubs = {
   'c-expand-btn': true,
   'c-action-btn': true,
   'c-table-pagination': true,
-
   'c-alarm-action-chip': true,
   'tags-list-expand-panel': true,
 };
@@ -34,7 +33,7 @@ describe('tags-list', () => {
 
   const tags = range(totalItems).map(index => ({
     _id: `pattern-id-${index}`,
-    name: `pattern-name-${index}`,
+    value: `pattern-value-${index}`,
     type: types[index % 2],
     enabled: !!(index % 2),
     deletable: true,

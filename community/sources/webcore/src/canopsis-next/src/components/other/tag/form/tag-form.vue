@@ -1,13 +1,15 @@
 <template lang="pug">
   v-layout(column)
-    c-name-field(
+    v-text-field(
       v-field="form.value",
+      v-validate="valueRules",
       :disabled="isImported",
       :max-length="maxTagNameLength",
-      required
+      :error-messages="errors.collect('value')",
+      name="value"
     )
     c-color-picker-field(v-field="form.color")
-    tag-patterns-form(v-field="form.patterns")
+    tag-patterns-form(v-if="!isImported", v-field="form.patterns")
 </template>
 
 <script>
@@ -16,6 +18,7 @@ import { MAX_TAG_NAME_LENGTH } from '@/constants';
 import TagPatternsForm from './tag-patterns-form.vue';
 
 export default {
+  inject: ['$validator'],
   components: { TagPatternsForm },
   model: {
     prop: 'form',
@@ -33,6 +36,14 @@ export default {
     maxTagNameLength: {
       type: Number,
       default: MAX_TAG_NAME_LENGTH,
+    },
+  },
+  computed: {
+    valueRules() {
+      return {
+        required: true,
+        max: this.maxTagNameLength,
+      };
     },
   },
 };
