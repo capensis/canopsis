@@ -26,7 +26,7 @@ import { omit } from 'lodash';
 import { MODALS } from '@/constants';
 
 import { isImportedTag } from '@/helpers/entities/tag/entity';
-import { mapIds } from '@/helpers/array';
+import { pickIds } from '@/helpers/array';
 
 import { authMixin } from '@/mixins/auth';
 import { localQueryMixin } from '@/mixins/query-local/query';
@@ -113,7 +113,7 @@ export default {
         config: {
           text: this.$tc('tag.deleteConfirmation', selected.length),
           action: async () => {
-            await this.bulkRemoveAlarmTag({ data: mapIds(selected) });
+            await this.bulkRemoveAlarmTag({ data: pickIds(selected) });
 
             return this.fetchList();
           },
@@ -122,7 +122,11 @@ export default {
     },
 
     fetchList() {
-      return this.fetchAlarmTagsList({ params: this.getQuery() });
+      const params = this.getQuery();
+
+      params.with_flags = true;
+
+      return this.fetchAlarmTagsList({ params });
     },
   },
 };
