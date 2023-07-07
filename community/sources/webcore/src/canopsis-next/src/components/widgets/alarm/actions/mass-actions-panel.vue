@@ -176,16 +176,16 @@ export default {
         },
       );
 
-      if (!this.hasMetaAlarm) {
-        actions.push(
-          {
-            type: ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm,
-            icon: getEntityEventIcon(EVENT_ENTITY_TYPES.createManualMetaAlarm),
-            title: this.$t('alarm.actions.titles.createManualMetaAlarm'),
-            method: this.showCreateManualMetaAlarmModal,
-          },
-        );
-      }
+      // if (!this.hasMetaAlarm) {
+      actions.push(
+        {
+          type: ALARM_LIST_ACTIONS_TYPES.createManualMetaAlarm,
+          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.createManualMetaAlarm),
+          title: this.$t('alarm.actions.titles.createManualMetaAlarm'),
+          method: this.showCreateManualMetaAlarmModal,
+        },
+      );
+      // }
 
       /**
        * If we have actions for resolved alarms in the features we should move this condition to
