@@ -54,7 +54,7 @@ func NewStore(db mongo.DbClient, linkGenerator link.Generator, logger zerolog.Lo
 		dbCollection:              db.Collection(mongo.EntityMongoCollection),
 		alarmDbCollection:         db.Collection(mongo.AlarmMongoCollection),
 		resolvedAlarmDbCollection: db.Collection(mongo.ResolvedAlarmMongoCollection),
-		serviceCountersCollection: db.Collection(mongo.EntityServiceCountersMongoCollection),
+		serviceCountersCollection: db.Collection(mongo.EntityServiceCountersCollection),
 		userDbCollection:          db.Collection(mongo.UserCollection),
 
 		linkGenerator: linkGenerator,
