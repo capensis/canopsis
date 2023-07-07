@@ -99,6 +99,7 @@ describe('create-manual-meta-alarm', () => {
     expect(manualMetaAlarmForm.vm.form).toEqual({
       metaAlarm: null,
       comment: '',
+      auto_resolve: false,
     });
   });
 
@@ -125,6 +126,7 @@ describe('create-manual-meta-alarm', () => {
     const newData = {
       comment: Faker.datatype.string(),
       metaAlarm: Faker.datatype.string(),
+      auto_resolve: true,
     };
 
     manualMetaAlarmForm.vm.$emit('input', newData);
@@ -137,6 +139,7 @@ describe('create-manual-meta-alarm', () => {
       name: newData.metaAlarm,
       alarms: [alarm._id],
       comment: newData.comment,
+      auto_resolve: newData.auto_resolve,
     });
     expect($modals.hide).toBeCalledWith();
   });
