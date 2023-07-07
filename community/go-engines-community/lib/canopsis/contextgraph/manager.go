@@ -289,7 +289,7 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 	}
 
 	if !service.Enabled || service.ID == "" {
-		return m.processDisabledService(ctx, service)
+		return m.processDisabledService(ctx, service, serviceID)
 	}
 
 	var updatedEntities []types.Entity
@@ -757,9 +757,9 @@ func (m *manager) UpdateLastEventDate(ctx context.Context, eventType string, ent
 	return err
 }
 
-func (m *manager) processDisabledService(ctx context.Context, service entityservice.EntityService) (types.Entity, []types.Entity, error) {
+func (m *manager) processDisabledService(ctx context.Context, service entityservice.EntityService, serviceID string) (types.Entity, []types.Entity, error) {
 	var dependedEntities []types.Entity
-	cursor, err := m.collection.Find(ctx, bson.M{"services": service.ID})
+	cursor, err := m.collection.Find(ctx, bson.M{"services": serviceID})
 	if err != nil {
 		return types.Entity{}, nil, err
 	}
@@ -771,14 +771,14 @@ func (m *manager) processDisabledService(ctx context.Context, service entityserv
 
 	for idx, ent := range dependedEntities {
 		for impIdx, impServ := range ent.Services {
-			if impServ == service.ID {
+			if impServ == serviceID {
 				ent.Services = append(ent.Services[:impIdx], ent.Services[impIdx+1:]...)
 				break
 			}
 		}
 
 		for impIdx, impServ := range ent.ServicesToAdd {
-			if impServ == service.ID {
+			if impServ == serviceID {
 				ent.ServicesToAdd = append(ent.ServicesToAdd[:impIdx], ent.ServicesToAdd[impIdx+1:]...)
 				break
 			}
@@ -788,7 +788,7 @@ func (m *manager) processDisabledService(ctx context.Context, service entityserv
 	}
 
 	var impactedEntities []types.Entity
-	cursor, err = m.collection.Find(ctx, bson.M{"depends": service.ID})
+	cursor, err = m.collection.Find(ctx, bson.M{"depends": serviceID})
 	if err != nil {
 		return types.Entity{}, nil, err
 	}
