@@ -64,6 +64,7 @@ export default {
       form: {
         metaAlarm: null,
         comment: '',
+        auto_resolve: false,
       },
     };
   },
@@ -79,6 +80,7 @@ export default {
       if (isFormValid) {
         const data = {
           comment: this.form.comment,
+          auto_resolve: this.form.auto_resolve,
           alarms: mapIds(this.alarms),
         };
 
