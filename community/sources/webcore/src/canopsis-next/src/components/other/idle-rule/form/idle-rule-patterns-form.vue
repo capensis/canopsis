@@ -5,6 +5,8 @@
     :alarm-attributes="alarmAttributes",
     :entity-attributes="entityAttributes",
     :readonly="readonly",
+    :entity-counters-type="isEntityType",
+    :both-counters="!isEntityType",
     some-required,
     with-entity
   )

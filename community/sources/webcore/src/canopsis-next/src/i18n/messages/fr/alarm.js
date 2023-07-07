@@ -138,6 +138,9 @@ export default {
     failedManualInstructions: 'Consigne manuelle <strong>{title}</strong> en échec | Consignes manuelles <strong>{title}</strong> en échec',
     failedAutoInstructions: 'Consigne automatique <strong>{title}</strong> en échec | Consignes automatiques <strong>{title}</strong> en échec',
     hasManualInstruction: 'Il y a une consigne manuelle associée | Il y a des consignes manuelles associées',
+    resetChangeColumns: 'Réinitialiser l\'ordre/le redimensionnement des colonnes',
+    startChangeColumns: 'Commencer à modifier l\'ordre/le redimensionnement des colonnes',
+    finishChangeColumns: 'Terminer la modification de l\'ordre/du redimensionnement des colonnes',
   },
   metrics: {
     [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Nombre d\'alarmes créées',
@@ -173,6 +176,7 @@ export default {
   },
   fields: {
     displayName: 'Nom simplifié (DisplayName)',
+    assignedInstructions: 'Consignes assignées',
     initialOutput: 'Sortie initiale longue',
     initialLongOutput: 'Sortie longue initiale',
     lastComment: 'Dernier commentaire',

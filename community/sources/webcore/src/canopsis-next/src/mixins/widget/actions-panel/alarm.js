@@ -325,6 +325,7 @@ export const widgetActionsPanelAlarmMixin = {
         config: {
           items: alarms,
           title: this.$t('alarm.actions.titles.removeAlarmsFromManualMetaAlarm'),
+          isCommentRequired: this.widget.parameters.isRemoveAlarmsFromMetaAlarmCommentRequired,
           action: async (removeAlarmsFromMetaAlarmEvent) => {
             await this.removeAlarmsFromManualMetaAlarm({
               id: this.parentAlarm?._id,
@@ -343,6 +344,7 @@ export const widgetActionsPanelAlarmMixin = {
         config: {
           items: alarms,
           title: this.$t('alarm.actions.titles.removeAlarmsFromAutoMetaAlarm'),
+          isCommentRequired: this.widget.parameters.isRemoveAlarmsFromMetaAlarmCommentRequired,
           action: async (removeAlarmsFromMetaAlarmEvent) => {
             await this.removeAlarmsFromMetaAlarm({
               id: this.parentAlarm?._id,

@@ -14,7 +14,8 @@ import { uid } from '@/helpers/uid';
  * @property {string} empty_response
  * @property {string} is_regexp
  * @property {string} ticket_id
- * @property {string} ticket_url
+ * @property {string} [ticket_url]
+ * @property {string} [ticket_url_tpl]
  */
 
 /**
@@ -38,9 +39,16 @@ import { uid } from '@/helpers/uid';
  */
 
 /**
+ * @typedef {Object} DeclareTicketRuleWebhookTickerUrlForm
+ * @property {boolean} template
+ * @property {string} value
+ */
+
+/**
  * @typedef {DeclareTicketRuleWebhookDeclareTicket} DeclareTicketRuleWebhookDeclareTicketForm
  * @property {boolean} enabled
  * @property {TextPairObject[]} mapping
+ * @property {DeclareTicketRuleWebhookTickerUrlForm} ticket_url
  */
 
 /**
@@ -102,7 +110,8 @@ export const declareTicketRuleWebhookDeclareTicketToForm = (declareTicket) => {
     empty_response: emptyResponse,
     is_regexp: isRegexp,
     ticket_id: ticketId,
-    ticket_url: ticketUrl,
+    ticket_url: ticketUrl = '',
+    ticket_url_tpl: ticketUrlTpl = '',
     ...fields
   } = declareTicket ?? {};
 
@@ -111,7 +120,10 @@ export const declareTicketRuleWebhookDeclareTicketToForm = (declareTicket) => {
     empty_response: emptyResponse ?? false,
     is_regexp: isRegexp ?? false,
     ticket_id: ticketId ?? '',
-    ticket_url: ticketUrl ?? '',
+    ticket_url: {
+      template: !!ticketUrlTpl,
+      value: ticketUrlTpl || ticketUrl,
+    },
     mapping: objectToTextPairs(fields),
   };
 };
@@ -159,16 +171,26 @@ export const declareTicketRuleToForm = (declareTicketRule = {}) => ({
  * @returns {DeclareTicketRuleWebhookDeclareTicket | null}
  */
 export const formToDeclareTicketRuleWebhookDeclareTicket = (form) => {
-  const { enabled, mapping, ...declareTicket } = form;
+  const { enabled, mapping, ticket_url: ticketUrl, ...rest } = form;
 
   if (!enabled) {
     return null;
   }
 
-  return {
-    ...declareTicket,
+  const declareTicket = {
+    ...rest,
     ...textPairsToObject(mapping),
   };
+
+  if (ticketUrl.template) {
+    declareTicket.ticket_url = '';
+    declareTicket.ticket_url_tpl = ticketUrl.value;
+  } else {
+    declareTicket.ticket_url = ticketUrl.value;
+    declareTicket.ticket_url_tpl = '';
+  }
+
+  return declareTicket;
 };
 
 /**

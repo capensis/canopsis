@@ -2927,7 +2927,7 @@ instruction:
     timeout_after_execution:
       value: 1
       unit: s
-      
+
   instruction_correlation_get_alarms_6_3:
     <<: *instruction_auto
     _id: test-instruction-to-alarm-correlation-get-6-3
@@ -3320,3 +3320,25 @@ instruction:
     timeout_after_execution:
       value: 1
       unit: s
+
+  instruction_to_alarm_export_1:
+    <<: *instruction_manual
+    name: test-instruction-to-alarm-export-1-name
+    alarm_pattern:
+    entity_pattern:
+      - - field: name
+          cond:
+            type: is_one_of
+            value:
+              - test-resource-to-alarm-export-2
+  instruction_to_alarm_export_2:
+    <<: *instruction_manual_simplified
+    name: test-instruction-to-alarm-export-2-name
+    alarm_pattern:
+    entity_pattern:
+      - - field: name
+          cond:
+            type: is_one_of
+            value:
+              - test-resource-to-alarm-export-1
+              - test-resource-to-alarm-export-2
