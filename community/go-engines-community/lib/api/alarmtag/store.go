@@ -55,11 +55,19 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		sortBy = r.SortBy
 	}
 
+	project := s.authorProvider.Pipeline()
+	if r.WithFlags {
+		project = append(project, bson.M{
+			"$addFields": bson.M{
+				"deletable": bson.M{"$eq": bson.A{"$type", alarmtag.TypeInternal}},
+			},
+		})
+	}
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
 		common.GetSortQuery(sortBy, r.Sort),
-		s.authorProvider.Pipeline(),
+		project,
 	))
 
 	if err != nil {
