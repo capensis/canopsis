@@ -39,7 +39,7 @@ db.user.find().forEach(function (doc) {
     delete doc.roles;
 
     db.default_rights.updateOne(
-        {crecord_name: doc.name},
+        {crecord_name: doc.crecord_name},
         {$setOnInsert: doc},
         {upsert: true},
     );

@@ -40,7 +40,7 @@ describe('Entities corporate pattern mixin', () => {
 
   test('Corporate patterns list fetched', async () => {
     axiosMockAdapter
-      .onGet(API_ROUTES.patterns, { patterns: { corporate: true } })
+      .onGet(API_ROUTES.pattern.list, { patterns: { corporate: true } })
       .reply(200, { data: corporatePatterns, meta });
 
     const wrapper = factory();
@@ -62,7 +62,7 @@ describe('Entities corporate pattern mixin', () => {
       page: Faker.datatype.string(),
     };
     axiosMockAdapter
-      .onGet(API_ROUTES.patterns, {
+      .onGet(API_ROUTES.pattern.list, {
         params: { corporate: true, ...params },
       })
       .reply(200, { data: corporatePatterns, meta });
@@ -84,7 +84,7 @@ describe('Entities corporate pattern mixin', () => {
       params: { corporate: true, ...params },
     };
     axiosMockAdapter
-      .onGet(API_ROUTES.patterns, options)
+      .onGet(API_ROUTES.pattern.list, options)
       .replyOnce(200, { data: corporatePatterns, meta });
 
     const wrapper = factory();
@@ -92,7 +92,7 @@ describe('Entities corporate pattern mixin', () => {
     await wrapper.vm.fetchCorporatePatternsList({ params });
 
     axiosMockAdapter
-      .onGet(API_ROUTES.patterns, options)
+      .onGet(API_ROUTES.pattern.list, options)
       .reply(400, error);
 
     const originalError = console.error;
@@ -119,7 +119,7 @@ describe('Entities corporate pattern mixin', () => {
     };
     const reversedPatterns = corporatePatterns.slice().reverse();
     axiosMockAdapter
-      .onGet(API_ROUTES.patterns, {
+      .onGet(API_ROUTES.pattern.list, {
         params: { corporate: true, ...params },
       })
       .replyOnce(200, { data: corporatePatterns, meta });
@@ -129,7 +129,7 @@ describe('Entities corporate pattern mixin', () => {
     await wrapper.vm.fetchCorporatePatternsList({ params });
 
     axiosMockAdapter
-      .onGet(API_ROUTES.patterns, {
+      .onGet(API_ROUTES.pattern.list, {
         params: { corporate: true, ...params },
       })
       .replyOnce(200, { data: reversedPatterns, meta });

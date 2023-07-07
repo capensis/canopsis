@@ -128,6 +128,7 @@ func (a *api) StartExport(c *gin.Context) {
 		Fields:         r.Fields,
 		Separator:      separator,
 		FilenamePrefix: "entities",
+		UserID:         c.MustGet(auth.UserKey).(string),
 	})
 
 	if err != nil {

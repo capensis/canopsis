@@ -57,38 +57,30 @@
         )
 
     template(v-if="!readonly && !patterns.old_mongo_query")
-      v-layout(align-center, justify-end)
-        div(v-if="checkCountName")
-          span.mr-2(
-            v-show="patternsChecked",
-            :class="{ 'error--text': itemsCount === 0 }"
-          ) {{ $tc('common.itemFound', itemsCount, { count: itemsCount }) }}
-          v-btn.primary.mx-0(
-            :disabled="disabled || patternsChecked || hasChildrenError || !patterns.groups.length",
-            :loading="checkPatternsPending",
-            @click="checkPatterns"
-          ) {{ $t('common.checkPattern') }}
+      v-layout(row, align-center, justify-end)
         v-btn.mr-0(
           v-if="withType && !isCustomPattern",
           :disabled="disabled",
           color="primary",
           @click="updatePatternToCustom"
         ) {{ $t('common.edit') }}
-
+        v-messages.text-xs-right(
+          v-if="checked",
+          :value="[$tc('common.itemFound', count, { count })]",
+          :color="count === 0 ? 'error' : ''"
+        )
       v-flex
         v-alert.pre-wrap(v-if="errorMessage", value="true") {{ errorMessage }}
         v-alert(
-          v-if="patternsChecked && itemsOverLimit",
-          value="true",
+          :value="overLimit",
           type="warning",
           transition="fade-transition"
         )
-          span {{ $t('pattern.errors.countOverLimit', { count: itemsCount }) }}
+          span {{ $t('pattern.errors.countOverLimit', { count }) }}
 </template>
 
 <script>
-import { isEqual } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
+import { isEqual, isEmpty } from 'lodash';
 
 import { PATTERN_CUSTOM_ITEM_VALUE, PATTERN_EDITOR_TABS } from '@/constants';
 
@@ -98,8 +90,6 @@ import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
 import PatternAdvancedEditorField from './pattern-advanced-editor-field.vue';
 import PatternGroupsField from './pattern-groups-field.vue';
-
-const { mapActions } = createNamespacedHelpers('pattern');
 
 export default {
   inject: ['$validator'],
@@ -146,13 +136,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    counter: {
+      type: Object,
+      required: false,
+    },
   },
   data() {
     return {
-      checkPatternsPending: false,
-      patternsChecked: false,
-      itemsCount: undefined,
-      itemsOverLimit: false,
       activeTab: PATTERN_EDITOR_TABS.simple,
       patternsJson: [],
     };
@@ -185,13 +175,23 @@ export default {
     isCustomPattern() {
       return this.patterns.id === PATTERN_CUSTOM_ITEM_VALUE;
     },
+
+    checked() {
+      return !isEmpty(this.counter);
+    },
+
+    count() {
+      return this.counter?.count ?? 0;
+    },
+
+    overLimit() {
+      return this.counter?.over_limit ?? false;
+    },
   },
   watch: {
     'patterns.groups': {
       handler(groups, oldGroups) {
         if (!isEqual(groups, oldGroups)) {
-          this.patternsChecked = false;
-
           this.errors.remove(this.name);
         }
       },
@@ -214,10 +214,6 @@ export default {
     this.$validator.detach(this.name);
   },
   methods: {
-    ...mapActions({
-      checkPatternsCount: 'checkPatternsCount',
-    }),
-
     discardPattern() {
       this.updateModel(patternToForm({ id: PATTERN_CUSTOM_ITEM_VALUE }));
     },
@@ -241,38 +237,6 @@ export default {
       this.updateField('groups', patternsToGroups(patterns));
 
       this.patternsJson = patterns;
-    },
-
-    async checkPatterns() {
-      try {
-        this.checkPatternsPending = true;
-
-        const isFormValid = await this.validateChildren();
-
-        if (isFormValid) {
-          const { [this.checkCountName]: patternsCount } = await this.checkPatternsCount({
-            data: {
-              [this.checkCountName]: formGroupsToPatternRules(this.patterns.groups),
-            },
-          });
-
-          const { count, over_limit: overLimit } = patternsCount;
-
-          this.itemsCount = count;
-          this.itemsOverLimit = overLimit;
-          this.patternsChecked = true;
-        }
-      } catch (err) {
-        const { [this.checkCountName]: error } = err || {};
-
-        if (error) {
-          this.errors.add({ field: this.name, msg: error });
-        }
-
-        this.patternsChecked = false;
-      } finally {
-        this.checkPatternsPending = false;
-      }
     },
   },
 };
