@@ -25,7 +25,7 @@ const (
 	ChePeriodicalLockKey           = "che-periodical-lock-key"
 	CheSoftDeletePeriodicalLockKey = "che-soft-delete-periodical-lock-key"
 
-	ServiceIdleSincePeriodicalLockKey = "service-periodical-idle-since-lock"
+	AxeIdleSincePeriodicalLockKey = "axe-periodical-idle-since-lock"
 
 	RemediationPeriodicalLockKey      = "remediation-periodical-lock-key"
 	RemediationStatsPeriodicalLockKey = "remediation-stats-periodical-lock-key"

@@ -47,7 +47,7 @@ func NewStateCountersService(
 ) StateCountersService {
 	return &service{
 		dbClient:                  client,
-		serviceCountersCollection: client.Collection(mongo.EntityServiceCountersMongoCollection),
+		serviceCountersCollection: client.Collection(mongo.EntityServiceCountersCollection),
 		entityCollection:          client.Collection(mongo.EntityMongoCollection),
 		encoder:                   encoder,
 		pubChannel:                pubChannel,

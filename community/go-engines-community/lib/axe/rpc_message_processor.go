@@ -233,7 +233,7 @@ func (p *rpcMessageProcessor) executeOperation(ctx context.Context, event rpc.Ax
 		for servID, servInfo := range updatedServiceStates {
 			err := p.StateCountersService.UpdateServiceState(context.Background(), servID, servInfo)
 			if err != nil {
-				p.Logger.Err(err).Msg("failed to update service state")
+				p.Logger.Err(err).Str("service", servID).Msg("failed to update service state")
 			}
 		}
 	}()
