@@ -11,7 +11,6 @@
         v-btn(color="primary", @click="submit") {{ $t('common.submit') }}
         v-btn(@click="cancel") {{ $t('common.cancel') }}
     view-tabs(
-      :view="view",
       :tabs.sync="tabs",
       :changed="isTabsChanged",
       :editing="editing",

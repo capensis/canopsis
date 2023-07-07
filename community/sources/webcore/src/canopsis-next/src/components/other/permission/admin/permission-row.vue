@@ -1,6 +1,15 @@
 <template lang="pug">
   tr
-    td {{ permission.description }}
+    td
+      v-layout(align-center)
+        span.mr-1 {{ permission.name }}
+        c-help-icon(
+          v-if="permission.description",
+          :text="permission.description",
+          icon="help",
+          size="18",
+          top
+        )
     permission-row-cell(
       v-for="role in roles",
       :key="`role-permission-${role._id}`",

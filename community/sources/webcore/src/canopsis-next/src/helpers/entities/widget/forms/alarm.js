@@ -5,6 +5,7 @@ import {
   ALARM_FIELDS,
   ALARM_FIELDS_TO_LABELS_KEYS,
   ALARM_UNSORTABLE_FIELDS,
+  ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
   COLOR_INDICATOR_TYPES,
   DEFAULT_ALARMS_WIDGET_COLUMNS,
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
@@ -40,6 +41,10 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  */
 
 /**
+ * @typedef { 'wrap' | 'truncate' } AlarmsResizingBehaviors
+ */
+
+/**
  * @typedef {Object} AlarmsListDataTableColumn
  * @property {string} value
  * @property {string} text
@@ -63,6 +68,13 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @typedef {Object} WidgetLiveReporting
  * @property {string} [tstart]
  * @property {string} [tstop]
+ */
+
+/**
+ * @typedef {Object} WidgetColumnsParameters
+ * @property {boolean} draggable
+ * @property {boolean} resizable
+ * @property {AlarmsResizingBehaviors} cells_content_behavior
  */
 
 /**
@@ -141,6 +153,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {WidgetColumn[]} serviceDependenciesColumns
  * @property {boolean} isAckNoteRequired
  * @property {boolean} isSnoozeNoteRequired
+ * @property {boolean} isRemoveAlarmsFromMetaAlarmCommentRequired
  * @property {boolean} isMultiAckEnabled
  * @property {boolean} isMultiDeclareTicketEnabled
  * @property {boolean} isHtmlEnabledOnTimeLine
@@ -162,6 +175,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} clearFilterDisabled
  * @property {WidgetKioskParameters} kiosk
  * @property {AlarmChart[]} charts
+ * @property {WidgetColumnsParameters} [columns]
  */
 
 /**
@@ -187,8 +201,13 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  */
 
 /**
+ * @typedef {WidgetColumnsParameters} WidgetColumnsParametersForm
+ */
+
+/**
  * @typedef {AlarmListWidgetDefaultParametersForm & AlarmListWidgetParameters} AlarmListWidgetParametersForm
  * @property {AlarmChartForm[]} charts
+ * @property {WidgetColumnsParametersForm} columns
  */
 
 /**
@@ -204,6 +223,18 @@ export const openedToForm = (opened) => {
 
   return true;
 };
+
+/**
+ * Convert columns parameters field widget
+ *
+ * @param  {WidgetColumnsParameters} [columns]
+ * @returns {WidgetColumnsParametersForm}
+ */
+export const columnsParametersToForm = (columns = {}) => ({
+  draggable: columns.draggable ?? false,
+  resizable: columns.resizable ?? false,
+  cells_content_behavior: columns.cells_content_behavior ?? ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap,
+});
 
 /**
  * Convert alarm list infoPopups parameters to form
@@ -293,6 +324,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   moreInfoTemplateTemplate: widgetTemplateValueToForm(parameters.moreInfoTemplateTemplate),
   isAckNoteRequired: !!parameters.isAckNoteRequired,
   isSnoozeNoteRequired: !!parameters.isSnoozeNoteRequired,
+  isRemoveAlarmsFromMetaAlarmCommentRequired: parameters.isRemoveAlarmsFromMetaAlarmCommentRequired ?? true,
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
   isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
   isHtmlEnabledOnTimeLine: !!parameters.isHtmlEnabledOnTimeLine,
@@ -350,6 +382,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   exportCsvSeparator: parameters.exportCsvSeparator ?? EXPORT_CSV_SEPARATORS.comma,
   exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
   kiosk: kioskParametersToForm(parameters.kiosk),
+  columns: columnsParametersToForm(parameters.columns),
   charts: addKeyInEntities(parameters.charts),
 });
 
@@ -581,6 +614,8 @@ export const getAlarmsListWidgetColumnComponentGetter = ({ value, onlyIcon }, wi
   return context => ({
     bind: {
       is: 'c-ellipsis',
+      class: 'alarm-column-cell__text',
+      title: context.value,
       text: context.value,
     },
   });

@@ -39,6 +39,12 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <hr
       class="v-divider theme--light"
     />
+    <field-resize-column-behavior-stub
+      value="[object Object]"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       label="Column names for meta alarms"
@@ -189,6 +195,13 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       class="v-divider theme--light"
     />
     <field-switcher-stub
+      title="Comment field required when remove alarms from manual meta alarm?"
+      value="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
       title="Multiple declare ticket"
     />
     <hr
@@ -206,6 +219,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       form="[object Object]"
       templates=""
       type="alarm"
+      withinstructions="true"
     />
     <hr
       class="v-divider theme--light"
@@ -289,6 +303,12 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       withcolorindicator="true"
       withhtml="true"
       withtemplate="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-resize-column-behavior-stub
+      value="[object Object]"
     />
     <hr
       class="v-divider theme--light"
@@ -429,6 +449,13 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       class="v-divider theme--light"
     />
     <field-switcher-stub
+      title="Comment field required when remove alarms from manual meta alarm?"
+      value="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
       title="Multiple declare ticket"
     />
     <hr
@@ -446,6 +473,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       form="[object Object]"
       templates=""
       type="alarm"
+      withinstructions="true"
     />
     <hr
       class="v-divider theme--light"
@@ -530,6 +558,12 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       withcolorindicator="true"
       withhtml="true"
       withtemplate="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-resize-column-behavior-stub
+      value="[object Object]"
     />
     <hr
       class="v-divider theme--light"
@@ -666,6 +700,13 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       class="v-divider theme--light"
     />
     <field-switcher-stub
+      title="Comment field required when remove alarms from manual meta alarm?"
+      value="true"
+    />
+    <hr
+      class="v-divider theme--light"
+    />
+    <field-switcher-stub
       title="Multiple declare ticket"
     />
     <hr
@@ -683,6 +724,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       form="[object Object]"
       templates=""
       type="alarm"
+      withinstructions="true"
     />
     <hr
       class="v-divider theme--light"
