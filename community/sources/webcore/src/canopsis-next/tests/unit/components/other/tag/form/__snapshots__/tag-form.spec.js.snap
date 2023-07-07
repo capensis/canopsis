@@ -14,9 +14,7 @@ exports[`tag-form Renders \`tag-form\` with custom props 1`] = `
   <c-color-picker-field-stub
     value="#2b3e4f"
   />
-  <tag-patterns-form-stub
-    form="[object Object]"
-  />
+  <!---->
 </div>
 `;
 

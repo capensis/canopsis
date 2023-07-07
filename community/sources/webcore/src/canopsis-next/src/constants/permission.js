@@ -113,8 +113,8 @@ export const USERS_PERMISSIONS = {
     kpiCollectionSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiCollectionSettings`,
     map: `${USER_PERMISSIONS_PREFIXES.technical.admin}_map`,
     shareToken: `${USER_PERMISSIONS_PREFIXES.technical.admin}_shareToken`,
-    widgetTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningType`,
-    tag: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningType`,
+    widgetTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_widgetTemplate`,
+    tag: `${USER_PERMISSIONS_PREFIXES.technical.admin}_tag`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
