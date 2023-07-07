@@ -760,6 +760,8 @@ definitions:
         type: string
       created:
         type: integer
+      deletable:
+        type: boolean
       entity_pattern:
         items:
           items:
