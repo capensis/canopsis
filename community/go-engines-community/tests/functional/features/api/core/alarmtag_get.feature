@@ -7,7 +7,7 @@ Feature: Get a alarm tag
     When I am admin
     When I do GET /api/v4/alarm-tags?search=test-alarm-tag-to-get
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
       "data": [
@@ -40,6 +40,7 @@ Feature: Get a alarm tag
           ],
           "author": {
             "_id": "root",
+            "display_name": "root John Doe admin@canopsis.net",
             "name": "root"
           },
           "created": 1612139798,
@@ -52,10 +53,36 @@ Feature: Get a alarm tag
           "color": "#AABBCC",
           "author": {
             "_id": "root",
+            "display_name": "root John Doe admin@canopsis.net",
             "name": "root"
           },
           "created": 1612139798,
           "updated": 1612139798
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I do GET /api/v4/alarm-tags?search=test-alarm-tag-to-get&with_flags=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "_id": "test-alarm-tag-to-get-1",
+          "type": 1,
+          "deletable": true
+        },
+        {
+          "_id": "test-alarm-tag-to-get-2",
+          "type": 0,
+          "deletable": false
         }
       ],
       "meta": {
@@ -83,7 +110,7 @@ Feature: Get a alarm tag
     When I am admin
     When I do GET /api/v4/alarm-tags/test-alarm-tag-to-get-1
     Then the response code should be 200
-    Then the response body should contain:
+    Then the response body should be:
     """json
     {
       "_id": "test-alarm-tag-to-get-1",
@@ -114,6 +141,7 @@ Feature: Get a alarm tag
       ],
       "author": {
         "_id": "root",
+        "display_name": "root John Doe admin@canopsis.net",
         "name": "root"
       },
       "created": 1612139798,

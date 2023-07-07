@@ -9,9 +9,7 @@ import (
 )
 
 type ListRequest struct {
-	pagination.Query
-	Search string `form:"search" json:"search"`
-	Sort   string `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
+	pagination.FilteredQuery
 	SortBy string `form:"sort_by" json:"sort_by" binding:"oneoforempty=value created"`
 }
 
@@ -34,13 +32,14 @@ type UpdateRequest struct {
 }
 
 type Response struct {
-	ID      string         `bson:"_id" json:"_id"`
-	Type    int64          `bson:"type" json:"type"`
-	Value   string         `bson:"value" json:"value"`
-	Color   string         `bson:"color" json:"color"`
-	Author  *author.Author `bson:"author" json:"author"`
-	Updated types.CpsTime  `bson:"updated" json:"updated" swaggertype:"integer"`
-	Created types.CpsTime  `bson:"created" json:"created" swaggertype:"integer"`
+	ID        string         `bson:"_id" json:"_id"`
+	Type      int64          `bson:"type" json:"type"`
+	Value     string         `bson:"value" json:"value"`
+	Color     string         `bson:"color" json:"color"`
+	Author    *author.Author `bson:"author" json:"author"`
+	Updated   types.CpsTime  `bson:"updated" json:"updated" swaggertype:"integer"`
+	Created   types.CpsTime  `bson:"created" json:"created" swaggertype:"integer"`
+	Deletable *bool          `bson:"deletable,omitempty" json:"deletable,omitempty"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`

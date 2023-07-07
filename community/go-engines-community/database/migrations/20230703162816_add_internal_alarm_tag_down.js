@@ -28,9 +28,17 @@ db.alarm_tag.updateMany({type: 0}, {
 
 db.periodical_alarm.dropIndex("itags_1_itags_upd_1");
 
-db.permission.deleteOne({_id: "api_alarm_tag"});
+db.permission.deleteMany({
+    _id: {
+        $in: [
+            "api_alarm_tag",
+            "models_tag"
+        ]
+    }
+});
 db.role.updateMany({}, {
     $unset: {
-        "permissions.api_alarm_tag": ""
+        "permissions.api_alarm_tag": "",
+        "permissions.models_tag": ""
     }
 });

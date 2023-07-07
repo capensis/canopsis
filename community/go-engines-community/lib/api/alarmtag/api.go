@@ -136,9 +136,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	ctx := c
-
-	err := a.transformUpdateRequest(ctx, &request)
+	err := a.transformUpdateRequest(c, &request)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -148,7 +146,7 @@ func (a *api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	response, err := a.store.Update(ctx, request)
+	response, err := a.store.Update(c, request)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {

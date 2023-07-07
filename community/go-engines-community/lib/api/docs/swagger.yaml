@@ -367,6 +367,7 @@ paths:
         -  PERMISSIONS: `api_alarm_tag:read`
       operationId: alarm-tags-get
       parameters:
+        - $ref: '#/components/parameters/withFlags'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/search'
