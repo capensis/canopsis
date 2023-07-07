@@ -1,1 +1,1 @@
-db.entity_service_counters.deleteMany({});
+db.default_entities.dropIndex("type_service_1")
