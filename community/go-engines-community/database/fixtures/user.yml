@@ -518,6 +518,11 @@ permission:
     _id: models_widgetTemplate
     name: <Current()._id>
     description: "Widget templates"
+  permission_models_tag:
+    <<: *permission_crud
+    _id: models_tag
+    name: <Current()._id>
+    description: "Alarm tags"
   permission_listalarm_ack:
     <<: *permission
     _id: listalarm_ack
@@ -1120,7 +1125,7 @@ permission:
     _id: api_view
     name: <Current()._id>
     description: Views
-  api_widgettemplate:
+  permission_api_widgettemplate:
     <<: *permission_crud
     _id: api_widgettemplate
     name: <Current()._id>
@@ -1334,7 +1339,7 @@ permission:
     <<: *permission_crud
     _id: api_alarm_tag
     name: <Current()._id>
-    description: Alarm tag
+    description: Alarm tags
 
   # Views permissions
   permission_view_open_alarms:
@@ -1399,6 +1404,7 @@ role:
       "@permission_models_shareToken": 15
       "@permission_models_techmetrics": 1
       "@permission_models_widgetTemplate": 15
+      "@permission_models_tag": 15
       "@permission_listalarm_ack": 1
       "@permission_listalarm_fastAck": 1
       "@permission_listalarm_cancelAck": 1
@@ -1520,7 +1526,7 @@ role:
       "@permission_api_entitycategory": 15
       "@permission_api_viewgroup": 15
       "@permission_api_view": 15
-      "@api_widgettemplate": 15
+      "@permission_api_widgettemplate": 15
       "@permission_api_pbehavior": 15
       "@permission_api_pbehaviortype": 15
       "@permission_api_pbehaviorreason": 15

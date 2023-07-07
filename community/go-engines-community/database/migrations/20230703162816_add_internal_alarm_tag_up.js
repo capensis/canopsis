@@ -28,7 +28,7 @@ if (!db.permission.findOne({_id: "api_alarm_tag"})) {
         _id: "api_alarm_tag",
         crecord_name: "api_alarm_tag",
         crecord_type: "action",
-        description: "Alarm tag",
+        description: "Alarm tags",
         type: "CRUD"
     });
     db.role.updateMany({"permissions.api_alarm_read": 1}, {
@@ -39,6 +39,21 @@ if (!db.permission.findOne({_id: "api_alarm_tag"})) {
     db.role.updateOne({name: "admin"}, {
         $set: {
             "permissions.api_alarm_tag": 15
+        }
+    });
+}
+
+if (!db.permission.findOne({_id: "models_tag"})) {
+    db.permission.insertOne({
+        _id: "models_tag",
+        crecord_name: "models_tag",
+        crecord_type: "action",
+        description: "Alarm tags",
+        type: "CRUD"
+    });
+    db.role.updateOne({name: "admin"}, {
+        $set: {
+            "permissions.models_tag": 15
         }
     });
 }
