@@ -56,6 +56,7 @@ describe('tags', () => {
         params: {
           page: 1,
           limit: 10,
+          with_flags: true,
         },
       },
       undefined,
@@ -79,6 +80,7 @@ describe('tags', () => {
         params: {
           page: 1,
           limit: 10,
+          with_flags: true,
         },
       },
       undefined,
@@ -299,7 +301,7 @@ describe('tags', () => {
     expect(bulkRemoveAlarmTags).toBeCalledWith(
       expect.any(Object),
       {
-        data: [tag._id],
+        data: [{ _id: tag._id }],
       },
       undefined,
     );
