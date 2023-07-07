@@ -88,5 +88,5 @@ const (
 	RoleTemplateCollection = "role_template"
 	PermissionCollection   = "permission"
 
-	EntityServiceCountersMongoCollection = "entity_service_counters"
+	EntityServiceCountersCollection = "entity_service_counters"
 )

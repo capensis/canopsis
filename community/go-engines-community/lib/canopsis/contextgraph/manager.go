@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
@@ -169,13 +168,13 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 				var err error
 				match, err = serv.EntityPattern.Match(ent)
 				if err != nil {
-					m.logger.Err(err).Str("service", serv.ID).Msgf("service has invalid pattern")
+					m.logger.Err(err).Str("service", serviceID).Msgf("service has invalid pattern")
 				}
 			} else if serv.OldEntityPatterns.IsSet() {
 				if serv.OldEntityPatterns.IsValid() {
 					match = serv.OldEntityPatterns.Matches(&ent)
 				} else {
-					m.logger.Err(pattern.ErrInvalidOldEntityPattern).Str("service", serv.ID).Msgf("service has invalid pattern")
+					m.logger.Err(pattern.ErrInvalidOldEntityPattern).Str("service", serviceID).Msgf("service has invalid pattern")
 				}
 			}
 
@@ -219,8 +218,8 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 			continue
 		}
 
-		addedTo := data[0]
-		removedFrom := data[1]
+		addedTo := data[added]
+		removedFrom := data[removed]
 
 		toAddMap := make(map[string]bool, len(addedTo))
 		for _, impact := range addedTo {
@@ -232,17 +231,21 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 			toRemoveMap[impact] = true
 		}
 
-		for idx := 0; idx < len(ent.ServicesToAdd) && len(removedFrom) != 0; idx++ {
-			if toRemoveMap[ent.ServicesToAdd[idx]] {
-				ent.ServicesToAdd = append(ent.ServicesToAdd[:idx], ent.ServicesToAdd[idx+1:]...)
-				idx--
+		if len(removedFrom) != 0 {
+			for idx := 0; idx < len(ent.ServicesToAdd); idx++ {
+				if toRemoveMap[ent.ServicesToAdd[idx]] {
+					ent.ServicesToAdd = append(ent.ServicesToAdd[:idx], ent.ServicesToAdd[idx+1:]...)
+					idx--
+				}
 			}
 		}
 
-		for idx := 0; idx < len(ent.ServicesToRemove) && len(addedTo) != 0; idx++ {
-			if toAddMap[ent.ServicesToRemove[idx]] {
-				ent.ServicesToRemove = append(ent.ServicesToRemove[:idx], ent.ServicesToRemove[idx+1:]...)
-				idx--
+		if len(addedTo) != 0 {
+			for idx := 0; idx < len(ent.ServicesToRemove); idx++ {
+				if toAddMap[ent.ServicesToRemove[idx]] {
+					ent.ServicesToRemove = append(ent.ServicesToRemove[:idx], ent.ServicesToRemove[idx+1:]...)
+					idx--
+				}
 			}
 		}
 
@@ -286,56 +289,7 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 	}
 
 	if !service.Enabled || service.ID == "" {
-		var dependedEntities []types.Entity
-		cursor, err := m.collection.Find(ctx, bson.M{"services": serviceID})
-		if err != nil {
-			return types.Entity{}, nil, err
-		}
-
-		err = cursor.All(ctx, &dependedEntities)
-		if err != nil {
-			return types.Entity{}, nil, err
-		}
-
-		for idx, ent := range dependedEntities {
-			for impIdx, impServ := range ent.Services {
-				if impServ == serviceID {
-					ent.Services = append(ent.Services[:impIdx], ent.Services[impIdx+1:]...)
-					break
-				}
-			}
-
-			for impIdx, impServ := range ent.ServicesToAdd {
-				if impServ == serviceID {
-					ent.ServicesToAdd = append(ent.ServicesToAdd[:impIdx], ent.ServicesToAdd[impIdx+1:]...)
-					break
-				}
-			}
-
-			dependedEntities[idx] = ent
-		}
-
-		var impactedEntities []types.Entity
-		cursor, err = m.collection.Find(ctx, bson.M{"depends": serviceID})
-		if err != nil {
-			return types.Entity{}, nil, err
-		}
-
-		err = cursor.All(ctx, &impactedEntities)
-		if err != nil {
-			return types.Entity{}, nil, err
-		}
-
-		for idx, ent := range impactedEntities {
-			service.Services = append(service.Services, ent.ID)
-			impactedEntities[idx] = ent
-		}
-
-		if service.Entity.ID != "" {
-			impactedEntities = append(impactedEntities, service.Entity)
-		}
-
-		return service.Entity, append(dependedEntities, impactedEntities...), nil
+		return m.processDisabledService(ctx, service)
 	}
 
 	var updatedEntities []types.Entity
@@ -445,7 +399,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 		return types.Entity{}, nil, nil
 	}
 
-	now := types.CpsTime{Time: time.Now()}
+	now := types.NewCpsTime()
 	if event.EventType == types.EventTypeCheck {
 		eventEntity.LastEventDate = &now
 	}
@@ -801,6 +755,59 @@ func (m *manager) UpdateLastEventDate(ctx context.Context, eventType string, ent
 	)
 
 	return err
+}
+
+func (m *manager) processDisabledService(ctx context.Context, service entityservice.EntityService) (types.Entity, []types.Entity, error) {
+	var dependedEntities []types.Entity
+	cursor, err := m.collection.Find(ctx, bson.M{"services": service.ID})
+	if err != nil {
+		return types.Entity{}, nil, err
+	}
+
+	err = cursor.All(ctx, &dependedEntities)
+	if err != nil {
+		return types.Entity{}, nil, err
+	}
+
+	for idx, ent := range dependedEntities {
+		for impIdx, impServ := range ent.Services {
+			if impServ == service.ID {
+				ent.Services = append(ent.Services[:impIdx], ent.Services[impIdx+1:]...)
+				break
+			}
+		}
+
+		for impIdx, impServ := range ent.ServicesToAdd {
+			if impServ == service.ID {
+				ent.ServicesToAdd = append(ent.ServicesToAdd[:impIdx], ent.ServicesToAdd[impIdx+1:]...)
+				break
+			}
+		}
+
+		dependedEntities[idx] = ent
+	}
+
+	var impactedEntities []types.Entity
+	cursor, err = m.collection.Find(ctx, bson.M{"depends": service.ID})
+	if err != nil {
+		return types.Entity{}, nil, err
+	}
+
+	err = cursor.All(ctx, &impactedEntities)
+	if err != nil {
+		return types.Entity{}, nil, err
+	}
+
+	for idx, ent := range impactedEntities {
+		service.Services = append(service.Services, ent.ID)
+		impactedEntities[idx] = ent
+	}
+
+	if service.Entity.ID != "" {
+		impactedEntities = append(impactedEntities, service.Entity)
+	}
+
+	return service.Entity, append(dependedEntities, impactedEntities...), nil
 }
 
 func (m *manager) entityExist(ctx context.Context, id string) (bool, error) {

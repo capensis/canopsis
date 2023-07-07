@@ -382,7 +382,7 @@ func NewEngine(
 	))
 	engineAxe.AddPeriodicalWorker("idle since", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
-		redis.ServiceIdleSincePeriodicalLockKey,
+		redis.AxeIdleSincePeriodicalLockKey,
 		&idleSincePeriodicalWorker{
 			IdleSinceService:   idleSinceService,
 			PeriodicalInterval: options.PeriodicalWaitTime,
