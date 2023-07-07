@@ -86,6 +86,8 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import {
   MODALS,
   ENTITIES_TYPES,
@@ -143,6 +145,10 @@ export default {
       type: String,
       default: '',
     },
+    withInstructions: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -183,7 +189,11 @@ export default {
     },
 
     alarmListAvailableColumns() {
-      return Object.values(ALARM_LIST_WIDGET_COLUMNS).map(value => ({
+      const columns = this.withInstructions
+        ? ALARM_LIST_WIDGET_COLUMNS
+        : omit(ALARM_LIST_WIDGET_COLUMNS, ['assignedInstructions']);
+
+      return Object.values(columns).map(value => ({
         value,
         text: this.$tc(ALARM_FIELDS_TO_LABELS_KEYS[value], 2),
       }));

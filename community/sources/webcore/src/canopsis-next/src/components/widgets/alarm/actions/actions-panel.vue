@@ -1,5 +1,5 @@
 <template lang="pug">
-  shared-actions-panel(:actions="preparedActions", :small="small")
+  shared-actions-panel(:actions="preparedActions", :small="small", :wrap="wrap")
 </template>
 
 <script>
@@ -73,6 +73,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    wrap: {
+      type: Boolean,
+      default: false,
+    },
     refreshAlarmsList: {
       type: Function,
       default: () => {},
@@ -131,8 +135,12 @@ export default {
       return isAutoMetaAlarmRuleType(this.parentAlarm?.meta_alarm_rule?.type);
     },
 
+    visibleLinks() {
+      return harmonizeLinks(this.item.links).filter(link => !link.hide_in_menu);
+    },
+
     linksActions() {
-      return harmonizeLinks(this.item.links).map((link) => {
+      return this.visibleLinks.map((link) => {
         const type = getLinkRuleLinkActionType(link);
 
         return {

@@ -31,7 +31,8 @@ type Store interface {
 	Find(ctx context.Context, r ListRequest, userId string) (*AggregationResult, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
 	Delete(ctx context.Context, pattern Response) (bool, error)
-	Count(ctx context.Context, r CountRequest, maxCount int64) (CountResponse, error)
+	CountAlarms(ctx context.Context, r CountRequest, maxCount int64) (CountAlarmsResponse, error)
+	CountEntities(ctx context.Context, r CountRequest, maxCount int64) (CountEntitiesResponse, error)
 	GetAlarms(ctx context.Context, r GetAlarmsRequest) (GetAlarmsResponse, error)
 }
 
@@ -466,16 +467,22 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response) error {
 	return nil
 }
 
-func (s *store) Count(ctx context.Context, r CountRequest, maxCount int64) (CountResponse, error) {
-	res := CountResponse{}
+func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64) (CountAlarmsResponse, error) {
+	res := CountAlarmsResponse{}
 	g, ctx := errgroup.WithContext(ctx)
 	var err error
 	var alarmPatternQuery, entityPatternQuery, pbhPatternQuery bson.M
-	var alarmPatternCount, entityPatternCount, pbhPatternCount Count
+	alarmsPipeline := make([]bson.M, 0)
+	entitiesPipeline := make([]bson.M, 0)
+	var alarmPatternCount, entityPatternCount, pbhPatternCount, alarmsCount, entitiesCount Count
 	if len(r.AlarmPattern) > 0 {
 		alarmPatternQuery, err = r.AlarmPattern.ToMongoQuery("")
 		if err != nil {
 			return res, err
+		}
+
+		if len(r.PbehaviorPattern) > 0 || len(r.EntityPattern) > 0 {
+			alarmsPipeline = append(alarmsPipeline, bson.M{"$match": alarmPatternQuery})
 		}
 	}
 	if len(r.PbehaviorPattern) > 0 {
@@ -483,17 +490,42 @@ func (s *store) Count(ctx context.Context, r CountRequest, maxCount int64) (Coun
 		if err != nil {
 			return res, err
 		}
+
+		if len(r.AlarmPattern) > 0 || len(r.EntityPattern) > 0 {
+			alarmsPipeline = append(alarmsPipeline, bson.M{"$match": pbhPatternQuery})
+		}
 	}
 	if len(r.EntityPattern) > 0 {
-		entityPatternQuery, err = r.EntityPattern.ToMongoQuery("")
+		entityPatternQuery, err = r.EntityPattern.ToMongoQuery("entity")
 		if err != nil {
 			return res, err
 		}
+
+		if len(r.AlarmPattern) > 0 || len(r.PbehaviorPattern) > 0 {
+			alarmsPipeline = append(alarmsPipeline,
+				bson.M{"$lookup": bson.M{
+					"from":         mongo.EntityMongoCollection,
+					"localField":   "d",
+					"foreignField": "_id",
+					"as":           "entity",
+				}},
+				bson.M{"$unwind": "$entity"},
+				bson.M{"$match": entityPatternQuery},
+			)
+		}
+
+		entityPatternQueryForEntities, err := r.EntityPattern.ToMongoQuery("")
+		if err != nil {
+			return res, err
+		}
+
+		entitiesPipeline = append(entitiesPipeline, bson.M{"$match": entityPatternQueryForEntities})
 	}
 
 	if len(alarmPatternQuery) > 0 {
 		g.Go(func() error {
-			alarmPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection), alarmPatternQuery)
+			alarmPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection),
+				[]bson.M{{"$match": alarmPatternQuery}})
 			alarmPatternCount.OverLimit = alarmPatternCount.Count > maxCount
 
 			return err
@@ -502,7 +534,8 @@ func (s *store) Count(ctx context.Context, r CountRequest, maxCount int64) (Coun
 	if len(pbhPatternQuery) > 0 {
 		g.Go(func() error {
 			var err error
-			pbhPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection), pbhPatternQuery)
+			pbhPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection),
+				[]bson.M{{"$match": pbhPatternQuery}})
 			pbhPatternCount.OverLimit = pbhPatternCount.Count > maxCount
 
 			return err
@@ -511,12 +544,43 @@ func (s *store) Count(ctx context.Context, r CountRequest, maxCount int64) (Coun
 	if len(entityPatternQuery) > 0 {
 		g.Go(func() error {
 			var err error
-			entityPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.EntityMongoCollection), entityPatternQuery)
+			entityPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection),
+				[]bson.M{
+					{"$lookup": bson.M{
+						"from":         mongo.EntityMongoCollection,
+						"localField":   "d",
+						"foreignField": "_id",
+						"as":           "entity",
+					}},
+					{"$unwind": "$entity"},
+					{"$match": entityPatternQuery},
+				})
 			entityPatternCount.OverLimit = entityPatternCount.Count > maxCount
 
 			return err
 		})
 	}
+	fetchAlarmsCount := false
+	if len(alarmsPipeline) > 0 {
+		fetchAlarmsCount = true
+		g.Go(func() error {
+			var err error
+			alarmsCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection), alarmsPipeline)
+			alarmsCount.OverLimit = alarmsCount.Count > maxCount
+
+			return err
+		})
+	}
+	if len(entitiesPipeline) > 0 {
+		g.Go(func() error {
+			var err error
+			entitiesCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.EntityMongoCollection), entitiesPipeline)
+			entitiesCount.OverLimit = entitiesCount.Count > maxCount
+
+			return err
+		})
+	}
+
 	if err := g.Wait(); err != nil {
 		return res, err
 	}
@@ -524,15 +588,150 @@ func (s *store) Count(ctx context.Context, r CountRequest, maxCount int64) (Coun
 	res.AlarmPattern = alarmPatternCount
 	res.PbehaviorPattern = pbhPatternCount
 	res.EntityPattern = entityPatternCount
+	if fetchAlarmsCount {
+		res.All = alarmsCount
+	} else if len(r.AlarmPattern) > 0 {
+		res.All = alarmPatternCount
+	} else if len(r.PbehaviorPattern) > 0 {
+		res.All = pbhPatternCount
+	} else if len(r.EntityPattern) > 0 {
+		res.All = entityPatternCount
+	}
+	res.Entities = entitiesCount
 
 	return res, nil
 }
 
-func (s *store) fetchCount(ctx context.Context, collection mongo.DbCollection, match bson.M) (int64, error) {
-	cursor, err := collection.Aggregate(ctx, []bson.M{
-		{"$match": match},
-		{"$count": "total_count"},
-	})
+func (s *store) CountEntities(ctx context.Context, r CountRequest, maxCount int64) (CountEntitiesResponse, error) {
+	res := CountEntitiesResponse{}
+	g, ctx := errgroup.WithContext(ctx)
+	var err error
+	var alarmPatternQuery, entityPatternQuery, pbhPatternQuery bson.M
+	entitiesPipeline := make([]bson.M, 0)
+	var alarmPatternCount, entityPatternCount, pbhPatternCount, entitiesCount Count
+	if len(r.EntityPattern) > 0 {
+		entityPatternQuery, err = r.EntityPattern.ToMongoQuery("")
+		if err != nil {
+			return res, err
+		}
+
+		if len(r.AlarmPattern) > 0 || len(r.PbehaviorPattern) > 0 {
+			entitiesPipeline = append(entitiesPipeline, bson.M{"$match": entityPatternQuery})
+		}
+	}
+	if len(r.PbehaviorPattern) > 0 {
+		pbhPatternQuery, err = r.PbehaviorPattern.ToMongoQuery("")
+		if err != nil {
+			return res, err
+		}
+
+		if len(r.AlarmPattern) > 0 || len(r.EntityPattern) > 0 {
+			entitiesPipeline = append(entitiesPipeline, bson.M{"$match": pbhPatternQuery})
+		}
+	}
+	if len(r.AlarmPattern) > 0 {
+		alarmPatternQuery, err = r.AlarmPattern.ToMongoQuery("")
+		if err != nil {
+			return res, err
+		}
+
+		if len(r.PbehaviorPattern) > 0 || len(r.EntityPattern) > 0 {
+			alarmPatternQueryForEntities, err := r.AlarmPattern.ToMongoQuery("alarm")
+			if err != nil {
+				return res, err
+			}
+
+			entitiesPipeline = append(entitiesPipeline,
+				bson.M{"$lookup": bson.M{
+					"from": mongo.AlarmMongoCollection,
+					"let":  bson.M{"id": "$_id"},
+					"pipeline": []bson.M{
+						{"$match": bson.M{"$and": []bson.M{
+							{"$expr": bson.M{"$eq": bson.A{"$d", "$$id"}}},
+							{"v.resolved": nil},
+						}}},
+						{"$limit": 1},
+					},
+					"as": "alarm",
+				}},
+				bson.M{"$unwind": bson.M{"path": "$alarm", "preserveNullAndEmptyArrays": true}},
+				bson.M{"$match": alarmPatternQueryForEntities},
+			)
+		}
+	}
+
+	if len(entityPatternQuery) > 0 {
+		g.Go(func() error {
+			var err error
+			entityPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.EntityMongoCollection),
+				[]bson.M{{"$match": entityPatternQuery}})
+			entityPatternCount.OverLimit = entityPatternCount.Count > maxCount
+
+			return err
+		})
+	}
+	if len(pbhPatternQuery) > 0 {
+		g.Go(func() error {
+			var err error
+			pbhPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.EntityMongoCollection),
+				[]bson.M{{"$match": pbhPatternQuery}})
+			pbhPatternCount.OverLimit = pbhPatternCount.Count > maxCount
+
+			return err
+		})
+	}
+	if len(alarmPatternQuery) > 0 {
+		g.Go(func() error {
+			alarmPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection),
+				[]bson.M{
+					{"$match": bson.M{"v.resolved": nil}},
+					{"$match": alarmPatternQuery},
+				})
+			alarmPatternCount.OverLimit = alarmPatternCount.Count > maxCount
+
+			return err
+		})
+	}
+
+	fetchEntitiesCount := false
+	if len(entitiesPipeline) > 0 {
+		fetchEntitiesCount = true
+		g.Go(func() error {
+			var err error
+			entitiesCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.EntityMongoCollection), entitiesPipeline)
+			entitiesCount.OverLimit = entitiesCount.Count > maxCount
+
+			return err
+		})
+	}
+
+	if err := g.Wait(); err != nil {
+		return res, err
+	}
+
+	res.AlarmPattern = alarmPatternCount
+	res.PbehaviorPattern = pbhPatternCount
+	res.EntityPattern = entityPatternCount
+	if fetchEntitiesCount {
+		res.All = entitiesCount
+	} else if len(r.AlarmPattern) > 0 {
+		res.All = alarmPatternCount
+	} else if len(r.PbehaviorPattern) > 0 {
+		res.All = pbhPatternCount
+	} else if len(r.EntityPattern) > 0 {
+		res.All = entityPatternCount
+	}
+
+	return res, nil
+}
+
+func (s *store) fetchCount(
+	ctx context.Context,
+	collection mongo.DbCollection,
+	pipeline []bson.M,
+) (int64, error) {
+	pipeline = append(pipeline, bson.M{"$count": "total_count"})
+	cursor, err := collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return 0, err
 	}

@@ -9,6 +9,9 @@
     :name="name",
     :error-messages="errors.collect(name)",
     :disabled="disabled",
+    :multiple="multiple",
+    :chips="chips",
+    :small-chips="chips",
     item-text="name",
     item-value="_id",
     return-object
@@ -17,7 +20,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import { isObject } from 'lodash';
+import { isArray, isObject } from 'lodash';
 
 import { MAX_LIMIT } from '@/constants';
 
@@ -27,7 +30,7 @@ export default {
   inject: ['$validator'],
   props: {
     value: {
-      type: [Object, String],
+      type: [Object, String, Array],
       required: false,
     },
     label: {
@@ -50,6 +53,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    multiple: {
+      type: Boolean,
+      default: false,
+    },
+    chips: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -67,7 +78,17 @@ export default {
     },
 
     availableRoles() {
-      return !this.items.length && isObject(this.value) ? [this.value] : this.items;
+      if (!this.items.length) {
+        if (isArray(this.value)) {
+          return this.value;
+        }
+
+        if (isObject(this.value)) {
+          return [this.value];
+        }
+      }
+
+      return this.items;
     },
 
     rules() {

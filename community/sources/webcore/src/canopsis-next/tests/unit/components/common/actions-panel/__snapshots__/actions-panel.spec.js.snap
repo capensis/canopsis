@@ -31,9 +31,7 @@ exports[`actions-panel Renders \`actions-panel\` with actions correctly on the l
   <div
     class="layout row align-center"
   >
-    <span
-      class="ml-1"
-    >
+    <span>
       <button
         class="ma-0 v-btn v-btn--icon theme--light"
         type="button"
@@ -157,9 +155,7 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
   <div
     class="layout row align-center"
   >
-    <span
-      class="ml-1"
-    >
+    <span>
       <button
         class="ma-0 v-btn v-btn--icon theme--light"
         type="button"
@@ -255,9 +251,7 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
   <div
     class="layout row align-center"
   >
-    <span
-      class="ml-1"
-    >
+    <span>
       <button
         class="ma-0 v-btn v-btn--icon theme--light"
         type="button"
@@ -353,9 +347,7 @@ exports[`actions-panel Renders \`actions-panel\` with dropdown actions correctly
   <div
     class="layout row align-center"
   >
-    <span
-      class="ml-1"
-    >
+    <span>
       <button
         class="ma-0 v-btn v-btn--icon theme--light"
         type="button"

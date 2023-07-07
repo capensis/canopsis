@@ -4,6 +4,7 @@ export default {
   dataFromOneStepAttention: 'Les données de la réponse de l\'API ne peuvent être extraites que d\'une étape d\'une règle.',
   ticketID: 'ID de ticket',
   ticketURL: 'URL du ticket',
+  allowTicketURLTemplate: 'Autoriser les variables dans l\'URL',
   alarmFieldName: 'Nom du champ d\'alarme',
   customFields: 'Les champs personnalisés',
   responseField: 'Champ de réponse',
