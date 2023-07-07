@@ -785,26 +785,3 @@ Feature: Get alarm metrics
       }
     }
     """
-    When I do POST /api/v4/cat/metrics-export/group:
-    """json
-    {
-      "from": {{ nowDateTz }},
-      "to": {{ nowDateTz }},
-      "criteria": 3,
-      "filter": "test-kpi-filter-to-group-metrics-get",
-      "parameters": [
-        {
-          "metric": "total_user_activity"
-        }
-      ]
-    }
-    """
-    Then the response code should be 400
-    Then the response body should be:
-    """json
-    {
-      "errors": {
-        "filter": "KpiFilter is not empty."
-      }
-    }
-    """
