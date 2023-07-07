@@ -13,7 +13,8 @@
         :editable="hasAccessToEditFilter",
         :entity-types="[$constants.ENTITY_TYPES.service]",
         with-entity,
-        with-service-weather
+        with-service-weather,
+        entity-counters-type
       )
       v-divider
     alarms-list-modal-form(
