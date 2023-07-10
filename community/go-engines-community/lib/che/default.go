@@ -196,11 +196,12 @@ func NewEngine(
 		periodicalLockClient,
 		redis.CheSoftDeletePeriodicalLockKey,
 		&softDeletePeriodicalWorker{
-			collection:         mongoClient.Collection(mongo.EntityMongoCollection),
-			periodicalInterval: options.PeriodicalWaitTime,
-			eventPublisher:     communityimport.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
-			softDeleteWaitTime: options.SoftDeleteWaitTime,
-			logger:             logger,
+			entityCollection:          mongoClient.Collection(mongo.EntityMongoCollection),
+			serviceCountersCollection: mongoClient.Collection(mongo.EntityServiceCountersCollection),
+			periodicalInterval:        options.PeriodicalWaitTime,
+			eventPublisher:            communityimport.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
+			softDeleteWaitTime:        options.SoftDeleteWaitTime,
+			logger:                    logger,
 		},
 		logger,
 	))
