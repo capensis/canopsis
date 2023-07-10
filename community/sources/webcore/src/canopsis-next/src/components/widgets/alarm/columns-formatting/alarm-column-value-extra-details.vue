@@ -30,6 +30,8 @@
     extra-details-children(
       v-if="alarm.children",
       :total="alarm.children",
+      :opened="alarm.opened_children",
+      :closed="alarm.closed_children",
       :rule="alarm.meta_alarm_rule"
     )
 </template>
