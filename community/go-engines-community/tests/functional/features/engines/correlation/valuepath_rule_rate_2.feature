@@ -532,9 +532,7 @@ Feature: correlation feature - valuegroup rule with threshold rate
     }
     """
     When I wait 1s
-    When I do GET /api/v4/alarms?search=test-resource-correlation-valuegroup-rate-second-2&correlation=true&sort_by=v.meta&sort=desc
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-resource-correlation-valuegroup-rate-second-2&correlation=true&sort_by=v.meta&sort=desc until response code is 200 and body contains:
     """json
     {
       "data": [
