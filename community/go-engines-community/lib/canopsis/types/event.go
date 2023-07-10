@@ -165,6 +165,9 @@ type Event struct {
 
 	MetaAlarmParents  []string `bson:"ma_parents,omitempty" json:"ma_parents,omitempty"`
 	MetaAlarmChildren []string `bson:"ma_children,omitempty" json:"ma_children,omitempty"`
+
+	// ManualMetaAlarmAutoResolve is used for manual meta alarms.
+	ManualMetaAlarmAutoResolve bool `bson:"manual_meta_alarm_auto_resolve,omitempty" json:"manual_meta_alarm_auto_resolve,omitempty"`
 	// DisplayName is used for manual meta alarms.
 	DisplayName string `bson:"display_name,omitempty" json:"display_name,omitempty"`
 
