@@ -215,5 +215,7 @@ export default {
     entityInfos: 'Entity infos',
     entityComponentInfos: 'Entity component infos',
     entityLastPbehaviorDate: 'Entity last pbehavior date',
+    openedChildren: 'Opened consequences',
+    closedChildren: 'Closed consequences',
   },
 };
