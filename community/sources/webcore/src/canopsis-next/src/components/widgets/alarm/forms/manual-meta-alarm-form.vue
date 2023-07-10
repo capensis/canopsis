@@ -21,6 +21,7 @@
       v-field="form.comment",
       :label="$t('common.note')"
     )
+    c-enabled-field(v-field="form.auto_resolve", :label="$t('metaAlarmRule.autoResolve')")
 </template>
 
 <script>
