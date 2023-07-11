@@ -571,6 +571,11 @@ default_rights:
     _id: listalarm_fastRemoveAlarm
     crecord_name: <Current()._id>
     description: "Rights on listalarm: fast remove alarm"
+  permission_listalarm_unCancel:
+    <<: *permission
+    _id: listalarm_unCancel
+    crecord_name: <Current()._id>
+    description: "Rights on listalarm: uncancel alarm"
   permission_listalarm_changeState:
     <<: *permission
     _id: listalarm_changeState
@@ -1393,6 +1398,8 @@ default_rights:
       "@permission_listalarm_removeAlarm":
         checksum: 1
       "@permission_listalarm_fastRemoveAlarm":
+        checksum: 1
+      "@permission_listalarm_unCancel":
         checksum: 1
       "@permission_listalarm_changeState":
         checksum: 1
