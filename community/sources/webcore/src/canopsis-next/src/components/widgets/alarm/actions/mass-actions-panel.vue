@@ -16,7 +16,7 @@ import {
 
 import featuresService from '@/services/features';
 
-import { mapIds } from '@/helpers/entities';
+import { mapIds, isCancelledAlarmStatus, isClosedAlarmStatus, isResolvedAlarm } from '@/helpers/entities';
 import { getEntityEventIcon } from '@/helpers/icon';
 import { createEntityIdPatternByValue } from '@/helpers/pattern';
 import { harmonizeAlarmsLinks, getLinkRuleLinkActionType } from '@/helpers/links';
@@ -69,7 +69,38 @@ export default {
       getEntitiesList: 'getList',
     }),
 
+    openedAlarms() {
+      return this.items.filter(item => !isCancelledAlarmStatus(item) && !isClosedAlarmStatus(item));
+    },
+
+    cancelledAndUnResolvedAlarms() {
+      return this.items.filter(alarm => isCancelledAlarmStatus(alarm) && !isResolvedAlarm(alarm));
+    },
+
+    hasAlarms() {
+      return !!this.items.length;
+    },
+
+    hasOpenedAlarms() {
+      return !!this.openedAlarms.length;
+    },
+
+    hasCancelledAndUnResolvedAlarms() {
+      return !!this.cancelledAndUnResolvedAlarms.length;
+    },
+
     actions() {
+      const unCancelAction = {
+        type: ALARM_LIST_ACTIONS_TYPES.unCancel,
+        icon: getEntityEventIcon(EVENT_ENTITY_TYPES.uncancel),
+        title: this.$t('alarm.actions.titles.unCancel'),
+        method: this.showUnCancelEventModal,
+      };
+
+      if (this.hasAlarms && !this.hasOpenedAlarms) {
+        return [unCancelAction];
+      }
+
       const actions = [
         {
           type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
@@ -107,13 +138,18 @@ export default {
           title: this.$t('alarm.actions.titles.fastCancel'),
           method: this.createFastCancelEvent,
         },
-        {
-          type: ALARM_LIST_ACTIONS_TYPES.comment,
-          icon: getEntityEventIcon(EVENT_ENTITY_TYPES.comment),
-          title: this.$t('alarm.actions.titles.comment'),
-          method: this.showCreateCommentEventModal,
-        },
       ];
+
+      if (this.hasCancelledAndUnResolvedAlarms) {
+        actions.push(unCancelAction);
+      }
+
+      actions.push({
+        type: ALARM_LIST_ACTIONS_TYPES.comment,
+        icon: getEntityEventIcon(EVENT_ENTITY_TYPES.comment),
+        title: this.$t('alarm.actions.titles.comment'),
+        method: this.showCreateCommentEventModal,
+      });
 
       if (this.hasAlarmsWithoutTickets || this.widget.parameters.isMultiDeclareTicketEnabled) {
         if (this.alarmsWithAssignedDeclareTicketRules.length) {
@@ -184,7 +220,7 @@ export default {
         return [];
       }
 
-      return harmonizeAlarmsLinks(this.items).map((link) => {
+      return harmonizeAlarmsLinks(this.openedAlarms).map((link) => {
         const type = getLinkRuleLinkActionType(link);
 
         return {
