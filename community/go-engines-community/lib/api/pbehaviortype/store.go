@@ -293,16 +293,24 @@ func (s *store) getPrioritiesOfDefaultTypes(ctx context.Context) ([]int, error) 
 func getEditableAndDeletablePipeline(prioritiesOfDefaultTypes []int) []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from":         pbehavior.PBehaviorCollectionName,
-			"localField":   "_id",
-			"foreignField": "type",
-			"as":           "pbhs",
+			"from": mongo.PbehaviorMongoCollection,
+			"let":  bson.M{"type": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$expr": bson.M{"$eq": bson.A{"$type", "$$type"}}}},
+				{"$limit": 1},
+				{"$project": bson.M{"_id": 1}},
+			},
+			"as": "pbhs",
 		}},
 		{"$lookup": bson.M{
-			"from":         mongo.ScenarioMongoCollection,
-			"localField":   "_id",
-			"foreignField": "actions.parameters.type",
-			"as":           "actions",
+			"from": mongo.ScenarioMongoCollection,
+			"let":  bson.M{"type": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$expr": bson.M{"$eq": bson.A{"$actions.parameters.type", "$$type"}}}},
+				{"$limit": 1},
+				{"$project": bson.M{"_id": 1}},
+			},
+			"as": "actions",
 		}},
 		{"$addFields": bson.M{
 			"editable": bson.M{"$not": bson.M{"$in": bson.A{"$priority", prioritiesOfDefaultTypes}}},
