@@ -22,6 +22,11 @@ import { isManualGroupMetaAlarmRuleType, isAutoMetaAlarmRuleType } from '@/helpe
 import { isInstructionExecutionIconInProgress } from '@/helpers/forms/remediation-instruction-execution';
 import { isInstructionManual } from '@/helpers/forms/remediation-instruction';
 import { harmonizeLinks, getLinkRuleLinkActionType } from '@/helpers/links';
+import {
+  isCancelledAlarmStatus,
+  isClosedAlarmStatus,
+  isResolvedAlarm,
+} from '@/helpers/entities';
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { entitiesMetaAlarmMixin } from '@/mixins/entities/meta-alarm';
@@ -60,10 +65,6 @@ export default {
     parentAlarm: {
       type: Object,
       default: null,
-    },
-    isResolvedAlarm: {
-      type: Boolean,
-      default: false,
     },
     small: {
       type: Boolean,
@@ -133,6 +134,12 @@ export default {
           title: this.$t('alarm.actions.titles.cancel'),
           method: this.showCancelEventModal,
         },
+        unCancel: {
+          type: ALARM_LIST_ACTIONS_TYPES.unCancel,
+          icon: 'delete_forever',
+          title: this.$t('alarm.actions.titles.unCancel'),
+          method: this.showUnCancelEventModal,
+        },
         fastCancel: {
           type: ALARM_LIST_ACTIONS_TYPES.fastCancel,
           icon: 'delete',
@@ -184,6 +191,18 @@ export default {
       };
     },
 
+    isCancelledAlarm() {
+      return isCancelledAlarmStatus(this.item);
+    },
+
+    isClosedAlarm() {
+      return isClosedAlarmStatus(this.item);
+    },
+
+    isResolvedAlarm() {
+      return isResolvedAlarm(this.item);
+    },
+
     isParentAlarmManualMetaAlarm() {
       return isManualGroupMetaAlarmRuleType(this.parentAlarm?.meta_alarm_rule?.type);
     },
@@ -219,13 +238,19 @@ export default {
     },
 
     resolvedActions() {
-      const { pbehaviorList, variablesHelp } = this.filteredActionsMap;
+      const { unCancel, pbehaviorList, variablesHelp } = this.filteredActionsMap;
 
-      return [
+      const actions = [
         pbehaviorList,
         ...this.linksActions,
         variablesHelp,
       ];
+
+      if (this.isCancelledAlarm && !this.isResolvedAlarm) {
+        actions.unshift(unCancel);
+      }
+
+      return actions;
     },
 
     unresolvedActions() {
@@ -339,7 +364,11 @@ export default {
     },
 
     actions() {
-      return compact(this.isResolvedAlarm ? this.resolvedActions : this.unresolvedActions);
+      return compact(
+        this.isCancelledAlarm || this.isClosedAlarm
+          ? this.resolvedActions
+          : this.unresolvedActions,
+      );
     },
   },
   methods: {

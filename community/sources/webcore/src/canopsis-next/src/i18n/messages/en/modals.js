@@ -101,6 +101,9 @@ export default {
   createCancelEvent: {
     title: 'Cancel',
   },
+  createUnCancelEvent: {
+    title: 'Create uncancel event',
+  },
   createGroupRequestEvent: {
     title: 'Suggest group request for meta alarm',
   },
