@@ -1355,21 +1355,41 @@ func getInstructionQuery(instruction Instruction) (bson.M, error) {
 func getImpactsCountPipeline() []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "entity.services",
-			"foreignField": "_id",
-			"as":           "service_impacts",
+			"from": mongo.EntityMongoCollection,
+			"let": bson.M{"services": bson.M{"$cond": bson.M{
+				"if":   "$entity.services",
+				"then": "$entity.services",
+				"else": bson.A{},
+			}}},
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"$expr": bson.M{"$in": bson.A{"$_id", "$$services"}},
+				}},
+				{"$project": bson.M{"_id": 1}},
+			},
+			"as": "service_impacts",
 		}},
 		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "entity._id",
-			"foreignField": "services",
-			"as":           "depends",
+			"from": mongo.EntityMongoCollection,
+			"let":  bson.M{"service": "$entity._id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"$expr": bson.M{"$and": []bson.M{
+						{"$isArray": "$services"},
+						{"$in": bson.A{"$$service", "$services"}},
+					}},
+				}},
+				{"$project": bson.M{"_id": 1}},
+			},
+			"as": "depends",
 		}},
 		{"$addFields": bson.M{
 			"entity.depends_count": bson.M{"$size": "$depends"},
 			"entity.impacts_count": bson.M{"$size": "$service_impacts"},
 		}},
-		{"$project": bson.M{"service_impacts": 0}},
+		{"$project": bson.M{
+			"service_impacts": 0,
+			"depends":         0,
+		}},
 	}
 }
