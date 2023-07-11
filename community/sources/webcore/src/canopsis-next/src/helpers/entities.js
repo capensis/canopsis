@@ -31,12 +31,37 @@ export const isClosedAlarm = alarm => [ENTITIES_STATUSES.closed, ENTITIES_STATUS
   .includes(alarm.v.status.val);
 
 /**
+ * Checks if alarm has closed status
+ *
+ * @param alarm - alarm entity
+ * @returns {boolean}
+ */
+export const isClosedAlarmStatus = alarm => alarm.v.status.val === ENTITIES_STATUSES.closed;
+
+/**
+ * Checks if alarm has cancelled status
+ *
+ * @param alarm - alarm entity
+ * @returns {boolean}
+ */
+export const isCancelledAlarmStatus = alarm => alarm.v.status.val === ENTITIES_STATUSES.cancelled;
+
+/**
  * Checks if alarm have critical state
  *
  * @param alarm - alarm entity
  * @returns {boolean}
  */
 export const isWarningAlarmState = alarm => ENTITIES_STATES.ok !== alarm.v.state.val;
+
+/**
+ * Checks if action available for alarm
+ *
+ * @param alarm - alarm entity
+ * @returns {boolean}
+ */
+export const isActionAvailableForAlarm = alarm => !isClosedAlarmStatus(alarm)
+  && !(isCancelledAlarmStatus(alarm) && isResolvedAlarm(alarm));
 
 /**
  * Add uniq key field in each entity.
