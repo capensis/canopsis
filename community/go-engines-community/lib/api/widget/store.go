@@ -99,10 +99,15 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{
 		{"$match": bson.M{"_id": id}},
 		{"$lookup": bson.M{
-			"from":         mongo.WidgetFiltersMongoCollection,
-			"localField":   "_id",
-			"foreignField": "widget",
-			"as":           "filters",
+			"from": mongo.WidgetFiltersMongoCollection,
+			"let":  bson.M{"widget": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"$expr":      bson.M{"$eq": bson.A{"$widget", "$$widget"}},
+					"is_private": false,
+				}},
+			},
+			"as": "filters",
 		}},
 		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
 	}
@@ -110,16 +115,17 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	pipeline = append(pipeline,
 		bson.M{"$sort": bson.M{"filters.position": 1}},
 		bson.M{"$group": bson.M{
-			"_id":     nil,
-			"data":    bson.M{"$first": "$$ROOT"},
-			"filters": bson.M{"$push": "$filters"},
+			"_id":  nil,
+			"data": bson.M{"$first": "$$ROOT"},
+			"filters": bson.M{"$push": bson.M{"$cond": bson.M{
+				"if":   "$filters._id",
+				"then": "$filters",
+				"else": "$$REMOVE",
+			}}},
 		}},
 		bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
 			"$data",
-			bson.M{"filters": bson.M{"$filter": bson.M{
-				"input": "$filters",
-				"cond":  bson.M{"$eq": bson.A{"$$this.is_private", false}},
-			}}},
+			bson.M{"filters": "$filters"},
 		}}}},
 	)
 	pipeline = append(pipeline, author.Pipeline()...)
