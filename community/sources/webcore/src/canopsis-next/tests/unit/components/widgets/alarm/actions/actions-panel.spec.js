@@ -727,6 +727,11 @@ describe('actions-panel', () => {
     const alarmData = {
       _id: Faker.datatype.string(),
       entity,
+      v: {
+        status: {
+          val: ENTITIES_STATUSES.ongoing,
+        },
+      },
       pbehavior,
     };
 
@@ -737,10 +742,16 @@ describe('actions-panel', () => {
         eventModule,
       ]),
       propsData: {
-        item: alarmData,
+        item: {
+          ...alarmData,
+          v: {
+            status: {
+              val: ENTITIES_STATUSES.closed,
+            },
+          },
+        },
         widget: widgetData,
         parentAlarm,
-        isResolvedAlarm: true,
       },
     });
 
@@ -752,12 +763,27 @@ describe('actions-panel', () => {
       {
         name: MODALS.variablesHelp,
         config: {
-          items: [alarmData],
-          afterSubmit: expect.any(Function),
           variables: [
             {
               name: 'alarm',
-              children: [{ name: '_id', path: 'alarm._id', value: alarmData._id }],
+              children: [
+                { name: '_id', path: 'alarm._id', value: alarmData._id },
+                {
+                  name: 'v',
+                  children: [
+                    {
+                      name: 'status',
+                      children: [
+                        {
+                          name: 'val',
+                          path: 'alarm.v.status.val',
+                          value: 0,
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
             },
             {
               name: 'entity',
@@ -1258,10 +1284,16 @@ describe('actions-panel', () => {
         eventModule,
       ]),
       propsData: {
-        item: alarm,
+        item: {
+          ...alarm,
+          v: {
+            status: {
+              val: ENTITIES_STATUSES.closed,
+            },
+          },
+        },
         widget,
         parentAlarm,
-        isResolvedAlarm: true,
       },
     });
 
