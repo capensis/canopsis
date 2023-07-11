@@ -111,10 +111,15 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 				project = append(project, author.PipelineForField("widgets.author")...)
 				project = append(project,
 					bson.M{"$lookup": bson.M{
-						"from":         mongo.WidgetFiltersMongoCollection,
-						"localField":   "widgets._id",
-						"foreignField": "widget",
-						"as":           "filters",
+						"from": mongo.WidgetFiltersMongoCollection,
+						"let":  bson.M{"widget": "$widgets._id"},
+						"pipeline": []bson.M{
+							{"$match": bson.M{
+								"$expr":      bson.M{"$eq": bson.A{"$widget", "$$widget"}},
+								"is_private": false,
+							}},
+						},
+						"as": "filters",
 					}},
 					bson.M{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
 				)
@@ -133,14 +138,15 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 						"views":     bson.M{"$first": "$views"},
 						"tabs":      bson.M{"$first": "$tabs"},
 						"widgets":   bson.M{"$first": "$widgets"},
-						"filters":   bson.M{"$push": "$filters"},
+						"filters": bson.M{"$push": bson.M{"$cond": bson.M{
+							"if":   "$filters._id",
+							"then": "$filters",
+							"else": "$$REMOVE",
+						}}},
 					}},
 					bson.M{"$addFields": bson.M{
-						"_id": "$_id._id",
-						"widgets.filters": bson.M{"$filter": bson.M{
-							"input": "$filters",
-							"cond":  bson.M{"$eq": bson.A{"$$this.is_private", false}},
-						}},
+						"_id":             "$_id._id",
+						"widgets.filters": "$filters",
 					}},
 					bson.M{"$sort": bson.D{
 						{Key: "widgets.grid_parameters.desktop.y", Value: 1},
