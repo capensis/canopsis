@@ -175,6 +175,18 @@ export const widgetActionsPanelAlarmMixin = {
       });
     },
 
+    showUnCancelEventModal() {
+      this.$modals.show({
+        name: MODALS.createEvent,
+        config: {
+          ...this.modalConfig,
+
+          title: this.$t('modals.createUnCancelEvent.title'),
+          eventType: EVENT_ENTITY_TYPES.uncancel,
+        },
+      });
+    },
+
     showAckRemoveModal() {
       this.$modals.show({
         name: MODALS.createEvent,
@@ -209,8 +221,6 @@ export const widgetActionsPanelAlarmMixin = {
       this.$modals.show({
         name: MODALS.variablesHelp,
         config: {
-          ...this.modalConfig,
-
           variables,
         },
       });
