@@ -52,7 +52,6 @@ export default {
   isAckNoteRequired: 'Champ \'Note\' requis lors d\'un acquittement ?',
   isSnoozeNoteRequired: 'Champ \'Note\' requis lors d\'une mise en veille ?',
   isRemoveAlarmsFromMetaAlarmCommentRequired: 'Champ \'Commentaire\' requis lors de la suppression des alarmes de la méta-alarme manuelle ?',
-  inlineLinksCount: 'Nombre de liens en ligne',
   isMultiAckEnabled: 'Acquittement multiple',
   isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
   isActionsAllowWithOkState: 'Actions autorisées lorsque l\'état est OK ?',
@@ -152,6 +151,9 @@ export default {
     withTemplate: 'Modèle personnalisé',
     isState: 'Affiché comme une criticité ?',
     onlyIcon: 'Afficher uniquement les icônes de liens',
+    inlineLinksCount: 'Nombre de liens en ligne',
+    linksInRowCount: 'Nombre de liens dans la ligne',
+    linksInRowCountTooltip: 'Ce nombre de liens sera toujours affiché dans la ligne qui comprend plus de boutons de liens (...)',
   },
   liveReporting: {
     title: 'Suivi personnalisé',
