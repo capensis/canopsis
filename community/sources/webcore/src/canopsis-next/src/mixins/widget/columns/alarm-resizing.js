@@ -39,13 +39,30 @@ export const widgetColumnResizingAlarmMixin = {
       return this.calculateFullColumnsWidth(this.columnsWidthByField);
     },
 
-    minColumnsWidthInPercent() {
+    minColumnsWidth() {
       /**
        * 24 - max padding size
        * 22 - max sort position icon width
        * 16 - max sort direction icon width
        */
-      return (24 + 22 + 16 + this.minColumnWidth) * this.percentsInPixel;
+      return (24 + 22 + 16 + this.minColumnWidth);
+    },
+
+    minColumnsWidthInPercent() {
+      return this.minColumnsWidth * this.percentsInPixel;
+    },
+
+    columnsMinWidthByField() {
+      return [...this.headerCells].reduce((acc, headerElement) => {
+        if (headerElement.dataset?.value) {
+          const { value } = headerElement.dataset;
+          const { minWidth: headerMinWidth } = headerElement.style;
+
+          acc[value] = (parseInt(headerMinWidth, 10) * this.percentsInPixel) || 0;
+        }
+
+        return acc;
+      }, {});
     },
   },
   methods: {
@@ -71,6 +88,10 @@ export const widgetColumnResizingAlarmMixin = {
       return this.columnsWidthByField[field];
     },
 
+    getNormalizedWidth(field, newWidth) {
+      return Math.max(newWidth, this.minColumnsWidthInPercent);
+    },
+
     setPercentsInPixel() {
       const { width: rowWidth } = this.tableRow.getBoundingClientRect();
 
@@ -88,18 +109,13 @@ export const widgetColumnResizingAlarmMixin = {
         if (headerElement.dataset?.value) {
           const { value } = headerElement.dataset;
           const { width: headerWidth } = headerElement.getBoundingClientRect();
-
           const width = headerWidth * this.percentsInPixel;
 
-          acc[value] = Math.max(this.minColumnsWidthInPercent, width);
+          acc[value] = this.getNormalizedWidth(value, width);
         }
 
         return acc;
       }, {});
-    },
-
-    getNormalizedWidth(field, newWidth) {
-      return Math.max(newWidth, this.minColumnsWidthInPercent);
     },
 
     resizeColumnByDiff(index) {

@@ -1,5 +1,6 @@
 <template lang="pug">
   v-layout.c-alarm-actions-chips(
+    :key="wrapperKey",
     :class="{ 'c-alarm-actions-chips--small': small }",
     row,
     wrap,
@@ -19,6 +20,7 @@
         span {{ item[itemText] }}
     v-menu(
       v-if="dropDownItems.length",
+      key="more",
       bottom,
       left,
       @input="$emit('activate')"
@@ -43,6 +45,8 @@
 </template>
 
 <script>
+import { uid } from '@/helpers/uid';
+
 export default {
   props: {
     items: {
@@ -82,6 +86,11 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      wrapperKey: uid(),
+    };
+  },
   computed: {
     sortedItems() {
       return [...this.items].sort((first, second) => {
@@ -111,6 +120,11 @@ export default {
 
     dropDownItems() {
       return this.sortedItems.slice(this.inlineCount);
+    },
+  },
+  watch: {
+    inlineItems() {
+      this.wrapperKey = uid();
     },
   },
   methods: {
