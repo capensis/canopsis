@@ -27,7 +27,7 @@ func NewHandler(checker Checker, logger zerolog.Logger) http.Handler {
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if !h.setInProgress() {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusTooManyRequests)
 		return
 	}
 
@@ -38,7 +38,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	err := h.checker.Check(ctx)
 	if err != nil {
 		h.logger.Err(err).Msg("cannot process healthcheck event")
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
