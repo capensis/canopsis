@@ -26,12 +26,23 @@
     )
     template(v-if="isLinks")
       column-links-category-field(v-field="column.field")
+      c-number-field(
+        v-field="column.inlineLinksCount",
+        :label="$t('settings.columns.inlineLinksCount')"
+      )
       v-switch.pa-0.my-2(
         v-field="column.onlyIcon",
         :label="$t('settings.columns.onlyIcon')",
         color="primary",
         hide-details
       )
+      c-number-field(
+        v-if="column.onlyIcon",
+        v-field="column.linksInRowCount",
+        :label="$t('settings.columns.linksInRowCount')"
+      )
+        template(#append="")
+          c-help-icon(:text="$t('settings.columns.linksInRowCountTooltip')", left)
     v-switch.pa-0.my-2(
       v-model="customLabel",
       :label="$t('settings.columns.customLabel')",
@@ -107,11 +118,13 @@ import { isLinksWidgetColumn } from '@/helpers/entities/widget/column/form';
 import { formMixin } from '@/mixins/form';
 import { entitiesInfosMixin } from '@/mixins/entities/infos';
 
+import CHelpIcon from '@/components/common/icons/c-help-icon.vue';
+
 import ColumnLinksCategoryField from './column-links-category-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { ColumnLinksCategoryField },
+  components: { CHelpIcon, ColumnLinksCategoryField },
   mixins: [
     formMixin,
     entitiesInfosMixin,

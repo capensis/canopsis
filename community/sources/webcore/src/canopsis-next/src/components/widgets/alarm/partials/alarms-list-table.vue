@@ -72,7 +72,7 @@
             :resizing="resizingMode",
             @clear:tag="$emit('clear:tag')"
           )
-          template
+          template(v-if="header.value !== 'actions'")
             span.alarms-list-table__dragging-handler(v-if="draggingMode", @click.stop="")
             span.alarms-list-table__resize-handler(
               v-if="resizingMode",
@@ -128,11 +128,15 @@
 <script>
 import { differenceBy } from 'lodash';
 
-import { ALARM_DENSE_TYPES, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
+import {
+  ALARM_DENSE_TYPES,
+  ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
+} from '@/constants';
 
 import featuresService from '@/services/features';
 
 import { isActionAvailableForAlarm } from '@/helpers/entities/alarm/form';
+import { calculateAlarmLinksColumnWidth } from '@/helpers/entities/alarm/list';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns/alarm';
@@ -309,10 +313,18 @@ export default {
     },
 
     headers() {
-      const headers = this.sortedColumns.map(column => ({
-        ...column,
-        class: this.draggableClass,
-      }));
+      const headers = this.sortedColumns.map((column) => {
+        const header = {
+          ...column,
+          class: this.draggableClass,
+        };
+
+        if (column.linksInRowCount) {
+          header.width = calculateAlarmLinksColumnWidth(this.dense, column.linksInRowCount);
+        }
+
+        return header;
+      });
 
       if (!this.hideActions) {
         headers.push({ text: this.$t('common.actionsLabel'), value: 'actions', sortable: false });
@@ -335,7 +347,9 @@ export default {
 
           return {
             ...header,
-            width: width && `${width}%`,
+            width: header.width
+              ? header.width
+              : width && `${width}%`,
           };
         });
       }
