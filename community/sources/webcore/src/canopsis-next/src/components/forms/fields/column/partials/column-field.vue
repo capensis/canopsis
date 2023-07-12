@@ -118,13 +118,11 @@ import { isLinksWidgetColumn } from '@/helpers/entities/widget/column/form';
 import { formMixin } from '@/mixins/form';
 import { entitiesInfosMixin } from '@/mixins/entities/infos';
 
-import CHelpIcon from '@/components/common/icons/c-help-icon.vue';
-
 import ColumnLinksCategoryField from './column-links-category-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { CHelpIcon, ColumnLinksCategoryField },
+  components: { ColumnLinksCategoryField },
   mixins: [
     formMixin,
     entitiesInfosMixin,
