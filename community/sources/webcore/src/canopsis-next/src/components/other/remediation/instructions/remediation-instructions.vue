@@ -63,7 +63,7 @@ export default {
           disabled: wasRequestedByAnotherUser,
           title: this.$t('modals.createRemediationInstruction.edit.title'),
           action: async (instruction) => {
-            await this.updateRemediationInstructionWithConfirm(remediationInstruction, instruction);
+            await this.updateRemediationInstruction(remediationInstruction, instruction);
 
             this.$popups.success({
               text: this.$t('modals.createRemediationInstruction.edit.popups.success', {
@@ -85,38 +85,6 @@ export default {
           afterSubmit: this.fetchList,
         },
       });
-    },
-
-    showConfirmModalOnRunningRemediationInstruction(action) {
-      return new Promise((resolve, reject) => {
-        this.$modals.show({
-          name: MODALS.confirmation,
-          dialogProps: { persistent: true },
-          config: {
-            text: this.$t('remediation.instruction.errors.runningInstruction'),
-            action: async () => {
-              try {
-                await action();
-
-                resolve();
-              } catch (err) {
-                reject(err);
-              }
-            },
-            cancel: resolve,
-          },
-        });
-      });
-    },
-
-    async updateRemediationInstructionWithConfirm(remediationInstruction, data) {
-      if (remediationInstruction.running) {
-        await this.showConfirmModalOnRunningRemediationInstruction(
-          () => this.updateRemediationInstruction({ id: remediationInstruction._id, data }),
-        );
-      } else {
-        await this.updateRemediationInstruction({ id: remediationInstruction._id, data });
-      }
     },
 
     showAssignPatternsModal(instruction) {
@@ -146,7 +114,7 @@ export default {
               ...data,
             };
 
-            await this.updateRemediationInstructionWithConfirm(
+            await this.updateRemediationInstruction(
               instruction,
               formToRemediationInstruction(form),
             );
@@ -160,9 +128,6 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          text: remediationInstruction.running
-            ? this.$t('remediation.instruction.errors.runningInstruction')
-            : undefined,
           action: async () => {
             await this.removeRemediationInstruction({ id: remediationInstruction._id });
             await this.fetchList();
