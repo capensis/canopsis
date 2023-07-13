@@ -4824,6 +4824,8 @@ definitions:
     properties:
       colorIndicator:
         type: string
+      inlineLinksCount:
+        type: integer
       isHtml:
         type: boolean
       label:
