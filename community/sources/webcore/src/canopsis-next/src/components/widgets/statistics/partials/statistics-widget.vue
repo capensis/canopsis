@@ -32,7 +32,7 @@
 import { pick, find } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import { KPI_RATING_CRITERIA } from '@/constants';
+import { DATETIME_FORMATS, KPI_RATING_CRITERIA, TIME_UNITS } from '@/constants';
 
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 import { convertFiltersToQuery } from '@/helpers/entities/shared/query';
@@ -138,13 +138,15 @@ export default {
           sortable: false,
         },
 
-        ...this.widget.parameters.widgetColumns.map(({ metric }) => {
+        ...this.widget.parameters.widgetColumns.map(({ metric, label }) => {
           const kpiKey = `kpi.statisticsWidgets.metrics.${metric}`;
           const alarmKey = `alarm.metrics.${metric}`;
 
           let text;
 
-          if (this.$te(kpiKey)) {
+          if (label) {
+            text = label;
+          } else if (this.$te(kpiKey)) {
             text = this.$t(kpiKey);
           } else if (this.$te(alarmKey)) {
             text = this.$t(alarmKey);
@@ -161,10 +163,17 @@ export default {
 
     preparedGroupMetrics() {
       return this.groupMetrics.map(({ title, data = [] }) => {
-        const preparedMetrics = Object.entries(data)
-          .reduce((acc, [metric, value]) => {
+        const preparedMetrics = Object.values(data)
+          .reduce((acc, value, index) => {
+            const { metric } = this.query.parameters[index];
+
             acc[metric] = value.reduce((secondAcc, item) => {
-              const preparedValue = convertMetricValueToString(item.value, metric);
+              const preparedValue = convertMetricValueToString(
+                item.value,
+                metric,
+                TIME_UNITS.second,
+                DATETIME_FORMATS.refreshFieldFormat,
+              );
 
               return secondAcc + (item.title ? `${item.title}: ${preparedValue}\n` : preparedValue);
             }, '');

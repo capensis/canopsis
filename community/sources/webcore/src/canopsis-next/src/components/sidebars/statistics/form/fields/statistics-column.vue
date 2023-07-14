@@ -8,6 +8,19 @@
       :name="`${name}.column`",
       required
     )
+    c-enabled-field.pa-0.my-2(
+      v-model="customLabel",
+      :label="$t('settings.columns.customLabel')",
+      @change="updateCustomLabel"
+    )
+    v-text-field(
+      v-if="customLabel",
+      v-field="column.label",
+      v-validate="'required'",
+      :label="$t('common.label')",
+      :error-messages="errors.collect(`${name}.label`)",
+      :name="`${name}.label`"
+    )
     c-enabled-field(
       v-field="column.split",
       :label="$t('settings.statisticsWidgetColumn.split')",
@@ -67,6 +80,11 @@ export default {
       default: () => [],
     },
   },
+  data() {
+    return {
+      customLabel: !!this.column.label,
+    };
+  },
   computed: {
     hasPossibilityToSplit() {
       return STATISTICS_WIDGETS_USER_METRICS_WITH_ENTITY_TYPE.includes(this.column?.metric);
@@ -106,6 +124,15 @@ export default {
           criteria: '',
         });
       }
+    },
+  },
+  methods: {
+    updateCustomLabel(checked) {
+      if (checked) {
+        return;
+      }
+
+      this.updateField('label', '');
     },
   },
 };
