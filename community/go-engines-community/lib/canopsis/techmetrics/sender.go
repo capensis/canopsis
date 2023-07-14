@@ -285,13 +285,13 @@ func (s *sender) getColumns(metricName string) []string {
 	case AxePeriodical:
 		return []string{
 			"time",
-			"length",
+			"interval",
 			"events",
 		}
 	case PBehaviorPeriodical:
 		return []string{
 			"time",
-			"length",
+			"interval",
 			"events",
 			"entities",
 			"pbehaviors",
