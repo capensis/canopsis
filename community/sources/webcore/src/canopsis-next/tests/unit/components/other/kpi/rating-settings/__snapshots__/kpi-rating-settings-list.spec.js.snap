@@ -42,6 +42,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` after upd
               data-value="enabled"
               role="columnheader"
               scope="col"
+              style="min-width: 100"
               width="100"
             >
               
@@ -649,6 +650,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with cust
               data-value="enabled"
               role="columnheader"
               scope="col"
+              style="min-width: 100"
               width="100"
             >
               
@@ -1288,6 +1290,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with defa
               data-value="enabled"
               role="columnheader"
               scope="col"
+              style="min-width: 100"
               width="100"
             >
               
@@ -1394,6 +1397,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               data-value="enabled"
               role="columnheader"
               scope="col"
+              style="min-width: 100"
               width="100"
             >
               
@@ -2001,6 +2005,7 @@ exports[`kpi-rating-settings-list Renders \`kpi-rating-settings-list\` with enab
               data-value="enabled"
               role="columnheader"
               scope="col"
+              style="min-width: 100"
               width="100"
             >
               
