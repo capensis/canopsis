@@ -51,6 +51,37 @@ export default {
     },
   },
   methods: {
+    genHeaderData(header, children, key) {
+      const classes = ['column'];
+      const data = {
+        key,
+        attrs: {
+          role: 'columnheader',
+          scope: 'col',
+          width: header.width || null,
+          'aria-label': header[this.headerText] || '',
+          'data-value': header.value || '',
+          'aria-sort': 'none',
+        },
+      };
+
+      if (header.sortable == null || header.sortable) {
+        this.genHeaderSortingData(header, children, data, classes);
+      } else {
+        data.attrs['aria-label'] += ': Not sorted.'; // TODO: Localization
+      }
+
+      classes.push(`text-xs-${header.align || 'left'}`);
+      if (Array.isArray(header.class)) {
+        classes.push(...header.class);
+      } else if (header.class) {
+        classes.push(header.class);
+      }
+      data.class = classes;
+
+      return [data, children];
+    },
+
     /**
      * Get thead element for a table
      *
