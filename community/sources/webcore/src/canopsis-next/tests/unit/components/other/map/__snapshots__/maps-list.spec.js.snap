@@ -863,6 +863,7 @@ exports[`maps-list Renders \`maps-list\` with default props 1`] = `
               data-value=""
               role="columnheader"
               scope="col"
+              style="min-width: 20"
               width="20"
             >
               

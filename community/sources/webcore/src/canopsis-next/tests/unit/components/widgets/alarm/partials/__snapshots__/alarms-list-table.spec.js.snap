@@ -389,6 +389,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 data-value="links"
                 role="columnheader"
                 scope="col"
+                style="min-width: 104px"
                 tabindex="0"
                 width="104px"
               >
