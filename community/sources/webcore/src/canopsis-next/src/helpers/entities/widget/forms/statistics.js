@@ -1,5 +1,3 @@
-import { pick } from 'lodash';
-
 import { DEFAULT_PERIODIC_REFRESH, KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA, QUICK_RANGES } from '@/constants';
 
 import { uid } from '@/helpers/uid';
@@ -10,6 +8,7 @@ import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
  * @typedef {Object} StatisticsWidgetColumn
  * @property {string} metric
  * @property {string} criteria
+ * @property {string} label
  */
 
 /**
@@ -56,6 +55,7 @@ import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
 export const statisticsWidgetColumnToForm = (widgetColumn = {}) => ({
   metric: widgetColumn.metric ?? '',
   criteria: widgetColumn.criteria ?? '',
+  label: widgetColumn.label ?? '',
   split: !!widgetColumn.criteria,
   key: uid(),
 });
@@ -93,7 +93,11 @@ export const statisticsWidgetParametersToForm = (parameters = {}) => ({
  * @param {StatisticsWidgetColumnForm} form
  * @returns {StatisticsWidgetColumn}
  */
-export const formToStatisticsWidgetColumn = form => pick(form, ['metric', 'criteria']);
+export const formToStatisticsWidgetColumn = form => ({
+  metric: form.metric,
+  label: form.label,
+  criteria: form.split && form.criteria ? form.criteria : '',
+});
 
 /**
  * Convert form to statistics widget main parameter
