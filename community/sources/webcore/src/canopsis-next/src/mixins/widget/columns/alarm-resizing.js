@@ -51,19 +51,6 @@ export const widgetColumnResizingAlarmMixin = {
     minColumnsWidthInPercent() {
       return this.minColumnsWidth * this.percentsInPixel;
     },
-
-    columnsMinWidthByField() {
-      return [...this.headerCells].reduce((acc, headerElement) => {
-        if (headerElement.dataset?.value) {
-          const { value } = headerElement.dataset;
-          const { minWidth: headerMinWidth } = headerElement.style;
-
-          acc[value] = (parseInt(headerMinWidth, 10) * this.percentsInPixel) || 0;
-        }
-
-        return acc;
-      }, {});
-    },
   },
   methods: {
     enableResizingMode() {
