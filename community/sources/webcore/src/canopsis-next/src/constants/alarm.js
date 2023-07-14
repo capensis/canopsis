@@ -439,3 +439,17 @@ export const ALARMS_EXPAND_PANEL_TABS = {
   impactChain: 'impactChain',
   entityGantt: 'entityGantt',
 };
+
+export const ALARM_LINK_ICON_CHIP_WIDTH = 24;
+
+export const ALARM_LINK_ICON_CHIP_COLUMN_GAP = {
+  [ALARM_DENSE_TYPES.large]: 8,
+  [ALARM_DENSE_TYPES.medium]: 8,
+  [ALARM_DENSE_TYPES.small]: 4,
+};
+
+export const ALARM_LINK_TD_PADDINGS = {
+  [ALARM_DENSE_TYPES.large]: 8,
+  [ALARM_DENSE_TYPES.medium]: 6,
+  [ALARM_DENSE_TYPES.small]: 6,
+};
