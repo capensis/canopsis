@@ -332,7 +332,7 @@ export const convertMetricDurationToString = (value, format = DATETIME_FORMATS.d
  * @param {string} [format]
  * @returns {string}
  */
-export const convertMetricValueToString = (value, metric, unit, format) => {
+export const convertMetricValueToString = ({ value, metric, unit, format }) => {
   if (isTimeMetric(metric) || isExternalTimeMetricUnit(unit)) {
     return convertMetricDurationToString(value, format);
   }
