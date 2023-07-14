@@ -48,7 +48,6 @@ export default {
   filterEditor: 'Éditeur de filtre',
   isAckNoteRequired: 'Champ \'Note\' requis lors d\'un acquittement ?',
   isSnoozeNoteRequired: 'Champ \'Note\' requis lors d\'une mise en veille ?',
-  inlineLinksCount: 'Nombre de liens en ligne',
   isMultiAckEnabled: 'Acquittement multiple',
   isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
   fastAckOutput: 'Commentaire d\'acquittement rapide',
@@ -147,6 +146,9 @@ export default {
     withTemplate: 'Modèle personnalisé',
     isState: 'Affiché comme une criticité ?',
     onlyIcon: 'Afficher uniquement les icônes de liens',
+    inlineLinksCount: 'Nombre de liens en ligne',
+    linksInRowCount: 'Nombre de liens dans la ligne',
+    linksInRowCountTooltip: 'Ce nombre de liens sera toujours affiché dans la ligne qui comprend plus de boutons de liens (...)',
   },
   liveReporting: {
     title: 'Suivi personnalisé',
