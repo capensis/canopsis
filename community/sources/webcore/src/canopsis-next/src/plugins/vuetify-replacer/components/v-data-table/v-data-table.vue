@@ -62,6 +62,7 @@ export default {
           'aria-label': header[this.headerText] || '',
           'data-value': header.value || '',
           'aria-sort': 'none',
+          style: header.width ? `min-width: ${header.width}` : null,
         },
       };
 

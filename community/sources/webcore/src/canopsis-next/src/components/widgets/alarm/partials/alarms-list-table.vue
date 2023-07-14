@@ -651,6 +651,11 @@ export default {
     }
   }
 
+  table {
+    max-width: unset;
+    min-width: 100%;
+  }
+
   tbody {
     position: relative;
   }
