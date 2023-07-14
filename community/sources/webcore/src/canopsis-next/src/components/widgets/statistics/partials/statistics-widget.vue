@@ -32,7 +32,7 @@
 import { pick, find } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import { DATETIME_FORMATS, KPI_RATING_CRITERIA, TIME_UNITS } from '@/constants';
+import { DATETIME_FORMATS, KPI_RATING_CRITERIA } from '@/constants';
 
 import { convertDateToStartOfDayTimestampByTimezone } from '@/helpers/date/date';
 import { convertFiltersToQuery } from '@/helpers/entities/shared/query';
@@ -168,12 +168,11 @@ export default {
             const { metric } = this.query.parameters[index];
 
             acc[metric] = value.reduce((secondAcc, item) => {
-              const preparedValue = convertMetricValueToString(
-                item.value,
+              const preparedValue = convertMetricValueToString({
+                value: item.value,
                 metric,
-                TIME_UNITS.second,
-                DATETIME_FORMATS.refreshFieldFormat,
-              );
+                format: DATETIME_FORMATS.refreshFieldFormat,
+              });
 
               return secondAcc + (item.title ? `${item.title}: ${preparedValue}\n` : preparedValue);
             }, '');
