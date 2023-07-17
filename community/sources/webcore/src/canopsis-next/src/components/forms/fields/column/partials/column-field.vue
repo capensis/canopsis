@@ -26,12 +26,23 @@
     )
     template(v-if="isLinks")
       column-links-category-field(v-field="column.field")
+      c-number-field(
+        v-field="column.inlineLinksCount",
+        :label="$t('settings.columns.inlineLinksCount')"
+      )
       v-switch.pa-0.my-2(
         v-field="column.onlyIcon",
         :label="$t('settings.columns.onlyIcon')",
         color="primary",
         hide-details
       )
+      c-number-field(
+        v-if="column.onlyIcon",
+        v-field="column.linksInRowCount",
+        :label="$t('settings.columns.linksInRowCount')"
+      )
+        template(#append="")
+          c-help-icon(:text="$t('settings.columns.linksInRowCountTooltip')", left)
     v-switch.pa-0.my-2(
       v-model="customLabel",
       :label="$t('settings.columns.customLabel')",
