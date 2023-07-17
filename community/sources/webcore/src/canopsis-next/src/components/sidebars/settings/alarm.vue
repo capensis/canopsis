@@ -137,11 +137,6 @@
         :title="$t('settings.isMultiDeclareTicketEnabled')"
       )
       v-divider
-      field-number(
-        v-model="form.parameters.inlineLinksCount",
-        :title="$t('settings.inlineLinksCount')"
-      )
-      v-divider
       export-csv-form(
         v-model="form.parameters",
         :type="$constants.ENTITIES_TYPES.alarm",

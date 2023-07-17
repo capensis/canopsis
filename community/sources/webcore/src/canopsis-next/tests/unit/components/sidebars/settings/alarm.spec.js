@@ -106,7 +106,6 @@ const selectFieldMultiAckEnabled = wrapper => wrapper.findAll('input.field-switc
 const selectFieldFastAckOutput = wrapper => wrapper.findAll('input.field-fast-action-output').at(0);
 const selectFieldFastCancelOutput = wrapper => wrapper.findAll('input.field-fast-action-output').at(1);
 const selectFieldSnoozeNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(4);
-const selectFieldInlineLinksCount = wrapper => wrapper.find('input.field-number');
 const selectFieldExportCsvForm = wrapper => wrapper.find('input.export-csv-form');
 const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher').at(6);
 const selectFieldKioskHideActions = wrapper => wrapper.findAll('input.field-switcher').at(7);
@@ -1007,33 +1006,6 @@ describe('alarm', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'isSnoozeNoteRequired', isSnoozeNoteRequired),
-      },
-    });
-  });
-
-  test('Inline links count changed after trigger', async () => {
-    const wrapper = factory({
-      store,
-      propsData: {
-        sidebar,
-      },
-      mocks: {
-        $sidebar,
-      },
-    });
-
-    const fieldInlineLinksCount = selectFieldInlineLinksCount(wrapper);
-    const inlineLinksCount = 4;
-
-    fieldInlineLinksCount.vm.$emit('input', inlineLinksCount);
-
-    await submitWithExpects(wrapper, {
-      fetchActiveView,
-      hideSidebar: $sidebar.hide,
-      widgetMethod: updateWidget,
-      expectData: {
-        id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'inlineLinksCount', inlineLinksCount),
       },
     });
   });

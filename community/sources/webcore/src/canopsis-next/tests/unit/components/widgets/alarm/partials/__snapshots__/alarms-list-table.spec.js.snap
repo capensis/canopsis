@@ -86,6 +86,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
                 aria-label=""
                 aria-sort="none"
                 class="column sortable text-xs-left"
+                data-value="label"
                 role="columnheader"
                 scope="col"
                 tabindex="0"
@@ -305,6 +306,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 aria-label=""
                 aria-sort="none"
                 class="column sortable text-xs-left"
+                data-value="label"
                 role="columnheader"
                 scope="col"
                 tabindex="0"
@@ -325,6 +327,89 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 aria-label="Actions: Not sorted."
                 aria-sort="none"
                 class="column text-xs-left"
+                data-value=""
+                role="columnheader"
+                scope="col"
+              >
+                <alarm-header-cell-stub
+                  header="[object Object]"
+                  selectedtag=""
+                />
+              </th>
+            </tr>
+            <tr
+              class="v-datatable__progress"
+            >
+              <th
+                class="column"
+                colspan="2"
+              />
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                class="text-xs-center"
+                colspan="2"
+              >
+                No data available
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <c-table-pagination-stub />
+  <!---->
+</div>
+`;
+
+exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with links column with links in row count 1`] = `
+<div
+  class="flex"
+>
+  <div>
+    <!---->
+    <div
+      class="alarms-list-table columns-sm"
+    >
+      <div
+        class="v-table__overflow"
+      >
+        <table
+          class="v-datatable v-table theme--light"
+        >
+          <thead>
+            <tr>
+              <th
+                aria-label=""
+                aria-sort="none"
+                class="column sortable text-xs-left"
+                data-value="links"
+                role="columnheader"
+                scope="col"
+                style="min-width: 104px"
+                tabindex="0"
+                width="104px"
+              >
+                <alarm-header-cell-stub
+                  header="[object Object]"
+                  selectedtag=""
+                />
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  arrow_upward
+                </i>
+              </th>
+              <th
+                aria-label="Actions: Not sorted."
+                aria-sort="none"
+                class="column text-xs-left"
+                data-value=""
                 role="columnheader"
                 scope="col"
               >
@@ -417,6 +502,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 aria-label=""
                 aria-sort="none"
                 class="column sortable text-xs-left"
+                data-value="label"
                 role="columnheader"
                 scope="col"
                 tabindex="0"
@@ -437,6 +523,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 aria-label="Actions: Not sorted."
                 aria-sort="none"
                 class="column text-xs-left"
+                data-value=""
                 role="columnheader"
                 scope="col"
               >
@@ -531,6 +618,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 aria-label=""
                 aria-sort="none"
                 class="column sortable text-xs-left"
+                data-value="label"
                 role="columnheader"
                 scope="col"
                 tabindex="0"
@@ -551,6 +639,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 aria-label="Actions: Not sorted."
                 aria-sort="none"
                 class="column text-xs-left"
+                data-value=""
                 role="columnheader"
                 scope="col"
               >
@@ -645,6 +734,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 aria-label=": Not sorted."
                 aria-sort="none"
                 class="column text-xs-left"
+                data-value=""
                 role="columnheader"
                 scope="col"
               >
@@ -657,6 +747,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 aria-label=""
                 aria-sort="none"
                 class="column sortable text-xs-left"
+                data-value="label"
                 role="columnheader"
                 scope="col"
                 tabindex="0"
@@ -677,6 +768,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 aria-label="Actions: Not sorted."
                 aria-sort="none"
                 class="column text-xs-left"
+                data-value=""
                 role="columnheader"
                 scope="col"
               >

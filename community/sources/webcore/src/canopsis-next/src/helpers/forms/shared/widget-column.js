@@ -18,6 +18,8 @@ import uid from '@/helpers/uid';
  * @property {boolean} [isHtml]
  * @property {string} [template]
  * @property {string} [onlyIcon]
+ * @property {number} [inlineLinkCount]
+ * @property {number} [linksInRowCount]
  * @property {ColorIndicator} [colorIndicator]
  */
 
@@ -31,6 +33,9 @@ import uid from '@/helpers/uid';
  * @property {string} [label]
  * @property {boolean} [isHtml]
  * @property {string} [template]
+ * @property {string} [onlyIcon]
+ * @property {number} [inlineLinkCount]
+ * @property {number} [linksInRowCount]
  * @property {ColorIndicator} [colorIndicator]
  */
 
@@ -111,7 +116,7 @@ export const widgetColumnsToForm = (columns = []) => columns.map(widgetColumnToF
  * @returns {WidgetColumn[]}
  */
 export const formToWidgetColumns = (form = []) => (
-  form.map(({ key, column, dictionary, field, onlyIcon, rule, ...rest }) => {
+  form.map(({ key, column, dictionary, field, onlyIcon, linksInRowCount, rule, ...rest }) => {
     const result = {
       ...rest,
 
@@ -124,6 +129,10 @@ export const formToWidgetColumns = (form = []) => (
       result.value = `${column}.${dictionary}.${field}`;
     } else if (isLinksWidgetColumn(column)) {
       result.onlyIcon = onlyIcon;
+
+      if (onlyIcon) {
+        result.linksInRowCount = linksInRowCount;
+      }
 
       if (field) {
         result.value = `${column}.${field}`;

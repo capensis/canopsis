@@ -108,7 +108,7 @@ import { differenceBy, throttle } from 'lodash';
 import { TOP_BAR_HEIGHT } from '@/config';
 import { ALARM_DENSE_TYPES, ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
 
-import { isActionAvailableForAlarm } from '@/helpers/entities';
+import { isActionAvailableForAlarm, calculateAlarmLinksColumnWidth } from '@/helpers/entities';
 
 import featuresService from '@/services/features';
 
@@ -244,7 +244,11 @@ export default {
     },
 
     headers() {
-      const headers = [...this.preparedColumns];
+      const headers = this.preparedColumns.map(column => (
+        column.linksInRowCount
+          ? { ...column, width: calculateAlarmLinksColumnWidth(this.dense, column.linksInRowCount) }
+          : column
+      ));
 
       if (!this.hideActions) {
         headers.push({ text: this.$t('common.actionsLabel'), sortable: false });
@@ -645,6 +649,11 @@ export default {
     * {
       user-select: none;
     }
+  }
+
+  table {
+    max-width: unset;
+    min-width: 100%;
   }
 
   tbody {
