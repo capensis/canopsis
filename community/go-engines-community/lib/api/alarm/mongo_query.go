@@ -1317,14 +1317,21 @@ func getInstructionQuery(instruction Instruction) (bson.M, error) {
 
 func getImpactsCountPipeline() []bson.M {
 	return []bson.M{
-		{"$graphLookup": bson.M{
-			"from":                    mongo.EntityMongoCollection,
-			"startWith":               "$entity.impact",
-			"connectFromField":        "entity.impact",
-			"connectToField":          "_id",
-			"as":                      "service_impacts",
-			"restrictSearchWithMatch": bson.M{"type": types.EntityTypeService},
-			"maxDepth":                0,
+		{"$lookup": bson.M{
+			"from": mongo.EntityMongoCollection,
+			"let": bson.M{"services": bson.M{"$cond": bson.M{
+				"if":   "$entity.impact",
+				"then": "$entity.impact",
+				"else": bson.A{},
+			}}},
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"type":  types.EntityTypeService,
+					"$expr": bson.M{"$in": bson.A{"$_id", "$$services"}},
+				}},
+				{"$project": bson.M{"_id": 1}},
+			},
+			"as": "service_impacts",
 		}},
 		{"$addFields": bson.M{
 			"entity.depends_count": bson.M{"$cond": bson.M{
