@@ -898,6 +898,7 @@ func (s *store) GetAlarms(ctx context.Context, r GetAlarmsRequest) (GetAlarmsRes
 								},
 							},
 						},
+						{"$limit": 1},
 						{
 							"$project": bson.M{
 								"_id": 1,
