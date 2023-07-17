@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`login-footer Renders \`login-footer\` without version 1`] = `
+<div
+  class="secondary darken-1 footer"
+>
+  <a
+    href="https://doc.canopsis.net"
+    target="_blank"
+  >
+    Documentation
+  </a>
+  <a
+    href="https://www.capensis.fr/canopsis/"
+    target="_blank"
+  >
+    Canopsis.com
+  </a>
+  <a
+    href="https://community.capensis.org/"
+    target="_blank"
+  >
+    Forum
+  </a>
+  <a
+    class="version"
+    href="https://doc.canopsis.net"
+    target="_blank"
+  >
+    
+  </a>
+</div>
+`;
+
+exports[`login-footer Renders \`login-footer\` without version 2`] = `
+<div
+  class="secondary darken-1 footer"
+>
+  <a
+    href="https://doc.canopsis.net"
+    target="_blank"
+  >
+    Documentation
+  </a>
+  <a
+    href="https://www.capensis.fr/canopsis/"
+    target="_blank"
+  >
+    Canopsis.com
+  </a>
+  <a
+    href="https://community.capensis.org/"
+    target="_blank"
+  >
+    Forum
+  </a>
+  <a
+    class="version"
+    href="https://doc.canopsis.net/notes-de-version/23.10/"
+    target="_blank"
+  >
+    23.10
+  </a>
+</div>
+`;
