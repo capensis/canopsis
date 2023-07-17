@@ -1029,7 +1029,10 @@ export const createPatternModule = () => {
 export const createInfoModule = () => {
   const description = jest.fn().mockReturnValue('');
   const footer = jest.fn().mockReturnValue('');
+  const casConfig = jest.fn().mockReturnValue({});
+  const samlConfig = jest.fn().mockReturnValue({});
   const edition = jest.fn().mockReturnValue(CANOPSIS_EDITION.community);
+  const version = jest.fn().mockReturnValue();
   const isCASAuthEnabled = jest.fn().mockReturnValue(false);
   const isSAMLAuthEnabled = jest.fn().mockReturnValue(false);
   const isLDAPAuthEnabled = jest.fn().mockReturnValue(false);
@@ -1037,7 +1040,10 @@ export const createInfoModule = () => {
   afterEach(() => {
     description.mockClear();
     footer.mockClear();
+    casConfig.mockClear();
+    samlConfig.mockClear();
     edition.mockClear();
+    version.mockClear();
     isCASAuthEnabled.mockClear();
     isSAMLAuthEnabled.mockClear();
     isLDAPAuthEnabled.mockClear();
@@ -1048,7 +1054,10 @@ export const createInfoModule = () => {
     getters: {
       description,
       footer,
+      casConfig,
+      samlConfig,
       edition,
+      version,
       isCASAuthEnabled,
       isSAMLAuthEnabled,
       isLDAPAuthEnabled,
@@ -1059,7 +1068,10 @@ export const createInfoModule = () => {
     infoModule,
     description,
     footer,
+    casConfig,
+    samlConfig,
     edition,
+    version,
     isCASAuthEnabled,
     isSAMLAuthEnabled,
     isLDAPAuthEnabled,
