@@ -5,17 +5,13 @@
         h3 {{ $t('common.login') }}
         img.secondaryLogo(src="@/assets/canopsis.png")
     v-card-text
-      v-form.pa-2(data-test="loginForm", @submit.prevent.stop="submit")
+      v-form.pa-2(@submit.prevent.stop="submit")
         ldap-login-information(v-if="isLDAPAuthEnabled")
         login-form(v-field.model="form")
         v-flex
           v-layout.mb-1(justify-space-between, align-center)
-            v-btn.ma-0(
-              type="submit",
-              color="primary",
-              data-test="submitButton"
-            ) {{ $t('common.connect') }}
-            v-flex(v-if="hasServerError", xs9, data-test="errorLogin")
+            v-btn.ma-0(type="submit", color="primary") {{ $t('common.connect') }}
+            v-flex(v-if="hasServerError", xs9)
               v-alert.py-1.my-0.font-weight-bold(:value="hasServerError", type="error")
                 span {{ $t('login.errors.incorrectEmailOrPassword') }}
           template(v-if="footer")
