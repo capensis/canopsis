@@ -5,6 +5,7 @@ import Faker from 'faker';
 
 import request from '@/services/request';
 import { DEFAULT_ENTITY_MODULE_TYPES } from '@/store/plugins/entities/create-entity-module';
+import { CANOPSIS_EDITION } from '@/constants';
 
 /**
  * @typedef {Object} Module
@@ -358,22 +359,34 @@ export const testsEntityModule = ({
 };
 
 export const createAuthModule = () => {
+  const currentUser = jest.fn()
+    .mockReturnValue({});
   const currentUserPermissionsById = jest.fn()
     .mockReturnValue({});
+  const login = jest.fn();
+
   const authModule = {
     name: 'auth',
     getters: {
+      currentUser,
       currentUserPermissionsById,
+    },
+    actions: {
+      login,
     },
   };
 
   afterEach(() => {
+    currentUser.mockClear();
     currentUserPermissionsById.mockClear();
+    login.mockClear();
   });
 
   return {
     authModule,
+    currentUser,
     currentUserPermissionsById,
+    login,
   };
 };
 
@@ -1010,5 +1023,45 @@ export const createPatternModule = () => {
     patternModule,
     checkPatternsEntitiesCount,
     checkPatternsAlarmsCount,
+  };
+};
+
+export const createInfoModule = () => {
+  const description = jest.fn().mockReturnValue('');
+  const footer = jest.fn().mockReturnValue('');
+  const edition = jest.fn().mockReturnValue(CANOPSIS_EDITION.community);
+  const isCASAuthEnabled = jest.fn().mockReturnValue(false);
+  const isSAMLAuthEnabled = jest.fn().mockReturnValue(false);
+  const isLDAPAuthEnabled = jest.fn().mockReturnValue(false);
+
+  afterEach(() => {
+    description.mockClear();
+    footer.mockClear();
+    edition.mockClear();
+    isCASAuthEnabled.mockClear();
+    isSAMLAuthEnabled.mockClear();
+    isLDAPAuthEnabled.mockClear();
+  });
+
+  const infoModule = {
+    name: 'info',
+    getters: {
+      description,
+      footer,
+      edition,
+      isCASAuthEnabled,
+      isSAMLAuthEnabled,
+      isLDAPAuthEnabled,
+    },
+  };
+
+  return {
+    infoModule,
+    description,
+    footer,
+    edition,
+    isCASAuthEnabled,
+    isSAMLAuthEnabled,
+    isLDAPAuthEnabled,
   };
 };

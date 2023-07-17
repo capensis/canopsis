@@ -1,0 +1,193 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`base-login Renders \`base-login\` with custom state 1`] = `
+<div
+  class="v-card v-sheet theme--light"
+>
+  <div
+    class="v-card__title primary white--text"
+  >
+    <div
+      class="layout justify-space-between align-center"
+    >
+      <h3>
+        Login
+      </h3>
+      <img
+        class="secondaryLogo"
+        src="@/assets/canopsis.png"
+      />
+    </div>
+  </div>
+  <div
+    class="v-card__text"
+  >
+    <form
+      class="v-form pa-2"
+      novalidate="novalidate"
+    >
+      <ldap-login-information-stub />
+      <login-form-stub
+        form="[object Object]"
+      />
+      <div
+        class="flex"
+      >
+        <div
+          class="layout mb-1 justify-space-between align-center"
+        >
+          <button
+            class="ma-0 v-btn theme--light primary"
+            type="submit"
+          >
+            <div
+              class="v-btn__content"
+            >
+              Connect
+            </div>
+          </button>
+          <!---->
+        </div>
+        <hr
+          class="my-2 v-divider theme--light"
+        />
+        <div
+          class="layout"
+        >
+          <c-compiled-template-stub
+            template="footer"
+          />
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+`;
+
+exports[`base-login Renders \`base-login\` with default state 1`] = `
+<div
+  class="v-card v-sheet theme--light"
+>
+  <div
+    class="v-card__title primary white--text"
+  >
+    <div
+      class="layout justify-space-between align-center"
+    >
+      <h3>
+        Login
+      </h3>
+      <img
+        class="secondaryLogo"
+        src="@/assets/canopsis.png"
+      />
+    </div>
+  </div>
+  <div
+    class="v-card__text"
+  >
+    <form
+      class="v-form pa-2"
+      novalidate="novalidate"
+    >
+      <!---->
+      <login-form-stub
+        form="[object Object]"
+      />
+      <div
+        class="flex"
+      >
+        <div
+          class="layout mb-1 justify-space-between align-center"
+        >
+          <button
+            class="ma-0 v-btn theme--light primary"
+            type="submit"
+          >
+            <div
+              class="v-btn__content"
+            >
+              Connect
+            </div>
+          </button>
+          <!---->
+        </div>
+        <!---->
+      </div>
+    </form>
+  </div>
+</div>
+`;
+
+exports[`base-login Renders \`base-login\` with error 1`] = `
+<div
+  class="v-card v-sheet theme--light"
+>
+  <div
+    class="v-card__title primary white--text"
+  >
+    <div
+      class="layout justify-space-between align-center"
+    >
+      <h3>
+        Login
+      </h3>
+      <img
+        class="secondaryLogo"
+        src="@/assets/canopsis.png"
+      />
+    </div>
+  </div>
+  <div
+    class="v-card__text"
+  >
+    <form
+      class="v-form pa-2"
+      novalidate="novalidate"
+    >
+      <!---->
+      <login-form-stub
+        form="[object Object]"
+      />
+      <div
+        class="flex"
+      >
+        <div
+          class="layout mb-1 justify-space-between align-center"
+        >
+          <button
+            class="ma-0 v-btn theme--light primary"
+            type="submit"
+          >
+            <div
+              class="v-btn__content"
+            >
+              Connect
+            </div>
+          </button>
+          <div
+            class="flex xs9"
+          >
+            <div
+              class="v-alert py-1 my-0 font-weight-bold error"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light v-alert__icon"
+              >
+                warning
+              </i>
+              <div>
+                <span>
+                  Incorrect email or password
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!---->
+      </div>
+    </form>
+  </div>
+</div>
+`;
