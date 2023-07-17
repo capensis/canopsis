@@ -52,7 +52,6 @@ export default {
   isAckNoteRequired: 'Note field required when ack?',
   isSnoozeNoteRequired: 'Note field required when snooze?',
   isRemoveAlarmsFromMetaAlarmCommentRequired: 'Comment field required when remove alarms from manual meta alarm?',
-  inlineLinksCount: 'Inline links count',
   isMultiAckEnabled: 'Multiple ack',
   isMultiDeclareTicketEnabled: 'Multiple declare ticket',
   isActionsAllowWithOkState: 'Actions allowed when state OK?',
@@ -152,6 +151,9 @@ export default {
     withTemplate: 'Custom template',
     isState: 'Displayed as severity?',
     onlyIcon: 'Show only links icons',
+    inlineLinksCount: 'Inline links count',
+    linksInRowCount: 'Count of links in row',
+    linksInRowCountTooltip: 'This count of links always will be displayed in the one row includes more links (`...`) button',
   },
   liveReporting: {
     title: 'Live reporting',
