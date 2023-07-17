@@ -42,7 +42,7 @@ export default {
       declareTicket: 'Déclarer un incident',
       associateTicket: 'Associer un ticket',
       cancel: 'Annuler l\'alarme',
-      unCancel: 'Uncancel l\'alarme',
+      unCancel: 'Annuler l\'annulation de l\'alarme',
       fastCancel: 'Annulation rapide',
       changeState: 'Changer et verrouiller la criticité',
       variablesHelp: 'Liste des variables disponibles',
