@@ -26,6 +26,7 @@ const snapshotStubs = {
 
 const selectSubmitButton = wrapper => wrapper.find('button.v-btn');
 const selectLoginForm = wrapper => wrapper.find('login-form-stub');
+const selectAlert = wrapper => wrapper.find('v-alert-stub');
 
 describe('base-login', () => {
   const $router = mockRouter();
@@ -70,6 +71,35 @@ describe('base-login', () => {
     );
 
     expect($router.push).toBeCalledWith({ name: ROUTES_NAMES.home });
+  });
+
+  it('Error shown after trigger submit button with error', async () => {
+    login.mockRejectedValueOnce({});
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModule,
+        infoModule,
+      ]),
+      mocks: {
+        $route: { query: {} },
+        $router: {},
+      },
+    });
+
+    selectSubmitButton(wrapper).trigger('click');
+
+    await flushPromises();
+
+    expect(login).toBeCalledWith(
+      expect.any(Object),
+      { username: '', password: '' },
+      undefined,
+    );
+
+    expect(selectAlert(wrapper).attributes('value')).toBeTruthy();
+
+    expect($router.push).not.toBeCalled();
   });
 
   it('Form submitted after trigger submit button with redirect query', async () => {
