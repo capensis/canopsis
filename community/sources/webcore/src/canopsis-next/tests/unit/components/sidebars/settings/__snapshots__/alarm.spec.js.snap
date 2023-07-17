@@ -193,13 +193,6 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <hr
       class="v-divider theme--light"
     />
-    <field-number-stub
-      title="Inline links count"
-      value="3"
-    />
-    <hr
-      class="v-divider theme--light"
-    />
     <export-csv-form-stub
       datetimeformat="true"
       form="[object Object]"
@@ -420,13 +413,6 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <hr
       class="v-divider theme--light"
     />
-    <field-number-stub
-      title="Inline links count"
-      value="3"
-    />
-    <hr
-      class="v-divider theme--light"
-    />
     <export-csv-form-stub
       datetimeformat="true"
       form="[object Object]"
@@ -640,13 +626,6 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     />
     <field-switcher-stub
       title="Multiple declare ticket"
-    />
-    <hr
-      class="v-divider theme--light"
-    />
-    <field-number-stub
-      title="Inline links count"
-      value="3"
     />
     <hr
       class="v-divider theme--light"

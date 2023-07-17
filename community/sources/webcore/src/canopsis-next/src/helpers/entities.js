@@ -5,6 +5,9 @@ import {
   ENTITIES_STATUSES,
   DATETIME_FORMATS,
   WIDGET_TYPES,
+  ALARM_LINK_ICON_CHIP_COLUMN_GAP,
+  ALARM_LINK_ICON_CHIP_WIDTH,
+  ALARM_LINK_TD_PADDINGS,
 } from '@/constants';
 
 import uid from './uid';
@@ -243,4 +246,17 @@ export const getAlarmDetailsDataPreparer = widgetId => data => (
      */
     _id: generateAlarmDetailsId(item._id, widgetId),
   }))
+);
+
+/**
+ * Calculate alarm links column width for table
+ *
+ * @param {number} dense
+ * @param {number} linksInRowCount
+ * @returns {`${number}px`}
+ */
+export const calculateAlarmLinksColumnWidth = (dense, linksInRowCount) => (
+  `${(ALARM_LINK_ICON_CHIP_WIDTH * linksInRowCount)
+  + (ALARM_LINK_ICON_CHIP_COLUMN_GAP[dense] * (linksInRowCount - 1))
+  + (ALARM_LINK_TD_PADDINGS[dense] * 2)}px`
 );
