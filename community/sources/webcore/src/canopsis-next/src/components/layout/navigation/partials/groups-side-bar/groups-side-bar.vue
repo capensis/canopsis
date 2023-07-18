@@ -5,7 +5,6 @@
       :width="$config.SIDE_BAR_WIDTH",
       :class="{ editing: isNavigationEditingMode }",
       :ignore-click-outside="isGroupsOrderChanged || hasMaximizedModal",
-      data-test="groupsSideBar",
       app
     )
       div.brand.ma-0.secondary.lighten-1
@@ -24,7 +23,7 @@
           v-for="(group, index) in mutatedGroups",
           :key="group._id",
           :group.sync="mutatedGroups[index]",
-          :isGroupsOrderChanged="isGroupsOrderChanged"
+          :is-groups-order-changed="isGroupsOrderChanged"
         )
       v-divider
       v-fade-transition
@@ -33,7 +32,7 @@
           v-btn(@click="resetMutatedGroups") {{ $t('common.cancel') }}
       groups-side-bar-playlists
       groups-settings-button(
-        tooltipRight,
+        tooltip-right,
         @toggleEditingMode="toggleNavigationEditingMode"
       )
     v-fade-transition
@@ -49,7 +48,7 @@ import { isDeepOrderChanged } from '@/helpers/dragdrop';
 import { groupsWithViewsToPositions } from '@/helpers/entities/view/form';
 
 import { entitiesViewMixin } from '@/mixins/entities/view';
-import layoutNavigationGroupsBarMixin from '@/mixins/layout/navigation/groups-bar';
+import { layoutNavigationGroupsBarMixin } from '@/mixins/layout/navigation/groups-bar';
 import { registrableMixin } from '@/mixins/registrable';
 
 import GroupsSettingsButton from '../groups-settings-button.vue';
