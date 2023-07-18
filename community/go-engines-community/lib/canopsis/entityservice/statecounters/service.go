@@ -270,7 +270,7 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 			}
 		case types.AlarmChangeTypeCreate, types.AlarmChangeTypeCreateAndPbhEnter:
 			if servicesToRemove[counters.ID] {
-				continue
+				break
 			}
 
 			counters.All++
@@ -413,7 +413,7 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 			}
 		case types.AlarmChangeTypeResolve:
 			if servicesToAdd[counters.ID] {
-				continue
+				break
 			}
 
 			counters.All--
