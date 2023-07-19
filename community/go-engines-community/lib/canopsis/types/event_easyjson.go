@@ -224,6 +224,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				in.Delim(']')
 			}
+		case "manual_meta_alarm_auto_resolve":
+			out.ManualMetaAlarmAutoResolve = bool(in.Bool())
 		case "display_name":
 			out.DisplayName = string(in.String())
 		case "pbehavior_info":
@@ -568,6 +570,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 			out.RawByte(']')
 		}
+	}
+	if in.ManualMetaAlarmAutoResolve {
+		const prefix string = ",\"manual_meta_alarm_auto_resolve\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.ManualMetaAlarmAutoResolve))
 	}
 	if in.DisplayName != "" {
 		const prefix string = ",\"display_name\":"

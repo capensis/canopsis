@@ -187,10 +187,11 @@ type WidgetTemplate struct {
 }
 
 type WidgetColumn struct {
-	Value          string `bson:"value," json:"value" binding:"required"`
-	Label          string `bson:"label,omitempty" json:"label,omitempty" binding:"max=255"`
-	IsHtml         bool   `bson:"isHtml,omitempty" json:"isHtml,omitempty"`
-	OnlyIcon       bool   `bson:"onlyIcon,omitempty" json:"onlyIcon,omitempty"`
-	ColorIndicator string `bson:"colorIndicator,omitempty" json:"colorIndicator,omitempty"`
-	Template       string `bson:"template,omitempty" json:"template,omitempty"`
+	Value            string `bson:"value," json:"value" binding:"required"`
+	Label            string `bson:"label,omitempty" json:"label,omitempty" binding:"max=255"`
+	IsHtml           bool   `bson:"isHtml,omitempty" json:"isHtml,omitempty"`
+	OnlyIcon         bool   `bson:"onlyIcon,omitempty" json:"onlyIcon,omitempty"`
+	ColorIndicator   string `bson:"colorIndicator,omitempty" json:"colorIndicator,omitempty"`
+	Template         string `bson:"template,omitempty" json:"template,omitempty"`
+	InlineLinksCount int64  `bson:"inlineLinksCount,omitempty" json:"inlineLinksCount,omitempty"`
 }

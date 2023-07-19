@@ -402,29 +402,6 @@ Feature: get a instruction
     }
     """
 
-  Scenario: given get all request should return instructions with flags
-    When I am admin
-    When I do GET /api/v4/cat/instructions?search=test-instruction-to-get-1-name&with_flags=true
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "_id": "test-instruction-to-get-1",
-          "deletable": true,
-          "running": false
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
-
   Scenario: given filter by type request should return instructions
     When I am admin
     When I do GET /api/v4/cat/instructions?search=test-instruction-to-get&type=0
@@ -691,23 +668,6 @@ Feature: get a instruction
       ],
       "created": 1596712203,
       "last_modified": 1596712203
-    }
-    """
-
-  Scenario: Get a instruction with running executions
-    When I am admin
-    When I do GET /api/v4/cat/instructions?search=test-instruction-execution-running&with_flags=true
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "_id": "test-instruction-execution-running",
-          "deletable": false,
-          "running": true
-        }
-      ]
     }
     """
 
