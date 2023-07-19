@@ -6,7 +6,6 @@
       :loading="pending",
       :total-items="totalItems",
       :pagination="pagination",
-      :is-disabled-item="isDisabledInstruction",
       :select-all="removable",
       search,
       advanced-pagination,
@@ -31,7 +30,7 @@
       template(#type="{ item }") {{ $t(`remediation.instruction.types.${item.type}`) }}
       template(#last_modified="{ item }") {{ item.last_modified | date }}
       template(#last_executed_on="{ item }") {{ item.last_executed_on | date }}
-      template(#actions="{ item, disabled }")
+      template(#actions="{ item }")
         v-layout(row, justify-end)
           c-action-btn(
             v-if="item.approval && isApprovalForCurrentUser(item.approval)",
@@ -60,8 +59,6 @@
           )
           c-action-btn(
             v-if="removable",
-            :tooltip="disabled ? $t('remediation.instruction.usingInstruction') : $t('common.delete')",
-            :disabled="disabled",
             type="delete",
             @click="$emit('remove', item)"
           )
@@ -154,10 +151,6 @@ export default {
     isApprovalForCurrentUser(remediationInstruction) {
       return remediationInstruction?.user?._id === this.currentUser._id
         || remediationInstruction?.role?._id === this.currentUser.role._id;
-    },
-
-    isDisabledInstruction({ deletable }) {
-      return !deletable;
     },
 
     isOldPattern(item) {
