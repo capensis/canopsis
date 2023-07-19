@@ -41,6 +41,8 @@ exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-det
   />
   <!---->
   <extra-details-children-stub
+    closed="1"
+    opened="2"
     rule="[object Object]"
     total="3"
   />

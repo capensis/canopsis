@@ -13,6 +13,9 @@ Feature: Get alarm metrics
           "metric": "ack_alarms"
         },
         {
+          "metric": "ack_alarms"
+        },
+        {
           "metric": "average_ack"
         },
         {
@@ -35,61 +38,73 @@ Feature: Get alarm metrics
       "data": [
         {
           "title": "test-user-to-group-metrics-get-1-username",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "",
                 "value": 3
               }
             ],
-            "average_ack": [
+            [
+              {
+                "title": "",
+                "value": 3
+              }
+            ],
+            [
               {
                 "title": "",
                 "value": 200
               }
             ],
-            "min_ack": [
-              {
-                "title": "",
-                "value": 100
-              }
-            ],
-            "max_ack": [
+            [
               {
                 "title": "",
                 "value": 300
               }
+            ],
+            [
+              {
+                "title": "",
+                "value": 100
+              }
             ]
-          }
+          ]
         },
         {
           "title": "test-user-to-group-metrics-get-2-username",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "",
                 "value": 1
               }
             ],
-            "average_ack": [
+            [
+              {
+                "title": "",
+                "value": 1
+              }
+            ],
+            [
               {
                 "title": "",
                 "value": 400
               }
             ],
-            "min_ack": [
+            [
               {
                 "title": "",
                 "value": 400
               }
             ],
-            "max_ack": [
+            [
               {
                 "title": "",
                 "value": 400
               }
             ]
-          }
+          ]
         }
       ],
       "meta": {
@@ -105,6 +120,10 @@ Feature: Get alarm metrics
     """json
     {
       "parameters": [
+        {
+          "metric": "ack_alarms",
+          "criteria": 11
+        },
         {
           "metric": "ack_alarms",
           "criteria": 11
@@ -139,8 +158,8 @@ Feature: Get alarm metrics
       "data": [
         {
           "title": "test-user-to-group-metrics-get-1-username",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "value1",
                 "value": 2
@@ -150,7 +169,17 @@ Feature: Get alarm metrics
                 "value": 1
               }
             ],
-            "average_ack": [
+            [
+              {
+                "title": "value1",
+                "value": 2
+              },
+              {
+                "title": "value2",
+                "value": 1
+              }
+            ],
+            [
               {
                 "title": "value1",
                 "value": 150
@@ -160,7 +189,7 @@ Feature: Get alarm metrics
                 "value": 300
               }
             ],
-            "max_ack": [
+            [
               {
                 "title": "value1",
                 "value": 200
@@ -170,7 +199,7 @@ Feature: Get alarm metrics
                 "value": 300
               }
             ],
-            "min_ack": [
+            [
               {
                 "title": "value1",
                 "value": 100
@@ -180,38 +209,44 @@ Feature: Get alarm metrics
                 "value": 300
               }
             ],
-            "ticket_active_alarms": []
-          }
+            []
+          ]
         },
         {
           "title": "test-user-to-group-metrics-get-2-username",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "value2",
                 "value": 1
               }
             ],
-            "average_ack": [
+            [
+              {
+                "title": "value2",
+                "value": 1
+              }
+            ],
+            [
               {
                 "title": "value2",
                 "value": 400
               }
             ],
-            "max_ack": [
+            [
               {
                 "title": "value2",
                 "value": 400
               }
             ],
-            "min_ack": [
+            [
               {
                 "title": "value2",
                 "value": 400
               }
             ],
-            "ticket_active_alarms": []
-          }
+            []
+          ]
         }
       ],
       "meta": {
@@ -259,8 +294,8 @@ Feature: Get alarm metrics
       "data": [
         {
           "title": "test-user-to-group-metrics-get-1-username",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "value1",
                 "value": 2
@@ -270,51 +305,51 @@ Feature: Get alarm metrics
                 "value": 1
               }
             ],
-            "average_ack": [
+            [
               {
                 "title": "value1",
                 "value": 150
               }
             ],
-            "max_ack": [],
-            "min_ack": [
+            [],
+            [
               {
                 "title": "",
                 "value": 100
               }
             ],
-            "cancel_ack_alarms": [
+            [
               {
                 "title": "",
                 "value": 0
               }
             ]
-          }
+          ]
         },
         {
           "title": "test-user-to-group-metrics-get-2-username",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "value2",
                 "value": 1
               }
             ],
-            "average_ack": [],
-            "max_ack": [],
-            "min_ack": [
+            [],
+            [],
+            [
               {
                 "title": "",
                 "value": 400
               }
             ],
-            "cancel_ack_alarms": [
+            [
               {
                 "title": "",
                 "value": 0
               }
             ]
-          }
+          ]
         }
       ],
       "meta": {
@@ -347,25 +382,25 @@ Feature: Get alarm metrics
       "data": [
         {
           "title": "test-role-to-group-metrics-get-1",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "",
                 "value": 3
               }
             ]
-          }
+          ]
         },
         {
           "title": "test-role-to-group-metrics-get-2",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "",
                 "value": 1
               }
             ]
-          }
+          ]
         }
       ],
       "meta": {
@@ -399,8 +434,8 @@ Feature: Get alarm metrics
       "data": [
         {
           "title": "test-role-to-group-metrics-get-1",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "value1",
                 "value": 2
@@ -410,18 +445,18 @@ Feature: Get alarm metrics
                 "value": 1
               }
             ]
-          }
+          ]
         },
         {
           "title": "test-role-to-group-metrics-get-2",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "value2",
                 "value": 1
               }
             ]
-          }
+          ]
         }
       ],
       "meta": {
@@ -463,61 +498,61 @@ Feature: Get alarm metrics
       "data": [
         {
           "title": "test-category-to-group-metrics-get-1",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "",
                 "value": 0.75
               }
             ],
-            "active_alarms": [
+            [
               {
                 "title": "",
                 "value": 1.25
               }
             ],
-            "ack_active_alarms": [
+            [
               {
                 "title": "",
                 "value": 0.75
               }
             ],
-            "not_acked_alarms": [
+            [
               {
                 "title": "",
                 "value": 0.5
               }
             ]
-          }
+          ]
         },
         {
           "title": "test-category-to-group-metrics-get-2",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "",
                 "value": 0.25
               }
             ],
-            "active_alarms": [
+            [
               {
                 "title": "",
                 "value": 0.5
               }
             ],
-            "ack_active_alarms": [
+            [
               {
                 "title": "",
                 "value": 0.5
               }
             ],
-            "not_acked_alarms": [
+            [
               {
                 "title": "",
                 "value": 0
               }
             ]
-          }
+          ]
         }
       ],
       "meta": {
@@ -563,8 +598,8 @@ Feature: Get alarm metrics
       "data": [
         {
           "title": "test-category-to-group-metrics-get-1",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "value1",
                 "value": 0.5
@@ -574,7 +609,7 @@ Feature: Get alarm metrics
                 "value": 0.25
               }
             ],
-            "active_alarms": [
+            [
               {
                 "title": "value1",
                 "value": 1
@@ -584,7 +619,7 @@ Feature: Get alarm metrics
                 "value": 0.25
               }
             ],
-            "ack_active_alarms": [
+            [
               {
                 "title": "value1",
                 "value": 0.5
@@ -594,7 +629,7 @@ Feature: Get alarm metrics
                 "value": 0.25
               }
             ],
-            "not_acked_alarms": [
+            [
               {
                 "title": "value1",
                 "value": 0.5
@@ -604,36 +639,36 @@ Feature: Get alarm metrics
                 "value": 0
               }
             ]
-          }
+          ]
         },
         {
           "title": "test-category-to-group-metrics-get-2",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "value2",
                 "value": 0.25
               }
             ],
-            "active_alarms": [
+            [
               {
                 "title": "value2",
                 "value": 0.5
               }
             ],
-            "ack_active_alarms": [
+            [
               {
                 "title": "value2",
                 "value": 0.5
               }
             ],
-            "not_acked_alarms": [
+            [
               {
                 "title": "value2",
                 "value": 0
               }
             ]
-          }
+          ]
         }
       ],
       "meta": {
@@ -666,25 +701,25 @@ Feature: Get alarm metrics
       "data": [
         {
           "title": "1",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "",
                 "value": 0.75
               }
             ]
-          }
+          ]
         },
         {
           "title": "2",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "",
                 "value": 0.25
               }
             ]
-          }
+          ]
         }
       ],
       "meta": {
@@ -718,8 +753,8 @@ Feature: Get alarm metrics
       "data": [
         {
           "title": "1",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "value1",
                 "value": 0.5
@@ -729,18 +764,18 @@ Feature: Get alarm metrics
                 "value": 0.25
               }
             ]
-          }
+          ]
         },
         {
           "title": "2",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "value2",
                 "value": 0.25
               }
             ]
-          }
+          ]
         }
       ],
       "meta": {
@@ -756,6 +791,9 @@ Feature: Get alarm metrics
     """json
     {
       "parameters": [
+        {
+          "metric": "ack_alarms"
+        },
         {
           "metric": "ack_alarms"
         },
@@ -825,97 +863,109 @@ Feature: Get alarm metrics
       "data": [
         {
           "title": "test2",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "",
                 "value": 0.75
               }
             ],
-            "active_alarms": [
+            [
+              {
+                "title": "",
+                "value": 0.75
+              }
+            ],
+            [
               {
                 "title": "",
                 "value": 1.25
               }
             ],
-            "ack_active_alarms": [
+            [
               {
                 "title": "",
                 "value": 0.75
               }
             ],
-            "not_acked_alarms": [
+            [
               {
                 "title": "",
                 "value": 0.5
               }
             ],
-            "average_ack": [
+            [
               {
                 "title": "",
                 "value": 200
               }
             ],
-            "max_ack": [
+            [
               {
                 "title": "",
                 "value": 300
               }
             ],
-            "min_ack": [
+            [
               {
                 "title": "",
                 "value": 100
               }
             ]
-          }
+          ]
         },
         {
           "title": "test1",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "",
                 "value": 0.25
               }
             ],
-            "active_alarms": [
+            [
+              {
+                "title": "",
+                "value": 0.25
+              }
+            ],
+            [
               {
                 "title": "",
                 "value": 0.5
               }
             ],
-            "ack_active_alarms": [
+            [
               {
                 "title": "",
                 "value": 0.5
               }
             ],
-            "not_acked_alarms": [
+            [
               {
                 "title": "",
                 "value": 0
               }
             ],
-            "average_ack": [
+            [
               {
                 "title": "",
                 "value": 400
               }
             ],
-            "max_ack": [
+            [
               {
                 "title": "",
                 "value": 400
               }
             ],
-            "min_ack": [
+            [
               {
                 "title": "",
                 "value": 400
               }
             ]
-          }
+          ]
         }
       ],
       "meta": {
@@ -1007,8 +1057,8 @@ Feature: Get alarm metrics
       "data": [
         {
           "title": "test2",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "value1",
                 "value": 0.5
@@ -1018,7 +1068,7 @@ Feature: Get alarm metrics
                 "value": 0.25
               }
             ],
-            "active_alarms": [
+            [
               {
                 "title": "value1",
                 "value": 1
@@ -1028,7 +1078,7 @@ Feature: Get alarm metrics
                 "value": 0.25
               }
             ],
-            "ack_active_alarms": [
+            [
               {
                 "title": "value1",
                 "value": 0.5
@@ -1038,7 +1088,7 @@ Feature: Get alarm metrics
                 "value": 0.25
               }
             ],
-            "not_acked_alarms": [
+            [
               {
                 "title": "value1",
                 "value": 0.5
@@ -1048,7 +1098,7 @@ Feature: Get alarm metrics
                 "value": 0
               }
             ],
-            "average_ack": [
+            [
               {
                 "title": "value1",
                 "value": 150
@@ -1058,7 +1108,7 @@ Feature: Get alarm metrics
                 "value": 300
               }
             ],
-            "max_ack": [
+            [
               {
                 "title": "value1",
                 "value": 200
@@ -1068,7 +1118,7 @@ Feature: Get alarm metrics
                 "value": 300
               }
             ],
-            "min_ack": [
+            [
               {
                 "title": "value1",
                 "value": 100
@@ -1078,54 +1128,54 @@ Feature: Get alarm metrics
                 "value": 300
               }
             ]
-          }
+          ]
         },
         {
           "title": "test1",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "value2",
                 "value": 0.25
               }
             ],
-            "active_alarms": [
+            [
               {
                 "title": "value2",
                 "value": 0.5
               }
             ],
-            "ack_active_alarms": [
+            [
               {
                 "title": "value2",
                 "value": 0.5
               }
             ],
-            "not_acked_alarms": [
+            [
               {
                 "title": "value2",
                 "value": 0
               }
             ],
-            "average_ack": [
+            [
               {
                 "title": "value2",
                 "value": 400
               }
             ],
-            "max_ack": [
+            [
               {
                 "title": "value2",
                 "value": 400
               }
             ],
-            "min_ack": [
+            [
               {
                 "title": "value2",
                 "value": 400
               }
             ]
-          }
+          ]
         }
       ],
       "meta": {
@@ -1221,8 +1271,8 @@ Feature: Get alarm metrics
       "data": [
         {
           "title": "test2",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "value1",
                 "value": 0.5
@@ -1232,71 +1282,71 @@ Feature: Get alarm metrics
                 "value": 0.25
               }
             ],
-            "active_alarms": [
+            [
               {
                 "title": "value1",
                 "value": 1
               }
             ],
-            "ack_active_alarms": [],
-            "not_acked_alarms": [
+            [],
+            [
               {
                 "title": "",
                 "value": 0.5
               }
             ],
-            "cancel_ack_alarms": [
+            [
               {
                 "title": "",
                 "value": 0
               }
             ]
-          }
+          ]
         },
         {
           "title": "test1",
-          "data": {
-            "ack_alarms": [
+          "data": [
+            [
               {
                 "title": "value2",
                 "value": 0.25
               }
             ],
-            "active_alarms": [],
-            "ack_active_alarms": [],
-            "not_acked_alarms": [
+            [],
+            [],
+            [
               {
                 "title": "",
                 "value": 0
               }
             ],
-            "cancel_ack_alarms": [
+            [
               {
                 "title": "",
                 "value": 0
               }
             ]
-          }
+          ]
         },
         {
           "title": "test3",
-          "data": {
-            "ack_alarms": [],
-            "active_alarms": [],
-            "ack_active_alarms": [],
-            "not_acked_alarms": [
+          "data": [
+            [],
+            [],
+            [],
+            [
               {
                 "title": "",
                 "value": 0
               }
             ],
-            "cancel_ack_alarms": [
+            [
               {
                 "title": "",
                 "value": 0
               }
             ]
-          }
+          ]
         }
       ],
       "meta": {
@@ -1605,29 +1655,6 @@ Feature: Get alarm metrics
     {
       "errors": {
         "entity_patterns": "EntityPatterns is not empty."
-      }
-    }
-    """
-    When I do POST /api/v4/cat/metrics/group:
-    """json
-    {
-      "from": {{ nowDateTz }},
-      "to": {{ nowDateTz }},
-      "criteria": 3,
-      "filter": "test-kpi-filter-to-group-metrics-get",
-      "parameters": [
-        {
-          "metric": "total_user_activity"
-        }
-      ]
-    }
-    """
-    Then the response code should be 400
-    Then the response body should be:
-    """json
-    {
-      "errors": {
-        "filter": "KpiFilter is not empty."
       }
     }
     """

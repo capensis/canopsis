@@ -55,7 +55,7 @@ describe('alarm-column-cell', () => {
     const column = {
       value: field,
       filter: getAlarmsListWidgetColumnValueFilter(field),
-      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: field }, widget),
+      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: field }),
     };
 
     const wrapper = factory({
@@ -96,7 +96,7 @@ describe('alarm-column-cell', () => {
     const column = {
       value: field,
       filter: getAlarmsListWidgetColumnValueFilter(field),
-      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: field }, widget),
+      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: field }),
     };
 
     const wrapper = factory({
@@ -126,7 +126,7 @@ describe('alarm-column-cell', () => {
     const column = {
       value: columnValue,
       filter,
-      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: columnValue }, widget),
+      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: columnValue }),
     };
 
     const wrapper = factory({
@@ -148,7 +148,7 @@ describe('alarm-column-cell', () => {
     const column = {
       value: ALARM_FIELDS.state,
       filter: getAlarmsListWidgetColumnValueFilter(ALARM_FIELDS.state),
-      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: ALARM_FIELDS.state }, widget),
+      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: ALARM_FIELDS.state }),
     };
     const wrapper = snapshotFactory({
       propsData: {
@@ -167,7 +167,7 @@ describe('alarm-column-cell', () => {
     const column = {
       value: ALARM_FIELDS.status,
       filter: getAlarmsListWidgetColumnValueFilter(ALARM_FIELDS.status),
-      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: ALARM_FIELDS.status }, widget),
+      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: ALARM_FIELDS.status }),
     };
 
     const wrapper = snapshotFactory({
@@ -187,7 +187,7 @@ describe('alarm-column-cell', () => {
     const column = {
       value: ALARM_FIELDS.impactState,
       filter: getAlarmsListWidgetColumnValueFilter(ALARM_FIELDS.impactState),
-      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: ALARM_FIELDS.impactState }, widget),
+      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: ALARM_FIELDS.impactState }),
     };
 
     const wrapper = snapshotFactory({
@@ -209,7 +209,7 @@ describe('alarm-column-cell', () => {
     const column = {
       value: ALARM_FIELDS.links,
       filter: getAlarmsListWidgetColumnValueFilter(ALARM_FIELDS.links),
-      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: ALARM_FIELDS.links }, widget),
+      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: ALARM_FIELDS.links }),
     };
 
     const wrapper = snapshotFactory({
@@ -234,7 +234,7 @@ describe('alarm-column-cell', () => {
     const column = {
       value: ALARM_FIELDS.links,
       filter: getAlarmsListWidgetColumnValueFilter(ALARM_FIELDS.links),
-      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: ALARM_FIELDS.links, onlyIcon: true }, widget),
+      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: ALARM_FIELDS.links, onlyIcon: true }),
     };
 
     const wrapper = snapshotFactory({
@@ -256,16 +256,16 @@ describe('alarm-column-cell', () => {
   });
 
   it('Renders `alarm-column-cell` with column links with inline links count', async () => {
-    const localWidget = {
-      parameters: {
-        inlineLinksCount: 2,
-      },
+    const originalColumn = {
+      value: ALARM_FIELDS.links,
+      inlineLinksCount: 2,
     };
 
     const column = {
-      value: ALARM_FIELDS.links,
-      filter: getAlarmsListWidgetColumnValueFilter(ALARM_FIELDS.links),
-      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: ALARM_FIELDS.links }, localWidget),
+      ...originalColumn,
+
+      filter: getAlarmsListWidgetColumnValueFilter(originalColumn.value),
+      getComponent: getAlarmsListWidgetColumnComponentGetter(originalColumn),
     };
 
     const wrapper = snapshotFactory({
@@ -273,7 +273,7 @@ describe('alarm-column-cell', () => {
         alarm: {
           links: {},
         },
-        widget: localWidget,
+        widget,
         column,
       },
       listeners: {
@@ -291,7 +291,7 @@ describe('alarm-column-cell', () => {
     const column = {
       value: 'links.test',
       filter: getAlarmsListWidgetColumnValueFilter(columnValue),
-      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: columnValue }, widget),
+      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: columnValue }),
     };
     const wrapper = snapshotFactory({
       propsData: {
@@ -314,7 +314,7 @@ describe('alarm-column-cell', () => {
     const column = {
       value: ALARM_FIELDS.extraDetails,
       filter: getAlarmsListWidgetColumnValueFilter(ALARM_FIELDS.extraDetails),
-      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: ALARM_FIELDS.extraDetails }, widget),
+      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: ALARM_FIELDS.extraDetails }),
     };
 
     const wrapper = snapshotFactory({
@@ -335,7 +335,7 @@ describe('alarm-column-cell', () => {
     const column = {
       value: columnValue,
       filter: getAlarmsListWidgetColumnValueFilter(columnValue),
-      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: columnValue }, widget),
+      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: columnValue }),
       isHtml: true,
     };
 
@@ -360,7 +360,7 @@ describe('alarm-column-cell', () => {
     const column = {
       value: ALARM_FIELDS.displayName,
       filter: getAlarmsListWidgetColumnValueFilter(ALARM_FIELDS.displayName),
-      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: ALARM_FIELDS.displayName }, widget),
+      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: ALARM_FIELDS.displayName }),
     };
 
     const wrapper = snapshotFactory({
@@ -395,7 +395,7 @@ describe('alarm-column-cell', () => {
     const column = {
       value: ALARM_FIELDS.displayName,
       filter: getAlarmsListWidgetColumnValueFilter(ALARM_FIELDS.displayName),
-      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: ALARM_FIELDS.displayName }, widget),
+      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: ALARM_FIELDS.displayName }),
     };
 
     const wrapper = snapshotFactory({
@@ -436,7 +436,7 @@ describe('alarm-column-cell', () => {
     const column = {
       value: ALARM_FIELDS.entityName,
       filter: getAlarmsListWidgetColumnValueFilter(ALARM_FIELDS.entityName),
-      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: ALARM_FIELDS.entityName }, widget),
+      getComponent: getAlarmsListWidgetColumnComponentGetter({ value: ALARM_FIELDS.entityName }),
       isHtml: true,
     };
 

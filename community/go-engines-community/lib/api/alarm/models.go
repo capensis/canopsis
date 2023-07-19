@@ -225,6 +225,8 @@ type Alarm struct {
 	MetaAlarmRule        *MetaAlarmRule `bson:"meta_alarm_rule,omitempty" json:"meta_alarm_rule,omitempty"`
 	IsMetaAlarm          *bool          `bson:"is_meta_alarm,omitempty" json:"is_meta_alarm,omitempty"`
 	Children             *int64         `bson:"children,omitempty" json:"children,omitempty"`
+	OpenedChildren       *int64         `bson:"opened_children,omitempty" json:"opened_children,omitempty"`
+	ClosedChildren       *int64         `bson:"closed_children,omitempty" json:"closed_children,omitempty"`
 	ChildrenInstructions *bool          `bson:"children_instructions" json:"children_instructions,omitempty"`
 	FilteredChildrenIDs  []string       `bson:"filtered_children,omitempty" json:"filtered_children,omitempty"`
 	// Meta alarm child fields
