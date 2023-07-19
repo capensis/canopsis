@@ -6,9 +6,9 @@ import {
   createNavigationModule,
 } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
-
-import GroupsSideBar from '@/components/layout/navigation/partials/groups-side-bar/groups-side-bar-group.vue';
 import { MODALS } from '@/constants';
+
+import GroupsSideBarGroup from '@/components/layout/navigation/partials/groups-side-bar/groups-side-bar-group.vue';
 
 const stubs = {
   'group-panel': true,
@@ -31,11 +31,11 @@ describe('groups-side-bar-group', () => {
     views: [{ _id: 'group-view-1' }, { _id: 'group-view-2' }],
   };
 
-  const factory = generateShallowRenderer(GroupsSideBar, {
+  const factory = generateShallowRenderer(GroupsSideBarGroup, {
     stubs,
     mocks: { $modals },
   });
-  const snapshotFactory = generateRenderer(GroupsSideBar, { stubs });
+  const snapshotFactory = generateRenderer(GroupsSideBarGroup, { stubs });
 
   it('Edit group modal showed after trigger group panel', () => {
     const wrapper = factory({
