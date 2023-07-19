@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`groups-side-bar Renders \`groups-side-bar\` with closed navigation 1`] = `
+exports[`groups-side-bar Renders \`groups-side-bar\` with custom data 1`] = `
 <div>
   <aside
-    class="side-bar secondary v-navigation-drawer v-navigation-drawer--close v-navigation-drawer--fixed v-navigation-drawer--is-mobile theme--light"
-    style="height: 100%; margin-top: 0px; transform: translateX(-250px); width: 250px;"
+    class="side-bar secondary v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open theme--light"
+    style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 250px;"
   >
     <div
       class="brand ma-0 secondary lighten-1"
@@ -19,7 +19,20 @@ exports[`groups-side-bar Renders \`groups-side-bar\` with closed navigation 1`] 
         class="version"
       />
     </div>
-    <!---->
+    <c-draggable-list-field-stub
+      class="groups-panel"
+      component="v-expansion-panel"
+      component-data="[object Object]"
+      disabled="true"
+      value="[object Object],[object Object]"
+    >
+      <groups-side-bar-group-stub
+        group="[object Object]"
+      />
+      <groups-side-bar-group-stub
+        group="[object Object]"
+      />
+    </c-draggable-list-field-stub>
     <hr
       class="v-divider theme--light"
     />
@@ -73,11 +86,11 @@ exports[`groups-side-bar Renders \`groups-side-bar\` with closed navigation 1`] 
 </div>
 `;
 
-exports[`groups-side-bar Renders \`groups-side-bar\` with opened navigation 1`] = `
+exports[`groups-side-bar Renders \`groups-side-bar\` with default data 1`] = `
 <div>
   <aside
-    class="side-bar secondary v-navigation-drawer v-navigation-drawer--fixed v-navigation-drawer--is-mobile v-navigation-drawer--open theme--light"
-    style="height: 100%; margin-top: 0px; transform: translateX(0px); width: 250px;"
+    class="side-bar secondary v-navigation-drawer v-navigation-drawer--close v-navigation-drawer--fixed v-navigation-drawer--is-mobile theme--light"
+    style="height: 100%; margin-top: 0px; transform: translateX(-250px); width: 250px;"
   >
     <div
       class="brand ma-0 secondary lighten-1"
