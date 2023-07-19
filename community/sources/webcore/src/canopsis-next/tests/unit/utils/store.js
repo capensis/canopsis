@@ -1216,3 +1216,29 @@ export const createViewModule = () => {
     updateViewsPositions,
   };
 };
+
+export const createPlaylistModule = () => {
+  const playlists = jest.fn().mockReturnValue([]);
+  const fetchPlaylistsList = jest.fn();
+
+  afterEach(() => {
+    playlists.mockClear();
+    fetchPlaylistsList.mockClear();
+  });
+
+  const playlistModule = {
+    name: 'playlist',
+    getters: {
+      items: playlists,
+    },
+    actions: {
+      fetchList: fetchPlaylistsList,
+    },
+  };
+
+  return {
+    playlistModule,
+    playlists,
+    fetchPlaylistsList,
+  };
+};
