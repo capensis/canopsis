@@ -563,10 +563,6 @@ instruction:
     entity_pattern:
     alarm_pattern:
 
-  instruction_execution_running:
-    <<: *instruction_manual
-    _id: test-instruction-execution-running
-
   instruction_to_rate_1:
     <<: *instruction_manual
     _id: test-instruction-to-rate-1
