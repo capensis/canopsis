@@ -1196,3 +1196,23 @@ export const createEntitiesModule = () => {
     unregisterGetter,
   };
 };
+
+export const createViewModule = () => {
+  const updateViewsPositions = jest.fn();
+
+  afterEach(() => {
+    updateViewsPositions.mockClear();
+  });
+
+  const viewModule = {
+    name: 'view',
+    actions: {
+      updatePositions: updateViewsPositions,
+    },
+  };
+
+  return {
+    viewModule,
+    updateViewsPositions,
+  };
+};
