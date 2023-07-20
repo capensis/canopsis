@@ -9,11 +9,11 @@
         action-author-field(v-if="!isPbehaviorAction", v-model="parameters")
       v-flex(v-if="isWebhookActionType", xs6)
         c-enabled-field(
-          v-field="parameters.skip_for_child",
+          v-model="parameters.skip_for_child",
           :label="$t('scenario.skipForChild')"
         )
         c-enabled-field.mt-0(
-          v-field="parameters.skip_for_instruction",
+          v-model="parameters.skip_for_instruction",
           :label="$t('scenario.skipForInstruction')"
         )
     c-workflow-field(
