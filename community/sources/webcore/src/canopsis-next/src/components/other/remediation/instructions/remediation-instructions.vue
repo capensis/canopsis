@@ -63,7 +63,7 @@ export default {
           disabled: wasRequestedByAnotherUser,
           title: this.$t('modals.createRemediationInstruction.edit.title'),
           action: async (instruction) => {
-            await this.updateRemediationInstruction(remediationInstruction, instruction);
+            await this.updateRemediationInstruction({ id: remediationInstruction._id, data: instruction });
 
             this.$popups.success({
               text: this.$t('modals.createRemediationInstruction.edit.popups.success', {
