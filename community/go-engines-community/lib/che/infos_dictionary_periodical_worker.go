@@ -8,13 +8,22 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 const minInfoLength = 2
+
+// A composite id is used, because it works faster with a lot of bulk upserts instead of filter and uuid
+type infosDictID struct {
+	Key   string `bson:"k"`
+	Value string `bson:"v"`
+}
+
+type infosDictDoc struct {
+	ID infosDictID `bson:"_id"`
+}
 
 func NewInfosDictionaryPeriodicalWorker(
 	client mongo.DbClient,
@@ -24,20 +33,20 @@ func NewInfosDictionaryPeriodicalWorker(
 	return &infosDictionaryPeriodicalWorker{
 		entityCollection:          client.Collection(mongo.EntityMongoCollection),
 		entityInfosDictCollection: client.Collection(mongo.EntityInfosDictionaryCollection),
-		PeriodicalInterval:        periodicalInterval,
-		Logger:                    logger,
+		periodicalInterval:        periodicalInterval,
+		logger:                    logger,
 	}
 }
 
 type infosDictionaryPeriodicalWorker struct {
 	entityCollection          mongo.DbCollection
 	entityInfosDictCollection mongo.DbCollection
-	PeriodicalInterval        time.Duration
-	Logger                    zerolog.Logger
+	periodicalInterval        time.Duration
+	logger                    zerolog.Logger
 }
 
 func (w *infosDictionaryPeriodicalWorker) GetInterval() time.Duration {
-	return w.PeriodicalInterval
+	return w.periodicalInterval
 }
 
 func (w *infosDictionaryPeriodicalWorker) Work(ctx context.Context) {
@@ -90,17 +99,10 @@ func (w *infosDictionaryPeriodicalWorker) Work(ctx context.Context) {
 					},
 				},
 			},
-			{
-				"$project": bson.M{
-					"_id": 0,
-					"k":   "$_id.k",
-					"v":   "$_id.v",
-				},
-			},
 		},
 	)
 	if err != nil {
-		w.Logger.Error().Err(err).Msg("unable to load entity infos data")
+		w.logger.Error().Err(err).Msg("unable to load entity infos data")
 		return
 	}
 
@@ -110,29 +112,23 @@ func (w *infosDictionaryPeriodicalWorker) Work(ctx context.Context) {
 	bulkBytesSize := 0
 
 	for dictCursor.Next(ctx) {
-		var info struct {
-			Key   string `bson:"k"`
-			Value string `bson:"v"`
-		}
+		var info infosDictDoc
 
 		err = dictCursor.Decode(&info)
 		if err != nil {
-			w.Logger.Error().Err(err).Msg("unable to decode entity infos data")
+			w.logger.Error().Err(err).Msg("unable to decode entity infos data")
 			return
 		}
 
 		newModel := mongodriver.
 			NewUpdateOneModel().
-			SetFilter(bson.M{"k": info.Key, "v": info.Value}).
-			SetUpdate(bson.M{
-				"$set":         bson.M{"last_update": now},
-				"$setOnInsert": bson.M{"_id": utils.NewID()},
-			}).
+			SetFilter(bson.M{"_id": info.ID}).
+			SetUpdate(bson.M{"$set": bson.M{"last_update": now}}).
 			SetUpsert(true)
 
 		b, err := bson.Marshal(newModel)
 		if err != nil {
-			w.Logger.Error().Err(err).Msg("unable to marshal entity infos data")
+			w.logger.Error().Err(err).Msg("unable to marshal entity infos data")
 			return
 		}
 
@@ -140,7 +136,7 @@ func (w *infosDictionaryPeriodicalWorker) Work(ctx context.Context) {
 		if bulkBytesSize+newModelLen > canopsis.DefaultBulkBytesSize {
 			_, err := w.entityInfosDictCollection.BulkWrite(ctx, writeModels)
 			if err != nil {
-				w.Logger.Error().Err(err).Msg("unable to bulk write entity infos dictionary")
+				w.logger.Error().Err(err).Msg("unable to bulk write entity infos dictionary")
 				return
 			}
 
@@ -154,7 +150,7 @@ func (w *infosDictionaryPeriodicalWorker) Work(ctx context.Context) {
 		if len(writeModels) == canopsis.DefaultBulkSize {
 			_, err := w.entityInfosDictCollection.BulkWrite(ctx, writeModels)
 			if err != nil {
-				w.Logger.Error().Err(err).Msg("unable to bulk write entity infos dictionary")
+				w.logger.Error().Err(err).Msg("unable to bulk write entity infos dictionary")
 				return
 			}
 
@@ -166,7 +162,7 @@ func (w *infosDictionaryPeriodicalWorker) Work(ctx context.Context) {
 	if len(writeModels) > 0 {
 		_, err := w.entityInfosDictCollection.BulkWrite(ctx, writeModels)
 		if err != nil {
-			w.Logger.Error().Err(err).Msg("unable to bulk write entity infos dictionary")
+			w.logger.Error().Err(err).Msg("unable to bulk write entity infos dictionary")
 			return
 		}
 	}
@@ -178,22 +174,23 @@ func (w *infosDictionaryPeriodicalWorker) Work(ctx context.Context) {
 		}},
 	)
 	if err != nil {
-		w.Logger.Error().Err(err).Msg("unable to find outdated entity infos dictionary documents")
+		w.logger.Error().Err(err).Msg("unable to find outdated entity infos dictionary documents")
 		return
 	}
 
 	defer delCursor.Close(ctx)
 
-	ids := make([]string, 0, canopsis.DefaultBulkSize)
+	// use any, because old dictionary ids contained strings instead of composite ids
+	ids := make([]any, 0, canopsis.DefaultBulkSize)
 
 	for delCursor.Next(ctx) {
 		var info struct {
-			ID string `bson:"_id"`
+			ID any `bson:"_id"`
 		}
 
 		err = delCursor.Decode(&info)
 		if err != nil {
-			w.Logger.Error().Err(err).Msg("unable to decode entity infos data")
+			w.logger.Error().Err(err).Msg("unable to decode entity infos data")
 			return
 		}
 
@@ -202,7 +199,7 @@ func (w *infosDictionaryPeriodicalWorker) Work(ctx context.Context) {
 		if len(ids) == canopsis.DefaultBulkSize {
 			_, err = w.entityInfosDictCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
 			if err != nil {
-				w.Logger.Error().Err(err).Msg("unable to delete outdated entity infos dictionary documents")
+				w.logger.Error().Err(err).Msg("unable to delete outdated entity infos dictionary documents")
 				return
 			}
 
@@ -213,7 +210,7 @@ func (w *infosDictionaryPeriodicalWorker) Work(ctx context.Context) {
 	if len(ids) > 0 {
 		_, err = w.entityInfosDictCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
 		if err != nil {
-			w.Logger.Error().Err(err).Msg("unable to delete outdated entity infos dictionary documents")
+			w.logger.Error().Err(err).Msg("unable to delete outdated entity infos dictionary documents")
 			return
 		}
 	}
