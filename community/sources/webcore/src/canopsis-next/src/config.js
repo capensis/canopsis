@@ -141,6 +141,8 @@ export const API_ROUTES = {
   },
   eventFilter: {
     rules: '/api/v4/eventfilter/rules',
+    ruleErrors: '/api/v4/eventfilter/rule-errors',
+    ruleErrorsRead: '/api/v4/eventfilter/rule-errors/read',
   },
   file: '/api/v4/file',
   fileAccess: '/api/v4/file-access',

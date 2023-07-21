@@ -20,6 +20,9 @@
     template(#priority="{ item }") {{ item.priority || '-' }}
     template(#enabled="{ item }")
       c-enabled(:value="item | get('enabled', true)")
+    template(#errors="{ item }")
+      c-circle-badge.error(v-if="item.errors") {{ item.errors }}
+      template(v-else) -
     template(#created="{ item }") {{ item.created | date }}
     template(#updated="{ item }") {{ item.updated | date }}
     template(#calendar="{ item }")
@@ -102,6 +105,7 @@ export default {
         { text: this.$t('common.type'), value: 'type', sortable: false },
         { text: this.$t('common.priority'), value: 'priority' },
         { text: this.$t('common.enabled'), value: 'enabled', sortable: false },
+        { text: this.$tc('common.error', 2), value: 'errors' },
         { text: this.$t('common.author'), value: 'author.display_name' },
         { text: this.$t('common.created'), value: 'created' },
         { text: this.$t('common.updated'), value: 'updated' },

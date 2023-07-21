@@ -27,6 +27,7 @@ export default {
   duringPeriod: 'Applied during this period only',
   enrichmentOptions: 'Enrichment options',
   changeEntityOptions: 'Change entity options',
+  markAsRead: 'Mark as read',
   types: {
     [EVENT_FILTER_TYPES.drop]: 'Drop',
     [EVENT_FILTER_TYPES.break]: 'Break',
