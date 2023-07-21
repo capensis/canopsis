@@ -260,6 +260,9 @@ export default {
       return !!this.widget.parameters?.columns?.draggable;
     },
   },
+  watch: {
+    alarms() {},
+  },
   methods: {
     refreshExpanded() {
       if (this.$refs.alarmsTable?.expanded) {
