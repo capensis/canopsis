@@ -4,7 +4,10 @@
     v-tab-item
       v-layout.py-3.secondary.lighten-2(row, justify-center)
         v-flex(xs11)
-          event-filters-recurrence-rule-summary(:event-filter="eventFilter")
+          v-card
+            v-card-text
+              v-flex(xs12, md8, offset-md2, lg6, offset-lg3)
+                event-filters-rule-summary(:event-filter="eventFilter")
     v-tab {{ $tc('common.pattern', 2) }}
     v-tab-item(lazy)
       v-layout.pa-3.secondary.lighten-2(row, justify-center)
@@ -12,6 +15,13 @@
           v-card
             v-card-text
               c-patterns-field(:value="patterns", readonly, with-entity, with-event)
+    v-tab {{ $tc('common.error', 2) }}
+    v-tab-item
+      v-layout.py-3.secondary.lighten-2(row, justify-center)
+        v-flex(xs11)
+          v-card
+            v-card-text
+              event-filter-errors(:event-filter="eventFilter")
     template(v-if="isEnrichment")
       v-tab {{ $tc('common.action', 2) }}
       v-tab-item
@@ -35,11 +45,13 @@ import { eventFilterPatternToForm } from '@/helpers/entities/event-filter/rule/f
 
 import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
 
-import EventFiltersRecurrenceRuleSummary from './event-filters-recurrence-rule-summary.vue';
+import EventFiltersRuleSummary from './event-filters-rule-summary.vue';
+import EventFilterErrors from './event-filter-errors.vue';
 
 export default {
   components: {
-    EventFiltersRecurrenceRuleSummary,
+    EventFiltersRuleSummary,
+    EventFilterErrors,
     ExternalDataForm,
   },
   props: {

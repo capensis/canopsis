@@ -274,6 +274,7 @@ export default {
   chart: 'Chart | Charts',
   chooseFile: 'Choose file',
   seeAlarms: 'See alarms',
+  new: 'New',
   variableTypes: {
     string: 'String',
     number: 'Number',
