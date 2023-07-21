@@ -48,6 +48,11 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  */
 
 /**
+ * @typedef {Object} DataStorageErrorsConfig
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
  * @typedef {Object} DataStorageConfig
  * @property {DataStorageJunitConfig} junit
  * @property {DataStorageRemediationConfig} remediation
@@ -58,6 +63,7 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  * @property {DataStorageWebhookConfig} webhook
  * @property {DataStorageMetricsConfig} metrics
  * @property {DataStorageMetricsConfig} perf_data_metrics
+ * @property {DataStorageErrorsConfig} errors
  */
 
 /**
@@ -205,6 +211,18 @@ export const dataStoragePerfDataMetricsToForm = (perfDataMetrics = {}) => ({
 });
 
 /**
+ * Convert data storage errors config to errors form object
+ *
+ * @param {DataStorageErrorsConfig} errors
+ * @return {DataStorageErrorsConfig}
+ */
+export const dataStorageErrorsToForm = (errors = {}) => ({
+  delete_after: errors.delete_after
+    ? durationWithEnabledToForm(errors.delete_after)
+    : { value: 30, unit: TIME_UNITS.day, enabled: false },
+});
+
+/**
  * Convert data storage object to data storage form
  *
  * @param {DataStorageConfig} dataStorage
@@ -220,4 +238,5 @@ export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   webhook: dataStorageWebhookSettingsToForm(dataStorage.webhook),
   metrics: dataStorageMetricsToForm(dataStorage.metrics),
   perf_data_metrics: dataStoragePerfDataMetricsToForm(dataStorage.perf_data_metrics),
+  errors: dataStorageErrorsToForm(dataStorage.errors),
 });

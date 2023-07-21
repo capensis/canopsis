@@ -30,6 +30,7 @@ export default {
   duringPeriod: 'Appliqué pendant cette période uniquement',
   enrichmentOptions: 'Options d\'enrichissement',
   changeEntityOptions: 'Modifier les options d\'entité',
+  markAsRead: 'Marquer comme lu',
   types: {
     [EVENT_FILTER_TYPES.drop]: 'Drop',
     [EVENT_FILTER_TYPES.break]: 'Break',

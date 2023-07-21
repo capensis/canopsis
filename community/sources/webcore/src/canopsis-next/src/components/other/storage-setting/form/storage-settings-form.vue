@@ -136,6 +136,17 @@
         :help-text="$t('storageSetting.perfDataMetrics.deleteAfterHelpText')",
         :name="perfDataMetricsDeleteAfterFieldName"
       )
+    c-information-block(
+      :title="$t('storageSetting.errors.title')",
+      :help-text="$t('storageSetting.errors.titleHelp')",
+      help-icon-color="info"
+    )
+      c-enabled-duration-field(
+        v-field="form.errors.delete_after",
+        :label="$t('storageSetting.errors.deleteAfter')",
+        :help-text="$t('storageSetting.errors.deleteAfterHelpText')",
+        :name="errorsDeleteAfterFieldName"
+      )
 </template>
 
 <script>
@@ -198,6 +209,10 @@ export default {
 
     perfDataMetricsDeleteAfterFieldName() {
       return 'perf_data_metrics.delete_after';
+    },
+
+    errorsDeleteAfterFieldName() {
+      return 'errors.delete_after';
     },
 
     webhookDeleteAfterFieldName() {

@@ -95,13 +95,8 @@
         :counter="counters.weather_service_pattern",
         @input="errors.remove(serviceWeatherFieldName)"
       )
-    v-flex(xs12)
-      v-alert(
-        :value="allOverLimit",
-        type="warning",
-        transition="fade-transition"
-      )
-        span {{ $t('pattern.errors.countOverLimit', { count: allCount }) }}
+    c-alert(:value="allOverLimit", type="warning", transition="fade-transition")
+      span {{ $t('pattern.errors.countOverLimit', { count: allCount }) }}
     v-layout(row, justify-end, align-center)
       v-messages.text-xs-right(
         :value="checkFilterMessages",
@@ -338,6 +333,10 @@ export default {
           : this.checkPatternsAlarmsCount;
 
         this.counters = await method({ data: this.patterns });
+        this.counters = {
+          ...this.counters,
+          all: { over_limit: true },
+        };
       } catch (err) {
         console.error(err);
 
