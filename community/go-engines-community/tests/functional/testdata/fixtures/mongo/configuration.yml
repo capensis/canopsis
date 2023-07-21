@@ -47,6 +47,8 @@ configuration:
       reconnectretries: 3
       reconnecttimeoutmilliseconds: 8
       maxexternalresponsesize: 10485760
+      buildentityinfosdictionary: true
+      builddynamicinfosdictionary: true
     import_ctx:
       filepattern: /tmp/import_%s.json
       thdcritminperimport: 60m
