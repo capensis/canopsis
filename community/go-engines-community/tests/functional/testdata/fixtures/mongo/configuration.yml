@@ -44,6 +44,8 @@ configuration:
       prefetchsize: 0
       reconnectretries: 3
       reconnecttimeoutmilliseconds: 8
+      buildentityinfosdictionary: true
+      builddynamicinfosdictionary: true
     import_ctx:
       filepattern: /tmp/import_%s.json
       thdcritminperimport: 60m
