@@ -114,10 +114,11 @@ export default {
               ...data,
             };
 
-            await this.updateRemediationInstruction(
-              instruction,
-              formToRemediationInstruction(form),
-            );
+            await this.updateRemediationInstruction({
+              id: instruction._id,
+              data: formToRemediationInstruction(form),
+            });
+
             await this.fetchList();
           },
         },
