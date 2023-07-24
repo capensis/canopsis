@@ -1,9 +1,9 @@
 <template lang="pug">
   div
     c-collapse-panel.mb-2(:title="$t('externalData.title')")
-      external-data-form(v-field="form.external_data")
+      external-data-form(v-field="form.external_data", :variables="externalDataVariables")
     c-collapse-panel.mb-2(:title="$t('eventFilter.editActions')")
-      event-filter-enrichment-actions-form(v-field="form.config.actions")
+      event-filter-enrichment-actions-form(v-field="form.config.actions", :variables="actionsDataVariables")
     v-layout(row)
       v-select.mr-3(
         v-field="form.config.on_success",
@@ -19,7 +19,11 @@
 </template>
 
 <script>
-import { EVENT_FILTER_ENRICHMENT_AFTER_TYPES } from '@/constants';
+import {
+  EVENT_FILTER_ENRICHMENT_AFTER_TYPES,
+  EXTERNAL_DATA_DEFAULT_CONDITION_VALUES,
+  EXTERNAL_DATA_PAYLOADS_VARIABLES,
+} from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
@@ -51,6 +55,30 @@ export default {
   computed: {
     eventFilterAfterTypes() {
       return Object.values(EVENT_FILTER_ENRICHMENT_AFTER_TYPES);
+    },
+
+    externalDataVariables() {
+      return EXTERNAL_DATA_DEFAULT_CONDITION_VALUES.map(({ value, text }) => ({
+        value,
+        text: this.$t(`externalData.conditionValues.${text}`),
+      }));
+    },
+
+    actionsDataVariables() {
+      const referencesVariables = this.form.external_data.length
+        ? this.form.external_data.map(({ reference }) => ({
+          value: EXTERNAL_DATA_PAYLOADS_VARIABLES.externalData.replace('%reference%', reference),
+          text: `${this.$t('externalData.title')}: ${reference}`,
+        }))
+        : [{
+          value: EXTERNAL_DATA_PAYLOADS_VARIABLES.externalData,
+          text: this.$t('externalData.title'),
+        }];
+
+      return [
+        ...this.externalDataVariables,
+        ...referencesVariables,
+      ];
     },
   },
   watch: {

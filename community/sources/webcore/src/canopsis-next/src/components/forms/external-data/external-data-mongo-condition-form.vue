@@ -22,7 +22,7 @@
           v-field="condition.value",
           :label="$t('common.value')",
           :disabled="disabled",
-          :variables="preparedVariables",
+          :variables="variables",
           clearable
         )
         v-btn(
@@ -36,10 +36,7 @@
 </template>
 
 <script>
-import {
-  EXTERNAL_DATA_CONDITION_TYPES,
-  EXTERNAL_DATA_DEFAULT_CONDITION_VALUES,
-} from '@/constants';
+import { EXTERNAL_DATA_CONDITION_TYPES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
@@ -73,17 +70,6 @@ export default {
     },
   },
   computed: {
-    preparedVariables() {
-      if (this.variables.length) {
-        return this.variables;
-      }
-
-      return EXTERNAL_DATA_DEFAULT_CONDITION_VALUES.map(({ value, text }) => ({
-        value,
-        text: this.$t(`externalData.conditionValues.${text}`),
-      }));
-    },
-
     conditionTypes() {
       return Object.values(EXTERNAL_DATA_CONDITION_TYPES)
         .map(type => ({ text: this.$t(`externalData.conditionTypes.${type}`), value: type }));
