@@ -213,6 +213,7 @@ export const API_ROUTES = {
   templateValidator: {
     declareTicketRules: '/api/v4/template-validator/declare-ticket-rules',
     scenarios: '/api/v4/template-validator/scenarios',
+    eventFilterRules: '/api/v4/template-validator/event-filter-rules',
   },
   linkRule: '/api/v4/link-rules',
   linkCategories: '/api/v4/link-categories',

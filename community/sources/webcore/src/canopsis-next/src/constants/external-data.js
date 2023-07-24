@@ -40,7 +40,7 @@ export const EXTERNAL_DATA_DEFAULT_CONDITION_VALUES = [
   },
   {
     text: EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.extraInfos,
-    value: '.Event.ExtraInfos',
+    value: 'index .Event.ExtraInfos "%infos_name%"',
   },
 ];
 
