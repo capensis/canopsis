@@ -23,8 +23,18 @@
             v-flex(xs5)
               c-name-field(v-field="form.name", key="name", required)
             v-flex(xs7)
+              c-payload-text-field.ml-2(
+                v-if="isStringTemplateValueType",
+                v-field="form.value",
+                :label="$t('common.value')",
+                :variables="variables",
+                key="from",
+                name="value",
+                required,
+                clearable
+              )
               v-text-field.ml-2(
-                v-if="isStringValueType",
+                v-else-if="isStringCopyValueType",
                 v-field="form.value",
                 v-validate="'required'",
                 :label="$t('common.value')",
@@ -59,6 +69,10 @@ export default {
       type: Object,
       required: true,
     },
+    variables: {
+      type: Array,
+      default: () => [],
+    },
   },
   computed: {
     eventFilterActionTypes() {
@@ -69,10 +83,15 @@ export default {
       }));
     },
 
-    isStringValueType() {
+    isStringCopyValueType() {
       return [
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy,
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo,
+      ].includes(this.form.type);
+    },
+
+    isStringTemplateValueType() {
+      return [
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate,
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate,
       ].includes(this.form.type);

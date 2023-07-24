@@ -7,6 +7,10 @@
         event-filter-form(v-model="form", :is-disabled-id-field="config.isDisabledIdField")
       template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
+        v-btn.orange.white--text(
+          :loading="checking",
+          @click="validateTemplateVariables"
+        ) {{ $t('declareTicket.checkSyntax') }}
         v-btn.primary(
           :disabled="isDisabled",
           :loading="submitting",
@@ -42,6 +46,7 @@ export default {
   ],
   data() {
     return {
+      checking: false,
       form: eventFilterToForm(this.modal.config.rule, this.$system.timezone),
     };
   },
@@ -51,6 +56,12 @@ export default {
     },
   },
   methods: {
+    async validateTemplateVariables() {
+      /**
+       * TODO: Should be added validate templates functions
+       */
+    },
+
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 

@@ -36,7 +36,9 @@
           v-else,
           v-field="form.request",
           :name="form.key",
-          :disabled="disabled"
+          :disabled="disabled",
+          :payload-variables="variables",
+          :url-variables="variables"
         )
 </template>
 
