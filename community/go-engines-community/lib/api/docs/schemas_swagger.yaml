@@ -1019,6 +1019,11 @@ definitions:
           delete_after:
             $ref: '#/definitions/types.DurationWithEnabled'
         type: object
+      event_filter_failure:
+        properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+        type: object
       health_check:
         properties:
           delete_after:
@@ -1074,6 +1079,8 @@ definitions:
         $ref: '#/definitions/datastorage.HistoryWithCount'
       entity:
         $ref: '#/definitions/datastorage.HistoryWithCount'
+      event_filter_failure:
+        type: integer
       health_check:
         type: integer
       junit:
@@ -1843,6 +1850,23 @@ definitions:
       type:
         type: string
     type: object
+  eventfilter.FailureResponse:
+    properties:
+      _id:
+        type: string
+      event:
+        additionalProperties:
+          type: any
+        type: object
+      message:
+        type: string
+      t:
+        $ref: '#/definitions/types.CpsTime'
+      type:
+        type: integer
+      unread:
+        type: boolean
+    type: object
   eventfilter.Response:
     properties:
       _id:
@@ -1871,6 +1895,8 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      events_count:
+        type: integer
       exceptions:
         items:
           $ref: '#/definitions/eventfilter.Exception'
@@ -1883,6 +1909,8 @@ definitions:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
+      failures_count:
+        type: integer
       old_patterns:
         $ref: '#/definitions/oldpattern.EventPatternList'
       priority:
@@ -1895,6 +1923,8 @@ definitions:
         type: integer
       type:
         type: string
+      unread_failures_count:
+        type: integer
       updated:
         type: integer
     type: object

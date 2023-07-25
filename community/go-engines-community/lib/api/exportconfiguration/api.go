@@ -42,7 +42,7 @@ func NewApi(client mongo.DbClient, logger zerolog.Logger) API {
 			"scenario":            mongo.ScenarioMongoCollection,
 			"metaalarm":           mongo.MetaAlarmRulesMongoCollection,
 			"idle_rule":           mongo.IdleRuleMongoCollection,
-			"eventfilter":         mongo.EventFilterRulesMongoCollection,
+			"eventfilter":         mongo.EventFilterRuleCollection,
 			"dynamic_infos":       mongo.DynamicInfosRulesMongoCollection,
 			"playlist":            mongo.PlaylistMongoCollection,
 			"state_settings":      mongo.StateSettingsMongoCollection,
