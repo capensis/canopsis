@@ -210,6 +210,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    search: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -324,6 +328,17 @@ export default {
       if (!isEqual(query, oldQuery)) {
         this.fetchList();
       }
+    },
+
+    search: {
+      immediate: true,
+      handler(search) {
+        this.childrenQuery = {
+          ...this.childrenQuery,
+
+          search,
+        };
+      },
     },
   },
   beforeDestroy() {

@@ -14,7 +14,8 @@
           :alarm="alarm",
           :widget="widget",
           :is-tour-enabled="isTourEnabled",
-          :small="small"
+          :small="small",
+          :search="search"
         )
     td.alarm-list-row__cell(v-for="column in columns", :key="column.value")
       alarm-column-value(
@@ -143,6 +144,10 @@ export default {
     wrapActions: {
       type: Boolean,
       default: false,
+    },
+    search: {
+      type: String,
+      default: '',
     },
   },
   data() {

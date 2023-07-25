@@ -94,6 +94,7 @@
       :dense="dense",
       :refresh-alarms-list="fetchList",
       :selected-tag="query.tag",
+      :search="query.search",
       :selectable="!hideMassSelection",
       :hide-actions="hideActions",
       :resizable-column="resizableColumn",
@@ -127,6 +128,7 @@ import { exportMixinCreator } from '@/mixins/widget/export';
 import { widgetSearchMixin } from '@/mixins/widget/search';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
+import { widgetAlarmsSocketMixin } from '@/mixins/widget/alarms-socket';
 import { widgetRemediationInstructionsFilterMixin } from '@/mixins/widget/remediation-instructions-filter-select';
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
@@ -167,6 +169,7 @@ export default {
     widgetSearchMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
+    widgetAlarmsSocketMixin,
     widgetRemediationInstructionsFilterMixin,
     entitiesAlarmMixin,
     entitiesAlarmTagMixin,
@@ -259,9 +262,6 @@ export default {
     draggableColumn() {
       return !!this.widget.parameters?.columns?.draggable;
     },
-  },
-  watch: {
-    alarms() {},
   },
   methods: {
     refreshExpanded() {
