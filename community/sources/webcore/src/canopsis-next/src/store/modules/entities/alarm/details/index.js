@@ -165,5 +165,19 @@ export default {
     removeQuery({ commit }, { widgetId, id }) {
       commit(types.REMOVE_QUERY, { widgetId, id });
     },
+
+    /**
+     * Update alarm details item in store
+     *
+     * @param {Function} dispatch
+     * @param {Object} alarmDetails
+     * @returns {*}
+     */
+    updateItemInStore({ dispatch }, alarmDetails) {
+      return dispatch('entities/addToStore', {
+        schema: alarmDetailsSchema,
+        data: alarmDetails,
+      }, { root: true });
+    },
   },
 };

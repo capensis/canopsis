@@ -106,9 +106,10 @@ export function convertAlarmUserPreferenceToQuery({ content }) {
  *
  * @param {Alarm} alarm
  * @param {Widget} widget
+ * @param {string} search
  * @returns {Object}
  */
-export const prepareAlarmDetailsQuery = (alarm, widget) => {
+export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
   const { sort = {}, widgetGroupColumns = [], charts = [] } = widget.parameters;
   const columns = widgetGroupColumns.length > 0
     ? widgetGroupColumns
@@ -127,6 +128,7 @@ export const prepareAlarmDetailsQuery = (alarm, widget) => {
       limit: PAGINATION_LIMIT,
     },
     children: {
+      search,
       page: 1,
       limit: PAGINATION_LIMIT,
       multiSortBy: [],
