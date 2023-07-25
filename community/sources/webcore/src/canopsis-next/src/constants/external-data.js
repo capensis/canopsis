@@ -17,33 +17,51 @@ export const EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS = {
   extraInfos: 'extra',
 };
 
+export const EXTERNAL_DATA_PAYLOADS_VARIABLES = {
+  component: '.Event.Component',
+  connector: '.Event.Connector',
+  connectorName: '.Event.ConnectorName',
+  resource: '.Event.Resource',
+  output: '.Event.Output',
+  extraInfos: 'index .Event.ExtraInfos "%infos_name%"',
+  externalData: '.ExternalData.%reference%',
+  regexp: '.RegexMatch.%field%.%name%',
+};
+
+export const ACTION_COPY_PAYLOAD_VARIABLES = {
+  connector: 'Event.Connector',
+  connectorName: 'Event.ConnectorName',
+  component: 'Event.Component',
+  resource: 'Event.Resource',
+  output: 'Event.Output',
+  extraInfos: 'Event.ExtraInfos.',
+  regexMatch: 'RegexMatch.',
+  externalData: 'ExternalData.',
+};
+
 export const EXTERNAL_DATA_DEFAULT_CONDITION_VALUES = [
   {
     text: EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.component,
-    value: '.Event.Component',
+    value: EXTERNAL_DATA_PAYLOADS_VARIABLES.component,
   },
   {
     text: EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.connector,
-    value: '.Event.Connector',
+    value: EXTERNAL_DATA_PAYLOADS_VARIABLES.connector,
   },
   {
     text: EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.connectorName,
-    value: '.Event.ConnectorName',
+    value: EXTERNAL_DATA_PAYLOADS_VARIABLES.connectorName,
   },
   {
     text: EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.resource,
-    value: '.Event.Resource',
+    value: EXTERNAL_DATA_PAYLOADS_VARIABLES.resource,
   },
   {
     text: EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.output,
-    value: '.Event.Output',
+    value: EXTERNAL_DATA_PAYLOADS_VARIABLES.output,
   },
   {
     text: EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.extraInfos,
-    value: 'index .Event.ExtraInfos "%infos_name%"',
+    value: EXTERNAL_DATA_PAYLOADS_VARIABLES.extraInfos,
   },
 ];
-
-export const EXTERNAL_DATA_PAYLOADS_VARIABLES = {
-  externalData: '.ExternalData.%reference%',
-};

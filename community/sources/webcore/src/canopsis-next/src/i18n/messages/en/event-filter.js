@@ -40,8 +40,6 @@ export default {
     addObjectRuleField: 'Add object rule field',
     editObjectRuleField: 'Edit object rule field',
     removeRuleField: 'Remove rule field',
-    copyFromHelp: '<p>The accessible variables are: <strong>Event</strong></p>'
-      + '<i>For example:</i> <span>"Event.ExtraInfos.datecustom"</span>',
   },
   actionsTypes: {
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
