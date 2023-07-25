@@ -33,17 +33,16 @@
                 required,
                 clearable
               )
-              v-text-field.ml-2(
+              v-combobox.ml-2(
                 v-else-if="isStringCopyValueType",
                 v-field="form.value",
                 v-validate="'required'",
                 :label="$t('common.value')",
                 :error-messages="errors.collect('value')",
+                :items="copyValueVariables",
                 key="from",
                 name="value"
               )
-                template(#append="")
-                  c-help-icon(icon="help", :text="$t('eventFilter.tooltips.copyFromHelp')", left)
               c-mixed-field.ml-2(
                 v-else,
                 v-field="form.value",
@@ -53,7 +52,7 @@
 </template>
 
 <script>
-import { EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
+import { ACTION_COPY_PAYLOAD_VARIABLES, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
 
 import EventFilterEnrichmentActionFormTypeInfo from './event-filter-enrichment-action-form-type-info.vue';
 
@@ -81,6 +80,10 @@ export default {
 
         text: this.$t(`eventFilter.actionsTypes.${value}.text`),
       }));
+    },
+
+    copyValueVariables() {
+      return Object.values(ACTION_COPY_PAYLOAD_VARIABLES);
     },
 
     isStringCopyValueType() {
