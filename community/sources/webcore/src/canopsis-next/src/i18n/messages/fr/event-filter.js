@@ -43,8 +43,6 @@ export default {
     addObjectRuleField: 'Ajouter un groupe de règles',
     editObjectRuleField: 'Éditer le groupe de règles',
     removeRuleField: 'Supprimer le groupe/la règle',
-    copyFromHelp: '<p>Les variables accessibles sont: <strong>Event</strong></p>'
-      + '<i>Quelques exemples:</i> <span>"Event.ExtraInfos.datecustom"</span>',
   },
   actionsTypes: {
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
