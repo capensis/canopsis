@@ -98,6 +98,7 @@
             :medium="isMediumHeight",
             :small="isSmallHeight",
             :resizing="resizingMode",
+            :search="search",
             :wrap-actions="resizableColumn",
             @start:resize="startColumnResize",
             @select:tag="$emit('select:tag', $event)"
@@ -107,6 +108,7 @@
             :alarm="item",
             :parent-alarm-id="parentAlarmId",
             :widget="widget",
+            :search="search",
             :hide-children="hideChildren",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
           )
@@ -257,6 +259,10 @@ export default {
     cellsContentBehavior: {
       type: String,
       required: false,
+    },
+    search: {
+      type: String,
+      default: '',
     },
   },
 
