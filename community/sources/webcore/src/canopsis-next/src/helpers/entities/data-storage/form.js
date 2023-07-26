@@ -48,7 +48,7 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  */
 
 /**
- * @typedef {Object} DataStorageErrorsConfig
+ * @typedef {Object} DataStorageEventFilterFailureConfig
  * @property {DurationWithEnabled} delete_after
  */
 
@@ -63,7 +63,7 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  * @property {DataStorageWebhookConfig} webhook
  * @property {DataStorageMetricsConfig} metrics
  * @property {DataStorageMetricsConfig} perf_data_metrics
- * @property {DataStorageErrorsConfig} errors
+ * @property {DataStorageEventFilterFailureConfig} errors
  */
 
 /**
@@ -80,6 +80,7 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  * @property {HistoryWithCount} alarm
  * @property {HistoryWithCount} entity
  * @property {number} health_check
+ * @property {number} event_filter_failure
  */
 
 /**
@@ -211,12 +212,12 @@ export const dataStoragePerfDataMetricsToForm = (perfDataMetrics = {}) => ({
 });
 
 /**
- * Convert data storage errors config to errors form object
+ * Convert data storage event filter failure config to errors form object
  *
- * @param {DataStorageErrorsConfig} errors
- * @return {DataStorageErrorsConfig}
+ * @param {DataStorageEventFilterFailureConfig} errors
+ * @return {DataStorageEventFilterFailureConfig}
  */
-export const dataStorageErrorsToForm = (errors = {}) => ({
+export const dataStorageEventFilterFailureToForm = (errors = {}) => ({
   delete_after: errors.delete_after
     ? durationWithEnabledToForm(errors.delete_after)
     : { value: 30, unit: TIME_UNITS.day, enabled: false },
@@ -238,5 +239,5 @@ export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   webhook: dataStorageWebhookSettingsToForm(dataStorage.webhook),
   metrics: dataStorageMetricsToForm(dataStorage.metrics),
   perf_data_metrics: dataStoragePerfDataMetricsToForm(dataStorage.perf_data_metrics),
-  errors: dataStorageErrorsToForm(dataStorage.errors),
+  event_filter_failure: dataStorageEventFilterFailureToForm(dataStorage.errors),
 });

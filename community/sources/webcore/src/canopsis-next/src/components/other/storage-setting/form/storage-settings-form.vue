@@ -137,14 +137,15 @@
         :name="perfDataMetricsDeleteAfterFieldName"
       )
     c-information-block(
-      :title="$t('storageSetting.errors.title')",
-      :help-text="$t('storageSetting.errors.titleHelp')",
+      :title="$t('storageSetting.eventFilterFailure.title')",
+      :help-text="$t('storageSetting.eventFilterFailure.titleHelp')",
       help-icon-color="info"
     )
+      template(v-if="history.event_filter_failure", #subtitle="") {{ eventFilterFailureSubTitle }}
       c-enabled-duration-field(
-        v-field="form.errors.delete_after",
-        :label="$t('storageSetting.errors.deleteAfter')",
-        :help-text="$t('storageSetting.errors.deleteAfterHelpText')",
+        v-field="form.event_filter_failure.delete_after",
+        :label="$t('storageSetting.eventFilterFailure.deleteAfter')",
+        :help-text="$t('storageSetting.eventFilterFailure.deleteAfterHelpText')",
         :name="errorsDeleteAfterFieldName"
       )
 </template>
@@ -232,6 +233,12 @@ export default {
     remediationSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
         launchedAt: convertDateToString(this.history.remediation),
+      });
+    },
+
+    eventFilterFailureSubTitle() {
+      return this.$t('storageSetting.history.scriptLaunched', {
+        launchedAt: convertDateToString(this.history.event_filter_failure),
       });
     },
 

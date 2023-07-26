@@ -140,9 +140,8 @@ export const API_ROUTES = {
     templates: '/api/v4/role-templates',
   },
   eventFilter: {
+    list: '/api/v4/eventfilter',
     rules: '/api/v4/eventfilter/rules',
-    ruleErrors: '/api/v4/eventfilter/rule-errors',
-    ruleErrorsRead: '/api/v4/eventfilter/rule-errors/read',
   },
   file: '/api/v4/file',
   fileAccess: '/api/v4/file-access',
