@@ -89,13 +89,11 @@ Feature: get a job
       "data": [
         {
           "_id": "test-job-to-get-1",
-          "deletable": true,
-          "running": false
+          "deletable": true
         },
         {
           "_id": "test-job-to-get-2",
-          "deletable": true,
-          "running": false
+          "deletable": true
         }
       ],
       "meta": {
@@ -160,13 +158,11 @@ Feature: get a job
       "data": [
         {
           "_id": "test-job-to-check-linked-to-manual-instruction",
-          "deletable": false,
-          "running": false
+          "deletable": false
         },
         {
           "_id": "test-job-to-check-linked-to-manual-instruction-execution",
-          "deletable": false,
-          "running": false
+          "deletable": false
         }
       ]
     }
@@ -179,8 +175,7 @@ Feature: get a job
       "data": [
         {
           "_id": "test-job-to-check-linked-to-auto-instruction",
-          "deletable": false,
-          "running": false
+          "deletable": false
         }
       ]
     }

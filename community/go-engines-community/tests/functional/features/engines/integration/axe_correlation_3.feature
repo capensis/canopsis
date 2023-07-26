@@ -422,3 +422,132 @@ Feature: create and update meta alarm
       }
     ]
     """
+
+  @concurrent
+  Scenario: given manual meta alarm with auto_resolve=true should resolve manual metaalarm when the last child is resolved
+    Given I am admin
+    When I send an event and wait the end of event processing:
+    """json
+    [
+      {
+        "connector": "test-connector-axe-correlation-third-2",
+        "connector_name": "test-connector-name-axe-correlation-third-2",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-axe-correlation-third-2",
+        "resource": "test-resource-axe-correlation-third-2-1",
+        "state": 1,
+        "output": "test-output-axe-correlation-third-2"
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-third-2-1
+    When I save response alarmId1={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/manual-meta-alarms:
+    """json
+    {
+      "name": "test-metaAlarm-axe-correlation-third-2",
+      "comment": "test-metaAlarm-axe-correlation-third-2-comment",
+      "alarms": ["{{ .alarmId1 }}"],
+      "auto_resolve": true
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/cat/manual-meta-alarms?search=test-metaAlarm-axe-correlation-third-2 until response code is 200 and body contains:
+    """json
+    [
+      {
+        "name": "test-metaAlarm-axe-correlation-third-2"
+      }
+    ]
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-axe-correlation-third-2",
+      "connector_name": "test-connector-name-axe-correlation-third-2",
+      "source_type": "resource",
+      "event_type": "cancel",
+      "component": "test-component-axe-correlation-third-2",
+      "resource": "test-resource-axe-correlation-third-2-1",
+      "output": "test-output-axe-correlation-third-2"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-axe-correlation-third-2",
+      "connector_name": "test-connector-name-axe-correlation-third-2",
+      "source_type": "resource",
+      "event_type": "resolve_cancel",
+      "component": "test-component-axe-correlation-third-2",
+      "resource": "test-resource-axe-correlation-third-2-1",
+      "output": "test-output-axe-correlation-third-2"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-third-2-1&correlation=true until response code is 200 and response key "data.0.v.resolved" is greater or equal than 1
+
+  @concurrent
+  Scenario: given manual meta alarm with auto_resolve=false shouldn't resolve manual metaalarm when the last child is resolved
+    Given I am admin
+    When I send an event and wait the end of event processing:
+    """json
+    [
+      {
+        "connector": "test-connector-axe-correlation-third-3",
+        "connector_name": "test-connector-name-axe-correlation-third-3",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-axe-correlation-third-3",
+        "resource": "test-resource-axe-correlation-third-3-1",
+        "state": 1,
+        "output": "test-output-axe-correlation-third-3"
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-axe-correlation-third-3-1
+    When I save response alarmId1={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/manual-meta-alarms:
+    """json
+    {
+      "name": "test-metaAlarm-axe-correlation-third-3",
+      "comment": "test-metaAlarm-axe-correlation-third-3-comment",
+      "alarms": ["{{ .alarmId1 }}"],
+      "auto_resolve": false
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/cat/manual-meta-alarms?search=test-metaAlarm-axe-correlation-third-3 until response code is 200 and body contains:
+    """json
+    [
+      {
+        "name": "test-metaAlarm-axe-correlation-third-3"
+      }
+    ]
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-axe-correlation-third-3",
+      "connector_name": "test-connector-name-axe-correlation-third-3",
+      "source_type": "resource",
+      "event_type": "cancel",
+      "component": "test-component-axe-correlation-third-3",
+      "resource": "test-resource-axe-correlation-third-3-1",
+      "output": "test-output-axe-correlation-third-3"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-axe-correlation-third-3",
+      "connector_name": "test-connector-name-axe-correlation-third-3",
+      "source_type": "resource",
+      "event_type": "resolve_cancel",
+      "component": "test-component-axe-correlation-third-3",
+      "resource": "test-resource-axe-correlation-third-3-1",
+      "output": "test-output-axe-correlation-third-3"
+    }
+    """
+    When I wait 3s
+    Then the response key "data.0.v.resolved" should not exist
