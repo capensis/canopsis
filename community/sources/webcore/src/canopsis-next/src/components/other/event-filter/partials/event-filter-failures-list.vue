@@ -1,23 +1,32 @@
 <template lang="pug">
   c-advanced-data-table(
     :headers="headers",
-    :items="errors",
+    :items="failures",
     :loading="pending",
     :total-items="totalItems",
     :pagination="pagination",
+    :is-expandable-item="hasEvent"
     expand,
     advanced-pagination,
     @update:pagination="$emit('update:pagination', $event)"
   )
     template(#status="{ item }")
-      c-circle-badge.error.text-uppercase(v-if="item.new") {{ $t('common.new') }}
-    template(#timestamp="{ item }") {{ item.timestamp | date }}
+      c-circle-badge.error.text-uppercase(v-if="item.unread") {{ $t('common.new') }}
+    template(#t="{ item }") {{ item.t | date }}
+    template(#type="{ item }") {{ $t(`eventFilter.failureTypes.${item.type}`) }}
+    template(#message="{ item }")
+      span.pre-wrap {{ item.message }}
+    template(#expand="{ item }")
+      event-filter-failures-list-expand-panel(:failure="item")
 </template>
 
 <script>
+import EventFilterFailuresListExpandPanel from './event-filter-failures-list-expand-panel.vue';
+
 export default {
+  components: { EventFilterFailuresListExpandPanel },
   props: {
-    errors: {
+    failures: {
       type: Array,
       default: () => [],
     },
@@ -38,10 +47,15 @@ export default {
     headers() {
       return [
         { value: 'status', sortable: false, width: 50 },
-        { text: this.$t('common.timestamp'), value: 'timestamp' },
+        { text: this.$t('common.timestamp'), value: 't' },
         { text: this.$t('common.type'), value: 'type' },
         { text: this.$t('common.message'), value: 'message' },
       ];
+    },
+  },
+  methods: {
+    hasEvent(failure) {
+      return !!failure.event;
     },
   },
 };

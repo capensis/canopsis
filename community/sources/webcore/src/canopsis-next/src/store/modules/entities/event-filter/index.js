@@ -13,12 +13,12 @@ export default createEntityModule({
   withMeta: true,
 }, {
   actions: {
-    markNewEventFilterErrorsAsRead(context, { id }) {
-      return request.post(`${API_ROUTES.eventFilter.rules}/${id}/read-errors`);
+    markNewEventFilterFailuresAsRead(context, { id }) {
+      return request.put(`${API_ROUTES.eventFilter.list}/${id}/failures`);
     },
 
-    fetchEventFilterErrorsListWithoutStore(context, { id, params } = {}) {
-      return request.get(`${API_ROUTES.eventFilter.rules}/${id}/errors`, { params });
+    fetchEventFilterFailuresListWithoutStore(context, { id, params } = {}) {
+      return request.get(`${API_ROUTES.eventFilter.list}/${id}/failures`, { params });
     },
   },
 });
