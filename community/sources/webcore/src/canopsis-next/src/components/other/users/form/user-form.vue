@@ -32,7 +32,14 @@
       :required="isNew",
       browser-autocomplete="new-password"
     )
-    c-role-field(v-field="form.role", :disabled="onlyUserPrefs", required)
+    c-role-field(
+      v-field="form.roles",
+      :disabled="onlyUserPrefs",
+      :label="$tc('common.role', 2)",
+      required,
+      multiple,
+      chips
+    )
     c-language-field(
       v-field="form.ui_language",
       :label="$t('user.language')"

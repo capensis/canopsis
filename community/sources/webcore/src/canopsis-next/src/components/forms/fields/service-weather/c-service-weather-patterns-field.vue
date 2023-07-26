@@ -5,7 +5,8 @@
     :name="name",
     :required="required",
     :attributes="availableServiceWeatherAttributes",
-    :with-type="withType"
+    :with-type="withType",
+    :counter="counter"
   )
 </template>
 
@@ -50,6 +51,10 @@ export default {
     withType: {
       type: Boolean,
       default: false,
+    },
+    counter: {
+      type: Object,
+      required: false,
     },
   },
   computed: {

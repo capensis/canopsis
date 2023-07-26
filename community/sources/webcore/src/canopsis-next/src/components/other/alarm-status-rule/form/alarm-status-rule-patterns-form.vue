@@ -6,7 +6,8 @@
     :alarm-attributes="alarmAttributes",
     :entity-attributes="entityAttributes",
     with-alarm,
-    with-entity
+    with-entity,
+    both-counters
   )
 </template>
 

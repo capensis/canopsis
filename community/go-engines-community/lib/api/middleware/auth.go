@@ -29,7 +29,7 @@ func Auth(providers []security.HttpProvider) gin.HandlerFunc {
 				// the user's id can be read later using c.MustGet(auth.UserKey).
 				c.Set(auth.Username, user.DisplayName)
 				c.Set(auth.UserKey, user.ID)
-				c.Set(auth.RoleKey, user.Role)
+				c.Set(auth.RolesKey, user.Roles)
 				c.Set(auth.ApiKey, user.AuthApiKey)
 				break
 			}

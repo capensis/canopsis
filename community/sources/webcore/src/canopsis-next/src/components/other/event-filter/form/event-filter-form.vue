@@ -16,7 +16,7 @@
     c-information-block(:title="$t('eventFilter.duringPeriod')")
       event-filter-drop-intervals-field(v-field="form")
     pbehavior-recurrence-rule-field.mb-3(v-field="form")
-    c-patterns-field(v-field="form.patterns", with-entity, with-event, some-required)
+    c-patterns-field(v-field="form.patterns", with-entity, with-event, some-required, entity-counters-type)
 
     template(v-if="hasAdditionalOptions")
       v-divider.my-3

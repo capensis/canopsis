@@ -41,7 +41,7 @@ func NewStore(
 		tokenGenerator: tokenGenerator,
 		authorProvider: authorProvider,
 
-		defaultSearchByFields: []string{"value", "user.name", "role.name", "description"},
+		defaultSearchByFields: []string{"value", "user.name", "roles.name", "description"},
 		defaultSortBy:         "created",
 	}
 }
@@ -161,15 +161,33 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 
 func getRolePipeline() []bson.M {
 	return []bson.M{
+		{"$unwind": bson.M{
+			"path":                       "$user.roles",
+			"preserveNullAndEmptyArrays": true,
+			"includeArrayIndex":          "role_index",
+		}},
 		{"$lookup": bson.M{
-			"from":         mongo.RightsMongoCollection,
-			"localField":   "user.role",
+			"from":         mongo.RoleCollection,
+			"localField":   "user.roles",
 			"foreignField": "_id",
 			"as":           "role",
 		}},
 		{"$unwind": bson.M{"path": "$role", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"role.name": "$role.crecord_name",
+		{"$sort": bson.M{"role_index": 1}},
+		{"$group": bson.M{
+			"_id":  "$_id",
+			"data": bson.M{"$first": "$$ROOT"},
+			"roles": bson.M{"$push": bson.M{
+				"$cond": bson.M{
+					"if":   "$role._id",
+					"then": "$role",
+					"else": "$$REMOVE",
+				},
+			}},
 		}},
+		{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+			"$data",
+			bson.M{"roles": "$roles"},
+		}}}},
 	}
 }

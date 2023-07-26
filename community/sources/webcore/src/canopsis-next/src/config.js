@@ -135,7 +135,10 @@ export const API_ROUTES = {
   widgetTemplate: '/api/v4/widget-templates',
   permissions: '/api/v4/permissions',
   users: '/api/v4/users',
-  roles: '/api/v4/roles',
+  roles: {
+    list: '/api/v4/roles',
+    templates: '/api/v4/role-templates',
+  },
   eventFilter: {
     rules: '/api/v4/eventfilter/rules',
   },
@@ -196,9 +199,12 @@ export const API_ROUTES = {
   flappingRules: '/api/v4/flapping-rules',
   resolveRules: '/api/v4/resolve-rules',
   messageRateStats: '/api/v4/message-rate-stats',
-  patterns: '/api/v4/patterns',
-  bulkPatterns: '/api/v4/bulk/patterns',
-  patternsCount: '/api/v4/patterns-count',
+  pattern: {
+    list: '/api/v4/patterns',
+    bulkList: '/api/v4/bulk/patterns',
+    entitiesCount: '/api/v4/patterns-entities-count',
+    alarmsCount: '/api/v4/patterns-alarms-count',
+  },
   shareTokens: '/api/v4/share-tokens',
   techMetrics: '/api/v4/tech-metrics-export',
   templateVars: '/api/v4/template-vars',

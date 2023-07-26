@@ -12,7 +12,7 @@ export { default as CPriorityField } from '@/components/forms/fields/c-priority-
 export { default as CEnabledLimitField } from '@/components/forms/fields/c-enabled-limit-field.vue';
 
 export { default as CLazySearchField } from '@/components/forms/fields/c-lazy-search-field.vue';
-export { default as CRoleField } from '@/components/forms/fields/c-role-field.vue';
+export { default as CRoleField } from '@/components/forms/fields/role/c-role-field.vue';
 export { default as CTimezoneField } from '@/components/forms/fields/c-timezone-field.vue';
 export { default as CLanguageField } from '@/components/forms/fields/c-language-field.vue';
 export { default as CSamplingField } from '@/components/forms/fields/c-sampling-field.vue';

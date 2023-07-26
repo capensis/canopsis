@@ -5,11 +5,10 @@
       v-flex.text-xs-center.font-weight-bold(xs4) {{ $tc('common.view') }}
       v-flex.text-xs-center.font-weight-bold(xs4) {{ $tc('common.tab') }}
     v-layout(column)
-      draggable.tabs-draggable-panel.secondary.lighten-1(
-        :value="tabs",
-        :class="{ empty: isTabsEmpty, disabled: disabled }",
-        :options="draggableOptions",
-        @change="changeTabsOrdering"
+      c-draggable-list-field.tabs-draggable-panel.secondary.lighten-1(
+        v-field="tabs",
+        :class="{ 'tabs-draggable-panel--empty': isTabsEmpty, 'tabs-draggable-panel--disabled': disabled }",
+        :disabled="disabled"
       )
         tab-panel-content(v-for="tab in tabs", :tab="tab", hideActions, :key="tab._id")
           template(#title="")
@@ -17,17 +16,11 @@
 </template>
 
 <script>
-import Draggable from 'vuedraggable';
-
-import { VUETIFY_ANIMATION_DELAY } from '@/config';
-
-import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
-
 import TabPanelContent from '@/components/other/playlists/partials/tab-panel-content.vue';
 import PlaylistTabItem from '@/components/other/playlists/partials/playlist-tab-item.vue';
 
 export default {
-  components: { Draggable, TabPanelContent, PlaylistTabItem },
+  components: { TabPanelContent, PlaylistTabItem },
   model: {
     prop: 'tabs',
     event: 'change',
@@ -46,29 +39,17 @@ export default {
     isTabsEmpty() {
       return this.tabs.length === 0;
     },
-
-    draggableOptions() {
-      return {
-        animation: VUETIFY_ANIMATION_DELAY,
-        disabled: this.disabled,
-      };
-    },
-  },
-  methods: {
-    changeTabsOrdering(event) {
-      this.$emit('change', dragDropChangePositionHandler(this.tabs, event));
-    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
   .tabs-draggable-panel {
-    &:not(.disabled) ::v-deep .tab-panel-item {
+    &:not(&--disabled) ::v-deep .tab-panel-item {
       cursor: move;
     }
 
-    &.empty {
+    &--empty {
       &:after {
         content: '';
         display: block;

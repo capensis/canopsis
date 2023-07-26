@@ -1,28 +1,17 @@
 <template lang="pug">
-  draggable.views-panel.secondary.lighten-1(
-    :value="views",
+  c-draggable-list-field.views-panel.secondary.lighten-1(
+    v-field="views",
     :class="{ empty: isViewsEmpty }",
-    :options="draggableOptions",
-    @change="changeViewsOrdering"
+    :group="draggableGroup"
   )
-    group-view-panel(
-      v-for="view in views",
-      :key="view._id",
-      :view="view"
-    )
+    group-view-panel(v-for="view in views", :key="view._id", :view="view")
 </template>
 
 <script>
-import Draggable from 'vuedraggable';
-
-import { VUETIFY_ANIMATION_DELAY } from '@/config';
-
-import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
-
 import GroupViewPanel from './group-view-panel.vue';
 
 export default {
-  components: { GroupViewPanel, Draggable },
+  components: { GroupViewPanel },
   model: {
     prop: 'views',
     event: 'change',
@@ -46,16 +35,16 @@ export default {
       return this.views.length === 0;
     },
 
-    draggableOptions() {
-      return {
-        animation: VUETIFY_ANIMATION_DELAY,
-        group: { name: 'views', put: this.put, pull: this.pull },
-      };
+    draggableGroupName() {
+      return 'views';
     },
-  },
-  methods: {
-    changeViewsOrdering(event) {
-      this.$emit('change', dragDropChangePositionHandler(this.views, event));
+
+    draggableGroup() {
+      return {
+        name: this.draggableGroupName,
+        put: this.put ? [this.draggableGroupName] : false,
+        pull: this.pull ? [this.draggableGroupName] : false,
+      };
     },
   },
 };
