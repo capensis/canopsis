@@ -199,9 +199,9 @@ func RegisterRoutes(
 				userApi.Delete,
 			)
 		}
+		roleApi := role.NewApi(role.NewStore(dbClient), actionLogger)
 		roleRouter := protected.Group("/roles")
 		{
-			roleApi := role.NewApi(role.NewStore(dbClient), actionLogger)
 			roleRouter.POST("",
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer),
 				roleApi.Create,
@@ -224,6 +224,10 @@ func RegisterRoutes(
 				roleApi.Delete,
 			)
 		}
+		protected.GET("/role-templates",
+			middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
+			roleApi.ListTemplates,
+		)
 		permissionRouter := protected.Group("/permissions")
 		{
 			permissionApi := permission.NewApi(permission.NewStore(dbClient))
@@ -1296,9 +1300,14 @@ func RegisterRoutes(
 			)
 		}
 		protected.POST(
-			"/patterns-count",
+			"/patterns-alarms-count",
 			middleware.OnlyAuth(),
-			patternAPI.Count,
+			patternAPI.CountAlarms,
+		)
+		protected.POST(
+			"/patterns-entities-count",
+			middleware.OnlyAuth(),
+			patternAPI.CountEntities,
 		)
 		protected.POST(
 			"/patterns-alarms",

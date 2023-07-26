@@ -96,12 +96,18 @@
       :selected-tag="query.tag",
       :selectable="!hideMassSelection",
       :hide-actions="hideActions",
+      :resizable-column="resizableColumn",
+      :draggable-column="draggableColumn",
+      :cells-content-behavior="cellsContentBehavior",
+      :columns-settings="columnsSettings",
+      :editing="editing",
       expandable,
       densable,
       @select:tag="selectTag",
       @update:dense="updateDense",
       @update:page="updateQueryPage",
       @update:rows-per-page="updateRecordsPerPage",
+      @update:columns-settings="updateColumnsSettings",
       @clear:tag="clearTag"
     )
     alarms-expand-panel-tour(v-if="isTourEnabled", :callbacks="tourCallbacks")
@@ -237,6 +243,22 @@ export default {
     dense() {
       return this.userPreference.content.dense ?? this.widget.parameters.dense;
     },
+
+    columnsSettings() {
+      return this.userPreference.content.columns_settings;
+    },
+
+    resizableColumn() {
+      return !!this.widget.parameters?.columns?.resizable;
+    },
+
+    cellsContentBehavior() {
+      return this.widget.parameters?.columns?.cells_content_behavior;
+    },
+
+    draggableColumn() {
+      return !!this.widget.parameters?.columns?.draggable;
+    },
   },
   methods: {
     refreshExpanded() {
@@ -266,8 +288,8 @@ export default {
       this.query = newQuery;
     },
 
-    updateSearchQuery(query) {
-      this.query = query;
+    updateColumnsSettings(columnsSettings) {
+      this.updateContentInUserPreference({ columns_settings: columnsSettings });
     },
 
     updateCorrelation(correlation) {

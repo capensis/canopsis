@@ -103,6 +103,7 @@ type BasePool interface {
 	Close()
 	Stat() *pgxpool.Stat
 	Ping(ctx context.Context) error
+	CopyFrom(ctx context.Context, tableName pgx.Identifier, columnNames []string, rowSrc pgx.CopyFromSource) (int64, error)
 }
 
 type Pool interface {
@@ -113,6 +114,7 @@ type Pool interface {
 	Close()
 	WithTransaction(ctx context.Context, f func(context.Context, pgx.Tx) error) error
 	Ping(ctx context.Context) error
+	CopyFrom(ctx context.Context, tableName pgx.Identifier, columnNames []string, rowSrc pgx.CopyFromSource) (int64, error)
 }
 
 type poolWithRetries struct {
@@ -209,6 +211,10 @@ func (p *poolWithRetries) WithTransaction(ctx context.Context, f func(context.Co
 
 func (p *poolWithRetries) Ping(ctx context.Context) error {
 	return p.pgxPool.Ping(ctx)
+}
+
+func (p *poolWithRetries) CopyFrom(ctx context.Context, tableName pgx.Identifier, columnNames []string, rowSrc pgx.CopyFromSource) (int64, error) {
+	return p.pgxPool.CopyFrom(ctx, tableName, columnNames, rowSrc)
 }
 
 func (p *poolWithRetries) retry(ctx context.Context, f func() error) {

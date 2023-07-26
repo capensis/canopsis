@@ -35,27 +35,25 @@ func NewStore(
 	logger zerolog.Logger,
 ) Store {
 	return &store{
-		dbClient:         dbClient,
-		dbCollection:     dbClient.Collection(mongo.AlarmMongoCollection),
-		userDbCollection: dbClient.Collection(mongo.RightsMongoCollection),
-		amqpPublisher:    amqpPublisher,
-		exchange:         exchange,
-		queue:            queue,
-		encoder:          encoder,
-		contentType:      contentType,
-		logger:           logger,
+		dbClient:      dbClient,
+		dbCollection:  dbClient.Collection(mongo.AlarmMongoCollection),
+		amqpPublisher: amqpPublisher,
+		exchange:      exchange,
+		queue:         queue,
+		encoder:       encoder,
+		contentType:   contentType,
+		logger:        logger,
 	}
 }
 
 type store struct {
-	dbClient         mongo.DbClient
-	dbCollection     mongo.DbCollection
-	userDbCollection mongo.DbCollection
-	amqpPublisher    libamqp.Publisher
-	exchange, queue  string
-	encoder          encoding.Encoder
-	contentType      string
-	logger           zerolog.Logger
+	dbClient        mongo.DbClient
+	dbCollection    mongo.DbCollection
+	amqpPublisher   libamqp.Publisher
+	exchange, queue string
+	encoder         encoding.Encoder
+	contentType     string
+	logger          zerolog.Logger
 }
 
 func (s *store) Ack(ctx context.Context, id string, r AckRequest, userId, username string) (bool, error) {

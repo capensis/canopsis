@@ -24,6 +24,8 @@
         @update:template="updateWidgetColumnsTemplate"
       )
       v-divider
+      field-resize-column-behavior(v-model="form.parameters.columns")
+      v-divider
       field-columns(
         v-model="form.parameters.widgetGroupColumns",
         :template="form.parameters.widgetGroupColumnsTemplate",
@@ -133,13 +135,13 @@
       )
       v-divider
       field-switcher(
-        v-model="form.parameters.isMultiDeclareTicketEnabled",
-        :title="$t('settings.isMultiDeclareTicketEnabled')"
+        v-model="form.parameters.isRemoveAlarmsFromMetaAlarmCommentRequired",
+        :title="$t('settings.isRemoveAlarmsFromMetaAlarmCommentRequired')"
       )
       v-divider
-      field-number(
-        v-model="form.parameters.inlineLinksCount",
-        :title="$t('settings.inlineLinksCount')"
+      field-switcher(
+        v-model="form.parameters.isMultiDeclareTicketEnabled",
+        :title="$t('settings.isMultiDeclareTicketEnabled')"
       )
       v-divider
       export-csv-form(
@@ -147,7 +149,8 @@
         :type="$constants.ENTITIES_TYPES.alarm",
         :templates="alarmColumnsWidgetTemplates",
         :templates-pending="widgetTemplatesPending",
-        datetime-format
+        datetime-format,
+        with-instructions
       )
       v-divider
       field-switcher(
@@ -170,6 +173,11 @@
           v-model="form.parameters.kiosk.hideToolbar",
           :title="$t('settings.kiosk.hideToolbar')"
         )
+      v-divider
+      field-switcher(
+        v-model="form.parameters.isActionsAllowWithOkState",
+        :title="$t('settings.isActionsAllowWithOkState')"
+      )
     v-divider
     charts-form(v-model="form.parameters.charts")
     v-divider
@@ -210,6 +218,7 @@ import FieldLiveReporting from './form/fields/live-reporting.vue';
 import FieldFastActionOutput from './form/fields/fast-action-output.vue';
 import FieldOpenedResolvedFilter from './form/fields/opened-resolved-filter.vue';
 import FieldInfoPopup from './form/fields/info-popup.vue';
+import FieldResizeColumnBehavior from './form/fields/resize-column-behavior.vue';
 
 /**
  * Component to regroup the alarms list settings fields
@@ -237,6 +246,7 @@ export default {
     FieldNumber,
     ExportCsvForm,
     ChartsForm,
+    FieldResizeColumnBehavior,
   },
   mixins: [
     widgetSettingsMixin,
