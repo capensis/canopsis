@@ -1861,7 +1861,7 @@ definitions:
       message:
         type: string
       t:
-        $ref: '#/definitions/types.CpsTime'
+        type: integer
       type:
         type: integer
       unread:
@@ -3615,7 +3615,7 @@ definitions:
       author:
         type: string
       created:
-        $ref: '#/definitions/types.CpsTime'
+        type: integer
       enabled:
         type: boolean
       fullscreen:
@@ -3629,7 +3629,7 @@ definitions:
           type: string
         type: array
       updated:
-        $ref: '#/definitions/types.CpsTime'
+        type: integer
     type: object
   request.BasicAuth:
     properties:
@@ -4621,11 +4621,6 @@ definitions:
     - lat
     - lng
     type: object
-  types.CpsTime:
-    properties:
-      time.Time:
-        type: string
-    type: object
   types.CropCounter:
     properties:
       state:0:
@@ -5168,11 +5163,11 @@ definitions:
       author:
         $ref: '#/definitions/author.Author'
       created:
-        $ref: '#/definitions/types.CpsTime'
+        type: integer
       title:
         type: string
       updated:
-        $ref: '#/definitions/types.CpsTime'
+        type: integer
       widgets:
         items:
           $ref: '#/definitions/widget.Response'
