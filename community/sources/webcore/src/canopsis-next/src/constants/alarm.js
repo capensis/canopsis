@@ -2,6 +2,7 @@ import { COLORS } from '@/config';
 
 export const ALARM_FIELDS = {
   id: '_id',
+  assignedInstructions: 'assigned_instructions',
   displayName: 'v.display_name',
   output: 'v.output',
   longOutput: 'v.long_output',
@@ -193,6 +194,11 @@ export const ALARMS_OPENED_VALUES = {
   resolved: false,
 };
 
+export const ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS = {
+  wrap: 'wrap',
+  truncate: 'truncate',
+};
+
 export const ALARM_BASIC_METRIC_PARAMETERS = {
   activeAlarms: 'active_alarms',
   createdAlarms: 'created_alarms',
@@ -324,6 +330,7 @@ export const ALARM_TEMPLATE_FIELDS = {
 
 export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.id]: 'common.id',
+  [ALARM_FIELDS.assignedInstructions]: 'alarm.fields.assignedInstructions',
   [ALARM_FIELDS.displayName]: 'alarm.fields.displayName',
   [ALARM_FIELDS.output]: 'common.output',
   [ALARM_FIELDS.longOutput]: 'common.longOutput',
@@ -442,4 +449,18 @@ export const ALARMS_EXPAND_PANEL_TABS = {
   impactChain: 'impactChain',
   entityGantt: 'entityGantt',
   charts: 'charts',
+};
+
+export const ALARM_LINK_ICON_CHIP_WIDTH = 24;
+
+export const ALARM_LINK_ICON_CHIP_COLUMN_GAP = {
+  [ALARM_DENSE_TYPES.large]: 8,
+  [ALARM_DENSE_TYPES.medium]: 8,
+  [ALARM_DENSE_TYPES.small]: 4,
+};
+
+export const ALARM_LINK_TD_PADDINGS = {
+  [ALARM_DENSE_TYPES.large]: 8,
+  [ALARM_DENSE_TYPES.medium]: 6,
+  [ALARM_DENSE_TYPES.small]: 6,
 };

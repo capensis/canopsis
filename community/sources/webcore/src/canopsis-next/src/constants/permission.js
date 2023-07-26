@@ -353,7 +353,6 @@ export const USERS_PERMISSIONS = {
       ratingSettings: `${USER_PERMISSIONS_PREFIXES.api}_rating_settings`,
       filter: `${USER_PERMISSIONS_PREFIXES.api}_kpi_filter`,
       corporatePattern: `${USER_PERMISSIONS_PREFIXES.api}_corporate_pattern`,
-      api: `${USER_PERMISSIONS_PREFIXES.api}_api`,
       exportConfigurations: `${USER_PERMISSIONS_PREFIXES.api}_export_configurations`,
       map: `${USER_PERMISSIONS_PREFIXES.api}_map`,
       shareToken: `${USER_PERMISSIONS_PREFIXES.api}_share_token`,
@@ -446,9 +445,6 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [CONTEXT_ACTIONS_TYPES.duplicateEntity]: USERS_PERMISSIONS.business.context.actions.duplicateEntity,
     [CONTEXT_ACTIONS_TYPES.deleteEntity]: USERS_PERMISSIONS.business.context.actions.deleteEntity,
     [CONTEXT_ACTIONS_TYPES.pbehaviorAdd]: USERS_PERMISSIONS.business.context.actions.pbehaviorAdd,
-    [CONTEXT_ACTIONS_TYPES.pbehaviorList]: USERS_PERMISSIONS.business.context.actions.pbehaviorList,
-    [CONTEXT_ACTIONS_TYPES.pbehaviorDelete]: USERS_PERMISSIONS.business.context.actions.pbehaviorDelete,
-    [CONTEXT_ACTIONS_TYPES.pbehaviorDelete]: USERS_PERMISSIONS.business.context.actions.pbehaviorDelete,
     [CONTEXT_ACTIONS_TYPES.massEnable]: USERS_PERMISSIONS.business.context.actions.massEnable,
     [CONTEXT_ACTIONS_TYPES.massDisable]: USERS_PERMISSIONS.business.context.actions.massDisable,
 

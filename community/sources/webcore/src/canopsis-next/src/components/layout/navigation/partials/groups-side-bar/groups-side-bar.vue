@@ -12,13 +12,13 @@
         app-logo.logo
         logged-users-count
         app-version.version
-      draggable.groups-panel(
+      c-draggable-list-field.groups-panel(
         v-if="hasReadAnyViewAccess",
         v-model="mutatedGroups",
         :class="{ ordering: isGroupsOrderChanged }",
         :component-data="{ props: { expand: true, dark: true, focusable: true } }",
-        :options="draggableOptions",
-        element="v-expansion-panel"
+        :disabled="!isNavigationEditingMode",
+        component="v-expansion-panel"
       )
         groups-side-bar-group(
           v-for="(group, index) in mutatedGroups",
@@ -42,9 +42,6 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import Draggable from 'vuedraggable';
-
-import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 import { groupSchema } from '@/store/schemas';
 
@@ -74,7 +71,6 @@ const { mapGetters: modalMapGetters } = createNamespacedHelpers('modals');
  */
 export default {
   components: {
-    Draggable,
     GroupsSettingsButton,
     AppLogo,
     AppVersion,
@@ -111,13 +107,6 @@ export default {
           this.$emit('input', value);
         }
       },
-    },
-
-    draggableOptions() {
-      return {
-        animation: VUETIFY_ANIMATION_DELAY,
-        disabled: !this.isNavigationEditingMode,
-      };
     },
 
     isGroupsOrderChanged() {

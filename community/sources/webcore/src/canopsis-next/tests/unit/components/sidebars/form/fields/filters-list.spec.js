@@ -2,6 +2,7 @@ import Faker from 'faker';
 
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
+
 import { MODALS } from '@/constants';
 import { uuid } from '@/helpers/uuid';
 
@@ -66,6 +67,7 @@ describe('filters-list', () => {
           withEntity: false,
           withPbehavior: false,
           withServiceWeather: false,
+          entityCountersType: false,
           withTitle: true,
           action: expect.any(Function),
         },
@@ -118,6 +120,7 @@ describe('filters-list', () => {
           withEntity: false,
           withPbehavior: false,
           withServiceWeather: false,
+          entityCountersType: false,
           withTitle: true,
           action: expect.any(Function),
         },

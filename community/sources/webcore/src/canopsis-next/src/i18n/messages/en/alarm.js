@@ -138,6 +138,9 @@ export default {
     failedManualInstructions: 'Manual instruction <strong>{title}</strong> is failed | Manual instructions <strong>{title}</strong> is failed',
     failedAutoInstructions: 'Automatic instruction <strong>{title}</strong> is failed | Automatic instructions <strong>{title}</strong> is failed',
     hasManualInstruction: 'There is a manual instruction for this type of an incident | There are a manual instructions for this type of an incident',
+    resetChangeColumns: 'Reset columns ordering/resizing',
+    startChangeColumns: 'Start change columns ordering/resizing',
+    finishChangeColumns: 'Finish change columns ordering/resizing',
   },
   metrics: {
     [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Number of created alarms',
@@ -173,6 +176,7 @@ export default {
   },
   fields: {
     displayName: 'Display name',
+    assignedInstructions: 'Assigned instructions',
     initialOutput: 'Initial output',
     initialLongOutput: 'Initial long output',
     lastComment: 'Last comment',
@@ -211,5 +215,7 @@ export default {
     entityInfos: 'Entity infos',
     entityComponentInfos: 'Entity component infos',
     entityLastPbehaviorDate: 'Entity last pbehavior date',
+    openedChildren: 'Opened consequences',
+    closedChildren: 'Closed consequences',
   },
 };
