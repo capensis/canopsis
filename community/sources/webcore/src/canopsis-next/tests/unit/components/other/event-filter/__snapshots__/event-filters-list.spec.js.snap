@@ -127,7 +127,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               aria-label="Errors: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
-              data-value="errors"
+              data-value="unread_failures_count"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -279,7 +279,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0
             </td>
             <td>
-              type-0
+              Drop
             </td>
             <td>
               -
@@ -358,7 +358,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-1
             </td>
             <td>
-              type-1
+              Break
             </td>
             <td>
               1
@@ -439,7 +439,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-2
             </td>
             <td>
-              type-2
+              Enrichment
             </td>
             <td>
               2
@@ -518,7 +518,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-3
             </td>
             <td>
-              type-3
+              Change entity
             </td>
             <td>
               3
@@ -599,7 +599,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-4
             </td>
             <td>
-              type-4
+              Drop
             </td>
             <td>
               4
@@ -678,7 +678,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-5
             </td>
             <td>
-              type-5
+              Break
             </td>
             <td>
               5
@@ -759,7 +759,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-6
             </td>
             <td>
-              type-6
+              Enrichment
             </td>
             <td>
               6
@@ -838,7 +838,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-7
             </td>
             <td>
-              type-7
+              Change entity
             </td>
             <td>
               7
@@ -919,7 +919,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-8
             </td>
             <td>
-              type-8
+              Drop
             </td>
             <td>
               8
@@ -998,7 +998,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-9
             </td>
             <td>
-              type-9
+              Break
             </td>
             <td>
               9
@@ -1079,7 +1079,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-10
             </td>
             <td>
-              type-10
+              Enrichment
             </td>
             <td>
               10
@@ -1254,7 +1254,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               aria-label="Errors: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
-              data-value="errors"
+              data-value="unread_failures_count"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -1508,7 +1508,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               aria-label="Errors: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
-              data-value="errors"
+              data-value="unread_failures_count"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -1657,7 +1657,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0
             </td>
             <td>
-              type-0
+              Drop
             </td>
             <td>
               -
@@ -1737,7 +1737,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-1
             </td>
             <td>
-              type-1
+              Break
             </td>
             <td>
               1
@@ -1807,7 +1807,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-2
             </td>
             <td>
-              type-2
+              Enrichment
             </td>
             <td>
               2
@@ -1875,7 +1875,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-3
             </td>
             <td>
-              type-3
+              Change entity
             </td>
             <td>
               3
@@ -1945,7 +1945,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-4
             </td>
             <td>
-              type-4
+              Drop
             </td>
             <td>
               4
@@ -2013,7 +2013,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-5
             </td>
             <td>
-              type-5
+              Break
             </td>
             <td>
               5
@@ -2083,7 +2083,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-6
             </td>
             <td>
-              type-6
+              Enrichment
             </td>
             <td>
               6
@@ -2151,7 +2151,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-7
             </td>
             <td>
-              type-7
+              Change entity
             </td>
             <td>
               7
@@ -2221,7 +2221,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-8
             </td>
             <td>
-              type-8
+              Drop
             </td>
             <td>
               8
@@ -2289,7 +2289,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-9
             </td>
             <td>
-              type-9
+              Break
             </td>
             <td>
               9
@@ -2359,7 +2359,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-10
             </td>
             <td>
-              type-10
+              Enrichment
             </td>
             <td>
               10
@@ -2529,7 +2529,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               aria-label="Errors: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
-              data-value="errors"
+              data-value="unread_failures_count"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -2677,7 +2677,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0
             </td>
             <td>
-              type-0
+              Drop
             </td>
             <td>
               -
@@ -2749,7 +2749,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-1
             </td>
             <td>
-              type-1
+              Break
             </td>
             <td>
               1
@@ -2823,7 +2823,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-2
             </td>
             <td>
-              type-2
+              Enrichment
             </td>
             <td>
               2
@@ -2895,7 +2895,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-3
             </td>
             <td>
-              type-3
+              Change entity
             </td>
             <td>
               3
@@ -2969,7 +2969,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-4
             </td>
             <td>
-              type-4
+              Drop
             </td>
             <td>
               4
@@ -3041,7 +3041,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-5
             </td>
             <td>
-              type-5
+              Break
             </td>
             <td>
               5
@@ -3115,7 +3115,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-6
             </td>
             <td>
-              type-6
+              Enrichment
             </td>
             <td>
               6
@@ -3187,7 +3187,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-7
             </td>
             <td>
-              type-7
+              Change entity
             </td>
             <td>
               7
@@ -3261,7 +3261,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-8
             </td>
             <td>
-              type-8
+              Drop
             </td>
             <td>
               8
@@ -3333,7 +3333,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-9
             </td>
             <td>
-              type-9
+              Break
             </td>
             <td>
               9
@@ -3407,7 +3407,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-10
             </td>
             <td>
-              type-10
+              Enrichment
             </td>
             <td>
               10

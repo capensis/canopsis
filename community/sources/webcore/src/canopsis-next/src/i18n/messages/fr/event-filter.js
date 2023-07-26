@@ -1,7 +1,4 @@
-import {
-  EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
-  EVENT_FILTER_TYPES,
-} from '@/constants';
+import { EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES, EVENT_FILTER_FAILURE_TYPES, EVENT_FILTER_TYPES } from '@/constants';
 
 export default {
   externalData: 'Données externes',
@@ -30,12 +27,25 @@ export default {
   duringPeriod: 'Appliqué pendant cette période uniquement',
   enrichmentOptions: 'Options d\'enrichissement',
   changeEntityOptions: 'Modifier les options d\'entité',
+  eventsFilteredSinceLastUpdate: 'Events filtered since last update',
+  errorsSinceLastUpdate: 'Errors since last update',
   markAsRead: 'Marquer comme lu',
+  filterByType: 'Filter by type',
+  copyEventToClipboard: 'Copy event to clipboard',
+  event: 'Event',
+  eventCopied: 'Event copied to clipboard',
   types: {
     [EVENT_FILTER_TYPES.drop]: 'Drop',
     [EVENT_FILTER_TYPES.break]: 'Break',
     [EVENT_FILTER_TYPES.enrichment]: 'Enrichment',
     [EVENT_FILTER_TYPES.changeEntity]: 'Change entity',
+  },
+  failureTypes: {
+    [EVENT_FILTER_FAILURE_TYPES.invalidPattern]: 'Invalid pattern',
+    [EVENT_FILTER_FAILURE_TYPES.invalidTemplate]: 'Invalid template',
+    [EVENT_FILTER_FAILURE_TYPES.externalDataMongo]: 'Mongo',
+    [EVENT_FILTER_FAILURE_TYPES.externalDataApi]: 'External API',
+    [EVENT_FILTER_FAILURE_TYPES.other]: 'Other',
   },
   tooltips: {
     addValueRuleField: 'Ajouter une règle',
