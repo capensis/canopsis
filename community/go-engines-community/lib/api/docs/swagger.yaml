@@ -10910,14 +10910,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/template.Request'
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/template.Request'
             examples:
               check:
                 summary: Check
                 description: Check if template is valid
-                value: {
-                  "text": "{{ range .Alarms }} {{ .Value.Resource }} {{ end }}"
-                }
+                value: [
+                  {
+                    "text": "{{ range .Alarms }} {{ .Value.Resource }} {{ end }}"
+                  }
+                ]
         required: true
       responses:
         200:
@@ -10925,7 +10929,49 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/template.Response'
+                type: array
+                items:
+                  $ref: 'schemas_swagger.yaml#/definitions/template.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /template-validator/event-filter-rules:
+    post:
+      tags:
+        - template-validator
+      summary: Validate event filter rule template
+      description: Validate event filter rule template.
+      operationId: template-validator-event-filter-rules
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/template.Request'
+            examples:
+              check:
+                summary: Check
+                description: Check if template is valid
+                value: [
+                  {
+                    "text": "{{ .ExtraData.component.name }}"
+                  }
+                ]
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'schemas_swagger.yaml#/definitions/template.Response'
         400:
           description: Bad Request
           content:
@@ -10944,14 +10990,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/template.Request'
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/template.Request'
             examples:
               check:
                 summary: Check
                 description: Check if template is valid
-                value: {
-                  "text": "{{ .Alarm.Value.Output }}"
-                }
+                value: [
+                  {
+                    "text": "{{ .Alarm.Value.Output }}"
+                  }
+                ]
         required: true
       responses:
         200:
@@ -10959,7 +11009,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/template.Response'
+                type: array
+                items:
+                  $ref: 'schemas_swagger.yaml#/definitions/template.Response'
         400:
           description: Bad Request
           content:

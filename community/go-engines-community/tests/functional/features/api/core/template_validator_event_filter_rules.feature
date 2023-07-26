@@ -1,22 +1,22 @@
-Feature: Validate templates for declare ticket rules
-  I need to be able to validate templates for declare ticket rules
+Feature: Validate templates for event filter rules
+  I need to be able to validate templates for event filter rules
 
   @concurrent
   Scenario: given validate template request and no auth should not allow access
-    When I do POST /api/v4/template-validator/scenarios
+    When I do POST /api/v4/template-validator/event-filter-rules
     Then the response code should be 401
 
   @concurrent
   Scenario: given validate template request should return success
     When I am admin
-    When I do POST /api/v4/template-validator/scenarios:
+    When I do POST /api/v4/template-validator/event-filter-rules:
     """json
     [
       {
-        "text": "{{ `{{ .Alarm.Value.Output}}` }}"
+        "text": "{{ `{{ .Event.Component }} {{ .ExternalData.component.title }}` }}"
       },
       {
-        "text": "{{ `{{ .Alarm.Value.Output}}` }}"
+        "text": "{{ `{{ .Event.Component }} {{ .ExternalData.component.title }}` }}"
       }
     ]
     """
@@ -38,7 +38,7 @@ Feature: Validate templates for declare ticket rules
   @concurrent
   Scenario: given validate template request with unexpected block should return error
     When I am admin
-    When I do POST /api/v4/template-validator/scenarios:
+    When I do POST /api/v4/template-validator/event-filter-rules:
     """json
     [
       {
@@ -64,11 +64,11 @@ Feature: Validate templates for declare ticket rules
   @concurrent
   Scenario: given validate template request with unexpected symbol should return error
     When I am admin
-    When I do POST /api/v4/template-validator/scenarios:
+    When I do POST /api/v4/template-validator/event-filter-rules:
     """json
     [
       {
-        "text": "test {{ `{{ range .Children } {{ end }}` }}"
+        "text": "test {{ `{{ range .Event.ExtraInfos } {{ end }}` }}"
       }
     ]
     """
@@ -90,11 +90,11 @@ Feature: Validate templates for declare ticket rules
   @concurrent
   Scenario: given validate template request with unexpected function should return error
     When I am admin
-    When I do POST /api/v4/template-validator/scenarios:
+    When I do POST /api/v4/template-validator/event-filter-rules:
     """json
     [
       {
-        "text": "test {{ `{{ rangee .Children }} {{ end }}` }}"
+        "text": "test {{ `{{ rangee .Event.ExtraInfos }} {{ end }}` }}"
       }
     ]
     """
@@ -116,11 +116,11 @@ Feature: Validate templates for declare ticket rules
   @concurrent
   Scenario: given validate template request with unexpected EOF should return error
     When I am admin
-    When I do POST /api/v4/template-validator/scenarios:
+    When I do POST /api/v4/template-validator/event-filter-rules:
     """json
     [
       {
-        "text": "test {{ `{{ range .Children }}` }}"
+        "text": "test {{ `{{ range .Event.ExtraInfos }}` }}"
       }
     ]
     """
@@ -142,7 +142,7 @@ Feature: Validate templates for declare ticket rules
   @concurrent
   Scenario: given validate template request with undefined error should return error
     When I am admin
-    When I do POST /api/v4/template-validator/scenarios:
+    When I do POST /api/v4/template-validator/event-filter-rules:
     """json
     [
       {
@@ -168,11 +168,11 @@ Feature: Validate templates for declare ticket rules
   @concurrent
   Scenario: given validate template request with var out of block
     When I am admin
-    When I do POST /api/v4/template-validator/scenarios:
+    When I do POST /api/v4/template-validator/event-filter-rules:
     """json
     [
       {
-        "text": "{{ `{{ .AdditionalData.Author }} test { index .Response \"test\" }} {{ .Alarm.Value.Output }}` }}"
+        "text": "test {{ `test { .Event.Output }}` }}"
       }
     ]
     """
@@ -186,7 +186,7 @@ Feature: Validate templates for declare ticket rules
           {
             "type": 0,
             "message": "Variable is out of a template block",
-            "var": ".Response"
+            "var": ".Event"
           }
         ]
       }

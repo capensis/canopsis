@@ -1772,6 +1772,11 @@ func RegisterRoutes(
 				middleware.OnlyAuth(),
 				templateValidatorApi.ValidateScenarios,
 			)
+			templateValidatorRouter.POST(
+				"/event-filter-rules",
+				middleware.OnlyAuth(),
+				templateValidatorApi.ValidateEventFilterRules,
+			)
 		}
 		protected.GET(
 			"/template-vars",
