@@ -58,7 +58,7 @@ export default {
     deleteAfter: 'Effacer le stockage des métriques après',
     deleteAfterHelpText: 'Toutes les métriques externes antérieures à la période définie seront supprimées',
   },
-  errors: {
+  eventFilterFailure: {
     title: 'Stockage des données des messages d\'erreur',
     titleHelp: 'Lorsqu\'il est activé, les données des messages d\'erreur seront supprimées après la période de temps définie. Cependant, toutes les erreurs sont disponibles dans les journaux.',
     deleteAfter: 'Effacer les messages d\'erreur antérieurs à',

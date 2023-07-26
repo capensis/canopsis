@@ -58,7 +58,7 @@ export default {
     deleteAfter: 'Clear metrics storage after',
     deleteAfterHelpText: 'All external metrics older than the defined time period will be deleted',
   },
-  errors: {
+  eventFilterFailure: {
     title: 'Error messages data storage',
     titleHelp: 'When enabled, error messages data will be deleted after the defined time period. However, all errors are available in logs.',
     deleteAfter: 'Clear error messages older than',
