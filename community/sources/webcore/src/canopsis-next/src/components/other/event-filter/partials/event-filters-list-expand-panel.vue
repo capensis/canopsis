@@ -15,13 +15,6 @@
           v-card
             v-card-text
               c-patterns-field(:value="patterns", readonly, with-entity, with-event)
-    v-tab {{ $tc('common.error', 2) }}
-    v-tab-item
-      v-layout.py-3.secondary.lighten-2(row, justify-center)
-        v-flex(xs11)
-          v-card
-            v-card-text
-              event-filter-errors(:event-filter="eventFilter")
     template(v-if="isEnrichment")
       v-tab {{ $tc('common.action', 2) }}
       v-tab-item
@@ -35,6 +28,14 @@
         v-layout.py-3.secondary.lighten-2(row, justify-center)
           v-flex(xs11)
             external-data-form(:form="externalDataForm", disabled)
+    template(v-if="eventFilter.failures_count")
+      v-tab {{ $tc('common.error', 2) }}
+      v-tab-item(lazy)
+        v-layout.py-3.secondary.lighten-2(row, justify-center)
+          v-flex(xs11)
+            v-card
+              v-card-text
+                event-filter-failures(:event-filter="eventFilter", @refresh="$emit('refresh')")
 </template>
 
 <script>
@@ -46,12 +47,12 @@ import { eventFilterPatternToForm } from '@/helpers/entities/event-filter/rule/f
 import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
 
 import EventFiltersRuleSummary from './event-filters-rule-summary.vue';
-import EventFilterErrors from './event-filter-errors.vue';
+import EventFilterFailures from './event-filter-failures.vue';
 
 export default {
   components: {
     EventFiltersRuleSummary,
-    EventFilterErrors,
+    EventFilterFailures,
     ExternalDataForm,
   },
   props: {

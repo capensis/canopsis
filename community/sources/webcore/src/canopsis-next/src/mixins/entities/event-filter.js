@@ -14,8 +14,8 @@ export const entitiesEventFilterMixin = {
     ...mapActions({
       fetchEventFiltersList: 'fetchList',
       refreshEventFiltersList: 'fetchListWithPreviousParams',
-      fetchEventFilterErrorsListWithoutStore: 'fetchEventFilterErrorsListWithoutStore',
-      markNewEventFilterErrorsAsRead: 'markNewEventFilterErrorsAsRead',
+      fetchEventFilterFailuresListWithoutStore: 'fetchEventFilterFailuresListWithoutStore',
+      markNewEventFilterFailuresAsRead: 'markNewEventFilterFailuresAsRead',
       createEventFilter: 'create',
       updateEventFilter: 'update',
       removeEventFilter: 'remove',

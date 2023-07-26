@@ -1,21 +1,34 @@
 <template lang="pug">
   v-layout(column)
-    c-information-block-row(:label="$t('common.description')") {{ eventFilter.description }}
-    c-information-block-row(:label="$t('common.type')") {{ eventFilter.type }}
-    c-information-block-row(:label="$t('common.priority')") {{ eventFilter.priority || '-' }}
-    c-information-block-row(:label="$t('common.author')") {{ eventFilter.author.display_name }}
-    c-information-block-row(:label="$t('common.created')") {{ eventFilter.created | date }}
-    c-information-block-row(:label="$t('common.updated')") {{ eventFilter.updated | date }}
+    c-information-block-row(:label="$t('common.description')", :width="labelWidth") {{ eventFilter.description }}
     c-information-block-row(
-      v-if="eventFilter.events_filtered_since_last_update",
-      :label="$t('eventFilter.eventsFilteredSinceLastUpdate')"
-    ) {{ eventFilter.events_filtered_since_last_update }}
+      :label="$t('common.type')",
+      :width="labelWidth"
+    ) {{ $t(`eventFilter.types.${eventFilter.type}`) }}
+    c-information-block-row(:label="$t('common.priority')", :width="labelWidth") {{ eventFilter.priority || '-' }}
+    c-information-block-row(:label="$t('common.author')", :width="labelWidth") {{ eventFilter.author.display_name }}
+    c-information-block-row(:label="$t('common.created')", :width="labelWidth") {{ eventFilter.created | date }}
+    c-information-block-row(:label="$t('common.updated')", :width="labelWidth") {{ eventFilter.updated | date }}
     c-information-block-row(
-      v-if="eventFilter.errors_since_last_update",
-      :label="$t('eventFilter.errorsSinceLastUpdate')"
-    ) {{ eventFilter.errors_since_last_update }}
-    c-information-block-row(v-if="eventFilter.start", :label="$t('common.start')") {{ eventFilter.start | date }}
-    c-information-block-row(v-if="eventFilter.stop", :label="$t('common.stop')") {{ eventFilter.stop | date }}
+      v-if="eventFilter.events_count",
+      :label="$t('eventFilter.eventsFilteredSinceLastUpdate')",
+      :width="labelWidth"
+    ) {{ eventFilter.events_count }}
+    c-information-block-row(
+      v-if="eventFilter.failures_count",
+      :label="$t('eventFilter.errorsSinceLastUpdate')",
+      :width="labelWidth"
+    ) {{ eventFilter.failures_count }}
+    c-information-block-row(
+      v-if="eventFilter.start",
+      :label="$t('common.start')",
+      :width="labelWidth"
+    ) {{ eventFilter.start | date }}
+    c-information-block-row(
+      v-if="eventFilter.stop",
+      :label="$t('common.stop')",
+      :width="labelWidth"
+    ) {{ eventFilter.stop | date }}
     recurrence-rule-information(v-if="eventFilter.rrule", :rrule="eventFilter.rrule")
     pbehavior-recurrence-rule-exceptions-field(
       v-if="hasExdatesOrExceptions",
@@ -42,6 +55,10 @@ export default {
     eventFilter: {
       type: Object,
       default: () => ({}),
+    },
+    labelWidth: {
+      type: [Number, String],
+      default: 220,
     },
   },
   computed: {
