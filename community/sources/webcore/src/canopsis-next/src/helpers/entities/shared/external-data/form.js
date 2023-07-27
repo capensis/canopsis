@@ -3,8 +3,9 @@ import { pick } from 'lodash';
 import { EXTERNAL_DATA_CONDITION_TYPES, EXTERNAL_DATA_TYPES } from '@/constants';
 
 import { uid } from '@/helpers/uid';
+import { isApiExternalDataType } from '@/helpers/entities/shared/external-data/entity';
 
-import { formToRequest, requestToForm } from '../request/form';
+import { formToRequest, requestTemplateVariablesErrorsToForm, requestToForm } from '../request/form';
 
 /**
  * @typedef {'mongo' | 'api'} ExternalDataType
@@ -157,7 +158,7 @@ export const formToExternalData = (form = []) => (
   form.reduce((acc, externalData) => {
     const { type, reference } = externalData;
 
-    const additionalFields = type === EXTERNAL_DATA_TYPES.api
+    const additionalFields = isApiExternalDataType(type)
       ? { request: formToRequest(externalData.request) }
       : {
         ...pick(externalData, ['sort', 'sort_by', 'collection']),
@@ -173,3 +174,51 @@ export const formToExternalData = (form = []) => (
     return acc;
   }, {})
 );
+
+export const externalDataConditionTemplateVariablesErrorsToForm = (errorsObject) => {
+  const { value } = errorsObject;
+  const conditionErrors = {};
+
+  if (!value.is_valid) {
+    conditionErrors.value = value.err.message;
+  }
+
+  return conditionErrors;
+};
+
+export const externalDataConditionsTemplateVariablesErrorsToForm = (errorsArray, conditions) => errorsArray
+  .reduce((acc, errors, index) => {
+    const condition = conditions[index];
+
+    acc[condition.key] = externalDataConditionTemplateVariablesErrorsToForm(errors);
+
+    return acc;
+  }, {});
+
+/**
+ * Convert template variables errors structure to form structure
+ *
+ * @param {Object} errorsObject
+ * @param {ExternalDataForm} form
+ * @return {FlattenErrors}
+ */
+export const externalDataTemplateVariablesErrorsToForm = (errorsObject, form) => errorsObject
+  .reduce((acc, { request, conditions }, index) => {
+    const externalDataItem = form[index];
+    const externalDataItemErrors = {};
+
+    if (request) {
+      externalDataItemErrors.request = requestTemplateVariablesErrorsToForm(request, externalDataItem.request);
+    }
+
+    if (conditions) {
+      externalDataItemErrors.conditions = externalDataConditionsTemplateVariablesErrorsToForm(
+        conditions,
+        externalDataItem.conditions,
+      );
+    }
+
+    acc[externalDataItem.key] = externalDataItemErrors;
+
+    return acc;
+  }, {});

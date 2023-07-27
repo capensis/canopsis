@@ -8,6 +8,7 @@
       template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.orange.white--text(
+          v-if="hasVariablesFields",
           :loading="checking",
           @click="validateTemplateVariables"
         ) {{ $t('declareTicket.checkSyntax') }}
@@ -21,11 +22,21 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { eventFilterToForm, formToEventFilter } from '@/helpers/entities/event-filter/rule/form';
+import {
+  eventFilterRuleTemplateVariablesErrorsToForm,
+  eventFilterToForm,
+  formToEventFilter,
+} from '@/helpers/entities/event-filter/rule/form';
+import {
+  isChangeEntityEventFilterRuleType,
+  isEnrichmentEventFilterRuleType,
+} from '@/helpers/entities/event-filter/rule/entity';
+import { isApiExternalDataType } from '@/helpers/entities/shared/external-data/entity';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { entitiesTemplateValidatorMixin } from '@/mixins/entities/template-validator';
 
 import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
 
@@ -41,6 +52,7 @@ export default {
   components: { EventFilterForm, ModalWrapper },
   mixins: [
     modalInnerMixin,
+    entitiesTemplateValidatorMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
@@ -54,12 +66,121 @@ export default {
     title() {
       return this.config.title ?? this.$t('modals.createEventFilter.create.title');
     },
+
+    isEnrichment() {
+      return isEnrichmentEventFilterRuleType(this.form.type);
+    },
+
+    isChangeEntity() {
+      return isChangeEntityEventFilterRuleType(this.form.type);
+    },
+
+    hasVariablesFields() {
+      return this.isEnrichment || isChangeEntityEventFilterRuleType(this.form.type);
+    },
+  },
+  watch: {
+    'form.type': {
+      handler() {
+        this.errors.clear();
+      },
+    },
   },
   methods: {
+    async validateRequestTemplates(request) {
+      const [url, payload] = await this.validateEventFilterRulesVariables({
+        data: [
+          { text: request.url },
+          { text: request.payload },
+        ],
+      });
+
+      return {
+        url,
+        payload,
+      };
+    },
+
+    async validateChangeEntityTemplates(config) {
+      const [component, connector, connectorName, resource] = await this.validateEventFilterRulesVariables({
+        data: [
+          { text: config.component },
+          { text: config.connector },
+          { text: config.connector_name },
+          { text: config.resource },
+        ],
+      });
+
+      return {
+        component,
+        connector,
+        connector_name: connectorName,
+        resource,
+      };
+    },
+
+    async validateArrayWithValueTemplates(array) {
+      const errors = await this.validateEventFilterRulesVariables({
+        data: array.map(({ value }) => ({ text: value })),
+      });
+
+      return errors.map(value => ({ value }));
+    },
+
+    validateExternalDataTemplates(externalData) {
+      return Promise.all(externalData.map(async ({ type, conditions, request }) => {
+        if (isApiExternalDataType(type)) {
+          return {
+            request: await this.validateRequestTemplates(request),
+          };
+        }
+
+        return {
+          conditions: await this.validateArrayWithValueTemplates(conditions),
+        };
+      }));
+    },
+
+    async validateConfigTemplates(config) {
+      const [actions, fields] = await Promise.all([
+        this.isEnrichment ? this.validateArrayWithValueTemplates(config.actions) : undefined,
+        this.isChangeEntity ? this.validateChangeEntityTemplates(config) : undefined,
+      ]);
+
+      return {
+        actions,
+        ...fields,
+      };
+    },
+
+    async validateFormTemplates(form) {
+      const [externalData, config] = await Promise.all([
+        this.validateExternalDataTemplates(form.external_data),
+        this.validateConfigTemplates(form.config),
+      ]);
+
+      return {
+        external_data: externalData,
+        config,
+      };
+    },
+
     async validateTemplateVariables() {
-      /**
-       * TODO: Should be added validate templates functions
-       */
+      this.checking = true;
+
+      try {
+        const errors = await this.validateFormTemplates(this.form);
+
+        const wasSet = this.setFormErrors(eventFilterRuleTemplateVariablesErrorsToForm(errors, this.form));
+
+        if (!wasSet) {
+          this.$popups.success({ text: this.$t('eventFilter.syntaxIsValid') });
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.checking = false;
+      }
     },
 
     async submit() {
