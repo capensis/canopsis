@@ -39,10 +39,9 @@
 </template>
 
 <script>
-import { EVENT_FILTER_TYPES } from '@/constants';
-
 import { externalDataToForm } from '@/helpers/entities/shared/external-data/form';
 import { eventFilterPatternToForm } from '@/helpers/entities/event-filter/rule/form';
+import { isEnrichmentEventFilterRuleType } from '@/helpers/entities/event-filter/rule/entity';
 
 import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
 
@@ -67,7 +66,7 @@ export default {
     },
 
     isEnrichment() {
-      return this.eventFilter.type === EVENT_FILTER_TYPES.enrichment;
+      return isEnrichmentEventFilterRuleType(this.eventFilter.type);
     },
 
     headers() {
