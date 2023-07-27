@@ -34,6 +34,7 @@ export default {
   copyEventToClipboard: 'Copy event to clipboard',
   event: 'Event',
   eventCopied: 'Event copied to clipboard',
+  syntaxIsValid: 'La syntaxe est valide',
   types: {
     [EVENT_FILTER_TYPES.drop]: 'Drop',
     [EVENT_FILTER_TYPES.break]: 'Break',

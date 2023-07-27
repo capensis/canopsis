@@ -40,10 +40,11 @@
 
 <script>
 import {
-  EVENT_FILTER_TYPES,
   EXTERNAL_DATA_DEFAULT_CONDITION_VALUES,
   EXTERNAL_DATA_PAYLOADS_VARIABLES,
 } from '@/constants';
+
+import { isEnrichmentEventFilterRuleType, isChangeEntityEventFilterRuleType } from '@/helpers/entities/event-filter/rule/entity';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-recurrence-rule-field.vue';
@@ -79,11 +80,11 @@ export default {
   },
   computed: {
     isEnrichmentType() {
-      return this.form.type === EVENT_FILTER_TYPES.enrichment;
+      return isEnrichmentEventFilterRuleType(this.form.type);
     },
 
     isChangeEntityType() {
-      return this.form.type === EVENT_FILTER_TYPES.changeEntity;
+      return isChangeEntityEventFilterRuleType(this.form.type);
     },
 
     hasAdditionalOptions() {

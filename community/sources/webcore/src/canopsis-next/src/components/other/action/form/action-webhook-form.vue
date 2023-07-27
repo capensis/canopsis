@@ -71,18 +71,14 @@ export default {
     },
   },
   methods: {
-    validateRequestHeadersTemplates(headers) {
-      return Promise.all(
-        headers.map(({ value }) => this.validateScenariosVariables({ data: { text: value } })),
-      );
-    },
-
     async validateRequestTemplates(request) {
-      const [url, payload, headers] = await Promise.all([
-        this.validateScenariosVariables({ data: { text: request.url } }),
-        this.validateScenariosVariables({ data: { text: request.payload } }),
-        this.validateRequestHeadersTemplates(request.headers),
-      ]);
+      const [url, payload, ...headers] = await this.validateScenariosVariables({
+        data: [
+          { text: request.url },
+          { text: request.payload },
+          ...request.headers.map(({ value }) => ({ text: value })),
+        ],
+      });
 
       return {
         url,

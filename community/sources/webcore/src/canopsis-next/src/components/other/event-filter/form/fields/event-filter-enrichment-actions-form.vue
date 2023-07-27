@@ -4,6 +4,7 @@
       event-filter-enrichment-action-form.mb-3(
         v-for="(action, index) in actions",
         v-field="actions[index]",
+        :name="`${name}.${action.key}`",
         :key="action.key",
         :variables="variables",
         @remove="removeItemFromArray(index)"
@@ -35,6 +36,10 @@ export default {
     variables: {
       type: Array,
       default: () => [],
+    },
+    name: {
+      type: String,
+      default: 'actions',
     },
   },
   methods: {
