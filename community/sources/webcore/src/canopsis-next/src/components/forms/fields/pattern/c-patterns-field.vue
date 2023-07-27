@@ -333,10 +333,6 @@ export default {
           : this.checkPatternsAlarmsCount;
 
         this.counters = await method({ data: this.patterns });
-        this.counters = {
-          ...this.counters,
-          all: { over_limit: true },
-        };
       } catch (err) {
         console.error(err);
 
