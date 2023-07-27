@@ -116,11 +116,11 @@ export const requestTemplateVariablesErrorsToForm = (errorsObject, form) => {
 
   const requestErrors = {};
 
-  if (!url?.is_valid) {
+  if (url && !url.is_valid) {
     requestErrors.url = url.err.message;
   }
 
-  if (!payload?.is_valid) {
+  if (payload && !payload.is_valid) {
     requestErrors.payload = `${payload.err.line}|${payload.err.message}`;
   }
 
