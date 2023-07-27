@@ -1,6 +1,5 @@
-import { cloneDeep, pick, isEmpty, omit } from 'lodash';
+import { cloneDeep, pick, isEmpty, omit, omitBy } from 'lodash';
 import flatten from 'flat';
-import { omitBy } from 'lodash/object';
 
 import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
