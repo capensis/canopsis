@@ -1,7 +1,11 @@
 <template lang="pug">
   v-layout(column)
     c-collapse-panel.mb-2(:title="$t('eventFilter.editActions')")
-      event-filter-enrichment-actions-form(v-field="form.config.actions", :variables="templateVariables")
+      event-filter-enrichment-actions-form(
+        v-field="form.config.actions",
+        :variables="templateVariables",
+        :name="name"
+      )
     v-layout(row)
       v-select.mr-3(
         v-field="form.config.on_success",
@@ -13,7 +17,7 @@
         :label="$t('eventFilter.onFailure')",
         :items="eventFilterAfterTypes"
       )
-    v-alert(:value="errors.has(name)", type="error") {{ $t('eventFilter.actionsRequired') }}
+    c-alert(:value="errors.has(name)", type="error") {{ $t('eventFilter.actionsRequired') }}
 </template>
 
 <script>
@@ -41,7 +45,7 @@ export default {
     },
     name: {
       type: String,
-      default: 'actions',
+      default: 'config.actions',
     },
     templateVariables: {
       type: Array,

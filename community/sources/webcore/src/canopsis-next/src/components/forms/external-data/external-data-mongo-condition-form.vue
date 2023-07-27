@@ -23,6 +23,7 @@
           :label="$t('common.value')",
           :disabled="disabled",
           :variables="variables",
+          :name="valueFieldName",
           clearable
         )
         v-btn(
@@ -77,6 +78,10 @@ export default {
 
     conditionFieldName() {
       return `${this.name}.condition`;
+    },
+
+    valueFieldName() {
+      return `${this.name}.value`;
     },
   },
   methods: {

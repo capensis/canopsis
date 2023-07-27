@@ -28,8 +28,8 @@
                 v-field="form.value",
                 :label="$t('common.value')",
                 :variables="variables",
+                :name="valueFieldName",
                 key="from",
-                name="value",
                 required,
                 clearable
               )
@@ -40,13 +40,14 @@
                 :label="$t('common.value')",
                 :error-messages="errors.collect('value')",
                 :items="copyValueVariables",
-                key="from",
-                name="value"
+                :name="valueFieldName",
+                key="from"
               )
               c-mixed-field.ml-2(
                 v-else,
                 v-field="form.value",
                 :label="$t('common.value')",
+                :name="valueFieldName",
                 key="value"
               )
 </template>
@@ -72,8 +73,16 @@ export default {
       type: Array,
       default: () => [],
     },
+    name: {
+      type: String,
+      default: 'action',
+    },
   },
   computed: {
+    valueFieldName() {
+      return `${this.name}.value`;
+    },
+
     eventFilterActionTypes() {
       return Object.values(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES).map(value => ({
         value,
