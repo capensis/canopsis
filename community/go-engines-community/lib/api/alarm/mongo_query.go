@@ -231,6 +231,8 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 	r ChildDetailsRequest,
 	opened int,
 	parentId string,
+	search string,
+	searchBy []string,
 	now types.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now)
@@ -286,6 +288,59 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 		}},
 	}})
 	q.excludedFields = append(q.excludedFields, "resolved_parents", "resolved_meta_alarm_rules")
+
+	if search != "" {
+		p := parser.NewParser()
+		expr, err := p.Parse(search)
+		if err == nil {
+			query := expr.ExprQuery()
+			resolvedQuery := q.resolveAliasesInQuery(query).(bson.M)
+			if err != nil {
+				return nil, err
+			}
+
+			b, err := json.Marshal(resolvedQuery)
+			if err != nil {
+				return nil, fmt.Errorf("cannot marshal search expression: %w", err)
+			}
+
+			resolvedSearch := string(b)
+			for field := range q.computedFields {
+				if strings.Contains(resolvedSearch, field) {
+					q.computedFieldsForAlarmMatch[field] = true
+				}
+			}
+
+			q.computedFields["filtered"] = bson.M{"$cond": bson.M{
+				"if":   resolvedQuery,
+				"then": true,
+				"else": false,
+			}}
+		} else {
+			filteredSearchBy := make([]string, 0, len(searchBy))
+			for _, f := range searchBy {
+				if _, ok := q.availableSearchByFields[f]; ok {
+					filteredSearchBy = append(filteredSearchBy, f)
+				}
+			}
+			if len(filteredSearchBy) == 0 {
+				filteredSearchBy = q.defaultSearchByFields
+			}
+			searchMatch := make([]bson.M, len(filteredSearchBy))
+			for i := range filteredSearchBy {
+				searchMatch[i] = bson.M{"$regexMatch": bson.M{
+					"input":   "$" + filteredSearchBy[i],
+					"regex":   fmt.Sprintf(".*%s.*", search),
+					"options": "i",
+				}}
+			}
+			q.computedFields["filtered"] = bson.M{"$cond": bson.M{
+				"if":   bson.M{"$or": searchMatch},
+				"then": true,
+				"else": false,
+			}}
+		}
+	}
 
 	err := q.handleSort(r.SortRequest)
 	if err != nil {
@@ -678,12 +733,12 @@ func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (match bson.M, with
 		childrenCollection = mongo.ResolvedAlarmMongoCollection
 	}
 
-	q.lookupsForAdditionalMatch["filtered_children"] = true
-	q.lookups = append(q.lookups, lookupWithKey{key: "filtered_children", pipeline: getFilteredChildrenLookup(childrenCollection, childrenMatch)})
+	q.lookupsForAdditionalMatch["has_filtered_children"] = true
+	q.lookups = append(q.lookups, lookupWithKey{key: "has_filtered_children", pipeline: getHasFilteredChildrenLookup(childrenCollection, childrenMatch)})
 
 	searchMatchWithChildren := make([]bson.M, len(searchBy))
 	copy(searchMatchWithChildren, searchMatch)
-	searchMatchWithChildren = append(searchMatchWithChildren, bson.M{"filtered_children": bson.M{"$ne": []string{}}})
+	searchMatchWithChildren = append(searchMatchWithChildren, bson.M{"has_filtered_children": bson.M{"$gt": 0}})
 
 	return bson.M{"$or": searchMatchWithChildren}, true, nil
 }
@@ -1050,6 +1105,8 @@ func (q *MongoQueryBuilder) resolveAliasesInQuery(query any) any {
 			val.SetMapIndex(key, reflect.Value{})
 			val.SetMapIndex(reflect.ValueOf(newKey), mapVal)
 		}
+	case reflect.String:
+		return q.resolveAlias(val.Interface().(string))
 	}
 
 	return res
@@ -1060,9 +1117,15 @@ func (q *MongoQueryBuilder) resolveAlias(v string) string {
 		return v
 	}
 
+	prefix := ""
+	if v[0] == '$' {
+		v = v[1:]
+		prefix = "$"
+	}
+
 	for alias, field := range q.fieldsAliases {
 		if alias == v {
-			return field
+			return prefix + field
 		}
 	}
 
@@ -1071,12 +1134,12 @@ func (q *MongoQueryBuilder) resolveAlias(v string) string {
 		if err == nil {
 			replace := r.ReplaceAllString(v, repl)
 			if v != replace {
-				return replace
+				return prefix + replace
 			}
 		}
 	}
 
-	return v
+	return prefix + v
 }
 
 func (q *MongoQueryBuilder) handleDependencies(withDependencies bool) {
@@ -1227,19 +1290,23 @@ func getChildrenCountLookup() []bson.M {
 	}
 }
 
-func getFilteredChildrenLookup(childrenCollection string, childrenMatch bson.M) []bson.M {
+func getHasFilteredChildrenLookup(childrenCollection string, childrenMatch bson.M) []bson.M {
 	return []bson.M{
-		{"$graphLookup": bson.M{
-			"from":                    childrenCollection,
-			"startWith":               "$d",
-			"connectFromField":        "d",
-			"connectToField":          "v.parents",
-			"restrictSearchWithMatch": childrenMatch,
-			"as":                      "filtered_children",
-			"maxDepth":                0,
+		{"$lookup": bson.M{
+			"from": childrenCollection,
+			"let":  bson.M{"parent": "$d"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$and": []bson.M{
+					{"$expr": bson.M{"$in": bson.A{"$$parent", "$v.parents"}}},
+					childrenMatch,
+				}}},
+				{"$limit": 1},
+				{"$project": bson.M{"_id": 1}},
+			},
+			"as": "has_filtered_children",
 		}},
 		{"$addFields": bson.M{
-			"filtered_children": "$filtered_children._id",
+			"has_filtered_children": bson.M{"$size": "$has_filtered_children"},
 		}},
 	}
 }

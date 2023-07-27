@@ -1172,7 +1172,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 			},
 		},
 	}
-	filteredChildrenLookup := getFilteredChildrenLookup(mongo.AlarmMongoCollection, bson.M{
+	filteredChildrenLookup := getHasFilteredChildrenLookup(mongo.AlarmMongoCollection, bson.M{
 		"$or": []bson.M{
 			{"v.connector": searchRegexp},
 			{"v.connector_name": searchRegexp},
@@ -1224,9 +1224,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 			{"v.connector_name": searchRegexp},
 			{"v.component": searchRegexp},
 			{"v.resource": searchRegexp},
-			{"filtered_children": bson.M{"$ne": bson.A{}}},
+			{"has_filtered_children": bson.M{"$gt": 0}},
 		}}},
-		bson.M{"$project": bson.M{"entity": 0, "filtered_children": 0}},
+		bson.M{"$project": bson.M{"entity": 0, "has_filtered_children": 0}},
 		bson.M{"$facet": bson.M{
 			"data":        expectedDataPipeline,
 			"total_count": []bson.M{{"$count": "count"}},
