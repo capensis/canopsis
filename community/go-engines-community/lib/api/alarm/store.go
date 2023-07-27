@@ -433,7 +433,8 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 		}
 
 		if details.IsMetaAlarm {
-			childrenPipeline, err := s.getQueryBuilder().CreateChildrenAggregationPipeline(*r.Children, r.GetOpenedFilter(), details.Entity.ID, now)
+			childrenPipeline, err := s.getQueryBuilder().CreateChildrenAggregationPipeline(*r.Children,
+				r.GetOpenedFilter(), details.Entity.ID, r.Search, r.SearchBy, now)
 			if err != nil {
 				return nil, err
 			}

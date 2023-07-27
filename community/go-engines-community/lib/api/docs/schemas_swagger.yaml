@@ -161,10 +161,9 @@ definitions:
         items:
           type: string
         type: array
-      filtered_children:
-        items:
-          type: string
-        type: array
+      filtered:
+        description: Only for details request
+        type: boolean
       impact_state:
         type: integer
       infos:
@@ -390,6 +389,12 @@ definitions:
       opened:
         type: boolean
       perf_data:
+        items:
+          type: string
+        type: array
+      search:
+        type: string
+      search_by:
         items:
           type: string
         type: array
