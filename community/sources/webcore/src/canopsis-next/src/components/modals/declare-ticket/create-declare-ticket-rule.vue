@@ -11,8 +11,9 @@
           flat,
           @click="$modals.hide"
         ) {{ $t('common.cancel') }}
-        v-btn.orange.white--text(
+        v-btn.white--text(
           :loading="checking",
+          color="orange",
           @click="validateTemplateVariables"
         ) {{ $t('declareTicket.checkSyntax') }}
         v-btn.primary(
