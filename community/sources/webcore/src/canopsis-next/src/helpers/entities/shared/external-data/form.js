@@ -175,6 +175,12 @@ export const formToExternalData = (form = []) => (
   }, {})
 );
 
+/**
+ * Convert template variables errors structure to form structure
+ *
+ * @param {Object} errorsObject
+ * @return {FlattenErrors}
+ */
 export const externalDataConditionTemplateVariablesErrorsToForm = (errorsObject) => {
   const { value } = errorsObject;
   const conditionErrors = {};
@@ -186,6 +192,13 @@ export const externalDataConditionTemplateVariablesErrorsToForm = (errorsObject)
   return conditionErrors;
 };
 
+/**
+ * Convert template variables errors structure to form structure
+ *
+ * @param {Object} errorsArray
+ * @param {ExternalDataConditionForm[]} conditions
+ * @return {FlattenErrors}
+ */
 export const externalDataConditionsTemplateVariablesErrorsToForm = (errorsArray, conditions) => errorsArray
   .reduce((acc, errors, index) => {
     const condition = conditions[index];
