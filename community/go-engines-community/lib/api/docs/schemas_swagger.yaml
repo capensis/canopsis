@@ -371,6 +371,9 @@ definitions:
     type: object
   alarm.Details:
     properties:
+      _id:
+        description: Only for websocket
+        type: string
       children:
         $ref: '#/definitions/alarm.ChildrenDetails'
       filtered_perf_data:
