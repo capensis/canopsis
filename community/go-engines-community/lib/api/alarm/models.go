@@ -195,6 +195,9 @@ type DetailsResponse struct {
 }
 
 type Details struct {
+	// Only for websocket
+	ID string `bson:"-" json:"_id,omitempty"`
+
 	Steps    *StepDetails     `bson:"steps" json:"steps,omitempty"`
 	Children *ChildrenDetails `bson:"children" json:"children,omitempty"`
 

@@ -233,11 +233,16 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithTheSameRequest_ShouldCr
 			return false
 		}
 	}).Times(2)
+	mockChangeStream.EXPECT().Decode(gomock.Any()).Do(func(changeEvent *struct {
+		DocumentKey struct {
+			ID string `bson:"_id"`
+		} `bson:"documentKey"`
+		FullDocument types.Alarm `bson:"fullDocument"`
+	}) {
+		changeEvent.DocumentKey.ID = alarmId
+	})
 	mockChangeStream.EXPECT().Close(gomock.Any())
-	mockSingleResultHelper := mock_mongo.NewMockSingleResultHelper(ctrl)
-	mockSingleResultHelper.EXPECT().Decode(gomock.Any())
 	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockSingleResultHelper)
 	mockDbCollection.EXPECT().Watch(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockChangeStream, nil)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.EXPECT().Collection(gomock.Eq(mongo.AlarmMongoCollection)).Return(mockDbCollection)
@@ -251,7 +256,7 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithTheSameRequest_ShouldCr
 		gomock.Eq(roomId), gomock.Eq(alarmResForUserId2))
 
 	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
-	data := alarm.DetailsRequest{ID: alarmId}
+	data := []alarm.DetailsRequest{{ID: alarmId}}
 	err := w.StartWatchDetails(ctx, connId1, userId1, roomId, data)
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
@@ -309,6 +314,14 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithDiffRequest_ShouldCreat
 			return false
 		}
 	}).Times(2)
+	mockChangeStream1.EXPECT().Decode(gomock.Any()).Do(func(changeEvent *struct {
+		DocumentKey struct {
+			ID string `bson:"_id"`
+		} `bson:"documentKey"`
+		FullDocument types.Alarm `bson:"fullDocument"`
+	}) {
+		changeEvent.DocumentKey.ID = alarmId1
+	})
 	mockChangeStream1.EXPECT().Close(gomock.Any())
 	mockChangeStream2 := mock_mongo.NewMockChangeStream(ctrl)
 	mockChangeStream2.EXPECT().Next(gomock.Any()).DoAndReturn(func(_ context.Context) bool {
@@ -324,14 +337,16 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithDiffRequest_ShouldCreat
 			return false
 		}
 	}).Times(2)
+	mockChangeStream2.EXPECT().Decode(gomock.Any()).Do(func(changeEvent *struct {
+		DocumentKey struct {
+			ID string `bson:"_id"`
+		} `bson:"documentKey"`
+		FullDocument types.Alarm `bson:"fullDocument"`
+	}) {
+		changeEvent.DocumentKey.ID = alarmId2
+	})
 	mockChangeStream2.EXPECT().Close(gomock.Any())
-	mockSingleResultHelper1 := mock_mongo.NewMockSingleResultHelper(ctrl)
-	mockSingleResultHelper1.EXPECT().Decode(gomock.Any())
-	mockSingleResultHelper2 := mock_mongo.NewMockSingleResultHelper(ctrl)
-	mockSingleResultHelper2.EXPECT().Decode(gomock.Any())
 	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockSingleResultHelper1)
-	mockDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockSingleResultHelper2)
 	mockDbCollection.EXPECT().Watch(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockChangeStream1, nil)
 	mockDbCollection.EXPECT().Watch(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockChangeStream2, nil)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
@@ -346,12 +361,12 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithDiffRequest_ShouldCreat
 		gomock.Eq(roomId), gomock.Eq(alarmResForConnId2))
 
 	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
-	err := w.StartWatchDetails(ctx, connId1, userId, roomId, alarm.DetailsRequest{ID: alarmId1})
+	err := w.StartWatchDetails(ctx, connId1, userId, roomId, []alarm.DetailsRequest{{ID: alarmId1}})
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
 
-	err = w.StartWatchDetails(ctx, connId2, userId, roomId, alarm.DetailsRequest{ID: alarmId2})
+	err = w.StartWatchDetails(ctx, connId2, userId, roomId, []alarm.DetailsRequest{{ID: alarmId2}})
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
@@ -452,10 +467,7 @@ func TestWatcher_StopWatch_GivenStartWatchDetails_ShouldCloseChangeStream(t *tes
 	mockChangeStream.EXPECT().Close(gomock.Any()).Do(func(_ context.Context) {
 		close(done)
 	})
-	mockSingleResultHelper := mock_mongo.NewMockSingleResultHelper(ctrl)
-	mockSingleResultHelper.EXPECT().Decode(gomock.Any())
 	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
-	mockDbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockSingleResultHelper)
 	mockDbCollection.EXPECT().Watch(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockChangeStream, nil)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.EXPECT().Collection(gomock.Eq(mongo.AlarmMongoCollection)).Return(mockDbCollection)
@@ -463,7 +475,7 @@ func TestWatcher_StopWatch_GivenStartWatchDetails_ShouldCloseChangeStream(t *tes
 	mockHub := mock_websocket.NewMockHub(ctrl)
 
 	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
-	err := w.StartWatchDetails(ctx, connId, userId, roomId, alarm.DetailsRequest{ID: alarmId})
+	err := w.StartWatchDetails(ctx, connId, userId, roomId, []alarm.DetailsRequest{{ID: alarmId}})
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
