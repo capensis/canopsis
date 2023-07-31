@@ -182,12 +182,20 @@ func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, 
 func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 	match bson.M,
 	now types.CpsTime,
+	onlyParents bool,
 ) ([]bson.M, error) {
 	q.clear(now)
 
 	q.alarmMatch = append(q.alarmMatch,
 		bson.M{"$match": match},
 	)
+
+	if onlyParents {
+		q.computedFields["is_meta_alarm"] = getIsMetaAlarmField()
+		q.lookups = append(q.lookups, lookupWithKey{key: "meta_alarm_rule", pipeline: getMetaAlarmRuleLookup()})
+		q.lookups = append(q.lookups, lookupWithKey{key: "children", pipeline: getChildrenCountLookup()})
+		q.excludedFields = append(q.excludedFields, "resolved_children")
+	}
 
 	query := pagination.Query{
 		Page:  1,

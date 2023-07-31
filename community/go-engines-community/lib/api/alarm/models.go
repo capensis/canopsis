@@ -140,17 +140,31 @@ type DetailsRequest struct {
 	PerfData           []string             `json:"perf_data"`
 }
 
-type StepsRequest struct {
-	pagination.Query
-	Reversed bool `json:"reversed"`
+func (r *DetailsRequest) Format() {
+	defaultQuery := pagination.GetDefaultQuery()
+
+	if r.Steps != nil {
+		r.Steps.Paginate = true
+		if r.Steps.Page == 0 {
+			r.Steps.Page = defaultQuery.Page
+		}
+		if r.Steps.Limit == 0 {
+			r.Steps.Limit = defaultQuery.Limit
+		}
+	}
+
+	if r.Children != nil {
+		r.Children.Paginate = true
+		if r.Children.Page == 0 {
+			r.Children.Page = defaultQuery.Page
+		}
+		if r.Children.Limit == 0 {
+			r.Children.Limit = defaultQuery.Limit
+		}
+	}
 }
 
-type ChildDetailsRequest struct {
-	pagination.Query
-	SortRequest
-}
-
-func (r DetailsRequest) GetOpenedFilter() int {
+func (r *DetailsRequest) GetOpenedFilter() int {
 	if r.Opened == nil {
 		return OpenedAndRecentResolved
 	}
@@ -160,6 +174,16 @@ func (r DetailsRequest) GetOpenedFilter() int {
 	}
 
 	return OnlyResolved
+}
+
+type StepsRequest struct {
+	pagination.Query
+	Reversed bool `json:"reversed"`
+}
+
+type ChildDetailsRequest struct {
+	pagination.Query
+	SortRequest
 }
 
 type DetailsResponse struct {
