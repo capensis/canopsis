@@ -180,7 +180,7 @@ func (c *WebsocketClient) ISubscribeToRoomWithData(ctx context.Context, roomTpl,
 	}
 
 	var data any
-	err = json.Unmarshal([]byte(b.String()), &data)
+	err = json.Unmarshal(b.Bytes(), &data)
 	if err != nil {
 		return err
 	}
