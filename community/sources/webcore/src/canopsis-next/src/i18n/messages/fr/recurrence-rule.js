@@ -1,7 +1,6 @@
 import { PBEHAVIOR_RRULE_PERIODS_RANGES } from '@/constants';
 
 export default {
-  advancedHint: 'Séparer les nombres par une virgule',
   freq: 'Fréquence',
   until: 'Jusqu\'à',
   byweekday: 'Par jour de la semaine',
@@ -12,7 +11,7 @@ export default {
   bysetpos: 'Par position',
   bymonthday: 'Par jour du mois',
   byyearday: 'Par jour de l\'année',
-  byweekno: 'Par semaine n°',
+  byweekno: 'Par numéro de semaine',
   byhour: 'Par heure',
   byminute: 'Par minute',
   bysecond: 'Par seconde',

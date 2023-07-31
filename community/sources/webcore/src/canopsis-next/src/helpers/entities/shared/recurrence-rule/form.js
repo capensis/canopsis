@@ -56,7 +56,7 @@ import { isArray } from 'lodash';
  * @return {RecurrenceRuleFormOptions}
  */
 export const recurrenceRuleToFormOptions = recurrenceRule => ({
-  freq: recurrenceRule.freq || '',
+  freq: recurrenceRule.freq || null,
   count: recurrenceRule.count || '',
   interval: recurrenceRule.interval || '',
   byweekday: recurrenceRule.byweekday ? recurrenceRule.byweekday.map(v => v.weekday) : [],
