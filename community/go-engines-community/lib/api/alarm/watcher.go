@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"sync"
 
@@ -15,7 +14,6 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -142,38 +140,62 @@ func (w *watcher) StartWatchDetails(ctx context.Context, connId, userId, roomId 
 		return nil
 	}
 
-	var request DetailsRequest
-	err = w.decoder.Decode(b, &request)
+	var requests []DetailsRequest
+	err = w.decoder.Decode(b, &requests)
 	if err != nil {
 		return fmt.Errorf("unexpected data type: %w", err)
 	}
 
-	request.Format()
-	err = binding.Validator.ValidateStruct(request)
-	if err != nil {
-		return fmt.Errorf("invalid request: %w", err)
-	}
-
-	var alarm types.Alarm
-	err = w.collection.FindOne(ctx, bson.M{
-		"_id":        request.ID,
-		"v.resolved": nil,
-	}, options.FindOne().SetProjection(bson.M{"d": 1, "v.meta": 1})).Decode(&alarm)
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return fmt.Errorf("alarm not found")
+	requestsById := make(map[string]DetailsRequest, len(requests))
+	alarmIds := make([]string, len(requests))
+	metaAlarmIds := make([]string, 0, len(requests))
+	for i, request := range requests {
+		request.Format()
+		err = binding.Validator.ValidateStruct(request)
+		if err != nil {
+			return fmt.Errorf("invalid request %d: %w", i, err)
 		}
 
-		return fmt.Errorf("cannot find alarm: %w", err)
+		requestsById[request.ID] = request
+		alarmIds[i] = request.ID
+		if request.Children != nil && request.Children.Page > 0 {
+			metaAlarmIds = append(metaAlarmIds, request.ID)
+		}
+	}
+
+	metaAlarmEntityIds := make([]string, 0, len(metaAlarmIds))
+	metaAlarmIdByEntityId := make(map[string]string, len(metaAlarmIds))
+	if len(metaAlarmIds) > 0 {
+		cursor, err := w.collection.Find(ctx, bson.M{
+			"_id":        bson.M{"$in": metaAlarmIds},
+			"v.resolved": nil,
+		}, options.Find().SetProjection(bson.M{"d": 1, "v.meta": 1}))
+		if err != nil {
+			return fmt.Errorf("cannot find alarm: %w", err)
+		}
+
+		defer cursor.Close(ctx)
+		for cursor.Next(ctx) {
+			metaAlarm := types.Alarm{}
+			err := cursor.Decode(&metaAlarm)
+			if err != nil {
+				return err
+			}
+
+			if metaAlarm.Value.Meta != "" {
+				metaAlarmEntityIds = append(metaAlarmEntityIds, metaAlarm.EntityID)
+				metaAlarmIdByEntityId[metaAlarm.EntityID] = metaAlarm.ID
+			}
+		}
 	}
 
 	var pipeline []bson.M
 	opts := options.ChangeStream()
-	if request.Children == nil || request.Children.Page == 0 || alarm.Value.Meta == "" {
+	if len(metaAlarmEntityIds) == 0 {
 		pipeline = []bson.M{
 			{"$match": bson.M{
 				"operationType":   "update",
-				"documentKey._id": request.ID,
+				"documentKey._id": bson.M{"$in": alarmIds},
 			}},
 		}
 	} else {
@@ -181,11 +203,11 @@ func (w *watcher) StartWatchDetails(ctx context.Context, connId, userId, roomId 
 			{"$match": bson.M{"$or": []bson.M{
 				{
 					"operationType":   "update",
-					"documentKey._id": request.ID,
+					"documentKey._id": bson.M{"$in": alarmIds},
 				},
 				{
 					"operationType":          "update",
-					"fullDocument.v.parents": alarm.EntityID,
+					"fullDocument.v.parents": bson.M{"$in": metaAlarmEntityIds},
 				},
 			}}},
 		}
@@ -203,15 +225,47 @@ func (w *watcher) StartWatchDetails(ctx context.Context, connId, userId, roomId 
 			streamCancel()
 		}()
 		for stream.Next(streamCtx) {
-			connIdsByUserId := w.getConnIds(roomId, k)
-			for userId, connIds := range connIdsByUserId {
-				res, err := w.store.GetDetails(streamCtx, request, userId)
-				if err != nil {
-					w.logger.Err(err).Msgf("cannot get alarm")
-					continue
-				}
+			changeEvent := struct {
+				DocumentKey struct {
+					ID string `bson:"_id"`
+				} `bson:"documentKey"`
+				FullDocument types.Alarm `bson:"fullDocument"`
+			}{}
+			err = stream.Decode(&changeEvent)
+			if err != nil {
+				w.logger.Err(err).Msgf("cannot decode alarm")
+				continue
+			}
 
-				w.hub.SendGroupRoomByConnections(streamCtx, connIds, websocket.RoomAlarmDetailsGroup, roomId, res)
+			connIdsByUserId := w.getConnIds(roomId, k)
+			if request, ok := requestsById[changeEvent.DocumentKey.ID]; ok {
+				for userId, connIds := range connIdsByUserId {
+					res, err := w.store.GetDetails(streamCtx, request, userId)
+					if err != nil {
+						w.logger.Err(err).Msgf("cannot get alarm")
+						continue
+					}
+
+					res.ID = request.ID
+					w.hub.SendGroupRoomByConnections(streamCtx, connIds, websocket.RoomAlarmDetailsGroup, roomId, res)
+				}
+			}
+
+			for _, parent := range changeEvent.FullDocument.Value.Parents {
+				if metaAlarmId, ok := metaAlarmIdByEntityId[parent]; ok {
+					if request, ok := requestsById[metaAlarmId]; ok {
+						for userId, connIds := range connIdsByUserId {
+							res, err := w.store.GetDetails(streamCtx, request, userId)
+							if err != nil {
+								w.logger.Err(err).Msgf("cannot get alarm")
+								continue
+							}
+
+							res.ID = request.ID
+							w.hub.SendGroupRoomByConnections(streamCtx, connIds, websocket.RoomAlarmDetailsGroup, roomId, res)
+						}
+					}
+				}
 			}
 		}
 	}()

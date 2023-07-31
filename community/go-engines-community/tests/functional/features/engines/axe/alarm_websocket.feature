@@ -71,14 +71,16 @@ Feature: get alarms
     When I save response alarmId={{ (index .lastResponse.data 0)._id }}
     When I connect to websocket
     When I authenticate in websocket
-    When I subscribe to websocket room "alarm-details/test-widget/{{ .alarmId }}":
+    When I subscribe to websocket room "alarm-details/test-widget":
     """json
-    {
-      "_id": "{{ .alarmId }}",
-      "steps": {
-        "page": 1
+    [
+      {
+        "_id": "{{ .alarmId }}",
+        "steps": {
+          "page": 1
+        }
       }
-    }
+    ]
     """
     When I send an event and wait the end of event processing:
     """json
@@ -92,9 +94,10 @@ Feature: get alarms
       "source_type": "resource"
     }
     """
-    Then I wait message from websocket room "alarm-details/test-widget/{{ .alarmId }}" which contains:
+    Then I wait message from websocket room "alarm-details/test-widget" which contains:
     """json
     {
+      "_id": "{{ .alarmId }}",
       "steps": {
         "data": [
           {
