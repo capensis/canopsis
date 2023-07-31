@@ -43,7 +43,6 @@ func TestWatcher_StartWatch_GivenMultipleConnsWithTheSameRequest_ShouldCreateOne
 				return true
 			}
 
-			close(done)
 			return false
 		}
 	}).Times(2)
@@ -54,7 +53,9 @@ func TestWatcher_StartWatch_GivenMultipleConnsWithTheSameRequest_ShouldCreateOne
 	}) {
 		changeEvent.DocumentKey.ID = alarmId
 	})
-	mockChangeStream.EXPECT().Close(gomock.Any())
+	mockChangeStream.EXPECT().Close(gomock.Any()).Do(func(_ context.Context) {
+		close(done)
+	})
 	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockDbCollection.EXPECT().Watch(gomock.Any(), gomock.Any()).Return(mockChangeStream, nil)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
@@ -123,7 +124,6 @@ func TestWatcher_StartWatch_GivenMultipleConnsWithDiffRequest_ShouldCreateMultip
 				return true
 			}
 
-			done <- struct{}{}
 			return false
 		}
 	}).Times(2)
@@ -134,7 +134,9 @@ func TestWatcher_StartWatch_GivenMultipleConnsWithDiffRequest_ShouldCreateMultip
 	}) {
 		changeEvent.DocumentKey.ID = alarmId1
 	})
-	mockChangeStream1.EXPECT().Close(gomock.Any())
+	mockChangeStream1.EXPECT().Close(gomock.Any()).Do(func(_ context.Context) {
+		done <- struct{}{}
+	})
 	mockChangeStream2 := mock_mongo.NewMockChangeStream(ctrl)
 	mockChangeStream2.EXPECT().Next(gomock.Any()).DoAndReturn(func(_ context.Context) bool {
 		select {
@@ -145,7 +147,6 @@ func TestWatcher_StartWatch_GivenMultipleConnsWithDiffRequest_ShouldCreateMultip
 				return true
 			}
 
-			done <- struct{}{}
 			return false
 		}
 	}).Times(2)
@@ -156,7 +157,9 @@ func TestWatcher_StartWatch_GivenMultipleConnsWithDiffRequest_ShouldCreateMultip
 	}) {
 		changeEvent.DocumentKey.ID = alarmId2
 	})
-	mockChangeStream2.EXPECT().Close(gomock.Any())
+	mockChangeStream2.EXPECT().Close(gomock.Any()).Do(func(_ context.Context) {
+		done <- struct{}{}
+	})
 	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockDbCollection.EXPECT().Watch(gomock.Any(), gomock.Any()).Return(mockChangeStream1, nil)
 	mockDbCollection.EXPECT().Watch(gomock.Any(), gomock.Any()).Return(mockChangeStream2, nil)
@@ -229,7 +232,6 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithTheSameRequest_ShouldCr
 				return true
 			}
 
-			close(done)
 			return false
 		}
 	}).Times(2)
@@ -241,7 +243,9 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithTheSameRequest_ShouldCr
 	}) {
 		changeEvent.DocumentKey.ID = alarmId
 	})
-	mockChangeStream.EXPECT().Close(gomock.Any())
+	mockChangeStream.EXPECT().Close(gomock.Any()).Do(func(_ context.Context) {
+		close(done)
+	})
 	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockDbCollection.EXPECT().Watch(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockChangeStream, nil)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
@@ -310,7 +314,6 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithDiffRequest_ShouldCreat
 				return true
 			}
 
-			done <- struct{}{}
 			return false
 		}
 	}).Times(2)
@@ -322,7 +325,9 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithDiffRequest_ShouldCreat
 	}) {
 		changeEvent.DocumentKey.ID = alarmId1
 	})
-	mockChangeStream1.EXPECT().Close(gomock.Any())
+	mockChangeStream1.EXPECT().Close(gomock.Any()).Do(func(_ context.Context) {
+		done <- struct{}{}
+	})
 	mockChangeStream2 := mock_mongo.NewMockChangeStream(ctrl)
 	mockChangeStream2.EXPECT().Next(gomock.Any()).DoAndReturn(func(_ context.Context) bool {
 		select {
@@ -333,7 +338,6 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithDiffRequest_ShouldCreat
 				return true
 			}
 
-			done <- struct{}{}
 			return false
 		}
 	}).Times(2)
@@ -345,7 +349,9 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithDiffRequest_ShouldCreat
 	}) {
 		changeEvent.DocumentKey.ID = alarmId2
 	})
-	mockChangeStream2.EXPECT().Close(gomock.Any())
+	mockChangeStream2.EXPECT().Close(gomock.Any()).Do(func(_ context.Context) {
+		done <- struct{}{}
+	})
 	mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockDbCollection.EXPECT().Watch(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockChangeStream1, nil)
 	mockDbCollection.EXPECT().Watch(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockChangeStream2, nil)
