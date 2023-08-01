@@ -7,41 +7,49 @@
     v-layout(column)
       v-layout(row)
         v-flex.pr-2(xs6)
-          recurrence-rule-frequency-field(:value="form.recurrenceRuleOptions.freq", @input="updateFrequency")
-          recurrence-rule-interval-field(v-if="isFrequencyEnabled", v-model="form.recurrenceRuleOptions")
+          recurrence-rule-frequency-field(:value="form.freq", @input="updateFrequency")
+          recurrence-rule-interval-field(v-if="isFrequencyEnabled", v-model="form")
         v-flex.pl-2(xs6)
-          recurrence-rule-end-field(v-if="isFrequencyEnabled", v-model="form.recurrenceRuleOptions")
+          recurrence-rule-end-field(v-if="isFrequencyEnabled", v-model="form")
 
       recurrence-rule-weekday-field(
         v-if="!isAdvancedTab && isWeeklyFrequency",
-        v-model="form.recurrenceRuleOptions.byweekday",
+        v-model="form.byweekday",
         chips
       )
 
     v-tabs-items(v-model="activeTab")
       v-tab-item
       v-tab-item(:disabled="!isFrequencyEnabled")
-        recurrence-rule-weekday-field(v-model="form.recurrenceRuleOptions.wkst")
-        recurrence-rule-weekday-field(v-if="!isYearlyFrequency", v-model="form.recurrenceRuleOptions.byweekday", chips)
-        recurrence-rule-month-field(v-model="form.recurrenceRuleOptions.bymonth")
         v-layout(row, wrap)
+          v-flex(xs6)
+            recurrence-rule-weekday-field(v-model="form.wkst")
+          v-flex(v-if="!isYearlyFrequency", xs12)
+            recurrence-rule-weekday-field(v-model="form.byweekday", chips)
+          v-flex(xs12)
+            recurrence-rule-month-field(v-model="form.bymonth")
           v-flex(v-for="(field, index) in advancedFields", :key="field", :class="`${index % 2 ? 'pl' : 'pr'}-2`", xs6)
             recurrence-rule-regex-field(
-              v-model="form.advancedRecurrenceRuleOptions[field]",
+              v-model="form[field]",
               :label="$t(`recurrenceRule.${field}`)",
               :help-text="$t(`recurrenceRule.tooltips.${field}`)",
               :name="field"
             )
-    template(v-if="isFrequencyEnabled")
-      recurrence-rule-information(:rrule="recurrenceRuleString")
+
+    recurrence-rule-information(v-if="isFrequencyEnabled", :rrule="recurrenceRuleString")
     c-alert(:value="errors.has('recurrenceRule')", type="error") {{ errors.first('recurrenceRule') }}
 </template>
 
 <script>
 import { RRule, rrulestr } from 'rrule';
-import { isNull, mapValues, pickBy } from 'lodash';
+import { isNull } from 'lodash';
 
-import { recurrenceRuleToFormAdvancedOptions, recurrenceRuleToFormOptions } from '@/helpers/entities/shared/recurrence-rule/form';
+import {
+  formOptionsToRecurrenceRuleOptions,
+  recurrenceRuleToFormOptions,
+} from '@/helpers/entities/shared/recurrence-rule/form';
+
+import { formBaseMixin } from '@/mixins/form';
 
 import RecurrenceRuleInformation from '@/components/common/reccurence-rule/recurrence-rule-information.vue';
 import RecurrenceRuleRegexField from '@/components/forms/recurrence-rule/fields/recurrence-rule-regex-field.vue';
@@ -63,6 +71,7 @@ export default {
     RecurrenceRuleFrequencyField,
     RecurrenceRuleInformation,
   },
+  mixins: [formBaseMixin],
   model: {
     prop: 'rrule',
     event: 'input',
@@ -90,31 +99,28 @@ export default {
     return {
       activeTab: 0,
       recurrenceRuleObject: recurrenceRule,
-      form: {
-        recurrenceRuleOptions: recurrenceRuleToFormOptions(recurrenceRule.origOptions),
-        advancedRecurrenceRuleOptions: recurrenceRuleToFormAdvancedOptions(recurrenceRule.origOptions),
-      },
+      form: recurrenceRuleToFormOptions(recurrenceRule.origOptions),
     };
   },
   computed: {
     isFrequencyEnabled() {
-      return !isNull(this.form.recurrenceRuleOptions.freq);
+      return !isNull(this.form.freq);
     },
 
     isHourlyFrequency() {
-      return this.form.recurrenceRuleOptions.freq === RRule.HOURLY;
+      return this.form.freq === RRule.HOURLY;
     },
 
     isWeeklyFrequency() {
-      return this.form.recurrenceRuleOptions.freq === RRule.WEEKLY;
+      return this.form.freq === RRule.WEEKLY;
     },
 
     isMonthlyFrequency() {
-      return this.form.recurrenceRuleOptions.freq === RRule.MONTHLY;
+      return this.form.freq === RRule.MONTHLY;
     },
 
     isYearlyFrequency() {
-      return this.form.recurrenceRuleOptions.freq === RRule.YEARLY;
+      return this.form.freq === RRule.YEARLY;
     },
 
     isAdvancedTab() {
@@ -160,12 +166,17 @@ export default {
   },
   methods: {
     updateFrequency(frequency) {
-      this.form.recurrenceRuleOptions.freq = frequency;
+      this.form.freq = frequency;
+
+      if (!this.isWeeklyFrequency && this.form.byweekday) {
+        this.form.byweekday = [];
+      }
 
       if (this.isAdvancedTab && isNull(frequency)) {
         this.activeTab = 0;
       }
     },
+
     /**
      * For each changes in the form we call this function.
      * If RRule isn't valid then add error message to visible RRule field
@@ -173,10 +184,7 @@ export default {
      */
     changeRecurrenceRuleOption() {
       try {
-        this.recurrenceRuleObject = new RRule({
-          ...pickBy(this.form.recurrenceRuleOptions, v => v !== ''),
-          ...mapValues(this.form.advancedRecurrenceRuleOptions, o => o.split(',').filter(v => v)),
-        });
+        this.recurrenceRuleObject = new RRule(formOptionsToRecurrenceRuleOptions(this.form, this.advancedFields));
 
         if (!this.errors.has('recurrenceRule') && !this.recurrenceRuleObject.isFullyConvertibleToText()) {
           this.errors.add({
@@ -186,11 +194,10 @@ export default {
         } else {
           this.errors.remove('recurrenceRule');
 
-          /** TODO: Should be used updateModel */
-          this.$emit('input', this.recurrenceRuleString.replace(/.*RRULE:/, ''));
+          this.updateModel(this.recurrenceRuleString.replace(/.*RRULE:/, ''));
         }
       } catch (err) {
-        this.$emit('input', '');
+        this.updateModel('');
       }
     },
   },

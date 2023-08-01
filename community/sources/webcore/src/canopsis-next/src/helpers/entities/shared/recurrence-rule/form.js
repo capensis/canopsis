@@ -1,4 +1,5 @@
-import { isArray } from 'lodash';
+import { RRule } from 'rrule';
+import { isArray, isNumber, mapValues, pick } from 'lodash';
 
 /**
  * @typedef {Object} Weekday
@@ -40,29 +41,7 @@ import { isArray } from 'lodash';
 
 /**
  * @typedef {Object} RecurrenceRuleFormAdvancedOptions
- * @property {string} bysetpos
- * @property {string} bymonthday
- * @property {string} byyearday
- * @property {string} byweekno
- * @property {string} byhour
- * @property {string} byminute
- * @property {string} bysecond
  */
-
-/**
- * Prepare rrule options to form
- *
- * @param {RecurrenceRuleOptions} recurrenceRule
- * @return {RecurrenceRuleFormOptions}
- */
-export const recurrenceRuleToFormOptions = recurrenceRule => ({
-  freq: recurrenceRule.freq || null,
-  count: recurrenceRule.count || '',
-  interval: recurrenceRule.interval || '',
-  byweekday: recurrenceRule.byweekday ? recurrenceRule.byweekday.map(v => v.weekday) : [],
-  wkst: recurrenceRule.wkst ? recurrenceRule.wkst.weekday : '',
-  bymonth: recurrenceRule.bymonth || [],
-});
 
 /**
  * Convert string or array to string
@@ -79,12 +58,18 @@ const prepareRecurrenceRuleOption = (value) => {
 };
 
 /**
- * Prepare rrule options to advanced form
+ * Prepare rrule options to form
  *
  * @param {RecurrenceRuleOptions} recurrenceRule
- * @return {RecurrenceRuleFormAdvancedOptions}
+ * @return {RecurrenceRuleFormOptions}
  */
-export const recurrenceRuleToFormAdvancedOptions = recurrenceRule => ({
+export const recurrenceRuleToFormOptions = recurrenceRule => ({
+  freq: recurrenceRule.freq || null,
+  count: recurrenceRule.count || '',
+  interval: recurrenceRule.interval || '',
+  byweekday: recurrenceRule.byweekday ? recurrenceRule.byweekday.map(v => v.weekday) : [],
+  wkst: recurrenceRule.wkst ? recurrenceRule.wkst.weekday : '',
+  bymonth: recurrenceRule.bymonth || [],
   bysetpos: prepareRecurrenceRuleOption(recurrenceRule.bysetpos),
   bymonthday: prepareRecurrenceRuleOption(recurrenceRule.bymonthday),
   byyearday: prepareRecurrenceRuleOption(recurrenceRule.byyearday),
@@ -93,3 +78,42 @@ export const recurrenceRuleToFormAdvancedOptions = recurrenceRule => ({
   byminute: prepareRecurrenceRuleOption(recurrenceRule.byminute),
   bysecond: prepareRecurrenceRuleOption(recurrenceRule.bysecond),
 });
+
+/**
+ * Prepare form options to rrule form
+ *
+ * @param {RecurrenceRuleFormOptions} options
+ * @param {string[]} advancedFields
+ * @return {RecurrenceRuleOptions}
+ */
+export const formOptionsToRecurrenceRuleOptions = (options, advancedFields = []) => {
+  const recurrenceRuleOptions = {
+    freq: options.freq,
+    ...mapValues(
+      pick(options, advancedFields),
+      o => o.split(',').filter(v => v),
+    ),
+  };
+
+  if (isNumber(options.count)) {
+    recurrenceRuleOptions.count = options.count;
+  }
+
+  if (isNumber(options.interval)) {
+    recurrenceRuleOptions.interval = options.interval;
+  }
+
+  if (options.freq !== RRule.YEARLY && options.byweekday.length) {
+    recurrenceRuleOptions.byweekday = options.byweekday;
+  }
+
+  if (options.bymonth.length) {
+    recurrenceRuleOptions.bymonth = options.bymonth;
+  }
+
+  if (isNumber(options.wkst)) {
+    recurrenceRuleOptions.wkst = options.wkst.weekday;
+  }
+
+  return recurrenceRuleOptions;
+};
