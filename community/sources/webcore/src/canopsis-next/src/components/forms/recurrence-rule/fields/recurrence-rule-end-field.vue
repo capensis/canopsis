@@ -9,7 +9,7 @@
     v-radio.mb-0(:value="types.date", color="primary")
       template(#label="")
         span {{ $t('recurrenceRule.on') }}
-        date-time-splitted-picker-field.ml-3.mt-0(
+        date-time-splitted-picker-field.ml-3(
           v-field="value.until",
           v-validate="'required'",
           :placeholder="$t('common.date')",
@@ -20,7 +20,7 @@
     v-radio.mb-0(:value="types.after", color="primary")
       template(#label="")
         span {{ $t('recurrenceRule.after') }}
-        c-number-field.mx-3.mt-0(
+        c-number-field.mx-3(
           v-field="value.count",
           :disabled="!isAfterType",
           :required="isAfterType",
@@ -31,6 +31,8 @@
 
 <script>
 import { omit } from 'lodash';
+
+import { RECURRENCE_RULE_END_TYPES } from '@/constants';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -49,21 +51,17 @@ export default {
       type: Object,
       required: true,
     },
+    types: {
+      type: Object,
+      default: () => RECURRENCE_RULE_END_TYPES,
+    },
   },
   data() {
     return {
-      type: 0,
+      type: RECURRENCE_RULE_END_TYPES.never,
     };
   },
   computed: {
-    types() {
-      return {
-        never: 0,
-        date: 1,
-        after: 2,
-      };
-    },
-
     isDateType() {
       return this.type === this.types.date;
     },
