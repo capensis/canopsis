@@ -2,6 +2,7 @@ import { PBEHAVIOR_RRULE_PERIODS_RANGES } from '@/constants';
 
 export default {
   repeatEvery: 'Repeat every',
+  repeatOn: 'Repeat on',
   freq: 'Frequency',
   until: 'Until',
   byweekday: 'By week day',
@@ -21,6 +22,8 @@ export default {
   after: 'After',
   occurrence: 'Occurrence | Occurrences',
   none: 'None',
+  dayOfMonth: 'Day {day} of a month',
+  weeksDayOfMonth: '{weeksNumber} {weeksDay} of a month',
   tabs: {
     simple: 'Simple',
     advanced: 'Advanced',

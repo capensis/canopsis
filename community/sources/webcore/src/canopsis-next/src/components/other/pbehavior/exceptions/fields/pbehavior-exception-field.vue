@@ -1,7 +1,7 @@
 <template lang="pug">
-  v-layout(column)
+  v-layout.pbehavior-exception-field(column)
     v-layout(row, justify-space-between)
-      v-flex(xs6)
+      v-flex.pbehavior-exception-field__interval(xs6)
         date-time-splitted-range-picker-field(
           v-if="editing",
           :start="value.begin",
@@ -37,7 +37,7 @@
           v-else,
           :value="value.type"
         )
-      v-flex.exception-field-item--actions(v-if="!disabled")
+      v-flex.pbehavior-exception-field__actions(v-if="!disabled")
         v-btn.btn--editing(
           :input-value="editing",
           icon,
@@ -165,12 +165,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.exception-field-item--actions {
-  min-width: 90px;
+.pbehavior-exception-field {
+  &__interval {
+    flex-shrink: 0;
+  }
 
-  .btn--editing {
-    height: 36px;
-    width: 36px;
+  &__actions {
+    min-width: 90px;
+
+    .btn--editing {
+      height: 36px;
+      width: 36px;
+    }
   }
 }
 </style>

@@ -4,8 +4,8 @@
       template(#title="")
         span {{ $t('modals.createRrule.title') }}
       template(#text="")
-        recurrence-rule-form(v-model="form.rrule")
-        pbehavior-recurrence-rule-exceptions-field(
+        recurrence-rule-form(v-model="form.rrule", :start="config.start")
+        pbehavior-recurrence-rule-exceptions-field.mt-2(
           v-model="form.exdates",
           :exceptions.sync="form.exceptions",
           :with-exdate-type="config.withExdateType"
