@@ -71,7 +71,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			now := time.Now().In(timezoneConfigProvider.Get().Location)
 			newSpan := timespan.New(now, now.Add(frameDuration))
 
-			_, count, err := pbhService.Compute(ctx, newSpan)
+			resolver, count, err := pbhService.Compute(ctx, newSpan)
 			if err != nil {
 				return fmt.Errorf("compute pbehavior's frames failed: %w", err)
 			}
@@ -82,6 +82,11 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 					Time("interval_to", newSpan.To()).
 					Int("count", count).
 					Msg("pbehaviors are recomputed")
+
+				err = updatePbehaviorComputedStarts(ctx, dbClient.Collection(mongo.PbehaviorMongoCollection), resolver.GetComputedRruleStarts())
+				if err != nil {
+					logger.Err(err).Msg("cannot update pbehaviors")
+				}
 			}
 
 			return nil
@@ -179,6 +184,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			Encoder:                json.NewEncoder(),
 			Logger:                 logger,
 			TimezoneConfigProvider: timezoneConfigProvider,
+			PbhCollection:          dbClient.Collection(mongo.PbehaviorMongoCollection),
 		},
 		logger,
 	))
