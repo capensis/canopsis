@@ -211,11 +211,28 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 		response, err = s.GetById(ctx, model.ID)
 		return err
 	})
+	if err != nil || response == nil {
+		return nil, err
+	}
 
-	return response, err
+	_, err = s.dbFailureCollection.UpdateMany(ctx, bson.M{"rule": request.ID, "unread": true}, bson.M{
+		"$unset": bson.M{
+			"unread": "",
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+	_, err := s.dbFailureCollection.DeleteMany(ctx, bson.M{"rule": id})
+	if err != nil {
+		return false, err
+	}
+
 	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
 	if err != nil {
 		return false, err

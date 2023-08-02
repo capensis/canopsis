@@ -5798,9 +5798,9 @@ paths:
     put:
       tags:
         - eventfilters
-      summary: Read failures of event filter rule by id
+      summary: Make failures of event filter rule by id as read
       description: |
-        Read failures of event filter rule by id.
+        Make failures of event filter rule by id as read.
         
         -  PERMISSIONS: `api_eventfilter:create`
       operationId: eventfilters-read-failures

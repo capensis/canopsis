@@ -94,7 +94,7 @@ func (s *failureService) flush(ctx context.Context) error {
 	bulkCount := int(math.Ceil(float64(l) / float64(bulkSize)))
 	for i := 0; i < bulkCount; i++ {
 		begin := i * bulkSize
-		end := (i + 1) * bulkSize
+		end := begin + bulkSize
 		if end > l {
 			end = l
 		}
