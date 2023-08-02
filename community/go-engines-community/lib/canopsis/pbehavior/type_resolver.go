@@ -21,6 +21,13 @@ type TypeResolver interface {
 	Resolve(ctx context.Context, t time.Time, entity types.Entity, cachedMatchedPbehaviorIds []string) (ResolveResult, error)
 	GetPbehaviors(ctx context.Context, t time.Time, pbehaviorIDs []string) ([]ResolveResult, error)
 	GetPbehaviorsCount(ctx context.Context, t time.Time) (int, error)
+	GetComputedRruleStarts() map[string]RruleStart
+}
+
+type RruleStart struct {
+	Rrule         string
+	Start         types.CpsTime
+	ComputedStart types.CpsTime
 }
 
 // typeResolver resolves entity state by computed data.
@@ -188,6 +195,23 @@ func (r *typeResolver) GetPbehaviorsCount(ctx context.Context, t time.Time) (int
 	}
 
 	return int(count), nil
+}
+
+func (r *typeResolver) GetComputedRruleStarts() map[string]RruleStart {
+	res := make(map[string]RruleStart, len(r.ComputedPbehaviors))
+	for id, pbehavior := range r.ComputedPbehaviors {
+		if pbehavior.Rrule == "" || pbehavior.Start == nil || pbehavior.LastRruleEvent.IsZero() {
+			continue
+		}
+
+		res[id] = RruleStart{
+			Rrule:         pbehavior.Rrule,
+			Start:         *pbehavior.Start,
+			ComputedStart: types.CpsTime{Time: pbehavior.LastRruleEvent},
+		}
+	}
+
+	return res
 }
 
 func (r *typeResolver) getPbehaviorIntervals(

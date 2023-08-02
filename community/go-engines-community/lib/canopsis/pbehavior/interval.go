@@ -37,6 +37,15 @@ func GetTimeSpans(event Event, view timespan.Span) ([]timespan.Span, error) {
 		return getSpansForSingleEvent(event.span, view), nil
 	}
 
+	res, _, err := getTimeSpansForRecEvent(event, view)
+	return res, err
+}
+
+func GetTimeSpansAndLastStart(event Event, view timespan.Span) ([]timespan.Span, time.Time, error) {
+	if event.rOption == nil {
+		return getSpansForSingleEvent(event.span, view), time.Time{}, nil
+	}
+
 	return getTimeSpansForRecEvent(event, view)
 }
 
@@ -49,12 +58,12 @@ func getSpansForSingleEvent(span, view timespan.Span) []timespan.Span {
 	return []timespan.Span{*intersect}
 }
 
-func getTimeSpansForRecEvent(event Event, view timespan.Span) ([]timespan.Span, error) {
+func getTimeSpansForRecEvent(event Event, view timespan.Span) ([]timespan.Span, time.Time, error) {
 	rOption := *event.rOption
 	rOption.Dtstart = event.span.From()
 	r, err := rrule.NewRRule(rOption)
 	if err != nil {
-		return nil, err
+		return nil, time.Time{}, err
 	}
 
 	duration := event.span.Duration()
@@ -62,8 +71,9 @@ func getTimeSpansForRecEvent(event Event, view timespan.Span) ([]timespan.Span, 
 	before := view.To()
 	startList := r.Between(after, before, true)
 	res := make([]timespan.Span, 0, len(startList))
-
+	var lastStart time.Time
 	for _, start := range startList {
+		lastStart = start
 		from := utils.MaxTime(start, view.From())
 		to := utils.MinTime(start.Add(duration), view.To())
 
@@ -72,5 +82,5 @@ func getTimeSpansForRecEvent(event Event, view timespan.Span) ([]timespan.Span, 
 		}
 	}
 
-	return res, nil
+	return res, lastStart, nil
 }
