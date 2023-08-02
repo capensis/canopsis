@@ -1,16 +1,8 @@
-Feature: update a PBehavior
-  I need to be able to update a PBehavior
-  Only admin should be able to update a PBehavior
+Feature: update a pbehavior
+  I need to be able to update a pbehavior
+  Only admin should be able to update a pbehavior
 
-  Scenario: given update request and no auth user should not allow access
-    When I do PUT /api/v4/pbehaviors/test-pbehavior-to-update
-    Then the response code should be 401
-
-  Scenario: given update request and auth user without view permission should not allow access
-    When I am noperms
-    When I do PUT /api/v4/pbehaviors/test-pbehavior-to-update
-    Then the response code should be 403
-
+  @concurrent
   Scenario: given update request should return ok
     When I am admin
     When I do PUT /api/v4/pbehaviors/test-pbehavior-to-update-1:
@@ -104,6 +96,7 @@ Feature: update a PBehavior
     }
     """
 
+  @concurrent
   Scenario: given update request with pause type and without stop should return ok
     When I am admin
     When I do PUT /api/v4/pbehaviors/test-pbehavior-to-update-2:
@@ -206,6 +199,7 @@ Feature: update a PBehavior
     }
     """
 
+  @concurrent
   Scenario: given update request with old mongo pattern should return ok
     When I am admin
     When I do PUT /api/v4/pbehaviors/test-pbehavior-to-update-3:
@@ -310,16 +304,17 @@ Feature: update a PBehavior
     """
     Then the response key "old_mongo_query" should not exist
 
-  Scenario: given update request with the name that already exists should cause dup error
+  @concurrent
+  Scenario: given update request with rrule should return update rrule end
     When I am admin
-    When I do PUT /api/v4/pbehaviors/test-pbehavior-to-update-1:
+    When I do PUT /api/v4/pbehaviors/test-pbehavior-to-update-4:
     """json
     {
+      "rrule": "FREQ=DAILY;UNTIL=20221108T103000Z",
+      "tstart": {{ parseTimeTz "08-10-2022 10:00" }},
+      "tstop": {{ parseTimeTz "08-10-2022 11:00" }},
       "enabled": true,
-      "name": "test-pbehavior-to-check-unique-name",
-      "tstart": 1591172881,
-      "tstop": 1591536400,
-      "color": "#FFFFFF",
+      "name": "test-pbehavior-to-update-4-name",
       "type": "test-type-to-pbh-edit-1",
       "reason": "test-reason-to-pbh-edit",
       "entity_pattern": [
@@ -328,54 +323,34 @@ Feature: update a PBehavior
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-pbehavior-to-update-1-pattern"
+              "value": "test-pbehavior-to-update-4-pattern"
             }
           }
         ]
-      ]
+      ],
+      "exdates":[],
+      "exceptions": []
     }
     """
-    Then the response code should be 400
-    Then the response body should be:
+    Then the response code should be 200
+    Then the response body should contain:
     """json
     {
-      "errors": {
-        "name": "Name already exists."
-      }
-    }
-    """
-
-  Scenario: given invalid update request should return errors
-    When I am admin
-    When I do PUT /api/v4/pbehaviors/test-pbehavior-to-update-1:
-    """json
-    {}
-    """
-    Then the response code should be 400
-    Then the response body should be:
-    """json
-    {
-      "errors": {
-        "enabled": "Enabled is missing.",
-        "name": "Name is missing.",
-        "entity_pattern": "EntityPattern is missing.",
-        "reason": "Reason is missing.",
-        "tstart": "Start is missing.",
-        "type": "Type is missing."
-      }
+      "_id": "test-pbehavior-to-update-4",
+      "rrule_end": {{ parseTimeTz "08-11-2022 10:00" }}
     }
     """
 
-  Scenario: given no exist pbehavior id should return error
+  @concurrent
+  Scenario: given update request without rrule should return remove rrule end
     When I am admin
-    When I do PUT /api/v4/pbehaviors/test-pbehavior-not-exist:
+    When I do PUT /api/v4/pbehaviors/test-pbehavior-to-update-5:
     """json
     {
+      "tstart": {{ parseTimeTz "08-10-2022 10:00" }},
+      "tstop": {{ parseTimeTz "08-10-2022 11:00" }},
       "enabled": true,
-      "name": "test-pbehavior-not-exist",
-      "tstart": 1591172881,
-      "tstop": 1591536400,
-      "color": "#FFFFFF",
+      "name": "test-pbehavior-to-update-5-name",
       "type": "test-type-to-pbh-edit-1",
       "reason": "test-reason-to-pbh-edit",
       "entity_pattern": [
@@ -384,11 +359,20 @@ Feature: update a PBehavior
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-pbehavior-not-exist"
+              "value": "test-pbehavior-to-update-5-pattern"
             }
           }
         ]
-      ]
+      ],
+      "exdates":[],
+      "exceptions": []
     }
     """
-    Then the response code should be 404
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-pbehavior-to-update-5",
+      "rrule_end": null
+    }
+    """
