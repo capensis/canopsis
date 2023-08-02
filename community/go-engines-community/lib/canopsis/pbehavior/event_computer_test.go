@@ -123,7 +123,7 @@ func BenchmarkEventComputer_Compute(b *testing.B) {
 	span := timespan.New(now, now.Add(7*24*time.Hour))
 
 	for i := 0; i < b.N; i++ {
-		_, err := computer.Compute(params, span)
+		_, _, err := computer.Compute(params, span)
 		if err != nil {
 			b.Fatalf("unexpected error: %v", err)
 		}

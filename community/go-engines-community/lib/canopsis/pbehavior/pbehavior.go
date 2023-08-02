@@ -51,6 +51,8 @@ type PBehavior struct {
 	Stop     *types.CpsTime `bson:"tstop,omitempty"`
 	RRule    string         `bson:"rrule"`
 	RRuleEnd *types.CpsTime `bson:"rrule_end,omitempty"`
+	// RRuleComputedStart is an auxiliary start date to compute rrule faster.
+	RRuleComputedStart *types.CpsTime `bson:"rrule_cstart,omitempty"`
 
 	// Origin is used if a pbehavior is created for certain entity.
 	// Origin can contain some feature name or external service name.

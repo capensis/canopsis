@@ -5,6 +5,7 @@ package pbehavior
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -50,6 +51,10 @@ type ComputedPbehavior struct {
 
 	Pattern       pattern.Entity         `json:"p,omitempty"`
 	OldMongoQuery map[string]interface{} `json:"q,omitempty"`
+
+	Start          *types.CpsTime `json:"-"`
+	Rrule          string         `json:"-"`
+	LastRruleEvent time.Time      `json:"-"`
 }
 
 //easyjson:json
@@ -285,12 +290,18 @@ func (c *typeComputer) computePbehavior(
 	models models,
 ) (ComputedPbehavior, error) {
 	var start, end types.CpsTime
-	if pbehavior.Start != nil {
+	if pbehavior.RRuleComputedStart != nil && pbehavior.RRuleComputedStart.Time.Before(span.From()) {
+		start = *pbehavior.RRuleComputedStart
+		if pbehavior.Stop != nil && pbehavior.Start != nil {
+			end = types.CpsTime{Time: start.Add(pbehavior.Stop.Sub(pbehavior.Start.Time))}
+		}
+	} else if pbehavior.Start != nil {
 		start = *pbehavior.Start
+		if pbehavior.Stop != nil {
+			end = *pbehavior.Stop
+		}
 	}
-	if pbehavior.Stop != nil {
-		end = *pbehavior.Stop
-	}
+
 	exdates, err := c.getExdates(pbehavior, models)
 	if err != nil {
 		return ComputedPbehavior{}, err
@@ -302,7 +313,7 @@ func (c *typeComputer) computePbehavior(
 		Type:    pbehavior.Type,
 		Exdates: exdates,
 	}
-	computedTypes, err := eventComputer.Compute(params, span)
+	computedTypes, lastRruleEvent, err := eventComputer.Compute(params, span)
 	if err != nil {
 		return ComputedPbehavior{}, err
 	}
@@ -332,6 +343,10 @@ func (c *typeComputer) computePbehavior(
 
 			Pattern:       pbehavior.EntityPattern,
 			OldMongoQuery: oldMongoQuery,
+
+			Rrule:          pbehavior.RRule,
+			Start:          pbehavior.Start,
+			LastRruleEvent: lastRruleEvent,
 		}, nil
 	}
 

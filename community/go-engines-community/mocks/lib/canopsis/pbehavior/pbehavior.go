@@ -554,6 +554,20 @@ func (mr *MockComputedEntityTypeResolverMockRecorder) GetComputedEntityIDs() *go
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetComputedEntityIDs", reflect.TypeOf((*MockComputedEntityTypeResolver)(nil).GetComputedEntityIDs))
 }
 
+// GetComputedRruleStarts mocks base method.
+func (m *MockComputedEntityTypeResolver) GetComputedRruleStarts() map[string]pbehavior.RruleStart {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetComputedRruleStarts")
+	ret0, _ := ret[0].(map[string]pbehavior.RruleStart)
+	return ret0
+}
+
+// GetComputedRruleStarts indicates an expected call of GetComputedRruleStarts.
+func (mr *MockComputedEntityTypeResolverMockRecorder) GetComputedRruleStarts() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetComputedRruleStarts", reflect.TypeOf((*MockComputedEntityTypeResolver)(nil).GetComputedRruleStarts))
+}
+
 // GetPbehaviorsCount mocks base method.
 func (m *MockComputedEntityTypeResolver) GetPbehaviorsCount(arg0 context.Context, arg1 time.Time) (int, error) {
 	m.ctrl.T.Helper()
