@@ -139,7 +139,7 @@
 </template>
 
 <script>
-import { isEqual } from 'lodash';
+import { isEqual, map } from 'lodash';
 
 import {
   ENTITY_TYPES,
@@ -320,6 +320,16 @@ export default {
       },
     },
 
+    'widget.parameters.widgetGroupColumns': {
+      handler(columns) {
+        this.query = {
+          ...this.query,
+
+          search_by: map(columns, 'value'),
+        };
+      },
+    },
+
     isTourEnabled() {
       this.refreshTabs();
     },
@@ -333,8 +343,8 @@ export default {
     search: {
       immediate: true,
       handler(search) {
-        this.childrenQuery = {
-          ...this.childrenQuery,
+        this.query = {
+          ...this.query,
 
           search,
         };

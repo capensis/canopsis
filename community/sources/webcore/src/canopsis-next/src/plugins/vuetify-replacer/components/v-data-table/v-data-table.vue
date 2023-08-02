@@ -3,6 +3,8 @@ import { VDataTable } from 'vuetify/es5/components/VDataTable';
 import { VIcon } from 'vuetify/es5/components/VIcon';
 import { VCheckbox } from 'vuetify/es5/components/VCheckbox';
 import { consoleWarn } from 'vuetify/es5/util/console';
+import { getObjectValueByPath } from 'vuetify/es5/util/helpers';
+import ExpandTransitionGenerator from 'vuetify/es5/components/transitions/expand-transition';
 
 import { DEFAULT_MAX_MULTI_SORT_COLUMNS_COUNT } from '@/config';
 
@@ -51,6 +53,30 @@ export default {
     },
   },
   methods: {
+    genExpandedRow(props) {
+      const children = [];
+      if (this.isExpanded(props.item)) {
+        const expand = this.$createElement('div', {
+          class: 'v-datatable__expand-content',
+          key: getObjectValueByPath(props.item, this.itemKey),
+        }, [this.$scopedSlots.expand(props)]);
+        children.push(expand);
+      }
+      const transition = this.$createElement('transition-group', {
+        class: 'v-datatable__expand-col',
+        attrs: { colspan: this.headerColumns },
+        props: {
+          tag: 'td',
+        },
+        on: ExpandTransitionGenerator('v-datatable__expand-col--expanded'),
+      }, children);
+
+      return this.genTR([transition], {
+        class: 'v-datatable__expand-row',
+        key: `${getObjectValueByPath(props.item, this.itemKey)}-row`,
+      });
+    },
+
     genHeaderData(header, children, key) {
       const classes = ['column'];
       const data = {
