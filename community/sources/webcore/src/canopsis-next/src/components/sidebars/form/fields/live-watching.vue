@@ -1,12 +1,12 @@
 <template lang="pug">
   c-enabled-field(
     v-field="value",
-    :label="$t('settings.fields.liveWatching')",
+    :label="$t('settings.liveWatching')",
     hide-details
   )
     template(#append="")
       c-help-icon(
-        :text="$t('settings.fields.liveWatchingTooltip')",
+        :text="$t('settings.liveWatchingTooltip')",
         color="info",
         top
       )
