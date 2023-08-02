@@ -17,7 +17,7 @@ export const widgetAlarmsSocketMixin = {
   },
   computed: {
     ...mapAlarmDetailsGetters({
-      getAlarmDetailsQuery: 'getQuery',
+      getAlarmDetailsQueries: 'getQueries',
     }),
 
     alarmsSocketRoom() {
@@ -29,30 +29,65 @@ export const widgetAlarmsSocketMixin = {
     },
 
     allAlarmDetailsQueries() {
-      return this.getAlarmDetailsQuery(this.widget._id);
+      return this.getAlarmDetailsQueries(this.widget._id);
+    },
+
+    liveWatching() {
+      return this.widget.parameters.liveWatching;
     },
   },
   watch: {
     alarms(alarms, prevAlarms) {
-      const diff = differenceBy(alarms, prevAlarms, ['_id']);
+      if (!this.liveWatching || this.editing) {
+        return;
+      }
+
+      const diff = differenceBy(alarms, prevAlarms, '_id');
 
       if (diff.length) {
-        this.leaveAlarmsSocketRoom();
+        if (prevAlarms.length) {
+          this.leaveAlarmsSocketRoom();
+        }
+
         this.joinToAlarmsSocketRoom(alarms);
       }
     },
 
     allAlarmDetailsQueries(queries, prevQueries) {
-      const diff = differenceBy(queries, prevQueries, ['_id']);
+      if (!this.liveWatching || this.editing) {
+        return;
+      }
+
+      const diff = differenceBy(queries, prevQueries, '_id');
 
       if (diff.length) {
-        this.leaveAlarmDetailsSocketRoom();
+        if (prevQueries.length) {
+          this.leaveAlarmDetailsSocketRoom();
+        }
+
         this.joinToAlarmDetailsSocketRoom(queries);
       }
+    },
+
+    liveWatching(liveWatching) {
+      if (this.editing) {
+        return;
+      }
+
+      if (liveWatching) {
+        this.joinToAlarmsSocketRoom(this.alarms);
+        this.joinToAlarmDetailsSocketRoom(this.allAlarmDetailsQueries);
+
+        return;
+      }
+
+      this.leaveAlarmsSocketRoom();
+      this.leaveAlarmDetailsSocketRoom();
     },
   },
   beforeDestroy() {
     this.leaveAlarmsSocketRoom();
+    this.leaveAlarmDetailsSocketRoom();
   },
   methods: {
     ...mapAlarmsActions({
@@ -64,8 +99,12 @@ export const widgetAlarmsSocketMixin = {
     }),
 
     joinToAlarmsSocketRoom(alarms) {
+      if (this.editing) {
+        return;
+      }
+
       this.$socket
-        .join(this.alarmsSocketRoom, { ids: mapIds(alarms) })
+        .join(this.alarmsSocketRoom, mapIds(alarms))
         .addListener(this.updateAlarmInStore);
     },
 
