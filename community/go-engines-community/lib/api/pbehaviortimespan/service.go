@@ -61,7 +61,7 @@ func (s *service) GetTimespans(ctx context.Context, r TimespansRequest) ([]ItemR
 		Type:    r.Type,
 		Exdates: exdates,
 	}
-	computed, err := eventComputer.Compute(params, viewSpan)
+	computed, _, err := eventComputer.Compute(params, viewSpan)
 	if err != nil {
 		return nil, err
 	}
