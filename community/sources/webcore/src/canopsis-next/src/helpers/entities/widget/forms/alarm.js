@@ -165,6 +165,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
 /**
  * @typedef {AlarmListWidgetDefaultParameters} AlarmListWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
+ * @property {boolean} liveWatching
  * @property {string | null} mainFilter
  * @property {WidgetLiveReporting} liveReporting
  * @property {WidgetSort} sort
@@ -369,6 +370,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   ...alarmListWidgetDefaultParametersToForm(parameters),
 
   periodic_refresh: periodicRefreshToDurationForm(parameters.periodic_refresh),
+  liveWatching: parameters.liveWatching ?? false,
   mainFilter: parameters.mainFilter ?? null,
   clearFilterDisabled: parameters.clearFilterDisabled ?? false,
   liveReporting: parameters.liveReporting

@@ -1,4 +1,4 @@
-import { isEmpty, isUndefined, omit } from 'lodash';
+import { isEmpty, isUndefined, omit, map } from 'lodash';
 
 import { ALARMS_OPENED_VALUES, DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS, QUICK_RANGES, SORT_ORDERS } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
@@ -116,6 +116,8 @@ export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
     : DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS;
 
   const query = {
+    search,
+    search_by: map(columns, 'value'),
     _id: alarm._id,
     with_instructions: true,
     with_declare_tickets: true,
@@ -128,7 +130,6 @@ export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
       limit: PAGINATION_LIMIT,
     },
     children: {
-      search,
       page: 1,
       limit: PAGINATION_LIMIT,
       multiSortBy: [],
