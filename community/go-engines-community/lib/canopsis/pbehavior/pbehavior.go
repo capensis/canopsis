@@ -33,24 +33,24 @@ type Comments []*Comment
 
 // PBehavior represents a canopsis periodical behavior.
 type PBehavior struct {
-	ID         string         `bson:"_id,omitempty"`
-	Author     string         `bson:"author"`
-	Comments   Comments       `bson:"comments,omitempty"`
-	Enabled    bool           `bson:"enabled"`
-	Name       string         `bson:"name"`
-	Reason     string         `bson:"reason"`
-	RRule      string         `bson:"rrule"`
-	Start      *types.CpsTime `bson:"tstart"`
-	Stop       *types.CpsTime `bson:"tstop,omitempty"`
-	Type       string         `bson:"type_"`
-	Exdates    []Exdate       `bson:"exdates"`
-	Exceptions []string       `bson:"exceptions"`
-	Created    *types.CpsTime `bson:"created,omitempty"`
-	Updated    *types.CpsTime `bson:"updated,omitempty"`
-
+	ID            string         `bson:"_id,omitempty"`
+	Author        string         `bson:"author"`
+	Comments      Comments       `bson:"comments,omitempty"`
+	Enabled       bool           `bson:"enabled"`
+	Name          string         `bson:"name"`
+	Reason        string         `bson:"reason"`
+	Type          string         `bson:"type_"`
+	Exdates       []Exdate       `bson:"exdates"`
+	Exceptions    []string       `bson:"exceptions"`
+	Color         string         `bson:"color"`
+	Created       *types.CpsTime `bson:"created,omitempty"`
+	Updated       *types.CpsTime `bson:"updated,omitempty"`
 	LastAlarmDate *types.CpsTime `bson:"last_alarm_date,omitempty"`
 
-	Color string `bson:"color"`
+	Start    *types.CpsTime `bson:"tstart"`
+	Stop     *types.CpsTime `bson:"tstop,omitempty"`
+	RRule    string         `bson:"rrule"`
+	RRuleEnd *types.CpsTime `bson:"rrule_end,omitempty"`
 
 	// Origin is used if a pbehavior is created for certain entity.
 	// Origin can contain some feature name or external service name.
