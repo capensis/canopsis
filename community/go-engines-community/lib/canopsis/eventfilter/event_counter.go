@@ -2,6 +2,7 @@ package eventfilter
 
 import (
 	"context"
+	"math"
 	"sync"
 	"time"
 
@@ -64,30 +65,23 @@ func (s *eventCounter) Run(ctx context.Context) {
 func (s *eventCounter) Add(id string, lastUpdated types.CpsTime) {
 	s.countsMx.Lock()
 	defer s.countsMx.Unlock()
-	if v, ok := s.counts[id]; ok {
-		if v.LastUpdated.Unix() == lastUpdated.Unix() {
-			s.counts[id] = count{
-				LastUpdated: v.LastUpdated,
-				Count:       v.Count + 1,
-			}
-		} else if v.LastUpdated.Unix() < lastUpdated.Unix() {
-			s.counts[id] = count{
-				LastUpdated: lastUpdated,
-				Count:       1,
-			}
-		}
-	} else {
-		s.counts[id] = count{
+	v, exists := s.counts[id]
+	if exists && v.LastUpdated.Unix() == lastUpdated.Unix() {
+		v.Count++
+	} else if !exists || v.LastUpdated.Unix() < lastUpdated.Unix() {
+		v = count{
 			LastUpdated: lastUpdated,
 			Count:       1,
 		}
 	}
+
+	s.counts[id] = v
 }
 
 func (s *eventCounter) flush(ctx context.Context) error {
 	counts := s.flushCounts()
 	bulkSize := canopsis.DefaultBulkSize
-	writeModels := make([]mongodriver.WriteModel, 0)
+	writeModels := make([]mongodriver.WriteModel, 0, int(math.Min(float64(bulkSize), float64(len(counts)))))
 	for id, c := range counts {
 		writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
 			SetFilter(bson.M{"_id": id, "updated": c.LastUpdated}).
