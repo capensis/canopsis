@@ -3204,6 +3204,8 @@ definitions:
         $ref: '#/definitions/pbehaviorreason.Reason'
       rrule:
         type: string
+      rrule_end:
+        type: integer
       tstart:
         type: integer
       tstop:
