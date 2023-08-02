@@ -9,6 +9,11 @@
         v-flex.pr-2(xs6)
           recurrence-rule-frequency-field(:value="form.freq", @input="updateFrequency")
           recurrence-rule-interval-field(v-if="isFrequencyEnabled", v-model="form")
+          recurrence-rule-advanced-repeat-field(
+            v-if="isMonthlyFrequency",
+            v-model="form",
+            :start="start"
+          )
         v-flex.pl-2(xs6)
           recurrence-rule-end-field(v-if="isFrequencyEnabled", v-model="form")
 
@@ -59,10 +64,12 @@ import RecurrenceRuleIntervalField from '@/components/forms/recurrence-rule/fiel
 import RecurrenceRuleMonthField from './fields/recurrence-rule-month-field.vue';
 import RecurrenceRuleWeekdayField from './fields/recurrence-rule-weekday-field.vue';
 import RecurrenceRuleFrequencyField from './fields/recurrence-rule-frequency-field.vue';
+import RecurrenceRuleAdvancedRepeatField from './fields/recurrence-rule-advanced-repeat-field.vue';
 
 export default {
   inject: ['$validator'],
   components: {
+    RecurrenceRuleAdvancedRepeatField,
     RecurrenceRuleIntervalField,
     RecurrenceRuleEndField,
     RecurrenceRuleRegexField,
@@ -79,6 +86,11 @@ export default {
   props: {
     rrule: {
       type: String,
+      default: '',
+    },
+    start: {
+      type: Date,
+      required: false,
     },
   },
   data() {
