@@ -8,6 +8,21 @@ describe('pbehavior-exceptions-list', () => {
   const totalItems = 5;
   const exceptions = range(totalItems).map(index => ({
     name: `exception-${index}`,
+    exdates: [
+      {
+        begin: 1000055522,
+        end: 1000155522,
+        type: {
+          name: `exdate-${index}-1-name`,
+        },
+      },
+      {
+        begin: 1000256522,
+        type: {
+          name: `exdate-${index}-2-name`,
+        },
+      },
+    ],
   }));
 
   const snapshotFactory = generateRenderer(PbehaviorExceptionsList);
