@@ -48,6 +48,7 @@
       :multi-sort="multiSort",
       :table-class="tableClass",
       :disable-initial-sort="disableInitialSort",
+      :dense="dense",
       @update:pagination="updatePagination"
     )
       template(#items="props")
@@ -187,6 +188,10 @@ export default {
       required: false,
     },
     disableInitialSort: {
+      type: Boolean,
+      default: false,
+    },
+    dense: {
       type: Boolean,
       default: false,
     },
