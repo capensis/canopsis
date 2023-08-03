@@ -7,4 +7,6 @@ const (
 	DefaultMetaAlarmConnectorName = "correlation"
 
 	InfosKeyMetaAlarmMeta = "Meta"
+
+	DefaultConfigTimeInterval = 86400
 )
