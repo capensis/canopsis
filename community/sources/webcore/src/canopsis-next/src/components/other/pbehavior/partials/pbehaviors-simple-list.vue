@@ -9,24 +9,23 @@
         left,
         @click="showPbehaviorsCalendarModal"
       )
-    v-data-table.ma-0(:items="pbehaviors", :headers="headers", :loading="pending")
-      template(#items="{ item }")
-        td {{ item.name }}
-        td {{ item.author.name }}
-        td
-          c-enabled(:value="item.enabled")
-        td {{ item.tstart | timezone($system.timezone) }}
-        td {{ item.tstop | timezone($system.timezone) }}
-        td {{ item.type.name }}
-        td {{ item.reason.name }}
-        td
-          v-icon {{ item.rrule ? 'check' : 'clear' }}
-        td
-          v-icon(color="primary") {{ item.type.icon_name }}
-        td
-          v-layout(row)
-            c-action-btn(v-if="editable", type="edit", @click="showEditPbehaviorModal(item)")
-            c-action-btn(v-if="deletable", type="delete", @click="showDeletePbehaviorModal(item._id)")
+    c-advanced-data-table.ma-0(
+      :items="pbehaviors",
+      :headers="headers",
+      :loading="pending"
+    )
+      template(#enabled="{ item }")
+        c-enabled(:value="item.enabled")
+      template(#tstart="{ item }") {{ item.tstart | timezone($system.timezone) }}
+      template(#tstop="{ item }") {{ item.tstop | timezone($system.timezone) }}
+      template(#rrule="{ item }")
+        v-icon {{ item.rrule ? 'check' : 'clear' }}
+      template(#icon="{ item }")
+        v-icon(color="primary") {{ item.type.icon_name }}
+      template(#actions="{ item }")
+        v-layout(row)
+          c-action-btn(v-if="editable", type="edit", @click="showEditPbehaviorModal(item)")
+          c-action-btn(v-if="deletable", type="delete", @click="showDeletePbehaviorModal(item._id)")
 </template>
 
 <script>
@@ -75,11 +74,11 @@ export default {
         { text: this.$t('pbehaviors.isEnabled'), value: 'enabled' },
         { text: this.$t('pbehaviors.begins'), value: 'tstart' },
         { text: this.$t('pbehaviors.ends'), value: 'tstop' },
-        { text: this.$t('pbehaviors.type'), value: 'type.type' },
+        { text: this.$t('pbehaviors.type'), value: 'type.name' },
         { text: this.$t('pbehaviors.reason'), value: 'reason.name' },
         { text: this.$t('pbehaviors.rrule'), value: 'rrule' },
-        { text: this.$t('common.icon'), value: 'type.icon_name' },
-        { text: this.$t('common.actionsLabel'), value: 'actionsLabel', sortable: false },
+        { text: this.$t('common.icon'), value: 'icon' },
+        { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
       ];
     },
   },
