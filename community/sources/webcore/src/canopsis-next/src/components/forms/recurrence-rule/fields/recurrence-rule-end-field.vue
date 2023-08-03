@@ -26,7 +26,7 @@
           :required="isAfterType",
           name="count"
         )
-        span {{ $tc('recurrenceRule.occurrence', value.count) }}
+        span.text-lowercase {{ $tc('recurrenceRule.occurrence', value.count || 1) }}
 </template>
 
 <script>
