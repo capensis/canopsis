@@ -63,6 +63,13 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 
+	computeRruleStartWorker := &computeRruleStartPeriodicalWorker{
+		PeriodicalInterval:     12 * time.Hour,
+		PbhCollection:          dbClient.Collection(mongo.PbehaviorMongoCollection),
+		TimezoneConfigProvider: timezoneConfigProvider,
+		Logger:                 logger,
+	}
+
 	enginePbehavior := engine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
@@ -71,7 +78,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			now := time.Now().In(timezoneConfigProvider.Get().Location)
 			newSpan := timespan.New(now, now.Add(frameDuration))
 
-			resolver, count, err := pbhService.Compute(ctx, newSpan)
+			_, count, err := pbhService.Compute(ctx, newSpan)
 			if err != nil {
 				return fmt.Errorf("compute pbehavior's frames failed: %w", err)
 			}
@@ -82,12 +89,9 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 					Time("interval_to", newSpan.To()).
 					Int("count", count).
 					Msg("pbehaviors are recomputed")
-
-				err = updatePbehaviorComputedStarts(ctx, dbClient.Collection(mongo.PbehaviorMongoCollection), resolver.GetComputedRruleStarts())
-				if err != nil {
-					logger.Err(err).Msg("cannot update pbehaviors")
-				}
 			}
+
+			computeRruleStartWorker.Work(ctx)
 
 			return nil
 		},
@@ -184,7 +188,6 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			Encoder:                json.NewEncoder(),
 			Logger:                 logger,
 			TimezoneConfigProvider: timezoneConfigProvider,
-			PbhCollection:          dbClient.Collection(mongo.PbehaviorMongoCollection),
 		},
 		logger,
 	))
@@ -208,6 +211,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		dataStorageConfigProvider,
 		techMetricsConfigProvider,
 	))
+	enginePbehavior.AddPeriodicalWorker("rrule_cstart", computeRruleStartWorker)
 
 	return enginePbehavior
 }

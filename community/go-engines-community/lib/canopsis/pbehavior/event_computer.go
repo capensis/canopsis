@@ -13,7 +13,7 @@ import (
 
 // EventComputer is used to compute periodical behavior timespans for provided interval.
 type EventComputer interface {
-	Compute(params PbhEventParams, span timespan.Span) ([]ComputedType, time.Time, error)
+	Compute(params PbhEventParams, span timespan.Span) ([]ComputedType, error)
 }
 
 type eventComputer struct {
@@ -48,7 +48,7 @@ type ComputedType struct {
 func (c *eventComputer) Compute(
 	params PbhEventParams,
 	span timespan.Span,
-) ([]ComputedType, time.Time, error) {
+) ([]ComputedType, error) {
 	var event Event
 	location := span.From().Location()
 	var stop time.Time
@@ -64,7 +64,7 @@ func (c *eventComputer) Compute(
 	} else {
 		rOption, err := rrule.StrToROption(params.RRule)
 		if err != nil {
-			return nil, time.Time{}, err
+			return nil, err
 		}
 
 		event = NewRecEvent(params.Start.Time.In(location), stop, rOption)
@@ -72,25 +72,21 @@ func (c *eventComputer) Compute(
 
 	err := c.sortExdates(params.Exdates)
 	if err != nil {
-		return nil, time.Time{}, err
+		return nil, err
 	}
-
-	computed, lastRruleEvent, err := c.computeByRrule(event, span, c.typesByID[params.Type], params.Exdates)
+	computed, err := c.computeByRrule(event, span, c.typesByID[params.Type], params.Exdates)
 	if err != nil {
-		return nil, lastRruleEvent, err
+		return nil, err
 	}
 
 	computedByActiveType, err := c.computeByActiveType(event, span, params.Type)
 	if err != nil {
-		return nil, lastRruleEvent, err
+		return nil, err
 	}
 
 	computed = append(computed, computedByActiveType...)
-	if params.RRule == "" {
-		return computed, time.Time{}, nil
-	}
 
-	return computed, lastRruleEvent, nil
+	return computed, nil
 }
 
 // computeByRrule returns all time spans for pbehavior on the date which are defined by rrule with exdates.
@@ -99,11 +95,11 @@ func (c *eventComputer) computeByRrule(
 	span timespan.Span,
 	t Type,
 	exdates []Exdate,
-) ([]ComputedType, time.Time, error) {
+) ([]ComputedType, error) {
 	location := event.span.From().Location()
-	eventTimespans, lastRruleEvent, err := GetTimeSpansAndLastStart(event, span)
-	if err != nil || len(eventTimespans) == 0 {
-		return nil, time.Time{}, err
+	eventTimespans, err := GetTimeSpans(event, span)
+	if err != nil {
+		return nil, err
 	}
 
 	computed := make([]ComputedType, len(eventTimespans))
@@ -149,7 +145,8 @@ func (c *eventComputer) computeByRrule(
 	}
 
 	computed = append(computed, computedByExdate...)
-	return computed, lastRruleEvent, nil
+
+	return computed, nil
 }
 
 // computeByActiveType returns time span with default inactive type if pbehavior has
