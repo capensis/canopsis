@@ -14,10 +14,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
+	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -31,125 +33,383 @@ func NewMetaAlarmEventProcessor(
 	alarmConfigProvider config.AlarmConfigProvider,
 	encoder encoding.Encoder,
 	amqpPublisher libamqp.Publisher,
-	fifoExchange, fifoQueue string,
 	metricsSender metrics.Sender,
+	metaAlarmStatesService correlation.MetaAlarmStateService,
+	templateExecutor template.Executor,
 	logger zerolog.Logger,
 ) alarm.MetaAlarmEventProcessor {
 	return &metaAlarmEventProcessor{
-		dbClient:            dbClient,
-		adapter:             adapter,
-		ruleAdapter:         ruleAdapter,
-		alarmStatusService:  alarmStatusService,
-		alarmConfigProvider: alarmConfigProvider,
-		encoder:             encoder,
-		amqpPublisher:       amqpPublisher,
-		fifoExchange:        fifoExchange,
-		fifoQueue:           fifoQueue,
-		metricsSender:       metricsSender,
-		logger:              logger,
+		dbClient:                  dbClient,
+		alarmCollection:           dbClient.Collection(mongo.AlarmMongoCollection),
+		metaAlarmStatesCollection: dbClient.Collection(mongo.MetaAlarmStatesCollection),
+		metaAlarmStatesService:    metaAlarmStatesService,
+		adapter:                   adapter,
+		ruleAdapter:               ruleAdapter,
+		alarmStatusService:        alarmStatusService,
+		alarmConfigProvider:       alarmConfigProvider,
+		encoder:                   encoder,
+		amqpPublisher:             amqpPublisher,
+		metricsSender:             metricsSender,
+		templateExecutor:          templateExecutor,
+		logger:                    logger,
 	}
 }
 
 type metaAlarmEventProcessor struct {
-	dbClient    mongo.DbClient
-	adapter     alarm.Adapter
-	ruleAdapter correlation.RulesAdapter
+	dbClient                  mongo.DbClient
+	alarmCollection           mongo.DbCollection
+	metaAlarmStatesCollection mongo.DbCollection
+	metaAlarmStatesService    correlation.MetaAlarmStateService
+	adapter                   alarm.Adapter
+	ruleAdapter               correlation.RulesAdapter
 
 	alarmStatusService  alarmstatus.Service
 	alarmConfigProvider config.AlarmConfigProvider
 
-	encoder                 encoding.Encoder
-	amqpPublisher           libamqp.Publisher
-	fifoExchange, fifoQueue string
+	encoder       encoding.Encoder
+	amqpPublisher libamqp.Publisher
 
 	metricsSender metrics.Sender
 
 	logger zerolog.Logger
+
+	templateExecutor template.Executor
 }
 
-func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event types.Event) (*types.Alarm, error) {
-	var updatedChildAlarms []types.Alarm
-	var metaAlarm types.Alarm
+func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event types.Event) (*types.Alarm, []types.Alarm, error) {
+	rule, err := p.ruleAdapter.GetRule(ctx, event.MetaAlarmRuleID)
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot fetch meta alarm rule id=%q: %w", event.MetaAlarmRuleID, err)
+	} else if rule.ID == "" {
+		return nil, nil, fmt.Errorf("meta alarm rule id=%q not found", event.MetaAlarmRuleID)
+	}
 
-	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		updatedChildAlarms = make([]types.Alarm, 0)
-		metaAlarm = types.Alarm{}
+	metaAlarm := newAlarm(event, p.alarmConfigProvider.Get())
+	metaAlarm.Value.Meta = event.MetaAlarmRuleID
+	metaAlarm.Value.MetaValuePath = event.MetaAlarmValuePath
 
-		ruleIdentifier := event.MetaAlarmRuleID
-		rule, err := p.ruleAdapter.GetRule(ctx, ruleIdentifier)
+	if event.DisplayName != "" {
+		metaAlarm.Value.DisplayName = event.DisplayName
+	}
+
+	stateID := rule.ID
+	if event.MetaAlarmValuePath != "" {
+		stateID = fmt.Sprintf("%s&&%s", rule.ID, event.MetaAlarmValuePath)
+	}
+
+	var childEntityIDs []string
+
+	if rule.IsManual() {
+		childEntityIDs = event.MetaAlarmChildren
+	} else {
+		metaAlarmState, err := p.metaAlarmStatesService.GetMetaAlarmState(ctx, stateID)
 		if err != nil {
-			return fmt.Errorf("cannot fetch meta alarm rule id=%q: %w", ruleIdentifier, err)
-		} else if rule.ID == "" {
-			return fmt.Errorf("meta alarm rule id=%q not found", ruleIdentifier)
-		} else {
-			ruleIdentifier = rule.Name
+			return nil, nil, err
 		}
 
-		metaAlarm = newAlarm(event, p.alarmConfigProvider.Get())
-		metaAlarm.Value.Meta = event.MetaAlarmRuleID
-		metaAlarm.Value.MetaValuePath = event.MetaAlarmValuePath
-
-		if event.DisplayName != "" {
-			metaAlarm.Value.DisplayName = event.DisplayName
+		if metaAlarmState.ID == "" {
+			return nil, nil, fmt.Errorf("meta alarm state for rule id=%q not found", event.MetaAlarmRuleID)
 		}
 
-		var childAlarms []types.Alarm
-		worstState := types.CpsNumber(types.AlarmStateMinor)
+		childEntityIDs = metaAlarmState.ChildrenEntityIDs
+	}
 
-		if len(event.MetaAlarmChildren) > 0 {
-			err := p.adapter.GetOpenedAlarmsByIDs(ctx, event.MetaAlarmChildren, &childAlarms)
-			if err != nil {
-				return fmt.Errorf("cannot fetch children alarms: %w", err)
+	var lastChild types.AlarmWithEntity
+	worstState := types.CpsNumber(types.AlarmStateMinor)
+
+	updatedChildrenAlarms := make([]types.Alarm, 0)
+	if len(childEntityIDs) > 0 {
+		childAlarms, err := p.getAlarmsWithEntityByEntityIDs(ctx, childEntityIDs)
+		if err != nil {
+			return nil, nil, fmt.Errorf("cannot fetch children alarms: %w", err)
+		}
+
+		if len(childAlarms) > 0 {
+			lastChild = childAlarms[len(childAlarms)-1]
+		}
+
+		newStep := types.NewMetaAlarmAttachStep(metaAlarm, rule.Name)
+		for _, childAlarm := range childAlarms {
+			if childAlarm.Alarm.Value.State != nil {
+				childState := childAlarm.Alarm.Value.State.Value
+				if childState > worstState {
+					worstState = childState
+				}
 			}
 
-			newStep := types.NewMetaAlarmAttachStep(metaAlarm, ruleIdentifier)
-			for i := range childAlarms {
-				if childAlarms[i].Value.State != nil {
-					childState := childAlarms[i].Value.State.Value
-					if childState > worstState {
-						worstState = childState
-					}
+			if !childAlarm.Alarm.HasParentByEID(metaAlarm.EntityID) {
+				childAlarm.Alarm.AddParent(metaAlarm.EntityID)
+				err = childAlarm.Alarm.PartialUpdateAddStepWithStep(newStep)
+				if err != nil {
+					return nil, nil, err
 				}
-
-				if !childAlarms[i].HasParentByEID(metaAlarm.EntityID) {
-					childAlarms[i].AddParent(metaAlarm.EntityID)
-					err = childAlarms[i].PartialUpdateAddStepWithStep(newStep)
-					if err != nil {
-						return err
-					}
-					metaAlarm.AddChild(childAlarms[i].EntityID)
-					updatedChildAlarms = append(updatedChildAlarms, childAlarms[i])
-				}
+				metaAlarm.AddChild(childAlarm.Alarm.EntityID)
+				updatedChildrenAlarms = append(updatedChildrenAlarms, childAlarm.Alarm)
 			}
 		}
+	}
 
-		err = UpdateAlarmState(&metaAlarm, *event.Entity, event.Timestamp, worstState, event.Output, p.alarmStatusService)
+	err = UpdateAlarmState(&metaAlarm, *event.Entity, event.Timestamp, worstState, event.Output, p.alarmStatusService)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	output := ""
+	if rule.IsManual() {
+		output = event.Output
+	} else {
+		output, err = p.executeOutputTpl(correlation.EventExtraInfosMeta{
+			Rule:     rule,
+			Count:    int64(len(updatedChildrenAlarms)),
+			Children: lastChild,
+		})
 		if err != nil {
-			return err
+			return nil, nil, err
+		}
+	}
+
+	metaAlarm.UpdateOutput(output)
+
+	err = p.adapter.Insert(ctx, metaAlarm)
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot create alarm: %w", err)
+	}
+
+	err = p.adapter.PartialMassUpdateOpen(ctx, updatedChildrenAlarms)
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot update children alarms: %w", err)
+	}
+
+	if !rule.IsManual() {
+		ok, err := p.metaAlarmStatesService.SwitchStateToCreated(ctx, stateID)
+		if err != nil || !ok {
+			return nil, nil, err
+		}
+	}
+
+	return &metaAlarm, updatedChildrenAlarms, nil
+}
+
+func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context, event types.Event) (*types.Alarm, []types.Alarm, []types.Event, error) {
+	if len(event.MetaAlarmChildren) == 0 {
+		return event.Alarm, nil, nil, nil
+	}
+
+	rule, err := p.ruleAdapter.GetRule(ctx, event.MetaAlarmRuleID)
+	if err != nil {
+		return nil, nil, nil, fmt.Errorf("cannot fetch meta alarm rule id=%q: %w", event.MetaAlarmRuleID, err)
+	} else if rule.ID == "" {
+		return nil, nil, nil, fmt.Errorf("meta alarm rule id=%q not found", event.MetaAlarmRuleID)
+	}
+
+	alarms, err := p.getAlarmsWithEntityByEntityIDs(ctx, event.MetaAlarmChildren)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	newStep := types.NewMetaAlarmAttachStep(*event.Alarm, rule.Name)
+	worstState := types.CpsNumber(types.AlarmStateOK)
+
+	var lastChild types.AlarmWithEntity
+	updatedChildrenAlarms := make([]types.Alarm, 0)
+
+	for _, childAlarm := range alarms {
+		if !childAlarm.Alarm.AddParent(event.Alarm.EntityID) {
+			continue
 		}
 
-		err = p.adapter.Insert(ctx, metaAlarm)
+		event.Alarm.AddChild(childAlarm.Entity.ID)
+		err = childAlarm.Alarm.PartialUpdateAddStepWithStep(newStep)
 		if err != nil {
-			return fmt.Errorf("cannot create alarm: %w", err)
+			return nil, nil, nil, err
 		}
 
-		err = p.adapter.PartialMassUpdateOpen(ctx, childAlarms)
-		if err != nil {
-			return fmt.Errorf("cannot update children alarms: %w", err)
+		if childAlarm.Alarm.Value.State.Value > worstState {
+			worstState = childAlarm.Alarm.Value.State.Value
 		}
 
-		return nil
-	})
+		updatedChildrenAlarms = append(updatedChildrenAlarms, childAlarm.Alarm)
+		lastChild = childAlarm
+	}
 
+	if len(updatedChildrenAlarms) == 0 {
+		return nil, nil, nil, nil
+	}
+
+	if event.Alarm.Value.Meta == "" {
+		event.Alarm.SetMeta(event.MetaAlarmRuleID)
+		event.Alarm.SetMetaValuePath(event.MetaAlarmValuePath)
+	}
+
+	if worstState > event.Alarm.CurrentState() {
+		err = UpdateAlarmState(event.Alarm, *event.Entity, event.Timestamp, worstState, event.Alarm.Value.Output, p.alarmStatusService)
+		if err != nil {
+			return nil, nil, nil, err
+		}
+	}
+
+	if event.Alarm.Value.LastEventDate.Before(event.Timestamp) {
+		event.Alarm.PartialUpdateLastEventDate(event.Timestamp)
+	}
+
+	childrenCount, err := p.adapter.GetCountOpenedAlarmsByIDs(ctx, event.Alarm.Value.Children)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	output := ""
+	if rule.Type == correlation.RuleTypeManualGroup {
+		output = event.Output
+	} else {
+		output, err = p.executeOutputTpl(correlation.EventExtraInfosMeta{
+			Rule:     rule,
+			Count:    childrenCount,
+			Children: lastChild,
+		})
+		if err != nil {
+			return nil, nil, nil, err
+		}
+	}
+
+	event.Alarm.UpdateOutput(output)
+
+	err = p.adapter.PartialMassUpdateOpen(ctx, append([]types.Alarm{*event.Alarm}, updatedChildrenAlarms...))
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	childrenEvents, err := p.applyActionsOnChildren(*event.Alarm, updatedChildrenAlarms)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	return event.Alarm, updatedChildrenAlarms, childrenEvents, nil
+}
+
+func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(ctx context.Context, event types.Event) (*types.Alarm, error) {
+	if len(event.MetaAlarmChildren) == 0 {
+		return event.Alarm, nil
+	}
+
+	rule, err := p.ruleAdapter.GetRule(ctx, event.MetaAlarmRuleID)
+	if err != nil {
+		return nil, fmt.Errorf("cannot fetch meta alarm rule id=%q: %w", event.MetaAlarmRuleID, err)
+	} else if rule.ID == "" {
+		return nil, fmt.Errorf("meta alarm rule id=%q not found", event.MetaAlarmRuleID)
+	}
+
+	alarms, err := p.getAlarmsWithEntityByEntityIDs(ctx, event.MetaAlarmChildren)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, child := range updatedChildAlarms {
-		p.metricsSender.SendCorrelation(event.Timestamp.Time, child)
+	updatedChildAlarms := make([]types.Alarm, 0)
+	for _, childAlarm := range alarms {
+		if childAlarm.Alarm.RemoveParent(event.Entity.ID) {
+			event.Alarm.RemoveChild(childAlarm.Entity.ID)
+			updatedChildAlarms = append(updatedChildAlarms, childAlarm.Alarm)
+		}
 	}
 
-	return &metaAlarm, nil
+	if len(updatedChildAlarms) == 0 {
+		return nil, nil
+	}
+
+	metaAlarmChildren, err := p.getAlarmsWithEntityByEntityIDs(ctx, event.Alarm.Value.Children)
+	if err != nil {
+		return nil, err
+	}
+
+	worstState := types.CpsNumber(types.AlarmStateOK)
+
+	for _, childAlarm := range metaAlarmChildren {
+		if childAlarm.Alarm.Value.State.Value > worstState {
+			worstState = childAlarm.Alarm.Value.State.Value
+		}
+	}
+
+	err = UpdateAlarmState(event.Alarm, *event.Entity, event.Timestamp, worstState, event.Alarm.Value.Output, p.alarmStatusService)
+	if err != nil {
+		return nil, err
+	}
+
+	infos := correlation.EventExtraInfosMeta{
+		Rule:  rule,
+		Count: int64(len(metaAlarmChildren)),
+	}
+	if len(metaAlarmChildren) > 0 {
+		infos.Children = metaAlarmChildren[len(metaAlarmChildren)-1]
+	}
+
+	output := ""
+	if rule.IsManual() {
+		output = event.Output
+	} else {
+		output, err = p.executeOutputTpl(infos)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	event.Alarm.UpdateOutput(output)
+
+	err = p.adapter.PartialMassUpdateOpen(ctx, append([]types.Alarm{*event.Alarm}, updatedChildAlarms...))
+	if err != nil || len(updatedChildAlarms) == 0 {
+		return nil, err
+	}
+
+	return event.Alarm, nil
+}
+
+func (p *metaAlarmEventProcessor) applyActionsOnChildren(metaAlarm types.Alarm, childrenAlarms []types.Alarm) ([]types.Event, error) {
+	var events []types.Event
+
+	steps := metaAlarm.GetAppliedActions()
+
+	for _, childAlarm := range childrenAlarms {
+		childEvent := types.Event{
+			Connector:     childAlarm.Value.Connector,
+			ConnectorName: childAlarm.Value.ConnectorName,
+			Resource:      childAlarm.Value.Resource,
+			Component:     childAlarm.Value.Component,
+			Initiator:     types.InitiatorSystem,
+			Timestamp:     types.NewCpsTime(),
+		}
+		childEvent.SourceType = childEvent.DetectSourceType()
+
+		for _, step := range steps {
+			childEvent.Output = step.Message
+			childEvent.Author = step.Author
+			childEvent.UserID = step.UserID
+			childEvent.Role = step.Role
+			switch step.Type {
+			case types.AlarmStepAck:
+				childEvent.EventType = types.EventTypeAck
+			case types.AlarmStepSnooze:
+				childEvent.EventType = types.EventTypeSnooze
+				childEvent.Duration = types.CpsNumber(int64(step.Value) - childEvent.Timestamp.Unix())
+				if childEvent.Duration <= 0 {
+					continue
+				}
+			case types.AlarmStepAssocTicket:
+				childEvent.EventType = types.EventTypeAssocTicket
+				childEvent.TicketInfo = step.TicketInfo
+				childEvent.TicketInfo.TicketMetaAlarmID = metaAlarm.ID
+			case types.AlarmStepDeclareTicket:
+				childEvent.EventType = types.EventTypeDeclareTicketWebhook
+				childEvent.TicketInfo = step.TicketInfo
+				childEvent.TicketInfo.TicketMetaAlarmID = metaAlarm.ID
+			case types.AlarmStepComment:
+				childEvent.EventType = types.EventTypeComment
+			default:
+				continue
+			}
+
+			events = append(events, childEvent)
+		}
+	}
+
+	return events, nil
 }
 
 func (p *metaAlarmEventProcessor) Process(ctx context.Context, event types.Event) error {
@@ -555,8 +815,8 @@ func (p *metaAlarmEventProcessor) sendToFifo(ctx context.Context, event types.Ev
 
 	err = p.amqpPublisher.PublishWithContext(
 		ctx,
-		p.fifoExchange,
-		p.fifoQueue,
+		canopsis.FIFOExchangeName,
+		canopsis.FIFOQueueName,
 		false,
 		false,
 		amqp.Publishing{
@@ -570,6 +830,65 @@ func (p *metaAlarmEventProcessor) sendToFifo(ctx context.Context, event types.Ev
 	}
 
 	return nil
+}
+
+func (p *metaAlarmEventProcessor) getAlarmsWithEntityByEntityIDs(ctx context.Context, entityIDs []string) ([]types.AlarmWithEntity, error) {
+	var alarms []types.AlarmWithEntity
+
+	cursor, err := p.alarmCollection.Aggregate(ctx, []bson.M{
+		{
+			"$match": bson.M{
+				"d":          bson.M{"$in": entityIDs},
+				"v.resolved": nil,
+			},
+		},
+		{
+			"$project": bson.M{
+				"alarm": "$$ROOT",
+				"_id":   0,
+			},
+		},
+		{
+			"$lookup": bson.M{
+				"from":         mongo.EntityMongoCollection,
+				"localField":   "alarm.d",
+				"foreignField": "_id",
+				"as":           "entity",
+			},
+		},
+		{
+			"$unwind": "$entity",
+		},
+		{
+			"$sort": bson.M{
+				"alarm.v.last_update_date": 1,
+			},
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	err = cursor.All(ctx, &alarms)
+	if err != nil {
+		return nil, err
+	}
+
+	return alarms, err
+}
+
+func (p *metaAlarmEventProcessor) executeOutputTpl(data correlation.EventExtraInfosMeta) (string, error) {
+	rule := data.Rule
+	if rule.OutputTemplate == "" {
+		return "", nil
+	}
+
+	res, err := p.templateExecutor.Execute(rule.OutputTemplate, data)
+	if err != nil {
+		return "", fmt.Errorf("unable to execute output template for metaalarm rule %s: %+v", rule.ID, err)
+	}
+
+	return res, nil
 }
 
 func applyOnChild(changeType types.AlarmChangeType) bool {

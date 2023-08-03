@@ -194,9 +194,19 @@ func NewEngine(
 		logger,
 	)
 
-	metaAlarmEventProcessor := NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
-		alarmStatusService, alarmConfigProvider, json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName,
-		metricsSender, logger)
+	metaAlarmEventProcessor := NewMetaAlarmEventProcessor(
+		dbClient,
+		alarm.NewAdapter(dbClient),
+		correlation.NewRuleAdapter(dbClient),
+		alarmStatusService,
+		alarmConfigProvider,
+		json.NewEncoder(),
+		amqpChannel,
+		metricsSender,
+		correlation.NewMetaAlarmStateService(dbClient),
+		template.NewExecutor(templateConfigProvider, timezoneConfigProvider),
+		logger,
+	)
 
 	tagUpdater := alarmtag.NewUpdater(dbClient)
 
@@ -284,7 +294,6 @@ func NewEngine(
 				dbClient,
 				alarm.NewAdapter(dbClient),
 				entity.NewAdapter(dbClient),
-				correlation.NewRuleAdapter(dbClient),
 				alarmConfigProvider,
 				m.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider, alarmStatusService),
 				alarmStatusService,
@@ -294,6 +303,8 @@ func NewEngine(
 				stateCountersService,
 				pbehavior.NewEntityTypeResolver(pbehavior.NewStore(pbhRedisClient, json.NewEncoder(), json.NewDecoder()), pbehavior.NewEntityMatcher(dbClient), logger),
 				autoInstructionMatcher,
+				json.NewEncoder(),
+				amqpChannel,
 				logger,
 			),
 			RemediationRpcClient:   remediationRpcClient,
