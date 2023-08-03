@@ -70,9 +70,9 @@ export default {
        * @type {number}
        */
       const weekNumber = Math.ceil(this.start.getDate() / 7);
-      const weeksDayIndex = this.start.getDay();
+      const weekDayIndex = this.start.getDay();
 
-      const weeksDay = [
+      const weekDay = [
         this.$t('common.weekDays.monday'),
         this.$t('common.weekDays.tuesday'),
         this.$t('common.weekDays.wednesday'),
@@ -80,8 +80,8 @@ export default {
         this.$t('common.weekDays.friday'),
         this.$t('common.weekDays.saturday'),
         this.$t('common.weekDays.sunday'),
-      ][weeksDayIndex];
-      const weeksDayValue = [
+      ][weekDayIndex];
+      const weekDayValue = [
         RRule.MO.weekday,
         RRule.TU.weekday,
         RRule.WE.weekday,
@@ -89,7 +89,7 @@ export default {
         RRule.FR.weekday,
         RRule.SA.weekday,
         RRule.SU.weekday,
-      ][weeksDayIndex];
+      ][weekDayIndex];
 
       const weekNumberString = [
         this.$t('common.ordinals.first'),
@@ -100,10 +100,7 @@ export default {
       ][weekNumber - 1];
 
       hints.push({
-        text: this.$t('recurrenceRule.weeksDayOfMonth', {
-          weekNumber: weekNumberString,
-          weeksDay,
-        }),
+        text: this.$t('recurrenceRule.weekDayOfMonth', { weekNumber: weekNumberString, weekDay }),
         value: {
           byyearday: '',
           bymonthday: '',
@@ -113,7 +110,7 @@ export default {
           /**
            * TODO: Need to discuss about clear this field
            */
-          byweekday: [RRule.WE.nth(weeksDayValue)],
+          byweekday: [RRule.WE.nth(weekDayValue)],
         },
       });
 
