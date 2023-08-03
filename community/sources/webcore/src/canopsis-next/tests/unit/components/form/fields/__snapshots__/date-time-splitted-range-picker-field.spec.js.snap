@@ -10,6 +10,7 @@ exports[`date-time-splitted-range-picker-field Renders \`date-time-splitted-rang
     <date-time-splitted-picker-field-stub
       label="Required start label"
       name="date-range_start"
+      placeholder=""
     />
   </div>
   <div
@@ -23,6 +24,7 @@ exports[`date-time-splitted-range-picker-field Renders \`date-time-splitted-rang
     <date-time-splitted-picker-field-stub
       label="Required end label"
       name="date-range_end"
+      placeholder=""
       reverse="true"
     />
   </div>
@@ -41,6 +43,7 @@ exports[`date-time-splitted-range-picker-field Renders \`date-time-splitted-rang
       fullday="true"
       label="Custom start label"
       name="custom_name_start"
+      placeholder=""
       value="Sat Mar 03 2012 00:00:00 GMT+0100 (Central European Standard Time)"
     />
   </div>
@@ -59,6 +62,7 @@ exports[`date-time-splitted-range-picker-field Renders \`date-time-splitted-rang
       max="1970-01-03"
       min="1970-01-02"
       name="custom_name_end"
+      placeholder=""
       reverse="true"
       value="Sun Mar 04 2012 00:00:00 GMT+0100 (Central European Standard Time)"
     />
