@@ -23,7 +23,7 @@ export default {
   occurrence: 'Occurrence | Occurrences',
   none: 'Aucune',
   dayOfMonth: 'Jour {day} d\'un mois',
-  weeksDayOfMonth: '{weekNumber} {weeksDay} d\'un mois',
+  weekDayOfMonth: '{weekNumber} {weekDay} d\'un mois',
   tabs: {
     simple: 'Simple',
     advanced: 'Avancé',
