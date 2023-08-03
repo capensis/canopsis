@@ -11,7 +11,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
       class="flex xs4"
     >
       <c-advanced-search-field-stub
-        columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         query="[object Object]"
         tooltip=<span>Help on the advanced research :</span>
 <p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
@@ -176,6 +176,42 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               </i>
             </th>
             <th
+              aria-label="End of recurrence: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              data-value="rrule_end"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              End of recurrence
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Recurrence: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              data-value="rrule"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Recurrence
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
               aria-label="Type: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
@@ -266,24 +302,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               </i>
             </th>
             <th
-              aria-label="Recurrence: Not sorted. Activate to sort ascending."
-              aria-sort="none"
-              class="column sortable text-xs-left"
-              data-value="rrule"
-              role="columnheader"
-              scope="col"
-              tabindex="0"
-            >
-              Recurrence
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
-              >
-                arrow_upward
-              </i>
-            </th>
-            <th
               aria-label="Icon: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
@@ -327,7 +345,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           >
             <th
               class="column"
-              colspan="15"
+              colspan="16"
             >
               <div
                 aria-valuemax="100"
@@ -431,6 +449,17 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               04/03/2021 13:33:20
             </td>
             <td>
+              -
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
               
             </td>
             <td>
@@ -444,14 +473,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             </td>
             <td>
               04/03/2021 13:34:10
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
             </td>
             <td>
               <i
@@ -490,7 +511,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -555,10 +576,21 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               />
             </td>
             <td>
-              04/03/2021 13:30:01
+              04/03 13:30
             </td>
             <td>
-              04/03/2021 13:33:21
+              04/03 13:33
+            </td>
+            <td>
+              04/03/2021 13:44:49
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                check
+              </i>
             </td>
             <td>
               
@@ -574,14 +606,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             </td>
             <td>
               04/03/2021 13:34:11
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                check
-              </i>
             </td>
             <td>
               <i
@@ -620,7 +644,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -689,6 +713,17 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               04/03/2021 13:33:22
             </td>
             <td>
+              -
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
               
             </td>
             <td>
@@ -702,14 +737,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             </td>
             <td>
               04/03/2021 13:34:12
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
             </td>
             <td>
               <i
@@ -748,7 +775,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -813,10 +840,21 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               />
             </td>
             <td>
-              04/03/2021 13:30:03
+              04/03 13:30
             </td>
             <td>
-              04/03/2021 13:33:23
+              04/03 13:33
+            </td>
+            <td>
+              04/03/2021 13:44:51
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                check
+              </i>
             </td>
             <td>
               
@@ -832,14 +870,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             </td>
             <td>
               04/03/2021 13:34:13
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                check
-              </i>
             </td>
             <td>
               <i
@@ -878,7 +908,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -947,6 +977,17 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               04/03/2021 13:33:24
             </td>
             <td>
+              -
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
               
             </td>
             <td>
@@ -960,14 +1001,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             </td>
             <td>
               04/03/2021 13:34:14
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
             </td>
             <td>
               <i
@@ -1006,7 +1039,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -1071,10 +1104,21 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               />
             </td>
             <td>
-              04/03/2021 13:30:05
+              04/03 13:30
             </td>
             <td>
-              04/03/2021 13:33:25
+              04/03 13:33
+            </td>
+            <td>
+              04/03/2021 13:44:53
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                check
+              </i>
             </td>
             <td>
               
@@ -1090,14 +1134,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             </td>
             <td>
               04/03/2021 13:34:15
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                check
-              </i>
             </td>
             <td>
               <i
@@ -1136,7 +1172,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -1205,6 +1241,17 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               04/03/2021 13:33:26
             </td>
             <td>
+              -
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
               
             </td>
             <td>
@@ -1218,14 +1265,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             </td>
             <td>
               04/03/2021 13:34:16
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
             </td>
             <td>
               <i
@@ -1264,7 +1303,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -1329,10 +1368,21 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               />
             </td>
             <td>
-              04/03/2021 13:30:07
+              04/03 13:30
             </td>
             <td>
-              04/03/2021 13:33:27
+              04/03 13:33
+            </td>
+            <td>
+              04/03/2021 13:44:55
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                check
+              </i>
             </td>
             <td>
               
@@ -1348,14 +1398,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             </td>
             <td>
               04/03/2021 13:34:17
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                check
-              </i>
             </td>
             <td>
               <i
@@ -1394,7 +1436,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -1463,6 +1505,17 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               04/03/2021 13:33:28
             </td>
             <td>
+              -
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
               
             </td>
             <td>
@@ -1476,14 +1529,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             </td>
             <td>
               04/03/2021 13:34:18
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
             </td>
             <td>
               <i
@@ -1522,7 +1567,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -1587,10 +1632,21 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               />
             </td>
             <td>
-              04/03/2021 13:30:09
+              04/03 13:30
             </td>
             <td>
-              04/03/2021 13:33:29
+              04/03 13:33
+            </td>
+            <td>
+              04/03/2021 13:44:57
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                check
+              </i>
             </td>
             <td>
               
@@ -1606,14 +1662,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             </td>
             <td>
               04/03/2021 13:34:19
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                check
-              </i>
             </td>
             <td>
               <i
@@ -1652,7 +1700,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -1721,6 +1769,17 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               04/03/2021 13:33:30
             </td>
             <td>
+              -
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
               
             </td>
             <td>
@@ -1734,14 +1793,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             </td>
             <td>
               04/03/2021 13:34:20
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
             </td>
             <td>
               <i
@@ -1780,7 +1831,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -1807,7 +1858,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
       class="flex xs4"
     >
       <c-advanced-search-field-stub
-        columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         query="[object Object]"
         tooltip=<span>Help on the advanced research :</span>
 <p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
@@ -1950,6 +2001,42 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               </i>
             </th>
             <th
+              aria-label="End of recurrence: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              data-value="rrule_end"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              End of recurrence
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Recurrence: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              data-value="rrule"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Recurrence
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
               aria-label="Type: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
@@ -2040,24 +2127,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               </i>
             </th>
             <th
-              aria-label="Recurrence: Not sorted. Activate to sort ascending."
-              aria-sort="none"
-              class="column sortable text-xs-left"
-              data-value="rrule"
-              role="columnheader"
-              scope="col"
-              tabindex="0"
-            >
-              Recurrence
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
-              >
-                arrow_upward
-              </i>
-            </th>
-            <th
               aria-label="Icon: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
@@ -2101,7 +2170,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
           >
             <th
               class="column"
-              colspan="15"
+              colspan="16"
             />
           </tr>
         </thead>
@@ -2109,7 +2178,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
           <tr>
             <td
               class="text-xs-center"
-              colspan="15"
+              colspan="16"
             >
               No data available
             </td>
@@ -2133,7 +2202,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
       class="flex xs4"
     >
       <c-advanced-search-field-stub
-        columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         query="[object Object]"
         tooltip=<span>Help on the advanced research :</span>
 <p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
@@ -2276,6 +2345,42 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               </i>
             </th>
             <th
+              aria-label="End of recurrence: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              data-value="rrule_end"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              End of recurrence
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Recurrence: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              data-value="rrule"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Recurrence
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
               aria-label="Type: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
@@ -2366,24 +2471,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               </i>
             </th>
             <th
-              aria-label="Recurrence: Not sorted. Activate to sort ascending."
-              aria-sort="none"
-              class="column sortable text-xs-left"
-              data-value="rrule"
-              role="columnheader"
-              scope="col"
-              tabindex="0"
-            >
-              Recurrence
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
-              >
-                arrow_upward
-              </i>
-            </th>
-            <th
               aria-label="Icon: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
@@ -2427,7 +2514,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           >
             <th
               class="column"
-              colspan="15"
+              colspan="16"
             />
           </tr>
         </thead>
@@ -2462,6 +2549,17 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               04/03/2021 13:33:20
             </td>
             <td>
+              -
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
               
             </td>
             <td>
@@ -2475,14 +2573,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             </td>
             <td>
               04/03/2021 13:34:10
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
             </td>
             <td>
               <i
@@ -2513,7 +2603,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             >
               <div
@@ -2554,10 +2644,21 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               />
             </td>
             <td>
-              04/03/2021 13:30:01
+              04/03 13:30
             </td>
             <td>
-              04/03/2021 13:33:21
+              04/03 13:33
+            </td>
+            <td>
+              04/03/2021 13:44:49
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                check
+              </i>
             </td>
             <td>
               
@@ -2573,14 +2674,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             </td>
             <td>
               04/03/2021 13:34:11
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                check
-              </i>
             </td>
             <td>
               <i
@@ -2611,7 +2704,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -2644,6 +2737,17 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               04/03/2021 13:33:22
             </td>
             <td>
+              -
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
               
             </td>
             <td>
@@ -2657,14 +2761,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             </td>
             <td>
               04/03/2021 13:34:12
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
             </td>
             <td>
               <i
@@ -2695,7 +2791,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -2724,10 +2820,21 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               />
             </td>
             <td>
-              04/03/2021 13:30:03
+              04/03 13:30
             </td>
             <td>
-              04/03/2021 13:33:23
+              04/03 13:33
+            </td>
+            <td>
+              04/03/2021 13:44:51
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                check
+              </i>
             </td>
             <td>
               
@@ -2743,14 +2850,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             </td>
             <td>
               04/03/2021 13:34:13
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                check
-              </i>
             </td>
             <td>
               <i
@@ -2781,7 +2880,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -2814,6 +2913,17 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               04/03/2021 13:33:24
             </td>
             <td>
+              -
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
               
             </td>
             <td>
@@ -2827,14 +2937,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             </td>
             <td>
               04/03/2021 13:34:14
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
             </td>
             <td>
               <i
@@ -2865,7 +2967,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -2894,10 +2996,21 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               />
             </td>
             <td>
-              04/03/2021 13:30:05
+              04/03 13:30
             </td>
             <td>
-              04/03/2021 13:33:25
+              04/03 13:33
+            </td>
+            <td>
+              04/03/2021 13:44:53
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                check
+              </i>
             </td>
             <td>
               
@@ -2913,14 +3026,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             </td>
             <td>
               04/03/2021 13:34:15
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                check
-              </i>
             </td>
             <td>
               <i
@@ -2951,7 +3056,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -2984,6 +3089,17 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               04/03/2021 13:33:26
             </td>
             <td>
+              -
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
               
             </td>
             <td>
@@ -2997,14 +3113,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             </td>
             <td>
               04/03/2021 13:34:16
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
             </td>
             <td>
               <i
@@ -3035,7 +3143,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -3064,10 +3172,21 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               />
             </td>
             <td>
-              04/03/2021 13:30:07
+              04/03 13:30
             </td>
             <td>
-              04/03/2021 13:33:27
+              04/03 13:33
+            </td>
+            <td>
+              04/03/2021 13:44:55
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                check
+              </i>
             </td>
             <td>
               
@@ -3083,14 +3202,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             </td>
             <td>
               04/03/2021 13:34:17
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                check
-              </i>
             </td>
             <td>
               <i
@@ -3121,7 +3232,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -3154,6 +3265,17 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               04/03/2021 13:33:28
             </td>
             <td>
+              -
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
               
             </td>
             <td>
@@ -3167,14 +3289,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             </td>
             <td>
               04/03/2021 13:34:18
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
             </td>
             <td>
               <i
@@ -3205,7 +3319,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -3234,10 +3348,21 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               />
             </td>
             <td>
-              04/03/2021 13:30:09
+              04/03 13:30
             </td>
             <td>
-              04/03/2021 13:33:29
+              04/03 13:33
+            </td>
+            <td>
+              04/03/2021 13:44:57
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                check
+              </i>
             </td>
             <td>
               
@@ -3253,14 +3378,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             </td>
             <td>
               04/03/2021 13:34:19
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                check
-              </i>
             </td>
             <td>
               <i
@@ -3291,7 +3408,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -3324,6 +3441,17 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               04/03/2021 13:33:30
             </td>
             <td>
+              -
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
               
             </td>
             <td>
@@ -3337,14 +3465,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             </td>
             <td>
               04/03/2021 13:34:20
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
             </td>
             <td>
               <i
@@ -3375,7 +3495,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -3402,7 +3522,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
       class="flex xs4"
     >
       <c-advanced-search-field-stub
-        columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         query="[object Object]"
         tooltip=<span>Help on the advanced research :</span>
 <p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
@@ -3545,6 +3665,42 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               </i>
             </th>
             <th
+              aria-label="End of recurrence: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              data-value="rrule_end"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              End of recurrence
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Recurrence: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              data-value="rrule"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Recurrence
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
               aria-label="Type: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
@@ -3635,24 +3791,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               </i>
             </th>
             <th
-              aria-label="Recurrence: Not sorted. Activate to sort ascending."
-              aria-sort="none"
-              class="column sortable text-xs-left"
-              data-value="rrule"
-              role="columnheader"
-              scope="col"
-              tabindex="0"
-            >
-              Recurrence
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
-              >
-                arrow_upward
-              </i>
-            </th>
-            <th
               aria-label="Icon: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
@@ -3696,7 +3834,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           >
             <th
               class="column"
-              colspan="15"
+              colspan="16"
             />
           </tr>
         </thead>
@@ -3731,6 +3869,17 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               04/03/2021 13:33:20
             </td>
             <td>
+              -
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
               
             </td>
             <td>
@@ -3744,14 +3893,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             </td>
             <td>
               04/03/2021 13:34:10
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
             </td>
             <td>
               <i
@@ -3787,7 +3928,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             >
               <div
@@ -3828,10 +3969,21 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               />
             </td>
             <td>
-              04/03/2021 13:30:01
+              04/03 13:30
             </td>
             <td>
-              04/03/2021 13:33:21
+              04/03 13:33
+            </td>
+            <td>
+              04/03/2021 13:44:49
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                check
+              </i>
             </td>
             <td>
               
@@ -3847,14 +3999,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             </td>
             <td>
               04/03/2021 13:34:11
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                check
-              </i>
             </td>
             <td>
               <i
@@ -3890,7 +4034,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -3923,6 +4067,17 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               04/03/2021 13:33:22
             </td>
             <td>
+              -
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
               
             </td>
             <td>
@@ -3936,14 +4091,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             </td>
             <td>
               04/03/2021 13:34:12
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
             </td>
             <td>
               <i
@@ -3979,7 +4126,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -4008,10 +4155,21 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               />
             </td>
             <td>
-              04/03/2021 13:30:03
+              04/03 13:30
             </td>
             <td>
-              04/03/2021 13:33:23
+              04/03 13:33
+            </td>
+            <td>
+              04/03/2021 13:44:51
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                check
+              </i>
             </td>
             <td>
               
@@ -4027,14 +4185,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             </td>
             <td>
               04/03/2021 13:34:13
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                check
-              </i>
             </td>
             <td>
               <i
@@ -4070,7 +4220,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -4103,6 +4253,17 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               04/03/2021 13:33:24
             </td>
             <td>
+              -
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
               
             </td>
             <td>
@@ -4116,14 +4277,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             </td>
             <td>
               04/03/2021 13:34:14
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
             </td>
             <td>
               <i
@@ -4159,7 +4312,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -4188,10 +4341,21 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               />
             </td>
             <td>
-              04/03/2021 13:30:05
+              04/03 13:30
             </td>
             <td>
-              04/03/2021 13:33:25
+              04/03 13:33
+            </td>
+            <td>
+              04/03/2021 13:44:53
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                check
+              </i>
             </td>
             <td>
               
@@ -4207,14 +4371,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             </td>
             <td>
               04/03/2021 13:34:15
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                check
-              </i>
             </td>
             <td>
               <i
@@ -4250,7 +4406,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -4283,6 +4439,17 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               04/03/2021 13:33:26
             </td>
             <td>
+              -
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
               
             </td>
             <td>
@@ -4296,14 +4463,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             </td>
             <td>
               04/03/2021 13:34:16
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
             </td>
             <td>
               <i
@@ -4339,7 +4498,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -4368,10 +4527,21 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               />
             </td>
             <td>
-              04/03/2021 13:30:07
+              04/03 13:30
             </td>
             <td>
-              04/03/2021 13:33:27
+              04/03 13:33
+            </td>
+            <td>
+              04/03/2021 13:44:55
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                check
+              </i>
             </td>
             <td>
               
@@ -4387,14 +4557,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             </td>
             <td>
               04/03/2021 13:34:17
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                check
-              </i>
             </td>
             <td>
               <i
@@ -4430,7 +4592,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -4463,6 +4625,17 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               04/03/2021 13:33:28
             </td>
             <td>
+              -
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
               
             </td>
             <td>
@@ -4476,14 +4649,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             </td>
             <td>
               04/03/2021 13:34:18
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
             </td>
             <td>
               <i
@@ -4519,7 +4684,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -4548,10 +4713,21 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               />
             </td>
             <td>
-              04/03/2021 13:30:09
+              04/03 13:30
             </td>
             <td>
-              04/03/2021 13:33:29
+              04/03 13:33
+            </td>
+            <td>
+              04/03/2021 13:44:57
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                check
+              </i>
             </td>
             <td>
               
@@ -4567,14 +4743,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             </td>
             <td>
               04/03/2021 13:34:19
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                check
-              </i>
             </td>
             <td>
               <i
@@ -4610,7 +4778,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
@@ -4643,6 +4811,17 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
               04/03/2021 13:33:30
             </td>
             <td>
+              -
+            </td>
+            <td>
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                clear
+              </i>
+            </td>
+            <td>
               
             </td>
             <td>
@@ -4656,14 +4835,6 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             </td>
             <td>
               04/03/2021 13:34:20
-            </td>
-            <td>
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-              >
-                clear
-              </i>
             </td>
             <td>
               <i
@@ -4699,7 +4870,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="15"
+              colspan="16"
               tag="td"
             />
           </tr>
