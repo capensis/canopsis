@@ -191,7 +191,7 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event typ
 }
 
 func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context, event types.Event) (*types.Alarm, []types.Alarm, []types.Event, error) {
-	if len(event.MetaAlarmChildren) == 0 {
+	if len(event.MetaAlarmChildren) == 0 || event.Alarm == nil {
 		return event.Alarm, nil, nil, nil
 	}
 
