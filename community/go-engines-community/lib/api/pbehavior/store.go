@@ -25,7 +25,6 @@ import (
 )
 
 const (
-	rruleEndMaxYears   = 10
 	nextEventMaxMonths = 1
 )
 
@@ -93,7 +92,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		doc.ID = utils.NewID()
 	}
 
-	rruleEnd, err := s.getRruleEnd(*r.Start, r.RRule)
+	rruleEnd, err := pbehavior.GetRruleEnd(*r.Start, r.RRule, s.timezoneConfigProvider.Get().Location)
 	if err != nil {
 		return nil, err
 	}
@@ -327,7 +326,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		unset["old_mongo_query"] = ""
 	}
 
-	rruleEnd, err := s.getRruleEnd(*r.Start, r.RRule)
+	rruleEnd, err := pbehavior.GetRruleEnd(*r.Start, r.RRule, s.timezoneConfigProvider.Get().Location)
 	if err != nil {
 		return nil, err
 	}
@@ -472,7 +471,7 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 		}
 
 		if rruleUpdated {
-			pbh.RRuleEnd, err = s.getRruleEnd(*pbh.Start, pbh.RRule)
+			pbh.RRuleEnd, err = pbehavior.GetRruleEnd(*pbh.Start, pbh.RRule, s.timezoneConfigProvider.Get().Location)
 			if err != nil {
 				return err
 			}
@@ -786,36 +785,6 @@ func (s *store) fillActiveStatuses(ctx context.Context, result []Response) error
 	}
 
 	return nil
-}
-
-func (s *store) getRruleEnd(start libtypes.CpsTime, rrule string) (*libtypes.CpsTime, error) {
-	if rrule == "" {
-		return nil, nil
-	}
-
-	rOption, err := librrule.StrToROption(rrule)
-	if err != nil {
-		return nil, err
-	}
-
-	if rOption.Until.IsZero() && rOption.Count == 0 {
-		return nil, nil
-	}
-
-	loc := s.timezoneConfigProvider.Get().Location
-	rOption.Dtstart = start.Time.In(loc)
-	r, err := librrule.NewRRule(*rOption)
-	if err != nil {
-		return nil, err
-	}
-
-	before := time.Now().In(loc).AddDate(rruleEndMaxYears, 0, 0)
-	t := r.Before(before, true)
-	if t.IsZero() {
-		return nil, nil
-	}
-
-	return &libtypes.CpsTime{Time: t}, nil
 }
 
 func sortCalendarResponse(response []CalendarResponse) func(i, j int) bool {
