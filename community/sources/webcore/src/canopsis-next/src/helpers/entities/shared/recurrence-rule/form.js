@@ -111,7 +111,7 @@ export const formOptionsToRecurrenceRuleOptions = (options, advancedFields = [])
     recurrenceRuleOptions.bymonth = options.bymonth;
   }
 
-  if (isNumber(options.wkst)) {
+  if (isNumber(options.wkst?.weekday)) {
     recurrenceRuleOptions.wkst = options.wkst.weekday;
   }
 

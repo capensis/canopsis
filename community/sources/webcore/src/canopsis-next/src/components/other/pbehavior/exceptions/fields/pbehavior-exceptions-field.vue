@@ -16,7 +16,6 @@
       slot(name="actions")
         v-flex
           v-btn.ml-0(color="secondary", @click="addExceptionDate") {{ $t('modals.createPbehaviorException.addDate') }}
-    v-alert(:value="errors.has('exdates')", type="error") {{ errors.first('exdates') }}
 </template>
 
 <script>
@@ -53,14 +52,6 @@ export default {
       default: false,
     },
   },
-  created() {
-    this.$validator.attach({
-      name: 'exdates',
-      rules: 'required:true',
-      getter: () => !!this.exdates.length,
-      vm: this,
-    });
-  },
   mounted() {
     this.fetchFieldPbehaviorTypesList();
   },
@@ -72,7 +63,6 @@ export default {
         end: convertDateToStartOfDayDateObject(),
         type: '',
       });
-      this.$nextTick(() => this.$validator.validate('exdates'));
     },
   },
 };
