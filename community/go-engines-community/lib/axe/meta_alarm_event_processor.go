@@ -111,7 +111,14 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event typ
 			return nil, nil, fmt.Errorf("meta alarm state for rule id=%q not found", event.MetaAlarmRuleID)
 		}
 
-		childEntityIDs = metaAlarmState.ChildrenEntityIDs
+		// Bad case, when metaalarm event was so late that his group became outdated.
+		// To avoid duplicates, use only children ids from an event, the previous group data is lost and cannot be restored.
+		// todo: Should it be fixed??
+		if metaAlarmState.MetaAlarmName != event.Resource {
+			childEntityIDs = event.MetaAlarmChildren
+		} else {
+			childEntityIDs = metaAlarmState.ChildrenEntityIDs
+		}
 	}
 
 	var lastChild types.AlarmWithEntity
