@@ -69,7 +69,7 @@ export default {
        * 7 - day in week
        * @type {number}
        */
-      const weeksNumber = Math.ceil(this.start.getDate() / 7);
+      const weekNumber = Math.ceil(this.start.getDate() / 7);
       const weeksDayIndex = this.start.getDay();
 
       const weeksDay = [
@@ -91,17 +91,17 @@ export default {
         RRule.SU.weekday,
       ][weeksDayIndex];
 
-      const weeksNumberString = [
+      const weekNumberString = [
         this.$t('common.ordinals.first'),
         this.$t('common.ordinals.second'),
         this.$t('common.ordinals.third'),
         this.$t('common.ordinals.fourth'),
         this.$t('common.ordinals.fifth'),
-      ][weeksNumber - 1];
+      ][weekNumber - 1];
 
       hints.push({
         text: this.$t('recurrenceRule.weeksDayOfMonth', {
-          weeksNumber: weeksNumberString,
+          weekNumber: weekNumberString,
           weeksDay,
         }),
         value: {
