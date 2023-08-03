@@ -7,11 +7,12 @@ import (
 	"strings"
 	"time"
 
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
@@ -23,6 +24,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -31,7 +33,6 @@ type eventProcessor struct {
 	dbClient            mongo.DbClient
 	adapter             libalarm.Adapter
 	entityAdapter       libentity.Adapter
-	ruleAdapter         correlation.RulesAdapter
 	alarmConfigProvider config.AlarmConfigProvider
 	executor            liboperation.Executor
 	alarmStatusService  alarmstatus.Service
@@ -47,13 +48,15 @@ type eventProcessor struct {
 	pbhTypeResolver pbehavior.EntityTypeResolver
 
 	autoInstructionMatcher AutoInstructionMatcher
+
+	encoder       encoding.Encoder
+	amqpPublisher libamqp.Publisher
 }
 
 func NewEventProcessor(
 	dbClient mongo.DbClient,
 	adapter libalarm.Adapter,
 	entityAdapter libentity.Adapter,
-	ruleAdapter correlation.RulesAdapter,
 	alarmConfigProvider config.AlarmConfigProvider,
 	executor liboperation.Executor,
 	alarmStatusService alarmstatus.Service,
@@ -63,13 +66,14 @@ func NewEventProcessor(
 	stateCountersService statecounters.StateCountersService,
 	pbhTypeResolver pbehavior.EntityTypeResolver,
 	autoInstructionMatcher AutoInstructionMatcher,
+	encoder encoding.Encoder,
+	amqpPublisher libamqp.Publisher,
 	logger zerolog.Logger,
 ) libalarm.EventProcessor {
 	return &eventProcessor{
 		dbClient:            dbClient,
 		adapter:             adapter,
 		entityAdapter:       entityAdapter,
-		ruleAdapter:         ruleAdapter,
 		alarmConfigProvider: alarmConfigProvider,
 		executor:            executor,
 		alarmStatusService:  alarmStatusService,
@@ -82,6 +86,9 @@ func NewEventProcessor(
 
 		stateCountersService:   stateCountersService,
 		autoInstructionMatcher: autoInstructionMatcher,
+
+		encoder:       encoder,
+		amqpPublisher: amqpPublisher,
 	}
 }
 
@@ -101,6 +108,11 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	var entityOldIdleSince *types.CpsTime
 	var entityOldLastIdleRuleApply string
 	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
+
+	// used after EventTypeMetaAlarmAttachChildren event
+	var updatedChildrenAlarms []types.Alarm
+	var updatedChildrenEvents []types.Event
+
 	firstTimeTran := true
 
 	err := s.dbClient.WithTransaction(ctx, func(tCtx context.Context) error {
@@ -163,8 +175,14 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 				}
 			}()
 		case types.EventTypeMetaAlarm:
-			event.Alarm, err = s.metaAlarmEventProcessor.CreateMetaAlarm(tCtx, *event)
+			event.Alarm, updatedChildrenAlarms, err = s.metaAlarmEventProcessor.CreateMetaAlarm(tCtx, *event)
 			alarmChange.Type = types.AlarmChangeTypeCreate
+		case types.EventTypeMetaAlarmAttachChildren:
+			event.Alarm, updatedChildrenAlarms, updatedChildrenEvents, err = s.metaAlarmEventProcessor.AttachChildrenToMetaAlarm(tCtx, *event)
+			alarmChange.Type = types.AlarmChangeTypeNone
+		case types.EventTypeMetaAlarmDetachChildren:
+			event.Alarm, err = s.metaAlarmEventProcessor.DetachChildrenFromMetaAlarm(tCtx, *event)
+			alarmChange.Type = types.AlarmChangeTypeNone
 		case types.EventTypeTrigger:
 			if event.AlarmChange == nil {
 				alarmChange = types.NewAlarmChange()
@@ -246,6 +264,17 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 			event.UserID,
 			event.Instruction,
 		)
+
+		for _, child := range updatedChildrenAlarms {
+			s.metricsSender.SendCorrelation(event.Timestamp.Time, child)
+		}
+
+		for _, childEvent := range updatedChildrenEvents {
+			err = s.sendToFifo(ctx, childEvent)
+			if err != nil {
+				return alarmChange, err
+			}
+		}
 	}
 
 	if event.EventType == types.EventTypeCheck {
@@ -736,6 +765,31 @@ func (s *eventProcessor) resolvePbehaviorInfo(ctx context.Context, entity types.
 	}
 
 	return pbehavior.NewPBehaviorInfo(types.CpsTime{Time: now}, result), nil
+}
+
+func (s *eventProcessor) sendToFifo(ctx context.Context, event types.Event) error {
+	body, err := s.encoder.Encode(event)
+	if err != nil {
+		return fmt.Errorf("cannot encode event: %w", err)
+	}
+
+	err = s.amqpPublisher.PublishWithContext(
+		ctx,
+		canopsis.FIFOExchangeName,
+		canopsis.FIFOQueueName,
+		false,
+		false,
+		amqp.Publishing{
+			ContentType:  canopsis.JsonContentType,
+			Body:         body,
+			DeliveryMode: amqp.Persistent,
+		},
+	)
+	if err != nil {
+		return fmt.Errorf("cannot send child event: %w", err)
+	}
+
+	return nil
 }
 
 func newAlarm(event types.Event, alarmConfig config.AlarmConfig) types.Alarm {

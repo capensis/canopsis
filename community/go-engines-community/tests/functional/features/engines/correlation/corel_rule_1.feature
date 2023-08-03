@@ -1042,7 +1042,7 @@ Feature: correlation feature - corel rule
       ]
     }
     """
-    When I wait 5s
+    When I wait 6s
     When I send an event and wait the end of event processing:
     """json
     {
