@@ -5,7 +5,6 @@ package pbehavior
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -51,10 +50,6 @@ type ComputedPbehavior struct {
 
 	Pattern       pattern.Entity         `json:"p,omitempty"`
 	OldMongoQuery map[string]interface{} `json:"q,omitempty"`
-
-	Start          *types.CpsTime `json:"-"`
-	Rrule          string         `json:"-"`
-	LastRruleEvent time.Time      `json:"-"`
 }
 
 //easyjson:json
@@ -313,7 +308,7 @@ func (c *typeComputer) computePbehavior(
 		Type:    pbehavior.Type,
 		Exdates: exdates,
 	}
-	computedTypes, lastRruleEvent, err := eventComputer.Compute(params, span)
+	computedTypes, err := eventComputer.Compute(params, span)
 	if err != nil {
 		return ComputedPbehavior{}, err
 	}
@@ -343,10 +338,6 @@ func (c *typeComputer) computePbehavior(
 
 			Pattern:       pbehavior.EntityPattern,
 			OldMongoQuery: oldMongoQuery,
-
-			Rrule:          pbehavior.RRule,
-			Start:          pbehavior.Start,
-			LastRruleEvent: lastRruleEvent,
 		}, nil
 	}
 

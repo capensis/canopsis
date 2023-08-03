@@ -16,7 +16,6 @@ type ComputedEntityTypeResolver interface {
 	) (ResolveResult, error)
 	GetComputedEntityIDs() ([]string, error)
 	GetPbehaviorsCount(ctx context.Context, t time.Time) (int, error)
-	GetComputedRruleStarts() map[string]RruleStart
 }
 
 func NewComputedEntityTypeResolver(
@@ -53,8 +52,4 @@ func (r *computedEntityTypeResolver) GetComputedEntityIDs() ([]string, error) {
 
 func (r *computedEntityTypeResolver) GetPbehaviorsCount(ctx context.Context, t time.Time) (int, error) {
 	return r.resolver.GetPbehaviorsCount(ctx, t)
-}
-
-func (r *computedEntityTypeResolver) GetComputedRruleStarts() map[string]RruleStart {
-	return r.resolver.GetComputedRruleStarts()
 }

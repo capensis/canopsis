@@ -16,12 +16,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
-	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type periodicalWorker struct {
@@ -36,7 +33,6 @@ type periodicalWorker struct {
 	TimezoneConfigProvider config.TimezoneConfigProvider
 	Encoder                encoding.Encoder
 	Logger                 zerolog.Logger
-	PbhCollection          libmongo.DbCollection
 }
 
 func (w *periodicalWorker) GetInterval() time.Duration {
@@ -72,11 +68,6 @@ func (w *periodicalWorker) Work(ctx context.Context) {
 			Time("interval_to", newSpan.To()).
 			Int("count", recomputedCount).
 			Msg("pbehaviors are recomputed")
-
-		err = updatePbehaviorComputedStarts(ctx, w.PbhCollection, resolver.GetComputedRruleStarts())
-		if err != nil {
-			w.Logger.Err(err).Msg("cannot update pbehaviors")
-		}
 	}
 
 	computedEntityIDs, err := resolver.GetComputedEntityIDs()
@@ -288,39 +279,4 @@ func (w *periodicalWorker) publishTo(ctx context.Context, event types.Event, que
 			DeliveryMode: amqp.Persistent,
 		},
 	))
-}
-
-func updatePbehaviorComputedStarts(ctx context.Context, dbCollection libmongo.DbCollection, computedStarts map[string]pbehavior.RruleStart) error {
-	writeModels := make([]mongo.WriteModel, 0)
-	for id, v := range computedStarts {
-		writeModels = append(writeModels, mongo.NewUpdateOneModel().
-			SetFilter(bson.M{
-				"_id":    id,
-				"tstart": v.Start,
-				"rrule":  v.Rrule,
-				"$or": []bson.M{
-					{"rrule_cstart": nil},
-					{"rrule_cstart": bson.M{"$lt": v.ComputedStart}},
-				},
-			}).
-			SetUpdate(bson.M{"$set": bson.M{
-				"rrule_cstart": v.ComputedStart,
-			}}))
-
-		if len(writeModels) == canopsis.DefaultBulkSize {
-			_, err := dbCollection.BulkWrite(ctx, writeModels)
-			if err != nil {
-				return err
-			}
-
-			writeModels = writeModels[:0]
-		}
-	}
-
-	if len(writeModels) > 0 {
-		_, err := dbCollection.BulkWrite(ctx, writeModels)
-		return err
-	}
-
-	return nil
 }
