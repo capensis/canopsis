@@ -61,10 +61,9 @@
 </template>
 
 <script>
-import { DATETIME_FORMATS } from '@/constants';
-
 import { isOldPattern } from '@/helpers/entities/pattern/form';
-import { convertDateToTimezoneDateString } from '@/helpers/date/date';
+
+import { pbehaviorsDateFormatMixin } from '@/mixins/pbehavior/pbehavior-date-format';
 
 import PbehaviorsMassActionsPanel from './actions/pbehaviors-mass-actions-panel.vue';
 import PbehaviorsListExpandItem from './partials/pbehaviors-list-expand-item.vue';
@@ -75,6 +74,7 @@ export default {
     PbehaviorsListExpandItem,
     PbehaviorsMassActionsPanel,
   },
+  mixins: [pbehaviorsDateFormatMixin],
   props: {
     pbehaviors: {
       type: Array,
@@ -137,23 +137,6 @@ export default {
   methods: {
     isOldPattern(item) {
       return isOldPattern(item);
-    },
-
-    formatIntervalDate(item, field) {
-      const date = item[field];
-      const format = item.rrule ? DATETIME_FORMATS.medium : DATETIME_FORMATS.long;
-
-      return convertDateToTimezoneDateString(date, this.$system.timezone, format);
-    },
-
-    formatRruleEndDate(item) {
-      if (!item.rrule) {
-        return '-';
-      }
-
-      return item.rrule_end
-        ? convertDateToTimezoneDateString(item.rrule_end, this.$system.timezone, DATETIME_FORMATS.long)
-        : this.$t('common.undefined');
     },
   },
 };
