@@ -27,6 +27,7 @@ type Options struct {
 	ModeDebug                bool
 	FrameDuration            int
 	PeriodicalWaitTime       time.Duration
+	ComputeRruleEnd          bool
 }
 
 type DependencyMaker struct {
