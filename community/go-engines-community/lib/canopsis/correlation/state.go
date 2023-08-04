@@ -3,6 +3,7 @@ package correlation
 import (
 	"math"
 	"sort"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -35,11 +36,9 @@ type MetaAlarmState struct {
 	// only for corel rule type
 	ParentsEntityIDs  []string `bson:"parents_entity_ids"`
 	ParentsTimestamps []int64  `bson:"parents_timestamps"`
-}
 
-type AlarmDoc struct {
-	ID         string `bson:"_id"`
-	LastUpdate int64  `bson:"last_update"`
+	// CreatedAt should be set only for archive state, time.Time for ttl index.
+	CreatedAt time.Time `bson:"created_at,omitempty"`
 }
 
 func (s *MetaAlarmState) Reset(id string) {
