@@ -3,6 +3,7 @@ package correlation
 import (
 	"context"
 	"errors"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -15,6 +16,8 @@ type MetaAlarmStateService interface {
 	GetMetaAlarmState(ctx context.Context, ruleID string) (MetaAlarmState, error)
 	// UpdateOpenedState updates opened metaalarm state by increasing its version and replaces alarm groups.
 	UpdateOpenedState(ctx context.Context, state MetaAlarmState, previousVersion int64, previousState int, upsert bool) (bool, error)
+	// ArchiveState moves state to a separate document, needed for late create metaalarm events to get their state instead of new one.
+	ArchiveState(ctx context.Context, state MetaAlarmState) (bool, error)
 	// SwitchStateToReady switch state status to ready, should be used only after metaalarm is triggered.
 	SwitchStateToReady(ctx context.Context, state MetaAlarmState, previousVersion int64, previousState int, upsert bool) (bool, error)
 	// SwitchStateToCreated switch state status to created, should be used only after or during the metaalarm creation.
@@ -72,6 +75,22 @@ func (a *metaAlarmStateService) UpdateOpenedState(ctx context.Context, state Met
 		options.Update().SetUpsert(upsert),
 	)
 	if err != nil || res.MatchedCount == 0 && res.UpsertedCount == 0 {
+		if mongodriver.IsDuplicateKeyError(err) {
+			return false, nil
+		}
+
+		return false, err
+	}
+
+	return true, nil
+}
+
+func (a *metaAlarmStateService) ArchiveState(ctx context.Context, state MetaAlarmState) (bool, error) {
+	state.ID = state.ID + "-" + state.MetaAlarmName
+	state.CreatedAt = time.Now()
+
+	_, err := a.metaAlarmStatesCollection.InsertOne(ctx, state)
+	if err != nil {
 		if mongodriver.IsDuplicateKeyError(err) {
 			return false, nil
 		}

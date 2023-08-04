@@ -98,6 +98,7 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event typ
 	}
 
 	var childEntityIDs []string
+	var archived bool
 
 	if rule.IsManual() {
 		childEntityIDs = event.MetaAlarmChildren
@@ -107,18 +108,21 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event typ
 			return nil, nil, err
 		}
 
-		if metaAlarmState.ID == "" {
-			return nil, nil, fmt.Errorf("meta alarm state for rule id=%q not found", event.MetaAlarmRuleID)
+		if metaAlarmState.MetaAlarmName != event.Resource {
+			// try to get archived state
+			metaAlarmState, err = p.metaAlarmStatesService.GetMetaAlarmState(ctx, stateID+"-"+event.Resource)
+			if err != nil {
+				return nil, nil, err
+			}
+
+			if metaAlarmState.ID == "" {
+				return nil, nil, fmt.Errorf("meta alarm state for rule id=%q and meta alarm name=%q not found", event.MetaAlarmRuleID, event.Resource)
+			}
+
+			archived = true
 		}
 
-		// Bad case, when metaalarm event was so late that his group became outdated.
-		// To avoid duplicates, use only children ids from an event, the previous group data is lost and cannot be restored.
-		// todo: Should it be fixed??
-		if metaAlarmState.MetaAlarmName != event.Resource {
-			childEntityIDs = event.MetaAlarmChildren
-		} else {
-			childEntityIDs = metaAlarmState.ChildrenEntityIDs
-		}
+		childEntityIDs = metaAlarmState.ChildrenEntityIDs
 	}
 
 	var lastChild types.AlarmWithEntity
@@ -187,7 +191,7 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event typ
 		return nil, nil, fmt.Errorf("cannot update children alarms: %w", err)
 	}
 
-	if !rule.IsManual() {
+	if !rule.IsManual() && !archived {
 		ok, err := p.metaAlarmStatesService.SwitchStateToCreated(ctx, stateID)
 		if err != nil || !ok {
 			return nil, nil, err
@@ -294,7 +298,7 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 }
 
 func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(ctx context.Context, event types.Event) (*types.Alarm, error) {
-	if len(event.MetaAlarmChildren) == 0 {
+	if len(event.MetaAlarmChildren) == 0 || event.Alarm == nil {
 		return event.Alarm, nil
 	}
 
