@@ -164,7 +164,7 @@ func (w *periodicalWorker) processEntities(
 
 	defer cursor.Close(ctx)
 
-	eventGenerator := libevent.NewGenerator(w.EntityAdapter)
+	eventGenerator := libevent.NewGenerator(w.EntityAdapter, "pbehavior")
 
 	ech := make(chan PublishEventMsg, 1)
 	defer close(ech)
