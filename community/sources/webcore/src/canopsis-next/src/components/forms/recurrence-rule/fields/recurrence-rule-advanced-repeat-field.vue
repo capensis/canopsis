@@ -106,11 +106,8 @@ export default {
           bymonthday: '',
           byweekno: '',
           byhour: '',
-          bysetpos: '',
-          /**
-           * TODO: Need to discuss about clear this field
-           */
-          byweekday: [RRule.WE.nth(weekDayValue)],
+          bysetpos: String(weekDayValue),
+          byweekday: [RRule.WE.weekday],
         },
       });
 
