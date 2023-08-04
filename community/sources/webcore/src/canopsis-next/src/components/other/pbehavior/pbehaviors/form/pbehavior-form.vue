@@ -14,10 +14,11 @@
           row
         )
         c-collapse-panel.mb-2(:title="$t('recurrenceRule.title')")
-          recurrence-rule-form(v-field="form.rrule")
+          recurrence-rule-form(v-field="form.rrule", :start="form.tstart")
           pbehavior-recurrence-rule-exceptions-field.mt-2(
             v-field="form.exdates",
             :exceptions="form.exceptions",
+            with-exdate-type,
             @update:exceptions="updateExceptions"
           )
         c-collapse-panel.mt-2(v-if="!noComments", :title="$tc('common.comment', 2)")

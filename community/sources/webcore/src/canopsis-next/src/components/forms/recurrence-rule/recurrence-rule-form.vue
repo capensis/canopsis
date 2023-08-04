@@ -13,13 +13,7 @@
         v-flex.pl-2(xs6)
           recurrence-rule-end-field(v-if="isFrequencyEnabled", v-model="form")
 
-      recurrence-rule-weekday-field(
-        v-if="isWeeklyFrequency",
-        v-model="form.byweekday",
-        chips
-      )
-
-      c-collapse-panel.mb-3(v-if="isFrequencyEnabled", :color="advancedCollapseColor")
+      c-collapse-panel.my-2(v-if="isFrequencyEnabled", :color="advancedCollapseColor")
         template(#header="")
           span {{ $t('recurrenceRule.tabs.advanced') }}
         template(#actions="")
