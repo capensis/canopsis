@@ -34,8 +34,6 @@
 </template>
 
 <script>
-import { PBEHAVIOR_FORM_TABS } from '@/constants';
-
 import { formMixin } from '@/mixins/form';
 
 import RecurrenceRuleForm from '@/components/forms/recurrence-rule/recurrence-rule-form.vue';
@@ -82,11 +80,6 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  data() {
-    return {
-      activeTab: PBEHAVIOR_FORM_TABS.general,
-    };
   },
   methods: {
     updateExceptions(exceptions) {

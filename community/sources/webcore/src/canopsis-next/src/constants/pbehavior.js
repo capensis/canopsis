@@ -43,8 +43,3 @@ export const PBEHAVIOR_INFO_FIELDS = {
 export const PBEHAVIOR_ORIGINS = {
   serviceWeather: 'ServiceWeather',
 };
-
-export const PBEHAVIOR_FORM_TABS = {
-  general: 'general',
-  patterns: 'patterns',
-};
