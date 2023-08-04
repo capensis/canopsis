@@ -47,8 +47,10 @@
               @update:end="updateTStop"
             )
       v-layout(row)
-        c-pbehavior-reason-field.mr-2(v-field="form.reason", required, return-object)
-        c-pbehavior-type-field.ml-2(v-field="form.type", required, return-object)
+        v-flex(xs6)
+          c-pbehavior-reason-field.mr-2(v-field="form.reason", required, return-object)
+        v-flex(xs6)
+          c-pbehavior-type-field.ml-2(v-field="form.type", required, return-object)
 </template>
 
 <script>
