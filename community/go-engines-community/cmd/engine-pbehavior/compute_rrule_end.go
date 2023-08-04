@@ -18,11 +18,18 @@ func computeRruleEnd(ctx context.Context, logger zerolog.Logger) error {
 		return err
 	}
 
-	defer dbClient.Disconnect(ctx)
+	defer func() {
+		err := dbClient.Disconnect(ctx)
+		if err != nil {
+			logger.Err(err).Msgf("cannot close mongo connection")
+		}
+	}()
+
 	cfg, err := config.NewAdapter(dbClient).GetConfig(ctx)
 	if err != nil {
 		return err
 	}
+
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	loc := timezoneConfigProvider.Get().Location
 	dbCollection := dbClient.Collection(mongo.PbehaviorMongoCollection)
