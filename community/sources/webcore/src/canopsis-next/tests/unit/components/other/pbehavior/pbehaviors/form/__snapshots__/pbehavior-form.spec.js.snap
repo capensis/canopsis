@@ -83,6 +83,7 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with custom props 1`] = `
                 class="mt-2"
                 exceptions=""
                 exdates=""
+                withexdatetype="true"
               />
             </c-collapse-panel-stub>
             <!---->
@@ -197,6 +198,7 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with required props 1`] = `
                 class="mt-2"
                 exceptions=""
                 exdates=""
+                withexdatetype="true"
               />
             </c-collapse-panel-stub>
             <c-collapse-panel-stub
