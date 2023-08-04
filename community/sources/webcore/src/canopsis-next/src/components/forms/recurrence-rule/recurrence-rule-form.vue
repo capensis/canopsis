@@ -1,9 +1,5 @@
 <template lang="pug">
   div.recurrence-rule-form
-    v-tabs(v-model="activeTab", slider-color="primary", fixed-tabs, centered)
-      v-tab {{ $t('recurrenceRule.tabs.simple') }}
-      v-tab(:disabled="!isFrequencyEnabled") {{ $t('recurrenceRule.tabs.advanced') }}
-
     v-layout(column)
       v-layout(row)
         v-flex.pr-2(xs6)
@@ -18,14 +14,16 @@
           recurrence-rule-end-field(v-if="isFrequencyEnabled", v-model="form")
 
       recurrence-rule-weekday-field(
-        v-if="!isAdvancedTab && isWeeklyFrequency",
+        v-if="isWeeklyFrequency",
         v-model="form.byweekday",
         chips
       )
 
-    v-tabs-items(v-model="activeTab")
-      v-tab-item
-      v-tab-item(:disabled="!isFrequencyEnabled")
+      c-collapse-panel.mb-3(v-if="isFrequencyEnabled", :color="advancedCollapseColor")
+        template(#header="")
+          span {{ $t('recurrenceRule.tabs.advanced') }}
+        template(#actions="")
+          v-icon $vuetify.icons.expand
         v-layout(row, wrap)
           v-flex(xs6)
             recurrence-rule-weekday-field(v-model="form.wkst")
@@ -67,7 +65,7 @@ import RecurrenceRuleFrequencyField from './fields/recurrence-rule-frequency-fie
 import RecurrenceRuleAdvancedRepeatField from './fields/recurrence-rule-advanced-repeat-field.vue';
 
 export default {
-  inject: ['$validator'],
+  inject: ['$validator', '$system'],
   components: {
     RecurrenceRuleAdvancedRepeatField,
     RecurrenceRuleIntervalField,
@@ -109,7 +107,6 @@ export default {
     }
 
     return {
-      activeTab: 0,
       recurrenceRuleObject: recurrenceRule,
       form: recurrenceRuleToFormOptions(recurrenceRule.origOptions),
     };
@@ -133,10 +130,6 @@ export default {
 
     isYearlyFrequency() {
       return this.form.freq === RRule.YEARLY;
-    },
-
-    isAdvancedTab() {
-      return this.activeTab === 1;
     },
 
     advancedFields() {
@@ -164,6 +157,10 @@ export default {
     recurrenceRuleString() {
       return this.recurrenceRuleObject.toString();
     },
+
+    advancedCollapseColor() {
+      return this.$system.dark ? '#555' : '#e0e0e0';
+    },
   },
   watch: {
     form: {
@@ -182,10 +179,6 @@ export default {
 
       if (!this.isWeeklyFrequency && this.form.byweekday) {
         this.form.byweekday = [];
-      }
-
-      if (this.isAdvancedTab && isNull(frequency)) {
-        this.activeTab = 0;
       }
     },
 
