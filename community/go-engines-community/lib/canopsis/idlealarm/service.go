@@ -56,7 +56,7 @@ type baseService struct {
 
 func (s *baseService) Process(ctx context.Context) (res []types.Event, resErr error) {
 	now := types.NewCpsTime()
-	eventGenerator := libevent.NewGenerator(s.entityAdapter)
+	eventGenerator := libevent.NewGenerator(s.entityAdapter, "axe")
 	rules, err := s.ruleAdapter.GetEnabled(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("cannot fetch idle rules: %w", err)
