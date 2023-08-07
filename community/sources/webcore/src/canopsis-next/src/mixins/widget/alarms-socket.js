@@ -1,4 +1,4 @@
-import { differenceBy } from 'lodash';
+import { isEqual } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { SOCKET_ROOMS } from '@/config';
@@ -46,13 +46,8 @@ export const widgetAlarmsSocketMixin = {
         return;
       }
 
-      const diff = differenceBy(alarms, prevAlarms, '_id');
-
-      if (diff.length) {
-        if (prevAlarms.length) {
-          this.leaveAlarmsSocketRoom();
-        }
-
+      if (!isEqual(mapIds(alarms), mapIds(prevAlarms))) {
+        this.leaveAlarmsSocketRoom();
         this.joinToAlarmsSocketRoom(alarms);
       }
     },
@@ -62,13 +57,8 @@ export const widgetAlarmsSocketMixin = {
         return;
       }
 
-      const diff = differenceBy(queries, prevQueries, '_id');
-
-      if (diff.length) {
-        if (prevQueries.length) {
-          this.leaveAlarmDetailsSocketRoom();
-        }
-
+      if (!isEqual(mapIds(queries), mapIds(prevQueries))) {
+        this.leaveAlarmDetailsSocketRoom();
         this.joinToAlarmDetailsSocketRoom(queries);
       }
     },
