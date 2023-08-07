@@ -7,6 +7,7 @@
     template(#append="")
       c-help-icon(
         :text="$t('settings.liveWatchingTooltip')",
+        icon-class="mt-1",
         color="info",
         top
       )
