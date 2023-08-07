@@ -1,7 +1,7 @@
 <template lang="pug">
   widget-settings-item(:title="$t('settings.periodicRefresh')", optional)
     periodic-refresh-field(v-field="form.periodic_refresh", :name="name")
-    live-watching-field(v-if="withLifeWatching", v-field="form.liveWatching")
+    live-watching-field(v-if="withLiveWatching", v-field="form.liveWatching")
 </template>
 
 <script>
@@ -35,14 +35,14 @@ export default {
       type: String,
       required: false,
     },
-    withLifeWatching: {
+    withLiveWatching: {
       type: Boolean,
       default: false,
     },
   },
   created() {
-    if (!this.value?.unit) {
-      this.updateField('unit', TIME_UNITS.second);
+    if (!this.form?.periodic_refresh?.unit) {
+      this.updateField('periodic_refresh.unit', TIME_UNITS.second);
     }
   },
 };

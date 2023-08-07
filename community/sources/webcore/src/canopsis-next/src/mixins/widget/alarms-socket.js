@@ -14,6 +14,10 @@ export const widgetAlarmsSocketMixin = {
       type: Object,
       required: true,
     },
+    overview: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     ...mapAlarmDetailsGetters({
@@ -38,7 +42,7 @@ export const widgetAlarmsSocketMixin = {
   },
   watch: {
     alarms(alarms, prevAlarms) {
-      if (!this.liveWatching || this.editing) {
+      if (!this.liveWatching) {
         return;
       }
 
@@ -70,10 +74,6 @@ export const widgetAlarmsSocketMixin = {
     },
 
     liveWatching(liveWatching) {
-      if (this.editing) {
-        return;
-      }
-
       if (liveWatching) {
         this.joinToAlarmsSocketRoom(this.alarms);
         this.joinToAlarmDetailsSocketRoom(this.allAlarmDetailsQueries);
@@ -87,7 +87,6 @@ export const widgetAlarmsSocketMixin = {
   },
   beforeDestroy() {
     this.leaveAlarmsSocketRoom();
-    this.leaveAlarmDetailsSocketRoom();
   },
   methods: {
     ...mapAlarmsActions({
@@ -99,7 +98,7 @@ export const widgetAlarmsSocketMixin = {
     }),
 
     joinToAlarmsSocketRoom(alarms) {
-      if (this.editing) {
+      if (!this.overview) {
         return;
       }
 
@@ -109,6 +108,10 @@ export const widgetAlarmsSocketMixin = {
     },
 
     leaveAlarmsSocketRoom() {
+      if (!this.overview) {
+        return;
+      }
+
       this.$socket
         .leave(this.alarmsSocketRoom)
         .removeListener(this.updateAlarmInStore);

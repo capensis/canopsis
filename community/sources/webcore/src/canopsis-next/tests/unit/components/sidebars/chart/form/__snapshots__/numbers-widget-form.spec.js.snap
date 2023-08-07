@@ -9,7 +9,7 @@ exports[`numbers-widget-form Renders \`numbers-widget-form\` widget settings wit
     value="Map widget"
   />
   <field-periodic-refresh-stub
-    value="[object Object]"
+    form="[object Object]"
   />
   <field-preset-stub
     name="preset"

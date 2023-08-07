@@ -203,15 +203,15 @@ class Socket {
   join(room, data = {}, authNeeded = true) {
     if (!this.rooms[room]) {
       this.rooms[room] = new SocketRoom(room, data, authNeeded);
+
+      this.send({
+        room,
+        data,
+        type: REQUEST_MESSAGES_TYPES.join,
+      }, authNeeded);
     } else {
       this.rooms[room].increment();
     }
-
-    this.send({
-      room,
-      data,
-      type: REQUEST_MESSAGES_TYPES.join,
-    }, authNeeded);
 
     return this.rooms[room];
   }
@@ -230,13 +230,13 @@ class Socket {
 
       if (!socketRoom.count) {
         delete this.rooms[room];
+
+        this.send({
+          room,
+          type: REQUEST_MESSAGES_TYPES.leave,
+        });
       }
     }
-
-    this.send({
-      room,
-      type: REQUEST_MESSAGES_TYPES.leave,
-    });
 
     return socketRoom ?? new SocketRoom(room);
   }

@@ -10,7 +10,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
     class="v-divider theme--light"
   />
   <field-periodic-refresh-stub
-    value="[object Object]"
+    form="[object Object]"
   />
   <hr
     class="v-divider theme--light"
@@ -175,7 +175,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     class="v-divider theme--light"
   />
   <field-periodic-refresh-stub
-    value="[object Object]"
+    form="[object Object]"
   />
   <hr
     class="v-divider theme--light"
