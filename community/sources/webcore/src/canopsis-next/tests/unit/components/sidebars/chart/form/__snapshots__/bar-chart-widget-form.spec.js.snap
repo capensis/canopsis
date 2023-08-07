@@ -9,7 +9,7 @@ exports[`bar-chart-widget-form Renders \`bar-chart-widget-form\` widget settings
     value="Bar chart"
   />
   <field-periodic-refresh-stub
-    value="[object Object]"
+    form="[object Object]"
   />
   <field-preset-stub
     name="preset"

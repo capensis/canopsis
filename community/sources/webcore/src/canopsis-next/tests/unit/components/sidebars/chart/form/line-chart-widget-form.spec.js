@@ -90,7 +90,10 @@ describe('line-chart-widget-form', () => {
       unit: Faker.datatype.string(),
     };
 
-    fieldPeriodicRefresh.vm.$emit('input', periodicRefresh);
+    fieldPeriodicRefresh.vm.$emit('input', {
+      ...wrapper.vm.form.parameters,
+      periodic_refresh: periodicRefresh,
+    });
 
     expectsOneInput(wrapper, getWidgetRequestWithNewParametersProperty(form, 'periodic_refresh', periodicRefresh));
   });
