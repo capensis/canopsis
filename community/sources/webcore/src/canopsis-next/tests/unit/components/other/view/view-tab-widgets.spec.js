@@ -180,7 +180,7 @@ describe('view-tab-widgets', () => {
     expect(fetchActiveView).toHaveBeenCalledTimes(1);
   });
 
-  it('Renders `view-tab-widgets` with editing mode', () => {
+  it('Renders `view-tab-widgets` without editing mode', () => {
     const wrapper = snapshotFactory({
       propsData: {
         tab: {

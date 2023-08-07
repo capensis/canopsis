@@ -12,7 +12,8 @@
         v-bind="widgetProps",
         :widget="preparedWidget",
         :tab-id="tab._id",
-        :editing="editing"
+        :editing="editing",
+        :overview="overview"
       )
 </template>
 
@@ -84,6 +85,10 @@ export default {
       default: false,
     },
     kiosk: {
+      type: Boolean,
+      default: false,
+    },
+    overview: {
       type: Boolean,
       default: false,
     },
