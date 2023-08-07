@@ -10,7 +10,8 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     class="v-divider theme--light"
   />
   <field-periodic-refresh-stub
-    value="[object Object]"
+    form="[object Object]"
+    withlivewatching="true"
   />
   <hr
     class="v-divider theme--light"
@@ -271,7 +272,8 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     class="v-divider theme--light"
   />
   <field-periodic-refresh-stub
-    value="[object Object]"
+    form="[object Object]"
+    withlivewatching="true"
   />
   <hr
     class="v-divider theme--light"
@@ -519,7 +521,8 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     class="v-divider theme--light"
   />
   <field-periodic-refresh-stub
-    value="[object Object]"
+    form="[object Object]"
+    withlivewatching="true"
   />
   <hr
     class="v-divider theme--light"

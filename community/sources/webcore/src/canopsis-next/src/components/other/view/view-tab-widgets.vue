@@ -9,7 +9,8 @@
           :widget="widget",
           :tab="tab",
           :kiosk="kiosk",
-          :editing="editing"
+          :editing="editing",
+          overview
         )
     grid-edit-widgets(
       v-if="editing",
