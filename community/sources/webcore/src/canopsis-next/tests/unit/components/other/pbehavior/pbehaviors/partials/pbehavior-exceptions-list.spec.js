@@ -4,6 +4,11 @@ import { generateRenderer } from '@unit/utils/vue';
 
 import PbehaviorExceptionsList from '@/components/other/pbehavior/pbehaviors/partials/pbehavior-exceptions-list.vue';
 
+const stubs = {
+  'c-advanced-data-table': true,
+  'c-action-btn': true,
+};
+
 describe('pbehavior-exceptions-list', () => {
   const totalItems = 5;
   const exceptions = range(totalItems).map(index => ({
@@ -25,7 +30,7 @@ describe('pbehavior-exceptions-list', () => {
     ],
   }));
 
-  const snapshotFactory = generateRenderer(PbehaviorExceptionsList);
+  const snapshotFactory = generateRenderer(PbehaviorExceptionsList, { stubs });
 
   test('Renders `pbehavior-exceptions-list` without exceptions', () => {
     const wrapper = snapshotFactory();
