@@ -1026,6 +1026,28 @@ Feature: Get alarms
       }
     ]
     """
+    When I do GET /api/v4/alarms?opened=true&search=test-resource-to-alarm-correlation-get-3-3&active_columns[]=v.resource&correlation=true&sort_by=children&sort=desc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [],
+      "meta": {
+        "total_count": 0
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?opened=false&search=test-resource-to-alarm-correlation-get-3-3&active_columns[]=v.resource&correlation=true&sort_by=children&sort=desc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [],
+      "meta": {
+        "total_count": 0
+      }
+    }
+    """
 
   @concurrent
   Scenario: given get correlation with_instructions request should return
