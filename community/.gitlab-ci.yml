@@ -9,7 +9,6 @@ before_script:
 variables:
   COMPOSE_HTTP_TIMEOUT: "180"
   COMPOSE_PROJECT_NAME: "test${CI_JOB_ID}"
-  CANOPSIS_DISTRIBUTION: "debian-9"
   CANOPSIS_TAG: "ci"
   CANOPSIS_DOCKER_MODE: "test-ci"
   CANOPSIS_ENV_CONFIRM: "0"
