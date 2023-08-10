@@ -89,8 +89,6 @@ const (
 
 	// EventTypeRecomputeEntityService is used to recompute service context graph and state.
 	EventTypeRecomputeEntityService = "recomputeentityservice"
-	// EventTypeUpdateEntityService is used to update service cache in engines.
-	EventTypeUpdateEntityService = "updateentityservice"
 	// EventTypeEntityUpdated is used to notify engines that entity is updated out of
 	// event flow.
 	EventTypeEntityUpdated = "entityupdated"
@@ -98,9 +96,6 @@ const (
 	EventTypeEntityToggled = "entitytoggled"
 
 	EventTypeUpdateCounters = "updatecounters"
-	// EventTypeAlarmSkipped is used to check alarm in service counters if alarm was skipped
-	// during service recompute.
-	EventTypeAlarmSkipped = "alarmskipped"
 	// EventTypeJunitTestSuiteUpdated is used to notify that test suite is updated but state is not changed.
 	EventTypeJunitTestSuiteUpdated = "junittestsuiteupdated"
 	// EventTypeJunitTestCaseUpdated is used to notify that test case is updated but state is not changed.
@@ -520,7 +515,6 @@ func isValidEventType(t string) bool {
 		EventTypeManualMetaAlarmUngroup,
 		EventTypeManualMetaAlarmUpdate,
 		EventTypeRecomputeEntityService,
-		EventTypeUpdateEntityService,
 		EventTypeEntityUpdated,
 		EventTypeEntityToggled,
 		EventTypeNoEvents,
@@ -537,7 +531,6 @@ func isValidEventType(t string) bool {
 		EventTypeInstructionJobStarted,
 		EventTypeInstructionJobCompleted,
 		EventTypeInstructionJobFailed,
-		EventTypeAlarmSkipped,
 		EventTypeJunitTestSuiteUpdated,
 		EventTypeJunitTestCaseUpdated,
 		EventTypeTrigger,

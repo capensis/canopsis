@@ -101,12 +101,10 @@ type EventProcessor interface {
 }
 
 type MetaAlarmEventProcessor interface {
-	// Process handles related meta alarm parents and children after alarm change.
-	Process(ctx context.Context, event types.Event) error
 	// ProcessAxeRpc handles related meta alarm parents and children after alarm change.
 	ProcessAxeRpc(ctx context.Context, event rpc.AxeEvent, eventRes rpc.AxeResultEvent) error
 	// CreateMetaAlarm creates meta alarm by event.
-	CreateMetaAlarm(ctx context.Context, event types.Event) (*types.Alarm, error)
+	CreateMetaAlarm(ctx context.Context, event rpc.AxeEvent) (*types.Alarm, error)
 }
 
 type Service interface {

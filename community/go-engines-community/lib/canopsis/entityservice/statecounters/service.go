@@ -2,6 +2,7 @@ package statecounters
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 	"time"
@@ -548,27 +549,23 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 	return updatedServiceInfos, nil
 }
 
-func (s *service) RecomputeEntityServiceCounters(ctx context.Context, event types.Event) (map[string]UpdatedServicesInfo, error) {
-	if event.Entity == nil {
-		return nil, nil
-	}
-
+func (s *service) RecomputeEntityServiceCounters(ctx context.Context, entity types.Entity) (map[string]UpdatedServicesInfo, error) {
 	updatedServiceStates := make(map[string]UpdatedServicesInfo)
 	var counters EntityServiceCounters
-	err := s.serviceCountersCollection.FindOne(ctx, bson.M{"_id": event.Entity.ID}).Decode(&counters)
-	if err != nil && err != mongodriver.ErrNoDocuments {
+	err := s.serviceCountersCollection.FindOne(ctx, bson.M{"_id": entity.ID}).Decode(&counters)
+	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 		return nil, err
 	}
 
 	counters = EntityServiceCounters{
-		ID:                event.Entity.ID,
+		ID:                entity.ID,
 		OutputTemplate:    counters.OutputTemplate,
 		PbehaviorCounters: make(map[string]int),
 	}
 
 	cursor, err := s.entityCollection.Aggregate(ctx, []bson.M{
 		{
-			"$match": bson.M{"services": event.Entity.ID},
+			"$match": bson.M{"services": entity.ID},
 		},
 		{
 			"$project": bson.M{
@@ -633,7 +630,7 @@ func (s *service) RecomputeEntityServiceCounters(ctx context.Context, event type
 		}
 	}
 
-	_, err = s.serviceCountersCollection.UpdateOne(ctx, bson.M{"_id": event.GetEID()}, bson.M{"$set": counters}, options.Update().SetUpsert(true))
+	_, err = s.serviceCountersCollection.UpdateOne(ctx, bson.M{"_id": entity.ID}, bson.M{"$set": counters}, options.Update().SetUpsert(true))
 	if err != nil {
 		return nil, err
 	}
@@ -643,7 +640,7 @@ func (s *service) RecomputeEntityServiceCounters(ctx context.Context, event type
 		return nil, err
 	}
 
-	updatedServiceStates[event.Entity.ID] = UpdatedServicesInfo{
+	updatedServiceStates[entity.ID] = UpdatedServicesInfo{
 		State:  counters.GetWorstState(),
 		Output: output,
 	}
