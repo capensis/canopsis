@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 	"math"
+	"strings"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
@@ -16,8 +17,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
+	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -25,7 +28,7 @@ const workers = 10
 
 func NewMetaAlarmEventProcessor(
 	dbClient mongo.DbClient,
-	adapter alarm.Adapter,
+	adapter libalarm.Adapter,
 	ruleAdapter correlation.RulesAdapter,
 	alarmStatusService alarmstatus.Service,
 	alarmConfigProvider config.AlarmConfigProvider,
@@ -34,7 +37,7 @@ func NewMetaAlarmEventProcessor(
 	fifoExchange, fifoQueue string,
 	metricsSender metrics.Sender,
 	logger zerolog.Logger,
-) alarm.MetaAlarmEventProcessor {
+) libalarm.MetaAlarmEventProcessor {
 	return &metaAlarmEventProcessor{
 		dbClient:            dbClient,
 		adapter:             adapter,
@@ -52,7 +55,7 @@ func NewMetaAlarmEventProcessor(
 
 type metaAlarmEventProcessor struct {
 	dbClient    mongo.DbClient
-	adapter     alarm.Adapter
+	adapter     libalarm.Adapter
 	ruleAdapter correlation.RulesAdapter
 
 	alarmStatusService  alarmstatus.Service
@@ -67,7 +70,11 @@ type metaAlarmEventProcessor struct {
 	logger zerolog.Logger
 }
 
-func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event types.Event) (*types.Alarm, error) {
+func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc.AxeEvent) (*types.Alarm, error) {
+	if event.Entity == nil {
+		return nil, nil
+	}
+
 	var updatedChildAlarms []types.Alarm
 	var metaAlarm types.Alarm
 
@@ -75,7 +82,7 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event typ
 		updatedChildAlarms = make([]types.Alarm, 0)
 		metaAlarm = types.Alarm{}
 
-		ruleIdentifier := event.MetaAlarmRuleID
+		ruleIdentifier := event.Parameters.MetaAlarmRuleID
 		rule, err := p.ruleAdapter.GetRule(ctx, ruleIdentifier)
 		if err != nil {
 			return fmt.Errorf("cannot fetch meta alarm rule id=%q: %w", ruleIdentifier, err)
@@ -85,19 +92,19 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event typ
 			ruleIdentifier = rule.Name
 		}
 
-		metaAlarm = newAlarm(event, p.alarmConfigProvider.Get())
-		metaAlarm.Value.Meta = event.MetaAlarmRuleID
-		metaAlarm.Value.MetaValuePath = event.MetaAlarmValuePath
+		metaAlarm = p.newAlarm(event.Parameters, *event.Entity, p.alarmConfigProvider.Get())
+		metaAlarm.Value.Meta = event.Parameters.MetaAlarmRuleID
+		metaAlarm.Value.MetaValuePath = event.Parameters.MetaAlarmValuePath
 
-		if event.DisplayName != "" {
-			metaAlarm.Value.DisplayName = event.DisplayName
+		if event.Parameters.DisplayName != "" {
+			metaAlarm.Value.DisplayName = event.Parameters.DisplayName
 		}
 
 		var childAlarms []types.Alarm
 		worstState := types.CpsNumber(types.AlarmStateMinor)
 
-		if len(event.MetaAlarmChildren) > 0 {
-			err := p.adapter.GetOpenedAlarmsByIDs(ctx, event.MetaAlarmChildren, &childAlarms)
+		if len(event.Parameters.MetaAlarmChildren) > 0 {
+			err := p.adapter.GetOpenedAlarmsByIDs(ctx, event.Parameters.MetaAlarmChildren, &childAlarms)
 			if err != nil {
 				return fmt.Errorf("cannot fetch children alarms: %w", err)
 			}
@@ -123,7 +130,7 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event typ
 			}
 		}
 
-		err = UpdateAlarmState(&metaAlarm, *event.Entity, event.Timestamp, worstState, event.Output, p.alarmStatusService)
+		err = UpdateAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp, worstState, event.Parameters.Output, p.alarmStatusService)
 		if err != nil {
 			return err
 		}
@@ -146,36 +153,18 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event typ
 	}
 
 	for _, child := range updatedChildAlarms {
-		p.metricsSender.SendCorrelation(event.Timestamp.Time, child)
+		p.metricsSender.SendCorrelation(event.Parameters.Timestamp.Time, child)
 	}
 
 	return &metaAlarm, nil
 }
 
-func (p *metaAlarmEventProcessor) Process(ctx context.Context, event types.Event) error {
-	if event.Alarm == nil || event.AlarmChange == nil {
-		return nil
-	}
-
-	alarm := event.Alarm
-
-	if alarm.IsMetaAlarm() {
-		return p.processParent(ctx, event)
-	}
-
-	if alarm.IsMetaChildren() {
-		return p.processChild(ctx, event)
-	}
-
-	return nil
-}
-
 func (p *metaAlarmEventProcessor) ProcessAxeRpc(ctx context.Context, event rpc.AxeEvent, eventRes rpc.AxeResultEvent) error {
-	if event.Alarm == nil || eventRes.AlarmChangeType == "" {
+	if eventRes.Alarm == nil || eventRes.AlarmChangeType == "" {
 		return nil
 	}
 
-	alarm := event.Alarm
+	alarm := eventRes.Alarm
 
 	err := p.processComponentRpc(ctx, event, eventRes)
 	if err != nil {
@@ -187,38 +176,7 @@ func (p *metaAlarmEventProcessor) ProcessAxeRpc(ctx context.Context, event rpc.A
 	}
 
 	if alarm.IsMetaChildren() {
-		return p.processChildRpc(ctx, eventRes)
-	}
-
-	return nil
-}
-
-func (p *metaAlarmEventProcessor) processParent(ctx context.Context, event types.Event) error {
-	if !applyOnChild(event.AlarmChange.Type) {
-		return nil
-	}
-
-	childEvent := types.Event{
-		EventType:  event.EventType,
-		Timestamp:  event.Timestamp,
-		Output:     event.Output,
-		LongOutput: event.LongOutput,
-		Author:     event.Author,
-		UserID:     event.UserID,
-		Debug:      event.Debug,
-		Role:       event.Role,
-		Initiator:  types.InitiatorSystem,
-		Status:     event.Status,
-		State:      event.State,
-		TicketInfo: event.TicketInfo,
-		Duration:   event.Duration,
-	}
-
-	childEvent.TicketInfo.TicketMetaAlarmID = event.Alarm.ID
-
-	err := p.sendChildrenEvents(ctx, event.Alarm.Value.Children, childEvent)
-	if err != nil {
-		return err
+		return p.processChildRpc(ctx, event, eventRes)
 	}
 
 	return nil
@@ -258,7 +216,7 @@ func (p *metaAlarmEventProcessor) processParentRpc(ctx context.Context, event rp
 		}
 	}
 
-	err := p.sendChildrenEvents(ctx, event.Alarm.Value.Children, childEvent)
+	err := p.sendChildrenEvents(ctx, eventRes.Alarm.Value.Children, childEvent)
 	if err != nil {
 		return err
 	}
@@ -278,7 +236,7 @@ func (p *metaAlarmEventProcessor) processComponentRpc(ctx context.Context, event
 		return nil
 	}
 
-	resources, err := p.adapter.GetAlarmsWithoutTicketByComponent(ctx, event.Alarm.Value.Component)
+	resources, err := p.adapter.GetAlarmsWithoutTicketByComponent(ctx, eventRes.Alarm.Value.Component)
 	if err != nil {
 		return fmt.Errorf("cannot fetch alarms: %w", err)
 	}
@@ -312,43 +270,31 @@ func (p *metaAlarmEventProcessor) processComponentRpc(ctx context.Context, event
 	return nil
 }
 
-func (p *metaAlarmEventProcessor) processChild(ctx context.Context, event types.Event) error {
-	switch event.AlarmChange.Type {
+func (p *metaAlarmEventProcessor) processChildRpc(ctx context.Context, event rpc.AxeEvent, eventRes rpc.AxeResultEvent) error {
+	switch eventRes.AlarmChangeType {
+	case types.AlarmChangeTypeStateIncrease, types.AlarmChangeTypeStateDecrease, types.AlarmChangeTypeChangeState:
+		err := p.updateParentState(ctx, *eventRes.Alarm)
+		if err != nil {
+			return err
+		}
 	case types.AlarmChangeTypeResolve:
-		err := p.resolveParents(ctx, *event.Alarm, event.Timestamp)
+		err := p.resolveParents(ctx, *eventRes.Alarm, event.Parameters.Timestamp)
 		if err != nil {
 			return err
 		}
 
-		if event.Alarm.Value.State.Value != types.AlarmStateOK {
-			err := p.updateParentState(ctx, *event.Alarm)
+		if eventRes.Alarm.Value.State.Value != types.AlarmStateOK {
+			err := p.updateParentState(ctx, *eventRes.Alarm)
 			if err != nil {
 				return err
 			}
 		}
-	case types.AlarmChangeTypeStateIncrease, types.AlarmChangeTypeStateDecrease, types.AlarmChangeTypeChangeState:
-		err := p.updateParentState(ctx, *event.Alarm)
-		if err != nil {
-			return err
-		}
 	}
 
 	if event.EventType == types.EventTypeCheck && p.alarmConfigProvider.Get().EnableLastEventDate {
-		err := p.adapter.UpdateLastEventDate(ctx, event.Alarm.Value.Parents, event.Timestamp)
+		err := p.adapter.UpdateLastEventDate(ctx, eventRes.Alarm.Value.Parents, event.Parameters.Timestamp)
 		if err != nil {
 			return fmt.Errorf("cannot update parent alarms: %w", err)
-		}
-	}
-
-	return nil
-}
-
-func (p *metaAlarmEventProcessor) processChildRpc(ctx context.Context, eventRes rpc.AxeResultEvent) error {
-	switch eventRes.AlarmChangeType {
-	case types.AlarmChangeTypeChangeState:
-		err := p.updateParentState(ctx, *eventRes.Alarm)
-		if err != nil {
-			return err
 		}
 	}
 
@@ -572,6 +518,49 @@ func (p *metaAlarmEventProcessor) sendToFifo(ctx context.Context, event types.Ev
 	return nil
 }
 
+func (p *metaAlarmEventProcessor) newAlarm(
+	params rpc.AxeParameters,
+	entity types.Entity,
+	alarmConfig config.AlarmConfig,
+) types.Alarm {
+	now := types.NewCpsTime()
+	alarm := types.Alarm{
+		EntityID: entity.ID,
+		ID:       utils.NewID(),
+		Time:     now,
+		Value: types.AlarmValue{
+			CreationDate:      now,
+			DisplayName:       types.GenDisplayName(alarmConfig.DisplayNameScheme),
+			InitialOutput:     params.Output,
+			Output:            params.Output,
+			InitialLongOutput: params.LongOutput,
+			LongOutput:        params.LongOutput,
+			LongOutputHistory: []string{params.LongOutput},
+			LastUpdateDate:    params.Timestamp,
+			LastEventDate:     now,
+			Parents:           []string{},
+			Children:          []string{},
+			UnlinkedParents:   []string{},
+			Infos:             map[string]map[string]interface{}{},
+			RuleVersion:       map[string]string{},
+		},
+	}
+
+	switch entity.Type {
+	case types.EntityTypeResource:
+		alarm.Value.Resource = entity.Name
+		alarm.Value.Component = entity.Component
+		alarm.Value.Connector, alarm.Value.ConnectorName, _ = strings.Cut(entity.Connector, "/")
+	case types.EntityTypeComponent, types.EntityTypeService:
+		alarm.Value.Component = entity.Name
+		alarm.Value.Connector, alarm.Value.ConnectorName, _ = strings.Cut(entity.Connector, "/")
+	case types.EntityTypeConnector:
+		alarm.Value.Connector, alarm.Value.ConnectorName, _ = strings.Cut(entity.ID, "/")
+	}
+
+	return alarm
+}
+
 func applyOnChild(changeType types.AlarmChangeType) bool {
 	switch changeType {
 	case types.AlarmChangeTypeAck,
@@ -589,4 +578,97 @@ func applyOnChild(changeType types.AlarmChangeType) bool {
 	}
 
 	return false
+}
+
+func UpdateAlarmState(alarm *types.Alarm, entity types.Entity, timestamp types.CpsTime, state types.CpsNumber, output string,
+	service alarmstatus.Service) error {
+	var currentState, currentStatus types.CpsNumber
+	if alarm.Value.State != nil {
+		currentState = alarm.Value.State.Value
+		currentStatus = alarm.Value.Status.Value
+	}
+
+	author := ""
+	if entity.Type != types.EntityTypeService {
+		author = strings.Replace(entity.Connector, "/", ".", 1)
+	} else {
+		author = alarm.Value.Connector + "." + alarm.Value.ConnectorName
+	}
+
+	if state != currentState {
+		// Event is an OK, so the alarm should be resolved anyway
+		if alarm.IsStateLocked() && state != types.AlarmStateOK {
+			return nil
+		}
+
+		// Create new Step to keep track of the alarm history
+		newStep := types.NewAlarmStep(types.AlarmStepStateIncrease, timestamp, author, output, "", "", "")
+		newStep.Value = state
+
+		if state < currentState {
+			newStep.Type = types.AlarmStepStateDecrease
+		}
+
+		alarm.Value.State = &newStep
+		err := alarm.Value.Steps.Add(newStep)
+		if err != nil {
+			return err
+		}
+
+		alarm.Value.TotalStateChanges++
+		alarm.Value.LastUpdateDate = timestamp
+	}
+
+	newStatus := service.ComputeStatus(*alarm, entity)
+
+	if newStatus == currentStatus {
+		if state != currentState {
+			alarm.Value.StateChangesSinceStatusUpdate++
+
+			alarm.AddUpdate("$set", bson.M{
+				"v.state":                             alarm.Value.State,
+				"v.state_changes_since_status_update": alarm.Value.StateChangesSinceStatusUpdate,
+				"v.total_state_changes":               alarm.Value.TotalStateChanges,
+				"v.last_update_date":                  alarm.Value.LastUpdateDate,
+			})
+			alarm.AddUpdate("$push", bson.M{"v.steps": alarm.Value.State})
+		}
+
+		return nil
+	}
+
+	// Create new Step to keep track of the alarm history
+	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, timestamp, author, output, "", "", "")
+	newStepStatus.Value = newStatus
+
+	if newStatus < currentStatus {
+		newStepStatus.Type = types.AlarmStepStatusDecrease
+	}
+
+	alarm.Value.Status = &newStepStatus
+	err := alarm.Value.Steps.Add(newStepStatus)
+	if err != nil {
+		return err
+	}
+
+	alarm.Value.StateChangesSinceStatusUpdate = 0
+	alarm.Value.LastUpdateDate = timestamp
+
+	set := bson.M{
+		"v.status":                            alarm.Value.Status,
+		"v.state_changes_since_status_update": alarm.Value.StateChangesSinceStatusUpdate,
+		"v.last_update_date":                  alarm.Value.LastUpdateDate,
+	}
+	newSteps := bson.A{}
+	if state != currentState {
+		set["v.total_state_changes"] = alarm.Value.TotalStateChanges
+		set["v.state"] = alarm.Value.State
+		newSteps = append(newSteps, alarm.Value.State)
+	}
+	newSteps = append(newSteps, alarm.Value.Status)
+
+	alarm.AddUpdate("$set", set)
+	alarm.AddUpdate("$push", bson.M{"v.steps": bson.M{"$each": newSteps}})
+
+	return nil
 }
