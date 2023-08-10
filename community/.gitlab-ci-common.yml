@@ -23,6 +23,7 @@ publish_docker_archive:
   extends: .common
   stage: publish
   script:
+    - echo '${CI_JOB_TOKEN}' 
     - |
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
            --upload-file "${DOCKER_ARCHIVE_PATH}" \
