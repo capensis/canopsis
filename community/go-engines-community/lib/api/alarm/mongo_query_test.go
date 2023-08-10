@@ -1161,25 +1161,19 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 		Pattern: fmt.Sprintf(".*%s.*", search),
 		Options: "i",
 	}
+	opened := true
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
+					Opened:      &opened,
 					Search:      search,
 					OnlyParents: true,
 				},
 			},
 		},
 	}
-	filteredChildrenLookup := getHasFilteredChildrenLookup(mongo.AlarmMongoCollection, bson.M{
-		"$or": []bson.M{
-			{"v.connector": searchRegexp},
-			{"v.connector_name": searchRegexp},
-			{"v.component": searchRegexp},
-			{"v.resource": searchRegexp},
-		},
-	})
 	now := types.NewCpsTime()
 	expectedDataPipeline := []bson.M{
 		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
@@ -1193,7 +1187,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getMetaAlarmRuleLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, getChildrenCountLookup()...)
-	expectedDataPipeline = append(expectedDataPipeline, filteredChildrenLookup...)
 	fields := getComputedFields(now)
 	fields["is_meta_alarm"] = getIsMetaAlarmField()
 	expectedDataPipeline = append(expectedDataPipeline, bson.M{
@@ -1208,25 +1201,29 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 			"resolved_children":   0,
 		},
 	})
-	expected := []bson.M{
-		{"$match": bson.M{"$and": []bson.M{{"$or": []bson.M{
-			{"v.parents": nil},
-			{"v.parents": bson.M{"$eq": bson.A{}}},
-			{"v.meta": bson.M{"$ne": nil}},
-		}}}}},
-	}
-	expected = append(expected, getEntityLookup()...)
-	expected = append(expected, filteredChildrenLookup...)
-	expected = append(expected,
-		bson.M{"$match": bson.M{"entity.enabled": true}},
-		bson.M{"$match": bson.M{"$or": []bson.M{
+	expected := getOnlyParentsSearchPipeline(bson.M{
+		"v.resolved": nil,
+		"$or": []bson.M{
 			{"v.connector": searchRegexp},
 			{"v.connector_name": searchRegexp},
 			{"v.component": searchRegexp},
 			{"v.resource": searchRegexp},
-			{"has_filtered_children": bson.M{"$gt": 0}},
+		},
+	}, mongo.AlarmMongoCollection, bson.M{"v.resolved": nil})
+	expected = append(expected,
+		bson.M{"$match": bson.M{"$and": []bson.M{
+			{"v.resolved": nil},
+			{"$or": []bson.M{
+				{"v.parents": nil},
+				{"v.parents": bson.M{"$eq": bson.A{}}},
+				{"v.meta": bson.M{"$ne": nil}},
+			}},
 		}}},
-		bson.M{"$project": bson.M{"entity": 0, "has_filtered_children": 0}},
+	)
+	expected = append(expected, getEntityLookup()...)
+	expected = append(expected,
+		bson.M{"$match": bson.M{"entity.enabled": true}},
+		bson.M{"$project": bson.M{"entity": 0}},
 		bson.M{"$facet": bson.M{
 			"data":        expectedDataPipeline,
 			"total_count": []bson.M{{"$count": "count"}},
