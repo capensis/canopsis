@@ -1,5 +1,4 @@
 stages:
-  - test
   - build
   - publish
   - release
@@ -19,20 +18,6 @@ variables:
 include:
   - community/.gitlab-ci-common.yml
   - community/.gitlab-ci-template.yml
-
-stage_test:
-  stage: test
-  tags: ["canopsis"]
-  script:
-    - set
-    - ./build-docker.sh
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "push"'
-      changes:
-        - community/{build*,.gitlab-ci.yml,{docker*,sources/{canopsis,db-conf,functional_testing,webcore}}/**/*}
-  artifacts:
-    paths:
-      #- tests_report
 
 create_release:
   extends: .create_release
