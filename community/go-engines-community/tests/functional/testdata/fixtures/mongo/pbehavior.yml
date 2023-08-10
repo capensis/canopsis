@@ -487,16 +487,16 @@ pbehavior:
     _id: test-pbehavior-to-check-unique
     name: test-pbehavior-to-check-unique-name
 
-  pbehavior_to_pbehavior_14:
+  pbehavior_to_pbehavior_second_4:
     <<: *pbehavior
-    _id: test-pbehavior-14
+    _id: test-pbehavior-second-4
     enabled: false
     entity_pattern:
     old_mongo_query: |
       {
         "$and": [
           {
-            "name": "test-resource-pbehavior-14"
+            "name": "test-resource-pbehavior-second-4"
           }
         ]
       }
