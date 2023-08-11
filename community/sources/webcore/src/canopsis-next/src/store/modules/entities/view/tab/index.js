@@ -2,19 +2,11 @@ import { API_ROUTES } from '@/config';
 
 import request from '@/services/request';
 
-import { viewTabSchema } from '@/store/schemas';
-
 export default {
   namespaced: true,
   actions: {
-    async fetchItem({ dispatch }, { id, params } = {}) {
-      const { data } = await dispatch('entities/fetch', {
-        params,
-        route: `${API_ROUTES.view.tabs}/${id}`,
-        schema: viewTabSchema,
-      }, { root: true });
-
-      return data;
+    fetchItem({ dispatch }, { id, params } = {}) {
+      return dispatch('view/group/fetchViewTab', { id, params }, { root: true });
     },
 
     create(context, { data } = {}) {

@@ -13,7 +13,9 @@ export const entitiesViewGroupMixin = {
     ...mapGetters({
       groupsPending: 'pending',
       groups: 'items',
-      getGroupById: 'getItemById',
+      getGroupById: 'getGroupById',
+      getViewById: 'getViewById',
+      getViewTabById: 'getViewTabById',
     }),
   },
   methods: {
