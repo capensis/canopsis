@@ -2,6 +2,49 @@
   div.grid-layout-wrapper
     portal(:to="$constants.PORTALS_NAMES.additionalTopBarItems")
       window-size-field(v-model="size", color="white", light)
+    c-grid-layout(
+      v-model="layouts[size]",
+      :margin="[$constants.WIDGET_GRID_ROW_HEIGHT, $constants.WIDGET_GRID_ROW_HEIGHT]",
+      :columns-count="$constants.WIDGET_GRID_COLUMNS_COUNT",
+      :row-height="$constants.WIDGET_GRID_ROW_HEIGHT",
+      auto-size
+    )
+      template(#default="{ bind, on }")
+        c-grid-item(
+          v-for="(layoutItem, index) in layouts[size]",
+          v-bind="bind",
+          v-on="on",
+          :key="layoutItem.i",
+          :x="layoutItem.x",
+          :y="layoutItem.y",
+          :w="layoutItem.w",
+          :h="layoutItem.h",
+          :i="layoutItem.i",
+          :auto-height="layoutItem.autoHeight",
+          overlay
+        )
+          div.wrapper
+            div.drag-handler
+              v-layout.controls
+                v-tooltip(bottom)
+                  template(#activator="{ on }")
+                    v-btn.ma-0.mr-1(
+                      v-on="on",
+                      :color="layoutItem.autoHeight ? 'grey lighten-1' : 'transparent'",
+                      icon,
+                      small,
+                      @click="toggleAutoHeight(index)"
+                    )
+                      v-icon(
+                        :color="layoutItem.autoHeight ? 'black' : 'grey darken-1'",
+                        small
+                      ) lock
+                  span {{ $t('view.autoHeightButton') }}
+                widget-wrapper-menu(
+                  :widget="layoutItem.widget",
+                  :tab="tab"
+                )
+            slot(:widget="layoutItem.widget")
     grid-layout(
       ref="gridLayout",
       :layout.sync="layouts[size]",
@@ -60,11 +103,15 @@ import {
 
 import { getWidgetsLayoutBySize } from '@/helpers/entities/widget/layout';
 
+import CGridLayout from '@/components/common/grid/c-grid-layout.vue';
+import CGridItem from '@/components/common/grid/c-grid-item.vue';
 import WidgetWrapperMenu from '@/components/widgets/partials/widget-wrapper-menu.vue';
 import WindowSizeField from '@/components/forms/fields/window-size.vue';
 
 export default {
   components: {
+    CGridLayout,
+    CGridItem,
     WindowSizeField,
     WidgetWrapperMenu,
   },
