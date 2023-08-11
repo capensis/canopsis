@@ -2,7 +2,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { MAX_LIMIT } from '@/constants';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('view/group');
+const { mapGetters, mapActions } = createNamespacedHelpers('view');
 const { mapActions: mapAuthActions } = createNamespacedHelpers('auth');
 
 /**

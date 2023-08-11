@@ -8,14 +8,14 @@ const { mapActions } = createNamespacedHelpers('view');
 export const entitiesViewMixin = {
   methods: {
     ...mapActions({
-      createView: 'create',
-      updateView: 'update',
-      updateViewsPositions: 'updatePositions',
-      updateViewWithoutStore: 'updateWithoutStore',
-      removeView: 'remove',
-      copyView: 'copy',
-      exportViewsWithoutStore: 'exportWithoutStore',
-      importViewsWithoutStore: 'importWithoutStore',
+      createView: 'createView',
+      updateView: 'updateView',
+      updateViewsPositions: 'updatePositionsView',
+      updateViewWithoutStore: 'updateWithoutStoreView',
+      removeView: 'removeView',
+      copyView: 'copyView',
+      exportViewsWithoutStore: 'exportViewWithoutStore',
+      importViewsWithoutStore: 'importViewWithoutStore',
     }),
 
     async createViewWithPopup({ data }) {
