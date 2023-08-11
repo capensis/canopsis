@@ -24,6 +24,7 @@ publish_docker_archive:
   stage: publish
   script:
     - pwd
+    - find .
     - |
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
            --upload-file "${DOCKER_ARCHIVE_PATH}" \
