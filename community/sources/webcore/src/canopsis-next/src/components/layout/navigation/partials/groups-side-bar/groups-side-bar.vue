@@ -12,7 +12,7 @@
         logged-users-count
         app-version.version
       template(v-if="hasReadAnyViewAccess")
-        v-layout.pa-2(v-if="groupsPending", row, justify-center)
+        v-layout.pa-2(v-if="!mutatedGroups.length && groupsPending", row, justify-center)
           v-progress-circular(color="white", indeterminate)
         c-draggable-list-field.groups-panel(
           v-else,
