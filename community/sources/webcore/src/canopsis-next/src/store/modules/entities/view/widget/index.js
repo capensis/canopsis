@@ -1,26 +1,10 @@
 import { API_ROUTES } from '@/config';
-import { ENTITIES_TYPES } from '@/constants';
 
 import request from '@/services/request';
 
-import { widgetSchema } from '@/store/schemas';
-
 export default {
   namespaced: true,
-  getters: {
-    getItemById: (state, getters, rootState, rootGetters) => id => rootGetters['entities/getItem'](
-      ENTITIES_TYPES.widget,
-      id,
-    ),
-  },
   actions: {
-    fetchItem({ dispatch }, { id }) {
-      return dispatch('entities/fetch', {
-        route: `${API_ROUTES.widget.list}/${id}`,
-        schema: widgetSchema,
-      }, { root: true });
-    },
-
     fetchItemWithoutStore(context, { id }) {
       return request.get(`${API_ROUTES.widget.list}/${id}`);
     },
