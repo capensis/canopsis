@@ -40,45 +40,6 @@ export const userPreferenceSchema = new schema.Entity(ENTITIES_TYPES.userPrefere
   idAttribute: 'widget',
 });
 
-export const widgetSchema = new schema.Entity(ENTITIES_TYPES.widget, {}, {
-  idAttribute: '_id',
-});
-
-export const viewTabSchema = new schema.Entity(ENTITIES_TYPES.viewTab, {
-  widgets: [widgetSchema],
-}, {
-  idAttribute: '_id',
-  processStrategy(entity, parent, key) {
-    const result = childProcessStrategy.call(this, entity, parent, key);
-
-    if (!result.widgets) {
-      result.widgets = [];
-    }
-
-    return result;
-  },
-  mergeStrategy: childMergeStrategy,
-});
-
-export const viewSchema = new schema.Entity(ENTITIES_TYPES.view, {
-  tabs: [viewTabSchema],
-}, {
-  idAttribute: '_id',
-  processStrategy: childProcessStrategy,
-  mergeStrategy: childMergeStrategy,
-});
-
-viewSchema.disabledCache = true;
-
-export const groupSchema = new schema.Entity(ENTITIES_TYPES.group, {
-  views: [viewSchema],
-}, {
-  idAttribute: '_id',
-  processStrategy: parentProcessStrategy,
-});
-
-groupSchema.disabledCache = true;
-
 export const userSchema = new schema.Entity(ENTITIES_TYPES.user, {}, { idAttribute: '_id' });
 
 export const roleSchema = new schema.Entity(ENTITIES_TYPES.role, {}, { idAttribute: '_id' });
@@ -93,9 +54,7 @@ export const dynamicInfoSchema = new schema.Entity(ENTITIES_TYPES.dynamicInfo, {
 
 export const broadcastMessageSchema = new schema.Entity(ENTITIES_TYPES.broadcastMessage, {}, { idAttribute: '_id' });
 
-export const playlistSchema = new schema.Entity(ENTITIES_TYPES.playlist, {
-  tabs: [viewTabSchema],
-}, { idAttribute: '_id' });
+export const playlistSchema = new schema.Entity(ENTITIES_TYPES.playlist, {}, { idAttribute: '_id' });
 
 export const pbehaviorTypesSchema = new schema.Entity(ENTITIES_TYPES.pbehaviorTypes, {}, { idAttribute: '_id' });
 
@@ -173,10 +132,6 @@ export default {
   [ENTITIES_TYPES.weatherService]: weatherServiceSchema,
   [ENTITIES_TYPES.pbehavior]: pbehaviorSchema,
   [ENTITIES_TYPES.userPreference]: userPreferenceSchema,
-  [ENTITIES_TYPES.group]: groupSchema,
-  [ENTITIES_TYPES.view]: viewSchema,
-  [ENTITIES_TYPES.viewTab]: viewTabSchema,
-  [ENTITIES_TYPES.widget]: widgetSchema,
   [ENTITIES_TYPES.user]: userSchema,
   [ENTITIES_TYPES.role]: roleSchema,
   [ENTITIES_TYPES.eventFilter]: eventFilterSchema,
