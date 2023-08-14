@@ -11,12 +11,14 @@ export const DEFAULT_ENTITY_MODULE_TYPES = {
 export const createCRUDModule = ({
   types = DEFAULT_ENTITY_MODULE_TYPES,
   route,
+  dataPreparer = d => d?.data,
+  metaPreparer = d => d?.meta,
   withFetchingParams,
   withWithoutStore,
 }, module = {}) => {
   const moduleState = {
     items: [],
-    meta: [],
+    meta: {},
     pending: false,
   };
 
@@ -51,7 +53,10 @@ export const createCRUDModule = ({
       try {
         commit(types.FETCH_LIST, { params });
 
-        const { data, meta } = await request.get(route, { params });
+        const response = await request.get(route, { params });
+
+        const data = dataPreparer(response);
+        const meta = metaPreparer(response);
 
         commit(types.FETCH_LIST_COMPLETED, { data, meta });
       } catch (err) {
