@@ -316,7 +316,9 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	doc := s.transformRequestToDocument(r.EditRequest)
 	doc.Updated = &now
 
-	unset := bson.M{}
+	unset := bson.M{
+		"rrule_cstart": "",
+	}
 
 	if r.Stop == nil {
 		unset["tstop"] = ""
@@ -431,6 +433,10 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 		set["entity_pattern"] = r.EntityPattern
 		unset["corporate_entity_pattern"] = ""
 		unset["corporate_entity_pattern_title"] = ""
+	}
+
+	if rruleUpdated {
+		unset["rrule_cstart"] = ""
 	}
 
 	update := bson.M{"$set": set}
@@ -730,7 +736,11 @@ func (s *store) transformResponse(ctx context.Context, result []Response) error 
 			continue
 		}
 
-		rOption.Dtstart = v.Start.Time.In(loc)
+		if v.RRuleComputedStart != nil && v.RRuleComputedStart.Time.Before(after) {
+			rOption.Dtstart = v.RRuleComputedStart.Time.In(loc)
+		} else {
+			rOption.Dtstart = v.Start.Time.In(loc)
+		}
 		r, err := librrule.NewRRule(*rOption)
 		if err != nil {
 			continue
