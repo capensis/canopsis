@@ -115,6 +115,8 @@ type Response struct {
 	Editable *bool  `bson:"editable,omitempty" json:"editable,omitempty"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
+
+	RRuleComputedStart *types.CpsTime `bson:"rrule_cstart" json:"-"`
 }
 
 type OldMongoQuery map[string]interface{}
