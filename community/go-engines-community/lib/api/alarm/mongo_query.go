@@ -25,6 +25,7 @@ import (
 const (
 	defaultTimeFieldOpened   = "t"
 	defaultTimeFieldResolved = "v.resolved"
+	entityInfosPrefix        = "entity.infos"
 )
 
 type MongoQueryBuilder struct {
@@ -32,10 +33,11 @@ type MongoQueryBuilder struct {
 	instructionCollection mongo.DbCollection
 	authorProvider        author.Provider
 
-	defaultSearchByFields   []string
-	availableSearchByFields map[string]struct{}
-	defaultSortBy           string
-	defaultSort             string
+	defaultSearchByFields         []string
+	availableSearchByFields       map[string]struct{}
+	availableSearchByEntityFields map[string]struct{}
+	defaultSortBy                 string
+	defaultSort                   string
 
 	fieldsAliases        map[string]string
 	fieldsAliasesByRegex map[string]string
@@ -87,6 +89,13 @@ func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider)
 			"v.resource":       {},
 			"v.display_name":   {},
 			"v.output":         {},
+		},
+		availableSearchByEntityFields: map[string]struct{}{
+			"entity.name":        {},
+			"entity.connector":   {},
+			"entity.component":   {},
+			"entity.description": {},
+			"entity.type":        {},
 		},
 		defaultSortBy: "t",
 		defaultSort:   common.SortDesc,
@@ -330,8 +339,20 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 			for _, f := range searchBy {
 				if _, ok := q.availableSearchByFields[f]; ok {
 					filteredSearchBy = append(filteredSearchBy, f)
+					continue
+				}
+
+				if _, ok := q.availableSearchByEntityFields[f]; ok {
+					filteredSearchBy = append(filteredSearchBy, f)
+					continue
+				}
+
+				if strings.HasPrefix(f, entityInfosPrefix) {
+					filteredSearchBy = append(filteredSearchBy, f)
+					continue
 				}
 			}
+
 			if len(filteredSearchBy) == 0 {
 				filteredSearchBy = q.defaultSearchByFields
 			}
@@ -343,6 +364,7 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 					"options": "i",
 				}}
 			}
+
 			q.computedFields["filtered"] = bson.M{"$cond": bson.M{
 				"if":   bson.M{"$or": searchMatch},
 				"then": true,
@@ -713,21 +735,41 @@ func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (bson.M, bool, erro
 	}
 
 	searchBy := make([]string, 0, len(r.SearchBy))
+	searchByEntity := false
 	for _, f := range r.SearchBy {
 		if _, ok := q.availableSearchByFields[f]; ok {
 			searchBy = append(searchBy, f)
+			continue
+		}
+
+		if _, ok := q.availableSearchByEntityFields[f]; ok {
+			searchBy = append(searchBy, f)
+			searchByEntity = true
+			continue
+		}
+
+		if strings.HasPrefix(f, entityInfosPrefix) {
+			searchBy = append(searchBy, f)
+			searchByEntity = true
+			continue
 		}
 	}
+
 	if len(searchBy) == 0 {
 		searchBy = q.defaultSearchByFields
 	}
+
 	searchMatch := make([]bson.M, len(searchBy))
 	for i := range searchBy {
 		searchMatch[i] = bson.M{searchBy[i]: searchRegexp}
 	}
 
 	if !r.OnlyParents {
-		return bson.M{"$or": searchMatch}, false, nil
+		if searchByEntity {
+			q.lookupsForAdditionalMatch["entity"] = true
+		}
+
+		return bson.M{"$or": searchMatch}, searchByEntity, nil
 	}
 
 	match := bson.M{"$or": searchMatch}
@@ -744,7 +786,7 @@ func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (bson.M, bool, erro
 		metaAlarmLookupCollection = mongo.ResolvedAlarmMongoCollection
 	}
 
-	q.searchPipeline = getOnlyParentsSearchPipeline(match, metaAlarmLookupCollection, metaAlarmLookupMatch)
+	q.searchPipeline = getOnlyParentsSearchPipeline(match, metaAlarmLookupCollection, metaAlarmLookupMatch, searchByEntity)
 
 	return nil, false, nil
 }
@@ -1448,9 +1490,23 @@ func getImpactsCountPipeline() []bson.M {
 	}
 }
 
-func getOnlyParentsSearchPipeline(match bson.M, metaAlarmLookupCollection string, metaAlarmLookupMatch bson.M) []bson.M {
-	return []bson.M{
-		{"$match": match},
+func getOnlyParentsSearchPipeline(
+	match bson.M,
+	metaAlarmLookupCollection string,
+	metaAlarmLookupMatch bson.M,
+	searchByEntity bool,
+) []bson.M {
+	var pipeline []bson.M
+	if searchByEntity {
+		pipeline = append(pipeline, getEntityLookup()...)
+	}
+
+	pipeline = append(pipeline, bson.M{"$match": match})
+	if searchByEntity {
+		pipeline = append(pipeline, bson.M{"$project": bson.M{"entity": 0}})
+	}
+
+	pipeline = append(pipeline, []bson.M{
 		{"$unwind": bson.M{"path": "$v.parents", "preserveNullAndEmptyArrays": true}},
 		{"$group": bson.M{
 			"_id": "$v.parents",
@@ -1484,5 +1540,7 @@ func getOnlyParentsSearchPipeline(match bson.M, metaAlarmLookupCollection string
 			"alarm": bson.M{"$first": "$alarm"},
 		}},
 		{"$replaceRoot": bson.M{"newRoot": "$alarm"}},
-	}
+	}...)
+
+	return pipeline
 }

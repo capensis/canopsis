@@ -2207,3 +2207,391 @@ Feature: Get alarms
       ]
     }
     """
+
+  @concurrent
+  Scenario: given get search correlation request with entity infos should return filtered children
+    When I am admin
+    When I do POST /api/v4/eventfilter/rules:
+    """json
+    {
+      "type": "enrichment",
+      "event_pattern":[[
+        {
+          "field": "event_type",
+          "cond": {
+            "type": "eq",
+            "value": "check"
+          }
+        },
+        {
+          "field": "component",
+          "cond": {
+            "type": "eq",
+            "value": "test-component-to-alarm-correlation-get-9"
+          }
+        }
+      ]],
+      "config": {
+        "actions": [
+          {
+            "type": "set_entity_info_from_template",
+            "name": "output",
+            "description": "Output",
+            "value": "{{ `{{ .Event.Output }}` }}"
+          }
+        ],
+        "on_success": "pass",
+        "on_failure": "pass"
+      },
+      "description": "test-event-filter-to-alarm-correlation-get-9-description",
+      "enabled": true
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event and wait the end of event processing:
+    """json
+    [
+      {
+        "connector": "test-connector-to-alarm-correlation-get-9",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-9",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-9",
+        "resource": "test-resource-to-alarm-correlation-get-9-1",
+        "state": 1,
+        "output": "test-output-to-alarm-correlation-get-9"
+      },
+      {
+        "connector": "test-connector-to-alarm-correlation-get-9",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-9",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-9",
+        "resource": "test-resource-to-alarm-correlation-get-9-2",
+        "state": 1,
+        "output": "test-resource-to-alarm-correlation-get-9-search"
+      },
+      {
+        "connector": "test-connector-to-alarm-correlation-get-9",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-9",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-9",
+        "resource": "test-resource-to-alarm-correlation-get-9-3",
+        "state": 1,
+        "output": "test-resource-to-alarm-correlation-get-9-search"
+      },
+      {
+        "connector": "test-connector-to-alarm-correlation-get-9",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-9",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-9",
+        "resource": "test-resource-to-alarm-correlation-get-9-4",
+        "state": 1,
+        "output": "test-resource-to-alarm-correlation-get-9-search"
+      },
+      {
+        "connector": "test-connector-to-alarm-correlation-get-9",
+        "connector_name": "test-connector-name-to-alarm-correlation-get-9",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-to-alarm-correlation-get-9",
+        "resource": "test-resource-to-alarm-correlation-get-9-5",
+        "state": 1,
+        "output": "test-resource-to-alarm-correlation-get-9-search"
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-9&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    When I save response childAlarmID1={{ (index .lastResponse.data 0)._id }}
+    When I save response childAlarmID2={{ (index .lastResponse.data 1)._id }}
+    When I save response childAlarmID3={{ (index .lastResponse.data 2)._id }}
+    When I save response childAlarmID4={{ (index .lastResponse.data 3)._id }}
+    When I save response childAlarmID5={{ (index .lastResponse.data 4)._id }}
+    When I do POST /api/v4/cat/manual-meta-alarms:
+    """json
+    {
+      "name": "test-metalarm-to-alarm-correlation-get-9-1",
+      "comment": "test-metalarm-to-alarm-correlation-get-9-1-comment",
+      "alarms": [
+        "{{ .childAlarmID1 }}",
+        "{{ .childAlarmID2 }}",
+        "{{ .childAlarmID3 }}"
+      ]
+    }
+    """
+    Then the response code should be 204
+    When I do POST /api/v4/cat/manual-meta-alarms:
+    """json
+    {
+      "name": "test-metalarm-to-alarm-correlation-get-9-2",
+      "comment": "test-metalarm-to-alarm-correlation-get-9-2-comment",
+      "alarms": [
+        "{{ .childAlarmID4 }}"
+      ]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-9&correlation=true&sort_by=v.output&sort=asc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 3
+        },
+        {
+          "children": 1
+        },
+        {}
+      ]
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-to-alarm-correlation-get-9",
+      "connector_name": "test-connector-name-to-alarm-correlation-get-9",
+      "source_type": "resource",
+      "event_type": "cancel",
+      "component": "test-component-to-alarm-correlation-get-9",
+      "resource": "test-resource-to-alarm-correlation-get-9-3"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-to-alarm-correlation-get-9",
+      "connector_name": "test-connector-name-to-alarm-correlation-get-9",
+      "source_type": "resource",
+      "event_type": "resolve_cancel",
+      "component": "test-component-to-alarm-correlation-get-9",
+      "resource": "test-resource-to-alarm-correlation-get-9-3"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-9-search&active_columns[]=entity.infos.output.value&correlation=true&sort_by=children&sort=desc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 3
+        },
+        {
+          "is_meta_alarm": true,
+          "children": 1
+        },
+        {
+          "is_meta_alarm": false,
+          "v": {
+            "resource": "test-resource-to-alarm-correlation-get-9-5"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 3
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "search": "test-resource-to-alarm-correlation-get-9-search",
+        "search_by": ["entity.infos.output.value"],
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 1)._id }}",
+        "search": "test-resource-to-alarm-correlation-get-9-search",
+        "search_by": ["entity.infos.output.value"],
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-9-1"
+                },
+                "filtered": false
+              },
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-9-2"
+                },
+                "filtered": true
+              },
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-9-3"
+                },
+                "filtered": true
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-9-4"
+                },
+                "filtered": true
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 1
+            }
+          }
+        }
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?opened=true&search=test-resource-to-alarm-correlation-get-9-search&active_columns[]=entity.infos.output.value&correlation=true&sort_by=children&sort=desc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 3
+        },
+        {
+          "is_meta_alarm": true,
+          "children": 1
+        },
+        {
+          "is_meta_alarm": false,
+          "v": {
+            "resource": "test-resource-to-alarm-correlation-get-9-5"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 3
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "opened": true,
+        "search": "test-resource-to-alarm-correlation-get-9-search",
+        "search_by": ["entity.infos.output.value"],
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 1)._id }}",
+        "opened": true,
+        "search": "test-resource-to-alarm-correlation-get-9-search",
+        "search_by": ["entity.infos.output.value"],
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-9-1"
+                },
+                "filtered": false
+              },
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-9-2"
+                },
+                "filtered": true
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "resource": "test-resource-to-alarm-correlation-get-9-4"
+                },
+                "filtered": true
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 1
+            }
+          }
+        }
+      }
+    ]
+    """
