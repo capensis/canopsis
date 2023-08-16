@@ -14,6 +14,7 @@ const (
 	RemediationKeyName   = "remediation"
 	HealthCheckName      = "health_check"
 	AlarmTagColorKeyName = "alarm_tag_color"
+	MaintenanceKeyName   = "maintenance"
 )
 
 // SectionAlarm ...
