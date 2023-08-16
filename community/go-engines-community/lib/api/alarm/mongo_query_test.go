@@ -1209,7 +1209,103 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 			{"v.component": searchRegexp},
 			{"v.resource": searchRegexp},
 		},
-	}, mongo.AlarmMongoCollection, bson.M{"v.resolved": nil})
+	}, mongo.AlarmMongoCollection, bson.M{"v.resolved": nil}, false)
+	expected = append(expected,
+		bson.M{"$match": bson.M{"$and": []bson.M{
+			{"v.resolved": nil},
+			{"$or": []bson.M{
+				{"v.parents": nil},
+				{"v.parents": bson.M{"$eq": bson.A{}}},
+				{"v.meta": bson.M{"$ne": nil}},
+			}},
+		}}},
+	)
+	expected = append(expected, getEntityLookup()...)
+	expected = append(expected,
+		bson.M{"$match": bson.M{"entity.enabled": true}},
+		bson.M{"$project": bson.M{"entity": 0}},
+		bson.M{"$facet": bson.M{
+			"data":        expectedDataPipeline,
+			"total_count": []bson.M{{"$count": "count"}},
+		}},
+		bson.M{"$addFields": bson.M{
+			"total_count": bson.M{"$sum": "$total_count.count"},
+		}},
+	)
+
+	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
+	result, err := b.CreateListAggregationPipeline(ctx, request, now)
+	if err != nil {
+		t.Errorf("expected no error but got %v", err)
+	}
+	if diff := pretty.Compare(result, expected); diff != "" {
+		t.Errorf("unexpected result: %s", diff)
+	}
+}
+
+func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchByEntityInfosAndOnlyParents_ShouldBuildQuery(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	mockDbClient := createMockDbClient(ctrl)
+	authorProvider := author.NewProvider(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	search := "test-search"
+	searchRegexp := primitive.Regex{
+		Pattern: fmt.Sprintf(".*%s.*", search),
+		Options: "i",
+	}
+	opened := true
+	request := ListRequestWithPagination{
+		Query: pagination.GetDefaultQuery(),
+		ListRequest: ListRequest{
+			FilterRequest: FilterRequest{
+				SearchBy: []string{
+					"entity.infos.info1.value",
+				},
+				BaseFilterRequest: BaseFilterRequest{
+					Opened:      &opened,
+					Search:      search,
+					OnlyParents: true,
+				},
+			},
+		},
+	}
+	now := types.NewCpsTime()
+	expectedDataPipeline := []bson.M{
+		{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
+		{"$skip": 0},
+		{"$limit": 10},
+	}
+	expectedDataPipeline = append(expectedDataPipeline, getEntityLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getEntityCategoryLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getImpactsCountPipeline()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorInfoTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getMetaAlarmRuleLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, getChildrenCountLookup()...)
+	fields := getComputedFields(now)
+	fields["is_meta_alarm"] = getIsMetaAlarmField()
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": fields,
+	})
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$project": bson.M{
+			"entity.services":     0,
+			"v.steps":             0,
+			"pbehavior.comments":  0,
+			"pbehavior_info_type": 0,
+			"resolved_children":   0,
+		},
+	})
+	expected := getOnlyParentsSearchPipeline(bson.M{
+		"v.resolved": nil,
+		"$or": []bson.M{
+			{"entity.infos.info1.value": searchRegexp},
+		},
+	}, mongo.AlarmMongoCollection, bson.M{"v.resolved": nil}, true)
 	expected = append(expected,
 		bson.M{"$match": bson.M{"$and": []bson.M{
 			{"v.resolved": nil},
