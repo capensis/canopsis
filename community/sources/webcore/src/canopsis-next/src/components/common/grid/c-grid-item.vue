@@ -1,20 +1,19 @@
 <template lang="pug">
-  div.c-grid-item(:style="style")
+  div.c-grid-item(
+    :class="{ 'c-grid-item--resizing': resizing || dragging, 'c-grid-item--enabled': !disabled }",
+    :style="style",
+    :draggable="!disabled"
+  )
     slot
-    div.c-grid-item__resize-handler(ref="resizeHandler")
+    div.c-grid-item__resize-handler(v-if="resizable", ref="resizeHandler")
       v-icon(small) $vuetify.icons.resize_right
 </template>
 
 <script>
-import { debounce } from 'lodash';
+import { debounce, isNumber, throttle } from 'lodash';
 
 /**
- * Get count above grid-item
- *
- * @param {number} cardX
- * @param {number} cardY
- * @param {number} currentCardWidth
- * @returns {number}
+ * TODO: MOVE TO HELPERS
  */
 const getCountAboveItems = (layout = [], itemX, itemY, itemW) => {
   const { count } = layout
@@ -47,6 +46,35 @@ const getCountAboveItems = (layout = [], itemX, itemY, itemW) => {
     });
 
   return count;
+};
+
+export const createCoreData = (lastX, lastY, x, y) => (
+  !isNumber(lastX)
+    ? {
+      deltaX: 0,
+      deltaY: 0,
+      lastX: x,
+      lastY: y,
+      x,
+      y,
+    }
+    : {
+      deltaX: x - lastX,
+      deltaY: y - lastY,
+      lastX,
+      lastY,
+      x,
+      y,
+    }
+);
+
+export const getControlPosition = (event, layoutElement) => {
+  const layoutElementRect = layoutElement.getBoundingClientRect();
+
+  const x = event.clientX + layoutElement.scrollLeft - layoutElementRect.left;
+  const y = event.clientY + layoutElement.scrollTop - layoutElementRect.top;
+
+  return { x, y };
 };
 
 export default {
@@ -119,15 +147,22 @@ export default {
       type: Boolean,
       default: false,
     },
-    overlay: {
+    resizable: {
       type: Boolean,
       default: false,
+    },
+    throttle: {
+      type: Number,
+      default: 50,
+    },
+    debounce: {
+      type: Number,
+      default: 100,
     },
   },
   data() {
     return {
-      resizable: null,
-      draggable: null,
+      draggable: false,
       isResizing: false,
       isDragging: false,
       resizing: null,
@@ -160,15 +195,28 @@ export default {
         ? this.columnsCount
         : this.w;
     },
+
+    layoutElement() {
+      return this.$parent?.$el ?? document.body;
+    },
+  },
+  created() {
+    this.throttledMousemoveHandler = throttle(this.mousemoveHandler, this.throttle);
+    this.throttledDragHandler = throttle(this.dragHandler, this.throttle);
+    this.debouncedAutoSizeHeight = debounce(() => setTimeout(this.autoSizeHeight, 0), this.debounce);
   },
   mounted() {
     this.calculateStyle();
     this.addAllAutoSizeListeners();
     this.addAllMainPropsWatchers();
+    this.addAllResizeListeners();
+    this.addAllDragListeners();
   },
   beforeDestroy() {
     this.removeAllAutoSizeListeners();
     this.removeAllMainPropsWatchers();
+    this.removeAllResizeListeners();
+    this.removeAllDragListeners();
   },
   methods: {
     addAllMainPropsWatchers() {
@@ -186,7 +234,7 @@ export default {
           this.calculateStyle();
 
           if (this.autoHeight) {
-            this.callAutoSizeHeight();
+            this.debouncedAutoSizeHeight();
           }
         }),
 
@@ -210,26 +258,79 @@ export default {
       delete this.$mainPropsWatchers;
     },
 
+    calculateWH(height, width) {
+      const [marginX] = this.margin;
+      const w = Math.round((width + marginX) / (this.columnWidth + marginX));
+      const h = Math.round((height) / this.rowHeight);
+
+      return {
+        w: Math.min(Math.max(Math.min(w, this.columnsCount - this.innerX), this.minW), this.maxW),
+        h: Math.min(Math.max(Math.min(h, this.maxRows - this.y), this.minH), this.maxH),
+      };
+    },
+
+    calculateXY(top, left) {
+      const [marginX] = this.margin;
+
+      let x = Math.round((left - marginX) / (this.columnWidth + marginX));
+      let y = Math.round(top / this.rowHeight);
+
+      x = Math.max(Math.min(x, this.columnsCount - this.innerW), 0);
+      y = Math.max(Math.min(y, this.maxRows - this.h), 0);
+
+      return { x, y };
+    },
+
+    calculatePosition(x, y, w, h) {
+      const [marginX, marginY] = this.margin;
+      const marginCount = getCountAboveItems(this.layout, this.x, this.y, this.w);
+
+      return {
+        left: Math.round(this.columnWidth * x + (x + 1) * marginX),
+        top: Math.round((this.rowHeight * y) + (marginY * marginCount) + marginY),
+        width: w === Infinity ? w : Math.round(this.columnWidth * w + Math.max(0, w - 1) * marginX),
+        height: h === Infinity ? h : Math.round(this.rowHeight * h),
+      };
+    },
+
+    calculateStyle() {
+      const pos = this.calculatePosition(this.innerX, this.y, this.innerW, this.h);
+
+      if (this.dragging) {
+        pos.top = this.dragging.top;
+        pos.left = this.dragging.left;
+      }
+
+      if (this.resizing) {
+        pos.width = this.resizingSize.width;
+        pos.height = this.resizingSize.height;
+      }
+
+      const translate = `translate3d(${pos.left}px,${pos.top}px, 0)`;
+
+      this.style = {
+        transform: translate,
+        WebkitTransform: translate,
+        MozTransform: translate,
+        msTransform: translate,
+        OTransform: translate,
+        width: `${pos.width}px`,
+        height: `${pos.height}px`,
+        position: 'absolute',
+      };
+    },
+
+    /**
+     * AUTO SIZE
+     */
     addAllAutoSizeListeners() {
       if (!this.autoHeight) {
         return;
       }
 
-      /**
-       * Method which wrap autoSizeHeight method into setTimeout and debounce
-       * We are using debounce here for pauses between calls
-       * And setTimeout instead of $nextTick for correct call after rerender
-       * We are declared that not in the methods because we need one method for every instance, not for all
-       */
-      this.callAutoSizeHeight = debounce(() => {
-        setTimeout(() => {
-          this.autoSizeHeight();
-        }, 0);
-      }, 100);
+      this.debouncedAutoSizeHeight();
 
-      this.callAutoSizeHeight();
-
-      this.$mutationObserver = new MutationObserver(this.callAutoSizeHeight);
+      this.$mutationObserver = new MutationObserver(this.debouncedAutoSizeHeight);
 
       /**
        * We are observe on the mutationObserver after render
@@ -256,14 +357,8 @@ export default {
       this.$mutationObserver.disconnect();
 
       delete this.$mutationObserver;
-      delete this.callAutoSizeHeight;
     },
 
-    /**
-     * Get defaultSlot element
-     *
-     * @returns {null|HTMLElement}
-     */
     getDefaultSlotElement() {
       const { default: defaultSlots } = this.$slots;
 
@@ -274,56 +369,6 @@ export default {
       const [{ elm: element }] = defaultSlots;
 
       return element || null;
-    },
-
-    calculateWH(height, width) {
-      const [marginX] = this.margin;
-      const w = Math.round((width + marginX) / (this.columnWidth + marginX));
-      const h = Math.round((height) / this.rowHeight);
-
-      return {
-        w: Math.min(Math.max(Math.min(w, this.columnsCount - this.innerX), this.minW), this.maxW),
-        h: Math.min(Math.max(Math.min(h, this.maxRows - this.y), this.minH), this.maxH),
-      };
-    },
-
-    calculatePosition(x, y, w, h) {
-      const [marginX, marginY] = this.margin;
-      const marginCount = getCountAboveItems(this.layout, this.x, this.y, this.w);
-
-      return {
-        left: Math.round(this.columnWidth * x + (x + 1) * marginX),
-        top: Math.round((this.rowHeight * y) + (marginY * marginCount) + marginY),
-        width: w === Infinity ? w : Math.round(this.columnWidth * w + Math.max(0, w - 1) * marginX),
-        height: h === Infinity ? h : Math.round(this.rowHeight * h),
-      };
-    },
-
-    calculateStyle() {
-      const pos = this.calculatePosition(this.innerX, this.y, this.innerW, this.h);
-
-      if (this.isDragging) {
-        pos.top = this.dragging.top;
-        pos.left = this.dragging.left;
-      }
-
-      if (this.isResizing) {
-        pos.width = this.resizing.width;
-        pos.height = this.resizing.height;
-      }
-
-      const translate = `translate3d(${pos.left}px,${pos.top}px, 0)`;
-
-      this.style = {
-        transform: translate,
-        WebkitTransform: translate,
-        MozTransform: translate,
-        msTransform: translate,
-        OTransform: translate,
-        width: `${pos.width}px`,
-        height: `${pos.height}px`,
-        position: 'absolute',
-      };
     },
 
     autoSizeHeight() {
@@ -348,6 +393,184 @@ export default {
         this.$emit('resized', this.i, this.innerX, this.y, pos.h, this.innerW);
       }
     },
+
+    /**
+     * RESIZING
+     */
+    addAllResizeListeners() {
+      this.$refs.resizeHandler?.addEventListener('mousedown', this.mousedownHandler);
+      document.addEventListener('mouseup', this.mouseupHandler);
+    },
+
+    removeAllResizeListeners() {
+      this.$refs.resizeHandler?.removeEventListener('mousedown', this.mousedownHandler);
+      document.removeEventListener('mouseup', this.mouseupHandler);
+    },
+
+    mousedownHandler(event) {
+      document.addEventListener('mousemove', this.throttledMousemoveHandler);
+
+      const position = getControlPosition(event, this.layoutElement);
+      this.previousW = this.innerW;
+      this.previousH = this.h;
+      this.resizingSize = this.calculatePosition(this.innerX, this.y, this.innerW, this.h);
+
+      const { w, h } = this.calculateWH(this.resizingSize.height, this.resizingSize.width);
+
+      this.$emit('resize', this.i, this.x, this.y, h, w);
+
+      this.lastW = position.x;
+      this.lastH = position.y;
+      this.resizing = true;
+
+      this.calculateStyle();
+    },
+
+    mousemoveHandler(event) {
+      if (!this.resizing) {
+        return;
+      }
+
+      const position = getControlPosition(event, this.layoutElement);
+      const element = this.getDefaultSlotElement();
+      const newElementSize = element.getBoundingClientRect();
+      const coreEvent = createCoreData(this.lastW, this.lastH, position.x, position.y);
+
+      this.lastW = position.x;
+      this.lastH = position.y;
+      this.resizingSize = {
+        width: this.resizingSize.width + coreEvent.deltaX,
+        height: this.autoHeight
+          ? newElementSize.height
+          : this.resizingSize.height + coreEvent.deltaY,
+      };
+
+      const { w, h } = this.calculateWH(this.resizingSize.height, this.resizingSize.width);
+
+      if (this.innerW !== w || this.h !== h) {
+        this.$emit('resize', this.i, this.x, this.y, h, w);
+      }
+
+      this.calculateStyle();
+    },
+
+    mouseupHandler() {
+      if (!this.resizing) {
+        return;
+      }
+
+      document.removeEventListener('mousemove', this.throttledMousemoveHandler);
+
+      this.resizingSize = this.calculatePosition(this.innerX, this.y, this.innerW, this.h);
+
+      const { w, h } = this.calculateWH(this.resizingSize.height, this.resizingSize.width);
+
+      this.$emit('resized', this.i, this.x, this.y, h, w);
+
+      if (this.autoHeight) {
+        this.debouncedAutoSizeHeight();
+      }
+
+      this.resizing = false;
+      this.calculateStyle();
+    },
+
+    /**
+     * DRAG AND DROP
+     */
+    addAllDragListeners() {
+      this.$el.addEventListener('dragstart', this.dragstartHandler);
+    },
+
+    removeAllDragListeners() {
+      this.$el.removeEventListener('dragstart', this.dragstartHandler);
+      this.$el.removeEventListener('drag', this.dragHandler);
+      this.$el.removeEventListener('dragend', this.dragendHandler);
+    },
+
+    dragstartHandler(event) {
+      if (this.resizing) {
+        event.preventDefault();
+
+        return;
+      }
+
+      this.$el.addEventListener('drag', this.throttledDragHandler);
+      this.$el.addEventListener('dragend', this.dragendHandler);
+
+      this.previousX = this.innerX;
+      this.previousY = this.y;
+      const position = getControlPosition(event, this.layoutElement);
+      const newPosition = { top: 0, left: 0 };
+      const { x, y } = position;
+
+      const parentRect = this.layoutElement.getBoundingClientRect();
+      const clientRect = event.target.getBoundingClientRect();
+      newPosition.left = clientRect.left - parentRect.left;
+      newPosition.top = clientRect.top - parentRect.top;
+      this.dragging = newPosition;
+      this.isDragging = true;
+      const pos = this.calculateXY(newPosition.top, newPosition.left);
+
+      this.lastX = x;
+      this.lastY = y;
+
+      if (this.innerX !== pos.x || this.y !== pos.y) {
+        this.$emit('move', this.i, pos.x, pos.y);
+      }
+
+      this.calculateStyle();
+    },
+
+    dragHandler(event) {
+      if (!this.dragging || this.resizing) {
+        return;
+      }
+
+      const position = getControlPosition(event, this.layoutElement);
+      const { x, y } = position;
+      const coreEvent = createCoreData(this.lastX, this.lastY, x, y);
+
+      this.dragging = {
+        top: this.dragging.top + coreEvent.deltaY,
+        left: this.dragging.left + coreEvent.deltaX,
+      };
+
+      const pos = this.calculateXY(this.dragging.top, this.dragging.left);
+
+      this.lastX = x;
+      this.lastY = y;
+
+      if (this.innerX !== pos.x || this.y !== pos.y) {
+        this.$emit('move', this.i, pos.x, pos.y);
+      }
+
+      this.calculateStyle();
+    },
+
+    dragendHandler(event) {
+      if (!this.dragging || this.resizing) {
+        return;
+      }
+
+      this.$el.removeEventListener('drag', this.throttledDragHandler);
+      this.$el.removeEventListener('dragend', this.dragendHandler);
+
+      const position = getControlPosition(event, this.layoutElement);
+      const { x, y } = position;
+      const coreEvent = createCoreData(this.lastX, this.lastY, x, y);
+      const newPosition = {
+        top: this.dragging.top + coreEvent.deltaY,
+        left: this.dragging.left + coreEvent.deltaX,
+      };
+
+      this.dragging = null;
+
+      const pos = this.calculateXY(newPosition.top, newPosition.left);
+
+      this.$emit('moved', this.i, pos.x, pos.y);
+      this.calculateStyle();
+    },
   },
 };
 </script>
@@ -360,6 +583,7 @@ export default {
   transition: none;
   left: 0;
   right: auto;
+  z-index: 2;
 
   &__resize-handler {
     cursor: se-resize;
@@ -390,6 +614,25 @@ export default {
     height: 100%;
     opacity: 0.4;
     z-index: 2;
+  }
+
+  &--resizing {
+    opacity: .7;
+    user-select: none;
+  }
+
+  &--enabled {
+    pointer-events: none;
+
+    & ::v-deep * {
+      pointer-events: none !important;
+    }
+
+    & ::v-deep .drag-handler, .c-grid-item__resize-handler {
+      &, * {
+        pointer-events: auto !important;
+      }
+    }
   }
 }
 </style>

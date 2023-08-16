@@ -21,7 +21,7 @@
           :h="layoutItem.h",
           :i="layoutItem.i",
           :auto-height="layoutItem.autoHeight",
-          overlay
+          resizable
         )
           div.wrapper
             div.drag-handler
@@ -45,51 +45,6 @@
                   :tab="tab"
                 )
             slot(:widget="layoutItem.widget")
-    grid-layout(
-      ref="gridLayout",
-      :layout.sync="layouts[size]",
-      :margin="[$constants.WIDGET_GRID_ROW_HEIGHT, $constants.WIDGET_GRID_ROW_HEIGHT]",
-      :col-num="$constants.WIDGET_GRID_COLUMNS_COUNT",
-      :row-height="$constants.WIDGET_GRID_ROW_HEIGHT",
-      :style="layoutStyles",
-      is-draggable,
-      is-resizable,
-      vertical-compact,
-      @layout-updated="updatedLayout"
-    )
-      grid-item(
-        v-for="(layoutItem, index) in layouts[size]",
-        :key="layoutItem.i",
-        :x="layoutItem.x",
-        :y="layoutItem.y",
-        :w="layoutItem.w",
-        :h="layoutItem.h",
-        :i="layoutItem.i",
-        :auto-height="layoutItem.autoHeight",
-        drag-allow-from=".drag-handler"
-      )
-        div.wrapper
-          div.drag-handler
-            v-layout.controls
-              v-tooltip(bottom)
-                template(#activator="{ on }")
-                  v-btn.ma-0.mr-1(
-                    v-on="on",
-                    :color="layoutItem.autoHeight ? 'grey lighten-1' : 'transparent'",
-                    icon,
-                    small,
-                    @click="toggleAutoHeight(index)"
-                  )
-                    v-icon(
-                      :color="layoutItem.autoHeight ? 'black' : 'grey darken-1'",
-                      small
-                    ) lock
-                span {{ $t('view.autoHeightButton') }}
-              widget-wrapper-menu(
-                :widget="layoutItem.widget",
-                :tab="tab"
-              )
-          slot(:widget="layoutItem.widget")
 </template>
 
 <script>
