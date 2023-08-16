@@ -20,6 +20,16 @@ type User struct {
 	Source     Source `bson:"source"`
 }
 
+func (u *User) IsAdmin() bool {
+	for _, role := range u.Roles {
+		if role == RoleAdmin {
+			return true
+		}
+	}
+
+	return false
+}
+
 type Source string
 
 const SourceLdap Source = "ldap"

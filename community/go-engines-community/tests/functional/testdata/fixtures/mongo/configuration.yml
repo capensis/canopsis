@@ -210,3 +210,7 @@ configuration:
       - "#8D6E63"
       - "#607D8B"
       - "#9E9E9E"
+
+  configuration_maintenance:
+    _id: maintenance
+    enabled: false
