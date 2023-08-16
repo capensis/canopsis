@@ -6601,6 +6601,46 @@ paths:
           description: OK
       security:
         - BearerAuth: [ ]
+  /maintenance:
+    put:
+      tags:
+        - maintenance
+      summary: Enable or disable maintenance
+      description: |
+        Enable or disable maintenance.
+        
+        -  PERMISSIONS: `api_maintenance`
+      operationId: maintenance
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/maintenance.Request'
+            examples:
+              enable:
+                summary: Enable
+                description: Enable maintenance
+                value: {
+                  "enable": true,
+                  "message": "test maintenance"
+                }
+              disable:
+                summary: Disable
+                description: Disable maintenance
+                value: {
+                  "enable": false
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /message-rate-stats:
     get:
       tags:

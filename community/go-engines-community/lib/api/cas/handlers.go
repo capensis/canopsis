@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"github.com/gin-gonic/gin"
@@ -39,7 +40,7 @@ func LoginHandler(config libsecurity.CasConfig) gin.HandlerFunc {
 }
 
 // CallbackHandler validates CAS ticket, creates access token and redirects to referer url.
-func CallbackHandler(p libsecurity.HttpProvider, enforcer libsecurity.Enforcer, tokenService security.TokenService) gin.HandlerFunc {
+func CallbackHandler(p libsecurity.HttpProvider, enforcer libsecurity.Enforcer, tokenService security.TokenService, maintenanceAdapter config.MaintenanceAdapter) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		request := casLoginRequest{}
 
@@ -55,6 +56,16 @@ func CallbackHandler(p libsecurity.HttpProvider, enforcer libsecurity.Enforcer, 
 
 		if !ok || user == nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+			return
+		}
+
+		maintenanceConf, err := maintenanceAdapter.GetConfig(c)
+		if err != nil {
+			panic(err)
+		}
+
+		if maintenanceConf.Enabled && !user.IsAdmin() {
+			c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
 			return
 		}
 

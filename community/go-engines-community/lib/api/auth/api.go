@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
@@ -29,16 +30,18 @@ func NewApi(
 	tokenProviders []security.TokenProvider,
 	providers []security.Provider,
 	websocketStore websocket.Store,
+	maintenanceAdapter config.MaintenanceAdapter,
 	cookieName string,
 	cookieMaxAge int,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		tokenService:   tokenService,
-		tokenProviders: tokenProviders,
-		providers:      providers,
-		websocketStore: websocketStore,
-		logger:         logger,
+		tokenService:       tokenService,
+		tokenProviders:     tokenProviders,
+		providers:          providers,
+		websocketStore:     websocketStore,
+		maintenanceAdapter: maintenanceAdapter,
+		logger:             logger,
 
 		cookieName:     cookieName,
 		cookieMaxAge:   cookieMaxAge,
@@ -48,11 +51,12 @@ func NewApi(
 }
 
 type api struct {
-	tokenService   apisecurity.TokenService
-	tokenProviders []security.TokenProvider
-	providers      []security.Provider
-	websocketStore websocket.Store
-	logger         zerolog.Logger
+	tokenService       apisecurity.TokenService
+	tokenProviders     []security.TokenProvider
+	providers          []security.Provider
+	websocketStore     websocket.Store
+	maintenanceAdapter config.MaintenanceAdapter
+	logger             zerolog.Logger
 
 	cookieName     string
 	cookieMaxAge   int
@@ -88,6 +92,16 @@ func (a *api) Login(c *gin.Context) {
 
 	if user == nil {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+		return
+	}
+
+	maintenanceConf, err := a.maintenanceAdapter.GetConfig(c)
+	if err != nil {
+		panic(err)
+	}
+
+	if maintenanceConf.Enabled && !user.IsAdmin() {
+		c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
 		return
 	}
 

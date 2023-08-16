@@ -2,19 +2,26 @@ package middleware
 
 import (
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
-	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
-	"github.com/gin-gonic/gin"
-	"github.com/golang/mock/gomock"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
+	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
+	"github.com/gin-gonic/gin"
+	"github.com/golang/mock/gomock"
 )
 
 func TestAuth_GivenCredentials_ShouldReturnResponseAndSetUserDataToContext(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+
+	mockMaintenanceAdapter := mock_config.NewMockMaintenanceAdapter(ctrl)
+	mockMaintenanceAdapter.EXPECT().GetConfig(gomock.Any()).Return(config.MaintenanceConf{})
+
 	expectedCode := http.StatusOK
 	user := &security.User{
 		ID:             "testid",
@@ -30,7 +37,7 @@ func TestAuth_GivenCredentials_ShouldReturnResponseAndSetUserDataToContext(t *te
 	router := gin.New()
 	router.GET(
 		okURL,
-		Auth([]security.HttpProvider{mockProvider}),
+		Auth([]security.HttpProvider{mockProvider}, mockMaintenanceAdapter),
 		func(c *gin.Context) {
 			c.String(
 				expectedCode,
@@ -58,6 +65,10 @@ func TestAuth_GivenCredentials_ShouldReturnResponseAndSetUserDataToContext(t *te
 func TestAuth_GivenNoCredentials_ShouldReturnResponse(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+
+	mockMaintenanceAdapter := mock_config.NewMockMaintenanceAdapter(ctrl)
+	mockMaintenanceAdapter.EXPECT().GetConfig(gomock.Any()).Return(config.MaintenanceConf{})
+
 	expectedCode := http.StatusOK
 	req := httptest.NewRequest("GET", okURL, nil)
 	mockProvider := mock_security.NewMockHttpProvider(ctrl)
@@ -68,7 +79,7 @@ func TestAuth_GivenNoCredentials_ShouldReturnResponse(t *testing.T) {
 	router := gin.New()
 	router.GET(
 		okURL,
-		Auth([]security.HttpProvider{mockProvider}),
+		Auth([]security.HttpProvider{mockProvider}, mockMaintenanceAdapter),
 		okHandler,
 	)
 
@@ -83,6 +94,10 @@ func TestAuth_GivenNoCredentials_ShouldReturnResponse(t *testing.T) {
 func TestAuth_GivenInvalidCredentials_ShouldReturnUnauthorizedError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+
+	mockMaintenanceAdapter := mock_config.NewMockMaintenanceAdapter(ctrl)
+	mockMaintenanceAdapter.EXPECT().GetConfig(gomock.Any()).Return(config.MaintenanceConf{})
+
 	expectedCode := http.StatusUnauthorized
 	req := httptest.NewRequest("GET", okURL, nil)
 	mockProvider := mock_security.NewMockHttpProvider(ctrl)
@@ -93,7 +108,7 @@ func TestAuth_GivenInvalidCredentials_ShouldReturnUnauthorizedError(t *testing.T
 	router := gin.New()
 	router.GET(
 		okURL,
-		Auth([]security.HttpProvider{mockProvider}),
+		Auth([]security.HttpProvider{mockProvider}, mockMaintenanceAdapter),
 		okHandler,
 	)
 
