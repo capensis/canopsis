@@ -29,6 +29,17 @@ func NewMongoProvider(db libmongo.DbClient, configProvider config.ApiConfigProvi
 	}
 }
 
+func (p *mongoProvider) FindNotAdmins(ctx context.Context) ([]security.User, error) {
+	var users []security.User
+
+	cursor, err := p.collection.Find(ctx, bson.M{"roles": bson.M{"$nin": bson.A{security.RoleAdmin}}})
+	if err != nil {
+		return users, err
+	}
+
+	return users, cursor.All(ctx, &users)
+}
+
 func (p *mongoProvider) FindByUsername(ctx context.Context, username string) (*security.User, error) {
 	return p.findByFilter(ctx, bson.M{
 		"name":   username,

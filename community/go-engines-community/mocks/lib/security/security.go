@@ -313,6 +313,21 @@ func (mr *MockUserProviderMockRecorder) FindByUsername(arg0, arg1 interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUsername", reflect.TypeOf((*MockUserProvider)(nil).FindByUsername), arg0, arg1)
 }
 
+// FindNotAdmins mocks base method.
+func (m *MockUserProvider) FindNotAdmins(arg0 context.Context) ([]security.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindNotAdmins", arg0)
+	ret0, _ := ret[0].([]security.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindNotAdmins indicates an expected call of FindNotAdmins.
+func (mr *MockUserProviderMockRecorder) FindNotAdmins(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindNotAdmins", reflect.TypeOf((*MockUserProvider)(nil).FindNotAdmins), arg0)
+}
+
 // Save mocks base method.
 func (m *MockUserProvider) Save(arg0 context.Context, arg1 *security.User) error {
 	m.ctrl.T.Helper()

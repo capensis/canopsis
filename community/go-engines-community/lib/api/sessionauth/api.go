@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"github.com/gin-gonic/gin"
@@ -21,19 +22,22 @@ type API interface {
 func NewApi(
 	sessionStore libsession.Store,
 	providers []security.Provider,
+	maintenanceAdapter config.MaintenanceAdapter,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		sessionStore: sessionStore,
-		providers:    providers,
-		logger:       logger,
+		sessionStore:       sessionStore,
+		providers:          providers,
+		maintenanceAdapter: maintenanceAdapter,
+		logger:             logger,
 	}
 }
 
 type api struct {
-	sessionStore libsession.Store
-	providers    []security.Provider
-	logger       zerolog.Logger
+	sessionStore       libsession.Store
+	providers          []security.Provider
+	maintenanceAdapter config.MaintenanceAdapter
+	logger             zerolog.Logger
 }
 
 // LoginHandler authenticates user and starts sessions.
@@ -62,6 +66,16 @@ func (a *api) LoginHandler() gin.HandlerFunc {
 
 		if user == nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+			return
+		}
+
+		maintenanceConf, err := a.maintenanceAdapter.GetConfig(c)
+		if err != nil {
+			panic(err)
+		}
+
+		if maintenanceConf.Enabled && !user.IsAdmin() {
+			c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
 			return
 		}
 
