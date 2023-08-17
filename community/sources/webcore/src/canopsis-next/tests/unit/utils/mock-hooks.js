@@ -90,6 +90,21 @@ export const mockPopups = () => {
 };
 
 /**
+ * Mock for the router. Clear yourself after all tests.
+ */
+export const mockRouter = () => {
+  const router = {
+    push: jest.fn(),
+  };
+
+  afterEach(() => {
+    router.push.mockReset();
+  });
+
+  return router;
+};
+
+/**
  * Mock for the sidebar. Clear yourself after all tests.
  */
 export const mockSidebar = () => {
