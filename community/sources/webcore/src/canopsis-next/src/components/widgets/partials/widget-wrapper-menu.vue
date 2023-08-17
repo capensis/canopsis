@@ -1,7 +1,11 @@
 <template lang="pug">
   v-menu(offset-y)
     template(#activator="{ on }")
-      v-btn.ma-0(v-on="on", icon, small)
+      v-btn.ma-0(
+        v-on="on",
+        icon,
+        small
+      )
         v-icon(small) more_horiz
     v-list(dense)
       v-list-tile(@click="showSettings")
