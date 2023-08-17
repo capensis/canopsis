@@ -8,6 +8,7 @@ Feature: maintenance feature
     """json
     {
       "enabled": true,
+      "color": "#BBBBBB",
       "message": "test maintenance"
     }
     """
@@ -17,6 +18,7 @@ Feature: maintenance feature
     """json
     {
       "enabled": true,
+      "color": "#BBBBBB",
       "message": "test maintenance"
     }
     """
@@ -26,6 +28,7 @@ Feature: maintenance feature
     """json
     {
       "enabled": true,
+      "color": "#BBBBBB",
       "message": "test maintenance"
     }
     """
@@ -44,7 +47,9 @@ Feature: maintenance feature
     """json
     [
       {
-        "message": "test maintenance"
+        "message": "test maintenance",
+        "maintenance": true,
+        "color": "#BBBBBB"
       },
       {}
     ]
@@ -95,7 +100,8 @@ Feature: maintenance feature
     """json
     {
       "enabled": true,
-      "message": "test maintenance"
+      "message": "test maintenance",
+      "color": "#BBBBBB"
     }
     """
     Then the response code should be 204
@@ -103,7 +109,8 @@ Feature: maintenance feature
     """json
     {
       "enabled": true,
-      "message": "test maintenance"
+      "message": "test maintenance",
+      "color": "#BBBBBB"
     }
     """
     Then the response code should be 400
@@ -142,7 +149,8 @@ Feature: maintenance feature
     """json
     {
       "enabled": true,
-      "message": "test maintenance"
+      "message": "test maintenance",
+      "color": "#BBBBBB"
     }
     """
     Then the response code should be 204
@@ -228,7 +236,8 @@ Feature: maintenance feature
     """json
     {
       "enabled": true,
-      "message": "test maintenance"
+      "message": "test maintenance",
+      "color": "#BBBBBB"
     }
     """
     Then the response code should be 204
@@ -248,7 +257,7 @@ Feature: maintenance feature
     Then the response code should be 401
 
   @standalone
-  Scenario: given user with admin/not admin shared tokens, when maintenance mode is enabled it shouldn't remove shared token, 
+  Scenario: given user with admin/not admin shared tokens, when maintenance mode is enabled it shouldn't remove shared token,
     but should restrict access for not admin shared tokens while maintenance is active
     When I am manager
     When I do POST /api/v4/share-tokens:
@@ -287,7 +296,8 @@ Feature: maintenance feature
     """json
     {
       "enabled": true,
-      "message": "test maintenance"
+      "message": "test maintenance",
+      "color": "#BBBBBB"
     }
     """
     Then the response code should be 204

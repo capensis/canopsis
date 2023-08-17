@@ -388,7 +388,9 @@ func Default(
 		websocketHub.Start(ctx)
 	})
 	api.AddWorker("websocket_conns", updateWebsocketConns(flags.IntegrationPeriodicalWaitTime, websocketHub, websocketStore, logger))
-	broadcastMessageService := broadcastmessage.NewService(broadcastmessage.NewStore(dbClient), websocketHub, canopsis.PeriodicalWaitTime, logger)
+
+	maintenanceAdapter := config.NewMaintenanceAdapter(dbClient)
+	broadcastMessageService := broadcastmessage.NewService(broadcastmessage.NewStore(dbClient, maintenanceAdapter), websocketHub, canopsis.PeriodicalWaitTime, logger)
 	api.AddWorker("broadcast_message", func(ctx context.Context) {
 		broadcastMessageService.Start(ctx, broadcastMessageChan)
 	})

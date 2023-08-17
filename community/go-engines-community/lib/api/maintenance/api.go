@@ -39,7 +39,7 @@ func (a *api) Maintenance(c *gin.Context) {
 			return
 		}
 
-		err = a.store.Enable(c, r.Message)
+		err = a.store.Enable(c, r.Message, r.Color)
 	} else {
 		err = a.store.Disable(c)
 	}

@@ -20,8 +20,10 @@ import (
 var ErrEnabled = errors.New("maintenance mode has already been enabled")
 var ErrDisabled = errors.New("maintenance mode has already been disabled")
 
+const defaultColor = "#e75e40"
+
 type Store interface {
-	Enable(ctx context.Context, message string) error
+	Enable(ctx context.Context, message, color string) error
 	Disable(ctx context.Context) error
 }
 
@@ -52,7 +54,7 @@ func NewStore(
 	}
 }
 
-func (s *store) Enable(ctx context.Context, message string) error {
+func (s *store) Enable(ctx context.Context, message, color string) error {
 	broadcastID := utils.NewID()
 
 	_, err := s.configCollection.UpdateOne(
@@ -95,10 +97,14 @@ func (s *store) Enable(ctx context.Context, message string) error {
 
 		now := types.NewCpsTime()
 
+		if color == "" {
+			color = defaultColor
+		}
+
 		_, err = s.broadcastCollection.InsertOne(ctx, broadcastmessage.BroadcastMessage{
 			ID: broadcastID,
 			Payload: broadcastmessage.Payload{
-				Color:   "#e75e40",
+				Color:   color,
 				Message: message,
 				Start:   now,
 				End:     types.NewCpsTime(now.AddDate(1, 0, 0).Unix()),
