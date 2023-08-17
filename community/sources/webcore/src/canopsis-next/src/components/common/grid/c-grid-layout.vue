@@ -1,5 +1,9 @@
 <template lang="pug">
-  div.c-grid-layout(ref="layout", :style="style")
+  div.c-grid-layout(
+    ref="layout",
+    :style="preparedStyle",
+    :class="{ 'c-grid-layout--disabled': disabled }"
+  )
     c-grid-item.c-grid-layout__placeholder(
       v-if="!disabled",
       v-show="resizing || moving",
@@ -15,6 +19,8 @@
 
 <script>
 import { uniq } from 'lodash';
+
+import { WIDGET_GRID_COLUMNS_COUNT, WIDGET_GRID_ROW_HEIGHT } from '@/constants';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -72,7 +78,7 @@ const getAllCollisions = (layout, layoutItem) => layout.filter(l => collides(lay
  * @returns {GridLayout}
  */
 const getSortedLayout = (layout = []) => (
-  [...layout].sort((a, b) => Number(a.y > b.y || (a.y === b.y && a.x > b.x)))
+  [...layout].sort((a, b) => Number(a.y > b.y || (a.y === b.y && a.x > b.x)) || -1)
 );
 
 const getFirstCollision = (layout, layoutItem) => layout.find(item => collides(item, layoutItem));
@@ -137,6 +143,57 @@ function moveElement(layout, layoutItem, x, y, isUserAction) {
   }, newLayout);
 }
 
+/**
+ * @param {GridLayout} compareWith
+ * @param {GridLayoutItem} layoutItem
+ * @returns {GridLayoutItem}
+ */
+const compactItem = (compareWith, layoutItem) => {
+  const newLayoutItem = { ...layoutItem };
+
+  while (newLayoutItem.y > 0 && !getFirstCollision(compareWith, newLayoutItem)) {
+    newLayoutItem.y -= 1;
+  }
+
+  for (
+    let collision = getFirstCollision(compareWith, newLayoutItem);
+    collision;
+    collision = getFirstCollision(compareWith, newLayoutItem)
+  ) {
+    newLayoutItem.y = collision.y + collision.h;
+  }
+
+  return newLayoutItem;
+};
+
+/**
+ * @param {GridLayout} layout
+ * @returns {GridLayout}
+ */
+const compact = (layout = []) => {
+  const indexesById = layout.reduce((acc, { i }, index) => {
+    acc[i] = index;
+
+    return acc;
+  }, {});
+
+  const newLayout = new Array(layout.length);
+  const sortedLayout = getSortedLayout(layout);
+  const compareWith = [];
+
+  for (const layoutItem of sortedLayout) {
+    const newLayoutItem = compactItem(compareWith, layoutItem);
+
+    newLayoutItem.moved = false;
+
+    compareWith.push(newLayoutItem);
+
+    newLayout[indexesById[layoutItem.i]] = newLayoutItem;
+  }
+
+  return newLayout;
+};
+
 export default {
   components: { CGridItem },
   mixins: [formArrayMixin],
@@ -193,8 +250,10 @@ export default {
         rowHeight: this.rowHeight,
         columnsCount: this.columnsCount,
         margin: this.margin,
+        disabled: this.disabled,
       };
     },
+
     on() {
       return {
         resize: this.resizeItemHandler,
@@ -203,10 +262,39 @@ export default {
         moved: this.movedItemHandler,
       };
     },
+
+    overviewLayoutStyle() {
+      const rowHeightInPixels = `${WIDGET_GRID_ROW_HEIGHT}px`;
+
+      return {
+        padding: rowHeightInPixels,
+        columnGap: rowHeightInPixels,
+        gridTemplateColumns: `repeat(${WIDGET_GRID_COLUMNS_COUNT}, 1fr)`,
+      };
+    },
+
+    preparedStyle() {
+      return this.disabled ? this.overviewLayoutStyle : this.style;
+    },
+  },
+  watch: {
+    disabled(disabled) {
+      if (disabled) {
+        this.removeAllListeners();
+        this.style = {};
+
+        return;
+      }
+
+      this.addAllListeners();
+      this.resizeObserverHandler();
+    },
   },
   mounted() {
-    this.addAllListeners();
-    this.resizeObserverHandler();
+    if (!this.disabled) {
+      this.addAllListeners();
+      this.resizeObserverHandler();
+    }
   },
   beforeDestroy() {
     this.removeAllListeners();
@@ -242,17 +330,17 @@ export default {
 
     resizeItemHandler(id, x, y, h, w) {
       const index = this.layout.findIndex(item => item.i === id);
+      const newLayoutItem = { ...this.layout[index], h, w };
+      const newLayout = compact(this.layout.map(item => (item.i === id ? newLayoutItem : item)));
 
       this.resizing = true;
+
       this.placeholder = {
         ...this.placeholder,
-        x,
-        y,
-        h,
-        w,
+        ...newLayout.find(item => item.i === id),
       };
 
-      this.updateItemInArray(index, { ...this.layout[index], h, w });
+      this.updateModel(newLayout);
 
       this.$nextTick(() => {
         this.updateHeight();
@@ -261,8 +349,9 @@ export default {
 
     resizedItemHandler(id, x, y, h, w) {
       const index = this.layout.findIndex(item => item.i === id);
+      const newLayoutItem = { ...this.layout[index], h, w };
 
-      this.updateItemInArray(index, { ...this.layout[index], h, w });
+      this.updateModel(compact(this.layout.map(item => (item.i === id ? newLayoutItem : item))));
 
       this.$nextTick(() => {
         this.updateHeight();
@@ -273,13 +362,13 @@ export default {
     moveItemHandler(id, x, y) {
       this.moving = true;
       const layoutItem = this.layout.find(item => item.i === id);
-
+      const newLayout = compact(moveElement(this.layout, layoutItem, x, y, true));
       this.placeholder = {
         ...this.placeholder,
-        ...layoutItem,
+        ...newLayout.find(item => item.i === id),
       };
 
-      this.updateModel(moveElement(this.layout, layoutItem, x, y, true));
+      this.updateModel(newLayout);
 
       this.$nextTick(() => {
         this.updateHeight();
@@ -289,7 +378,7 @@ export default {
     movedItemHandler(id, x, y) {
       const layoutItem = this.layout.find(item => item.i === id);
 
-      this.updateModel(moveElement(this.layout, layoutItem, x, y, true));
+      this.updateModel(compact(moveElement(this.layout, layoutItem, x, y, true)));
 
       this.$nextTick(() => {
         this.moving = false;
@@ -311,14 +400,23 @@ export default {
 
 <style lang="scss" scoped>
 .c-grid-layout {
-  background-color: rgba(60, 60, 60, 0.05);
+  &:not(&--disabled) {
+    background-color: rgba(60, 60, 60, 0.05);
+    margin: auto;
+    position: relative;
+  }
 
   &__placeholder {
-    width: 100%;
-    height: 100%;
-    background: red;
-    opacity: .2;
-    z-index: 2 !important;
+    background: var(--v-primary-darken1);
+    opacity: .35;
+
+    &:after {
+      content: none !important;
+    }
+  }
+
+  &--disabled {
+    display: grid;
   }
 }
 </style>
