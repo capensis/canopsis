@@ -12,7 +12,7 @@
       v-layout(v-on="on", d-inline-flex, align-center)
         div(v-if="column.isHtml", v-html="sanitizedValue")
         div(v-else, v-bind="component.bind", v-on="component.on")
-        v-btn.ma-0(icon, small, @click.stop="showInfoPopup")
+        v-btn.alarm-column-cell__info-btn.ma-0(icon, small, @click.stop="showInfoPopup")
           v-icon(small) info
     alarm-column-cell-popup-body(
       :alarm="alarm",
@@ -120,3 +120,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.alarm-column-cell {
+  &__info-btn {
+    flex-shrink: 0 !important;
+  }
+}
+</style>

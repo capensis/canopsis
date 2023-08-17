@@ -311,20 +311,27 @@ export const testsEntityModule = ({
 export const createAuthModule = () => {
   const currentUserPermissionsById = jest.fn()
     .mockReturnValue({});
+  const fetchCurrentUser = jest.fn();
+
   const authModule = {
     name: 'auth',
     getters: {
       currentUserPermissionsById,
     },
+    actions: {
+      fetchCurrentUser,
+    },
   };
 
   afterEach(() => {
     currentUserPermissionsById.mockClear();
+    fetchCurrentUser.mockClear();
   });
 
   return {
     authModule,
     currentUserPermissionsById,
+    fetchCurrentUser,
   };
 };
 
@@ -443,6 +450,66 @@ export const createWidgetModule = () => {
     createWidgetFilter,
     updateWidgetFilter,
     removeWidgetFilter,
+  };
+};
+
+export const createViewModule = () => {
+  const views = jest.fn();
+  const fetchGroupsList = jest.fn();
+  const fetchGroupsListWithoutStore = jest.fn();
+  const createGroup = jest.fn();
+  const updateGroup = jest.fn();
+  const removeGroup = jest.fn();
+  const copyView = jest.fn();
+  const createView = jest.fn();
+  const updateView = jest.fn();
+  const removeView = jest.fn();
+
+  afterEach(() => {
+    fetchGroupsList.mockClear();
+    fetchGroupsListWithoutStore.mockClear();
+    createGroup.mockClear();
+    updateGroup.mockClear();
+    removeGroup.mockClear();
+    createView.mockClear();
+    copyView.mockClear();
+    updateView.mockClear();
+    removeView.mockClear();
+    views.mockClear();
+  });
+
+  const viewModule = {
+    name: 'view',
+    getters: {
+      items: views,
+    },
+    actions: {
+      fetchList: fetchGroupsList,
+      fetchListWithoutStore: fetchGroupsListWithoutStore,
+      create: createGroup,
+      update: updateGroup,
+      remove: removeGroup,
+      copyView,
+      createView,
+      updateView,
+      removeView,
+    },
+  };
+
+  return {
+    viewModule,
+
+    views,
+
+    fetchGroupsList,
+    fetchGroupsListWithoutStore,
+    createGroup,
+    updateGroup,
+    removeGroup,
+    createView,
+    copyView,
+    updateView,
+    removeView,
   };
 };
 
