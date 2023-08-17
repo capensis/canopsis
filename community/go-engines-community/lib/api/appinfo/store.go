@@ -39,6 +39,7 @@ type store struct {
 func NewStore(db mongo.DbClient, maintenanceAdapter config.MaintenanceAdapter, authProviders []string, casTitle, samlTitle string) Store {
 	return &store{
 		dbClient:           db,
+		configCollection:   db.Collection(mongo.ConfigurationMongoCollection),
 		maintenanceAdapter: maintenanceAdapter,
 		authProviders:      authProviders,
 		casTitle:           casTitle,
