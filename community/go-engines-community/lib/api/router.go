@@ -1058,7 +1058,7 @@ func RegisterRoutes(
 
 		// broadcast message API
 		broadcastMessageApi := broadcastmessage.NewApi(
-			broadcastmessage.NewStore(dbClient),
+			broadcastmessage.NewStore(dbClient, maintenanceAdapter),
 			broadcastMessageChan,
 			actionLogger,
 		)

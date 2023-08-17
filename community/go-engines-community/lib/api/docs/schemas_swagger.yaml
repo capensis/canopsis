@@ -876,6 +876,8 @@ definitions:
         type: integer
       end:
         type: integer
+      maintenance:
+        type: boolean
       message:
         type: string
       start:
@@ -896,6 +898,8 @@ definitions:
         type: integer
       end:
         type: integer
+      maintenance:
+        type: boolean
       message:
         type: string
       start:
@@ -2725,6 +2729,8 @@ definitions:
     type: object
   maintenance.Request:
     properties:
+      color:
+        type: string
       enabled:
         type: boolean
       message:

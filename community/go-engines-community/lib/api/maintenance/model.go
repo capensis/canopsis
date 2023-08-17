@@ -1,6 +1,7 @@
 package maintenance
 
 type Request struct {
-	Message string `bson:"message"`
-	Enabled *bool  `bson:"enabled" binding:"required"`
+	Message string `json:"message"`
+	Color   string `json:"color" binding:"iscolororempty"`
+	Enabled *bool  `json:"enabled" binding:"required"`
 }
