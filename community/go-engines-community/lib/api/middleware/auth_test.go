@@ -20,7 +20,7 @@ func TestAuth_GivenCredentials_ShouldReturnResponseAndSetUserDataToContext(t *te
 	defer ctrl.Finish()
 
 	mockMaintenanceAdapter := mock_config.NewMockMaintenanceAdapter(ctrl)
-	mockMaintenanceAdapter.EXPECT().GetConfig(gomock.Any()).Return(config.MaintenanceConf{})
+	mockMaintenanceAdapter.EXPECT().GetConfig(gomock.Any()).Return(config.MaintenanceConf{}, nil).AnyTimes()
 
 	expectedCode := http.StatusOK
 	user := &security.User{
@@ -67,7 +67,7 @@ func TestAuth_GivenNoCredentials_ShouldReturnResponse(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockMaintenanceAdapter := mock_config.NewMockMaintenanceAdapter(ctrl)
-	mockMaintenanceAdapter.EXPECT().GetConfig(gomock.Any()).Return(config.MaintenanceConf{})
+	mockMaintenanceAdapter.EXPECT().GetConfig(gomock.Any()).Return(config.MaintenanceConf{}, nil).AnyTimes()
 
 	expectedCode := http.StatusOK
 	req := httptest.NewRequest("GET", okURL, nil)
@@ -96,7 +96,7 @@ func TestAuth_GivenInvalidCredentials_ShouldReturnUnauthorizedError(t *testing.T
 	defer ctrl.Finish()
 
 	mockMaintenanceAdapter := mock_config.NewMockMaintenanceAdapter(ctrl)
-	mockMaintenanceAdapter.EXPECT().GetConfig(gomock.Any()).Return(config.MaintenanceConf{})
+	mockMaintenanceAdapter.EXPECT().GetConfig(gomock.Any()).Return(config.MaintenanceConf{}, nil).AnyTimes()
 
 	expectedCode := http.StatusUnauthorized
 	req := httptest.NewRequest("GET", okURL, nil)
