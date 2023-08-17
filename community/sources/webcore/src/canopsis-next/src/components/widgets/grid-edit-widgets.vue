@@ -27,8 +27,9 @@
           :widget="layoutItem.widget",
           resizable
         )
-          v-layout(column)
+          template(#default="{ on }")
             widget-edit-drag-handler(
+              v-on="on",
               :widget="layoutItem.widget",
               :tab="tab",
               :auto-height="layoutItem.autoHeight",
