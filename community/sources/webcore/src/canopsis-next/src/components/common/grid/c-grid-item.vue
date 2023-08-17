@@ -1,10 +1,10 @@
 <template lang="pug">
   v-card.c-grid-item(
     :class="{ 'c-grid-item--resizing': resizing || dragging, 'c-grid-item--disabled': disabled }",
-    :style="preparedStyle",
-    :draggable="!disabled"
+    :style="preparedStyle"
   )
-    slot
+    div(ref="defaultSlotWrapper")
+      slot(:on="on")
     div.c-grid-item__resize-handler(v-if="resizable", ref="resizeHandler")
       v-icon(small) $vuetify.icons.resize_right
 </template>
@@ -182,6 +182,16 @@ export default {
       return (this.containerWidth - (this.margin[0] * (this.columnsCount + 1))) / this.columnsCount;
     },
 
+    on() {
+      if (this.disabled) {
+        return {};
+      }
+
+      return {
+        pointerdown: this.dragstartHandler,
+      };
+    },
+
     innerX() {
       return this.x + this.w > this.columnsCount
         ? 0
@@ -248,7 +258,6 @@ export default {
       this.addAllAutoSizeListeners();
       this.addAllMainPropsWatchers();
       this.addAllResizeListeners();
-      this.addAllDragListeners();
     },
 
     removeAllWatchersAndListeners() {
@@ -399,15 +408,7 @@ export default {
     },
 
     getDefaultSlotElement() {
-      const { default: defaultSlots } = this.$slots;
-
-      if (!defaultSlots) {
-        return null;
-      }
-
-      const [{ elm: element }] = defaultSlots;
-
-      return element || null;
+      return this.$refs?.defaultSlotWrapper ?? null;
     },
 
     autoSizeHeight() {
@@ -441,6 +442,13 @@ export default {
     },
 
     mousedownHandler(event) {
+      if (event.button) {
+        return;
+      }
+
+      event.stopPropagation();
+      event.preventDefault();
+
       document.addEventListener('mousemove', this.throttledMousemoveHandler);
 
       const position = getControlPosition(event, this.layoutElement);
@@ -508,14 +516,10 @@ export default {
     /**
      * DRAG AND DROP
      */
-    addAllDragListeners() {
-      this.$el.addEventListener('dragstart', this.dragstartHandler);
-    },
 
     removeAllDragListeners() {
-      this.$el.removeEventListener('dragstart', this.dragstartHandler);
-      this.$el.removeEventListener('drag', this.throttledDragoverHandler);
-      this.$el.removeEventListener('dragend', this.dragendHandler);
+      this.layoutElement.removeEventListener('pointermove', this.throttledDragoverHandler);
+      window.removeEventListener('pointerup', this.dragendHandler);
     },
 
     dragstartHandler(event) {
@@ -525,8 +529,8 @@ export default {
         return;
       }
 
-      this.layoutElement.addEventListener('dragover', this.throttledDragoverHandler);
-      this.$el.addEventListener('dragend', this.dragendHandler);
+      this.layoutElement.addEventListener('pointermove', this.throttledDragoverHandler);
+      window.addEventListener('pointerup', this.dragendHandler);
 
       const position = getControlPosition(event, this.layoutElement);
       const newPosition = { top: 0, left: 0 };
@@ -632,7 +636,6 @@ export default {
     left: 0;
     right: auto;
     z-index: 2;
-    pointer-events: none;
     overflow: hidden;
     height: 1000px;
 
@@ -650,17 +653,6 @@ export default {
       height: 100%;
       opacity: 0.3;
       z-index: 2;
-    }
-
-    & ::v-deep * {
-      pointer-events: none;
-      overflow: hidden !important;
-    }
-
-    & ::v-deep .c-grid-item__resize-handler {
-      &, * {
-        pointer-events: auto;
-      }
     }
   }
 }
