@@ -1,7 +1,7 @@
 <template lang="pug">
-  div.c-grid-item(
-    :class="{ 'c-grid-item--resizing': resizing || dragging, 'c-grid-item--enabled': !disabled }",
-    :style="style",
+  v-card.c-grid-item(
+    :class="{ 'c-grid-item--resizing': resizing || dragging, 'c-grid-item--disabled': disabled }",
+    :style="preparedStyle",
     :draggable="!disabled"
   )
     slot
@@ -11,6 +11,8 @@
 
 <script>
 import { debounce, isNumber, throttle } from 'lodash';
+
+import { MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP, WIDGET_GRID_ROW_HEIGHT } from '@/constants';
 
 /**
  * TODO: MOVE TO HELPERS
@@ -87,6 +89,10 @@ export default {
       type: [Number, String],
       required: true,
     },
+    widget: {
+      type: Object,
+      default: () => ({}),
+    },
     containerWidth: {
       type: Number,
       default: 100,
@@ -162,9 +168,6 @@ export default {
   },
   data() {
     return {
-      draggable: false,
-      isResizing: false,
-      isDragging: false,
       resizing: null,
       dragging: null,
       lastX: NaN,
@@ -172,11 +175,6 @@ export default {
       lastW: NaN,
       lastH: NaN,
       style: {},
-
-      previousW: null,
-      previousH: null,
-      previousX: null,
-      previousY: null,
     };
   },
   computed: {
@@ -199,26 +197,67 @@ export default {
     layoutElement() {
       return this.$parent?.$el ?? document.body;
     },
+
+    gridParameters() {
+      const key = MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.$mq];
+
+      return this.widget.grid_parameters[key];
+    },
+
+    overviewItemStyle() {
+      return {
+        margin: `${WIDGET_GRID_ROW_HEIGHT / 2}px 0`,
+        gridColumnStart: this.gridParameters.x + 1,
+        gridColumnEnd: this.gridParameters.x + 1 + this.gridParameters.w,
+        gridRowStart: this.gridParameters.y + 1,
+        gridRowEnd: this.gridParameters.y + this.gridParameters.h + 1,
+        height: this.gridParameters.autoHeight ? 'auto' : `${WIDGET_GRID_ROW_HEIGHT * this.gridParameters.h}px`,
+      };
+    },
+
+    preparedStyle() {
+      return this.disabled ? this.overviewItemStyle : this.style;
+    },
+  },
+  watch: {
+    disabled(disabled) {
+      if (disabled) {
+        this.removeAllWatchersAndListeners();
+        return;
+      }
+
+      this.addAllWatchersAndListeners();
+    },
   },
   created() {
     this.throttledMousemoveHandler = throttle(this.mousemoveHandler, this.throttle);
-    this.throttledDragHandler = throttle(this.dragHandler, this.throttle);
+    this.throttledDragoverHandler = throttle(this.dragoverHandler, this.throttle);
     this.debouncedAutoSizeHeight = debounce(() => setTimeout(this.autoSizeHeight, 0), this.debounce);
   },
   mounted() {
-    this.calculateStyle();
-    this.addAllAutoSizeListeners();
-    this.addAllMainPropsWatchers();
-    this.addAllResizeListeners();
-    this.addAllDragListeners();
+    if (!this.disabled) {
+      this.addAllWatchersAndListeners();
+    }
   },
   beforeDestroy() {
-    this.removeAllAutoSizeListeners();
-    this.removeAllMainPropsWatchers();
-    this.removeAllResizeListeners();
-    this.removeAllDragListeners();
+    this.removeAllWatchersAndListeners();
   },
   methods: {
+    addAllWatchersAndListeners() {
+      this.calculateStyle();
+      this.addAllAutoSizeListeners();
+      this.addAllMainPropsWatchers();
+      this.addAllResizeListeners();
+      this.addAllDragListeners();
+    },
+
+    removeAllWatchersAndListeners() {
+      this.removeAllAutoSizeListeners();
+      this.removeAllMainPropsWatchers();
+      this.removeAllResizeListeners();
+      this.removeAllDragListeners();
+    },
+
     addAllMainPropsWatchers() {
       this.$mainPropsWatchers = [
         'x',
@@ -302,8 +341,8 @@ export default {
       }
 
       if (this.resizing) {
-        pos.width = this.resizingSize.width;
-        pos.height = this.resizingSize.height;
+        pos.width = this.resizing.width;
+        pos.height = this.resizing.height;
       }
 
       const translate = `translate3d(${pos.left}px,${pos.top}px, 0)`;
@@ -372,8 +411,6 @@ export default {
     },
 
     autoSizeHeight() {
-      this.previousW = this.innerW;
-      this.previousH = this.h;
       const element = this.getDefaultSlotElement();
 
       if (!element) {
@@ -386,10 +423,6 @@ export default {
       pos.h = Math.max(Math.min(pos.h, this.maxH), this.minH);
 
       if (this.h !== pos.h) {
-        this.$emit('resize', this.i, pos.h, this.innerW, newSize.height, newSize.width);
-      }
-
-      if (this.previousH !== pos.h) {
         this.$emit('resized', this.i, this.innerX, this.y, pos.h, this.innerW);
       }
     },
@@ -411,17 +444,14 @@ export default {
       document.addEventListener('mousemove', this.throttledMousemoveHandler);
 
       const position = getControlPosition(event, this.layoutElement);
-      this.previousW = this.innerW;
-      this.previousH = this.h;
-      this.resizingSize = this.calculatePosition(this.innerX, this.y, this.innerW, this.h);
+      this.resizing = this.calculatePosition(this.innerX, this.y, this.innerW, this.h);
 
-      const { w, h } = this.calculateWH(this.resizingSize.height, this.resizingSize.width);
+      const { w, h } = this.calculateWH(this.resizing.height, this.resizing.width);
 
       this.$emit('resize', this.i, this.x, this.y, h, w);
 
       this.lastW = position.x;
       this.lastH = position.y;
-      this.resizing = true;
 
       this.calculateStyle();
     },
@@ -438,14 +468,14 @@ export default {
 
       this.lastW = position.x;
       this.lastH = position.y;
-      this.resizingSize = {
-        width: this.resizingSize.width + coreEvent.deltaX,
+      this.resizing = {
+        width: this.resizing.width + coreEvent.deltaX,
         height: this.autoHeight
           ? newElementSize.height
-          : this.resizingSize.height + coreEvent.deltaY,
+          : this.resizing.height + coreEvent.deltaY,
       };
 
-      const { w, h } = this.calculateWH(this.resizingSize.height, this.resizingSize.width);
+      const { w, h } = this.calculateWH(this.resizing.height, this.resizing.width);
 
       if (this.innerW !== w || this.h !== h) {
         this.$emit('resize', this.i, this.x, this.y, h, w);
@@ -461,9 +491,9 @@ export default {
 
       document.removeEventListener('mousemove', this.throttledMousemoveHandler);
 
-      this.resizingSize = this.calculatePosition(this.innerX, this.y, this.innerW, this.h);
+      this.resizing = this.calculatePosition(this.innerX, this.y, this.innerW, this.h);
 
-      const { w, h } = this.calculateWH(this.resizingSize.height, this.resizingSize.width);
+      const { w, h } = this.calculateWH(this.resizing.height, this.resizing.width);
 
       this.$emit('resized', this.i, this.x, this.y, h, w);
 
@@ -484,7 +514,7 @@ export default {
 
     removeAllDragListeners() {
       this.$el.removeEventListener('dragstart', this.dragstartHandler);
-      this.$el.removeEventListener('drag', this.dragHandler);
+      this.$el.removeEventListener('drag', this.throttledDragoverHandler);
       this.$el.removeEventListener('dragend', this.dragendHandler);
     },
 
@@ -495,11 +525,9 @@ export default {
         return;
       }
 
-      this.$el.addEventListener('drag', this.throttledDragHandler);
+      this.layoutElement.addEventListener('dragover', this.throttledDragoverHandler);
       this.$el.addEventListener('dragend', this.dragendHandler);
 
-      this.previousX = this.innerX;
-      this.previousY = this.y;
       const position = getControlPosition(event, this.layoutElement);
       const newPosition = { top: 0, left: 0 };
       const { x, y } = position;
@@ -509,7 +537,6 @@ export default {
       newPosition.left = clientRect.left - parentRect.left;
       newPosition.top = clientRect.top - parentRect.top;
       this.dragging = newPosition;
-      this.isDragging = true;
       const pos = this.calculateXY(newPosition.top, newPosition.left);
 
       this.lastX = x;
@@ -522,7 +549,9 @@ export default {
       this.calculateStyle();
     },
 
-    dragHandler(event) {
+    dragoverHandler(event) {
+      event.preventDefault();
+
       if (!this.dragging || this.resizing) {
         return;
       }
@@ -553,7 +582,7 @@ export default {
         return;
       }
 
-      this.$el.removeEventListener('drag', this.throttledDragHandler);
+      this.layoutElement.removeEventListener('dragover', this.throttledDragoverHandler);
       this.$el.removeEventListener('dragend', this.dragendHandler);
 
       const position = getControlPosition(event, this.layoutElement);
@@ -577,43 +606,20 @@ export default {
 
 <style lang="scss" scoped>
 .c-grid-item {
-  position: absolute;
-  height: 1000px;
-  overflow: hidden;
   transition: none;
-  left: 0;
-  right: auto;
-  z-index: 2;
+  overflow: auto;
 
   &__resize-handler {
+    display: none;
     cursor: se-resize;
     position: absolute;
     width: 16px;
     height: 16px;
+    line-height: 16px;
     bottom: 3px;
     right: 3px;
     z-index: 3;
     opacity: .7;
-  }
-
-  &__placeholder {
-    background: red;
-    opacity: 0.2;
-    transition-duration: 100ms;
-    z-index: 2;
-    user-select: none;
-  }
-
-  &:after {
-    content: '';
-    background-color: #888;
-    position: absolute;
-    left: 0;
-    top: 36px;
-    width: 100%;
-    height: 100%;
-    opacity: 0.4;
-    z-index: 2;
   }
 
   &--resizing {
@@ -621,16 +627,39 @@ export default {
     user-select: none;
   }
 
-  &--enabled {
+  &:not(&--disabled) {
+    position: absolute;
+    left: 0;
+    right: auto;
+    z-index: 2;
     pointer-events: none;
+    overflow: hidden;
+    height: 1000px;
 
-    & ::v-deep * {
-      pointer-events: none !important;
+    .c-grid-item__resize-handler {
+      display: block;
     }
 
-    & ::v-deep .drag-handler, .c-grid-item__resize-handler {
+    &:after {
+      content: '';
+      background-color: #888;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.3;
+      z-index: 2;
+    }
+
+    & ::v-deep * {
+      pointer-events: none;
+      overflow: hidden !important;
+    }
+
+    & ::v-deep .c-grid-item__resize-handler {
       &, * {
-        pointer-events: auto !important;
+        pointer-events: auto;
       }
     }
   }

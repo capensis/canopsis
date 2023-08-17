@@ -1,13 +1,16 @@
 <template lang="pug">
   div.grid-layout-wrapper
-    portal(:to="$constants.PORTALS_NAMES.additionalTopBarItems")
+    portal(v-if="editing", :to="$constants.PORTALS_NAMES.additionalTopBarItems")
       window-size-field(v-model="size", color="white", light)
     c-grid-layout(
       v-model="layouts[size]",
       :margin="[$constants.WIDGET_GRID_ROW_HEIGHT, $constants.WIDGET_GRID_ROW_HEIGHT]",
       :columns-count="$constants.WIDGET_GRID_COLUMNS_COUNT",
       :row-height="$constants.WIDGET_GRID_ROW_HEIGHT",
-      auto-size
+      :style="layoutStyles",
+      :disabled="!editing",
+      auto-size,
+      @input="updatedLayout"
     )
       template(#default="{ bind, on }")
         c-grid-item(
@@ -21,29 +24,16 @@
           :h="layoutItem.h",
           :i="layoutItem.i",
           :auto-height="layoutItem.autoHeight",
+          :widget="layoutItem.widget",
           resizable
         )
-          div.wrapper
-            div.drag-handler
-              v-layout.controls
-                v-tooltip(bottom)
-                  template(#activator="{ on }")
-                    v-btn.ma-0.mr-1(
-                      v-on="on",
-                      :color="layoutItem.autoHeight ? 'grey lighten-1' : 'transparent'",
-                      icon,
-                      small,
-                      @click="toggleAutoHeight(index)"
-                    )
-                      v-icon(
-                        :color="layoutItem.autoHeight ? 'black' : 'grey darken-1'",
-                        small
-                      ) lock
-                  span {{ $t('view.autoHeightButton') }}
-                widget-wrapper-menu(
-                  :widget="layoutItem.widget",
-                  :tab="tab"
-                )
+          v-layout(column)
+            widget-edit-drag-handler(
+              :widget="layoutItem.widget",
+              :tab="tab",
+              :auto-height="layoutItem.autoHeight",
+              @toggle="toggleAutoHeight(index)"
+            )
             slot(:widget="layoutItem.widget")
 </template>
 
@@ -62,9 +52,11 @@ import CGridLayout from '@/components/common/grid/c-grid-layout.vue';
 import CGridItem from '@/components/common/grid/c-grid-item.vue';
 import WidgetWrapperMenu from '@/components/widgets/partials/widget-wrapper-menu.vue';
 import WindowSizeField from '@/components/forms/fields/window-size.vue';
+import WidgetEditDragHandler from '@/components/widgets/widget-edit-drag-handler.vue';
 
 export default {
   components: {
+    WidgetEditDragHandler,
     CGridLayout,
     CGridItem,
     WindowSizeField,
@@ -74,6 +66,10 @@ export default {
     tab: {
       type: Object,
       required: true,
+    },
+    editing: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -156,58 +152,11 @@ export default {
 <style lang="scss" scoped>
   .grid-layout-wrapper {
     padding-bottom: 500px;
-
-    & ::v-deep .vue-grid-layout {
-      margin: auto;
-      background-color: rgba(60, 60, 60, .05);
-    }
-
-    & ::v-deep .vue-grid-item {
-      overflow: hidden;
-      transition: none !important;
-
-      &:after {
-        content: '';
-        background-color: #888;
-        position: absolute;
-        left: 0;
-        top: 36px;
-        width: 100%;
-        height: 100%;
-        opacity: .4;
-        z-index: 2;
-      }
-
-      & > .vue-resizable-handle {
-        z-index: 3;
-      }
-    }
   }
 
   .wrapper {
     position: relative;
     overflow: hidden;
-
-    .controls {
-      position: absolute;
-      right: 4px;
-      top: 4px;
-      z-index: 2;
-    }
-
-    .drag-handler {
-      position: absolute;
-      background-color: rgba(0, 0, 0, .12);
-      width: 100%;
-      height: 36px;
-      transition: .2s ease-out;
-      cursor: move;
-      z-index: 2;
-
-      &:hover {
-        background-color: rgba(0, 0, 0, .15);
-      }
-    }
 
     & ::v-deep .v-card {
       position: relative;

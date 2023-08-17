@@ -1,19 +1,8 @@
 <template lang="pug">
   div.view(:id="`view-tab-${tab._id}`")
-    grid-overview-widget(
-      v-show="editing",
-      :tab="tab"
-    )
-      template(#default="{ widget }")
-        widget-wrapper(
-          :widget="widget",
-          :tab="tab",
-          :kiosk="kiosk",
-          :editing="editing"
-        )
     grid-edit-widgets(
-      v-if="!editing",
       :tab="tab",
+      :editing="editing",
       @update:widgets-grid="updateWidgetsGrid"
     )
       template(#default="{ widget }")
@@ -21,7 +10,7 @@
           :widget="widget",
           :tab="tab",
           :kiosk="kiosk",
-          editing
+          :editing="editing"
         )
 </template>
 
