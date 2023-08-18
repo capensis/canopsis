@@ -392,6 +392,8 @@ func TestPool_SendBatch_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T
 	defer cancel()
 
 	b := &pgx.Batch{}
+	b.Queue("test")
+
 	retryCount := 3
 	minRetryTimeout := time.Millisecond
 
@@ -434,6 +436,8 @@ func TestPool_SendBatch_GivenConnectionError_ShouldReturnError(t *testing.T) {
 	defer cancel()
 
 	b := &pgx.Batch{}
+	b.Queue("test")
+
 	retryCount := 3
 	minRetryTimeout := time.Millisecond
 
@@ -469,6 +473,8 @@ func TestPool_SendBatch_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.
 	defer cancel()
 
 	b := &pgx.Batch{}
+	b.Queue("test")
+
 	retryCount := 3
 	minRetryTimeout := time.Millisecond
 
@@ -492,7 +498,6 @@ func TestPool_SendBatch_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.
 	mockTx.EXPECT().SendBatch(gomock.Any(), gomock.Eq(b)).DoAndReturn(func(_ context.Context, _ *pgx.Batch) pgx.BatchResults {
 		mockBr := mock_v5.NewMockBatchResults(ctrl)
 		mockBr.EXPECT().Exec().Return(pgconn.CommandTag{}, nil)
-		mockBr.EXPECT().Exec().Return(pgconn.CommandTag{}, errors.New("no result"))
 		mockBr.EXPECT().Close()
 
 		return mockBr
