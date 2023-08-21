@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.grid-layout-wrapper
+  div
     portal(v-if="editing", :to="$constants.PORTALS_NAMES.additionalTopBarItems")
       window-size-field(v-model="size", color="white", light)
     c-grid-layout(
@@ -9,7 +9,6 @@
       :row-height="$constants.WIDGET_GRID_ROW_HEIGHT",
       :style="layoutStyles",
       :disabled="!editing",
-      auto-size,
       @input="updatedLayout"
     )
       template(#default="{ bind, on }")
@@ -18,17 +17,12 @@
           v-bind="bind",
           v-on="on",
           :key="layoutItem.i",
-          :x="layoutItem.x",
-          :y="layoutItem.y",
-          :w="layoutItem.w",
-          :h="layoutItem.h",
-          :i="layoutItem.i",
-          :auto-height="layoutItem.autoHeight",
-          :widget="layoutItem.widget",
-          resizable
+          :item="layoutItem",
+          :auto-height="layoutItem.autoHeight"
         )
           template(#default="{ on }")
             widget-edit-drag-handler(
+              v-if="editing",
               v-on="on",
               :widget="layoutItem.widget",
               :tab="tab",
@@ -149,19 +143,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-  .grid-layout-wrapper {
-    padding-bottom: 500px;
-  }
-
-  .wrapper {
-    position: relative;
-    overflow: hidden;
-
-    & ::v-deep .v-card {
-      position: relative;
-      min-height: 100%;
-    }
-  }
-</style>
