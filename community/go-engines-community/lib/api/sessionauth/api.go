@@ -6,8 +6,10 @@ import (
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
@@ -23,12 +25,14 @@ func NewApi(
 	sessionStore libsession.Store,
 	providers []security.Provider,
 	maintenanceAdapter config.MaintenanceAdapter,
+	enforcer security.Enforcer,
 	logger zerolog.Logger,
 ) API {
 	return &api{
 		sessionStore:       sessionStore,
 		providers:          providers,
 		maintenanceAdapter: maintenanceAdapter,
+		enforcer:           enforcer,
 		logger:             logger,
 	}
 }
@@ -37,6 +41,7 @@ type api struct {
 	sessionStore       libsession.Store
 	providers          []security.Provider
 	maintenanceAdapter config.MaintenanceAdapter
+	enforcer           security.Enforcer
 	logger             zerolog.Logger
 }
 
@@ -74,9 +79,16 @@ func (a *api) LoginHandler() gin.HandlerFunc {
 			panic(err)
 		}
 
-		if maintenanceConf.Enabled && !user.IsAdmin() {
-			c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
-			return
+		if maintenanceConf.Enabled {
+			ok, err := a.enforcer.Enforce(user.ID, apisecurity.PermMaintenance, model.PermissionCan)
+			if err != nil {
+				panic(err)
+			}
+
+			if !ok {
+				c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
+				return
+			}
 		}
 
 		var response loginResponse

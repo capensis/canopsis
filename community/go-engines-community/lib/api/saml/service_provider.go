@@ -19,6 +19,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"github.com/beevik/etree"
 	"github.com/gin-gonic/gin"
@@ -410,9 +411,16 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 			panic(err)
 		}
 
-		if maintenanceConf.Enabled && !user.IsAdmin() {
-			c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
-			return
+		if maintenanceConf.Enabled {
+			ok, err := sp.enforcer.Enforce(user.ID, apisecurity.PermMaintenance, model.PermissionCan)
+			if err != nil {
+				panic(err)
+			}
+
+			if !ok {
+				c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
+				return
+			}
 		}
 
 		err = sp.enforcer.LoadPolicy()
