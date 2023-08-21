@@ -1,17 +1,18 @@
-//Package contextgraph contains a service, which is responsible for building canopsis context graph.
+// Package contextgraph contains a service, which is responsible for building canopsis context graph.
 package contextgraph
 
 //go:generate mockgen -destination=../../../mocks/lib/canopsis/contextgraph/contextgraph.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph Manager,EntityServiceStorage
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type EntityServiceStorage interface {
 	GetAll(ctx context.Context) ([]entityservice.EntityService, error)
-	Get(ctx context.Context, serviceID string) (entityservice.EntityService, error)
+	Get(ctx context.Context, serviceName string) (entityservice.EntityService, error)
 }
 
 type Manager interface {

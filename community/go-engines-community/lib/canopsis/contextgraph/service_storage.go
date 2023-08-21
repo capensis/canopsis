@@ -31,10 +31,10 @@ func (s *storage) GetAll(ctx context.Context) ([]entityservice.EntityService, er
 	return services, cursor.All(ctx, &services)
 }
 
-func (s *storage) Get(ctx context.Context, serviceID string) (entityservice.EntityService, error) {
+func (s *storage) Get(ctx context.Context, serviceName string) (entityservice.EntityService, error) {
 	var service entityservice.EntityService
 
-	err := s.collection.FindOne(ctx, bson.M{"_id": serviceID}).Decode(&service)
+	err := s.collection.FindOne(ctx, bson.M{"name": serviceName}).Decode(&service)
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			return entityservice.EntityService{}, nil

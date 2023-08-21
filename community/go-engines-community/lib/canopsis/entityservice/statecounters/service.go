@@ -633,7 +633,7 @@ func (s *service) RecomputeEntityServiceCounters(ctx context.Context, event type
 		}
 	}
 
-	_, err = s.serviceCountersCollection.UpdateOne(ctx, bson.M{"_id": event.GetEID()}, bson.M{"$set": counters}, options.Update().SetUpsert(true))
+	_, err = s.serviceCountersCollection.UpdateOne(ctx, bson.M{"_id": event.Entity.ID}, bson.M{"$set": counters}, options.Update().SetUpsert(true))
 	if err != nil {
 		return nil, err
 	}
