@@ -74,8 +74,14 @@ func (s *store) Enable(ctx context.Context, message, color string) error {
 		return err
 	}
 
+	if color == "" {
+		color = defaultColor
+	}
+
 	return s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		users, err := s.userProvider.FindNotAdmins(ctx)
+		now := types.NewCpsTime()
+
+		users, err := s.userProvider.FindWithoutMaintenancePerm(ctx)
 		if err != nil {
 			panic(err)
 		}
@@ -93,12 +99,6 @@ func (s *store) Enable(ctx context.Context, message, color string) error {
 		err = s.sessionStore.ExpireSessionsByUserIDs(ctx, userIDs)
 		if err != nil {
 			return err
-		}
-
-		now := types.NewCpsTime()
-
-		if color == "" {
-			color = defaultColor
 		}
 
 		_, err = s.broadcastCollection.InsertOne(ctx, broadcastmessage.BroadcastMessage{

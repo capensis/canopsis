@@ -170,7 +170,7 @@ func (s *security) RegisterCallbackRoutes(router gin.IRouter, client mongo.DbCli
 
 func (s *security) GetAuthMiddleware() []gin.HandlerFunc {
 	return []gin.HandlerFunc{
-		middleware.Auth(s.GetHttpAuthProviders(), s.maintenanceAdapter),
+		middleware.Auth(s.GetHttpAuthProviders(), s.maintenanceAdapter, s.enforcer),
 		middleware.SessionAuth(s.dbClient, s.apiConfigProvider, s.sessionStore),
 	}
 }
@@ -178,7 +178,7 @@ func (s *security) GetAuthMiddleware() []gin.HandlerFunc {
 func (s *security) GetFileAuthMiddleware() gin.HandlerFunc {
 	return middleware.Auth([]libsecurity.HttpProvider{
 		httpprovider.NewCookieProvider(s.GetTokenProviders(), s.cookieOptions.FileAccessName, s.logger),
-	}, s.maintenanceAdapter)
+	}, s.maintenanceAdapter, s.enforcer)
 }
 
 func (s *security) GetSessionStore() libsession.Store {
