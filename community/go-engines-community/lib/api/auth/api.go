@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -31,6 +32,7 @@ func NewApi(
 	providers []security.Provider,
 	websocketStore websocket.Store,
 	maintenanceAdapter config.MaintenanceAdapter,
+	enforcer security.Enforcer,
 	cookieName string,
 	cookieMaxAge int,
 	logger zerolog.Logger,
@@ -41,6 +43,7 @@ func NewApi(
 		providers:          providers,
 		websocketStore:     websocketStore,
 		maintenanceAdapter: maintenanceAdapter,
+		enforcer:           enforcer,
 		logger:             logger,
 
 		cookieName:     cookieName,
@@ -56,6 +59,7 @@ type api struct {
 	providers          []security.Provider
 	websocketStore     websocket.Store
 	maintenanceAdapter config.MaintenanceAdapter
+	enforcer           security.Enforcer
 	logger             zerolog.Logger
 
 	cookieName     string
@@ -100,9 +104,16 @@ func (a *api) Login(c *gin.Context) {
 		panic(err)
 	}
 
-	if maintenanceConf.Enabled && !user.IsAdmin() {
-		c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
-		return
+	if maintenanceConf.Enabled {
+		ok, err := a.enforcer.Enforce(user.ID, apisecurity.PermMaintenance, model.PermissionCan)
+		if err != nil {
+			panic(err)
+		}
+
+		if !ok {
+			c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
+			return
+		}
 	}
 
 	accessToken, err := a.tokenService.Create(c, *user, provider)

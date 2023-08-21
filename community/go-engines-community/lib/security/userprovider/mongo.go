@@ -4,6 +4,7 @@ package userprovider
 import (
 	"context"
 
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -29,10 +30,28 @@ func NewMongoProvider(db libmongo.DbClient, configProvider config.ApiConfigProvi
 	}
 }
 
-func (p *mongoProvider) FindNotAdmins(ctx context.Context) ([]security.User, error) {
+func (p *mongoProvider) FindWithoutMaintenancePerm(ctx context.Context) ([]security.User, error) {
 	var users []security.User
 
-	cursor, err := p.collection.Find(ctx, bson.M{"roles": bson.M{"$nin": bson.A{security.RoleAdmin}}})
+	cursor, err := p.collection.Aggregate(ctx, []bson.M{
+		{
+			"$lookup": bson.M{
+				"from":         "role",
+				"localField":   "roles",
+				"foreignField": "_id",
+				"as":           "roles_objects",
+			},
+		},
+		{
+			"$match": bson.M{
+				"roles_objects": bson.M{
+					"$elemMatch": bson.M{
+						"permissions." + apisecurity.PermMaintenance: bson.M{"$exists": false},
+					},
+				},
+			},
+		},
+	})
 	if err != nil {
 		return users, err
 	}

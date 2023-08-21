@@ -22,6 +22,8 @@ func TestAuth_GivenCredentials_ShouldReturnResponseAndSetUserDataToContext(t *te
 	mockMaintenanceAdapter := mock_config.NewMockMaintenanceAdapter(ctrl)
 	mockMaintenanceAdapter.EXPECT().GetConfig(gomock.Any()).Return(config.MaintenanceConf{}, nil).AnyTimes()
 
+	enforcer := mock_security.NewMockEnforcer(ctrl)
+
 	expectedCode := http.StatusOK
 	user := &security.User{
 		ID:             "testid",
@@ -37,7 +39,7 @@ func TestAuth_GivenCredentials_ShouldReturnResponseAndSetUserDataToContext(t *te
 	router := gin.New()
 	router.GET(
 		okURL,
-		Auth([]security.HttpProvider{mockProvider}, mockMaintenanceAdapter),
+		Auth([]security.HttpProvider{mockProvider}, mockMaintenanceAdapter, enforcer),
 		func(c *gin.Context) {
 			c.String(
 				expectedCode,
@@ -69,6 +71,8 @@ func TestAuth_GivenNoCredentials_ShouldReturnResponse(t *testing.T) {
 	mockMaintenanceAdapter := mock_config.NewMockMaintenanceAdapter(ctrl)
 	mockMaintenanceAdapter.EXPECT().GetConfig(gomock.Any()).Return(config.MaintenanceConf{}, nil).AnyTimes()
 
+	enforcer := mock_security.NewMockEnforcer(ctrl)
+
 	expectedCode := http.StatusOK
 	req := httptest.NewRequest("GET", okURL, nil)
 	mockProvider := mock_security.NewMockHttpProvider(ctrl)
@@ -79,7 +83,7 @@ func TestAuth_GivenNoCredentials_ShouldReturnResponse(t *testing.T) {
 	router := gin.New()
 	router.GET(
 		okURL,
-		Auth([]security.HttpProvider{mockProvider}, mockMaintenanceAdapter),
+		Auth([]security.HttpProvider{mockProvider}, mockMaintenanceAdapter, enforcer),
 		okHandler,
 	)
 
@@ -98,6 +102,8 @@ func TestAuth_GivenInvalidCredentials_ShouldReturnUnauthorizedError(t *testing.T
 	mockMaintenanceAdapter := mock_config.NewMockMaintenanceAdapter(ctrl)
 	mockMaintenanceAdapter.EXPECT().GetConfig(gomock.Any()).Return(config.MaintenanceConf{}, nil).AnyTimes()
 
+	enforcer := mock_security.NewMockEnforcer(ctrl)
+
 	expectedCode := http.StatusUnauthorized
 	req := httptest.NewRequest("GET", okURL, nil)
 	mockProvider := mock_security.NewMockHttpProvider(ctrl)
@@ -108,7 +114,7 @@ func TestAuth_GivenInvalidCredentials_ShouldReturnUnauthorizedError(t *testing.T
 	router := gin.New()
 	router.GET(
 		okURL,
-		Auth([]security.HttpProvider{mockProvider}, mockMaintenanceAdapter),
+		Auth([]security.HttpProvider{mockProvider}, mockMaintenanceAdapter, enforcer),
 		okHandler,
 	)
 
