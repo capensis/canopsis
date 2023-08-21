@@ -16,34 +16,7 @@
 # used rabbitMQ library and the documentation of our version of RabbitMQ.
 
 [[RabbitMQ.exchanges]]
-name = "canopsis"
-kind = "topic"
-durable = true
-autoDelete = false
-internal = false
-noWait = false
-# args =
-
-[[RabbitMQ.exchanges]]
-name = "canopsis.alerts"
-kind = "topic"
-durable = true
-autoDelete = false
-internal = false
-noWait = false
-# args =
-
-[[RabbitMQ.exchanges]]
 name = "canopsis.events"
-kind = "topic"
-durable = true
-autoDelete = false
-internal = false
-noWait = false
-# args =
-
-[[RabbitMQ.exchanges]]
-name = "canopsis.incidents"
 kind = "topic"
 durable = true
 autoDelete = false
