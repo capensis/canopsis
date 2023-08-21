@@ -100,7 +100,6 @@
       :draggable-column="draggableColumn",
       :cells-content-behavior="cellsContentBehavior",
       :columns-settings="columnsSettings",
-      :editing="editing",
       expandable,
       densable,
       @select:tag="selectTag",

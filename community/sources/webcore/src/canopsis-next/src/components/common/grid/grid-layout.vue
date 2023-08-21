@@ -1,16 +1,25 @@
 <template lang="pug">
-  div.c-grid-layout(
+  div.grid-layout(
     ref="layout",
-    :class="{ 'c-grid-layout--disabled': disabled }",
+    :class="{ 'grid-layout--disabled': disabled }",
     :style="style"
   )
-    c-grid-item.c-grid-layout__placeholder(
+    grid-item.grid-layout__placeholder(
       v-if="!disabled",
       v-show="resizing || moving",
-      v-bind="slotBind",
-      :item="placeholder"
+      v-bind="itemBind",
+      :item="placeholder",
+      key="placeholder"
     )
-    slot(:bind="slotBind", :on="slotOn")
+    grid-item(
+      v-for="layoutItem in layout",
+      v-on="itemOn",
+      v-bind="itemBind",
+      :key="layoutItem.i",
+      :item="layoutItem",
+    )
+      template(#default="props")
+        slot(name="item", v-bind="props")
 </template>
 
 <script>
@@ -25,10 +34,10 @@ import {
 
 import { formBaseMixin } from '@/mixins/form';
 
-import CGridItem from './c-grid-item.vue';
+import GridItem from './partials/grid-item.vue';
 
 export default {
-  components: { CGridItem },
+  components: { GridItem },
   mixins: [formBaseMixin],
   model: {
     prop: 'layout',
@@ -71,7 +80,7 @@ export default {
     };
   },
   computed: {
-    slotBind() {
+    itemBind() {
       return {
         layout: this.layout,
         containerWidth: this.width,
@@ -82,12 +91,17 @@ export default {
       };
     },
 
-    slotOn() {
+    itemOn() {
+      if (this.disabled) {
+        return {};
+      }
+
       return {
         resize: this.resizeItemHandler,
         resized: this.resizedItemHandler,
         move: this.moveItemHandler,
         moved: this.movedItemHandler,
+        toggle: this.toggleAutoHeightHandler,
       };
     },
 
@@ -137,6 +151,13 @@ export default {
     this.removeAllListeners();
   },
   methods: {
+    toggleAutoHeightHandler(layoutItem) {
+      const newLayoutItem = { ...layoutItem, autoHeight: !layoutItem.autoHeight };
+      const newLayout = compactLayout(replaceLayoutItemInLayout(this.layout, newLayoutItem));
+
+      this.updateModel(newLayout);
+    },
+
     /**
      * Resize grid item handler
      *
@@ -237,11 +258,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.c-grid-layout {
+.grid-layout {
   &:not(&--disabled) {
     background-color: rgba(60, 60, 60, 0.05);
-    margin: auto;
-    padding-bottom: 500px;
+    margin: auto auto 500px auto;
     position: relative;
   }
 

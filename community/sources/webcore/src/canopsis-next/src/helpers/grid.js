@@ -8,6 +8,8 @@ import { isNumber, uniq } from 'lodash';
  * @property {number} w
  * @property {number} h
  * @property {boolean} [moved]
+ * @property {boolean} [autoHeight]
+ * @property {Widget} [widget]
  */
 
 /**
