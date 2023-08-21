@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -77,7 +78,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -173,7 +174,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -272,7 +273,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -365,7 +366,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -474,7 +475,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -551,7 +552,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -651,7 +652,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -723,7 +724,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -889,7 +890,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -980,7 +981,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -1087,7 +1088,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -1167,7 +1168,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -1266,7 +1267,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -1339,7 +1340,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -1416,7 +1417,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -1490,7 +1491,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
@@ -1641,7 +1642,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
-	if diff := pretty.Compare(result, expected); diff != "" {
+	if diff := pretty.Compare(author.StripAuthorRandomPrefix(result), author.StripAuthorRandomPrefix(expected)); diff != "" {
 		t.Errorf("unexpected result: %s", diff)
 	}
 }
