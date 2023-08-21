@@ -1,83 +1,18 @@
 <template lang="pug">
   v-card.c-grid-item(
-    :class="{ 'c-grid-item--resizing': resizing || dragging, 'c-grid-item--disabled': disabled }",
-    :style="preparedStyle"
+    :class="cardClass",
+    :style="style"
   )
     div(ref="defaultSlotWrapper")
-      slot(:on="on")
-    div.c-grid-item__resize-handler(v-if="resizable", ref="resizeHandler")
+      slot(:on="slotOn")
+    div.c-grid-item__resize-handler(v-if="!disabled", v-on="resizeHandlerOn")
       v-icon(small) $vuetify.icons.resize_right
 </template>
 
 <script>
-import { debounce, isNumber, throttle } from 'lodash';
+import { debounce, throttle } from 'lodash';
 
-import { MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP, WIDGET_GRID_ROW_HEIGHT } from '@/constants';
-
-/**
- * TODO: MOVE TO HELPERS
- */
-const getCountAboveItems = (layout = [], itemX, itemY, itemW) => {
-  const { count } = layout
-    .filter(({ y }) => y < itemY)
-    .sort((a, b) => b.y - a.y)
-    .reduce((acc, {
-      y, x, w, h,
-    }) => {
-      if (acc.y !== y + h) {
-        return acc;
-      }
-
-      const range = (acc.x + acc.w) - (x + w);
-
-      const isInteraction = range > 0 ? range < acc.w : Math.abs(range) < w;
-
-      if (y < acc.y && isInteraction) {
-        acc.count += 1;
-        acc.x = x;
-        acc.y = y;
-        acc.w = w;
-      }
-
-      return acc;
-    }, {
-      count: 0,
-      x: itemX,
-      y: itemY,
-      w: itemW,
-    });
-
-  return count;
-};
-
-export const createCoreData = (lastX, lastY, x, y) => (
-  !isNumber(lastX)
-    ? {
-      deltaX: 0,
-      deltaY: 0,
-      lastX: x,
-      lastY: y,
-      x,
-      y,
-    }
-    : {
-      deltaX: x - lastX,
-      deltaY: y - lastY,
-      lastX,
-      lastY,
-      x,
-      y,
-    }
-);
-
-export const getControlPosition = (event, layoutElement) => {
-  const layoutElementRect = layoutElement.getBoundingClientRect();
-
-  const x = event.clientX + layoutElement.scrollLeft - layoutElementRect.left;
-  const y = event.clientY + layoutElement.scrollTop - layoutElementRect.top;
-
-  return { x, y };
-};
+import { getItemDelta, getCountAboveItems, getControlPosition } from '@/helpers/grid';
 
 export default {
   props: {
@@ -85,13 +20,9 @@ export default {
       type: Array,
       required: true,
     },
-    i: {
-      type: [Number, String],
-      required: true,
-    },
-    widget: {
+    item: {
       type: Object,
-      default: () => ({}),
+      required: true,
     },
     containerWidth: {
       type: Number,
@@ -109,22 +40,6 @@ export default {
       type: Array,
       default: () => [10, 10],
     },
-    x: {
-      type: Number,
-      default: 0,
-    },
-    y: {
-      type: Number,
-      default: 0,
-    },
-    w: {
-      type: Number,
-      default: 0,
-    },
-    h: {
-      type: Number,
-      default: 0,
-    },
     minW: {
       type: Number,
       default: 0,
@@ -141,19 +56,11 @@ export default {
       type: Number,
       default: Infinity,
     },
-    maxRows: {
-      type: Number,
-      default: Infinity,
-    },
     autoHeight: {
       type: Boolean,
       default: false,
     },
     disabled: {
-      type: Boolean,
-      default: false,
-    },
-    resizable: {
       type: Boolean,
       default: false,
     },
@@ -170,63 +77,104 @@ export default {
     return {
       resizing: null,
       dragging: null,
-      lastX: NaN,
-      lastY: NaN,
-      lastW: NaN,
-      lastH: NaN,
-      style: {},
     };
   },
   computed: {
+    cardClass() {
+      return {
+        'c-grid-item--resizing': this.resizing || this.dragging,
+        'c-grid-item--disabled': this.disabled,
+      };
+    },
+
     columnWidth() {
       return (this.containerWidth - (this.margin[0] * (this.columnsCount + 1))) / this.columnsCount;
     },
 
-    on() {
+    slotOn() {
       if (this.disabled) {
         return {};
       }
 
       return {
-        pointerdown: this.dragstartHandler,
+        pointerdown: this.dragStartHandler,
       };
     },
 
-    innerX() {
-      return this.x + this.w > this.columnsCount
-        ? 0
-        : this.x;
+    resizeHandlerOn() {
+      return {
+        pointerdown: this.resizeStartHandler,
+      };
     },
 
-    innerW() {
-      return (this.x + this.w > this.columnsCount) && (this.w > this.columnsCount)
+    x() {
+      const { x = 0, w = 0 } = this.item;
+
+      return x + w > this.columnsCount
+        ? 0
+        : x;
+    },
+
+    y() {
+      return this.item.y ?? 0;
+    },
+
+    w() {
+      const { x = 0, w = 0 } = this.item;
+
+      return (x + w > this.columnsCount) && (w > this.columnsCount)
         ? this.columnsCount
-        : this.w;
+        : w;
+    },
+
+    h() {
+      return this.item.h ?? 0;
     },
 
     layoutElement() {
       return this.$parent?.$el ?? document.body;
     },
 
-    gridParameters() {
-      const key = MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.$mq];
-
-      return this.widget.grid_parameters[key];
-    },
-
-    overviewItemStyle() {
+    disabledItemStyle() {
       return {
-        margin: `${WIDGET_GRID_ROW_HEIGHT / 2}px 0`,
-        gridColumnStart: this.gridParameters.x + 1,
-        gridColumnEnd: this.gridParameters.x + 1 + this.gridParameters.w,
-        gridRowStart: this.gridParameters.y + 1,
-        gridRowEnd: this.gridParameters.y + this.gridParameters.h + 1,
-        height: this.gridParameters.autoHeight ? 'auto' : `${WIDGET_GRID_ROW_HEIGHT * this.gridParameters.h}px`,
+        margin: `${this.rowHeight / 2}px 0`,
+        gridColumnStart: this.x + 1,
+        gridColumnEnd: this.x + 1 + this.w,
+        gridRowStart: this.y + 1,
+        gridRowEnd: this.y + this.h + 1,
+        height: this.autoHeight ? 'auto' : `${this.rowHeight * this.h}px`,
       };
     },
 
-    preparedStyle() {
-      return this.disabled ? this.overviewItemStyle : this.style;
+    enabledItemStyle() {
+      const position = this.calculatePosition(this.x, this.y, this.w, this.h);
+
+      if (this.dragging) {
+        position.top = this.dragging.top;
+        position.left = this.dragging.left;
+      }
+
+      if (this.resizing) {
+        position.width = this.resizing.width;
+        position.height = this.resizing.height;
+      }
+
+      const translate = `translate3d(${position.left}px,${position.top}px, 0)`;
+
+      return {
+        transform: translate,
+        WebkitTransform: translate,
+        MozTransform: translate,
+        msTransform: translate,
+        OTransform: translate,
+        width: `${position.width}px`,
+        height: `${position.height}px`,
+        position: 'absolute',
+      };
+    },
+
+    style() {
+      return this.disabled ? this.disabledItemStyle : this.enabledItemStyle;
     },
   },
   watch: {
@@ -240,9 +188,9 @@ export default {
     },
   },
   created() {
-    this.throttledMousemoveHandler = throttle(this.mousemoveHandler, this.throttle);
-    this.throttledDragoverHandler = throttle(this.dragoverHandler, this.throttle);
-    this.debouncedAutoSizeHeight = debounce(() => setTimeout(this.autoSizeHeight, 0), this.debounce);
+    this.throttledResizeProcessHandler = throttle(this.resizeProcessHandler, this.throttle);
+    this.throttledDragProcessHandler = throttle(this.dragProcessHandler, this.throttle);
+    this.debouncedSetAutoCalculatedHeight = debounce(() => setTimeout(this.setAutoCalculatedHeight, 0), this.debounce);
   },
   mounted() {
     if (!this.disabled) {
@@ -254,46 +202,37 @@ export default {
   },
   methods: {
     addAllWatchersAndListeners() {
-      this.calculateStyle();
-      this.addAllAutoSizeListeners();
+      this.addAllAutoHeightListeners();
       this.addAllMainPropsWatchers();
-      this.addAllResizeListeners();
     },
 
     removeAllWatchersAndListeners() {
-      this.removeAllAutoSizeListeners();
+      this.removeAllAutoHeightListeners();
       this.removeAllMainPropsWatchers();
       this.removeAllResizeListeners();
       this.removeAllDragListeners();
     },
 
     addAllMainPropsWatchers() {
+      if (this.$mainPropsWatchers) {
+        return;
+      }
+
       this.$mainPropsWatchers = [
-        'x',
-        'y',
-        'w',
-        'h',
-        'rowHeight',
-        'columnsCount',
-      ].map(prop => this.$watch(prop, this.calculateStyle));
-
-      this.$mainPropsWatchers.push(
         this.$watch('containerWidth', () => {
-          this.calculateStyle();
-
           if (this.autoHeight) {
-            this.debouncedAutoSizeHeight();
+            this.debouncedSetAutoCalculatedHeight();
           }
         }),
 
         this.$watch('autoHeight', () => {
           if (this.autoHeight) {
-            this.addAllAutoSizeListeners();
+            this.addAllAutoHeightListeners();
           } else {
-            this.removeAllAutoSizeListeners();
+            this.removeAllAutoHeightListeners();
           }
         }),
-      );
+      ];
     },
 
     removeAllMainPropsWatchers() {
@@ -306,27 +245,27 @@ export default {
       delete this.$mainPropsWatchers;
     },
 
-    calculateWH(height, width) {
+    calculateXY(top, left) {
+      const [marginX] = this.margin;
+
+      const x = Math.round((left - marginX) / (this.columnWidth + marginX));
+      const y = Math.round(top / this.rowHeight);
+
+      return {
+        x: Math.max(Math.min(x, this.columnsCount - this.w), 0),
+        y: Math.max(y, 0),
+      };
+    },
+
+    calculateWH(width, height) {
       const [marginX] = this.margin;
       const w = Math.round((width + marginX) / (this.columnWidth + marginX));
       const h = Math.round((height) / this.rowHeight);
 
       return {
-        w: Math.min(Math.max(Math.min(w, this.columnsCount - this.innerX), this.minW), this.maxW),
-        h: Math.min(Math.max(Math.min(h, this.maxRows - this.y), this.minH), this.maxH),
+        w: Math.min(Math.max(Math.min(w, this.columnsCount - this.x), this.minW), this.maxW),
+        h: Math.min(Math.max(h, this.minH), this.maxH),
       };
-    },
-
-    calculateXY(top, left) {
-      const [marginX] = this.margin;
-
-      let x = Math.round((left - marginX) / (this.columnWidth + marginX));
-      let y = Math.round(top / this.rowHeight);
-
-      x = Math.max(Math.min(x, this.columnsCount - this.innerW), 0);
-      y = Math.max(Math.min(y, this.maxRows - this.h), 0);
-
-      return { x, y };
     },
 
     calculatePosition(x, y, w, h) {
@@ -341,50 +280,23 @@ export default {
       };
     },
 
-    calculateStyle() {
-      const pos = this.calculatePosition(this.innerX, this.y, this.innerW, this.h);
-
-      if (this.dragging) {
-        pos.top = this.dragging.top;
-        pos.left = this.dragging.left;
-      }
-
-      if (this.resizing) {
-        pos.width = this.resizing.width;
-        pos.height = this.resizing.height;
-      }
-
-      const translate = `translate3d(${pos.left}px,${pos.top}px, 0)`;
-
-      this.style = {
-        transform: translate,
-        WebkitTransform: translate,
-        MozTransform: translate,
-        msTransform: translate,
-        OTransform: translate,
-        width: `${pos.width}px`,
-        height: `${pos.height}px`,
-        position: 'absolute',
-      };
-    },
-
     /**
-     * AUTO SIZE
+     * AUTO HEIGHT
      */
-    addAllAutoSizeListeners() {
+    addAllAutoHeightListeners() {
       if (!this.autoHeight) {
         return;
       }
 
-      this.debouncedAutoSizeHeight();
+      this.debouncedSetAutoCalculatedHeight();
 
-      this.$mutationObserver = new MutationObserver(this.debouncedAutoSizeHeight);
+      this.$mutationObserver = new MutationObserver(this.debouncedSetAutoCalculatedHeight);
 
       /**
        * We are observe on the mutationObserver after render
        */
       this.$nextTick(() => {
-        const element = this.getDefaultSlotElement();
+        const element = this.$refs.defaultSlotWrapper;
 
         if (!element) {
           return;
@@ -397,7 +309,7 @@ export default {
       });
     },
 
-    removeAllAutoSizeListeners() {
+    removeAllAutoHeightListeners() {
       if (!this.$mutationObserver) {
         return;
       }
@@ -407,202 +319,171 @@ export default {
       delete this.$mutationObserver;
     },
 
-    getDefaultSlotElement() {
-      return this.$refs?.defaultSlotWrapper ?? null;
-    },
-
-    autoSizeHeight() {
-      const element = this.getDefaultSlotElement();
+    setAutoCalculatedHeight() {
+      const element = this.$refs.defaultSlotWrapper;
 
       if (!element) {
         return;
       }
 
-      const newSize = element.getBoundingClientRect();
-      const pos = this.calculateWH(newSize.height, newSize.width);
+      const { height = 0, width = 0 } = element.getBoundingClientRect();
+      let { h } = this.calculateWH(width, height);
 
-      pos.h = Math.max(Math.min(pos.h, this.maxH), this.minH);
+      h = Math.max(Math.min(h, this.maxH), this.minH);
 
-      if (this.h !== pos.h) {
-        this.$emit('resized', this.i, this.innerX, this.y, pos.h, this.innerW);
+      if (this.h !== h) {
+        this.$emit('resized', this.item, this.w, h);
       }
     },
 
     /**
      * RESIZING
      */
-    addAllResizeListeners() {
-      this.$refs.resizeHandler?.addEventListener('mousedown', this.mousedownHandler);
-      document.addEventListener('mouseup', this.mouseupHandler);
-    },
-
     removeAllResizeListeners() {
-      this.$refs.resizeHandler?.removeEventListener('mousedown', this.mousedownHandler);
-      document.removeEventListener('mouseup', this.mouseupHandler);
+      window.removeEventListener('pointerup', this.resizeEndHandler);
+      window.removeEventListener('pointermove', this.throttledResizeProcessHandler);
     },
 
-    mousedownHandler(event) {
+    setWHByResizing(position, controlPosition) {
+      this.resizing = position;
+      this.controlX = controlPosition.x;
+      this.controlY = controlPosition.y;
+
+      const { w, h } = this.calculateWH(position.width, position.height);
+
+      if (this.w !== w || this.h !== h) {
+        this.$emit('resize', this.item, w, h);
+      }
+    },
+
+    resizeStartHandler(event) {
       if (event.button) {
         return;
       }
 
-      event.stopPropagation();
-      event.preventDefault();
+      window.addEventListener('pointerup', this.resizeEndHandler);
+      window.addEventListener('pointermove', this.throttledResizeProcessHandler);
 
-      document.addEventListener('mousemove', this.throttledMousemoveHandler);
-
-      const position = getControlPosition(event, this.layoutElement);
-      this.resizing = this.calculatePosition(this.innerX, this.y, this.innerW, this.h);
-
-      const { w, h } = this.calculateWH(this.resizing.height, this.resizing.width);
-
-      this.$emit('resize', this.i, this.x, this.y, h, w);
-
-      this.lastW = position.x;
-      this.lastH = position.y;
-
-      this.calculateStyle();
+      this.setWHByResizing(
+        this.calculatePosition(this.x, this.y, this.w, this.h),
+        getControlPosition(event, this.layoutElement),
+      );
     },
 
-    mousemoveHandler(event) {
+    resizeProcessHandler(event) {
+      const element = this.$refs.defaultSlotWrapper;
+
+      if (!this.resizing || !element) {
+        return;
+      }
+
+      const { height = 0 } = element.getBoundingClientRect();
+      const controlPosition = getControlPosition(event, this.layoutElement);
+      const delta = getItemDelta(this.controlX, this.controlY, controlPosition.x, controlPosition.y);
+
+      this.setWHByResizing(
+        {
+          width: this.resizing.width + delta.deltaX,
+          height: this.autoHeight
+            ? height
+            : this.resizing.height + delta.deltaY,
+        },
+        controlPosition,
+      );
+    },
+
+    resizeEndHandler() {
       if (!this.resizing) {
         return;
       }
 
-      const position = getControlPosition(event, this.layoutElement);
-      const element = this.getDefaultSlotElement();
-      const newElementSize = element.getBoundingClientRect();
-      const coreEvent = createCoreData(this.lastW, this.lastH, position.x, position.y);
+      window.removeEventListener('pointermove', this.throttledResizeProcessHandler);
 
-      this.lastW = position.x;
-      this.lastH = position.y;
-      this.resizing = {
-        width: this.resizing.width + coreEvent.deltaX,
-        height: this.autoHeight
-          ? newElementSize.height
-          : this.resizing.height + coreEvent.deltaY,
-      };
+      this.resizing = this.calculatePosition(this.x, this.y, this.w, this.h);
 
-      const { w, h } = this.calculateWH(this.resizing.height, this.resizing.width);
+      const { w, h } = this.calculateWH(this.resizing.width, this.resizing.height);
 
-      if (this.innerW !== w || this.h !== h) {
-        this.$emit('resize', this.i, this.x, this.y, h, w);
-      }
-
-      this.calculateStyle();
-    },
-
-    mouseupHandler() {
-      if (!this.resizing) {
-        return;
-      }
-
-      document.removeEventListener('mousemove', this.throttledMousemoveHandler);
-
-      this.resizing = this.calculatePosition(this.innerX, this.y, this.innerW, this.h);
-
-      const { w, h } = this.calculateWH(this.resizing.height, this.resizing.width);
-
-      this.$emit('resized', this.i, this.x, this.y, h, w);
+      this.$emit('resized', this.item, w, h);
 
       if (this.autoHeight) {
-        this.debouncedAutoSizeHeight();
+        this.debouncedSetAutoCalculatedHeight();
       }
 
       this.resizing = false;
-      this.calculateStyle();
     },
 
     /**
      * DRAG AND DROP
      */
-
     removeAllDragListeners() {
-      this.layoutElement.removeEventListener('pointermove', this.throttledDragoverHandler);
-      window.removeEventListener('pointerup', this.dragendHandler);
+      window.removeEventListener('pointermove', this.throttledDragProcessHandler);
+      window.removeEventListener('pointerup', this.dragEndHandler);
     },
 
-    dragstartHandler(event) {
-      if (this.resizing) {
-        event.preventDefault();
+    setXYByDragging(position, controlPosition) {
+      this.dragging = position;
+      this.controlX = controlPosition.x;
+      this.controlY = controlPosition.y;
 
+      const { x, y } = this.calculateXY(position.top, position.left);
+
+      if (this.x !== x || this.y !== y) {
+        this.$emit('move', this.item, x, y);
+      }
+    },
+
+    dragStartHandler(event) {
+      if (this.resizing) {
         return;
       }
 
-      this.layoutElement.addEventListener('pointermove', this.throttledDragoverHandler);
-      window.addEventListener('pointerup', this.dragendHandler);
-
-      const position = getControlPosition(event, this.layoutElement);
-      const newPosition = { top: 0, left: 0 };
-      const { x, y } = position;
+      window.addEventListener('pointermove', this.throttledDragProcessHandler);
+      window.addEventListener('pointerup', this.dragEndHandler);
 
       const parentRect = this.layoutElement.getBoundingClientRect();
       const clientRect = event.target.getBoundingClientRect();
-      newPosition.left = clientRect.left - parentRect.left;
-      newPosition.top = clientRect.top - parentRect.top;
-      this.dragging = newPosition;
-      const pos = this.calculateXY(newPosition.top, newPosition.left);
 
-      this.lastX = x;
-      this.lastY = y;
-
-      if (this.innerX !== pos.x || this.y !== pos.y) {
-        this.$emit('move', this.i, pos.x, pos.y);
-      }
-
-      this.calculateStyle();
+      this.setXYByDragging(
+        {
+          top: clientRect.top - parentRect.top,
+          left: clientRect.left - parentRect.left,
+        },
+        getControlPosition(event, this.layoutElement),
+      );
     },
 
-    dragoverHandler(event) {
-      event.preventDefault();
-
+    dragProcessHandler(event) {
       if (!this.dragging || this.resizing) {
         return;
       }
 
-      const position = getControlPosition(event, this.layoutElement);
-      const { x, y } = position;
-      const coreEvent = createCoreData(this.lastX, this.lastY, x, y);
+      const controlPosition = getControlPosition(event, this.layoutElement);
+      const delta = getItemDelta(this.controlX, this.controlY, controlPosition.x, controlPosition.y);
 
-      this.dragging = {
-        top: this.dragging.top + coreEvent.deltaY,
-        left: this.dragging.left + coreEvent.deltaX,
-      };
-
-      const pos = this.calculateXY(this.dragging.top, this.dragging.left);
-
-      this.lastX = x;
-      this.lastY = y;
-
-      if (this.innerX !== pos.x || this.y !== pos.y) {
-        this.$emit('move', this.i, pos.x, pos.y);
-      }
-
-      this.calculateStyle();
+      this.setXYByDragging(
+        {
+          top: this.dragging.top + delta.deltaY,
+          left: this.dragging.left + delta.deltaX,
+        },
+        controlPosition,
+      );
     },
 
-    dragendHandler(event) {
+    dragEndHandler(event) {
       if (!this.dragging || this.resizing) {
         return;
       }
 
-      this.layoutElement.removeEventListener('dragover', this.throttledDragoverHandler);
-      this.$el.removeEventListener('dragend', this.dragendHandler);
+      window.removeEventListener('pointermove', this.throttledDragProcessHandler);
+      window.removeEventListener('pointerup', this.dragEndHandler);
 
-      const position = getControlPosition(event, this.layoutElement);
-      const { x, y } = position;
-      const coreEvent = createCoreData(this.lastX, this.lastY, x, y);
-      const newPosition = {
-        top: this.dragging.top + coreEvent.deltaY,
-        left: this.dragging.left + coreEvent.deltaX,
-      };
+      const controlPosition = getControlPosition(event, this.layoutElement);
+      const delta = getItemDelta(this.controlX, this.controlY, controlPosition.x, controlPosition.y);
+      const { x, y } = this.calculateXY(this.dragging.top + delta.deltaY, this.dragging.left + delta.deltaX);
 
       this.dragging = null;
 
-      const pos = this.calculateXY(newPosition.top, newPosition.left);
-
-      this.$emit('moved', this.i, pos.x, pos.y);
-      this.calculateStyle();
+      this.$emit('moved', this.item, x, y);
     },
   },
 };
@@ -626,11 +507,6 @@ export default {
     opacity: .7;
   }
 
-  &--resizing {
-    opacity: .7;
-    user-select: none;
-  }
-
   &:not(&--disabled) {
     position: absolute;
     left: 0;
@@ -638,6 +514,12 @@ export default {
     z-index: 2;
     overflow: hidden;
     height: 1000px;
+
+    &.c-grid-item--resizing {
+      opacity: .7;
+      z-index: 999;
+      user-select: none;
+    }
 
     .c-grid-item__resize-handler {
       display: block;
