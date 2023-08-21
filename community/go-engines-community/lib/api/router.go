@@ -130,6 +130,7 @@ func RegisterRoutes(
 		security.GetAuthProviders(),
 		websocketStore,
 		maintenanceAdapter,
+		enforcer,
 		security.GetCookieOptions().FileAccessName,
 		security.GetCookieOptions().MaxAge,
 		logger,
@@ -138,6 +139,7 @@ func RegisterRoutes(
 		sessionStore,
 		security.GetAuthProviders(),
 		maintenanceAdapter,
+		enforcer,
 		logger,
 	)
 	router.POST("/auth", sessionauthApi.LoginHandler())

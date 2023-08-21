@@ -32,8 +32,8 @@ type UserProvider interface {
 	FindByID(ctx context.Context, id string) (*User, error)
 	// FindByExternalSource returns user with ID from source or nil.
 	FindByExternalSource(ctx context.Context, externalID string, source Source) (*User, error)
-	// FindNotAdmins returns users without admin role.
-	FindNotAdmins(ctx context.Context) ([]User, error)
+	// FindWithoutMaintenancePerm returns users without maintenance permission.
+	FindWithoutMaintenancePerm(ctx context.Context) ([]User, error)
 	// Save updates user or inserts user if not exist.
 	Save(ctx context.Context, user *User) error
 }
