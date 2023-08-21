@@ -278,18 +278,18 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 	return updatedEntities, nil
 }
 
-func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types.Entity, []types.Entity, error) {
-	if serviceID == "" {
+func (m *manager) RecomputeService(ctx context.Context, serviceName string) (types.Entity, []types.Entity, error) {
+	if serviceName == "" {
 		return types.Entity{}, nil, nil
 	}
 
-	service, err := m.storage.Get(ctx, serviceID)
+	service, err := m.storage.Get(ctx, serviceName)
 	if err != nil {
 		return types.Entity{}, nil, err
 	}
 
 	if !service.Enabled || service.ID == "" {
-		return m.processDisabledService(ctx, service, serviceID)
+		return m.processDisabledService(ctx, service, service.ID)
 	}
 
 	var updatedEntities []types.Entity
@@ -308,7 +308,7 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 	cursor, err := m.collection.Find(
 		ctx,
 		bson.M{"$and": bson.A{
-			bson.M{"services": serviceID},
+			bson.M{"services": service.ID},
 			negativeQuery,
 		}},
 	)
@@ -326,14 +326,14 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 		entitiesToRemoveMap[ent.ID] = true
 
 		for idx, impServ := range ent.Services {
-			if impServ == serviceID {
+			if impServ == service.ID {
 				ent.Services = append(ent.Services[:idx], ent.Services[idx+1:]...)
 				break
 			}
 		}
 
 		for idx, impServ := range ent.ServicesToAdd {
-			if impServ == serviceID {
+			if impServ == service.ID {
 				ent.ServicesToAdd = append(ent.ServicesToAdd[:idx], ent.ServicesToAdd[idx+1:]...)
 				break
 			}
@@ -346,7 +346,7 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 	cursor, err = m.collection.Find(
 		ctx,
 		bson.M{"$and": bson.A{
-			bson.M{"services": bson.M{"$ne": serviceID}},
+			bson.M{"services": bson.M{"$ne": service.ID}},
 			query,
 		}})
 	if err != nil {
@@ -360,13 +360,13 @@ func (m *manager) RecomputeService(ctx context.Context, serviceID string) (types
 
 	for _, ent := range entitiesToAdd {
 		for idx, impServ := range ent.ServicesToRemove {
-			if impServ == serviceID {
+			if impServ == service.ID {
 				ent.ServicesToRemove = append(ent.ServicesToRemove[:idx], ent.ServicesToRemove[idx+1:]...)
 				break
 			}
 		}
 
-		ent.Services = append(ent.Services, serviceID)
+		ent.Services = append(ent.Services, service.ID)
 		updatedEntities = append(updatedEntities, ent)
 	}
 
