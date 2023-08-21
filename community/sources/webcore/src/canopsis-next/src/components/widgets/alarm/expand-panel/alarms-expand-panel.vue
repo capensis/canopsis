@@ -102,7 +102,6 @@
                   :children="children",
                   :alarm="alarm",
                   :widget="widget",
-                  :editing="editing",
                   :pending="pending",
                   :query.sync="childrenQuery",
                   :refresh-alarms-list="fetchList"
@@ -197,10 +196,6 @@ export default {
     widget: {
       type: Object,
       required: true,
-    },
-    editing: {
-      type: Boolean,
-      default: false,
     },
     hideChildren: {
       type: Boolean,

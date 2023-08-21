@@ -1,18 +1,18 @@
 <template lang="pug">
-  v-card.c-grid-item(
+  v-card.grid-item(
     :class="cardClass",
     :style="style"
   )
     div(ref="defaultSlotWrapper")
-      slot(:on="slotOn")
-    div.c-grid-item__resize-handler(v-if="!disabled", v-on="resizeHandlerOn")
+      slot(:on="slotOn", :item="item")
+    div.grid-item__resize-handler(v-if="!disabled", v-on="resizeHandlerOn")
       v-icon(small) $vuetify.icons.resize_right
 </template>
 
 <script>
 import { debounce, throttle } from 'lodash';
 
-import { getItemDelta, getCountAboveItems, getControlPosition } from '@/helpers/grid';
+import { getControlPosition, getCountAboveItems, getItemDelta } from '@/helpers/grid';
 
 export default {
   props: {
@@ -56,10 +56,6 @@ export default {
       type: Number,
       default: Infinity,
     },
-    autoHeight: {
-      type: Boolean,
-      default: false,
-    },
     disabled: {
       type: Boolean,
       default: false,
@@ -82,8 +78,8 @@ export default {
   computed: {
     cardClass() {
       return {
-        'c-grid-item--resizing': this.resizing || this.dragging,
-        'c-grid-item--disabled': this.disabled,
+        'grid-item--resizing': this.resizing || this.dragging,
+        'grid-item--disabled': this.disabled,
       };
     },
 
@@ -98,6 +94,7 @@ export default {
 
       return {
         pointerdown: this.dragStartHandler,
+        toggle: this.toggleAutoHeightHandler,
       };
     },
 
@@ -131,13 +128,18 @@ export default {
       return this.item.h ?? 0;
     },
 
+    autoHeight() {
+      return this.item.autoHeight ?? false;
+    },
+
     layoutElement() {
       return this.$parent?.$el ?? document.body;
     },
 
     disabledItemStyle() {
+      const [, marginY = 0] = this.margin;
       return {
-        margin: `${this.rowHeight / 2}px 0`,
+        margin: `${marginY}px 0`,
         gridColumnStart: this.x + 1,
         gridColumnEnd: this.x + 1 + this.w,
         gridRowStart: this.y + 1,
@@ -201,6 +203,10 @@ export default {
     this.removeAllWatchersAndListeners();
   },
   methods: {
+    toggleAutoHeightHandler() {
+      this.$emit('toggle', this.item);
+    },
+
     addAllWatchersAndListeners() {
       this.addAllAutoHeightListeners();
       this.addAllMainPropsWatchers();
@@ -490,7 +496,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.c-grid-item {
+.grid-item {
   transition: none;
   overflow: auto;
 
@@ -515,13 +521,13 @@ export default {
     overflow: hidden;
     height: 1000px;
 
-    &.c-grid-item--resizing {
+    &.grid-item--resizing {
       opacity: .7;
       z-index: 999;
       user-select: none;
     }
 
-    .c-grid-item__resize-handler {
+    .grid-item__resize-handler {
       display: block;
     }
 
