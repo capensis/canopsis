@@ -20,6 +20,8 @@ import (
 const (
 	defaultClientTimeout            = 15 * time.Second
 	disableRetries       contextKey = "disable_retries"
+
+	transactionTestTimeout = 3 * time.Second
 )
 
 type contextKey string
@@ -471,7 +473,7 @@ func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) 
 }
 
 func (c *dbClient) checkTransactionEnabled(pCtx context.Context, logger zerolog.Logger) {
-	ctx, cancel := context.WithTimeout(pCtx, time.Second)
+	ctx, cancel := context.WithTimeout(pCtx, transactionTestTimeout)
 	defer cancel()
 
 	session, err := c.Client.StartSession()
