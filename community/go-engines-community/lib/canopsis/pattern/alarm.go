@@ -269,6 +269,12 @@ func (p Alarm) ToMongoQuery(prefix string) (bson.M, error) {
 			}
 
 			mongoField := prefix + cond.Field
+
+			// backport from 23.10, ticket object was changed since version 23.04
+			if cond.Field == "v.ticket.ticket" {
+				mongoField = prefix + "v.ticket.val"
+			}
+
 			foundField := false
 			if _, ok := getAlarmStringField(emptyAlarm, cond.Field); ok {
 				foundField = true
@@ -461,7 +467,7 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 			return "", true
 		}
 
-		return alarm.Value.Ticket.Ticket, true
+		return alarm.Value.Ticket.Value, true
 	case "v.ack.a":
 		if alarm.Value.ACK == nil {
 			return "", true
