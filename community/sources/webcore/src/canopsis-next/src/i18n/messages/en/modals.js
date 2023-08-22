@@ -959,4 +959,14 @@ export default {
   importPbehaviorException: {
     title: 'Import exception dates',
   },
+  createMaintenance: {
+    cancelMaintenance: 'Cancel maintenance mode',
+    enableMaintenance: 'Enable maintenance mode',
+    setup: {
+      title: 'Maintenance mode setup',
+    },
+    cancel: {
+      title: 'Maintenance mode',
+    },
+  },
 };
