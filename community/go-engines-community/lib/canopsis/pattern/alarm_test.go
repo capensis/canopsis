@@ -579,6 +579,82 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			},
 			matchResult: true,
 		},
+		"given match ticket's message condition should match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.ticket.m",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test"),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{
+					Ticket: &types.AlarmStep{
+						Message: "test",
+					},
+				},
+			},
+			matchResult: true,
+		},
+		"given match ticket's message condition should not match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.ticket.m",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test"),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{
+					Ticket: &types.AlarmStep{
+						Message: "test 2",
+					},
+				},
+			},
+			matchResult: false,
+		},
+		"given match ticket's ticket condition should match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.ticket.ticket",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test"),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{
+					Ticket: &types.AlarmStep{
+						TicketInfo: types.TicketInfo{
+							Ticket: "test",
+						},
+					},
+				},
+			},
+			matchResult: true,
+		},
+		"given match ticket's ticket condition should not match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.ticket.ticket",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test"),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{
+					Ticket: &types.AlarmStep{
+						TicketInfo: types.TicketInfo{
+							Ticket: "test 2",
+						},
+					},
+				},
+			},
+			matchResult: false,
+		},
 	}
 }
 
@@ -828,6 +904,26 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 						"$gt": types.NewCpsTime(from),
 						"$lt": types.NewCpsTime(to),
 					}},
+				}},
+			}},
+		},
+		"given ticket conditions": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.ticket.ticket",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test ticket"),
+					},
+					{
+						Field:     "v.ticket.m",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test message"),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"alarm.v.ticket.ticket": bson.M{"$eq": "test ticket"}},
+					{"alarm.v.ticket.m": bson.M{"$eq": "test message"}},
 				}},
 			}},
 		},
