@@ -313,19 +313,19 @@ func (mr *MockUserProviderMockRecorder) FindByUsername(arg0, arg1 interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByUsername", reflect.TypeOf((*MockUserProvider)(nil).FindByUsername), arg0, arg1)
 }
 
-// FindWithoutMaintenancePerm mocks base method.
-func (m *MockUserProvider) FindWithoutMaintenancePerm(arg0 context.Context) ([]security.User, error) {
+// FindWithoutPermission mocks base method.
+func (m *MockUserProvider) FindWithoutPermission(arg0 context.Context, arg1 string) ([]security.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindWithoutMaintenancePerm", arg0)
+	ret := m.ctrl.Call(m, "FindWithoutPermission", arg0, arg1)
 	ret0, _ := ret[0].([]security.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// FindWithoutMaintenancePerm indicates an expected call of FindWithoutMaintenancePerm.
-func (mr *MockUserProviderMockRecorder) FindWithoutMaintenancePerm(arg0 interface{}) *gomock.Call {
+// FindWithoutPermission indicates an expected call of FindWithoutPermission.
+func (mr *MockUserProviderMockRecorder) FindWithoutPermission(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindWithoutMaintenancePerm", reflect.TypeOf((*MockUserProvider)(nil).FindWithoutMaintenancePerm), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindWithoutPermission", reflect.TypeOf((*MockUserProvider)(nil).FindWithoutPermission), arg0, arg1)
 }
 
 // Save mocks base method.
