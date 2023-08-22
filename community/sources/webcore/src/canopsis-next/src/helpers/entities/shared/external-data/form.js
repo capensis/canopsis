@@ -122,11 +122,13 @@ export const externalDataItemToForm = (reference = '', item = { type: EXTERNAL_D
 /**
  * Convert external data to form
  *
- * @param {ExternalData} [externalData = {}]
+ * @param {ExternalData} [externalData]
  * @returns {ExternalDataForm}
  */
-export const externalDataToForm = (externalData = {}) => (
-  Object.entries(externalData).map(([reference, item]) => externalDataItemToForm(reference, item))
+export const externalDataToForm = externalData => (
+  externalData
+    ? Object.entries(externalData).map(([reference, item]) => externalDataItemToForm(reference, item))
+    : []
 );
 
 /**

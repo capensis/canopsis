@@ -546,6 +546,11 @@ export default {
       name: 'Widget templates',
       description: 'This permission defines the access to the Widget templates',
     },
+    [USERS_PERMISSIONS.technical.maintenance]: {
+      name: 'Maintenance mode',
+      // TODO: Should be added
+      description: '',
+    },
 
     /**
      * Technical Exploitation Permissions
