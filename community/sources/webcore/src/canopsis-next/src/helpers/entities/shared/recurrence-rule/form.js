@@ -67,6 +67,7 @@ export const recurrenceRuleToFormOptions = recurrenceRule => ({
   freq: recurrenceRule.freq || null,
   count: recurrenceRule.count || '',
   interval: recurrenceRule.interval || '',
+  until: recurrenceRule.until,
   byweekday: recurrenceRule.byweekday ? recurrenceRule.byweekday.map(v => v.weekday) : [],
   wkst: recurrenceRule.wkst ? recurrenceRule.wkst.weekday : '',
   bymonth: recurrenceRule.bymonth || [],
@@ -113,6 +114,16 @@ export const formOptionsToRecurrenceRuleOptions = (options, advancedFields = [])
 
   if (isNumber(options.wkst)) {
     recurrenceRuleOptions.wkst = options.wkst;
+  }
+
+  if (options.until) {
+    recurrenceRuleOptions.until = Date.UTC(
+      options.until.getFullYear(),
+      options.until.getMonth() + 1,
+      options.until.getDate(),
+      options.until.getHours(),
+      options.until.getMinutes(),
+    );
   }
 
   return recurrenceRuleOptions;
