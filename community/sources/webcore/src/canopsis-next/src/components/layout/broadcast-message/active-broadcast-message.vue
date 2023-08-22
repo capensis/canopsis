@@ -6,7 +6,7 @@
       :message="activeMessage.message",
       :color="activeMessage.color"
     )
-      template(v-if="activeMessage.maintenance", #actions="")
+      template(v-if="isLoggedIn && activeMessage.maintenance", #actions="")
         v-btn.my-0.ml-0.mr-2(
           color="white",
           outline,
@@ -27,6 +27,7 @@ import { SOCKET_ROOMS } from '@/config';
 import { MODALS } from '@/constants';
 
 import { maintenanceActionsMixin } from '@/mixins/maintenance/maintenance-actions';
+import { authMixin } from '@/mixins/auth';
 
 import BroadcastMessage from '@/components/other/broadcast-message/partials/broadcast-message.vue';
 
@@ -34,7 +35,7 @@ const { mapActions } = createNamespacedHelpers('broadcastMessage');
 
 export default {
   components: { BroadcastMessage },
-  mixins: [maintenanceActionsMixin],
+  mixins: [maintenanceActionsMixin, authMixin],
   data() {
     return {
       activeMessages: [],
