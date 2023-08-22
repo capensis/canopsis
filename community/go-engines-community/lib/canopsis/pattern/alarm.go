@@ -450,6 +450,18 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 			return "", true
 		}
 		return alarm.Value.LastComment.Message, true
+	case "v.ticket.m":
+		if alarm.Value.Ticket == nil {
+			return "", true
+		}
+
+		return alarm.Value.Ticket.Message, true
+	case "v.ticket.ticket":
+		if alarm.Value.Ticket == nil {
+			return "", true
+		}
+
+		return alarm.Value.Ticket.Ticket, true
 	case "v.ack.a":
 		if alarm.Value.ACK == nil {
 			return "", true
