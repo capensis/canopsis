@@ -4,7 +4,6 @@ package userprovider
 import (
 	"context"
 
-	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -30,7 +29,7 @@ func NewMongoProvider(db libmongo.DbClient, configProvider config.ApiConfigProvi
 	}
 }
 
-func (p *mongoProvider) FindWithoutMaintenancePerm(ctx context.Context) ([]security.User, error) {
+func (p *mongoProvider) FindWithoutPermission(ctx context.Context, perm string) ([]security.User, error) {
 	var users []security.User
 
 	cursor, err := p.collection.Aggregate(ctx, []bson.M{
@@ -46,7 +45,7 @@ func (p *mongoProvider) FindWithoutMaintenancePerm(ctx context.Context) ([]secur
 			"$match": bson.M{
 				"roles_objects": bson.M{
 					"$elemMatch": bson.M{
-						"permissions." + apisecurity.PermMaintenance: bson.M{"$exists": false},
+						"permissions." + perm: bson.M{"$exists": false},
 					},
 				},
 			},
