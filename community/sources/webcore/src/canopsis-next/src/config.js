@@ -90,6 +90,7 @@ export const API_ROUTES = {
   logout: '/api/v4/logout',
   loggedUserCount: '/api/v4/logged-user-count',
   currentUser: '/api/v4/account/me',
+  maintenance: '/api/v4/maintenance',
   alarms: {
     list: '/api/v4/alarms',
     bulkList: '/api/v4/bulk/alarms',
