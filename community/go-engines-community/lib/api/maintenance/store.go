@@ -81,7 +81,7 @@ func (s *store) Enable(ctx context.Context, message, color string) error {
 	return s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		now := types.NewCpsTime()
 
-		users, err := s.userProvider.FindWithoutMaintenancePerm(ctx)
+		users, err := s.userProvider.FindWithoutPermission(ctx, apisecurity.PermMaintenance)
 		if err != nil {
 			panic(err)
 		}
