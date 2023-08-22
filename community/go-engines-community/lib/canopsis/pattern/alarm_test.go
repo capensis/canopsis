@@ -590,7 +590,7 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			},
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
-					Ticket: &types.AlarmStep{
+					Ticket: &types.AlarmTicket{
 						Message: "test",
 					},
 				},
@@ -608,7 +608,7 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			},
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
-					Ticket: &types.AlarmStep{
+					Ticket: &types.AlarmTicket{
 						Message: "test 2",
 					},
 				},
@@ -626,10 +626,8 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			},
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
-					Ticket: &types.AlarmStep{
-						TicketInfo: types.TicketInfo{
-							Ticket: "test",
-						},
+					Ticket: &types.AlarmTicket{
+						Value: "test",
 					},
 				},
 			},
@@ -646,10 +644,8 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			},
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
-					Ticket: &types.AlarmStep{
-						TicketInfo: types.TicketInfo{
-							Ticket: "test 2",
-						},
+					Ticket: &types.AlarmTicket{
+						Value: "test 2",
 					},
 				},
 			},
@@ -922,7 +918,7 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 			},
 			mongoQueryResult: bson.M{"$or": []bson.M{
 				{"$and": []bson.M{
-					{"alarm.v.ticket.ticket": bson.M{"$eq": "test ticket"}},
+					{"alarm.v.ticket.val": bson.M{"$eq": "test ticket"}},
 					{"alarm.v.ticket.m": bson.M{"$eq": "test message"}},
 				}},
 			}},
