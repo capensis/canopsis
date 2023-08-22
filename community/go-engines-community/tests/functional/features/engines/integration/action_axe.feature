@@ -1,7 +1,6 @@
 Feature: update alarm on action
   I need to be able to update alarm on action.
 
-  @concurrent
   Scenario: given alarm and scenario with resolve trigger should call webhook on resolve
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -45,7 +44,7 @@ Feature: update alarm on action
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event and wait the end of event processing:
+    When I send an event:
     """json
     {
       "connector" : "test-connector-action-axe-1",
@@ -58,7 +57,8 @@ Feature: update alarm on action
       "output" : "noveo alarm"
     }
     """
-    When I send an event and wait the end of event processing:
+    When I wait the end of event processing
+    When I send an event:
     """json
     {
       "connector" : "test-connector-action-axe-1",
@@ -71,7 +71,8 @@ Feature: update alarm on action
       "output" : "noveo alarm"
     }
     """
-    When I send an event and wait the end of event processing:
+    When I wait the end of event processing
+    When I send an event:
     """json
     {
       "connector" : "test-connector-action-axe-1",
@@ -83,6 +84,7 @@ Feature: update alarm on action
       "output" : "noveo alarm"
     }
     """
+    When I wait the end of event processing
     When I do GET /api/v4/scenarios?search=test-resource-action-axe-1
     Then the response code should be 200
     Then the response body should contain:
@@ -99,7 +101,6 @@ Feature: update alarm on action
     }
     """
 
-  @concurrent
   Scenario: given alarm and scenario with resolve trigger should not update alarm
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -134,7 +135,7 @@ Feature: update alarm on action
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event and wait the end of event processing:
+    When I send an event:
     """json
     {
       "connector" : "test-connector-action-axe-2",
@@ -147,7 +148,8 @@ Feature: update alarm on action
       "output" : "noveo alarm"
     }
     """
-    When I send an event and wait the end of event processing:
+    When I wait the end of event processing
+    When I send an event:
     """json
     {
       "connector" : "test-connector-action-axe-2",
@@ -160,7 +162,8 @@ Feature: update alarm on action
       "output" : "noveo alarm"
     }
     """
-    When I send an event and wait the end of event processing:
+    When I wait the end of event processing
+    When I send an event:
     """json
     {
       "connector" : "test-connector-action-axe-2",
@@ -172,6 +175,7 @@ Feature: update alarm on action
       "output" : "noveo alarm"
     }
     """
+    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-action-axe-2
     Then the response code should be 200
     Then the response body should contain:
@@ -244,13 +248,13 @@ Feature: update alarm on action
     ]
     """
 
-  @concurrent
   Scenario: given alarm and scenario and widget filter should filter alarms by ticket message or ticket's ticket
     Given I am admin
     When I do POST /api/v4/scenarios:
     """json
     {
-      "name": "test-scenario-action-axe-3-name",
+      "name": "test-scenario-action-axe-3-name-1",
+      "priority": 1692721198,
       "enabled": true,
       "triggers": ["create"],
       "actions": [
@@ -260,8 +264,8 @@ Feature: update alarm on action
               {
                 "field": "name",
                 "cond": {
-                  "type": "regexp",
-                  "value": "test-resource-action-axe-3"
+                  "type": "eq",
+                  "value": "test-resource-action-axe-3-1"
                 }
               }
             ]
@@ -276,7 +280,93 @@ Feature: update alarm on action
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-axe-3-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"priority\":1692721199, \"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-axe-3-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+            },
+            "declare_ticket": {
+              "ticket_id": "name"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "name": "test-scenario-action-axe-3-name-2",
+      "priority": 1692721200,
+      "enabled": true,
+      "triggers": ["create"],
+      "actions": [
+        {
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-axe-3-2"
+                }
+              }
+            ]
+          ],
+          "type": "webhook",
+          "parameters": {
+            "request": {
+              "method": "POST",
+              "url": "{{ .apiURL }}/api/v4/scenarios",
+              "auth": {
+                "username": "root",
+                "password": "test"
+              },
+              "headers": {"Content-Type": "application/json"},
+              "payload": "{\"priority\":1692721201, \"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-axe-3-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+            },
+            "declare_ticket": {
+              "ticket_id": "name"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "name": "test-scenario-action-axe-3-name-3",
+      "priority": 1692721202,
+      "enabled": true,
+      "triggers": ["create"],
+      "actions": [
+        {
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-axe-3-3"
+                }
+              }
+            ]
+          ],
+          "type": "webhook",
+          "parameters": {
+            "request": {
+              "method": "POST",
+              "url": "{{ .apiURL }}/api/v4/scenarios",
+              "auth": {
+                "username": "root",
+                "password": "test"
+              },
+              "headers": {"Content-Type": "application/json"},
+              "payload": "{\"priority\":1692721203, \"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-axe-3-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "ticket_id": "name"
@@ -290,7 +380,7 @@ Feature: update alarm on action
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event and wait the end of event processing:
+    When I send an event:
     """json
     {
       "connector": "test-connector-action-axe-3",
@@ -303,7 +393,8 @@ Feature: update alarm on action
       "output": "test-1"
     }
     """
-    When I send an event and wait the end of event processing:
+    When I wait the end of event processing
+    When I send an event:
     """json
     {
       "connector": "test-connector-action-axe-3",
@@ -316,7 +407,8 @@ Feature: update alarm on action
       "output": "test-2"
     }
     """
-    When I send an event and wait the end of event processing:
+    When I wait the end of event processing
+    When I send an event:
     """json
     {
       "connector": "test-connector-action-axe-3",
@@ -329,6 +421,7 @@ Feature: update alarm on action
       "output": "test-3"
     }
     """
+    When I wait the end of event processing
     When I do POST /api/v4/widget-filters:
     """json
     {
@@ -425,7 +518,7 @@ Feature: update alarm on action
             "field": "v.ticket.m",
             "cond": {
               "type": "regexp",
-              "value": "Ticket ID: test-2"
+              "value": "test-2"
             }
           }
         ]
@@ -462,7 +555,7 @@ Feature: update alarm on action
             "field": "v.ticket.m",
             "cond": {
               "type": "regexp",
-              "value": "Ticket ID: test"
+              "value": "test"
             }
           }
         ]
