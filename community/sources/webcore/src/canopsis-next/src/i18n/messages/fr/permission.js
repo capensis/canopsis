@@ -546,6 +546,11 @@ export default {
       name: 'Modèles de widgets',
       description: 'Cette autorisation définit l\'accès aux modèles de widget',
     },
+    [USERS_PERMISSIONS.technical.maintenance]: {
+      name: 'Maintenance mode',
+      // TODO: Should be added
+      description: '',
+    },
 
     /**
      * Technical Exploitation Permissions

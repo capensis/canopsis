@@ -103,4 +103,6 @@ export const MODALS = {
   executeDeclareTickets: 'execute-declare-tickets',
 
   createLinkRule: 'create-link-rule',
+
+  createMaintenance: 'create-maintenance',
 };
