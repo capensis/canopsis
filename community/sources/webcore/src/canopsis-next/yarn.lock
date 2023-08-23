@@ -15692,11 +15692,6 @@ void-elements@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
 
-vue-async-computed@^3.8.2:
-  version "3.8.2"
-  resolved "https://registry.yarnpkg.com/vue-async-computed/-/vue-async-computed-3.8.2.tgz#d5dff221b62f95ad2f98ce9e7bbea5a067ec8b9a"
-  integrity sha512-If5roOhp/x0WWd0TWRD77YsuFoiIw3MbkcRlIB/FE3TqQCPje52eQp5CV5NN/7B0VAyPuGX5JQa+rc9AOcGAYw==
-
 vue-cli-plugin-test-attrs@^0.1.5:
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/vue-cli-plugin-test-attrs/-/vue-cli-plugin-test-attrs-0.1.5.tgz#afd0cd676a6d218cfc8fc32fc8b64faf43197c03"

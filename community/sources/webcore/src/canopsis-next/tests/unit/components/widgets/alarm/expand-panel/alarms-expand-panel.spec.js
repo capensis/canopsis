@@ -13,6 +13,7 @@ import {
 
 import AlarmsExpandPanel from '@/components/widgets/alarm/expand-panel/alarms-expand-panel.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
+import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 
 const stubs = {
   'more-infos': true,
@@ -23,6 +24,7 @@ const stubs = {
   'entity-gantt': true,
   'pbehaviors-simple-list': true,
   'alarms-expand-panel-charts': true,
+  'c-compiled-template': CCompiledTemplate,
   'c-runtime-template': CRuntimeTemplate,
 };
 
