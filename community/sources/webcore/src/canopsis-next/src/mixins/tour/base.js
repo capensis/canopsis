@@ -1,5 +1,6 @@
 import { createNamespacedHelpers } from 'vuex';
-import { formToUser, userToForm } from '@/helpers/forms/user';
+
+import { userToForm, formToUserRequest } from '@/helpers/entities/user/form';
 
 const { mapActions: authMapActions, mapGetters: authMapGetters } = createNamespacedHelpers('auth');
 const { mapActions: userMapActions } = createNamespacedHelpers('user');
@@ -16,7 +17,7 @@ export const tourBaseMixin = {
 
     async finishTourByName(tourName) {
       const userForm = userToForm(this.currentUser);
-      const user = formToUser({
+      const user = formToUserRequest({
         ...userForm,
         ui_tours: {
           ...this.currentUser.ui_tours,

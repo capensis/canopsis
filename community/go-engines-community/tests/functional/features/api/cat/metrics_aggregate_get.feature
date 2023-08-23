@@ -8,8 +8,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -44,7 +44,7 @@ Feature: Get alarm metrics
         },
         {
           "title": "created_alarms",
-          "value": 2,
+          "value": 1,
           "aggregate_func": "max"
         },
         {
@@ -54,10 +54,13 @@ Feature: Get alarm metrics
         },
         {
           "title": "created_alarms",
-          "value": 1.5,
+          "value": 1,
           "aggregate_func": "avg"
         }
-      ]
+      ],
+      "meta": {
+        "min_date": {{ parseTimeTz "01-07-2021 00:00" }}
+      }
     }
     """
 
@@ -67,8 +70,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -88,7 +91,7 @@ Feature: Get alarm metrics
     }
     """
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
@@ -99,7 +102,7 @@ Feature: Get alarm metrics
         },
         {
           "title": "active_alarms",
-          "value": 4,
+          "value": 5,
           "aggregate_func": "min"
         },
         {
@@ -117,8 +120,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-all-alarm-metrics-get",
       "parameters": [
@@ -138,13 +141,13 @@ Feature: Get alarm metrics
     }
     """
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
         {
           "title": "without_ticket_active_alarms",
-          "value": 1.87,
+          "value": 1.79,
           "aggregate_func": "avg"
         },
         {
@@ -167,8 +170,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "day",
       "parameters": [
@@ -179,7 +182,7 @@ Feature: Get alarm metrics
     }
     """
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
@@ -197,8 +200,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "filter": "test-kpi-filter-to-all-alarm-metrics-get",
       "parameters": [
         {
@@ -221,7 +224,7 @@ Feature: Get alarm metrics
     }
     """
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
@@ -255,8 +258,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "widget_filters": [
         "test-widget-filter-to-alarm-metrics-get-1"
@@ -282,18 +285,18 @@ Feature: Get alarm metrics
     }
     """
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
         {
           "title": "created_alarms",
-          "value": 7,
+          "value": 3,
           "aggregate_func": "sum"
         },
         {
           "title": "created_alarms",
-          "value": 4,
+          "value": 1,
           "aggregate_func": "max"
         },
         {
@@ -303,7 +306,7 @@ Feature: Get alarm metrics
         },
         {
           "title": "created_alarms",
-          "value": 2.33,
+          "value": 1,
           "aggregate_func": "avg"
         }
       ]
@@ -316,8 +319,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
         {
@@ -329,7 +332,7 @@ Feature: Get alarm metrics
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "sampling": "Sampling is missing."
@@ -343,8 +346,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -357,10 +360,10 @@ Feature: Get alarm metrics
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
-        "parameters.0.metric": "metric is not supported."
+        "parameters.0.metric": "Metric is not supported."
       }
     }
     """
@@ -371,8 +374,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-not-found",
       "parameters": [
@@ -385,7 +388,7 @@ Feature: Get alarm metrics
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "filter": "Filter doesn't exist."
@@ -399,8 +402,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "widget_filters": [
         "test-widget-filter-not-found"
@@ -415,7 +418,7 @@ Feature: Get alarm metrics
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
         "widget_filters.0": "WidgetFilter doesn't exist."
@@ -429,8 +432,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "sampling": "hour",
       "widget_filters": [
@@ -460,8 +463,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -487,8 +490,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -515,8 +518,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -543,8 +546,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -560,7 +563,7 @@ Feature: Get alarm metrics
     """json
     {
       "errors": {
-        "parameters.0.aggregate_func": "AggregateFunc must be one of [sum avg min max] or empty."
+        "parameters.0.aggregate_func": "AggregateFunc must be one of [sum last avg min max] or empty."
       }
     }
     """
@@ -571,8 +574,8 @@ Feature: Get alarm metrics
     When I do POST /api/v4/cat/metrics/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [

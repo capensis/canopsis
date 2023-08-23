@@ -77,6 +77,10 @@ func NewCpsTime(timestamp ...int64) CpsTime {
 // MarshalJSON converts from CpsTime to timestamp as bytes
 func (t CpsTime) MarshalJSON() ([]byte, error) {
 	ts := t.Time.Unix()
+	if ts <= 0 {
+		return []byte("null"), nil
+	}
+
 	stamp := fmt.Sprint(ts)
 
 	return []byte(stamp), nil
@@ -84,6 +88,9 @@ func (t CpsTime) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON converts from string to CpsTime
 func (t *CpsTime) UnmarshalJSON(b []byte) error {
+	if string(b) == "null" {
+		return nil
+	}
 	if nl := bytes.TrimPrefix(b, []byte("{\"$numberLong\":\"")); len(nl) < len(b) {
 		// json value can be recorded as "tstop":{"$numberLong":"4733481300"}
 		nl = bytes.TrimSuffix(nl, []byte("\"}"))
@@ -361,6 +368,13 @@ func NewDurationWithEnabled(value int64, unit string, enabled *bool) DurationWit
 	}
 }
 
+func IsDurationEnabledAndValid(durationWithEnabled *DurationWithEnabled) bool {
+	return durationWithEnabled != nil &&
+		durationWithEnabled.Enabled != nil &&
+		*durationWithEnabled.Enabled &&
+		durationWithEnabled.Value > 0
+}
+
 func listOfInterfaceToString(v []interface{}) (string, error) {
 	values := make([]string, len(v))
 	for i, vv := range v {
@@ -439,21 +453,50 @@ func InterfaceToStringSlice(v interface{}) ([]string, error) {
 // a unix timestamp is returned).
 func AsInteger(value interface{}) (int64, bool) {
 	switch typedValue := value.(type) {
+	case float32:
+		return int64(math.Round(float64(typedValue))), true
 	case float64:
-		return int64(math.Round(value.(float64))), true
-	case int64:
-		return typedValue, true
-	case uint64:
-		return int64(typedValue), true
+		return int64(math.Round(typedValue)), true
 	case int:
 		return int64(typedValue), true
+	case int8:
+		return int64(typedValue), true
+	case int16:
+		return int64(typedValue), true
+	case int32:
+		return int64(typedValue), true
+	case int64:
+		return typedValue, true
 	case uint:
+		return int64(typedValue), true
+	case uint8:
+		return int64(typedValue), true
+	case uint16:
+		return int64(typedValue), true
+	case uint32:
+		return int64(typedValue), true
+	case uint64:
 		return int64(typedValue), true
 	case CpsNumber:
 		return int64(typedValue), true
+	case *CpsNumber:
+		if typedValue == nil {
+			return 0, false
+		}
+		return int64(*typedValue), true
 	case time.Time:
 		return typedValue.Unix(), true
+	case *time.Time:
+		if typedValue == nil {
+			return 0, false
+		}
+		return typedValue.Unix(), true
 	case CpsTime:
+		return typedValue.Unix(), true
+	case *CpsTime:
+		if typedValue == nil {
+			return 0, false
+		}
 		return typedValue.Unix(), true
 	default:
 		return 0, false

@@ -1,6 +1,6 @@
 import mermaid from 'mermaid';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 
 /**
  * Render mermaid diagram

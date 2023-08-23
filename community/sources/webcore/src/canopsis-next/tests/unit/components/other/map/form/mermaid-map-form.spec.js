@@ -1,34 +1,21 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import MermaidMapForm from '@/components/other/map/form/mermaid-map-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-name-field': true,
   'mermaid-editor': true,
 };
 
-const factory = (options = {}) => shallowMount(MermaidMapForm, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(MermaidMapForm, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 const selectNameField = wrapper => wrapper.find('c-name-field-stub');
 const selectMermaidEditor = wrapper => wrapper.find('mermaid-editor-stub');
 
 describe('mermaid-map-form', () => {
+  const factory = generateShallowRenderer(MermaidMapForm, { stubs });
+  const snapshotFactory = generateRenderer(MermaidMapForm, { stubs });
+
   test('Name changed after trigger name field', () => {
     const form = {
       name: '',

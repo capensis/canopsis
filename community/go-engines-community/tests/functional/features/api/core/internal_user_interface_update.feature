@@ -12,6 +12,7 @@ Feature: update user interface
     When I do POST /api/v4/internal/user_interface
     Then the response code should be 403
 
+  @standalone
   Scenario: PUT a valid user_interface without timeout config
     When I am admin
     When I do PUT /api/v4/internal/user_interface:
@@ -51,6 +52,7 @@ Feature: update user interface
     }
     """
 
+  @standalone
   Scenario: PUT a valid user_interface with timeout config
     When I am admin
     When I do PUT /api/v4/internal/user_interface:
@@ -107,6 +109,7 @@ Feature: update user interface
     }
     """
 
+  @standalone
   Scenario: PUT a valid user_interface without max_matched_items or check_count_request_timeout should
     set those values to default
     When I am admin
@@ -222,11 +225,3 @@ Feature: update user interface
       }
     }
     """
-    When I do PUT /api/v4/internal/user_interface:
-    """json
-    {
-      "max_matched_items": 4
-    }
-    """
-    Then the response code should be 200
-    When I wait 2s

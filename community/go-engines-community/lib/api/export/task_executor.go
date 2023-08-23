@@ -189,6 +189,7 @@ func (e *taskExecutor) StartExecute(ctx context.Context, params TaskParameters) 
 		Fields:     params.Fields,
 		Separator:  params.Separator,
 		Filename:   params.FilenamePrefix + "-" + now.Time.Format(fileNameTimeLayout) + ".csv",
+		User:       params.UserID,
 		Created:    now,
 	}
 

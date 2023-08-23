@@ -64,6 +64,9 @@ type Entity struct {
 	Coordinates Coordinates `bson:"coordinates,omitempty" json:"-"`
 
 	SoftDeleted *CpsTime `bson:"soft_deleted,omitempty" json:"soft_deleted,omitempty"`
+
+	PerfData        []string `bson:"perf_data,omitempty" json:"-"`
+	PerfDataUpdated *CpsTime `bson:"perf_data_updated,omitempty" json:"-"`
 }
 
 type Coordinates struct {

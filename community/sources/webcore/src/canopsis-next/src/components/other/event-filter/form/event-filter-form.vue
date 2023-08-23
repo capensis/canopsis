@@ -16,7 +16,7 @@
     c-information-block(:title="$t('eventFilter.duringPeriod')")
       event-filter-drop-intervals-field(v-field="form")
     pbehavior-recurrence-rule-field.mb-3(v-field="form")
-    c-patterns-field(v-field="form.patterns", with-entity, with-event, some-required)
+    c-patterns-field(v-field="form.patterns", with-entity, with-event, some-required, entity-counters-type)
 
     template(v-if="hasAdditionalOptions")
       v-divider.my-3
@@ -32,9 +32,9 @@ import { EVENT_FILTER_TYPES } from '@/constants';
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-recurrence-rule-field.vue';
 
-import EventFilterEnrichmentForm from './partials/event-filter-enrichment-form.vue';
-import EventFilterChangeEntityForm from './partials/event-filter-change-entity-form.vue';
-import EventFilterDropIntervalsField from './partials/fields/event-filter-drop-intervals-field.vue';
+import EventFilterEnrichmentForm from './fields/event-filter-enrichment-form.vue';
+import EventFilterChangeEntityForm from './fields/event-filter-change-entity-form.vue';
+import EventFilterDropIntervalsField from './fields/event-filter-drop-intervals-field.vue';
 
 export default {
   inject: ['$validator'],

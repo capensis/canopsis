@@ -2,34 +2,8 @@ import { API_ROUTES } from '@/config';
 
 import request from '@/services/request';
 
-const types = {
-  FETCH_EXTERNAL_METRICS_LIST: 'FETCH_EXTERNAL_METRICS_LIST',
-  FETCH_EXTERNAL_METRICS_LIST_COMPLETED: 'FETCH_EXTERNAL_METRICS_LIST_COMPLETED',
-  FETCH_EXTERNAL_METRICS_LIST_FAILED: 'FETCH_EXTERNAL_METRICS_LIST_FAILED',
-};
-
 export default {
   namespaced: true,
-  state: {
-    externalMetrics: [],
-    pending: false,
-  },
-  getters: {
-    externalMetrics: state => state.externalMetrics,
-    pending: state => state.pending,
-  },
-  mutations: {
-    [types.FETCH_EXTERNAL_METRICS_LIST](state) {
-      state.pending = true;
-    },
-    [types.FETCH_EXTERNAL_METRICS_LIST_COMPLETED](state, externalMetrics) {
-      state.pending = false;
-      state.externalMetrics = externalMetrics;
-    },
-    [types.FETCH_EXTERNAL_METRICS_LIST_FAILED](state) {
-      state.pending = false;
-    },
-  },
   actions: {
     fetchSliMetricsWithoutStore(context, { params } = {}) {
       return request.get(API_ROUTES.metrics.sli, { params });
@@ -44,7 +18,7 @@ export default {
     },
 
     createKpiAlarmExport(context, { data }) {
-      return request.post(API_ROUTES.metrics.exportAlarm, null, { params: data });
+      return request.post(API_ROUTES.metrics.exportAlarm, data);
     },
 
     createKpiAlarmAggregateExport(context, { data }) {
@@ -67,16 +41,16 @@ export default {
       return request.get(`${API_ROUTES.metrics.exportMetric}/${id}`);
     },
 
-    async fetchExternalMetricsList({ commit }, { params }) {
-      commit(types.FETCH_EXTERNAL_METRICS_LIST);
+    fetchExternalMetricsWithoutStore(context, { params }) {
+      return request.get(API_ROUTES.metrics.perfDataMetrics, { params });
+    },
 
-      try {
-        const { data } = await request.get(API_ROUTES.metrics.perfDataMetrics, { params });
+    fetchEntityAlarmsMetricsWithoutStore(context, { params }) {
+      return request.post(API_ROUTES.metrics.entityAlarmMetrics, params);
+    },
 
-        commit(types.FETCH_EXTERNAL_METRICS_LIST_COMPLETED, data);
-      } catch (err) {
-        commit(types.FETCH_EXTERNAL_METRICS_LIST_FAILED);
-      }
+    fetchEntityAggregateMetricsWithoutStore(context, { params }) {
+      return request.post(API_ROUTES.metrics.entityAggregateMetrics, params);
     },
   },
 };

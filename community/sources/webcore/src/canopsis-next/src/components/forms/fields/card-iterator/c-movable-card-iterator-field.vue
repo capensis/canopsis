@@ -14,8 +14,10 @@
         slot(name="item", :item="item", :index="index")
     slot(name="append")
     v-layout(row, wrap)
-      v-btn.mx-0(
+      v-btn.mr-2.mx-0(
+        v-if="addable",
         color="primary",
+        outline,
         @click.prevent="$emit('add')"
       ) {{ $t('common.add') }}
       slot(name="actions")
@@ -41,6 +43,10 @@ export default {
     itemKey: {
       type: String,
       default: 'key',
+    },
+    addable: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {

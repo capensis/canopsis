@@ -1,11 +1,12 @@
 <template lang="pug">
-  c-pattern-editor-field(
+  pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
     :name="name",
     :required="required",
     :attributes="availableServiceWeatherAttributes",
-    :with-type="withType"
+    :with-type="withType",
+    :counter="counter"
   )
 </template>
 
@@ -18,7 +19,10 @@ import {
   ENTITIES_STATES,
 } from '@/constants';
 
+import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
+
 export default {
+  components: { PatternEditorField },
   model: {
     prop: 'patterns',
     event: 'input',
@@ -47,6 +51,10 @@ export default {
     withType: {
       type: Boolean,
       default: false,
+    },
+    counter: {
+      type: Object,
+      required: false,
     },
   },
   computed: {

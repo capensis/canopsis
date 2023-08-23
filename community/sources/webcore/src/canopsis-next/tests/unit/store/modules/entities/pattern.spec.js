@@ -16,7 +16,7 @@ describe('Entities pattern module', () => {
   }));
 
   const { axiosMockAdapter } = testsEntityModule({
-    route: API_ROUTES.patterns,
+    route: API_ROUTES.pattern.list,
     module: patternModule,
     schema: patternSchema,
     entityType: ENTITIES_TYPES.pattern,
@@ -29,7 +29,7 @@ describe('Entities pattern module', () => {
       param: Faker.datatype.string(),
     };
     axiosMockAdapter
-      .onGet(API_ROUTES.patterns, { params })
+      .onGet(API_ROUTES.pattern.list, { params })
       .reply(200, patterns);
 
     const result = await patternModule.actions.fetchListWithoutStore({}, { params });

@@ -1,7 +1,7 @@
 <template lang="pug">
-  v-layout.chart-metrics-widget(column, align-center)
-    h4.chart-metrics-widget__title {{ title }}
-    line-chart.chart-metrics-widget__chart(
+  v-layout.kpi-widget(column, align-center)
+    h4.kpi-widget__title {{ title }}
+    line-chart.kpi-widget__chart(
       :chart-id="chartId",
       :options="chartOptions",
       :datasets="datasets",
@@ -14,9 +14,11 @@
 </template>
 
 <script>
-import { X_AXES_IDS, SAMPLINGS } from '@/constants';
+import { X_AXES_IDS, SAMPLINGS, KPI_CHART_DEFAULT_HEIGHT } from '@/constants';
 
-import { colorToRgba, getMetricColor } from '@/helpers/color';
+import { colorToRgba } from '@/helpers/color';
+import { getMetricColor } from '@/helpers/entities/metric/color';
+import { convertMetricValueByUnit } from '@/helpers/entities/metric/list';
 
 import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';
 
@@ -46,7 +48,7 @@ export default {
       type: Number,
     },
     height: {
-      default: 560,
+      default: KPI_CHART_DEFAULT_HEIGHT,
       type: Number,
     },
     sampling: {
@@ -113,6 +115,7 @@ export default {
             },
             callbacks: {
               title: this.getChartTooltipTitle,
+              label: this.getChartTooltipLabel,
             },
           },
         },
@@ -120,21 +123,22 @@ export default {
     },
 
     datasets() {
-      return this.preparedMetrics.reduce((acc, { title: metric, label, data, color }) => {
+      return this.preparedMetrics.reduce((acc, { title: metric, label, unit, data, color }) => {
         const metricColor = color ?? getMetricColor(metric);
-
         const datasetLabel = label ?? this.getMetricLabel(metric);
+        const yAxisID = this.getMetricYAxisId(metric, unit);
 
         const defaultDataset = {
           metric,
           backgroundColor: metricColor,
           borderColor: metricColor,
           xAxisID: X_AXES_IDS.default,
-          yAxisID: this.getMetricYAxisId(metric),
+          yAxisID,
           label: datasetLabel,
+          unit,
           data: data.map(({ timestamp, value }) => ({
             x: timestamp * 1000,
-            y: value,
+            y: convertMetricValueByUnit(value, unit),
           })),
         };
 
@@ -147,11 +151,12 @@ export default {
             backgroundColor: historyMetricColor,
             borderColor: historyMetricColor,
             xAxisID: X_AXES_IDS.history,
-            yAxisID: this.getMetricYAxisId(metric),
+            yAxisID,
             label: `${datasetLabel} (${this.$t('common.previous')})`,
+            unit,
             data: data.map(({ history_timestamp: historyTimestamp, history_value: historyValue }) => ({
               x: historyTimestamp * 1000,
-              y: historyValue,
+              y: convertMetricValueByUnit(historyValue, unit),
             })),
           };
 

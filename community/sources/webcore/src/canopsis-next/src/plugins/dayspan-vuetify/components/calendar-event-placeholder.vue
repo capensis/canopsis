@@ -24,7 +24,6 @@
 
 <script>
 import { Functions as fn } from 'dayspan';
-
 import { DsCalendarEventPlaceholder } from 'dayspan-vuetify/src/components';
 
 import popoverMixin from '../mixins/popover';

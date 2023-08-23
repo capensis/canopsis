@@ -21,11 +21,11 @@ Pour rappel, SELinux n'est pas supporté.
 
 Composant   | Version          |
 ------------|------------------|
-MongoDB     | 4.4              |
+MongoDB     | 5.0              |
 Nginx       | 1.20 (uniquement pour l'installation via paquets RPM) |
 PostgreSQL  | 13               |
-TimescaleDB | 2.7.2            |
-RabbitMQ    | 3.10             |
+TimescaleDB | 2.9.3            |
+RabbitMQ    | 3.11             |
 Redis       | ≥ 5.0, < 7.0     |
 
 ## Prérequis composants externes
