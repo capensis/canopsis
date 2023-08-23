@@ -60,7 +60,7 @@ class AlarmExportToPdfVisitor extends Visitor {
 
     return {
       ...path,
-      parts: lastItem ? [lastItem] : parts,
+      parts: ALARM_EXPORT_PDF_FIELDS?.[lastItem] ? [lastItem] : parts,
     };
   }
 }
