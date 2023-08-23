@@ -46,6 +46,8 @@ import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html'
  * @property {AlarmEvent[]} comments
  */
 
+const ALARM_EXPORT_PDF_FIELDS_VALUES = Object.values(ALARM_EXPORT_PDF_FIELDS);
+
 class AlarmExportToPdfVisitor extends Visitor {
   constructor() {
     super();
@@ -60,7 +62,7 @@ class AlarmExportToPdfVisitor extends Visitor {
 
     return {
       ...path,
-      parts: ALARM_EXPORT_PDF_FIELDS?.[lastItem] ? [lastItem] : parts,
+      parts: ALARM_EXPORT_PDF_FIELDS_VALUES.includes(lastItem) ? [lastItem] : parts,
     };
   }
 }
