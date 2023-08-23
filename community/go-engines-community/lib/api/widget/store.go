@@ -26,13 +26,14 @@ type Store interface {
 	UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error)
 }
 
-func NewStore(dbClient mongo.DbClient) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
 		client:             dbClient,
 		collection:         dbClient.Collection(mongo.WidgetMongoCollection),
 		tabCollection:      dbClient.Collection(mongo.ViewTabMongoCollection),
 		filterCollection:   dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 		userPrefCollection: dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		authorProvider:     authorProvider,
 	}
 }
 
@@ -42,6 +43,7 @@ type store struct {
 	tabCollection      mongo.DbCollection
 	filterCollection   mongo.DbCollection
 	userPrefCollection mongo.DbCollection
+	authorProvider     author.Provider
 }
 
 func (s *store) FindViewIds(ctx context.Context, ids []string) (map[string]string, error) {
@@ -99,30 +101,36 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{
 		{"$match": bson.M{"_id": id}},
 		{"$lookup": bson.M{
-			"from":         mongo.WidgetFiltersMongoCollection,
-			"localField":   "_id",
-			"foreignField": "widget",
-			"as":           "filters",
+			"from": mongo.WidgetFiltersMongoCollection,
+			"let":  bson.M{"widget": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"$expr":      bson.M{"$eq": bson.A{"$widget", "$$widget"}},
+					"is_private": false,
+				}},
+			},
+			"as": "filters",
 		}},
 		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
 	}
-	pipeline = append(pipeline, author.PipelineForField("filters.author")...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("filters.author")...)
 	pipeline = append(pipeline,
 		bson.M{"$sort": bson.M{"filters.position": 1}},
 		bson.M{"$group": bson.M{
-			"_id":     nil,
-			"data":    bson.M{"$first": "$$ROOT"},
-			"filters": bson.M{"$push": "$filters"},
+			"_id":  nil,
+			"data": bson.M{"$first": "$$ROOT"},
+			"filters": bson.M{"$push": bson.M{"$cond": bson.M{
+				"if":   "$filters._id",
+				"then": "$filters",
+				"else": "$$REMOVE",
+			}}},
 		}},
 		bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
 			"$data",
-			bson.M{"filters": bson.M{"$filter": bson.M{
-				"input": "$filters",
-				"cond":  bson.M{"$eq": bson.A{"$$this.is_private", false}},
-			}}},
+			bson.M{"filters": "$filters"},
 		}}}},
 	)
-	pipeline = append(pipeline, author.Pipeline()...)
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err

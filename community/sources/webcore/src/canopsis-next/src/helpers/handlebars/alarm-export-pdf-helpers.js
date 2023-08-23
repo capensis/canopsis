@@ -3,7 +3,7 @@ import Handlebars from 'handlebars';
 
 import { ALARM_EXPORT_PDF_FIELDS } from '@/constants';
 
-import { harmonizeLinks } from '../links';
+import { harmonizeLinks } from '@/helpers/entities/link/list';
 
 /**
  * Create paragraph HTML element

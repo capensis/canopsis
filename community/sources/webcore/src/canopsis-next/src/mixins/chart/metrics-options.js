@@ -1,20 +1,34 @@
 import {
   X_AXES_IDS,
   Y_AXES_IDS,
-  DATETIME_FORMATS,
   MAX_METRICS_DISPLAY_COUNT,
+  TIME_UNITS,
+  KPI_CHART_DEFAULT_HEIGHT,
 } from '@/constants';
 
-import { convertDurationToString } from '@/helpers/date/duration';
+import { fromSeconds } from '@/helpers/date/duration';
 import {
+  isRatioMetric,
+  isTimeMetric,
+  isExternalDataSizeMetricUnit,
+  isExternalPercentMetricUnit,
+  isExternalTimeMetricUnit,
+} from '@/helpers/entities/metric/form';
+import {
+  convertDataSizeValueToTickString,
   getDateLabelBySampling,
   getMaxTimeDurationForMetrics,
   hasHistoryData,
-  isRatioMetric,
-  isTimeMetric,
-} from '@/helpers/metrics';
+  convertMetricValueToString,
+} from '@/helpers/entities/metric/list';
+import {
+  convertDateToEndOfUnitTimestamp,
+  convertDateToStartOfDayTimestamp,
+  convertDateToTimestampByTimezone,
+} from '@/helpers/date/date';
 
 export const chartMetricsOptionsMixin = {
+  inject: ['$system'],
   computed: {
     hasHistoryData() {
       return hasHistoryData(this.metrics);
@@ -54,7 +68,9 @@ export const chartMetricsOptionsMixin = {
 
     labelsFont() {
       return {
-        size: 11,
+        size({ chart }) {
+          return chart.height < KPI_CHART_DEFAULT_HEIGHT ? 9 : 11;
+        },
         family: 'Arial, sans-serif',
       };
     },
@@ -67,8 +83,12 @@ export const chartMetricsOptionsMixin = {
         maxWidth: 700,
         labels: {
           font: this.labelsFont,
-          boxWidth: 15,
-          boxHeight: 15,
+          boxWidth({ chart }) {
+            return chart.height < KPI_CHART_DEFAULT_HEIGHT ? 10 : 15;
+          },
+          boxHeight({ chart }) {
+            return chart.height < KPI_CHART_DEFAULT_HEIGHT ? 10 : 15;
+          },
         },
       };
 
@@ -96,8 +116,14 @@ export const chartMetricsOptionsMixin = {
       return {
         [X_AXES_IDS.default]: {
           type: 'time',
-          min: this.interval.from * 1000,
-          max: this.interval.to * 1000,
+          min: convertDateToTimestampByTimezone(
+            convertDateToStartOfDayTimestamp(this.interval.from),
+            this.$system.timezone,
+          ) * 1000,
+          max: convertDateToTimestampByTimezone(
+            convertDateToEndOfUnitTimestamp(this.interval.to, TIME_UNITS.day),
+            this.$system.timezone,
+          ) * 1000,
           ticks: {
             min: this.minDate * 1000,
             max: Date.now(),
@@ -142,29 +168,41 @@ export const chartMetricsOptionsMixin = {
             font: this.labelsFont,
           },
         },
+        [Y_AXES_IDS.bytes]: {
+          stacked: this.stacked,
+          display: 'auto',
+          position: 'right',
+          beginAtZero: true,
+          ticks: {
+            callback: convertDataSizeValueToTickString,
+            font: this.labelsFont,
+          },
+        },
       };
     },
   },
   methods: {
     getChartTooltipLabel({ raw, dataset }) {
-      const value = isTimeMetric(dataset.metric)
-        ? convertDurationToString(
-          raw.y,
-          DATETIME_FORMATS.refreshFieldFormat,
-          this.maxTimeDuration.unit,
-        )
-        : raw.y;
+      const value = convertMetricValueToString(raw.y, dataset.metric, dataset.unit);
 
-      return this.$t(`kpi.metrics.tooltip.${dataset.metric}`, { value });
+      const messageKey = `kpi.metrics.tooltip.${dataset.metric}`;
+
+      return this.$te(messageKey)
+        ? this.$t(`kpi.metrics.tooltip.${dataset.metric}`, { value })
+        : `${dataset.label || dataset.metric}: ${value}`;
     },
 
-    getMetricYAxisId(metric) {
-      if (isRatioMetric(metric)) {
+    getMetricYAxisId(metric, unit) {
+      if (isRatioMetric(metric) || isExternalPercentMetricUnit(unit)) {
         return Y_AXES_IDS.percent;
       }
 
-      if (isTimeMetric(metric)) {
+      if (isTimeMetric(metric) || isExternalTimeMetricUnit(unit)) {
         return Y_AXES_IDS.time;
+      }
+
+      if (isExternalDataSizeMetricUnit(unit)) {
+        return Y_AXES_IDS.bytes;
       }
 
       return Y_AXES_IDS.default;
@@ -182,7 +220,9 @@ export const chartMetricsOptionsMixin = {
     },
 
     getChartYTimeTick(value) {
-      return `${value}${this.maxTimeDuration.unit}`;
+      const count = fromSeconds(value, this.maxTimeDuration.unit).toFixed(1);
+
+      return `${count}${this.maxTimeDuration.unit}`;
     },
 
     getChartTimeTickLabel(_, index, data) {

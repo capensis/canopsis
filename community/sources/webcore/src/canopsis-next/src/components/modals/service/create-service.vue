@@ -19,7 +19,7 @@ import { get } from 'lodash';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { serviceToForm, formToService } from '@/helpers/forms/service';
+import { serviceToForm, formToService } from '@/helpers/entities/service/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

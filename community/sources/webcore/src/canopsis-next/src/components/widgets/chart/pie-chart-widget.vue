@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout.py-2(column)
-    chart-widget-filters.px-3(
+    kpi-widget-filters.px-3(
       :widget-id="widget._id",
       :user-filters="userPreference.filters",
       :widget-filters="widget.filters",
@@ -36,11 +36,11 @@
 import { createNamespacedHelpers } from 'vuex';
 import { pick } from 'lodash';
 
-import { convertFilterToQuery } from '@/helpers/query';
+import { convertFilterToQuery } from '@/helpers/entities/shared/query';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
-import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
+import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
 import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
@@ -50,7 +50,7 @@ import { permissionsWidgetsPieChartInterval } from '@/mixins/permissions/widgets
 import { permissionsWidgetsPieChartSampling } from '@/mixins/permissions/widgets/chart/pie/sampling';
 import { permissionsWidgetsPieChartFilters } from '@/mixins/permissions/widgets/chart/pie/filters';
 
-import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
+import KpiWidgetFilters from '../partials/kpi-widget-filters.vue';
 
 import ChartLoader from './partials/chart-loader.vue';
 import PieChartMetrics from './partials/pie-chart-metrics.vue';
@@ -60,14 +60,14 @@ const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
 export default {
   inject: ['$system'],
   components: {
-    ChartWidgetFilters,
+    KpiWidgetFilters,
     ChartLoader,
     PieChartMetrics,
   },
   mixins: [
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
-    widgetIntervalFilterMixin,
+    metricsIntervalFilterMixin,
     widgetSamplingFilterMixin,
     widgetPeriodicRefreshMixin,
     widgetChartMetricsMap,

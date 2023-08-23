@@ -1,16 +1,11 @@
 import { createNamespacedHelpers } from 'vuex';
 
-import { exportAlarmToPdf } from '@/helpers/alarm-export-pdf';
+import { exportAlarmToPdf } from '@/helpers/file/pdf';
 
 const { mapActions } = createNamespacedHelpers('alarm/details');
 
 export const widgetActionsPanelAlarmExportPdfMixin = {
   inject: ['$system'],
-  data() {
-    return {
-      exportAlarmToPdfPending: false,
-    };
-  },
   methods: {
     ...mapActions({
       fetchAlarmDetailsWithoutStore: 'fetchListWithoutStore',
@@ -18,8 +13,6 @@ export const widgetActionsPanelAlarmExportPdfMixin = {
 
     async exportAlarmToPdf(alarm, template) {
       try {
-        this.exportAlarmToPdfPending = true;
-
         const response = await this.fetchAlarmDetailsWithoutStore({
           params: [{
             _id: alarm._id,
@@ -34,8 +27,6 @@ export const widgetActionsPanelAlarmExportPdfMixin = {
       } catch (err) {
         console.error(err);
         this.$popups.error({ text: this.$t('errors.default') });
-      } finally {
-        this.exportAlarmToPdfPending = false;
       }
     },
   },

@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
 
-export default (prefix, suffix) => {
+export const uuid = (prefix, suffix) => {
   let result = v4();
 
   if (prefix) {

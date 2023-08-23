@@ -15,8 +15,7 @@
 </template>
 
 <script>
-import { API_HOST, API_ROUTES, REMEDIATION_STATISTICS_FILENAME_PREFIX } from '@/config';
-
+import { REMEDIATION_STATISTICS_FILENAME_PREFIX } from '@/config';
 import {
   QUICK_RANGES,
   SAMPLINGS,
@@ -33,7 +32,9 @@ import {
   convertStartDateIntervalToTimestampByTimezone,
   convertStopDateIntervalToTimestampByTimezone,
 } from '@/helpers/date/date-intervals';
-import { isMetricsQueryChanged, convertMetricsToTimezone } from '@/helpers/metrics';
+import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
+import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
+import { getExportMetricDownloadFileUrl } from '@/helpers/entities/metric/url';
 import { saveFile } from '@/helpers/file/files';
 
 import { localQueryMixin } from '@/mixins/query-local/query';
@@ -162,7 +163,7 @@ export default {
           data: this.getQuery(),
         });
 
-        this.downloadFile(`${API_HOST}${API_ROUTES.metrics.exportMetric}/${fileData._id}/download`);
+        this.downloadFile(getExportMetricDownloadFileUrl(fileData._id));
       } catch (err) {
         this.$popups.error({ text: this.$t('kpi.popups.exportFailed') });
       } finally {

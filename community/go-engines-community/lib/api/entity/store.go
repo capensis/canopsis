@@ -2,7 +2,6 @@ package entity
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"strings"
 	"time"
@@ -10,6 +9,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/perfdata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -29,14 +30,16 @@ type store struct {
 	mainCollection         mongo.DbCollection
 	archivedCollection     mongo.DbCollection
 	timezoneConfigProvider config.TimezoneConfigProvider
+	decoder                encoding.Decoder
 }
 
-func NewStore(db mongo.DbClient, timezoneConfigProvider config.TimezoneConfigProvider) Store {
+func NewStore(db mongo.DbClient, timezoneConfigProvider config.TimezoneConfigProvider, decoder encoding.Decoder) Store {
 	return &store{
 		db:                     db,
 		mainCollection:         db.Collection(mongo.EntityMongoCollection),
 		archivedCollection:     db.Collection(mongo.ArchivedEntitiesMongoCollection),
 		timezoneConfigProvider: timezoneConfigProvider,
+		decoder:                decoder,
 	}
 }
 
@@ -66,6 +69,7 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 	}
 
 	s.fillConnectorType(&res)
+	s.fillPerfData(&res, r.PerfData)
 
 	return &res, nil
 }
@@ -338,7 +342,7 @@ func (s *store) GetContextGraph(ctx context.Context, id string) (*ContextGraphRe
 
 func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, error) {
 	r := BaseFilterRequest{}
-	err := json.Unmarshal([]byte(t.Parameters), &r)
+	err := s.decoder.Decode([]byte(t.Parameters), &r)
 	if err != nil {
 		return nil, err
 	}
@@ -356,10 +360,10 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	for _, field := range t.Fields {
 		found := false
 		for anotherField := range project {
-			if strings.HasPrefix(field.Name, anotherField) {
+			if strings.HasPrefix(field.Name, anotherField+".") {
 				found = true
 				break
-			} else if strings.HasPrefix(anotherField, field.Name) {
+			} else if strings.HasPrefix(anotherField, field.Name+".") {
 				delete(project, anotherField)
 				break
 			}
@@ -389,4 +393,15 @@ func (s *store) fillConnectorType(result *AggregationResult) {
 
 func (s *store) getQueryBuilder() *MongoQueryBuilder {
 	return NewMongoQueryBuilder(s.db)
+}
+
+func (s *store) fillPerfData(result *AggregationResult, perfData []string) {
+	if len(perfData) == 0 {
+		return
+	}
+
+	perfDataRe := perfdata.Parse(perfData)
+	for i, entity := range result.Data {
+		result.Data[i].FilteredPerfData = perfdata.Filter(perfData, perfDataRe, entity.PerfData)
+	}
 }

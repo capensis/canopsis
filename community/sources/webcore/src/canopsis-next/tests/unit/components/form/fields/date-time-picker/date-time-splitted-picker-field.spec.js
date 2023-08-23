@@ -1,10 +1,8 @@
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import DateTimeSplittedPickerField from '@/components/forms/fields/date-time-picker/date-time-splitted-picker-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'time-picker-field': true,
@@ -16,7 +14,7 @@ const selectDatePickerField = wrapper => wrapper.find('c-date-picker-field-stub'
 
 describe('date-time-splitted-picker-field', () => {
   const factory = generateShallowRenderer(DateTimeSplittedPickerField, {
-    localVue,
+
     stubs,
 
     parentComponent: {
@@ -27,7 +25,7 @@ describe('date-time-splitted-picker-field', () => {
   });
 
   const snapshotFactory = generateRenderer(DateTimeSplittedPickerField, {
-    localVue,
+
     stubs,
 
     parentComponent: {

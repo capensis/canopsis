@@ -5,7 +5,7 @@ Feature: Account auth user
     When I do POST /api/v4/login:
     """json
     {
-      "username": "test-user-to-get-1",
+      "username": "test-user-to-account-get-1",
       "password": "test"
     }
     """
@@ -16,18 +16,19 @@ Feature: Account auth user
     Then the response body should be:
     """json
     {
-      "_id": "test-user-to-get-1",
-      "authkey": "3ct2e1ff-5e9e-4b1f-9d80-d968d61g5202",
+      "_id": "test-user-to-account-get-1",
+      "authkey": "5ez4e3jj-7e1e-5c2g-0e91-e179f72a6426",
       "defaultview": {
         "_id": "test-view-to-edit-user",
         "title": "test-view-to-edit-user-title"
       },
-      "email": "test-user-to-get-1-email@canopsis.net",
+      "email": "test-user-to-account-get-1-email@canopsis.net",
       "enable": true,
       "external_id": "",
-      "firstname": "test-user-to-get-1-firstname",
-      "lastname": "test-user-to-get-1-lastname",
-      "name": "test-user-to-get-1",
+      "firstname": "test-user-to-account-get-1-firstname",
+      "lastname": "test-user-to-account-get-1-lastname",
+      "name": "test-user-to-account-get-1",
+      "display_name": "test-user-to-account-get-1 test-user-to-account-get-1-firstname test-user-to-account-get-1-lastname test-user-to-account-get-1-email@canopsis.net",
       "permissions": [
         {
           "_id": "test-permission-to-edit-user-1",
@@ -60,20 +61,27 @@ Feature: Account auth user
           "type": "RW"
         }
       ],
-      "role": {
-        "_id": "test-role-to-user-get-1",
-        "name": "test-role-to-user-get-1",
-        "defaultview": {
-          "_id": "test-view-to-edit-user",
-          "title": "test-view-to-edit-user-title"
+      "roles": [
+        {
+          "_id": "test-role-to-account-get-2",
+          "name": "test-role-to-account-get-2",
+          "defaultview": null
+        },
+        {
+          "_id": "test-role-to-account-get-1",
+          "name": "test-role-to-account-get-1",
+          "defaultview": {
+            "_id": "test-view-to-edit-user",
+            "title": "test-view-to-edit-user-title"
+          }
         }
-      },
+      ],
       "source": "",
       "ui_groups_navigation_type": "side-bar",
       "ui_language": "en",
       "ui_theme": "canopsis",
       "ui_tours": {
-        "test-tour-to-get-user-1": true
+        "test-tour-to-account-get-1": true
       }
     }
 	"""

@@ -36,7 +36,8 @@
             private,
             with-alarm,
             with-entity,
-            with-pbehavior
+            with-pbehavior,
+            entity-counters-type
           )
       v-flex
         v-checkbox.pt-2(
@@ -59,9 +60,9 @@
 <script>
 import { isObject } from 'lodash';
 
-import { API_HOST, API_ROUTES } from '@/config';
-
 import { USERS_PERMISSIONS } from '@/constants';
+
+import { getContextExportDownloadFileUrl } from '@/helpers/entities/entity/url';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -71,8 +72,8 @@ import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 import { permissionsWidgetsContextFilters } from '@/mixins/permissions/widgets/context/filters';
 import { permissionsWidgetsContextCategory } from '@/mixins/permissions/widgets/context/category';
 
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
-import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
+import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
+import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 
 import ContextFab from './actions/context-fab.vue';
 import EntitiesListTableWithPagination from './partials/entities-list-table-with-pagination.vue';
@@ -190,7 +191,7 @@ export default {
           data: this.getExportQuery(),
         });
 
-        this.downloadFile(`${API_HOST}${API_ROUTES.contextExport}/${fileData._id}/download`);
+        this.downloadFile(getContextExportDownloadFileUrl(fileData._id));
       } catch (err) {
         this.$popups.error({ text: this.$t('context.popups.exportFailed') });
       } finally {

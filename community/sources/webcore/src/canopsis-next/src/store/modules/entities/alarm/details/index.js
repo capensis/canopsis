@@ -2,14 +2,13 @@ import Vue from 'vue';
 import { get } from 'lodash';
 
 import { API_ROUTES } from '@/config';
-
 import { ENTITIES_TYPES } from '@/constants';
 
 import request from '@/services/request';
 
 import { alarmDetailsSchema } from '@/store/schemas';
 
-import { generateAlarmDetailsId, getAlarmDetailsDataPreparer } from '@/helpers/entities';
+import { generateAlarmDetailsId, getAlarmDetailsDataPreparer } from '@/helpers/entities/alarm/list';
 
 export const types = {
   FETCH_ITEM: 'FETCH_ITEM',

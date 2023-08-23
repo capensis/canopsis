@@ -5,6 +5,8 @@ import request from '@/services/request';
 
 import { createEntityModule } from '@/store/plugins/entities';
 
+import { convertObjectToFormData } from '@/helpers/request';
+
 export default createEntityModule({
   route: API_ROUTES.pbehavior.exceptions,
   entityType: ENTITIES_TYPES.pbehaviorExceptions,
@@ -15,6 +17,12 @@ export default createEntityModule({
   actions: {
     fetchListWithoutStore(context, { params }) {
       return request.get(API_ROUTES.pbehavior.exceptions, { params });
+    },
+
+    import(context, { data } = {}) {
+      return request.post(API_ROUTES.pbehavior.exceptionImport, convertObjectToFormData(data), {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
     },
   },
 });

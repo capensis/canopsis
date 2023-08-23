@@ -80,4 +80,6 @@ const (
 	EngineConnector = "engine"
 
 	FacetLimit = 1000
+
+	ApiName = "api"
 )

@@ -18,7 +18,7 @@ import { Calendar } from 'dayspan';
 import { DATETIME_FORMATS } from '@/constants';
 
 import { getMostReadableTextColor } from '@/helpers/color';
-import { getPbehaviorColor } from '@/helpers/entities/pbehavior';
+import { getPbehaviorColor } from '@/helpers/entities/pbehavior/form';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/calendar/dayspan';
 import { convertDateToString, convertDateToTimestampByTimezone } from '@/helpers/date/date';
 

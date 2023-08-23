@@ -1,4 +1,4 @@
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { fakeAlarm } from '@unit/data/alarm';
@@ -11,8 +11,6 @@ import VariablesHelp from '@/components/modals/common/variables-help.vue';
 jest.mock('@/helpers/file/files', () => ({
   saveJsonFile: jest.fn(),
 }));
-
-const localVue = createVueInstance();
 
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
@@ -96,7 +94,7 @@ describe('variables-help', () => {
   };
 
   const snapshotFactory = generateRenderer(VariablesHelp, {
-    localVue,
+
     stubs: snapshotStubs,
     mocks: { $popups },
     parentComponent: {

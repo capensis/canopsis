@@ -12,16 +12,19 @@ Feature: Get a rating settings
       "data": [
         {
           "id": 4,
+          "type": 0,
           "label": "test-rating-settings-to-get-1",
           "enabled": true
         },
         {
           "id": 5,
+          "type": 0,
           "label": "infos.test-rating-settings-to-get-2",
           "enabled": false
         },
         {
           "id": 6,
+          "type": 1,
           "label": "test-rating-settings-to-get-3",
           "enabled": false
         }
@@ -45,11 +48,13 @@ Feature: Get a rating settings
       "data": [
         {
           "id": 4,
+          "type": 0,
           "label": "test-rating-settings-to-get-1",
           "enabled": true
         },
         {
           "id": 5,
+          "type": 0,
           "label": "infos.test-rating-settings-to-get-2",
           "enabled": false
         }
@@ -70,6 +75,7 @@ Feature: Get a rating settings
       "data": [
         {
           "id": 6,
+          "type": 1,
           "label": "test-rating-settings-to-get-3",
           "enabled": false
         }
@@ -93,6 +99,7 @@ Feature: Get a rating settings
       "data": [
         {
           "id": 4,
+          "type": 0,
           "label": "test-rating-settings-to-get-1",
           "enabled": true
         }

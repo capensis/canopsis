@@ -4,7 +4,7 @@ package techmetrics
 
 import (
 	"context"
-	"fmt"
+	"math"
 	"sync"
 	"time"
 
@@ -14,6 +14,8 @@ import (
 	"github.com/jackc/pgx/v4"
 	"github.com/rs/zerolog"
 )
+
+const maxUrlLength = 500
 
 type Sender interface {
 	Run(ctx context.Context)
@@ -47,7 +49,7 @@ func NewSender(
 		poolRetryTimeout: poolRetryTimeout,
 		logger:           logger,
 
-		batches: make(map[string][]batchItem),
+		batches: make(map[string][][]any),
 	}
 }
 
@@ -60,14 +62,9 @@ type sender struct {
 	poolRetryTimeout time.Duration
 
 	batchesMx sync.Mutex
-	batches   map[string][]batchItem
+	batches   map[string][][]any
 
 	pool postgres.Pool
-}
-
-type batchItem struct {
-	query     string
-	arguments []interface{}
 }
 
 func (s *sender) Run(ctx context.Context) {
@@ -91,117 +88,77 @@ func (s *sender) Run(ctx context.Context) {
 }
 
 func (s *sender) SendQueue(metricName string, timestamp time.Time, length int64) {
-	query := fmt.Sprintf("INSERT INTO %s (time, length) VALUES($1, $2);", metricName)
-	s.addBatch(metricName, batchItem{
-		query: query,
-		arguments: []interface{}{
-			timestamp.UTC(),
-			length,
-		},
+	s.addBatch(metricName, []any{
+		timestamp.UTC(),
+		length,
 	})
 }
 
 func (s *sender) SendAxePeriodical(metric AxePeriodicalMetric) {
-	metricName := AxePeriodical
-	query := fmt.Sprintf("INSERT INTO %s (time, interval, events) VALUES($1, $2, $3);", metricName)
-	s.addBatch(metricName, batchItem{
-		query: query,
-		arguments: []interface{}{
-			metric.Timestamp.UTC(),
-			metric.Interval.Microseconds(),
-			metric.Events,
-		},
+	s.addBatch(AxePeriodical, []any{
+		metric.Timestamp.UTC(),
+		metric.Interval.Microseconds(),
+		metric.Events,
 	})
 }
 
 func (s *sender) SendPBehaviorPeriodical(metric PbehaviorPeriodicalMetric) {
-	metricName := PBehaviorPeriodical
-	query := fmt.Sprintf("INSERT INTO %s (time, interval, events, entities, pbehaviors) VALUES($1, $2, $3, $4, $5);", metricName)
-	s.addBatch(metricName, batchItem{
-		query: query,
-		arguments: []interface{}{
-			metric.Timestamp.UTC(),
-			metric.Interval.Microseconds(),
-			metric.Events,
-			metric.Entities,
-			metric.Pbehaviors,
-		},
+	s.addBatch(PBehaviorPeriodical, []any{
+		metric.Timestamp.UTC(),
+		metric.Interval.Microseconds(),
+		metric.Events,
+		metric.Entities,
+		metric.Pbehaviors,
 	})
 }
 
 func (s *sender) SendCheEntityInfo(timestamp time.Time, name string) {
-	metricName := CheInfos
-	query := fmt.Sprintf("INSERT INTO %s (time, name) VALUES($1, $2);", metricName)
-	s.addBatch(metricName, batchItem{
-		query: query,
-		arguments: []interface{}{
-			timestamp.UTC(),
-			name,
-		},
+	s.addBatch(CheInfos, []any{
+		timestamp.UTC(),
+		name,
 	})
 }
 
 func (s *sender) SendApiRequest(metric ApiRequestMetric) {
-	metricName := ApiRequests
-	query := fmt.Sprintf("INSERT INTO %s (time, method, url, interval) VALUES($1, $2, $3, $4);", metricName)
-	s.addBatch(metricName, batchItem{
-		query: query,
-		arguments: []interface{}{
-			metric.Timestamp.UTC(),
-			metric.Method,
-			metric.Url,
-			metric.Interval.Microseconds(),
-		},
+	url := metric.Url
+	if len(url) > maxUrlLength {
+		url = url[:maxUrlLength]
+	}
+	s.addBatch(ApiRequests, []any{
+		metric.Timestamp.UTC(),
+		metric.Method,
+		url,
+		metric.Interval.Microseconds(),
 	})
 }
 
 func (s *sender) SendSimpleEvent(metricName string, metric EventMetric) {
-	query := fmt.Sprintf("INSERT INTO %s (time, type, interval) VALUES ($1, $2, $3)", metricName)
-	s.addBatch(metricName, batchItem{
-		query: query,
-		arguments: []interface{}{
-			metric.Timestamp.UTC(),
-			metric.EventType,
-			metric.Interval.Microseconds(),
-		},
+	s.addBatch(metricName, []any{
+		metric.Timestamp.UTC(),
+		metric.EventType,
+		metric.Interval.Microseconds(),
 	})
 }
 
 func (s *sender) SendCheEvent(metric CheEventMetric) {
-	metricName := CheEvent
-	query := fmt.Sprintf(`
-		INSERT INTO %s (time, type, interval, entity_type, is_new_entity, is_infos_updated, is_services_updated) 
-		VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-		metricName)
-	s.addBatch(metricName, batchItem{
-		query: query,
-		arguments: []interface{}{
-			metric.Timestamp.UTC(),
-			metric.EventType,
-			metric.Interval.Microseconds(),
-			metric.EntityType,
-			metric.IsNewEntity,
-			metric.IsInfosUpdated,
-			metric.IsServicesUpdated,
-		},
+	s.addBatch(CheEvent, []any{
+		metric.Timestamp.UTC(),
+		metric.EventType,
+		metric.Interval.Microseconds(),
+		metric.EntityType,
+		metric.IsNewEntity,
+		metric.IsInfosUpdated,
+		metric.IsServicesUpdated,
 	})
 }
 
 func (s *sender) SendAxeEvent(metric AxeEventMetric) {
-	metricName := AxeEvent
-	query := fmt.Sprintf(`
-		INSERT INTO %s (time, type, interval, entity_type, alarm_change_type) 
-		VALUES ($1, $2, $3, $4, $5)`,
-		metricName)
-	s.addBatch(metricName, batchItem{
-		query: query,
-		arguments: []interface{}{
-			metric.Timestamp.UTC(),
-			metric.EventType,
-			metric.Interval.Microseconds(),
-			metric.EntityType,
-			metric.AlarmChangeType,
-		},
+	s.addBatch(AxeEvent, []any{
+		metric.Timestamp.UTC(),
+		metric.EventType,
+		metric.Interval.Microseconds(),
+		metric.EntityType,
+		metric.AlarmChangeType,
 	})
 
 }
@@ -228,43 +185,41 @@ func (s *sender) send(ctx context.Context) {
 		}
 	}
 
-	batch := &pgx.Batch{}
-	count := 0
-	for _, items := range batches {
-		for _, item := range items {
-			batch.Queue(item.query, item.arguments...)
-			count++
-
-			if count >= canopsis.DefaultBulkSize {
-				err := s.pool.SendBatch(ctx, batch)
-				if err != nil {
-					s.logger.Err(err).Msg("cannot send tech metrics")
-					return
-				}
-				batch = &pgx.Batch{}
-				count = 0
-			}
+	bulkSize := canopsis.DefaultBulkSize
+	for metricName, rows := range batches {
+		columns := s.getColumns(metricName)
+		if len(columns) == 0 {
+			s.logger.Error().Msgf("unknown columns for %q", metricName)
+			continue
 		}
-	}
 
-	if count > 0 {
-		err := s.pool.SendBatch(ctx, batch)
-		if err != nil {
-			s.logger.Err(err).Msg("cannot send tech metrics")
+		rowsCount := len(rows)
+		bulkCount := int(math.Ceil(float64(rowsCount) / float64(bulkSize)))
+		for i := 0; i < bulkCount; i++ {
+			begin := i * bulkSize
+			end := (i + 1) * bulkSize
+			if end > rowsCount {
+				end = rowsCount
+			}
+			_, err := s.pool.CopyFrom(ctx, pgx.Identifier{metricName}, columns, pgx.CopyFromRows(rows[begin:end]))
+			if err != nil {
+				s.logger.Err(err).Msg("cannot send tech metrics")
+				return
+			}
 		}
 	}
 }
 
-func (s *sender) flushBatches() map[string][]batchItem {
+func (s *sender) flushBatches() map[string][][]any {
 	s.batchesMx.Lock()
 	defer s.batchesMx.Unlock()
 
-	batches := make(map[string][]batchItem, len(s.batches))
+	batches := make(map[string][][]any, len(s.batches))
 	for metricName, items := range s.batches {
 		if len(items) == 0 {
 			continue
 		}
-		batches[metricName] = make([]batchItem, 0, len(items))
+		batches[metricName] = make([][]any, 0, len(items))
 	}
 	res := s.batches
 	s.batches = batches
@@ -277,11 +232,11 @@ func (s *sender) cleanBatches() {
 	defer s.batchesMx.Unlock()
 
 	if len(s.batches) > 0 {
-		s.batches = make(map[string][]batchItem, 0)
+		s.batches = make(map[string][][]any, 0)
 	}
 }
 
-func (s *sender) addBatch(metricName string, item batchItem) {
+func (s *sender) addBatch(metricName string, args []any) {
 	if !s.configProvider.Get().Enabled {
 		return
 	}
@@ -290,8 +245,75 @@ func (s *sender) addBatch(metricName string, item batchItem) {
 	defer s.batchesMx.Unlock()
 
 	if _, ok := s.batches[metricName]; !ok {
-		s.batches[metricName] = make([]batchItem, 0, 1)
+		s.batches[metricName] = make([][]any, 0, 1)
 	}
 
-	s.batches[metricName] = append(s.batches[metricName], item)
+	s.batches[metricName] = append(s.batches[metricName], args)
+}
+
+func (s *sender) getColumns(metricName string) []string {
+	switch metricName {
+	case CheEvent:
+		return []string{
+			"time",
+			"type",
+			"interval",
+			"entity_type",
+			"is_new_entity",
+			"is_infos_updated",
+			"is_services_updated",
+		}
+	case AxeEvent:
+		return []string{
+			"time",
+			"type",
+			"interval",
+			"entity_type",
+			"alarm_change_type",
+		}
+	case CanopsisEvent,
+		FIFOEvent,
+		CorrelationEvent,
+		ServiceEvent,
+		DynamicInfosEvent,
+		ActionEvent:
+		return []string{
+			"time",
+			"type",
+			"interval",
+		}
+	case AxePeriodical:
+		return []string{
+			"time",
+			"interval",
+			"events",
+		}
+	case PBehaviorPeriodical:
+		return []string{
+			"time",
+			"interval",
+			"events",
+			"entities",
+			"pbehaviors",
+		}
+	case FIFOQueue:
+		return []string{
+			"time",
+			"length",
+		}
+	case CheInfos:
+		return []string{
+			"time",
+			"name",
+		}
+	case ApiRequests:
+		return []string{
+			"time",
+			"method",
+			"url",
+			"interval",
+		}
+	}
+
+	return nil
 }

@@ -32,7 +32,9 @@ func NewApi(client mongo.DbClient, logger zerolog.Logger) API {
 		logger: logger,
 		collectionNames: map[string]string{
 			"configuration":       mongo.ConfigurationMongoCollection,
-			"acl":                 mongo.RightsMongoCollection,
+			"user":                mongo.UserCollection,
+			"role":                mongo.RoleCollection,
+			"permission":          mongo.PermissionCollection,
 			"pbehavior":           mongo.PbehaviorMongoCollection,
 			"pbehavior_type":      mongo.PbehaviorTypeMongoCollection,
 			"pbehavior_reason":    mongo.PbehaviorReasonMongoCollection,
@@ -63,6 +65,7 @@ func NewApi(client mongo.DbClient, logger zerolog.Logger) API {
 			"pattern":             mongo.PatternMongoCollection,
 			"declare_ticket_rule": mongo.DeclareTicketRuleMongoCollection,
 			"link_rule":           mongo.LinkRuleMongoCollection,
+			"map":                 mongo.MapMongoCollection,
 		},
 	}
 }

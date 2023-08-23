@@ -2,7 +2,7 @@ import { cloneDeep, isEqual } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 
 /**
  * Confirm user action on form mixin creator

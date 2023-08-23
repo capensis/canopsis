@@ -8,9 +8,11 @@
         :pagination.sync="pagination",
         :total-items="rolesMeta.total_count",
         :removable="hasDeleteAnyRoleAccess",
+        :duplicable="hasCreateAnyRoleAccess",
         :updatable="hasUpdateAnyRoleAccess",
         @edit="showEditRoleModal",
         @remove="showRemoveRoleModal",
+        @duplicate="showDuplicateRoleModal",
         @remove-selected="showRemoveSelectedRolesModal"
       )
     c-fab-btn(
@@ -22,6 +24,8 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import { MODALS } from '@/constants';
 
 import { entitiesRoleMixin } from '@/mixins/entities/role';
@@ -97,16 +101,34 @@ export default {
       });
     },
 
-    showCreateRoleModal() {
+    showDuplicateRoleModal(role) {
       this.$modals.show({
         name: MODALS.createRole,
         config: {
+          role: omit(role, ['_id']),
+          title: this.$t('modals.createRole.duplicate.title'),
           action: async (data) => {
             await this.createRole({ data });
 
             this.$popups.success({ text: this.$t('success.default') });
 
-            await this.fetchList();
+            return this.fetchList();
+          },
+        },
+      });
+    },
+
+    showCreateRoleModal() {
+      this.$modals.show({
+        name: MODALS.createRole,
+        config: {
+          withTemplate: true,
+          action: async (data) => {
+            await this.createRole({ data });
+
+            this.$popups.success({ text: this.$t('success.default') });
+
+            return this.fetchList();
           },
         },
       });

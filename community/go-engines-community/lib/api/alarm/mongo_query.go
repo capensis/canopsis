@@ -30,6 +30,7 @@ const (
 type MongoQueryBuilder struct {
 	filterCollection      mongo.DbCollection
 	instructionCollection mongo.DbCollection
+	authorProvider        author.Provider
 
 	defaultSearchByFields   []string
 	availableSearchByFields map[string]struct{}
@@ -66,10 +67,11 @@ type lookupWithKey struct {
 	pipeline []bson.M
 }
 
-func NewMongoQueryBuilder(client mongo.DbClient) *MongoQueryBuilder {
+func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider) *MongoQueryBuilder {
 	return &MongoQueryBuilder{
 		filterCollection:      client.Collection(mongo.WidgetFiltersMongoCollection),
 		instructionCollection: client.Collection(mongo.InstructionMongoCollection),
+		authorProvider:        authorProvider,
 
 		defaultSearchByFields: []string{
 			"v.connector",
@@ -124,7 +126,7 @@ func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 		{key: "entity", pipeline: getEntityLookup()},
 		{key: "entity.category", pipeline: getEntityCategoryLookup()},
 		{key: "entity.impacts_counts", pipeline: getImpactsCountPipeline()},
-		{key: "pbehavior", pipeline: getPbehaviorLookup()},
+		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
 		{key: "pbehavior.type", pipeline: getPbehaviorTypeLookup()},
 		{key: "v.pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
 	}
@@ -1099,7 +1101,7 @@ func getEntityCategoryLookup() []bson.M {
 	}
 }
 
-func getPbehaviorLookup() []bson.M {
+func getPbehaviorLookup(authorProvider author.Provider) []bson.M {
 	pipeline := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorMongoCollection,
@@ -1120,8 +1122,8 @@ func getPbehaviorLookup() []bson.M {
 		{"$unwind": bson.M{"path": "$pbehavior.reason", "preserveNullAndEmptyArrays": true}},
 	}
 
-	pipeline = append(pipeline, author.PipelineForField("pbehavior.author")...)
-	pipeline = append(pipeline, author.PipelineForField("pbehavior.last_comment.author")...)
+	pipeline = append(pipeline, authorProvider.PipelineForField("pbehavior.author")...)
+	pipeline = append(pipeline, authorProvider.PipelineForField("pbehavior.last_comment.author")...)
 	pipeline = append(pipeline, bson.M{"$addFields": bson.M{
 		"pbehavior.last_comment": bson.M{
 			"$cond": bson.M{
@@ -1213,6 +1215,8 @@ func getChildrenCountLookup() []bson.M {
 				bson.M{"$size": "$children"},
 				bson.M{"$size": "$resolved_children"},
 			}},
+			"opened_children": bson.M{"$size": "$children"},
+			"closed_children": bson.M{"$size": "$resolved_children"},
 		}},
 	}
 }
@@ -1351,21 +1355,41 @@ func getInstructionQuery(instruction Instruction) (bson.M, error) {
 func getImpactsCountPipeline() []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "entity.services",
-			"foreignField": "_id",
-			"as":           "service_impacts",
+			"from": mongo.EntityMongoCollection,
+			"let": bson.M{"services": bson.M{"$cond": bson.M{
+				"if":   "$entity.services",
+				"then": "$entity.services",
+				"else": bson.A{},
+			}}},
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"$expr": bson.M{"$in": bson.A{"$_id", "$$services"}},
+				}},
+				{"$project": bson.M{"_id": 1}},
+			},
+			"as": "service_impacts",
 		}},
 		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "entity._id",
-			"foreignField": "services",
-			"as":           "depends",
+			"from": mongo.EntityMongoCollection,
+			"let":  bson.M{"service": "$entity._id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"$expr": bson.M{"$and": []bson.M{
+						{"$isArray": "$services"},
+						{"$in": bson.A{"$$service", "$services"}},
+					}},
+				}},
+				{"$project": bson.M{"_id": 1}},
+			},
+			"as": "depends",
 		}},
 		{"$addFields": bson.M{
 			"entity.depends_count": bson.M{"$size": "$depends"},
 			"entity.impacts_count": bson.M{"$size": "$service_impacts"},
 		}},
-		{"$project": bson.M{"service_impacts": 0}},
+		{"$project": bson.M{
+			"service_impacts": 0,
+			"depends":         0,
+		}},
 	}
 }

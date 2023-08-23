@@ -30,7 +30,7 @@ describe('ack-event-form', () => {
     attachTo: document.body,
   });
 
-  test('Output changed after trigger description field', () => {
+  test('Comment changed after trigger description field', () => {
     const form = {
       output: Faker.datatype.string(),
       ack_resources: Faker.datatype.boolean(),
@@ -41,13 +41,13 @@ describe('ack-event-form', () => {
       },
     });
 
-    const output = Faker.datatype.string();
+    const comment = Faker.datatype.string();
 
     const descriptionField = selectDescriptionField(wrapper);
 
-    descriptionField.vm.$emit('input', output);
+    descriptionField.vm.$emit('input', comment);
 
-    expect(wrapper).toEmit('input', { ...form, output });
+    expect(wrapper).toEmit('input', { ...form, comment });
   });
 
   test('Ack resources changed after trigger checkbox field', async () => {
@@ -80,7 +80,7 @@ describe('ack-event-form', () => {
     const wrapper = snapshotFactory({
       propsData: {
         form: {
-          output: 'output',
+          comment: 'Comment',
           ack_resources: true,
         },
         isNoteRequired: true,

@@ -1,18 +1,18 @@
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import flushPromises from 'flush-promises';
 import ExtraDetailsChildren from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-children.vue';
 
-const localVue = createVueInstance();
-
 describe('extra-details-children', () => {
   const total = 3;
+  const opened = 2;
+  const closed = 1;
   const rule = {
     name: 'rule-name',
   };
 
   const snapshotFactory = generateRenderer(ExtraDetailsChildren, {
-    localVue,
+
     attachTo: document.body,
   });
 
@@ -20,6 +20,8 @@ describe('extra-details-children', () => {
     snapshotFactory({
       propsData: {
         total,
+        opened,
+        closed,
         rule,
       },
     });

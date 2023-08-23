@@ -4,8 +4,7 @@
       template(#title="")
         span {{ $t('modals.createSnoozeEvent.title') }}
       template(#text="")
-        v-container
-          snooze-event-form(v-model="form", :is-note-required="isNoteRequired")
+        snooze-event-form(v-model="form", :is-note-required="config.isNoteRequired")
       template(#actions="")
         v-btn(
           depressed,
@@ -20,15 +19,13 @@
 </template>
 
 <script>
-import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
+import { MODALS } from '@/constants';
+
+import { snoozeToForm } from '@/helpers/entities/alarm/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
-import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
-import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-
-import { formToSnooze, snoozeToForm } from '@/helpers/forms/snooze-event';
 
 import SnoozeEventForm from '@/components/widgets/alarm/forms/snooze-event-form.vue';
 
@@ -48,8 +45,6 @@ export default {
   },
   mixins: [
     modalInnerMixin,
-    modalInnerItemsMixin,
-    eventActionsAlarmMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
@@ -58,19 +53,12 @@ export default {
       form: snoozeToForm(),
     };
   },
-  computed: {
-    isNoteRequired() {
-      return this.config.isNoteRequired;
-    },
-  },
   methods: {
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        const form = formToSnooze(this.form);
-
-        await this.createEvent(EVENT_ENTITY_TYPES.snooze, this.items, form);
+        await this.config?.action(this.form);
 
         this.$modals.hide();
       }
