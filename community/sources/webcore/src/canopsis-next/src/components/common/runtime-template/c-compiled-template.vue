@@ -1,15 +1,16 @@
 <template lang="pug">
-  c-runtime-template(:template="compiledTemplate", :parent="$parent")
+  c-runtime-template(v-bind="$attrs", :template="compiledTemplate", :parent="$parent")
 </template>
 
 <script>
 import { compile } from '@/helpers/handlebars';
 
 export default {
+  inheritAttrs: false,
   props: {
     template: {
       type: String,
-      required: false,
+      default: '',
     },
     parentElement: {
       type: String,
@@ -20,14 +21,24 @@ export default {
       required: false,
     },
   },
-  asyncComputed: {
-    compiledTemplate: {
-      async get() {
-        const compiledTemplate = await compile(this.template, this.context);
+  data() {
+    return {
+      compiledTemplate: '',
+    };
+  },
+  watch: {
+    template: 'compileTemplate',
+    context: 'compileTemplate',
+    parentElement: 'compileTemplate',
+  },
+  created() {
+    this.compileTemplate();
+  },
+  methods: {
+    async compileTemplate() {
+      const compiledTemplate = await compile(this.template, this.context);
 
-        return `<${this.parentElement}>${compiledTemplate}</${this.parentElement}>`;
-      },
-      default: '',
+      this.compiledTemplate = `<${this.parentElement}>${compiledTemplate}</${this.parentElement}>`;
     },
   },
 };
