@@ -101,9 +101,6 @@ export default {
   createCancelEvent: {
     title: 'Annuler',
   },
-  createGroupRequestEvent: {
-    title: 'Proposition de regroupement pour méta-alarmes',
-  },
   createGroupEvent: {
     title: 'Créer une méta-alarme',
   },
@@ -181,6 +178,9 @@ export default {
   },
   createAckRemove: {
     title: 'Annuler l\'acquittement',
+  },
+  createUnCancel: {
+    title: 'Créer en uncanccel',
   },
   liveReporting: {
     editLiveReporting: 'Suivi personnalisé',
@@ -277,6 +277,18 @@ export default {
       [WIDGET_TYPES.numbers]: {
         title: 'Nombres',
       },
+      [WIDGET_TYPES.userStatistics]: {
+        title: 'Statistiques des utilisateurs',
+      },
+      [WIDGET_TYPES.alarmStatistics]: {
+        title: 'Statistiques des alarmes',
+      },
+      chart: {
+        title: 'Graphique',
+      },
+      report: {
+        title: 'Rapport',
+      },
     },
   },
   manageHistogramGroups: {
@@ -317,6 +329,9 @@ export default {
     },
     edit: {
       title: 'Éditer un rôle',
+    },
+    duplicate: {
+      title: 'Dupliquer un rôle',
     },
   },
   createEventFilter: {
@@ -940,5 +955,8 @@ export default {
         title: 'Modifier le tableau des nombres',
       },
     },
+  },
+  importPbehaviorException: {
+    title: 'Importer des dates d\'exception',
   },
 };

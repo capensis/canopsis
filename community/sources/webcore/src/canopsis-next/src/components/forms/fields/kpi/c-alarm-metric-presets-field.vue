@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-movable-card-iterator-field(v-field="metrics", @add="add")
+  c-movable-card-iterator-field(v-field="metrics", :addable="!onlyExternal", @add="addMetric")
     template(#item="{ item, index }")
       c-alarm-metric-preset-field(
         v-field="metrics[index]",
@@ -8,15 +8,22 @@
         :parameters="parameters",
         :disabled-parameters="disabledParameters",
         :with-external="withExternal",
+        :only-external="onlyExternal",
         :name="`${name}[${item.key}]`"
       )
     template(#append="")
       c-alert(v-if="errorMessage", type="error") {{ errorMessage }}
     template(#actions="")
-      v-btn.ml-2.mx-0(
+      v-btn.mr-2.mx-0(
+        v-if="withExternal",
         color="primary",
-        @click.prevent="add(true)"
-      ) {{ $t('common.autoAdd') }}
+        @click.prevent="addExternal"
+      ) {{ $t('kpi.addExternal') }}
+      v-btn.mr-2.mx-0(
+        v-if="withExternal",
+        color="primary",
+        @click.prevent="addAuto"
+      ) {{ $t('kpi.autoAdd') }}
 </template>
 
 <script>
@@ -24,8 +31,7 @@ import { omit } from 'lodash';
 
 import { ALARM_METRIC_PARAMETERS, AGGREGATE_FUNCTIONS } from '@/constants';
 
-import { metricPresetToForm } from '@/helpers/forms/metric';
-import { isRatioMetric, isTimeMetric } from '@/helpers/metrics';
+import { metricPresetToForm, isRatioMetric, isTimeMetric } from '@/helpers/entities/metric/form';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -68,6 +74,10 @@ export default {
     min: {
       type: Number,
       default: 1,
+    },
+    onlyExternal: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -122,11 +132,19 @@ export default {
     this.detachRules();
   },
   methods: {
-    add(auto = false) {
+    addMetric(metric = {}) {
       this.addItemIntoArray(metricPresetToForm({
         aggregate_func: this.withAggregateFunction ? AGGREGATE_FUNCTIONS.avg : '',
-        auto,
+        ...metric,
       }));
+    },
+
+    addExternal() {
+      this.addMetric({ external: true, aggregate_func: AGGREGATE_FUNCTIONS.avg });
+    },
+
+    addAuto() {
+      this.addMetric({ auto: true, aggregate_func: AGGREGATE_FUNCTIONS.avg });
     },
 
     attachMinValueRule() {

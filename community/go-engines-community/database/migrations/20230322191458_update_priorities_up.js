@@ -7,6 +7,9 @@ var collectionNames = [
     "instruction",
 ];
 
+// previous version of index has type "unique"
+db.pbehavior_type.dropIndex("priority_1");
+
 if (db.eventfilter.findOne({priority: 0}) && db.eventfilter.findOne({priority: {$gt: 0}})) {
     collectionNames.push("eventfilter");
 }
@@ -49,3 +52,5 @@ for (var collectionName of collectionNames) {
         }
     });
 }
+
+db.pbehavior_type.createIndex({priority: 1}, {name: "priority_1"});

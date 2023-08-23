@@ -25,7 +25,6 @@ import { createNamespacedHelpers } from 'vuex';
 import { isArray, keyBy, pick } from 'lodash';
 
 import { BASIC_ENTITY_TYPES } from '@/constants';
-
 import { PAGINATION_LIMIT } from '@/config';
 
 import { formArrayMixin } from '@/mixins/form';

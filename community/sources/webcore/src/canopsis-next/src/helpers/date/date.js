@@ -190,7 +190,7 @@ export const convertDateToTimestampByTimezone = (date, timezone = getLocaleTimez
 /**
  * Check if date is start of day
  *
- * @param {Date|moment.Moment} date
+ * @param {LocalDate} date
  * @param {string} unit
  * @returns {boolean}
  */

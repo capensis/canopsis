@@ -1,23 +1,17 @@
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
+import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import AlarmsExpandPanelMoreInfos from '@/components/widgets/alarm/expand-panel/alarms-expand-panel-more-infos.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
-  'v-runtime-template': true,
+  'c-runtime-template': CRuntimeTemplate,
 };
 
-const snapshotFactory = (options = {}) => mount(AlarmsExpandPanelMoreInfos, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 describe('alarms-expand-panel-more-infos', () => {
+  const snapshotFactory = generateRenderer(AlarmsExpandPanelMoreInfos, { stubs });
+
   it('Renders `alarms-expand-panel-more-infos` without template', () => {
     const wrapper = snapshotFactory();
 

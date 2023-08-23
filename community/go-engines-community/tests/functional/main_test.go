@@ -12,7 +12,9 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/bdd"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libjson "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	liblog "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -147,7 +149,7 @@ func TestMain(m *testing.M) {
 		time.Sleep(flags.periodicalWaitTime)
 	}
 
-	scenarioInitializer := InitializeScenario(flags, apiClient, amqpClient, mongoClient, websocketClient, loader, redisClient, logger)
+	scenarioInitializer := InitializeScenario(flags, apiClient, amqpClient, mongoClient, websocketClient, loader, dbClient, redisClient, logger)
 	status := godog.TestSuite{
 		Name:                "canopsis",
 		ScenarioInitializer: scenarioInitializer,
@@ -158,9 +160,11 @@ func TestMain(m *testing.M) {
 		status = st
 	}
 
-	err = clearStores(ctx, flags, loader, redisClient, logger)
-	if err != nil {
-		logger.Fatal().Err(err).Send()
+	if !flags.keepStoresOnFail || status == 0 {
+		err = clearStores(ctx, flags, loader, redisClient, logger)
+		if err != nil {
+			logger.Fatal().Err(err).Send()
+		}
 	}
 
 	os.Exit(status)
@@ -173,6 +177,7 @@ func InitializeScenario(
 	mongoClient *bdd.MongoClient,
 	websocketClient *bdd.WebsocketClient,
 	loader fixtures.Loader,
+	dbClient mongo.DbClient,
 	redisClient redismod.Cmdable,
 	logger zerolog.Logger,
 ) func(*godog.ScenarioContext) {
@@ -210,6 +215,19 @@ func InitializeScenario(
 				return ctx, nil
 			})
 		}
+
+		scenarioCtx.Before(func(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
+			cfg, err := config.NewAdapter(dbClient).GetConfig(ctx)
+			if err != nil {
+				return nil, err
+			}
+			loc, err := time.LoadLocation(cfg.Timezone.Timezone)
+			if err != nil {
+				return ctx, err
+			}
+			ctx = bdd.SetTimezone(ctx, loc)
+			return ctx, nil
+		})
 
 		scenarioCtx.Step(`^I am ([\w-]+)$`, apiClient.IAm)
 		scenarioCtx.Step(`^I am authenticated with username "([^"]+)" and password "([^"]+)"$`, apiClient.IAmAuthenticatedByBasicAuth)
@@ -319,6 +337,10 @@ func clearStores(
 	err = tsFixtures.Load()
 	if err != nil {
 		return fmt.Errorf("cannot load timescale fixtures: %w", err)
+	}
+	_, err = pgDb.Exec("REFRESH MATERIALIZED VIEW " + metrics.PerfDataName)
+	if err != nil {
+		return fmt.Errorf("cannot refresh timescale views: %w", err)
 	}
 
 	logger.Info().Msg("PostgresSQL fixtures are applied")

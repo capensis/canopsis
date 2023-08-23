@@ -44,8 +44,8 @@ export const CreateManualMetaAlarm = () => ({
   component: import(/* webpackChunkName: "Alarm" */ './alarm/create-manual-meta-alarm.vue'),
   loading: LoaderOverlay,
 });
-export const RemoveAlarmsFromManualMetaAlarm = () => ({
-  component: import(/* webpackChunkName: "Alarm" */ './alarm/remove-alarms-from-manual-meta-alarm.vue'),
+export const RemoveAlarmsFromMetaAlarm = () => ({
+  component: import(/* webpackChunkName: "Alarm" */ './alarm/remove-alarms-from-meta-alarm.vue'),
   loading: LoaderOverlay,
 });
 export const AlarmsList = () => ({
@@ -103,6 +103,10 @@ export const CreatePbehaviorReason = () => ({
 });
 export const CreatePbehaviorException = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/create-pbehavior-exception.vue'),
+  loading: LoaderOverlay,
+});
+export const ImportPbehaviorException = () => ({
+  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/import-pbehavior-exception.vue'),
   loading: LoaderOverlay,
 });
 export const PbehaviorPatterns = () => ({

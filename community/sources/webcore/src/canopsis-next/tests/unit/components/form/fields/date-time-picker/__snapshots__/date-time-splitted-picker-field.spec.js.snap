@@ -45,7 +45,7 @@ exports[`date-time-splitted-picker-field Renders \`date-time-splitted-picker-fie
     class="layout row"
   >
     <div
-      class="flex date-time-splitted-field__date pr-1"
+      class="flex date-time-splitted-field__date"
     >
       <c-date-picker-field-stub
         hide-details="hide-details"
@@ -83,7 +83,7 @@ exports[`date-time-splitted-picker-field Renders \`date-time-splitted-picker-fie
     class="layout row"
   >
     <div
-      class="flex date-time-splitted-field__date pr-1"
+      class="flex date-time-splitted-field__date"
     >
       <c-date-picker-field-stub
         error="true"

@@ -19,7 +19,7 @@ import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS, WIDGET_TYPES } from '
 import LineChartWidget from '@/components/widgets/chart/line-chart-widget.vue';
 
 const stubs = {
-  'chart-widget-filters': true,
+  'kpi-widget-filters': true,
 };
 
 describe('line-chart-widget', () => {
@@ -140,8 +140,8 @@ describe('line-chart-widget', () => {
         params: {
           widget_filters: [filter],
           sampling,
-          from: 1383843500,
-          to: 1386435500,
+          from: 1383865200,
+          to: 1386370800,
           parameters,
         },
       },

@@ -23,6 +23,9 @@ var columnsByType = map[string][]string{
 		"v.ack.initiator",
 		"v.state.m",
 		"v.status.m",
+		"v.ticket.a",
+		"v.ticket.m",
+		"v.ticket.ticket",
 		"v.state.val",
 		"v.status.val",
 		"v.total_state_changes",
@@ -31,6 +34,7 @@ var columnsByType = map[string][]string{
 		"v.last_event_date",
 		"v.last_update_date",
 		"v.ack.t",
+		"v.ticket.t",
 		"v.state.t",
 		"v.status.t",
 		"v.resolved",
@@ -40,6 +44,7 @@ var columnsByType = map[string][]string{
 		"v.snooze_duration",
 		"v.pbh_inactive_duration",
 		"v.active_duration",
+		"v.events_count",
 		"tags",
 		"extra_details",
 		"impact_state",
@@ -93,9 +98,22 @@ var columnsPrefixByType = map[string][]string{
 	},
 }
 
+var widgetExportColumns = map[string]map[string][]string{
+	WidgetTypeAlarmsList: {
+		"widgetExportColumns": []string{
+			"assigned_instructions",
+		},
+	},
+}
+
 func init() {
 	for _, columns := range columnsByType {
 		sort.Strings(columns)
+	}
+	for wt, v := range widgetExportColumns {
+		for param := range v {
+			sort.Strings(widgetExportColumns[wt][param])
+		}
 	}
 }
 
@@ -105,6 +123,7 @@ func GetWidgetTemplateParameters() map[string]map[string][]string {
 			WidgetTemplateTypeAlarmColumns: {
 				"widgetColumns",
 				"widgetGroupColumns",
+				"widgetExportColumns",
 			},
 			WidgetTemplateTypeEntityColumns: {
 				"serviceDependenciesColumns",
@@ -121,6 +140,7 @@ func GetWidgetTemplateParameters() map[string]map[string][]string {
 			WidgetTemplateTypeEntityColumns: {
 				"widgetColumns",
 				"serviceDependenciesColumns",
+				"widgetExportColumns",
 			},
 		},
 		WidgetTypeServiceWeather: {
@@ -175,6 +195,17 @@ func IsValidWidgetColumn(t, column string) bool {
 	prefixes := columnsPrefixByType[t]
 	for _, prefix := range prefixes {
 		if column == prefix || strings.HasPrefix(column, prefix+".") {
+			return true
+		}
+	}
+
+	return false
+}
+
+func IsValidWidgetExportColumn(widgetType, param, column string) bool {
+	if columns, ok := widgetExportColumns[widgetType][param]; ok {
+		idx := sort.SearchStrings(columns, column)
+		if idx < len(columns) && columns[idx] == column {
 			return true
 		}
 	}

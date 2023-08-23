@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout.py-2(column)
-    chart-widget-filters.mx-3(
+    kpi-widget-filters.mx-3(
       :widget-id="widget._id",
       :user-filters="userPreference.filters",
       :widget-filters="widget.filters",
@@ -42,11 +42,11 @@ import {
   NUMBERS_CHART_MIN_AUTO_FONT_SIZE,
 } from '@/constants';
 
-import { convertFilterToQuery } from '@/helpers/query';
+import { convertFilterToQuery } from '@/helpers/entities/shared/query';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
-import { widgetIntervalFilterMixin } from '@/mixins/widget/chart/interval';
+import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
 import { widgetSamplingFilterMixin } from '@/mixins/widget/chart/sampling';
 import { widgetChartExportMixinCreator } from '@/mixins/widget/chart/export';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
@@ -56,7 +56,7 @@ import { permissionsWidgetsNumbersInterval } from '@/mixins/permissions/widgets/
 import { permissionsWidgetsNumbersSampling } from '@/mixins/permissions/widgets/chart/numbers/sampling';
 import { permissionsWidgetsNumbersFilters } from '@/mixins/permissions/widgets/chart/numbers/filters';
 
-import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
+import KpiWidgetFilters from '../partials/kpi-widget-filters.vue';
 
 import ChartLoader from './partials/chart-loader.vue';
 import NumbersMetrics from './partials/numbers-metrics.vue';
@@ -66,14 +66,14 @@ const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
 export default {
   inject: ['$system'],
   components: {
-    ChartWidgetFilters,
+    KpiWidgetFilters,
     ChartLoader,
     NumbersMetrics,
   },
   mixins: [
     widgetFetchQueryMixin,
     widgetFilterSelectMixin,
-    widgetIntervalFilterMixin,
+    metricsIntervalFilterMixin,
     widgetSamplingFilterMixin,
     widgetPeriodicRefreshMixin,
     widgetChartMetricsMap,
@@ -164,7 +164,7 @@ export default {
     getQuery() {
       return {
         ...this.getIntervalQuery(),
-        ...pick(this.query, ['parameters', 'sampling']),
+        ...pick(this.query, ['parameters', 'sampling', 'with_history']),
         widget_filters: convertFilterToQuery(this.query.filter),
       };
     },
@@ -172,7 +172,6 @@ export default {
     async fetchList() {
       await this.fetchAggregatedMetricsList({
         widgetId: this.widget._id,
-        trend: this.widget.parameters.show_trend,
         params: this.getQuery(),
       });
 

@@ -8,7 +8,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { addKeyInEntities } from '@/helpers/entities';
+import { addKeyInEntities } from '@/helpers/array';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 
