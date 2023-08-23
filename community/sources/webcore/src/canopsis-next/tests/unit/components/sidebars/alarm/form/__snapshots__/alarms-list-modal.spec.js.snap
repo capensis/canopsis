@@ -68,7 +68,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
           <p style="padding: 12px; margin: 0;">Display&nbsp;&nbsp;name</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ display_name }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.display_name }}</p>
         </td>
       </tr>
       <tr>
@@ -76,7 +76,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
           <p style="padding: 12px; margin: 0;">State</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ state }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.state }}</p>
         </td>
       </tr>
       <tr>
@@ -84,7 +84,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
           <p style="padding: 12px; margin: 0;">Status</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ status }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.status }}</p>
         </td>
       </tr>
       <tr>
@@ -92,7 +92,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
           <p style="padding: 12px; margin: 0;">Connector</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ connector }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.connector }}</p>
         </td>
       </tr>
       <tr>
@@ -100,7 +100,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
           <p style="padding: 12px; margin: 0;">Connector&nbsp;&nbsp;name</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ connector_name }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.connector_name }}</p>
         </td>
       </tr>
       <tr>
@@ -108,7 +108,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
           <p style="padding: 12px; margin: 0;">Component</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ component }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.component }}</p>
         </td>
       </tr>
       <tr>
@@ -116,7 +116,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
           <p style="padding: 12px; margin: 0;">Resource</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ resource }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.resource }}</p>
         </td>
       </tr>
       <tr>
@@ -124,7 +124,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
           <p style="padding: 12px; margin: 0;">Creation&nbsp;&nbsp;date</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ creation_date }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.creation_date }}</p>
         </td>
       </tr>
       <tr>
@@ -132,7 +132,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
           <p style="padding: 12px; margin: 0;">Activated&nbsp;&nbsp;at</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ activation_date }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.activation_date }}</p>
         </td>
       </tr>
       <tr>
@@ -140,7 +140,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
           <p style="padding: 12px; margin: 0;">Resolved&nbsp;&nbsp;at</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ resolved }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.resolved }}</p>
         </td>
       </tr>
       <tr>
@@ -148,7 +148,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
           <p style="padding: 12px; margin: 0;">Duration</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ duration }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.duration }}</p>
         </td>
       </tr>
       <tr>
@@ -156,21 +156,21 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
           <p style="padding: 12px; margin: 0;">Infos</p>
         </td>
         <td style="padding: 0 2px 0 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          {{ infos }}</td>
+          {{ alarm.infos }}</td>
       </tr>
       <tr>
         <td style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
           <p style="padding: 12px; margin: 0;">PBehavior&nbsp;&nbsp;info</p>
         </td>
         <td style="padding: 0 2px 0 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          {{ pbehavior_info }}</td>
+          {{ alarm.v.pbehavior_info }}</td>
       </tr>
       <tr>
         <td style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
           <p style="padding: 12px; margin: 0;">Initial&nbsp;&nbsp;output</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ initial_output }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.initial_output }}</p>
         </td>
       </tr>
       <tr>
@@ -178,7 +178,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
           <p style="padding: 12px; margin: 0;">Output</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ output }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.output }}</p>
         </td>
       </tr>
       <tr>
@@ -186,7 +186,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
           <p style="padding: 12px; margin: 0;">Last&nbsp;&nbsp;event&nbsp;&nbsp;date</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ last_event_date }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.last_event_date }}</p>
         </td>
       </tr>
       <tr>
@@ -194,7 +194,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
           <p style="padding: 12px; margin: 0;">Last&nbsp;&nbsp;update&nbsp;&nbsp;date</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ last_event_date }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.last_event_date }}</p>
         </td>
       </tr>
       <tr>
@@ -202,7 +202,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
           <p style="padding: 12px; margin: 0;">Acked&nbsp;&nbsp;at</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ acknowledge_date }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.acknowledge_date }}</p>
         </td>
       </tr>
       <tr>
@@ -210,7 +210,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
           <p style="padding: 12px; margin: 0;">Events&nbsp;&nbsp;count</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ events_count }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.events_count }}</p>
         </td>
       </tr>
       <tr>
@@ -218,28 +218,28 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
           <p style="padding: 12px; margin: 0;">Ticket</p>
         </td>
         <td style="padding: 0 2px 0 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          {{ ticket }}</td>
+          {{ alarm.v.ticket }}</td>
       </tr>
       <tr>
         <td style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
           <p style="padding: 12px; margin: 0;">Comments</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          {{ comments }}</td>
+          {{ alarm.comments }}</td>
       </tr>
       <tr>
         <td style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
           <p style="padding: 12px; margin: 0;">Tags</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          {{ tags }}</td>
+          {{ alarm.tags }}</td>
       </tr>
       <tr>
         <td style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
           <p style="padding: 12px; margin: 0;">Links</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
-          {{ links }}</td>
+          {{ alarm.links }}</td>
       </tr>
     </tbody>
   </table>
@@ -320,7 +320,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
           <p style="padding: 12px; margin: 0;">Display&nbsp;&nbsp;name</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ display_name }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.display_name }}</p>
         </td>
       </tr>
       <tr>
@@ -328,7 +328,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
           <p style="padding: 12px; margin: 0;">State</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ state }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.state }}</p>
         </td>
       </tr>
       <tr>
@@ -336,7 +336,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
           <p style="padding: 12px; margin: 0;">Status</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ status }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.status }}</p>
         </td>
       </tr>
       <tr>
@@ -344,7 +344,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
           <p style="padding: 12px; margin: 0;">Connector</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ connector }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.connector }}</p>
         </td>
       </tr>
       <tr>
@@ -352,7 +352,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
           <p style="padding: 12px; margin: 0;">Connector&nbsp;&nbsp;name</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ connector_name }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.connector_name }}</p>
         </td>
       </tr>
       <tr>
@@ -360,7 +360,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
           <p style="padding: 12px; margin: 0;">Component</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ component }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.component }}</p>
         </td>
       </tr>
       <tr>
@@ -368,7 +368,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
           <p style="padding: 12px; margin: 0;">Resource</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ resource }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.resource }}</p>
         </td>
       </tr>
       <tr>
@@ -376,7 +376,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
           <p style="padding: 12px; margin: 0;">Creation&nbsp;&nbsp;date</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ creation_date }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.creation_date }}</p>
         </td>
       </tr>
       <tr>
@@ -384,7 +384,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
           <p style="padding: 12px; margin: 0;">Activated&nbsp;&nbsp;at</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ activation_date }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.activation_date }}</p>
         </td>
       </tr>
       <tr>
@@ -392,7 +392,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
           <p style="padding: 12px; margin: 0;">Resolved&nbsp;&nbsp;at</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ resolved }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.resolved }}</p>
         </td>
       </tr>
       <tr>
@@ -400,7 +400,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
           <p style="padding: 12px; margin: 0;">Duration</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ duration }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.duration }}</p>
         </td>
       </tr>
       <tr>
@@ -408,21 +408,21 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
           <p style="padding: 12px; margin: 0;">Infos</p>
         </td>
         <td style="padding: 0 2px 0 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          {{ infos }}</td>
+          {{ alarm.infos }}</td>
       </tr>
       <tr>
         <td style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
           <p style="padding: 12px; margin: 0;">PBehavior&nbsp;&nbsp;info</p>
         </td>
         <td style="padding: 0 2px 0 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          {{ pbehavior_info }}</td>
+          {{ alarm.v.pbehavior_info }}</td>
       </tr>
       <tr>
         <td style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
           <p style="padding: 12px; margin: 0;">Initial&nbsp;&nbsp;output</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ initial_output }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.initial_output }}</p>
         </td>
       </tr>
       <tr>
@@ -430,7 +430,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
           <p style="padding: 12px; margin: 0;">Output</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ output }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.output }}</p>
         </td>
       </tr>
       <tr>
@@ -438,7 +438,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
           <p style="padding: 12px; margin: 0;">Last&nbsp;&nbsp;event&nbsp;&nbsp;date</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ last_event_date }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.last_event_date }}</p>
         </td>
       </tr>
       <tr>
@@ -446,7 +446,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
           <p style="padding: 12px; margin: 0;">Last&nbsp;&nbsp;update&nbsp;&nbsp;date</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ last_event_date }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.last_event_date }}</p>
         </td>
       </tr>
       <tr>
@@ -454,7 +454,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
           <p style="padding: 12px; margin: 0;">Acked&nbsp;&nbsp;at</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ acknowledge_date }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.acknowledge_date }}</p>
         </td>
       </tr>
       <tr>
@@ -462,7 +462,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
           <p style="padding: 12px; margin: 0;">Events&nbsp;&nbsp;count</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          <p style="padding: 12px; margin: 0;">{{ events_count }}</p>
+          <p style="padding: 12px; margin: 0;">{{ alarm.v.events_count }}</p>
         </td>
       </tr>
       <tr>
@@ -470,28 +470,28 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
           <p style="padding: 12px; margin: 0;">Ticket</p>
         </td>
         <td style="padding: 0 2px 0 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          {{ ticket }}</td>
+          {{ alarm.v.ticket }}</td>
       </tr>
       <tr>
         <td style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
           <p style="padding: 12px; margin: 0;">Comments</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          {{ comments }}</td>
+          {{ alarm.comments }}</td>
       </tr>
       <tr>
         <td style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
           <p style="padding: 12px; margin: 0;">Tags</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          {{ tags }}</td>
+          {{ alarm.tags }}</td>
       </tr>
       <tr>
         <td style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
           <p style="padding: 12px; margin: 0;">Links</p>
         </td>
         <td style="padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);">
-          {{ links }}</td>
+          {{ alarm.links }}</td>
       </tr>
     </tbody>
   </table>
