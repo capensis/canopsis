@@ -17,8 +17,8 @@
           v-icon(v-on="on", color="white", small) {{ item.icon }}
         span {{ item.text }}
       template(v-else)
-        v-icon(color="white", small) {{ item.icon }}
-        span.ml-1 {{ item.text }}
+        v-icon.mr-1(color="white", small) {{ item.icon }}
+        span {{ item.text }}
 </template>
 
 <script>
@@ -29,7 +29,7 @@ import {
   LINK_RULE_ACTIONS,
 } from '@/constants';
 
-import { harmonizeLinks, harmonizeCategoryLinks } from '@/helpers/links';
+import { harmonizeLinks, harmonizeCategoryLinks } from '@/helpers/entities/link/list';
 import { writeTextToClipboard } from '@/helpers/clipboard';
 
 import { authMixin } from '@/mixins/auth';

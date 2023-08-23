@@ -2,15 +2,15 @@
 
 exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with custom props 1`] = `
 <div
-  class="layout chart-metrics-widget column align-center"
+  class="layout kpi-widget column align-center"
 >
   <h4
-    class="chart-metrics-widget__title"
+    class="kpi-widget__title"
   >
     Custom title
   </h4>
   <div
-    class="pie-chart-metrics__chart chart-metrics-widget__chart"
+    class="pie-chart-metrics__chart kpi-widget__chart"
   >
     <div
       class=""
@@ -32,10 +32,10 @@ exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with custom props 1`] =
 
 exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with default props 1`] = `
 <div
-  class="layout chart-metrics-widget column align-center"
+  class="layout kpi-widget column align-center"
 >
   <h4
-    class="chart-metrics-widget__title"
+    class="kpi-widget__title"
   >
     
   </h4>
@@ -45,15 +45,15 @@ exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with default props 1`] 
 
 exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with empty data 1`] = `
 <div
-  class="layout chart-metrics-widget column align-center"
+  class="layout kpi-widget column align-center"
 >
   <h4
-    class="chart-metrics-widget__title"
+    class="kpi-widget__title"
   >
     
   </h4>
   <div
-    class="pie-chart-metrics__chart chart-metrics-widget__chart"
+    class="pie-chart-metrics__chart kpi-widget__chart"
   >
     <div
       class=""
@@ -75,15 +75,15 @@ exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with empty data 1`] = `
 
 exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with number labels props 1`] = `
 <div
-  class="layout chart-metrics-widget column align-center"
+  class="layout kpi-widget column align-center"
 >
   <h4
-    class="chart-metrics-widget__title"
+    class="kpi-widget__title"
   >
     
   </h4>
   <div
-    class="pie-chart-metrics__chart chart-metrics-widget__chart"
+    class="pie-chart-metrics__chart kpi-widget__chart"
   >
     <div
       class=""

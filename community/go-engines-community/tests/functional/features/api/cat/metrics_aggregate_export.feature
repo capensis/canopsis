@@ -8,8 +8,8 @@ Feature: Export aggregated metrics
     When I do POST /api/v4/cat/metrics-export/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -73,15 +73,15 @@ Feature: Export aggregated metrics
     """csv
     func,metric,value
     sum,created_alarms,3
-    max,created_alarms,2
+    max,created_alarms,1
     min,created_alarms,1
-    avg,created_alarms,1.5
+    avg,created_alarms,1
     max,active_alarms,6
-    min,active_alarms,4
+    min,active_alarms,5
     avg,active_alarms,5.58
     avg,without_ticket_active_alarms,4.54
     max,without_ticket_active_alarms,5
-    min,without_ticket_active_alarms,3
+    min,without_ticket_active_alarms,4
     ,ratio_tickets,18.65
 
     """
@@ -92,8 +92,8 @@ Feature: Export aggregated metrics
     When I do POST /api/v4/cat/metrics-export/aggregate:
     """json
     {
-      "from": {{ parseTime "06-09-2020 00:00" }},
-      "to": {{ parseTime "08-09-2020 00:00" }},
+      "from": {{ parseTimeTz "06-09-2020 00:00" }},
+      "to": {{ parseTimeTz "08-09-2020 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -142,8 +142,8 @@ Feature: Export aggregated metrics
     When I do POST /api/v4/cat/metrics-export/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
         {
@@ -169,8 +169,8 @@ Feature: Export aggregated metrics
     When I do POST /api/v4/cat/metrics-export/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -186,7 +186,7 @@ Feature: Export aggregated metrics
     """
     {
       "errors": {
-        "parameters.0.metric": "metric is not supported."
+        "parameters.0.metric": "Metric is not supported."
       }
     }
     """
@@ -197,8 +197,8 @@ Feature: Export aggregated metrics
     When I do POST /api/v4/cat/metrics-export/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-not-found",
       "parameters": [
@@ -225,8 +225,8 @@ Feature: Export aggregated metrics
     When I do POST /api/v4/cat/metrics-export/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "widget_filters": [
         "test-widget-filter-not-found"
@@ -255,8 +255,8 @@ Feature: Export aggregated metrics
     When I do POST /api/v4/cat/metrics-export/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "widget_filters": [
@@ -286,8 +286,8 @@ Feature: Export aggregated metrics
     When I do POST /api/v4/cat/metrics-export/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -313,8 +313,8 @@ Feature: Export aggregated metrics
     When I do POST /api/v4/cat/metrics-export/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -341,8 +341,8 @@ Feature: Export aggregated metrics
     When I do POST /api/v4/cat/metrics-export/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -369,8 +369,8 @@ Feature: Export aggregated metrics
     When I do POST /api/v4/cat/metrics-export/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [
@@ -386,7 +386,7 @@ Feature: Export aggregated metrics
     """json
     {
       "errors": {
-        "parameters.0.aggregate_func": "AggregateFunc must be one of [sum avg min max] or empty."
+        "parameters.0.aggregate_func": "AggregateFunc must be one of [sum last avg min max] or empty."
       }
     }
     """
@@ -397,8 +397,8 @@ Feature: Export aggregated metrics
     When I do POST /api/v4/cat/metrics-export/aggregate:
     """json
     {
-      "from": {{ parseTime "23-11-2021 00:00" }},
-      "to": {{ parseTime "23-11-2021 00:00" }},
+      "from": {{ parseTimeTz "23-11-2021 00:00" }},
+      "to": {{ parseTimeTz "23-11-2021 00:00" }},
       "sampling": "hour",
       "filter": "test-kpi-filter-to-alarm-metrics-get",
       "parameters": [

@@ -1,9 +1,9 @@
 import { API_ROUTES } from '@/config';
 import { ENTITIES_TYPES } from '@/constants';
 
-import { createEntityModule } from '@/store/plugins/entities';
-
 import request from '@/services/request';
+
+import { createEntityModule } from '@/store/plugins/entities';
 
 export const types = {
   SET_UPDATED_AT: 'SET_UPDATED_AT',

@@ -36,7 +36,7 @@
             :loading="exportAlarmToPdfPending",
             icon="assignment_returned",
             left,
-            @click="exportAlarmToPdf(item.original, config.exportPdfTemplate)"
+            @click="exportAsPdf(item.original, config.exportPdfTemplate)"
           )
 </template>
 
@@ -59,6 +59,11 @@ export default {
     modalInnerMixin,
     widgetActionsPanelAlarmExportPdfMixin,
   ],
+  data() {
+    return {
+      exportAlarmToPdfPending: false,
+    };
+  },
   methods: {
     exportAsJson(item) {
       const object = convertTreeviewToObject(item);
@@ -69,6 +74,14 @@ export default {
       );
 
       saveJsonFile(object, `${item.name}-${dateString}`);
+    },
+
+    async exportAsPdf(alarm, template) {
+      this.exportAlarmToPdfPending = true;
+
+      await this.exportAlarmToPdf(alarm, template);
+
+      this.exportAlarmToPdfPending = false;
     },
 
     onSuccessCopied() {

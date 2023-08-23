@@ -1,15 +1,13 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import { ALARM_METRIC_PARAMETERS, KPI_RATING_CRITERIA, QUICK_RANGES, USER_METRIC_PARAMETERS } from '@/constants';
 
 import KpiRatingFilters from '@/components/other/kpi/charts/partials/kpi-rating-filters';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-quick-date-interval-field': true,
@@ -18,20 +16,6 @@ const stubs = {
   'kpi-rating-metric-field': true,
   'c-records-per-page-field': true,
 };
-
-const factory = (options = {}) => shallowMount(KpiRatingFilters, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(KpiRatingFilters, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 describe('kpi-rating-filters', () => {
   const nowTimestamp = 1386435600000;
@@ -47,6 +31,9 @@ describe('kpi-rating-filters', () => {
   };
 
   mockDateNow(nowTimestamp);
+
+  const factory = generateShallowRenderer(KpiRatingFilters, { stubs });
+  const snapshotFactory = generateRenderer(KpiRatingFilters, { stubs });
 
   it('Query changed after trigger a quick interval field', async () => {
     const wrapper = factory({

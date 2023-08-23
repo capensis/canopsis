@@ -4,7 +4,7 @@ Feature: Export remediation metrics
 
   Scenario: given export request should return metrics
     When I am admin
-    When I do POST /api/v4/cat/metrics-export/remediation?sampling=day&from={{ parseTime "20-11-2021 00:00" }}&to={{ parseTime "24-11-2021 00:00" }}&instruction=test-instruction-to-remediation-metrics-get
+    When I do POST /api/v4/cat/metrics-export/remediation?sampling=day&from={{ parseTimeTz "20-11-2021 00:00" }}&to={{ parseTimeTz "24-11-2021 00:00" }}&instruction=test-instruction-to-remediation-metrics-get
     Then the response code should be 200
     When I save response exportID={{ .lastResponse._id }}
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
@@ -18,17 +18,17 @@ Feature: Export remediation metrics
     Then the response raw body should be:
     """csv
     assigned,executed,ratio,timestamp
-    1,1,100,{{ parseTime "20-11-2021 00:00" }}
-    1,0,0,{{ parseTime "21-11-2021 00:00" }}
-    2,1,50,{{ parseTime "22-11-2021 00:00" }}
-    4,2,50,{{ parseTime "23-11-2021 00:00" }}
-    0,0,0,{{ parseTime "24-11-2021 00:00" }}
+    1,1,100,{{ parseTimeTz "20-11-2021 00:00" }}
+    1,0,0,{{ parseTimeTz "21-11-2021 00:00" }}
+    2,1,50,{{ parseTimeTz "22-11-2021 00:00" }}
+    4,2,50,{{ parseTimeTz "23-11-2021 00:00" }}
+    0,0,0,{{ parseTimeTz "24-11-2021 00:00" }}
 
     """
 
   Scenario: given export request with empty interval should return metrics with zeros
     When I am admin
-    When I do POST /api/v4/cat/metrics-export/remediation?sampling=day&from={{ parseTime "06-09-2020 00:00" }}&to={{ parseTime "08-09-2020 00:00" }}&instruction=test-instruction-to-remediation-metrics-get
+    When I do POST /api/v4/cat/metrics-export/remediation?sampling=day&from={{ parseTimeTz "06-09-2020 00:00" }}&to={{ parseTimeTz "08-09-2020 00:00" }}&instruction=test-instruction-to-remediation-metrics-get
     Then the response code should be 200
     When I save response exportID={{ .lastResponse._id }}
     When I do GET /api/v4/cat/metrics-export/{{ .exportID }} until response code is 200 and body contains:
@@ -42,9 +42,9 @@ Feature: Export remediation metrics
     Then the response raw body should be:
     """csv
     assigned,executed,ratio,timestamp
-    0,0,0,{{ parseTime "06-09-2020 00:00" }}
-    0,0,0,{{ parseTime "07-09-2020 00:00" }}
-    0,0,0,{{ parseTime "08-09-2020 00:00" }}
+    0,0,0,{{ parseTimeTz "06-09-2020 00:00" }}
+    0,0,0,{{ parseTimeTz "07-09-2020 00:00" }}
+    0,0,0,{{ parseTimeTz "08-09-2020 00:00" }}
 
     """
 

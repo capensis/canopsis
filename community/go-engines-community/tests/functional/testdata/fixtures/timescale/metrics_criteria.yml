@@ -48,3 +48,33 @@
   name: test-rating-settings-to-bulk-update-3
   label: test-rating-settings-to-bulk-update-3
   enabled: false
+- id: 11
+  type: 0
+  name: infos->>'test-info-to-group-metrics-get'
+  label: infos.test-info-to-group-metrics-get
+  enabled: false
+- id: 12
+  type: 1
+  name: role
+  label: role
+  enabled: true
+- id: 13
+  type: 0
+  name: category
+  label: category
+  enabled: true
+- id: 14
+  type: 0
+  name: impact_level
+  label: impact_level
+  enabled: true
+- id: 15
+  type: 0
+  name: infos->>'test-info-to-group-metrics-get-2'
+  label: infos.test-info-to-group-metrics-get-2
+  enabled: false
+- id: 16
+  type: 0
+  name: infos->>'test-info-to-group-metrics-get-3'
+  label: infos.test-info-to-group-metrics-get-3
+  enabled: false

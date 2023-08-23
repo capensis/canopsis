@@ -1,6 +1,6 @@
 <template lang="pug">
   div.actions-panel(:class="{ 'actions-panel--small': small }")
-    v-layout(row, align-center)
+    v-layout(:wrap="wrap", row, align-center)
       c-action-btn(
         v-for="(action, index) in preparedActions.inline",
         :key="index",
@@ -13,7 +13,7 @@
         :badge-tooltip="action.badgeTooltip",
         @click="action.method"
       )
-      span.ml-1(v-if="preparedActions.dropDown.length")
+      span(v-if="preparedActions.dropDown.length")
         v-menu(
           key="dropdown-menu",
           bottom,
@@ -64,6 +64,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    wrap: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     preparedActions() {
@@ -85,6 +89,10 @@ export default {
 
 <style lang="scss">
 .actions-panel {
+  &__menu-item-loader {
+    margin-right: 32px;
+  }
+
   &--small {
     .v-btn--icon {
       width: 24px;

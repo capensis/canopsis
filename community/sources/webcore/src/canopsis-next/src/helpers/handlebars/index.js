@@ -19,6 +19,7 @@ export async function compile(template, context = {}, instance = Handlebars) {
   const handleBarFunction = instance.compile(template ?? '');
   const preparedContext = {
     env: store.getters['templateVars/items'] ?? {},
+    user: store.getters['auth/currentUser'] ?? {},
 
     ...context,
   };

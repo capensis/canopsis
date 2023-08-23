@@ -5,19 +5,19 @@
       v-flex.mr-3(xs6)
         declare-ticket-rule-ticket-id-field(v-field="form.ticket_id", :name="ticketIdFieldName", required)
       v-flex(xs6)
-        declare-ticket-rule-ticket-url-field(v-field="form.ticket_url", :name="ticketUrlFieldName")
+        declare-ticket-rule-ticket-url-text-field(v-field="form.ticket_url", :name="ticketUrlFieldName")
     declare-ticket-rule-ticket-custom-fields-field(v-field="form.mapping", :name="name")
 </template>
 
 <script>
 import DeclareTicketRuleTicketIdField from './fields/declare-ticket-rule-ticket-id-field.vue';
-import DeclareTicketRuleTicketUrlField from './fields/declare-ticket-rule-ticket-url-field.vue';
+import DeclareTicketRuleTicketUrlTextField from './fields/declare-ticket-rule-ticket-url-text-field.vue';
 import DeclareTicketRuleTicketCustomFieldsField from './fields/declare-ticket-rule-ticket-custom-fields-field.vue';
 
 export default {
   components: {
     DeclareTicketRuleTicketCustomFieldsField,
-    DeclareTicketRuleTicketUrlField,
+    DeclareTicketRuleTicketUrlTextField,
     DeclareTicketRuleTicketIdField,
   },
   model: {

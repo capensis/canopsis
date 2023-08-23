@@ -1,8 +1,6 @@
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import ServiceEntityTreeOfDependenciesTab from '@/components/other/service/partials/service-entity-tree-of-dependencies-tab.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'service-dependencies': true,
@@ -10,7 +8,7 @@ const stubs = {
 
 describe('service-entity-tree-of-dependencies-tab', () => {
   const snapshotFactory = generateRenderer(ServiceEntityTreeOfDependenciesTab, {
-    localVue,
+
     stubs,
   });
 

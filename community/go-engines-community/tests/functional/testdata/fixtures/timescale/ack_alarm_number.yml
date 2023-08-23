@@ -30,3 +30,31 @@
   entity_id: 5
   user_id: test-user-to-metrics-rating-get-1
   value: 1
+- time: '2021-11-23'
+  entity_id: 19
+  user_id: test-user-to-group-metrics-get-1
+  value: 1
+- time: '2021-11-24'
+  entity_id: 19
+  user_id: test-user-to-group-metrics-get-1
+  value: -1
+- time: '2021-11-24'
+  entity_id: 20
+  user_id: test-user-to-group-metrics-get-1
+  value: 1
+- time: '2021-11-24'
+  entity_id: 21
+  user_id: test-user-to-group-metrics-get-1
+  value: 1
+- time: '2021-11-25'
+  entity_id: 20
+  user_id: test-user-to-group-metrics-get-2
+  value: -1
+- time: '2021-11-25'
+  entity_id: 21
+  user_id: test-user-to-group-metrics-get-1
+  value: -1
+- time: '2021-11-25'
+  entity_id: 22
+  user_id: test-user-to-group-metrics-get-2
+  value: 1

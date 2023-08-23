@@ -46,6 +46,18 @@ export default {
     logCredentialsHelpText: 'When enabled, all credentials and auth data is written in logs in open way (not recommended). \n'
       + 'When disabled, all passwords, tokens and auth data is hidden and written as *** in logs.',
   },
+  metrics: {
+    title: 'Internal metrics data storage',
+    titleHelp: 'When enabled, internal metrics data will be deleted after the defined time period',
+    deleteAfter: 'Clear metrics storage after',
+    deleteAfterHelpText: 'All internal metrics older than the defined time period will be deleted',
+  },
+  perfDataMetrics: {
+    title: 'External metrics data storage',
+    titleHelp: 'When enabled, external metrics data will be deleted after the defined time period',
+    deleteAfter: 'Clear metrics storage after',
+    deleteAfterHelpText: 'All external metrics older than the defined time period will be deleted',
+  },
   history: {
     scriptLaunched: 'Script launched at {launchedAt}.',
     alarm: {

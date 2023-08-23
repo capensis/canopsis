@@ -18,7 +18,8 @@ const (
 	ObjViewGroup      = "api_viewgroup"
 	ObjPlaylist       = "api_playlist"
 
-	PermAlarmRead = "api_alarm_read"
+	PermAlarmRead   = "api_alarm_read"
+	PermAlarmUpdate = "api_alarm_update"
 
 	PermAcl = "api_acl"
 

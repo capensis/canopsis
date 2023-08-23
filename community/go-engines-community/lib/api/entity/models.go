@@ -1,5 +1,7 @@
 package entity
 
+//go:generate easyjson -no_std_marshalers
+
 import (
 	"strings"
 
@@ -17,7 +19,8 @@ import (
 type ListRequestWithPagination struct {
 	pagination.Query
 	ListRequest
-	WithFlags bool `form:"with_flags" json:"with_flags"`
+	WithFlags bool     `form:"with_flags" json:"with_flags"`
+	PerfData  []string `form:"perf_data[]" json:"perf_data"`
 }
 
 type ListRequest struct {
@@ -31,6 +34,8 @@ type SortRequest struct {
 	SortBy string `form:"sort_by" json:"sort_by"`
 }
 
+// BaseFilterRequest
+// easyjson:json
 type BaseFilterRequest struct {
 	Search   string   `form:"search" json:"search"`
 	Filters  []string `form:"filters[]" json:"filters"`
@@ -118,6 +123,9 @@ type Entity struct {
 
 	ImportSource string         `bson:"import_source,omitempty" json:"import_source,omitempty"`
 	Imported     *types.CpsTime `bson:"imported,omitempty" json:"imported,omitempty" swaggertype:"integer"`
+
+	PerfData         []string `bson:"perf_data" json:"-"`
+	FilteredPerfData []string `bson:"filtered_perf_data" json:"filtered_perf_data,omitempty"`
 }
 
 func (e *Entity) fillConnectorType() {

@@ -227,6 +227,7 @@ export default {
   sourceType: 'Source type',
   cycleDependency: 'Cycle dependency',
   checkPattern: 'Check pattern',
+  checkFilter: 'Check filter',
   itemFound: '{count} item found | {count} items found',
   canonicalType: 'Canonical type',
   map: 'Map | Maps',
@@ -269,9 +270,11 @@ export default {
   copyProperty: 'Copy property',
   copyPropertyPath: 'Copy property path',
   hidden: 'Hidden',
-  autoAdd: 'Auto add',
+  numberField: 'Number field',
   chart: 'Chart | Charts',
   currentDate: 'Current date',
+  chooseFile: 'Choose file',
+  seeAlarms: 'See alarms',
   variableTypes: {
     string: 'String',
     number: 'Number',
@@ -483,6 +486,12 @@ export default {
     },
     [TRIGGERS.autoinstructioncomplete]: {
       text: 'Auto instruction is completed',
+    },
+    [TRIGGERS.autoinstructionresultok]: {
+      text: 'Alarm is in OK state after all auto instructions',
+    },
+    [TRIGGERS.autoinstructionresultfail]: {
+      text: 'Alarm is in not OK state after all auto instructions',
     },
   },
   themes: {

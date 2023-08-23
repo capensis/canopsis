@@ -32,7 +32,7 @@ func (r EditRequest) getUpdateBson(passwordEncoder password.Encoder) bson.M {
 		"ui_tours":                  r.UITours,
 	}
 	if r.Password != "" {
-		bsonModel["shadowpasswd"] = string(passwordEncoder.EncodePassword([]byte(r.Password)))
+		bsonModel["password"] = string(passwordEncoder.EncodePassword([]byte(r.Password)))
 	}
 
 	return bsonModel

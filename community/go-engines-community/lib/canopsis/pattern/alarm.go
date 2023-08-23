@@ -34,7 +34,7 @@ func (p Alarm) Match(alarm types.Alarm) (bool, error) {
 					case FieldTypeString:
 						var s string
 						if s, err = getStringValue(infoVal); err == nil {
-							matched, _, err = cond.MatchString(s)
+							matched, err = cond.MatchString(s)
 						}
 					case FieldTypeInt:
 						var i int64
@@ -70,7 +70,7 @@ func (p Alarm) Match(alarm types.Alarm) (bool, error) {
 			foundField := false
 			if str, ok := getAlarmStringField(alarm, f); ok {
 				foundField = true
-				matched, _, err = cond.MatchString(str)
+				matched, err = cond.MatchString(str)
 			}
 			if !foundField || err != nil {
 				if i, ok := getAlarmIntField(alarm, f); ok {
@@ -152,7 +152,7 @@ func (p Alarm) Validate(forbiddenFields, onlyTimeAbsoluteFields []string) bool {
 			if infoName := getAlarmInfoName(f); infoName != "" {
 				switch v.FieldType {
 				case FieldTypeString:
-					_, _, err = cond.MatchString("")
+					_, err = cond.MatchString("")
 				case FieldTypeInt:
 					_, err = cond.MatchInt(0)
 				case FieldTypeBool:
@@ -175,7 +175,7 @@ func (p Alarm) Validate(forbiddenFields, onlyTimeAbsoluteFields []string) bool {
 			foundField := false
 			if str, ok := getAlarmStringField(emptyAlarm, f); ok {
 				foundField = true
-				_, _, err = cond.MatchString(str)
+				_, err = cond.MatchString(str)
 			}
 			if !foundField || err != nil {
 				if i, ok := getAlarmIntField(emptyAlarm, f); ok {

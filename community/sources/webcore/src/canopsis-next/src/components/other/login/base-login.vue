@@ -21,7 +21,7 @@
           template(v-if="footer")
             v-divider.my-2
             v-layout
-              div(v-html="footer")
+              c-compiled-template(:template="footer")
 </template>
 
 <script>
@@ -30,8 +30,8 @@ import { ROUTES_NAMES, ROUTES } from '@/constants';
 import { authMixin } from '@/mixins/auth';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
-import LdapLoginInformation from '@/components/other/login/ldap-login-information.vue';
-import LoginForm from '@/components/other/login/form/login-form.vue';
+import LdapLoginInformation from './partials/ldap-login-information.vue';
+import LoginForm from './form/login-form.vue';
 
 export default {
   $_veeValidate: {
