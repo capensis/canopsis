@@ -160,38 +160,26 @@ const prepareAlarmForExport = (alarm = {}, timezone) => {
  * @param {string} [timezone]
  * @returns {Promise<unknown>}
  */
-export const exportAlarmToPdf = async (template = ALARM_EXPORT_PDF_TEMPLATE, alarm = {}, timezone) => (
-  new Promise((resolve, reject) => {
-    try {
-      const doc = new JsPDF();
-      const handlebars = createInstanceWithHelpers();
-      const ast = parseWithoutProcessing(template ?? ALARM_EXPORT_PDF_TEMPLATE);
-      const scanner = new AlarmExportToPdfVisitor();
+export const exportAlarmToPdf = async (template = ALARM_EXPORT_PDF_TEMPLATE, alarm = {}, timezone) => {
+  const doc = new JsPDF();
+  const handlebars = createInstanceWithHelpers();
+  const ast = parseWithoutProcessing(template ?? ALARM_EXPORT_PDF_TEMPLATE);
+  const scanner = new AlarmExportToPdfVisitor();
+  const html = await compile(
+    scanner.accept(ast),
+    prepareAlarmForExport(alarm, timezone),
+    handlebars,
+  );
 
-      compile(
-        scanner.accept(ast),
-        prepareAlarmForExport(alarm, timezone),
-        handlebars,
-      )
-        .then(html => doc.html(html, {
-          margin: [5, 5, 5, 5],
-          autoPaging: 'text',
-          x: 0,
-          y: 0,
-          width: 200,
-          windowWidth: 1000,
-          html2canvas: {
-            logging: false,
-          },
-          callback: () => {
-            doc.save(`alarm-${alarm?._id}.pdf`);
-
-            return resolve();
-          },
-        }))
-        .catch(reject);
-    } catch (err) {
-      reject(err);
-    }
-  })
-);
+  return doc.html(html, {
+    margin: [5, 5, 5, 5],
+    autoPaging: 'text',
+    x: 0,
+    y: 0,
+    width: 200,
+    windowWidth: 1000,
+    html2canvas: {
+      logging: false,
+    },
+  }).save(`alarm-${alarm?._id}.pdf`);
+};
