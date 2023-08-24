@@ -4,7 +4,7 @@
       v-if="template",
       :template="template",
       :context="templateContext",
-      @select="$emit('select:tag', $event)"
+      @select:tag="$emit('select:tag', $event)"
     )
     v-layout(v-else, justify-center)
       v-icon(color="info") infos
