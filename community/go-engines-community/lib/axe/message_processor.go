@@ -2,6 +2,7 @@ package axe
 
 import (
 	"context"
+	"fmt"
 	"runtime/trace"
 	"time"
 
@@ -64,6 +65,10 @@ func (p *MessageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		eventMetric.Interval = time.Since(eventMetric.Timestamp)
 		p.TechMetricsSender.SendAxeEvent(eventMetric)
 	}()
+
+	if event.EventType == types.EventTypeMetaAlarmAttachChildren {
+		fmt.Printf("dfsdfsd\n")
+	}
 
 	res, err := p.EventProcessor.Process(ctx, p.transformEvent(event))
 	if err != nil {

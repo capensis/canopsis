@@ -474,6 +474,8 @@ func (m DependencyMaker) EventProcessor(
 	container.Set(types.EventTypeJunitTestCaseUpdated, event.NewJunitProcessor(dbClient))
 	container.Set(types.EventTypeRunDelayedScenario, event.NewForwardWithAlarmProcessor(dbClient))
 	container.Set(types.EventTypeMetaAlarm, event.NewMetaAlarmProcessor(metaAlarmEventProcessor, autoInstructionMatcher, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
+	container.Set(types.EventTypeMetaAlarmAttachChildren, event.NewMetaAlarmAttachProcessor(metaAlarmEventProcessor, metricsSender, json.NewEncoder(), amqpPublisher, logger))
+	container.Set(types.EventTypeMetaAlarmDetachChildren, event.NewMetaAlarmDetachProcessor(metaAlarmEventProcessor))
 	container.Set(types.EventTypeMetaAlarmUngroup, event.NewForwardProcessor())
 	container.Set(types.EventTypeManualMetaAlarmGroup, event.NewForwardProcessor())
 	container.Set(types.EventTypeManualMetaAlarmUngroup, event.NewForwardProcessor())
