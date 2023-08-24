@@ -198,28 +198,6 @@ func (a *Alarm) UpdateOutput(newOutput string) {
 	})
 }
 
-// UpdateLongOutput updates an alarm output field
-func (a *Alarm) UpdateLongOutput(newOutput string) {
-	if (len(a.Value.LongOutputHistory) == 0) || (a.Value.LongOutputHistory[len(a.Value.LongOutputHistory)-1] != newOutput) {
-		a.Value.LongOutput = newOutput
-		history := append(a.Value.LongOutputHistory, newOutput)
-		if len(history) > 100 {
-			history = history[len(history)-100:]
-		}
-		a.Value.LongOutputHistory = history
-
-		a.AddUpdate("$set", bson.M{
-			"v.long_output":         a.Value.LongOutput,
-			"v.long_output_history": a.Value.LongOutputHistory,
-		})
-	}
-}
-
-// Resolve mark as resolved an Alarm with a timestamp [sic]
-func (a *Alarm) Resolve(timestamp *CpsTime) {
-	a.Value.Resolved = timestamp
-}
-
 // Closable checks the last step for it's state to be OK for at least d interval.
 // Reference time is time.Now() when this function is called.
 func (a *Alarm) Closable(d time.Duration) bool {
