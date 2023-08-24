@@ -1,6 +1,11 @@
 <template lang="pug">
   div.more-infos
-    c-runtime-template(v-if="template", :template="compiledTemplate")
+    c-compiled-template(
+      v-if="template",
+      :template="template",
+      :context="templateContext",
+      @select="$emit('select:tag', $event)"
+    )
     v-layout(v-else, justify-center)
       v-icon(color="info") infos
       p.ma-0 {{ $t('alarm.moreInfos.defineATemplate') }}
@@ -8,8 +13,6 @@
 
 <script>
 import { USERS_PERMISSIONS } from '@/constants';
-
-import { compile } from '@/helpers/handlebars';
 
 import { handlebarsLinksHelperCreator } from '@/mixins/handlebars/links-helper-creator';
 
@@ -30,15 +33,12 @@ export default {
       required: false,
     },
   },
-  asyncComputed: {
-    compiledTemplate: {
-      async get() {
-        const compiledTemplate = await compile(this.template, { alarm: this.alarm, entity: this.alarm.entity });
-
-        return `<div>${compiledTemplate}</div>`;
-      },
-      lazy: true,
-      default: '',
+  computed: {
+    templateContext() {
+      return {
+        alarm: this.alarm,
+        entity: this.alarm.entity,
+      };
     },
   },
 };
