@@ -84,6 +84,7 @@
             v-model="props.selected",
             v-on="rowListeners",
             :ref="`row${props.item._id}`",
+            :key="props.item._id",
             :selectable="selectable",
             :expandable="expandable",
             :row="props",
