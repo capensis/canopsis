@@ -6,34 +6,35 @@ package mock_metrics
 
 import (
 	context "context"
-	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
+
+	gomock "github.com/golang/mock/gomock"
 )
 
-// MockMetaUpdater is a mock of MetaUpdater interface
+// MockMetaUpdater is a mock of MetaUpdater interface.
 type MockMetaUpdater struct {
 	ctrl     *gomock.Controller
 	recorder *MockMetaUpdaterMockRecorder
 }
 
-// MockMetaUpdaterMockRecorder is the mock recorder for MockMetaUpdater
+// MockMetaUpdaterMockRecorder is the mock recorder for MockMetaUpdater.
 type MockMetaUpdaterMockRecorder struct {
 	mock *MockMetaUpdater
 }
 
-// NewMockMetaUpdater creates a new mock instance
+// NewMockMetaUpdater creates a new mock instance.
 func NewMockMetaUpdater(ctrl *gomock.Controller) *MockMetaUpdater {
 	mock := &MockMetaUpdater{ctrl: ctrl}
 	mock.recorder = &MockMetaUpdaterMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockMetaUpdater) EXPECT() *MockMetaUpdaterMockRecorder {
 	return m.recorder
 }
 
-// DeleteById mocks base method
+// DeleteById mocks base method.
 func (m *MockMetaUpdater) DeleteById(arg0 context.Context, arg1 ...string) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0}
@@ -43,26 +44,26 @@ func (m *MockMetaUpdater) DeleteById(arg0 context.Context, arg1 ...string) {
 	m.ctrl.Call(m, "DeleteById", varargs...)
 }
 
-// DeleteById indicates an expected call of DeleteById
+// DeleteById indicates an expected call of DeleteById.
 func (mr *MockMetaUpdaterMockRecorder) DeleteById(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0}, arg1...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteById", reflect.TypeOf((*MockMetaUpdater)(nil).DeleteById), varargs...)
 }
 
-// UpdateAll mocks base method
+// UpdateAll mocks base method.
 func (m *MockMetaUpdater) UpdateAll(arg0 context.Context) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "UpdateAll", arg0)
 }
 
-// UpdateAll indicates an expected call of UpdateAll
+// UpdateAll indicates an expected call of UpdateAll.
 func (mr *MockMetaUpdaterMockRecorder) UpdateAll(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateAll", reflect.TypeOf((*MockMetaUpdater)(nil).UpdateAll), arg0)
 }
 
-// UpdateById mocks base method
+// UpdateById mocks base method.
 func (m *MockMetaUpdater) UpdateById(arg0 context.Context, arg1 ...string) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0}
@@ -72,7 +73,7 @@ func (m *MockMetaUpdater) UpdateById(arg0 context.Context, arg1 ...string) {
 	m.ctrl.Call(m, "UpdateById", varargs...)
 }
 
-// UpdateById indicates an expected call of UpdateById
+// UpdateById indicates an expected call of UpdateById.
 func (mr *MockMetaUpdaterMockRecorder) UpdateById(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0}, arg1...)
