@@ -94,7 +94,11 @@ export function alarmStateHelper(state) {
  */
 export function alarmTagsHelper() {
   return new Handlebars.SafeString(
-    `<c-alarm-tags-chips :alarm="alarm" inline-count="${MAX_LIMIT}" v-on="$listeners"></c-alarm-tags-chips>`,
+    `<c-alarm-tags-chips
+      :alarm="alarm"
+      inline-count="${MAX_LIMIT}"
+      @select="$emit('select:tag', $event)"
+    ></c-alarm-tags-chips>`,
   );
 }
 
