@@ -292,6 +292,13 @@ export default {
     },
   },
   saveChanges: 'Sauvegarder',
+  ordinals: {
+    first: 'D\'abord',
+    second: 'Seconde',
+    third: 'Troisième',
+    fourth: 'Quatrième',
+    fifth: 'Cinquième',
+  },
   times: {
     second: 'seconde | secondes',
     minute: 'minute | minutes',
