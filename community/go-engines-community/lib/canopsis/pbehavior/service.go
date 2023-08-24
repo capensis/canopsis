@@ -6,12 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
-	"time"
 )
 
 // Service computes pbehavior timespans and figures out state
