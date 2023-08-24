@@ -1,3 +1,4 @@
+export * from './recurrence-rule';
 export * from './common';
 export * from './entity';
 export * from './alarm';
