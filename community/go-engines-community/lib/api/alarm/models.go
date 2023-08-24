@@ -140,7 +140,8 @@ type DetailsRequest struct {
 
 type StepsRequest struct {
 	pagination.Query
-	Reversed bool `json:"reversed"`
+	Reversed bool   `json:"reversed"`
+	Type     string `json:"type"`
 }
 
 type ChildDetailsRequest struct {
