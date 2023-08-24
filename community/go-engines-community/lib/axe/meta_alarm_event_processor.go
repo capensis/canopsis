@@ -77,6 +77,8 @@ type metaAlarmEventProcessor struct {
 }
 
 func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event types.Event) (*types.Alarm, []types.Alarm, error) {
+	now := types.NewCpsTime()
+
 	rule, err := p.ruleAdapter.GetRule(ctx, event.MetaAlarmRuleID)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot fetch meta alarm rule id=%q: %w", event.MetaAlarmRuleID, err)
@@ -84,7 +86,7 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event typ
 		return nil, nil, fmt.Errorf("meta alarm rule id=%q not found", event.MetaAlarmRuleID)
 	}
 
-	metaAlarm := newAlarm(event, p.alarmConfigProvider.Get())
+	metaAlarm := newAlarm(event, p.alarmConfigProvider.Get(), now)
 	metaAlarm.Value.Meta = event.MetaAlarmRuleID
 	metaAlarm.Value.MetaValuePath = event.MetaAlarmValuePath
 
