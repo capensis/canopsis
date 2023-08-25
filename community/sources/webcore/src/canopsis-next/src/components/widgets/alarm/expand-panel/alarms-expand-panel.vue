@@ -50,7 +50,8 @@
               v-card-text
                 alarms-expand-panel-more-infos(
                   :alarm="alarm",
-                  :template="widget.parameters.moreInfoTemplate"
+                  :template="widget.parameters.moreInfoTemplate",
+                  @select:tag="$emit('select:tag', $event)"
                 )
       v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.timeLine")
         v-layout.pa-3(row)

@@ -13,6 +13,7 @@ import {
 
 import AlarmsExpandPanel from '@/components/widgets/alarm/expand-panel/alarms-expand-panel.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
+import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 
 const stubs = {
   'more-infos': true,
@@ -24,6 +25,7 @@ const stubs = {
   'pbehaviors-simple-list': true,
   'alarms-expand-panel-charts': true,
   'c-runtime-template': CRuntimeTemplate,
+  'c-compiled-template': CCompiledTemplate,
 };
 
 const selectTabs = wrapper => wrapper.vm.$children[0];
