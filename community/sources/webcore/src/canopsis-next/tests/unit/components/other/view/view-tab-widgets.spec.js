@@ -14,9 +14,11 @@ const createWidgetsGridStub = className => ({
 });
 
 const stubs = {
-  'grid-overview-widget': createWidgetsGridStub('grid-overview-widget'),
+  'grid-layout': createWidgetsGridStub('grid-overview-widget'),
   'grid-edit-widgets': createWidgetsGridStub('grid-edit-widgets'),
-  'widget-wrapper': true,
+  'widget-edit-drag-handler': createWidgetsGridStub('grid-edit-widgets'),
+  portal: true,
+  'window-size-field': true,
 };
 
 describe('view-tab-widgets', () => {
@@ -59,12 +61,44 @@ describe('view-tab-widgets', () => {
   ]);
 
   const widgets = [
-    { title: 'Widget 1', _id: 'id' },
-    { title: 'Widget 2', _id: 'id2' },
+    {
+      _id: 'widget_Context_505742f9-faf5-445e-a537-2288a84fc58e',
+      grid_parameters: {
+        desktop: { autoHeight: true, h: 14, w: 12, x: 0, y: 0 },
+        mobile: { autoHeight: true, h: 12, w: 3, x: 0, y: 0 },
+        tablet: { autoHeight: true, h: 1, w: 12, x: 0, y: 0 },
+      },
+    },
+    {
+      _id: 'widget_ServiceWeather_43a12599-5800-4a86-b6f4-50bf186c4840',
+      grid_parameters: {
+        desktop: { autoHeight: true, h: 24, w: 12, x: 0, y: 14 },
+        mobile: { autoHeight: true, h: 12, w: 3, x: 0, y: 0 },
+        tablet: { autoHeight: true, h: 1, w: 12, x: 0, y: 0 },
+      },
+    },
+    {
+      _id: 'widget_ServiceWeather_58e5c9a5-aa04-4dc6-a59d-6fa847bc62e0',
+      grid_parameters: {
+        desktop: { autoHeight: true, h: 21, w: 12, x: 0, y: 38 },
+        mobile: { autoHeight: true, h: 1, w: 12, x: 0, y: 12 },
+        tablet: { autoHeight: true, h: 1, w: 12, x: 0, y: 1 },
+      },
+    },
   ];
 
-  const factory = generateShallowRenderer(ViewTabWidgets, { stubs });
-  const snapshotFactory = generateRenderer(ViewTabWidgets, { stubs });
+  const factory = generateShallowRenderer(ViewTabWidgets, {
+    stubs,
+    mocks: {
+      $mq: 'l',
+    },
+  });
+  const snapshotFactory = generateRenderer(ViewTabWidgets, {
+    stubs,
+    mocks: {
+      $mq: 'l',
+    },
+  });
 
   afterEach(() => {
     removeQuery.mockReset();

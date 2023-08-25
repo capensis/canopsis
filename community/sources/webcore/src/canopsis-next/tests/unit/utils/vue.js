@@ -9,7 +9,6 @@ import { MqLayout } from '@unit/stubs/mq';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ValidatorPlugin from '@/plugins/validator';
 import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
-import GridPlugin from '@/plugins/grid';
 import ToursPlugin from '@/plugins/tours';
 import * as constants from '@/constants';
 import * as config from '@/config';
@@ -41,7 +40,6 @@ Vue.use(Vuetify);
 Vue.use(UpdateFieldPlugin);
 Vue.use(ValidatorPlugin, { i18n });
 Vue.use(VuetifyReplacerPlugin);
-Vue.use(GridPlugin);
 Vue.use(SetSeveralPlugin);
 Vue.use(ToursPlugin);
 

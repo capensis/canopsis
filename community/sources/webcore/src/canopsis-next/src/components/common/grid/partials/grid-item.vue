@@ -1,7 +1,8 @@
 <template lang="pug">
   v-card.grid-item(
     :class="cardClass",
-    :style="style"
+    :style="style",
+    light
   )
     div(ref="defaultSlotWrapper")
       slot(:on="slotOn", :item="item")
