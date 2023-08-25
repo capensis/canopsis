@@ -5363,6 +5363,7 @@ definitions:
         - alarm_columns
         - entity_columns
         - alarm_more_infos
+        - alarm_export_to_pdf
         - weather_item
         - weather_modal
         - weather_entity
