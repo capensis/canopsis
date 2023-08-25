@@ -144,7 +144,6 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 		var lastChild types.AlarmWithEntity
 		worstState := types.CpsNumber(types.AlarmStateMinor)
 
-		updatedChildrenAlarms := make([]types.Alarm, 0)
 		if len(childEntityIDs) > 0 {
 			childAlarms, err := p.getAlarmsWithEntityByEntityIDs(ctx, childEntityIDs)
 			if err != nil {

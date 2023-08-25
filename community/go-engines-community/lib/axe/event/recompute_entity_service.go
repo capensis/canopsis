@@ -65,7 +65,7 @@ func (p *recomputeEntityServiceProcessor) Process(ctx context.Context, event rpc
 
 			var err error
 			if !firstTry {
-				entity, err = findEntity(ctx, entity.ID, p.entityCollection)
+				entity, err = findEntity(ctx, event.Entity.ID, p.entityCollection)
 				if err != nil {
 					return err
 				}
