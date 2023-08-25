@@ -15,7 +15,13 @@
           @click="showEditBroadcastMessageModal(activeMessage)"
         )
           v-icon(small) edit
-        v-btn.my-0.ml-0.mr-2(color="white", outline, round, small, @click="logout")
+        v-btn.my-0.ml-0.mr-2(
+          color="white",
+          outline,
+          round,
+          small,
+          @click="showConfirmationLeaveMaintenanceMode"
+        )
           v-icon(small) logout
 </template>
 
@@ -83,6 +89,20 @@ export default {
             });
 
             this.fetchBroadcastMessagesListWithPreviousParams();
+          },
+        },
+      });
+    },
+
+    showConfirmationLeaveMaintenanceMode() {
+      this.$modals.show({
+        name: MODALS.confirmation,
+        config: {
+          title: this.$t('modals.confirmationLeaveMaintenance.title'),
+          text: this.$t('modals.confirmationLeaveMaintenance.text'),
+          action: async () => {
+            await this.disableMaintenanceMode();
+            await this.fetchList();
           },
         },
       });

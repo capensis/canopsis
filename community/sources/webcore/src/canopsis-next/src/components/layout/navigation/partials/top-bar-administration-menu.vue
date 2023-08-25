@@ -120,7 +120,7 @@ export default {
         {
           icon: '$vuetify.icons.build_circle',
           permission: USERS_PERMISSIONS.technical.maintenance,
-          handler: this.showCreateMaintenanceModeModal,
+          handler: this.showToggleMaintenanceModeModal,
         },
       ];
 
