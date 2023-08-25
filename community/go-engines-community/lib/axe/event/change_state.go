@@ -101,7 +101,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 		updatedServiceStates = nil
 		var err error
 		if !firstTry {
-			entity, err = findEntity(ctx, entity.ID, p.entityCollection)
+			entity, err = findEntity(ctx, event.Entity.ID, p.entityCollection)
 			if err != nil {
 				return err
 			}
