@@ -155,36 +155,40 @@ func (a *metaAlarmStateService) PushChild(ctx context.Context, state MetaAlarmSt
 	return true, nil
 }
 
+func (a *metaAlarmStateService) getAlarmsByIDs(entityIDs []string, excludeID string) []bson.M {
+	return []bson.M{
+		{
+			"$match": bson.M{
+				"$and": bson.A{
+					bson.M{"_id": bson.M{"$in": entityIDs}},
+					bson.M{"d": bson.M{"$ne": excludeID}},
+				},
+				"v.resolved": nil,
+			},
+		},
+		{
+			"$lookup": bson.M{
+				"from":         mongo.EntityMongoCollection,
+				"localField":   "d",
+				"foreignField": "_id",
+				"as":           "entity",
+			},
+		},
+		{
+			"$unwind": "$entity",
+		},
+		{
+			"$project": bson.M{
+				"_id":         "$d",
+				"last_update": "$v.last_update_date",
+			},
+		},
+	}
+}
+
 func (a *metaAlarmStateService) RefreshMetaAlarmStateGroup(ctx context.Context, state *MetaAlarmState, entityID string, timeInterval int64) error {
 	if len(state.ChildrenEntityIDs) > 0 {
-		cursor, err := a.alarmCollection.Aggregate(ctx, []bson.M{
-			{
-				"$match": bson.M{
-					"$and": bson.A{
-						bson.M{"_id": bson.M{"$in": state.ChildrenEntityIDs}},
-						bson.M{"d": bson.M{"$ne": entityID}},
-					},
-					"v.resolved": bson.M{"$in": bson.A{"", nil}},
-				},
-			},
-			{
-				"$lookup": bson.M{
-					"from":         mongo.EntityMongoCollection,
-					"localField":   "d",
-					"foreignField": "_id",
-					"as":           "entity",
-				},
-			},
-			{
-				"$unwind": "$entity",
-			},
-			{
-				"$project": bson.M{
-					"_id":         "$d",
-					"last_update": "$v.last_update_date",
-				},
-			},
-		})
+		cursor, err := a.alarmCollection.Aggregate(ctx, a.getAlarmsByIDs(state.ChildrenEntityIDs, entityID))
 		if err != nil {
 			return err
 		}
@@ -207,34 +211,7 @@ func (a *metaAlarmStateService) RefreshMetaAlarmStateGroup(ctx context.Context, 
 	}
 
 	if len(state.ParentsEntityIDs) > 0 {
-		cursor, err := a.alarmCollection.Aggregate(ctx, []bson.M{
-			{
-				"$match": bson.M{
-					"$and": bson.A{
-						bson.M{"_id": bson.M{"$in": state.ParentsEntityIDs}},
-						bson.M{"d": bson.M{"$ne": entityID}},
-					},
-					"v.resolved": nil,
-				},
-			},
-			{
-				"$lookup": bson.M{
-					"from":         mongo.EntityMongoCollection,
-					"localField":   "d",
-					"foreignField": "_id",
-					"as":           "entity",
-				},
-			},
-			{
-				"$unwind": "$entity",
-			},
-			{
-				"$project": bson.M{
-					"_id":         "$d",
-					"last_update": "$v.last_update_date",
-				},
-			},
-		})
+		cursor, err := a.alarmCollection.Aggregate(ctx, a.getAlarmsByIDs(state.ParentsEntityIDs, entityID))
 		if err != nil {
 			return err
 		}
