@@ -300,8 +300,8 @@ func benchmarkMessageProcessor(
 	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(config.UserInterfaceConf{}, logger)
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
 	metaAlarmEventProcessor := NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
-		alarmStatusService, alarmConfigProvider, json.NewEncoder(), nil, canopsis.FIFOExchangeName, canopsis.FIFOQueueName,
-		metricsSender, logger)
+		alarmStatusService, alarmConfigProvider, json.NewEncoder(), nil, metricsSender, correlation.NewMetaAlarmStateService(dbClient),
+		template.NewExecutor(templateConfigProvider, tzConfigProvider), logger)
 	pbhRedisSession, err := redis.NewSession(ctx, redis.PBehaviorLockStorage, logger, 0, 0)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)

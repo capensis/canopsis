@@ -45,7 +45,7 @@ func (p *metaAlarmProcessor) Process(ctx context.Context, event rpc.AxeEvent) (R
 		return result, nil
 	}
 
-	alarm, err := p.metaAlarmEventProcessor.CreateMetaAlarm(ctx, event)
+	alarm, updatedChildrenAlarms, err := p.metaAlarmEventProcessor.CreateMetaAlarm(ctx, event)
 	if err != nil {
 		return result, err
 	}
@@ -56,6 +56,11 @@ func (p *metaAlarmProcessor) Process(ctx context.Context, event rpc.AxeEvent) (R
 	result.Alarm = *alarm
 	result.AlarmChange = alarmChange
 	result.IsInstructionMatched = isInstructionMatched(event, result, p.autoInstructionMatcher, p.logger)
+
+	for _, child := range updatedChildrenAlarms {
+		p.metricsSender.SendCorrelation(event.Parameters.Timestamp.Time, child)
+	}
+
 	go p.postProcess(context.Background(), event, result)
 
 	return result, nil

@@ -103,7 +103,8 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 		if event.EventType == types.EventTypeManualMetaAlarmGroup ||
 			event.EventType == types.EventTypeManualMetaAlarmUngroup ||
-			event.EventType == types.EventTypeManualMetaAlarmUpdate {
+			event.EventType == types.EventTypeManualMetaAlarmUpdate ||
+			event.EventType == types.EventTypeMetaAlarmUngroup {
 			return nil
 		}
 
