@@ -62,12 +62,13 @@ const (
 	EventTypeActivate           = "activate"
 	EventTypeRunDelayedScenario = "run_delayed_scenario"
 
-	EventTypeMetaAlarm              = "metaalarm"
-	EventTypeMetaAlarmUpdated       = "metaalarmupdated"
-	EventTypeMetaAlarmUngroup       = "metaalarm_ungroup"
-	EventTypeManualMetaAlarmGroup   = "manual_metaalarm_group"
-	EventTypeManualMetaAlarmUngroup = "manual_metaalarm_ungroup"
-	EventTypeManualMetaAlarmUpdate  = "manual_metaalarm_update"
+	EventTypeMetaAlarm               = "metaalarm"
+	EventTypeMetaAlarmAttachChildren = "metaalarmattachchildren"
+	EventTypeMetaAlarmDetachChildren = "metaalarmdetachchildren"
+	EventTypeMetaAlarmUngroup        = "metaalarm_ungroup"
+	EventTypeManualMetaAlarmGroup    = "manual_metaalarm_group"
+	EventTypeManualMetaAlarmUngroup  = "manual_metaalarm_ungroup"
+	EventTypeManualMetaAlarmUpdate   = "manual_metaalarm_update"
 
 	// Following event types are used to add manual instruction execution to alarm steps.
 	EventTypeInstructionStarted   = "instructionstarted"
@@ -509,7 +510,8 @@ func isValidEventType(t string) bool {
 		EventTypePbhLeave,
 		EventTypeUpdateStatus,
 		EventTypeMetaAlarm,
-		EventTypeMetaAlarmUpdated,
+		EventTypeMetaAlarmAttachChildren,
+		EventTypeMetaAlarmDetachChildren,
 		EventTypeMetaAlarmUngroup,
 		EventTypeManualMetaAlarmGroup,
 		EventTypeManualMetaAlarmUngroup,

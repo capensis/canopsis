@@ -83,7 +83,7 @@ func (s *service) RecomputeAllServices(ctx context.Context) error {
 		event := types.Event{
 			EventType:     types.EventTypeRecomputeEntityService,
 			SourceType:    types.SourceTypeService,
-			Component:     serv.Name,
+			Component:     serv.ID,
 			Connector:     types.ConnectorEngineService,
 			ConnectorName: types.ConnectorEngineService,
 			Timestamp:     types.CpsTime{Time: time.Now()},
