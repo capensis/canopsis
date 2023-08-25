@@ -12829,6 +12829,14 @@ paths:
                   "type": "alarm_more_infos",
                   "content": "Name: {{ alarm.v.display_name }}"
                 }
+              alarm_export_to_pdf:
+                summary: Alarm export to pdf template
+                description: Create a template for alarms list.
+                value: {
+                  "title": "Template",
+                  "type": "alarm_export_to_pdf",
+                  "content": "Name: {{ alarm.v.display_name }}"
+                }
         required: true
       responses:
         201:
