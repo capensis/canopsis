@@ -109,7 +109,8 @@
             :parent-alarm-id="parentAlarmId",
             :widget="widget",
             :hide-children="hideChildren",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
+            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)",
+            @select:tag="$emit('select:tag', $event)"
           )
     c-table-pagination(
       v-if="!hidePagination",
