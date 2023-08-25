@@ -969,4 +969,8 @@ export default {
       title: 'Maintenance mode',
     },
   },
+  confirmationLeaveMaintenance: {
+    title: 'Leave maintenance mode',
+    text: 'Are you sure you want to leave the maintenance mode?\nAll users will be able to login to the system after leaving.',
+  },
 };
