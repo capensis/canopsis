@@ -92,6 +92,10 @@ export default {
         this.size = MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[mq];
       },
     },
+
+    editing() {
+      this.size = MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.$mq];
+    },
   },
   created() {
     this.registerEditingOffHandler(this.updatePositions);
