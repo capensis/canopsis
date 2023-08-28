@@ -193,6 +193,8 @@ export default merge({
     retryUnit: 'Unit',
     retryCount: 'Repeat',
     ticket: 'Ticket',
+    ticketValue: 'Ticket ID',
+    ticketMessage: 'Ticket message',
     method: 'Method',
     url: 'URL',
     category: 'Category',
