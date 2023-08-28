@@ -211,6 +211,7 @@ export const WIDGET_TEMPLATES_TYPES = {
   alarmColumns: 'alarm_columns',
   entityColumns: 'entity_columns',
   alarmMoreInfos: 'alarm_more_infos',
+  alarmExportToPdf: 'alarm_export_to_pdf',
   weatherItem: 'weather_item',
   weatherModal: 'weather_modal',
   weatherEntity: 'weather_entity',

@@ -108,6 +108,7 @@ export default {
     },
   },
   moreInfosModal: 'Fenêtre "Plus d\'infos"',
+  exportPdfTemplate: 'Exporter le modèle PDF',
   expandGridRangeSize: 'Largeur-position "Plus d\'infos / chronologie"',
   weatherTemplate: 'Template - Tuiles',
   modalTemplate: 'Template - Modale',
