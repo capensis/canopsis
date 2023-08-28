@@ -13,11 +13,7 @@
 <script>
 import { keyBy, merge } from 'lodash';
 
-import {
-  SERVICE_WEATHER_PATTERN_FIELDS,
-  PATTERN_OPERATORS,
-  ENTITIES_STATES,
-} from '@/constants';
+import { SERVICE_WEATHER_PATTERN_FIELDS, PATTERN_OPERATORS, ENTITIES_STATES } from '@/constants';
 
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
