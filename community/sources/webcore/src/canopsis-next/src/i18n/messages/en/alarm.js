@@ -51,6 +51,7 @@ export default {
       removeAlarmsFromManualMetaAlarm: 'Unlink alarm from manual meta alarm',
       removeAlarmsFromAutoMetaAlarm: 'Unlink alarm from meta alarm',
       comment: 'Comment',
+      exportPdf: 'Export alarm to PDF file',
     },
     iconsTitles: {
       ack: 'Ack',

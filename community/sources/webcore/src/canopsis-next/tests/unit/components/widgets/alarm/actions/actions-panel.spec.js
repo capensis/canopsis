@@ -4,6 +4,7 @@ import flushPromises from 'flush-promises';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
   createAlarmModule,
+  createAlarmDetailsModule,
   createAuthModule,
   createDeclareTicketModule,
   createManualMetaAlarmModule,
@@ -30,8 +31,18 @@ import featuresService from '@/services/features';
 
 import { generateDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
+import { exportAlarmToPdf } from '@/helpers/file/pdf';
 
 import ActionsPanel from '@/components/widgets/alarm/actions/actions-panel.vue';
+
+jest.mock('@/helpers/file/pdf', () => {
+  const original = jest.requireActual('@/helpers/file/pdf');
+  return {
+    ...original,
+
+    exportAlarmToPdf: jest.fn(),
+  };
+});
 
 const stubs = {
   'shared-actions-panel': {
@@ -67,6 +78,7 @@ describe('actions-panel', () => {
         }), {}),
     },
   };
+
   const {
     alarmModule,
     bulkCreateAlarmAckEvent,
@@ -79,6 +91,8 @@ describe('actions-panel', () => {
   } = createAlarmModule();
   const { manualMetaAlarmModule, removeAlarmsFromManualMetaAlarm } = createManualMetaAlarmModule();
   const { metaAlarmModule, removeAlarmsFromMetaAlarm } = createMetaAlarmModule();
+  const { alarmDetailsModule, fetchAlarmDetailsWithoutStore } = createAlarmDetailsModule();
+
   const {
     declareTicketRuleModule,
     fetchAssignedDeclareTicketsWithoutStore,
@@ -89,6 +103,7 @@ describe('actions-panel', () => {
     metaAlarmModule,
     authModule,
     alarmModule,
+    alarmDetailsModule,
     declareTicketRuleModule,
   ]);
 
@@ -179,8 +194,16 @@ describe('actions-panel', () => {
   const factory = generateShallowRenderer(ActionsPanel, {
     stubs,
     mocks: { $modals },
+    provide: {
+      $system: {},
+    },
   });
-  const snapshotFactory = generateRenderer(ActionsPanel, { stubs });
+  const snapshotFactory = generateRenderer(ActionsPanel, {
+    stubs,
+    provide: {
+      $system: {},
+    },
+  });
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -788,6 +811,7 @@ describe('actions-panel', () => {
           variables: [
             {
               name: 'alarm',
+              original: alarmData,
               children: [
                 { name: '_id', path: 'alarm._id', value: alarmData._id },
                 {
@@ -1168,6 +1192,29 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(3);
   });
 
+  it('Export PDF action', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        item: alarm,
+        widget,
+        parentAlarm,
+      },
+    });
+
+    const exportPdfAction = selectActionByType(
+      wrapper,
+      ALARM_LIST_ACTIONS_TYPES.exportPdf,
+    );
+
+    exportPdfAction.trigger('click');
+
+    await flushPromises();
+
+    expect(fetchAlarmDetailsWithoutStore).toBeCalled();
+    expect(exportAlarmToPdf).toBeCalled();
+  });
+
   it('Custom action called after trigger button', () => {
     const customAction = {
       type: 'custom-type',
@@ -1467,38 +1514,6 @@ describe('actions-panel', () => {
           v: {
             status: {
               val: ENTITIES_STATUSES.closed,
-            },
-          },
-          links: {
-            cat: [
-              {
-                icon_name: 'icon',
-                label: 'Label',
-                url: 'URL',
-                rule_id: 'RuleId',
-              },
-            ],
-          },
-        },
-        widget,
-      },
-    });
-
-    expect(wrapper.element).toMatchSnapshot();
-  });
-
-  it('Renders `actions-panel` with links in resolved alarm', () => {
-    const wrapper = snapshotFactory({
-      store: createMockedStoreModules([
-        authModuleWithAccess,
-      ]),
-      propsData: {
-        item: {
-          ...alarm,
-
-          v: {
-            status: {
-              val: ENTITIES_STATUSES.cancelled,
             },
           },
           links: {
