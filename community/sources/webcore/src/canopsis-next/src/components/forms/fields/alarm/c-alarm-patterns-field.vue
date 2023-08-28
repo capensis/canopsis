@@ -410,6 +410,16 @@ export default {
           options: this.ticketOptions,
         },
         {
+          text: this.$t('common.ticketValue'),
+          value: ALARM_PATTERN_FIELDS.ticketValue,
+          options: this.stringWithExistOptions,
+        },
+        {
+          text: this.$t('common.ticketMessage'),
+          value: ALARM_PATTERN_FIELDS.ticketMessage,
+          options: this.stringWithExistOptions,
+        },
+        {
           text: this.$t('common.snoozed'),
           value: ALARM_PATTERN_FIELDS.snooze,
           options: this.snoozeOptions,
