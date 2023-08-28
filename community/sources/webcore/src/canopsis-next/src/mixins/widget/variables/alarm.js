@@ -3,7 +3,7 @@ import {
   ALARM_FIELDS_TO_LABELS_KEYS,
   ENTITY_TEMPLATE_FIELDS,
   PBEHAVIOR_INFO_FIELDS,
-  ALARM_EXPORT_PDF_FIELDS,
+  ALARM_EXPORT_PDF_FIELDS, ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS,
 } from '@/constants';
 
 import { variablesMixin } from './common';
@@ -175,7 +175,7 @@ export const alarmVariablesMixin = {
           value: ALARM_EXPORT_PDF_FIELDS.links,
           text: this.$tc('common.link', 2),
         },
-      ];
+      ].map(variable => ({ ...variable, value: ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS[variable.value] }));
     },
   },
 };

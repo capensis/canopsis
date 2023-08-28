@@ -11,7 +11,6 @@ const stubs = {
   'field-columns': true,
   'field-default-elements-per-page': true,
   'field-info-popup': true,
-  'field-text-editor': true,
   'field-text-editor-with-template': true,
 };
 
@@ -21,7 +20,6 @@ const snapshotStubs = {
   'field-columns': true,
   'field-default-elements-per-page': true,
   'field-info-popup': true,
-  'field-text-editor': true,
   'field-text-editor-with-template': true,
 };
 
