@@ -24,10 +24,7 @@ import {
   REMEDIATION_INSTRUCTION_TYPES,
 } from '@/constants';
 
-import {
-  convertDateToStartOfDayTimestampByTimezone,
-  convertDateToString,
-} from '@/helpers/date/date';
+import { convertDateToStartOfDayTimestampByTimezone, convertDateToString } from '@/helpers/date/date';
 import {
   convertStartDateIntervalToTimestampByTimezone,
   convertStopDateIntervalToTimestampByTimezone,

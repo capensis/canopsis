@@ -1,4 +1,11 @@
-import { get, isFunction, isNumber, isObject, unescape, isString } from 'lodash';
+import {
+  get,
+  isFunction,
+  isNumber,
+  isObject,
+  unescape,
+  isString,
+} from 'lodash';
 import Handlebars from 'handlebars';
 import axios from 'axios';
 

@@ -36,10 +36,7 @@
 </template>
 
 <script>
-import {
-  EXTERNAL_DATA_CONDITION_TYPES,
-  EXTERNAL_DATA_DEFAULT_CONDITION_VALUES,
-} from '@/constants';
+import { EXTERNAL_DATA_CONDITION_TYPES, EXTERNAL_DATA_DEFAULT_CONDITION_VALUES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 

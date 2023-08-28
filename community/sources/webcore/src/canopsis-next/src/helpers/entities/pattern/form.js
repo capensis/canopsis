@@ -1,4 +1,15 @@
-import { isNil, isArray, isBoolean, isEmpty, isNan, isNull, isNumber, isString, isUndefined, omit } from 'lodash';
+import {
+  isNil,
+  isArray,
+  isBoolean,
+  isEmpty,
+  isNan,
+  isNull,
+  isNumber,
+  isString,
+  isUndefined,
+  omit,
+} from 'lodash';
 
 import {
   PATTERN_FIELD_TYPES,

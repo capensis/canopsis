@@ -1,7 +1,4 @@
-import {
-  EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
-  EVENT_FILTER_TYPES,
-} from '@/constants';
+import { EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES, EVENT_FILTER_TYPES } from '@/constants';
 
 export default {
   externalData: 'Données externes',
