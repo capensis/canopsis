@@ -1,4 +1,10 @@
-import { cloneDeep, pick, isEmpty, omit, omitBy } from 'lodash';
+import {
+  cloneDeep,
+  pick,
+  isEmpty,
+  omit,
+  omitBy,
+} from 'lodash';
 import flatten from 'flat';
 
 import {

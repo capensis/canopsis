@@ -272,6 +272,7 @@ export default {
   hidden: 'Caché',
   numberField: 'Champ numérique',
   chart: 'Graphique | Graphiques',
+  currentDate: 'Date actuelle',
   chooseFile: 'Choisir le fichier',
   seeAlarms: 'Voir les alarmes',
   new: 'Nouvelle',

@@ -39,12 +39,12 @@
 </template>
 
 <script>
-import {
-  EXTERNAL_DATA_DEFAULT_CONDITION_VALUES,
-  EXTERNAL_DATA_PAYLOADS_VARIABLES,
-} from '@/constants';
+import { EXTERNAL_DATA_DEFAULT_CONDITION_VALUES, EXTERNAL_DATA_PAYLOADS_VARIABLES } from '@/constants';
 
-import { isEnrichmentEventFilterRuleType, isChangeEntityEventFilterRuleType } from '@/helpers/entities/event-filter/rule/entity';
+import {
+  isEnrichmentEventFilterRuleType,
+  isChangeEntityEventFilterRuleType,
+} from '@/helpers/entities/event-filter/rule/entity';
 
 import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
 import PbehaviorRecurrenceRuleField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-recurrence-rule-field.vue';

@@ -65,6 +65,11 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
     List of available variables|help|variablesHelp
   </button>
   <button
+    class="action-exportPdf"
+  >
+    Export alarm to PDF file|assignment_returned|exportPdf
+  </button>
+  <button
     class="action-executeInstruction"
     disabled="disabled"
   >
@@ -88,7 +93,13 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
 exports[`actions-panel Renders \`actions-panel\` with full unresolved alarm, but without access 1`] = `
 <div
   class="shared-actions-panel"
-/>
+>
+  <button
+    class="action-exportPdf"
+  >
+    Export alarm to PDF file|assignment_returned|exportPdf
+  </button>
+</div>
 `;
 
 exports[`actions-panel Renders \`actions-panel\` with links in alarm 1`] = `
@@ -156,6 +167,11 @@ exports[`actions-panel Renders \`actions-panel\` with links in alarm 1`] = `
     List of available variables|help|variablesHelp
   </button>
   <button
+    class="action-exportPdf"
+  >
+    Export alarm to PDF file|assignment_returned|exportPdf
+  </button>
+  <button
     class="action-RuleId.icon.Label"
   >
     Follow the link "Label"|icon|RuleId.icon.Label
@@ -193,27 +209,10 @@ exports[`actions-panel Renders \`actions-panel\` with links in resolved alarm 1`
   >
     List of available variables|help|variablesHelp
   </button>
-</div>
-`;
-
-exports[`actions-panel Renders \`actions-panel\` with links in resolved alarm 2`] = `
-<div
-  class="shared-actions-panel"
->
   <button
-    class="action-unCancel"
+    class="action-exportPdf"
   >
-    Uncancel alarm|delete_forever|unCancel
-  </button>
-  <button
-    class="action-RuleId.icon.Label"
-  >
-    Follow the link "Label"|icon|RuleId.icon.Label
-  </button>
-  <button
-    class="action-variablesHelp"
-  >
-    List of available variables|help|variablesHelp
+    Export alarm to PDF file|assignment_returned|exportPdf
   </button>
 </div>
 `;
@@ -281,6 +280,11 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in runn
     class="action-variablesHelp"
   >
     List of available variables|help|variablesHelp
+  </button>
+  <button
+    class="action-exportPdf"
+  >
+    Export alarm to PDF file|assignment_returned|exportPdf
   </button>
   <button
     class="action-executeInstruction"
@@ -368,6 +372,11 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
     List of available variables|help|variablesHelp
   </button>
   <button
+    class="action-exportPdf"
+  >
+    Export alarm to PDF file|assignment_returned|exportPdf
+  </button>
+  <button
     class="action-executeInstruction"
     disabled="disabled"
   >
@@ -451,6 +460,11 @@ exports[`actions-panel Renders \`actions-panel\` with parentAlarm with auto meta
     class="action-variablesHelp"
   >
     List of available variables|help|variablesHelp
+  </button>
+  <button
+    class="action-exportPdf"
+  >
+    Export alarm to PDF file|assignment_returned|exportPdf
   </button>
   <button
     class="action-removeAlarmsFromAutoMetaAlarm"
@@ -541,6 +555,11 @@ exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 
     List of available variables|help|variablesHelp
   </button>
   <button
+    class="action-exportPdf"
+  >
+    Export alarm to PDF file|assignment_returned|exportPdf
+  </button>
+  <button
     class="action-executeInstruction"
     disabled="disabled"
   >
@@ -562,6 +581,11 @@ exports[`actions-panel Renders \`actions-panel\` with resolved alarm 1`] = `
     class="action-variablesHelp"
   >
     List of available variables|help|variablesHelp
+  </button>
+  <button
+    class="action-exportPdf"
+  >
+    Export alarm to PDF file|assignment_returned|exportPdf
   </button>
 </div>
 `;
@@ -629,6 +653,11 @@ exports[`actions-panel Renders \`actions-panel\` with simple manual instruction 
     class="action-variablesHelp"
   >
     List of available variables|help|variablesHelp
+  </button>
+  <button
+    class="action-exportPdf"
+  >
+    Export alarm to PDF file|assignment_returned|exportPdf
   </button>
   <button
     class="action-executeInstruction"
@@ -722,6 +751,11 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
     List of available variables|help|variablesHelp
   </button>
   <button
+    class="action-exportPdf"
+  >
+    Export alarm to PDF file|assignment_returned|exportPdf
+  </button>
+  <button
     class="action-removeAlarmsFromManualMetaAlarm"
   >
     Unlink alarm from manual meta alarm|link_off|removeAlarmsFromManualMetaAlarm
@@ -783,6 +817,11 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoi
     class="action-variablesHelp"
   >
     List of available variables|help|variablesHelp
+  </button>
+  <button
+    class="action-exportPdf"
+  >
+    Export alarm to PDF file|assignment_returned|exportPdf
   </button>
   <button
     class="action-removeAlarmsFromManualMetaAlarm"
@@ -868,6 +907,11 @@ exports[`actions-panel Renders \`actions-panel\` without assigned_declare_ticket
     List of available variables|help|variablesHelp
   </button>
   <button
+    class="action-exportPdf"
+  >
+    Export alarm to PDF file|assignment_returned|exportPdf
+  </button>
+  <button
     class="action-removeAlarmsFromManualMetaAlarm"
   >
     Unlink alarm from manual meta alarm|link_off|removeAlarmsFromManualMetaAlarm
@@ -914,6 +958,11 @@ exports[`actions-panel Renders \`actions-panel\` without entity, instructions, b
     class="action-variablesHelp"
   >
     List of available variables|help|variablesHelp
+  </button>
+  <button
+    class="action-exportPdf"
+  >
+    Export alarm to PDF file|assignment_returned|exportPdf
   </button>
   <button
     class="action-removeAlarmsFromManualMetaAlarm"
