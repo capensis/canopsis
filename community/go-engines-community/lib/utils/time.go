@@ -25,3 +25,11 @@ func MaxTime(left, right time.Time) time.Time {
 
 	return right
 }
+
+func MinDuration(left, right time.Duration) time.Duration {
+	if left < right {
+		return left
+	}
+
+	return right
+}
