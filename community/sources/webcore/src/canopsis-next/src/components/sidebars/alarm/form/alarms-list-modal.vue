@@ -35,14 +35,17 @@
       @input="updateMoreInfo"
     )
     v-divider
-    field-text-editor(
-      v-model="form.exportPdfTemplate",
+    field-text-editor-with-template(
+      :value="form.exportPdfTemplate",
+      :template="form.exportPdfTemplateTemplate",
       :title="$t('settings.exportPdfTemplate')",
       :variables="exportPdfAlarmVariables",
       :default-value="defaultExportPdfTemplateValue",
       :dialog-props="{ maxWidth: 1070 }",
+      :templates="alarmExportToPdfTemplates",
       addable,
-      removable
+      removable,
+      @input="updateExportPdf"
     )
 </template>
 
@@ -116,6 +119,10 @@ export default {
       return filter(this.templates, { type: WIDGET_TEMPLATES_TYPES.alarmMoreInfos });
     },
 
+    alarmExportToPdfTemplates() {
+      return filter(this.templates, { type: WIDGET_TEMPLATES_TYPES.alarmExportToPdf });
+    },
+
     preparedWidgetColumns() {
       return formToWidgetColumns(this.form.widgetColumns).map(column => ({
         ...column,
@@ -144,6 +151,15 @@ export default {
 
         moreInfoTemplate: content,
         moreInfoTemplateTemplate: template,
+      });
+    },
+
+    updateExportPdf(content, template) {
+      this.updateModel({
+        ...this.form,
+
+        exportPdfTemplate: content,
+        exportPdfTemplateTemplate: template,
       });
     },
   },
