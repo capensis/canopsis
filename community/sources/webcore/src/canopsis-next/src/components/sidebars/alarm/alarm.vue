@@ -197,11 +197,7 @@
 </template>
 
 <script>
-import {
-  SIDE_BARS,
-  ALARM_UNSORTABLE_FIELDS,
-  ALARM_FIELDS_TO_LABELS_KEYS,
-} from '@/constants';
+import { SIDE_BARS, ALARM_UNSORTABLE_FIELDS, ALARM_FIELDS_TO_LABELS_KEYS } from '@/constants';
 
 import { formToWidgetColumns } from '@/helpers/entities/widget/column/form';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/list';
@@ -211,8 +207,9 @@ import { entitiesInfosMixin } from '@/mixins/entities/infos';
 import { alarmVariablesMixin } from '@/mixins/widget/variables';
 import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
-import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
-  from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
+import {
+  permissionsWidgetsAlarmsListRemediationInstructionsFilters,
+} from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
 
 import WidgetSettingsGroup from '../partials/widget-settings-group.vue';
 import WidgetSettings from '../partials/widget-settings.vue';

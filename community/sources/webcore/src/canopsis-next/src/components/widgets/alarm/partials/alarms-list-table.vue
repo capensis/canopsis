@@ -128,10 +128,7 @@
 <script>
 import { differenceBy } from 'lodash';
 
-import {
-  ALARM_DENSE_TYPES,
-  ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
-} from '@/constants';
+import { ALARM_DENSE_TYPES, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
 
 import featuresService from '@/services/features';
 
