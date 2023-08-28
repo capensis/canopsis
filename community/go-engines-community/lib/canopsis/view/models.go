@@ -27,6 +27,7 @@ const (
 	WidgetTemplateTypeAlarmColumns         = "alarm_columns"
 	WidgetTemplateTypeEntityColumns        = "entity_columns"
 	WidgetTemplateTypeAlarmMoreInfos       = "alarm_more_infos"
+	WidgetTemplateTypeAlarmExportToPDF     = "alarm_export_to_pdf"
 	WidgetTemplateTypeServiceWeatherItem   = "weather_item"
 	WidgetTemplateTypeServiceWeatherModal  = "weather_modal"
 	WidgetTemplateTypeServiceWeatherEntity = "weather_entity"
