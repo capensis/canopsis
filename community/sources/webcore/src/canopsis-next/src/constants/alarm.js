@@ -295,6 +295,8 @@ export const ALARM_PATTERN_FIELDS = {
   totalStateChanges: ALARM_FIELDS.totalStateChanges,
   tags: ALARM_FIELDS.tags,
   activated: ALARM_FIELDS.activated,
+  ticketValue: ALARM_FIELDS.ticketValue,
+  ticketMessage: ALARM_FIELDS.ticketMessage,
 };
 
 export const ALARM_ACK_INITIATORS = {
