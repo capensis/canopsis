@@ -2,13 +2,13 @@
 
 exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with custom props 1`] = `
 <div
-  class="layout column"
+  class="layout pbehavior-exception-field column"
 >
   <div
     class="layout row justify-space-between"
   >
     <div
-      class="flex xs6"
+      class="flex pbehavior-exception-field__interval xs6"
     >
       <date-time-splitted-range-picker-field-stub
         disabled="true"
@@ -60,13 +60,13 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
 
 exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with custom props with defined type 1`] = `
 <div
-  class="layout column"
+  class="layout pbehavior-exception-field column"
 >
   <div
     class="layout row justify-space-between"
   >
     <div
-      class="flex xs6"
+      class="flex pbehavior-exception-field__interval xs6"
     >
       <date-time-splitted-range-picker-text-stub
         end="Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)"
@@ -111,13 +111,13 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with cu
 
 exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with default props 1`] = `
 <div
-  class="layout column"
+  class="layout pbehavior-exception-field column"
 >
   <div
     class="layout row justify-space-between"
   >
     <div
-      class="flex xs6"
+      class="flex pbehavior-exception-field__interval xs6"
     >
       <date-time-splitted-range-picker-field-stub
         endlabel="End"
@@ -129,7 +129,7 @@ exports[`pbehavior-exception-field Renders \`pbehavior-exception-field\` with de
     </div>
     <!---->
     <div
-      class="flex exception-field-item--actions"
+      class="flex pbehavior-exception-field__actions"
     >
       <button
         class="btn--editing v-btn v-btn--active v-btn--floating v-btn--icon theme--light"

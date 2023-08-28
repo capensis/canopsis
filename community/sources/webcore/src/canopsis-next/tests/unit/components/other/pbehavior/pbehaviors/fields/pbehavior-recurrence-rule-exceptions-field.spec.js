@@ -3,13 +3,12 @@ import Faker from 'faker';
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 
-import { MODALS } from '@/constants';
-
 import PbehaviorRecurrenceRuleExceptionsField
   from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-exceptions-field.vue';
 
 const stubs = {
   'pbehavior-exceptions-list': true,
+  'pbehavior-recurrence-rule-exceptions-list-menu': true,
   'pbehavior-exceptions-field': {
     template: `
     <div>
@@ -23,7 +22,7 @@ const stubs = {
 
 const selectButtonByIndex = (wrapper, index) => wrapper.findAll('v-btn-stub').at(index);
 const selectAddExceptionButton = wrapper => selectButtonByIndex(wrapper, 0);
-const selectChooseExceptionButton = wrapper => selectButtonByIndex(wrapper, 1);
+const selectChooseExceptionButton = wrapper => wrapper.find('pbehavior-recurrence-rule-exceptions-list-menu-stub');
 
 describe('pbehavior-recurrence-rule-exceptions-field', () => {
   const nowTimestamp = 1386435500000;
@@ -68,27 +67,16 @@ describe('pbehavior-recurrence-rule-exceptions-field', () => {
         exceptions,
       },
     });
-
-    selectChooseExceptionButton(wrapper).vm.$emit('click');
-
-    expect($modals.show).toBeCalledWith(
-      {
-        name: MODALS.selectExceptionsLists,
-        config: {
-          exceptions,
-          action: expect.any(Function),
-        },
-      },
-    );
-
-    const [{ config }] = $modals.show.mock.calls[0];
-    const newExceptions = [
+    const mewExceptions = [
       ...exceptions,
-      { name: Faker.datatype.string() },
+      {
+        name: Faker.datatype.string(),
+      },
     ];
-    config.action(newExceptions);
 
-    expect(wrapper).toEmit('update:exceptions', newExceptions);
+    selectChooseExceptionButton(wrapper).vm.$emit('input', mewExceptions);
+
+    expect(wrapper).toEmit('update:exceptions', mewExceptions);
   });
 
   test('Renders `pbehavior-exceptions-field` with default props', () => {

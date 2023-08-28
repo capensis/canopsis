@@ -447,6 +447,33 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
       value="[object Object]"
     />
   </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        Error messages data storage
+      </div>
+      <c-help-icon-stub
+        color="info"
+        icon-class="ml-2"
+        max-width="300"
+        text="When enabled, error messages data will be deleted after the defined time period. However, all errors are available in logs."
+        top="top"
+      />
+    </div>
+    <!---->
+    <c-enabled-duration-field-stub
+      help-text="All error messages older than the defined time period will be deleted"
+      label="Clear error messages older than"
+      name="errors.delete_after"
+      value="[object Object]"
+    />
+  </div>
 </div>
 `;
 
@@ -837,6 +864,33 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with default fo
       help-text="All external metrics older than the defined time period will be deleted"
       label="Clear metrics storage after"
       name="perf_data_metrics.delete_after"
+      value="[object Object]"
+    />
+  </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        Error messages data storage
+      </div>
+      <c-help-icon-stub
+        color="info"
+        icon-class="ml-2"
+        max-width="300"
+        text="When enabled, error messages data will be deleted after the defined time period. However, all errors are available in logs."
+        top="top"
+      />
+    </div>
+    <!---->
+    <c-enabled-duration-field-stub
+      help-text="All error messages older than the defined time period will be deleted"
+      label="Clear error messages older than"
+      name="errors.delete_after"
       value="[object Object]"
     />
   </div>
