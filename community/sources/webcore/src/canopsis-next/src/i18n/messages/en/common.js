@@ -272,6 +272,7 @@ export default {
   hidden: 'Hidden',
   numberField: 'Number field',
   chart: 'Chart | Charts',
+  currentDate: 'Current date',
   chooseFile: 'Choose file',
   seeAlarms: 'See alarms',
   new: 'New',
