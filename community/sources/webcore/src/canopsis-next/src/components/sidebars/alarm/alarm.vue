@@ -97,14 +97,17 @@
         @input="updateMoreInfo"
       )
       v-divider
-      field-text-editor(
-        v-model="form.parameters.exportPdfTemplate",
+      field-text-editor-with-template(
+        :value="form.parameters.exportPdfTemplate",
+        :template="form.parameters.exportPdfTemplateTemplate",
         :title="$t('settings.exportPdfTemplate')",
         :variables="exportPdfAlarmVariables",
         :default-value="defaultExportPdfTemplateValue",
         :dialog-props="{ maxWidth: 1070 }",
+        :templates="alarmExportToPdfWidgetTemplates",
         addable,
-        removable
+        removable,
+        @input="updateExportPdf"
       )
       v-divider
       field-grid-range-size(
@@ -315,6 +318,14 @@ export default {
 
       if (template && template !== this.form.parameters.moreInfoTemplateTemplate) {
         this.$set(this.form.parameters, 'moreInfoTemplateTemplate', template);
+      }
+    },
+
+    updateExportPdf(content, template) {
+      this.$set(this.form.parameters, 'exportPdfTemplate', content);
+
+      if (template && template !== this.form.parameters.exportPdfTemplateTemplate) {
+        this.$set(this.form.parameters, 'exportPdfTemplateTemplate', template);
       }
     },
   },

@@ -39,6 +39,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
     class="v-divider theme--light"
   />
   <field-text-editor-with-template-stub
+    defaultvalue=""
     templates=""
     title="\\"More Infos\\" Popup"
     value=""
@@ -47,7 +48,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
   <hr
     class="v-divider theme--light"
   />
-  <field-text-editor-stub
+  <field-text-editor-with-template-stub
     addable="true"
     defaultvalue=<div style="width: 1000px; font-family: Roboto, sans-serif; font-size: 15px; line-height: 1.2; overflow-wrap: break-word;">
   <div style="font-size: 18px; color: rgb(255, 255, 255); background-color: rgb(47, 171, 99); border: 2px solid rgb(255, 255, 255);">
@@ -156,7 +157,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
           <p style="padding: 12px; margin: 0;">Infos</p>
         </td>
         <td style="padding: 0 2px 0 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          {{ alarm.infos }}</td>
+          {{ alarm.v.infos }}</td>
       </tr>
       <tr>
         <td style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
@@ -246,6 +247,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
 </div>
     dialogprops="[object Object]"
     removable="true"
+    templates=""
     title="Export PDF template"
     value=""
     variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -291,6 +293,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
     class="v-divider theme--light"
   />
   <field-text-editor-with-template-stub
+    defaultvalue=""
     templates=""
     title="\\"More Infos\\" Popup"
     value=""
@@ -299,7 +302,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
   <hr
     class="v-divider theme--light"
   />
-  <field-text-editor-stub
+  <field-text-editor-with-template-stub
     addable="true"
     defaultvalue=<div style="width: 1000px; font-family: Roboto, sans-serif; font-size: 15px; line-height: 1.2; overflow-wrap: break-word;">
   <div style="font-size: 18px; color: rgb(255, 255, 255); background-color: rgb(47, 171, 99); border: 2px solid rgb(255, 255, 255);">
@@ -408,7 +411,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
           <p style="padding: 12px; margin: 0;">Infos</p>
         </td>
         <td style="padding: 0 2px 0 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;">
-          {{ alarm.infos }}</td>
+          {{ alarm.v.infos }}</td>
       </tr>
       <tr>
         <td style="font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;">
@@ -498,6 +501,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
 </div>
     dialogprops="[object Object]"
     removable="true"
+    templates=""
     title="Export PDF template"
     value=""
     variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"

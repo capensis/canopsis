@@ -1,7 +1,13 @@
 import JsPDF from 'jspdf';
 import { Visitor, parseWithoutProcessing } from 'handlebars';
 
-import { ALARM_EXPORT_PDF_FIELDS, DATETIME_FORMATS, ENTITIES_STATES, ENTITIES_STATUSES } from '@/constants';
+import {
+  ALARM_EXPORT_PDF_FIELDS,
+  ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS,
+  DATETIME_FORMATS,
+  ENTITIES_STATES,
+  ENTITIES_STATUSES,
+} from '@/constants';
 
 import { compile } from '../handlebars';
 import { createInstanceWithHelpers } from '../handlebars/alarm-export-pdf-helpers';
@@ -46,8 +52,6 @@ import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html'
  * @property {AlarmEvent[]} comments
  */
 
-const ALARM_EXPORT_PDF_FIELDS_VALUES = Object.values(ALARM_EXPORT_PDF_FIELDS);
-
 class AlarmExportToPdfVisitor extends Visitor {
   constructor() {
     super();
@@ -62,7 +66,7 @@ class AlarmExportToPdfVisitor extends Visitor {
 
     return {
       ...path,
-      parts: ALARM_EXPORT_PDF_FIELDS_VALUES.includes(lastItem) ? [lastItem] : parts,
+      parts: ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS[lastItem] ? [lastItem] : parts,
     };
   }
 }

@@ -47,6 +47,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    defaultValue: {
+      type: String,
+      default: '',
+    },
     dialogProps: {
       type: Object,
       required: false,
@@ -54,7 +58,7 @@ export default {
   },
   computed: {
     isValueEmpty() {
-      return !this.value || !this.value.length;
+      return this.defaultValue === String(this.value);
     },
   },
   methods: {
@@ -76,7 +80,7 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          action: () => this.$emit('input', '', CUSTOM_WIDGET_TEMPLATE),
+          action: () => this.$emit('input', this.defaultValue, CUSTOM_WIDGET_TEMPLATE),
         },
       });
     },
