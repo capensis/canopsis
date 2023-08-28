@@ -51,7 +51,7 @@ type watcher struct {
 	decoder    encoding.Decoder
 	logger     zerolog.Logger
 
-	streamsMx sync.Mutex
+	streamsMx sync.RWMutex
 	streams   map[string]map[string]streamData
 }
 
@@ -336,8 +336,8 @@ func (w *watcher) newStream(roomId, k, connId, userId string, streamCancel conte
 }
 
 func (w *watcher) getConnIds(roomId, k string) map[string][]string {
-	w.streamsMx.Lock()
-	defer w.streamsMx.Unlock()
+	w.streamsMx.RLock()
+	defer w.streamsMx.RUnlock()
 
 	return w.streams[roomId][k].connIdsByUserId
 }
