@@ -275,6 +275,8 @@ export default {
   currentDate: 'Current date',
   chooseFile: 'Choose file',
   seeAlarms: 'See alarms',
+  new: 'New',
+  regexp: 'Regexp',
   variableTypes: {
     string: 'String',
     number: 'Number',
@@ -293,6 +295,13 @@ export default {
     },
   },
   saveChanges: 'Save changes',
+  ordinals: {
+    first: 'First',
+    second: 'Second',
+    third: 'Third',
+    fourth: 'Fourth',
+    fifth: 'Fifth',
+  },
   times: {
     second: 'second | seconds',
     minute: 'minute | minutes',
