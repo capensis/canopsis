@@ -25,10 +25,7 @@ import dependentMixin from 'vuetify/es5/mixins/dependent';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import {
-  calendarEventToPbehaviorForm,
-  formToCalendarEvent,
-} from '@/helpers/entities/pbehavior/form';
+import { calendarEventToPbehaviorForm, formToCalendarEvent } from '@/helpers/entities/pbehavior/form';
 import { isOmitEqual } from '@/helpers/collection';
 import { getMenuClassByCalendarEvent } from '@/helpers/calendar/dayspan';
 
