@@ -142,12 +142,7 @@
 <script>
 import { isEqual } from 'lodash';
 
-import {
-  ENTITY_TYPES,
-  GRID_SIZES,
-  TOURS,
-  JUNIT_ALARM_CONNECTOR,
-} from '@/constants';
+import { ENTITY_TYPES, GRID_SIZES, TOURS, JUNIT_ALARM_CONNECTOR } from '@/constants';
 
 import { uid } from '@/helpers/uid';
 import { getStepClass } from '@/helpers/tour';

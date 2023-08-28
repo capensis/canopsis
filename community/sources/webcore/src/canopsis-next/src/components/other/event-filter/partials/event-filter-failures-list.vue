@@ -5,7 +5,7 @@
     :loading="pending",
     :total-items="totalItems",
     :pagination="pagination",
-    :is-expandable-item="hasEvent"
+    :is-expandable-item="hasEvent",
     expand,
     advanced-pagination,
     @update:pagination="$emit('update:pagination', $event)"

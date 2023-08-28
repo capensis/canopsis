@@ -4,12 +4,7 @@ import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/s
 
 import { fakeAlarmDetails } from '@unit/data/alarm';
 
-import {
-  CANOPSIS_EDITION,
-  ENTITY_TYPES,
-  JUNIT_ALARM_CONNECTOR,
-  USERS_PERMISSIONS,
-} from '@/constants';
+import { CANOPSIS_EDITION, ENTITY_TYPES, JUNIT_ALARM_CONNECTOR, USERS_PERMISSIONS } from '@/constants';
 
 import AlarmsExpandPanel from '@/components/widgets/alarm/expand-panel/alarms-expand-panel.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
