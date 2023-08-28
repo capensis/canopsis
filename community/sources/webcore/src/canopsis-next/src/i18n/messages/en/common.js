@@ -274,6 +274,8 @@ export default {
   chart: 'Chart | Charts',
   chooseFile: 'Choose file',
   seeAlarms: 'See alarms',
+  new: 'New',
+  regexp: 'Regexp',
   variableTypes: {
     string: 'String',
     number: 'Number',
