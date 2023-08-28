@@ -23,27 +23,37 @@
             v-flex(xs5)
               c-name-field(v-field="form.name", key="name", required)
             v-flex(xs7)
-              v-text-field.ml-2(
-                v-if="isStringValueType",
+              c-payload-text-field.ml-2(
+                v-if="isStringTemplateValueType",
+                v-field="form.value",
+                :label="$t('common.value')",
+                :variables="variables",
+                :name="valueFieldName",
+                key="from",
+                required,
+                clearable
+              )
+              v-combobox.ml-2(
+                v-else-if="isStringCopyValueType",
                 v-field="form.value",
                 v-validate="'required'",
                 :label="$t('common.value')",
                 :error-messages="errors.collect('value')",
-                key="from",
-                name="value"
+                :items="copyValueVariables",
+                :name="valueFieldName",
+                key="from"
               )
-                template(#append="")
-                  c-help-icon(icon="help", :text="$t('eventFilter.tooltips.copyFromHelp')", left)
               c-mixed-field.ml-2(
                 v-else,
                 v-field="form.value",
                 :label="$t('common.value')",
+                :name="valueFieldName",
                 key="value"
               )
 </template>
 
 <script>
-import { EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
+import { ACTION_COPY_PAYLOAD_VARIABLES, EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES } from '@/constants';
 
 import EventFilterEnrichmentActionFormTypeInfo from './event-filter-enrichment-action-form-type-info.vue';
 
@@ -59,8 +69,20 @@ export default {
       type: Object,
       required: true,
     },
+    variables: {
+      type: Array,
+      default: () => [],
+    },
+    name: {
+      type: String,
+      default: 'action',
+    },
   },
   computed: {
+    valueFieldName() {
+      return `${this.name}.value`;
+    },
+
     eventFilterActionTypes() {
       return Object.values(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES).map(value => ({
         value,
@@ -69,10 +91,19 @@ export default {
       }));
     },
 
-    isStringValueType() {
+    copyValueVariables() {
+      return Object.values(ACTION_COPY_PAYLOAD_VARIABLES);
+    },
+
+    isStringCopyValueType() {
       return [
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy,
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo,
+      ].includes(this.form.type);
+    },
+
+    isStringTemplateValueType() {
+      return [
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate,
         EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate,
       ].includes(this.form.type);
