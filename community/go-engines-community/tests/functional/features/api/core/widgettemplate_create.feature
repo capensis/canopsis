@@ -176,6 +176,44 @@ Feature: Create a widget template
     }
     """
 
+  Scenario: given create alarm export to pdf request should return ok
+    When I am admin
+    When I do POST /api/v4/widget-templates:
+    """json
+    {
+      "title": "test-widgettemplate-to-create-4-title",
+      "type": "alarm_export_to_pdf",
+      "content": "{{ `{{ alarm.v.display_name }}` }}"
+    }
+    """
+    Then the response code should be 201
+    Then the response body should contain:
+    """json
+    {
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "title": "test-widgettemplate-to-create-4-title",
+      "type": "alarm_export_to_pdf",
+      "content": "{{ `{{ alarm.v.display_name }}` }}"
+    }
+    """
+    When I do GET /api/v4/widget-templates/{{ .lastResponse._id }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "title": "test-widgettemplate-to-create-4-title",
+      "type": "alarm_export_to_pdf",
+      "content": "{{ `{{ alarm.v.display_name }}` }}"
+    }
+    """
+
   Scenario: given create request and no auth user should not allow access
     When I do POST /api/v4/widget-templates
     Then the response code should be 401
@@ -267,6 +305,37 @@ Feature: Create a widget template
     When I do POST /api/v4/widget-templates:
     """json
     {
+      "type": "alarm_export_to_pdf"
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "content": "Content is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/widget-templates:
+    """json
+    {
+      "type": "alarm_export_to_pdf",
+      "content": ""
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "content": "Content is missing."
+      }
+    }
+    """
+    When I do POST /api/v4/widget-templates:
+    """json
+    {
       "type": "unknown"
     }
     """
@@ -275,7 +344,7 @@ Feature: Create a widget template
     """json
     {
       "errors": {
-        "type": "Type must be one of [alarm_columns entity_columns alarm_more_infos weather_item weather_modal weather_entity]."
+        "type": "Type must be one of [alarm_columns entity_columns alarm_more_infos alarm_export_to_pdf weather_item weather_modal weather_entity]."
       }
     }
     """
