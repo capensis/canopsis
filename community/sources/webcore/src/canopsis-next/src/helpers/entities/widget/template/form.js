@@ -1,8 +1,4 @@
-import {
-  COLUMNS_WIDGET_TEMPLATES_TYPES,
-  CUSTOM_WIDGET_TEMPLATE,
-  WIDGET_TEMPLATES_TYPES,
-} from '@/constants';
+import { COLUMNS_WIDGET_TEMPLATES_TYPES, CUSTOM_WIDGET_TEMPLATE, WIDGET_TEMPLATES_TYPES } from '@/constants';
 
 import { widgetColumnsToForm, formToWidgetColumns } from '../column/form';
 
