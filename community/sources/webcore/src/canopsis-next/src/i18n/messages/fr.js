@@ -193,6 +193,8 @@ export default merge({
     retryUnit: 'Unité d\'essai',
     retryCount: 'Nombre de tentatives après échec',
     ticket: 'Ticket',
+    ticketValue: 'ID du ticket',
+    ticketMessage: 'Message du ticket',
     method: 'Méthode',
     url: 'URL',
     category: 'Catégorie',
