@@ -43,6 +43,13 @@ export default {
       markAsReadPending: false,
     };
   },
+  watch: {
+    'eventFilter.failures_count': {
+      handler() {
+        this.fetchList();
+      },
+    },
+  },
   mounted() {
     this.fetchList();
   },
