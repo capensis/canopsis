@@ -4,14 +4,21 @@ import Faker from 'faker';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
   createActiveViewModule,
-  createAlarmModule, createAuthModule,
+  createAlarmModule,
+  createAuthModule,
   createMockedStoreModules,
   createQueryModule,
   createServiceModule,
   createUserPreferenceModule,
 } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
-import { ENTITY_TYPES, MAP_TYPES, MODALS, USERS_PERMISSIONS, WIDGET_TYPES } from '@/constants';
+import {
+  ENTITY_TYPES,
+  MAP_TYPES,
+  MODALS,
+  USERS_PERMISSIONS,
+  WIDGET_TYPES,
+} from '@/constants';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
 import MapWidget from '@/components/widgets/map/map.vue';

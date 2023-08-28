@@ -1,6 +1,12 @@
 import moment from 'moment-timezone';
 
-import { DATETIME_FORMATS, QUICK_RANGES, DATETIME_INTERVAL_TYPES, TIME_UNITS, SAMPLINGS } from '@/constants';
+import {
+  DATETIME_FORMATS,
+  QUICK_RANGES,
+  DATETIME_INTERVAL_TYPES,
+  TIME_UNITS,
+  SAMPLINGS,
+} from '@/constants';
 
 import {
   convertDateToMomentByTimezone,

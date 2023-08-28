@@ -4,6 +4,7 @@ import { generateRenderer } from '@unit/utils/vue';
 
 import EventFiltersList from '@/components/other/event-filter/event-filters-list.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
+import { EVENT_FILTER_TYPES } from '@/constants';
 
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
@@ -21,10 +22,11 @@ const stubs = {
 
 describe('event-filters-list', () => {
   const totalItems = 11;
+  const eventFilterTypes = Object.values(EVENT_FILTER_TYPES);
 
   const eventFilters = range(totalItems).map(index => ({
     _id: `c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-${index}`,
-    type: `type-${index}`,
+    type: eventFilterTypes[index % eventFilterTypes.length],
     priority: index,
     enabled: !!(index % 2),
     author: {

@@ -4,7 +4,10 @@
     v-tab-item
       v-layout.py-3.secondary.lighten-2(row, justify-center)
         v-flex(xs11)
-          event-filters-recurrence-rule-summary(:event-filter="eventFilter")
+          v-card
+            v-card-text
+              v-flex(xs12, md8, offset-md2, lg6, offset-lg3)
+                event-filters-rule-summary(:event-filter="eventFilter")
     v-tab {{ $tc('common.pattern', 2) }}
     v-tab-item(lazy)
       v-layout.pa-3.secondary.lighten-2(row, justify-center)
@@ -25,21 +28,30 @@
         v-layout.py-3.secondary.lighten-2(row, justify-center)
           v-flex(xs11)
             external-data-form(:form="externalDataForm", disabled)
+    template(v-if="eventFilter.failures_count")
+      v-tab {{ $tc('common.error', 2) }}
+      v-tab-item(lazy)
+        v-layout.py-3.secondary.lighten-2(row, justify-center)
+          v-flex(xs11)
+            v-card
+              v-card-text
+                event-filter-failures(:event-filter="eventFilter", @refresh="$emit('refresh')")
 </template>
 
 <script>
-import { EVENT_FILTER_TYPES } from '@/constants';
-
 import { externalDataToForm } from '@/helpers/entities/shared/external-data/form';
 import { eventFilterPatternToForm } from '@/helpers/entities/event-filter/rule/form';
+import { isEnrichmentEventFilterRuleType } from '@/helpers/entities/event-filter/rule/entity';
 
 import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
 
-import EventFiltersRecurrenceRuleSummary from './event-filters-recurrence-rule-summary.vue';
+import EventFiltersRuleSummary from './event-filters-rule-summary.vue';
+import EventFilterFailures from './event-filter-failures.vue';
 
 export default {
   components: {
-    EventFiltersRecurrenceRuleSummary,
+    EventFiltersRuleSummary,
+    EventFilterFailures,
     ExternalDataForm,
   },
   props: {
@@ -54,7 +66,7 @@ export default {
     },
 
     isEnrichment() {
-      return this.eventFilter.type === EVENT_FILTER_TYPES.enrichment;
+      return isEnrichmentEventFilterRuleType(this.eventFilter.type);
     },
 
     headers() {
