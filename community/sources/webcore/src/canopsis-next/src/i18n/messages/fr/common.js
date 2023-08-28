@@ -274,6 +274,8 @@ export default {
   chart: 'Graphique | Graphiques',
   chooseFile: 'Choisir le fichier',
   seeAlarms: 'Voir les alarmes',
+  new: 'Nouvelle',
+  regexp: 'Expression régulière',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
