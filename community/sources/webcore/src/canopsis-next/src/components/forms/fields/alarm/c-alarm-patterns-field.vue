@@ -389,6 +389,14 @@ export default {
           options: this.ticketOptions,
         },
         {
+          value: ALARM_PATTERN_FIELDS.ticketValue,
+          options: this.stringWithExistOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.ticketMessage,
+          options: this.stringWithExistOptions,
+        },
+        {
           value: ALARM_PATTERN_FIELDS.snooze,
           options: this.snoozeOptions,
         },
