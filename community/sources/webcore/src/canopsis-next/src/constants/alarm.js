@@ -331,6 +331,7 @@ export const ALARM_TEMPLATE_FIELDS = {
 };
 
 export const ALARM_EXPORT_PDF_FIELDS = {
+  currentDate: 'current_date',
   displayName: 'display_name',
   state: 'state',
   status: 'status',
@@ -342,7 +343,6 @@ export const ALARM_EXPORT_PDF_FIELDS = {
   output: 'output',
   eventsCount: 'events_count',
   duration: 'duration',
-  currentDate: 'current_date',
   creationDate: 'creation_date',
   lastEventDate: 'last_event_date',
   lastUpdateDate: 'last_update_date',
@@ -355,6 +355,33 @@ export const ALARM_EXPORT_PDF_FIELDS = {
   comments: 'comments',
   tags: 'tags',
   links: 'links',
+};
+
+export const ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS = {
+  [ALARM_EXPORT_PDF_FIELDS.currentDate]: 'current_date',
+  [ALARM_EXPORT_PDF_FIELDS.displayName]: 'alarm.v.display_name',
+  [ALARM_EXPORT_PDF_FIELDS.state]: 'alarm.v.state',
+  [ALARM_EXPORT_PDF_FIELDS.status]: 'alarm.v.status',
+  [ALARM_EXPORT_PDF_FIELDS.connector]: 'alarm.v.connector',
+  [ALARM_EXPORT_PDF_FIELDS.connectorName]: 'alarm.v.connector_name',
+  [ALARM_EXPORT_PDF_FIELDS.component]: 'alarm.v.component',
+  [ALARM_EXPORT_PDF_FIELDS.resource]: 'alarm.v.resource',
+  [ALARM_EXPORT_PDF_FIELDS.initialOutput]: 'alarm.v.initial_output',
+  [ALARM_EXPORT_PDF_FIELDS.output]: 'alarm.v.output',
+  [ALARM_EXPORT_PDF_FIELDS.eventsCount]: 'alarm.v.events_count',
+  [ALARM_EXPORT_PDF_FIELDS.duration]: 'alarm.v.duration',
+  [ALARM_EXPORT_PDF_FIELDS.creationDate]: 'alarm.v.creation_date',
+  [ALARM_EXPORT_PDF_FIELDS.lastEventDate]: 'alarm.v.last_event_date',
+  [ALARM_EXPORT_PDF_FIELDS.lastUpdateDate]: 'alarm.v.last_update_date',
+  [ALARM_EXPORT_PDF_FIELDS.acknowledgeDate]: 'alarm.v.acknowledge_date',
+  [ALARM_EXPORT_PDF_FIELDS.resolved]: 'alarm.v.resolved',
+  [ALARM_EXPORT_PDF_FIELDS.activationDate]: 'alarm.v.activation_date',
+  [ALARM_EXPORT_PDF_FIELDS.infos]: 'alarm.v.infos',
+  [ALARM_EXPORT_PDF_FIELDS.pbehaviorInfo]: 'alarm.v.pbehavior_info',
+  [ALARM_EXPORT_PDF_FIELDS.ticket]: 'alarm.v.ticket',
+  [ALARM_EXPORT_PDF_FIELDS.comments]: 'alarm.comments',
+  [ALARM_EXPORT_PDF_FIELDS.tags]: 'alarm.tags',
+  [ALARM_EXPORT_PDF_FIELDS.links]: 'alarm.links',
 };
 
 export const ALARM_FIELDS_TO_LABELS_KEYS = {
