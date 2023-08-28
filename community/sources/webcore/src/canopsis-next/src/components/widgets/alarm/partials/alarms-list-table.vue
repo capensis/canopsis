@@ -84,6 +84,7 @@
             v-model="props.selected",
             v-on="rowListeners",
             :ref="`row${props.item._id}`",
+            :key="props.item._id",
             :selectable="selectable",
             :expandable="expandable",
             :row="props",
@@ -108,7 +109,8 @@
             :parent-alarm-id="parentAlarmId",
             :widget="widget",
             :hide-children="hideChildren",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
+            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)",
+            @select:tag="$emit('select:tag', $event)"
           )
     c-table-pagination(
       v-if="!hidePagination",

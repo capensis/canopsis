@@ -16,6 +16,7 @@
         :label="urlLabel || $t('common.url')",
         :name="urlFieldName",
         :variables="urlVariables",
+        :disabled="disabled",
         :error-messages="errors.collect(urlFieldName)",
         required
       )
