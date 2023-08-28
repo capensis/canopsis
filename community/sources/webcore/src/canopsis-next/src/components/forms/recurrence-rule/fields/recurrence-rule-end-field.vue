@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { omit } from 'lodash';
+import { omit, isNumber } from 'lodash';
 
 import { RECURRENCE_RULE_END_TYPES } from '@/constants';
 
@@ -57,8 +57,18 @@ export default {
     },
   },
   data() {
+    let type = RECURRENCE_RULE_END_TYPES.never;
+
+    if (this.value.until) {
+      type = RECURRENCE_RULE_END_TYPES.date;
+    }
+
+    if (isNumber(this.value.count)) {
+      type = RECURRENCE_RULE_END_TYPES.after;
+    }
+
     return {
-      type: RECURRENCE_RULE_END_TYPES.never,
+      type,
     };
   },
   computed: {
