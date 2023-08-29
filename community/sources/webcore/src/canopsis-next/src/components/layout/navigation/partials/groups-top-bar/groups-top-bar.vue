@@ -17,12 +17,9 @@
 </template>
 
 <script>
-import { groupSchema } from '@/store/schemas';
-
 import { vuetifyTabsMixin } from '@/mixins/vuetify/tabs';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import layoutNavigationGroupsBarMixin from '@/mixins/layout/navigation/groups-bar';
-import { registrableMixin } from '@/mixins/registrable';
 
 import GroupsSettingsButton from '../groups-settings-button.vue';
 
@@ -39,8 +36,6 @@ export default {
     vuetifyTabsMixin,
     entitiesViewGroupMixin,
     layoutNavigationGroupsBarMixin,
-
-    registrableMixin([groupSchema], 'groups'),
   ],
   watch: {
     filledGroups() {
