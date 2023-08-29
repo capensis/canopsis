@@ -161,11 +161,9 @@ const compactLayoutItem = (compareWith, layoutItem) => {
     newLayoutItem.y -= 1;
   }
 
-  for (
-    let collision = getFirstCollision(compareWith, newLayoutItem);
-    collision;
-    collision = getFirstCollision(compareWith, newLayoutItem)
-  ) {
+  let collision;
+
+  while (collision = getFirstCollision(compareWith, newLayoutItem)) {
     newLayoutItem.y = collision.y + collision.h;
   }
 
