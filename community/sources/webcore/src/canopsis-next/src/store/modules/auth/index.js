@@ -1,11 +1,6 @@
 import { keyBy } from 'lodash';
 
-import {
-  API_ROUTES,
-  DEFAULT_LOCALE,
-  VUETIFY_ANIMATION_DELAY,
-  LOCAL_STORAGE_ACCESS_TOKEN_KEY,
-} from '@/config';
+import { API_ROUTES, DEFAULT_LOCALE, VUETIFY_ANIMATION_DELAY, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
 import { EXCLUDED_SERVER_ERROR_STATUSES } from '@/constants';
 
 import request from '@/services/request';

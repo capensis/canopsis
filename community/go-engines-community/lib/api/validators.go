@@ -236,7 +236,7 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	v.RegisterStructValidation(stateSettingsValidator.ValidateStateThresholds, statesettings.StateThresholds{})
 
 	eventfilterValidator := eventfilter.NewValidator(client)
-	eventfilterExistIdValidator := common.NewUniqueFieldValidator(client, mongo.EventFilterRulesMongoCollection, "ID")
+	eventfilterExistIdValidator := common.NewUniqueFieldValidator(client, mongo.EventFilterRuleCollection, "ID")
 	v.RegisterStructValidationCtx(eventfilterValidator.ValidateUpdateRequest, eventfilter.UpdateRequest{})
 	v.RegisterStructValidationCtx(eventfilterValidator.ValidateBulkUpdateRequestItem, eventfilter.BulkUpdateRequestItem{})
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
