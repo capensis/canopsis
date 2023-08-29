@@ -8,7 +8,6 @@ export const entitiesBroadcastMessageMixin = {
       broadcastMessages: 'items',
       broadcastMessagesPending: 'pending',
       broadcastMessagesMeta: 'meta',
-      activeMessages: 'activeMessages',
     }),
   },
   methods: {
