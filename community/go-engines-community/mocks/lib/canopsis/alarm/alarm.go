@@ -438,19 +438,20 @@ func (mr *MockAdapterMockRecorder) GetOpenedMetaAlarmWithEntity(arg0, arg1, arg2
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedMetaAlarmWithEntity", reflect.TypeOf((*MockAdapter)(nil).GetOpenedMetaAlarmWithEntity), arg0, arg1, arg2)
 }
 
-// GetWorstAlarmState mocks base method.
-func (m *MockAdapter) GetWorstAlarmState(arg0 context.Context, arg1 []string) (int64, error) {
+// GetWorstAlarmStateAndMaxLastEventDate mocks base method.
+func (m *MockAdapter) GetWorstAlarmStateAndMaxLastEventDate(arg0 context.Context, arg1 []string) (int64, int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetWorstAlarmState", arg0, arg1)
+	ret := m.ctrl.Call(m, "GetWorstAlarmStateAndMaxLastEventDate", arg0, arg1)
 	ret0, _ := ret[0].(int64)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(int64)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
-// GetWorstAlarmState indicates an expected call of GetWorstAlarmState.
-func (mr *MockAdapterMockRecorder) GetWorstAlarmState(arg0, arg1 interface{}) *gomock.Call {
+// GetWorstAlarmStateAndMaxLastEventDate indicates an expected call of GetWorstAlarmStateAndMaxLastEventDate.
+func (mr *MockAdapterMockRecorder) GetWorstAlarmStateAndMaxLastEventDate(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWorstAlarmState", reflect.TypeOf((*MockAdapter)(nil).GetWorstAlarmState), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWorstAlarmStateAndMaxLastEventDate", reflect.TypeOf((*MockAdapter)(nil).GetWorstAlarmStateAndMaxLastEventDate), arg0, arg1)
 }
 
 // Insert mocks base method.
@@ -719,19 +720,52 @@ func (m *MockMetaAlarmEventProcessor) EXPECT() *MockMetaAlarmEventProcessorMockR
 	return m.recorder
 }
 
+// AttachChildrenToMetaAlarm mocks base method.
+func (m *MockMetaAlarmEventProcessor) AttachChildrenToMetaAlarm(arg0 context.Context, arg1 rpc.AxeEvent) (*types.Alarm, []types.Alarm, []types.Event, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AttachChildrenToMetaAlarm", arg0, arg1)
+	ret0, _ := ret[0].(*types.Alarm)
+	ret1, _ := ret[1].([]types.Alarm)
+	ret2, _ := ret[2].([]types.Event)
+	ret3, _ := ret[3].(error)
+	return ret0, ret1, ret2, ret3
+}
+
+// AttachChildrenToMetaAlarm indicates an expected call of AttachChildrenToMetaAlarm.
+func (mr *MockMetaAlarmEventProcessorMockRecorder) AttachChildrenToMetaAlarm(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AttachChildrenToMetaAlarm", reflect.TypeOf((*MockMetaAlarmEventProcessor)(nil).AttachChildrenToMetaAlarm), arg0, arg1)
+}
+
 // CreateMetaAlarm mocks base method.
-func (m *MockMetaAlarmEventProcessor) CreateMetaAlarm(arg0 context.Context, arg1 rpc.AxeEvent) (*types.Alarm, error) {
+func (m *MockMetaAlarmEventProcessor) CreateMetaAlarm(arg0 context.Context, arg1 rpc.AxeEvent) (*types.Alarm, []types.Alarm, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateMetaAlarm", arg0, arg1)
 	ret0, _ := ret[0].(*types.Alarm)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].([]types.Alarm)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // CreateMetaAlarm indicates an expected call of CreateMetaAlarm.
 func (mr *MockMetaAlarmEventProcessorMockRecorder) CreateMetaAlarm(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateMetaAlarm", reflect.TypeOf((*MockMetaAlarmEventProcessor)(nil).CreateMetaAlarm), arg0, arg1)
+}
+
+// DetachChildrenFromMetaAlarm mocks base method.
+func (m *MockMetaAlarmEventProcessor) DetachChildrenFromMetaAlarm(arg0 context.Context, arg1 rpc.AxeEvent) (*types.Alarm, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DetachChildrenFromMetaAlarm", arg0, arg1)
+	ret0, _ := ret[0].(*types.Alarm)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DetachChildrenFromMetaAlarm indicates an expected call of DetachChildrenFromMetaAlarm.
+func (mr *MockMetaAlarmEventProcessorMockRecorder) DetachChildrenFromMetaAlarm(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DetachChildrenFromMetaAlarm", reflect.TypeOf((*MockMetaAlarmEventProcessor)(nil).DetachChildrenFromMetaAlarm), arg0, arg1)
 }
 
 // ProcessAxeRpc mocks base method.
