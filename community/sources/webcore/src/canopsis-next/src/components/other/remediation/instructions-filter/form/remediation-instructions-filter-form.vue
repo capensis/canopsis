@@ -89,7 +89,9 @@ import { find, pick } from 'lodash';
 
 import { MAX_LIMIT } from '@/constants';
 
-import { isRemediationInstructionIntersectsWithFilterByType } from '@/helpers/entities/remediation/instruction-filter/form';
+import {
+  isRemediationInstructionIntersectsWithFilterByType,
+} from '@/helpers/entities/remediation/instruction-filter/form';
 
 import { formMixin } from '@/mixins/form';
 import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediation/instruction';

@@ -42,6 +42,13 @@ template:
     priority: <Index()>,
     type: enrichment
   }
+  - &failure {
+    _id: <UUID()>,
+    rule: test-eventfilter,
+    type: 0,
+    t: <NowUnix()>,
+    message: <LoremIpsumSentence(3)>
+  }
 
 eventfilter:
   eventfilter_to_get_1:
@@ -156,56 +163,52 @@ eventfilter:
   eventfilter_to_update_5:
     <<: *eventfilter
     _id: test-eventfilter-to-update-5
-
   eventfilter_to_update_6:
     <<: *eventfilter
     _id: test-eventfilter-to-update-6
-
   eventfilter_to_update_7:
     <<: *eventfilter
     _id: test-eventfilter-to-update-7
-
   eventfilter_to_update_8:
     <<: *eventfilter
     _id: test-eventfilter-to-update-8
-
   eventfilter_to_update_9:
     <<: *eventfilter
     _id: test-eventfilter-to-update-9
-  eventfilter_23:
+  eventfilter_to_update_10:
     <<: *eventfilter
     _id: test-eventfilter-to-update-10
-  eventfilter_24:
+  eventfilter_to_update_11:
     <<: *eventfilter
     _id: test-eventfilter-to-update-11
-  eventfilter_25:
+  eventfilter_to_update_12:
     <<: *eventfilter
     _id: test-eventfilter-to-update-12
-  eventfilter_26:
+  eventfilter_to_update_13:
     <<: *eventfilter
     _id: test-eventfilter-to-update-13
-  eventfilter_27:
+  eventfilter_to_update_14:
     <<: *eventfilter
     _id: test-eventfilter-to-update-14
-  eventfilter_28:
+  eventfilter_to_update_15:
     <<: *eventfilter
     _id: test-eventfilter-to-update-15
-  eventfilter_29:
+  eventfilter_to_update_16:
     <<: *eventfilter
     _id: test-eventfilter-to-update-16
-  eventfilter_30:
+  eventfilter_to_update_17:
     <<: *eventfilter
     _id: test-eventfilter-to-update-17
-  eventfilter_31:
+  eventfilter_to_update_18:
     <<: *eventfilter
     _id: test-eventfilter-to-update-18
-  eventfilter_32:
+  eventfilter_to_update_19:
     <<: *eventfilter
     _id: test-eventfilter-to-update-19
-  eventfilter_33:
+  eventfilter_to_update_20:
     <<: *eventfilter
     _id: test-eventfilter-to-update-20
-  eventfilter_34:
+  eventfilter_to_update_21:
     <<: *eventfilter
     _id: test-eventfilter-to-update-21
     start: 1591164001
@@ -282,6 +285,105 @@ eventfilter:
       - test-exception-to-get-3
     type: break
 
+  eventfilter_to_failure_get_1:
+    <<: *eventfilter
+    _id: test-eventfilter-to-failure-get-1
+    description: test-eventfilter-to-failure-get-1-description
+    events_count: 100
+    created: 1592215336
+    updated: 1592215336
+  eventfilter_to_failure_read_1:
+    <<: *eventfilter
+    _id: test-eventfilter-to-failure-read-1
+    description: test-eventfilter-to-failure-read-1-description
+    created: 1592215336
+    updated: 1592215336
+
+  eventfilter_che_event_filters_failure_7:
+    <<: *eventfilter
+    _id: test-event-filter-che-event-filters-failure-7
+    entity_pattern:
+    event_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-che-event-filters-failure-7
+        - field: event_type
+          cond:
+            type: eq
+            value: check
+    config:
+      actions:
+        - type: set_entity_info
+          name: info1
+          value:
+            - 1
+            - 2
+      on_success: pass
+      on_failure: pass
+  eventfilter_che_event_filters_failure_second_3_1:
+    <<: *eventfilter
+    _id: test-event-filter-che-event-filters-failure-second-3-1
+    entity_pattern:
+    event_pattern:
+        - - field: event_type
+            cond:
+              type: eq
+              value: 1
+  eventfilter_che_event_filters_failure_second_3_2:
+    <<: *eventfilter
+    _id: test-event-filter-che-event-filters-failure-second-3-2
+    entity_pattern:
+        - - field: type
+            cond:
+              type: eq
+              value: 1
+    event_pattern:
+  eventfilter_che_event_filters_failure_second_3_3:
+    <<: *eventfilter
+    _id: test-event-filter-che-event-filters-failure-second-3-3
+    entity_pattern:
+    event_pattern:
+    old_patterns:
+      - state:
+          regex_match: 'CMDD:(?P<SI_CMDB>.*?)($|,)'
+
+  eventfilter_che_event_filters_failure_api_8:
+    <<: *eventfilter
+    _id: test-event-filter-che-event-filters-failure-api-8
+    entity_pattern:
+    event_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-che-event-filters-failure-api-8
+        - field: event_type
+          cond:
+            type: eq
+            value: check
+    external_data:
+      title:
+        type: api
+        request:
+          url: INVALID
+          method: ?INVALID?
+  eventfilter_che_event_filters_failure_api_9:
+    <<: *eventfilter
+    _id: test-event-filter-che-event-filters-failure-api-9
+    entity_pattern:
+    event_pattern:
+      - - field: component
+          cond:
+            type: eq
+            value: test-component-che-event-filters-failure-api-9
+        - field: event_type
+          cond:
+            type: eq
+            value: check
+    external_data:
+      title:
+        type: api
+
 eventfilter_mongo_data:
   data_1:
     _id: test-eventfilter-mongo-data-1
@@ -315,3 +417,51 @@ eventfilter_mongo_data_regexp:
     message: test-eventfilter-mongo-data-regexp-1-.*
     status: test-eventfilter-mongo-data-regexp-3-status
     state: 1
+  data_4:
+    _id: test-eventfilter-mongo-data-regexp-4
+    customer: test-eventfilter-mongo-data-regexp-4-customer
+    message: test-eventfilter-mongo-data-regexp-1-(.*
+    status: test-eventfilter-mongo-data-regexp-4-status
+    state: 1
+
+eventfilter_failure:
+  failure_to_get_1:
+    <<: *failure
+    _id: test-eventfilter-failure-to-get-1
+    rule: test-eventfilter-to-failure-get-1
+    type: 0
+    t: 1592215337
+    message: test-eventfilter-failure-to-get-1-message
+    unread: true
+  failure_to_get_2:
+    <<: *failure
+    _id: test-eventfilter-failure-to-get-2
+    rule: test-eventfilter-to-failure-get-1
+    type: 1
+    t: 1592215338
+    message: test-eventfilter-failure-to-get-2-message
+    event:
+      event_type: check
+      connector: test-eventfilter-failure-to-get-2-connector
+      connector_name: test-eventfilter-failure-to-get-2-connector-name
+      component: test-eventfilter-failure-to-get-2-component
+      resource: test-eventfilter-failure-to-get-2-resource
+  failure_to_get_3:
+    <<: *failure
+    _id: test-eventfilter-failure-to-get-3
+    rule: test-eventfilter-to-failure-get-1
+    type: 2
+    t: 1492215338
+    message: test-eventfilter-failure-to-get-3-message
+  failure_to_read_1:
+    <<: *failure
+    _id: test-eventfilter-failure-to-read-1
+    rule: test-eventfilter-to-failure-read-1
+    t: 1592215337
+    unread: true
+  failure_to_read_2:
+    <<: *failure
+    _id: test-eventfilter-failure-to-read-2
+    rule: test-eventfilter-to-failure-read-1
+    t: 1592215338
+    unread: true

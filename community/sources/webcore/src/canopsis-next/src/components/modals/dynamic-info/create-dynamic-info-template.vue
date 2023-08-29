@@ -13,10 +13,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import {
-  templateToForm,
-  formToTemplate,
-} from '@/helpers/entities/dynamic-info/template/form';
+import { templateToForm, formToTemplate } from '@/helpers/entities/dynamic-info/template/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

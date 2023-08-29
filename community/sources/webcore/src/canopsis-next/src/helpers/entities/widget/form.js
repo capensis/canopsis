@@ -6,7 +6,11 @@ import featuresService from '@/services/features';
 
 import { uuid } from '@/helpers/uuid';
 
-import { alarmListWidgetParametersToForm, formToAlarmListWidgetParameters, prepareAlarmListWidget } from './forms/alarm';
+import {
+  alarmListWidgetParametersToForm,
+  formToAlarmListWidgetParameters,
+  prepareAlarmListWidget,
+} from './forms/alarm';
 import { counterWidgetParametersToForm, formToCounterWidgetParameters } from './forms/counter';
 import { testingWeatherWidgetParametersToForm, formToTestingWeatherWidgetParameters } from './forms/junit';
 import { statsCalendarWidgetParametersToForm, formToStatsCalendarWidgetParameters } from './forms/stats-calendar';
