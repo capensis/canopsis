@@ -960,13 +960,12 @@ export default {
     title: 'Importer des dates d\'exception',
   },
   createMaintenance: {
-    cancelMaintenance: 'Annuler le mode maintenance',
     enableMaintenance: 'Activer le mode d\'entretien',
     setup: {
       title: 'Activer le mode d\'entretien',
     },
-    cancel: {
-      title: 'Mode de Maintenance',
+    edit: {
+      title: 'Modifier le mode de maintenance',
     },
   },
   confirmationLeaveMaintenance: {
