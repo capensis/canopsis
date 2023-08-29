@@ -1,58 +1,53 @@
+import { omit } from 'lodash';
 import flushPromises from 'flush-promises';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { createMockedStoreModules } from '@unit/utils/store';
+import {
+  createQueryModule,
+  createActiveViewModule,
+  createMockedStoreModules,
+  createWidgetModule,
+} from '@unit/utils/store';
+
+import { WIDGET_GRID_SIZES_KEYS, WIDGET_TYPES } from '@/constants';
+
+import { setField } from '@/helpers/immutable';
 
 import ViewTabWidgets from '@/components/other/view/view-tab-widgets.vue';
 
-const createWidgetsGridStub = className => ({
-  template: `
-    <div class="${className}">
-      <slot :widget="{}" />
-    </div>
-  `,
-});
-
 const stubs = {
-  'grid-layout': createWidgetsGridStub('grid-overview-widget'),
-  'grid-edit-widgets': createWidgetsGridStub('grid-edit-widgets'),
-  'widget-edit-drag-handler': createWidgetsGridStub('grid-edit-widgets'),
-  portal: true,
+  'grid-layout': true,
+  'widget-edit-drag-handler': true,
   'window-size-field': true,
+  portal: true,
 };
 
+const snapshotStubs = {
+  'window-size-field': true,
+  'widget-wrapper': true,
+  'widget-edit-drag-handler': true,
+  portal: {
+    props: ['to'],
+    template: `
+      <div class="portal">
+        Portal to: {{ to }}
+        <slot />
+      </div>
+    `,
+  },
+};
+
+const selectGridLayout = wrapper => wrapper.find('grid-layout-stub');
+
 describe('view-tab-widgets', () => {
-  const removeQuery = jest.fn();
-  const fetchActiveView = jest.fn();
-  const registerEditingOffHandler = jest.fn();
-  const unregisterEditingOffHandler = jest.fn();
-  const updateGridPositions = jest.fn();
-
-  const queryModule = {
-    name: 'query',
-    actions: {
-      remove: removeQuery,
-    },
-  };
-
-  const activeViewModule = {
-    name: 'activeView',
-    getters: {
-      editing: false,
-    },
-    actions: {
-      fetch: fetchActiveView,
-      registerEditingOffHandler,
-      unregisterEditingOffHandler,
-    },
-  };
-
-  const widgetModule = {
-    name: 'view/widget',
-    actions: {
-      updateGridPositions,
-    },
-  };
+  const { queryModule, removeQuery } = createQueryModule();
+  const { widgetModule, updateGridPositions } = createWidgetModule();
+  const {
+    editing,
+    activeViewModule,
+    registerEditingOffHandler,
+    unregisterEditingOffHandler,
+  } = createActiveViewModule();
 
   const store = createMockedStoreModules([
     queryModule,
@@ -63,6 +58,7 @@ describe('view-tab-widgets', () => {
   const widgets = [
     {
       _id: 'widget_Context_505742f9-faf5-445e-a537-2288a84fc58e',
+      type: WIDGET_TYPES.text,
       grid_parameters: {
         desktop: { autoHeight: true, h: 14, w: 12, x: 0, y: 0 },
         mobile: { autoHeight: true, h: 12, w: 3, x: 0, y: 0 },
@@ -71,6 +67,7 @@ describe('view-tab-widgets', () => {
     },
     {
       _id: 'widget_ServiceWeather_43a12599-5800-4a86-b6f4-50bf186c4840',
+      type: WIDGET_TYPES.text,
       grid_parameters: {
         desktop: { autoHeight: true, h: 24, w: 12, x: 0, y: 14 },
         mobile: { autoHeight: true, h: 12, w: 3, x: 0, y: 0 },
@@ -79,6 +76,7 @@ describe('view-tab-widgets', () => {
     },
     {
       _id: 'widget_ServiceWeather_58e5c9a5-aa04-4dc6-a59d-6fa847bc62e0',
+      type: WIDGET_TYPES.text,
       grid_parameters: {
         desktop: { autoHeight: true, h: 21, w: 12, x: 0, y: 38 },
         mobile: { autoHeight: true, h: 1, w: 12, x: 0, y: 12 },
@@ -94,7 +92,7 @@ describe('view-tab-widgets', () => {
     },
   });
   const snapshotFactory = generateRenderer(ViewTabWidgets, {
-    stubs,
+    stubs: snapshotStubs,
     mocks: {
       $mq: 'l',
     },
@@ -102,9 +100,6 @@ describe('view-tab-widgets', () => {
 
   afterEach(() => {
     removeQuery.mockReset();
-    fetchActiveView.mockReset();
-    registerEditingOffHandler.mockReset();
-    unregisterEditingOffHandler.mockReset();
     updateGridPositions.mockReset();
   });
 
@@ -149,90 +144,73 @@ describe('view-tab-widgets', () => {
     expect(unregisterEditingOffHandler).toHaveBeenCalledTimes(1);
   });
 
-  it('Event emitted after trigger edition grid', async () => {
+  it('Update positions doesn\'t trigger updateGridPositions without changes', async () => {
+    editing.mockReturnValueOnce(true);
+
     const wrapper = factory({
       propsData: {
         tab: {
-          id: 'tab-id',
+          _id: 'tab-id',
           widgets,
-        },
-      },
-      store: createMockedStoreModules([
-        queryModule,
-        widgetModule,
-        {
-          ...activeViewModule,
-
-          getters: {
-            editing: true,
-          },
-        },
-      ]),
-    });
-
-    const gridEditWidgetsElement = wrapper.find('.grid-edit-widgets');
-
-    const data = {
-      'widget-id': {
-        desktop: {
-          autoHeight: true,
-          x: 0,
-          y: 0,
-          h: 1,
-          w: 12,
-        },
-        tablet: {
-          autoHeight: true,
-          x: 0,
-          y: 0,
-          h: 1,
-          w: 12,
-        },
-        mobile: {
-          autoHeight: true,
-          x: 0,
-          y: 0,
-          h: 1,
-          w: 12,
-        },
-      },
-    };
-    gridEditWidgetsElement.vm.$emit('update:widgets-grid', data);
-
-    expect(wrapper.vm.widgetsGrid).toEqual(data);
-
-    await wrapper.vm.updatePositions();
-
-    expect(updateGridPositions).toHaveBeenCalledTimes(1);
-    expect(updateGridPositions).toHaveBeenLastCalledWith(
-      expect.any(Object),
-      {
-        data: Object.entries(data).map(([key, value]) => ({ _id: key, grid_parameters: value })),
-      },
-      undefined,
-    );
-    expect(fetchActiveView).toHaveBeenCalledTimes(1);
-  });
-
-  it('Renders `view-tab-widgets` with editing mode', () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        tab: {
-          id: 'tab-id',
-          widgets: [],
         },
       },
       store,
     });
 
-    expect(wrapper.element).toMatchSnapshot();
+    await wrapper.vm.updatePositions();
+
+    expect(updateGridPositions).toHaveBeenCalledTimes(0);
+  });
+
+  it('Update positions triggers updateGridPositions with changes', async () => {
+    editing.mockReturnValueOnce(true);
+
+    const wrapper = factory({
+      propsData: {
+        tab: {
+          _id: 'tab-id',
+          widgets,
+        },
+      },
+      store,
+    });
+
+    const gridLayoutElement = selectGridLayout(wrapper);
+    const newHeightForThirdWidgetOnDesktop = 25;
+    const newLayouts = setField(
+      gridLayoutElement.vm.layout,
+      [2, 'h'],
+      newHeightForThirdWidgetOnDesktop,
+    );
+
+    gridLayoutElement.vm.$emit('input', newLayouts);
+
+    await flushPromises();
+    await wrapper.vm.updatePositions();
+
+    const newPositions = widgets.map((widget, index) => (
+      index !== 2
+        ? omit(widget, ['type'])
+        : omit(setField(
+          widget,
+          ['grid_parameters', WIDGET_GRID_SIZES_KEYS.desktop, 'h'],
+          newHeightForThirdWidgetOnDesktop,
+        ), ['type'])
+    ));
+
+    expect(updateGridPositions).toHaveBeenCalledTimes(1);
+    expect(updateGridPositions).toHaveBeenCalledWith(
+      expect.any(Object),
+      { data: newPositions },
+      undefined,
+    );
   });
 
   it('Renders `view-tab-widgets` with default and required props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         tab: {
-          id: 'tab-id',
+          _id: 'tab-id',
           widgets: [],
         },
       },
@@ -243,23 +221,19 @@ describe('view-tab-widgets', () => {
   });
 
   it('Renders `view-tab-widgets` with editing mode', () => {
+    editing.mockReturnValueOnce(true);
+
     const wrapper = snapshotFactory({
       propsData: {
         tab: {
-          id: 'tab-id',
+          _id: 'tab-id',
           widgets: [],
         },
       },
       store: createMockedStoreModules([
         queryModule,
+        activeViewModule,
         widgetModule,
-        {
-          ...activeViewModule,
-
-          getters: {
-            editing: true,
-          },
-        },
       ]),
     });
 
@@ -270,7 +244,7 @@ describe('view-tab-widgets', () => {
     const wrapper = snapshotFactory({
       propsData: {
         tab: {
-          id: 'tab-id',
+          _id: 'tab-id',
           widgets,
         },
       },
@@ -280,24 +254,43 @@ describe('view-tab-widgets', () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `view-tab-widgets` with widgets with editing mode', () => {
+  it.each(['m', 't', 'l', 'xl'])('Renders `view-tab-widgets` with widgets on \'%s\' window size', async (size) => {
+    editing.mockReturnValueOnce(true);
+
     const wrapper = snapshotFactory({
+      mocks: {
+        $mq: size,
+      },
       propsData: {
         tab: {
-          id: 'tab-id',
+          _id: 'tab-id',
           widgets,
         },
       },
       store: createMockedStoreModules([
         queryModule,
+        activeViewModule,
         widgetModule,
-        {
-          ...activeViewModule,
+      ]),
+    });
 
-          getters: {
-            editing: true,
-          },
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `view-tab-widgets` with widgets with editing mode', () => {
+    editing.mockReturnValueOnce(true);
+
+    const wrapper = snapshotFactory({
+      propsData: {
+        tab: {
+          _id: 'tab-id',
+          widgets,
         },
+      },
+      store: createMockedStoreModules([
+        queryModule,
+        activeViewModule,
+        widgetModule,
       ]),
     });
 

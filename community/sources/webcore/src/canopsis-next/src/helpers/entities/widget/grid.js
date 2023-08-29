@@ -63,10 +63,10 @@ export const calculateNewWidgetGridParametersY = (widgets = []) => (
  *
  * @param {Widget[]} [widgets = []]
  * @param {GridLayout} [layouts = []]
- * @param {string[]} [sizes = Object.keys(WIDGET_GRID_SIZES_KEYS)]
+ * @param {string[]} [sizes = Object.values(WIDGET_GRID_SIZES_KEYS)]
  * @returns {GridLayout}
  */
-export const widgetsToLayouts = (widgets = [], layouts = [], sizes = Object.keys(WIDGET_GRID_SIZES_KEYS)) => (
+export const widgetsToLayouts = (widgets = [], layouts = [], sizes = Object.values(WIDGET_GRID_SIZES_KEYS)) => (
   sizes.reduce((acc, size) => {
     const oldLayout = get(layouts, size, []);
 
