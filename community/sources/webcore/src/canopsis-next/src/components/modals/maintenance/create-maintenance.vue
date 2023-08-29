@@ -16,7 +16,7 @@
           :loading="submitting",
           :disabled="isDisabled",
           type="submit"
-        ) {{ $t('modals.createMaintenance.enableMaintenance') }}
+        ) {{  $t(config.maintenance ? 'common.submit' : 'modals.createMaintenance.enableMaintenance') }}
 </template>
 
 <script>

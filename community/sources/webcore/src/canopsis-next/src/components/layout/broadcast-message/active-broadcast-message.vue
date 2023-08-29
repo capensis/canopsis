@@ -47,6 +47,9 @@ export default {
       activeMessages: [],
     };
   },
+  watch: {
+    maintenance: 'fetchList',
+  },
   mounted() {
     this.fetchList();
 
