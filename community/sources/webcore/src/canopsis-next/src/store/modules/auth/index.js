@@ -55,11 +55,15 @@ export default {
   actions: {
     async login({ commit, dispatch }, credentials) {
       try {
-        const { access_token: accessToken } = await request.post(API_ROUTES.login, credentials);
+        const { access_token: accessToken } = await request.post(
+          API_ROUTES.login,
+          credentials,
+          { fullResponse: true },
+        );
 
         await dispatch('applyAccessToken', accessToken);
       } catch (err) {
-        console.error(err);
+        console.error(err.data);
         commit(types.LOGOUT);
 
         throw err;
