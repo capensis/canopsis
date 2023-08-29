@@ -52,9 +52,7 @@ if [ $1 -eq 0 ]; then
 fi
 
 %files
-%defattr(0755, canopsis, canopsis, 0755)
 /opt/canopsis/bin
-%defattr(0644, canopsis, canopsis, 0755)
 %config(noreplace) /opt/canopsis/etc
 %config(noreplace) /opt/canopsis/share/config
 %attr(0640, root, canopsis) /opt/canopsis/etc/go-engines-vars.conf
@@ -63,7 +61,6 @@ fi
 /opt/canopsis/share/database/migrations/*.js
 /opt/canopsis/share/database/postgres_migrations/*.sql
 /opt/canopsis/share/database/tech_postgres_migrations/*.sql
-%defattr(0644, root, root, 0755)
 /usr/lib/systemd/system/canopsis-*
 /usr/lib/systemd/system/canopsis.service
 
@@ -98,9 +95,7 @@ Canopsis WebUI RPM Package
 %postun webui
 
 %files webui
-%defattr(0644, nginx, nginx, 0755)
 /opt/canopsis/srv
-%defattr(0644, nginx, nginx, 0755)
 %config(noreplace) /etc/nginx/conf.d/default.conf
 %config(noreplace) /etc/nginx/cors.inc
 %config(noreplace) /etc/nginx/https.inc
