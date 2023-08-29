@@ -16,7 +16,7 @@
       v-on="itemOn",
       v-bind="itemBind",
       :key="layoutItem.i",
-      :item="layoutItem",
+      :item="layoutItem"
     )
       template(#default="props")
         slot(name="item", v-bind="props")
@@ -64,6 +64,14 @@ export default {
       type: Array,
       default: () => [10, 10],
     },
+    throttle: {
+      type: Number,
+      default: 10,
+    },
+    debounce: {
+      type: Number,
+      default: 50,
+    },
   },
   data() {
     return {
@@ -88,6 +96,8 @@ export default {
         columnsCount: this.columnsCount,
         margin: this.margin,
         disabled: this.disabled,
+        throttle: this.throttle,
+        debounce: this.debounce,
       };
     },
 

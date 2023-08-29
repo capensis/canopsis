@@ -63,11 +63,11 @@ export default {
     },
     throttle: {
       type: Number,
-      default: 50,
+      default: 10,
     },
     debounce: {
       type: Number,
-      default: 100,
+      default: 50,
     },
   },
   data() {
@@ -140,7 +140,7 @@ export default {
     disabledItemStyle() {
       const [, marginY = 0] = this.margin;
       return {
-        margin: `${marginY}px 0`,
+        margin: `${marginY / 2}px 0`,
         gridColumnStart: this.x + 1,
         gridColumnEnd: this.x + 1 + this.w,
         gridRowStart: this.y + 1,

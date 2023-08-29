@@ -70,7 +70,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets 1`] = `
     <!---->
     <div
       class="grid-item v-card v-sheet theme--light grid-item--disabled"
-      style="margin: 20px 0px; grid-column-start: 1; grid-column-end: 13; grid-row-start: 1; grid-row-end: 15; height: auto;"
+      style="margin: 10px 0px; grid-column-start: 1; grid-column-end: 13; grid-row-start: 1; grid-row-end: 15; height: auto;"
     >
       <div>
         <!---->
@@ -83,7 +83,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets 1`] = `
     </div>
     <div
       class="grid-item v-card v-sheet theme--light grid-item--disabled"
-      style="margin: 20px 0px; grid-column-start: 1; grid-column-end: 13; grid-row-start: 15; grid-row-end: 39; height: auto;"
+      style="margin: 10px 0px; grid-column-start: 1; grid-column-end: 13; grid-row-start: 15; grid-row-end: 39; height: auto;"
     >
       <div>
         <!---->
@@ -96,7 +96,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets 1`] = `
     </div>
     <div
       class="grid-item v-card v-sheet theme--light grid-item--disabled"
-      style="margin: 20px 0px; grid-column-start: 1; grid-column-end: 13; grid-row-start: 39; grid-row-end: 60; height: auto;"
+      style="margin: 10px 0px; grid-column-start: 1; grid-column-end: 13; grid-row-start: 39; grid-row-end: 60; height: auto;"
     >
       <div>
         <!---->
@@ -207,7 +207,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'l' windo
     </div>
     <div
       class="grid-item v-card v-sheet theme--light"
-      style="transform: translate3d(20px,800px, 0); width: -40px; height: 420px; position: absolute;"
+      style="transform: translate3d(20px,820px, 0); width: -40px; height: 420px; position: absolute;"
     >
       <div>
         <widget-edit-drag-handler-stub
@@ -585,7 +585,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'xl' wind
     </div>
     <div
       class="grid-item v-card v-sheet theme--light"
-      style="transform: translate3d(20px,800px, 0); width: -40px; height: 420px; position: absolute;"
+      style="transform: translate3d(20px,820px, 0); width: -40px; height: 420px; position: absolute;"
     >
       <div>
         <widget-edit-drag-handler-stub
@@ -711,7 +711,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets with editing
     </div>
     <div
       class="grid-item v-card v-sheet theme--light"
-      style="transform: translate3d(20px,800px, 0); width: -40px; height: 420px; position: absolute;"
+      style="transform: translate3d(20px,820px, 0); width: -40px; height: 420px; position: absolute;"
     >
       <div>
         <widget-edit-drag-handler-stub
