@@ -87,7 +87,7 @@ type Adapter interface {
 
 	FindToCheckPbehaviorInfo(ctx context.Context, createdBefore types.CpsTime, idsWithPbehaviors []string) (mongo.Cursor, error)
 
-	GetWorstAlarmState(ctx context.Context, entityIds []string) (int64, error)
+	GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context, entityIds []string) (int64, int64, error)
 
 	UpdateLastEventDate(ctx context.Context, entityIds []string, t types.CpsTime) error
 }
