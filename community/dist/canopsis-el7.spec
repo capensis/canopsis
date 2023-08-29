@@ -2,12 +2,13 @@
 Name: canopsis
 Version: %{version}
 Release: 1%{?dist}
-Summary: Canopsis
+Summary: Canopsis community edition
 License: AGPL-3.0-only
 Source0: https://git.canopsis.net/canopsis/canopsis-pro/-/archive/%{version}/canopsis.tar.gz
 
 BuildRequires: make >= 3.81, gcc, nodejs = 2:14.18.3, yarn
 
+Requires: canopsis-common
 Conflicts: canopsis-pro
 
 Prefix: /usr
@@ -35,10 +36,6 @@ make -C community/go-engines-community DESTDIR=%{buildroot} systemd_install SYST
 make -C community/sources/webcore/src/canopsis-next DESTDIR=%{buildroot} install
 make -C community/sources/webcore/src/canopsis-next DESTDIR=%{buildroot} nginx_config
 
-%pre
-getent passwd canopsis >/dev/null || \
-  useradd -r -d /opt/canopsis -s /bin/bash -c "Canopsis user account" canopsis
-
 %preun
 %systemd_preun canopsis-engine-go@.service
 if [ $1 -eq 0 ]; then
@@ -57,6 +54,7 @@ fi
 %config(noreplace) /opt/canopsis/share/config
 %attr(0640, root, canopsis) /opt/canopsis/etc/go-engines-vars.conf
 /opt/canopsis/share/config
+/opt/canopsis/share/database
 /opt/canopsis/share/database/fixtures/*yml
 /opt/canopsis/share/database/migrations/*.js
 /opt/canopsis/share/database/postgres_migrations/*.sql
@@ -69,14 +67,26 @@ echo "Modify /opt/canopsis/etc/go-engines-vars.conf to configure Canopsis"
 echo "and run canopsis-reconfigure"
 echo "After that, you can enable and start services"
 
-%postun
+%clean
+make -C community/go-engines-community clean
+make -C community/sources/webcore/src/canopsis-next clean
+
+%package common
+Summary: Canopsis common files and configurations
+
+%description common
+Canopsis common files and configurations
+
+%pre common
+getent passwd canopsis >/dev/null || \
+  useradd -r -d /opt/canopsis -s /bin/bash -c "Canopsis user account" canopsis
+
+%postun common
 if [ "$1" = "0" ]; then
   userdel canopsis
 fi
 
-%clean
-make -C community/go-engines-community clean
-make -C community/sources/webcore/src/canopsis-next clean
+%files common
 
 %package webui
 Summary: Canopsis WebUI
