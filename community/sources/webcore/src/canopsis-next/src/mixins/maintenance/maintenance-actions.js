@@ -9,21 +9,25 @@ export const maintenanceActionsMixin = {
     ...mapInfoGetters(['maintenance']),
   },
   methods: {
-    ...mapInfoActions(['updateMaintenanceMode']),
+    ...mapInfoActions(['updateMaintenanceMode', 'fetchAppInfo']),
 
-    enableMaintenanceMode(form) {
-      return this.updateMaintenanceMode({
+    async enableMaintenanceMode(form) {
+      await this.updateMaintenanceMode({
         data: {
           ...form,
           enabled: true,
         },
       });
+
+      await this.fetchAppInfo();
     },
 
-    disableMaintenanceMode() {
-      return this.updateMaintenanceMode({
+    async disableMaintenanceMode() {
+      await this.updateMaintenanceMode({
         data: { enabled: false },
       });
+
+      await this.fetchAppInfo();
     },
 
     showCreateMaintenanceModeModal() {
