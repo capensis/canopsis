@@ -6,16 +6,14 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockDateNow, mockSidebar } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
-import {
-  createSettingsMocks,
-  submitWithExpects,
-} from '@unit/utils/settings';
+import { createSettingsMocks, submitWithExpects } from '@unit/utils/settings';
 
 import {
   ALARM_METRIC_PARAMETERS,
   QUICK_RANGES,
   SAMPLINGS,
-  SIDE_BARS, USERS_PERMISSIONS,
+  SIDE_BARS,
+  USERS_PERMISSIONS,
   WIDGET_TYPES,
 } from '@/constants';
 

@@ -22,13 +22,18 @@ import { isEqual, omit } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { remediationInstructionToForm, formToRemediationInstruction } from '@/helpers/entities/remediation/instruction/form';
+import {
+  remediationInstructionToForm,
+  formToRemediationInstruction,
+} from '@/helpers/entities/remediation/instruction/form';
 import { isSeveralEqual } from '@/helpers/collection';
 
 import { authMixin } from '@/mixins/auth';
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediation/instruction';
-import { permissionsTechnicalRemediationInstructionMixin } from '@/mixins/permissions/technical/remediation-instruction';
+import {
+  permissionsTechnicalRemediationInstructionMixin,
+} from '@/mixins/permissions/technical/remediation-instruction';
 
 import RemediationInstructionsList from './remediation-instructions-list.vue';
 
