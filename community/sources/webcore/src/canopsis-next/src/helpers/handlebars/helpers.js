@@ -1,4 +1,11 @@
-import { get, isFunction, isNumber, isObject, unescape, isString } from 'lodash';
+import {
+  get,
+  isFunction,
+  isNumber,
+  isObject,
+  unescape,
+  isString,
+} from 'lodash';
 import Handlebars from 'handlebars';
 import axios from 'axios';
 
@@ -93,7 +100,13 @@ export function alarmStateHelper(state) {
  * @return {string}
  */
 export function alarmTagsHelper() {
-  return new Handlebars.SafeString(`<c-alarm-tags-chips :alarm="alarm" inline-count="${MAX_LIMIT}"></c-alarm-tags-chips>`);
+  return new Handlebars.SafeString(
+    `<c-alarm-tags-chips
+      :alarm="alarm"
+      inline-count="${MAX_LIMIT}"
+      @select="$emit('select:tag', $event)"
+    ></c-alarm-tags-chips>`,
+  );
 }
 
 /**
