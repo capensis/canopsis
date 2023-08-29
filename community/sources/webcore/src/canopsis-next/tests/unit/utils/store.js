@@ -416,6 +416,7 @@ export const createWidgetModule = () => {
   const createWidgetFilter = jest.fn();
   const updateWidgetFilter = jest.fn();
   const removeWidgetFilter = jest.fn();
+  const updateGridPositions = jest.fn();
 
   afterEach(() => {
     createWidget.mockClear();
@@ -433,6 +434,7 @@ export const createWidgetModule = () => {
       createWidgetFilter,
       updateWidgetFilter,
       removeWidgetFilter,
+      updateGridPositions,
     },
   };
 
@@ -443,6 +445,7 @@ export const createWidgetModule = () => {
     createWidgetFilter,
     updateWidgetFilter,
     removeWidgetFilter,
+    updateGridPositions,
   };
 };
 
@@ -500,6 +503,7 @@ export const createQueryModule = () => {
   const getQueryById = jest.fn().mockReturnValue(() => ({}));
   const getQueryNonceById = jest.fn().mockReturnValue(() => 'nonce');
   const updateQuery = jest.fn();
+  const removeQuery = jest.fn();
 
   const queryModule = {
     name: 'query',
@@ -509,6 +513,7 @@ export const createQueryModule = () => {
     },
     actions: {
       update: updateQuery,
+      remove: removeQuery,
     },
   };
 
@@ -516,6 +521,7 @@ export const createQueryModule = () => {
     getQueryById,
     getQueryNonceById,
     updateQuery,
+    removeQuery,
     queryModule,
   };
 };
@@ -524,7 +530,8 @@ export const createActiveViewModule = () => {
   const registerEditingOffHandler = jest.fn();
   const unregisterEditingOffHandler = jest.fn();
   const fetchActiveView = jest.fn();
-  const editing = jest.fn().mockReturnValue(() => false);
+  const toggleEditing = jest.fn();
+  const editing = jest.fn().mockReturnValue(false);
 
   const activeViewModule = {
     name: 'activeView',
@@ -534,11 +541,14 @@ export const createActiveViewModule = () => {
     actions: {
       registerEditingOffHandler,
       unregisterEditingOffHandler,
+      toggleEditing,
       fetch: fetchActiveView,
     },
   };
 
   afterEach(() => {
+    editing.mockClear();
+    toggleEditing.mockClear();
     fetchActiveView.mockClear();
     registerEditingOffHandler.mockClear();
     unregisterEditingOffHandler.mockClear();
@@ -549,6 +559,7 @@ export const createActiveViewModule = () => {
     registerEditingOffHandler,
     unregisterEditingOffHandler,
     fetchActiveView,
+    toggleEditing,
     activeViewModule,
   };
 };
@@ -685,6 +696,26 @@ export const createAlarmModule = () => {
     bulkCreateAlarmUnCancelEvent,
     bulkCreateAlarmChangestateEvent,
     alarmModule,
+  };
+};
+
+export const createAlarmDetailsModule = () => {
+  const fetchAlarmDetailsWithoutStore = jest.fn().mockResolvedValue([]);
+
+  afterEach(() => {
+    fetchAlarmDetailsWithoutStore.mockClear();
+  });
+
+  const alarmDetailsModule = {
+    name: 'alarm/details',
+    actions: {
+      fetchListWithoutStore: fetchAlarmDetailsWithoutStore,
+    },
+  };
+
+  return {
+    fetchAlarmDetailsWithoutStore,
+    alarmDetailsModule,
   };
 };
 

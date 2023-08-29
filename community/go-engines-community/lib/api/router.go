@@ -450,6 +450,14 @@ func RegisterRoutes(
 				middleware.SetAuthor(),
 				eventFilterApi.Update)
 		}
+		protected.GET(
+			"/eventfilter/:id/failures",
+			middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionRead, enforcer),
+			eventFilterApi.ListFailures)
+		protected.PUT(
+			"/eventfilter/:id/failures",
+			middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionCreate, enforcer),
+			eventFilterApi.ReadFailures)
 
 		pbehaviorApi := pbehavior.NewApi(
 			pbehavior.NewStore(
@@ -1763,6 +1771,11 @@ func RegisterRoutes(
 				"/scenarios",
 				middleware.OnlyAuth(),
 				templateValidatorApi.ValidateScenarios,
+			)
+			templateValidatorRouter.POST(
+				"/event-filter-rules",
+				middleware.OnlyAuth(),
+				templateValidatorApi.ValidateEventFilterRules,
 			)
 		}
 		protected.GET(

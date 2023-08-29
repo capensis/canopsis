@@ -2,7 +2,6 @@ import Vuetify from 'vuetify';
 import VueMq from 'vue-mq';
 import VueFullScreen from 'vue-fullscreen';
 import VueClipboard from 'vue-clipboard2';
-import VueAsyncComputed from 'vue-async-computed';
 import PortalVue from 'portal-vue';
 import frDaySpanVuetifyMessages from 'dayspan-vuetify/src/locales/fr';
 
@@ -22,7 +21,6 @@ import UpdateFieldPlugin from '@/plugins/update-field';
 import ToursPlugin from '@/plugins/tours';
 import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
 import SocketPlugin from '@/plugins/socket';
-import GridPlugin from '@/plugins/grid';
 import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';
 
 import featuresService from '@/services/features';
@@ -51,6 +49,7 @@ import ManualInstruction from '@/components/icons/manual_instruction.vue';
 import RestartAltIcon from '@/components/icons/restart_alt.vue';
 import ListDeleteIcon from '@/components/icons/list_delete.vue';
 import PushPinIcon from '@/components/icons/push_pin.vue';
+import ResizeRightIcon from '@/components/icons/resize_right.vue';
 import * as modalsComponents from '@/components/modals';
 import * as sidebarsComponents from '@/components/sidebars';
 
@@ -59,7 +58,6 @@ import * as sidebarsComponents from '@/components/sidebars';
  * @returns {*}
  */
 export const bootstrapApplicationPlugins = (Vue) => {
-  Vue.use(VueAsyncComputed);
   Vue.use(PortalVue);
   Vue.use(Filters);
   Vue.use(Vuetify, {
@@ -123,10 +121,12 @@ export const bootstrapApplicationPlugins = (Vue) => {
       push_pin: {
         component: PushPinIcon,
       },
+      resize_right: {
+        component: ResizeRightIcon,
+      },
     },
   });
 
-  Vue.use(GridPlugin);
   Vue.use(VueFullScreen);
   Vue.use(DaySpanVuetifyPlugin, {
     data: {
