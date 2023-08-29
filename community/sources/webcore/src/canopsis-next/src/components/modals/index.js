@@ -77,10 +77,6 @@ export const PbehaviorRecurrenceRule = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-recurrence-rule.vue'),
   loading: LoaderOverlay,
 });
-export const SelectExceptionsLists = () => ({
-  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/select-exceptions-lists.vue'),
-  loading: LoaderOverlay,
-});
 export const CreateRecurrenceRule = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/create-recurrence-rule.vue'),
   loading: LoaderOverlay,

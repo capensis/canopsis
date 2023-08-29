@@ -737,6 +737,26 @@ export const createAlarmModule = () => {
   };
 };
 
+export const createAlarmDetailsModule = () => {
+  const fetchAlarmDetailsWithoutStore = jest.fn().mockResolvedValue([]);
+
+  afterEach(() => {
+    fetchAlarmDetailsWithoutStore.mockClear();
+  });
+
+  const alarmDetailsModule = {
+    name: 'alarm/details',
+    actions: {
+      fetchListWithoutStore: fetchAlarmDetailsWithoutStore,
+    },
+  };
+
+  return {
+    fetchAlarmDetailsWithoutStore,
+    alarmDetailsModule,
+  };
+};
+
 export const createWidgetTemplateModule = () => {
   const fetchWidgetTemplatesListWithoutStore = jest.fn()
     .mockReturnValue({

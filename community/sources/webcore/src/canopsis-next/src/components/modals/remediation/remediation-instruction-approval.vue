@@ -45,8 +45,7 @@ import { submittableMixinCreator } from '@/mixins/submittable';
 
 import RemediationInstructionApprovalAlert from
   '@/components/other/remediation/instructions/partials/approval-alert.vue';
-import RemediationInstructionApprovalTabs from
-  '@/components/other/remediation/instructions/partials/approval-tabs.vue';
+import RemediationInstructionApprovalTabs from '@/components/other/remediation/instructions/partials/approval-tabs.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

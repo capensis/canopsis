@@ -2,8 +2,8 @@ import flushPromises from 'flush-promises';
 
 import { generateRenderer } from '@unit/utils/vue';
 
-import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
+import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 import AlarmsExpandPanelMoreInfos from '@/components/widgets/alarm/expand-panel/alarms-expand-panel-more-infos.vue';
 
 const stubs = {
