@@ -411,6 +411,24 @@ export const convertDateToEndOfDayTimestamp = date => convertDateToEndOfDayMomen
 export const convertDateToEndOfDayDateObject = date => convertDateToEndOfDayMoment(date).toDate();
 
 /**
+ * Convert date to special format with new timezone without strict parsing
+ *
+ * @param {LocalDate} date
+ * @param {string} [format = DATETIME_FORMATS.long]
+ * @param {string} [timezone = getLocaleTimezone()]
+ * @returns {string}
+ */
+export const convertDateToStringWithNewTimezone = (
+  date,
+  format = DATETIME_FORMATS.long,
+  timezone = getLocaleTimezone(),
+) => (
+  date
+    ? convertDateToMoment(date).tz(timezone).format(format)
+    : ''
+);
+
+/**
  * Check time unit is valid
  *
  * @param {string} unit
