@@ -80,7 +80,8 @@ export default {
       this.$modals.show({
         name: MODALS.createMaintenance,
         config: {
-          title: '',
+          title: this.$t('modals.createMaintenance.edit.title'),
+          warningText: this.$t('maintenance.maintenanceModeIsOn'),
           maintenance: pick(broadcastMessage, ['message', 'color']),
           action: async (data) => {
             await this.updateBroadcastMessage({
