@@ -21,7 +21,6 @@ import UpdateFieldPlugin from '@/plugins/update-field';
 import ToursPlugin from '@/plugins/tours';
 import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
 import SocketPlugin from '@/plugins/socket';
-import GridPlugin from '@/plugins/grid';
 import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';
 
 import featuresService from '@/services/features';
@@ -50,6 +49,7 @@ import ManualInstruction from '@/components/icons/manual_instruction.vue';
 import RestartAltIcon from '@/components/icons/restart_alt.vue';
 import ListDeleteIcon from '@/components/icons/list_delete.vue';
 import PushPinIcon from '@/components/icons/push_pin.vue';
+import ResizeRightIcon from '@/components/icons/resize_right.vue';
 import * as modalsComponents from '@/components/modals';
 import * as sidebarsComponents from '@/components/sidebars';
 
@@ -121,10 +121,12 @@ export const bootstrapApplicationPlugins = (Vue) => {
       push_pin: {
         component: PushPinIcon,
       },
+      resize_right: {
+        component: ResizeRightIcon,
+      },
     },
   });
 
-  Vue.use(GridPlugin);
   Vue.use(VueFullScreen);
   Vue.use(DaySpanVuetifyPlugin, {
     data: {
