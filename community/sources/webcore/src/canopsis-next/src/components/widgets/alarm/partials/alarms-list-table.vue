@@ -84,6 +84,7 @@
             v-model="props.selected",
             v-on="rowListeners",
             :ref="`row${props.item._id}`",
+            :key="props.item._id",
             :selectable="selectable",
             :expandable="expandable",
             :row="props",
@@ -108,7 +109,8 @@
             :parent-alarm-id="parentAlarmId",
             :widget="widget",
             :hide-children="hideChildren",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
+            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)",
+            @select:tag="$emit('select:tag', $event)"
           )
     c-table-pagination(
       v-if="!hidePagination",
@@ -128,10 +130,7 @@
 <script>
 import { differenceBy } from 'lodash';
 
-import {
-  ALARM_DENSE_TYPES,
-  ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
-} from '@/constants';
+import { ALARM_DENSE_TYPES, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
 
 import featuresService from '@/services/features';
 
@@ -177,10 +176,6 @@ export default {
     widget: {
       type: Object,
       required: true,
-    },
-    editing: {
-      type: Boolean,
-      default: false,
     },
     alarms: {
       type: Array,
@@ -436,7 +431,7 @@ export default {
       }
     },
 
-    editing() {
+    columns() {
       if (this.isColumnsChanging) {
         this.updateColumnsSettings();
 

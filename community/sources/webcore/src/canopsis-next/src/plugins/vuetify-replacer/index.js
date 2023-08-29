@@ -11,6 +11,7 @@ import VTooltip from './components/v-tooltip/v-tooltip.vue';
 import VDataTable from './components/v-data-table/v-data-table.vue';
 import VTextarea from './components/v-textarea/v-textarea.vue';
 import VSelect from './components/v-select';
+import VTabs from './components/v-tabs/v-tabs.vue';
 import ClickOutside from './directives/click-outside';
 
 export default {
@@ -28,6 +29,7 @@ export default {
     Vue.component('v-data-table', VDataTable);
     Vue.component('v-textarea', VTextarea);
     Vue.component('v-select', VSelect);
+    Vue.component('v-tabs', VTabs);
 
     Vue.directive('click-outside', ClickOutside);
   },
