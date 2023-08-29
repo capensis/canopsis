@@ -1,9 +1,9 @@
-%define debug_package %{nil} 
+%define debug_package %{nil}
 Name: canopsis
 Version: %{version}
 Release: 1%{?dist}
 Summary: Canopsis
-License: ASL 2.0
+License: AGPL-3.0-only
 Source0: https://git.canopsis.net/canopsis/canopsis-pro/-/archive/%{version}/canopsis.tar.gz
 
 BuildRequires: make >= 3.81, gcc, nodejs = 2:14.18.3, yarn, systemd-rpm-macros
