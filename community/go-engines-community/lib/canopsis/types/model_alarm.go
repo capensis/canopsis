@@ -16,7 +16,6 @@ const (
 	AlarmStateMinor
 	AlarmStateMajor
 	AlarmStateCritical
-	AlarmStateUnknown
 )
 
 const (
@@ -288,7 +287,7 @@ func (a *Alarm) IsMetaAlarm() bool {
 	return a.Value.Meta != ""
 }
 
-func (a *Alarm) IsMetaChildren() bool {
+func (a *Alarm) IsMetaChild() bool {
 	return len(a.Value.Parents) > 0
 }
 
@@ -407,4 +406,12 @@ func (a *Alarm) IsInActivePeriod() bool {
 
 func (a *Alarm) CanActivate() bool {
 	return !a.IsActivated() && !a.IsSnoozed() && a.Value.PbehaviorInfo.IsActive() && !a.InactiveAutoInstructionInProgress
+}
+
+func (a *Alarm) IncrementEventsCount(count CpsNumber) {
+	a.AddUpdate("$inc", bson.M{"v.events_count": count})
+}
+
+func (a *Alarm) DecrementEventsCount(count CpsNumber) {
+	a.AddUpdate("$inc", bson.M{"v.events_count": -count})
 }
