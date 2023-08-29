@@ -53,17 +53,13 @@ export default {
   transition: .2s ease-out;
   cursor: move;
   z-index: 3;
-  pointer-events: auto !important;
+
   &:hover {
     background-color: rgba(0, 0, 0, .15);
   }
 
   &__controls {
     height: 100%;
-  }
-
-  & ::v-deep * {
-    pointer-events: auto !important;
   }
 }
 </style>

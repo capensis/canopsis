@@ -76,6 +76,17 @@ const getSortedLayout = (layout = []) => (
 );
 
 /**
+ * Replace the layout item in the layout
+ *
+ * @param {GridLayout} layout
+ * @param {GridLayoutItem} layoutItem
+ * @returns {GridLayout}
+ */
+export const replaceLayoutItemInLayout = (layout = [], layoutItem) => (
+  layout.map(item => (item.i === layoutItem?.i ? layoutItem : item))
+);
+
+/**
  * Immutable move item in the layout
  *
  * @param {GridLayout} layout
@@ -92,7 +103,7 @@ export const moveLayoutItem = (layout, layoutItem, x, y, isUserAction) => {
     y,
     moved: true,
   };
-  const newLayout = layout.map(item => (item.i === newLayoutItem.i ? newLayoutItem : item));
+  const newLayout = replaceLayoutItemInLayout(layout, newLayoutItem);
   const movingUp = y && layoutItem.y > y;
 
   // If this collides with anything, move it.
@@ -201,30 +212,32 @@ export const compactLayout = (layout = []) => {
  * @returns {*}
  */
 export const getCountAboveItems = (layout = [], itemX, itemY, itemW) => {
-  const { count } = getSortedLayout(layout)
-    .reduce((acc, { y, x, w, h }) => {
-      if (acc.y !== y + h) {
-        return acc;
-      }
+  const sortedByYLayout = layout
+    .filter(({ y }) => y < itemY)
+    .sort((a, b) => b.y - a.y);
 
-      const range = (acc.x + acc.w) - (x + w);
+  let count = 0;
+  let x = itemX;
+  let y = itemY;
+  let w = itemW;
 
-      const isInteraction = range > 0 ? range < acc.w : Math.abs(range) < w;
+  for (const item of sortedByYLayout) {
+    if (y !== item.y + item.h) {
+      continue;
+    }
 
-      if (y < acc.y && isInteraction) {
-        acc.count += 1;
-        acc.x = x;
-        acc.y = y;
-        acc.w = w;
-      }
+    const diff = (x + w) - (item.x + item.w);
+    const isInteraction = diff > 0
+      ? diff < w
+      : Math.abs(diff) < item.w;
 
-      return acc;
-    }, {
-      count: 0,
-      x: itemX,
-      y: itemY,
-      w: itemW,
-    });
+    if (item.y < y && isInteraction) {
+      count += 1;
+      x = item.x;
+      y = item.y;
+      w = item.w;
+    }
+  }
 
   return count;
 };
@@ -272,14 +285,3 @@ export const getControlPosition = (event, layoutElement) => {
  * @returns {GridLayoutItem | undefined}
  */
 export const findLayoutItem = (layout = [], id) => layout.find(({ i }) => i === id);
-
-/**
- * Replace the layout item in the layout
- *
- * @param {GridLayout} layout
- * @param {GridLayoutItem} layoutItem
- * @returns {GridLayout}
- */
-export const replaceLayoutItemInLayout = (layout = [], layoutItem) => (
-  layout.map(item => (item.i === layoutItem?.i ? layoutItem : item))
-);
