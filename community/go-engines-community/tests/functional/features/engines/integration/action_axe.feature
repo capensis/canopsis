@@ -353,7 +353,7 @@ Feature: update alarm on action
       "component":  "test-component-action-axe-3",
       "resource": "test-resource-action-axe-3-1",
       "state": 2,
-      "output": "test-1"
+      "output": "test-output-action-axe-3-1"
     }
     """
     When I send an event and wait the end of event processing:
@@ -366,7 +366,7 @@ Feature: update alarm on action
       "component":  "test-component-action-axe-3",
       "resource": "test-resource-action-axe-3-2",
       "state": 2,
-      "output": "test-2"
+      "output": "test-output-action-axe-3-2"
     }
     """
     When I send an event and wait the end of event processing:
@@ -379,7 +379,7 @@ Feature: update alarm on action
       "component":  "test-component-action-axe-3",
       "resource": "test-resource-action-axe-3-3",
       "state": 2,
-      "output": "test-3"
+      "output": "test-output-action-axe-3-3"
     }
     """
     When I do POST /api/v4/widget-filters:
@@ -394,7 +394,7 @@ Feature: update alarm on action
             "field": "v.ticket.ticket",
             "cond": {
               "type": "eq",
-              "value": "test-2"
+              "value": "test-output-action-axe-3-2"
             }
           }
         ]
@@ -431,7 +431,7 @@ Feature: update alarm on action
             "field": "v.ticket.ticket",
             "cond": {
               "type": "regexp",
-              "value": "test"
+              "value": "test-output-action-axe-3"
             }
           }
         ]
@@ -478,7 +478,7 @@ Feature: update alarm on action
             "field": "v.ticket.m",
             "cond": {
               "type": "regexp",
-              "value": "Ticket ID: test-2"
+              "value": "Ticket ID: test-output-action-axe-3-2"
             }
           }
         ]
@@ -515,7 +515,7 @@ Feature: update alarm on action
             "field": "v.ticket.m",
             "cond": {
               "type": "regexp",
-              "value": "Ticket ID: test"
+              "value": "Ticket ID: test-output-action-axe-3"
             }
           }
         ]
@@ -542,6 +542,177 @@ Feature: update alarm on action
         {
           "v": {
             "resource": "test-resource-action-axe-3-3"
+          }
+        }
+      ],
+      "meta": {
+        "total_count": 3
+      }
+    }
+    """
+
+  @concurrent
+  Scenario: given alarm and scenario and widget filter should filter alarms by ticket_data
+    Given I am admin
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "name": "test-scenario-action-axe-4-name",
+      "enabled": true,
+      "triggers": ["create"],
+      "actions": [
+        {
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "regexp",
+                  "value": "test-resource-action-axe-4"
+                }
+              }
+            ]
+          ],
+          "type": "webhook",
+          "parameters": {
+            "request": {
+              "method": "POST",
+              "url": "{{ .apiURL }}/api/v4/scenarios",
+              "auth": {
+                "username": "root",
+                "password": "test"
+              },
+              "headers": {"Content-Type": "application/json"},
+              "payload": "{\"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-axe-4-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+            },
+            "declare_ticket": {
+              "ticket_id": "name",
+              "name": "name"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-action-axe-4",
+      "connector_name": "test-connector-name-action-axe-4",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-action-axe-4",
+      "resource": "test-resource-action-axe-4-1",
+      "state": 2,
+      "output": "test-output-action-axe-4-1"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-action-axe-4",
+      "connector_name": "test-connector-name-action-axe-4",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-action-axe-4",
+      "resource": "test-resource-action-axe-4-2",
+      "state": 2,
+      "output": "test-output-action-axe-4-2"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-connector-action-axe-4",
+      "connector_name": "test-connector-name-action-axe-4",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-action-axe-4",
+      "resource": "test-resource-action-axe-4-3",
+      "state": 2,
+      "output": "test-output-action-axe-4-3"
+    }
+    """
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-action-axe-4-1",
+      "widget": "test-widget-to-alarm-get",
+      "is_private": true,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.ticket.ticket_data.name",
+            "cond": {
+              "type": "eq",
+              "value": "test-output-action-axe-4-2"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/alarms?filters[]={{ .lastResponse._id }}&sort=asc&sort_by=v.resource
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-action-axe-4-2"
+          }
+        }
+      ],
+      "meta": {
+        "total_count": 1
+      }
+    }
+    """
+    When I do POST /api/v4/widget-filters:
+    """json
+    {
+      "title": "test-widgetfilter-action-axe-4-2",
+      "widget": "test-widget-to-alarm-get",
+      "is_private": true,
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.ticket.ticket_data.name",
+            "cond": {
+              "type": "regexp",
+              "value": "test-output-action-axe-4"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do GET /api/v4/alarms?filters[]={{ .lastResponse._id }}&sort=asc&sort_by=v.resource
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-action-axe-4-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-action-axe-4-2"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-action-axe-4-3"
           }
         }
       ],
