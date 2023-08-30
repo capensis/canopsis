@@ -597,9 +597,10 @@ Feature: update alarm on action
     When I do POST /api/v4/scenarios:
     """json
     {
-      "name": "test-scenario-action-axe-4-name",
+      "name": "test-scenario-action-axe-4-name-1",
       "enabled": true,
       "triggers": ["create"],
+      "priority": 1692721204,
       "actions": [
         {
           "entity_pattern": [
@@ -607,8 +608,8 @@ Feature: update alarm on action
               {
                 "field": "name",
                 "cond": {
-                  "type": "regexp",
-                  "value": "test-resource-action-axe-4"
+                  "type": "eq",
+                  "value": "test-resource-action-axe-4-1"
                 }
               }
             ]
@@ -623,7 +624,95 @@ Feature: update alarm on action
                 "password": "test"
               },
               "headers": {"Content-Type": "application/json"},
-              "payload": "{\"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-axe-4-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+              "payload": "{\"priority\":1692721205, \"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-axe-4-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+            },
+            "declare_ticket": {
+              "ticket_id": "name",
+              "name": "name"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "name": "test-scenario-action-axe-4-name-2",
+      "enabled": true,
+      "triggers": ["create"],
+      "priority": 1692721206,
+      "actions": [
+        {
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-axe-4-2"
+                }
+              }
+            ]
+          ],
+          "type": "webhook",
+          "parameters": {
+            "request": {
+              "method": "POST",
+              "url": "{{ .apiURL }}/api/v4/scenarios",
+              "auth": {
+                "username": "root",
+                "password": "test"
+              },
+              "headers": {"Content-Type": "application/json"},
+              "payload": "{\"priority\":1692721207, \"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-axe-4-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+            },
+            "declare_ticket": {
+              "ticket_id": "name",
+              "name": "name"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "name": "test-scenario-action-axe-4-name-3",
+      "enabled": true,
+      "triggers": ["create"],
+      "priority": 1692721208,
+      "actions": [
+        {
+          "entity_pattern": [
+            [
+              {
+                "field": "name",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-resource-action-axe-4-3"
+                }
+              }
+            ]
+          ],
+          "type": "webhook",
+          "parameters": {
+            "request": {
+              "method": "POST",
+              "url": "{{ .apiURL }}/api/v4/scenarios",
+              "auth": {
+                "username": "root",
+                "password": "test"
+              },
+              "headers": {"Content-Type": "application/json"},
+              "payload": "{\"priority\":1692721209, \"name\":\"{{ `{{ .Alarm.Value.Output }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-scenario-action-axe-4-alarm\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
             },
             "declare_ticket": {
               "ticket_id": "name",
@@ -638,7 +727,7 @@ Feature: update alarm on action
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event and wait the end of event processing:
+    When I send an event:
     """json
     {
       "connector": "test-connector-action-axe-4",
@@ -651,7 +740,8 @@ Feature: update alarm on action
       "output": "test-output-action-axe-4-1"
     }
     """
-    When I send an event and wait the end of event processing:
+    When I wait the end of event processing
+    When I send an event:
     """json
     {
       "connector": "test-connector-action-axe-4",
@@ -664,7 +754,8 @@ Feature: update alarm on action
       "output": "test-output-action-axe-4-2"
     }
     """
-    When I send an event and wait the end of event processing:
+    When I wait the end of event processing
+    When I send an event:
     """json
     {
       "connector": "test-connector-action-axe-4",
@@ -677,6 +768,7 @@ Feature: update alarm on action
       "output": "test-output-action-axe-4-3"
     }
     """
+    When I wait the end of event processing
     When I do POST /api/v4/widget-filters:
     """json
     {
