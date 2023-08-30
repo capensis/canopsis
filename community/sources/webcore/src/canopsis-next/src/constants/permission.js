@@ -113,8 +113,7 @@ export const USERS_PERMISSIONS = {
     map: `${USER_PERMISSIONS_PREFIXES.technical.admin}_map`,
     shareToken: `${USER_PERMISSIONS_PREFIXES.technical.admin}_shareToken`,
     widgetTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningType`,
-    // maintenance: `${USER_PERMISSIONS_PREFIXES.technical.admin}_maintenance`,
-    maintenance: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningType`,
+    maintenance: `${USER_PERMISSIONS_PREFIXES.technical.admin}_maintenance`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
