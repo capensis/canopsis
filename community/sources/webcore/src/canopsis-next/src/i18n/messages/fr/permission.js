@@ -547,9 +547,8 @@ export default {
       description: 'Cette autorisation définit l\'accès aux modèles de widget',
     },
     [USERS_PERMISSIONS.technical.maintenance]: {
-      name: 'Maintenance mode',
-      // TODO: Should be added
-      description: '',
+      name: 'Mode de Maintenance',
+      description: 'Cette autorisation définit l\'accès au mode Maintenance',
     },
 
     /**
@@ -750,6 +749,10 @@ export default {
     [USERS_PERMISSIONS.api.general.widgetTemplate]: {
       name: 'Modèles de widgets',
       description: 'Accès à la route API vers les modèles de widgets CRUD',
+    },
+    [USERS_PERMISSIONS.api.general.maintenance]: {
+      name: 'Mode de Maintenance',
+      description: 'Accès à l\'API route vers le mode maintenance',
     },
 
     [USERS_PERMISSIONS.api.rules.action]: {
