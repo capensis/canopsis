@@ -1,11 +1,10 @@
-db.permission.deleteOne({_id: "api_maintenance"});
+db.permission.deleteMany({_id: {$in: ["api_maintenance", "models_maintenance"]}});
 db.role.updateMany(
-    {
-        _id: "admin"
-    },
+    {},
     {
         $unset: {
-            "rights.api_maintenance": 1
+            "permissions.api_maintenance": "",
+            "permissions.models_maintenance": ""
         }
     },
 );
