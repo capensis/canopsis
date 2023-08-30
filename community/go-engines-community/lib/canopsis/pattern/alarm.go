@@ -487,6 +487,14 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 
 		return alarm.Value.ACK.Initiator, true
 	default:
+		if n := strings.TrimPrefix(f, "v.ticket.ticket_data."); n != f {
+			if alarm.Value.Ticket == nil || alarm.Value.Ticket.TicketData == nil {
+				return "", true
+			}
+
+			return alarm.Value.Ticket.TicketData[n], true
+		}
+
 		return "", false
 	}
 }
