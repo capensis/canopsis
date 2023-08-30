@@ -74,7 +74,8 @@ const (
 
 	MapMongoCollection = "map"
 
-	AlarmTagCollection = "alarm_tag"
+	AlarmTagCollection      = "alarm_tag"
+	AlarmTagColorCollection = "alarm_tag_color"
 
 	ScenarioMongoCollection          = "action_scenario"
 	DeclareTicketRuleMongoCollection = "declare_ticket_rule"

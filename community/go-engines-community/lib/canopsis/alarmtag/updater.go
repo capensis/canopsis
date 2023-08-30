@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Updater interface {
@@ -20,17 +21,19 @@ type Updater interface {
 
 func NewUpdater(client mongo.DbClient) Updater {
 	return &updater{
-		client:           client,
-		collection:       client.Collection(mongo.AlarmTagCollection),
-		configCollection: client.Collection(mongo.ConfigurationMongoCollection),
-		tags:             make(map[string]string),
+		client:                  client,
+		alarmTagCollection:      client.Collection(mongo.AlarmTagCollection),
+		alarmTagColorCollection: client.Collection(mongo.AlarmTagColorCollection),
+		configCollection:        client.Collection(mongo.ConfigurationMongoCollection),
+		tags:                    make(map[string]string),
 	}
 }
 
 type updater struct {
-	client           mongo.DbClient
-	collection       mongo.DbCollection
-	configCollection mongo.DbCollection
+	client                  mongo.DbClient
+	alarmTagColorCollection mongo.DbCollection
+	alarmTagCollection      mongo.DbCollection
+	configCollection        mongo.DbCollection
 
 	tagsMx sync.Mutex
 	tags   map[string]string
@@ -84,48 +87,70 @@ func (u *updater) update(ctx context.Context, tags map[string]string) error {
 			return err
 		}
 
-		models := make([]interface{}, len(tags))
-		i := 0
+		models := make([]interface{}, 0, len(tags))
 		k := 0
 		for t, label := range tags {
 			color := labelColors[label]
 			if color == "" && len(colors) > 0 {
 				colorIndex := (count + k) % len(colors)
 				color = colors[colorIndex]
+
+				v := struct {
+					Color string `bson:"color"`
+				}{}
+
+				err = u.alarmTagColorCollection.FindOneAndUpdate(
+					ctx,
+					bson.M{"_id": label},
+					bson.M{
+						"$setOnInsert": bson.M{
+							"color": color,
+						},
+					},
+					options.FindOneAndUpdate().SetUpsert(true).SetReturnDocument(options.After),
+				).Decode(&v)
+				if err != nil {
+					return err
+				}
+
+				labelColors[label] = v.Color
+				color = v.Color
+
 				k++
 			}
 
-			models[i] = types.AlarmTag{
+			models = append(models, types.AlarmTag{
 				ID:      utils.NewID(),
 				Value:   t,
 				Label:   label,
 				Color:   color,
 				Created: now,
-			}
-			i++
+			})
 		}
 
-		_, err = u.collection.InsertMany(ctx, models)
+		_, err = u.alarmTagCollection.InsertMany(ctx, models)
 		return err
 	})
 }
 
 func (u *updater) keepNewTags(ctx context.Context, tags map[string]string) error {
-	values := make([]string, len(tags))
-	i := 0
+	values := make([]string, 0, len(tags))
 	for t := range tags {
-		values[i] = t
-		i++
+		values = append(values, t)
 	}
-	cursor, err := u.collection.Find(ctx, bson.M{"value": bson.M{"$in": values}})
+
+	cursor, err := u.alarmTagCollection.Find(ctx, bson.M{"value": bson.M{"$in": values}})
 	if err != nil {
 		return err
 	}
+
 	defer cursor.Close(ctx)
+
 	for cursor.Next(ctx) {
 		tag := struct {
 			Value string `bson:"value"`
 		}{}
+
 		err = cursor.Decode(&tag)
 		if err != nil {
 			return err
@@ -137,25 +162,26 @@ func (u *updater) keepNewTags(ctx context.Context, tags map[string]string) error
 	return nil
 }
 
-func (u *updater) getLabelColors(ctx context.Context, newTags map[string]string) (map[string]string, error) {
-	newLabels := make([]string, len(newTags))
-	i := 0
-	for _, label := range newTags {
-		newLabels[i] = label
-		i++
+func (u *updater) getLabelColors(ctx context.Context, tags map[string]string) (map[string]string, error) {
+	labels := make([]string, 0, len(tags))
+	for _, label := range tags {
+		labels = append(labels, label)
 	}
 
-	cursor, err := u.collection.Find(ctx, bson.M{"label": bson.M{"$in": newLabels}})
+	cursor, err := u.alarmTagColorCollection.Find(ctx, bson.M{"_id": bson.M{"$in": labels}})
 	if err != nil {
 		return nil, err
 	}
+
 	defer cursor.Close(ctx)
-	colors := make(map[string]string, len(newLabels))
+
+	colors := make(map[string]string, len(labels))
 	for cursor.Next(ctx) {
 		v := struct {
-			Label string `bson:"label"`
+			Label string `bson:"_id"`
 			Color string `bson:"color"`
 		}{}
+
 		err = cursor.Decode(&v)
 		if err != nil {
 			return nil, err
@@ -168,29 +194,9 @@ func (u *updater) getLabelColors(ctx context.Context, newTags map[string]string)
 }
 
 func (u *updater) getLabelsCount(ctx context.Context) (int, error) {
-	cursor, err := u.collection.Aggregate(ctx, []bson.M{
-		{"$group": bson.M{
-			"_id": "$label",
-		}},
-		{"$group": bson.M{
-			"_id":   nil,
-			"count": bson.M{"$sum": 1},
-		}},
-	})
-	if err != nil {
-		return 0, err
-	}
-	defer cursor.Close(ctx)
+	c, err := u.alarmTagColorCollection.CountDocuments(ctx, bson.M{})
 
-	if cursor.Next(ctx) {
-		v := struct {
-			Count int `bson:"count"`
-		}{}
-		err = cursor.Decode(&v)
-		return v.Count, err
-	}
-
-	return 0, nil
+	return int(c), err
 }
 
 func (u *updater) getColors(ctx context.Context) ([]string, error) {
