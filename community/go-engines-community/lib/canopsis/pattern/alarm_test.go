@@ -655,6 +655,108 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			},
 			matchResult: false,
 		},
+		"given match ticket data condition should match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.ticket.ticket_data.data_1",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test_1"),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{
+					Ticket: &types.AlarmStep{
+						TicketInfo: types.TicketInfo{
+							TicketData: map[string]string{
+								"data_1": "test_1",
+								"data_2": "test_2",
+							},
+						},
+					},
+				},
+			},
+			matchResult: true,
+		},
+		"given match ticket data condition should not match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.ticket.ticket_data.data_2",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test_1"),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{
+					Ticket: &types.AlarmStep{
+						TicketInfo: types.TicketInfo{
+							TicketData: map[string]string{
+								"data_1": "test_1",
+								"data_2": "test_2",
+							},
+						},
+					},
+				},
+			},
+			matchResult: false,
+		},
+		"given match ticket data condition without ticket data should not match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.ticket.ticket_data.data_1",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test"),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{
+					Ticket: &types.AlarmStep{
+						TicketInfo: types.TicketInfo{},
+					},
+				},
+			},
+			matchResult: false,
+		},
+		"given match ticket data condition without ticket should not match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.ticket.ticket_data.data_1",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test"),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{},
+			},
+			matchResult: false,
+		},
+		"given match ticket data condition with wrong condition should return err": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.ticket.ticket_data.data_1",
+						Condition: pattern.NewIntCondition(pattern.ConditionEqual, 123),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{
+					Ticket: &types.AlarmStep{
+						TicketInfo: types.TicketInfo{
+							TicketData: map[string]string{
+								"data_1": "test_1",
+								"data_2": "test_2",
+							},
+						},
+					},
+				},
+			},
+			matchErr:    pattern.ErrWrongConditionValue,
+			matchResult: false,
+		},
 	}
 }
 
@@ -918,12 +1020,17 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 						Field:     "v.ticket.m",
 						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test message"),
 					},
+					{
+						Field:     "v.ticket.ticket_data.data_1",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test_1"),
+					},
 				},
 			},
 			mongoQueryResult: bson.M{"$or": []bson.M{
 				{"$and": []bson.M{
 					{"alarm.v.ticket.ticket": bson.M{"$eq": "test ticket"}},
 					{"alarm.v.ticket.m": bson.M{"$eq": "test message"}},
+					{"alarm.v.ticket.ticket_data.data_1": bson.M{"$eq": "test_1"}},
 				}},
 			}},
 		},
