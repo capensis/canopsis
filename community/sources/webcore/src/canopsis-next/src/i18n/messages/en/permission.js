@@ -752,7 +752,7 @@ export default {
     },
     [USERS_PERMISSIONS.api.general.maintenance]: {
       name: 'Maintenance mode',
-      description: 'Access to API route to maintenance mode',
+      description: 'Access to API route to the maintenance mode',
     },
 
     [USERS_PERMISSIONS.api.rules.action]: {
