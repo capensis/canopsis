@@ -662,12 +662,10 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			},
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
-					Ticket: &types.AlarmStep{
-						TicketInfo: types.TicketInfo{
-							TicketData: map[string]string{
-								"data_1": "test_1",
-								"data_2": "test_2",
-							},
+					Ticket: &types.AlarmTicket{
+						Data: map[string]string{
+							"data_1": "test_1",
+							"data_2": "test_2",
 						},
 					},
 				},
@@ -685,12 +683,10 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			},
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
-					Ticket: &types.AlarmStep{
-						TicketInfo: types.TicketInfo{
-							TicketData: map[string]string{
-								"data_1": "test_1",
-								"data_2": "test_2",
-							},
+					Ticket: &types.AlarmTicket{
+						Data: map[string]string{
+							"data_1": "test_1",
+							"data_2": "test_2",
 						},
 					},
 				},
@@ -708,9 +704,7 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			},
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
-					Ticket: &types.AlarmStep{
-						TicketInfo: types.TicketInfo{},
-					},
+					Ticket: &types.AlarmTicket{},
 				},
 			},
 			matchResult: false,
@@ -740,12 +734,10 @@ func getAlarmMatchDataSets() map[string]alarmDataSet {
 			},
 			alarm: types.Alarm{
 				Value: types.AlarmValue{
-					Ticket: &types.AlarmStep{
-						TicketInfo: types.TicketInfo{
-							TicketData: map[string]string{
-								"data_1": "test_1",
-								"data_2": "test_2",
-							},
+					Ticket: &types.AlarmTicket{
+						Data: map[string]string{
+							"data_1": "test_1",
+							"data_2": "test_2",
 						},
 					},
 				},
@@ -1026,7 +1018,7 @@ func getAlarmMongoQueryDataSets() map[string]alarmDataSet {
 				{"$and": []bson.M{
 					{"alarm.v.ticket.val": bson.M{"$eq": "test ticket"}},
 					{"alarm.v.ticket.m": bson.M{"$eq": "test message"}},
-					{"alarm.v.ticket.ticket_data.data_1": bson.M{"$eq": "test_1"}},
+					{"alarm.v.ticket.data.data_1": bson.M{"$eq": "test_1"}},
 				}},
 			}},
 		},
