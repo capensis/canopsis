@@ -2,7 +2,7 @@
   v-layout(row)
     v-flex(:xs5="isAnyInfosRule", xs4)
       v-layout(row)
-        v-flex(:xs4="isAnyInfosRule")
+        v-flex(:xs4="isAnyInfosRule", :xs6="isObjectRule")
           c-pattern-attribute-field(
             v-field="rule.attribute",
             :items="attributes",
@@ -19,7 +19,15 @@
             :combobox="isInfosRule",
             row
           )
-
+        v-flex.pl-3(v-else-if="isObjectRule", xs6)
+          v-text-field(
+            v-field="rule.dictionary",
+            v-validate="'required'",
+            :name="objectDictionaryName",
+            :disabled="disabled",
+            :label="$t('common.dictionary')",
+            :error-messages="errors.collect(objectDictionaryName)"
+          )
     v-flex(v-if="rule.attribute", :xs8="!isAnyInfosRule", xs7)
       v-layout(row)
         template(v-if="isDateRule")
@@ -80,6 +88,7 @@ import {
   isDurationRuleType,
   isExtraInfosRuleType,
   isInfosRuleType,
+  isObjectRuleType,
   isOperatorHasValue,
 } from '@/helpers/pattern';
 
@@ -88,6 +97,7 @@ import { formMixin } from '@/mixins/form';
 import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: { DateTimePickerTextField },
   mixins: [formMixin],
   model: {
@@ -164,6 +174,10 @@ export default {
 
     isExtraInfosRule() {
       return isExtraInfosRuleType(this.type);
+    },
+
+    isObjectRule() {
+      return !!isObjectRuleType(this.type);
     },
 
     isAnyInfosRule() {
@@ -246,6 +260,10 @@ export default {
 
     shownOperatorField() {
       return this.operators.length !== 1 || this.operators[0] !== this.rule.operator;
+    },
+
+    objectDictionaryName() {
+      return `${this.name}.dictionary`;
     },
   },
   methods: {
