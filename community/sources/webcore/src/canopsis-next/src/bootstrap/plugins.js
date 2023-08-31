@@ -50,6 +50,7 @@ import RestartAltIcon from '@/components/icons/restart_alt.vue';
 import ListDeleteIcon from '@/components/icons/list_delete.vue';
 import PushPinIcon from '@/components/icons/push_pin.vue';
 import ResizeRightIcon from '@/components/icons/resize_right.vue';
+import BuildCircleIcon from '@/components/icons/build_circle.vue';
 import * as modalsComponents from '@/components/modals';
 import * as sidebarsComponents from '@/components/sidebars';
 
@@ -123,6 +124,9 @@ export const bootstrapApplicationPlugins = (Vue) => {
       },
       resize_right: {
         component: ResizeRightIcon,
+      },
+      build_circle: {
+        component: BuildCircleIcon,
       },
     },
   });

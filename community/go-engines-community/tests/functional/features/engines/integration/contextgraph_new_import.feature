@@ -1020,9 +1020,7 @@ Feature: new-import entities
       }
     ]
     """
-    When I do GET /api/v4/alarms?search=test-resource-new-import-partial-7-1&correlation=true
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do GET /api/v4/alarms?search=test-resource-new-import-partial-7-1&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
