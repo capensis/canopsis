@@ -1,5 +1,4 @@
 import { QUICK_RANGES } from '@/constants/common';
-import { ALARM_PATTERN_FIELDS } from '@/constants/alarm';
 
 export const PATTERN_TYPES = {
   alarm: 'alarm',
@@ -227,5 +226,3 @@ export const OLD_PATTERN_FIELDS_TO_NEW_FIELDS = {
   [OLD_PATTERNS_FIELDS.totalEntity]: [PATTERNS_FIELDS.totalEntity],
   [OLD_PATTERNS_FIELDS.patterns]: [PATTERNS_FIELDS.entity, PATTERNS_FIELDS.event],
 };
-
-export const PATTERN_OBJECT_TYPE_FIELDS = [ALARM_PATTERN_FIELDS.ticketData];
