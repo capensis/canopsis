@@ -11,7 +11,8 @@
   },
 
   "plugins": [
-    "vue"
+    "vue",
+    "import-newlines"
   ],
   "globals": {
     "sel": true
@@ -125,6 +126,14 @@
       {
         "selector": "ImportDeclaration[source.value=/\\u002Ffield\\u002F/]",
         "message": "`field` folder deprecated. Please, rename to `field`."
+      }
+    ],
+    "import-newlines/enforce": [
+      "error",
+      {
+        "items": 4,
+        "max-len": 120,
+        "semi": true
       }
     ]
   }
