@@ -26,11 +26,14 @@ type Store interface {
 	Delete(ctx context.Context, id string) (bool, error)
 }
 
-func NewStore(dbClient mongo.DbClient) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
 		client:                dbClient,
 		collection:            dbClient.Collection(mongo.PlaylistMongoCollection),
-		aclCollection:         dbClient.Collection(mongo.RightsMongoCollection),
+		userCollection:        dbClient.Collection(mongo.UserCollection),
+		roleCollection:        dbClient.Collection(mongo.RoleCollection),
+		permissionCollection:  dbClient.Collection(mongo.PermissionCollection),
+		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "name"},
 		defaultSortBy:         "name",
 	}
@@ -39,13 +42,16 @@ func NewStore(dbClient mongo.DbClient) Store {
 type store struct {
 	client                mongo.DbClient
 	collection            mongo.DbCollection
-	aclCollection         mongo.DbCollection
+	userCollection        mongo.DbCollection
+	roleCollection        mongo.DbCollection
+	permissionCollection  mongo.DbCollection
+	authorProvider        author.Provider
 	defaultSearchByFields []string
 	defaultSortBy         string
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
-	pipeline := author.Pipeline()
+	pipeline := s.authorProvider.Pipeline()
 
 	if len(r.Ids) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"_id": bson.M{"$in": r.Ids}}})
@@ -90,7 +96,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 
 func (s *store) GetById(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
-	pipeline = append(pipeline, author.Pipeline()...)
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
@@ -211,45 +217,39 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 }
 
 func (s *store) createPermission(ctx context.Context, userID, playlistID, playlistName string) error {
-	_, err := s.aclCollection.InsertOne(ctx, bson.M{
-		"_id":          playlistID,
-		"crecord_name": playlistID,
-		"crecord_type": securitymodel.LineTypeObject,
-		"description":  fmt.Sprintf("%s %s", permissionPrefix, playlistName),
-		"type":         securitymodel.LineObjectTypeRW,
+	_, err := s.permissionCollection.InsertOne(ctx, bson.M{
+		"_id":         playlistID,
+		"name":        playlistID,
+		"description": fmt.Sprintf("%s %s", permissionPrefix, playlistName),
+		"type":        securitymodel.ObjectTypeRW,
 	})
 	if err != nil {
 		return err
 	}
 
-	res := s.aclCollection.FindOne(ctx, bson.M{
-		"_id":          userID,
-		"crecord_type": securitymodel.LineTypeSubject,
-	})
+	res := s.userCollection.FindOne(ctx, bson.M{"_id": userID})
 	if err := res.Err(); err != nil {
 		return err
 	}
 
 	user := struct {
-		Role string `json:"role"`
+		Roles []string `json:"roles"`
 	}{}
 	err = res.Decode(&user)
 	if err != nil {
 		return err
 	}
 
-	_, err = s.aclCollection.UpdateMany(ctx,
+	roles := append([]string{security.RoleAdmin}, user.Roles...)
+	_, err = s.roleCollection.UpdateMany(ctx,
 		bson.M{
-			"_id":          bson.M{"$in": bson.A{user.Role, security.RoleAdmin}},
-			"crecord_type": securitymodel.LineTypeRole,
+			"_id": bson.M{"$in": roles},
 		},
 		bson.M{
 			"$set": bson.M{
-				"rights." + playlistID: bson.M{
-					"checksum": securitymodel.PermissionBitmaskRead |
-						securitymodel.PermissionBitmaskUpdate |
-						securitymodel.PermissionBitmaskDelete,
-				},
+				"permissions." + playlistID: securitymodel.PermissionBitmaskRead |
+					securitymodel.PermissionBitmaskUpdate |
+					securitymodel.PermissionBitmaskDelete,
 			},
 		},
 	)
@@ -261,12 +261,8 @@ func (s *store) createPermission(ctx context.Context, userID, playlistID, playli
 }
 
 func (s *store) updatePermission(ctx context.Context, playlistID, playlistName string) error {
-
-	_, err := s.aclCollection.UpdateOne(ctx,
-		bson.M{
-			"_id":          playlistID,
-			"crecord_type": securitymodel.LineTypeObject,
-		},
+	_, err := s.permissionCollection.UpdateOne(ctx,
+		bson.M{"_id": playlistID},
 		bson.M{
 			"$set": bson.M{
 				"description": fmt.Sprintf("%s %s", permissionPrefix, playlistName),
@@ -278,23 +274,18 @@ func (s *store) updatePermission(ctx context.Context, playlistID, playlistName s
 }
 
 func (s *store) deletePermission(ctx context.Context, playlistID string) error {
-	_, err := s.aclCollection.UpdateMany(ctx,
+	_, err := s.roleCollection.UpdateMany(ctx,
 		bson.M{
-			"crecord_type":         securitymodel.LineTypeRole,
-			"rights." + playlistID: bson.M{"$exists": true},
+			"permissions." + playlistID: bson.M{"$exists": true},
 		},
 		bson.M{
-			"$unset": bson.M{"rights." + playlistID: ""},
+			"$unset": bson.M{"permissions." + playlistID: ""},
 		},
 	)
 	if err != nil {
 		return err
 	}
 
-	_, err = s.aclCollection.DeleteOne(ctx, bson.M{
-		"_id":          playlistID,
-		"crecord_type": securitymodel.LineTypeObject,
-	})
-
+	_, err = s.permissionCollection.DeleteOne(ctx, bson.M{"_id": playlistID})
 	return err
 }

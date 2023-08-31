@@ -137,13 +137,13 @@ func updateWebsocketConns(
 				err := websocketStore.UpdateConnections(ctx, websocketHub.GetConnections())
 				if err != nil {
 					logger.Err(err).Msg("cannot update websocket connections")
-					return
+					continue
 				}
 
 				c, err := websocketStore.GetActiveConnections(ctx)
 				if err != nil {
 					logger.Err(err).Msg("cannot get active websocket connections")
-					return
+					continue
 				}
 
 				websocketHub.Send(websocket.RoomLoggedUserCount, c)
@@ -171,6 +171,7 @@ func sendPbhRecomputeEvents(
 				body, err := encoder.Encode(rpc.PbehaviorRecomputeEvent{Ids: ids})
 				if err != nil {
 					logger.Err(err).Msg("cannot encode event")
+					continue
 				}
 				err = publisher.PublishWithContext(
 					ctx,

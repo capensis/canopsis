@@ -6,15 +6,22 @@ export default {
   metricsNotAvailable: 'TimescaleDB not running. Metrics are not available.',
   noData: 'No data available',
   selectMetric: 'Select metric to display',
+  addMetricMask: 'Add metrics by mask, e.g. cpu*',
+  displayedLabel: 'Displayed label',
   customColor: 'Custom color',
   calculationMethod: 'Calculation method',
   periodTrend: '{count} for the period\n{from} - {to}',
+  largeCountOfMetrics: 'The list of metrics to display is too large and truncated.',
+  onlyDisplayed: 'Only {count} metrics are displayed.',
+  autoAdd: 'Auto add',
+  addExternal: 'Add external',
   tabs: {
     collectionSettings: 'Collection settings',
     ratingSettings: 'Rating settings',
   },
 
   aggregateFunctions: {
+    [AGGREGATE_FUNCTIONS.last]: 'Last',
     [AGGREGATE_FUNCTIONS.sum]: 'Sum',
     [AGGREGATE_FUNCTIONS.avg]: 'Average',
     [AGGREGATE_FUNCTIONS.min]: 'Min',
@@ -79,5 +86,24 @@ export default {
     optionalMetrics: 'Optional metrics',
     manualInstructions: 'Number of alarms with manual instructions',
     notAckedMetrics: 'Number of active not acked alarms of different durations',
+  },
+
+  statisticsWidgets: {
+    metrics: {
+      [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Average number of created alarms',
+      [ALARM_METRIC_PARAMETERS.activeAlarms]: 'Average number of active alarms',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Average number of alarms with auto remediation',
+      [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: 'Average number of active alarms with manual instructions',
+      [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: 'Average number of manually remediated alarms',
+      [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: 'Average number of non-displayed alarms',
+      [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: 'Average number of alarms with PBehavior',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: 'Average number of alarms with correlation',
+      [ALARM_METRIC_PARAMETERS.notAckedAlarms]: 'Average number of not acked alarms',
+      [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]: 'Average number of not acked alarms with duration 1-4h',
+      [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]: 'Average number of not acked alarms with duration 4-24h',
+      [ALARM_METRIC_PARAMETERS.notAckedInDayAlarms]: 'Average number of not acked alarms older than 24h',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Average number of active alarms with tickets created',
+      [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: 'Average number of active alarms with no tickets created',
+    },
   },
 };

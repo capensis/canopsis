@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`filters-list Renders \`filters\` with custom props 1`] = `
+<filters-list-stub
+  filters="[object Object],[object Object]"
+  name="filters"
+  value="filter-id-1"
+/>
+`;
+
+exports[`filters-list Renders \`filters\` with default and required props 1`] = `
+<filters-list-stub
+  filters=""
+  name="filters"
+/>
+`;

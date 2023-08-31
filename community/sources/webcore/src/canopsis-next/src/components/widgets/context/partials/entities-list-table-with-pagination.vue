@@ -38,7 +38,8 @@
           :columns-filters="columnsFilters",
           :service-dependencies-columns="widget.parameters.serviceDependenciesColumns",
           :resolved-alarms-columns="widget.parameters.resolvedAlarmsColumns",
-          :active-alarms-columns="widget.parameters.activeAlarmsColumns"
+          :active-alarms-columns="widget.parameters.activeAlarmsColumns",
+          :charts="widget.parameters.charts"
         )
       template(#mass-actions="{ selected, clearSelected }")
         mass-actions-panel.ml-3(
@@ -63,14 +64,15 @@ import { SORT_ORDERS } from '@/constants';
 import { authMixin } from '@/mixins/auth';
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
 
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
-import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
+import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
+import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 
 import EntityColumnCell from '../columns-formatting/entity-column-cell.vue';
-import EntitiesListExpandPanel from './entities-list-expand-panel.vue';
 import ContextFab from '../actions/context-fab.vue';
 import ActionsPanel from '../actions/actions-panel.vue';
 import MassActionsPanel from '../actions/mass-actions-panel.vue';
+
+import EntitiesListExpandPanel from './entities-list-expand-panel.vue';
 
 export default {
   components: {

@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"strconv"
 	"text/template"
 	"time"
@@ -139,6 +140,9 @@ func getTplFuncs(location *time.Location) template.FuncMap {
 			}
 
 			return sum, nil
+		},
+		"query_escape": func(s string) string {
+			return url.QueryEscape(s)
 		},
 	}
 }

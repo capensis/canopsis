@@ -25,9 +25,9 @@ import 'jodit/build/jodit.min.css';
 
 import { BASE_URL, FILE_BASE_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
 
-import { matchPayloadVariableBySelection } from '@/helpers/payload-json';
-
 import localStorageService from '@/services/local-storage';
+
+import { matchPayloadVariableBySelection } from '@/helpers/payload-json';
 
 import VariablesMenu from './variables-menu.vue';
 

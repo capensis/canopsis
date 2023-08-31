@@ -1,6 +1,6 @@
 import { isEqual, isEmpty } from 'lodash';
 
-import { prepareQuery } from '@/helpers/query';
+import { prepareWidgetQuery } from '@/helpers/entities/widget/query';
 
 import { queryWidgetMixin } from '@/mixins/widget/query';
 
@@ -17,7 +17,7 @@ export const widgetFetchQueryMixin = {
   },
   watch: {
     query(value, oldValue) {
-      if (!this.editing && !isEqual(value, oldValue) && !isEmpty(value)) {
+      if (!isEqual(value, oldValue) && !isEmpty(value)) {
         this.fetchList();
       }
     },
@@ -42,7 +42,7 @@ export const widgetFetchQueryMixin = {
       const { search = '' } = this.query;
 
       this.query = {
-        ...prepareQuery(this.widget, this.userPreference),
+        ...prepareWidgetQuery(this.widget, this.userPreference),
 
         search,
       };

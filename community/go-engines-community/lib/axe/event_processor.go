@@ -4,10 +4,9 @@ import (
 	"context"
 	"fmt"
 	"runtime/trace"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
@@ -27,7 +26,7 @@ import (
 
 type eventProcessor struct {
 	dbClient            mongo.DbClient
-	adapter             alarm.Adapter
+	adapter             libalarm.Adapter
 	entityAdapter       entity.Adapter
 	ruleAdapter         correlation.RulesAdapter
 	alarmConfigProvider config.AlarmConfigProvider
@@ -36,7 +35,7 @@ type eventProcessor struct {
 	logger              zerolog.Logger
 	metricsSender       metrics.Sender
 
-	metaAlarmEventProcessor alarm.MetaAlarmEventProcessor
+	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
 
 	statisticsSender statistics.EventStatisticsSender
 
@@ -47,19 +46,19 @@ type eventProcessor struct {
 
 func NewEventProcessor(
 	dbClient mongo.DbClient,
-	adapter alarm.Adapter,
+	adapter libalarm.Adapter,
 	entityAdapter entity.Adapter,
 	ruleAdapter correlation.RulesAdapter,
 	alarmConfigProvider config.AlarmConfigProvider,
 	executor liboperation.Executor,
 	alarmStatusService alarmstatus.Service,
 	metricsSender metrics.Sender,
-	metaAlarmEventProcessor alarm.MetaAlarmEventProcessor,
+	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	statisticsSender statistics.EventStatisticsSender,
 	pbhTypeResolver pbehavior.EntityTypeResolver,
 	autoInstructionMatcher AutoInstructionMatcher,
 	logger zerolog.Logger,
-) alarm.EventProcessor {
+) libalarm.EventProcessor {
 	return &eventProcessor{
 		dbClient:            dbClient,
 		adapter:             adapter,
@@ -82,6 +81,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	defer trace.StartRegion(ctx, "alarm.ProcessAlarmEvent").End()
 
 	alarmChange := types.NewAlarmChange()
+	now := types.NewCpsTime()
 
 	if event.Entity == nil {
 		return alarmChange, nil
@@ -110,6 +110,10 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		return alarmChange, fmt.Errorf("cannot fetch alarm: %w", err)
 	}
 
+	if event.AlarmID != "" && event.AlarmID != alarm.ID {
+		alarmNotFound = true
+	}
+
 	if !alarmNotFound {
 		event.Alarm = &alarm
 	}
@@ -120,7 +124,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 
 	switch event.EventType {
 	case types.EventTypeCheck:
-		changeType, err := s.storeAlarm(ctx, event)
+		changeType, err := s.storeAlarm(ctx, event, now)
 		if err == nil {
 			go s.sendEventStatistics(ctx, *event)
 		}
@@ -135,7 +139,7 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		alarmChange.Type = changeType
 		return alarmChange, err
 	case types.EventTypeNoEvents:
-		changeType, err := s.processNoEvents(ctx, event)
+		changeType, err := s.processNoEvents(ctx, event, now)
 
 		go func() {
 			err := s.metaAlarmEventProcessor.Process(context.Background(), *event)
@@ -159,7 +163,24 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		alarmChange.Type = types.AlarmChangeTypeEntityToggled
 		return alarmChange, nil
 	case types.EventTypeTrigger:
-		if event.AlarmChange == nil || event.Alarm == nil {
+		if event.AlarmChange == nil {
+			return types.NewAlarmChange(), nil
+		}
+
+		if event.Alarm == nil && event.AlarmID != "" {
+			alarm, err := s.adapter.GetAlarmByAlarmId(ctx, event.AlarmID)
+			if err != nil {
+				if _, ok := err.(errt.NotFound); !ok {
+					return alarmChange, fmt.Errorf("cannot fetch alarm: %w", err)
+				}
+			}
+
+			if alarm.ID != "" {
+				event.Alarm = &alarm
+			}
+		}
+
+		if event.Alarm == nil {
 			return types.NewAlarmChange(), nil
 		}
 
@@ -213,12 +234,6 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		}
 	}()
 
-	go func() {
-		if err = s.processResources(context.Background(), *event); err != nil {
-			s.logger.Err(err).Msg("cannot update resources")
-		}
-	}()
-
 	alarmChange.Type = changeType
 
 	return alarmChange, nil
@@ -239,30 +254,30 @@ func (s *eventProcessor) fillAlarmChange(alarm *types.Alarm, entity types.Entity
 	return nil
 }
 
-func (s *eventProcessor) storeAlarm(ctx context.Context, event *types.Event) (types.AlarmChangeType, error) {
+func (s *eventProcessor) storeAlarm(ctx context.Context, event *types.Event, now types.CpsTime) (types.AlarmChangeType, error) {
 	changeType := types.AlarmChangeTypeNone
 	if event.Alarm == nil && event.State == types.AlarmStateOK {
 		return changeType, nil
 	}
 
 	if event.Alarm == nil {
-		return s.createAlarm(ctx, event)
+		return s.createAlarm(ctx, event, now)
 	}
 
 	return s.updateAlarm(ctx, event)
 }
 
-func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (types.AlarmChangeType, error) {
+func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event, now types.CpsTime) (types.AlarmChangeType, error) {
 	changeType := types.AlarmChangeTypeNone
 	entity := *event.Entity
 
-	pbehaviorInfo, err := s.resolvePbehaviorInfo(ctx, entity)
+	pbehaviorInfo, err := s.resolvePbehaviorInfo(ctx, entity, now)
 	if err != nil {
 		return changeType, err
 	}
 
 	alarmConfig := s.alarmConfigProvider.Get()
-	alarm := newAlarm(*event, alarmConfig)
+	alarm := newAlarm(*event, alarmConfig, now)
 	err = UpdateAlarmState(&alarm, entity, event.Timestamp, event.State, event.Output, s.alarmStatusService)
 	if err != nil {
 		return changeType, err
@@ -285,7 +300,7 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (t
 			pbehaviorInfo.ReasonName,
 		)
 
-		err := alarm.PartialUpdatePbhEnter(event.Timestamp, pbehaviorInfo,
+		err := alarm.PartialUpdatePbhEnter(*pbehaviorInfo.Timestamp, pbehaviorInfo,
 			canopsis.DefaultEventAuthor, output, "", event.Role, event.Initiator)
 		if err != nil {
 			return changeType, fmt.Errorf("cannot add alarm steps: %w", err)
@@ -295,7 +310,7 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event) (t
 	}
 
 	if s.alarmConfigProvider.Get().ActivateAlarmAfterAutoRemediation {
-		matched, err := s.autoInstructionMatcher.Match(types.AlarmWithEntity{Alarm: alarm, Entity: entity})
+		matched, err := s.autoInstructionMatcher.Match(types.GetTriggers(changeType), types.AlarmWithEntity{Alarm: alarm, Entity: entity})
 		if err != nil {
 			return changeType, err
 		}
@@ -403,20 +418,20 @@ func (s *eventProcessor) updateAlarm(ctx context.Context, event *types.Event) (t
 	return changeType, nil
 }
 
-func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event) (types.AlarmChangeType, error) {
+func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event, now types.CpsTime) (types.AlarmChangeType, error) {
 	changeType := types.AlarmChangeTypeNone
 	if event.Alarm == nil && event.State == types.AlarmStateOK {
 		return changeType, nil
 	}
 
-	pbehaviorInfo, err := s.resolvePbehaviorInfo(ctx, *event.Entity)
+	pbehaviorInfo, err := s.resolvePbehaviorInfo(ctx, *event.Entity, now)
 	if err != nil {
 		return changeType, err
 	}
 
 	if event.Alarm == nil {
 		alarmConfig := s.alarmConfigProvider.Get()
-		alarm := newAlarm(*event, alarmConfig)
+		alarm := newAlarm(*event, alarmConfig, now)
 		err := s.updateAlarmOnNoEventsEvent(&alarm, *event.Entity, *event)
 		if err != nil {
 			return changeType, err
@@ -518,7 +533,7 @@ func (s *eventProcessor) createOperationFromEvent(event *types.Event) types.Oper
 			Value: int64(event.Duration),
 			Unit:  "s",
 		}
-	case types.EventTypeChangestate, types.EventTypeKeepstate:
+	case types.EventTypeChangestate:
 		parameters.State = &event.State
 	case types.EventTypePbhEnter, types.EventTypePbhLeave, types.EventTypePbhLeaveAndEnter:
 		parameters.PbehaviorInfo = &event.PbehaviorInfo
@@ -534,18 +549,6 @@ func (s *eventProcessor) createOperationFromEvent(event *types.Event) types.Oper
 		Type:       t,
 		Parameters: parameters,
 	}
-}
-
-func (s *eventProcessor) processResources(ctx context.Context, event types.Event) error {
-	if event.AckResources {
-		return s.metaAlarmEventProcessor.ProcessAckResources(ctx, event)
-	}
-
-	if event.TicketResources {
-		return s.metaAlarmEventProcessor.ProcessTicketResources(ctx, event)
-	}
-
-	return nil
 }
 
 func (s *eventProcessor) resolveAlarmForDisabledEntity(ctx context.Context, event *types.Event) (types.AlarmChange, error) {
@@ -703,23 +706,20 @@ func (s *eventProcessor) sendEventStatistics(ctx context.Context, event types.Ev
 	s.statisticsSender.Send(ctx, event.GetEID(), stats)
 }
 
-func (s *eventProcessor) resolvePbehaviorInfo(ctx context.Context, entity types.Entity) (types.PbehaviorInfo, error) {
+func (s *eventProcessor) resolvePbehaviorInfo(ctx context.Context, entity types.Entity, now types.CpsTime) (types.PbehaviorInfo, error) {
 	if !entity.PbehaviorInfo.IsDefaultActive() {
 		return entity.PbehaviorInfo, nil
 	}
 
-	now := time.Now()
-	result, err := s.pbhTypeResolver.Resolve(ctx, entity, now)
+	result, err := s.pbhTypeResolver.Resolve(ctx, entity, now.Time)
 	if err != nil {
 		return types.PbehaviorInfo{}, err
 	}
 
-	return pbehavior.NewPBehaviorInfo(types.CpsTime{Time: now}, result), nil
+	return pbehavior.NewPBehaviorInfo(now, result), nil
 }
 
-func newAlarm(event types.Event, alarmConfig config.AlarmConfig) types.Alarm {
-	now := types.CpsTime{Time: time.Now()}
-
+func newAlarm(event types.Event, alarmConfig config.AlarmConfig, now types.CpsTime) types.Alarm {
 	return types.Alarm{
 		EntityID: event.GetEID(),
 		ID:       utils.NewID(),
@@ -741,6 +741,7 @@ func newAlarm(event types.Event, alarmConfig config.AlarmConfig) types.Alarm {
 			Resource:          event.Resource,
 			Parents:           []string{},
 			Children:          []string{},
+			UnlinkedParents:   []string{},
 			Infos:             map[string]map[string]interface{}{},
 			RuleVersion:       map[string]string{},
 		},

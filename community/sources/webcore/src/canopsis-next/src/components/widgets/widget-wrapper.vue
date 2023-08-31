@@ -19,22 +19,15 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import {
-  WIDGET_TYPES,
-  WIDGET_TYPES_RULES,
-  WIDGET_GRID_ROW_HEIGHT,
-  COMPONENTS_BY_WIDGET_TYPES,
-} from '@/constants';
-
-import {
-  prepareAlarmListWidget,
-  prepareContextWidget,
-  prepareServiceWeatherWidget,
-  prepareStatsCalendarAndCounterWidget,
-  prepareMapWidget,
-} from '@/helpers/widgets';
+import { WIDGET_TYPES, WIDGET_TYPES_RULES, WIDGET_GRID_ROW_HEIGHT, COMPONENTS_BY_WIDGET_TYPES } from '@/constants';
 
 import featuresService from '@/services/features';
+
+import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
+import { prepareContextWidget } from '@/helpers/entities/widget/forms/context';
+import { prepareServiceWeatherWidget } from '@/helpers/entities/widget/forms/service-weather';
+import { prepareStatsCalendarAndCounterWidget } from '@/helpers/entities/widget/forms/stats-calendar';
+import { prepareMapWidget } from '@/helpers/entities/widget/forms/map';
 
 import AlarmsListWidget from './alarm/alarms-list.vue';
 import EntitiesListWidget from './context/entities-list.vue';
@@ -48,6 +41,8 @@ import BarChartWidget from './chart/bar-chart-widget.vue';
 import LineChartWidget from './chart/line-chart-widget.vue';
 import PieChartWidget from './chart/pie-chart-widget.vue';
 import NumbersWidget from './chart/numbers-widget.vue';
+import UserStatisticsWidget from './statistics/user-statistics-widget.vue';
+import AlarmStatisticsWidget from './statistics/alarm-statistics-widget.vue';
 
 const { mapGetters } = createNamespacedHelpers('info');
 
@@ -65,6 +60,8 @@ export default {
     LineChartWidget,
     PieChartWidget,
     NumbersWidget,
+    UserStatisticsWidget,
+    AlarmStatisticsWidget,
 
     ...featuresService.get('components.widgetWrapper.components', {}),
   },

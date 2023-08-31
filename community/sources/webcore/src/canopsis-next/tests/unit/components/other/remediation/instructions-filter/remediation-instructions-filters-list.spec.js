@@ -1,36 +1,10 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import RemediationInstructionsFiltersList from '@/components/other/remediation/instructions-filter/remediation-instructions-filters-list.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'remediation-instructions-filters-item': true,
 };
-
-const factory = (options = {}) => shallowMount(RemediationInstructionsFiltersList, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(RemediationInstructionsFiltersList, {
-  localVue,
-  stubs,
-
-  parentComponent: {
-    provide: {
-      list: {
-        register: jest.fn(),
-        unregister: jest.fn(),
-      },
-      listClick: jest.fn(),
-    },
-  },
-
-  ...options,
-});
 
 const selectRemediationInstructionsFiltersItemsField = wrapper => wrapper.findAll('remediation-instructions-filters-item-stub');
 
@@ -50,6 +24,20 @@ describe('remediation-instructions-filters-list', () => {
     instructions: [{}],
     _id: 'id2',
   }];
+
+  const factory = generateShallowRenderer(RemediationInstructionsFiltersList, { stubs });
+  const snapshotFactory = generateRenderer(RemediationInstructionsFiltersList, {
+    stubs,
+    parentComponent: {
+      provide: {
+        list: {
+          register: jest.fn(),
+          unregister: jest.fn(),
+        },
+        listClick: jest.fn(),
+      },
+    },
+  });
 
   it('Instruction filters changed after trigger instruction filters item field', () => {
     const wrapper = factory({

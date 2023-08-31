@@ -16,12 +16,15 @@ Feature: Get a share token
           "description": "test-share-token-to-get-1-description",
           "user": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
-          "role": {
-            "_id": "admin",
-            "name": "admin"
-          },
+          "roles": [
+            {
+              "_id": "admin",
+              "name": "admin"
+            }
+          ],
           "created": 1619083733,
           "accessed": 1619083733,
           "expired": null

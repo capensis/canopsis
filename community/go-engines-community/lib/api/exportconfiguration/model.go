@@ -5,7 +5,9 @@ type ExportDocuments map[int]map[string]interface{}
 type Request struct {
 	// Possible export values.
 	//   * `configuration` - export configuration collection
-	//   * `acl` - export default_rights collection
+	//   * `user` - export user collection
+	//   * `role` - export role collection
+	//   * `permission` - export permission collection
 	//   * `pbehavior` - export pbehavior collection
 	//   * `pbehavior_type` - export pbehavior_types collection
 	//   * `pbehavior_reason` - export pbehavior_reason collection
@@ -36,5 +38,6 @@ type Request struct {
 	//   * `pattern` - export pattern collection
 	//   * `declare_ticket_rule` - export declare_ticket_rule collection
 	//   * `link_rule` - export link_rule collection
+	//   * `map` - export map collection
 	Exports []string `json:"export"`
 }

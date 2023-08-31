@@ -45,11 +45,12 @@ import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Op } from 'dayspan';
 
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
+import { COLORS } from '@/config';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 import { getMostReadableTextColor } from '@/helpers/color';
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/calendar/dayspan';
-import { pbehaviorToTimespanRequest } from '@/helpers/forms/timespans-pbehavior';
+import { pbehaviorToTimespanRequest } from '@/helpers/entities/pbehavior/timespans/form';
 import { convertDateToTimestampByTimezone, convertDateToMoment } from '@/helpers/date/date';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
@@ -57,7 +58,6 @@ import { entitiesPbehaviorTimespansMixin } from '@/mixins/entities/pbehavior/tim
 
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 import PbehaviorPlanningCalendarLegend from './partials/pbehavior-planning-calendar-legend.vue';
-import { COLORS } from '@/config';
 
 const { mapActions: pbehaviorTypesMapActions } = createNamespacedHelpers('pbehaviorTypes');
 
@@ -123,6 +123,7 @@ export default {
             openOnHover: false,
             ignoreClickOutside: true,
             ignoreClickUpperOutside: true,
+            contentClass: 'pbehavior-calendar-event-popover__wrapper',
           },
         },
         dsCalendarEvent: {
@@ -130,6 +131,7 @@ export default {
             openOnHover: false,
             ignoreClickOutside: true,
             ignoreClickUpperOutside: true,
+            contentClass: 'pbehavior-calendar-event-popover__wrapper',
           },
         },
         dsCalendarEventPlaceholder: {
@@ -137,6 +139,7 @@ export default {
             openOnHover: false,
             ignoreClickOutside: true,
             ignoreClickUpperOutside: true,
+            contentClass: 'pbehavior-calendar-event-popover__wrapper',
           },
         },
         dsCalendarEventTimePlaceholder: {
@@ -144,6 +147,7 @@ export default {
             openOnHover: false,
             ignoreClickOutside: true,
             ignoreClickUpperOutside: true,
+            contentClass: 'pbehavior-calendar-event-popover__wrapper',
           },
         },
       };
@@ -565,10 +569,18 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 // We've turned off animation because of render freezes on css animation on the render process
 
-.calendar-progress ::v-deep .v-progress-circular--indeterminate .v-progress-circular__overlay {
+.calendar-progress .v-progress-circular--indeterminate .v-progress-circular__overlay {
   animation: none;
+}
+
+.pbehavior-calendar-event-popover__wrapper {
+  max-height: 95%;
+  max-width: 95% !important;
+  width: 980px !important;
+  top: 50% !important;
+  transform: translate3d(0, -50%, 0);
 }
 </style>

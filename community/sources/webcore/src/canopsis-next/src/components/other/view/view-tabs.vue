@@ -3,16 +3,18 @@
     ref="tabs",
     :key="vTabsKey",
     :value="$route.fullPath",
-    :class="{ hidden: this.tabs.length < 2 && !editing, 'tabs-editing': editing }",
+    :class="{ hidden: tabs.length < 2 && !editing, 'tabs-editing': editing }",
     :hide-slider="changed",
     color="secondary lighten-2",
     slider-color="primary",
     dark
   )
-    draggable.d-flex(
+    c-draggable-list-field.d-flex(
       v-if="tabs.length",
       :value="tabs",
-      :options="draggableOptions",
+      :disabled="!editing",
+      drag-class="draggable-item--dragging",
+      chosen-class="draggable-item--chosen",
       @end="onDragEnd",
       @input="$emit('update:tabs', $event)"
     )
@@ -44,9 +46,6 @@
 </template>
 
 <script>
-import Draggable from 'vuedraggable';
-
-import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { MODALS, ROUTES_NAMES } from '@/constants';
 
 import { activeViewMixin } from '@/mixins/active-view';
@@ -56,9 +55,6 @@ import { entitiesViewMixin } from '@/mixins/entities/view';
 import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
 
 export default {
-  components: {
-    Draggable,
-  },
   mixins: [
     activeViewMixin,
     viewRouterMixin,
@@ -83,13 +79,6 @@ export default {
   computed: {
     vTabsKey() {
       return this.view.tabs.map(tab => tab._id).join('-');
-    },
-
-    draggableOptions() {
-      return {
-        animation: VUETIFY_ANIMATION_DELAY,
-        disabled: !this.editing,
-      };
     },
 
     getTabHrefById() {
@@ -242,6 +231,16 @@ export default {
         box-shadow: none !important;
         pointer-events: none;
       }
+    }
+
+    &--dragging, &--chosen {
+      & ::v-deep .v-ripple__container {
+        display: none;
+      }
+    }
+
+    &--dragging {
+      background: var(--v-secondary-lighten2);
     }
   }
 </style>

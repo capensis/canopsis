@@ -2,16 +2,14 @@ import { range } from 'lodash';
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorModule } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { selectRowEditButtonByIndex, selectRowRemoveButtonByIndex } from '@unit/utils/table';
 import { MODALS } from '@/constants';
-import { createEntityIdPatternByValue } from '@/helpers/pattern';
+import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-search-field': true,
@@ -33,12 +31,14 @@ describe('pbehaviors-simple-list', () => {
     _id: `id-pbehavior-${index}`,
     name: `name-${index}`,
     author: {
-      name: `author-${index}`,
+      display_name: `author-${index}`,
     },
     enabled: !!(index % 2),
     editable: !!(index % 2),
     tstart: 1614861000 + index,
     tstop: 1614861200 + index,
+    rrule: index % 2 ? 'RRULE:' : null,
+    rrule_end: index % 4 ? 1614861888 + index : null,
     type: {
       name: `type-name-${index}`,
       icon_name: `type-icon-name-${index}`,
@@ -54,7 +54,6 @@ describe('pbehaviors-simple-list', () => {
   const store = createMockedStoreModules([pbehaviorModule]);
 
   const factory = generateShallowRenderer(PbehaviorsSimpleList, {
-    localVue,
     stubs,
     mocks: { $modals },
     parentComponent: {
@@ -66,7 +65,7 @@ describe('pbehaviors-simple-list', () => {
     },
   });
   const snapshotFactory = generateRenderer(PbehaviorsSimpleList, {
-    localVue,
+
     stubs,
     mocks: { $modals },
     parentComponent: {

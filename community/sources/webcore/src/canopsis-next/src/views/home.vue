@@ -4,10 +4,10 @@
 </template>
 
 <script>
+import { ROUTES_NAMES } from '@/constants';
+
 import { authMixin } from '@/mixins/auth';
 import { entitiesRoleMixin } from '@/mixins/entities/role';
-
-import { ROUTES_NAMES } from '@/constants';
 
 export default {
   mixins: [authMixin, entitiesRoleMixin],
@@ -37,7 +37,7 @@ export default {
     },
 
     async redirectToRoleDefaultView() {
-      const { defaultview: roleDefaultView } = this.currentUser.role;
+      const { defaultview: roleDefaultView } = this.currentUser.roles.find(role => !!role.defaultview);
 
       if (!roleDefaultView) {
         this.addRedirectInfoPopup(this.$t('home.popups.info.notSelectedRoleDefaultView'));

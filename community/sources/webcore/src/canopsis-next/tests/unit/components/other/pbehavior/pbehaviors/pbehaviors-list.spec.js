@@ -1,11 +1,9 @@
 import { range } from 'lodash';
 
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import PbehaviorsList from '@/components/other/pbehavior/pbehaviors/pbehaviors-list.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
@@ -37,6 +35,7 @@ describe('pbehaviors-list', () => {
     created: 1614861888 + index,
     updated: 1614861888 + index,
     rrule: index % 2 ? 'RRULWE' : null,
+    rrule_end: index % 4 ? 1614861888 + index : null,
     is_active_status: !(index % 2),
     type: {
       icon_name: `type-icon-name-${index}`,
@@ -44,7 +43,6 @@ describe('pbehaviors-list', () => {
   }));
 
   const snapshotFactory = generateRenderer(PbehaviorsList, {
-    localVue,
     stubs,
     parentComponent: {
       provide: {

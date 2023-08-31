@@ -1,10 +1,8 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import CInformationBlock from '@/components/common/block/c-information-block.vue';
 import KpiCharts from '@/components/other/kpi/charts/kpi-charts';
 import CHelpIcon from '@/components/common/icons/c-help-icon.vue';
-
-const localVue = createVueInstance();
 
 const snapshotStubs = {
   'c-information-block': CInformationBlock,
@@ -14,15 +12,12 @@ const snapshotStubs = {
   'kpi-sli': true,
 };
 
-const snapshotFactory = (options = {}) => mount(KpiCharts, {
-  localVue,
-  stubs: snapshotStubs,
-  attachTo: document.body,
-
-  ...options,
-});
-
 describe('kpi-charts', () => {
+  const snapshotFactory = generateRenderer(KpiCharts, {
+    stubs: snapshotStubs,
+    attachTo: document.body,
+  });
+
   it('Renders `kpi-charts` with default props', () => {
     const wrapper = snapshotFactory();
 
