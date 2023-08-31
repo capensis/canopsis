@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { LOGIN_MAINTENANCE_POLLING_DELAY } from '@/constants';
+import { LOGIN_APP_INFO_POLLING_DELAY } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
@@ -32,41 +32,26 @@ export default {
   mixins: [authMixin, entitiesInfoMixin],
   data() {
     return {
-      timerId: null,
+      intervalId: null,
     };
   },
-  watch: {
-    maintenance: {
-      immediate: true,
-      handler(maintenance) {
-        if (maintenance) {
-          this.startMaintenancePolling();
-        } else {
-          this.stopMaintenancePolling();
-        }
-      },
-    },
+  mounted() {
+    this.startAppInfoPolling();
   },
   beforeDestroy() {
-    this.stopMaintenancePolling();
+    this.stopAppInfoPolling();
   },
   methods: {
-    startMaintenancePolling() {
-      if (this.timerId) {
-        this.stopMaintenancePolling();
+    startAppInfoPolling() {
+      if (this.intervalId) {
+        this.stopAppInfoPolling();
       }
 
-      this.timerId = setTimeout(async () => {
-        await this.fetchAppInfo();
-
-        if (this.maintenance) {
-          this.startMaintenancePolling();
-        }
-      }, LOGIN_MAINTENANCE_POLLING_DELAY);
+      this.intervalId = setInterval(this.fetchAppInfo, LOGIN_APP_INFO_POLLING_DELAY);
     },
 
-    stopMaintenancePolling() {
-      clearTimeout(this.timerId);
+    stopAppInfoPolling() {
+      clearInterval(this.intervalId);
     },
   },
 };
