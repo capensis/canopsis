@@ -102,6 +102,14 @@ export const isInfosRuleType = type => type === PATTERN_RULE_TYPES.infos;
 export const isExtraInfosRuleType = type => type === PATTERN_RULE_TYPES.extraInfos;
 
 /**
+ * Check rule is object
+ *
+ * @param {string} type
+ * @return {boolean}
+ */
+export const isObjectRuleType = type => type === PATTERN_RULE_TYPES.object;
+
+/**
  * Check rule is date
  *
  * @param {string} type
@@ -244,6 +252,23 @@ export const isDurationPatternRuleField = value => value === ALARM_PATTERN_FIELD
  * @return {boolean}
  */
 export const isExtraInfosPatternRuleField = value => value?.startsWith(EVENT_FILTER_PATTERN_FIELDS.extraInfos);
+
+/**
+ * Get object pattern field
+ *
+ * @param {string} value
+ * @return {string}
+ */
+export const getObjectPatternRuleField = value => [ALARM_PATTERN_FIELDS.ticketData]
+  .find(field => value.startsWith(field));
+
+/**
+ * Check pattern field is object
+ *
+ * @param {string} value
+ * @return {boolean}
+ */
+export const isObjectPatternRuleField = value => !!getObjectPatternRuleField(value);
 
 /**
  * Check rule value is valid without field type

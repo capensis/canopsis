@@ -177,6 +177,12 @@ export default {
       };
     },
 
+    ticketDataOptions() {
+      return {
+        type: PATTERN_RULE_TYPES.object,
+      };
+    },
+
     dateOptions() {
       return {
         type: PATTERN_RULE_TYPES.date,
@@ -418,6 +424,11 @@ export default {
           text: this.$t('common.ticketMessage'),
           value: ALARM_PATTERN_FIELDS.ticketMessage,
           options: this.stringWithExistOptions,
+        },
+        {
+          text: this.$t('common.ticketData'),
+          value: ALARM_PATTERN_FIELDS.ticketData,
+          options: this.ticketDataOptions,
         },
         {
           text: this.$t('common.snoozed'),
