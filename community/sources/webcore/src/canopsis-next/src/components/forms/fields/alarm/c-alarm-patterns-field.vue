@@ -181,6 +181,12 @@ export default {
       };
     },
 
+    ticketDataOptions() {
+      return {
+        type: PATTERN_RULE_TYPES.object,
+      };
+    },
+
     dateOptions() {
       return {
         type: PATTERN_RULE_TYPES.date,
@@ -398,6 +404,10 @@ export default {
         {
           value: ALARM_PATTERN_FIELDS.ticketMessage,
           options: this.stringWithExistOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.ticketData,
+          options: this.ticketDataOptions,
         },
         {
           value: ALARM_PATTERN_FIELDS.snooze,
