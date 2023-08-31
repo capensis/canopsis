@@ -391,27 +391,6 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Method: http.MethodGet,
 			Body:   "test-job-execution-failed-output",
 		},
-		// External data
-		"/api/external_data": {
-			Code:   http.StatusOK,
-			Method: http.MethodGet,
-			Body:   "{\"id\": 1,\"title\": \"test title\"}",
-		},
-		"/api/external_data_document_with_array": {
-			Code:   http.StatusOK,
-			Method: http.MethodGet,
-			Body:   "{\"array\":[{\"id\":\"1\",\"title\":\"test title 1\"},{\"id\":\"2\",\"title\":\"test title 2\"}]}",
-		},
-		"/api/external_data_response_is_array": {
-			Code:   http.StatusOK,
-			Method: http.MethodGet,
-			Body:   "[{\"id\":\"1\",\"title\":\"test title 1\"},{\"id\":\"2\",\"title\":\"test title 2\"}]",
-		},
-		"/api/external_data_response_is_nested_documents": {
-			Code:   http.StatusOK,
-			Method: http.MethodGet,
-			Body:   "{\"objects\":{\"server\":{\"code\":200,\"message\":\"test message\",\"fields\":{\"name\":\"test name\"}}},\"code\":400,\"message\":\"test message\"}",
-		},
 		// Webhook
 		"/webhook/request": {
 			Code:                 http.StatusOK,

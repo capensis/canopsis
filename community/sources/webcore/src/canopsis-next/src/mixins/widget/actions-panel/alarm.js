@@ -392,9 +392,11 @@ export const widgetActionsPanelAlarmMixin = {
       infos,
       ...alarm
     }) {
-      const variables = [];
+      const variables = [{
+        ...convertObjectToTreeview(alarm, 'alarm'),
 
-      variables.push(convertObjectToTreeview(alarm, 'alarm'));
+        original: this.item,
+      }];
 
       if (entity) {
         variables.push(convertObjectToTreeview(entity, 'entity'));

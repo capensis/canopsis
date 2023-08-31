@@ -43,10 +43,7 @@ import {
   convertDateToString,
   getNowTimestamp,
 } from '@/helpers/date/date';
-import {
-  convertStartDateIntervalToTimestamp,
-  convertStopDateIntervalToTimestamp,
-} from '@/helpers/date/date-intervals';
+import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
 import { convertUnit } from '@/helpers/date/duration';
 import { colorToRgba } from '@/helpers/color';
 import { saveFile } from '@/helpers/file/files';

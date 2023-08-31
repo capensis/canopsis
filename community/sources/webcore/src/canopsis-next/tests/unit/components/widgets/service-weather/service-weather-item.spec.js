@@ -1,10 +1,7 @@
 import flushPromises from 'flush-promises';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import {
-  COLOR_INDICATOR_TYPES,
-  DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE,
-} from '@/constants';
+import { COLOR_INDICATOR_TYPES, DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE } from '@/constants';
 
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';

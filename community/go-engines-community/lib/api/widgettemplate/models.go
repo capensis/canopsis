@@ -16,7 +16,7 @@ type ListRequest struct {
 type EditRequest struct {
 	ID      string              `json:"-"`
 	Title   string              `json:"title" binding:"required,max=255"`
-	Type    string              `json:"type" binding:"required,oneof=alarm_columns entity_columns alarm_more_infos weather_item weather_modal weather_entity"`
+	Type    string              `json:"type" binding:"required,oneof=alarm_columns entity_columns alarm_more_infos alarm_export_to_pdf weather_item weather_modal weather_entity"`
 	Columns []view.WidgetColumn `json:"columns" binding:"dive"`
 	Content string              `json:"content"`
 	Author  string              `json:"author" swaggerignore:"true"`
