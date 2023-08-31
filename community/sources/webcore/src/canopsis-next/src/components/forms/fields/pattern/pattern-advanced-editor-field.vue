@@ -74,7 +74,7 @@ export default {
           || isExtraInfosRuleType(options?.type)
           || isObjectRuleType(options?.type)
         ) {
-          return field.startsWith(value);
+          return field.startsWith(`${value}.`);
         }
 
         return value === field;
