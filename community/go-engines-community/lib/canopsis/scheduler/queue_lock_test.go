@@ -3,13 +3,14 @@ package scheduler_test
 import (
 	"bytes"
 	"context"
+	"testing"
+	"time"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	mock_v8 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/go-redis/redis/v8"
 	"github.com/go-redis/redis/v8"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
-	"testing"
-	"time"
 )
 
 func TestQueueLock_LockOrPush_GivenLockIsNotSet_ShouldSetLock(t *testing.T) {
