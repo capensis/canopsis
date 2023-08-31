@@ -26,6 +26,14 @@ export default {
       type: String,
       default: '',
     },
+    resizing: {
+      type: Boolean,
+      default: false,
+    },
+    resizable: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     component() {

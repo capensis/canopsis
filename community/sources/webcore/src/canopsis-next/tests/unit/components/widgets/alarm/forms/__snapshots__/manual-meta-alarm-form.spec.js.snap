@@ -102,6 +102,9 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with alarms 1
       </div>
     </div>
   </div>
+  <c-enabled-field-stub
+    label="Auto resolve"
+  />
 </div>
 `;
 
@@ -241,6 +244,10 @@ exports[`manual-meta-alarm-form Renders \`manual-meta-alarm-form\` with default 
       </div>
     </div>
   </div>
+  <c-enabled-field-stub
+    label="Auto resolve"
+    value="true"
+  />
 </div>
 `;
 

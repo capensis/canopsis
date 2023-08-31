@@ -7,8 +7,8 @@
 </template>
 
 <script>
-import RemediationStatisticsShowModeField from './remediation-statistics-show-mode-field.vue';
-import RemediationStatisticsInstructionsField from './remediation-statistics-instructions-field.vue';
+import RemediationStatisticsShowModeField from '../form/fields/remediation-statistics-show-mode-field.vue';
+import RemediationStatisticsInstructionsField from '../form/fields/remediation-statistics-instructions-field.vue';
 
 export default {
   components: {

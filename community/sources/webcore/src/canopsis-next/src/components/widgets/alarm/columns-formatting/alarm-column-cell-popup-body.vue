@@ -12,16 +12,13 @@
           v-icon(color="error", small) close
     v-fade-transition
       v-card-text.pa-2
-        v-runtime-template(:template="popupTextContent", :template-props="{ alarm }")
+        c-runtime-template(:template="popupTextContent", :template-props="{ alarm }")
 </template>
 
 <script>
-import VRuntimeTemplate from 'v-runtime-template';
-
 import { compile } from '@/helpers/handlebars';
 
 export default {
-  components: { VRuntimeTemplate },
   props: {
     alarm: {
       type: Object,

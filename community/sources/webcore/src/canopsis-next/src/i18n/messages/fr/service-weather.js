@@ -1,7 +1,6 @@
 import { SERVICE_WEATHER_STATE_COUNTERS, WEATHER_ACTIONS_TYPES } from '@/constants';
 
 export default {
-  seeAlarms: 'Voir les alarmes',
   grey: 'Gris',
   hideGrey: 'Cacher le gris',
   primaryIcon: 'Icône principale',

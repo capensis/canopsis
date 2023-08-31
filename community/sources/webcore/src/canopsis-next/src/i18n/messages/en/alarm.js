@@ -1,7 +1,6 @@
 import { EVENT_ENTITY_TYPES, ALARM_METRIC_PARAMETERS } from '@/constants';
 
 export default {
-  eventsCount: 'Events count',
   liveReporting: 'Set a custom date range',
   ackAuthor: 'Ack author',
   lastCommentAuthor: 'Last comment author',
@@ -43,14 +42,16 @@ export default {
       declareTicket: 'Declare ticket',
       associateTicket: 'Associate ticket',
       cancel: 'Cancel alarm',
+      unCancel: 'Uncancel alarm',
       fastCancel: 'Fast cancel',
       changeState: 'Change and lock severity',
       variablesHelp: 'List of available variables',
       history: 'History',
-      groupRequest: 'Suggest group request for meta alarm',
       createManualMetaAlarm: 'Manual meta alarm management',
       removeAlarmsFromManualMetaAlarm: 'Unlink alarm from manual meta alarm',
+      removeAlarmsFromAutoMetaAlarm: 'Unlink alarm from meta alarm',
       comment: 'Comment',
+      exportPdf: 'Export alarm to PDF file',
     },
     iconsTitles: {
       ack: 'Ack',
@@ -118,6 +119,7 @@ export default {
   tabs: {
     moreInfos: 'More infos',
     timeLine: 'Timeline',
+    charts: 'Charts',
     alarmsChildren: 'Alarms consequences',
     trackSource: 'Track source',
     impactChain: 'Impact chain',
@@ -137,6 +139,9 @@ export default {
     failedManualInstructions: 'Manual instruction <strong>{title}</strong> is failed | Manual instructions <strong>{title}</strong> is failed',
     failedAutoInstructions: 'Automatic instruction <strong>{title}</strong> is failed | Automatic instructions <strong>{title}</strong> is failed',
     hasManualInstruction: 'There is a manual instruction for this type of an incident | There are a manual instructions for this type of an incident',
+    resetChangeColumns: 'Reset columns ordering/resizing',
+    startChangeColumns: 'Start change columns ordering/resizing',
+    finishChangeColumns: 'Finish change columns ordering/resizing',
   },
   metrics: {
     [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Number of created alarms',
@@ -167,9 +172,12 @@ export default {
     [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]: 'Number of not acked alarms with duration 1-4h',
     [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]: 'Number of not acked alarms with duration 4-24h',
     [ALARM_METRIC_PARAMETERS.notAckedInDayAlarms]: 'Number of not acked alarms older than 24h',
+    [ALARM_METRIC_PARAMETERS.minResolve]: 'Min time to resolve alarms',
+    [ALARM_METRIC_PARAMETERS.maxResolve]: 'Max time to resolve alarms',
   },
   fields: {
     displayName: 'Display name',
+    assignedInstructions: 'Assigned instructions',
     initialOutput: 'Initial output',
     initialLongOutput: 'Initial long output',
     lastComment: 'Last comment',
@@ -195,6 +203,7 @@ export default {
     ticketAuthor: 'Ticket submitter',
     ticketId: 'Ticket id',
     ticketMessage: 'Ticket message',
+    ticketCreatedAt: 'Ticket created at',
     entityId: 'Entity ID',
     entityName: 'Entity name',
     entityCategoryName: 'Entity category name',
@@ -207,5 +216,7 @@ export default {
     entityInfos: 'Entity infos',
     entityComponentInfos: 'Entity component infos',
     entityLastPbehaviorDate: 'Entity last pbehavior date',
+    openedChildren: 'Opened consequences',
+    closedChildren: 'Closed consequences',
   },
 };

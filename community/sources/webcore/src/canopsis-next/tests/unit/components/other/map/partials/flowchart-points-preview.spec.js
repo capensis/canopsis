@@ -1,31 +1,15 @@
 import { keyBy } from 'lodash';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { COLOR_INDICATOR_TYPES, SHAPES } from '@/constants';
 import { shapeToForm } from '@/helpers/flowchart/shapes';
 
 import FlowchartPointsPreview from '@/components/other/map/partials/flowchart-points-preview.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'point-icon': true,
   'point-popup-dialog': true,
 };
-
-const factory = (options = {}) => shallowMount(FlowchartPointsPreview, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(FlowchartPointsPreview, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectPoints = wrapper => wrapper.findAll('.flowchart-points-preview__point');
 const selectPointByIndex = (wrapper, index) => selectPoints(wrapper).at(index);
@@ -56,6 +40,9 @@ describe('flowchart-points-preview', () => {
     entity: {},
   };
   const points = [firstPoint, secondPoint];
+
+  const factory = generateShallowRenderer(FlowchartPointsPreview, { stubs });
+  const snapshotFactory = generateRenderer(FlowchartPointsPreview, { stubs });
 
   test('Show alarms emitted after trigger point popup dialog', async () => {
     const wrapper = factory({

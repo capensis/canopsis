@@ -5,7 +5,7 @@ const { mapActions, mapGetters } = createNamespacedHelpers('pbehaviorExceptions'
 /**
  * @mixin
  */
-export default {
+export const entitiesPbehaviorExceptionMixin = {
   computed: {
     ...mapGetters({
       pbehaviorExceptions: 'items',
@@ -21,6 +21,7 @@ export default {
       createPbehaviorException: 'create',
       updatePbehaviorException: 'update',
       removePbehaviorException: 'remove',
+      importPbehaviorException: 'import',
     }),
   },
 };

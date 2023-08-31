@@ -52,13 +52,9 @@
 <script>
 import { get, omit } from 'lodash';
 
-import {
-  WIDGET_GRID_SIZES_KEYS,
-  WIDGET_LAYOUT_MAX_WIDTHS,
-  MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP,
-} from '@/constants';
+import { WIDGET_GRID_SIZES_KEYS, WIDGET_LAYOUT_MAX_WIDTHS, MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP } from '@/constants';
 
-import { getWidgetsLayoutBySize } from '@/helpers/grid-layout';
+import { getWidgetsLayoutBySize } from '@/helpers/entities/widget/layout';
 
 import WidgetWrapperMenu from '@/components/widgets/partials/widget-wrapper-menu.vue';
 import WindowSizeField from '@/components/forms/fields/window-size.vue';

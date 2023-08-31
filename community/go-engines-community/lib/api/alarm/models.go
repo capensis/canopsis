@@ -1,5 +1,7 @@
 package alarm
 
+//go:generate easyjson -no_std_marshalers
+
 import (
 	"fmt"
 
@@ -133,11 +135,13 @@ type DetailsRequest struct {
 	WithDeclareTickets bool                 `json:"with_declare_tickets"`
 	Steps              *StepsRequest        `json:"steps"`
 	Children           *ChildDetailsRequest `json:"children"`
+	PerfData           []string             `json:"perf_data"`
 }
 
 type StepsRequest struct {
 	pagination.Query
-	Reversed bool `json:"reversed"`
+	Reversed bool   `json:"reversed"`
+	Type     string `json:"type"`
 }
 
 type ChildDetailsRequest struct {
@@ -169,9 +173,11 @@ type Details struct {
 	Steps    *StepDetails     `bson:"steps" json:"steps,omitempty"`
 	Children *ChildrenDetails `bson:"children" json:"children,omitempty"`
 
-	IsMetaAlarm bool   `json:"-" bson:"is_meta_alarm"`
-	EntityID    string `json:"-" bson:"d"`
-	StepsCount  int64  `json:"-" bson:"steps_count"`
+	FilteredPerfData []string `bson:"filtered_perf_data" json:"filtered_perf_data,omitempty"`
+
+	IsMetaAlarm bool         `json:"-" bson:"is_meta_alarm"`
+	StepsCount  int64        `json:"-" bson:"steps_count"`
+	Entity      types.Entity `json:"-" bson:"entity"`
 }
 
 type StepDetails struct {
@@ -190,6 +196,8 @@ type ExportRequest struct {
 	Separator string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
 }
 
+// ExportFetchParameters
+// easyjson:json
 type ExportFetchParameters struct {
 	BaseFilterRequest
 	TimeFormat string `json:"time_format" binding:"time_format"`
@@ -218,6 +226,8 @@ type Alarm struct {
 	MetaAlarmRule        *MetaAlarmRule `bson:"meta_alarm_rule,omitempty" json:"meta_alarm_rule,omitempty"`
 	IsMetaAlarm          *bool          `bson:"is_meta_alarm,omitempty" json:"is_meta_alarm,omitempty"`
 	Children             *int64         `bson:"children,omitempty" json:"children,omitempty"`
+	OpenedChildren       *int64         `bson:"opened_children,omitempty" json:"opened_children,omitempty"`
+	ClosedChildren       *int64         `bson:"closed_children,omitempty" json:"closed_children,omitempty"`
 	ChildrenInstructions *bool          `bson:"children_instructions" json:"children_instructions,omitempty"`
 	FilteredChildrenIDs  []string       `bson:"filtered_children,omitempty" json:"filtered_children,omitempty"`
 	// Meta alarm child fields

@@ -101,9 +101,6 @@ export default {
   createCancelEvent: {
     title: 'Annuler',
   },
-  createGroupRequestEvent: {
-    title: 'Proposition de regroupement pour méta-alarmes',
-  },
   createGroupEvent: {
     title: 'Créer une méta-alarme',
   },
@@ -181,6 +178,9 @@ export default {
   },
   createAckRemove: {
     title: 'Annuler l\'acquittement',
+  },
+  createUnCancel: {
+    title: 'Créer en uncanccel',
   },
   liveReporting: {
     editLiveReporting: 'Suivi personnalisé',
@@ -276,6 +276,18 @@ export default {
       },
       [WIDGET_TYPES.numbers]: {
         title: 'Nombres',
+      },
+      [WIDGET_TYPES.userStatistics]: {
+        title: 'Statistiques des utilisateurs',
+      },
+      [WIDGET_TYPES.alarmStatistics]: {
+        title: 'Statistiques des alarmes',
+      },
+      chart: {
+        title: 'Graphique',
+      },
+      report: {
+        title: 'Rapport',
       },
     },
   },
@@ -483,9 +495,6 @@ export default {
   },
   pbehaviorPlanning: {
     title: 'Comportements périodiques',
-  },
-  selectExceptionsLists: {
-    title: 'Choisissez la liste des exceptions',
   },
   createRrule: {
     title: 'Créer une règle de récurrence',
@@ -917,5 +926,34 @@ export default {
     edit: {
       title: 'Modifier le générateur de liens',
     },
+  },
+  createAlarmChart: {
+    [WIDGET_TYPES.barChart]: {
+      create: {
+        title: 'Créer un graphique à barres',
+      },
+      edit: {
+        title: 'Modifier le graphique à barres',
+      },
+    },
+    [WIDGET_TYPES.lineChart]: {
+      create: {
+        title: 'Créer un graphique en courbes',
+      },
+      edit: {
+        title: 'Modifier le graphique en courbes',
+      },
+    },
+    [WIDGET_TYPES.numbers]: {
+      create: {
+        title: 'Créer un tableau de nombres',
+      },
+      edit: {
+        title: 'Modifier le tableau des nombres',
+      },
+    },
+  },
+  importPbehaviorException: {
+    title: 'Importer des dates d\'exception',
   },
 };

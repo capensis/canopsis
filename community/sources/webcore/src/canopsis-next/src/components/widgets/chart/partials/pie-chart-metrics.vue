@@ -1,7 +1,8 @@
 <template lang="pug">
-  v-layout.chart-metrics-widget(column, align-center)
-    h4.chart-metrics-widget__title {{ title }}
-    pie-chart.pie-chart-metrics__chart.chart-metrics-widget__chart(
+  v-layout.kpi-widget(column, align-center)
+    h4.kpi-widget__title {{ title }}
+    pie-chart.pie-chart-metrics__chart.kpi-widget__chart(
+      :chart-id="chartId",
       :datasets="datasets",
       :labels="labels",
       :options="chartOptions",
@@ -14,11 +15,13 @@
 
 <script>
 import { COLORS } from '@/config';
-
 import { KPI_PIE_CHART_SHOW_MODS } from '@/constants';
 
-import { getMetricColor, getMostReadableTextColor } from '@/helpers/color';
+import { getMostReadableTextColor } from '@/helpers/color';
+import { getMetricColor } from '@/helpers/entities/metric/color';
 import { convertNumberToRoundedPercentString } from '@/helpers/string';
+
+import { chartMetricsOptionsMixin } from '@/mixins/chart/metrics-options';
 
 import KpiChartExportActions from '@/components/other/kpi/charts/partials/kpi-chart-export-actions.vue';
 
@@ -27,14 +30,15 @@ const PieChart = () => import(/* webpackChunkName: "Charts" */ '@/components/com
 export default {
   inject: ['$system'],
   components: { KpiChartExportActions, PieChart },
+  mixins: [chartMetricsOptionsMixin],
   props: {
+    chartId: {
+      type: String,
+      required: false,
+    },
     metrics: {
       type: Array,
       default: () => [],
-    },
-    colorsByMetrics: {
-      type: Object,
-      default: () => ({}),
     },
     title: {
       type: String,
@@ -67,9 +71,9 @@ export default {
     },
 
     datasets() {
-      const { data, backgroundColor } = this.metrics.reduce((acc, metric) => {
+      const { data, backgroundColor } = this.preparedMetrics.reduce((acc, metric) => {
         acc.data.push(metric.value);
-        acc.backgroundColor.push(this.colorsByMetrics[metric.title] ?? getMetricColor(metric.title));
+        acc.backgroundColor.push(metric.color ?? getMetricColor(metric.title));
 
         return acc;
       }, {
@@ -86,7 +90,7 @@ export default {
     },
 
     labels() {
-      return this.metrics.map(metric => this.$t(`alarm.metrics.${metric.title}`));
+      return this.preparedMetrics.map(metric => metric.label ?? this.getMetricLabel(metric.title));
     },
 
     chartOptions() {
@@ -106,22 +110,7 @@ export default {
               family: 'Arial, sans-serif',
             },
           },
-          legend: {
-            position({ chart }) {
-              return chart.width > 600 ? 'right' : 'top';
-            },
-            maxWidth: 300,
-            maxHeight: 300,
-            labels: {
-              font: {
-                size: 11,
-                family: 'Arial, sans-serif',
-              },
-              boxWidth: 15,
-              boxHeight: 15,
-              padding: 8,
-            },
-          },
+          legend: this.legend,
           emptyPie: {
             width: 2,
             color: COLORS.error,
@@ -143,6 +132,12 @@ export default {
     },
   },
   methods: {
+    getMetricLabel(metric) {
+      const metricMessageKey = `alarm.metrics.${metric}`;
+
+      return this.$te(metricMessageKey) ? this.$t(metricMessageKey) : metric;
+    },
+
     formatDataLabel(value) {
       if (!value) {
         return null;

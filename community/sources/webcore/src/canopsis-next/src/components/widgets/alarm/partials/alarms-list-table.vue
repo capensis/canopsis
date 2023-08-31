@@ -6,7 +6,7 @@
     c-empty-data-table-columns(v-if="!columns.length")
     div(v-else)
       v-layout.alarms-list-table__top-pagination.px-4.position-relative(
-        v-if="totalItems && (densable || !hideActions || !hidePagination)",
+        v-if="shownTopPagination",
         ref="actions",
         row,
         align-center
@@ -14,30 +14,41 @@
         v-flex.alarms-list-table__top-pagination--left(v-if="densable || !hideActions", xs6)
           v-layout(row, align-center, justify-start)
             c-density-btn-toggle(v-if="densable", :value="dense", @change="$emit('update:dense', $event)")
-            v-fade-transition
+            v-fade-transition(v-if="!hideActions")
               v-flex.px-1(v-show="unresolvedSelected.length")
                 mass-actions-panel(
-                  v-if="!hideActions",
                   :items="unresolvedSelected",
                   :widget="widget",
                   :refresh-alarms-list="refreshAlarmsList",
                   @clear:items="clearSelected"
                 )
-        v-flex.alarms-list-table__top-pagination--center-absolute(xs4)
+        v-flex.alarms-list-table__top-pagination--center-absolute(v-if="!hidePagination", xs4)
           c-pagination(
-            v-if="!hidePagination",
             :page="pagination.page",
             :limit="pagination.limit",
             :total="totalItems",
             type="top",
             @input="updateQueryPage"
           )
+        v-flex.alarms-list-table__top-pagination--right-absolute(v-if="resizableColumn || draggableColumn")
+          c-action-btn(
+            v-if="isColumnsChanging",
+            :tooltip="$t('alarm.tooltips.resetChangeColumns')",
+            icon="$vuetify.icons.restart_alt",
+            @click="resetColumnsSettings"
+          )
+          c-action-btn(
+            :icon="isColumnsChanging ? 'lock_open' : 'lock_outline'",
+            :tooltip="$t(`alarm.tooltips.${isColumnsChanging ? 'finishChangeColumns' : 'startChangeColumns'}`)",
+            @click="toggleColumnEditingMode"
+          )
       v-data-table.alarms-list-table(
         ref="dataTable",
         v-model="selected",
         :class="vDataTableClass",
+        :style="vDataTableStyle",
         :items="alarms",
-        :headers="headers",
+        :headers="headersWithWidth",
         :total-items="totalItems",
         :pagination="pagination",
         :select-all="selectable",
@@ -45,6 +56,7 @@
         :expand="expandable",
         :dense="isMediumHeight",
         :ultra-dense="isSmallHeight",
+        header-key="value",
         item-key="_id",
         hide-actions,
         multi-sort,
@@ -53,22 +65,31 @@
         template(#progress="")
           v-fade-transition
             v-progress-linear(color="primary", height="2", indeterminate)
-        template(#headerCell="{ header }")
+        template(#headerCell="{ header, index }")
           alarm-header-cell(
             :header="header",
             :selected-tag="selectedTag",
+            :resizing="resizingMode",
             @clear:tag="$emit('clear:tag')"
           )
+          template(v-if="header.value !== 'actions'")
+            span.alarms-list-table__dragging-handler(v-if="draggingMode", @click.stop="")
+            span.alarms-list-table__resize-handler(
+              v-if="resizingMode",
+              @mousedown.stop.prevent="startColumnResize(header.value)",
+              @click.stop=""
+            )
         template(#items="props")
           alarms-list-row(
             v-model="props.selected",
             v-on="rowListeners",
             :ref="`row${props.item._id}`",
+            :key="props.item._id",
             :selectable="selectable",
             :expandable="expandable",
             :row="props",
             :widget="widget",
-            :columns="preparedColumns",
+            :columns="sortedColumns",
             :parent-alarm="parentAlarm",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)",
             :refresh-alarms-list="refreshAlarmsList",
@@ -77,6 +98,9 @@
             :hide-actions="hideActions",
             :medium="isMediumHeight",
             :small="isSmallHeight",
+            :resizing="resizingMode",
+            :wrap-actions="resizableColumn",
+            @start:resize="startColumnResize",
             @select:tag="$emit('select:tag', $event)"
           )
         template(#expand="{ item, index }")
@@ -85,7 +109,8 @@
             :parent-alarm-id="parentAlarmId",
             :widget="widget",
             :hide-children="hideChildren",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
+            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)",
+            @select:tag="$emit('select:tag', $event)"
           )
     c-table-pagination(
       v-if="!hidePagination",
@@ -103,17 +128,21 @@
 </template>
 
 <script>
-import { differenceBy, throttle } from 'lodash';
+import { differenceBy } from 'lodash';
 
-import { TOP_BAR_HEIGHT } from '@/config';
-import { ALARM_DENSE_TYPES, ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
-
-import { isResolvedAlarm } from '@/helpers/entities';
+import { ALARM_DENSE_TYPES, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
 
 import featuresService from '@/services/features';
 
+import { isActionAvailableForAlarm } from '@/helpers/entities/alarm/form';
+import { calculateAlarmLinksColumnWidth } from '@/helpers/entities/alarm/list';
+
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns/alarm';
+import { widgetRowsSelectingAlarmMixin } from '@/mixins/widget/rows/alarm-selecting';
+import { widgetColumnResizingAlarmMixin } from '@/mixins/widget/columns/alarm-resizing';
+import { widgetColumnDraggingAlarmMixin } from '@/mixins/widget/columns/alarm-dragging';
+import { widgetHeaderStickyAlarmMixin } from '@/mixins/widget/rows/alarm-sticky-header';
 
 import AlarmHeaderCell from '../headers-formatting/alarm-header-cell.vue';
 import AlarmsExpandPanel from '../expand-panel/alarms-expand-panel.vue';
@@ -136,6 +165,10 @@ export default {
   mixins: [
     entitiesInfoMixin,
     widgetColumnsAlarmMixin,
+    widgetHeaderStickyAlarmMixin,
+    widgetRowsSelectingAlarmMixin,
+    widgetColumnResizingAlarmMixin,
+    widgetColumnDraggingAlarmMixin,
 
     ...featuresService.get('components.alarmListTable.mixins', []),
   ],
@@ -143,6 +176,10 @@ export default {
     widget: {
       type: Object,
       required: true,
+    },
+    editing: {
+      type: Boolean,
+      default: false,
     },
     alarms: {
       type: Array,
@@ -168,15 +205,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    selectable: {
-      type: Boolean,
-      default: false,
-    },
     expandable: {
-      type: Boolean,
-      default: false,
-    },
-    stickyHeader: {
       type: Boolean,
       default: false,
     },
@@ -212,45 +241,95 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  data() {
-    return {
-      selecting: false,
-      selected: [],
-    };
+    resizableColumn: {
+      type: Boolean,
+      default: false,
+    },
+    draggableColumn: {
+      type: Boolean,
+      default: false,
+    },
+    columnsSettings: {
+      type: Object,
+      default: () => ({}),
+    },
+    cellsContentBehavior: {
+      type: String,
+      required: false,
+    },
   },
 
   computed: {
+    shownTopPagination() {
+      return this.totalItems && (this.densable || !this.hideActions || !this.hidePagination);
+    },
+
     wrapperListeners() {
       return this.selectable
         ? { mousemove: this.throttledMousemoveHandler }
         : {};
     },
 
-    topBarHeight() {
-      return this.shownHeader ? TOP_BAR_HEIGHT : 0;
-    },
-
     unresolvedSelected() {
-      return this.selected.filter(item => !isResolvedAlarm(item));
+      return this.selected.filter(item => isActionAvailableForAlarm(item));
     },
 
     expanded() {
       return this.$refs.dataTable.expanded;
     },
 
+    isColumnsChanging() {
+      return this.resizingMode || this.draggingMode;
+    },
+
     hasInstructionsAlarms() {
       return this.alarms.some(alarm => alarm.assigned_instructions?.length);
     },
 
-    headers() {
-      const headers = [...this.preparedColumns];
+    isCellContentWrapped() {
+      return this.cellsContentBehavior === ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap;
+    },
 
-      if (!this.hideActions) {
-        headers.push({ text: this.$t('common.actionsLabel'), sortable: false });
+    isCellContentTruncated() {
+      return this.cellsContentBehavior === ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate;
+    },
+
+    sortedColumns() {
+      if (this.draggableColumn) {
+        return [...this.preparedColumns]
+          .sort((a, b) => this.getColumnPositionByField(a.value) - this.getColumnPositionByField(b.value));
       }
 
-      if ((this.expandable || this.hasInstructionsAlarms) && !this.selectable) {
+      return this.preparedColumns;
+    },
+
+    needToAddLeftActionsCell() {
+      return (this.expandable || this.hasInstructionsAlarms) && !this.selectable;
+    },
+
+    hasLeftActions() {
+      return this.selectable || this.needToAddLeftActionsCell;
+    },
+
+    headers() {
+      const headers = this.sortedColumns.map((column) => {
+        const header = {
+          ...column,
+          class: this.draggableClass,
+        };
+
+        if (column.linksInRowCount) {
+          header.width = calculateAlarmLinksColumnWidth(this.dense, column.linksInRowCount);
+        }
+
+        return header;
+      });
+
+      if (!this.hideActions) {
+        headers.push({ text: this.$t('common.actionsLabel'), value: 'actions', sortable: false });
+      }
+
+      if (this.needToAddLeftActionsCell) {
         /**
          * We need it for the expand panel open button
          */
@@ -258,6 +337,23 @@ export default {
       }
 
       return headers;
+    },
+
+    headersWithWidth() {
+      if (this.resizableColumn) {
+        return this.headers.map((header) => {
+          const width = this.getColumnWidthByField(header.value);
+
+          return {
+            ...header,
+            width: header.width
+              ? header.width
+              : width && `${width}%`,
+          };
+        });
+      }
+
+      return this.headers;
     },
 
     vDataTableClass() {
@@ -274,7 +370,31 @@ export default {
       return {
         [`columns-${label}`]: true,
         'alarms-list-table__selecting': this.selecting,
+        'alarms-list-table__grid': this.isColumnsChanging,
+        'alarms-list-table__dragging': this.draggingMode,
+        'alarms-list-table--wrapped': this.isCellContentWrapped,
+        'alarms-list-table--truncated': this.isCellContentTruncated,
+        'alarms-list-table--fixed': this.resizableColumn || this.draggableColumn,
       };
+    },
+
+    leftActionsWidth() {
+      /**
+       * left expand/instruction icon/select actions width
+       */
+      return this.isMediumHeight || this.isSmallHeight ? 82 : 100;
+    },
+
+    vDataTableStyle() {
+      if (this.resizableColumn) {
+        const actionsWidth = this.hasLeftActions ? this.leftActionsWidth : 0;
+
+        return {
+          '--alarms-list-table-width': `calc(${actionsWidth}px + ${this.sumOfColumnsWidth}%)`,
+        };
+      }
+
+      return {};
     },
 
     rowListeners() {
@@ -291,14 +411,6 @@ export default {
       }
 
       return {};
-    },
-
-    tableHeader() {
-      return this.$el.querySelector('.v-table__overflow > table > thead');
-    },
-
-    tableBody() {
-      return this.$el.querySelector('.v-table__overflow > table > tbody');
     },
 
     isMediumHeight() {
@@ -323,133 +435,68 @@ export default {
       }
     },
 
-    stickyHeader(stickyHeader) {
-      if (stickyHeader) {
-        this.calculateHeaderOffsetPosition();
-        this.setHeaderPosition();
-        this.addShadowToHeader();
+    editing() {
+      if (this.isColumnsChanging) {
+        this.updateColumnsSettings();
 
-        window.addEventListener('scroll', this.changeHeaderPosition);
-      } else {
-        window.removeEventListener('scroll', this.changeHeaderPosition);
-
-        this.resetHeaderPosition();
+        this.disableDraggingMode();
+        this.disableResizingMode();
       }
     },
-  },
 
-  created() {
-    this.actionsTranslateY = 0;
-    this.translateY = 0;
-    this.previousTranslateY = 0;
-    this.throttledMousemoveHandler = throttle(this.mousemoveHandler, 50);
-  },
+    columnsSettings: {
+      immediate: true,
+      deep: true,
+      handler() {
+        if (!this.draggingMode && this.columnsSettings?.columns_position) {
+          this.setColumnsPosition(this.columnsSettings?.columns_position);
+        }
 
-  async mounted() {
-    if (this.stickyHeader) {
-      window.addEventListener('scroll', this.changeHeaderPosition);
-    }
-
-    if (this.selectable) {
-      window.addEventListener('keydown', this.enableSelecting);
-      window.addEventListener('keyup', this.disableSelecting);
-      window.addEventListener('mousedown', this.mousedownHandler);
-      window.addEventListener('mouseup', this.mouseupHandler);
-    }
-  },
-  updated() {
-    if (this.selecting) {
-      this.calculateRowsPositions();
-    }
-  },
-  beforeDestroy() {
-    window.removeEventListener('scroll', this.changeHeaderPosition);
-    window.removeEventListener('keydown', this.enableSelecting);
-    window.removeEventListener('keyup', this.disableSelecting);
-    window.removeEventListener('mousedown', this.mousedownHandler);
-    window.removeEventListener('mouseup', this.mouseupHandler);
+        if (!this.resizingMode && this.columnsSettings?.columns_width) {
+          this.setColumnsWidth(this.columnsSettings?.columns_width);
+        }
+      },
+    },
   },
 
   methods: {
-    calculateRowsPositions() {
-      this.rowsPositions = Object.entries(this.$refs).reduce((acc, [key, value]) => {
-        if (!key.startsWith('row') || !value) {
-          return acc;
-        }
+    updateColumnsSettings() {
+      const settings = {};
 
-        const position = value.$el.getBoundingClientRect();
-
-        acc.push({
-          position: {
-            x1: position.x,
-            x2: position.x + position.width,
-            y1: position.y,
-            y2: position.y + position.height,
-          },
-          row: value.$options.propsData.row,
-        });
-
-        return acc;
-      }, []);
-    },
-
-    getIntersectRowsByPosition(newX, newY, prevX, prevY) {
-      return this.rowsPositions?.reduce((acc, { position, row }) => {
-        if (
-          (prevX >= position.x1 && prevX <= position.x2 && prevY >= position.y1 && prevY <= position.y2)
-          || (newX < position.x1 && prevX < position.x1)
-          || (newX > position.x2 && prevX > position.x2)
-          || (newY < position.y1 && prevY < position.y1)
-          || (newY > position.y2 && prevY > position.y2)
-        ) {
-          return acc;
-        }
-
-        acc.push(row);
-
-        return acc;
-      }, []) ?? [];
-    },
-
-    mousedownHandler(event) {
-      this.prevEvent = event;
-    },
-
-    mouseupHandler() {
-      delete this.prevEvent;
-    },
-
-    mousemoveHandler(event) {
-      if (!event.ctrlKey || !event.buttons || !this.prevEvent) {
-        return;
+      if (this.resizingMode) {
+        settings.columns_width = this.columnsWidthByField;
       }
 
-      const rows = this.getIntersectRowsByPosition(
-        event.clientX,
-        event.clientY,
-        this.prevEvent.clientX,
-        this.prevEvent.clientY,
-      );
-
-      this.prevEvent = event;
-
-      rows.forEach(row => this.toggleSelected(row.item));
-    },
-
-    toggleSelected(alarm) {
-      const index = this.selected.findIndex(({ _id: id }) => id === alarm._id);
-
-      if (index === -1) {
-        this.selected.push(alarm);
-
-        return;
+      if (this.draggingMode) {
+        settings.columns_position = this.columnsPositionByField;
       }
 
-      this.selected.splice(index, 1);
+      this.$emit('update:columns-settings', settings);
     },
 
-    clearSelected() {
-      this.selected = [];
+    toggleColumnEditingMode() {
+      if (this.isColumnsChanging) {
+        this.updateColumnsSettings();
+      }
+
+      if (this.resizableColumn) {
+        this.toggleResizingMode();
+      }
+
+      if (this.draggableColumn) {
+        this.toggleDraggingMode();
+      }
+    },
+
+    resetColumnsSettings() {
+      if (this.resizableColumn) {
+        this.setColumnsPosition({});
+      }
+
+      if (this.draggableColumn) {
+        this.setColumnsWidth({});
+        this.$nextTick(this.calculateColumnsWidths);
+      }
     },
 
     updateRecordsPerPage(limit) {
@@ -458,108 +505,6 @@ export default {
 
     updateQueryPage(page) {
       this.$emit('update:page', page);
-    },
-
-    enableSelecting({ key }) {
-      if (key === 'Control') {
-        this.selecting = true;
-      }
-    },
-
-    disableSelecting({ key }) {
-      if (key === 'Control') {
-        this.selecting = false;
-      }
-    },
-
-    startScrolling() {
-      if (this.translateY !== this.previousTranslateY) {
-        this.tableHeader.style.opacity = '0';
-
-        if (this.$refs.actions) {
-          this.$refs.actions.style.opacity = '0';
-        }
-      }
-
-      this.scrooling = true;
-    },
-
-    finishScrolling() {
-      if (!Number(this.tableHeader.style.opacity)) {
-        this.tableHeader.style.opacity = '1.0';
-
-        if (this.$refs.actions) {
-          this.$refs.actions.style.opacity = '1.0';
-        }
-      }
-
-      this.scrooling = false;
-    },
-
-    clearFinishTimer() {
-      if (this.finishTimer) {
-        clearTimeout(this.finishTimer);
-      }
-    },
-
-    setHeaderPosition() {
-      this.tableHeader.style.transform = `translateY(${this.translateY}px)`;
-
-      if (this.$refs.actions) {
-        this.$refs.actions.style.transform = `translateY(${this.actionsTranslateY}px)`;
-      }
-    },
-
-    calculateHeaderOffsetPosition() {
-      const { top: headerTop } = this.tableHeader.getBoundingClientRect();
-      const { height: bodyHeight } = this.tableBody.getBoundingClientRect();
-      const { top: actionsTop = 0, height: actionsHeight = 0 } = this.$refs.actions?.getBoundingClientRect() ?? {};
-
-      const offset = headerTop - this.translateY - this.topBarHeight - actionsHeight;
-      const actionsOffset = actionsTop - this.actionsTranslateY - this.topBarHeight;
-
-      this.previousTranslateY = this.actionsTranslateY;
-      this.translateY = Math.min(bodyHeight, Math.max(0, -offset));
-      this.actionsTranslateY = Math.min(bodyHeight, Math.max(0, -actionsOffset));
-    },
-
-    addShadowToHeader() {
-      this.tableHeader.classList.add('head-shadow');
-    },
-
-    removeShadowFromHeader() {
-      this.tableHeader.classList.remove('head-shadow');
-    },
-
-    changeHeaderPosition() {
-      this.clearFinishTimer();
-
-      this.calculateHeaderOffsetPosition();
-      this.setHeaderPosition();
-
-      if (!this.actionsTranslateY || !this.translateY) {
-        this.removeShadowFromHeader();
-        this.finishScrolling();
-
-        return;
-      }
-
-      if (!this.scrooling) {
-        this.addShadowToHeader();
-        this.startScrolling();
-      }
-
-      this.finishTimer = setTimeout(this.finishScrolling, ALARMS_LIST_HEADER_OPACITY_DELAY);
-    },
-
-    resetHeaderPosition() {
-      this.translateY = 0;
-      this.actionsTranslateY = 0;
-      this.previousTranslateY = 0;
-
-      this.setHeaderPosition();
-      this.clearFinishTimer();
-      this.removeShadowFromHeader();
     },
 
     changeHeaderPositionOnResize() {
@@ -617,6 +562,57 @@ export default {
       left: 50%;
       transform: translate(-50%, 0);
     }
+
+    &--right-absolute {
+      position: absolute;
+      right: 0;
+    }
+  }
+
+  &__resize-handler {
+    cursor: col-resize;
+
+    display: flex;
+    justify-content: center;
+
+    width: 15px;
+
+    position: absolute;
+    right: -7px;
+    top: 0;
+
+    height: 100%;
+
+    z-index: 2;
+  }
+
+  &__dragging-handler {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    z-index: 1;
+
+    &:after {
+      content: ' ';
+      position: absolute;
+      transition: .3s cubic-bezier(.25, .8, .5,1);
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background: var(--v-secondary-base);
+      opacity: 0.0;
+    }
+
+    &:hover:after {
+      opacity: 0.1;
+    }
   }
 
   .alarm-list-row {
@@ -647,6 +643,61 @@ export default {
     }
   }
 
+  &__grid {
+    & > .v-table__overflow > table {
+      & > tbody > tr > td,
+      & > thead > tr > th {
+        position: relative;
+
+        &:after {
+          content: ' ';
+          background: rgba(0, 0, 0, 0.12);
+          position: absolute;
+          right: -1px;
+          top: 0;
+          width: 2px;
+          height: 100%;
+        }
+      }
+    }
+  }
+
+  &--fixed {
+    & > .v-table__overflow > table {
+      table-layout: fixed;
+      /**
+       * TODO: Should be used v-bind later. We should update compiler.
+       * Current compiler cannot to handle script setup and v-bind
+       */
+      width: var(--alarms-list-table-width);
+      max-width: unset;
+      min-width: 100%;
+
+      & > thead > tr > th {
+        word-break: break-all;
+        white-space: pre-wrap;
+      }
+    }
+  }
+
+  &--wrapped {
+    & > .v-table__overflow > table > tbody > tr > td:not(:last-of-type) {
+      word-break: break-all;
+      word-wrap: break-word;
+    }
+  }
+
+  &--truncated {
+    .alarm-list-row__cell {
+      .alarm-column-cell__text > span {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display: block;
+      }
+    }
+  }
+
   tbody {
     position: relative;
   }
@@ -673,7 +724,21 @@ export default {
       }
 
       th {
+        position: relative;
         transition: none;
+      }
+    }
+  }
+
+  th:not([role='columnheader']) {
+    width: 100px;
+  }
+
+  .v-datatable--dense,
+  .v-datatable--ultra-dense {
+    thead {
+      th:not([role='columnheader']) {
+        width: 82px;
       }
     }
   }
@@ -724,6 +789,12 @@ export default {
       .badge {
         font-size: inherit;
       }
+    }
+  }
+
+  &.columns-sm .v-table {
+    td, th {
+      padding: 0 12px;
     }
   }
 }

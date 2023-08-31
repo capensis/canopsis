@@ -1,13 +1,11 @@
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import featuresService from '@/services/features';
 
 import AlarmsListRow from '@/components/widgets/alarm/partials/alarms-list-row.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-checkbox-functional': true,
@@ -16,30 +14,6 @@ const stubs = {
   'alarm-column-value': true,
   'actions-panel': true,
 };
-
-const factory = (options = {}) => shallowMount(AlarmsListRow, {
-  localVue,
-  stubs,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(AlarmsListRow, {
-  localVue,
-  stubs,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-
-  ...options,
-});
 
 const selectExpandButton = wrapper => wrapper.find('alarms-expand-panel-btn-stub');
 const selectTableRow = wrapper => wrapper.find('tr');
@@ -69,6 +43,23 @@ describe('alarms-list-row', () => {
     .mockReturnValueOnce(undefined);
   const featureCallSpy = jest.spyOn(featuresService, 'call')
     .mockReturnValueOnce(() => {});
+
+  const factory = generateShallowRenderer(AlarmsListRow, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(AlarmsListRow, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   afterEach(() => {
     updateQuery.mockClear();

@@ -22,7 +22,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { userToForm, formToUser } from '@/helpers/forms/user';
+import { userToForm, formToUserRequest } from '@/helpers/entities/user/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -65,7 +65,7 @@ export default {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        await this.config.action(formToUser(this.form));
+        await this.config.action(formToUserRequest(this.form));
 
         this.$modals.hide();
       }

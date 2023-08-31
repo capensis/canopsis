@@ -21,15 +21,16 @@
     v-data-table.ma-0(:items="pbehaviors", :headers="headers", :loading="pending", :dense="dense")
       template(#items="{ item }")
         td {{ item.name }}
-        td {{ item.author.name }}
+        td {{ item.author.display_name }}
         td
           c-enabled(:value="item.enabled")
-        td {{ item.tstart | timezone($system.timezone) }}
-        td {{ item.tstop | timezone($system.timezone) }}
-        td {{ item.type.name }}
-        td {{ item.reason.name }}
+        td {{ formatIntervalDate(item, 'tstart') }}
+        td {{ formatIntervalDate(item, 'tstop') }}
+        td {{ formatRruleEndDate(item) }}
         td
           v-icon {{ item.rrule ? 'check' : 'clear' }}
+        td {{ item.type.name }}
+        td {{ item.reason.name }}
         td
           v-icon(color="primary") {{ item.type.icon_name }}
         td(v-if="withActiveStatus")
@@ -53,7 +54,9 @@ import { MODALS } from '@/constants';
 
 import Observer from '@/services/observer';
 
-import { createEntityIdPatternByValue } from '@/helpers/pattern';
+import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
+
+import { pbehaviorsDateFormatMixin } from '@/mixins/pbehavior/pbehavior-date-format';
 
 const { mapActions } = createNamespacedHelpers('pbehavior');
 
@@ -66,6 +69,7 @@ export default {
       },
     },
   },
+  mixins: [pbehaviorsDateFormatMixin],
   props: {
     entity: {
       type: Object,
@@ -102,13 +106,14 @@ export default {
     headers() {
       const headers = [
         { text: this.$t('common.name'), value: 'name' },
-        { text: this.$t('common.author'), value: 'author.name' },
+        { text: this.$t('common.author'), value: 'author.display_name' },
         { text: this.$t('pbehavior.isEnabled'), value: 'enabled' },
         { text: this.$t('pbehavior.begins'), value: 'tstart' },
         { text: this.$t('pbehavior.ends'), value: 'tstop' },
+        { text: this.$t('pbehavior.rruleEnd'), value: 'rrule_end' },
+        { text: this.$t('common.recurrence'), value: 'rrule' },
         { text: this.$t('common.type'), value: 'type.type' },
         { text: this.$t('common.reason'), value: 'reason.name' },
-        { text: this.$t('common.recurrence'), value: 'rrule' },
         { text: this.$t('common.icon'), value: 'type.icon_name' },
       ];
 

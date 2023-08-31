@@ -12,7 +12,12 @@
         c-advanced-search-field(
           :query.sync="query",
           :columns="widget.parameters.widgetColumns",
-          :tooltip="$t('alarm.advancedSearch')"
+          :tooltip="$t('alarm.advancedSearch')",
+          :items="searches",
+          combobox,
+          @submit="updateSearchesInUserPreferences",
+          @toggle-pin="togglePinSearchInUserPreferences",
+          @remove="removeSearchFromUserPreferences"
         )
       v-flex(v-if="hasAccessToCategory")
         c-entity-category-field.mr-3.mt-0(:category="query.category", hide-details, @input="updateCategory")
@@ -91,12 +96,18 @@
       :selected-tag="query.tag",
       :selectable="!hideMassSelection",
       :hide-actions="hideActions",
+      :resizable-column="resizableColumn",
+      :draggable-column="draggableColumn",
+      :cells-content-behavior="cellsContentBehavior",
+      :columns-settings="columnsSettings",
+      :editing="editing",
       expandable,
       densable,
       @select:tag="selectTag",
       @update:dense="updateDense",
       @update:page="updateQueryPage",
       @update:rows-per-page="updateRecordsPerPage",
+      @update:columns-settings="updateColumnsSettings",
       @clear:tag="clearTag"
     )
     alarms-expand-panel-tour(v-if="isTourEnabled", :callbacks="tourCallbacks")
@@ -105,15 +116,15 @@
 <script>
 import { omit, pick, isObject, isEqual } from 'lodash';
 
-import { API_HOST, API_ROUTES } from '@/config';
-
 import { MODALS, TOURS, USERS_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
+import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { exportMixinCreator } from '@/mixins/widget/export';
+import { widgetSearchMixin } from '@/mixins/widget/search';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetRemediationInstructionsFilterMixin } from '@/mixins/widget/remediation-instructions-filter-select';
@@ -123,11 +134,12 @@ import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
 import { permissionsWidgetsAlarmsListCorrelation } from '@/mixins/permissions/widgets/alarms-list/correlation';
 import { permissionsWidgetsAlarmsListCategory } from '@/mixins/permissions/widgets/alarms-list/category';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
-import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
-  from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
+import {
+  permissionsWidgetsAlarmsListRemediationInstructionsFilters,
+} from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
 
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
-import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
+import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
+import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 
 import AlarmsListTable from './partials/alarms-list-table.vue';
 import AlarmsExpandPanelTour from './expand-panel/alarms-expand-panel-tour.vue';
@@ -153,6 +165,7 @@ export default {
   mixins: [
     authMixin,
     widgetFetchQueryMixin,
+    widgetSearchMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     widgetRemediationInstructionsFilterMixin,
@@ -231,6 +244,22 @@ export default {
     dense() {
       return this.userPreference.content.dense ?? this.widget.parameters.dense;
     },
+
+    columnsSettings() {
+      return this.userPreference.content.columns_settings;
+    },
+
+    resizableColumn() {
+      return !!this.widget.parameters?.columns?.resizable;
+    },
+
+    cellsContentBehavior() {
+      return this.widget.parameters?.columns?.cells_content_behavior;
+    },
+
+    draggableColumn() {
+      return !!this.widget.parameters?.columns?.draggable;
+    },
   },
   methods: {
     refreshExpanded() {
@@ -258,6 +287,10 @@ export default {
       newQuery.page = 1;
 
       this.query = newQuery;
+    },
+
+    updateColumnsSettings(columnsSettings) {
+      this.updateContentInUserPreference({ columns_settings: columnsSettings });
     },
 
     updateCorrelation(correlation) {
@@ -404,7 +437,7 @@ export default {
           widgetId: this.widget._id,
         });
 
-        this.downloadFile(`${API_HOST}${API_ROUTES.alarmListExport}/${fileData._id}/download`);
+        this.downloadFile(getAlarmListExportDownloadFileUrl(fileData._id));
       } catch (err) {
         this.$popups.error({ text: this.$t('alarm.popups.exportFailed') });
       } finally {

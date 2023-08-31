@@ -38,7 +38,8 @@ Feature: Get a dynamic infos
           "old_entity_patterns": null,
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1581423405,
           "description": "test-dynamic-infos-to-get-1-description",
@@ -68,7 +69,8 @@ Feature: Get a dynamic infos
           ],
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1581423405,
           "description": "test-dynamic-infos-to-get-2-description",
@@ -143,7 +145,8 @@ Feature: Get a dynamic infos
       ],
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "created": 1581423405,
       "description": "test-dynamic-infos-to-get-2-description",
