@@ -102,6 +102,10 @@ export default {
     title: 'Cartographie',
     message: '', // TODO: add correct message
   },
+  [USERS_PERMISSIONS.technical.maintenance]: {
+    title: 'Mode de Maintenance',
+    message: '', // TODO: add correct message
+  },
 
   /**
    * Admin general
