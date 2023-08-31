@@ -48,6 +48,8 @@ type AppInfoResponse struct {
 	VersionConf
 	Login       LoginConf        `json:"login"`
 	Remediation *RemediationConf `json:"remediation,omitempty"`
+
+	Maintenance bool `json:"maintenance"`
 }
 
 type LoginConf struct {

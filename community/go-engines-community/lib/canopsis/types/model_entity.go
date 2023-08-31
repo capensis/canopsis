@@ -38,13 +38,12 @@ type Entity struct {
 	Type           string          `bson:"type" json:"type"`
 	Category       string          `bson:"category" json:"category"`
 	ImpactLevel    int64           `bson:"impact_level" json:"impact_level"`
-	IsNew          bool            `bson:"-" json:"-"`
 	Created        CpsTime         `bson:"created" json:"created"`
 	LastEventDate  *CpsTime        `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
 
 	Connector string   `bson:"connector,omitempty" json:"connector,omitempty"`
 	Component string   `bson:"component,omitempty" json:"component,omitempty"`
-	Services  []string `bson:"services," json:"services,omitempty"`
+	Services  []string `bson:"services" json:"services,omitempty"`
 	// ImpactedServices field is only for connectors, see entity service RecomputeIdleSince method.
 	ImpactedServices []string `bson:"impacted_services" json:"-"`
 
@@ -60,6 +59,9 @@ type Entity struct {
 	LastPbehaviorDate *CpsTime      `bson:"last_pbehavior_date,omitempty" json:"last_pbehavior_date,omitempty"`
 
 	SliAvailState int64 `bson:"sli_avail_state" json:"sli_avail_state"`
+
+	ServicesToAdd    []string `bson:"services_to_add,omitempty" json:"services_to_add,omitempty"`
+	ServicesToRemove []string `bson:"services_to_remove,omitempty" json:"services_to_remove,omitempty"`
 	// Coordinates is used only in api, add json tag if it's required in an event.
 	Coordinates Coordinates `bson:"coordinates,omitempty" json:"-"`
 
@@ -67,6 +69,10 @@ type Entity struct {
 
 	PerfData        []string `bson:"perf_data,omitempty" json:"-"`
 	PerfDataUpdated *CpsTime `bson:"perf_data_updated,omitempty" json:"-"`
+
+	// IsNew and IsUpdated used in engine che in entity creation and eventfilter
+	IsNew     bool `bson:"-" json:"-"`
+	IsUpdated bool `bson:"-" json:"-"`
 }
 
 type Coordinates struct {
