@@ -84,6 +84,8 @@ extra:
       link: https://fr.linkedin.com/company/capensis
     - icon: fontawesome/brands/youtube
       link: https://www.youtube.com/channel/UCkjGq4pG3jrlTRnMmA8BGbQ
+  version:
+    provider: mike
 
 extra_css:
   - mkdocs.css

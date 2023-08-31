@@ -8,86 +8,6 @@ exports[`c-action-btn Renders \`c-action-btn\` with badge. 1`] = `
     bottom="true"
     class="v-tooltip"
   >
-    <button
-      class="v-btn mx-1 my-0 c-action-btn__button"
-      icon="icon"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
-      >
-        edit
-      </i>
-    </button>
-     
-    <span>
-      Edit
-    </span>
-  </div>
-  <div
-    bottom="true"
-    class="v-tooltip"
-  >
-    <button
-      class="v-btn mx-1 my-0 c-action-btn__button"
-      icon="icon"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
-      >
-        file_copy
-      </i>
-    </button>
-     
-    <span>
-      Duplicate
-    </span>
-  </div>
-  <div
-    bottom="true"
-    class="v-tooltip"
-  >
-    <button
-      class="v-btn mx-1 my-0 c-action-btn__button"
-      icon="icon"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light error--text"
-      >
-        delete
-      </i>
-    </button>
-     
-    <span>
-      Delete
-    </span>
-  </div>
-  <div
-    bottom="true"
-    class="v-tooltip"
-  >
-    <button
-      class="v-btn mx-1 my-0 c-action-btn__button"
-      icon="icon"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light color--text"
-      >
-        test_icon
-      </i>
-    </button>
-     
-    <span>
-      tooltip
-    </span>
-  </div>
-  <div
-    bottom="true"
-    class="v-tooltip"
-  >
     <span
       class="v-badge c-action-btn__badge v-badge--overlap"
     >
@@ -148,66 +68,6 @@ exports[`c-action-btn Renders \`c-action-btn\` with custom type correctly. 1`] =
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light"
-      >
-        edit
-      </i>
-    </button>
-     
-    <span>
-      Edit
-    </span>
-  </div>
-  <div
-    bottom="true"
-    class="v-tooltip"
-  >
-    <button
-      class="v-btn mx-1 my-0 c-action-btn__button"
-      icon="icon"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
-      >
-        file_copy
-      </i>
-    </button>
-     
-    <span>
-      Duplicate
-    </span>
-  </div>
-  <div
-    bottom="true"
-    class="v-tooltip"
-  >
-    <button
-      class="v-btn mx-1 my-0 c-action-btn__button"
-      icon="icon"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light error--text"
-      >
-        delete
-      </i>
-    </button>
-     
-    <span>
-      Delete
-    </span>
-  </div>
-  <div
-    bottom="true"
-    class="v-tooltip"
-  >
-    <button
-      class="v-btn mx-1 my-0 c-action-btn__button"
-      icon="icon"
-    >
-      <i
-        aria-hidden="true"
         class="v-icon material-icons theme--light color--text"
       >
         test_icon
@@ -235,46 +95,6 @@ exports[`c-action-btn Renders \`c-action-btn\` with default delete type correctl
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light"
-      >
-        edit
-      </i>
-    </button>
-     
-    <span>
-      Edit
-    </span>
-  </div>
-  <div
-    bottom="true"
-    class="v-tooltip"
-  >
-    <button
-      class="v-btn mx-1 my-0 c-action-btn__button"
-      icon="icon"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
-      >
-        file_copy
-      </i>
-    </button>
-     
-    <span>
-      Duplicate
-    </span>
-  </div>
-  <div
-    bottom="true"
-    class="v-tooltip"
-  >
-    <button
-      class="v-btn mx-1 my-0 c-action-btn__button"
-      icon="icon"
-    >
-      <i
-        aria-hidden="true"
         class="v-icon material-icons theme--light error--text"
       >
         delete
@@ -292,26 +112,6 @@ exports[`c-action-btn Renders \`c-action-btn\` with default duplicate type corre
 <body
   data-app="true"
 >
-  <div
-    bottom="true"
-    class="v-tooltip"
-  >
-    <button
-      class="v-btn mx-1 my-0 c-action-btn__button"
-      icon="icon"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
-      >
-        edit
-      </i>
-    </button>
-     
-    <span>
-      Edit
-    </span>
-  </div>
   <div
     bottom="true"
     class="v-tooltip"

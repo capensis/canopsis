@@ -17,11 +17,14 @@
         type="delete",
         @click="$emit('remove-selected', selected)"
       )
+    template(#name="{ item }") {{ item.display_name }}
     template(#enable="{ item }")
       c-enabled(:value="item.enable")
     template(#active="{ item }")
       c-enabled(:value="item.active_connects > 0")
     template(#source="{ item }") {{ item.source || $constants.AUTH_METHODS.local }}
+    template(#roles="{ item }")
+      v-chip-group(:items="item.roles", item-text="name", item-value="_id")
     template(#actions="{ item }")
       v-layout(row)
         c-action-btn(
@@ -82,8 +85,9 @@ export default {
           sortable: false,
         },
         {
-          text: this.$tc('common.role'),
-          value: 'role.name',
+          text: this.$tc('common.role', 2),
+          value: 'roles',
+          sortable: false,
         },
         {
           text: this.$t('user.active'),

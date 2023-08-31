@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { remediationInstructionStepToForm } from '@/helpers/forms/remediation-instruction';
+import { remediationInstructionStepToForm } from '@/helpers/entities/remediation/instruction/form';
 
 import { formArrayMixin } from '@/mixins/form';
 

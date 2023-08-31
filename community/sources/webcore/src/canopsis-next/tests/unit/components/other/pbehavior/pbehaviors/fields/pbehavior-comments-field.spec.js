@@ -1,10 +1,8 @@
 import Faker from 'faker';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import PbehaviorCommentsField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-comments-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'pbehavior-comment-field': true,
@@ -17,10 +15,10 @@ const selectCommentFieldByIndex = (wrapper, index) => wrapper
 
 describe('pbehavior-comments-field', () => {
   const factory = generateShallowRenderer(PbehaviorCommentsField, {
-    localVue,
+
     stubs,
   });
-  const snapshotFactory = generateRenderer(PbehaviorCommentsField, { localVue, stubs });
+  const snapshotFactory = generateRenderer(PbehaviorCommentsField, { stubs });
 
   test('Comment added after trigger create button', () => {
     const comments = [{ key: Faker.datatype.string(), message: Faker.datatype.string() }];

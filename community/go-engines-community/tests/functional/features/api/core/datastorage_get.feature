@@ -63,6 +63,27 @@ Feature: Get and update data storage config
           "value": 20,
           "unit": "d"
         }
+      },
+      "metrics": {
+        "delete_after": {
+          "enabled": true,
+          "value": 1,
+          "unit": "M"
+        }
+      },
+      "perf_data_metrics": {
+        "delete_after": {
+          "enabled": true,
+          "value": 1,
+          "unit": "M"
+        }
+      },
+      "event_filter_failure": {
+        "delete_after": {
+          "enabled": true,
+          "value": 1,
+          "unit": "M"
+        }
       }
     }
     """
@@ -128,6 +149,27 @@ Feature: Get and update data storage config
             "value": 20,
             "unit": "d"
           }
+        },
+        "metrics": {
+          "delete_after": {
+            "enabled": true,
+            "value": 1,
+            "unit": "M"
+          }
+        },
+        "perf_data_metrics": {
+          "delete_after": {
+            "enabled": true,
+            "value": 1,
+            "unit": "M"
+          }
+        },
+        "event_filter_failure": {
+          "delete_after": {
+            "enabled": true,
+            "value": 1,
+            "unit": "M"
+          }
         }
       },
       "history": {
@@ -137,7 +179,8 @@ Feature: Get and update data storage config
         "entity": null,
         "pbehavior": null,
         "health_check": null,
-        "webhook": null
+        "webhook": null,
+        "event_filter_failure": null
       }
     }
     """
@@ -204,6 +247,27 @@ Feature: Get and update data storage config
             "value": 20,
             "unit": "d"
           }
+        },
+        "metrics": {
+          "delete_after": {
+            "enabled": true,
+            "value": 1,
+            "unit": "M"
+          }
+        },
+        "perf_data_metrics": {
+          "delete_after": {
+            "enabled": true,
+            "value": 1,
+            "unit": "M"
+          }
+        },
+        "event_filter_failure": {
+          "delete_after": {
+            "enabled": true,
+            "value": 1,
+            "unit": "M"
+          }
         }
       },
       "history": {
@@ -213,7 +277,8 @@ Feature: Get and update data storage config
         "entity": null,
         "pbehavior": null,
         "health_check": null,
-        "webhook": null
+        "webhook": null,
+        "event_filter_failure": null
       }
     }
     """
@@ -247,6 +312,15 @@ Feature: Get and update data storage config
         "webhook": {
           "log_credentials": false,
           "delete_after": null
+        },
+        "metrics": {
+          "delete_after": null
+        },
+        "perf_data_metrics": {
+          "delete_after": null
+        },
+        "event_filter_failure": {
+          "delete_after": null
         }
       },
       "history": {
@@ -256,7 +330,8 @@ Feature: Get and update data storage config
         "entity": null,
         "pbehavior": null,
         "health_check": null,
-        "webhook": null
+        "webhook": null,
+        "event_filter_failure": null
       }
     }
     """
@@ -287,6 +362,15 @@ Feature: Get and update data storage config
         "webhook": {
           "log_credentials": false,
           "delete_after": null
+        },
+        "metrics": {
+          "delete_after": null
+        },
+        "perf_data_metrics": {
+          "delete_after": null
+        },
+        "event_filter_failure": {
+          "delete_after": null
         }
       },
       "history": {
@@ -296,7 +380,8 @@ Feature: Get and update data storage config
         "entity": null,
         "pbehavior": null,
         "health_check": null,
-        "webhook": null
+        "webhook": null,
+        "event_filter_failure": null
       }
     }
     """

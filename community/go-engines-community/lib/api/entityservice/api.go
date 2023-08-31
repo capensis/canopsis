@@ -2,11 +2,11 @@ package entityservice
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -14,9 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog"
-	"github.com/valyala/fastjson"
 )
 
 type API interface {
@@ -85,7 +83,8 @@ func (a *api) GetDependencies(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.GetDependencies(c, r)
+	userId := c.MustGet(auth.UserKey).(string)
+	aggregationResult, err := a.store.GetDependencies(c, r, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -115,7 +114,8 @@ func (a *api) GetImpacts(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.GetImpacts(c, r)
+	userId := c.MustGet(auth.UserKey).(string)
+	aggregationResult, err := a.store.GetImpacts(c, r, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -273,67 +273,16 @@ func (a *api) Delete(c *gin.Context) {
 // @Param body body []CreateRequest true "body"
 func (a *api) BulkCreate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-
-	var ar fastjson.Arena
-
-	raw, err := c.GetRawData()
-	if err != nil {
-		panic(err)
-	}
-
-	jsonValue, err := fastjson.ParseBytes(raw)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	rawObjects, err := jsonValue.Array()
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	response := ar.NewArray()
-	serviceIDs := make([]string, 0, len(rawObjects))
-
-	for idx, rawObject := range rawObjects {
-		object, err := rawObject.Object()
+	serviceIDs := make([]string, 0)
+	bulk.Handler(c, func(request CreateRequest) (string, error) {
+		err := a.transformEditRequest(c, &request.EditRequest)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
-		}
-
-		var request CreateRequest
-		err = json.Unmarshal(object.MarshalTo(nil), &request)
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
-		}
-
-		err = binding.Validator.ValidateStruct(request)
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
-			continue
-		}
-
-		err = a.transformEditRequest(c, &request.EditRequest)
-		if err != nil {
-			valErr := common.ValidationError{}
-			if errors.As(err, &valErr) {
-				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
-				continue
-			}
-
-			a.logger.Err(err).Msg("cannot create entity service")
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
-			continue
+			return "", err
 		}
 
 		service, err := a.store.Create(c, request)
 		if err != nil {
-			a.logger.Err(err).Msg("cannot create entity service")
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
-			continue
+			return "", err
 		}
 
 		if service.Enabled {
@@ -343,8 +292,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 				IsServicePatternChanged: true,
 			})
 		}
-
-		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, service.ID, http.StatusOK, rawObject, nil))
 
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionCreate,
@@ -356,83 +303,26 @@ func (a *api) BulkCreate(c *gin.Context) {
 		}
 
 		serviceIDs = append(serviceIDs, service.ID)
-	}
 
+		return request.ID, nil
+	}, a.logger)
 	a.metricMetaUpdater.UpdateById(c, serviceIDs...)
-
-	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
 // BulkUpdate
 // @Param body body []BulkUpdateRequestItem true "body"
 func (a *api) BulkUpdate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-
-	var ar fastjson.Arena
-
-	raw, err := c.GetRawData()
-	if err != nil {
-		panic(err)
-	}
-
-	jsonValue, err := fastjson.ParseBytes(raw)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	rawObjects, err := jsonValue.Array()
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	response := ar.NewArray()
-	serviceIDs := make([]string, 0, len(rawObjects))
-
-	for idx, rawObject := range rawObjects {
-		object, err := rawObject.Object()
+	serviceIDs := make([]string, 0)
+	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
+		err := a.transformEditRequest(c, &request.EditRequest)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
-		}
-
-		var request BulkUpdateRequestItem
-		err = json.Unmarshal(object.MarshalTo(nil), &request)
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
-		}
-
-		err = binding.Validator.ValidateStruct(request)
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
-			continue
-		}
-
-		err = a.transformEditRequest(c, &request.EditRequest)
-		if err != nil {
-			valErr := common.ValidationError{}
-			if errors.As(err, &valErr) {
-				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
-				continue
-			}
-
-			a.logger.Err(err).Msg("cannot update entity service")
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
-			continue
+			return "", err
 		}
 
 		service, serviceChanges, err := a.store.Update(c, UpdateRequest(request))
-		if err != nil {
-			a.logger.Err(err).Msg("cannot update entity service")
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
-			continue
-		}
-
-		if service == nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
-			continue
+		if err != nil || service == nil {
+			return "", err
 		}
 
 		if service.Enabled || serviceChanges.IsToggled {
@@ -444,8 +334,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 			})
 		}
 
-		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, service.ID, http.StatusOK, rawObject, nil))
-
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionUpdate,
 			ValueType: logger.ValueTypeEntityService,
@@ -456,70 +344,21 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		}
 
 		serviceIDs = append(serviceIDs, service.ID)
-	}
 
+		return service.ID, nil
+	}, a.logger)
 	a.metricMetaUpdater.UpdateById(c, serviceIDs...)
-
-	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-
-	var ar fastjson.Arena
-
-	raw, err := c.GetRawData()
-	if err != nil {
-		panic(err)
-	}
-
-	jsonValue, err := fastjson.ParseBytes(raw)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	rawObjects, err := jsonValue.Array()
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	response := ar.NewArray()
-	serviceIDs := make([]string, 0, len(rawObjects))
-
-	for idx, rawObject := range rawObjects {
-		object, err := rawObject.Object()
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
-		}
-
-		var request BulkDeleteRequestItem
-		err = json.Unmarshal(object.MarshalTo(nil), &request)
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
-		}
-
-		err = binding.Validator.ValidateStruct(request)
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
-			continue
-		}
-
+	serviceIDs := make([]string, 0)
+	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
 		ok, err := a.store.Delete(c, request.ID)
-		if err != nil {
-			a.logger.Err(err).Msg("cannot delete entity service")
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
-			continue
-		}
-
-		if !ok {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
-			continue
+		if err != nil || !ok {
+			return "", err
 		}
 
 		a.sendChangeMsg(entityservice.ChangeEntityMessage{
@@ -527,9 +366,6 @@ func (a *api) BulkDelete(c *gin.Context) {
 			EntityType:              types.EntityTypeService,
 			IsServicePatternChanged: true,
 		})
-
-		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
-
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionDelete,
 			ValueType: logger.ValueTypeEntityService,
@@ -540,11 +376,11 @@ func (a *api) BulkDelete(c *gin.Context) {
 		}
 
 		serviceIDs = append(serviceIDs, request.ID)
-	}
+
+		return request.ID, nil
+	}, a.logger)
 
 	a.metricMetaUpdater.DeleteById(c, serviceIDs...)
-
-	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
 }
 
 func (a *api) sendChangeMsg(msg entityservice.ChangeEntityMessage) {

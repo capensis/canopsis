@@ -21,7 +21,10 @@ Feature: Bulk create users
         "firstname": "test-user-to-bulk-create-1-firstname",
         "lastname": "test-user-to-bulk-create-1-lastname",
         "email": "test-user-to-bulk-create-1-email@canopsis.net",
-        "role": "test-role-to-edit-user",
+        "roles": [
+          "test-role-to-user-edit-2",
+          "test-role-to-user-edit-1"
+        ],
         "ui_language": "fr",
         "ui_theme": "canopsis",
         "ui_groups_navigation_type": "top-bar",
@@ -34,7 +37,9 @@ Feature: Bulk create users
         "firstname": "test-user-to-bulk-create-1-firstname",
         "lastname": "test-user-to-bulk-create-1-lastname",
         "email": "test-user-to-bulk-create-1-email@canopsis.net",
-        "role": "test-role-to-edit-user",
+        "roles": [
+          "test-role-to-user-edit-1"
+        ],
         "ui_language": "fr",
         "ui_theme": "canopsis",
         "ui_groups_navigation_type": "top-bar",
@@ -43,7 +48,10 @@ Feature: Bulk create users
         "password": "test-password"
       },
       {
-        "role": "not-exist",
+        "roles": [
+          "test-role-to-user-edit-1",
+          "not-exist"
+        ],
         "defaultview": "not-exist"
       },
       {
@@ -58,7 +66,9 @@ Feature: Bulk create users
         "firstname": "test-user-to-bulk-create-2-firstname",
         "lastname": "test-user-to-bulk-create-2-lastname",
         "email": "test-user-to-bulk-create-2-email@canopsis.net",
-        "role": "test-role-to-edit-user",
+        "roles": [
+          "test-role-to-user-edit-1"
+        ],
         "ui_language": "fr",
         "ui_theme": "canopsis",
         "ui_groups_navigation_type": "top-bar",
@@ -71,7 +81,9 @@ Feature: Bulk create users
         "firstname": "test-user-to-bulk-create-3-firstname",
         "lastname": "test-user-to-bulk-create-3-lastname",
         "email": "test-user-to-bulk-create-3-email@canopsis.net",
-        "role": "test-role-to-edit-user",
+        "roles": [
+          "test-role-to-user-edit-1"
+        ],
         "ui_language": "fr",
         "ui_groups_navigation_type": "top-bar",
         "enable": true,
@@ -84,7 +96,9 @@ Feature: Bulk create users
         "firstname": "test-user-to-bulk-create-4-firstname",
         "lastname": "test-user-to-bulk-create-4-lastname",
         "email": "test-user-to-bulk-create-4-email@canopsis.net",
-        "role": "test-role-to-edit-user",
+        "roles": [
+          "test-role-to-user-edit-1"
+        ],
         "ui_language": "fr",
         "ui_groups_navigation_type": "top-bar",
         "enable": true,
@@ -98,7 +112,9 @@ Feature: Bulk create users
         "firstname": "test-user-to-bulk-create-5-firstname",
         "lastname": "test-user-to-bulk-create-5-lastname",
         "email": "test-user-to-bulk-create-5-email@canopsis.net",
-        "role": "test-role-to-edit-user",
+        "roles": [
+          "test-role-to-user-edit-1"
+        ],
         "ui_language": "fr",
         "ui_groups_navigation_type": "top-bar",
         "enable": true,
@@ -110,7 +126,9 @@ Feature: Bulk create users
         "firstname": "test-user-to-bulk-create-6-firstname",
         "lastname": "test-user-to-bulk-create-6-lastname",
         "email": "test-user-to-bulk-create-6-email@canopsis.net",
-        "role": "test-role-to-edit-user",
+        "roles": [
+          "test-role-to-user-edit-1"
+        ],
         "ui_language": "fr",
         "ui_groups_navigation_type": "top-bar",
         "enable": true,
@@ -123,7 +141,9 @@ Feature: Bulk create users
         "firstname": "test-user-to-bulk-create-7-firstname",
         "lastname": "test-user-to-bulk-create-7-lastname",
         "email": "test-user-to-bulk-create-7-email@canopsis.net",
-        "role": "test-role-to-edit-user",
+        "roles": [
+          "test-role-to-user-edit-1"
+        ],
         "ui_language": "fr",
         "ui_groups_navigation_type": "top-bar",
         "enable": true,
@@ -134,7 +154,9 @@ Feature: Bulk create users
         "firstname": "test-user-to-bulk-create-8-firstname",
         "lastname": "test-user-to-bulk-create-8-lastname",
         "email": "test-user-to-bulk-create-8-email@canopsis.net",
-        "role": "test-role-to-edit-user",
+        "roles": [
+          "test-role-to-user-edit-1"
+        ],
         "ui_language": "fr",
         "ui_groups_navigation_type": "top-bar",
         "enable": true,
@@ -155,7 +177,10 @@ Feature: Bulk create users
           "firstname": "test-user-to-bulk-create-1-firstname",
           "lastname": "test-user-to-bulk-create-1-lastname",
           "email": "test-user-to-bulk-create-1-email@canopsis.net",
-          "role": "test-role-to-edit-user",
+          "roles": [
+            "test-role-to-user-edit-2",
+            "test-role-to-user-edit-1"
+          ],
           "ui_language": "fr",
           "ui_theme": "canopsis",
           "ui_groups_navigation_type": "top-bar",
@@ -171,7 +196,9 @@ Feature: Bulk create users
           "firstname": "test-user-to-bulk-create-1-firstname",
           "lastname": "test-user-to-bulk-create-1-lastname",
           "email": "test-user-to-bulk-create-1-email@canopsis.net",
-          "role": "test-role-to-edit-user",
+          "roles": [
+            "test-role-to-user-edit-1"
+          ],
           "ui_language": "fr",
           "ui_theme": "canopsis",
           "ui_groups_navigation_type": "top-bar",
@@ -186,7 +213,10 @@ Feature: Bulk create users
       {
         "status": 400,
         "item": {
-          "role": "not-exist",
+          "roles": [
+            "test-role-to-user-edit-1",
+            "not-exist"
+          ],
           "defaultview": "not-exist"
         },
         "errors": {
@@ -195,7 +225,7 @@ Feature: Bulk create users
           "enable": "IsEnabled is missing.",
           "name": "Name is missing.",
           "password": "Password is missing.",
-          "role": "Role doesn't exist."
+          "roles": "Roles doesn't exist."
         }
       },
       {
@@ -229,7 +259,9 @@ Feature: Bulk create users
           "firstname": "test-user-to-bulk-create-2-firstname",
           "lastname": "test-user-to-bulk-create-2-lastname",
           "email": "test-user-to-bulk-create-2-email@canopsis.net",
-          "role": "test-role-to-edit-user",
+          "roles": [
+            "test-role-to-user-edit-1"
+          ],
           "ui_language": "fr",
           "ui_theme": "canopsis",
           "ui_groups_navigation_type": "top-bar",
@@ -246,7 +278,9 @@ Feature: Bulk create users
           "firstname": "test-user-to-bulk-create-3-firstname",
           "lastname": "test-user-to-bulk-create-3-lastname",
           "email": "test-user-to-bulk-create-3-email@canopsis.net",
-          "role": "test-role-to-edit-user",
+          "roles": [
+            "test-role-to-user-edit-1"
+          ],
           "ui_language": "fr",
           "ui_groups_navigation_type": "top-bar",
           "enable": true,
@@ -262,7 +296,9 @@ Feature: Bulk create users
           "firstname": "test-user-to-bulk-create-4-firstname",
           "lastname": "test-user-to-bulk-create-4-lastname",
           "email": "test-user-to-bulk-create-4-email@canopsis.net",
-          "role": "test-role-to-edit-user",
+          "roles": [
+            "test-role-to-user-edit-1"
+          ],
           "ui_language": "fr",
           "ui_groups_navigation_type": "top-bar",
           "enable": true,
@@ -282,7 +318,9 @@ Feature: Bulk create users
           "firstname": "test-user-to-bulk-create-5-firstname",
           "lastname": "test-user-to-bulk-create-5-lastname",
           "email": "test-user-to-bulk-create-5-email@canopsis.net",
-          "role": "test-role-to-edit-user",
+          "roles": [
+            "test-role-to-user-edit-1"
+          ],
           "ui_language": "fr",
           "ui_groups_navigation_type": "top-bar",
           "enable": true,
@@ -300,7 +338,9 @@ Feature: Bulk create users
           "firstname": "test-user-to-bulk-create-6-firstname",
           "lastname": "test-user-to-bulk-create-6-lastname",
           "email": "test-user-to-bulk-create-6-email@canopsis.net",
-          "role": "test-role-to-edit-user",
+          "roles": [
+            "test-role-to-user-edit-1"
+          ],
           "ui_language": "fr",
           "ui_groups_navigation_type": "top-bar",
           "enable": true,
@@ -319,7 +359,9 @@ Feature: Bulk create users
           "firstname": "test-user-to-bulk-create-7-firstname",
           "lastname": "test-user-to-bulk-create-7-lastname",
           "email": "test-user-to-bulk-create-7-email@canopsis.net",
-          "role": "test-role-to-edit-user",
+          "roles": [
+            "test-role-to-user-edit-1"
+          ],
           "ui_language": "fr",
           "ui_groups_navigation_type": "top-bar",
           "enable": true,
@@ -336,7 +378,9 @@ Feature: Bulk create users
           "firstname": "test-user-to-bulk-create-8-firstname",
           "lastname": "test-user-to-bulk-create-8-lastname",
           "email": "test-user-to-bulk-create-8-email@canopsis.net",
-          "role": "test-role-to-edit-user",
+          "roles": [
+            "test-role-to-user-edit-1"
+          ],
           "ui_language": "fr",
           "ui_groups_navigation_type": "top-bar",
           "enable": true,
@@ -367,14 +411,24 @@ Feature: Bulk create users
           "firstname": "test-user-to-bulk-create-1-firstname",
           "lastname": "test-user-to-bulk-create-1-lastname",
           "name": "test-user-to-bulk-create-1-name",
-          "role": {
-            "_id": "test-role-to-edit-user",
-            "name": "test-role-to-edit-user",
-            "defaultview": {
-              "_id": "test-view-to-edit-user",
-              "title": "test-view-to-edit-user-title"
+          "roles": [
+            {
+              "_id": "test-role-to-user-edit-2",
+              "name": "test-role-to-user-edit-2",
+              "defaultview": {
+                "_id": "test-view-to-edit-user",
+                "title": "test-view-to-edit-user-title"
+              }
+            },
+            {
+              "_id": "test-role-to-user-edit-1",
+              "name": "test-role-to-user-edit-1",
+              "defaultview": {
+                "_id": "test-view-to-edit-user",
+                "title": "test-view-to-edit-user-title"
+              }
             }
-          },
+          ],
           "source": "",
           "ui_groups_navigation_type": "top-bar",
           "ui_language": "fr",
@@ -392,14 +446,16 @@ Feature: Bulk create users
           "firstname": "test-user-to-bulk-create-2-firstname",
           "lastname": "test-user-to-bulk-create-2-lastname",
           "name": "test-user-to-bulk-create-2-name",
-          "role": {
-            "_id": "test-role-to-edit-user",
-            "name": "test-role-to-edit-user",
-            "defaultview": {
-              "_id": "test-view-to-edit-user",
-              "title": "test-view-to-edit-user-title"
+          "roles": [
+            {
+              "_id": "test-role-to-user-edit-1",
+              "name": "test-role-to-user-edit-1",
+              "defaultview": {
+                "_id": "test-view-to-edit-user",
+                "title": "test-view-to-edit-user-title"
+              }
             }
-          },
+          ],
           "source": "",
           "ui_groups_navigation_type": "top-bar",
           "ui_language": "fr",
@@ -416,14 +472,16 @@ Feature: Bulk create users
           "firstname": "test-user-to-bulk-create-3-firstname",
           "lastname": "test-user-to-bulk-create-3-lastname",
           "name": "test-user-to-bulk-create-3-name",
-          "role": {
-            "_id": "test-role-to-edit-user",
-            "name": "test-role-to-edit-user",
-            "defaultview": {
-              "_id": "test-view-to-edit-user",
-              "title": "test-view-to-edit-user-title"
+          "roles": [
+            {
+              "_id": "test-role-to-user-edit-1",
+              "name": "test-role-to-user-edit-1",
+              "defaultview": {
+                "_id": "test-view-to-edit-user",
+                "title": "test-view-to-edit-user-title"
+              }
             }
-          },
+          ],
           "ui_groups_navigation_type": "top-bar",
           "ui_language": "fr",
           "source": "saml",

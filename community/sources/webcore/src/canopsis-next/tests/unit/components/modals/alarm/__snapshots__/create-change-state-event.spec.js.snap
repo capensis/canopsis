@@ -20,14 +20,10 @@ exports[`create-change-state-event Renders \`create-change-state-event\` 1`] = `
     <div
       class="text"
     >
-      <div
-        class="container"
-      >
-        <c-change-state-field-stub
-          label="Note"
-          value="[object Object]"
-        />
-      </div>
+      <c-change-state-field-stub
+        label="Note"
+        value="[object Object]"
+      />
     </div>
      
     <div

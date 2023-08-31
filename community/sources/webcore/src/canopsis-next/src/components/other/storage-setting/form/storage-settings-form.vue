@@ -22,7 +22,13 @@
       help-icon-color="info"
     )
       template(v-if="history.entity", #subtitle="") {{ entitySubTitle }}
-      v-radio-group(v-field="form.entity.archive", hide-details, mandatory, row)
+      v-radio-group(
+        v-field="form.entity.archive",
+        name="entity.archive",
+        hide-details,
+        mandatory,
+        row
+      )
         v-radio(:value="true", :label="$t('storageSetting.entity.archiveEntity')", color="primary")
         v-radio(:value="false", :label="$t('storageSetting.entity.deleteEntity')", color="primary")
       v-checkbox(
@@ -104,11 +110,44 @@
       c-enabled-field(
         v-field="form.webhook.log_credentials",
         :label="$t('storageSetting.webhook.logCredentials')",
-        :name="webhookLogCredentialsFieldName",
-        hide-details
+        :name="webhookLogCredentialsFieldName"
       )
         template(#append="")
           c-help-icon(:text="$t('storageSetting.webhook.logCredentialsHelpText')", color="info", top)
+    c-information-block(
+      :title="$t('storageSetting.metrics.title')",
+      :help-text="$t('storageSetting.metrics.titleHelp')",
+      help-icon-color="info"
+    )
+      c-enabled-duration-field(
+        v-field="form.metrics.delete_after",
+        :label="$t('storageSetting.metrics.deleteAfter')",
+        :help-text="$t('storageSetting.metrics.deleteAfterHelpText')",
+        :name="metricsDeleteAfterFieldName"
+      )
+    c-information-block(
+      :title="$t('storageSetting.perfDataMetrics.title')",
+      :help-text="$t('storageSetting.perfDataMetrics.titleHelp')",
+      help-icon-color="info"
+    )
+      c-enabled-duration-field(
+        v-field="form.perf_data_metrics.delete_after",
+        :label="$t('storageSetting.perfDataMetrics.deleteAfter')",
+        :help-text="$t('storageSetting.perfDataMetrics.deleteAfterHelpText')",
+        :name="perfDataMetricsDeleteAfterFieldName"
+      )
+    c-information-block(
+      :title="$t('storageSetting.eventFilterFailure.title')",
+      :help-text="$t('storageSetting.eventFilterFailure.titleHelp')",
+      help-icon-color="info"
+    )
+      template(v-if="history.event_filter_failure", #subtitle="") {{ eventFilterFailureSubTitle }}
+      c-enabled-duration-field(
+        v-field="form.event_filter_failure.delete_after",
+        :label="$t('storageSetting.eventFilterFailure.deleteAfter')",
+        :help-text="$t('storageSetting.eventFilterFailure.deleteAfterHelpText')",
+        :name="errorsDeleteAfterFieldName"
+      )
 </template>
 
 <script>
@@ -165,6 +204,18 @@ export default {
       return 'health_check.delete_after';
     },
 
+    metricsDeleteAfterFieldName() {
+      return 'metrics.delete_after';
+    },
+
+    perfDataMetricsDeleteAfterFieldName() {
+      return 'perf_data_metrics.delete_after';
+    },
+
+    errorsDeleteAfterFieldName() {
+      return 'errors.delete_after';
+    },
+
     webhookDeleteAfterFieldName() {
       return 'webhook.delete_after';
     },
@@ -182,6 +233,12 @@ export default {
     remediationSubTitle() {
       return this.$t('storageSetting.history.scriptLaunched', {
         launchedAt: convertDateToString(this.history.remediation),
+      });
+    },
+
+    eventFilterFailureSubTitle() {
+      return this.$t('storageSetting.history.scriptLaunched', {
+        launchedAt: convertDateToString(this.history.event_filter_failure),
       });
     },
 

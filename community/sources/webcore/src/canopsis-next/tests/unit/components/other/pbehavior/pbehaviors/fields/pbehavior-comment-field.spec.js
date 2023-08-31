@@ -1,26 +1,28 @@
 import Faker from 'faker';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createTextareaInputStub } from '@unit/stubs/input';
 
 import PbehaviorCommentField from '@/components/other/pbehavior/pbehaviors/fields/pbehavior-comment-field.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'v-textarea': createTextareaInputStub('v-textarea'),
+  'c-action-btn': true,
+};
+
+const snapshotStubs = {
+  'c-action-btn': true,
 };
 
 const selectMessageField = wrapper => wrapper.find('.v-textarea');
-const selectRemoveButton = wrapper => wrapper.find('v-btn-stub');
+const selectRemoveButton = wrapper => wrapper.find('c-action-btn-stub');
 
 describe('pbehavior-comment-field', () => {
   const factory = generateShallowRenderer(PbehaviorCommentField, {
-    localVue,
     stubs,
   });
   const snapshotFactory = generateRenderer(PbehaviorCommentField, {
-    localVue,
+    stubs: snapshotStubs,
   });
 
   test('Message changed after trigger textarea', () => {

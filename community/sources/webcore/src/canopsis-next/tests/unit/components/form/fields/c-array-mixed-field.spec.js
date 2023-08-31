@@ -1,12 +1,10 @@
 import Faker from 'faker';
 import { Validator } from 'vee-validate';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
 
 import CArrayTextField from '@/components/forms/fields/c-array-text-field.vue';
-
-const localVue = createVueInstance();
 
 const mockData = {
   string: Faker.datatype.string(),
@@ -33,15 +31,12 @@ const snapshotStubs = {
   'c-action-btn': true,
 };
 
-const factory = (options = {}) => shallowMount(CArrayTextField, {
-  localVue,
-  stubs,
-  ...options,
-});
-
 const selectTextField = wrapper => wrapper.find('input.v-text-field');
 
 describe('c-array-text-field', () => {
+  const factory = generateShallowRenderer(CArrayTextField, { stubs });
+  const snapshotFactory = generateRenderer(CArrayTextField, { stubs: snapshotStubs });
+
   it('Empty string added after click on add button', () => {
     const wrapper = factory({
       propsData: {
@@ -102,21 +97,16 @@ describe('c-array-text-field', () => {
   });
 
   it('Renders `c-array-text-field` with default props correctly', () => {
-    const wrapper = mount(CArrayTextField, {
-      localVue,
-      stubs: snapshotStubs,
-    });
+    const wrapper = snapshotFactory();
 
     expect(wrapper.element).toMatchSnapshot();
   });
 
   it('Renders `c-array-text-field` with all field types correctly', () => {
-    const wrapper = mount(CArrayTextField, {
-      localVue,
+    const wrapper = snapshotFactory({
       provide: {
         $validator: new Validator(),
       },
-      stubs: snapshotStubs,
       propsData: {
         values: [
           'string',
@@ -131,12 +121,10 @@ describe('c-array-text-field', () => {
   });
 
   it('Renders disabled `c-array-text-field` correctly', () => {
-    const wrapper = mount(CArrayTextField, {
-      localVue,
+    const wrapper = snapshotFactory({
       provide: {
         $validator: new Validator(),
       },
-      stubs: snapshotStubs,
       propsData: {
         values: ['string', 123],
         disabled: true,

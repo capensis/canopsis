@@ -4,6 +4,7 @@ import {
   EXTERNAL_DATA_PAYLOADS_VARIABLES,
   DECLARE_TICKET_PAYLOAD_ADDITIONAL_DATA_VARIABLES,
   DECLARE_TICKET_PAYLOAD_PREVIOUS_STEP_VARIABLES,
+  USER_PAYLOADS_VARIABLES,
 } from '@/constants';
 
 export const payloadVariablesMixin = {
@@ -81,6 +82,38 @@ export const payloadVariablesMixin = {
         enumerable: true,
         variables: this.alarmPayloadSubVariables,
       }];
+    },
+
+    userPayloadVariables() {
+      return [
+        {
+          value: USER_PAYLOADS_VARIABLES.email,
+          text: this.$t('user.variables.userEmail') },
+        {
+          value: USER_PAYLOADS_VARIABLES.username,
+          text: this.$t('user.variables.userUsername'),
+        },
+        {
+          value: USER_PAYLOADS_VARIABLES.firstname,
+          text: this.$t('user.variables.userFirstname'),
+        },
+        {
+          value: USER_PAYLOADS_VARIABLES.lastname,
+          text: this.$t('user.variables.userLastname'),
+        },
+        {
+          value: USER_PAYLOADS_VARIABLES.externalId,
+          text: this.$t('user.variables.userExternalId'),
+        },
+        {
+          value: USER_PAYLOADS_VARIABLES.source,
+          text: this.$t('user.variables.userSource'),
+        },
+        {
+          value: USER_PAYLOADS_VARIABLES.role,
+          text: this.$t('user.variables.userRole'),
+        },
+      ];
     },
 
     alarmPayloadVariables() {

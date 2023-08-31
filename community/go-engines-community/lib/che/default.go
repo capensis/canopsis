@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
@@ -34,10 +35,13 @@ func NewEngine(
 	options Options,
 	mongoClient mongo.DbClient,
 	cfg config.CanopsisConf,
+	metricsSender metrics.Sender,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	externalDataContainer *eventfilter.ExternalDataContainer,
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 	templateConfigProvider *config.BaseTemplateConfigProvider,
+	eventFilterEventCounter eventfilter.EventCounter,
+	eventFilterFailureService eventfilter.FailureService,
 	logger zerolog.Logger,
 ) libengine.Engine {
 	defer depmake.Catch(logger)
@@ -53,7 +57,7 @@ func NewEngine(
 	serviceRedisSession := m.DepRedisSession(ctx, redis.EntityServiceStorage, logger, cfg)
 	periodicalLockClient := redis.NewLockClient(redisSession)
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
-
+	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
 	enrichmentCenter := libcontext.NewEnrichmentCenter(
 		entityAdapter,
 		mongoClient,
@@ -70,14 +74,22 @@ func NewEngine(
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer, templateExecutor))
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(externalDataContainer, eventfilter.NewActionProcessor(templateExecutor, techMetricsSender)))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(
+		externalDataContainer,
+		eventFilterFailureService,
+		templateExecutor,
+	))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(
+		externalDataContainer,
+		eventfilter.NewActionProcessor(eventFilterFailureService, templateExecutor, techMetricsSender),
+		eventFilterFailureService,
+	))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeBreak, eventfilter.NewBreakApplicator())
 
 	ruleAdapter := eventfilter.NewRuleAdapter(mongoClient)
-
-	eventfilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, logger)
+	eventFilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, eventFilterEventCounter,
+		eventFilterFailureService, templateExecutor, logger)
 
 	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
@@ -112,7 +124,7 @@ func NewEngine(
 
 			if !mongoClient.IsDistributed() {
 				logger.Debug().Msg("Loading event filter rules")
-				err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
+				err := eventFilterService.LoadRules(ctx, []string{eventfilter.RuleTypeDrop, eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeBreak})
 				if err != nil {
 					return fmt.Errorf("unable to load rules: %w", err)
 				}
@@ -169,6 +181,14 @@ func NewEngine(
 	)
 
 	engine.AddRoutine(func(ctx context.Context) error {
+		eventFilterEventCounter.Run(ctx)
+		return nil
+	})
+	engine.AddRoutine(func(ctx context.Context) error {
+		eventFilterFailureService.Run(ctx)
+		return nil
+	})
+	engine.AddRoutine(func(ctx context.Context) error {
 		techMetricsSender.Run(ctx)
 		return nil
 	})
@@ -190,11 +210,13 @@ func NewEngine(
 			FeatureContextCreation:   options.FeatureContextCreation,
 
 			AlarmConfigProvider: alarmConfigProvider,
-			EventFilterService:  eventfilterService,
+			EventFilterService:  eventFilterService,
 			EnrichmentCenter:    enrichmentCenter,
 			TechMetricsSender:   techMetricsSender,
+			MetricsSender:       metricsSender,
 			AmqpPublisher:       m.DepAMQPChannelPub(amqpConnection),
 			AlarmAdapter:        alarm.NewAdapter(mongoClient),
+			EntityCollection:    mongoClient.Collection(mongo.EntityMongoCollection),
 			Encoder:             json.NewEncoder(),
 			Decoder:             json.NewDecoder(),
 			Logger:              logger,
@@ -202,7 +224,7 @@ func NewEngine(
 		logger,
 	))
 	engine.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
-		EventFilterService: eventfilterService,
+		EventFilterService: eventFilterService,
 		EnrichmentCenter:   enrichmentCenter,
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		Logger:             logger,
@@ -230,6 +252,7 @@ func NewEngine(
 		timezoneConfigProvider,
 		techMetricsConfigProvider,
 		templateConfigProvider,
+		dataStorageConfigProvider,
 	))
 	engine.AddPeriodicalWorker("impacted services", libengine.NewLockedPeriodicalWorker(
 		periodicalLockClient,
@@ -244,7 +267,7 @@ func NewEngine(
 	engine.AddPeriodicalWorker("entity infos dictionary", infosDictLockedPeriodicalWorker)
 	if mongoClient.IsDistributed() {
 		engine.AddRoutine(func(ctx context.Context) error {
-			w := eventfilter.NewRulesChangesWatcher(mongoClient, eventfilterService)
+			w := eventfilter.NewRulesChangesWatcher(mongoClient, eventFilterService)
 
 			logger.Debug().Msg("Loading event filter rules")
 
@@ -261,6 +284,13 @@ func NewEngine(
 			}
 		})
 	}
+	engine.AddPeriodicalWorker("clean", &cleanPeriodicalWorker{
+		PeriodicalInterval:        time.Hour,
+		TimezoneConfigProvider:    timezoneConfigProvider,
+		DataStorageConfigProvider: dataStorageConfigProvider,
+		LimitConfigAdapter:        datastorage.NewAdapter(mongoClient),
+		Logger:                    logger,
+	})
 
 	return engine
 }

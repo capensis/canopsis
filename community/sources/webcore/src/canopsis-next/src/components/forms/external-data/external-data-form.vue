@@ -8,7 +8,7 @@
     external-data-item-form.mb-3(
       v-for="(item, index) in form",
       v-field="form[index]",
-      :name="item.key",
+      :name="`${name}.${item.key}`",
       :key="item.key",
       :disabled="disabled",
       :types="types",
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { externalDataItemToForm } from '@/helpers/forms/shared/external-data';
+import { externalDataItemToForm } from '@/helpers/entities/shared/external-data/form';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -54,6 +54,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    name: {
+      type: String,
+      default: 'external_data',
     },
   },
   methods: {

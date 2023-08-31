@@ -1,15 +1,9 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
-import {
-  EVENT_FILTER_ENRICHMENT_AFTER_TYPES,
-  EVENT_FILTER_TYPES,
-  PATTERN_CUSTOM_ITEM_VALUE,
-} from '@/constants';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { EVENT_FILTER_ENRICHMENT_AFTER_TYPES, EVENT_FILTER_TYPES, PATTERN_CUSTOM_ITEM_VALUE } from '@/constants';
 
 import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-id-field': true,
@@ -19,25 +13,13 @@ const stubs = {
   'c-enabled-field': true,
   'c-patterns-field': true,
   'c-information-block': true,
+  'c-collapse-panel': true,
+  'external-data-form': true,
   'event-filter-change-entity-form': true,
   'event-filter-enrichment-form': true,
   'pbehavior-recurrence-rule-field': true,
   'event-filter-drop-intervals-field': true,
 };
-
-const factory = (options = {}) => shallowMount(EventFilterForm, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(EventFilterForm, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectIdField = wrapper => wrapper.find('c-id-field-stub');
 const selectEventFilterTypeField = wrapper => wrapper.find('c-event-filter-type-field-stub');
@@ -63,7 +45,11 @@ describe('event-filter-form', () => {
       },
     },
     config: {},
+    external_data: [],
   };
+
+  const factory = generateShallowRenderer(EventFilterForm, { stubs });
+  const snapshotFactory = generateRenderer(EventFilterForm, { stubs });
 
   test('ID changed after trigger id field', () => {
     const wrapper = factory({

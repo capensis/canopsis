@@ -21,7 +21,6 @@ import (
 
 	libhttp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
@@ -800,36 +799,29 @@ Step example:
 	Given I am admin
 */
 func (a *ApiClient) IAm(ctx context.Context, role string) (context.Context, error) {
-	var line model.Rbac
-	res := a.db.Collection(mongo.RightsMongoCollection).FindOne(ctx, bson.M{
-		"crecord_type": model.LineTypeRole,
-		"crecord_name": role,
-	})
-	if err := res.Err(); err != nil {
+	var r struct {
+		ID string `bson:"_id"`
+	}
+	err := a.db.Collection(mongo.RoleCollection).FindOne(ctx, bson.M{
+		"name": role,
+	}).Decode(&r)
+	if err != nil {
 		return ctx, fmt.Errorf("cannot fetch role: %w", err)
 	}
 
-	err := res.Decode(&line)
-	if err != nil {
-		return ctx, fmt.Errorf("cannot decode role: %w", err)
+	var u struct {
+		Name string `bson:"name"`
 	}
-
-	res = a.db.Collection(mongo.RightsMongoCollection).FindOne(ctx, bson.M{
-		"crecord_type": model.LineTypeSubject,
-		"role":         line.ID,
-	})
-	if err := res.Err(); err != nil {
+	err = a.db.Collection(mongo.UserCollection).FindOne(ctx, bson.M{
+		"roles": r.ID,
+	}).Decode(&u)
+	if err != nil {
 		return ctx, fmt.Errorf("cannot fetch user: %w", err)
-	}
-
-	err = res.Decode(&line)
-	if err != nil {
-		return ctx, fmt.Errorf("cannot decode user: %w", err)
 	}
 
 	uri := fmt.Sprintf("%s/api/v4/login", a.url)
 	body, err := json.Marshal(map[string]string{
-		"username": line.Name,
+		"username": u.Name,
 		"password": userPass,
 	})
 	if err != nil {
@@ -1014,14 +1006,6 @@ func (a *ApiClient) IDoRequestWithBody(ctx context.Context, method, uri string, 
 	req, err := a.createRequest(ctx, method, uri, doc)
 	if err != nil {
 		return ctx, err
-	}
-
-	if headers, ok := getHeaders(ctx); ok {
-		if _, ok := headers[headerContentType]; !ok {
-			req.Header.Set(headerContentType, binding.MIMEJSON)
-		}
-	} else {
-		req.Header.Set(headerContentType, binding.MIMEJSON)
 	}
 
 	return a.doRequest(ctx, req)
@@ -1426,6 +1410,16 @@ func (a *ApiClient) createRequest(ctx context.Context, method, uri, body string)
 		return nil, fmt.Errorf("cannot create request: %w", err)
 	}
 
+	if body != "" {
+		if headers, ok := getHeaders(ctx); ok {
+			if _, ok := headers[headerContentType]; !ok {
+				req.Header.Set(headerContentType, binding.MIMEJSON)
+			}
+		} else {
+			req.Header.Set(headerContentType, binding.MIMEJSON)
+		}
+	}
+
 	return req, nil
 }
 
@@ -1448,6 +1442,16 @@ func (a *ApiClient) createRequestWithSavedRequest(ctx context.Context, method, u
 	req, err := http.NewRequest(method, uri, r)
 	if err != nil {
 		return nil, ctx, fmt.Errorf("cannot create request: %w", err)
+	}
+
+	if body != "" {
+		if headers, ok := getHeaders(ctx); ok {
+			if _, ok := headers[headerContentType]; !ok {
+				req.Header.Set(headerContentType, binding.MIMEJSON)
+			}
+		} else {
+			req.Header.Set(headerContentType, binding.MIMEJSON)
+		}
 	}
 
 	return req, ctx, nil

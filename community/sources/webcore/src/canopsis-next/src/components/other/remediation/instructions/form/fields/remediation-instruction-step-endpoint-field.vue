@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 
 export default {
   inject: ['$validator'],
