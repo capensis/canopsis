@@ -120,6 +120,7 @@ export const PATTERN_RULE_TYPES = {
   duration: 'duration',
   string: 'string',
   number: 'number',
+  object: 'object',
 };
 
 export const PATTERN_RULE_INFOS_FIELDS = {
