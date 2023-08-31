@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import { LOGIN_MAINTENANCE_POLLING_DELAY } from '@/constants';
+
 import { authMixin } from '@/mixins/auth';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
@@ -28,6 +30,45 @@ export default {
     LoginFooter,
   },
   mixins: [authMixin, entitiesInfoMixin],
+  data() {
+    return {
+      timerId: null,
+    };
+  },
+  watch: {
+    maintenance: {
+      immediate: true,
+      handler(maintenance) {
+        if (maintenance) {
+          this.startMaintenancePolling();
+        } else {
+          this.stopMaintenancePolling();
+        }
+      },
+    },
+  },
+  beforeDestroy() {
+    this.stopMaintenancePolling();
+  },
+  methods: {
+    startMaintenancePolling() {
+      if (this.timerId) {
+        this.stopMaintenancePolling();
+      }
+
+      this.timerId = setTimeout(async () => {
+        await this.fetchAppInfo();
+
+        if (this.maintenance) {
+          this.startMaintenancePolling();
+        }
+      }, LOGIN_MAINTENANCE_POLLING_DELAY);
+    },
+
+    stopMaintenancePolling() {
+      clearTimeout(this.timerId);
+    },
+  },
 };
 </script>
 
