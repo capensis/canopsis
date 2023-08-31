@@ -1,8 +1,17 @@
 import { groupBy } from 'lodash';
 
-import { DATETIME_FORMATS } from '@/constants';
+import {
+  ALARM_LINK_ICON_CHIP_COLUMN_GAP,
+  ALARM_LINK_ICON_CHIP_WIDTH,
+  ALARM_LINK_TD_PADDINGS,
+  DATETIME_FORMATS,
+} from '@/constants';
 
 import { convertDateToString } from '@/helpers/date/date';
+
+/**
+ * @typedef {0 | 1 | 2} AlarmListWidgetDense
+ */
 
 /**
  * Generate alarm details id by widgetId
@@ -39,4 +48,17 @@ export const getAlarmDetailsDataPreparer = widgetId => data => (
  */
 export const groupAlarmSteps = steps => (
   groupBy(steps, step => convertDateToString(step.t, DATETIME_FORMATS.short))
+);
+
+/**
+ * Calculate alarm links column width for table
+ *
+ * @param {AlarmListWidgetDense} dense
+ * @param {number} linksInRowCount
+ * @returns {`${number}px`}
+ */
+export const calculateAlarmLinksColumnWidth = (dense, linksInRowCount) => (
+  `${(ALARM_LINK_ICON_CHIP_WIDTH * linksInRowCount)
+  + (ALARM_LINK_ICON_CHIP_COLUMN_GAP[dense] * (linksInRowCount - 1))
+  + (ALARM_LINK_TD_PADDINGS[dense] * 2)}px`
 );

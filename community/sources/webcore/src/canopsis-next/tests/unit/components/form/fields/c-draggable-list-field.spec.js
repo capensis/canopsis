@@ -35,25 +35,15 @@ describe('c-draggable-list-field', () => {
       },
     });
 
-    const draggable = selectDraggable(wrapper);
-
-    draggable.trigger('change', {
-      moved: {
-        oldIndex: 0,
-        newIndex: 1,
-      },
-    });
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-    const [eventData] = inputEvents[0];
-
-    expect(eventData).toEqual([
+    const newOrder = [
       items[1],
       items[0],
       items[2],
-    ]);
+    ];
+
+    selectDraggable(wrapper).vm.$emit('input', newOrder);
+
+    expect(wrapper).toEmit('input', newOrder);
   });
 
   it('Filter position changed after trigger draggable with added event', () => {
@@ -63,30 +53,20 @@ describe('c-draggable-list-field', () => {
       },
     });
 
-    const draggable = selectDraggable(wrapper);
-
     const newItem = {
       title: Faker.datatype.string(),
     };
 
-    draggable.trigger('change', {
-      added: {
-        element: newItem,
-        newIndex: 1,
-      },
-    });
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-    const [eventData] = inputEvents[0];
-
-    expect(eventData).toEqual([
+    const newItems = [
       items[0],
       newItem,
       items[1],
       items[2],
-    ]);
+    ];
+
+    selectDraggable(wrapper).vm.$emit('input', newItems);
+
+    expect(wrapper).toEmit('input', newItems);
   });
 
   it('Filter position changed after trigger draggable with removed event', () => {
@@ -96,23 +76,14 @@ describe('c-draggable-list-field', () => {
       },
     });
 
-    const draggable = selectDraggable(wrapper);
-
-    draggable.trigger('change', {
-      removed: {
-        oldIndex: 1,
-      },
-    });
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-    const [eventData] = inputEvents[0];
-
-    expect(eventData).toEqual([
+    const newItems = [
       items[0],
       items[2],
-    ]);
+    ];
+
+    selectDraggable(wrapper).vm.$emit('input', newItems);
+
+    expect(wrapper).toEmit('input', newItems);
   });
 
   it('Renders `c-draggable-list-field` with default props', () => {

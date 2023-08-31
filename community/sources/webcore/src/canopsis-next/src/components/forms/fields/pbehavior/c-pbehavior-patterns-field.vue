@@ -8,19 +8,14 @@
     :required="required",
     :attributes="pbehaviorAttributes",
     :with-type="withType",
-    :check-count-name="checkCountName"
+    :counter="counter"
   )
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import {
-  MAX_LIMIT,
-  PATTERN_OPERATORS,
-  PBEHAVIOR_PATTERN_FIELDS,
-  PBEHAVIOR_TYPE_TYPES,
-} from '@/constants';
+import { MAX_LIMIT, PATTERN_OPERATORS, PBEHAVIOR_PATTERN_FIELDS, PBEHAVIOR_TYPE_TYPES } from '@/constants';
 
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
@@ -62,6 +57,10 @@ export default {
     readonly: {
       type: Boolean,
       default: false,
+    },
+    counter: {
+      type: Object,
+      required: false,
     },
   },
   data() {

@@ -22,11 +22,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import {
-  MODALS,
-  USERS_PERMISSIONS,
-  TEST_SUITE_COLORS,
-} from '@/constants';
+import { MODALS, USERS_PERMISSIONS, TEST_SUITE_COLORS } from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
