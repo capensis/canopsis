@@ -1,8 +1,10 @@
 <template lang="pug">
-  div.mainContainer.secondary
-    div.description
+  div.login(:class="{ 'login--maintenance': maintenance }")
+    div.login__image(v-if="maintenance")
+      v-icon(size="120", color="white") $vuetify.icons.miscellaneous_services
+    div.login__description
       c-compiled-template(:template="description")
-    div.loginContainer
+    div.login__container
       base-login
       cas-login.mt-2(v-if="isCASAuthEnabled", key="cas")
       saml-login.mt-2(v-if="isSAMLAuthEnabled", key="saml")
@@ -30,40 +32,32 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .mainContainer {
-    min-width: 100%;
-    min-height: 100vh;
-    overflow-x: hidden;
-    display: grid;
-    align-items: center;
+.login {
+  min-width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  display: grid;
+  align-items: center;
 
-    grid-template-columns: 1fr 8fr 1fr;
-    grid-template-rows: 5% auto auto 15% auto;
+  grid-template-columns: 1fr 8fr 1fr;
+  grid-template-rows: 5% auto auto 15% auto;
+  background: var(--v-secondary-base);
 
-    grid-template-areas:
-      ". . ."
-      ". description ."
-      ". form ."
-      ". . ."
-      "footer footer footer";
+  grid-template-areas:
+    ". . ."
+    ". image ."
+    ". description ."
+    ". form ."
+    ". . ."
+    "footer footer footer";
 
-    @media (min-width: 900px) {
-      grid-template-columns: auto 40% 1% 40% auto;
-      grid-template-rows: auto auto auto auto;
-
-      grid-template-areas:
-        ". . . . ."
-        ". description . form ."
-        ". . . . ."
-        "footer footer footer footer footer";
-    }
-
-    @media (min-width: 1200px) {
-      grid-template-columns: auto 30% 3% 30% auto;
-    }
+  &__image {
+    grid-area: image;
+    display: flex;
+    justify-content: center;
   }
 
-  .description {
+  &__description {
     grid-area: description;
     align-content: center;
     min-height: 500px;
@@ -73,7 +67,7 @@ export default {
     color: white;
   }
 
-  .loginContainer {
+  &__container {
     grid-area: form;
     width: 100%;
     min-height: 500px;
@@ -81,4 +75,29 @@ export default {
     flex-flow: column;
     justify-content: space-between;
   }
+
+  &--maintenance {
+    background: #6a6a6a;
+  }
+
+  @media (min-width: 900px) {
+    grid-template-columns: auto 40% 1% 40% auto;
+    grid-template-rows: auto auto auto auto;
+
+    grid-template-areas:
+      ". . . . ."
+      "image description . form ."
+      ". . . . ."
+      "footer footer footer footer footer";
+
+    &__image {
+      min-height: 500px;
+      padding-top: 80px;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    grid-template-columns: auto 30% 3% 30% auto;
+  }
+}
 </style>
