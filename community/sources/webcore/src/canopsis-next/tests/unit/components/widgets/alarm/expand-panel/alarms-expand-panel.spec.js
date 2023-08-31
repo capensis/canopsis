@@ -19,8 +19,8 @@ const stubs = {
   'entity-gantt': true,
   'pbehaviors-simple-list': true,
   'alarms-expand-panel-charts': true,
-  'c-runtime-template': CRuntimeTemplate,
   'c-compiled-template': CCompiledTemplate,
+  'c-runtime-template': CRuntimeTemplate,
 };
 
 const selectTabs = wrapper => wrapper.vm.$children[0];

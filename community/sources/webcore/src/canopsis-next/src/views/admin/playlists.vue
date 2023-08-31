@@ -7,6 +7,9 @@
         :pending="playlistsPending",
         :pagination.sync="pagination",
         :total-items="playlistsMeta.total_count",
+        :creatable="hasCreateAnyPlaylistAccess",
+        :updatable="hasUpdateAnyPlaylistAccess",
+        :removable="hasDeleteAnyPlaylistAccess",
         @edit="showEditPlaylistModal",
         @remove="showRemovePlaylistModal",
         @duplicate="showDuplicatePlaylistModal"
