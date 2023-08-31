@@ -7,7 +7,9 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
@@ -39,7 +41,7 @@ func LoginHandler(config libsecurity.CasConfig) gin.HandlerFunc {
 }
 
 // CallbackHandler validates CAS ticket, creates access token and redirects to referer url.
-func CallbackHandler(p libsecurity.HttpProvider, enforcer libsecurity.Enforcer, tokenService security.TokenService) gin.HandlerFunc {
+func CallbackHandler(p libsecurity.HttpProvider, enforcer libsecurity.Enforcer, tokenService security.TokenService, maintenanceAdapter config.MaintenanceAdapter) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		request := casLoginRequest{}
 
@@ -61,6 +63,23 @@ func CallbackHandler(p libsecurity.HttpProvider, enforcer libsecurity.Enforcer, 
 		err = enforcer.LoadPolicy()
 		if err != nil {
 			panic(fmt.Errorf("reload enforcer error: %w", err))
+		}
+
+		maintenanceConf, err := maintenanceAdapter.GetConfig(c)
+		if err != nil {
+			panic(err)
+		}
+
+		if maintenanceConf.Enabled {
+			ok, err = enforcer.Enforce(user.ID, security.PermMaintenance, model.PermissionCan)
+			if err != nil {
+				panic(err)
+			}
+
+			if !ok {
+				c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
+				return
+			}
 		}
 
 		accessToken, err := tokenService.Create(c, *user, libsecurity.AuthMethodCas)
