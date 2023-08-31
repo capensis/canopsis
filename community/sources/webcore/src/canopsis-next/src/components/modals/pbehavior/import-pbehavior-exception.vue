@@ -18,8 +18,7 @@ import { pbehaviorExceptionImportToForm } from '@/helpers/entities/pbehavior/exc
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 
-import PbehaviorExceptionImportForm
-  from '@/components/other/pbehavior/exceptions/form/pbehavior-exception-import-form.vue';
+import PbehaviorExceptionImportForm from '@/components/other/pbehavior/exceptions/form/pbehavior-exception-import-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
