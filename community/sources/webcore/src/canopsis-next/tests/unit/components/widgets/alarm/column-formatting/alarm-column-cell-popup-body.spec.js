@@ -4,8 +4,10 @@ import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import AlarmColumnCellPopupBody from '@/components/widgets/alarm/columns-formatting/alarm-column-cell-popup-body.vue';
+import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 
 const stubs = {
+  'c-compiled-template': CCompiledTemplate,
   'c-runtime-template': CRuntimeTemplate,
 };
 
