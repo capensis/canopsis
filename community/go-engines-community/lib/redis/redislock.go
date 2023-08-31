@@ -5,8 +5,9 @@ package redis
 
 import (
 	"context"
-	"github.com/bsm/redislock"
 	"time"
+
+	"github.com/bsm/redislock"
 )
 
 type LockClient interface {
