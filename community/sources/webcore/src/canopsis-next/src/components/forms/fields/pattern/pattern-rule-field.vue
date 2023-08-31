@@ -1,8 +1,8 @@
 <template lang="pug">
   v-layout(row)
-    v-flex(:xs5="isAnyInfosRule", :xs6="isObjectRule", xs4)
+    v-flex(:xs5="isAnyInfosRule", xs4)
       v-layout(row)
-        v-flex(:xs4="isAnyInfosRule")
+        v-flex(:xs4="isAnyInfosRule", :xs6="isObjectRule")
           pattern-attribute-field(
             v-field="rule.attribute",
             :items="attributes",
