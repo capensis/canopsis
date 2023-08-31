@@ -37,6 +37,7 @@ import {
   PATTERN_CUSTOM_ITEM_VALUE,
   PATTERN_TYPES,
   TIME_UNITS,
+  PATTERN_OBJECT_TYPE_FIELDS,
 } from '@/constants';
 
 import { convertDateToTimestamp, isValidDateInterval } from '@/helpers/date/date';
@@ -212,6 +213,14 @@ export const isDateRuleType = type => type === PATTERN_RULE_TYPES.date;
 export const isDurationRuleType = type => type === PATTERN_RULE_TYPES.duration;
 
 /**
+ * Check rule is object
+ *
+ * @param {string} type
+ * @return {boolean}
+ */
+export const isObjectRuleType = type => type === PATTERN_RULE_TYPES.object;
+
+/**
  * Check field type is string array
  *
  * @param {PatternFieldType} type
@@ -322,6 +331,14 @@ export const isInfosPatternRuleField = value => [
   ENTITY_PATTERN_FIELDS.componentInfos,
   ENTITY_PATTERN_FIELDS.infos,
 ].some(field => value?.startsWith(field));
+
+/**
+ * Check pattern field is object
+ *
+ * @param {string} value
+ * @return {boolean}
+ */
+export const isObjectPatternRuleField = value => PATTERN_OBJECT_TYPE_FIELDS.includes(value);
 
 /**
  * Check pattern field is duration
@@ -647,6 +664,7 @@ export const patternRuleToForm = (rule = {}) => {
   const isDuration = rule.field === ALARM_PATTERN_FIELDS.duration;
   const isInfos = isAlarmInfos || isEntityInfos || isEntityComponentInfos;
   const isExtraInfos = !isInfos && rule.field?.startsWith(EVENT_FILTER_PATTERN_FIELDS.extraInfos);
+  const patternObjectField = PATTERN_OBJECT_TYPE_FIELDS.find(field => rule.field.startsWith(field));
 
   switch (rule.cond.type) {
     case PATTERN_CONDITIONS.equal: {
@@ -811,6 +829,11 @@ export const patternRuleToForm = (rule = {}) => {
       : PATTERN_RULE_INFOS_FIELDS.value;
   }
 
+  if (patternObjectField) {
+    form.attribute = patternObjectField;
+    form.dictionary = rule.field.replace(`${patternObjectField}.`, '');
+  }
+
   return form;
 };
 
@@ -905,8 +928,9 @@ export const formRuleToPatternRule = (rule) => {
   const isInfos = isInfosPatternRuleField(rule.attribute);
   const isExtraInfos = isExtraInfosPatternRuleField(rule.attribute);
   const isDate = isDatePatternRuleField(rule.attribute);
+  const isObject = isObjectPatternRuleField(rule.attribute);
 
-  if (isInfos || isExtraInfos) {
+  if (isInfos || isExtraInfos || isObject) {
     pattern.field = [rule.attribute, rule.dictionary].join('.');
   }
 
