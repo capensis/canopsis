@@ -442,6 +442,7 @@ Feature: get a PBehavior
         "description": "test-reason-to-pbh-edit-description"
       },
       "rrule": "",
+      "rrule_end": null,
       "tstart": 1591172881,
       "tstop": 1591536400,
       "type": {

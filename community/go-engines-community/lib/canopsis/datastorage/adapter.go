@@ -145,3 +145,19 @@ func (a *adapter) UpdateHistoryWebhook(ctx context.Context, t types.CpsTime) err
 
 	return nil
 }
+
+func (a *adapter) UpdateHistoryEventFilterFailure(ctx context.Context, t types.CpsTime) error {
+	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{
+		"$set": bson.M{
+			"history.event_filter_failure": t,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	if res.MatchedCount == 0 {
+		return fmt.Errorf("cannot find configuration _id=%s", ID)
+	}
+
+	return nil
+}
