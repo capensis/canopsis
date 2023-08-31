@@ -4,7 +4,8 @@
     :entity-attributes="entityAttributes",
     :readonly="readonly",
     with-entity,
-    required
+    required,
+    entity-counters-type
   )
 </template>
 

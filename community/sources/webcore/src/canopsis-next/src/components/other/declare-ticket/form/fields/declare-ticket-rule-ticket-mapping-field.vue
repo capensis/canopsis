@@ -18,20 +18,17 @@
           v-field="value.empty_response",
           :label="$t('declareTicket.emptyResponse')"
         )
-        v-layout
-          v-flex.mr-3(xs6)
-            declare-ticket-rule-ticket-id-field(
-              v-field="value.ticket_id",
-              :disabled="disabled",
-              :name="ticketIdFieldName",
-              :required="ticketIdRequired"
-            )
-          v-flex(xs6)
-            declare-ticket-rule-ticket-url-field(
-              v-field="value.ticket_url",
-              :disabled="disabled",
-              :name="ticketUrlFieldName"
-            )
+        declare-ticket-rule-ticket-id-field(
+          v-field="value.ticket_id",
+          :disabled="disabled",
+          :name="ticketIdFieldName",
+          :required="ticketIdRequired"
+        )
+        declare-ticket-rule-ticket-url-field(
+          v-field="value.ticket_url",
+          :disabled="disabled",
+          :name="ticketUrlFieldName"
+        )
         declare-ticket-rule-ticket-custom-fields-field(v-field="value.mapping", :name="name", :disabled="disabled")
 </template>
 

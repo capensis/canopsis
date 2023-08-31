@@ -102,6 +102,8 @@ describe('alarm-column-value-extra-details', () => {
           ...fullAlarm,
 
           children: 3,
+          opened_children: 2,
+          closed_children: 1,
           meta_alarm_rule: {
             id: 'child-rule-id',
             name: 'child-rule-name',

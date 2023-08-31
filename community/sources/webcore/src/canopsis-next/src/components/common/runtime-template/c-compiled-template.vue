@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-runtime-template(:template="compiledTemplate", :parent="$parent")
+  c-runtime-template(v-on="$listeners", :template="compiledTemplate", :parent="$parent")
 </template>
 
 <script>

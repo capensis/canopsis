@@ -51,18 +51,18 @@ func (mr *MockRulesAdapterMockRecorder) Get(arg0 interface{}) *gomock.Call {
 }
 
 // GetManualRule mocks base method.
-func (m *MockRulesAdapter) GetManualRule(arg0 context.Context) (correlation.Rule, error) {
+func (m *MockRulesAdapter) GetManualRule(arg0 context.Context, arg1 bool) (correlation.Rule, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetManualRule", arg0)
+	ret := m.ctrl.Call(m, "GetManualRule", arg0, arg1)
 	ret0, _ := ret[0].(correlation.Rule)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetManualRule indicates an expected call of GetManualRule.
-func (mr *MockRulesAdapterMockRecorder) GetManualRule(arg0 interface{}) *gomock.Call {
+func (mr *MockRulesAdapterMockRecorder) GetManualRule(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetManualRule", reflect.TypeOf((*MockRulesAdapter)(nil).GetManualRule), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetManualRule", reflect.TypeOf((*MockRulesAdapter)(nil).GetManualRule), arg0, arg1)
 }
 
 // GetRule mocks base method.
