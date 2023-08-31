@@ -21,6 +21,7 @@ const stubs = {
   'c-entity-patterns-field': true,
   'c-pbehavior-patterns-field': true,
   'c-event-filter-patterns-field': true,
+  'c-alert': true,
 };
 
 const selectAlarmPatternsField = wrapper => wrapper.find('c-alarm-patterns-field-stub');

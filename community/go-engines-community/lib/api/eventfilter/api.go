@@ -15,6 +15,12 @@ import (
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
+type API interface {
+	common.BulkCrudAPI
+	ListFailures(c *gin.Context)
+	ReadFailures(c *gin.Context)
+}
+
 type api struct {
 	store        Store
 	actionLogger logger.ActionLogger
@@ -27,7 +33,7 @@ func NewApi(
 	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 	transformer common.PatternFieldsTransformer,
-) common.BulkCrudAPI {
+) API {
 	return &api{
 		store:        store,
 		actionLogger: actionLogger,
@@ -48,9 +54,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	ctx := c.Request.Context()
-
-	err = a.transformEditRequest(ctx, &request.EditRequest)
+	err = a.transformEditRequest(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -60,7 +64,7 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	eventfilter, err := a.store.Insert(ctx, request)
+	eventfilter, err := a.store.Insert(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -88,7 +92,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.Find(c.Request.Context(), query)
+	aggregationResult, err := a.store.Find(c, query)
 	if err != nil {
 		panic(err)
 	}
@@ -105,7 +109,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	evf, err := a.store.GetById(c.Request.Context(), c.Param("id"))
+	evf, err := a.store.GetById(c, c.Param("id"))
 
 	if err == mongodriver.ErrNoDocuments || evf == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -133,9 +137,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	ctx := c.Request.Context()
-
-	err := a.transformEditRequest(ctx, &request.EditRequest)
+	err := a.transformEditRequest(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -145,7 +147,7 @@ func (a *api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	eventfilter, err := a.store.Update(ctx, request)
+	eventfilter, err := a.store.Update(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -168,7 +170,7 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
+	ok, err := a.store.Delete(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -267,6 +269,49 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 		return request.ID, nil
 	}, a.logger)
+}
+
+// ListFailures
+// @Success 200 {object} common.PaginatedListResponse{data=[]FailureResponse}
+func (a *api) ListFailures(c *gin.Context) {
+	r := FailureRequest{}
+	r.Query = pagination.GetDefaultQuery()
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+
+	aggregationResult, err := a.store.FindFailures(c, c.Param("id"), r)
+	if err != nil {
+		panic(err)
+	}
+
+	if aggregationResult == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (a *api) ReadFailures(c *gin.Context) {
+	exists, err := a.store.ReadFailures(c, c.Param("id"))
+	if err != nil {
+		panic(err)
+	}
+
+	if !exists {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	c.Status(http.StatusNoContent)
 }
 
 func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {

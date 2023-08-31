@@ -96,6 +96,7 @@ type Response struct {
 	Name          string                         `bson:"name" json:"name"`
 	Reason        *pbehaviorreason.Reason        `bson:"reason" json:"reason"`
 	RRule         string                         `bson:"rrule" json:"rrule"`
+	RRuleEnd      *types.CpsTime                 `bson:"rrule_end" json:"rrule_end" swaggertype:"integer"`
 	Start         *types.CpsTime                 `bson:"tstart" json:"tstart" swaggertype:"integer"`
 	Stop          *types.CpsTime                 `bson:"tstop" json:"tstop" swaggertype:"integer"`
 	Created       *types.CpsTime                 `bson:"created" json:"created" swaggertype:"integer"`
@@ -114,6 +115,8 @@ type Response struct {
 	Editable *bool  `bson:"editable,omitempty" json:"editable,omitempty"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
+
+	RRuleComputedStart *types.CpsTime `bson:"rrule_cstart" json:"-"`
 }
 
 type OldMongoQuery map[string]interface{}
