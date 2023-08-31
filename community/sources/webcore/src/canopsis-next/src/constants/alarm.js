@@ -63,7 +63,7 @@ export const ALARM_FIELDS = {
    */
   ack: 'v.ack',
   ticket: 'v.ticket',
-  ticketData: 'v.ticket.data',
+  ticketData: 'v.ticket.ticket_data',
   canceled: 'v.canceled',
   snooze: 'v.snooze',
   pbehaviorInfo: 'v.pbehavior_info',
