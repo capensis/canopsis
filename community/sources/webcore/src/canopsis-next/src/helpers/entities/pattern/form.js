@@ -37,7 +37,6 @@ import {
   PATTERN_CUSTOM_ITEM_VALUE,
   PATTERN_TYPES,
   TIME_UNITS,
-  PATTERN_OBJECT_TYPE_FIELDS,
 } from '@/constants';
 
 import { convertDateToTimestamp, isValidDateInterval } from '@/helpers/date/date';
@@ -333,14 +332,6 @@ export const isInfosPatternRuleField = value => [
 ].some(field => value?.startsWith(field));
 
 /**
- * Check pattern field is object
- *
- * @param {string} value
- * @return {boolean}
- */
-export const isObjectPatternRuleField = value => PATTERN_OBJECT_TYPE_FIELDS.includes(value);
-
-/**
  * Check pattern field is duration
  *
  * @param {string} value
@@ -355,6 +346,23 @@ export const isDurationPatternRuleField = value => value === ALARM_PATTERN_FIELD
  * @return {boolean}
  */
 export const isExtraInfosPatternRuleField = value => value?.startsWith(EVENT_FILTER_PATTERN_FIELDS.extraInfos);
+
+/**
+ * Get object pattern field
+ *
+ * @param {string} value
+ * @return {string}
+ */
+export const getObjectPatternRuleField = value => [ALARM_PATTERN_FIELDS.ticketData]
+  .find(field => value.startsWith(field));
+
+/**
+ * Check pattern field is object
+ *
+ * @param {string} value
+ * @return {boolean}
+ */
+export const isObjectPatternRuleField = value => !!getObjectPatternRuleField(value);
 
 /**
  * Check rule value is valid without field type
@@ -664,7 +672,7 @@ export const patternRuleToForm = (rule = {}) => {
   const isDuration = rule.field === ALARM_PATTERN_FIELDS.duration;
   const isInfos = isAlarmInfos || isEntityInfos || isEntityComponentInfos;
   const isExtraInfos = !isInfos && rule.field?.startsWith(EVENT_FILTER_PATTERN_FIELDS.extraInfos);
-  const patternObjectField = PATTERN_OBJECT_TYPE_FIELDS.find(field => rule.field.startsWith(field));
+  const patternObjectField = getObjectPatternRuleField(rule.field);
 
   switch (rule.cond.type) {
     case PATTERN_CONDITIONS.equal: {
