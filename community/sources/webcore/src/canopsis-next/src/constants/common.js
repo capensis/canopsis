@@ -363,3 +363,5 @@ export const CONTENT_TYPES = {
 };
 
 export const MAX_SEARCH_ITEMS = 8;
+
+export const LOGIN_APP_INFO_POLLING_DELAY = 5000;

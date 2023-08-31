@@ -23,24 +23,27 @@ type Store interface {
 	RetrieveRemediationConfig(ctx context.Context) (RemediationConf, error)
 	UpdateUserInterfaceConfig(ctx context.Context, conf *UserInterfaceConf) error
 	DeleteUserInterfaceConfig(ctx context.Context) error
+	RetrieveMaintenanceState(ctx context.Context) (bool, error)
 }
 
 type store struct {
-	dbClient         mongo.DbClient
-	configCollection mongo.DbCollection
+	dbClient           mongo.DbClient
+	configCollection   mongo.DbCollection
+	maintenanceAdapter config.MaintenanceAdapter
 
 	authProviders       []string
 	casTitle, samlTitle string
 }
 
 // NewStore instantiates configuration store.
-func NewStore(db mongo.DbClient, authProviders []string, casTitle, samlTitle string) Store {
+func NewStore(db mongo.DbClient, maintenanceAdapter config.MaintenanceAdapter, authProviders []string, casTitle, samlTitle string) Store {
 	return &store{
-		dbClient:         db,
-		configCollection: db.Collection(mongo.ConfigurationMongoCollection),
-		authProviders:    authProviders,
-		casTitle:         casTitle,
-		samlTitle:        samlTitle,
+		dbClient:           db,
+		configCollection:   db.Collection(mongo.ConfigurationMongoCollection),
+		maintenanceAdapter: maintenanceAdapter,
+		authProviders:      authProviders,
+		casTitle:           casTitle,
+		samlTitle:          samlTitle,
 	}
 }
 
@@ -134,6 +137,15 @@ func (s *store) RetrieveRemediationConfig(ctx context.Context) (RemediationConf,
 	})
 
 	return result, nil
+}
+
+func (s *store) RetrieveMaintenanceState(ctx context.Context) (bool, error) {
+	maintenanceConf, err := s.maintenanceAdapter.GetConfig(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	return maintenanceConf.Enabled, nil
 }
 
 func (s *store) UpdateUserInterfaceConfig(ctx context.Context, model *UserInterfaceConf) error {
