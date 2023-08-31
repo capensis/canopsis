@@ -13,7 +13,12 @@
 <script>
 import { isArray } from 'lodash';
 
-import { isExtraInfosRuleType, isInfosRuleType, isValidPatternRule } from '@/helpers/entities/pattern/form';
+import {
+  isExtraInfosRuleType,
+  isInfosRuleType,
+  isValidPatternRule,
+  isObjectRuleType,
+} from '@/helpers/entities/pattern/form';
 
 import { formMixin } from '@/mixins/form';
 
@@ -64,7 +69,11 @@ export default {
           return false;
         }
 
-        if (isInfosRuleType(options?.type) || isExtraInfosRuleType(options?.type)) {
+        if (
+          isInfosRuleType(options?.type)
+          || isExtraInfosRuleType(options?.type)
+          || isObjectRuleType(options?.type)
+        ) {
           return field.startsWith(value);
         }
 
