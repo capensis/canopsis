@@ -1,11 +1,7 @@
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import {
-  EVENT_FILTER_ENRICHMENT_AFTER_TYPES,
-  EVENT_FILTER_TYPES,
-  PATTERN_CUSTOM_ITEM_VALUE,
-} from '@/constants';
+import { EVENT_FILTER_ENRICHMENT_AFTER_TYPES, EVENT_FILTER_TYPES, PATTERN_CUSTOM_ITEM_VALUE } from '@/constants';
 
 import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
 
@@ -17,6 +13,8 @@ const stubs = {
   'c-enabled-field': true,
   'c-patterns-field': true,
   'c-information-block': true,
+  'c-collapse-panel': true,
+  'external-data-form': true,
   'event-filter-change-entity-form': true,
   'event-filter-enrichment-form': true,
   'pbehavior-recurrence-rule-field': true,
@@ -47,6 +45,7 @@ describe('event-filter-form', () => {
       },
     },
     config: {},
+    external_data: [],
   };
 
   const factory = generateShallowRenderer(EventFilterForm, { stubs });

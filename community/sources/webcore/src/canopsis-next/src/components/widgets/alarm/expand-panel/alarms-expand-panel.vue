@@ -50,7 +50,8 @@
               v-card-text
                 alarms-expand-panel-more-infos(
                   :alarm="alarm",
-                  :template="widget.parameters.moreInfoTemplate"
+                  :template="widget.parameters.moreInfoTemplate",
+                  @select:tag="$emit('select:tag', $event)"
                 )
       v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.timeLine")
         v-layout.pa-3(row)
@@ -141,12 +142,7 @@
 <script>
 import { isEqual } from 'lodash';
 
-import {
-  ENTITY_TYPES,
-  GRID_SIZES,
-  TOURS,
-  JUNIT_ALARM_CONNECTOR,
-} from '@/constants';
+import { ENTITY_TYPES, GRID_SIZES, TOURS, JUNIT_ALARM_CONNECTOR } from '@/constants';
 
 import { uid } from '@/helpers/uid';
 import { getStepClass } from '@/helpers/tour';

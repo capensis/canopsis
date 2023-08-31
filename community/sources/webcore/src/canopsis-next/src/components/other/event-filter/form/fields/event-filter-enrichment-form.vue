@@ -1,9 +1,11 @@
 <template lang="pug">
-  div
-    c-collapse-panel.mb-2(:title="$t('externalData.title')")
-      external-data-form(v-field="form.external_data")
+  v-layout(column)
     c-collapse-panel.mb-2(:title="$t('eventFilter.editActions')")
-      event-filter-enrichment-actions-form(v-field="form.config.actions")
+      event-filter-enrichment-actions-form(
+        v-field="form.config.actions",
+        :variables="templateVariables",
+        :name="name"
+      )
     v-layout(row)
       v-select.mr-3(
         v-field="form.config.on_success",
@@ -15,25 +17,23 @@
         :label="$t('eventFilter.onFailure')",
         :items="eventFilterAfterTypes"
       )
-    v-alert(:value="errors.has(name)", type="error") {{ $t('eventFilter.actionsRequired') }}
+    c-alert(:value="errors.has(name)", type="error") {{ $t('eventFilter.actionsRequired') }}
 </template>
 
 <script>
 import { EVENT_FILTER_ENRICHMENT_AFTER_TYPES } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
-
-import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
+import { validationAttachRequiredMixin } from '@/mixins/form/validation-attach-required';
 
 import EventFilterEnrichmentActionsForm from './event-filter-enrichment-actions-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
-    ExternalDataForm,
     EventFilterEnrichmentActionsForm,
   },
-  mixins: [formMixin],
+  mixins: [formMixin, validationAttachRequiredMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -45,7 +45,11 @@ export default {
     },
     name: {
       type: String,
-      default: 'actions',
+      default: 'config.actions',
+    },
+    templateVariables: {
+      type: Array,
+      default: () => [],
     },
   },
   computed: {
@@ -55,27 +59,14 @@ export default {
   },
   watch: {
     'form.config.actions': function validateActions() {
-      this.$validator.validate(this.name);
+      this.validateRequiredRule();
     },
   },
   created() {
-    this.attachActionsRequiredRule();
+    this.attachRequiredRule(() => this.form.config.actions);
   },
   beforeDestroy() {
-    this.detachActionsRequiredRule();
-  },
-  methods: {
-    attachActionsRequiredRule() {
-      this.$validator.attach({
-        name: this.name,
-        rules: 'required:true',
-        getter: () => this.form.config.actions,
-      });
-    },
-
-    detachActionsRequiredRule() {
-      this.$validator.detach(this.name);
-    },
+    this.detachRequiredRule();
   },
 };
 </script>

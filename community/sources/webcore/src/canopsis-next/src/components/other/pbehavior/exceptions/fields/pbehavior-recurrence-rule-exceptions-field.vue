@@ -1,8 +1,7 @@
 <template lang="pug">
   div
-    h3.my-3.grey--text {{ $t('pbehavior.exceptions.title') }}
-    v-divider
-    pbehavior-exceptions-list(v-if="exceptions.length", :exceptions="exceptions")
+    h3.grey--text {{ $t('pbehavior.exceptions.title') }}
+    pbehavior-exceptions-list(v-if="exceptions.length", :exceptions="exceptions", @input="updateExceptions")
     pbehavior-exceptions-field(
       v-field="exdates",
       :disabled="disabled",
@@ -14,15 +13,11 @@
           type="info"
         ) {{ $t('pbehavior.exceptions.emptyExceptions') }}
       template(#actions="")
-        v-flex
-          v-btn.ml-0(outline, @click="addException") {{ $t('pbehavior.exceptions.create') }}
-        v-flex
-          v-btn.mr-0(outline, @click="showSelectExceptionModal") {{ $t('pbehavior.exceptions.choose') }}
+        v-btn.ml-0(color="primary", @click="addException") {{ $t('pbehavior.exceptions.create') }}
+        pbehavior-recurrence-rule-exceptions-list-menu(:value="exceptions", @input="updateExceptions")
 </template>
 
 <script>
-import { MODALS } from '@/constants';
-
 import { uid } from '@/helpers/uid';
 import { convertDateToStartOfDayDateObject } from '@/helpers/date/date';
 
@@ -31,9 +26,11 @@ import { formArrayMixin } from '@/mixins/form';
 import PbehaviorExceptionsList from '../../pbehaviors/partials/pbehavior-exceptions-list.vue';
 
 import PbehaviorExceptionsField from './pbehavior-exceptions-field.vue';
+import PbehaviorRecurrenceRuleExceptionsListMenu from './pbehavior-recurrence-rule-exceptions-list-menu.vue';
 
 export default {
   components: {
+    PbehaviorRecurrenceRuleExceptionsListMenu,
     PbehaviorExceptionsList,
     PbehaviorExceptionsField,
   },
@@ -66,14 +63,8 @@ export default {
     },
   },
   methods: {
-    showSelectExceptionModal() {
-      this.$modals.show({
-        name: MODALS.selectExceptionsLists,
-        config: {
-          exceptions: this.exceptions,
-          action: exceptions => this.$emit('update:exceptions', exceptions),
-        },
-      });
+    updateExceptions(exceptions) {
+      this.$emit('update:exceptions', exceptions);
     },
 
     addException() {

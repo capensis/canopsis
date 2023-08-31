@@ -131,6 +131,9 @@ func GetWidgetTemplateParameters() map[string]map[string][]string {
 			WidgetTemplateTypeAlarmMoreInfos: {
 				"moreInfoTemplate",
 			},
+			WidgetTemplateTypeAlarmExportToPDF: {
+				"exportPdfTemplate",
+			},
 		},
 		WidgetTypeContextExplorer: {
 			WidgetTemplateTypeAlarmColumns: {
