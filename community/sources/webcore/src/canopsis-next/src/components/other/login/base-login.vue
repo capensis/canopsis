@@ -78,10 +78,15 @@ export default {
           this.$router.push({ name: ROUTES_NAMES.home });
         }
       } catch (err) {
-        this.serverErrorMessage = {
-          401: this.$t('login.errors.incorrectEmailOrPassword'),
-          503: this.$t('login.errors.underMaintenance'),
-        }[err?.status] ?? this.$t('errors.default');
+        if (err?.status === 503) {
+          this.serverErrorMessage = this.$t('login.errors.underMaintenance');
+
+          if (!this.maintenance) {
+            this.fetchAppInfo();
+          }
+        } else {
+          this.serverErrorMessage = this.$t('login.errors.incorrectEmailOrPassword');
+        }
       }
     },
   },

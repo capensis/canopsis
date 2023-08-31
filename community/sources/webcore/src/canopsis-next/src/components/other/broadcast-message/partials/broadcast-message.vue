@@ -4,7 +4,7 @@
     :title="message"
   )
     span.broadcast-message__text(v-html="message")
-    div.broadcast-message__actions
+    div.broadcast-message__actions(title="")
       slot(name="actions")
 </template>
 
