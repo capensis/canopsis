@@ -117,28 +117,28 @@ func (t CpsTime) MarshalBSONValue() (bsontype.Type, []byte, error) {
 // UnmarshalBSONValue converts from timestamp as bytes to CpsTime
 func (t *CpsTime) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
-	case bsontype.Double:
+	case bson.TypeDouble:
 		double, _, ok := bsoncore.ReadDouble(b)
 		if !ok {
 			return errors.New("invalid value, expected double")
 		}
 
 		*t = NewCpsTime(int64(double))
-	case bsontype.Int64:
+	case bson.TypeInt64:
 		i64, _, ok := bsoncore.ReadInt64(b)
 		if !ok {
 			return errors.New("invalid value, expected int64")
 		}
 
 		*t = NewCpsTime(i64)
-	case bsontype.Int32:
+	case bson.TypeInt32:
 		i32, _, ok := bsoncore.ReadInt32(b)
 		if !ok {
 			return errors.New("invalid value, expected int64")
 		}
 
 		*t = NewCpsTime(int64(i32))
-	case bsontype.Null:
+	case bson.TypeNull:
 		//do nothing
 	default:
 		return fmt.Errorf("unexpected type %v", valueType)
