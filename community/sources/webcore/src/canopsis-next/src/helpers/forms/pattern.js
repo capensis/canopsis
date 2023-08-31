@@ -20,9 +20,11 @@ import {
 import uid from '@/helpers/uid';
 import {
   getFieldType,
+  getObjectPatternRuleField,
   isDatePatternRuleField,
   isInfosPatternRuleField,
   isExtraInfosPatternRuleField,
+  isObjectPatternRuleField,
 } from '@/helpers/pattern';
 import { convertDateToTimestamp } from '@/helpers/date/date';
 import {
@@ -137,6 +139,7 @@ export const patternRuleToForm = (rule = {}) => {
   const isDuration = rule.field === ALARM_PATTERN_FIELDS.duration;
   const isInfos = isAlarmInfos || isEntityInfos || isEntityComponentInfos;
   const isExtraInfos = !isInfos && rule.field?.startsWith(EVENT_FILTER_PATTERN_FIELDS.extraInfos);
+  const patternObjectField = getObjectPatternRuleField(rule.field);
 
   switch (rule.cond.type) {
     case PATTERN_CONDITIONS.equal: {
@@ -301,6 +304,11 @@ export const patternRuleToForm = (rule = {}) => {
       : PATTERN_RULE_INFOS_FIELDS.value;
   }
 
+  if (patternObjectField) {
+    form.attribute = patternObjectField;
+    form.dictionary = rule.field.replace(`${patternObjectField}.`, '');
+  }
+
   return form;
 };
 
@@ -395,8 +403,9 @@ export const formRuleToPatternRule = (rule) => {
   const isInfos = isInfosPatternRuleField(rule.attribute);
   const isExtraInfos = isExtraInfosPatternRuleField(rule.attribute);
   const isDate = isDatePatternRuleField(rule.attribute);
+  const isObject = isObjectPatternRuleField(rule.attribute);
 
-  if (isInfos || isExtraInfos) {
+  if (isInfos || isExtraInfos || isObject) {
     pattern.field = [rule.attribute, rule.dictionary].join('.');
   }
 

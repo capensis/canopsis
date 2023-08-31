@@ -228,6 +228,7 @@ export const ALARM_PATTERN_FIELDS = {
   ticket: 'v.ticket',
   ticketValue: 'v.ticket.ticket',
   ticketMessage: 'v.ticket.m',
+  ticketData: 'v.ticket.data',
   canceled: 'v.canceled',
   snooze: 'v.snooze',
   lastComment: 'v.last_comment.m',

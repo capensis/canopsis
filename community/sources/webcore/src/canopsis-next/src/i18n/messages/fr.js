@@ -195,6 +195,7 @@ export default merge({
     ticket: 'Ticket',
     ticketValue: 'ID du ticket',
     ticketMessage: 'Message du ticket',
+    ticketData: 'Données du ticket',
     method: 'Méthode',
     url: 'URL',
     category: 'Catégorie',
