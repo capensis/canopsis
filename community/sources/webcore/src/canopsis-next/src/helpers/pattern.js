@@ -102,7 +102,7 @@ export const isInfosRuleType = type => type === PATTERN_RULE_TYPES.infos;
 export const isExtraInfosRuleType = type => type === PATTERN_RULE_TYPES.extraInfos;
 
 /**
- * Check rule is щиоусе
+ * Check rule is object
  *
  * @param {string} type
  * @return {boolean}
