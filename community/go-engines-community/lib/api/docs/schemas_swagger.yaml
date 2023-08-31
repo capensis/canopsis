@@ -741,6 +741,8 @@ definitions:
         type: string
       logo:
         type: string
+      maintenance:
+        type: boolean
       max_matched_items:
         type: integer
       popup_timeout:
@@ -876,6 +878,8 @@ definitions:
         type: integer
       end:
         type: integer
+      maintenance:
+        type: boolean
       message:
         type: string
       start:
@@ -896,6 +900,8 @@ definitions:
         type: integer
       end:
         type: integer
+      maintenance:
+        type: boolean
       message:
         type: string
       start:
@@ -2752,6 +2758,17 @@ definitions:
         type: string
       updated:
         type: integer
+    type: object
+  maintenance.Request:
+    properties:
+      color:
+        type: string
+      enabled:
+        type: boolean
+      message:
+        type: string
+    required:
+    - enabled
     type: object
   messageratestats.StatsListResponse:
     properties:
