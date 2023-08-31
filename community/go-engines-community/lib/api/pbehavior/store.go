@@ -20,9 +20,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	librrule "github.com/teambition/rrule-go"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+)
+
+const (
+	nextEventMaxMonths = 1
 )
 
 type Store interface {
@@ -92,12 +97,18 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		doc.ID = utils.NewID()
 	}
 
+	rruleEnd, err := pbehavior.GetRruleEnd(*r.Start, r.RRule, s.timezoneConfigProvider.Get().Location)
+	if err != nil {
+		return nil, err
+	}
+
 	doc.Created = &now
 	doc.Updated = &now
 	doc.Comments = make([]*pbehavior.Comment, 0)
+	doc.RRuleEnd = rruleEnd
 
 	var pbh *Response
-	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
 
 		_, err := s.dbCollection.InsertOne(ctx, doc)
@@ -139,7 +150,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		}
 	}
 
-	err = s.fillActiveStatuses(ctx, result.Data)
+	err = s.transformResponse(ctx, result.Data)
 	if err != nil {
 		return nil, err
 	}
@@ -176,7 +187,7 @@ func (s *store) FindByEntityID(ctx context.Context, entity libtypes.Entity, r Fi
 		return nil, err
 	}
 
-	err = s.fillActiveStatuses(ctx, res)
+	err = s.transformResponse(ctx, res)
 	if err != nil {
 		return nil, err
 	}
@@ -306,7 +317,9 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	doc := s.transformRequestToDocument(r.EditRequest)
 	doc.Updated = &now
 
-	unset := bson.M{}
+	unset := bson.M{
+		"rrule_cstart": "",
+	}
 
 	if r.Stop == nil {
 		unset["tstop"] = ""
@@ -316,13 +329,23 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		unset["old_mongo_query"] = ""
 	}
 
+	rruleEnd, err := pbehavior.GetRruleEnd(*r.Start, r.RRule, s.timezoneConfigProvider.Get().Location)
+	if err != nil {
+		return nil, err
+	}
+	if rruleEnd == nil {
+		unset["rrule_end"] = ""
+	} else {
+		doc.RRuleEnd = rruleEnd
+	}
+
 	update := bson.M{"$set": doc}
 	if len(unset) > 0 {
 		update["$unset"] = unset
 	}
 
 	var pbh *Response
-	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
 
 		err := s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID, "origin": bson.M{"$ne": nil}}).Err()
@@ -355,6 +378,7 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 		"updated": libtypes.NewCpsTime(),
 	}
 	unset := bson.M{}
+	rruleUpdated := false
 	if r.Name != nil {
 		set["name"] = *r.Name
 	}
@@ -369,9 +393,11 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 	}
 	if r.RRule != nil {
 		set["rrule"] = *r.RRule
+		rruleUpdated = true
 	}
 	if r.Start != nil {
 		set["tstart"] = *r.Start
+		rruleUpdated = true
 	}
 	if r.Stop.isSet {
 		if r.Stop.val == nil {
@@ -406,6 +432,10 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 		unset["corporate_entity_pattern_title"] = ""
 	}
 
+	if rruleUpdated {
+		unset["rrule_cstart"] = ""
+	}
+
 	update := bson.M{"$set": set}
 	if len(unset) > 0 {
 		update["$unset"] = unset
@@ -433,7 +463,27 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 		}
 
 		pbh, err = s.GetOneBy(ctx, r.ID)
-		return err
+		if err != nil || pbh == nil {
+			return err
+		}
+
+		if rruleUpdated {
+			pbh.RRuleEnd, err = pbehavior.GetRruleEnd(*pbh.Start, pbh.RRule, s.timezoneConfigProvider.Get().Location)
+			if err != nil {
+				return err
+			}
+
+			if pbh.RRuleEnd == nil {
+				_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$unset": bson.M{"rrule_end": ""}})
+			} else {
+				_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": bson.M{"rrule_end": pbh.RRuleEnd}})
+			}
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
 	})
 
 	return pbh, err
@@ -652,6 +702,61 @@ func (s *store) transformRequestToDocument(r EditRequest) pbehavior.PBehavior {
 
 		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)),
 	}
+}
+
+func (s *store) transformResponse(ctx context.Context, result []Response) error {
+	err := s.fillActiveStatuses(ctx, result)
+	if err != nil {
+		return err
+	}
+
+	loc := s.timezoneConfigProvider.Get().Location
+	after := time.Now().In(loc)
+	before := after.AddDate(0, nextEventMaxMonths, 0)
+	for i, v := range result {
+		if v.RRule == "" || v.RRuleEnd != nil && v.RRuleEnd.Time.Before(after) {
+			continue
+		}
+
+		rOption, err := librrule.StrToROption(v.RRule)
+		if err != nil {
+			continue
+		}
+
+		if v.RRuleComputedStart != nil && v.RRuleComputedStart.Time.Before(after) {
+			rOption.Dtstart = v.RRuleComputedStart.Time.In(loc)
+		} else {
+			rOption.Dtstart = v.Start.Time.In(loc)
+		}
+		r, err := librrule.NewRRule(*rOption)
+		if err != nil {
+			continue
+		}
+
+		iterator := r.Iterator()
+		var next time.Time
+		for {
+			event, ok := iterator()
+			if !ok || event.After(before) {
+				break
+			}
+			if !event.Before(after) {
+				next = event
+				break
+			}
+		}
+
+		if !next.IsZero() {
+			if v.Stop != nil {
+				d := v.Stop.Sub(v.Start.Time)
+				result[i].Stop = &libtypes.CpsTime{Time: next.Add(d)}
+			}
+
+			result[i].Start = &libtypes.CpsTime{Time: next}
+		}
+	}
+
+	return nil
 }
 
 func (s *store) fillActiveStatuses(ctx context.Context, result []Response) error {

@@ -34,10 +34,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import {
-  KPI_RATING_SETTINGS_TYPES,
-  KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA,
-} from '@/constants';
+import { KPI_RATING_SETTINGS_TYPES, KPI_ENTITY_RATING_SETTINGS_CUSTOM_CRITERIA } from '@/constants';
 
 import { isCustomCriteria } from '@/helpers/entities/metric/form';
 

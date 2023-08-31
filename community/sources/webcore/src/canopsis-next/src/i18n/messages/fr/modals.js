@@ -496,9 +496,6 @@ export default {
   pbehaviorPlanning: {
     title: 'Comportements périodiques',
   },
-  selectExceptionsLists: {
-    title: 'Choisissez la liste des exceptions',
-  },
   createRrule: {
     title: 'Créer une règle de récurrence',
   },
