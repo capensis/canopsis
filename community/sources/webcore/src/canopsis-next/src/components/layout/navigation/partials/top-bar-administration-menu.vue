@@ -146,6 +146,7 @@ export default {
         USERS_PERMISSIONS.technical.engine,
         USERS_PERMISSIONS.technical.healthcheck,
         USERS_PERMISSIONS.technical.kpi,
+        USERS_PERMISSIONS.technical.maintenance,
       ];
     },
   },
