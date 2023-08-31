@@ -21,6 +21,7 @@ module.exports = {
     '^.+\\.vue$': '<rootDir>/tests/unit/jest.vue',
     '^.+\\.jsx?$': '<rootDir>/tests/unit/jest.transform',
     '^.+\\.svg$': '<rootDir>/tests/unit/jest.svg',
+    '^.+\\.html?$': 'html-loader-jest',
   },
   transformIgnorePatterns: [
     '<rootDir>/node_modules/(?!(vue-tour|monaco-editor|dayspan-vuetify/src)/.*)',

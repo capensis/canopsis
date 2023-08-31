@@ -40,6 +40,15 @@ template:
     updated: <Current().created>,
     content: <LoremIpsumSentence(3)>
   }
+  - &tpl_alarm_export_to_pdf {
+    _id: <UUID()>,
+    title: <UniqueName()>,
+    type: alarm_export_to_pdf,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    content: <LoremIpsumSentence(3)>
+  }
   - &tpl_weather_item {
     _id: <UUID()>,
     title: <UniqueName()>,
@@ -103,6 +112,14 @@ widget_templates:
     <<: *tpl_alarm_more_infos
     _id: test-widgettemplate-to-get-3
     title: test-widgettemplate-to-get-3-title
+    created: 1605263992
+    updated: 1605263992
+    content: "{{ alarm.v.display_name }}"
+
+  tpl_to_get_4:
+    <<: *tpl_alarm_export_to_pdf
+    _id: test-widgettemplate-to-get-4
+    title: test-widgettemplate-to-get-4-title
     created: 1605263992
     updated: 1605263992
     content: "{{ alarm.v.display_name }}"
@@ -181,3 +198,9 @@ widget_templates:
     _id: test-widgettemplate-to-widget-widgettemplate-8
     title: test-widgettemplate-to-widget-widgettemplate-8-title
     content: "{{ entity.infos.name1.value }}"
+
+  tpl_to_widget_widgettemplate_9:
+    <<: *tpl_alarm_export_to_pdf
+    _id: test-widgettemplate-to-widget-widgettemplate-9
+    title: test-widgettemplate-to-widget-widgettemplate-9-title
+    content: "{{ alarm.v.display_name }}"

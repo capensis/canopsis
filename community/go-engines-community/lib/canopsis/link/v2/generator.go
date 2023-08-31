@@ -268,21 +268,35 @@ func (g *generator) getRules(ctx context.Context) ([]parsedRule, error) {
 				"regexp": make(map[string]*template.Template, len(params.Regexp)),
 			}
 			for k, v := range params.Select {
-				externalDataTpl[ref]["select"][k], err = g.tplExecutor.Parse(v)
+				if v == "" {
+					continue
+				}
+
+				parsed := g.tplExecutor.Parse(v)
+				err = parsed.Err
 				if err != nil {
 					g.logger.Err(err).Str("rule", rule.ID).Msg("invalid template in link rule")
 					break
 				}
+
+				externalDataTpl[ref]["select"][k] = parsed.Tpl
 			}
 			if err != nil {
 				break
 			}
 			for k, v := range params.Regexp {
-				externalDataTpl[ref]["regexp"][k], err = g.tplExecutor.Parse(v)
+				if v == "" {
+					continue
+				}
+
+				parsed := g.tplExecutor.Parse(v)
+				err = parsed.Err
 				if err != nil {
 					g.logger.Err(err).Str("rule", rule.ID).Msg("invalid template in link rule")
 					break
 				}
+
+				externalDataTpl[ref]["regexp"][k] = parsed.Tpl
 			}
 			if err != nil {
 				break
@@ -315,11 +329,19 @@ func (g *generator) getRules(ctx context.Context) ([]parsedRule, error) {
 		pr.Links = rule.Links
 		pr.LinkTpls = make([]*template.Template, len(rule.Links))
 		for i, link := range rule.Links {
-			pr.LinkTpls[i], err = g.tplExecutor.Parse(link.Url)
+			if link.Url == "" {
+				g.logger.Error().Str("rule", rule.ID).Msg("empty url template in link rule")
+				break
+			}
+
+			parsed := g.tplExecutor.Parse(link.Url)
+			err = parsed.Err
 			if err != nil {
 				g.logger.Err(err).Str("rule", rule.ID).Msg("invalid template in link rule")
 				break
 			}
+
+			pr.LinkTpls[i] = parsed.Tpl
 		}
 		if err != nil {
 			continue

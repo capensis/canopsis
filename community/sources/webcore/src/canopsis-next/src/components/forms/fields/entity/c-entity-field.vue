@@ -10,6 +10,7 @@
     :item-text="itemText",
     :item-value="itemValue",
     :item-disabled="itemDisabled",
+    :disabled="disabled",
     :required="required",
     :clearable="clearable",
     :autocomplete="autocomplete",

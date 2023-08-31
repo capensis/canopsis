@@ -1,4 +1,13 @@
-import { get, flow, uniq, isArray, isFunction, isObject, isUndefined, merge } from 'lodash';
+import {
+  get,
+  flow,
+  uniq,
+  isArray,
+  isFunction,
+  isObject,
+  isUndefined,
+  merge,
+} from 'lodash';
 
 /**
  * Get combined value from features by key

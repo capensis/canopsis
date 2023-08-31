@@ -1,22 +1,18 @@
 <template lang="pug">
   div
-    v-layout(row, wrap, align-center)
-      v-flex(xs11)
-        v-textarea(
-          v-field="comment.message",
-          v-validate="rules",
-          :disabled="!!comment._id",
-          :label="$t('modals.createPbehavior.steps.comments.fields.message')",
-          :error-messages="errors.collect(messageFieldName)",
-          :name="messageFieldName"
-        )
-      v-flex(xs1)
-        v-btn(
-          color="error",
-          icon,
-          @click="$emit('remove')"
-        )
-          v-icon delete
+    v-layout(row, align-center)
+      v-textarea(
+        v-field="comment.message",
+        v-validate="rules",
+        :disabled="!!comment._id",
+        :label="$t('modals.createPbehavior.steps.comments.fields.message')",
+        :error-messages="errors.collect(messageFieldName)",
+        :name="messageFieldName"
+      )
+      c-action-btn(
+        type="delete",
+        @click="$emit('remove')"
+      )
 </template>
 
 <script>
