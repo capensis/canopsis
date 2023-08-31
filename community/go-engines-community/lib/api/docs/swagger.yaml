@@ -5984,6 +5984,64 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /eventfilter/{id}/failures:
+    get:
+      tags:
+        - eventfilters
+      summary: Get failures of event filter rule by id
+      description: |
+        Get failures of event filter rule by id.
+        
+        -  PERMISSIONS: `api_eventfilter:read`
+      operationId: eventfilters-get-failures
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/eventfilter.FailureResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - eventfilters
+      summary: Make failures of event filter rule by id as read
+      description: |
+        Make failures of event filter rule by id as read.
+        
+        -  PERMISSIONS: `api_eventfilter:create`
+      operationId: eventfilters-read-failures
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /export-configuration:
     post:
       tags:
@@ -7066,13 +7124,13 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-  /patterns-count:
+  /patterns-alarms-count:
     post:
       tags:
         - saved-patterns
-      summary: Count matches
-      description: Count matches of pattern.
-      operationId: saved-patterns-count
+      summary: Count alarm matches
+      description: Count alarm matches of pattern.
+      operationId: saved-patterns-alarms-count
       requestBody:
         description: body
         content:
@@ -7082,7 +7140,7 @@ paths:
             examples:
               count:
                 summary: Count
-                description: Count matches of patterns.
+                description: Count alarm matches of patterns.
                 value: {
                   "alarm_pattern": [
                     [
@@ -7125,7 +7183,73 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pattern.CountResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.CountAlarmsResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /patterns-entities-count:
+    post:
+      tags:
+        - saved-patterns
+      summary: Count entity matches
+      description: Count entity matches of pattern.
+      operationId: saved-patterns-entities-count
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pattern.CountRequest'
+            examples:
+              count:
+                summary: Count
+                description: Count entity matches of patterns.
+                value: {
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "pbehavior_pattern": [
+                    [
+                      {
+                        "field": "pbehavior_info.type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "default_maintenance"
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.CountEntitiesResponse'
         400:
           description: Bad Request
           content:
@@ -10699,17 +10823,18 @@ paths:
     get:
       tags:
         - linkrules
-      summary: Get categories by link type
+      summary: Get link categories
       description: |
-        Get list of distinct categories, empty list if no categories found 
+        Get list of distinct categories, empty list if no categories found.
         
         -  PERMISSIONS: `api_link_rule:get`
       operationId: linkrules-categories
       parameters:
         - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
         - name: type
           in: query
-          description: id
+          description: type
           schema:
             type: string
             enum:
@@ -11012,14 +11137,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/template.Request'
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/template.Request'
             examples:
               check:
                 summary: Check
                 description: Check if template is valid
-                value: {
-                  "text": "{{ range .Alarms }} {{ .Value.Resource }} {{ end }}"
-                }
+                value: [
+                  {
+                    "text": "{{ range .Alarms }} {{ .Value.Resource }} {{ end }}"
+                  }
+                ]
         required: true
       responses:
         200:
@@ -11027,7 +11156,49 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/template.Response'
+                type: array
+                items:
+                  $ref: 'schemas_swagger.yaml#/definitions/template.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /template-validator/event-filter-rules:
+    post:
+      tags:
+        - template-validator
+      summary: Validate event filter rule template
+      description: Validate event filter rule template.
+      operationId: template-validator-event-filter-rules
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/template.Request'
+            examples:
+              check:
+                summary: Check
+                description: Check if template is valid
+                value: [
+                  {
+                    "text": "{{ .ExtraData.component.name }}"
+                  }
+                ]
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'schemas_swagger.yaml#/definitions/template.Response'
         400:
           description: Bad Request
           content:
@@ -11046,14 +11217,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/template.Request'
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/template.Request'
             examples:
               check:
                 summary: Check
                 description: Check if template is valid
-                value: {
-                  "text": "{{ .Alarm.Value.Output }}"
-                }
+                value: [
+                  {
+                    "text": "{{ .Alarm.Value.Output }}"
+                  }
+                ]
         required: true
       responses:
         200:
@@ -11061,7 +11236,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/template.Response'
+                type: array
+                items:
+                  $ref: 'schemas_swagger.yaml#/definitions/template.Response'
         400:
           description: Bad Request
           content:
@@ -12987,6 +13164,14 @@ paths:
                 value: {
                   "title": "Template",
                   "type": "alarm_more_infos",
+                  "content": "Name: {{ alarm.v.display_name }}"
+                }
+              alarm_export_to_pdf:
+                summary: Alarm export to pdf template
+                description: Create a template for alarms list.
+                value: {
+                  "title": "Template",
+                  "type": "alarm_export_to_pdf",
                   "content": "Name: {{ alarm.v.display_name }}"
                 }
         required: true

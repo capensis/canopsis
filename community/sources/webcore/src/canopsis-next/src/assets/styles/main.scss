@@ -151,6 +151,7 @@ $mobileBreakpoint: 450px;
     white-space: nowrap;
     vertical-align: baseline;
     border-radius: 10px;
+    display: flex;
   }
 
   &__message {

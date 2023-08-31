@@ -573,9 +573,13 @@ export const createActiveViewModule = () => {
   const registerEditingOffHandler = jest.fn();
   const unregisterEditingOffHandler = jest.fn();
   const fetchActiveView = jest.fn();
+  const editing = jest.fn().mockReturnValue(() => false);
 
   const activeViewModule = {
     name: 'activeView',
+    getters: {
+      editing,
+    },
     actions: {
       registerEditingOffHandler,
       unregisterEditingOffHandler,
@@ -590,6 +594,7 @@ export const createActiveViewModule = () => {
   });
 
   return {
+    editing,
     registerEditingOffHandler,
     unregisterEditingOffHandler,
     fetchActiveView,
@@ -729,6 +734,26 @@ export const createAlarmModule = () => {
     bulkCreateAlarmUnCancelEvent,
     bulkCreateAlarmChangestateEvent,
     alarmModule,
+  };
+};
+
+export const createAlarmDetailsModule = () => {
+  const fetchAlarmDetailsWithoutStore = jest.fn().mockResolvedValue([]);
+
+  afterEach(() => {
+    fetchAlarmDetailsWithoutStore.mockClear();
+  });
+
+  const alarmDetailsModule = {
+    name: 'alarm/details',
+    actions: {
+      fetchListWithoutStore: fetchAlarmDetailsWithoutStore,
+    },
+  };
+
+  return {
+    fetchAlarmDetailsWithoutStore,
+    alarmDetailsModule,
   };
 };
 
@@ -981,5 +1006,29 @@ export const createMetricsModule = () => {
     fetchAlarmsMetricsWithoutStore,
     fetchEntityAlarmsMetricsWithoutStore,
     fetchEntityAggregateMetricsWithoutStore,
+  };
+};
+
+export const createPatternModule = () => {
+  const checkPatternsEntitiesCount = jest.fn().mockResolvedValue({});
+  const checkPatternsAlarmsCount = jest.fn().mockResolvedValue({});
+
+  afterEach(() => {
+    checkPatternsEntitiesCount.mockClear();
+    checkPatternsAlarmsCount.mockClear();
+  });
+
+  const patternModule = {
+    name: 'pattern',
+    actions: {
+      checkPatternsEntitiesCount,
+      checkPatternsAlarmsCount,
+    },
+  };
+
+  return {
+    patternModule,
+    checkPatternsEntitiesCount,
+    checkPatternsAlarmsCount,
   };
 };

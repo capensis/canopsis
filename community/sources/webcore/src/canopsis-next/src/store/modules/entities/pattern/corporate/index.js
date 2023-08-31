@@ -57,7 +57,7 @@ export default {
         commit(types.FETCH_LIST, { params: preparedParams });
 
         const { normalizedData, data } = await dispatch('entities/fetch', {
-          route: API_ROUTES.patterns,
+          route: API_ROUTES.pattern.list,
           params: preparedParams,
           dataPreparer: d => d.data,
           schema: [patternSchema],
