@@ -37,7 +37,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { groupToRequest } from '@/helpers/forms/view';
+import { groupToRequest } from '@/helpers/entities/view/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

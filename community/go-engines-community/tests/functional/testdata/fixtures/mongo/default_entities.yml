@@ -162,6 +162,10 @@ default_entities:
     <<: *resource
     _id: test-resource-to-pattern-count-4/test-component-default
     name: test-resource-to-pattern-count-4
+  entity_to_pattern_count_5:
+    <<: *resource
+    _id: test-resource-to-pattern-count-5/test-component-default
+    name: test-resource-to-pattern-count-5
 
   entity_to_pbehavior_get_by_entity_id_1:
     <<: *resource
@@ -409,6 +413,16 @@ default_entities:
     name: test-entitybasic-to-delete-linked-to-alarm-resource
     component: test-entitybasic-to-delete-linked-to-alarm-component
     connector: test-entitybasic-to-delete-linked-to-alarm-connector/test-entitybasic-to-delete-linked-to-alarm-connector-name
+  connector_to_entitybasic_delete:
+    <<: *connector
+    _id: test-entitybasic-to-delete-connector/test-entitybasic-to-delete-connector-name
+    name: test-entitybasic-to-delete-connector-name
+  component_to_entitybasic_delete_connector:
+    <<: *component
+    _id: test-entitybasic-component-to-link-with-deleted-connector
+    name: test-entitybasic-component-to-link-with-deleted-connector
+    component: test-entitybasic-component-to-link-with-deleted-connector
+    connector: test-entitybasic-to-delete-connector/test-entitybasic-to-delete-connector-name
 
   component_service_weather_entity_5:
     <<: *component
@@ -1075,6 +1089,20 @@ default_entities:
     <<: *resource
     _id: test-resource-to-export-2/test-component-default
     name: test-resource-to-export-2
+
+  entity_to_alarm_metrics_get_1:
+    <<: *component
+    _id: test-entity-to-alarm-metrics-get-1
+    name: test-entity-to-alarm-metrics-get-1
+    component: test-entity-to-alarm-metrics-get-1
+    perf_data:
+      - cpu_%
+      - cpu
+  entity_to_alarm_metrics_get_2:
+    <<: *component
+    _id: test-entity-to-alarm-metrics-get-2
+    name: test-entity-to-alarm-metrics-get-2
+    component: test-entity-to-alarm-metrics-get-2
 
   default_entities_34:
     _id: test-instruction-execution-next-resource-1/test-instruction-execution-next-component

@@ -1,7 +1,6 @@
 <script>
 import VCombobox from 'vuetify/es5/components/VCombobox';
 import VSelect from 'vuetify/es5/components/VSelect/VSelect';
-
 import { camelize } from 'vuetify/es5/util/helpers';
 import { consoleWarn } from 'vuetify/es5/util/console';
 

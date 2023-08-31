@@ -22,7 +22,9 @@ import { MODALS } from '@/constants';
 
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesRemediationConfigurationMixin } from '@/mixins/entities/remediation/configuration';
-import { permissionsTechnicalRemediationConfigurationMixin } from '@/mixins/permissions/technical/remediation-configuration';
+import {
+  permissionsTechnicalRemediationConfigurationMixin,
+} from '@/mixins/permissions/technical/remediation-configuration';
 
 import RemediationConfigurationsList from './remediation-configurations-list.vue';
 

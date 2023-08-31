@@ -227,6 +227,7 @@ export default {
   sourceType: 'Type de Source',
   cycleDependency: 'Dépendance au cycle',
   checkPattern: 'Vérification du modèle',
+  checkFilter: 'Vérifier le filtre',
   itemFound: '{count} élément trouvé | {count} éléments trouvés',
   canonicalType: 'Type canonique',
   map: 'Cartographie | Cartographies',
@@ -269,6 +270,13 @@ export default {
   copyProperty: 'Copier la propriété',
   copyPropertyPath: 'Copier le chemin de la propriété',
   hidden: 'Caché',
+  numberField: 'Champ numérique',
+  chart: 'Graphique | Graphiques',
+  currentDate: 'Date actuelle',
+  chooseFile: 'Choisir le fichier',
+  seeAlarms: 'Voir les alarmes',
+  new: 'Nouvelle',
+  regexp: 'Expression régulière',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
@@ -287,6 +295,13 @@ export default {
     },
   },
   saveChanges: 'Sauvegarder',
+  ordinals: {
+    first: 'D\'abord',
+    second: 'Seconde',
+    third: 'Troisième',
+    fourth: 'Quatrième',
+    fifth: 'Cinquième',
+  },
   times: {
     second: 'seconde | secondes',
     minute: 'minute | minutes',
@@ -480,6 +495,12 @@ export default {
     },
     [TRIGGERS.autoinstructioncomplete]: {
       text: 'Consigne automatique terminée',
+    },
+    [TRIGGERS.autoinstructionresultok]: {
+      text: 'L\'alarme est en état OK après toutes les instructions automatiques',
+    },
+    [TRIGGERS.autoinstructionresultfail]: {
+      text: 'L\'alarme n\'est pas dans l\'état OK après toutes les instructions automatiques',
     },
   },
   themes: {

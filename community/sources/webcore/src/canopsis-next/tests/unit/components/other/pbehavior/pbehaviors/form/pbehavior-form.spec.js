@@ -1,28 +1,42 @@
 import Faker from 'faker';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'pbehavior-general-form': true,
   'pbehavior-comments-field': true,
-  'pbehavior-filter-field': true,
-  'pbehavior-recurrence-rule-field': true,
+  'recurrence-rule-form': true,
+  'pbehavior-recurrence-rule-exceptions-field': true,
   'c-enabled-color-picker-field': true,
+  'c-collapse-panel': true,
+  'c-patterns-field': true,
 };
 
 const selectPbehaviorGeneralForm = wrapper => wrapper.find('pbehavior-general-form-stub');
 const selectPbehaviorCommentsField = wrapper => wrapper.find('pbehavior-comments-field-stub');
-const selectPbehaviorFilterField = wrapper => wrapper.find('pbehavior-filter-field-stub');
-const selectPbehaviorRruleField = wrapper => wrapper.find('pbehavior-recurrence-rule-field-stub');
 const selectEnabledColorPickerField = wrapper => wrapper.find('c-enabled-color-picker-field-stub');
+const selectPatternsField = wrapper => wrapper.find('c-patterns-field-stub');
 
 describe('pbehavior-form', () => {
-  const factory = generateShallowRenderer(PbehaviorForm, { localVue, stubs });
-  const snapshotFactory = generateRenderer(PbehaviorForm, { localVue, stubs });
+  const factory = generateShallowRenderer(PbehaviorForm, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
+
+  const snapshotFactory = generateRenderer(PbehaviorForm, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   test('General options updated after trigger general pbehavior form', () => {
     const form = {
@@ -93,35 +107,12 @@ describe('pbehavior-form', () => {
     const newPatterns = [
     ];
 
-    selectPbehaviorFilterField(wrapper).vm.$emit('input', newPatterns);
+    selectPatternsField(wrapper).vm.$emit('input', newPatterns);
 
     expect(wrapper).toEmit('input', {
       ...form,
       patterns: newPatterns,
     });
-  });
-
-  test('Recurrence rule updated after trigger general rrule field', () => {
-    const form = {
-      name: Faker.datatype.string(),
-      rrule: '',
-      patterns: {},
-      comments: [],
-    };
-    const wrapper = factory({
-      propsData: {
-        form,
-      },
-    });
-
-    const newForm = {
-      ...form,
-      rrule: Faker.datatype.string(),
-    };
-
-    selectPbehaviorRruleField(wrapper).vm.$emit('input', newForm);
-
-    expect(wrapper).toEmit('input', newForm);
   });
 
   test('Color changed after trigger color field', () => {

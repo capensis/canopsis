@@ -21,9 +21,22 @@ export const WIDGET_TYPES = {
   lineChart: 'LineChart',
   pieChart: 'PieChart',
   numbers: 'Numbers',
+  userStatistics: 'UserStatistics',
+  alarmStatistics: 'AlarmStatistics',
 
   ...featuresService.get('constants.WIDGET_TYPES'),
 };
+
+export const TOP_LEVEL_WIDGET_TYPES = [
+  WIDGET_TYPES.alarmList,
+  WIDGET_TYPES.context,
+  WIDGET_TYPES.serviceWeather,
+  WIDGET_TYPES.statsCalendar,
+  WIDGET_TYPES.text,
+  WIDGET_TYPES.counter,
+  WIDGET_TYPES.testingWeather,
+  WIDGET_TYPES.map,
+];
 
 export const COMPONENTS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.alarmList]: 'alarms-list-widget',
@@ -38,6 +51,8 @@ export const COMPONENTS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.lineChart]: 'line-chart-widget',
   [WIDGET_TYPES.pieChart]: 'pie-chart-widget',
   [WIDGET_TYPES.numbers]: 'numbers-widget',
+  [WIDGET_TYPES.userStatistics]: 'user-statistics-widget',
+  [WIDGET_TYPES.alarmStatistics]: 'alarm-statistics-widget',
 
   ...featuresService.get('constants.COMPONENTS_BY_WIDGET_TYPES'),
 };
@@ -55,6 +70,9 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.lineChart]: 'show_chart',
   [WIDGET_TYPES.pieChart]: 'donut_small',
   [WIDGET_TYPES.numbers]: 'functions',
+  [WIDGET_TYPES.numbers]: 'functions',
+  [WIDGET_TYPES.userStatistics]: 'perm_identity',
+  [WIDGET_TYPES.alarmStatistics]: 'notification_important',
 
   ...featuresService.get('constants.WIDGET_ICONS'),
 };
@@ -72,6 +90,8 @@ export const SIDE_BARS = {
   lineChartSettings: 'line-chart-settings',
   pieChartSettings: 'pie-chart-settings',
   numbersSettings: 'numbers-settings',
+  userStatisticsSettings: 'user-statistics-settings',
+  alarmStatisticsSettings: 'alarm-statistics-settings',
 
   ...featuresService.get('constants.SIDE_BARS'),
 };
@@ -89,6 +109,8 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.lineChart]: SIDE_BARS.lineChartSettings,
   [WIDGET_TYPES.pieChart]: SIDE_BARS.pieChartSettings,
   [WIDGET_TYPES.numbers]: SIDE_BARS.numbersSettings,
+  [WIDGET_TYPES.userStatistics]: SIDE_BARS.userStatisticsSettings,
+  [WIDGET_TYPES.alarmStatistics]: SIDE_BARS.alarmStatisticsSettings,
 
   ...featuresService.get('constants.SIDE_BARS_BY_WIDGET_TYPES'),
 };
@@ -97,6 +119,8 @@ export const WIDGET_TYPES_RULES = {
   [WIDGET_TYPES.statsCalendar]: { edition: CANOPSIS_EDITION.pro },
   [WIDGET_TYPES.testingWeather]: { edition: CANOPSIS_EDITION.pro },
   [WIDGET_TYPES.map]: { edition: CANOPSIS_EDITION.pro },
+  [WIDGET_TYPES.userStatistics]: { edition: CANOPSIS_EDITION.pro },
+  [WIDGET_TYPES.alarmStatistics]: { edition: CANOPSIS_EDITION.pro },
 
   ...featuresService.get('constants.WIDGET_TYPES_RULES'),
 };
@@ -187,6 +211,7 @@ export const WIDGET_TEMPLATES_TYPES = {
   alarmColumns: 'alarm_columns',
   entityColumns: 'entity_columns',
   alarmMoreInfos: 'alarm_more_infos',
+  alarmExportToPdf: 'alarm_export_to_pdf',
   weatherItem: 'weather_item',
   weatherModal: 'weather_modal',
   weatherEntity: 'weather_entity',

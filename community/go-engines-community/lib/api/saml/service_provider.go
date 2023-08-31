@@ -161,18 +161,19 @@ func NewServiceProvider(
 
 	return &serviceProvider{
 		samlSP: &saml2.SAMLServiceProvider{
-			IdentityProviderSSOURL:      ssoLocation,
-			IdentityProviderSLOURL:      sloLocation,
-			IdentityProviderIssuer:      idpMetadata.EntityID,
-			AssertionConsumerServiceURL: fmt.Sprintf("%s/%s", config.Security.Saml.CanopsisSamlUrl, "acs"),
-			ServiceProviderSLOURL:       fmt.Sprintf("%s/%s", config.Security.Saml.CanopsisSamlUrl, "slo"),
-			ServiceProviderIssuer:       fmt.Sprintf("%s/%s", config.Security.Saml.CanopsisSamlUrl, "metadata"),
-			SignAuthnRequests:           config.Security.Saml.SignAuthRequest,
-			AudienceURI:                 fmt.Sprintf("%s/%s", config.Security.Saml.CanopsisSamlUrl, "metadata"),
-			IDPCertificateStore:         &certStore,
-			SPKeyStore:                  dsig.TLSCertKeyStore(keyPair),
-			NameIdFormat:                config.Security.Saml.NameIdFormat,
-			SkipSignatureValidation:     config.Security.Saml.SkipSignatureValidation,
+			IdentityProviderSSOURL:         ssoLocation,
+			IdentityProviderSLOURL:         sloLocation,
+			IdentityProviderIssuer:         idpMetadata.EntityID,
+			AssertionConsumerServiceURL:    fmt.Sprintf("%s/%s", config.Security.Saml.CanopsisSamlUrl, "acs"),
+			ServiceProviderSLOURL:          fmt.Sprintf("%s/%s", config.Security.Saml.CanopsisSamlUrl, "slo"),
+			ServiceProviderIssuer:          fmt.Sprintf("%s/%s", config.Security.Saml.CanopsisSamlUrl, "metadata"),
+			SignAuthnRequests:              config.Security.Saml.SignAuthRequest,
+			AudienceURI:                    fmt.Sprintf("%s/%s", config.Security.Saml.CanopsisSamlUrl, "metadata"),
+			IDPCertificateStore:            &certStore,
+			SPKeyStore:                     dsig.TLSCertKeyStore(keyPair),
+			NameIdFormat:                   config.Security.Saml.NameIdFormat,
+			SkipSignatureValidation:        config.Security.Saml.SkipSignatureValidation,
+			SignAuthnRequestsCanonicalizer: dsig.MakeC14N10ExclusiveCanonicalizerWithPrefixList(""),
 		},
 		userProvider:   userProvider,
 		roleCollection: roleCollection,
@@ -585,7 +586,7 @@ func (sp *serviceProvider) createUser(c *gin.Context, relayUrl *url.URL, asserti
 
 	role := sp.getAssocAttribute(assertionInfo.Values, "role", sp.defaultRole)
 
-	err := sp.roleCollection.FindOne(c, bson.M{"crecord_name": role, "crecord_type": "role"}).Err()
+	err := sp.roleCollection.FindOne(c, bson.M{"name": role}).Err()
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			errMessage := fmt.Errorf("role %s doesn't exist", role)
@@ -599,7 +600,7 @@ func (sp *serviceProvider) createUser(c *gin.Context, relayUrl *url.URL, asserti
 
 	user := &security.User{
 		Name:       sp.getAssocAttribute(assertionInfo.Values, "name", assertionInfo.NameID),
-		Role:       role,
+		Roles:      []string{role},
 		IsEnabled:  true,
 		ExternalID: assertionInfo.NameID,
 		Source:     security.SourceSaml,

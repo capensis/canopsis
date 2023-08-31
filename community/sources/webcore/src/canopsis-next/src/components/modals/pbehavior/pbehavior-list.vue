@@ -51,7 +51,7 @@
 <script>
 import { MODALS, CRUD_ACTIONS } from '@/constants';
 
-import { createEntityIdPatternByValue } from '@/helpers/pattern';
+import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesPbehaviorMixin } from '@/mixins/entities/pbehavior';
@@ -75,7 +75,7 @@ export default {
     headers() {
       return [
         { text: this.$t('common.name'), value: 'name' },
-        { text: this.$t('common.author'), value: 'author.name' },
+        { text: this.$t('common.author'), value: 'author.display_name' },
         { text: this.$t('pbehavior.isEnabled'), value: 'enabled' },
         { text: this.$t('pbehavior.begins'), value: 'tstart' },
         { text: this.$t('pbehavior.ends'), value: 'tstop' },

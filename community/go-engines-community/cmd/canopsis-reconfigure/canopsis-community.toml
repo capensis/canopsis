@@ -16,34 +16,7 @@
 # used rabbitMQ library and the documentation of our version of RabbitMQ.
 
 [[RabbitMQ.exchanges]]
-name = "canopsis"
-kind = "topic"
-durable = true
-autoDelete = false
-internal = false
-noWait = false
-# args =
-
-[[RabbitMQ.exchanges]]
-name = "canopsis.alerts"
-kind = "topic"
-durable = true
-autoDelete = false
-internal = false
-noWait = false
-# args =
-
-[[RabbitMQ.exchanges]]
 name = "canopsis.events"
-kind = "topic"
-durable = true
-autoDelete = false
-internal = false
-noWait = false
-# args =
-
-[[RabbitMQ.exchanges]]
-name = "canopsis.incidents"
 kind = "topic"
 durable = true
 autoDelete = false
@@ -222,6 +195,8 @@ FilePattern = "/tmp/import_%s.json"
 [Canopsis.api]
 TokenSigningMethod = "HS256"
 BulkMaxSize = 10000
+AuthorScheme = ["$username"]
+#AuthorScheme = ["$username", " ", "$firstname", " ", "$lastname", " ", "$email", " ", "$_id"]
 
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.

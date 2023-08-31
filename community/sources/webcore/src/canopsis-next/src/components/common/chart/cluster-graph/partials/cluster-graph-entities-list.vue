@@ -42,8 +42,8 @@
 <script>
 import { ENTITY_TYPES, MAX_LIMIT } from '@/constants';
 
-import uid from '@/helpers/uid';
-import { getMapEntityText } from '@/helpers/map';
+import { uid } from '@/helpers/uid';
+import { getMapEntityText } from '@/helpers/entities/map/list';
 
 import { formArrayMixin } from '@/mixins/form';
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';

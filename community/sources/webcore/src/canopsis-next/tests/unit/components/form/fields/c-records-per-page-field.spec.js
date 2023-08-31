@@ -1,10 +1,8 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { PAGINATION_LIMIT, PAGINATION_PER_PAGE_VALUES } from '@/config';
 
 import CRecordsPerPage from '@/components/forms/fields/c-records-per-page-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-select': {
@@ -17,19 +15,10 @@ const stubs = {
   },
 };
 
-const factory = (options = {}) => shallowMount(CRecordsPerPage, {
-  localVue,
-  stubs,
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CRecordsPerPage, {
-  localVue,
-
-  ...options,
-});
-
 describe('c-records-per-page-field', () => {
+  const factory = generateShallowRenderer(CRecordsPerPage, { stubs });
+  const snapshotFactory = generateRenderer(CRecordsPerPage);
+
   it('Default items is equal to PAGINATION_PER_PAGE_VALUES', () => {
     const wrapper = factory();
 

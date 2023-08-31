@@ -29,7 +29,8 @@ Feature: Job's config update
       "auth_username": "",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "host": "http://example-2.com",
       "name": "test-job-config-name-to-update-new",
@@ -91,7 +92,8 @@ Feature: Job's config update
       "auth_username": "",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "host": "http://example-2.com",
       "name": "test-job-config-name-to-update-new",

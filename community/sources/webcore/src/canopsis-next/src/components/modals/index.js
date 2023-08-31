@@ -44,8 +44,8 @@ export const CreateManualMetaAlarm = () => ({
   component: import(/* webpackChunkName: "Alarm" */ './alarm/create-manual-meta-alarm.vue'),
   loading: LoaderOverlay,
 });
-export const RemoveAlarmsFromManualMetaAlarm = () => ({
-  component: import(/* webpackChunkName: "Alarm" */ './alarm/remove-alarms-from-manual-meta-alarm.vue'),
+export const RemoveAlarmsFromMetaAlarm = () => ({
+  component: import(/* webpackChunkName: "Alarm" */ './alarm/remove-alarms-from-meta-alarm.vue'),
   loading: LoaderOverlay,
 });
 export const AlarmsList = () => ({
@@ -54,6 +54,10 @@ export const AlarmsList = () => ({
 });
 export const CreateMetaAlarmRule = () => ({
   component: import(/* webpackChunkName: "Alarm" */ './meta-alarm-rule/create-meta-alarm-rule.vue'),
+  loading: LoaderOverlay,
+});
+export const CreateAlarmChart = () => ({
+  component: import(/* webpackChunkName: "Alarm" */ './alarm/create-alarm-chart.vue'),
   loading: LoaderOverlay,
 });
 
@@ -71,10 +75,6 @@ export const PbehaviorsCalendar = () => ({
 });
 export const PbehaviorRecurrenceRule = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-recurrence-rule.vue'),
-  loading: LoaderOverlay,
-});
-export const SelectExceptionsLists = () => ({
-  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/select-exceptions-lists.vue'),
   loading: LoaderOverlay,
 });
 export const CreateRecurrenceRule = () => ({
@@ -99,6 +99,10 @@ export const CreatePbehaviorReason = () => ({
 });
 export const CreatePbehaviorException = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/create-pbehavior-exception.vue'),
+  loading: LoaderOverlay,
+});
+export const ImportPbehaviorException = () => ({
+  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/import-pbehavior-exception.vue'),
   loading: LoaderOverlay,
 });
 export const PbehaviorPatterns = () => ({

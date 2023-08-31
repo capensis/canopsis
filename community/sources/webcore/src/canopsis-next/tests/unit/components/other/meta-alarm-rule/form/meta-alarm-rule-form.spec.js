@@ -1,12 +1,10 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub, createSelectInputStub } from '@unit/stubs/input';
 import { META_ALARMS_RULE_TYPES } from '@/constants';
 
 import MetaAlarmRuleForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-id-field': true,
@@ -34,20 +32,6 @@ const snapshotStubs = {
   'meta-alarm-rule-patterns-form': true,
 };
 
-const factory = (options = {}) => shallowMount(MetaAlarmRuleForm, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(MetaAlarmRuleForm, {
-  localVue,
-  stubs: snapshotStubs,
-
-  ...options,
-});
-
 const selectIdField = wrapper => wrapper.find('c-id-field-stub');
 const selectDescriptionField = wrapper => wrapper.find('c-description-field-stub');
 const selectNameField = wrapper => wrapper.find('c-name-field-stub');
@@ -68,6 +52,9 @@ describe('meta-alarm-rule-form', () => {
     type: META_ALARMS_RULE_TYPES.complex,
     config: {},
   };
+
+  const factory = generateShallowRenderer(MetaAlarmRuleForm, { stubs });
+  const snapshotFactory = generateRenderer(MetaAlarmRuleForm, { stubs: snapshotStubs });
 
   test('ID changed after trigger id field', () => {
     const wrapper = factory({

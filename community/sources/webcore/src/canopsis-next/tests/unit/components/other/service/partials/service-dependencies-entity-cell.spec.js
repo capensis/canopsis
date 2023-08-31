@@ -1,13 +1,8 @@
 import { generateRenderer } from '@unit/utils/vue';
 
-import {
-  COLOR_INDICATOR_TYPES,
-  ENTITY_FIELDS,
-  ENTITY_FIELDS_TO_LABELS_KEYS,
-  ENTITY_TYPES,
-} from '@/constants';
+import { COLOR_INDICATOR_TYPES, ENTITY_FIELDS, ENTITY_FIELDS_TO_LABELS_KEYS, ENTITY_TYPES } from '@/constants';
 
-import { getColumnLabel } from '@/helpers/widgets';
+import { getWidgetColumnLabel } from '@/helpers/entities/widget/list';
 
 import ServiceDependenciesEntityCell from '@/components/other/service/partials/service-dependencies-entity-cell.vue';
 
@@ -30,7 +25,7 @@ describe('service-dependencies', () => {
   };
   const column = {
     value: `entity.${ENTITY_FIELDS.name}`,
-    text: getColumnLabel({ value: ENTITY_FIELDS.name }, ENTITY_FIELDS_TO_LABELS_KEYS),
+    text: getWidgetColumnLabel({ value: ENTITY_FIELDS.name }, ENTITY_FIELDS_TO_LABELS_KEYS),
   };
   const columnWithStateColorIndicator = {
     ...column,
@@ -42,7 +37,7 @@ describe('service-dependencies', () => {
   };
   const stateColumn = {
     value: `entity.${ENTITY_FIELDS.state}`,
-    text: getColumnLabel({ value: ENTITY_FIELDS.state }, ENTITY_FIELDS_TO_LABELS_KEYS),
+    text: getWidgetColumnLabel({ value: ENTITY_FIELDS.state }, ENTITY_FIELDS_TO_LABELS_KEYS),
   };
   const stateColumnWithStateColorIndicator = {
     ...stateColumn,

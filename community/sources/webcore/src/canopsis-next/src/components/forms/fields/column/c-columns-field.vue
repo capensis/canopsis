@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-movable-card-iterator-field(v-field="columns", @add="add")
+  c-movable-card-iterator-field(v-field="columns", addable, @add="add")
     template(#item="{ item, index }")
       column-field(
         v-field="columns[index]",
@@ -7,14 +7,15 @@
         :type="type",
         :with-html="withHtml",
         :with-template="withTemplate",
-        :with-color-indicator="withColorIndicator"
+        :with-color-indicator="withColorIndicator",
+        :with-instructions="withInstructions"
       )
 </template>
 
 <script>
 import { ENTITIES_TYPES } from '@/constants';
 
-import { widgetColumnToForm } from '@/helpers/forms/shared/widget-column';
+import { widgetColumnToForm } from '@/helpers/entities/widget/column/form';
 
 import { formArrayMixin, formValidationHeaderMixin } from '@/mixins/form';
 
@@ -49,6 +50,10 @@ export default {
       default: false,
     },
     withColorIndicator: {
+      type: Boolean,
+      default: false,
+    },
+    withInstructions: {
       type: Boolean,
       default: false,
     },
