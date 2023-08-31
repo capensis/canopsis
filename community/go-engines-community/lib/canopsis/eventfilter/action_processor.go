@@ -78,8 +78,6 @@ func (p *actionProcessor) Process(
 
 		return event, nil
 	case ActionSetEntityInfo:
-		entityUpdated := false
-
 		if !types.IsInfoValueValid(action.Value) {
 			failReason := fmt.Sprintf("action %d cannot set %q entity info: invalid type of %v", action.Index,
 				action.Name, action.Value)
@@ -87,9 +85,7 @@ func (p *actionProcessor) Process(
 			return event, types.ErrInvalidInfoType
 		}
 
-		*event.Entity, entityUpdated = p.setEntityInfo(*event.Entity, action.Value, action.Name, action.Description)
-
-		event.IsEntityUpdated = event.IsEntityUpdated || entityUpdated
+		*event.Entity = p.setEntityInfo(*event.Entity, action.Value, action.Name, action.Description)
 
 		return event, nil
 	case ActionSetEntityInfoFromTemplate:
@@ -112,10 +108,7 @@ func (p *actionProcessor) Process(
 			return event, err
 		}
 
-		entityUpdated := false
-		*event.Entity, entityUpdated = p.setEntityInfo(*event.Entity, value, action.Name, action.Description)
-
-		event.IsEntityUpdated = event.IsEntityUpdated || entityUpdated
+		*event.Entity = p.setEntityInfo(*event.Entity, value, action.Name, action.Description)
 
 		return event, nil
 	case ActionCopy:
@@ -186,10 +179,7 @@ func (p *actionProcessor) Process(
 			return event, types.ErrInvalidInfoType
 		}
 
-		entityUpdated := false
-		*event.Entity, entityUpdated = p.setEntityInfo(*event.Entity, value, action.Name, action.Description)
-
-		event.IsEntityUpdated = event.IsEntityUpdated || entityUpdated
+		*event.Entity = p.setEntityInfo(*event.Entity, value, action.Name, action.Description)
 
 		return event, nil
 	}
@@ -199,10 +189,10 @@ func (p *actionProcessor) Process(
 	return event, fmt.Errorf("action type = %s is invalid", action.Type)
 }
 
-func (p *actionProcessor) setEntityInfo(entity types.Entity, value interface{}, name, description string) (types.Entity, bool) {
+func (p *actionProcessor) setEntityInfo(entity types.Entity, value interface{}, name, description string) types.Entity {
 	if info, ok := entity.Infos[name]; ok {
 		if reflect.DeepEqual(info.Value, value) {
-			return entity, false
+			return entity
 		}
 	}
 
@@ -217,8 +207,9 @@ func (p *actionProcessor) setEntityInfo(entity types.Entity, value interface{}, 
 	}
 
 	p.techMetricsSender.SendCheEntityInfo(time.Now(), name)
+	entity.IsUpdated = true
 
-	return entity, true
+	return entity
 }
 
 var ErrShouldBeAString = fmt.Errorf("value should be a string")

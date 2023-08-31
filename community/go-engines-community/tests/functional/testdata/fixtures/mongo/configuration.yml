@@ -34,6 +34,7 @@ configuration:
       bulkmaxsize: 10000
       tokensigningmethod: HS256
       authorscheme: ["$username", " ", "$firstname", " ", "$lastname", " ", "$email"]
+      metricscachexpiration: 24h
     data_storage:
       timetoexecute: ""
     file:
@@ -58,7 +59,7 @@ configuration:
       enabledinstructions: true
       enablednotackedmetrics: true
     tech_metrics:
-      enabled: false
+      enabled: true
       dumpkeepinterval: 1h
     timezone:
       timezone: Europe/Paris
@@ -184,8 +185,6 @@ configuration:
     - from: engine-axe
       to: engine-remediation
     - from: engine-correlation
-      to: engine-service
-    - from: engine-service
       to: engine-dynamic-infos
     - from: engine-dynamic-infos
       to: engine-action
