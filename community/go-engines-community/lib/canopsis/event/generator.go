@@ -16,20 +16,22 @@ type Generator interface {
 	) (types.Event, error)
 }
 
-func NewGenerator(entityAdapter libentity.Adapter) Generator {
+func NewGenerator(entityAdapter libentity.Adapter, defaultConnector string) Generator {
 	return &generator{
 		entityAdapter: entityAdapter,
 
-		connectors: make(map[string]types.Entity),
-		components: make(map[string]types.Entity),
+		defaultConnector: defaultConnector,
+		connectors:       make(map[string]types.Entity),
+		components:       make(map[string]types.Entity),
 	}
 }
 
 type generator struct {
 	entityAdapter libentity.Adapter
 
-	connectors map[string]types.Entity
-	components map[string]types.Entity
+	defaultConnector string
+	connectors       map[string]types.Entity
+	components       map[string]types.Entity
 }
 
 func (g *generator) Generate(
@@ -53,10 +55,12 @@ func (g *generator) Generate(
 				return event, err
 			}
 			if connector == nil {
-				return event, fmt.Errorf("cannot generate event for entity %v : not found any alarm and not found linked connector", entity.ID)
+				event.Connector = g.defaultConnector
+				event.ConnectorName = g.defaultConnector
+			} else {
+				event.Connector = strings.TrimSuffix(connector.ID, "/"+connector.Name)
+				event.ConnectorName = connector.Name
 			}
-			event.Connector = strings.TrimSuffix(connector.ID, "/"+connector.Name)
-			event.ConnectorName = connector.Name
 		}
 		event.Component = entity.Name
 	case types.EntityTypeResource:
@@ -68,10 +72,12 @@ func (g *generator) Generate(
 				return event, err
 			}
 			if connector == nil {
-				return event, fmt.Errorf("cannot generate event for entity %v : not found any alarm and not found linked connector", entity.ID)
+				event.Connector = g.defaultConnector
+				event.ConnectorName = g.defaultConnector
+			} else {
+				event.Connector = strings.TrimSuffix(connector.ID, "/"+connector.Name)
+				event.ConnectorName = connector.Name
 			}
-			event.Connector = strings.TrimSuffix(connector.ID, "/"+connector.Name)
-			event.ConnectorName = connector.Name
 		}
 		if entity.Component != "" {
 			event.Component = entity.Component
@@ -81,9 +87,10 @@ func (g *generator) Generate(
 				return event, err
 			}
 			if component == nil {
-				return event, fmt.Errorf("cannot generate event for resource %v : not found any alarm and not found linked component", entity.ID)
+				event.Component = strings.TrimPrefix(entity.ID, entity.Name+"/")
+			} else {
+				event.Component = component.ID
 			}
-			event.Component = component.ID
 		}
 		event.Resource = entity.Name
 	case types.EntityTypeService:

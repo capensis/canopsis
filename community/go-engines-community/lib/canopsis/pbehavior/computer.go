@@ -182,7 +182,7 @@ func (c *cancelableComputer) updateAlarms(
 	excludeIds []string,
 	resolver ComputedEntityTypeResolver,
 ) ([]string, error) {
-	eventGenerator := libevent.NewGenerator(libentity.NewAdapter(c.dbClient))
+	eventGenerator := libevent.NewGenerator(libentity.NewAdapter(c.dbClient), "api")
 	pbehavior := PBehavior{}
 	err := c.pbehaviorCollection.FindOne(ctx, bson.M{"_id": pbehaviorID},
 		options.FindOne().SetProjection(bson.M{
