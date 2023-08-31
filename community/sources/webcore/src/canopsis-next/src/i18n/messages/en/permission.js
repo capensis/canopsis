@@ -546,6 +546,10 @@ export default {
       name: 'Widget templates',
       description: 'This permission defines the access to the Widget templates',
     },
+    [USERS_PERMISSIONS.technical.maintenance]: {
+      name: 'Maintenance mode',
+      description: 'This permission defines the access to the Maintenance mode',
+    },
 
     /**
      * Technical Exploitation Permissions
@@ -745,6 +749,10 @@ export default {
     [USERS_PERMISSIONS.api.general.widgetTemplate]: {
       name: 'Widget templates',
       description: 'Access to API route to CRUD widget templates',
+    },
+    [USERS_PERMISSIONS.api.general.maintenance]: {
+      name: 'Maintenance mode',
+      description: 'Access to API route to the maintenance mode',
     },
 
     [USERS_PERMISSIONS.api.rules.action]: {
