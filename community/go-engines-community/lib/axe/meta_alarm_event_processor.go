@@ -623,7 +623,7 @@ func (p *metaAlarmEventProcessor) processChildRpc(ctx context.Context, event rpc
 			return err
 		}
 	case types.AlarmChangeTypeResolve:
-		err := p.updateParentEventsCount(ctx, eventRes.Alarm.Value.Parents, -eventRes.Alarm.Value.EventsCount)
+		err := p.incrementParentEventsCount(ctx, eventRes.Alarm.Value.Parents, -eventRes.Alarm.Value.EventsCount)
 		if err != nil {
 			return fmt.Errorf("cannot update parent alarms: %w", err)
 		}
@@ -642,7 +642,7 @@ func (p *metaAlarmEventProcessor) processChildRpc(ctx context.Context, event rpc
 	}
 
 	if event.EventType == types.EventTypeCheck {
-		err := p.updateParentEventsCount(ctx, eventRes.Alarm.Value.Parents, 1)
+		err := p.incrementParentEventsCount(ctx, eventRes.Alarm.Value.Parents, 1)
 		if err != nil {
 			return fmt.Errorf("cannot update parent alarms: %w", err)
 		}
@@ -656,7 +656,7 @@ func (p *metaAlarmEventProcessor) processChildRpc(ctx context.Context, event rpc
 	return nil
 }
 
-func (p *metaAlarmEventProcessor) updateParentEventsCount(ctx context.Context, parentIDs []string, count types.CpsNumber) error {
+func (p *metaAlarmEventProcessor) incrementParentEventsCount(ctx context.Context, parentIDs []string, count types.CpsNumber) error {
 	_, err := p.alarmCollection.UpdateMany(
 		ctx,
 		bson.M{
