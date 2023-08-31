@@ -78,10 +78,21 @@ export default {
       type: Array,
       required: false,
     },
+    entityCountersType: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     listProps() {
-      return pick(this, ['withAlarm', 'withEntity', 'withPbehavior', 'withServiceWeather', 'entityTypes']);
+      return pick(this, [
+        'withAlarm',
+        'withEntity',
+        'withPbehavior',
+        'withServiceWeather',
+        'entityTypes',
+        'entityCountersType',
+      ]);
     },
   },
   methods: {

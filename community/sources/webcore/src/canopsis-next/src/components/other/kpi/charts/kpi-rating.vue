@@ -18,12 +18,7 @@
 import { isUndefined } from 'lodash';
 
 import { KPI_RATING_METRICS_FILENAME_PREFIX } from '@/config';
-import {
-  QUICK_RANGES,
-  ALARM_METRIC_PARAMETERS,
-  DATETIME_FORMATS,
-  USER_METRIC_PARAMETERS,
-} from '@/constants';
+import { QUICK_RANGES, ALARM_METRIC_PARAMETERS, DATETIME_FORMATS, USER_METRIC_PARAMETERS } from '@/constants';
 
 import { convertDateToStartOfDayTimestampByTimezone, convertDateToString } from '@/helpers/date/date';
 import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';

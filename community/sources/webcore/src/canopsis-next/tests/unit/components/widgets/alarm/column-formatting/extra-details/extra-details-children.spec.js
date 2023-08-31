@@ -5,6 +5,8 @@ import ExtraDetailsChildren from '@/components/widgets/alarm/columns-formatting/
 
 describe('extra-details-children', () => {
   const total = 3;
+  const opened = 2;
+  const closed = 1;
   const rule = {
     name: 'rule-name',
   };
@@ -18,6 +20,8 @@ describe('extra-details-children', () => {
     snapshotFactory({
       propsData: {
         total,
+        opened,
+        closed,
         rule,
       },
     });
