@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout(row)
-    v-flex(:xs5="isAnyInfosRule", xs4)
+    v-flex(:xs5="isAnyInfosRule", :xs6="isObjectRule", xs4)
       v-layout(row)
         v-flex(:xs4="isAnyInfosRule")
           pattern-attribute-field(
@@ -19,7 +19,7 @@
             :combobox="isInfosRule",
             row
           )
-        v-flex.pl-3(v-else-if="isObjectRule", xs8)
+        v-flex.pl-3(v-else-if="isObjectRule", xs6)
           v-text-field(
             v-field="rule.dictionary",
             v-validate="'required'",
