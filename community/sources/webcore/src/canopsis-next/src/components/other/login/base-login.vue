@@ -80,10 +80,6 @@ export default {
       } catch (err) {
         if (err?.status === 503) {
           this.serverErrorMessage = this.$t('login.errors.underMaintenance');
-
-          if (!this.maintenance) {
-            this.fetchAppInfo();
-          }
         } else {
           this.serverErrorMessage = this.$t('login.errors.incorrectEmailOrPassword');
         }
