@@ -4,6 +4,7 @@ export default {
   dataFromOneStepAttention: 'Data from the API response can be taken only from one step of a rule.',
   ticketID: 'Ticket ID',
   ticketURL: 'Ticket URL',
+  allowTicketURLTemplate: 'Allow variables in the URL',
   alarmFieldName: 'Alarm field name',
   customFields: 'Custom fields',
   responseField: 'Response field',

@@ -149,6 +149,8 @@ definitions:
         type: integer
       children_instructions:
         type: boolean
+      closed_children:
+        type: integer
       entity:
         $ref: '#/definitions/entity.Entity'
       failed_auto_instructions:
@@ -183,6 +185,8 @@ definitions:
         items:
           $ref: '#/definitions/alarm.MetaAlarmRule'
         type: array
+      opened_children:
+        type: integer
       parents:
         description: Meta alarm child fields
         type: integer
@@ -543,6 +547,8 @@ definitions:
         type: boolean
       reversed:
         type: boolean
+      type:
+        type: string
     type: object
   alarmaction.AckRequest:
     properties:
@@ -735,6 +741,8 @@ definitions:
         type: string
       logo:
         type: string
+      maintenance:
+        type: boolean
       max_matched_items:
         type: integer
       popup_timeout:
@@ -870,6 +878,8 @@ definitions:
         type: integer
       end:
         type: integer
+      maintenance:
+        type: boolean
       message:
         type: string
       start:
@@ -890,6 +900,8 @@ definitions:
         type: integer
       end:
         type: integer
+      maintenance:
+        type: boolean
       message:
         type: string
       start:
@@ -1015,6 +1027,11 @@ definitions:
           delete_after:
             $ref: '#/definitions/types.DurationWithEnabled'
         type: object
+      event_filter_failure:
+        properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+        type: object
       health_check:
         properties:
           delete_after:
@@ -1070,6 +1087,8 @@ definitions:
         $ref: '#/definitions/datastorage.HistoryWithCount'
       entity:
         $ref: '#/definitions/datastorage.HistoryWithCount'
+      event_filter_failure:
+        type: integer
       health_check:
         type: integer
       junit:
@@ -1839,6 +1858,23 @@ definitions:
       type:
         type: string
     type: object
+  eventfilter.FailureResponse:
+    properties:
+      _id:
+        type: string
+      event:
+        additionalProperties:
+          type: any
+        type: object
+      message:
+        type: string
+      t:
+        type: integer
+      type:
+        type: integer
+      unread:
+        type: boolean
+    type: object
   eventfilter.Response:
     properties:
       _id:
@@ -1867,6 +1903,8 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      events_count:
+        type: integer
       exceptions:
         items:
           $ref: '#/definitions/eventfilter.Exception'
@@ -1879,6 +1917,8 @@ definitions:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
+      failures_count:
+        type: integer
       old_patterns:
         $ref: '#/definitions/oldpattern.EventPatternList'
       priority:
@@ -1891,6 +1931,8 @@ definitions:
         type: integer
       type:
         type: string
+      unread_failures_count:
+        type: integer
       updated:
         type: integer
     type: object
@@ -2717,6 +2759,17 @@ definitions:
       updated:
         type: integer
     type: object
+  maintenance.Request:
+    properties:
+      color:
+        type: string
+      enabled:
+        type: boolean
+      message:
+        type: string
+    required:
+    - enabled
+    type: object
   messageratestats.StatsListResponse:
     properties:
       data:
@@ -2777,6 +2830,30 @@ definitions:
       over_limit:
         type: boolean
     type: object
+  pattern.CountAlarmsResponse:
+    properties:
+      alarm_pattern:
+        $ref: '#/definitions/pattern.Count'
+      all:
+        $ref: '#/definitions/pattern.Count'
+      entities:
+        $ref: '#/definitions/pattern.Count'
+      entity_pattern:
+        $ref: '#/definitions/pattern.Count'
+      pbehavior_pattern:
+        $ref: '#/definitions/pattern.Count'
+    type: object
+  pattern.CountEntitiesResponse:
+    properties:
+      alarm_pattern:
+        $ref: '#/definitions/pattern.Count'
+      all:
+        $ref: '#/definitions/pattern.Count'
+      entity_pattern:
+        $ref: '#/definitions/pattern.Count'
+      pbehavior_pattern:
+        $ref: '#/definitions/pattern.Count'
+    type: object
   pattern.CountRequest:
     properties:
       alarm_pattern:
@@ -2797,15 +2874,6 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
-    type: object
-  pattern.CountResponse:
-    properties:
-      alarm_pattern:
-        $ref: '#/definitions/pattern.Count'
-      entity_pattern:
-        $ref: '#/definitions/pattern.Count'
-      pbehavior_pattern:
-        $ref: '#/definitions/pattern.Count'
     type: object
   pattern.EditRequest:
     properties:
@@ -3185,6 +3253,8 @@ definitions:
         $ref: '#/definitions/pbehaviorreason.Reason'
       rrule:
         type: string
+      rrule_end:
+        type: integer
       tstart:
         type: integer
       tstop:
@@ -3566,7 +3636,7 @@ definitions:
       author:
         type: string
       created:
-        $ref: '#/definitions/types.CpsTime'
+        type: integer
       enabled:
         type: boolean
       fullscreen:
@@ -3580,7 +3650,7 @@ definitions:
           type: string
         type: array
       updated:
-        $ref: '#/definitions/types.CpsTime'
+        type: integer
     type: object
   request.BasicAuth:
     properties:
@@ -3638,6 +3708,8 @@ definitions:
       ticket_id:
         type: string
       ticket_url:
+        type: string
+      ticket_url_tpl:
         type: string
     type: object
   resolverule.CreateRequest:
@@ -4570,11 +4642,6 @@ definitions:
     - lat
     - lng
     type: object
-  types.CpsTime:
-    properties:
-      time.Time:
-        type: string
-    type: object
   types.CropCounter:
     properties:
       state:0:
@@ -5056,6 +5123,8 @@ definitions:
     properties:
       colorIndicator:
         type: string
+      inlineLinksCount:
+        type: integer
       isHtml:
         type: boolean
       label:
@@ -5115,11 +5184,11 @@ definitions:
       author:
         $ref: '#/definitions/author.Author'
       created:
-        $ref: '#/definitions/types.CpsTime'
+        type: integer
       title:
         type: string
       updated:
-        $ref: '#/definitions/types.CpsTime'
+        type: integer
       widgets:
         items:
           $ref: '#/definitions/widget.Response'
@@ -5336,6 +5405,7 @@ definitions:
         - alarm_columns
         - entity_columns
         - alarm_more_infos
+        - alarm_export_to_pdf
         - weather_item
         - weather_modal
         - weather_entity

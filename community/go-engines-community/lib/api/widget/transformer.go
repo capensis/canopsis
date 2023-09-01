@@ -109,6 +109,7 @@ func (t *RequestTransformer) transformTemplateFields(ctx context.Context, r *Edi
 				view.WidgetTemplateTypeEntityColumns:
 				parameters[key] = tpl.Columns
 			case view.WidgetTemplateTypeAlarmMoreInfos,
+				view.WidgetTemplateTypeAlarmExportToPDF,
 				view.WidgetTemplateTypeServiceWeatherItem,
 				view.WidgetTemplateTypeServiceWeatherModal,
 				view.WidgetTemplateTypeServiceWeatherEntity:

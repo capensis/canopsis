@@ -48,6 +48,7 @@ Feature: Get application information
         "saml2config": {
           "enable": false
         }
-      }
+      },
+      "maintenance": false
     }
     """

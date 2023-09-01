@@ -77,10 +77,6 @@ export const PbehaviorRecurrenceRule = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-recurrence-rule.vue'),
   loading: LoaderOverlay,
 });
-export const SelectExceptionsLists = () => ({
-  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/select-exceptions-lists.vue'),
-  loading: LoaderOverlay,
-});
 export const CreateRecurrenceRule = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/create-recurrence-rule.vue'),
   loading: LoaderOverlay,
@@ -385,6 +381,11 @@ export const CreateAssociateTicketEvent = () => ({
 
 export const CreateLinkRule = () => ({
   component: import(/* webpackChunkName: "LinkRule" */ './link-rule/create-link-rule.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateMaintenance = () => ({
+  component: import(/* webpackChunkName: "Maintenance" */ './maintenance/create-maintenance.vue'),
   loading: LoaderOverlay,
 });
 

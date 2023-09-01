@@ -1,30 +1,39 @@
 <template lang="pug">
   div
-    v-text-field(
+    c-payload-text-field(
       v-field="form.resource",
-      :label="$t('eventFilter.resource')"
+      :label="$t('eventFilter.resource')",
+      :name="`${name}.resource`",
+      :variables="variables"
     )
-    v-text-field(
+    c-payload-text-field(
       v-field="form.component",
-      :label="$t('eventFilter.component')"
+      :label="$t('eventFilter.component')",
+      :name="`${name}.component`",
+      :variables="variables"
     )
-    v-text-field(
+    c-payload-text-field(
       v-field="form.connector",
-      :label="$t('eventFilter.connector')"
+      :label="$t('eventFilter.connector')",
+      :name="`${name}.connector`",
+      :variables="variables"
     )
-    v-text-field(
+    c-payload-text-field(
       v-field="form.connector_name",
-      :label="$t('eventFilter.connectorName')"
+      :label="$t('eventFilter.connectorName')",
+      :name="`${name}.connector_name`",
+      :variables="variables"
     )
     v-alert(:value="errors.has(name)", type="error") {{ $t('eventFilter.configRequired') }}
 </template>
 
 <script>
 import { formMixin } from '@/mixins/form';
+import { validationAttachRequiredMixin } from '@/mixins/form/validation-attach-required';
 
 export default {
   inject: ['$validator'],
-  mixins: [formMixin],
+  mixins: [formMixin, validationAttachRequiredMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -38,33 +47,23 @@ export default {
       type: String,
       default: 'config',
     },
+    variables: {
+      type: Array,
+      default: () => [],
+    },
   },
   watch: {
     form() {
-      this.$validator.validate(this.name);
+      this.validateRequiredRule();
     },
   },
   created() {
-    this.attachConfigRequiredRule();
+    this.attachRequiredRule(
+      () => this.form.resource || this.form.component || this.form.connector || this.form.connector_name,
+    );
   },
   beforeDestroy() {
-    this.detachConfigRequiredRule();
-  },
-  methods: {
-    attachConfigRequiredRule() {
-      this.$validator.attach({
-        name: this.name,
-        rules: 'required:true',
-        getter: () => this.form.resource
-          || this.form.component
-          || this.form.connector
-          || this.form.connector_name,
-      });
-    },
-
-    detachConfigRequiredRule() {
-      this.$validator.detach(this.name);
-    },
+    this.detachRequiredRule();
   },
 };
 </script>

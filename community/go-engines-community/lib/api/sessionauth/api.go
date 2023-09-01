@@ -6,7 +6,10 @@ import (
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
@@ -21,19 +24,25 @@ type API interface {
 func NewApi(
 	sessionStore libsession.Store,
 	providers []security.Provider,
+	maintenanceAdapter config.MaintenanceAdapter,
+	enforcer security.Enforcer,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		sessionStore: sessionStore,
-		providers:    providers,
-		logger:       logger,
+		sessionStore:       sessionStore,
+		providers:          providers,
+		maintenanceAdapter: maintenanceAdapter,
+		enforcer:           enforcer,
+		logger:             logger,
 	}
 }
 
 type api struct {
-	sessionStore libsession.Store
-	providers    []security.Provider
-	logger       zerolog.Logger
+	sessionStore       libsession.Store
+	providers          []security.Provider
+	maintenanceAdapter config.MaintenanceAdapter
+	enforcer           security.Enforcer
+	logger             zerolog.Logger
 }
 
 // LoginHandler authenticates user and starts sessions.
@@ -63,6 +72,23 @@ func (a *api) LoginHandler() gin.HandlerFunc {
 		if user == nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 			return
+		}
+
+		maintenanceConf, err := a.maintenanceAdapter.GetConfig(c)
+		if err != nil {
+			panic(err)
+		}
+
+		if maintenanceConf.Enabled {
+			ok, err := a.enforcer.Enforce(user.ID, apisecurity.PermMaintenance, model.PermissionCan)
+			if err != nil {
+				panic(err)
+			}
+
+			if !ok {
+				c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
+				return
+			}
 		}
 
 		var response loginResponse

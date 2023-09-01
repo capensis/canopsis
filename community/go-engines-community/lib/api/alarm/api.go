@@ -381,6 +381,7 @@ func (a *api) StartExport(c *gin.Context) {
 		Fields:         r.Fields,
 		Separator:      separator,
 		FilenamePrefix: "alarms",
+		UserID:         c.MustGet(auth.UserKey).(string),
 	})
 	if err != nil {
 		panic(err)

@@ -8,7 +8,7 @@
     :required="required",
     :attributes="availableAlarmAttributes",
     :with-type="withType",
-    :check-count-name="checkCountName"
+    :counter="counter"
   )
 </template>
 
@@ -68,13 +68,13 @@ export default {
       type: Boolean,
       default: false,
     },
-    checkCountName: {
-      type: String,
-      required: false,
-    },
     readonly: {
       type: Boolean,
       default: false,
+    },
+    counter: {
+      type: Object,
+      required: false,
     },
   },
   data() {

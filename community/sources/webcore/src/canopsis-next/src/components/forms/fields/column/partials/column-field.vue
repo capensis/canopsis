@@ -26,12 +26,23 @@
     )
     template(v-if="isLinks")
       column-links-category-field(v-field="column.field")
+      c-number-field(
+        v-field="column.inlineLinksCount",
+        :label="$t('settings.columns.inlineLinksCount')"
+      )
       v-switch.pa-0.my-2(
         v-field="column.onlyIcon",
         :label="$t('settings.columns.onlyIcon')",
         color="primary",
         hide-details
       )
+      c-number-field(
+        v-if="column.onlyIcon",
+        v-field="column.linksInRowCount",
+        :label="$t('settings.columns.linksInRowCount')"
+      )
+        template(#append="")
+          c-help-icon(:text="$t('settings.columns.linksInRowCountTooltip')", left)
     v-switch.pa-0.my-2(
       v-model="customLabel",
       :label="$t('settings.columns.customLabel')",
@@ -86,6 +97,8 @@
 </template>
 
 <script>
+import { omit } from 'lodash';
+
 import {
   MODALS,
   ENTITIES_TYPES,
@@ -143,6 +156,10 @@ export default {
       type: String,
       default: '',
     },
+    withInstructions: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -183,7 +200,11 @@ export default {
     },
 
     alarmListAvailableColumns() {
-      return Object.values(ALARM_LIST_WIDGET_COLUMNS).map(value => ({
+      const columns = this.withInstructions
+        ? ALARM_LIST_WIDGET_COLUMNS
+        : omit(ALARM_LIST_WIDGET_COLUMNS, ['assignedInstructions']);
+
+      return Object.values(columns).map(value => ({
         value,
         text: this.$tc(ALARM_FIELDS_TO_LABELS_KEYS[value], 2),
       }));
