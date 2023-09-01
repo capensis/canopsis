@@ -749,6 +749,56 @@ export const createWidgetTemplateModule = () => {
   };
 };
 
+export const createAlarmTagModule = () => {
+  const alarmTags = jest.fn().mockReturnValue([]);
+  const alarmTagsPending = jest.fn().mockReturnValue(false);
+  const alarmTagsMeta = jest.fn().mockReturnValue({});
+
+  const fetchAlarmTagsList = jest.fn();
+  const createAlarmTag = jest.fn();
+  const updateAlarmTag = jest.fn();
+  const removeAlarmTag = jest.fn();
+  const bulkRemoveAlarmTags = jest.fn();
+
+  afterEach(() => {
+    fetchAlarmTagsList.mockClear();
+    createAlarmTag.mockClear();
+    updateAlarmTag.mockClear();
+    removeAlarmTag.mockClear();
+    bulkRemoveAlarmTags.mockClear();
+  });
+
+  const alarmTagModule = {
+    name: 'alarmTag',
+    getters: {
+      items: alarmTags,
+      pending: alarmTagsPending,
+      meta: alarmTagsMeta,
+    },
+    actions: {
+      fetchList: fetchAlarmTagsList,
+      create: createAlarmTag,
+      update: updateAlarmTag,
+      remove: removeAlarmTag,
+      bulkRemove: bulkRemoveAlarmTags,
+    },
+  };
+
+  return {
+    alarmTagModule,
+
+    alarmTags,
+    alarmTagsPending,
+    alarmTagsMeta,
+
+    fetchAlarmTagsList,
+    createAlarmTag,
+    updateAlarmTag,
+    removeAlarmTag,
+    bulkRemoveAlarmTags,
+  };
+};
+
 export const createInfosModule = () => {
   const fetchItems = jest.fn();
 

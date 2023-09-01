@@ -1,6 +1,7 @@
 export { default as CAlert } from '@/components/common/alert/c-alert.vue';
 export { default as CEnabled } from '@/components/icons/c-enabled.vue';
 export { default as CPageHeader } from '@/components/common/page/c-page-header.vue';
+export { default as CPage } from '@/components/common/page/c-page.vue';
 export { default as CEllipsis } from '@/components/common/table/c-ellipsis.vue';
 export { default as CPagination } from '@/components/common/pagination/c-pagination.vue';
 export { default as CDraggableStepNumber } from '@/components/common/drag-drop/c-draggable-step-number.vue';
