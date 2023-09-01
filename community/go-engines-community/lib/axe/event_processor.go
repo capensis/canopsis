@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"runtime/trace"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -12,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	liboperation "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
@@ -41,6 +43,8 @@ type eventProcessor struct {
 
 	statisticsSender statistics.EventStatisticsSender
 
+	stateCountersService statecounters.StateCountersService
+
 	pbhTypeResolver pbehavior.EntityTypeResolver
 
 	autoInstructionMatcher AutoInstructionMatcher
@@ -57,6 +61,7 @@ func NewEventProcessor(
 	metricsSender metrics.Sender,
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
 	statisticsSender statistics.EventStatisticsSender,
+	stateCountersService statecounters.StateCountersService,
 	pbhTypeResolver pbehavior.EntityTypeResolver,
 	autoInstructionMatcher AutoInstructionMatcher,
 	alarmMatcher alarmtag.InternalTagAlarmMatcher,
@@ -77,7 +82,9 @@ func NewEventProcessor(
 		logger:              logger,
 
 		metaAlarmEventProcessor: metaAlarmEventProcessor,
-		autoInstructionMatcher:  autoInstructionMatcher,
+
+		stateCountersService:   stateCountersService,
+		autoInstructionMatcher: autoInstructionMatcher,
 	}
 }
 
@@ -87,130 +94,176 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 	alarmChange := types.NewAlarmChange()
 	now := types.NewCpsTime()
 
-	if event.Entity == nil {
+	if event.Entity == nil ||
+		!event.Entity.Enabled &&
+			event.EventType != types.EventTypeEntityToggled &&
+			event.EventType != types.EventTypeRecomputeEntityService &&
+			event.EventType != types.EventTypeResolveDeleted {
 		return alarmChange, nil
 	}
 
-	if !event.Entity.Enabled && event.EventType != types.EventTypeResolveDeleted {
-		var err error
+	var entityOldIdleSince *types.CpsTime
+	var entityOldLastIdleRuleApply string
+	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
+	firstTimeTran := true
 
-		if event.EventType == types.EventTypeEntityToggled ||
-			event.EventType == types.EventTypeRecomputeEntityService {
-			alarmChange, err = s.resolveAlarmForDisabledEntity(ctx, event)
-
-			if err == nil && alarmChange.Type == types.AlarmChangeTypeNone {
-				alarmChange.Type = types.AlarmChangeTypeEntityToggled
+	err := s.dbClient.WithTransaction(ctx, func(tCtx context.Context) error {
+		if !firstTimeTran {
+			entity, exist := s.entityAdapter.Get(tCtx, event.GetEID())
+			if !exist {
+				return fmt.Errorf("entity with id = %s is not found after transaction rollback", event.GetEID())
 			}
+
+			event.Entity = &entity
+			event.Alarm = nil
 		}
 
-		return alarmChange, err
-	}
-
-	alarm, err := s.adapter.GetOpenedAlarm(ctx, event.GetEID())
-	alarmNotFound := false
-	if _, ok := err.(errt.NotFound); ok {
-		alarmNotFound = true
-	} else if err != nil {
-		return alarmChange, fmt.Errorf("cannot fetch alarm: %w", err)
-	}
-
-	if event.AlarmID != "" && event.AlarmID != alarm.ID {
-		alarmNotFound = true
-	}
-
-	if !alarmNotFound {
-		event.Alarm = &alarm
-	}
-
-	if err := s.fillAlarmChange(event.Alarm, *event.Entity, &alarmChange); err != nil {
-		return alarmChange, err
-	}
-
-	switch event.EventType {
-	case types.EventTypeCheck:
-		changeType, err := s.storeAlarm(ctx, event, now)
-		if err == nil {
-			go s.sendEventStatistics(ctx, *event)
+		firstTimeTran = false
+		alarm, err := s.adapter.GetOpenedAlarm(tCtx, event.GetEID())
+		alarmNotFound := false
+		if _, ok := err.(errt.NotFound); ok {
+			alarmNotFound = true
+			err = nil
+		} else if err != nil {
+			return fmt.Errorf("cannot fetch alarm: %w", err)
 		}
 
-		go func() {
-			err := s.metaAlarmEventProcessor.Process(context.Background(), *event)
-			if err != nil {
-				s.logger.Err(err).Msg("cannot process meta alarm")
+		if event.AlarmID != "" && event.AlarmID != alarm.ID {
+			alarmNotFound = true
+		}
+
+		if !alarmNotFound {
+			event.Alarm = &alarm
+		}
+
+		s.fillAlarmChange(event.Alarm, *event.Entity, &alarmChange)
+
+		switch event.EventType {
+		case types.EventTypeUpdateCounters:
+			alarmChange.Type = types.AlarmChangeTypeNone
+		case types.EventTypeEntityToggled:
+			if !event.Entity.Enabled {
+				alarmChange, err = s.resolveAlarmForDisabledEntity(tCtx, event)
+			} else {
+				alarmChange.Type = types.AlarmChangeTypeEnabled
 			}
-		}()
-
-		alarmChange.Type = changeType
-		return alarmChange, err
-	case types.EventTypeNoEvents:
-		changeType, err := s.processNoEvents(ctx, event, now)
-
-		go func() {
-			err := s.metaAlarmEventProcessor.Process(context.Background(), *event)
-			if err != nil {
-				s.logger.Err(err).Msg("cannot process meta alarm")
+		case types.EventTypeRecomputeEntityService:
+			if !event.Entity.Enabled {
+				alarmChange, err = s.resolveAlarmForDisabledEntity(tCtx, event)
+				break
 			}
-		}()
 
-		alarmChange.Type = changeType
-		return alarmChange, err
-	case types.EventTypeMetaAlarm:
-		alarm, err := s.metaAlarmEventProcessor.CreateMetaAlarm(ctx, *event)
-		if err != nil {
-			return alarmChange, err
-		}
+			updatedServiceStates, err = s.stateCountersService.RecomputeEntityServiceCounters(tCtx, *event)
+			return err
+		case types.EventTypeCheck:
+			alarmChange.Type, err = s.storeAlarm(tCtx, event, now)
+		case types.EventTypeNoEvents:
+			alarmChange.Type, err = s.processNoEvents(tCtx, event, now)
 
-		event.Alarm = alarm
-		alarmChange.Type = types.AlarmChangeTypeCreate
-		return alarmChange, err
-	case types.EventTypeEntityToggled:
-		alarmChange.Type = types.AlarmChangeTypeEntityToggled
-		return alarmChange, nil
-	case types.EventTypeTrigger:
-		if event.AlarmChange == nil {
-			return types.NewAlarmChange(), nil
-		}
+			go func() {
+				err := s.metaAlarmEventProcessor.Process(context.Background(), *event)
+				if err != nil {
+					s.logger.Err(err).Msg("cannot process meta alarm")
+				}
+			}()
+		case types.EventTypeMetaAlarm:
+			event.Alarm, err = s.metaAlarmEventProcessor.CreateMetaAlarm(tCtx, *event)
+			alarmChange.Type = types.AlarmChangeTypeCreate
+		case types.EventTypeTrigger:
+			if event.AlarmChange == nil {
+				alarmChange = types.NewAlarmChange()
+				return nil
+			}
 
-		if event.Alarm == nil && event.AlarmID != "" {
-			alarm, err := s.adapter.GetAlarmByAlarmId(ctx, event.AlarmID)
-			if err != nil {
-				if _, ok := err.(errt.NotFound); !ok {
-					return alarmChange, fmt.Errorf("cannot fetch alarm: %w", err)
+			if event.Alarm == nil && event.AlarmID != "" {
+				alarm, err := s.adapter.GetAlarmByAlarmId(ctx, event.AlarmID)
+				if err != nil {
+					if _, ok := err.(errt.NotFound); !ok {
+						return fmt.Errorf("cannot fetch alarm: %w", err)
+					}
+				}
+
+				if alarm.ID != "" {
+					event.Alarm = &alarm
 				}
 			}
 
-			if alarm.ID != "" {
-				event.Alarm = &alarm
+			if event.Alarm == nil {
+				alarmChange = types.NewAlarmChange()
+				return nil
+			}
+
+			alarmChange = *event.AlarmChange
+		default:
+			if event.Entity == nil {
+				return nil
+			}
+
+			entityOldIdleSince, entityOldLastIdleRuleApply = event.Entity.IdleSince, event.Entity.LastIdleRuleApply
+
+			if event.Alarm == nil {
+				err = s.processPbhEventsForEntity(tCtx, event, &alarmChange)
+			} else {
+				operation := s.createOperationFromEvent(event)
+				alarmChange.Type, err = s.executor.Exec(tCtx, operation, event.Alarm, event.Entity, event.Timestamp, event.UserID, event.Role, event.Initiator)
+				if err != nil {
+					err = fmt.Errorf("cannot update alarm: %w", err)
+				}
 			}
 		}
 
-		if event.Alarm == nil {
-			return types.NewAlarmChange(), nil
+		if err != nil {
+			return err
 		}
 
-		return *event.AlarmChange, nil
-	}
+		updatedServiceStates, err = s.stateCountersService.UpdateServiceCounters(tCtx, *event.Entity, event.Alarm, alarmChange)
+		return err
+	})
 
-	if event.Alarm == nil {
-		err = s.processPbhEventsForEntity(ctx, event, &alarmChange)
-
+	if err != nil {
 		return alarmChange, err
 	}
 
-	entityOldIdleSince, entityOldLastIdleRuleApply := event.Entity.IdleSince, event.Entity.LastIdleRuleApply
-	changeType := types.AlarmChangeTypeNone
-	operation := s.createOperationFromEvent(event)
-	if operation.Type != "" {
-		changeType, err = s.executor.Exec(ctx, operation, event.Alarm, event.Entity, event.Timestamp, event.UserID, event.Role, event.Initiator)
-		if err != nil {
-			return alarmChange, fmt.Errorf("cannot update alarm: %w", err)
+	// services alarms
+	go func() {
+		for servID, servInfo := range updatedServiceStates {
+			err := s.stateCountersService.UpdateServiceState(context.Background(), servID, servInfo)
+			if err != nil {
+				s.logger.Err(err).Msg("failed to update service state")
+			}
 		}
+	}()
+
+	if event.EventType != types.EventTypeTrigger {
+		// metrics
+		alarm := types.Alarm{}
+		if event.Alarm != nil {
+			alarm = *event.Alarm
+		}
+
+		s.metricsSender.SendEventMetrics(
+			alarm,
+			*event.Entity,
+			alarmChange,
+			event.Timestamp.Time,
+			event.Initiator,
+			event.UserID,
+			event.Instruction,
+		)
+	}
+
+	if event.EventType == types.EventTypeCheck {
+		go s.sendEventStatistics(ctx, *event)
+	}
+
+	if event.Alarm == nil {
+		return alarmChange, nil
 	}
 
 	mustUpdateIdleFields := entityOldIdleSince != event.Entity.IdleSince ||
 		entityOldLastIdleRuleApply != event.Entity.LastIdleRuleApply
 
-	if changeType == types.AlarmChangeTypeResolve {
+	if alarmChange.Type == types.AlarmChangeTypeResolve {
 		go func() {
 			err := s.adapter.CopyAlarmToResolvedCollection(context.Background(), *event.Alarm)
 			if err != nil {
@@ -238,24 +291,22 @@ func (s *eventProcessor) Process(ctx context.Context, event *types.Event) (types
 		}
 	}()
 
-	alarmChange.Type = changeType
-
 	return alarmChange, nil
 }
 
-func (s *eventProcessor) fillAlarmChange(alarm *types.Alarm, entity types.Entity, alarmChange *types.AlarmChange) error {
+func (s *eventProcessor) fillAlarmChange(alarm *types.Alarm, entity types.Entity, alarmChange *types.AlarmChange) {
 	if alarm == nil {
 		alarmChange.PreviousPbehaviorTypeID = entity.PbehaviorInfo.TypeID
 		alarmChange.PreviousPbehaviorCannonicalType = entity.PbehaviorInfo.CanonicalType
+		alarmChange.PreviousPbehaviorTime = entity.PbehaviorInfo.Timestamp
 	} else {
 		alarmChange.PreviousState = alarm.Value.State.Value
 		alarmChange.PreviousStateChange = alarm.Value.State.Timestamp
 		alarmChange.PreviousStatus = alarm.Value.Status.Value
 		alarmChange.PreviousPbehaviorTypeID = alarm.Value.PbehaviorInfo.TypeID
 		alarmChange.PreviousPbehaviorCannonicalType = alarm.Value.PbehaviorInfo.CanonicalType
+		alarmChange.PreviousPbehaviorTime = alarm.Value.PbehaviorInfo.Timestamp
 	}
-
-	return nil
 }
 
 func (s *eventProcessor) storeAlarm(ctx context.Context, event *types.Event, now types.CpsTime) (types.AlarmChangeType, error) {
@@ -331,18 +382,12 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event, no
 		return changeType, fmt.Errorf("cannot create alarm: %w", err)
 	}
 
-	if changeType == types.AlarmChangeTypeCreate {
-		s.metricsSender.SendCreate(alarm, alarm.Value.CreationDate.Time)
-	}
-
 	if changeType == types.AlarmChangeTypeCreateAndPbhEnter {
 		event.Entity.PbehaviorInfo = alarm.Value.PbehaviorInfo
 		err := s.entityAdapter.UpdatePbehaviorInfo(ctx, event.Entity.ID, event.Entity.PbehaviorInfo)
 		if err != nil {
 			return changeType, fmt.Errorf("cannot update entity: %w", err)
 		}
-
-		s.metricsSender.SendCreateAndPbhEnter(alarm, alarm.Value.CreationDate.Time)
 	}
 
 	event.Alarm = &alarm
@@ -377,22 +422,14 @@ func (s *eventProcessor) updateAlarm(ctx context.Context, event *types.Event) (t
 	}
 
 	// Update cropped steps if needed
-	err = s.dbClient.WithTransaction(ctx, func(tranCtx context.Context) error {
-		alarm, err := s.adapter.GetOpenedAlarmByAlarmId(tranCtx, event.Alarm.ID)
+	if alarm.CropSteps() {
+		alarm.AddUpdate("$set", bson.M{"v.steps": alarm.Value.Steps})
+		err = s.adapter.PartialUpdateOpen(ctx, alarm)
 		if err != nil {
-			return fmt.Errorf("cannot fetch alarm: %w", err)
+			return changeType, fmt.Errorf("cannot update alarm: %w", err)
 		}
-		if alarm.CropSteps() {
-			alarm.AddUpdate("$set", bson.M{"v.steps": alarm.Value.Steps})
-			err = s.adapter.PartialUpdateOpen(tranCtx, &alarm)
-			if err != nil {
-				return fmt.Errorf("cannot update alarm: %w", err)
-			}
-			event.Alarm = &alarm
-		}
-
-		return nil
-	})
+		event.Alarm = alarm
+	}
 	if err != nil {
 		return changeType, err
 	}
@@ -420,8 +457,6 @@ func (s *eventProcessor) updateAlarm(ctx context.Context, event *types.Event) (t
 			return changeType, fmt.Errorf("cannot update entity: %w", err)
 		}
 	}
-
-	s.metricsSender.SendUpdateState(*event.Alarm, *event.Entity, previousState)
 
 	return changeType, nil
 }
@@ -470,7 +505,6 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 		}
 
 		event.Alarm = &alarm
-		s.metricsSender.SendCreate(alarm, alarm.Value.CreationDate.Time)
 	} else {
 		alarm := event.Alarm
 		previousState := alarm.Value.State.Value
@@ -489,10 +523,8 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 		newStatus := alarm.Value.Status.Value
 		if newState > previousState {
 			changeType = types.AlarmChangeTypeStateIncrease
-			s.metricsSender.SendUpdateState(*alarm, *event.Entity, previousState)
 		} else if newState < previousState {
 			changeType = types.AlarmChangeTypeStateDecrease
-			s.metricsSender.SendUpdateState(*alarm, *event.Entity, previousState)
 		} else if newStatus != previousStatus {
 			changeType = types.AlarmChangeTypeUpdateStatus
 		}
@@ -518,8 +550,6 @@ func (s *eventProcessor) processNoEvents(ctx context.Context, event *types.Event
 		if err != nil {
 			return changeType, fmt.Errorf("cannot update entity: %w", err)
 		}
-
-		s.metricsSender.SendCreateAndPbhEnter(*event.Alarm, event.Alarm.Value.CreationDate.Time)
 	}
 
 	return changeType, nil
@@ -561,21 +591,12 @@ func (s *eventProcessor) createOperationFromEvent(event *types.Event) types.Oper
 
 func (s *eventProcessor) resolveAlarmForDisabledEntity(ctx context.Context, event *types.Event) (types.AlarmChange, error) {
 	alarmChange := types.NewAlarmChange()
-	alarm, err := s.adapter.GetOpenedAlarm(ctx, event.GetEID())
 	event.Entity.IdleSince = nil
 	event.Entity.LastIdleRuleApply = ""
-
-	if _, ok := err.(errt.NotFound); ok {
+	if event.Alarm == nil {
 		return alarmChange, nil
-	} else if err != nil {
-		return alarmChange, fmt.Errorf("cannot fetch alarm: %w", err)
 	}
 
-	if err := s.fillAlarmChange(event.Alarm, *event.Entity, &alarmChange); err != nil {
-		return alarmChange, err
-	}
-
-	event.Alarm = &alarm
 	operation := types.Operation{
 		Type: types.EventTypeEntityToggled,
 		Parameters: types.OperationParameters{
@@ -681,13 +702,10 @@ func (s *eventProcessor) processPbhEventsForEntity(ctx context.Context, event *t
 
 			if alarmChange.PreviousPbehaviorTypeID == "" {
 				alarmChange.Type = types.AlarmChangeTypePbhEnter
-				s.metricsSender.SendPbhEnter(nil, *event.Entity)
 			} else if event.PbehaviorInfo.TypeID == "" {
 				alarmChange.Type = types.AlarmChangeTypePbhLeave
-				s.metricsSender.SendPbhLeave(*event.Entity, event.Timestamp.Time, curPbehaviorInfo.CanonicalType, curPbehaviorInfo.Timestamp.Time)
 			} else {
 				alarmChange.Type = types.AlarmChangeTypePbhLeaveAndEnter
-				s.metricsSender.SendPbhLeaveAndEnter(nil, *event.Entity, curPbehaviorInfo.CanonicalType, curPbehaviorInfo.Timestamp.Time)
 			}
 		}
 	}
@@ -766,6 +784,13 @@ func UpdateAlarmState(alarm *types.Alarm, entity types.Entity, timestamp types.C
 		currentStatus = alarm.Value.Status.Value
 	}
 
+	author := ""
+	if entity.Type != types.EntityTypeService {
+		author = strings.Replace(entity.Connector, "/", ".", 1)
+	} else {
+		author = alarm.Value.Connector + "." + alarm.Value.ConnectorName
+	}
+
 	if state != currentState {
 		// Event is an OK, so the alarm should be resolved anyway
 		if alarm.IsStateLocked() && state != types.AlarmStateOK {
@@ -773,7 +798,7 @@ func UpdateAlarmState(alarm *types.Alarm, entity types.Entity, timestamp types.C
 		}
 
 		// Create new Step to keep track of the alarm history
-		newStep := types.NewAlarmStep(types.AlarmStepStateIncrease, timestamp, alarm.Value.Connector+"."+alarm.Value.ConnectorName, output, "", "", "")
+		newStep := types.NewAlarmStep(types.AlarmStepStateIncrease, timestamp, author, output, "", "", "")
 		newStep.Value = state
 
 		if state < currentState {
@@ -809,7 +834,7 @@ func UpdateAlarmState(alarm *types.Alarm, entity types.Entity, timestamp types.C
 	}
 
 	// Create new Step to keep track of the alarm history
-	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, timestamp, alarm.Value.Connector+"."+alarm.Value.ConnectorName, output, "", "", "")
+	newStepStatus := types.NewAlarmStep(types.AlarmStepStatusIncrease, timestamp, author, output, "", "", "")
 	newStepStatus.Value = newStatus
 
 	if newStatus < currentStatus {

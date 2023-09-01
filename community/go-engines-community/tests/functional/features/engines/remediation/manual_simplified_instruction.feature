@@ -104,6 +104,11 @@ Feature: run an manual simplified instruction
         "event_type": "trigger",
         "resource": "test-resource-to-run-manual-simplified-instruction-1",
         "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "resource": "test-resource-to-run-manual-simplified-instruction-1",
+        "source_type": "resource"
       }
     ]
     """
@@ -201,6 +206,11 @@ Feature: run an manual simplified instruction
         "event_type": "trigger",
         "resource": "test-resource-to-run-manual-simplified-instruction-2",
         "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "resource": "test-resource-to-run-manual-simplified-instruction-2",
+        "source_type": "resource"
       }
     ]
     """
@@ -279,6 +289,11 @@ Feature: run an manual simplified instruction
     [
       {
         "event_type": "instructionstarted",
+        "resource": "test-resource-to-run-manual-simplified-instruction-3",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
         "resource": "test-resource-to-run-manual-simplified-instruction-3",
         "source_type": "resource"
       },
@@ -381,6 +396,11 @@ Feature: run an manual simplified instruction
     [
       {
         "event_type": "instructionstarted",
+        "resource": "test-resource-to-run-manual-simplified-instruction-4",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
         "resource": "test-resource-to-run-manual-simplified-instruction-4",
         "source_type": "resource"
       },
