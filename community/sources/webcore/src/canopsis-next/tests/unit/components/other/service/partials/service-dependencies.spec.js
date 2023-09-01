@@ -4,12 +4,7 @@ import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
-import {
-  ENTITY_FIELDS,
-  ENTITY_FIELDS_TO_LABELS_KEYS,
-  ENTITY_TYPES,
-  MODALS,
-} from '@/constants';
+import { ENTITY_FIELDS, ENTITY_FIELDS_TO_LABELS_KEYS, ENTITY_TYPES, MODALS } from '@/constants';
 
 import { getWidgetColumnLabel } from '@/helpers/entities/widget/list';
 

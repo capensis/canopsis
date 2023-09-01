@@ -42,8 +42,8 @@ type Playlist struct {
 	Fullscreen bool                   `bson:"fullscreen" json:"fullscreen"`
 	TabsList   []string               `bson:"tabs_list" json:"tabs_list"`
 	Interval   types.DurationWithUnit `bson:"interval" json:"interval"`
-	Created    types.CpsTime          `bson:"created,omitempty" json:"created,omitempty"`
-	Updated    types.CpsTime          `bson:"updated,omitempty" json:"updated,omitempty"`
+	Created    types.CpsTime          `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated    types.CpsTime          `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 }
 
 type AggregationResult struct {

@@ -14,7 +14,13 @@ import {
 } from '@unit/utils/store';
 import { randomArrayItem } from '@unit/utils/array';
 import { mockDateNow } from '@unit/utils/mock-hooks';
-import { AGGREGATE_FUNCTIONS, ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS, WIDGET_TYPES } from '@/constants';
+import {
+  AGGREGATE_FUNCTIONS,
+  ALARM_METRIC_PARAMETERS,
+  QUICK_RANGES,
+  SAMPLINGS,
+  WIDGET_TYPES,
+} from '@/constants';
 
 import PieChartWidget from '@/components/widgets/chart/pie-chart-widget.vue';
 

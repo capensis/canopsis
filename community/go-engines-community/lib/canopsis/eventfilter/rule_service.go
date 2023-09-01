@@ -3,10 +3,10 @@ package eventfilter
 import (
 	"context"
 	"sync"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 )
@@ -14,27 +14,30 @@ import (
 type ruleService struct {
 	rulesAdapter            RuleAdapter
 	ruleApplicatorContainer RuleApplicatorContainer
-	rules                   []Rule
+	eventCounter            EventCounter
+	failureService          FailureService
+	templateExecutor        template.Executor
+	rules                   []ParsedRule
 	rulesMutex              sync.RWMutex
 	logger                  zerolog.Logger
 }
 
 func (s *ruleService) LoadRules(ctx context.Context, types []string) error {
-	s.rulesMutex.Lock()
-	defer s.rulesMutex.Unlock()
-
-	var err error
-
-	s.rules, err = s.rulesAdapter.GetByTypes(ctx, types)
+	rules, err := s.rulesAdapter.GetByTypes(ctx, types)
 	if err != nil {
 		return err
 	}
 
-	ids := make([]string, len(s.rules))
-	for i := 0; i < len(s.rules); i++ {
-		ids[i] = s.rules[i].ID
+	parsedRules := make([]ParsedRule, len(rules))
+	ids := make([]string, len(rules))
+	for i := 0; i < len(rules); i++ {
+		ids[i] = rules[i].ID
+		parsedRules[i] = ParseRule(rules[i], s.templateExecutor)
 	}
 
+	s.rulesMutex.Lock()
+	defer s.rulesMutex.Unlock()
+	s.rules = parsedRules
 	s.logger.Debug().Strs("rules", ids).Msg("Loading event filter rules")
 
 	return nil
@@ -45,7 +48,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 	defer s.rulesMutex.RUnlock()
 
 	outcome := OutcomePass
-	now := time.Now()
+	now := types.NewCpsTime()
 
 	for _, rule := range s.rules {
 		if outcome != OutcomePass {
@@ -55,7 +58,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 		if rule.ResolvedStart != nil && rule.ResolvedStop != nil {
 			inExDate := false
 			for _, exdate := range rule.ResolvedExdates {
-				if now.After(exdate.Begin.Time) && now.Before(exdate.End.Time) {
+				if now.After(exdate.Begin) && now.Before(exdate.End) {
 					inExDate = true
 					break
 				}
@@ -65,16 +68,16 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 				continue
 			}
 
-			if now.Before(rule.ResolvedStart.Time) {
+			if now.Before(*rule.ResolvedStart) {
 				continue
 			}
 
-			if now.After(rule.ResolvedStop.Time) {
+			if now.After(*rule.ResolvedStop) {
 				if rule.NextResolvedStart == nil || rule.NextResolvedStop == nil {
 					continue
 				}
 
-				if now.Before(rule.NextResolvedStart.Time) || now.After(rule.NextResolvedStop.Time) {
+				if now.Before(*rule.NextResolvedStart) || now.After(*rule.NextResolvedStop) {
 					continue
 				}
 			}
@@ -98,6 +101,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 			match, eventRegexMatches, err = rule.EventPattern.MatchWithRegexMatches(event)
 			if err != nil {
 				s.logger.Err(err).Str("rule_id", rule.ID).Msg("Event filter rule service: invalid event pattern")
+				s.failureService.Add(rule.ID, FailureTypeInvalidPattern, "invalid event pattern: "+err.Error(), nil)
 				continue
 			}
 
@@ -113,6 +117,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 				match, entityRegexMatches, err = rule.EntityPattern.MatchWithRegexMatches(*event.Entity)
 				if err != nil {
 					s.logger.Err(err).Str("rule_id", rule.ID).Msg("Event filter rule service: invalid entity pattern")
+					s.failureService.Add(rule.ID, FailureTypeInvalidPattern, "invalid entity pattern: "+err.Error(), nil)
 					continue
 				}
 
@@ -128,6 +133,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 			backwardCompatibility = true
 			if !rule.OldPatterns.IsValid() {
 				s.logger.Warn().Msgf("Rule %s has an invalid old event pattern, skip", rule.ID)
+				s.failureService.Add(rule.ID, FailureTypeInvalidPattern, "invalid old pattern", nil)
 				continue
 			}
 
@@ -162,6 +168,11 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 
 		if err != nil {
 			s.logger.Err(err).Str("rule_id", rule.ID).Str("rule_type", rule.Type).Msg("Event filter rule service: failed to apply")
+			continue
+		}
+
+		if rule.Updated != nil {
+			s.eventCounter.Add(rule.ID, *rule.Updated)
 		}
 	}
 
@@ -172,11 +183,21 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event types.Event) (type
 	return event, nil
 }
 
-func NewRuleService(ruleAdapter RuleAdapter, container RuleApplicatorContainer, logger zerolog.Logger) Service {
+func NewRuleService(
+	ruleAdapter RuleAdapter,
+	container RuleApplicatorContainer,
+	eventCounter EventCounter,
+	failureService FailureService,
+	templateExecutor template.Executor,
+	logger zerolog.Logger,
+) Service {
 	return &ruleService{
 		rulesMutex:              sync.RWMutex{},
 		rulesAdapter:            ruleAdapter,
 		ruleApplicatorContainer: container,
+		eventCounter:            eventCounter,
+		failureService:          failureService,
+		templateExecutor:        templateExecutor,
 		logger:                  logger,
 	}
 }

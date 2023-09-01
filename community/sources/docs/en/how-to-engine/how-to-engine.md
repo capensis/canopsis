@@ -396,7 +396,7 @@ Now we're ready to create and add our consumer;
 			cfg.Global.PrefetchSize,      // specific rabbitmq consumer values, just take them from global canopsis conf
 			false,                        // we don't want to purge our queue
 			"",                           // we don't have any specific exchange for the next engine, so leave it empty
-			"Engine_service",             // next queue name
+			"Engine_action",              // next queue name
 			canopsis.FIFOAckExchangeName, // if message processor doesn't return message to the next queue, then if fifo exchange and queue is defined,
 			canopsis.FIFOAckQueueName,    // then fifo_ack event will be sent to the engine_fifo to remove event lock. If you don't want to send fifo_ack, then leave it empty.
 			amqpConnection,
@@ -471,7 +471,7 @@ func main() {
 			cfg.Global.PrefetchSize,      // specific rabbitmq consumer values, just take them from global canopsis conf
 			false,                        // we don't want to purge our queue
 			"",                           // we don't have any specific exchange for the next engine, so leave it empty
-			"Engine_service",             // next queue name
+			"Engine_action",              // next queue name
 			canopsis.FIFOAckExchangeName, // if message processor doesn't return message to the next queue, then if fifo exchange and queue is defined,
 			canopsis.FIFOAckQueueName,    // then fifo_ack event will be sent to the engine_fifo to remove event lock. If you don't want to send fifo_ack, then leave it empty.
 			amqpConnection,

@@ -9,5 +9,6 @@ export default {
   connectionProtocols: 'Modes de connexion',
   errors: {
     incorrectEmailOrPassword: 'Mot de passe ou Email incorrect',
+    underMaintenance: 'Canopsis est en maintenance',
   },
 };
