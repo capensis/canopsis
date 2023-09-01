@@ -24,7 +24,7 @@ exports[`associate-ticket-event-form Renders \`associate-ticket-event-form\` wit
     <div
       class="flex xs6"
     >
-      <declare-ticket-rule-ticket-url-field-stub
+      <declare-ticket-rule-ticket-url-text-field-stub
         name="ticket_url"
         value="Ticket URL"
       />

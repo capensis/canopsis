@@ -87,6 +87,7 @@ const snapshotStubs = {
   'field-density': true,
   'export-csv-form': true,
   'charts-form': true,
+  'field-resize-column-behavior': true,
 };
 
 const selectFieldTitle = wrapper => wrapper.find('input.field-title');
@@ -111,7 +112,6 @@ const selectFieldFastAckOutput = wrapper => wrapper.findAll('input.field-fast-ac
 const selectFieldFastCancelOutput = wrapper => wrapper.findAll('input.field-fast-action-output').at(1);
 const selectFieldSnoozeNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(4);
 const selectFieldRemoveAlarmsFromMetaAlarmCommentRequired = wrapper => wrapper.findAll('input.field-switcher').at(5);
-const selectFieldInlineLinksCount = wrapper => wrapper.find('input.field-number');
 const selectFieldExportCsvForm = wrapper => wrapper.find('input.export-csv-form');
 const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher').at(7);
 const selectFieldKioskHideActions = wrapper => wrapper.findAll('input.field-switcher').at(8);
@@ -1044,33 +1044,6 @@ describe('alarm', () => {
           'isRemoveAlarmsFromMetaAlarmCommentRequired',
           isRemoveAlarmsFromMetaAlarmCommentRequired,
         ),
-      },
-    });
-  });
-
-  test('Inline links count changed after trigger', async () => {
-    const wrapper = factory({
-      store,
-      propsData: {
-        sidebar,
-      },
-      mocks: {
-        $sidebar,
-      },
-    });
-
-    const fieldInlineLinksCount = selectFieldInlineLinksCount(wrapper);
-    const inlineLinksCount = 4;
-
-    fieldInlineLinksCount.vm.$emit('input', inlineLinksCount);
-
-    await submitWithExpects(wrapper, {
-      fetchActiveView,
-      hideSidebar: $sidebar.hide,
-      widgetMethod: updateWidget,
-      expectData: {
-        id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'inlineLinksCount', inlineLinksCount),
       },
     });
   });

@@ -98,9 +98,22 @@ var columnsPrefixByType = map[string][]string{
 	},
 }
 
+var widgetExportColumns = map[string]map[string][]string{
+	WidgetTypeAlarmsList: {
+		"widgetExportColumns": []string{
+			"assigned_instructions",
+		},
+	},
+}
+
 func init() {
 	for _, columns := range columnsByType {
 		sort.Strings(columns)
+	}
+	for wt, v := range widgetExportColumns {
+		for param := range v {
+			sort.Strings(widgetExportColumns[wt][param])
+		}
 	}
 }
 
@@ -117,6 +130,9 @@ func GetWidgetTemplateParameters() map[string]map[string][]string {
 			},
 			WidgetTemplateTypeAlarmMoreInfos: {
 				"moreInfoTemplate",
+			},
+			WidgetTemplateTypeAlarmExportToPDF: {
+				"exportPdfTemplate",
 			},
 		},
 		WidgetTypeContextExplorer: {
@@ -182,6 +198,17 @@ func IsValidWidgetColumn(t, column string) bool {
 	prefixes := columnsPrefixByType[t]
 	for _, prefix := range prefixes {
 		if column == prefix || strings.HasPrefix(column, prefix+".") {
+			return true
+		}
+	}
+
+	return false
+}
+
+func IsValidWidgetExportColumn(widgetType, param, column string) bool {
+	if columns, ok := widgetExportColumns[widgetType][param]; ok {
+		idx := sort.SearchStrings(columns, column)
+		if idx < len(columns) && columns[idx] == column {
 			return true
 		}
 	}

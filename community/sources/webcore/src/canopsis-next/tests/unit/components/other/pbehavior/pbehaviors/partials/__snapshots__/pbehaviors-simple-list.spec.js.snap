@@ -39,6 +39,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               aria-label="Name: Sorted ascending. Activate to sort descending."
               aria-sort="ascending"
               class="column active asc sortable text-xs-left"
+              data-value="name"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -56,6 +57,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               aria-label="Author: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="author.display_name"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -73,6 +75,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               aria-label="Is enabled: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="enabled"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -90,6 +93,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               aria-label="Begins: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="tstart"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -107,6 +111,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               aria-label="Ends: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="tstop"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -121,9 +126,46 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               </i>
             </th>
             <th
+              aria-label="End of recurrence: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              data-value="rrule_end"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              End of recurrence
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Recurrence: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              data-value="rrule"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Recurrence
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
               aria-label="Type: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="type.type"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -141,6 +183,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               aria-label="Reason: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="reason.name"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -155,26 +198,10 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               </i>
             </th>
             <th
-              aria-label="Recurrence: Not sorted. Activate to sort ascending."
-              aria-sort="none"
-              class="column sortable text-xs-left"
-              role="columnheader"
-              scope="col"
-              tabindex="0"
-            >
-              Recurrence
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
-              >
-                arrow_upward
-              </i>
-            </th>
-            <th
               aria-label="Icon: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="type.icon_name"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -192,6 +219,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               aria-label="Status: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value="is_active_status"
               role="columnheader"
               scope="col"
             >
@@ -201,6 +229,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               aria-label="Actions: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value="actionsLabel"
               role="columnheader"
               scope="col"
             >
@@ -212,7 +241,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
           >
             <th
               class="column"
-              colspan="11"
+              colspan="12"
             />
           </tr>
         </thead>
@@ -234,10 +263,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               04/03/2021 13:33:20
             </td>
             <td>
-              type-name-0
-            </td>
-            <td>
-              reason-name-0
+              -
             </td>
             <td>
               <i
@@ -246,6 +272,12 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               >
                 clear
               </i>
+            </td>
+            <td>
+              type-name-0
+            </td>
+            <td>
+              reason-name-0
             </td>
             <td>
               <i
@@ -289,24 +321,27 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               />
             </td>
             <td>
-              04/03/2021 13:30:01
+              04/03 13:30
             </td>
             <td>
-              04/03/2021 13:33:21
+              04/03 13:33
             </td>
             <td>
-              type-name-1
-            </td>
-            <td>
-              reason-name-1
+              04/03/2021 13:44:49
             </td>
             <td>
               <i
                 aria-hidden="true"
                 class="v-icon material-icons theme--light"
               >
-                clear
+                check
               </i>
+            </td>
+            <td>
+              type-name-1
+            </td>
+            <td>
+              reason-name-1
             </td>
             <td>
               <i
@@ -353,10 +388,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               04/03/2021 13:33:22
             </td>
             <td>
-              type-name-2
-            </td>
-            <td>
-              reason-name-2
+              -
             </td>
             <td>
               <i
@@ -365,6 +397,12 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               >
                 clear
               </i>
+            </td>
+            <td>
+              type-name-2
+            </td>
+            <td>
+              reason-name-2
             </td>
             <td>
               <i
@@ -408,24 +446,27 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               />
             </td>
             <td>
-              04/03/2021 13:30:03
+              04/03 13:30
             </td>
             <td>
-              04/03/2021 13:33:23
+              04/03 13:33
             </td>
             <td>
-              type-name-3
-            </td>
-            <td>
-              reason-name-3
+              04/03/2021 13:44:51
             </td>
             <td>
               <i
                 aria-hidden="true"
                 class="v-icon material-icons theme--light"
               >
-                clear
+                check
               </i>
+            </td>
+            <td>
+              type-name-3
+            </td>
+            <td>
+              reason-name-3
             </td>
             <td>
               <i
@@ -472,10 +513,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               04/03/2021 13:33:24
             </td>
             <td>
-              type-name-4
-            </td>
-            <td>
-              reason-name-4
+              -
             </td>
             <td>
               <i
@@ -484,6 +522,12 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` with pbehavio
               >
                 clear
               </i>
+            </td>
+            <td>
+              type-name-4
+            </td>
+            <td>
+              reason-name-4
             </td>
             <td>
               <i
@@ -658,6 +702,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
               aria-label="Name: Sorted ascending. Activate to sort descending."
               aria-sort="ascending"
               class="column active asc sortable text-xs-left"
+              data-value="name"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -675,6 +720,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
               aria-label="Author: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="author.display_name"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -692,6 +738,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
               aria-label="Is enabled: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="enabled"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -709,6 +756,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
               aria-label="Begins: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="tstart"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -726,6 +774,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
               aria-label="Ends: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="tstop"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -740,9 +789,46 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
               </i>
             </th>
             <th
+              aria-label="End of recurrence: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              data-value="rrule_end"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              End of recurrence
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
+              aria-label="Recurrence: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              data-value="rrule"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Recurrence
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
               aria-label="Type: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="type.type"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -760,6 +846,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
               aria-label="Reason: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="reason.name"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -774,26 +861,10 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
               </i>
             </th>
             <th
-              aria-label="Recurrence: Not sorted. Activate to sort ascending."
-              aria-sort="none"
-              class="column sortable text-xs-left"
-              role="columnheader"
-              scope="col"
-              tabindex="0"
-            >
-              Recurrence
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
-              >
-                arrow_upward
-              </i>
-            </th>
-            <th
               aria-label="Icon: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="type.icon_name"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -813,7 +884,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
           >
             <th
               class="column"
-              colspan="9"
+              colspan="10"
             />
           </tr>
         </thead>
@@ -821,7 +892,7 @@ exports[`pbehaviors-simple-list Renders \`pbehaviors-simple-list\` without pbeha
           <tr>
             <td
               class="text-xs-center"
-              colspan="9"
+              colspan="10"
             >
               No data available
             </td>

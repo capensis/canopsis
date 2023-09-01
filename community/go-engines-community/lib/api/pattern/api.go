@@ -21,7 +21,8 @@ import (
 type API interface {
 	common.CrudAPI
 	BulkDelete(c *gin.Context)
-	Count(c *gin.Context)
+	CountAlarms(c *gin.Context)
+	CountEntities(c *gin.Context)
 	GetAlarms(c *gin.Context)
 }
 
@@ -74,7 +75,7 @@ func (a *api) Create(c *gin.Context) {
 		}
 	}
 
-	pattern, err := a.store.Insert(c.Request.Context(), request)
+	pattern, err := a.store.Insert(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -102,7 +103,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.Find(c.Request.Context(), request, c.MustGet(auth.UserKey).(string))
+	aggregationResult, err := a.store.Find(c, request, c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -119,7 +120,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	pattern, err := a.store.GetById(c.Request.Context(), c.Param("id"), c.MustGet(auth.UserKey).(string))
+	pattern, err := a.store.GetById(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -145,7 +146,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	pattern, err := a.store.GetById(c.Request.Context(), request.ID, userId)
+	pattern, err := a.store.GetById(c, request.ID, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -177,7 +178,7 @@ func (a *api) Update(c *gin.Context) {
 		}
 	}
 
-	pattern, err = a.store.Update(c.Request.Context(), request)
+	pattern, err = a.store.Update(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -202,7 +203,7 @@ func (a *api) Update(c *gin.Context) {
 func (a *api) Delete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
-	pattern, err := a.store.GetById(c.Request.Context(), id, userId)
+	pattern, err := a.store.GetById(c, id, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -224,7 +225,7 @@ func (a *api) Delete(c *gin.Context) {
 		}
 	}
 
-	ok, err := a.store.Delete(c.Request.Context(), *pattern)
+	ok, err := a.store.Delete(c, *pattern)
 	if err != nil {
 		panic(err)
 	}
@@ -283,10 +284,10 @@ func (a *api) BulkDelete(c *gin.Context) {
 	}, a.logger)
 }
 
-// Count
+// CountAlarms
 // @Param body body CountRequest true "body"
-// @Success 200 {object} CountResponse
-func (a *api) Count(c *gin.Context) {
+// @Success 200 {object} CountAlarmsResponse
+func (a *api) CountAlarms(c *gin.Context) {
 	request := CountRequest{}
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -294,10 +295,32 @@ func (a *api) Count(c *gin.Context) {
 	}
 
 	conf := a.configProvider.Get()
-	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Duration(conf.CheckCountRequestTimeout)*time.Second)
+	ctx, cancel := context.WithTimeout(c, time.Duration(conf.CheckCountRequestTimeout)*time.Second)
 	defer cancel()
 
-	res, err := a.store.Count(ctx, request, int64(conf.MaxMatchedItems))
+	res, err := a.store.CountAlarms(ctx, request, int64(conf.MaxMatchedItems))
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+// CountEntities
+// @Param body body CountRequest true "body"
+// @Success 200 {object} CountEntitiesResponse
+func (a *api) CountEntities(c *gin.Context) {
+	request := CountRequest{}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	conf := a.configProvider.Get()
+	ctx, cancel := context.WithTimeout(c, time.Duration(conf.CheckCountRequestTimeout)*time.Second)
+	defer cancel()
+
+	res, err := a.store.CountEntities(ctx, request, int64(conf.MaxMatchedItems))
 	if err != nil {
 		panic(err)
 	}
@@ -316,7 +339,7 @@ func (a *api) GetAlarms(c *gin.Context) {
 	}
 
 	conf := a.configProvider.Get()
-	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Duration(conf.CheckCountRequestTimeout)*time.Second)
+	ctx, cancel := context.WithTimeout(c, time.Duration(conf.CheckCountRequestTimeout)*time.Second)
 	defer cancel()
 
 	res, err := a.store.GetAlarms(ctx, request)

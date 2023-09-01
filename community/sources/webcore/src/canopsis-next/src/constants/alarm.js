@@ -2,6 +2,7 @@ import { COLORS } from '@/config';
 
 export const ALARM_FIELDS = {
   id: '_id',
+  assignedInstructions: 'assigned_instructions',
   displayName: 'v.display_name',
   output: 'v.output',
   longOutput: 'v.long_output',
@@ -100,6 +101,8 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   changeState: 'changeState',
   variablesHelp: 'variablesHelp',
   history: 'history',
+  exportPdf: 'exportPdf',
+  groupRequest: 'groupRequest',
   createManualMetaAlarm: 'createManualMetaAlarm',
   removeAlarmsFromManualMetaAlarm: 'removeAlarmsFromManualMetaAlarm',
   removeAlarmsFromAutoMetaAlarm: 'removeAlarmsFromAutoMetaAlarm',
@@ -191,6 +194,11 @@ export const ALARMS_OPENED_VALUES = {
   opened: true,
   all: null,
   resolved: false,
+};
+
+export const ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS = {
+  wrap: 'wrap',
+  truncate: 'truncate',
 };
 
 export const ALARM_BASIC_METRIC_PARAMETERS = {
@@ -322,8 +330,63 @@ export const ALARM_TEMPLATE_FIELDS = {
   eventsCount: `alarm.${ALARM_FIELDS.eventsCount}`,
 };
 
+export const ALARM_EXPORT_PDF_FIELDS = {
+  currentDate: 'current_date',
+  displayName: 'display_name',
+  state: 'state',
+  status: 'status',
+  connector: 'connector',
+  connectorName: 'connector_name',
+  component: 'component',
+  resource: 'resource',
+  initialOutput: 'initial_output',
+  output: 'output',
+  eventsCount: 'events_count',
+  duration: 'duration',
+  creationDate: 'creation_date',
+  lastEventDate: 'last_event_date',
+  lastUpdateDate: 'last_update_date',
+  acknowledgeDate: 'acknowledge_date',
+  resolved: 'resolved',
+  activationDate: 'activation_date',
+  infos: 'infos',
+  pbehaviorInfo: 'pbehavior_info',
+  ticket: 'ticket',
+  comments: 'comments',
+  tags: 'tags',
+  links: 'links',
+};
+
+export const ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS = {
+  [ALARM_EXPORT_PDF_FIELDS.currentDate]: 'current_date',
+  [ALARM_EXPORT_PDF_FIELDS.displayName]: 'alarm.v.display_name',
+  [ALARM_EXPORT_PDF_FIELDS.state]: 'alarm.v.state',
+  [ALARM_EXPORT_PDF_FIELDS.status]: 'alarm.v.status',
+  [ALARM_EXPORT_PDF_FIELDS.connector]: 'alarm.v.connector',
+  [ALARM_EXPORT_PDF_FIELDS.connectorName]: 'alarm.v.connector_name',
+  [ALARM_EXPORT_PDF_FIELDS.component]: 'alarm.v.component',
+  [ALARM_EXPORT_PDF_FIELDS.resource]: 'alarm.v.resource',
+  [ALARM_EXPORT_PDF_FIELDS.initialOutput]: 'alarm.v.initial_output',
+  [ALARM_EXPORT_PDF_FIELDS.output]: 'alarm.v.output',
+  [ALARM_EXPORT_PDF_FIELDS.eventsCount]: 'alarm.v.events_count',
+  [ALARM_EXPORT_PDF_FIELDS.duration]: 'alarm.v.duration',
+  [ALARM_EXPORT_PDF_FIELDS.creationDate]: 'alarm.v.creation_date',
+  [ALARM_EXPORT_PDF_FIELDS.lastEventDate]: 'alarm.v.last_event_date',
+  [ALARM_EXPORT_PDF_FIELDS.lastUpdateDate]: 'alarm.v.last_update_date',
+  [ALARM_EXPORT_PDF_FIELDS.acknowledgeDate]: 'alarm.v.acknowledge_date',
+  [ALARM_EXPORT_PDF_FIELDS.resolved]: 'alarm.v.resolved',
+  [ALARM_EXPORT_PDF_FIELDS.activationDate]: 'alarm.v.activation_date',
+  [ALARM_EXPORT_PDF_FIELDS.infos]: 'alarm.v.infos',
+  [ALARM_EXPORT_PDF_FIELDS.pbehaviorInfo]: 'alarm.v.pbehavior_info',
+  [ALARM_EXPORT_PDF_FIELDS.ticket]: 'alarm.v.ticket',
+  [ALARM_EXPORT_PDF_FIELDS.comments]: 'alarm.comments',
+  [ALARM_EXPORT_PDF_FIELDS.tags]: 'alarm.tags',
+  [ALARM_EXPORT_PDF_FIELDS.links]: 'alarm.links',
+};
+
 export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.id]: 'common.id',
+  [ALARM_FIELDS.assignedInstructions]: 'alarm.fields.assignedInstructions',
   [ALARM_FIELDS.displayName]: 'alarm.fields.displayName',
   [ALARM_FIELDS.output]: 'common.output',
   [ALARM_FIELDS.longOutput]: 'common.longOutput',
@@ -442,4 +505,18 @@ export const ALARMS_EXPAND_PANEL_TABS = {
   impactChain: 'impactChain',
   entityGantt: 'entityGantt',
   charts: 'charts',
+};
+
+export const ALARM_LINK_ICON_CHIP_WIDTH = 24;
+
+export const ALARM_LINK_ICON_CHIP_COLUMN_GAP = {
+  [ALARM_DENSE_TYPES.large]: 8,
+  [ALARM_DENSE_TYPES.medium]: 8,
+  [ALARM_DENSE_TYPES.small]: 4,
+};
+
+export const ALARM_LINK_TD_PADDINGS = {
+  [ALARM_DENSE_TYPES.large]: 8,
+  [ALARM_DENSE_TYPES.medium]: 6,
+  [ALARM_DENSE_TYPES.small]: 6,
 };

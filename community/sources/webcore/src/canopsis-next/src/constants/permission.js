@@ -113,6 +113,7 @@ export const USERS_PERMISSIONS = {
     kpiCollectionSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiCollectionSettings`,
     map: `${USER_PERMISSIONS_PREFIXES.technical.admin}_map`,
     shareToken: `${USER_PERMISSIONS_PREFIXES.technical.admin}_shareToken`,
+    maintenance: `${USER_PERMISSIONS_PREFIXES.technical.admin}_maintenance`,
     widgetTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_widgetTemplate`,
     tag: `${USER_PERMISSIONS_PREFIXES.technical.admin}_tag`,
     exploitation: {
@@ -360,6 +361,7 @@ export const USERS_PERMISSIONS = {
       shareToken: `${USER_PERMISSIONS_PREFIXES.api}_share_token`,
       declareTicketExecution: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_execution`,
       widgetTemplate: `${USER_PERMISSIONS_PREFIXES.api}_widgettemplate`,
+      maintenance: `${USER_PERMISSIONS_PREFIXES.api}_maintenance`,
       alarmTag: `${USER_PERMISSIONS_PREFIXES.api}_alarm_tag`,
 
       ...featuresService.get('constants.USERS_PERMISSIONS.api.general'),

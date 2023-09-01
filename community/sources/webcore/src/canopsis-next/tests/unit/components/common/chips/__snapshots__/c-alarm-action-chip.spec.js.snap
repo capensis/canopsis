@@ -11,7 +11,7 @@ exports[`c-alarm-action-chip Renders \`c-alarm-tag-chip\` with custom props and 
     class="v-chip__content"
   >
     <span
-      class="white--text"
+      class="c-alarm-action-chip__text white--text"
     >
       <div
         class="default-slot"
@@ -31,7 +31,7 @@ exports[`c-alarm-action-chip Renders \`c-alarm-tag-chip\` with default props 1`]
     class="v-chip__content"
   >
     <span
-      class="white--text"
+      class="c-alarm-action-chip__text white--text"
     />
     <!---->
   </span>

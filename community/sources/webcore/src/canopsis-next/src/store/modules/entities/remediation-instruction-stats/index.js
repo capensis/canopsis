@@ -1,15 +1,11 @@
 import { API_ROUTES } from '@/config';
-import { ENTITIES_TYPES } from '@/constants';
 
 import request from '@/services/request';
 
-import { createEntityModule } from '@/store/plugins/entities';
+import { createCRUDModule } from '@/store/plugins/entities';
 
-export default createEntityModule({
+export default createCRUDModule({
   route: API_ROUTES.remediation.instructionStats,
-  entityType: ENTITIES_TYPES.remediationInstructionStats,
-  dataPreparer: d => d.data,
-  withMeta: true,
 }, {
   actions: {
     fetchSummaryWithoutStore(context, { id, params }) {

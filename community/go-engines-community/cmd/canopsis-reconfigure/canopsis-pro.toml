@@ -16,34 +16,7 @@
 # used rabbitMQ library and the documentation of our version of RabbitMQ.
 
 [[RabbitMQ.exchanges]]
-name = "canopsis"
-kind = "topic"
-durable = true
-autoDelete = false
-internal = false
-noWait = false
-# args =
-
-[[RabbitMQ.exchanges]]
-name = "canopsis.alerts"
-kind = "topic"
-durable = true
-autoDelete = false
-internal = false
-noWait = false
-# args =
-
-[[RabbitMQ.exchanges]]
 name = "canopsis.events"
-kind = "topic"
-durable = true
-autoDelete = false
-internal = false
-noWait = false
-# args =
-
-[[RabbitMQ.exchanges]]
-name = "canopsis.incidents"
 kind = "topic"
 durable = true
 autoDelete = false
@@ -97,14 +70,6 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
-name = "Engine_axe_service_rpc_client"
-durable = true
-autoDelete = false
-exclusive = false
-noWait = false
-# args =
-
-[[RabbitMQ.queues]]
 name = "Engine_axe_pbehavior_rpc_client"
 durable = true
 autoDelete = false
@@ -135,27 +100,6 @@ noWait = false
 
 [[RabbitMQ.queues]]
 name = "FIFO_ack"
-durable = true
-autoDelete = false
-exclusive = false
-noWait = false
-# args =
-
-[[RabbitMQ.queues]]
-name = "Engine_service"
-durable = true
-autoDelete = false
-exclusive = false
-noWait = false
-# args =
-[RabbitMQ.queues.bind]
-key = "Engine_service"
-exchange = "amq.direct"
-noWait = false
-# args =
-
-[[RabbitMQ.queues]]
-name = "Engine_service_rpc_server"
 durable = true
 autoDelete = false
 exclusive = false
@@ -493,9 +437,6 @@ from = "engine-axe"
 to = "engine-pbehavior"
 [[HealthCheck.engine_order]]
 from = "engine-correlation"
-to = "engine-service"
-[[HealthCheck.engine_order]]
-from = "engine-service"
 to = "engine-dynamic-infos"
 [[HealthCheck.engine_order]]
 from = "engine-dynamic-infos"

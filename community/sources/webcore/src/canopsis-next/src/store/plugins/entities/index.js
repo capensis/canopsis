@@ -1,5 +1,11 @@
 import Vue from 'vue';
-import { get, pick, uniqWith, mergeWith, isEqual } from 'lodash';
+import {
+  get,
+  pick,
+  uniqWith,
+  mergeWith,
+  isEqual,
+} from 'lodash';
 import { normalize, denormalize } from 'normalizr';
 
 import { SCHEMA_EMBEDDED_KEY } from '@/config';
@@ -387,6 +393,7 @@ export const types = {
 
 export { default as createEntityModule } from './create-entity-module';
 export { default as createWidgetModule } from './create-widget-module';
+export { createCRUDModule } from './create-crud-module';
 
 export default (store) => {
   store.registerModule(entitiesModuleName, entitiesModule);

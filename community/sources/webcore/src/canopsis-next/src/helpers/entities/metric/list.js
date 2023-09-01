@@ -301,15 +301,16 @@ export const convertDataSizeValueToTickString = (value) => {
  * Convert time value to duration string with microseconds
  *
  * @param {number} value
+ * @param {string} [format = DATETIME_FORMATS.durationWithMilliseconds]
  * @returns {string}
  */
-export const convertMetricDurationToString = (value) => {
+export const convertMetricDurationToString = (value, format = DATETIME_FORMATS.durationWithMilliseconds) => {
   const milliseconds = value * 1000;
   const hasMicroseconds = milliseconds % 1 > 0;
 
   let result = convertDurationToString(
     value,
-    DATETIME_FORMATS.durationWithMilliseconds,
+    format,
     TIME_UNITS.second,
     hasMicroseconds ? '' : '0s',
   );
@@ -328,11 +329,12 @@ export const convertMetricDurationToString = (value) => {
  * @param {number} value
  * @param {string} metric
  * @param {ExternalMetricUnit} [unit]
+ * @param {string} [format]
  * @returns {string}
  */
-export const convertMetricValueToString = (value, metric, unit) => {
+export const convertMetricValueToString = ({ value, metric, unit, format }) => {
   if (isTimeMetric(metric) || isExternalTimeMetricUnit(unit)) {
-    return convertMetricDurationToString(value);
+    return convertMetricDurationToString(value, format);
   }
 
   if (isRatioMetric(metric) || isExternalPercentMetricUnit(unit)) {

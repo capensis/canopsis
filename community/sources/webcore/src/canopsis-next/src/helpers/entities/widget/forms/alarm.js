@@ -5,6 +5,7 @@ import {
   ALARM_FIELDS,
   ALARM_FIELDS_TO_LABELS_KEYS,
   ALARM_UNSORTABLE_FIELDS,
+  ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
   COLOR_INDICATOR_TYPES,
   DEFAULT_ALARMS_WIDGET_COLUMNS,
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
@@ -35,8 +36,14 @@ import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from '
 import { formToLineChartWidgetParameters, lineChartWidgetParametersToForm } from './line-chart';
 import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './numbers-chart';
 
+import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
+
 /**
  * @typedef {'BarChart', 'LineChart', 'Numbers'} AlarmChartType
+ */
+
+/**
+ * @typedef { 'wrap' | 'truncate' } AlarmsResizingBehaviors
  */
 
 /**
@@ -63,6 +70,13 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @typedef {Object} WidgetLiveReporting
  * @property {string} [tstart]
  * @property {string} [tstop]
+ */
+
+/**
+ * @typedef {Object} WidgetColumnsParameters
+ * @property {boolean} draggable
+ * @property {boolean} resizable
+ * @property {AlarmsResizingBehaviors} cells_content_behavior
  */
 
 /**
@@ -112,6 +126,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  */
 
 /**
+
  * @typedef {Object} AlarmListBaseParameters
  * @property {number} itemsPerPage
  * @property {WidgetSort} sort
@@ -120,6 +135,8 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {WidgetInfoPopup[]} infoPopups
  * @property {string} widgetColumnsTemplate
  * @property {WidgetColumn[]} widgetColumns
+ * @property {string} exportPdfTemplate
+ * @property {string} exportPdfTemplateTemplate
  */
 
 /**
@@ -135,6 +152,8 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {string} widgetGroupColumnsTemplate
  * @property {string} widgetExportColumnsTemplate
  * @property {string} serviceDependenciesColumnsTemplate
+ * @property {string} exportPdfTemplate
+ * @property {string} exportPdfTemplateTemplate
  * @property {WidgetColumn[]} widgetColumns
  * @property {WidgetColumn[]} widgetGroupColumns
  * @property {WidgetColumn[]} widgetExportColumns
@@ -163,6 +182,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} clearFilterDisabled
  * @property {WidgetKioskParameters} kiosk
  * @property {AlarmChart[]} charts
+ * @property {WidgetColumnsParameters} [columns]
  */
 
 /**
@@ -188,8 +208,13 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  */
 
 /**
+ * @typedef {WidgetColumnsParameters} WidgetColumnsParametersForm
+ */
+
+/**
  * @typedef {AlarmListWidgetDefaultParametersForm & AlarmListWidgetParameters} AlarmListWidgetParametersForm
  * @property {AlarmChartForm[]} charts
+ * @property {WidgetColumnsParametersForm} columns
  */
 
 /**
@@ -205,6 +230,18 @@ export const openedToForm = (opened) => {
 
   return true;
 };
+
+/**
+ * Convert columns parameters field widget
+ *
+ * @param  {WidgetColumnsParameters} [columns]
+ * @returns {WidgetColumnsParametersForm}
+ */
+export const columnsParametersToForm = (columns = {}) => ({
+  draggable: columns.draggable ?? false,
+  resizable: columns.resizable ?? false,
+  cells_content_behavior: columns.cells_content_behavior ?? ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap,
+});
 
 /**
  * Convert alarm list infoPopups parameters to form
@@ -239,6 +276,8 @@ export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
   infoPopups: infoPopupsToForm(alarmListParameters.infoPopups),
   widgetColumnsTemplate: widgetTemplateValueToForm(alarmListParameters.widgetColumnsTemplate),
   widgetColumns: widgetColumnsToForm(alarmListParameters.widgetColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
+  exportPdfTemplate: alarmListParameters.exportPdfTemplate ?? ALARM_EXPORT_PDF_TEMPLATE,
+  exportPdfTemplateTemplate: widgetTemplateValueToForm(alarmListParameters.exportPdfTemplateTemplate),
 });
 
 /**
@@ -326,6 +365,8 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   widgetExportColumns:
     widgetColumnsToForm(parameters.widgetExportColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
   inlineLinksCount: parameters.inlineLinksCount ?? DEFAULT_LINKS_INLINE_COUNT,
+  exportPdfTemplate: parameters.exportPdfTemplate ?? ALARM_EXPORT_PDF_TEMPLATE,
+  exportPdfTemplateTemplate: widgetTemplateValueToForm(parameters.exportPdfTemplateTemplate),
 });
 
 /**
@@ -352,6 +393,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   exportCsvSeparator: parameters.exportCsvSeparator ?? EXPORT_CSV_SEPARATORS.comma,
   exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
   kiosk: kioskParametersToForm(parameters.kiosk),
+  columns: columnsParametersToForm(parameters.columns),
   charts: addKeyInEntities(parameters.charts),
 });
 
@@ -365,6 +407,7 @@ export const formToAlarmListBaseParameters = (form = {}) => ({
   ...form,
 
   moreInfoTemplateTemplate: formToWidgetTemplateValue(form.moreInfoTemplateTemplate),
+  exportPdfTemplateTemplate: formToWidgetTemplateValue(form.exportPdfTemplateTemplate),
   widgetColumnsTemplate: formToWidgetTemplateValue(form.widgetColumnsTemplate),
   widgetColumns: formToWidgetColumns(form.widgetColumns),
 });
@@ -401,6 +444,7 @@ export const formToAlarmListWidgetParameters = form => ({
   ...form,
 
   moreInfoTemplateTemplate: formToWidgetTemplateValue(form.moreInfoTemplateTemplate),
+  exportPdfTemplateTemplate: formToWidgetTemplateValue(form.exportPdfTemplateTemplate),
   widgetColumnsTemplate: formToWidgetTemplateValue(form.widgetColumnsTemplate),
   widgetGroupColumnsTemplate: formToWidgetTemplateValue(form.widgetGroupColumnsTemplate),
   serviceDependenciesColumnsTemplate: formToWidgetTemplateValue(form.serviceDependenciesColumnsTemplate),
@@ -493,10 +537,10 @@ export const getAlarmsListWidgetColumnValueFilter = (value) => {
  *
  * @param {string} value
  * @param {boolean} [onlyIcon]
- * @param {Widget | {}} [widget = {}]
+ * @param {number} [inlineLinksCount]
  * @returns {Function}
  */
-export const getAlarmsListWidgetColumnComponentGetter = ({ value, onlyIcon }, widget = {}) => {
+export const getAlarmsListWidgetColumnComponentGetter = ({ value, onlyIcon, inlineLinksCount }) => {
   switch (value) {
     case ALARM_FIELDS.state:
       return context => ({
@@ -534,7 +578,7 @@ export const getAlarmsListWidgetColumnComponentGetter = ({ value, onlyIcon }, wi
           is: 'c-alarm-links-chips',
           alarm: context.alarm,
           small: context.small,
-          inlineCount: widget.parameters?.inlineLinksCount,
+          inlineCount: inlineLinksCount,
         },
         on: {
           activate: context.$listeners.activate,
@@ -575,7 +619,7 @@ export const getAlarmsListWidgetColumnComponentGetter = ({ value, onlyIcon }, wi
         is: 'c-alarm-links-chips',
         alarm: context.alarm,
         small: context.small,
-        inlineCount: widget.parameters?.inlineLinksCount,
+        inlineCount: inlineLinksCount,
       },
     });
   }
@@ -583,6 +627,8 @@ export const getAlarmsListWidgetColumnComponentGetter = ({ value, onlyIcon }, wi
   return context => ({
     bind: {
       is: 'c-ellipsis',
+      class: 'alarm-column-cell__text',
+      title: context.value,
       text: context.value,
     },
   });

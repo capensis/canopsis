@@ -1,15 +1,16 @@
 <template lang="pug">
   group-panel(
     :group="group",
-    :orderChanged="isGroupsOrderChanged",
-    :isEditing="isNavigationEditingMode",
+    :order-changed="isGroupsOrderChanged",
+    :is-editing="isNavigationEditingMode",
     @change="showEditGroupModal"
   )
-    draggable.views-panel.secondary.lighten-1(
+    c-draggable-list-field.views-panel.secondary.lighten-1(
       :class="{ empty: isGroupEmpty }",
       :value="group.views",
-      :options="draggableOptions",
-      @change="changeViewsOrdering"
+      :disabled="!isNavigationEditingMode",
+      group="views",
+      @input="changeViewsOrdering"
     )
       groups-side-bar-group-view(
         v-for="view in group.views",
@@ -20,19 +21,13 @@
 </template>
 
 <script>
-import Draggable from 'vuedraggable';
-
-import { VUETIFY_ANIMATION_DELAY } from '@/config';
-
-import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
-
 import layoutNavigationGroupsBarGroupMixin from '@/mixins/layout/navigation/groups-bar-group';
 
 import GroupsSideBarGroupView from './groups-side-bar-group-view.vue';
 import GroupPanel from './group-panel.vue';
 
 export default {
-  components: { GroupPanel, Draggable, GroupsSideBarGroupView },
+  components: { GroupPanel, GroupsSideBarGroupView },
   mixins: [layoutNavigationGroupsBarGroupMixin],
   props: {
     isGroupsOrderChanged: {
@@ -41,24 +36,13 @@ export default {
     },
   },
   computed: {
-    draggableOptions() {
-      return {
-        disabled: !this.isNavigationEditingMode,
-        animation: VUETIFY_ANIMATION_DELAY,
-        group: 'views',
-      };
-    },
-
     isGroupEmpty() {
       return this.group.views && this.group.views.length === 0;
     },
   },
   methods: {
-    changeViewsOrdering(event) {
-      this.$emit('update:group', {
-        ...this.group,
-        views: dragDropChangePositionHandler(this.group.views, event),
-      });
+    changeViewsOrdering(views) {
+      this.$emit('update:group', { ...this.group, views });
     },
   },
 };

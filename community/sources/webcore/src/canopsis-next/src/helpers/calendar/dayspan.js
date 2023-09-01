@@ -1,5 +1,11 @@
 import { get, groupBy } from 'lodash';
-import { Day, Schedule, Constants, Op, DaySpan } from 'dayspan';
+import {
+  Day,
+  Schedule,
+  Constants,
+  Op,
+  DaySpan,
+} from 'dayspan';
 
 import {
   convertDateToMoment,
