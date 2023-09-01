@@ -18,5 +18,3 @@
   fill: currentColor;
 }
 </style>
-<script setup>
-</script>

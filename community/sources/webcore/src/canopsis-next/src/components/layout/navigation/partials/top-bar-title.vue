@@ -1,6 +1,6 @@
 <template lang="pug">
   v-toolbar-title.white--text.font-weight-regular.top-bar-title
-    span(v-html="compiledTitle")
+    c-compiled-template(:template="title", parent-element="span")
     div.badge-wrapper(v-if="showBadge")
       v-tooltip(right)
         template(#activator="{ on, attrs }")
@@ -21,8 +21,6 @@ import { MODALS } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
 
-import { compile } from '@/helpers/handlebars';
-
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 export default {
@@ -37,17 +35,6 @@ export default {
     return {
       showBadge: false,
     };
-  },
-  asyncComputed: {
-    compiledTitle: {
-      async get() {
-        const compiledTitle = await compile(this.title);
-
-        return `<span>${compiledTitle}</span>`;
-      },
-      lazy: true,
-      default: '',
-    },
   },
   created() {
     this.$socket.on(Socket.EVENTS_TYPES.networkError, this.socketNetworkErrorHandler);

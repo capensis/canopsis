@@ -177,10 +177,6 @@ export default {
       type: Object,
       required: true,
     },
-    editing: {
-      type: Boolean,
-      default: false,
-    },
     alarms: {
       type: Array,
       required: true,
@@ -435,7 +431,7 @@ export default {
       }
     },
 
-    editing() {
+    columns() {
       if (this.isColumnsChanging) {
         this.updateColumnsSettings();
 
