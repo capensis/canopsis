@@ -236,7 +236,7 @@ func (u *externalUpdater) removeInternalTags(ctx context.Context, tags []string)
 		return nil
 	}
 
-	_, err := u.collection.DeleteMany(ctx, bson.M{
+	_, err := u.alarmTagCollection.DeleteMany(ctx, bson.M{
 		"type":  TypeInternal,
 		"value": bson.M{"$in": tags},
 	})
