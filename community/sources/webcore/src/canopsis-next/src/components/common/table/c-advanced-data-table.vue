@@ -23,7 +23,7 @@
       )
       v-flex(v-if="hasMassActionsSlot", xs12)
         v-expand-transition
-          v-layout.px-3(v-if="selected.length")
+          v-layout.px-3.mt-1(v-if="selected.length")
             slot(
               name="mass-actions",
               :selected="selected",
@@ -48,6 +48,7 @@
       :multi-sort="multiSort",
       :table-class="tableClass",
       :disable-initial-sort="disableInitialSort",
+      :dense="dense",
       @update:pagination="updatePagination"
     )
       template(#items="props")
@@ -187,6 +188,10 @@ export default {
       required: false,
     },
     disableInitialSort: {
+      type: Boolean,
+      default: false,
+    },
+    dense: {
       type: Boolean,
       default: false,
     },

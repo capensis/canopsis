@@ -4,19 +4,17 @@ import (
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 // NewDeclareTicketWebhookExecutor creates new executor.
-func NewDeclareTicketWebhookExecutor(configProvider config.AlarmConfigProvider, metricsSender metrics.Sender) operation.Executor {
-	return &declareTicketWebhookExecutor{configProvider: configProvider, metricsSender: metricsSender}
+func NewDeclareTicketWebhookExecutor(configProvider config.AlarmConfigProvider) operation.Executor {
+	return &declareTicketWebhookExecutor{configProvider: configProvider}
 }
 
 type declareTicketWebhookExecutor struct {
 	configProvider config.AlarmConfigProvider
-	metricsSender  metrics.Sender
 }
 
 // Exec creates new declare ticket step for alarm.
@@ -45,12 +43,6 @@ func (e *declareTicketWebhookExecutor) Exec(
 	if err != nil {
 		return "", err
 	}
-
-	metricsUserID := ""
-	if initiator == types.InitiatorUser {
-		metricsUserID = userID
-	}
-	e.metricsSender.SendTicket(*alarm, metricsUserID, time.Time)
 
 	return types.AlarmChangeTypeDeclareTicketWebhook, nil
 }

@@ -143,7 +143,7 @@ func Default(
 	if p.ApiConfigProvider == nil {
 		p.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
 	}
-	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, p.ApiConfigProvider, cookieOptions, logger)
+	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, p.ApiConfigProvider, config.NewMaintenanceAdapter(dbClient), cookieOptions, logger)
 
 	if flags.EnableSameServiceNames {
 		logger.Info().Msg("Non-unique names for services ENABLED")
@@ -388,7 +388,9 @@ func Default(
 		websocketHub.Start(ctx)
 	})
 	api.AddWorker("websocket_conns", updateWebsocketConns(flags.IntegrationPeriodicalWaitTime, websocketHub, websocketStore, logger))
-	broadcastMessageService := broadcastmessage.NewService(broadcastmessage.NewStore(dbClient), websocketHub, canopsis.PeriodicalWaitTime, logger)
+
+	maintenanceAdapter := config.NewMaintenanceAdapter(dbClient)
+	broadcastMessageService := broadcastmessage.NewService(broadcastmessage.NewStore(dbClient, maintenanceAdapter), websocketHub, canopsis.PeriodicalWaitTime, logger)
 	api.AddWorker("broadcast_message", func(ctx context.Context) {
 		broadcastMessageService.Start(ctx, broadcastMessageChan)
 	})

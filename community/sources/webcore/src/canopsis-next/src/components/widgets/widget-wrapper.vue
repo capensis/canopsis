@@ -11,8 +11,7 @@
       component(
         v-bind="widgetProps",
         :widget="preparedWidget",
-        :tab-id="tab._id",
-        :editing="editing"
+        :tab-id="tab._id"
       )
 </template>
 
