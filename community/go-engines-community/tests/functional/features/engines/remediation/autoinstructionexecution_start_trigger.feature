@@ -394,17 +394,7 @@ Feature: run an auto instruction
         "m": "Instruction test-instruction-to-run-auto-instruction-trigger-1-1-name."
       },
       {
-        "_t": "autoinstructioncomplete",
-        "a": "system",
-        "m": "Instruction test-instruction-to-run-auto-instruction-trigger-1-1-name."
-      },
-      {
         "_t": "autoinstructionstart",
-        "a": "system",
-        "m": "Instruction test-instruction-to-run-auto-instruction-trigger-1-3-name."
-      },
-      {
-        "_t": "autoinstructioncomplete",
         "a": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-trigger-1-3-name."
       }
@@ -670,11 +660,6 @@ Feature: run an auto instruction
         "_t": "autoinstructionstart",
         "a": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-trigger-2-2-name."
-      },
-      {
-        "_t": "autoinstructioncomplete",
-        "a": "system",
-        "m": "Instruction test-instruction-to-run-auto-instruction-trigger-2-2-name."
       }
     ]
     """
@@ -923,11 +908,6 @@ Feature: run an auto instruction
       },
       {
         "_t": "autoinstructionstart",
-        "a": "system",
-        "m": "Instruction test-instruction-to-run-auto-instruction-trigger-3-2-name."
-      },
-      {
-        "_t": "autoinstructioncomplete",
         "a": "system",
         "m": "Instruction test-instruction-to-run-auto-instruction-trigger-3-2-name."
       }
