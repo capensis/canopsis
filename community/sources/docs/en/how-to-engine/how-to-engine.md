@@ -357,13 +357,13 @@ To define other `NewDefaultConsumer` arguments, we need to decide where we shoul
 
 Community version pipeline:
 
-fifo -> che -> pbehavior -> axe -> service -> action
+fifo -> che -> pbehavior -> axe -> action
 
 Since we need `entity_id` and `alarm_id` it should be placed after the `axe` engine, since the `axe` creates alarms. So with our new engine the pipeline will looks like this:  
 
-fifo -> che -> pbehavior -> axe -> logs -> service -> action
+fifo -> che -> pbehavior -> axe -> logs -> action
 
-So for our `engine-logs` the previous engine is `engine-axe` and the next engine is `engine-service`.
+So for our `engine-logs` the previous engine is `engine-axe` and the next engine is `engine-action`.
 
 ###### Create engine's queue
 
