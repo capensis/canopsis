@@ -352,7 +352,7 @@ export default {
     },
 
     /**
-     * Technical Line Chart Permissions
+     * Business Line Chart Permissions
      */
     [USERS_PERMISSIONS.business.lineChart.actions.interval]: {
       name: 'Graphique en courbes : intervalle',
@@ -380,7 +380,7 @@ export default {
     },
 
     /**
-     * Technical Pie Chart Permissions
+     * Business Pie Chart Permissions
      */
     [USERS_PERMISSIONS.business.pieChart.actions.interval]: {
       name: 'Piechart : intervalle',
@@ -408,7 +408,7 @@ export default {
     },
 
     /**
-     * Technical Pie Chart Permissions
+     * Business Numbers Permissions
      */
     [USERS_PERMISSIONS.business.numbers.actions.interval]: {
       name: 'Nombres : intervalle',
@@ -549,6 +549,10 @@ export default {
     [USERS_PERMISSIONS.technical.maintenance]: {
       name: 'Mode de Maintenance',
       description: 'Cette autorisation définit l\'accès au mode Maintenance',
+    },
+    [USERS_PERMISSIONS.technical.tag]: {
+      name: 'Gestion des balises',
+      description: 'Cette autorisation définit l\'accès à la gestion des balises',
     },
 
     /**
