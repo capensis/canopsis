@@ -299,6 +299,20 @@ link_rule:
               - test-resource-to-alarm-link-get-1
               - test-resource-to-alarm-link-get-2
 
+  rule_to_alarm_export:
+    <<: *link_rule_entity
+    links:
+      - label: test-link-rule-to-alarm-export-link-label
+        category: test-category-to-alarm-export-1
+        icon_name: test-link-rule-to-alarm-export-link-icon
+        url: http://test-link-rule-to-alarm-export-link-url.com?user={{ .User.Username }}&{{ range .Entities }}ids[]={{ .Entity.ID }}&{{ end }}
+        action: open
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-export-1
+
 link_mongo_data:
   data_1:
     _id: test-link-mongo-data-1

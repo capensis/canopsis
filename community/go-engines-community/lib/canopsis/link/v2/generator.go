@@ -93,6 +93,22 @@ func (g *generator) Load(ctx context.Context) error {
 	return nil
 }
 
+func (g *generator) GenerateForAlarm(ctx context.Context, alarm types.Alarm, entity types.Entity, user liblink.User) (liblink.LinksByCategory, error) {
+	res, err := g.runWorkers(ctx, func(ctx context.Context, rule parsedRule) (map[string][]linkWithCategory, error) {
+		return g.generateLinksByAlarms(ctx, rule, []alarmWithData{
+			{
+				Alarm:  alarm,
+				Entity: entity,
+			},
+		}, user)
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return res[alarm.ID], nil
+}
+
 func (g *generator) GenerateForAlarms(ctx context.Context, ids []string, user liblink.User) (map[string]liblink.LinksByCategory, error) {
 	alarms, err := g.getAlarms(ctx, ids)
 	if err != nil || len(alarms) == 0 {
@@ -252,21 +268,35 @@ func (g *generator) getRules(ctx context.Context) ([]parsedRule, error) {
 				"regexp": make(map[string]*template.Template, len(params.Regexp)),
 			}
 			for k, v := range params.Select {
-				externalDataTpl[ref]["select"][k], err = g.tplExecutor.Parse(v)
+				if v == "" {
+					continue
+				}
+
+				parsed := g.tplExecutor.Parse(v)
+				err = parsed.Err
 				if err != nil {
 					g.logger.Err(err).Str("rule", rule.ID).Msg("invalid template in link rule")
 					break
 				}
+
+				externalDataTpl[ref]["select"][k] = parsed.Tpl
 			}
 			if err != nil {
 				break
 			}
 			for k, v := range params.Regexp {
-				externalDataTpl[ref]["regexp"][k], err = g.tplExecutor.Parse(v)
+				if v == "" {
+					continue
+				}
+
+				parsed := g.tplExecutor.Parse(v)
+				err = parsed.Err
 				if err != nil {
 					g.logger.Err(err).Str("rule", rule.ID).Msg("invalid template in link rule")
 					break
 				}
+
+				externalDataTpl[ref]["regexp"][k] = parsed.Tpl
 			}
 			if err != nil {
 				break
@@ -299,11 +329,19 @@ func (g *generator) getRules(ctx context.Context) ([]parsedRule, error) {
 		pr.Links = rule.Links
 		pr.LinkTpls = make([]*template.Template, len(rule.Links))
 		for i, link := range rule.Links {
-			pr.LinkTpls[i], err = g.tplExecutor.Parse(link.Url)
+			if link.Url == "" {
+				g.logger.Error().Str("rule", rule.ID).Msg("empty url template in link rule")
+				break
+			}
+
+			parsed := g.tplExecutor.Parse(link.Url)
+			err = parsed.Err
 			if err != nil {
 				g.logger.Err(err).Str("rule", rule.ID).Msg("invalid template in link rule")
 				break
 			}
+
+			pr.LinkTpls[i] = parsed.Tpl
 		}
 		if err != nil {
 			continue

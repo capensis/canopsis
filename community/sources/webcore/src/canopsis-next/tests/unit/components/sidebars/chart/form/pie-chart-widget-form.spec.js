@@ -2,10 +2,7 @@ import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import {
-  getWidgetRequestWithNewProperty,
-  getWidgetRequestWithNewParametersProperty,
-} from '@unit/utils/settings';
+import { getWidgetRequestWithNewProperty, getWidgetRequestWithNewParametersProperty } from '@unit/utils/settings';
 import { expectsOneInput } from '@unit/utils/form';
 
 import {

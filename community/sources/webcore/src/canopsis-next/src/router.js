@@ -2,19 +2,11 @@ import Vue from 'vue';
 import Router from 'vue-router';
 
 import { ROUTER_MODE, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
-import {
-  CRUD_ACTIONS,
-  ROUTES_NAMES,
-  ROUTES,
-  USERS_PERMISSIONS,
-} from '@/constants';
+import { CRUD_ACTIONS, ROUTES_NAMES, ROUTES, USERS_PERMISSIONS } from '@/constants';
 
 import store from '@/store';
 
-import {
-  checkAppInfoAccessForRoute,
-  checkUserAccessForRoute,
-} from '@/helpers/router';
+import { checkAppInfoAccessForRoute, checkUserAccessForRoute } from '@/helpers/router';
 
 import Login from '@/views/login.vue';
 import Error from '@/views/error.vue';

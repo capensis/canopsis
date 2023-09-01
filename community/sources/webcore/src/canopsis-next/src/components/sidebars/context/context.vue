@@ -59,7 +59,8 @@
           :editable="hasAccessToEditFilter",
           with-alarm,
           with-entity,
-          with-pbehavior
+          with-pbehavior,
+          entity-counters-type
         )
         v-divider
       field-context-entities-types-filter(v-model="form.parameters.selectedTypes")
@@ -76,11 +77,7 @@
 </template>
 
 <script>
-import {
-  SIDE_BARS,
-  ENTITY_UNSORTABLE_FIELDS,
-  ENTITY_FIELDS_TO_LABELS_KEYS,
-} from '@/constants';
+import { SIDE_BARS, ENTITY_UNSORTABLE_FIELDS, ENTITY_FIELDS_TO_LABELS_KEYS } from '@/constants';
 
 import { formToWidgetColumns } from '@/helpers/entities/widget/column/form';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/list';
