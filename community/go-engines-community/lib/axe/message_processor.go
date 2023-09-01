@@ -28,7 +28,7 @@ type MessageProcessor struct {
 	Decoder                encoding.Decoder
 	Logger                 zerolog.Logger
 	PbehaviorAdapter       pbehavior.Adapter
-	TagUpdater             alarmtag.Updater
+	TagUpdater             alarmtag.ExternalUpdater
 	AutoInstructionMatcher AutoInstructionMatcher
 }
 

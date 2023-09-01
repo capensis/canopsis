@@ -8,18 +8,18 @@ import (
 	"github.com/rs/zerolog"
 )
 
-type tagPeriodicalWorker struct {
+type externalTagPeriodicalWorker struct {
 	PeriodicalInterval time.Duration
-	TagUpdater         alarmtag.Updater
+	ExternalTagUpdater alarmtag.ExternalUpdater
 	Logger             zerolog.Logger
 }
 
-func (w *tagPeriodicalWorker) GetInterval() time.Duration {
+func (w *externalTagPeriodicalWorker) GetInterval() time.Duration {
 	return w.PeriodicalInterval
 }
 
-func (w *tagPeriodicalWorker) Work(ctx context.Context) {
-	err := w.TagUpdater.Update(ctx)
+func (w *externalTagPeriodicalWorker) Work(ctx context.Context) {
+	err := w.ExternalTagUpdater.Update(ctx)
 	if err != nil {
 		w.Logger.Err(err).Msg("cannot update alarm tags")
 	}

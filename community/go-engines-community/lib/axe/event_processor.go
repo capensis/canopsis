@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
@@ -36,6 +37,7 @@ type eventProcessor struct {
 	alarmStatusService  alarmstatus.Service
 	logger              zerolog.Logger
 	metricsSender       metrics.Sender
+	alarmMatcher        alarmtag.InternalTagAlarmMatcher
 
 	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
 
@@ -62,6 +64,7 @@ func NewEventProcessor(
 	stateCountersService statecounters.StateCountersService,
 	pbhTypeResolver pbehavior.EntityTypeResolver,
 	autoInstructionMatcher AutoInstructionMatcher,
+	alarmMatcher alarmtag.InternalTagAlarmMatcher,
 	logger zerolog.Logger,
 ) libalarm.EventProcessor {
 	return &eventProcessor{
@@ -75,6 +78,7 @@ func NewEventProcessor(
 		metricsSender:       metricsSender,
 		statisticsSender:    statisticsSender,
 		pbhTypeResolver:     pbhTypeResolver,
+		alarmMatcher:        alarmMatcher,
 		logger:              logger,
 
 		metaAlarmEventProcessor: metaAlarmEventProcessor,
@@ -368,6 +372,10 @@ func (s *eventProcessor) createAlarm(ctx context.Context, event *types.Event, no
 
 		alarm.InactiveAutoInstructionInProgress = matched
 	}
+
+	alarm.InternalTags = s.alarmMatcher.Match(entity, alarm)
+	alarm.InternalTagsUpdated = types.NewMicroTime()
+	alarm.Tags = append(alarm.Tags, alarm.InternalTags...)
 
 	err = s.adapter.Insert(ctx, alarm)
 	if err != nil {
@@ -738,11 +746,13 @@ func (s *eventProcessor) resolvePbehaviorInfo(ctx context.Context, entity types.
 }
 
 func newAlarm(event types.Event, alarmConfig config.AlarmConfig, now types.CpsTime) types.Alarm {
+	tags := types.TransformEventTags(event.Tags)
 	return types.Alarm{
-		EntityID: event.GetEID(),
-		ID:       utils.NewID(),
-		Time:     now,
-		Tags:     types.TransformEventTags(event.Tags),
+		EntityID:     event.GetEID(),
+		ID:           utils.NewID(),
+		Time:         now,
+		Tags:         tags,
+		ExternalTags: tags,
 		Value: types.AlarmValue{
 			Component:         event.Component,
 			Connector:         event.Connector,
