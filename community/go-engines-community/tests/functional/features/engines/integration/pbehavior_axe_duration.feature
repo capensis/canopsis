@@ -35,9 +35,9 @@ Feature: update alarm on pbehavior
     """json
     {
       "enabled": true,
-      "name": "test-pbehavior-alarm-duration-1",
+      "name": "test-pbehavior-axe-duration-1",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "2s" }},
+      "tstop": {{ nowAdd "3s" }},
       "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",

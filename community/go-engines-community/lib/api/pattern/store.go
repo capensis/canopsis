@@ -70,7 +70,7 @@ func NewStore(
 
 		linkedCollections: []string{
 			mongo.WidgetFiltersMongoCollection,
-			mongo.EventFilterRulesMongoCollection,
+			mongo.EventFilterRuleCollection,
 			mongo.MetaAlarmRulesMongoCollection,
 			mongo.InstructionMongoCollection,
 			mongo.PbehaviorMongoCollection,

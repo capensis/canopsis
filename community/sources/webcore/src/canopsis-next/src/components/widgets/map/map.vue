@@ -136,9 +136,7 @@ export default {
     this.unregisterEditingOffHandler(this.clearPreviousMaps);
   },
   mounted() {
-    if (this.editing) {
-      this.fetchList();
-    }
+    this.fetchList();
   },
   methods: {
     ...mapMapActions({

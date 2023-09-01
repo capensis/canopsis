@@ -15,6 +15,7 @@
         :class="contentClass",
         :value="value | date(format)",
         :label="label",
+        :placeholder="placeholder",
         :error="error",
         :error-messages="errorMessages",
         :name="name",
@@ -61,6 +62,10 @@ export default {
       default: null,
     },
     label: {
+      type: String,
+      default: '',
+    },
+    placeholder: {
       type: String,
       default: '',
     },

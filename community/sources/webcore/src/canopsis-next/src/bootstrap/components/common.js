@@ -18,3 +18,4 @@ export { default as CImagesViewer } from '@/components/common/images-viewer/c-im
 export { default as CClickableTooltip } from '@/components/common/clickable-tooltip/c-clickable-tooltip.vue';
 export { default as CCollapsePanel } from '@/components/common/block/c-collapse-panel.vue';
 export { default as CContextmenu } from '@/components/common/contextmenu/c-contextmenu.vue';
+export { default as CCircleBadge } from '@/components/common/badge/c-circle-badge.vue';

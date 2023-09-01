@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-list-tile.top-bar-menu-link(:to="link.route", active-class="")
+  v-list-tile.top-bar-menu-link(:to="link.route", active-class="", @click="handleClick")
     v-list-tile-title
       v-layout(justify-space-between)
         span {{ link.title }}
@@ -12,6 +12,11 @@ export default {
     link: {
       type: Object,
       default: () => ({}),
+    },
+  },
+  methods: {
+    handleClick() {
+      this.link.handler?.();
     },
   },
 };
