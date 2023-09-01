@@ -198,7 +198,8 @@ func NewEngine(
 		alarmStatusService, alarmConfigProvider, json.NewEncoder(), amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName,
 		metricsSender, logger)
 
-	tagUpdater := alarmtag.NewUpdater(dbClient)
+	externalTagUpdater := alarmtag.NewExternalUpdater(dbClient)
+	internalTagAlarmMatcher := alarmtag.NewInternalTagAlarmMatcher(dbClient)
 
 	engineAxe := libengine.New(
 		func(ctx context.Context) error {
@@ -294,6 +295,7 @@ func NewEngine(
 				stateCountersService,
 				pbehavior.NewEntityTypeResolver(pbehavior.NewStore(pbhRedisClient, json.NewEncoder(), json.NewDecoder()), pbehavior.NewEntityMatcher(dbClient), logger),
 				autoInstructionMatcher,
+				internalTagAlarmMatcher,
 				logger,
 			),
 			RemediationRpcClient:   remediationRpcClient,
@@ -302,7 +304,7 @@ func NewEngine(
 			Decoder:                json.NewDecoder(),
 			Logger:                 logger,
 			PbehaviorAdapter:       pbehavior.NewAdapter(dbClient),
-			TagUpdater:             tagUpdater,
+			TagUpdater:             externalTagUpdater,
 			AutoInstructionMatcher: autoInstructionMatcher,
 		},
 		logger,
@@ -333,18 +335,30 @@ func NewEngine(
 		logger,
 	))
 	engineAxe.AddConsumer(pbhRpcClient)
-	engineAxe.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
-	engineAxe.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
-		PeriodicalInterval:     options.PeriodicalWaitTime,
-		AlarmStatusService:     alarmStatusService,
-		AutoInstructionMatcher: autoInstructionMatcher,
-		Logger:                 logger,
+	engineAxe.AddPeriodicalWorker("run_info", runInfoPeriodicalWorker)
+	engineAxe.AddPeriodicalWorker("local_cache", &reloadLocalCachePeriodicalWorker{
+		PeriodicalInterval:      options.PeriodicalWaitTime,
+		AlarmStatusService:      alarmStatusService,
+		AutoInstructionMatcher:  autoInstructionMatcher,
+		InternalTagAlarmMatcher: internalTagAlarmMatcher,
+		Logger:                  logger,
 	})
-	engineAxe.AddPeriodicalWorker("tags", &tagPeriodicalWorker{
+	engineAxe.AddPeriodicalWorker("external_tags", &externalTagPeriodicalWorker{
 		PeriodicalInterval: options.TagsPeriodicalWaitTime,
-		TagUpdater:         tagUpdater,
+		ExternalTagUpdater: externalTagUpdater,
 		Logger:             logger,
 	})
+	engineAxe.AddPeriodicalWorker("internal_tags", libengine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(lockRedisClient),
+		redis.AxeInternalTagsPeriodicalLockKey,
+		&internalTagPeriodicalWorker{
+			PeriodicalInterval: options.PeriodicalWaitTime,
+			Logger:             logger,
+			TagCollection:      dbClient.Collection(mongo.AlarmTagCollection),
+			AlarmCollection:    dbClient.Collection(mongo.AlarmMongoCollection),
+		},
+		logger,
+	))
 	engineAxe.AddPeriodicalWorker("alarms", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.AxePeriodicalLockKey,
@@ -368,7 +382,7 @@ func NewEngine(
 		},
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker("resolve archiver", libengine.NewLockedPeriodicalWorker(
+	engineAxe.AddPeriodicalWorker("resolve_archiver", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.AxeResolvedArchiverPeriodicalLockKey,
 		&resolvedArchiverWorker{
