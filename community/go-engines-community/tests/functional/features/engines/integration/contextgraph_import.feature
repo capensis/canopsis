@@ -48,7 +48,7 @@ Feature: Import entities
        "status": "done"
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
     When I do GET /api/v4/entities/context-graph?_id=test-component-import-partial-1
     Then the response code should be 200
     Then the response body should be:

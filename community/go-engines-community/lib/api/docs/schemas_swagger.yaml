@@ -851,6 +851,10 @@ definitions:
         type: string
       name:
         type: string
+      with_body:
+        type: boolean
+      with_query:
+        type: boolean
     type: object
   appinfo.LoginConf:
     properties:

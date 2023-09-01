@@ -18,7 +18,7 @@
           :label="$t('remediation.job.retryInterval')",
           clearable
         )
-    v-layout(row)
+    v-layout(v-if="withPayload", row)
       v-btn.ml-0(
         v-if="!form.payload",
         color="primary",
@@ -41,6 +41,7 @@
           @click="removePayload"
         )
     c-text-pairs-field(
+      v-if="withQuery",
       v-field="form.query",
       :title="$t('remediation.job.query')",
       :text-label="$t('common.field')",
@@ -69,6 +70,14 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
+    },
+    withPayload: {
+      type: Boolean,
+      default: false,
+    },
+    withQuery: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {
