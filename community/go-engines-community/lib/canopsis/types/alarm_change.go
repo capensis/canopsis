@@ -66,8 +66,7 @@ const (
 	AlarmChangeTypeJunitTestSuiteUpdate AlarmChangeType = "junittestsuiteupdate"
 	AlarmChangeTypeJunitTestCaseUpdate  AlarmChangeType = "junittestcaseupdate"
 
-	// AlarmChangeTypeEntityToggled is used to update entity service's counters on disable/enable entity actions.
-	AlarmChangeTypeEntityToggled AlarmChangeType = "entitytoggled"
+	AlarmChangeTypeEnabled AlarmChangeType = "enabled"
 
 	// AlarmChangeTypeAutoInstructionActivate is used to activate alarm when an autoremediation triggered by create trigger is completed
 	AlarmChangeTypeAutoInstructionActivate AlarmChangeType = "autoinstructionactivate"
@@ -81,6 +80,7 @@ type AlarmChange struct {
 	PreviousStateChange             CpsTime
 	PreviousStatus                  CpsNumber
 	PreviousStatusChange            CpsTime
+	PreviousPbehaviorTime           *CpsTime
 	PreviousPbehaviorTypeID         string
 	PreviousPbehaviorCannonicalType string
 }

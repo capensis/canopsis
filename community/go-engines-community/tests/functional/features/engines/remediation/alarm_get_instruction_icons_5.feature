@@ -54,7 +54,7 @@ Feature: update an instruction statistics
       }
     ]
     """
-    When I wait 2s
+    When I wait 1s
     When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-fifth-1
     Then the response code should be 200
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
@@ -71,6 +71,14 @@ Feature: update an instruction statistics
     [
       {
         "event_type": "instructionstarted",
+        "connector": "test-connector-to-alarm-instruction-get-icons-fifth-1",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-icons-fifth-1",
+        "component": "test-component-to-alarm-instruction-get-icons-fifth-1",
+        "resource": "test-resource-to-alarm-instruction-get-icons-fifth-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
         "connector": "test-connector-to-alarm-instruction-get-icons-fifth-1",
         "connector_name": "test-connector-name-to-alarm-instruction-get-icons-fifth-1",
         "component": "test-component-to-alarm-instruction-get-icons-fifth-1",
