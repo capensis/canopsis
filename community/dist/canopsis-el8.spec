@@ -56,6 +56,7 @@ fi
 %defattr(0644, canopsis, canopsis, 0755)
 %config(noreplace) /opt/canopsis/etc
 %config(noreplace) /opt/canopsis/share/config
+%attr(0640, root, canopsis) /opt/canopsis/etc/go-engines-vars.conf
 /opt/canopsis/share/config
 /opt/canopsis/share/database/fixtures/*yml
 /opt/canopsis/share/database/migrations/*.js
