@@ -2,6 +2,7 @@ package executor
 
 import (
 	"context"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -37,7 +38,12 @@ func (e *updateStatusExecutor) Exec(
 	}
 
 	// Create new Step to keep track of the alarm history
-	newStep := types.NewAlarmStep(types.AlarmStepStatusIncrease, time, alarm.Value.Connector+"."+alarm.Value.ConnectorName, params.Output, "", "", "")
+	var newStep types.AlarmStep
+	if entity.Type != types.EntityTypeService {
+		newStep = types.NewAlarmStep(types.AlarmStepStatusIncrease, time, strings.Replace(entity.Connector, "/", ".", 1), params.Output, "", "", "")
+	} else {
+		newStep = types.NewAlarmStep(types.AlarmStepStatusIncrease, time, alarm.Value.Connector+"."+alarm.Value.ConnectorName, params.Output, "", "", "")
+	}
 	newStep.Value = newStatus
 
 	if newStatus < currentStatus {

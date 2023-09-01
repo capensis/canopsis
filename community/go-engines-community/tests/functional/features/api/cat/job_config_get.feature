@@ -43,8 +43,7 @@ Feature: get a job's config
       "data": [
         {
           "_id": "test-job-config-to-get",
-          "deletable": true,
-          "running": false
+          "deletable": true
         }
       ],
       "meta": {
@@ -96,8 +95,7 @@ Feature: get a job's config
       "data": [
         {
           "_id": "test-job-config-to-check-linked",
-          "deletable": false,
-          "running": false
+          "deletable": false
         }
       ]
     }

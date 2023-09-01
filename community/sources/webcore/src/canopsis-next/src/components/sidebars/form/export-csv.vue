@@ -23,15 +23,13 @@
           :templates-pending="templatesPending",
           :label="$t('settings.exportColumnNames')",
           :type="type",
+          :with-instructions="withInstructions",
           @update:template="updateTemplate"
         )
 </template>
 
 <script>
-import {
-  EXPORT_CSV_SEPARATORS,
-  EXPORT_CSV_DATETIME_FORMATS,
-} from '@/constants';
+import { EXPORT_CSV_SEPARATORS, EXPORT_CSV_DATETIME_FORMATS } from '@/constants';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -62,6 +60,10 @@ export default {
       default: false,
     },
     datetimeFormat: {
+      type: Boolean,
+      default: false,
+    },
+    withInstructions: {
       type: Boolean,
       default: false,
     },

@@ -95,6 +95,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                   aria-label=": Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
+                  data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
                 />
@@ -102,6 +103,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                   aria-label="Custom name label: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
+                  data-value="entity.name"
                   role="columnheader"
                   scope="col"
                 >
@@ -111,6 +113,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                   aria-label="Custom type label: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
+                  data-value="entity.type"
                   role="columnheader"
                   scope="col"
                 >
@@ -318,6 +321,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   aria-label=": Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
+                  data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
                 />
@@ -325,6 +329,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   aria-label="Name: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
+                  data-value="entity.name"
                   role="columnheader"
                   scope="col"
                 >
@@ -334,6 +339,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                   aria-label="Type: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
+                  data-value="entity.type"
                   role="columnheader"
                   scope="col"
                 >
@@ -571,6 +577,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   aria-label=": Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
+                  data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
                 />
@@ -578,6 +585,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   aria-label="Name: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
+                  data-value="entity.name"
                   role="columnheader"
                   scope="col"
                 >
@@ -587,6 +595,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                   aria-label="Type: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
+                  data-value="entity.type"
                   role="columnheader"
                   scope="col"
                 >
@@ -680,6 +689,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                   aria-label=": Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
+                  data-value="no-events-icon"
                   role="columnheader"
                   scope="col"
                 />
@@ -687,6 +697,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                   aria-label="Name: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
+                  data-value="entity.name"
                   role="columnheader"
                   scope="col"
                 >
@@ -696,6 +707,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with required pro
                   aria-label="Type: Not sorted."
                   aria-sort="none"
                   class="column text-xs-left"
+                  data-value="entity.type"
                   role="columnheader"
                   scope="col"
                 >

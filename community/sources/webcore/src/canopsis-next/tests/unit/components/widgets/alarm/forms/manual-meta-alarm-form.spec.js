@@ -10,10 +10,16 @@ import ManualMetaAlarmForm from '@/components/widgets/alarm/forms/manual-meta-al
 const stubs = {
   'v-combobox': createInputStub('v-combobox'),
   'v-text-field': createInputStub('v-text-field'),
+  'c-enabled-field': true,
+};
+
+const snapshotStubs = {
+  'c-enabled-field': true,
 };
 
 const selectTextField = wrapper => wrapper.find('.v-text-field');
 const selectComboboxField = wrapper => wrapper.find('.v-combobox');
+const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 
 describe('manual-meta-alarm-form', () => {
   const fetchManualMetaAlarmsListWithoutStore = jest.fn().mockReturnValue([]);
@@ -28,7 +34,7 @@ describe('manual-meta-alarm-form', () => {
   ]);
 
   const factory = generateShallowRenderer(ManualMetaAlarmForm, { stubs });
-  const snapshotFactory = generateRenderer(ManualMetaAlarmForm);
+  const snapshotFactory = generateRenderer(ManualMetaAlarmForm, { stubs: snapshotStubs });
 
   test('Alarms fetched after mount', () => {
     factory({
@@ -45,6 +51,7 @@ describe('manual-meta-alarm-form', () => {
     const form = {
       metaAlarm: Faker.datatype.string(),
       comment: Faker.datatype.string(),
+      auto_resolve: false,
     };
     const wrapper = factory({
       store,
@@ -66,6 +73,7 @@ describe('manual-meta-alarm-form', () => {
     const form = {
       metaAlarm: Faker.datatype.string(),
       comment: Faker.datatype.string(),
+      auto_resolve: false,
     };
     const wrapper = factory({
       store,
@@ -83,6 +91,28 @@ describe('manual-meta-alarm-form', () => {
     expect(wrapper).toEmit('input', { ...form, comment });
   });
 
+  test('Auto resolve changed after trigger enabled field', () => {
+    const form = {
+      metaAlarm: Faker.datatype.string(),
+      comment: Faker.datatype.string(),
+      auto_resolve: false,
+    };
+    const wrapper = factory({
+      store,
+      propsData: {
+        form,
+      },
+    });
+
+    const autoResolve = true;
+
+    const enabledField = selectEnabledField(wrapper);
+
+    enabledField.vm.$emit('input', autoResolve);
+
+    expect(wrapper).toEmit('input', { ...form, auto_resolve: autoResolve });
+  });
+
   test('Renders `manual-meta-alarm-form` with default props', () => {
     const wrapper = snapshotFactory({
       store,
@@ -90,6 +120,7 @@ describe('manual-meta-alarm-form', () => {
         form: {
           metaAlarm: 'metaAlarm',
           comment: 'comment',
+          auto_resolve: true,
         },
       },
     });

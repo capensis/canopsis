@@ -9,6 +9,6 @@ type RulesAdapter interface {
 	Get(ctx context.Context) ([]Rule, error)
 
 	Save(ctx context.Context, r Rule) error
-	GetManualRule(ctx context.Context) (Rule, error)
+	GetManualRule(ctx context.Context, autoResolve bool) (Rule, error)
 	GetRule(ctx context.Context, id string) (Rule, error)
 }

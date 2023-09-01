@@ -401,28 +401,40 @@ func getNestedObjectsPipeline() []bson.M {
 func getDeletablePipeline() []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from":         mongo.PbehaviorMongoCollection,
-			"localField":   "_id",
-			"foreignField": "exceptions",
-			"as":           "pbh",
-		}},
-		{"$addFields": bson.M{
-			"deletable": bson.M{"$eq": bson.A{bson.M{"$size": "$pbh"}, 0}},
-		}},
-		{"$project": bson.M{
-			"pbh": 0,
+			"from": mongo.PbehaviorMongoCollection,
+			"let":  bson.M{"exception": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$expr": bson.M{"$and": []bson.M{
+					{"$isArray": "$exceptions"},
+					{"$in": bson.A{"$$exception", "$exceptions"}},
+				}}}},
+				{"$limit": 1},
+				{"$project": bson.M{"_id": 1}},
+			},
+			"as": "pbhs",
 		}},
 		{"$lookup": bson.M{
-			"from":         mongo.EventFilterRulesMongoCollection,
-			"localField":   "_id",
-			"foreignField": "exceptions",
-			"as":           "ef",
+			"from": mongo.EventFilterRuleCollection,
+			"let":  bson.M{"exception": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"$expr": bson.M{"$and": []bson.M{
+					{"$isArray": "$exceptions"},
+					{"$in": bson.A{"$$exception", "$exceptions"}},
+				}}}},
+				{"$limit": 1},
+				{"$project": bson.M{"_id": 1}},
+			},
+			"as": "efs",
 		}},
 		{"$addFields": bson.M{
-			"deletable": bson.M{"$and": bson.A{bson.M{"$eq": bson.A{bson.M{"$size": "$ef"}, 0}}, "$deletable"}},
+			"deletable": bson.M{"$and": []bson.M{
+				{"$eq": bson.A{bson.M{"$size": "$pbhs"}, 0}},
+				{"$eq": bson.A{bson.M{"$size": "$efs"}, 0}},
+			}},
 		}},
 		{"$project": bson.M{
-			"ef": 0,
+			"pbhs": 0,
+			"efs":  0,
 		}},
 	}
 }

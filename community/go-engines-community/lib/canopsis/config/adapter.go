@@ -1,5 +1,7 @@
 package config
 
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/config/adapter.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config MaintenanceAdapter
+
 import (
 	"context"
 	"errors"
@@ -158,4 +160,32 @@ func (a *versionAdapter) UpsertConfig(ctx context.Context, conf VersionConf) err
 		bson.M{"$set": conf}, options.Update().SetUpsert(true))
 
 	return err
+}
+
+type MaintenanceAdapter interface {
+	GetConfig(ctx context.Context) (MaintenanceConf, error)
+}
+
+type maintenanceAdapter struct {
+	collection mongo.DbCollection
+}
+
+func NewMaintenanceAdapter(client mongo.DbClient) MaintenanceAdapter {
+	return &maintenanceAdapter{
+		collection: client.Collection(mongo.ConfigurationMongoCollection),
+	}
+}
+
+func (a *maintenanceAdapter) GetConfig(ctx context.Context) (MaintenanceConf, error) {
+	conf := MaintenanceConf{}
+	err := a.collection.FindOne(ctx, bson.M{"_id": MaintenanceKeyName}).Decode(&conf)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return conf, nil
+		}
+
+		return conf, err
+	}
+
+	return conf, nil
 }

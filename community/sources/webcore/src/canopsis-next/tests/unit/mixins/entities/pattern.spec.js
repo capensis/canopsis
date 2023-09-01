@@ -39,7 +39,7 @@ describe('Entities pattern mixin', () => {
 
   test('Patterns list fetched', async () => {
     axiosMockAdapter
-      .onGet(API_ROUTES.patterns)
+      .onGet(API_ROUTES.pattern.list)
       .reply(200, { data: patterns, meta });
 
     const wrapper = factory();
@@ -61,7 +61,7 @@ describe('Entities pattern mixin', () => {
       page: Faker.datatype.string(),
     };
     axiosMockAdapter
-      .onGet(API_ROUTES.patterns, { params })
+      .onGet(API_ROUTES.pattern.list, { params })
       .reply(200, { data: patterns, meta });
 
     const wrapper = factory();
@@ -78,7 +78,7 @@ describe('Entities pattern mixin', () => {
       page: Faker.datatype.string(),
     };
     axiosMockAdapter
-      .onGet(API_ROUTES.patterns, { params })
+      .onGet(API_ROUTES.pattern.list, { params })
       .replyOnce(200, { data: patterns, meta });
 
     const wrapper = factory();
@@ -86,7 +86,7 @@ describe('Entities pattern mixin', () => {
     await wrapper.vm.fetchPatternsList({ params });
 
     axiosMockAdapter
-      .onGet(API_ROUTES.patterns, { params })
+      .onGet(API_ROUTES.pattern.list, { params })
       .reply(400, error);
 
     const originalError = console.error;
@@ -113,7 +113,7 @@ describe('Entities pattern mixin', () => {
     };
     const reversedPatterns = patterns.slice().reverse();
     axiosMockAdapter
-      .onGet(API_ROUTES.patterns, { params })
+      .onGet(API_ROUTES.pattern.list, { params })
       .replyOnce(200, { data: patterns, meta });
 
     const wrapper = factory();
@@ -121,7 +121,7 @@ describe('Entities pattern mixin', () => {
     await wrapper.vm.fetchPatternsList({ params });
 
     axiosMockAdapter
-      .onGet(API_ROUTES.patterns, { params })
+      .onGet(API_ROUTES.pattern.list, { params })
       .replyOnce(200, { data: reversedPatterns, meta });
 
     await wrapper.vm.fetchPatternsListWithPreviousParams();

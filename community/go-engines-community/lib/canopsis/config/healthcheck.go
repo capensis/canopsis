@@ -43,7 +43,6 @@ type HealthCheckParameters struct {
 	Axe          EngineParameters `bson:"engine-axe" json:"engine-axe"`
 	Correlation  EngineParameters `bson:"engine-correlation" json:"engine-correlation"`
 	Remediation  EngineParameters `bson:"engine-remediation" json:"engine-remediation"`
-	Service      EngineParameters `bson:"engine-service" json:"engine-service"`
 	DynamicInfos EngineParameters `bson:"engine-dynamic-infos" json:"engine-dynamic-infos"`
 	Action       EngineParameters `bson:"engine-action" json:"engine-action"`
 	Webhook      EngineParameters `bson:"engine-webhook" json:"engine-webhook"`
@@ -63,8 +62,6 @@ func (h HealthCheckParameters) GetEngineParameters(name string) EngineParameters
 		return h.Correlation
 	case canopsis.RemediationEngineName:
 		return h.Remediation
-	case canopsis.ServiceEngineName:
-		return h.Service
 	case canopsis.DynamicInfosEngineName:
 		return h.DynamicInfos
 	case canopsis.ActionEngineName:
