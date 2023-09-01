@@ -10,8 +10,10 @@ import { MODALS } from '@/constants';
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
+import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 
 const stubs = {
+  'c-advanced-data-table': CAdvancedDataTable,
   'c-search-field': true,
   'c-expand-btn': true,
   'c-action-btn': true,
