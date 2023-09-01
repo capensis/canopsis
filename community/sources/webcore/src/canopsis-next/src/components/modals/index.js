@@ -388,3 +388,8 @@ export const CreateMaintenance = () => ({
   component: import(/* webpackChunkName: "Maintenance" */ './maintenance/create-maintenance.vue'),
   loading: LoaderOverlay,
 });
+
+export const CreateTag = () => ({
+  component: import(/* webpackChunkName: "Tags" */ './tag/create-tag.vue'),
+  loading: LoaderOverlay,
+});

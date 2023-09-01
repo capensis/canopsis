@@ -12,4 +12,5 @@ export const ENTITIES_TYPES = {
   testSuite: 'testSuite',
   testSuiteHistory: 'testSuiteHistory',
   linkRule: 'linkRule',
+  tag: 'tag',
 };

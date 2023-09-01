@@ -1,4 +1,4 @@
-import { QUICK_RANGES } from '@/constants/common';
+import { QUICK_RANGES } from './common';
 
 export const PATTERN_TYPES = {
   alarm: 'alarm',
