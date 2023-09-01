@@ -614,6 +614,10 @@ export default {
       name: 'Profil : Modèles d\'entreprise',
       description: 'Cette autorisation définit l\'accès à la fonctionnalité des modèles d\'entreprise',
     },
+    [USERS_PERMISSIONS.technical.profile.theme]: {
+      name: 'Thèmes de couleurs',
+      description: 'Cette autorisation définit l\'accès aux couleurs du thème',
+    },
 
     /**
      * API Permissions
