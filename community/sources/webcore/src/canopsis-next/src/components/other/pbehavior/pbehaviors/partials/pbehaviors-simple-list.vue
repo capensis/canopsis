@@ -26,8 +26,9 @@
     )
       template(#enabled="{ item }")
         c-enabled(:value="item.enabled")
-      template(#tstart="{ item }") {{ item.tstart | timezone($system.timezone) }}
-      template(#tstop="{ item }") {{ item.tstop | timezone($system.timezone) }}
+      template(#tstart="{ item }") {{ formatIntervalDate(item, 'tstart') }}
+      template(#tstop="{ item }") {{ formatIntervalDate(item, 'tstop') }}
+      template(#rrule_end="{ item }") {{ formatRruleEndDate(item) }}
       template(#rrule="{ item }")
         v-icon {{ item.rrule ? 'check' : 'clear' }}
       template(#icon="{ item }")
@@ -55,6 +56,8 @@ import Observer from '@/services/observer';
 
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
+import { pbehaviorsDateFormatMixin } from '@/mixins/pbehavior/pbehavior-date-format';
+
 const { mapActions } = createNamespacedHelpers('pbehavior');
 
 export default {
@@ -66,6 +69,7 @@ export default {
       },
     },
   },
+  mixins: [pbehaviorsDateFormatMixin],
   props: {
     entity: {
       type: Object,
@@ -106,9 +110,10 @@ export default {
         { text: this.$t('pbehavior.isEnabled'), value: 'enabled' },
         { text: this.$t('pbehavior.begins'), value: 'tstart' },
         { text: this.$t('pbehavior.ends'), value: 'tstop' },
+        { text: this.$t('pbehavior.rruleEnd'), value: 'rrule_end' },
+        { text: this.$t('common.recurrence'), value: 'rrule' },
         { text: this.$t('common.type'), value: 'type.name' },
         { text: this.$t('common.reason'), value: 'reason.name' },
-        { text: this.$t('common.recurrence'), value: 'rrule' },
         { text: this.$t('common.icon'), value: 'icon' },
       ];
 

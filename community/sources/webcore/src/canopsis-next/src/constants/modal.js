@@ -58,7 +58,6 @@ export const MODALS = {
   pbehaviorsCalendar: 'pbehaviors-calendar',
   pbehaviorRecurrenceRule: 'pbehavior-recurrence-rule',
   createRecurrenceRule: 'create-recurrence-rule',
-  selectExceptionsLists: 'select-exceptions-lists',
   pbehaviorRecurrentChangesConfirmation: 'pbehavior-recurrent-changes-confirmation',
   createPbehavior: 'create-pbehavior',
   createPbehaviorType: 'create-pbehavior-type',
@@ -103,4 +102,6 @@ export const MODALS = {
   executeDeclareTickets: 'execute-declare-tickets',
 
   createLinkRule: 'create-link-rule',
+
+  createMaintenance: 'create-maintenance',
 };

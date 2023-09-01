@@ -95,6 +95,7 @@ var UnauthorizedResponse = ErrorResponse{Error: http.StatusText(http.StatusUnaut
 var InternalServerErrorResponse = ErrorResponse{Error: "Internal server error"}
 var ForbiddenResponse = ErrorResponse{Error: http.StatusText(http.StatusForbidden)}
 var RequestTimeoutResponse = ErrorResponse{Error: http.StatusText(http.StatusRequestTimeout)}
+var CanopsisUnderMaintenanceResponse = ErrorResponse{Error: "canopsis is under maintenance"}
 
 // ValidationErrorResponse is response for failed validation.
 type ValidationErrorResponse struct {
