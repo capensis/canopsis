@@ -24,9 +24,8 @@ Feature: create a job
         "resource": "{{ `{{ .Alarm.Value.Resource }}` }}"
       },
       "multiple_executions": true,
-      "retry_amount": 3,
-      "retry_interval": {
-        "value": 10,
+      "job_wait_interval": {
+        "value": 40,
         "unit": "s"
       }
     }
@@ -53,9 +52,8 @@ Feature: create a job
         "resource": "{{ `{{ .Alarm.Value.Resource }}` }}"
       },
       "multiple_executions": true,
-      "retry_amount": 3,
-      "retry_interval": {
-        "value": 10,
+      "job_wait_interval": {
+        "value": 40,
         "unit": "s"
       }
     }
@@ -83,9 +81,8 @@ Feature: create a job
         "resource": "{{ `{{ .Alarm.Value.Resource }}` }}"
       },
       "multiple_executions": true,
-      "retry_amount": 3,
-      "retry_interval": {
-        "value": 10,
+      "job_wait_interval": {
+        "value": 40,
         "unit": "s"
       }
     }

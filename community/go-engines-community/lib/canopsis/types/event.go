@@ -96,6 +96,8 @@ const (
 	EventTypeEntityUpdated = "entityupdated"
 	// EventTypeEntityToggled is used to notify engines that entity is enabled/disabled.
 	EventTypeEntityToggled = "entitytoggled"
+
+	EventTypeUpdateCounters = "updatecounters"
 	// EventTypeAlarmSkipped is used to check alarm in service counters if alarm was skipped
 	// during service recompute.
 	EventTypeAlarmSkipped = "alarmskipped"
@@ -196,9 +198,6 @@ type Event struct {
 
 	// Instruction is used only for manual instructions kpi metrics
 	Instruction string `bson:"instruction,omitempty" json:"instruction,omitempty"`
-
-	// TODO: should be refactored
-	IsEntityUpdated bool `bson:"-" json:"-"`
 
 	// IsMetaAlarmUpdated is true if an alarm is added to a meta alarm on an event.
 	IsMetaAlarmUpdated bool `bson:"ma_updated,omitempty" json:"ma_updated,omitempty"`

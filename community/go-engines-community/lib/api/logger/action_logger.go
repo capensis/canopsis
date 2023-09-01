@@ -68,6 +68,8 @@ const (
 	ValueTypeDeclareTicketRule = "declareticketrule"
 
 	ValueTypeLinkRule = "linkrule"
+
+	ValueTypeAlarmTag = "alarmtag"
 )
 
 type ActionLogger interface {

@@ -82,6 +82,7 @@ func NewStore(
 			mongo.KpiFilterMongoCollection,
 			mongo.DeclareTicketRuleMongoCollection,
 			mongo.LinkRuleMongoCollection,
+			mongo.AlarmTagCollection,
 		},
 
 		pbhComputeChan: pbhComputeChan,
@@ -244,7 +245,6 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 			if err != nil {
 				return err
 			}
-
 		}
 
 		return nil

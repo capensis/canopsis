@@ -956,4 +956,28 @@ export default {
   importPbehaviorException: {
     title: 'Import exception dates',
   },
+  createMaintenance: {
+    enableMaintenance: 'Enable maintenance mode',
+    setup: {
+      title: 'Maintenance mode setup',
+    },
+    edit: {
+      title: 'Edit maintenance mode',
+    },
+  },
+  confirmationLeaveMaintenance: {
+    title: 'Leave maintenance mode',
+    text: 'Are you sure you want to leave the maintenance mode?\nAll users will be able to login to the system after leaving.',
+  },
+  createTag: {
+    create: {
+      title: 'Create a tag',
+    },
+    edit: {
+      title: 'Edit a tag',
+    },
+    duplicate: {
+      title: 'Duplicate a tag',
+    },
+  },
 };
