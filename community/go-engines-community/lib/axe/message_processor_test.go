@@ -330,6 +330,7 @@ func benchmarkMessageProcessor(
 			statecounters.NewStateCountersService(dbClient, amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), template.NewExecutor(templateConfigProvider, tzConfigProvider), logger),
 			pbehavior.NewEntityTypeResolver(pbhStore, pbehavior.NewEntityMatcher(dbClient), logger),
 			NewNullAutoInstructionMatcher(),
+			alarmtag.NewInternalTagAlarmMatcher(dbClient),
 			logger,
 		),
 		TechMetricsSender:      techmetrics.NewSender(techMetricsConfigProvider, time.Minute, 0, 0, logger),
@@ -338,7 +339,7 @@ func benchmarkMessageProcessor(
 		Decoder:                json.NewDecoder(),
 		Logger:                 logger,
 		PbehaviorAdapter:       pbehavior.NewAdapter(dbClient),
-		TagUpdater:             alarmtag.NewUpdater(dbClient),
+		TagUpdater:             alarmtag.NewExternalUpdater(dbClient),
 		AutoInstructionMatcher: NewNullAutoInstructionMatcher(),
 	}
 
