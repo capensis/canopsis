@@ -217,6 +217,10 @@ export const API_ROUTES = {
   },
   linkRule: '/api/v4/link-rules',
   linkCategories: '/api/v4/link-categories',
+  themes: {
+    list: '/api/v4/themes',
+    bulkList: '/api/v4/bulk/themes',
+  },
 
   /**
    * Cat routes
@@ -288,7 +292,19 @@ export const API_ROUTES = {
 export const COLORS = {
   primary: '#2fab63',
   secondary: '#2b3e4f',
+  accent: '#82b1ff',
   error: '#ff5252',
+  info: '#2196f3',
+  success: '#4caf50',
+  warning: '#fb8c00',
+  background: '#ffffff',
+  table: {
+    background: '#FFFFFF',
+    activeColor: '#000000',
+    rowColor: '#FFFFFF',
+    shiftRowColor: '#F5F5F5',
+    hoverRowColor: '#F5F5F5',
+  },
   state: {
     ok: '#00a65a',
     minor: '#fcdc00',

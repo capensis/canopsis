@@ -388,3 +388,8 @@ export const CreateMaintenance = () => ({
   component: import(/* webpackChunkName: "Maintenance" */ './maintenance/create-maintenance.vue'),
   loading: LoaderOverlay,
 });
+
+export const CreateTheme = () => ({
+  component: import(/* webpackChunkName: "Theme" */ './theme/create-theme.vue'),
+  loading: LoaderOverlay,
+});

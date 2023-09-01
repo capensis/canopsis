@@ -61,6 +61,7 @@ import metricsSettingsModule from './metrics-settings';
 import aggregatedMetricsModule from './aggregated-metrics';
 import vectorMetricsModule from './vector-metrics';
 import groupMetricsModule from './group-metrics';
+import themeModule from './theme';
 
 export default {
   alarm: alarmModule,
@@ -126,4 +127,5 @@ export default {
   aggregatedMetrics: aggregatedMetricsModule,
   vectorMetrics: vectorMetricsModule,
   groupMetrics: groupMetricsModule,
+  theme: themeModule,
 };

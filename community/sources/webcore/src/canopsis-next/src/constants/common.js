@@ -31,6 +31,7 @@ export const ROUTES_NAMES = {
   exploitationLinkRules: 'exploitation-link-rules',
   notificationInstructionStats: 'notification-instruction-stats',
   profilePatterns: 'profile-patterns',
+  profileColorThemes: 'profile-color-themes',
 };
 
 export const ROUTES = {
@@ -66,6 +67,7 @@ export const ROUTES = {
   exploitationLinkRules: '/exploitation/link-rules',
   notificationInstructionStats: '/notification/instruction-stats',
   profilePatterns: '/filters',
+  profileColorThemes: '/themes',
 };
 
 export const GROUPS_NAVIGATION_TYPES = {
