@@ -6,7 +6,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -18,13 +17,11 @@ func NewChangeStateExecutor(
 	alarmConfigProvider config.AlarmConfigProvider,
 	userInterfaceConfigProvider config.UserInterfaceConfigProvider,
 	alarmStatusService alarmstatus.Service,
-	metricsSender metrics.Sender,
 ) operation.Executor {
 	return &changeStateExecutor{
 		alarmConfigProvider:         alarmConfigProvider,
 		userInterfaceConfigProvider: userInterfaceConfigProvider,
 		alarmStatusService:          alarmStatusService,
-		metricsSender:               metricsSender,
 	}
 }
 
@@ -32,8 +29,6 @@ type changeStateExecutor struct {
 	alarmConfigProvider         config.AlarmConfigProvider
 	userInterfaceConfigProvider config.UserInterfaceConfigProvider
 	alarmStatusService          alarmstatus.Service
-
-	metricsSender metrics.Sender
 }
 
 // Exec emits change state event.
@@ -109,8 +104,6 @@ func (e *changeStateExecutor) Exec(
 		"v.last_update_date":                  alarm.Value.LastUpdateDate,
 	})
 	alarm.AddUpdate("$push", bson.M{"v.steps": bson.M{"$each": bson.A{alarm.Value.State, alarm.Value.Status}}})
-
-	e.metricsSender.SendUpdateState(*alarm, *entity, currentState)
 
 	return types.AlarmChangeTypeChangeState, nil
 }

@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"regexp"
 	"sort"
 	"time"
 
@@ -59,6 +61,8 @@ type store struct {
 
 	entitiesDefaultSearchByFields []string
 	entitiesDefaultSortBy         string
+
+	dupErrorRegexp *regexp.Regexp
 }
 
 func NewStore(
@@ -81,6 +85,7 @@ func NewStore(
 		defaultSortBy:                 "created",
 		entitiesDefaultSearchByFields: []string{"_id", "name", "type"},
 		entitiesDefaultSortBy:         "_id",
+		dupErrorRegexp:                regexp.MustCompile(`{ ([^:]+)`),
 	}
 }
 
@@ -106,16 +111,12 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
 
-		err := s.dbCollection.FindOne(ctx, bson.M{"name": doc.Name}).Err()
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return err
-		}
-		if err == nil {
-			return common.NewValidationError("name", "Name already exists.")
-		}
-
-		_, err = s.dbCollection.InsertOne(ctx, doc)
+		_, err := s.dbCollection.InsertOne(ctx, doc)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.parseDupError(err)
+			}
+
 			return err
 		}
 
@@ -347,15 +348,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
 
-		err := s.dbCollection.FindOne(ctx, bson.M{"name": r.Name, "_id": bson.M{"$ne": r.ID}}).Err()
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return err
-		}
-		if err == nil {
-			return common.NewValidationError("name", "Name already exists.")
-		}
-
-		err = s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID, "origin": bson.M{"$ne": nil}}).Err()
+		err := s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID, "origin": bson.M{"$ne": nil}}).Err()
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
 		}
@@ -365,6 +358,10 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.parseDupError(err)
+			}
+
 			return err
 		}
 
@@ -448,16 +445,6 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
 
-		if r.Name != nil {
-			err := s.dbCollection.FindOne(ctx, bson.M{"name": *r.Name, "_id": bson.M{"$ne": r.ID}}).Err()
-			if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-				return err
-			}
-			if err == nil {
-				return common.NewValidationError("name", "Name already exists.")
-			}
-		}
-
 		err := s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID, "origin": bson.M{"$ne": nil}}).Err()
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
@@ -468,6 +455,10 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.parseDupError(err)
+			}
+
 			return err
 		}
 
@@ -595,16 +586,12 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 			return common.NewValidationError("entity", "Pbehavior for origin already exists.")
 		}
 
-		err = s.dbCollection.FindOne(ctx, bson.M{"name": doc.Name}).Err()
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return err
-		}
-		if err == nil {
-			return common.NewValidationError("name", "Name already exists.")
-		}
-
 		_, err = s.dbCollection.InsertOne(ctx, doc)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.parseDupError(err)
+			}
+
 			return err
 		}
 
@@ -795,6 +782,24 @@ func (s *store) fillActiveStatuses(ctx context.Context, result []Response) error
 	}
 
 	return nil
+}
+
+func (s *store) parseDupError(err error) error {
+	match := s.dupErrorRegexp.FindStringSubmatch(err.Error())
+	if len(match) > 1 {
+		matchedStr := match[1]
+
+		switch matchedStr {
+		case "name":
+			return common.NewValidationError("name", "Name already exists.")
+		case "_id":
+			return common.NewValidationError("_id", "ID already exists.")
+		default:
+			return common.NewValidationError(matchedStr, matchedStr+" already exists.")
+		}
+	}
+
+	return fmt.Errorf("can't parse duplication error: %w", err)
 }
 
 func sortCalendarResponse(response []CalendarResponse) func(i, j int) bool {

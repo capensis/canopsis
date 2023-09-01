@@ -90,4 +90,6 @@ const (
 
 	EventFilterRuleCollection    = "eventfilter"
 	EventFilterFailureCollection = "eventfilter_failure"
+
+	EntityServiceCountersCollection = "entity_service_counters"
 )

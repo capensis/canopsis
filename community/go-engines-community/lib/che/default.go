@@ -6,14 +6,12 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	communityimport "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -51,23 +49,13 @@ func NewEngine(
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	entityAdapter := entity.NewAdapter(mongoClient)
-	entityServiceAdapter := entityservice.NewAdapter(mongoClient)
 	redisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	runInfoRedisSession := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
 	serviceRedisSession := m.DepRedisSession(ctx, redis.EntityServiceStorage, logger, cfg)
 	periodicalLockClient := redis.NewLockClient(redisSession)
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
-	enrichmentCenter := libcontext.NewEnrichmentCenter(
-		entityAdapter,
-		mongoClient,
-		entityservice.NewManager(
-			entityServiceAdapter,
-			entityservice.NewStorage(entityServiceAdapter, serviceRedisSession, json.NewEncoder(), json.NewDecoder(), logger),
-			logger,
-		),
-		metricsEntityMetaUpdater,
-	)
+	contextGraphManager := contextgraph.NewManager(entityAdapter, mongoClient, contextgraph.NewEntityServiceStorage(mongoClient), metricsEntityMetaUpdater, logger)
 
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
@@ -130,12 +118,7 @@ func NewEngine(
 				}
 			}
 
-			err := enrichmentCenter.LoadServices(ctx)
-			if err != nil {
-				return fmt.Errorf("unable to load services: %w", err)
-			}
-
-			_, err = periodicalLockClient.Obtain(ctx, redis.ChePeriodicalLockKey,
+			_, err := periodicalLockClient.Obtain(ctx, redis.ChePeriodicalLockKey,
 				options.PeriodicalWaitTime, &redislock.Options{
 					RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(1*time.Second), 1),
 				})
@@ -149,7 +132,7 @@ func NewEngine(
 			}
 
 			// Below are actions locked with ChePeriodicalLockKey for multi-instance configuration
-			err = enrichmentCenter.UpdateImpactedServices(ctx)
+			err = contextGraphManager.UpdateImpactedServicesFromDependencies(ctx)
 			if err != nil {
 				logger.Warn().Err(err).Msg("error while recomputing impacted services for connectors")
 			}
@@ -206,16 +189,15 @@ func NewEngine(
 		amqpConnection,
 		&messageProcessor{
 			FeaturePrintEventOnError: options.PrintEventOnError,
-			FeatureEventProcessing:   options.FeatureEventProcessing,
-			FeatureContextCreation:   options.FeatureContextCreation,
+			DbClient:                 mongoClient,
 
 			AlarmConfigProvider: alarmConfigProvider,
 			EventFilterService:  eventFilterService,
-			EnrichmentCenter:    enrichmentCenter,
+			ContextGraphManager: contextGraphManager,
 			TechMetricsSender:   techMetricsSender,
 			MetricsSender:       metricsSender,
 			AmqpPublisher:       m.DepAMQPChannelPub(amqpConnection),
-			AlarmAdapter:        alarm.NewAdapter(mongoClient),
+			MetaUpdater:         metricsEntityMetaUpdater,
 			EntityCollection:    mongoClient.Collection(mongo.EntityMongoCollection),
 			Encoder:             json.NewEncoder(),
 			Decoder:             json.NewDecoder(),
@@ -225,7 +207,6 @@ func NewEngine(
 	))
 	engine.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
 		EventFilterService: eventFilterService,
-		EnrichmentCenter:   enrichmentCenter,
 		PeriodicalInterval: options.PeriodicalWaitTime,
 		Logger:             logger,
 		LoadRules:          !mongoClient.IsDistributed(),
@@ -234,11 +215,12 @@ func NewEngine(
 		periodicalLockClient,
 		redis.CheSoftDeletePeriodicalLockKey,
 		&softDeletePeriodicalWorker{
-			collection:         mongoClient.Collection(mongo.EntityMongoCollection),
-			periodicalInterval: options.PeriodicalWaitTime,
-			eventPublisher:     communityimport.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
-			softDeleteWaitTime: options.SoftDeleteWaitTime,
-			logger:             logger,
+			entityCollection:          mongoClient.Collection(mongo.EntityMongoCollection),
+			serviceCountersCollection: mongoClient.Collection(mongo.EntityServiceCountersCollection),
+			periodicalInterval:        options.PeriodicalWaitTime,
+			eventPublisher:            communityimport.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
+			softDeleteWaitTime:        options.SoftDeleteWaitTime,
+			logger:                    logger,
 		},
 		logger,
 	))
@@ -258,7 +240,7 @@ func NewEngine(
 		periodicalLockClient,
 		redis.ChePeriodicalLockKey,
 		&impactedServicesPeriodicalWorker{
-			EnrichmentCenter:   enrichmentCenter,
+			Manager:            contextGraphManager,
 			PeriodicalInterval: options.PeriodicalWaitTime,
 			Logger:             logger,
 		},

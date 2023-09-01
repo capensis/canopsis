@@ -243,7 +243,7 @@ Feature: create and update alarm by main event stream
               },
               {
                 "_t": "stateinc",
-                "a": "test-connector-axe-change-connector-1.test-connector-name-axe-change-connector-1-1",
+                "a": "test-connector-axe-change-connector-1.test-connector-name-axe-change-connector-1-2",
                 "m": "test-output-axe-change-connector-1",
                 "val": 3
               }
