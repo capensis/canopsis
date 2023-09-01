@@ -1,27 +1,21 @@
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('view');
+const { mapActions } = createNamespacedHelpers('view');
 
 /**
  * @mixin Helpers for the view entity
  */
 export const entitiesViewMixin = {
-  computed: {
-    ...mapGetters({
-      getViewById: 'getItemById',
-    }),
-  },
   methods: {
     ...mapActions({
-      fetchView: 'fetchItem',
-      createView: 'create',
-      updateView: 'update',
-      updateViewsPositions: 'updatePositions',
-      updateViewWithoutStore: 'updateWithoutStore',
-      removeView: 'remove',
-      copyView: 'copy',
-      exportViewsWithoutStore: 'exportWithoutStore',
-      importViewsWithoutStore: 'importWithoutStore',
+      createView: 'createView',
+      updateView: 'updateView',
+      updateViewsPositions: 'updatePositionsView',
+      updateViewWithoutStore: 'updateWithoutStoreView',
+      removeView: 'removeView',
+      copyView: 'copyView',
+      exportViewsWithoutStore: 'exportViewWithoutStore',
+      importViewsWithoutStore: 'importViewWithoutStore',
     }),
 
     async createViewWithPopup({ data }) {

@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`c-compiled-template Renders \`c-compiled-template\` after mount 1`] = `<div />`;
+
+exports[`c-compiled-template Renders \`c-compiled-template\` after update context 1`] = `
+<div>
+  <span>
+    updated-context-value-1
+  </span>
+</div>
+`;
+
+exports[`c-compiled-template Renders \`c-compiled-template\` after update parentElement 1`] = `
+<section>
+  <span>
+    template
+  </span>
+</section>
+`;
+
+exports[`c-compiled-template Renders \`c-compiled-template\` after update template 1`] = `
+<div>
+  <div>
+    updated template
+  </div>
+</div>
+`;
+
+exports[`c-compiled-template Renders \`c-compiled-template\` with context 1`] = `
+<span>
+  <span>
+    context-value-1
+  </span>
+</span>
+`;
+
+exports[`c-compiled-template Renders \`c-compiled-template\` with simple template 1`] = `
+<div>
+  <span>
+    template
+  </span>
+</div>
+`;

@@ -1,6 +1,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapActions } = createNamespacedHelpers('view/tab');
+const { mapActions } = createNamespacedHelpers('view');
 
 /**
  * @mixin Helpers for the view tab entity
@@ -8,12 +8,12 @@ const { mapActions } = createNamespacedHelpers('view/tab');
 export const entitiesViewTabMixin = {
   methods: {
     ...mapActions({
-      fetchViewTab: 'fetchItem',
-      createViewTab: 'create',
-      updateViewTab: 'update',
-      copyViewTab: 'copy',
-      removeViewTab: 'remove',
-      updateViewTabPositions: 'updatePositions',
+      fetchViewTab: 'fetchViewTab',
+      createViewTab: 'createViewTab',
+      updateViewTab: 'updateViewTab',
+      copyViewTab: 'copyViewTab',
+      removeViewTab: 'removeViewTab',
+      updateViewTabPositions: 'updateViewTabPositions',
     }),
 
     async updateViewTabAndFetch({ id, data }) {
