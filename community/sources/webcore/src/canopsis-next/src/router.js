@@ -39,6 +39,7 @@ const ExploitationResolveRules = () => import(/* webpackChunkName: "AlarmStatusR
 const ExploitationDeclareTicketRules = () => import(/* webpackChunkName: "DeclareTicketRule" */ '@/views/exploitation/declare-ticket-rules.vue');
 const ExploitationLinkRules = () => import(/* webpackChunkName: "LinkRule" */ '@/views/exploitation/link-rules.vue');
 const ProfilePatterns = () => import(/* webpackChunkName: "Pattern" */ '@/views/profile/patterns.vue');
+const ProfileThemes = () => import(/* webpackChunkName: "Theme" */ '@/views/profile/Themes.vue');
 const Playlist = () => import(/* webpackChunkName: "Playlist" */ '@/views/playlist.vue');
 const NotificationInstructionStats = () => import(/* webpackChunkName: "InstructionStats" */ '@/views/notification/instruction-stats.vue');
 
@@ -374,6 +375,17 @@ const routes = [
     component: ProfilePatterns,
     meta: {
       requiresLogin: true,
+    },
+  },
+  {
+    path: ROUTES.profileColorThemes,
+    name: ROUTES_NAMES.profileColorThemes,
+    component: ProfileThemes,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.profile.theme,
+      },
     },
   },
   {

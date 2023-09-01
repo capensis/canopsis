@@ -614,6 +614,10 @@ export default {
       name: 'Profile: Corporate patterns',
       description: 'This permission defines the access to the corporate patterns functionality',
     },
+    [USERS_PERMISSIONS.technical.profile.theme]: {
+      name: 'Color themes',
+      description: 'This permission defines the access to the theme colors',
+    },
 
     /**
      * API Permissions

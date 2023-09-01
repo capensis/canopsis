@@ -969,4 +969,15 @@ export default {
     title: 'Quitter le mode maintenance',
     text: 'Êtes-vous sûr de vouloir quitter le mode maintenance ?\\nTous les utilisateurs pourront se connecter au système après avoir quitté.',
   },
+  createTheme: {
+    create: {
+      title: 'Créer un thème',
+    },
+    edit: {
+      title: 'Modifier le thème',
+    },
+    duplicate: {
+      title: 'Thème en double',
+    },
+  },
 };
