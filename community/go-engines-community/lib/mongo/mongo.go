@@ -13,15 +13,17 @@ import (
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/description"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"go.mongodb.org/mongo-driver/x/mongo/driver/topology"
 )
 
 const (
 	defaultClientTimeout            = 15 * time.Second
 	disableRetries       contextKey = "disable_retries"
 
-	transactionTestTimeout = 3 * time.Second
+	topologyCheckTimeout = 1 * time.Second
 )
 
 type contextKey string
@@ -355,16 +357,17 @@ func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duratio
 		return nil, err
 	}
 
-	db := client.Database(dbName)
-
 	dbClient := &dbClient{
 		Client:          client,
-		Database:        db,
+		Database:        client.Database(dbName),
 		RetryCount:      retryCount,
 		MinRetryTimeout: minRetryTimeout,
 	}
 
-	dbClient.checkTransactionEnabled(ctx, logger)
+	err = dbClient.checkTransactionEnabled(ctx, logger)
+	if err != nil {
+		return nil, err
+	}
 
 	return dbClient, nil
 }
@@ -405,16 +408,17 @@ func NewClientWithOptions(
 		return nil, err
 	}
 
-	db := client.Database(dbName)
-
 	dbClient := &dbClient{
 		Client:          client,
-		Database:        db,
+		Database:        client.Database(dbName),
 		RetryCount:      retryCount,
 		MinRetryTimeout: minRetryTimeout,
 	}
 
-	dbClient.checkTransactionEnabled(ctx, logger)
+	err = dbClient.checkTransactionEnabled(ctx, logger)
+	if err != nil {
+		return nil, err
+	}
 
 	return dbClient, nil
 }
@@ -472,47 +476,87 @@ func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) 
 	return err
 }
 
-func (c *dbClient) checkTransactionEnabled(pCtx context.Context, logger zerolog.Logger) {
-	ctx, cancel := context.WithTimeout(pCtx, transactionTestTimeout)
-	defer cancel()
+func (c *dbClient) checkTransactionEnabled(ctx context.Context, logger zerolog.Logger) error {
+	var err error
 
-	session, err := c.Client.StartSession()
+	c.isDistributed, err = isMongoReplicaSetEnabled(ctx)
 	if err != nil {
-		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
-		return
+		return err
 	}
 
-	defer session.EndSession(ctx)
-
-	collection := c.Collection("test_collection")
-	_, err = collection.InsertOne(ctx, bson.M{})
-	if err != nil {
-		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
-		return
+	if c.isDistributed {
+		logger.Info().Msg("replica set is detected, transactions are enabled")
+	} else {
+		logger.Warn().Msg("replica set is not detected, transactions are disabled")
 	}
 
-	_, err = session.WithTransaction(ctx, func(sessCtx mongo.SessionContext) (interface{}, error) {
-		return nil, func(ctx mongo.SessionContext) error {
-			_, err = collection.DeleteMany(ctx, bson.M{})
-			return err
-		}(sessCtx)
-	})
-
-	_ = collection.Drop(ctx)
-
-	if err != nil {
-		logger.Warn().Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
-		return
-	}
-
-	logger.Info().Msg("MongoDB version supports transactions, transactions are enabled")
-	c.isDistributed = true
+	return nil
 }
 
 // IsDistributed returns true if MongoDB is Replica Set or Sharded Cluster.
 // Use to check feature availability : Transactions, Change Streams, etc.
 func (c *dbClient) IsDistributed() bool {
 	return c.isDistributed
+}
+
+func isMongoReplicaSetEnabled(ctx context.Context) (bool, error) {
+	t := time.Now()
+	defer func() {
+		fmt.Printf("detect time: %s\n", time.Since(t))
+	}()
+	mongoURL, _, err := getURL()
+	if err != nil {
+		return false, fmt.Errorf("could not get mongo url: %w", err)
+	}
+
+	cfg, err := topology.NewConfig(options.Client().ApplyURI(mongoURL), nil)
+	if err != nil {
+		return false, fmt.Errorf("could not create topology config: %w", err)
+	}
+
+	top, err := topology.New(cfg)
+	if err != nil {
+		return false, fmt.Errorf("could not create topology: %w", err)
+	}
+
+	defer top.Disconnect(ctx)
+
+	err = top.Connect()
+	if err != nil {
+		return false, fmt.Errorf("could not connect to topology: %w", err)
+	}
+
+	sub, err := top.Subscribe()
+	if err != nil {
+		return false, fmt.Errorf("could not subscribe to topology: %w", err)
+	}
+
+	defer top.Unsubscribe(sub)
+
+	for {
+		select {
+		case <-ctx.Done():
+			return false, nil
+		case <-time.After(topologyCheckTimeout):
+			return false, nil
+		case desc, ok := <-sub.Updates:
+			if !ok {
+				return false, fmt.Errorf("topology subscription was closed: %w", err)
+			}
+
+			switch desc.Kind {
+			case description.Unknown:
+				continue
+			case description.Sharded,
+				description.ReplicaSet,
+				description.ReplicaSetNoPrimary,
+				description.ReplicaSetWithPrimary:
+				return true, nil
+			default:
+				return false, nil
+			}
+		}
+	}
 }
 
 // getURL parses URL value in EnvURL environment variable
