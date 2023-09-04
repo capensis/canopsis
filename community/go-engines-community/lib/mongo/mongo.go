@@ -92,7 +92,8 @@ const (
 
 	MapMongoCollection = "map"
 
-	AlarmTagCollection = "alarm_tag"
+	AlarmTagCollection      = "alarm_tag"
+	AlarmTagColorCollection = "alarm_tag_color"
 )
 
 const (
