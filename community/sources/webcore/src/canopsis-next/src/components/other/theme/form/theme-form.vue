@@ -1,6 +1,7 @@
 <template lang="pug">
   v-layout.theme-form(column)
     c-name-field(v-field="form.name")
+
     c-information-block(:title="$t('theme.main.title')")
       v-layout.theme-form__colors(column)
         theme-color-picker-field(
@@ -59,45 +60,51 @@
           :label="$t('theme.table.rowColor')",
           :help-text="$t('theme.table.rowColorHelpText')"
         )
-        theme-color-picker-field(
+        theme-enabled-color-picker-field(
           v-field="form.colors.table.shift_row_color",
+          :enable-label="$t('theme.table.shiftRowEnable')",
+          :enable-help-text="$t('theme.table.shiftRowEnableHelpText')",
           :label="$t('theme.table.shiftRowColor')",
           :help-text="$t('theme.table.shiftRowColorHelpText')"
         )
-        theme-color-picker-field(
+        theme-enabled-color-picker-field(
           v-field="form.colors.table.hover_row_color",
+          :enable-label="$t('theme.table.hoverRowEnable')",
+          :enable-help-text="$t('theme.table.hoverRowEnableHelpText')",
           :label="$t('theme.table.hoverRowColor')"
         )
-    c-information-block(:title="$t('theme.states.title')")
+    c-information-block(:title="$t('theme.state.title')")
       v-layout.theme-form__colors(column)
         theme-color-picker-field(
-          v-field="form.colors.states.ok",
-          :label="$t('theme.states.ok')",
-          :help-text="$t('theme.states.okHelpText')"
+          v-field="form.colors.state.ok",
+          :label="$t('theme.state.ok')",
+          :help-text="$t('theme.state.okHelpText')"
         )
         theme-color-picker-field(
-          v-field="form.colors.states.minor",
-          :label="$t('theme.states.minor')",
-          :help-text="$t('theme.states.minorHelpText')"
+          v-field="form.colors.state.minor",
+          :label="$t('theme.state.minor')",
+          :help-text="$t('theme.state.minorHelpText')"
         )
         theme-color-picker-field(
-          v-field="form.colors.states.major",
-          :label="$t('theme.states.major')",
-          :help-text="$t('theme.states.majorHelpText')"
+          v-field="form.colors.state.major",
+          :label="$t('theme.state.major')",
+          :help-text="$t('theme.state.majorHelpText')"
         )
         theme-color-picker-field(
-          v-field="form.colors.states.critical",
-          :label="$t('theme.states.critical')",
-          :help-text="$t('theme.states.criticalHelpText')"
+          v-field="form.colors.state.critical",
+          :label="$t('theme.state.critical')",
+          :help-text="$t('theme.state.criticalHelpText')"
         )
 </template>
 
 <script>
+import ThemeEnabledColorPickerField from '@/components/other/theme/form/fields/theme-enabled-color-picker-field.vue';
+
 import ThemeColorPickerField from './fields/theme-color-picker-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { ThemeColorPickerField },
+  components: { ThemeEnabledColorPickerField, ThemeColorPickerField },
   model: {
     prop: 'form',
     event: 'input',

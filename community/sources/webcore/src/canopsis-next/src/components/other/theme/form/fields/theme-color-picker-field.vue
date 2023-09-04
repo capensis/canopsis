@@ -1,18 +1,14 @@
 <template lang="pug">
   v-layout.theme-color-picker-field(row, justify-space-between, align-center)
     v-layout(align-center)
-      span.v-label.mr-2 {{ label }}
+      label.theme-color-picker-field__label.mr-2(
+        :class="{ 'theme-color-picker-field__label--disabled': disabled }"
+      ) {{ label }}
       c-help-icon(v-if="helpText", :text="helpText", top)
-    v-btn.theme-color-picker-field__button.ma-0.pa-0(
-      :style="style",
-      block,
-      @click="showColorPickerModal"
-    )
+    c-color-picker-menu-field(v-field="value", :disabled="disabled")
 </template>
 
 <script>
-import { MODALS } from '@/constants';
-
 import { formBaseMixin } from '@/mixins/form';
 
 export default {
@@ -34,23 +30,9 @@ export default {
       type: String,
       required: false,
     },
-  },
-  computed: {
-    style() {
-      return {
-        backgroundColor: this.value,
-      };
-    },
-  },
-  methods: {
-    showColorPickerModal() {
-      this.$modals.show({
-        name: MODALS.colorPicker,
-        config: {
-          color: this.value,
-          action: color => this.updateModel(color),
-        },
-      });
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
 };
@@ -58,10 +40,12 @@ export default {
 
 <style lang="scss">
 .theme-color-picker-field {
-  &__button {
-    min-width: unset;
-    max-width: 80px;
-    flex-shrink: 0;
+  &__label {
+    font-size: 16px;
+
+    &--disabled {
+      opacity: 0.5;
+    }
   }
 }
 </style>

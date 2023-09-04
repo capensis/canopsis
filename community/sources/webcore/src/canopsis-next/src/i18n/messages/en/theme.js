@@ -38,12 +38,18 @@ export default {
     rowColor: 'Table background color',
     rowColorHelpText: 'BG color for the alarm list table',
 
+    shiftRowEnable: 'Shift table background colors',
+    shiftRowEnableHelpText: 'Switcher to enable/disable color shifts for table rows',
+
     shiftRowColor: 'Second table background color',
-    shiftRowColorHelpText: 'When enabled, rows colors are switching (every second row color is different).',
+    shiftRowColorHelpText: 'When enabled, rows colors are switching (every second row color is different)',
+
+    hoverRowEnable: 'Change row color on hover',
+    hoverRowEnableHelpText: 'Switcher to enable/disable table row color change on hover',
 
     hoverRowColor: 'Table row color on hover',
   },
-  states: {
+  state: {
     title: 'Severity colors',
 
     ok: 'Ok',

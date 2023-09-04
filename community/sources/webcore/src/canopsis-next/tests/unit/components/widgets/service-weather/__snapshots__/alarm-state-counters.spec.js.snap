@@ -15,8 +15,8 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light white--text"
-        style="font-size: 18px;"
+        class="v-icon material-icons theme--light"
+        style="font-size: 18px; color: white; caret-color: white;"
       >
         build
       </i>
@@ -31,8 +31,8 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light white--text"
-        style="font-size: 18px;"
+        class="v-icon material-icons theme--light"
+        style="font-size: 18px; color: white; caret-color: white;"
       >
         $vuetify.icons.playlist_build
       </i>
@@ -47,8 +47,8 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light white--text"
-        style="font-size: 18px;"
+        class="v-icon material-icons theme--light"
+        style="font-size: 18px; color: white; caret-color: white;"
       >
         playlist_play
       </i>
@@ -63,8 +63,8 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light white--text"
-        style="font-size: 18px;"
+        class="v-icon material-icons theme--light"
+        style="font-size: 18px; color: white; caret-color: white;"
       >
         playlist_add_check
       </i>
@@ -80,7 +80,7 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       <i
         aria-hidden="true"
         class="v-icon material-icons theme--light"
-        style="font-size: 18px; color: rgb(245, 105, 84); caret-color: #f56954;"
+        style="font-size: 18px; caret-color: var(--v-state-critical-base);"
       >
         $vuetify.icons.warning_stroke
       </i>
@@ -96,7 +96,7 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       <i
         aria-hidden="true"
         class="v-icon material-icons theme--light"
-        style="font-size: 18px; color: rgb(255, 153, 0); caret-color: #ff9900;"
+        style="font-size: 18px; caret-color: var(--v-state-major-base);"
       >
         $vuetify.icons.warning_stroke
       </i>
@@ -112,7 +112,7 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       <i
         aria-hidden="true"
         class="v-icon material-icons theme--light"
-        style="font-size: 18px; color: rgb(252, 220, 0); caret-color: #fcdc00;"
+        style="font-size: 18px; caret-color: var(--v-state-minor-base);"
       >
         $vuetify.icons.warning_stroke
       </i>
@@ -127,8 +127,8 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light white--text"
-        style="font-size: 18px;"
+        class="v-icon material-icons theme--light"
+        style="font-size: 18px; color: white; caret-color: white;"
       >
         check_circle
       </i>
@@ -144,7 +144,7 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       <i
         aria-hidden="true"
         class="v-icon material-icons theme--light"
-        style="font-size: 18px; color: rgb(255, 82, 82); caret-color: #ff5252;"
+        style="font-size: 18px; caret-color: var(--v-error-base);"
       >
         $vuetify.icons.notification_important_stroke
       </i>
@@ -160,7 +160,7 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
       <i
         aria-hidden="true"
         class="v-icon material-icons theme--light"
-        style="font-size: 18px; color: rgb(255, 82, 82); caret-color: #ff5252;"
+        style="font-size: 18px; caret-color: var(--v-error-base);"
       >
         notification_important
       </i>
@@ -175,8 +175,8 @@ exports[`alarm-state-counters Renders \`alarm-state-counters\` with custom props
     >
       <i
         aria-hidden="true"
-        class="v-icon material-icons theme--light white--text"
-        style="font-size: 18px;"
+        class="v-icon material-icons theme--light"
+        style="font-size: 18px; color: white; caret-color: white;"
       >
         $vuetify.icons.mediation
       </i>

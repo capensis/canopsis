@@ -24,6 +24,7 @@
 import { omit } from 'lodash';
 
 import { MODALS } from '@/constants';
+import { DEFAULT_THEME_COLORS } from '@/config';
 
 import { pickIds } from '@/helpers/array';
 
@@ -45,11 +46,7 @@ export default {
       return [
         {
           name: 'Canopsis',
-          colors: {
-            main: {},
-            table: {},
-            states: {},
-          },
+          colors: DEFAULT_THEME_COLORS,
         },
       ];
     },
@@ -85,6 +82,10 @@ export default {
           title: this.$t('modals.createTheme.edit.title'),
           action: async (newTheme) => {
             await this.createTheme({ data: newTheme });
+
+            /**
+             * TODO: Should be handled update current theme
+             */
 
             return this.fetchList();
           },
