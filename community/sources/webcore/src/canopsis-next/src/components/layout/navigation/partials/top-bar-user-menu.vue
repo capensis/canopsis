@@ -41,7 +41,7 @@ export default {
         },
         {
           icon: 'palette',
-          title: this.$t('themes.colorThemes'),
+          title: this.$t('theme.colorThemes'),
           route: { name: ROUTES_NAMES.profileColorThemes },
         },
         {

@@ -1,8 +1,10 @@
 import Vue from 'vue';
 import theme from 'vuetify/es5/components/Vuetify/mixins/theme';
 
-import { THEMES, THEMES_NAMES } from '@/config';
+import { DEFAULT_THEME_COLORS, THEMES, THEMES_NAMES } from '@/config';
 import { DEFAULT_TIMEZONE } from '@/constants';
+
+import { themeColorsToCSSVariables } from '@/helpers/entities/theme/entity';
 
 export const systemMixin = {
   provide() {
@@ -34,9 +36,16 @@ export const systemMixin = {
 
     setTheme(name = THEMES_NAMES.canopsis) {
       if (THEMES[name]) {
-        const { dark, colors } = THEMES[name];
+        const { dark } = THEMES[name];
+        const { colors } = {
+          colors: {
+            ...DEFAULT_THEME_COLORS,
+          },
+        };
 
-        this.$vuetify.theme = theme(colors);
+        const variables = themeColorsToCSSVariables(colors);
+
+        this.$vuetify.theme = theme(variables);
 
         this.system.dark = dark;
       }
