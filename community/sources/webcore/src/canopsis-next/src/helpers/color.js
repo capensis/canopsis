@@ -60,3 +60,28 @@ export const isValidColor = color => tinycolor(color).isValid();
 export const getDarkenColor = (color, amount) => tinycolor(color)
   .darken(amount)
   .toString();
+
+/**
+ * Check property is css variable
+ *
+ * @param {string} property
+ * @returns {boolean}
+ */
+export const isCSSVariable = property => /^var\(.+\)$/.test(property);
+
+/**
+ * Get css variable name
+ *
+ * @param {string} property
+ * @returns {string}
+ */
+export const getCSSVariableName = property => property.match(/^var\((.+)\)$/)[1];
+
+/**
+ * Get darken color
+ *
+ * @param {Element} element
+ * @param {string} property
+ */
+export const getCSSVariableColor = (element, property) => getComputedStyle(element)
+  .getPropertyValue(property);

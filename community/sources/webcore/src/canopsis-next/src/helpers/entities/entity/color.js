@@ -1,7 +1,7 @@
-import { get, isNumber } from 'lodash';
+import { isNumber } from 'lodash';
 
 import { COLORS } from '@/config';
-import { COLOR_INDICATOR_TYPES, ENTITIES_STATES_STYLES, EVENT_ENTITY_COLORS_BY_TYPE } from '@/constants';
+import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, EVENT_ENTITY_COLORS_BY_TYPE } from '@/constants';
 
 /**
  * Get color by entity impact state
@@ -17,7 +17,12 @@ export const getImpactStateColor = value => COLORS.impactState[value];
  * @param {number} value
  * @returns {string}
  */
-export const getEntityStateColor = value => get(ENTITIES_STATES_STYLES, [value, 'color']);
+export const getEntityStateColor = value => ({
+  [ENTITIES_STATES.ok]: 'var(--v-state-ok-base)',
+  [ENTITIES_STATES.minor]: 'var(--v-state-minor-base)',
+  [ENTITIES_STATES.major]: 'var(--v-state-major-base)',
+  [ENTITIES_STATES.critical]: 'var(--v-state-critical-base)',
+}[value]);
 
 /**
  * Get color for a entity by colorIndicator and isGrey parameters
@@ -28,7 +33,7 @@ export const getEntityStateColor = value => get(ENTITIES_STATES_STYLES, [value, 
  */
 export const getEntityColor = (entity = {}, colorIndicator = COLOR_INDICATOR_TYPES.state) => {
   if (entity.is_grey) {
-    return COLORS.state.pause;
+    return 'var(--v-state-pause-base)';
   }
 
   if (colorIndicator === COLOR_INDICATOR_TYPES.state) {

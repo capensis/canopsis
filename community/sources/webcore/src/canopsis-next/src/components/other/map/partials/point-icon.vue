@@ -13,7 +13,7 @@ import { ENTITIES_STATES } from '@/constants';
 import { COLORS } from '@/config';
 
 import { isNotActivePbehaviorType } from '@/helpers/entities/pbehavior/form';
-import { getEntityColor } from '@/helpers/entities/entity/color';
+import { getEntityColor, getEntityStateColor } from '@/helpers/entities/entity/color';
 
 export default {
   props: {
@@ -48,7 +48,7 @@ export default {
         return {
           name: 'check_circle_outline',
           color: 'white',
-          backgroundColor: COLORS.primary,
+          backgroundColor: getEntityStateColor(ENTITIES_STATES.ok),
         };
       }
 

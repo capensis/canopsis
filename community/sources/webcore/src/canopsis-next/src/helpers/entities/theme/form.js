@@ -1,43 +1,9 @@
-/**
- * @typedef {Object} ThemeMainColors
- * @property {string} primary
- * @property {string} secondary
- * @property {string} accent
- * @property {string} error
- * @property {string} info
- * @property {string} success
- * @property {string} warning
- * @property {string} background
- */
+import { COLORS } from '@/config';
 
 /**
- * @typedef {Object} ThemeTableColors
- * @property {string} background
- * @property {string} active_color
- * @property {string} row_color
- * @property {string} shift_row_color
- * @property {string} hover_row_color
- */
-
-/**
- * @typedef {Object} ThemeStatesColors
- * @property {string} ok
- * @property {string} minor
- * @property {string} major
- * @property {string} critical
- */
-
-/**
- * @typedef {Object} ThemeColors
- * @property {ThemeMainColors} main
- * @property {ThemeTableColors} table
- * @property {ThemeStatesColors} states
- */
-
-/**
- * @typedef {Object} Theme
- * @property {String} name
- * @property {ThemeColors} colors
+ * @typedef {Object} ThemeEnabledColor
+ * @property {boolean} enabled
+ * @property {color} string
  */
 
 /**
@@ -46,6 +12,8 @@
 
 /**
  * @typedef {ThemeTableColors} ThemeTableColorsForm
+ * @property {ThemeEnabledColor} shift_row_color
+ * @property {ThemeEnabledColor} hover_row_color
  */
 
 /**
@@ -56,15 +24,13 @@
  * @typedef {User} ThemeColorsForm
  * @property {ThemeMainColorsForm} main
  * @property {ThemeTableColorsForm} table
- * @property {ThemeStatesColorsForm} states
+ * @property {ThemeStatesColorsForm} state
  */
 
 /**
  * @typedef {User} ThemeForm
  * @property {ThemeColorsForm} colors
  */
-
-import { COLORS } from '@/config';
 
 /**
  * Convert theme main colors to form object
@@ -93,8 +59,14 @@ export const themeTableColorsToForm = (table = {}) => ({
   background: table.background ?? COLORS.table.background,
   active_color: table.active_color ?? COLORS.table.activeColor,
   row_color: table.row_color ?? COLORS.table.rowColor,
-  shift_row_color: table.shift_row_color,
-  hover_row_color: table.hover_row_color ?? COLORS.table.hoverRowColor,
+  shift_row_color: {
+    enabled: table.shift_row_color ?? false,
+    color: table.shift_row_color ?? COLORS.table.shiftRowColor,
+  },
+  hover_row_color: {
+    enabled: table.hover_row_color ?? true,
+    color: table.hover_row_color ?? COLORS.table.hoverRowColor,
+  },
 });
 
 /**
@@ -119,7 +91,7 @@ export const themeStatesColorsToForm = (states = {}) => ({
 export const themeColorsToForm = (colors = {}) => ({
   main: themeMainColorsToForm(colors.main),
   table: themeTableColorsToForm(colors.table),
-  states: themeStatesColorsToForm(colors.states),
+  state: themeStatesColorsToForm(colors.state),
 });
 
 /**

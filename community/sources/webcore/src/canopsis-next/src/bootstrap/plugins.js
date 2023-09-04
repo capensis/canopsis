@@ -1,4 +1,5 @@
 import Vuetify from 'vuetify';
+import theme from 'vuetify/es5/components/Vuetify/mixins/theme';
 import VueMq from 'vue-mq';
 import VueFullScreen from 'vue-fullscreen';
 import VueClipboard from 'vue-clipboard2';
@@ -10,7 +11,7 @@ import 'vuetify/dist/vuetify.min.css';
 import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
 
 import { MODALS } from '@/constants';
-import { MEDIA_QUERIES_BREAKPOINTS, THEMES } from '@/config';
+import { DEFAULT_THEME_COLORS, MEDIA_QUERIES_BREAKPOINTS } from '@/config';
 
 import ValidatorPlugin from '@/plugins/validator';
 import ModalsPlugin from '@/plugins/modals';
@@ -30,6 +31,7 @@ import i18n from '@/i18n';
 import Filters from '@/filters';
 
 import { setSeveralFields } from '@/helpers/immutable';
+import { themeColorsToCSSVariables } from '@/helpers/entities/theme/entity';
 
 import BullhornIcon from '@/components/icons/bullhorn.vue';
 import AltRouteIcon from '@/components/icons/alt_route.vue';
@@ -66,7 +68,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       customProperties: true,
     },
     iconfont: 'md',
-    theme: THEMES.canopsis.colors,
+    theme: theme(themeColorsToCSSVariables(DEFAULT_THEME_COLORS)),
     icons: {
       bullhorn: {
         component: BullhornIcon,
