@@ -99,11 +99,6 @@ export default {
       description: 'Déclenche le lancement des actions',
     },
 
-    [HEALTHCHECK_ENGINES_NAMES.service]: {
-      name: 'Service',
-      description: 'Met à jour les compteurs et génère service-events',
-    },
-
     [HEALTHCHECK_ENGINES_NAMES.dynamicInfos]: {
       name: 'Infos dynamiques',
       description: 'Ajoute des informations dynamiques à l\'alarme',
