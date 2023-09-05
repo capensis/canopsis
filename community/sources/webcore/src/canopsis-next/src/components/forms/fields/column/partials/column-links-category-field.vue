@@ -49,7 +49,9 @@ export default {
 
         const { categories = [] } = await this.fetchLinkCategoriesWithoutStore({ params });
 
-        this.categories = categories.filter(category => !!category);
+        if (categories?.length) {
+          this.categories = categories.filter(category => !!category);
+        }
       } catch (err) {
         console.error(err);
       } finally {
