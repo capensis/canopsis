@@ -19,18 +19,17 @@ require (
 	github.com/apognu/gocal v0.9.0
 	github.com/beevik/etree v1.2.0
 	github.com/brianvoe/gofakeit/v6 v6.23.2
-	github.com/bsm/redislock v0.7.2
-	github.com/casbin/casbin/v2 v2.69.1
+	github.com/bsm/redislock v0.9.4
+	github.com/casbin/casbin/v2 v2.77.2
 	github.com/chenyahui/gin-cache v1.8.1
 	github.com/cucumber/godog v0.13.0
 	github.com/dlclark/regexp2 v1.10.0
-	github.com/dop251/goja v0.0.0-20230304130813-e2f543bf4b4c
+	github.com/dop251/goja v0.0.0-20230828202809-3dbe69dd2b8e
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-ldap/ldap/v3 v3.4.5
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.15.3
-	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-testfixtures/testfixtures/v3 v3.9.0
 	github.com/goccy/go-yaml v1.11.0
 	github.com/golang-jwt/jwt/v5 v5.0.0
@@ -47,15 +46,16 @@ require (
 	github.com/mailru/easyjson v0.7.7
 	github.com/pelletier/go-toml/v2 v2.1.0
 	github.com/rabbitmq/amqp091-go v1.8.1
+	github.com/redis/go-redis/v9 v9.1.0
 	github.com/rs/zerolog v1.30.0
 	github.com/russellhaering/gosaml2 v0.9.1
-	github.com/russellhaering/goxmldsig v1.3.0
+	github.com/russellhaering/goxmldsig v1.4.0
 	github.com/smartystreets/goconvey v1.7.2
 	github.com/teambition/rrule-go v1.8.2
 	github.com/valyala/fastjson v1.6.4
 	go.mongodb.org/mongo-driver v1.12.1
 	golang.org/x/sync v0.3.0
-	golang.org/x/text v0.12.0
+	golang.org/x/text v0.13.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -79,6 +79,7 @@ require (
 	github.com/go-asn1-ber/asn1-ber v1.5.4 // indirect
 	github.com/go-faster/city v1.0.1 // indirect
 	github.com/go-faster/errors v0.6.1 // indirect
+	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/gofrs/uuid v4.3.1+incompatible // indirect
@@ -121,6 +122,9 @@ require (
 	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/smartystreets/assertions v1.2.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/tidwall/gjson v1.14.4 // indirect
+	github.com/tidwall/match v1.1.1 // indirect
+	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
