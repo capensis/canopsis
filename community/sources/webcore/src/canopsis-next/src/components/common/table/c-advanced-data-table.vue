@@ -278,6 +278,8 @@ export default {
 
 <style lang="scss" scoped>
 .c-advanced-data-table {
+  background-color: var(--v-table-background-base);
+
   ::v-deep thead th {
     vertical-align: middle;
   }
