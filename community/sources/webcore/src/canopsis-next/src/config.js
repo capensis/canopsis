@@ -514,16 +514,15 @@ export const THEMES_NAMES = {
 };
 
 export const DEFAULT_THEME_COLORS = {
-  main: {
-    primary: COLORS.primary,
-    secondary: COLORS.secondary,
-    accent: COLORS.accent,
-    error: COLORS.error,
-    info: COLORS.info,
-    success: COLORS.success,
-    warning: COLORS.warning,
-    background: COLORS.background,
-  },
+  primary: COLORS.primary,
+  secondary: COLORS.secondary,
+  accent: COLORS.accent,
+  error: COLORS.error,
+  info: COLORS.info,
+  success: COLORS.success,
+  warning: COLORS.warning,
+  background: COLORS.background,
+
   state: COLORS.state,
   table: COLORS.table,
 };

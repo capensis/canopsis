@@ -1,3 +1,5 @@
+import { isString, kebabCase } from 'lodash';
+
 /**
  * @typedef {Object} ThemeMainColors
  * @property {string} primary
@@ -41,26 +43,34 @@
  */
 
 /**
- * @typedef {Object & ThemeMainColors} ThemeCSSVariables
+ * Convert object deep object to flat object variables
+ *
+ * @param {Object} colors
+ * @param {string} prefix
+ * @returns {Object}
  */
-
-import { kebabCase } from 'lodash';
-
 const themeObjectColorsToCSSVariables = (colors, prefix = '') => Object.entries(colors)
   .reduce((acc, [key, value]) => {
-    acc[`${prefix}${kebabCase(key)}`] = value;
+    if (!value) {
+      return acc;
+    }
 
-    return acc;
+    if (isString(value)) {
+      acc[`${prefix}${kebabCase(key)}`] = value;
+
+      return acc;
+    }
+
+    return {
+      ...acc,
+      ...themeObjectColorsToCSSVariables(value, `${key}-`),
+    };
   }, {});
 
 /**
  * Convert theme to form object
  *
- * @param {ThemeColors} [colors = {}]
- * @returns {ThemeCSSVariables}
+ * @param {Object} [colors = {}]
+ * @returns {Object}
  */
-export const themeColorsToCSSVariables = (colors = {}) => ({
-  ...colors.main,
-  ...themeObjectColorsToCSSVariables(colors.state, 'state-'),
-  ...themeObjectColorsToCSSVariables(colors.table, 'table-'),
-});
+export const themeColorsToCSSVariables = (colors = {}) => themeObjectColorsToCSSVariables(colors);

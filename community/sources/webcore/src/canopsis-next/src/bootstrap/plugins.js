@@ -1,5 +1,3 @@
-import Vuetify from 'vuetify';
-import theme from 'vuetify/es5/components/Vuetify/mixins/theme';
 import VueMq from 'vue-mq';
 import VueFullScreen from 'vue-fullscreen';
 import VueClipboard from 'vue-clipboard2';
@@ -7,12 +5,12 @@ import PortalVue from 'portal-vue';
 import frDaySpanVuetifyMessages from 'dayspan-vuetify/src/locales/fr';
 
 import 'vue-tour/dist/vue-tour.css';
-import 'vuetify/dist/vuetify.min.css';
 import 'dayspan-vuetify/dist/lib/dayspan-vuetify.min.css';
 
 import { MODALS } from '@/constants';
 import { DEFAULT_THEME_COLORS, MEDIA_QUERIES_BREAKPOINTS } from '@/config';
 
+import Vuetify from '@/plugins/vuetify';
 import ValidatorPlugin from '@/plugins/validator';
 import ModalsPlugin from '@/plugins/modals';
 import PopupsPlugin from '@/plugins/popups';
@@ -20,7 +18,6 @@ import SidebarPlugin from '@/plugins/sidebar';
 import SetSeveralPlugin from '@/plugins/set-several';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ToursPlugin from '@/plugins/tours';
-import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
 import SocketPlugin from '@/plugins/socket';
 import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';
 
@@ -33,26 +30,6 @@ import Filters from '@/filters';
 import { setSeveralFields } from '@/helpers/immutable';
 import { themeColorsToCSSVariables } from '@/helpers/entities/theme/entity';
 
-import BullhornIcon from '@/components/icons/bullhorn.vue';
-import AltRouteIcon from '@/components/icons/alt_route.vue';
-import SettingsSyncIcon from '@/components/icons/settings_sync.vue';
-import EngineeringIcon from '@/components/icons/engineering.vue';
-import InsightsIcon from '@/components/icons/insights.vue';
-import MiscellaneousServicesIcon from '@/components/icons/miscellaneous_services.vue';
-import PublishedWithChangesIcon from '@/components/icons/published_with_changes.vue';
-import DensityLargeIcon from '@/components/icons/density_large.vue';
-import DensityMediumIcon from '@/components/icons/density_medium.vue';
-import DensitySmallIcon from '@/components/icons/density_small.vue';
-import NotificationImportantStrokeIcon from '@/components/icons/notification_important-stroke.vue';
-import MediationIcon from '@/components/icons/mediation.vue';
-import WarningStrokeIcon from '@/components/icons/warning-stroke.vue';
-import PlaylistBuildIcon from '@/components/icons/playlist-build.vue';
-import ManualInstruction from '@/components/icons/manual_instruction.vue';
-import RestartAltIcon from '@/components/icons/restart_alt.vue';
-import ListDeleteIcon from '@/components/icons/list_delete.vue';
-import PushPinIcon from '@/components/icons/push_pin.vue';
-import ResizeRightIcon from '@/components/icons/resize_right.vue';
-import BuildCircleIcon from '@/components/icons/build_circle.vue';
 import * as modalsComponents from '@/components/modals';
 import * as sidebarsComponents from '@/components/sidebars';
 
@@ -64,73 +41,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
   Vue.use(PortalVue);
   Vue.use(Filters);
   Vue.use(Vuetify, {
-    options: {
-      customProperties: true,
-    },
-    iconfont: 'md',
-    theme: theme(themeColorsToCSSVariables(DEFAULT_THEME_COLORS)),
-    icons: {
-      bullhorn: {
-        component: BullhornIcon,
-      },
-      alt_route: {
-        component: AltRouteIcon,
-      },
-      settings_sync: {
-        component: SettingsSyncIcon,
-      },
-      engineering: {
-        component: EngineeringIcon,
-      },
-      insights: {
-        component: InsightsIcon,
-      },
-      miscellaneous_services: {
-        component: MiscellaneousServicesIcon,
-      },
-      published_with_changes: {
-        component: PublishedWithChangesIcon,
-      },
-      density_large: {
-        component: DensityLargeIcon,
-      },
-      density_medium: {
-        component: DensityMediumIcon,
-      },
-      density_small: {
-        component: DensitySmallIcon,
-      },
-      notification_important_stroke: {
-        component: NotificationImportantStrokeIcon,
-      },
-      mediation: {
-        component: MediationIcon,
-      },
-      warning_stroke: {
-        component: WarningStrokeIcon,
-      },
-      playlist_build: {
-        component: PlaylistBuildIcon,
-      },
-      manual_instruction: {
-        component: ManualInstruction,
-      },
-      restart_alt: {
-        component: RestartAltIcon,
-      },
-      list_delete: {
-        component: ListDeleteIcon,
-      },
-      push_pin: {
-        component: PushPinIcon,
-      },
-      resize_right: {
-        component: ResizeRightIcon,
-      },
-      build_circle: {
-        component: BuildCircleIcon,
-      },
-    },
+    theme: themeColorsToCSSVariables(DEFAULT_THEME_COLORS),
   });
 
   Vue.use(VueFullScreen);
@@ -272,6 +183,5 @@ export const bootstrapApplicationPlugins = (Vue) => {
   Vue.use(SetSeveralPlugin);
   Vue.use(UpdateFieldPlugin);
   Vue.use(ToursPlugin);
-  Vue.use(VuetifyReplacerPlugin);
   Vue.use(SocketPlugin);
 };

@@ -42,6 +42,7 @@ export default {
     classes() {
       return {
         'v-datatable v-table': true,
+        'v-datatable--expand': this.expand,
         'v-datatable--select-all': this.selectAll !== false,
         'v-datatable--dense': this.dense,
         'v-datatable--ultra-dense': this.ultraDense,
@@ -298,6 +299,33 @@ $denseTreeviewCellHeight: 32px;
 
 $denseColorIndicatorPadding: 1px 5px;
 
+.v-datatable {
+  &.v-table,
+  & .v-datatable__actions,
+  & thead th {
+    color: var(--v-table-active-color-base) !important;
+    caret-color: var(--v-table-active-color-base) !important;
+  }
+
+  &.v-table,
+  & .v-datatable__actions {
+    background-color: var(--v-table-background-base) !important;
+  }
+
+  & tbody tr:not(.v-datatable__expand-row) {
+    background-color: var(--v-table-row-color-base) !important;
+  }
+
+  & tbody tr:nth-of-type(4n + 1),
+  &:not(&--expand) tbody tr:nth-of-type(2n + 1){
+    background-color: var(--v-table-shift-row-color-base, var(--v-table-row-color-base)) !important;
+  }
+
+  & tbody tr:not(.v-datatable__expand-row):hover {
+    background-color: var(--v-table-hover-row-color-base, var(--v-table-row-color-base)) !important;
+  }
+}
+
 table.v-datatable {
   transition: background-color .3s cubic-bezier(.25,.8,.5,1);
 
@@ -346,7 +374,7 @@ table.v-datatable {
     }
 
     tbody, thead {
-      td, th {
+      td:not(.v-datatable__expand-col), th {
         padding: 0 $ultraDensePadding !important;
       }
 
