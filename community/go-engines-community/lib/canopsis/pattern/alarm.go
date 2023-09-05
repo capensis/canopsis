@@ -466,6 +466,18 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 			return "", true
 		}
 		return alarm.Value.LastComment.Message, true
+	case "v.ticket.m":
+		if alarm.Value.Ticket == nil {
+			return "", true
+		}
+
+		return alarm.Value.Ticket.Message, true
+	case "v.ticket.ticket":
+		if alarm.Value.Ticket == nil {
+			return "", true
+		}
+
+		return alarm.Value.Ticket.Ticket, true
 	case "v.ack.a":
 		if alarm.Value.ACK == nil {
 			return "", true
@@ -485,6 +497,14 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 
 		return alarm.Value.ACK.Initiator, true
 	default:
+		if n := strings.TrimPrefix(f, "v.ticket.ticket_data."); n != f {
+			if alarm.Value.Ticket == nil || alarm.Value.Ticket.TicketData == nil {
+				return "", true
+			}
+
+			return alarm.Value.Ticket.TicketData[n], true
+		}
+
 		return "", false
 	}
 }
