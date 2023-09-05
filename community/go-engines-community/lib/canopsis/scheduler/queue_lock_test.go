@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
-	mock_v8 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/go-redis/redis/v8"
-	"github.com/go-redis/redis/v8"
+	mock_v8 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/redis/go-redis/v9"
 	"github.com/golang/mock/gomock"
+	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
 
