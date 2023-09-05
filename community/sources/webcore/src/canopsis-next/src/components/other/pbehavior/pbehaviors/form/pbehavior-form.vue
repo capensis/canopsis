@@ -38,8 +38,7 @@
 import { formMixin } from '@/mixins/form';
 
 import RecurrenceRuleForm from '@/components/forms/recurrence-rule/recurrence-rule-form.vue';
-import PbehaviorRecurrenceRuleExceptionsField
-  from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-exceptions-field.vue';
+import PbehaviorRecurrenceRuleExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-exceptions-field.vue';
 
 import PbehaviorCommentsField from '../fields/pbehavior-comments-field.vue';
 import PbehaviorFilterField from '../fields/pbehavior-filter-field.vue';
