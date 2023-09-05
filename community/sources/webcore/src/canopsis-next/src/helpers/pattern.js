@@ -102,6 +102,14 @@ export const isInfosRuleType = type => type === PATTERN_RULE_TYPES.infos;
 export const isExtraInfosRuleType = type => type === PATTERN_RULE_TYPES.extraInfos;
 
 /**
+ * Check rule is object
+ *
+ * @param {string} type
+ * @return {boolean}
+ */
+export const isObjectRuleType = type => type === PATTERN_RULE_TYPES.object;
+
+/**
  * Check rule is date
  *
  * @param {string} type
@@ -227,7 +235,14 @@ export const isInfosPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.infos,
   ENTITY_PATTERN_FIELDS.componentInfos,
   ENTITY_PATTERN_FIELDS.infos,
-].some(field => value?.startsWith(field));
+].some((field) => {
+  /**
+   * @TODO: update babel-eslint for resolving problem with templates inside optional chaiging function call
+   */
+  const start = `${field}.`;
+
+  return value === field || value?.startsWith(start);
+});
 
 /**
  * Check pattern field is duration
@@ -243,7 +258,39 @@ export const isDurationPatternRuleField = value => value === ALARM_PATTERN_FIELD
  * @param {string} value
  * @return {boolean}
  */
-export const isExtraInfosPatternRuleField = value => value?.startsWith(EVENT_FILTER_PATTERN_FIELDS.extraInfos);
+export const isExtraInfosPatternRuleField = (value) => {
+  /**
+   * @TODO: update babel-eslint for resolving problem with templates inside optional chaiging function call
+   */
+  const start = `${EVENT_FILTER_PATTERN_FIELDS.extraInfos}.`;
+
+  return value === EVENT_FILTER_PATTERN_FIELDS.extraInfos
+    || value?.startsWith(start);
+};
+
+/**
+ * Get object pattern field
+ *
+ * @param {string} value
+ * @return {string}
+ */
+export const getObjectPatternRuleField = value => [ALARM_PATTERN_FIELDS.ticketData]
+  .find((field) => {
+    /**
+     * @TODO: update babel-eslint for resolving problem with templates inside optional chaiging function call
+     */
+    const start = `${field}.`;
+
+    return value === field || value?.startsWith(start);
+  });
+
+/**
+ * Check pattern field is object
+ *
+ * @param {string} value
+ * @return {boolean}
+ */
+export const isObjectPatternRuleField = value => !!getObjectPatternRuleField(value);
 
 /**
  * Check rule value is valid without field type

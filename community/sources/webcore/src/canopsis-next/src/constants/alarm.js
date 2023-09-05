@@ -62,6 +62,7 @@ export const ALARM_FIELDS = {
    */
   ack: 'v.ack',
   ticket: 'v.ticket',
+  ticketData: 'v.ticket.ticket_data',
   canceled: 'v.canceled',
   snooze: 'v.snooze',
   pbehaviorInfo: 'v.pbehavior_info',
@@ -284,6 +285,9 @@ export const ALARM_PATTERN_FIELDS = {
   totalStateChanges: ALARM_FIELDS.totalStateChanges,
   tags: ALARM_FIELDS.tags,
   activated: ALARM_FIELDS.activated,
+  ticketValue: ALARM_FIELDS.ticketValue,
+  ticketMessage: ALARM_FIELDS.ticketMessage,
+  ticketData: ALARM_FIELDS.ticketData,
 };
 
 export const ALARM_ACK_INITIATORS = {
@@ -363,6 +367,7 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.ticketMessage]: 'alarm.fields.ticketMessage',
   [ALARM_FIELDS.ticketValue]: 'alarm.fields.ticketId',
   [ALARM_FIELDS.ticketCreatedAt]: 'alarm.fields.ticketCreatedAt',
+  [ALARM_FIELDS.ticketData]: 'alarm.fields.ticketData',
   [ALARM_FIELDS.entityId]: 'alarm.fields.entityId',
   [ALARM_FIELDS.entityName]: 'alarm.fields.entityName',
   [ALARM_FIELDS.entityCategoryName]: 'alarm.fields.entityCategoryName',

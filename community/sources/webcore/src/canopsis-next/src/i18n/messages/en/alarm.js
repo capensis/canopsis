@@ -197,6 +197,7 @@ export default {
     ticketId: 'Ticket id',
     ticketMessage: 'Ticket message',
     ticketCreatedAt: 'Ticket created at',
+    ticketData: 'Ticket data',
     entityId: 'Entity ID',
     entityName: 'Entity name',
     entityCategoryName: 'Entity category name',
