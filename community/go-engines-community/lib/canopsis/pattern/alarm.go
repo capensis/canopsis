@@ -269,6 +269,16 @@ func (p Alarm) ToMongoQuery(prefix string) (bson.M, error) {
 			}
 
 			mongoField := prefix + cond.Field
+
+			// backport from 23.10, ticket object was changed since version 23.04
+			if cond.Field == "v.ticket.ticket" {
+				mongoField = prefix + "v.ticket.val"
+			}
+
+			if strings.HasPrefix(cond.Field, "v.ticket.ticket_data") {
+				mongoField = strings.Replace(mongoField, "v.ticket.ticket_data", "v.ticket.data", 1)
+			}
+
 			foundField := false
 			if _, ok := getAlarmStringField(emptyAlarm, cond.Field); ok {
 				foundField = true
@@ -450,6 +460,18 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 			return "", true
 		}
 		return alarm.Value.LastComment.Message, true
+	case "v.ticket.m":
+		if alarm.Value.Ticket == nil {
+			return "", true
+		}
+
+		return alarm.Value.Ticket.Message, true
+	case "v.ticket.ticket":
+		if alarm.Value.Ticket == nil {
+			return "", true
+		}
+
+		return alarm.Value.Ticket.Value, true
 	case "v.ack.a":
 		if alarm.Value.ACK == nil {
 			return "", true
@@ -469,6 +491,14 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 
 		return alarm.Value.ACK.Initiator, true
 	default:
+		if n := strings.TrimPrefix(f, "v.ticket.ticket_data."); n != f {
+			if alarm.Value.Ticket == nil || alarm.Value.Ticket.Data == nil {
+				return "", true
+			}
+
+			return alarm.Value.Ticket.Data[n], true
+		}
+
 		return "", false
 	}
 }
