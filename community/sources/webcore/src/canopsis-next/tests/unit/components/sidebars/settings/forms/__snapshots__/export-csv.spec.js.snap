@@ -1,198 +1,161 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`export-csv Renders \`export-csv\` with custom props 1`] = `
-<div
-  class="v-list__group"
+<widget-settings-item-stub
+  title="Export CSV"
 >
   <div
-    class="v-list__group__header"
+    class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
+    role="combobox"
   >
     <div
-      role="listitem"
+      class="v-input__control"
     >
       <div
-        class="v-list__tile theme--light"
+        class="v-input__slot"
       >
-        Export CSV
+        <div
+          class="v-select__slot"
+        >
+          <label
+            aria-hidden="true"
+            class="v-label v-label--active theme--light"
+            style="left: 0px; position: absolute;"
+          >
+            Separator
+          </label>
+          <div
+            class="v-select__selections"
+          >
+            <div
+              class="v-select__selection v-select__selection--comma"
+            >
+              comma
+            </div>
+            <input
+              aria-label="Separator"
+              aria-readonly="false"
+              autocomplete="on"
+              readonly="readonly"
+              type="text"
+            />
+          </div>
+          <div
+            class="v-input__append-inner"
+          >
+            <div
+              class="v-input__icon v-input__icon--append"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                arrow_drop_down
+              </i>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-menu"
+        />
       </div>
-    </div>
-    <div
-      class="v-list__group__header__append-icon"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
-      >
-        keyboard_arrow_down
-      </i>
-    </div>
-  </div>
-  <transition-stub
-    mode="in-out"
-    name="expand-transition"
-  >
-    <div
-      class="v-list__group__items"
-      style="display: none;"
-    >
       <div
-        class="container"
+        class="v-text-field__details"
       >
         <div
-          class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-          role="combobox"
+          class="v-messages theme--light"
         >
           <div
-            class="v-input__control"
-          >
-            <div
-              class="v-input__slot"
-            >
-              <div
-                class="v-select__slot"
-              >
-                <label
-                  aria-hidden="true"
-                  class="v-label v-label--active theme--light"
-                  style="left: 0px; position: absolute;"
-                >
-                  Separator
-                </label>
-                <div
-                  class="v-select__selections"
-                >
-                  <div
-                    class="v-select__selection v-select__selection--comma"
-                  >
-                    comma
-                  </div>
-                  <input
-                    aria-label="Separator"
-                    aria-readonly="false"
-                    autocomplete="on"
-                    readonly="readonly"
-                    type="text"
-                  />
-                </div>
-                <div
-                  class="v-input__append-inner"
-                >
-                  <div
-                    class="v-input__icon v-input__icon--append"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      arrow_drop_down
-                    </i>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="v-menu"
-              />
-            </div>
-            <div
-              class="v-text-field__details"
-            >
-              <div
-                class="v-messages theme--light"
-              >
-                <div
-                  class="v-messages__wrapper"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
-          role="combobox"
-        >
-          <div
-            class="v-input__control"
-          >
-            <div
-              class="v-input__slot"
-            >
-              <div
-                class="v-select__slot"
-              >
-                <label
-                  aria-hidden="true"
-                  class="v-label v-label--active theme--light"
-                  style="left: 0px; position: absolute;"
-                >
-                  Datetime format
-                </label>
-                <div
-                  class="v-select__selections"
-                >
-                  <div
-                    class="v-select__selection v-select__selection--comma"
-                  >
-                    2021-01-02T15:04:05+0200
-                  </div>
-                  <input
-                    aria-label="Datetime format"
-                    aria-readonly="false"
-                    autocomplete="on"
-                    readonly="readonly"
-                    type="text"
-                  />
-                </div>
-                <div
-                  class="v-input__append-inner"
-                >
-                  <div
-                    class="v-input__icon v-input__icon--append"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      arrow_drop_down
-                    </i>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="v-menu"
-              />
-            </div>
-            <div
-              class="v-text-field__details"
-            >
-              <div
-                class="v-messages theme--light"
-              >
-                <div
-                  class="v-messages__wrapper"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="layout column"
-        >
-          <h4
-            class="subheading my-4"
-          >
-            Export column names
-          </h4>
-          <c-columns-with-template-field-stub
-            label="Export column names"
-            templates=""
-            type="alarm"
-            value="[object Object]"
+            class="v-messages__wrapper"
           />
         </div>
       </div>
     </div>
-  </transition-stub>
-</div>
+  </div>
+  <div
+    class="v-input v-text-field v-select v-input--is-label-active v-input--is-dirty theme--light"
+    role="combobox"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-select__slot"
+        >
+          <label
+            aria-hidden="true"
+            class="v-label v-label--active theme--light"
+            style="left: 0px; position: absolute;"
+          >
+            Datetime format
+          </label>
+          <div
+            class="v-select__selections"
+          >
+            <div
+              class="v-select__selection v-select__selection--comma"
+            >
+              2021-01-02T15:04:05+0200
+            </div>
+            <input
+              aria-label="Datetime format"
+              aria-readonly="false"
+              autocomplete="on"
+              readonly="readonly"
+              type="text"
+            />
+          </div>
+          <div
+            class="v-input__append-inner"
+          >
+            <div
+              class="v-input__icon v-input__icon--append"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+              >
+                arrow_drop_down
+              </i>
+            </div>
+          </div>
+        </div>
+        <div
+          class="v-menu"
+        />
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <div
+            class="v-messages__wrapper"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="layout column"
+  >
+    <h4
+      class="subheading my-4"
+    >
+      Export column names
+    </h4>
+    <c-columns-with-template-field-stub
+      label="Export column names"
+      templates=""
+      type="alarm"
+      value="[object Object]"
+    />
+  </div>
+</widget-settings-item-stub>
 `;
 
 exports[`export-csv Renders \`export-csv\` with custom props 2`] = `
@@ -385,125 +348,88 @@ exports[`export-csv Renders \`export-csv\` with custom props 3`] = `
 `;
 
 exports[`export-csv Renders \`export-csv\` with default props 1`] = `
-<div
-  class="v-list__group"
+<widget-settings-item-stub
+  title="Export CSV"
 >
   <div
-    class="v-list__group__header"
+    class="v-input v-text-field v-select theme--light"
+    role="combobox"
   >
     <div
-      role="listitem"
+      class="v-input__control"
     >
       <div
-        class="v-list__tile theme--light"
-      >
-        Export CSV
-      </div>
-    </div>
-    <div
-      class="v-list__group__header__append-icon"
-    >
-      <i
-        aria-hidden="true"
-        class="v-icon material-icons theme--light"
-      >
-        keyboard_arrow_down
-      </i>
-    </div>
-  </div>
-  <transition-stub
-    mode="in-out"
-    name="expand-transition"
-  >
-    <div
-      class="v-list__group__items"
-      style="display: none;"
-    >
-      <div
-        class="container"
+        class="v-input__slot"
       >
         <div
-          class="v-input v-text-field v-select theme--light"
-          role="combobox"
+          class="v-select__slot"
         >
+          <label
+            aria-hidden="true"
+            class="v-label theme--light"
+            style="left: 0px; position: absolute;"
+          >
+            Separator
+          </label>
           <div
-            class="v-input__control"
+            class="v-select__selections"
+          >
+            <input
+              aria-label="Separator"
+              aria-readonly="false"
+              autocomplete="on"
+              readonly="readonly"
+              type="text"
+            />
+          </div>
+          <div
+            class="v-input__append-inner"
           >
             <div
-              class="v-input__slot"
+              class="v-input__icon v-input__icon--append"
             >
-              <div
-                class="v-select__slot"
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
               >
-                <label
-                  aria-hidden="true"
-                  class="v-label theme--light"
-                  style="left: 0px; position: absolute;"
-                >
-                  Separator
-                </label>
-                <div
-                  class="v-select__selections"
-                >
-                  <input
-                    aria-label="Separator"
-                    aria-readonly="false"
-                    autocomplete="on"
-                    readonly="readonly"
-                    type="text"
-                  />
-                </div>
-                <div
-                  class="v-input__append-inner"
-                >
-                  <div
-                    class="v-input__icon v-input__icon--append"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      arrow_drop_down
-                    </i>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="v-menu"
-              />
-            </div>
-            <div
-              class="v-text-field__details"
-            >
-              <div
-                class="v-messages theme--light"
-              >
-                <div
-                  class="v-messages__wrapper"
-                />
-              </div>
+                arrow_drop_down
+              </i>
             </div>
           </div>
         </div>
-        <!---->
         <div
-          class="layout column"
+          class="v-menu"
+        />
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
         >
-          <h4
-            class="subheading my-4"
-          >
-            Export column names
-          </h4>
-          <c-columns-with-template-field-stub
-            label="Export column names"
-            templates=""
-            type="alarm"
+          <div
+            class="v-messages__wrapper"
           />
         </div>
       </div>
     </div>
-  </transition-stub>
-</div>
+  </div>
+  <!---->
+  <div
+    class="layout column"
+  >
+    <h4
+      class="subheading my-4"
+    >
+      Export column names
+    </h4>
+    <c-columns-with-template-field-stub
+      label="Export column names"
+      templates=""
+      type="alarm"
+    />
+  </div>
+</widget-settings-item-stub>
 `;
 
 exports[`export-csv Renders \`export-csv\` with default props 2`] = `

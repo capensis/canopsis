@@ -1,18 +1,18 @@
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 
 import { ALARM_FIELDS, ENTITIES_TYPES, EXPORT_CSV_DATETIME_FORMATS, EXPORT_CSV_SEPARATORS } from '@/constants';
 
 import ExportCsv from '@/components/sidebars/settings/forms/export-csv.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'c-columns-with-template-field': true,
+  'widget-settings-item': true,
   'v-select': createSelectInputStub('v-select'),
 };
 
 const snapshotStubs = {
+  'widget-settings-item': true,
   'c-columns-with-template-field': true,
 };
 
@@ -27,12 +27,8 @@ describe('export-csv', () => {
     isHtml: false,
   }];
 
-  const factory = generateShallowRenderer(ExportCsv, {
-    localVue,
-    stubs,
-  });
+  const factory = generateShallowRenderer(ExportCsv, { stubs });
   const snapshotFactory = generateRenderer(ExportCsv, {
-    localVue,
     stubs: snapshotStubs,
 
     parentComponent: {
