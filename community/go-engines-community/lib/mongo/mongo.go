@@ -500,10 +500,6 @@ func (c *dbClient) IsDistributed() bool {
 }
 
 func isMongoReplicaSetEnabled(ctx context.Context) (bool, error) {
-	t := time.Now()
-	defer func() {
-		fmt.Printf("detect time: %s\n", time.Since(t))
-	}()
 	mongoURL, _, err := getURL()
 	if err != nil {
 		return false, fmt.Errorf("could not get mongo url: %w", err)
@@ -519,7 +515,9 @@ func isMongoReplicaSetEnabled(ctx context.Context) (bool, error) {
 		return false, fmt.Errorf("could not create topology: %w", err)
 	}
 
-	defer top.Disconnect(ctx)
+	defer func() {
+		_ = top.Disconnect(ctx)
+	}()
 
 	err = top.Connect()
 	if err != nil {
@@ -531,7 +529,9 @@ func isMongoReplicaSetEnabled(ctx context.Context) (bool, error) {
 		return false, fmt.Errorf("could not subscribe to topology: %w", err)
 	}
 
-	defer top.Unsubscribe(sub)
+	defer func() {
+		_ = top.Unsubscribe(sub)
+	}()
 
 	for {
 		select {
