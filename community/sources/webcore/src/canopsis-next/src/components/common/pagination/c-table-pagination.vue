@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout(v-show="totalItems", align-center)
+  v-layout.c-table-pagination(v-show="totalItems", align-center)
     v-flex(xs10)
       c-pagination(
         :page="page",
@@ -44,3 +44,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.c-table-pagination {
+  background-color: var(--v-table-background-base);
+}
+</style>

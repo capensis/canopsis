@@ -46,7 +46,9 @@ export default {
       return [
         {
           name: 'Canopsis',
-          colors: DEFAULT_THEME_COLORS,
+          colors: {
+            ...DEFAULT_THEME_COLORS,
+          },
         },
       ];
     },
