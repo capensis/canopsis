@@ -70,6 +70,8 @@ const (
 
 	TechMetricsFlushInterval = time.Second * 10
 
+	DefaultFlushInterval = time.Second * 5
+
 	EngineConnector = "engine"
 
 	FacetLimit = 1000

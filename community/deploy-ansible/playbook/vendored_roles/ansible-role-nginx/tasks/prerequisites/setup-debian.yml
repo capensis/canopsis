@@ -1,6 +1,0 @@
----
-- name: "(Install: Debian/Ubuntu) Install Required Debian and Ubuntu Dependencies"
-  apt:
-    name:
-      - apt-transport-https
-      - dirmngr

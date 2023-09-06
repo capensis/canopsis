@@ -27,6 +27,7 @@ func ValidateEditRequest(sl validator.StructLevel) {
 			sl.ReportError(r.Content, "Content", "Content", "must_be_empty", "")
 		}
 	case view.WidgetTemplateTypeAlarmMoreInfos,
+		view.WidgetTemplateTypeAlarmExportToPDF,
 		view.WidgetTemplateTypeServiceWeatherItem,
 		view.WidgetTemplateTypeServiceWeatherModal,
 		view.WidgetTemplateTypeServiceWeatherEntity:

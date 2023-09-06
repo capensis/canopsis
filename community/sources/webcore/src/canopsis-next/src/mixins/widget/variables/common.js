@@ -1,7 +1,4 @@
-import {
-  ALARM_STEP_FIELDS,
-  PBEHAVIOR_INFO_FIELDS,
-} from '@/constants';
+import { ALARM_STEP_FIELDS, PBEHAVIOR_INFO_FIELDS } from '@/constants';
 
 export const variablesMixin = {
   computed: {

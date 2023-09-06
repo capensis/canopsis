@@ -97,10 +97,14 @@ const (
 
 // Alarm represents an alarm document.
 type Alarm struct {
-	ID       string   `bson:"_id" json:"_id"`
-	Time     CpsTime  `bson:"t" json:"t"`
-	EntityID string   `bson:"d" json:"d"`
-	Tags     []string `bson:"tags" json:"tags"`
+	ID       string  `bson:"_id" json:"_id"`
+	Time     CpsTime `bson:"t" json:"t"`
+	EntityID string  `bson:"d" json:"d"`
+
+	Tags                []string  `bson:"tags" json:"tags"`
+	ExternalTags        []string  `bson:"etags" json:"etags"`
+	InternalTags        []string  `bson:"itags" json:"itags"`
+	InternalTagsUpdated MicroTime `bson:"itags_upd" json:"itags_upd"`
 	// todo move all field from Value to Alarm
 	Value AlarmValue `bson:"v" json:"v"`
 	// update contains alarm changes after last mongo update. Use functions Update* to

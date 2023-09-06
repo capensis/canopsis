@@ -434,14 +434,14 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 	case cpsNumberType:
 		integerValue, success := AsInteger(value)
 		if !success {
-			return fmt.Errorf("value cannot be converted to an integer: %+v", value)
+			return fmt.Errorf("%[1]T value cannot be converted to an integer: %+[1]v", value)
 		}
 		field.Set(reflect.ValueOf(CpsNumber(integerValue)))
 
 	case cpsNumberPtrType:
 		integerValue, success := AsInteger(value)
 		if !success {
-			return fmt.Errorf("value cannot be converted to an integer: %+v", value)
+			return fmt.Errorf("%[1]T value cannot be converted to an integer: %+[1]v", value)
 		}
 		cpsNumberValue := CpsNumber(integerValue)
 		field.Set(reflect.ValueOf(&cpsNumberValue))
@@ -449,7 +449,7 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 	case cpsTimeType:
 		integerValue, success := AsInteger(value)
 		if !success {
-			return fmt.Errorf("value cannot be converted to an integer: %+v", value)
+			return fmt.Errorf("%[1]T value cannot be converted to an integer: %+[1]v", value)
 		}
 		cpsTimeValue := CpsTime{Time: time.Unix(integerValue, 0)}
 		field.Set(reflect.ValueOf(cpsTimeValue))
@@ -457,21 +457,21 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 	case stringType:
 		stringValue, success := utils.AsString(value)
 		if !success {
-			return fmt.Errorf("value cannot be assigned to a string: %+v", value)
+			return fmt.Errorf("%[1]T value cannot be assigned to a string: %+[1]v", value)
 		}
 		field.Set(reflect.ValueOf(stringValue))
 
 	case stringPtrType:
 		stringValue, success := utils.AsString(value)
 		if !success {
-			return fmt.Errorf("value cannot be assigned to a string: %+v", value)
+			return fmt.Errorf("%[1]T value cannot be assigned to a string: %+[1]v", value)
 		}
 		field.Set(reflect.ValueOf(&stringValue))
 
 	case boolType:
 		boolValue, success := value.(bool)
 		if !success {
-			return fmt.Errorf("value cannot be assigned to a bool: %+v", value)
+			return fmt.Errorf("%[1]T value cannot be assigned to a bool: %+[1]v", value)
 		}
 		field.Set(reflect.ValueOf(boolValue))
 
