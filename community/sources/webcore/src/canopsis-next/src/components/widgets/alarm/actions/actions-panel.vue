@@ -36,6 +36,7 @@ import { entitiesMetaAlarmMixin } from '@/mixins/entities/meta-alarm';
 import { entitiesManualMetaAlarmMixin } from '@/mixins/entities/manual-meta-alarm';
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { clipboardMixin } from '@/mixins/clipboard';
+import { widgetActionsPanelAlarmExportPdfMixin } from '@/mixins/widget/actions-panel/alarm-export-pdf';
 
 import SharedActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
 
@@ -55,6 +56,7 @@ export default {
     entitiesManualMetaAlarmMixin,
     widgetActionsPanelAlarmMixin,
     clipboardMixin,
+    widgetActionsPanelAlarmExportPdfMixin,
   ],
   props: {
     item: {
@@ -177,7 +179,7 @@ export default {
             }
           }
 
-          const action = {
+          return {
             cssClass,
             type: ALARM_LIST_ACTIONS_TYPES.executeInstruction,
             icon: getEntityEventIcon(EVENT_ENTITY_TYPES.executeInstruction),
@@ -188,8 +190,6 @@ export default {
             }),
             method: () => this.showExecuteInstructionModal(instruction),
           };
-
-          return action;
         });
       }
 
@@ -230,6 +230,13 @@ export default {
         icon: 'help',
         title: this.$t('alarm.actions.titles.variablesHelp'),
         method: this.showVariablesHelperModal,
+      };
+
+      const exportPdfAction = {
+        type: ALARM_LIST_ACTIONS_TYPES.exportPdf,
+        icon: 'assignment_returned',
+        title: this.$t('alarm.actions.titles.exportPdf'),
+        method: this.exportPdf,
       };
 
       if (this.isCancelledAlarm && !this.isResolvedAlarm) {
@@ -279,7 +286,7 @@ export default {
       }
 
       if (this.isOpenedAlarm) {
-        actions.push(variablesHelpAction);
+        actions.push(variablesHelpAction, exportPdfAction);
       }
 
       if (this.isAlarmOpenedOrActionAllowedWithStateOk && this.isParentAlarmManualMetaAlarm) {
@@ -304,7 +311,8 @@ export default {
        * If we will have actions for resolved alarms in the features we should move this condition to
        * the every features repositories
        */
-      if (this.isOpenedAlarm
+      if (
+        this.isOpenedAlarm
         && featuresService.has('components.alarmListActionPanel.computed.actions')
       ) {
         const featuresActions = featuresService.call('components.alarmListActionPanel.computed.actions', this, []);
@@ -382,7 +390,7 @@ export default {
       if (this.isOpenedAlarm) {
         actions.push(...this.instructionsActions);
       } else {
-        actions.push(variablesHelpAction);
+        actions.push(variablesHelpAction, exportPdfAction);
       }
 
       return actions;
@@ -418,6 +426,12 @@ export default {
 
     createFastAckEvent() {
       this.createFastAckActionByAlarms([this.item]);
+    },
+
+    async exportPdf() {
+      this.setActionPending(ALARM_LIST_ACTIONS_TYPES.exportPdf, true);
+      await this.exportAlarmToPdf(this.item, this.widget.parameters.exportPdfTemplate);
+      this.setActionPending(ALARM_LIST_ACTIONS_TYPES.exportPdf, false);
     },
 
     showAssociateTicketModal() {

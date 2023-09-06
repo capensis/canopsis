@@ -272,8 +272,11 @@ export default {
   hidden: 'Caché',
   numberField: 'Champ numérique',
   chart: 'Graphique | Graphiques',
+  currentDate: 'Date actuelle',
   chooseFile: 'Choisir le fichier',
   seeAlarms: 'Voir les alarmes',
+  new: 'Nouvelle',
+  regexp: 'Expression régulière',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
@@ -292,6 +295,13 @@ export default {
     },
   },
   saveChanges: 'Sauvegarder',
+  ordinals: {
+    first: 'D\'abord',
+    second: 'Seconde',
+    third: 'Troisième',
+    fourth: 'Quatrième',
+    fifth: 'Cinquième',
+  },
   times: {
     second: 'seconde | secondes',
     minute: 'minute | minutes',

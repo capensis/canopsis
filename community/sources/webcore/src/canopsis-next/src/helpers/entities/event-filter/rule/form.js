@@ -1,4 +1,11 @@
-import { cloneDeep, pick, isEmpty, omit } from 'lodash';
+import {
+  cloneDeep,
+  pick,
+  isEmpty,
+  omit,
+  omitBy,
+} from 'lodash';
+import flatten from 'flat';
 
 import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
@@ -18,7 +25,11 @@ import {
   formExdatesToExdates,
 } from '@/helpers/entities/pbehavior/form';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
-import { externalDataToForm, formToExternalData } from '@/helpers/entities/shared/external-data/form';
+import {
+  externalDataTemplateVariablesErrorsToForm,
+  externalDataToForm,
+  formToExternalData,
+} from '@/helpers/entities/shared/external-data/form';
 
 /**
  * @typedef { 'enrichment' | 'drop' | 'break' | 'change_entity' } EventFilterType
@@ -203,4 +214,93 @@ export const formToEventFilter = (eventFilterForm, timezone) => {
     exceptions: exceptionsToRequest(formExceptionsToExceptions(exceptions)),
     ...formFilterToPatterns(patterns, [PATTERNS_FIELDS.event, PATTERNS_FIELDS.entity]),
   };
+};
+
+/**
+ * Convert template variables errors structure to form structure
+ *
+ * @param {Object} errorsObject
+ * @return {FlattenErrors}
+ */
+export const eventFilterRuleActionTemplateVariablesErrorsToForm = (errorsObject) => {
+  const { value } = errorsObject;
+  const actionErrors = {};
+
+  if (!value.is_valid) {
+    actionErrors.value = value.err.message;
+  }
+
+  return actionErrors;
+};
+
+/**
+ * Convert template variables errors structure to form structure
+ *
+ * @param {Object[]} errorsArray
+ * @param {EventFilterAction[]} actions
+ * @return {FlattenErrors}
+ */
+export const eventFilterRuleActionsTemplateVariablesErrorsToForm = (errorsArray, actions) => errorsArray
+  .reduce((acc, errors, index) => {
+    const action = actions[index];
+
+    acc[action.key] = eventFilterRuleActionTemplateVariablesErrorsToForm(errors);
+
+    return acc;
+  }, {});
+
+/**
+ * Convert template variables errors structure to form structure
+ *
+ * @param {Object} errorsObject
+ * @param {EventFilterConfig} form
+ * @return {FlattenErrors}
+ */
+export const eventFilterRuleConfigTemplateVariablesErrorsToForm = (errorsObject, form) => {
+  const { actions, component, connector, connector_name: connectorName, resource } = errorsObject ?? {};
+  const errors = {};
+
+  if (actions) {
+    errors.actions = eventFilterRuleActionsTemplateVariablesErrorsToForm(actions, form.actions);
+  }
+
+  if (component && !component.is_valid) {
+    errors.component = component.err.message;
+  }
+
+  if (connector && !connector?.is_valid) {
+    errors.connector = connector.err.message;
+  }
+
+  if (connectorName && !connectorName?.is_valid) {
+    errors.connector_name = connectorName.err.message;
+  }
+
+  if (resource && !resource?.is_valid) {
+    errors.resource = resource.err.message;
+  }
+
+  return errors;
+};
+
+/**
+ * Convert template variables errors structure to form structure
+ *
+ * @param {Object} errorsObject
+ * @param {EventFilterForm} form
+ * @return {FlattenErrors}
+ */
+export const eventFilterRuleTemplateVariablesErrorsToForm = (errorsObject, form) => {
+  const { external_data: externalData, config } = errorsObject;
+  const errors = {};
+
+  if (externalData) {
+    errors.external_data = externalDataTemplateVariablesErrorsToForm(externalData, form.external_data);
+  }
+
+  if (config) {
+    errors.config = eventFilterRuleConfigTemplateVariablesErrorsToForm(config, form.config);
+  }
+
+  return omitBy(flatten(errors), value => isEmpty(value));
 };

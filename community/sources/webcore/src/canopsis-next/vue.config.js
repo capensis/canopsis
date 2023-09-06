@@ -14,7 +14,15 @@ module.exports = {
     config.plugin('monaco-editor-webpack-plugin')
       .use(MonacoWebpackPlugin, [{ languages: [] }]);
 
-    config.module.rule('vue').use('vue-loader').loader('vue-loader')
+    config.module.rule('html')
+      .test(/^((?!index).)*\.html$/i)
+      .use('html-loader')
+      .loader('html-loader')
+      .end();
+
+    config.module.rule('vue')
+      .use('vue-loader')
+      .loader('vue-loader')
       .tap((options) => {
         // eslint-disable-next-line no-param-reassign
         options.compilerOptions = {

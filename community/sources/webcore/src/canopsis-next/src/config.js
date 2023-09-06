@@ -90,6 +90,7 @@ export const API_ROUTES = {
   logout: '/api/v4/logout',
   loggedUserCount: '/api/v4/logged-user-count',
   currentUser: '/api/v4/account/me',
+  maintenance: '/api/v4/maintenance',
   alarms: {
     list: '/api/v4/alarms',
     bulkList: '/api/v4/bulk/alarms',
@@ -111,7 +112,10 @@ export const API_ROUTES = {
   entityInfosKeys: '/api/v4/entity-infos-dictionary/keys',
   weatherService: '/api/v4/weather-services',
   alarmListExport: '/api/v4/alarm-export',
-  alarmTags: '/api/v4/alarm-tags',
+  alarmTag: {
+    list: '/api/v4/alarm-tags',
+    bulkList: '/api/v4/bulk/alarm-tags',
+  },
   contextExport: '/api/v4/entity-export',
   event: '/api/v4/event',
   userPreferences: '/api/v4/user-preferences',
@@ -140,6 +144,7 @@ export const API_ROUTES = {
     templates: '/api/v4/role-templates',
   },
   eventFilter: {
+    list: '/api/v4/eventfilter',
     rules: '/api/v4/eventfilter/rules',
   },
   file: '/api/v4/file',
@@ -211,6 +216,7 @@ export const API_ROUTES = {
   templateValidator: {
     declareTicketRules: '/api/v4/template-validator/declare-ticket-rules',
     scenarios: '/api/v4/template-validator/scenarios',
+    eventFilterRules: '/api/v4/template-validator/event-filter-rules',
   },
   linkRule: '/api/v4/link-rules',
   linkCategories: '/api/v4/link-categories',
@@ -280,6 +286,7 @@ export const API_ROUTES = {
     declareTicketExecution: '/api/v4/cat/declare-ticket-executions',
     bulkDeclareTicket: '/api/v4/cat/bulk/declare-ticket-executions',
   },
+  tags: '/api/v4/cat/tags',
 };
 
 export const COLORS = {

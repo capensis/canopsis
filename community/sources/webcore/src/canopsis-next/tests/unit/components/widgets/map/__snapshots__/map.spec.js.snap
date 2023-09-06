@@ -12,7 +12,10 @@ exports[`map Renders \`map\` with default props 1`] = `
   </div>
   <!---->
   <!---->
-  <!---->
+  <geomap-preview-stub
+    map="[object Object]"
+    popup-actions="popup-actions"
+  />
 </div>
 `;
 
