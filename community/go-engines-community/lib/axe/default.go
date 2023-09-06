@@ -146,7 +146,8 @@ func NewEngine(
 		alarmStatusService, alarmConfigProvider, json.NewEncoder(), amqpChannel, metricsSender, correlation.NewMetaAlarmStateService(dbClient),
 		template.NewExecutor(templateConfigProvider, timezoneConfigProvider), logger)
 
-	tagUpdater := alarmtag.NewUpdater(dbClient)
+	externalTagUpdater := alarmtag.NewExternalUpdater(dbClient)
+	internalTagAlarmMatcher := alarmtag.NewInternalTagAlarmMatcher(dbClient)
 
 	eventProcessor := m.EventProcessor(
 		dbClient,
@@ -160,7 +161,8 @@ func NewEngine(
 		metricsSender,
 		statistics.NewEventStatisticsSender(dbClient, logger, timezoneConfigProvider),
 		remediationRpcClient,
-		tagUpdater,
+		externalTagUpdater,
+		internalTagAlarmMatcher,
 		amqpChannel,
 		logger,
 	)
@@ -325,16 +327,28 @@ func NewEngine(
 	engineAxe.AddConsumer(pbhRpcClient)
 	engineAxe.AddPeriodicalWorker("run info", runInfoPeriodicalWorker)
 	engineAxe.AddPeriodicalWorker("local cache", &reloadLocalCachePeriodicalWorker{
-		PeriodicalInterval:     options.PeriodicalWaitTime,
-		AlarmStatusService:     alarmStatusService,
-		AutoInstructionMatcher: autoInstructionMatcher,
-		Logger:                 logger,
+		PeriodicalInterval:      options.PeriodicalWaitTime,
+		AlarmStatusService:      alarmStatusService,
+		AutoInstructionMatcher:  autoInstructionMatcher,
+		InternalTagAlarmMatcher: internalTagAlarmMatcher,
+		Logger:                  logger,
 	})
-	engineAxe.AddPeriodicalWorker("tags", &tagPeriodicalWorker{
+	engineAxe.AddPeriodicalWorker("external_tags", &externalTagPeriodicalWorker{
 		PeriodicalInterval: options.TagsPeriodicalWaitTime,
-		TagUpdater:         tagUpdater,
+		ExternalTagUpdater: externalTagUpdater,
 		Logger:             logger,
 	})
+	engineAxe.AddPeriodicalWorker("internal_tags", libengine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(lockRedisClient),
+		redis.AxeInternalTagsPeriodicalLockKey,
+		&internalTagPeriodicalWorker{
+			PeriodicalInterval: options.PeriodicalWaitTime,
+			Logger:             logger,
+			TagCollection:      dbClient.Collection(mongo.AlarmTagCollection),
+			AlarmCollection:    dbClient.Collection(mongo.AlarmMongoCollection),
+		},
+		logger,
+	))
 	engineAxe.AddPeriodicalWorker("alarms", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.AxePeriodicalLockKey,
@@ -358,7 +372,7 @@ func NewEngine(
 		},
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker("resolve archiver", libengine.NewLockedPeriodicalWorker(
+	engineAxe.AddPeriodicalWorker("resolve_archiver", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.AxeResolvedArchiverPeriodicalLockKey,
 		&resolvedArchiverWorker{
@@ -416,14 +430,15 @@ func (m DependencyMaker) EventProcessor(
 	metricsSender metrics.Sender,
 	eventStatisticsSender statistics.EventStatisticsSender,
 	remediationRpcClient libengine.RPCClient,
-	tagUpdater alarmtag.Updater,
+	externalTagUpdater alarmtag.ExternalUpdater,
+	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher,
 	amqpPublisher amqp.Publisher,
 	logger zerolog.Logger,
 ) event.Processor {
 	container := event.NewProcessorContainer()
 	container.Set(types.EventTypeCheck, event.NewCheckProcessor(dbClient, alarmConfigProvider, alarmStatusService,
 		pbhTypeResolver, autoInstructionMatcher, stateCountersService, metaAlarmEventProcessor, metricsSender,
-		eventStatisticsSender, remediationRpcClient, tagUpdater, json.NewEncoder(), logger))
+		eventStatisticsSender, remediationRpcClient, externalTagUpdater, internalTagAlarmMatcher, json.NewEncoder(), logger))
 	container.Set(types.EventTypeNoEvents, event.NewNoEventsProcessor(dbClient, alarmConfigProvider, alarmStatusService,
 		pbhTypeResolver, autoInstructionMatcher, stateCountersService, metaAlarmEventProcessor, metricsSender,
 		remediationRpcClient, json.NewEncoder(), logger))

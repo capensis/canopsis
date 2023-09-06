@@ -40,7 +40,8 @@ func NewCheckProcessor(
 	metricsSender metrics.Sender,
 	eventStatisticsSender statistics.EventStatisticsSender,
 	remediationRpcClient engine.RPCClient,
-	tagUpdater alarmtag.Updater,
+	externalTagUpdater alarmtag.ExternalUpdater,
+	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Processor {
@@ -58,7 +59,8 @@ func NewCheckProcessor(
 		metricsSender:           metricsSender,
 		eventStatisticsSender:   eventStatisticsSender,
 		remediationRpcClient:    remediationRpcClient,
-		tagUpdater:              tagUpdater,
+		externalTagUpdater:      externalTagUpdater,
+		internalTagAlarmMatcher: internalTagAlarmMatcher,
 		encoder:                 encoder,
 		logger:                  logger,
 	}
@@ -78,7 +80,8 @@ type checkProcessor struct {
 	metricsSender           metrics.Sender
 	eventStatisticsSender   statistics.EventStatisticsSender
 	remediationRpcClient    engine.RPCClient
-	tagUpdater              alarmtag.Updater
+	externalTagUpdater      alarmtag.ExternalUpdater
+	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher
 	encoder                 encoding.Encoder
 	logger                  zerolog.Logger
 }
@@ -224,6 +227,9 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, p
 		alarm.InactiveAutoInstructionInProgress = matched
 	}
 
+	alarm.InternalTags = p.internalTagAlarmMatcher.Match(entity, alarm)
+	alarm.InternalTagsUpdated = types.NewMicroTime()
+	alarm.Tags = append(alarm.Tags, alarm.InternalTags...)
 	_, err = p.alarmCollection.InsertOne(ctx, alarm)
 	if err != nil {
 		return result, fmt.Errorf("cannot create alarm: %w", err)
@@ -334,9 +340,10 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	}
 
 	addToSet := bson.M{}
-	newTags := p.newTags(alarm.Tags, params.Tags)
-	if len(newTags) > 0 {
-		addToSet["tags"] = bson.M{"$each": newTags}
+	newExternalTags := p.getNewExternalTags(alarm.ExternalTags, params.Tags)
+	if len(newExternalTags) > 0 {
+		addToSet["tags"] = bson.M{"$each": newExternalTags}
+		addToSet["etags"] = bson.M{"$each": newExternalTags}
 	}
 	newAlarm := types.Alarm{}
 	err := p.alarmCollection.FindOneAndUpdate(ctx, match, bson.M{
@@ -407,12 +414,14 @@ func (p *checkProcessor) newAlarm(
 	entity types.Entity,
 	alarmConfig config.AlarmConfig,
 ) types.Alarm {
+	tags := types.TransformEventTags(params.Tags)
 	now := types.NewCpsTime()
 	alarm := types.Alarm{
-		EntityID: entity.ID,
-		ID:       utils.NewID(),
-		Time:     now,
-		Tags:     types.TransformEventTags(params.Tags),
+		EntityID:     entity.ID,
+		ID:           utils.NewID(),
+		Time:         now,
+		Tags:         tags,
+		ExternalTags: tags,
 		Value: types.AlarmValue{
 			CreationDate:      now,
 			DisplayName:       types.GenDisplayName(alarmConfig.DisplayNameScheme),
@@ -448,7 +457,7 @@ func (p *checkProcessor) newAlarm(
 	return alarm
 }
 
-func (p *checkProcessor) newTags(alarmTags []string, eventTags map[string]string) []string {
+func (p *checkProcessor) getNewExternalTags(alarmTags []string, eventTags map[string]string) []string {
 	exists := make(map[string]struct{}, len(alarmTags))
 	for _, tag := range alarmTags {
 		exists[tag] = struct{}{}
@@ -486,7 +495,7 @@ func (p *checkProcessor) postProcess(
 		"",
 	)
 
-	p.tagUpdater.Add(event.Parameters.Tags)
+	p.externalTagUpdater.Add(event.Parameters.Tags)
 
 	for servID, servInfo := range updatedServiceStates {
 		err := p.stateCountersService.UpdateServiceState(ctx, servID, servInfo)
