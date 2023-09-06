@@ -1003,6 +1003,101 @@ definitions:
     - message
     - start
     type: object
+  colortheme.Colors:
+    properties:
+      main:
+        properties:
+          accent:
+            type: string
+          background:
+            type: string
+          error:
+            type: string
+          info:
+            type: string
+          primary:
+            type: string
+          secondary:
+            type: string
+          success:
+            type: string
+          warning:
+            type: string
+        required:
+        - accent
+        - background
+        - error
+        - info
+        - primary
+        - secondary
+        - success
+        - warning
+        type: object
+      state:
+        properties:
+          critical:
+            type: string
+          major:
+            type: string
+          minor:
+            type: string
+          ok:
+            type: string
+        required:
+        - critical
+        - major
+        - minor
+        - ok
+        type: object
+      table:
+        properties:
+          active_color:
+            type: string
+          background:
+            type: string
+          hover_row_color:
+            type: string
+          row_color:
+            type: string
+          shift_row_color:
+            type: string
+        required:
+        - active_color
+        - background
+        - row_color
+        type: object
+    type: object
+  colortheme.CreateRequest:
+    properties:
+      _id:
+        type: string
+      colors:
+        $ref: '#/definitions/colortheme.Colors'
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  colortheme.Theme:
+    properties:
+      _id:
+        type: string
+      colors:
+        $ref: '#/definitions/colortheme.Colors'
+      last_modified:
+        type: integer
+      name:
+        type: string
+    type: object
+  colortheme.UpdateRequest:
+    properties:
+      colors:
+        $ref: '#/definitions/colortheme.Colors'
+      name:
+        type: string
+    required:
+    - name
+    type: object
   common.AlarmStep:
     properties:
       _t:

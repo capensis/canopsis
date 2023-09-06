@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
 	libcontextgraphV1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph/v1"
@@ -1841,6 +1842,36 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.PermMaintenance, model.PermissionCan, enforcer),
 			maintenanceApi.Maintenance,
 		)
+
+		colorThemeApi := colortheme.NewApi(colortheme.NewStore(dbClient), actionLogger)
+		colorThemeRouter := protected.Group("/color-themes")
+		{
+			colorThemeRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.PermColorTheme, model.PermissionCreate, enforcer),
+				colorThemeApi.Create,
+			)
+			colorThemeRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.PermColorTheme, model.PermissionRead, enforcer),
+				colorThemeApi.List,
+			)
+			colorThemeRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.PermColorTheme, model.PermissionRead, enforcer),
+				colorThemeApi.Get,
+			)
+			colorThemeRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.PermColorTheme, model.PermissionUpdate, enforcer),
+				colorThemeApi.Update,
+			)
+			colorThemeRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.PermColorTheme, model.PermissionDelete, enforcer),
+				colorThemeApi.Delete,
+			)
+		}
 	}
 }
 
