@@ -17,6 +17,7 @@ export const ROUTES_NAMES = {
   adminEngines: 'admin-engines',
   adminKPI: 'admin-kpi',
   adminMaps: 'admin-maps',
+  adminTags: 'admin-tags',
   exploitationPbehaviors: 'exploitation-pbehaviors',
   exploitationEventFilters: 'exploitation-event-filters',
   exploitationSnmpRules: 'exploitation-snmp-rules',
@@ -52,6 +53,7 @@ export const ROUTES = {
   adminEngines: '/admin/engines',
   adminKPI: '/admin/kpi',
   adminMaps: '/admin/maps',
+  adminTags: '/admin/tags',
   exploitationPbehaviors: '/exploitation/pbehaviors',
   exploitationEventFilters: '/exploitation/event-filters',
   exploitationSnmpRules: '/exploitation/snmp-rules',
@@ -363,3 +365,5 @@ export const CONTENT_TYPES = {
 };
 
 export const MAX_SEARCH_ITEMS = 8;
+
+export const LOGIN_APP_INFO_POLLING_DELAY = 5000;

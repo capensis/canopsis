@@ -4,7 +4,13 @@ import flushPromises from 'flush-promises';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
-import { CRUD_ACTIONS, MODALS, PATTERN_TABS, PATTERN_TYPES, USERS_PERMISSIONS } from '@/constants';
+import {
+  CRUD_ACTIONS,
+  MODALS,
+  PATTERN_TABS,
+  PATTERN_TYPES,
+  USERS_PERMISSIONS,
+} from '@/constants';
 
 import Patterns from '@/views/profile/patterns.vue';
 

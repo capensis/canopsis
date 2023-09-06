@@ -27,25 +27,25 @@
             v-list-tile(
               v-for="(action, index) in preparedActions.dropDown",
               :key="index",
-              :disabled="action.disabled",
+              :disabled="action.disabled || action.loading",
               @click.stop="action.method"
             )
               v-list-tile-title
-                v-progress-circular.actions-panel__menu-item-loader(
-                  v-if="action.loading",
-                  :color="action.iconColor",
-                  size="16",
-                  width="2",
-                  left,
-                  indeterminate
-                )
-                v-icon.pr-3(
-                  v-else,
-                  :color="action.iconColor",
-                  :disabled="action.disabled",
-                  left,
-                  small
-                ) {{ action.icon }}
+                span.mr-4
+                  v-progress-circular(
+                    v-if="action.loading",
+                    :color="action.iconColor",
+                    :size="16",
+                    :width="2",
+                    indeterminate
+                  )
+                  v-icon.ma-0.pa-0(
+                    v-else,
+                    :color="action.iconColor",
+                    :disabled="action.disabled",
+                    left,
+                    small
+                  ) {{ action.icon }}
                 span.body-1(:class="action.cssClass") {{ action.title }}
 </template>
 
