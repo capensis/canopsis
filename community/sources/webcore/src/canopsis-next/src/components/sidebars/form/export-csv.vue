@@ -29,10 +29,7 @@
 </template>
 
 <script>
-import {
-  EXPORT_CSV_SEPARATORS,
-  EXPORT_CSV_DATETIME_FORMATS,
-} from '@/constants';
+import { EXPORT_CSV_SEPARATORS, EXPORT_CSV_DATETIME_FORMATS } from '@/constants';
 
 import { formBaseMixin } from '@/mixins/form';
 

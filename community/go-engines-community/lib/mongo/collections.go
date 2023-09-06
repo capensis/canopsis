@@ -15,7 +15,6 @@ const (
 	IdleRuleMongoCollection           = "idle_rule"
 	ExportTaskMongoCollection         = "export_task"
 	ActionLogMongoCollection          = "action_log"
-	EventFilterRulesMongoCollection   = "eventfilter"
 	DynamicInfosRulesMongoCollection  = "dynamic_infos"
 	EntityCategoryMongoCollection     = "entity_category"
 	ImportJobMongoCollection          = "default_importgraph"
@@ -75,7 +74,8 @@ const (
 
 	MapMongoCollection = "map"
 
-	AlarmTagCollection = "alarm_tag"
+	AlarmTagCollection      = "alarm_tag"
+	AlarmTagColorCollection = "alarm_tag_color"
 
 	ScenarioMongoCollection          = "action_scenario"
 	DeclareTicketRuleMongoCollection = "declare_ticket_rule"
@@ -87,6 +87,9 @@ const (
 	RoleCollection         = "role"
 	RoleTemplateCollection = "role_template"
 	PermissionCollection   = "permission"
+
+	EventFilterRuleCollection    = "eventfilter"
+	EventFilterFailureCollection = "eventfilter_failure"
 
 	EntityServiceCountersCollection = "entity_service_counters"
 

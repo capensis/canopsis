@@ -7,7 +7,6 @@
     :meta="meta",
     :query="query",
     :columns="widget.parameters.widgetGroupColumns",
-    :editing="editing",
     :loading="pending",
     :refresh-alarms-list="refreshAlarmsList",
     expandable
@@ -41,10 +40,6 @@ export default {
     query: {
       type: Object,
       required: true,
-    },
-    editing: {
-      type: Boolean,
-      default: false,
     },
     pending: {
       type: Boolean,

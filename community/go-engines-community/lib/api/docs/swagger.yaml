@@ -359,14 +359,15 @@ paths:
   /alarm-tags:
     get:
       tags:
-        - alarms
-      summary: Get alarms' tags
+        - alarm-tags
+      summary: Get alarm tags
       description: |
-        Get paginated list of alarms' tags.
+        Get paginated list of alarm tags.
         
-        -  PERMISSIONS: `api_alarm_read`
-      operationId: alarms-tags-get
+        -  PERMISSIONS: `api_alarm_tag:read`
+      operationId: alarm-tags-get
       parameters:
+        - $ref: '#/components/parameters/withFlags'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/search'
@@ -392,6 +393,182 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+    post:
+      tags:
+        - alarm-tags
+      summary: Create an internal alarm tag
+      description: |
+        Create an internal alarm tag.
+        
+        -  PERMISSIONS: `api_alarm_tag:create`
+      operationId: alarm-tags-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmtag.CreateRequest'
+            examples:
+              create:
+                summary: Create a tag
+                description: Create a tag
+                value: {
+                  "value": "cloud",
+                  "color": "#AABBCC",
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.state.val",
+                        "cond": {
+                          "type": "eq",
+                          "value": 3
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmtag.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarm-tags/{id}:
+    get:
+      tags:
+        - alarm-tags
+      summary: Get an alarm tag by id
+      description: |
+        Get an alarm tag by id.
+
+        -  PERMISSIONS: `api_alarm_tag:read`
+      operationId: alarm-tags-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmtag.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - alarm-tags
+      summary: Update an alarm tag by id
+      description: |
+        Update an alarm tag by id.
+
+        -  PERMISSIONS: `api_alarm_tag:update`
+      operationId: alarm-tags-update-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmtag.UpdateRequest'
+            examples:
+              internal:
+                summary: Update an internal tag
+                description: Update an internal tag
+                value: {
+                  "color": "#AABBCC",
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.state.val",
+                        "cond": {
+                          "type": "eq",
+                          "value": 3
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              external:
+                summary: Update an external tag
+                description: Update an external tag
+                value: {
+                  "color": "#AABBCC"
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmtag.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - alarm-tags
+      summary: Delete an alarm tag by id
+      description: |
+        Delete an alarm tag by id.
+
+        -  PERMISSIONS: `api_alarm_tag:delete`
+      operationId: alarm-tags-delete-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /alarms:
     get:
       tags:
@@ -1173,6 +1350,56 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /bulk/alarm-tags:
+    delete:
+      tags:
+        - alarm-tags
+      summary: Bulk delete alarm tags
+      description: |
+        Bulk delete alarm tags.
+
+        -  PERMISSIONS: `api_alarm_tag:delete`
+      operationId: alarm-tags-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmtag.BulkDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete tags
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmtag.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /bulk/alarms/ack:
     put:
       tags:
@@ -5757,6 +5984,64 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /eventfilter/{id}/failures:
+    get:
+      tags:
+        - eventfilters
+      summary: Get failures of event filter rule by id
+      description: |
+        Get failures of event filter rule by id.
+        
+        -  PERMISSIONS: `api_eventfilter:read`
+      operationId: eventfilters-get-failures
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/eventfilter.FailureResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - eventfilters
+      summary: Make failures of event filter rule by id as read
+      description: |
+        Make failures of event filter rule by id as read.
+        
+        -  PERMISSIONS: `api_eventfilter:create`
+      operationId: eventfilters-read-failures
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /export-configuration:
     post:
       tags:
@@ -6601,6 +6886,46 @@ paths:
           description: OK
       security:
         - BearerAuth: [ ]
+  /maintenance:
+    put:
+      tags:
+        - maintenance
+      summary: Enable or disable maintenance
+      description: |
+        Enable or disable maintenance.
+        
+        -  PERMISSIONS: `api_maintenance`
+      operationId: maintenance
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/maintenance.Request'
+            examples:
+              enable:
+                summary: Enable
+                description: Enable maintenance
+                value: {
+                  "enable": true,
+                  "message": "test maintenance"
+                }
+              disable:
+                summary: Disable
+                description: Disable maintenance
+                value: {
+                  "enable": false
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /message-rate-stats:
     get:
       tags:
@@ -10852,14 +11177,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/template.Request'
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/template.Request'
             examples:
               check:
                 summary: Check
                 description: Check if template is valid
-                value: {
-                  "text": "{{ range .Alarms }} {{ .Value.Resource }} {{ end }}"
-                }
+                value: [
+                  {
+                    "text": "{{ range .Alarms }} {{ .Value.Resource }} {{ end }}"
+                  }
+                ]
         required: true
       responses:
         200:
@@ -10867,7 +11196,49 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/template.Response'
+                type: array
+                items:
+                  $ref: 'schemas_swagger.yaml#/definitions/template.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /template-validator/event-filter-rules:
+    post:
+      tags:
+        - template-validator
+      summary: Validate event filter rule template
+      description: Validate event filter rule template.
+      operationId: template-validator-event-filter-rules
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/template.Request'
+            examples:
+              check:
+                summary: Check
+                description: Check if template is valid
+                value: [
+                  {
+                    "text": "{{ .ExtraData.component.name }}"
+                  }
+                ]
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'schemas_swagger.yaml#/definitions/template.Response'
         400:
           description: Bad Request
           content:
@@ -10886,14 +11257,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/template.Request'
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/template.Request'
             examples:
               check:
                 summary: Check
                 description: Check if template is valid
-                value: {
-                  "text": "{{ .Alarm.Value.Output }}"
-                }
+                value: [
+                  {
+                    "text": "{{ .Alarm.Value.Output }}"
+                  }
+                ]
         required: true
       responses:
         200:
@@ -10901,7 +11276,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/template.Response'
+                type: array
+                items:
+                  $ref: 'schemas_swagger.yaml#/definitions/template.Response'
         400:
           description: Bad Request
           content:
@@ -12827,6 +13204,14 @@ paths:
                 value: {
                   "title": "Template",
                   "type": "alarm_more_infos",
+                  "content": "Name: {{ alarm.v.display_name }}"
+                }
+              alarm_export_to_pdf:
+                summary: Alarm export to pdf template
+                description: Create a template for alarms list.
+                value: {
+                  "title": "Template",
+                  "type": "alarm_export_to_pdf",
                   "content": "Name: {{ alarm.v.display_name }}"
                 }
         required: true

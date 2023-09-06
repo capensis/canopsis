@@ -23,7 +23,7 @@ func NewEventfilterIntervalsWorker(
 	logger zerolog.Logger,
 ) engine.PeriodicalWorker {
 	return &eventfilterIntervalsWorker{
-		collection:             client.Collection(mongo.EventFilterRulesMongoCollection),
+		collection:             client.Collection(mongo.EventFilterRuleCollection),
 		timezoneConfigProvider: provider,
 		periodicalInterval:     periodicalInterval,
 		logger:                 logger,

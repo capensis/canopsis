@@ -293,6 +293,16 @@ permission:
     _id: api_link_rule
     name: <Current()._id>
     description: Link rule
+  permission_api_alarm_tag:
+    <<: *permission_crud
+    _id: api_alarm_tag
+    name: <Current()._id>
+    description: Alarm tag
+  permission_api_maintenance:
+    <<: *permission
+    _id: api_maintenance
+    name: <Current()._id>
+    description: Trigger maintenance mode
 
   permission_to_get_1:
     <<: *permission
@@ -620,6 +630,7 @@ role:
       "@permission_api_map": 15
       "@permission_api_share_token": 15
       "@permission_api_link_rule": 15
+      "@permission_api_alarm_tag": 15
       "@permission_api_declare_ticket_rule": 15
       "@permission_api_declare_ticket_execution": 1
       "@permission_playlist_to_delete": 1
@@ -653,6 +664,7 @@ role:
       "@permission_view_to_entity_get": 6
       "@permission_view_dynamic_infos": 6
       "@permission_view_to_weather_get": 6
+      "@permission_api_maintenance": 1
 
   role_noperms:
     <<: *role
@@ -699,6 +711,7 @@ role:
       "@permission_api_pbehaviortype": 15
       "@permission_api_playlist": 4
       "@permission_api_viewgroup": 4
+      "@permission_api_share_token": 15
 
   role_to_check_unique_name:
     <<: *role

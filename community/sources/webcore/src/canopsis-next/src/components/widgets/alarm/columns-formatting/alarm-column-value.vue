@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-runtime-template(v-if="column.template", :template="columnContent")
+  c-compiled-template(v-if="column.template", :template="column.template", :context="templateContext")
   color-indicator-wrapper(
     v-else-if="column.colorIndicatorEnabled",
     :type="column.colorIndicator",
@@ -29,8 +29,6 @@
 
 <script>
 import { get } from 'lodash';
-
-import { compile } from '@/helpers/handlebars';
 
 import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 
@@ -63,21 +61,13 @@ export default {
       default: false,
     },
   },
-  asyncComputed: {
-    columnContent: {
-      lazy: true,
-
-      async get() {
-        const context = {
-          value: get(this.alarm, this.column.value, ''),
-          alarm: this.alarm,
-          entity: this.alarm.entity,
-        };
-        const compiledTemplate = await compile(this.column.template, context);
-
-        return `<div>${compiledTemplate}</div>`;
-      },
-      default: '',
+  computed: {
+    templateContext() {
+      return {
+        value: get(this.alarm, this.column.value, ''),
+        alarm: this.alarm,
+        entity: this.alarm.entity,
+      };
     },
   },
 };

@@ -5,7 +5,10 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { ALARM_FIELDS, DATETIME_FORMATS } from '@/constants';
 
 import { convertDateToString } from '@/helpers/date/date';
-import { getAlarmsListWidgetColumnComponentGetter, getAlarmsListWidgetColumnValueFilter } from '@/helpers/entities/widget/forms/alarm';
+import {
+  getAlarmsListWidgetColumnComponentGetter,
+  getAlarmsListWidgetColumnValueFilter,
+} from '@/helpers/entities/widget/forms/alarm';
 
 import AlarmColumnCell from '@/components/widgets/alarm/columns-formatting/alarm-column-cell.vue';
 

@@ -17,10 +17,10 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { entitiesViewMixin } from '@/mixins/entities/view';
+import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 
 export default {
-  mixins: [entitiesViewMixin],
+  mixins: [entitiesViewGroupMixin],
   model: {
     prop: 'value',
     event: 'input',

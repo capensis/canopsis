@@ -1,11 +1,9 @@
 <template lang="pug">
   div.position-relative
-    c-runtime-template(:template="compiledTemplate")
+    c-compiled-template(:template="template")
 </template>
 
 <script>
-import { compile } from '@/helpers/handlebars';
-
 export default {
   props: {
     widget: {
@@ -13,14 +11,9 @@ export default {
       required: true,
     },
   },
-  asyncComputed: {
-    compiledTemplate: {
-      async get() {
-        const compiledTemplate = await compile(this.widget.parameters?.template ?? '');
-
-        return `<div>${compiledTemplate}</div>`;
-      },
-      default: '',
+  computed: {
+    template() {
+      return this.widget.parameters?.template;
     },
   },
 };
