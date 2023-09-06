@@ -70,6 +70,8 @@ const (
 	ValueTypeLinkRule = "linkrule"
 
 	ValueTypeAlarmTag = "alarmtag"
+
+	ValueTypeColorTheme = "colortheme"
 )
 
 type ActionLogger interface {

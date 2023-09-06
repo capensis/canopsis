@@ -3157,6 +3157,231 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /color-themes:
+    get:
+      tags:
+        - colorthemes
+      summary: Find all color theme
+      description: |
+        Get paginated list of color theme.
+        
+        -  PERMISSIONS: `api_color_theme:read`
+      operationId: colorthemes-find-all
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    post:
+      tags:
+        - colorthemes
+      summary: Create color theme
+      description: |
+        Create color theme.
+        
+        -  PERMISSIONS: `api_color_theme:create`
+      operationId: colorthemes-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/colortheme.CreateRequest'
+            examples:
+              create:
+                summary: Create a color theme
+                description: Create a color theme
+                value: {
+                  "_id": "test_1",
+                  "name": "test_1",
+                  "colors": {
+                    "main": {
+                      "primary": "#AAAAAA",
+                      "secondary": "#AAAAAA",
+                      "accent": "#AAAAAA",
+                      "error": "#AAAAAA",
+                      "info": "#AAAAAA",
+                      "success": "#AAAAAA",
+                      "warning": "#AAAAAA",
+                      "background": "#AAAAAA"
+                    },
+                    "table": {
+                      "background": "#AAAAAA",
+                      "active_color": "#AAAAAA",
+                      "row_color": "#AAAAAA",
+                      "shift_row_color": "#AAAAAA",
+                      "hover_row_color": "#AAAAAA"
+                    },
+                    "state": {
+                      "ok": "#AAAAAA",
+                      "minor": "#AAAAAA",
+                      "major": "#AAAAAA",
+                      "critical": "#AAAAAA"
+                    }
+                  }
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /color-themes/{id}:
+    get:
+      tags:
+        - colorthemes
+      summary: Get color theme by id
+      description: |
+        Get color theme by id.
+        
+        -  PERMISSIONS: `api_color_theme:read`
+      operationId: colorthemes-get-by-id
+      parameters:
+        - name: id
+          in: path
+          description: color theme id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - colorthemes
+      summary: Update color theme by id
+      description: |
+        Update color theme by id.
+        
+        -  PERMISSIONS: `api_color_theme:update`
+      operationId: colorthemes-update-by-id
+      parameters:
+        - name: id
+          in: path
+          description: color theme id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/colortheme.UpdateRequest'
+            examples:
+              update:
+                summary: Update a color theme
+                description: Update a color theme
+                value: {
+                  "name": "test_1_updated",
+                  "colors": {
+                    "main": {
+                      "primary": "#FFFFFF",
+                      "secondary": "#FFFFFF",
+                      "accent": "#FFFFFF",
+                      "error": "#FFFFFF",
+                      "info": "#FFFFFF",
+                      "success": "#FFFFFF",
+                      "warning": "#FFFFFF",
+                      "background": "#FFFFFF"
+                    },
+                    "table": {
+                      "background": "#FFFFFF",
+                      "active_color": "#FFFFFF",
+                      "row_color": "#FFFFFF",
+                      "shift_row_color": "#FFFFFF",
+                      "hover_row_color": "#FFFFFF"
+                    },
+                    "state": {
+                      "ok": "#FFFFFF",
+                      "minor": "#FFFFFF",
+                      "major": "#FFFFFF",
+                      "critical": "#FFFFFF"
+                    }
+                  }
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - colorthemes
+      summary: Delete color theme by id
+      description: |
+        Delete color theme by id.
+        
+        -  PERMISSIONS: `api_color_theme:delete`
+      operationId: colorthemes-delete-by-id
+      parameters:
+        - name: id
+          in: path
+          description: color theme id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'                
   /component-alarms:
     get:
       tags:

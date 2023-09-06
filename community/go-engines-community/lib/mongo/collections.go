@@ -92,4 +92,6 @@ const (
 	EventFilterFailureCollection = "eventfilter_failure"
 
 	EntityServiceCountersCollection = "entity_service_counters"
+
+	ColorThemeCollection = "color_theme"
 )
