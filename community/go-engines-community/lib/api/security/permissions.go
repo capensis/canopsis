@@ -65,4 +65,6 @@ const (
 	ObjAlarmTag = "api_alarm_tag"
 
 	PermMaintenance = "api_maintenance"
+
+	PermColorTheme = "api_color_theme"
 )
