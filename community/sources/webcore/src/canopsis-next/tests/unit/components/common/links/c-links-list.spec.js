@@ -14,6 +14,8 @@ describe('c-links-list', () => {
     FirstCategory: [
       { label: 'FirstCategoryLinkLabel1', url: 'FirstCategoryLink1', rule_id: '1' },
       { label: 'FirstCategoryLinkLabel2', url: 'FirstCategoryLink2', rule_id: '2' },
+      { label: 'FirstCategoryLinkLabel3', url: 'FirstCategoryLink3' },
+      { label: 'FirstCategoryLinkLabel4', url: 'FirstCategoryLink4' },
     ],
     SecondCategory: [
       { label: 'SecondCategoryLinkLabel1', url: 'SecondCategoryLink1', rule_id: '2' },
