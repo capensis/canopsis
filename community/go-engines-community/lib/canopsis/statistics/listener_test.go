@@ -9,7 +9,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	mock_v8 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/redis/go-redis/v9"
+	mock_redis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/redis/go-redis/v9"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/golang/mock/gomock"
 	"github.com/redis/go-redis/v9"
@@ -70,7 +70,7 @@ func TestStatsListener_Listen(t *testing.T) {
 			return
 		}
 	}).Return(&mongodriver.BulkWriteResult{}, nil)
-	mockRedisClient := mock_v8.NewMockCmdable(ctrl)
+	mockRedisClient := mock_redis.NewMockCmdable(ctrl)
 	mockRedisClient.EXPECT().Scan(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(redis.NewScanCmdResult(keys, 0, nil))
 	mockRedisClient.EXPECT().HGet(gomock.Any(), gomock.Eq(keys[0]), gomock.Any()).

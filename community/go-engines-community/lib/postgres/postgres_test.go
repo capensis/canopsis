@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	mock_v5 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/jackc/pgx"
+	mock_pgx "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/jackc/pgx"
 	mock_postgres "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/postgres"
 	"github.com/golang/mock/gomock"
 	"github.com/jackc/pgx/v5"
@@ -259,7 +259,7 @@ func TestPool_Query_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
 			return nil, &pgconn.PgError{Code: "57P01"}
 		}
 
-		return mock_v5.NewMockRows(ctrl), nil
+		return mock_pgx.NewMockRows(ctrl), nil
 	}).Times(retryCount + 1)
 
 	pool := poolWithRetries{
@@ -352,7 +352,7 @@ func TestPool_QueryRow_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T
 	minRetryTimeout := time.Millisecond
 
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
-	mockRows := mock_v5.NewMockRows(ctrl)
+	mockRows := mock_pgx.NewMockRows(ctrl)
 	mockRows.EXPECT().Scan().Return(nil)
 	mockRows.EXPECT().Err().Return(nil)
 	mockRows.EXPECT().Next().Return(true)
@@ -398,7 +398,7 @@ func TestPool_SendBatch_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T
 	minRetryTimeout := time.Millisecond
 
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
-	mockTx := mock_v5.NewMockTx(ctrl)
+	mockTx := mock_pgx.NewMockTx(ctrl)
 	beginExecCount := -1
 	mockPgxPool.EXPECT().Begin(gomock.Any()).DoAndReturn(func(_ context.Context) (pgx.Tx, error) {
 		beginExecCount++
@@ -410,7 +410,7 @@ func TestPool_SendBatch_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T
 		return nil, &net.OpError{Err: errors.New("test error")}
 	}).Times(retryCount + 1)
 	mockTx.EXPECT().SendBatch(gomock.Any(), gomock.Eq(b)).DoAndReturn(func(_ context.Context, _ *pgx.Batch) pgx.BatchResults {
-		mockBr := mock_v5.NewMockBatchResults(ctrl)
+		mockBr := mock_pgx.NewMockBatchResults(ctrl)
 		mockBr.EXPECT().Exec().Return(pgconn.CommandTag{}, &net.OpError{Err: errors.New("test error")})
 
 		return mockBr
@@ -442,12 +442,12 @@ func TestPool_SendBatch_GivenConnectionError_ShouldReturnError(t *testing.T) {
 	minRetryTimeout := time.Millisecond
 
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
-	mockTx := mock_v5.NewMockTx(ctrl)
+	mockTx := mock_pgx.NewMockTx(ctrl)
 	mockPgxPool.EXPECT().Begin(gomock.Any()).DoAndReturn(func(_ context.Context) (pgx.Tx, error) {
 		return mockTx, nil
 	})
 	mockTx.EXPECT().SendBatch(gomock.Any(), gomock.Eq(b)).DoAndReturn(func(_ context.Context, _ *pgx.Batch) pgx.BatchResults {
-		mockBr := mock_v5.NewMockBatchResults(ctrl)
+		mockBr := mock_pgx.NewMockBatchResults(ctrl)
 		mockBr.EXPECT().Exec().Return(pgconn.CommandTag{}, errors.New("test error"))
 
 		return mockBr
@@ -479,7 +479,7 @@ func TestPool_SendBatch_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.
 	minRetryTimeout := time.Millisecond
 
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
-	mockTx := mock_v5.NewMockTx(ctrl)
+	mockTx := mock_pgx.NewMockTx(ctrl)
 	beginExecCount := -1
 	mockPgxPool.EXPECT().Begin(gomock.Any()).DoAndReturn(func(_ context.Context) (pgx.Tx, error) {
 		beginExecCount++
@@ -496,7 +496,7 @@ func TestPool_SendBatch_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.
 		return mockTx, nil
 	}).Times(retryCount + 1)
 	mockTx.EXPECT().SendBatch(gomock.Any(), gomock.Eq(b)).DoAndReturn(func(_ context.Context, _ *pgx.Batch) pgx.BatchResults {
-		mockBr := mock_v5.NewMockBatchResults(ctrl)
+		mockBr := mock_pgx.NewMockBatchResults(ctrl)
 		mockBr.EXPECT().Exec().Return(pgconn.CommandTag{}, nil)
 		mockBr.EXPECT().Close()
 
