@@ -366,6 +366,7 @@ export default {
       return {
         [`columns-${label}`]: true,
         'alarms-list-table__selecting': this.selecting,
+        'alarms-list-table__selecting--text-unselectable': this.selectingMousePressed,
         'alarms-list-table__grid': this.isColumnsChanging,
         'alarms-list-table__dragging': this.draggingMode,
         'alarms-list-table--wrapped': this.isCellContentWrapped,
@@ -630,8 +631,10 @@ export default {
       opacity: 1;
     }
 
-    * {
-      user-select: none;
+    &--text-unselectable {
+      * {
+        user-select: none;
+      }
     }
   }
 
