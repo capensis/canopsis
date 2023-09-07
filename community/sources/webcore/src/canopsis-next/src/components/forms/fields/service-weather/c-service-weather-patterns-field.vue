@@ -5,18 +5,15 @@
     :name="name",
     :required="required",
     :attributes="availableServiceWeatherAttributes",
-    :with-type="withType"
+    :with-type="withType",
+    :counter="counter"
   )
 </template>
 
 <script>
 import { keyBy, merge } from 'lodash';
 
-import {
-  SERVICE_WEATHER_PATTERN_FIELDS,
-  PATTERN_OPERATORS,
-  ENTITIES_STATES,
-} from '@/constants';
+import { SERVICE_WEATHER_PATTERN_FIELDS, PATTERN_OPERATORS, ENTITIES_STATES } from '@/constants';
 
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
@@ -50,6 +47,10 @@ export default {
     withType: {
       type: Boolean,
       default: false,
+    },
+    counter: {
+      type: Object,
+      required: false,
     },
   },
   computed: {

@@ -9,7 +9,8 @@
           :alarm-attributes="alarmAttributes",
           :entity-attributes="entityAttributes",
           with-alarm,
-          with-entity
+          with-entity,
+          both-counters
         )
         c-collapse-panel.mt-3(:title="$t('remediation.pattern.tabs.pbehaviorTypes.title')")
           remediation-patterns-pbehavior-types-form(v-model="form")
@@ -44,8 +45,7 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import RemediationPatternsPbehaviorTypesForm
-  from '@/components/other/remediation/patterns/form/remediation-patterns-pbehavior-types-form.vue';
+import RemediationPatternsPbehaviorTypesForm from '@/components/other/remediation/patterns/form/remediation-patterns-pbehavior-types-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

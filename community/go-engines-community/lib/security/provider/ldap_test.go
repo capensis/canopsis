@@ -253,7 +253,7 @@ func TestLdapProvider_Auth_GivenUsernameAndPasswordAndNoUserInStore_ShouldCreate
 		Email:      "johndoe@canopsis.net",
 		Firstname:  "testfirstname",
 		Lastname:   "testlastname",
-		Role:       "manager",
+		Roles:      []string{"manager"},
 		ExternalID: externalID,
 		Source:     security.SourceLdap,
 		IsEnabled:  true,

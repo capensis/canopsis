@@ -49,7 +49,7 @@ export default {
 
       const preparedValue = convertMetricValueByUnit(value, unit);
 
-      return convertMetricValueToString(preparedValue, metric, unit);
+      return convertMetricValueToString({ value: preparedValue, metric, unit });
     },
 
     title() {

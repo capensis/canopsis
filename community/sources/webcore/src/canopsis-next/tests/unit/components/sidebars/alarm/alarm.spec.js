@@ -87,6 +87,7 @@ const snapshotStubs = {
   'field-density': true,
   'export-csv-form': true,
   'charts-form': true,
+  'field-resize-column-behavior': true,
 };
 
 const selectFieldTitle = wrapper => wrapper.find('input.field-title');
@@ -110,12 +111,13 @@ const selectFieldMultiAckEnabled = wrapper => wrapper.findAll('input.field-switc
 const selectFieldFastAckOutput = wrapper => wrapper.findAll('input.field-fast-action-output').at(0);
 const selectFieldFastCancelOutput = wrapper => wrapper.findAll('input.field-fast-action-output').at(1);
 const selectFieldSnoozeNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(4);
-const selectFieldInlineLinksCount = wrapper => wrapper.find('input.field-number');
+const selectFieldRemoveAlarmsFromMetaAlarmCommentRequired = wrapper => wrapper.findAll('input.field-switcher').at(5);
 const selectFieldExportCsvForm = wrapper => wrapper.find('input.export-csv-form');
-const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher').at(6);
-const selectFieldKioskHideActions = wrapper => wrapper.findAll('input.field-switcher').at(7);
-const selectFieldKioskHideMassSelection = wrapper => wrapper.findAll('input.field-switcher').at(8);
-const selectFieldKioskHideToolbar = wrapper => wrapper.findAll('input.field-switcher').at(9);
+const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher').at(7);
+const selectFieldKioskHideActions = wrapper => wrapper.findAll('input.field-switcher').at(8);
+const selectFieldKioskHideMassSelection = wrapper => wrapper.findAll('input.field-switcher').at(9);
+const selectFieldKioskHideToolbar = wrapper => wrapper.findAll('input.field-switcher').at(10);
+const selectFieldActionsAllowWithOkState = wrapper => wrapper.findAll('input.field-switcher').at(11);
 const selectChartsForm = wrapper => wrapper.findAll('input.charts-form').at(0);
 
 describe('alarm', () => {
@@ -1016,7 +1018,7 @@ describe('alarm', () => {
     });
   });
 
-  test('Inline links count changed after trigger', async () => {
+  test('Remove alarms from meta alarms comment required changed after trigger switcher field', async () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -1027,10 +1029,9 @@ describe('alarm', () => {
       },
     });
 
-    const fieldInlineLinksCount = selectFieldInlineLinksCount(wrapper);
-    const inlineLinksCount = 4;
+    const isRemoveAlarmsFromMetaAlarmCommentRequired = Faker.datatype.boolean();
 
-    fieldInlineLinksCount.vm.$emit('input', inlineLinksCount);
+    selectFieldRemoveAlarmsFromMetaAlarmCommentRequired(wrapper).vm.$emit('input', isRemoveAlarmsFromMetaAlarmCommentRequired);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -1038,7 +1039,11 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'inlineLinksCount', inlineLinksCount),
+        data: getWidgetRequestWithNewParametersProperty(
+          widget,
+          'isRemoveAlarmsFromMetaAlarmCommentRequired',
+          isRemoveAlarmsFromMetaAlarmCommentRequired,
+        ),
       },
     });
   });
@@ -1191,6 +1196,32 @@ describe('alarm', () => {
           hideMassSelection,
           hideToolbar,
         }),
+      },
+    });
+  });
+
+  test('Actions allowed with state ok changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const isActionsAllowWithOkState = Faker.datatype.boolean();
+
+    selectFieldActionsAllowWithOkState(wrapper).vm.$emit('input', isActionsAllowWithOkState);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'isActionsAllowWithOkState', isActionsAllowWithOkState),
       },
     });
   });

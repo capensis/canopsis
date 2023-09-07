@@ -33,11 +33,13 @@ Feature: Update an account
       "lastname": "test-user-to-account-update-1-lastname",
       "name": "test-user-to-account-update-1",
       "display_name": "test-user-to-account-update-1 test-user-to-account-update-1-firstname test-user-to-account-update-1-lastname test-user-to-account-update-1-email@canopsis.net",
-      "role": {
-        "_id": "test-role-to-account-update-1",
-        "name": "test-role-to-account-update-1",
-        "defaultview": null
-      },
+      "roles": [
+        {
+          "_id": "test-role-to-account-update-1",
+          "name": "test-role-to-account-update-1",
+          "defaultview": null
+        }
+      ],
       "permissions": [],
       "source": "",
       "ui_groups_navigation_type": "top-bar",
@@ -65,15 +67,9 @@ Feature: Update an account
     """json
     {
       "password": "test-password-updated",
-      "name": "test-user-to-account-update-2",
-      "firstname": "test-user-to-account-update-2-firstname-updated",
-      "lastname": "test-user-to-account-update-2-lastname-updated",
-      "email": "test-user-to-account-update-2-email-updated@canopsis.net",
-      "role": "test-role-to-edit-user",
       "ui_language": "fr",
       "ui_theme": "canopsis",
       "ui_groups_navigation_type": "top-bar",
-      "enable": true,
       "defaultview": "test-view-to-edit-user",
       "ui_tours": {
         "test-tour-to-update-user-2": true

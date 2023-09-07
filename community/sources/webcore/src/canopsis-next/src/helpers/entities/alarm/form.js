@@ -60,6 +60,7 @@ import { ENTITIES_STATES, ENTITIES_STATUSES, TIME_UNITS } from '@/constants';
  * @property {string} id
  * @property {string} name
  * @property {string} reason
+ * @property {string} reason_name
  * @property {string} type
  * @property {string} type_name
  * @property {number} timestamp
@@ -125,9 +126,50 @@ import { ENTITIES_STATES, ENTITIES_STATUSES, TIME_UNITS } from '@/constants';
  * @property {Correlation} causes
  * @property {AlarmPbehavior} pbehavior
  * @property {AlarmLinks} links
+ * @property {string[]} tags
  * @property {number} t
  * @property {AlarmValue} v
  */
+
+/**
+ * Check alarm state is ok
+ *
+ * @param {Alarm} alarm
+ * @returns {boolean}
+ */
+export const isAlarmStateOk = alarm => alarm.v?.state?.val === ENTITIES_STATES.ok;
+
+/**
+ * Check alarm status is closed
+ *
+ * @param {Alarm} alarm
+ * @returns {boolean}
+ */
+export const isAlarmStatusClosed = alarm => alarm.v?.status?.val === ENTITIES_STATUSES.closed;
+
+/**
+ * Check alarm status is cancelled
+ *
+ * @param {Alarm} alarm
+ * @returns {boolean}
+ */
+export const isAlarmStatusCancelled = alarm => alarm.v?.status?.val === ENTITIES_STATUSES.cancelled;
+
+/**
+ * Check alarm status is ongoing
+ *
+ * @param {Alarm} alarm
+ * @returns {boolean}
+ */
+export const isAlarmStatusOngoing = alarm => alarm.v?.status?.val === ENTITIES_STATUSES.ongoing;
+
+/**
+ * Check alarm status is flapping
+ *
+ * @param {Alarm} alarm
+ * @returns {boolean}
+ */
+export const isAlarmStatusFlapping = alarm => alarm.v?.status?.val === ENTITIES_STATUSES.flapping;
 
 /**
  * @typedef {Object} SnoozeAction

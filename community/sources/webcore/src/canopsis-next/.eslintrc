@@ -11,7 +11,8 @@
   },
 
   "plugins": [
-    "vue"
+    "vue",
+    "import-newlines"
   ],
   "globals": {
     "sel": true
@@ -26,6 +27,8 @@
     "no-return-assign": "off",
     "no-underscore-dangle": ["error", { "allow": ["_id", "_embedded", "_t", "_filter", "type_", "_original"] }],
     "no-bitwise": ["error", { "allow": ["&"] }],
+    "no-continue": "off",
+    "no-cond-assign": "off",
     "vue/multi-word-component-names": "off",
     "vue/no-use-computed-property-like-method": "off",
     "vue/component-definition-name-casing": "off",
@@ -125,6 +128,14 @@
       {
         "selector": "ImportDeclaration[source.value=/\\u002Ffield\\u002F/]",
         "message": "`field` folder deprecated. Please, rename to `field`."
+      }
+    ],
+    "import-newlines/enforce": [
+      "error",
+      {
+        "items": 4,
+        "max-len": 120,
+        "semi": true
       }
     ]
   }

@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
 	mock_techmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/techmetrics"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
@@ -18,10 +19,10 @@ import (
 func TestActionProcessor(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	dataSets := []struct {
 		testName      string
-		action        eventfilter.Action
+		action        eventfilter.ParsedAction
 		event         types.Event
 		regexMatches  eventfilter.RegexMatch
 		externalData  map[string]interface{}
@@ -30,7 +31,7 @@ func TestActionProcessor(t *testing.T) {
 	}{
 		{
 			testName: "given set_field action should return success",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:  eventfilter.ActionSetField,
 				Name:  "Output",
 				Value: "test output",
@@ -45,7 +46,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_field action should return error, because of wrong value field type",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:  eventfilter.ActionSetField,
 				Name:  "Output",
 				Value: 5,
@@ -58,10 +59,10 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_field_from_template action should return success",
-			action: eventfilter.Action{
-				Type:  eventfilter.ActionSetFieldFromTemplate,
-				Name:  "Output",
-				Value: "{{.ExternalData.data_1}}",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetFieldFromTemplate,
+				Name:        "Output",
+				ParsedValue: tplExecutor.Parse("{{.ExternalData.data_1}}"),
 			},
 			event:        types.Event{},
 			regexMatches: eventfilter.RegexMatch{},
@@ -75,10 +76,10 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_field_from_template action should return error, because of wrong template",
-			action: eventfilter.Action{
-				Type:  eventfilter.ActionSetFieldFromTemplate,
-				Name:  "Output",
-				Value: "{{.Some.data_1}}",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetFieldFromTemplate,
+				Name:        "Output",
+				ParsedValue: tplExecutor.Parse("{{.Some.data_1}}"),
 			},
 			event:        types.Event{},
 			regexMatches: eventfilter.RegexMatch{},
@@ -90,7 +91,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_field_from_template action should return error, because value should be a string",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:  eventfilter.ActionSetFieldFromTemplate,
 				Name:  "Output",
 				Value: 123,
@@ -105,7 +106,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_entity_info action should return success with string type",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -125,14 +126,14 @@ func TestActionProcessor(t *testing.T) {
 							Value:       "test output",
 						},
 					},
+					IsUpdated: true,
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given set_entity_info action should return success with int type",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -152,14 +153,14 @@ func TestActionProcessor(t *testing.T) {
 							Value:       123,
 						},
 					},
+					IsUpdated: true,
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given set_entity_info action should return success with bool type",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -179,14 +180,14 @@ func TestActionProcessor(t *testing.T) {
 							Value:       true,
 						},
 					},
+					IsUpdated: true,
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given set_entity_info action should return success with string slice type",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -206,14 +207,14 @@ func TestActionProcessor(t *testing.T) {
 							Value:       []string{"test", "test2"},
 						},
 					},
+					IsUpdated: true,
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given set_entity_info action should return success with slice of interfaces but all items are strings",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -233,14 +234,14 @@ func TestActionProcessor(t *testing.T) {
 							Value:       []interface{}{"test", "test2"},
 						},
 					},
+					IsUpdated: true,
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given set_entity_info action should return success with primitive.A",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -260,14 +261,14 @@ func TestActionProcessor(t *testing.T) {
 							Value:       primitive.A{"test", "test2"},
 						},
 					},
+					IsUpdated: true,
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given set_entity_info action should return success with float64 as a whole number",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -287,14 +288,14 @@ func TestActionProcessor(t *testing.T) {
 							Value:       float64(2),
 						},
 					},
+					IsUpdated: true,
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given set_entity_info action should return success with float32 as a whole number",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -314,14 +315,14 @@ func TestActionProcessor(t *testing.T) {
 							Value:       float32(2),
 						},
 					},
+					IsUpdated: true,
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given set_entity_info action should return error with float value",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -339,7 +340,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_entity_info action should return error with slice of interfaces, where some are not strings",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -357,7 +358,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_entity_info action should return error with primitive.A, where some are not strings",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -375,7 +376,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_entity_info action should return error with structs",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -395,7 +396,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_entity_info action should return updated entity true, if infos is changed",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -423,14 +424,14 @@ func TestActionProcessor(t *testing.T) {
 							Value:       "new info",
 						},
 					},
+					IsUpdated: true,
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given set_entity_info action should not return updated entity true, if info is not changed",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -464,11 +465,11 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_entity_info_from_template action should return success",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfoFromTemplate,
 				Name:        "Info 1",
 				Description: "Test description",
-				Value:       "{{.ExternalData.data_1}}",
+				ParsedValue: tplExecutor.Parse("{{.ExternalData.data_1}}"),
 			},
 			event: types.Event{
 				Entity: &types.Entity{},
@@ -486,18 +487,18 @@ func TestActionProcessor(t *testing.T) {
 							Value:       "test output",
 						},
 					},
+					IsUpdated: true,
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given set_entity_info_from_template action should return error, because of wrong template",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfoFromTemplate,
 				Name:        "Info 1",
 				Description: "Test description",
-				Value:       "{{.Some.data}}",
+				ParsedValue: tplExecutor.Parse("{{.Some.data}}"),
 			},
 			event: types.Event{
 				Entity: &types.Entity{},
@@ -511,7 +512,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_entity_info_from_template action should return error, because value should be a string",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfoFromTemplate,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -529,11 +530,11 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given set_entity_info_from_template action should return updated entity true, if infos is changed",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfoFromTemplate,
 				Name:        "Info 1",
 				Description: "Test description",
-				Value:       "new info",
+				ParsedValue: tplExecutor.Parse("new info"),
 			},
 			event: types.Event{
 				Entity: &types.Entity{
@@ -557,18 +558,18 @@ func TestActionProcessor(t *testing.T) {
 							Value:       "new info",
 						},
 					},
+					IsUpdated: true,
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given set_entity_info_from_template action should not return updated entity true, if info is not changed",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfoFromTemplate,
 				Name:        "Info 1",
 				Description: "Test description",
-				Value:       "new info",
+				ParsedValue: tplExecutor.Parse("new info"),
 			},
 			event: types.Event{
 				Entity: &types.Entity{
@@ -598,7 +599,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy action should return success",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:  eventfilter.ActionCopy,
 				Name:  "Output",
 				Value: "Event.Resource",
@@ -616,7 +617,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy action should return error, because value should be a string",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:  eventfilter.ActionCopy,
 				Name:  "Output",
 				Value: 123,
@@ -633,7 +634,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy action should return error, because get field doesn't exist",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:  eventfilter.ActionCopy,
 				Name:  "Output",
 				Value: "Some",
@@ -650,7 +651,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy action should return error, because set field doesn't exist",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:  eventfilter.ActionCopy,
 				Name:  "Some",
 				Value: "Event.Resource",
@@ -667,7 +668,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with string type",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -689,14 +690,14 @@ func TestActionProcessor(t *testing.T) {
 							Value:       "test resource",
 						},
 					},
+					IsUpdated: true,
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with string type",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -718,14 +719,14 @@ func TestActionProcessor(t *testing.T) {
 							Value:       "test resource",
 						},
 					},
+					IsUpdated: true,
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with int type",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -749,14 +750,14 @@ func TestActionProcessor(t *testing.T) {
 							Value:       123,
 						},
 					},
+					IsUpdated: true,
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with bool type",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -780,14 +781,14 @@ func TestActionProcessor(t *testing.T) {
 							Value:       true,
 						},
 					},
+					IsUpdated: true,
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with string type",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -809,14 +810,14 @@ func TestActionProcessor(t *testing.T) {
 							Value:       "test resource",
 						},
 					},
+					IsUpdated: true,
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with string slice type",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -839,17 +840,17 @@ func TestActionProcessor(t *testing.T) {
 							Value:       []string{"test", "test2"},
 						},
 					},
+					IsUpdated: true,
 				},
 				ExtraInfos: map[string]interface{}{
 					"Test": []string{"test", "test2"},
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with slice of interfaces but all items are strings",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -872,17 +873,17 @@ func TestActionProcessor(t *testing.T) {
 							Value:       []interface{}{"test", "test2"},
 						},
 					},
+					IsUpdated: true,
 				},
 				ExtraInfos: map[string]interface{}{
 					"Test": []interface{}{"test", "test2"},
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with primitive.A",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -905,17 +906,17 @@ func TestActionProcessor(t *testing.T) {
 							Value:       primitive.A{"test", "test2"},
 						},
 					},
+					IsUpdated: true,
 				},
 				ExtraInfos: map[string]interface{}{
 					"Test": primitive.A{"test", "test2"},
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given copy_to_entity_info action should return success  with float64 as a whole number",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -938,17 +939,17 @@ func TestActionProcessor(t *testing.T) {
 							Value:       float64(2),
 						},
 					},
+					IsUpdated: true,
 				},
 				ExtraInfos: map[string]interface{}{
 					"Test": float64(2),
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given copy_to_entity_info action should return success  with float32 as a whole number",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -971,17 +972,17 @@ func TestActionProcessor(t *testing.T) {
 							Value:       float32(2),
 						},
 					},
+					IsUpdated: true,
 				},
 				ExtraInfos: map[string]interface{}{
 					"Test": float32(2),
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given copy_to_entity_info action should return error with float value",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -1005,7 +1006,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy_to_entity_info action should return error with slice of interfaces, where some are not strings",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -1029,7 +1030,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy_to_entity_info action should return error with primitive.A, where some are not strings",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -1053,7 +1054,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy_to_entity_info action should return error with structs",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -1081,7 +1082,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy_to_entity_info action should change existing info",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -1111,14 +1112,14 @@ func TestActionProcessor(t *testing.T) {
 							Value:       "test resource",
 						},
 					},
+					IsUpdated: true,
 				},
-				IsEntityUpdated: true,
 			},
 			expectedError: false,
 		},
 		{
 			testName: "given copy_to_entity_info action should not return entity updated true, if info is not changed",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -1154,7 +1155,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy_to_entity_info action should return error, because value is not a string",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -1174,7 +1175,7 @@ func TestActionProcessor(t *testing.T) {
 		},
 		{
 			testName: "given copy_to_entity_info action should return error, because value field is not exist",
-			action: eventfilter.Action{
+			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
@@ -1194,13 +1195,14 @@ func TestActionProcessor(t *testing.T) {
 		},
 	}
 
-	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
+	mockFailureService.EXPECT().Add(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
 	mockTechMetricsSender := mock_techmetrics.NewMockSender(ctrl)
 	mockTechMetricsSender.EXPECT().SendCheEntityInfo(gomock.Any(), gomock.Any()).AnyTimes()
-	processor := eventfilter.NewActionProcessor(tplExecutor, mockTechMetricsSender)
+	processor := eventfilter.NewActionProcessor(mockFailureService, tplExecutor, mockTechMetricsSender)
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			resultEvent, resultErr := processor.Process(context.Background(), dataset.action, dataset.event, eventfilter.RegexMatchWrapper{
+			resultEvent, resultErr := processor.Process(context.Background(), "test", dataset.action, dataset.event, eventfilter.RegexMatchWrapper{
 				BackwardCompatibility: false,
 				RegexMatch:            dataset.regexMatches,
 			}, dataset.externalData)
@@ -1213,7 +1215,7 @@ func TestActionProcessor(t *testing.T) {
 			}
 
 			if !dataset.expectedError && resultErr != nil {
-				t.Error("expected no error")
+				t.Errorf("expected no error but got %+v", resultErr)
 			}
 		})
 	}

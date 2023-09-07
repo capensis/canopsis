@@ -212,6 +212,11 @@ func (s *MongoStore) ExpireSessions(ctx context.Context, user string, provider s
 	return err
 }
 
+func (s *MongoStore) ExpireSessionsByUserIDs(ctx context.Context, ids []string) error {
+	_, err := s.collection.DeleteMany(ctx, bson.M{"user": bson.M{"$in": ids}})
+	return err
+}
+
 // save writes encoded session.Values to mongo collection.
 func (s *MongoStore) save(ctx context.Context, session *sessions.Session, expires time.Time) error {
 	encoded, err := securecookie.EncodeMulti(session.Name(), session.Values, s.Codecs...)
