@@ -159,13 +159,17 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		eventType == types.EventTypeChangestate ||
 		eventType == types.EventTypeSnooze {
 
-		role, ok := c.Get(auth.RoleKey)
-		if !ok {
-			role = ""
+		roles, ok := c.Get(auth.RolesKey)
+		role := ""
+		if ok {
+			if s, ok := roles.([]string); ok && len(s) > 0 {
+				role = s[0]
+			}
+		} else {
 			api.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msg("Cannot retrieve role from user")
 		}
 
-		value.Set("role", fastjson.MustParse(fmt.Sprintf("%q", role.(string))))
+		value.Set("role", fastjson.MustParse(fmt.Sprintf("%q", role)))
 		api.logger.Info().Str("event", string(value.MarshalTo(nil))).Msgf("Role added to the event. event_type = %s, role = %s", eventType, role)
 	}
 

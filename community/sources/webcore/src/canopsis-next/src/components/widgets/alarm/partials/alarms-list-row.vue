@@ -1,6 +1,6 @@
 <template lang="pug">
   tr.alarm-list-row(v-on="listeners", :class="classes")
-    td.pr-0(v-if="hasRowActions")
+    td.alarm-list-row__icons.pr-0(v-if="hasRowActions")
       v-layout(row, align-center, justify-space-between)
         v-layout.alarm-list-row__checkbox
           template(v-if="selectable")
@@ -16,7 +16,7 @@
           :is-tour-enabled="isTourEnabled",
           :small="small"
         )
-    td(v-for="column in columns")
+    td.alarm-list-row__cell(v-for="column in columns", :key="column.value")
       alarm-column-value(
         :alarm="alarm",
         :widget="widget",
@@ -26,13 +26,24 @@
         @activate="activateRow",
         @select:tag="$emit('select:tag', $event)"
       )
+      span.alarms-list-table__resize-handler(
+        v-if="resizing",
+        @mousedown.prevent="$emit('start:resize', column.value)",
+        @click.stop=""
+      )
     td(v-if="!hideActions")
       actions-panel(
         :item="alarm",
         :widget="widget",
         :parent-alarm="parentAlarm",
         :refresh-alarms-list="refreshAlarmsList",
-        :small="small"
+        :small="small",
+        :wrap="wrapActions"
+      )
+      span.alarms-list-table__resize-handler(
+        v-if="resizing",
+        @mousedown.prevent="$emit('start:resize', 'actions')",
+        @click.stop=""
       )
 </template>
 
@@ -125,6 +136,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    resizing: {
+      type: Boolean,
+      default: false,
+    },
+    wrapActions: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -211,6 +230,14 @@ export default {
     width: 24px;
     max-width: 24px;
     height: 24px;
+  }
+
+  &__icons {
+    width: 82px;
+  }
+
+  &__cell {
+    position: relative;
   }
 
   &--not-filtered {

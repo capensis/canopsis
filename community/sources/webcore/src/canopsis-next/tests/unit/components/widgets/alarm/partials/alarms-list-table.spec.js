@@ -6,7 +6,7 @@ import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreGetters, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarm } from '@unit/data/alarm';
 import { triggerWindowKeyboardEvent, triggerWindowScrollEvent } from '@unit/utils/events';
-import { ALARM_DENSE_TYPES } from '@/constants';
+import { ALARM_DENSE_TYPES, ALARM_FIELDS } from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
@@ -543,6 +543,31 @@ describe('alarms-list-table', () => {
         },
         alarms: [],
         columns,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `alarms-list-table` with default and required props with links column with links in row count', () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        pagination: {},
+        widget: {
+          ...defaultWidget,
+          parameters: {
+            ...defaultWidget.parameters,
+
+            dense: ALARM_DENSE_TYPES.medium,
+          },
+        },
+        alarms: [],
+        columns: [{
+          value: ALARM_FIELDS.links,
+          inlineLinksCount: 2,
+          linksInRowCount: 3,
+        }],
       },
     });
 

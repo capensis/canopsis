@@ -1,6 +1,6 @@
 <template lang="pug">
   div.actions-panel(:class="{ 'actions-panel--small': small }")
-    v-layout(row, align-center)
+    v-layout(:wrap="wrap", row, align-center)
       c-action-btn(
         v-for="(action, index) in preparedActions.inline",
         :key="index",
@@ -13,7 +13,7 @@
         :badge-tooltip="action.badgeTooltip",
         @click="action.method"
       )
-      span.ml-1(v-if="preparedActions.dropDown.length")
+      span(v-if="preparedActions.dropDown.length")
         v-menu(
           key="dropdown-menu",
           bottom,
@@ -27,25 +27,25 @@
             v-list-tile(
               v-for="(action, index) in preparedActions.dropDown",
               :key="index",
-              :disabled="action.disabled",
+              :disabled="action.disabled || action.loading",
               @click.stop="action.method"
             )
               v-list-tile-title
-                v-progress-circular.actions-panel__menu-item-loader(
-                  v-if="action.loading",
-                  :color="action.iconColor",
-                  size="16",
-                  width="2",
-                  left,
-                  indeterminate
-                )
-                v-icon.pr-3(
-                  v-else,
-                  :color="action.iconColor",
-                  :disabled="action.disabled",
-                  left,
-                  small
-                ) {{ action.icon }}
+                span.mr-4
+                  v-progress-circular(
+                    v-if="action.loading",
+                    :color="action.iconColor",
+                    :size="16",
+                    :width="2",
+                    indeterminate
+                  )
+                  v-icon.ma-0.pa-0(
+                    v-else,
+                    :color="action.iconColor",
+                    :disabled="action.disabled",
+                    left,
+                    small
+                  ) {{ action.icon }}
                 span.body-1(:class="action.cssClass") {{ action.title }}
 </template>
 
@@ -61,6 +61,10 @@ export default {
       default: 3,
     },
     small: {
+      type: Boolean,
+      default: false,
+    },
+    wrap: {
       type: Boolean,
       default: false,
     },

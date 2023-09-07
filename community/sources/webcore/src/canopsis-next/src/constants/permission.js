@@ -53,6 +53,7 @@ export const ADMIN_PAGES_RULES = {
   remediation: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
   healthcheck: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
   kpi: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
+  tag: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
 };
 
 export const NOTIFICATIONS_PAGES_RULES = {
@@ -112,7 +113,9 @@ export const USERS_PERMISSIONS = {
     kpiCollectionSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_kpiCollectionSettings`,
     map: `${USER_PERMISSIONS_PREFIXES.technical.admin}_map`,
     shareToken: `${USER_PERMISSIONS_PREFIXES.technical.admin}_shareToken`,
-    widgetTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningType`,
+    maintenance: `${USER_PERMISSIONS_PREFIXES.technical.admin}_maintenance`,
+    widgetTemplate: `${USER_PERMISSIONS_PREFIXES.technical.admin}_widgetTemplate`,
+    tag: `${USER_PERMISSIONS_PREFIXES.technical.admin}_tag`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -353,12 +356,13 @@ export const USERS_PERMISSIONS = {
       ratingSettings: `${USER_PERMISSIONS_PREFIXES.api}_rating_settings`,
       filter: `${USER_PERMISSIONS_PREFIXES.api}_kpi_filter`,
       corporatePattern: `${USER_PERMISSIONS_PREFIXES.api}_corporate_pattern`,
-      api: `${USER_PERMISSIONS_PREFIXES.api}_api`,
       exportConfigurations: `${USER_PERMISSIONS_PREFIXES.api}_export_configurations`,
       map: `${USER_PERMISSIONS_PREFIXES.api}_map`,
       shareToken: `${USER_PERMISSIONS_PREFIXES.api}_share_token`,
       declareTicketExecution: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_execution`,
       widgetTemplate: `${USER_PERMISSIONS_PREFIXES.api}_widgettemplate`,
+      maintenance: `${USER_PERMISSIONS_PREFIXES.api}_maintenance`,
+      alarmTag: `${USER_PERMISSIONS_PREFIXES.api}_alarm_tag`,
 
       ...featuresService.get('constants.USERS_PERMISSIONS.api.general'),
     },
@@ -446,9 +450,6 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [CONTEXT_ACTIONS_TYPES.duplicateEntity]: USERS_PERMISSIONS.business.context.actions.duplicateEntity,
     [CONTEXT_ACTIONS_TYPES.deleteEntity]: USERS_PERMISSIONS.business.context.actions.deleteEntity,
     [CONTEXT_ACTIONS_TYPES.pbehaviorAdd]: USERS_PERMISSIONS.business.context.actions.pbehaviorAdd,
-    [CONTEXT_ACTIONS_TYPES.pbehaviorList]: USERS_PERMISSIONS.business.context.actions.pbehaviorList,
-    [CONTEXT_ACTIONS_TYPES.pbehaviorDelete]: USERS_PERMISSIONS.business.context.actions.pbehaviorDelete,
-    [CONTEXT_ACTIONS_TYPES.pbehaviorDelete]: USERS_PERMISSIONS.business.context.actions.pbehaviorDelete,
     [CONTEXT_ACTIONS_TYPES.massEnable]: USERS_PERMISSIONS.business.context.actions.massEnable,
     [CONTEXT_ACTIONS_TYPES.massDisable]: USERS_PERMISSIONS.business.context.actions.massDisable,
 
@@ -491,6 +492,7 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USERS_PERMISSIONS.technical.remediation]: ADMIN_PAGES_RULES.remediation,
   [USERS_PERMISSIONS.technical.healthcheck]: ADMIN_PAGES_RULES.healthcheck,
   [USERS_PERMISSIONS.technical.kpi]: ADMIN_PAGES_RULES.kpi,
+  [USERS_PERMISSIONS.technical.tag]: ADMIN_PAGES_RULES.tag,
 
   /**
    * Exploitation pages

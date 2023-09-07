@@ -11,16 +11,13 @@
         v-btn(color="primary", @click="submit") {{ $t('common.submit') }}
         v-btn(@click="cancel") {{ $t('common.cancel') }}
     view-tabs(
-      :view="view",
       :tabs.sync="tabs",
       :changed="isTabsChanged",
       :editing="editing",
       :updatable="updatable"
     )
-      view-tab-widgets(
-        slot-scope="props",
-        v-bind="props"
-      )
+      template(#default="props")
+        view-tab-widgets(v-bind="props")
 </template>
 
 <script>

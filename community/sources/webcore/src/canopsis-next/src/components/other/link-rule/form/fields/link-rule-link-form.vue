@@ -23,11 +23,9 @@
               :name="iconFieldName",
               required
             )
-        c-enabled-field(
-          v-if="isAlarmType",
-          v-field="form.single",
-          :label="$t('linkRule.single')"
-        )
+        template(v-if="isAlarmType")
+          c-enabled-field(v-field="form.single", :label="$t('linkRule.single')", hide-details)
+          c-enabled-field(v-field="form.hide_in_menu", :label="$t('linkRule.hideInMenu')")
         c-payload-text-field(
           v-field="form.url",
           :label="$t('common.url')",

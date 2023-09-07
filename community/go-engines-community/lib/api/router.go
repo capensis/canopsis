@@ -33,6 +33,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/linkrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/maintenance"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/notification"
@@ -80,6 +81,7 @@ import (
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/userprovider"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -120,11 +122,15 @@ func RegisterRoutes(
 	sessionStore := security.GetSessionStore()
 	authMiddleware := security.GetAuthMiddleware()
 	security.RegisterCallbackRoutes(router, dbClient)
+
+	maintenanceAdapter := config.NewMaintenanceAdapter(dbClient)
 	authApi := auth.NewApi(
 		security.GetTokenService(),
 		security.GetTokenProviders(),
 		security.GetAuthProviders(),
 		websocketStore,
+		maintenanceAdapter,
+		enforcer,
 		security.GetCookieOptions().FileAccessName,
 		security.GetCookieOptions().MaxAge,
 		logger,
@@ -132,6 +138,8 @@ func RegisterRoutes(
 	sessionauthApi := sessionauth.NewApi(
 		sessionStore,
 		security.GetAuthProviders(),
+		maintenanceAdapter,
+		enforcer,
 		logger,
 	)
 	router.POST("/auth", sessionauthApi.LoginHandler())
@@ -199,9 +207,9 @@ func RegisterRoutes(
 				userApi.Delete,
 			)
 		}
+		roleApi := role.NewApi(role.NewStore(dbClient), actionLogger)
 		roleRouter := protected.Group("/roles")
 		{
-			roleApi := role.NewApi(role.NewStore(dbClient), actionLogger)
 			roleRouter.POST("",
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer),
 				roleApi.Create,
@@ -224,6 +232,10 @@ func RegisterRoutes(
 				roleApi.Delete,
 			)
 		}
+		protected.GET("/role-templates",
+			middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
+			roleApi.ListTemplates,
+		)
 		permissionRouter := protected.Group("/permissions")
 		{
 			permissionApi := permission.NewApi(permission.NewStore(dbClient))
@@ -446,6 +458,14 @@ func RegisterRoutes(
 				middleware.SetAuthor(),
 				eventFilterApi.Update)
 		}
+		protected.GET(
+			"/eventfilter/:id/failures",
+			middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionRead, enforcer),
+			eventFilterApi.ListFailures)
+		protected.PUT(
+			"/eventfilter/:id/failures",
+			middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionCreate, enforcer),
+			eventFilterApi.ReadFailures)
 
 		pbehaviorApi := pbehavior.NewApi(
 			pbehavior.NewStore(
@@ -759,7 +779,7 @@ func RegisterRoutes(
 		}
 
 		securityConfig := security.GetConfig().Security
-		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient, securityConfig.AuthProviders,
+		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient, maintenanceAdapter, securityConfig.AuthProviders,
 			securityConfig.Cas.Title, securityConfig.Saml.Title))
 		protected.GET("app-info", appInfoApi.GetAppInfo)
 		appInfoRouter := protected.Group("/internal")
@@ -1048,7 +1068,7 @@ func RegisterRoutes(
 
 		// broadcast message API
 		broadcastMessageApi := broadcastmessage.NewApi(
-			broadcastmessage.NewStore(dbClient),
+			broadcastmessage.NewStore(dbClient, maintenanceAdapter),
 			broadcastMessageChan,
 			actionLogger,
 		)
@@ -1267,8 +1287,8 @@ func RegisterRoutes(
 			)
 		}
 
-		patternAPI := pattern.NewApi(pattern.NewStore(dbClient, pbhComputeChan, entityPublChan, authorProvider, logger), userInterfaceConfig,
-			enforcer, actionLogger, logger)
+		patternAPI := pattern.NewApi(pattern.NewStore(dbClient, pbhComputeChan, entityPublChan, authorProvider, logger),
+			userInterfaceConfig, enforcer, actionLogger, logger)
 		patternRouter := protected.Group("/patterns")
 		{
 			patternRouter.Use(middleware.OnlyAuth())
@@ -1296,9 +1316,14 @@ func RegisterRoutes(
 			)
 		}
 		protected.POST(
-			"/patterns-count",
+			"/patterns-alarms-count",
 			middleware.OnlyAuth(),
-			patternAPI.Count,
+			patternAPI.CountAlarms,
+		)
+		protected.POST(
+			"/patterns-entities-count",
+			middleware.OnlyAuth(),
+			patternAPI.CountEntities,
 		)
 		protected.POST(
 			"/patterns-alarms",
@@ -1348,6 +1373,43 @@ func RegisterRoutes(
 				"",
 				middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionRead, enforcer),
 				linkRuleAPI.GetCategories,
+			)
+		}
+
+		alarmTagAPI := alarmtag.NewApi(
+			alarmtag.NewStore(dbClient, authorProvider),
+			common.NewPatternFieldsTransformer(dbClient),
+			actionLogger,
+			logger,
+		)
+		alarmTagRouter := protected.Group("/alarm-tags")
+		{
+			alarmTagRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
+				alarmTagAPI.List,
+			)
+			alarmTagRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionCreate, enforcer),
+				middleware.SetAuthor(),
+				alarmTagAPI.Create,
+			)
+			alarmTagRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionRead, enforcer),
+				alarmTagAPI.Get,
+			)
+			alarmTagRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				alarmTagAPI.Update,
+			)
+			alarmTagRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionDelete, enforcer),
+				alarmTagAPI.Delete,
 			)
 		}
 
@@ -1579,6 +1641,16 @@ func RegisterRoutes(
 					alarmActionAPI.BulkChangeState,
 				)
 			}
+
+			alarmTagRouter := bulkRouter.Group("/alarm-tags")
+			{
+				alarmTagRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionDelete, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					alarmTagAPI.BulkDelete,
+				)
+			}
 		}
 
 		dateStorageRouter := protected.Group("data-storage")
@@ -1711,16 +1783,6 @@ func RegisterRoutes(
 			entityInfoDictionaryApi.ListValues,
 		)
 
-		alarmTagRouter := protected.Group("/alarm-tags")
-		{
-			alarmTagAPI := alarmtag.NewApi(alarmtag.NewStore(dbClient))
-			alarmTagRouter.GET(
-				"",
-				middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
-				alarmTagAPI.List,
-			)
-		}
-
 		techMetricsRouter := protected.Group("/tech-metrics-export")
 		{
 			techMetricsAPI := techmetrics.NewApi(techMetricsTaskExecutor, timezoneConfigProvider)
@@ -1755,10 +1817,29 @@ func RegisterRoutes(
 				middleware.OnlyAuth(),
 				templateValidatorApi.ValidateScenarios,
 			)
+			templateValidatorRouter.POST(
+				"/event-filter-rules",
+				middleware.OnlyAuth(),
+				templateValidatorApi.ValidateEventFilterRules,
+			)
 		}
 		protected.GET(
 			"/template-vars",
 			templateValidatorApi.GetEnvVars,
+		)
+
+		maintenanceApi := maintenance.NewApi(
+			maintenance.NewStore(
+				dbClient,
+				userprovider.NewMongoProvider(dbClient, apiConfigProvider),
+				security.GetTokenService(),
+				sessionStore,
+			),
+		)
+		protected.PUT(
+			"/maintenance",
+			middleware.Authorize(apisecurity.PermMaintenance, model.PermissionCan, enforcer),
+			maintenanceApi.Maintenance,
 		)
 	}
 }

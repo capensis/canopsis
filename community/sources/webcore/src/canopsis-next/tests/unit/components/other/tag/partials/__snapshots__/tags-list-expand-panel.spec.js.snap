@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`tags-list-expand-panel Renders \`tags-list-expand-panel\` with patterns 1`] = `
+<div
+  class="v-tabs"
+>
+  <div
+    class="v-tabs__bar theme--dark secondary lighten-1"
+  >
+    <transition-stub
+      name="fade-transition"
+    />
+    <div
+      class="v-tabs__wrapper"
+    >
+      <div
+        class="v-tabs__container v-tabs__container--centered"
+      >
+        <div
+          class="v-tabs__slider-wrapper"
+          style="transition: none;"
+        >
+          <div
+            class="v-tabs__slider primary"
+          />
+        </div>
+        <div
+          class="v-tabs__div"
+        >
+          <a
+            class="v-tabs__item v-tabs__item--active"
+          >
+            Patterns
+          </a>
+        </div>
+      </div>
+    </div>
+    <transition-stub
+      name="fade-transition"
+    />
+  </div>
+  <div
+    class="v-window"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+        >
+          <div
+            class="layout py-3"
+          >
+            <div
+              class="flex xs12 md8 offset-md2"
+            >
+              <div
+                class="v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <tag-patterns-form-stub
+                    form="[object Object]"
+                    readonly="true"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;

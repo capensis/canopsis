@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -39,6 +40,7 @@ type store struct {
 	dbCollection              mongo.DbCollection
 	alarmDbCollection         mongo.DbCollection
 	resolvedAlarmDbCollection mongo.DbCollection
+	serviceCountersCollection mongo.DbCollection
 	userDbCollection          mongo.DbCollection
 
 	linkGenerator link.Generator
@@ -52,7 +54,8 @@ func NewStore(db mongo.DbClient, linkGenerator link.Generator, logger zerolog.Lo
 		dbCollection:              db.Collection(mongo.EntityMongoCollection),
 		alarmDbCollection:         db.Collection(mongo.AlarmMongoCollection),
 		resolvedAlarmDbCollection: db.Collection(mongo.ResolvedAlarmMongoCollection),
-		userDbCollection:          db.Collection(mongo.RightsMongoCollection),
+		serviceCountersCollection: db.Collection(mongo.EntityServiceCountersCollection),
+		userDbCollection:          db.Collection(mongo.UserCollection),
 
 		linkGenerator: linkGenerator,
 
@@ -219,6 +222,15 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 		if err != nil {
 			return err
 		}
+
+		_, err = s.serviceCountersCollection.InsertOne(ctx, statecounters.EntityServiceCounters{
+			ID:             service.ID,
+			OutputTemplate: service.OutputTemplate,
+		})
+		if err != nil {
+			return err
+		}
+
 		response, err = s.GetOneBy(ctx, service.ID)
 		return err
 	})
@@ -286,6 +298,18 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 		} else {
 			serviceChanges.IsPatternChanged = !reflect.DeepEqual(oldValues.EntityPattern, request.EntityPattern)
 		}
+
+		_, err = s.serviceCountersCollection.UpdateOne(
+			ctx,
+			bson.M{"_id": request.ID}, bson.M{
+				"$set": bson.M{
+					"output_template": request.OutputTemplate,
+				},
+			})
+		if err != nil {
+			return err
+		}
+
 		service, err = s.GetOneBy(ctx, request.ID)
 		return err
 	})
@@ -349,7 +373,7 @@ func (s *store) findUser(ctx context.Context, id string) (link.User, error) {
 	user := link.User{}
 	cursor, err := s.userDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"_id": id}},
-		{"$addFields": bson.M{"username": "$crecord_name"}},
+		{"$addFields": bson.M{"username": "$name"}},
 	})
 	if err != nil {
 		return user, err
