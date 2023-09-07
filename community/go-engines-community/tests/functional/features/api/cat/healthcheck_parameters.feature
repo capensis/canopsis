@@ -34,17 +34,16 @@ Feature: to get and update healthcheck parameters
         "limit": 0,
         "enabled": false
       },
+      "messages": {
+        "limit": 0,
+        "enabled": false
+      },
       "engine-fifo": {
         "enabled": false,
         "minimal": 0,
         "optimal": 0
       },
       "engine-pbehavior": {
-        "enabled": false,
-        "minimal": 0,
-        "optimal": 0
-      },
-      "engine-service": {
         "enabled": false,
         "minimal": 0,
         "optimal": 0
@@ -95,17 +94,16 @@ Feature: to get and update healthcheck parameters
         "limit": 0,
         "enabled": false
       },
+      "messages": {
+        "limit": 0,
+        "enabled": false
+      },
       "engine-fifo": {
         "enabled": false,
         "minimal": 0,
         "optimal": 0
       },
       "engine-pbehavior": {
-        "enabled": false,
-        "minimal": 0,
-        "optimal": 0
-      },
-      "engine-service": {
         "enabled": false,
         "minimal": 0,
         "optimal": 0
@@ -154,6 +152,10 @@ Feature: to get and update healthcheck parameters
         "limit": 1000,
         "enabled": true
       },
+      "messages": {
+        "limit": 5000,
+        "enabled": true
+      },
       "engine-fifo": {
         "enabled": true,
         "minimal": 1,
@@ -163,11 +165,6 @@ Feature: to get and update healthcheck parameters
         "enabled": true,
         "minimal": 1,
         "optimal": 2
-      },
-      "engine-service": {
-        "enabled": true,
-        "minimal": 1,
-        "optimal": 3
       },
       "engine-action": {
         "enabled": false
@@ -212,6 +209,10 @@ Feature: to get and update healthcheck parameters
         "limit": 1000,
         "enabled": true
       },
+      "messages": {
+        "limit": 5000,
+        "enabled": true
+      },
       "engine-fifo": {
         "enabled": true,
         "minimal": 1,
@@ -221,11 +222,6 @@ Feature: to get and update healthcheck parameters
         "enabled": true,
         "minimal": 1,
         "optimal": 2
-      },
-      "engine-service": {
-        "enabled": true,
-        "minimal": 1,
-        "optimal": 3
       },
       "engine-action": {
         "enabled": false,
@@ -273,6 +269,10 @@ Feature: to get and update healthcheck parameters
         "limit": 1000,
         "enabled": true
       },
+      "messages": {
+        "limit": 5000,
+        "enabled": true
+      },
       "engine-fifo": {
         "enabled": true,
         "minimal": 1,
@@ -282,11 +282,6 @@ Feature: to get and update healthcheck parameters
         "enabled": true,
         "minimal": 1,
         "optimal": 2
-      },
-      "engine-service": {
-        "enabled": true,
-        "minimal": 1,
-        "optimal": 3
       },
       "engine-action": {
         "enabled": false,
@@ -335,6 +330,10 @@ Feature: to get and update healthcheck parameters
         "limit": -1,
         "enabled": true
       },
+      "messages": {
+        "limit": -1,
+        "enabled": true
+      },
       "engine-fifo": {
         "enabled": true,
         "minimal": 1,
@@ -344,11 +343,6 @@ Feature: to get and update healthcheck parameters
         "enabled": true,
         "minimal": 1,
         "optimal": 2
-      },
-      "engine-service": {
-        "enabled": true,
-        "minimal": 1,
-        "optimal": 3
       },
       "engine-action": {
         "enabled": true,
@@ -392,7 +386,8 @@ Feature: to get and update healthcheck parameters
     """
     {
       "errors": {
-        "queue.limit": "Limit should be greater than 0."
+        "queue.limit": "Limit should be greater than 0.",
+        "messages.limit": "Limit should be greater than 0."
       }
     }
     """
@@ -401,6 +396,10 @@ Feature: to get and update healthcheck parameters
     {
       "queue": {
         "limit": 1000,
+        "enabled": true
+      },
+      "messages": {
+        "limit": 5000,
         "enabled": true
       },
       "engine-fifo": {
@@ -412,11 +411,6 @@ Feature: to get and update healthcheck parameters
         "enabled": true,
         "minimal": 1,
         "optimal": 2
-      },
-      "engine-service": {
-        "enabled": true,
-        "minimal": 1,
-        "optimal": 3
       },
       "engine-action": {
         "enabled": true,
@@ -480,11 +474,6 @@ Feature: to get and update healthcheck parameters
         "enabled": true,
         "minimal": 1,
         "optimal": 2
-      },
-      "engine-service": {
-        "enabled": true,
-        "minimal": 1,
-        "optimal": 3
       },
       "engine-action": {
         "enabled": true,

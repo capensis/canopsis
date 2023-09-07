@@ -1,15 +1,14 @@
 <template lang="pug">
-  div.kpi-sli-toolbar
-    v-layout.my-4(row)
-      c-quick-date-interval-field.mr-4(v-field="query.interval", :min="minDate")
-      c-sampling-field.mr-4(v-field="query.sampling")
-      remediation-statistics-show-mode-field.mr-4(v-field="query.type")
-      remediation-statistics-instructions-field(v-field="query.instruction")
+  v-layout.remediation-statistics-filters.my-4(wrap)
+    c-quick-date-interval-field.mr-4(v-field="query.interval", :min="minDate")
+    c-sampling-field.remediation-statistics-filters__sampling.mr-4(v-field="query.sampling")
+    remediation-statistics-show-mode-field.remediation-statistics-filters__type.mr-4(v-field="query.type")
+    remediation-statistics-instructions-field.remediation-statistics-filters__instruction(v-field="query.instruction")
 </template>
 
 <script>
-import RemediationStatisticsShowModeField from './remediation-statistics-show-mode-field.vue';
-import RemediationStatisticsInstructionsField from './remediation-statistics-instructions-field.vue';
+import RemediationStatisticsShowModeField from '../form/fields/remediation-statistics-show-mode-field.vue';
+import RemediationStatisticsInstructionsField from '../form/fields/remediation-statistics-instructions-field.vue';
 
 export default {
   components: {
@@ -33,18 +32,18 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-.kpi-sli-toolbar {
+<style lang="scss">
+.remediation-statistics-filters {
   &__sampling {
     max-width: 200px;
   }
 
-  &__show-mode {
+  &__type {
     max-width: 150px;
   }
 
-  &__filters {
-    max-width: 200px;
+  &__instruction {
+    max-width: 400px;
   }
 }
 </style>

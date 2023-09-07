@@ -1,15 +1,27 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
-import { createMockedStoreModules } from '@unit/utils/store';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import {
+  createActiveViewModule,
+  createAlarmModule,
+  createAuthModule,
+  createMockedStoreModules,
+  createQueryModule,
+  createServiceModule,
+  createUserPreferenceModule,
+} from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
-import { ENTITY_TYPES, MAP_TYPES, MODALS, USERS_PERMISSIONS, WIDGET_TYPES } from '@/constants';
+import {
+  ENTITY_TYPES,
+  MAP_TYPES,
+  MODALS,
+  USERS_PERMISSIONS,
+  WIDGET_TYPES,
+} from '@/constants';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
 import MapWidget from '@/components/widgets/map/map.vue';
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-entity-category-field': true,
@@ -21,20 +33,6 @@ const stubs = {
   'mermaid-preview': true,
   'tree-of-dependencies-preview': true,
 };
-
-const factory = (options = {}) => shallowMount(MapWidget, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(MapWidget, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectMapBreadcrumbs = wrapper => wrapper.find('map-breadcrumbs-stub');
 const selectEntityCategoryField = wrapper => wrapper.find('c-entity-category-field-stub');
@@ -63,14 +61,6 @@ describe('map', () => {
     },
   };
 
-  const currentUserPermissionsById = jest.fn().mockReturnValue({});
-  const authModule = {
-    name: 'auth',
-    getters: {
-      currentUser: {},
-      currentUserPermissionsById,
-    },
-  };
   const fetchMapStateWithoutStore = jest.fn().mockReturnValue({
     type: MAP_TYPES.geo,
     _id: mapId,
@@ -81,62 +71,15 @@ describe('map', () => {
       fetchItemStateWithoutStore: fetchMapStateWithoutStore,
     },
   };
-  const registerEditingOffHandler = jest.fn();
-  const unregisterEditingOffHandler = jest.fn();
-  const activeViewModule = {
-    name: 'activeView',
-    actions: {
-      registerEditingOffHandler,
-      unregisterEditingOffHandler,
-    },
-  };
-  const fetchOpenAlarmsListWithoutStore = jest.fn();
-  const alarmModule = {
-    name: 'alarm',
-    actions: {
-      fetchOpenAlarmsListWithoutStore,
-    },
-  };
-  const getUserPreferenceByWidgetId = jest.fn().mockReturnValue({});
+
+  const { authModule, currentUserPermissionsById } = createAuthModule();
+  const { activeViewModule, registerEditingOffHandler, unregisterEditingOffHandler } = createActiveViewModule();
+  const { alarmModule, fetchOpenAlarmsListWithoutStore } = createAlarmModule();
+
   const filters = [{ _id: 'filter' }];
-  const getItemByWidgetId = jest.fn().mockReturnValue(() => ({
-    content: {
-      filters,
-    },
-  }));
-  const updateUserPreference = jest.fn();
-  const fetchItem = jest.fn();
-  const userPreferenceModule = {
-    name: 'userPreference',
-    getters: {
-      getItemByWidgetId,
-      getUserPreferenceByWidgetId,
-    },
-    actions: {
-      update: updateUserPreference,
-      fetchItem,
-    },
-  };
-  const fetchServiceAlarmsWithoutStore = jest.fn();
-  const serviceModule = {
-    name: 'service',
-    actions: {
-      fetchAlarmsWithoutStore: fetchServiceAlarmsWithoutStore,
-    },
-  };
-  const getQueryById = jest.fn().mockReturnValue(() => ({}));
-  const getQueryNonceById = jest.fn().mockReturnValue(() => 'nonce');
-  const updateQuery = jest.fn();
-  const queryModule = {
-    name: 'query',
-    getters: {
-      getQueryById,
-      getQueryNonceById,
-    },
-    actions: {
-      update: updateQuery,
-    },
-  };
+  const { userPreferenceModule, updateUserPreference, getUserPreferenceByWidgetId } = createUserPreferenceModule();
+  const { serviceModule, fetchServiceAlarmsWithoutStore } = createServiceModule();
+  const { queryModule, updateQuery } = createQueryModule();
 
   const store = createMockedStoreModules([
     authModule,
@@ -148,17 +91,13 @@ describe('map', () => {
     queryModule,
   ]);
 
-  beforeEach(() => {
-    fetchMapStateWithoutStore.mockClear();
-    registerEditingOffHandler.mockClear();
-    unregisterEditingOffHandler.mockClear();
-  });
+  const factory = generateShallowRenderer(MapWidget, { stubs });
+  const snapshotFactory = generateRenderer(MapWidget, { stubs });
 
   it('Register and unregister editing off handler is working', async () => {
     const wrapper = factory({
       propsData: {
         tabId,
-        editing: true,
         widget,
       },
       store,
@@ -178,7 +117,6 @@ describe('map', () => {
       store,
       propsData: {
         tabId,
-        editing: true,
         widget,
       },
     });
@@ -204,7 +142,6 @@ describe('map', () => {
       store,
       propsData: {
         tabId,
-        editing: true,
         widget,
       },
     });
@@ -236,7 +173,6 @@ describe('map', () => {
       store,
       propsData: {
         tabId,
-        editing: true,
         widget,
       },
     });
@@ -273,7 +209,6 @@ describe('map', () => {
       store,
       propsData: {
         tabId,
-        editing: true,
         widget,
       },
     });
@@ -310,6 +245,12 @@ describe('map', () => {
     currentUserPermissionsById.mockReturnValue({
       [USERS_PERMISSIONS.business.map.actions.category]: { actions: [] },
     });
+
+    getUserPreferenceByWidgetId.mockReturnValue(() => ({
+      content: {
+        filters,
+      },
+    }));
     const wrapper = factory({
       store: createMockedStoreModules([
         authModule,
@@ -322,7 +263,6 @@ describe('map', () => {
       ]),
       propsData: {
         tabId,
-        editing: true,
         widget,
       },
     });
@@ -374,7 +314,6 @@ describe('map', () => {
       store,
       propsData: {
         tabId,
-        editing: true,
         widget,
       },
       mocks: {
@@ -437,7 +376,6 @@ describe('map', () => {
       store,
       propsData: {
         tabId,
-        editing: true,
         widget,
       },
       mocks: {
@@ -524,7 +462,6 @@ describe('map', () => {
             entities_under_pbehavior_enabled: true,
           },
         },
-        editing: true,
       },
       store: createMockedStoreModules([
         authModule,
@@ -543,6 +480,11 @@ describe('map', () => {
   });
 
   test('Renders `map` with default props', async () => {
+    fetchMapStateWithoutStore.mockReturnValue({
+      type: MAP_TYPES.geo,
+      _id: mapId,
+    });
+
     const wrapper = snapshotFactory({
       propsData: {
         tabId: 'tab-id',
@@ -554,7 +496,6 @@ describe('map', () => {
             map: 'map',
           },
         },
-        editing: false,
       },
       store,
     });

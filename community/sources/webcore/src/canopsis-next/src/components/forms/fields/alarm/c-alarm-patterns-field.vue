@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-pattern-editor-field(
+  pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
     :readonly="readonly",
@@ -8,7 +8,7 @@
     :required="required",
     :attributes="availableAlarmAttributes",
     :with-type="withType",
-    :check-count-name="checkCountName"
+    :counter="counter"
   )
 </template>
 
@@ -32,9 +32,12 @@ import {
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
+import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
+
 const { mapActions: dynamicInfoMapActions } = createNamespacedHelpers('dynamicInfo');
 
 export default {
+  components: { PatternEditorField },
   mixins: [entitiesInfoMixin],
   model: {
     prop: 'patterns',
@@ -65,13 +68,13 @@ export default {
       type: Boolean,
       default: false,
     },
-    checkCountName: {
-      type: String,
-      required: false,
-    },
     readonly: {
       type: Boolean,
       default: false,
+    },
+    counter: {
+      type: Object,
+      required: false,
     },
   },
   data() {
@@ -175,6 +178,12 @@ export default {
       return {
         infos: this.infos,
         type: PATTERN_RULE_TYPES.infos,
+      };
+    },
+
+    ticketDataOptions() {
+      return {
+        type: PATTERN_RULE_TYPES.object,
       };
     },
 
@@ -387,6 +396,18 @@ export default {
         {
           value: ALARM_PATTERN_FIELDS.ticket,
           options: this.ticketOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.ticketValue,
+          options: this.stringWithExistOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.ticketMessage,
+          options: this.stringWithExistOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.ticketData,
+          options: this.ticketDataOptions,
         },
         {
           value: ALARM_PATTERN_FIELDS.snooze,

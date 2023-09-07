@@ -1,10 +1,8 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import CDraggableListField from '@/components/forms/fields/c-draggable-list-field.vue';
-
-const localVue = createVueInstance();
+import CDraggableListField from '@/components/forms/fields/list/c-draggable-list-field.vue';
 
 const stubs = {
   draggable: {
@@ -18,20 +16,6 @@ const snapshotStubs = {
   draggable: true,
 };
 
-const factory = (options = {}) => shallowMount(CDraggableListField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CDraggableListField, {
-  localVue,
-  stubs: snapshotStubs,
-
-  ...options,
-});
-
 const selectDraggable = wrapper => wrapper.find('.draggable');
 
 describe('c-draggable-list-field', () => {
@@ -41,6 +25,9 @@ describe('c-draggable-list-field', () => {
     { title: 'Item 3' },
   ];
 
+  const factory = generateShallowRenderer(CDraggableListField, { stubs });
+  const snapshotFactory = generateRenderer(CDraggableListField, { stubs: snapshotStubs });
+
   it('Item position changed after trigger draggable with moved event', () => {
     const wrapper = factory({
       propsData: {
@@ -48,25 +35,15 @@ describe('c-draggable-list-field', () => {
       },
     });
 
-    const draggable = selectDraggable(wrapper);
-
-    draggable.trigger('change', {
-      moved: {
-        oldIndex: 0,
-        newIndex: 1,
-      },
-    });
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-    const [eventData] = inputEvents[0];
-
-    expect(eventData).toEqual([
+    const newOrder = [
       items[1],
       items[0],
       items[2],
-    ]);
+    ];
+
+    selectDraggable(wrapper).vm.$emit('input', newOrder);
+
+    expect(wrapper).toEmit('input', newOrder);
   });
 
   it('Filter position changed after trigger draggable with added event', () => {
@@ -76,30 +53,20 @@ describe('c-draggable-list-field', () => {
       },
     });
 
-    const draggable = selectDraggable(wrapper);
-
     const newItem = {
       title: Faker.datatype.string(),
     };
 
-    draggable.trigger('change', {
-      added: {
-        element: newItem,
-        newIndex: 1,
-      },
-    });
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-    const [eventData] = inputEvents[0];
-
-    expect(eventData).toEqual([
+    const newItems = [
       items[0],
       newItem,
       items[1],
       items[2],
-    ]);
+    ];
+
+    selectDraggable(wrapper).vm.$emit('input', newItems);
+
+    expect(wrapper).toEmit('input', newItems);
   });
 
   it('Filter position changed after trigger draggable with removed event', () => {
@@ -109,23 +76,14 @@ describe('c-draggable-list-field', () => {
       },
     });
 
-    const draggable = selectDraggable(wrapper);
-
-    draggable.trigger('change', {
-      removed: {
-        oldIndex: 1,
-      },
-    });
-
-    const inputEvents = wrapper.emitted('input');
-
-    expect(inputEvents).toHaveLength(1);
-    const [eventData] = inputEvents[0];
-
-    expect(eventData).toEqual([
+    const newItems = [
       items[0],
       items[2],
-    ]);
+    ];
+
+    selectDraggable(wrapper).vm.$emit('input', newItems);
+
+    expect(wrapper).toEmit('input', newItems);
   });
 
   it('Renders `c-draggable-list-field` with default props', () => {

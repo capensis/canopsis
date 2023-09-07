@@ -248,7 +248,8 @@ Feature: Get a map's state and alarms
       "type": "treeofdeps",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "parameters": {
         "type": "treeofdeps",
@@ -654,7 +655,8 @@ Feature: Get a map's state and alarms
       "type": "treeofdeps",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "parameters": {
         "type": "impactchain",
@@ -1845,7 +1847,8 @@ Feature: Get a map's state and alarms
       "_id": "{{ .mapId }}",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "name": "test-map-service-api-map-7-name",
       "type": "treeofdeps",

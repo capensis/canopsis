@@ -12,12 +12,14 @@ Feature: Get alarms
       {
         "label": "test-link-rule-to-alarm-link-get-2-link-1-label",
         "icon_name": "test-link-rule-to-alarm-link-get-2-link-1-icon",
-        "url": "http://test-link-rule-to-alarm-link-get-2-link-1-url.com?info[]=test-resource-to-alarm-link-get-1-info-1-val&info[]=test-resource-to-alarm-link-get-2-info-1-val&"
+        "url": "http://test-link-rule-to-alarm-link-get-2-link-1-url.com?user=root&info[]=test-resource-to-alarm-link-get-1-info-1-val&info[]=test-resource-to-alarm-link-get-2-info-1-val&",
+        "action": "open"
       },
       {
         "label": "test-link-rule-to-alarm-link-get-2-link-2-label",
         "icon_name": "test-link-rule-to-alarm-link-get-2-link-2-icon",
-        "url": "http://test-link-rule-to-alarm-link-get-2-link-2-url.com?info[]=test-resource-to-alarm-link-get-1-info-1-val&info[]=test-resource-to-alarm-link-get-2-info-1-val&"
+        "url": "http://test-link-rule-to-alarm-link-get-2-link-2-url.com?info[]=test-resource-to-alarm-link-get-1-info-1-val&info[]=test-resource-to-alarm-link-get-2-info-1-val&",
+        "action": "open"
       }
     ]
     """
@@ -33,12 +35,14 @@ Feature: Get alarms
       {
         "label": "test-link-rule-to-alarm-link-get-4-link-1-label",
         "icon_name": "test-link-rule-to-alarm-link-get-4-link-1-icon",
-        "url": "http://test-link-rule-to-alarm-link-get-4-link-1-url.com?info[]=test-resource-to-alarm-link-get-1-info-1-val|test-link-mongo-data-1-status&info[]=test-resource-to-alarm-link-get-2-info-1-val|test-link-mongo-data-2-status&"
+        "url": "http://test-link-rule-to-alarm-link-get-4-link-1-url.com?user=root&info[]=test-resource-to-alarm-link-get-1-info-1-val|test-link-mongo-data-1-status&info[]=test-resource-to-alarm-link-get-2-info-1-val|test-link-mongo-data-2-status&",
+        "action": "open"
       },
       {
         "label": "test-link-rule-to-alarm-link-get-4-link-2-label",
         "icon_name": "test-link-rule-to-alarm-link-get-4-link-2-icon",
-        "url": "http://test-link-rule-to-alarm-link-get-4-link-2-url.com?info[]=test-resource-to-alarm-link-get-1-info-1-val|test-link-mongo-data-1-status&info[]=test-resource-to-alarm-link-get-2-info-1-val|test-link-mongo-data-2-status&"
+        "url": "http://test-link-rule-to-alarm-link-get-4-link-2-url.com?info[]=test-resource-to-alarm-link-get-1-info-1-val|test-link-mongo-data-1-status&info[]=test-resource-to-alarm-link-get-2-info-1-val|test-link-mongo-data-2-status&",
+        "action": "open"
       }
     ]
     """

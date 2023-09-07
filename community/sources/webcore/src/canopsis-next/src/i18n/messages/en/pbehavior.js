@@ -34,6 +34,7 @@ export default {
   pbehaviorReason: 'Pbehavior reason',
   pbehaviorName: 'Pbehavior name',
   pbehaviorCanonicalType: 'Pbehavior canonical type',
+  rruleEnd: 'End of recurrence',
   buttons: {
     addFilter: 'Add filter',
     editFilter: 'Edit filter',
@@ -57,6 +58,7 @@ export default {
   types: {
     usingType: 'Cannot be deleted since it is in use',
     defaultType: 'The type is default, you can edit only color field',
+    hidden: 'Hide this type on pbehavior form ?',
     types: {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Active',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactive',
@@ -67,5 +69,6 @@ export default {
 
   reasons: {
     usingReason: 'Cannot be deleted since it is in use',
+    hidden: 'Hide this reason on pbehavior form ?',
   },
 };

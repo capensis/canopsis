@@ -28,6 +28,7 @@ const (
 
 type MongoQueryBuilder struct {
 	filterCollection mongo.DbCollection
+	authorProvider   author.Provider
 
 	defaultSortBy string
 
@@ -53,9 +54,10 @@ type lookupWithKey struct {
 	pipeline []bson.M
 }
 
-func NewMongoQueryBuilder(client mongo.DbClient) *MongoQueryBuilder {
+func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider) *MongoQueryBuilder {
 	return &MongoQueryBuilder{
 		filterCollection: client.Collection(mongo.WidgetFiltersMongoCollection),
+		authorProvider:   authorProvider,
 
 		defaultSortBy: "name",
 	}
@@ -84,7 +86,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	q.lookups = []lookupWithKey{
 		{key: "category", pipeline: getCategoryLookup()},
 		{key: "alarm", pipeline: getAlarmLookup()},
-		{key: "pbehavior", pipeline: getPbehaviorLookup()},
+		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
 		{key: "pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
 		{key: "counters", pipeline: getPbehaviorAlarmCountersLookup()},
 	}
@@ -112,7 +114,7 @@ func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(id string,
 	q.lookups = []lookupWithKey{
 		{key: "category", pipeline: getCategoryLookup()},
 		{key: "alarm", pipeline: getAlarmLookup()},
-		{key: "pbehavior", pipeline: getPbehaviorLookup()},
+		{key: "pbehavior", pipeline: getPbehaviorLookup(q.authorProvider)},
 		{key: "pbehavior_info.icon_name", pipeline: getPbehaviorInfoTypeLookup()},
 		{key: "stats", pipeline: getEventStatsLookup(now)},
 		{key: "depends_count", pipeline: getDependsCountPipeline()},
@@ -403,7 +405,7 @@ func getAlarmLookup() []bson.M {
 	}
 }
 
-func getPbehaviorLookup() []bson.M {
+func getPbehaviorLookup(authorProvider author.Provider) []bson.M {
 	pipeline := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.PbehaviorMongoCollection,
@@ -434,8 +436,8 @@ func getPbehaviorLookup() []bson.M {
 		{"$unwind": bson.M{"path": "$pbehavior.reason", "preserveNullAndEmptyArrays": true}},
 	}
 
-	pipeline = append(pipeline, author.PipelineForField("pbehavior.author")...)
-	pipeline = append(pipeline, author.PipelineForField("pbehavior.last_comment.author")...)
+	pipeline = append(pipeline, authorProvider.PipelineForField("pbehavior.author")...)
+	pipeline = append(pipeline, authorProvider.PipelineForField("pbehavior.last_comment.author")...)
 	pipeline = append(pipeline,
 		bson.M{"$addFields": bson.M{
 			"pbehavior.last_comment": bson.M{
@@ -506,15 +508,24 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 	}
 
 	return []bson.M{
-		{"$addFields": bson.M{
-			"pbh_types": bson.M{"$ifNull": bson.A{
-				bson.M{"$map": bson.M{
-					"input": bson.M{"$objectToArray": "$counters.pbehavior"},
-					"in":    "$$this.k",
-				}},
-				[]int{-1},
+		{
+			"$lookup": bson.M{
+				"from":         mongo.EntityServiceCountersCollection,
+				"localField":   "_id",
+				"foreignField": "_id",
+				"as":           "counters",
+			},
+		},
+		{
+			"$unwind": "$counters",
+		},
+		{"$addFields": bson.M{"pbh_types": bson.M{"$ifNull": bson.A{
+			bson.M{"$map": bson.M{
+				"input": bson.M{"$objectToArray": "$counters.pbehavior"},
+				"in":    "$$this.k",
 			}},
-		}},
+			[]int{-1},
+		}}}},
 		{"$lookup": bson.M{
 			"from": mongo.PbehaviorTypeMongoCollection,
 			"as":   "pbh_types_counters",

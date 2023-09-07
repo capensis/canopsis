@@ -3,10 +3,14 @@ package entity
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/perfdata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -18,6 +22,7 @@ type Store interface {
 	Find(ctx context.Context, r ListRequestWithPagination) (*AggregationResult, error)
 	Toggle(ctx context.Context, id string, enabled bool) (bool, SimplifiedEntity, error)
 	GetContextGraph(ctx context.Context, id string) (*ContextGraphResponse, error)
+	Export(ctx context.Context, t export.Task) (export.DataCursor, error)
 }
 
 type store struct {
@@ -25,14 +30,16 @@ type store struct {
 	mainCollection         mongo.DbCollection
 	archivedCollection     mongo.DbCollection
 	timezoneConfigProvider config.TimezoneConfigProvider
+	decoder                encoding.Decoder
 }
 
-func NewStore(db mongo.DbClient, timezoneConfigProvider config.TimezoneConfigProvider) Store {
+func NewStore(db mongo.DbClient, timezoneConfigProvider config.TimezoneConfigProvider, decoder encoding.Decoder) Store {
 	return &store{
 		db:                     db,
 		mainCollection:         db.Collection(mongo.EntityMongoCollection),
 		archivedCollection:     db.Collection(mongo.ArchivedEntitiesMongoCollection),
 		timezoneConfigProvider: timezoneConfigProvider,
+		decoder:                decoder,
 	}
 }
 
@@ -62,6 +69,7 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination) (*Aggrega
 	}
 
 	s.fillConnectorType(&res)
+	s.fillPerfData(&res, r.PerfData)
 
 	return &res, nil
 }
@@ -332,6 +340,48 @@ func (s *store) GetContextGraph(ctx context.Context, id string) (*ContextGraphRe
 	return nil, nil
 }
 
+func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, error) {
+	r := BaseFilterRequest{}
+	err := s.decoder.Decode([]byte(t.Parameters), &r)
+	if err != nil {
+		return nil, err
+	}
+
+	now := types.NewCpsTime()
+	pipeline, err := s.getQueryBuilder().CreateOnlyListAggregationPipeline(ctx, ListRequest{
+		BaseFilterRequest: r,
+		SearchBy:          t.Fields.Fields(),
+	}, now)
+	if err != nil {
+		return nil, err
+	}
+
+	project := make(bson.M, len(t.Fields))
+	for _, field := range t.Fields {
+		found := false
+		for anotherField := range project {
+			if strings.HasPrefix(field.Name, anotherField+".") {
+				found = true
+				break
+			} else if strings.HasPrefix(anotherField, field.Name+".") {
+				delete(project, anotherField)
+				break
+			}
+		}
+		if !found {
+			project[field.Name] = 1
+		}
+	}
+	pipeline = append(pipeline, bson.M{"$project": project})
+
+	cursor, err := s.mainCollection.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
+	if err != nil {
+		return nil, err
+	}
+
+	return export.NewMongoCursor(cursor, t.Fields.Fields(), nil), nil
+}
+
 func (s *store) fillConnectorType(result *AggregationResult) {
 	if result == nil {
 		return
@@ -343,4 +393,15 @@ func (s *store) fillConnectorType(result *AggregationResult) {
 
 func (s *store) getQueryBuilder() *MongoQueryBuilder {
 	return NewMongoQueryBuilder(s.db)
+}
+
+func (s *store) fillPerfData(result *AggregationResult, perfData []string) {
+	if len(perfData) == 0 {
+		return
+	}
+
+	perfDataRe := perfdata.Parse(perfData)
+	for i, entity := range result.Data {
+		result.Data[i].FilteredPerfData = perfdata.Filter(perfData, perfDataRe, entity.PerfData)
+	}
 }

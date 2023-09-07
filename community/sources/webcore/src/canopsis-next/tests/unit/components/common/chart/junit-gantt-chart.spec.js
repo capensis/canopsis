@@ -1,10 +1,9 @@
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import JunitGanttChart from '@/components/common/chart/junit-gantt-chart.vue';
 
-const localVue = createVueInstance();
 const newRowsPerPage = 20;
 
 const snapshotStubs = {
@@ -24,21 +23,6 @@ const stubs = {
 
   'horizontal-bar': true,
 };
-
-const factory = (options = {}) => shallowMount(JunitGanttChart, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(JunitGanttChart, {
-  localVue,
-  stubs: snapshotStubs,
-  attachTo: document.body,
-
-  ...options,
-});
 
 const tooltipFactory = (dataIndex = 0) => ({
   opacity: 1,
@@ -235,6 +219,12 @@ describe('junit-gantt-chart', () => {
     avg_time: 0,
     avg_status: 0,
   }];
+
+  const factory = generateShallowRenderer(JunitGanttChart, { stubs });
+  const snapshotFactory = generateRenderer(JunitGanttChart, {
+    stubs: snapshotStubs,
+    attachTo: document.body,
+  });
 
   it('Pagination next page event', async () => {
     const wrapper = factory({

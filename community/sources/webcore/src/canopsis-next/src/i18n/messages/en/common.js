@@ -161,6 +161,7 @@ export default {
   download: 'Download',
   initiator: 'Initiator',
   percent: 'Percent | Percents',
+  number: 'Number | Numbers',
   tests: 'Tests',
   total: 'Total',
   error: 'Error | Errors',
@@ -226,6 +227,7 @@ export default {
   sourceType: 'Source type',
   cycleDependency: 'Cycle dependency',
   checkPattern: 'Check pattern',
+  checkFilter: 'Check filter',
   itemFound: '{count} item found | {count} items found',
   canonicalType: 'Canonical type',
   map: 'Map | Maps',
@@ -267,6 +269,14 @@ export default {
   copyValue: 'Copy value',
   copyProperty: 'Copy property',
   copyPropertyPath: 'Copy property path',
+  hidden: 'Hidden',
+  numberField: 'Number field',
+  chart: 'Chart | Charts',
+  currentDate: 'Current date',
+  chooseFile: 'Choose file',
+  seeAlarms: 'See alarms',
+  new: 'New',
+  regexp: 'Regexp',
   variableTypes: {
     string: 'String',
     number: 'Number',
@@ -285,6 +295,13 @@ export default {
     },
   },
   saveChanges: 'Save changes',
+  ordinals: {
+    first: 'First',
+    second: 'Second',
+    third: 'Third',
+    fourth: 'Fourth',
+    fifth: 'Fifth',
+  },
   times: {
     second: 'second | seconds',
     minute: 'minute | minutes',
@@ -478,6 +495,12 @@ export default {
     },
     [TRIGGERS.autoinstructioncomplete]: {
       text: 'Auto instruction is completed',
+    },
+    [TRIGGERS.autoinstructionresultok]: {
+      text: 'Alarm is in OK state after all auto instructions',
+    },
+    [TRIGGERS.autoinstructionresultfail]: {
+      text: 'Alarm is in not OK state after all auto instructions',
     },
   },
   themes: {

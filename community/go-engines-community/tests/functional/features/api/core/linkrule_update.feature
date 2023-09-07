@@ -17,13 +17,16 @@ Feature: Update an link rule
           "category": "test-link-rule-to-update-link-1-category",
           "icon_name": "test-link-rule-to-update-link-1-icon",
           "url": "http://test-link-rule-to-update-link-1-url.com",
-          "single": true
+          "action": "open",
+          "single": true,
+          "hide_in_menu": true
         },
         {
           "label": "test-link-rule-to-update-link-2-label",
           "category": "test-link-rule-to-update-link-2-category",
           "icon_name": "test-link-rule-to-update-link-2-icon",
-          "url": "http://test-link-rule-to-update-link-2-url.com"
+          "url": "http://test-link-rule-to-update-link-2-url.com",
+          "action": "open"
         }
       ],
       "alarm_pattern": [
@@ -68,13 +71,16 @@ Feature: Update an link rule
           "category": "test-link-rule-to-update-link-1-category",
           "icon_name": "test-link-rule-to-update-link-1-icon",
           "url": "http://test-link-rule-to-update-link-1-url.com",
-          "single": true
+          "action": "open",
+          "single": true,
+          "hide_in_menu": true
         },
         {
           "label": "test-link-rule-to-update-link-2-label",
           "category": "test-link-rule-to-update-link-2-category",
           "icon_name": "test-link-rule-to-update-link-2-icon",
-          "url": "http://test-link-rule-to-update-link-2-url.com"
+          "url": "http://test-link-rule-to-update-link-2-url.com",
+          "action": "open"
         }
       ],
       "alarm_pattern": [
@@ -127,7 +133,8 @@ Feature: Update an link rule
           "label": "test-link-rule-not-found-link-1-label",
           "category": "test-link-rule-not-found-link-1-category",
           "icon_name": "test-link-rule-not-found-link-1-icon",
-          "url": "http://test-link-rule-not-found-link-1-url.com"
+          "url": "http://test-link-rule-not-found-link-1-url.com",
+          "action": "open"
         }
       ],
       "alarm_pattern": [

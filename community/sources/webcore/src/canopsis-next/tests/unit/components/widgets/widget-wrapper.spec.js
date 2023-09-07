@@ -1,10 +1,9 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
-import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 import { CANOPSIS_EDITION, WIDGET_TYPES } from '@/constants';
 
-const localVue = createVueInstance();
+import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 
 const stubs = {
   'c-alert-overlay': true,
@@ -17,18 +16,27 @@ const stubs = {
   'counter-widget': true,
   'testing-weather-widget': true,
   'map-widget': true,
+  'bar-chart-widget': true,
+  'line-chart-widget': true,
+  'pie-chart-widget': true,
+  'numbers-widget': true,
+  'user-statistics-widget': true,
+  'alarm-statistics-widget': true,
 };
-
-const snapshotFactory = (options = {}) => mount(WidgetWrapper, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 describe('widget-wrapper', () => {
   const types = Object.values(WIDGET_TYPES);
   const tabId = 'tab-id';
+
+  const snapshotFactory = generateRenderer(WidgetWrapper, {
+
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   it('Renders `widget-wrapper` with default props', () => {
     const wrapper = snapshotFactory({

@@ -34,13 +34,25 @@
         span.ml-4.grey--text {{ item.type }}
     template(#append-item="")
       div.c-lazy-search-field__append(ref="append")
-    template(v-if="isMultiply", #selection="{ item, index }")
-      v-chip.c-lazy-search-field__chip(small, close, @input="removeItemFromArray(index)")
+    template(#selection="{ item, index }")
+      v-chip.c-lazy-search-field__chip(
+        v-if="isMultiply",
+        small,
+        close,
+        @input="removeItemFromArray(index)"
+      )
         span.ellipsis {{ getItemText(item) }}
+      slot(v-else, name="selection", :item="item") {{ getItemText(item) }}
 </template>
 
 <script>
-import { debounce, isArray, isString, isFunction, get } from 'lodash';
+import {
+  debounce,
+  isArray,
+  isString,
+  isFunction,
+  get,
+} from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 

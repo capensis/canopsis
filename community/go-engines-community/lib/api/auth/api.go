@@ -7,7 +7,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -28,17 +30,21 @@ func NewApi(
 	tokenService apisecurity.TokenService,
 	tokenProviders []security.TokenProvider,
 	providers []security.Provider,
-	websocketHub websocket.Hub,
+	websocketStore websocket.Store,
+	maintenanceAdapter config.MaintenanceAdapter,
+	enforcer security.Enforcer,
 	cookieName string,
 	cookieMaxAge int,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		tokenService:   tokenService,
-		tokenProviders: tokenProviders,
-		providers:      providers,
-		websocketHub:   websocketHub,
-		logger:         logger,
+		tokenService:       tokenService,
+		tokenProviders:     tokenProviders,
+		providers:          providers,
+		websocketStore:     websocketStore,
+		maintenanceAdapter: maintenanceAdapter,
+		enforcer:           enforcer,
+		logger:             logger,
 
 		cookieName:     cookieName,
 		cookieMaxAge:   cookieMaxAge,
@@ -48,11 +54,13 @@ func NewApi(
 }
 
 type api struct {
-	tokenService   apisecurity.TokenService
-	tokenProviders []security.TokenProvider
-	providers      []security.Provider
-	websocketHub   websocket.Hub
-	logger         zerolog.Logger
+	tokenService       apisecurity.TokenService
+	tokenProviders     []security.TokenProvider
+	providers          []security.Provider
+	websocketStore     websocket.Store
+	maintenanceAdapter config.MaintenanceAdapter
+	enforcer           security.Enforcer
+	logger             zerolog.Logger
 
 	cookieName     string
 	cookieMaxAge   int
@@ -91,6 +99,23 @@ func (a *api) Login(c *gin.Context) {
 		return
 	}
 
+	maintenanceConf, err := a.maintenanceAdapter.GetConfig(c)
+	if err != nil {
+		panic(err)
+	}
+
+	if maintenanceConf.Enabled {
+		ok, err := a.enforcer.Enforce(user.ID, apisecurity.PermMaintenance, model.PermissionCan)
+		if err != nil {
+			panic(err)
+		}
+
+		if !ok {
+			c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
+			return
+		}
+	}
+
 	accessToken, err := a.tokenService.Create(c, *user, provider)
 	if err != nil {
 		panic(err)
@@ -125,8 +150,12 @@ func (a *api) Logout(c *gin.Context) {
 // GetLoggedUserCount
 // @Success 200 {object} LoggedUserCountResponse
 func (a *api) GetLoggedUserCount(c *gin.Context) {
+	count, err := a.websocketStore.GetActiveConnections(c)
+	if err != nil {
+		panic(err)
+	}
 	c.JSON(http.StatusOK, LoggedUserCountResponse{
-		Count: int64(a.websocketHub.GetAuthConnectionsCount()),
+		Count: count,
 	})
 }
 

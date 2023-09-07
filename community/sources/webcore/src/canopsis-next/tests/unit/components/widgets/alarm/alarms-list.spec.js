@@ -2,7 +2,7 @@ import Faker from 'faker';
 import flushPromises from 'flush-promises';
 import { omit } from 'lodash';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarmDetails, fakeStaticAlarms } from '@unit/data/alarm';
@@ -18,11 +18,9 @@ import {
   USERS_PERMISSIONS,
 } from '@/constants';
 
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
 import AlarmsList from '@/components/widgets/alarm/alarms-list.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-advanced-search-field': true,
@@ -62,30 +60,6 @@ const snapshotStubs = {
   'mass-actions-panel': true,
 };
 
-const factory = (options = {}) => shallowMount(AlarmsList, {
-  localVue,
-  stubs,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(AlarmsList, {
-  localVue,
-  stubs: snapshotStubs,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-
-  ...options,
-});
-
 const selectCorrelationField = wrapper => wrapper.find('v-switch-stub');
 const selectFilterSelectorField = wrapper => wrapper.find('filter-selector-stub');
 const selectCategoryField = wrapper => wrapper.find('c-entity-category-field-stub');
@@ -101,8 +75,7 @@ describe('alarms-list', () => {
   const $modals = mockModals();
 
   const nowTimestamp = 1386435600000;
-  const nowUnix = 1386435600;
-  const nowSubtractOneYearUnix = 1354899600;
+  const nowSubtractOneYearUnix = 1354921200;
 
   mockDateNow(nowTimestamp);
 
@@ -283,6 +256,23 @@ describe('alarms-list', () => {
     authModule,
     alarmTagModule,
   ]);
+
+  const factory = generateShallowRenderer(AlarmsList, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(AlarmsList, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   afterEach(() => {
     fetchUserPreference.mockClear();
@@ -932,7 +922,7 @@ describe('alarms-list', () => {
           correlation: defaultQuery.correlation,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
-          tstop: nowUnix,
+          tstop: 1386370800,
           fields: widget.parameters.widgetExportColumns.map(({ text, value }) => ({
             label: text,
             name: value,
@@ -1022,7 +1012,7 @@ describe('alarms-list', () => {
           correlation: defaultQuery.correlation,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
-          tstop: nowUnix,
+          tstop: 1386370800,
           fields: widget.parameters.widgetExportColumns.map(({ text, value }) => ({
             label: text,
             name: value,
@@ -1087,7 +1077,7 @@ describe('alarms-list', () => {
           correlation: defaultQuery.correlation,
           opened: defaultQuery.opened,
           tstart: nowSubtractOneYearUnix,
-          tstop: nowUnix,
+          tstop: 1386370800,
           fields: widget.parameters.widgetColumns.map(({ text, value }) => ({
             label: text,
             name: value,
@@ -1188,8 +1178,6 @@ describe('alarms-list', () => {
   });
 
   it('Error popup showed exported after trigger export button with failed create export', async () => {
-    const rejectValue = { error: 'Create error' };
-
     const wrapper = factory({
       mocks: {
         $popups,
@@ -1204,7 +1192,7 @@ describe('alarms-list', () => {
         {
           ...alarmModule,
           actions: {
-            createAlarmsListExport: jest.fn().mockRejectedValue(rejectValue),
+            createAlarmsListExport: jest.fn().mockRejectedValue(),
             fetchAlarmsListExport,
           },
         },
@@ -1230,14 +1218,12 @@ describe('alarms-list', () => {
     await flushPromises();
 
     expect($popups.error).toHaveBeenCalledWith({
-      text: rejectValue.error,
+      text: 'Failed to export alarms list in CSV format',
     });
   });
 
   it('Error popup showed exported after trigger export button with failed fetch export', async () => {
     jest.useFakeTimers('legacy');
-
-    const rejectValue = { error: 'Fetch error' };
 
     const wrapper = factory({
       mocks: {
@@ -1254,7 +1240,7 @@ describe('alarms-list', () => {
           ...alarmModule,
           actions: {
             createAlarmsListExport,
-            fetchAlarmsListExport: jest.fn().mockRejectedValue(rejectValue),
+            fetchAlarmsListExport: jest.fn().mockRejectedValue(),
           },
         },
         {
@@ -1283,7 +1269,7 @@ describe('alarms-list', () => {
     await flushPromises();
 
     expect($popups.error).toHaveBeenCalledWith({
-      text: rejectValue.error,
+      text: 'Failed to export alarms list in CSV format',
     });
 
     jest.useRealTimers();
@@ -1336,7 +1322,7 @@ describe('alarms-list', () => {
     await flushPromises();
 
     expect($popups.error).toHaveBeenCalledWith({
-      text: 'Something went wrong...',
+      text: 'Failed to export alarms list in CSV format',
     });
 
     jest.useRealTimers();
@@ -1544,6 +1530,7 @@ describe('alarms-list', () => {
 
   it('Periodic started after mount with enabled value', async () => {
     jest.useFakeTimers();
+    jest.spyOn(window, 'setInterval');
 
     const expanded = {};
     factory({
@@ -1576,7 +1563,7 @@ describe('alarms-list', () => {
       1000,
     );
 
-    jest.runTimersToTime(1000);
+    jest.advanceTimersByTime(1000);
 
     expect(fetchAlarmsList).toHaveBeenCalledWith(
       expect.any(Object),
@@ -1596,7 +1583,7 @@ describe('alarms-list', () => {
   });
 
   it('Interval cleared after update periodic refresh', async () => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
 
     const expanded = {};
     const wrapper = factory({
@@ -1652,7 +1639,7 @@ describe('alarms-list', () => {
   });
 
   it('Interval cleared after destroy', async () => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
 
     const expanded = {};
     const wrapper = factory({
@@ -1758,6 +1745,18 @@ describe('alarms-list', () => {
             currentUserPermissionsById: {
               [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
             },
+          },
+        },
+        {
+          ...userPreferenceModule,
+          getters: {
+            getItemByWidgetId: () => () => ({
+              content: {
+                ...userPreferences,
+
+                searches: ['item 1', 'item 2'],
+              },
+            }),
           },
         },
       ]),

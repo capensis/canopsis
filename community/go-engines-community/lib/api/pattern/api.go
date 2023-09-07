@@ -2,11 +2,11 @@ package pattern
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -15,15 +15,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog"
-	"github.com/valyala/fastjson"
 )
 
 type API interface {
 	common.CrudAPI
 	BulkDelete(c *gin.Context)
-	Count(c *gin.Context)
+	CountAlarms(c *gin.Context)
+	CountEntities(c *gin.Context)
 	GetAlarms(c *gin.Context)
 }
 
@@ -76,7 +75,7 @@ func (a *api) Create(c *gin.Context) {
 		}
 	}
 
-	pattern, err := a.store.Insert(c.Request.Context(), request)
+	pattern, err := a.store.Insert(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -104,7 +103,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.Find(c.Request.Context(), request, c.MustGet(auth.UserKey).(string))
+	aggregationResult, err := a.store.Find(c, request, c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -121,7 +120,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	pattern, err := a.store.GetById(c.Request.Context(), c.Param("id"), c.MustGet(auth.UserKey).(string))
+	pattern, err := a.store.GetById(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -147,7 +146,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	pattern, err := a.store.GetById(c.Request.Context(), request.ID, userId)
+	pattern, err := a.store.GetById(c, request.ID, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -179,7 +178,7 @@ func (a *api) Update(c *gin.Context) {
 		}
 	}
 
-	pattern, err = a.store.Update(c.Request.Context(), request)
+	pattern, err = a.store.Update(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -204,7 +203,7 @@ func (a *api) Update(c *gin.Context) {
 func (a *api) Delete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	id := c.Param("id")
-	pattern, err := a.store.GetById(c.Request.Context(), id, userId)
+	pattern, err := a.store.GetById(c, id, userId)
 	if err != nil {
 		panic(err)
 	}
@@ -226,7 +225,7 @@ func (a *api) Delete(c *gin.Context) {
 		}
 	}
 
-	ok, err := a.store.Delete(c.Request.Context(), *pattern)
+	ok, err := a.store.Delete(c, *pattern)
 	if err != nil {
 		panic(err)
 	}
@@ -252,82 +251,25 @@ func (a *api) Delete(c *gin.Context) {
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-
-	var ar fastjson.Arena
-
-	raw, err := c.GetRawData()
-	if err != nil {
-		panic(err)
-	}
-
-	jsonValue, err := fastjson.ParseBytes(raw)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	rawObjects, err := jsonValue.Array()
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	ctx := c.Request.Context()
-	response := ar.NewArray()
-
 	canDeleteCorporate, err := a.enforcer.Enforce(userId, apisecurity.PermCorporatePattern, model.PermissionCan)
 	if err != nil {
 		panic(err)
 	}
 
-	for idx, rawObject := range rawObjects {
-		object, err := rawObject.Object()
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
-		}
-
-		var request BulkDeleteRequestItem
-		err = json.Unmarshal(object.MarshalTo(nil), &request)
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
-		}
-
-		err = binding.Validator.ValidateStruct(request)
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
-			continue
-		}
-
-		pattern, err := a.store.GetById(ctx, request.ID, userId)
-		if err != nil {
-			panic(err)
-		}
-
-		if pattern == nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
-			continue
+	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
+		pattern, err := a.store.GetById(c, request.ID, userId)
+		if err != nil || pattern == nil {
+			return "", err
 		}
 
 		if pattern.IsCorporate && !canDeleteCorporate {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusForbidden, rawObject, ar.NewString(common.ForbiddenResponse.Error)))
-			continue
+			return "", bulk.ErrUnauthorized
 		}
 
-		ok, err := a.store.Delete(ctx, *pattern)
-		if err != nil {
-			a.logger.Err(err).Msg("cannot delete pattern")
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
-			continue
+		ok, err := a.store.Delete(c, *pattern)
+		if err != nil || !ok {
+			return "", err
 		}
-
-		if !ok {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
-			continue
-		}
-
-		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
 
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionDelete,
@@ -337,15 +279,15 @@ func (a *api) BulkDelete(c *gin.Context) {
 		if err != nil {
 			a.actionLogger.Err(err, "failed to log action")
 		}
-	}
 
-	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+		return pattern.ID, nil
+	}, a.logger)
 }
 
-// Count
+// CountAlarms
 // @Param body body CountRequest true "body"
-// @Success 200 {object} CountResponse
-func (a *api) Count(c *gin.Context) {
+// @Success 200 {object} CountAlarmsResponse
+func (a *api) CountAlarms(c *gin.Context) {
 	request := CountRequest{}
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -353,10 +295,32 @@ func (a *api) Count(c *gin.Context) {
 	}
 
 	conf := a.configProvider.Get()
-	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Duration(conf.CheckCountRequestTimeout)*time.Second)
+	ctx, cancel := context.WithTimeout(c, time.Duration(conf.CheckCountRequestTimeout)*time.Second)
 	defer cancel()
 
-	res, err := a.store.Count(ctx, request, int64(conf.MaxMatchedItems))
+	res, err := a.store.CountAlarms(ctx, request, int64(conf.MaxMatchedItems))
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+// CountEntities
+// @Param body body CountRequest true "body"
+// @Success 200 {object} CountEntitiesResponse
+func (a *api) CountEntities(c *gin.Context) {
+	request := CountRequest{}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	conf := a.configProvider.Get()
+	ctx, cancel := context.WithTimeout(c, time.Duration(conf.CheckCountRequestTimeout)*time.Second)
+	defer cancel()
+
+	res, err := a.store.CountEntities(ctx, request, int64(conf.MaxMatchedItems))
 	if err != nil {
 		panic(err)
 	}
@@ -375,7 +339,7 @@ func (a *api) GetAlarms(c *gin.Context) {
 	}
 
 	conf := a.configProvider.Get()
-	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Duration(conf.CheckCountRequestTimeout)*time.Second)
+	ctx, cancel := context.WithTimeout(c, time.Duration(conf.CheckCountRequestTimeout)*time.Second)
 	defer cancel()
 
 	res, err := a.store.GetAlarms(ctx, request)

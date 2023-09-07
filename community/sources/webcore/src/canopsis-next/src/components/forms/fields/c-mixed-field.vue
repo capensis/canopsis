@@ -28,7 +28,7 @@
 <script>
 import { PATTERN_FIELD_TYPES } from '@/constants';
 
-import { convertValueByType, getFieldType } from '@/helpers/pattern';
+import { convertValueByType, getFieldType } from '@/helpers/entities/pattern/form';
 
 import { formBaseMixin } from '@/mixins/form';
 

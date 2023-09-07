@@ -8,11 +8,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-const (
-	PriorityField = "priority"
-	IdField       = "_id"
-)
-
 type Scenario struct {
 	ID                   string                  `bson:"_id,omitempty" json:"_id,omitempty"`
 	Name                 string                  `bson:"name" json:"name"`
@@ -21,7 +16,7 @@ type Scenario struct {
 	DisableDuringPeriods []string                `bson:"disable_during_periods" json:"disable_during_periods"`
 	Triggers             []string                `bson:"triggers" json:"triggers"`
 	Actions              []Action                `bson:"actions" json:"actions"`
-	Priority             int                     `bson:"priority" json:"priority"`
+	Priority             int64                   `bson:"priority" json:"priority"`
 	Delay                *types.DurationWithUnit `bson:"delay" json:"delay"`
 	Created              types.CpsTime           `bson:"created,omitempty" json:"created,omitempty"`
 	Updated              types.CpsTime           `bson:"updated,omitempty" json:"updated,omitempty"`
@@ -94,8 +89,11 @@ type Parameters struct {
 	// StartOnTrigger is used in pbehavior action.
 	StartOnTrigger *bool `json:"start_on_trigger,omitempty" bson:"start_on_trigger,omitempty"`
 	// Request is used in webhook action.
-	Request      *request.Parameters `json:"request,omitempty" bson:"request,omitempty"`
-	SkipForChild *bool               `json:"skip_for_child,omitempty" bson:"skip_for_child,omitempty"`
+	Request *request.Parameters `json:"request,omitempty" bson:"request,omitempty"`
+	// SkipForChild is used in webhook action.
+	SkipForChild *bool `json:"skip_for_child,omitempty" bson:"skip_for_child,omitempty"`
+	// SkipForInstruction is used in webhook action.
+	SkipForInstruction *bool `json:"skip_for_instruction,omitempty" bson:"skip_for_instruction,omitempty"`
 	// DeclareTicket is used in webhook action.
 	DeclareTicket *request.WebhookDeclareTicket `json:"declare_ticket,omitempty" bson:"declare_ticket,omitempty"`
 }

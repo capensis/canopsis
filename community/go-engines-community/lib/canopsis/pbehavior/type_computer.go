@@ -285,12 +285,18 @@ func (c *typeComputer) computePbehavior(
 	models models,
 ) (ComputedPbehavior, error) {
 	var start, end types.CpsTime
-	if pbehavior.Start != nil {
+	if pbehavior.RRuleComputedStart != nil && pbehavior.RRuleComputedStart.Time.Before(span.From()) {
+		start = *pbehavior.RRuleComputedStart
+		if pbehavior.Stop != nil && pbehavior.Start != nil {
+			end = types.CpsTime{Time: start.Add(pbehavior.Stop.Sub(pbehavior.Start.Time))}
+		}
+	} else if pbehavior.Start != nil {
 		start = *pbehavior.Start
+		if pbehavior.Stop != nil {
+			end = *pbehavior.Stop
+		}
 	}
-	if pbehavior.Stop != nil {
-		end = *pbehavior.Stop
-	}
+
 	exdates, err := c.getExdates(pbehavior, models)
 	if err != nil {
 		return ComputedPbehavior{}, err
@@ -348,9 +354,7 @@ func (c *typeComputer) getExdates(
 
 	for _, id := range pbehavior.Exceptions {
 		if exception, ok := models.exceptionsByID[id]; ok {
-			for i := range exception.Exdates {
-				res = append(res, exception.Exdates[i])
-			}
+			res = append(res, exception.Exdates...)
 		} else {
 			return nil, fmt.Errorf("unknown exception %v", id)
 		}

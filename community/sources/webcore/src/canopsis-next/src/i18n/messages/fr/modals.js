@@ -101,9 +101,6 @@ export default {
   createCancelEvent: {
     title: 'Annuler',
   },
-  createGroupRequestEvent: {
-    title: 'Proposition de regroupement pour méta-alarmes',
-  },
   createGroupEvent: {
     title: 'Créer une méta-alarme',
   },
@@ -181,6 +178,9 @@ export default {
   },
   createAckRemove: {
     title: 'Annuler l\'acquittement',
+  },
+  createUnCancel: {
+    title: 'Créer en uncanccel',
   },
   liveReporting: {
     editLiveReporting: 'Suivi personnalisé',
@@ -265,6 +265,30 @@ export default {
       [WIDGET_TYPES.map]: {
         title: 'Cartographie',
       },
+      [WIDGET_TYPES.barChart]: {
+        title: 'Histogramme',
+      },
+      [WIDGET_TYPES.lineChart]: {
+        title: 'Graphique en ligne',
+      },
+      [WIDGET_TYPES.pieChart]: {
+        title: 'Diagramme circulaire',
+      },
+      [WIDGET_TYPES.numbers]: {
+        title: 'Nombres',
+      },
+      [WIDGET_TYPES.userStatistics]: {
+        title: 'Statistiques des utilisateurs',
+      },
+      [WIDGET_TYPES.alarmStatistics]: {
+        title: 'Statistiques des alarmes',
+      },
+      chart: {
+        title: 'Graphique',
+      },
+      report: {
+        title: 'Rapport',
+      },
     },
   },
   manageHistogramGroups: {
@@ -305,6 +329,9 @@ export default {
     },
     edit: {
       title: 'Éditer un rôle',
+    },
+    duplicate: {
+      title: 'Dupliquer un rôle',
     },
   },
   createEventFilter: {
@@ -471,9 +498,6 @@ export default {
   },
   pbehaviorPlanning: {
     title: 'Comportements périodiques',
-  },
-  selectExceptionsLists: {
-    title: 'Choisissez la liste des exceptions',
   },
   createRrule: {
     title: 'Créer une règle de récurrence',
@@ -904,6 +928,59 @@ export default {
     },
     edit: {
       title: 'Modifier le générateur de liens',
+    },
+  },
+  createAlarmChart: {
+    [WIDGET_TYPES.barChart]: {
+      create: {
+        title: 'Créer un graphique à barres',
+      },
+      edit: {
+        title: 'Modifier le graphique à barres',
+      },
+    },
+    [WIDGET_TYPES.lineChart]: {
+      create: {
+        title: 'Créer un graphique en courbes',
+      },
+      edit: {
+        title: 'Modifier le graphique en courbes',
+      },
+    },
+    [WIDGET_TYPES.numbers]: {
+      create: {
+        title: 'Créer un tableau de nombres',
+      },
+      edit: {
+        title: 'Modifier le tableau des nombres',
+      },
+    },
+  },
+  importPbehaviorException: {
+    title: 'Importer des dates d\'exception',
+  },
+  createMaintenance: {
+    enableMaintenance: 'Activer le mode d\'entretien',
+    setup: {
+      title: 'Activer le mode d\'entretien',
+    },
+    edit: {
+      title: 'Modifier le mode de maintenance',
+    },
+  },
+  confirmationLeaveMaintenance: {
+    title: 'Quitter le mode maintenance',
+    text: 'Êtes-vous sûr de vouloir quitter le mode maintenance ?\\nTous les utilisateurs pourront se connecter au système après avoir quitté.',
+  },
+  createTag: {
+    create: {
+      title: 'Créer une balise',
+    },
+    edit: {
+      title: 'Modifier une balise',
+    },
+    duplicate: {
+      title: 'Dupliquer une balise',
     },
   },
 };

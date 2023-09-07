@@ -3,7 +3,6 @@ package executor
 import (
 	"context"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -11,10 +10,9 @@ import (
 type instructionExecutor struct {
 	alarmStepTypeMap   map[string]string
 	alarmChangeTypeMap map[string]types.AlarmChangeType
-	metricsSender      metrics.Sender
 }
 
-func NewInstructionExecutor(metricsSender metrics.Sender) operation.Executor {
+func NewInstructionExecutor() operation.Executor {
 	return &instructionExecutor{
 		alarmStepTypeMap: map[string]string{
 			// Manual instruction
@@ -52,7 +50,6 @@ func NewInstructionExecutor(metricsSender metrics.Sender) operation.Executor {
 			types.EventTypeInstructionJobCompleted: types.AlarmChangeTypeInstructionJobComplete,
 			types.EventTypeInstructionJobFailed:    types.AlarmChangeTypeInstructionJobFail,
 		},
-		metricsSender: metricsSender,
 	}
 }
 
@@ -94,12 +91,11 @@ func (e *instructionExecutor) Exec(
 		return "", err
 	}
 
+	instrID := params.Instruction
 	switch alarmChangeType {
 	case types.AlarmStepInstructionComplete, types.AlarmStepInstructionFail:
-		instrID := params.Instruction
-
 		assigned := false
-		for _, assignedInstr := range alarm.KPIAssignedInstructions {
+		for _, assignedInstr := range alarm.KpiAssignedInstructions {
 			if assignedInstr == instrID {
 				assigned = true
 				break
@@ -111,7 +107,7 @@ func (e *instructionExecutor) Exec(
 		}
 
 		executed := false
-		for _, executedInstr := range alarm.KPIExecutedInstructions {
+		for _, executedInstr := range alarm.KpiExecutedInstructions {
 			if executedInstr == instrID {
 				executed = true
 				break
@@ -123,14 +119,8 @@ func (e *instructionExecutor) Exec(
 		}
 
 		alarm.PartialUpdateAddExecutedInstruction(instrID)
-
-		if len(alarm.KPIExecutedInstructions) == 0 {
-			e.metricsSender.SendInstructionExecutionForAlarm(alarm.EntityID, time.Time)
-		}
-
-		e.metricsSender.SendInstructionExecutionForInstruction(instrID, time.Time)
-	case types.AlarmStepAutoInstructionStart:
-		e.metricsSender.SendAutoInstructionStart(*alarm, time.Time)
+	case types.AlarmStepAutoInstructionComplete, types.AlarmStepAutoInstructionFail:
+		alarm.PartialUpdateAddExecutedAutoInstruction(instrID)
 	}
 
 	return alarmChangeType, nil

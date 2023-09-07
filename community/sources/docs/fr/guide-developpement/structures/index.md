@@ -23,7 +23,9 @@ Voici la structure de base d'un [évènement](../../guide-utilisation/vocabulair
 
     // /!\ The following is optional /!\
 
-    "timestamp":        // UNIX timestamp for when the event  was emitted (optional: set by the server to now) - value field is an integer `number` type
+    "timestamp":        // UNIX timestamp for when the event  was emitted (optional: set by the server to now) - value field is an integer `number` type. 
+                        // Since 4.5 release, only timestamp  values < 24H are kept and forwarded, values > 24H are dropped by FIFO engine
+                        // Since 4.5 release, `last_update_date` field inside created alarm is initialized from event timestamp field, and `creation_date` is initialized from time.Now()
     "output":           // Message - value field is `string` type
     "long_output":      // Description - value field is `string` type
 }

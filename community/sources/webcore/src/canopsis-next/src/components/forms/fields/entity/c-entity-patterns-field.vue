@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-pattern-editor-field(
+  pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
     :readonly="readonly",
@@ -8,7 +8,7 @@
     :required="required",
     :attributes="availableEntityAttributes",
     :with-type="withType",
-    :check-count-name="checkCountName"
+    :counter="counter"
   )
 </template>
 
@@ -26,10 +26,13 @@ import {
   PATTERN_RULE_TYPES,
 } from '@/constants';
 
+import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
+
 const { mapActions: entityCategoryMapActions } = createNamespacedHelpers('entityCategory');
 const { mapActions: serviceMapActions } = createNamespacedHelpers('service');
 
 export default {
+  components: { PatternEditorField },
   model: {
     prop: 'patterns',
     event: 'input',
@@ -71,6 +74,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    counter: {
+      type: Object,
+      required: false,
+    },
   },
   data() {
     return {
@@ -90,6 +97,24 @@ export default {
         PATTERN_OPERATORS.notContains,
         PATTERN_OPERATORS.regexp,
       ];
+    },
+
+    nameOptions() {
+      return {
+        operators: [
+          PATTERN_OPERATORS.equal,
+          PATTERN_OPERATORS.notEqual,
+          PATTERN_OPERATORS.contains,
+          PATTERN_OPERATORS.notContains,
+          PATTERN_OPERATORS.beginsWith,
+          PATTERN_OPERATORS.notBeginWith,
+          PATTERN_OPERATORS.endsWith,
+          PATTERN_OPERATORS.notEndWith,
+          PATTERN_OPERATORS.regexp,
+          PATTERN_OPERATORS.isOneOf,
+          PATTERN_OPERATORS.isNotOneOf,
+        ],
+      };
     },
 
     entitiesValueField() {
@@ -217,6 +242,7 @@ export default {
         {
           text: this.$t('common.name'),
           value: ENTITY_PATTERN_FIELDS.name,
+          options: this.nameOptions,
         },
         {
           text: this.$t('common.type'),

@@ -1,6 +1,6 @@
 import { VALIDATION_DELAY } from '@/constants';
 
-import { widgetToForm, formToWidget } from '@/helpers/forms/widgets/common';
+import { widgetToForm, formToWidget } from '@/helpers/entities/widget/form';
 
 import { queryMixin } from '@/mixins/query';
 import { activeViewMixin } from '@/mixins/active-view';
@@ -65,7 +65,7 @@ export const widgetSettingsMixin = {
           data.tab = tabId;
 
           if (this.duplicate) {
-            await this.copyWidget({ id: widgetId, data });
+            await this.createWidget({ data });
           } else if (widgetId) {
             await this.updateWidget({ id: widgetId, data });
           } else {

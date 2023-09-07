@@ -6,7 +6,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -15,27 +14,26 @@ import (
 
 // NewChangeStateExecutor creates new executor.
 func NewChangeStateExecutor(
-	configProvider config.AlarmConfigProvider,
+	alarmConfigProvider config.AlarmConfigProvider,
+	userInterfaceConfigProvider config.UserInterfaceConfigProvider,
 	alarmStatusService alarmstatus.Service,
-	metricsSender metrics.Sender,
 ) operation.Executor {
 	return &changeStateExecutor{
-		configProvider:     configProvider,
-		alarmStatusService: alarmStatusService,
-		metricsSender:      metricsSender,
+		alarmConfigProvider:         alarmConfigProvider,
+		userInterfaceConfigProvider: userInterfaceConfigProvider,
+		alarmStatusService:          alarmStatusService,
 	}
 }
 
 type changeStateExecutor struct {
-	configProvider     config.AlarmConfigProvider
-	alarmStatusService alarmstatus.Service
-
-	metricsSender metrics.Sender
+	alarmConfigProvider         config.AlarmConfigProvider
+	userInterfaceConfigProvider config.UserInterfaceConfigProvider
+	alarmStatusService          alarmstatus.Service
 }
 
 // Exec emits change state event.
 func (e *changeStateExecutor) Exec(
-	ctx context.Context,
+	_ context.Context,
 	op types.Operation,
 	alarm *types.Alarm,
 	entity *types.Entity,
@@ -60,7 +58,11 @@ func (e *changeStateExecutor) Exec(
 		return "", nil
 	}
 
-	conf := e.configProvider.Get()
+	if *params.State == types.AlarmStateOK && !e.userInterfaceConfigProvider.Get().IsAllowChangeSeverityToInfo {
+		return "", fmt.Errorf("cannot change to ok state")
+	}
+
+	conf := e.alarmConfigProvider.Get()
 	output := utils.TruncateString(params.Output, conf.OutputLength)
 
 	newStep := types.NewAlarmStep(types.AlarmStepChangeState, time, params.Author, output, userID, role, initiator)
@@ -102,8 +104,6 @@ func (e *changeStateExecutor) Exec(
 		"v.last_update_date":                  alarm.Value.LastUpdateDate,
 	})
 	alarm.AddUpdate("$push", bson.M{"v.steps": bson.M{"$each": bson.A{alarm.Value.State, alarm.Value.Status}}})
-
-	e.metricsSender.SendUpdateState(*alarm, *entity, currentState)
 
 	return types.AlarmChangeTypeChangeState, nil
 }

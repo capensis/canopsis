@@ -60,6 +60,8 @@ func Default(
 	externalDataContainer *eventfilter.ExternalDataContainer,
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 	templateConfigProvider *config.BaseTemplateConfigProvider,
+	eventFilterEventCounter eventfilter.EventCounter,
+	eventFilterFailureService eventfilter.FailureService,
 	logger zerolog.Logger,
 ) libengine.Engine {
 	var m depmake.DependencyMaker
@@ -98,8 +100,8 @@ func Default(
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 	ruleAdapter := eventfilter.NewRuleAdapter(mongoClient)
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer, templateExecutor))
-	eventfilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, logger)
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer, eventFilterFailureService, templateExecutor))
+	eventfilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, eventFilterEventCounter, eventFilterFailureService, templateExecutor, logger)
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
@@ -262,6 +264,14 @@ func Default(
 			Logger:             logger,
 		})
 	}
+	engine.AddRoutine(func(ctx context.Context) error {
+		eventFilterEventCounter.Run(ctx)
+		return nil
+	})
+	engine.AddRoutine(func(ctx context.Context) error {
+		eventFilterFailureService.Run(ctx)
+		return nil
+	})
 
 	return engine
 }

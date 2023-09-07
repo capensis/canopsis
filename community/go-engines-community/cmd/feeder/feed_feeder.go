@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"math/rand"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -34,8 +33,6 @@ func (f *Feeder) modeFeeder(ctx context.Context) error {
 	checkEvery := int64(100)
 
 	changeStateEvery := int64(100 / f.flags.Alarms)
-
-	rand.Seed(time.Now().UnixNano())
 
 	stateMap := make(map[string]int)
 

@@ -3,10 +3,13 @@
     v-layout(row)
       v-flex(v-if="!operations.length", xs11)
         v-alert(:value="true", type="info") {{ $t('remediation.instruction.emptyOperations') }}
-    draggable(
+    c-draggable-list-field(
       v-field="operations",
-      :options="draggableOptions",
+      :disabled="disabled",
       :class="{ 'grey lighten-1': isDragging }",
+      :group="draggableGroup",
+      ghost-class="grey",
+      handle=".operation-drag-handler",
       @start="startDragging",
       @end="endDragging"
     )
@@ -30,11 +33,7 @@
 </template>
 
 <script>
-import Draggable from 'vuedraggable';
-
-import { VUETIFY_ANIMATION_DELAY } from '@/config';
-
-import { remediationInstructionStepOperationToForm } from '@/helpers/forms/remediation-instruction';
+import { remediationInstructionStepOperationToForm } from '@/helpers/entities/remediation/instruction/form';
 import { getLetterByIndex } from '@/helpers/string';
 
 import { formArrayMixin } from '@/mixins/form';
@@ -44,7 +43,6 @@ import RemediationInstructionOperationField from './fields/remediation-instructi
 export default {
   inject: ['$validator'],
   components: {
-    Draggable,
     RemediationInstructionOperationField,
   },
   mixins: [formArrayMixin],
@@ -80,17 +78,11 @@ export default {
       return this.errors.has(this.name);
     },
 
-    draggableOptions() {
+    draggableGroup() {
       return {
-        disabled: this.disabled,
-        animation: VUETIFY_ANIMATION_DELAY,
-        handle: '.operation-drag-handler',
-        ghostClass: 'grey',
-        group: {
-          name: 'remediation-instruction-operations',
-          pull: false,
-          put: false,
-        },
+        name: 'remediation-instruction-operations',
+        pull: false,
+        put: false,
       };
     },
   },

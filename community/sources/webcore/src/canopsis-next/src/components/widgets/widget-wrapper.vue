@@ -11,30 +11,22 @@
       component(
         v-bind="widgetProps",
         :widget="preparedWidget",
-        :tab-id="tab._id",
-        :editing="editing"
+        :tab-id="tab._id"
       )
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import {
-  WIDGET_TYPES,
-  WIDGET_TYPES_RULES,
-  WIDGET_GRID_ROW_HEIGHT,
-  COMPONENTS_BY_WIDGET_TYPES,
-} from '@/constants';
-
-import {
-  prepareAlarmListWidget,
-  prepareContextWidget,
-  prepareServiceWeatherWidget,
-  prepareStatsCalendarAndCounterWidget,
-  prepareMapWidget,
-} from '@/helpers/widgets';
+import { WIDGET_TYPES, WIDGET_TYPES_RULES, WIDGET_GRID_ROW_HEIGHT, COMPONENTS_BY_WIDGET_TYPES } from '@/constants';
 
 import featuresService from '@/services/features';
+
+import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
+import { prepareContextWidget } from '@/helpers/entities/widget/forms/context';
+import { prepareServiceWeatherWidget } from '@/helpers/entities/widget/forms/service-weather';
+import { prepareStatsCalendarAndCounterWidget } from '@/helpers/entities/widget/forms/stats-calendar';
+import { prepareMapWidget } from '@/helpers/entities/widget/forms/map';
 
 import AlarmsListWidget from './alarm/alarms-list.vue';
 import EntitiesListWidget from './context/entities-list.vue';
@@ -44,6 +36,12 @@ import StatsCalendarWidget from './stats/calendar/stats-calendar.vue';
 import TextWidget from './text/text.vue';
 import CounterWidget from './counter/counter.vue';
 import MapWidget from './map/map.vue';
+import BarChartWidget from './chart/bar-chart-widget.vue';
+import LineChartWidget from './chart/line-chart-widget.vue';
+import PieChartWidget from './chart/pie-chart-widget.vue';
+import NumbersWidget from './chart/numbers-widget.vue';
+import UserStatisticsWidget from './statistics/user-statistics-widget.vue';
+import AlarmStatisticsWidget from './statistics/alarm-statistics-widget.vue';
 
 const { mapGetters } = createNamespacedHelpers('info');
 
@@ -57,6 +55,12 @@ export default {
     TextWidget,
     CounterWidget,
     MapWidget,
+    BarChartWidget,
+    LineChartWidget,
+    PieChartWidget,
+    NumbersWidget,
+    UserStatisticsWidget,
+    AlarmStatisticsWidget,
 
     ...featuresService.get('components.widgetWrapper.components', {}),
   },
@@ -70,6 +74,10 @@ export default {
       required: true,
     },
     editing: {
+      type: Boolean,
+      default: false,
+    },
+    kiosk: {
       type: Boolean,
       default: false,
     },
@@ -115,10 +123,18 @@ export default {
       const widgetComponentsMap = { ...COMPONENTS_BY_WIDGET_TYPES };
       let widgetSpecificsProp = {};
 
+      if (this.kiosk) {
+        widgetSpecificsProp = {
+          ...this.widget.parameters.kiosk,
+        };
+      }
+
       Object.entries(WIDGET_TYPES_RULES).forEach(([key, rule]) => {
         if (rule.edition !== this.edition) {
           widgetComponentsMap[key] = 'c-alert-overlay';
           widgetSpecificsProp = {
+            ...widgetSpecificsProp,
+
             message: this.$t('errors.statsWrongEditionError'),
             value: true,
           };

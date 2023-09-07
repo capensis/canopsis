@@ -501,4 +501,13 @@ Ce helper permet d'afficher les `tags` d'une alarme sous forme de badge. Il n'at
 
 Ce helper permet d'afficher les `liens` d'une alarme ou d'une entité.
 
+### Helper `copy`
+
+```handlebars
+{{#copy 'Valeur à copier'}}Label{{/copy}}
+{{#copy alarm.v.display_name}}<button>Cliquer pour copier</button>{{/copy}}
+```
+
+Ce helper permet de copier le contenu de sa valeur dans le clipboard pour utilsiation ultérieure.
+
 
