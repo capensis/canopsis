@@ -31,7 +31,8 @@ type Store interface {
 }
 
 type store struct {
-	dbCollection libmongo.DbCollection
+	dbColorCollection libmongo.DbCollection
+	dbUserCollection  libmongo.DbCollection
 
 	defaultSearchByFields []string
 	defaultThemeIDs       map[string]struct{}
@@ -42,7 +43,8 @@ func NewStore(
 	dbClient libmongo.DbClient,
 ) Store {
 	return &store{
-		dbCollection:          dbClient.Collection(libmongo.ColorThemeCollection),
+		dbColorCollection:     dbClient.Collection(libmongo.ColorThemeCollection),
+		dbUserCollection:      dbClient.Collection(libmongo.UserCollection),
 		defaultSearchByFields: []string{"_id", "name"},
 		defaultThemeIDs: map[string]struct{}{
 			Canopsis:       {},
@@ -62,7 +64,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Theme, error) {
 		theme.ID = utils.NewID()
 	}
 
-	_, err := s.dbCollection.InsertOne(ctx, theme)
+	_, err := s.dbColorCollection.InsertOne(ctx, theme)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
 			return nil, s.parseDupError(err)
@@ -76,7 +78,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Theme, error) {
 
 func (s *store) GetById(ctx context.Context, id string) (*Theme, error) {
 	var res Theme
-	err := s.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&res)
+	err := s.dbColorCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&res)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, nil
@@ -101,7 +103,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 		sortBy = query.SortBy
 	}
 
-	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
+	cursor, err := s.dbColorCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		query.Query,
 		pipeline,
 		common.GetSortQuery(sortBy, query.Sort),
@@ -131,7 +133,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Theme, error) {
 	theme := s.transformRequestToDocument(r.EditRequest)
 	theme.ID = r.ID
 
-	res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": theme.ID}, bson.M{"$set": theme})
+	res, err := s.dbColorCollection.UpdateOne(ctx, bson.M{"_id": theme.ID}, bson.M{"$set": theme})
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
 			return nil, s.parseDupError(err)
@@ -152,12 +154,17 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		return false, ErrDefaultTheme
 	}
 
-	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+	deleted, err := s.dbColorCollection.DeleteOne(ctx, bson.M{"_id": id})
+	if err != nil || deleted == 0 {
+		return false, err
+	}
+
+	_, err = s.dbUserCollection.UpdateMany(ctx, bson.M{"ui_theme": id}, bson.M{"$set": bson.M{"ui_theme": Canopsis}})
 	if err != nil {
 		return false, err
 	}
 
-	return deleted > 0, nil
+	return true, nil
 }
 
 func (s *store) transformRequestToDocument(r EditRequest) Theme {
