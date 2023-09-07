@@ -16,7 +16,7 @@ exports[`text-editor Renders \`text-editor\` with all parameters 1`] = `
         Text editor title
       </span>
     </div>
-
+     
     <div
       class="text"
     >
@@ -27,7 +27,7 @@ exports[`text-editor Renders \`text-editor\` with all parameters 1`] = `
         value="Text"
       />
     </div>
-
+     
     <div
       class="actions"
     >
@@ -72,7 +72,7 @@ exports[`text-editor Renders \`text-editor\` with empty modal 1`] = `
         Text editor
       </span>
     </div>
-
+     
     <div
       class="text"
     >
@@ -82,7 +82,7 @@ exports[`text-editor Renders \`text-editor\` with empty modal 1`] = `
         value=""
       />
     </div>
-
+     
     <div
       class="actions"
     >
