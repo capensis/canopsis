@@ -14,10 +14,6 @@ export const widgetAlarmsSocketMixin = {
       type: Object,
       required: true,
     },
-    overview: {
-      type: Boolean,
-      default: false,
-    },
   },
   computed: {
     ...mapAlarmDetailsGetters({
@@ -88,20 +84,12 @@ export const widgetAlarmsSocketMixin = {
     }),
 
     joinToAlarmsSocketRoom(alarms) {
-      if (!this.overview) {
-        return;
-      }
-
       this.$socket
         .join(this.alarmsSocketRoom, mapIds(alarms))
         .addListener(this.updateAlarmInStore);
     },
 
     leaveAlarmsSocketRoom() {
-      if (!this.overview) {
-        return;
-      }
-
       this.$socket
         .leave(this.alarmsSocketRoom)
         .removeListener(this.updateAlarmInStore);

@@ -22,8 +22,7 @@
           :widget="item.widget",
           :tab="tab",
           :kiosk="kiosk",
-          :editing="editing",
-          overview
+          :editing="editing"
         )
 </template>
 
