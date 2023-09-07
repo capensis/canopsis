@@ -43,6 +43,30 @@ exports[`c-links-list Renders \`c-links-list\` with links 1`] = `
         </a>
       </div>
     </div>
+    <div>
+      <div
+        class="pa-2 text-xs-right"
+      >
+        <a
+          href="FirstCategoryLink3"
+          target="_blank"
+        >
+          FirstCategoryLinkLabel3
+        </a>
+      </div>
+    </div>
+    <div>
+      <div
+        class="pa-2 text-xs-right"
+      >
+        <a
+          href="FirstCategoryLink4"
+          target="_blank"
+        >
+          FirstCategoryLinkLabel4
+        </a>
+      </div>
+    </div>
   </div>
   <div>
     <span
@@ -152,6 +176,28 @@ exports[`c-links-list Renders \`c-links-list\` with links with copy action 1`] =
           value="FirstCategoryLink2"
         >
           FirstCategoryLinkLabel2
+        </c-copy-wrapper-stub>
+      </div>
+    </div>
+    <div>
+      <div
+        class="pa-2 text-xs-right"
+      >
+        <c-copy-wrapper-stub
+          value="FirstCategoryLink3"
+        >
+          FirstCategoryLinkLabel3
+        </c-copy-wrapper-stub>
+      </div>
+    </div>
+    <div>
+      <div
+        class="pa-2 text-xs-right"
+      >
+        <c-copy-wrapper-stub
+          value="FirstCategoryLink4"
+        >
+          FirstCategoryLinkLabel4
         </c-copy-wrapper-stub>
       </div>
     </div>
