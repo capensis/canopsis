@@ -1,4 +1,4 @@
-import { COLUMNS_WIDGET_TEMPLATES_TYPES, CUSTOM_WIDGET_TEMPLATE, ENTITIES_TYPES } from '@/constants';
+import { COLUMNS_WIDGET_TEMPLATES_TYPES, CUSTOM_WIDGET_TEMPLATE, WIDGET_TEMPLATES_TYPES } from '@/constants';
 
 import { widgetColumnsToForm, formToWidgetColumns } from '../column/form';
 
@@ -27,7 +27,7 @@ import { widgetColumnsToForm, formToWidgetColumns } from '../column/form';
  */
 export const widgetTemplateToForm = (widgetTemplate = {}) => ({
   title: widgetTemplate.title ?? '',
-  type: widgetTemplate.type ?? ENTITIES_TYPES.alarm,
+  type: widgetTemplate.type ?? WIDGET_TEMPLATES_TYPES.alarmMoreInfos,
   columns: widgetColumnsToForm(widgetTemplate.columns),
   content: widgetTemplate.content ?? '',
 });

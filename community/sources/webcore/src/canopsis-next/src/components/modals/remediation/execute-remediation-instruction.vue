@@ -32,8 +32,7 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesRemediationJobExecutionMixin } from '@/mixins/entities/remediation/job-execution';
 import { entitiesRemediationInstructionExecutionMixin } from '@/mixins/entities/remediation/instruction-execution';
 
-import RemediationInstructionExecute
-  from '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';
+import RemediationInstructionExecute from '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

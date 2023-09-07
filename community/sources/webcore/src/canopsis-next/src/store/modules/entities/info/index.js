@@ -23,6 +23,7 @@ export default {
     version: state => state.appInfo.version,
     logo: state => state.appInfo.logo,
     appTitle: state => state.appInfo.app_title,
+    maintenance: state => state.appInfo.maintenance,
     popupTimeout: state => state.appInfo.popup_timeout || {},
     maxMatchedItems: state => state.appInfo.max_matched_items,
     checkCountRequestTimeout: state => state.appInfo.check_count_request_timeout,
@@ -79,6 +80,10 @@ export default {
 
     updateUserInterface(context, { data } = {}) {
       return request.post(API_ROUTES.infos.userInterface, data);
+    },
+
+    updateMaintenanceMode(context, { data } = {}) {
+      return request.put(API_ROUTES.maintenance, data);
     },
 
     setPopupTimeouts({ dispatch }, { popupTimeout = {} }) {

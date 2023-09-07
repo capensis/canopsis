@@ -12,7 +12,6 @@
         v-bind="widgetProps",
         :widget="preparedWidget",
         :tab-id="tab._id",
-        :editing="editing",
         :overview="overview"
       )
 </template>
@@ -20,12 +19,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import {
-  WIDGET_TYPES,
-  WIDGET_TYPES_RULES,
-  WIDGET_GRID_ROW_HEIGHT,
-  COMPONENTS_BY_WIDGET_TYPES,
-} from '@/constants';
+import { WIDGET_TYPES, WIDGET_TYPES_RULES, WIDGET_GRID_ROW_HEIGHT, COMPONENTS_BY_WIDGET_TYPES } from '@/constants';
 
 import featuresService from '@/services/features';
 

@@ -9,7 +9,7 @@
         :fab="fab",
         icon
       )
-        v-icon(:color="color") {{ icon }}
+        v-icon(:color="color", :small="iconSmall") {{ icon }}
 </template>
 
 <script>
@@ -32,6 +32,10 @@ export default {
       required: true,
     },
     small: {
+      type: Boolean,
+      default: false,
+    },
+    iconSmall: {
       type: Boolean,
       default: false,
     },

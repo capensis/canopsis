@@ -414,7 +414,7 @@ func getDeletablePipeline() []bson.M {
 			"as": "pbhs",
 		}},
 		{"$lookup": bson.M{
-			"from": mongo.EventFilterRulesMongoCollection,
+			"from": mongo.EventFilterRuleCollection,
 			"let":  bson.M{"exception": "$_id"},
 			"pipeline": []bson.M{
 				{"$match": bson.M{"$expr": bson.M{"$and": []bson.M{

@@ -47,7 +47,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with editing mode 1`] = `
     class="v-card__text pa-0 position-relative"
   >
     <alarms-list-widget-stub
-      editing="true"
       tabid="tab-id"
       widget="[object Object]"
     />
@@ -86,7 +85,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with title and editing mode 1
     class="v-card__text pa-0 position-relative"
   >
     <alarms-list-widget-stub
-      editing="true"
       tabid="tab-id"
       widget="[object Object]"
     />

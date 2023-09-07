@@ -6,9 +6,11 @@ import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 
 import ServiceTemplate from '@/components/other/service/partials/service-template.vue';
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
+import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 
 const stubs = {
   'c-runtime-template': CRuntimeTemplate,
+  'c-compiled-template': CCompiledTemplate,
   'service-entities-list': true,
 };
 
