@@ -6,7 +6,7 @@ db.default_entities.find({
     var impact = [];
     var depends = [];
 
-    if (doc.component !== "") {
+    if (doc.component && doc.component !== "") {
         impact.push(doc.component);
     }
 
@@ -14,7 +14,7 @@ db.default_entities.find({
         impact = impact.concat(doc.services);
     }
 
-    if (doc.connector !== "") {
+    if (doc.connector && doc.connector !== "") {
         depends.push(doc.connector);
     }
 
@@ -55,7 +55,7 @@ db.default_entities.aggregate([
     var impact = [];
     var depends = [];
 
-    if (doc.connector !== "") {
+    if (doc.connector && doc.connector !== "") {
         impact.push(doc.connector);
     }
 

@@ -30,6 +30,7 @@ type Options struct {
 	ModeDebug                bool
 	FrameDuration            int
 	PeriodicalWaitTime       time.Duration
+	ComputeRruleEnd          bool
 }
 
 type DependencyMaker struct {
@@ -65,6 +66,13 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 
+	computeRruleStartWorker := &computeRruleStartPeriodicalWorker{
+		PeriodicalInterval:     12 * time.Hour,
+		PbhCollection:          dbClient.Collection(mongo.PbehaviorMongoCollection),
+		TimezoneConfigProvider: timezoneConfigProvider,
+		Logger:                 logger,
+	}
+
 	enginePbehavior := engine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
@@ -85,6 +93,8 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 					Int("count", count).
 					Msg("pbehaviors are recomputed")
 			}
+
+			computeRruleStartWorker.Work(ctx)
 
 			return nil
 		},
@@ -205,6 +215,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		dataStorageConfigProvider,
 		techMetricsConfigProvider,
 	))
+	enginePbehavior.AddPeriodicalWorker("rrule_cstart", computeRruleStartWorker)
 
 	healthcheck.Start(ctx, healthcheck.NewRpcChecker(
 		"pbehavior",

@@ -47,6 +47,16 @@ Feature: Count matches
         "resource": "test-resource-pbehavior-pattern-count-1-4",
         "state": 1,
         "output": "noveo alarm"
+      },
+      {
+        "connector": "test-connector-pbehavior-pattern-count-1",
+        "connector_name": "test-connector-name-pbehavior-pattern-count-1",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-pbehavior-pattern-count-1",
+        "resource": "test-resource-pbehavior-pattern-count-1-5",
+        "state": 0,
+        "output": "noveo alarm"
       }
     ]
     """
@@ -116,19 +126,27 @@ Feature: Count matches
         "component": "test-component-pbehavior-pattern-count-1",
         "resource": "test-resource-pbehavior-pattern-count-1-4",
         "source_type": "resource"
+      },
+      {
+        "event_type": "pbhenter",
+        "connector": "test-connector-pbehavior-pattern-count-1",
+        "connector_name": "test-connector-name-pbehavior-pattern-count-1",
+        "component": "test-component-pbehavior-pattern-count-1",
+        "resource": "test-resource-pbehavior-pattern-count-1-5",
+        "source_type": "resource"
       }
     ]
     """
     When I do PUT /api/v4/internal/user_interface:
     """json
     {
-      "max_matched_items": 4
+      "max_matched_items": 5
     }
     """
     Then the response code should be 200
     Then I wait 2s
     When I am noperms
-    When I do POST /api/v4/patterns-count:
+    When I do POST /api/v4/patterns-alarms-count:
     """json
     {
       "pbehavior_pattern": [
@@ -151,6 +169,44 @@ Feature: Count matches
       "pbehavior_pattern": {
         "count": 4,
         "over_limit": false
+      },
+      "all": {
+        "count": 4,
+        "over_limit": false
+      },
+      "entities": {
+        "count": 0,
+        "over_limit": false
+      }
+    }
+    """
+    When I do POST /api/v4/patterns-entities-count:
+    """json
+    {
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.id",
+            "cond": {
+              "type": "eq",
+              "value": "{{ .pbehaviorID }}"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "pbehavior_pattern": {
+        "count": 5,
+        "over_limit": false
+      },
+      "all": {
+        "count": 5,
+        "over_limit": false
       }
     }
     """
@@ -164,7 +220,7 @@ Feature: Count matches
     Then the response code should be 200
     Then I wait 2s
     When I am noperms
-    When I do POST /api/v4/patterns-count:
+    When I do POST /api/v4/patterns-alarms-count:
     """json
     {
       "pbehavior_pattern": [
@@ -186,6 +242,44 @@ Feature: Count matches
     {
       "pbehavior_pattern": {
         "count": 4,
+        "over_limit": true
+      },
+      "all": {
+        "count": 4,
+        "over_limit": true
+      },
+      "entities": {
+        "count": 0,
+        "over_limit": false
+      }
+    }
+    """
+    When I do POST /api/v4/patterns-entities-count:
+    """json
+    {
+      "pbehavior_pattern": [
+        [
+          {
+            "field": "pbehavior_info.id",
+            "cond": {
+              "type": "eq",
+              "value": "{{ .pbehaviorID }}"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "pbehavior_pattern": {
+        "count": 5,
+        "over_limit": true
+      },
+      "all": {
+        "count": 5,
         "over_limit": true
       }
     }
@@ -274,7 +368,7 @@ Feature: Count matches
     ]
     """
     Then I wait 2s
-    When I do POST /api/v4/patterns-count:
+    When I do POST /api/v4/patterns-alarms-count:
     """json
     {
       "entity_pattern": [
@@ -317,10 +411,14 @@ Feature: Count matches
       "pbehavior_pattern": {
         "count": 2,
         "over_limit": false
+      },
+      "all": {
+        "count": 2,
+        "over_limit": false
       }
     }
     """
-    When I do POST /api/v4/patterns-count:
+    When I do POST /api/v4/patterns-alarms-count:
     """json
     {
       "pbehavior_pattern": [
@@ -341,6 +439,10 @@ Feature: Count matches
     """json
     {
       "pbehavior_pattern": {
+        "count": 0,
+        "over_limit": false
+      },
+      "all": {
         "count": 0,
         "over_limit": false
       }

@@ -34,6 +34,19 @@
       :templates="alarmMoreInfosWidgetTemplates",
       @input="updateMoreInfo"
     )
+    v-divider
+    field-text-editor-with-template(
+      :value="form.exportPdfTemplate",
+      :template="form.exportPdfTemplateTemplate",
+      :title="$t('settings.exportPdfTemplate')",
+      :variables="exportPdfAlarmVariables",
+      :default-value="defaultExportPdfTemplateValue",
+      :dialog-props="{ maxWidth: 1070 }",
+      :templates="alarmExportToPdfTemplates",
+      addable,
+      removable,
+      @input="updateExportPdf"
+    )
 </template>
 
 <script>
@@ -49,10 +62,13 @@ import { alarmVariablesMixin } from '@/mixins/widget/variables/alarm';
 
 import FieldDefaultSortColumn from '@/components/sidebars/form/fields/default-sort-column.vue';
 import FieldColumns from '@/components/sidebars/form/fields/columns.vue';
+import FieldTextEditor from '@/components/sidebars/form/fields/text-editor.vue';
 import FieldInfoPopup from '@/components/sidebars/alarm/form/fields/info-popup.vue';
 import FieldTextEditorWithTemplate from '@/components/sidebars/form/fields/text-editor-with-template.vue';
 import FieldDefaultElementsPerPage from '@/components/sidebars/form/fields/default-elements-per-page.vue';
 import WidgetSettingsGroup from '@/components/sidebars/partials/widget-settings-group.vue';
+
+import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
 
 export default {
   components: {
@@ -60,6 +76,7 @@ export default {
     FieldDefaultSortColumn,
     FieldColumns,
     FieldInfoPopup,
+    FieldTextEditor,
     FieldTextEditorWithTemplate,
     FieldDefaultElementsPerPage,
   },
@@ -90,12 +107,20 @@ export default {
     },
   },
   computed: {
+    defaultExportPdfTemplateValue() {
+      return ALARM_EXPORT_PDF_TEMPLATE;
+    },
+
     alarmColumnsWidgetTemplates() {
       return filter(this.templates, { type: WIDGET_TEMPLATES_TYPES.alarmColumns });
     },
 
     alarmMoreInfosWidgetTemplates() {
       return filter(this.templates, { type: WIDGET_TEMPLATES_TYPES.alarmMoreInfos });
+    },
+
+    alarmExportToPdfTemplates() {
+      return filter(this.templates, { type: WIDGET_TEMPLATES_TYPES.alarmExportToPdf });
     },
 
     preparedWidgetColumns() {
@@ -126,6 +151,15 @@ export default {
 
         moreInfoTemplate: content,
         moreInfoTemplateTemplate: template,
+      });
+    },
+
+    updateExportPdf(content, template) {
+      this.updateModel({
+        ...this.form,
+
+        exportPdfTemplate: content,
+        exportPdfTemplateTemplate: template,
       });
     },
   },

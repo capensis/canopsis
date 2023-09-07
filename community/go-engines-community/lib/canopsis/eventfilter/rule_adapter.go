@@ -14,7 +14,7 @@ type mongoAdapter struct {
 
 func NewRuleAdapter(dbClient mongo.DbClient) RuleAdapter {
 	return mongoAdapter{
-		dbCollection: dbClient.Collection(mongo.EventFilterRulesMongoCollection),
+		dbCollection: dbClient.Collection(mongo.EventFilterRuleCollection),
 	}
 }
 

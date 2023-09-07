@@ -16,8 +16,10 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"github.com/beevik/etree"
 	"github.com/gin-gonic/gin"
@@ -48,15 +50,16 @@ type ServiceProvider interface {
 }
 
 type serviceProvider struct {
-	samlSP         *saml2.SAMLServiceProvider
-	userProvider   security.UserProvider
-	roleCollection mongo.DbCollection
-	sessionStore   libsession.Store
-	enforcer       security.Enforcer
-	config         security.Config
-	tokenService   apisecurity.TokenService
-	logger         zerolog.Logger
-	defaultRole    string
+	samlSP             *saml2.SAMLServiceProvider
+	userProvider       security.UserProvider
+	roleCollection     mongo.DbCollection
+	sessionStore       libsession.Store
+	enforcer           security.Enforcer
+	config             security.Config
+	tokenService       apisecurity.TokenService
+	maintenanceAdapter config.MaintenanceAdapter
+	logger             zerolog.Logger
+	defaultRole        string
 }
 
 func NewServiceProvider(
@@ -66,6 +69,7 @@ func NewServiceProvider(
 	enforcer security.Enforcer,
 	config security.Config,
 	tokenService apisecurity.TokenService,
+	maintenanceAdapter config.MaintenanceAdapter,
 	logger zerolog.Logger,
 ) (ServiceProvider, error) {
 	if config.Security.Saml.IdpMetadataUrl != "" && config.Security.Saml.IdpMetadataXml != "" {
@@ -175,14 +179,15 @@ func NewServiceProvider(
 			SkipSignatureValidation:        config.Security.Saml.SkipSignatureValidation,
 			SignAuthnRequestsCanonicalizer: dsig.MakeC14N10ExclusiveCanonicalizerWithPrefixList(""),
 		},
-		userProvider:   userProvider,
-		roleCollection: roleCollection,
-		sessionStore:   sessionStore,
-		enforcer:       enforcer,
-		config:         config,
-		tokenService:   tokenService,
-		defaultRole:    defaultRole,
-		logger:         logger,
+		userProvider:       userProvider,
+		roleCollection:     roleCollection,
+		sessionStore:       sessionStore,
+		enforcer:           enforcer,
+		config:             config,
+		tokenService:       tokenService,
+		maintenanceAdapter: maintenanceAdapter,
+		defaultRole:        defaultRole,
+		logger:             logger,
 	}, nil
 }
 
@@ -401,6 +406,23 @@ func (sp *serviceProvider) SamlAcsHandler() gin.HandlerFunc {
 			}
 		}
 
+		maintenanceConf, err := sp.maintenanceAdapter.GetConfig(c)
+		if err != nil {
+			panic(err)
+		}
+
+		if maintenanceConf.Enabled {
+			ok, err := sp.enforcer.Enforce(user.ID, apisecurity.PermMaintenance, model.PermissionCan)
+			if err != nil {
+				panic(err)
+			}
+
+			if !ok {
+				c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
+				return
+			}
+		}
+
 		err = sp.enforcer.LoadPolicy()
 		if err != nil {
 			panic(fmt.Errorf("reload enforcer error: %w", err))
@@ -586,7 +608,7 @@ func (sp *serviceProvider) createUser(c *gin.Context, relayUrl *url.URL, asserti
 
 	role := sp.getAssocAttribute(assertionInfo.Values, "role", sp.defaultRole)
 
-	err := sp.roleCollection.FindOne(c, bson.M{"crecord_name": role, "crecord_type": "role"}).Err()
+	err := sp.roleCollection.FindOne(c, bson.M{"name": role}).Err()
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
 			errMessage := fmt.Errorf("role %s doesn't exist", role)
@@ -600,7 +622,7 @@ func (sp *serviceProvider) createUser(c *gin.Context, relayUrl *url.URL, asserti
 
 	user := &security.User{
 		Name:       sp.getAssocAttribute(assertionInfo.Values, "name", assertionInfo.NameID),
-		Role:       role,
+		Roles:      []string{role},
 		IsEnabled:  true,
 		ExternalID: assertionInfo.NameID,
 		Source:     security.SourceSaml,

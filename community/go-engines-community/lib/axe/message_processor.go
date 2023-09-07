@@ -30,7 +30,7 @@ type MessageProcessor struct {
 	Decoder                encoding.Decoder
 	Logger                 zerolog.Logger
 	PbehaviorAdapter       pbehavior.Adapter
-	TagUpdater             alarmtag.Updater
+	TagUpdater             alarmtag.ExternalUpdater
 	AutoInstructionMatcher AutoInstructionMatcher
 	AlarmCollection        mongo.DbCollection
 }
@@ -106,6 +106,12 @@ func (p *MessageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		p.updatePbhLastAlarmDate(ctx, event)
 		p.updateTags(event)
 		event.IsInstructionMatched = p.isInstructionMatched(event, msg)
+	}
+
+	// there is nothing to do with those kinds of event in the next engines.
+	if event.EventType == types.EventTypeRecomputeEntityService ||
+		event.EventType == types.EventTypeUpdateCounters {
+		return nil, nil
 	}
 
 	// Encode and publish the event to the next engine

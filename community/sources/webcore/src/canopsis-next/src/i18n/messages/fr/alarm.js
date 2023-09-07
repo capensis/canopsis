@@ -42,7 +42,7 @@ export default {
       declareTicket: 'Déclarer un incident',
       associateTicket: 'Associer un ticket',
       cancel: 'Annuler l\'alarme',
-      unCancel: 'Uncancel l\'alarme',
+      unCancel: 'Annuler l\'annulation de l\'alarme',
       fastCancel: 'Annulation rapide',
       changeState: 'Changer et verrouiller la criticité',
       variablesHelp: 'Liste des variables disponibles',
@@ -51,6 +51,7 @@ export default {
       removeAlarmsFromManualMetaAlarm: 'Dissocier l\'alarme de la méta-alarme manuelle',
       removeAlarmsFromAutoMetaAlarm: 'Dissocier l\'alarme de la méta-alarme',
       comment: 'Commenter l\'alarme',
+      exportPdf: 'Exporter l\'alarme vers un fichier PDF',
     },
     iconsTitles: {
       ack: 'Acquitter',
@@ -138,6 +139,9 @@ export default {
     failedManualInstructions: 'Consigne manuelle <strong>{title}</strong> en échec | Consignes manuelles <strong>{title}</strong> en échec',
     failedAutoInstructions: 'Consigne automatique <strong>{title}</strong> en échec | Consignes automatiques <strong>{title}</strong> en échec',
     hasManualInstruction: 'Il y a une consigne manuelle associée | Il y a des consignes manuelles associées',
+    resetChangeColumns: 'Réinitialiser l\'ordre/le redimensionnement des colonnes',
+    startChangeColumns: 'Commencer à modifier l\'ordre/le redimensionnement des colonnes',
+    finishChangeColumns: 'Terminer la modification de l\'ordre/du redimensionnement des colonnes',
   },
   metrics: {
     [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Nombre d\'alarmes créées',
@@ -173,6 +177,7 @@ export default {
   },
   fields: {
     displayName: 'Nom simplifié (DisplayName)',
+    assignedInstructions: 'Consignes assignées',
     initialOutput: 'Sortie initiale longue',
     initialLongOutput: 'Sortie longue initiale',
     lastComment: 'Dernier commentaire',
@@ -199,6 +204,7 @@ export default {
     ticketId: 'ID du ticket',
     ticketMessage: 'Message du ticket',
     ticketCreatedAt: 'Ticket créé à',
+    ticketData: 'Données du ticket',
     entityId: 'ID d\'entité',
     entityName: 'Nom de l\'entité',
     entityCategoryName: 'Nom de la catégorie d\'entité',
@@ -211,5 +217,7 @@ export default {
     entityInfos: 'Informations sur l\'entité',
     entityComponentInfos: 'Informations sur les composants de l\'entité',
     entityLastPbehaviorDate: 'Date du dernier comportement de l\'entité',
+    openedChildren: 'Conséquences ouvertes',
+    closedChildren: 'Conséquences fermées',
   },
 };

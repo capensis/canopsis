@@ -13,6 +13,9 @@ export default {
   noDataDisabled: 'No pattern set.',
   discard: 'Discard pattern',
   oldPatternTooltip: 'Filter patterns are not migrated',
+  alarmsCount: '{alarmsCount} alarms found',
+  entitiesCount: '{entitiesCount} entities found',
+  alarmsEntitiesCount: '{alarmsCount} alarms and {entitiesCount} entities found',
   types: {
     [PATTERN_TYPES.alarm]: 'Alarm pattern',
     [PATTERN_TYPES.entity]: 'Entity pattern',

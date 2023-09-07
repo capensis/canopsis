@@ -5,7 +5,7 @@
     small,
     @click="$emit('click')"
   )
-    span.white--text
+    span.c-alarm-action-chip__text.white--text
       slot
     v-icon.cursor-pointer.ml-2(
       v-if="closable",
@@ -37,8 +37,17 @@ export default {
 .c-alarm-action-chip {
   border-radius: 5px;
   font-size: 12px;
+  min-height: 24px;
+  height: unset !important;
+
+  &__text {
+    white-space: initial;
+    word-wrap: break-word;
+    max-width: 100%;
+  }
 
   .v-chip__content {
+    height: unset !important;
     cursor: pointer;
   }
 
@@ -49,7 +58,7 @@ export default {
   }
 
   &--small {
-    height: 20px !important;
+    min-height: 20px !important;
     margin: 2px;
   }
 

@@ -6,83 +6,93 @@ exports[`pbehavior-exceptions-list Renders \`pbehavior-exceptions-list\` with ex
 >
   <div>
     <div
-      class="flex"
+      class="layout column"
     >
       <div
-        class="v-card v-sheet theme--light"
+        class="layout row align-center"
       >
-        <div
-          class="v-card__title"
-        >
+        <h4>
           exception-0
-        </div>
+        </h4>
+        <c-action-btn-stub
+          type="delete"
+        />
       </div>
-      <hr
-        class="v-divider theme--light"
+      <c-advanced-data-table-stub
+        headers="[object Object],[object Object],[object Object]"
+        items="[object Object],[object Object]"
       />
     </div>
     <div
-      class="flex"
+      class="layout column"
     >
       <div
-        class="v-card v-sheet theme--light"
+        class="layout row align-center"
       >
-        <div
-          class="v-card__title"
-        >
+        <h4>
           exception-1
-        </div>
+        </h4>
+        <c-action-btn-stub
+          type="delete"
+        />
       </div>
-      <hr
-        class="v-divider theme--light"
+      <c-advanced-data-table-stub
+        headers="[object Object],[object Object],[object Object]"
+        items="[object Object],[object Object]"
       />
     </div>
     <div
-      class="flex"
+      class="layout column"
     >
       <div
-        class="v-card v-sheet theme--light"
+        class="layout row align-center"
       >
-        <div
-          class="v-card__title"
-        >
+        <h4>
           exception-2
-        </div>
+        </h4>
+        <c-action-btn-stub
+          type="delete"
+        />
       </div>
-      <hr
-        class="v-divider theme--light"
+      <c-advanced-data-table-stub
+        headers="[object Object],[object Object],[object Object]"
+        items="[object Object],[object Object]"
       />
     </div>
     <div
-      class="flex"
+      class="layout column"
     >
       <div
-        class="v-card v-sheet theme--light"
+        class="layout row align-center"
       >
-        <div
-          class="v-card__title"
-        >
+        <h4>
           exception-3
-        </div>
+        </h4>
+        <c-action-btn-stub
+          type="delete"
+        />
       </div>
-      <hr
-        class="v-divider theme--light"
+      <c-advanced-data-table-stub
+        headers="[object Object],[object Object],[object Object]"
+        items="[object Object],[object Object]"
       />
     </div>
     <div
-      class="flex"
+      class="layout column"
     >
       <div
-        class="v-card v-sheet theme--light"
+        class="layout row align-center"
       >
-        <div
-          class="v-card__title"
-        >
+        <h4>
           exception-4
-        </div>
+        </h4>
+        <c-action-btn-stub
+          type="delete"
+        />
       </div>
-      <hr
-        class="v-divider theme--light"
+      <c-advanced-data-table-stub
+        headers="[object Object],[object Object],[object Object]"
+        items="[object Object],[object Object]"
       />
     </div>
   </div>
@@ -98,19 +108,7 @@ exports[`pbehavior-exceptions-list Renders \`pbehavior-exceptions-list\` without
       class="text-xs-center"
       style="width: 100%;"
     >
-      <div
-        class="flex"
-      >
-        <div
-          class="v-card v-sheet theme--light"
-        >
-          <div
-            class="v-card__title"
-          >
-            No data
-          </div>
-        </div>
-      </div>
+      No data available
     </div>
   </div>
 </div>

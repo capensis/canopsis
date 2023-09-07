@@ -1,9 +1,18 @@
 <template lang="pug">
   draggable(
     :value="value",
-    :options="options",
-    :element="component",
-    @change="updateOrdering"
+    :group="group",
+    :tag="component",
+    :animation="animation",
+    :disabled="disabled",
+    :handle="handle",
+    :ghost-class="ghostClass",
+    :drag-class="dragClass",
+    :chosen-class="dragClass",
+    :component-data="componentData",
+    @change="updateOrdering",
+    @start="$emit('start', $event)",
+    @end="$emit('end', $event)"
   )
     slot
 </template>
@@ -41,28 +50,29 @@ export default {
       type: String,
       required: false,
     },
+    componentData: {
+      type: Object,
+      required: false,
+    },
     handle: {
       type: String,
       required: false,
     },
     ghostClass: {
       type: String,
+      default: 'grey',
+    },
+    dragClass: {
+      type: String,
+      required: false,
+    },
+    chosenClass: {
+      type: String,
       required: false,
     },
     group: {
-      type: Object,
+      type: [Object, String],
       required: false,
-    },
-  },
-  computed: {
-    options() {
-      return {
-        animation: this.animation,
-        disabled: this.disabled,
-        handle: this.handle,
-        ghostClass: 'grey',
-        group: this.group,
-      };
     },
   },
   methods: {
