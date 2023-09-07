@@ -216,6 +216,7 @@ export default {
   },
   data() {
     return {
+      prevEvent: null,
       selecting: false,
       selected: [],
     };
@@ -279,6 +280,7 @@ export default {
       return {
         [`columns-${label}`]: true,
         'alarms-list-table__selecting': this.selecting,
+        'alarms-list-table__selecting--text-unselectable': this.selectingMousePressed,
       };
     },
 
@@ -316,6 +318,10 @@ export default {
 
     parentAlarmId() {
       return this.parentAlarm?._id;
+    },
+
+    selectingMousePressed() {
+      return this.selecting && !!this.prevEvent;
     },
   },
 
@@ -417,7 +423,7 @@ export default {
     },
 
     mouseupHandler() {
-      delete this.prevEvent;
+      this.prevEvent = null;
     },
 
     mousemoveHandler(event) {
@@ -643,8 +649,10 @@ export default {
       opacity: 1;
     }
 
-    * {
-      user-select: none;
+    &--text-unselectable {
+      * {
+        user-select: none;
+      }
     }
   }
 
