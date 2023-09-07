@@ -37,6 +37,9 @@ type SectionGlobal struct {
 	PrefetchSize                 int `toml:"PrefetchSize"`
 	ReconnectTimeoutMilliseconds int `toml:"ReconnectTimeoutMilliseconds"`
 	ReconnectRetries             int `toml:"ReconnectRetries"`
+
+	BuildEntityInfosDictionary  bool `toml:"BuildEntityInfosDictionary"`
+	BuildDynamicInfosDictionary bool `toml:"BuildDynamicInfosDictionary"`
 }
 
 func (s *SectionGlobal) GetReconnectTimeout() time.Duration {
