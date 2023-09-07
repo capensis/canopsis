@@ -2,18 +2,10 @@ import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import {
-  getWidgetRequestWithNewProperty,
-  getWidgetRequestWithNewParametersProperty,
-} from '@unit/utils/settings';
+import { getWidgetRequestWithNewProperty, getWidgetRequestWithNewParametersProperty } from '@unit/utils/settings';
 import { expectsOneInput } from '@unit/utils/form';
 
-import {
-  ALARM_METRIC_PARAMETERS,
-  QUICK_RANGES,
-  SAMPLINGS,
-  WIDGET_TYPES,
-} from '@/constants';
+import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS, WIDGET_TYPES } from '@/constants';
 
 import { widgetToForm, formToWidget } from '@/helpers/entities/widget/form';
 

@@ -110,6 +110,7 @@ export default {
     },
   },
   moreInfosModal: '"More Infos" Popup',
+  exportPdfTemplate: 'Export PDF template',
   expandGridRangeSize: 'Expand card (more infos / timeline) width',
   weatherTemplate: 'Template - Weather item',
   modalTemplate: 'Template - Modal',

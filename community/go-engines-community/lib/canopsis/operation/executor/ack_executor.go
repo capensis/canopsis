@@ -7,22 +7,19 @@ import (
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 // NewAckExecutor creates new executor.
-func NewAckExecutor(metricsSender metrics.Sender, configProvider config.AlarmConfigProvider) operation.Executor {
+func NewAckExecutor(configProvider config.AlarmConfigProvider) operation.Executor {
 	return &ackExecutor{
-		metricsSender:  metricsSender,
 		configProvider: configProvider,
 	}
 }
 
 type ackExecutor struct {
-	metricsSender  metrics.Sender
 	configProvider config.AlarmConfigProvider
 }
 
@@ -62,13 +59,6 @@ func (e *ackExecutor) Exec(
 	}
 
 	if !doubleAck {
-		metricsUserID := ""
-		if initiator == types.InitiatorUser {
-			metricsUserID = userID
-		}
-		e.metricsSender.SendAck(*alarm, metricsUserID, time.Time)
-		e.metricsSender.SendRemoveNotAckedMetric(*alarm, time.Time)
-
 		return types.AlarmChangeTypeAck, nil
 	}
 

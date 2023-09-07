@@ -1,5 +1,3 @@
-import { ENTITIES_TYPES } from '@/constants';
-
 export const types = {
   TOGGLE_EDITING: 'TOGGLE_EDITING',
   TOGGLE_EDITING_FINISHED: 'TOGGLE_EDITING_FINISHED',
@@ -27,10 +25,7 @@ export default {
     editing: state => state.editing,
     editingProcess: state => state.editingProcess,
     pending: state => state.pending,
-    item: (state, getters, rootState, rootGetters) => rootGetters['entities/getItem'](
-      ENTITIES_TYPES.view,
-      state.id,
-    ),
+    item: (state, getters, rootState, rootGetters) => rootGetters['view/getViewById'](state.id),
   },
   mutations: {
     [types.TOGGLE_EDITING]: (state) => {
@@ -102,7 +97,7 @@ export default {
 
         commit(types.FETCH_ITEM, { id });
 
-        await dispatch('view/fetchItem', { id }, { root: true });
+        await dispatch('view/fetchView', { id }, { root: true });
 
         commit(types.FETCH_ITEM_COMPLETED);
       } catch (err) {
