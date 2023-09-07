@@ -258,3 +258,45 @@ Feature: Update a color theme
     "error": "Not found"
   }
   """
+
+  @concurrent
+  Scenario: given put request for default theme should return error
+  When I am admin
+  When I do PUT /api/v4/color-themes/canopsis:
+  """json
+  {
+    "name": "test_not_found",
+    "colors": {
+      "main": {
+        "primary": "#AAAAAA",
+        "secondary": "#AAAAAA",
+        "accent": "#AAAAAA",
+        "error": "#AAAAAA",
+        "info": "#AAAAAA",
+        "success": "#AAAAAA",
+        "warning": "#AAAAAA",
+        "background": "#AAAAAA"
+      },
+      "table": {
+        "background": "#AAAAAA",
+        "active_color": "#AAAAAA",
+        "row_color": "#AAAAAA",
+        "shift_row_color": "#AAAAAA",
+        "hover_row_color": "#AAAAAA"
+      },
+      "state": {
+        "ok": "#AAAAAA",
+        "minor": "#AAAAAA",
+        "major": "#AAAAAA",
+        "critical": "#AAAAAA"
+      }
+    }
+  }
+  """
+  Then the response code should be 400
+  Then the response body should contain:
+  """json
+  {
+    "error": "can't modify or delete the default color theme"
+  }
+  """

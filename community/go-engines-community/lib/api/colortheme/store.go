@@ -15,6 +15,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+const (
+	Canopsis       = "canopsis"
+	CanopsisDark   = "canopsis_dark"
+	ColorBlind     = "color_blind"
+	ColorBlindDark = "color_blind_dark"
+)
+
 type Store interface {
 	Insert(ctx context.Context, r CreateRequest) (*Theme, error)
 	GetById(ctx context.Context, id string) (*Theme, error)
@@ -27,6 +34,7 @@ type store struct {
 	dbCollection libmongo.DbCollection
 
 	defaultSearchByFields []string
+	defaultThemeIDs       map[string]struct{}
 	dupErrorRegexp        *regexp.Regexp
 }
 
@@ -36,7 +44,13 @@ func NewStore(
 	return &store{
 		dbCollection:          dbClient.Collection(libmongo.ColorThemeCollection),
 		defaultSearchByFields: []string{"_id", "name"},
-		dupErrorRegexp:        regexp.MustCompile(`{ ([^:]+)`),
+		defaultThemeIDs: map[string]struct{}{
+			Canopsis:       {},
+			CanopsisDark:   {},
+			ColorBlind:     {},
+			ColorBlindDark: {},
+		},
+		dupErrorRegexp: regexp.MustCompile(`{ ([^:]+)`),
 	}
 }
 
@@ -110,6 +124,10 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 }
 
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*Theme, error) {
+	if s.isDefaultTheme(r.ID) {
+		return nil, ErrDefaultTheme
+	}
+
 	theme := s.transformRequestToDocument(r.EditRequest)
 	theme.ID = r.ID
 
@@ -130,6 +148,10 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Theme, error) {
 }
 
 func (s *store) Delete(ctx context.Context, id string) (bool, error) {
+	if s.isDefaultTheme(id) {
+		return false, ErrDefaultTheme
+	}
+
 	deleted, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
 	if err != nil {
 		return false, err
@@ -162,4 +184,9 @@ func (s *store) parseDupError(err error) error {
 	}
 
 	return fmt.Errorf("can't parse duplication error: %w", err)
+}
+
+func (s *store) isDefaultTheme(id string) bool {
+	_, ok := s.defaultThemeIDs[id]
+	return ok
 }

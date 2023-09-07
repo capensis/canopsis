@@ -1,4 +1,4 @@
-db.color_theme.dropIndex("name_1");
+db.color_theme.drop();
 
 db.permission.deleteMany({_id: {$in: ["api_color_theme", "models_color_theme"]}});
 db.role.updateMany(

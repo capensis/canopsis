@@ -115,6 +115,11 @@ func (a api) Update(c *gin.Context) {
 
 	theme, err := a.store.Update(c, request)
 	if err != nil {
+		if errors.Is(err, ErrDefaultTheme) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			return
+		}
+
 		validationErr := common.ValidationError{}
 		if errors.As(err, &validationErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
@@ -144,6 +149,11 @@ func (a api) Update(c *gin.Context) {
 func (a api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c, c.Param("id"))
 	if err != nil {
+		if errors.Is(err, ErrDefaultTheme) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			return
+		}
+
 		panic(err)
 	}
 

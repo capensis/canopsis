@@ -22,7 +22,7 @@ Feature: Delete a color theme
   Then the response code should be 404
 
   @concurrent
-  Scenario: given delete not found theme should return error
+  Scenario: given delete request for not found theme should return error
   When I am admin
   When I do DELETE /api/v4/color-themes/test_theme_not_found
   Then the response code should be 404
@@ -30,5 +30,17 @@ Feature: Delete a color theme
   """json
   {
     "error": "Not found"
+  }
+  """
+
+  @concurrent
+  Scenario: given delete request for default theme should return error
+  When I am admin
+  When I do DELETE /api/v4/color-themes/canopsis
+  Then the response code should be 400
+  Then the response body should contain:
+  """json
+  {
+    "error": "can't modify or delete the default color theme"
   }
   """
