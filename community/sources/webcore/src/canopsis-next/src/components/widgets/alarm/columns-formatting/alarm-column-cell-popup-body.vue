@@ -12,16 +12,11 @@
           v-icon(color="error", small) close
     v-fade-transition
       v-card-text.pa-2
-        v-runtime-template(:template="popupTextContent", :template-props="{ alarm }")
+        c-compiled-template(:template="template", :context="templateContext", :template-props="{ alarm }")
 </template>
 
 <script>
-import VRuntimeTemplate from 'v-runtime-template';
-
-import { compile } from '@/helpers/handlebars';
-
 export default {
-  components: { VRuntimeTemplate },
   props: {
     alarm: {
       type: Object,
@@ -32,17 +27,12 @@ export default {
       default: '',
     },
   },
-  asyncComputed: {
-    popupTextContent: {
-      lazy: true,
-
-      async get() {
-        const context = { alarm: this.alarm, entity: this.alarm.entity ?? {} };
-        const compiledTemplate = await compile(this.template, context);
-
-        return `<div>${compiledTemplate}</div>`;
-      },
-      default: '',
+  computed: {
+    templateContext() {
+      return {
+        alarm: this.alarm,
+        entity: this.alarm.entity ?? {},
+      };
     },
   },
 };

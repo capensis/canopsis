@@ -31,7 +31,7 @@
       v-for="(condition, index) in form.conditions",
       v-field="form.conditions[index]",
       :key="condition.key",
-      :name="`${name}.${condition.key}`",
+      :name="`${name}.conditions.${condition.key}`",
       :disabled-remove="hasOnlyOneCondition",
       :disabled="disabled",
       :variables="variables",
@@ -44,7 +44,7 @@
 <script>
 import { SORT_ORDERS } from '@/constants';
 
-import { externalDataItemConditionAttributeToForm } from '@/helpers/forms/shared/external-data';
+import { externalDataItemConditionAttributeToForm } from '@/helpers/entities/shared/external-data/form';
 
 import { formMixin } from '@/mixins/form';
 

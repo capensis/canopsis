@@ -7,7 +7,7 @@ Feature: Update a metrics settings
     When I do PUT /api/v4/cat/metrics-settings:
     """json
     {
-      "enabled_manual_instructions": true,
+      "enabled_instructions": true,
       "enabled_not_acked_metrics": true
     }
     """
@@ -15,7 +15,7 @@ Feature: Update a metrics settings
     Then the response body should be:
     """json
     {
-      "enabled_manual_instructions": true,
+      "enabled_instructions": true,
       "enabled_not_acked_metrics": true
     }
     """
@@ -24,7 +24,7 @@ Feature: Update a metrics settings
     Then the response body should be:
     """json
     {
-      "enabled_manual_instructions": true,
+      "enabled_instructions": true,
       "enabled_not_acked_metrics": true
     }
     """
@@ -33,7 +33,7 @@ Feature: Update a metrics settings
     When I do PUT /api/v4/cat/metrics-settings:
     """json
     {
-      "enabled_manual_instructions": true,
+      "enabled_instructions": true,
       "enabled_not_acked_metrics": true
     }
     """
@@ -44,7 +44,7 @@ Feature: Update a metrics settings
     When I do PUT /api/v4/cat/metrics-settings:
     """json
     {
-      "enabled_manual_instructions": true,
+      "enabled_instructions": true,
       "enabled_not_acked_metrics": true
     }
     """

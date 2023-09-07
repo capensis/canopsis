@@ -1,6 +1,6 @@
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
@@ -9,8 +9,6 @@ import { QUICK_RANGES, SAMPLINGS } from '@/constants';
 
 import KpiSli from '@/components/other/kpi/charts/kpi-sli';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'c-progress-overlay': true,
   'kpi-sli-filters': true,
@@ -18,43 +16,35 @@ const stubs = {
   'kpi-error-overlay': true,
 };
 
-const factory = (options = {}) => shallowMount(KpiSli, {
-  localVue,
-  stubs,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(KpiSli, {
-  localVue,
-  stubs,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-
-  ...options,
-});
-
 describe('kpi-sli', () => {
   const nowTimestamp = 1386435600000;
-  const nowUnix = nowTimestamp / 1000;
 
   mockDateNow(nowTimestamp);
+
+  const factory = generateShallowRenderer(KpiSli, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(KpiSli, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   it('Metrics fetched after mount', async () => {
     const expectedDefaultParams = {
       /* now - 7d  */
-      from: 1385830800,
+      from: 1385852400,
       in_percents: true,
       sampling: SAMPLINGS.day,
-      to: nowUnix,
+      to: 1386370800,
       filter: null,
     };
     const fetchSliMetrics = jest.fn(() => ({
@@ -83,10 +73,10 @@ describe('kpi-sli', () => {
     const { start, stop } = QUICK_RANGES.last2Days;
     const expectedParamsAfterUpdate = {
       /* now - 7d  */
-      from: 1385830800,
+      from: 1385852400,
       in_percents: true,
       sampling: SAMPLINGS.day,
-      to: nowUnix,
+      to: 1386370800,
       filter: null,
     };
     const fetchSliMetrics = jest.fn(() => ({

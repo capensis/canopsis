@@ -2,6 +2,7 @@ import { API_ROUTES } from '@/config';
 import { POPUP_TYPES } from '@/constants';
 
 import request from '@/services/request';
+
 import { durationToSeconds } from '@/helpers/date/duration';
 
 const types = {
@@ -22,10 +23,12 @@ export default {
     version: state => state.appInfo.version,
     logo: state => state.appInfo.logo,
     appTitle: state => state.appInfo.app_title,
+    maintenance: state => state.appInfo.maintenance,
     popupTimeout: state => state.appInfo.popup_timeout || {},
     maxMatchedItems: state => state.appInfo.max_matched_items,
     checkCountRequestTimeout: state => state.appInfo.check_count_request_timeout,
     allowChangeSeverityToInfo: state => state.appInfo.allow_change_severity_to_info,
+    showHeaderOnKioskMode: state => state.appInfo.show_header_on_kiosk_mode,
     footer: state => state.appInfo.footer,
     edition: state => state.appInfo.edition,
     stack: state => state.appInfo.stack,
@@ -77,6 +80,10 @@ export default {
 
     updateUserInterface(context, { data } = {}) {
       return request.post(API_ROUTES.infos.userInterface, data);
+    },
+
+    updateMaintenanceMode(context, { data } = {}) {
+      return request.put(API_ROUTES.maintenance, data);
     },
 
     setPopupTimeouts({ dispatch }, { popupTimeout = {} }) {

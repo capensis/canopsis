@@ -14,6 +14,7 @@ const (
 	RemediationKeyName   = "remediation"
 	HealthCheckName      = "health_check"
 	AlarmTagColorKeyName = "alarm_tag_color"
+	MaintenanceKeyName   = "maintenance"
 )
 
 // SectionAlarm ...
@@ -29,6 +30,8 @@ type SectionAlarm struct {
 	// TimeToKeepResolvedAlarms defines how long resolved alarms will be kept in main alarm collection
 	TimeToKeepResolvedAlarms string `toml:"TimeToKeepResolvedAlarms"`
 	AllowDoubleAck           bool   `toml:"AllowDoubleAck"`
+	// ActivateAlarmAfterAutoRemediation if is set then alarm will be activated only after auto remediation execution
+	ActivateAlarmAfterAutoRemediation bool `toml:"ActivateAlarmAfterAutoRemediation"`
 }
 
 // SectionGlobal ...
@@ -38,6 +41,9 @@ type SectionGlobal struct {
 	ReconnectTimeoutMilliseconds int   `toml:"ReconnectTimeoutMilliseconds"`
 	ReconnectRetries             int   `toml:"ReconnectRetries"`
 	MaxExternalResponseSize      int64 `toml:"MaxExternalResponseSize"`
+
+	BuildEntityInfosDictionary  bool `toml:"BuildEntityInfosDictionary"`
+	BuildDynamicInfosDictionary bool `toml:"BuildDynamicInfosDictionary"`
 }
 
 func (s *SectionGlobal) GetReconnectTimeout() time.Duration {
@@ -68,8 +74,10 @@ type SectionDataStorage struct {
 }
 
 type SectionApi struct {
-	TokenSigningMethod string `toml:"TokenSigningMethod"`
-	BulkMaxSize        int    `toml:"BulkMaxSize"`
+	TokenSigningMethod     string   `toml:"TokenSigningMethod"`
+	BulkMaxSize            int      `toml:"BulkMaxSize"`
+	AuthorScheme           []string `toml:"AuthorScheme"`
+	MetricsCacheExpiration string   `toml:"MetricsCacheExpiration"`
 }
 
 type SectionLogger struct {
@@ -85,10 +93,11 @@ type ConsoleWriter struct {
 }
 
 type SectionMetrics struct {
-	FlushInterval             string `toml:"FlushInterval"`
-	SliInterval               string `toml:"SliInterval"`
-	EnabledManualInstructions bool   `toml:"EnabledManualInstructions"`
-	EnabledNotAckedMetrics    bool   `toml:"EnabledNotAckedMetrics"`
+	FlushInterval          string `toml:"FlushInterval"`
+	SliInterval            string `toml:"SliInterval"`
+	UserSessionGapInterval string `toml:"UserSessionGapInterval"`
+	EnabledInstructions    bool   `toml:"EnabledInstructions"`
+	EnabledNotAckedMetrics bool   `toml:"EnabledNotAckedMetrics"`
 }
 
 type SectionTechMetrics struct {

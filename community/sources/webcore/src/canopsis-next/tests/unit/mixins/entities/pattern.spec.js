@@ -1,22 +1,12 @@
 import Faker from 'faker';
 import AxiosMockAdapter from 'axios-mock-adapter';
 
-import { shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer } from '@unit/utils/vue';
 
 import { API_ROUTES } from '@/config';
 import request from '@/services/request';
 import store from '@/store';
 import { entitiesPatternsMixin } from '@/mixins/entities/pattern';
-
-const localVue = createVueInstance();
-
-const factory = () => shallowMount({
-  render() {},
-  mixins: [entitiesPatternsMixin],
-}, {
-  localVue,
-  store,
-});
 
 describe('Entities pattern mixin', () => {
   const axiosMockAdapter = new AxiosMockAdapter(request);
@@ -29,6 +19,11 @@ describe('Entities pattern mixin', () => {
   const meta = {
     total_count: totalCount,
   };
+
+  const factory = generateShallowRenderer({
+    render() {},
+    mixins: [entitiesPatternsMixin],
+  }, { store });
 
   beforeEach(() => {
     axiosMockAdapter.reset();
@@ -44,7 +39,7 @@ describe('Entities pattern mixin', () => {
 
   test('Patterns list fetched', async () => {
     axiosMockAdapter
-      .onGet(API_ROUTES.patterns)
+      .onGet(API_ROUTES.pattern.list)
       .reply(200, { data: patterns, meta });
 
     const wrapper = factory();
@@ -66,7 +61,7 @@ describe('Entities pattern mixin', () => {
       page: Faker.datatype.string(),
     };
     axiosMockAdapter
-      .onGet(API_ROUTES.patterns, { params })
+      .onGet(API_ROUTES.pattern.list, { params })
       .reply(200, { data: patterns, meta });
 
     const wrapper = factory();
@@ -83,7 +78,7 @@ describe('Entities pattern mixin', () => {
       page: Faker.datatype.string(),
     };
     axiosMockAdapter
-      .onGet(API_ROUTES.patterns, { params })
+      .onGet(API_ROUTES.pattern.list, { params })
       .replyOnce(200, { data: patterns, meta });
 
     const wrapper = factory();
@@ -91,7 +86,7 @@ describe('Entities pattern mixin', () => {
     await wrapper.vm.fetchPatternsList({ params });
 
     axiosMockAdapter
-      .onGet(API_ROUTES.patterns, { params })
+      .onGet(API_ROUTES.pattern.list, { params })
       .reply(400, error);
 
     const originalError = console.error;
@@ -118,7 +113,7 @@ describe('Entities pattern mixin', () => {
     };
     const reversedPatterns = patterns.slice().reverse();
     axiosMockAdapter
-      .onGet(API_ROUTES.patterns, { params })
+      .onGet(API_ROUTES.pattern.list, { params })
       .replyOnce(200, { data: patterns, meta });
 
     const wrapper = factory();
@@ -126,7 +121,7 @@ describe('Entities pattern mixin', () => {
     await wrapper.vm.fetchPatternsList({ params });
 
     axiosMockAdapter
-      .onGet(API_ROUTES.patterns, { params })
+      .onGet(API_ROUTES.pattern.list, { params })
       .replyOnce(200, { data: reversedPatterns, meta });
 
     await wrapper.vm.fetchPatternsListWithPreviousParams();

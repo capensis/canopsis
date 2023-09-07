@@ -1,9 +1,8 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import PeriodicRefreshField from '@/components/forms/fields/periodic-refresh-field.vue';
 import { TIME_UNITS } from '@/constants';
 
-const localVue = createVueInstance();
+import PeriodicRefreshField from '@/components/forms/fields/periodic-refresh-field.vue';
 
 const stubs = {
   'c-enabled-field': {
@@ -37,34 +36,27 @@ const snapshotStubs = {
   'c-duration-field': true,
 };
 
-const factory = (options = {}) => shallowMount(PeriodicRefreshField, {
-  localVue,
-  stubs,
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(PeriodicRefreshField, {
-  localVue,
-  stubs: snapshotStubs,
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-
-  ...options,
-});
-
 const selectEnabledField = wrapper => wrapper.find('.c-enabled-field');
 const selectDurationField = wrapper => wrapper.find('.c-duration-field');
 
 describe('periodic-refresh-field', () => {
+  const factory = generateShallowRenderer(PeriodicRefreshField, {
+    stubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(PeriodicRefreshField, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+
   it('Enabled changed after trigger the enabled field', () => {
     const periodicRefresh = {
       enabled: true,

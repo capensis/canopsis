@@ -5,8 +5,8 @@
 <script>
 import { MODALS, CONTEXT_ACTIONS_TYPES } from '@/constants';
 
-import { createEntityIdPatternByValue } from '@/helpers/pattern';
-import { pickIds } from '@/helpers/entities';
+import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
+import { pickIds } from '@/helpers/array';
 
 import { widgetActionsPanelContextMixin } from '@/mixins/widget/actions-panel/context';
 

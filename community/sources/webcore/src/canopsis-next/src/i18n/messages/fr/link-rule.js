@@ -9,8 +9,14 @@ export default {
   sourceCodeAlert: 'Veuillez ne modifier ce script que si vous êtes parfaitement conscient de ce que vous faites',
   type: 'Type de lien',
   single: 'Appliquer ce lien uniquement à une seule alarme ?',
+  hideInMenu: 'Masquer ce lien des actions d\'alarme ?',
+  actionType: 'Type d\'action',
   types: {
     [LINK_RULE_TYPES.alarm]: 'Alarme',
     [LINK_RULE_TYPES.entity]: 'Entité',
+  },
+  actionTypes: {
+    open: 'Ouvrir l\'URL du lien',
+    copy: 'Copier l\'URL du lien',
   },
 };

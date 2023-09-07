@@ -1,36 +1,63 @@
 <template lang="pug">
-  div.c-quick-interval(:class="{ 'c-quick-interval--reverse': reverse }")
-    c-date-interval-field(
-      :value="intervalObject",
-      :disabled="disabled",
-      :is-allowed-from-date="isAllowedFromDate",
-      :is-allowed-to-date="isAllowedToDate",
-      @input="updateModel($event)"
-    )
-    div.c-quick-interval__range
-      c-quick-date-interval-type-field(
-        :class="{ 'ml-4': !reverse, 'mr-4': reverse }",
-        :value="range",
-        :ranges="quickRanges",
+  div.c-quick-interval(:class="{ 'c-quick-interval--reverse': reverse, 'c-quick-interval--short': short }")
+    template(v-if="short")
+      v-menu(offset-y, :close-on-content-click="false")
+        template(#activator="{ on }")
+          v-text-field(
+            v-on="on",
+            :value="shortValue",
+            :label="$t('common.interval')",
+            readonly,
+            hide-details
+          )
+        v-card(width="400px")
+          v-card-text
+            c-information-block(:title="$t('common.interval')")
+              v-divider
+              v-layout.mt-2
+                c-date-interval-field(
+                  :value="intervalObject",
+                  :disabled="disabled",
+                  :is-allowed-from-date="isAllowedFromDate",
+                  :is-allowed-to-date="isAllowedToDate",
+                  column,
+                  @input="updateModel($event)"
+                )
+                c-quick-date-interval-type-field.c-quick-interval__range.ml-4(
+                  :value="range",
+                  :ranges="availableQuickRanges",
+                  :disabled="disabled",
+                  hide-details,
+                  return-object,
+                  @input="updateIntervalRange"
+                )
+    template(v-else)
+      c-date-interval-field(
+        :value="intervalObject",
         :disabled="disabled",
-        hide-details,
-        return-object,
-        @input="updateIntervalRange"
+        :is-allowed-from-date="isAllowedFromDate",
+        :is-allowed-to-date="isAllowedToDate",
+        @input="updateModel($event)"
       )
+      div.c-quick-interval__range
+        c-quick-date-interval-type-field(
+          :value="range",
+          :ranges="availableQuickRanges",
+          :disabled="disabled",
+          hide-details,
+          return-object,
+          @input="updateIntervalRange"
+        )
 </template>
 
 <script>
 import { DATETIME_FORMATS, QUICK_RANGES } from '@/constants';
 
-import {
-  convertDateToString,
-  convertDateToTimestamp,
-  getNowTimestamp,
-  getWeekdayNumber,
-} from '@/helpers/date/date';
+import { convertDateToString, convertDateToTimestamp, getNowTimestamp, getWeekdayNumber } from '@/helpers/date/date';
 import {
   convertStartDateIntervalToTimestamp,
   convertStopDateIntervalToTimestamp,
+  findQuickRangeValue,
 } from '@/helpers/date/date-intervals';
 
 import { formMixin } from '@/mixins/form';
@@ -65,10 +92,28 @@ export default {
       type: Boolean,
       default: false,
     },
+    quickRanges: {
+      type: Array,
+      default: () => Object.values(QUICK_RANGES),
+    },
+    short: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
-    quickRanges() {
-      return Object.values(QUICK_RANGES).filter(this.isAllowedQuickRange);
+    shortValue() {
+      const range = findQuickRangeValue(this.range.start, this.range.stop, this.availableQuickRanges);
+
+      if (range.value === QUICK_RANGES.custom.value) {
+        return `${this.intervalFromString} - ${this.intervalToString}`;
+      }
+
+      return this.$t(`quickRanges.types.${range.value}`);
+    },
+
+    availableQuickRanges() {
+      return this.quickRanges.filter(this.isAllowedQuickRange);
     },
 
     intervalFromAsTimestamp() {
@@ -111,7 +156,7 @@ export default {
     },
 
     isLessToDate(dateTimestamp) {
-      return dateTimestamp < this.intervalToAsTimestamp;
+      return this.interval.to && dateTimestamp < this.intervalToAsTimestamp;
     },
 
     isLessNowDate(dateTimestamp) {
@@ -164,7 +209,7 @@ export default {
       }
 
       const startTimestamp = convertStartDateIntervalToTimestamp(start);
-      const stopTimestamp = convertStopDateIntervalToTimestamp(start);
+      const stopTimestamp = convertStopDateIntervalToTimestamp(stop);
 
       return this.isGreaterMinDate(startTimestamp)
         && this.isAllowedAccumulatedFromDate(startTimestamp)
@@ -188,6 +233,8 @@ export default {
 <style scoped lang="scss">
 .c-quick-interval {
   display: inline-flex;
+  flex-wrap: wrap;
+  column-gap: 24px;
 
   &__range {
     display: flex;
@@ -196,6 +243,10 @@ export default {
 
   &--reverse {
     flex-direction: row-reverse;
+  }
+
+  &--short {
+    column-gap: 0;
   }
 }
 </style>

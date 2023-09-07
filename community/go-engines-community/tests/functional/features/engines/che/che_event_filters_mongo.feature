@@ -1,6 +1,7 @@
 Feature: modify event on event filter
   I need to be able to modify event on event filter
 
+  @concurrent
   Scenario: given check event and enrichment event filter should enrich from external mongo data
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
@@ -30,7 +31,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-event-filter-che-event-filters-mongo-1-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [
@@ -48,7 +48,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-che-event-filters-mongo-1",
@@ -61,7 +61,6 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-mongo-1"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/entities?search=test-resource-che-event-filters-mongo-1
     Then the response code should be 200
     Then the response body should contain:
@@ -88,6 +87,7 @@ Feature: modify event on event filter
     }
     """
 
+  @concurrent
   Scenario: given check event and enrichment event filter shouldn't drop event if enrich from external mongo data failed
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
@@ -115,7 +115,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-event-filter-che-event-filters-mongo-2-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [
@@ -133,7 +132,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-che-event-filters-mongo-2",
@@ -146,7 +145,6 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-mongo-2"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/entities?search=test-resource-che-event-filters-mongo-2
     Then the response code should be 200
     Then the response body should be:
@@ -202,6 +200,7 @@ Feature: modify event on event filter
     }
     """
 
+  @concurrent
   Scenario: given check event and enrichment event filter should drop event if enrich from external mongo data failed
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
@@ -229,7 +228,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-event-filter-che-event-filters-mongo-3-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [
@@ -247,7 +245,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-che-event-filters-mongo-3",
@@ -260,37 +258,17 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-mongo-3"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/entities?search=test-resource-che-event-filters-mongo-3
     Then the response code should be 200
     Then the response body should be:
     """json
     {
-      "data": [
-        {
-          "_id": "test-resource-che-event-filters-mongo-3/test-eventfilter-mongo-data-not-exist-2-customer",
-          "infos": {},
-          "name": "test-resource-che-event-filters-mongo-3",
-          "type": "resource",
-          "category": null,
-          "component": "test-eventfilter-mongo-data-not-exist-2-customer",
-          "connector": "test-connector-che-event-filters-mongo-3/test-connector-name-che-event-filters-mongo-3",
-          "enabled": true,
-          "old_entity_patterns": null,
-          "impact_level": 1,
-          "impact_state": 0,
-          "last_event_date": {{ (index .lastResponse.data 0).last_event_date }},
-          "ko_events": 0,
-          "ok_events": 0,
-          "state": 0,
-          "status": 0
-        }
-      ],
+      "data": [],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 1
+        "total_count": 0
       }
     }
     """
@@ -309,6 +287,7 @@ Feature: modify event on event filter
     }
     """
 
+  @concurrent
   Scenario: given check event and enrichment event filter should enrich from external mongo data by regexp
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
@@ -341,7 +320,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-event-filter-che-event-filters-mongo-4-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [
@@ -359,7 +337,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
@@ -384,7 +362,6 @@ Feature: modify event on event filter
       }
     ]
     """
-    When I wait the end of 2 events processing
     When I do GET /api/v4/entities?search=test-resource-che-event-filters-mongo-4&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
@@ -421,6 +398,7 @@ Feature: modify event on event filter
     }
     """
 
+  @concurrent
   Scenario: given int field in regexp external data should not update entity
     Given I am admin
     When I do POST /api/v4/eventfilter/rules:
@@ -454,7 +432,6 @@ Feature: modify event on event filter
         ]
       ],
       "description": "test-event-filter-che-event-filters-mongo-5-description",
-      "priority": 1,
       "enabled": true,
       "config": {
         "actions": [
@@ -472,7 +449,7 @@ Feature: modify event on event filter
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-che-event-filters-mongo-5",
@@ -485,7 +462,6 @@ Feature: modify event on event filter
       "output": "test-eventfilter-mongo-data-regexp-1-message"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/entities?search=test-resource-che-event-filters-mongo-5
     Then the response code should be 200
     Then the response body should be:

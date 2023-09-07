@@ -2,7 +2,7 @@ import Vue from 'vue';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 
 export const types = {
   SHOW: 'SHOW',
@@ -94,6 +94,10 @@ export default {
     hide({ commit, state }, { id } = {}) {
       if (!id) {
         throw new Error('Missed required parameter');
+      }
+
+      if (!state.byId[id]) {
+        return;
       }
 
       commit(types.HIDE, { id });

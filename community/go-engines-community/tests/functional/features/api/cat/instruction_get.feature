@@ -42,7 +42,8 @@ Feature: get a instruction
           "description": "test-instruction-to-get-1-description",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "enabled": true,
           "timeout_after_execution": {
@@ -63,7 +64,8 @@ Feature: get a instruction
                       "name": "test-job-to-instruction-edit-1-name",
                       "author": {
                         "_id": "root",
-                        "name": "root"
+                        "name": "root",
+                        "display_name": "root John Doe admin@canopsis.net"
                       },
                       "config": {
                         "_id": "test-job-config-to-edit-instruction",
@@ -72,7 +74,8 @@ Feature: get a instruction
                         "host": "http://example.com",
                         "author": {
                           "_id": "root",
-                          "name": "root"
+                          "name": "root",
+                          "display_name": "root John Doe admin@canopsis.net"
                         },
                         "auth_username": "",
                         "auth_token": "test-auth-token"
@@ -87,7 +90,8 @@ Feature: get a instruction
                       "name": "test-job-to-instruction-edit-2-name",
                       "author": {
                         "_id": "root",
-                        "name": "root"
+                        "name": "root",
+                        "display_name": "root John Doe admin@canopsis.net"
                       },
                       "config": {
                         "_id": "test-job-config-to-edit-instruction",
@@ -96,7 +100,8 @@ Feature: get a instruction
                         "host": "http://example.com",
                         "author": {
                           "_id": "root",
-                          "name": "root"
+                          "name": "root",
+                          "display_name": "root John Doe admin@canopsis.net"
                         },
                         "auth_username": "",
                         "auth_token": "test-auth-token"
@@ -118,7 +123,8 @@ Feature: get a instruction
                       "name": "test-job-to-instruction-edit-2-name",
                       "author": {
                         "_id": "root",
-                        "name": "root"
+                        "name": "root",
+                        "display_name": "root John Doe admin@canopsis.net"
                       },
                       "config": {
                         "_id": "test-job-config-to-edit-instruction",
@@ -127,7 +133,8 @@ Feature: get a instruction
                         "host": "http://example.com",
                         "author": {
                           "_id": "root",
-                          "name": "root"
+                          "name": "root",
+                          "display_name": "root John Doe admin@canopsis.net"
                         },
                         "auth_username": "",
                         "auth_token": "test-auth-token"
@@ -156,7 +163,8 @@ Feature: get a instruction
                       "name": "test-job-to-instruction-edit-2-name",
                       "author": {
                         "_id": "root",
-                        "name": "root"
+                        "name": "root",
+                        "display_name": "root John Doe admin@canopsis.net"
                       },
                       "config": {
                         "_id": "test-job-config-to-edit-instruction",
@@ -165,7 +173,8 @@ Feature: get a instruction
                         "host": "http://example.com",
                         "author": {
                           "_id": "root",
-                          "name": "root"
+                          "name": "root",
+                          "display_name": "root John Doe admin@canopsis.net"
                         },
                         "auth_username": "",
                         "auth_token": "test-auth-token"
@@ -180,7 +189,8 @@ Feature: get a instruction
                       "name": "test-job-to-instruction-edit-1-name",
                       "author": {
                         "_id": "root",
-                        "name": "root"
+                        "name": "root",
+                        "display_name": "root John Doe admin@canopsis.net"
                       },
                       "config": {
                         "_id": "test-job-config-to-edit-instruction",
@@ -189,7 +199,8 @@ Feature: get a instruction
                         "host": "http://example.com",
                         "author": {
                           "_id": "root",
-                          "name": "root"
+                          "name": "root",
+                          "display_name": "root John Doe admin@canopsis.net"
                         },
                         "auth_username": "",
                         "auth_token": "test-auth-token"
@@ -246,7 +257,8 @@ Feature: get a instruction
           "description": "test-instruction-to-get-2-description",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "enabled": true,
           "jobs": [
@@ -256,7 +268,8 @@ Feature: get a instruction
                 "name": "test-job-to-instruction-edit-1-name",
                 "author": {
                   "_id": "root",
-                  "name": "root"
+                  "name": "root",
+                  "display_name": "root John Doe admin@canopsis.net"
                 },
                 "config": {
                   "_id": "test-job-config-to-edit-instruction",
@@ -265,7 +278,8 @@ Feature: get a instruction
                   "host": "http://example.com",
                   "author": {
                     "_id": "root",
-                    "name": "root"
+                    "name": "root",
+                    "display_name": "root John Doe admin@canopsis.net"
                   },
                   "auth_username": "",
                   "auth_token": "test-auth-token"
@@ -283,7 +297,8 @@ Feature: get a instruction
                 "name": "test-job-to-instruction-edit-2-name",
                 "author": {
                   "_id": "root",
-                  "name": "root"
+                  "name": "root",
+                  "display_name": "root John Doe admin@canopsis.net"
                 },
                 "config": {
                   "_id": "test-job-config-to-edit-instruction",
@@ -292,7 +307,8 @@ Feature: get a instruction
                   "host": "http://example.com",
                   "author": {
                     "_id": "root",
-                    "name": "root"
+                    "name": "root",
+                    "display_name": "root John Doe admin@canopsis.net"
                   },
                   "auth_username": "",
                   "auth_token": "test-auth-token"
@@ -332,7 +348,8 @@ Feature: get a instruction
           "description": "test-instruction-to-get-3-description",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "enabled": true,
           "jobs": [
@@ -342,7 +359,8 @@ Feature: get a instruction
                 "name": "test-job-to-instruction-edit-1-name",
                 "author": {
                   "_id": "root",
-                  "name": "root"
+                  "name": "root",
+                  "display_name": "root John Doe admin@canopsis.net"
                 },
                 "config": {
                   "_id": "test-job-config-to-edit-instruction",
@@ -351,7 +369,8 @@ Feature: get a instruction
                   "host": "http://example.com",
                   "author": {
                     "_id": "root",
-                    "name": "root"
+                    "name": "root",
+                    "display_name": "root John Doe admin@canopsis.net"
                   },
                   "auth_username": "",
                   "auth_token": "test-auth-token"
@@ -379,29 +398,6 @@ Feature: get a instruction
         "page_count": 1,
         "per_page": 10,
         "total_count": 3
-      }
-    }
-    """
-
-  Scenario: given get all request should return instructions with flags
-    When I am admin
-    When I do GET /api/v4/cat/instructions?search=test-instruction-to-get-1-name&with_flags=true
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "_id": "test-instruction-to-get-1",
-          "deletable": true,
-          "running": false
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
       }
     }
     """
@@ -495,7 +491,8 @@ Feature: get a instruction
       "description": "test-instruction-to-get-1-description",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "enabled": true,
       "timeout_after_execution": {
@@ -507,177 +504,170 @@ Feature: get a instruction
           "name": "test-instruction-to-get-1-step-1-name",
           "operations": [
             {
-               "name": "test-instruction-to-get-1-step-1-operation-1-name",
-               "time_to_complete": {"value": 1, "unit":"s"},
-               "description": "test-instruction-to-get-1-step-1-operation-1-description",
-               "jobs": [
-                 {
-                   "_id": "test-job-to-instruction-edit-1",
-                   "name": "test-job-to-instruction-edit-1-name",
-                   "author": {
-                     "_id": "root",
-                     "name": "root"
-                   },
-                   "config": {
-                     "_id": "test-job-config-to-edit-instruction",
-                     "name": "test-job-config-to-edit-instruction-name",
-                     "type": "rundeck",
-                     "host": "http://example.com",
-                     "author": {
-                       "_id": "root",
-                       "name": "root"
-                     },
-                     "auth_username": "",
-                     "auth_token": "test-auth-token"
-                   },
-                   "job_id": "test-job-to-instruction-edit-1-external-id",
-                   "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-                   "query": null,
-                   "multiple_executions": false
-                 },
-                 {
-                   "_id": "test-job-to-instruction-edit-2",
-                   "name": "test-job-to-instruction-edit-2-name",
-                   "author": {
-                     "_id": "root",
-                     "name": "root"
-                   },
-                   "config": {
-                     "_id": "test-job-config-to-edit-instruction",
-                     "name": "test-job-config-to-edit-instruction-name",
-                     "type": "rundeck",
-                     "host": "http://example.com",
-                     "author": {
-                       "_id": "root",
-                       "name": "root"
-                     },
-                     "auth_username": "",
-                     "auth_token": "test-auth-token"
-                   },
-                   "job_id": "test-job-to-instruction-edit-2-external-id",
-                   "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-                   "query": null,
-                   "multiple_executions": false
-                 }
-               ]
-              },
-             {
-               "name": "test-instruction-to-get-1-step-1-operation-2-name",
-               "time_to_complete": {"value": 3, "unit":"s"},
-               "description": "test-instruction-to-get-1-step-1-operation-2-description",
-               "jobs": [
-                 {
-                   "_id": "test-job-to-instruction-edit-2",
-                   "name": "test-job-to-instruction-edit-2-name",
-                   "author": {
-                     "_id": "root",
-                     "name": "root"
-                   },
-                   "config": {
-                     "_id": "test-job-config-to-edit-instruction",
-                     "name": "test-job-config-to-edit-instruction-name",
-                     "type": "rundeck",
-                     "host": "http://example.com",
-                     "author": {
-                       "_id": "root",
-                       "name": "root"
-                     },
-                     "auth_username": "",
-                     "auth_token": "test-auth-token"
-                   },
-                   "job_id": "test-job-to-instruction-edit-2-external-id",
-                   "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-                   "query": null,
-                   "multiple_executions": false
-                 }
-               ]
-             }
+              "name": "test-instruction-to-get-1-step-1-operation-1-name",
+              "time_to_complete": {"value": 1, "unit":"s"},
+              "description": "test-instruction-to-get-1-step-1-operation-1-description",
+              "jobs": [
+                {
+                  "_id": "test-job-to-instruction-edit-1",
+                  "name": "test-job-to-instruction-edit-1-name",
+                  "author": {
+                    "_id": "root",
+                    "name": "root",
+                    "display_name": "root John Doe admin@canopsis.net"
+                  },
+                  "config": {
+                    "_id": "test-job-config-to-edit-instruction",
+                    "name": "test-job-config-to-edit-instruction-name",
+                    "type": "rundeck",
+                    "host": "http://example.com",
+                    "author": {
+                      "_id": "root",
+                      "name": "root",
+                      "display_name": "root John Doe admin@canopsis.net"
+                    },
+                    "auth_username": "",
+                    "auth_token": "test-auth-token"
+                  },
+                  "job_id": "test-job-to-instruction-edit-1-external-id",
+                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+                  "query": null,
+                  "multiple_executions": false
+                },
+                {
+                  "_id": "test-job-to-instruction-edit-2",
+                  "name": "test-job-to-instruction-edit-2-name",
+                  "author": {
+                    "_id": "root",
+                    "name": "root",
+                    "display_name": "root John Doe admin@canopsis.net"
+                  },
+                  "config": {
+                    "_id": "test-job-config-to-edit-instruction",
+                    "name": "test-job-config-to-edit-instruction-name",
+                    "type": "rundeck",
+                    "host": "http://example.com",
+                    "author": {
+                      "_id": "root",
+                      "name": "root",
+                      "display_name": "root John Doe admin@canopsis.net"
+                    },
+                    "auth_username": "",
+                    "auth_token": "test-auth-token"
+                  },
+                  "job_id": "test-job-to-instruction-edit-2-external-id",
+                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+                  "query": null,
+                  "multiple_executions": false
+                }
+              ]
+            },
+            {
+              "name": "test-instruction-to-get-1-step-1-operation-2-name",
+              "time_to_complete": {"value": 3, "unit":"s"},
+              "description": "test-instruction-to-get-1-step-1-operation-2-description",
+              "jobs": [
+                {
+                  "_id": "test-job-to-instruction-edit-2",
+                  "name": "test-job-to-instruction-edit-2-name",
+                  "author": {
+                    "_id": "root",
+                    "name": "root",
+                    "display_name": "root John Doe admin@canopsis.net"
+                  },
+                  "config": {
+                    "_id": "test-job-config-to-edit-instruction",
+                    "name": "test-job-config-to-edit-instruction-name",
+                    "type": "rundeck",
+                    "host": "http://example.com",
+                    "author": {
+                      "_id": "root",
+                      "name": "root",
+                      "display_name": "root John Doe admin@canopsis.net"
+                    },
+                    "auth_username": "",
+                    "auth_token": "test-auth-token"
+                  },
+                  "job_id": "test-job-to-instruction-edit-2-external-id",
+                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+                  "query": null,
+                  "multiple_executions": false
+                }
+              ]
+            }
           ],
           "stop_on_fail": true,
           "endpoint": "test-instruction-to-get-1-step-1-endpoint"
         },
         {
-         "name": "test-instruction-to-get-1-step-2-name",
-         "operations": [
-           {
-             "name": "test-instruction-to-get-1-step-2-operation-1-name",
-             "time_to_complete": {"value": 6, "unit":"s"},
-             "description": "test-instruction-to-get-1-step-2-operation-1-description",
-             "jobs": [
-               {
-                 "_id": "test-job-to-instruction-edit-2",
-                 "name": "test-job-to-instruction-edit-2-name",
-                 "author": {
-                   "_id": "root",
-                   "name": "root"
-                 },
-                 "config": {
-                   "_id": "test-job-config-to-edit-instruction",
-                   "name": "test-job-config-to-edit-instruction-name",
-                   "type": "rundeck",
-                   "host": "http://example.com",
-                   "author": {
-                     "_id": "root",
-                     "name": "root"
-                   },
-                   "auth_username": "",
-                   "auth_token": "test-auth-token"
-                 },
-                 "job_id": "test-job-to-instruction-edit-2-external-id",
-                 "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-                 "query": null,
-                 "multiple_executions": false
-               },
-               {
-                 "_id": "test-job-to-instruction-edit-1",
-                 "name": "test-job-to-instruction-edit-1-name",
-                 "author": {
-                   "_id": "root",
-                   "name": "root"
-                 },
-                 "config": {
-                   "_id": "test-job-config-to-edit-instruction",
-                   "name": "test-job-config-to-edit-instruction-name",
-                   "type": "rundeck",
-                   "host": "http://example.com",
-                   "author": {
-                     "_id": "root",
-                     "name": "root"
-                   },
-                   "auth_username": "",
-                   "auth_token": "test-auth-token"
-                 },
-                 "job_id": "test-job-to-instruction-edit-1-external-id",
-                 "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
-                 "query": null,
-                 "multiple_executions": false
-               }
-             ]
-           }
-         ],
-         "stop_on_fail": true,
-         "endpoint": "test-instruction-to-get-1-step-2-endpoint"
+          "name": "test-instruction-to-get-1-step-2-name",
+          "operations": [
+            {
+              "name": "test-instruction-to-get-1-step-2-operation-1-name",
+              "time_to_complete": {"value": 6, "unit":"s"},
+              "description": "test-instruction-to-get-1-step-2-operation-1-description",
+              "jobs": [
+                {
+                  "_id": "test-job-to-instruction-edit-2",
+                  "name": "test-job-to-instruction-edit-2-name",
+                  "author": {
+                    "_id": "root",
+                    "name": "root",
+                    "display_name": "root John Doe admin@canopsis.net"
+                  },
+                  "config": {
+                    "_id": "test-job-config-to-edit-instruction",
+                    "name": "test-job-config-to-edit-instruction-name",
+                    "type": "rundeck",
+                    "host": "http://example.com",
+                    "author": {
+                      "_id": "root",
+                      "name": "root",
+                      "display_name": "root John Doe admin@canopsis.net"
+                    },
+                    "auth_username": "",
+                    "auth_token": "test-auth-token"
+                  },
+                  "job_id": "test-job-to-instruction-edit-2-external-id",
+                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+                  "query": null,
+                  "multiple_executions": false
+                },
+                {
+                  "_id": "test-job-to-instruction-edit-1",
+                  "name": "test-job-to-instruction-edit-1-name",
+                  "author": {
+                    "_id": "root",
+                    "name": "root",
+                    "display_name": "root John Doe admin@canopsis.net"
+                  },
+                  "config": {
+                    "_id": "test-job-config-to-edit-instruction",
+                    "name": "test-job-config-to-edit-instruction-name",
+                    "type": "rundeck",
+                    "host": "http://example.com",
+                    "author": {
+                      "_id": "root",
+                      "name": "root",
+                      "display_name": "root John Doe admin@canopsis.net"
+                    },
+                    "auth_username": "",
+                    "auth_token": "test-auth-token"
+                  },
+                  "job_id": "test-job-to-instruction-edit-1-external-id",
+                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}",
+                  "query": null,
+                  "multiple_executions": false
+                }
+              ]
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-get-1-step-2-endpoint"
         }
       ],
       "created": 1596712203,
       "last_modified": 1596712203
-    }
-    """
-
-  Scenario: Get a instruction with running executions
-    When I am admin
-    When I do GET /api/v4/cat/instructions?search=test-instruction-execution-running&with_flags=true
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "_id": "test-instruction-execution-running",
-          "deletable": false,
-          "running": true
-        }
-      ]
     }
     """
 

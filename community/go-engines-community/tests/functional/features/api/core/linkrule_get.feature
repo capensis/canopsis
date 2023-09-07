@@ -21,7 +21,8 @@ Feature: Get a link rule
               "label": "test-link-rule-to-get-1-link-1-label",
               "category": "test-link-rule-to-get-1-link-1-category",
               "icon_name": "test-link-rule-to-get-1-link-1-icon",
-              "url": "http://test-link-rule-to-get-1-link-1-url.com"
+              "url": "http://test-link-rule-to-get-1-link-1-url.com",
+              "action": "open"
             }
           ],
           "external_data": null,
@@ -49,7 +50,8 @@ Feature: Get a link rule
           ],
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1605263992,
           "updated": 1605263992
@@ -59,7 +61,7 @@ Feature: Get a link rule
           "name": "test-link-rule-to-get-2-name",
           "type": "alarm",
           "enabled": true,
-          "source_code": "function generate(alarms) { return [{\"label\": \"test-link-rule-to-get-2-link-1-label\",\"category\": \"test-link-rule-to-get-2-link-1-category\",\"icon_name\": \"test-link-rule-to-get-2-link-1-icon\",\"url\": \"http://test-link-rule-to-get-2-link-1-url.com\"}] }",
+          "source_code": "function generate(alarms) { return [{\"label\": \"test-link-rule-to-get-2-link-1-label\",\"category\": \"test-link-rule-to-get-2-link-1-category\",\"icon_name\": \"test-link-rule-to-get-2-link-1-icon\",\"url\": \"http://test-link-rule-to-get-2-link-1-url.com\",\"action\": \"open\"}] }",
           "external_data": null,
           "alarm_pattern": [
             [
@@ -85,7 +87,8 @@ Feature: Get a link rule
           ],
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1605263992,
           "updated": 1605263992
@@ -100,7 +103,8 @@ Feature: Get a link rule
               "label": "test-link-rule-to-get-3-link-1-label",
               "category": "test-link-rule-to-get-3-link-1-category",
               "icon_name": "test-link-rule-to-get-3-link-1-icon",
-              "url": "http://test-link-rule-to-get-3-link-1-url.com"
+              "url": "http://test-link-rule-to-get-3-link-1-url.com",
+              "action": "open"
             }
           ],
           "external_data": null,
@@ -117,7 +121,8 @@ Feature: Get a link rule
           ],
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1605263992,
           "updated": 1605263992
@@ -149,7 +154,8 @@ Feature: Get a link rule
           "label": "test-link-rule-to-get-1-link-1-label",
           "category": "test-link-rule-to-get-1-link-1-category",
           "icon_name": "test-link-rule-to-get-1-link-1-icon",
-          "url": "http://test-link-rule-to-get-1-link-1-url.com"
+          "url": "http://test-link-rule-to-get-1-link-1-url.com",
+          "action": "open"
         }
       ],
       "external_data": null,
@@ -177,7 +183,8 @@ Feature: Get a link rule
       ],
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "created": 1605263992,
       "updated": 1605263992

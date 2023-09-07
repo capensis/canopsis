@@ -1,8 +1,11 @@
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import CLinksList from '@/components/common/links/c-links-list.vue';
+import { LINK_RULE_ACTIONS } from '@/constants';
 
-const localVue = createVueInstance();
+const snapshotStubs = {
+  'c-copy-wrapper': true,
+};
 
 describe('c-links-list', () => {
   const links = {
@@ -19,7 +22,8 @@ describe('c-links-list', () => {
   };
 
   const snapshotFactory = generateRenderer(CLinksList, {
-    localVue,
+
+    stubs: snapshotStubs,
   });
 
   test('Renders `c-links-list` with default props', () => {
@@ -43,6 +47,23 @@ describe('c-links-list', () => {
       propsData: {
         category: 'SecondCategory',
         links,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  test('Renders `c-links-list` with links with copy action', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        links: {
+          ...links,
+
+          FirstCategory: links.FirstCategory.map(link => ({
+            ...link,
+            action: LINK_RULE_ACTIONS.copy,
+          })),
+        },
       },
     });
 

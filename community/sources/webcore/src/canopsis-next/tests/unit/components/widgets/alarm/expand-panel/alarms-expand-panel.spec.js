@@ -4,14 +4,11 @@ import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/s
 
 import { fakeAlarmDetails } from '@unit/data/alarm';
 
-import {
-  CANOPSIS_EDITION,
-  ENTITY_TYPES,
-  JUNIT_ALARM_CONNECTOR,
-  USERS_PERMISSIONS,
-} from '@/constants';
+import { CANOPSIS_EDITION, ENTITY_TYPES, JUNIT_ALARM_CONNECTOR, USERS_PERMISSIONS } from '@/constants';
 
 import AlarmsExpandPanel from '@/components/widgets/alarm/expand-panel/alarms-expand-panel.vue';
+import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
+import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 
 const stubs = {
   'more-infos': true,
@@ -21,6 +18,9 @@ const stubs = {
   'declared-tickets-list': true,
   'entity-gantt': true,
   'pbehaviors-simple-list': true,
+  'alarms-expand-panel-charts': true,
+  'c-compiled-template': CCompiledTemplate,
+  'c-runtime-template': CRuntimeTemplate,
 };
 
 const selectTabs = wrapper => wrapper.vm.$children[0];
@@ -230,6 +230,9 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
         },
         widget: {
           parameters: {
+            charts: [{
+              metric: 'cpu',
+            }],
             moreInfoTemplate: 'template',
             isHtmlEnabledOnTimeLine: false,
             serviceDependenciesColumns: [{}],

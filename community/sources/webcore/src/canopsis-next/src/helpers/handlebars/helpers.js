@@ -1,13 +1,20 @@
-import { get, isFunction, isNumber, isObject, unescape, isString } from 'lodash';
+import {
+  get,
+  isFunction,
+  isNumber,
+  isObject,
+  unescape,
+  isString,
+} from 'lodash';
 import Handlebars from 'handlebars';
 import axios from 'axios';
 
 import { DATETIME_FORMATS, MAX_LIMIT } from '@/constants';
 
+import i18n from '@/i18n';
+
 import { convertDurationToString } from '@/helpers/date/duration';
 import { convertDateToStringWithFormatForToday, convertDateToString } from '@/helpers/date/date';
-
-import i18n from '@/i18n';
 
 /**
  * Prepare object attributes from `{ key: value, keySecond: valueSecond }` format
@@ -27,6 +34,7 @@ function prepareAttributes(attributes) {
  *
  * First example: {{timestamp 1673932037}} -> 07:07:17 (it's today time)
  * Second example: {{timestamp 1673932037 format='long'}} -> 17/01/2023 07:07:17
+ * Third example: {{timestamp 1673932037 format='MMMM Do YYYY, h:mm:ss a'}} -> January 17th 2023, 07:07:17 am
  *
  * @param {string|number} date
  * @param {Object} options
@@ -39,8 +47,8 @@ export function timestampHelper(date, options = {}) {
     return '';
   }
 
-  return format === 'long'
-    ? convertDateToString(date)
+  return format
+    ? convertDateToString(date, format)
     : convertDateToStringWithFormatForToday(date);
 }
 
@@ -92,7 +100,13 @@ export function alarmStateHelper(state) {
  * @return {string}
  */
 export function alarmTagsHelper() {
-  return new Handlebars.SafeString(`<c-alarm-tags-chips :alarm="alarm" inline-count="${MAX_LIMIT}"></c-alarm-tags-chips>`);
+  return new Handlebars.SafeString(
+    `<c-alarm-tags-chips
+      :alarm="alarm"
+      inline-count="${MAX_LIMIT}"
+      @select="$emit('select:tag', $event)"
+    ></c-alarm-tags-chips>`,
+  );
 }
 
 /**
@@ -427,4 +441,21 @@ export function replaceHelper(source, pattern, replacement, options = {}) {
   const regex = new RegExp(String(pattern), flags);
 
   return String(source).replace(regex, replacement);
+}
+
+/**
+ * Copy value to clipboard helper
+ *
+ * Example: {{#copy 'some string'}}CLICK TO COPY{{/copy}}
+ *
+ * @param {string|number|null} [value = '']
+ * @param {Object} options
+ * @returns {*}
+ */
+export function copyHelper(value = '', options = {}) {
+  if (!isFunction(options.fn)) {
+    throw new Error('handlebars helper {{copy}} expects options.fn');
+  }
+
+  return new Handlebars.SafeString(`<c-copy-wrapper value="${value}" />${options.fn(this)}</c-copy-wrapper>`);
 }

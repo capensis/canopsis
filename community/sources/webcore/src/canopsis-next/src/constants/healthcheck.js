@@ -27,7 +27,6 @@ export const HEALTHCHECK_ENGINES_NAMES = {
   che: 'engine-che',
   pbehavior: 'engine-pbehavior',
   action: 'engine-action',
-  service: 'engine-service',
   dynamicInfos: 'engine-dynamic-infos',
   correlation: 'engine-correlation',
   remediation: 'engine-remediation',
@@ -52,10 +51,6 @@ export const HEALTHCHECK_ENGINES_REFERENCE_EDGES = [
   },
   {
     from: HEALTHCHECK_ENGINES_NAMES.axe,
-    to: HEALTHCHECK_ENGINES_NAMES.service,
-  },
-  {
-    from: HEALTHCHECK_ENGINES_NAMES.service,
     to: HEALTHCHECK_ENGINES_NAMES.action,
   },
 ];
@@ -83,10 +78,6 @@ export const HEALTHCHECK_ENGINES_PRO_REFERENCE_EDGES = [
   },
   {
     from: HEALTHCHECK_ENGINES_NAMES.correlation,
-    to: HEALTHCHECK_ENGINES_NAMES.service,
-  },
-  {
-    from: HEALTHCHECK_ENGINES_NAMES.service,
     to: HEALTHCHECK_ENGINES_NAMES.dynamicInfos,
   },
   {
@@ -106,7 +97,6 @@ export const ENGINES_QUEUE_NAMES = {
   che: 'Engine_che',
   pbehavior: 'Engine_pbehavior',
   action: 'Engine_action',
-  service: 'Engine_service',
   dynamicInfo: 'Engine_dynamic_infos',
   correlation: 'Engine_correlation',
 };
@@ -118,7 +108,6 @@ export const ENGINES_NAMES_TO_QUEUE_NAMES = {
   [ENGINES_QUEUE_NAMES.che]: HEALTHCHECK_ENGINES_NAMES.che,
   [ENGINES_QUEUE_NAMES.pbehavior]: HEALTHCHECK_ENGINES_NAMES.pbehavior,
   [ENGINES_QUEUE_NAMES.action]: HEALTHCHECK_ENGINES_NAMES.action,
-  [ENGINES_QUEUE_NAMES.service]: HEALTHCHECK_ENGINES_NAMES.service,
   [ENGINES_QUEUE_NAMES.dynamicInfo]: HEALTHCHECK_ENGINES_NAMES.dynamicInfos,
   [ENGINES_QUEUE_NAMES.correlation]: HEALTHCHECK_ENGINES_NAMES.correlation,
 };

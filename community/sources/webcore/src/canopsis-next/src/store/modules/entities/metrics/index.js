@@ -14,11 +14,19 @@ export default {
     },
 
     fetchAlarmsMetricsWithoutStore(context, { params } = {}) {
-      return request.get(API_ROUTES.metrics.alarm, { params });
+      return request.post(API_ROUTES.metrics.alarm, params);
     },
 
     createKpiAlarmExport(context, { data }) {
-      return request.post(API_ROUTES.metrics.exportAlarm, null, { params: data });
+      return request.post(API_ROUTES.metrics.exportAlarm, data);
+    },
+
+    createKpiAlarmAggregateExport(context, { data }) {
+      return request.post(API_ROUTES.metrics.exportAggregate, data);
+    },
+
+    createRemediationExport(context, { data }) {
+      return request.post(API_ROUTES.metrics.exportRemediation, data);
     },
 
     createKpiRatingExport(context, { data }) {
@@ -31,6 +39,18 @@ export default {
 
     fetchMetricExport(context, { id }) {
       return request.get(`${API_ROUTES.metrics.exportMetric}/${id}`);
+    },
+
+    fetchExternalMetricsWithoutStore(context, { params }) {
+      return request.get(API_ROUTES.metrics.perfDataMetrics, { params });
+    },
+
+    fetchEntityAlarmsMetricsWithoutStore(context, { params }) {
+      return request.post(API_ROUTES.metrics.entityAlarmMetrics, params);
+    },
+
+    fetchEntityAggregateMetricsWithoutStore(context, { params }) {
+      return request.post(API_ROUTES.metrics.entityAggregateMetrics, params);
     },
   },
 };

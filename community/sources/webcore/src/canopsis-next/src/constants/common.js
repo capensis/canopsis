@@ -17,6 +17,7 @@ export const ROUTES_NAMES = {
   adminEngines: 'admin-engines',
   adminKPI: 'admin-kpi',
   adminMaps: 'admin-maps',
+  adminTags: 'admin-tags',
   exploitationPbehaviors: 'exploitation-pbehaviors',
   exploitationEventFilters: 'exploitation-event-filters',
   exploitationSnmpRules: 'exploitation-snmp-rules',
@@ -52,6 +53,7 @@ export const ROUTES = {
   adminEngines: '/admin/engines',
   adminKPI: '/admin/kpi',
   adminMaps: '/admin/maps',
+  adminTags: '/admin/tags',
   exploitationPbehaviors: '/exploitation/pbehaviors',
   exploitationEventFilters: '/exploitation/event-filters',
   exploitationSnmpRules: '/exploitation/snmp-rules',
@@ -161,72 +163,109 @@ export const QUICK_RANGES = {
   },
   last2Days: {
     value: 'last2Days',
-    start: 'now-2d',
-    stop: 'now',
+    start: 'today-2d',
+    stop: 'today',
   },
   last7Days: {
     value: 'last7Days',
-    start: 'now-7d',
-    stop: 'now',
+    start: 'today-7d',
+    stop: 'today',
   },
   last30Days: {
     value: 'last30Days',
-    start: 'now-30d',
-    stop: 'now',
+    start: 'today-30d',
+    stop: 'today',
   },
   last1Year: {
     value: 'last1Year',
-    start: 'now-1y',
-    stop: 'now',
+    start: 'today-1y',
+    stop: 'today',
   },
   yesterday: {
     value: 'yesterday',
-    start: 'now-1d/d',
-    stop: 'now-1d/d',
+    start: 'today-1d/d',
+    stop: 'today-1d/d',
   },
   previousWeek: {
     value: 'previousWeek',
-    start: 'now-1w/w',
-    stop: 'now-1w/w',
+    start: 'today-1w/w',
+    stop: 'today-1w/w',
   },
   previousMonth: {
     value: 'previousMonth',
-    start: 'now-1M/M',
-    stop: 'now-1M/M',
+    start: 'today-1M/M',
+    stop: 'today-1M/M',
   },
   today: {
     value: 'today',
-    start: 'now/d',
-    stop: 'now/d',
+    start: 'today/d',
+    stop: 'today/d',
   },
   todaySoFar: {
     value: 'todaySoFar',
-    start: 'now/d',
+    start: 'today/d',
     stop: 'now',
   },
   thisWeek: {
     value: 'thisWeek',
-    start: 'now/w',
-    stop: 'now/w',
+    start: 'today/w',
+    stop: 'today/w',
   },
   thisWeekSoFar: {
     value: 'thisWeekSoFar',
-    start: 'now/w',
+    start: 'today/w',
     stop: 'now',
   },
   thisMonth: {
     value: 'thisMonth',
-    start: 'now/M',
-    stop: 'now/M',
+    start: 'today/M',
+    stop: 'today/M',
   },
   thisMonthSoFar: {
     value: 'thisMonthSoFar',
-    start: 'now/M',
+    start: 'today/M',
     stop: 'now',
   },
   custom: {
     value: 'custom',
   },
+};
+
+export const LIVE_REPORTING_QUICK_RANGES = {
+  ...QUICK_RANGES,
+
+  [QUICK_RANGES.last2Days.value]: {
+    ...QUICK_RANGES.last2Days,
+    stop: 'now',
+  },
+  [QUICK_RANGES.last7Days.value]: {
+    ...QUICK_RANGES.last7Days,
+    stop: 'now',
+  },
+  [QUICK_RANGES.last30Days.value]: {
+    ...QUICK_RANGES.last30Days,
+    stop: 'now',
+  },
+  [QUICK_RANGES.last1Year.value]: {
+    ...QUICK_RANGES.last1Year,
+    stop: 'now',
+  },
+};
+
+export const METRICS_QUICK_RANGES = {
+  [QUICK_RANGES.last2Days.value]: QUICK_RANGES.last2Days,
+  [QUICK_RANGES.last7Days.value]: QUICK_RANGES.last7Days,
+  [QUICK_RANGES.last30Days.value]: QUICK_RANGES.last30Days,
+  [QUICK_RANGES.last1Year.value]: QUICK_RANGES.last1Year,
+  [QUICK_RANGES.yesterday.value]: QUICK_RANGES.yesterday,
+  [QUICK_RANGES.previousWeek.value]: QUICK_RANGES.previousWeek,
+  [QUICK_RANGES.previousMonth.value]: QUICK_RANGES.previousMonth,
+  [QUICK_RANGES.today.value]: QUICK_RANGES.today,
+  [QUICK_RANGES.thisWeek.value]: QUICK_RANGES.thisWeek,
+  [QUICK_RANGES.thisWeekSoFar.value]: QUICK_RANGES.thisWeekSoFar,
+  [QUICK_RANGES.thisMonth.value]: QUICK_RANGES.thisMonth,
+  [QUICK_RANGES.thisMonthSoFar.value]: QUICK_RANGES.thisMonthSoFar,
+  [QUICK_RANGES.custom.value]: QUICK_RANGES.custom,
 };
 
 export const GRID_SIZES = {
@@ -293,6 +332,8 @@ export const TRIGGERS = {
   instructionjobfail: 'instructionjobfail',
   instructioncomplete: 'instructioncomplete',
   autoinstructioncomplete: 'autoinstructioncomplete',
+  autoinstructionresultok: 'autoinstructionresultok',
+  autoinstructionresultfail: 'autoinstructionresultfail',
 };
 
 export const PRO_TRIGGERS = [
@@ -304,6 +345,8 @@ export const PRO_TRIGGERS = [
   TRIGGERS.instructionjobfail,
   TRIGGERS.instructioncomplete,
   TRIGGERS.autoinstructioncomplete,
+  TRIGGERS.autoinstructionresultok,
+  TRIGGERS.autoinstructionresultfail,
 ];
 
 export const DEPRECATED_TRIGGERS = [
@@ -320,3 +363,7 @@ export const CONTENT_TYPES = {
   javascript: 'application/javascript',
   xWwwFormUrlencoded: 'application/x-www-form-urlencoded',
 };
+
+export const MAX_SEARCH_ITEMS = 8;
+
+export const LOGIN_APP_INFO_POLLING_DELAY = 5000;

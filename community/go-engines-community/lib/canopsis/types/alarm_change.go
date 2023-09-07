@@ -54,6 +54,9 @@ const (
 	AlarmChangeTypeAutoInstructionStart    AlarmChangeType = "autoinstructionstart"
 	AlarmChangeTypeAutoInstructionComplete AlarmChangeType = "autoinstructioncomplete"
 	AlarmChangeTypeAutoInstructionFail     AlarmChangeType = "autoinstructionfail"
+	// Following change types are used for auto instruction triggers.
+	AlarmChangeTypeAutoInstructionResultOk   AlarmChangeType = "autoinstructionresultok"
+	AlarmChangeTypeAutoInstructionResultFail AlarmChangeType = "autoinstructionresultfail"
 	// Following change types are used for job execution.
 	AlarmChangeTypeInstructionJobStart    AlarmChangeType = "instructionjobstart"
 	AlarmChangeTypeInstructionJobComplete AlarmChangeType = "instructionjobcomplete"
@@ -63,8 +66,10 @@ const (
 	AlarmChangeTypeJunitTestSuiteUpdate AlarmChangeType = "junittestsuiteupdate"
 	AlarmChangeTypeJunitTestCaseUpdate  AlarmChangeType = "junittestcaseupdate"
 
-	// AlarmChangeTypeEntityToggled is used to update entity service's counters on disable/enable entity actions.
-	AlarmChangeTypeEntityToggled AlarmChangeType = "entitytoggled"
+	AlarmChangeTypeEnabled AlarmChangeType = "enabled"
+
+	// AlarmChangeTypeAutoInstructionActivate is used to activate alarm when an autoremediation triggered by create trigger is completed
+	AlarmChangeTypeAutoInstructionActivate AlarmChangeType = "autoinstructionactivate"
 )
 
 // AlarmChange is a struct containing the type of change that occured on an
@@ -75,6 +80,7 @@ type AlarmChange struct {
 	PreviousStateChange             CpsTime
 	PreviousStatus                  CpsNumber
 	PreviousStatusChange            CpsTime
+	PreviousPbehaviorTime           *CpsTime
 	PreviousPbehaviorTypeID         string
 	PreviousPbehaviorCannonicalType string
 }
@@ -86,6 +92,23 @@ func NewAlarmChange() AlarmChange {
 		PreviousStateChange:  CpsTime{Time: time.Now()},
 		PreviousStatus:       AlarmStatusOff,
 		PreviousStatusChange: CpsTime{Time: time.Now()},
+	}
+}
+
+func NewAlarmChangeByAlarm(alarm Alarm, t ...AlarmChangeType) AlarmChange {
+	alarmChangeType := AlarmChangeTypeNone
+	if len(t) > 0 {
+		alarmChangeType = t[0]
+	}
+
+	return AlarmChange{
+		Type:                            alarmChangeType,
+		PreviousState:                   alarm.Value.State.Value,
+		PreviousStateChange:             alarm.Value.State.Timestamp,
+		PreviousStatus:                  alarm.Value.Status.Value,
+		PreviousStatusChange:            alarm.Value.Status.Timestamp,
+		PreviousPbehaviorTypeID:         alarm.Value.PbehaviorInfo.TypeID,
+		PreviousPbehaviorCannonicalType: alarm.Value.PbehaviorInfo.CanonicalType,
 	}
 }
 
@@ -110,7 +133,8 @@ func GetTriggers(t AlarmChangeType) []string {
 		AlarmChangeTypeAutoWebhookStart,
 		AlarmChangeTypeAutoWebhookComplete,
 		AlarmChangeTypeAutoWebhookFail,
-		AlarmChangeTypeAutoDeclareTicketWebhookFail:
+		AlarmChangeTypeAutoDeclareTicketWebhookFail,
+		AlarmChangeTypeAutoInstructionActivate:
 		// not a trigger
 	case AlarmChangeTypeDeclareTicketWebhook,
 		AlarmChangeTypeAutoDeclareTicketWebhook:

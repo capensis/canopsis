@@ -97,10 +97,14 @@ const (
 
 // Alarm represents an alarm document.
 type Alarm struct {
-	ID       string   `bson:"_id" json:"_id"`
-	Time     CpsTime  `bson:"t" json:"t"`
-	EntityID string   `bson:"d" json:"d"`
-	Tags     []string `bson:"tags" json:"tags"`
+	ID       string  `bson:"_id" json:"_id"`
+	Time     CpsTime `bson:"t" json:"t"`
+	EntityID string  `bson:"d" json:"d"`
+
+	Tags                []string  `bson:"tags" json:"tags"`
+	ExternalTags        []string  `bson:"etags" json:"etags"`
+	InternalTags        []string  `bson:"itags" json:"itags"`
+	InternalTagsUpdated MicroTime `bson:"itags_upd" json:"itags_upd"`
 	// todo move all field from Value to Alarm
 	Value AlarmValue `bson:"v" json:"v"`
 	// update contains alarm changes after last mongo update. Use functions Update* to
@@ -112,13 +116,19 @@ type Alarm struct {
 	parentsRemove  []string
 
 	// is used only for manual instructions KPI metrics
-	KPIAssignedInstructions []string `bson:"kpi_assigned_instructions,omitempty" json:"kpi_assigned_instructions,omitempty"`
-	KPIExecutedInstructions []string `bson:"kpi_executed_instructions,omitempty" json:"kpi_executed_instructions,omitempty"`
+	KpiAssignedInstructions []string `bson:"kpi_assigned_instructions,omitempty" json:"kpi_assigned_instructions,omitempty"`
+	KpiExecutedInstructions []string `bson:"kpi_executed_instructions,omitempty" json:"kpi_executed_instructions,omitempty"`
+	// is used only for auto instructions KPI metrics
+	KpiAssignedAutoInstructions []string `bson:"kpi_assigned_auto_instructions,omitempty" json:"kpi_assigned_auto_instructions,omitempty"`
+	KpiExecutedAutoInstructions []string `bson:"kpi_executed_auto_instructions,omitempty" json:"kpi_executed_auto_instructions,omitempty"`
 
 	// is used only for not acked metrics
 	NotAckedMetricType     string   `bson:"not_acked_metric_type,omitempty" json:"-"`
 	NotAckedMetricSendTime *CpsTime `bson:"not_acked_metric_send_time,omitempty" json:"-"`
 	NotAckedSince          *CpsTime `bson:"not_acked_since,omitempty" json:"-"`
+
+	// InactiveAutoInstructionInProgress shows that autoremediation is launched and alarm is not active until the remediation is finished
+	InactiveAutoInstructionInProgress bool `bson:"auto_instruction_in_progress,omitempty" json:"auto_instruction_in_progress,omitempty"`
 }
 
 // AlarmWithEntity is an encapsulated type, mostly to facilitate the alarm manipulation for the post-processors
@@ -328,6 +338,16 @@ func (a *Alarm) HasParentByEID(parentEID string) bool {
 	return false
 }
 
+func (a *Alarm) HasUnlinkedParentByEID(parentEID string) bool {
+	for _, parent := range a.Value.UnlinkedParents {
+		if parent == parentEID {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (a *Alarm) AddChild(childEID string) {
 	if a.HasChildByEID(childEID) {
 		return
@@ -383,7 +403,9 @@ func (a *Alarm) RemoveParent(parentEID string) bool {
 	}
 
 	a.parentsRemove = append(a.parentsRemove, parentEID)
+	a.Value.UnlinkedParents = append(a.Value.UnlinkedParents, parentEID)
 	a.AddUpdate("$pull", bson.M{"v.parents": bson.M{"$in": a.parentsRemove}})
+	a.AddUpdate("$push", bson.M{"v.unlinked_parents": parentEID})
 	return true
 }
 
@@ -407,4 +429,8 @@ func (a *Alarm) IsActivated() bool {
 
 func (a *Alarm) IsInActivePeriod() bool {
 	return a.Value.PbehaviorInfo.IsActive()
+}
+
+func (a *Alarm) CanActivate() bool {
+	return !a.IsActivated() && !a.IsSnoozed() && a.Value.PbehaviorInfo.IsActive() && !a.InactiveAutoInstructionInProgress
 }

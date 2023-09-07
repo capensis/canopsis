@@ -3,6 +3,7 @@
 exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1`] = `
 <div
   class="v-tabs expand-panel secondary lighten-2"
+  editing="true"
 >
   <div
     class="v-tabs__bar theme--dark secondary lighten-1"
@@ -44,6 +45,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
             Timeline
           </a>
         </div>
+        <!---->
         <!---->
         <div
           class="v-tabs__div"
@@ -92,7 +94,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
                   <div
                     class="more-infos"
                   >
-                    <!---->
+                    <div />
                   </div>
                 </div>
               </div>
@@ -162,6 +164,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
           </div>
         </div>
       </transition-stub>
+      <!---->
       <!---->
       <transition-stub
         name=""
@@ -244,6 +247,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
             Timeline
           </a>
         </div>
+        <!---->
         <div
           class="v-tabs__div"
         >
@@ -319,7 +323,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
                   <div
                     class="more-infos"
                   >
-                    <!---->
+                    <div />
                   </div>
                 </div>
               </div>
@@ -417,6 +421,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           </div>
         </div>
       </transition-stub>
+      <!---->
       <transition-stub
         name=""
       >
@@ -560,6 +565,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           </a>
         </div>
         <!---->
+        <!---->
         <div
           class="v-tabs__div"
         >
@@ -616,7 +622,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
                   <div
                     class="more-infos"
                   >
-                    <!---->
+                    <div />
                   </div>
                 </div>
               </div>
@@ -686,6 +692,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           </div>
         </div>
       </transition-stub>
+      <!---->
       <!---->
       <transition-stub
         name=""
@@ -776,6 +783,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           </a>
         </div>
         <!---->
+        <!---->
         <div
           class="v-tabs__div"
         >
@@ -823,7 +831,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
                   <div
                     class="more-infos"
                   >
-                    <!---->
+                    <div />
                   </div>
                 </div>
               </div>
@@ -893,6 +901,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           </div>
         </div>
       </transition-stub>
+      <!---->
       <!---->
       <transition-stub
         name=""

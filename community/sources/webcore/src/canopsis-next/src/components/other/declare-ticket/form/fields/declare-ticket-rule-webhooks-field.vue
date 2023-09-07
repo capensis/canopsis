@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(column)
     c-alert(v-if="!webhooks.length", type="info") {{ $t('declareTicket.emptyWebhooks') }}
-    c-card-iterator.mb-2(
+    c-card-iterator-field.mb-2(
       v-field="webhooks",
       item-key="key",
       :disabled="disabled",
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { declareTicketRuleWebhookToForm } from '@/helpers/forms/declare-ticket-rule';
+import { declareTicketRuleWebhookToForm } from '@/helpers/entities/declare-ticket/rule/form';
 
 import { formArrayMixin } from '@/mixins/form';
 

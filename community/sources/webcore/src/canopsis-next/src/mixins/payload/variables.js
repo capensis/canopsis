@@ -4,6 +4,7 @@ import {
   EXTERNAL_DATA_PAYLOADS_VARIABLES,
   DECLARE_TICKET_PAYLOAD_ADDITIONAL_DATA_VARIABLES,
   DECLARE_TICKET_PAYLOAD_PREVIOUS_STEP_VARIABLES,
+  USER_PAYLOADS_VARIABLES,
 } from '@/constants';
 
 export const payloadVariablesMixin = {
@@ -83,12 +84,44 @@ export const payloadVariablesMixin = {
       }];
     },
 
+    userPayloadVariables() {
+      return [
+        {
+          value: USER_PAYLOADS_VARIABLES.email,
+          text: this.$t('user.variables.userEmail') },
+        {
+          value: USER_PAYLOADS_VARIABLES.username,
+          text: this.$t('user.variables.userUsername'),
+        },
+        {
+          value: USER_PAYLOADS_VARIABLES.firstname,
+          text: this.$t('user.variables.userFirstname'),
+        },
+        {
+          value: USER_PAYLOADS_VARIABLES.lastname,
+          text: this.$t('user.variables.userLastname'),
+        },
+        {
+          value: USER_PAYLOADS_VARIABLES.externalId,
+          text: this.$t('user.variables.userExternalId'),
+        },
+        {
+          value: USER_PAYLOADS_VARIABLES.source,
+          text: this.$t('user.variables.userSource'),
+        },
+        {
+          value: USER_PAYLOADS_VARIABLES.role,
+          text: this.$t('user.variables.userRole'),
+        },
+      ];
+    },
+
     alarmPayloadVariables() {
       return this.alarmPayloadSubVariables.map(
         variable => ({
           ...variable,
           value: variable.value === ALARM_PAYLOADS_VARIABLES.entityInfosValue
-            ? variable.value.replace('index ', `index ${ALARM_PAYLOADS_VARIABLES.alarm}`)
+            ? variable.value
             : `${ALARM_PAYLOADS_VARIABLES.alarm}${variable.value}`,
         }),
       );
@@ -114,6 +147,10 @@ export const payloadVariablesMixin = {
     additionalDataVariables() {
       return [
         {
+          value: DECLARE_TICKET_PAYLOAD_ADDITIONAL_DATA_VARIABLES.ruleName,
+          text: this.$t('declareTicket.ruleName'),
+        },
+        {
           value: DECLARE_TICKET_PAYLOAD_ADDITIONAL_DATA_VARIABLES.author,
           text: this.$t('common.username'),
         },
@@ -136,10 +173,10 @@ export const payloadVariablesMixin = {
       ];
     },
 
-    entityPayloadVariables() {
+    entityPayloadSubVariables() {
       return [
         {
-          value: `${ENTITY_PAYLOADS_VARIABLES.entity}${ENTITY_PAYLOADS_VARIABLES.name}`,
+          value: ENTITY_PAYLOADS_VARIABLES.name,
           text: this.$t('common.name'),
         },
         {
@@ -178,6 +215,21 @@ export const payloadVariablesMixin = {
       if (this.hasPrevious) {
         variables.push(...this.payloadVariablesFromPreviousStep);
       }
+
+      variables.unshift(
+        {
+          value: DECLARE_TICKET_PAYLOAD_ADDITIONAL_DATA_VARIABLES.ruleName,
+          text: this.$t('declareTicket.ruleName'),
+        },
+        {
+          value: DECLARE_TICKET_PAYLOAD_ADDITIONAL_DATA_VARIABLES.author,
+          text: this.$t('common.username'),
+        },
+        {
+          value: DECLARE_TICKET_PAYLOAD_ADDITIONAL_DATA_VARIABLES.user,
+          text: this.$t('declareTicket.userId'),
+        },
+      );
 
       return variables;
     },

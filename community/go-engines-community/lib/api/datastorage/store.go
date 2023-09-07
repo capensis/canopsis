@@ -4,6 +4,8 @@ import (
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"github.com/rs/zerolog"
@@ -11,9 +13,6 @@ import (
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
-
-const InstructionExecutionHourly = "instruction_execution_hourly"
-const InstructionExecutionByModifiedOn = "instruction_execution_by_modified_on"
 
 type Store interface {
 	Get(ctx context.Context) (datastorage.DataStorage, error)
@@ -78,25 +77,102 @@ func (s *store) updateRetentionPolicy(ctx context.Context, data datastorage.Data
 	if err != nil {
 		return err
 	}
-	err = s.deleteRetentionPolicy(ctx, pgPool, InstructionExecutionHourly)
+
+	err = s.updateInstructionRetentionPolicy(ctx, data, pgPool)
+	if err != nil {
+		return err
+	}
+
+	err = s.updateMetricsRetentionPolicy(ctx, data, pgPool)
+	if err != nil {
+		return err
+	}
+
+	return s.updatePerfDataRetentionPolicy(ctx, data, pgPool)
+}
+
+func (s *store) updateInstructionRetentionPolicy(ctx context.Context, data datastorage.DataStorage, pgPool postgres.Pool) error {
+	err := s.deleteRetentionPolicy(ctx, pgPool, metrics.InstructionExecutionHourly)
 	if err != nil {
 		return err
 	}
 	deleteStatsAfter := data.Config.Remediation.DeleteStatsAfter
-	if deleteStatsAfter != nil && deleteStatsAfter.Enabled != nil && *deleteStatsAfter.Enabled && deleteStatsAfter.Value > 0 {
-		err = s.addRetentionPolicy(ctx, pgPool, InstructionExecutionHourly, deleteStatsAfter.String())
+	if types.IsDurationEnabledAndValid(deleteStatsAfter) {
+		err = s.addRetentionPolicy(ctx, pgPool, metrics.InstructionExecutionHourly, deleteStatsAfter.String())
 		if err != nil {
 			return err
 		}
 	}
 
-	err = s.deleteRetentionPolicy(ctx, pgPool, InstructionExecutionByModifiedOn)
+	err = s.deleteRetentionPolicy(ctx, pgPool, metrics.InstructionExecutionByModifiedOn)
 	if err != nil {
 		return err
 	}
 	deleteModStatsAfter := data.Config.Remediation.DeleteModStatsAfter
-	if deleteModStatsAfter != nil && deleteModStatsAfter.Enabled != nil && *deleteModStatsAfter.Enabled && deleteModStatsAfter.Value > 0 {
-		err = s.addRetentionPolicy(ctx, pgPool, InstructionExecutionByModifiedOn, deleteStatsAfter.String())
+	if types.IsDurationEnabledAndValid(deleteModStatsAfter) {
+		err = s.addRetentionPolicy(ctx, pgPool, metrics.InstructionExecutionByModifiedOn, deleteStatsAfter.String())
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *store) updateMetricsRetentionPolicy(ctx context.Context, data datastorage.DataStorage, pgPool postgres.Pool) error {
+	tables := []string{
+		metrics.TotalAlarmNumber,
+		metrics.NonDisplayedAlarmNumber,
+		metrics.PbhAlarmNumber,
+		metrics.InstructionAlarmNumber,
+		metrics.TicketAlarmNumber,
+		metrics.CorrelationAlarmNumber,
+		metrics.AckAlarmNumber,
+		metrics.CancelAckAlarmNumber,
+		metrics.AckDuration,
+		metrics.ResolveDuration,
+		metrics.UserActivity,
+		metrics.UserSessions,
+		metrics.TicketNumber,
+		metrics.SliDuration,
+		metrics.ManualInstructionAssignedAlarms,
+		metrics.ManualInstructionExecutedAlarms,
+		metrics.InstructionAssignedInstructions,
+		metrics.InstructionExecutedInstructions,
+		metrics.NotAckedInHourAlarms,
+		metrics.NotAckedInFourHoursAlarms,
+		metrics.NotAckedInDayAlarms,
+	}
+
+	deleteAfter := data.Config.Metrics.DeleteAfter
+	interval := ""
+	if types.IsDurationEnabledAndValid(deleteAfter) {
+		interval = deleteAfter.String()
+	}
+	for _, table := range tables {
+		err := s.deleteRetentionPolicy(ctx, pgPool, table)
+		if err != nil {
+			return err
+		}
+		if interval != "" {
+			err = s.addRetentionPolicy(ctx, pgPool, table, interval)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (s *store) updatePerfDataRetentionPolicy(ctx context.Context, data datastorage.DataStorage, pgPool postgres.Pool) error {
+	err := s.deleteRetentionPolicy(ctx, pgPool, metrics.PerfData)
+	if err != nil {
+		return err
+	}
+	deleteAfter := data.Config.PerfDataMetrics.DeleteAfter
+	if types.IsDurationEnabledAndValid(deleteAfter) {
+		err = s.addRetentionPolicy(ctx, pgPool, metrics.PerfData, deleteAfter.String())
 		if err != nil {
 			return err
 		}

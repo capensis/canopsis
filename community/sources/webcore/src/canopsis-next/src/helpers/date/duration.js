@@ -185,9 +185,10 @@ export const convertDurationToMaxUnitDurationString = (
  * @param {number | Duration} duration
  * @param {string} [format = DEFAULT_DURATION_FORMAT]
  * @param {DurationUnit} [unit = TIME_UNITS.second]
+ * @param {string} [defaultValue = '0s']
  * @returns {string}
  */
-export const convertDurationToString = (duration, format = DEFAULT_DURATION_FORMAT, unit = TIME_UNITS.second) => {
+export const convertDurationToString = (duration, format = DEFAULT_DURATION_FORMAT, unit = TIME_UNITS.second, defaultValue = '0s') => {
   if (isNil(duration)) {
     return '';
   }
@@ -199,7 +200,7 @@ export const convertDurationToString = (duration, format = DEFAULT_DURATION_FORM
 
   return moment
     .duration(preparedDuration, duration?.unit ?? unit)
-    .format(resultFormat, { trim: 'both final' }) || '0s';
+    .format(resultFormat, { trim: 'both final' }) || defaultValue;
 };
 
 /**

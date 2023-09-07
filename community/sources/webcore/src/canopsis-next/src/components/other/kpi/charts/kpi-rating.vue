@@ -8,8 +8,8 @@
       :downloading="downloading",
       :min-date="minDate",
       responsive,
-      @export:csv="exportRatingMetricsAsCsv",
-      @export:png="exportRatingMetricsAsPng"
+      @export:csv="exportMetricsAsCsv",
+      @export:png="exportMetricsAsPng"
     )
     kpi-error-overlay(v-if="unavailable || fetchError")
 </template>
@@ -17,30 +17,17 @@
 <script>
 import { isUndefined } from 'lodash';
 
-import { API_HOST, API_ROUTES, KPI_RATING_METRICS_FILENAME_PREFIX } from '@/config';
+import { KPI_RATING_METRICS_FILENAME_PREFIX } from '@/config';
+import { QUICK_RANGES, ALARM_METRIC_PARAMETERS, DATETIME_FORMATS, USER_METRIC_PARAMETERS } from '@/constants';
 
-import {
-  QUICK_RANGES,
-  ALARM_METRIC_PARAMETERS,
-  DATETIME_FORMATS,
-  USER_METRIC_PARAMETERS,
-  SAMPLINGS,
-} from '@/constants';
-
-import { saveFile } from '@/helpers/file/files';
-import {
-  convertStartDateIntervalToTimestampByTimezone,
-  convertStopDateIntervalToTimestampByTimezone,
-} from '@/helpers/date/date-intervals';
-import {
-  convertDateToStartOfDayTimestampByTimezone,
-  convertDateToString,
-} from '@/helpers/date/date';
-import { convertMetricsToTimezone, isMetricsQueryChanged } from '@/helpers/metrics';
+import { convertDateToStartOfDayTimestampByTimezone, convertDateToString } from '@/helpers/date/date';
+import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';
+import { isMetricsQueryChanged } from '@/helpers/entities/metric/query';
 
 import { entitiesMetricsMixin } from '@/mixins/entities/metrics';
 import { localQueryMixin } from '@/mixins/query-local/query';
-import { exportMixinCreator } from '@/mixins/widget/export';
+import { metricsIntervalFilterMixin } from '@/mixins/widget/metrics/interval';
+import { metricsExportMixinCreator } from '@/mixins/widget/metrics/export';
 
 import KpiRatingFilters from './partials/kpi-rating-filters.vue';
 import KpiErrorOverlay from './partials/kpi-error-overlay.vue';
@@ -53,7 +40,8 @@ export default {
   mixins: [
     entitiesMetricsMixin,
     localQueryMixin,
-    exportMixinCreator({
+    metricsIntervalFilterMixin,
+    metricsExportMixinCreator({
       createExport: 'createKpiRatingExport',
       fetchExport: 'fetchMetricExport',
     }),
@@ -68,7 +56,6 @@ export default {
     return {
       ratingMetrics: [],
       pending: false,
-      downloading: false,
       fetchError: false,
       minDate: null,
       query: {
@@ -82,24 +69,6 @@ export default {
       },
     };
   },
-  computed: {
-    interval() {
-      return {
-        from: convertStartDateIntervalToTimestampByTimezone(
-          this.query.interval.from,
-          DATETIME_FORMATS.datePicker,
-          SAMPLINGS.day,
-          this.$system.timezone,
-        ),
-        to: convertStopDateIntervalToTimestampByTimezone(
-          this.query.interval.to,
-          DATETIME_FORMATS.datePicker,
-          SAMPLINGS.day,
-          this.$system.timezone,
-        ),
-      };
-    },
-  },
   watch: {
     unavailable(unavailable) {
       if (!unavailable) {
@@ -109,8 +78,10 @@ export default {
   },
   methods: {
     getFileName() {
-      const fromTime = convertDateToString(this.interval.from, DATETIME_FORMATS.short);
-      const toTime = convertDateToString(this.interval.to, DATETIME_FORMATS.short);
+      const { from, to } = this.getIntervalQuery();
+
+      const fromTime = convertDateToString(from, DATETIME_FORMATS.short);
+      const toTime = convertDateToString(to, DATETIME_FORMATS.short);
 
       return [
         KPI_RATING_METRICS_FILENAME_PREFIX,
@@ -121,21 +92,13 @@ export default {
       ].join('-');
     },
 
-    async exportRatingMetricsAsPng(blob) {
-      try {
-        await saveFile(blob, this.getFileName());
-      } catch (err) {
-        this.$popups.error({ text: err.message || this.$t('errors.default') });
-      }
-    },
-
     customQueryCondition(query, oldQuery) {
       return !isUndefined(query.criteria) && isMetricsQueryChanged(query, oldQuery, this.minDate);
     },
 
     getQuery() {
       return {
-        ...this.interval,
+        ...this.getIntervalQuery(),
 
         criteria: this.query.criteria?.id,
         filter: this.query.metric !== USER_METRIC_PARAMETERS.totalUserActivity ? this.query.filter : undefined,
@@ -166,22 +129,6 @@ export default {
         this.fetchError = true;
       } finally {
         this.pending = false;
-      }
-    },
-
-    async exportRatingMetricsAsCsv() {
-      this.downloading = true;
-
-      try {
-        const fileData = await this.generateFile({
-          data: this.getQuery(),
-        });
-
-        this.downloadFile(`${API_HOST}${API_ROUTES.metrics.exportMetric}/${fileData._id}/download`);
-      } catch (err) {
-        this.$popups.error({ text: err?.error ?? this.$t('errors.default') });
-      } finally {
-        this.downloading = false;
       }
     },
   },

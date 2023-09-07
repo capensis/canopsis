@@ -140,52 +140,6 @@ Feature: Update a scenario
     }
     """
 
-  Scenario: given update request with already exists priority should return error
-    When I am admin
-    When I do PUT /api/v4/scenarios/test-scenario-to-update-1:
-    """json
-    {
-      "name": "test-scenario-to-update-1-name",
-      "enabled": true,
-      "priority": 2,
-      "triggers": ["create","pbhenter"],
-      "actions": [
-        {
-          "alarm_pattern": [
-            [
-              {
-                "field": "v.component",
-                "cond": {
-                  "type": "eq",
-                  "value": "test-scenario-to-update-1-alarm-updated"
-                }
-              }
-            ]
-          ],
-          "type": "snooze",
-          "parameters": {
-            "output": "test snooze updated",
-            "duration": {
-              "value": 3,
-              "unit": "s"
-            }
-          },
-          "drop_scenario_if_not_matched": false,
-          "emit_trigger": false
-        }
-      ]
-    }
-    """
-    Then the response code should be 400
-    Then the response body should be:
-    """json
-    {
-      "errors": {
-        "priority": "Priority already exists."
-      }
-    }
-    """
-
   Scenario: given no exist scenario id should return error
     When I am admin
     When I do PUT /api/v4/scenarios/notexist:
