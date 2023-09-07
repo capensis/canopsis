@@ -3160,13 +3160,13 @@ paths:
   /color-themes:
     get:
       tags:
-        - colorthemes
+        - color-themes
       summary: Find all color theme
       description: |
         Get paginated list of color theme.
         
         -  PERMISSIONS: `api_color_theme:read`
-      operationId: colorthemes-find-all
+      operationId: color-themes-find-all
       parameters:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
@@ -3193,13 +3193,13 @@ paths:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
     post:
       tags:
-        - colorthemes
+        - color-themes
       summary: Create color theme
       description: |
         Create color theme.
         
         -  PERMISSIONS: `api_color_theme:create`
-      operationId: colorthemes-create
+      operationId: color-themes-create
       requestBody:
         description: body
         content:
@@ -3256,13 +3256,13 @@ paths:
   /color-themes/{id}:
     get:
       tags:
-        - colorthemes
+        - color-themes
       summary: Get color theme by id
       description: |
         Get color theme by id.
         
         -  PERMISSIONS: `api_color_theme:read`
-      operationId: colorthemes-get-by-id
+      operationId: color-themes-get-by-id
       parameters:
         - name: id
           in: path
@@ -3285,13 +3285,13 @@ paths:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
     put:
       tags:
-        - colorthemes
+        - color-themes
       summary: Update color theme by id
       description: |
         Update color theme by id.
         
         -  PERMISSIONS: `api_color_theme:update`
-      operationId: colorthemes-update-by-id
+      operationId: color-themes-update-by-id
       parameters:
         - name: id
           in: path
@@ -3359,13 +3359,13 @@ paths:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
     delete:
       tags:
-        - colorthemes
+        - color-themes
       summary: Delete color theme by id
       description: |
         Delete color theme by id.
         
         -  PERMISSIONS: `api_color_theme:delete`
-      operationId: colorthemes-delete-by-id
+      operationId: color-themes-delete-by-id
       parameters:
         - name: id
           in: path
