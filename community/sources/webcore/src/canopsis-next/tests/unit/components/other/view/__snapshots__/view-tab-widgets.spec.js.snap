@@ -23,9 +23,9 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with editing mode 1`] = `
   <div
     class="portal"
   >
-
+    
         Portal to: additional-top-bar-items
-
+        
     <window-size-field-stub
       color="white"
       light="true"
@@ -119,9 +119,9 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'l' windo
   <div
     class="portal"
   >
-
+    
         Portal to: additional-top-bar-items
-
+        
     <window-size-field-stub
       color="white"
       light="true"
@@ -245,9 +245,9 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'm' windo
   <div
     class="portal"
   >
-
+    
         Portal to: additional-top-bar-items
-
+        
     <window-size-field-stub
       color="white"
       light="true"
@@ -371,9 +371,9 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 't' windo
   <div
     class="portal"
   >
-
+    
         Portal to: additional-top-bar-items
-
+        
     <window-size-field-stub
       color="white"
       light="true"
@@ -497,9 +497,9 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'xl' wind
   <div
     class="portal"
   >
-
+    
         Portal to: additional-top-bar-items
-
+        
     <window-size-field-stub
       color="white"
       light="true"
@@ -623,9 +623,9 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets with editing
   <div
     class="portal"
   >
-
+    
         Portal to: additional-top-bar-items
-
+        
     <window-size-field-stub
       color="white"
       light="true"
