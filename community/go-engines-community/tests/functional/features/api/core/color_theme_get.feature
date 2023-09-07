@@ -16,7 +16,7 @@ Feature: Get a color theme
   @concurrent
   Scenario: given get list request should return ok
   When I am admin
-  When I do GET /api/v4/color-themes
+  When I do GET /api/v4/color-themes?search=test_theme_to_get
   Then the response code should be 200
   Then the response body should contain:
   """json
@@ -126,31 +126,9 @@ Feature: Get a color theme
   """
 
   @concurrent
-  Scenario: given get list with search request should return ok
-  When I am admin
-  When I do GET /api/v4/color-themes?search=test_theme_to_get_2
-  Then the response code should be 200
-  Then the response body should contain:
-  """json
-  {
-    "data": [
-      {
-        "name": "test_theme_to_get_2"
-      }
-    ],
-    "meta": {
-        "page": 1,
-        "per_page": 10,
-        "page_count": 1,
-        "total_count": 1
-    }
-  }
-  """
-
-  @concurrent
   Scenario: given get list with sort request should return ok
   When I am admin
-  When I do GET /api/v4/color-themes?sort_by=name&sort=asc
+  When I do GET /api/v4/color-themes?search=test_theme_to_get&sort_by=name&sort=asc
   Then the response code should be 200
   Then the response body should contain:
   """json
@@ -171,7 +149,7 @@ Feature: Get a color theme
     }
   }
   """
-  When I do GET /api/v4/color-themes?sort_by=name&sort=desc
+  When I do GET /api/v4/color-themes?search=test_theme_to_get&sort_by=name&sort=desc
   Then the response code should be 200
   Then the response body should contain:
   """json
