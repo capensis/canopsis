@@ -1303,6 +1303,13 @@ user:
     roles:
       - "@role_noperms"
 
+  user_to_pick_color_theme_4:
+    <<: *user
+    _id: test-user-to-pick-color-theme-4
+    name: <Current()._id>
+    roles:
+      - "@role_noperms"
+
 role_template:
   tpl_pilot:
     _id: pilot
