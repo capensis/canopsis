@@ -1,13 +1,11 @@
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import { MAX_LIMIT } from '@/constants';
 
 import CEntityCategoryField from '@/components/forms/fields/entity/c-entity-category-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-select': {
@@ -140,7 +138,7 @@ describe('c-entity-category-field', () => {
   const name = 'category';
 
   const factory = generateShallowRenderer(CEntityCategoryField, {
-    localVue,
+
     stubs,
     store: createMockedStoreModules([{ name: 'entityCategory' }]),
 
@@ -151,7 +149,7 @@ describe('c-entity-category-field', () => {
     },
   });
   const snapshotFactory = generateRenderer(CEntityCategoryField, {
-    localVue,
+
     stubs: snapshotStubs,
     store: createMockedStoreModules([{
       name: 'entityCategory',

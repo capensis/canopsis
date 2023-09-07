@@ -20,7 +20,7 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { dataStorageSettingsToForm } from '@/helpers/forms/data-storage';
+import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
 
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { entitiesDataStorageSettingsMixin } from '@/mixins/entities/data-storage';

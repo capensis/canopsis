@@ -2,10 +2,10 @@
 
 exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` with custom props 1`] = `
 <div
-  class="layout justify-end"
+  class="layout kpi-chart-export-actions justify-end wrap"
 >
   <button
-    class="ma-0 mr-4 v-btn v-btn--loader v-btn--small theme--light primary"
+    class="ma-0 v-btn v-btn--loader v-btn--small theme--light primary"
     type="button"
   >
     <div
@@ -80,10 +80,10 @@ exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` with cust
 
 exports[`kpi-chart-export-actions Renders \`kpi-chart-export-actions\` without props 1`] = `
 <div
-  class="layout justify-end"
+  class="layout kpi-chart-export-actions justify-end wrap"
 >
   <button
-    class="ma-0 mr-4 v-btn v-btn--small theme--light primary"
+    class="ma-0 v-btn v-btn--small theme--light primary"
     type="button"
   >
     <div

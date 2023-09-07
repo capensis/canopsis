@@ -4,7 +4,11 @@
       template(#title="")
         span {{ title }}
       template(#text="")
-        remediation-job-form(v-model="form")
+        remediation-job-form(
+          v-model="form",
+          :with-payload="withPayload",
+          :with-query="withQuery"
+        )
       template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
@@ -15,9 +19,11 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from 'vuex';
+
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { formToRemediationJob, remediationJobToForm } from '@/helpers/forms/remediation-job';
+import { formToRemediationJob, remediationJobToForm } from '@/helpers/entities/remediation/job/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -26,6 +32,8 @@ import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import RemediationJobForm from '@/components/other/remediation/jobs/form/remediation-job-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
+
+const { mapGetters: mapInfoGetters } = createNamespacedHelpers('info');
 
 export default {
   name: MODALS.createRemediationJob,
@@ -48,8 +56,22 @@ export default {
     };
   },
   computed: {
+    ...mapInfoGetters(['remediationJobConfigTypes']),
+
     title() {
       return this.config.title ?? this.$t('modals.createRemediationJob.create.title');
+    },
+
+    remediationJobConfigType() {
+      return this.remediationJobConfigTypes.find(({ name }) => name === this.form.config.type);
+    },
+
+    withPayload() {
+      return this.remediationJobConfigType?.with_body;
+    },
+
+    withQuery() {
+      return this.remediationJobConfigType?.with_query;
     },
   },
   methods: {
@@ -58,7 +80,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToRemediationJob(this.form));
+          await this.config.action(formToRemediationJob(this.form, this.remediationJobConfigType));
         }
 
         this.$modals.hide();

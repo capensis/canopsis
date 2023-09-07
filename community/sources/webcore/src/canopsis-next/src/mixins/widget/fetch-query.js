@@ -1,6 +1,6 @@
 import { isEqual, isEmpty } from 'lodash';
 
-import { prepareQuery } from '@/helpers/query';
+import { prepareWidgetQuery } from '@/helpers/entities/widget/query';
 
 import { queryWidgetMixin } from '@/mixins/widget/query';
 
@@ -9,21 +9,15 @@ import { queryWidgetMixin } from '@/mixins/widget/query';
  */
 export const widgetFetchQueryMixin = {
   mixins: [queryWidgetMixin],
-  props: {
-    editing: {
-      type: Boolean,
-      default: false,
-    },
-  },
   watch: {
     query(value, oldValue) {
-      if (!this.editing && !isEqual(value, oldValue) && !isEmpty(value)) {
+      if (!isEqual(value, oldValue) && !isEmpty(value)) {
         this.fetchList();
       }
     },
 
     tabQueryNonce(value, oldValue) {
-      if (!this.editing && value > oldValue) {
+      if (value > oldValue) {
         this.fetchList();
       }
     },
@@ -31,18 +25,16 @@ export const widgetFetchQueryMixin = {
     widget: 'setQuery',
   },
   async mounted() {
-    if (!this.editing) {
-      await this.fetchUserPreference({ id: this.widget._id });
+    await this.fetchUserPreference({ id: this.widget._id });
 
-      this.setQuery();
-    }
+    this.setQuery();
   },
   methods: {
     setQuery() {
       const { search = '' } = this.query;
 
       this.query = {
-        ...prepareQuery(this.widget, this.userPreference),
+        ...prepareWidgetQuery(this.widget, this.userPreference),
 
         search,
       };

@@ -12,22 +12,24 @@ Feature: update user interface
     When I do POST /api/v4/internal/user_interface
     Then the response code should be 403
 
+  @standalone
   Scenario: PUT a valid user_interface without timeout config
     When I am admin
     When I do PUT /api/v4/internal/user_interface:
-    """
+    """json
     {
       "language": "en",
       "footer": "Test footer",
       "app_title": "Canopsis Test",
       "login_page_description": "Test login",
       "max_matched_items": 10000,
-      "check_count_request_timeout": 30
+      "check_count_request_timeout": 30,
+      "show_header_on_kiosk_mode": true
     }
     """
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "allow_change_severity_to_info": false,
       "app_title": "Canopsis Test",
@@ -36,6 +38,7 @@ Feature: update user interface
       "login_page_description": "Test login",
       "max_matched_items": 10000,
       "check_count_request_timeout": 30,
+      "show_header_on_kiosk_mode": true,
       "popup_timeout": {
         "error": {
           "value": 3,
@@ -49,10 +52,11 @@ Feature: update user interface
     }
     """
 
+  @standalone
   Scenario: PUT a valid user_interface with timeout config
     When I am admin
     When I do PUT /api/v4/internal/user_interface:
-    """
+    """json
     {
       "language": "en",
       "footer": "Test footer",
@@ -66,7 +70,7 @@ Feature: update user interface
     """
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "allow_change_severity_to_info": false,
       "app_title": "Canopsis Test",
@@ -89,7 +93,7 @@ Feature: update user interface
   Scenario: POST an invalid user_interface
     When I am admin
     When I do POST /api/v4/internal/user_interface:
-    """
+    """json
     {
       "language": "vn",
       "footer": "Test footer"
@@ -97,7 +101,7 @@ Feature: update user interface
     """
     Then the response code should be 400
     Then the response body should be:
-    """
+    """json
     {
       "errors": {
          "language": "Language must be one of [fr en] or empty."
@@ -105,11 +109,12 @@ Feature: update user interface
     }
     """
 
+  @standalone
   Scenario: PUT a valid user_interface without max_matched_items or check_count_request_timeout should
     set those values to default
     When I am admin
     When I do PUT /api/v4/internal/user_interface:
-    """
+    """json
     {
       "language": "en",
       "footer": "Test footer",
@@ -121,7 +126,7 @@ Feature: update user interface
     """
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "allow_change_severity_to_info": false,
       "app_title": "Canopsis Test",
@@ -130,6 +135,7 @@ Feature: update user interface
       "login_page_description": "Test login",
       "max_matched_items": 100,
       "check_count_request_timeout": 100,
+      "show_header_on_kiosk_mode": false,
       "popup_timeout": {
         "error": {
           "value": 3,
@@ -143,7 +149,7 @@ Feature: update user interface
     }
     """
     When I do PUT /api/v4/internal/user_interface:
-    """
+    """json
     {
       "language": "en",
       "footer": "Test footer",
@@ -153,7 +159,7 @@ Feature: update user interface
     """
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "allow_change_severity_to_info": false,
       "app_title": "Canopsis Test",
@@ -178,7 +184,7 @@ Feature: update user interface
   Scenario: PUT an invalid user_interface, max_matched_items and check_count_request_timeout should be >0
     When I am admin
     When I do PUT /api/v4/internal/user_interface:
-    """
+    """json
     {
       "language": "en",
       "footer": "Test footer",
@@ -190,7 +196,7 @@ Feature: update user interface
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "check_count_request_timeout": "CheckCountRequestTimeout should be greater than 0.",
@@ -199,7 +205,7 @@ Feature: update user interface
     }
     """
     When I do PUT /api/v4/internal/user_interface:
-    """
+    """json
     {
       "language": "en",
       "footer": "Test footer",
@@ -211,7 +217,7 @@ Feature: update user interface
     """
     Then the response code should be 400
     Then the response body should contain:
-    """
+    """json
     {
       "errors": {
         "check_count_request_timeout": "CheckCountRequestTimeout should be greater than 0.",
@@ -219,11 +225,3 @@ Feature: update user interface
       }
     }
     """
-    When I do PUT /api/v4/internal/user_interface:
-    """
-    {
-      "max_matched_items": 4
-    }
-    """
-    Then the response code should be 200
-    When I wait 2s

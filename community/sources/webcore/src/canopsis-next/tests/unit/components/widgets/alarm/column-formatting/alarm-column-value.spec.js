@@ -1,26 +1,22 @@
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 
+import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
+import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import AlarmColumnValue from '@/components/widgets/alarm/columns-formatting/alarm-column-value.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'color-indicator-wrapper': true,
   'alarm-column-cell': true,
-  'c-runtime-template': true,
+  'c-compiled-template': CCompiledTemplate,
+  'c-runtime-template': CRuntimeTemplate,
 };
 
-const snapshotFactory = (options = {}) => mount(AlarmColumnValue, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 describe('alarm-column-value', () => {
+  const snapshotFactory = generateRenderer(AlarmColumnValue, { stubs });
+
   it('Renders `alarm-column-value` with required props', async () => {
     const wrapper = snapshotFactory({
       propsData: {

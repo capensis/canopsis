@@ -19,11 +19,15 @@ export default {
   queueLimit: 'Queue length limit',
   defineQueueLimit: 'Define the engines queue length limit',
   notifyUsersQueueLimit: 'Users can be notified when the queue length limit is exceeded',
+  messagesLimit: 'Messages processing limit',
+  defineMessageLimit: 'Define the FIFO messages processing limit (per minute)',
+  notifyUsersMessagesLimit: 'Users can be notified when the FIFO messages processing limit is exceeded',
   numberOfInstances: 'Number of instances',
   notifyUsersNumberOfInstances: 'Users can be notified when the number of active instances is less than the minimal value. The optimal number of instances is shown when the engine state is unavailable.',
   messagesHistory: 'FIFO messages processing history',
   messagesLastHour: 'FIFO messages processing for the last hour',
   messagesPerHour: 'messages/hour',
+  messagesPerMinute: 'messages/minute',
   unknown: 'This system state is unavailable',
   systemStatusChipError: 'The system is not operational',
   systemStatusServerError: 'System configuration is invalid, please contact the administrator',
@@ -93,11 +97,6 @@ export default {
     [HEALTHCHECK_ENGINES_NAMES.action]: {
       name: 'Action',
       description: 'Triggers the actions launch',
-    },
-
-    [HEALTHCHECK_ENGINES_NAMES.service]: {
-      name: 'Service',
-      description: 'Updates counters and generates service-events',
     },
 
     [HEALTHCHECK_ENGINES_NAMES.dynamicInfos]: {

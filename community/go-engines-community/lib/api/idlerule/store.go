@@ -7,12 +7,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 type Store interface {
@@ -28,23 +28,25 @@ type store struct {
 	collection            mongo.DbCollection
 	entityCollection      mongo.DbCollection
 	alarmCollection       mongo.DbCollection
+	authorProvider        author.Provider
 	defaultSearchByFields []string
 	defaultSortBy         string
 }
 
-func NewStore(db mongo.DbClient) Store {
+func NewStore(db mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
 		dbClient:              db,
 		collection:            db.Collection(mongo.IdleRuleMongoCollection),
 		entityCollection:      db.Collection(mongo.EntityMongoCollection),
 		alarmCollection:       db.Collection(mongo.AlarmMongoCollection),
+		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "name", "description", "author.name"},
 		defaultSortBy:         "created",
 	}
 }
 
 func (s *store) Find(ctx context.Context, r FilteredQuery) (*AggregationResult, error) {
-	pipeline := author.Pipeline()
+	pipeline := s.authorProvider.Pipeline()
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
@@ -79,7 +81,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Rule, error) {
 		{"$match": bson.M{"_id": id}},
 	}
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
-	pipeline = append(pipeline, author.Pipeline()...)
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -117,7 +119,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
 			return err
 		}
 
-		err = s.updateFollowingPriorities(ctx, rule.ID, rule.Priority)
+		err = priority.UpdateFollowing(ctx, s.collection, rule.ID, rule.Priority)
 		if err != nil {
 			return err
 		}
@@ -156,21 +158,15 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Rule, error) {
 	var idleRule *Rule
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
-		prevRule, err := s.GetOneBy(ctx, r.ID)
-		if err != nil || prevRule == nil {
-			return err
-		}
 
-		_, err = s.collection.UpdateOne(ctx, bson.M{"_id": model.ID}, update)
+		_, err := s.collection.UpdateOne(ctx, bson.M{"_id": model.ID}, update)
 		if err != nil {
 			return err
 		}
 
-		if prevRule.Priority != model.Priority {
-			err := s.updateFollowingPriorities(ctx, model.ID, model.Priority)
-			if err != nil {
-				return err
-			}
+		err = priority.UpdateFollowing(ctx, s.collection, model.ID, model.Priority)
+		if err != nil {
+			return err
 		}
 
 		idleRule, err = s.GetOneBy(ctx, r.ID)
@@ -190,30 +186,6 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	}
 
 	return deleted > 0, nil
-}
-
-func (s *store) updateFollowingPriorities(ctx context.Context, id string, priority int64) error {
-	err := s.collection.FindOne(ctx, bson.M{
-		"_id":      bson.M{"$ne": id},
-		"priority": priority,
-	}).Err()
-	if err != nil {
-		if err == mongodriver.ErrNoDocuments {
-			return nil
-		}
-		return err
-	}
-
-	_, err = s.collection.UpdateMany(
-		ctx,
-		bson.M{
-			"_id":      bson.M{"$ne": id},
-			"priority": bson.M{"$gte": priority},
-		},
-		bson.M{"$inc": bson.M{"priority": 1}},
-	)
-
-	return err
 }
 
 func (s *store) getSort(r FilteredQuery) bson.M {
@@ -244,7 +216,7 @@ func transformRequestToModel(r EditRequest) idlerule.Rule {
 		Author:               r.Author,
 		Enabled:              *r.Enabled,
 		Type:                 r.Type,
-		Priority:             *r.Priority,
+		Priority:             r.Priority,
 		Duration:             r.Duration,
 		Comment:              r.Comment,
 		DisableDuringPeriods: r.DisableDuringPeriods,

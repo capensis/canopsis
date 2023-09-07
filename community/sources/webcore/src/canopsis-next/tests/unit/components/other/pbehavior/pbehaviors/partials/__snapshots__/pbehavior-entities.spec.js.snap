@@ -29,6 +29,7 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
               aria-label="Id: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value="_id"
               role="columnheader"
               scope="col"
             >
@@ -38,6 +39,7 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
               aria-label="Name: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value="name"
               role="columnheader"
               scope="col"
             >
@@ -47,6 +49,7 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` with entities 1`] = `
               aria-label="Type: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value="type"
               role="columnheader"
               scope="col"
             >
@@ -337,6 +340,7 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
               aria-label="Id: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value="_id"
               role="columnheader"
               scope="col"
             >
@@ -346,6 +350,7 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
               aria-label="Name: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value="name"
               role="columnheader"
               scope="col"
             >
@@ -355,6 +360,7 @@ exports[`pbehavior-entities Renders \`pbehavior-entities\` without entities 1`] 
               aria-label="Type: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value="type"
               role="columnheader"
               scope="col"
             >

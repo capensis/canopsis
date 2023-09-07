@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.c-date-interval
+  div.c-date-interval(:class="{ 'c-date-interval--column': column }")
     c-date-picker-field(
       v-field="value.from",
       :label="$t('common.from')",
@@ -9,11 +9,12 @@
     )
       template(#append="")
         v-icon calendar_today
-    c-date-picker-field.ml-4(
+    c-date-picker-field(
       v-field="value.to",
       :label="$t('common.to')",
       :disabled="disabled",
       :allowed-dates="isAllowedToDate",
+      :content-class="{ 'ml-4': !column }",
       hide-details
     )
       template(#append="")
@@ -43,6 +44,10 @@ export default {
       type: Boolean,
       required: false,
     },
+    column: {
+      type: Boolean,
+      required: false,
+    },
   },
 };
 </script>
@@ -50,5 +55,9 @@ export default {
 <style scoped lang="scss">
 .c-date-interval {
   display: inline-flex;
+
+  &--column {
+    flex-direction: column;
+  }
 }
 </style>

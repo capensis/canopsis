@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 	"os"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/cas"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
@@ -25,6 +26,7 @@ import (
 )
 
 const JwtSecretEnv = "CPS_JWT_SECRET"
+const sessionStoreSessionMaxAge = 24 * time.Hour
 
 // Security is used to init auth methods by config.
 type Security interface {
@@ -52,6 +54,13 @@ type CookieOptions struct {
 	MaxAge         int
 }
 
+func DefaultCookieOptions() CookieOptions {
+	return CookieOptions{
+		FileAccessName: "token",
+		MaxAge:         int(sessionStoreSessionMaxAge.Seconds()),
+	}
+}
+
 type security struct {
 	config       libsecurity.Config
 	dbClient     mongo.DbClient
@@ -59,7 +68,8 @@ type security struct {
 	enforcer     libsecurity.Enforcer
 	logger       zerolog.Logger
 
-	apiConfigProvider config.ApiConfigProvider
+	apiConfigProvider  config.ApiConfigProvider
+	maintenanceAdapter config.MaintenanceAdapter
 
 	cookieOptions CookieOptions
 }
@@ -71,6 +81,7 @@ func NewSecurity(
 	sessionStore libsession.Store,
 	enforcer libsecurity.Enforcer,
 	apiConfigProvider config.ApiConfigProvider,
+	maintenanceAdapter config.MaintenanceAdapter,
 	cookieOptions CookieOptions,
 	logger zerolog.Logger,
 ) Security {
@@ -83,7 +94,8 @@ func NewSecurity(
 
 		cookieOptions: cookieOptions,
 
-		apiConfigProvider: apiConfigProvider,
+		apiConfigProvider:  apiConfigProvider,
+		maintenanceAdapter: maintenanceAdapter,
 	}
 }
 
@@ -135,10 +147,10 @@ func (s *security) RegisterCallbackRoutes(router gin.IRouter, client mongo.DbCli
 			router.GET("/cas/login", cas.SessionLoginHandler(casConfig))
 			router.GET("/cas/loggedin", cas.SessionCallbackHandler(p, s.enforcer, s.sessionStore))
 			router.GET("/api/v4/cas/login", cas.LoginHandler(casConfig))
-			router.GET("/api/v4/cas/loggedin", cas.CallbackHandler(p, s.enforcer, s.GetTokenService()))
+			router.GET("/api/v4/cas/loggedin", cas.CallbackHandler(p, s.enforcer, s.GetTokenService(), s.maintenanceAdapter))
 		case libsecurity.AuthMethodSaml:
-			sp, err := saml.NewServiceProvider(s.newUserProvider(), client.Collection(mongo.RightsMongoCollection), s.sessionStore,
-				s.enforcer, s.config, s.GetTokenService(), s.logger)
+			sp, err := saml.NewServiceProvider(s.newUserProvider(), client.Collection(mongo.RoleCollection), s.sessionStore,
+				s.enforcer, s.config, s.GetTokenService(), s.maintenanceAdapter, s.logger)
 			if err != nil {
 				s.logger.Err(err).Msg("RegisterCallbackRoutes: NewServiceProvider error")
 				panic(err)
@@ -158,15 +170,15 @@ func (s *security) RegisterCallbackRoutes(router gin.IRouter, client mongo.DbCli
 
 func (s *security) GetAuthMiddleware() []gin.HandlerFunc {
 	return []gin.HandlerFunc{
-		middleware.Auth(s.GetHttpAuthProviders()),
-		middleware.SessionAuth(s.dbClient, s.sessionStore),
+		middleware.Auth(s.GetHttpAuthProviders(), s.maintenanceAdapter, s.enforcer),
+		middleware.SessionAuth(s.dbClient, s.apiConfigProvider, s.sessionStore),
 	}
 }
 
 func (s *security) GetFileAuthMiddleware() gin.HandlerFunc {
 	return middleware.Auth([]libsecurity.HttpProvider{
 		httpprovider.NewCookieProvider(s.GetTokenProviders(), s.cookieOptions.FileAccessName, s.logger),
-	})
+	}, s.maintenanceAdapter, s.enforcer)
 }
 
 func (s *security) GetSessionStore() libsession.Store {
@@ -202,7 +214,7 @@ func (s *security) GetTokenGenerator() token.Generator {
 }
 
 func (s *security) newUserProvider() libsecurity.UserProvider {
-	return userprovider.NewMongoProvider(s.dbClient)
+	return userprovider.NewMongoProvider(s.dbClient, s.apiConfigProvider)
 }
 
 func (s *security) newBaseAuthProvider() libsecurity.Provider {

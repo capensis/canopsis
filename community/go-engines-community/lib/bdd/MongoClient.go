@@ -3,8 +3,10 @@ package bdd
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -86,4 +88,23 @@ func (c *MongoClient) EntityShouldNotBeInTheDb(ctx context.Context, eid string) 
 	}
 
 	return fmt.Errorf("could find an entity for eid = %s", eid)
+}
+
+func (c *MongoClient) ISetConfigParameter(ctx context.Context, configParameter string, boolString string) error {
+	b, err := strconv.ParseBool(boolString)
+	if err != nil {
+		return err
+	}
+
+	res, err := c.client.Collection(libmongo.ConfigurationMongoCollection).UpdateOne(
+		ctx,
+		bson.M{"_id": config.ConfigKeyName, configParameter: bson.M{"$exists": true}},
+		bson.M{"$set": bson.M{configParameter: b}},
+	)
+
+	if res.MatchedCount == 0 {
+		return fmt.Errorf("couldn't find a config parameter = %s", configParameter)
+	}
+
+	return err
 }

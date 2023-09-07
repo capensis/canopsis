@@ -162,6 +162,10 @@ default_entities:
     <<: *resource
     _id: test-resource-to-pattern-count-4/test-component-default
     name: test-resource-to-pattern-count-4
+  entity_to_pattern_count_5:
+    <<: *resource
+    _id: test-resource-to-pattern-count-5/test-component-default
+    name: test-resource-to-pattern-count-5
 
   entity_to_pbehavior_get_by_entity_id_1:
     <<: *resource
@@ -409,6 +413,16 @@ default_entities:
     name: test-entitybasic-to-delete-linked-to-alarm-resource
     component: test-entitybasic-to-delete-linked-to-alarm-component
     connector: test-entitybasic-to-delete-linked-to-alarm-connector/test-entitybasic-to-delete-linked-to-alarm-connector-name
+  connector_to_entitybasic_delete:
+    <<: *connector
+    _id: test-entitybasic-to-delete-connector/test-entitybasic-to-delete-connector-name
+    name: test-entitybasic-to-delete-connector-name
+  component_to_entitybasic_delete_connector:
+    <<: *component
+    _id: test-entitybasic-component-to-link-with-deleted-connector
+    name: test-entitybasic-component-to-link-with-deleted-connector
+    component: test-entitybasic-component-to-link-with-deleted-connector
+    connector: test-entitybasic-to-delete-connector/test-entitybasic-to-delete-connector-name
 
   component_service_weather_entity_5:
     <<: *component
@@ -458,23 +472,13 @@ default_entities:
     <<: *service
     _id: test-service-weather-entity-7
     name: test-service-weather-entity-7
+    depends:
+      - test-resource-service-weather-entity-7/test-component-service-weather-entity-7
     entity_pattern:
       - - field: name
           cond:
             type: regexp
             value: test-resource-service-weather-entity-7
-
-  service_weather_entity_8:
-    <<: *service
-    _id: test-service-weather-entity-8
-    name: test-service-weather-entity-8
-    depends:
-      - test-resource-service-weather-entity-8/test-component-service-weather-entity-8
-    entity_pattern:
-      - - field: name
-          cond:
-            type: regexp
-            value: test-resource-service-weather-entity-8
 
   service_to_emit_resource_entityupdated_events_on_component_infos_update:
     <<: *service
@@ -1048,6 +1052,48 @@ default_entities:
     component: test-junit-entity-to-get-entity-gantt-not-linked-to-test-suite
     connector: junit/junit
 
+  resource_to_alarm_export_1:
+    <<: *resource
+    _id: test-resource-to-alarm-export-1/test-component-default
+    name: test-resource-to-alarm-export-1
+    infos:
+      test-resource-to-alarm-export-1-info-1:
+        description: test-resource-to-alarm-export-1-info-1-description
+        name: test-resource-to-alarm-export-1-info-1-name
+        value: test-resource-to-alarm-export-1-info-1-value
+  resource_to_alarm_export_2:
+    <<: *resource
+    _id: test-resource-to-alarm-export-2/test-component-default
+    name: test-resource-to-alarm-export-2
+
+  resource_to_export_1:
+    <<: *resource
+    _id: test-resource-to-export-1/test-component-default
+    name: test-resource-to-export-1
+    infos:
+      test-resource-to-export-1-info-1:
+        description: test-resource-to-export-1-info-1-description
+        name: test-resource-to-export-1-info-1-name
+        value: test-resource-to-export-1-info-1-value
+  resource_to_export_2:
+    <<: *resource
+    _id: test-resource-to-export-2/test-component-default
+    name: test-resource-to-export-2
+
+  entity_to_alarm_metrics_get_1:
+    <<: *component
+    _id: test-entity-to-alarm-metrics-get-1
+    name: test-entity-to-alarm-metrics-get-1
+    component: test-entity-to-alarm-metrics-get-1
+    perf_data:
+      - cpu_%
+      - cpu
+  entity_to_alarm_metrics_get_2:
+    <<: *component
+    _id: test-entity-to-alarm-metrics-get-2
+    name: test-entity-to-alarm-metrics-get-2
+    component: test-entity-to-alarm-metrics-get-2
+
   default_entities_34:
     _id: test-instruction-execution-next-resource-1/test-instruction-execution-next-component
     component: test-instruction-execution-next-component
@@ -1338,34 +1384,6 @@ default_entities:
     infos: { }
     measurements: null
     name: test-idle-since-integration-2-resource-1
-    type: resource
-  default_entities_133:
-    _id: test-entity-to-export-resource-1/test-entity-to-export-component
-    component: test-entity-to-export-component
-    connector: test-entity-to-export-connector/test-entity-to-export-connector-name
-    enable_history:
-      - 1597030096
-    enabled: true
-    impact_level: 1
-    infos:
-      test-entity-to-export-resource-1-info-1:
-        description: test-entity-to-export-resource-1-info-1-description
-        name: test-entity-to-export-resource-1-info-1-name
-        value: test-entity-to-export-resource-1-info-1-value
-    measurements: null
-    name: test-entity-to-export-resource-1
-    type: resource
-  default_entities_134:
-    _id: test-entity-to-export-resource-2/test-entity-to-export-component
-    component: test-entity-to-export-component
-    connector: test-entity-to-export-connector/test-entity-to-export-connector-name
-    enable_history:
-      - 1597030096
-    enabled: true
-    impact_level: 1
-    infos: { }
-    measurements: null
-    name: test-entity-to-export-resource-2
     type: resource
   default_entities_149:
     _id: test-resource-to-not-run-auto-instruction-manually/test-component-to-not-run-auto-instruction-manually
@@ -3377,11 +3395,16 @@ default_entities:
     _id: test-resource-to-alarm-test-tag-filter-3/test-component-to-alarm-test-tag-filter
     name: test-resource-to-alarm-test-tag-filter-3
     component: test-component-to-alarm-test-tag-filter
+  connector_to_test_not_acked_metrics_axe:
+    <<: *connector
+    _id: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
+    name: test-connector-name-not-acked-metrics-axe
   component_to_test_not_acked_metrics_axe:
     <<: *component
     _id: test-component-not-acked-metrics-axe
     name: <Current()._id>
     component: <Current()._id>
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
     depends:
       - test-resource-not-acked-metrics-axe-2/test-component-not-acked-metrics-axe
       - test-resource-not-acked-metrics-axe-3/test-component-not-acked-metrics-axe
@@ -3397,46 +3420,55 @@ default_entities:
     _id: test-resource-not-acked-metrics-axe-2/test-component-not-acked-metrics-axe
     name: test-resource-not-acked-metrics-axe-2
     component: test-component-not-acked-metrics-axe
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
   resource_to_test_not_acked_metrics_axe_3:
     <<: *resource
     _id: test-resource-not-acked-metrics-axe-3/test-component-not-acked-metrics-axe
     name: test-resource-not-acked-metrics-axe-3
     component: test-component-not-acked-metrics-axe
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
   resource_to_test_not_acked_metrics_axe_4:
     <<: *resource
     _id: test-resource-not-acked-metrics-axe-4/test-component-not-acked-metrics-axe
     name: test-resource-not-acked-metrics-axe-4
     component: test-component-not-acked-metrics-axe
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
   resource_to_test_not_acked_metrics_axe_5:
     <<: *resource
     _id: test-resource-not-acked-metrics-axe-5/test-component-not-acked-metrics-axe
     name: test-resource-not-acked-metrics-axe-5
     component: test-component-not-acked-metrics-axe
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
   resource_to_test_not_acked_metrics_axe_6:
     <<: *resource
     _id: test-resource-not-acked-metrics-axe-6/test-component-not-acked-metrics-axe
     name: test-resource-not-acked-metrics-axe-6
     component: test-component-not-acked-metrics-axe
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
   resource_to_test_not_acked_metrics_axe_7:
     <<: *resource
     _id: test-resource-not-acked-metrics-axe-7/test-component-not-acked-metrics-axe
     name: test-resource-not-acked-metrics-axe-7
     component: test-component-not-acked-metrics-axe
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
   resource_to_test_not_acked_metrics_axe_8:
     <<: *resource
     _id: test-resource-not-acked-metrics-axe-8/test-component-not-acked-metrics-axe
     name: test-resource-not-acked-metrics-axe-8
     component: test-component-not-acked-metrics-axe
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
   resource_to_test_not_acked_metrics_axe_9:
     <<: *resource
     _id: test-resource-not-acked-metrics-axe-9/test-component-not-acked-metrics-axe
     name: test-resource-not-acked-metrics-axe-9
     component: test-component-not-acked-metrics-axe
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
   resource_to_test_not_acked_metrics_axe_10:
     <<: *resource
     _id: test-resource-not-acked-metrics-axe-10/test-component-not-acked-metrics-axe
     name: test-resource-not-acked-metrics-axe-10
     component: test-component-not-acked-metrics-axe
+    connector: test-connector-not-acked-metrics-axe/test-connector-name-not-acked-metrics-axe
 
   entity_manual_correlation_fail_1:
     <<: *resource

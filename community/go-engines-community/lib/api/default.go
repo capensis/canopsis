@@ -9,7 +9,8 @@ import (
 	"os"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
@@ -21,7 +22,6 @@ import (
 	apitechmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
@@ -55,7 +55,6 @@ import (
 )
 
 const chanBuf = 10
-const sessionStoreSessionMaxAge = 24 * time.Hour
 const linkFetchTimeout = 30 * time.Second
 
 //go:embed swaggerui/*
@@ -108,7 +107,7 @@ func Default(
 	// Set mongodb setting.
 	config.SetDbClientRetry(dbClient, cfg)
 	// Connect to rmq.
-	amqpConn, err := amqp.NewConnection(logger, -1, cfg.Global.GetReconnectTimeout())
+	amqpConn, err := libamqp.NewConnection(logger, -1, cfg.Global.GetReconnectTimeout())
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
@@ -127,22 +126,24 @@ func Default(
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot connect to redis: %w", err)
 	}
+	lockRedisSession, err := libredis.NewSession(ctx, libredis.EngineLockStorage, logger,
+		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot connect to redis: %w", err)
+	}
 	securityConfig, err := libsecurity.LoadConfig(flags.ConfigDir)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot load security config: %w", err)
 	}
 
-	cookieOptions := CookieOptions{
-		FileAccessName: "token",
-		MaxAge:         int(sessionStoreSessionMaxAge.Seconds()),
-	}
+	cookieOptions := DefaultCookieOptions()
 	sessionStore := mongostore.NewStore(dbClient, []byte(os.Getenv("SESSION_KEY")))
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
 	sessionStore.Options.Secure = flags.SecureSession
 	if p.ApiConfigProvider == nil {
 		p.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
 	}
-	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, p.ApiConfigProvider, cookieOptions, logger)
+	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, p.ApiConfigProvider, config.NewMaintenanceAdapter(dbClient), cookieOptions, logger)
 
 	if flags.EnableSameServiceNames {
 		logger.Info().Msg("Non-unique names for services ENABLED")
@@ -153,10 +154,8 @@ func Default(
 		return nil, nil, fmt.Errorf("cannot load access config: %w", err)
 	}
 	// Create pbehavior computer.
-	pbhComputeChan := make(chan libpbehavior.ComputeTask, chanBuf)
+	pbhComputeChan := make(chan []string, chanBuf)
 	pbhStore := libpbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
-	pbhService := libpbehavior.NewService(dbClient, libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(dbClient), json.NewDecoder()),
-		pbhStore, libredis.NewLockClient(pbhRedisSession), logger)
 	pbhEntityTypeResolver := libpbehavior.NewEntityTypeResolver(pbhStore, libpbehavior.NewEntityMatcher(dbClient), logger)
 	// Create entity service event publisher.
 	entityPublChan := make(chan entityservice.ChangeEntityMessage, chanBuf)
@@ -166,12 +165,10 @@ func Default(
 		canopsis.FIFOAckExchangeName, canopsis.FIFOQueueName, logger,
 	)
 
-	jobQueue := contextgraph.NewJobQueue()
 	importWorker := contextgraph.NewImportWorker(
 		cfg,
 		contextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 		contextgraph.NewMongoStatusReporter(dbClient),
-		jobQueue,
 		libcontextgraphV1.NewWorker(
 			dbClient,
 			importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
@@ -181,12 +178,14 @@ func Default(
 			dbClient,
 			importcontextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 			metricsEntityMetaUpdater,
+			logger,
 		),
 		logger,
 	)
 
 	entityCleanerTaskChan := make(chan entity.CleanTask)
 	disabledEntityCleaner := entity.NewDisabledCleaner(
+		lockRedisSession,
 		datastorage.NewAdapter(dbClient),
 		p.DataStorageConfigProvider,
 		metricsEntityMetaUpdater,
@@ -202,18 +201,12 @@ func Default(
 		p.UserInterfaceConfigProvider = config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
 	}
 
-	// Create and compute scenario priority intervals.
-	scenarioPriorityIntervals := action.NewPriorityIntervals()
-	err = scenarioPriorityIntervals.Recalculate(ctx, dbClient.Collection(mongo.ScenarioMongoCollection))
-	if err != nil {
-		return nil, nil, fmt.Errorf("cannot recalculate scenario preority: %w", err)
-	}
-
 	// Create csv exporter.
 	if exportExecutor == nil {
 		exportExecutor = export.NewTaskExecutor(dbClient, p.TimezoneConfigProvider, logger)
 	}
 
+	websocketStore := websocket.NewStore(dbClient, flags.IntegrationPeriodicalWaitTime)
 	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProviders(), flags.IntegrationPeriodicalWaitTime, logger)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot create websocket hub: %w", err)
@@ -254,6 +247,11 @@ func Default(
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
 
+			err = lockRedisSession.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
 			if deferFunc != nil {
 				deferFunc(ctx)
 			}
@@ -273,7 +271,7 @@ func Default(
 	}
 
 	api.AddRouter(func(router gin.IRouter) {
-		router.Use(middleware.Cache())
+		router.Use(middleware.CacheControl())
 
 		router.Use(func(c *gin.Context) {
 			start := time.Now()
@@ -289,7 +287,6 @@ func Default(
 
 		RegisterValidators(dbClient, flags.EnableSameServiceNames)
 		RegisterRoutes(
-			ctx,
 			cfg,
 			router,
 			security,
@@ -297,6 +294,8 @@ func Default(
 			linkGenerator,
 			dbClient,
 			pgPoolProvider,
+			amqpChannel,
+			p.ApiConfigProvider,
 			p.TimezoneConfigProvider,
 			p.TemplateConfigProvider,
 			pbhEntityTypeResolver,
@@ -308,14 +307,14 @@ func Default(
 			techMetricsTaskExecutor,
 			apilogger.NewActionLogger(dbClient, logger),
 			amqpChannel,
-			jobQueue,
 			p.UserInterfaceConfigProvider,
-			scenarioPriorityIntervals,
 			cfg.File.Upload,
 			websocketHub,
+			websocketStore,
 			broadcastMessageChan,
 			metricsEntityMetaUpdater,
 			metricsUserMetaUpdater,
+			author.NewProvider(dbClient, p.ApiConfigProvider),
 			logger,
 		)
 	})
@@ -351,99 +350,48 @@ func Default(
 	})
 	api.SetWebsocketHub(websocketHub)
 
-	api.AddWorker("tech metrics", func(ctx context.Context) {
+	api.AddWorker("tech_metrics", func(ctx context.Context) {
 		techMetricsSender.Run(ctx)
 	})
-	api.AddWorker("session clean", func(ctx context.Context) {
+	api.AddWorker("session_clean", func(ctx context.Context) {
 		security.GetSessionStore().StartAutoClean(ctx, flags.IntegrationPeriodicalWaitTime)
 	})
-	api.AddWorker("enforce policy load", func(ctx context.Context) {
+	api.AddWorker("enforce_policy_load", func(ctx context.Context) {
 		enforcer.StartAutoLoadPolicy(ctx)
 	})
-	api.AddWorker("pbehavior compute", func(ctx context.Context) {
-		pbhComputer := libpbehavior.NewCancelableComputer(
-			pbhService,
-			dbClient,
-			amqpChannel,
-			libpbehavior.NewEventManager(),
-			json.NewDecoder(),
-			json.NewEncoder(),
-			canopsis.FIFOQueueName,
-			logger,
-		)
-		pbhComputer.Compute(ctx, pbhComputeChan)
-	})
-	api.AddWorker("entity event publish", func(ctx context.Context) {
+	api.AddWorker("pbehavior_compute", sendPbhRecomputeEvents(pbhComputeChan, json.NewEncoder(), amqpChannel, logger))
+	api.AddWorker("entity_event_publish", func(ctx context.Context) {
 		entityServiceEventPublisher.Publish(ctx, entityPublChan)
 	})
-	api.AddWorker("entity cleaner", func(ctx context.Context) {
+	api.AddWorker("entity_cleaner", func(ctx context.Context) {
 		disabledEntityCleaner.RunCleanerProcess(ctx, entityCleanerTaskChan)
 	})
-	api.AddWorker("import job", func(ctx context.Context) {
+	api.AddWorker("import_job", func(ctx context.Context) {
 		importWorker.Run(ctx)
 	})
-	api.AddWorker("config reload", updateConfig(p.TimezoneConfigProvider, p.DataStorageConfigProvider, p.ApiConfigProvider,
+	api.AddWorker("config_reload", updateConfig(p.TimezoneConfigProvider, p.DataStorageConfigProvider, p.ApiConfigProvider,
 		p.TemplateConfigProvider, techMetricsConfigProvider, configAdapter, p.UserInterfaceConfigProvider,
 		userInterfaceAdapter, flags.PeriodicalWaitTime, logger))
-	api.AddWorker("data export", func(ctx context.Context) {
+	api.AddWorker("data_export", func(ctx context.Context) {
 		exportExecutor.Execute(ctx)
 	})
-	api.AddWorker("tech metrics export", func(ctx context.Context) {
+	api.AddWorker("tech_metrics_export", func(ctx context.Context) {
 		techMetricsTaskExecutor.Run(ctx)
 	})
-	api.AddWorker("auth token activity", func(ctx context.Context) {
-		ticker := time.NewTicker(canopsis.PeriodicalWaitTime)
-		defer ticker.Stop()
-		tokenStore := token.NewMongoStore(dbClient, logger)
-		shareTokenStore := sharetoken.NewMongoStore(dbClient, logger)
-
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case <-ticker.C:
-				for _, tokens := range websocketHub.GetUsers() {
-					for _, t := range tokens {
-						err := tokenStore.Access(ctx, t)
-						if err != nil {
-							logger.Err(err).Msg("cannot update token access")
-						}
-						err = shareTokenStore.Access(ctx, t)
-						if err != nil {
-							logger.Err(err).Msg("cannot update share token access")
-						}
-					}
-				}
-			}
-		}
-	})
-	api.AddWorker("auth token expiration", func(ctx context.Context) {
-		ticker := time.NewTicker(canopsis.PeriodicalWaitTime)
-		defer ticker.Stop()
-		tokenStore := token.NewMongoStore(dbClient, logger)
-		shareTokenStore := sharetoken.NewMongoStore(dbClient, logger)
-
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case <-ticker.C:
-				err := tokenStore.DeleteExpired(ctx)
-				if err != nil {
-					logger.Err(err).Msg("cannot delete expired tokens")
-				}
-				err = shareTokenStore.DeleteExpired(ctx)
-				if err != nil {
-					logger.Err(err).Msg("cannot delete expired share tokens")
-				}
-			}
-		}
-	})
+	tokenStore := token.NewMongoStore(dbClient, logger)
+	shareTokenStore := sharetoken.NewMongoStore(dbClient, logger)
+	api.AddWorker("auth_token_activity", updateTokenActivity(flags.IntegrationPeriodicalWaitTime, tokenStore, shareTokenStore,
+		websocketHub, logger))
+	api.AddWorker("auth_token_expiration", removeExpiredTokens(flags.PeriodicalWaitTime, tokenStore, shareTokenStore,
+		logger))
 	api.AddWorker("websocket", func(ctx context.Context) {
 		websocketHub.Start(ctx)
 	})
-	broadcastMessageService := broadcastmessage.NewService(broadcastmessage.NewStore(dbClient), websocketHub, canopsis.PeriodicalWaitTime, logger)
-	api.AddWorker("broadcast message", func(ctx context.Context) {
+	api.AddWorker("websocket_conns", updateWebsocketConns(flags.IntegrationPeriodicalWaitTime, websocketHub, websocketStore, logger))
+
+	maintenanceAdapter := config.NewMaintenanceAdapter(dbClient)
+	broadcastMessageService := broadcastmessage.NewService(broadcastmessage.NewStore(dbClient, maintenanceAdapter), websocketHub, canopsis.PeriodicalWaitTime, logger)
+	api.AddWorker("broadcast_message", func(ctx context.Context) {
 		broadcastMessageService.Start(ctx, broadcastMessageChan)
 	})
 	api.AddWorker("links", func(ctx context.Context) {
@@ -489,48 +437,4 @@ func newWebsocketHub(
 		return nil, err
 	}
 	return websocketHub, nil
-}
-
-func updateConfig(
-	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
-	dataStorageConfigProvider *config.BaseDataStorageConfigProvider,
-	apiConfigProvider *config.BaseApiConfigProvider,
-	templateConfigProvider *config.BaseTemplateConfigProvider,
-	techMetricsConfigProvider *config.BaseTechMetricsConfigProvider,
-	configAdapter config.Adapter,
-	userInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider,
-	userInterfaceAdapter config.UserInterfaceAdapter,
-	interval time.Duration,
-	logger zerolog.Logger,
-) func(ctx context.Context) {
-	return func(ctx context.Context) {
-		ticker := time.NewTicker(interval)
-		defer ticker.Stop()
-
-		for {
-			select {
-			case <-ticker.C:
-				cfg, err := configAdapter.GetConfig(ctx)
-				if err != nil {
-					logger.Err(err).Msg("fail to load config")
-					continue
-				}
-
-				timezoneConfigProvider.Update(cfg)
-				apiConfigProvider.Update(cfg)
-				techMetricsConfigProvider.Update(cfg)
-				dataStorageConfigProvider.Update(cfg)
-				templateConfigProvider.Update(cfg)
-
-				userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
-				if err != nil {
-					logger.Err(err).Msg("fail to load user interface config")
-					continue
-				}
-				userInterfaceConfigProvider.Update(userInterfaceConfig)
-			case <-ctx.Done():
-				return
-			}
-		}
-	}
 }

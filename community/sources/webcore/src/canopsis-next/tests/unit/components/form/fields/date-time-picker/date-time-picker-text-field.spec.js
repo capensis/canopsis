@@ -1,12 +1,10 @@
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 import { createInputStub } from '@unit/stubs/input';
 
 import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/date-time-picker-text-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-text-field': createInputStub('v-text-field'),
@@ -17,38 +15,28 @@ const snapshotStubs = {
   'date-time-picker-menu': true,
 };
 
-const factory = (options = {}) => shallowMount(DateTimePickerTextField, {
-  localVue,
-  stubs,
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(DateTimePickerTextField, {
-  localVue,
-  stubs: snapshotStubs,
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-
-  ...options,
-});
-
 const selectTextField = wrapper => wrapper.find('.v-text-field');
 const selectDateTimePickerButton = wrapper => wrapper.find('date-time-picker-menu-stub');
 
 describe('date-time-picker-text-field', () => {
   const nowTimestamp = 1386435600000;
   mockDateNow(nowTimestamp);
+
+  const factory = generateShallowRenderer(DateTimePickerTextField, { stubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(DateTimePickerTextField, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
 
   test('String value changed after trigger text field', () => {
     const wrapper = factory();

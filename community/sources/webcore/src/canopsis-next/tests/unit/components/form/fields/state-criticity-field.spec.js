@@ -1,9 +1,7 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { ENTITIES_STATES } from '@/constants';
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-btn-toggle': {
@@ -18,18 +16,10 @@ const stubs = {
   },
 };
 
-const factory = (options = {}) => shallowMount(StateCriticityField, {
-  localVue,
-  stubs,
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(StateCriticityField, {
-  localVue,
-  ...options,
-});
-
 describe('state-criticity-field', () => {
+  const factory = generateShallowRenderer(StateCriticityField, { stubs });
+  const snapshotFactory = generateRenderer(StateCriticityField);
+
   it('Value changed after trigger click on the button', () => {
     const wrapper = factory({
       propsData: {

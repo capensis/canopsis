@@ -14,10 +14,12 @@ configuration:
     loader_no_update: true
     login_page_description: Test login
     max_matched_items: 4
+    allow_change_severity_to_info: true
 
   configuration_global:
     _id: global_config
     alarm:
+      activatealarmafterautoremediation: false
       allowdoubleack: true
       cancelautosolvedelay: 1h
       disableactionsnoozedelayonpbh: true
@@ -31,6 +33,8 @@ configuration:
     api:
       bulkmaxsize: 10000
       tokensigningmethod: HS256
+      authorscheme: ["$username", " ", "$firstname", " ", "$lastname", " ", "$email"]
+      metricscachexpiration: 24h
     data_storage:
       timetoexecute: ""
     file:
@@ -44,6 +48,8 @@ configuration:
       reconnectretries: 3
       reconnecttimeoutmilliseconds: 8
       maxexternalresponsesize: 10485760
+      buildentityinfosdictionary: true
+      builddynamicinfosdictionary: true
     import_ctx:
       filepattern: /tmp/import_%s.json
       thdcritminperimport: 60m
@@ -51,10 +57,11 @@ configuration:
     metrics:
       flushinterval: 1s
       sliinterval: 1h
-      enabledmanualinstructions: true
+      usersessiongapinterval: 1h
+      enabledinstructions: true
       enablednotackedmetrics: true
     tech_metrics:
-      enabled: false
+      enabled: true
       dumpkeepinterval: 1h
     timezone:
       timezone: Europe/Paris
@@ -76,6 +83,8 @@ configuration:
           method: POST
           response_status_url_key: url
           url_tpl: '{{ .host }}/api/v2/job_templates/{{ .jobID }}/launch/'
+          with_body: true
+          with_url_query: false
         output_endpoint:
           headers:
             Accept: text/plain
@@ -107,6 +116,8 @@ configuration:
           response_status_header_url_key: Location
           url_tpl: '{{ .host }}/job/{{ .jobID }}/build'
           url_tpl_with_params: '{{ .host }}/job/{{ .jobID }}/buildWithParameters'
+          with_body: false
+          with_url_query: true
         output_endpoint:
           method: GET
           url_tpl: '{{ .host }}/job/{{ .jobID }}/{{ .executionID }}/consoleText'
@@ -140,6 +151,8 @@ configuration:
           response_external_url_key: permalink
           response_status_url_key: href
           url_tpl: '{{ .host }}/api/35/job/{{ .jobID }}/run'
+          with_body: true
+          with_url_query: false
         output_endpoint:
           headers:
             Accept: text/plain
@@ -159,12 +172,50 @@ configuration:
             running: running
             succeeded: succeeded
           url_tpl: '{{ .host }}{{ .responseUrl }}'
+      vtom:
+        auth:
+          type: header-token
+          header: X-API-KEY
+        reset_endpoint:
+          url_tpl: "{{ .host }}/jobs/{{ .jobID }}/action"
+          method: POST
+          headers:
+            "Content-Type": "application/json"
+            "Accept": "application/json"
+          body: "{\"type\":\"ChangeStatus\",\"status\":\"Waiting\"}"
+        launch_endpoint:
+          url_tpl: "{{ .host }}/jobs/{{ .jobID }}/action"
+          method: POST
+          headers:
+            "Content-Type": "application/json"
+            "Accept": "application/json"
+          body: "{\"type\":\"Request\"}"
+          with_body: true
+          with_url_query: false
+        status_endpoint:
+          url_tpl: "{{ .host }}/jobs/{{ .jobID }}/status"
+          method: GET
+          response_status_key: status
+          statuses:
+            Waiting: waiting
+            Running: running
+            Finished: succeeded
+            Error: failed
+        output_endpoint:
+          url_tpl: "{{ .host }}/jobs/{{ .jobID }}/logs/last/stdout"
+          method: GET
+        err_output_endpoint:
+          url_tpl: "{{ .host }}/jobs/{{ .jobID }}/logs/last/stderr"
+          method: GET
+        response_err_msg_key: message
     http_timeout: 1m
     launch_job_retries_amount: 1
     launch_job_retries_interval: 1s
     pause_manual_instruction_interval: 30m
     wait_job_complete_retries_amount: 1
     wait_job_complete_retries_interval: 1s
+    job_wait_interval: 4s
+    job_retry_interval: 4s
 
   configuration_healthcheck:
     _id: health_check
@@ -180,8 +231,6 @@ configuration:
     - from: engine-axe
       to: engine-remediation
     - from: engine-correlation
-      to: engine-service
-    - from: engine-service
       to: engine-dynamic-infos
     - from: engine-dynamic-infos
       to: engine-action
@@ -206,3 +255,7 @@ configuration:
       - "#8D6E63"
       - "#607D8B"
       - "#9E9E9E"
+
+  configuration_maintenance:
+    _id: maintenance
+    enabled: false

@@ -1,27 +1,20 @@
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
-import {
-  ENTITY_FIELDS,
-  ENTITY_FIELDS_TO_LABELS_KEYS,
-  ENTITY_TYPES,
-  MODALS,
-} from '@/constants';
+import { ENTITY_FIELDS, ENTITY_FIELDS_TO_LABELS_KEYS, ENTITY_TYPES, MODALS } from '@/constants';
 
-import { getColumnLabel } from '@/helpers/widgets';
+import { getWidgetColumnLabel } from '@/helpers/entities/widget/list';
 
 import CTreeviewDataTable from '@/components/common/table/c-treeview-data-table.vue';
 import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'c-treeview-data-table': CTreeviewDataTable,
   'c-no-events-icon': true,
-  'color-indicator-wrapper': true,
+  'service-dependencies-entity-cell': true,
 };
 
 const selectTreeviewTable = wrapper => wrapper.find('.service-dependencies');
@@ -47,6 +40,7 @@ describe('service-dependencies', () => {
       _id: 'data-alarm-1-entity',
       name: 'Data alarm 1 entity',
       type: ENTITY_TYPES.service,
+      state: 0,
       impact_level: 5,
       impact_state: 0,
       has_impacts: false,
@@ -56,6 +50,7 @@ describe('service-dependencies', () => {
       _id: 'data-alarm-2-entity',
       name: 'Data alarm 2 entity',
       type: ENTITY_TYPES.service,
+      state: 1,
       impact_level: 1,
       impact_state: 0,
       has_impacts: false,
@@ -64,6 +59,7 @@ describe('service-dependencies', () => {
       _id: 'data-alarm-3-entity',
       name: 'Data alarm 3 entity',
       type: ENTITY_TYPES.connector,
+      state: 2,
       impact_level: 5,
       impact_state: 0,
       has_impacts: false,
@@ -72,6 +68,7 @@ describe('service-dependencies', () => {
       _id: 'data-alarm-4-entity',
       name: 'Data alarm 4 entity',
       type: ENTITY_TYPES.service,
+      state: 3,
       impact_level: 1,
       impact_state: 0,
       has_impacts: false,
@@ -109,15 +106,15 @@ describe('service-dependencies', () => {
 
     value: `entity.${column.value}`,
     sortable: false,
-    text: getColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
+    text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
   }));
 
   const store = createMockedStoreModules([
     serviceModule,
   ]);
 
-  const snapshotFactory = generateRenderer(ServiceDependencies, { localVue, stubs });
-  const factory = generateShallowRenderer(ServiceDependencies, { localVue, stubs });
+  const snapshotFactory = generateRenderer(ServiceDependencies, { stubs });
+  const factory = generateShallowRenderer(ServiceDependencies, { stubs });
 
   it('Dependencies fetched after mount', async () => {
     factory({
@@ -320,7 +317,7 @@ describe('service-dependencies', () => {
 
           value: `entity.${column.value}`,
           sortable: false,
-          text: getColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
+          text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
         })),
         root: entity,
       },

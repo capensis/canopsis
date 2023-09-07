@@ -4,7 +4,7 @@ import AxiosMockAdapter from 'axios-mock-adapter';
 import Faker from 'faker';
 
 import request from '@/services/request';
-import { DEFAULT_ENTITY_MODULE_TYPES } from '@/store/plugins/entities/create-entity-module';
+import { DEFAULT_ENTITY_MODULE_TYPES } from '@/store/plugins/entities/create-crud-module';
 
 /**
  * @typedef {Object} Module
@@ -86,22 +86,19 @@ export const createMockedStoreGetters = ({ name, ...getters }) => createMockedSt
 export const testsEntityModule = ({
   route,
   module,
-  schema,
-  entityType,
   entities,
-  entityIds,
   types = DEFAULT_ENTITY_MODULE_TYPES,
 }) => {
   const { actions, state: initialState, mutations, getters } = module;
 
   const axiosMockAdapter = new AxiosMockAdapter(request);
-  const normalizedData = {
-    result: entityIds,
+  const meta = {
+    total_count: entities.length,
   };
-  const responseData = {
+  const response = {
     data: entities,
     meta: {
-      total_count: Faker.datatype.number(),
+      total_count: entities.length,
     },
   };
 
@@ -145,11 +142,12 @@ export const testsEntityModule = ({
 
     const fetchListCompleted = mutations[types.FETCH_LIST_COMPLETED];
 
-    const allIds = Faker.datatype.array();
+    fetchListCompleted(state, {
+      data: entities,
+      meta,
+    });
 
-    fetchListCompleted(state, { allIds });
-
-    expect(state).toEqual({ ...state, allIds });
+    expect(state).toEqual({ ...state, items: entities, meta });
   });
 
   it('Mutate state after commit FETCH_LIST_FAILED', () => {
@@ -162,38 +160,13 @@ export const testsEntityModule = ({
     expect(state).toEqual({ ...state, pending: false });
   });
 
-  it('Get item by id. Getter: getItemById', () => {
-    const item = {
-      param: Faker.datatype.string(),
-    };
-    const getItem = jest.fn(() => item);
-    const rootGetters = {
-      'entities/getItem': getItem,
-    };
-    const state = {};
-
-    const id = Faker.datatype.string();
-
-    const data = getters.getItemById(state, getters, {}, rootGetters)(id);
-
-    expect(data).toEqual(item);
-    expect(getItem).toHaveBeenCalledWith(entityType, id);
-  });
-
   it('Get items. Getter: items', () => {
-    const getList = jest.fn(() => entities);
-    const rootGetters = {
-      'entities/getList': getList,
-    };
     const state = {
       ...initialState,
-      allIds: entityIds,
+      items: entities,
     };
 
-    const data = getters.items(state, getters, {}, rootGetters);
-
-    expect(data).toEqual(entities);
-    expect(getList).toHaveBeenCalledWith(entityType, entityIds);
+    expect(getters.items(state)).toEqual(entities);
   });
 
   it('Get pending. Getter: pending', () => {
@@ -205,44 +178,28 @@ export const testsEntityModule = ({
     expect(data).toEqual(pending);
   });
 
-  if (getters.meta) {
-    it('Get meta. Getter: meta', () => {
-      const meta = {
-        total_count: Faker.datatype.number(),
-      };
-      const state = { meta };
+  it('Get meta. Getter: meta', () => {
+    const state = { meta };
 
-      const data = getters.meta(state);
+    const data = getters.meta(state);
 
-      expect(data).toEqual(meta);
-    });
-  }
+    expect(data).toEqual(meta);
+  });
 
   it('Fetch list. Action: fetchList', async () => {
-    const dispatch = jest.fn().mockReturnValue({
-      normalizedData,
-      data: responseData,
-    });
+    axiosMockAdapter
+      .onGet(route)
+      .reply(200, response);
+
     const commit = jest.fn();
 
-    await actions.fetchList({ dispatch, commit });
-
-    expect(dispatch).toBeCalledWith(
-      'entities/fetch',
-      {
-        route,
-        dataPreparer: expect.any(Function),
-        params: undefined,
-        schema: [schema],
-      },
-      { root: true },
-    );
+    await actions.fetchList({ commit });
 
     expect(commit).toBeCalledWith(
       types.FETCH_LIST_COMPLETED,
       {
-        ...responseData,
-        allIds: entityIds,
+        data: entities,
+        meta,
       },
     );
   });
@@ -262,51 +219,45 @@ export const testsEntityModule = ({
   }
 
   it('Fetch list with params. Action: fetchList', async () => {
-    const params = {};
-    const dispatch = jest.fn().mockReturnValue({
-      normalizedData,
-      data: responseData,
-    });
+    const params = { param: 1 };
     const commit = jest.fn();
 
-    await actions.fetchList({ dispatch, commit }, { params });
+    axiosMockAdapter
+      .onGet(route, params)
+      .reply(200, response);
 
-    expect(dispatch).toBeCalledWith(
-      'entities/fetch',
-      {
-        route,
-        params,
-        dataPreparer: expect.any(Function),
-        schema: [schema],
-      },
-      { root: true },
-    );
+    await actions.fetchList({ commit }, { params });
 
     expect(commit).toBeCalledWith(
       types.FETCH_LIST_COMPLETED,
       {
-        ...responseData,
-        allIds: entityIds,
+        data: entities,
+        meta,
       },
     );
   });
 
   it('Fetch list with error. Action: fetchList', async () => {
+    const error = { message: Faker.datatype.string() };
+
+    axiosMockAdapter
+      .onGet(route)
+      .reply(404, error);
+
     const originalError = console.error;
     console.error = jest.fn();
-    const error = new Error(Faker.datatype.string());
     const dispatch = jest.fn().mockRejectedValue(error);
     const commit = jest.fn();
 
     try {
       await actions.fetchList({ dispatch, commit });
     } catch (err) {
-      expect(err).toBe(error);
+      expect(err.message).toBe(error.message);
 
       expect(commit).toBeCalledWith(types.FETCH_LIST_FAILED);
 
       expect(console.error).toBeCalledWith(error);
-
+    } finally {
       console.error = originalError;
     }
   });
@@ -382,16 +333,32 @@ export const createPbehaviorTypesModule = () => {
     data: [],
   });
 
+  const fieldPbehaviorTypes = jest.fn()
+    .mockReturnValue([]);
+
+  const fieldPbehaviorTypesPending = jest.fn()
+    .mockReturnValue(false);
+
+  const fetchFieldPbehaviorTypes = jest.fn();
+
   const pbehaviorTypesModule = {
     name: 'pbehaviorTypes',
+    getters: {
+      fieldItems: fieldPbehaviorTypes,
+      fieldPending: fieldPbehaviorTypesPending,
+    },
     actions: {
       fetchListWithoutStore: fetchPbehaviorTypesListWithoutStore,
+      fetchFieldList: fetchFieldPbehaviorTypes,
     },
   };
 
   return {
     pbehaviorTypesModule,
+    fieldPbehaviorTypes,
+    fieldPbehaviorTypesPending,
     fetchPbehaviorTypesListWithoutStore,
+    fetchFieldPbehaviorTypes,
   };
 };
 
@@ -421,7 +388,7 @@ export const createPbehaviorReasonModule = () => {
 export const createUserPreferenceModule = () => {
   const fetchUserPreference = jest.fn();
   const getUserPreferenceByWidgetId = jest.fn()
-    .mockReturnValue({ content: {} });
+    .mockReturnValue(() => ({ content: {} }));
   const updateUserPreference = jest.fn();
 
   const userPreferenceModule = {
@@ -431,7 +398,7 @@ export const createUserPreferenceModule = () => {
       update: updateUserPreference,
     },
     getters: {
-      getItemByWidgetId: () => getUserPreferenceByWidgetId,
+      getItemByWidgetId: getUserPreferenceByWidgetId,
     },
   };
 
@@ -446,15 +413,14 @@ export const createUserPreferenceModule = () => {
 export const createWidgetModule = () => {
   const createWidget = jest.fn();
   const updateWidget = jest.fn();
-  const copyWidget = jest.fn();
   const createWidgetFilter = jest.fn();
   const updateWidgetFilter = jest.fn();
   const removeWidgetFilter = jest.fn();
+  const updateGridPositions = jest.fn();
 
   afterEach(() => {
     createWidget.mockClear();
     updateWidget.mockClear();
-    copyWidget.mockClear();
     createWidgetFilter.mockClear();
     updateWidgetFilter.mockClear();
     removeWidgetFilter.mockClear();
@@ -465,10 +431,10 @@ export const createWidgetModule = () => {
     actions: {
       create: createWidget,
       update: updateWidget,
-      copy: copyWidget,
       createWidgetFilter,
       updateWidgetFilter,
       removeWidgetFilter,
+      updateGridPositions,
     },
   };
 
@@ -476,10 +442,10 @@ export const createWidgetModule = () => {
     widgetModule,
     createWidget,
     updateWidget,
-    copyWidget,
     createWidgetFilter,
     updateWidgetFilter,
     removeWidgetFilter,
+    updateGridPositions,
   };
 };
 
@@ -537,6 +503,7 @@ export const createQueryModule = () => {
   const getQueryById = jest.fn().mockReturnValue(() => ({}));
   const getQueryNonceById = jest.fn().mockReturnValue(() => 'nonce');
   const updateQuery = jest.fn();
+  const removeQuery = jest.fn();
 
   const queryModule = {
     name: 'query',
@@ -546,6 +513,7 @@ export const createQueryModule = () => {
     },
     actions: {
       update: updateQuery,
+      remove: removeQuery,
     },
   };
 
@@ -553,6 +521,7 @@ export const createQueryModule = () => {
     getQueryById,
     getQueryNonceById,
     updateQuery,
+    removeQuery,
     queryModule,
   };
 };
@@ -561,20 +530,36 @@ export const createActiveViewModule = () => {
   const registerEditingOffHandler = jest.fn();
   const unregisterEditingOffHandler = jest.fn();
   const fetchActiveView = jest.fn();
+  const toggleEditing = jest.fn();
+  const editing = jest.fn().mockReturnValue(false);
 
   const activeViewModule = {
     name: 'activeView',
+    getters: {
+      editing,
+    },
     actions: {
       registerEditingOffHandler,
       unregisterEditingOffHandler,
+      toggleEditing,
       fetch: fetchActiveView,
     },
   };
 
+  afterEach(() => {
+    editing.mockClear();
+    toggleEditing.mockClear();
+    fetchActiveView.mockClear();
+    registerEditingOffHandler.mockClear();
+    unregisterEditingOffHandler.mockClear();
+  });
+
   return {
+    editing,
     registerEditingOffHandler,
     unregisterEditingOffHandler,
     fetchActiveView,
+    toggleEditing,
     activeViewModule,
   };
 };
@@ -605,23 +590,31 @@ export const createPbehaviorEntitiesModule = () => {
 export const createPbehaviorModule = () => {
   const fetchPbehaviorsByEntityIdWithoutStore = jest.fn().mockResolvedValue([]);
   const removePbehavior = jest.fn();
+  const createEntityPbehaviors = jest.fn();
+  const removeEntityPbehaviors = jest.fn();
 
   const pbehaviorModule = {
     name: 'pbehavior',
     actions: {
       fetchListByEntityIdWithoutStore: fetchPbehaviorsByEntityIdWithoutStore,
       removeWithoutStore: removePbehavior,
+      bulkCreateEntityPbehaviors: createEntityPbehaviors,
+      bulkRemoveEntityPbehaviors: removeEntityPbehaviors,
     },
   };
 
   afterEach(() => {
     removePbehavior.mockClear();
     fetchPbehaviorsByEntityIdWithoutStore.mockClear();
+    createEntityPbehaviors.mockClear();
+    removeEntityPbehaviors.mockClear();
   });
 
   return {
     removePbehavior,
     fetchPbehaviorsByEntityIdWithoutStore,
+    createEntityPbehaviors,
+    removeEntityPbehaviors,
     pbehaviorModule,
   };
 };
@@ -648,11 +641,29 @@ export const createPbehaviorTimespanModule = () => {
 
 export const createAlarmModule = () => {
   const fetchAlarmItem = jest.fn();
+  const fetchOpenAlarmsListWithoutStore = jest.fn();
   const fetchAlarmItemWithoutStore = jest.fn().mockResolvedValue({});
+  const bulkCreateAlarmAckEvent = jest.fn();
+  const bulkCreateAlarmAckremoveEvent = jest.fn();
+  const bulkCreateAlarmSnoozeEvent = jest.fn();
+  const bulkCreateAlarmAssocticketEvent = jest.fn();
+  const bulkCreateAlarmCommentEvent = jest.fn();
+  const bulkCreateAlarmCancelEvent = jest.fn();
+  const bulkCreateAlarmUnCancelEvent = jest.fn();
+  const bulkCreateAlarmChangestateEvent = jest.fn();
 
   afterEach(() => {
     fetchAlarmItem.mockClear();
     fetchAlarmItemWithoutStore.mockClear();
+    fetchOpenAlarmsListWithoutStore.mockClear();
+    bulkCreateAlarmAckEvent.mockClear();
+    bulkCreateAlarmAckremoveEvent.mockClear();
+    bulkCreateAlarmSnoozeEvent.mockClear();
+    bulkCreateAlarmAssocticketEvent.mockClear();
+    bulkCreateAlarmCommentEvent.mockClear();
+    bulkCreateAlarmCancelEvent.mockClear();
+    bulkCreateAlarmUnCancelEvent.mockClear();
+    bulkCreateAlarmChangestateEvent.mockClear();
   });
 
   const alarmModule = {
@@ -660,33 +671,51 @@ export const createAlarmModule = () => {
     actions: {
       fetchItem: fetchAlarmItem,
       fetchItemWithoutStore: fetchAlarmItemWithoutStore,
+      fetchOpenAlarmsListWithoutStore,
+      bulkCreateAlarmAckEvent,
+      bulkCreateAlarmAckremoveEvent,
+      bulkCreateAlarmSnoozeEvent,
+      bulkCreateAlarmAssocticketEvent,
+      bulkCreateAlarmCommentEvent,
+      bulkCreateAlarmCancelEvent,
+      bulkCreateAlarmUnCancelEvent,
+      bulkCreateAlarmChangestateEvent,
     },
   };
 
   return {
     fetchAlarmItem,
     fetchAlarmItemWithoutStore,
+    fetchOpenAlarmsListWithoutStore,
+    bulkCreateAlarmAckEvent,
+    bulkCreateAlarmAckremoveEvent,
+    bulkCreateAlarmSnoozeEvent,
+    bulkCreateAlarmAssocticketEvent,
+    bulkCreateAlarmCommentEvent,
+    bulkCreateAlarmCancelEvent,
+    bulkCreateAlarmUnCancelEvent,
+    bulkCreateAlarmChangestateEvent,
     alarmModule,
   };
 };
 
-export const createEventModule = () => {
-  const createEvent = jest.fn();
+export const createAlarmDetailsModule = () => {
+  const fetchAlarmDetailsWithoutStore = jest.fn().mockResolvedValue([]);
 
   afterEach(() => {
-    createEvent.mockClear();
+    fetchAlarmDetailsWithoutStore.mockClear();
   });
 
-  const eventModule = {
-    name: 'event',
+  const alarmDetailsModule = {
+    name: 'alarm/details',
     actions: {
-      create: createEvent,
+      fetchListWithoutStore: fetchAlarmDetailsWithoutStore,
     },
   };
 
   return {
-    eventModule,
-    createEvent,
+    fetchAlarmDetailsWithoutStore,
+    alarmDetailsModule,
   };
 };
 
@@ -720,6 +749,56 @@ export const createWidgetTemplateModule = () => {
   };
 };
 
+export const createAlarmTagModule = () => {
+  const alarmTags = jest.fn().mockReturnValue([]);
+  const alarmTagsPending = jest.fn().mockReturnValue(false);
+  const alarmTagsMeta = jest.fn().mockReturnValue({});
+
+  const fetchAlarmTagsList = jest.fn();
+  const createAlarmTag = jest.fn();
+  const updateAlarmTag = jest.fn();
+  const removeAlarmTag = jest.fn();
+  const bulkRemoveAlarmTags = jest.fn();
+
+  afterEach(() => {
+    fetchAlarmTagsList.mockClear();
+    createAlarmTag.mockClear();
+    updateAlarmTag.mockClear();
+    removeAlarmTag.mockClear();
+    bulkRemoveAlarmTags.mockClear();
+  });
+
+  const alarmTagModule = {
+    name: 'alarmTag',
+    getters: {
+      items: alarmTags,
+      pending: alarmTagsPending,
+      meta: alarmTagsMeta,
+    },
+    actions: {
+      fetchList: fetchAlarmTagsList,
+      create: createAlarmTag,
+      update: updateAlarmTag,
+      remove: removeAlarmTag,
+      bulkRemove: bulkRemoveAlarmTags,
+    },
+  };
+
+  return {
+    alarmTagModule,
+
+    alarmTags,
+    alarmTagsPending,
+    alarmTagsMeta,
+
+    fetchAlarmTagsList,
+    createAlarmTag,
+    updateAlarmTag,
+    removeAlarmTag,
+    bulkRemoveAlarmTags,
+  };
+};
+
 export const createInfosModule = () => {
   const fetchItems = jest.fn();
 
@@ -746,13 +825,13 @@ export const createManualMetaAlarmModule = () => {
   const fetchManualMetaAlarmsListWithoutStore = jest.fn().mockResolvedValue([]);
   const createManualMetaAlarm = jest.fn().mockResolvedValue([]);
   const addAlarmsIntoManualMetaAlarm = jest.fn().mockResolvedValue([]);
-  const removeAlarmsIntoManualMetaAlarm = jest.fn().mockResolvedValue([]);
+  const removeAlarmsFromManualMetaAlarm = jest.fn().mockResolvedValue([]);
 
   afterEach(() => {
     fetchManualMetaAlarmsListWithoutStore.mockClear();
     createManualMetaAlarm.mockClear();
     addAlarmsIntoManualMetaAlarm.mockClear();
-    removeAlarmsIntoManualMetaAlarm.mockClear();
+    removeAlarmsFromManualMetaAlarm.mockClear();
   });
 
   const manualMetaAlarmModule = {
@@ -761,7 +840,7 @@ export const createManualMetaAlarmModule = () => {
       fetchListWithoutStore: fetchManualMetaAlarmsListWithoutStore,
       create: createManualMetaAlarm,
       addAlarms: addAlarmsIntoManualMetaAlarm,
-      removeAlarms: removeAlarmsIntoManualMetaAlarm,
+      removeAlarms: removeAlarmsFromManualMetaAlarm,
     },
   };
 
@@ -769,8 +848,28 @@ export const createManualMetaAlarmModule = () => {
     fetchManualMetaAlarmsListWithoutStore,
     createManualMetaAlarm,
     addAlarmsIntoManualMetaAlarm,
-    removeAlarmsIntoManualMetaAlarm,
+    removeAlarmsFromManualMetaAlarm,
     manualMetaAlarmModule,
+  };
+};
+
+export const createMetaAlarmModule = () => {
+  const removeAlarmsFromMetaAlarm = jest.fn().mockResolvedValue([]);
+
+  afterEach(() => {
+    removeAlarmsFromMetaAlarm.mockClear();
+  });
+
+  const metaAlarmModule = {
+    name: 'metaAlarm',
+    actions: {
+      removeAlarms: removeAlarmsFromMetaAlarm,
+    },
+  };
+
+  return {
+    removeAlarmsFromMetaAlarm,
+    metaAlarmModule,
   };
 };
 
@@ -798,5 +897,150 @@ export const createDeclareTicketModule = () => {
     declareTicketRuleModule,
     bulkCreateDeclareTicketExecution,
     fetchAssignedDeclareTicketsWithoutStore,
+  };
+};
+
+export const createVectorMetricsModule = () => {
+  const getVectorMetricsListByWidgetId = jest.fn().mockReturnValue(() => false);
+  const getVectorMetricsPendingByWidgetId = jest.fn().mockReturnValue(() => []);
+  const getVectorMetricsMetaByWidgetId = jest.fn().mockReturnValue(() => ({}));
+  const fetchVectorMetricsList = jest.fn();
+
+  afterEach(() => {
+    getVectorMetricsListByWidgetId.mockClear();
+    getVectorMetricsPendingByWidgetId.mockClear();
+    getVectorMetricsMetaByWidgetId.mockClear();
+    fetchVectorMetricsList.mockClear();
+  });
+
+  const vectorMetricsModule = {
+    name: 'vectorMetrics',
+    getters: {
+      getListByWidgetId: getVectorMetricsListByWidgetId,
+      getPendingByWidgetId: getVectorMetricsPendingByWidgetId,
+      getMetaByWidgetId: getVectorMetricsMetaByWidgetId,
+    },
+    actions: {
+      fetchList: fetchVectorMetricsList,
+    },
+  };
+
+  return {
+    vectorMetricsModule,
+    getVectorMetricsListByWidgetId,
+    getVectorMetricsPendingByWidgetId,
+    getVectorMetricsMetaByWidgetId,
+    fetchVectorMetricsList,
+  };
+};
+
+export const createAggregatedMetricsModule = () => {
+  const getAggregatedMetricsListByWidgetId = jest.fn().mockReturnValue(() => false);
+  const getAggregatedMetricsPendingByWidgetId = jest.fn().mockReturnValue(() => []);
+  const getAggregatedMetricsMetaByWidgetId = jest.fn().mockReturnValue(() => ({}));
+  const fetchAggregatedMetricsList = jest.fn();
+  const fetchAggregatedMetricsWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+  });
+
+  afterEach(() => {
+    getAggregatedMetricsListByWidgetId.mockClear();
+    getAggregatedMetricsPendingByWidgetId.mockClear();
+    getAggregatedMetricsMetaByWidgetId.mockClear();
+    fetchAggregatedMetricsList.mockClear();
+    fetchAggregatedMetricsWithoutStore.mockClear();
+  });
+
+  const aggregatedMetricsModule = {
+    name: 'aggregatedMetrics',
+    getters: {
+      getListByWidgetId: getAggregatedMetricsListByWidgetId,
+      getPendingByWidgetId: getAggregatedMetricsPendingByWidgetId,
+      getMetaByWidgetId: getAggregatedMetricsMetaByWidgetId,
+    },
+    actions: {
+      fetchList: fetchAggregatedMetricsList,
+      fetchListWithoutStore: fetchAggregatedMetricsWithoutStore,
+    },
+  };
+
+  return {
+    aggregatedMetricsModule,
+    getAggregatedMetricsListByWidgetId,
+    getAggregatedMetricsPendingByWidgetId,
+    getAggregatedMetricsMetaByWidgetId,
+    fetchAggregatedMetricsList,
+    fetchAggregatedMetricsWithoutStore,
+  };
+};
+
+export const createMetricsModule = () => {
+  const fetchExternalMetricsList = jest.fn();
+  const fetchAlarmsMetricsWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+  });
+  const fetchEntityAlarmsMetricsWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+  });
+  const fetchEntityAggregateMetricsWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+  });
+  const externalMetrics = jest.fn().mockReturnValue([]);
+  const pending = jest.fn().mockReturnValue(false);
+
+  afterEach(() => {
+    fetchExternalMetricsList.mockClear();
+    fetchAlarmsMetricsWithoutStore.mockClear();
+    externalMetrics.mockClear();
+    pending.mockClear();
+    fetchEntityAlarmsMetricsWithoutStore.mockClear();
+    fetchEntityAggregateMetricsWithoutStore.mockClear();
+  });
+
+  const metricsModule = {
+    name: 'metrics',
+    getters: {
+      externalMetrics,
+      pending,
+    },
+    actions: {
+      fetchExternalMetricsList,
+      fetchAlarmsMetricsWithoutStore,
+      fetchEntityAlarmsMetricsWithoutStore,
+      fetchEntityAggregateMetricsWithoutStore,
+    },
+  };
+
+  return {
+    metricsModule,
+    externalMetrics,
+    fetchExternalMetricsList,
+    fetchAlarmsMetricsWithoutStore,
+    fetchEntityAlarmsMetricsWithoutStore,
+    fetchEntityAggregateMetricsWithoutStore,
+  };
+};
+
+export const createPatternModule = () => {
+  const checkPatternsEntitiesCount = jest.fn().mockResolvedValue({});
+  const checkPatternsAlarmsCount = jest.fn().mockResolvedValue({});
+
+  afterEach(() => {
+    checkPatternsEntitiesCount.mockClear();
+    checkPatternsAlarmsCount.mockClear();
+  });
+
+  const patternModule = {
+    name: 'pattern',
+    actions: {
+      checkPatternsEntitiesCount,
+      checkPatternsAlarmsCount,
+    },
+  };
+
+  return {
+    patternModule,
+    checkPatternsEntitiesCount,
+    checkPatternsAlarmsCount,
   };
 };

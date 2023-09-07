@@ -1,4 +1,4 @@
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 
 export const modelPropKeyComputed = uid('_modelProp');
 export const modelEventKeyComputed = uid('_modelEventKey');

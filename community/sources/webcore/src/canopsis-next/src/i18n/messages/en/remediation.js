@@ -46,7 +46,6 @@ export default {
       lastExecutedOn: 'Last executed on',
     },
     errors: {
-      runningInstruction: 'New changes cannot be applied to the instruction in progress. Would you like to cancel started instruction and apply new changes?',
       operationRequired: 'Please add at least one operation',
       stepRequired: 'Please add at least one step',
       jobRequired: 'Please add at least one job',
@@ -126,6 +125,7 @@ export default {
     alarmResolvedDate: 'Alarm resolved date',
     showFailedExecutions: 'Show failed instruction executions',
     remediationDuration: 'Remediation duration',
+    timeoutAfterExecution: 'Timeout after execution',
     actions: {
       needRate: 'Rate it!',
       rate: 'Rate',
@@ -165,9 +165,9 @@ export default {
 
   statistic: {
     remediation: 'Remediation',
-    fields: {
-      all: 'All',
-    },
+    allInstructions: 'All instructions',
+    manualInstructions: 'Manual instructions',
+    autoInstructions: 'Automatic instructions',
     labels: {
       remediated: 'Remediated',
       notRemediated: 'Not remediated',

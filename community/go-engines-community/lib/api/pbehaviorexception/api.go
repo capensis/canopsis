@@ -2,24 +2,29 @@ package pbehaviorexception
 
 import (
 	"context"
+	"errors"
+	"net/http"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	"net/http"
 )
+
+type API interface {
+	common.CrudAPI
+	Import(c *gin.Context)
+}
 
 func NewApi(
 	transformer ModelTransformer,
 	store Store,
-	computeChan chan<- pbehavior.ComputeTask,
+	computeChan chan<- []string,
 	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
-) common.CrudAPI {
+) API {
 	return &api{
 		transformer:  transformer,
 		store:        store,
@@ -32,7 +37,7 @@ func NewApi(
 type api struct {
 	transformer  ModelTransformer
 	store        Store
-	computeChan  chan<- pbehavior.ComputeTask
+	computeChan  chan<- []string
 	actionLogger logger.ActionLogger
 	logger       zerolog.Logger
 }
@@ -48,7 +53,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.Find(c.Request.Context(), r)
+	aggregationResult, err := a.store.Find(c, r)
 	if err != nil {
 		panic(err)
 	}
@@ -73,7 +78,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	exception, err := a.transformer.TransformCreateRequestToModel(c.Request.Context(), request)
+	exception, err := a.transformer.TransformCreateRequestToModel(c, request)
 	if err != nil {
 		if err == ErrTypeNotExists {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
@@ -82,7 +87,7 @@ func (a *api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	err = a.store.Insert(c.Request.Context(), exception)
+	err = a.store.Insert(c, exception)
 	if err != nil {
 		panic(err)
 	}
@@ -112,7 +117,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	exception, err := a.transformer.TransformUpdateRequestToModel(c.Request.Context(), request)
+	exception, err := a.transformer.TransformUpdateRequestToModel(c, request)
 	if err != nil {
 		if err == ErrTypeNotExists {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
@@ -121,7 +126,7 @@ func (a *api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	ok, err := a.store.Update(c.Request.Context(), exception)
+	ok, err := a.store.Update(c, exception)
 	if err != nil {
 		panic(err)
 	}
@@ -131,7 +136,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	isLinked, err := a.store.IsLinked(c.Request.Context(), exception.ID)
+	isLinked, err := a.store.IsLinked(c, exception.ID)
 	if err != nil {
 		panic(err)
 	}
@@ -155,7 +160,7 @@ func (a *api) Update(c *gin.Context) {
 // Get
 // @Success 200 {object} Exception
 func (a *api) Get(c *gin.Context) {
-	exception, err := a.store.GetOneBy(c.Request.Context(), bson.M{"_id": c.Param("id")})
+	exception, err := a.store.GetOneById(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -169,7 +174,7 @@ func (a *api) Get(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
+	ok, err := a.store.Delete(c, c.Param("id"))
 
 	if err != nil {
 		if err == ErrLinkedException {
@@ -197,6 +202,50 @@ func (a *api) Delete(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
+// Import
+// @Success 200 {object} Exception
+func (a *api) Import(c *gin.Context) {
+	f, fh, err := c.Request.FormFile("file")
+	if err != nil {
+		if errors.Is(err, http.ErrMissingFile) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: map[string]string{
+				"file": "File is missing.",
+			}})
+			return
+		}
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: "request has invalid structure"})
+		return
+	}
+	defer f.Close()
+
+	name := c.Request.FormValue("name")
+	pbhType := c.Request.FormValue("type")
+	valErrors := make(map[string]string)
+	if name == "" {
+		valErrors["name"] = "Name is missing."
+	}
+	if pbhType == "" {
+		valErrors["type"] = "Type is missing."
+	}
+
+	if len(valErrors) > 0 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: valErrors})
+		return
+	}
+
+	exception, err := a.store.Import(c, name, pbhType, f, fh)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, exception)
+}
+
 func (a *api) sendComputeTask() {
-	a.computeChan <- pbehavior.ComputeTask{}
+	a.computeChan <- []string{}
 }

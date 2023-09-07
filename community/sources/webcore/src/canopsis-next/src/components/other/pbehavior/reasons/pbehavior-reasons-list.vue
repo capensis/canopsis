@@ -18,6 +18,8 @@
         type="delete",
         @click="$emit('remove-selected', selected)"
       )
+    template(#hidden="{ item }")
+      c-enabled(:value="item.hidden")
     template(#actions="{ item }")
       c-action-btn(
         v-if="hasUpdateAnyPbehaviorReasonAccess",
@@ -69,6 +71,10 @@ export default {
         {
           text: this.$t('common.name'),
           value: 'name',
+        },
+        {
+          text: this.$t('common.hidden'),
+          value: 'hidden',
         },
         {
           text: this.$t('common.actionsLabel'),

@@ -23,8 +23,8 @@
       v-field="form.patterns",
       :alarm-attributes="alarmPatternAttributes",
       :entity-attributes="entityPatternAttributes",
+      :with-alarm="isAlarmType",
       some-required,
-      with-alarm,
       with-entity
     )
     c-collapse-panel.my-3(:title="$t('externalData.title')")
@@ -50,7 +50,7 @@ import { payloadVariablesMixin } from '@/mixins/payload/variables';
 
 import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
 
-import LinkRuleLinksForm from './partials/link-rule-links-form.vue';
+import LinkRuleLinksForm from './fields/link-rule-links-form.vue';
 
 export default {
   inject: ['$validator'],
@@ -94,8 +94,8 @@ export default {
 
     externalDataPayloadVariables() {
       return this.isAlarmType
-        ? this.alarmPayloadVariables
-        : this.entityPayloadVariables;
+        ? this.alarmPayloadSubVariables
+        : this.entityPayloadSubVariables;
     },
 
     alarmPatternAttributes() {

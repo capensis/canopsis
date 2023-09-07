@@ -6,7 +6,7 @@
       color="gray"
     )
     v-layout(v-if="!wholePending")
-      the-navigation#main-navigation(v-if="shownNavigation")
+      the-navigation#main-navigation(v-if="currentUser && shownHeader")
       v-content#main-content
         active-broadcast-message
         router-view(:key="routeViewKey")
@@ -22,12 +22,12 @@ import { createNamespacedHelpers } from 'vuex';
 import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
 import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, ROUTES_NAMES } from '@/constants';
 
-import { reloadPageWithTrailingSlashes } from '@/helpers/url';
-import { convertDateToString } from '@/helpers/date/date';
+import Socket from '@/plugins/socket/services/socket';
 
 import localStorageService from '@/services/local-storage';
 
-import Socket from '@/plugins/socket/services/socket';
+import { reloadPageWithTrailingSlashes } from '@/helpers/url';
+import { convertDateToString } from '@/helpers/date/date';
 
 import { authMixin } from '@/mixins/auth';
 import { systemMixin } from '@/mixins/system';
@@ -72,10 +72,10 @@ export default {
 
       return this.$route.fullPath;
     },
-
-    shownNavigation() {
-      return this.currentUser && !this.$route.meta.hideNavigation;
-    },
+  },
+  watch: {
+    templateVars: 'setTitle',
+    currentUser: 'setTitle',
   },
   beforeCreate() {
     reloadPageWithTrailingSlashes();
@@ -83,12 +83,16 @@ export default {
   created() {
     this.registerCurrentUserOnceWatcher();
   },
-  mounted() {
-    this.fetchAppInfoWithErrorHandling();
+  async mounted() {
     this.socketConnectWithErrorHandling();
-    this.fetchCurrentUserWithErrorHandling();
     this.showLocalStorageWarningPopupMessage();
-    this.fetchTemplateVars();
+
+    await Promise.all([
+      this.fetchCurrentUserWithErrorHandling(),
+      this.fetchTemplateVars(),
+    ]);
+
+    this.fetchAppInfoWithErrorHandling();
   },
   methods: {
     ...mapActions({

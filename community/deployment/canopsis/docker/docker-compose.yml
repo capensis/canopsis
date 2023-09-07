@@ -7,8 +7,6 @@ volumes:
     driver: local
   timescaledata:
     driver: local
-  dumpdata:
-    driver: local
   junitsharedata:
     driver: local
   nginxcerts:
@@ -99,11 +97,14 @@ services:
     image: redis:${REDIS_TAG}
     ports:
       - "6379:6379"
+    env_file:
+      - compose.env
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      test: ["CMD-SHELL", "redis-cli --no-auth-warning -a $$REDIS_PASSWORD ping | grep PONG"]
       interval: 1s
       timeout: 3s
       retries: 5
+    command: /bin/sh -c "redis-server --requirepass $$REDIS_PASSWORD"
 
   timescaledb:
     <<: *service_base
@@ -167,10 +168,6 @@ services:
   pbehavior:
     <<: *app_service_base
     image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}engine-pbehavior:${CANOPSIS_IMAGE_TAG}
-
-  service:
-    <<: *app_service_base
-    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}engine-service:${CANOPSIS_IMAGE_TAG}
 
   api:
     <<: *app_service_base

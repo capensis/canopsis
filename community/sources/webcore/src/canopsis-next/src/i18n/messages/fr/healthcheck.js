@@ -19,11 +19,15 @@ export default {
   queueLimit: 'Limite de longueur de file d\'attente',
   defineQueueLimit: 'Définir la limite de longueur de file d\'attente des moteurs',
   notifyUsersQueueLimit: 'Les utilisateurs peuvent être avertis lorsque la limite de longueur de file d\'attente est dépassée',
+  messagesLimit: 'Limite de traitement des messages',
+  defineMessageLimit: 'Définir la limite de traitement des messages FIFO (par minute)',
+  notifyUsersMessagesLimit: 'Les utilisateurs peuvent être avertis lorsque la limite de traitement des messages FIFO est dépassée',
   numberOfInstances: 'Nombre d\'instances',
   notifyUsersNumberOfInstances: 'Les utilisateurs peuvent être avertis lorsque le nombre d\'instances actives est inférieur à la valeur minimale. Le nombre optimal d\'instances est affiché lorsque l\'état du moteur n\'est pas disponible.',
   messagesHistory: 'Historique de traitement des messages FIFO',
   messagesLastHour: 'Traitement des messages FIFO pour la dernière heure',
   messagesPerHour: 'messages/heure',
+  messagesPerMinute: 'messages/minute',
   unknown: 'Cet état du système n\'est pas disponible',
   systemStatusChipError: 'Le système n\'est pas opérationnel',
   systemStatusServerError: 'La configuration du système n\'est pas valide, veuillez contacter l\'administrateur',
@@ -93,11 +97,6 @@ export default {
     [HEALTHCHECK_ENGINES_NAMES.action]: {
       name: 'Action',
       description: 'Déclenche le lancement des actions',
-    },
-
-    [HEALTHCHECK_ENGINES_NAMES.service]: {
-      name: 'Service',
-      description: 'Met à jour les compteurs et génère service-events',
     },
 
     [HEALTHCHECK_ENGINES_NAMES.dynamicInfos]: {

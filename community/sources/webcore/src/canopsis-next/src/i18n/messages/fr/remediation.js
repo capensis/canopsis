@@ -46,7 +46,6 @@ export default {
       lastExecutedOn: 'Dernière exécution le',
     },
     errors: {
-      runningInstruction: 'Les changements ne peuvent pas être enregistrés car la consigne est en cours d\'exécution. Voulez-vous stopper l\'exécution de la consigne et ainsi enregistrer les changements ?',
       operationRequired: 'Veuillez ajouter au moins une opération',
       stepRequired: 'Veuillez ajouter au moins une étape',
       jobRequired: 'Veuillez ajouter au moins une tâche',
@@ -126,6 +125,7 @@ export default {
     alarmResolvedDate: 'Date de résolution de l\'alarme',
     showFailedExecutions: 'Afficher les exécutions d\'instructions ayant échoué',
     remediationDuration: 'Durée de la remédiation',
+    timeoutAfterExecution: 'Timeout après exécution',
     actions: {
       needRate: 'Evaluez-les!',
       rate: 'Évaluer',
@@ -165,9 +165,9 @@ export default {
 
   statistic: {
     remediation: 'Remédiation',
-    fields: {
-      all: 'Tout',
-    },
+    allInstructions: 'Toutes les instructions',
+    manualInstructions: 'Instructions manuelles',
+    autoInstructions: 'Instructions automatique',
     labels: {
       remediated: 'Remédié',
       notRemediated: 'Non remédié',
