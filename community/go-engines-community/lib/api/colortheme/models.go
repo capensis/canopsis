@@ -6,9 +6,8 @@ import (
 )
 
 type EditRequest struct {
-	Name         string        `bson:"name" json:"name" binding:"required"`
-	Colors       Colors        `bson:"colors" json:"colors"`
-	LastModified types.CpsTime `bson:"last_modified" json:"-"`
+	Name   string `bson:"name" json:"name" binding:"required"`
+	Colors Colors `bson:"colors" json:"colors"`
 }
 
 type CreateRequest struct {
