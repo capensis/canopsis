@@ -128,7 +128,7 @@
 </template>
 
 <script>
-import { differenceBy } from 'lodash';
+import { intersectionBy } from 'lodash';
 
 import { ALARM_DENSE_TYPES, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
 
@@ -423,12 +423,8 @@ export default {
   },
 
   watch: {
-    alarms(alarms, prevAlarms) {
-      const diff = differenceBy(alarms, prevAlarms, '_id');
-
-      if (diff.length) {
-        this.clearSelected();
-      }
+    alarms(alarms) {
+      this.selected = intersectionBy(alarms, this.selected, '_id');
     },
 
     columns() {
