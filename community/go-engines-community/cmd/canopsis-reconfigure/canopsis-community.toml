@@ -121,6 +121,10 @@ PrefetchCount = 10000
 PrefetchSize = 0
 ReconnectTimeoutMilliseconds = 8
 ReconnectRetries = 3
+# Infos dictionary options enable or disable infos dictionary building.
+# The dictionary is used in UI autocomplete hints for infos key and values.
+BuildEntityInfosDictionary = true
+BuildDynamicInfosDictionary = true
 
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.
