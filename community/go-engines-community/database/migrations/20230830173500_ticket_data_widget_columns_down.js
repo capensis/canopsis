@@ -5,7 +5,7 @@ db.widgets.find({
         var updated = false,
             wp = widget.parameters;
         if (wp.moreInfoTemplate) {
-            var newTemplate = wp.moreInfoTemplate.replaceAll(/alarm\.v\.ticket_data\./g, "alarm.v.ticket.data.")
+            var newTemplate = wp.moreInfoTemplate.replace(/alarm\.v\.ticket_data\./g, "alarm.v.ticket.data.")
             updated = newTemplate !== wp.moreInfoTemplate;
             if (updated) {
                 wp.moreInfoTemplate = newTemplate;
