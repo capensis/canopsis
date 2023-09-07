@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import { differenceBy, throttle } from 'lodash';
+import { intersectionBy, throttle } from 'lodash';
 
 import { TOP_BAR_HEIGHT } from '@/config';
 import { ALARM_DENSE_TYPES, ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
@@ -320,12 +320,8 @@ export default {
   },
 
   watch: {
-    alarms(alarms, prevAlarms) {
-      const diff = differenceBy(alarms, prevAlarms, '_id');
-
-      if (diff.length) {
-        this.clearSelected();
-      }
+    alarms(alarms) {
+      this.selected = intersectionBy(alarms, this.selected, '_id');
     },
 
     stickyHeader(stickyHeader) {
