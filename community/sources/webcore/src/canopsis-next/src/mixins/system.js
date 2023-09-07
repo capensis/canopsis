@@ -47,7 +47,7 @@ export const systemMixin = {
             info: '#2196f3',
             success: '#4caf50',
             warning: '#fb8c00',
-            background: '#ffffff',
+            background: '#ffdfdf',
             state: {
               ok: '#a1f56f',
               minor: '#a8a841',
@@ -60,7 +60,7 @@ export const systemMixin = {
               activeColor: '#491f1f',
               rowColor: '#ffc7c7',
               shiftRowColor: '#f6bcbc',
-              hoverRowColor: '#fc9898',
+              hoverRowColor: '#ffeeee',
             },
           },
         };
