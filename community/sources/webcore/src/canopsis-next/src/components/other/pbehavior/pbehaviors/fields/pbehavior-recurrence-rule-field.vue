@@ -58,6 +58,7 @@ export default {
           rrule: this.form.rrule,
           exdates: this.form.exdates,
           exceptions: this.form.exceptions,
+          start: this.form.tstart,
           withExdateType: this.withExdateType,
           action: ({ rrule, exdates, exceptions }) => this.updateModel({
             ...this.form,

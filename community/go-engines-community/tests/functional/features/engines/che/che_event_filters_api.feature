@@ -12,8 +12,9 @@ Feature: modify event on event filter
         "title": {
           "type": "api",
           "request": {
-            "url": "{{ .dummyApiURL }}/api/external_data",
-            "method": "GET"
+            "url": "{{ .dummyApiURL }}/webhook/request",
+            "method": "POST",
+            "payload": "{\"id\":1,\"title\":\"test title\"}"
           }
         }
       },
@@ -96,8 +97,9 @@ Feature: modify event on event filter
         "title": {
           "type": "api",
           "request": {
-            "url": "{{ .dummyApiURL }}/api/external_data",
-            "method": "GET"
+            "url": "{{ .dummyApiURL }}/webhook/request",
+            "method": "POST",
+            "payload": "{\"id\":1,\"title\":\"test title\"}"
           }
         },
         "component": {
@@ -198,8 +200,9 @@ Feature: modify event on event filter
         "title": {
           "type": "api",
           "request": {
-            "url": "{{ .dummyApiURL }}/api/external_data_document_with_array",
-            "method": "GET"
+            "url": "{{ .dummyApiURL }}/webhook/request",
+            "method": "POST",
+            "payload": "{\"array\":[{\"id\":\"1\",\"title\":\"test title 1\"},{\"id\":\"2\",\"title\":\"test title 2\"}]}"
           }
         }
       },
@@ -282,8 +285,9 @@ Feature: modify event on event filter
         "title": {
           "type": "api",
           "request": {
-            "url": "{{ .dummyApiURL }}/api/external_data_response_is_array",
-            "method": "GET"
+            "url": "{{ .dummyApiURL }}/webhook/request",
+            "method": "POST",
+            "payload": "[{\"id\":\"1\",\"title\":\"test title 1\"},{\"id\":\"2\",\"title\":\"test title 2\"}]"
           }
         }
       },
@@ -366,8 +370,9 @@ Feature: modify event on event filter
         "name": {
           "type": "api",
           "request": {
-            "url": "{{ .dummyApiURL }}/api/external_data_response_is_nested_documents",
-            "method": "GET"
+            "url": "{{ .dummyApiURL }}/webhook/request",
+            "method": "POST",
+            "payload": "{\"objects\":{\"server\":{\"code\":200,\"message\":\"test message\",\"fields\":{\"name\":\"test name\"}}},\"code\":400,\"message\":\"test message\"}"
           }
         }
       },
@@ -450,14 +455,9 @@ Feature: modify event on event filter
         "name": {
           "type": "api",
           "request": {
-            "url": "{{ .apiURL }}/api/v4/scenarios",
+            "url": "{{ .dummyApiURL }}/webhook/request",
             "method": "POST",
-            "auth": {
-              "username": "root",
-              "password": "test"
-            },
-            "headers": {"Content-Type": "application/json"},
-            "payload": "{\"priority\": 10039,\"name\":\"{{ `{{ .Event.Component }}` }}\",\"enabled\":true,\"triggers\":[\"create\"],\"actions\":[{\"entity_pattern\":[[{\"field\":\"name\",\"cond\":{\"type\": \"eq\", \"value\": \"test-eventfilter-assets-customer-6-pattern\"}}]],\"type\":\"ack\",\"drop_scenario_if_not_matched\":false,\"emit_trigger\":false}]}"
+            "payload": "{\"name\":\"{{ `{{ .Event.Component }}` }}\"}"
           }
         }
       },

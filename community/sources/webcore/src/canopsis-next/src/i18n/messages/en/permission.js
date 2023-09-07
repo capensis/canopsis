@@ -352,7 +352,7 @@ export default {
     },
 
     /**
-     * Technical Line Chart Permissions
+     * Business Line Chart Permissions
      */
     [USERS_PERMISSIONS.business.lineChart.actions.interval]: {
       name: 'Linechart: interval',
@@ -380,7 +380,7 @@ export default {
     },
 
     /**
-     * Technical Pie Chart Permissions
+     * Business Pie Chart Permissions
      */
     [USERS_PERMISSIONS.business.pieChart.actions.interval]: {
       name: 'Piechart: interval',
@@ -408,7 +408,7 @@ export default {
     },
 
     /**
-     * Technical Pie Chart Permissions
+     * Business Numbers Permissions
      */
     [USERS_PERMISSIONS.business.numbers.actions.interval]: {
       name: 'Numbers: interval',
@@ -545,6 +545,14 @@ export default {
     [USERS_PERMISSIONS.technical.widgetTemplate]: {
       name: 'Widget templates',
       description: 'This permission defines the access to the Widget templates',
+    },
+    [USERS_PERMISSIONS.technical.maintenance]: {
+      name: 'Maintenance mode',
+      description: 'This permission defines the access to the Maintenance mode',
+    },
+    [USERS_PERMISSIONS.technical.tag]: {
+      name: 'Tags management',
+      description: 'This permission defines the access to the Tags management',
     },
 
     /**
@@ -745,6 +753,10 @@ export default {
     [USERS_PERMISSIONS.api.general.widgetTemplate]: {
       name: 'Widget templates',
       description: 'Access to API route to CRUD widget templates',
+    },
+    [USERS_PERMISSIONS.api.general.maintenance]: {
+      name: 'Maintenance mode',
+      description: 'Access to API route to the maintenance mode',
     },
 
     [USERS_PERMISSIONS.api.rules.action]: {

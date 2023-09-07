@@ -27,8 +27,7 @@ import { MODALS } from '@/constants';
 
 import { uid } from '@/helpers/uid';
 
-import RemediationInstructionsFiltersList
-  from '@/components/other/remediation/instructions-filter/remediation-instructions-filters-list.vue';
+import RemediationInstructionsFiltersList from '@/components/other/remediation/instructions-filter/remediation-instructions-filters-list.vue';
 
 export default {
   components: { RemediationInstructionsFiltersList },

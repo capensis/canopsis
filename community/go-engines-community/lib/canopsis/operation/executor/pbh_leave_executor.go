@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -12,12 +11,10 @@ import (
 
 type pbhLeaveExecutor struct {
 	configProvider config.AlarmConfigProvider
-
-	metricsSender metrics.Sender
 }
 
-func NewPbhLeaveExecutor(configProvider config.AlarmConfigProvider, metricsSender metrics.Sender) operation.Executor {
-	return &pbhLeaveExecutor{configProvider: configProvider, metricsSender: metricsSender}
+func NewPbhLeaveExecutor(configProvider config.AlarmConfigProvider) operation.Executor {
+	return &pbhLeaveExecutor{configProvider: configProvider}
 }
 
 func (e *pbhLeaveExecutor) Exec(
@@ -53,8 +50,6 @@ func (e *pbhLeaveExecutor) Exec(
 	}
 
 	entity.PbehaviorInfo = alarm.Value.PbehaviorInfo
-
-	e.metricsSender.SendPbhLeave(*entity, time.Time, currPbehaviorInfo.CanonicalType, currPbehaviorInfo.Timestamp.Time)
 
 	return types.AlarmChangeTypePbhLeave, nil
 }
