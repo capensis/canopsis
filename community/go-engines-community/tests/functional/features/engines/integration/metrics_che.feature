@@ -359,14 +359,6 @@ Feature: Entities should be synchronized in metrics db
         "connector_name": "test-connector-name-metrics-che-2",
         "component": "test-component-metrics-che-2",
         "source_type": "component"
-      },
-      {
-        "event_type": "entityupdated",
-        "connector": "test-connector-metrics-che-2",
-        "connector_name": "test-connector-name-metrics-che-2",
-        "component": "test-component-metrics-che-2",
-        "resource": "test-resource-metrics-che-2",
-        "source_type": "resource"
       }
     ]
     """

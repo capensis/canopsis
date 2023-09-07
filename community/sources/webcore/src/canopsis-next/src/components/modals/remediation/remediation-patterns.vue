@@ -45,8 +45,7 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import RemediationPatternsPbehaviorTypesForm
-  from '@/components/other/remediation/patterns/form/remediation-patterns-pbehavior-types-form.vue';
+import RemediationPatternsPbehaviorTypesForm from '@/components/other/remediation/patterns/form/remediation-patterns-pbehavior-types-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

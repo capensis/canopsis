@@ -101,7 +101,6 @@
       :draggable-column="draggableColumn",
       :cells-content-behavior="cellsContentBehavior",
       :columns-settings="columnsSettings",
-      :editing="editing",
       expandable,
       densable,
       @select:tag="selectTag",
@@ -136,8 +135,9 @@ import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
 import { permissionsWidgetsAlarmsListCorrelation } from '@/mixins/permissions/widgets/alarms-list/correlation';
 import { permissionsWidgetsAlarmsListCategory } from '@/mixins/permissions/widgets/alarms-list/category';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
-import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
-  from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
+import {
+  permissionsWidgetsAlarmsListRemediationInstructionsFilters,
+} from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
 
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';

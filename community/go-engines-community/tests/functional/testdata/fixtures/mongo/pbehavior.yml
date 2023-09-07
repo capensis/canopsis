@@ -134,13 +134,11 @@ pbehavior:
         author: root
         ts: 1592215338
         message: test-pbehavior-to-update-1-comment-2-message
-
   pbehavior_to_update_2:
     <<: *pbehavior
     _id: test-pbehavior-to-update-2
     comments: [ ]
     created: 1592215337
-
   pbehavior_to_update_3:
     <<: *pbehavior
     _id: test-pbehavior-to-update-3
@@ -154,6 +152,19 @@ pbehavior:
           }
         ]
       }
+  pbehavior_to_update_4:
+    <<: *pbehavior
+    _id: test-pbehavior-to-update-4
+    comments: [ ]
+    created: 1592215337
+  pbehavior_to_update_5:
+    <<: *pbehavior
+    _id: test-pbehavior-to-update-5
+    comments: [ ]
+    created: 1592215337
+    tstart: 1592215337
+    tstop: 1592215337
+    rrule_end: 1592215337
 
   pbehavior_to_delete_exception:
     <<: *pbehavior
@@ -417,21 +428,21 @@ pbehavior:
             type: eq
             value: <LoremIpsumWord()>
 
-  pbehavior_to_patch_10:
+  pbehavior_to_patch_second_1:
     <<: *pbehavior
-    _id: test-pbehavior-to-patch-10
+    _id: test-pbehavior-to-patch-second-1
     author: noperms
 
-  pbehavior_to_patch_11:
+  pbehavior_to_patch_second_2:
     <<: *pbehavior
-    _id: test-pbehavior-to-patch-11
+    _id: test-pbehavior-to-patch-second-2
     author: noperms
     tstart: 1591172881
     tstop: 1591172981
     type_: test-type-to-pbh-edit-1
 
-  pbehavior_to_patch_12:
-    _id: test-pbehavior-to-patch-12
+  pbehavior_to_patch_second_3:
+    _id: test-pbehavior-to-patch-second-3
     author: noperms
     tstart: 1591172881
     color: "#FFFFFF"
@@ -446,9 +457,9 @@ pbehavior:
             type: eq
             value: <LoremIpsumWord()>
 
-  pbehavior_to_patch_13:
+  pbehavior_to_patch_second_4:
     <<: *pbehavior
-    _id: test-pbehavior-to-patch-13
+    _id: test-pbehavior-to-patch-second-4
     author: noperms
     rrule: FREQ=DAILY
     exceptions:
@@ -458,11 +469,63 @@ pbehavior:
         end: 1591167601
         type: test-type-to-pbh-edit-1
 
-  pbehavior_to_patch_14:
+  pbehavior_to_patch_second_5:
     <<: *pbehavior
-    _id: test-pbehavior-to-patch-14
+    _id: test-pbehavior-to-patch-second-5
+    author: noperms
+    rrule: FREQ=DAILY
+    exceptions:
+      - test-exception-to-pbh-edit
+    exdates:
+      - begin: 1591164001
+        end: 1591167601
+        type: test-type-to-pbh-edit-1
+
+  pbehavior_to_patch_second_6:
+    <<: *pbehavior
+    _id: test-pbehavior-to-patch-second-6
+    author: noperms
+    rrule: FREQ=DAILY
+    exceptions:
+      - test-exception-to-pbh-edit
+    exdates:
+      - begin: 1591164001
+        end: 1591167601
+        type: test-type-to-pbh-edit-1
+
+  pbehavior_to_patch_second_7:
+    <<: *pbehavior
+    _id: test-pbehavior-to-patch-second-7
+    author: noperms
+    rrule: FREQ=DAILY
+    exceptions:
+      - test-exception-to-pbh-edit
+    exdates:
+      - begin: 1591164001
+        end: 1591167601
+        type: test-type-to-pbh-edit-1
+
+  pbehavior_to_patch_second_8:
+    <<: *pbehavior
+    _id: test-pbehavior-to-patch-second-8
+    author: noperms
+    rrule: FREQ=DAILY
+    exceptions:
+      - test-exception-to-pbh-edit
+    exdates:
+      - begin: 1591164001
+        end: 1591167601
+        type: test-type-to-pbh-edit-1
+
+  pbehavior_to_patch_second_9:
+    <<: *pbehavior
+    _id: test-pbehavior-to-patch-second-9
     author: noperms
     color: "#FFFFFF"
+
+  pbehavior_to_patch_third_1:
+    <<: *pbehavior
+    _id: test-pbehavior-to-patch-third-1
 
   pbehavior_to_bulk_delete_1:
     <<: *pbehavior
