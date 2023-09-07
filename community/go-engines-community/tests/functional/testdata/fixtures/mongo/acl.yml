@@ -1282,6 +1282,27 @@ user:
     roles:
       - "@role_to_websocket_connect"
 
+  user_to_pick_color_theme_1:
+    <<: *user
+    _id: test-user-to-pick-color-theme-1
+    name: <Current()._id>
+    roles:
+      - "@role_noperms"
+
+  user_to_pick_color_theme_2:
+    <<: *user
+    _id: test-user-to-pick-color-theme-2
+    name: <Current()._id>
+    roles:
+      - "@role_noperms"
+
+  user_to_pick_color_theme_3:
+    <<: *user
+    _id: test-user-to-pick-color-theme-3
+    name: <Current()._id>
+    roles:
+      - "@role_noperms"
+
 role_template:
   tpl_pilot:
     _id: pilot
