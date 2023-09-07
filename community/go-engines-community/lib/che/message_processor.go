@@ -95,95 +95,8 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	alarmConfig := p.AlarmConfigProvider.Get()
 	event.Output = utils.TruncateString(event.Output, alarmConfig.OutputLength)
 	event.LongOutput = utils.TruncateString(event.LongOutput, alarmConfig.LongOutputLength)
-
 	var updatedEntities []types.Entity
-
-	err = p.DbClient.WithTransaction(ctx, func(tCtx context.Context) error {
-		updatedEntities = make([]types.Entity, 0, len(updatedEntities))
-
-		if event.EventType == types.EventTypeManualMetaAlarmGroup ||
-			event.EventType == types.EventTypeManualMetaAlarmUngroup ||
-			event.EventType == types.EventTypeManualMetaAlarmUpdate {
-			return nil
-		}
-
-		if event.EventType == types.EventTypeRecomputeEntityService {
-			eventEntity, updatedEntities, err := p.ContextGraphManager.RecomputeService(tCtx, event.GetEID())
-			if err != nil {
-				return fmt.Errorf("cannot recompute service %s: %w", event.Component, err)
-			}
-
-			event.Entity = &eventEntity
-
-			_, err = p.ContextGraphManager.UpdateEntities(tCtx, "", updatedEntities)
-			if err != nil {
-				return fmt.Errorf("cannot update entities %s: %w", event.Component, err)
-			}
-
-			return nil
-		}
-
-		eventEntity, contextGraphEntities, err := p.ContextGraphManager.HandleEvent(tCtx, event)
-		if err != nil {
-			return fmt.Errorf("cannot update context graph: %w", err)
-		}
-
-		event.Entity = &eventEntity
-
-		// Process event by event filters.
-		if event.Entity != nil && event.Entity.Enabled {
-			event, err = p.EventFilterService.ProcessEvent(tCtx, event)
-			if err != nil {
-				return err
-			}
-		}
-
-		eventEntity = *event.Entity
-		if eventEntity.IsNew ||
-			eventEntity.IsUpdated ||
-			event.EventType == types.EventTypeEntityUpdated ||
-			event.EventType == types.EventTypeEntityToggled ||
-			event.SourceType == types.SourceTypeService {
-			updatedEntities = []types.Entity{eventEntity}
-		}
-
-		updatedEntities = append(updatedEntities, contextGraphEntities...)
-
-		if len(updatedEntities) > 0 {
-			// if it's a new resource add a component info to check if component is matched by the service
-			updatedEntities, err = p.ContextGraphManager.CheckServices(tCtx, updatedEntities)
-			if err != nil {
-				return fmt.Errorf("cannot check services: %w", err)
-			}
-
-			if eventEntity.IsUpdated || event.EventType == types.EventTypeEntityUpdated && eventEntity.Type == types.EntityTypeComponent {
-				resources, err := p.ContextGraphManager.FillResourcesWithInfos(tCtx, eventEntity)
-				if err != nil {
-					return fmt.Errorf("cannot update entity infos: %w", err)
-				}
-
-				updatedEntities = append(updatedEntities, resources...)
-			}
-
-			eventEntity, err = p.ContextGraphManager.UpdateEntities(tCtx, eventEntity.ID, updatedEntities)
-			if err != nil {
-				return fmt.Errorf("cannot update entities: %w", err)
-			}
-
-			event.Entity = &eventEntity
-			isServicesUpdated = len(eventEntity.ServicesToAdd) > 0 || len(eventEntity.ServicesToRemove) > 0
-		}
-
-		if !eventEntity.IsNew && !eventEntity.IsUpdated && event.Entity.LastEventDate != nil {
-			err := p.ContextGraphManager.UpdateLastEventDate(tCtx, event.EventType, event.Entity.ID, *event.Entity.LastEventDate)
-			if err != nil {
-				return err
-			}
-		}
-
-		return nil
-	})
-
+	event, updatedEntities, isServicesUpdated, err = p.handleEvent(ctx, event)
 	if err != nil {
 		if errors.Is(err, eventfilter.ErrDropOutcome) {
 			return nil, nil
@@ -209,6 +122,168 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	}
 
 	return body, nil
+}
+
+func (p *messageProcessor) handleEvent(ctx context.Context, event types.Event) (types.Event, []types.Entity, bool, error) {
+	if event.EventType == types.EventTypeManualMetaAlarmGroup ||
+		event.EventType == types.EventTypeManualMetaAlarmUngroup ||
+		event.EventType == types.EventTypeManualMetaAlarmUpdate {
+		return event, nil, false, nil
+	}
+
+	if event.EventType == types.EventTypeRecomputeEntityService {
+		var updatedEntities []types.Entity
+		var eventEntity types.Entity
+		err := p.DbClient.WithTransaction(ctx, func(ctx context.Context) error {
+			updatedEntities = make([]types.Entity, 0, len(updatedEntities))
+			eventEntity = types.Entity{}
+			var err error
+			eventEntity, updatedEntities, err = p.ContextGraphManager.RecomputeService(ctx, event.GetEID())
+			if err != nil {
+				return fmt.Errorf("cannot recompute service %s: %w", event.Component, err)
+			}
+
+			_, err = p.ContextGraphManager.UpdateEntities(ctx, "", updatedEntities)
+			if err != nil {
+				return fmt.Errorf("cannot update entities %s: %w", event.Component, err)
+			}
+
+			return nil
+		})
+		if err != nil {
+			return event, nil, false, err
+		}
+
+		event.Entity = &eventEntity
+		return event, updatedEntities, false, nil
+	}
+
+	var eventEntity types.Entity
+	var updatedEntityIds []string
+	err := p.DbClient.WithTransaction(ctx, func(tCtx context.Context) error {
+		eventEntity = types.Entity{}
+		updatedEntityIds = make([]string, 0, len(updatedEntityIds))
+		var contextGraphEntities []types.Entity
+		var err error
+		eventEntity, contextGraphEntities, err = p.ContextGraphManager.HandleEvent(tCtx, event)
+		if err != nil {
+			return fmt.Errorf("cannot update context graph: %w", err)
+		}
+
+		if !eventEntity.IsNew && !eventEntity.IsUpdated && eventEntity.LastEventDate != nil {
+			err := p.ContextGraphManager.UpdateLastEventDate(tCtx, event.EventType, eventEntity.ID, *eventEntity.LastEventDate)
+			if err != nil {
+				return err
+			}
+		}
+
+		updatedEntities := make([]types.Entity, 0, len(contextGraphEntities)+1)
+		if eventEntity.IsNew ||
+			eventEntity.IsUpdated ||
+			event.EventType == types.EventTypeEntityUpdated ||
+			event.EventType == types.EventTypeEntityToggled ||
+			event.SourceType == types.SourceTypeService {
+			updatedEntities = append(updatedEntities, eventEntity)
+			updatedEntityIds = append(updatedEntityIds, eventEntity.ID)
+		}
+
+		updatedEntities = append(updatedEntities, contextGraphEntities...)
+		for _, e := range contextGraphEntities {
+			updatedEntityIds = append(updatedEntityIds, e.ID)
+		}
+
+		_, err = p.ContextGraphManager.UpdateEntities(tCtx, "", updatedEntities)
+		if err != nil {
+			return fmt.Errorf("cannot update entities: %w", err)
+		}
+
+		return nil
+	})
+	if err != nil {
+		return event, nil, false, err
+	}
+
+	eventEntity.IsNew = false
+	eventEntity.IsUpdated = false
+	event.Entity = &eventEntity
+	// Process event by event filters.
+	if event.Entity != nil && event.Entity.Enabled {
+		event, err = p.EventFilterService.ProcessEvent(ctx, event)
+		if err != nil {
+			return event, nil, false, err
+		}
+
+		if event.Entity.IsUpdated {
+			updatedEntityIds = append(updatedEntityIds, event.Entity.ID)
+			_, err = p.ContextGraphManager.UpdateEntities(ctx, "", []types.Entity{*event.Entity})
+			if err != nil {
+				return event, nil, false, fmt.Errorf("cannot update entities: %w", err)
+			}
+		}
+	}
+
+	if len(updatedEntityIds) == 0 {
+		return event, nil, false, nil
+	}
+
+	isUpdated := event.Entity.IsUpdated
+	var serviceUpdatedEntities []types.Entity
+	isServicesUpdated := false
+	err = p.DbClient.WithTransaction(ctx, func(tCtx context.Context) error {
+		serviceUpdatedEntities = nil
+		isServicesUpdated = false
+		eventEntity = *event.Entity
+		cursor, err := p.EntityCollection.Find(ctx, bson.M{"_id": bson.M{"$in": updatedEntityIds}})
+		if err != nil {
+			return err
+		}
+
+		updatedEntities := make([]types.Entity, 0, len(updatedEntityIds))
+		err = cursor.All(ctx, &updatedEntities)
+		if err != nil {
+			return err
+		}
+
+		for _, entity := range updatedEntities {
+			if entity.ID == eventEntity.ID {
+				eventEntity = entity
+				break
+			}
+		}
+
+		// if it's a new resource add a component info to check if component is matched by the service
+		serviceUpdatedEntities, err = p.ContextGraphManager.CheckServices(tCtx, updatedEntities)
+		if err != nil {
+			return fmt.Errorf("cannot check services: %w", err)
+		}
+
+		if isUpdated || event.EventType == types.EventTypeEntityUpdated && eventEntity.Type == types.EntityTypeComponent {
+			resources, err := p.ContextGraphManager.FillResourcesWithInfos(tCtx, eventEntity)
+			if err != nil {
+				return fmt.Errorf("cannot update entity infos: %w", err)
+			}
+
+			serviceUpdatedEntities = append(serviceUpdatedEntities, resources...)
+		}
+
+		updatedEventEntity, err := p.ContextGraphManager.UpdateEntities(tCtx, eventEntity.ID, serviceUpdatedEntities)
+		if err != nil {
+			return fmt.Errorf("cannot update entities: %w", err)
+		}
+
+		if updatedEventEntity.ID != "" {
+			eventEntity = updatedEventEntity
+		}
+
+		isServicesUpdated = len(eventEntity.ServicesToAdd) > 0 || len(eventEntity.ServicesToRemove) > 0
+		return nil
+	})
+	if err != nil {
+		return event, nil, false, err
+	}
+
+	event.Entity = &eventEntity
+	return event, serviceUpdatedEntities, isServicesUpdated, nil
 }
 
 func (p *messageProcessor) postProcessUpdatedEntities(ctx context.Context, event types.Event, updatedEntities []types.Entity) {
