@@ -20,6 +20,7 @@
         :templates-pending="templatesPending",
         :label="$t('settings.exportColumnNames')",
         :type="type",
+        without-infos-attributes,
         @update:template="updateTemplate"
       )
 </template>

@@ -8,22 +8,23 @@
       :error-messages="errors.collect(`${name}.column`)",
       :name="`${name}.column`"
     )
-    c-alarm-infos-attribute-field(
-      v-if="isAlarmInfos",
-      v-field="column",
-      :rules="alarmInfosRules",
-      :pending="infosPending",
-      :name="`${name}.column`"
-    )
-    c-infos-attribute-field(
-      v-else-if="isInfos",
-      v-field="column",
-      :items="infosItems",
-      :pending="infosPending",
-      :name="`${name}.column`",
-      combobox,
-      column
-    )
+    template(v-if="!withoutInfosAttributes")
+      c-alarm-infos-attribute-field(
+        v-if="isAlarmInfos",
+        v-field="column",
+        :rules="alarmInfosRules",
+        :pending="infosPending",
+        :name="`${name}.column`"
+      )
+      c-infos-attribute-field(
+        v-else-if="isInfos",
+        v-field="column",
+        :items="infosItems",
+        :pending="infosPending",
+        :name="`${name}.column`",
+        combobox,
+        column
+      )
     template(v-if="isLinks")
       column-links-category-field(v-field="column.field")
       c-number-field(
@@ -153,6 +154,10 @@ export default {
     name: {
       type: String,
       default: '',
+    },
+    withoutInfosAttributes: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
