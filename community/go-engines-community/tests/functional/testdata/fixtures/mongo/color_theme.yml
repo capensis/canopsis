@@ -159,3 +159,8 @@ color_theme:
     <<: *theme
     _id: test_theme_to_pick_1
     name: test_theme_to_pick_1
+
+  test_theme_to_pick_2:
+    <<: *theme
+    _id: test_theme_to_pick_2
+    name: test_theme_to_pick_2
