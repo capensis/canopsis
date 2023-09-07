@@ -1,22 +1,14 @@
 import { API_ROUTES } from '@/config';
 
-import { ENTITIES_TYPES } from '@/constants';
-
-import { createEntityModule } from '@/store/plugins/entities';
-
 import request from '@/services/request';
 
-export default createEntityModule({
+import { createCRUDModule } from '@/store/plugins/entities';
+
+export default createCRUDModule({
   route: API_ROUTES.dynamicInfo,
-  entityType: ENTITIES_TYPES.dynamicInfo,
-  dataPreparer: d => d.data,
-  withMeta: true,
+  withWithoutStore: true,
 }, {
   actions: {
-    fetchListWithoutStore(context, { params }) {
-      return request.get(API_ROUTES.dynamicInfo, { params });
-    },
-
     fetchInfosKeysWithoutStore(context, { params }) {
       return request.get(API_ROUTES.dynamicInfosDictionaryKeys, { params });
     },

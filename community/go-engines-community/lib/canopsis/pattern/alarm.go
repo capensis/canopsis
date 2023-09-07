@@ -34,7 +34,7 @@ func (p Alarm) Match(alarm types.Alarm) (bool, error) {
 					case FieldTypeString:
 						var s string
 						if s, err = getStringValue(infoVal); err == nil {
-							matched, _, err = cond.MatchString(s)
+							matched, err = cond.MatchString(s)
 						}
 					case FieldTypeInt:
 						var i int64
@@ -70,7 +70,7 @@ func (p Alarm) Match(alarm types.Alarm) (bool, error) {
 			foundField := false
 			if str, ok := getAlarmStringField(alarm, f); ok {
 				foundField = true
-				matched, _, err = cond.MatchString(str)
+				matched, err = cond.MatchString(str)
 			}
 			if !foundField || err != nil {
 				if i, ok := getAlarmIntField(alarm, f); ok {
@@ -152,7 +152,7 @@ func (p Alarm) Validate(forbiddenFields, onlyTimeAbsoluteFields []string) bool {
 			if infoName := getAlarmInfoName(f); infoName != "" {
 				switch v.FieldType {
 				case FieldTypeString:
-					_, _, err = cond.MatchString("")
+					_, err = cond.MatchString("")
 				case FieldTypeInt:
 					_, err = cond.MatchInt(0)
 				case FieldTypeBool:
@@ -175,7 +175,7 @@ func (p Alarm) Validate(forbiddenFields, onlyTimeAbsoluteFields []string) bool {
 			foundField := false
 			if str, ok := getAlarmStringField(emptyAlarm, f); ok {
 				foundField = true
-				_, _, err = cond.MatchString(str)
+				_, err = cond.MatchString(str)
 			}
 			if !foundField || err != nil {
 				if i, ok := getAlarmIntField(emptyAlarm, f); ok {
@@ -222,101 +222,19 @@ func (p Alarm) Validate(forbiddenFields, onlyTimeAbsoluteFields []string) bool {
 }
 
 func (p Alarm) ToMongoQuery(prefix string) (bson.M, error) {
-	if len(p) == 0 {
-		return nil, nil
+	groupQueries, err := p.getGroupMongoQueries(prefix)
+	if err != nil || len(groupQueries) == 0 {
+		return nil, err
 	}
-
-	if prefix != "" {
-		prefix += "."
-	}
-
-	emptyAlarm := types.Alarm{}
-	groupQueries := make([]bson.M, len(p))
-	var err error
-
-	for i, group := range p {
-		condQueries := make([]bson.M, len(group))
-		for j, cond := range group {
-			if infoName := getAlarmInfoName(cond.Field); infoName != "" {
-				mongoField := prefix + "v.infos_array.v." + infoName
-
-				switch cond.FieldType {
-				case FieldTypeString:
-					condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField)
-				case FieldTypeInt:
-					condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField)
-				case FieldTypeBool:
-					condQueries[j], err = cond.Condition.BoolToMongoQuery(mongoField)
-				case FieldTypeStringArray:
-					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField)
-				case "":
-					condQueries[j], err = cond.Condition.RefToMongoQuery(mongoField)
-				default:
-					return nil, fmt.Errorf("invalid field type for %q field: %s", cond.Field, cond.FieldType)
-				}
-				if err != nil {
-					return nil, fmt.Errorf("invalid condition for %q field: %w", cond.Field, err)
-				}
-
-				conds := getTypeMongoQuery(mongoField, cond.FieldType)
-
-				if len(conds) > 0 {
-					conds = append(conds, condQueries[j])
-					condQueries[j] = bson.M{"$and": conds}
-				}
-
-				continue
-			}
-
-			mongoField := prefix + cond.Field
-			foundField := false
-			if _, ok := getAlarmStringField(emptyAlarm, cond.Field); ok {
-				foundField = true
-				condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField)
-			}
-			if !foundField || err != nil {
-				if _, ok := getAlarmIntField(emptyAlarm, cond.Field); ok {
-					foundField = true
-					condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField)
-				}
-			}
-			if !foundField || err != nil {
-				if _, ok := getAlarmRefField(emptyAlarm, cond.Field); ok {
-					foundField = true
-					condQueries[j], err = cond.Condition.RefToMongoQuery(mongoField)
-				}
-			}
-			if !foundField || err != nil {
-				if _, ok := getAlarmTimeField(emptyAlarm, cond.Field); ok {
-					foundField = true
-					condQueries[j], err = cond.Condition.TimeToMongoQuery(mongoField)
-				}
-			}
-			if !foundField || err != nil {
-				if _, ok := getAlarmDurationField(emptyAlarm, cond.Field); ok {
-					foundField = true
-					condQueries[j], err = cond.Condition.DurationToMongoQuery(mongoField)
-				}
-			}
-			if !foundField || err != nil {
-				if _, ok := getAlarmStringArrayField(emptyAlarm, cond.Field); ok {
-					foundField = true
-					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField)
-				}
-			}
-
-			if !foundField {
-				err = ErrUnsupportedField
-			}
-			if err != nil {
-				return nil, fmt.Errorf("invalid condition for %q field: %w", cond.Field, err)
-			}
-		}
-
-		groupQueries[i] = bson.M{"$and": condQueries}
-	}
-
 	return bson.M{"$or": groupQueries}, nil
+}
+
+func (p Alarm) ToNegativeMongoQuery(prefix string) (bson.M, error) {
+	groupQueries, err := p.getGroupMongoQueries(prefix)
+	if err != nil || len(groupQueries) == 0 {
+		return nil, err
+	}
+	return bson.M{"$nor": groupQueries}, nil
 }
 
 func (p Alarm) GetMongoFields(prefix string) bson.M {
@@ -425,6 +343,104 @@ func (p Alarm) RemoveFields(fields, onlyTimeAbsoluteFields []string) Alarm {
 	return nil
 }
 
+func (p Alarm) getGroupMongoQueries(prefix string) ([]bson.M, error) {
+	if len(p) == 0 {
+		return nil, nil
+	}
+
+	if prefix != "" {
+		prefix += "."
+	}
+
+	emptyAlarm := types.Alarm{}
+	groupQueries := make([]bson.M, len(p))
+	var err error
+
+	for i, group := range p {
+		condQueries := make([]bson.M, len(group))
+		for j, cond := range group {
+			if infoName := getAlarmInfoName(cond.Field); infoName != "" {
+				mongoField := prefix + "v.infos_array.v." + infoName
+
+				switch cond.FieldType {
+				case FieldTypeString:
+					condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField)
+				case FieldTypeInt:
+					condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField)
+				case FieldTypeBool:
+					condQueries[j], err = cond.Condition.BoolToMongoQuery(mongoField)
+				case FieldTypeStringArray:
+					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField)
+				case "":
+					condQueries[j], err = cond.Condition.RefToMongoQuery(mongoField)
+				default:
+					return nil, fmt.Errorf("invalid field type for %q field: %s", cond.Field, cond.FieldType)
+				}
+				if err != nil {
+					return nil, fmt.Errorf("invalid condition for %q field: %w", cond.Field, err)
+				}
+
+				conds := getTypeMongoQuery(mongoField, cond.FieldType)
+
+				if len(conds) > 0 {
+					conds = append(conds, condQueries[j])
+					condQueries[j] = bson.M{"$and": conds}
+				}
+
+				continue
+			}
+
+			mongoField := prefix + cond.Field
+			foundField := false
+			if _, ok := getAlarmStringField(emptyAlarm, cond.Field); ok {
+				foundField = true
+				condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField)
+			}
+			if !foundField || err != nil {
+				if _, ok := getAlarmIntField(emptyAlarm, cond.Field); ok {
+					foundField = true
+					condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField)
+				}
+			}
+			if !foundField || err != nil {
+				if _, ok := getAlarmRefField(emptyAlarm, cond.Field); ok {
+					foundField = true
+					condQueries[j], err = cond.Condition.RefToMongoQuery(mongoField)
+				}
+			}
+			if !foundField || err != nil {
+				if _, ok := getAlarmTimeField(emptyAlarm, cond.Field); ok {
+					foundField = true
+					condQueries[j], err = cond.Condition.TimeToMongoQuery(mongoField)
+				}
+			}
+			if !foundField || err != nil {
+				if _, ok := getAlarmDurationField(emptyAlarm, cond.Field); ok {
+					foundField = true
+					condQueries[j], err = cond.Condition.DurationToMongoQuery(mongoField)
+				}
+			}
+			if !foundField || err != nil {
+				if _, ok := getAlarmStringArrayField(emptyAlarm, cond.Field); ok {
+					foundField = true
+					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField)
+				}
+			}
+
+			if !foundField {
+				err = ErrUnsupportedField
+			}
+			if err != nil {
+				return nil, fmt.Errorf("invalid condition for %q field: %w", cond.Field, err)
+			}
+		}
+
+		groupQueries[i] = bson.M{"$and": condQueries}
+	}
+
+	return groupQueries, nil
+}
+
 func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 	switch f {
 	case "v.display_name":
@@ -450,6 +466,18 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 			return "", true
 		}
 		return alarm.Value.LastComment.Message, true
+	case "v.ticket.m":
+		if alarm.Value.Ticket == nil {
+			return "", true
+		}
+
+		return alarm.Value.Ticket.Message, true
+	case "v.ticket.ticket":
+		if alarm.Value.Ticket == nil {
+			return "", true
+		}
+
+		return alarm.Value.Ticket.Ticket, true
 	case "v.ack.a":
 		if alarm.Value.ACK == nil {
 			return "", true
@@ -469,6 +497,14 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 
 		return alarm.Value.ACK.Initiator, true
 	default:
+		if n := strings.TrimPrefix(f, "v.ticket.ticket_data."); n != f {
+			if alarm.Value.Ticket == nil || alarm.Value.Ticket.TicketData == nil {
+				return "", true
+			}
+
+			return alarm.Value.Ticket.TicketData[n], true
+		}
+
 		return "", false
 	}
 }

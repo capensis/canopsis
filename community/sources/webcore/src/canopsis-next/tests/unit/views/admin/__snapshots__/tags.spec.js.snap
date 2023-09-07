@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`tags Renders \`tags\` with permissions 1`] = `
+<c-page-stub
+  creatable="true"
+  create-tooltip="Create a tag"
+>
+  <tags-list-stub
+    duplicable="true"
+    pagination="[object Object]"
+    pending="true"
+    removable="true"
+    tags="[object Object],[object Object]"
+    totalitems="2"
+    updatable="true"
+  />
+</c-page-stub>
+`;
+
+exports[`tags Renders \`tags\` without permissions 1`] = `
+<c-page-stub
+  create-tooltip="Create a tag"
+>
+  <tags-list-stub
+    pagination="[object Object]"
+    tags=""
+  />
+</c-page-stub>
+`;

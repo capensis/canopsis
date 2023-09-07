@@ -79,7 +79,7 @@ func (p EventPattern) Matches(event types.Event, matches *EventRegexMatches) boo
 		p.EventType.Matches(event.EventType, &matches.EventType) &&
 		p.Component.Matches(event.Component, &matches.Component) &&
 		p.Resource.Matches(event.Resource, &matches.Resource) &&
-		p.PerfData.Matches(event.PerfData, &matches.PerfData) &&
+		p.PerfData.Matches(&event.PerfData, &matches.PerfData) &&
 		p.Status.Matches(event.Status) &&
 		p.Timestamp.Matches(event.Timestamp) &&
 		p.SourceType.Matches(event.SourceType, &matches.SourceType) &&
@@ -88,7 +88,6 @@ func (p EventPattern) Matches(event types.Event, matches *EventRegexMatches) boo
 		p.Output.Matches(event.Output, &matches.Output) &&
 		p.Author.Matches(event.Author, &matches.Author) &&
 		p.RK.Matches(event.RK, &matches.RK) &&
-		p.AckResources.Matches(event.AckResources) &&
 		p.Duration.Matches(event.Duration) &&
 		p.Ticket.Matches(event.TicketInfo.Ticket, &matches.Ticket) &&
 		p.StatName.Matches(event.StatName, &matches.StatName) &&

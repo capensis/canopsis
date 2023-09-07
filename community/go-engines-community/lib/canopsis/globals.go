@@ -16,7 +16,6 @@ const (
 
 	AxeEngineName                  = "engine-axe"
 	AxeQueueName                   = "Engine_axe"
-	AxeServiceRPCClientQueueName   = "Engine_axe_service_rpc_client"
 	AxePbehaviorRPCClientQueueName = "Engine_axe_pbehavior_rpc_client"
 	AxeRPCQueueServerName          = "Engine_axe_rpc_server"
 	AxeConsumerName                = "axe"
@@ -39,13 +38,9 @@ const (
 
 	PBehaviorEngineName         = "engine-pbehavior"
 	PBehaviorRPCQueueServerName = "Engine_pbehavior_rpc_server"
+	PBehaviorQueueRecomputeName = "Engine_pbehavior_recompute"
 	PBehaviorRPCConsumerName    = "pbehavior_rpc"
-
-	ServiceEngineName         = "engine-service"
-	ServiceQueueName          = "Engine_service"
-	ServiceRPCQueueServerName = "Engine_service_rpc_server"
-	ServiceConsumerName       = "service"
-	ServiceRPCConsumerName    = "service_rpc"
+	PBehaviorConsumerName       = "pbehavior"
 
 	WebhookEngineName         = "engine-webhook"
 	WebhookRPCQueueServerName = "Engine_webhook_rpc_server"
@@ -75,7 +70,11 @@ const (
 
 	TechMetricsFlushInterval = time.Second * 10
 
+	DefaultFlushInterval = time.Second * 5
+
 	EngineConnector = "engine"
 
 	FacetLimit = 1000
+
+	ApiName = "api"
 )

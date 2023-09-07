@@ -1,20 +1,17 @@
 import { API_ROUTES } from '@/config';
-import { ENTITIES_TYPES } from '@/constants';
-
-import { createEntityModule } from '@/store/plugins/entities';
 
 import request from '@/services/request';
+
+import { createCRUDModule } from '@/store/plugins/entities';
 
 export const types = {
   SET_UPDATED_AT: 'SET_UPDATED_AT',
 };
 
-export default createEntityModule({
+export default createCRUDModule({
   route: API_ROUTES.ratingSettings,
-  entityType: ENTITIES_TYPES.ratingSettings,
-  dataPreparer: d => d.data,
   withFetchingParams: true,
-  withMeta: true,
+  withWithoutStore: true,
 }, {
   getters: {
     updatedAt: state => state.updatedAt,
@@ -28,10 +25,6 @@ export default createEntityModule({
     },
   },
   actions: {
-    fetchListWithoutStore(context, { params }) {
-      return request.get(API_ROUTES.ratingSettings, { params });
-    },
-
     async bulkUpdate({ commit }, { data }) {
       await request.put(API_ROUTES.bulkRatingSettings, data);
 

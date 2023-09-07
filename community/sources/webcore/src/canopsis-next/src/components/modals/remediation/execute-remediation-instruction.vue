@@ -26,14 +26,13 @@ import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants'
 
 import Socket from '@/plugins/socket/services/socket';
 
-import { getEmptyRemediationJobExecution } from '@/helpers/forms/remediation-job';
+import { getEmptyRemediationJobExecution } from '@/helpers/entities/remediation/job/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesRemediationJobExecutionMixin } from '@/mixins/entities/remediation/job-execution';
 import { entitiesRemediationInstructionExecutionMixin } from '@/mixins/entities/remediation/instruction-execution';
 
-import RemediationInstructionExecute
-  from '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';
+import RemediationInstructionExecute from '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -96,7 +95,7 @@ export default {
           await this.config.onComplete(instructionExecution);
         }
 
-        this.$modals.hide();
+        await this.closeModal();
       }
     },
   },
@@ -224,7 +223,7 @@ export default {
      */
     socketCloseHandler() {
       if (!this.$socket.isConnectionOpen) {
-        this.$modals.hide();
+        this.closeModal();
         this.$popups.error({
           text: this.$t('remediation.instructionExecute.popups.connectionError'),
           autoClose: false,
@@ -236,7 +235,7 @@ export default {
      * Socket closeRoom event handler
      */
     socketCloseRoomHandler() {
-      this.$modals.hide();
+      this.closeModal();
       this.$popups.error({
         text: this.$t('remediation.instructionExecute.popups.wasAborted', {
           instructionName: this.instructionExecution?.name,
@@ -316,7 +315,7 @@ export default {
         }
       } catch (err) {
         this.$popups.error({ text: err.error || this.$t('errors.default') });
-        this.$modals.hide();
+        this.closeModal();
       } finally {
         this.pending = false;
       }
@@ -327,7 +326,7 @@ export default {
      *
      * @return {Promise<void>}
      */
-    async confirmationHide() {
+    async closeModal() {
       if (this.config.onClose) {
         await this.config.onClose();
       }
@@ -346,7 +345,7 @@ export default {
           text: this.$t('remediation.instructionExecute.closeConfirmationText'),
           action: async () => {
             await this.pauseRemediationInstructionExecution({ id: this.instructionExecutionId });
-            await this.confirmationHide();
+            await this.closeModal();
           },
           cancel: async (cancelled) => {
             if (!cancelled) {
@@ -354,7 +353,7 @@ export default {
             }
 
             await this.cancelRemediationInstructionExecution({ id: this.instructionExecutionId });
-            await this.confirmationHide();
+            await this.closeModal();
           },
         },
       });

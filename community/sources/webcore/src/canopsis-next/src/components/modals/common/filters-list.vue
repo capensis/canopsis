@@ -7,8 +7,8 @@
       filters-list-component(
         :filters="filters",
         :pending="pending",
-        :addable="config.hasAccessToAddFilter",
-        :editable="config.hasAccessToEditFilter",
+        :addable="config.addable",
+        :editable="config.editable",
         @input="updateFiltersPositions",
         @add="showCreateFilterModal",
         @edit="showEditFilterModal",
@@ -21,7 +21,7 @@ import { pick } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { mapIds } from '@/helpers/entities';
+import { mapIds } from '@/helpers/array';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
@@ -59,7 +59,14 @@ export default {
 
     modalConfig() {
       return {
-        ...pick(this.config, ['withAlarm', 'withEntity', 'withPbehavior', 'withServiceWeather', 'entityTypes']),
+        ...pick(this.config, [
+          'withAlarm',
+          'withEntity',
+          'withPbehavior',
+          'withServiceWeather',
+          'entityTypes',
+          'entityCountersType',
+        ]),
 
         withTitle: true,
       };

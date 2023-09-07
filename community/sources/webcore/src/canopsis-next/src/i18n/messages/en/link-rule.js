@@ -9,8 +9,14 @@ export default {
   sourceCodeAlert: 'Please, change this script only if you are completely aware of what you are doing',
   type: 'Link type',
   single: 'Apply this link only to single alarm ?',
+  hideInMenu: 'Hide this link from alarm actions ?',
+  actionType: 'Action type',
   types: {
     [LINK_RULE_TYPES.alarm]: 'Alarm',
     [LINK_RULE_TYPES.entity]: 'Entity',
+  },
+  actionTypes: {
+    open: 'Open the link URL',
+    copy: 'Copy link URL',
   },
 };

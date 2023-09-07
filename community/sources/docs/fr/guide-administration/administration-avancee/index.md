@@ -27,6 +27,6 @@ Cette section vous accompagne dans l'administration avancée des composants de C
 - [Configuration avancée de la base de données MongoDB](configuration-composants/base-de-donnees-mongodb.md)
 - [Configuration avancée du serveur de cache Redis](configuration-composants/serveur-cache-redis.md)
 - [Configuration avancée du reverse proxy HTTP Nginx](configuration-composants/reverse-proxy-nginx.md)
-    - [Activation d'HTTPS danx Nginx](configuration-composants/reverse-proxy-nginx-https.md)
+- [Activation d'HTTPS danx Nginx](configuration-composants/reverse-proxy-nginx-https.md)
 - [Liste des variables d'environnement liées à Canopsis](variables-environnement.md)
 - [Reconnexion automatique des services et des moteurs](reconnexion-automatique.md)

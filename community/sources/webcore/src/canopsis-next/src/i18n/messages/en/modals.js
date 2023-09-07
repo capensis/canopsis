@@ -101,9 +101,6 @@ export default {
   createCancelEvent: {
     title: 'Cancel',
   },
-  createGroupRequestEvent: {
-    title: 'Suggest group request for meta alarm',
-  },
   createGroupEvent: {
     title: 'Create meta alarm',
   },
@@ -181,6 +178,9 @@ export default {
   },
   createAckRemove: {
     title: 'Remove ack',
+  },
+  createUnCancel: {
+    title: 'Create uncancel event',
   },
   liveReporting: {
     editLiveReporting: 'Live reporting',
@@ -265,6 +265,30 @@ export default {
       [WIDGET_TYPES.map]: {
         title: 'Mapping',
       },
+      [WIDGET_TYPES.barChart]: {
+        title: 'Bar chart',
+      },
+      [WIDGET_TYPES.lineChart]: {
+        title: 'Line chart',
+      },
+      [WIDGET_TYPES.pieChart]: {
+        title: 'Pie chart',
+      },
+      [WIDGET_TYPES.numbers]: {
+        title: 'Numbers',
+      },
+      [WIDGET_TYPES.userStatistics]: {
+        title: 'User statistics',
+      },
+      [WIDGET_TYPES.alarmStatistics]: {
+        title: 'Alarm statistics',
+      },
+      chart: {
+        title: 'Chart',
+      },
+      report: {
+        title: 'Report',
+      },
     },
   },
   manageHistogramGroups: {
@@ -305,6 +329,9 @@ export default {
     },
     edit: {
       title: 'Edit role',
+    },
+    duplicate: {
+      title: 'Duplicate role',
     },
   },
   createEventFilter: {
@@ -471,9 +498,6 @@ export default {
   },
   pbehaviorPlanning: {
     title: 'Periodical behaviors',
-  },
-  selectExceptionsLists: {
-    title: 'Choose list of exceptions',
   },
   createRrule: {
     title: 'Create recurrence rule',
@@ -904,6 +928,59 @@ export default {
     },
     edit: {
       title: 'Edit link generator',
+    },
+  },
+  createAlarmChart: {
+    [WIDGET_TYPES.barChart]: {
+      create: {
+        title: 'Create bar chart',
+      },
+      edit: {
+        title: 'Edit bar chart',
+      },
+    },
+    [WIDGET_TYPES.lineChart]: {
+      create: {
+        title: 'Create line chart',
+      },
+      edit: {
+        title: 'Edit line chart',
+      },
+    },
+    [WIDGET_TYPES.numbers]: {
+      create: {
+        title: 'Create numbers chart',
+      },
+      edit: {
+        title: 'Edit numbers chart',
+      },
+    },
+  },
+  importPbehaviorException: {
+    title: 'Import exception dates',
+  },
+  createMaintenance: {
+    enableMaintenance: 'Enable maintenance mode',
+    setup: {
+      title: 'Maintenance mode setup',
+    },
+    edit: {
+      title: 'Edit maintenance mode',
+    },
+  },
+  confirmationLeaveMaintenance: {
+    title: 'Leave maintenance mode',
+    text: 'Are you sure you want to leave the maintenance mode?\nAll users will be able to login to the system after leaving.',
+  },
+  createTag: {
+    create: {
+      title: 'Create a tag',
+    },
+    edit: {
+      title: 'Edit a tag',
+    },
+    duplicate: {
+      title: 'Duplicate a tag',
     },
   },
 };

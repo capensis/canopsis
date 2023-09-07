@@ -3,6 +3,8 @@ package eventfilter
 import (
 	"context"
 	"fmt"
+	"reflect"
+	"strconv"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
@@ -12,85 +14,109 @@ import (
 )
 
 type actionProcessor struct {
+	failureService    FailureService
 	templateExecutor  template.Executor
 	techMetricsSender techmetrics.Sender
 }
 
 func NewActionProcessor(
+	failureService FailureService,
 	templateExecutor template.Executor,
 	sender techmetrics.Sender,
 ) ActionProcessor {
 	return &actionProcessor{
+		failureService:    failureService,
 		templateExecutor:  templateExecutor,
 		techMetricsSender: sender,
 	}
 }
 
-func (p *actionProcessor) Process(ctx context.Context, action Action, event types.Event, regexMatchWrapper RegexMatchWrapper, externalData map[string]interface{}) (types.Event, error) {
+func (p *actionProcessor) Process(
+	_ context.Context,
+	ruleID string,
+	action ParsedAction,
+	event types.Event,
+	regexMatchWrapper RegexMatchWrapper,
+	externalData map[string]any,
+) (types.Event, error) {
 	switch action.Type {
 	case ActionSetField:
 		err := event.SetField(action.Name, action.Value)
-		return event, err
+		if err != nil {
+			failReason := fmt.Sprintf("action %d cannot set %q field: %s", action.Index, action.Name, err.Error())
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
+			return event, err
+		}
+
+		return event, nil
 	case ActionSetFieldFromTemplate:
-		templateStr, ok := action.Value.(string)
-		if !ok {
+		if action.ParsedValue.Text == "" {
+			failReason := fmt.Sprintf("action %d cannot set %q field: %v must be template", action.Index,
+				action.Name, action.Value)
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
 			return event, ErrShouldBeAString
 		}
 
-		value, err := p.templateExecutor.Execute(
-			templateStr,
-			Template{
-				Event:             event,
-				RegexMatchWrapper: regexMatchWrapper,
-				ExternalData:      externalData,
-			}.GetTemplate(),
-		)
+		tplData := Template{
+			Event:             event,
+			RegexMatchWrapper: regexMatchWrapper,
+			ExternalData:      externalData,
+		}.GetTemplate()
+		value, err := ExecuteParsedTemplate(ruleID, "Actions."+strconv.Itoa(action.Index)+".Value",
+			action.ParsedValue, tplData, event, p.failureService,
+			p.templateExecutor)
 		if err != nil {
 			return event, err
 		}
 
 		err = event.SetField(action.Name, value)
+		if err != nil {
+			failReason := fmt.Sprintf("action %d cannot set %q field: %s", action.Index, action.Name, err.Error())
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
+			return event, err
+		}
 
-		return event, err
+		return event, nil
 	case ActionSetEntityInfo:
-		entityUpdated := false
-
 		if !types.IsInfoValueValid(action.Value) {
+			failReason := fmt.Sprintf("action %d cannot set %q entity info: invalid type of %v", action.Index,
+				action.Name, action.Value)
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
 			return event, types.ErrInvalidInfoType
 		}
 
-		*event.Entity, entityUpdated = p.setEntityInfo(*event.Entity, action.Value, action.Name, action.Description)
-
-		event.IsEntityUpdated = event.IsEntityUpdated || entityUpdated
+		*event.Entity = p.setEntityInfo(*event.Entity, action.Value, action.Name, action.Description)
 
 		return event, nil
 	case ActionSetEntityInfoFromTemplate:
-		templateStr, ok := action.Value.(string)
-		if !ok {
+		if action.ParsedValue.Text == "" {
+			failReason := fmt.Sprintf("action %d cannot set %q entity info: %v must be template", action.Index,
+				action.Name, action.Value)
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
 			return event, ErrShouldBeAString
 		}
 
-		value, err := p.templateExecutor.Execute(
-			templateStr,
-			Template{
-				Event:             event,
-				RegexMatchWrapper: regexMatchWrapper,
-				ExternalData:      externalData,
-			}.GetTemplate(),
-		)
+		tplData := Template{
+			Event:             event,
+			RegexMatchWrapper: regexMatchWrapper,
+			ExternalData:      externalData,
+		}.GetTemplate()
+		value, err := ExecuteParsedTemplate(ruleID, "Actions."+strconv.Itoa(action.Index)+".Value",
+			action.ParsedValue, tplData, event, p.failureService,
+			p.templateExecutor)
 		if err != nil {
 			return event, err
 		}
 
-		entityUpdated := false
-		*event.Entity, entityUpdated = p.setEntityInfo(*event.Entity, value, action.Name, action.Description)
-
-		event.IsEntityUpdated = event.IsEntityUpdated || entityUpdated
+		*event.Entity = p.setEntityInfo(*event.Entity, value, action.Name, action.Description)
 
 		return event, nil
 	case ActionCopy:
 		strValue, ok := action.Value.(string)
 		if !ok {
+			failReason := fmt.Sprintf("action %d cannot copy to %q field: value %v must be path to field",
+				action.Index, action.Name, action.Value)
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
 			return event, ErrShouldBeAString
 		}
 
@@ -105,11 +131,17 @@ func (p *actionProcessor) Process(ctx context.Context, action Action, event type
 			strValue,
 		)
 		if err != nil {
+			failReason := fmt.Sprintf("action %d cannot copy from %q to %q: %s", action.Index, strValue,
+				action.Name, err.Error())
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, &event)
 			return event, err
 		}
 
 		err = event.SetField(action.Name, value)
 		if err != nil {
+			failReason := fmt.Sprintf("action %d cannot copy from %q to %q: %s", action.Index, strValue,
+				action.Name, err.Error())
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, &event)
 			return event, err
 		}
 
@@ -117,6 +149,9 @@ func (p *actionProcessor) Process(ctx context.Context, action Action, event type
 	case ActionCopyToEntityInfo:
 		strValue, ok := action.Value.(string)
 		if !ok {
+			failReason := fmt.Sprintf("action %d cannot copy to %q entity info: value %v must be path to field",
+				action.Index, action.Name, action.Value)
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
 			return event, ErrShouldBeAString
 		}
 
@@ -131,45 +166,50 @@ func (p *actionProcessor) Process(ctx context.Context, action Action, event type
 			strValue,
 		)
 		if err != nil {
+			failReason := fmt.Sprintf("action %d cannot copy from %q to %q entity info: %s", action.Index,
+				strValue, action.Name, err.Error())
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, &event)
 			return event, err
 		}
 
 		if !types.IsInfoValueValid(value) {
+			failReason := fmt.Sprintf("action %d cannot copy from %q to %q entity info: invalid type of %v",
+				action.Index, strValue, action.Name, value)
+			p.failureService.Add(ruleID, FailureTypeOther, failReason, &event)
 			return event, types.ErrInvalidInfoType
 		}
 
-		entityUpdated := false
-		*event.Entity, entityUpdated = p.setEntityInfo(*event.Entity, value, action.Name, action.Description)
-
-		event.IsEntityUpdated = event.IsEntityUpdated || entityUpdated
+		*event.Entity = p.setEntityInfo(*event.Entity, value, action.Name, action.Description)
 
 		return event, nil
 	}
 
+	failReason := fmt.Sprintf("action %d has invalid type %q", action.Index, action.Type)
+	p.failureService.Add(ruleID, FailureTypeOther, failReason, &event)
 	return event, fmt.Errorf("action type = %s is invalid", action.Type)
 }
 
-func (p *actionProcessor) setEntityInfo(entity types.Entity, value interface{}, name, description string) (types.Entity, bool) {
-	info, ok := entity.Infos[name]
-
-	entityUpdated := false
-	valueChanged := !ok || info.Value != value
-	if valueChanged {
-		entityUpdated = true
-		p.techMetricsSender.SendCheEntityInfo(time.Now(), name)
+func (p *actionProcessor) setEntityInfo(entity types.Entity, value interface{}, name, description string) types.Entity {
+	if info, ok := entity.Infos[name]; ok {
+		if reflect.DeepEqual(info.Value, value) {
+			return entity
+		}
 	}
-
-	info.Name = name
-	info.Description = description
-	info.Value = value
 
 	if entity.Infos == nil {
-		entity.Infos = make(map[string]types.Info)
+		entity.Infos = make(map[string]types.Info, 1)
 	}
 
-	entity.Infos[name] = info
+	entity.Infos[name] = types.Info{
+		Name:        name,
+		Description: description,
+		Value:       value,
+	}
 
-	return entity, entityUpdated
+	p.techMetricsSender.SendCheEntityInfo(time.Now(), name)
+	entity.IsUpdated = true
+
+	return entity
 }
 
 var ErrShouldBeAString = fmt.Errorf("value should be a string")

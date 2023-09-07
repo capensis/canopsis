@@ -1,9 +1,10 @@
 <template lang="pug">
-  v-card.white--text.cursor-pointer.weather-item.ma-1(
+  card-with-see-alarms-btn.white--text.cursor-pointer.ma-1(
     :style="{ backgroundColor: color }",
-    :class="{ 'v-card__with-see-alarms-btn': hasAlarmsListAccess }",
+    :show-button="hasAlarmsListAccess",
     tile,
-    @click="showTestSuiteInformationModal"
+    @click="showTestSuiteInformationModal",
+    @show:alarms="showAlarmListModal"
   )
     v-layout.fill-height(row)
       v-flex.pa-2
@@ -16,24 +17,18 @@
               span.pre-wrap {{ testSuite.timestamp | date('testSuiteFormat') }}
           v-flex(xs6)
             test-suite-statistics(:test-suite="testSuite")
-    v-btn.see-alarms-btn(
-      v-if="hasAlarmsListAccess",
-      flat,
-      @click.stop="showAlarmListModal"
-    ) {{ $t('serviceWeather.seeAlarms') }}
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import VRuntimeTemplate from 'v-runtime-template';
 
-import {
-  MODALS,
-  USERS_PERMISSIONS,
-  TEST_SUITE_COLORS,
-} from '@/constants';
+import { MODALS, USERS_PERMISSIONS, TEST_SUITE_COLORS } from '@/constants';
+
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
 import { authMixin } from '@/mixins/auth';
+
+import CardWithSeeAlarmsBtn from '@/components/common/card/card-with-see-alarms-btn.vue';
 
 import TestSuiteStatistics from './test-suite-statistics.vue';
 
@@ -41,7 +36,7 @@ const { mapActions } = createNamespacedHelpers('alarm');
 
 export default {
   components: {
-    VRuntimeTemplate,
+    CardWithSeeAlarmsBtn,
     TestSuiteStatistics,
   },
   mixins: [authMixin],
@@ -84,6 +79,7 @@ export default {
         this.$modals.show({
           name: MODALS.alarmsList,
           config: {
+            widget: generatePreparedDefaultAlarmListWidget(),
             title: this.$t('modals.alarmsList.prefixTitle', { prefix: this.testSuite.name }),
             fetchList: params => this.fetchComponentAlarmsListWithoutStore({
               params: { ...params, _id: this.testSuite.entity_id },

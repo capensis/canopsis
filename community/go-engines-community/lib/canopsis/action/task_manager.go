@@ -117,7 +117,8 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 						return
 					}
 
-					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AdditionalData, task.FifoAckEvent)
+					e.startExecution(ctx, *scenario, task.Alarm, task.Entity, task.AdditionalData, task.FifoAckEvent,
+						task.IsMetaAlarmUpdated, task.IsInstructionMatched)
 					return
 				}
 
@@ -147,21 +148,28 @@ func (e *redisBasedManager) listenInputChannel(ctx context.Context, wg *sync.Wai
 					if action.Parameters.SkipForChild != nil {
 						skipForChild = *action.Parameters.SkipForChild
 					}
+					skipForInstruction := false
+					if action.Parameters.SkipForInstruction != nil {
+						skipForInstruction = *action.Parameters.SkipForInstruction
+					}
 					e.taskChannel <- Task{
-						Source:            "input listener",
-						Action:            action,
-						Alarm:             task.Alarm,
-						Entity:            task.Entity,
-						Step:              step,
-						ExecutionID:       execution.ID,
-						ExecutionCacheKey: execution.GetCacheKey(),
-						ScenarioID:        execution.ScenarioID,
-						ScenarioName:      execution.ScenarioName,
-						SkipForChild:      skipForChild,
-						Header:            execution.Header,
-						Response:          execution.Response,
-						ResponseMap:       execution.ResponseMap,
-						AdditionalData:    task.AdditionalData,
+						Source:               "input listener",
+						Action:               action,
+						Alarm:                task.Alarm,
+						Entity:               task.Entity,
+						Step:                 step,
+						ExecutionID:          execution.ID,
+						ExecutionCacheKey:    execution.GetCacheKey(),
+						ScenarioID:           execution.ScenarioID,
+						ScenarioName:         execution.ScenarioName,
+						SkipForChild:         skipForChild,
+						IsMetaAlarmUpdated:   execution.IsMetaAlarmUpdated,
+						SkipForInstruction:   skipForInstruction,
+						IsInstructionMatched: execution.IsInstructionMatched,
+						Header:               execution.Header,
+						Response:             execution.Response,
+						ResponseMap:          execution.ResponseMap,
+						AdditionalData:       task.AdditionalData,
 					}
 
 					return
@@ -420,21 +428,28 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 		if action.Parameters.SkipForChild != nil {
 			skipForChild = *action.Parameters.SkipForChild
 		}
+		skipForInstruction := false
+		if action.Parameters.SkipForInstruction != nil {
+			skipForInstruction = *action.Parameters.SkipForInstruction
+		}
 		nextTask := Task{
-			Source:            "process task func",
-			Action:            action,
-			Alarm:             taskRes.Alarm,
-			Entity:            scenarioExecution.Entity,
-			Step:              nextStep,
-			ExecutionID:       scenarioExecution.ID,
-			ExecutionCacheKey: scenarioExecution.GetCacheKey(),
-			ScenarioID:        scenarioExecution.ScenarioID,
-			ScenarioName:      scenarioExecution.ScenarioName,
-			SkipForChild:      skipForChild,
-			Header:            scenarioExecution.Header,
-			Response:          scenarioExecution.Response,
-			ResponseMap:       scenarioExecution.ResponseMap,
-			AdditionalData:    additionalData,
+			Source:               "process task func",
+			Action:               action,
+			Alarm:                taskRes.Alarm,
+			Entity:               scenarioExecution.Entity,
+			Step:                 nextStep,
+			ExecutionID:          scenarioExecution.ID,
+			ExecutionCacheKey:    scenarioExecution.GetCacheKey(),
+			ScenarioID:           scenarioExecution.ScenarioID,
+			ScenarioName:         scenarioExecution.ScenarioName,
+			SkipForChild:         skipForChild,
+			IsMetaAlarmUpdated:   scenarioExecution.IsMetaAlarmUpdated,
+			SkipForInstruction:   skipForInstruction,
+			IsInstructionMatched: scenarioExecution.IsInstructionMatched,
+			Header:               scenarioExecution.Header,
+			Response:             scenarioExecution.Response,
+			ResponseMap:          scenarioExecution.ResponseMap,
+			AdditionalData:       additionalData,
 		}
 
 		select {
@@ -483,7 +498,8 @@ func (e *redisBasedManager) processTriggers(ctx context.Context, task ExecuteSce
 	for trigger, scenarios := range scenariosByTrigger {
 		additionalData.Trigger = trigger
 		for _, scenario := range scenarios {
-			e.startExecution(ctx, scenario, task.Alarm, task.Entity, additionalData, task.FifoAckEvent)
+			e.startExecution(ctx, scenario, task.Alarm, task.Entity, additionalData, task.FifoAckEvent,
+				task.IsMetaAlarmUpdated, task.IsInstructionMatched)
 		}
 	}
 
@@ -529,7 +545,7 @@ func (e *redisBasedManager) processEmittedTrigger(
 		additionalData.Trigger = trigger
 		for _, scenario := range scenarios {
 			e.startExecution(ctx, scenario, prevTaskRes.Alarm, prevScenarioExecution.Entity, additionalData,
-				prevScenarioExecution.FifoAckEvent)
+				prevScenarioExecution.FifoAckEvent, prevScenarioExecution.IsMetaAlarmUpdated, prevScenarioExecution.IsInstructionMatched)
 		}
 	}
 
@@ -543,6 +559,8 @@ func (e *redisBasedManager) startExecution(
 	entity types.Entity,
 	data AdditionalData,
 	fifoAckEvent types.Event,
+	isMetaAlarmUpdated bool,
+	isInstructionMatched bool,
 ) {
 	e.logger.Debug().Msgf("Execute scenario = %s for alarm = %s", scenario.ID, alarm.ID)
 	var executions []Execution
@@ -556,16 +574,20 @@ func (e *redisBasedManager) startExecution(
 		)
 	}
 
+	data.RuleName = scenario.Name
+
 	execution := ScenarioExecution{
-		ID:               utils.NewID(),
-		ScenarioID:       scenario.ID,
-		ScenarioName:     scenario.Name,
-		AlarmID:          alarm.ID,
-		Entity:           entity,
-		ActionExecutions: executions,
-		LastUpdate:       time.Now().Unix(),
-		AdditionalData:   data,
-		FifoAckEvent:     fifoAckEvent,
+		ID:                   utils.NewID(),
+		ScenarioID:           scenario.ID,
+		ScenarioName:         scenario.Name,
+		AlarmID:              alarm.ID,
+		Entity:               entity,
+		ActionExecutions:     executions,
+		LastUpdate:           time.Now().Unix(),
+		AdditionalData:       data,
+		FifoAckEvent:         fifoAckEvent,
+		IsMetaAlarmUpdated:   isMetaAlarmUpdated,
+		IsInstructionMatched: isInstructionMatched,
 	}
 	ok, err := e.executionStorage.Create(ctx, execution)
 	if err != nil {
@@ -582,17 +604,24 @@ func (e *redisBasedManager) startExecution(
 	if action.Parameters.SkipForChild != nil {
 		skipForChild = *action.Parameters.SkipForChild
 	}
+	skipForInstruction := false
+	if action.Parameters.SkipForInstruction != nil {
+		skipForInstruction = *action.Parameters.SkipForInstruction
+	}
 	e.taskChannel <- Task{
-		Source:            "input listener",
-		Action:            action,
-		Alarm:             alarm,
-		Entity:            entity,
-		Step:              0,
-		ExecutionID:       execution.ID,
-		ExecutionCacheKey: execution.GetCacheKey(),
-		ScenarioID:        scenario.ID,
-		ScenarioName:      scenario.Name,
-		SkipForChild:      skipForChild,
-		AdditionalData:    data,
+		Source:               "input listener",
+		Action:               action,
+		Alarm:                alarm,
+		Entity:               entity,
+		Step:                 0,
+		ExecutionID:          execution.ID,
+		ExecutionCacheKey:    execution.GetCacheKey(),
+		ScenarioID:           scenario.ID,
+		ScenarioName:         scenario.Name,
+		SkipForChild:         skipForChild,
+		IsMetaAlarmUpdated:   execution.IsMetaAlarmUpdated,
+		SkipForInstruction:   skipForInstruction,
+		IsInstructionMatched: execution.IsInstructionMatched,
+		AdditionalData:       data,
 	}
 }

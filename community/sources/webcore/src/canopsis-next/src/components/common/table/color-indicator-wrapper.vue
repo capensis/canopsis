@@ -12,10 +12,9 @@
 
 <script>
 import { COLORS } from '@/config';
-
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 
-import { getEntityStateColor, getImpactStateColor } from '@/helpers/color';
+import { getEntityStateColor, getImpactStateColor } from '@/helpers/entities/entity/color';
 
 export default {
   props: {
@@ -42,7 +41,9 @@ export default {
     },
 
     state() {
-      return this.alarm?.v?.state?.val ?? 0;
+      return this.alarm?.v?.state?.val
+        ?? this.entity?.state
+        ?? 0;
     },
 
     impactState() {

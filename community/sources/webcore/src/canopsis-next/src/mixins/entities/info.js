@@ -2,7 +2,9 @@ import { createNamespacedHelpers } from 'vuex';
 import { isMatch } from 'lodash';
 
 import { DEFAULT_APP_TITLE } from '@/config';
-import { CANOPSIS_EDITION, USER_PERMISSIONS_TO_PAGES_RULES } from '@/constants';
+import { CANOPSIS_EDITION, ROUTES_NAMES, USER_PERMISSIONS_TO_PAGES_RULES } from '@/constants';
+
+import { compile } from '@/helpers/handlebars';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('info');
 
@@ -23,6 +25,7 @@ export const entitiesInfoMixin = {
       description: 'description',
       language: 'language',
       allowChangeSeverityToInfo: 'allowChangeSeverityToInfo',
+      showHeaderOnKioskMode: 'showHeaderOnKioskMode',
       isLDAPAuthEnabled: 'isLDAPAuthEnabled',
       isCASAuthEnabled: 'isCASAuthEnabled',
       isSAMLAuthEnabled: 'isSAMLAuthEnabled',
@@ -31,10 +34,17 @@ export const entitiesInfoMixin = {
       timezone: 'timezone',
       fileUploadMaxSize: 'fileUploadMaxSize',
       remediationJobConfigTypes: 'remediationJobConfigTypes',
+      maintenance: 'maintenance',
     }),
 
     isProVersion() {
       return this.edition === CANOPSIS_EDITION.pro;
+    },
+
+    shownHeader() {
+      return this.$route?.name === ROUTES_NAMES.viewKiosk
+        ? this.showHeaderOnKioskMode
+        : !this.$route?.meta?.hideHeader;
     },
   },
   methods: {
@@ -55,8 +65,10 @@ export const entitiesInfoMixin = {
       return isMatch(appInfo, USER_PERMISSIONS_TO_PAGES_RULES[permission]);
     },
 
-    setTitle() {
-      document.title = this.appTitle || DEFAULT_APP_TITLE;
+    async setTitle() {
+      document.title = this.appTitle
+        ? await compile(this.appTitle)
+        : DEFAULT_APP_TITLE;
     },
   },
 };

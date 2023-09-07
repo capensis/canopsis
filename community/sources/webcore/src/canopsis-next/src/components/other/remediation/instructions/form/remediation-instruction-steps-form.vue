@@ -2,7 +2,7 @@
   v-layout(column)
     v-flex(v-if="!steps.length", xs12)
       v-alert(:value="true", type="info") {{ $t('remediation.instruction.emptySteps') }}
-    c-card-iterator.mb-2(
+    c-card-iterator-field.mb-2(
       v-field="steps",
       item-key="key",
       :disabled="disabled",
@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { remediationInstructionStepToForm } from '@/helpers/forms/remediation-instruction';
+import { remediationInstructionStepToForm } from '@/helpers/entities/remediation/instruction/form';
 
 import { formArrayMixin } from '@/mixins/form';
 

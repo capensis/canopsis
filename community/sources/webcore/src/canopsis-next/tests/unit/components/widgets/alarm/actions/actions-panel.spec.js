@@ -1,37 +1,48 @@
 import Faker from 'faker';
+import flushPromises from 'flush-promises';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
   createAlarmModule,
+  createAlarmDetailsModule,
   createAuthModule,
   createDeclareTicketModule,
-  createEventModule,
+  createManualMetaAlarmModule,
+  createMetaAlarmModule,
   createMockedStoreModules,
 } from '@unit/utils/store';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
-import flushPromises from 'flush-promises';
 import {
   ALARM_LIST_ACTIONS_TYPES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
+  ENTITIES_STATES,
   ENTITIES_STATUSES,
   ENTITY_PATTERN_FIELDS,
-  EVENT_DEFAULT_ORIGIN,
-  EVENT_ENTITY_TYPES,
-  EVENT_INITIATORS,
   INSTRUCTION_EXECUTION_ICONS,
   META_ALARMS_RULE_TYPES,
   MODALS,
   PATTERN_CONDITIONS,
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
   REMEDIATION_INSTRUCTION_TYPES,
+  TIME_UNITS,
 } from '@/constants';
 
 import featuresService from '@/services/features';
 
-import { generateDefaultAlarmListWidget } from '@/helpers/entities';
-import { prepareAlarmListWidget } from '@/helpers/widgets';
+import { generateDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
+import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
+import { exportAlarmToPdf } from '@/helpers/file/pdf';
 
 import ActionsPanel from '@/components/widgets/alarm/actions/actions-panel.vue';
+
+jest.mock('@/helpers/file/pdf', () => {
+  const original = jest.requireActual('@/helpers/file/pdf');
+  return {
+    ...original,
+
+    exportAlarmToPdf: jest.fn(),
+  };
+});
 
 const stubs = {
   'shared-actions-panel': {
@@ -67,17 +78,32 @@ describe('actions-panel', () => {
         }), {}),
     },
   };
-  const { alarmModule } = createAlarmModule();
-  const { eventModule, createEvent } = createEventModule();
+
+  const {
+    alarmModule,
+    bulkCreateAlarmAckEvent,
+    bulkCreateAlarmAckremoveEvent,
+    bulkCreateAlarmSnoozeEvent,
+    bulkCreateAlarmAssocticketEvent,
+    bulkCreateAlarmCommentEvent,
+    bulkCreateAlarmCancelEvent,
+    bulkCreateAlarmChangestateEvent,
+  } = createAlarmModule();
+  const { manualMetaAlarmModule, removeAlarmsFromManualMetaAlarm } = createManualMetaAlarmModule();
+  const { metaAlarmModule, removeAlarmsFromMetaAlarm } = createMetaAlarmModule();
+  const { alarmDetailsModule, fetchAlarmDetailsWithoutStore } = createAlarmDetailsModule();
+
   const {
     declareTicketRuleModule,
     fetchAssignedDeclareTicketsWithoutStore,
   } = createDeclareTicketModule();
 
   const store = createMockedStoreModules([
-    eventModule,
+    manualMetaAlarmModule,
+    metaAlarmModule,
     authModule,
     alarmModule,
+    alarmDetailsModule,
     declareTicketRuleModule,
   ]);
 
@@ -168,8 +194,16 @@ describe('actions-panel', () => {
   const factory = generateShallowRenderer(ActionsPanel, {
     stubs,
     mocks: { $modals },
+    provide: {
+      $system: {},
+    },
   });
-  const snapshotFactory = generateRenderer(ActionsPanel, { stubs });
+  const snapshotFactory = generateRenderer(ActionsPanel, {
+    stubs,
+    provide: {
+      $system: {},
+    },
+  });
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -189,7 +223,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        eventModule,
+        manualMetaAlarmModule,
       ]),
       propsData: {
         item: alarm,
@@ -199,9 +233,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const ackAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.ack);
-
-    ackAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.ack).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -229,10 +261,11 @@ describe('actions-panel', () => {
       parameters: {
         fastAckOutput: {
           enabled: true,
+          value: 'Output',
         },
       },
     };
-    const fastAckAlarm = {
+    const fastActionAlarm = {
       ...alarm,
       entity: {
         type: 'entity-type',
@@ -255,44 +288,30 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        eventModule,
+        manualMetaAlarmModule,
       ]),
       propsData: {
-        item: fastAckAlarm,
+        item: fastActionAlarm,
         widget: widgetData,
         parentAlarm,
       },
     });
 
-    const fastAckAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastAck);
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastAck).trigger('click');
 
-    fastAckAction.trigger('click');
-
-    expect(createEvent).toBeCalledWith(
+    expect(bulkCreateAlarmAckEvent).toBeCalledWith(
       expect.any(Object),
       {
-        data: {
-          timestamp: timestamp / 1000,
-          component: fastAckAlarm.v.component,
-          connector: fastAckAlarm.v.connector,
-          connector_name: fastAckAlarm.v.connector_name,
-          resource: fastAckAlarm.v.resource,
-          state: fastAckAlarm.v.state.val,
-          state_type: fastAckAlarm.v.status.val,
-          source_type: fastAckAlarm.entity.type,
-          crecord_type: 'ack',
-          event_type: 'ack',
-          id: fastAckAlarm._id,
-          initiator: EVENT_INITIATORS.user,
-          origin: EVENT_DEFAULT_ORIGIN,
-          ref_rk: `${fastAckAlarm.v.resource}/${fastAckAlarm.v.component}`,
-        },
+        data: [{
+          _id: alarm._id,
+          comment: widgetData.parameters.fastAckOutput.value,
+        }],
       },
       undefined,
     );
   });
 
-  it('Ack remove modal showed after trigger ack remove action', () => {
+  it('Ack remove modal showed after trigger ack remove action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -302,7 +321,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        eventModule,
+        manualMetaAlarmModule,
       ]),
       propsData: {
         item: alarm,
@@ -311,25 +330,35 @@ describe('actions-panel', () => {
       },
     });
 
-    const ackRemoveAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.ackRemove);
-
-    ackRemoveAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.ackRemove).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
         name: MODALS.createEvent,
         config: {
           title: 'Remove ack',
-          eventType: EVENT_ENTITY_TYPES.ackRemove,
           items: [alarm],
-          afterSubmit: expect.any(Function),
+          action: expect.any(Function),
         },
       },
     );
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    config.afterSubmit();
+    const comment = Faker.datatype.string();
+
+    await config.action({ comment });
+
+    expect(bulkCreateAlarmAckremoveEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: [{
+          _id: alarm._id,
+          comment,
+        }],
+      },
+      undefined,
+    );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
@@ -343,7 +372,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        eventModule,
+        manualMetaAlarmModule,
       ]),
       propsData: {
         item: { ...alarm, entity },
@@ -352,14 +381,13 @@ describe('actions-panel', () => {
       },
     });
 
-    const pbehaviorAddAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd);
-
-    pbehaviorAddAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
         name: MODALS.pbehaviorPlanning,
         config: {
+          afterSubmit: expect.any(Function),
           entityPattern: [[{
             field: ENTITY_PATTERN_FIELDS.id,
             cond: {
@@ -372,7 +400,7 @@ describe('actions-panel', () => {
     );
   });
 
-  it('Snooze modal showed after trigger snooze action', () => {
+  it('Snooze modal showed after trigger snooze action', async () => {
     const isNoteRequired = Faker.datatype.boolean();
     const widgetData = {
       _id: Faker.datatype.string(),
@@ -385,7 +413,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        eventModule,
+        manualMetaAlarmModule,
       ]),
       propsData: {
         item: alarm,
@@ -395,9 +423,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const snoozeAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.snooze);
-
-    snoozeAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.snooze).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -405,14 +431,33 @@ describe('actions-panel', () => {
         config: {
           isNoteRequired,
           items: [alarm],
-          afterSubmit: expect.any(Function),
+          action: expect.any(Function),
         },
       },
     );
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    config.afterSubmit();
+    const snoozeEvent = {
+      duration: {
+        unit: TIME_UNITS.minute,
+        value: Faker.datatype.number(),
+      },
+      comment: Faker.datatype.string(),
+    };
+
+    await config.action(snoozeEvent);
+
+    expect(bulkCreateAlarmSnoozeEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: [{
+          _id: alarm._id,
+          ...snoozeEvent,
+        }],
+      },
+      undefined,
+    );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
@@ -446,7 +491,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        eventModule,
+        manualMetaAlarmModule,
         declareTicketRuleModule,
       ]),
       propsData: {
@@ -499,7 +544,7 @@ describe('actions-panel', () => {
 
     const wrapper = factory({
       store: createMockedStoreModules([
-        eventModule,
+        manualMetaAlarmModule,
         authModuleWithAccess,
         alarmModule,
       ]),
@@ -526,36 +571,27 @@ describe('actions-panel', () => {
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    config.action({});
+    const ticketEvent = {
+      comment: Faker.datatype.string(),
+    };
 
-    await flushPromises();
+    await config.action(ticketEvent);
 
-    expect(createEvent).toBeCalledWith(
+    expect(bulkCreateAlarmAssocticketEvent).toBeCalledWith(
       expect.any(Object),
       {
         data: [{
-          component: undefined,
-          connector: undefined,
-          connector_name: undefined,
-          crecord_type: EVENT_ENTITY_TYPES.assocTicket,
-          event_type: EVENT_ENTITY_TYPES.assocTicket,
-          id: alarm._id,
-          initiator: 'user',
-          origin: 'canopsis',
-          ref_rk: 'undefined/undefined',
-          resource: undefined,
-          source_type: undefined,
-          state: undefined,
-          state_type: 3,
-          timestamp: 1386435600,
+          _id: alarm._id,
+          ...ticketEvent,
         }],
       },
       undefined,
     );
+
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Change state modal showed after trigger change state action', () => {
+  it('Change state modal showed after trigger change state action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -565,7 +601,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        eventModule,
+        manualMetaAlarmModule,
       ]),
       propsData: {
         item: alarm,
@@ -575,28 +611,42 @@ describe('actions-panel', () => {
       },
     });
 
-    const changeStateAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.changeState);
-
-    changeStateAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.changeState).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
         name: MODALS.createChangeStateEvent,
         config: {
           items: [alarm],
-          afterSubmit: expect.any(Function),
+          action: expect.any(Function),
         },
       },
     );
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    config.afterSubmit();
+    const changeStateEvent = {
+      state: ENTITIES_STATES.critical,
+      comment: Faker.datatype.string(),
+    };
+
+    await config.action(changeStateEvent);
+
+    expect(bulkCreateAlarmChangestateEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: [{
+          _id: alarm._id,
+          ...changeStateEvent,
+        }],
+      },
+      undefined,
+    );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Cancel modal showed after trigger cancel action', () => {
+  it('Cancel modal showed after trigger cancel action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -606,7 +656,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        eventModule,
+        manualMetaAlarmModule,
       ]),
       propsData: {
         item: alarm,
@@ -616,27 +666,98 @@ describe('actions-panel', () => {
       },
     });
 
-    const cancelAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.cancel);
-
-    cancelAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.cancel).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
         name: MODALS.createEvent,
         config: {
           items: [alarm],
-          afterSubmit: expect.any(Function),
+          action: expect.any(Function),
           title: 'Cancel',
-          eventType: EVENT_ENTITY_TYPES.cancel,
         },
       },
     );
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    config.afterSubmit();
+    const cancelEvent = {
+      comment: Faker.datatype.string(),
+    };
+
+    await config.action(cancelEvent);
+
+    expect(bulkCreateAlarmCancelEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: [{
+          _id: alarm._id,
+          ...cancelEvent,
+        }],
+      },
+      undefined,
+    );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
+  });
+
+  it('Fast cancel event sent after trigger fast cancel action', async () => {
+    const widgetData = {
+      _id: Faker.datatype.string(),
+      parameters: {
+        fastCancelOutput: {
+          enabled: true,
+          value: 'Output',
+        },
+      },
+    };
+    const fastActionAlarm = {
+      ...alarm,
+      entity: {
+        type: 'entity-type',
+      },
+      v: {
+        connector: 'alarm-connector',
+        connector_name: 'alarm-connector-name',
+        component: 'alarm-component',
+        resource: 'alarm-resource',
+        status: {
+          val: ENTITIES_STATUSES.ongoing,
+        },
+        state: {
+          val: 'state-val',
+        },
+        ack: {},
+      },
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        alarmModule,
+        manualMetaAlarmModule,
+      ]),
+      propsData: {
+        item: fastActionAlarm,
+        widget: widgetData,
+        parentAlarm,
+      },
+    });
+
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.fastCancel).trigger('click');
+
+    await flushPromises();
+
+    expect(bulkCreateAlarmCancelEvent).toBeCalledWith(
+      expect.any(Object),
+      {
+        data: [{
+          _id: alarm._id,
+          comment: 'Output',
+        }],
+      },
+      undefined,
+    );
   });
 
   it('Variables modal showed after trigger variables help action', () => {
@@ -654,36 +775,59 @@ describe('actions-panel', () => {
       _id: Faker.datatype.string(),
       entity,
       pbehavior,
+      v: {
+        status: {
+          val: ENTITIES_STATUSES.closed,
+        },
+      },
     };
 
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        eventModule,
+        manualMetaAlarmModule,
       ]),
       propsData: {
-        item: alarmData,
+        item: {
+          ...alarmData,
+          v: {
+            status: {
+              val: ENTITIES_STATUSES.closed,
+            },
+          },
+        },
         widget: widgetData,
         parentAlarm,
-        isResolvedAlarm: true,
       },
     });
 
-    const variablesHelpAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.variablesHelp);
-
-    variablesHelpAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.variablesHelp).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
         name: MODALS.variablesHelp,
         config: {
-          items: [alarmData],
-          afterSubmit: expect.any(Function),
           variables: [
             {
               name: 'alarm',
-              children: [{ name: '_id', path: 'alarm._id', value: alarmData._id }],
+              original: alarmData,
+              children: [
+                { name: '_id', path: 'alarm._id', value: alarmData._id },
+                {
+                  name: 'v',
+                  children: [{
+                    name: 'status',
+                    children: [
+                      {
+                        name: 'val',
+                        path: 'alarm.v.status.val',
+                        value: 0,
+                      },
+                    ],
+                  }],
+                },
+              ],
             },
             {
               name: 'entity',
@@ -721,7 +865,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        eventModule,
+        manualMetaAlarmModule,
       ]),
       propsData: {
         item: { ...alarm, entity },
@@ -730,9 +874,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const historyAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.history);
-
-    historyAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.history).trigger('click');
 
     const defaultWidget = prepareAlarmListWidget(generateDefaultAlarmListWidget());
 
@@ -759,7 +901,7 @@ describe('actions-panel', () => {
     );
   });
 
-  it('Comment modal showed after trigger comment action', () => {
+  it('Comment modal showed after trigger comment action', async () => {
     const commentAlarm = {
       ...alarm,
       v: {
@@ -784,7 +926,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        eventModule,
+        manualMetaAlarmModule,
       ]),
       propsData: {
         item: commentAlarm,
@@ -794,16 +936,13 @@ describe('actions-panel', () => {
       },
     });
 
-    const commentAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.comment);
-
-    commentAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.comment).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
         name: MODALS.createCommentEvent,
         config: {
           items: [commentAlarm],
-          afterSubmit: expect.any(Function),
           action: expect.any(Function),
         },
       },
@@ -811,28 +950,17 @@ describe('actions-panel', () => {
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    config.action();
-    config.afterSubmit();
+    const comment = Faker.datatype.string();
 
-    expect(createEvent).toBeCalledWith(
+    await config.action({ comment });
+
+    expect(bulkCreateAlarmCommentEvent).toBeCalledWith(
       expect.any(Object),
       {
-        data: {
-          timestamp: timestamp / 1000,
-          component: commentAlarm.v.component,
-          connector: commentAlarm.v.connector,
-          connector_name: commentAlarm.v.connector_name,
-          resource: commentAlarm.v.resource,
-          state: commentAlarm.v.state.val,
-          state_type: commentAlarm.v.status.val,
-          source_type: undefined,
-          crecord_type: 'comment',
-          event_type: 'comment',
-          id: commentAlarm._id,
-          initiator: EVENT_INITIATORS.user,
-          origin: EVENT_DEFAULT_ORIGIN,
-          ref_rk: `${commentAlarm.v.resource}/${commentAlarm.v.component}`,
-        },
+        data: [{
+          _id: alarm._id,
+          comment,
+        }],
       },
       undefined,
     );
@@ -840,7 +968,7 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
-  it('Remove alarms from manual meta alarm modal showed after trigger remove alarms from manual meta alarm action', () => {
+  it('Remove alarms from manual meta alarm modal showed after trigger remove alarms from manual meta alarm action', async () => {
     const widgetData = {
       _id: Faker.datatype.string(),
       parameters: {},
@@ -850,7 +978,7 @@ describe('actions-panel', () => {
       store: createMockedStoreModules([
         authModuleWithAccess,
         alarmModule,
-        eventModule,
+        manualMetaAlarmModule,
       ]),
       propsData: {
         item: alarm,
@@ -860,28 +988,150 @@ describe('actions-panel', () => {
       },
     });
 
-    const manualMetaAlarmUngroupAction = selectActionByType(
-      wrapper,
-      ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm,
-    );
-
-    manualMetaAlarmUngroupAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
-        name: MODALS.removeAlarmsFromManualMetaAlarm,
+        name: MODALS.removeAlarmsFromMetaAlarm,
         config: {
           items: [alarm],
-          afterSubmit: expect.any(Function),
+          action: expect.any(Function),
           title: 'Unlink alarm from manual meta alarm',
-          parentAlarm,
         },
       },
     );
 
     const [{ config }] = $modals.show.mock.calls[0];
 
-    config.afterSubmit();
+    const newRemoveAlarmsEvent = {
+      comment: Faker.datatype.string(),
+      alarms: [Faker.datatype.string()],
+    };
+
+    await config.action(newRemoveAlarmsEvent);
+
+    expect(removeAlarmsFromManualMetaAlarm).toBeCalledWith(
+      expect.any(Object),
+      {
+        id: parentAlarm?._id,
+        data: newRemoveAlarmsEvent,
+      },
+      undefined,
+    );
+
+    expect(refreshAlarmsList).toBeCalledTimes(1);
+  });
+
+  it('Remove alarms from manual meta alarm modal showed after trigger remove alarms from manual meta alarm action', async () => {
+    const widgetData = {
+      _id: Faker.datatype.string(),
+      parameters: {},
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        alarmModule,
+        manualMetaAlarmModule,
+      ]),
+      propsData: {
+        item: alarm,
+        widget: widgetData,
+        parentAlarm,
+        refreshAlarmsList,
+      },
+    });
+
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm).trigger('click');
+
+    expect($modals.show).toBeCalledWith(
+      {
+        name: MODALS.removeAlarmsFromMetaAlarm,
+        config: {
+          items: [alarm],
+          action: expect.any(Function),
+          title: 'Unlink alarm from manual meta alarm',
+        },
+      },
+    );
+
+    const [{ config }] = $modals.show.mock.calls[0];
+
+    const newRemoveAlarmsEvent = {
+      comment: Faker.datatype.string(),
+      alarms: [Faker.datatype.string()],
+    };
+
+    await config.action(newRemoveAlarmsEvent);
+
+    expect(removeAlarmsFromManualMetaAlarm).toBeCalledWith(
+      expect.any(Object),
+      {
+        id: parentAlarm?._id,
+        data: newRemoveAlarmsEvent,
+      },
+      undefined,
+    );
+
+    expect(refreshAlarmsList).toBeCalledTimes(1);
+  });
+
+  it('Remove alarms from auto meta alarm modal showed after trigger remove alarms from auto meta alarm action', async () => {
+    const widgetData = {
+      _id: Faker.datatype.string(),
+      parameters: {},
+    };
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        alarmModule,
+        manualMetaAlarmModule,
+        metaAlarmModule,
+      ]),
+      propsData: {
+        item: alarm,
+        widget: widgetData,
+        parentAlarm: {
+          meta_alarm_rule: {
+            type: META_ALARMS_RULE_TYPES.attribute,
+          },
+          d: 'parent-d',
+        },
+        refreshAlarmsList,
+      },
+    });
+
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromAutoMetaAlarm).trigger('click');
+
+    expect($modals.show).toBeCalledWith(
+      {
+        name: MODALS.removeAlarmsFromMetaAlarm,
+        config: {
+          items: [alarm],
+          action: expect.any(Function),
+          title: 'Unlink alarm from meta alarm',
+        },
+      },
+    );
+
+    const [{ config }] = $modals.show.mock.calls[0];
+
+    const newRemoveAlarmsEvent = {
+      comment: Faker.datatype.string(),
+      alarms: [Faker.datatype.string()],
+    };
+
+    await config.action(newRemoveAlarmsEvent);
+
+    expect(removeAlarmsFromMetaAlarm).toBeCalledWith(
+      expect.any(Object),
+      {
+        id: parentAlarm?._id,
+        data: newRemoveAlarmsEvent,
+      },
+      undefined,
+    );
 
     expect(refreshAlarmsList).toBeCalledTimes(1);
   });
@@ -901,7 +1151,7 @@ describe('actions-panel', () => {
     const wrapper = factory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        eventModule,
+        manualMetaAlarmModule,
         {
           ...alarmModule,
           getters: {
@@ -917,12 +1167,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const executeInstructionAction = selectActionByType(
-      wrapper,
-      ALARM_LIST_ACTIONS_TYPES.executeInstruction,
-    );
-
-    executeInstructionAction.trigger('click');
+    selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.executeInstruction).trigger('click');
 
     expect($modals.show).toBeCalledWith(
       {
@@ -947,6 +1192,29 @@ describe('actions-panel', () => {
     expect(refreshAlarmsList).toBeCalledTimes(3);
   });
 
+  it('Export PDF action', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        item: alarm,
+        widget,
+        parentAlarm,
+      },
+    });
+
+    const exportPdfAction = selectActionByType(
+      wrapper,
+      ALARM_LIST_ACTIONS_TYPES.exportPdf,
+    );
+
+    exportPdfAction.trigger('click');
+
+    await flushPromises();
+
+    expect(fetchAlarmDetailsWithoutStore).toBeCalled();
+    expect(exportAlarmToPdf).toBeCalled();
+  });
+
   it('Custom action called after trigger button', () => {
     const customAction = {
       type: 'custom-type',
@@ -954,12 +1222,8 @@ describe('actions-panel', () => {
       title: 'custom-title',
       method: jest.fn(),
     };
-    const featureHasSpy = jest.spyOn(featuresService, 'has')
-      .mockReturnValueOnce(false)
-      .mockReturnValueOnce(true);
-    const featureGetSpy = jest.spyOn(featuresService, 'get')
-      .mockReturnValueOnce((
-      ) => [customAction]);
+    const featureHasSpy = jest.spyOn(featuresService, 'has').mockReturnValueOnce(true);
+    const featureGetSpy = jest.spyOn(featuresService, 'get').mockReturnValueOnce(() => [customAction]);
 
     const wrapper = factory({
       store: createMockedStoreModules([
@@ -973,9 +1237,7 @@ describe('actions-panel', () => {
       },
     });
 
-    const executeInstructionAction = selectActionByType(wrapper, customAction.type);
-
-    executeInstructionAction.trigger('click');
+    selectActionByType(wrapper, customAction.type).trigger('click');
 
     expect(customAction.method).toBeCalled();
 
@@ -987,7 +1249,7 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        eventModule,
+        manualMetaAlarmModule,
       ]),
       propsData: {
         item: {
@@ -1006,7 +1268,7 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        eventModule,
+        manualMetaAlarmModule,
       ]),
       propsData: {
         item: {
@@ -1034,7 +1296,7 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        eventModule,
+        manualMetaAlarmModule,
       ]),
       propsData: {
         item: {
@@ -1053,7 +1315,7 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        eventModule,
+        manualMetaAlarmModule,
       ]),
       propsData: {
         item: {
@@ -1072,7 +1334,7 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        eventModule,
+        manualMetaAlarmModule,
       ]),
       propsData: {
         item: {
@@ -1091,7 +1353,7 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        eventModule,
+        manualMetaAlarmModule,
       ]),
       propsData: {
         item: alarm,
@@ -1107,7 +1369,7 @@ describe('actions-panel', () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        eventModule,
+        manualMetaAlarmModule,
       ]),
       propsData: {
         item: {
@@ -1127,16 +1389,23 @@ describe('actions-panel', () => {
   });
 
   it('Renders `actions-panel` with resolved alarm', () => {
+    const resolvedAlarmData = {
+      ...alarm,
+      v: {
+        status: {
+          val: ENTITIES_STATUSES.closed,
+        },
+      },
+    };
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
         authModuleWithAccess,
-        eventModule,
+        manualMetaAlarmModule,
       ]),
       propsData: {
-        item: alarm,
+        item: resolvedAlarmData,
         widget,
         parentAlarm,
-        isResolvedAlarm: true,
       },
     });
 
@@ -1211,6 +1480,13 @@ describe('actions-panel', () => {
           links: {
             cat: [
               {
+                hide_in_menu: true,
+                icon_name: 'hidden_link_icon',
+                label: 'Hidden link label',
+                url: 'Hidden link URL',
+                rule_id: 'Hidden link RuleId',
+              },
+              {
                 icon_name: 'icon',
                 label: 'Label',
                 url: 'URL',
@@ -1220,6 +1496,58 @@ describe('actions-panel', () => {
           },
         },
         widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `actions-panel` with links in resolved alarm', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: {
+          ...alarm,
+
+          v: {
+            status: {
+              val: ENTITIES_STATUSES.closed,
+            },
+          },
+          links: {
+            cat: [
+              {
+                icon_name: 'icon',
+                label: 'Label',
+                url: 'URL',
+                rule_id: 'RuleId',
+              },
+            ],
+          },
+        },
+        widget,
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `actions-panel` with parentAlarm with auto meta alarm', () => {
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+      ]),
+      propsData: {
+        item: alarm,
+        widget,
+        parentAlarm: {
+          meta_alarm_rule: {
+            type: META_ALARMS_RULE_TYPES.attribute,
+          },
+          d: 'parent-d',
+        },
       },
     });
 

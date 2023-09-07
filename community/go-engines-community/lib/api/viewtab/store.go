@@ -27,7 +27,7 @@ type Store interface {
 	UpdatePositions(ctx context.Context, tabs []Response) (bool, error)
 }
 
-func NewStore(dbClient mongo.DbClient, widgetStore widget.Store) Store {
+func NewStore(dbClient mongo.DbClient, widgetStore widget.Store, authorProvider author.Provider) Store {
 	return &store{
 		client:             dbClient,
 		collection:         dbClient.Collection(mongo.ViewTabMongoCollection),
@@ -35,6 +35,7 @@ func NewStore(dbClient mongo.DbClient, widgetStore widget.Store) Store {
 		filterCollection:   dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 		playlistCollection: dbClient.Collection(mongo.PlaylistMongoCollection),
 		userPrefCollection: dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		authorProvider:     authorProvider,
 
 		widgetStore: widgetStore,
 	}
@@ -47,6 +48,7 @@ type store struct {
 	filterCollection   mongo.DbCollection
 	playlistCollection mongo.DbCollection
 	userPrefCollection mongo.DbCollection
+	authorProvider     author.Provider
 
 	widgetStore widget.Store
 }
@@ -54,7 +56,7 @@ type store struct {
 func (s *store) Find(ctx context.Context, ids []string) ([]Response, error) {
 	tabs := make([]Response, 0)
 	pipeline := []bson.M{{"$match": bson.M{"_id": bson.M{"$in": ids}}}}
-	pipeline = append(pipeline, author.Pipeline()...)
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -92,34 +94,40 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 		}},
 		{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
 	}
-	pipeline = append(pipeline, author.PipelineForField("widgets.author")...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("widgets.author")...)
 	pipeline = append(pipeline,
 		bson.M{"$lookup": bson.M{
-			"from":         mongo.WidgetFiltersMongoCollection,
-			"localField":   "widgets._id",
-			"foreignField": "widget",
-			"as":           "filters",
+			"from": mongo.WidgetFiltersMongoCollection,
+			"let":  bson.M{"widget": "$widgets._id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"$expr":      bson.M{"$eq": bson.A{"$widget", "$$widget"}},
+					"is_private": false,
+				}},
+			},
+			"as": "filters",
 		}},
 		bson.M{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
 	)
-	pipeline = append(pipeline, author.PipelineForField("filters.author")...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("filters.author")...)
 	pipeline = append(pipeline,
 		bson.M{"$sort": bson.M{"filters.position": 1}},
 		bson.M{"$group": bson.M{
 			"_id": bson.M{
-				"_id":    "_id",
+				"_id":    "$_id",
 				"widget": "$widgets._id",
 			},
 			"data":    bson.M{"$first": "$$ROOT"},
 			"widgets": bson.M{"$first": "$widgets"},
-			"filters": bson.M{"$push": "$filters"},
+			"filters": bson.M{"$push": bson.M{"$cond": bson.M{
+				"if":   "$filters._id",
+				"then": "$filters",
+				"else": "$$REMOVE",
+			}}},
 		}},
 		bson.M{"$addFields": bson.M{
-			"_id": "$_id._id",
-			"widgets.filters": bson.M{"$filter": bson.M{
-				"input": "$filters",
-				"cond":  bson.M{"$eq": bson.A{"$$this.is_private", false}},
-			}},
+			"_id":             "$_id._id",
+			"widgets.filters": "$filters",
 		}},
 		bson.M{"$sort": bson.D{
 			{Key: "widgets.grid_parameters.desktop.y", Value: 1},
@@ -138,7 +146,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			}}},
 		}}}},
 	)
-	pipeline = append(pipeline, author.Pipeline()...)
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err

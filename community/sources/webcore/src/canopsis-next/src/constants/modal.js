@@ -25,6 +25,7 @@ export const MODALS = {
   createWidgetTemplate: 'create-widget-template',
   createFilter: 'create-filter',
   alarmsList: 'alarms-list',
+  createAlarmChart: 'create-alarm-chart',
   colorPicker: 'color-picker',
   textEditor: 'text-editor',
   textEditorWithTemplate: 'text-editor-with-template',
@@ -57,15 +58,15 @@ export const MODALS = {
   pbehaviorsCalendar: 'pbehaviors-calendar',
   pbehaviorRecurrenceRule: 'pbehavior-recurrence-rule',
   createRecurrenceRule: 'create-recurrence-rule',
-  selectExceptionsLists: 'select-exceptions-lists',
   pbehaviorRecurrentChangesConfirmation: 'pbehavior-recurrent-changes-confirmation',
   createPbehavior: 'create-pbehavior',
   createPbehaviorType: 'create-pbehavior-type',
   createPbehaviorReason: 'create-pbehavior-reason',
   createPbehaviorException: 'create-pbehavior-exception',
+  importPbehaviorException: 'import-pbehavior-exception',
 
   createManualMetaAlarm: 'create-manual-meta-alarm',
-  removeAlarmsFromManualMetaAlarm: 'remove-alarms-from-manual-meta-alarm',
+  removeAlarmsFromMetaAlarm: 'remove-alarms-from-meta-alarm',
   createRemediationInstruction: 'create-remediation-instruction',
   createRemediationConfiguration: 'create-remediation-configuration',
   createRemediationJob: 'create-remediation-job',
@@ -101,4 +102,8 @@ export const MODALS = {
   executeDeclareTickets: 'execute-declare-tickets',
 
   createLinkRule: 'create-link-rule',
+
+  createMaintenance: 'create-maintenance',
+
+  createTag: 'create-tag',
 };

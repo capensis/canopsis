@@ -473,12 +473,24 @@ func (a *Alarm) PartialUpdateAddInstructionStep(stepType string, timestamp CpsTi
 	newStep.Execution = execution
 
 	a.AddUpdate("$push", bson.M{"v.steps": newStep})
+	if stepType == AlarmStepAutoInstructionStart && a.InactiveAutoInstructionInProgress {
+		a.startInactiveInterval(newStep.Timestamp)
+	}
 
 	return nil
 }
 
 func (a *Alarm) PartialUpdateAddExecutedInstruction(instructionID string) {
 	a.AddUpdate("$addToSet", bson.M{"kpi_executed_instructions": instructionID})
+}
+
+func (a *Alarm) PartialUpdateAddExecutedAutoInstruction(instructionID string) {
+	a.AddUpdate("$addToSet", bson.M{"kpi_executed_auto_instructions": instructionID})
+}
+
+func (a *Alarm) PartialUpdateUnsetAutoInstructionInProgress(timestamp CpsTime) {
+	a.AddUpdate("$unset", bson.M{"auto_instruction_in_progress": ""})
+	a.stopInactiveInterval(timestamp)
 }
 
 func (a *Alarm) PartialUpdateCropSteps() {
@@ -511,8 +523,8 @@ func (a *Alarm) PartialUpdateAddStepWithStep(newStep AlarmStep) error {
 }
 
 func (a *Alarm) PartialUpdateTags(eventTags map[string]string) {
-	exists := make(map[string]struct{}, len(a.Tags))
-	for _, tag := range a.Tags {
+	exists := make(map[string]struct{}, len(a.ExternalTags))
+	for _, tag := range a.ExternalTags {
 		exists[tag] = struct{}{}
 	}
 
@@ -529,8 +541,10 @@ func (a *Alarm) PartialUpdateTags(eventTags map[string]string) {
 	}
 	tags = tags[:k]
 	a.Tags = append(a.Tags, tags...)
+	a.ExternalTags = append(a.ExternalTags, tags...)
 	a.AddUpdate("$addToSet", bson.M{
-		"tags": bson.M{"$each": tags},
+		"tags":  bson.M{"$each": tags},
+		"etags": bson.M{"$each": tags},
 	})
 }
 
@@ -585,7 +599,7 @@ func (a *Alarm) stopInactiveInterval(timestamp CpsTime) {
 	a.Value.InactiveDuration += inactiveDuration
 	a.AddUpdate("$inc", bson.M{"v.inactive_duration": inactiveDuration})
 
-	if a.Value.PbehaviorInfo.IsActive() && a.Value.Snooze == nil {
+	if a.Value.PbehaviorInfo.IsActive() && a.Value.Snooze == nil && !a.InactiveAutoInstructionInProgress {
 		a.Value.InactiveStart = nil
 		a.AddUpdate("$unset", bson.M{"v.inactive_start": ""})
 	} else {

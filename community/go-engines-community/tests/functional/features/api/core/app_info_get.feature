@@ -2,14 +2,13 @@ Feature: Get application information
   I need to be able to get application information
   Only admin should be able to get this information
 
-  @standalone
   Scenario: given get request should return application information
     When I do GET /api/v4/app-info
     Then the response code should be 200
     Then the response body should be:
     """json
     {
-      "allow_change_severity_to_info": false,
+      "allow_change_severity_to_info": true,
       "app_title": "Canopsis Test",
       "edition": "pro",
       "footer": "Test footer",
@@ -19,15 +18,27 @@ Feature: Get application information
         "job_config_types": [
           {
             "auth_type": "bearer-token",
-            "name": "awx"
+            "name": "awx",
+            "with_body": true,
+            "with_query": false
           },
           {
             "auth_type": "basic-auth",
-            "name": "jenkins"
+            "name": "jenkins",
+            "with_body": false,
+            "with_query": true
           },
           {
             "auth_type": "header-token",
-            "name": "rundeck"
+            "name": "rundeck",
+            "with_body": true,
+            "with_query": false
+          },
+          {
+            "auth_type": "header-token",
+            "name": "vtom",
+            "with_body": true,
+            "with_query": false
           }
         ]
       },
@@ -35,6 +46,7 @@ Feature: Get application information
       "timezone": "Europe/Paris",
       "version": "development",
       "check_count_request_timeout": 30,
+      "show_header_on_kiosk_mode": false,
       "file_upload_max_size": 314572800,
       "version_updated": null,
       "max_matched_items": 4,
@@ -48,6 +60,7 @@ Feature: Get application information
         "saml2config": {
           "enable": false
         }
-      }
+      },
+      "maintenance": false
     }
     """

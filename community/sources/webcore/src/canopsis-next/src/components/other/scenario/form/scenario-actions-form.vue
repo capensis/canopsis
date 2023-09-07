@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(column)
     c-alert(v-show="!actions.length", type="info") {{ $t('scenario.emptyActions') }}
-    c-card-iterator.mb-2(
+    c-card-iterator-field.mb-2(
       v-field="actions",
       item-key="key",
       :draggable-group="draggableGroup"
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { actionToForm, isWebhookActionType } from '@/helpers/forms/action';
+import { actionToForm, isWebhookActionType } from '@/helpers/entities/action';
 
 import { formArrayMixin, validationChildrenMixin } from '@/mixins/form';
 

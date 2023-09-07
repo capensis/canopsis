@@ -3,17 +3,21 @@ package v2
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -48,12 +52,15 @@ type worker struct {
 
 	publisher         importcontextgraph.EventPublisher
 	metricMetaUpdater metrics.MetaUpdater
+
+	logger zerolog.Logger
 }
 
 func NewWorker(
 	dbClient libmongo.DbClient,
 	publisher importcontextgraph.EventPublisher,
 	metricMetaUpdater metrics.MetaUpdater,
+	logger zerolog.Logger,
 ) importcontextgraph.Worker {
 	return &worker{
 		entityCollection:        dbClient.Collection(libmongo.EntityMongoCollection),
@@ -63,6 +70,8 @@ func NewWorker(
 
 		publisher:         publisher,
 		metricMetaUpdater: metricMetaUpdater,
+
+		logger: logger,
 	}
 }
 
@@ -243,12 +252,42 @@ func (w *worker) parseEntities(
 		var ci importcontextgraph.EntityConfiguration
 		err := decoder.Decode(&ci)
 		if err != nil {
-			return res, fmt.Errorf("failed to decode cis item: %v", err)
+			return res, fmt.Errorf("failed to decode cis item: %w", err)
 		}
 
 		err = w.validate(ci)
 		if err != nil {
 			return res, fmt.Errorf("ci = %s, validation error: %s", ci.ID, err.Error())
+		}
+
+		if ci.Type == types.EntityTypeService && !ci.EntityPattern.Validate(common.GetForbiddenFieldsInEntityPattern(libmongo.EntityMongoCollection)) {
+			w.logger.Warn().Str("entity_name", ci.Name).Msg("invalid entity pattern, skip")
+			continue
+		}
+
+		if ci.CategoryName != "" {
+			var category entitycategory.Category
+
+			err = w.categoryCollection.FindOne(ctx, bson.M{"name": ci.CategoryName}).Decode(&category)
+			if err != nil {
+				if !errors.Is(err, mongo.ErrNoDocuments) {
+					return res, fmt.Errorf("failed to find a category with name = %s: %w", category.Name, err)
+				}
+
+				category = entitycategory.Category{
+					ID:      utils.NewID(),
+					Name:    ci.CategoryName,
+					Created: &now,
+					Updated: &now,
+				}
+
+				_, err = w.categoryCollection.InsertOne(ctx, category)
+				if err != nil {
+					return res, fmt.Errorf("failed to create a category with name = %s: %w", category.Name, err)
+				}
+			}
+
+			ci.CategoryID = category.ID
 		}
 
 		w.fillDefaultFields(&ci, source, now)
@@ -606,7 +645,7 @@ func (w *worker) validate(ci importcontextgraph.EntityConfiguration) error {
 func (w *worker) fillDefaultFields(ci *importcontextgraph.EntityConfiguration, source string, now types.CpsTime) {
 	switch ci.Type {
 	case types.EntityTypeService:
-		ci.ID = utils.NewID()
+		ci.ID = ci.Name
 	case types.EntityTypeResource:
 		ci.ID = ci.Name + "/" + ci.Component
 	case types.EntityTypeComponent:
@@ -652,6 +691,10 @@ func (w *worker) updateEntity(ci *importcontextgraph.EntityConfiguration, oldEnt
 
 	if ci.Infos == nil {
 		ci.Infos = make(map[string]types.Info)
+	}
+
+	if oldEntity.Infos == nil {
+		oldEntity.Infos = make(map[string]types.Info)
 	}
 
 	if mergeInfos {

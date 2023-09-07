@@ -34,6 +34,7 @@ export default {
   pbehaviorReason: 'Raison PBehavior',
   pbehaviorName: 'Nom PBehavior',
   pbehaviorCanonicalType: 'Type canonique de PBehavior',
+  rruleEnd: 'Fin de récurrence',
   buttons: {
     addFilter: 'Ajouter un filtre',
     editFilter: 'Modifier le filtre',
@@ -57,6 +58,7 @@ export default {
   types: {
     usingType: 'Le type ne peut être supprimé car il est en cours d\'utilisation.',
     defaultType: 'Le type est par défaut, vous ne pouvez modifier que le champ de couleur.',
+    hidden: 'Masquer ce type sur le formulaire de comportement ?',
     types: {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
@@ -67,5 +69,6 @@ export default {
 
   reasons: {
     usingReason: 'La raison ne peut pas être supprimée car elle est en cours d\'utilisation.',
+    hidden: 'Masquez cette raison sur le formulaire de comportement ?',
   },
 };

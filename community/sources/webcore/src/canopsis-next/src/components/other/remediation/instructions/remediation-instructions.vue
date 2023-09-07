@@ -22,13 +22,18 @@ import { isEqual, omit } from 'lodash';
 
 import { MODALS } from '@/constants';
 
-import { remediationInstructionToForm, formToRemediationInstruction } from '@/helpers/forms/remediation-instruction';
-import { isSeveralEqual } from '@/helpers/equal';
+import {
+  remediationInstructionToForm,
+  formToRemediationInstruction,
+} from '@/helpers/entities/remediation/instruction/form';
+import { isSeveralEqual } from '@/helpers/collection';
 
 import { authMixin } from '@/mixins/auth';
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediation/instruction';
-import { permissionsTechnicalRemediationInstructionMixin } from '@/mixins/permissions/technical/remediation-instruction';
+import {
+  permissionsTechnicalRemediationInstructionMixin,
+} from '@/mixins/permissions/technical/remediation-instruction';
 
 import RemediationInstructionsList from './remediation-instructions-list.vue';
 
@@ -63,7 +68,7 @@ export default {
           disabled: wasRequestedByAnotherUser,
           title: this.$t('modals.createRemediationInstruction.edit.title'),
           action: async (instruction) => {
-            await this.updateRemediationInstructionWithConfirm(remediationInstruction, instruction);
+            await this.updateRemediationInstruction({ id: remediationInstruction._id, data: instruction });
 
             this.$popups.success({
               text: this.$t('modals.createRemediationInstruction.edit.popups.success', {
@@ -85,38 +90,6 @@ export default {
           afterSubmit: this.fetchList,
         },
       });
-    },
-
-    showConfirmModalOnRunningRemediationInstruction(action) {
-      return new Promise((resolve, reject) => {
-        this.$modals.show({
-          name: MODALS.confirmation,
-          dialogProps: { persistent: true },
-          config: {
-            text: this.$t('remediation.instruction.errors.runningInstruction'),
-            action: async () => {
-              try {
-                await action();
-
-                resolve();
-              } catch (err) {
-                reject(err);
-              }
-            },
-            cancel: resolve,
-          },
-        });
-      });
-    },
-
-    async updateRemediationInstructionWithConfirm(remediationInstruction, data) {
-      if (remediationInstruction.running) {
-        await this.showConfirmModalOnRunningRemediationInstruction(
-          () => this.updateRemediationInstruction({ id: remediationInstruction._id, data }),
-        );
-      } else {
-        await this.updateRemediationInstruction({ id: remediationInstruction._id, data });
-      }
     },
 
     showAssignPatternsModal(instruction) {
@@ -146,10 +119,11 @@ export default {
               ...data,
             };
 
-            await this.updateRemediationInstructionWithConfirm(
-              instruction,
-              formToRemediationInstruction(form),
-            );
+            await this.updateRemediationInstruction({
+              id: instruction._id,
+              data: formToRemediationInstruction(form),
+            });
+
             await this.fetchList();
           },
         },
@@ -160,9 +134,6 @@ export default {
       this.$modals.show({
         name: MODALS.confirmation,
         config: {
-          text: remediationInstruction.running
-            ? this.$t('remediation.instruction.errors.runningInstruction')
-            : undefined,
           action: async () => {
             await this.removeRemediationInstruction({ id: remediationInstruction._id });
             await this.fetchList();

@@ -17,6 +17,7 @@ import (
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
 )
@@ -264,10 +265,10 @@ func (s *baseService) applyAlarmRule(
 	case types.ActionTypeChangeState:
 		event.EventType = types.EventTypeChangestate
 	case types.ActionTypePbehavior:
-		rpcEvent := types.RPCPBehaviorEvent{
+		rpcEvent := rpc.PbehaviorEvent{
 			Alarm:  &alarm,
 			Entity: &entity,
-			Params: types.RPCPBehaviorParameters{
+			Params: rpc.PbehaviorParameters{
 				Name:           rule.Operation.Parameters.Name,
 				Reason:         rule.Operation.Parameters.Reason,
 				Type:           rule.Operation.Parameters.Type,

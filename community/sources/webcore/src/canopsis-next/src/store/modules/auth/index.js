@@ -1,14 +1,7 @@
 import { keyBy } from 'lodash';
 
-import {
-  API_ROUTES,
-  DEFAULT_LOCALE,
-  VUETIFY_ANIMATION_DELAY,
-  LOCAL_STORAGE_ACCESS_TOKEN_KEY,
-} from '@/config';
+import { API_ROUTES, DEFAULT_LOCALE, VUETIFY_ANIMATION_DELAY, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
 import { EXCLUDED_SERVER_ERROR_STATUSES } from '@/constants';
-
-import router from '@/router';
 
 import request from '@/services/request';
 import localStorageService from '@/services/local-storage';
@@ -57,11 +50,15 @@ export default {
   actions: {
     async login({ commit, dispatch }, credentials) {
       try {
-        const { access_token: accessToken } = await request.post(API_ROUTES.login, credentials);
+        const { access_token: accessToken } = await request.post(
+          API_ROUTES.login,
+          credentials,
+          { fullResponse: true },
+        );
 
         await dispatch('applyAccessToken', accessToken);
       } catch (err) {
-        console.error(err);
+        console.error(err.data);
         commit(types.LOGOUT);
 
         throw err;
@@ -109,15 +106,15 @@ export default {
       }
     },
 
-    async logout({ commit }, { redirectTo } = {}) {
+    async logout({ commit }, { redirect } = {}) {
       try {
         await request.post(API_ROUTES.logout);
 
         commit(types.LOGOUT);
         localStorageService.remove(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
 
-        if (redirectTo) {
-          await router.replaceAsync(redirectTo);
+        if (redirect) {
+          await redirect();
         }
 
         /**

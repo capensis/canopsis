@@ -48,6 +48,27 @@ Feature: create a reason
     }
     """
 
+  Scenario: given create request with hidden reason should return ok
+    When I am admin
+    When I do POST /api/v4/pbehavior-reasons:
+    """json
+    {
+      "name": "test-reason-to-create-hidden-name",
+      "description": "test-reason-to-create-hidden-description",
+      "hidden": true
+    }
+    """
+    When I do GET /api/v4/pbehavior-reasons/{{ .lastResponse._id}}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "name": "test-reason-to-create-hidden-name",
+      "description": "test-reason-to-create-hidden-description",
+      "hidden": true
+    }
+    """
+
   Scenario: POST a valid reason with custom id
     When I am admin
     When I do POST /api/v4/pbehavior-reasons:

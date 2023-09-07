@@ -19,7 +19,7 @@
               )
           v-select.ml-2(
             v-field="form.type",
-            :items="types",
+            :items="availableTypes",
             :label="$t('common.type')",
             :disabled="disabled"
           )
@@ -28,20 +28,24 @@
         external-data-mongo-form(
           v-if="isMongoType",
           v-field="form",
-          :name="form.key",
+          :name="name",
           :disabled="disabled",
           :variables="variables"
         )
         request-form(
           v-else,
           v-field="form.request",
-          :name="form.key",
-          :disabled="disabled"
+          :name="`${name}.request`",
+          :disabled="disabled",
+          :payload-variables="variables",
+          :url-variables="variables"
         )
 </template>
 
 <script>
 import { EXTERNAL_DATA_TYPES } from '@/constants';
+
+import { isMongoExternalDataType } from '@/helpers/entities/shared/external-data/entity';
 
 import { formMixin } from '@/mixins/form';
 
@@ -88,7 +92,7 @@ export default {
     },
 
     isMongoType() {
-      return this.form.type === EXTERNAL_DATA_TYPES.mongo;
+      return isMongoExternalDataType(this.form.type);
     },
 
     referenceFieldName() {

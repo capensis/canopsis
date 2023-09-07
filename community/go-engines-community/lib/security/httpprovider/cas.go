@@ -133,7 +133,7 @@ func (p *casProvider) saveUser(ctx context.Context, username string) (*security.
 	if user == nil {
 		user = &security.User{
 			Name:       username,
-			Role:       p.config.DefaultRole,
+			Roles:      []string{p.config.DefaultRole},
 			IsEnabled:  true,
 			ExternalID: username,
 			Source:     security.SourceCas,

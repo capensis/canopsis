@@ -3,6 +3,8 @@ import { VDataTable } from 'vuetify/es5/components/VDataTable';
 import { VIcon } from 'vuetify/es5/components/VIcon';
 import { VCheckbox } from 'vuetify/es5/components/VCheckbox';
 import { consoleWarn } from 'vuetify/es5/util/console';
+import { getObjectValueByPath } from 'vuetify/es5/util/helpers';
+import ExpandTransitionGenerator from 'vuetify/es5/components/transitions/expand-transition';
 
 import { DEFAULT_MAX_MULTI_SORT_COLUMNS_COUNT } from '@/config';
 
@@ -51,6 +53,59 @@ export default {
     },
   },
   methods: {
+    genExpandedRow(props) {
+      const children = [];
+      if (this.isExpanded(props.item)) {
+        const expand = this.$createElement('div', {
+          class: 'v-datatable__expand-content',
+          key: getObjectValueByPath(props.item, this.itemKey),
+        }, [this.$scopedSlots.expand(props)]);
+        children.push(expand);
+      }
+      const transition = this.$createElement('transition-group', {
+        class: 'v-datatable__expand-col',
+        attrs: { colspan: this.headerColumns },
+        props: {
+          tag: 'td',
+        },
+        on: ExpandTransitionGenerator('v-datatable__expand-col--expanded'),
+      }, children);
+
+      return this.genTR([transition], {
+        class: 'v-datatable__expand-row',
+        key: `${getObjectValueByPath(props.item, this.itemKey)}-row`,
+      });
+    },
+    genHeaderData(header, children, key) {
+      const classes = ['column'];
+      const data = {
+        key,
+        attrs: {
+          role: 'columnheader',
+          scope: 'col',
+          width: header.width || null,
+          'aria-label': header[this.headerText] || '',
+          'data-value': header.value || '',
+          'aria-sort': 'none',
+        },
+      };
+
+      if (header.sortable == null || header.sortable) {
+        this.genHeaderSortingData(header, children, data, classes);
+      } else {
+        data.attrs['aria-label'] += ': Not sorted.'; // TODO: Localization
+      }
+
+      classes.push(`text-xs-${header.align || 'left'}`);
+      if (Array.isArray(header.class)) {
+        classes.push(...header.class);
+      } else if (header.class) {
+        classes.push(header.class);
+      }
+      data.class = classes;
+
+      return [data, children];
+    },
     /**
      * Get thead element for a table
      *
@@ -260,6 +315,7 @@ export default {
 
 <style lang="scss">
 $densePadding: 6px;
+$ultraDensePadding: 6px;
 
 $denseCellHeight: 32px;
 $ultraDenseCellHeight: 24px;
@@ -300,7 +356,7 @@ table.v-datatable {
 
     tbody, thead {
       td, th {
-        padding: 0 $densePadding;
+        padding: 0 $densePadding !important;
       }
 
       td:not(.v-datatable__expand-col) {
@@ -315,6 +371,10 @@ table.v-datatable {
     }
 
     tbody, thead {
+      td, th {
+        padding: 0 $ultraDensePadding !important;
+      }
+
       td:not(.v-datatable__expand-col) {
         height: $ultraDenseCellHeight;
       }
@@ -326,7 +386,7 @@ table.v-datatable {
     tbody, thead {
       td:not(.v-datatable__expand-col) {
         td, th {
-          padding: 0 $densePadding;
+          padding: 0 $densePadding !important;
         }
 
         .v-btn {
@@ -335,7 +395,7 @@ table.v-datatable {
         }
 
         .color-indicator {
-          padding: $denseColorIndicatorPadding;
+          padding: $denseColorIndicatorPadding !important;
         }
 
         .c-action-btn__button {
