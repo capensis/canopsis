@@ -429,6 +429,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 						Created:       now,
 						LastEventDate: &now,
 						IsNew:         true,
+						Healthcheck:   event.Healthcheck,
 					},
 				}
 			} else {
@@ -455,6 +456,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 				Created:       now,
 				IsNew:         true,
 				LastEventDate: &now,
+				Healthcheck:   event.Healthcheck,
 			}, contextGraphEntities, nil
 		}
 
@@ -484,6 +486,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 					ImpactLevel:   types.EntityDefaultImpactLevel,
 					Created:       now,
 					LastEventDate: &now,
+					Healthcheck:   event.Healthcheck,
 				},
 			}
 		} else {
@@ -519,6 +522,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 				Created:       now,
 				LastEventDate: &now,
 				IsNew:         true,
+				Healthcheck:   event.Healthcheck,
 			})
 		} else {
 			_, err := m.collection.UpdateOne(
@@ -577,6 +581,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 				Created:       now,
 				IsNew:         true,
 				LastEventDate: &now,
+				Healthcheck:   event.Healthcheck,
 			})
 		}
 
@@ -594,6 +599,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 			IsNew:          true,
 			Created:        now,
 			LastEventDate:  &now,
+			Healthcheck:    event.Healthcheck,
 		}, contextGraphEntities, nil
 	}
 
@@ -622,6 +628,7 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 			Created:       now,
 			LastEventDate: &now,
 			IsNew:         true,
+			Healthcheck:   event.Healthcheck,
 		})
 	} else {
 		_, err := m.collection.UpdateOne(

@@ -149,7 +149,7 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 		updatedEntities = append(updatedEntities, contextGraphEntities...)
 
-		if len(updatedEntities) > 0 {
+		if len(updatedEntities) > 0 && !event.Healthcheck {
 			// if it's a new resource add a component info to check if component is matched by the service
 			updatedEntities, err = p.ContextGraphManager.CheckServices(tCtx, updatedEntities)
 			if err != nil {
