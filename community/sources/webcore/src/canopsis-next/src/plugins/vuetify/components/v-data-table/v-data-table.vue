@@ -358,12 +358,14 @@ table.v-datatable {
     }
 
     tbody, thead {
-      td, th {
-        padding: 0 $densePadding !important;
-      }
+      tr:not(.v-datatable__progress) {
+        td, th {
+          padding: 0 $densePadding !important;
+        }
 
-      td:not(.v-datatable__expand-col) {
-        height: $denseCellHeight;
+        td:not(.v-datatable__expand-col) {
+          height: $denseCellHeight;
+        }
       }
     }
   }
@@ -373,13 +375,15 @@ table.v-datatable {
       height: $ultraDenseCellHeight;
     }
 
-    tbody, thead {
-      td:not(.v-datatable__expand-col), th {
-        padding: 0 $ultraDensePadding !important;
-      }
+    tr:not(.v-datatable__progress) {
+      tbody, thead {
+        td:not(.v-datatable__expand-col), th {
+          padding: 0 $ultraDensePadding !important;
+        }
 
-      td:not(.v-datatable__expand-col) {
-        height: $ultraDenseCellHeight;
+        td:not(.v-datatable__expand-col) {
+          height: $ultraDenseCellHeight;
+        }
       }
     }
   }
