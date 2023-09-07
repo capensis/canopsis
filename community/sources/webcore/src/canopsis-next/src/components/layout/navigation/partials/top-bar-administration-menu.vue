@@ -20,12 +20,13 @@
 import { USERS_PERMISSIONS, ROUTES_NAMES } from '@/constants';
 
 import { layoutNavigationTopBarMenuMixin } from '@/mixins/layout/navigation/top-bar-menu';
+import { maintenanceActionsMixin } from '@/mixins/maintenance/maintenance-actions';
 
 import TopBarMenuLink from './top-bar-menu-link.vue';
 
 export default {
   components: { TopBarMenuLink },
-  mixins: [layoutNavigationTopBarMenuMixin],
+  mixins: [layoutNavigationTopBarMenuMixin, maintenanceActionsMixin],
   computed: {
     administrationGroupedLinks() {
       const groupedLinks = [
@@ -116,6 +117,16 @@ export default {
           icon: 'edit_location',
           permission: USERS_PERMISSIONS.technical.map,
         },
+        {
+          icon: '$vuetify.icons.build_circle',
+          permission: USERS_PERMISSIONS.technical.maintenance,
+          handler: this.showToggleMaintenanceModeModal,
+        },
+        {
+          route: { name: ROUTES_NAMES.adminTags },
+          icon: 'local_offer',
+          permission: USERS_PERMISSIONS.technical.tag,
+        },
       ];
 
       const enginesLink = this.isProVersion
@@ -140,6 +151,7 @@ export default {
         USERS_PERMISSIONS.technical.engine,
         USERS_PERMISSIONS.technical.healthcheck,
         USERS_PERMISSIONS.technical.kpi,
+        USERS_PERMISSIONS.technical.maintenance,
       ];
     },
   },

@@ -1,11 +1,10 @@
 <template lang="pug">
-  draggable.groups-panel.secondary(
-    :value="groups",
+  c-draggable-list-field.groups-panel.secondary(
+    v-field="groups",
     :class="{ empty: isGroupsEmpty }",
     :component-data="{ props: { expand: true, dark: true, focusable: true } }",
-    :options="draggableOptions",
-    element="v-expansion-panel",
-    @change="changeGroupsOrdering"
+    :group="draggableGroup",
+    component="v-expansion-panel"
   )
     group-panel(
       v-for="(group, groupIndex) in groups",
@@ -21,17 +20,11 @@
 </template>
 
 <script>
-import Draggable from 'vuedraggable';
-
-import { VUETIFY_ANIMATION_DELAY } from '@/config';
-
-import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
-
 import DraggableGroupViews from './draggable-group-views.vue';
 import GroupPanel from './group-panel.vue';
 
 export default {
-  components: { DraggableGroupViews, Draggable, GroupPanel },
+  components: { DraggableGroupViews, GroupPanel },
   model: {
     prop: 'groups',
     event: 'change',
@@ -59,10 +52,15 @@ export default {
     },
   },
   computed: {
-    draggableOptions() {
+    draggableGroupName() {
+      return 'groups';
+    },
+
+    draggableGroup() {
       return {
-        animation: VUETIFY_ANIMATION_DELAY,
-        group: { name: 'groups', put: this.put, pull: this.pull },
+        name: this.draggableGroupName,
+        put: this.put ? [this.draggableGroupName] : false,
+        pull: this.pull ? [this.draggableGroupName] : false,
       };
     },
 
@@ -71,10 +69,6 @@ export default {
     },
   },
   methods: {
-    changeGroupsOrdering(event) {
-      this.$emit('change', dragDropChangePositionHandler(this.groups, event));
-    },
-
     changeViewsHandler(groupIndex, views) {
       const group = this.groups[groupIndex];
 

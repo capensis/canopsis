@@ -3,17 +3,15 @@ package executor
 import (
 	"context"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	operationlib "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/operation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
-func NewWebhookCompleteExecutor(metricsSender metrics.Sender) operationlib.Executor {
-	return &webhookCompleteExecutor{metricsSender: metricsSender}
+func NewWebhookCompleteExecutor() operationlib.Executor {
+	return &webhookCompleteExecutor{}
 }
 
 type webhookCompleteExecutor struct {
-	metricsSender metrics.Sender
 }
 
 func (e *webhookCompleteExecutor) Exec(
@@ -67,12 +65,6 @@ func (e *webhookCompleteExecutor) Exec(
 	if err != nil {
 		return "", err
 	}
-
-	metricsUserID := ""
-	if initiator == types.InitiatorUser {
-		metricsUserID = userID
-	}
-	e.metricsSender.SendTicket(*alarm, metricsUserID, time.Time)
 
 	return types.AlarmChangeTypeDeclareTicketWebhook, nil
 }

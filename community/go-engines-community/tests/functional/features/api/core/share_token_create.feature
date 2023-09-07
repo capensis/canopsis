@@ -22,10 +22,12 @@ Feature: Create a share token
         "_id": "root",
         "name": "root"
       },
-      "role": {
-        "_id": "admin",
-        "name": "admin"
-      },
+      "roles": [
+        {
+          "_id": "admin",
+          "name": "admin"
+        }
+      ],
       "description": "test-share-token-to-create-1"
     }
     """
@@ -46,10 +48,12 @@ Feature: Create a share token
             "_id": "root",
             "name": "root"
           },
-          "role": {
-            "_id": "admin",
-            "name": "admin"
-          },
+          "roles": [
+            {
+              "_id": "admin",
+              "name": "admin"
+            }
+          ],
           "description": "test-share-token-to-create-1"
         }
       ],
@@ -76,10 +80,12 @@ Feature: Create a share token
         "_id": "root",
         "name": "root"
       },
-      "role": {
-        "_id": "admin",
-        "name": "admin"
-      },
+      "roles": [
+        {
+          "_id": "admin",
+          "name": "admin"
+        }
+      ],
       "description": "",
       "expired": null
     }
@@ -95,10 +101,12 @@ Feature: Create a share token
             "_id": "root",
             "name": "root"
           },
-          "role": {
-            "_id": "admin",
-            "name": "admin"
-          },
+          "roles": [
+            {
+              "_id": "admin",
+              "name": "admin"
+            }
+          ],
           "description": "",
           "expired": null
         }

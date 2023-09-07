@@ -4,6 +4,7 @@ import {
   SIDE_BARS,
   ALARMS_OPENED_VALUES,
   CHART_WIDGET_PRESET_TYPES,
+  ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
 } from '@/constants';
 
 export default {
@@ -50,9 +51,10 @@ export default {
   filterEditor: 'Éditeur de filtre',
   isAckNoteRequired: 'Champ \'Note\' requis lors d\'un acquittement ?',
   isSnoozeNoteRequired: 'Champ \'Note\' requis lors d\'une mise en veille ?',
-  inlineLinksCount: 'Nombre de liens en ligne',
+  isRemoveAlarmsFromMetaAlarmCommentRequired: 'Champ \'Commentaire\' requis lors de la suppression des alarmes de la méta-alarme manuelle ?',
   isMultiAckEnabled: 'Acquittement multiple',
   isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
+  isActionsAllowWithOkState: 'Actions autorisées lorsque l\'état est OK ?',
   fastAckOutput: 'Commentaire d\'acquittement rapide',
   fastCancelOutput: 'Commentaire d\'annulation rapide',
   isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie ?',
@@ -106,6 +108,7 @@ export default {
     },
   },
   moreInfosModal: 'Fenêtre "Plus d\'infos"',
+  exportPdfTemplate: 'Exporter le modèle PDF',
   expandGridRangeSize: 'Largeur-position "Plus d\'infos / chronologie"',
   weatherTemplate: 'Template - Tuiles',
   modalTemplate: 'Template - Modale',
@@ -149,6 +152,9 @@ export default {
     withTemplate: 'Modèle personnalisé',
     isState: 'Affiché comme une criticité ?',
     onlyIcon: 'Afficher uniquement les icônes de liens',
+    inlineLinksCount: 'Nombre de liens en ligne',
+    linksInRowCount: 'Nombre de liens dans la ligne',
+    linksInRowCountTooltip: 'Ce nombre de liens sera toujours affiché dans la ligne qui comprend plus de boutons de liens (...)',
   },
   liveReporting: {
     title: 'Suivi personnalisé',
@@ -263,6 +269,16 @@ export default {
     hideActions: 'Masquer les actions',
     hideMassSelection: 'Masquer la sélection en masse',
     hideToolbar: 'Masquer la barre de tâches',
+  },
+  columnsSettings: {
+    title: 'Paramètres des colonnes',
+    dragging: 'Glisser/déposer les colonnes',
+    resizing: 'Redimensionner les colonnes',
+    cellsContentBehavior: 'Contenu des cellules',
+    cellsContentBehaviors: {
+      [ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap]: 'Enveloppé',
+      [ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate]: 'Tronquée',
+    },
   },
   mainParameter: {
     title: 'Paramètre principal',
