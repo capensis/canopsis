@@ -812,6 +812,8 @@ definitions:
         type: string
       check_count_request_timeout:
         type: integer
+      default_color_theme:
+        $ref: '#/definitions/colortheme.Theme'
       edition:
         type: string
       file_upload_max_size:
@@ -2047,8 +2049,7 @@ definitions:
       _id:
         type: string
       event:
-        additionalProperties:
-          type: any
+        additionalProperties: {}
         type: object
       message:
         type: string
