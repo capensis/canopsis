@@ -1,38 +1,5 @@
-template:
-  - &theme {
-    _id: <UUID()>,
-    name: <UniqueName()>,
-    last_modified: <NowUnix()>,
-    colors: {
-      main: {
-        primary: "#AAAAAA",
-        secondary: "#AAAAAA",
-        accent: "#AAAAAA",
-        error: "#AAAAAA",
-        info: "#AAAAAA",
-        success: "#AAAAAA",
-        warning: "#AAAAAA",
-        background: "#AAAAAA"
-      },
-      table: {
-        background: "#AAAAAA",
-        active_color: "#AAAAAA",
-        row_color: "#AAAAAA",
-        shift_row_color: "#AAAAAA",
-        hover_row_color: "#AAAAAA"
-      },
-      state: {
-        ok: "#AAAAAA",
-        minor: "#AAAAAA",
-        major: "#AAAAAA",
-        critical: "#AAAAAA"
-      }
-    }
-  }
-
 color_theme:
   canopsis:
-    <<: *theme
     _id: "canopsis"
     name: "Canopsis"
     colors:
@@ -50,15 +17,13 @@ color_theme:
         minor: '#fcdc00'
         major: '#ff9900'
         critical: '#f56954'
-        pause: '#808080'
       table:
         background: '#fff'
         active_color: '#000'
         row_color: '#fff'
         hover_row_color: '#eee'
-
+    last_modified: <NowUnix()>
   canopsis_dark:
-    <<: *theme
     _id: "canopsis_dark"
     name: "Canopsis dark"
     colors:
@@ -76,15 +41,13 @@ color_theme:
         minor: '#fcdc00'
         major: '#ff9900'
         critical: '#f56954'
-        pause: '#808080'
       table:
         background: '#424242'
         active_color: '#fff'
         row_color: '#424242'
         hover_row_color: '#616161'
-
+    last_modified: <NowUnix()>
   color_blind:
-    <<: *theme
     _id: "color_blind"
     name: "Color blind"
     colors:
@@ -102,15 +65,13 @@ color_theme:
         minor: '#fcdc00'
         major: '#ff9900'
         critical: '#f56954'
-        pause: '#808080'
       table:
         background: '#fff'
         active_color: '#000'
         row_color: '#fff'
         hover_row_color: '#eee'
-
+    last_modified: <NowUnix()>
   color_blind_dark:
-    <<: *theme
     _id: "color_blind_dark"
     name: "Color blind dark"
     colors:
@@ -128,34 +89,9 @@ color_theme:
         minor: '#fcdc00'
         major: '#ff9900'
         critical: '#f56954'
-        pause: '#808080'
       table:
         background: '#424242'
         active_color: '#fff'
         row_color: '#424242'
         hover_row_color: '#616161'
-
-  test_theme_to_get_1:
-    <<: *theme
-    _id: test_theme_to_get_1
-    name: test_theme_to_get_1
-
-  test_theme_to_get_2:
-    <<: *theme
-    _id: test_theme_to_get_2
-    name: test_theme_to_get_2
-
-  test_theme_to_update_1:
-    <<: *theme
-    _id: test_theme_to_update_1
-    name: test_theme_to_update_1
-
-  test_theme_to_delete_1:
-    <<: *theme
-    _id: test_theme_to_delete_1
-    name: test_theme_to_delete_1
-
-  test_theme_to_pick_1:
-    <<: *theme
-    _id: test_theme_to_pick_1
-    name: test_theme_to_pick_1
+    last_modified: <NowUnix()>
