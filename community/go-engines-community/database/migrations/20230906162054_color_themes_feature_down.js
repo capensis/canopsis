@@ -10,3 +10,7 @@ db.role.updateMany(
         }
     },
 );
+
+db.user.updateMany({"ui_theme": "canopsis_dark"}, {$set:{"ui_theme": "canopsisDark"}})
+db.user.updateMany({"ui_theme": "color_blind"}, {$set:{"ui_theme": "colorBlind"}})
+db.user.updateMany({"ui_theme": "color_blind_dark"}, {$set:{"ui_theme": "colorBlindDark"}})
