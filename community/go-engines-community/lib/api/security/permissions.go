@@ -66,5 +66,5 @@ const (
 
 	PermMaintenance = "api_maintenance"
 
-	PermColorTheme = "api_color_theme"
+	ObjColorTheme = "api_color_theme"
 )

@@ -30,11 +30,12 @@ Feature: Create a color theme
         "info": "#AAAAAA",
         "success": "#AAAAAA",
         "warning": "#AAAAAA",
-        "background": "#AAAAAA"
+        "background": "#AAAAAA",
+        "active_color": "#AAAAAA",
+        "font_size": 1
       },
       "table": {
         "background": "#AAAAAA",
-        "active_color": "#AAAAAA",
         "row_color": "#AAAAAA",
         "shift_row_color": "#AAAAAA",
         "hover_row_color": "#AAAAAA"
@@ -63,11 +64,12 @@ Feature: Create a color theme
         "info": "#AAAAAA",
         "success": "#AAAAAA",
         "warning": "#AAAAAA",
-        "background": "#AAAAAA"
+        "background": "#AAAAAA",
+        "active_color": "#AAAAAA",
+        "font_size": 1
       },
       "table": {
         "background": "#AAAAAA",
-        "active_color": "#AAAAAA",
         "row_color": "#AAAAAA",
         "shift_row_color": "#AAAAAA",
         "hover_row_color": "#AAAAAA"
@@ -99,11 +101,12 @@ Feature: Create a color theme
         "info": "#AAAAAA",
         "success": "#AAAAAA",
         "warning": "#AAAAAA",
-        "background": "#AAAAAA"
+        "background": "#AAAAAA",
+        "active_color": "#AAAAAA",
+        "font_size": 1
       },
       "table": {
         "background": "#AAAAAA",
-        "active_color": "#AAAAAA",
         "row_color": "#AAAAAA",
         "shift_row_color": "#AAAAAA",
         "hover_row_color": "#AAAAAA"
@@ -132,11 +135,12 @@ Feature: Create a color theme
         "info": "#AAAAAA",
         "success": "#AAAAAA",
         "warning": "#AAAAAA",
-        "background": "#AAAAAA"
+        "background": "#AAAAAA",
+        "active_color": "#AAAAAA",
+        "font_size": 1
       },
       "table": {
         "background": "#AAAAAA",
-        "active_color": "#AAAAAA",
         "row_color": "#AAAAAA",
         "shift_row_color": "#AAAAAA",
         "hover_row_color": "#AAAAAA"
@@ -173,11 +177,12 @@ Feature: Create a color theme
         "info": "#AAAAAA",
         "success": "#AAAAAA",
         "warning": "#AAAAAA",
-        "background": "#AAAAAA"
+        "background": "#AAAAAA",
+        "active_color": "#AAAAAA",
+        "font_size": 1
       },
       "table": {
         "background": "#AAAAAA",
-        "active_color": "#AAAAAA",
         "row_color": "#AAAAAA",
         "shift_row_color": "#AAAAAA",
         "hover_row_color": "#AAAAAA"
@@ -221,11 +226,12 @@ Feature: Create a color theme
       "colors.main.secondary": "Secondary is missing.",
       "colors.main.success": "Success is missing.",
       "colors.main.warning": "Warning is missing.",
+      "colors.main.active_color": "ActiveColor is missing.",
+      "colors.main.font_size": "FontSize is missing.",
       "colors.state.critical": "Critical is missing.",
       "colors.state.major": "Major is missing.",
       "colors.state.minor": "Minor is missing.",
       "colors.state.ok": "OK is missing.",
-      "colors.table.active_color": "ActiveColor is missing.",
       "colors.table.background": "Background is missing.",
       "colors.table.row_color": "RowColor is missing.",
       "name": "Name is missing."
@@ -234,7 +240,7 @@ Feature: Create a color theme
   """
 
   @concurrent
-  Scenario: given create request with invalid color fields should return error
+  Scenario: given create request with invalid color and font fields should return error
   When I am admin
   When I do POST /api/v4/color-themes:
   """json
@@ -250,11 +256,12 @@ Feature: Create a color theme
         "info": "bad_color",
         "success": "bad_color",
         "warning": "bad_color",
-        "background": "bad_color"
+        "background": "bad_color",
+        "active_color": "bad_color",
+        "font_size": 4
       },
       "table": {
         "background": "bad_color",
-        "active_color": "bad_color",
         "row_color": "bad_color",
         "shift_row_color": "bad_color",
         "hover_row_color": "bad_color"
@@ -281,11 +288,12 @@ Feature: Create a color theme
       "colors.main.secondary": "Secondary is not valid.",
       "colors.main.success": "Success is not valid.",
       "colors.main.warning": "Warning is not valid.",
+      "colors.main.active_color": "ActiveColor is not valid.",
+      "colors.main.font_size": "FontSize must be one of [1 2 3].",
       "colors.state.critical": "Critical is not valid.",
       "colors.state.major": "Major is not valid.",
       "colors.state.minor": "Minor is not valid.",
       "colors.state.ok": "OK is not valid.",
-      "colors.table.active_color": "ActiveColor is not valid.",
       "colors.table.background": "Background is not valid.",
       "colors.table.hover_row_color": "HoverRowColor is not valid.",
       "colors.table.row_color": "RowColor is not valid.",

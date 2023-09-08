@@ -1,6 +1,7 @@
 package user
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -81,21 +82,21 @@ func (r EditRequest) getBson(passwordEncoder password.Encoder) bson.M {
 }
 
 type User struct {
-	ID                     string `bson:"_id" json:"_id"`
-	Name                   string `bson:"name" json:"name"`
-	DisplayName            string `bson:"display_name" json:"display_name"`
-	Lastname               string `bson:"lastname" json:"lastname"`
-	Firstname              string `bson:"firstname" json:"firstname"`
-	Email                  string `bson:"email" json:"email"`
-	Roles                  []Role `bson:"roles" json:"roles"`
-	UILanguage             string `bson:"ui_language" json:"ui_language"`
-	UITheme                string `bson:"ui_theme" json:"ui_theme"`
-	UIGroupsNavigationType string `bson:"ui_groups_navigation_type" json:"ui_groups_navigation_type"`
-	Enabled                bool   `bson:"enable" json:"enable"`
-	DefaultView            *View  `bson:"defaultview" json:"defaultview"`
-	ExternalID             string `bson:"external_id" json:"external_id"`
-	Source                 string `bson:"source" json:"source"`
-	AuthApiKey             string `bson:"authkey" json:"authkey"`
+	ID                     string           `bson:"_id" json:"_id"`
+	Name                   string           `bson:"name" json:"name"`
+	DisplayName            string           `bson:"display_name" json:"display_name"`
+	Lastname               string           `bson:"lastname" json:"lastname"`
+	Firstname              string           `bson:"firstname" json:"firstname"`
+	Email                  string           `bson:"email" json:"email"`
+	Roles                  []Role           `bson:"roles" json:"roles"`
+	UILanguage             string           `bson:"ui_language" json:"ui_language"`
+	UITheme                colortheme.Theme `bson:"ui_theme" json:"ui_theme"`
+	UIGroupsNavigationType string           `bson:"ui_groups_navigation_type" json:"ui_groups_navigation_type"`
+	Enabled                bool             `bson:"enable" json:"enable"`
+	DefaultView            *View            `bson:"defaultview" json:"defaultview"`
+	ExternalID             string           `bson:"external_id" json:"external_id"`
+	Source                 string           `bson:"source" json:"source"`
+	AuthApiKey             string           `bson:"authkey" json:"authkey"`
 
 	ActiveConnects *int64 `bson:"-" json:"active_connects,omitempty"`
 }

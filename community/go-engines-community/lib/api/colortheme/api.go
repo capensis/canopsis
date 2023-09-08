@@ -6,25 +6,35 @@ import (
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 )
+
+type API interface {
+	common.CrudAPI
+	BulkDelete(c *gin.Context)
+}
 
 func NewApi(
 	store Store,
 	actionLogger logger.ActionLogger,
-) common.CrudAPI {
+	logger zerolog.Logger,
+) API {
 	return &api{
 		store:        store,
 		actionLogger: actionLogger,
+		logger:       logger,
 	}
 }
 
 type api struct {
 	store        Store
 	actionLogger logger.ActionLogger
+	logger       zerolog.Logger
 }
 
 // Create
@@ -172,4 +182,27 @@ func (a api) Delete(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusNoContent, nil)
+}
+
+// BulkDelete
+// @Param body body []BulkDeleteRequestItem true "body"
+func (a *api) BulkDelete(c *gin.Context) {
+	userId := c.MustGet(auth.UserKey).(string)
+	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
+		ok, err := a.store.Delete(c, request.ID)
+		if err != nil || !ok {
+			return "", err
+		}
+
+		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+			Action:    logger.ActionDelete,
+			ValueType: logger.ValueTypeColorTheme,
+			ValueID:   request.ID,
+		})
+		if err != nil {
+			a.actionLogger.Err(err, "failed to log action")
+		}
+
+		return request.ID, nil
+	}, a.logger)
 }

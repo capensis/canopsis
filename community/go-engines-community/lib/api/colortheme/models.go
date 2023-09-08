@@ -20,27 +20,32 @@ type UpdateRequest struct {
 	ID string `json:"-"`
 }
 
+type BulkDeleteRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+}
+
 type Theme struct {
-	ID           string        `bson:"_id" json:"_id"`
-	Name         string        `bson:"name" json:"name"`
-	Colors       Colors        `bson:"colors" json:"colors"`
-	LastModified types.CpsTime `bson:"last_modified" json:"last_modified" swaggertype:"integer"`
+	ID      string        `bson:"_id" json:"_id"`
+	Name    string        `bson:"name" json:"name"`
+	Colors  Colors        `bson:"colors" json:"colors"`
+	Updated types.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
 }
 
 type Colors struct {
 	Main struct {
-		Primary    string `bson:"primary" json:"primary" binding:"required,iscolor"`
-		Secondary  string `bson:"secondary" json:"secondary" binding:"required,iscolor"`
-		Accent     string `bson:"accent" json:"accent" binding:"required,iscolor"`
-		Error      string `bson:"error" json:"error" binding:"required,iscolor"`
-		Info       string `bson:"info" json:"info" binding:"required,iscolor"`
-		Success    string `bson:"success" json:"success" binding:"required,iscolor"`
-		Warning    string `bson:"warning" json:"warning" binding:"required,iscolor"`
-		Background string `bson:"background" json:"background" binding:"required,iscolor"`
+		Primary     string `bson:"primary" json:"primary" binding:"required,iscolor"`
+		Secondary   string `bson:"secondary" json:"secondary" binding:"required,iscolor"`
+		Accent      string `bson:"accent" json:"accent" binding:"required,iscolor"`
+		Error       string `bson:"error" json:"error" binding:"required,iscolor"`
+		Info        string `bson:"info" json:"info" binding:"required,iscolor"`
+		Success     string `bson:"success" json:"success" binding:"required,iscolor"`
+		Warning     string `bson:"warning" json:"warning" binding:"required,iscolor"`
+		Background  string `bson:"background" json:"background" binding:"required,iscolor"`
+		ActiveColor string `bson:"active_color" json:"active_color" binding:"required,iscolor"`
+		FontSize    int    `bson:"font_size" json:"font_size" binding:"required,oneof=1 2 3"`
 	} `bson:"main" json:"main"`
 	Table struct {
 		Background    string `bson:"background" json:"background" binding:"required,iscolor"`
-		ActiveColor   string `bson:"active_color" json:"active_color" binding:"required,iscolor"`
 		RowColor      string `bson:"row_color" json:"row_color" binding:"required,iscolor"`
 		ShiftRowColor string `bson:"shift_row_color,omitempty" json:"shift_row_color,omitempty" binding:"iscolororempty"`
 		HoverRowColor string `bson:"hover_row_color,omitempty" json:"hover_row_color,omitempty" binding:"iscolororempty"`
@@ -68,5 +73,5 @@ func (r *AggregationResult) GetTotal() int64 {
 
 type FilteredQuery struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=name last_modified"`
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=name updated"`
 }
