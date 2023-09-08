@@ -2,6 +2,7 @@ Feature: Get application information
   I need to be able to get application information
   Only admin should be able to get this information
 
+  @concurrent
   Scenario: given get request should return application information
     When I do GET /api/v4/app-info
     Then the response code should be 200
@@ -74,11 +75,12 @@ Feature: Get application information
             "info": "#2196f3",
             "success": "#4caf50",
             "warning": "#fb8c00",
-            "background": "#ffffff"
+            "background": "#ffffff",
+            "active_color": "#000",
+            "font_size": 2
           },
           "table": {
             "background": "#fff",
-            "active_color": "#000",
             "row_color": "#fff",
             "hover_row_color": "#eee"
           },

@@ -24,6 +24,7 @@ color_theme:
         row_color: '#fff'
         hover_row_color: '#eee'
     updated: <NowUnix()>
+    deletable: false
   canopsis_dark:
     _id: "canopsis_dark"
     name: "Canopsis dark"
@@ -49,6 +50,7 @@ color_theme:
         row_color: '#424242'
         hover_row_color: '#616161'
     updated: <NowUnix()>
+    deletable: false
   color_blind:
     _id: "color_blind"
     name: "Color blind"
@@ -74,6 +76,7 @@ color_theme:
         row_color: '#fff'
         hover_row_color: '#eee'
     updated: <NowUnix()>
+    deletable: false
   color_blind_dark:
     _id: "color_blind_dark"
     name: "Color blind dark"
@@ -99,3 +102,4 @@ color_theme:
         row_color: '#424242'
         hover_row_color: '#616161'
     updated: <NowUnix()>
+    deletable: false
