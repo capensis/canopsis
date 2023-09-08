@@ -2,15 +2,18 @@ Feature: Bulk update users
   I need to be able to bulk update users
   Only admin should be able to bulk update users
 
+  @concurrent
   Scenario: given bulk update request and no auth user should not allow access
     When I do PUT /api/v4/bulk/users
     Then the response code should be 401
 
+  @concurrent
   Scenario: given bulk update and auth user by api key without permissions should not allow access
     When I am noperms
     When I do PUT /api/v4/bulk/users
     Then the response code should be 403
 
+  @concurrent
   Scenario: given bulk update request should return multi status and should be handled independently
     When I am admin
     Then I do PUT /api/v4/bulk/users:
@@ -74,7 +77,7 @@ Feature: Bulk update users
           "test-role-to-user-edit-1"
         ],
         "ui_language": "fr",
-        "ui_theme": "canopsis",
+        "ui_theme": "canopsis_dark",
         "ui_groups_navigation_type": "top-bar",
         "password": "test-password-updated",
         "enable": true,
@@ -111,7 +114,42 @@ Feature: Bulk update users
         "password": "123",
         "enable": true,
         "defaultview": "test-view-to-edit-user"
-      }      
+      },
+      {
+        "_id": "test-user-to-bulk-update-5",
+        "name": "test-user-to-bulk-update-5-updated",
+        "firstname": "test-user-to-bulk-update-5-firstname-updated",
+        "lastname": "test-user-to-bulk-update-5-lastname-updated",
+        "email": "test-user-to-bulk-update-5-email-updated@canopsis.net",
+        "roles": [
+          "test-role-to-user-edit-1"
+        ],
+        "ui_language": "fr",
+        "ui_groups_navigation_type": "top-bar",
+        "password": "test-password-updated",
+        "enable": true,
+        "defaultview": "test-view-to-edit-user",
+        "source": "ldap",
+        "external_id": "ldap_id",
+        "ui_theme": "not found"
+      },
+      {
+        "_id": "test-user-to-bulk-update-6",
+        "name": "test-user-to-bulk-update-6-updated",
+        "firstname": "test-user-to-bulk-update-6-firstname-updated-twice",
+        "lastname": "test-user-to-bulk-update-6-lastname-updated",
+        "email": "test-user-to-bulk-update-6-email-updated@canopsis.net",
+        "roles": [
+          "test-role-to-user-edit-2",
+          "test-role-to-user-edit-1"
+        ],
+        "ui_language": "fr",
+        "ui_theme": "test_theme_to_pick_1",
+        "ui_groups_navigation_type": "top-bar",
+        "enable": true,
+        "password": "test-password-updated",
+        "defaultview": "test-view-to-edit-user"
+      }
     ]
     """
     Then the response code should be 207
@@ -217,7 +255,7 @@ Feature: Bulk update users
             "test-role-to-user-edit-1"
           ],
           "ui_language": "fr",
-          "ui_theme": "canopsis",
+          "ui_theme": "canopsis_dark",
           "ui_groups_navigation_type": "top-bar",
           "password": "test-password-updated",
           "enable": true,
@@ -265,6 +303,51 @@ Feature: Bulk update users
         "errors": {
           "password": "Password should be 8 or more."
         }
+      },
+      {
+        "status": 400,
+        "item": {
+          "_id": "test-user-to-bulk-update-5",
+          "name": "test-user-to-bulk-update-5-updated",
+          "firstname": "test-user-to-bulk-update-5-firstname-updated",
+          "lastname": "test-user-to-bulk-update-5-lastname-updated",
+          "email": "test-user-to-bulk-update-5-email-updated@canopsis.net",
+          "roles": [
+            "test-role-to-user-edit-1"
+          ],
+          "ui_language": "fr",
+          "ui_groups_navigation_type": "top-bar",
+          "password": "test-password-updated",
+          "enable": true,
+          "defaultview": "test-view-to-edit-user",
+          "source": "ldap",
+          "external_id": "ldap_id",
+          "ui_theme": "not found"
+        },
+        "errors": {
+          "ui_theme": "UITheme doesn't exist."
+        }
+      },
+      {
+        "id": "test-user-to-bulk-update-6",
+        "status": 200,
+        "item": {
+          "_id": "test-user-to-bulk-update-6",
+          "name": "test-user-to-bulk-update-6-updated",
+          "firstname": "test-user-to-bulk-update-6-firstname-updated-twice",
+          "lastname": "test-user-to-bulk-update-6-lastname-updated",
+          "email": "test-user-to-bulk-update-6-email-updated@canopsis.net",
+          "roles": [
+            "test-role-to-user-edit-2",
+            "test-role-to-user-edit-1"
+          ],
+          "ui_language": "fr",
+          "ui_theme": "test_theme_to_pick_1",
+          "ui_groups_navigation_type": "top-bar",
+          "enable": true,
+          "password": "test-password-updated",
+          "defaultview": "test-view-to-edit-user"
+        }
       }
     ]
     """
@@ -308,7 +391,34 @@ Feature: Bulk update users
           "source": "",
           "ui_groups_navigation_type": "top-bar",
           "ui_language": "fr",
-          "ui_theme": "canopsis"
+          "ui_theme": {
+            "name": "Canopsis",
+            "colors": {
+              "main": {
+                "primary": "#2fab63",
+                "secondary": "#2b3e4f",
+                "accent": "#82b1ff",
+                "error": "#ff5252",
+                "info": "#2196f3",
+                "success": "#4caf50",
+                "warning": "#fb8c00",
+                "background": "#ffffff",
+                "active_color": "#000",
+                "font_size": 2
+              },
+              "table": {
+                "background": "#fff",
+                "row_color": "#fff",
+                "hover_row_color": "#eee"
+              },
+              "state": {
+                "ok": "#00a65a",
+                "minor": "#fcdc00",
+                "major": "#ff9900",
+                "critical": "#f56954"
+              }
+            }
+          }
         },
         {
           "_id": "test-user-to-bulk-update-2",
@@ -335,7 +445,35 @@ Feature: Bulk update users
           ],
           "source": "",
           "ui_groups_navigation_type": "top-bar",
-          "ui_language": "fr"
+          "ui_language": "fr",
+          "ui_theme": {
+            "name": "Canopsis dark",
+            "colors": {
+              "main": {
+                "primary": "#2fab63",
+                "secondary": "#2b3e4f",
+                "accent": "#82b1ff",
+                "error": "#ff8b8b",
+                "info": "#2196f3",
+                "success": "#4caf50",
+                "warning": "#fb8c00",
+                "background": "#303030",
+                "active_color": "#fff",
+                "font_size": 2
+              },
+              "table": {
+                "background": "#424242",
+                "row_color": "#424242",
+                "hover_row_color": "#616161"
+              },
+              "state": {
+                "ok": "#00a65a",
+                "minor": "#fcdc00",
+                "major": "#ff9900",
+                "critical": "#f56954"
+              }
+            }
+          }
         },
         {
           "_id": "test-user-to-bulk-update-3",
@@ -362,7 +500,35 @@ Feature: Bulk update users
           "ui_groups_navigation_type": "top-bar",
           "ui_language": "fr",
           "source": "saml",
-          "external_id": "saml_id"
+          "external_id": "saml_id",
+          "ui_theme": {
+            "name": "Canopsis",
+            "colors": {
+              "main": {
+                "primary": "#2fab63",
+                "secondary": "#2b3e4f",
+                "accent": "#82b1ff",
+                "error": "#ff5252",
+                "info": "#2196f3",
+                "success": "#4caf50",
+                "warning": "#fb8c00",
+                "background": "#ffffff",
+                "active_color": "#000",
+                "font_size": 2
+              },
+              "table": {
+                "background": "#fff",
+                "row_color": "#fff",
+                "hover_row_color": "#eee"
+              },
+              "state": {
+                "ok": "#00a65a",
+                "minor": "#fcdc00",
+                "major": "#ff9900",
+                "critical": "#f56954"
+              }
+            }
+          }
         },
         {
           "_id": "test-user-to-bulk-update-4",
@@ -383,14 +549,155 @@ Feature: Bulk update users
               }
             }
           ],
-          "source": ""
-        }   
+          "source": "",
+          "ui_theme": {
+            "name": "Canopsis",
+            "colors": {
+              "main": {
+                "primary": "#2fab63",
+                "secondary": "#2b3e4f",
+                "accent": "#82b1ff",
+                "error": "#ff5252",
+                "info": "#2196f3",
+                "success": "#4caf50",
+                "warning": "#fb8c00",
+                "background": "#ffffff",
+                "active_color": "#000",
+                "font_size": 2
+              },
+              "table": {
+                "background": "#fff",
+                "row_color": "#fff",
+                "hover_row_color": "#eee"
+              },
+              "state": {
+                "ok": "#00a65a",
+                "minor": "#fcdc00",
+                "major": "#ff9900",
+                "critical": "#f56954"
+              }
+            }
+          }
+        },
+        {
+          "_id": "test-user-to-bulk-update-5",
+          "authkey": "5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424",
+          "email": "",
+          "enable": true,
+          "external_id": "",
+          "firstname": "",
+          "lastname": "",
+          "name": "test-user-to-bulk-update-5",
+          "roles": [
+            {
+              "_id": "test-role-to-user-edit-1",
+              "name": "test-role-to-user-edit-1",
+              "defaultview": {
+                "_id": "test-view-to-edit-user",
+                "title": "test-view-to-edit-user-title"
+              }
+            }
+          ],
+          "source": "",
+          "ui_theme": {
+            "name": "Canopsis",
+            "colors": {
+              "main": {
+                "primary": "#2fab63",
+                "secondary": "#2b3e4f",
+                "accent": "#82b1ff",
+                "error": "#ff5252",
+                "info": "#2196f3",
+                "success": "#4caf50",
+                "warning": "#fb8c00",
+                "background": "#ffffff",
+                "active_color": "#000",
+                "font_size": 2
+              },
+              "table": {
+                "background": "#fff",
+                "row_color": "#fff",
+                "hover_row_color": "#eee"
+              },
+              "state": {
+                "ok": "#00a65a",
+                "minor": "#fcdc00",
+                "major": "#ff9900",
+                "critical": "#f56954"
+              }
+            }
+          }
+        },
+        {
+          "_id": "test-user-to-bulk-update-6",
+          "authkey": "5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424",
+          "defaultview": {
+            "_id": "test-view-to-edit-user",
+            "title": "test-view-to-edit-user-title"
+          },
+          "email": "test-user-to-bulk-update-6-email-updated@canopsis.net",
+          "enable": true,
+          "external_id": "",
+          "firstname": "test-user-to-bulk-update-6-firstname-updated-twice",
+          "lastname": "test-user-to-bulk-update-6-lastname-updated",
+          "name": "test-user-to-bulk-update-6-updated",
+          "roles": [
+            {
+              "_id": "test-role-to-user-edit-2",
+              "name": "test-role-to-user-edit-2",
+              "defaultview": {
+                "_id": "test-view-to-edit-user",
+                "title": "test-view-to-edit-user-title"
+              }
+            },
+            {
+              "_id": "test-role-to-user-edit-1",
+              "name": "test-role-to-user-edit-1",
+              "defaultview": {
+                "_id": "test-view-to-edit-user",
+                "title": "test-view-to-edit-user-title"
+              }
+            }
+          ],
+          "source": "",
+          "ui_groups_navigation_type": "top-bar",
+          "ui_language": "fr",
+          "ui_theme": {
+            "name": "test_theme_to_pick_1",
+            "colors": {
+              "main": {
+                "primary": "#AAAAAA",
+                "secondary": "#AAAAAA",
+                "accent": "#AAAAAA",
+                "error": "#AAAAAA",
+                "info": "#AAAAAA",
+                "success": "#AAAAAA",
+                "warning": "#AAAAAA",
+                "background": "#AAAAAA",
+                "active_color": "#AAAAAA",
+                "font_size": 2
+              },
+              "table": {
+                "background": "#AAAAAA",
+                "row_color": "#AAAAAA",
+                "shift_row_color": "#AAAAAA",
+                "hover_row_color": "#AAAAAA"
+              },
+              "state": {
+                "ok": "#AAAAAA",
+                "minor": "#AAAAAA",
+                "major": "#AAAAAA",
+                "critical": "#AAAAAA"
+              }
+            }
+          }
+        }
       ],
       "meta": {
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 4
+        "total_count": 6
       }
     }
     """

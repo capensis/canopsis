@@ -169,9 +169,9 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 
 func (s *store) transformRequestToDocument(r EditRequest) Theme {
 	return Theme{
-		Name:         r.Name,
-		Colors:       r.Colors,
-		LastModified: types.NewCpsTime(),
+		Name:    r.Name,
+		Colors:  r.Colors,
+		Updated: types.NewCpsTime(),
 	}
 }
 

@@ -3,14 +3,25 @@ Feature: Get a color theme
   Only admin should be able to get a color theme
 
   @concurrent
-  Scenario: given get request and no auth user should not allow access
+  Scenario: given get list request and no auth user should not allow access
     When I do GET /api/v4/color-themes
+    Then the response code should be 401
+
+  @concurrent
+  Scenario: given get list request and auth user without permissions should not allow access
+    When I am noperms
+    When I do GET /api/v4/color-themes
+    Then the response code should be 403
+
+  @concurrent
+  Scenario: given get request and no auth user should not allow access
+    When I do GET /api/v4/color-themes/test_theme_to_get_1
     Then the response code should be 401
 
   @concurrent
   Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
-    When I do GET /api/v4/color-themes
+    When I do GET /api/v4/color-themes/test_theme_to_get_1
     Then the response code should be 403
 
   @concurrent
@@ -33,11 +44,12 @@ Feature: Get a color theme
             "info": "#AAAAAA",
             "success": "#AAAAAA",
             "warning": "#AAAAAA",
-            "background": "#AAAAAA"
+            "background": "#AAAAAA",
+            "active_color": "#AAAAAA",
+            "font_size": 2
           },
           "table": {
             "background": "#AAAAAA",
-            "active_color": "#AAAAAA",
             "row_color": "#AAAAAA",
             "shift_row_color": "#AAAAAA",
             "hover_row_color": "#AAAAAA"
@@ -61,11 +73,12 @@ Feature: Get a color theme
             "info": "#AAAAAA",
             "success": "#AAAAAA",
             "warning": "#AAAAAA",
-            "background": "#AAAAAA"
+            "background": "#AAAAAA",
+            "active_color": "#AAAAAA",
+            "font_size": 2
           },
           "table": {
             "background": "#AAAAAA",
-            "active_color": "#AAAAAA",
             "row_color": "#AAAAAA",
             "shift_row_color": "#AAAAAA",
             "hover_row_color": "#AAAAAA"
@@ -106,11 +119,12 @@ Feature: Get a color theme
         "info": "#AAAAAA",
         "success": "#AAAAAA",
         "warning": "#AAAAAA",
-        "background": "#AAAAAA"
+        "background": "#AAAAAA",
+        "active_color": "#AAAAAA",
+        "font_size": 2
       },
       "table": {
         "background": "#AAAAAA",
-        "active_color": "#AAAAAA",
         "row_color": "#AAAAAA",
         "shift_row_color": "#AAAAAA",
         "hover_row_color": "#AAAAAA"
@@ -192,7 +206,7 @@ Feature: Get a color theme
   """json
   {
     "errors": {
-      "sort_by": "SortBy must be one of [name last_modified] or empty."
+      "sort_by": "SortBy must be one of [name updated] or empty."
     }
   }
   """
