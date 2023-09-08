@@ -55,7 +55,7 @@ definitions:
       ui_language:
         type: string
       ui_theme:
-        type: string
+        $ref: '#/definitions/colortheme.Theme'
       ui_tours:
         additionalProperties:
           type: boolean
@@ -1005,16 +1005,31 @@ definitions:
     - message
     - start
     type: object
+  colortheme.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
   colortheme.Colors:
     properties:
       main:
         properties:
           accent:
             type: string
+          active_color:
+            type: string
           background:
             type: string
           error:
             type: string
+          font_size:
+            enum:
+            - 1
+            - 2
+            - 3
+            type: integer
           info:
             type: string
           primary:
@@ -1027,8 +1042,10 @@ definitions:
             type: string
         required:
         - accent
+        - active_color
         - background
         - error
+        - font_size
         - info
         - primary
         - secondary
@@ -1053,8 +1070,6 @@ definitions:
         type: object
       table:
         properties:
-          active_color:
-            type: string
           background:
             type: string
           hover_row_color:
@@ -1064,7 +1079,6 @@ definitions:
           shift_row_color:
             type: string
         required:
-        - active_color
         - background
         - row_color
         type: object
@@ -1086,10 +1100,10 @@ definitions:
         type: string
       colors:
         $ref: '#/definitions/colortheme.Colors'
-      last_modified:
-        type: integer
       name:
         type: string
+      updated:
+        type: integer
     type: object
   colortheme.UpdateRequest:
     properties:
@@ -5072,7 +5086,7 @@ definitions:
       ui_language:
         type: string
       ui_theme:
-        type: string
+        $ref: '#/definitions/colortheme.Theme'
     type: object
   user.View:
     properties:
