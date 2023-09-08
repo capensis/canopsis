@@ -24,7 +24,6 @@
 import { omit } from 'lodash';
 
 import { MODALS } from '@/constants';
-import { DEFAULT_THEME_COLORS } from '@/config';
 
 import { pickIds } from '@/helpers/array';
 
@@ -41,24 +40,6 @@ export default {
     entitiesThemesMixin,
     permissionsTechnicalProfileThemeMixin,
   ],
-  computed: {
-    themes() {
-      return [
-        {
-          name: 'Canopsis',
-          colors: {
-            ...DEFAULT_THEME_COLORS,
-          },
-        },
-      ];
-    },
-
-    themesMeta() {
-      return {
-        total_count: this.themes.length,
-      };
-    },
-  },
   mounted() {
     this.fetchList();
   },
@@ -83,8 +64,12 @@ export default {
           theme,
           title: this.$t('modals.createTheme.edit.title'),
           action: async (newTheme) => {
-            await this.createTheme({ data: newTheme });
+            await this.updateTheme({ id: theme._id, data: newTheme });
 
+
+            if (this.currentUser.ui_theme === theme._id) {
+              this.setTheme
+            }
             /**
              * TODO: Should be handled update current theme
              */

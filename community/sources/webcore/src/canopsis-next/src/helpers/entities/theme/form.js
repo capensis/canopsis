@@ -3,7 +3,7 @@ import { COLORS } from '@/config';
 /**
  * @typedef {Object} ThemeEnabledColor
  * @property {boolean} enabled
- * @property {color} string
+ * @property {string} color
  */
 
 /**
@@ -21,14 +21,14 @@ import { COLORS } from '@/config';
  */
 
 /**
- * @typedef {User} ThemeColorsForm
+ * @typedef {ThemeColors} ThemeColorsForm
  * @property {ThemeMainColorsForm} main
  * @property {ThemeTableColorsForm} table
  * @property {ThemeStatesColorsForm} state
  */
 
 /**
- * @typedef {User} ThemeForm
+ * @typedef {Theme} ThemeForm
  * @property {ThemeColorsForm} colors
  */
 
@@ -60,11 +60,11 @@ export const themeTableColorsToForm = (table = {}) => ({
   active_color: table.active_color ?? COLORS.table.activeColor,
   row_color: table.row_color ?? COLORS.table.rowColor,
   shift_row_color: {
-    enabled: table.shift_row_color ?? false,
+    enabled: !!table.shift_row_color,
     color: table.shift_row_color ?? COLORS.table.shiftRowColor,
   },
   hover_row_color: {
-    enabled: table.hover_row_color ?? true,
+    enabled: !!table.hover_row_color || true,
     color: table.hover_row_color ?? COLORS.table.hoverRowColor,
   },
 });
@@ -103,4 +103,46 @@ export const themeColorsToForm = (colors = {}) => ({
 export const themeToForm = (theme = {}) => ({
   name: theme.name ?? '',
   colors: themeColorsToForm(theme.colors),
+});
+
+/**
+ * Convert theme enabled color to string
+ *
+ * @param {ThemeEnabledColor} value
+ * @returns {string}
+ */
+const themeEnabledColorToString = value => (value.enabled ? value.color : null);
+
+/**
+ * Convert theme table colors form to API compatible object
+ *
+ * @param {ThemeTableColorsForm} table
+ * @returns {ThemeTableColors}
+ */
+const formTableColorsToTheme = table => ({
+  ...table,
+  shift_row_color: themeEnabledColorToString(table.shift_row_color),
+  hover_row_color: themeEnabledColorToString(table.hover_row_color),
+});
+
+/**
+ * Convert theme colors form to API compatible object
+ *
+ * @param {ThemeColorsForm} colors
+ * @returns {ThemeColors}
+ */
+const formColorsToTheme = colors => ({
+  ...colors,
+  table: formTableColorsToTheme(colors.table),
+});
+
+/**
+ * Convert theme form to API compatible object
+ *
+ * @param {ThemeForm} form
+ * @returns {Theme}
+ */
+export const formToTheme = form => ({
+  ...form,
+  colors: formColorsToTheme(form.colors),
 });

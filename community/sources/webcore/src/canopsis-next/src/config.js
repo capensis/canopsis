@@ -218,8 +218,8 @@ export const API_ROUTES = {
   linkRule: '/api/v4/link-rules',
   linkCategories: '/api/v4/link-categories',
   themes: {
-    list: '/api/v4/themes',
-    bulkList: '/api/v4/bulk/themes',
+    list: '/api/v4/color-themes',
+    bulkList: '/api/v4/bulk/color-themes',
   },
 
   /**
@@ -506,13 +506,6 @@ export const COLORS = {
   },
 };
 
-export const THEMES_NAMES = {
-  canopsis: 'canopsis',
-  canopsisDark: 'canopsisDark',
-  colorBlind: 'colorBlind',
-  colorBlindDark: 'colorBlindDark',
-};
-
 export const DEFAULT_THEME_COLORS = {
   primary: COLORS.primary,
   secondary: COLORS.secondary,
@@ -524,49 +517,11 @@ export const DEFAULT_THEME_COLORS = {
   background: COLORS.background,
 
   state: COLORS.state,
-  table: COLORS.table,
-};
-
-const CANOPSIS_THEME_COLORS = {
-  primary: COLORS.primary,
-  secondary: COLORS.secondary,
-  background: '#ffffff',
-};
-
-const CANOPSIS_DARK_THEME_COLORS = {
-  ...CANOPSIS_THEME_COLORS,
-  error: '#ff8b8b',
-  background: '#303030',
-};
-
-const COLOR_BLIND_THEME_COLORS = {
-  primary: '#2196f3',
-  secondary: COLORS.secondary,
-  background: CANOPSIS_THEME_COLORS.background,
-};
-
-const COLOR_BLIND_DARK_THEME_COLORS = {
-  ...COLOR_BLIND_THEME_COLORS,
-  error: CANOPSIS_DARK_THEME_COLORS.error,
-  background: CANOPSIS_DARK_THEME_COLORS.background,
-};
-
-export const THEMES = {
-  [THEMES_NAMES.canopsis]: {
-    dark: false,
-    colors: CANOPSIS_THEME_COLORS,
-  },
-  [THEMES_NAMES.canopsisDark]: {
-    dark: true,
-    colors: CANOPSIS_DARK_THEME_COLORS,
-  },
-  [THEMES_NAMES.colorBlind]: {
-    dark: false,
-    colors: COLOR_BLIND_THEME_COLORS,
-  },
-  [THEMES_NAMES.colorBlindDark]: {
-    dark: true,
-    colors: COLOR_BLIND_DARK_THEME_COLORS,
+  table: {
+    background: COLORS.table.background,
+    activeColor: COLORS.table.activeColor,
+    rowColor: COLORS.table.rowColor,
+    hoverRowColor: COLORS.table.hoverRowColor,
   },
 };
 

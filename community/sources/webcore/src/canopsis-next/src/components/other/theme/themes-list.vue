@@ -8,7 +8,6 @@
     :select-all="removable",
     :is-disabled-item="isDisabledMap",
     advanced-pagination,
-    expand,
     search,
     @update:pagination="$emit('update:pagination', $event)"
   )
@@ -38,8 +37,6 @@
           type="delete",
           @click="$emit('remove', item._id)"
         )
-    template(#expand="{ item }")
-      | Expand
 </template>
 
 <script>
@@ -84,10 +81,6 @@ export default {
         {
           text: this.$t('common.lastModifiedOn'),
           value: 'updated',
-        },
-        {
-          text: this.$t('common.lastModifiedBy'),
-          value: 'author.display_name',
         },
         {
           text: this.$t('common.actionsLabel'),

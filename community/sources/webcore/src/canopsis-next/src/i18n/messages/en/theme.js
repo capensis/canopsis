@@ -1,5 +1,8 @@
 export default {
   colorThemes: 'Color themes',
+  errors: {
+    notReadable: 'Text is not readable',
+  },
   main: {
     title: 'Main UI elements',
 
@@ -30,18 +33,20 @@ export default {
     title: 'Table settings',
 
     background: 'Table background color',
-    backgroundHelpText: 'Background color for the alarm list table',
+    backgroundHelpText: 'BG color for the alarm list table',
 
     activeColor: 'Main active color',
     activeColorHelpText: 'Main color for texts and icons',
 
-    rowColor: 'Table background color',
-    rowColorHelpText: 'BG color for the alarm list table',
+    exampleText: 'Hello world!',
+
+    rowColor: 'Table row color',
+    rowColorHelpText: 'BG color for the each table row',
 
     shiftRowEnable: 'Shift table background colors',
     shiftRowEnableHelpText: 'Switcher to enable/disable color shifts for table rows',
 
-    shiftRowColor: 'Second table background color',
+    shiftRowColor: 'Second table row background color',
     shiftRowColorHelpText: 'When enabled, rows colors are switching (every second row color is different)',
 
     hoverRowEnable: 'Change row color on hover',
