@@ -60,7 +60,8 @@ Feature: Get a color theme
             "major": "#AAAAAA",
             "critical": "#AAAAAA"
           }
-        }
+        },
+        "deletable": true
       },
       {
         "name": "test_theme_to_get_2",
@@ -89,7 +90,8 @@ Feature: Get a color theme
             "major": "#AAAAAA",
             "critical": "#AAAAAA"
           }
-        }
+        },
+        "deletable": true
       }
     ],
     "meta": {
@@ -135,7 +137,8 @@ Feature: Get a color theme
         "major": "#AAAAAA",
         "critical": "#AAAAAA"
       }
-    }
+    },
+    "deletable": true
   }
   """
 
@@ -207,6 +210,52 @@ Feature: Get a color theme
   {
     "errors": {
       "sort_by": "SortBy must be one of [name updated] or empty."
+    }
+  }
+  """
+
+  @concurrent
+  Scenario: given get default themes should return them with deletable flag equal to false
+  When I am admin
+  When I do GET /api/v4/color-themes?search=canopsis
+  Then the response code should be 200
+  Then the response body should contain:
+  """json
+  {
+    "data": [
+      {
+        "deletable": false
+      },
+      {
+        "deletable": false
+      }
+    ],
+    "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 2
+    }
+  }
+  """
+  When I do GET /api/v4/color-themes?search=color_blind
+  Then the response code should be 200
+  Then the response body should contain:
+  """json
+  {
+    "data": [
+      {
+        "deletable": false
+      },
+      {
+        "deletable": false
+      }
+    ],
+    "meta": {
+        "page": 1,
+        "per_page": 10,
+        "page_count": 1,
+        "total_count": 2
     }
   }
   """

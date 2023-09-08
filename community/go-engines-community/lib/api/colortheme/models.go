@@ -25,10 +25,11 @@ type BulkDeleteRequestItem struct {
 }
 
 type Theme struct {
-	ID      string        `bson:"_id" json:"_id"`
-	Name    string        `bson:"name" json:"name"`
-	Colors  Colors        `bson:"colors" json:"colors"`
-	Updated types.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
+	ID        string        `bson:"_id" json:"_id"`
+	Name      string        `bson:"name" json:"name"`
+	Colors    Colors        `bson:"colors" json:"colors"`
+	Updated   types.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
+	Deletable bool          `bson:"deletable" json:"deletable"`
 }
 
 type Colors struct {

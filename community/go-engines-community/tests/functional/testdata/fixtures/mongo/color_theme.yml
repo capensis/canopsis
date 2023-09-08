@@ -3,6 +3,7 @@ template:
     _id: <UUID()>,
     name: <UniqueName()>,
     updated: <NowUnix()>,
+    deletable: true,
     colors: {
       main: {
         primary: "#AAAAAA",
@@ -36,6 +37,7 @@ color_theme:
     <<: *theme
     _id: "canopsis"
     name: "Canopsis"
+    deletable: false
     colors:
       main:
         primary: '#2fab63'
@@ -63,6 +65,7 @@ color_theme:
     <<: *theme
     _id: "canopsis_dark"
     name: "Canopsis dark"
+    deletable: false
     colors:
       main:
         primary: '#2fab63'
@@ -90,6 +93,7 @@ color_theme:
     <<: *theme
     _id: "color_blind"
     name: "Color blind"
+    deletable: false
     colors:
       main:
         primary: '#2196f3'
@@ -117,6 +121,7 @@ color_theme:
     <<: *theme
     _id: "color_blind_dark"
     name: "Color blind dark"
+    deletable: false
     colors:
       main:
         primary: '#2196f3'

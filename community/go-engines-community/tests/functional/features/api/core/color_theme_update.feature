@@ -79,7 +79,8 @@ Feature: Update a color theme
         "major": "#FFFFFF",
         "critical": "#FFFFFF"
       }
-    }
+    },
+    "deletable": true
   }
   """
 
