@@ -41,6 +41,7 @@ import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active
 import '@/assets/styles/main.scss';
 
 const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
+const { mapActions: mapThemeActions } = createNamespacedHelpers('theme');
 
 export default {
   components: {
@@ -92,11 +93,18 @@ export default {
       this.fetchTemplateVars(),
     ]);
 
-    this.fetchAppInfoWithErrorHandling();
+    await this.fetchAppInfoWithErrorHandling();
+
+    if (!this.isLoggedIn) {
+      this.setTheme(this.defaultColorTheme);
+    }
   },
   methods: {
     ...mapActions({
       fetchPausedExecutionsWithoutStore: 'fetchPausedListWithoutStore',
+    }),
+    ...mapThemeActions({
+      fetchThemesListWithoutStore: 'fetchListWithoutStore',
     }),
 
     showLocalStorageWarningPopupMessage() {
@@ -111,7 +119,13 @@ export default {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
           this.$socket.authenticate(localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY));
-          this.setTheme(currentUser.ui_theme);
+
+          /**
+           * TODO: Should be removed later
+           */
+          const { data: themes } = await this.fetchThemesListWithoutStore({ params: { limit: MAX_LIMIT } });
+          this.setTheme(themes.find(({ _id: id }) => currentUser.ui_theme === id));
+          // this.setTheme(currentUser.ui_theme);
 
           await this.filesAccess();
 

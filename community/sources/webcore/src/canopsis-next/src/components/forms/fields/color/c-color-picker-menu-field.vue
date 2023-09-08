@@ -1,5 +1,14 @@
 <template lang="pug">
-  v-menu(:close-on-content-click="false", :disabled="disabled", bottom, left, offset-x)
+  v-menu(
+    :close-on-content-click="false",
+    :disabled="disabled",
+    content-class="c-color-picker-menu-field__dropdown",
+    bottom,
+    left,
+    lazy-with-unmount,
+    lazy,
+    offset-x
+  )
     template(#activator="{ on }")
       v-btn.c-color-picker-menu-field__button.ma-0.pa-0(
         v-on="on",
@@ -8,6 +17,7 @@
         block
       )
     c-color-chrome-picker-field(v-model="colorObject")
+    c-color-compact-picker-field(v-model="colorObject")
 </template>
 
 <script>
@@ -70,6 +80,16 @@ export default {
     min-width: unset;
     max-width: 80px;
     flex-shrink: 0;
+  }
+
+  &__dropdown {
+    max-width: 245px;
+
+    .vc-chrome,
+    .vc-compact {
+      box-shadow: none;
+      width: 100%;
+    }
   }
 }
 </style>
