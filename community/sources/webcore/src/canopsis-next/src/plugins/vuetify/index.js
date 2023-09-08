@@ -18,7 +18,7 @@ import VChipGroup from './components/v-chip-group/v-chip-group.vue';
 import VChip from './components/v-chip/v-chip.vue';
 import VCheckboxFunctional from './components/v-checkbox-functional/v-checkbox-functional.vue';
 
-import '../../stylus/main.styl';
+import './styles/vuetify.styl';
 
 export default {
   install(Vue, options) {

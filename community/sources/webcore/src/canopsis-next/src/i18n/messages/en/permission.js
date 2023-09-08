@@ -758,6 +758,10 @@ export default {
       name: 'Maintenance mode',
       description: 'Access to API route to the maintenance mode',
     },
+    [USERS_PERMISSIONS.api.general.colorTheme]: {
+      name: 'Color themes',
+      description: 'Access to API route to the color themes',
+    },
 
     [USERS_PERMISSIONS.api.rules.action]: {
       name: 'Actions',

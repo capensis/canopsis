@@ -39,7 +39,7 @@ const ExploitationResolveRules = () => import(/* webpackChunkName: "AlarmStatusR
 const ExploitationDeclareTicketRules = () => import(/* webpackChunkName: "DeclareTicketRule" */ '@/views/exploitation/declare-ticket-rules.vue');
 const ExploitationLinkRules = () => import(/* webpackChunkName: "LinkRule" */ '@/views/exploitation/link-rules.vue');
 const ProfilePatterns = () => import(/* webpackChunkName: "Pattern" */ '@/views/profile/patterns.vue');
-const ProfileThemes = () => import(/* webpackChunkName: "Theme" */ '@/views/profile/Themes.vue');
+const ProfileThemes = () => import(/* webpackChunkName: "Theme" */ '@/views/profile/themes.vue');
 const Playlist = () => import(/* webpackChunkName: "Playlist" */ '@/views/playlist.vue');
 const NotificationInstructionStats = () => import(/* webpackChunkName: "InstructionStats" */ '@/views/notification/instruction-stats.vue');
 
