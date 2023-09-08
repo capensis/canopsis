@@ -52,6 +52,7 @@ if (!db.color_theme.findOne({_id: "canopsis"})) {
             }
         },
         updated: now,
+        deletable: false
     });
 }
 
@@ -85,6 +86,7 @@ if (!db.color_theme.findOne({_id: "canopsis_dark"})) {
             }
         },
         updated: now,
+        deletable: false
     });
 }
 
@@ -118,6 +120,7 @@ if (!db.color_theme.findOne({_id: "color_blind"})) {
             }
         },
         updated: now,
+        deletable: false,
     });
 }
 
@@ -151,6 +154,7 @@ if (!db.color_theme.findOne({_id: "color_blind_dark"})) {
             }
         },
         updated: now,
+        deletable: false,
     });
 }
 

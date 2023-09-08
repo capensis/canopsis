@@ -80,7 +80,8 @@ Feature: Create a color theme
         "major": "#AAAAAA",
         "critical": "#AAAAAA"
       }
-    }
+    },
+    "deletable": true
   }
   """
 

@@ -1100,6 +1100,8 @@ definitions:
         type: string
       colors:
         $ref: '#/definitions/colortheme.Colors'
+      deletable:
+        type: boolean
       name:
         type: string
       updated:
