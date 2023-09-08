@@ -17,7 +17,7 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { themeToForm } from '@/helpers/entities/theme/form';
+import { themeToForm, formToTheme } from '@/helpers/entities/theme/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -58,7 +58,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(this.form);
+          await this.config.action(formToTheme(this.form));
         }
 
         this.$modals.hide();

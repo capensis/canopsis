@@ -55,6 +55,23 @@
           :label="$t('theme.table.activeColor')",
           :help-text="$t('theme.table.activeColorHelpText')"
         )
+
+        v-card(
+          :color="form.colors.table.background",
+          :style="{ color: form.colors.table.active_color }",
+          :dark="isDarkBackgroundTable"
+        )
+          v-card-text
+            v-layout(justify-space-between, align-center)
+              span {{ $t('theme.table.exampleText') }}
+              v-icon help
+
+        v-messages(
+          v-if="!isTableColorReadable",
+          :value="[$t('theme.errors.notReadable')]",
+          color="error"
+        )
+
         theme-color-picker-field(
           v-field="form.colors.table.row_color",
           :label="$t('theme.table.rowColor')",
@@ -98,6 +115,8 @@
 </template>
 
 <script>
+import { isReadableColor, isDarkColor } from '@/helpers/color';
+
 import ThemeEnabledColorPickerField from '@/components/other/theme/form/fields/theme-enabled-color-picker-field.vue';
 
 import ThemeColorPickerField from './fields/theme-color-picker-field.vue';
@@ -113,6 +132,18 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
+    },
+  },
+  computed: {
+    isDarkBackgroundTable() {
+      return isDarkColor(this.form.colors.table.background);
+    },
+
+    isTableColorReadable() {
+      return isReadableColor(
+        this.form.colors.table.background,
+        this.form.colors.table.active_color,
+      );
     },
   },
 };

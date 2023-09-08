@@ -6,6 +6,8 @@ import { consoleWarn } from 'vuetify/es5/util/console';
 
 import { DEFAULT_MAX_MULTI_SORT_COLUMNS_COUNT } from '@/config';
 
+import { isDarkColor } from '@/helpers/color';
+
 export default {
   extends: VDataTable,
   props: {
@@ -31,6 +33,10 @@ export default {
     },
   },
   computed: {
+    isDark() {
+      return isDarkColor(this.$vuetify.theme['table-background']);
+    },
+
     activeItems() {
       return this.filteredItems.filter(item => !this.isDisabledItem(item));
     },
@@ -307,8 +313,7 @@ $denseColorIndicatorPadding: 1px 5px;
     caret-color: var(--v-table-active-color-base) !important;
   }
 
-  &.v-table,
-  & .v-datatable__actions {
+  &.v-table {
     background-color: var(--v-table-background-base) !important;
   }
 

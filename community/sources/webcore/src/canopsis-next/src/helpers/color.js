@@ -1,17 +1,37 @@
 import tinycolor from 'tinycolor2';
 
 /**
+ * @typedef {Object} ReadableColorOptions
+ * @property {'AA' | 'AAA'} level
+ * @property {'small' | 'large'} size
+ */
+
+/**
+ * Check color is readable
+ *
+ * @param {string} firstColor
+ * @param {string} secondColor
+ * @param {ReadableColorOptions} [options = {}]
+ * @return {boolean}
+ */
+export const isReadableColor = (firstColor, secondColor, options = {}) => tinycolor.isReadable(
+  firstColor,
+  secondColor,
+  options,
+);
+
+/**
  * Get most readable text color ('white' or 'black')
  *
  * @param {string} color
- * @param {{ level: 'AA' | 'AAA', size: 'small' | 'large' }} [options = {}]
+ * @param {ReadableColorOptions} [options = {}]
  */
 export const getMostReadableTextColor = (color, options = {}) => {
   if (!color) {
     return 'black';
   }
 
-  const isWhiteReadable = tinycolor.isReadable(color, 'white', options);
+  const isWhiteReadable = isReadableColor(color, 'white', options);
 
   return isWhiteReadable ? 'white' : 'black';
 };
@@ -50,6 +70,14 @@ export const colorToHex = color => tinycolor(color).toHexString();
  * @return {boolean}
  */
 export const isValidColor = color => tinycolor(color).isValid();
+
+/**
+ * Check color is dark
+ *
+ * @param {string|Object} color
+ * @return {boolean}
+ */
+export const isDarkColor = color => tinycolor(color).isDark();
 
 /**
  * Get darken color
