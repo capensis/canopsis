@@ -10,14 +10,14 @@ if (!db.permission.findOne({_id: "api_color_theme"})) {
     db.role.updateMany({_id: "admin"}, {$set: {"permissions.api_color_theme": 15}});
 }
 
-if (!db.permission.findOne({_id: "models_color_theme"})) {
+if (!db.permission.findOne({_id: "models_profile_color_theme"})) {
     db.permission.insertOne({
-        _id: "models_color_theme",
-        name: "models_color_theme",
+        _id: "models_profile_color_theme",
+        name: "models_profile_color_theme",
         type: "CRUD",
         description: "Models color themes"
     });
-    db.role.updateMany({_id: "admin"}, {$set: {"permissions.models_color_theme": 15}});
+    db.role.updateMany({_id: "admin"}, {$set: {"permissions.models_profile_color_theme": 15}});
 }
 
 var now = Math.ceil((new Date()).getTime() / 1000);
