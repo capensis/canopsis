@@ -36,6 +36,8 @@ if (!db.color_theme.findOne({_id: "canopsis"})) {
                 success: '#4caf50',
                 warning: '#fb8c00',
                 background: '#ffffff',
+                active_color: '#000',
+                font_size: 2
             },
             state: {
                 ok: '#00a65a',
@@ -45,12 +47,11 @@ if (!db.color_theme.findOne({_id: "canopsis"})) {
             },
             table: {
                 background: '#fff',
-                active_color: '#000',
                 row_color: '#fff',
                 hover_row_color: '#eee',
             }
         },
-        last_modified: now,
+        updated: now,
     });
 }
 
@@ -68,6 +69,8 @@ if (!db.color_theme.findOne({_id: "canopsis_dark"})) {
                 success: '#4caf50',
                 warning: '#fb8c00',
                 background: '#303030',
+                active_color: '#fff',
+                font_size: 2
             },
             state: {
                 ok: '#00a65a',
@@ -77,12 +80,11 @@ if (!db.color_theme.findOne({_id: "canopsis_dark"})) {
             },
             table: {
                 background: '#424242',
-                active_color: '#fff',
                 row_color: '#424242',
                 hover_row_color: '#616161',
             }
         },
-        last_modified: now,
+        updated: now,
     });
 }
 
@@ -100,6 +102,8 @@ if (!db.color_theme.findOne({_id: "color_blind"})) {
                 success: '#4caf50',
                 warning: '#fb8c00',
                 background: '#ffffff',
+                active_color: '#000',
+                font_size: 2
             },
             state: {
                 ok: '#00a65a',
@@ -109,12 +113,11 @@ if (!db.color_theme.findOne({_id: "color_blind"})) {
             },
             table: {
                 background: '#fff',
-                active_color: '#000',
                 row_color: '#fff',
                 hover_row_color: '#eee',
             }
         },
-        last_modified: now,
+        updated: now,
     });
 }
 
@@ -132,6 +135,8 @@ if (!db.color_theme.findOne({_id: "color_blind_dark"})) {
                 success: '#4caf50',
                 warning: '#fb8c00',
                 background: '#303030',
+                active_color: '#fff',
+                font_size: 2
             },
             state: {
                 ok: '#00a65a',
@@ -141,11 +146,15 @@ if (!db.color_theme.findOne({_id: "color_blind_dark"})) {
             },
             table: {
                 background: '#424242',
-                active_color: '#fff',
                 row_color: '#424242',
                 hover_row_color: '#616161',
             }
         },
-        last_modified: now,
+        updated: now,
     });
 }
+
+db.user.updateMany({"ui_theme": {$in: ["", null]}}, {$set:{"ui_theme": "canopsis"}})
+db.user.updateMany({"ui_theme": "canopsisDark"}, {$set:{"ui_theme": "canopsis_dark"}})
+db.user.updateMany({"ui_theme": "colorBlind"}, {$set:{"ui_theme": "color_blind"}})
+db.user.updateMany({"ui_theme": "colorBlindDark"}, {$set:{"ui_theme": "color_blind_dark"}})

@@ -1060,6 +1060,38 @@ user:
     roles:
       - "@role_to_user_edit_1"
 
+  user_to_update_5:
+    <<: *user
+    _id: test-user-to-update-5
+    name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    roles:
+      - "@role_to_user_edit_1"
+
+  user_to_update_6:
+    <<: *user
+    _id: test-user-to-update-6
+    name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    roles:
+      - "@role_to_user_edit_1"
+
+  user_to_update_7:
+    <<: *user
+    _id: test-user-to-update-7
+    name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    roles:
+      - "@role_to_user_edit_1"
+
+  user_to_update_8:
+    <<: *user
+    _id: test-user-to-update-8
+    name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    roles:
+      - "@role_to_user_edit_1"
+
   user_to_delete_role_linked_to_user:
     <<: *user
     _id: test-user-to-delete-role-linked-to-user
@@ -1132,6 +1164,26 @@ user:
   user_to_bulk_update_4:
     <<: *user
     _id: test-user-to-bulk-update-4
+    name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    roles:
+      - "@role_to_user_edit_1"
+    firstname:
+    lastname:
+
+  user_to_bulk_update_5:
+    <<: *user
+    _id: test-user-to-bulk-update-5
+    name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    roles:
+      - "@role_to_user_edit_1"
+    firstname:
+    lastname:
+
+  user_to_bulk_update_6:
+    <<: *user
+    _id: test-user-to-bulk-update-6
     name: <Current()._id>
     authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
     roles:
@@ -1309,6 +1361,14 @@ user:
     name: <Current()._id>
     roles:
       - "@role_noperms"
+
+  user_to_pick_color_theme_5:
+    <<: *user
+    _id: test-user-to-pick-color-theme-5
+    name: <Current()._id>
+    roles:
+      - "@role_noperms"
+    ui_theme: "canopsis_dark"
 
 role_template:
   tpl_pilot:

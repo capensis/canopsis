@@ -1414,6 +1414,36 @@ func RegisterRoutes(
 			)
 		}
 
+		colorThemeApi := colortheme.NewApi(colortheme.NewStore(dbClient), actionLogger, logger)
+		colorThemeRouter := protected.Group("/color-themes")
+		{
+			colorThemeRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionCreate, enforcer),
+				colorThemeApi.Create,
+			)
+			colorThemeRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionRead, enforcer),
+				colorThemeApi.List,
+			)
+			colorThemeRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionRead, enforcer),
+				colorThemeApi.Get,
+			)
+			colorThemeRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionUpdate, enforcer),
+				colorThemeApi.Update,
+			)
+			colorThemeRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionDelete, enforcer),
+				colorThemeApi.Delete,
+			)
+		}
+
 		bulkRouter := protected.Group("/bulk")
 		{
 			patternRouter := bulkRouter.Group("/patterns")
@@ -1652,6 +1682,16 @@ func RegisterRoutes(
 					alarmTagAPI.BulkDelete,
 				)
 			}
+
+			colorThemeRouter := bulkRouter.Group("/color-themes")
+			{
+				colorThemeRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionDelete, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					colorThemeApi.BulkDelete,
+				)
+			}
 		}
 
 		dateStorageRouter := protected.Group("data-storage")
@@ -1842,36 +1882,6 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.PermMaintenance, model.PermissionCan, enforcer),
 			maintenanceApi.Maintenance,
 		)
-
-		colorThemeApi := colortheme.NewApi(colortheme.NewStore(dbClient), actionLogger)
-		colorThemeRouter := protected.Group("/color-themes")
-		{
-			colorThemeRouter.POST(
-				"",
-				middleware.Authorize(apisecurity.PermColorTheme, model.PermissionCreate, enforcer),
-				colorThemeApi.Create,
-			)
-			colorThemeRouter.GET(
-				"",
-				middleware.Authorize(apisecurity.PermColorTheme, model.PermissionRead, enforcer),
-				colorThemeApi.List,
-			)
-			colorThemeRouter.GET(
-				"/:id",
-				middleware.Authorize(apisecurity.PermColorTheme, model.PermissionRead, enforcer),
-				colorThemeApi.Get,
-			)
-			colorThemeRouter.PUT(
-				"/:id",
-				middleware.Authorize(apisecurity.PermColorTheme, model.PermissionUpdate, enforcer),
-				colorThemeApi.Update,
-			)
-			colorThemeRouter.DELETE(
-				"/:id",
-				middleware.Authorize(apisecurity.PermColorTheme, model.PermissionDelete, enforcer),
-				colorThemeApi.Delete,
-			)
-		}
 	}
 }
 

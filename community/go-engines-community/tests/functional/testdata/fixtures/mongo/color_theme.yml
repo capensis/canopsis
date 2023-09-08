@@ -2,7 +2,7 @@ template:
   - &theme {
     _id: <UUID()>,
     name: <UniqueName()>,
-    last_modified: <NowUnix()>,
+    updated: <NowUnix()>,
     colors: {
       main: {
         primary: "#AAAAAA",
@@ -12,11 +12,12 @@ template:
         info: "#AAAAAA",
         success: "#AAAAAA",
         warning: "#AAAAAA",
-        background: "#AAAAAA"
+        background: "#AAAAAA",
+        active_color: "#AAAAAA",
+        font_size: 2
       },
       table: {
         background: "#AAAAAA",
-        active_color: "#AAAAAA",
         row_color: "#AAAAAA",
         shift_row_color: "#AAAAAA",
         hover_row_color: "#AAAAAA"
@@ -45,6 +46,8 @@ color_theme:
         success: '#4caf50'
         warning: '#fb8c00'
         background: '#ffffff'
+        active_color: '#000'
+        font_size: 2
       state:
         ok: '#00a65a'
         minor: '#fcdc00'
@@ -53,7 +56,6 @@ color_theme:
         pause: '#808080'
       table:
         background: '#fff'
-        active_color: '#000'
         row_color: '#fff'
         hover_row_color: '#eee'
 
@@ -71,6 +73,8 @@ color_theme:
         success: '#4caf50'
         warning: '#fb8c00'
         background: '#303030'
+        active_color: '#fff'
+        font_size: 2
       state:
         ok: '#00a65a'
         minor: '#fcdc00'
@@ -79,7 +83,6 @@ color_theme:
         pause: '#808080'
       table:
         background: '#424242'
-        active_color: '#fff'
         row_color: '#424242'
         hover_row_color: '#616161'
 
@@ -97,6 +100,8 @@ color_theme:
         success: '#4caf50'
         warning: '#fb8c00'
         background: '#ffffff'
+        active_color: '#000'
+        font_size: 2
       state:
         ok: '#00a65a'
         minor: '#fcdc00'
@@ -105,7 +110,6 @@ color_theme:
         pause: '#808080'
       table:
         background: '#fff'
-        active_color: '#000'
         row_color: '#fff'
         hover_row_color: '#eee'
 
@@ -123,6 +127,8 @@ color_theme:
         success: '#4caf50'
         warning: '#fb8c00'
         background: '#303030'
+        active_color: '#fff'
+        font_size: 2
       state:
         ok: '#00a65a'
         minor: '#fcdc00'
@@ -131,7 +137,6 @@ color_theme:
         pause: '#808080'
       table:
         background: '#424242'
-        active_color: '#fff'
         row_color: '#424242'
         hover_row_color: '#616161'
 
@@ -164,3 +169,23 @@ color_theme:
     <<: *theme
     _id: test_theme_to_pick_2
     name: test_theme_to_pick_2
+
+  test_theme_to_pick_3:
+    <<: *theme
+    _id: test_theme_to_pick_3
+    name: test_theme_to_pick_3
+
+  test_theme_to_pick_4:
+    <<: *theme
+    _id: test_theme_to_pick_4
+    name: test_theme_to_pick_4
+
+  test_theme_to_bulk_delete_1:
+    <<: *theme
+    _id: test-theme-to-bulk-delete-1
+    name: test-theme-to-bulk-delete-1
+
+  test_theme_to_bulk_delete_2:
+    <<: *theme
+    _id: test-theme-to-bulk-delete-2
+    name: test-theme-to-bulk-delete-2
