@@ -1,3 +1,0 @@
----
-- name: restart rabbitmq
-  systemd: name="{{ rabbitmq_daemon }}" state=restarted

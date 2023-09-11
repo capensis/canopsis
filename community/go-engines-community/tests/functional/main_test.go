@@ -248,6 +248,7 @@ func InitializeScenario(
 		scenarioCtx.Step(`^the response key \"([^"]+)\" should exist$`, apiClient.TheResponseKeyShouldExist)
 		scenarioCtx.Step(`^the response key \"([^"]+)\" should not exist$`, apiClient.TheResponseKeyShouldNotExist)
 		scenarioCtx.Step(`^the response key \"([^"]+)\" should not be \"([^\"]+)\"$`, apiClient.TheResponseKeyShouldNotBe)
+		scenarioCtx.Step(`^the response key \"([^"]+)\" should be \"([^\"]+)\"$`, apiClient.TheResponseKeyShouldBe)
 		scenarioCtx.Step(`^the difference between ([^"]+) ([^"]+) is in range (-?\d+\.?\d*),(-?\d+\.?\d*)$`, apiClient.TheDifferenceBetweenValues)
 		scenarioCtx.Step(`^the response key \"([^"]+)\" should be greater or equal than (\d+)$`, apiClient.TheResponseKeyShouldBeGreaterOrEqualThan)
 		scenarioCtx.Step(`^the response key \"([^"]+)\" should be greater than (\d+)$`, apiClient.TheResponseKeyShouldBeGreaterThan)

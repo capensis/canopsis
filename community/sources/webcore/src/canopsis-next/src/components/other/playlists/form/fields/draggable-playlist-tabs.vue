@@ -10,17 +10,20 @@
         :class="{ 'tabs-draggable-panel--empty': isTabsEmpty, 'tabs-draggable-panel--disabled': disabled }",
         :disabled="disabled"
       )
-        tab-panel-content(v-for="tab in tabs", :tab="tab", hideActions, :key="tab._id")
+        tab-panel-content(v-for="{ tab, view, group } in tabsWithDetails", :tab="tab", hideActions, :key="tab._id")
           template(#title="")
-            playlist-tab-item(:tab="tab")
+            playlist-tab-item(:tab="tab", :view="view", :group="group")
 </template>
 
 <script>
+import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
+
 import TabPanelContent from '@/components/other/playlists/partials/tab-panel-content.vue';
 import PlaylistTabItem from '@/components/other/playlists/partials/playlist-tab-item.vue';
 
 export default {
   components: { TabPanelContent, PlaylistTabItem },
+  mixins: [entitiesViewGroupMixin],
   model: {
     prop: 'tabs',
     event: 'change',
@@ -36,6 +39,26 @@ export default {
     },
   },
   computed: {
+    tabsDetailsById() {
+      return this.groups.reduce((acc, group) => {
+        group.views.forEach((view) => {
+          view.tabs.forEach((tab) => {
+            acc[tab._id] = {
+              tab,
+              group,
+              view,
+            };
+          });
+        });
+
+        return acc;
+      }, {});
+    },
+
+    tabsWithDetails() {
+      return this.tabs.map(tab => this.tabsDetailsById[tab._id]);
+    },
+
     isTabsEmpty() {
       return this.tabs.length === 0;
     },

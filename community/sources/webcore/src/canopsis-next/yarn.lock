@@ -1359,11 +1359,6 @@
   dependencies:
     "@hapi/hoek" "^8.3.0"
 
-"@interactjs/types@1.9.17":
-  version "1.9.17"
-  resolved "https://registry.yarnpkg.com/@interactjs/types/-/types-1.9.17.tgz#a6b2ae0939075b42d6a99a4e5a706d927179c892"
-  integrity sha512-yrfNj4kJHsTxb2gJrihznNSDkg7thSC04CWIF+aDZm6K7+6wiAzxJf4PyznR23Am0FPxeP8a8uM6md89BlIXHw==
-
 "@intervolga/optimize-cssnano-plugin@^1.0.5":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@intervolga/optimize-cssnano-plugin/-/optimize-cssnano-plugin-1.0.6.tgz#be7c7846128b88f6a9b1d1261a0ad06eb5c0fdf8"
@@ -3623,11 +3618,6 @@ base@^0.11.1:
     isobject "^3.0.1"
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
-
-batch-processor@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/batch-processor/-/batch-processor-1.0.0.tgz#75c95c32b748e0850d10c2b168f6bdbe9891ace8"
-  integrity sha1-dclcMrdI4IUNEMKxaPa9vpiRrOg=
 
 batch@0.6.1:
   version "0.6.1"
@@ -6375,13 +6365,6 @@ elegant-spinner@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/elegant-spinner/-/elegant-spinner-1.0.1.tgz#db043521c95d7e303fd8f345bedc3349cfb0729e"
 
-element-resize-detector@^1.1.15:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/element-resize-detector/-/element-resize-detector-1.2.1.tgz#b0305194447a4863155e58f13323a0aef30851d1"
-  integrity sha512-BdFsPepnQr9fznNPF9nF4vQ457U/ZJXQDSNF1zBe7yaga8v9AdZf3/NElYxFdUh7SitSGt040QygiTo6dtatIw==
-  dependencies:
-    batch-processor "1.0.0"
-
 elliptic@^6.0.0:
   version "6.4.1"
   resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.4.1.tgz#c2d0b7776911b86722c632c3c06c60f2f819939a"
@@ -8590,13 +8573,6 @@ inquirer@^7.0.0, inquirer@^7.1.0:
     string-width "^4.1.0"
     strip-ansi "^6.0.0"
     through "^2.3.6"
-
-interactjs@^1.6.3:
-  version "1.9.17"
-  resolved "https://registry.yarnpkg.com/interactjs/-/interactjs-1.9.17.tgz#4147171e3b212d6cc7dc38acebfd7c80e85398bd"
-  integrity sha512-FBWOju1kD0sMwRxKCkz1RNCoiXluef8AApgpR05QSkAMX3ix0W8ZJzUPjuFK8BRh7HOIXlJJJ+Dy7W3fQ1Byzg==
-  dependencies:
-    "@interactjs/types" "1.9.17"
 
 internal-ip@^4.3.0:
   version "4.3.0"
@@ -11146,9 +11122,9 @@ minimist@^1.1.1, minimist@^1.2.0:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.0.tgz#a35008b20f41383eec1fb914f4cd5df79a264284"
 
 minimist@^1.2.5:
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.5.tgz#67d66014b66a6a8aaa0c083c5fd58df4e4e97602"
-  integrity sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.8.tgz#c1a464e7693302e082a075cee0c057741ac4772c"
+  integrity sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==
 
 minimist@~0.0.1:
   version "0.0.10"
@@ -14776,6 +14752,7 @@ source-map@^0.5.0, source-map@^0.5.3, source-map@^0.5.6, source-map@^0.5.7, sour
 source-map@^0.6.0, source-map@^0.6.1, source-map@~0.6.0, source-map@~0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.6.1.tgz#74722af32e9614e9c287a8d0bbde48b5e2f1a263"
+  integrity sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==
 
 source-map@^0.7.3:
   version "0.7.3"
@@ -15741,7 +15718,7 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-uglify-js@3.4.x, uglify-js@^3.1.4:
+uglify-js@3.4.x:
   version "3.4.9"
   resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.4.9.tgz#af02f180c1207d76432e473ed24a28f4a782bae3"
   dependencies:
@@ -15756,6 +15733,11 @@ uglify-js@^2.6.1:
     yargs "~3.10.0"
   optionalDependencies:
     uglify-to-browserify "~1.0.0"
+
+uglify-js@^3.1.4:
+  version "3.17.4"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.17.4.tgz#61678cf5fa3f5b7eb789bb345df29afb8257c22c"
+  integrity sha512-T9q82TJI9e/C1TAxYvfb16xO120tMVFZrGA3f9/P4424DNu6ypK103y0GPFVa17yotwSyZW5iYXgjYHkGrJW/g==
 
 uglify-to-browserify@~1.0.0:
   version "1.0.2"
@@ -16008,11 +15990,6 @@ void-elements@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
 
-vue-async-computed@^3.8.2:
-  version "3.8.2"
-  resolved "https://registry.yarnpkg.com/vue-async-computed/-/vue-async-computed-3.8.2.tgz#d5dff221b62f95ad2f98ce9e7bbea5a067ec8b9a"
-  integrity sha512-If5roOhp/x0WWd0TWRD77YsuFoiIw3MbkcRlIB/FE3TqQCPje52eQp5CV5NN/7B0VAyPuGX5JQa+rc9AOcGAYw==
-
 vue-cli-plugin-test-attrs@^0.1.5:
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/vue-cli-plugin-test-attrs/-/vue-cli-plugin-test-attrs-0.1.5.tgz#afd0cd676a6d218cfc8fc32fc8b64faf43197c03"
@@ -16056,14 +16033,6 @@ vue-eslint-parser@^9.0.1:
 vue-fullscreen@^2.1.3:
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/vue-fullscreen/-/vue-fullscreen-2.1.3.tgz#831f6c2f89771e80f7189b1c8b863d4d66677fcf"
-
-vue-grid-layout@^2.3.7:
-  version "2.3.7"
-  resolved "https://registry.yarnpkg.com/vue-grid-layout/-/vue-grid-layout-2.3.7.tgz#d148f013ef2ca9dc1cb5d5298e7966aa50f54431"
-  integrity sha512-q3FMiuog0hPsK/IUKtlg2A/lwPo86YlLaX9+wEiCTjUU++GabM2o9hDhRVruDJZLUah55iTg8LRttBxrxPv0WQ==
-  dependencies:
-    element-resize-detector "^1.1.15"
-    interactjs "^1.6.3"
 
 vue-hot-reload-api@^2.3.0:
   version "2.3.1"
@@ -16190,16 +16159,7 @@ vue2-leaflet@^2.7.1:
   resolved "https://registry.yarnpkg.com/vue2-leaflet/-/vue2-leaflet-2.7.1.tgz#2f95c287621bf778f10804c88223877f5c049257"
   integrity sha512-K7HOlzRhjt3Z7+IvTqEavIBRbmCwSZSCVUlz9u4Rc+3xGCLsHKz4TAL4diAmfHElCQdPPVdZdJk8wPUt2fu6WQ==
 
-vue@^2.3.3:
-  version "2.5.21"
-  resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.21.tgz#3d33dcd03bb813912ce894a8303ab553699c4a85"
-
-vue@^2.6.10:
-  version "2.6.11"
-  resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.11.tgz#76594d877d4b12234406e84e35275c6d514125c5"
-  integrity sha512-VfPwgcGABbGAue9+sfrD4PuwFar7gPb1yl1UK1MwXoQPAw0BKSqWfoYCT/ThFrdEVWoI51dBuyCoiNU9bZDZxQ==
-
-vue@^2.7.10:
+vue@^2.3.3, vue@^2.6.10, vue@^2.7.10:
   version "2.7.10"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.7.10.tgz#ae516cc6c88e1c424754468844218fdd5e280f40"
   integrity sha512-HmFC70qarSHPXcKtW8U8fgIkF6JGvjEmDiVInTkKZP0gIlEPhlVlcJJLkdGIDiNkIeA2zJPQTWJUI4iWe+AVfg==
