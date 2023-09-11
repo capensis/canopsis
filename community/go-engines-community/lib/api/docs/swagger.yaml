@@ -9606,17 +9606,18 @@ paths:
     get:
       tags:
         - linkrules
-      summary: Get categories by link type
+      summary: Get link categories
       description: |
-        Get list of distinct categories, empty list if no categories found 
+        Get list of distinct categories, empty list if no categories found.
         
         -  PERMISSIONS: `api_link_rule:get`
       operationId: linkrules-categories
       parameters:
         - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
         - name: type
           in: query
-          description: id
+          description: type
           schema:
             type: string
             enum:
