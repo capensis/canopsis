@@ -11,13 +11,13 @@ const stubs = {
   'pbehavior-recurrence-rule-exceptions-field': true,
   'c-enabled-color-picker-field': true,
   'c-collapse-panel': true,
-  'c-patterns-field': true,
+  'pbehavior-patterns-form': true,
 };
 
 const selectPbehaviorGeneralForm = wrapper => wrapper.find('pbehavior-general-form-stub');
 const selectPbehaviorCommentsField = wrapper => wrapper.find('pbehavior-comments-field-stub');
 const selectEnabledColorPickerField = wrapper => wrapper.find('c-enabled-color-picker-field-stub');
-const selectPatternsField = wrapper => wrapper.find('c-patterns-field-stub');
+const selectPatternsField = wrapper => wrapper.find('pbehavior-patterns-form-stub');
 
 describe('pbehavior-form', () => {
   const factory = generateShallowRenderer(PbehaviorForm, {

@@ -1,10 +1,15 @@
 import { API_ROUTES } from '@/config';
-import { ENTITIES_TYPES } from '@/constants';
 
-import { createEntityModule } from '@/store/plugins/entities';
+import request from '@/services/request';
 
-export default createEntityModule({
-  route: API_ROUTES.alarmTags,
-  entityType: ENTITIES_TYPES.alarmTag,
-  dataPreparer: d => d.data,
+import { createCRUDModule } from '@/store/plugins/entities';
+
+export default createCRUDModule({
+  route: API_ROUTES.alarmTag.list,
+}, {
+  actions: {
+    bulkRemove(context, { data }) {
+      return request.delete(API_ROUTES.alarmTag.bulkList, { data });
+    },
+  },
 });

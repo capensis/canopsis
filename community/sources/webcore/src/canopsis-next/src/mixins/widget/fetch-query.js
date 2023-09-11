@@ -9,12 +9,6 @@ import { queryWidgetMixin } from '@/mixins/widget/query';
  */
 export const widgetFetchQueryMixin = {
   mixins: [queryWidgetMixin],
-  props: {
-    editing: {
-      type: Boolean,
-      default: false,
-    },
-  },
   watch: {
     query(value, oldValue) {
       if (!isEqual(value, oldValue) && !isEmpty(value)) {
@@ -23,7 +17,7 @@ export const widgetFetchQueryMixin = {
     },
 
     tabQueryNonce(value, oldValue) {
-      if (!this.editing && value > oldValue) {
+      if (value > oldValue) {
         this.fetchList();
       }
     },
@@ -31,11 +25,9 @@ export const widgetFetchQueryMixin = {
     widget: 'setQuery',
   },
   async mounted() {
-    if (!this.editing) {
-      await this.fetchUserPreference({ id: this.widget._id });
+    await this.fetchUserPreference({ id: this.widget._id });
 
-      this.setQuery();
-    }
+    this.setQuery();
   },
   methods: {
     setQuery() {
