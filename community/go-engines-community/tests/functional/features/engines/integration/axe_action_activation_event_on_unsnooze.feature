@@ -1,10 +1,11 @@
 Feature: send activation event on unsnooze
   I need to be able to trigger rule on alarm activation
 
+  @concurrent
   Scenario: given event for new alarm and snooze action should send event on unsnooze
     Given I am admin
     When I do POST /api/v4/scenarios:
-    """
+    """json
     {
       "name": "test-scenario-axe-action-activation-name",
       "priority": 10058,
@@ -39,7 +40,7 @@ Feature: send activation event on unsnooze
     Then the response code should be 201
     When I wait the next periodical process
     When I send an event:
-    """
+    """json
     {
       "connector" : "test-connector-axe-action-activation-event",
       "connector_name" : "test-connector-name-axe-action-activation-event",
@@ -51,11 +52,27 @@ Feature: send activation event on unsnooze
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "check",
+        "component" : "test-component-axe-action-activation-event",
+        "resource" : "test-resource-axe-action-activation-event",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "activate",
+        "component" : "test-component-axe-action-activation-event",
+        "resource" : "test-resource-axe-action-activation-event",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-resource-axe-action-activation-event
     Then the response code should be 200
     Then the response body should contain:
-    """
+    """json
     {
       "data": [
         {

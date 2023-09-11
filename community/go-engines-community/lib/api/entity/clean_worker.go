@@ -10,7 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
 
@@ -94,7 +94,7 @@ func (w *worker) processTask(ctx context.Context, task CleanTask) {
 		case <-lockCtx.Done():
 			return
 		case <-ticker.C:
-			err := w.redisClient.SetEX(lockCtx, libredis.ApiCleanEntitiesLockKey, lockValue, lockExpirationTime).Err()
+			err := w.redisClient.SetEx(lockCtx, libredis.ApiCleanEntitiesLockKey, lockValue, lockExpirationTime).Err()
 			if err != nil {
 				w.logger.Err(err).Msg("cannot update redis lock")
 			}

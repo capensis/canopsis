@@ -385,7 +385,7 @@ Feature: correlation feature - valuegroup rule with threshold count
       "type": "valuegroup",
       "config": {
         "time_interval": {
-          "value": 10,
+          "value": 20,
           "unit": "s"
         },
         "threshold_count": 2,
