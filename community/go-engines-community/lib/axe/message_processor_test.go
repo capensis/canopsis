@@ -6,6 +6,8 @@ import (
 	"testing"
 	"time"
 
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/axe/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
@@ -13,12 +15,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
-	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -271,17 +274,34 @@ func benchmarkMessageProcessor(
 		}
 	})
 
+	amqpConnection, err := libamqp.NewConnection(zerolog.Nop(), 0, 0)
+	if err != nil {
+		b.Fatalf("unexpected error %v", err)
+	}
+	b.Cleanup(func() {
+		err := amqpConnection.Close()
+		if err != nil {
+			b.Errorf("unexpected error %v", err)
+		}
+	})
+
+	amqpChannel, err := amqpConnection.Channel()
+	if err != nil {
+		b.Fatalf("unexpected error %v", err)
+	}
+
 	cfg := config.CanopsisConf{}
 	logger := zerolog.Nop()
 	metricsSender := metrics.NewNullSender()
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	tzConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
+	templateConfigProvider := config.NewTemplateConfigProvider(cfg)
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(config.UserInterfaceConf{}, logger)
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
 	metaAlarmEventProcessor := NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
-		alarmStatusService, alarmConfigProvider, json.NewEncoder(), nil, canopsis.FIFOExchangeName, canopsis.FIFOQueueName,
-		metricsSender, logger)
+		alarmStatusService, alarmConfigProvider, json.NewEncoder(), nil, metricsSender, correlation.NewMetaAlarmStateService(dbClient),
+		template.NewExecutor(templateConfigProvider, tzConfigProvider), logger)
 	pbhRedisSession, err := redis.NewSession(ctx, redis.PBehaviorLockStorage, logger, 0, 0)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
@@ -294,31 +314,30 @@ func benchmarkMessageProcessor(
 		b.Fatalf("unexpected error %v", err)
 	}
 
+	m := DependencyMaker{}
 	p := MessageProcessor{
 		FeaturePrintEventOnError: true,
-		EventProcessor: NewEventProcessor(
+		EventProcessor: m.EventProcessor(
 			dbClient,
-			alarm.NewAdapter(dbClient),
-			libentity.NewAdapter(dbClient),
-			correlation.NewRuleAdapter(dbClient),
 			alarmConfigProvider,
-			DependencyMaker{}.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider, alarmStatusService, metricsSender),
+			userInterfaceConfigProvider,
 			alarmStatusService,
-			metrics.NewNullSender(),
-			metaAlarmEventProcessor,
-			statistics.NewEventStatisticsSender(dbClient, logger, tzConfigProvider),
 			pbehavior.NewEntityTypeResolver(pbhStore, pbehavior.NewEntityMatcher(dbClient), logger),
-			NewNullAutoInstructionMatcher(),
+			event.NewNullAutoInstructionMatcher(),
+			statecounters.NewStateCountersService(dbClient, amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), template.NewExecutor(templateConfigProvider, tzConfigProvider), logger),
+			metaAlarmEventProcessor,
+			metrics.NewNullSender(),
+			statistics.NewEventStatisticsSender(dbClient, logger, tzConfigProvider),
+			nil,
+			alarmtag.NewExternalUpdater(dbClient),
+			alarmtag.NewInternalTagAlarmMatcher(dbClient),
+			amqpChannel,
 			logger,
 		),
-		TechMetricsSender:      techmetrics.NewSender(techMetricsConfigProvider, time.Minute, 0, 0, logger),
-		TimezoneConfigProvider: tzConfigProvider,
-		Encoder:                json.NewEncoder(),
-		Decoder:                json.NewDecoder(),
-		Logger:                 logger,
-		PbehaviorAdapter:       pbehavior.NewAdapter(dbClient),
-		TagUpdater:             alarmtag.NewUpdater(dbClient),
-		AutoInstructionMatcher: NewNullAutoInstructionMatcher(),
+		TechMetricsSender: techmetrics.NewSender(techMetricsConfigProvider, time.Minute, 0, 0, logger),
+		Encoder:           json.NewEncoder(),
+		Decoder:           json.NewDecoder(),
+		Logger:            logger,
 	}
 
 	encoder := json.NewEncoder()

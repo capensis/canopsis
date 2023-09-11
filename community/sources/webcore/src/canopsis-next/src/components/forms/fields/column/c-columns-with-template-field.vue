@@ -15,6 +15,7 @@
       :with-html="withHtml",
       :with-color-indicator="withColorIndicator",
       :with-instructions="withInstructions",
+      :without-infos-attributes="withoutInfosAttributes",
       :type="type",
       @input="updateColumns"
     )
@@ -68,6 +69,10 @@ export default {
       default: false,
     },
     withInstructions: {
+      type: Boolean,
+      default: false,
+    },
+    withoutInfosAttributes: {
       type: Boolean,
       default: false,
     },
