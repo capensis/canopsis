@@ -9,9 +9,9 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	pgconn "github.com/jackc/pgconn"
-	pgx "github.com/jackc/pgx/v4"
-	pgxpool "github.com/jackc/pgx/v4/pgxpool"
+	pgx "github.com/jackc/pgx/v5"
+	pgconn "github.com/jackc/pgx/v5/pgconn"
+	pgxpool "github.com/jackc/pgx/v5/pgxpool"
 )
 
 // MockBasePool is a mock of BasePool interface.
