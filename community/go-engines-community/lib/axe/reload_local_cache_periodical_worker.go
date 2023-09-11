@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/axe/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"github.com/rs/zerolog"
@@ -12,7 +13,7 @@ import (
 type reloadLocalCachePeriodicalWorker struct {
 	PeriodicalInterval      time.Duration
 	AlarmStatusService      alarmstatus.Service
-	AutoInstructionMatcher  AutoInstructionMatcher
+	AutoInstructionMatcher  event.AutoInstructionMatcher
 	InternalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher
 	Logger                  zerolog.Logger
 }

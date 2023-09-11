@@ -29,9 +29,7 @@ export const harmonizeCategoryLinks = (links = {}, category) => {
     return [];
   }
 
-  return links[category]
-    .filter(link => !!link.rule_id)
-    .sort(linksCollectionComparatorByLabel);
+  return links[category].sort(linksCollectionComparatorByLabel);
 };
 
 /**
@@ -53,7 +51,7 @@ export const harmonizeCategoriesLinks = (links = {}) => Object.keys(links ?? {})
  * @param {LinkRuleLink} link
  * @returns {string}
  */
-export const getLinkRuleLinkActionType = (link = {}) => `${link.rule_id}.${link.icon_name}.${link.label}`;
+export const getLinkRuleLinkActionType = (link = {}) => [link.rule_id, link.icon_name, link.label].join('.');
 
 /**
  * Get flatten alarm links
@@ -62,7 +60,6 @@ export const getLinkRuleLinkActionType = (link = {}) => `${link.rule_id}.${link.
  * @returns {AlarmLink[]}
  */
 export const harmonizeLinks = (links = {}) => Object.values(links)
-  .map(nestedLinks => nestedLinks.filter(link => !!link.rule_id))
   .flat()
   .sort(linksCollectionComparatorByLabel);
 
@@ -73,7 +70,8 @@ export const harmonizeLinks = (links = {}) => Object.values(links)
  * @returns {AlarmLink[]}
  */
 export const harmonizeAlarmsLinks = (alarms = []) => {
-  const links = alarms.map(alarm => harmonizeLinks(alarm.links));
+  const links = alarms
+    .map(alarm => harmonizeLinks(alarm.links).filter(link => !!link.rule_id));
 
   if (links.length === 0) {
     return [];
