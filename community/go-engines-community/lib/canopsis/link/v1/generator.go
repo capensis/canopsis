@@ -76,6 +76,15 @@ func (g *generator) Load(_ context.Context) error {
 	return nil
 }
 
+func (g *generator) GenerateForAlarm(ctx context.Context, alarm types.Alarm, _ types.Entity) (liblink.LinksByCategory, error) {
+	res, err := g.GenerateForAlarms(ctx, []string{alarm.ID})
+	if err != nil {
+		return nil, err
+	}
+
+	return res[alarm.ID], nil
+}
+
 func (g *generator) GenerateForAlarms(ctx context.Context, ids []string) (map[string]liblink.LinksByCategory, error) {
 	req, err := g.createRequestByAlarms(ctx, ids)
 	if err != nil || req == nil {
