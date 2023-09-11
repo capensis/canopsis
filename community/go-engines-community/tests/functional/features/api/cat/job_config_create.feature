@@ -208,7 +208,7 @@ Feature: create a job's config
     """json
     {
       "errors": {
-        "type": "Type must be one of [awx, jenkins, rundeck]."
+        "type": "Type must be one of [awx, jenkins, rundeck, vtom]."
       }
     }
     """

@@ -3,21 +3,20 @@ package che
 import (
 	"context"
 	"errors"
+	"fmt"
 	"runtime/trace"
 	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/errt"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -27,20 +26,18 @@ import (
 
 type messageProcessor struct {
 	FeaturePrintEventOnError bool
-	FeatureEventProcessing   bool
-	FeatureContextCreation   bool
-
-	AlarmConfigProvider config.AlarmConfigProvider
-	MetricsSender       metrics.Sender
-	TechMetricsSender   techmetrics.Sender
-	EventFilterService  eventfilter.Service
-	EnrichmentCenter    libcontext.EnrichmentCenter
-	AmqpPublisher       libamqp.Publisher
-	AlarmAdapter        alarm.Adapter
-	EntityCollection    mongo.DbCollection
-	Encoder             encoding.Encoder
-	Decoder             encoding.Decoder
-	Logger              zerolog.Logger
+	DbClient                 mongo.DbClient
+	AlarmConfigProvider      config.AlarmConfigProvider
+	EventFilterService       eventfilter.Service
+	MetricsSender            metrics.Sender
+	MetaUpdater              metrics.MetaUpdater
+	TechMetricsSender        techmetrics.Sender
+	ContextGraphManager      contextgraph.Manager
+	AmqpPublisher            libamqp.Publisher
+	EntityCollection         mongo.DbCollection
+	Encoder                  encoding.Encoder
+	Decoder                  encoding.Decoder
+	Logger                   zerolog.Logger
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
@@ -78,16 +75,16 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 		return nil, nil
 	}
 
-	updatedEntityServices := libcontext.UpdatedEntityServices{}
+	isServicesUpdated := false
 
 	defer func() {
 		if event.Entity != nil {
 			eventMetric.EntityType = event.Entity.Type
 			eventMetric.IsNewEntity = event.Entity.IsNew
+			eventMetric.IsInfosUpdated = event.Entity.IsUpdated
 		}
 
-		eventMetric.IsInfosUpdated = event.IsEntityUpdated
-		eventMetric.IsServicesUpdated = len(updatedEntityServices.AddedTo) > 0 || len(updatedEntityServices.RemovedFrom) > 0
+		eventMetric.IsServicesUpdated = isServicesUpdated
 		eventMetric.Interval = time.Since(eventMetric.Timestamp)
 
 		p.TechMetricsSender.SendCheEvent(eventMetric)
@@ -99,111 +96,113 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	event.Output = utils.TruncateString(event.Output, alarmConfig.OutputLength)
 	event.LongOutput = utils.TruncateString(event.LongOutput, alarmConfig.LongOutputLength)
 
-	// Enrich the event with the entity and create the context.
-	if p.FeatureContextCreation && event.IsContextable() {
-		entity, updated, err := p.EnrichmentCenter.Handle(ctx, event)
-		if err != nil {
-			if engine.IsConnectionError(err) {
-				return nil, err
-			}
+	var updatedEntities []types.Entity
 
-			p.logError(err, "cannot update context graph", d.Body)
-			return nil, nil
-		}
-		event.Entity = entity
-		updatedEntityServices = updatedEntityServices.Add(updated)
-	}
+	err = p.DbClient.WithTransaction(ctx, func(tCtx context.Context) error {
+		updatedEntities = make([]types.Entity, 0, len(updatedEntities))
 
-	// Find entity if still empty.
-	if event.Entity == nil {
-		event.Entity, err = p.EnrichmentCenter.Get(ctx, event)
-		if err != nil {
-			if engine.IsConnectionError(err) {
-				return nil, err
-			}
-
-			p.logError(err, "cannot find entity", d.Body)
-			return nil, nil
-		}
-	}
-
-	if event.Entity == nil && event.EventType == types.EventTypeCheck {
-		p.Logger.Warn().Str("entity", event.GetEID()).Msg("entity doesn't exist")
-		return nil, nil
-	}
-
-	// Process event by event filters.
-	if p.FeatureEventProcessing {
-		event, err = p.EventFilterService.ProcessEvent(ctx, event)
-		if err != nil {
-			if errors.Is(err, eventfilter.ErrDropOutcome) {
-				return nil, nil
-			}
-
-			if engine.IsConnectionError(err) {
-				return nil, err
-			}
-
-			p.logError(err, "cannot apply event filters on event", d.Body)
-			return nil, nil
+		if event.EventType == types.EventTypeManualMetaAlarmGroup ||
+			event.EventType == types.EventTypeManualMetaAlarmUngroup ||
+			event.EventType == types.EventTypeManualMetaAlarmUpdate ||
+			event.EventType == types.EventTypeMetaAlarmUngroup {
+			return nil
 		}
 
-		if event.IsEntityUpdated && event.Entity != nil {
-			updated, err := p.EnrichmentCenter.UpdateEntityInfos(ctx, event.Entity)
+		if event.EventType == types.EventTypeRecomputeEntityService {
+			eventEntity, updatedEntities, err := p.ContextGraphManager.RecomputeService(tCtx, event.GetEID())
 			if err != nil {
-				if engine.IsConnectionError(err) {
-					return nil, err
+				return fmt.Errorf("cannot recompute service %s: %w", event.Component, err)
+			}
+
+			event.Entity = &eventEntity
+
+			_, err = p.ContextGraphManager.UpdateEntities(tCtx, "", updatedEntities)
+			if err != nil {
+				return fmt.Errorf("cannot update entities %s: %w", event.Component, err)
+			}
+
+			return nil
+		}
+
+		eventEntity, contextGraphEntities, err := p.ContextGraphManager.HandleEvent(tCtx, event)
+		if err != nil {
+			return fmt.Errorf("cannot update context graph: %w", err)
+		}
+
+		event.Entity = &eventEntity
+
+		// Process event by event filters.
+		if event.Entity != nil && event.Entity.Enabled {
+			event, err = p.EventFilterService.ProcessEvent(tCtx, event)
+			if err != nil {
+				return err
+			}
+		}
+
+		eventEntity = *event.Entity
+		if eventEntity.IsNew ||
+			eventEntity.IsUpdated ||
+			event.EventType == types.EventTypeEntityUpdated ||
+			event.EventType == types.EventTypeEntityToggled ||
+			event.SourceType == types.SourceTypeService {
+			updatedEntities = []types.Entity{eventEntity}
+		}
+
+		updatedEntities = append(updatedEntities, contextGraphEntities...)
+
+		if len(updatedEntities) > 0 {
+			// if it's a new resource add a component info to check if component is matched by the service
+			updatedEntities, err = p.ContextGraphManager.CheckServices(tCtx, updatedEntities)
+			if err != nil {
+				return fmt.Errorf("cannot check services: %w", err)
+			}
+
+			if eventEntity.IsUpdated || event.EventType == types.EventTypeEntityUpdated && eventEntity.Type == types.EntityTypeComponent {
+				resources, err := p.ContextGraphManager.FillResourcesWithInfos(tCtx, eventEntity)
+				if err != nil {
+					return fmt.Errorf("cannot update entity infos: %w", err)
 				}
 
-				p.logError(err, "cannot update entity infos", d.Body)
-				return nil, nil
+				updatedEntities = append(updatedEntities, resources...)
 			}
 
-			updatedEntityServices = updatedEntityServices.Add(updated)
+			eventEntity, err = p.ContextGraphManager.UpdateEntities(tCtx, eventEntity.ID, updatedEntities)
+			if err != nil {
+				return fmt.Errorf("cannot update entities: %w", err)
+			}
+
+			event.Entity = &eventEntity
+			isServicesUpdated = len(eventEntity.ServicesToAdd) > 0 || len(eventEntity.ServicesToRemove) > 0
 		}
-	}
 
-	// Update context graph for entity service.
-	if event.EventType == types.EventTypeUpdateEntityService {
-		err = p.EnrichmentCenter.ReloadService(ctx, event.GetEID())
-		if err != nil {
-			if engine.IsConnectionError(err) {
-				return nil, err
+		if !eventEntity.IsNew && !eventEntity.IsUpdated && event.Entity.LastEventDate != nil {
+			err := p.ContextGraphManager.UpdateLastEventDate(tCtx, event.EventType, event.Entity.ID, *event.Entity.LastEventDate)
+			if err != nil {
+				return err
 			}
-
-			p.logError(err, "cannot update service", d.Body)
-			return nil, nil
 		}
-	} else if event.EventType == types.EventTypeRecomputeEntityService {
-		updated, err := p.EnrichmentCenter.HandleEntityServiceUpdate(ctx, event.GetEID())
-		if err != nil {
-			if engine.IsConnectionError(err) {
-				return nil, err
-			}
 
-			p.logError(err, "cannot update entity service", d.Body)
+		return nil
+	})
+
+	if err != nil {
+		if errors.Is(err, eventfilter.ErrDropOutcome) {
 			return nil, nil
 		}
 
-		if updated != nil {
-			updatedEntityServices = updatedEntityServices.Add(*updated)
+		if engine.IsConnectionError(err) {
+			return nil, err
 		}
-	}
 
-	if !p.FeatureEventProcessing {
+		p.logError(err, "cannot process event", d.Body)
 		return nil, nil
 	}
 
-	event.AddedToServices = append(event.AddedToServices, updatedEntityServices.AddedTo...)
-	event.RemovedFromServices = append(event.RemovedFromServices, updatedEntityServices.RemovedFrom...)
-
-	err = p.publishComponentInfosUpdatedEvents(ctx, updatedEntityServices.UpdatedComponentInfosResources)
-	if err != nil {
-		return nil, err
-	}
+	go p.postProcessUpdatedEntities(ctx, event, updatedEntities)
 
 	p.handlePerfData(ctx, event)
 
+	event.Format()
 	body, err := p.Encoder.Encode(event)
 	if err != nil {
 		p.logError(err, "cannot encode event", d.Body)
@@ -213,85 +212,79 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	return body, nil
 }
 
+func (p *messageProcessor) postProcessUpdatedEntities(ctx context.Context, event types.Event, updatedEntities []types.Entity) {
+	entityIDs := make([]string, len(updatedEntities))
+
+	for idx, ent := range updatedEntities {
+		entityIDs[idx] = ent.ID
+
+		if (len(ent.ServicesToAdd) != 0 || len(ent.ServicesToRemove) != 0) && ent.ID != event.GetEID() && ent.Type != types.EntityTypeService {
+			var updateCountersEvent types.Event
+
+			switch ent.Type {
+			case types.EntityTypeResource:
+				updateCountersEvent = types.Event{
+					EventType:     types.EventTypeUpdateCounters,
+					SourceType:    types.SourceTypeResource,
+					Connector:     event.Connector,
+					ConnectorName: event.ConnectorName,
+					Component:     ent.Component,
+					Resource:      ent.Name,
+					Timestamp:     types.CpsTime{Time: time.Now()},
+					Entity:        &ent,
+				}
+			case types.EntityTypeComponent:
+				updateCountersEvent = types.Event{
+					EventType:     types.EventTypeUpdateCounters,
+					SourceType:    types.SourceTypeComponent,
+					Connector:     event.Connector,
+					ConnectorName: event.ConnectorName,
+					Component:     ent.Component,
+					Timestamp:     types.CpsTime{Time: time.Now()},
+					Entity:        &ent,
+				}
+			case types.EntityTypeConnector:
+				updateCountersEvent = types.Event{
+					EventType:     types.EventTypeUpdateCounters,
+					SourceType:    types.SourceTypeConnector,
+					Connector:     event.Connector,
+					ConnectorName: event.ConnectorName,
+					Timestamp:     types.CpsTime{Time: time.Now()},
+					Entity:        &ent,
+				}
+			}
+
+			body, err := p.Encoder.Encode(updateCountersEvent)
+			if err != nil {
+				p.Logger.Err(err).Msg("unable to serialize event")
+			}
+
+			err = p.AmqpPublisher.PublishWithContext(
+				ctx,
+				"",
+				canopsis.AxeQueueName,
+				false,
+				false,
+				amqp.Publishing{
+					Body:        body,
+					ContentType: "application/json",
+				},
+			)
+			if err != nil {
+				p.Logger.Err(err).Msg("unable to send service event")
+			}
+		}
+	}
+
+	p.MetaUpdater.UpdateById(context.Background(), entityIDs...)
+}
+
 func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {
 	if p.FeaturePrintEventOnError {
 		p.Logger.Err(err).Str("event", string(msg)).Msg(errMsg)
 	} else {
 		p.Logger.Err(err).Msg(errMsg)
 	}
-}
-
-// publishComponentInfosUpdatedEvents sends event to update context graph and state of
-// entity services if there are entity services which depend on component infos and
-// component infos of resources have been updated on component event.
-// It's not possible to immediately process such resources  since only component entity
-// is locked by engine fifo and resource entity can be updated by another event in parallel.
-// todo delete after old patterns support ends
-func (p *messageProcessor) publishComponentInfosUpdatedEvents(ctx context.Context, resources []string) error {
-	if len(resources) == 0 {
-		return nil
-	}
-
-	alarms := make([]types.Alarm, 0)
-	err := p.AlarmAdapter.GetOpenedAlarmsByIDs(ctx, resources, &alarms)
-	if err != nil {
-		if engine.IsConnectionError(err) {
-			return err
-		}
-
-		p.Logger.Err(err).Msg("cannot find alarms")
-		return nil
-	}
-	sentForResources := make(map[string]bool, len(alarms))
-
-	for _, a := range alarms {
-		sentForResources[a.EntityID] = true
-		e := types.Event{
-			EventType:     types.EventTypeEntityUpdated,
-			Connector:     a.Value.Connector,
-			ConnectorName: a.Value.ConnectorName,
-			Component:     a.Value.Component,
-			Resource:      a.Value.Resource,
-			Timestamp:     types.CpsTime{Time: time.Now()},
-			SourceType:    types.SourceTypeResource,
-			Output:        "updated component infos",
-			Initiator:     types.InitiatorSystem,
-		}
-
-		err := p.publishToEngineFIFO(ctx, e)
-		if err != nil {
-			return err
-		}
-	}
-
-	for _, resource := range resources {
-		if !sentForResources[resource] {
-			p.Logger.Warn().Str("entity", resource).
-				Msg("resource doesn't have opened alarm so no event was fired on component_infos update and context graph won't be updated until new alarm")
-		}
-	}
-
-	return nil
-}
-
-func (p *messageProcessor) publishToEngineFIFO(ctx context.Context, event types.Event) error {
-	body, err := p.Encoder.Encode(event)
-	if err != nil {
-		p.Logger.Err(err).Msg("cannot encode event")
-		return nil
-	}
-	return errt.NewIOError(p.AmqpPublisher.PublishWithContext(
-		ctx,
-		"",
-		canopsis.FIFOQueueName,
-		false,
-		false,
-		amqp.Publishing{
-			ContentType:  "application/json", // this type is mandatory to avoid bad conversions into Python.
-			Body:         body,
-			DeliveryMode: amqp.Persistent,
-		},
-	))
 }
 
 func (p *messageProcessor) handlePerfData(ctx context.Context, event types.Event) {

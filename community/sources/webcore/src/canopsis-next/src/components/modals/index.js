@@ -383,3 +383,13 @@ export const CreateLinkRule = () => ({
   component: import(/* webpackChunkName: "LinkRule" */ './link-rule/create-link-rule.vue'),
   loading: LoaderOverlay,
 });
+
+export const CreateMaintenance = () => ({
+  component: import(/* webpackChunkName: "Maintenance" */ './maintenance/create-maintenance.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateTag = () => ({
+  component: import(/* webpackChunkName: "Tags" */ './tag/create-tag.vue'),
+  loading: LoaderOverlay,
+});
