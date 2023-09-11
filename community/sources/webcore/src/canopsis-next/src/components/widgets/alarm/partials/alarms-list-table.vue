@@ -219,6 +219,7 @@ export default {
       : {};
 
     return {
+      prevEvent: null,
       selecting: false,
       columnsFilters: [],
       selected: [],
@@ -280,6 +281,7 @@ export default {
       return {
         [`columns-${label}`]: true,
         'alarms-list-table__selecting': this.selecting,
+        'alarms-list-table__selecting--text-unselectable': this.selectingMousePressed,
       };
     },
 
@@ -313,6 +315,10 @@ export default {
 
     isSmallHeight() {
       return this.dense === ALARM_DENSE_TYPES.small;
+    },
+
+    selectingMousePressed() {
+      return this.selecting && !!this.prevEvent;
     },
   },
 
@@ -427,7 +433,7 @@ export default {
     },
 
     mouseupHandler() {
-      delete this.prevEvent;
+      this.prevEvent = null;
     },
 
     mousemoveHandler(event) {
@@ -618,8 +624,10 @@ export default {
         opacity: 1;
       }
 
-      * {
-        user-select: none;
+      &--text-unselectable {
+        * {
+          user-select: none;
+        }
       }
     }
 
