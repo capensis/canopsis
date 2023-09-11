@@ -59,9 +59,6 @@ func (m *manager) UpdateEntities(ctx context.Context, eventEntityID string, enti
 
 		if ent.ID == eventEntityID {
 			eventEntity = ent
-			if ent.LastEventDate != nil {
-				set["last_event_date"] = ent.LastEventDate
-			}
 		}
 
 		if ent.IsNew {
