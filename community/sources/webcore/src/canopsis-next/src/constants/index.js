@@ -28,3 +28,4 @@ export * from './parameters';
 export * from './declare-ticket';
 export * from './link-rule';
 export * from './external-data';
+export * from './tag';

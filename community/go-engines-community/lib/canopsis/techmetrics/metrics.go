@@ -45,3 +45,9 @@ type ApiRequestMetric struct {
 	Method    string
 	Url       string
 }
+
+type CorrelationRetriesMetric struct {
+	Timestamp time.Time
+	Type      string
+	Retries   int
+}

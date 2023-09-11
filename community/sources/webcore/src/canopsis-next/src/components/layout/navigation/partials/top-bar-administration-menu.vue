@@ -122,6 +122,11 @@ export default {
           permission: USERS_PERMISSIONS.technical.maintenance,
           handler: this.showToggleMaintenanceModeModal,
         },
+        {
+          route: { name: ROUTES_NAMES.adminTags },
+          icon: 'local_offer',
+          permission: USERS_PERMISSIONS.technical.tag,
+        },
       ];
 
       const enginesLink = this.isProVersion
