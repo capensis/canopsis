@@ -117,6 +117,14 @@ Feature: update an instruction statistics
         "component": "test-component-to-alarm-instruction-get-icons-fourth-2",
         "resource": "test-resource-to-alarm-instruction-get-icons-fourth-2",
         "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-alarm-instruction-get-icons-fourth-2",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-icons-fourth-2",
+        "component": "test-component-to-alarm-instruction-get-icons-fourth-2",
+        "resource": "test-resource-to-alarm-instruction-get-icons-fourth-2",
+        "source_type": "resource"
       }
     ]
     """
@@ -267,10 +275,17 @@ Feature: update an instruction statistics
         "component": "test-component-to-alarm-instruction-get-icons-fourth-5",
         "resource": "test-resource-to-alarm-instruction-get-icons-fourth-5",
         "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-alarm-instruction-get-icons-fourth-5",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-icons-fourth-5",
+        "component": "test-component-to-alarm-instruction-get-icons-fourth-5",
+        "resource": "test-resource-to-alarm-instruction-get-icons-fourth-5",
+        "source_type": "resource"
       }
     ]
     """
-    When I wait 3s
     When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-fourth-5&with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
@@ -402,10 +417,17 @@ Feature: update an instruction statistics
         "component": "test-component-to-alarm-instruction-get-icons-fourth-7",
         "resource": "test-resource-to-alarm-instruction-get-icons-fourth-7",
         "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-alarm-instruction-get-icons-fourth-7",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-icons-fourth-7",
+        "component": "test-component-to-alarm-instruction-get-icons-fourth-7",
+        "resource": "test-resource-to-alarm-instruction-get-icons-fourth-7",
+        "source_type": "resource"
       }
     ]
     """
-    When I wait 3s
     When I do POST /api/v4/cat/executions:
     """json
     {
@@ -534,10 +556,17 @@ Feature: update an instruction statistics
         "component": "test-component-to-alarm-instruction-get-icons-fourth-9",
         "resource": "test-resource-to-alarm-instruction-get-icons-fourth-9",
         "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-alarm-instruction-get-icons-fourth-9",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-icons-fourth-9",
+        "component": "test-component-to-alarm-instruction-get-icons-fourth-9",
+        "resource": "test-resource-to-alarm-instruction-get-icons-fourth-9",
+        "source_type": "resource"
       }
     ]
     """
-    When I wait 3s
     When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-fourth-9&with_instructions=true
     Then the response code should be 200
     Then the response body should contain:

@@ -106,6 +106,10 @@ export default {
     title: 'Maintenance mode',
     message: '', // TODO: add correct message
   },
+  [USERS_PERMISSIONS.technical.tag]: {
+    title: 'Tags management',
+    message: '', // TODO: add correct message
+  },
 
   /**
    * Admin general

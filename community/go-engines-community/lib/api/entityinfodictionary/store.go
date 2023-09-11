@@ -31,10 +31,13 @@ func (s *store) FindKeys(ctx context.Context, r ListKeysRequest) (AggregationRes
 
 	var pipeline []bson.M
 
-	searchQuery := common.GetSearchQuery(r.Search, []string{"_id"})
+	searchQuery := common.GetSearchQuery(r.Search, []string{"_id.k"})
 	if searchQuery != nil {
 		pipeline = append(pipeline, bson.M{"$match": searchQuery})
 	}
+
+	// distinct
+	pipeline = append(pipeline, bson.M{"$group": bson.M{"_id": "$_id.k"}})
 
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
@@ -61,15 +64,13 @@ func (s *store) FindValues(ctx context.Context, r ListValuesRequest) (Aggregatio
 	pipeline := []bson.M{
 		{
 			"$match": bson.M{
-				"_id": r.Key,
+				"_id.k": r.Key,
+				"_id.v": bson.M{"$ne": ""},
 			},
-		},
-		{
-			"$unwind": "$values",
 		},
 	}
 
-	searchQuery := common.GetSearchQuery(r.Search, []string{"values"})
+	searchQuery := common.GetSearchQuery(r.Search, []string{"_id.v"})
 	if searchQuery != nil {
 		pipeline = append(pipeline, bson.M{"$match": searchQuery})
 	}
@@ -77,8 +78,8 @@ func (s *store) FindValues(ctx context.Context, r ListValuesRequest) (Aggregatio
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		bson.M{"$sort": bson.D{{Key: "values", Value: 1}}},
-		[]bson.M{{"$project": bson.M{"value": "$values"}}},
+		bson.M{"$sort": bson.D{{Key: "_id.v", Value: 1}}},
+		[]bson.M{{"$project": bson.M{"value": "$_id.v"}}},
 	))
 	if err != nil {
 		return res, err

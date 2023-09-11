@@ -1,5 +1,5 @@
 template:
-  - &condig_rundeck {
+  - &config_rundeck {
     _id: <UUID()>,
     type: rundeck,
     name: <UniqueName()>,
@@ -8,7 +8,7 @@ template:
     author: root,
     created: <NowUnix()>
   }
-  - &condig_dummy_rundeck {
+  - &config_dummy_rundeck {
     _id: <UUID()>,
     type: rundeck,
     name: <UniqueName()>,
@@ -17,7 +17,7 @@ template:
     author: root,
     created: <NowUnix()>
   }
-  - &condig_dummy_awx {
+  - &config_dummy_awx {
     _id: <UUID()>,
     type: awx,
     name: <UniqueName()>,
@@ -26,7 +26,7 @@ template:
     author: root,
     created: <NowUnix()>
   }
-  - &condig_dummy_jenkins {
+  - &config_dummy_jenkins {
     _id: <UUID()>,
     type: jenkins,
     name: <UniqueName()>,
@@ -35,10 +35,18 @@ template:
     author: root,
     created: <NowUnix()>
   }
+  - &config_dummy_vtom {
+    _id: <UUID()>,
+    type: vtom,
+    name: <UniqueName()>,
+    auth_token: <UUID()>,
+    author: root,
+    created: <NowUnix()>
+  }
 
 job_config:
   job_config_to_get:
-    <<: *condig_rundeck
+    <<: *config_rundeck
     _id: test-job-config-to-get
     auth_token: test-auth-token
     created: 1596550518
@@ -46,19 +54,19 @@ job_config:
     name: test-job-config-name-to-get
 
   job_config_to_update:
-    <<: *condig_rundeck
+    <<: *config_rundeck
     _id: test-job-config-to-update
 
   job_config_to_delete:
-    <<: *condig_rundeck
+    <<: *config_rundeck
     _id: test-job-config-to-delete
   
   job_config_to_check_linked:
-    <<: *condig_rundeck
+    <<: *config_rundeck
     _id: test-job-config-to-check-linked
   
   job_config_to_edit_job:
-    <<: *condig_rundeck
+    <<: *config_rundeck
     _id: test-job-config-to-edit-job
     auth_token: test-auth-token
     created: 1596550518
@@ -66,7 +74,7 @@ job_config:
     name: test-job-config-to-edit-job-name
 
   job_config_to_edit_instruction:
-    <<: *condig_rundeck
+    <<: *config_rundeck
     _id: test-job-config-to-edit-instruction
     auth_token: test-auth-token
     created: 1596550518
@@ -74,33 +82,43 @@ job_config:
     name: test-job-config-to-edit-instruction-name
 
   job_config_to_exection_get:
-    <<: *condig_rundeck
+    <<: *config_rundeck
     _id: test-jobconfig-to-execution-get
   
   job_config_to_run_auto_instruction:
-    <<: *condig_dummy_rundeck
+    <<: *config_dummy_rundeck
     _id: test-job-config-to-run-auto-instruction
     auth_token: test-job-config-to-run-auto-instruction-token
     created: 1596550518
     name: test-job-config-to-run-auto-instruction-name
 
   job_config_to_run_manual_job_1:
-    <<: *condig_dummy_rundeck
+    <<: *config_dummy_rundeck
     _id: test-job-config-to-run-manual-job-1
 
   job_config_to_run_manual_job_2:
-    <<: *condig_dummy_rundeck
+    <<: *config_dummy_rundeck
     _id: test-job-config-to-run-manual-job-2
     host: "http://not-exist"
 
   job_config_to_run_manual_jenkins_job:
-    <<: *condig_dummy_jenkins
+    <<: *config_dummy_jenkins
     _id: test-job-config-to-run-manual-jenkins-job
 
   job_config_to_run_manual_awx_job:
-    <<: *condig_dummy_awx
+    <<: *config_dummy_awx
     _id: test-job-config-to-run-manual-awx-job
   
   job_config_metrics_axe:
-    <<: *condig_dummy_rundeck
+    <<: *config_dummy_rundeck
     _id: test-job-config-metrics-axe
+
+  job_config_to_run_manual_vtom_job_1:
+    <<: *config_dummy_vtom
+    _id: test-job-config-to-run-manual-vtom-job-1
+    host: "http://localhost:3000/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_1"
+
+  job_config_to_run_manual_vtom_job_2:
+    <<: *config_dummy_vtom
+    _id: test-job-config-to-run-manual-vtom-job-2
+    host: "http://localhost:3000/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_2"
