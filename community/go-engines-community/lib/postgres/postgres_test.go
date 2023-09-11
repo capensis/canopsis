@@ -3,14 +3,15 @@ package postgres
 import (
 	"context"
 	"errors"
-	mock_v4 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/jackc/pgx"
-	mock_postgres "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/postgres"
-	"github.com/golang/mock/gomock"
-	"github.com/jackc/pgconn"
-	"github.com/jackc/pgx/v4"
 	"net"
 	"testing"
 	"time"
+
+	mock_pgx "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/jackc/pgx"
+	mock_postgres "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/postgres"
+	"github.com/golang/mock/gomock"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 func TestPool_Exec_GivenContextDone_ShouldAbortRetries(t *testing.T) {
@@ -25,7 +26,7 @@ func TestPool_Exec_GivenContextDone_ShouldAbortRetries(t *testing.T) {
 
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
 	mockPgxPool.EXPECT().Exec(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...interface{}) (pgconn.CommandTag, error) {
-		return nil, &net.OpError{Err: errors.New("test error")}
+		return pgconn.CommandTag{}, &net.OpError{Err: errors.New("test error")}
 	}).AnyTimes()
 
 	pool := poolWithRetries{
@@ -50,8 +51,8 @@ func TestPool_Exec_GivenContextDone_ShouldAbortRetries(t *testing.T) {
 		t.Errorf("expected error but got nothing")
 	}
 
-	if commandTag != nil {
-		t.Errorf("expected nil result but got %+v", commandTag)
+	if commandTag.String() != "" {
+		t.Errorf("expected empty result but got %+v", commandTag.String())
 	}
 }
 
@@ -67,7 +68,7 @@ func TestPool_Exec_GivenConnectionError_ShouldRetryMaxTries(t *testing.T) {
 
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
 	mockPgxPool.EXPECT().Exec(gomock.Any(), gomock.Eq(sql)).DoAndReturn(func(_ context.Context, _ string, _ ...interface{}) (pgconn.CommandTag, error) {
-		return nil, &net.OpError{Err: errors.New("test error")}
+		return pgconn.CommandTag{}, &net.OpError{Err: errors.New("test error")}
 	}).Times(retryCount + 1)
 
 	pool := poolWithRetries{
@@ -81,8 +82,8 @@ func TestPool_Exec_GivenConnectionError_ShouldRetryMaxTries(t *testing.T) {
 		t.Errorf("expected error but got nothing")
 	}
 
-	if commandTag != nil {
-		t.Errorf("expected nil result but got %+v", commandTag)
+	if commandTag.String() != "" {
+		t.Errorf("expected empty result but got %+v", commandTag.String())
 	}
 }
 
@@ -102,10 +103,10 @@ func TestPool_Exec_GivenNotConnectionError_ShouldReturnError(t *testing.T) {
 		execCount++
 
 		if execCount == 0 {
-			return nil, &net.OpError{Err: errors.New("test error")}
+			return pgconn.CommandTag{}, &net.OpError{Err: errors.New("test error")}
 		}
 
-		return nil, &pgconn.PgError{Code: "42P09"}
+		return pgconn.CommandTag{}, &pgconn.PgError{Code: "42P09"}
 	}).Times(2)
 
 	pool := poolWithRetries{
@@ -119,8 +120,8 @@ func TestPool_Exec_GivenNotConnectionError_ShouldReturnError(t *testing.T) {
 		t.Errorf("expected error but got nothing")
 	}
 
-	if commandTag != nil {
-		t.Errorf("expected nil result but got %+v", commandTag)
+	if commandTag.String() != "" {
+		t.Errorf("expected empty result but got %+v", commandTag.String())
 	}
 }
 
@@ -140,14 +141,14 @@ func TestPool_Exec_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
 		execCount++
 		switch execCount {
 		case 0:
-			return nil, &net.OpError{Err: errors.New("test error")}
+			return pgconn.CommandTag{}, &net.OpError{Err: errors.New("test error")}
 		case 1:
-			return nil, &pgconn.PgError{Code: "57000"}
+			return pgconn.CommandTag{}, &pgconn.PgError{Code: "57000"}
 		case 2:
-			return nil, &pgconn.PgError{Code: "57P01"}
+			return pgconn.CommandTag{}, &pgconn.PgError{Code: "57P01"}
 		}
 
-		return pgconn.CommandTag{}, nil
+		return pgconn.NewCommandTag("test"), nil
 	}).Times(retryCount + 1)
 
 	pool := poolWithRetries{
@@ -161,8 +162,8 @@ func TestPool_Exec_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
 		t.Errorf("expected no error but got %v", err)
 	}
 
-	if commandTag == nil {
-		t.Errorf("expected result but got nil")
+	if commandTag.String() == "" {
+		t.Errorf("expected not empty result but got %+v", commandTag.String())
 	}
 }
 
@@ -258,7 +259,7 @@ func TestPool_Query_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
 			return nil, &pgconn.PgError{Code: "57P01"}
 		}
 
-		return mock_v4.NewMockRows(ctrl), nil
+		return mock_pgx.NewMockRows(ctrl), nil
 	}).Times(retryCount + 1)
 
 	pool := poolWithRetries{
@@ -351,7 +352,7 @@ func TestPool_QueryRow_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T
 	minRetryTimeout := time.Millisecond
 
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
-	mockRows := mock_v4.NewMockRows(ctrl)
+	mockRows := mock_pgx.NewMockRows(ctrl)
 	mockRows.EXPECT().Scan().Return(nil)
 	mockRows.EXPECT().Err().Return(nil)
 	mockRows.EXPECT().Next().Return(true)
@@ -391,11 +392,13 @@ func TestPool_SendBatch_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T
 	defer cancel()
 
 	b := &pgx.Batch{}
+	b.Queue("test")
+
 	retryCount := 3
 	minRetryTimeout := time.Millisecond
 
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
-	mockTx := mock_v4.NewMockTx(ctrl)
+	mockTx := mock_pgx.NewMockTx(ctrl)
 	beginExecCount := -1
 	mockPgxPool.EXPECT().Begin(gomock.Any()).DoAndReturn(func(_ context.Context) (pgx.Tx, error) {
 		beginExecCount++
@@ -407,8 +410,8 @@ func TestPool_SendBatch_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T
 		return nil, &net.OpError{Err: errors.New("test error")}
 	}).Times(retryCount + 1)
 	mockTx.EXPECT().SendBatch(gomock.Any(), gomock.Eq(b)).DoAndReturn(func(_ context.Context, _ *pgx.Batch) pgx.BatchResults {
-		mockBr := mock_v4.NewMockBatchResults(ctrl)
-		mockBr.EXPECT().Exec().Return(nil, &net.OpError{Err: errors.New("test error")})
+		mockBr := mock_pgx.NewMockBatchResults(ctrl)
+		mockBr.EXPECT().Exec().Return(pgconn.CommandTag{}, &net.OpError{Err: errors.New("test error")})
 
 		return mockBr
 	})
@@ -433,17 +436,19 @@ func TestPool_SendBatch_GivenConnectionError_ShouldReturnError(t *testing.T) {
 	defer cancel()
 
 	b := &pgx.Batch{}
+	b.Queue("test")
+
 	retryCount := 3
 	minRetryTimeout := time.Millisecond
 
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
-	mockTx := mock_v4.NewMockTx(ctrl)
+	mockTx := mock_pgx.NewMockTx(ctrl)
 	mockPgxPool.EXPECT().Begin(gomock.Any()).DoAndReturn(func(_ context.Context) (pgx.Tx, error) {
 		return mockTx, nil
 	})
 	mockTx.EXPECT().SendBatch(gomock.Any(), gomock.Eq(b)).DoAndReturn(func(_ context.Context, _ *pgx.Batch) pgx.BatchResults {
-		mockBr := mock_v4.NewMockBatchResults(ctrl)
-		mockBr.EXPECT().Exec().Return(nil, errors.New("test error"))
+		mockBr := mock_pgx.NewMockBatchResults(ctrl)
+		mockBr.EXPECT().Exec().Return(pgconn.CommandTag{}, errors.New("test error"))
 
 		return mockBr
 	})
@@ -468,11 +473,13 @@ func TestPool_SendBatch_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.
 	defer cancel()
 
 	b := &pgx.Batch{}
+	b.Queue("test")
+
 	retryCount := 3
 	minRetryTimeout := time.Millisecond
 
 	mockPgxPool := mock_postgres.NewMockBasePool(ctrl)
-	mockTx := mock_v4.NewMockTx(ctrl)
+	mockTx := mock_pgx.NewMockTx(ctrl)
 	beginExecCount := -1
 	mockPgxPool.EXPECT().Begin(gomock.Any()).DoAndReturn(func(_ context.Context) (pgx.Tx, error) {
 		beginExecCount++
@@ -489,9 +496,8 @@ func TestPool_SendBatch_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.
 		return mockTx, nil
 	}).Times(retryCount + 1)
 	mockTx.EXPECT().SendBatch(gomock.Any(), gomock.Eq(b)).DoAndReturn(func(_ context.Context, _ *pgx.Batch) pgx.BatchResults {
-		mockBr := mock_v4.NewMockBatchResults(ctrl)
-		mockBr.EXPECT().Exec().Return(nil, nil)
-		mockBr.EXPECT().Exec().Return(nil, errors.New("no result"))
+		mockBr := mock_pgx.NewMockBatchResults(ctrl)
+		mockBr.EXPECT().Exec().Return(pgconn.CommandTag{}, nil)
 		mockBr.EXPECT().Close()
 
 		return mockBr
