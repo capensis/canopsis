@@ -66,6 +66,7 @@ Feature: Get application information
       "default_color_theme": {
         "_id": "canopsis",
         "name": "Canopsis",
+        "font_size": 2,
         "colors": {
           "main": {
             "primary": "#2fab63",
@@ -76,8 +77,7 @@ Feature: Get application information
             "success": "#4caf50",
             "warning": "#fb8c00",
             "background": "#ffffff",
-            "active_color": "#000",
-            "font_size": 2
+            "active_color": "#000"
           },
           "table": {
             "background": "#fff",

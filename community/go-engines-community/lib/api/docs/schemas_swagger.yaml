@@ -1024,12 +1024,6 @@ definitions:
             type: string
           error:
             type: string
-          font_size:
-            enum:
-            - 1
-            - 2
-            - 3
-            type: integer
           info:
             type: string
           primary:
@@ -1045,7 +1039,6 @@ definitions:
         - active_color
         - background
         - error
-        - font_size
         - info
         - primary
         - secondary
@@ -1083,15 +1076,20 @@ definitions:
         - row_color
         type: object
     type: object
-  colortheme.CreateRequest:
+  colortheme.EditRequest:
     properties:
-      _id:
-        type: string
       colors:
         $ref: '#/definitions/colortheme.Colors'
+      font_size:
+        enum:
+        - 1
+        - 2
+        - 3
+        type: integer
       name:
         type: string
     required:
+    - font_size
     - name
     type: object
   colortheme.Theme:
@@ -1102,19 +1100,12 @@ definitions:
         $ref: '#/definitions/colortheme.Colors'
       deletable:
         type: boolean
+      font_size:
+        type: integer
       name:
         type: string
       updated:
         type: integer
-    type: object
-  colortheme.UpdateRequest:
-    properties:
-      colors:
-        $ref: '#/definitions/colortheme.Colors'
-      name:
-        type: string
-    required:
-    - name
     type: object
   common.AlarmStep:
     properties:

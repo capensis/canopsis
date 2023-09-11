@@ -3262,6 +3262,7 @@ paths:
                 description: Create a color theme
                 value: {
                   "name": "test_1",
+                  "font_color": 2,
                   "colors": {
                     "main": {
                       "primary": "#AAAAAA",
@@ -3360,6 +3361,7 @@ paths:
                 description: Update a color theme
                 value: {
                   "name": "test_1_updated",
+                  "font_color": 2,
                   "colors": {
                     "main": {
                       "primary": "#FFFFFF",
