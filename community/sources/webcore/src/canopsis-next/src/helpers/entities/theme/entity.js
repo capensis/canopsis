@@ -10,12 +10,13 @@ import { isString, kebabCase } from 'lodash';
  * @property {string} success
  * @property {string} warning
  * @property {string} background
+ * @property {string} active_color
+ * @property {number} font_size
  */
 
 /**
  * @typedef {Object} ThemeTableColors
  * @property {string} background
- * @property {string} active_color
  * @property {string} row_color
  * @property {string} shift_row_color
  * @property {string} hover_row_color

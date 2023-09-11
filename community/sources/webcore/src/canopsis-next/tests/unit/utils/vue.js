@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import Vuetify from 'vuetify';
 import { get, merge } from 'lodash';
 import { shallowMount as testUtilsShallowMount, mount as testUtilsMount, createLocalVue } from '@vue/test-utils';
 import theme from 'vuetify/es5/components/Vuetify/mixins/theme';
@@ -8,7 +7,7 @@ import theme from 'vuetify/es5/components/Vuetify/mixins/theme';
 import { MqLayout } from '@unit/stubs/mq';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ValidatorPlugin from '@/plugins/validator';
-import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
+import Vuetify from '@/plugins/vuetify';
 import ToursPlugin from '@/plugins/tours';
 import * as constants from '@/constants';
 import * as config from '@/config';
@@ -41,7 +40,6 @@ Vue.use(Vuetify, {
 });
 Vue.use(UpdateFieldPlugin);
 Vue.use(ValidatorPlugin, { i18n });
-Vue.use(VuetifyReplacerPlugin);
 Vue.use(SetSeveralPlugin);
 Vue.use(ToursPlugin);
 

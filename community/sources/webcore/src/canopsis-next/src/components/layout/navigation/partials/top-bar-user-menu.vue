@@ -15,13 +15,14 @@ import { MODALS, ROUTES_NAMES } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesUserMixin } from '@/mixins/entities/user';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import TopBarProfileMenuLink from './top-bar-profile-menu-link.vue';
 
 export default {
   inject: ['$system'],
   components: { TopBarProfileMenuLink },
-  mixins: [authMixin, entitiesUserMixin],
+  mixins: [authMixin, entitiesUserMixin, entitiesInfoMixin],
   computed: {
     userName() {
       return this.currentUser.display_name || this.currentUser._id;
@@ -80,7 +81,7 @@ export default {
         redirect: () => this.$router.replaceAsync({ name: ROUTES_NAMES.login }),
       });
 
-      this.$system.setTheme();
+      this.$system.setTheme(this.defaultColorTheme);
     },
   },
 };
