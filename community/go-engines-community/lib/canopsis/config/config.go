@@ -20,7 +20,6 @@ const (
 // SectionAlarm ...
 type SectionAlarm struct {
 	StealthyInterval     int    `toml:"StealthyInterval"`
-	EnableLastEventDate  bool   `toml:"EnableLastEventDate"`
 	CancelAutosolveDelay string `toml:"CancelAutosolveDelay"`
 	DisplayNameScheme    string `toml:"DisplayNameScheme"`
 	OutputLength         int    `toml:"OutputLength"`
