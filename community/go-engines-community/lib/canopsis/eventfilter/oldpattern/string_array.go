@@ -128,7 +128,7 @@ func (p StringArrayPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		if v.isFieldSet {
 			bsonFieldName, err := GetFieldBsonName(p, v.fieldName, v.bsonName)
 			if err != nil {
-				return bsontype.Undefined, nil, err
+				return bson.TypeUndefined, nil, err
 			}
 
 			resultBson[bsonFieldName] = v.value
@@ -139,12 +139,12 @@ func (p StringArrayPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		return bson.MarshalValue(resultBson)
 	}
 
-	return bsontype.Undefined, nil, nil
+	return bson.TypeUndefined, nil, nil
 }
 
 func (p *StringArrayPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
-	case bsontype.EmbeddedDocument:
+	case bson.TypeEmbeddedDocument:
 		err := bson.Unmarshal(b, &p.StringArrayConditions)
 		if err != nil {
 			return err

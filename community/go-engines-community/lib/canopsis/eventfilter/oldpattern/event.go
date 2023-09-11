@@ -116,7 +116,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.ID.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "ID", "id")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.ID
@@ -125,7 +125,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Entity.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "Entity", "entity")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Entity
@@ -140,7 +140,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Resource.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "Resource", "resource")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Resource
@@ -149,7 +149,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.ConnectorName.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "ConnectorName", "connectorname")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.ConnectorName
@@ -158,7 +158,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Component.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "Component", "component")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Component
@@ -167,7 +167,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.State.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "State", "state")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.State
@@ -176,7 +176,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Status.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "Status", "status")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Status
@@ -185,7 +185,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.LongOutput.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "LongOutput", "longoutput")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.LongOutput
@@ -194,7 +194,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Connector.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "Connector", "connector")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Connector
@@ -203,7 +203,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.ConnectorName.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "ConnectorName", "connectorname")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.ConnectorName
@@ -212,7 +212,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Ticket.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "Ticket", "ticket")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Ticket
@@ -221,7 +221,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Author.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "Author", "author")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Author
@@ -230,7 +230,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Timestamp.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "Timestamp", "timestamp")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Timestamp
@@ -239,7 +239,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Output.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "Output", "output")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Output
@@ -248,7 +248,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Debug.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "Debug", "debug")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Debug
@@ -257,7 +257,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.EventType.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "EventType", "eventtype")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.EventType
@@ -266,7 +266,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.AckResources.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "AckResources", "ackresources")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.AckResources
@@ -275,7 +275,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Duration.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "Duration", "duration")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Duration
@@ -284,7 +284,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.PerfData.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "PerfData", "perfdata")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.PerfData
@@ -293,7 +293,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.RK.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "RK", "rk")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.RK
@@ -302,7 +302,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.SourceType.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "SourceType", "sourcetype")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.SourceType
@@ -311,7 +311,7 @@ func (p EventPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.StatName.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "StatName", "statname")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.StatName
@@ -373,7 +373,7 @@ func (l EventPatternList) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 
-	if bsonType == bsontype.Null {
+	if bsonType == bson.TypeNull {
 		res, err := json.Marshal(nil)
 		if err != nil {
 			return nil, err
@@ -384,7 +384,7 @@ func (l EventPatternList) MarshalJSON() ([]byte, error) {
 
 	var unmarshalledBson []map[string]interface{}
 	raw := bson.RawValue{
-		Type:  bsontype.Array,
+		Type:  bson.TypeArray,
 		Value: b,
 	}
 	err = raw.Unmarshal(&unmarshalledBson)
@@ -448,7 +448,7 @@ func (l EventPatternList) IsZero() bool {
 
 func (l EventPatternList) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if !l.Set {
-		return bsontype.Null, nil, nil
+		return bson.TypeNull, nil, nil
 	}
 
 	return bson.MarshalValue(l.Patterns)
@@ -456,10 +456,10 @@ func (l EventPatternList) MarshalBSONValue() (bsontype.Type, []byte, error) {
 
 func (l *EventPatternList) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
-	case bsontype.Null:
+	case bson.TypeNull:
 		l.Set = false
 		l.Valid = false
-	case bsontype.Array:
+	case bson.TypeArray:
 		l.Set = true
 		l.Valid = false
 
@@ -489,8 +489,8 @@ func (l *EventPatternList) UnmarshalBSONValue(valueType bsontype.Type, b []byte)
 
 					return err
 				}
-			} else if v.Type != bsontype.Null && v.Type != bsontype.Undefined &&
-				v.Type != bsontype.EmbeddedDocument || valuesCount > 1 {
+			} else if v.Type != bson.TypeNull && v.Type != bson.TypeUndefined &&
+				v.Type != bson.TypeEmbeddedDocument || valuesCount > 1 {
 				// empty object, null or undefined allowed as only value and treated as [{}]
 				return fmt.Errorf("unable to parse event pattern list element")
 			}
