@@ -956,4 +956,28 @@ export default {
   importPbehaviorException: {
     title: 'Importer des dates d\'exception',
   },
+  createMaintenance: {
+    enableMaintenance: 'Activer le mode d\'entretien',
+    setup: {
+      title: 'Activer le mode d\'entretien',
+    },
+    edit: {
+      title: 'Modifier le mode de maintenance',
+    },
+  },
+  confirmationLeaveMaintenance: {
+    title: 'Quitter le mode maintenance',
+    text: 'Êtes-vous sûr de vouloir quitter le mode maintenance ?\\nTous les utilisateurs pourront se connecter au système après avoir quitté.',
+  },
+  createTag: {
+    create: {
+      title: 'Créer une balise',
+    },
+    edit: {
+      title: 'Modifier une balise',
+    },
+    duplicate: {
+      title: 'Dupliquer une balise',
+    },
+  },
 };

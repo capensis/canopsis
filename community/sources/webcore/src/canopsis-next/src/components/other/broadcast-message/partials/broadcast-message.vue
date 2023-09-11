@@ -4,6 +4,8 @@
     :title="message"
   )
     span.broadcast-message__text(v-html="message")
+    div.broadcast-message__actions(title="")
+      slot(name="actions")
 </template>
 
 <script>
@@ -23,6 +25,7 @@ export default {
 
 <style lang="scss" scoped>
   .broadcast-message {
+    position: relative;
     color: white;
     display: flex;
     width: 100%;
@@ -40,6 +43,15 @@ export default {
       & ::v-deep p {
         margin: 0 !important;
       }
+    }
+
+    &__actions {
+      display: flex;
+      align-items: center;
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
     }
   }
 </style>

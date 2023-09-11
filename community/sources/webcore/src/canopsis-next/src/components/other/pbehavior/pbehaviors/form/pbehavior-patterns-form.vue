@@ -12,7 +12,11 @@
 <script>
 import { ENTITY_PATTERN_FIELDS } from '@/constants';
 
+import { formValidationHeaderMixin } from '@/mixins/form';
+
 export default {
+  inject: ['$validator'],
+  mixins: [formValidationHeaderMixin],
   model: {
     prop: 'form',
     event: 'input',
