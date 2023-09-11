@@ -261,13 +261,13 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	}
 	newState := *params.State
 	alarmChange := p.newAlarmChange(&alarm, entity)
-	alarmConfig := p.alarmConfigProvider.Get()
 	previousState := alarm.Value.State.Value
 	previousStatus := alarm.Value.Status.Value
 	match := bson.M{"_id": alarm.ID, "v.resolved": nil}
 	set := bson.M{
-		"v.output":      params.Output,
-		"v.long_output": params.LongOutput,
+		"v.output":          params.Output,
+		"v.last_event_date": params.Timestamp,
+		"v.long_output":     params.LongOutput,
 	}
 	push := bson.M{}
 	inc := bson.M{
@@ -333,10 +333,6 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		} else {
 			push["v.steps"] = statusStep
 		}
-	}
-
-	if alarmConfig.EnableLastEventDate {
-		set["v.last_event_date"] = params.Timestamp
 	}
 
 	addToSet := bson.M{}
