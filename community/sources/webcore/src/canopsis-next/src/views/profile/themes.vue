@@ -34,6 +34,7 @@ import { permissionsTechnicalProfileThemeMixin } from '@/mixins/permissions/tech
 import ThemesList from '@/components/other/theme/themes-list.vue';
 
 export default {
+  inject: ['$system'],
   components: { ThemesList },
   mixins: [
     localQueryMixin,
@@ -66,13 +67,9 @@ export default {
           action: async (newTheme) => {
             await this.updateTheme({ id: theme._id, data: newTheme });
 
-
-            if (this.currentUser.ui_theme === theme._id) {
-              this.setTheme
+            if (this.currentUser.ui_theme._id === theme._id) {
+              this.$system.setTheme(newTheme);
             }
-            /**
-             * TODO: Should be handled update current theme
-             */
 
             return this.fetchList();
           },

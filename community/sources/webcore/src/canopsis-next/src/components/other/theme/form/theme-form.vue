@@ -43,6 +43,19 @@
           v-field="form.colors.main.background",
           :label="$t('theme.main.background')"
         )
+        theme-color-picker-field(
+          v-field="form.colors.main.active_color",
+          :label="$t('theme.main.activeColor')",
+          :help-text="$t('theme.main.activeColorHelpText')"
+        )
+        theme-colors-preview(
+          :background-color="form.colors.main.background",
+          :color="form.colors.main.active_color",
+          :font-size="fontSize"
+        )
+    c-information-block(:title="$t('theme.fontSize.title')")
+      v-layout.theme-form__colors(column)
+        theme-color-font-size-field(v-field="form.colors.main.font_size")
     c-information-block(:title="$t('theme.table.title')")
       v-layout.theme-form__colors(column)
         theme-color-picker-field(
@@ -50,28 +63,6 @@
           :label="$t('theme.table.background')",
           :help-text="$t('theme.table.backgroundHelpText')"
         )
-        theme-color-picker-field(
-          v-field="form.colors.table.active_color",
-          :label="$t('theme.table.activeColor')",
-          :help-text="$t('theme.table.activeColorHelpText')"
-        )
-
-        v-card(
-          :color="form.colors.table.background",
-          :style="{ color: form.colors.table.active_color }",
-          :dark="isDarkBackgroundTable"
-        )
-          v-card-text
-            v-layout(justify-space-between, align-center)
-              span {{ $t('theme.table.exampleText') }}
-              v-icon help
-
-        v-messages(
-          v-if="!isTableColorReadable",
-          :value="[$t('theme.errors.notReadable')]",
-          color="error"
-        )
-
         theme-color-picker-field(
           v-field="form.colors.table.row_color",
           :label="$t('theme.table.rowColor')",
@@ -89,6 +80,11 @@
           :enable-label="$t('theme.table.hoverRowEnable')",
           :enable-help-text="$t('theme.table.hoverRowEnableHelpText')",
           :label="$t('theme.table.hoverRowColor')"
+        )
+        theme-colors-preview(
+          :background-color="form.colors.table.background",
+          :color="form.colors.main.active_color",
+          :font-size="fontSize"
         )
     c-information-block(:title="$t('theme.state.title')")
       v-layout.theme-form__colors(column)
@@ -115,15 +111,18 @@
 </template>
 
 <script>
-import { isReadableColor, isDarkColor } from '@/helpers/color';
-
 import ThemeEnabledColorPickerField from '@/components/other/theme/form/fields/theme-enabled-color-picker-field.vue';
+import ThemeColorFontSizeField from '@/components/other/theme/form/fields/theme-color-font-size-field.vue';
+
+import ThemeColorsPreview from '../partials/theme-colors-preview.vue';
 
 import ThemeColorPickerField from './fields/theme-color-picker-field.vue';
 
+import { THEME_FONT_PIXEL_SIZES } from '@/constants/theme';
+
 export default {
   inject: ['$validator'],
-  components: { ThemeEnabledColorPickerField, ThemeColorPickerField },
+  components: { ThemeColorFontSizeField, ThemeColorsPreview, ThemeEnabledColorPickerField, ThemeColorPickerField },
   model: {
     prop: 'form',
     event: 'input',
@@ -135,15 +134,8 @@ export default {
     },
   },
   computed: {
-    isDarkBackgroundTable() {
-      return isDarkColor(this.form.colors.table.background);
-    },
-
-    isTableColorReadable() {
-      return isReadableColor(
-        this.form.colors.table.background,
-        this.form.colors.table.active_color,
-      );
+    fontSize() {
+      return THEME_FONT_PIXEL_SIZES[this.form.colors.main.font_size];
     },
   },
 };

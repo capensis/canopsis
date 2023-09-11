@@ -22,6 +22,8 @@
       v-layout(row)
         c-action-btn(
           v-if="updatable",
+          :tooltip="item.deletable ? $t('common.edit') : $t('theme.defaultTheme')",
+          :disabled="!item.deletable",
           type="edit",
           @click="$emit('edit', item)"
         )

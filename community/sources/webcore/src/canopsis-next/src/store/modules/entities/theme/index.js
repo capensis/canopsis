@@ -9,7 +9,9 @@ export default createCRUDModule({
   withFetchingParams: true,
   withWithoutStore: true,
 }, {
-  bulkRemove(context, { data }) {
-    return request.delete(API_ROUTES.themes.bulkList, { data });
+  actions: {
+    bulkRemove(context, { data }) {
+      return request.delete(API_ROUTES.themes.bulkList, { data });
+    },
   },
 });
