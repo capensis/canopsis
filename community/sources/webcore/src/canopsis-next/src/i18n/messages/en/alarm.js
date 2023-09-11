@@ -171,6 +171,7 @@ export default {
   },
   fields: {
     displayName: 'Display name',
+    assignedInstructions: 'Assigned instructions',
     initialOutput: 'Initial output',
     initialLongOutput: 'Initial long output',
     lastComment: 'Last comment',
