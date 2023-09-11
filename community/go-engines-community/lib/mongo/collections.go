@@ -92,4 +92,6 @@ const (
 	EventFilterFailureCollection = "eventfilter_failure"
 
 	EntityServiceCountersCollection = "entity_service_counters"
+
+	MetaAlarmStatesCollection = "meta_alarm_states"
 )
