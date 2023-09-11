@@ -14,6 +14,7 @@
       :with-template="withTemplate",
       :with-html="withHtml",
       :with-color-indicator="withColorIndicator",
+      :with-instructions="withInstructions",
       :without-infos-attributes="withoutInfosAttributes",
       :type="type",
       @input="updateColumns"
@@ -64,6 +65,10 @@ export default {
       default: false,
     },
     withColorIndicator: {
+      type: Boolean,
+      default: false,
+    },
+    withInstructions: {
       type: Boolean,
       default: false,
     },
