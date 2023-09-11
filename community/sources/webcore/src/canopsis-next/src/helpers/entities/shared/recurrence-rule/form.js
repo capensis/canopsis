@@ -119,7 +119,7 @@ export const formOptionsToRecurrenceRuleOptions = (options, advancedFields = [])
   if (options.until) {
     recurrenceRuleOptions.until = Date.UTC(
       options.until.getFullYear(),
-      options.until.getMonth() + 1,
+      options.until.getMonth(),
       options.until.getDate(),
       options.until.getHours(),
       options.until.getMinutes(),

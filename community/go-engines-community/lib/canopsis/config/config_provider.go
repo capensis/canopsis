@@ -65,7 +65,6 @@ type TemplateConfigProvider interface {
 
 type AlarmConfig struct {
 	StealthyInterval      time.Duration
-	EnableLastEventDate   bool
 	CancelAutosolveDelay  time.Duration
 	DisplayNameScheme     *template.Template
 	displayNameSchemeText string
@@ -173,7 +172,6 @@ func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmC
 	sectionName := "alarm"
 	conf := AlarmConfig{
 		StealthyInterval:                  parseTimeDurationBySeconds(cfg.Alarm.StealthyInterval, 0, "StealthyInterval", sectionName, logger),
-		EnableLastEventDate:               parseBool(cfg.Alarm.EnableLastEventDate, "EnableLastEventDate", sectionName, logger),
 		CancelAutosolveDelay:              parseTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, AlarmCancelAutosolveDelay, "CancelAutosolveDelay", sectionName, logger),
 		DisableActionSnoozeDelayOnPbh:     parseBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, logger),
 		TimeToKeepResolvedAlarms:          parseTimeDurationByStr(cfg.Alarm.TimeToKeepResolvedAlarms, 0, "TimeToKeepResolvedAlarms", sectionName, logger),
@@ -254,12 +252,7 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) {
 		p.conf.TimeToKeepResolvedAlarms = d
 	}
 
-	b, ok := parseUpdatedBool(cfg.Alarm.EnableLastEventDate, p.conf.EnableLastEventDate, "EnableLastEventDate", sectionName, p.logger)
-	if ok {
-		p.conf.EnableLastEventDate = b
-	}
-
-	b, ok = parseUpdatedBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, p.conf.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, p.logger)
+	b, ok := parseUpdatedBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, p.conf.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, p.logger)
 	if ok {
 		p.conf.DisableActionSnoozeDelayOnPbh = b
 	}
