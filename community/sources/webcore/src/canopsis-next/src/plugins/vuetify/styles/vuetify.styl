@@ -1,14 +1,87 @@
+$default-font-size = 14px
+
+rem(px) {
+  return unit(px / $default-font-size, 'rem');
+}
+
 // Font sizes
-$font-size-root = var(--v-font-size-root, 14px)
+$font-size-root = var(--v-font-size-root, $default-font-size)
 $alert-font-size = $font-size-root
+
+$list-tile-font-size = rem(16px)
+$list-action-text-font-size = rem(12px)
+$list-sub-title-font-size = rem(14px)
+$list-item-dense-font-size = rem(13px)
+
+$button-font-size = rem(14px)
+$button-small-font-size = rem(13px)
+$button-large-font-size = rem(15px)
+
+$badge-font-size = rem(14px)
+
+$breadcrumbs-item-font-size = rem(14px)
+$breadcrumbs-item-large-font-size = rem(16px)
+$chip-font-size = rem(13px)
+$chip-small-font-size = rem(20px)
+
+$subheader-height-font-size = rem(14px)
+$subheader-dense-font-size = $list-item-dense-font-size
+
+$time-picker-number-font-size = rem(16px)
+
+$navigation-drawer-item-font-size = rem(14px)
+
+$calendar-daily-weekday-font-size = rem(14px)
+$calendar-daily-day-font-size = rem(40px)
+$calendar-daily-interval-gutter-font-size = rem(10px)
+$calendar-weekly-weekday-font-size = rem(14px)
+
+$alert-icon-font-size = rem(24px)
+$chip-icon-font-size = rem(20px)
+$list-item-dense-icon-font-size = rem(22px)
 
 @import '~vuetify/src/stylus/theme.styl'
 
 // Backgrounds
 $material-light.background = var(--v-application-background-base, $material-light.background)
 $material-light.cards = var(--v-background-base, $material-dark.cards)
+$material-light.text.primary = var(--v-active-color-base, $material-light.text.primary)
 
 $material-dark.background = var(--v-application-background-base, $material-dark.background)
 $material-dark.cards = var(--v-background-base, $material-dark.cards)
+$material-dark.text.primary = var(--v-active-color-base, $material-dark.text.primary)
+
+@import '~vuetify/src/stylus/settings/_variables.styl'
+
+// Font sizes
+$headings.h1.size = rem(112px)
+$headings.h2.size = rem(56px)
+$headings.h3.size = rem(45px)
+$headings.h4.size = rem(34px)
+$headings.h5.size = rem(24px)
+$headings.h6.size = rem(20px)
+$headings.subheading.size = rem(16px)
+$headings.body-2.size = rem(14px)
+$headings.body-1.size = rem(14px)
+$headings.caption.size = rem(12px)
 
 @import '~vuetify/src/stylus/main'
+
+@import "./components/data-table.styl"
+
+table.v-table
+  thead
+    th
+      font-size: rem(12px)
+
+  tbody
+    td
+      font-size: rem(13px)
+
+.v-tooltip
+  &__content
+    color: var(--v-active-color-base, #fff)
+    font-size: rem(12px)
+
+.v-input
+  font-size: rem(16px)

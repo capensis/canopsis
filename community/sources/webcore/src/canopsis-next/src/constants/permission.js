@@ -132,8 +132,7 @@ export const USERS_PERMISSIONS = {
     },
     profile: {
       corporatePattern: `${USER_PERMISSIONS_PREFIXES.technical.profile}_corporatePattern`,
-      // theme: `${USER_PERMISSIONS_PREFIXES.technical.profile}_color_theme`,
-      theme: `${USER_PERMISSIONS_PREFIXES.technical.admin}_color_theme`,
+      theme: `${USER_PERMISSIONS_PREFIXES.technical.profile}_color_theme`,
     },
   },
   business: {

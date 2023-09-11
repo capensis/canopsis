@@ -1,12 +1,11 @@
 import Vue from 'vue';
-import theme from 'vuetify/es5/components/Vuetify/mixins/theme';
 
 import { DEFAULT_TIMEZONE } from '@/constants';
 
-import { themeColorsToCSSVariables } from '@/helpers/entities/theme/entity';
-import { getDarkenColor, isDarkColor } from '@/helpers/color';
+import { systemThemeMixin } from '@/mixins/system-theme';
 
 export const systemMixin = {
+  mixins: [systemThemeMixin],
   provide() {
     return {
       $system: this.system,
@@ -32,20 +31,6 @@ export const systemMixin = {
           Vue.set(this.system, key, value);
         }
       });
-    },
-
-    setTheme({ colors }) {
-      const { main, table, state } = colors;
-      const variables = themeColorsToCSSVariables({
-        ...main,
-        table,
-        state,
-        applicationBackground: getDarkenColor(main.background, 5),
-      });
-
-      this.$vuetify.theme = theme(variables);
-
-      this.system.dark = isDarkColor(main.background);
     },
   },
 };

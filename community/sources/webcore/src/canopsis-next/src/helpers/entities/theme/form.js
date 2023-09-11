@@ -1,5 +1,7 @@
 import { COLORS } from '@/config';
 
+import { THEME_FONT_SIZES } from '@/constants/theme';
+
 /**
  * @typedef {Object} ThemeEnabledColor
  * @property {boolean} enabled
@@ -47,6 +49,8 @@ export const themeMainColorsToForm = (main = {}) => ({
   success: main.success ?? COLORS.success,
   warning: main.warning ?? COLORS.warning,
   background: main.background ?? COLORS.background,
+  active_color: main.active_color ?? COLORS.activeColor,
+  font_size: main.font_size ?? THEME_FONT_SIZES.medium,
 });
 
 /**
@@ -57,14 +61,13 @@ export const themeMainColorsToForm = (main = {}) => ({
  */
 export const themeTableColorsToForm = (table = {}) => ({
   background: table.background ?? COLORS.table.background,
-  active_color: table.active_color ?? COLORS.table.activeColor,
   row_color: table.row_color ?? COLORS.table.rowColor,
   shift_row_color: {
     enabled: !!table.shift_row_color,
     color: table.shift_row_color ?? COLORS.table.shiftRowColor,
   },
   hover_row_color: {
-    enabled: !!table.hover_row_color || true,
+    enabled: !!table.hover_row_color,
     color: table.hover_row_color ?? COLORS.table.hoverRowColor,
   },
 });
