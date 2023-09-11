@@ -38,10 +38,10 @@ type api struct {
 }
 
 // Create
-// @Param body body CreateRequest true "body"
+// @Param body body EditRequest true "body"
 // @Success 201 {object} Theme
-func (a api) Create(c *gin.Context) {
-	request := CreateRequest{}
+func (a *api) Create(c *gin.Context) {
+	request := EditRequest{}
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
@@ -72,7 +72,7 @@ func (a api) Create(c *gin.Context) {
 
 // List
 // @Success 200 {object} common.PaginatedListResponse{data=[]Theme}
-func (a api) List(c *gin.Context) {
+func (a *api) List(c *gin.Context) {
 	var query FilteredQuery
 	query.Query = pagination.GetDefaultQuery()
 
@@ -97,7 +97,7 @@ func (a api) List(c *gin.Context) {
 
 // Get
 // @Success 200 {object} Theme
-func (a api) Get(c *gin.Context) {
+func (a *api) Get(c *gin.Context) {
 	theme, err := a.store.GetById(c, c.Param("id"))
 	if err != nil {
 		panic(err)
@@ -112,10 +112,10 @@ func (a api) Get(c *gin.Context) {
 }
 
 // Update
-// @Param body body UpdateRequest true "body"
+// @Param body body EditRequest true "body"
 // @Success 200 {object} Theme
-func (a api) Update(c *gin.Context) {
-	request := UpdateRequest{
+func (a *api) Update(c *gin.Context) {
+	request := EditRequest{
 		ID: c.Param("id"),
 	}
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -156,7 +156,7 @@ func (a api) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, theme)
 }
 
-func (a api) Delete(c *gin.Context) {
+func (a *api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c, c.Param("id"))
 	if err != nil {
 		if errors.Is(err, ErrDefaultTheme) {

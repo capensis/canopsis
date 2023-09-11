@@ -19,8 +19,8 @@ Feature: Create a color theme
   When I do POST /api/v4/color-themes:
   """json
   {
-    "_id": "test_1",
     "name": "test_1",
+    "font_size": 1,
     "colors": {
       "main": {
         "primary": "#AAAAAA",
@@ -31,8 +31,7 @@ Feature: Create a color theme
         "success": "#AAAAAA",
         "warning": "#AAAAAA",
         "background": "#AAAAAA",
-        "active_color": "#AAAAAA",
-        "font_size": 1
+        "active_color": "#AAAAAA"
       },
       "table": {
         "background": "#AAAAAA",
@@ -53,8 +52,8 @@ Feature: Create a color theme
   Then the response body should contain:
   """json
   {
-    "_id": "test_1",
     "name": "test_1",
+    "font_size": 1,
     "colors": {
       "main": {
         "primary": "#AAAAAA",
@@ -65,8 +64,7 @@ Feature: Create a color theme
         "success": "#AAAAAA",
         "warning": "#AAAAAA",
         "background": "#AAAAAA",
-        "active_color": "#AAAAAA",
-        "font_size": 1
+        "active_color": "#AAAAAA"
       },
       "table": {
         "background": "#AAAAAA",
@@ -86,13 +84,13 @@ Feature: Create a color theme
   """
 
   @concurrent
-  Scenario: given create request with the existing name or id should return error
+  Scenario: given create request with the existing name should return error
   When I am admin
   When I do POST /api/v4/color-themes:
   """json
   {
-    "_id": "test_2_1",
     "name": "test_2_1",
+    "font_size": 1,
     "colors": {
       "main": {
         "primary": "#AAAAAA",
@@ -103,8 +101,7 @@ Feature: Create a color theme
         "success": "#AAAAAA",
         "warning": "#AAAAAA",
         "background": "#AAAAAA",
-        "active_color": "#AAAAAA",
-        "font_size": 1
+        "active_color": "#AAAAAA"
       },
       "table": {
         "background": "#AAAAAA",
@@ -125,8 +122,8 @@ Feature: Create a color theme
   When I do POST /api/v4/color-themes:
   """json
   {
-    "_id": "test_2_2",
     "name": "test_2_1",
+    "font_size": 1,
     "colors": {
       "main": {
         "primary": "#AAAAAA",
@@ -137,8 +134,7 @@ Feature: Create a color theme
         "success": "#AAAAAA",
         "warning": "#AAAAAA",
         "background": "#AAAAAA",
-        "active_color": "#AAAAAA",
-        "font_size": 1
+        "active_color": "#AAAAAA"
       },
       "table": {
         "background": "#AAAAAA",
@@ -164,48 +160,6 @@ Feature: Create a color theme
     }
   }
   """
-  When I do POST /api/v4/color-themes:
-  """json
-  {
-    "_id": "test_2_1",
-    "name": "test_2_2",
-    "colors": {
-      "main": {
-        "primary": "#AAAAAA",
-        "secondary": "#AAAAAA",
-        "accent": "#AAAAAA",
-        "error": "#AAAAAA",
-        "info": "#AAAAAA",
-        "success": "#AAAAAA",
-        "warning": "#AAAAAA",
-        "background": "#AAAAAA",
-        "active_color": "#AAAAAA",
-        "font_size": 1
-      },
-      "table": {
-        "background": "#AAAAAA",
-        "row_color": "#AAAAAA",
-        "shift_row_color": "#AAAAAA",
-        "hover_row_color": "#AAAAAA"
-      },
-      "state": {
-        "ok": "#AAAAAA",
-        "minor": "#AAAAAA",
-        "major": "#AAAAAA",
-        "critical": "#AAAAAA"
-      }
-    }
-  }
-  """
-  Then the response code should be 400
-  Then the response body should contain:
-  """json
-  {
-    "errors": {
-      "_id": "ID already exists."
-    }
-  }
-  """
 
   @concurrent
   Scenario: given create request without required fields should return error
@@ -228,7 +182,7 @@ Feature: Create a color theme
       "colors.main.success": "Success is missing.",
       "colors.main.warning": "Warning is missing.",
       "colors.main.active_color": "ActiveColor is missing.",
-      "colors.main.font_size": "FontSize is missing.",
+      "font_size": "FontSize is missing.",
       "colors.state.critical": "Critical is missing.",
       "colors.state.major": "Major is missing.",
       "colors.state.minor": "Minor is missing.",
@@ -246,8 +200,8 @@ Feature: Create a color theme
   When I do POST /api/v4/color-themes:
   """json
   {
-    "_id": "test_3",
     "name": "test_3",
+    "font_size": 4,
     "colors": {
       "main": {
         "primary": "bad_color",
@@ -258,8 +212,7 @@ Feature: Create a color theme
         "success": "bad_color",
         "warning": "bad_color",
         "background": "bad_color",
-        "active_color": "bad_color",
-        "font_size": 4
+        "active_color": "bad_color"
       },
       "table": {
         "background": "bad_color",
@@ -290,7 +243,7 @@ Feature: Create a color theme
       "colors.main.success": "Success is not valid.",
       "colors.main.warning": "Warning is not valid.",
       "colors.main.active_color": "ActiveColor is not valid.",
-      "colors.main.font_size": "FontSize must be one of [1 2 3].",
+      "font_size": "FontSize must be one of [1 2 3].",
       "colors.state.critical": "Critical is not valid.",
       "colors.state.major": "Major is not valid.",
       "colors.state.minor": "Minor is not valid.",
