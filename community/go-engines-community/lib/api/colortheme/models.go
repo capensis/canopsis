@@ -6,18 +6,10 @@ import (
 )
 
 type EditRequest struct {
-	Name   string `bson:"name" json:"name" binding:"required"`
-	Colors Colors `bson:"colors" json:"colors"`
-}
-
-type CreateRequest struct {
-	EditRequest
-	ID string `bson:"_id" json:"_id" binding:"id"`
-}
-
-type UpdateRequest struct {
-	EditRequest
-	ID string `json:"-"`
+	ID       string `bson:"_id" json:"-"`
+	Name     string `bson:"name" json:"name" binding:"required"`
+	Colors   Colors `bson:"colors" json:"colors"`
+	FontSize int    `bson:"font_size" json:"font_size" binding:"required,oneof=1 2 3"`
 }
 
 type BulkDeleteRequestItem struct {
@@ -28,6 +20,7 @@ type Theme struct {
 	ID        string        `bson:"_id" json:"_id"`
 	Name      string        `bson:"name" json:"name"`
 	Colors    Colors        `bson:"colors" json:"colors"`
+	FontSize  int           `bson:"font_size" json:"font_size"`
 	Updated   types.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
 	Deletable bool          `bson:"deletable" json:"deletable"`
 }
@@ -43,7 +36,6 @@ type Colors struct {
 		Warning     string `bson:"warning" json:"warning" binding:"required,iscolor"`
 		Background  string `bson:"background" json:"background" binding:"required,iscolor"`
 		ActiveColor string `bson:"active_color" json:"active_color" binding:"required,iscolor"`
-		FontSize    int    `bson:"font_size" json:"font_size" binding:"required,oneof=1 2 3"`
 	} `bson:"main" json:"main"`
 	Table struct {
 		Background    string `bson:"background" json:"background" binding:"required,iscolor"`

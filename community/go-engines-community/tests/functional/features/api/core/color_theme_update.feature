@@ -20,6 +20,7 @@ Feature: Update a color theme
   """json
   {
     "name": "test_theme_to_update_1_updated",
+    "font_size": 1,
     "colors": {
       "main": {
         "primary": "#FFFFFF",
@@ -30,8 +31,7 @@ Feature: Update a color theme
         "success": "#FFFFFF",
         "warning": "#FFFFFF",
         "background": "#FFFFFF",
-        "active_color": "#FFFFFF",
-        "font_size": 1
+        "active_color": "#FFFFFF"
       },
       "table": {
         "background": "#FFFFFF",
@@ -52,8 +52,8 @@ Feature: Update a color theme
   Then the response body should contain:
   """json
   {
-    "_id": "test_theme_to_update_1",
     "name": "test_theme_to_update_1_updated",
+    "font_size": 1,
     "colors": {
       "main": {
         "primary": "#FFFFFF",
@@ -64,8 +64,7 @@ Feature: Update a color theme
         "success": "#FFFFFF",
         "warning": "#FFFFFF",
         "background": "#FFFFFF",
-        "active_color": "#FFFFFF",
-        "font_size": 1
+        "active_color": "#FFFFFF"
       },
       "table": {
         "background": "#FFFFFF",
@@ -91,6 +90,7 @@ Feature: Update a color theme
   """json
   {
     "name": "test_theme_to_get_1",
+    "font_size": 1,
     "colors": {
       "main": {
         "primary": "#AAAAAA",
@@ -101,8 +101,7 @@ Feature: Update a color theme
         "success": "#AAAAAA",
         "warning": "#AAAAAA",
         "background": "#AAAAAA",
-        "active_color": "#FFFFFF",
-        "font_size": 1
+        "active_color": "#FFFFFF"
       },
       "table": {
         "background": "#AAAAAA",
@@ -150,7 +149,7 @@ Feature: Update a color theme
       "colors.main.success": "Success is missing.",
       "colors.main.warning": "Warning is missing.",
       "colors.main.active_color": "ActiveColor is missing.",
-      "colors.main.font_size": "FontSize is missing.",
+      "font_size": "FontSize is missing.",
       "colors.state.critical": "Critical is missing.",
       "colors.state.major": "Major is missing.",
       "colors.state.minor": "Minor is missing.",
@@ -169,6 +168,7 @@ Feature: Update a color theme
   """json
   {
     "name": "test_theme_to_update_1",
+    "font_size": 4,
     "colors": {
       "main": {
         "primary": "bad_color",
@@ -179,8 +179,7 @@ Feature: Update a color theme
         "success": "bad_color",
         "warning": "bad_color",
         "background": "bad_color",
-        "active_color": "bad_color",
-        "font_size": 4
+        "active_color": "bad_color"
       },
       "table": {
         "background": "bad_color",
@@ -211,7 +210,7 @@ Feature: Update a color theme
       "colors.main.success": "Success is not valid.",
       "colors.main.warning": "Warning is not valid.",
       "colors.main.active_color": "ActiveColor is not valid.",
-      "colors.main.font_size": "FontSize must be one of [1 2 3].",
+      "font_size": "FontSize must be one of [1 2 3].",
       "colors.state.critical": "Critical is not valid.",
       "colors.state.major": "Major is not valid.",
       "colors.state.minor": "Minor is not valid.",
@@ -231,6 +230,7 @@ Feature: Update a color theme
   """json
   {
     "name": "test_not_found",
+    "font_size": 1,
     "colors": {
       "main": {
         "primary": "#AAAAAA",
@@ -241,8 +241,7 @@ Feature: Update a color theme
         "success": "#AAAAAA",
         "warning": "#AAAAAA",
         "background": "#AAAAAA",
-        "active_color": "#AAAAAA",
-        "font_size": 1
+        "active_color": "#AAAAAA"
       },
       "table": {
         "background": "#AAAAAA",
@@ -274,6 +273,7 @@ Feature: Update a color theme
   """json
   {
     "name": "test_not_found",
+    "font_size": 1,
     "colors": {
       "main": {
         "primary": "#AAAAAA",
@@ -284,8 +284,7 @@ Feature: Update a color theme
         "success": "#AAAAAA",
         "warning": "#AAAAAA",
         "background": "#AAAAAA",
-        "active_color": "#AAAAAA",
-        "font_size": 1
+        "active_color": "#AAAAAA"
       },
       "table": {
         "background": "#AAAAAA",
