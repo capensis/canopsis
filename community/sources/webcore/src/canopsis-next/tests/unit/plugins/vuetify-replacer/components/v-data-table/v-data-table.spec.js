@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import VDataTable from '@/plugins/vuetify-replacer/components/v-data-table/v-data-table.vue';
+import VDataTable from '@/plugins/vuetify/components/v-data-table/v-data-table.vue';
 
 const stubs = {};
 

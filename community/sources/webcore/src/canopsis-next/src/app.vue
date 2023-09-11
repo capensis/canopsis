@@ -41,7 +41,6 @@ import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active
 import '@/assets/styles/main.scss';
 
 const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
-const { mapActions: mapThemeActions } = createNamespacedHelpers('theme');
 
 export default {
   components: {
@@ -103,9 +102,6 @@ export default {
     ...mapActions({
       fetchPausedExecutionsWithoutStore: 'fetchPausedListWithoutStore',
     }),
-    ...mapThemeActions({
-      fetchThemesListWithoutStore: 'fetchListWithoutStore',
-    }),
 
     showLocalStorageWarningPopupMessage() {
       const text = localStorageService.pop('warningPopup');
@@ -120,12 +116,7 @@ export default {
         if (!isEmpty(currentUser)) {
           this.$socket.authenticate(localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY));
 
-          /**
-           * TODO: Should be removed later
-           */
-          const { data: themes } = await this.fetchThemesListWithoutStore({ params: { limit: MAX_LIMIT } });
-          this.setTheme(themes.find(({ _id: id }) => currentUser.ui_theme === id));
-          // this.setTheme(currentUser.ui_theme);
+          this.setTheme(currentUser.ui_theme);
 
           await this.filesAccess();
 
@@ -223,17 +214,17 @@ export default {
 </script>
 
 <style lang="scss">
-  #app {
-    &.-fullscreen {
-      width: 100%;
+#app {
+  &.-fullscreen {
+    width: 100%;
 
-      #main-navigation {
-        display: none;
-      }
+    #main-navigation {
+      display: none;
+    }
 
-      #main-content {
-        padding: 0 !important;
-      }
+    #main-content {
+      padding: 0 !important;
     }
   }
+}
 </style>

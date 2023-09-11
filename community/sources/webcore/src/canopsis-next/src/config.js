@@ -298,9 +298,9 @@ export const COLORS = {
   success: '#4caf50',
   warning: '#fb8c00',
   background: '#ffffff',
+  activeColor: '#000000',
   table: {
     background: '#FFFFFF',
-    activeColor: '#000000',
     rowColor: '#FFFFFF',
     shiftRowColor: '#F5F5F5',
     hoverRowColor: '#F5F5F5',
@@ -515,13 +515,13 @@ export const DEFAULT_THEME_COLORS = {
   success: COLORS.success,
   warning: COLORS.warning,
   background: COLORS.background,
+  active_color: COLORS.activeColor,
 
   state: COLORS.state,
   table: {
     background: COLORS.table.background,
-    activeColor: COLORS.table.activeColor,
-    rowColor: COLORS.table.rowColor,
-    hoverRowColor: COLORS.table.hoverRowColor,
+    row_color: COLORS.table.rowColor,
+    hover_row_color: COLORS.table.hoverRowColor,
   },
 };
 

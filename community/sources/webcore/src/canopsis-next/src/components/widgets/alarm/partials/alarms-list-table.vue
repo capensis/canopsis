@@ -52,7 +52,7 @@
         :total-items="totalItems",
         :pagination="pagination",
         :select-all="selectable",
-        :loading="true",
+        :loading="loading || columnsFiltersPending",
         :expand="expandable",
         :dense="isMediumHeight",
         :ultra-dense="isSmallHeight",

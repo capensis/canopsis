@@ -1,5 +1,9 @@
+import { THEME_FONT_SIZES } from '@/constants/theme';
+
 export default {
   colorThemes: 'Color themes',
+  exampleText: 'Hello world!',
+  defaultTheme: 'The theme is default, you cannot to edit theme!',
   errors: {
     notReadable: 'Text is not readable',
   },
@@ -28,17 +32,24 @@ export default {
     warningHelpText: 'Color for warning messages and notifications',
 
     background: 'Main background color',
+
+    activeColor: 'Main active color',
+    activeColorHelpText: 'Main color for texts and icons',
+  },
+  fontSize: {
+    title: 'Font size settings',
+
+    sizes: {
+      [THEME_FONT_SIZES.small]: 'Small',
+      [THEME_FONT_SIZES.medium]: 'Medium',
+      [THEME_FONT_SIZES.large]: 'Large',
+    },
   },
   table: {
     title: 'Table settings',
 
     background: 'Table background color',
     backgroundHelpText: 'BG color for the alarm list table',
-
-    activeColor: 'Main active color',
-    activeColorHelpText: 'Main color for texts and icons',
-
-    exampleText: 'Hello world!',
 
     rowColor: 'Table row color',
     rowColorHelpText: 'BG color for the each table row',
