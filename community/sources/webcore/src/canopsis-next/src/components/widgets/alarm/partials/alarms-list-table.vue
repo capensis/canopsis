@@ -128,7 +128,7 @@
 </template>
 
 <script>
-import { differenceBy } from 'lodash';
+import { intersectionBy } from 'lodash';
 
 import { ALARM_DENSE_TYPES, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
 
@@ -366,6 +366,7 @@ export default {
       return {
         [`columns-${label}`]: true,
         'alarms-list-table__selecting': this.selecting,
+        'alarms-list-table__selecting--text-unselectable': this.selectingMousePressed,
         'alarms-list-table__grid': this.isColumnsChanging,
         'alarms-list-table__dragging': this.draggingMode,
         'alarms-list-table--wrapped': this.isCellContentWrapped,
@@ -423,12 +424,8 @@ export default {
   },
 
   watch: {
-    alarms(alarms, prevAlarms) {
-      const diff = differenceBy(alarms, prevAlarms, '_id');
-
-      if (diff.length) {
-        this.clearSelected();
-      }
+    alarms(alarms) {
+      this.selected = intersectionBy(alarms, this.selected, '_id');
     },
 
     columns() {
@@ -634,8 +631,10 @@ export default {
       opacity: 1;
     }
 
-    * {
-      user-select: none;
+    &--text-unselectable {
+      * {
+        user-select: none;
+      }
     }
   }
 

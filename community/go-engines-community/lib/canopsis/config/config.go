@@ -20,7 +20,6 @@ const (
 // SectionAlarm ...
 type SectionAlarm struct {
 	StealthyInterval     int    `toml:"StealthyInterval"`
-	EnableLastEventDate  bool   `toml:"EnableLastEventDate"`
 	CancelAutosolveDelay string `toml:"CancelAutosolveDelay"`
 	DisplayNameScheme    string `toml:"DisplayNameScheme"`
 	OutputLength         int    `toml:"OutputLength"`
@@ -41,6 +40,9 @@ type SectionGlobal struct {
 	ReconnectTimeoutMilliseconds int   `toml:"ReconnectTimeoutMilliseconds"`
 	ReconnectRetries             int   `toml:"ReconnectRetries"`
 	MaxExternalResponseSize      int64 `toml:"MaxExternalResponseSize"`
+
+	BuildEntityInfosDictionary  bool `toml:"BuildEntityInfosDictionary"`
+	BuildDynamicInfosDictionary bool `toml:"BuildDynamicInfosDictionary"`
 }
 
 func (s *SectionGlobal) GetReconnectTimeout() time.Duration {

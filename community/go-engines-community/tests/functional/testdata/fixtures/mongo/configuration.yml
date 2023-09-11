@@ -25,7 +25,6 @@ configuration:
       disableactionsnoozedelayonpbh: true
       displaynamescheme: '{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3
         }}'
-      enablelasteventdate: true
       longoutputlength: 1024
       outputlength: 255
       stealthyinterval: 0
@@ -48,6 +47,8 @@ configuration:
       reconnectretries: 3
       reconnecttimeoutmilliseconds: 8
       maxexternalresponsesize: 10485760
+      buildentityinfosdictionary: true
+      builddynamicinfosdictionary: true
     import_ctx:
       filepattern: /tmp/import_%s.json
       thdcritminperimport: 60m
