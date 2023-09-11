@@ -13,7 +13,6 @@ color_theme:
         warning: '#fb8c00'
         background: '#ffffff'
         active_color: '#000'
-        font_size: 2
       state:
         ok: '#00a65a'
         minor: '#fcdc00'
@@ -23,6 +22,7 @@ color_theme:
         background: '#fff'
         row_color: '#fff'
         hover_row_color: '#eee'
+    font_size: 2
     updated: <NowUnix()>
     deletable: false
   canopsis_dark:
@@ -37,9 +37,8 @@ color_theme:
         info: '#2196f3'
         success: '#4caf50'
         warning: '#fb8c00'
-        background: '#303030'
+        background: '#424242'
         active_color: '#fff'
-        font_size: 2
       state:
         ok: '#00a65a'
         minor: '#fcdc00'
@@ -49,6 +48,7 @@ color_theme:
         background: '#424242'
         row_color: '#424242'
         hover_row_color: '#616161'
+    font_size: 2
     updated: <NowUnix()>
     deletable: false
   color_blind:
@@ -65,7 +65,6 @@ color_theme:
         warning: '#fb8c00'
         background: '#ffffff'
         active_color: '#000'
-        font_size: 2
       state:
         ok: '#00a65a'
         minor: '#fcdc00'
@@ -75,6 +74,7 @@ color_theme:
         background: '#fff'
         row_color: '#fff'
         hover_row_color: '#eee'
+    font_size: 2
     updated: <NowUnix()>
     deletable: false
   color_blind_dark:
@@ -89,9 +89,8 @@ color_theme:
         info: '#2196f3'
         success: '#4caf50'
         warning: '#fb8c00'
-        background: '#303030'
+        background: '#424242'
         active_color: '#fff'
-        font_size: 2
       state:
         ok: '#00a65a'
         minor: '#fcdc00'
@@ -101,5 +100,6 @@ color_theme:
         background: '#424242'
         row_color: '#424242'
         hover_row_color: '#616161'
+    font_size: 2
     updated: <NowUnix()>
     deletable: false

@@ -3,8 +3,6 @@ package colortheme
 import (
 	"context"
 	"errors"
-	"fmt"
-	"regexp"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -23,10 +21,10 @@ const (
 )
 
 type Store interface {
-	Insert(ctx context.Context, r CreateRequest) (*Theme, error)
+	Insert(ctx context.Context, r EditRequest) (*Theme, error)
 	GetById(ctx context.Context, id string) (*Theme, error)
 	Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error)
-	Update(ctx context.Context, r UpdateRequest) (*Theme, error)
+	Update(ctx context.Context, r EditRequest) (*Theme, error)
 	Delete(ctx context.Context, id string) (bool, error)
 }
 
@@ -36,7 +34,6 @@ type store struct {
 
 	defaultSearchByFields []string
 	defaultThemeIDs       map[string]struct{}
-	dupErrorRegexp        *regexp.Regexp
 }
 
 func NewStore(
@@ -52,22 +49,17 @@ func NewStore(
 			ColorBlind:     {},
 			ColorBlindDark: {},
 		},
-		dupErrorRegexp: regexp.MustCompile(`{ ([^:]+)`),
 	}
 }
 
-func (s *store) Insert(ctx context.Context, r CreateRequest) (*Theme, error) {
-	theme := s.transformRequestToDocument(r.EditRequest)
-
-	theme.ID = r.ID
-	if theme.ID == "" {
-		theme.ID = utils.NewID()
-	}
+func (s *store) Insert(ctx context.Context, r EditRequest) (*Theme, error) {
+	theme := s.transformRequestToDocument(r)
+	theme.ID = utils.NewID()
 
 	_, err := s.dbColorCollection.InsertOne(ctx, theme)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
-			return nil, s.parseDupError(err)
+			return nil, common.NewValidationError("name", "Name already exists.")
 		}
 
 		return nil, err
@@ -125,18 +117,18 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 	return &result, nil
 }
 
-func (s *store) Update(ctx context.Context, r UpdateRequest) (*Theme, error) {
+func (s *store) Update(ctx context.Context, r EditRequest) (*Theme, error) {
 	if s.isDefaultTheme(r.ID) {
 		return nil, ErrDefaultTheme
 	}
 
-	theme := s.transformRequestToDocument(r.EditRequest)
+	theme := s.transformRequestToDocument(r)
 	theme.ID = r.ID
 
 	res, err := s.dbColorCollection.UpdateOne(ctx, bson.M{"_id": theme.ID}, bson.M{"$set": theme})
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
-			return nil, s.parseDupError(err)
+			return nil, common.NewValidationError("name", "Name already exists.")
 		}
 
 		return nil, err
@@ -171,27 +163,10 @@ func (s *store) transformRequestToDocument(r EditRequest) Theme {
 	return Theme{
 		Name:      r.Name,
 		Colors:    r.Colors,
+		FontSize:  r.FontSize,
 		Updated:   types.NewCpsTime(),
 		Deletable: true,
 	}
-}
-
-func (s *store) parseDupError(err error) error {
-	match := s.dupErrorRegexp.FindStringSubmatch(err.Error())
-	if len(match) > 1 {
-		matchedStr := match[1]
-
-		switch matchedStr {
-		case "name":
-			return common.NewValidationError("name", "Name already exists.")
-		case "_id":
-			return common.NewValidationError("_id", "ID already exists.")
-		default:
-			return common.NewValidationError(matchedStr, matchedStr+" already exists.")
-		}
-	}
-
-	return fmt.Errorf("can't parse duplication error: %w", err)
 }
 
 func (s *store) isDefaultTheme(id string) bool {

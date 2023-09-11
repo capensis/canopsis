@@ -82,6 +82,7 @@ Feature: Account auth user
       "ui_language": "en",
       "ui_theme": {
         "name": "Canopsis",
+        "font_size": 2,
         "colors": {
           "main": {
             "primary": "#2fab63",
@@ -92,8 +93,7 @@ Feature: Account auth user
             "success": "#4caf50",
             "warning": "#fb8c00",
             "background": "#ffffff",
-            "active_color": "#000",
-            "font_size": 2
+            "active_color": "#000"
           },
           "table": {
             "background": "#fff",

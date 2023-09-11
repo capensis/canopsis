@@ -37,7 +37,6 @@ if (!db.color_theme.findOne({_id: "canopsis"})) {
                 warning: '#fb8c00',
                 background: '#ffffff',
                 active_color: '#000',
-                font_size: 2
             },
             state: {
                 ok: '#00a65a',
@@ -51,6 +50,7 @@ if (!db.color_theme.findOne({_id: "canopsis"})) {
                 hover_row_color: '#eee',
             }
         },
+        font_size: 2,
         updated: now,
         deletable: false
     });
@@ -69,9 +69,8 @@ if (!db.color_theme.findOne({_id: "canopsis_dark"})) {
                 info: '#2196f3',
                 success: '#4caf50',
                 warning: '#fb8c00',
-                background: '#303030',
+                background: '#424242',
                 active_color: '#fff',
-                font_size: 2
             },
             state: {
                 ok: '#00a65a',
@@ -85,6 +84,7 @@ if (!db.color_theme.findOne({_id: "canopsis_dark"})) {
                 hover_row_color: '#616161',
             }
         },
+        font_size: 2,
         updated: now,
         deletable: false
     });
@@ -105,7 +105,6 @@ if (!db.color_theme.findOne({_id: "color_blind"})) {
                 warning: '#fb8c00',
                 background: '#ffffff',
                 active_color: '#000',
-                font_size: 2
             },
             state: {
                 ok: '#00a65a',
@@ -119,6 +118,7 @@ if (!db.color_theme.findOne({_id: "color_blind"})) {
                 hover_row_color: '#eee',
             }
         },
+        font_size: 2,
         updated: now,
         deletable: false,
     });
@@ -137,9 +137,8 @@ if (!db.color_theme.findOne({_id: "color_blind_dark"})) {
                 info: '#2196f3',
                 success: '#4caf50',
                 warning: '#fb8c00',
-                background: '#303030',
+                background: '#424242',
                 active_color: '#fff',
-                font_size: 2
             },
             state: {
                 ok: '#00a65a',
@@ -153,6 +152,7 @@ if (!db.color_theme.findOne({_id: "color_blind_dark"})) {
                 hover_row_color: '#616161',
             }
         },
+        font_size: 2,
         updated: now,
         deletable: false,
     });

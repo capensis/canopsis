@@ -63,6 +63,7 @@ Feature: Update a user
       "ui_language": "fr",
       "ui_theme": {
         "name": "Canopsis",
+        "font_size": 2,
         "colors": {
           "main": {
             "primary": "#2fab63",
@@ -73,8 +74,7 @@ Feature: Update a user
             "success": "#4caf50",
             "warning": "#fb8c00",
             "background": "#ffffff",
-            "active_color": "#000",
-            "font_size": 2
+            "active_color": "#000"
           },
           "table": {
             "background": "#fff",
@@ -369,6 +369,7 @@ Feature: Update a user
     {
       "ui_theme": {
         "name": "Canopsis",
+        "font_size": 2,
         "colors": {
           "main": {
             "primary": "#2fab63",
@@ -379,8 +380,7 @@ Feature: Update a user
             "success": "#4caf50",
             "warning": "#fb8c00",
             "background": "#ffffff",
-            "active_color": "#000",
-            "font_size": 2
+            "active_color": "#000"
           },
           "table": {
             "background": "#fff",
@@ -425,6 +425,7 @@ Feature: Update a user
     {
       "ui_theme": {
         "name": "test_theme_to_pick_1",
+        "font_size": 2,
         "colors": {
           "main": {
             "primary": "#AAAAAA",
@@ -435,8 +436,7 @@ Feature: Update a user
             "success": "#AAAAAA",
             "warning": "#AAAAAA",
             "background": "#AAAAAA",
-            "active_color": "#AAAAAA",
-            "font_size": 2
+            "active_color": "#AAAAAA"
           },
           "table": {
             "background": "#AAAAAA",
@@ -482,6 +482,7 @@ Feature: Update a user
     {
       "ui_theme": {
         "name": "test_theme_to_pick_3",
+        "font_size": 2,
         "colors": {
           "main": {
             "primary": "#AAAAAA",
@@ -492,8 +493,7 @@ Feature: Update a user
             "success": "#AAAAAA",
             "warning": "#AAAAAA",
             "background": "#AAAAAA",
-            "active_color": "#AAAAAA",
-            "font_size": 2
+            "active_color": "#AAAAAA"
           },
           "table": {
             "background": "#AAAAAA",
@@ -520,6 +520,7 @@ Feature: Update a user
     {
       "ui_theme": {
         "name": "Canopsis",
+        "font_size": 2,
         "colors": {
           "main": {
             "primary": "#2fab63",
@@ -530,8 +531,7 @@ Feature: Update a user
             "success": "#4caf50",
             "warning": "#fb8c00",
             "background": "#ffffff",
-            "active_color": "#000",
-            "font_size": 2
+            "active_color": "#000"
           },
           "table": {
             "background": "#fff",

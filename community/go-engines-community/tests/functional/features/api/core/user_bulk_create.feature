@@ -509,6 +509,7 @@ Feature: Bulk create users
           "ui_language": "fr",
           "ui_theme": {
             "name": "Canopsis",
+            "font_size": 2,
             "colors": {
               "main": {
                 "primary": "#2fab63",
@@ -519,8 +520,7 @@ Feature: Bulk create users
                 "success": "#4caf50",
                 "warning": "#fb8c00",
                 "background": "#ffffff",
-                "active_color": "#000",
-                "font_size": 2
+                "active_color": "#000"
               },
               "table": {
                 "background": "#fff",
@@ -563,6 +563,7 @@ Feature: Bulk create users
           "ui_language": "fr",
           "ui_theme": {
             "name": "test_theme_to_pick_1",
+            "font_size": 2,
             "colors": {
               "main": {
                 "primary": "#AAAAAA",
@@ -573,8 +574,7 @@ Feature: Bulk create users
                 "success": "#AAAAAA",
                 "warning": "#AAAAAA",
                 "background": "#AAAAAA",
-                "active_color": "#AAAAAA",
-                "font_size": 2
+                "active_color": "#AAAAAA"
               },
               "table": {
                 "background": "#AAAAAA",
@@ -618,6 +618,7 @@ Feature: Bulk create users
           "ui_language": "fr",
           "ui_theme": {
             "name": "Canopsis dark",
+            "font_size": 2,
             "colors": {
               "main": {
                 "primary": "#2fab63",
@@ -627,9 +628,8 @@ Feature: Bulk create users
                 "info": "#2196f3",
                 "success": "#4caf50",
                 "warning": "#fb8c00",
-                "background": "#303030",
-                "active_color": "#fff",
-                "font_size": 2
+                "background": "#424242",
+                "active_color": "#fff"
               },
               "table": {
                 "background": "#424242",
@@ -672,6 +672,7 @@ Feature: Bulk create users
           "external_id": "test-id",
           "ui_theme": {
             "name": "Canopsis",
+            "font_size": 2,
             "colors": {
               "main": {
                 "primary": "#2fab63",
@@ -682,8 +683,7 @@ Feature: Bulk create users
                 "success": "#4caf50",
                 "warning": "#fb8c00",
                 "background": "#ffffff",
-                "active_color": "#000",
-                "font_size": 2
+                "active_color": "#000"
               },
               "table": {
                 "background": "#fff",

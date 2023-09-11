@@ -35,6 +35,7 @@ Feature: Get a color theme
     "data": [
       {
         "name": "test_theme_to_get_1",
+        "font_size": 2,
         "colors": {
           "main": {
             "primary": "#AAAAAA",
@@ -45,8 +46,7 @@ Feature: Get a color theme
             "success": "#AAAAAA",
             "warning": "#AAAAAA",
             "background": "#AAAAAA",
-            "active_color": "#AAAAAA",
-            "font_size": 2
+            "active_color": "#AAAAAA"
           },
           "table": {
             "background": "#AAAAAA",
@@ -65,6 +65,7 @@ Feature: Get a color theme
       },
       {
         "name": "test_theme_to_get_2",
+        "font_size": 2,
         "colors": {
           "main": {
             "primary": "#AAAAAA",
@@ -75,8 +76,7 @@ Feature: Get a color theme
             "success": "#AAAAAA",
             "warning": "#AAAAAA",
             "background": "#AAAAAA",
-            "active_color": "#AAAAAA",
-            "font_size": 2
+            "active_color": "#AAAAAA"
           },
           "table": {
             "background": "#AAAAAA",
@@ -112,6 +112,7 @@ Feature: Get a color theme
   """json
   {
     "name": "test_theme_to_get_1",
+    "font_size": 2,
     "colors": {
       "main": {
         "primary": "#AAAAAA",
@@ -122,8 +123,7 @@ Feature: Get a color theme
         "success": "#AAAAAA",
         "warning": "#AAAAAA",
         "background": "#AAAAAA",
-        "active_color": "#AAAAAA",
-        "font_size": 2
+        "active_color": "#AAAAAA"
       },
       "table": {
         "background": "#AAAAAA",
