@@ -103,6 +103,7 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 		metaAlarm = p.newAlarm(event.Parameters, *event.Entity, p.alarmConfigProvider.Get())
 		metaAlarm.Value.Meta = event.Parameters.MetaAlarmRuleID
 		metaAlarm.Value.MetaValuePath = event.Parameters.MetaAlarmValuePath
+		metaAlarm.Value.LastEventDate = types.CpsTime{} // should be empty
 
 		if event.Parameters.DisplayName != "" {
 			metaAlarm.Value.DisplayName = event.Parameters.DisplayName
@@ -143,6 +144,7 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 
 		var lastChild types.AlarmWithEntity
 		worstState := types.CpsNumber(types.AlarmStateMinor)
+		eventsCount := types.CpsNumber(0)
 
 		if len(childEntityIDs) > 0 {
 			childAlarms, err := p.getAlarmsWithEntityByEntityIDs(ctx, childEntityIDs)
@@ -171,6 +173,11 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 					}
 					metaAlarm.AddChild(childAlarm.Alarm.EntityID)
 					updatedChildrenAlarms = append(updatedChildrenAlarms, childAlarm.Alarm)
+
+					eventsCount += childAlarm.Alarm.Value.EventsCount
+					if metaAlarm.Value.LastEventDate.Before(childAlarm.Alarm.Value.LastEventDate) {
+						metaAlarm.Value.LastEventDate = childAlarm.Alarm.Value.LastEventDate
+					}
 				}
 			}
 		}
@@ -195,6 +202,7 @@ func (p *metaAlarmEventProcessor) CreateMetaAlarm(ctx context.Context, event rpc
 		}
 
 		metaAlarm.UpdateOutput(output)
+		metaAlarm.Value.EventsCount = eventsCount
 
 		err = p.adapter.Insert(ctx, metaAlarm)
 		if err != nil {
@@ -228,14 +236,14 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 	}
 
 	var updatedChildrenAlarms []types.Alarm
-	var alarm types.Alarm
+	var metaAlarm types.Alarm
 	var err error
 
 	err = p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedChildrenAlarms = make([]types.Alarm, 0)
 		var lastChild types.AlarmWithEntity
 
-		err = p.alarmCollection.FindOne(ctx, bson.M{"d": event.Entity.ID}).Decode(&alarm)
+		err = p.alarmCollection.FindOne(ctx, bson.M{"d": event.Entity.ID}).Decode(&metaAlarm)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil
@@ -256,15 +264,22 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 			return err
 		}
 
-		newStep := types.NewMetaAlarmAttachStep(alarm, rule.Name)
+		var lastEventDate types.CpsTime
+		newStep := types.NewMetaAlarmAttachStep(metaAlarm, rule.Name)
 		worstState := types.CpsNumber(types.AlarmStateOK)
+		eventsCount := types.CpsNumber(0)
 
 		for _, childAlarm := range alarms {
-			if !childAlarm.Alarm.AddParent(alarm.EntityID) {
+			if !childAlarm.Alarm.AddParent(metaAlarm.EntityID) {
 				continue
 			}
 
-			alarm.AddChild(childAlarm.Entity.ID)
+			metaAlarm.AddChild(childAlarm.Entity.ID)
+			eventsCount += childAlarm.Alarm.Value.EventsCount
+			if lastEventDate.Before(childAlarm.Alarm.Value.LastEventDate) {
+				lastEventDate = childAlarm.Alarm.Value.LastEventDate
+			}
+
 			err = childAlarm.Alarm.PartialUpdateAddStepWithStep(newStep)
 			if err != nil {
 				return err
@@ -282,23 +297,22 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 			return nil
 		}
 
-		if alarm.Value.Meta == "" {
-			alarm.SetMeta(event.Parameters.MetaAlarmRuleID)
-			alarm.SetMetaValuePath(event.Parameters.MetaAlarmValuePath)
+		if metaAlarm.Value.Meta == "" {
+			metaAlarm.SetMeta(event.Parameters.MetaAlarmRuleID)
+			metaAlarm.SetMetaValuePath(event.Parameters.MetaAlarmValuePath)
 		}
 
-		if worstState > alarm.CurrentState() {
-			err = UpdateAlarmState(&alarm, *event.Entity, event.Parameters.Timestamp, worstState, alarm.Value.Output, p.alarmStatusService)
+		metaAlarm.PartialUpdateLastEventDate(lastEventDate)
+		metaAlarm.IncrementEventsCount(eventsCount)
+
+		if worstState > metaAlarm.CurrentState() {
+			err = UpdateAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp, worstState, metaAlarm.Value.Output, p.alarmStatusService)
 			if err != nil {
 				return err
 			}
 		}
 
-		if alarm.Value.LastEventDate.Before(event.Parameters.Timestamp) {
-			alarm.PartialUpdateLastEventDate(event.Parameters.Timestamp)
-		}
-
-		childrenCount, err := p.adapter.GetCountOpenedAlarmsByIDs(ctx, alarm.Value.Children)
+		childrenCount, err := p.adapter.GetCountOpenedAlarmsByIDs(ctx, metaAlarm.Value.Children)
 		if err != nil {
 			return err
 		}
@@ -317,24 +331,24 @@ func (p *metaAlarmEventProcessor) AttachChildrenToMetaAlarm(ctx context.Context,
 			}
 		}
 
-		alarm.UpdateOutput(output)
+		metaAlarm.UpdateOutput(output)
 
-		return p.adapter.PartialMassUpdateOpen(ctx, append([]types.Alarm{alarm}, updatedChildrenAlarms...))
+		return p.adapter.PartialMassUpdateOpen(ctx, append([]types.Alarm{metaAlarm}, updatedChildrenAlarms...))
 	})
 	if err != nil {
 		return nil, nil, nil, err
 	}
 
-	if alarm.ID == "" {
+	if metaAlarm.ID == "" {
 		return nil, nil, nil, nil
 	}
 
-	childrenEvents, err := p.applyActionsOnChildren(alarm, updatedChildrenAlarms)
+	childrenEvents, err := p.applyActionsOnChildren(metaAlarm, updatedChildrenAlarms)
 	if err != nil {
 		return nil, nil, nil, err
 	}
 
-	return &alarm, updatedChildrenAlarms, childrenEvents, nil
+	return &metaAlarm, updatedChildrenAlarms, childrenEvents, nil
 }
 
 func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(ctx context.Context, event rpc.AxeEvent) (*types.Alarm, error) {
@@ -343,13 +357,13 @@ func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(ctx context.Contex
 	}
 
 	var updatedChildrenAlarms []types.Alarm
-	var alarm types.Alarm
+	var metaAlarm types.Alarm
 	var err error
 
 	err = p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedChildrenAlarms = make([]types.Alarm, 0)
 
-		err = p.alarmCollection.FindOne(ctx, bson.M{"d": event.Entity.ID}).Decode(&alarm)
+		err = p.alarmCollection.FindOne(ctx, bson.M{"d": event.Entity.ID}).Decode(&metaAlarm)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil
@@ -370,9 +384,12 @@ func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(ctx context.Contex
 			return err
 		}
 
+		eventsCount := types.CpsNumber(0)
+
 		for _, childAlarm := range alarms {
 			if childAlarm.Alarm.RemoveParent(event.Entity.ID) {
-				alarm.RemoveChild(childAlarm.Entity.ID)
+				metaAlarm.RemoveChild(childAlarm.Entity.ID)
+				eventsCount -= childAlarm.Alarm.Value.EventsCount
 				updatedChildrenAlarms = append(updatedChildrenAlarms, childAlarm.Alarm)
 			}
 		}
@@ -381,20 +398,28 @@ func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(ctx context.Contex
 			return nil
 		}
 
-		metaAlarmChildren, err := p.getAlarmsWithEntityByEntityIDs(ctx, alarm.Value.Children)
+		metaAlarmChildren, err := p.getAlarmsWithEntityByEntityIDs(ctx, metaAlarm.Value.Children)
 		if err != nil {
 			return err
 		}
 
+		var lastEventDate types.CpsTime // should be empty
 		worstState := types.CpsNumber(types.AlarmStateOK)
 
 		for _, childAlarm := range metaAlarmChildren {
 			if childAlarm.Alarm.Value.State.Value > worstState {
 				worstState = childAlarm.Alarm.Value.State.Value
 			}
+
+			if lastEventDate.Before(childAlarm.Alarm.Value.LastEventDate) {
+				lastEventDate = childAlarm.Alarm.Value.LastEventDate
+			}
 		}
 
-		err = UpdateAlarmState(&alarm, *event.Entity, event.Parameters.Timestamp, worstState, alarm.Value.Output, p.alarmStatusService)
+		metaAlarm.PartialUpdateLastEventDate(lastEventDate)
+		metaAlarm.IncrementEventsCount(eventsCount)
+
+		err = UpdateAlarmState(&metaAlarm, *event.Entity, event.Parameters.Timestamp, worstState, metaAlarm.Value.Output, p.alarmStatusService)
 		if err != nil {
 			return err
 		}
@@ -417,15 +442,15 @@ func (p *metaAlarmEventProcessor) DetachChildrenFromMetaAlarm(ctx context.Contex
 			}
 		}
 
-		alarm.UpdateOutput(output)
+		metaAlarm.UpdateOutput(output)
 
-		return p.adapter.PartialMassUpdateOpen(ctx, append([]types.Alarm{alarm}, updatedChildrenAlarms...))
+		return p.adapter.PartialMassUpdateOpen(ctx, append([]types.Alarm{metaAlarm}, updatedChildrenAlarms...))
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	return &alarm, nil
+	return &metaAlarm, nil
 }
 
 func (p *metaAlarmEventProcessor) applyActionsOnChildren(metaAlarm types.Alarm, childrenAlarms []types.Alarm) ([]types.Event, error) {
@@ -480,7 +505,7 @@ func (p *metaAlarmEventProcessor) applyActionsOnChildren(metaAlarm types.Alarm, 
 }
 
 func (p *metaAlarmEventProcessor) ProcessAxeRpc(ctx context.Context, event rpc.AxeEvent, eventRes rpc.AxeResultEvent) error {
-	if eventRes.Alarm == nil || eventRes.AlarmChangeType == "" {
+	if eventRes.Alarm == nil {
 		return nil
 	}
 
@@ -495,7 +520,7 @@ func (p *metaAlarmEventProcessor) ProcessAxeRpc(ctx context.Context, event rpc.A
 		return p.processParentRpc(ctx, event, eventRes)
 	}
 
-	if alarm.IsMetaChildren() {
+	if alarm.IsMetaChild() {
 		return p.processChildRpc(ctx, event, eventRes)
 	}
 
@@ -598,7 +623,12 @@ func (p *metaAlarmEventProcessor) processChildRpc(ctx context.Context, event rpc
 			return err
 		}
 	case types.AlarmChangeTypeResolve:
-		err := p.resolveParents(ctx, *eventRes.Alarm, event.Parameters.Timestamp)
+		err := p.incrementParentEventsCount(ctx, eventRes.Alarm.Value.Parents, -eventRes.Alarm.Value.EventsCount)
+		if err != nil {
+			return fmt.Errorf("cannot update parent alarms: %w", err)
+		}
+
+		err = p.resolveParents(ctx, *eventRes.Alarm, event.Parameters.Timestamp)
 		if err != nil {
 			return err
 		}
@@ -611,14 +641,32 @@ func (p *metaAlarmEventProcessor) processChildRpc(ctx context.Context, event rpc
 		}
 	}
 
-	if event.EventType == types.EventTypeCheck && p.alarmConfigProvider.Get().EnableLastEventDate {
-		err := p.adapter.UpdateLastEventDate(ctx, eventRes.Alarm.Value.Parents, event.Parameters.Timestamp)
+	if event.EventType == types.EventTypeCheck {
+		err := p.incrementParentEventsCount(ctx, eventRes.Alarm.Value.Parents, 1)
+		if err != nil {
+			return fmt.Errorf("cannot update parent alarms: %w", err)
+		}
+
+		err = p.adapter.UpdateLastEventDate(ctx, eventRes.Alarm.Value.Parents, event.Parameters.Timestamp)
 		if err != nil {
 			return fmt.Errorf("cannot update parent alarms: %w", err)
 		}
 	}
 
 	return nil
+}
+
+func (p *metaAlarmEventProcessor) incrementParentEventsCount(ctx context.Context, parentIDs []string, count types.CpsNumber) error {
+	_, err := p.alarmCollection.UpdateMany(
+		ctx,
+		bson.M{
+			"d":          bson.M{"$in": parentIDs},
+			"v.resolved": nil,
+		},
+		bson.M{"$inc": bson.M{"v.events_count": count}},
+	)
+
+	return err
 }
 
 func (p *metaAlarmEventProcessor) sendChildrenEvents(ctx context.Context, childrenIds []string, childEvent types.Event) error {
@@ -778,12 +826,13 @@ func (p *metaAlarmEventProcessor) updateParentState(ctx context.Context, childAl
 					if childState > parentState {
 						newState = childState
 					} else if childState < parentState {
-						r, err := p.adapter.GetWorstAlarmState(ctx, parentAlarm.Alarm.Value.Children)
+						state, lastEventDate, err := p.adapter.GetWorstAlarmStateAndMaxLastEventDate(ctx, parentAlarm.Alarm.Value.Children)
 						if err != nil {
 							return fmt.Errorf("cannot fetch children state: %w", err)
 						}
 
-						newState = types.CpsNumber(r)
+						newState = types.CpsNumber(state)
+						parentAlarm.Alarm.PartialUpdateLastEventDate(types.NewCpsTime(lastEventDate))
 					} else {
 						return nil
 					}

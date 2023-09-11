@@ -8,48 +8,48 @@ Feature: Get alarms
     """json
     [
       {
-        "connector": "test-connector-to-alarm-correlation-get-1",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-1",
+        "connector": "test-connector-correlation-alarm-get-1",
+        "connector_name": "test-connector-name-correlation-alarm-get-1",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-1",
-        "resource": "test-resource-to-alarm-correlation-get-1-1",
+        "component": "test-component-correlation-alarm-get-1",
+        "resource": "test-resource-correlation-alarm-get-1-1",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-1"
+        "output": "test-output-correlation-alarm-get-1"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-1",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-1",
+        "connector": "test-connector-correlation-alarm-get-1",
+        "connector_name": "test-connector-name-correlation-alarm-get-1",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-1",
-        "resource": "test-resource-to-alarm-correlation-get-1-2",
+        "component": "test-component-correlation-alarm-get-1",
+        "resource": "test-resource-correlation-alarm-get-1-2",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-1"
+        "output": "test-output-correlation-alarm-get-1"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-1",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-1",
+        "connector": "test-connector-correlation-alarm-get-1",
+        "connector_name": "test-connector-name-correlation-alarm-get-1",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-1",
-        "resource": "test-resource-to-alarm-correlation-get-1-3",
+        "component": "test-component-correlation-alarm-get-1",
+        "resource": "test-resource-correlation-alarm-get-1-3",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-1"
+        "output": "test-output-correlation-alarm-get-1"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-1",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-1",
+        "connector": "test-connector-correlation-alarm-get-1",
+        "connector_name": "test-connector-name-correlation-alarm-get-1",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-1",
-        "resource": "test-resource-to-alarm-correlation-get-1-4",
+        "component": "test-component-correlation-alarm-get-1",
+        "resource": "test-resource-correlation-alarm-get-1-4",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-1"
+        "output": "test-output-correlation-alarm-get-1"
       }
     ]
     """
-    When I do GET /api/v4/alarms?correlation=false&search=test-resource-to-alarm-correlation-get-1&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?correlation=false&search=test-resource-correlation-alarm-get-1&sort_by=v.resource&sort=asc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -57,22 +57,22 @@ Feature: Get alarms
       "data": [
         {
           "v": {
-            "resource": "test-resource-to-alarm-correlation-get-1-1"
+            "resource": "test-resource-correlation-alarm-get-1-1"
           }
         },
         {
           "v": {
-            "resource": "test-resource-to-alarm-correlation-get-1-2"
+            "resource": "test-resource-correlation-alarm-get-1-2"
           }
         },
         {
           "v": {
-            "resource": "test-resource-to-alarm-correlation-get-1-3"
+            "resource": "test-resource-correlation-alarm-get-1-3"
           }
         },
         {
           "v": {
-            "resource": "test-resource-to-alarm-correlation-get-1-4"
+            "resource": "test-resource-correlation-alarm-get-1-4"
           }
         }
       ],
@@ -87,7 +87,7 @@ Feature: Get alarms
     When I save response childAlarmID1={{ (index .lastResponse.data 0)._id }}
     When I save response childAlarmID2={{ (index .lastResponse.data 1)._id }}
     When I save response childAlarmID3={{ (index .lastResponse.data 2)._id }}
-    When I do GET /api/v4/alarms?correlation=true&search=test-resource-to-alarm-correlation-get-1&multi_sort[]=v.component,asc&multi_sort[]=meta_alarm_rule.name,asc until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?correlation=true&search=test-resource-correlation-alarm-get-1&multi_sort[]=v.component,asc&multi_sort[]=meta_alarm_rule.name,asc until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -100,7 +100,7 @@ Feature: Get alarms
           },
           "v": {
             "meta": "test-metaalarm-rule-alarm-correlation-get-1-1",
-            "output": "Rule: test-metaalarm-rule-alarm-correlation-get-1-1; Count: 3; Children: test-component-to-alarm-correlation-get-1"
+            "output": "Rule: test-metaalarm-rule-alarm-correlation-get-1-1; Count: 3; Children: test-component-correlation-alarm-get-1"
           }
         },
         {
@@ -112,16 +112,16 @@ Feature: Get alarms
           },
           "v": {
             "meta": "test-metaalarm-rule-alarm-correlation-get-1-2",
-            "output": "Rule: test-metaalarm-rule-alarm-correlation-get-1-2; Count: 1; Children: test-component-to-alarm-correlation-get-1",
+            "output": "Rule: test-metaalarm-rule-alarm-correlation-get-1-2; Count: 1; Children: test-component-correlation-alarm-get-1",
             "children": [
-              "test-resource-to-alarm-correlation-get-1-3/test-component-to-alarm-correlation-get-1"
+              "test-resource-correlation-alarm-get-1-3/test-component-correlation-alarm-get-1"
             ]
           }
         },
         {
           "is_meta_alarm": false,
           "v": {
-            "resource": "test-resource-to-alarm-correlation-get-1-4"
+            "resource": "test-resource-correlation-alarm-get-1-4"
           }
         }
       ],
@@ -186,7 +186,7 @@ Feature: Get alarms
             "data": [
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-1-1"
+                  "resource": "test-resource-correlation-alarm-get-1-1"
                 },
                 "parents": 1,
                 "meta_alarm_rules": [
@@ -198,7 +198,7 @@ Feature: Get alarms
               },
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-1-2"
+                  "resource": "test-resource-correlation-alarm-get-1-2"
                 },
                 "parents": 1,
                 "meta_alarm_rules": [
@@ -210,7 +210,7 @@ Feature: Get alarms
               },
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-1-3"
+                  "resource": "test-resource-correlation-alarm-get-1-3"
                 },
                 "parents": 2,
                 "meta_alarm_rules": [
@@ -241,7 +241,7 @@ Feature: Get alarms
             "data": [
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-1-3"
+                  "resource": "test-resource-correlation-alarm-get-1-3"
                 }
               }
             ],
@@ -277,17 +277,17 @@ Feature: Get alarms
             "data": [
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-1-1"
+                  "resource": "test-resource-correlation-alarm-get-1-1"
                 }
               },
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-1-2"
+                  "resource": "test-resource-correlation-alarm-get-1-2"
                 }
               },
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-1-3"
+                  "resource": "test-resource-correlation-alarm-get-1-3"
                 }
               }
             ],
@@ -343,43 +343,43 @@ Feature: Get alarms
     """json
     [
       {
-        "connector": "test-connector-to-alarm-correlation-get-2",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-2",
+        "connector": "test-connector-correlation-alarm-get-2",
+        "connector_name": "test-connector-name-correlation-alarm-get-2",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-2",
-        "resource": "test-resource-to-alarm-correlation-get-2-1",
+        "component": "test-component-correlation-alarm-get-2",
+        "resource": "test-resource-correlation-alarm-get-2-1",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-2"
+        "output": "test-output-correlation-alarm-get-2"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-2",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-2",
+        "connector": "test-connector-correlation-alarm-get-2",
+        "connector_name": "test-connector-name-correlation-alarm-get-2",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-2",
-        "resource": "test-resource-to-alarm-correlation-get-2-2",
+        "component": "test-component-correlation-alarm-get-2",
+        "resource": "test-resource-correlation-alarm-get-2-2",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-2"
+        "output": "test-output-correlation-alarm-get-2"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-2",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-2",
+        "connector": "test-connector-correlation-alarm-get-2",
+        "connector_name": "test-connector-name-correlation-alarm-get-2",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-2",
-        "resource": "test-resource-to-alarm-correlation-get-2-3",
+        "component": "test-component-correlation-alarm-get-2",
+        "resource": "test-resource-correlation-alarm-get-2-3",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-2"
+        "output": "test-output-correlation-alarm-get-2"
       }
     ]
     """
-    When I do GET /api/v4/alarms?correlation=false&search=test-resource-to-alarm-correlation-get-2&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?correlation=false&search=test-resource-correlation-alarm-get-2&sort_by=v.resource&sort=asc
     Then the response code should be 200
     When I save response childAlarmID1={{ (index .lastResponse.data 0)._id }}
     When I save response childAlarmID2={{ (index .lastResponse.data 1)._id }}
     When I save response childAlarmID3={{ (index .lastResponse.data 2)._id }}
-    When I do GET /api/v4/alarms?correlation=true&search=test-resource-to-alarm-correlation-get-2&multi_sort[]=v.component,asc&multi_sort[]=meta_alarm_rule.name,asc until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?correlation=true&search=test-resource-correlation-alarm-get-2&multi_sort[]=v.component,asc&multi_sort[]=meta_alarm_rule.name,asc until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -405,20 +405,20 @@ Feature: Get alarms
     """json
     [
       {
-        "connector": "test-connector-to-alarm-correlation-get-2",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-2",
+        "connector": "test-connector-correlation-alarm-get-2",
+        "connector_name": "test-connector-name-correlation-alarm-get-2",
         "source_type": "resource",
         "event_type": "cancel",
-        "component": "test-component-to-alarm-correlation-get-2",
-        "resource": "test-resource-to-alarm-correlation-get-2-2"
+        "component": "test-component-correlation-alarm-get-2",
+        "resource": "test-resource-correlation-alarm-get-2-2"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-2",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-2",
+        "connector": "test-connector-correlation-alarm-get-2",
+        "connector_name": "test-connector-name-correlation-alarm-get-2",
         "source_type": "resource",
         "event_type": "cancel",
-        "component": "test-component-to-alarm-correlation-get-2",
-        "resource": "test-resource-to-alarm-correlation-get-2-3"
+        "component": "test-component-correlation-alarm-get-2",
+        "resource": "test-resource-correlation-alarm-get-2-3"
       },
       {
         "connector": "engine",
@@ -434,20 +434,20 @@ Feature: Get alarms
     """json
     [
       {
-        "connector": "test-connector-to-alarm-correlation-get-2",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-2",
+        "connector": "test-connector-correlation-alarm-get-2",
+        "connector_name": "test-connector-name-correlation-alarm-get-2",
         "source_type": "resource",
         "event_type": "resolve_cancel",
-        "component": "test-component-to-alarm-correlation-get-2",
-        "resource": "test-resource-to-alarm-correlation-get-2-2"
+        "component": "test-component-correlation-alarm-get-2",
+        "resource": "test-resource-correlation-alarm-get-2-2"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-2",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-2",
+        "connector": "test-connector-correlation-alarm-get-2",
+        "connector_name": "test-connector-name-correlation-alarm-get-2",
         "source_type": "resource",
         "event_type": "resolve_cancel",
-        "component": "test-component-to-alarm-correlation-get-2",
-        "resource": "test-resource-to-alarm-correlation-get-2-3"
+        "component": "test-component-correlation-alarm-get-2",
+        "resource": "test-resource-correlation-alarm-get-2-3"
       },
       {
         "connector": "engine",
@@ -459,7 +459,7 @@ Feature: Get alarms
       }
     ]
     """
-    When I do GET /api/v4/alarms?correlation=true&opened=true&search=test-resource-to-alarm-correlation-get-2&multi_sort[]=v.component,asc&multi_sort[]=meta_alarm_rule.name,asc until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?correlation=true&opened=true&search=test-resource-correlation-alarm-get-2&multi_sort[]=v.component,asc&multi_sort[]=meta_alarm_rule.name,asc until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -472,7 +472,7 @@ Feature: Get alarms
       }
     }
     """
-    When I do GET /api/v4/alarms?correlation=true&opened=false&search=test-resource-to-alarm-correlation-get-2&multi_sort[]=v.component,asc&multi_sort[]=meta_alarm_rule.name,asc until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?correlation=true&opened=false&search=test-resource-correlation-alarm-get-2&multi_sort[]=v.component,asc&multi_sort[]=meta_alarm_rule.name,asc until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -535,7 +535,7 @@ Feature: Get alarms
             "data": [
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-2-1"
+                  "resource": "test-resource-correlation-alarm-get-2-1"
                 },
                 "parents": 2,
                 "meta_alarm_rules": [
@@ -551,7 +551,7 @@ Feature: Get alarms
               },
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-2-2"
+                  "resource": "test-resource-correlation-alarm-get-2-2"
                 },
                 "parents": 1,
                 "meta_alarm_rules": [
@@ -563,7 +563,7 @@ Feature: Get alarms
               },
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-2-3"
+                  "resource": "test-resource-correlation-alarm-get-2-3"
                 },
                 "parents": 2,
                 "meta_alarm_rules": [
@@ -594,7 +594,7 @@ Feature: Get alarms
             "data": [
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-2-1"
+                  "resource": "test-resource-correlation-alarm-get-2-1"
                 }
               }
             ],
@@ -614,7 +614,7 @@ Feature: Get alarms
             "data": [
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-2-1"
+                  "resource": "test-resource-correlation-alarm-get-2-1"
                 },
                 "parents": 2,
                 "meta_alarm_rules": [
@@ -630,7 +630,7 @@ Feature: Get alarms
               },
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-2-3"
+                  "resource": "test-resource-correlation-alarm-get-2-3"
                 },
                 "parents": 2,
                 "meta_alarm_rules": [
@@ -661,7 +661,7 @@ Feature: Get alarms
             "data": [
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-2-3"
+                  "resource": "test-resource-correlation-alarm-get-2-3"
                 }
               }
             ],
@@ -684,58 +684,58 @@ Feature: Get alarms
     """json
     [
       {
-        "connector": "test-connector-to-alarm-correlation-get-3",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-3",
+        "connector": "test-connector-correlation-alarm-get-3",
+        "connector_name": "test-connector-name-correlation-alarm-get-3",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-3",
-        "resource": "test-resource-to-alarm-correlation-get-3-1",
+        "component": "test-component-correlation-alarm-get-3",
+        "resource": "test-resource-correlation-alarm-get-3-1",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-3"
+        "output": "test-output-correlation-alarm-get-3"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-3",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-3",
+        "connector": "test-connector-correlation-alarm-get-3",
+        "connector_name": "test-connector-name-correlation-alarm-get-3",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-3",
-        "resource": "test-resource-to-alarm-correlation-get-3-2",
+        "component": "test-component-correlation-alarm-get-3",
+        "resource": "test-resource-correlation-alarm-get-3-2",
         "state": 1,
-        "output": "test-resource-to-alarm-correlation-get-3-search"
+        "output": "test-resource-correlation-alarm-get-3-search"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-3",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-3",
+        "connector": "test-connector-correlation-alarm-get-3",
+        "connector_name": "test-connector-name-correlation-alarm-get-3",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-3",
-        "resource": "test-resource-to-alarm-correlation-get-3-3",
+        "component": "test-component-correlation-alarm-get-3",
+        "resource": "test-resource-correlation-alarm-get-3-3",
         "state": 1,
-        "output": "test-resource-to-alarm-correlation-get-3-search"
+        "output": "test-resource-correlation-alarm-get-3-search"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-3",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-3",
+        "connector": "test-connector-correlation-alarm-get-3",
+        "connector_name": "test-connector-name-correlation-alarm-get-3",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-3",
-        "resource": "test-resource-to-alarm-correlation-get-3-4",
+        "component": "test-component-correlation-alarm-get-3",
+        "resource": "test-resource-correlation-alarm-get-3-4",
         "state": 1,
-        "output": "test-resource-to-alarm-correlation-get-3-search"
+        "output": "test-resource-correlation-alarm-get-3-search"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-3",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-3",
+        "connector": "test-connector-correlation-alarm-get-3",
+        "connector_name": "test-connector-name-correlation-alarm-get-3",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-3",
-        "resource": "test-resource-to-alarm-correlation-get-3-5",
+        "component": "test-component-correlation-alarm-get-3",
+        "resource": "test-resource-correlation-alarm-get-3-5",
         "state": 1,
-        "output": "test-resource-to-alarm-correlation-get-3-search"
+        "output": "test-resource-correlation-alarm-get-3-search"
       }
     ]
     """
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-3&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-3&sort_by=v.resource&sort=asc
     Then the response code should be 200
     When I save response childAlarmID1={{ (index .lastResponse.data 0)._id }}
     When I save response childAlarmID2={{ (index .lastResponse.data 1)._id }}
@@ -745,8 +745,8 @@ Feature: Get alarms
     When I do POST /api/v4/cat/manual-meta-alarms:
     """json
     {
-      "name": "test-metalarm-to-alarm-correlation-get-3-1",
-      "comment": "test-metalarm-to-alarm-correlation-get-3-1-comment",
+      "name": "test-metalarm-correlation-alarm-get-3-1",
+      "comment": "test-metalarm-correlation-alarm-get-3-1-comment",
       "alarms": [
         "{{ .childAlarmID1 }}",
         "{{ .childAlarmID2 }}",
@@ -758,15 +758,15 @@ Feature: Get alarms
     When I do POST /api/v4/cat/manual-meta-alarms:
     """json
     {
-      "name": "test-metalarm-to-alarm-correlation-get-3-2",
-      "comment": "test-metalarm-to-alarm-correlation-get-3-2-comment",
+      "name": "test-metalarm-correlation-alarm-get-3-2",
+      "comment": "test-metalarm-correlation-alarm-get-3-2-comment",
       "alarms": [
         "{{ .childAlarmID4 }}"
       ]
     }
     """
     Then the response code should be 204
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-3&correlation=true&sort_by=v.output&sort=asc until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-3&correlation=true&sort_by=v.output&sort=asc until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -783,26 +783,26 @@ Feature: Get alarms
     When I send an event and wait the end of event processing:
     """json
     {
-      "connector": "test-connector-to-alarm-correlation-get-3",
-      "connector_name": "test-connector-name-to-alarm-correlation-get-3",
+      "connector": "test-connector-correlation-alarm-get-3",
+      "connector_name": "test-connector-name-correlation-alarm-get-3",
       "source_type": "resource",
       "event_type": "cancel",
-      "component": "test-component-to-alarm-correlation-get-3",
-      "resource": "test-resource-to-alarm-correlation-get-3-3"
+      "component": "test-component-correlation-alarm-get-3",
+      "resource": "test-resource-correlation-alarm-get-3-3"
     }
     """
     When I send an event and wait the end of event processing:
     """json
     {
-      "connector": "test-connector-to-alarm-correlation-get-3",
-      "connector_name": "test-connector-name-to-alarm-correlation-get-3",
+      "connector": "test-connector-correlation-alarm-get-3",
+      "connector_name": "test-connector-name-correlation-alarm-get-3",
       "source_type": "resource",
       "event_type": "resolve_cancel",
-      "component": "test-component-to-alarm-correlation-get-3",
-      "resource": "test-resource-to-alarm-correlation-get-3-3"
+      "component": "test-component-correlation-alarm-get-3",
+      "resource": "test-resource-correlation-alarm-get-3-3"
     }
     """
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-3-search&active_columns[]=v.output&correlation=true&sort_by=children&sort=desc
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-3-search&active_columns[]=v.output&correlation=true&sort_by=children&sort=desc
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -822,7 +822,7 @@ Feature: Get alarms
         {
           "is_meta_alarm": false,
           "v": {
-            "resource": "test-resource-to-alarm-correlation-get-3-5"
+            "resource": "test-resource-correlation-alarm-get-3-5"
           }
         }
       ],
@@ -841,7 +841,7 @@ Feature: Get alarms
       "{{ .childAlarmID3 }}"
     ]
     """
-    When I do GET /api/v4/alarms?opened=true&search=test-resource-to-alarm-correlation-get-3-search&active_columns[]=v.output&correlation=true&sort_by=children&sort=desc until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?opened=true&search=test-resource-correlation-alarm-get-3-search&active_columns[]=v.output&correlation=true&sort_by=children&sort=desc until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -862,7 +862,7 @@ Feature: Get alarms
         {
           "is_meta_alarm": false,
           "v": {
-            "resource": "test-resource-to-alarm-correlation-get-3-5"
+            "resource": "test-resource-correlation-alarm-get-3-5"
           }
         }
       ],
@@ -884,48 +884,48 @@ Feature: Get alarms
     """json
     [
       {
-        "connector": "test-connector-to-alarm-correlation-get-4",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-4",
+        "connector": "test-connector-correlation-alarm-get-4",
+        "connector_name": "test-connector-name-correlation-alarm-get-4",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-4",
-        "resource": "test-resource-to-alarm-correlation-get-4-1",
+        "component": "test-component-correlation-alarm-get-4",
+        "resource": "test-resource-correlation-alarm-get-4-1",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-4"
+        "output": "test-output-correlation-alarm-get-4"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-4",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-4",
+        "connector": "test-connector-correlation-alarm-get-4",
+        "connector_name": "test-connector-name-correlation-alarm-get-4",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-4",
-        "resource": "test-resource-to-alarm-correlation-get-4-2",
+        "component": "test-component-correlation-alarm-get-4",
+        "resource": "test-resource-correlation-alarm-get-4-2",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-4"
+        "output": "test-output-correlation-alarm-get-4"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-4",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-4",
+        "connector": "test-connector-correlation-alarm-get-4",
+        "connector_name": "test-connector-name-correlation-alarm-get-4",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-4",
-        "resource": "test-resource-to-alarm-correlation-get-4-3",
+        "component": "test-component-correlation-alarm-get-4",
+        "resource": "test-resource-correlation-alarm-get-4-3",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-4"
+        "output": "test-output-correlation-alarm-get-4"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-4",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-4",
+        "connector": "test-connector-correlation-alarm-get-4",
+        "connector_name": "test-connector-name-correlation-alarm-get-4",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-4",
-        "resource": "test-resource-to-alarm-correlation-get-4-4",
+        "component": "test-component-correlation-alarm-get-4",
+        "resource": "test-resource-correlation-alarm-get-4-4",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-4"
+        "output": "test-output-correlation-alarm-get-4"
       }
     ]
     """
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-4&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-4&sort_by=v.resource&sort=asc
     Then the response code should be 200
     When I save response childAlarmID1={{ (index .lastResponse.data 0)._id }}
     When I save response childAlarmID2={{ (index .lastResponse.data 1)._id }}
@@ -934,8 +934,8 @@ Feature: Get alarms
     When I do POST /api/v4/cat/manual-meta-alarms:
     """json
     {
-      "name": "test-metalarm-to-alarm-correlation-get-4-1",
-      "comment": "test-metalarm-to-alarm-correlation-get-4-1-comment",
+      "name": "test-metalarm-correlation-alarm-get-4-1",
+      "comment": "test-metalarm-correlation-alarm-get-4-1-comment",
       "alarms": [
         "{{ .childAlarmID1 }}",
         "{{ .childAlarmID2 }}"
@@ -946,8 +946,8 @@ Feature: Get alarms
     When I do POST /api/v4/cat/manual-meta-alarms:
     """json
     {
-      "name": "test-metalarm-to-alarm-correlation-get-4-2",
-      "comment": "test-metalarm-to-alarm-correlation-get-4-2-comment",
+      "name": "test-metalarm-correlation-alarm-get-4-2",
+      "comment": "test-metalarm-correlation-alarm-get-4-2-comment",
       "alarms": [
         "{{ .childAlarmID3 }}",
         "{{ .childAlarmID4 }}"
@@ -955,7 +955,7 @@ Feature: Get alarms
     }
     """
     Then the response code should be 204
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-4&correlation=true&with_instructions=true&sort_by=v.display_name&sort=asc until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-4&correlation=true&with_instructions=true&sort_by=v.display_name&sort=asc until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -964,7 +964,7 @@ Feature: Get alarms
           "children": 2,
           "children_instructions": true,
           "v": {
-            "display_name": "test-metalarm-to-alarm-correlation-get-4-1"
+            "display_name": "test-metalarm-correlation-alarm-get-4-1"
           }
         },
         {
@@ -972,7 +972,7 @@ Feature: Get alarms
           "children": 2,
           "children_instructions": false,
           "v": {
-            "display_name": "test-metalarm-to-alarm-correlation-get-4-2"
+            "display_name": "test-metalarm-correlation-alarm-get-4-2"
           }
         }
       ],
@@ -1018,7 +1018,7 @@ Feature: Get alarms
             "data": [
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-4-1",
+                  "resource": "test-resource-correlation-alarm-get-4-1",
                   "state": {
                     "val": 1
                   }
@@ -1027,11 +1027,11 @@ Feature: Get alarms
               },
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-4-2"
+                  "resource": "test-resource-correlation-alarm-get-4-2"
                 },
                 "assigned_instructions": [
                   {
-                    "_id": "test-instruction-to-alarm-correlation-instruction-get-4-1"
+                    "_id": "test-instruction-correlation-alarm-get-instruction-get-4-1"
                   }
                 ]
               }
@@ -1052,13 +1052,13 @@ Feature: Get alarms
             "data": [
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-4-3"
+                  "resource": "test-resource-correlation-alarm-get-4-3"
                 },
                 "assigned_instructions": []
               },
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-4-4"
+                  "resource": "test-resource-correlation-alarm-get-4-4"
                 },
                 "assigned_instructions": []
               }
@@ -1082,36 +1082,36 @@ Feature: Get alarms
     """json
     [
       {
-        "connector": "test-connector-to-alarm-correlation-get-5",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-5",
+        "connector": "test-connector-correlation-alarm-get-5",
+        "connector_name": "test-connector-name-correlation-alarm-get-5",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-5",
-        "resource": "test-resource-to-alarm-correlation-get-5-1",
+        "component": "test-component-correlation-alarm-get-5",
+        "resource": "test-resource-correlation-alarm-get-5-1",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-5"
+        "output": "test-output-correlation-alarm-get-5"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-5",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-5",
+        "connector": "test-connector-correlation-alarm-get-5",
+        "connector_name": "test-connector-name-correlation-alarm-get-5",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-5",
-        "resource": "test-resource-to-alarm-correlation-get-5-2",
+        "component": "test-component-correlation-alarm-get-5",
+        "resource": "test-resource-correlation-alarm-get-5-2",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-5"
+        "output": "test-output-correlation-alarm-get-5"
       }
     ]
     """
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-5&opened=true&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-5&opened=true&sort_by=v.resource&sort=asc
     Then the response code should be 200
     When I save response childAlarmID1={{ (index .lastResponse.data 0)._id }}
     When I save response childAlarmID2={{ (index .lastResponse.data 1)._id }}
     When I do POST /api/v4/cat/manual-meta-alarms:
     """json
     {
-      "name": "test-metalarm-to-alarm-correlation-get-5-1",
-      "comment": "test-metalarm-to-alarm-correlation-get-5-1-comment",
+      "name": "test-metalarm-correlation-alarm-get-5-1",
+      "comment": "test-metalarm-correlation-alarm-get-5-1-comment",
       "alarms": [
         "{{ .childAlarmID1 }}",
         "{{ .childAlarmID2 }}"
@@ -1119,7 +1119,7 @@ Feature: Get alarms
     }
     """
     Then the response code should be 204
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-5&correlation=true until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-5&correlation=true until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1132,48 +1132,48 @@ Feature: Get alarms
     When I send an event and wait the end of event processing:
     """json
     {
-      "connector": "test-connector-to-alarm-correlation-get-5",
-      "connector_name": "test-connector-name-to-alarm-correlation-get-5",
+      "connector": "test-connector-correlation-alarm-get-5",
+      "connector_name": "test-connector-name-correlation-alarm-get-5",
       "source_type": "resource",
       "event_type": "cancel",
-      "component": "test-component-to-alarm-correlation-get-5",
-      "resource": "test-resource-to-alarm-correlation-get-5-1",
-      "output": "test-output-to-alarm-correlation-get-5"
+      "component": "test-component-correlation-alarm-get-5",
+      "resource": "test-resource-correlation-alarm-get-5-1",
+      "output": "test-output-correlation-alarm-get-5"
     }
     """
     When I send an event and wait the end of event processing:
     """json
     {
-      "connector": "test-connector-to-alarm-correlation-get-5",
-      "connector_name": "test-connector-name-to-alarm-correlation-get-5",
+      "connector": "test-connector-correlation-alarm-get-5",
+      "connector_name": "test-connector-name-correlation-alarm-get-5",
       "source_type": "resource",
       "event_type": "resolve_cancel",
-      "component": "test-component-to-alarm-correlation-get-5",
-      "resource": "test-resource-to-alarm-correlation-get-5-1",
-      "output": "test-output-to-alarm-correlation-get-5"
+      "component": "test-component-correlation-alarm-get-5",
+      "resource": "test-resource-correlation-alarm-get-5-1",
+      "output": "test-output-correlation-alarm-get-5"
     }
     """
     When I send an event and wait the end of event processing:
     """json
     {
-      "connector": "test-connector-to-alarm-correlation-get-5",
-      "connector_name": "test-connector-name-to-alarm-correlation-get-5",
+      "connector": "test-connector-correlation-alarm-get-5",
+      "connector_name": "test-connector-name-correlation-alarm-get-5",
       "source_type": "resource",
       "event_type": "check",
-      "component": "test-component-to-alarm-correlation-get-5",
-      "resource": "test-resource-to-alarm-correlation-get-5-1",
+      "component": "test-component-correlation-alarm-get-5",
+      "resource": "test-resource-correlation-alarm-get-5-1",
       "state": 2,
-      "output": "test-output-to-alarm-correlation-get-5"
+      "output": "test-output-correlation-alarm-get-5"
     }
     """
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-5&opened=true&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-5&opened=true&sort_by=v.resource&sort=asc
     Then the response code should be 200
     When I save response childAlarmID3={{ (index .lastResponse.data 0)._id }}
     When I do POST /api/v4/cat/manual-meta-alarms:
     """json
     {
-      "name": "test-metalarm-to-alarm-correlation-get-5-2",
-      "comment": "test-metalarm-to-alarm-correlation-get-5-2-comment",
+      "name": "test-metalarm-correlation-alarm-get-5-2",
+      "comment": "test-metalarm-correlation-alarm-get-5-2-comment",
       "alarms": [
         "{{ .childAlarmID3 }}",
         "{{ .childAlarmID2 }}"
@@ -1181,7 +1181,7 @@ Feature: Get alarms
     }
     """
     Then the response code should be 204
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-5&correlation=true&sort_by=v.display_name&sort=asc until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-5&correlation=true&sort_by=v.display_name&sort=asc until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1229,7 +1229,7 @@ Feature: Get alarms
               {
                 "_id": "{{ .childAlarmID1 }}",
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-5-1",
+                  "resource": "test-resource-correlation-alarm-get-5-1",
                   "state": {
                     "val": 1
                   }
@@ -1238,7 +1238,7 @@ Feature: Get alarms
               {
                 "_id": "{{ .childAlarmID2 }}",
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-5-2"
+                  "resource": "test-resource-correlation-alarm-get-5-2"
                 }
               }
             ],
@@ -1259,7 +1259,7 @@ Feature: Get alarms
               {
                 "_id": "{{ .childAlarmID3 }}",
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-5-1",
+                  "resource": "test-resource-correlation-alarm-get-5-1",
                   "state": {
                     "val": 2
                   }
@@ -1268,7 +1268,7 @@ Feature: Get alarms
               {
                 "_id": "{{ .childAlarmID2 }}",
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-5-2"
+                  "resource": "test-resource-correlation-alarm-get-5-2"
                 }
               }
             ],
@@ -1291,54 +1291,54 @@ Feature: Get alarms
     """json
     [
       {
-        "connector": "test-connector-to-alarm-correlation-get-6",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-6",
+        "connector": "test-connector-correlation-alarm-get-6",
+        "connector_name": "test-connector-name-correlation-alarm-get-6",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-6",
-        "resource": "test-resource-to-alarm-correlation-get-6-1",
+        "component": "test-component-correlation-alarm-get-6",
+        "resource": "test-resource-correlation-alarm-get-6-1",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-6"
+        "output": "test-output-correlation-alarm-get-6"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-6",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-6",
+        "connector": "test-connector-correlation-alarm-get-6",
+        "connector_name": "test-connector-name-correlation-alarm-get-6",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-6",
-        "resource": "test-resource-to-alarm-correlation-get-6-2",
+        "component": "test-component-correlation-alarm-get-6",
+        "resource": "test-resource-correlation-alarm-get-6-2",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-6"
+        "output": "test-output-correlation-alarm-get-6"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-6",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-6",
+        "connector": "test-connector-correlation-alarm-get-6",
+        "connector_name": "test-connector-name-correlation-alarm-get-6",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-6",
-        "resource": "test-resource-to-alarm-correlation-get-6-3",
+        "component": "test-component-correlation-alarm-get-6",
+        "resource": "test-resource-correlation-alarm-get-6-3",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-6"
+        "output": "test-output-correlation-alarm-get-6"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-6",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-6",
+        "connector": "test-connector-correlation-alarm-get-6",
+        "connector_name": "test-connector-name-correlation-alarm-get-6",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-6",
-        "resource": "test-resource-to-alarm-correlation-get-6-4",
+        "component": "test-component-correlation-alarm-get-6",
+        "resource": "test-resource-correlation-alarm-get-6-4",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-6"
+        "output": "test-output-correlation-alarm-get-6"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-6",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-6",
+        "connector": "test-connector-correlation-alarm-get-6",
+        "connector_name": "test-connector-name-correlation-alarm-get-6",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-6",
-        "resource": "test-resource-to-alarm-correlation-get-6-5",
+        "component": "test-component-correlation-alarm-get-6",
+        "resource": "test-resource-correlation-alarm-get-6-5",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-6"
+        "output": "test-output-correlation-alarm-get-6"
       }
     ]
     """
@@ -1347,86 +1347,86 @@ Feature: Get alarms
     [
       {
         "event_type": "activate",
-        "connector": "test-connector-to-alarm-correlation-get-6",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-6",
-        "component": "test-component-to-alarm-correlation-get-6",
-        "resource": "test-resource-to-alarm-correlation-get-6-1",
+        "connector": "test-connector-correlation-alarm-get-6",
+        "connector_name": "test-connector-name-correlation-alarm-get-6",
+        "component": "test-component-correlation-alarm-get-6",
+        "resource": "test-resource-correlation-alarm-get-6-1",
         "source_type": "resource"
       },
       {
         "event_type": "activate",
-        "connector": "test-connector-to-alarm-correlation-get-6",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-6",
-        "component": "test-component-to-alarm-correlation-get-6",
-        "resource": "test-resource-to-alarm-correlation-get-6-2",
+        "connector": "test-connector-correlation-alarm-get-6",
+        "connector_name": "test-connector-name-correlation-alarm-get-6",
+        "component": "test-component-correlation-alarm-get-6",
+        "resource": "test-resource-correlation-alarm-get-6-2",
         "source_type": "resource"
       },
       {
         "event_type": "activate",
-        "connector": "test-connector-to-alarm-correlation-get-6",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-6",
-        "component": "test-component-to-alarm-correlation-get-6",
-        "resource": "test-resource-to-alarm-correlation-get-6-3",
+        "connector": "test-connector-correlation-alarm-get-6",
+        "connector_name": "test-connector-name-correlation-alarm-get-6",
+        "component": "test-component-correlation-alarm-get-6",
+        "resource": "test-resource-correlation-alarm-get-6-3",
         "source_type": "resource"
       },
       {
         "event_type": "activate",
-        "connector": "test-connector-to-alarm-correlation-get-6",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-6",
-        "component": "test-component-to-alarm-correlation-get-6",
-        "resource": "test-resource-to-alarm-correlation-get-6-4",
+        "connector": "test-connector-correlation-alarm-get-6",
+        "connector_name": "test-connector-name-correlation-alarm-get-6",
+        "component": "test-component-correlation-alarm-get-6",
+        "resource": "test-resource-correlation-alarm-get-6-4",
         "source_type": "resource"
       },
       {
         "event_type": "activate",
-        "connector": "test-connector-to-alarm-correlation-get-6",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-6",
-        "component": "test-component-to-alarm-correlation-get-6",
-        "resource": "test-resource-to-alarm-correlation-get-6-5",
+        "connector": "test-connector-correlation-alarm-get-6",
+        "connector_name": "test-connector-name-correlation-alarm-get-6",
+        "component": "test-component-correlation-alarm-get-6",
+        "resource": "test-resource-correlation-alarm-get-6-5",
         "source_type": "resource"
       },
       {
         "event_type": "trigger",
-        "connector": "test-connector-to-alarm-correlation-get-6",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-6",
-        "component": "test-component-to-alarm-correlation-get-6",
-        "resource": "test-resource-to-alarm-correlation-get-6-2",
+        "connector": "test-connector-correlation-alarm-get-6",
+        "connector_name": "test-connector-name-correlation-alarm-get-6",
+        "component": "test-component-correlation-alarm-get-6",
+        "resource": "test-resource-correlation-alarm-get-6-2",
         "source_type": "resource"
       },
       {
         "event_type": "trigger",
-        "connector": "test-connector-to-alarm-correlation-get-6",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-6",
-        "component": "test-component-to-alarm-correlation-get-6",
-        "resource": "test-resource-to-alarm-correlation-get-6-2",
+        "connector": "test-connector-correlation-alarm-get-6",
+        "connector_name": "test-connector-name-correlation-alarm-get-6",
+        "component": "test-component-correlation-alarm-get-6",
+        "resource": "test-resource-correlation-alarm-get-6-2",
         "source_type": "resource"
       },
       {
         "event_type": "trigger",
-        "connector": "test-connector-to-alarm-correlation-get-6",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-6",
-        "component": "test-component-to-alarm-correlation-get-6",
-        "resource": "test-resource-to-alarm-correlation-get-6-3",
+        "connector": "test-connector-correlation-alarm-get-6",
+        "connector_name": "test-connector-name-correlation-alarm-get-6",
+        "component": "test-component-correlation-alarm-get-6",
+        "resource": "test-resource-correlation-alarm-get-6-3",
         "source_type": "resource"
       },
       {
         "event_type": "trigger",
-        "connector": "test-connector-to-alarm-correlation-get-6",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-6",
-        "component": "test-component-to-alarm-correlation-get-6",
-        "resource": "test-resource-to-alarm-correlation-get-6-3",
+        "connector": "test-connector-correlation-alarm-get-6",
+        "connector_name": "test-connector-name-correlation-alarm-get-6",
+        "component": "test-component-correlation-alarm-get-6",
+        "resource": "test-resource-correlation-alarm-get-6-3",
         "source_type": "resource"
       }
     ]
     """
-    When I do GET /api/v4/alarms?correlation=false&search=test-resource-to-alarm-correlation-get-6&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?correlation=false&search=test-resource-correlation-alarm-get-6&sort_by=v.resource&sort=asc
     Then the response code should be 200
     When I save response childAlarmID1={{ (index .lastResponse.data 0)._id }}
     When I save response childAlarmID2={{ (index .lastResponse.data 1)._id }}
     When I save response childAlarmID3={{ (index .lastResponse.data 2)._id }}
     When I save response childAlarmID4={{ (index .lastResponse.data 3)._id }}
     When I save response childAlarmID5={{ (index .lastResponse.data 4)._id }}
-    When I do GET /api/v4/alarms?correlation=true&search=test-resource-to-alarm-correlation-get-6&multi_sort[]=v.component,asc&multi_sort[]=meta_alarm_rule.name,asc until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?correlation=true&search=test-resource-correlation-alarm-get-6&multi_sort[]=v.component,asc&multi_sort[]=meta_alarm_rule.name,asc until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1442,7 +1442,7 @@ Feature: Get alarms
     """json
     {
       "alarm": "{{ .childAlarmID4 }}",
-      "instruction": "test-instruction-to-alarm-correlation-get-6-4"
+      "instruction": "test-instruction-correlation-alarm-get-6-4"
     }
     """
     Then the response code should be 200
@@ -1450,7 +1450,7 @@ Feature: Get alarms
     """json
     {
       "alarm": "{{ .childAlarmID5 }}",
-      "instruction": "test-instruction-to-alarm-correlation-get-6-5"
+      "instruction": "test-instruction-correlation-alarm-get-6-5"
     }
     """
     Then the response code should be 200
@@ -1459,34 +1459,34 @@ Feature: Get alarms
     [
       {
         "event_type": "instructionstarted",
-        "connector": "test-connector-to-alarm-correlation-get-6",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-6",
-        "component": "test-component-to-alarm-correlation-get-6",
-        "resource": "test-resource-to-alarm-correlation-get-6-4",
+        "connector": "test-connector-correlation-alarm-get-6",
+        "connector_name": "test-connector-name-correlation-alarm-get-6",
+        "component": "test-component-correlation-alarm-get-6",
+        "resource": "test-resource-correlation-alarm-get-6-4",
         "source_type": "resource"
       },
       {
         "event_type": "trigger",
-        "connector": "test-connector-to-alarm-correlation-get-6",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-6",
-        "component": "test-component-to-alarm-correlation-get-6",
-        "resource": "test-resource-to-alarm-correlation-get-6-4",
+        "connector": "test-connector-correlation-alarm-get-6",
+        "connector_name": "test-connector-name-correlation-alarm-get-6",
+        "component": "test-component-correlation-alarm-get-6",
+        "resource": "test-resource-correlation-alarm-get-6-4",
         "source_type": "resource"
       },
       {
         "event_type": "instructionstarted",
-        "connector": "test-connector-to-alarm-correlation-get-6",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-6",
-        "component": "test-component-to-alarm-correlation-get-6",
-        "resource": "test-resource-to-alarm-correlation-get-6-5",
+        "connector": "test-connector-correlation-alarm-get-6",
+        "connector_name": "test-connector-name-correlation-alarm-get-6",
+        "component": "test-component-correlation-alarm-get-6",
+        "resource": "test-resource-correlation-alarm-get-6-5",
         "source_type": "resource"
       },
       {
         "event_type": "trigger",
-        "connector": "test-connector-to-alarm-correlation-get-6",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-6",
-        "component": "test-component-to-alarm-correlation-get-6",
-        "resource": "test-resource-to-alarm-correlation-get-6-5",
+        "connector": "test-connector-correlation-alarm-get-6",
+        "connector_name": "test-connector-name-correlation-alarm-get-6",
+        "component": "test-component-correlation-alarm-get-6",
+        "resource": "test-resource-correlation-alarm-get-6-5",
         "source_type": "resource"
       }
     ]
@@ -1515,44 +1515,44 @@ Feature: Get alarms
             "data": [
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-6-1"
+                  "resource": "test-resource-correlation-alarm-get-6-1"
                 },
                 "instruction_execution_icon": 9
               },
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-6-2"
+                  "resource": "test-resource-correlation-alarm-get-6-2"
                 },
                 "instruction_execution_icon": 10,
                 "successful_auto_instructions": [
-                  "test-instruction-to-alarm-correlation-get-6-2-name"
+                  "test-instruction-correlation-alarm-get-6-2-name"
                 ]
               },
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-6-3"
+                  "resource": "test-resource-correlation-alarm-get-6-3"
                 },
                 "instruction_execution_icon": 3,
                 "failed_auto_instructions": [
-                  "test-instruction-to-alarm-correlation-get-6-3-name"
+                  "test-instruction-correlation-alarm-get-6-3-name"
                 ]
               },
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-6-4"
+                  "resource": "test-resource-correlation-alarm-get-6-4"
                 },
                 "instruction_execution_icon": 11,
                 "successful_manual_instructions": [
-                  "test-instruction-to-alarm-correlation-get-6-4-name"
+                  "test-instruction-correlation-alarm-get-6-4-name"
                 ]
               },
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-6-5"
+                  "resource": "test-resource-correlation-alarm-get-6-5"
                 },
                 "instruction_execution_icon": 4,
                 "failed_manual_instructions": [
-                  "test-instruction-to-alarm-correlation-get-6-5-name"
+                  "test-instruction-correlation-alarm-get-6-5-name"
                 ]
               }
             ],
@@ -1575,48 +1575,48 @@ Feature: Get alarms
     """json
     [
       {
-        "connector": "test-connector-to-alarm-correlation-get-7",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-7",
+        "connector": "test-connector-correlation-alarm-get-7",
+        "connector_name": "test-connector-name-correlation-alarm-get-7",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-7",
-        "resource": "test-resource-to-alarm-correlation-get-7-1",
+        "component": "test-component-correlation-alarm-get-7",
+        "resource": "test-resource-correlation-alarm-get-7-1",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-7"
+        "output": "test-output-correlation-alarm-get-7"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-7",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-7",
+        "connector": "test-connector-correlation-alarm-get-7",
+        "connector_name": "test-connector-name-correlation-alarm-get-7",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-7",
-        "resource": "test-resource-to-alarm-correlation-get-7-2",
+        "component": "test-component-correlation-alarm-get-7",
+        "resource": "test-resource-correlation-alarm-get-7-2",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-7"
+        "output": "test-output-correlation-alarm-get-7"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-7",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-7",
+        "connector": "test-connector-correlation-alarm-get-7",
+        "connector_name": "test-connector-name-correlation-alarm-get-7",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-7",
-        "resource": "test-resource-to-alarm-correlation-get-7-3",
+        "component": "test-component-correlation-alarm-get-7",
+        "resource": "test-resource-correlation-alarm-get-7-3",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-7"
+        "output": "test-output-correlation-alarm-get-7"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-7",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-7",
+        "connector": "test-connector-correlation-alarm-get-7",
+        "connector_name": "test-connector-name-correlation-alarm-get-7",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-7",
-        "resource": "test-resource-to-alarm-correlation-get-7-4",
+        "component": "test-component-correlation-alarm-get-7",
+        "resource": "test-resource-correlation-alarm-get-7-4",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-7"
+        "output": "test-output-correlation-alarm-get-7"
       }
     ]
     """
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-7&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-7&sort_by=v.resource&sort=asc
     Then the response code should be 200
     When I save response childAlarmID1={{ (index .lastResponse.data 0)._id }}
     When I save response childAlarmID2={{ (index .lastResponse.data 1)._id }}
@@ -1625,8 +1625,8 @@ Feature: Get alarms
     When I do POST /api/v4/cat/manual-meta-alarms:
     """json
     {
-      "name": "test-metalarm-to-alarm-correlation-get-7-1",
-      "comment": "test-metalarm-to-alarm-correlation-get-7-1-comment",
+      "name": "test-metalarm-correlation-alarm-get-7-1",
+      "comment": "test-metalarm-correlation-alarm-get-7-1-comment",
       "alarms": [
         "{{ .childAlarmID1 }}",
         "{{ .childAlarmID2 }}"
@@ -1637,8 +1637,8 @@ Feature: Get alarms
     When I do POST /api/v4/cat/manual-meta-alarms:
     """json
     {
-      "name": "test-metalarm-to-alarm-correlation-get-7-2",
-      "comment": "test-metalarm-to-alarm-correlation-get-7-2-comment",
+      "name": "test-metalarm-correlation-alarm-get-7-2",
+      "comment": "test-metalarm-correlation-alarm-get-7-2-comment",
       "alarms": [
         "{{ .childAlarmID3 }}",
         "{{ .childAlarmID4 }}"
@@ -1646,7 +1646,7 @@ Feature: Get alarms
     }
     """
     Then the response code should be 204
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-7&correlation=true&sort_by=v.display_name&sort=asc until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-7&correlation=true&sort_by=v.display_name&sort=asc until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1704,7 +1704,7 @@ Feature: Get alarms
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-to-alarm-correlation-get-7-2"
+              "value": "test-resource-correlation-alarm-get-7-2"
             }
           }
         ],
@@ -1713,7 +1713,7 @@ Feature: Get alarms
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-to-alarm-correlation-get-7-3"
+              "value": "test-resource-correlation-alarm-get-7-3"
             }
           }
         ]
@@ -1755,7 +1755,7 @@ Feature: Get alarms
             "data": [
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-7-1",
+                  "resource": "test-resource-correlation-alarm-get-7-1",
                   "state": {
                     "val": 1
                   }
@@ -1763,7 +1763,7 @@ Feature: Get alarms
               },
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-7-2"
+                  "resource": "test-resource-correlation-alarm-get-7-2"
                 },
                 "assigned_declare_ticket_rules": [
                   {
@@ -1789,7 +1789,7 @@ Feature: Get alarms
             "data": [
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-7-3"
+                  "resource": "test-resource-correlation-alarm-get-7-3"
                 },
                 "assigned_declare_ticket_rules": [
                   {
@@ -1800,7 +1800,7 @@ Feature: Get alarms
               },
               {
                 "v": {
-                  "resource": "test-resource-to-alarm-correlation-get-7-4"
+                  "resource": "test-resource-correlation-alarm-get-7-4"
                 }
               }
             ],
@@ -1825,38 +1825,38 @@ Feature: Get alarms
     """json
     [
       {
-        "connector": "test-connector-to-alarm-correlation-get-8",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+        "connector": "test-connector-correlation-alarm-get-8",
+        "connector_name": "test-connector-name-correlation-alarm-get-8",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-8",
-        "resource": "test-resource-to-alarm-correlation-get-8-1",
+        "component": "test-component-correlation-alarm-get-8",
+        "resource": "test-resource-correlation-alarm-get-8-1",
         "state": 1,
-        "output": "test-output-to-alarm-correlation-get-8"
+        "output": "test-output-correlation-alarm-get-8"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-8",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+        "connector": "test-connector-correlation-alarm-get-8",
+        "connector_name": "test-connector-name-correlation-alarm-get-8",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-8",
-        "resource": "test-resource-to-alarm-correlation-get-8-2",
+        "component": "test-component-correlation-alarm-get-8",
+        "resource": "test-resource-correlation-alarm-get-8-2",
         "state": 1,
-        "output": "test-resource-to-alarm-correlation-get-8-search"
+        "output": "test-resource-correlation-alarm-get-8-search"
       },
       {
-        "connector": "test-connector-to-alarm-correlation-get-8",
-        "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+        "connector": "test-connector-correlation-alarm-get-8",
+        "connector_name": "test-connector-name-correlation-alarm-get-8",
         "source_type": "resource",
         "event_type": "check",
-        "component": "test-component-to-alarm-correlation-get-8",
-        "resource": "test-resource-to-alarm-correlation-get-8-3",
+        "component": "test-component-correlation-alarm-get-8",
+        "resource": "test-resource-correlation-alarm-get-8-3",
         "state": 1,
-        "output": "test-resource-to-alarm-correlation-get-8-search"
+        "output": "test-resource-correlation-alarm-get-8-search"
       }
     ]
     """
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-8&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-8&sort_by=v.resource&sort=asc
     Then the response code should be 200
     When I save response childAlarmID1={{ (index .lastResponse.data 0)._id }}
     When I save response childAlarmID2={{ (index .lastResponse.data 1)._id }}
@@ -1864,8 +1864,8 @@ Feature: Get alarms
     When I do POST /api/v4/cat/manual-meta-alarms:
     """json
     {
-      "name": "test-metalarm-to-alarm-correlation-get-8-1",
-      "comment": "test-metalarm-to-alarm-correlation-get-8-1-comment",
+      "name": "test-metalarm-correlation-alarm-get-8-1",
+      "comment": "test-metalarm-correlation-alarm-get-8-1-comment",
       "alarms": [
         "{{ .childAlarmID1 }}",
         "{{ .childAlarmID2 }}",
@@ -1874,7 +1874,7 @@ Feature: Get alarms
     }
     """
     Then the response code should be 204
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-8&correlation=true&sort_by=v.output&sort=asc until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-8&correlation=true&sort_by=v.output&sort=asc until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1888,26 +1888,26 @@ Feature: Get alarms
     When I send an event and wait the end of event processing:
     """json
     {
-      "connector": "test-connector-to-alarm-correlation-get-8",
-      "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+      "connector": "test-connector-correlation-alarm-get-8",
+      "connector_name": "test-connector-name-correlation-alarm-get-8",
       "source_type": "resource",
       "event_type": "cancel",
-      "component": "test-component-to-alarm-correlation-get-8",
-      "resource": "test-resource-to-alarm-correlation-get-8-3"
+      "component": "test-component-correlation-alarm-get-8",
+      "resource": "test-resource-correlation-alarm-get-8-3"
     }
     """
     When I send an event and wait the end of event processing:
     """json
     {
-      "connector": "test-connector-to-alarm-correlation-get-8",
-      "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+      "connector": "test-connector-correlation-alarm-get-8",
+      "connector_name": "test-connector-name-correlation-alarm-get-8",
       "source_type": "resource",
       "event_type": "resolve_cancel",
-      "component": "test-component-to-alarm-correlation-get-8",
-      "resource": "test-resource-to-alarm-correlation-get-8-3"
+      "component": "test-component-correlation-alarm-get-8",
+      "resource": "test-resource-correlation-alarm-get-8-3"
     }
     """
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-8&correlation=true&sort_by=v.output&sort=asc until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-8&correlation=true&sort_by=v.output&sort=asc until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1922,48 +1922,48 @@ Feature: Get alarms
     When I send an event and wait the end of event processing:
     """json
     {
-      "connector": "test-connector-to-alarm-correlation-get-8",
-      "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+      "connector": "test-connector-correlation-alarm-get-8",
+      "connector_name": "test-connector-name-correlation-alarm-get-8",
       "source_type": "resource",
       "event_type": "cancel",
-      "component": "test-component-to-alarm-correlation-get-8",
-      "resource": "test-resource-to-alarm-correlation-get-8-1"
+      "component": "test-component-correlation-alarm-get-8",
+      "resource": "test-resource-correlation-alarm-get-8-1"
     }
     """
     When I send an event and wait the end of event processing:
     """json
     {
-      "connector": "test-connector-to-alarm-correlation-get-8",
-      "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+      "connector": "test-connector-correlation-alarm-get-8",
+      "connector_name": "test-connector-name-correlation-alarm-get-8",
       "source_type": "resource",
       "event_type": "resolve_cancel",
-      "component": "test-component-to-alarm-correlation-get-8",
-      "resource": "test-resource-to-alarm-correlation-get-8-1"
+      "component": "test-component-correlation-alarm-get-8",
+      "resource": "test-resource-correlation-alarm-get-8-1"
     }
     """
     When I send an event and wait the end of event processing:
     """json
     {
-      "connector": "test-connector-to-alarm-correlation-get-8",
-      "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+      "connector": "test-connector-correlation-alarm-get-8",
+      "connector_name": "test-connector-name-correlation-alarm-get-8",
       "source_type": "resource",
       "event_type": "cancel",
-      "component": "test-component-to-alarm-correlation-get-8",
-      "resource": "test-resource-to-alarm-correlation-get-8-2"
+      "component": "test-component-correlation-alarm-get-8",
+      "resource": "test-resource-correlation-alarm-get-8-2"
     }
     """
     When I send an event and wait the end of event processing:
     """json
     {
-      "connector": "test-connector-to-alarm-correlation-get-8",
-      "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+      "connector": "test-connector-correlation-alarm-get-8",
+      "connector_name": "test-connector-name-correlation-alarm-get-8",
       "source_type": "resource",
       "event_type": "resolve_cancel",
-      "component": "test-component-to-alarm-correlation-get-8",
-      "resource": "test-resource-to-alarm-correlation-get-8-2"
+      "component": "test-component-correlation-alarm-get-8",
+      "resource": "test-resource-correlation-alarm-get-8-2"
     }
     """
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-8&correlation=true&sort_by=v.output&sort=asc until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-8&correlation=true&sort_by=v.output&sort=asc until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -1979,28 +1979,28 @@ Feature: Get alarms
     When I send an event and wait the end of event processing:
     """json
     {
-      "connector": "test-connector-to-alarm-correlation-get-8",
-      "connector_name": "test-connector-name-to-alarm-correlation-get-8",
+      "connector": "test-connector-correlation-alarm-get-8",
+      "connector_name": "test-connector-name-correlation-alarm-get-8",
       "source_type": "resource",
       "event_type": "check",
-      "component": "test-component-to-alarm-correlation-get-8",
-      "resource": "test-resource-to-alarm-correlation-get-8-4",
+      "component": "test-component-correlation-alarm-get-8",
+      "resource": "test-resource-correlation-alarm-get-8-4",
       "state": 1,
-      "output": "test-resource-to-alarm-correlation-get-8-search"
+      "output": "test-resource-correlation-alarm-get-8-search"
     }
     """
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-8-4&sort_by=v.resource&sort=asc
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-8-4&sort_by=v.resource&sort=asc
     Then the response code should be 200
     When I save response childAlarmID4={{ (index .lastResponse.data 0)._id }}
     When I do PUT /api/v4/cat/manual-meta-alarms/{{ .metaAlarmID }}/add:
     """json
     {
-      "comment": "test-metalarm-to-alarm-correlation-get-8-1-comment",
+      "comment": "test-metalarm-correlation-alarm-get-8-1-comment",
       "alarms": ["{{ .childAlarmID4 }}"]
     }
     """
     Then the response code should be 204
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-8&correlation=true&sort_by=v.output&sort=asc until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-8&correlation=true&sort_by=v.output&sort=asc until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -2015,12 +2015,12 @@ Feature: Get alarms
     When I do PUT /api/v4/cat/manual-meta-alarms/{{ .metaAlarmID }}/remove:
     """json
     {
-      "comment": "test-metalarm-to-alarm-correlation-get-8-1-comment",
+      "comment": "test-metalarm-correlation-alarm-get-8-1-comment",
       "alarms": ["{{ .childAlarmID4 }}"]
     }
     """
     Then the response code should be 204
-    When I do GET /api/v4/alarms?search=test-resource-to-alarm-correlation-get-8&correlation=true&sort_by=v.output&sort=asc until response code is 200 and body contains:
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-8&correlation=true&sort_by=v.output&sort=asc until response code is 200 and body contains:
     """json
     {
       "data": [
@@ -2033,3 +2033,293 @@ Feature: Get alarms
       ]
     }
     """
+
+  @concurrent
+  Scenario: given meta alarm rule and alarms should increase events_count and last_event_date in metaalarm
+    Given I am admin
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "_id": "test-correlation-alarm-get-9",
+      "name": "test-correlation-alarm-get-9",
+      "type": "complex",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-correlation-alarm-get-9"
+            }
+          }
+        ]
+      ],
+      "config": {
+        "time_interval": {
+          "value": 20,
+          "unit": "s"
+        },
+        "threshold_count": 3
+      }
+    }
+    """
+    Then the response code should be 201
+    Then I save response metaAlarmRuleID={{ .lastResponse._id }}
+    When I wait the next periodical process
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-correlation-alarm-get-9",
+      "connector_name": "test-correlation-alarm-get-9-name",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-correlation-alarm-get-9",
+      "resource": "test-resource-correlation-alarm-get-9-1",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-correlation-alarm-get-9",
+      "connector_name": "test-correlation-alarm-get-9-name",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-correlation-alarm-get-9",
+      "resource": "test-resource-correlation-alarm-get-9-2",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-correlation-alarm-get-9",
+      "connector_name": "test-correlation-alarm-get-9-name",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-correlation-alarm-get-9",
+      "resource": "test-resource-correlation-alarm-get-9-2",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-correlation-alarm-get-9",
+      "connector_name": "test-correlation-alarm-get-9-name",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-correlation-alarm-get-9",
+      "resource": "test-resource-correlation-alarm-get-9-3",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-9-3
+    Then the response code should be 200
+    Then I save response lastEventDate={{ (index .lastResponse.data 0).v.last_event_date }}
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-9&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
+            "name": "test-correlation-alarm-get-9"
+          },
+          "v": {
+            "events_count": 4
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    Then the response key "data.0.v.last_event_date" should be "{{ .lastEventDate }}"
+    When I wait 1s
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-correlation-alarm-get-9",
+      "connector_name": "test-correlation-alarm-get-9-name",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-correlation-alarm-get-9",
+      "resource": "test-resource-correlation-alarm-get-9-3",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-9-3
+    Then the response code should be 200
+    Then I save response lastEventDate={{ (index .lastResponse.data 0).v.last_event_date }}
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-9&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
+            "name": "test-correlation-alarm-get-9"
+          },
+          "v": {
+            "events_count": 5
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    Then the response key "data.0.v.last_event_date" should be "{{ .lastEventDate }}"
+    When I wait 2s
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-correlation-alarm-get-9",
+      "connector_name": "test-correlation-alarm-get-9-name",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-correlation-alarm-get-9",
+      "resource": "test-resource-correlation-alarm-get-9-4",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-9-4
+    Then the response code should be 200
+    Then I save response lastEventDate={{ (index .lastResponse.data 0).v.last_event_date }}
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-9&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
+            "name": "test-correlation-alarm-get-9"
+          },
+          "v": {
+            "events_count": 6
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    Then the response key "data.0.v.last_event_date" should be "{{ .lastEventDate }}"
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "connector": "test-correlation-alarm-get-9",
+      "connector_name": "test-correlation-alarm-get-9-name",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-correlation-alarm-get-9",
+      "resource": "test-resource-correlation-alarm-get-9-4",
+      "state": 2,
+      "output": "test",
+      "long_output": "test",
+      "author": "test-author"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-9&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
+            "name": "test-correlation-alarm-get-9"
+          },
+          "v": {
+            "events_count": 7
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type" : "cancel",
+      "connector": "test-correlation-alarm-get-9",
+      "connector_name": "test-correlation-alarm-get-9-name",
+      "source_type": "resource",
+      "component":  "test-component-correlation-alarm-get-9",
+      "resource": "test-resource-correlation-alarm-get-9-4",
+      "output": "test"
+    }
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type" : "resolve_cancel",
+      "connector": "test-correlation-alarm-get-9",
+      "connector_name": "test-correlation-alarm-get-9-name",
+      "source_type": "resource",
+      "component":  "test-component-correlation-alarm-get-9",
+      "resource": "test-resource-correlation-alarm-get-9-4"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-9-3
+    Then the response code should be 200
+    Then I save response lastEventDate={{ (index .lastResponse.data 0).v.last_event_date }}
+    When I do GET /api/v4/alarms?search=test-resource-correlation-alarm-get-9&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "meta_alarm_rule": {
+            "name": "test-correlation-alarm-get-9"
+          },
+          "v": {
+            "events_count": 5
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    Then the response key "data.0.v.last_event_date" should be "{{ .lastEventDate }}"
+

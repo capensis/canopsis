@@ -25,7 +25,6 @@ configuration:
       disableactionsnoozedelayonpbh: true
       displaynamescheme: '{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3
         }}'
-      enablelasteventdate: true
       longoutputlength: 1024
       outputlength: 255
       stealthyinterval: 0
