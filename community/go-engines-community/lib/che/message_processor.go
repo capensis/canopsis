@@ -127,7 +127,8 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 func (p *messageProcessor) handleEvent(ctx context.Context, event types.Event) (types.Event, []types.Entity, bool, error) {
 	if event.EventType == types.EventTypeManualMetaAlarmGroup ||
 		event.EventType == types.EventTypeManualMetaAlarmUngroup ||
-		event.EventType == types.EventTypeManualMetaAlarmUpdate {
+		event.EventType == types.EventTypeManualMetaAlarmUpdate ||
+		event.EventType == types.EventTypeMetaAlarmUngroup {
 		return event, nil, false, nil
 	}
 
