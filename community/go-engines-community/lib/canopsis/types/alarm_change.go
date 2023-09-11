@@ -116,6 +116,14 @@ func (ac *AlarmChange) GetTriggers() []string {
 	return GetTriggers(ac.Type)
 }
 
+func (ac *AlarmChange) IsZero() bool {
+	if ac == nil {
+		return true
+	}
+
+	return *ac == AlarmChange{}
+}
+
 func GetTriggers(t AlarmChangeType) []string {
 	var triggers []string
 

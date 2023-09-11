@@ -194,6 +194,10 @@ ReconnectTimeoutMilliseconds = 8
 ReconnectRetries = 3
 # MaxExternalResponseSize limits reading of a response of external API.
 MaxExternalResponseSize = 10485760 # 10Mb
+# Infos dictionary options enable or disable infos dictionary building.
+# The dictionary is used in UI autocomplete hints for infos key and values.
+BuildEntityInfosDictionary = true
+BuildDynamicInfosDictionary = true
 
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.
@@ -209,7 +213,6 @@ JunitApi = "/tmp/canopsis/junit"
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.alarm]
 StealthyInterval = 0
-EnableLastEventDate = false
 CancelAutosolveDelay = "1h"
 DisplayNameScheme = "{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3 }}"
 OutputLength = 255
