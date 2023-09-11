@@ -201,6 +201,47 @@ func (t *MicroTime) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+func (t MicroTime) MarshalBSONValue() (bsontype.Type, []byte, error) {
+	unixMicro := t.Time.UnixMicro()
+	if unixMicro <= 0 {
+		return bsontype.Null, nil, nil
+	}
+
+	return bson.MarshalValue(unixMicro)
+}
+
+func (t *MicroTime) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
+	switch valueType {
+	case bsontype.Double:
+		double, _, ok := bsoncore.ReadDouble(b)
+		if !ok {
+			return errors.New("invalid value, expected double")
+		}
+
+		*t = MicroTime{Time: time.UnixMicro(int64(double))}
+	case bsontype.Int64:
+		i64, _, ok := bsoncore.ReadInt64(b)
+		if !ok {
+			return errors.New("invalid value, expected int64")
+		}
+
+		*t = MicroTime{Time: time.UnixMicro(i64)}
+	case bsontype.Int32:
+		i32, _, ok := bsoncore.ReadInt32(b)
+		if !ok {
+			return errors.New("invalid value, expected int32")
+		}
+
+		*t = MicroTime{Time: time.UnixMicro(int64(i32))}
+	case bsontype.Null:
+		//do nothing
+	default:
+		return fmt.Errorf("unexpected type %v", valueType)
+	}
+
+	return nil
+}
+
 // DurationWithUnit represent duration with user-preferred units
 type DurationWithUnit struct {
 	Value int64  `bson:"value" json:"value" binding:"required,min=1"`

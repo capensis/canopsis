@@ -37,8 +37,8 @@ import { saveJsonFile } from '@/helpers/file/files';
 import { getFileTextContent } from '@/helpers/file/file-select';
 import { getAllViewsFromGroups, exportedGroupsAndViewsToRequest } from '@/helpers/entities/view/form';
 
-import { entitiesViewMixin } from '@/mixins/entities/view';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
+import { entitiesViewMixin } from '@/mixins/entities/view';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 import ViewsExportExpansionPanel from '@/components/other/view/partials/views-export-expansion-panel.vue';
