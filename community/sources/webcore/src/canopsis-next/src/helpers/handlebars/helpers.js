@@ -1,13 +1,21 @@
-import { get, isFunction, isNumber, isObject, unescape, isString } from 'lodash';
+import {
+  get,
+  isFunction,
+  isNumber,
+  isObject,
+  unescape,
+  isString,
+  pick,
+} from 'lodash';
 import Handlebars from 'handlebars';
 import axios from 'axios';
 
 import { DATETIME_FORMATS, MAX_LIMIT } from '@/constants';
 
+import i18n from '@/i18n';
+
 import { convertDurationToString } from '@/helpers/date/duration';
 import { convertDateToStringWithFormatForToday, convertDateToString } from '@/helpers/date/date';
-
-import i18n from '@/i18n';
 
 /**
  * Prepare object attributes from `{ key: value, keySecond: valueSecond }` format
@@ -443,5 +451,26 @@ export function copyHelper(value = '', options = {}) {
     throw new Error('handlebars helper {{copy}} expects options.fn');
   }
 
-  return new Handlebars.SafeString(`<c-copy-wrapper value="${value}" />${options.fn(this)}</c-copy-wrapper>`);
+  return new Handlebars.SafeString(
+    `<c-copy-wrapper ${prepareAttributes({ value })} />${options.fn(this)}</c-copy-wrapper>`,
+  );
+}
+
+/**
+ * JSON stringify helper
+ *
+ * Example: {{ json alarm.v 'display_name' }}
+ *
+ * @param {Object} [object]
+ * @param {Array} [args]
+ * @returns {*}
+ */
+export function jsonHelper(object, ...args) {
+  if (!isObject(object)) {
+    throw new Error('handlebars helper {{json}} expects object');
+  }
+
+  const fields = args.filter(isString);
+
+  return JSON.stringify(fields.length ? pick(object, fields) : object, undefined, 2);
 }

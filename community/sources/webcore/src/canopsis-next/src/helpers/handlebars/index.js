@@ -77,3 +77,4 @@ registerHelper('lowercase', helpers.lowercaseHelper);
 registerHelper('uppercase', helpers.uppercaseHelper);
 registerHelper('replace', helpers.replaceHelper);
 registerHelper('copy', helpers.copyHelper);
+registerHelper('json', helpers.jsonHelper);
