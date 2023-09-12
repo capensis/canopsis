@@ -394,3 +394,8 @@ Feature: get running instruction
     When I am noperms
     When I do GET /api/v4/cat/executions/notexist
     Then the response code should be 403
+
+  Scenario: given get request with not found id should return error
+    When I am admin
+    When I do GET /api/v4/cat/executions/notexist
+    Then the response code should be 404
