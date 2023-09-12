@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { get, isString } from 'lodash';
+import { isString } from 'lodash';
 import { Validator } from 'vee-validate';
 
 import { convertPayloadToJson } from '@/helpers/payload-json';
@@ -116,7 +116,7 @@ export default {
     },
 
     wasChanged() {
-      return get(this.fields, [this.name, 'changed']);
+      return this.valueToLocalValue(this.value) !== this.localValue;
     },
 
     listeners() {

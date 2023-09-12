@@ -13,13 +13,20 @@ import (
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/description"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"go.mongodb.org/mongo-driver/x/mongo/driver/topology"
 )
 
 const (
-	defaultClientTimeout = 15 * time.Second
+	defaultClientTimeout            = 15 * time.Second
+	disableRetries       contextKey = "disable_retries"
+
+	topologyCheckTimeout = 1 * time.Second
 )
+
+type contextKey string
 
 type SingleResultHelper interface {
 	Decode(v interface{}) error
@@ -91,7 +98,7 @@ func (c *dbCollection) Aggregate(ctx context.Context, pipeline interface{},
 	var mongoCursor *mongo.Cursor
 	var err error
 
-	c.retry(ctx, func(ctx context.Context) error {
+	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		mongoCursor, err = c.mongoCollection.Aggregate(ctx, pipeline, opts...)
 		return err
 	})
@@ -107,7 +114,7 @@ func (c *dbCollection) BulkWrite(ctx context.Context, models []mongo.WriteModel,
 	opts ...*options.BulkWriteOptions) (*mongo.BulkWriteResult, error) {
 	var res *mongo.BulkWriteResult
 	var err error
-	c.retry(ctx, func(ctx context.Context) error {
+	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		res, err = c.mongoCollection.BulkWrite(ctx, models, opts...)
 		return err
 	})
@@ -119,7 +126,7 @@ func (c *dbCollection) CountDocuments(ctx context.Context, filter interface{},
 	opts ...*options.CountOptions) (int64, error) {
 	var res int64
 	var err error
-	c.retry(ctx, func(ctx context.Context) error {
+	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		res, err = c.mongoCollection.CountDocuments(ctx, filter, opts...)
 		return err
 	})
@@ -131,7 +138,7 @@ func (c *dbCollection) DeleteMany(ctx context.Context, filter interface{},
 	opts ...*options.DeleteOptions) (int64, error) {
 	var res *mongo.DeleteResult
 	var err error
-	c.retry(ctx, func(ctx context.Context) error {
+	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		res, err = c.mongoCollection.DeleteMany(ctx, filter, opts...)
 		return err
 	})
@@ -146,7 +153,7 @@ func (c *dbCollection) Distinct(ctx context.Context, fieldName string, filter in
 	opts ...*options.DistinctOptions) ([]interface{}, error) {
 	var res []interface{}
 	var err error
-	c.retry(ctx, func(ctx context.Context) error {
+	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		res, err = c.mongoCollection.Distinct(ctx, fieldName, filter, opts...)
 		return err
 	})
@@ -156,7 +163,7 @@ func (c *dbCollection) Distinct(ctx context.Context, fieldName string, filter in
 
 func (c *dbCollection) Drop(ctx context.Context) error {
 	var err error
-	c.retry(ctx, func(ctx context.Context) error {
+	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		err = c.mongoCollection.Drop(ctx)
 		return err
 	})
@@ -169,7 +176,7 @@ func (c *dbCollection) Find(ctx context.Context, filter interface{},
 	var mongoCursor *mongo.Cursor
 	var err error
 
-	c.retry(ctx, func(ctx context.Context) error {
+	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		mongoCursor, err = c.mongoCollection.Find(ctx, filter, opts...)
 		return err
 	})
@@ -184,7 +191,7 @@ func (c *dbCollection) Find(ctx context.Context, filter interface{},
 func (c *dbCollection) FindOne(ctx context.Context, filter interface{},
 	opts ...*options.FindOneOptions) SingleResultHelper {
 	var res *mongo.SingleResult
-	c.retry(ctx, func(ctx context.Context) error {
+	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		res = c.mongoCollection.FindOne(ctx, filter, opts...)
 		return res.Err()
 	})
@@ -195,7 +202,7 @@ func (c *dbCollection) FindOne(ctx context.Context, filter interface{},
 func (c *dbCollection) FindOneAndDelete(ctx context.Context, filter interface{},
 	opts ...*options.FindOneAndDeleteOptions) SingleResultHelper {
 	var res *mongo.SingleResult
-	c.retry(ctx, func(ctx context.Context) error {
+	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		res = c.mongoCollection.FindOneAndDelete(ctx, filter, opts...)
 		return res.Err()
 	})
@@ -206,7 +213,7 @@ func (c *dbCollection) FindOneAndDelete(ctx context.Context, filter interface{},
 func (c *dbCollection) FindOneAndReplace(ctx context.Context, filter, replacement interface{},
 	opts ...*options.FindOneAndReplaceOptions) SingleResultHelper {
 	var res *mongo.SingleResult
-	c.retry(ctx, func(ctx context.Context) error {
+	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		res = c.mongoCollection.FindOneAndReplace(ctx, filter, replacement, opts...)
 		return res.Err()
 	})
@@ -217,7 +224,7 @@ func (c *dbCollection) FindOneAndReplace(ctx context.Context, filter, replacemen
 func (c *dbCollection) FindOneAndUpdate(ctx context.Context, filter, update interface{},
 	opts ...*options.FindOneAndUpdateOptions) SingleResultHelper {
 	var res *mongo.SingleResult
-	c.retry(ctx, func(ctx context.Context) error {
+	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		res = c.mongoCollection.FindOneAndUpdate(ctx, filter, update, opts...)
 		return res.Err()
 	})
@@ -229,7 +236,7 @@ func (c *dbCollection) DeleteOne(ctx context.Context, filter interface{},
 	opts ...*options.DeleteOptions) (int64, error) {
 	var res *mongo.DeleteResult
 	var err error
-	c.retry(ctx, func(ctx context.Context) error {
+	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		res, err = c.mongoCollection.DeleteOne(ctx, filter, opts...)
 		return err
 	})
@@ -248,7 +255,7 @@ func (c *dbCollection) InsertOne(ctx context.Context, document interface{},
 	opts ...*options.InsertOneOptions) (interface{}, error) {
 	var res *mongo.InsertOneResult
 	var err error
-	c.retry(ctx, func(ctx context.Context) error {
+	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		res, err = c.mongoCollection.InsertOne(ctx, document, opts...)
 		return err
 	})
@@ -264,7 +271,7 @@ func (c *dbCollection) InsertMany(ctx context.Context, documents []interface{},
 	opts ...*options.InsertManyOptions) ([]interface{}, error) {
 	var res *mongo.InsertManyResult
 	var err error
-	c.retry(ctx, func(ctx context.Context) error {
+	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		res, err = c.mongoCollection.InsertMany(ctx, documents, opts...)
 		return err
 	})
@@ -279,7 +286,7 @@ func (c *dbCollection) ReplaceOne(ctx context.Context, filter, replacement inter
 	opts ...*options.ReplaceOptions) (*mongo.UpdateResult, error) {
 	var res *mongo.UpdateResult
 	var err error
-	c.retry(ctx, func(ctx context.Context) error {
+	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		res, err = c.mongoCollection.ReplaceOne(ctx, filter, replacement, opts...)
 		return err
 	})
@@ -294,7 +301,7 @@ func (c *dbCollection) UpdateMany(ctx context.Context, filter interface{}, updat
 	opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
 	var res *mongo.UpdateResult
 	var err error
-	c.retry(ctx, func(ctx context.Context) error {
+	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		res, err = c.mongoCollection.UpdateMany(ctx, filter, update, opts...)
 		return err
 	})
@@ -314,7 +321,7 @@ func (c *dbCollection) UpdateOne(ctx context.Context, filter interface{}, update
 	opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
 	var res *mongo.UpdateResult
 	var err error
-	c.retry(ctx, func(ctx context.Context) error {
+	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		res, err = c.mongoCollection.UpdateOne(ctx, filter, update, opts...)
 		return err
 	})
@@ -323,35 +330,6 @@ func (c *dbCollection) UpdateOne(ctx context.Context, filter interface{}, update
 		return nil, err
 	}
 	return res, nil
-}
-
-func (c *dbCollection) retry(ctx context.Context, f func(context.Context) error) {
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
-
-	timeout := c.minRetryTimeout
-
-	for i := 0; i <= c.retryCount; i++ {
-		err := f(ctx)
-		if err == nil {
-			return
-		}
-
-		if c.retryCount == i || timeout == 0 {
-			return
-		}
-
-		if !IsConnectionError(err) {
-			return
-		}
-
-		select {
-		case <-ctx.Done():
-			return
-		case <-time.After(timeout):
-			timeout *= 2
-		}
-	}
 }
 
 // NewClient creates a new connection to the MongoDB database.
@@ -379,16 +357,17 @@ func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duratio
 		return nil, err
 	}
 
-	db := client.Database(dbName)
-
 	dbClient := &dbClient{
 		Client:          client,
-		Database:        db,
+		Database:        client.Database(dbName),
 		RetryCount:      retryCount,
 		MinRetryTimeout: minRetryTimeout,
 	}
 
-	dbClient.checkTransactionEnabled(ctx, logger)
+	err = dbClient.checkTransactionEnabled(ctx, logger)
+	if err != nil {
+		return nil, err
+	}
 
 	return dbClient, nil
 }
@@ -429,16 +408,17 @@ func NewClientWithOptions(
 		return nil, err
 	}
 
-	db := client.Database(dbName)
-
 	dbClient := &dbClient{
 		Client:          client,
-		Database:        db,
+		Database:        client.Database(dbName),
 		RetryCount:      retryCount,
 		MinRetryTimeout: minRetryTimeout,
 	}
 
-	dbClient.checkTransactionEnabled(ctx, logger)
+	err = dbClient.checkTransactionEnabled(ctx, logger)
+	if err != nil {
+		return nil, err
+	}
 
 	return dbClient, nil
 }
@@ -474,61 +454,109 @@ func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) 
 	}
 
 	opts := options.Session().SetDefaultReadPreference(readpref.Primary())
-	session, err := c.Client.StartSession(opts)
-	if err != nil {
+
+	var session mongo.Session
+	var err error
+
+	retry(ctx, c.RetryCount, c.MinRetryTimeout, func(ctx context.Context) error {
+		session, err = c.Client.StartSession(opts)
+		if err != nil {
+			return err
+		}
+
+		defer session.EndSession(ctx)
+
+		_, err = session.WithTransaction(ctx, func(sessCtx mongo.SessionContext) (interface{}, error) {
+			return nil, f(context.WithValue(sessCtx, disableRetries, true))
+		})
+
 		return err
-	}
-
-	defer session.EndSession(ctx)
-
-	_, err = session.WithTransaction(ctx, func(sessCtx mongo.SessionContext) (interface{}, error) {
-		return nil, f(sessCtx)
 	})
 
 	return err
 }
 
-func (c *dbClient) checkTransactionEnabled(pCtx context.Context, logger zerolog.Logger) {
-	ctx, cancel := context.WithTimeout(pCtx, time.Second)
-	defer cancel()
+func (c *dbClient) checkTransactionEnabled(ctx context.Context, logger zerolog.Logger) error {
+	var err error
 
-	session, err := c.Client.StartSession()
+	c.isDistributed, err = isMongoReplicaSetEnabled(ctx)
 	if err != nil {
-		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
-		return
+		return err
 	}
 
-	defer session.EndSession(ctx)
-
-	collection := c.Collection("test_collection")
-	_, err = collection.InsertOne(ctx, bson.M{})
-	if err != nil {
-		logger.Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
-		return
+	if c.isDistributed {
+		logger.Info().Msg("replica set is detected, transactions are enabled")
+	} else {
+		logger.Warn().Msg("replica set is not detected, transactions are disabled")
 	}
 
-	_, err = session.WithTransaction(ctx, func(sessCtx mongo.SessionContext) (interface{}, error) {
-		return nil, func(ctx mongo.SessionContext) error {
-			_, err = collection.DeleteMany(ctx, bson.M{})
-			return err
-		}(sessCtx)
-	})
-
-	_ = collection.Drop(ctx)
-
-	if err != nil {
-		logger.Warn().Err(err).Msg("cannot determine MongoDB version, transactions are disabled")
-		return
-	}
-
-	logger.Info().Msg("MongoDB version supports transactions, transactions are enabled")
-	c.isDistributed = true
+	return nil
 }
 
 // IsDistributed returns true if MongoDB is Replica Set or Sharded Cluster.
 // Use to check feature availability : Transactions, Change Streams, etc.
 func (c *dbClient) IsDistributed() bool {
 	return c.isDistributed
+}
+
+func isMongoReplicaSetEnabled(ctx context.Context) (bool, error) {
+	mongoURL, _, err := getURL()
+	if err != nil {
+		return false, fmt.Errorf("could not get mongo url: %w", err)
+	}
+
+	cfg, err := topology.NewConfig(options.Client().ApplyURI(mongoURL), nil)
+	if err != nil {
+		return false, fmt.Errorf("could not create topology config: %w", err)
+	}
+
+	top, err := topology.New(cfg)
+	if err != nil {
+		return false, fmt.Errorf("could not create topology: %w", err)
+	}
+
+	defer func() {
+		_ = top.Disconnect(ctx)
+	}()
+
+	err = top.Connect()
+	if err != nil {
+		return false, fmt.Errorf("could not connect to topology: %w", err)
+	}
+
+	sub, err := top.Subscribe()
+	if err != nil {
+		return false, fmt.Errorf("could not subscribe to topology: %w", err)
+	}
+
+	defer func() {
+		_ = top.Unsubscribe(sub)
+	}()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return false, nil
+		case <-time.After(topologyCheckTimeout):
+			return false, nil
+		case desc, ok := <-sub.Updates:
+			if !ok {
+				return false, fmt.Errorf("topology subscription was closed: %w", err)
+			}
+
+			switch desc.Kind {
+			case description.Unknown:
+				continue
+			case description.Sharded,
+				description.ReplicaSet,
+				description.ReplicaSetNoPrimary,
+				description.ReplicaSetWithPrimary:
+				return true, nil
+			default:
+				return false, nil
+			}
+		}
+	}
 }
 
 // getURL parses URL value in EnvURL environment variable
@@ -543,6 +571,39 @@ func getURL() (mongoURL, dbName string, err error) {
 	}
 	dbName = strings.TrimPrefix(parsed.EscapedPath(), "/")
 	return mongoURL, dbName, nil
+}
+
+func retry(ctx context.Context, retryCount int, retryTimeout time.Duration, f func(context.Context) error) {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	withoutRetries, _ := ctx.Value(disableRetries).(bool)
+	if withoutRetries {
+		_ = f(ctx)
+		return
+	}
+
+	for i := 0; i <= retryCount; i++ {
+		err := f(ctx)
+		if err == nil {
+			return
+		}
+
+		if retryCount == i || retryTimeout == 0 {
+			return
+		}
+
+		if !IsConnectionError(err) && !mongo.IsDuplicateKeyError(err) {
+			return
+		}
+
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(retryTimeout):
+			retryTimeout *= 2
+		}
+	}
 }
 
 func IsConnectionError(err error) bool {

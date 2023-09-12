@@ -283,6 +283,72 @@ func (a *ApiClient) TheResponseKeyShouldNotBe(ctx context.Context, path, value s
 *
 Step example:
 
+	Then the response key "data.0.created_at" should be "0"
+*/
+func (a *ApiClient) TheResponseKeyShouldBe(ctx context.Context, path, value string) error {
+	responseBody, ok := getResponseBody(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+
+	b, err := a.templater.Execute(ctx, value)
+	if err != nil {
+		return err
+	}
+
+	value = b.String()
+
+	if nestedVal, ok := getNestedJsonVal(responseBody, strings.Split(path, ".")); ok {
+		switch v := nestedVal.(type) {
+		case types.Nil:
+			if value == "null" {
+				return nil
+			}
+		case string:
+			if v == value {
+				return nil
+			}
+		case int:
+			if i, err := strconv.ParseInt(value, 10, 0); err != nil || v == int(i) {
+				return nil
+			}
+		case int32:
+			if i, err := strconv.ParseInt(value, 10, 0); err != nil || v == int32(i) {
+				return nil
+			}
+		case int64:
+			if i, err := strconv.ParseInt(value, 10, 0); err != nil || v == i {
+				return nil
+			}
+		case float32:
+			if f, err := strconv.ParseFloat(value, 32); err != nil || v == float32(f) {
+				return nil
+			}
+		case float64:
+			if f, err := strconv.ParseFloat(value, 64); err != nil || v == f {
+				return nil
+			}
+		case bool:
+			if b, err := strconv.ParseBool(value); err != nil || v == b {
+				return nil
+			}
+		}
+
+		return fmt.Errorf("%v doesn't equal to %v", value, nestedVal)
+	}
+
+	responseBodyOutput, ok := getResponseBodyOutput(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+
+	return fmt.Errorf("%s not exists in response:\n%v", path, responseBodyOutput)
+}
+
+/*
+*
+Step example:
+
 	Then the response key "data.0.created_at" should not exist
 */
 func (a *ApiClient) TheResponseKeyShouldNotExist(ctx context.Context, path string) error {
