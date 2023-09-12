@@ -10,14 +10,18 @@ import (
 type AxeEvent struct {
 	EventType  string        `json:"event_type"`
 	Parameters AxeParameters `json:"parameters,omitempty"`
-	Alarm      *types.Alarm  `json:"alarm"`
-	Entity     *types.Entity `json:"entity"`
+	Alarm      *types.Alarm  `json:"alarm,omitempty"`
+	AlarmID    string        `json:"alarm_id,omitempty"`
+	Entity     *types.Entity `json:"entity,omitempty"`
 }
 
 type AxeParameters struct {
-	Output string `json:"output,omitempty"`
-	Author string `json:"author,omitempty"`
-	User   string `json:"user,omitempty"`
+	Output    string        `json:"output,omitempty"`
+	Author    string        `json:"author,omitempty"`
+	User      string        `json:"user,omitempty"`
+	Role      string        `json:"role,omitempty"`
+	Initiator string        `json:"initiator,omitempty"`
+	Timestamp types.CpsTime `json:"timestamp,omitempty"`
 	// ChangeState
 	State *types.CpsNumber `json:"state,omitempty"`
 	// AssocTicket and Webhook
@@ -32,7 +36,9 @@ type AxeParameters struct {
 	EmitTrigger       bool              `json:"emit_trigger,omitempty"`
 	// Snooze and Pbehavior
 	Duration *types.DurationWithUnit `json:"duration,omitempty"`
-	// Pbehavior
+	// Pbehavior enter
+	PbehaviorInfo types.PbehaviorInfo `json:"pbehavior_info,omitempty"`
+	// Pbehavior create
 	Name           string         `json:"name,omitempty"`
 	Reason         string         `json:"reason,omitempty"`
 	Type           string         `json:"type,omitempty"`
@@ -43,6 +49,20 @@ type AxeParameters struct {
 	// Instruction
 	Execution   string `json:"execution,omitempty"`
 	Instruction string `json:"instruction,omitempty"`
+	// Trigger
+	Trigger string `json:"trigger,omitempty"`
+	// Check
+	LongOutput    string            `json:"long_output,omitempty"`
+	Tags          map[string]string `json:"tags,omitempty"`
+	Connector     string            `json:"connector,omitempty"`
+	ConnectorName string            `json:"connector_name,omitempty"`
+	// Idle events
+	IdleRuleApply string `json:"idle_rule_apply,omitempty"`
+	// Meta alarm create
+	MetaAlarmRuleID    string   `json:"meta_alarm_rule_id,omitempty"`
+	MetaAlarmValuePath string   `json:"meta_alarm_value_path,omitempty"`
+	DisplayName        string   `json:"display_name,omitempty"`
+	MetaAlarmChildren  []string `json:"meta_alarm_children,omitempty"`
 }
 
 type AxeResultEvent struct {

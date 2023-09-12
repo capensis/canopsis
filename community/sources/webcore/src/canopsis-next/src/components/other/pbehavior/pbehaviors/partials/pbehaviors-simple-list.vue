@@ -18,33 +18,33 @@
         left,
         @click="showPbehaviorsCalendarModal"
       )
-    v-data-table.ma-0(:items="pbehaviors", :headers="headers", :loading="pending", :dense="dense")
-      template(#items="{ item }")
-        td {{ item.name }}
-        td {{ item.author.display_name }}
-        td
-          c-enabled(:value="item.enabled")
-        td {{ formatIntervalDate(item, 'tstart') }}
-        td {{ formatIntervalDate(item, 'tstop') }}
-        td {{ formatRruleEndDate(item) }}
-        td
-          v-icon {{ item.rrule ? 'check' : 'clear' }}
-        td {{ item.type.name }}
-        td {{ item.reason.name }}
-        td
-          v-icon(color="primary") {{ item.type.icon_name }}
-        td(v-if="withActiveStatus")
-          v-icon(:color="item.is_active_status ? 'primary' : 'error'") $vuetify.icons.settings_sync
-        td
-          v-layout(row)
-            c-action-btn(
-              v-if="updatable",
-              :disabled="!item.editable",
-              :tooltip="item.editable ? $t('common.edit') : $t('pbehavior.notEditable')",
-              type="edit",
-              @click="showEditPbehaviorModal(item)"
-            )
-            c-action-btn(v-if="removable", type="delete", @click="showDeletePbehaviorModal(item._id)")
+    c-advanced-data-table.ma-0(
+      :items="pbehaviors",
+      :headers="headers",
+      :loading="pending",
+      :dense="dense"
+    )
+      template(#enabled="{ item }")
+        c-enabled(:value="item.enabled")
+      template(#tstart="{ item }") {{ formatIntervalDate(item, 'tstart') }}
+      template(#tstop="{ item }") {{ formatIntervalDate(item, 'tstop') }}
+      template(#rrule_end="{ item }") {{ formatRruleEndDate(item) }}
+      template(#rrule="{ item }")
+        v-icon {{ item.rrule ? 'check' : 'clear' }}
+      template(#icon="{ item }")
+        v-icon(color="primary") {{ item.type.icon_name }}
+      template(#status="{ item }")
+        v-icon(:color="item.is_active_status ? 'primary' : 'error'") $vuetify.icons.settings_sync
+      template(#actions="{ item }")
+        v-layout(row)
+          c-action-btn(
+            v-if="updatable",
+            :disabled="!item.editable",
+            :tooltip="item.editable ? $t('common.edit') : $t('pbehavior.notEditable')",
+            type="edit",
+            @click="showEditPbehaviorModal(item)"
+          )
+          c-action-btn(v-if="removable", type="delete", @click="showDeletePbehaviorModal(item._id)")
 </template>
 
 <script>
@@ -112,17 +112,17 @@ export default {
         { text: this.$t('pbehavior.ends'), value: 'tstop' },
         { text: this.$t('pbehavior.rruleEnd'), value: 'rrule_end' },
         { text: this.$t('common.recurrence'), value: 'rrule' },
-        { text: this.$t('common.type'), value: 'type.type' },
+        { text: this.$t('common.type'), value: 'type.name' },
         { text: this.$t('common.reason'), value: 'reason.name' },
-        { text: this.$t('common.icon'), value: 'type.icon_name' },
+        { text: this.$t('common.icon'), value: 'icon' },
       ];
 
       if (this.withActiveStatus) {
-        headers.push({ text: this.$t('common.status'), value: 'is_active_status', sortable: false });
+        headers.push({ text: this.$t('common.status'), value: 'status', sortable: false });
       }
 
       if (this.updatable || this.removable) {
-        headers.push({ text: this.$t('common.actionsLabel'), value: 'actionsLabel', sortable: false });
+        headers.push({ text: this.$t('common.actionsLabel'), value: 'actions', sortable: false });
       }
 
       return headers;

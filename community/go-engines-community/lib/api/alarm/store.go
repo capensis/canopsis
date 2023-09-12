@@ -663,8 +663,11 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 
 	if withInstructions || withLinks {
 		project["model"] = bson.M{
-			"alarm":  "$$ROOT",
-			"entity": "$entity",
+			"alarm": "$$ROOT",
+			"entity": bson.M{"$mergeObjects": bson.A{
+				"$entity",
+				bson.M{"category": "$entity.category._id"},
+			}},
 		}
 	}
 
