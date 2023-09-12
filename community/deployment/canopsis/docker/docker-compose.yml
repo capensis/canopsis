@@ -164,10 +164,6 @@ services:
     <<: *app_service_base
     image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}engine-pbehavior:${CANOPSIS_IMAGE_TAG}
 
-  service:
-    <<: *app_service_base
-    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}engine-service:${CANOPSIS_IMAGE_TAG}
-
   api:
     <<: *app_service_base
     image: ${DOCKER_REPOSITORY}${CPS_EDITION}/canopsis-api-${CPS_EDITION}:${CANOPSIS_IMAGE_TAG}

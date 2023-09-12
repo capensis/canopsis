@@ -3,16 +3,14 @@ package che
 import (
 	"context"
 	"fmt"
-	"reflect"
 	"testing"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	libcontext "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/context"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
@@ -22,72 +20,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
-	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
-	mock_context "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/context"
-	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
-	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
-	mock_techmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/techmetrics"
-	"github.com/golang/mock/gomock"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 )
-
-func TestMessageProcessor_Process_GivenRecomputeEntityServiceEvent_ShouldPassItToNextQueue(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-	body := []byte("{\"event_type\":\"recomputeentityservice\"}")
-	event := types.Event{
-		EventType:     types.EventTypeRecomputeEntityService,
-		SourceType:    types.SourceTypeComponent,
-		Connector:     "test-connector",
-		ConnectorName: "test-connector-name",
-		Component:     "test-component",
-	}
-	expectedBody := []byte("test-next-body")
-	mockAlarmConfigProvider := mock_config.NewMockAlarmConfigProvider(ctrl)
-	mockAlarmConfigProvider.EXPECT().Get().Return(config.AlarmConfig{})
-	mockEventFilterService := mock_eventfilter.NewMockService(ctrl)
-	mockEventFilterService.EXPECT().ProcessEvent(gomock.Any(), gomock.Any()).Return(event, nil)
-	mockEnrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
-	mockEnrichmentCenter.EXPECT().HandleEntityServiceUpdate(gomock.Any(), gomock.Eq("test-component")).
-		Return(&libcontext.UpdatedEntityServices{}, nil)
-	mockEnrichmentCenter.EXPECT().Get(gomock.Any(), gomock.Any()).Return(nil, nil)
-	mockDecoder := mock_encoding.NewMockDecoder(ctrl)
-	mockDecoder.EXPECT().Decode(gomock.Eq(body), gomock.Any()).Do(func(_ []byte, e *types.Event) {
-		*e = event
-	}).Return(nil)
-	mockEncoder := mock_encoding.NewMockEncoder(ctrl)
-	mockEncoder.EXPECT().Encode(gomock.Any()).Do(func(event types.Event) {
-		if event.EventType != types.EventTypeRecomputeEntityService {
-			t.Errorf("expected event %s but got %s", types.EventTypeRecomputeEntityService, event.EventType)
-		}
-	}).Return(expectedBody, nil)
-	mockTechMetricsSender := mock_techmetrics.NewMockSender(ctrl)
-	mockTechMetricsSender.EXPECT().SendCheEvent(gomock.Any()).AnyTimes()
-
-	processor := &messageProcessor{
-		FeatureEventProcessing: true,
-		FeatureContextCreation: true,
-
-		AlarmConfigProvider: mockAlarmConfigProvider,
-		EventFilterService:  mockEventFilterService,
-		EnrichmentCenter:    mockEnrichmentCenter,
-		TechMetricsSender:   mockTechMetricsSender,
-		Encoder:             mockEncoder,
-		Decoder:             mockDecoder,
-		Logger:              zerolog.Logger{},
-	}
-
-	resBody, err := processor.Process(context.Background(), amqp.Delivery{
-		Body: body,
-	})
-	if err != nil {
-		t.Errorf("expected no error but got %v", err)
-	}
-	if !reflect.DeepEqual(expectedBody, resBody) {
-		t.Errorf("expected result %s but got %s", expectedBody, resBody)
-	}
-}
 
 func BenchmarkMessageProcessor_Process_GivenOldEntity(b *testing.B) {
 	benchmarkMessageProcessor(b, "./testdata/fixtures/old_entity.yml", func(i int) types.Event {
@@ -320,32 +255,14 @@ func benchmarkMessageProcessorWithConfig(
 	}
 
 	p := messageProcessor{
-		FeatureContextCreation:   true,
-		FeatureEventProcessing:   true,
 		FeaturePrintEventOnError: true,
-
-		AlarmConfigProvider: config.NewAlarmConfigProvider(cfg, zerolog.Nop()),
-		EnrichmentCenter: libcontext.NewEnrichmentCenter(
-			entity.NewAdapter(dbClient),
-			dbClient,
-			entityservice.NewManager(
-				entityservice.NewAdapter(dbClient),
-				entityservice.NewStorage(
-					entityservice.NewAdapter(dbClient),
-					redisClient,
-					json.NewEncoder(),
-					json.NewDecoder(),
-					zerolog.Nop(),
-				),
-				zerolog.Nop(),
-			),
-			metrics.NewNullMetaUpdater(),
-		),
-		EventFilterService: ruleService,
-		TechMetricsSender:  techMetricsSender,
-		Encoder:            json.NewEncoder(),
-		Decoder:            json.NewDecoder(),
-		Logger:             zerolog.Nop(),
+		AlarmConfigProvider:      config.NewAlarmConfigProvider(cfg, zerolog.Nop()),
+		ContextGraphManager:      contextgraph.NewManager(entity.NewAdapter(dbClient), dbClient, contextgraph.NewEntityServiceStorage(dbClient), metrics.NewNullMetaUpdater(), zerolog.Nop()),
+		EventFilterService:       ruleService,
+		TechMetricsSender:        techMetricsSender,
+		Encoder:                  json.NewEncoder(),
+		Decoder:                  json.NewDecoder(),
+		Logger:                   zerolog.Nop(),
 	}
 
 	encoder := json.NewEncoder()

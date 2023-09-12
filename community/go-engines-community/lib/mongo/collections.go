@@ -74,7 +74,8 @@ const (
 
 	MapMongoCollection = "map"
 
-	AlarmTagCollection = "alarm_tag"
+	AlarmTagCollection      = "alarm_tag"
+	AlarmTagColorCollection = "alarm_tag_color"
 
 	MibCollection       = "default_mibs"
 	SnmpRulesCollection = "default_snmprules"
@@ -92,4 +93,8 @@ const (
 
 	EventFilterRuleCollection    = "eventfilter"
 	EventFilterFailureCollection = "eventfilter_failure"
+
+	EntityServiceCountersCollection = "entity_service_counters"
+
+	MetaAlarmStatesCollection = "meta_alarm_states"
 )

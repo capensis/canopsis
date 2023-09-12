@@ -22,9 +22,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"github.com/cucumber/godog"
-	redismod "github.com/go-redis/redis/v8"
 	"github.com/go-testfixtures/testfixtures/v3"
 	_ "github.com/golang-migrate/migrate/v4/database/pgx"
+	redismod "github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
 
@@ -248,6 +248,7 @@ func InitializeScenario(
 		scenarioCtx.Step(`^the response key \"([^"]+)\" should exist$`, apiClient.TheResponseKeyShouldExist)
 		scenarioCtx.Step(`^the response key \"([^"]+)\" should not exist$`, apiClient.TheResponseKeyShouldNotExist)
 		scenarioCtx.Step(`^the response key \"([^"]+)\" should not be \"([^\"]+)\"$`, apiClient.TheResponseKeyShouldNotBe)
+		scenarioCtx.Step(`^the response key \"([^"]+)\" should be \"([^\"]+)\"$`, apiClient.TheResponseKeyShouldBe)
 		scenarioCtx.Step(`^the difference between ([^"]+) ([^"]+) is in range (-?\d+\.?\d*),(-?\d+\.?\d*)$`, apiClient.TheDifferenceBetweenValues)
 		scenarioCtx.Step(`^the response key \"([^"]+)\" should be greater or equal than (\d+)$`, apiClient.TheResponseKeyShouldBeGreaterOrEqualThan)
 		scenarioCtx.Step(`^the response key \"([^"]+)\" should be greater than (\d+)$`, apiClient.TheResponseKeyShouldBeGreaterThan)
