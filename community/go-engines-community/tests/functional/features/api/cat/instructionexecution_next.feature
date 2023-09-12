@@ -207,7 +207,12 @@ Feature: move a instruction execution to next operation
     When I do PUT /api/v4/cat/executions/notexist/next
     Then the response code should be 401
 
-  Scenario: given get request and auth user without permissions should not allow access
+  Scenario: given next request and auth user without permissions should not allow access
     When I am noperms
     When I do PUT /api/v4/cat/executions/notexist/next
     Then the response code should be 403
+
+  Scenario: given next request with not found id should return error
+    When I am admin
+    When I do PUT /api/v4/cat/executions/notexist/next
+    Then the response code should be 404

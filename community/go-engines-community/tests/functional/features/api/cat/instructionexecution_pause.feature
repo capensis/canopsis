@@ -79,3 +79,8 @@ Feature: pause a instruction execution
     When I am noperms
     When I do PUT /api/v4/cat/executions/notexist/pause
     Then the response code should be 403
+
+  Scenario: given pause request with not found id should return error
+    When I am admin
+    When I do PUT /api/v4/cat/executions/notexist/pause
+    Then the response code should be 404

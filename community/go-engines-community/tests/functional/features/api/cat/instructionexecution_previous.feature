@@ -470,7 +470,12 @@ Feature: move a instruction execution to previous operation
     When I do PUT /api/v4/cat/executions/notexist/previous
     Then the response code should be 401
 
-  Scenario: given get request and auth user without permissions should not allow access
+  Scenario: given prev request and auth user without permissions should not allow access
     When I am noperms
     When I do PUT /api/v4/cat/executions/notexist/previous
     Then the response code should be 403
+
+  Scenario: given prev request with not found id should return error
+    When I am admin
+    When I do PUT /api/v4/cat/executions/notexist/previous
+    Then the response code should be 404
