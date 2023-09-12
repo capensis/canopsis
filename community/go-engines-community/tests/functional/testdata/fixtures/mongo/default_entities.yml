@@ -1061,6 +1061,7 @@ default_entities:
     <<: *resource
     _id: test-resource-to-alarm-export-2/test-component-default
     name: test-resource-to-alarm-export-2
+    category: test-category-to-alarm-export
 
   resource_to_export_1:
     <<: *resource
