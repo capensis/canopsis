@@ -103,10 +103,8 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with custom props 1`] = `
             <div
               class="flex xs12"
             >
-              <c-patterns-field-stub
-                some-required="some-required"
-                value="[object Object]"
-                with-entity="with-entity"
+              <pbehavior-patterns-form-stub
+                form="[object Object]"
               />
             </div>
           </div>
@@ -225,10 +223,8 @@ exports[`pbehavior-form Renders \`pbehavior-form\` with required props 1`] = `
             <div
               class="flex xs12"
             >
-              <c-patterns-field-stub
-                some-required="some-required"
-                value="[object Object]"
-                with-entity="with-entity"
+              <pbehavior-patterns-form-stub
+                form="[object Object]"
               />
             </div>
           </div>

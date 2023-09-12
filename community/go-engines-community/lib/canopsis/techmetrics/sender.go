@@ -11,7 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
-	"github.com/jackc/pgx/v4"
+	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog"
 )
 
@@ -33,6 +33,8 @@ type Sender interface {
 	SendPBehaviorPeriodical(metric PbehaviorPeriodicalMetric)
 
 	SendApiRequest(metric ApiRequestMetric)
+
+	SendCorrelationRetries(metric CorrelationRetriesMetric)
 }
 
 func NewSender(
@@ -161,6 +163,14 @@ func (s *sender) SendAxeEvent(metric AxeEventMetric) {
 		metric.AlarmChangeType,
 	})
 
+}
+
+func (s *sender) SendCorrelationRetries(metric CorrelationRetriesMetric) {
+	s.addBatch(CorrelationRetries, []any{
+		metric.Timestamp.UTC(),
+		metric.Type,
+		metric.Retries,
+	})
 }
 
 func (s *sender) send(ctx context.Context) {
@@ -312,6 +322,12 @@ func (s *sender) getColumns(metricName string) []string {
 			"method",
 			"url",
 			"interval",
+		}
+	case CorrelationRetries:
+		return []string{
+			"time",
+			"type",
+			"retries",
 		}
 	}
 

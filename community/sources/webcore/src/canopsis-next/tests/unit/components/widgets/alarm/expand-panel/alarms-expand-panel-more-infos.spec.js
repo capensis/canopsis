@@ -7,8 +7,8 @@ import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-t
 import AlarmsExpandPanelMoreInfos from '@/components/widgets/alarm/expand-panel/alarms-expand-panel-more-infos.vue';
 
 const stubs = {
-  'c-runtime-template': CRuntimeTemplate,
   'c-compiled-template': CCompiledTemplate,
+  'c-runtime-template': CRuntimeTemplate,
 };
 
 describe('alarms-expand-panel-more-infos', () => {

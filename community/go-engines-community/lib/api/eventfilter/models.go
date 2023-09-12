@@ -18,7 +18,7 @@ type EditRequest struct {
 	Type         string                                        `json:"type" binding:"required,oneof=break drop enrichment change_entity"`
 	Priority     int64                                         `json:"priority" binding:"min=0"`
 	Enabled      bool                                          `json:"enabled"`
-	Config       eventfilter.RuleConfig                        `json:"config" binding:"dive"`
+	Config       eventfilter.RuleConfig                        `json:"config"`
 	ExternalData map[string]eventfilter.ExternalDataParameters `json:"external_data,omitempty" binding:"dive"`
 
 	common.EntityPatternFieldsRequest
