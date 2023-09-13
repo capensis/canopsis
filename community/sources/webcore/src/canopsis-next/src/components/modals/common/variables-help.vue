@@ -3,6 +3,10 @@
     template(#title="")
       span {{ $t('modals.variablesHelp.variables') }}
     template(#text="")
+      v-layout(v-if="config.exportEntity", justify-end)
+        v-btn(color="primary", small, @click="exportOriginal")
+          v-icon(left) file_download
+          span {{ $t('common.download') }}
       v-treeview(:items="config.variables", item-key="name")
         template(#prepend="{ item }")
           div.caption.font-italic(v-if="item.isArray") {{`(${$t('common.variableTypes.array')})`}}
@@ -65,15 +69,21 @@ export default {
     };
   },
   methods: {
-    exportAsJson(item) {
-      const object = convertTreeviewToObject(item);
-
-      const dateString = convertDateToString(
+    getNowDateString() {
+      return convertDateToString(
         getNowTimestamp(),
         DATETIME_FORMATS.long,
       );
+    },
 
-      saveJsonFile(object, `${item.name}-${dateString}`);
+    exportAsJson(item) {
+      const object = convertTreeviewToObject(item);
+
+      saveJsonFile(object, `${item.name}-${this.getNowDateString()}`);
+    },
+
+    exportOriginal() {
+      saveJsonFile(this.config.exportEntity, `${this.config.exportEntityName}-${this.getNowDateString()}`);
     },
 
     async exportAsPdf(alarm, template) {
