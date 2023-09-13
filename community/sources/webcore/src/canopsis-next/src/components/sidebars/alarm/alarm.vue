@@ -2,7 +2,7 @@
   widget-settings(:submitting="submitting", @submit="submit")
     field-title(v-model="form.title")
     v-divider
-    field-periodic-refresh(v-model="form.parameters.periodic_refresh")
+    field-periodic-refresh(v-model="form.parameters", with-live-watching)
     v-divider
     widget-settings-group(:title="$t('settings.advancedSettings')")
       field-default-sort-column(

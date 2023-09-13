@@ -292,15 +292,16 @@ describe('alarm', () => {
       },
     });
 
-    const fieldPeriodicRefresh = selectFieldPeriodicRefresh(wrapper);
-
     const periodicRefresh = {
       enabled: Faker.datatype.boolean(),
       value: Faker.datatype.number(),
       unit: Faker.datatype.string(),
     };
 
-    fieldPeriodicRefresh.vm.$emit('input', periodicRefresh);
+    selectFieldPeriodicRefresh(wrapper).vm.$emit('input', {
+      ...wrapper.vm.form.parameters,
+      periodic_refresh: periodicRefresh,
+    });
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -309,6 +310,35 @@ describe('alarm', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'periodic_refresh', periodicRefresh),
+      },
+    });
+  });
+
+  test('Live watching changed after trigger field periodic refresh', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const liveWatching = Faker.datatype.boolean();
+
+    selectFieldPeriodicRefresh(wrapper).vm.$emit('input', {
+      ...wrapper.vm.form.parameters,
+      liveWatching,
+    });
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'liveWatching', liveWatching),
       },
     });
   });
