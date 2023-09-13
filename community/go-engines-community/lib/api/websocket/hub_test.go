@@ -38,7 +38,7 @@ func TestHub_Send_GivenNotJoinedToRoomConnection_ShouldNotSendMessageToConnectio
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *libwebsocket.RMessage) error {
-		hub.Send(room, msgBody)
+		hub.Send(ctx, room, msgBody)
 		cancel()
 		return &websocket.CloseError{Code: websocket.CloseNormalClosure}
 	})
@@ -85,7 +85,7 @@ func TestHub_Send_GivenJoinedToRoomConnection_ShouldSendMessageToConnection(t *t
 			msg.Type = libwebsocket.RMessageJoin
 			return nil
 		default:
-			hub.Send(room, msgBody)
+			hub.Send(ctx, room, msgBody)
 			cancel()
 			return &websocket.CloseError{Code: websocket.CloseNormalClosure}
 		}
@@ -138,11 +138,11 @@ func TestHub_Send_GivenLeftRoomConnection_ShouldNotSendMessageToConnection(t *te
 			msg.Type = libwebsocket.RMessageJoin
 			return nil
 		case 2:
-			hub.Send(room, msgBody)
+			hub.Send(ctx, room, msgBody)
 			msg.Type = libwebsocket.RMessageLeave
 			return nil
 		default:
-			hub.Send(room, msgBody)
+			hub.Send(ctx, room, msgBody)
 			cancel()
 			return &websocket.CloseError{Code: websocket.CloseNormalClosure}
 		}
@@ -195,11 +195,11 @@ func TestHub_Send_GivenDisconnectedConnection_ShouldNotSendMessageToConnection(t
 			msg.Type = libwebsocket.RMessageJoin
 			return nil
 		default:
-			hub.Send(room, msgBody)
+			hub.Send(ctx, room, msgBody)
 
 			go func() {
 				time.Sleep(waitTimeout / 2)
-				hub.Send(room, msgBody)
+				hub.Send(ctx, room, msgBody)
 				cancel()
 			}()
 
@@ -254,7 +254,7 @@ func TestHub_Send_GivenErrOnWriteMessage_ShouldCloseConnection(t *testing.T) {
 			msg.Type = libwebsocket.RMessageJoin
 			return nil
 		default:
-			hub.Send(room, msgBody)
+			hub.Send(ctx, room, msgBody)
 			return &websocket.CloseError{Code: websocket.CloseNormalClosure}
 		}
 	}).Times(2)

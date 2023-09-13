@@ -25,6 +25,7 @@ import (
 const (
 	defaultTimeFieldOpened   = "t"
 	defaultTimeFieldResolved = "v.resolved"
+	entityInfosPrefix        = "entity.infos"
 )
 
 type MongoQueryBuilder struct {
@@ -32,14 +33,16 @@ type MongoQueryBuilder struct {
 	instructionCollection mongo.DbCollection
 	authorProvider        author.Provider
 
-	defaultSearchByFields   []string
-	availableSearchByFields map[string]struct{}
-	defaultSortBy           string
-	defaultSort             string
+	defaultSearchByFields         []string
+	availableSearchByFields       map[string]struct{}
+	availableSearchByEntityFields map[string]struct{}
+	defaultSortBy                 string
+	defaultSort                   string
 
 	fieldsAliases        map[string]string
 	fieldsAliasesByRegex map[string]string
 
+	searchPipeline []bson.M
 	// alarmMatch is match before all lookups
 	alarmMatch []bson.M
 	// additionalMatch is match after some lookups
@@ -87,6 +90,13 @@ func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider)
 			"v.display_name":   {},
 			"v.output":         {},
 		},
+		availableSearchByEntityFields: map[string]struct{}{
+			"entity.name":        {},
+			"entity.connector":   {},
+			"entity.component":   {},
+			"entity.description": {},
+			"entity.type":        {},
+		},
 		defaultSortBy: "t",
 		defaultSort:   common.SortDesc,
 
@@ -115,6 +125,7 @@ func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider)
 }
 
 func (q *MongoQueryBuilder) clear(now types.CpsTime) {
+	q.searchPipeline = make([]bson.M, 0)
 	q.alarmMatch = make([]bson.M, 0)
 	q.additionalMatch = []bson.M{{"$match": bson.M{"entity.enabled": true}}}
 
@@ -182,12 +193,20 @@ func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, 
 func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 	match bson.M,
 	now types.CpsTime,
+	onlyParents bool,
 ) ([]bson.M, error) {
 	q.clear(now)
 
 	q.alarmMatch = append(q.alarmMatch,
 		bson.M{"$match": match},
 	)
+
+	if onlyParents {
+		q.computedFields["is_meta_alarm"] = getIsMetaAlarmField()
+		q.lookups = append(q.lookups, lookupWithKey{key: "meta_alarm_rule", pipeline: getMetaAlarmRuleLookup()})
+		q.lookups = append(q.lookups, lookupWithKey{key: "children", pipeline: getChildrenCountLookup()})
+		q.excludedFields = append(q.excludedFields, "resolved_children")
+	}
 
 	query := pagination.Query{
 		Page:  1,
@@ -231,6 +250,8 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 	r ChildDetailsRequest,
 	opened int,
 	parentId string,
+	search string,
+	searchBy []string,
 	now types.CpsTime,
 ) ([]bson.M, error) {
 	q.clear(now)
@@ -286,6 +307,72 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 	}})
 	q.excludedFields = append(q.excludedFields, "resolved_parents", "resolved_meta_alarm_rules")
 
+	if search != "" {
+		p := parser.NewParser()
+		expr, err := p.Parse(search)
+		if err == nil {
+			query := expr.ExprQuery()
+			resolvedQuery := q.resolveAliasesInQuery(query).(bson.M)
+			if err != nil {
+				return nil, err
+			}
+
+			b, err := json.Marshal(resolvedQuery)
+			if err != nil {
+				return nil, fmt.Errorf("cannot marshal search expression: %w", err)
+			}
+
+			resolvedSearch := string(b)
+			for field := range q.computedFields {
+				if strings.Contains(resolvedSearch, field) {
+					q.computedFieldsForAlarmMatch[field] = true
+				}
+			}
+
+			q.computedFields["filtered"] = bson.M{"$cond": bson.M{
+				"if":   resolvedQuery,
+				"then": true,
+				"else": false,
+			}}
+		} else {
+			filteredSearchBy := make([]string, 0, len(searchBy))
+			for _, f := range searchBy {
+				if _, ok := q.availableSearchByFields[f]; ok {
+					filteredSearchBy = append(filteredSearchBy, f)
+					continue
+				}
+
+				if _, ok := q.availableSearchByEntityFields[f]; ok {
+					filteredSearchBy = append(filteredSearchBy, f)
+					continue
+				}
+
+				if strings.HasPrefix(f, entityInfosPrefix) {
+					filteredSearchBy = append(filteredSearchBy, f)
+					continue
+				}
+			}
+
+			if len(filteredSearchBy) == 0 {
+				filteredSearchBy = q.defaultSearchByFields
+			}
+			searchMatch := make([]bson.M, len(filteredSearchBy))
+			for i := range filteredSearchBy {
+				searchMatch[i] = bson.M{"$regexMatch": bson.M{
+					"input":   "$" + filteredSearchBy[i],
+					"regex":   fmt.Sprintf(".*%s.*", search),
+					"options": "i",
+				}}
+			}
+
+			q.computedFields["filtered"] = bson.M{"$cond": bson.M{
+				"if":   bson.M{"$or": searchMatch},
+				"then": true,
+				"else": false,
+			}}
+		}
+	}
+
 	err := q.handleSort(r.SortRequest)
 	if err != nil {
 		return nil, err
@@ -334,7 +421,8 @@ func (q *MongoQueryBuilder) createPaginationAggregationPipeline(query pagination
 func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 	addedLookups := make(map[string]bool)
 	addedComputedFields := make(map[string]bool)
-	beforeLimit := make([]bson.M, 0)
+	beforeLimit := make([]bson.M, len(q.searchPipeline))
+	copy(beforeLimit, q.searchPipeline)
 
 	q.addFieldsToPipeline(q.computedFieldsForAlarmMatch, addedComputedFields, &beforeLimit)
 	beforeLimit = append(beforeLimit, q.alarmMatch...)
@@ -608,9 +696,9 @@ func (q *MongoQueryBuilder) handleEntityPattern(entityPattern pattern.Entity) er
 	return nil
 }
 
-func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (match bson.M, withLookups bool, err error) {
+func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (bson.M, bool, error) {
 	if r.Search == "" {
-		return
+		return nil, false, nil
 	}
 
 	p := parser.NewParser()
@@ -647,43 +735,60 @@ func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (match bson.M, with
 	}
 
 	searchBy := make([]string, 0, len(r.SearchBy))
+	searchByEntity := false
 	for _, f := range r.SearchBy {
 		if _, ok := q.availableSearchByFields[f]; ok {
 			searchBy = append(searchBy, f)
+			continue
+		}
+
+		if _, ok := q.availableSearchByEntityFields[f]; ok {
+			searchBy = append(searchBy, f)
+			searchByEntity = true
+			continue
+		}
+
+		if strings.HasPrefix(f, entityInfosPrefix) {
+			searchBy = append(searchBy, f)
+			searchByEntity = true
+			continue
 		}
 	}
+
 	if len(searchBy) == 0 {
 		searchBy = q.defaultSearchByFields
 	}
+
 	searchMatch := make([]bson.M, len(searchBy))
 	for i := range searchBy {
 		searchMatch[i] = bson.M{searchBy[i]: searchRegexp}
 	}
 
 	if !r.OnlyParents {
-		return bson.M{"$or": searchMatch}, false, nil
+		if searchByEntity {
+			q.lookupsForAdditionalMatch["entity"] = true
+		}
+
+		return bson.M{"$or": searchMatch}, searchByEntity, nil
 	}
 
-	childrenMatch := bson.M{"$or": searchMatch}
-	childrenCollection := mongo.AlarmMongoCollection
+	match := bson.M{"$or": searchMatch}
+	metaAlarmLookupCollection := mongo.AlarmMongoCollection
+	metaAlarmLookupMatch := bson.M{}
 	switch r.GetOpenedFilter() {
 	case OnlyOpened:
-		childrenMatch = bson.M{"$and": []bson.M{
-			{"v.resolved": nil},
-			{"$or": searchMatch},
-		}}
+		match = bson.M{
+			"v.resolved": nil,
+			"$or":        searchMatch,
+		}
+		metaAlarmLookupMatch = bson.M{"v.resolved": nil}
 	case OnlyResolved:
-		childrenCollection = mongo.ResolvedAlarmMongoCollection
+		metaAlarmLookupCollection = mongo.ResolvedAlarmMongoCollection
 	}
 
-	q.lookupsForAdditionalMatch["filtered_children"] = true
-	q.lookups = append(q.lookups, lookupWithKey{key: "filtered_children", pipeline: getFilteredChildrenLookup(childrenCollection, childrenMatch)})
+	q.searchPipeline = getOnlyParentsSearchPipeline(match, metaAlarmLookupCollection, metaAlarmLookupMatch, searchByEntity)
 
-	searchMatchWithChildren := make([]bson.M, len(searchBy))
-	copy(searchMatchWithChildren, searchMatch)
-	searchMatchWithChildren = append(searchMatchWithChildren, bson.M{"filtered_children": bson.M{"$ne": []string{}}})
-
-	return bson.M{"$or": searchMatchWithChildren}, true, nil
+	return nil, false, nil
 }
 
 func (q *MongoQueryBuilder) addStartFromFilter(r FilterRequest, match *[]bson.M) {
@@ -1048,6 +1153,8 @@ func (q *MongoQueryBuilder) resolveAliasesInQuery(query any) any {
 			val.SetMapIndex(key, reflect.Value{})
 			val.SetMapIndex(reflect.ValueOf(newKey), mapVal)
 		}
+	case reflect.String:
+		return q.resolveAlias(val.Interface().(string))
 	}
 
 	return res
@@ -1058,9 +1165,15 @@ func (q *MongoQueryBuilder) resolveAlias(v string) string {
 		return v
 	}
 
+	prefix := ""
+	if v[0] == '$' {
+		v = v[1:]
+		prefix = "$"
+	}
+
 	for alias, field := range q.fieldsAliases {
 		if alias == v {
-			return field
+			return prefix + field
 		}
 	}
 
@@ -1069,12 +1182,12 @@ func (q *MongoQueryBuilder) resolveAlias(v string) string {
 		if err == nil {
 			replace := r.ReplaceAllString(v, repl)
 			if v != replace {
-				return replace
+				return prefix + replace
 			}
 		}
 	}
 
-	return v
+	return prefix + v
 }
 
 func getEntityLookup() []bson.M {
@@ -1217,23 +1330,6 @@ func getChildrenCountLookup() []bson.M {
 			}},
 			"opened_children": bson.M{"$size": "$children"},
 			"closed_children": bson.M{"$size": "$resolved_children"},
-		}},
-	}
-}
-
-func getFilteredChildrenLookup(childrenCollection string, childrenMatch bson.M) []bson.M {
-	return []bson.M{
-		{"$graphLookup": bson.M{
-			"from":                    childrenCollection,
-			"startWith":               "$d",
-			"connectFromField":        "d",
-			"connectToField":          "v.parents",
-			"restrictSearchWithMatch": childrenMatch,
-			"as":                      "filtered_children",
-			"maxDepth":                0,
-		}},
-		{"$addFields": bson.M{
-			"filtered_children": "$filtered_children._id",
 		}},
 	}
 }
@@ -1392,4 +1488,59 @@ func getImpactsCountPipeline() []bson.M {
 			"depends":         0,
 		}},
 	}
+}
+
+func getOnlyParentsSearchPipeline(
+	match bson.M,
+	metaAlarmLookupCollection string,
+	metaAlarmLookupMatch bson.M,
+	searchByEntity bool,
+) []bson.M {
+	var pipeline []bson.M
+	if searchByEntity {
+		pipeline = append(pipeline, getEntityLookup()...)
+	}
+
+	pipeline = append(pipeline, bson.M{"$match": match})
+	if searchByEntity {
+		pipeline = append(pipeline, bson.M{"$project": bson.M{"entity": 0}})
+	}
+
+	pipeline = append(pipeline, []bson.M{
+		{"$unwind": bson.M{"path": "$v.parents", "preserveNullAndEmptyArrays": true}},
+		{"$group": bson.M{
+			"_id": "$v.parents",
+			"alarms": bson.M{"$push": bson.M{"$cond": bson.M{
+				"if":   "$v.parents",
+				"then": "$$REMOVE",
+				"else": "$$ROOT",
+			}}},
+		}},
+		{"$graphLookup": bson.M{
+			"from":                    metaAlarmLookupCollection,
+			"startWith":               "$_id",
+			"connectFromField":        "_id",
+			"connectToField":          "d",
+			"restrictSearchWithMatch": metaAlarmLookupMatch,
+			"as":                      "meta_alarm",
+			"maxDepth":                0,
+		}},
+		{"$unwind": bson.M{"path": "$meta_alarm", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$alarms", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"alarm": bson.M{"$cond": bson.M{
+				"if":   "$meta_alarm",
+				"then": "$meta_alarm",
+				"else": "$alarms",
+			}},
+		}},
+		{"$match": bson.M{"alarm": bson.M{"$ne": nil}}},
+		{"$group": bson.M{
+			"_id":   "$alarm._id",
+			"alarm": bson.M{"$first": "$alarm"},
+		}},
+		{"$replaceRoot": bson.M{"newRoot": "$alarm"}},
+	}...)
+
+	return pipeline
 }
