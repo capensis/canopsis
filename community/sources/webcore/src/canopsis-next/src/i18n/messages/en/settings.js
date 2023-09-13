@@ -78,6 +78,8 @@ export default {
   headerTitle: 'Header title',
   defaultSampling: 'Default sampling',
   defaultTimeRange: 'Default time range',
+  liveWatching: 'Live watching',
+  liveWatchingTooltip: 'If enabled, the information about changes in alarms are retrieved using websockets',
   exportCsv: {
     title: 'Export CSV',
     fields: {
