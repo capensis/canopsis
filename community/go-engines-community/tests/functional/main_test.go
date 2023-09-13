@@ -294,6 +294,7 @@ func InitializeScenario(
 		scenarioCtx.Step(`^I wait next message from websocket:$`, websocketClient.IWaitNextMessage)
 		scenarioCtx.Step(`^I wait next message from websocket which contains:$`, websocketClient.IWaitNextMessageWhichContains)
 		scenarioCtx.Step(`^I authenticate in websocket$`, websocketClient.IAuthenticate)
+		scenarioCtx.Step(`^I subscribe to websocket room \"([^\"]+)\":$`, websocketClient.ISubscribeToRoomWithData)
 		scenarioCtx.Step(`^I subscribe to websocket room \"([^\"]+)\"$`, websocketClient.ISubscribeToRoom)
 		scenarioCtx.Step(`^I wait message from websocket room \"([^\"]+)\":$`, websocketClient.IWaitMessageFromRoom)
 		scenarioCtx.Step(`^I wait message from websocket room \"([^\"]+)\" which contains:$`, websocketClient.IWaitMessageFromRoomWhichContains)
