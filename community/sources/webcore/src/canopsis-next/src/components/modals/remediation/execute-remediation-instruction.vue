@@ -141,10 +141,16 @@ export default {
      * @return {Promise<void>}
      */
     async nextStep(success = false) {
-      this.instructionExecution = await this.nextStepRemediationInstructionExecution({
-        id: this.instructionExecutionId,
-        data: { failed: !success },
-      });
+      try {
+        this.instructionExecution = await this.nextStepRemediationInstructionExecution({
+          id: this.instructionExecutionId,
+          data: { failed: !success },
+        });
+      } catch (err) {
+        console.error(err);
+
+        this.$popups.error({ text: err.error || this.$t('errors.default') });
+      }
     },
 
     /**
@@ -153,9 +159,15 @@ export default {
      * @return {Promise<void>}
      */
     async nextOperation() {
-      this.instructionExecution = await this.nextOperationRemediationInstructionExecution({
-        id: this.instructionExecutionId,
-      });
+      try {
+        this.instructionExecution = await this.nextOperationRemediationInstructionExecution({
+          id: this.instructionExecutionId,
+        });
+      } catch (err) {
+        console.error(err);
+
+        this.$popups.error({ text: err.error || this.$t('errors.default') });
+      }
     },
 
     /**
@@ -164,9 +176,15 @@ export default {
      * @return {Promise<void>}
      */
     async previousOperation() {
-      this.instructionExecution = await this.previousOperationRemediationInstructionExecution({
-        id: this.instructionExecutionId,
-      });
+      try {
+        this.instructionExecution = await this.previousOperationRemediationInstructionExecution({
+          id: this.instructionExecutionId,
+        });
+      } catch (err) {
+        console.error(err);
+
+        this.$popups.error({ text: err.error || this.$t('errors.default') });
+      }
     },
 
     /**
