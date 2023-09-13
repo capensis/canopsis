@@ -16,6 +16,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
   <div
     class="text"
   >
+    <!---->
     <div
       class="v-treeview theme--light"
     >
@@ -507,6 +508,7 @@ exports[`variables-help Renders \`variables-help\` with empty modal 1`] = `
   <div
     class="text"
   >
+    <!---->
     <div
       class="v-treeview theme--light"
     />
@@ -534,6 +536,7 @@ exports[`variables-help Renders \`variables-help\` with original flag 1`] = `
   <div
     class="text"
   >
+    <!---->
     <div
       class="v-treeview theme--light"
     >

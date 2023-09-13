@@ -808,6 +808,8 @@ describe('actions-panel', () => {
       {
         name: MODALS.variablesHelp,
         config: {
+          exportEntity: alarmData,
+          exportEntityName: `alarm-${alarmData._id}`,
           variables: [
             {
               name: 'alarm',

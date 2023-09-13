@@ -494,3 +494,5 @@ export const ENTITY_PAYLOADS_VARIABLES = {
 };
 
 export const SERVICE_WEATHER_DEFAULT_EM_HEIGHT = 4;
+
+export const ENTITY_EXPORT_FILE_NAME_PREFIX = 'entity';
