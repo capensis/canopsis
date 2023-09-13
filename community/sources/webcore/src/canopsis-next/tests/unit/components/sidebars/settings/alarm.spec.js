@@ -85,6 +85,7 @@ const snapshotStubs = {
   'export-csv-form': true,
 };
 
+const selectSwitcherFieldByTitle = (wrapper, title) => wrapper.find(`input.field-switcher[title="${title}"]`);
 const selectFieldTitle = wrapper => wrapper.find('input.field-title');
 const selectFieldPeriodicRefresh = wrapper => wrapper.find('input.field-periodic-refresh');
 const selectFieldDefaultSortColumn = wrapper => wrapper.find('input.field-default-sort-column');
@@ -99,18 +100,21 @@ const selectFieldLiveReporting = wrapper => wrapper.find('input.field-live-repor
 const selectFieldInfoPopups = wrapper => wrapper.find('input.field-info-popup');
 const selectFieldTextEditorWithTemplate = wrapper => wrapper.find('input.field-text-editor-with-template');
 const selectFieldGridRangeSize = wrapper => wrapper.find('input.field-grid-range-size');
-const selectFieldClearFilterDisabled = wrapper => wrapper.findAll('input.field-switcher').at(0);
-const selectFieldHtmlEnabledSwitcher = wrapper => wrapper.findAll('input.field-switcher').at(1);
-const selectFieldAckNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(2);
-const selectFieldMultiAckEnabled = wrapper => wrapper.findAll('input.field-switcher').at(3);
+const selectFieldClearFilterDisabled = wrapper => selectSwitcherFieldByTitle(
+  wrapper,
+  'Disable possibility to clear selected filter',
+);
+const selectFieldHtmlEnabledSwitcher = wrapper => selectSwitcherFieldByTitle(wrapper, 'HTML enabled on timeline?');
+const selectFieldAckNoteRequired = wrapper => selectSwitcherFieldByTitle(wrapper, 'Note field required when ack?');
+const selectFieldMultiAckEnabled = wrapper => selectSwitcherFieldByTitle(wrapper, 'Multiple ack');
 const selectFieldFastAckOutput = wrapper => wrapper.findAll('input.field-fast-action-output').at(0);
 const selectFieldFastCancelOutput = wrapper => wrapper.findAll('input.field-fast-action-output').at(1);
-const selectFieldSnoozeNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(4);
+const selectFieldSnoozeNoteRequired = wrapper => selectSwitcherFieldByTitle(wrapper, 'Note field required when snooze?');
 const selectFieldExportCsvForm = wrapper => wrapper.find('input.export-csv-form');
-const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher').at(6);
-const selectFieldKioskHideActions = wrapper => wrapper.findAll('input.field-switcher').at(7);
-const selectFieldKioskHideMassSelection = wrapper => wrapper.findAll('input.field-switcher').at(8);
-const selectFieldKioskHideToolbar = wrapper => wrapper.findAll('input.field-switcher').at(9);
+const selectFieldStickyHeader = wrapper => selectSwitcherFieldByTitle(wrapper, 'Sticky header');
+const selectFieldKioskHideActions = wrapper => selectSwitcherFieldByTitle(wrapper, 'Hide actions');
+const selectFieldKioskHideMassSelection = wrapper => selectSwitcherFieldByTitle(wrapper, 'Hide mass selection');
+const selectFieldKioskHideToolbar = wrapper => selectSwitcherFieldByTitle(wrapper, 'Hide toolbar');
 
 describe('alarm', () => {
   const parentComponent = {
