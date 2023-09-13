@@ -9,7 +9,7 @@ exports[`line-chart-widget-form Renders \`line-chart-widget-form\` widget settin
     value="Map widget"
   />
   <field-periodic-refresh-stub
-    value="[object Object]"
+    form="[object Object]"
   />
   <widget-settings-group-stub
     title="Metrics display"
