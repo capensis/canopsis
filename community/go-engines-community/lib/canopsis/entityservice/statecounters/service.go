@@ -158,6 +158,7 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 		return nil, nil
 	}
 
+	changeType := alarmChange.Type
 	prevState := int(alarmChange.PreviousState)
 	curState := types.AlarmStateOK
 	isActive := entity.PbehaviorInfo.IsActive()
@@ -166,43 +167,51 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 		curState = int(alarm.CurrentState())
 		acked = alarm.IsAck()
 	}
-	changeType := alarmChange.Type
+
+	// some services data may be changed if another event for the same entity was processed or because of transaction retry.
+	// Always get the fresh data.
+	entityServiceData := struct {
+		Services         []string `bson:"services"`
+		ServicesToAdd    []string `bson:"services_to_add"`
+		ServicesToRemove []string `bson:"services_to_remove"`
+	}{}
+	err := s.entityCollection.FindOne(ctx, bson.M{"_id": entity.ID}).Decode(&entityServiceData)
+	if err != nil {
+		return nil, err
+	}
 
 	updatedServiceInfos := make(map[string]UpdatedServicesInfo)
 	updateCountersModels := make(
 		[]mongodriver.WriteModel,
 		0,
 		int(math.Min(
-			float64(len(entity.ServicesToRemove)+len(entity.Services)),
+			float64(len(entityServiceData.ServicesToRemove)+len(entityServiceData.Services)),
 			canopsis.DefaultBulkSize,
 		)),
 	)
 
-	servicesToRemove := make(map[string]bool, len(entity.ServicesToRemove))
-	for _, impServ := range entity.ServicesToRemove {
+	servicesToRemove := make(map[string]bool, len(entityServiceData.ServicesToRemove))
+	for _, impServ := range entityServiceData.ServicesToRemove {
 		servicesToRemove[impServ] = true
 	}
 
-	servicesToAdd := make(map[string]bool, len(entity.ServicesToAdd))
-	for _, impServ := range entity.ServicesToAdd {
+	servicesToAdd := make(map[string]bool, len(entityServiceData.ServicesToAdd))
+	for _, impServ := range entityServiceData.ServicesToAdd {
 		servicesToAdd[impServ] = true
 	}
 
-	var cursor mongo.Cursor
-	var err error
-
 	var inSlice []string
 	if changeType == types.AlarmChangeTypeEnabled {
-		inSlice = entity.ServicesToAdd
+		inSlice = entityServiceData.ServicesToAdd
 	} else {
-		inSlice = append(entity.Services, entity.ServicesToRemove...)
+		inSlice = append(entityServiceData.Services, entityServiceData.ServicesToRemove...)
 	}
 
 	if len(inSlice) == 0 {
 		return updatedServiceInfos, nil
 	}
 
-	cursor, err = s.serviceCountersCollection.Find(context.Background(), bson.M{"_id": bson.M{"$in": inSlice}})
+	cursor, err := s.serviceCountersCollection.Find(ctx, bson.M{"_id": bson.M{"$in": inSlice}})
 	if err != nil {
 		return nil, err
 	}
@@ -537,7 +546,7 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 		}
 	}
 
-	if len(entity.ServicesToAdd) > 0 || len(entity.ServicesToRemove) > 0 {
+	if len(entityServiceData.ServicesToAdd) > 0 || len(entityServiceData.ServicesToRemove) > 0 {
 		_, err = s.entityCollection.UpdateOne(
 			ctx, bson.M{"_id": entity.ID},
 			bson.M{"$unset": bson.M{"services_to_add": 1, "services_to_remove": 1}})
