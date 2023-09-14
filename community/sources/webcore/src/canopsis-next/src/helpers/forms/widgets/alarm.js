@@ -84,6 +84,7 @@ import { openedToForm } from './common';
  * @property {WidgetColumn[]} serviceDependenciesColumns
  * @property {boolean} isAckNoteRequired
  * @property {boolean} isSnoozeNoteRequired
+ * @property {boolean} isUncancelAlarmsCommentRequired
  * @property {boolean} isMultiAckEnabled
  * @property {boolean} isMultiDeclareTicketEnabled
  * @property {boolean} isHtmlEnabledOnTimeLine
@@ -192,6 +193,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   moreInfoTemplateTemplate: widgetTemplateValueToForm(parameters.moreInfoTemplateTemplate),
   isAckNoteRequired: !!parameters.isAckNoteRequired,
   isSnoozeNoteRequired: !!parameters.isSnoozeNoteRequired,
+  isUncancelAlarmsCommentRequired: parameters.isUncancelAlarmsCommentRequired ?? true,
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
   isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
   isHtmlEnabledOnTimeLine: !!parameters.isHtmlEnabledOnTimeLine,
