@@ -11,7 +11,6 @@ export const entitiesUserMixin = {
       users: 'items',
       usersPending: 'pending',
       usersMeta: 'meta',
-      getUserById: 'getItemById',
     }),
   },
   methods: {
