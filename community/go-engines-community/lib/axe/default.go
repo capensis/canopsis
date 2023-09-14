@@ -293,6 +293,7 @@ func NewEngine(
 		Encoder:                  json.NewEncoder(),
 		Decoder:                  json.NewDecoder(),
 		TechMetricsSender:        techMetricsSender,
+		AlarmCollection:          dbClient.Collection(mongo.AlarmMongoCollection),
 		Logger:                   logger,
 	}
 	engineAxe.AddConsumer(libengine.NewDefaultConsumer(
