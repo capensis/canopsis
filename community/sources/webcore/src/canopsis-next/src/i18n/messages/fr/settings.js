@@ -52,6 +52,7 @@ export default {
   isAckNoteRequired: 'Champ \'Note\' requis lors d\'un acquittement ?',
   isSnoozeNoteRequired: 'Champ \'Note\' requis lors d\'une mise en veille ?',
   isRemoveAlarmsFromMetaAlarmCommentRequired: 'Champ \'Commentaire\' requis lors de la suppression des alarmes de la méta-alarme manuelle ?',
+  isUncancelAlarmsCommentRequired: 'Champ de commentaire obligatoire lors de l\'annulation ?',
   isMultiAckEnabled: 'Acquittement multiple',
   isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
   isActionsAllowWithOkState: 'Actions autorisées lorsque l\'état est OK ?',

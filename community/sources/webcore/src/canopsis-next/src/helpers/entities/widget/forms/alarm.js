@@ -161,6 +161,7 @@ import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html'
  * @property {boolean} isAckNoteRequired
  * @property {boolean} isSnoozeNoteRequired
  * @property {boolean} isRemoveAlarmsFromMetaAlarmCommentRequired
+ * @property {boolean} isUncancelAlarmsCommentRequired
  * @property {boolean} isMultiAckEnabled
  * @property {boolean} isMultiDeclareTicketEnabled
  * @property {boolean} isHtmlEnabledOnTimeLine
@@ -335,6 +336,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isAckNoteRequired: !!parameters.isAckNoteRequired,
   isSnoozeNoteRequired: !!parameters.isSnoozeNoteRequired,
   isRemoveAlarmsFromMetaAlarmCommentRequired: parameters.isRemoveAlarmsFromMetaAlarmCommentRequired ?? true,
+  isUncancelAlarmsCommentRequired: parameters.isUncancelAlarmsCommentRequired ?? true,
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
   isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
   isHtmlEnabledOnTimeLine: !!parameters.isHtmlEnabledOnTimeLine,
