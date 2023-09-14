@@ -62,12 +62,13 @@ const (
 	EventTypeActivate           = "activate"
 	EventTypeRunDelayedScenario = "run_delayed_scenario"
 
-	EventTypeMetaAlarm              = "metaalarm"
-	EventTypeMetaAlarmUpdated       = "metaalarmupdated"
-	EventTypeMetaAlarmUngroup       = "metaalarm_ungroup"
-	EventTypeManualMetaAlarmGroup   = "manual_metaalarm_group"
-	EventTypeManualMetaAlarmUngroup = "manual_metaalarm_ungroup"
-	EventTypeManualMetaAlarmUpdate  = "manual_metaalarm_update"
+	EventTypeMetaAlarm               = "metaalarm"
+	EventTypeMetaAlarmAttachChildren = "metaalarmattachchildren"
+	EventTypeMetaAlarmDetachChildren = "metaalarmdetachchildren"
+	EventTypeMetaAlarmUngroup        = "metaalarm_ungroup"
+	EventTypeManualMetaAlarmGroup    = "manual_metaalarm_group"
+	EventTypeManualMetaAlarmUngroup  = "manual_metaalarm_ungroup"
+	EventTypeManualMetaAlarmUpdate   = "manual_metaalarm_update"
 
 	// Following event types are used to add manual instruction execution to alarm steps.
 	EventTypeInstructionStarted   = "instructionstarted"
@@ -89,8 +90,6 @@ const (
 
 	// EventTypeRecomputeEntityService is used to recompute service context graph and state.
 	EventTypeRecomputeEntityService = "recomputeentityservice"
-	// EventTypeUpdateEntityService is used to update service cache in engines.
-	EventTypeUpdateEntityService = "updateentityservice"
 	// EventTypeEntityUpdated is used to notify engines that entity is updated out of
 	// event flow.
 	EventTypeEntityUpdated = "entityupdated"
@@ -98,9 +97,6 @@ const (
 	EventTypeEntityToggled = "entitytoggled"
 
 	EventTypeUpdateCounters = "updatecounters"
-	// EventTypeAlarmSkipped is used to check alarm in service counters if alarm was skipped
-	// during service recompute.
-	EventTypeAlarmSkipped = "alarmskipped"
 	// EventTypeJunitTestSuiteUpdated is used to notify that test suite is updated but state is not changed.
 	EventTypeJunitTestSuiteUpdated = "junittestsuiteupdated"
 	// EventTypeJunitTestCaseUpdated is used to notify that test case is updated but state is not changed.
@@ -516,13 +512,13 @@ func isValidEventType(t string) bool {
 		EventTypePbhLeave,
 		EventTypeUpdateStatus,
 		EventTypeMetaAlarm,
-		EventTypeMetaAlarmUpdated,
+		EventTypeMetaAlarmAttachChildren,
+		EventTypeMetaAlarmDetachChildren,
 		EventTypeMetaAlarmUngroup,
 		EventTypeManualMetaAlarmGroup,
 		EventTypeManualMetaAlarmUngroup,
 		EventTypeManualMetaAlarmUpdate,
 		EventTypeRecomputeEntityService,
-		EventTypeUpdateEntityService,
 		EventTypeEntityUpdated,
 		EventTypeEntityToggled,
 		EventTypeNoEvents,
@@ -539,7 +535,6 @@ func isValidEventType(t string) bool {
 		EventTypeInstructionJobStarted,
 		EventTypeInstructionJobCompleted,
 		EventTypeInstructionJobFailed,
-		EventTypeAlarmSkipped,
 		EventTypeJunitTestSuiteUpdated,
 		EventTypeJunitTestCaseUpdated,
 		EventTypeTrigger,
