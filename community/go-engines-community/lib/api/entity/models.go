@@ -16,6 +16,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson/bsontype"
 )
 
+const (
+	CleanTaskTypeArchiveDisabled = iota
+	CleanTaskTypeArchiveUnlinked
+	CleanTaskTypeCleanArchived
+)
+
 type ListRequestWithPagination struct {
 	pagination.Query
 	ListRequest
@@ -50,15 +56,19 @@ type ExportRequest struct {
 	Separator string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
 }
 
-type CleanRequest struct {
-	Archive             *bool `json:"archive" bson:"archive" binding:"required"`
-	ArchiveDependencies bool  `json:"archive_dependencies" bson:"archive_dependencies"`
+type ArchiveDisabledRequest struct {
+	WithDependencies bool `json:"with_dependencies"`
+}
+
+type ArchiveUnlinkedRequest struct {
+	ArchiveBefore types.DurationWithUnit `json:"archive_before"`
 }
 
 type CleanTask struct {
-	Archive             *bool
-	ArchiveDependencies bool
-	UserID              string
+	Type                    int
+	ArchiveWithDependencies bool
+	ArchiveBefore           *types.DurationWithUnit
+	UserID                  string
 }
 
 type ExportResponse struct {
