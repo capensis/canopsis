@@ -8,6 +8,8 @@
           remediation-instruction-execute(
             v-if="instructionExecution",
             :instruction-execution="instructionExecution",
+            :next-pending="nextPending",
+            :previous-pending="previousPending",
             @next-step="nextStep",
             @next-operation="nextOperation",
             @previous-operation="previousOperation",
@@ -51,6 +53,8 @@ export default {
   data() {
     return {
       pending: true,
+      nextPending: false,
+      previousPending: false,
       instructionExecution: null,
     };
   },
@@ -135,23 +139,51 @@ export default {
       }
     },
 
+    async callFunctionWithPreviousPending(func) {
+      this.previousPending = true;
+
+      try {
+        await func();
+      } catch (err) {
+        console.error(err);
+
+        this.$popups.error({ text: err.error || this.$t('errors.default') });
+
+        this.closeModal();
+      } finally {
+        this.previousPending = false;
+      }
+    },
+
+    async callFunctionWithNextPending(func) {
+      this.nextPending = true;
+
+      try {
+        await func();
+      } catch (err) {
+        console.error(err);
+
+        this.$popups.error({ text: err.error || this.$t('errors.default') });
+
+        this.closeModal();
+      } finally {
+        this.nextPending = false;
+      }
+    },
+
     /**
      * Goto next step
      *
      * @param {boolean} success
      * @return {Promise<void>}
      */
-    async nextStep(success = false) {
-      try {
+    nextStep(success = false) {
+      return this.callFunctionWithNextPending(async () => {
         this.instructionExecution = await this.nextStepRemediationInstructionExecution({
           id: this.instructionExecutionId,
           data: { failed: !success },
         });
-      } catch (err) {
-        console.error(err);
-
-        this.$popups.error({ text: err.error || this.$t('errors.default') });
-      }
+      });
     },
 
     /**
@@ -160,15 +192,11 @@ export default {
      * @return {Promise<void>}
      */
     async nextOperation() {
-      try {
+      return this.callFunctionWithNextPending(async () => {
         this.instructionExecution = await this.nextOperationRemediationInstructionExecution({
           id: this.instructionExecutionId,
         });
-      } catch (err) {
-        console.error(err);
-
-        this.$popups.error({ text: err.error || this.$t('errors.default') });
-      }
+      });
     },
 
     /**
@@ -176,16 +204,12 @@ export default {
      *
      * @return {Promise<void>}
      */
-    async previousOperation() {
-      try {
+    previousOperation() {
+      return this.callFunctionWithPreviousPending(async () => {
         this.instructionExecution = await this.previousOperationRemediationInstructionExecution({
           id: this.instructionExecutionId,
         });
-      } catch (err) {
-        console.error(err);
-
-        this.$popups.error({ text: err.error || this.$t('errors.default') });
-      }
+      });
     },
 
     /**
