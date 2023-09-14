@@ -62,22 +62,12 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 
 	entity := *event.Entity
 	if entity.Enabled {
-		firstTry := true
 		var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
 		err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 			updatedServiceStates = nil
 
-			var err error
-			if !firstTry {
-				entity, err = findEntity(ctx, event.Entity.ID, p.entityCollection)
-				if err != nil {
-					return err
-				}
-			}
-
-			firstTry = false
 			alarm := types.Alarm{}
-			err = p.alarmCollection.FindOne(ctx, getOpenAlarmMatch(event)).Decode(&alarm)
+			err := p.alarmCollection.FindOne(ctx, getOpenAlarmMatch(event)).Decode(&alarm)
 			if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 				return err
 			}
@@ -108,7 +98,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	update := getResolveAlarmUpdate(types.NewCpsTime())
 	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
 	notAckedMetricType := ""
-	firstTry := true
+
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		updatedServiceStates = nil
@@ -126,14 +116,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			return err
 		}
 
-		if beforeAlarm.ID == "" {
-			if !firstTry {
-				entity, err = findEntity(ctx, event.Entity.ID, p.entityCollection)
-				if err != nil {
-					return err
-				}
-			}
-		} else {
+		if beforeAlarm.ID != "" {
 			if beforeAlarm.NotAckedMetricSendTime != nil {
 				notAckedMetricType = beforeAlarm.NotAckedMetricType
 			}
@@ -177,7 +160,6 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			}
 		}
 
-		firstTry = false
 		if result.Alarm.ID == "" {
 			updatedServiceStates, err = p.stateCountersService.UpdateServiceCounters(ctx, entity, nil, result.AlarmChange)
 		} else {
