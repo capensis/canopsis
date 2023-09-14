@@ -48,6 +48,7 @@ export default {
   filterEditor: 'Éditeur de filtre',
   isAckNoteRequired: 'Champ \'Note\' requis lors d\'un acquittement ?',
   isSnoozeNoteRequired: 'Champ \'Note\' requis lors d\'une mise en veille ?',
+  isUncancelAlarmsCommentRequired: 'Champ de commentaire obligatoire lors de l\'annulation ?',
   isMultiAckEnabled: 'Acquittement multiple',
   isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
   fastAckOutput: 'Commentaire d\'acquittement rapide',
