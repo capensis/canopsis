@@ -90,6 +90,7 @@ const snapshotStubs = {
   'field-resize-column-behavior': true,
 };
 
+const selectSwitcherFieldByTitle = (wrapper, title) => wrapper.find(`input.field-switcher[title="${title}"]`);
 const selectFieldTitle = wrapper => wrapper.find('input.field-title');
 const selectFieldPeriodicRefresh = wrapper => wrapper.find('input.field-periodic-refresh');
 const selectFieldDefaultSortColumn = wrapper => wrapper.find('input.field-default-sort-column');
@@ -104,20 +105,29 @@ const selectFieldLiveReporting = wrapper => wrapper.find('input.field-live-repor
 const selectFieldInfoPopups = wrapper => wrapper.find('input.field-info-popup');
 const selectFieldTextEditorWithTemplate = wrapper => wrapper.find('input.field-text-editor-with-template');
 const selectFieldGridRangeSize = wrapper => wrapper.find('input.field-grid-range-size');
-const selectFieldClearFilterDisabled = wrapper => wrapper.findAll('input.field-switcher').at(0);
-const selectFieldHtmlEnabledSwitcher = wrapper => wrapper.findAll('input.field-switcher').at(1);
-const selectFieldAckNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(2);
-const selectFieldMultiAckEnabled = wrapper => wrapper.findAll('input.field-switcher').at(3);
+const selectFieldClearFilterDisabled = wrapper => selectSwitcherFieldByTitle(
+  wrapper,
+  'Disable possibility to clear selected filter',
+);
+const selectFieldHtmlEnabledSwitcher = wrapper => selectSwitcherFieldByTitle(wrapper, 'HTML enabled on timeline?');
+const selectFieldAckNoteRequired = wrapper => selectSwitcherFieldByTitle(wrapper, 'Note field required when ack?');
+const selectFieldMultiAckEnabled = wrapper => selectSwitcherFieldByTitle(wrapper, 'Multiple ack');
 const selectFieldFastAckOutput = wrapper => wrapper.findAll('input.field-fast-action-output').at(0);
 const selectFieldFastCancelOutput = wrapper => wrapper.findAll('input.field-fast-action-output').at(1);
-const selectFieldSnoozeNoteRequired = wrapper => wrapper.findAll('input.field-switcher').at(4);
-const selectFieldRemoveAlarmsFromMetaAlarmCommentRequired = wrapper => wrapper.findAll('input.field-switcher').at(5);
+const selectFieldSnoozeNoteRequired = wrapper => selectSwitcherFieldByTitle(wrapper, 'Note field required when snooze?');
+const selectFieldRemoveAlarmsFromMetaAlarmCommentRequired = wrapper => selectSwitcherFieldByTitle(
+  wrapper,
+  'Comment field required when remove alarms from manual meta alarm?',
+);
 const selectFieldExportCsvForm = wrapper => wrapper.find('input.export-csv-form');
-const selectFieldStickyHeader = wrapper => wrapper.findAll('input.field-switcher').at(7);
-const selectFieldKioskHideActions = wrapper => wrapper.findAll('input.field-switcher').at(8);
-const selectFieldKioskHideMassSelection = wrapper => wrapper.findAll('input.field-switcher').at(9);
-const selectFieldKioskHideToolbar = wrapper => wrapper.findAll('input.field-switcher').at(10);
-const selectFieldActionsAllowWithOkState = wrapper => wrapper.findAll('input.field-switcher').at(11);
+const selectFieldStickyHeader = wrapper => selectSwitcherFieldByTitle(wrapper, 'Sticky header');
+const selectFieldKioskHideActions = wrapper => selectSwitcherFieldByTitle(wrapper, 'Hide actions');
+const selectFieldKioskHideMassSelection = wrapper => selectSwitcherFieldByTitle(wrapper, 'Hide mass selection');
+const selectFieldKioskHideToolbar = wrapper => selectSwitcherFieldByTitle(wrapper, 'Hide toolbar');
+const selectFieldActionsAllowWithOkState = wrapper => selectSwitcherFieldByTitle(
+  wrapper,
+  'Actions allowed when state OK?',
+);
 const selectChartsForm = wrapper => wrapper.findAll('input.charts-form').at(0);
 
 describe('alarm', () => {
@@ -292,15 +302,16 @@ describe('alarm', () => {
       },
     });
 
-    const fieldPeriodicRefresh = selectFieldPeriodicRefresh(wrapper);
-
     const periodicRefresh = {
       enabled: Faker.datatype.boolean(),
       value: Faker.datatype.number(),
       unit: Faker.datatype.string(),
     };
 
-    fieldPeriodicRefresh.vm.$emit('input', periodicRefresh);
+    selectFieldPeriodicRefresh(wrapper).vm.$emit('input', {
+      ...wrapper.vm.form.parameters,
+      periodic_refresh: periodicRefresh,
+    });
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -309,6 +320,35 @@ describe('alarm', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'periodic_refresh', periodicRefresh),
+      },
+    });
+  });
+
+  test('Live watching changed after trigger field periodic refresh', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const liveWatching = Faker.datatype.boolean();
+
+    selectFieldPeriodicRefresh(wrapper).vm.$emit('input', {
+      ...wrapper.vm.form.parameters,
+      liveWatching,
+    });
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'liveWatching', liveWatching),
       },
     });
   });

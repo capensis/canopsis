@@ -76,6 +76,7 @@ export default {
         key: `${getObjectValueByPath(props.item, this.itemKey)}-row`,
       });
     },
+
     genHeaderData(header, children, key) {
       const classes = ['column'];
       const data = {

@@ -9,7 +9,7 @@ exports[`pie-chart-widget-form Renders \`pie-chart-widget-form\` widget settings
     value="Map widget"
   />
   <field-periodic-refresh-stub
-    value="[object Object]"
+    form="[object Object]"
   />
   <field-preset-stub
     name="preset"
