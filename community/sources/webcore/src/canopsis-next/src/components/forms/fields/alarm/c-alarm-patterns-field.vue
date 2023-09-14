@@ -10,6 +10,13 @@
     :with-type="withType",
     :counter="counter"
   )
+    template(#append-count="")
+      v-btn(
+        v-if="counter && counter.count",
+        flat,
+        small,
+        @click="showPatternAlarms"
+      ) {{ $t('common.seeAlarms') }}
 </template>
 
 <script>
@@ -28,13 +35,18 @@ import {
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
+  MODALS,
 } from '@/constants';
+
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
+import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
 const { mapActions: dynamicInfoMapActions } = createNamespacedHelpers('dynamicInfo');
+const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
 
 export default {
   components: { PatternEditorField },
@@ -471,7 +483,26 @@ export default {
     }
   },
   methods: {
+    ...mapAlarmActions({ fetchAlarmsListWithoutStore: 'fetchListWithoutStore' }),
     ...dynamicInfoMapActions({ fetchDynamicInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
+
+    showPatternAlarms() {
+      const widget = generatePreparedDefaultAlarmListWidget();
+
+      this.$modals.show({
+        name: MODALS.alarmsList,
+        config: {
+          widget,
+          title: this.$t('pattern.patternAlarms'),
+          fetchList: params => this.fetchAlarmsListWithoutStore({
+            params: {
+              ...params,
+              alarm_pattern: formGroupsToPatternRulesQuery(this.patterns.groups),
+            },
+          }),
+        },
+      });
+    },
 
     async fetchInfos() {
       const { data: infos } = await this.fetchDynamicInfosKeysWithoutStore({

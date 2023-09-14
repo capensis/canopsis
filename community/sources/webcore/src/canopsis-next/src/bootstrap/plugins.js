@@ -213,6 +213,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.createWidget]: { maxWidth: 500, lazy: true },
       [MODALS.createWidgetTemplate]: { maxWidth: 920, lazy: true },
       [MODALS.alarmsList]: { maxWidth: '95%', lazy: true },
+      [MODALS.entitiesList]: { maxWidth: '95%', lazy: true },
       [MODALS.createFilter]: { maxWidth: 1100, lazy: true },
       [MODALS.textEditor]: { maxWidth: 700, lazy: true, persistent: true },
       [MODALS.addInfoPopup]: { maxWidth: 700, lazy: true, persistent: true },

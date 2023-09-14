@@ -7,11 +7,7 @@ export const MODALS = {
   createChangeStateEvent: 'create-change-state-event',
   createSnoozeEvent: 'create-snooze-event',
   variablesHelp: 'variables-help',
-  createEntity: 'create-entity',
-  createService: 'create-service',
-  entityDependenciesList: 'entity-dependencies-list',
-  createEntityInfo: 'create-entity-info',
-  serviceEntities: 'service-entities',
+
   serviceDependencies: 'service-dependencies',
   createServicePauseEvent: 'create-service-pause-event',
   editLiveReporting: 'edit-live-reporting',
@@ -106,4 +102,11 @@ export const MODALS = {
   createMaintenance: 'create-maintenance',
 
   createTag: 'create-tag',
+
+  createEntity: 'create-entity',
+  createService: 'create-service',
+  entityDependenciesList: 'entity-dependencies-list',
+  createEntityInfo: 'create-entity-info',
+  serviceEntities: 'service-entities',
+  entitiesList: 'entities-list',
 };
