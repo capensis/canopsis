@@ -38,10 +38,15 @@
             )
           v-layout.mb-2(row, justify-end)
             v-btn.accent(
-              :disabled="isFirstOperation && isFirstStep",
+              :disabled="(isFirstOperation && isFirstStep) || nextPending",
+              :loading="previousPending",
               @click="$listeners.previous"
             ) {{ $t('common.previous') }}
-            v-btn.primary.mr-0(@click="$listeners.next") {{ $t('common.next') }}
+            v-btn.primary.mr-0(
+              :disabled="previousPending",
+              :loading="nextPending",
+              @click="$listeners.next"
+            ) {{ $t('common.next') }}
 </template>
 
 <script>
@@ -72,6 +77,14 @@ export default {
     operationNumber: {
       type: [Number, String],
       required: true,
+    },
+    previousPending: {
+      type: Boolean,
+      default: false,
+    },
+    nextPending: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

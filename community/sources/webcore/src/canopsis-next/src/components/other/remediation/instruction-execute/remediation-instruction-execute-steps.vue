@@ -8,6 +8,8 @@
       :is-last-step="index === steps.length - 1",
       :is-first-step="index === 0",
       :execution-id="executionId",
+      :next-pending="nextPending",
+      :previous-pending="previousPending",
       v-on="$listeners"
     )
 </template>
@@ -25,6 +27,14 @@ export default {
     steps: {
       type: Array,
       default: () => [],
+    },
+    previousPending: {
+      type: Boolean,
+      default: false,
+    },
+    nextPending: {
+      type: Boolean,
+      default: false,
     },
   },
 };
