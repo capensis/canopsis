@@ -10,6 +10,13 @@
     :with-type="withType",
     :counter="counter"
   )
+    template(#append-count="")
+      v-btn(
+        v-if="counter && counter.count",
+        flat,
+        small,
+        @click="showPatternEntities"
+      ) {{ $t('common.seeEntities') }}
 </template>
 
 <script>
@@ -21,15 +28,20 @@ import {
   ENTITY_PATTERN_FIELDS,
   ENTITY_TYPES,
   MAX_LIMIT,
+  MODALS,
   PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
 } from '@/constants';
 
+import { generatePreparedDefaultContextWidget } from '@/helpers/entities/widget/form';
+import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
+
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
-const { mapActions: entityCategoryMapActions } = createNamespacedHelpers('entityCategory');
-const { mapActions: serviceMapActions } = createNamespacedHelpers('service');
+const { mapActions: mapEntityActions } = createNamespacedHelpers('entity');
+const { mapActions: mapEntityCategoryActions } = createNamespacedHelpers('entityCategory');
+const { mapActions: mapServiceActions } = createNamespacedHelpers('service');
 
 export default {
   components: { PatternEditorField },
@@ -310,8 +322,27 @@ export default {
     this.fetchInfos();
   },
   methods: {
-    ...entityCategoryMapActions({ fetchCategoriesListWithoutStore: 'fetchListWithoutStore' }),
-    ...serviceMapActions({ fetchEntityInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
+    ...mapEntityActions({ fetchContextEntitiesWithoutStore: 'fetchListWithoutStore' }),
+    ...mapEntityCategoryActions({ fetchCategoriesListWithoutStore: 'fetchListWithoutStore' }),
+    ...mapServiceActions({ fetchEntityInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
+
+    showPatternEntities() {
+      const widget = generatePreparedDefaultContextWidget();
+
+      this.$modals.show({
+        name: MODALS.entitiesList,
+        config: {
+          widget,
+          title: this.$t('pattern.patternEntities'),
+          fetchList: params => this.fetchContextEntitiesWithoutStore({
+            params: {
+              ...params,
+              entity_pattern: formGroupsToPatternRulesQuery(this.patterns.groups),
+            },
+          }),
+        },
+      });
+    },
 
     async fetchCategories() {
       this.categoriesPending = true;
