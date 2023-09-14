@@ -87,21 +87,12 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
   <div
     class="layout row justify-end align-center"
   >
-    <div
-      class="v-messages text-xs-right theme--light error--text"
+    <span
+      class="caption text--secondary error--text"
     >
-      <transition-group-stub
-        class="v-messages__wrapper"
-        name="message-transition"
-        tag="div"
-      >
-        <div
-          class="v-messages__message"
-        >
-          At least one pattern has to be defined. Please define filter patterns for rule
-        </div>
-      </transition-group-stub>
-    </div>
+      At least one pattern has to be defined. Please define filter patterns for rule
+    </span>
+    <!---->
     <button
       class="mr-0 ml-4 v-btn v-btn--disabled theme--light primary--text"
       disabled="disabled"
@@ -138,15 +129,12 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with default props 1`] = 
   <div
     class="layout row justify-end align-center"
   >
-    <div
-      class="v-messages text-xs-right theme--light"
+    <span
+      class="caption text--secondary"
     >
-      <transition-group-stub
-        class="v-messages__wrapper"
-        name="message-transition"
-        tag="div"
-      />
-    </div>
+      
+    </span>
+    <!---->
     <button
       class="mr-0 ml-4 v-btn v-btn--disabled theme--light primary--text"
       disabled="disabled"
