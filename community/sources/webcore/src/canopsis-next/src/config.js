@@ -83,6 +83,8 @@ export const SOCKET_ROOMS = {
   broadcastMessages: 'broadcast-messages',
   execution: 'execution',
   declareticket: 'declareticket',
+  alarms: 'alarms',
+  alarmDetails: 'alarm-details',
 };
 
 export const API_ROUTES = {

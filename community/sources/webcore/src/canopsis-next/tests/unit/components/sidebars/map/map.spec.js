@@ -244,7 +244,10 @@ describe('map', () => {
       unit: Faker.datatype.string(),
     };
 
-    fieldPeriodicRefresh.vm.$emit('input', periodicRefresh);
+    fieldPeriodicRefresh.vm.$emit('input', {
+      ...wrapper.vm.form.parameters,
+      periodic_refresh: periodicRefresh,
+    });
 
     await submitWithExpects(wrapper, {
       fetchActiveView,

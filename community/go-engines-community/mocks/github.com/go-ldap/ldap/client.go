@@ -65,9 +65,11 @@ func (mr *MockClientMockRecorder) Bind(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // Close mocks base method.
-func (m *MockClient) Close() {
+func (m *MockClient) Close() error {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Close")
+	ret := m.ctrl.Call(m, "Close")
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // Close indicates an expected call of Close.
@@ -105,6 +107,21 @@ func (mr *MockClientMockRecorder) Del(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Del", reflect.TypeOf((*MockClient)(nil).Del), arg0)
 }
 
+// DirSync mocks base method.
+func (m *MockClient) DirSync(arg0 *ldap.SearchRequest, arg1, arg2 int64, arg3 []byte) (*ldap.SearchResult, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DirSync", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(*ldap.SearchResult)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DirSync indicates an expected call of DirSync.
+func (mr *MockClientMockRecorder) DirSync(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DirSync", reflect.TypeOf((*MockClient)(nil).DirSync), arg0, arg1, arg2, arg3)
+}
+
 // ExternalBind mocks base method.
 func (m *MockClient) ExternalBind() error {
 	m.ctrl.T.Helper()
@@ -117,6 +134,20 @@ func (m *MockClient) ExternalBind() error {
 func (mr *MockClientMockRecorder) ExternalBind() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExternalBind", reflect.TypeOf((*MockClient)(nil).ExternalBind))
+}
+
+// GetLastError mocks base method.
+func (m *MockClient) GetLastError() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetLastError")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// GetLastError indicates an expected call of GetLastError.
+func (mr *MockClientMockRecorder) GetLastError() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLastError", reflect.TypeOf((*MockClient)(nil).GetLastError))
 }
 
 // IsClosing mocks base method.
