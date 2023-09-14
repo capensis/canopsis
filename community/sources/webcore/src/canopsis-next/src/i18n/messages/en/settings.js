@@ -52,6 +52,7 @@ export default {
   isAckNoteRequired: 'Note field required when ack?',
   isSnoozeNoteRequired: 'Note field required when snooze?',
   isRemoveAlarmsFromMetaAlarmCommentRequired: 'Comment field required when remove alarms from manual meta alarm?',
+  isUncancelAlarmsCommentRequired: 'Comment field required when uncancel?',
   isMultiAckEnabled: 'Multiple ack',
   isMultiDeclareTicketEnabled: 'Multiple declare ticket',
   isActionsAllowWithOkState: 'Actions allowed when state OK?',
