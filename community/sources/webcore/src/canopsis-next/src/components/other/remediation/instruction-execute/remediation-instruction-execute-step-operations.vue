@@ -7,6 +7,8 @@
       :operation-number="getOperationNumber(index)",
       :is-first-operation="!index",
       :is-first-step="isFirstStep",
+      :next-pending="nextPending",
+      :previous-pending="previousPending",
       @next="nextOperation(index)",
       @previous="previousOperation",
       @execute-job="executeJob",
@@ -31,6 +33,14 @@ export default {
       required: true,
     },
     isFirstStep: {
+      type: Boolean,
+      default: false,
+    },
+    previousPending: {
+      type: Boolean,
+      default: false,
+    },
+    nextPending: {
       type: Boolean,
       default: false,
     },
