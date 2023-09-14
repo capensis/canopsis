@@ -4230,22 +4230,22 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-  /entities/clean:
+  /entities/archive-disabled:
     post:
       tags:
         - entities
-      summary: Clean disabled entities
+      summary: Archive disabled entities
       description: |
-        Clean disabled entities.
+        Archive disabled entities.
         
         -  PERMISSIONS: `api_entity:delete`
-      operationId: entities-clean
+      operationId: entities-archive-disabled
       requestBody:
         description: body
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/entity.CleanRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/entity.ArchiveDisabledRequest'
       responses:
         202:
           description: OK
@@ -4255,6 +4255,44 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entities/archive-unlinked:
+    post:
+      tags:
+        - entities
+      summary: Archive unlinked entities
+      description: |
+        Archive unlinked entities.
+        
+        -  PERMISSIONS: `api_entity:delete`
+      operationId: entities-archive-unlinked
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/entity.ArchiveUnlinkedRequest'
+      responses:
+        202:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entities/clean-archived:
+    post:
+      tags:
+        - entities
+      summary: Clean archived entities
+      description: |
+        Clean archived entities.
+        
+        -  PERMISSIONS: `api_entity:delete`
+      operationId: entities-clean-archived
+      responses:
+        202:
+          description: OK
   /entities/context-graph:
     get:
       tags:
