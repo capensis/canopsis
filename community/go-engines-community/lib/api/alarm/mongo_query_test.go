@@ -1298,7 +1298,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 	)
 	expected = append(expected, getEntityLookup()...)
 	expected = append(expected,
-		bson.M{"$match": bson.M{"entity.enabled": true}},
+		bson.M{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
 		bson.M{"$project": bson.M{"entity": 0}},
 		bson.M{"$facet": bson.M{
 			"data":        expectedDataPipeline,
