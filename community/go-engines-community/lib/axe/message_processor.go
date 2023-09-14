@@ -81,7 +81,7 @@ func (p *MessageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	if event.Healthcheck {
 		_, err := p.AlarmCollection.DeleteMany(ctx, bson.M{"healthcheck": true})
 		if err != nil {
-			p.logError(err, "cannot delete temporary alarm", alarmID, d.Body)
+			p.logError(err, "cannot delete temporary alarm", "", d.Body)
 		}
 	}
 
@@ -155,11 +155,12 @@ func (p *MessageProcessor) transformEvent(event types.Event) rpc.AxeEvent {
 	}
 
 	return rpc.AxeEvent{
-		EventType:  event.EventType,
-		Parameters: params,
-		Alarm:      event.Alarm,
-		AlarmID:    event.AlarmID,
-		Entity:     event.Entity,
+		EventType:   event.EventType,
+		Parameters:  params,
+		Alarm:       event.Alarm,
+		AlarmID:     event.AlarmID,
+		Entity:      event.Entity,
+		Healthcheck: event.Healthcheck,
 	}
 }
 

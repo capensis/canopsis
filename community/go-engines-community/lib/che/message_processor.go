@@ -230,7 +230,7 @@ func (p *messageProcessor) handleEvent(ctx context.Context, event types.Event) (
 		}
 	}
 
-	if len(updatedEntityIds) == 0 || event.Healthcheck{
+	if len(updatedEntityIds) == 0 || event.Healthcheck {
 		return event, nil, false, nil
 	}
 

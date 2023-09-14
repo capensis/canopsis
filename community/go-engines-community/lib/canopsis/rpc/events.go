@@ -8,11 +8,12 @@ import (
 )
 
 type AxeEvent struct {
-	EventType  string        `json:"event_type"`
-	Parameters AxeParameters `json:"parameters,omitempty"`
-	Alarm      *types.Alarm  `json:"alarm,omitempty"`
-	AlarmID    string        `json:"alarm_id,omitempty"`
-	Entity     *types.Entity `json:"entity,omitempty"`
+	EventType   string        `json:"event_type"`
+	Parameters  AxeParameters `json:"parameters,omitempty"`
+	Alarm       *types.Alarm  `json:"alarm,omitempty"`
+	AlarmID     string        `json:"alarm_id,omitempty"`
+	Entity      *types.Entity `json:"entity,omitempty"`
+	Healthcheck bool          `json:"healthcheck,omitempty"`
 }
 
 type AxeParameters struct {
