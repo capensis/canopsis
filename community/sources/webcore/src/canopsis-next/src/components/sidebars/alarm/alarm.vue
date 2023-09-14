@@ -153,6 +153,11 @@
       )
       v-divider
       field-switcher(
+        v-model="form.parameters.isUncancelAlarmsCommentRequired",
+        :title="$t('settings.isUncancelAlarmsCommentRequired')"
+      )
+      v-divider
+      field-switcher(
         v-model="form.parameters.isMultiDeclareTicketEnabled",
         :title="$t('settings.isMultiDeclareTicketEnabled')"
       )
