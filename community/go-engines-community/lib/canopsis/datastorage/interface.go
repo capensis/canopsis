@@ -17,7 +17,9 @@ type Adapter interface {
 	UpdateHistoryJunit(ctx context.Context, t types.CpsTime) error
 	UpdateHistoryRemediation(ctx context.Context, t types.CpsTime) error
 	UpdateHistoryAlarm(ctx context.Context, history HistoryWithCount) error
-	UpdateHistoryEntity(ctx context.Context, history HistoryWithCount) error
+	UpdateHistoryEntityDisabled(ctx context.Context, history HistoryWithCount) error
+	UpdateHistoryEntityUnlinked(ctx context.Context, history HistoryWithCount) error
+	UpdateHistoryEntityCleaned(ctx context.Context, history HistoryWithCount) error
 	UpdateHistoryPbehavior(ctx context.Context, t types.CpsTime) error
 	UpdateHistoryHealthCheck(ctx context.Context, t types.CpsTime) error
 	UpdateHistoryWebhook(ctx context.Context, t types.CpsTime) error
@@ -67,7 +69,9 @@ type History struct {
 	Junit              *types.CpsTime    `bson:"junit" json:"junit" swaggertype:"integer"`
 	Remediation        *types.CpsTime    `bson:"remediation" json:"remediation" swaggertype:"integer"`
 	Alarm              *HistoryWithCount `bson:"alarm" json:"alarm"`
-	Entity             *HistoryWithCount `bson:"entity" json:"entity"`
+	EntityDisabled     *HistoryWithCount `bson:"entity_disabled" json:"entity_disabled"`
+	EntityUnlinked     *HistoryWithCount `bson:"entity_unlinked" json:"entity_unlinked"`
+	EntityCleaned      *HistoryWithCount `bson:"entity_cleaned" json:"entity_cleaned"`
 	Pbehavior          *types.CpsTime    `bson:"pbehavior" json:"pbehavior" swaggertype:"integer"`
 	HealthCheck        *types.CpsTime    `bson:"health_check" json:"health_check" swaggertype:"integer"`
 	Webhook            *types.CpsTime    `bson:"webhook" json:"webhook" swaggertype:"integer"`
@@ -76,6 +80,6 @@ type History struct {
 
 type HistoryWithCount struct {
 	Time     types.CpsTime `bson:"time" json:"time" swaggertype:"integer"`
-	Archived int64         `bson:"archived" json:"archived"`
-	Deleted  int64         `bson:"deleted" json:"deleted"`
+	Archived int64         `bson:"archived,omitempty" json:"archived"`
+	Deleted  int64         `bson:"deleted,omitempty" json:"deleted"`
 }

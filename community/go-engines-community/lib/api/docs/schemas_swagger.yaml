@@ -1182,7 +1182,11 @@ definitions:
     properties:
       alarm:
         $ref: '#/definitions/datastorage.HistoryWithCount'
-      entity:
+      entity_cleaned:
+        $ref: '#/definitions/datastorage.HistoryWithCount'
+      entity_disabled:
+        $ref: '#/definitions/datastorage.HistoryWithCount'
+      entity_unlinked:
         $ref: '#/definitions/datastorage.HistoryWithCount'
       event_filter_failure:
         type: integer
@@ -1206,6 +1210,16 @@ definitions:
       time:
         type: integer
     type: object
+  entity.ArchiveDisabledRequest:
+    properties:
+      with_dependencies:
+        type: boolean
+    type: object
+  entity.ArchiveUnlinkedRequest:
+    properties:
+      archive_before:
+        $ref: '#/definitions/types.DurationWithUnit'
+    type: object
   entity.BulkToggleRequestItem:
     properties:
       _id:
@@ -1219,15 +1233,6 @@ definitions:
         type: string
       name:
         type: string
-    type: object
-  entity.CleanRequest:
-    properties:
-      archive:
-        type: boolean
-      archive_dependencies:
-        type: boolean
-    required:
-    - archive
     type: object
   entity.ContextGraphResponse:
     properties:
