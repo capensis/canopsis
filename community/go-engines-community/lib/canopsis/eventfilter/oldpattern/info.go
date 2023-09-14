@@ -78,7 +78,7 @@ func (p InfoPattern) Matches(info types.Info, isSet bool, matches *InfoRegexMatc
 
 func (p InfoPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.ShouldNotBeSet {
-		return bsontype.Null, []byte{}, nil
+		return bson.TypeNull, []byte{}, nil
 	}
 
 	resultBson := bson.M{}
@@ -86,7 +86,7 @@ func (p InfoPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Name.RegexMatch.Set || p.Name.Equal.Set {
 		bsonFieldName, err := GetFieldBsonName(p, "Name", "name")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Name
@@ -95,7 +95,7 @@ func (p InfoPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Description.RegexMatch.Set || p.Description.Equal.Set {
 		bsonFieldName, err := GetFieldBsonName(p, "Description", "description")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Description
@@ -104,7 +104,7 @@ func (p InfoPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Value.RegexMatch.Set || p.Value.Equal.Set {
 		bsonFieldName, err := GetFieldBsonName(p, "Value", "value")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Value
@@ -114,12 +114,12 @@ func (p InfoPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		return bson.MarshalValue(resultBson)
 	}
 
-	return bsontype.Undefined, nil, nil
+	return bson.TypeUndefined, nil, nil
 }
 
 func (p *InfoPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
-	case bsontype.Null:
+	case bson.TypeNull:
 		// The BSON value is null. The field should not be set.
 		p.ShouldNotBeSet = true
 	default:

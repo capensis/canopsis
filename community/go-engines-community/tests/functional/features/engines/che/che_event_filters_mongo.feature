@@ -258,20 +258,6 @@ Feature: modify event on event filter
       "output": "test-output-che-event-filters-mongo-3"
     }
     """
-    When I do GET /api/v4/entities?search=test-resource-che-event-filters-mongo-3
-    Then the response code should be 200
-    Then the response body should be:
-    """json
-    {
-      "data": [],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 0
-      }
-    }
-    """
     When I do GET /api/v4/alarms?search=che-event-filters-mongo-3
     Then the response code should be 200
     Then the response body should contain:

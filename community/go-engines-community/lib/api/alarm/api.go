@@ -105,7 +105,7 @@ func (a *api) List(c *gin.Context) {
 // @Success 200 {object} Alarm
 func (a *api) Get(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-	alarm, err := a.store.GetByID(c, c.Param("id"), userId)
+	alarm, err := a.store.GetByID(c, c.Param("id"), userId, false)
 	if err != nil {
 		panic(err)
 	}
@@ -167,7 +167,6 @@ func (a *api) GetDetails(c *gin.Context) {
 		return
 	}
 
-	defaultQuery := pagination.GetDefaultQuery()
 	response := make([]DetailsResponse, len(rawObjects))
 	userId := c.MustGet(auth.UserKey).(string)
 
@@ -187,26 +186,7 @@ func (a *api) GetDetails(c *gin.Context) {
 			continue
 		}
 
-		if request.Steps != nil {
-			request.Steps.Paginate = true
-			if request.Steps.Page == 0 {
-				request.Steps.Page = defaultQuery.Page
-			}
-			if request.Steps.Limit == 0 {
-				request.Steps.Limit = defaultQuery.Limit
-			}
-		}
-
-		if request.Children != nil {
-			request.Children.Paginate = true
-			if request.Children.Page == 0 {
-				request.Children.Page = defaultQuery.Page
-			}
-			if request.Children.Limit == 0 {
-				request.Children.Limit = defaultQuery.Limit
-			}
-		}
-
+		request.Format()
 		err = binding.Validator.ValidateStruct(request)
 		if err != nil {
 			response[idx].ID = request.ID

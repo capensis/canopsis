@@ -8,7 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
-	redismod "github.com/go-redis/redis/v8"
+	redismod "github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
 
