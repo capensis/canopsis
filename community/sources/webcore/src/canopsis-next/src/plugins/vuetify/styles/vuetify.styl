@@ -45,11 +45,21 @@ $list-item-dense-icon-font-size = rem(22px)
 // Backgrounds
 $material-light.background = var(--v-application-background-base, $material-light.background)
 $material-light.cards = var(--v-background-base, $material-dark.cards)
-$material-light.text.primary = var(--v-active-color-base, $material-light.text.primary)
+
+$material-light.text.primary = var(--v-text-light-primary, $material-light.text.primary)
+$material-light.text.secondary = var(--v-text-light-secondary, $material-light.text.primary)
+$material-light.text.disabled = var(--v-text-light-disabled, $material-light.text.primary)
+
+$material-light.icons.active = $material-light.text.secondary
 
 $material-dark.background = var(--v-application-background-base, $material-dark.background)
 $material-dark.cards = var(--v-background-base, $material-dark.cards)
-$material-dark.text.primary = var(--v-active-color-base, $material-dark.text.primary)
+
+$material-dark.text.primary = var(--v-text-dark-primary, $material-dark.text.primary)
+$material-dark.text.secondary = var(--v-text-dark-secondary, $material-dark.text.primary)
+$material-dark.text.disabled = var(--v-text-dark-disabled, $material-dark.text.primary)
+
+$material-dark.icons.active = $material-dark.text.secondary
 
 @import '~vuetify/src/stylus/settings/_variables.styl'
 

@@ -13,7 +13,7 @@
         app-version.version
       template(v-if="hasReadAnyViewAccess")
         v-layout.pa-2(v-if="!mutatedGroups.length && groupsPending", row, justify-center)
-          v-progress-circular(color="white", indeterminate)
+          v-progress-circular(color="primary", indeterminate)
         c-draggable-list-field.groups-panel(
           v-else,
           v-model="mutatedGroups",
