@@ -11,7 +11,6 @@ import { isString, kebabCase } from 'lodash';
  * @property {string} warning
  * @property {string} background
  * @property {string} active_color
- * @property {number} font_size
  */
 
 /**
@@ -41,6 +40,7 @@ import { isString, kebabCase } from 'lodash';
  * @typedef {Object} Theme
  * @property {String} name
  * @property {ThemeColors} colors
+ * @property {number} font_size
  */
 
 /**
@@ -74,4 +74,4 @@ const themeObjectColorsToCSSVariables = (colors, prefix = '') => Object.entries(
  * @param {Object} [colors = {}]
  * @returns {Object}
  */
-export const themeColorsToCSSVariables = (colors = {}) => themeObjectColorsToCSSVariables(colors);
+export const themePropertiesToCSSVariables = (colors = {}) => themeObjectColorsToCSSVariables(colors);

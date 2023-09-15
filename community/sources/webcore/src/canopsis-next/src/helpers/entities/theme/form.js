@@ -50,7 +50,6 @@ export const themeMainColorsToForm = (main = {}) => ({
   warning: main.warning ?? COLORS.warning,
   background: main.background ?? COLORS.background,
   active_color: main.active_color ?? COLORS.activeColor,
-  font_size: main.font_size ?? THEME_FONT_SIZES.medium,
 });
 
 /**
@@ -105,6 +104,7 @@ export const themeColorsToForm = (colors = {}) => ({
  */
 export const themeToForm = (theme = {}) => ({
   name: theme.name ?? '',
+  font_size: theme.font_size ?? THEME_FONT_SIZES.medium,
   colors: themeColorsToForm(theme.colors),
 });
 

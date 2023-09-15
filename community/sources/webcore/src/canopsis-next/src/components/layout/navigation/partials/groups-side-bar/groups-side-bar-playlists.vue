@@ -1,6 +1,6 @@
 <template lang="pug">
   v-expansion-panel.sidebar-playlists(v-if="availablePlaylists.length", expand, focusable, dark)
-    v-expansion-panel-content.secondary.lighten-1.white--text
+    v-expansion-panel-content.secondary.lighten-1
       template(#header="")
         div.panel-header
           span {{ $t(`pageHeaders.${$constants.USERS_PERMISSIONS.technical.playlist}.title`) }}
