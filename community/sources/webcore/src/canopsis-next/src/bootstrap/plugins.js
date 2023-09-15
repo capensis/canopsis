@@ -28,7 +28,7 @@ import i18n from '@/i18n';
 import Filters from '@/filters';
 
 import { setSeveralFields } from '@/helpers/immutable';
-import { themeColorsToCSSVariables } from '@/helpers/entities/theme/entity';
+import { themePropertiesToCSSVariables } from '@/helpers/entities/theme/entity';
 
 import * as modalsComponents from '@/components/modals';
 import * as sidebarsComponents from '@/components/sidebars';
@@ -41,7 +41,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
   Vue.use(PortalVue);
   Vue.use(Filters);
   Vue.use(Vuetify, {
-    theme: themeColorsToCSSVariables(DEFAULT_THEME_COLORS),
+    theme: themePropertiesToCSSVariables(DEFAULT_THEME_COLORS),
   });
 
   Vue.use(VueFullScreen);

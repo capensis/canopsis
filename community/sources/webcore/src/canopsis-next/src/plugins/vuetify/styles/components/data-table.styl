@@ -6,14 +6,36 @@ $ultra-dense-cell-height = 24px
 $dense-treeview-cell-height = 32px
 
 $dense-color-indicator-padding = 1px 5px;
-π
-.v-datatable
-  &.v-table,
-  & .v-datatable__actions,
-  & thead th
-    color: var(--v-active-color-base) !important
-    caret-color: var(--v-active-color-base) !important
 
+/* Theme */
+v-table($material)
+  thead
+    th
+      color: $material.text.secondary
+
+v-datatable($material)
+  thead
+    th.column.sortable
+      .v-icon
+        color: $material.text.disabled
+
+      &:hover
+        color: $material.text.primary
+
+      &.active
+        color: $material.text.primary
+
+        .v-icon
+          color: $material.text.primary
+
+  .v-datatable
+    .v-datatable__actions
+      color: $material.text.secondary
+
+theme(v-table, "v-table")
+theme(v-datatable, "v-datatable")
+
+.v-datatable
   &.v-table
     background-color: var(--v-table-background-base) !important
 
@@ -54,13 +76,13 @@ table.v-datatable
     thead tr
       height: $dense-cell-height
 
-  tbody, thead
-    tr:not(.v-datatable__progress)
-      td, th
-        padding: 0 $dense-padding !important
+    tbody, thead
+      tr:not(.v-datatable__progress)
+        td, th
+          padding: 0 $dense-padding !important
 
-      td:not(.v-datatable__expand-col)
-        height: $dense-cell-height
+        td:not(.v-datatable__expand-col)
+          height: $dense-cell-height
 
 &--ultra-dense.v-datatable
   thead tr

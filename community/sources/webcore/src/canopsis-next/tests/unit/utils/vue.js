@@ -15,7 +15,7 @@ import i18n from '@/i18n';
 import { convertDateToString, convertDateToTimezoneDateString } from '@/helpers/date/date';
 import SetSeveralPlugin from '@/plugins/set-several';
 import { stringifyJsonFilter } from '@/helpers/json';
-import { themeColorsToCSSVariables } from '@/helpers/entities/theme/entity';
+import { themePropertiesToCSSVariables } from '@/helpers/entities/theme/entity';
 
 /**
  * @typedef {Wrapper<Vue>} CustomWrapper
@@ -36,7 +36,7 @@ const mocks = {
 
 Vue.use(Vuex);
 Vue.use(Vuetify, {
-  theme: theme(themeColorsToCSSVariables(config.DEFAULT_THEME_COLORS)),
+  theme: theme(themePropertiesToCSSVariables(config.DEFAULT_THEME_COLORS)),
 });
 Vue.use(UpdateFieldPlugin);
 Vue.use(ValidatorPlugin, { i18n });

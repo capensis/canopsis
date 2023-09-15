@@ -55,7 +55,7 @@
         )
     c-information-block(:title="$t('theme.fontSize.title')")
       v-layout.theme-form__colors(column)
-        theme-color-font-size-field(v-field="form.colors.main.font_size")
+        theme-color-font-size-field(v-field="form.font_size")
     c-information-block(:title="$t('theme.table.title')")
       v-layout.theme-form__colors(column)
         theme-color-picker-field(
@@ -135,7 +135,7 @@ export default {
   },
   computed: {
     fontSize() {
-      return THEME_FONT_PIXEL_SIZES[this.form.colors.main.font_size];
+      return THEME_FONT_PIXEL_SIZES[this.form.font_size];
     },
   },
 };
