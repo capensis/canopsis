@@ -1,22 +1,26 @@
 import theme from 'vuetify/es5/components/Vuetify/mixins/theme';
+import { kebabCase } from 'lodash';
 
-import { getDarkenColor, isDarkColor } from '@/helpers/color';
-import { themeColorsToCSSVariables } from '@/helpers/entities/theme/entity';
+import { colorToRgba, getDarkenColor, isDarkColor } from '@/helpers/color';
+import { themePropertiesToCSSVariables } from '@/helpers/entities/theme/entity';
 
 import { THEME_FONT_PIXEL_SIZES, THEME_FONT_SIZES } from '@/constants/theme';
 
 export const systemThemeMixin = {
   data() {
     return {
-      fontSize: THEME_FONT_PIXEL_SIZES[THEME_FONT_SIZES.medium],
+      otherVariables: {
+        fontSizeRoot: `${THEME_FONT_PIXEL_SIZES[THEME_FONT_SIZES.medium]}px`,
+      },
     };
   },
   computed: {
     cssVariables() {
-      return `--v-font-size-root:${this.fontSize}px;}`;
+      return Object.entries(themePropertiesToCSSVariables(this.otherVariables))
+        .reduce((acc, [key, value]) => `${acc}--v-${kebabCase(key)}:${value};`, '');
     },
     css() {
-      return `:root{${this.cssVariables}`;
+      return `:root{${this.cssVariables}}`;
     },
   },
   created() {
@@ -47,21 +51,39 @@ export const systemThemeMixin = {
       document.head.removeChild(this.styleElement);
     },
 
-    setTheme({ colors }) {
+    setTheme({ colors, font_size: fontSize }) {
       const { main, table, state } = colors;
 
       const isDark = isDarkColor(main.background);
 
-      const variables = themeColorsToCSSVariables({
+      const variables = themePropertiesToCSSVariables({
         ...main,
         table,
         state,
-        applicationBackground: getDarkenColor(main.background, 7),
+        applicationBackground: getDarkenColor(main.background, isDark ? 7 : 2),
       });
 
       this.$vuetify.theme = theme(variables);
 
-      this.fontSize = THEME_FONT_PIXEL_SIZES[main.font_size];
+      const lightBaseColor = isDark ? '#000' : main.active_color;
+      const darkBaseColor = isDark ? main.active_color : '#fff';
+
+      const textLight = {
+        primary: colorToRgba(lightBaseColor, 0.87),
+        secondary: colorToRgba(lightBaseColor, 0.54),
+        disabled: colorToRgba(lightBaseColor, 0.38),
+      };
+      const textDark = {
+        primary: darkBaseColor,
+        secondary: colorToRgba(darkBaseColor, 0.70),
+        disabled: colorToRgba(darkBaseColor, 0.50),
+      };
+
+      this.otherVariables = {
+        fontSizeRoot: `${THEME_FONT_PIXEL_SIZES[fontSize]}px`,
+        textLight,
+        textDark,
+      };
       this.system.dark = isDark;
     },
   },
