@@ -137,7 +137,7 @@ func (p *messageProcessor) handleEvent(ctx context.Context, event types.Event) (
 				return fmt.Errorf("cannot recompute service %s: %w", event.Component, err)
 			}
 
-			_, err = p.ContextGraphManager.UpdateEntities(ctx, "", updatedEntities, false)
+			_, err = p.ContextGraphManager.UpdateEntities(ctx, "", updatedEntities, true)
 			if err != nil {
 				return fmt.Errorf("cannot update entities %s: %w", event.Component, err)
 			}
