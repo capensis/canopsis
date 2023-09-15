@@ -23,7 +23,6 @@ type API interface {
 	BulkDelete(c *gin.Context)
 	CountAlarms(c *gin.Context)
 	CountEntities(c *gin.Context)
-	GetAlarms(c *gin.Context)
 }
 
 type api struct {
@@ -321,28 +320,6 @@ func (a *api) CountEntities(c *gin.Context) {
 	defer cancel()
 
 	res, err := a.store.CountEntities(ctx, request, int64(conf.MaxMatchedItems))
-	if err != nil {
-		panic(err)
-	}
-
-	c.JSON(http.StatusOK, res)
-}
-
-// GetAlarms
-// @Param body body GetAlarmsRequest true "body"
-// @Success 200 {object} GetAlarmsResponse
-func (a *api) GetAlarms(c *gin.Context) {
-	request := GetAlarmsRequest{}
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
-		return
-	}
-
-	conf := a.configProvider.Get()
-	ctx, cancel := context.WithTimeout(c, time.Duration(conf.CheckCountRequestTimeout)*time.Second)
-	defer cancel()
-
-	res, err := a.store.GetAlarms(ctx, request)
 	if err != nil {
 		panic(err)
 	}
