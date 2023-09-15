@@ -144,7 +144,8 @@ export default {
       try {
         this.$socket
           .connect(SOCKET_URL)
-          .on('error', this.socketErrorHandler);
+          .on('error', this.socketErrorHandler)
+          .on(Socket.EVENTS_TYPES.networkError, this.socketConnectionFailureHandler);
       } catch (err) {
         this.$popups.error({
           text: this.$t('errors.socketConnectionProblem'),
@@ -164,6 +165,13 @@ export default {
           this.logout();
         }
       }
+    },
+
+    socketConnectionFailureHandler() {
+      this.$popups.error({
+        text: this.$t('errors.socketConnectionProblem'),
+        autoClose: false,
+      });
     },
 
     async fetchCurrentUserWithErrorHandling() {
