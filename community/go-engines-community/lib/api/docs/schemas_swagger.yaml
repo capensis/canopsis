@@ -5227,6 +5227,8 @@ definitions:
       label:
         maxLength: 255
         type: string
+      linksInRowCount:
+        type: integer
       onlyIcon:
         type: boolean
       template:
