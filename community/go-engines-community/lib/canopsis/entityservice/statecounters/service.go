@@ -175,7 +175,15 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 		ServicesToAdd    []string `bson:"services_to_add"`
 		ServicesToRemove []string `bson:"services_to_remove"`
 	}{}
-	err := s.entityCollection.FindOne(ctx, bson.M{"_id": entity.ID}).Decode(&entityServiceData)
+	err := s.entityCollection.FindOne(
+		ctx,
+		bson.M{"_id": entity.ID},
+		options.FindOne().SetProjection(bson.M{
+			"services":           1,
+			"services_to_add":    1,
+			"services_to_remove": 1,
+		}),
+	).Decode(&entityServiceData)
 	if err != nil {
 		return nil, err
 	}
