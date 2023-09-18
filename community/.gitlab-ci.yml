@@ -4,19 +4,42 @@ stages:
   - release
 
 before_script:
-  - cd community/
+  - cd pro/
 
 variables:
-  COMPOSE_HTTP_TIMEOUT: "180"
-  COMPOSE_PROJECT_NAME: "test${CI_JOB_ID}"
-  CANOPSIS_TAG: "ci"
-  CANOPSIS_DOCKER_MODE: "test-ci"
-  CANOPSIS_ENV_CONFIRM: "0"
-  CANOPSIS_EDITION: "community"
+  CANOPSIS_EDITION: "pro"
 
-include:
+include: 
   - community/.gitlab-ci-common.yml
-  - community/.gitlab-ci-template.yml
+  - community/.gitlab-ci-builder.yml
 
-create_release:
-  extends: .create_release
+variables:
+  OCI_PATH_1: $CI_PROJECT_DIR/pro/go-engines-pro
+  RPM_PATH: $CI_PROJECT_DIR/pro/dist
+  RPM_PATH_OUTPUT: $RPM_PATH/build/el8/output
+  RPM_URL: https://nexus.canopsis.net/service/rest/v1/components?repository=canopsis-pro-develop
+
+build_oci:
+  stage: build
+  script:
+    - docker login docker.canopsis.net -u ci-builder -p $DOCKER_AUTH_CI_BUILDER
+    - echo 'PRO_OCI'
+    - make -C ${OCI_PATH_1} docker-images VERSION=$CI_COMMIT_TAG
+    - docker images --format="{{.Repository}}:{{.Tag}}" | grep docker.canopsis.net/docker/pro | grep $CI_COMMIT_TAG | xargs -I {} echo docker push {}
+    - docker logout docker.canopsis.net
+
+build_oci_dev:
+  stage: build
+  script:
+    - docker login docker.canopsis.net -u ci-builder -p $DOCKER_AUTH_CI_BUILDER
+    - make -C ${OCI_PATH_1} docker-images VERSION=$CI_COMMIT_TAG
+    - for i in $(docker images --format="{{.Repository}}:{{.Tag}}" | grep docker.canopsis.net/docker/pro | grep $CI_COMMIT_TAG); do docker image tag $i $(echo $i | sed 's/.net\/docker\/pro/.net\/docker\/develop-pro/g') ; done && docker images --format="{{.Repository}}:{{.Tag}}" | grep develop-pro | grep $CI_COMMIT_TAG | xargs -I {} docker push {}
+    - docker logout docker.canopsis.net
+
+build_rpm_dev:
+  variables:
+    RPM_URL: https://nexus.canopsis.net/service/rest/v1/components?repository=canopsis-pro-develop
+
+build_rpm:
+  variables:
+    RPM_URL: https://nexus.canopsis.net/service/rest/v1/components?repository=canopsis-pro
