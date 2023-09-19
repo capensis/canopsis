@@ -130,7 +130,7 @@ export default {
       }
 
       Object.entries(WIDGET_TYPES_RULES).forEach(([key, rule]) => {
-        if (rule.edition === this.edition) {
+        if (rule.edition !== this.edition) {
           widgetComponentsMap[key] = 'c-alert-overlay';
           widgetSpecificsProp = {
             ...widgetSpecificsProp,

@@ -79,10 +79,29 @@ export const systemThemeMixin = {
         disabled: colorToRgba(darkBaseColor, 0.50),
       };
 
+      const buttonsLight = {
+        disabled: colorToRgba(lightBaseColor, 0.26),
+        focused: colorToRgba(lightBaseColor, 0.12),
+      };
+      const buttonsDark = {
+        disabled: colorToRgba(lightBaseColor, 0.3),
+        focused: colorToRgba(lightBaseColor, 0.12),
+      };
+
+      const stepperBaseColor = isDark ? '#000' : '#fff';
+      const stepper = {
+        active: stepperBaseColor,
+        completed: colorToRgba(stepperBaseColor, 0.87),
+        hover: colorToRgba(stepperBaseColor, isDark ? 0.75 : 0.54),
+      };
+
       this.otherVariables = {
         fontSizeRoot: `${THEME_FONT_PIXEL_SIZES[fontSize]}px`,
         textLight,
         textDark,
+        buttonsLight,
+        buttonsDark,
+        stepper,
       };
       this.system.dark = isDark;
     },
