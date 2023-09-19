@@ -9,9 +9,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with default props 1`] = `
     class="v-card__text pa-0 position-relative"
   >
     <alarms-list-widget-stub
-      message="Stats widgets are not available with 'community' edition"
       tabid="tab-id"
-      value="true"
       widget="[object Object]"
     />
   </div>
@@ -49,9 +47,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with editing mode 1`] = `
     class="v-card__text pa-0 position-relative"
   >
     <alarms-list-widget-stub
-      message="Stats widgets are not available with 'community' edition"
       tabid="tab-id"
-      value="true"
       widget="[object Object]"
     />
   </div>
@@ -89,9 +85,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with title and editing mode 1
     class="v-card__text pa-0 position-relative"
   >
     <alarms-list-widget-stub
-      message="Stats widgets are not available with 'community' edition"
       tabid="tab-id"
-      value="true"
       widget="[object Object]"
     />
   </div>
@@ -99,24 +93,6 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with title and editing mode 1
 `;
 
 exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmStatistics and cat edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <c-alert-overlay-stub
-      message="Stats widgets are not available with 'community' edition"
-      tab-id="tab-id"
-      value="true"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
-exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmStatistics and core edition 1`] = `
 <div
   style="min-height: 40px;"
 >
@@ -132,6 +108,24 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmStatistics and
 </div>
 `;
 
+exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmStatistics and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <c-alert-overlay-stub
+      message="Stats widgets are not available with 'community' edition"
+      tab-id="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
 exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmsList and cat edition 1`] = `
 <div
   style="min-height: 40px;"
@@ -141,9 +135,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmsList and cat 
     class="v-card__text pa-0 position-relative"
   >
     <alarms-list-widget-stub
-      message="Stats widgets are not available with 'community' edition"
       tabid="tab-id"
-      value="true"
       widget="[object Object]"
     />
   </div>
@@ -159,7 +151,9 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type AlarmsList and core
     class="v-card__text pa-0 position-relative"
   >
     <alarms-list-widget-stub
+      message="Stats widgets are not available with 'community' edition"
       tabid="tab-id"
+      value="true"
       widget="[object Object]"
     />
   </div>
@@ -175,9 +169,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type BarChart and cat ed
     class="v-card__text pa-0 position-relative"
   >
     <bar-chart-widget-stub
-      message="Stats widgets are not available with 'community' edition"
       tabid="tab-id"
-      value="true"
       widget="[object Object]"
     />
   </div>
@@ -193,7 +185,9 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type BarChart and core e
     class="v-card__text pa-0 position-relative"
   >
     <bar-chart-widget-stub
+      message="Stats widgets are not available with 'community' edition"
       tabid="tab-id"
+      value="true"
       widget="[object Object]"
     />
   </div>
@@ -209,9 +203,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Context and cat edi
     class="v-card__text pa-0 position-relative"
   >
     <entities-list-widget-stub
-      message="Stats widgets are not available with 'community' edition"
       tabid="tab-id"
-      value="true"
       widget="[object Object]"
     />
   </div>
@@ -227,7 +219,9 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Context and core ed
     class="v-card__text pa-0 position-relative"
   >
     <entities-list-widget-stub
+      message="Stats widgets are not available with 'community' edition"
       tabid="tab-id"
+      value="true"
       widget="[object Object]"
     />
   </div>
@@ -243,9 +237,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Counter and cat edi
     class="v-card__text pa-0 position-relative"
   >
     <counter-widget-stub
-      message="Stats widgets are not available with 'community' edition"
       tabid="tab-id"
-      value="true"
       widget="[object Object]"
     />
   </div>
@@ -261,24 +253,8 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Counter and core ed
     class="v-card__text pa-0 position-relative"
   >
     <counter-widget-stub
-      tabid="tab-id"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
-exports[`widget-wrapper Renders \`widget-wrapper\` with type Junit and cat edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <c-alert-overlay-stub
       message="Stats widgets are not available with 'community' edition"
-      tab-id="tab-id"
+      tabid="tab-id"
       value="true"
       widget="[object Object]"
     />
@@ -286,7 +262,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Junit and cat editi
 </div>
 `;
 
-exports[`widget-wrapper Renders \`widget-wrapper\` with type Junit and core edition 1`] = `
+exports[`widget-wrapper Renders \`widget-wrapper\` with type Junit and cat edition 1`] = `
 <div
   style="min-height: 40px;"
 >
@@ -302,6 +278,24 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Junit and core edit
 </div>
 `;
 
+exports[`widget-wrapper Renders \`widget-wrapper\` with type Junit and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <c-alert-overlay-stub
+      message="Stats widgets are not available with 'community' edition"
+      tab-id="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
 exports[`widget-wrapper Renders \`widget-wrapper\` with type LineChart and cat edition 1`] = `
 <div
   style="min-height: 40px;"
@@ -311,9 +305,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type LineChart and cat e
     class="v-card__text pa-0 position-relative"
   >
     <line-chart-widget-stub
-      message="Stats widgets are not available with 'community' edition"
       tabid="tab-id"
-      value="true"
       widget="[object Object]"
     />
   </div>
@@ -329,24 +321,8 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type LineChart and core 
     class="v-card__text pa-0 position-relative"
   >
     <line-chart-widget-stub
-      tabid="tab-id"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
-exports[`widget-wrapper Renders \`widget-wrapper\` with type Map and cat edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <c-alert-overlay-stub
       message="Stats widgets are not available with 'community' edition"
-      tab-id="tab-id"
+      tabid="tab-id"
       value="true"
       widget="[object Object]"
     />
@@ -354,7 +330,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Map and cat edition
 </div>
 `;
 
-exports[`widget-wrapper Renders \`widget-wrapper\` with type Map and core edition 1`] = `
+exports[`widget-wrapper Renders \`widget-wrapper\` with type Map and cat edition 1`] = `
 <div
   style="min-height: 40px;"
 >
@@ -370,6 +346,24 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Map and core editio
 </div>
 `;
 
+exports[`widget-wrapper Renders \`widget-wrapper\` with type Map and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <c-alert-overlay-stub
+      message="Stats widgets are not available with 'community' edition"
+      tab-id="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
 exports[`widget-wrapper Renders \`widget-wrapper\` with type Numbers and cat edition 1`] = `
 <div
   style="min-height: 40px;"
@@ -379,9 +373,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Numbers and cat edi
     class="v-card__text pa-0 position-relative"
   >
     <numbers-widget-stub
-      message="Stats widgets are not available with 'community' edition"
       tabid="tab-id"
-      value="true"
       widget="[object Object]"
     />
   </div>
@@ -397,7 +389,9 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Numbers and core ed
     class="v-card__text pa-0 position-relative"
   >
     <numbers-widget-stub
+      message="Stats widgets are not available with 'community' edition"
       tabid="tab-id"
+      value="true"
       widget="[object Object]"
     />
   </div>
@@ -413,9 +407,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type PieChart and cat ed
     class="v-card__text pa-0 position-relative"
   >
     <pie-chart-widget-stub
-      message="Stats widgets are not available with 'community' edition"
       tabid="tab-id"
-      value="true"
       widget="[object Object]"
     />
   </div>
@@ -431,7 +423,9 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type PieChart and core e
     class="v-card__text pa-0 position-relative"
   >
     <pie-chart-widget-stub
+      message="Stats widgets are not available with 'community' edition"
       tabid="tab-id"
+      value="true"
       widget="[object Object]"
     />
   </div>
@@ -447,9 +441,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type ServiceWeather and 
     class="v-card__text pa-0 position-relative"
   >
     <service-weather-widget-stub
-      message="Stats widgets are not available with 'community' edition"
       tabid="tab-id"
-      value="true"
       widget="[object Object]"
     />
   </div>
@@ -465,24 +457,8 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type ServiceWeather and 
     class="v-card__text pa-0 position-relative"
   >
     <service-weather-widget-stub
-      tabid="tab-id"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
-exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsCalendar and cat edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <c-alert-overlay-stub
       message="Stats widgets are not available with 'community' edition"
-      tab-id="tab-id"
+      tabid="tab-id"
       value="true"
       widget="[object Object]"
     />
@@ -490,7 +466,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsCalendar and c
 </div>
 `;
 
-exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsCalendar and core edition 1`] = `
+exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsCalendar and cat edition 1`] = `
 <div
   style="min-height: 40px;"
 >
@@ -506,41 +482,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsCalendar and c
 </div>
 `;
 
-exports[`widget-wrapper Renders \`widget-wrapper\` with type Text and cat edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <text-widget-stub
-      message="Stats widgets are not available with 'community' edition"
-      tab-id="tab-id"
-      value="true"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
-exports[`widget-wrapper Renders \`widget-wrapper\` with type Text and core edition 1`] = `
-<div
-  style="min-height: 40px;"
->
-  <!---->
-  <div
-    class="v-card__text pa-0 position-relative"
-  >
-    <text-widget-stub
-      tab-id="tab-id"
-      widget="[object Object]"
-    />
-  </div>
-</div>
-`;
-
-exports[`widget-wrapper Renders \`widget-wrapper\` with type UserStatistics and cat edition 1`] = `
+exports[`widget-wrapper Renders \`widget-wrapper\` with type StatsCalendar and core edition 1`] = `
 <div
   style="min-height: 40px;"
 >
@@ -558,7 +500,41 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type UserStatistics and 
 </div>
 `;
 
-exports[`widget-wrapper Renders \`widget-wrapper\` with type UserStatistics and core edition 1`] = `
+exports[`widget-wrapper Renders \`widget-wrapper\` with type Text and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <text-widget-stub
+      tab-id="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type Text and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <text-widget-stub
+      message="Stats widgets are not available with 'community' edition"
+      tab-id="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type UserStatistics and cat edition 1`] = `
 <div
   style="min-height: 40px;"
 >
@@ -568,6 +544,24 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type UserStatistics and 
   >
     <user-statistics-widget-stub
       tabid="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type UserStatistics and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <c-alert-overlay-stub
+      message="Stats widgets are not available with 'community' edition"
+      tab-id="tab-id"
+      value="true"
       widget="[object Object]"
     />
   </div>
@@ -605,9 +599,7 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with widget title 1`] = `
     class="v-card__text pa-0 position-relative"
   >
     <alarms-list-widget-stub
-      message="Stats widgets are not available with 'community' edition"
       tabid="tab-id"
-      value="true"
       widget="[object Object]"
     />
   </div>

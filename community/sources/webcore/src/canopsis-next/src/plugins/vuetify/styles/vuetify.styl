@@ -43,23 +43,48 @@ $list-item-dense-icon-font-size = rem(22px)
 @import '~vuetify/src/stylus/theme.styl'
 
 // Backgrounds
+// Light
+$material-light.bg-color = var(--v-application-background-base, $material-light.background)
 $material-light.background = var(--v-application-background-base, $material-light.background)
 $material-light.cards = var(--v-background-base, $material-dark.cards)
 
 $material-light.text.primary = var(--v-text-light-primary, $material-light.text.primary)
-$material-light.text.secondary = var(--v-text-light-secondary, $material-light.text.primary)
-$material-light.text.disabled = var(--v-text-light-disabled, $material-light.text.primary)
+$material-light.text.secondary = var(--v-text-light-secondary, $material-light.text.secondary)
+$material-light.text.disabled = var(--v-text-light-disabled, $material-light.text.disabled)
 
 $material-light.icons.active = $material-light.text.secondary
 
+$material-light.buttons.disabled = var(--v-button-light-disabled, $material-light.buttons.disabled)
+$material-light.buttons.focused = var(--v-button-light-focused, $material-light.buttons.focused)
+
+$material-light.chips.color = var(--v-text-light-primary, $material-light.chips.color)
+
+$material-light.tabs.active = var(--v-text-light-primary, $material-light.chips.color)
+
+$material-light.stepper.active = var(--v-stepper-active, $material-light.stepper.active)
+$material-light.stepper.completed = var(--v-stepper-completed, $material-light.stepper.completed)
+$material-light.stepper.hover = var(--v-stepper-hover, $material-light.stepper.hover)
+
+// Dark
 $material-dark.background = var(--v-application-background-base, $material-dark.background)
 $material-dark.cards = var(--v-background-base, $material-dark.cards)
 
 $material-dark.text.primary = var(--v-text-dark-primary, $material-dark.text.primary)
-$material-dark.text.secondary = var(--v-text-dark-secondary, $material-dark.text.primary)
-$material-dark.text.disabled = var(--v-text-dark-disabled, $material-dark.text.primary)
+$material-dark.text.secondary = var(--v-text-dark-secondary, $material-dark.text.secondary)
+$material-dark.text.disabled = var(--v-text-dark-disabled, $material-dark.text.disabled)
 
 $material-dark.icons.active = $material-dark.text.secondary
+
+$material-dark.buttons.disabled = var(--v-button-dark-disabled, $material-dark.buttons.disabled)
+$material-dark.buttons.focused = var(--v-button-dark-focused, $material-dark.buttons.focused)
+
+$material-dark.chips.color = var(--v-text-dark-disabled, $material-dark.chips.color)
+
+$material-dark.tabs.active = var(--v-text-dark-primary, $material-dark.chips.color)
+
+$material-dark.stepper.active = var(--v-stepper-active, $material-dark.stepper.active)
+$material-dark.stepper.completed = var(--v-stepper-completed, $material-dark.stepper.completed)
+$material-dark.stepper.hover = var(--v-stepper-hover, $material-dark.stepper.hover)
 
 @import '~vuetify/src/stylus/settings/_variables.styl'
 
@@ -78,6 +103,7 @@ $headings.caption.size = rem(12px)
 @import '~vuetify/src/stylus/main'
 
 @import "./components/data-table.styl"
+@import "./components/steppers.styl"
 
 table.v-table
   thead
@@ -90,7 +116,7 @@ table.v-table
 
 .v-tooltip
   &__content
-    color: var(--v-active-color-base, #fff)
+    color: var(--v-text-dark-primary, #fff)
     font-size: rem(12px)
 
 .v-input
