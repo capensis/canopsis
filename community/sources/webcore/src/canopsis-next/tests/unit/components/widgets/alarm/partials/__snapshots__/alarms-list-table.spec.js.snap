@@ -31,7 +31,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
         class="v-table__overflow"
       >
         <table
-          class="v-datatable v-table v-datatable--select-all v-datatable--dense theme--light"
+          class="v-datatable v-table v-datatable--expand v-datatable--select-all v-datatable--dense theme--light"
         >
           <thead
             style="transform: translateY(0px); opacity: 1;"
@@ -728,7 +728,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
         class="v-table__overflow"
       >
         <table
-          class="v-datatable v-table theme--light"
+          class="v-datatable v-table v-datatable--expand theme--light"
         >
           <thead>
             <tr>

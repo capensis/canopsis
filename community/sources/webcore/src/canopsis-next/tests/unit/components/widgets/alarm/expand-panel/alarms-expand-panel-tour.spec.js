@@ -26,7 +26,7 @@ const currentUser = {
   ui_groups_navigation_type: GROUPS_NAVIGATION_TYPES.sideBar,
   ui_language: DEFAULT_LOCALE,
   ui_tours: tours,
-  ui_theme: 'canopsis',
+  ui_theme: { _id: 'canopsis' },
 };
 
 const fetchCurrentUser = jest.fn();
@@ -186,6 +186,7 @@ describe('alarms-expand-panel-tour', () => {
       {
         data: {
           ...currentUser,
+          ui_theme: 'canopsis',
           ui_tours: {
             ...tours,
             [TOURS.alarmsExpandPanel]: true,
@@ -221,6 +222,7 @@ describe('alarms-expand-panel-tour', () => {
       {
         data: {
           ...currentUser,
+          ui_theme: 'canopsis',
           ui_tours: {
             ...tours,
             [TOURS.alarmsExpandPanel]: true,
