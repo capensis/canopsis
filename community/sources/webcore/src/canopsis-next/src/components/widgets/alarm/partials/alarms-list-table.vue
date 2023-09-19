@@ -534,10 +534,6 @@ export default {
     transition: .3s cubic-bezier(.25, .8, .5,1);
     transition-property: opacity, background-color;
 
-    .theme--dark & {
-      background: #424242;
-    }
-
     &:after {
       content: ' ';
       width: 100%;
