@@ -3178,7 +3178,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             class="v-datatable__expand-row"
           >
             <transition-group-stub
-              class="v-datatable__expand-col"
+              class="v-datatable__expand-col v-datatable__expand-col--expanded"
               colspan="16"
               tag="td"
             >
@@ -5031,7 +5031,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with updatable and old_mong
             class="v-datatable__expand-row"
           >
             <transition-group-stub
-              class="v-datatable__expand-col"
+              class="v-datatable__expand-col v-datatable__expand-col--expanded"
               colspan="16"
               tag="td"
             >
