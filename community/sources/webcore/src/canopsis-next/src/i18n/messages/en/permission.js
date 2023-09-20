@@ -615,7 +615,7 @@ export default {
       description: 'This permission defines the access to the corporate patterns functionality',
     },
     [USERS_PERMISSIONS.technical.profile.theme]: {
-      name: 'Color themes',
+      name: 'Themes',
       description: 'This permission defines the access to the theme colors',
     },
 
@@ -758,9 +758,9 @@ export default {
       name: 'Maintenance mode',
       description: 'Access to API route to the maintenance mode',
     },
-    [USERS_PERMISSIONS.api.general.colorTheme]: {
-      name: 'Color themes',
-      description: 'Access to API route to the color themes',
+    [USERS_PERMISSIONS.api.general.theme]: {
+      name: 'Themes',
+      description: 'Access to API route to the themes',
     },
 
     [USERS_PERMISSIONS.api.rules.action]: {

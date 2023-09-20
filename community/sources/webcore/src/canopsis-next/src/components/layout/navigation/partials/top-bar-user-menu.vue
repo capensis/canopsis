@@ -42,8 +42,8 @@ export default {
         },
         {
           icon: 'palette',
-          title: this.$t('theme.colorThemes'),
-          route: { name: ROUTES_NAMES.profileColorThemes },
+          title: this.$t('theme.themes'),
+          route: { name: ROUTES_NAMES.profileThemes },
         },
         {
           icon: 'exit_to_app',
