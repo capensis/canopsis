@@ -127,7 +127,7 @@ func (p IntegerPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Lt.Set {
 		bsonFieldName, err := GetFieldBsonName(p, "Lt", "lt")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Lt.Value
@@ -136,7 +136,7 @@ func (p IntegerPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Lte.Set {
 		bsonFieldName, err := GetFieldBsonName(p, "Lte", "lte")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Lte.Value
@@ -145,7 +145,7 @@ func (p IntegerPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Gt.Set {
 		bsonFieldName, err := GetFieldBsonName(p, "Gt", "gt")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Gt.Value
@@ -154,7 +154,7 @@ func (p IntegerPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Gte.Set {
 		bsonFieldName, err := GetFieldBsonName(p, "Gte", "gte")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Gte.Value
@@ -164,7 +164,7 @@ func (p IntegerPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		return bson.MarshalValue(resultBson)
 	}
 
-	return bsontype.Undefined, nil, nil
+	return bson.TypeUndefined, nil, nil
 }
 
 func (p IntegerPattern) IsSet() bool {
@@ -173,7 +173,7 @@ func (p IntegerPattern) IsSet() bool {
 
 func (p *IntegerPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
-	case bsontype.Int32:
+	case bson.TypeInt32:
 		value, _, ok := bsoncore.ReadInt32(b)
 		if !ok {
 			return errors.New("invalid value, expected int32")
@@ -181,7 +181,7 @@ func (p *IntegerPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) e
 
 		p.Equal.Value = int64(value)
 		p.Equal.Set = true
-	case bsontype.Int64:
+	case bson.TypeInt64:
 		value, _, ok := bsoncore.ReadInt64(b)
 		if !ok {
 			return errors.New("invalid value, expected int64")
@@ -189,7 +189,7 @@ func (p *IntegerPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) e
 
 		p.Equal.Value = value
 		p.Equal.Set = true
-	case bsontype.Double:
+	case bson.TypeDouble:
 		value, _, ok := bsoncore.ReadDouble(b)
 		if !ok {
 			return errors.New("invalid value, expected double")
@@ -197,7 +197,7 @@ func (p *IntegerPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) e
 
 		p.Equal.Value = int64(value)
 		p.Equal.Set = true
-	case bsontype.EmbeddedDocument:
+	case bson.TypeEmbeddedDocument:
 		err := bson.Unmarshal(b, &p.IntegerConditions)
 		if err != nil {
 			return err
@@ -256,7 +256,7 @@ func (p IntegerRefPattern) Matches(value *types.CpsNumber) bool {
 
 func (p IntegerRefPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.EqualNil {
-		return bsontype.Null, []byte{}, nil
+		return bson.TypeNull, []byte{}, nil
 	}
 
 	return p.IntegerPattern.MarshalBSONValue()
@@ -268,7 +268,7 @@ func (p IntegerRefPattern) IsSet() bool {
 
 func (p *IntegerRefPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
-	case bsontype.Null:
+	case bson.TypeNull:
 		p.EqualNil = true
 	default:
 		return p.IntegerPattern.UnmarshalBSONValue(valueType, b)

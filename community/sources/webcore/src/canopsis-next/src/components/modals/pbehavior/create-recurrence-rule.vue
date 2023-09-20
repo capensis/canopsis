@@ -31,8 +31,7 @@ import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import RecurrenceRuleForm from '@/components/forms/recurrence-rule/recurrence-rule-form.vue';
-import PbehaviorRecurrenceRuleExceptionsField
-  from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-exceptions-field.vue';
+import PbehaviorRecurrenceRuleExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-exceptions-field.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

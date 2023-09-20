@@ -42,8 +42,7 @@
 import { exceptionsToForm, exdatesToForm } from '@/helpers/entities/pbehavior/form';
 
 import RecurrenceRuleInformation from '@/components/common/reccurence-rule/recurrence-rule-information.vue';
-import PbehaviorRecurrenceRuleExceptionsField
-  from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-exceptions-field.vue';
+import PbehaviorRecurrenceRuleExceptionsField from '@/components/other/pbehavior/exceptions/fields/pbehavior-recurrence-rule-exceptions-field.vue';
 
 export default {
   inject: ['$system'],

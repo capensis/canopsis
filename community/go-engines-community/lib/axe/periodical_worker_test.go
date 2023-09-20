@@ -38,7 +38,6 @@ func TestPeriodicalWorker_Work(t *testing.T) {
 
 	alarmConfig := config.AlarmConfig{
 		StealthyInterval:         time.Second,
-		EnableLastEventDate:      true,
 		CancelAutosolveDelay:     time.Second,
 		OutputLength:             10,
 		TimeToKeepResolvedAlarms: time.Second,

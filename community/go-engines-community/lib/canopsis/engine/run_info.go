@@ -9,7 +9,7 @@ import (
 	"time"
 
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 )
 
 // NewRunInfoManager creates new run info manager.
