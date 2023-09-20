@@ -61,6 +61,7 @@ import metricsSettingsModule from './metrics-settings';
 import aggregatedMetricsModule from './aggregated-metrics';
 import vectorMetricsModule from './vector-metrics';
 import groupMetricsModule from './group-metrics';
+import tagModule from './tag';
 import themeModule from './theme';
 
 export default {
@@ -127,5 +128,6 @@ export default {
   aggregatedMetrics: aggregatedMetricsModule,
   vectorMetrics: vectorMetricsModule,
   groupMetrics: groupMetricsModule,
+  tag: tagModule,
   theme: themeModule,
 };

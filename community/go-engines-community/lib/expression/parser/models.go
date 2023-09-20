@@ -25,6 +25,19 @@ func (e *Expression) Query() bson.M {
 	return bson.M{"$or": or}
 }
 
+func (e *Expression) ExprQuery() bson.M {
+	or := make([]bson.M, len(e.Or))
+	for i, v := range e.Or {
+		or[i] = v.ExprQuery()
+	}
+
+	if len(or) == 1 {
+		return or[0]
+	}
+
+	return bson.M{"$or": or}
+}
+
 func (e *Expression) GetFields() []string {
 	fields := make([]string, 0, len(e.Or))
 	for _, v := range e.Or {
@@ -42,6 +55,19 @@ func (c *OrCondition) Query() bson.M {
 	and := make([]bson.M, len(c.And))
 	for i, v := range c.And {
 		and[i] = v.Query()
+	}
+
+	if len(and) == 1 {
+		return and[0]
+	}
+
+	return bson.M{"$and": and}
+}
+
+func (c *OrCondition) ExprQuery() bson.M {
+	and := make([]bson.M, len(c.And))
+	for i, v := range c.And {
+		and[i] = v.ExprQuery()
 	}
 
 	if len(and) == 1 {
@@ -71,6 +97,17 @@ func (c *Condition) Query() bson.M {
 	}
 	if c.Not != nil {
 		return c.Not.Operand.NotQuery()
+	}
+
+	return nil
+}
+
+func (c *Condition) ExprQuery() bson.M {
+	if c.Operand != nil {
+		return c.Operand.ExprQuery()
+	}
+	if c.Not != nil {
+		return c.Not.Operand.NotExprQuery()
 	}
 
 	return nil
@@ -106,6 +143,19 @@ func (o *ConditionOperand) Query() bson.M {
 	return bson.M{left: right}
 }
 
+func (o *ConditionOperand) ExprQuery() bson.M {
+	op := ""
+	var res bson.M
+	if o.Operand != nil {
+		op, _ = o.Operand.Val().(string)
+	}
+	if o.ConditionRHS != nil {
+		res = o.ConditionRHS.ExprQuery(op)
+	}
+
+	return res
+}
+
 func (o *ConditionOperand) GetFields() []string {
 	if o.Operand != nil {
 		field, _ := o.Operand.Val().(string)
@@ -126,6 +176,19 @@ func (o *ConditionOperand) NotQuery() bson.M {
 	}
 
 	return bson.M{left: right}
+}
+
+func (o *ConditionOperand) NotExprQuery() bson.M {
+	op := ""
+	var res bson.M
+	if o.Operand != nil {
+		op, _ = o.Operand.Val().(string)
+	}
+	if o.ConditionRHS != nil {
+		res = o.ConditionRHS.NotExprQuery(op)
+	}
+
+	return res
 }
 
 type ConditionRHS struct {
@@ -156,8 +219,37 @@ func (r *ConditionRHS) Query() bson.M {
 	return nil
 }
 
+func (r *ConditionRHS) ExprQuery(op string) bson.M {
+	if r.Compare != nil {
+		return r.Compare.ExprQuery(op)
+	}
+	if r.Like != nil {
+		return r.Like.ExprQuery(op)
+	}
+	if r.NotLike != nil {
+		return r.NotLike.ExprQuery(op)
+	}
+	if r.Contains != nil {
+		return r.Contains.ExprQuery(op)
+	}
+	if r.NotContains != nil {
+		return r.NotContains.ExprQuery(op)
+	}
+
+	return nil
+}
+
 func (r *ConditionRHS) NotQuery() bson.M {
 	q := r.Query()
+	if len(q) == 0 {
+		return q
+	}
+
+	return bson.M{"$not": q}
+}
+
+func (r *ConditionRHS) NotExprQuery(op string) bson.M {
+	q := r.ExprQuery(op)
 	if len(q) == 0 {
 		return q
 	}
@@ -192,6 +284,27 @@ func (c *Compare) Query() bson.M {
 	return bson.M{mapOperator[c.Operator]: operand}
 }
 
+func (c *Compare) ExprQuery(op string) bson.M {
+	var operand interface{}
+	if c.Operand != nil {
+		operand = c.Operand.Val()
+	}
+	if c.Select != nil {
+		operand = c.Select.Val()
+	}
+
+	mapOperator := map[string]string{
+		"<=": "$lte",
+		"<":  "$lt",
+		"=":  "$eq",
+		"!=": "$ne",
+		">=": "$gte",
+		">":  "$gt",
+	}
+
+	return bson.M{mapOperator[c.Operator]: bson.A{"$" + op, operand}}
+}
+
 type Like struct {
 	Operand *Operand `@@`
 }
@@ -205,6 +318,18 @@ func (l *Like) Query() bson.M {
 	return bson.M{"$regex": fmt.Sprintf("%v", operand)}
 }
 
+func (l *Like) ExprQuery(op string) bson.M {
+	var operand interface{}
+	if l.Operand != nil {
+		operand = l.Operand.Val()
+	}
+
+	return bson.M{"$regexMatch": bson.M{
+		"input": "$" + op,
+		"regex": fmt.Sprintf("%v", operand),
+	}}
+}
+
 type NotLike struct {
 	Operand *Operand `@@`
 }
@@ -216,6 +341,18 @@ func (l *NotLike) Query() bson.M {
 	}
 
 	return bson.M{"$not": bson.M{"$regex": fmt.Sprintf("%v", operand)}}
+}
+
+func (l *NotLike) ExprQuery(op string) bson.M {
+	var operand interface{}
+	if l.Operand != nil {
+		operand = l.Operand.Val()
+	}
+
+	return bson.M{"$not": bson.M{"$regexMatch": bson.M{
+		"input": "$" + op,
+		"regex": fmt.Sprintf("%v", operand),
+	}}}
 }
 
 type Contains struct {
@@ -234,6 +371,18 @@ func (l *Contains) Query() bson.M {
 	return bson.M{"$in": operand}
 }
 
+func (l *Contains) ExprQuery(op string) bson.M {
+	var operand interface{}
+	if l.Operand != nil {
+		operand = l.Operand.Val()
+		if reflect.TypeOf(operand).Kind() != reflect.Array {
+			operand = []interface{}{operand}
+		}
+	}
+
+	return bson.M{"$in": bson.A{"$" + op, operand}}
+}
+
 type NotContains struct {
 	Operand *Operand `@@`
 }
@@ -248,6 +397,18 @@ func (l *NotContains) Query() bson.M {
 	}
 
 	return bson.M{"$nin": operand}
+}
+
+func (l *NotContains) ExprQuery(op string) bson.M {
+	var operand interface{}
+	if l.Operand != nil {
+		operand = l.Operand.Val()
+		if reflect.TypeOf(operand).Kind() != reflect.Array {
+			operand = []interface{}{operand}
+		}
+	}
+
+	return bson.M{"$not": bson.M{"$in": bson.A{"$" + op, operand}}}
 }
 
 type Operand struct {

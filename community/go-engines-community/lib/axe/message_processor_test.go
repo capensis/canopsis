@@ -7,6 +7,7 @@ import (
 	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/axe/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
@@ -14,7 +15,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
-	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -300,8 +300,8 @@ func benchmarkMessageProcessor(
 	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(config.UserInterfaceConf{}, logger)
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
 	metaAlarmEventProcessor := NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
-		alarmStatusService, alarmConfigProvider, json.NewEncoder(), nil, canopsis.FIFOExchangeName, canopsis.FIFOQueueName,
-		metricsSender, logger)
+		alarmStatusService, alarmConfigProvider, json.NewEncoder(), nil, metricsSender, correlation.NewMetaAlarmStateService(dbClient),
+		template.NewExecutor(templateConfigProvider, tzConfigProvider), logger)
 	pbhRedisSession, err := redis.NewSession(ctx, redis.PBehaviorLockStorage, logger, 0, 0)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
@@ -314,32 +314,30 @@ func benchmarkMessageProcessor(
 		b.Fatalf("unexpected error %v", err)
 	}
 
+	m := DependencyMaker{}
 	p := MessageProcessor{
 		FeaturePrintEventOnError: true,
-		EventProcessor: NewEventProcessor(
+		EventProcessor: m.EventProcessor(
 			dbClient,
-			alarm.NewAdapter(dbClient),
-			libentity.NewAdapter(dbClient),
-			correlation.NewRuleAdapter(dbClient),
 			alarmConfigProvider,
-			DependencyMaker{}.DepOperationExecutor(dbClient, alarmConfigProvider, userInterfaceConfigProvider, alarmStatusService),
+			userInterfaceConfigProvider,
 			alarmStatusService,
-			metrics.NewNullSender(),
-			metaAlarmEventProcessor,
-			statistics.NewEventStatisticsSender(dbClient, logger, tzConfigProvider),
-			statecounters.NewStateCountersService(dbClient, amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), template.NewExecutor(templateConfigProvider, tzConfigProvider), logger),
 			pbehavior.NewEntityTypeResolver(pbhStore, pbehavior.NewEntityMatcher(dbClient), logger),
-			NewNullAutoInstructionMatcher(),
+			event.NewNullAutoInstructionMatcher(),
+			statecounters.NewStateCountersService(dbClient, amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), template.NewExecutor(templateConfigProvider, tzConfigProvider), logger),
+			metaAlarmEventProcessor,
+			metrics.NewNullSender(),
+			statistics.NewEventStatisticsSender(dbClient, logger, tzConfigProvider),
+			nil,
+			alarmtag.NewExternalUpdater(dbClient),
+			alarmtag.NewInternalTagAlarmMatcher(dbClient),
+			amqpChannel,
 			logger,
 		),
-		TechMetricsSender:      techmetrics.NewSender(techMetricsConfigProvider, time.Minute, 0, 0, logger),
-		TimezoneConfigProvider: tzConfigProvider,
-		Encoder:                json.NewEncoder(),
-		Decoder:                json.NewDecoder(),
-		Logger:                 logger,
-		PbehaviorAdapter:       pbehavior.NewAdapter(dbClient),
-		TagUpdater:             alarmtag.NewUpdater(dbClient),
-		AutoInstructionMatcher: NewNullAutoInstructionMatcher(),
+		TechMetricsSender: techmetrics.NewSender(techMetricsConfigProvider, time.Minute, 0, 0, logger),
+		Encoder:           json.NewEncoder(),
+		Decoder:           json.NewDecoder(),
+		Logger:            logger,
 	}
 
 	encoder := json.NewEncoder()

@@ -6,7 +6,6 @@ export const entitiesFilterMixin = {
   computed: {
     ...mapGetters({
       filters: 'items',
-      getFilterById: 'getItemById',
       filtersPending: 'pending',
       filtersMeta: 'meta',
     }),

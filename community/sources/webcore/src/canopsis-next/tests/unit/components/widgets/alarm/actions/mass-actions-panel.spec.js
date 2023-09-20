@@ -15,6 +15,7 @@ import {
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
   ENTITIES_STATUSES,
   ENTITY_PATTERN_FIELDS,
+  LINK_RULE_ACTIONS,
   META_ALARMS_RULE_TYPES,
   MODALS,
   PATTERN_CONDITIONS,
@@ -52,6 +53,20 @@ describe('mass-actions-panel', () => {
       _id: 'alarm-entity-id',
     },
     assigned_declare_ticket_rules: [{}],
+    links: {
+      Category: [{
+        rule_id: 'rule_id',
+        label: 'with rule id',
+        icon_name: '',
+        url: 'url',
+        action: LINK_RULE_ACTIONS.open,
+      }, {
+        label: 'without rule id',
+        icon_name: '',
+        url: 'url',
+        action: LINK_RULE_ACTIONS.open,
+      }],
+    },
     v: {
       state: {},
       status: {},
