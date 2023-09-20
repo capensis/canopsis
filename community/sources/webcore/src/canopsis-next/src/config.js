@@ -506,6 +506,19 @@ export const COLORS = {
   },
 };
 
+export const CSS_COLOR_VARS = {
+  primary: 'var(--v-primary-base)',
+  secondary: 'var(--v-secondary-base)',
+  error: 'var(--v-error-base)',
+
+  state: {
+    ok: 'var(--v-state-ok-base)',
+    minor: 'var(--v-state-minor-base)',
+    major: 'var(--v-state-major-base)',
+    critical: 'var(--v-state-critical-base)',
+  },
+};
+
 export const DEFAULT_THEME_COLORS = {
   primary: COLORS.primary,
   secondary: COLORS.secondary,
