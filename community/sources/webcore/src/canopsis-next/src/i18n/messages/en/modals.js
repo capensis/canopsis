@@ -969,6 +969,17 @@ export default {
     title: 'Leave maintenance mode',
     text: 'Are you sure you want to leave the maintenance mode?\nAll users will be able to login to the system after leaving.',
   },
+  createTag: {
+    create: {
+      title: 'Create a tag',
+    },
+    edit: {
+      title: 'Edit a tag',
+    },
+    duplicate: {
+      title: 'Duplicate a tag',
+    },
+  },
   createTheme: {
     create: {
       title: 'Create theme',

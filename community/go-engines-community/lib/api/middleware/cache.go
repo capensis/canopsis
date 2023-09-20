@@ -15,15 +15,13 @@ import (
 	cache "github.com/chenyahui/gin-cache"
 	"github.com/chenyahui/gin-cache/persist"
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v8"
 )
 
 func Cache(
-	redisClient *redis.Client,
 	defaultExpire time.Duration,
 	getExpire func() time.Duration,
 ) gin.HandlerFunc {
-	redisStore := persist.NewRedisStore(redisClient)
+	redisStore := persist.NewMemoryStore(defaultExpire)
 	return cache.Cache(redisStore, defaultExpire, cache.WithPrefixKey(libredis.ApiCacheRequestKey), cache.WithCacheStrategyByRequest(func(c *gin.Context) (bool, cache.Strategy) {
 		buff := bytes.Buffer{}
 		getRequestUriIgnoreQueryOrder(&buff, c.Request.URL)

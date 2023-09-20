@@ -2,7 +2,7 @@
   widget-settings(:submitting="submitting", @submit="submit")
     field-title(v-model="form.title")
     v-divider
-    field-periodic-refresh(v-model="form.parameters.periodic_refresh")
+    field-periodic-refresh(v-model="form.parameters", with-live-watching)
     v-divider
     widget-settings-group(:title="$t('settings.advancedSettings')")
       field-default-sort-column(
@@ -150,6 +150,11 @@
       field-switcher(
         v-model="form.parameters.isRemoveAlarmsFromMetaAlarmCommentRequired",
         :title="$t('settings.isRemoveAlarmsFromMetaAlarmCommentRequired')"
+      )
+      v-divider
+      field-switcher(
+        v-model="form.parameters.isUncancelAlarmsCommentRequired",
+        :title="$t('settings.isUncancelAlarmsCommentRequired')"
       )
       v-divider
       field-switcher(

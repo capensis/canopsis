@@ -139,7 +139,7 @@
 </template>
 
 <script>
-import { isEqual } from 'lodash';
+import { isEqual, map } from 'lodash';
 
 import { ENTITY_TYPES, GRID_SIZES, TOURS, JUNIT_ALARM_CONNECTOR } from '@/constants';
 
@@ -200,6 +200,10 @@ export default {
     isTourEnabled: {
       type: Boolean,
       default: false,
+    },
+    search: {
+      type: String,
+      default: '',
     },
   },
   data() {
@@ -307,6 +311,16 @@ export default {
       },
     },
 
+    'widget.parameters.widgetGroupColumns': {
+      handler(columns) {
+        this.query = {
+          ...this.query,
+
+          search_by: map(columns, 'value'),
+        };
+      },
+    },
+
     isTourEnabled() {
       this.refreshTabs();
     },
@@ -315,6 +329,17 @@ export default {
       if (!isEqual(query, oldQuery)) {
         this.fetchList();
       }
+    },
+
+    search: {
+      immediate: true,
+      handler(search) {
+        this.query = {
+          ...this.query,
+
+          search,
+        };
+      },
     },
   },
   beforeDestroy() {

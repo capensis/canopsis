@@ -45,4 +45,5 @@ type RPCRemediationEvent struct {
 
 type RPCRemediationJobEvent struct {
 	JobExecutionID string `json:"job_execution_id"`
+	Step           int    `json:"step"`
 }
