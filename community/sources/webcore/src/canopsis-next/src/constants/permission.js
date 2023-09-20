@@ -361,7 +361,7 @@ export const USERS_PERMISSIONS = {
       declareTicketExecution: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_execution`,
       widgetTemplate: `${USER_PERMISSIONS_PREFIXES.api}_widgettemplate`,
       maintenance: `${USER_PERMISSIONS_PREFIXES.api}_maintenance`,
-      colorTheme: `${USER_PERMISSIONS_PREFIXES.api}_color_theme`,
+      theme: `${USER_PERMISSIONS_PREFIXES.api}_color_theme`,
 
       ...featuresService.get('constants.USERS_PERMISSIONS.api.general'),
     },

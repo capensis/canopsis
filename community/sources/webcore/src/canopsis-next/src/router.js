@@ -378,8 +378,8 @@ const routes = [
     },
   },
   {
-    path: ROUTES.profileColorThemes,
-    name: ROUTES_NAMES.profileColorThemes,
+    path: ROUTES.profileThemes,
+    name: ROUTES_NAMES.profileThemes,
     component: ProfileThemes,
     meta: {
       requiresLogin: true,
