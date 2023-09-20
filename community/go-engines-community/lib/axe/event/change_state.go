@@ -95,21 +95,13 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 		event.Parameters.User, event.Parameters.Role, event.Parameters.Initiator)
 	newStepState.Value = *event.Parameters.State
 	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
-	firstTry := true
+
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		updatedServiceStates = nil
-		var err error
-		if !firstTry {
-			entity, err = findEntity(ctx, event.Entity.ID, p.entityCollection)
-			if err != nil {
-				return err
-			}
-		}
 
-		firstTry = false
 		alarm := types.Alarm{}
-		err = p.alarmCollection.FindOne(ctx, match).Decode(&alarm)
+		err := p.alarmCollection.FindOne(ctx, match).Decode(&alarm)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil
