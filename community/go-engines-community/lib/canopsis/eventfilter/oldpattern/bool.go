@@ -2,6 +2,7 @@ package oldpattern
 
 import (
 	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
@@ -29,7 +30,7 @@ func (p BoolPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		return bson.MarshalValue(p.OptionalBool.Value)
 	}
 
-	return bsontype.Undefined, nil, nil
+	return bson.TypeUndefined, nil, nil
 }
 
 func (p BoolPattern) IsSet() bool {

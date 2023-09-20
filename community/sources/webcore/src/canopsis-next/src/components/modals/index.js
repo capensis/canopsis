@@ -389,6 +389,11 @@ export const CreateMaintenance = () => ({
   loading: LoaderOverlay,
 });
 
+export const CreateTag = () => ({
+  component: import(/* webpackChunkName: "Tags" */ './tag/create-tag.vue'),
+  loading: LoaderOverlay,
+});
+
 export const CreateTheme = () => ({
   component: import(/* webpackChunkName: "Theme" */ './theme/create-theme.vue'),
   loading: LoaderOverlay,

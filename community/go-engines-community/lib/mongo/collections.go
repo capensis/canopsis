@@ -74,7 +74,8 @@ const (
 
 	MapMongoCollection = "map"
 
-	AlarmTagCollection = "alarm_tag"
+	AlarmTagCollection      = "alarm_tag"
+	AlarmTagColorCollection = "alarm_tag_color"
 
 	ScenarioMongoCollection          = "action_scenario"
 	DeclareTicketRuleMongoCollection = "declare_ticket_rule"
@@ -91,4 +92,6 @@ const (
 	EventFilterFailureCollection = "eventfilter_failure"
 
 	EntityServiceCountersCollection = "entity_service_counters"
+
+	MetaAlarmStatesCollection = "meta_alarm_states"
 )

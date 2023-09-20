@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -41,12 +42,18 @@ func RunDummyHttpServer(ctx context.Context, addr string) error {
 }
 
 func dummyHandler(dummyRoutes map[string]dummyResponse) func(w http.ResponseWriter, r *http.Request) {
+	dummyRoutesMx := sync.Mutex{}
+
 	return func(w http.ResponseWriter, r *http.Request) {
+		dummyRoutesMx.Lock()
 		response, ok := dummyRoutes[r.URL.Path]
 		if !ok {
 			http.Error(w, fmt.Sprintf("[%s][%+v]", r.URL.Path, dummyRoutes), http.StatusNotFound)
+			dummyRoutesMx.Unlock()
+
 			return
 		}
+		dummyRoutesMx.Unlock()
 
 		if response.Method != r.Method {
 			http.Error(w, r.Method, http.StatusNotFound)
@@ -96,7 +103,22 @@ func dummyHandler(dummyRoutes map[string]dummyResponse) func(w http.ResponseWrit
 
 		w.WriteHeader(response.Code)
 
-		if response.Body != "" {
+		if len(response.BodySequence) != 0 {
+			_, err := fmt.Fprintf(w, response.BodySequence[response.BodySequenceIndex])
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			response.BodySequenceIndex++
+			if response.BodySequenceIndex == len(response.BodySequence) {
+				response.BodySequenceIndex = 0
+			}
+
+			dummyRoutesMx.Lock()
+			dummyRoutes[r.URL.Path] = response
+			dummyRoutesMx.Unlock()
+		} else if response.Body != "" {
 			_, err := fmt.Fprintf(w, response.Body)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -129,6 +151,9 @@ type dummyResponse struct {
 
 	Username string
 	Password string
+
+	BodySequence      map[int]string
+	BodySequenceIndex int
 }
 
 func getDummyRoutes(addr string) map[string]dummyResponse {
@@ -203,7 +228,7 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Code:    http.StatusOK,
 			Method:  http.MethodGet,
 			Body:    "{\"id\":\"test-job-execution-long-succeeded\",\"status\":\"succeeded\"}",
-			Timeout: 2 * time.Second,
+			Timeout: 3 * time.Second,
 		},
 		"/api/35/execution/test-job-execution-long-succeeded/output": {
 			Code:   http.StatusOK,
@@ -219,7 +244,7 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Code:    http.StatusOK,
 			Method:  http.MethodGet,
 			Body:    "{\"id\":\"test-job-execution-long-failed\",\"status\":\"failed\"}",
-			Timeout: 2 * time.Second,
+			Timeout: 3 * time.Second,
 		},
 		"/api/35/execution/test-job-execution-long-failed/output": {
 			Code:   http.StatusOK,
@@ -296,6 +321,75 @@ func getDummyRoutes(addr string) map[string]dummyResponse {
 			Code:   http.StatusOK,
 			Method: http.MethodGet,
 			Body:   "test-job-execution-params-succeeded-output",
+		},
+		// VTOM
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_1/jobs/test-job-succeeded/action": {
+			Code:   http.StatusOK,
+			Method: http.MethodPost,
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_1/jobs/test-job-succeeded/status": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			BodySequence: map[int]string{
+				0: "{\"status\":\"Waiting\"}",
+				1: "{\"status\":\"Finished\"}",
+			},
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_1/jobs/test-job-succeeded/logs/last/stdout": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "test-job-execution-succeeded-output",
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_1/jobs/test-job-failed/action": {
+			Code:   http.StatusOK,
+			Method: http.MethodPost,
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_1/jobs/test-job-failed/status": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			BodySequence: map[int]string{
+				0: "{\"status\":\"Waiting\"}",
+				1: "{\"status\":\"Error\"}",
+			},
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_1/jobs/test-job-failed/logs/last/stderr": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "test-job-execution-failed-output",
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_2/jobs/test-job-succeeded/action": {
+			Code:   http.StatusOK,
+			Method: http.MethodPost,
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_2/jobs/test-job-succeeded/status": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			BodySequence: map[int]string{
+				0: "{\"status\":\"Waiting\"}",
+				1: "{\"status\":\"Finished\"}",
+			},
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_2/jobs/test-job-succeeded/logs/last/stdout": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "test-job-execution-succeeded-output",
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_2/jobs/test-job-failed/action": {
+			Code:   http.StatusOK,
+			Method: http.MethodPost,
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_2/jobs/test-job-failed/status": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			BodySequence: map[int]string{
+				0: "{\"status\":\"Waiting\"}",
+				1: "{\"status\":\"Error\"}",
+			},
+		},
+		"/vtom/public/monitoring/1.0/environments/CANOPSIS/applications/CANOPSIS_2/jobs/test-job-failed/logs/last/stderr": {
+			Code:   http.StatusOK,
+			Method: http.MethodGet,
+			Body:   "test-job-execution-failed-output",
 		},
 		// Webhook
 		"/webhook/request": {

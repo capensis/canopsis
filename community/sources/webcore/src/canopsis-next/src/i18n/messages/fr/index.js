@@ -56,6 +56,7 @@ import linkRule from './link-rule';
 import externalData from './external-data';
 import popups from './popups';
 import maintenance from './maintenance';
+import tag from './tag';
 import theme from './theme';
 
 export default {
@@ -117,5 +118,6 @@ export default {
   externalData,
   popups,
   maintenance,
+  tag,
   theme,
 };

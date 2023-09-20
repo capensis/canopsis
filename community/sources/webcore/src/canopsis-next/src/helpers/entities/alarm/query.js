@@ -1,4 +1,10 @@
-import { isEmpty, isUndefined, omit, uniq } from 'lodash';
+import {
+  isEmpty,
+  isUndefined,
+  omit,
+  map,
+  uniq,
+} from 'lodash';
 
 import { ALARMS_OPENED_VALUES, DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS, QUICK_RANGES, SORT_ORDERS } from '@/constants';
 import { PAGINATION_LIMIT } from '@/config';
@@ -155,15 +161,18 @@ export function convertAlarmUserPreferenceToQuery({ content }) {
  *
  * @param {Alarm} alarm
  * @param {Widget} widget
+ * @param {string} search
  * @returns {Object}
  */
-export const prepareAlarmDetailsQuery = (alarm, widget) => {
+export const prepareAlarmDetailsQuery = (alarm, widget, search) => {
   const { sort = {}, widgetGroupColumns = [], charts = [] } = widget.parameters;
   const columns = widgetGroupColumns.length > 0
     ? widgetGroupColumns
     : DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS;
 
   const query = {
+    search,
+    search_by: map(columns, 'value'),
     _id: alarm._id,
     with_instructions: true,
     with_declare_tickets: true,

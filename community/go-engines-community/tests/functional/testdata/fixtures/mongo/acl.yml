@@ -293,6 +293,11 @@ permission:
     _id: api_link_rule
     name: <Current()._id>
     description: Link rule
+  permission_api_alarm_tag:
+    <<: *permission_crud
+    _id: api_alarm_tag
+    name: <Current()._id>
+    description: Alarm tag
   permission_api_maintenance:
     <<: *permission
     _id: api_maintenance
@@ -625,6 +630,7 @@ role:
       "@permission_api_map": 15
       "@permission_api_share_token": 15
       "@permission_api_link_rule": 15
+      "@permission_api_alarm_tag": 15
       "@permission_api_declare_ticket_rule": 15
       "@permission_api_declare_ticket_execution": 1
       "@permission_playlist_to_delete": 1
