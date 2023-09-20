@@ -1,6 +1,6 @@
 import { isNumber } from 'lodash';
 
-import { COLORS } from '@/config';
+import { COLORS, CSS_COLOR_VARS } from '@/config';
 import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, EVENT_ENTITY_COLORS_BY_TYPE } from '@/constants';
 
 /**
@@ -18,10 +18,10 @@ export const getImpactStateColor = value => COLORS.impactState[value];
  * @returns {string}
  */
 export const getEntityStateColor = value => ({
-  [ENTITIES_STATES.ok]: 'var(--v-state-ok-base)',
-  [ENTITIES_STATES.minor]: 'var(--v-state-minor-base)',
-  [ENTITIES_STATES.major]: 'var(--v-state-major-base)',
-  [ENTITIES_STATES.critical]: 'var(--v-state-critical-base)',
+  [ENTITIES_STATES.ok]: CSS_COLOR_VARS.state.ok,
+  [ENTITIES_STATES.minor]: CSS_COLOR_VARS.state.minor,
+  [ENTITIES_STATES.major]: CSS_COLOR_VARS.state.major,
+  [ENTITIES_STATES.critical]: CSS_COLOR_VARS.state.critical,
 }[value]);
 
 /**

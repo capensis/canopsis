@@ -1,7 +1,7 @@
 import { THEME_FONT_SIZES } from '@/constants/theme';
 
 export default {
-  colorThemes: 'Color themes',
+  themes: 'Themes',
   exampleText: 'Hello world!',
   defaultTheme: 'The theme is default, you cannot to edit theme!',
   errors: {
