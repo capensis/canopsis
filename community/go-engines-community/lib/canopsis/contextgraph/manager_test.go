@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"reflect"
+	"slices"
 	"sort"
 	"testing"
 
@@ -72,16 +73,12 @@ func TestCheckServices(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:            "id-1",
-					Component:     "component-1",
-					Enabled:       true,
-					ServicesToAdd: []string{"serv-1"},
-					Services:      []string{"serv-1"},
-				},
-				{
-					ID:      "serv-1",
-					Enabled: true,
-					Type:    types.EntityTypeService,
+					ID:               "id-1",
+					Component:        "component-1",
+					Enabled:          true,
+					ServicesToAdd:    []string{"serv-1"},
+					ServicesToRemove: []string{},
+					Services:         []string{"serv-1"},
 				},
 			},
 		},
@@ -130,21 +127,12 @@ func TestCheckServices(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:            "id-1",
-					Component:     "component-1",
-					Enabled:       true,
-					ServicesToAdd: []string{"serv-1", "serv-2"},
-					Services:      []string{"serv-1", "serv-2"},
-				},
-				{
-					ID:      "serv-1",
-					Enabled: true,
-					Type:    types.EntityTypeService,
-				},
-				{
-					ID:      "serv-2",
-					Enabled: true,
-					Type:    types.EntityTypeService,
+					ID:               "id-1",
+					Component:        "component-1",
+					Enabled:          true,
+					ServicesToAdd:    []string{"serv-1", "serv-2"},
+					ServicesToRemove: []string{},
+					Services:         []string{"serv-1", "serv-2"},
 				},
 			},
 		},
@@ -198,19 +186,9 @@ func TestCheckServices(t *testing.T) {
 					ID:               "id-1",
 					Component:        "component-1",
 					Enabled:          true,
-					ServicesToAdd:    []string{"serv-1", "serv-2", "serv-4"},
+					ServicesToAdd:    []string{"serv-1", "serv-4"},
 					ServicesToRemove: []string{"serv-0", "serv-3"},
 					Services:         []string{"serv-1", "serv-2"},
-				},
-				{
-					ID:      "serv-1",
-					Enabled: true,
-					Type:    types.EntityTypeService,
-				},
-				{
-					ID:      "serv-2",
-					Enabled: true,
-					Type:    types.EntityTypeService,
 				},
 			},
 		},
@@ -248,12 +226,47 @@ func TestCheckServices(t *testing.T) {
 					Component:        "component-1",
 					Enabled:          true,
 					Services:         []string{},
+					ServicesToAdd:    []string{},
 					ServicesToRemove: []string{"serv-1"},
 				},
+			},
+		},
+		{
+			name: "one entity is removed from a single service but have this service in ServicesToAdd",
+			entities: []types.Entity{
 				{
-					ID:      "serv-1",
-					Enabled: true,
-					Type:    types.EntityTypeService,
+					ID:            "id-1",
+					Component:     "component-1",
+					Enabled:       true,
+					Services:      []string{"serv-1"},
+					ServicesToAdd: []string{"serv-1"},
+				},
+			},
+			services: []entityservice.EntityService{
+				{
+					Entity: types.Entity{
+						ID:      "serv-1",
+						Enabled: true,
+					},
+					EntityPatternFields: savedpattern.EntityPatternFields{
+						EntityPattern: [][]pattern.FieldCondition{
+							{
+								{
+									Field:     "component",
+									Condition: pattern.NewStringCondition(pattern.ConditionEqual, "component-2"),
+								},
+							},
+						},
+					},
+				},
+			},
+			expectedResult: []types.Entity{
+				{
+					ID:               "id-1",
+					Component:        "component-1",
+					Enabled:          true,
+					Services:         []string{},
+					ServicesToRemove: []string{},
 				},
 			},
 		},
@@ -307,17 +320,8 @@ func TestCheckServices(t *testing.T) {
 					Component:        "component-1",
 					Enabled:          true,
 					Services:         []string{},
+					ServicesToAdd:    []string{},
 					ServicesToRemove: []string{"serv-1", "serv-2"},
-				},
-				{
-					ID:      "serv-1",
-					Enabled: true,
-					Type:    types.EntityTypeService,
-				},
-				{
-					ID:      "serv-2",
-					Enabled: true,
-					Type:    types.EntityTypeService,
 				},
 			},
 		},
@@ -390,16 +394,6 @@ func TestCheckServices(t *testing.T) {
 					ServicesToAdd:    []string{"serv-3"},
 					ServicesToRemove: []string{"serv-2"},
 				},
-				{
-					ID:      "serv-2",
-					Enabled: true,
-					Type:    types.EntityTypeService,
-				},
-				{
-					ID:      "serv-3",
-					Enabled: true,
-					Type:    types.EntityTypeService,
-				},
 			},
 		},
 		{
@@ -436,23 +430,20 @@ func TestCheckServices(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:            "id-1",
-					Component:     "component-1",
-					Enabled:       true,
-					ServicesToAdd: []string{"serv-1"},
-					Services:      []string{"serv-1"},
+					ID:               "id-1",
+					Component:        "component-1",
+					Enabled:          true,
+					ServicesToAdd:    []string{"serv-1"},
+					ServicesToRemove: []string{},
+					Services:         []string{"serv-1"},
 				},
 				{
-					ID:            "id-2",
-					Component:     "component-1",
-					Enabled:       true,
-					ServicesToAdd: []string{"serv-1"},
-					Services:      []string{"serv-1"},
-				},
-				{
-					ID:      "serv-1",
-					Enabled: true,
-					Type:    types.EntityTypeService,
+					ID:               "id-2",
+					Component:        "component-1",
+					Enabled:          true,
+					ServicesToAdd:    []string{"serv-1"},
+					ServicesToRemove: []string{},
+					Services:         []string{"serv-1"},
 				},
 			},
 		},
@@ -506,28 +497,20 @@ func TestCheckServices(t *testing.T) {
 			},
 			expectedResult: []types.Entity{
 				{
-					ID:            "id-1",
-					Component:     "component-1",
-					Enabled:       true,
-					ServicesToAdd: []string{"serv-1", "serv-2"},
-					Services:      []string{"serv-1", "serv-2"},
+					ID:               "id-1",
+					Component:        "component-1",
+					Enabled:          true,
+					ServicesToAdd:    []string{"serv-1", "serv-2"},
+					ServicesToRemove: []string{},
+					Services:         []string{"serv-1", "serv-2"},
 				},
 				{
-					ID:            "id-2",
-					Component:     "component-1",
-					Enabled:       true,
-					ServicesToAdd: []string{"serv-1", "serv-2"},
-					Services:      []string{"serv-1", "serv-2"},
-				},
-				{
-					ID:      "serv-1",
-					Enabled: true,
-					Type:    types.EntityTypeService,
-				},
-				{
-					ID:      "serv-2",
-					Enabled: true,
-					Type:    types.EntityTypeService,
+					ID:               "id-2",
+					Component:        "component-1",
+					Enabled:          true,
+					ServicesToAdd:    []string{"serv-1", "serv-2"},
+					ServicesToRemove: []string{},
+					Services:         []string{"serv-1", "serv-2"},
 				},
 			},
 		},
@@ -571,6 +554,7 @@ func TestCheckServices(t *testing.T) {
 					Enabled:          true,
 					Component:        "component-1",
 					Services:         []string{},
+					ServicesToAdd:    []string{},
 					ServicesToRemove: []string{"serv-1"},
 				},
 				{
@@ -578,12 +562,8 @@ func TestCheckServices(t *testing.T) {
 					Enabled:          true,
 					Component:        "component-1",
 					Services:         []string{},
+					ServicesToAdd:    []string{},
 					ServicesToRemove: []string{"serv-1"},
-				},
-				{
-					ID:      "serv-1",
-					Enabled: true,
-					Type:    types.EntityTypeService,
 				},
 			},
 		},
@@ -643,6 +623,7 @@ func TestCheckServices(t *testing.T) {
 					Enabled:          true,
 					Component:        "component-1",
 					Services:         []string{},
+					ServicesToAdd:    []string{},
 					ServicesToRemove: []string{"serv-1", "serv-2"},
 				},
 				{
@@ -650,17 +631,8 @@ func TestCheckServices(t *testing.T) {
 					Enabled:          true,
 					Component:        "component-1",
 					Services:         []string{},
+					ServicesToAdd:    []string{},
 					ServicesToRemove: []string{"serv-1", "serv-2"},
-				},
-				{
-					ID:      "serv-1",
-					Enabled: true,
-					Type:    types.EntityTypeService,
-				},
-				{
-					ID:      "serv-2",
-					Enabled: true,
-					Type:    types.EntityTypeService,
 				},
 			},
 		},
@@ -746,21 +718,6 @@ func TestCheckServices(t *testing.T) {
 					Services:         []string{"serv-1", "serv-3"},
 					ServicesToAdd:    []string{"serv-1"},
 					ServicesToRemove: []string{"serv-2"},
-				},
-				{
-					ID:      "serv-1",
-					Enabled: true,
-					Type:    types.EntityTypeService,
-				},
-				{
-					ID:      "serv-2",
-					Enabled: true,
-					Type:    types.EntityTypeService,
-				},
-				{
-					ID:      "serv-3",
-					Enabled: true,
-					Type:    types.EntityTypeService,
 				},
 			},
 		},
@@ -878,8 +835,18 @@ func TestCheckServices(t *testing.T) {
 				return dataset.expectedResult[i].ID < dataset.expectedResult[j].ID
 			})
 
-			if !reflect.DeepEqual(result, dataset.expectedResult) {
-				t.Error("result is not expected")
+			for idx := 0; idx < len(result); idx++ {
+				if slices.Compare(result[idx].Services, dataset.expectedResult[idx].Services) != 0 {
+					t.Errorf("expected Services to be %v, but got %v", dataset.expectedResult[idx].Services, result[idx].Services)
+				}
+
+				if slices.Compare(result[idx].ServicesToAdd, dataset.expectedResult[idx].ServicesToAdd) != 0 {
+					t.Errorf("expected ServicesToAdd to be %v, but got %v", dataset.expectedResult[idx].ServicesToAdd, result[idx].ServicesToAdd)
+				}
+
+				if slices.Compare(result[idx].ServicesToRemove, dataset.expectedResult[idx].ServicesToRemove) != 0 {
+					t.Errorf("expected ServicesToRemove to be %v, but got %v", dataset.expectedResult[idx].ServicesToRemove, result[idx].ServicesToRemove)
+				}
 			}
 		})
 	}
