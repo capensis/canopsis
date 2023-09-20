@@ -294,7 +294,7 @@ func (s *service) UpdateServiceCounters(ctx context.Context, entity types.Entity
 			counters.All++
 
 			counters.IncrementAlarmCounters(curState, false, isActive)
-			if !isActive && alarmChange.PreviousPbehaviorTypeID != alarm.Value.PbehaviorInfo.TypeID {
+			if !isActive && alarm != nil && alarmChange.PreviousPbehaviorTypeID != alarm.Value.PbehaviorInfo.TypeID {
 				counters.IncrementPbhCounters(pbhTypeID)
 			}
 		case types.AlarmChangeTypePbhEnter:
