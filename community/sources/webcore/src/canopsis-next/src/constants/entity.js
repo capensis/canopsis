@@ -165,37 +165,22 @@ export const WEATHER_ICONS = {
   [PBEHAVIOR_TYPE_TYPES.pause]: 'pause',
 };
 
-export const ENTITY_STATUS_STYLES = {
-  [ENTITIES_STATUSES.closed]: {
-    color: COLORS.status.closed,
-    text: 'closed',
-    icon: 'check_circle_outline',
-  },
-  [ENTITIES_STATUSES.ongoing]: {
-    color: COLORS.status.ongoing,
-    text: 'ongoing',
-    icon: 'warning',
-  },
-  [ENTITIES_STATUSES.stealthy]: {
-    color: COLORS.status.stealthy,
-    text: 'stealthy',
-    icon: 'swap_vert',
-  },
-  [ENTITIES_STATUSES.flapping]: {
-    color: COLORS.status.flapping,
-    text: 'flapping',
-    icon: 'swap_vert',
-  },
-  [ENTITIES_STATUSES.cancelled]: {
-    color: COLORS.status.cancelled,
-    text: 'cancelled',
-    icon: 'highlight_off',
-  },
-  [ENTITIES_STATUSES.noEvents]: {
-    color: COLORS.status.noEvents,
-    text: 'no events',
-    icon: 'sync_problem',
-  },
+export const ENTITIES_STATUSES_STYLES_ICONS = {
+  [ENTITIES_STATUSES.closed]: 'check_circle_outline',
+  [ENTITIES_STATUSES.ongoing]: 'warning',
+  [ENTITIES_STATUSES.stealthy]: 'swap_vert',
+  [ENTITIES_STATUSES.flapping]: 'swap_vert',
+  [ENTITIES_STATUSES.cancelled]: 'highlight_off',
+  [ENTITIES_STATUSES.noEvents]: 'sync_problem',
+};
+
+export const ENTITIES_STATUSES_STYLES_TEXT = {
+  [ENTITIES_STATUSES.closed]: 'closed',
+  [ENTITIES_STATUSES.ongoing]: 'ongoing',
+  [ENTITIES_STATUSES.stealthy]: 'stealthy',
+  [ENTITIES_STATUSES.flapping]: 'flapping',
+  [ENTITIES_STATUSES.cancelled]: 'cancelled',
+  [ENTITIES_STATUSES.noEvents]: 'no events',
 };
 
 export const WEATHER_ACTIONS_TYPES = {

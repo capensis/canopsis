@@ -49,6 +49,7 @@ export default {
   },
 };
 </script>
+
 <style lang="scss" scoped>
   .chip-container {
     display: inline-block;

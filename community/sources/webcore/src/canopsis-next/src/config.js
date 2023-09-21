@@ -350,7 +350,6 @@ export const COLORS = {
     edgeGray: '#979797',
     edgeBlack: '#000000',
   },
-  statsDefault: '#dddddd',
   impactState: [
     '#2FAB63',
     '#7CB342',
@@ -522,6 +521,16 @@ export const CSS_COLOR_VARS = {
     minor: 'var(--v-state-minor-base)',
     major: 'var(--v-state-major-base)',
     critical: 'var(--v-state-critical-base)',
+    pause: 'var(--v-state-pause-base)',
+  },
+
+  status: {
+    closed: 'var(--v-status-closed-base)',
+    stealthy: 'var(--v-status-stealthy-base)',
+    flapping: 'var(--v-status-flapping-base)',
+    ongoing: 'var(--v-status-ongoing-base)',
+    cancelled: 'var(--v-status-cancelled-base)',
+    noEvents: 'var(--v-status-noEvents-base)',
   },
 };
 
@@ -537,6 +546,7 @@ export const DEFAULT_THEME_COLORS = {
   active_color: COLORS.activeColor,
 
   state: COLORS.state,
+  status: COLORS.status,
   table: {
     background: COLORS.table.background,
     row_color: COLORS.table.rowColor,

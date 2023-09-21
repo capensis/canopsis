@@ -19,6 +19,7 @@
 <script>
 import { get } from 'lodash';
 
+import { CSS_COLOR_VARS } from '@/config';
 import { ENTITIES_STATES, SERVICE_WEATHER_STATE_COUNTERS, SERVICE_WEATHER_STATE_COUNTERS_ICONS } from '@/constants';
 
 import { getEntityStateColor } from '@/helpers/entities/entity/color';
@@ -40,8 +41,8 @@ export default {
   computed: {
     countersColorsByType() {
       return {
-        [SERVICE_WEATHER_STATE_COUNTERS.all]: 'var(--v-error-base)',
-        [SERVICE_WEATHER_STATE_COUNTERS.active]: 'var(--v-error-base)',
+        [SERVICE_WEATHER_STATE_COUNTERS.all]: CSS_COLOR_VARS.error,
+        [SERVICE_WEATHER_STATE_COUNTERS.active]: CSS_COLOR_VARS.error,
         [SERVICE_WEATHER_STATE_COUNTERS.minor]: getEntityStateColor(ENTITIES_STATES.minor),
         [SERVICE_WEATHER_STATE_COUNTERS.major]: getEntityStateColor(ENTITIES_STATES.major),
         [SERVICE_WEATHER_STATE_COUNTERS.critical]: getEntityStateColor(ENTITIES_STATES.critical),
