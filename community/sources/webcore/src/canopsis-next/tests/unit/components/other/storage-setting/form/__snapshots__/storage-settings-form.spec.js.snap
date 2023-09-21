@@ -391,14 +391,7 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
       label="Open auth data in logs"
       name="webhook.log_credentials"
       value="true"
-    >
-      <c-help-icon-stub
-        color="info"
-        text="When enabled, all credentials and auth data is written in logs in open way (not recommended). 
-When disabled, all passwords, tokens and auth data is hidden and written as *** in logs."
-        top="top"
-      />
-    </c-enabled-field-stub>
+    />
   </div>
   <div
     class="layout c-information-block column"
@@ -818,14 +811,7 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with default fo
     <c-enabled-field-stub
       label="Open auth data in logs"
       name="webhook.log_credentials"
-    >
-      <c-help-icon-stub
-        color="info"
-        text="When enabled, all credentials and auth data is written in logs in open way (not recommended). 
-When disabled, all passwords, tokens and auth data is hidden and written as *** in logs."
-        top="top"
-      />
-    </c-enabled-field-stub>
+    />
   </div>
   <div
     class="layout c-information-block column"
