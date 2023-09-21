@@ -513,7 +513,10 @@ func (e *redisBasedManager) processEmittedTrigger(
 ) error {
 	additionalData := prevScenarioExecution.AdditionalData
 	additionalData.AlarmChangeType = prevTaskRes.AlarmChangeType
-	triggers := types.GetTriggers(prevTaskRes.AlarmChangeType)
+
+	alarmChange := types.AlarmChange{Type: prevTaskRes.AlarmChangeType}
+	triggers := alarmChange.GetTriggers()
+
 	if len(triggers) == 0 {
 		return nil
 	}

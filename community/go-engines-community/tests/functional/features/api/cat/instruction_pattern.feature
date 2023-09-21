@@ -1,6 +1,7 @@
 Feature: Update instruction
   I need to be able to update a instruction
 
+  @concurrent
   Scenario: given updated or deleted corporate pattern request should return updated instruction
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -12,8 +13,11 @@ Feature: Update instruction
       "corporate_alarm_pattern": "test-pattern-to-instruction-pattern-2",
       "description": "test-instruction-to-pattern-1-description",
       "enabled": true,
-      "priority": 24,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"

@@ -325,6 +325,12 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("not_applicable", fe.StructField())
 		return t
 	})
+	_ = v.RegisterTranslation("excluded_unless", trans, func(ut ut.Translator) error {
+		return ut.Add("excluded_unless", "{0} should be empty when {1} is not defined.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("excluded_unless", fe.StructField(), fe.Param())
+		return t
+	})
 }
 
 // TranslateError returns custom validation error message.

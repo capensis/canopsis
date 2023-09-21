@@ -2,11 +2,12 @@ Feature: get a instruction
   I need to be able to get a instruction
   Only admin should be able to get a instruction
 
+  @concurrent
   Scenario: given get all request should return instructions
     When I am admin
     When I do GET /api/v4/cat/instructions?search=test-instruction-to-get
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
@@ -320,8 +321,11 @@ Feature: get a instruction
               }
             }
           ],
-          "priority": 2,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "timeout_after_execution": {
             "value": 2,
             "unit": "s"
@@ -382,8 +386,11 @@ Feature: get a instruction
               }
             }
           ],
-          "priority": 3,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "timeout_after_execution": {
             "value": 2,
             "unit": "s"
@@ -402,6 +409,7 @@ Feature: get a instruction
     }
     """
 
+  @concurrent
   Scenario: given filter by type request should return instructions
     When I am admin
     When I do GET /api/v4/cat/instructions?search=test-instruction-to-get&type=0
@@ -444,20 +452,23 @@ Feature: get a instruction
     }
     """
 
+  @concurrent
   Scenario: GET a instruction but unauthorized
     When I do GET /api/v4/cat/instructions/test-instruction-to-get
     Then the response code should be 401
 
+  @concurrent
   Scenario: GET a instruction but without permissions
     When I am noperms
     When I do GET /api/v4/cat/instructions/test-instruction-to-get
     Then the response code should be 403
 
+  @concurrent
   Scenario: Get a instruction with success
     When I am admin
     When I do GET /api/v4/cat/instructions/test-instruction-to-get-1
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "_id": "test-instruction-to-get-1",
@@ -671,6 +682,7 @@ Feature: get a instruction
     }
     """
 
+  @concurrent
   Scenario: Get a instruction with not found response
     When I am admin
     When I do GET /api/v4/cat/instructions/test-not-found

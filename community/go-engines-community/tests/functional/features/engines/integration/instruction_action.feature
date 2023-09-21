@@ -8,7 +8,11 @@ Feature: run an auto instruction
     """json
     {
       "type": 1,
-      "triggers": ["changestate"],
+      "triggers": [
+        {
+          "type": "changestate"
+        }
+      ],
       "name": "test-instruction-instruction-action-1-name",
       "description": "test-instruction-instruction-action-1-description",
       "enabled": true,
@@ -42,7 +46,11 @@ Feature: run an auto instruction
       "name": "test-scenario-instruction-action-1-name",
       "priority": 10070,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [

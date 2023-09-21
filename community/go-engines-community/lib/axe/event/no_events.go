@@ -162,7 +162,6 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 		return result, fmt.Errorf("cannot add alarm steps: %w", err)
 	}
 
-	alarm.Value.EventsCount++
 	alarm.Value.TotalStateChanges++
 
 	if pbehaviorInfo.IsDefaultActive() {
@@ -194,7 +193,7 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 	}
 
 	if p.alarmConfigProvider.Get().ActivateAlarmAfterAutoRemediation {
-		matched, err := p.autoInstructionMatcher.Match(types.GetTriggers(alarmChange.Type), types.AlarmWithEntity{Alarm: alarm, Entity: entity})
+		matched, err := p.autoInstructionMatcher.Match(alarmChange.GetTriggers(), types.AlarmWithEntity{Alarm: alarm, Entity: entity})
 		if err != nil {
 			return result, err
 		}
@@ -243,9 +242,7 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 		"v.long_output": params.LongOutput,
 	}
 	push := bson.M{}
-	inc := bson.M{
-		"v.events_count": 1,
-	}
+	inc := bson.M{}
 
 	var stateStep types.AlarmStep
 	if newState != previousState {
