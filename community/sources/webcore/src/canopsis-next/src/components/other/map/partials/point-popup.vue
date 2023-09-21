@@ -14,7 +14,7 @@
       v-layout(v-else, column)
         span(v-if="point.entity") {{ $tc('common.entity') }}: {{ point.entity.name }}
         span(v-if="point.map") {{ $tc('common.map') }}: {{ point.map.name }}
-    v-layout.ma-0.point-popup__actions(v-if="actions")
+    v-layout.ma-0.background.darken-1(v-if="actions")
       v-btn.ma-0(
         v-if="hasAlarmsListAccess && point.entity",
         flat,
@@ -90,15 +90,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.point-popup {
-  &__actions {
-    background: #eee;
-
-    .theme--dark & {
-      background: #2f2f2f;
-    }
-  }
-}
-</style>

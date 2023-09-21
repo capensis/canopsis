@@ -45,7 +45,7 @@ import { createNamespacedHelpers } from 'vuex';
 import { Calendar, Op } from 'dayspan';
 
 import { MODALS, PBEHAVIOR_PLANNING_EVENT_CHANGING_TYPES, PBEHAVIOR_TYPE_TYPES } from '@/constants';
-import { COLORS } from '@/config';
+import { CSS_COLOR_VARS } from '@/config';
 
 import { uid } from '@/helpers/uid';
 import { getMostReadableTextColor } from '@/helpers/color';
@@ -251,7 +251,7 @@ export default {
         /**
          * If there is `type` field in timespan it means that timespan is exception date with a `type`
          */
-        const color = pbehavior.color || type.color || pbehavior.type?.color || COLORS.secondary;
+        const color = pbehavior.color || type.color || pbehavior.type?.color || CSS_COLOR_VARS.secondary;
         const forecolor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
 
         const daySpan = getSpanForTimestamps({
