@@ -248,7 +248,7 @@ export default {
     headers() {
       const headers = this.preparedColumns.map((column) => {
         if (column.linksInRowCount) {
-          const linksCounts = this.alarms.map(alarm => Object.values(get(alarm, column.value)).flat().length);
+          const linksCounts = this.alarms.map(alarm => Object.values(get(alarm, column.value, {})).flat().length);
           const maxLinksCount = Math.max(...linksCounts);
           const actualInlineLinksCount = maxLinksCount > column.inlineLinksCount
             ? column.inlineLinksCount + 1
