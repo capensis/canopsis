@@ -11,6 +11,8 @@ volumes:
     driver: local
   nginxcerts:
     driver: local
+  uploadfiles:
+    driver: local
 
 #
 # SERVICE FRAGMENTS (or templates)
