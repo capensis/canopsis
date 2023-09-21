@@ -62,7 +62,11 @@ Feature: update meta alarm on action
       "name": "test-scenario-pbehavior-action-correlation-1-name",
       "priority": 10066,
       "enabled": true,
-      "triggers": ["comment"],
+      "triggers": [
+        {
+          "type": "comment"
+        }
+      ],
       "actions": [
         {
           "_id": "test-action-pbehavior-action-correlation-1",

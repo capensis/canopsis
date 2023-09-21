@@ -295,6 +295,12 @@ instruction:
     last_executed_on: 1596712203
     created: 1596712203
 
+  instruction_to_update_5:
+    <<: *instruction_auto
+    _id: test-instruction-to-update-5
+    last_executed_on: 1596712203
+    created: 1596712203
+
   instruction_to_update_with_approval_1:
     <<: *instruction_manual
     _id: test-instruction-to-update-with-approval-1
@@ -455,40 +461,40 @@ instruction:
     avg_complete_time: 10
     rating: 3.5
 
-  instruction_to_update_with_approval_10:
+  instruction_to_update_with_approval_second_1:
     <<: *instruction_manual
-    _id: test-instruction-to-update-with-approval-10
+    _id: test-instruction-to-update-with-approval-second-1
     created: 1596712203
-    description: test-instruction-to-update-with-approval-10-description
+    description: test-instruction-to-update-with-approval-second-1-description
     last_modified: 1596712203
     last_executed_on: 1596712203
     avg_complete_time: 10
     rating: 3.5
-    name: test-instruction-to-update-with-approval-10-name
+    name: test-instruction-to-update-with-approval-second-1-name
     steps:
-      - _id: test-instruction-to-update-with-approval-10-step-1
-        endpoint: test-instruction-to-update-with-approval-10-step-1-endpoint
-        name: test-instruction-to-update-with-approval-10-step-1-name
+      - _id: test-instruction-to-update-with-approval-second-1-step-1
+        endpoint: test-instruction-to-update-with-approval-second-1-step-1-endpoint
+        name: test-instruction-to-update-with-approval-second-1-step-1-name
         operations:
-          - _id: test-instruction-to-update-with-approval-10-step-1-operation-1
-            description: test-instruction-to-update-with-approval-10-step-1-operation-1-description
+          - _id: test-instruction-to-update-with-approval-second-1-step-1-operation-1
+            description: test-instruction-to-update-with-approval-second-1-step-1-operation-1-description
             jobs: [ ]
-            name: test-instruction-to-update-with-approval-10-step-1-operation-1-name
+            name: test-instruction-to-update-with-approval-second-1-step-1-operation-1-name
             time_to_complete:
               unit: s
               value: 1
         stop_on_fail: true
 
-  instruction_to_update_with_approval_11:
+  instruction_to_update_with_approval_second_2:
     <<: *instruction_auto
-    _id: test-instruction-to-update-with-approval-11
+    _id: test-instruction-to-update-with-approval-second-2
     created: 1596712203
-    description: test-instruction-to-update-with-approval-11-description
+    description: test-instruction-to-update-with-approval-second-2-description
     entity_pattern:
       - - field: name
           cond:
             type: eq
-            value: test-instruction-to-update-with-approval-11-pattern
+            value: test-instruction-to-update-with-approval-second-2-pattern
     alarm_pattern:
     jobs:
       - job: test-job-to-instruction-edit-1
@@ -497,19 +503,19 @@ instruction:
     last_executed_on: 1596712203
     avg_complete_time: 10
     rating: 3.5
-    name: test-instruction-to-update-with-approval-11-name
+    name: test-instruction-to-update-with-approval-second-2-name
     timeout_after_execution:
       unit: s
       value: 2
 
-  instruction_to_update_with_approval_12:
+  instruction_to_update_with_approval_second_3:
     <<: *instruction_auto
-    _id: test-instruction-to-update-with-approval-12
+    _id: test-instruction-to-update-with-approval-second-3
     created: 1596712203
     old_alarm_patterns:
-      - _id: test-instruction-to-update-with-approval-12-pattern
+      - _id: test-instruction-to-update-with-approval-second-3-pattern
     old_entity_patterns:
-      - name: test-instruction-to-update-with-approval-12-pattern
+      - name: test-instruction-to-update-with-approval-second-3-pattern
     alarm_pattern:
     entity_pattern:
 

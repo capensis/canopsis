@@ -1,6 +1,11 @@
 package scenario
 
 import (
+	"errors"
+	"fmt"
+	"strconv"
+	"strings"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -10,6 +15,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/bsontype"
+	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
 )
 
 type FilteredQuery struct {
@@ -18,12 +26,18 @@ type FilteredQuery struct {
 }
 
 type EditRequest struct {
-	Name     string `json:"name" binding:"required,max=255"`
-	Author   string `json:"author" binding:"required,max=255"`
-	Enabled  *bool  `json:"enabled" binding:"required"`
-	Priority int64  `json:"priority" binding:"min=0"`
+	Name                 string                  `json:"name" binding:"required,max=255"`
+	Author               string                  `json:"author" binding:"required,max=255"`
+	Enabled              *bool                   `json:"enabled" binding:"required"`
+	Priority             int64                   `json:"priority" binding:"min=0"`
+	Triggers             []Trigger               `json:"triggers" binding:"required,notblank,dive"`
+	DisableDuringPeriods []string                `json:"disable_during_periods" binding:"dive,oneof=maintenance pause inactive"`
+	Delay                *types.DurationWithUnit `json:"delay"`
+	Actions              []ActionRequest         `json:"actions" binding:"required,notblank,dive"`
+}
 
-	// Possible trigger values.
+type Trigger struct {
+	// Possible trigger type values.
 	//   * `create` - Alarm creation
 	//   * `statedec` - Alarm state decrease
 	//   * `changestate` - Alarm state has been changed by "change state" action
@@ -50,10 +64,37 @@ type EditRequest struct {
 	//   * `autoinstructioncomplete` - Auto instruction is completed
 	//   * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
 	//   * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
-	Triggers             []string                `json:"triggers" binding:"required,notblank,dive,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment declareticketwebhook assocticket snooze unsnooze resolve activate pbhenter pbhleave instructionfail autoinstructionfail instructionjobfail instructionjobcomplete instructioncomplete autoinstructioncomplete autoinstructionresultok autoinstructionresultfail"`
-	DisableDuringPeriods []string                `json:"disable_during_periods" binding:"dive,oneof=maintenance pause inactive"`
-	Delay                *types.DurationWithUnit `json:"delay"`
-	Actions              []ActionRequest         `json:"actions" binding:"required,notblank,dive"`
+	//   * `eventscount` - Alarm check events count
+	Type      string `json:"type" binding:"required,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment declareticketwebhook assocticket snooze unsnooze resolve activate pbhenter pbhleave instructionfail autoinstructionfail instructionjobfail instructionjobcomplete instructioncomplete autoinstructioncomplete autoinstructionresultok autoinstructionresultfail eventscount"`
+	Threshold int    `json:"threshold" binding:"required_if=Type eventscount,excluded_unless=Type eventscount,omitempty,gt=1"`
+}
+
+func (t *Trigger) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
+	switch valueType {
+	case bson.TypeString:
+		value, _, ok := bsoncore.ReadString(b)
+		if !ok {
+			return errors.New("invalid trigger value, expected string")
+		}
+
+		thresholdStr, ok := strings.CutPrefix(value, string(types.AlarmChangeEventsCount))
+		if !ok {
+			t.Type = value
+			return nil
+		}
+
+		threshold, err := strconv.Atoi(thresholdStr)
+		if err != nil {
+			return fmt.Errorf("cannot decode %s threshold value: %w", types.AlarmChangeEventsCount, err)
+		}
+
+		t.Type = string(types.AlarmChangeEventsCount)
+		t.Threshold = threshold
+
+		return nil
+	default:
+		return fmt.Errorf("trigger should be string")
+	}
 }
 
 type CreateRequest struct {
@@ -94,7 +135,7 @@ type Scenario struct {
 	Author               *author.Author          `bson:"author" json:"author"`
 	Enabled              bool                    `bson:"enabled" json:"enabled"`
 	DisableDuringPeriods []string                `bson:"disable_during_periods" json:"disable_during_periods"`
-	Triggers             []string                `bson:"triggers" json:"triggers"`
+	Triggers             []Trigger               `bson:"triggers" json:"triggers"`
 	Actions              []Action                `bson:"actions" json:"actions"`
 	Priority             int64                   `bson:"priority" json:"priority"`
 	Delay                *types.DurationWithUnit `bson:"delay" json:"delay"`

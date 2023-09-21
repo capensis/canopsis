@@ -49,6 +49,7 @@ configuration:
       maxexternalresponsesize: 10485760
       buildentityinfosdictionary: true
       builddynamicinfosdictionary: true
+      eventscounttriggerdefaultthreshold: 10
     import_ctx:
       filepattern: /tmp/import_%s.json
       thdcritminperimport: 60m
