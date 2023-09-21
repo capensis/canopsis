@@ -5,7 +5,7 @@ $dense-cell-height = 32px
 $ultra-dense-cell-height = 24px
 $dense-treeview-cell-height = 32px
 
-$dense-color-indicator-padding = 1px 5px;
+$dense-color-indicator-padding = 1px 5px
 
 /* Theme */
 v-table($material)
@@ -28,9 +28,8 @@ v-datatable($material)
         .v-icon
           color: $material.text.primary
 
-  .v-datatable
-    .v-datatable__actions
-      color: $material.text.secondary
+  .v-datatable__actions
+    color: $material.text.secondary
 
 theme(v-table, "v-table")
 theme(v-datatable, "v-datatable")
@@ -72,7 +71,7 @@ table.v-datatable
       background-color: rgba(white, .12)
       color: rgba(white, .87)
 
-  &--dense.v-datatable
+  &--dense
     thead tr
       height: $dense-cell-height
 
@@ -84,47 +83,47 @@ table.v-datatable
         td:not(.v-datatable__expand-col)
           height: $dense-cell-height
 
-&--ultra-dense.v-datatable
-  thead tr
+  &--ultra-dense
+    thead tr
       height: $ultra-dense-cell-height
 
-tr:not(.v-datatable__progress)
-  tbody, thead
-    td:not(.v-datatable__expand-col), th
-      padding: 0 $ultra-dense-padding !important
+    tbody, thead
+      tr:not(.v-datatable__progress)
+        td:not(.v-datatable__expand-col), th
+          padding: 0 $ultra-dense-padding !important
 
-    td:not(.v-datatable__expand-col)
-      height: $ultra-dense-cell-height
+        td:not(.v-datatable__expand-col)
+          height: $ultra-dense-cell-height
 
-&--dense.v-datatable,
-&--ultra-dense.v-datatable
-  tbody, thead
-    td:not(.v-datatable__expand-col)
-      td, th
-        padding: 0 $dense-padding !important
+  &--dense,
+  &--ultra-dense
+    tbody, thead
+      td:not(.v-datatable__expand-col)
+        td, th
+          padding: 0 $dense-padding !important
 
-      .v-btn
-        margin-top: 0;
-        margin-bottom: 0;
+        .v-btn
+          margin-top: 0
+          margin-bottom: 0
 
-      .color-indicator
-        padding: $dense-color-indicator-padding !important
+        .color-indicator
+          padding: $dense-color-indicator-padding !important
 
-      .c-action-btn__button
-        margin: 0 !important
+        .c-action-btn__button
+          margin: 0 !important
 
-  .service-dependencies
-    thead tr, thead th, td:not(.v-datatable__expand-col)
-      height: $dense-treeview-cell-height
+    .service-dependencies
+      thead tr, thead th, td:not(.v-datatable__expand-col)
+        height: $dense-treeview-cell-height
 
-    .treeview-data-table--tree
-      margin-top: $dense-treeview-cell-height
+      .treeview-data-table--tree
+        margin-top: $dense-treeview-cell-height
 
-    .v-treeview-node__root
-      min-height: $dense-treeview-cell-height
-      height: $dense-treeview-cell-height
+      .v-treeview-node__root
+        min-height: $dense-treeview-cell-height
+        height: $dense-treeview-cell-height
 
-      .v-btn
-        width: $dense-treeview-cell-height - 4
-        height: $dense-treeview-cell-height - 4
-        margin: 2px
+        .v-btn
+          width: $dense-treeview-cell-height - 4
+          height: $dense-treeview-cell-height - 4
+          margin: 2px
