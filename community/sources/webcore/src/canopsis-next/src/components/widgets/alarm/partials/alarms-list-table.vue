@@ -72,8 +72,11 @@
             :resizing="resizingMode",
             @clear:tag="$emit('clear:tag')"
           )
-          template(v-if="header.value !== 'actions'")
-            span.alarms-list-table__dragging-handler(v-if="draggingMode", @click.stop="")
+          template
+            span.alarms-list-table__dragging-handler(
+              v-if="draggingMode && header.value !== 'actions'",
+              @click.stop=""
+            )
             span.alarms-list-table__resize-handler(
               v-if="resizingMode",
               @mousedown.stop.prevent="startColumnResize(header.value)",
