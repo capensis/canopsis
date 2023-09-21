@@ -85,7 +85,7 @@ func (t *Trigger) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 
 		threshold, err := strconv.Atoi(thresholdStr)
 		if err != nil {
-			return fmt.Errorf("cannot decode %s threshold value: %w", types.AlarmChangeEventsCount, err)
+			return fmt.Errorf("cannot decode an %s trigger threshold value: %w", types.AlarmChangeEventsCount, err)
 		}
 
 		t.Type = string(types.AlarmChangeEventsCount)
@@ -93,7 +93,7 @@ func (t *Trigger) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 
 		return nil
 	default:
-		return fmt.Errorf("trigger should be string")
+		return fmt.Errorf("trigger should be a string")
 	}
 }
 
