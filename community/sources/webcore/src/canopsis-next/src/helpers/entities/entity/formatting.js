@@ -1,11 +1,12 @@
 import {
   ENTITIES_STATES_STYLES_ICONS,
   ENTITIES_STATES_STYLES_TEXT,
-  ENTITY_STATUS_STYLES,
+  ENTITIES_STATUSES_STYLES_ICONS,
+  ENTITIES_STATUSES_STYLES_TEXT,
   UNKNOWN_VALUE_STYLE,
 } from '@/constants';
 
-import { getEntityEventColor, getEntityStateColor } from '@/helpers/entities/entity/color';
+import { getEntityEventColor, getEntityStateColor, getEntityStatusColor } from '@/helpers/entities/entity/color';
 import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
 
 /**
@@ -37,17 +38,31 @@ export const formatState = value => ({
 });
 
 /**
+ * Return entity status text by status value
+ *
+ * @param {number} [value]
+ * @returns {string}
+ */
+export const getEntityStatusText = value => ENTITIES_STATUSES_STYLES_TEXT[value];
+
+/**
+ * Return entity status icon by status value
+ *
+ * @param {number} [value]
+ * @returns {string}
+ */
+export const getEntityStatusIcon = value => ENTITIES_STATUSES_STYLES_ICONS[value];
+
+/**
  * Return object that contains the status style
  * @param value The status value
  * @returns {*} Object with the color, icon and text associated
  */
-export const formatStatus = (value) => {
-  if (!ENTITY_STATUS_STYLES[value]) {
-    return UNKNOWN_VALUE_STYLE;
-  }
-
-  return ENTITY_STATUS_STYLES[value];
-};
+export const formatStatus = value => ({
+  icon: getEntityStatusIcon(value) ?? UNKNOWN_VALUE_STYLE.icon,
+  text: getEntityStatusText(value) ?? UNKNOWN_VALUE_STYLE.text,
+  color: getEntityStatusColor(value) ?? UNKNOWN_VALUE_STYLE.color,
+});
 
 /**
  * Return object that contains the event style

@@ -8,7 +8,7 @@
 <script>
 import { ENTITIES_STATES } from '@/constants';
 
-import { getImpactStateColor } from '@/helpers/entities/entity/color';
+import { getEntityStateColor } from '@/helpers/entities/entity/color';
 
 export default {
   props: {
@@ -19,15 +19,15 @@ export default {
   },
   computed: {
     minorColor() {
-      return getImpactStateColor(ENTITIES_STATES.minor);
+      return getEntityStateColor(ENTITIES_STATES.minor);
     },
 
     majorColor() {
-      return getImpactStateColor(ENTITIES_STATES.major);
+      return getEntityStateColor(ENTITIES_STATES.major);
     },
 
     criticalColor() {
-      return getImpactStateColor(ENTITIES_STATES.critical);
+      return getEntityStateColor(ENTITIES_STATES.critical);
     },
   },
 };
