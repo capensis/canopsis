@@ -4,6 +4,7 @@ import { Day } from 'dayspan';
 import { createVueInstance, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorTimespanModule, createPbehaviorTypesModule } from '@unit/utils/store';
 import { mockDateNow } from '@unit/utils/mock-hooks';
+
 import { convertDateToMoment } from '@/helpers/date/date';
 
 import DaySpanVuetifyPlugin from '@/plugins/dayspan-vuetify';

@@ -13,6 +13,10 @@ export default {
       default: false,
     },
   },
+  /**
+   * We need this empty method to avoid warning message in console about #activator="" slots
+   */
+  mounted() {},
   methods: {
     mouseEnterHandler(e) {
       this.getActivator(e);
