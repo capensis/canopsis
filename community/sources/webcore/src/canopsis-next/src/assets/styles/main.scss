@@ -1,6 +1,10 @@
 $seeAlarmBtnHeight: 18px;
 $mobileBreakpoint: 450px;
 
+html {
+  background-color: var(--v-application-background-base);
+}
+
 .v-toolbar--fixed {
   z-index: 3;
 }
