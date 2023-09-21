@@ -265,7 +265,11 @@ Feature: get service entities with assigned instructions
           "job": "test-job-to-run-auto-instruction-7"
         }
       ],
-      "triggers": ["create"]
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ]
     }
     """
     Then the response code should be 201
@@ -296,7 +300,11 @@ Feature: get service entities with assigned instructions
           "job": "test-job-to-run-auto-instruction-7"
         }
       ],
-      "triggers": ["create"]
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ]
     }
     """
     Then the response code should be 201
@@ -663,7 +671,11 @@ Feature: get service entities with assigned instructions
           "job": "test-job-to-run-auto-instruction-6"
         }
       ],
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "priority": 2000
     }
     """
@@ -695,7 +707,11 @@ Feature: get service entities with assigned instructions
           "job": "test-job-to-run-auto-instruction-7"
         }
       ],
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "priority": 2001
     }
     """

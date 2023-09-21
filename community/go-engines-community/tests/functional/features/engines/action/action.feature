@@ -11,7 +11,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-1-name",
       "priority": 10002,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -347,7 +351,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-negative-1-name",
       "priority": 10003,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -481,7 +489,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-2-name",
       "priority": 10004,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "delay": {
         "value": 5,
         "unit": "s"
@@ -659,7 +671,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-3-name-1",
       "priority": 10005,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -690,7 +706,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-3-name-2",
       "priority": 10006,
       "enabled": true,
-      "triggers": ["assocticket"],
+      "triggers": [
+        {
+          "type": "assocticket"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -888,7 +908,11 @@ Feature: execute action on trigger
       "name": "test-scenario-double-ack",
       "priority": 10007,
       "enabled": true,
-      "triggers": ["ack"],
+      "triggers": [
+        {
+          "type": "ack"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -1054,6 +1078,720 @@ Feature: execute action on trigger
               },
               {
                 "_t": "changestate"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 5
+            }
+          }
+        }
+      }
+    ]
+    """
+
+  @concurrent
+  Scenario: given scenario and several check events without state changes should execute scenario after threshold value
+    Given I am admin
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "_id": "test-scenario-action-4",
+      "name": "test-scenario-action-4-name",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount",
+          "threshold": 3
+        }
+      ],
+      "actions": [
+        {
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-4"
+                }
+              }
+            ]
+          ],
+          "type": "ack",
+          "parameters": {
+            "forward_author": true,
+            "author": "test-scenario-action-4-author {{ `{{ .Alarm.Value.Resource }}` }}",
+            "output": "test-scenario-action-4-output {{ `{{ .Entity.Name }} {{ .Alarm.Value.State.Value }}` }}"
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event and wait the end of event processing:
+    """json
+    [
+      {
+        "connector" : "test-connector-action-4",
+        "connector_name" : "test-connector-name-action-4",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" :  "test-component-action-4",
+        "resource" : "test-resource-action-4",
+        "state" : 2,
+        "output" : "test-output-action-4"
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-action-4&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "connector": "test-connector-action-4",
+            "connector_name": "test-connector-name-action-4",
+            "component": "test-component-action-4",
+            "resource": "test-resource-action-4"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .alarmID }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      }
+    ]
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    [
+      {
+        "connector" : "test-connector-action-4",
+        "connector_name" : "test-connector-name-action-4",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" :  "test-component-action-4",
+        "resource" : "test-resource-action-4",
+        "state" : 2,
+        "output" : "test-output-action-4"
+      }
+    ]
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .alarmID }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      }
+    ]
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    [
+      {
+        "connector" : "test-connector-action-4",
+        "connector_name" : "test-connector-name-action-4",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" :  "test-component-action-4",
+        "resource" : "test-resource-action-4",
+        "state" : 2,
+        "output" : "test-output-action-4"
+      }
+    ]
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .alarmID }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              },
+              {
+                "_t": "ack",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "m": "test-scenario-action-4-output test-resource-action-4 2"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
+    """
+
+  @concurrent
+  Scenario: given scenario and several check events when state increases should execute scenario after threshold value
+    Given I am admin
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "_id": "test-scenario-action-5",
+      "name": "test-scenario-action-5-name",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount",
+          "threshold": 3
+        }
+      ],
+      "actions": [
+        {
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-5"
+                }
+              }
+            ]
+          ],
+          "type": "ack",
+          "parameters": {
+            "forward_author": true,
+            "author": "test-scenario-action-5-author {{ `{{ .Alarm.Value.Resource }}` }}",
+            "output": "test-scenario-action-5-output {{ `{{ .Entity.Name }} {{ .Alarm.Value.State.Value }}` }}"
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event and wait the end of event processing:
+    """json
+    [
+      {
+        "connector" : "test-connector-action-5",
+        "connector_name" : "test-connector-name-action-5",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" :  "test-component-action-5",
+        "resource" : "test-resource-action-5",
+        "state" : 1,
+        "output" : "test-output-action-5"
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-action-5&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "connector": "test-connector-action-5",
+            "connector_name": "test-connector-name-action-5",
+            "component": "test-component-action-5",
+            "resource": "test-resource-action-5"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .alarmID }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      }
+    ]
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    [
+      {
+        "connector" : "test-connector-action-5",
+        "connector_name" : "test-connector-name-action-5",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" :  "test-component-action-5",
+        "resource" : "test-resource-action-5",
+        "state" : 2,
+        "output" : "test-output-action-5"
+      }
+    ]
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .alarmID }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              },
+              {
+                "_t": "stateinc"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    [
+      {
+        "connector" : "test-connector-action-5",
+        "connector_name" : "test-connector-name-action-5",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" :  "test-component-action-5",
+        "resource" : "test-resource-action-5",
+        "state" : 3,
+        "output" : "test-output-action-5"
+      }
+    ]
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .alarmID }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              },
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "ack",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "m": "test-scenario-action-5-output test-resource-action-5 3"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 5
+            }
+          }
+        }
+      }
+    ]
+    """
+
+  @concurrent
+  Scenario: given scenario and several check events when state decreases should execute scenario after threshold value
+    Given I am admin
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "_id": "test-scenario-action-6",
+      "name": "test-scenario-action-6-name",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount",
+          "threshold": 3
+        }
+      ],
+      "actions": [
+        {
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-component-action-6"
+                }
+              }
+            ]
+          ],
+          "type": "ack",
+          "parameters": {
+            "forward_author": true,
+            "author": "test-scenario-action-6-author {{ `{{ .Alarm.Value.Resource }}` }}",
+            "output": "test-scenario-action-6-output {{ `{{ .Entity.Name }} {{ .Alarm.Value.State.Value }}` }}"
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event and wait the end of event processing:
+    """json
+    [
+      {
+        "connector" : "test-connector-action-6",
+        "connector_name" : "test-connector-name-action-6",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" :  "test-component-action-6",
+        "resource" : "test-resource-action-6",
+        "state" : 3,
+        "output" : "test-output-action-6"
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-action-6&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "connector": "test-connector-action-6",
+            "connector_name": "test-connector-name-action-6",
+            "component": "test-component-action-6",
+            "resource": "test-resource-action-6"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .alarmID }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      }
+    ]
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    [
+      {
+        "connector" : "test-connector-action-6",
+        "connector_name" : "test-connector-name-action-6",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" :  "test-component-action-6",
+        "resource" : "test-resource-action-6",
+        "state" : 2,
+        "output" : "test-output-action-6"
+      }
+    ]
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .alarmID }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              },
+              {
+                "_t": "statedec"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
+    """
+    When I send an event and wait the end of event processing:
+    """json
+    [
+      {
+        "connector" : "test-connector-action-6",
+        "connector_name" : "test-connector-name-action-6",
+        "source_type" : "resource",
+        "event_type" : "check",
+        "component" :  "test-component-action-6",
+        "resource" : "test-resource-action-6",
+        "state" : 1,
+        "output" : "test-output-action-6"
+      }
+    ]
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .alarmID }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              },
+              {
+                "_t": "statedec"
+              },
+              {
+                "_t": "statedec"
+              },
+              {
+                "_t": "ack",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
+                "m": "test-scenario-action-6-output test-resource-action-6 1"
               }
             ],
             "meta": {
