@@ -130,7 +130,7 @@
 </template>
 
 <script>
-import { intersectionBy } from 'lodash';
+import { get, intersectionBy } from 'lodash';
 
 import { ALARM_DENSE_TYPES, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
 
@@ -321,7 +321,16 @@ export default {
         };
 
         if (column.linksInRowCount) {
-          header.width = calculateAlarmLinksColumnWidth(this.dense, column.linksInRowCount);
+          const linksCounts = this.alarms.map(alarm => Object.values(get(alarm, column.value, {})).flat().length);
+          const maxLinksCount = Math.max(...linksCounts);
+          const actualInlineLinksCount = maxLinksCount > column.inlineLinksCount
+            ? column.inlineLinksCount + 1
+            : maxLinksCount;
+
+          header.width = calculateAlarmLinksColumnWidth(
+            this.dense,
+            Math.max(Math.min(actualInlineLinksCount, column.linksInRowCount), 1),
+          );
         }
 
         return header;
