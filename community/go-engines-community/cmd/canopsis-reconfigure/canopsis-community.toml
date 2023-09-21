@@ -125,7 +125,7 @@ ReconnectRetries = 3
 # The dictionary is used in UI autocomplete hints for infos key and values.
 BuildEntityInfosDictionary = true
 BuildDynamicInfosDictionary = true
-# The default value for a check events count trigger threshold
+# The default value for a check events count trigger threshold.
 EventsCountTriggerDefaultThreshold = 10
 
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
