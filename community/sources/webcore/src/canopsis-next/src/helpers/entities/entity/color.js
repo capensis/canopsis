@@ -1,7 +1,7 @@
 import { isNumber } from 'lodash';
 
 import { COLORS, CSS_COLOR_VARS } from '@/config';
-import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, EVENT_ENTITY_COLORS_BY_TYPE } from '@/constants';
+import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, ENTITIES_STATUSES, EVENT_ENTITY_COLORS_BY_TYPE } from '@/constants';
 
 /**
  * Get color by entity impact state
@@ -25,6 +25,21 @@ export const getEntityStateColor = value => ({
 }[value]);
 
 /**
+ * Get color by entity status
+ *
+ * @param {number} value
+ * @returns {string}
+ */
+export const getEntityStatusColor = value => ({
+  [ENTITIES_STATUSES.closed]: CSS_COLOR_VARS.status.closed,
+  [ENTITIES_STATUSES.ongoing]: CSS_COLOR_VARS.status.ongoing,
+  [ENTITIES_STATUSES.stealthy]: CSS_COLOR_VARS.status.stealthy,
+  [ENTITIES_STATUSES.flapping]: CSS_COLOR_VARS.status.flapping,
+  [ENTITIES_STATUSES.cancelled]: CSS_COLOR_VARS.status.cancelled,
+  [ENTITIES_STATUSES.noEvents]: CSS_COLOR_VARS.status.noEvents,
+}[value]);
+
+/**
  * Get color for a entity by colorIndicator and isGrey parameters
  *
  * @param {Service | Entity | {}} [entity = {}]
@@ -33,7 +48,7 @@ export const getEntityStateColor = value => ({
  */
 export const getEntityColor = (entity = {}, colorIndicator = COLOR_INDICATOR_TYPES.state) => {
   if (entity.is_grey) {
-    return 'var(--v-state-pause-base)';
+    return CSS_COLOR_VARS.state.pause;
   }
 
   if (colorIndicator === COLOR_INDICATOR_TYPES.state) {

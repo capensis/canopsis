@@ -127,7 +127,7 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with status: ca
   <i
     aria-hidden="true"
     class="v-icon material-icons theme--light"
-    style="color: rgb(117, 117, 117); caret-color: #757575;"
+    style="caret-color: var(--v-status-cancelled-base);"
   >
     highlight_off
   </i>
@@ -157,7 +157,7 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with status: cl
   <i
     aria-hidden="true"
     class="v-icon material-icons theme--light"
-    style="color: rgb(47, 171, 99); caret-color: #2fab63;"
+    style="caret-color: var(--v-status-closed-base);"
   >
     check_circle_outline
   </i>
@@ -187,7 +187,7 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with status: fl
   <i
     aria-hidden="true"
     class="v-icon material-icons theme--light"
-    style="color: rgb(43, 62, 79); caret-color: #2b3E4F;"
+    style="caret-color: var(--v-status-flapping-base);"
   >
     swap_vert
   </i>
@@ -217,7 +217,7 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with status: no
   <i
     aria-hidden="true"
     class="v-icon material-icons theme--light"
-    style="color: rgb(255, 82, 82); caret-color: #ff5252;"
+    style="caret-color: var(--v-status-noEvents-base);"
   >
     sync_problem
   </i>
@@ -247,7 +247,7 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with status: on
   <i
     aria-hidden="true"
     class="v-icon material-icons theme--light"
-    style="color: rgb(249, 168, 37); caret-color: #f9A825;"
+    style="caret-color: var(--v-status-ongoing-base);"
   >
     warning
   </i>
@@ -277,7 +277,7 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with status: st
   <i
     aria-hidden="true"
     class="v-icon material-icons theme--light"
-    style="color: rgb(117, 117, 117); caret-color: #757575;"
+    style="caret-color: var(--v-status-stealthy-base);"
   >
     swap_vert
   </i>

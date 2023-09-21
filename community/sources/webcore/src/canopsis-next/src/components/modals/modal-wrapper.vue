@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import { CSS_COLOR_VARS } from '@/config';
+
 import ModalTitleButtons from './modal-title-buttons.vue';
 
 export default {
@@ -40,7 +42,7 @@ export default {
     },
     titleColor: {
       type: String,
-      default: 'var(--v-primary-base)',
+      default: CSS_COLOR_VARS.primary,
     },
     textClass: {
       type: String,

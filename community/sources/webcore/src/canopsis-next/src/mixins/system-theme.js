@@ -1,5 +1,7 @@
 import theme from 'vuetify/es5/components/Vuetify/mixins/theme';
-import { kebabCase } from 'lodash';
+import { kebabCase, merge } from 'lodash';
+
+import { DEFAULT_THEME_COLORS } from '@/config';
 
 import { colorToRgba, getDarkenColor, isDarkColor } from '@/helpers/color';
 import { themePropertiesToCSSVariables } from '@/helpers/entities/theme/entity';
@@ -56,12 +58,14 @@ export const systemThemeMixin = {
 
       const isDark = isDarkColor(main.background);
 
-      const variables = themePropertiesToCSSVariables({
+      const vuetifyVariables = merge({}, DEFAULT_THEME_COLORS, {
         ...main,
         table,
         state,
         applicationBackground: getDarkenColor(main.background, isDark ? 7 : 2),
       });
+
+      const variables = themePropertiesToCSSVariables(vuetifyVariables);
 
       this.$vuetify.theme = theme(variables);
 

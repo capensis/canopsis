@@ -9,7 +9,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with custom props 1`] = `
   >
     <span
       class="chip"
-      style="background-color: rgb(117, 117, 117);"
     >
       stealthy
     </span>
@@ -1599,7 +1598,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: cancelled 1`] = `
   >
     <span
       class="chip"
-      style="background-color: rgb(117, 117, 117);"
     >
       cancelled
     </span>
@@ -1629,7 +1627,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: closed 1`] = `
   >
     <span
       class="chip"
-      style="background-color: rgb(47, 171, 99);"
     >
       closed
     </span>
@@ -1659,7 +1656,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: flapping 1`] = `
   >
     <span
       class="chip"
-      style="background-color: rgb(43, 62, 79);"
     >
       flapping
     </span>
@@ -1689,7 +1685,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: noEvents 1`] = `
   >
     <span
       class="chip"
-      style="background-color: rgb(255, 82, 82);"
     >
       no events
     </span>
@@ -1719,7 +1714,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: ongoing 1`] = `
   >
     <span
       class="chip"
-      style="background-color: rgb(249, 168, 37);"
     >
       ongoing
     </span>
@@ -1749,7 +1743,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: stealthy 1`] = `
   >
     <span
       class="chip"
-      style="background-color: rgb(117, 117, 117);"
     >
       stealthy
     </span>
