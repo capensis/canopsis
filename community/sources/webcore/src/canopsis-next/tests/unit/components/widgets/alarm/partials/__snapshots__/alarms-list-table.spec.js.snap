@@ -333,6 +333,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   selectedtag=""
                 />
                 <!---->
+                <!---->
               </th>
             </tr>
             <tr
@@ -416,6 +417,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
                 <!---->
               </th>
             </tr>
@@ -533,6 +535,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
                 <!---->
               </th>
             </tr>
@@ -652,6 +655,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
                 <!---->
               </th>
             </tr>
@@ -787,6 +791,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
                 <!---->
               </th>
             </tr>
