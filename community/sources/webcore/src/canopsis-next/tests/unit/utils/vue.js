@@ -29,8 +29,8 @@ import { stringifyJsonFilter } from '@/helpers/json';
 document.body.setAttribute('data-app', true);
 
 const mocks = {
-  $constants: Object.freeze(constants),
-  $config: Object.freeze(config),
+  $constants: constants,
+  $config: config,
 };
 
 Vue.use(Vuex);
