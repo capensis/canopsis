@@ -37,7 +37,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with editing mode 1`] = `
     style="height: 20px; max-width: 100%;"
   >
     <div
-      class="grid-item grid-layout__placeholder v-card v-sheet theme--light"
+      class="grid-item grid-layout__placeholder primary darken-1 v-card v-sheet theme--light"
       style="transform: translate3d(20px,20px, 0); width: 0px; height: 0px; position: absolute; display: none;"
     >
       <div />
@@ -140,7 +140,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'l' windo
     style="height: 1260px; max-width: 100%;"
   >
     <div
-      class="grid-item grid-layout__placeholder v-card v-sheet theme--light"
+      class="grid-item grid-layout__placeholder primary darken-1 v-card v-sheet theme--light"
       style="transform: translate3d(20px,20px, 0); width: 0px; height: 0px; position: absolute; display: none;"
     >
       <div />
@@ -294,7 +294,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'm' windo
     style="height: 320px; max-width: 450px;"
   >
     <div
-      class="grid-item grid-layout__placeholder v-card v-sheet theme--light"
+      class="grid-item grid-layout__placeholder primary darken-1 v-card v-sheet theme--light"
       style="transform: translate3d(20px,20px, 0); width: 0px; height: 0px; position: absolute; display: none;"
     >
       <div />
@@ -448,7 +448,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 't' windo
     style="height: 100px; max-width: 900px;"
   >
     <div
-      class="grid-item grid-layout__placeholder v-card v-sheet theme--light"
+      class="grid-item grid-layout__placeholder primary darken-1 v-card v-sheet theme--light"
       style="transform: translate3d(20px,20px, 0); width: 0px; height: 0px; position: absolute; display: none;"
     >
       <div />
@@ -602,7 +602,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets on 'xl' wind
     style="height: 1260px; max-width: 100%;"
   >
     <div
-      class="grid-item grid-layout__placeholder v-card v-sheet theme--light"
+      class="grid-item grid-layout__placeholder primary darken-1 v-card v-sheet theme--light"
       style="transform: translate3d(20px,20px, 0); width: 0px; height: 0px; position: absolute; display: none;"
     >
       <div />
@@ -756,7 +756,7 @@ exports[`view-tab-widgets Renders \`view-tab-widgets\` with widgets with editing
     style="height: 1260px; max-width: 100%;"
   >
     <div
-      class="grid-item grid-layout__placeholder v-card v-sheet theme--light"
+      class="grid-item grid-layout__placeholder primary darken-1 v-card v-sheet theme--light"
       style="transform: translate3d(20px,20px, 0); width: 0px; height: 0px; position: absolute; display: none;"
     >
       <div />
