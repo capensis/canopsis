@@ -391,6 +391,9 @@ export default {
     edit: {
       title: 'Modifier la règle SNMP',
     },
+    duplicate: {
+      title: 'Dupliquer la règle SNMP',
+    },
   },
   selectView: {
     title: 'Sélectionner une vue',
