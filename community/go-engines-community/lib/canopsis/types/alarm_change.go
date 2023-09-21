@@ -1,6 +1,7 @@
 package types
 
 import (
+	"strconv"
 	"time"
 )
 
@@ -70,6 +71,9 @@ const (
 
 	// AlarmChangeTypeAutoInstructionActivate is used to activate alarm when an autoremediation triggered by create trigger is completed
 	AlarmChangeTypeAutoInstructionActivate AlarmChangeType = "autoinstructionactivate"
+
+	// AlarmChangeEventsCount is used for eventscount trigger and alarm's events_count value should be added to the end of a trigger name, e.g. "eventscount3"
+	AlarmChangeEventsCount AlarmChangeType = "eventscount"
 )
 
 // AlarmChange is a struct containing the type of change that occured on an
@@ -83,6 +87,8 @@ type AlarmChange struct {
 	PreviousPbehaviorTime           *CpsTime
 	PreviousPbehaviorTypeID         string
 	PreviousPbehaviorCannonicalType string
+
+	EventsCount int
 }
 
 func NewAlarmChange() AlarmChange {
@@ -113,21 +119,23 @@ func NewAlarmChangeByAlarm(alarm Alarm, t ...AlarmChangeType) AlarmChange {
 }
 
 func (ac *AlarmChange) GetTriggers() []string {
-	return GetTriggers(ac.Type)
-}
-
-func (ac *AlarmChange) IsZero() bool {
-	if ac == nil {
-		return true
-	}
-
-	return *ac == AlarmChange{}
-}
-
-func GetTriggers(t AlarmChangeType) []string {
 	var triggers []string
 
-	switch t {
+	switch ac.Type {
+	case AlarmChangeTypeNone:
+		if ac.EventsCount > 1 {
+			triggers = append(triggers, string(AlarmChangeEventsCount)+strconv.Itoa(ac.EventsCount))
+		}
+	case AlarmChangeTypeStateIncrease:
+		triggers = append(triggers, string(AlarmChangeTypeStateIncrease))
+		if ac.EventsCount > 1 {
+			triggers = append(triggers, string(AlarmChangeEventsCount)+strconv.Itoa(ac.EventsCount))
+		}
+	case AlarmChangeTypeStateDecrease:
+		triggers = append(triggers, string(AlarmChangeTypeStateDecrease))
+		if ac.EventsCount > 1 {
+			triggers = append(triggers, string(AlarmChangeEventsCount)+strconv.Itoa(ac.EventsCount))
+		}
 	case AlarmChangeTypeCreateAndPbhEnter:
 		triggers = append(triggers, string(AlarmChangeTypeCreate), string(AlarmChangeTypePbhEnter))
 	case AlarmChangeTypePbhLeaveAndEnter:
@@ -148,11 +156,19 @@ func GetTriggers(t AlarmChangeType) []string {
 		AlarmChangeTypeAutoDeclareTicketWebhook:
 		triggers = append(triggers, string(AlarmChangeTypeDeclareTicketWebhook))
 	default:
-		trigger := string(t)
+		trigger := string(ac.Type)
 		if trigger != "" {
 			triggers = append(triggers, trigger)
 		}
 	}
 
 	return triggers
+}
+
+func (ac *AlarmChange) IsZero() bool {
+	if ac == nil {
+		return true
+	}
+
+	return *ac == AlarmChange{}
 }

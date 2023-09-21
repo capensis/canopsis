@@ -2,6 +2,7 @@ Feature: Get application information
   I need to be able to get application information
   Only admin should be able to get this information
 
+  @concurrent
   Scenario: given get request should return application information
     When I do GET /api/v4/app-info
     Then the response code should be 200
@@ -61,6 +62,7 @@ Feature: Get application information
           "enable": false
         }
       },
-      "maintenance": false
+      "maintenance": false,
+      "events_count_trigger_default_threshold": 10
     }
     """
