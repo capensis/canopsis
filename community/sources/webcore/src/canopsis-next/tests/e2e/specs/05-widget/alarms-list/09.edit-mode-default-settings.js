@@ -1,6 +1,6 @@
 // http://nightwatchjs.org/guide#usage
 
-import { ROW_SIZE_CLASSES, ROW_SIZE_KEYS } from '../../../constants';
+const { ROW_SIZE_CLASSES, ROW_SIZE_KEYS } = require('../../../constants');
 
 const { WIDGET_TYPES } = require('@/constants');
 const { createWidgetView, createWidgetForView, removeWidgetView } = require('../../../helpers/api');
