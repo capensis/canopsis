@@ -35,7 +35,7 @@
           v-btn(@click="resetMutatedGroups") {{ $t('common.cancel') }}
       groups-side-bar-playlists
       groups-settings-button(
-        tooltipRight,
+        tooltip-right,
         @toggleEditingMode="toggleNavigationEditingMode"
       )
     v-fade-transition
@@ -49,7 +49,7 @@ import { isDeepOrderChanged } from '@/helpers/dragdrop';
 import { groupsWithViewsToPositions } from '@/helpers/entities/view/form';
 
 import { entitiesViewMixin } from '@/mixins/entities/view';
-import layoutNavigationGroupsBarMixin from '@/mixins/layout/navigation/groups-bar';
+import { layoutNavigationGroupsBarMixin } from '@/mixins/layout/navigation/groups-bar';
 
 import GroupsSettingsButton from '../groups-settings-button.vue';
 import AppLogo from '../app-logo.vue';
