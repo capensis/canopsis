@@ -1,6 +1,6 @@
 import { isNumber } from 'lodash';
 
-import { COLORS, CSS_COLOR_VARS } from '@/config';
+import { COLORS, CSS_COLORS_VARS } from '@/config';
 import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, ENTITIES_STATUSES, EVENT_ENTITY_COLORS_BY_TYPE } from '@/constants';
 
 /**
@@ -18,10 +18,10 @@ export const getImpactStateColor = value => COLORS.impactState[value];
  * @returns {string}
  */
 export const getEntityStateColor = value => ({
-  [ENTITIES_STATES.ok]: CSS_COLOR_VARS.state.ok,
-  [ENTITIES_STATES.minor]: CSS_COLOR_VARS.state.minor,
-  [ENTITIES_STATES.major]: CSS_COLOR_VARS.state.major,
-  [ENTITIES_STATES.critical]: CSS_COLOR_VARS.state.critical,
+  [ENTITIES_STATES.ok]: CSS_COLORS_VARS.state.ok,
+  [ENTITIES_STATES.minor]: CSS_COLORS_VARS.state.minor,
+  [ENTITIES_STATES.major]: CSS_COLORS_VARS.state.major,
+  [ENTITIES_STATES.critical]: CSS_COLORS_VARS.state.critical,
 }[value]);
 
 /**
@@ -31,12 +31,12 @@ export const getEntityStateColor = value => ({
  * @returns {string}
  */
 export const getEntityStatusColor = value => ({
-  [ENTITIES_STATUSES.closed]: CSS_COLOR_VARS.status.closed,
-  [ENTITIES_STATUSES.ongoing]: CSS_COLOR_VARS.status.ongoing,
-  [ENTITIES_STATUSES.stealthy]: CSS_COLOR_VARS.status.stealthy,
-  [ENTITIES_STATUSES.flapping]: CSS_COLOR_VARS.status.flapping,
-  [ENTITIES_STATUSES.cancelled]: CSS_COLOR_VARS.status.cancelled,
-  [ENTITIES_STATUSES.noEvents]: CSS_COLOR_VARS.status.noEvents,
+  [ENTITIES_STATUSES.closed]: CSS_COLORS_VARS.status.closed,
+  [ENTITIES_STATUSES.ongoing]: CSS_COLORS_VARS.status.ongoing,
+  [ENTITIES_STATUSES.stealthy]: CSS_COLORS_VARS.status.stealthy,
+  [ENTITIES_STATUSES.flapping]: CSS_COLORS_VARS.status.flapping,
+  [ENTITIES_STATUSES.cancelled]: CSS_COLORS_VARS.status.cancelled,
+  [ENTITIES_STATUSES.noEvents]: CSS_COLORS_VARS.status.noEvents,
 }[value]);
 
 /**
@@ -48,7 +48,7 @@ export const getEntityStatusColor = value => ({
  */
 export const getEntityColor = (entity = {}, colorIndicator = COLOR_INDICATOR_TYPES.state) => {
   if (entity.is_grey) {
-    return CSS_COLOR_VARS.state.pause;
+    return CSS_COLORS_VARS.state.pause;
   }
 
   if (colorIndicator === COLOR_INDICATOR_TYPES.state) {
