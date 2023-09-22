@@ -50,7 +50,6 @@ class AlertsReader(object):
         :param logger: a logger object
         :param config: a confng instance
         :param storage: a storage instance
-        :param pbehavior_manager: a pbehavior manager instance
         """
         self.logger = logger
         self.config = config
@@ -66,8 +65,7 @@ class AlertsReader(object):
 
         :rtype: Union[logging.Logger,
                       canospis.confng.simpleconf.Configuration,
-                      canopsis.storage.core.Storage,
-                      canopsis.pbehavior.manager.PBehaviorManager]
+                      canopsis.storage.core.Storage]
         """
         logger = Logger.get('alertsreader', cls.LOG_PATH)
         conf = Configuration.load(cls.ALERTS_CONF_PATH, Ini)
