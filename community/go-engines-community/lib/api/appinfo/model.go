@@ -38,8 +38,10 @@ type RemediationConf struct {
 }
 
 type JobConfigType struct {
-	Name     string `json:"name"`
-	AuthType string `json:"auth_type"`
+	Name      string `json:"name"`
+	AuthType  string `json:"auth_type"`
+	WithBody  bool   `json:"with_body"`
+	WithQuery bool   `json:"with_query"`
 }
 
 type AppInfoResponse struct {
@@ -48,6 +50,8 @@ type AppInfoResponse struct {
 	VersionConf
 	Login       LoginConf        `json:"login"`
 	Remediation *RemediationConf `json:"remediation,omitempty"`
+
+	Maintenance bool `json:"maintenance"`
 }
 
 type LoginConf struct {

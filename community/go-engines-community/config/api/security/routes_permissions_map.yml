@@ -1,12 +1,1 @@
 map:
-  /snmprule:
-    POST: [api_snmprule,read]
-    DELETE: [api_snmprule,delete]
-  /snmprule/put:
-    POST: [api_snmprule,create]
-  /snmpmib:
-    POST: [api_snmpmib,read]
-  /snmpmibdistinct:
-    POST: [api_snmpmib,read]
-  /uploadmib:
-    POST: [api_snmpmib,create]

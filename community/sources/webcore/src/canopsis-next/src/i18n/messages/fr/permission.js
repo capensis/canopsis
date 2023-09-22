@@ -352,7 +352,7 @@ export default {
     },
 
     /**
-     * Technical Line Chart Permissions
+     * Business Line Chart Permissions
      */
     [USERS_PERMISSIONS.business.lineChart.actions.interval]: {
       name: 'Graphique en courbes : intervalle',
@@ -380,7 +380,7 @@ export default {
     },
 
     /**
-     * Technical Pie Chart Permissions
+     * Business Pie Chart Permissions
      */
     [USERS_PERMISSIONS.business.pieChart.actions.interval]: {
       name: 'Piechart : intervalle',
@@ -408,7 +408,7 @@ export default {
     },
 
     /**
-     * Technical Pie Chart Permissions
+     * Business Numbers Permissions
      */
     [USERS_PERMISSIONS.business.numbers.actions.interval]: {
       name: 'Nombres : intervalle',
@@ -545,6 +545,14 @@ export default {
     [USERS_PERMISSIONS.technical.widgetTemplate]: {
       name: 'Modèles de widgets',
       description: 'Cette autorisation définit l\'accès aux modèles de widget',
+    },
+    [USERS_PERMISSIONS.technical.maintenance]: {
+      name: 'Mode de Maintenance',
+      description: 'Cette autorisation définit l\'accès au mode Maintenance',
+    },
+    [USERS_PERMISSIONS.technical.tag]: {
+      name: 'Gestion des balises',
+      description: 'Cette autorisation définit l\'accès à la gestion des balises',
     },
 
     /**
@@ -745,6 +753,10 @@ export default {
     [USERS_PERMISSIONS.api.general.widgetTemplate]: {
       name: 'Modèles de widgets',
       description: 'Accès à la route API vers les modèles de widgets CRUD',
+    },
+    [USERS_PERMISSIONS.api.general.maintenance]: {
+      name: 'Mode de Maintenance',
+      description: 'Accès à l\'API route vers le mode maintenance',
     },
 
     [USERS_PERMISSIONS.api.rules.action]: {

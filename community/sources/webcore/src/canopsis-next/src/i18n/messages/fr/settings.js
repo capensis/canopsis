@@ -52,6 +52,7 @@ export default {
   isAckNoteRequired: 'Champ \'Note\' requis lors d\'un acquittement ?',
   isSnoozeNoteRequired: 'Champ \'Note\' requis lors d\'une mise en veille ?',
   isRemoveAlarmsFromMetaAlarmCommentRequired: 'Champ \'Commentaire\' requis lors de la suppression des alarmes de la méta-alarme manuelle ?',
+  isUncancelAlarmsCommentRequired: 'Champ de commentaire obligatoire lors de l\'annulation ?',
   isMultiAckEnabled: 'Acquittement multiple',
   isMultiDeclareTicketEnabled: 'Déclarer un ticket multiple',
   isActionsAllowWithOkState: 'Actions autorisées lorsque l\'état est OK ?',
@@ -78,6 +79,8 @@ export default {
   headerTitle: 'Titre de l\'en-tête',
   defaultSampling: 'Default sampling',
   defaultTimeRange: 'Plage horaire par défaut',
+  liveWatching: 'Regarder en direct',
+  liveWatchingTooltip: 'Si activé, les informations sur les changements d\'alarmes sont récupérées à l\'aide de websockets',
   exportCsv: {
     title: 'Exporter CSV',
     fields: {
@@ -108,6 +111,7 @@ export default {
     },
   },
   moreInfosModal: 'Fenêtre "Plus d\'infos"',
+  exportPdfTemplate: 'Exporter le modèle PDF',
   expandGridRangeSize: 'Largeur-position "Plus d\'infos / chronologie"',
   weatherTemplate: 'Template - Tuiles',
   modalTemplate: 'Template - Modale',

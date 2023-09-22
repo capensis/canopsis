@@ -10,7 +10,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
     class="v-divider theme--light"
   />
   <field-periodic-refresh-stub
-    value="[object Object]"
+    form="[object Object]"
   />
   <hr
     class="v-divider theme--light"
@@ -65,6 +65,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       class="v-divider theme--light"
     />
     <field-text-editor-with-template-stub
+      defaultvalue=""
       template="Symbol(custom)"
       templates=""
       title="Template - Weather item"
@@ -75,6 +76,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       class="v-divider theme--light"
     />
     <field-text-editor-with-template-stub
+      defaultvalue=""
       template="Symbol(custom)"
       templates=""
       title="Template - Modal"
@@ -85,6 +87,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
       class="v-divider theme--light"
     />
     <field-text-editor-with-template-stub
+      defaultvalue=""
       template="Symbol(custom)"
       templates=""
       title="Template - Entities"
@@ -175,7 +178,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
     class="v-divider theme--light"
   />
   <field-periodic-refresh-stub
-    value="[object Object]"
+    form="[object Object]"
   />
   <hr
     class="v-divider theme--light"
@@ -230,6 +233,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       class="v-divider theme--light"
     />
     <field-text-editor-with-template-stub
+      defaultvalue=""
       template="Symbol(custom)"
       templates=""
       title="Template - Weather item"
@@ -243,6 +247,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       class="v-divider theme--light"
     />
     <field-text-editor-with-template-stub
+      defaultvalue=""
       template="Symbol(custom)"
       templates=""
       title="Template - Modal"
@@ -253,6 +258,7 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
       class="v-divider theme--light"
     />
     <field-text-editor-with-template-stub
+      defaultvalue=""
       template="Symbol(custom)"
       templates=""
       title="Template - Entities"

@@ -17,7 +17,11 @@ export const layoutNavigationGroupsBarMixin = {
   },
   computed: {
     availableGroups() {
-      return this.groups.filter(({ views = [] }) => views.length || this.isNavigationEditingMode);
+      if (this.isNavigationEditingMode) {
+        return this.groups;
+      }
+
+      return this.groups.filter(({ views = [] }) => views.length);
     },
   },
   mounted() {

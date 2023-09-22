@@ -156,3 +156,7 @@ entity_category:
     <<: *category
     _id: test-category-to-import-contextgraph-3
     name: test-category-to-import-contextgraph-3-name
+  category_to_alarm_export:
+    <<: *category
+    _id: test-category-to-alarm-export
+    name: test-category-to-alarm-export-name
