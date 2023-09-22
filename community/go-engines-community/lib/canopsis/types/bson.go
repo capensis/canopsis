@@ -17,7 +17,7 @@ type OptionalStringArray struct {
 
 func (a *OptionalStringArray) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
-	case bsontype.Array:
+	case bson.TypeArray:
 		var raw bson.Raw
 		err := bson.Unmarshal(b, &raw)
 		if err != nil {
@@ -55,15 +55,15 @@ func (a OptionalStringArray) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		return bson.MarshalValue(a.Value)
 	}
 
-	return bsontype.Undefined, nil, nil
+	return bson.TypeUndefined, nil, nil
 }
 
 // OptionalInt64 is a wrapper around int64 that implements the bson.Setter
 // interface.
 //
 // Using this type instead of int64 in a struct allows to :
-//  - check whether the value was set or not in the bson document.
-//  - raise an error when trying to unmarshal a value that is not an integer.
+//   - check whether the value was set or not in the bson document.
+//   - raise an error when trying to unmarshal a value that is not an integer.
 //
 // Note that when trying to unmarshal a value that is not an integer, UnmarshalBSONValue
 // will raise an error that will not be handled by bson.Unmarshal. If this
@@ -80,21 +80,21 @@ type OptionalInt64 struct {
 
 func (i *OptionalInt64) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
-	case bsontype.Int32:
+	case bson.TypeInt32:
 		value, _, ok := bsoncore.ReadInt32(b)
 		if !ok {
 			return errors.New("invalid value, expected int32")
 		}
 
 		i.Value = int64(value)
-	case bsontype.Int64:
+	case bson.TypeInt64:
 		value, _, ok := bsoncore.ReadInt64(b)
 		if !ok {
 			return errors.New("invalid value, expected int64")
 		}
 
 		i.Value = value
-	case bsontype.Double:
+	case bson.TypeDouble:
 		value, _, ok := bsoncore.ReadDouble(b)
 		if !ok {
 			return errors.New("invalid value, expected double")
@@ -118,15 +118,15 @@ func (i OptionalInt64) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		return bson.MarshalValue(i.Value)
 	}
 
-	return bsontype.Undefined, nil, nil
+	return bson.TypeUndefined, nil, nil
 }
 
 // OptionalBool is a wrapper around bool that implements the bson.Setter
 // interface.
 //
 // Using this type instead of bool in a struct allows to :
-//  - check whether the value was set or not in the bson document.
-//  - raise an error when trying to unmarshal a value that is not an integer.
+//   - check whether the value was set or not in the bson document.
+//   - raise an error when trying to unmarshal a value that is not an integer.
 //
 // Note that when trying to unmarshal a value that is not a bool, UnmarshalBSONValue
 // will raise an error that will not be handled by bson.Unmarshal. If this
@@ -143,7 +143,7 @@ type OptionalBool struct {
 
 func (s *OptionalBool) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
-	case bsontype.Boolean:
+	case bson.TypeBoolean:
 		value, _, ok := bsoncore.ReadBoolean(b)
 		if !ok {
 			return errors.New("invalid value, expected bool")
@@ -163,15 +163,15 @@ func (s OptionalBool) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		return bson.MarshalValue(s.Value)
 	}
 
-	return bsontype.Undefined, nil, nil
+	return bson.TypeUndefined, nil, nil
 }
 
 // OptionalString is a wrapper around string that implements the bson.Setter
 // interface.
 //
 // Using this type instead of string in a struct allows to :
-//  - check whether the value was set or not in the bson document.
-//  - raise an error when trying to unmarshal a value that is not an integer.
+//   - check whether the value was set or not in the bson document.
+//   - raise an error when trying to unmarshal a value that is not an integer.
 //
 // Note that when trying to unmarshal a value that is not a string, UnmarshalBSONValue
 // will raise an error that will not be handled by bson.Unmarshal. If this
@@ -188,7 +188,7 @@ type OptionalString struct {
 
 func (s *OptionalString) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
-	case bsontype.String:
+	case bson.TypeString:
 		value, _, ok := bsoncore.ReadString(b)
 		if !ok {
 			return errors.New("invalid value, expected string")
@@ -208,7 +208,7 @@ func (s OptionalString) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		return bson.MarshalValue(s.Value)
 	}
 
-	return bsontype.Undefined, nil, nil
+	return bson.TypeUndefined, nil, nil
 }
 
 // OptionalInterface is a wrapper around interface{} that implements the
@@ -227,35 +227,35 @@ type OptionalInterface struct {
 
 func (i *OptionalInterface) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
-	case bsontype.Int32:
+	case bson.TypeInt32:
 		value, _, ok := bsoncore.ReadInt32(b)
 		if !ok {
 			return errors.New("invalid value, expected int32")
 		}
 
 		i.Value = int64(value)
-	case bsontype.Int64:
+	case bson.TypeInt64:
 		value, _, ok := bsoncore.ReadInt64(b)
 		if !ok {
 			return errors.New("invalid value, expected int64")
 		}
 
 		i.Value = value
-	case bsontype.Double:
+	case bson.TypeDouble:
 		value, _, ok := bsoncore.ReadDouble(b)
 		if !ok {
 			return errors.New("invalid value, expected double")
 		}
 
 		i.Value = int64(value)
-	case bsontype.Boolean:
+	case bson.TypeBoolean:
 		value, _, ok := bsoncore.ReadBoolean(b)
 		if !ok {
 			return errors.New("invalid value, expected bool")
 		}
 
 		i.Value = value
-	case bsontype.String:
+	case bson.TypeString:
 		value, _, ok := bsoncore.ReadString(b)
 		if !ok {
 			return errors.New("invalid value, expected string")
@@ -275,17 +275,17 @@ func (i OptionalInterface) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		return bson.MarshalValue(i.Value)
 	}
 
-	return bsontype.Undefined, nil, nil
+	return bson.TypeUndefined, nil, nil
 }
 
 // OptionalRegexp is a wrapper around regexp.Regexp that implements the
 // bson.Setter interface.
 //
 // Using this type in a struct allows to :
-//  - check whether the value was set or not in the bson document.
-//  - automatically compile a regular expression.
-//  - raise an error when trying to unmarshal a value that is not a valid
-//    regular expression.
+//   - check whether the value was set or not in the bson document.
+//   - automatically compile a regular expression.
+//   - raise an error when trying to unmarshal a value that is not a valid
+//     regular expression.
 //
 // Note that when trying to unmarshal a value that is not a valid regular
 // expression, UnmarshalBSONValue will raise an error that will not be handled by
@@ -302,7 +302,7 @@ type OptionalRegexp struct {
 
 func (r *OptionalRegexp) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
-	case bsontype.String:
+	case bson.TypeString:
 		value, _, ok := bsoncore.ReadString(b)
 		if !ok {
 			return errors.New("unable to parse regular expression")
@@ -326,5 +326,5 @@ func (r OptionalRegexp) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		return bson.MarshalValue(r.Value)
 	}
 
-	return bsontype.Undefined, nil, nil
+	return bson.TypeUndefined, nil, nil
 }

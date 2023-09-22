@@ -1,6 +1,7 @@
 Feature: Import entities
   I need to be able to import entities
 
+  @concurrent
   Scenario: given service and new entity by import should update service
     When I am admin
     When I do POST /api/v4/entityservices:
@@ -26,7 +27,24 @@ Feature: Import entities
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      }
+    ]
+    """
     When I do PUT /api/v4/contextgraph/import-partial?source=test-import-partial-1-source:
     """json
     {
@@ -48,7 +66,22 @@ Feature: Import entities
        "status": "done"
     }
     """
-    When I wait the end of event processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "entityupdated",
+        "component": "test-component-import-partial-1",
+        "source_type": "component"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      }
+    ]
+    """
     When I do GET /api/v4/entities/context-graph?_id=test-component-import-partial-1
     Then the response code should be 200
     Then the response body should be:
@@ -92,9 +125,10 @@ Feature: Import entities
     """
     Then the response key "data.0.imported" should be greater than 0
 
+  @concurrent
   Scenario: given service and updated entity by import should update service
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-import-partial-2",
@@ -106,7 +140,6 @@ Feature: Import entities
       "output": "test-output-import-partial-2"
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -131,7 +164,24 @@ Feature: Import entities
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      }
+    ]
+    """
     When I do PUT /api/v4/contextgraph/import-partial?source=test-import-partial-2-source:
     """json
     {
@@ -159,7 +209,22 @@ Feature: Import entities
        "status": "done"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "entityupdated",
+        "component": "test-component-import-partial-2",
+        "source_type": "component"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      }
+    ]
+    """
     When I do GET /api/v4/entities/context-graph?_id=test-component-import-partial-2
     Then the response array key "impact" should contain:
     """json
@@ -191,9 +256,10 @@ Feature: Import entities
     }
     """
 
+  @concurrent
   Scenario: given disabled entity by import should resolve alarm
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-import-partial-3",
@@ -205,7 +271,6 @@ Feature: Import entities
       "output": "test-output-import-partial-3"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-component-import-partial-3&opened=true
     Then the response code should be 200
     Then the response body should contain:
@@ -247,7 +312,14 @@ Feature: Import entities
        "status": "done"
     }
     """
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "entitytoggled",
+      "component": "test-component-import-partial-3",
+      "source_type": "component"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-component-import-partial-3&opened=true
     Then the response code should be 200
     Then the response body should be:

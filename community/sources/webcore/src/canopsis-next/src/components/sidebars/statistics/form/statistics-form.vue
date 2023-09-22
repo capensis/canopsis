@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(column)
     field-title(v-field="form.title")
-    field-periodic-refresh(v-field="form.parameters.periodic_refresh")
+    field-periodic-refresh(v-field="form.parameters")
     field-main-parameter(
       v-field="form.parameters.mainParameter",
       :type="type"

@@ -76,30 +76,14 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
       required="true"
     />
   </c-collapse-panel-stub>
-  <div
-    class="flex xs12"
+  <c-alert-stub
+    transition="fade-transition"
+    type="warning"
   >
-    <transition-stub
-      name="fade-transition"
-    >
-      <div
-        class="v-alert warning"
-        style="display: none;"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light v-alert__icon"
-        >
-          priority_high
-        </i>
-        <div>
-          <span>
-            The patterns you've defined targets about 0 items. It can affect performance, are you sure ?
-          </span>
-        </div>
-      </div>
-    </transition-stub>
-  </div>
+    <span>
+      The patterns you've defined targets about 0 items. It can affect performance, are you sure ?
+    </span>
+  </c-alert-stub>
   <div
     class="layout row justify-end align-center"
   >
@@ -143,30 +127,14 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with default props 1`] = 
   <!---->
   <!---->
   <!---->
-  <div
-    class="flex xs12"
+  <c-alert-stub
+    transition="fade-transition"
+    type="warning"
   >
-    <transition-stub
-      name="fade-transition"
-    >
-      <div
-        class="v-alert warning"
-        style="display: none;"
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon material-icons theme--light v-alert__icon"
-        >
-          priority_high
-        </i>
-        <div>
-          <span>
-            The patterns you've defined targets about 0 items. It can affect performance, are you sure ?
-          </span>
-        </div>
-      </div>
-    </transition-stub>
-  </div>
+    <span>
+      The patterns you've defined targets about 0 items. It can affect performance, are you sure ?
+    </span>
+  </c-alert-stub>
   <div
     class="layout row justify-end align-center"
   >

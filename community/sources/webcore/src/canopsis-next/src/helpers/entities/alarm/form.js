@@ -60,6 +60,7 @@ import { ENTITIES_STATES, ENTITIES_STATUSES, TIME_UNITS } from '@/constants';
  * @property {string} id
  * @property {string} name
  * @property {string} reason
+ * @property {string} reason_name
  * @property {string} type
  * @property {string} type_name
  * @property {number} timestamp
@@ -74,7 +75,6 @@ import { ENTITIES_STATES, ENTITIES_STATUSES, TIME_UNITS } from '@/constants';
  * @property {string} output
  * @property {string} initial_output
  * @property {string[]} children
- * @property {string[]} filtered_children
  * @property {Object} extra
  * @property {number} last_update_date
  * @property {number} resolved
@@ -125,6 +125,7 @@ import { ENTITIES_STATES, ENTITIES_STATUSES, TIME_UNITS } from '@/constants';
  * @property {Correlation} causes
  * @property {AlarmPbehavior} pbehavior
  * @property {AlarmLinks} links
+ * @property {string[]} tags
  * @property {number} t
  * @property {AlarmValue} v
  */

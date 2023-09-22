@@ -52,6 +52,7 @@ export default {
   isAckNoteRequired: 'Note field required when ack?',
   isSnoozeNoteRequired: 'Note field required when snooze?',
   isRemoveAlarmsFromMetaAlarmCommentRequired: 'Comment field required when remove alarms from manual meta alarm?',
+  isUncancelAlarmsCommentRequired: 'Comment field required when uncancel?',
   isMultiAckEnabled: 'Multiple ack',
   isMultiDeclareTicketEnabled: 'Multiple declare ticket',
   isActionsAllowWithOkState: 'Actions allowed when state OK?',
@@ -78,6 +79,8 @@ export default {
   headerTitle: 'Header title',
   defaultSampling: 'Default sampling',
   defaultTimeRange: 'Default time range',
+  liveWatching: 'Live watching',
+  liveWatchingTooltip: 'If enabled, the information about changes in alarms are retrieved using websockets',
   exportCsv: {
     title: 'Export CSV',
     fields: {
@@ -108,6 +111,7 @@ export default {
     },
   },
   moreInfosModal: '"More Infos" Popup',
+  exportPdfTemplate: 'Export PDF template',
   expandGridRangeSize: 'Expand card (more infos / timeline) width',
   weatherTemplate: 'Template - Weather item',
   modalTemplate: 'Template - Modal',
