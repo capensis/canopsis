@@ -151,15 +151,6 @@ export const API_ROUTES = {
   },
   file: '/api/v4/file',
   fileAccess: '/api/v4/file-access',
-  snmpRule: {
-    list: '/api/snmprule',
-    create: '/api/snmprule/put',
-  },
-  snmpMib: {
-    list: '/api/snmpmib',
-    distinct: '/api/snmpmibdistinct',
-    upload: '/api/uploadmib',
-  },
   infos: {
     app: '/api/v4/app-info',
     userInterface: '/api/v4/internal/user_interface',
@@ -283,6 +274,8 @@ export const API_ROUTES = {
   mapState: '/api/v4/cat/map-state',
   manualMetaAlarm: '/api/v4/cat/manual-meta-alarms',
   metaAlarm: '/api/v4/cat/meta-alarms',
+  snmpRule: '/api/v4/cat/snmprules',
+  snmpMib: '/api/v4/cat/snmpmibs',
   declareTicket: {
     rules: '/api/v4/cat/declare-ticket-rules',
     bulkRules: '/api/v4/cat/bulk/declare-ticket-rules',
