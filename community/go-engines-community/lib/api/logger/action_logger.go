@@ -65,6 +65,9 @@ const (
 
 	ValueTypeShareToken = "sharetoken"
 
+	ValueTypeSnmpRule = "snmprule"
+	ValueTypeSnmpMib  = "snmpmib"
+
 	ValueTypeDeclareTicketRule = "declareticketrule"
 
 	ValueTypeLinkRule = "linkrule"
