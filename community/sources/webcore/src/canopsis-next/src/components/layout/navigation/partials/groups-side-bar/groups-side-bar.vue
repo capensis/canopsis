@@ -35,7 +35,7 @@
           v-btn(@click="resetMutatedGroups") {{ $t('common.cancel') }}
       groups-side-bar-playlists
       groups-settings-button(
-        tooltipRight,
+        tooltip-right,
         @toggleEditingMode="toggleNavigationEditingMode"
       )
     v-fade-transition

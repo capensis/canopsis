@@ -857,6 +857,13 @@ Feature: update service on event
         "connector": "service",
         "connector_name": "service",
         "component": "{{ .serviceID }}"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}",
+        "source_type": "service"
       }
     ]
     """
