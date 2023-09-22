@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -31,7 +32,8 @@ const (
 
 const (
 	// Time allowed to write a message to the peer.
-	writeWait = 10 * time.Second
+	writeWait   = 10 * time.Second
+	stopTimeout = 5 * time.Second
 )
 
 // Hub interface is used to implement websocket room.
@@ -41,18 +43,33 @@ type Hub interface {
 	// Connect creates listener connection.
 	Connect(w http.ResponseWriter, r *http.Request) error
 	// Send sends message to all listeners in room.
-	Send(room string, msg any)
-	SendGroupRoom(group, id string, msg any)
+	Send(ctx context.Context, room string, msg any)
+	SendGroupRoom(ctx context.Context, group, id string, msg any)
+	SendGroupRoomByConnections(ctx context.Context, connIds []string, group, id string, b any)
 	// RegisterRoom adds room with permissions.
 	RegisterRoom(room string, perms ...string) error
-	RegisterGroup(group string, check GroupCheck, perms ...string) error
+	RegisterGroup(group string, params GroupParameters, perms ...string) error
 	GetGroupIds(group string) []string
 	GetConnectedGroupIds(group string) []string
-	CloseGroupRoom(group, id string) error
-	CloseGroupRoomAndNotify(group, id string) error
+	CloseGroupRoom(ctx context.Context, group, id string) error
+	CloseGroupRoomAndNotify(ctx context.Context, group, id string) error
 	GetUserTokens() []string
 	GetConnections() []UserConnection
 }
+
+type GroupParameters struct {
+	CheckExists GroupCheckExists
+	OnJoin      GroupOnJoin
+	OnLeave     GroupOnLeave
+}
+
+func (p GroupParameters) IsZero() bool {
+	return p.CheckExists == nil && p.OnJoin == nil && p.OnLeave == nil
+}
+
+type GroupCheckExists func(ctx context.Context, id string) (bool, error)
+type GroupOnJoin func(ctx context.Context, connId, userId, id string, data any) error
+type GroupOnLeave func(ctx context.Context, connId, id string) error
 
 func NewHub(
 	upgrader Upgrader,
@@ -64,6 +81,7 @@ func NewHub(
 		upgrader:     upgrader,
 		rooms:        make(map[string][]string),
 		conns:        make(map[string]userConn),
+		groups:       make(map[string]GroupParameters),
 		authorizer:   authorizer,
 		pingInterval: pingInterval,
 		pongInterval: pingInterval * 10 / 9,
@@ -75,6 +93,7 @@ type RMessage struct {
 	Type  int    `json:"type"`
 	Room  string `json:"room"`
 	Token string `json:"token"`
+	Data  any    `json:"data"`
 }
 
 type WMessage struct {
@@ -96,6 +115,8 @@ type hub struct {
 	rooms      map[string][]string
 	connsMx    sync.RWMutex
 	conns      map[string]userConn
+	groupsMx   sync.RWMutex
+	groups     map[string]GroupParameters
 	authorizer Authorizer
 	// Send pings to peer with this period. Must be less than pongInterval.
 	pingInterval time.Duration
@@ -121,15 +142,17 @@ loop:
 			break loop
 		case <-ticker.C:
 			closedConns := h.pingConnections()
-			h.closeConnections(closedConns...)
+			h.closeConnections(ctx, closedConns...)
 
 			closedConns, connsToDisconnect := h.checkAuth(ctx)
-			h.closeConnections(closedConns...)
-			h.disconnectConnections(connsToDisconnect...)
+			h.closeConnections(ctx, closedConns...)
+			h.disconnectConnections(ctx, connsToDisconnect...)
 		}
 	}
 
-	h.stop()
+	stopCtx, stopCancel := context.WithTimeout(context.Background(), stopTimeout)
+	defer stopCancel()
+	h.stop(stopCtx)
 }
 
 func (h *hub) Connect(w http.ResponseWriter, r *http.Request) error {
@@ -169,19 +192,31 @@ func (h *hub) Connect(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-func (h *hub) Send(room string, b any) {
+func (h *hub) Send(ctx context.Context, room string, b any) {
 	closedConns := h.sendToRoom(room, WMessage{
 		Type: WMessageSuccess,
 		Room: room,
 		Msg:  b,
 	})
 	if len(closedConns) > 0 {
-		h.closeConnections(closedConns...)
+		h.closeConnections(ctx, closedConns...)
 	}
 }
 
-func (h *hub) SendGroupRoom(group, id string, b any) {
-	h.Send(group+id, b)
+func (h *hub) SendGroupRoom(ctx context.Context, group, id string, b any) {
+	h.Send(ctx, group+id, b)
+}
+
+func (h *hub) SendGroupRoomByConnections(ctx context.Context, connIds []string, group, id string, b any) {
+	room := group + id
+	closedConns := h.sendToRoomByConns(room, connIds, WMessage{
+		Type: WMessageSuccess,
+		Room: room,
+		Msg:  b,
+	})
+	if len(closedConns) > 0 {
+		h.closeConnections(ctx, closedConns...)
+	}
 }
 
 func (h *hub) RegisterRoom(room string, perms ...string) error {
@@ -189,9 +224,14 @@ func (h *hub) RegisterRoom(room string, perms ...string) error {
 	return h.authorizer.AddRoom(room, perms)
 }
 
-func (h *hub) RegisterGroup(group string, check GroupCheck, perms ...string) error {
+func (h *hub) RegisterGroup(group string, params GroupParameters, perms ...string) error {
 	defer h.logger.Debug().Str("group", group).Msg("register websocket group")
-	return h.authorizer.AddGroup(group, perms, check)
+	if !params.IsZero() {
+		h.groupsMx.Lock()
+		h.groups[group] = params
+		h.groupsMx.Unlock()
+	}
+	return h.authorizer.AddGroup(group, perms, params.CheckExists)
 }
 
 func (h *hub) GetGroupIds(group string) []string {
@@ -219,7 +259,7 @@ func (h *hub) GetConnectedGroupIds(group string) []string {
 	return ids[:k]
 }
 
-func (h *hub) CloseGroupRoom(group, id string) error {
+func (h *hub) CloseGroupRoom(ctx context.Context, group, id string) error {
 	room := group + id
 	defer h.logger.Debug().Str("room", room).Msg("close websocket room")
 
@@ -228,25 +268,35 @@ func (h *hub) CloseGroupRoom(group, id string) error {
 		return err
 	}
 
+	onLeave := h.getOnLeaveByGroup(group)
 	h.roomsMx.Lock()
 	defer h.roomsMx.Unlock()
+
+	if onLeave != nil {
+		for _, connId := range h.rooms[room] {
+			err = onLeave(ctx, connId, id)
+			if err != nil {
+				h.logger.Err(err).Str("room", room).Msgf("cannot leave room")
+			}
+		}
+	}
 
 	delete(h.rooms, room)
 
 	return nil
 }
 
-func (h *hub) CloseGroupRoomAndNotify(group, id string) error {
+func (h *hub) CloseGroupRoomAndNotify(ctx context.Context, group, id string) error {
 	room := group + id
 	closedConns := h.sendToRoom(room, WMessage{
 		Type: WMessageCloseRoom,
 		Room: room,
 	})
 	if len(closedConns) > 0 {
-		h.closeConnections(closedConns...)
+		h.closeConnections(ctx, closedConns...)
 	}
 
-	return h.CloseGroupRoom(group, id)
+	return h.CloseGroupRoom(ctx, group, id)
 }
 
 func (h *hub) GetUserTokens() []string {
@@ -285,7 +335,7 @@ func (h *hub) GetConnections() []UserConnection {
 	return conns
 }
 
-func (h *hub) join(ctx context.Context, connId, room string) (closed bool) {
+func (h *hub) join(ctx context.Context, connId, room string, data any) (closed bool, _ error) {
 	h.connsMx.RLock()
 	defer h.connsMx.RUnlock()
 
@@ -344,27 +394,28 @@ func (h *hub) join(ctx context.Context, connId, room string) (closed bool) {
 		return
 	}
 
+	onJoin, id := h.getOnJoin(room)
 	h.roomsMx.Lock()
 	defer h.roomsMx.Unlock()
-
 	for _, v := range h.rooms[room] {
 		if v == connId {
 			return
 		}
 	}
 
-	if len(h.rooms[room]) == 0 {
-		h.rooms[room] = make([]string, 0, 1)
+	if onJoin != nil {
+		err := onJoin(ctx, connId, userId, id, data)
+		if err != nil {
+			return closed, err
+		}
 	}
 
 	h.rooms[room] = append(h.rooms[room], connId)
 	return
 }
 
-func (h *hub) leave(connId, room string) (closed bool) {
+func (h *hub) leave(ctx context.Context, connId, room string) {
 	h.roomsMx.Lock()
-	defer h.roomsMx.Unlock()
-
 	index := -1
 	for i, v := range h.rooms[room] {
 		if v == connId {
@@ -373,21 +424,39 @@ func (h *hub) leave(connId, room string) (closed bool) {
 		}
 	}
 
-	if index < 0 {
-		return
+	if index >= 0 {
+		h.rooms[room] = append(h.rooms[room][:index], h.rooms[room][index+1:]...)
 	}
 
-	h.rooms[room] = append(h.rooms[room][:index], h.rooms[room][index+1:]...)
-	return
+	h.roomsMx.Unlock()
+	onLeave, id := h.getOnLeave(room)
+	if onLeave != nil {
+		err := onLeave(ctx, connId, id)
+		if err != nil {
+			h.logger.Err(err).Str("room", room).Msg("cannot leave room")
+		}
+	}
 }
 
-func (h *hub) stop() {
+func (h *hub) stop(ctx context.Context) {
 	h.connsMx.Lock()
 	h.roomsMx.Lock()
 	defer func() {
 		h.roomsMx.Unlock()
 		h.connsMx.Unlock()
 	}()
+
+	for room, connIds := range h.rooms {
+		onLeave, id := h.getOnLeave(room)
+		if onLeave != nil {
+			for _, connId := range connIds {
+				err := onLeave(ctx, connId, id)
+				if err != nil {
+					h.logger.Err(err).Str("room", room).Msgf("cannot leave room")
+				}
+			}
+		}
+	}
 
 	h.rooms = make(map[string][]string)
 
@@ -404,7 +473,7 @@ func (h *hub) stop() {
 	h.conns = make(map[string]userConn)
 }
 
-func (h *hub) removeConnections(connIds ...string) {
+func (h *hub) removeConnections(ctx context.Context, connIds ...string) {
 	if len(connIds) == 0 {
 		return
 	}
@@ -412,14 +481,14 @@ func (h *hub) removeConnections(connIds ...string) {
 	h.connsMx.Lock()
 	defer h.connsMx.Unlock()
 
-	h.removeConnsFromRooms(connIds)
+	h.removeConnsFromRooms(ctx, connIds)
 
 	for _, connId := range connIds {
 		delete(h.conns, connId)
 	}
 }
 
-func (h *hub) closeConnections(connIds ...string) {
+func (h *hub) closeConnections(ctx context.Context, connIds ...string) {
 	if len(connIds) == 0 {
 		return
 	}
@@ -427,7 +496,7 @@ func (h *hub) closeConnections(connIds ...string) {
 	h.connsMx.Lock()
 	defer h.connsMx.Unlock()
 
-	h.removeConnsFromRooms(connIds)
+	h.removeConnsFromRooms(ctx, connIds)
 
 	for _, connId := range connIds {
 		if c, ok := h.conns[connId]; ok {
@@ -444,7 +513,7 @@ func (h *hub) closeConnections(connIds ...string) {
 	}
 }
 
-func (h *hub) disconnectConnections(connIds ...string) {
+func (h *hub) disconnectConnections(ctx context.Context, connIds ...string) {
 	if len(connIds) == 0 {
 		return
 	}
@@ -452,7 +521,7 @@ func (h *hub) disconnectConnections(connIds ...string) {
 	h.connsMx.Lock()
 	defer h.connsMx.Unlock()
 
-	h.removeConnsFromRooms(connIds)
+	h.removeConnsFromRooms(ctx, connIds)
 
 	for _, connId := range connIds {
 		if c, ok := h.conns[connId]; ok {
@@ -560,6 +629,7 @@ func (h *hub) checkRoomAuth(ctx context.Context, room string, checked map[string
 	roomConns := h.rooms[room]
 	authRoomConns := make([]string, 0, len(roomConns))
 	closedConns := make([]string, 0)
+	onLeave, id := h.getOnLeave(room)
 
 	for _, connId := range roomConns {
 		if !checked[connId] {
@@ -585,6 +655,13 @@ func (h *hub) checkRoomAuth(ctx context.Context, room string, checked map[string
 					Msg("cannot write message to connection, connection will be closed")
 			}
 
+			if onLeave != nil {
+				err = onLeave(ctx, connId, id)
+				if err != nil {
+					h.logger.Err(err).Str("room", room).Msgf("cannot leave room")
+				}
+			}
+
 			continue
 		}
 
@@ -600,6 +677,14 @@ func (h *hub) checkRoomAuth(ctx context.Context, room string, checked map[string
 					Str("addr", conn.RemoteAddr().String()).
 					Msg("cannot write message to connection, connection will be closed")
 			}
+
+			if onLeave != nil {
+				err = onLeave(ctx, connId, id)
+				if err != nil {
+					h.logger.Err(err).Str("room", room).Msgf("cannot leave room")
+				}
+			}
+
 			continue
 		}
 
@@ -607,7 +692,6 @@ func (h *hub) checkRoomAuth(ctx context.Context, room string, checked map[string
 	}
 
 	h.rooms[room] = authRoomConns
-
 	return closedConns
 }
 
@@ -619,7 +703,7 @@ func (h *hub) listen(connId string, conn Connection) {
 
 	for {
 		if closed {
-			h.closeConnections(connId)
+			h.closeConnections(ctx, connId)
 			return
 		}
 
@@ -646,13 +730,13 @@ func (h *hub) listen(connId string, conn Connection) {
 						Msg("connection closed unexpectedly")
 				}
 
-				h.removeConnections(connId)
+				h.removeConnections(ctx, connId)
 			} else {
 				h.logger.
 					Err(err).
 					Str("addr", conn.RemoteAddr().String()).
 					Msg("cannot read message from connection, connection will be closed")
-				h.disconnectConnections(connId)
+				h.disconnectConnections(ctx, connId)
 			}
 
 			return
@@ -699,7 +783,16 @@ func (h *hub) listen(connId string, conn Connection) {
 				})
 				continue
 			}
-			closed = h.join(ctx, connId, msg.Room)
+			closed, err = h.join(ctx, connId, msg.Room, msg.Data)
+			if err != nil {
+				if h.sendToConn(connId, WMessage{
+					Type:  WMessageFail,
+					Error: http.StatusBadRequest,
+					Msg:   err.Error(),
+				}) {
+					closed = true
+				}
+			}
 		case RMessageLeave:
 			if msg.Room == "" {
 				closed = h.sendToConn(connId, WMessage{
@@ -709,7 +802,7 @@ func (h *hub) listen(connId string, conn Connection) {
 				})
 				continue
 			}
-			closed = h.leave(connId, msg.Room)
+			h.leave(ctx, connId, msg.Room)
 		default:
 			closed = h.sendToConn(connId, WMessage{
 				Type:  WMessageFail,
@@ -791,26 +884,112 @@ func (h *hub) sendToRoom(room string, msg WMessage) []string {
 	return closedConns
 }
 
-func (h *hub) removeConnsFromRooms(connIds []string) {
+func (h *hub) sendToRoomByConns(room string, connIds []string, msg WMessage) []string {
+	h.connsMx.RLock()
+	h.roomsMx.RLock()
+	defer func() {
+		h.roomsMx.RUnlock()
+		h.connsMx.RUnlock()
+	}()
+
+	toSend := make(map[string]struct{}, len(connIds))
+	for _, id := range connIds {
+		toSend[id] = struct{}{}
+	}
+
+	closedConns := make([]string, 0)
+	count := 0
+	defer func() {
+		if count > 0 {
+			h.logger.Debug().
+				Str("room", room).
+				Int("type", msg.Type).
+				Int("conns", count).
+				Int("closed", len(closedConns)).
+				Msg("send to webhook room")
+		}
+	}()
+
+	for _, connId := range h.rooms[room] {
+		if _, ok := toSend[connId]; !ok {
+			continue
+		}
+
+		count++
+		conn := h.conns[connId].conn
+		err := conn.WriteJSON(msg)
+		if err != nil {
+			closedConns = append(closedConns, connId)
+			h.logger.Err(err).
+				Str("room", room).
+				Str("addr", conn.RemoteAddr().String()).
+				Msg("cannot write message to connection, connection will be closed")
+		}
+	}
+
+	return closedConns
+}
+
+func (h *hub) removeConnsFromRooms(ctx context.Context, connIds []string) {
 	h.roomsMx.Lock()
 	defer h.roomsMx.Unlock()
 
 	for room, conns := range h.rooms {
 		filteredConns := make([]string, 0, len(conns))
-
-		for _, v := range conns {
+		onLeave, id := h.getOnLeave(room)
+		for _, connId := range conns {
 			found := false
-			for _, connId := range connIds {
-				if v == connId {
+			for _, toRemove := range connIds {
+				if connId == toRemove {
 					found = true
 					break
 				}
 			}
-			if !found {
-				filteredConns = append(filteredConns, v)
+
+			if found {
+				if onLeave != nil {
+					err := onLeave(ctx, connId, id)
+					if err != nil {
+						h.logger.Err(err).Str("room", room).Msgf("cannot leave room")
+					}
+				}
+
+				continue
 			}
+
+			filteredConns = append(filteredConns, connId)
 		}
 
 		h.rooms[room] = filteredConns
 	}
+}
+
+func (h *hub) getOnJoin(room string) (GroupOnJoin, string) {
+	h.groupsMx.RLock()
+	defer h.groupsMx.RUnlock()
+	for group, params := range h.groups {
+		if strings.HasPrefix(room, group) {
+			return params.OnJoin, room[len(group):]
+		}
+	}
+
+	return nil, ""
+}
+
+func (h *hub) getOnLeave(room string) (GroupOnLeave, string) {
+	h.groupsMx.RLock()
+	defer h.groupsMx.RUnlock()
+	for group, params := range h.groups {
+		if strings.HasPrefix(room, group) {
+			return params.OnLeave, room[len(group):]
+		}
+	}
+
+	return nil, ""
+}
+
+func (h *hub) getOnLeaveByGroup(group string) GroupOnLeave {
+	h.groupsMx.RLock()
+	defer h.groupsMx.RUnlock()
+	return h.groups[group].OnLeave
 }

@@ -15,7 +15,8 @@ import {
 import {
   COLOR_INDICATOR_TYPES,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
-  SIDE_BARS, SORT_ORDERS,
+  SIDE_BARS,
+  SORT_ORDERS,
   USERS_PERMISSIONS,
   WIDGET_TYPES,
 } from '@/constants';
@@ -257,7 +258,10 @@ describe('service-weather', () => {
       unit: Faker.datatype.string(),
     };
 
-    fieldPeriodicRefresh.vm.$emit('input', periodicRefresh);
+    fieldPeriodicRefresh.vm.$emit('input', {
+      ...wrapper.vm.form.parameters,
+      periodic_refresh: periodicRefresh,
+    });
 
     await submitWithExpects(wrapper, {
       fetchActiveView,

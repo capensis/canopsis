@@ -11,6 +11,8 @@ volumes:
     driver: local
   nginxcerts:
     driver: local
+  uploadfiles:
+    driver: local
 
 #
 # SERVICE FRAGMENTS (or templates)
@@ -131,11 +133,6 @@ services:
     image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}canopsis-reconfigure:${CANOPSIS_IMAGE_TAG}
     command: /canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -edition ${CPS_EDITION} -conf /canopsis-${CPS_EDITION}.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
 
-  migrate-metrics-meta:
-    <<: *inital_config_base
-    image: alpine:latest
-    entrypoint: /bin/true
-
   #
   # Canopsis Community components
   #
@@ -169,15 +166,12 @@ services:
     <<: *app_service_base
     image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}engine-pbehavior:${CANOPSIS_IMAGE_TAG}
 
-  service:
-    <<: *app_service_base
-    image: ${DOCKER_REPOSITORY}${COMMUNITY_BASE_PATH}engine-service:${CANOPSIS_IMAGE_TAG}
-
   api:
     <<: *app_service_base
     image: ${DOCKER_REPOSITORY}${CPS_EDITION}/canopsis-api-${CPS_EDITION}:${CANOPSIS_IMAGE_TAG}
     volumes:
       - junitsharedata:/tmp/canopsis/junit
+      - uploadfiles:/opt/canopsis/var/lib/upload-files
     ports:
       - "8082:8082"
     healthcheck:

@@ -51,6 +51,7 @@ export default {
       removeAlarmsFromManualMetaAlarm: 'Unlink alarm from manual meta alarm',
       removeAlarmsFromAutoMetaAlarm: 'Unlink alarm from meta alarm',
       comment: 'Comment',
+      exportPdf: 'Export alarm to PDF file',
     },
     iconsTitles: {
       ack: 'Ack',
@@ -203,6 +204,7 @@ export default {
     ticketId: 'Ticket id',
     ticketMessage: 'Ticket message',
     ticketCreatedAt: 'Ticket created at',
+    ticketData: 'Ticket data',
     entityId: 'Entity ID',
     entityName: 'Entity name',
     entityCategoryName: 'Entity category name',

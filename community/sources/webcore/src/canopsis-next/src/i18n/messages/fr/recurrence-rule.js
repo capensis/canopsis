@@ -1,7 +1,9 @@
 import { PBEHAVIOR_RRULE_PERIODS_RANGES } from '@/constants';
 
 export default {
-  advancedHint: 'Séparer les nombres par une virgule',
+  title: 'Règle de récurrence',
+  repeatEvery: 'Repeat every',
+  repeatOn: 'Repeat on',
   freq: 'Fréquence',
   until: 'Jusqu\'à',
   byweekday: 'Par jour de la semaine',
@@ -12,10 +14,17 @@ export default {
   bysetpos: 'Par position',
   bymonthday: 'Par jour du mois',
   byyearday: 'Par jour de l\'année',
-  byweekno: 'Par semaine n°',
+  byweekno: 'Par numéro de semaine',
   byhour: 'Par heure',
   byminute: 'Par minute',
   bysecond: 'Par seconde',
+  never: 'Jamais',
+  on: 'Sur',
+  after: 'Après',
+  occurrence: 'Occurrence | Occurrences',
+  none: 'Aucune',
+  dayOfMonth: 'Jour {day} d\'un mois',
+  weekDayOfMonth: '{weekNumber} {weekDay} d\'un mois',
   tabs: {
     simple: 'Simple',
     advanced: 'Avancé',
