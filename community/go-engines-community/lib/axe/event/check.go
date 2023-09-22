@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -149,6 +148,8 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 }
 
 func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, params rpc.AxeParameters) (Result, error) {
+	now := types.NewCpsTime()
+
 	result := Result{
 		Forward: true,
 	}
@@ -157,7 +158,7 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, p
 	}
 
 	alarmChange := p.newAlarmChange(nil, entity)
-	pbehaviorInfo, err := resolvePbehaviorInfo(ctx, entity, p.pbhTypeResolver)
+	pbehaviorInfo, err := resolvePbehaviorInfo(ctx, entity, p.pbhTypeResolver, now)
 	if err != nil {
 		return result, err
 	}
@@ -170,7 +171,7 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, p
 	}
 
 	alarmConfig := p.alarmConfigProvider.Get()
-	alarm := p.newAlarm(params, entity, alarmConfig)
+	alarm := p.newAlarm(params, entity, alarmConfig, now)
 	stateStep := types.NewAlarmStep(types.AlarmStepStateIncrease, params.Timestamp, author,
 		params.Output, params.User, params.Role, params.Initiator)
 	stateStep.Value = *params.State
@@ -410,17 +411,17 @@ func (p *checkProcessor) newAlarm(
 	params rpc.AxeParameters,
 	entity types.Entity,
 	alarmConfig config.AlarmConfig,
+	timestamp types.CpsTime,
 ) types.Alarm {
 	tags := types.TransformEventTags(params.Tags)
-	now := types.NewCpsTime()
 	alarm := types.Alarm{
 		EntityID:     entity.ID,
 		ID:           utils.NewID(),
-		Time:         now,
+		Time:         timestamp,
 		Tags:         tags,
 		ExternalTags: tags,
 		Value: types.AlarmValue{
-			CreationDate:      now,
+			CreationDate:      timestamp,
 			DisplayName:       types.GenDisplayName(alarmConfig.DisplayNameScheme),
 			InitialOutput:     params.Output,
 			Output:            params.Output,
@@ -428,7 +429,7 @@ func (p *checkProcessor) newAlarm(
 			LongOutput:        params.LongOutput,
 			LongOutputHistory: []string{params.LongOutput},
 			LastUpdateDate:    params.Timestamp,
-			LastEventDate:     now,
+			LastEventDate:     timestamp,
 			Parents:           []string{},
 			Children:          []string{},
 			UnlinkedParents:   []string{},
@@ -537,18 +538,22 @@ func (p *checkProcessor) sendEventStatistics(ctx context.Context, event rpc.AxeE
 	p.eventStatisticsSender.Send(ctx, event.Entity.ID, stats)
 }
 
-func resolvePbehaviorInfo(ctx context.Context, entity types.Entity, pbhTypeResolver pbehavior.EntityTypeResolver) (types.PbehaviorInfo, error) {
+func resolvePbehaviorInfo(
+	ctx context.Context,
+	entity types.Entity,
+	pbhTypeResolver pbehavior.EntityTypeResolver,
+	timestamp types.CpsTime,
+) (types.PbehaviorInfo, error) {
 	if !entity.PbehaviorInfo.IsDefaultActive() {
 		return entity.PbehaviorInfo, nil
 	}
 
-	now := time.Now()
-	result, err := pbhTypeResolver.Resolve(ctx, entity, now)
+	result, err := pbhTypeResolver.Resolve(ctx, entity, timestamp.Time)
 	if err != nil {
 		return types.PbehaviorInfo{}, err
 	}
 
-	return pbehavior.NewPBehaviorInfo(types.CpsTime{Time: now}, result), nil
+	return pbehavior.NewPBehaviorInfo(timestamp, result), nil
 }
 
 func sendRemediationEvent(
