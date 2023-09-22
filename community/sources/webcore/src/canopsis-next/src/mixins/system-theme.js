@@ -38,7 +38,9 @@ export const systemThemeMixin = {
   },
   methods: {
     injectCSS(value) {
-      this.styleElement = document.createElement('style');
+      if (!this.styleElement) {
+        this.styleElement = document.createElement('style');
+      }
 
       this.updateCSS(value);
 

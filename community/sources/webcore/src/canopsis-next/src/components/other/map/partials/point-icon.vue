@@ -10,7 +10,7 @@
 import { isNumber } from 'lodash';
 
 import { ENTITIES_STATES } from '@/constants';
-import { CSS_COLOR_VARS } from '@/config';
+import { CSS_COLORS_VARS } from '@/config';
 
 import { isNotActivePbehaviorType } from '@/helpers/entities/pbehavior/form';
 import { getEntityColor, getEntityStateColor } from '@/helpers/entities/entity/color';
@@ -77,7 +77,7 @@ export default {
           name: this.entity.pbehavior_info.icon_name,
           color: 'white',
           size: this.size - 8,
-          backgroundColor: CSS_COLOR_VARS.secondary,
+          backgroundColor: CSS_COLORS_VARS.secondary,
         };
       }
 
