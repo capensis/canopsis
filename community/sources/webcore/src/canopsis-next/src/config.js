@@ -504,7 +504,7 @@ export const COLORS = {
   },
 };
 
-export const CSS_COLOR_VARS = {
+export const CSS_COLORS_VARS = {
   primary: 'var(--v-primary-base)',
   secondary: 'var(--v-secondary-base)',
   error: 'var(--v-error-base)',
