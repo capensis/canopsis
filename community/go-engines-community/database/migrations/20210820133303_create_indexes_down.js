@@ -1,4 +1,5 @@
 db.default_entities.dropIndex("enabled_1");
+db.default_entities.dropIndex("type_1");
 
 db.periodical_alarm.dropIndex("t_1");
 db.periodical_alarm.dropIndex("d_1");

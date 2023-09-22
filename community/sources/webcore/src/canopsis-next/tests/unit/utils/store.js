@@ -3,9 +3,10 @@ import Vuex from 'vuex';
 import AxiosMockAdapter from 'axios-mock-adapter';
 import Faker from 'faker';
 
-import request from '@/services/request';
-import { DEFAULT_ENTITY_MODULE_TYPES } from '@/store/plugins/entities/create-entity-module';
 import { CANOPSIS_EDITION } from '@/constants';
+
+import request from '@/services/request';
+import { DEFAULT_ENTITY_MODULE_TYPES } from '@/store/plugins/entities/create-crud-module';
 
 /**
  * @typedef {Object} Module
@@ -87,22 +88,19 @@ export const createMockedStoreGetters = ({ name, ...getters }) => createMockedSt
 export const testsEntityModule = ({
   route,
   module,
-  schema,
-  entityType,
   entities,
-  entityIds,
   types = DEFAULT_ENTITY_MODULE_TYPES,
 }) => {
   const { actions, state: initialState, mutations, getters } = module;
 
   const axiosMockAdapter = new AxiosMockAdapter(request);
-  const normalizedData = {
-    result: entityIds,
+  const meta = {
+    total_count: entities.length,
   };
-  const responseData = {
+  const response = {
     data: entities,
     meta: {
-      total_count: Faker.datatype.number(),
+      total_count: entities.length,
     },
   };
 
@@ -146,11 +144,12 @@ export const testsEntityModule = ({
 
     const fetchListCompleted = mutations[types.FETCH_LIST_COMPLETED];
 
-    const allIds = Faker.datatype.array();
+    fetchListCompleted(state, {
+      data: entities,
+      meta,
+    });
 
-    fetchListCompleted(state, { allIds });
-
-    expect(state).toEqual({ ...state, allIds });
+    expect(state).toEqual({ ...state, items: entities, meta });
   });
 
   it('Mutate state after commit FETCH_LIST_FAILED', () => {
@@ -163,38 +162,13 @@ export const testsEntityModule = ({
     expect(state).toEqual({ ...state, pending: false });
   });
 
-  it('Get item by id. Getter: getItemById', () => {
-    const item = {
-      param: Faker.datatype.string(),
-    };
-    const getItem = jest.fn(() => item);
-    const rootGetters = {
-      'entities/getItem': getItem,
-    };
-    const state = {};
-
-    const id = Faker.datatype.string();
-
-    const data = getters.getItemById(state, getters, {}, rootGetters)(id);
-
-    expect(data).toEqual(item);
-    expect(getItem).toHaveBeenCalledWith(entityType, id);
-  });
-
   it('Get items. Getter: items', () => {
-    const getList = jest.fn(() => entities);
-    const rootGetters = {
-      'entities/getList': getList,
-    };
     const state = {
       ...initialState,
-      allIds: entityIds,
+      items: entities,
     };
 
-    const data = getters.items(state, getters, {}, rootGetters);
-
-    expect(data).toEqual(entities);
-    expect(getList).toHaveBeenCalledWith(entityType, entityIds);
+    expect(getters.items(state)).toEqual(entities);
   });
 
   it('Get pending. Getter: pending', () => {
@@ -206,44 +180,28 @@ export const testsEntityModule = ({
     expect(data).toEqual(pending);
   });
 
-  if (getters.meta) {
-    it('Get meta. Getter: meta', () => {
-      const meta = {
-        total_count: Faker.datatype.number(),
-      };
-      const state = { meta };
+  it('Get meta. Getter: meta', () => {
+    const state = { meta };
 
-      const data = getters.meta(state);
+    const data = getters.meta(state);
 
-      expect(data).toEqual(meta);
-    });
-  }
+    expect(data).toEqual(meta);
+  });
 
   it('Fetch list. Action: fetchList', async () => {
-    const dispatch = jest.fn().mockReturnValue({
-      normalizedData,
-      data: responseData,
-    });
+    axiosMockAdapter
+      .onGet(route)
+      .reply(200, response);
+
     const commit = jest.fn();
 
-    await actions.fetchList({ dispatch, commit });
-
-    expect(dispatch).toBeCalledWith(
-      'entities/fetch',
-      {
-        route,
-        dataPreparer: expect.any(Function),
-        params: undefined,
-        schema: [schema],
-      },
-      { root: true },
-    );
+    await actions.fetchList({ commit });
 
     expect(commit).toBeCalledWith(
       types.FETCH_LIST_COMPLETED,
       {
-        ...responseData,
-        allIds: entityIds,
+        data: entities,
+        meta,
       },
     );
   });
@@ -263,51 +221,45 @@ export const testsEntityModule = ({
   }
 
   it('Fetch list with params. Action: fetchList', async () => {
-    const params = {};
-    const dispatch = jest.fn().mockReturnValue({
-      normalizedData,
-      data: responseData,
-    });
+    const params = { param: 1 };
     const commit = jest.fn();
 
-    await actions.fetchList({ dispatch, commit }, { params });
+    axiosMockAdapter
+      .onGet(route, params)
+      .reply(200, response);
 
-    expect(dispatch).toBeCalledWith(
-      'entities/fetch',
-      {
-        route,
-        params,
-        dataPreparer: expect.any(Function),
-        schema: [schema],
-      },
-      { root: true },
-    );
+    await actions.fetchList({ commit }, { params });
 
     expect(commit).toBeCalledWith(
       types.FETCH_LIST_COMPLETED,
       {
-        ...responseData,
-        allIds: entityIds,
+        data: entities,
+        meta,
       },
     );
   });
 
   it('Fetch list with error. Action: fetchList', async () => {
+    const error = { message: Faker.datatype.string() };
+
+    axiosMockAdapter
+      .onGet(route)
+      .reply(404, error);
+
     const originalError = console.error;
     console.error = jest.fn();
-    const error = new Error(Faker.datatype.string());
     const dispatch = jest.fn().mockRejectedValue(error);
     const commit = jest.fn();
 
     try {
       await actions.fetchList({ dispatch, commit });
     } catch (err) {
-      expect(err).toBe(error);
+      expect(err.message).toBe(error.message);
 
       expect(commit).toBeCalledWith(types.FETCH_LIST_FAILED);
 
       expect(console.error).toBeCalledWith(error);
-
+    } finally {
       console.error = originalError;
     }
   });
@@ -477,6 +429,7 @@ export const createWidgetModule = () => {
   const createWidgetFilter = jest.fn();
   const updateWidgetFilter = jest.fn();
   const removeWidgetFilter = jest.fn();
+  const updateGridPositions = jest.fn();
 
   afterEach(() => {
     createWidget.mockClear();
@@ -494,6 +447,7 @@ export const createWidgetModule = () => {
       createWidgetFilter,
       updateWidgetFilter,
       removeWidgetFilter,
+      updateGridPositions,
     },
   };
 
@@ -504,6 +458,7 @@ export const createWidgetModule = () => {
     createWidgetFilter,
     updateWidgetFilter,
     removeWidgetFilter,
+    updateGridPositions,
   };
 };
 
@@ -561,6 +516,7 @@ export const createQueryModule = () => {
   const getQueryById = jest.fn().mockReturnValue(() => ({}));
   const getQueryNonceById = jest.fn().mockReturnValue(() => 'nonce');
   const updateQuery = jest.fn();
+  const removeQuery = jest.fn();
 
   const queryModule = {
     name: 'query',
@@ -570,6 +526,7 @@ export const createQueryModule = () => {
     },
     actions: {
       update: updateQuery,
+      remove: removeQuery,
     },
   };
 
@@ -577,6 +534,7 @@ export const createQueryModule = () => {
     getQueryById,
     getQueryNonceById,
     updateQuery,
+    removeQuery,
     queryModule,
   };
 };
@@ -585,7 +543,8 @@ export const createActiveViewModule = () => {
   const registerEditingOffHandler = jest.fn();
   const unregisterEditingOffHandler = jest.fn();
   const fetchActiveView = jest.fn();
-  const editing = jest.fn().mockReturnValue(() => false);
+  const toggleEditing = jest.fn();
+  const editing = jest.fn().mockReturnValue(false);
 
   const activeViewModule = {
     name: 'activeView',
@@ -595,11 +554,14 @@ export const createActiveViewModule = () => {
     actions: {
       registerEditingOffHandler,
       unregisterEditingOffHandler,
+      toggleEditing,
       fetch: fetchActiveView,
     },
   };
 
   afterEach(() => {
+    editing.mockClear();
+    toggleEditing.mockClear();
     fetchActiveView.mockClear();
     registerEditingOffHandler.mockClear();
     unregisterEditingOffHandler.mockClear();
@@ -610,6 +572,7 @@ export const createActiveViewModule = () => {
     registerEditingOffHandler,
     unregisterEditingOffHandler,
     fetchActiveView,
+    toggleEditing,
     activeViewModule,
   };
 };
@@ -749,6 +712,26 @@ export const createAlarmModule = () => {
   };
 };
 
+export const createAlarmDetailsModule = () => {
+  const fetchAlarmDetailsWithoutStore = jest.fn().mockResolvedValue([]);
+
+  afterEach(() => {
+    fetchAlarmDetailsWithoutStore.mockClear();
+  });
+
+  const alarmDetailsModule = {
+    name: 'alarm/details',
+    actions: {
+      fetchListWithoutStore: fetchAlarmDetailsWithoutStore,
+    },
+  };
+
+  return {
+    fetchAlarmDetailsWithoutStore,
+    alarmDetailsModule,
+  };
+};
+
 export const createWidgetTemplateModule = () => {
   const fetchWidgetTemplatesListWithoutStore = jest.fn()
     .mockReturnValue({
@@ -776,6 +759,56 @@ export const createWidgetTemplateModule = () => {
     updateWidgetTemplate,
     removeWidgetTemplate,
     widgetTemplateModule,
+  };
+};
+
+export const createAlarmTagModule = () => {
+  const alarmTags = jest.fn().mockReturnValue([]);
+  const alarmTagsPending = jest.fn().mockReturnValue(false);
+  const alarmTagsMeta = jest.fn().mockReturnValue({});
+
+  const fetchAlarmTagsList = jest.fn();
+  const createAlarmTag = jest.fn();
+  const updateAlarmTag = jest.fn();
+  const removeAlarmTag = jest.fn();
+  const bulkRemoveAlarmTags = jest.fn();
+
+  afterEach(() => {
+    fetchAlarmTagsList.mockClear();
+    createAlarmTag.mockClear();
+    updateAlarmTag.mockClear();
+    removeAlarmTag.mockClear();
+    bulkRemoveAlarmTags.mockClear();
+  });
+
+  const alarmTagModule = {
+    name: 'alarmTag',
+    getters: {
+      items: alarmTags,
+      pending: alarmTagsPending,
+      meta: alarmTagsMeta,
+    },
+    actions: {
+      fetchList: fetchAlarmTagsList,
+      create: createAlarmTag,
+      update: updateAlarmTag,
+      remove: removeAlarmTag,
+      bulkRemove: bulkRemoveAlarmTags,
+    },
+  };
+
+  return {
+    alarmTagModule,
+
+    alarmTags,
+    alarmTagsPending,
+    alarmTagsMeta,
+
+    fetchAlarmTagsList,
+    createAlarmTag,
+    updateAlarmTag,
+    removeAlarmTag,
+    bulkRemoveAlarmTags,
   };
 };
 
@@ -1077,56 +1110,6 @@ export const createInfoModule = () => {
   };
 };
 
-export const createViewGroupModule = () => {
-  const groupsPending = jest.fn().mockReturnValue(false);
-  const groups = jest.fn().mockReturnValue([]);
-  const getGroupById = jest.fn();
-  const fetchGroupsList = jest.fn();
-  const fetchGroupsListWithoutStore = jest.fn();
-  const createGroup = jest.fn();
-  const updateGroup = jest.fn();
-  const removeGroup = jest.fn();
-
-  afterEach(() => {
-    groupsPending.mockClear();
-    groups.mockClear();
-    getGroupById.mockClear();
-    fetchGroupsList.mockClear();
-    fetchGroupsListWithoutStore.mockClear();
-    createGroup.mockClear();
-    updateGroup.mockClear();
-    removeGroup.mockClear();
-  });
-
-  const viewGroupModule = {
-    name: 'view/group',
-    getters: {
-      pending: groupsPending,
-      items: groups,
-      getItemById: getGroupById,
-    },
-    actions: {
-      fetchList: fetchGroupsList,
-      fetchListWithoutStore: fetchGroupsListWithoutStore,
-      create: createGroup,
-      update: updateGroup,
-      remove: removeGroup,
-    },
-  };
-
-  return {
-    viewGroupModule,
-    groupsPending,
-    groups,
-    getGroupById,
-    fetchGroupsList,
-    fetchGroupsListWithoutStore,
-    createGroup,
-    updateGroup,
-    removeGroup,
-  };
-};
-
 export const createNavigationModule = () => {
   const isEditingMode = jest.fn().mockReturnValue(false);
   const toggleEditingMode = jest.fn();
@@ -1198,7 +1181,10 @@ export const createEntitiesModule = () => {
 };
 
 export const createViewModule = () => {
+  const pending = jest.fn().mockReturnValue(false);
+  const groups = jest.fn().mockReturnValue([]);
   const updateViewsPositions = jest.fn();
+  const fetchGroupsList = jest.fn();
 
   afterEach(() => {
     updateViewsPositions.mockClear();
@@ -1206,13 +1192,20 @@ export const createViewModule = () => {
 
   const viewModule = {
     name: 'view',
+    getters: {
+      pending,
+      items: groups,
+    },
     actions: {
-      updatePositions: updateViewsPositions,
+      updatePositionsView: updateViewsPositions,
+      fetchList: fetchGroupsList,
     },
   };
 
   return {
     viewModule,
+    groups,
+    fetchGroupsList,
     updateViewsPositions,
   };
 };

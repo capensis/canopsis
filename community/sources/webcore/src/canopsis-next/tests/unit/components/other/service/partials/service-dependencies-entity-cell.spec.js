@@ -1,11 +1,6 @@
 import { generateRenderer } from '@unit/utils/vue';
 
-import {
-  COLOR_INDICATOR_TYPES,
-  ENTITY_FIELDS,
-  ENTITY_FIELDS_TO_LABELS_KEYS,
-  ENTITY_TYPES,
-} from '@/constants';
+import { COLOR_INDICATOR_TYPES, ENTITY_FIELDS, ENTITY_FIELDS_TO_LABELS_KEYS, ENTITY_TYPES } from '@/constants';
 
 import { getWidgetColumnLabel } from '@/helpers/entities/widget/list';
 

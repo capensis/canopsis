@@ -1,9 +1,6 @@
 import { isEmpty, isFunction, isMatch } from 'lodash';
 
-import {
-  USER_PERMISSIONS_TO_PAGES_RULES,
-  POPUP_TYPES, CRUD_ACTIONS,
-} from '@/constants';
+import { USER_PERMISSIONS_TO_PAGES_RULES, POPUP_TYPES, CRUD_ACTIONS } from '@/constants';
 
 import store from '@/store';
 import i18n from '@/i18n';

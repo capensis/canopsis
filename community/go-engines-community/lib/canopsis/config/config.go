@@ -14,12 +14,12 @@ const (
 	RemediationKeyName   = "remediation"
 	HealthCheckName      = "health_check"
 	AlarmTagColorKeyName = "alarm_tag_color"
+	MaintenanceKeyName   = "maintenance"
 )
 
 // SectionAlarm ...
 type SectionAlarm struct {
 	StealthyInterval     int    `toml:"StealthyInterval"`
-	EnableLastEventDate  bool   `toml:"EnableLastEventDate"`
 	CancelAutosolveDelay string `toml:"CancelAutosolveDelay"`
 	DisplayNameScheme    string `toml:"DisplayNameScheme"`
 	OutputLength         int    `toml:"OutputLength"`
@@ -40,6 +40,9 @@ type SectionGlobal struct {
 	ReconnectTimeoutMilliseconds int   `toml:"ReconnectTimeoutMilliseconds"`
 	ReconnectRetries             int   `toml:"ReconnectRetries"`
 	MaxExternalResponseSize      int64 `toml:"MaxExternalResponseSize"`
+
+	BuildEntityInfosDictionary  bool `toml:"BuildEntityInfosDictionary"`
+	BuildDynamicInfosDictionary bool `toml:"BuildDynamicInfosDictionary"`
 }
 
 func (s *SectionGlobal) GetReconnectTimeout() time.Duration {
@@ -57,10 +60,11 @@ type SectionImportCtx struct {
 }
 
 type SectionFile struct {
-	Upload        string `toml:"Upload"`
-	UploadMaxSize int64  `toml:"UploadMaxSize"`
-	Junit         string `toml:"Junit"`
-	JunitApi      string `toml:"JunitApi"`
+	Upload        string   `toml:"Upload"`
+	UploadMaxSize int64    `toml:"UploadMaxSize"`
+	Junit         string   `toml:"Junit"`
+	JunitApi      string   `toml:"JunitApi"`
+	SnmpMib       []string `toml:"SnmpMib"`
 }
 
 type SectionDataStorage struct {

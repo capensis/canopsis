@@ -162,6 +162,36 @@ func (c *WebsocketClient) ISubscribeToRoom(ctx context.Context, room string) err
 	})
 }
 
+func (c *WebsocketClient) ISubscribeToRoomWithData(ctx context.Context, roomTpl, dataTpl string) error {
+	conn, err := c.getConn(ctx)
+	if err != nil {
+		return err
+	}
+
+	b, err := c.templater.Execute(ctx, roomTpl)
+	if err != nil {
+		return err
+	}
+
+	room := b.String()
+	b, err = c.templater.Execute(ctx, dataTpl)
+	if err != nil {
+		return err
+	}
+
+	var data any
+	err = json.Unmarshal(b.Bytes(), &data)
+	if err != nil {
+		return err
+	}
+
+	return conn.WriteJSON(libwebsocket.RMessage{
+		Type: libwebsocket.RMessageJoin,
+		Room: room,
+		Data: data,
+	})
+}
+
 func (c *WebsocketClient) IWaitMessageFromRoom(ctx context.Context, room, doc string) error {
 	return c.iWaitMessageFromRoom(ctx, room, doc, func(receivedMsg, _ any) any {
 		return receivedMsg

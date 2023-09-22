@@ -27,6 +27,7 @@ const (
 	WidgetTemplateTypeAlarmColumns         = "alarm_columns"
 	WidgetTemplateTypeEntityColumns        = "entity_columns"
 	WidgetTemplateTypeAlarmMoreInfos       = "alarm_more_infos"
+	WidgetTemplateTypeAlarmExportToPDF     = "alarm_export_to_pdf"
 	WidgetTemplateTypeServiceWeatherItem   = "weather_item"
 	WidgetTemplateTypeServiceWeatherModal  = "weather_modal"
 	WidgetTemplateTypeServiceWeatherEntity = "weather_entity"
@@ -194,4 +195,5 @@ type WidgetColumn struct {
 	ColorIndicator   string `bson:"colorIndicator,omitempty" json:"colorIndicator,omitempty"`
 	Template         string `bson:"template,omitempty" json:"template,omitempty"`
 	InlineLinksCount int64  `bson:"inlineLinksCount,omitempty" json:"inlineLinksCount,omitempty"`
+	LinksInRowCount  int64  `bson:"linksInRowCount,omitempty" json:"linksInRowCount,omitempty"`
 }
