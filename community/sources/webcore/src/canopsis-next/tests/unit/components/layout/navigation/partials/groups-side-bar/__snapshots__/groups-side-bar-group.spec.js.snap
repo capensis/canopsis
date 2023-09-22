@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`groups-side-bar-group Renders \`groups-side-bar-group\` with custom data 1`] = `
+<group-panel-stub
+  group="[object Object]"
+  orderchanged="true"
+>
+  <c-draggable-list-field-stub
+    class="views-panel secondary lighten-1"
+    disabled="true"
+    group="views"
+    value="[object Object],[object Object]"
+  >
+    <groups-side-bar-group-view-stub
+      isgroupsorderchanged="true"
+      view="[object Object]"
+    />
+    <groups-side-bar-group-view-stub
+      isgroupsorderchanged="true"
+      view="[object Object]"
+    />
+  </c-draggable-list-field-stub>
+</group-panel-stub>
+`;
+
+exports[`groups-side-bar-group Renders \`groups-side-bar-group\` with default data 1`] = `
+<group-panel-stub
+  group="[object Object]"
+>
+  <c-draggable-list-field-stub
+    class="views-panel secondary lighten-1"
+    disabled="true"
+    group="views"
+    value="[object Object],[object Object]"
+  >
+    <groups-side-bar-group-view-stub
+      view="[object Object]"
+    />
+    <groups-side-bar-group-view-stub
+      view="[object Object]"
+    />
+  </c-draggable-list-field-stub>
+</group-panel-stub>
+`;
+
+exports[`groups-side-bar-group Renders \`groups-side-bar-group\` with empty groups 1`] = `
+<group-panel-stub
+  group="[object Object]"
+  orderchanged="true"
+>
+  <c-draggable-list-field-stub
+    class="views-panel secondary lighten-1 empty"
+    disabled="true"
+    group="views"
+    value=""
+  />
+</group-panel-stub>
+`;
