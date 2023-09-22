@@ -380,8 +380,8 @@ export default {
     [PATTERN_OPERATORS.higher]: 'Plus haut que',
     [PATTERN_OPERATORS.lower]: 'Plus bas que',
 
-    [PATTERN_OPERATORS.longer]: 'Supérieure à',
-    [PATTERN_OPERATORS.shorter]: 'Inférieure à',
+    [PATTERN_OPERATORS.longer]: 'Supérieur à',
+    [PATTERN_OPERATORS.shorter]: 'Inférieur à',
 
     [PATTERN_OPERATORS.ticketAssociated]: 'Un ticket est associé',
     [PATTERN_OPERATORS.ticketNotAssociated]: 'Un ticket n\'est pas associé',
@@ -408,7 +408,7 @@ export default {
   },
   entityEventTypes: {
     [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
-    [EVENT_ENTITY_TYPES.ackRemove]: 'Suppression d\'acquittement',
+    [EVENT_ENTITY_TYPES.ackRemove]: 'Supprimer l\'acquittement',
     [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
     [EVENT_ENTITY_TYPES.declareTicket]: 'Déclarer un incident',
     [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
