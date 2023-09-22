@@ -1,0 +1,114 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`group-view-panel Renders \`group-view-panel\` with custom props 1`] = `
+<div
+  class="v-card v-sheet theme--light secondary white--text lighten-3"
+>
+  <div
+    class="v-card__text panel-item-content"
+  >
+    <div
+      class="layout align-center justify-space-between"
+    >
+      <div
+        class="flex panel-view-title--editing"
+      >
+        <div
+          class="layout align-center"
+        >
+          <span
+            class="pl-2"
+          >
+            <div
+              class="title-slot"
+            >
+              TITLE
+            </div>
+          </span>
+        </div>
+      </div>
+      <div
+        class="flex"
+      >
+        <div
+          class="layout justify-end"
+        >
+          <button
+            class="ma-0 v-btn v-btn--disabled v-btn--icon v-btn--depressed v-btn--small theme--light"
+            disabled="disabled"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                edit
+              </i>
+            </div>
+          </button>
+          <button
+            class="ma-0 v-btn v-btn--disabled v-btn--icon v-btn--depressed v-btn--small theme--light"
+            disabled="disabled"
+            type="button"
+          >
+            <div
+              class="v-btn__content"
+            >
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                file_copy
+              </i>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr
+    class="v-divider theme--light"
+  />
+</div>
+`;
+
+exports[`group-view-panel Renders \`group-view-panel\` with required props 1`] = `
+<div
+  class="v-card v-sheet theme--light secondary white--text lighten-1"
+>
+  <div
+    class="v-card__text panel-item-content"
+  >
+    <div
+      class="layout align-center justify-space-between"
+    >
+      <div
+        class="flex"
+      >
+        <div
+          class="layout align-center"
+        >
+          <span
+            class="pl-2 ellipsis"
+          >
+            View title
+          </span>
+        </div>
+      </div>
+      <div
+        class="flex"
+      >
+        <!---->
+      </div>
+    </div>
+  </div>
+  <hr
+    class="v-divider theme--light"
+  />
+</div>
+`;
