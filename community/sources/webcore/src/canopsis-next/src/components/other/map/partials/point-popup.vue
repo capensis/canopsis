@@ -34,7 +34,7 @@
 <script>
 import { isNumber } from 'lodash';
 
-import { CSS_COLOR_VARS } from '@/config';
+import { CSS_COLORS_VARS } from '@/config';
 import { USERS_PERMISSIONS } from '@/constants';
 
 import { getEntityColor } from '@/helpers/entities/entity/color';
@@ -72,7 +72,7 @@ export default {
     color() {
       return isNumber(this.point.entity?.state)
         ? getEntityColor(this.point.entity, this.colorIndicator)
-        : CSS_COLOR_VARS.primary;
+        : CSS_COLORS_VARS.primary;
     },
 
     title() {

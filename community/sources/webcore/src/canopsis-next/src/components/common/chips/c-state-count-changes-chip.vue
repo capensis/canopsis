@@ -4,13 +4,13 @@
 </template>
 
 <script>
-import { CSS_COLOR_VARS } from '@/config';
+import { CSS_COLORS_VARS } from '@/config';
 
 export default {
   props: {
     color: {
       type: String,
-      default: CSS_COLOR_VARS.primary,
+      default: CSS_COLORS_VARS.primary,
     },
   },
   computed: {
