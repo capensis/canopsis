@@ -309,12 +309,6 @@ func clearStores(
 	redisClient redismod.Cmdable,
 	logger zerolog.Logger,
 ) error {
-	err := loader.Load(ctx)
-	if err != nil {
-		return fmt.Errorf("cannot load mongo fixtures: %w", err)
-	}
-
-	logger.Info().Msg("MongoDB fixtures are applied")
 	pgConnStr, err := postgres.GetConnStr()
 	if err != nil {
 		return err
@@ -346,6 +340,13 @@ func clearStores(
 	}
 
 	logger.Info().Msg("PostgresSQL fixtures are applied")
+
+	err = loader.Load(ctx)
+	if err != nil {
+		return fmt.Errorf("cannot load mongo fixtures: %w", err)
+	}
+
+	logger.Info().Msg("MongoDB fixtures are applied")
 
 	err = redisClient.FlushAll(ctx).Err()
 	if err != nil {

@@ -132,19 +132,21 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 }
 
 func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity, params rpc.AxeParameters) (Result, error) {
+	now := types.NewCpsTime()
+
 	result := Result{}
 	if *params.State == types.AlarmStateOK {
 		return result, nil
 	}
 
 	alarmChange := p.newAlarmChange(nil, entity)
-	pbehaviorInfo, err := resolvePbehaviorInfo(ctx, entity, p.pbhTypeResolver)
+	pbehaviorInfo, err := resolvePbehaviorInfo(ctx, entity, p.pbhTypeResolver, now)
 	if err != nil {
 		return result, err
 	}
 
 	alarmConfig := p.alarmConfigProvider.Get()
-	alarm := p.newAlarm(params, entity, alarmConfig)
+	alarm := p.newAlarm(params, entity, alarmConfig, now)
 	stateStep := types.NewAlarmStep(types.AlarmStepStateIncrease, params.Timestamp, params.Author,
 		params.Output, params.User, params.Role, params.Initiator)
 	stateStep.Value = *params.State
@@ -356,14 +358,14 @@ func (p *noEventsProcessor) newAlarm(
 	params rpc.AxeParameters,
 	entity types.Entity,
 	alarmConfig config.AlarmConfig,
+	timestamp types.CpsTime,
 ) types.Alarm {
-	now := types.NewCpsTime()
 	alarm := types.Alarm{
 		EntityID: entity.ID,
 		ID:       utils.NewID(),
-		Time:     now,
+		Time:     timestamp,
 		Value: types.AlarmValue{
-			CreationDate:      now,
+			CreationDate:      timestamp,
 			DisplayName:       types.GenDisplayName(alarmConfig.DisplayNameScheme),
 			InitialOutput:     params.Output,
 			Output:            params.Output,
@@ -371,7 +373,7 @@ func (p *noEventsProcessor) newAlarm(
 			LongOutput:        params.LongOutput,
 			LongOutputHistory: []string{params.LongOutput},
 			LastUpdateDate:    params.Timestamp,
-			LastEventDate:     now,
+			LastEventDate:     timestamp,
 			Parents:           []string{},
 			Children:          []string{},
 			UnlinkedParents:   []string{},
