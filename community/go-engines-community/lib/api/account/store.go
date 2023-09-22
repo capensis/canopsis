@@ -119,6 +119,33 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 		{"$addFields": bson.M{
 			"display_name": s.authorProvider.GetDisplayNameQuery(""),
 		}},
+		{
+			"$addFields": bson.M{
+				"ui_theme": bson.M{
+					"$cond": bson.M{
+						"if": bson.M{
+							"$or": bson.A{
+								bson.M{"$eq": bson.A{"$ui_theme", ""}},
+								bson.M{"$eq": bson.A{bson.M{"$ifNull": bson.A{"$ui_theme", ""}}, ""}},
+							},
+						},
+						"then": "canopsis",
+						"else": "$ui_theme",
+					},
+				},
+			},
+		},
+		{
+			"$lookup": bson.M{
+				"from":         mongo.ColorThemeCollection,
+				"localField":   "ui_theme",
+				"foreignField": "_id",
+				"as":           "ui_theme",
+			},
+		},
+		{
+			"$unwind": bson.M{"path": "$ui_theme", "preserveNullAndEmptyArrays": true},
+		},
 	})
 
 	if err != nil {

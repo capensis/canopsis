@@ -18,16 +18,18 @@ type Validator interface {
 }
 
 type baseValidator struct {
-	dbCollection     mongo.DbCollection
-	dbRoleCollection mongo.DbCollection
-	dbViewCollection mongo.DbCollection
+	dbCollection           mongo.DbCollection
+	dbRoleCollection       mongo.DbCollection
+	dbViewCollection       mongo.DbCollection
+	dbColorThemeCollection mongo.DbCollection
 }
 
 func NewValidator(dbClient mongo.DbClient) Validator {
 	return &baseValidator{
-		dbCollection:     dbClient.Collection(mongo.UserCollection),
-		dbRoleCollection: dbClient.Collection(mongo.RoleCollection),
-		dbViewCollection: dbClient.Collection(mongo.ViewMongoCollection),
+		dbCollection:           dbClient.Collection(mongo.UserCollection),
+		dbRoleCollection:       dbClient.Collection(mongo.RoleCollection),
+		dbViewCollection:       dbClient.Collection(mongo.ViewMongoCollection),
+		dbColorThemeCollection: dbClient.Collection(mongo.ColorThemeCollection),
 	}
 }
 
@@ -114,6 +116,17 @@ func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.St
 		}
 		if int(c) < len(r.Roles) {
 			sl.ReportError(r.Roles, "Roles", "Roles", "not_exist", "")
+		}
+	}
+	// Validate UITheme
+	if r.UITheme != "" {
+		err := v.dbColorThemeCollection.FindOne(ctx, bson.M{"_id": r.UITheme}).Err()
+		if err != nil {
+			if err == mongodriver.ErrNoDocuments {
+				sl.ReportError(r.UITheme, "UITheme", "UITheme", "not_exist", "")
+			} else {
+				panic(err)
+			}
 		}
 	}
 }
