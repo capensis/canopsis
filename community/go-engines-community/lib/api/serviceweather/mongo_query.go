@@ -517,7 +517,7 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 			},
 		},
 		{
-			"$unwind": "$counters",
+			"$unwind": "$counters", "preserveNullAndEmptyArrays": true,
 		},
 		{"$addFields": bson.M{"pbh_types": bson.M{"$ifNull": bson.A{
 			bson.M{"$map": bson.M{
