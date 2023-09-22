@@ -8,7 +8,6 @@ import {
   createMockedStoreModules,
   createModalsModule,
   createNavigationModule,
-  createViewGroupModule,
   createViewModule,
 } from '@unit/utils/store';
 import { CRUD_ACTIONS, MAX_LIMIT, USERS_PERMISSIONS } from '@/constants';
@@ -36,14 +35,12 @@ const selectCancelButton = wrapper => selectButtons(wrapper).at(1);
 describe('groups-side-bar', () => {
   const $popups = mockPopups();
 
-  const { viewGroupModule, groups, fetchGroupsList } = createViewGroupModule();
   const { navigationModule, toggleEditingMode } = createNavigationModule();
   const { modalsModule } = createModalsModule();
   const { authModule, currentUserPermissionsById } = createAuthModule();
   const { entitiesModule } = createEntitiesModule();
-  const { viewModule, updateViewsPositions } = createViewModule();
+  const { viewModule, updateViewsPositions, groups, fetchGroupsList } = createViewModule();
   const store = createMockedStoreModules([
-    viewGroupModule,
     navigationModule,
     modalsModule,
     authModule,
@@ -111,7 +108,6 @@ describe('groups-side-bar', () => {
 
     const wrapper = factory({
       store: createMockedStoreModules([
-        viewGroupModule,
         navigationModule,
         modalsModule,
         authModule,
@@ -154,7 +150,6 @@ describe('groups-side-bar', () => {
 
     const wrapper = factory({
       store: createMockedStoreModules([
-        viewGroupModule,
         navigationModule,
         modalsModule,
         authModule,
@@ -200,7 +195,6 @@ describe('groups-side-bar', () => {
 
     const wrapper = factory({
       store: createMockedStoreModules([
-        viewGroupModule,
         navigationModule,
         modalsModule,
         authModule,
@@ -244,7 +238,6 @@ describe('groups-side-bar', () => {
 
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([
-        viewGroupModule,
         navigationModule,
         modalsModule,
         authModule,
