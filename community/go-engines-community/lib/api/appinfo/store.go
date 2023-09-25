@@ -4,6 +4,7 @@ import (
 	"context"
 	"sort"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -24,12 +25,14 @@ type Store interface {
 	UpdateUserInterfaceConfig(ctx context.Context, conf *UserInterfaceConf) error
 	DeleteUserInterfaceConfig(ctx context.Context) error
 	RetrieveMaintenanceState(ctx context.Context) (bool, error)
+	RetrieveDefaultColorTheme(ctx context.Context) (colortheme.Theme, error)
 }
 
 type store struct {
-	dbClient           mongo.DbClient
-	configCollection   mongo.DbCollection
-	maintenanceAdapter config.MaintenanceAdapter
+	dbClient             mongo.DbClient
+	configCollection     mongo.DbCollection
+	colorThemeCollection mongo.DbCollection
+	maintenanceAdapter   config.MaintenanceAdapter
 
 	authProviders       []string
 	casTitle, samlTitle string
@@ -38,12 +41,13 @@ type store struct {
 // NewStore instantiates configuration store.
 func NewStore(db mongo.DbClient, maintenanceAdapter config.MaintenanceAdapter, authProviders []string, casTitle, samlTitle string) Store {
 	return &store{
-		dbClient:           db,
-		configCollection:   db.Collection(mongo.ConfigurationMongoCollection),
-		maintenanceAdapter: maintenanceAdapter,
-		authProviders:      authProviders,
-		casTitle:           casTitle,
-		samlTitle:          samlTitle,
+		dbClient:             db,
+		configCollection:     db.Collection(mongo.ConfigurationMongoCollection),
+		colorThemeCollection: db.Collection(mongo.ColorThemeCollection),
+		maintenanceAdapter:   maintenanceAdapter,
+		authProviders:        authProviders,
+		casTitle:             casTitle,
+		samlTitle:            samlTitle,
 	}
 }
 
@@ -188,4 +192,10 @@ func (s *store) UpdateUserInterfaceConfig(ctx context.Context, model *UserInterf
 func (s *store) DeleteUserInterfaceConfig(ctx context.Context) error {
 	_, err := s.configCollection.DeleteOne(ctx, bson.M{"_id": config.UserInterfaceKeyName})
 	return err
+}
+
+func (s *store) RetrieveDefaultColorTheme(ctx context.Context) (colortheme.Theme, error) {
+	var t colortheme.Theme
+
+	return t, s.colorThemeCollection.FindOne(ctx, bson.M{"_id": colortheme.Canopsis}).Decode(&t)
 }
