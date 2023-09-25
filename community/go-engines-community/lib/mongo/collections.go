@@ -97,4 +97,6 @@ const (
 	EntityServiceCountersCollection = "entity_service_counters"
 
 	MetaAlarmStatesCollection = "meta_alarm_states"
+
+	ColorThemeCollection = "color_theme"
 )
