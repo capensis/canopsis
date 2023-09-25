@@ -8,7 +8,7 @@
   )
     div.progress(v-if="autoClose")
       div.progress-line(:style="progressLineStyle", :class="progressLineClass")
-    div.pre-line(v-html="text")
+    c-compiled-template.pre-line(:template="text")
 </template>
 
 <script>

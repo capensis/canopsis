@@ -7,7 +7,8 @@
       v-list-tile(:key="comment._id")
         v-list-tile-content
           v-list-tile-title {{ comment.author.display_name }}
-          v-list-tile-sub-title {{ comment.message }}
+          v-list-tile-sub-title
+            c-compiled-template(:template="comment.message")
       v-divider(v-if="index < comments.length - 1", :key="`divider-${index}`")
 </template>
 

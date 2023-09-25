@@ -7,7 +7,7 @@
     v-expand-transition
       div(v-if="hasMessage && shownMessage")
         v-layout.pb-2(justify-center)
-          div.subheading.page-header__message.pre-wrap(v-html="message")
+          c-compiled-template.subheading.page-header__message.pre-wrap(:template="message")
         v-layout.pb-2(v-show="!messageWasHidden", justify-center)
           v-btn(color="primary", @click="hideMessage") {{ $t('pageHeaders.hideMessage') }}
 </template>

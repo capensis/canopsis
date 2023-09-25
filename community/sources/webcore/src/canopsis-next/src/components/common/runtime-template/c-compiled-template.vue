@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import { sanitizeHtml, linkifyHtml } from '@/helpers/html';
 import { compile } from '@/helpers/handlebars';
 
 export default {
@@ -36,9 +37,19 @@ export default {
   },
   methods: {
     async compileTemplate() {
-      const compiledTemplate = await compile(this.template, this.context);
+      try {
+        const compiledTemplate = await compile(this.template, this.context);
 
-      this.compiledTemplate = `<${this.parentElement}>${compiledTemplate}</${this.parentElement}>`;
+        this.compiledTemplate = sanitizeHtml(
+          linkifyHtml(
+            `<${this.parentElement}>${compiledTemplate}</${this.parentElement}>`,
+          ),
+        );
+      } catch (err) {
+        console.error(err);
+
+        this.compiledTemplate = '';
+      }
     },
   },
 };
