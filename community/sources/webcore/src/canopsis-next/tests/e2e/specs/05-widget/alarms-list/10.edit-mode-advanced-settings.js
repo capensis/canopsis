@@ -1,6 +1,6 @@
 // http://nightwatchjs.org/guide#usage
 
-import {
+const {
   ALARMS_SHARED_ACTIONS,
   SORT_ORDERS,
   SORT_ORDERS_STRING,
@@ -13,7 +13,7 @@ import {
   FILTER_OPERATORS,
   INTERVAL_RANGES,
   INFO_POPUP_DEFAULT_COLUMNS,
-} from '../../../constants';
+} = require('../../../constants');
 
 const { WIDGET_TYPES } = require('@/constants');
 const { createWidgetView, createWidgetForView, removeWidgetView } = require('../../../helpers/api');
