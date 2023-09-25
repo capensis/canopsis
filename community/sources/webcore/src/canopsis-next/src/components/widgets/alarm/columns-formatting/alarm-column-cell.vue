@@ -10,7 +10,7 @@
   )
     template(#activator="{ on }")
       v-layout(v-on="on", d-inline-flex, align-center)
-        div(v-if="column.isHtml", v-html="sanitizedValue")
+        c-compiled-template(v-if="column.isHtml", :template="value")
         div(v-else, v-bind="component.bind", v-on="component.on")
         v-btn.ma-0(icon, small, @click.stop="showInfoPopup")
           v-icon(small) info
@@ -19,13 +19,12 @@
       :template="column.popupTemplate",
       @close="hideInfoPopup"
     )
-  div(v-else-if="column.isHtml", v-html="sanitizedValue")
+  c-compiled-template(v-else-if="column.isHtml", :template="value")
   div(v-else, v-bind="component.bind", v-on="component.on")
 </template>
 
 <script>
 import { get } from 'lodash';
-import sanitizeHTML from 'sanitize-html';
 
 import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 
@@ -83,26 +82,6 @@ export default {
       const value = get(this.alarm, this.column.value, '');
 
       return this.column.filter ? this.column.filter(value) : value;
-    },
-
-    sanitizedValue() {
-      try {
-        return sanitizeHTML(this.value, {
-          allowedTags: ['h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
-            'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br', 'div',
-            'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre', 'iframe', 'span', 'font', 'u'],
-          allowedAttributes: {
-            '*': ['style'],
-            a: ['href', 'name', 'target'],
-            img: ['src', 'alt'],
-            font: ['color', 'size', 'face'],
-          },
-        });
-      } catch (err) {
-        console.warn(err);
-
-        return '';
-      }
     },
 
     component() {

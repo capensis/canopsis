@@ -9,7 +9,7 @@
       div {{ $t('common.date') }}: {{ date }}
       div.c-extra-details__message
         | {{ $tc('common.comment') }}:&nbsp;
-        span(v-html="lastComment.m")
+        c-compiled-template(:template="lastComment.m", parent-element="span")
 </template>
 
 <script>
