@@ -1,3 +1,5 @@
+import flushPromises from 'flush-promises';
+
 import { generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
@@ -31,12 +33,14 @@ describe('extra-details-last-comment', () => {
     attachTo: document.body,
   });
 
-  it('Renders `extra-details-last-comment` with full last comment', () => {
+  it('Renders `extra-details-last-comment` with full last comment', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         lastComment,
       },
     });
+
+    await flushPromises();
 
     const tooltipContent = wrapper.findTooltip();
 
@@ -44,7 +48,7 @@ describe('extra-details-last-comment', () => {
     expect(tooltipContent.element).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-last-comment` with date in previous month', () => {
+  it('Renders `extra-details-last-comment` with date in previous month', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         lastComment: {
@@ -53,6 +57,8 @@ describe('extra-details-last-comment', () => {
         },
       },
     });
+
+    await flushPromises();
 
     const tooltipContent = wrapper.findTooltip();
 
