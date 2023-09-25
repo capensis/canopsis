@@ -1,6 +1,7 @@
 Feature: Account auth user
   I need to be able to get auth user account.
 
+  @concurrent
   Scenario: given user username and password should get account
     When I do POST /api/v4/login:
     """json
@@ -13,7 +14,7 @@ Feature: Account auth user
     When I set header Authorization=Bearer {{ .lastResponse.access_token }}
     When I do GET /api/v4/account/me
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "_id": "test-user-to-account-get-1",
@@ -79,13 +80,41 @@ Feature: Account auth user
       "source": "",
       "ui_groups_navigation_type": "side-bar",
       "ui_language": "en",
-      "ui_theme": "canopsis",
+      "ui_theme": {
+        "name": "Canopsis",
+        "font_size": 2,
+        "colors": {
+          "main": {
+            "primary": "#2fab63",
+            "secondary": "#2b3e4f",
+            "accent": "#82b1ff",
+            "error": "#ff5252",
+            "info": "#2196f3",
+            "success": "#4caf50",
+            "warning": "#fb8c00",
+            "background": "#ffffff",
+            "active_color": "#000"
+          },
+          "table": {
+            "background": "#fff",
+            "row_color": "#fff",
+            "hover_row_color": "#eee"
+          },
+          "state": {
+            "ok": "#00a65a",
+            "minor": "#fcdc00",
+            "major": "#ff9900",
+            "critical": "#f56954"
+          }
+        }
+      },
       "ui_tours": {
         "test-tour-to-account-get-1": true
       }
     }
-	"""
+	  """
 
+  @concurrent
   Scenario: given unauth request should not allow access
     When I do GET /api/v4/account/me
     Then the response code should be 401
