@@ -9,12 +9,12 @@ import {
   ENTITIES_STATUSES,
 } from '@/constants';
 
+import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
+
 import { compile } from '../handlebars';
 import { createInstanceWithHelpers } from '../handlebars/alarm-export-pdf-helpers';
 import { convertDateToStringWithNewTimezone } from '../date/date';
 import { convertDurationToString } from '../date/duration';
-
-import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
 
 /**
  * @typedef {Object} AlarmExport
