@@ -352,7 +352,11 @@ func (s *store) fillChildren(ctx context.Context, r ListRequest, result *Aggrega
 	}
 
 	pipeline = append(pipeline, sortExpr)
-	pipeline = append(pipeline, s.getProject(r, false)...)
+
+	project := s.getProject(r, false)
+	project = s.insertDeferred(r.FilterRequest, &pipeline, project)
+
+	pipeline = append(pipeline, project...)
 	cursor, err := collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return err
