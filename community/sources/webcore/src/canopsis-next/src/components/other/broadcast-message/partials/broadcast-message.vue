@@ -3,7 +3,7 @@
     :style="{ backgroundColor: color }",
     :title="message"
   )
-    c-compiled-template(:template="message", parent-element="span")
+    c-compiled-template.broadcast-message__text(:template="message", parent-element="span")
     div.broadcast-message__actions(title="")
       slot(name="actions")
 </template>

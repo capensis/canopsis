@@ -40,11 +40,9 @@ export default {
       try {
         const compiledTemplate = await compile(this.template, this.context);
 
-        this.compiledTemplate = sanitizeHtml(
-          linkifyHtml(
-            `<${this.parentElement}>${compiledTemplate}</${this.parentElement}>`,
-          ),
-        );
+        this.compiledTemplate = `<${this.parentElement}>${
+          sanitizeHtml(linkifyHtml(compiledTemplate))
+        }</${this.parentElement}>`;
       } catch (err) {
         console.error(err);
 
