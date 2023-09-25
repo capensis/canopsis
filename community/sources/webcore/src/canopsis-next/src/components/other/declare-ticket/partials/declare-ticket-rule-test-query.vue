@@ -92,12 +92,20 @@ export default {
       return this.executionStatus?.webhooks.some(webhook => !isDeclareTicketExecutionWaiting(webhook));
     },
 
-    alarmsParams() {
-      return Object.entries(formFilterToPatterns(this.form.patterns)).reduce((acc, [key, value]) => {
-        acc[key] = JSON.stringify(value);
+    alarmsPatternsParams() {
+      return Object.entries(formFilterToPatterns(this.form.patterns))
+        .reduce((acc, [key, value]) => {
+          acc[key] = JSON.stringify(value);
 
-        return acc;
-      }, {});
+          return acc;
+        }, {});
+    },
+
+    alarmsParams() {
+      return {
+        opened: true,
+        ...this.alarmsPatternsParams,
+      };
     },
   },
   watch: {
