@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
 	libcontextgraphV1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph/v1"
@@ -1413,6 +1414,36 @@ func RegisterRoutes(
 			)
 		}
 
+		colorThemeApi := colortheme.NewApi(colortheme.NewStore(dbClient), actionLogger, logger)
+		colorThemeRouter := protected.Group("/color-themes")
+		{
+			colorThemeRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionCreate, enforcer),
+				colorThemeApi.Create,
+			)
+			colorThemeRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionRead, enforcer),
+				colorThemeApi.List,
+			)
+			colorThemeRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionRead, enforcer),
+				colorThemeApi.Get,
+			)
+			colorThemeRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionUpdate, enforcer),
+				colorThemeApi.Update,
+			)
+			colorThemeRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionDelete, enforcer),
+				colorThemeApi.Delete,
+			)
+		}
+
 		bulkRouter := protected.Group("/bulk")
 		{
 			patternRouter := bulkRouter.Group("/patterns")
@@ -1649,6 +1680,16 @@ func RegisterRoutes(
 					middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionDelete, enforcer),
 					middleware.PreProcessBulk(conf, false),
 					alarmTagAPI.BulkDelete,
+				)
+			}
+
+			colorThemeRouter := bulkRouter.Group("/color-themes")
+			{
+				colorThemeRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionDelete, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					colorThemeApi.BulkDelete,
 				)
 			}
 		}

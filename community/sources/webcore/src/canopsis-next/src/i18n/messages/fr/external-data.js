@@ -30,7 +30,7 @@ export default {
     [EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.connector]: 'Connecteur',
     [EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.connectorName]: 'Nom du connecteur',
     [EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.resource]: 'Ressource',
-    [EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.output]: 'Sortir',
+    [EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.output]: 'Output',
     [EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.extraInfos]: 'Informations supplémentaires',
   },
 };
