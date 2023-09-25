@@ -3,9 +3,13 @@ import { generateRenderer } from '@unit/utils/vue';
 import { ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR, ENTITIES_STATES } from '@/constants';
 
 import AlarmsTimeLineCard from '@/components/widgets/alarm/time-line/alarms-time-line-card.vue';
+import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
+import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 
 const stubs = {
   'c-alarm-chip': true,
+  'c-runtime-template': CRuntimeTemplate,
+  'c-compiled-template': CCompiledTemplate,
 };
 
 describe('alarms-time-line-card', () => {

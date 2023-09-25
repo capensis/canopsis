@@ -12,7 +12,7 @@
 
     div.time-line-card__content
       template(v-if="isStateCounter")
-        p(v-if="isHtmlEnabled", v-html="step.m")
+        c-compiled-template(v-if="isHtmlEnabled", :template="step.m", parent-element="p")
         p(v-else) {{ step.m }}
       table(v-else)
         tr

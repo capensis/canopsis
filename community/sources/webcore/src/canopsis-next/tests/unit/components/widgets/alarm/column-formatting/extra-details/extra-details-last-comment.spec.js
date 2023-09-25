@@ -3,9 +3,13 @@ import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import CClickableTooltip from '@/components/common/clickable-tooltip/c-clickable-tooltip.vue';
 import ExtraDetailsLastComment from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-last-comment.vue';
+import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
+import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 
 const stubs = {
   'c-clickable-tooltip': CClickableTooltip,
+  'c-runtime-template': CRuntimeTemplate,
+  'c-compiled-template': CCompiledTemplate,
 };
 
 describe('extra-details-last-comment', () => {
