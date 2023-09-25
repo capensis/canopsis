@@ -59,7 +59,7 @@ export default {
   },
   computed: {
     cardColor() {
-      return `secondary white--text ${this.isViewActive ? 'lighten-3' : 'lighten-1'}`;
+      return `secondary ${this.isViewActive ? 'lighten-3' : 'lighten-1'}`;
     },
 
     ellipsis() {
