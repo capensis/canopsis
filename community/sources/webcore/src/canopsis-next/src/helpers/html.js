@@ -8,6 +8,9 @@ const DEFAULT_SANITIZE_OPTIONS = {
     'img', 'video', 'audio', 'abbr', 'address', 'bdo', 'cite', 'q', 'dfn', 'var', 'area', 'map', 'dl', 'dt', 'dd',
     'section', 'article', 'colgroup', 'col', 'strike',
 
+    /**
+     * VUE COMPONENTS
+     */
     'router-link', 'c-alarm-chip', 'c-alarm-tags-chips', 'c-copy-wrapper', 'c-links-list', 'service-entities-list',
   ],
   allowedAttributes: {
