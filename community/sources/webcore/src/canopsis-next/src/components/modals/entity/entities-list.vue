@@ -10,8 +10,7 @@
         :meta="meta",
         :loading="pending",
         :query.sync="query",
-        selectable,
-        expandable
+        selectable
       )
 </template>
 
