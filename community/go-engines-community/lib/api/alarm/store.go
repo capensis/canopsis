@@ -671,8 +671,9 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 		ctx,
 		[]bson.M{
 			{"$match": bson.M{
-				"type":   bson.M{"$in": bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}},
-				"status": bson.M{"$in": bson.A{InstructionStatusApproved, nil}},
+				"type":    bson.M{"$in": bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}},
+				"status":  bson.M{"$in": bson.A{InstructionStatusApproved, nil}},
+				"enabled": true,
 			}},
 			{"$lookup": bson.M{
 				"from":         mongo.InstructionExecutionMongoCollection,
