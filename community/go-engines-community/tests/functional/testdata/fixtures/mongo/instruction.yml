@@ -1401,6 +1401,16 @@ instruction:
     entity_pattern:
     alarm_pattern:
 
+  instruction_alarm_instruction_get_5_3:
+    <<: *instruction_manual
+    _id: test-instruction-to-alarm-instruction-get-5-3
+    enabled: false
+    old_entity_patterns:
+      - name: test-resource-to-alarm-instruction-get-5-1
+    old_alarm_patterns:
+    entity_pattern:
+    alarm_pattern:
+
   instruction_alarm_instruction_get_7:
     <<: *instruction_auto
     entity_pattern:
