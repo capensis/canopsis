@@ -1611,6 +1611,18 @@ instruction:
             value: test-resource-to-alarm-instruction-get-5
     alarm_pattern:
 
+  instruction_alarm_instruction_get_5_3:
+    <<: *instruction_manual
+    _id: test-instruction-to-alarm-instruction-get-5-3
+    name: test-instruction-to-alarm-instruction-get-5-3-name
+    enabled: false
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-resource-to-alarm-instruction-get-5
+    alarm_pattern:
+
   instruction_alarm_instruction_get_6_1:
     <<: *instruction_manual
     _id: test-instruction-to-alarm-instruction-get-6-1
