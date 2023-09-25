@@ -983,4 +983,15 @@ export default {
       title: 'Duplicate a tag',
     },
   },
+  createTheme: {
+    create: {
+      title: 'Create theme',
+    },
+    edit: {
+      title: 'Edit theme',
+    },
+    duplicate: {
+      title: 'Duplicate theme',
+    },
+  },
 };

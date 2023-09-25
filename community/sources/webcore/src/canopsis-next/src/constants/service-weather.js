@@ -1,5 +1,3 @@
-import { COLORS } from '@/config';
-
 export const DEFAULT_SERVICE_WEATHER_BLOCK_TEMPLATE = `<p><strong><span style="font-size: 18px;">{{entity.name}}</span></strong></p>
 <hr id="null">
 <p>{{ entity.output }}</p>
@@ -65,14 +63,6 @@ export const SERVICE_WEATHER_STATE_COUNTERS_ICONS = {
   [SERVICE_WEATHER_STATE_COUNTERS.unacked]: 'playlist_play',
   [SERVICE_WEATHER_STATE_COUNTERS.underPbehavior]: 'build',
   [SERVICE_WEATHER_STATE_COUNTERS.ackedUnderPbehavior]: '$vuetify.icons.playlist_build',
-};
-
-export const SERVICE_WEATHER_STATE_COUNTERS_COLORS = {
-  [SERVICE_WEATHER_STATE_COUNTERS.all]: COLORS.error,
-  [SERVICE_WEATHER_STATE_COUNTERS.active]: COLORS.error,
-  [SERVICE_WEATHER_STATE_COUNTERS.minor]: COLORS.state.minor,
-  [SERVICE_WEATHER_STATE_COUNTERS.major]: COLORS.state.major,
-  [SERVICE_WEATHER_STATE_COUNTERS.critical]: COLORS.state.critical,
 };
 
 export const SERVICE_WEATHER_MAX_STATE_COUNTERS = 5;
