@@ -50,7 +50,9 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
         class="c-extra-details__message"
       >
         Comment: 
-        <div />
+        <span>
+          lastComment-message
+        </span>
       </div>
     </div>
   </span>
@@ -107,7 +109,9 @@ exports[`extra-details-last-comment Renders \`extra-details-last-comment\` with 
         class="c-extra-details__message"
       >
         Comment: 
-        <div />
+        <span>
+          lastComment-message
+        </span>
       </div>
     </div>
   </span>

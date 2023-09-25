@@ -355,7 +355,7 @@ export default {
 
 <style lang="scss" scoped>
 .scenario-action-card-general-tab ::v-deep {
-  .v-input, .v-sheet {
+  .v-input, .compiled-template__wrapper {
     margin-left: 16px;
 
     textarea {
