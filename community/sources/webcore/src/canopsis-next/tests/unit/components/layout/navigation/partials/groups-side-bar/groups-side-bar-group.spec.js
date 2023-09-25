@@ -1,10 +1,7 @@
 import Faker from 'faker';
 
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import {
-  createMockedStoreModules,
-  createNavigationModule,
-} from '@unit/utils/store';
+import { createMockedStoreModules, createNavigationModule } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { MODALS } from '@/constants';
 

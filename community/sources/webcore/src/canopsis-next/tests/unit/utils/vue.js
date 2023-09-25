@@ -1,13 +1,13 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import Vuetify from 'vuetify';
 import { get, merge } from 'lodash';
 import { shallowMount as testUtilsShallowMount, mount as testUtilsMount, createLocalVue } from '@vue/test-utils';
+import theme from 'vuetify/es5/components/Vuetify/mixins/theme';
 
 import { MqLayout } from '@unit/stubs/mq';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ValidatorPlugin from '@/plugins/validator';
-import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
+import Vuetify from '@/plugins/vuetify';
 import ToursPlugin from '@/plugins/tours';
 import * as constants from '@/constants';
 import * as config from '@/config';
@@ -15,6 +15,7 @@ import i18n from '@/i18n';
 import { convertDateToString, convertDateToTimezoneDateString } from '@/helpers/date/date';
 import SetSeveralPlugin from '@/plugins/set-several';
 import { stringifyJsonFilter } from '@/helpers/json';
+import { themePropertiesToCSSVariables } from '@/helpers/entities/theme/entity';
 
 /**
  * @typedef {Wrapper<Vue>} CustomWrapper
@@ -34,10 +35,11 @@ const mocks = {
 };
 
 Vue.use(Vuex);
-Vue.use(Vuetify);
+Vue.use(Vuetify, {
+  theme: theme(themePropertiesToCSSVariables(config.DEFAULT_THEME_COLORS)),
+});
 Vue.use(UpdateFieldPlugin);
 Vue.use(ValidatorPlugin, { i18n });
-Vue.use(VuetifyReplacerPlugin);
 Vue.use(SetSeveralPlugin);
 Vue.use(ToursPlugin);
 
