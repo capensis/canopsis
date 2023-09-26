@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-menu(
+  v-menu.alarms-column-cell(
     v-if="column.popupTemplate",
     v-model="opened",
     :close-on-content-click="false",
@@ -12,7 +12,12 @@
       v-layout(v-on="on", d-inline-flex, align-center)
         c-compiled-template(v-if="column.isHtml", :template="value")
         div(v-else, v-bind="component.bind", v-on="component.on")
-        v-btn.ma-0(icon, small, @click.stop="showInfoPopup")
+        v-btn.ma-0.alarms-column-cell__show-info-btn(
+          :class="{ 'alarms-column-cell__show-info-btn--small': small }",
+          icon,
+          small,
+          @click.stop="showInfoPopup"
+        )
           v-icon(small) info
     alarm-column-cell-popup-body(
       :alarm="alarm",
@@ -99,3 +104,15 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.alarms-column-cell {
+  &__show-info-btn {
+    &--small {
+      width: 22px;
+      max-width: 22px;
+      height: 22px;
+    }
+  }
+}
+</style>

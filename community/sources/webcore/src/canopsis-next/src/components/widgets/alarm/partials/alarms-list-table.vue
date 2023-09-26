@@ -549,10 +549,6 @@ export default {
     transition: .3s cubic-bezier(.25, .8, .5,1);
     transition-property: opacity, background-color;
 
-    .theme--dark & {
-      background: #424242;
-    }
-
     &:after {
       content: ' ';
       width: 100%;
@@ -729,11 +725,11 @@ export default {
     }
 
     tr {
-      background: white;
+      background: var(--v-table-background-base);
       transition: background-color .3s cubic-bezier(.25,.8,.5,1);
 
       .theme--dark & {
-        background: #424242;
+        background: var(--v-table-background-base);
       }
 
       th {

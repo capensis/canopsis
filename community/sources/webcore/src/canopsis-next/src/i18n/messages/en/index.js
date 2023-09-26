@@ -57,6 +57,7 @@ import externalData from './external-data';
 import popups from './popups';
 import maintenance from './maintenance';
 import tag from './tag';
+import theme from './theme';
 
 export default {
   common,
@@ -118,4 +119,5 @@ export default {
   popups,
   maintenance,
   tag,
+  theme,
 };

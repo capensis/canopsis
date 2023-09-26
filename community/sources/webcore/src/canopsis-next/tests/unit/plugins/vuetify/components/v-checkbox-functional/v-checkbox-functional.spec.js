@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import VCheckboxFunctional from '@/plugins/vuetify-replacer/components/v-checkbox-functional/v-checkbox-functional.vue';
+import VCheckboxFunctional from '@/plugins/vuetify/components/v-checkbox-functional/v-checkbox-functional.vue';
 
 const selectControlField = wrapper => wrapper.find('.v-input--selection-controls__input');
 const selectLabel = wrapper => wrapper.find('label');
