@@ -8,7 +8,7 @@ exports[`c-pagination Renders \`c-pagination\` on the bottom correctly 1`] = `
     class="layout align-center justify-center"
   >
     <span
-      class="grey--text text--darken-1"
+      class="text--secondary"
     >
       showing 21 to 30 of 100 entries
     </span>
@@ -282,7 +282,7 @@ exports[`c-pagination Renders \`c-pagination\` with default props correctly 1`] 
     class="layout align-center justify-center"
   >
     <span
-      class="grey--text text--darken-1"
+      class="text--secondary"
     >
       showing 1 to 1 of 1 entries
     </span>
@@ -337,7 +337,7 @@ exports[`c-pagination Renders \`c-pagination\` with default props correctly 2`] 
     class="layout align-center justify-center"
   >
     <span
-      class="grey--text text--darken-1"
+      class="text--secondary"
     >
       showing 1 to 1 of 1 entries
     </span>

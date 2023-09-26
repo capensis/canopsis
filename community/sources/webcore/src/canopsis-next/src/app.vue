@@ -92,7 +92,11 @@ export default {
       this.fetchTemplateVars(),
     ]);
 
-    this.fetchAppInfoWithErrorHandling();
+    await this.fetchAppInfoWithErrorHandling();
+
+    if (!this.isLoggedIn) {
+      this.setTheme(this.defaultColorTheme);
+    }
   },
   methods: {
     ...mapActions({
@@ -111,6 +115,7 @@ export default {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
           this.$socket.authenticate(localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY));
+
           this.setTheme(currentUser.ui_theme);
 
           await this.filesAccess();
@@ -209,17 +214,17 @@ export default {
 </script>
 
 <style lang="scss">
-  #app {
-    &.-fullscreen {
-      width: 100%;
+#app {
+  &.-fullscreen {
+    width: 100%;
 
-      #main-navigation {
-        display: none;
-      }
+    #main-navigation {
+      display: none;
+    }
 
-      #main-content {
-        padding: 0 !important;
-      }
+    #main-content {
+      padding: 0 !important;
     }
   }
+}
 </style>

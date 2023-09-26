@@ -8,6 +8,8 @@ import ExpandTransitionGenerator from 'vuetify/es5/components/transitions/expand
 
 import { DEFAULT_MAX_MULTI_SORT_COLUMNS_COUNT } from '@/config';
 
+import { isDarkColor } from '@/helpers/color';
+
 export default {
   extends: VDataTable,
   props: {
@@ -33,6 +35,10 @@ export default {
     },
   },
   computed: {
+    isDark() {
+      return isDarkColor(this.$vuetify.theme['table-background']);
+    },
+
     activeItems() {
       return this.filteredItems.filter(item => !this.isDisabledItem(item));
     },
@@ -44,6 +50,7 @@ export default {
     classes() {
       return {
         'v-datatable v-table': true,
+        'v-datatable--expand': this.expand,
         'v-datatable--select-all': this.selectAll !== false,
         'v-datatable--dense': this.dense,
         'v-datatable--ultra-dense': this.ultraDense,
@@ -62,8 +69,14 @@ export default {
         }, [this.$scopedSlots.expand(props)]);
         children.push(expand);
       }
+
+      const classes = {
+        'v-datatable__expand-col': true,
+        'v-datatable__expand-col--expanded': this.isExpanded(props.item),
+      };
+
       const transition = this.$createElement('transition-group', {
-        class: 'v-datatable__expand-col',
+        class: classes,
         attrs: { colspan: this.headerColumns },
         props: {
           tag: 'td',
@@ -313,118 +326,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-$densePadding: 6px;
-$ultraDensePadding: 6px;
-
-$denseCellHeight: 32px;
-$ultraDenseCellHeight: 24px;
-$denseTreeviewCellHeight: 32px;
-
-$denseColorIndicatorPadding: 1px 5px;
-
-table.v-datatable {
-  transition: background-color .3s cubic-bezier(.25,.8,.5,1);
-
-  .v-datatable-header__sort-badge {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    border: 0;
-    border-radius: 50%;
-    min-width: 18px;
-    min-height: 18px;
-    height: 18px;
-    width: 18px;
-    margin-left: 4px;
-
-    .theme--light & {
-      background-color: rgba(black, .12);
-      color: rgba(black, .87);
-    }
-
-    .theme--dark & {
-      background-color: rgba(white, .12);
-      color: rgba(white, .87);
-    }
-  }
-
-  &--dense.v-datatable {
-    thead tr {
-      height: $denseCellHeight;
-    }
-
-    tbody, thead {
-      td, th {
-        padding: 0 $densePadding !important;
-      }
-
-      td:not(.v-datatable__expand-col) {
-        height: $denseCellHeight;
-      }
-    }
-  }
-
-  &--ultra-dense.v-datatable {
-    thead tr {
-      height: $ultraDenseCellHeight;
-    }
-
-    tbody, thead {
-      td, th {
-        padding: 0 $ultraDensePadding !important;
-      }
-
-      td:not(.v-datatable__expand-col) {
-        height: $ultraDenseCellHeight;
-      }
-    }
-  }
-
-  &--dense.v-datatable,
-  &--ultra-dense.v-datatable {
-    tbody, thead {
-      td:not(.v-datatable__expand-col) {
-        td, th {
-          padding: 0 $densePadding !important;
-        }
-
-        .v-btn {
-          margin-top: 0;
-          margin-bottom: 0;
-        }
-
-        .color-indicator {
-          padding: $denseColorIndicatorPadding !important;
-        }
-
-        .c-action-btn__button {
-          margin: 0 !important;
-        }
-      }
-    }
-
-    .service-dependencies {
-      thead tr, thead th, td:not(.v-datatable__expand-col) {
-        height: $denseTreeviewCellHeight;
-      }
-
-      .treeview-data-table--tree {
-        margin-top: $denseTreeviewCellHeight;
-      }
-
-      .v-treeview-node__root {
-        min-height: $denseTreeviewCellHeight;
-        height: $denseTreeviewCellHeight;
-
-        .v-btn {
-          width: $denseTreeviewCellHeight - 4;
-          height: $denseTreeviewCellHeight - 4;
-          margin: 2px;
-        }
-      }
-    }
-  }
-}
-</style>
