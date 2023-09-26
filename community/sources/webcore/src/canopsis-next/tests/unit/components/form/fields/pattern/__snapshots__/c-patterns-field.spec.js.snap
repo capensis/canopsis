@@ -5,7 +5,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
   class="layout c-patterns-field column"
 >
   <c-collapse-panel-stub
-    outline-color="#ff5252"
+    outline-color="var(--v-error-base)"
     title="Alarm patterns"
   >
     <c-alarm-patterns-field-stub
@@ -18,7 +18,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
     />
   </c-collapse-panel-stub>
   <c-collapse-panel-stub
-    outline-color="#ff5252"
+    outline-color="var(--v-error-base)"
     title="Entity patterns"
   >
     <c-entity-patterns-field-stub
@@ -31,7 +31,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
     />
   </c-collapse-panel-stub>
   <c-collapse-panel-stub
-    outline-color="#ff5252"
+    outline-color="var(--v-error-base)"
     title="Pbehavior patterns"
   >
     <c-pbehavior-patterns-field-stub
@@ -44,7 +44,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
     />
   </c-collapse-panel-stub>
   <c-collapse-panel-stub
-    outline-color="#ff5252"
+    outline-color="var(--v-error-base)"
     title="Event patterns"
   >
     <c-event-filter-patterns-field-stub
@@ -55,7 +55,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
     />
   </c-collapse-panel-stub>
   <c-collapse-panel-stub
-    outline-color="#ff5252"
+    outline-color="var(--v-error-base)"
     title="Total entity patterns"
   >
     <c-entity-patterns-field-stub
@@ -67,7 +67,7 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
     />
   </c-collapse-panel-stub>
   <c-collapse-panel-stub
-    outline-color="#ff5252"
+    outline-color="var(--v-error-base)"
     title="Service weather patterns"
   >
     <c-service-weather-patterns-field-stub

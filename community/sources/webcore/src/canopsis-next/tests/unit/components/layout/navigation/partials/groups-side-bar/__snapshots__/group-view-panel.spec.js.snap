@@ -2,7 +2,7 @@
 
 exports[`group-view-panel Renders \`group-view-panel\` with custom props 1`] = `
 <div
-  class="v-card v-sheet theme--light secondary white--text lighten-3"
+  class="v-card v-sheet theme--light secondary lighten-3"
 >
   <div
     class="v-card__text panel-item-content"
@@ -79,7 +79,7 @@ exports[`group-view-panel Renders \`group-view-panel\` with custom props 1`] = `
 
 exports[`group-view-panel Renders \`group-view-panel\` with required props 1`] = `
 <div
-  class="v-card v-sheet theme--light secondary white--text lighten-1"
+  class="v-card v-sheet theme--light secondary lighten-1"
 >
   <div
     class="v-card__text panel-item-content"
