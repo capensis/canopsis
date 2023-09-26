@@ -488,6 +488,11 @@ permission:
     _id: models_kpiRatingSettings
     name: <Current()._id>
     description: KPI Rating settings
+  permission_models_kpiCollectionSettings:
+    <<: *permission_crud
+    _id: models_kpiCollectionSettings
+    name: <Current()._id>
+    description: KPI collection settings
   permission_models_notification_instructionStats:
     <<: *permission_crud
     _id: models_notification_instructionStats
@@ -1398,6 +1403,7 @@ role:
       "@permission_models_kpi": 1
       "@permission_models_kpiFilters": 15
       "@permission_models_kpiRatingSettings": 15
+      "@permission_models_kpiCollectionSettings": 15
       "@permission_models_notification_instructionStats": 15
       "@permission_models_profile_corporatePattern": 15
       "@permission_models_map": 15
