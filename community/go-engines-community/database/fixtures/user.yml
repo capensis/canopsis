@@ -491,6 +491,11 @@ default_rights:
     _id: models_kpiRatingSettings
     crecord_name: <Current()._id>
     description: KPI Rating settings
+  permission_models_kpiCollectionSettings:
+    <<: *permission_crud
+    _id: models_kpiCollectionSettings
+    crecord_name: <Current()._id>
+    description: KPI collection settings
   permission_models_notification_instructionStats:
     <<: *permission_crud
     _id: models_notification_instructionStats
@@ -1366,6 +1371,8 @@ default_rights:
       "@permission_models_kpiFilters":
         checksum: 15
       "@permission_models_kpiRatingSettings":
+        checksum: 15
+      "@permission_models_kpiCollectionSettings":
         checksum: 15
       "@permission_models_notification_instructionStats":
         checksum: 15
