@@ -770,7 +770,7 @@ export default {
       phrase: 'modifier la politique de stockage',
     },
     cleanStorage: {
-      title: 'Archivage/Suppression des entités désactivées. Êtes vous sur ?',
+      title: 'Archivage/Suppression des entités. Êtes vous sur ?',
       text: 'Vous êtes sur le point d\'archiver et/ou de supprimer des données.\n'
         + '<strong>Les opérations de suppression sont irreversibles.</strong>',
       phraseText: 'Merci de recopier le texte qui suit pour confirmer:',

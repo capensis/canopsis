@@ -61,9 +61,7 @@ describe('alarms-time-line-card', () => {
     m: `<p>${pbehaviorEnterStep.m}</p>`,
   };
 
-  const snapshotFactory = generateRenderer(AlarmsTimeLineCard, {
-    stubs,
-  });
+  const snapshotFactory = generateRenderer(AlarmsTimeLineCard, { stubs });
 
   it('Renders `alarms-time-line-card` with state counter type', () => {
     const wrapper = snapshotFactory({

@@ -1,0 +1,83 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`storage-settings-remediation-form Renders \`storage-settings-remediation-form\` with custom form and history 1`] = `
+<div
+  class="layout c-information-block column"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="subheading font-weight-bold"
+    >
+      Instructions data storage
+    </div>
+    <!---->
+  </div>
+  <div
+    class="layout mt-2 row"
+  >
+    <span
+      class="c-information-block__subtitle"
+    >
+      <storage-settings-history-message-stub
+        history="1611220000"
+      />
+    </span>
+  </div>
+  <c-enabled-duration-field-stub
+    help-text="When switched on, the instructions timelines data will be deleted after the defined time period."
+    label="Delete instructions timeline data after"
+    name="remediation.delete_after"
+    value="[object Object]"
+  />
+  <c-enabled-duration-field-stub
+    help-text="When switched on, the instruction statistics will be deleted after the defined time period."
+    label="Delete instruction statistics data after"
+    name="remediation.delete_stats_after"
+    value="[object Object]"
+  />
+  <c-enabled-duration-field-stub
+    help-text="When switched on, the instructions summary data will be deleted after the defined time period."
+    label="Delete instructions summary data after"
+    name="remediation.delete_mod_stats_after"
+    value="[object Object]"
+  />
+</div>
+`;
+
+exports[`storage-settings-remediation-form Renders \`storage-settings-remediation-form\` with default form 1`] = `
+<div
+  class="layout c-information-block column"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="subheading font-weight-bold"
+    >
+      Instructions data storage
+    </div>
+    <!---->
+  </div>
+  <!---->
+  <c-enabled-duration-field-stub
+    help-text="When switched on, the instructions timelines data will be deleted after the defined time period."
+    label="Delete instructions timeline data after"
+    name="remediation.delete_after"
+    value="[object Object]"
+  />
+  <c-enabled-duration-field-stub
+    help-text="When switched on, the instruction statistics will be deleted after the defined time period."
+    label="Delete instruction statistics data after"
+    name="remediation.delete_stats_after"
+    value="[object Object]"
+  />
+  <c-enabled-duration-field-stub
+    help-text="When switched on, the instructions summary data will be deleted after the defined time period."
+    label="Delete instructions summary data after"
+    name="remediation.delete_mod_stats_after"
+    value="[object Object]"
+  />
+</div>
+`;
