@@ -1,5 +1,5 @@
+import Vue from 'vue';
 import { schema, normalize, denormalize } from 'normalizr';
-import { merge } from 'lodash';
 
 import { API_ROUTES } from '@/config';
 
@@ -64,7 +64,9 @@ export default createCRUDModule({
     },
 
     [types.MERGE_VIEW_ENTITIES](state, { entities }) {
-      state.data = merge({}, state.data, entities);
+      Object.entries(entities).forEach(([type, typeEntities]) => {
+        Vue.set(state.data, type, { ...state.data[type], ...typeEntities });
+      });
     },
   },
   actions: {

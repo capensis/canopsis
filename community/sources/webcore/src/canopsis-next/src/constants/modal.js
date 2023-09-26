@@ -109,4 +109,6 @@ export const MODALS = {
   createEntityInfo: 'create-entity-info',
   serviceEntities: 'service-entities',
   entitiesList: 'entities-list',
+
+  createTheme: 'create-theme',
 };
