@@ -983,4 +983,15 @@ export default {
       title: 'Dupliquer une balise',
     },
   },
+  createTheme: {
+    create: {
+      title: 'Créer un thème',
+    },
+    edit: {
+      title: 'Modifier le thème',
+    },
+    duplicate: {
+      title: 'Thème en double',
+    },
+  },
 };

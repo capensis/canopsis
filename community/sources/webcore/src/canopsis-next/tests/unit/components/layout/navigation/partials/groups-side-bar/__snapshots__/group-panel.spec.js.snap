@@ -2,7 +2,7 @@
 
 exports[`group-panel Renders \`group-panel\` with custom props 1`] = `
 <li
-  class="v-expansion-panel__container secondary white--text group-item editing"
+  class="v-expansion-panel__container secondary group-item editing"
   isgroupsorderchanged="true"
   tabindex="0"
 >
@@ -52,7 +52,7 @@ exports[`group-panel Renders \`group-panel\` with custom props 1`] = `
 
 exports[`group-panel Renders \`group-panel\` with required props 1`] = `
 <li
-  class="v-expansion-panel__container secondary white--text group-item"
+  class="v-expansion-panel__container secondary group-item"
   tabindex="0"
 >
   <div

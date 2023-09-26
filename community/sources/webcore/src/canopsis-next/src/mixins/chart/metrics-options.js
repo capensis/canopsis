@@ -45,9 +45,11 @@ export const chartMetricsOptionsMixin = {
     },
 
     realMetricsCount() {
+      const length = this.metrics?.length ?? 0;
+
       return this.hasHistoryData
-        ? this.metrics?.length * 2
-        : this.metrics?.length;
+        ? length * 2
+        : length;
     },
 
     tooltipBodyFontSize() {

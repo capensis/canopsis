@@ -6,17 +6,18 @@
       @change="$emit('input', $event)"
     )
       v-btn(
-        :data-test="`stateCriticity-${state}`",
-        v-for="(state, key) in stateValues",
-        :key="key",
-        :value="state",
-        :style="{ backgroundColor: $constants.ENTITIES_STATES_STYLES[state].color }",
+        v-for="{ color, value, text } in availableStates",
+        :key="value",
+        :value="value",
+        :style="{ backgroundColor: color }",
         depressed
-      ) {{ $t(`modals.createChangeStateEvent.states.${key}`) }}
+      ) {{ text }}
 </template>
 
 <script>
 import { ENTITIES_STATES } from '@/constants';
+
+import { getEntityStateColor } from '@/helpers/entities/entity/color';
 
 export default {
   props: {
@@ -31,6 +32,15 @@ export default {
     stateValues: {
       type: Object,
       default: () => ENTITIES_STATES,
+    },
+  },
+  computed: {
+    availableStates() {
+      return Object.entries(this.stateValues).map(([key, state]) => ({
+        text: this.$t(`modals.createChangeStateEvent.states.${key}`),
+        value: state,
+        color: getEntityStateColor(state),
+      }));
     },
   },
 };

@@ -19,7 +19,7 @@ exports[`mermaid-theme-field Renders \`mermaid-theme-field\` with custom props 1
           class="v-label v-label--active theme--light"
           style="left: 0px; position: absolute;"
         >
-          Color theme
+          Theme
         </label>
         <div
           class="v-select__selections"
@@ -30,7 +30,7 @@ exports[`mermaid-theme-field Renders \`mermaid-theme-field\` with custom props 1
             Dark
           </div>
           <input
-            aria-label="Color theme"
+            aria-label="Theme"
             aria-readonly="false"
             autocomplete="on"
             name="custom_name"
@@ -200,7 +200,7 @@ exports[`mermaid-theme-field Renders \`mermaid-theme-field\` with default props 
           class="v-label v-label--active theme--light"
           style="left: 0px; position: absolute;"
         >
-          Color theme
+          Theme
         </label>
         <div
           class="v-select__selections"
@@ -211,7 +211,7 @@ exports[`mermaid-theme-field Renders \`mermaid-theme-field\` with default props 
             Canopsis
           </div>
           <input
-            aria-label="Color theme"
+            aria-label="Theme"
             aria-readonly="false"
             autocomplete="on"
             name="type"

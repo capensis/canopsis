@@ -1,4 +1,3 @@
-import { THEMES_NAMES } from '@/config';
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -502,12 +501,6 @@ export default {
     [TRIGGERS.autoinstructionresultfail]: {
       text: 'L\'alarme n\'est pas dans l\'état OK après toutes les instructions automatiques',
     },
-  },
-  themes: {
-    [THEMES_NAMES.canopsis]: 'Canopsis',
-    [THEMES_NAMES.canopsisDark]: 'Canopsis sombre',
-    [THEMES_NAMES.colorBlind]: 'Daltonien',
-    [THEMES_NAMES.colorBlindDark]: 'Daltonien foncé',
   },
   request: {
     timeout: 'Temps libre',
