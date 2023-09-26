@@ -9,9 +9,10 @@
     )
     declare-ticket-rule-ticket-mapping-field(v-field="webhook.declare_ticket")
     v-layout(row, justify-end)
-      v-btn.white--text(
+      v-btn(
         :loading="checking",
         color="orange",
+        dark,
         @click="validateTemplateVariables"
       ) {{ $t('declareTicket.checkSyntax') }}
 </template>

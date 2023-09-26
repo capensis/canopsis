@@ -26,7 +26,7 @@
         :alarm-states="remediationInstruction.alarm_states"
       )
     remediation-instruction-stats-summary-row(:label="$t('remediation.instructionStat.okAlarmStates')")
-      span.c-state-count-changes-chip.primary {{ remediationInstruction.ok_alarm_states }}
+      c-state-count-changes-chip {{ remediationInstruction.ok_alarm_states }}
 </template>
 
 <script>

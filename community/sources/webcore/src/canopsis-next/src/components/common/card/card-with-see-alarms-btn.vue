@@ -2,7 +2,8 @@
   v-card.card-with-see-alarms-btn(
     v-on="$listeners",
     :class="itemClasses",
-    tile
+    tile,
+    dark
   )
     slot
     v-btn.card-with-see-alarms-btn__btn(
@@ -46,7 +47,6 @@ export default {
     width: 100%;
     font-size: .6em;
     height: var(--see-alarms-btn-height);
-    color: white;
     margin: 0;
     background-color: rgba(0, 0, 0, .2);
 

@@ -14,7 +14,7 @@
       v-layout(v-else, column)
         span(v-if="point.entity") {{ $tc('common.entity') }}: {{ point.entity.name }}
         span(v-if="point.map") {{ $tc('common.map') }}: {{ point.map.name }}
-    v-layout.ma-0.point-popup__actions(v-if="actions")
+    v-layout.ma-0.background.darken-1(v-if="actions")
       v-btn.ma-0(
         v-if="hasAlarmsListAccess && point.entity",
         flat,
@@ -34,7 +34,7 @@
 <script>
 import { isNumber } from 'lodash';
 
-import { COLORS } from '@/config';
+import { CSS_COLORS_VARS } from '@/config';
 import { USERS_PERMISSIONS } from '@/constants';
 
 import { getEntityColor } from '@/helpers/entities/entity/color';
@@ -72,7 +72,7 @@ export default {
     color() {
       return isNumber(this.point.entity?.state)
         ? getEntityColor(this.point.entity, this.colorIndicator)
-        : COLORS.primary;
+        : CSS_COLORS_VARS.primary;
     },
 
     title() {
@@ -90,15 +90,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.point-popup {
-  &__actions {
-    background: #eee;
-
-    .theme--dark & {
-      background: #2f2f2f;
-    }
-  }
-}
-</style>

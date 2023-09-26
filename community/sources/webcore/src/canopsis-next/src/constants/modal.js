@@ -106,4 +106,6 @@ export const MODALS = {
   createMaintenance: 'create-maintenance',
 
   createTag: 'create-tag',
+
+  createTheme: 'create-theme',
 };
