@@ -7,10 +7,11 @@
         event-filter-form(v-model="form", :is-disabled-id-field="config.isDisabledIdField")
       template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
-        v-btn.white--text(
+        v-btn(
           v-if="hasVariablesFields",
           :loading="checking",
           color="orange",
+          dark,
           @click="validateTemplateVariables"
         ) {{ $t('declareTicket.checkSyntax') }}
         v-btn.primary(

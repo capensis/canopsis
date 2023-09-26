@@ -19,13 +19,43 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with custom props
       <div
         class="v-btn__content"
       >
-        <i
+        <svg
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
-          style="font-size: 16px;"
+          class="density_medium-svg-icon v-icon v-icon--is-component theme--light"
+          enable-background="new 0 0 24 24"
+          fill="#000000"
+          height="24px"
+          style="font-size: 16px; height: 16px;"
+          viewBox="0 0 24 24"
+          width="24px"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          $vuetify.icons.density_large
-        </i>
+          <g>
+            <rect
+              fill="none"
+              height="24"
+              width="24"
+            />
+          </g>
+           
+          <g>
+            <g>
+              <rect
+                height="2"
+                width="18"
+                x="3"
+                y="6"
+              />
+               
+              <rect
+                height="2"
+                width="18"
+                x="3"
+                y="16"
+              />
+            </g>
+          </g>
+        </svg>
       </div>
     </button>
   </span>
@@ -43,13 +73,50 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with custom props
       <div
         class="v-btn__content"
       >
-        <i
+        <svg
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
-          style="font-size: 16px;"
+          class="density_medium-svg-icon v-icon v-icon--is-component theme--light"
+          enable-background="new 0 0 24 24"
+          fill="#000000"
+          height="24px"
+          style="font-size: 16px; height: 16px;"
+          viewBox="0 0 24 24"
+          width="24px"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          $vuetify.icons.density_medium
-        </i>
+          <g>
+            <rect
+              fill="none"
+              height="24"
+              width="24"
+            />
+          </g>
+           
+          <g>
+            <g>
+              <rect
+                height="2"
+                width="18"
+                x="3"
+                y="3"
+              />
+               
+              <rect
+                height="2"
+                width="18"
+                x="3"
+                y="19"
+              />
+               
+              <rect
+                height="2"
+                width="18"
+                x="3"
+                y="11"
+              />
+            </g>
+          </g>
+        </svg>
       </div>
     </button>
   </span>
@@ -67,13 +134,57 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with custom props
       <div
         class="v-btn__content"
       >
-        <i
+        <svg
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
-          style="font-size: 16px;"
+          class="density_small-svg-icon v-icon v-icon--is-component theme--light"
+          enable-background="new 0 0 24 24"
+          fill="#000000"
+          height="24px"
+          style="font-size: 16px; height: 16px;"
+          viewBox="0 0 24 24"
+          width="24px"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          $vuetify.icons.density_small
-        </i>
+          <g>
+            <rect
+              fill="none"
+              height="24"
+              width="24"
+            />
+          </g>
+           
+          <g>
+            <g>
+              <rect
+                height="2"
+                width="18"
+                x="3"
+                y="2"
+              />
+               
+              <rect
+                height="2"
+                width="18"
+                x="3"
+                y="20"
+              />
+               
+              <rect
+                height="2"
+                width="18"
+                x="3"
+                y="14"
+              />
+               
+              <rect
+                height="2"
+                width="18"
+                x="3"
+                y="8"
+              />
+            </g>
+          </g>
+        </svg>
       </div>
     </button>
   </span>
@@ -99,13 +210,43 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with default prop
       <div
         class="v-btn__content"
       >
-        <i
+        <svg
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
-          style="font-size: 16px;"
+          class="density_medium-svg-icon v-icon v-icon--is-component theme--light"
+          enable-background="new 0 0 24 24"
+          fill="#000000"
+          height="24px"
+          style="font-size: 16px; height: 16px;"
+          viewBox="0 0 24 24"
+          width="24px"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          $vuetify.icons.density_large
-        </i>
+          <g>
+            <rect
+              fill="none"
+              height="24"
+              width="24"
+            />
+          </g>
+           
+          <g>
+            <g>
+              <rect
+                height="2"
+                width="18"
+                x="3"
+                y="6"
+              />
+               
+              <rect
+                height="2"
+                width="18"
+                x="3"
+                y="16"
+              />
+            </g>
+          </g>
+        </svg>
       </div>
     </button>
   </span>
@@ -123,13 +264,50 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with default prop
       <div
         class="v-btn__content"
       >
-        <i
+        <svg
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
-          style="font-size: 16px;"
+          class="density_medium-svg-icon v-icon v-icon--is-component theme--light"
+          enable-background="new 0 0 24 24"
+          fill="#000000"
+          height="24px"
+          style="font-size: 16px; height: 16px;"
+          viewBox="0 0 24 24"
+          width="24px"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          $vuetify.icons.density_medium
-        </i>
+          <g>
+            <rect
+              fill="none"
+              height="24"
+              width="24"
+            />
+          </g>
+           
+          <g>
+            <g>
+              <rect
+                height="2"
+                width="18"
+                x="3"
+                y="3"
+              />
+               
+              <rect
+                height="2"
+                width="18"
+                x="3"
+                y="19"
+              />
+               
+              <rect
+                height="2"
+                width="18"
+                x="3"
+                y="11"
+              />
+            </g>
+          </g>
+        </svg>
       </div>
     </button>
   </span>
@@ -147,13 +325,57 @@ exports[`c-density-btn-toggle Renders \`c-density-btn-toggle\` with default prop
       <div
         class="v-btn__content"
       >
-        <i
+        <svg
           aria-hidden="true"
-          class="v-icon material-icons theme--light"
-          style="font-size: 16px;"
+          class="density_small-svg-icon v-icon v-icon--is-component theme--light"
+          enable-background="new 0 0 24 24"
+          fill="#000000"
+          height="24px"
+          style="font-size: 16px; height: 16px;"
+          viewBox="0 0 24 24"
+          width="24px"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          $vuetify.icons.density_small
-        </i>
+          <g>
+            <rect
+              fill="none"
+              height="24"
+              width="24"
+            />
+          </g>
+           
+          <g>
+            <g>
+              <rect
+                height="2"
+                width="18"
+                x="3"
+                y="2"
+              />
+               
+              <rect
+                height="2"
+                width="18"
+                x="3"
+                y="20"
+              />
+               
+              <rect
+                height="2"
+                width="18"
+                x="3"
+                y="14"
+              />
+               
+              <rect
+                height="2"
+                width="18"
+                x="3"
+                y="8"
+              />
+            </g>
+          </g>
+        </svg>
       </div>
     </button>
   </span>

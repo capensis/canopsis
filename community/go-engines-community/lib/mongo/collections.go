@@ -77,6 +77,9 @@ const (
 	AlarmTagCollection      = "alarm_tag"
 	AlarmTagColorCollection = "alarm_tag_color"
 
+	MibCollection       = "default_mibs"
+	SnmpRulesCollection = "default_snmprules"
+
 	ScenarioMongoCollection          = "action_scenario"
 	DeclareTicketRuleMongoCollection = "declare_ticket_rule"
 	WebhookHistoryMongoCollection    = "webhook_history"
@@ -94,4 +97,6 @@ const (
 	EntityServiceCountersCollection = "entity_service_counters"
 
 	MetaAlarmStatesCollection = "meta_alarm_states"
+
+	ColorThemeCollection = "color_theme"
 )

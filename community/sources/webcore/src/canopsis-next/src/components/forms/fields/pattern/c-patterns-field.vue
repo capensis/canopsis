@@ -117,7 +117,7 @@
 import { isString, isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import { COLORS } from '@/config';
+import { CSS_COLORS_VARS } from '@/config';
 import { MODALS, PATTERNS_FIELDS } from '@/constants';
 
 import {
@@ -403,7 +403,7 @@ export default {
         return undefined;
       }
 
-      return this.isValidPatternRules(rules) ? COLORS.primary : COLORS.error;
+      return this.isValidPatternRules(rules) ? CSS_COLORS_VARS.primary : CSS_COLORS_VARS.error;
     },
 
     preparePatternsFieldName(name) {

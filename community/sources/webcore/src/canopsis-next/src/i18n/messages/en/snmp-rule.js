@@ -1,3 +1,5 @@
+import { SNMP_TEMPLATE_STATE_STATES } from '@/constants';
+
 export default {
   oid: 'oid',
   module: 'Select a mib module',
@@ -14,4 +16,13 @@ export default {
   formatter: 'Format (capture group with \\x)',
   uploadMib: 'Upload MIB',
   addSnmpRule: 'Add SNMP rule',
+  uploadedMibPopup:
+    'File was uploaded.\nNotifications: {notification}\nObjects: {object}'
+    + '|Files were uploaded.\nNotifications: {notification}\nObjects: {object}',
+  states: {
+    [SNMP_TEMPLATE_STATE_STATES.info]: 'Info',
+    [SNMP_TEMPLATE_STATE_STATES.minor]: 'Minor',
+    [SNMP_TEMPLATE_STATE_STATES.major]: 'Major',
+    [SNMP_TEMPLATE_STATE_STATES.critical]: 'Critical',
+  },
 };

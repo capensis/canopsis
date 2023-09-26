@@ -38,7 +38,7 @@ RUN apk add --no-cache ca-certificates tzdata
 
 RUN addgroup --system canopsis && adduser --system --disabled-password --shell /sbin/nologin --no-create-home --home /opt/canopsis --ingroup canopsis canopsis
 RUN mkdir -p /opt/canopsis/bin /opt/canopsis/etc /opt/canopsis/share
-RUN mkdir -p /opt/canopsis/var/lib/junit-files /opt/canopsis/var/lib/remediation-files /tmp/canopsis/junit && chown canopsis:canopsis /opt/canopsis/var/lib/junit-files /opt/canopsis/var/lib/remediation-files /tmp/canopsis/junit
+RUN mkdir -p /opt/canopsis/var/lib/junit-files /opt/canopsis/var/lib/remediation-files /tmp/canopsis/junit /opt/canopsis/var/lib/upload-files && chown canopsis:canopsis /opt/canopsis/var/lib/junit-files /opt/canopsis/var/lib/remediation-files /tmp/canopsis/junit /opt/canopsis/var/lib/upload-files
 
 COPY community/go-engines-community/config /opt/canopsis/share/config
 
@@ -46,9 +46,10 @@ ARG CANOPSIS_EDITION
 ARG CMD
 ENV CMD ${CMD}
 
-RUN ln -sf /${CMD} /opt/canopsis/bin/${CMD}
-RUN case "${CMD}" in canopsis-api*) ln -sf /canopsis-api-${CANOPSIS_EDITION} /canopsis-api && ( cd /opt/canopsis/bin && ln -sf canopsis-api-${CANOPSIS_EDITION} canopsis-api ) ;; esac
 COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/build/cmd/${CMD} /${CMD}
+RUN ln -sf /${CMD} /opt/canopsis/bin/${CMD}
+RUN if [ -f "/canopsis-api-pro" ] ; then apk add net-snmp-libs; fi
+RUN case "${CMD}" in canopsis-api*) ln -sf /canopsis-api-${CANOPSIS_EDITION} /canopsis-api && ( cd /opt/canopsis/bin && ln -sf canopsis-api-${CANOPSIS_EDITION} canopsis-api ) ;; esac
 
 USER canopsis:canopsis
 
@@ -66,7 +67,7 @@ RUN mkdir -p /opt/canopsis/bin /opt/canopsis/etc /opt/canopsis/share
 RUN apt update && apt install gnupg2 wget musl -y 
 RUN ln -sf /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1
 RUN wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | apt-key add -
-RUN echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/5.0 main" | tee /etc/apt/sources.list.d/mongodb-org-5.0.list
+RUN echo "deb http://repo.mongodb.org/apt/debian bullseye/mongodb-org/5.0 main" | tee /etc/apt/sources.list.d/mongodb-org-5.0.list
 RUN apt update && apt install mongodb-org-shell -y
 RUN apt clean 
 COPY community/go-engines-community/cmd/canopsis-reconfigure/canopsis-community.toml /canopsis-community.toml

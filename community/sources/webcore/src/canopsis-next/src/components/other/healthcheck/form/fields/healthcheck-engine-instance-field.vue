@@ -12,7 +12,7 @@
     v-flex(xs4)
       v-layout(column)
         v-layout(row, align-center)
-          v-flex(:class="{ 'grey--text': !value.enabled }", xs6) {{ $t('common.minimal') }}
+          v-flex(:class="{ 'text--disabled': !value.enabled }", xs6) {{ $t('common.minimal') }}
           v-flex(xs6)
             c-number-field(
               v-field="value.minimal",
@@ -25,7 +25,7 @@
               :min="0"
             )
         v-layout(row, align-center)
-          v-flex(:class="{ 'grey--text': !value.enabled }", xs6) {{ $t('common.optimal') }}
+          v-flex(:class="{ 'text--disabled': !value.enabled }", xs6) {{ $t('common.optimal') }}
           v-flex(xs6)
             c-number-field.mt-0(
               v-field="value.optimal",

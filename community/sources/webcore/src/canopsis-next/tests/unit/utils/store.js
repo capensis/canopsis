@@ -3,6 +3,8 @@ import Vuex from 'vuex';
 import AxiosMockAdapter from 'axios-mock-adapter';
 import Faker from 'faker';
 
+import { CANOPSIS_EDITION } from '@/constants';
+
 import request from '@/services/request';
 import { DEFAULT_ENTITY_MODULE_TYPES } from '@/store/plugins/entities/create-crud-module';
 
@@ -311,20 +313,31 @@ export const testsEntityModule = ({
 export const createAuthModule = () => {
   const currentUserPermissionsById = jest.fn()
     .mockReturnValue({});
+  const login = jest.fn();
+  const fetchCurrentUser = jest.fn();
+
   const authModule = {
     name: 'auth',
     getters: {
       currentUserPermissionsById,
     },
+    actions: {
+      login,
+      fetchCurrentUser,
+    },
   };
 
   afterEach(() => {
     currentUserPermissionsById.mockClear();
+    login.mockClear();
+    fetchCurrentUser.mockClear();
   });
 
   return {
     authModule,
     currentUserPermissionsById,
+    login,
+    fetchCurrentUser,
   };
 };
 
@@ -1042,5 +1055,183 @@ export const createPatternModule = () => {
     patternModule,
     checkPatternsEntitiesCount,
     checkPatternsAlarmsCount,
+  };
+};
+
+export const createInfoModule = () => {
+  const description = jest.fn().mockReturnValue('');
+  const footer = jest.fn().mockReturnValue('');
+  const casConfig = jest.fn().mockReturnValue({});
+  const samlConfig = jest.fn().mockReturnValue({});
+  const edition = jest.fn().mockReturnValue(CANOPSIS_EDITION.community);
+  const version = jest.fn().mockReturnValue();
+  const isCASAuthEnabled = jest.fn().mockReturnValue(false);
+  const isSAMLAuthEnabled = jest.fn().mockReturnValue(false);
+  const isLDAPAuthEnabled = jest.fn().mockReturnValue(false);
+
+  afterEach(() => {
+    description.mockClear();
+    footer.mockClear();
+    casConfig.mockClear();
+    samlConfig.mockClear();
+    edition.mockClear();
+    version.mockClear();
+    isCASAuthEnabled.mockClear();
+    isSAMLAuthEnabled.mockClear();
+    isLDAPAuthEnabled.mockClear();
+  });
+
+  const infoModule = {
+    name: 'info',
+    getters: {
+      description,
+      footer,
+      casConfig,
+      samlConfig,
+      edition,
+      version,
+      isCASAuthEnabled,
+      isSAMLAuthEnabled,
+      isLDAPAuthEnabled,
+    },
+  };
+
+  return {
+    infoModule,
+    description,
+    footer,
+    casConfig,
+    samlConfig,
+    edition,
+    version,
+    isCASAuthEnabled,
+    isSAMLAuthEnabled,
+    isLDAPAuthEnabled,
+  };
+};
+
+export const createNavigationModule = () => {
+  const isEditingMode = jest.fn().mockReturnValue(false);
+  const toggleEditingMode = jest.fn();
+
+  afterEach(() => {
+    isEditingMode.mockClear();
+    toggleEditingMode.mockClear();
+  });
+
+  const navigationModule = {
+    name: 'navigation',
+    getters: {
+      isEditingMode,
+    },
+    actions: {
+      toggleEditingMode,
+    },
+  };
+
+  return {
+    navigationModule,
+    isEditingMode,
+    toggleEditingMode,
+  };
+};
+
+export const createModalsModule = () => {
+  const hasMaximizedModal = jest.fn().mockReturnValue(false);
+
+  afterEach(() => {
+    hasMaximizedModal.mockClear();
+  });
+
+  const modalsModule = {
+    name: 'modals',
+    getters: {
+      hasMaximizedModal,
+    },
+  };
+
+  return {
+    modalsModule,
+    hasMaximizedModal,
+  };
+};
+
+export const createEntitiesModule = () => {
+  const registerGetter = jest.fn();
+  const unregisterGetter = jest.fn();
+
+  afterEach(() => {
+    registerGetter.mockClear();
+    unregisterGetter.mockClear();
+  });
+
+  const entitiesModule = {
+    name: 'entities',
+    actions: {
+      registerGetter,
+      unregisterGetter,
+    },
+  };
+
+  return {
+    entitiesModule,
+    registerGetter,
+    unregisterGetter,
+  };
+};
+
+export const createViewModule = () => {
+  const pending = jest.fn().mockReturnValue(false);
+  const groups = jest.fn().mockReturnValue([]);
+  const updateViewsPositions = jest.fn();
+  const fetchGroupsList = jest.fn();
+
+  afterEach(() => {
+    updateViewsPositions.mockClear();
+  });
+
+  const viewModule = {
+    name: 'view',
+    getters: {
+      pending,
+      items: groups,
+    },
+    actions: {
+      updatePositionsView: updateViewsPositions,
+      fetchList: fetchGroupsList,
+    },
+  };
+
+  return {
+    viewModule,
+    groups,
+    fetchGroupsList,
+    updateViewsPositions,
+  };
+};
+
+export const createPlaylistModule = () => {
+  const playlists = jest.fn().mockReturnValue([]);
+  const fetchPlaylistsList = jest.fn();
+
+  afterEach(() => {
+    playlists.mockClear();
+    fetchPlaylistsList.mockClear();
+  });
+
+  const playlistModule = {
+    name: 'playlist',
+    getters: {
+      items: playlists,
+    },
+    actions: {
+      fetchList: fetchPlaylistsList,
+    },
+  };
+
+  return {
+    playlistModule,
+    playlists,
+    fetchPlaylistsList,
   };
 };
