@@ -16,12 +16,12 @@
         v-for="view in group.views",
         :key="view._id",
         :view="view",
-        :isGroupsOrderChanged="isGroupsOrderChanged"
+        :is-groups-order-changed="isGroupsOrderChanged"
       )
 </template>
 
 <script>
-import layoutNavigationGroupsBarGroupMixin from '@/mixins/layout/navigation/groups-bar-group';
+import { layoutNavigationGroupsBarGroupMixin } from '@/mixins/layout/navigation/groups-bar-group';
 
 import GroupsSideBarGroupView from './groups-side-bar-group-view.vue';
 import GroupPanel from './group-panel.vue';

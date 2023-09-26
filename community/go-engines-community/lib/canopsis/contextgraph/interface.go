@@ -1,10 +1,11 @@
-//Package contextgraph contains a service, which is responsible for building canopsis context graph.
+// Package contextgraph contains a service, which is responsible for building canopsis context graph.
 package contextgraph
 
 //go:generate mockgen -destination=../../../mocks/lib/canopsis/contextgraph/contextgraph.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph Manager,EntityServiceStorage
 
 import (
 	"context"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -26,7 +27,7 @@ type Manager interface {
 	//RecomputeService recomputes context graph for an entity service
 	RecomputeService(ctx context.Context, serviceID string) (types.Entity, []types.Entity, error)
 	//UpdateEntities updates entities in the db, eventEntityID is needed to retrieve event entity from entities slice
-	UpdateEntities(ctx context.Context, eventEntityID string, entities []types.Entity) (types.Entity, error)
+	UpdateEntities(ctx context.Context, eventEntityID string, entities []types.Entity, updateServicesData bool) (types.Entity, error)
 	//FillResourcesWithInfos fills all dependent component's resources with component_infos
 	FillResourcesWithInfos(ctx context.Context, component types.Entity) ([]types.Entity, error)
 	//UpdateLastEventDate updates last event date field in the entity document

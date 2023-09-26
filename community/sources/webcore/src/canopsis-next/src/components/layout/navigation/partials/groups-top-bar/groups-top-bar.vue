@@ -19,7 +19,7 @@
 <script>
 import { vuetifyTabsMixin } from '@/mixins/vuetify/tabs';
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
-import layoutNavigationGroupsBarMixin from '@/mixins/layout/navigation/groups-bar';
+import { layoutNavigationGroupsBarMixin } from '@/mixins/layout/navigation/groups-bar';
 
 import GroupsSettingsButton from '../groups-settings-button.vue';
 

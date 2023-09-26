@@ -36,7 +36,7 @@
 <script>
 import { get } from 'lodash';
 
-import { COLORS } from '@/config';
+import { CSS_COLORS_VARS } from '@/config';
 import { ENTITIES_STATUSES, EVENT_ENTITY_TYPES } from '@/constants';
 
 import { getEntityEventIcon } from '@/helpers/entities/entity/icons';
@@ -96,7 +96,7 @@ export default {
       if (this.entity.pbh_origin_icon) {
         extraIcons.push({
           icon: this.entity.pbh_origin_icon,
-          color: COLORS.secondary,
+          color: CSS_COLORS_VARS.secondary,
         });
       }
 

@@ -2,7 +2,6 @@
   router-link.panel-item-content-link(
     :class="{ editing: isNavigationEditingMode }",
     :event="routerLinkEvents",
-    :data-test="`linkView-view-${view._id}`",
     :title="view.title",
     :to="viewLink"
   )
@@ -34,7 +33,7 @@ export default {
   },
   computed: {
     isViewActive() {
-      return this.$route.params.id && this.$route.params.id === this.view._id;
+      return this.$route?.params?.id === this.view._id;
     },
 
     routerLinkEvents() {
