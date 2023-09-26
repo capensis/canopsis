@@ -13,7 +13,7 @@ export const Handlebars = promisedHandlebars(HandlebarsLib);
  * @param {string} template
  * @param {Object} [context = {}]
  * @param {Object} [instance = Handlebars]
- * @returns {Promise}
+ * @returns {Promise<string>}
  */
 export async function compile(template, context = {}, instance = Handlebars) {
   const handleBarFunction = instance.compile(template ?? '');
@@ -24,13 +24,7 @@ export async function compile(template, context = {}, instance = Handlebars) {
     ...context,
   };
 
-  const result = await handleBarFunction(preparedContext);
-
-  const element = document.createElement('div');
-
-  element.innerHTML = result;
-
-  return element.innerHTML;
+  return handleBarFunction(preparedContext);
 }
 
 /**
