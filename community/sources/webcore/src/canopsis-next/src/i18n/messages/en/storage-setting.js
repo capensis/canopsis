@@ -22,11 +22,20 @@ export default {
   entity: {
     title: 'Entities data storage',
     titleHelp: 'All disabled entities with associated alarms can be archived (moved to the separate collection) and/or deleted forever.',
-    archiveEntity: 'Archive disabled entities',
-    deleteEntity: 'Delete disabled entities forever from archive',
     archiveDependencies: 'Remove the impacting and dependent entities as well',
     archiveDependenciesHelp: 'For connectors, all impacting and dependent components and resources will be archived or deleted forever. For components, all dependent resources will be archived or deleted forever as well.',
-    cleanStorage: 'Clean storage',
+    archiveDisabled: 'Archive disabled entities',
+  },
+  entityUnlinked: {
+    title: 'Unlinked entities storage',
+    titleHelp: 'All unlinked connectors, components and resources without alarms and updated long time ago can be archived.',
+    archiveBefore: 'Archive entities when no events received for',
+    archiveUnlinked: 'Archive unlinked entities',
+  },
+  entityArchived: {
+    title: 'Archived data storage',
+    titleHelp: 'All the archived entities can be deleted forever.',
+    cleanArchive: 'Clean archive',
   },
   pbehavior: {
     title: 'PBehavior data storage',

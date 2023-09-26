@@ -147,13 +147,9 @@ describe('mass-actions-panel', () => {
 
   const refreshAlarmsList = jest.fn();
 
-  const factory = generateShallowRenderer(MassActionsPanel, {
-    stubs,
-  });
+  const factory = generateShallowRenderer(MassActionsPanel, { stubs });
 
-  const snapshotFactory = generateRenderer(MassActionsPanel, {
-    stubs,
-  });
+  const snapshotFactory = generateRenderer(MassActionsPanel, { stubs });
 
   afterEach(() => {
     jest.clearAllMocks();

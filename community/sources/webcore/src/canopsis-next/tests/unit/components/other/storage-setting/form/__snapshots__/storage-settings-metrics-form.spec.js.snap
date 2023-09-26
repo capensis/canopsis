@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`storage-settings-metrics-form Renders \`storage-settings-metrics-form\` with custom form 1`] = `
+<div
+  class="layout c-information-block column"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="subheading font-weight-bold"
+    >
+      Internal metrics data storage
+    </div>
+    <c-help-icon-stub
+      color="info"
+      icon-class="ml-2"
+      max-width="300"
+      text="When enabled, internal metrics data will be deleted after the defined time period"
+      top="top"
+    />
+  </div>
+  <!---->
+  <c-enabled-duration-field-stub
+    help-text="All internal metrics older than the defined time period will be deleted"
+    label="Clear metrics storage after"
+    name="metrics.delete_after"
+    value="[object Object]"
+  />
+</div>
+`;
+
+exports[`storage-settings-metrics-form Renders \`storage-settings-metrics-form\` with default form 1`] = `
+<div
+  class="layout c-information-block column"
+>
+  <div
+    class="layout row"
+  >
+    <div
+      class="subheading font-weight-bold"
+    >
+      Internal metrics data storage
+    </div>
+    <c-help-icon-stub
+      color="info"
+      icon-class="ml-2"
+      max-width="300"
+      text="When enabled, internal metrics data will be deleted after the defined time period"
+      top="top"
+    />
+  </div>
+  <!---->
+  <c-enabled-duration-field-stub
+    help-text="All internal metrics older than the defined time period will be deleted"
+    label="Clear metrics storage after"
+    name="metrics.delete_after"
+    value="[object Object]"
+  />
+</div>
+`;

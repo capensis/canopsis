@@ -770,7 +770,7 @@ export default {
       phrase: 'update the storage policy',
     },
     cleanStorage: {
-      title: 'Archive/delete disabled entities. Are you sure ?',
+      title: 'Archive/delete entities. Are you sure ?',
       text: 'You are about to archive and/or delete data.\n'
         + '<strong>Deletion operation won\'t be cancellable.</strong>',
       phraseText: 'Please, type the following to confirm:',

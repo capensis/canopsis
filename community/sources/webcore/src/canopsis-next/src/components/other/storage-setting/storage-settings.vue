@@ -6,7 +6,9 @@
       storage-settings-form(
         v-model="form",
         :history="history",
-        @clean-entities="cleanEntities"
+        @archive:disabled="archiveDisabledEntities",
+        @archive:unlinked="archiveUnlinkedEntities",
+        @clean:archive="cleanArchivedEntities"
       )
       v-divider.mt-3
       v-layout.mt-3(row, justify-end)
@@ -52,7 +54,7 @@ export default {
     this.history = dataStorageSettings.history;
   },
   methods: {
-    cleanEntities() {
+    showConfirmationPhraseModal({ action, ...config }) {
       this.$modals.show({
         name: MODALS.confirmationPhrase,
         config: {
@@ -60,8 +62,9 @@ export default {
           text: this.$t('modals.confirmationPhrase.cleanStorage.text'),
           phraseText: this.$t('modals.confirmationPhrase.cleanStorage.phraseText'),
           phrase: this.$t('modals.confirmationPhrase.cleanStorage.phrase'),
+          ...config,
           action: async () => {
-            await this.cleanEntitiesData({ data: this.form.entity });
+            await action();
 
             this.$popups.success({ text: this.$t('success.default') });
 
@@ -70,6 +73,24 @@ export default {
             this.history = history;
           },
         },
+      });
+    },
+
+    archiveDisabledEntities() {
+      this.showConfirmationPhraseModal({
+        action: () => this.archiveDisabledEntitiesData({ data: this.form.entity_disabled }),
+      });
+    },
+
+    archiveUnlinkedEntities() {
+      this.showConfirmationPhraseModal({
+        action: () => this.archiveUnlinkedEntitiesData({ data: this.form.entity_unlinked }),
+      });
+    },
+
+    cleanArchivedEntities() {
+      this.showConfirmationPhraseModal({
+        action: () => this.cleanArchivedEntitiesData(),
       });
     },
 

@@ -32,9 +32,7 @@ describe('pbehavior-recurrence-rule-exceptions-field', () => {
     stubs,
     mocks: { $modals },
   });
-  const snapshotFactory = generateRenderer(PbehaviorRecurrenceRuleExceptionsField, {
-    stubs,
-  });
+  const snapshotFactory = generateRenderer(PbehaviorRecurrenceRuleExceptionsField, { stubs });
 
   test('Exception added after trigger create button', () => {
     const exdates = [{ key: 'exdate-1', begin: 1, end: 2, type: '' }];

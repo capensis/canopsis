@@ -23,9 +23,7 @@ const snapshotStubs = {
 describe('alarms-time-line', () => {
   const { steps } = fakeAlarmDetails();
 
-  const factory = generateShallowRenderer(AlarmsTimeLine, {
-    stubs,
-  });
+  const factory = generateShallowRenderer(AlarmsTimeLine, { stubs });
   const snapshotFactory = generateRenderer(AlarmsTimeLine, {
     stubs: snapshotStubs,
   });
