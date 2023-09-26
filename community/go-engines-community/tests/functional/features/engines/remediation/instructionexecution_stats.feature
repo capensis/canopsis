@@ -778,7 +778,6 @@ Feature: update an instruction statistics
                 },
                 {
                   "_t": "statedec",
-                  "t": {{ .execution1Time }},
                   "val": 0
                 }
               ]
@@ -798,6 +797,8 @@ Feature: update an instruction statistics
       }
     }
     """
+    When I save response alarmStatedecTimestamp={{ (index (index .lastResponse.data 0).alarm.v.steps 4).t }}
+    Then the difference between alarmStatedecTimestamp execution1Time is in range -1,1
     When I do GET /api/v4/cat/instructions?search=test-instruction-to-stats-update-3-name&with_month_executions=true
     Then the response code should be 200
     Then the response body should contain:
