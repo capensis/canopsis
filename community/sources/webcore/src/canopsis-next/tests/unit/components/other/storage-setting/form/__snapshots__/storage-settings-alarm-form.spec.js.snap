@@ -24,7 +24,7 @@ exports[`storage-settings-alarm-form Renders \`storage-settings-alarm-form\` wit
     class="layout mt-2 row"
   >
     <span
-      class="c-information-block__subtitle"
+      class="text--secondary"
     >
       <storage-settings-history-message-stub
         archivedcountmessagekey="storageSetting.history.alarm.archivedCount"

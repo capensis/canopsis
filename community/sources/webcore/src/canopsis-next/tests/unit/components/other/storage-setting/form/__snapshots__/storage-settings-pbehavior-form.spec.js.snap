@@ -18,7 +18,7 @@ exports[`storage-settings-pbehavior-form Renders \`storage-settings-pbehavior-fo
     class="layout mt-2 row"
   >
     <span
-      class="c-information-block__subtitle"
+      class="text--secondary"
     >
       <storage-settings-history-message-stub
         history="1611230000"

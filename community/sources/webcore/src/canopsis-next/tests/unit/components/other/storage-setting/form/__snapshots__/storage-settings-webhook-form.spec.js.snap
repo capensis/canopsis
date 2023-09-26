@@ -27,7 +27,7 @@ exports[`storage-settings-webhook-form Renders \`storage-settings-webhook-form\`
       class="layout mt-2 row"
     >
       <span
-        class="c-information-block__subtitle"
+        class="text--secondary"
       >
         <storage-settings-history-message-stub
           history="1611250000"
@@ -40,9 +40,10 @@ exports[`storage-settings-webhook-form Renders \`storage-settings-webhook-form\`
       name="webhook.delete_after"
       value="[object Object]"
     />
-    <c-enabled-field
+    <c-enabled-field-stub
       label="Open auth data in logs"
       name="webhook.log_credentials"
+      value="true"
     />
   </div>
 </div>
@@ -78,7 +79,7 @@ exports[`storage-settings-webhook-form Renders \`storage-settings-webhook-form\`
       name="webhook.delete_after"
       value="[object Object]"
     />
-    <c-enabled-field
+    <c-enabled-field-stub
       label="Open auth data in logs"
       name="webhook.log_credentials"
     />
