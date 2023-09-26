@@ -134,6 +134,7 @@ export const USERS_PERMISSIONS = {
     },
     profile: {
       corporatePattern: `${USER_PERMISSIONS_PREFIXES.technical.profile}_corporatePattern`,
+      theme: `${USER_PERMISSIONS_PREFIXES.technical.profile}_color_theme`,
     },
   },
   business: {
@@ -363,6 +364,7 @@ export const USERS_PERMISSIONS = {
       widgetTemplate: `${USER_PERMISSIONS_PREFIXES.api}_widgettemplate`,
       maintenance: `${USER_PERMISSIONS_PREFIXES.api}_maintenance`,
       alarmTag: `${USER_PERMISSIONS_PREFIXES.api}_alarm_tag`,
+      theme: `${USER_PERMISSIONS_PREFIXES.api}_color_theme`,
 
       ...featuresService.get('constants.USERS_PERMISSIONS.api.general'),
     },

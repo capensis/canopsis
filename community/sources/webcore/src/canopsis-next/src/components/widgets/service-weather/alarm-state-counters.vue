@@ -19,7 +19,10 @@
 <script>
 import { get } from 'lodash';
 
-import { SERVICE_WEATHER_STATE_COUNTERS_COLORS, SERVICE_WEATHER_STATE_COUNTERS_ICONS } from '@/constants';
+import { CSS_COLORS_VARS } from '@/config';
+import { ENTITIES_STATES, SERVICE_WEATHER_STATE_COUNTERS, SERVICE_WEATHER_STATE_COUNTERS_ICONS } from '@/constants';
+
+import { getEntityStateColor } from '@/helpers/entities/entity/color';
 
 import AlarmCounter from './alarm-counter.vue';
 
@@ -36,11 +39,21 @@ export default {
     },
   },
   computed: {
+    countersColorsByType() {
+      return {
+        [SERVICE_WEATHER_STATE_COUNTERS.all]: CSS_COLORS_VARS.error,
+        [SERVICE_WEATHER_STATE_COUNTERS.active]: CSS_COLORS_VARS.error,
+        [SERVICE_WEATHER_STATE_COUNTERS.minor]: getEntityStateColor(ENTITIES_STATES.minor),
+        [SERVICE_WEATHER_STATE_COUNTERS.major]: getEntityStateColor(ENTITIES_STATES.major),
+        [SERVICE_WEATHER_STATE_COUNTERS.critical]: getEntityStateColor(ENTITIES_STATES.critical),
+      };
+    },
+
     preparedCounters() {
       return this.types.map(type => ({
         type,
         icon: SERVICE_WEATHER_STATE_COUNTERS_ICONS[type],
-        color: SERVICE_WEATHER_STATE_COUNTERS_COLORS[type],
+        color: this.countersColorsByType[type],
         count: get(this.counters, type, 0),
       })).sort((a, b) => b.count - a.count);
     },

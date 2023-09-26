@@ -1,8 +1,8 @@
 <template lang="pug">
-  v-expansion-panel(color="grey", light)
+  v-expansion-panel(color="grey")
     v-expansion-panel-content
       template(#header="")
-        span.white {{ $t('flowchart.properties') }}
+        span {{ $t('flowchart.properties') }}
       v-divider
       v-card
         v-card-text

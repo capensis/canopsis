@@ -1,12 +1,12 @@
 <template lang="pug">
   span.d-inline-flex.align-center
-    span.c-state-count-changes-chip(:style="style") {{ affect.from }}
+    c-state-count-changes-chip(:color="color") {{ affect.from }}
     v-icon(size="16") arrow_forward
-    span.c-state-count-changes-chip(:style="style") {{ affect.to }}
+    c-state-count-changes-chip(:color="color") {{ affect.to }}
 </template>
 
 <script>
-import { COLORS } from '@/config';
+import { CSS_COLORS_VARS } from '@/config';
 
 export default {
   props: {
@@ -16,12 +16,7 @@ export default {
     },
     color: {
       type: String,
-      default: COLORS.primary,
-    },
-  },
-  computed: {
-    style() {
-      return { backgroundColor: this.color };
+      default: CSS_COLORS_VARS.primary,
     },
   },
 };

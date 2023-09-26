@@ -18,7 +18,7 @@
         v-flex.text-sm-center
           v-tooltip(bottom)
             template(#activator="{ on }")
-              v-btn.mx-2.ds-light-forecolor.ds-calendar-app-action(
+              v-btn.mx-2.ds-calendar-app-action(
                 v-on="on",
                 icon,
                 depressed,
@@ -29,7 +29,7 @@
           calendar-app-period-picker(:calendar="calendar", @change="selectPeriod")
           v-tooltip(bottom)
             template(#activator="{ on }")
-              v-btn.mx-2.ds-light-forecolor.ds-calendar-app-action(
+              v-btn.mx-2.ds-calendar-app-action(
                 v-on="on",
                 icon,
                 depressed,
@@ -376,48 +376,53 @@ export default {
 </script>
 
 <style lang="scss">
-  .ds-week-view-container {
+.ds {
+  &-week-view-container {
     max-height: 75vh;
   }
 
-  .ds-week-view {
+  &-week-view {
     position: relative !important;
     overflow: hidden;
     max-height: 75vh;
-
-    .ds-week-header .ds-day {
-      border-top: #e0e0e0 1px solid;
-    }
   }
 
-  .ds-day {
-    min-height: 10em;
-    user-select: none;
-
-    .ds-month & {
-      padding-bottom: 22px;
-    }
-  }
-
-  .ds-day:first-child, .ds-week-header-day:first-child {
-    border-left: #e0e0e0 1px solid;
-  }
-
-  .ds-week-header-day {
+  &-week-view &-week-header,
+  &-week-view &-day {
     border-top: #e0e0e0 1px solid;
   }
 
-  .theme--dark {
-    .ds-month {
+  &-day {
+    min-height: 10em;
+    user-select: none;
+  }
+
+  &-month &-day {
+    padding-bottom: 22px;
+  }
+
+  &-day:first-child, &-week-header-day:first-child {
+    border-left: #e0e0e0 1px solid;
+  }
+
+  &-week-header-day {
+    border-top: #e0e0e0 1px solid;
+  }
+
+  &-month {
+    .theme--dark & {
       background: var(--v-secondary) !important;
     }
+  }
 
-    .ds-week-header-day,
-    .ds-dom,
-    .ds-week-date,
-    .ds-week-weekday,
-    .ds-hour-text {
+  &-week-header-day,
+  &-dom,
+  &-week-date,
+  &-week-weekday,
+  &-hour-text {
+    .theme--dark & {
       color: white !important;
     }
   }
+}
 </style>

@@ -1,17 +1,37 @@
 import tinycolor from 'tinycolor2';
 
 /**
+ * @typedef {Object} ReadableColorOptions
+ * @property {'AA' | 'AAA'} level
+ * @property {'small' | 'large'} size
+ */
+
+/**
+ * Check color is readable
+ *
+ * @param {string} firstColor
+ * @param {string} secondColor
+ * @param {ReadableColorOptions} [options = {}]
+ * @return {boolean}
+ */
+export const isReadableColor = (firstColor, secondColor, options = {}) => tinycolor.isReadable(
+  firstColor,
+  secondColor,
+  options,
+);
+
+/**
  * Get most readable text color ('white' or 'black')
  *
  * @param {string} color
- * @param {{ level: 'AA' | 'AAA', size: 'small' | 'large' }} [options = {}]
+ * @param {ReadableColorOptions} [options = {}]
  */
 export const getMostReadableTextColor = (color, options = {}) => {
   if (!color) {
     return 'black';
   }
 
-  const isWhiteReadable = tinycolor.isReadable(color, 'white', options);
+  const isWhiteReadable = isReadableColor(color, 'white', options);
 
   return isWhiteReadable ? 'white' : 'black';
 };
@@ -52,6 +72,14 @@ export const colorToHex = color => tinycolor(color).toHexString();
 export const isValidColor = color => tinycolor(color).isValid();
 
 /**
+ * Check color is dark
+ *
+ * @param {string|Object} color
+ * @return {boolean}
+ */
+export const isDarkColor = color => tinycolor(color).isDark();
+
+/**
  * Get darken color
  *
  * @param {string} color
@@ -60,3 +88,28 @@ export const isValidColor = color => tinycolor(color).isValid();
 export const getDarkenColor = (color, amount) => tinycolor(color)
   .darken(amount)
   .toString();
+
+/**
+ * Check property is css variable
+ *
+ * @param {string} property
+ * @returns {boolean}
+ */
+export const isCSSVariable = property => /^var\(.+\)$/.test(property);
+
+/**
+ * Get css variable name
+ *
+ * @param {string} property
+ * @returns {string}
+ */
+export const getCSSVariableName = property => property.match(/^var\((.+)\)$/)[1];
+
+/**
+ * Get darken color
+ *
+ * @param {Element} element
+ * @param {string} property
+ */
+export const getCSSVariableColor = (element, property) => getComputedStyle(element)
+  .getPropertyValue(property);
