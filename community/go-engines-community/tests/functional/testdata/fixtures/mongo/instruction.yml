@@ -1463,7 +1463,6 @@ instruction:
 
   instruction_alarm_correlation_instruction_get_4_1:
     <<: *instruction_manual
-    enabled: false
     _id: test-instruction-correlation-alarm-get-instruction-get-4-1
     entity_pattern:
       - - field: name
