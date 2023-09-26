@@ -12,7 +12,7 @@
         top
       )
     v-layout.mt-2(v-if="$slots.subtitle", row)
-      span.c-information-block__subtitle
+      span.text--secondary
         slot(name="subtitle")
     slot
 </template>
@@ -39,17 +39,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.c-information-block {
-  &__subtitle {
-    color: #616161 !important;
-    caret-color: #616161 !important;
-
-    .theme--dark & {
-      color: #969696 !important;
-      caret-color: #969696 !important;
-    }
-  }
-}
-</style>

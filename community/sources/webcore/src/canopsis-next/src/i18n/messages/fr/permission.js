@@ -618,6 +618,10 @@ export default {
       name: 'Profil : Modèles partagés',
       description: 'Cette autorisation définit l\'accès à la fonctionnalité des modèles partagés',
     },
+    [USERS_PERMISSIONS.technical.profile.theme]: {
+      name: 'Thèmes de couleurs',
+      description: 'Cette autorisation définit l\'accès aux couleurs du thème',
+    },
 
     /**
      * API Permissions
@@ -757,6 +761,10 @@ export default {
     [USERS_PERMISSIONS.api.general.maintenance]: {
       name: 'Mode de Maintenance',
       description: 'Accès à l\'API route vers le mode maintenance',
+    },
+    [USERS_PERMISSIONS.api.general.theme]: {
+      name: 'Thèmes',
+      description: 'Accès à l\'API route vers les thèmes',
     },
 
     [USERS_PERMISSIONS.api.rules.action]: {
