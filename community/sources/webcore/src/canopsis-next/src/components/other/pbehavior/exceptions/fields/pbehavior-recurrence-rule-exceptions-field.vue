@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    h3.grey--text {{ $t('pbehavior.exceptions.title') }}
+    h3.text--secondary {{ $t('pbehavior.exceptions.title') }}
     pbehavior-exceptions-list(v-if="exceptions.length", :exceptions="exceptions", @input="updateExceptions")
     pbehavior-exceptions-field(
       v-field="exdates",

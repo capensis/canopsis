@@ -3,7 +3,7 @@ import flushPromises from 'flush-promises';
 import { omit } from 'lodash';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { mockDateNow, mockModals, mockPopups, mockSocket } from '@unit/utils/mock-hooks';
 import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarmDetails, fakeStaticAlarms } from '@unit/data/alarm';
 import { API_HOST, API_ROUTES } from '@/config';
@@ -73,6 +73,7 @@ const selectAlarmsExpandPanelTour = wrapper => wrapper.find('alarms-expand-panel
 describe('alarms-list', () => {
   const $popups = mockPopups();
   const $modals = mockModals();
+  const $socket = mockSocket();
 
   const nowTimestamp = 1386435600000;
   const nowSubtractOneYearUnix = 1354921200;
@@ -264,6 +265,9 @@ describe('alarms-list', () => {
         $system: {},
       },
     },
+    mocks: {
+      $socket,
+    },
   });
   const snapshotFactory = generateRenderer(AlarmsList, {
     stubs: snapshotStubs,
@@ -271,6 +275,9 @@ describe('alarms-list', () => {
       provide: {
         $system: {},
       },
+    },
+    mocks: {
+      $socket,
     },
   });
 

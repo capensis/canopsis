@@ -54,7 +54,7 @@ export default {
     this.fetchList();
 
     this.$socket
-      .join(SOCKET_ROOMS.broadcastMessages, false)
+      .join(SOCKET_ROOMS.broadcastMessages, null, false)
       .addListener(this.setActiveMessages);
   },
   beforeDestroy() {

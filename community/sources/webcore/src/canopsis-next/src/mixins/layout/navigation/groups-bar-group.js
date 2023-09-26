@@ -2,7 +2,7 @@ import { MODALS } from '@/constants';
 
 import layoutNavigationEditingModeMixin from './editing-mode';
 
-export default {
+export const layoutNavigationGroupsBarGroupMixin = {
   mixins: [layoutNavigationEditingModeMixin],
   props: {
     group: {

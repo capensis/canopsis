@@ -55,7 +55,7 @@ definitions:
       ui_language:
         type: string
       ui_theme:
-        type: string
+        $ref: '#/definitions/colortheme.Theme'
       ui_tours:
         additionalProperties:
           type: boolean
@@ -161,10 +161,9 @@ definitions:
         items:
           type: string
         type: array
-      filtered_children:
-        items:
-          type: string
-        type: array
+      filtered:
+        description: Only for details request
+        type: boolean
       impact_state:
         type: integer
       infos:
@@ -372,6 +371,9 @@ definitions:
     type: object
   alarm.Details:
     properties:
+      _id:
+        description: Only for websocket
+        type: string
       children:
         $ref: '#/definitions/alarm.ChildrenDetails'
       filtered_perf_data:
@@ -390,6 +392,12 @@ definitions:
       opened:
         type: boolean
       perf_data:
+        items:
+          type: string
+        type: array
+      search:
+        type: string
+      search_by:
         items:
           type: string
         type: array
@@ -812,6 +820,8 @@ definitions:
         type: string
       check_count_request_timeout:
         type: integer
+      default_color_theme:
+        $ref: '#/definitions/colortheme.Theme'
       edition:
         type: string
       file_upload_max_size:
@@ -1002,6 +1012,108 @@ definitions:
     - end
     - message
     - start
+    type: object
+  colortheme.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  colortheme.Colors:
+    properties:
+      main:
+        properties:
+          accent:
+            type: string
+          active_color:
+            type: string
+          background:
+            type: string
+          error:
+            type: string
+          info:
+            type: string
+          primary:
+            type: string
+          secondary:
+            type: string
+          success:
+            type: string
+          warning:
+            type: string
+        required:
+        - accent
+        - active_color
+        - background
+        - error
+        - info
+        - primary
+        - secondary
+        - success
+        - warning
+        type: object
+      state:
+        properties:
+          critical:
+            type: string
+          major:
+            type: string
+          minor:
+            type: string
+          ok:
+            type: string
+        required:
+        - critical
+        - major
+        - minor
+        - ok
+        type: object
+      table:
+        properties:
+          background:
+            type: string
+          hover_row_color:
+            type: string
+          row_color:
+            type: string
+          shift_row_color:
+            type: string
+        required:
+        - background
+        - row_color
+        type: object
+    type: object
+  colortheme.EditRequest:
+    properties:
+      colors:
+        $ref: '#/definitions/colortheme.Colors'
+      font_size:
+        enum:
+        - 1
+        - 2
+        - 3
+        type: integer
+      name:
+        type: string
+    required:
+    - font_size
+    - name
+    type: object
+  colortheme.Theme:
+    properties:
+      _id:
+        type: string
+      colors:
+        $ref: '#/definitions/colortheme.Colors'
+      deletable:
+        type: boolean
+      font_size:
+        type: integer
+      name:
+        type: string
+      updated:
+        type: integer
     type: object
   common.AlarmStep:
     properties:
@@ -1952,8 +2064,7 @@ definitions:
       _id:
         type: string
       event:
-        additionalProperties:
-          type: any
+        additionalProperties: {}
         type: object
       message:
         type: string
@@ -4976,7 +5087,7 @@ definitions:
       ui_language:
         type: string
       ui_theme:
-        type: string
+        $ref: '#/definitions/colortheme.Theme'
     type: object
   user.View:
     properties:
@@ -5219,6 +5330,8 @@ definitions:
       label:
         maxLength: 255
         type: string
+      linksInRowCount:
+        type: integer
       onlyIcon:
         type: boolean
       template:

@@ -814,10 +814,7 @@ Feature: Get alarms
         },
         {
           "is_meta_alarm": true,
-          "children": 1,
-          "filtered_children": [
-            "{{ .childAlarmID4 }}"
-          ]
+          "children": 1
         },
         {
           "is_meta_alarm": false,
@@ -834,30 +831,104 @@ Feature: Get alarms
       }
     }
     """
-    Then the response array key "data.0.filtered_children" should contain:
+    When I do POST /api/v4/alarm-details:
     """json
     [
-      "{{ .childAlarmID2 }}",
-      "{{ .childAlarmID3 }}"
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "search": "test-resource-correlation-alarm-get-3-search",
+        "search_by": ["v.output"],
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 1)._id }}",
+        "search": "test-resource-correlation-alarm-get-3-search",
+        "search_by": ["v.output"],
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
     ]
     """
-    When I do GET /api/v4/alarms?opened=true&search=test-resource-correlation-alarm-get-3-search&active_columns[]=v.output&correlation=true&sort_by=children&sort=desc until response code is 200 and body contains:
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "resource": "test-resource-correlation-alarm-get-3-1"
+                },
+                "filtered": false
+              },
+              {
+                "v": {
+                  "resource": "test-resource-correlation-alarm-get-3-2"
+                },
+                "filtered": true
+              },
+              {
+                "v": {
+                  "resource": "test-resource-correlation-alarm-get-3-3"
+                },
+                "filtered": true
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "resource": "test-resource-correlation-alarm-get-3-4"
+                },
+                "filtered": true
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 1
+            }
+          }
+        }
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?opened=true&search=test-resource-correlation-alarm-get-3-search&active_columns[]=v.output&correlation=true&sort_by=children&sort=desc
+    Then the response code should be 200
+    Then the response body should contain:
     """json
     {
       "data": [
         {
           "is_meta_alarm": true,
-          "children": 3,
-          "filtered_children": [
-            "{{ .childAlarmID2 }}"
-          ]
+          "children": 3
         },
         {
           "is_meta_alarm": true,
-          "children": 1,
-          "filtered_children": [
-            "{{ .childAlarmID4 }}"
-          ]
+          "children": 1
         },
         {
           "is_meta_alarm": false,
@@ -871,6 +942,109 @@ Feature: Get alarms
         "page_count": 1,
         "per_page": 10,
         "total_count": 3
+      }
+    }
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "opened": true,
+        "search": "test-resource-correlation-alarm-get-3-search",
+        "search_by": ["v.output"],
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      },
+      {
+        "_id": "{{ (index .lastResponse.data 1)._id }}",
+        "opened": true,
+        "search": "test-resource-correlation-alarm-get-3-search",
+        "search_by": ["v.output"],
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "resource": "test-resource-correlation-alarm-get-3-1"
+                },
+                "filtered": false
+              },
+              {
+                "v": {
+                  "resource": "test-resource-correlation-alarm-get-3-2"
+                },
+                "filtered": true
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "resource": "test-resource-correlation-alarm-get-3-4"
+                },
+                "filtered": true
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 1
+            }
+          }
+        }
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?opened=true&search=test-resource-correlation-alarm-get-3-3&active_columns[]=v.resource&correlation=true&sort_by=children&sort=desc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [],
+      "meta": {
+        "total_count": 0
+      }
+    }
+    """
+    When I do GET /api/v4/alarms?opened=false&search=test-resource-correlation-alarm-get-3-3&active_columns[]=v.resource&correlation=true&sort_by=children&sort=desc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [],
+      "meta": {
+        "total_count": 0
       }
     }
     """
@@ -2322,4 +2496,3 @@ Feature: Get alarms
     }
     """
     Then the response key "data.0.v.last_event_date" should be "{{ .lastEventDate }}"
-

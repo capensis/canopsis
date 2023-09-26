@@ -127,7 +127,7 @@ func TestMain(m *testing.M) {
 		"apiURL":      apiUrl,
 		"dummyApiURL": dummyApiUrl,
 	})
-	apiClient := bdd.NewApiClient(dbClient, apiUrl, requestLogger, templater)
+	apiClient := bdd.NewApiClient(dbClient, apiUrl, flags.scenarioData, requestLogger, templater)
 	amqpClient := bdd.NewAmqpClient(dbClient, amqpConnection, flags.eventWaitExchange, flags.eventWaitKey,
 		libjson.NewEncoder(), libjson.NewDecoder(), eventLogger, templater)
 	mongoClient := bdd.NewMongoClient(dbClient)
@@ -294,9 +294,11 @@ func InitializeScenario(
 		scenarioCtx.Step(`^I wait next message from websocket:$`, websocketClient.IWaitNextMessage)
 		scenarioCtx.Step(`^I wait next message from websocket which contains:$`, websocketClient.IWaitNextMessageWhichContains)
 		scenarioCtx.Step(`^I authenticate in websocket$`, websocketClient.IAuthenticate)
+		scenarioCtx.Step(`^I subscribe to websocket room \"([^\"]+)\":$`, websocketClient.ISubscribeToRoomWithData)
 		scenarioCtx.Step(`^I subscribe to websocket room \"([^\"]+)\"$`, websocketClient.ISubscribeToRoom)
 		scenarioCtx.Step(`^I wait message from websocket room \"([^\"]+)\":$`, websocketClient.IWaitMessageFromRoom)
 		scenarioCtx.Step(`^I wait message from websocket room \"([^\"]+)\" which contains:$`, websocketClient.IWaitMessageFromRoomWhichContains)
+		scenarioCtx.Step(`^I read file (\w[-\w\.\/]*) as (\w+)$`, apiClient.IReadFile)
 		scenarioCtx.Step(`^I set config parameter (.+)=(true|false)$`, mongoClient.ISetConfigParameter)
 	}
 }
