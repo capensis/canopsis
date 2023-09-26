@@ -213,6 +213,10 @@ export const API_ROUTES = {
   },
   linkRule: '/api/v4/link-rules',
   linkCategories: '/api/v4/link-categories',
+  themes: {
+    list: '/api/v4/color-themes',
+    bulkList: '/api/v4/bulk/color-themes',
+  },
 
   /**
    * Cat routes
@@ -287,7 +291,19 @@ export const API_ROUTES = {
 export const COLORS = {
   primary: '#2fab63',
   secondary: '#2b3e4f',
+  accent: '#82b1ff',
   error: '#ff5252',
+  info: '#2196f3',
+  success: '#4caf50',
+  warning: '#fb8c00',
+  background: '#ffffff',
+  activeColor: '#000000',
+  table: {
+    background: '#FFFFFF',
+    rowColor: '#FFFFFF',
+    shiftRowColor: '#F5F5F5',
+    hoverRowColor: '#F5F5F5',
+  },
   state: {
     ok: '#00a65a',
     minor: '#fcdc00',
@@ -327,7 +343,6 @@ export const COLORS = {
     edgeGray: '#979797',
     edgeBlack: '#000000',
   },
-  statsDefault: '#dddddd',
   impactState: [
     '#2FAB63',
     '#7CB342',
@@ -489,53 +504,46 @@ export const COLORS = {
   },
 };
 
-export const THEMES_NAMES = {
-  canopsis: 'canopsis',
-  canopsisDark: 'canopsisDark',
-  colorBlind: 'colorBlind',
-  colorBlindDark: 'colorBlindDark',
+export const CSS_COLORS_VARS = {
+  primary: 'var(--v-primary-base)',
+  secondary: 'var(--v-secondary-base)',
+  error: 'var(--v-error-base)',
+
+  state: {
+    ok: 'var(--v-state-ok-base)',
+    minor: 'var(--v-state-minor-base)',
+    major: 'var(--v-state-major-base)',
+    critical: 'var(--v-state-critical-base)',
+    pause: 'var(--v-state-pause-base)',
+  },
+
+  status: {
+    closed: 'var(--v-status-closed-base)',
+    stealthy: 'var(--v-status-stealthy-base)',
+    flapping: 'var(--v-status-flapping-base)',
+    ongoing: 'var(--v-status-ongoing-base)',
+    cancelled: 'var(--v-status-cancelled-base)',
+    noEvents: 'var(--v-status-noEvents-base)',
+  },
 };
 
-const CANOPSIS_THEME_COLORS = {
+export const DEFAULT_THEME_COLORS = {
   primary: COLORS.primary,
   secondary: COLORS.secondary,
-  background: '#ffffff',
-};
+  accent: COLORS.accent,
+  error: COLORS.error,
+  info: COLORS.info,
+  success: COLORS.success,
+  warning: COLORS.warning,
+  background: COLORS.background,
+  active_color: COLORS.activeColor,
 
-const CANOPSIS_DARK_THEME_COLORS = {
-  ...CANOPSIS_THEME_COLORS,
-  error: '#ff8b8b',
-  background: '#303030',
-};
-
-const COLOR_BLIND_THEME_COLORS = {
-  primary: '#2196f3',
-  secondary: COLORS.secondary,
-  background: CANOPSIS_THEME_COLORS.background,
-};
-
-const COLOR_BLIND_DARK_THEME_COLORS = {
-  ...COLOR_BLIND_THEME_COLORS,
-  error: CANOPSIS_DARK_THEME_COLORS.error,
-  background: CANOPSIS_DARK_THEME_COLORS.background,
-};
-
-export const THEMES = {
-  [THEMES_NAMES.canopsis]: {
-    dark: false,
-    colors: CANOPSIS_THEME_COLORS,
-  },
-  [THEMES_NAMES.canopsisDark]: {
-    dark: true,
-    colors: CANOPSIS_DARK_THEME_COLORS,
-  },
-  [THEMES_NAMES.colorBlind]: {
-    dark: false,
-    colors: COLOR_BLIND_THEME_COLORS,
-  },
-  [THEMES_NAMES.colorBlindDark]: {
-    dark: true,
-    colors: COLOR_BLIND_DARK_THEME_COLORS,
+  state: COLORS.state,
+  status: COLORS.status,
+  table: {
+    background: COLORS.table.background,
+    row_color: COLORS.table.rowColor,
+    hover_row_color: COLORS.table.hoverRowColor,
   },
 };
 

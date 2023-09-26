@@ -1,11 +1,7 @@
 import { generateRenderer } from '@unit/utils/vue';
 
 import GroupsSideBarPlaylists from '@/components/layout/navigation/partials/groups-side-bar/groups-side-bar-playlists.vue';
-import {
-  createEntitiesModule,
-  createMockedStoreModules,
-  createPlaylistModule,
-} from '@unit/utils/store';
+import { createEntitiesModule, createMockedStoreModules, createPlaylistModule } from '@unit/utils/store';
 
 const snapshotStubs = {
   'router-link': true,

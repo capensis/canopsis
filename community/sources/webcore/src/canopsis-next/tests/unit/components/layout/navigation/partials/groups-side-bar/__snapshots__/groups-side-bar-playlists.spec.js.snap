@@ -5,7 +5,7 @@ exports[`groups-side-bar-playlists Renders \`groups-side-bar-playlists\` with cu
   class="v-expansion-panel sidebar-playlists v-expansion-panel--focusable theme--dark"
 >
   <li
-    class="v-expansion-panel__container secondary lighten-1 white--text"
+    class="v-expansion-panel__container secondary lighten-1"
     tabindex="0"
   >
     <div

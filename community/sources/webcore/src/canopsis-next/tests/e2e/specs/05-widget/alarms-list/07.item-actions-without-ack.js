@@ -1,6 +1,6 @@
 // http://nightwatchjs.org/guide#usage
 
-import { CRUD_ACTIONS } from '../../../constants';
+const { CRUD_ACTIONS } = require('../../../constants');
 
 const { WIDGET_TYPES } = require('@/constants');
 
