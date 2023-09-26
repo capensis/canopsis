@@ -12,6 +12,7 @@ const snapshotStubs = {
   'c-help-icon': true,
   'c-enabled-duration-field': true,
   'storage-settings-history-message': true,
+  'c-enabled-field': true,
 };
 const stubs = {
   ...snapshotStubs,
