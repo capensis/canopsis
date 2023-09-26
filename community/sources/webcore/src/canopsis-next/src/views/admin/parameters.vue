@@ -16,7 +16,7 @@
             v-tab-item(:value="$constants.PARAMETERS_TABS.stateSettings", lazy)
               v-card-text
                 state-settings
-            template(v-if="!isProVersion")
+            template(v-if="isProVersion")
               v-tab(:href="`#${$constants.PARAMETERS_TABS.notificationSettings}`")
                 | {{ $t('parameters.tabs.notificationsSettings') }}
               v-tab-item(:value="$constants.PARAMETERS_TABS.notificationSettings", lazy)
