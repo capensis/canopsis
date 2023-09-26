@@ -1,41 +1,33 @@
-import Faker from 'faker';
-
 import { generateRenderer } from '@unit/utils/vue';
-import { createCheckboxInputStub, createInputStub } from '@unit/stubs/input';
-import { randomArrayItem } from '@unit/utils/array';
 import { TIME_UNITS } from '@/constants';
 import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form';
+import { randomDurationValue } from '@unit/utils/duration';
 
-import CInformationBlock from '@/components/common/block/c-information-block.vue';
-import StorageSettingsForm from '@/components/other/storage-setting/form/storage-settings-form';
+import StorageSettingsForm from '@/components/other/storage-setting/form/storage-settings-form.vue';
 
 const stubs = {
-  'c-information-block': CInformationBlock,
-  'c-help-icon': true,
-  'c-enabled-duration-field': true,
-  'c-enabled-field': true,
-  'v-checkbox': createCheckboxInputStub('v-checkbox'),
-  'v-radio-group': createInputStub('v-radio-group'),
-};
-const snapshotStubs = {
-  'c-information-block': CInformationBlock,
-  'c-help-icon': true,
-  'c-enabled-duration-field': true,
-  'c-enabled-field': true,
+  'storage-settings-entity-clean-form': true,
+  'storage-settings-entity-unlinked-form': true,
+  'storage-settings-entity-disabled-form': true,
+  'storage-settings-event-filter-failure-form': true,
+  'storage-settings-perf-data-metrics-form': true,
+  'storage-settings-metrics-form': true,
+  'storage-settings-webhook-form': true,
+  'storage-settings-health-check-form': true,
+  'storage-settings-junit-form': true,
+  'storage-settings-pbehavior-form': true,
+  'storage-settings-remediation-form': true,
+  'storage-settings-alarm-form': true,
 };
 
-const selectEnabledDurationFieldByIndex = (wrapper, index) => wrapper.findAll('c-enabled-duration-field-stub').at(index);
-const selectAlarmArchiveAfterField = wrapper => selectEnabledDurationFieldByIndex(wrapper, 0);
-const selectAlarmDeleteAfterField = wrapper => selectEnabledDurationFieldByIndex(wrapper, 1);
-const selectRemediationDeleteAfterField = wrapper => selectEnabledDurationFieldByIndex(wrapper, 2);
-const selectRemediationDeleteStatsAfterField = wrapper => selectEnabledDurationFieldByIndex(wrapper, 3);
-const selectRemediationDeleteModStatsAfterField = wrapper => selectEnabledDurationFieldByIndex(wrapper, 4);
-const selectPbehaviorDeleteAfterField = wrapper => selectEnabledDurationFieldByIndex(wrapper, 5);
-const selectJunitDeleteAfterField = wrapper => selectEnabledDurationFieldByIndex(wrapper, 6);
-const selectHealthCheckDeleteAfterField = wrapper => selectEnabledDurationFieldByIndex(wrapper, 7);
-const selectWebhookDeleteAfterField = wrapper => selectEnabledDurationFieldByIndex(wrapper, 8);
-const selectMetricsDeleteAfterField = wrapper => selectEnabledDurationFieldByIndex(wrapper, 9);
-const selectPerfDataMetricsDeleteAfterField = wrapper => selectEnabledDurationFieldByIndex(wrapper, 10);
+const selectStorageSettingsPerfDataMetricsForm = wrapper => wrapper.find('storage-settings-perf-data-metrics-form-stub');
+const selectStorageSettingsMetricsForm = wrapper => wrapper.find('storage-settings-metrics-form-stub');
+const selectStorageSettingsWebhookForm = wrapper => wrapper.find('storage-settings-webhook-form-stub');
+const selectStorageSettingsHealthCheckForm = wrapper => wrapper.find('storage-settings-health-check-form-stub');
+const selectStorageSettingsJunitForm = wrapper => wrapper.find('storage-settings-junit-form-stub');
+const selectStorageSettingsPbehaviorForm = wrapper => wrapper.find('storage-settings-pbehavior-form-stub');
+const selectStorageSettingsRemediationForm = wrapper => wrapper.find('storage-settings-remediation-form-stub');
+const selectStorageSettingsAlarmForm = wrapper => wrapper.find('storage-settings-alarm-form-stub');
 
 describe('storage-settings-form', () => {
   const form = dataStorageSettingsToForm({
@@ -113,22 +105,10 @@ describe('storage-settings-form', () => {
     },
   });
 
-  const randomDurationValue = () => ({
-    unit: randomArrayItem(Object.values(TIME_UNITS)),
-    value: Faker.datatype.number(),
-    enabled: Faker.datatype.boolean(),
-  });
+  const factory = generateRenderer(StorageSettingsForm, { stubs });
+  const snapshotFactory = generateRenderer(StorageSettingsForm, { stubs });
 
-  const factory = generateRenderer(StorageSettingsForm, {
-
-    stubs,
-  });
-  const snapshotFactory = generateRenderer(StorageSettingsForm, {
-
-    stubs: snapshotStubs,
-  });
-
-  test('Alarm archive after changed after trigger enabled duration field', () => {
+  test('Alarm storage settings changed after trigger alarm settings', () => {
     const wrapper = factory({
       propsData: {
         form,
@@ -136,17 +116,20 @@ describe('storage-settings-form', () => {
       },
     });
 
-    const newValue = randomDurationValue();
+    const newValue = {
+      archive_after: randomDurationValue(),
+      delete_after: randomDurationValue(),
+    };
 
-    selectAlarmArchiveAfterField(wrapper).vm.$emit('input', newValue);
+    selectStorageSettingsAlarmForm(wrapper).vm.$emit('input', newValue);
 
     expect(wrapper).toEmit('input', {
       ...form,
-      alarm: { ...form.alarm, archive_after: newValue },
+      alarm: newValue,
     });
   });
 
-  test('Alarm delete after changed after trigger enabled duration field', () => {
+  test('Remediation storage settings changed after trigger remediation settings', () => {
     const wrapper = factory({
       propsData: {
         form,
@@ -154,17 +137,21 @@ describe('storage-settings-form', () => {
       },
     });
 
-    const newValue = randomDurationValue();
+    const newValue = {
+      delete_after: randomDurationValue(),
+      delete_stats_after: randomDurationValue(),
+      delete_mod_stats_after: randomDurationValue(),
+    };
 
-    selectAlarmDeleteAfterField(wrapper).vm.$emit('input', newValue);
+    selectStorageSettingsRemediationForm(wrapper).vm.$emit('input', newValue);
 
     expect(wrapper).toEmit('input', {
       ...form,
-      alarm: { ...form.alarm, delete_after: newValue },
+      remediation: newValue,
     });
   });
 
-  test('Remediation delete after changed after trigger enabled duration field', () => {
+  test('Pbehavior storage settings changed after trigger pbehavior settings', () => {
     const wrapper = factory({
       propsData: {
         form,
@@ -172,17 +159,19 @@ describe('storage-settings-form', () => {
       },
     });
 
-    const newValue = randomDurationValue();
+    const newValue = {
+      delete_after: randomDurationValue(),
+    };
 
-    selectRemediationDeleteAfterField(wrapper).vm.$emit('input', newValue);
+    selectStorageSettingsPbehaviorForm(wrapper).vm.$emit('input', newValue);
 
     expect(wrapper).toEmit('input', {
       ...form,
-      remediation: { ...form.remediation, delete_after: newValue },
+      pbehavior: newValue,
     });
   });
 
-  test('Remediation delete stats after changed after trigger enabled duration field', () => {
+  test('Junit storage settings changed after trigger junit settings', () => {
     const wrapper = factory({
       propsData: {
         form,
@@ -190,17 +179,19 @@ describe('storage-settings-form', () => {
       },
     });
 
-    const newValue = randomDurationValue();
+    const newValue = {
+      delete_after: randomDurationValue(),
+    };
 
-    selectRemediationDeleteStatsAfterField(wrapper).vm.$emit('input', newValue);
+    selectStorageSettingsJunitForm(wrapper).vm.$emit('input', newValue);
 
     expect(wrapper).toEmit('input', {
       ...form,
-      remediation: { ...form.remediation, delete_stats_after: newValue },
+      junit: newValue,
     });
   });
 
-  test('Remediation delete mod stats after changed after trigger enabled duration field', () => {
+  test('Health check storage settings changed after trigger health check settings', () => {
     const wrapper = factory({
       propsData: {
         form,
@@ -208,17 +199,19 @@ describe('storage-settings-form', () => {
       },
     });
 
-    const newValue = randomDurationValue();
+    const newValue = {
+      delete_after: randomDurationValue(),
+    };
 
-    selectRemediationDeleteModStatsAfterField(wrapper).vm.$emit('input', newValue);
+    selectStorageSettingsHealthCheckForm(wrapper).vm.$emit('input', newValue);
 
     expect(wrapper).toEmit('input', {
       ...form,
-      remediation: { ...form.remediation, delete_mod_stats_after: newValue },
+      health_check: newValue,
     });
   });
 
-  test('Pbehavior delete after changed after trigger enabled duration field', () => {
+  test('Webhook storage settings changed after trigger webhook settings', () => {
     const wrapper = factory({
       propsData: {
         form,
@@ -226,17 +219,19 @@ describe('storage-settings-form', () => {
       },
     });
 
-    const newValue = randomDurationValue();
+    const newValue = {
+      delete_after: randomDurationValue(),
+    };
 
-    selectPbehaviorDeleteAfterField(wrapper).vm.$emit('input', newValue);
+    selectStorageSettingsWebhookForm(wrapper).vm.$emit('input', newValue);
 
     expect(wrapper).toEmit('input', {
       ...form,
-      pbehavior: { ...form.pbehavior, delete_after: newValue },
+      webhook: newValue,
     });
   });
 
-  test('Junit delete after changed after trigger enabled duration field', () => {
+  test('Metrics storage settings changed after trigger metrics settings', () => {
     const wrapper = factory({
       propsData: {
         form,
@@ -244,17 +239,19 @@ describe('storage-settings-form', () => {
       },
     });
 
-    const newValue = randomDurationValue();
+    const newValue = {
+      delete_after: randomDurationValue(),
+    };
 
-    selectJunitDeleteAfterField(wrapper).vm.$emit('input', newValue);
+    selectStorageSettingsMetricsForm(wrapper).vm.$emit('input', newValue);
 
     expect(wrapper).toEmit('input', {
       ...form,
-      junit: { ...form.junit, delete_after: newValue },
+      metrics: newValue,
     });
   });
 
-  test('Health check delete after changed after trigger enabled duration field', () => {
+  test('Perf data metrics storage settings changed after trigger perf data metrics settings', () => {
     const wrapper = factory({
       propsData: {
         form,
@@ -262,67 +259,15 @@ describe('storage-settings-form', () => {
       },
     });
 
-    const newValue = randomDurationValue();
+    const newValue = {
+      delete_after: randomDurationValue(),
+    };
 
-    selectHealthCheckDeleteAfterField(wrapper).vm.$emit('input', newValue);
-
-    expect(wrapper).toEmit('input', {
-      ...form,
-      health_check: { ...form.health_check, delete_after: newValue },
-    });
-  });
-
-  test('Webhook delete after changed after trigger enabled duration field', () => {
-    const wrapper = factory({
-      propsData: {
-        form,
-        history: {},
-      },
-    });
-
-    const newValue = randomDurationValue();
-
-    selectWebhookDeleteAfterField(wrapper).vm.$emit('input', newValue);
+    selectStorageSettingsPerfDataMetricsForm(wrapper).vm.$emit('input', newValue);
 
     expect(wrapper).toEmit('input', {
       ...form,
-      webhook: { ...form.webhook, delete_after: newValue },
-    });
-  });
-
-  test('Metrics delete after changed after trigger enabled duration field', () => {
-    const wrapper = factory({
-      propsData: {
-        form,
-        history: {},
-      },
-    });
-
-    const newValue = randomDurationValue();
-
-    selectMetricsDeleteAfterField(wrapper).vm.$emit('input', newValue);
-
-    expect(wrapper).toEmit('input', {
-      ...form,
-      metrics: { ...form.metrics, delete_after: newValue },
-    });
-  });
-
-  test('Perf data metrics delete after changed after trigger enabled duration field', () => {
-    const wrapper = factory({
-      propsData: {
-        form,
-        history: {},
-      },
-    });
-
-    const newValue = randomDurationValue();
-
-    selectPerfDataMetricsDeleteAfterField(wrapper).vm.$emit('input', newValue);
-
-    expect(wrapper).toEmit('input', {
-      ...form,
-      perf_data_metrics: { ...form.perf_data_metrics, delete_after: newValue },
+      perf_data_metrics: newValue,
     });
   });
 

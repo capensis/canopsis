@@ -1,6 +1,6 @@
 import { TIME_UNITS } from '@/constants';
 
-import { durationWithEnabledToForm } from '@/helpers/date/duration';
+import { durationToForm, durationWithEnabledToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} DataStorageJunitConfig
@@ -22,8 +22,12 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} DataStorageEntityConfig
- * @property {boolean} archive
- * @property {boolean} archive_dependencies
+ * @property {boolean} with_dependencies
+ */
+
+/**
+ * @typedef {Object} DataStorageUnlinkedEntityConfig
+ * @property {DurationWithEnabled} archive_before
  */
 
 /**
@@ -57,7 +61,8 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  * @property {DataStorageJunitConfig} junit
  * @property {DataStorageRemediationConfig} remediation
  * @property {DataStorageAlarmConfig} alarm
- * @property {DataStorageEntityConfig} [entity]
+ * @property {DataStorageEntityConfig} [entity_disabled]
+ * @property {DataStorageUnlinkedEntityConfig} [entity_unlinked]
  * @property {DataStoragePbehaviorConfig} pbehavior
  * @property {DataStorageHealthCheckConfig} health_check
  * @property {DataStorageWebhookConfig} webhook
@@ -158,8 +163,19 @@ export const dataStoragePbehaviorSettingsToForm = (pbehaviorConfig = {}) => ({
  * @return {DataStorageEntityConfig}
  */
 export const dataStorageEntitySettingsToForm = (entityConfig = {}) => ({
-  archive: entityConfig.archive || false,
-  archive_dependencies: entityConfig.archive_dependencies || false,
+  with_dependencies: entityConfig.with_dependencies || false,
+});
+
+/**
+ * Convert data storage unlinked entity config to unlinked entity form object
+ *
+ * @param {DataStorageUnlinkedEntityConfig} unlinkedEntityConfig
+ * @return {DataStorageUnlinkedEntityConfig}
+ */
+export const dataStorageEntityUnlinkedSettingsToForm = (unlinkedEntityConfig = {}) => ({
+  archive_before: unlinkedEntityConfig.archive_before
+    ? durationToForm(unlinkedEntityConfig.archive_before)
+    : { value: 60, unit: TIME_UNITS.day },
 });
 
 /**
@@ -233,7 +249,8 @@ export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   junit: dataStorageJunitSettingsToForm(dataStorage.junit),
   remediation: dataStorageRemediationSettingsToForm(dataStorage.remediation),
   alarm: dataStorageAlarmSettingsToForm(dataStorage.alarm),
-  entity: dataStorageEntitySettingsToForm(dataStorage.entity),
+  entity_disabled: dataStorageEntitySettingsToForm(dataStorage.entity_disabled),
+  entity_unlinked: dataStorageEntityUnlinkedSettingsToForm(dataStorage.entity_unlinked),
   pbehavior: dataStoragePbehaviorSettingsToForm(dataStorage.pbehavior),
   health_check: dataStorageHealthCheckSettingsToForm(dataStorage.health_check),
   webhook: dataStorageWebhookSettingsToForm(dataStorage.webhook),

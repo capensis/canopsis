@@ -81,12 +81,8 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
     infoModule,
   ]);
 
-  const factory = generateShallowRenderer(AlarmsExpandPanel, {
-    stubs,
-  });
-  const snapshotFactory = generateRenderer(AlarmsExpandPanel, {
-    stubs,
-  });
+  const factory = generateShallowRenderer(AlarmsExpandPanel, { stubs });
+  const snapshotFactory = generateRenderer(AlarmsExpandPanel, { stubs });
 
   afterEach(() => {
     jest.clearAllMocks();
