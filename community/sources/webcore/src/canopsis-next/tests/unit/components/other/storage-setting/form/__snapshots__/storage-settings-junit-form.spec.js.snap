@@ -21,7 +21,7 @@ exports[`storage-settings-junit-form Renders \`storage-settings-junit-form\` wit
       class="layout mt-2 row"
     >
       <span
-        class="c-information-block__subtitle"
+        class="text--secondary"
       >
         <storage-settings-history-message-stub
           history="1611210000"

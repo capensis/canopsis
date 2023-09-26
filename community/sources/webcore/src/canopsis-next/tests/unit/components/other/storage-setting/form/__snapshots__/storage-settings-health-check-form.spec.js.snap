@@ -21,7 +21,7 @@ exports[`storage-settings-health-check-form Renders \`storage-settings-health-ch
       class="layout mt-2 row"
     >
       <span
-        class="c-information-block__subtitle"
+        class="text--secondary"
       >
         <storage-settings-history-message-stub
           history="1611240000"

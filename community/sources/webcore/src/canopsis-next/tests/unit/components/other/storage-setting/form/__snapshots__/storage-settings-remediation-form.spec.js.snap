@@ -18,7 +18,7 @@ exports[`storage-settings-remediation-form Renders \`storage-settings-remediatio
     class="layout mt-2 row"
   >
     <span
-      class="c-information-block__subtitle"
+      class="text--secondary"
     >
       <storage-settings-history-message-stub
         history="1611220000"
