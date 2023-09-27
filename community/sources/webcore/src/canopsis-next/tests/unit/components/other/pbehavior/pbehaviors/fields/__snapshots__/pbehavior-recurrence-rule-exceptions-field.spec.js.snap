@@ -3,7 +3,7 @@
 exports[`pbehavior-recurrence-rule-exceptions-field Renders \`pbehavior-exceptions-field\` with custom props 1`] = `
 <div>
   <h3
-    class="grey--text"
+    class="text--secondary"
   >
     Exception dates
   </h3>
@@ -41,7 +41,7 @@ exports[`pbehavior-recurrence-rule-exceptions-field Renders \`pbehavior-exceptio
 exports[`pbehavior-recurrence-rule-exceptions-field Renders \`pbehavior-exceptions-field\` with default props 1`] = `
 <div>
   <h3
-    class="grey--text"
+    class="text--secondary"
   >
     Exception dates
   </h3>

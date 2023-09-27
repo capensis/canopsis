@@ -180,7 +180,7 @@ export default {
     title: 'Annuler l\'acquittement',
   },
   createUnCancel: {
-    title: 'Créer en uncanccel',
+    title: 'Annuler l\'annulation',
   },
   liveReporting: {
     editLiveReporting: 'Suivi personnalisé',
@@ -391,6 +391,9 @@ export default {
     edit: {
       title: 'Modifier la règle SNMP',
     },
+    duplicate: {
+      title: 'Dupliquer la règle SNMP',
+    },
   },
   selectView: {
     title: 'Sélectionner une vue',
@@ -515,7 +518,7 @@ export default {
     canonicalTypes: {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
-      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Entretien',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
       [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
     },
   },
@@ -855,13 +858,13 @@ export default {
   },
   createMermaidMap: {
     create: {
-      title: 'Créer un diagramme de mermaid',
+      title: 'Créer un diagramme mermaid',
     },
     edit: {
-      title: 'Modifier un diagramme de mermaid',
+      title: 'Modifier un diagramme mermaid',
     },
     duplicate: {
-      title: 'Dupliquer un diagramme de mermaid',
+      title: 'Dupliquer un diagramme mermaid',
     },
   },
   createTreeOfDependenciesMap: {
@@ -957,12 +960,12 @@ export default {
     title: 'Importer des dates d\'exception',
   },
   createMaintenance: {
-    enableMaintenance: 'Activer le mode d\'entretien',
+    enableMaintenance: 'Activer le mode maintenance',
     setup: {
-      title: 'Activer le mode d\'entretien',
+      title: 'Activer le mode maintenance',
     },
     edit: {
-      title: 'Modifier le mode de maintenance',
+      title: 'Modifier le mode maintenance',
     },
   },
   confirmationLeaveMaintenance: {
@@ -978,6 +981,17 @@ export default {
     },
     duplicate: {
       title: 'Dupliquer une balise',
+    },
+  },
+  createTheme: {
+    create: {
+      title: 'Créer un thème',
+    },
+    edit: {
+      title: 'Modifier le thème',
+    },
+    duplicate: {
+      title: 'Thème en double',
     },
   },
 };

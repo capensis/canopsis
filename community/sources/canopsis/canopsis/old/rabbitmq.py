@@ -533,8 +533,11 @@ class Amqp(Thread):
 
         filename = join(root_path, 'etc', '{0}.conf'.format(name))
 
-        import ConfigParser
-        self.config = ConfigParser.RawConfigParser()
+        if sys.version_info < (3, 0):
+            from ConfigParser import RawConfigParser
+        else:
+            from configparser import RawConfigParser
+        self.config = RawConfigParser()
 
         try:
             self.config.read(filename)

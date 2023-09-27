@@ -11,6 +11,7 @@ export const entitiesAlarmDetailsMixin = {
       getAlarmDetailsItem: 'getItem',
       getAlarmDetailsPending: 'getPending',
       getAlarmDetailsQuery: 'getQuery',
+      getAlarmDetailsQueries: 'getQueries',
     }),
   },
   methods: {

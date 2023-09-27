@@ -10,7 +10,7 @@ exports[`map Renders \`map\` widget settings with custom props 1`] = `
     class="v-divider theme--light"
   />
   <field-periodic-refresh-stub
-    value="[object Object]"
+    form="[object Object]"
   />
   <hr
     class="v-divider theme--light"
@@ -89,7 +89,7 @@ exports[`map Renders \`map\` widget settings with default props 1`] = `
     class="v-divider theme--light"
   />
   <field-periodic-refresh-stub
-    value="[object Object]"
+    form="[object Object]"
   />
   <hr
     class="v-divider theme--light"
