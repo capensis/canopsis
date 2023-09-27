@@ -5,7 +5,7 @@ exports[`flowchart-color-field Renders \`flowchart-color-field\` with custom pro
   class="layout flowchart-color-field row justify-space-between align-center"
 >
   <span
-    class="v-label theme--light"
+    class="v-label"
   >
     Custom label
   </span>

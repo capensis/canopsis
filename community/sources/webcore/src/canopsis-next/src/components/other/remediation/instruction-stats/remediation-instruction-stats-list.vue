@@ -28,7 +28,7 @@
       template(#alarm_states="{ item }")
         affect-alarm-states(:alarm-states="item.alarm_states")
       template(#ok_alarm_states="{ item }")
-        span.c-state-count-changes-chip.primary {{ item.ok_alarm_states }}
+        c-state-count-changes-chip {{ item.ok_alarm_states }}
       template(#rating="{ item }")
         rating-field(:value="item.rating", readonly)
       template(#actions="{ item }")

@@ -558,7 +558,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
           class="v-table__overflow"
         >
           <table
-            class="v-datatable v-table theme--dark"
+            class="v-datatable v-table theme--light"
           >
             <thead>
               <tr>
@@ -574,7 +574,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   Username
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--dark"
+                    class="v-icon material-icons theme--light"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -592,7 +592,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   Firstname
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--dark"
+                    class="v-icon material-icons theme--light"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -610,7 +610,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   Lastname
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--dark"
+                    class="v-icon material-icons theme--light"
                     style="font-size: 16px;"
                   >
                     arrow_upward
@@ -628,7 +628,7 @@ exports[`c-treeview-data-table Renders \`c-treeview-data-table\` with custom pro
                   Email
                   <i
                     aria-hidden="true"
-                    class="v-icon material-icons theme--dark"
+                    class="v-icon material-icons theme--light"
                     style="font-size: 16px;"
                   >
                     arrow_upward

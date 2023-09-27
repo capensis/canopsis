@@ -192,5 +192,12 @@ export default {
     bulkCreateAlarmChangestateEvent(context, { data }) {
       return request.put(`${API_ROUTES.alarms.bulkList}/changestate`, data);
     },
+
+    updateItemInStore({ dispatch }, alarm) {
+      return dispatch('entities/addToStore', {
+        schema: alarmSchema,
+        data: alarm,
+      }, { root: true });
+    },
   },
 };

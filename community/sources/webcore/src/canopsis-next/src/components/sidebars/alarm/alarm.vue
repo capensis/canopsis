@@ -2,7 +2,7 @@
   widget-settings(:submitting="submitting", @submit="submit")
     field-title(v-model="form.title")
     v-divider
-    field-periodic-refresh(v-model="form.parameters.periodic_refresh")
+    field-periodic-refresh(v-model="form.parameters", with-live-watching)
     v-divider
     widget-settings-group(:title="$t('settings.advancedSettings')")
       field-default-sort-column(
@@ -153,6 +153,11 @@
       )
       v-divider
       field-switcher(
+        v-model="form.parameters.isUncancelAlarmsCommentRequired",
+        :title="$t('settings.isUncancelAlarmsCommentRequired')"
+      )
+      v-divider
+      field-switcher(
         v-model="form.parameters.isMultiDeclareTicketEnabled",
         :title="$t('settings.isMultiDeclareTicketEnabled')"
       )
@@ -211,6 +216,8 @@ import {
   permissionsWidgetsAlarmsListRemediationInstructionsFilters,
 } from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
 
+import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
+
 import WidgetSettingsGroup from '../partials/widget-settings-group.vue';
 import WidgetSettings from '../partials/widget-settings.vue';
 import FieldTitle from '../form/fields/title.vue';
@@ -234,8 +241,6 @@ import FieldFastActionOutput from './form/fields/fast-action-output.vue';
 import FieldOpenedResolvedFilter from './form/fields/opened-resolved-filter.vue';
 import FieldInfoPopup from './form/fields/info-popup.vue';
 import FieldResizeColumnBehavior from './form/fields/resize-column-behavior.vue';
-
-import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
 
 /**
  * Component to regroup the alarms list settings fields

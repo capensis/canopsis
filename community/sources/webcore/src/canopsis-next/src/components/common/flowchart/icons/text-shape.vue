@@ -19,7 +19,6 @@
       y="0"
       width="4"
       height="4"
-      fill="white"
       stroke="currentColor"
     />
     <rect
@@ -27,7 +26,6 @@
       y="20.5"
       width="4"
       height="4"
-      fill="white"
       stroke="currentColor"
     />
     <rect
@@ -35,7 +33,6 @@
       y="41"
       width="4"
       height="4"
-      fill="white"
       stroke="currentColor"
     />
     <rect
@@ -43,7 +40,6 @@
       y="0"
       width="4"
       height="4"
-      fill="white"
       stroke="currentColor"
     />
     <rect
@@ -51,7 +47,6 @@
       y="41"
       width="4"
       height="4"
-      fill="white"
       stroke="currentColor"
     />
     <rect
@@ -59,7 +54,6 @@
       y="20.5"
       width="4"
       height="4"
-      fill="white"
       stroke="currentColor"
     />
     <rect
@@ -67,7 +61,6 @@
       y="0"
       width="4"
       height="4"
-      fill="white"
       stroke="currentColor"
     />
     <rect
@@ -75,7 +68,6 @@
       y="41"
       width="4"
       height="4"
-      fill="white"
       stroke="currentColor"
     />
     <text
