@@ -158,21 +158,21 @@ export const META_ALARMS_THRESHOLD_TYPES = {
 export const ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR = 'canopsis.engine';
 
 export const DEFAULT_ALARMS_WIDGET_COLUMNS = [
-  { value: ALARM_FIELDS.connector },
-  { value: ALARM_FIELDS.connectorName },
-  { value: ALARM_FIELDS.component },
-  { value: ALARM_FIELDS.resource },
-  { value: ALARM_FIELDS.output },
+  { value: ALARM_FIELDS.connector, isHtml: true },
+  { value: ALARM_FIELDS.connectorName, isHtml: true },
+  { value: ALARM_FIELDS.component, isHtml: true },
+  { value: ALARM_FIELDS.resource, isHtml: true },
+  { value: ALARM_FIELDS.output, isHtml: true },
   { value: ALARM_FIELDS.extraDetails },
   { value: ALARM_FIELDS.state },
   { value: ALARM_FIELDS.status },
 ];
 
 export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [
-  { value: ALARM_FIELDS.connector },
-  { value: ALARM_FIELDS.connectorName },
-  { value: ALARM_FIELDS.resource },
-  { value: ALARM_FIELDS.output },
+  { value: ALARM_FIELDS.connector, isHtml: true },
+  { value: ALARM_FIELDS.connectorName, isHtml: true },
+  { value: ALARM_FIELDS.resource, isHtml: true },
+  { value: ALARM_FIELDS.output, isHtml: true },
   { value: ALARM_FIELDS.extraDetails },
   { value: ALARM_FIELDS.state },
   { value: ALARM_FIELDS.status },
