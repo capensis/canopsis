@@ -27,7 +27,7 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
       class="layout mt-2 row"
     >
       <span
-        class="c-information-block__subtitle"
+        class="text--secondary"
       >
         Script launched at 21/01/2021 21:13:20. Alarms deleted: 1611270000. Alarms archived: 1611280000.
       </span>
@@ -66,7 +66,7 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
       class="layout mt-2 row"
     >
       <span
-        class="c-information-block__subtitle"
+        class="text--secondary"
       >
         Script launched at 22/01/2021 5:33:20. Entities deleted: 1611300000. Entities archived: 1611310000.
       </span>
@@ -243,7 +243,7 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
       class="layout mt-2 row"
     >
       <span
-        class="c-information-block__subtitle"
+        class="text--secondary"
       >
         Script launched at 21/01/2021 10:06:40.
       </span>
@@ -284,7 +284,7 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
       class="layout mt-2 row"
     >
       <span
-        class="c-information-block__subtitle"
+        class="text--secondary"
       >
         Script launched at 21/01/2021 12:53:20.
       </span>
@@ -313,7 +313,7 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
       class="layout mt-2 row"
     >
       <span
-        class="c-information-block__subtitle"
+        class="text--secondary"
       >
         Script launched at 21/01/2021 7:20:00.
       </span>
@@ -342,7 +342,7 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
       class="layout mt-2 row"
     >
       <span
-        class="c-information-block__subtitle"
+        class="text--secondary"
       >
         Script launched at 21/01/2021 15:40:00.
       </span>
@@ -376,7 +376,7 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
       class="layout mt-2 row"
     >
       <span
-        class="c-information-block__subtitle"
+        class="text--secondary"
       >
         Script launched at 21/01/2021 18:26:40.
       </span>

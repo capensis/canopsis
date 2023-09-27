@@ -196,20 +196,22 @@ class Socket {
    * Join to a room
    *
    * @param {string} room
+   * @param {Object} [data = {}]
    * @param {boolean} [authNeeded = true]
    * @returns {SocketRoom}
    */
-  join(room, authNeeded = true) {
+  join(room, data = {}, authNeeded = true) {
     if (!this.rooms[room]) {
-      this.rooms[room] = new SocketRoom(room, authNeeded);
+      this.rooms[room] = new SocketRoom(room, data, authNeeded);
+
+      this.send({
+        room,
+        data,
+        type: REQUEST_MESSAGES_TYPES.join,
+      }, authNeeded);
     } else {
       this.rooms[room].increment();
     }
-
-    this.send({
-      room,
-      type: REQUEST_MESSAGES_TYPES.join,
-    }, authNeeded);
 
     return this.rooms[room];
   }
@@ -228,13 +230,13 @@ class Socket {
 
       if (!socketRoom.count) {
         delete this.rooms[room];
+
+        this.send({
+          room,
+          type: REQUEST_MESSAGES_TYPES.leave,
+        });
       }
     }
-
-    this.send({
-      room,
-      type: REQUEST_MESSAGES_TYPES.leave,
-    });
 
     return socketRoom ?? new SocketRoom(room);
   }
@@ -341,7 +343,7 @@ class Socket {
     Object.entries(this.rooms).forEach(([name, room]) => {
       room.decrement();
 
-      this.join(name, room.authNeeded);
+      this.join(name, room.data, room.authNeeded);
     });
 
     return this;

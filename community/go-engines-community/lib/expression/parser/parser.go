@@ -1,4 +1,4 @@
-// parser contains expression parser for search parameter.
+// Package parser contains expression parser for search parameter.
 package parser
 
 import (
@@ -17,6 +17,7 @@ type Parser interface {
 
 type MongoQuery interface {
 	Query() bson.M
+	ExprQuery() bson.M
 	GetFields() []string
 }
 
@@ -43,30 +44,34 @@ func NewParser() Parser {
 
 // parser implements following syntax:
 // expr:
-//    expr OR expr
-//  | expr AND expr
-//  | NOT expr
-//  | boolean_expr
+//
+//	  expr OR expr
+//	| expr AND expr
+//	| NOT expr
+//	| boolean_expr
 //
 // boolean_expr:
-//    boolean_expr comparison_operator predicate
-//  | predicate
+//
+//	  boolean_expr comparison_operator predicate
+//	| predicate
 //
 // comparison_operator: = | >= | > | <= | < | !=
 //
 // predicate:
-//    simple_expr [NOT] CONTAINS simple_expr
-//  | simple_expr [NOT] LIKE simple_expr
-//  | simple_expr
+//
+//	  simple_expr [NOT] CONTAINS simple_expr
+//	| simple_expr [NOT] LIKE simple_expr
+//	| simple_expr
 //
 // simple_expr:
-//    variable
-//  | float
-//  | int
-//  | "string"
-//  | TRUE
-//  | FALSE
-//  | NULL
+//
+//	  variable
+//	| float
+//	| int
+//	| "string"
+//	| TRUE
+//	| FALSE
+//	| NULL
 type parser struct {
 	baseParser *participle.Parser
 }

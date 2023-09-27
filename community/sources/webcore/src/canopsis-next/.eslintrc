@@ -6,7 +6,7 @@
   ],
 
   "parserOptions": {
-    "parser": "babel-eslint",
+    "parser": "@babel/eslint-parser",
     "sourceType": "module"
   },
 
@@ -29,6 +29,10 @@
     "no-bitwise": ["error", { "allow": ["&"] }],
     "no-continue": "off",
     "no-cond-assign": "off",
+    "no-promise-executor-return": "off",
+    "default-param-last": "off",
+    "no-restricted-exports": "off",
+    "prefer-regex-literals": ["error", { "disallowRedundantWrapping": true }],
     "vue/multi-word-component-names": "off",
     "vue/no-use-computed-property-like-method": "off",
     "vue/component-definition-name-casing": "off",
