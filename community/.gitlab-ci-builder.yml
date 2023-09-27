@@ -43,6 +43,7 @@ build_rpm_dev:
     - docker login docker.capensis.fr -u oci_build -p $RPM_REGISTRY_AUTH
   after_script:
     - docker logout docker.capensis.fr
+    - rm -rf $RPM_PATH/build/el8
   script:
     - make -C $RPM_PATH VERSION=$(printf $CI_COMMIT_TAG | sed 's/-/~/g') BUILD_TARGET=el8
     - cd $RPM_PATH_OUTPUT
@@ -74,7 +75,6 @@ build_rpm_dev:
       -F "yum.asset.filename=${src_rpm_file}"
       "$RPM_URL" ;
       done
-    - rm -rf $RPM_PATH/build/el8
   rules:
     - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?(-)?(rc([0-9])?|preview([0-9])?)/'
 
@@ -87,6 +87,7 @@ build_rpm:
     - docker login docker.capensis.fr -u oci_build -p $RPM_REGISTRY_AUTH
   after_script:
     - docker logout docker.capensis.fr
+    - rm -rf $RPM_PATH/build/el8
   script:
     - make -C $RPM_PATH VERSION=$(printf $CI_COMMIT_TAG | sed 's/-/~/g') BUILD_TARGET=el8
     - cd $RPM_PATH_OUTPUT
@@ -118,6 +119,5 @@ build_rpm:
       -F "yum.asset.filename=${src_rpm_file}"
       "$RPM_URL" ;
       done
-    - rm -rf $RPM_PATH/build/el8
   rules:
     - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?$/' && $CI_COMMIT_TAG !~ '/(rc([0-9])?|preview([0-9])?)/'
