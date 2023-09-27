@@ -26,8 +26,7 @@ db.periodical_alarm.createIndex({itags: 1, itags_upd: 1}, {name: "itags_1_itags_
 if (!db.permission.findOne({_id: "api_alarm_tag"})) {
     db.permission.insertOne({
         _id: "api_alarm_tag",
-        crecord_name: "api_alarm_tag",
-        crecord_type: "action",
+        name: "api_alarm_tag",
         description: "Alarm tags",
         type: "CRUD"
     });
@@ -46,8 +45,7 @@ if (!db.permission.findOne({_id: "api_alarm_tag"})) {
 if (!db.permission.findOne({_id: "models_tag"})) {
     db.permission.insertOne({
         _id: "models_tag",
-        crecord_name: "models_tag",
-        crecord_type: "action",
+        name: "models_tag",
         description: "Alarm tags",
         type: "CRUD"
     });

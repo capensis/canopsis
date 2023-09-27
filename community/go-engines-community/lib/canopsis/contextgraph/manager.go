@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
@@ -47,8 +48,8 @@ type manager struct {
 	logger            zerolog.Logger
 }
 
-func (m *manager) UpdateEntities(ctx context.Context, eventEntityID string, entities []types.Entity) (types.Entity, error) {
-	writeModels := make([]mongo.WriteModel, 0, canopsis.DefaultBulkSize)
+func (m *manager) UpdateEntities(ctx context.Context, eventEntityID string, entities []types.Entity, updateServicesData bool) (types.Entity, error) {
+	writeModels := make([]mongo.WriteModel, 0, int(math.Min(float64(canopsis.DefaultBulkSize), float64(len(entities)))))
 
 	var eventEntity types.Entity
 
@@ -72,19 +73,21 @@ func (m *manager) UpdateEntities(ctx context.Context, eventEntityID string, enti
 				set["component_infos"] = ent.ComponentInfos
 			}
 
-			if ent.Services != nil {
-				set["services"] = ent.Services
-			}
-
-			if ent.ServicesToAdd != nil {
-				set["services_to_add"] = ent.ServicesToAdd
-			}
-
-			if ent.ServicesToRemove != nil {
-				set["services_to_remove"] = ent.ServicesToRemove
-			}
-
 			set["connector"] = ent.Connector
+
+			if updateServicesData {
+				if ent.Services != nil {
+					set["services"] = ent.Services
+				}
+
+				if ent.ServicesToAdd != nil {
+					set["services_to_add"] = ent.ServicesToAdd
+				}
+
+				if ent.ServicesToRemove != nil {
+					set["services_to_remove"] = ent.ServicesToRemove
+				}
+			}
 
 			newModel = mongo.NewUpdateOneModel().
 				SetFilter(bson.M{"_id": ent.ID}).
@@ -108,10 +111,7 @@ func (m *manager) UpdateEntities(ctx context.Context, eventEntityID string, enti
 		}
 
 		bulkBytesSize += newModelLen
-		writeModels = append(
-			writeModels,
-			newModel,
-		)
+		writeModels = append(writeModels, newModel)
 
 		if len(writeModels) == canopsis.DefaultBulkSize {
 			_, err := m.collection.BulkWrite(ctx, writeModels)
@@ -145,20 +145,19 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 	}
 
 	entitiesData := make(map[string][2][]string) // array's indexes: 0 - added to impact, 1 - removed from impact
-	servicesData := make(map[string][2][]string) // array's indexes: 0 - added to depends, 1 - removed from depends
 
 	for _, ent := range entities {
 		entityID := ent.ID
 
-		impactMap := make(map[string]struct{}, len(ent.Services))
-		for _, impactedService := range ent.Services {
-			impactMap[impactedService] = struct{}{}
+		servicesMap := make(map[string]struct{}, len(ent.Services))
+		for _, id := range ent.Services {
+			servicesMap[id] = struct{}{}
 		}
 
 		for _, serv := range services {
 			serviceID := serv.ID
 
-			_, found := impactMap[serviceID]
+			_, found := servicesMap[serviceID]
 
 			match := false
 			if len(serv.EntityPattern) > 0 {
@@ -180,34 +179,22 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 					entData := entitiesData[entityID]
 					entData[added] = append(entData[added], serviceID)
 					entitiesData[entityID] = entData
-
-					servData := servicesData[serviceID]
-					servData[added] = append(servData[added], entityID)
-					servicesData[serviceID] = servData
 				}
 
 				if found && !ent.Enabled {
 					entData := entitiesData[entityID]
 					entData[removed] = append(entData[removed], serviceID)
 					entitiesData[entityID] = entData
-
-					servData := servicesData[serviceID]
-					servData[removed] = append(servData[removed], entityID)
-					servicesData[serviceID] = servData
 				}
 			} else if found {
 				entData := entitiesData[entityID]
 				entData[removed] = append(entData[removed], serviceID)
 				entitiesData[entityID] = entData
-
-				servData := servicesData[serviceID]
-				servData[removed] = append(servData[removed], entityID)
-				servicesData[serviceID] = servData
 			}
 		}
 	}
 
-	updatedEntities := make([]types.Entity, 0, len(entities)+len(servicesData))
+	updatedEntities := make([]types.Entity, 0, len(entities))
 	for _, ent := range entities {
 		data, ok := entitiesData[ent.ID]
 		if !ok {
@@ -228,48 +215,57 @@ func (m *manager) CheckServices(ctx context.Context, entities []types.Entity) ([
 			toRemoveMap[impact] = true
 		}
 
-		if len(removedFrom) != 0 {
-			for idx := 0; idx < len(ent.ServicesToAdd); idx++ {
-				if toRemoveMap[ent.ServicesToAdd[idx]] {
-					ent.ServicesToAdd = append(ent.ServicesToAdd[:idx], ent.ServicesToAdd[idx+1:]...)
-					idx--
-				}
+		servicesToAddMap := make(map[string]bool, len(ent.ServicesToAdd))
+		for _, id := range ent.ServicesToAdd {
+			servicesToAddMap[id] = true
+		}
+
+		servicesToRemoveMap := make(map[string]bool, len(ent.ServicesToRemove))
+		for _, id := range ent.ServicesToRemove {
+			servicesToRemoveMap[id] = true
+		}
+
+		newServices := make([]string, 0, len(ent.Services))
+		newServicesToAdd := make([]string, 0, len(ent.ServicesToAdd))
+		newServicesToRemove := make([]string, 0, len(ent.ServicesToRemove))
+
+		newServices = append(newServices, addedTo...)
+
+		for idx := 0; idx < len(addedTo); idx++ {
+			if !servicesToRemoveMap[addedTo[idx]] {
+				newServicesToAdd = append(newServicesToAdd, addedTo[idx])
 			}
 		}
 
-		if len(addedTo) != 0 {
-			for idx := 0; idx < len(ent.ServicesToRemove); idx++ {
-				if toAddMap[ent.ServicesToRemove[idx]] {
-					ent.ServicesToRemove = append(ent.ServicesToRemove[:idx], ent.ServicesToRemove[idx+1:]...)
-					idx--
-				}
+		for idx := 0; idx < len(removedFrom); idx++ {
+			if !servicesToAddMap[removedFrom[idx]] {
+				newServicesToRemove = append(newServicesToRemove, removedFrom[idx])
+			}
+		}
+
+		for idx := 0; idx < len(ent.ServicesToAdd); idx++ {
+			if !toRemoveMap[ent.ServicesToAdd[idx]] {
+				newServicesToAdd = append(newServicesToAdd, ent.ServicesToAdd[idx])
+			}
+		}
+
+		for idx := 0; idx < len(ent.ServicesToRemove); idx++ {
+			if !toAddMap[ent.ServicesToRemove[idx]] {
+				newServicesToRemove = append(newServicesToRemove, ent.ServicesToRemove[idx])
 			}
 		}
 
 		for idx := 0; idx < len(ent.Services); idx++ {
-			if toRemoveMap[ent.Services[idx]] {
-				ent.Services = append(ent.Services[:idx], ent.Services[idx+1:]...)
-				idx--
+			if !toRemoveMap[ent.Services[idx]] {
+				newServices = append(newServices, ent.Services[idx])
 			}
 		}
 
-		ent.ServicesToAdd = append(ent.ServicesToAdd, addedTo...)
-		ent.ServicesToRemove = append(ent.ServicesToRemove, removedFrom...)
-		ent.Services = append(ent.Services, addedTo...)
+		ent.ServicesToAdd = newServicesToAdd
+		ent.ServicesToRemove = newServicesToRemove
+		ent.Services = newServices
 
 		updatedEntities = append(updatedEntities, ent)
-	}
-
-	for _, serv := range services {
-		if _, ok := servicesData[serv.ID]; ok {
-			ent := serv
-
-			updatedEntities = append(updatedEntities, types.Entity{
-				ID:      ent.ID,
-				Enabled: true,
-				Type:    types.EntityTypeService,
-			})
-		}
 	}
 
 	return updatedEntities, nil

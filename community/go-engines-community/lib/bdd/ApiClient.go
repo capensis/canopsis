@@ -13,6 +13,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strconv"
 	"strings"
@@ -49,18 +50,21 @@ type ApiClient struct {
 	db            mongo.DbClient
 	requestLogger zerolog.Logger
 	templater     *Templater
+	// directory with scenario's test data, which IReadFile can access
+	dirScenarioData string
 }
 
 // NewApiClient creates new API client.
-func NewApiClient(db mongo.DbClient, url string, requestLogger zerolog.Logger, templater *Templater) *ApiClient {
+func NewApiClient(db mongo.DbClient, url, dirScenarioData string, requestLogger zerolog.Logger, templater *Templater) *ApiClient {
 	return &ApiClient{
 		url: url,
 		client: &http.Client{
 			Timeout: requestTimeout,
 		},
-		db:            db,
-		requestLogger: requestLogger,
-		templater:     templater,
+		db:              db,
+		templater:       templater,
+		dirScenarioData: dirScenarioData,
+		requestLogger:   requestLogger,
 	}
 }
 
@@ -1397,6 +1401,22 @@ func (a *ApiClient) ISaveResponse(ctx context.Context, key, value string) (conte
 	}
 
 	return setVar(ctx, key, b.String()), nil
+}
+
+/*
+*
+IReadFile reads text file specified by "name" under testdata/scenariodata
+Step example:
+
+	When I read file TEST-MIB as testMIB
+*/
+func (a *ApiClient) IReadFile(ctx context.Context, name, key string) (context.Context, error) {
+	b, err := os.ReadFile(filepath.Join(a.dirScenarioData, name))
+	if err != nil {
+		return ctx, err
+	}
+
+	return setVar(ctx, key, string(b)), nil
 }
 
 // ValueShouldBeGteLteThan
