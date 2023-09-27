@@ -53,7 +53,6 @@
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.entitiesColumns')",
         :type="$constants.ENTITIES_TYPES.entity",
-        with-html,
         with-color-indicator,
         @update:template="updateEntitiesColumnsTemplate"
       )
