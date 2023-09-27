@@ -48,6 +48,7 @@ export default {
   filterEditor: 'Filter',
   isAckNoteRequired: 'Note field required when ack?',
   isSnoozeNoteRequired: 'Note field required when snooze?',
+  isUncancelAlarmsCommentRequired: 'Comment field required when uncancel?',
   isMultiAckEnabled: 'Multiple ack',
   isMultiDeclareTicketEnabled: 'Multiple declare ticket',
   fastAckOutput: 'Fast-ack output',

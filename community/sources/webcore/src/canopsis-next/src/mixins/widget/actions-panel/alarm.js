@@ -181,6 +181,7 @@ export const widgetActionsPanelAlarmMixin = {
         config: {
           ...this.modalConfig,
 
+          isCommentRequired: this.widget.parameters.isUncancelAlarmsCommentRequired,
           title: this.$t('modals.createUnCancelEvent.title'),
           eventType: EVENT_ENTITY_TYPES.uncancel,
         },

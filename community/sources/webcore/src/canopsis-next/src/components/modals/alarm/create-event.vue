@@ -13,7 +13,7 @@
           v-layout(row)
             v-text-field(
               v-model="form.output",
-              v-validate="'required'",
+              v-validate="rules",
               :label="$t('modals.createEvent.fields.output')",
               :error-messages="errors.collect('output')",
               name="output"
@@ -66,6 +66,15 @@ export default {
         output: '',
       },
     };
+  },
+  computed: {
+    isCommentRequired() {
+      return this.config.isCommentRequired ?? true;
+    },
+
+    rules() {
+      return { required: this.isCommentRequired };
+    },
   },
   methods: {
     async submit() {

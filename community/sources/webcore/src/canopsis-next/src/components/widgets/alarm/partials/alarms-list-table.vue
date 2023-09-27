@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import { intersectionBy, throttle } from 'lodash';
+import { get, intersectionBy, throttle } from 'lodash';
 
 import { TOP_BAR_HEIGHT } from '@/config';
 import { ALARM_DENSE_TYPES, ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
@@ -246,11 +246,24 @@ export default {
     },
 
     headers() {
-      const headers = this.preparedColumns.map(column => (
-        column.linksInRowCount
-          ? { ...column, width: calculateAlarmLinksColumnWidth(this.dense, column.linksInRowCount) }
-          : column
-      ));
+      const headers = this.preparedColumns.map((column) => {
+        if (column.linksInRowCount) {
+          const linksCounts = this.alarms.map(alarm => Object.values(get(alarm, column.value, {})).flat().length);
+          const maxLinksCount = Math.max(...linksCounts);
+          const actualInlineLinksCount = maxLinksCount > column.inlineLinksCount
+            ? column.inlineLinksCount + 1
+            : maxLinksCount;
+
+          const width = calculateAlarmLinksColumnWidth(
+            this.dense,
+            Math.max(Math.min(actualInlineLinksCount, column.linksInRowCount), 1),
+          );
+
+          return { ...column, width };
+        }
+
+        return column;
+      });
 
       if (!this.hideActions) {
         headers.push({ text: this.$t('common.actionsLabel'), sortable: false });
