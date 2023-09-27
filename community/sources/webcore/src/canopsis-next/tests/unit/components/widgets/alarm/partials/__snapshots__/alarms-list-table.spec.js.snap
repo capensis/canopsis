@@ -389,9 +389,9 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 data-value="links"
                 role="columnheader"
                 scope="col"
-                style="min-width: 104px"
+                style="min-width: 40px"
                 tabindex="0"
-                width="104px"
+                width="40px"
               >
                 <alarm-header-cell-stub
                   header="[object Object]"

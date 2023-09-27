@@ -259,6 +259,9 @@ BuildDynamicInfosDictionary = true
 # to catch up following parameters.
 [Canopsis.file]
 # Local storage for Upload artifacts. Upload artifacts are used in Remedaiton and Administration -> Parameters.
+# This directory must have write permissions for canopsis-api
+# Muli-instance canopsis-api configuration has to share storage via NFS directory or DRBD partition 
+# when instances run on different servers
 Upload = "/opt/canopsis/var/lib/upload-files"
 UploadMaxSize = 314572800 # 300Mb
 # Local storage for Junit artifacts.
