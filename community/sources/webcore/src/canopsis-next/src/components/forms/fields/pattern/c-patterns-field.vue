@@ -98,10 +98,20 @@
     c-alert(:value="allOverLimit", type="warning", transition="fade-transition")
       span {{ $t('pattern.errors.countOverLimit', { count: allCount }) }}
     v-layout(row, justify-end, align-center)
-      v-messages.text-xs-right(
-        :value="checkFilterMessages",
-        :color="hasError ? 'error' : ''"
-      )
+      pattern-count-message(:error="hasError", :message="checkFilterMessages")
+      template(v-if="hasAllInCounter")
+        v-btn(
+          v-if="entityCountersType",
+          flat,
+          small,
+          @click="showPatternEntities"
+        ) {{ $t('common.seeEntities') }}
+        v-btn(
+          v-else,
+          flat,
+          small,
+          @click="showPatternAlarms"
+        ) {{ $t('common.seeAlarms') }}
       v-btn.mr-0.ml-4(
         :disabled="!hasPatterns",
         :loading="countersPending",
@@ -117,13 +127,24 @@ import { createNamespacedHelpers } from 'vuex';
 import { CSS_COLORS_VARS } from '@/config';
 import { PATTERNS_FIELDS } from '@/constants';
 
-import { isValidPatternRule, formGroupsToPatternRules } from '@/helpers/entities/pattern/form';
+import {
+  isValidPatternRule,
+  formGroupsToPatternRules,
+  formGroupsToPatternRulesQuery,
+} from '@/helpers/entities/pattern/form';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
 
-const { mapActions } = createNamespacedHelpers('pattern');
+import { patternCountAlarmsModalMixin } from '@/mixins/pattern/pattern-count-alarms-modal';
+import { patternCountEntitiesModalMixin } from '@/mixins/pattern/pattern-count-entities-modal';
+
+import PatternCountMessage from '@/components/forms/fields/pattern/pattern-count-message.vue';
+
+const { mapActions: mapPatternActions } = createNamespacedHelpers('pattern');
 
 export default {
   inject: ['$validator'],
+  components: { PatternCountMessage },
+  mixins: [patternCountAlarmsModalMixin, patternCountEntitiesModalMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -266,29 +287,34 @@ export default {
       return this.isPatternRequired && !this.hasPatterns;
     },
 
+    hasAllInCounter() {
+      return this.counters?.all?.count > 0;
+    },
+
     checkFilterMessages() {
       if (this.hasError) {
-        return [this.$t('pattern.errors.required')];
+        return this.$t('pattern.errors.required');
       }
 
       if (isEmpty(this.counters)) {
-        return [];
+        return '';
       }
 
+      const allCount = this.counters?.all?.count ?? 0;
+      const entitiesCount = this.counters?.entities?.count ?? 0;
+
       if (this.entityCountersType) {
-        return [this.$t('pattern.entitiesCount', { entitiesCount: this.counters?.all?.count ?? 0 })];
+        return this.$t('pattern.entitiesCount', { entitiesCount: allCount });
       }
 
       if (this.bothCounters) {
-        return [
-          this.$t('pattern.alarmsEntitiesCount', {
-            entitiesCount: this.counters?.entities?.count ?? 0,
-            alarmsCount: this.counters?.all?.count ?? 0,
-          }),
-        ];
+        return this.$t('pattern.alarmsEntitiesCount', {
+          entitiesCount,
+          alarmsCount: allCount,
+        });
       }
 
-      return [this.$t('pattern.alarmsCount', { alarmsCount: this.counters?.all?.count ?? 0 })];
+      return this.$t('pattern.alarmsCount', { alarmsCount: allCount });
     },
 
     patternsFields() {
@@ -319,10 +345,24 @@ export default {
     },
   },
   methods: {
-    ...mapActions({
+    ...mapPatternActions({
       checkPatternsEntitiesCount: 'checkPatternsEntitiesCount',
       checkPatternsAlarmsCount: 'checkPatternsAlarmsCount',
     }),
+
+    showPatternAlarms() {
+      this.showAlarmsModalByPatterns({
+        alarm_pattern: formGroupsToPatternRulesQuery(this.value.alarm_pattern?.groups),
+        entity_pattern: formGroupsToPatternRulesQuery(this.value.entity_pattern?.groups),
+        pbehavior_pattern: formGroupsToPatternRulesQuery(this.value.pbehavior_pattern?.groups),
+      });
+    },
+
+    showPatternEntities() {
+      this.showEntitiesModalByPatterns({
+        entity_pattern: formGroupsToPatternRulesQuery(this.value.entity_pattern.groups),
+      });
+    },
 
     async checkFilter() {
       try {
