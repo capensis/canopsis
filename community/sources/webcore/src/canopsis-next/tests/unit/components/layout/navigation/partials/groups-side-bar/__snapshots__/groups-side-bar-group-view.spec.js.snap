@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`groups-side-bar-group-view Renders \`groups-side-bar-group-view\` with custom data 1`] = `
+<router-link-stub
+  class="panel-item-content-link editing"
+  event=""
+  title="Custom view title"
+  to="[object Object]"
+>
+  <group-view-panel-stub
+    allowediting="true"
+    isediting="true"
+    isorderchanged="true"
+    isviewactive="true"
+    view="[object Object]"
+  />
+</router-link-stub>
+`;
+
+exports[`groups-side-bar-group-view Renders \`groups-side-bar-group-view\` with default data 1`] = `
+<router-link-stub
+  class="panel-item-content-link"
+  event=""
+  title="View title"
+  to="[object Object]"
+>
+  <group-view-panel-stub
+    allowediting="true"
+    isorderchanged="true"
+    view="[object Object]"
+  />
+</router-link-stub>
+`;

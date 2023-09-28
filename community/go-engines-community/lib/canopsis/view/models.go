@@ -195,4 +195,5 @@ type WidgetColumn struct {
 	ColorIndicator   string `bson:"colorIndicator,omitempty" json:"colorIndicator,omitempty"`
 	Template         string `bson:"template,omitempty" json:"template,omitempty"`
 	InlineLinksCount int64  `bson:"inlineLinksCount,omitempty" json:"inlineLinksCount,omitempty"`
+	LinksInRowCount  int64  `bson:"linksInRowCount,omitempty" json:"linksInRowCount,omitempty"`
 }

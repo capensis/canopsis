@@ -30,7 +30,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
       class="v-table__overflow"
     >
       <table
-        class="v-datatable v-table v-datatable--select-all theme--light"
+        class="v-datatable v-table v-datatable--expand v-datatable--select-all theme--light"
       >
         <thead>
           <tr>
@@ -268,7 +268,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             class="v-datatable__expand-row"
           >
             <transition-group-stub
-              class="v-datatable__expand-col"
+              class="v-datatable__expand-col v-datatable__expand-col--expanded"
               colspan="7"
               tag="td"
             >
@@ -915,7 +915,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
       class="v-table__overflow"
     >
       <table
-        class="v-datatable v-table theme--light"
+        class="v-datatable v-table v-datatable--expand theme--light"
       >
         <thead>
           <tr>

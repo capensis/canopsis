@@ -12,7 +12,7 @@ La commande `engine-axe -help` liste toutes les options acceptées par le moteur
 
 Il est possible, à partir de Canopsis 3.40.0, de lancer plusieurs instances du moteur `engine-axe`, afin d'améliorer sa performance de traitement et sa résilience.
 
-Modifier le ficher `docker-compose.yml` (ou en fonction de votre version`02-app.docker-compose.yml`) de la manière suivante :
+Pour cela, modifiez le ficher `docker-compose.yml` (ou un fichier de surcharge le cas échéant) de la manière suivante :
 
 ```yml
   axe:
@@ -21,7 +21,7 @@ Modifier le ficher `docker-compose.yml` (ou en fonction de votre version`02-app.
       replicas: 2
 ```
 
-Exécutez ensuite `docker-compose up -d` (ou `docker-compose -f 02-app.docker-compose.yml`) pour appliquer cette modification.
+Exécutez ensuite `docker compose up -d` pour appliquer cette modification.
 
 
 Cette fonctionnalité sera aussi disponible en installation par paquets lors d'une prochaine mise à jour.
