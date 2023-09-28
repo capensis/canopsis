@@ -356,6 +356,7 @@ export default {
               ...params,
               alarm_pattern: formGroupsToPatternRulesQuery(this.value.alarm_pattern.groups),
               entity_pattern: formGroupsToPatternRulesQuery(this.value.entity_pattern.groups),
+              pbehavior_pattern: formGroupsToPatternRulesQuery(this.value.pbehavior_pattern.groups),
             },
           }),
         },
