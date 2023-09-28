@@ -1434,6 +1434,8 @@ definitions:
     properties:
       category:
         type: string
+      entity_pattern:
+        type: string
       fields:
         items:
           $ref: '#/definitions/export.Field'
@@ -3119,43 +3121,6 @@ definitions:
         type: string
       field_type:
         description: 'FieldType is only defined for custom fields, ex: infos.'
-        type: string
-    type: object
-  pattern.GetAlarmsRequest:
-    properties:
-      alarm_pattern:
-        items:
-          items:
-            $ref: '#/definitions/pattern.FieldCondition'
-          type: array
-        type: array
-      entity_pattern:
-        items:
-          items:
-            $ref: '#/definitions/pattern.FieldCondition'
-          type: array
-        type: array
-      pbehavior_pattern:
-        items:
-          items:
-            $ref: '#/definitions/pattern.FieldCondition'
-          type: array
-        type: array
-      search:
-        type: string
-    type: object
-  pattern.GetAlarmsResponse:
-    properties:
-      alarms:
-        items:
-          $ref: '#/definitions/pattern.MatchedAlarm'
-        type: array
-    type: object
-  pattern.MatchedAlarm:
-    properties:
-      _id:
-        type: string
-      name:
         type: string
     type: object
   pattern.Response:
