@@ -32,6 +32,7 @@ export const ROUTES_NAMES = {
   exploitationLinkRules: 'exploitation-link-rules',
   notificationInstructionStats: 'notification-instruction-stats',
   profilePatterns: 'profile-patterns',
+  profileThemes: 'profile-themes',
 };
 
 export const ROUTES = {
@@ -68,6 +69,7 @@ export const ROUTES = {
   exploitationLinkRules: '/exploitation/link-rules',
   notificationInstructionStats: '/notification/instruction-stats',
   profilePatterns: '/filters',
+  profileThemes: '/themes',
 };
 
 export const GROUPS_NAVIGATION_TYPES = {

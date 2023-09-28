@@ -42,7 +42,8 @@ describe('text-editor', () => {
   ];
   const files = filesMeta.map(({ filename, mediatype }) => new File(
     [new ArrayBuffer(1)],
-    filename, { type: mediatype },
+    filename,
+    { type: mediatype },
   ));
 
   const filesResponse = filesMeta.map(({ filename, mediatype }) => ({
