@@ -65,11 +65,16 @@ const (
 
 	ValueTypeShareToken = "sharetoken"
 
+	ValueTypeSnmpRule = "snmprule"
+	ValueTypeSnmpMib  = "snmpmib"
+
 	ValueTypeDeclareTicketRule = "declareticketrule"
 
 	ValueTypeLinkRule = "linkrule"
 
 	ValueTypeAlarmTag = "alarmtag"
+
+	ValueTypeColorTheme = "colortheme"
 )
 
 type ActionLogger interface {

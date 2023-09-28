@@ -39,7 +39,7 @@ func (p *updateCountersProcessor) Process(ctx context.Context, event rpc.AxeEven
 
 	entity := *event.Entity
 	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
-	firstTry := true
+
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedServiceStates = nil
 
@@ -49,14 +49,6 @@ func (p *updateCountersProcessor) Process(ctx context.Context, event rpc.AxeEven
 			return err
 		}
 
-		if !firstTry {
-			entity, err = findEntity(ctx, event.Entity.ID, p.entityCollection)
-			if err != nil {
-				return err
-			}
-		}
-
-		firstTry = false
 		if alarm.ID == "" {
 			updatedServiceStates, err = p.stateCountersService.UpdateServiceCounters(ctx, entity, nil, result.AlarmChange)
 		} else {

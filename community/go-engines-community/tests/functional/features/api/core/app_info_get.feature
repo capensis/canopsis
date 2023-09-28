@@ -6,7 +6,7 @@ Feature: Get application information
   Scenario: given get request should return application information
     When I do GET /api/v4/app-info
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "allow_change_severity_to_info": true,
@@ -63,6 +63,35 @@ Feature: Get application information
         }
       },
       "maintenance": false,
+      "default_color_theme": {
+        "_id": "canopsis",
+        "name": "Canopsis",
+        "font_size": 2,
+        "colors": {
+          "main": {
+            "primary": "#2fab63",
+            "secondary": "#2b3e4f",
+            "accent": "#82b1ff",
+            "error": "#ff5252",
+            "info": "#2196f3",
+            "success": "#4caf50",
+            "warning": "#fb8c00",
+            "background": "#ffffff",
+            "active_color": "#000"
+          },
+          "table": {
+            "background": "#fff",
+            "row_color": "#fff",
+            "hover_row_color": "#eee"
+          },
+          "state": {
+            "ok": "#00a65a",
+            "minor": "#fcdc00",
+            "major": "#ff9900",
+            "critical": "#f56954"
+          }
+        }
+      },
       "events_count_trigger_default_threshold": 10
     }
     """

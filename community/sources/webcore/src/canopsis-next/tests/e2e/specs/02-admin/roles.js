@@ -87,7 +87,8 @@ module.exports = {
       .waitForFirstXHR(
         API_ROUTES.role.list,
         WAIT_FOR_FIRST_XHR_TIME,
-        () => rolesPage.clickSubmitSearchButton(), ({ responseData }) => {
+        () => rolesPage.clickSubmitSearchButton(),
+        ({ responseData }) => {
           const { data } = JSON.parse(responseData);
 
           browser.assert.ok(data.every(item => item._id === role._id));
@@ -99,7 +100,8 @@ module.exports = {
       .waitForFirstXHR(
         API_ROUTES.role.list,
         WAIT_FOR_FIRST_XHR_TIME,
-        () => rolesPage.clickClearSearchButton(), ({ responseData }) => {
+        () => rolesPage.clickClearSearchButton(),
+        ({ responseData }) => {
           const { data } = JSON.parse(responseData);
 
           browser.assert.ok(data.some(item => item._id !== role._id));
