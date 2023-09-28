@@ -99,18 +99,19 @@
       span {{ $t('pattern.errors.countOverLimit', { count: allCount }) }}
     v-layout(row, justify-end, align-center)
       pattern-count-message(:error="hasError", :message="checkFilterMessages")
-      v-btn(
-        v-if="!entityCountersType && hasAllInCounter",
-        flat,
-        small,
-        @click="showPatternAlarms"
-      ) {{ $t('common.seeAlarms') }}
-      v-btn(
-        v-if="entityCountersType && hasAllInCounter",
-        flat,
-        small,
-        @click="showPatternEntities"
-      ) {{ $t('common.seeEntities') }}
+      template(v-if="hasAllInCounter")
+        v-btn(
+          v-if="entityCountersType",
+          flat,
+          small,
+          @click="showPatternEntities"
+        ) {{ $t('common.seeEntities') }}
+        v-btn(
+          v-else,
+          flat,
+          small,
+          @click="showPatternAlarms"
+        ) {{ $t('common.seeAlarms') }}
       v-btn.mr-0.ml-4(
         :disabled="!hasPatterns",
         :loading="countersPending",
