@@ -4,7 +4,7 @@ The one thing instances compete for is periodical process. Only one instance sho
 
 ## Start multi-axe
 
-To start with engine-axe multiple instances docker-compose can be run with command line arguments:  
+To start with engine-axe multiple instances, `docker compose` can be run with command line arguments:  
 `--scale axe=N` where N is number of engine-axe instances.  
 
 ## Testing Axe Multi-instance

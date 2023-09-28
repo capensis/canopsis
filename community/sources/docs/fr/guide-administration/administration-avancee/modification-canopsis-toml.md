@@ -84,8 +84,8 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
     Exécuter les commandes suivantes :
 
     ```sh
-    docker-compose restart reconfigure
-    docker-compose restart
+    docker compose restart reconfigure
+    docker compose restart
     ```
 
 ## Description des options
