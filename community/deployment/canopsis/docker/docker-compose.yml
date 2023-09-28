@@ -42,8 +42,6 @@ x-app_service_base: &app_service_base
   depends_on:
     reconfigure:
       condition: service_completed_successfully
-    migrate-metrics-meta:
-      condition: service_completed_successfully
 
 
 
