@@ -100,11 +100,17 @@
     v-layout(row, justify-end, align-center)
       pattern-count-message(:error="hasError", :message="checkFilterMessages")
       v-btn(
-        v-if="hasAlarmsForPatters",
+        v-if="!entityCountersType && hasAllInCounter",
         flat,
         small,
         @click="showPatternAlarms"
       ) {{ $t('common.seeAlarms') }}
+      v-btn(
+        v-if="entityCountersType && hasAllInCounter",
+        flat,
+        small,
+        @click="showPatternEntities"
+      ) {{ $t('common.seeEntities') }}
       v-btn.mr-0.ml-4(
         :disabled="!hasPatterns",
         :loading="countersPending",
@@ -118,7 +124,7 @@ import { isString, isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { CSS_COLORS_VARS } from '@/config';
-import { MODALS, PATTERNS_FIELDS } from '@/constants';
+import { PATTERNS_FIELDS } from '@/constants';
 
 import {
   isValidPatternRule,
@@ -126,16 +132,18 @@ import {
   formGroupsToPatternRulesQuery,
 } from '@/helpers/entities/pattern/form';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
+
+import { patternCountAlarmsModalMixin } from '@/mixins/pattern/pattern-count-alarms-modal';
+import { patternCountEntitiesModalMixin } from '@/mixins/pattern/pattern-count-entities-modal';
 
 import PatternCountMessage from '@/components/forms/fields/pattern/pattern-count-message.vue';
 
 const { mapActions: mapPatternActions } = createNamespacedHelpers('pattern');
-const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
 
 export default {
   inject: ['$validator'],
   components: { PatternCountMessage },
+  mixins: [patternCountAlarmsModalMixin, patternCountEntitiesModalMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -278,11 +286,7 @@ export default {
       return this.isPatternRequired && !this.hasPatterns;
     },
 
-    hasAlarmsForPatters() {
-      if (this.entityCountersType) {
-        return false;
-      }
-
+    hasAllInCounter() {
       return this.counters?.all?.count > 0;
     },
 
@@ -295,18 +299,21 @@ export default {
         return '';
       }
 
+      const allCount = this.counters?.all?.count ?? 0;
+      const entitiesCount = this.counters?.entities?.count ?? 0;
+
       if (this.entityCountersType) {
-        return this.$t('pattern.entitiesCount', { entitiesCount: this.counters?.all?.count ?? 0 });
+        return this.$t('pattern.entitiesCount', { entitiesCount: allCount });
       }
 
       if (this.bothCounters) {
         return this.$t('pattern.alarmsEntitiesCount', {
-          entitiesCount: this.counters?.entities?.count ?? 0,
-          alarmsCount: this.counters?.all?.count ?? 0,
+          entitiesCount,
+          alarmsCount: allCount,
         });
       }
 
-      return this.$t('pattern.alarmsCount', { alarmsCount: this.counters?.all?.count ?? 0 });
+      return this.$t('pattern.alarmsCount', { alarmsCount: allCount });
     },
 
     patternsFields() {
@@ -337,29 +344,22 @@ export default {
     },
   },
   methods: {
-    ...mapAlarmActions({ fetchAlarmsListWithoutStore: 'fetchListWithoutStore' }),
     ...mapPatternActions({
       checkPatternsEntitiesCount: 'checkPatternsEntitiesCount',
       checkPatternsAlarmsCount: 'checkPatternsAlarmsCount',
     }),
 
     showPatternAlarms() {
-      const widget = generatePreparedDefaultAlarmListWidget();
+      this.showAlarmsModalByPatterns({
+        alarm_pattern: formGroupsToPatternRulesQuery(this.value.alarm_pattern?.groups),
+        entity_pattern: formGroupsToPatternRulesQuery(this.value.entity_pattern?.groups),
+        pbehavior_pattern: formGroupsToPatternRulesQuery(this.value.pbehavior_pattern?.groups),
+      });
+    },
 
-      this.$modals.show({
-        name: MODALS.alarmsList,
-        config: {
-          widget,
-          title: this.$t('pattern.patternAlarms'),
-          fetchList: params => this.fetchAlarmsListWithoutStore({
-            params: {
-              ...params,
-              alarm_pattern: formGroupsToPatternRulesQuery(this.value.alarm_pattern.groups),
-              entity_pattern: formGroupsToPatternRulesQuery(this.value.entity_pattern.groups),
-              pbehavior_pattern: formGroupsToPatternRulesQuery(this.value.pbehavior_pattern.groups),
-            },
-          }),
-        },
+    showPatternEntities() {
+      this.showEntitiesModalByPatterns({
+        entity_pattern: formGroupsToPatternRulesQuery(this.value.entity_pattern.groups),
       });
     },
 
