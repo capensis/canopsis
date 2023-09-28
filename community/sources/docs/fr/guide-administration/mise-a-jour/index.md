@@ -100,13 +100,15 @@ Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite
 
 Après avoir suivi les notes de version, resynchronisez l'ensemble de vos fichiers Docker Compose avec les fichiers de référence correspondant à la version voulue :
 
-* Canopsis Community : <https://git.canopsis.net/canopsis/canopsis-community/-/tree/develop/community/docker-compose>
-* Canopsis Pro : <https://git.canopsis.net/canopsis/canopsis-pro/-/tree/develop/pro/deployment/canopsis/docker> (autorisation nécessaire)
+* Canopsis Community :  
+  <https://git.canopsis.net/canopsis/canopsis-community/-/tree/develop/community/deployment/canopsis/docker>
+* Canopsis Pro (autorisation nécessaire) :  
+  <https://git.canopsis.net/sources/canopsis-pro-sources/-/tree/develop/pro/deployment/canopsis/docker>
 
 Puis, exécutez la commande suivante :
 
 ```sh
-docker-compose up -d
+docker compose up -d
 ```
 
 Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite dans chacune des [notes de version](../../index.md#notes-de-version) qui vous concerne, y commpris toute éventuelle remarque des notes de version au sujet du fichier `canopsis.toml`.
