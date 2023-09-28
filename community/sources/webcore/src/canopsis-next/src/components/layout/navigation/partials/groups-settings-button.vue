@@ -9,7 +9,8 @@
       v-tooltip(
         :right="tooltipRight",
         :left="tooltipLeft",
-        z-index="10"
+        z-index="10",
+        custom-activator
       )
         template(#activator="{ on }")
           v-btn.primary(
@@ -24,35 +25,39 @@
       v-if="hasUpdateAnyViewAccess || hasDeleteAnyViewAccess",
       :right="tooltipRight",
       :left="tooltipLeft",
-      z-index="10"
+      z-index="10",
+      custom-activator
     )
-      v-btn(
-        slot="activator",
-        :input-value="isNavigationEditingMode",
-        color="blue darken-4",
-        small,
-        dark,
-        fab,
-        @click.stop="$emit('toggleEditingMode')"
-      )
-        v-icon(dark) edit
-        v-icon(dark) done
+      template(#activator="{ on }")
+        v-btn(
+          v-on="on",
+          :input-value="isNavigationEditingMode",
+          color="blue darken-4",
+          small,
+          dark,
+          fab,
+          @click.stop="$emit('toggleEditingMode')"
+        )
+          v-icon(dark) edit
+          v-icon(dark) done
       span {{ $t('layout.sideBar.buttons.edit') }}
     v-tooltip(
       v-if="hasCreateAnyViewAccess",
       :right="tooltipRight",
       :left="tooltipLeft",
-      z-index="10"
+      z-index="10",
+      custom-activator
     )
-      v-btn(
-        slot="activator",
-        color="green darken-4",
-        small,
-        dark,
-        fab,
-        @click.stop="showCreateViewModal"
-      )
-        v-icon(dark) add
+      template(#activator="{ on }")
+        v-btn(
+          v-on="on",
+          color="green darken-4",
+          small,
+          dark,
+          fab,
+          @click.stop="showCreateViewModal"
+        )
+          v-icon(dark) add
       span {{ $t('layout.sideBar.buttons.create') }}
 </template>
 

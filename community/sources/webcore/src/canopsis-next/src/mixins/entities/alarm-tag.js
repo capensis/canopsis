@@ -6,7 +6,6 @@ export const entitiesAlarmTagMixin = {
   computed: {
     ...mapGetters({
       alarmTags: 'items',
-      getAlarmTagById: 'getItemById',
       alarmTagsPending: 'pending',
       alarmTagsMeta: 'meta',
     }),
