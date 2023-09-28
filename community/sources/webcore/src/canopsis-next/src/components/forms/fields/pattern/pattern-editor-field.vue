@@ -64,11 +64,9 @@
           color="primary",
           @click="updatePatternToCustom"
         ) {{ $t('common.edit') }}
-        v-messages.text-xs-right(
-          v-if="checked",
-          :value="[$tc('common.itemFound', count, { count })]",
-          :color="count === 0 ? 'error' : ''"
-        )
+        v-layout(v-if="checked", align-center, justify-end)
+          pattern-count-message(:error="count === 0", :message="$tc('common.itemFound', count, { count })")
+          slot(name="append-count")
       v-flex
         v-alert.pre-wrap(v-if="errorMessage", value="true") {{ errorMessage }}
         v-alert(
@@ -90,10 +88,11 @@ import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
 import PatternAdvancedEditorField from './pattern-advanced-editor-field.vue';
 import PatternGroupsField from './pattern-groups-field.vue';
+import PatternCountMessage from './pattern-count-message.vue';
 
 export default {
   inject: ['$validator'],
-  components: { PatternGroupsField, PatternAdvancedEditorField },
+  components: { PatternCountMessage, PatternGroupsField, PatternAdvancedEditorField },
   mixins: [formMixin, validationChildrenMixin],
   model: {
     prop: 'patterns',
