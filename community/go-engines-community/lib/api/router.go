@@ -1326,11 +1326,6 @@ func RegisterRoutes(
 			middleware.OnlyAuth(),
 			patternAPI.CountEntities,
 		)
-		protected.POST(
-			"/patterns-alarms",
-			middleware.OnlyAuth(),
-			patternAPI.GetAlarms,
-		)
 
 		linkRuleAPI := linkrule.NewApi(
 			linkrule.NewStore(dbClient, authorProvider),
