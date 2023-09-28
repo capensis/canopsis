@@ -92,6 +92,6 @@ Feature: Get application information
           }
         }
       },
-      "events_count_trigger_default_threshold": 10
+      "events_count_trigger_default_threshold": 15
     }
     """

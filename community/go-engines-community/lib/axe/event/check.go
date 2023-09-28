@@ -561,7 +561,7 @@ func sendRemediationEvent(
 
 	switch result.AlarmChange.Type {
 	case types.AlarmChangeTypeNone:
-		if result.AlarmChange.EventsCount < 2 {
+		if result.AlarmChange.EventsCount < types.MinimalEventsCountThreshold {
 			return nil
 		}
 	case

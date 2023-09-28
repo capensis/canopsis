@@ -221,6 +221,7 @@ MaxExternalResponseSize = 10485760 # 10Mb
 BuildEntityInfosDictionary = true
 BuildDynamicInfosDictionary = true
 # The default value for a check events count trigger threshold.
+# EventsCountTriggerDefaultThreshold parameter doesn't require api or engines to restart.
 EventsCountTriggerDefaultThreshold = 10
 
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
