@@ -76,6 +76,8 @@ const (
 	AlarmChangeEventsCount AlarmChangeType = "eventscount"
 )
 
+const MinimalEventsCountThreshold = 2
+
 // AlarmChange is a struct containing the type of change that occured on an
 // alarm, as well as its previous state.
 type AlarmChange struct {
@@ -123,17 +125,17 @@ func (ac *AlarmChange) GetTriggers() []string {
 
 	switch ac.Type {
 	case AlarmChangeTypeNone:
-		if ac.EventsCount > 1 {
+		if ac.EventsCount >= MinimalEventsCountThreshold {
 			triggers = append(triggers, string(AlarmChangeEventsCount)+strconv.Itoa(ac.EventsCount))
 		}
 	case AlarmChangeTypeStateIncrease:
 		triggers = append(triggers, string(AlarmChangeTypeStateIncrease))
-		if ac.EventsCount > 1 {
+		if ac.EventsCount >= MinimalEventsCountThreshold {
 			triggers = append(triggers, string(AlarmChangeEventsCount)+strconv.Itoa(ac.EventsCount))
 		}
 	case AlarmChangeTypeStateDecrease:
 		triggers = append(triggers, string(AlarmChangeTypeStateDecrease))
-		if ac.EventsCount > 1 {
+		if ac.EventsCount >= MinimalEventsCountThreshold {
 			triggers = append(triggers, string(AlarmChangeEventsCount)+strconv.Itoa(ac.EventsCount))
 		}
 	case AlarmChangeTypeCreateAndPbhEnter:

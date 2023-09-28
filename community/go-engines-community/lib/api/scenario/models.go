@@ -66,7 +66,7 @@ type Trigger struct {
 	//   * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
 	//   * `eventscount` - Alarm check events count
 	Type      string `json:"type" binding:"required,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment declareticketwebhook assocticket snooze unsnooze resolve activate pbhenter pbhleave instructionfail autoinstructionfail instructionjobfail instructionjobcomplete instructioncomplete autoinstructioncomplete autoinstructionresultok autoinstructionresultfail eventscount"`
-	Threshold int    `json:"threshold" binding:"required_if=Type eventscount,excluded_unless=Type eventscount,omitempty,gt=1"`
+	Threshold int    `json:"threshold,omitempty" binding:"required_if=Type eventscount,excluded_unless=Type eventscount,omitempty,gt=1"`
 }
 
 func (t *Trigger) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {

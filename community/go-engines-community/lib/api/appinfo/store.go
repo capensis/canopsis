@@ -98,7 +98,11 @@ func (s *store) RetrieveVersionConfig(ctx context.Context) (VersionConf, error) 
 }
 
 func (s *store) RetrieveGlobalConfig(ctx context.Context) (GlobalConf, error) {
-	conf := config.CanopsisConf{}
+	conf := config.CanopsisConf{
+		Global: config.SectionGlobal{
+			EventsCountTriggerDefaultThreshold: config.DefaultEventsCountThreshold,
+		},
+	}
 	err := s.configCollection.FindOne(ctx, bson.M{"_id": config.ConfigKeyName}).Decode(&conf)
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
