@@ -81,21 +81,13 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 
 	entity := *event.Entity
 	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
-	firstTry := true
+
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		updatedServiceStates = nil
-		var err error
-		if !firstTry {
-			entity, err = findEntity(ctx, event.Entity.ID, p.entityCollection)
-			if err != nil {
-				return err
-			}
-		}
 
-		firstTry = false
 		alarm := types.Alarm{}
-		err = p.alarmCollection.FindOne(ctx, bson.M{
+		err := p.alarmCollection.FindOne(ctx, bson.M{
 			"d":          entity.ID,
 			"v.resolved": nil,
 		}).Decode(&alarm)

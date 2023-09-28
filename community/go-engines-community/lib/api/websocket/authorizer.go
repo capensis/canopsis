@@ -20,12 +20,10 @@ type Authorizer interface {
 	Authorize(ctx context.Context, userId, room string) (bool, error)
 	// AddRoom adds room with permissions.
 	AddRoom(room string, perms []string) error
-	AddGroup(group string, perms []string, check GroupCheck) error
+	AddGroup(group string, perms []string, check GroupCheckExists) error
 	GetGroupIds(group string) []string
 	RemoveGroupRoom(group, id string) error
 }
-
-type GroupCheck func(ctx context.Context, id string) (bool, error)
 
 func NewAuthorizer(
 	enforcer security.Enforcer,
@@ -36,7 +34,7 @@ func NewAuthorizer(
 		tokenProviders: tokenProviders,
 		roomPerms:      make(map[string][]string),
 		groupPerms:     make(map[string][]string),
-		groupChecks:    make(map[string]GroupCheck),
+		groupChecks:    make(map[string]GroupCheckExists),
 		roomsByGroup:   make(map[string][]string),
 	}
 }
@@ -47,7 +45,7 @@ type authorizer struct {
 	mx             sync.RWMutex
 	roomPerms      map[string][]string
 	groupPerms     map[string][]string
-	groupChecks    map[string]GroupCheck
+	groupChecks    map[string]GroupCheckExists
 	roomsByGroup   map[string][]string
 }
 
@@ -91,7 +89,7 @@ func (a *authorizer) AddRoom(room string, perms []string) error {
 	return nil
 }
 
-func (a *authorizer) AddGroup(group string, perms []string, check GroupCheck) error {
+func (a *authorizer) AddGroup(group string, perms []string, check GroupCheckExists) error {
 	a.mx.Lock()
 	defer a.mx.Unlock()
 
@@ -100,7 +98,9 @@ func (a *authorizer) AddGroup(group string, perms []string, check GroupCheck) er
 	}
 
 	a.groupPerms[group] = perms
-	a.groupChecks[group] = check
+	if check != nil {
+		a.groupChecks[group] = check
+	}
 	return nil
 }
 

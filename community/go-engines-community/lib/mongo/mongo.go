@@ -1,6 +1,6 @@
 package mongo
 
-//go:generate mockgen -destination=../../mocks/lib/mongo/mongo.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo DbCollection,DbClient,SingleResultHelper,Cursor
+//go:generate mockgen -destination=../../mocks/lib/mongo/mongo.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo DbCollection,DbClient,SingleResultHelper,Cursor,ChangeStream
 
 import (
 	"context"
@@ -34,6 +34,16 @@ type SingleResultHelper interface {
 	Err() error
 }
 
+type ChangeStream interface {
+	ID() int64
+	Decode(val interface{}) error
+	Err() error
+	Close(ctx context.Context) error
+	ResumeToken() bson.Raw
+	Next(ctx context.Context) bool
+	TryNext(ctx context.Context) bool
+}
+
 type DbCollection interface {
 	Aggregate(ctx context.Context, pipeline interface{}, opts ...*options.AggregateOptions) (Cursor, error)
 	BulkWrite(ctx context.Context, models []mongo.WriteModel, opts ...*options.BulkWriteOptions) (*mongo.BulkWriteResult, error)
@@ -64,7 +74,7 @@ type DbCollection interface {
 	UpdateOne(ctx context.Context, filter interface{}, update interface{},
 		opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
 	Watch(ctx context.Context, pipeline interface{},
-		opts ...*options.ChangeStreamOptions) (*mongo.ChangeStream, error)
+		opts ...*options.ChangeStreamOptions) (ChangeStream, error)
 }
 
 // DbClient connected MongoDB client settings
@@ -313,7 +323,7 @@ func (c *dbCollection) UpdateMany(ctx context.Context, filter interface{}, updat
 }
 
 func (c *dbCollection) Watch(ctx context.Context, pipeline interface{},
-	opts ...*options.ChangeStreamOptions) (*mongo.ChangeStream, error) {
+	opts ...*options.ChangeStreamOptions) (ChangeStream, error) {
 	return c.mongoCollection.Watch(ctx, pipeline, opts...)
 }
 

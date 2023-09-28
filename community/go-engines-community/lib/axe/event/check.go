@@ -94,21 +94,13 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 
 	entity := *event.Entity
 	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
-	firstTry := true
+
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		updatedServiceStates = nil
-		var err error
-		if !firstTry {
-			entity, err = findEntity(ctx, event.Entity.ID, p.entityCollection)
-			if err != nil {
-				return err
-			}
-		}
 
-		firstTry = false
 		alarm := types.Alarm{}
-		err = p.alarmCollection.FindOne(ctx, bson.M{
+		err := p.alarmCollection.FindOne(ctx, bson.M{
 			"d":          entity.ID,
 			"v.resolved": nil,
 		}).Decode(&alarm)
@@ -647,20 +639,6 @@ func isInstructionMatched(event rpc.AxeEvent, result Result, autoInstructionMatc
 	}
 
 	return matched
-}
-
-func findEntity(ctx context.Context, entityID string, entityCollection mongo.DbCollection) (types.Entity, error) {
-	fetchedEntity := types.Entity{}
-	err := entityCollection.FindOne(ctx, bson.M{"_id": entityID}).Decode(&fetchedEntity)
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return fetchedEntity, fmt.Errorf("entity with id = %s is not found after transaction rollback", entityID)
-		}
-
-		return fetchedEntity, err
-	}
-
-	return fetchedEntity, nil
 }
 
 func updateEntityByID(ctx context.Context, entityID string, update bson.M, entityCollection mongo.DbCollection) (types.Entity, error) {

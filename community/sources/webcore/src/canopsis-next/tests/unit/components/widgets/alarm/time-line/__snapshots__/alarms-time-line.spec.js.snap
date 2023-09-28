@@ -10,7 +10,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
     <ul>
       <li>
         <div
-          class="alarms-timeline-steps-date"
+          class="alarms-timeline-steps-date text--disabled"
         >
           <div
             class="date"
@@ -22,7 +22,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
           class="alarms-timeline-steps-card"
         >
           <div
-            class="time"
+            class="time text--disabled"
           >
             8:54:22
           </div>
@@ -38,7 +38,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
       </li>
       <li>
         <div
-          class="alarms-timeline-steps-date"
+          class="alarms-timeline-steps-date text--disabled"
           style="display: none;"
         >
           <div
@@ -51,7 +51,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
           class="alarms-timeline-steps-card"
         >
           <div
-            class="time"
+            class="time text--disabled"
           >
             8:54:22
           </div>
@@ -69,7 +69,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
     <ul>
       <li>
         <div
-          class="alarms-timeline-steps-date"
+          class="alarms-timeline-steps-date text--disabled"
         >
           <div
             class="date"
@@ -81,7 +81,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
           class="alarms-timeline-steps-card"
         >
           <div
-            class="time"
+            class="time text--disabled"
           >
             12:46:25
           </div>
@@ -99,7 +99,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
     <ul>
       <li>
         <div
-          class="alarms-timeline-steps-date"
+          class="alarms-timeline-steps-date text--disabled"
         >
           <div
             class="date"
@@ -111,7 +111,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
           class="alarms-timeline-steps-card"
         >
           <div
-            class="time"
+            class="time text--disabled"
           >
             8:17:21
           </div>
@@ -127,7 +127,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
       </li>
       <li>
         <div
-          class="alarms-timeline-steps-date"
+          class="alarms-timeline-steps-date text--disabled"
           style="display: none;"
         >
           <div
@@ -140,7 +140,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
           class="alarms-timeline-steps-card"
         >
           <div
-            class="time"
+            class="time text--disabled"
           >
             8:47:33
           </div>
@@ -158,7 +158,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
     <ul>
       <li>
         <div
-          class="alarms-timeline-steps-date"
+          class="alarms-timeline-steps-date text--disabled"
         >
           <div
             class="date"
@@ -170,7 +170,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
           class="alarms-timeline-steps-card"
         >
           <div
-            class="time"
+            class="time text--disabled"
           >
             6:54:10
           </div>
@@ -188,7 +188,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
     <ul>
       <li>
         <div
-          class="alarms-timeline-steps-date"
+          class="alarms-timeline-steps-date text--disabled"
         >
           <div
             class="date"
@@ -200,7 +200,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with isHtmlEnabled 1`] = 
           class="alarms-timeline-steps-card"
         >
           <div
-            class="time"
+            class="time text--disabled"
           >
             12:35:10
           </div>
@@ -234,7 +234,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
     <ul>
       <li>
         <div
-          class="alarms-timeline-steps-date"
+          class="alarms-timeline-steps-date text--disabled"
         >
           <div
             class="date"
@@ -246,7 +246,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
           class="alarms-timeline-steps-card"
         >
           <div
-            class="time"
+            class="time text--disabled"
           >
             8:54:22
           </div>
@@ -261,7 +261,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
       </li>
       <li>
         <div
-          class="alarms-timeline-steps-date"
+          class="alarms-timeline-steps-date text--disabled"
           style="display: none;"
         >
           <div
@@ -274,7 +274,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
           class="alarms-timeline-steps-card"
         >
           <div
-            class="time"
+            class="time text--disabled"
           >
             8:54:22
           </div>
@@ -291,7 +291,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
     <ul>
       <li>
         <div
-          class="alarms-timeline-steps-date"
+          class="alarms-timeline-steps-date text--disabled"
         >
           <div
             class="date"
@@ -303,7 +303,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
           class="alarms-timeline-steps-card"
         >
           <div
-            class="time"
+            class="time text--disabled"
           >
             12:46:25
           </div>
@@ -320,7 +320,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
     <ul>
       <li>
         <div
-          class="alarms-timeline-steps-date"
+          class="alarms-timeline-steps-date text--disabled"
         >
           <div
             class="date"
@@ -332,7 +332,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
           class="alarms-timeline-steps-card"
         >
           <div
-            class="time"
+            class="time text--disabled"
           >
             8:17:21
           </div>
@@ -347,7 +347,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
       </li>
       <li>
         <div
-          class="alarms-timeline-steps-date"
+          class="alarms-timeline-steps-date text--disabled"
           style="display: none;"
         >
           <div
@@ -360,7 +360,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
           class="alarms-timeline-steps-card"
         >
           <div
-            class="time"
+            class="time text--disabled"
           >
             8:47:33
           </div>
@@ -377,7 +377,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
     <ul>
       <li>
         <div
-          class="alarms-timeline-steps-date"
+          class="alarms-timeline-steps-date text--disabled"
         >
           <div
             class="date"
@@ -389,7 +389,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
           class="alarms-timeline-steps-card"
         >
           <div
-            class="time"
+            class="time text--disabled"
           >
             6:54:10
           </div>
@@ -406,7 +406,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
     <ul>
       <li>
         <div
-          class="alarms-timeline-steps-date"
+          class="alarms-timeline-steps-date text--disabled"
         >
           <div
             class="date"
@@ -418,7 +418,7 @@ exports[`alarms-time-line Renders \`alarms-time-line\` with required props 1`] =
           class="alarms-timeline-steps-card"
         >
           <div
-            class="time"
+            class="time text--disabled"
           >
             12:35:10
           </div>
