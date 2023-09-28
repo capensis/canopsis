@@ -20,6 +20,7 @@ exports[`create-declare-ticket-event Renders \`create-declare-ticket-event\` 1`]
     <div
       class="text"
     >
+      <!---->
       <declare-ticket-events-form-stub
         alarms="[object Object]"
         alarmsbytickets="[object Object]"
