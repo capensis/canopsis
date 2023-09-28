@@ -44,17 +44,23 @@ export const alarmsToDeclareTicketEventForm = (alarmIdsByTickets = {}) => Object
  * Convert form object to declare ticket API compatible object
  *
  * @param {DeclareTicketEventForm} form
+ * @param {boolean} singleMode
  * @return {DeclareTicketEvent[]}
  */
-export const formToDeclareTicketEvents = form => Object.entries(form.alarms_by_tickets)
+export const formToDeclareTicketEvents = (form, singleMode) => Object.entries(form.alarms_by_tickets)
   .reduce((acc, [ticketId, alarms]) => {
     if (alarms.length) {
-      acc.push({
+      const event = {
         _id: ticketId,
-        alarms,
         comment: form.comments_by_tickets[ticketId],
-        ticket_resources: form.ticket_resources_by_tickets[ticketId],
-      });
+        ticket_resources: form.comments_by_tickets[ticketId],
+      };
+
+      const events = singleMode
+        ? [{ ...event, alarms }]
+        : alarms.map(alarmId => ({ ...event, alarms: [alarmId] }));
+
+      acc.push(...events);
     }
 
     return acc;
