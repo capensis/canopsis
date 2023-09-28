@@ -4,6 +4,7 @@ export { default as CAlarmActionsChips } from '@/components/common/chips/c-alarm
 export { default as CAlarmTagsChips } from '@/components/common/chips/c-alarm-tags-chips.vue';
 export { default as CAlarmLinksChips } from '@/components/common/chips/c-alarm-links-chips.vue';
 export { default as CStateCountChangesChips } from '@/components/common/chips/c-state-count-changes-chips.vue';
+export { default as CStateCountChangesChip } from '@/components/common/chips/c-state-count-changes-chip.vue';
 export { default as CTestSuiteChip } from '@/components/common/chips/c-test-suite-chip.vue';
 export { default as CInstructionJobChip } from '@/components/common/chips/c-instruction-job-chip.vue';
 export { default as CEngineChip } from '@/components/common/chips/c-engine-chip.vue';

@@ -288,6 +288,7 @@ export const widgetActionsPanelAlarmMixin = {
         config: {
           items: alarms,
           title: this.$t('modals.createUnCancel.title'),
+          isCommentRequired: this.widget.parameters.isUncancelAlarmsCommentRequired,
           action: async (unCancelEvent) => {
             await this.bulkCreateAlarmUnCancelEvent({
               data: alarms.map(alarm => ({ ...unCancelEvent, _id: alarm._id })),

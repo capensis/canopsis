@@ -1,9 +1,9 @@
 <template lang="pug">
   div(@contextmenu.stop="", @click.stop="", @dblclick.stop="", @mousemove.stop="")
-    v-expansion-panel.geomap-layers-control(color="grey", light)
+    v-expansion-panel.geomap-layers-control(color="grey")
       v-expansion-panel-content
         template(#header="")
-          span.v-label.theme--light {{ $t('geomap.layers') }}
+          span.v-label {{ $t('geomap.layers') }}
         v-divider
         v-layout.pa-2(column)
           v-radio-group.ma-0(:value="activeLayer", color="primary", column, hide-details, @change="enableLayer")

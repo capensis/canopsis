@@ -35,7 +35,8 @@ module.exports = {
       .waitForFirstXHR(
         API_ROUTES.user.list,
         WAIT_FOR_FIRST_XHR_TIME,
-        () => usersPage.clickSubmitSearchButton(), ({ responseData }) => {
+        () => usersPage.clickSubmitSearchButton(),
+        ({ responseData }) => {
           const { data } = JSON.parse(responseData);
 
           browser.assert.ok(data.every(item => item._id === user._id));
@@ -47,7 +48,8 @@ module.exports = {
       .waitForFirstXHR(
         API_ROUTES.user.list,
         WAIT_FOR_FIRST_XHR_TIME,
-        () => usersPage.clickClearSearchButton(), ({ responseData }) => {
+        () => usersPage.clickClearSearchButton(),
+        ({ responseData }) => {
           const { data } = JSON.parse(responseData);
 
           browser.assert.ok(data.some(item => item._id !== user._id));
