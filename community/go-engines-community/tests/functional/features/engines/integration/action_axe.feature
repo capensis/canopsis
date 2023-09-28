@@ -591,7 +591,6 @@ Feature: update alarm on action
     }
     """
 
-  @concurrent
   Scenario: given alarm and scenario and widget filter should filter alarms by ticket_data
     Given I am admin
     When I do POST /api/v4/scenarios:
