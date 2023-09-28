@@ -1103,10 +1103,10 @@ export const formGroupsToPatternRules = groups => groups.map(formGroupToPatternR
 /**
  * Convert form groups to pattern rules query
  *
- * @param {PatternGroupsForm} groups
+ * @param {PatternGroupsForm} [groups = []]
  * @return {string}
  */
-export const formGroupsToPatternRulesQuery = groups => JSON.stringify(formGroupsToPatternRules(groups));
+export const formGroupsToPatternRulesQuery = (groups = []) => JSON.stringify(formGroupsToPatternRules(groups));
 
 /**
  * Convert pattern form to pattern
