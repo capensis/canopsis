@@ -375,6 +375,7 @@ export default {
      * @param {RemediationInstructionStepOperation} operation
      */
     setOperation(operation) {
+      // eslint-disable-next-line no-restricted-syntax
       for (const step of this.instructionExecution.steps) {
         const operationIndex = step.operations
           .findIndex(({ operation_id: operationId }) => operationId === operation.operation_id);
