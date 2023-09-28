@@ -303,6 +303,10 @@ func InitializeScenario(
 	}
 }
 
+// It's important to load postgres fixtures first and only then mongo fixtures.
+// If mongo fixtures are loaded first, some engine workers may send metrics to the postgres,
+// which will be cleaned by postgres fixtures loading.
+// Because of that some metrics functional tests may fail.
 func clearStores(
 	ctx context.Context,
 	flags Flags,
