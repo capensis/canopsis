@@ -33,7 +33,7 @@
               @click.stop="$emit('toggle-pin', item.search)"
             )
               v-icon(:color="item.pinned ? 'inherit' : 'grey'", small) $vuetify.icons.push_pin
-    v-text-field.ma-0(
+    v-text-field(
       v-else,
       v-model="localValue",
       :label="$t('common.search')",

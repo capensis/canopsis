@@ -5,7 +5,7 @@ exports[`c-search-field Renders \`c-search-field\` correctly 1`] = `
   class="layout c-search-field row align-end"
 >
   <div
-    class="v-input ma-0 v-text-field v-text-field--single-line v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
+    class="v-input v-text-field v-text-field--single-line v-input--hide-details v-input--is-label-active v-input--is-dirty theme--light"
   >
     <div
       class="v-input__control"
@@ -131,13 +131,20 @@ exports[`c-search-field Renders \`c-search-field\` correctly with combobox and i
                 <div
                   class="v-btn__content"
                 >
-                  <i
+                  <svg
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light inherit--text"
-                    style="font-size: 16px;"
+                    class="push_pin-svg-icon v-icon v-icon--is-component theme--light inherit--text"
+                    height="48"
+                    style="font-size: 16px; height: 16px;"
+                    viewBox="0 -960 960 960"
+                    width="48"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    $vuetify.icons.push_pin
-                  </i>
+                    <path
+                      d="m634-448 86 77v60H510v241l-30 30-30-30v-241H240v-60l80-77v-333h-50v-60h414v60h-50v333Z"
+                      fill="currentColor"
+                    />
+                  </svg>
                 </div>
               </button>
             </div>
@@ -188,13 +195,20 @@ exports[`c-search-field Renders \`c-search-field\` correctly with combobox and i
                 <div
                   class="v-btn__content"
                 >
-                  <i
+                  <svg
                     aria-hidden="true"
-                    class="v-icon material-icons theme--light grey--text"
-                    style="font-size: 16px;"
+                    class="push_pin-svg-icon v-icon v-icon--is-component theme--light grey--text"
+                    height="48"
+                    style="font-size: 16px; height: 16px;"
+                    viewBox="0 -960 960 960"
+                    width="48"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    $vuetify.icons.push_pin
-                  </i>
+                    <path
+                      d="m634-448 86 77v60H510v241l-30 30-30-30v-241H240v-60l80-77v-333h-50v-60h414v60h-50v333Z"
+                      fill="currentColor"
+                    />
+                  </svg>
                 </div>
               </button>
             </div>

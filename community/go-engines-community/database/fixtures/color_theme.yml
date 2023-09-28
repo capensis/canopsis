@@ -1,0 +1,105 @@
+color_theme:
+  canopsis:
+    _id: "canopsis"
+    name: "Canopsis"
+    colors:
+      main:
+        primary: '#2fab63'
+        secondary: '#2b3e4f'
+        accent: '#82b1ff'
+        error: '#ff5252'
+        info: '#2196f3'
+        success: '#4caf50'
+        warning: '#fb8c00'
+        background: '#ffffff'
+        active_color: '#000'
+      state:
+        ok: '#00a65a'
+        minor: '#fcdc00'
+        major: '#ff9900'
+        critical: '#f56954'
+      table:
+        background: '#fff'
+        row_color: '#fff'
+        hover_row_color: '#eee'
+    font_size: 2
+    updated: <NowUnix()>
+    deletable: false
+  canopsis_dark:
+    _id: "canopsis_dark"
+    name: "Canopsis dark"
+    colors:
+      main:
+        primary: '#2fab63'
+        secondary: '#2b3e4f'
+        accent: '#82b1ff'
+        error: '#ff8b8b'
+        info: '#2196f3'
+        success: '#4caf50'
+        warning: '#fb8c00'
+        background: '#424242'
+        active_color: '#fff'
+      state:
+        ok: '#00a65a'
+        minor: '#fcdc00'
+        major: '#ff9900'
+        critical: '#f56954'
+      table:
+        background: '#424242'
+        row_color: '#424242'
+        hover_row_color: '#616161'
+    font_size: 2
+    updated: <NowUnix()>
+    deletable: false
+  color_blind:
+    _id: "color_blind"
+    name: "Color blind"
+    colors:
+      main:
+        primary: '#2196f3'
+        secondary: '#2b3e4f'
+        accent: '#82b1ff'
+        error: '#ff5252'
+        info: '#2196f3'
+        success: '#4caf50'
+        warning: '#fb8c00'
+        background: '#ffffff'
+        active_color: '#000'
+      state:
+        ok: '#00a65a'
+        minor: '#fcdc00'
+        major: '#ff9900'
+        critical: '#f56954'
+      table:
+        background: '#fff'
+        row_color: '#fff'
+        hover_row_color: '#eee'
+    font_size: 2
+    updated: <NowUnix()>
+    deletable: false
+  color_blind_dark:
+    _id: "color_blind_dark"
+    name: "Color blind dark"
+    colors:
+      main:
+        primary: '#2196f3'
+        secondary: '#2b3e4f'
+        accent: '#82b1ff'
+        error: '#ff8b8b'
+        info: '#2196f3'
+        success: '#4caf50'
+        warning: '#fb8c00'
+        background: '#424242'
+        active_color: '#fff'
+      state:
+        ok: '#00a65a'
+        minor: '#fcdc00'
+        major: '#ff9900'
+        critical: '#f56954'
+      table:
+        background: '#424242'
+        row_color: '#424242'
+        hover_row_color: '#616161'
+    font_size: 2
+    updated: <NowUnix()>
+    deletable: false

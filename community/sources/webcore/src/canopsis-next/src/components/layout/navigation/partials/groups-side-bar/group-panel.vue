@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-expansion-panel-content.secondary.white--text.group-item(
+  v-expansion-panel-content.secondary.group-item(
     :hide-actions="hideActions",
     :class="{ editing: isEditing }"
   )

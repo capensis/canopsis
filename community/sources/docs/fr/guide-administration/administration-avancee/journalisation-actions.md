@@ -44,13 +44,13 @@ Les actions sont consignées dans le journal de l'API Canopsis. Voici la méthod
 === "Docker Compose Community"
 
     ```sh
-    CPS_EDITION=community docker-compose logs api
+    CPS_EDITION=community docker compose logs api
     ```
 
 === "Docker Compose Pro"
 
     ```sh
-    CPS_EDITION=pro docker-compose logs api
+    CPS_EDITION=pro docker compose logs api
     ```
 
 
