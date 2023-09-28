@@ -18,7 +18,7 @@ export default {
     },
 
     update(context, { path, id, data }) {
-      return request.put(`${API_ROUTES.remediation.executions}/${id}/${path}`, data);
+      return request.put(`${API_ROUTES.remediation.executions}/${id}/${path}`, data, { fullResponse: true });
     },
 
     cancel({ dispatch }, { id }) {
@@ -43,10 +43,6 @@ export default {
 
     resume({ dispatch }, { id }) {
       return dispatch('update', { path: 'resume', id });
-    },
-
-    rate({ dispatch }, { id, data }) {
-      return dispatch('update', { path: 'rate', id, data });
     },
   },
 };
