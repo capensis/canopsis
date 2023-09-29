@@ -53,7 +53,7 @@ export const formToDeclareTicketEvents = (form, singleMode) => Object.entries(fo
       const event = {
         _id: ticketId,
         comment: form.comments_by_tickets[ticketId],
-        ticket_resources: form.comments_by_tickets[ticketId],
+        ticket_resources: form.ticket_resources_by_tickets[ticketId],
       };
 
       const events = singleMode
