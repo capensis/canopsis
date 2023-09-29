@@ -3,7 +3,6 @@
     v-bind="$attrs",
     v-field.number="value",
     v-validate="rules",
-    v-on="$listeners",
     :label="label",
     :error-messages="errors.collect(name)",
     :disabled="disabled",
@@ -13,7 +12,9 @@
     :max="max",
     :step="step",
     :loading="loading",
-    type="number"
+    type="number",
+    @paste="$emit('paste', $event)",
+    @click="$emit('click', $event)"
   )
     template(#append="")
       slot(name="append")
