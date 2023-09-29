@@ -17,8 +17,6 @@ const (
 	MaintenanceKeyName   = "maintenance"
 )
 
-const DefaultEventsCountThreshold = 10
-
 // SectionAlarm ...
 type SectionAlarm struct {
 	StealthyInterval     int    `toml:"StealthyInterval"`
