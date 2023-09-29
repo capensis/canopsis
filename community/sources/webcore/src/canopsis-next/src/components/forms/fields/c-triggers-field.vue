@@ -43,7 +43,6 @@
               v-if="additionalValuesComponentsByTypes[item.type]",
               v-bind="additionalValuesComponentsByTypes[item.type].bind",
               v-on="additionalValuesComponentsByTypes[item.type].on",
-              v-validate="additionalValuesComponentsByTypes[item.type].rules",
               :is="additionalValuesComponentsByTypes[item.type].is",
               :disabled="!tile.props.value",
               @click.prevent.stop=""
@@ -163,10 +162,7 @@ export default {
             class: ['mt-0', 'pt-2'],
             hideDetails: true,
             min: 1,
-          },
-          rules: {
             required: true,
-            min_value: 1,
           },
         },
       ];
