@@ -60,7 +60,7 @@ export const INSTRUCTION_EXECUTION_ICONS = {
   manualSuccessfulWithManualAvailable: 15,
 };
 
-export const REMEDIATION_AUTO_INSTRUCTION_TRIGGERS = [
+export const REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES = [
   TRIGGERS_TYPES.create,
   TRIGGERS_TYPES.statedec,
   TRIGGERS_TYPES.stateinc,

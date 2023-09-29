@@ -33,10 +33,10 @@ import { flattenErrorMap } from '@/helpers/entities/shared/form';
 /**
  * Check trigger is deprecated
  *
- * @param {string} triggerType
+ * @param {string} type
  * @returns {boolean}
  */
-export const isDeprecatedTrigger = triggerType => DEPRECATED_TRIGGERS.includes(triggerType);
+export const isDeprecatedTrigger = type => DEPRECATED_TRIGGERS.includes(type);
 /**
  * Convert scenario to form
  *
