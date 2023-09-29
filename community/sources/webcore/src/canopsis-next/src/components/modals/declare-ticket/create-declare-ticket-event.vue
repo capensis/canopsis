@@ -81,7 +81,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToDeclareTicketEvents(this.form));
+          await this.config.action(formToDeclareTicketEvents(this.form, this.singleMode));
         }
 
         this.$modals.hide();
