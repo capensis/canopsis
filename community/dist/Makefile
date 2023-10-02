@@ -8,6 +8,8 @@ ARCHIVE_DIRS = community
 MONOREPO_ROOT = $(abspath $(dir $(CURDIR))/../)
 BUILDER_IMAGE = docker.capensis.fr/docker/images/mock-builder:v1.0.0
 
+include $(MONOREPO_ROOT)/community/.env
+
 TREE = build \
     $(addprefix build/, $(BUILD_TARGET)) \
     $(addsuffix /output, $(addprefix build/, $(BUILD_TARGET))) \
@@ -39,10 +41,12 @@ $(CANOPSIS_MOCK): $(TREE)
 	    cp centos-7-canopsis.cfg $@; \
 	elif [ "$(word 2,$(subst /, ,$@))" = "el8" ]; then \
 	    cp almalinux-8-canopsis.cfg $@; \
+	    sed -Ei 's/nodejs-[0-9]*.[0-9]*.?[0-9]*/nodejs-$(NODE_VERSION)/g' $@; \
 	fi
 
 $(CANOPSIS_SPECS): $(TREE)
-	cp canopsis$(PACKAGE_PREFIX)-$(word 2,$(subst /, ,$@)).spec $@
+	cp canopsis$(PACKAGE_PREFIX)-$(word 2,$(subst /, ,$@)).spec $@ ; \
+	sed -Ei 's/nodejs = 2:[0-9]*.[0-9]*.?[0-9]*/nodejs = 2:$(NODE_VERSION)/g' $@
 
 $(CANOPSIS_ARCHIVES): $(TREE)
 	( \
