@@ -115,8 +115,6 @@ export const MONTHS_IN_YEAR = 12;
 
 export const DAYS_IN_WEEK = 7;
 
-export const EXCLUDED_SERVER_ERROR_STATUSES = [401, 403];
-
 export const CANOPSIS_DOCUMENTATION = 'https://doc.canopsis.net';
 
 export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';
@@ -369,3 +367,15 @@ export const CONTENT_TYPES = {
 export const MAX_SEARCH_ITEMS = 8;
 
 export const LOGIN_APP_INFO_POLLING_DELAY = 5000;
+
+export const RESPONSE_STATUSES = {
+  unauthorized: 401,
+  notFound: 404,
+  forbidden: 403,
+  timeout: 408,
+
+  badGateway: 502,
+  serviceUnavailable: 503,
+};
+
+export const EXCLUDED_SERVER_ERROR_STATUSES = [RESPONSE_STATUSES.unauthorized, RESPONSE_STATUSES.forbidden];
