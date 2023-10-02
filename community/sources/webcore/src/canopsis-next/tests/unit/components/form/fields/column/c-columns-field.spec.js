@@ -7,17 +7,7 @@ import { ENTITIES_TYPES } from '@/constants';
 import CColumnsField from '@/components/forms/fields/column/c-columns-field.vue';
 
 const snapshotStubs = {
-  'c-movable-card-iterator-field': {
-    props: ['value', 'addable'],
-    template: `
-      <div class="c-movable-card-iterator-field">
-        <div v-for="(item, index) in value" :key="index">
-          <slot name="item" :item="item" :index="index" />
-        </div>
-        <button v-if="addable" class="add-item-btn" type="button" @click="$emit('add')" />
-      </div>
-    `,
-  },
+  'c-draggable-list-field': true,
   'column-field': true,
 };
 const stubs = {
@@ -25,7 +15,7 @@ const stubs = {
   'v-btn': createButtonStub('v-btn'),
 };
 
-const selectAddCardButton = wrapper => wrapper.find('.add-item-btn');
+const selectAddCardButton = wrapper => wrapper.find('button');
 const selectColumnFields = wrapper => wrapper.findAll('column-field-stub');
 const selectColumnFieldByIndex = (wrapper, index) => selectColumnFields(wrapper).at(index);
 
@@ -92,7 +82,7 @@ describe('c-columns-field', () => {
       propsData: {
         columns: [
           { id: 'id-1', key: 'key-1', label: 'label-1' },
-          { id: 'id-2', key: 'key-1', label: 'label-2' },
+          { id: 'id-2', key: 'key-2', label: 'label-2' },
         ],
         type: ENTITIES_TYPES.entity,
         withTemplate: true,
