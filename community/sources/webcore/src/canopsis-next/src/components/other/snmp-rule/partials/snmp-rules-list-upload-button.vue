@@ -5,12 +5,14 @@
     hide-details,
     @change="changeFiles"
   )
-    template(#activator="{ on }")
-      v-tooltip(top)
-        template(#activator="{ on: tooltipOn }")
+    template(#activator="{ on: fileSelectorOn }")
+      v-tooltip(top, custom-activator)
+        template(#activator="{}")
           v-btn(
-            v-on="{ ...on, ...tooltipOn }",
+            v-on="fileSelectorOn",
+            :loading="pending",
             color="indigo",
+            icon,
             small,
             dark,
             fab
@@ -30,6 +32,11 @@ const { mapActions } = createNamespacedHelpers('snmpMib');
 
 export default {
   components: { FileSelector },
+  data() {
+    return {
+      pending: false,
+    };
+  },
   methods: {
     ...mapActions({
       uploadSnmpMib: 'upload',
@@ -37,6 +44,8 @@ export default {
 
     async changeFiles(files = []) {
       try {
+        this.pending = true;
+
         if (files.length) {
           const promises = files.sort((a, b) => {
             const matchesA = a.name.match(/^(\d+)/) || ['0'];
@@ -47,28 +56,31 @@ export default {
 
           const results = await Promise.all(promises);
 
-          const { data: [{ msg, data }] } = await this.uploadSnmpMib({
-            data: results.join(''),
+          const fileContent = results.map((content, index) => ({
+            filename: files[index].name,
+            data: content,
+          }));
+
+          const { counts } = await this.uploadSnmpMib({
+            data: { filecontent: fileContent },
           });
 
-          const popup = {
-            text: msg,
+          this.$popups.success({
+            text: this.$tc('snmpRule.uploadedMibPopup', files.length, counts),
             autoClose: 10000,
-          };
-
-          if (data && data.length) {
-            this.$popups.error(popup);
-          } else {
-            this.$popups.success(popup);
-          }
+          });
         }
       } catch (err) {
-        this.$popups.error({
-          text: this.$t('errors.default'),
-        });
-      }
+        console.warn(err);
 
-      this.$refs.fileSelector.clear();
+        this.$popups.error({
+          text: err.error ?? this.$t('errors.default'),
+          autoClose: 10000,
+        });
+      } finally {
+        this.pending = false;
+        this.$refs.fileSelector.clear();
+      }
     },
   },
 };

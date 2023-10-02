@@ -17,13 +17,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/sync/errgroup"
 )
-
-const matchedAlarmsLimit = 100
 
 type Store interface {
 	Insert(ctx context.Context, r EditRequest) (*Response, error)
@@ -33,7 +30,6 @@ type Store interface {
 	Delete(ctx context.Context, pattern Response) (bool, error)
 	CountAlarms(ctx context.Context, r CountRequest, maxCount int64) (CountAlarmsResponse, error)
 	CountEntities(ctx context.Context, r CountRequest, maxCount int64) (CountEntitiesResponse, error)
-	GetAlarms(ctx context.Context, r GetAlarmsRequest) (GetAlarmsResponse, error)
 }
 
 type store struct {
@@ -482,7 +478,10 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 		}
 
 		if len(r.PbehaviorPattern) > 0 || len(r.EntityPattern) > 0 {
-			alarmsPipeline = append(alarmsPipeline, bson.M{"$match": alarmPatternQuery})
+			alarmsPipeline = append(alarmsPipeline, bson.M{"$match": bson.M{"$and": []bson.M{
+				{"v.resolved": nil},
+				alarmPatternQuery,
+			}}})
 		}
 	}
 	if len(r.PbehaviorPattern) > 0 {
@@ -492,7 +491,10 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 		}
 
 		if len(r.AlarmPattern) > 0 || len(r.EntityPattern) > 0 {
-			alarmsPipeline = append(alarmsPipeline, bson.M{"$match": pbhPatternQuery})
+			alarmsPipeline = append(alarmsPipeline, bson.M{"$match": bson.M{"$and": []bson.M{
+				{"v.resolved": nil},
+				pbhPatternQuery,
+			}}})
 		}
 	}
 	if len(r.EntityPattern) > 0 {
@@ -503,6 +505,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 
 		if len(r.AlarmPattern) > 0 || len(r.PbehaviorPattern) > 0 {
 			alarmsPipeline = append(alarmsPipeline,
+				bson.M{"$match": bson.M{"v.resolved": nil}},
 				bson.M{"$lookup": bson.M{
 					"from":         mongo.EntityMongoCollection,
 					"localField":   "d",
@@ -525,7 +528,10 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 	if len(alarmPatternQuery) > 0 {
 		g.Go(func() error {
 			alarmPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection),
-				[]bson.M{{"$match": alarmPatternQuery}})
+				[]bson.M{{"$match": bson.M{"$and": []bson.M{
+					{"v.resolved": nil},
+					alarmPatternQuery,
+				}}}})
 			alarmPatternCount.OverLimit = alarmPatternCount.Count > maxCount
 
 			return err
@@ -535,7 +541,10 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 		g.Go(func() error {
 			var err error
 			pbhPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection),
-				[]bson.M{{"$match": pbhPatternQuery}})
+				[]bson.M{{"$match": bson.M{"$and": []bson.M{
+					{"v.resolved": nil},
+					pbhPatternQuery,
+				}}}})
 			pbhPatternCount.OverLimit = pbhPatternCount.Count > maxCount
 
 			return err
@@ -546,6 +555,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 			var err error
 			entityPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection),
 				[]bson.M{
+					{"$match": bson.M{"v.resolved": nil}},
 					{"$lookup": bson.M{
 						"from":         mongo.EntityMongoCollection,
 						"localField":   "d",
@@ -819,116 +829,4 @@ func transformRequestToModel(request EditRequest) savedpattern.SavedPattern {
 	}
 
 	return model
-}
-
-func (s *store) GetAlarms(ctx context.Context, r GetAlarmsRequest) (GetAlarmsResponse, error) {
-	res := GetAlarmsResponse{
-		Alarms: make([]MatchedAlarm, 0),
-	}
-
-	alarmPatternQuery, err := r.AlarmPattern.ToMongoQuery("")
-	if err != nil {
-		return res, fmt.Errorf("invalid alarm pattern: %w", err)
-	}
-
-	entityPatternQuery, err := r.EntityPattern.ToMongoQuery("")
-	if err != nil {
-		return res, fmt.Errorf("invalid entity pattern: %w", err)
-	}
-
-	pbhPatternQuery, err := r.PbehaviorPattern.ToMongoQuery("v")
-	if err != nil {
-		return res, fmt.Errorf("invalid pbehavior pattern: %w", err)
-	}
-
-	if len(alarmPatternQuery) == 0 && len(entityPatternQuery) == 0 && len(pbhPatternQuery) == 0 {
-		return res, nil
-	}
-
-	var pipeline []bson.M
-
-	if r.Search != "" {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{
-			"v.display_name": primitive.Regex{
-				Pattern: fmt.Sprintf(".*%s.*", r.Search),
-				Options: "i",
-			},
-		}})
-	}
-
-	pipeline = append(
-		pipeline,
-		bson.M{
-			"$project": bson.M{
-				"v.steps": 0,
-			},
-		},
-		bson.M{
-			"$addFields": bson.M{
-				"v.infos_array": bson.M{"$objectToArray": "$v.infos"},
-				"v.duration": bson.M{"$subtract": bson.A{
-					types.NewCpsTime(),
-					"$v.creation_date",
-				}},
-			},
-		},
-	)
-
-	if len(alarmPatternQuery) > 0 {
-		pipeline = append(pipeline, bson.M{"$match": alarmPatternQuery})
-	}
-
-	if len(pbhPatternQuery) > 0 {
-		pipeline = append(pipeline, bson.M{"$match": pbhPatternQuery})
-	}
-
-	if len(entityPatternQuery) > 0 {
-		pipeline = append(
-			pipeline,
-			bson.M{
-				"$lookup": bson.M{
-					"from": mongo.EntityMongoCollection,
-					"let":  bson.M{"entity_id": "$d"},
-					"pipeline": []bson.M{
-						{
-							"$match": bson.M{
-								"$and": []bson.M{
-									{"$expr": bson.M{"$eq": bson.A{"$$entity_id", "$_id"}}},
-									entityPatternQuery,
-								},
-							},
-						},
-						{"$limit": 1},
-						{
-							"$project": bson.M{
-								"_id": 1,
-							},
-						},
-					},
-					"as": "entity",
-				},
-			},
-			bson.M{
-				"$match": bson.M{
-					"$expr": bson.M{"$gt": bson.A{bson.M{"$size": "$entity"}, 0}},
-				},
-			},
-		)
-	}
-
-	pipeline = append(
-		pipeline,
-		common.GetSortQuery("v.display_name", common.SortAsc),
-		bson.M{"$limit": matchedAlarmsLimit},
-		bson.M{"$project": bson.M{
-			"name": "$v.display_name",
-		}},
-	)
-
-	cursor, err := s.client.Collection(mongo.AlarmMongoCollection).Aggregate(ctx, pipeline)
-	if err != nil {
-		return res, err
-	}
-
-	return res, cursor.All(ctx, &res.Alarms)
 }
