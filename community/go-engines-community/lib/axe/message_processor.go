@@ -117,12 +117,24 @@ func (p *messageProcessor) updatePbhLastAlarmDate(ctx context.Context, event typ
 		return
 	}
 
-	go func() {
-		err := p.PbehaviorAdapter.UpdateLastAlarmDate(ctx, event.PbehaviorInfo.ID, types.CpsTime{Time: time.Now()})
-		if err != nil {
-			p.Logger.Err(err).Msg("cannot update pbehavior")
-		}
-	}()
+	pbhId := ""
+	var lastAlarmDate *types.CpsTime
+	if event.Alarm == nil {
+		pbhId = event.Entity.PbehaviorInfo.ID
+		lastAlarmDate = event.Entity.PbehaviorInfo.Timestamp
+	} else {
+		pbhId = event.Alarm.Value.PbehaviorInfo.ID
+		lastAlarmDate = event.Alarm.Value.PbehaviorInfo.Timestamp
+	}
+
+	if lastAlarmDate != nil {
+		go func() {
+			err := p.PbehaviorAdapter.UpdateLastAlarmDate(ctx, pbhId, *lastAlarmDate)
+			if err != nil {
+				p.Logger.Err(err).Msg("cannot update pbehavior")
+			}
+		}()
+	}
 }
 
 func (p *messageProcessor) handleRemediation(ctx context.Context, event types.Event, msg []byte) error {
