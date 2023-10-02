@@ -6,7 +6,7 @@
       v-chip(color="error", dark)
         span.subheading {{ $t('healthcheck.systemStatusChipError') }}
     v-sheet
-      v-tabs(v-model="activeTab", centered, slider-color="primary")
+      v-tabs(v-model="activeTab", slider-color="primary", centered)
         v-tab {{ $t('common.systemStatus') }}
         v-tab {{ $tc('common.graph', 2) }}
         v-tab {{ $tc('common.parameter', 2) }}
