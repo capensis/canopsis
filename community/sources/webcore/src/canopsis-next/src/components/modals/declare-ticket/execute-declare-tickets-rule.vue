@@ -53,6 +53,7 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 
 import DeclareTicketRuleExecutionsGroup from '@/components/other/declare-ticket/partials/declare-ticket-rule-executions-group.vue';
+import DeclareTicketRuleExecutionStatus from '@/components/other/declare-ticket/partials/declare-ticket-rule-execution-status.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -62,6 +63,7 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.executeDeclareTickets,
   components: {
+    DeclareTicketRuleExecutionStatus,
     DeclareTicketRuleExecutionsGroup,
     ModalWrapper,
   },
