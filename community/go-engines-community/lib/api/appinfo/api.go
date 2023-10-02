@@ -55,6 +55,11 @@ func (a *api) GetAppInfo(c *gin.Context) {
 		panic(err)
 	}
 
+	response.DefaultColorTheme, err = a.store.RetrieveDefaultColorTheme(c)
+	if err != nil {
+		panic(err)
+	}
+
 	c.JSON(http.StatusOK, response)
 }
 

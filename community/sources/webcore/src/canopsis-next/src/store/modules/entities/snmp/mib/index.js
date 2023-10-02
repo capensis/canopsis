@@ -1,5 +1,3 @@
-import qs from 'qs';
-
 import { API_ROUTES } from '@/config';
 
 import request from '@/services/request';
@@ -14,22 +12,11 @@ export default {
   namespaced: true,
   actions: {
     fetchList(context, { params = {} } = {}) {
-      return request.post(API_ROUTES.snmpMib.list, params);
-    },
-
-    fetchDistinctList(context, { params = {} } = {}) {
-      return request.post(API_ROUTES.snmpMib.distinct, params);
+      return request.get(API_ROUTES.snmpMib, { params });
     },
 
     upload(context, { data } = {}) {
-      return request.post(API_ROUTES.snmpMib.upload, qs.stringify({
-        filecontent: JSON.stringify([{
-          filename: 'concatenatedMibFiles',
-          data,
-        }]),
-      }), {
-        headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      });
+      return request.post(API_ROUTES.snmpMib, data);
     },
   },
 };

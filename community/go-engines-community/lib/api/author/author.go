@@ -1,8 +1,13 @@
 package author
 
 import (
+	"encoding/json"
+	"regexp"
+	"strings"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -40,20 +45,28 @@ func (p *provider) Pipeline() []bson.M {
 }
 
 func (p *provider) PipelineForField(field string) []bson.M {
+	tmpField := getTempField(field)
 	return []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.UserCollection,
 			"localField":   field,
 			"foreignField": "_id",
-			"as":           field,
+			"as":           tmpField,
 		}},
-		{"$unwind": bson.M{"path": "$" + field, "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$" + tmpField, "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
-			field + ".username": "$" + field + ".name",
+			field + "._id":      "$" + tmpField + "._id",
+			field + ".name":     "$" + tmpField + ".name",
+			field + ".username": "$" + tmpField + ".name",
+		}},
+		// mirror field "username" from AuthorScheme to tmpField, so GetDisplayNameQuery can access it
+		{"$addFields": bson.M{
+			tmpField + ".username": "$" + tmpField + ".name",
 		}},
 		{"$addFields": bson.M{
-			field + ".display_name": p.GetDisplayNameQuery(field),
+			field + ".display_name": p.GetDisplayNameQuery(tmpField),
 		}},
+		{"$project": bson.M{tmpField: 0}},
 		{"$addFields": bson.M{
 			field: bson.M{"$cond": bson.M{
 				"if":   "$" + field + "._id",
@@ -81,4 +94,31 @@ func (p *provider) GetDisplayNameQuery(field string) bson.M {
 	}
 
 	return bson.M{"$concat": concat}
+}
+
+// getTempField returns a field name with "_" prefix and 3 random characters
+func getTempField(s string) string {
+	prefix := "_" + utils.RandString(3)
+
+	if fs := strings.Split(s, "."); len(fs) > 1 {
+		return strings.Join(fs[:len(fs)-1], ".") + "." + prefix + fs[len(fs)-1]
+	}
+	return prefix + s
+}
+
+// StripAuthorRandomPrefix removes random prefix from author field in pipeline
+// This is required to make unit test's comparison
+func StripAuthorRandomPrefix(pipeline []bson.M) []bson.M {
+	b, err := json.Marshal(pipeline)
+	if err != nil {
+		return pipeline
+	}
+	re := regexp.MustCompile(`\._[0-9a-z]{3}author\b`)
+	b = re.ReplaceAll(b, []byte(`.author`))
+	var pipeline2 []bson.M
+	err = json.Unmarshal(b, &pipeline2)
+	if err != nil {
+		return pipeline
+	}
+	return pipeline2
 }

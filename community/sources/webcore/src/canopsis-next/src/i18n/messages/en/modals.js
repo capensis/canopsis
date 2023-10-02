@@ -391,6 +391,9 @@ export default {
     edit: {
       title: 'Edit SNMP rule',
     },
+    duplicate: {
+      title: 'Duplicate SNMP rule',
+    },
   },
   selectView: {
     title: 'Select view',
@@ -978,6 +981,17 @@ export default {
     },
     duplicate: {
       title: 'Duplicate a tag',
+    },
+  },
+  createTheme: {
+    create: {
+      title: 'Create theme',
+    },
+    edit: {
+      title: 'Edit theme',
+    },
+    duplicate: {
+      title: 'Duplicate theme',
     },
   },
 };

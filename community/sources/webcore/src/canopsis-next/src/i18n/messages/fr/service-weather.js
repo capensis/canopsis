@@ -2,14 +2,14 @@ import { SERVICE_WEATHER_STATE_COUNTERS, WEATHER_ACTIONS_TYPES } from '@/constan
 
 export default {
   grey: 'Gris',
-  hideGrey: 'Cacher le gris',
+  hideGrey: 'Cacher les tuiles grises',
   primaryIcon: 'Icône principale',
   secondaryIcon: 'Icône secondaire',
   massActions: 'Actions de masse',
   cannotBeApplied: 'Cette action ne peut pas être appliquée',
   actions: {
     [WEATHER_ACTIONS_TYPES.entityAck]: 'Acquitter',
-    [WEATHER_ACTIONS_TYPES.entityAckRemove]: 'Annuler l\'accusé de acquitter',
+    [WEATHER_ACTIONS_TYPES.entityAckRemove]: 'Supprimer l\'acquittement',
     [WEATHER_ACTIONS_TYPES.entityValidate]: 'Valider',
     [WEATHER_ACTIONS_TYPES.entityInvalidate]: 'Invalider',
     [WEATHER_ACTIONS_TYPES.entityPause]: 'Pause',
@@ -33,10 +33,10 @@ export default {
     [SERVICE_WEATHER_STATE_COUNTERS.minor]: 'Mineure',
     [SERVICE_WEATHER_STATE_COUNTERS.major]: 'Majeur',
     [SERVICE_WEATHER_STATE_COUNTERS.critical]: 'Critique',
-    [SERVICE_WEATHER_STATE_COUNTERS.acked]: 'Acquitter',
-    [SERVICE_WEATHER_STATE_COUNTERS.unacked]: 'Non acquitter',
+    [SERVICE_WEATHER_STATE_COUNTERS.acked]: 'Acquittées',
+    [SERVICE_WEATHER_STATE_COUNTERS.unacked]: 'Non acquittées',
     [SERVICE_WEATHER_STATE_COUNTERS.underPbehavior]: 'Sous PBh',
-    [SERVICE_WEATHER_STATE_COUNTERS.ackedUnderPbehavior]: 'Acquitter sous PBh',
+    [SERVICE_WEATHER_STATE_COUNTERS.ackedUnderPbehavior]: 'Acquittées sous PBh',
   },
   stateCountersTooltips: {
     [SERVICE_WEATHER_STATE_COUNTERS.all]: 'alarmes au total',
@@ -47,8 +47,8 @@ export default {
     [SERVICE_WEATHER_STATE_COUNTERS.major]: 'alarmes majeures',
     [SERVICE_WEATHER_STATE_COUNTERS.critical]: 'alarmes critiques',
     [SERVICE_WEATHER_STATE_COUNTERS.acked]: 'alarmes acquittées',
-    [SERVICE_WEATHER_STATE_COUNTERS.unacked]: 'non confirmé',
+    [SERVICE_WEATHER_STATE_COUNTERS.unacked]: 'non acquittées',
     [SERVICE_WEATHER_STATE_COUNTERS.underPbehavior]: 'sous PBh',
-    [SERVICE_WEATHER_STATE_COUNTERS.ackedUnderPbehavior]: 'accusé de réception sous PBh',
+    [SERVICE_WEATHER_STATE_COUNTERS.ackedUnderPbehavior]: 'acquittées sous PBh',
   },
 };
