@@ -18,7 +18,7 @@ import { COLORS } from '@/config';
 import { DATETIME_FORMATS } from '@/constants';
 
 import { getScheduleForSpan, getSpanForTimestamps } from '@/helpers/calendar/dayspan';
-import { pbehaviorToTimespanRequest } from '@/helpers/forms/timespans-pbehavior';
+import { pbehaviorToTimespanRequest } from '@/helpers/entities/pbehavior/timespans/form';
 import { convertDateToMoment, convertDateToString, convertDateToTimestampByTimezone } from '@/helpers/date/date';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';

@@ -11,7 +11,7 @@ export default {
   customColor: 'Couleur personnalisée',
   calculationMethod: 'Méthode de calcul',
   periodTrend: '{count} pour la période\n{from} - {to}',
-  largeCountOfMetrics: 'La liste des métriques à afficher est trop longue et tronquée.',
+  largeCountOfMetrics: 'La liste des métriques à afficher est tronquée.',
   onlyDisplayed: 'Seules {count} métriques sont affichées.',
   autoAdd: 'Ajout automatique',
   addExternal: 'Ajouter externe',
@@ -86,5 +86,24 @@ export default {
     optionalMetrics: 'Métriques facultatives',
     manualInstructions: 'Nombre d\'alarmes avec instructions manuelles',
     notAckedMetrics: 'Nombre d\'alarmes actives non acquittées de différentes durées',
+  },
+
+  statisticsWidgets: {
+    metrics: {
+      [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Nombre moyen d\'alarmes créées',
+      [ALARM_METRIC_PARAMETERS.activeAlarms]: 'Nombre moyen d\'alarmes actives',
+      [ALARM_METRIC_PARAMETERS.instructionAlarms]: 'Nombre moyen d\'alarmes avec remédiation automatique',
+      [ALARM_METRIC_PARAMETERS.manualInstructionAssignedAlarms]: 'Nombre moyen d\'alarmes actives avec remédiations manuelles',
+      [ALARM_METRIC_PARAMETERS.manualInstructionExecutedAlarms]: 'Nombre moyen d\'alarmes remédiées manuellement',
+      [ALARM_METRIC_PARAMETERS.nonDisplayedAlarms]: 'Nombre moyen d\'alarmes non affichées',
+      [ALARM_METRIC_PARAMETERS.pbehaviorAlarms]: 'Nombre moyen d\'alarmes avec PBehavior',
+      [ALARM_METRIC_PARAMETERS.correlationAlarms]: 'Nombre moyen d\'alarmes avec corrélation',
+      [ALARM_METRIC_PARAMETERS.notAckedAlarms]: 'Nombre moyen d\'alarmes non acquittées',
+      [ALARM_METRIC_PARAMETERS.notAckedInHourAlarms]: 'Nombre moyen d\'alarmes non acquittées avec une durée de 1 à 4h',
+      [ALARM_METRIC_PARAMETERS.notAckedInFourHoursAlarms]: 'Nombre moyen d\'alarmes non acquittées d\'une durée de 4 à 24h',
+      [ALARM_METRIC_PARAMETERS.notAckedInDayAlarms]: 'Nombre moyen d\'alarmes non acquittées datant de plus de 24h',
+      [ALARM_METRIC_PARAMETERS.ticketActiveAlarms]: 'Nombre moyen d\'alarmes actives avec tickets créés',
+      [ALARM_METRIC_PARAMETERS.withoutTicketActiveAlarms]: 'Nombre moyen d\'alarmes actives sans ticket créé',
+    },
   },
 };

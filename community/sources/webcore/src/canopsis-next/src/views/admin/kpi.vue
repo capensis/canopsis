@@ -49,7 +49,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
 import { SOCKET_ROOMS } from '@/config';
-
 import { HEALTHCHECK_SERVICES_NAMES, KPI_TABS, MODALS } from '@/constants';
 
 import { entitiesFilterMixin } from '@/mixins/entities/filter';

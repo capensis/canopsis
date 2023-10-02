@@ -1,6 +1,6 @@
 <template lang="pug">
   v-data-table(
-    :items="sortedPermissions",
+    :items="permissions",
     :headers="headers",
     item-key="_id",
     expand,
@@ -17,8 +17,6 @@
 </template>
 
 <script>
-import { sortBy } from 'lodash';
-
 import PermissionRow from './permission-row.vue';
 
 export default {
@@ -42,22 +40,14 @@ export default {
       type: Boolean,
       default: false,
     },
-    sortBy: {
-      type: [Function, Array, String],
-      default: () => ['description'],
-    },
   },
   computed: {
     headers() {
       return [
         { text: '', sortable: false },
 
-        ...this.roles.map(role => ({ text: role._id, sortable: false })),
+        ...this.roles.map(role => ({ text: role.name, sortable: false })),
       ];
-    },
-
-    sortedPermissions() {
-      return sortBy(this.permissions, this.sortBy);
     },
   },
 };

@@ -57,7 +57,7 @@ describe('create-ack-event', () => {
   const items = [alarm];
   const ackEventData = {
     ack_resources: false,
-    output: '',
+    comment: '',
   };
   const config = { items };
 
@@ -104,7 +104,7 @@ describe('create-ack-event', () => {
 
     expect(ackEventForm.vm.form).toEqual({
       ack_resources: false,
-      output: '',
+      comment: '',
     });
   });
 
@@ -172,7 +172,7 @@ describe('create-ack-event', () => {
 
   test('Errors added after trigger submit button with action errors', async () => {
     const formErrors = {
-      output: 'Output error',
+      comment: 'Comment error',
       ack_resources: 'Ack resources field error',
     };
     const action = jest.fn().mockRejectedValueOnce({ ...formErrors, unavailableField: 'Error' });

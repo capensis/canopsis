@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { groupAlarmSteps } from '@/helpers/entities';
+import { groupAlarmSteps } from '@/helpers/entities/alarm/list';
 
 import HorizontalTimeLineCard from './horizontal-time-line-card.vue';
 

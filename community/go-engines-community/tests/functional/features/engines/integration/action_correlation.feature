@@ -1730,3 +1730,197 @@ Feature: update meta alarm on action
       }
     ]
     """
+
+  @concurrent
+  Scenario: given meta alarm and scenario with webhook action should trigger only for parent on create trigger
+    Given I am admin
+    When I do POST /api/v4/cat/metaalarmrules:
+    """json
+    {
+      "name": "test-metaalarmrule-action-correlation-8",
+      "type": "attribute",
+      "auto_resolve": false,
+      "output_template": "test-output-action-correlation-8",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-component-action-correlation-8"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then I save response metaAlarmRuleID={{ .lastResponse._id }}
+    When I do POST /api/v4/scenarios:
+    """json
+    {
+      "name": "test-scenario-action-correlation-8-name",
+      "enabled": true,
+      "triggers": ["create"],
+      "priority": 10101,
+      "actions": [
+        {
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.output",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-output-action-correlation-8"
+                }
+              }
+            ]
+          ],
+          "type": "webhook",
+          "parameters": {
+            "skip_for_child": true,
+            "request": {
+              "method": "POST",
+              "url": "{{ .dummyApiURL }}/webhook/request",
+              "payload": "{\"ticket_id\":\"testticket\",\"ticket_data\":\"testdata\"}"
+            },
+            "declare_ticket": {
+              "ticket_id": "ticket_id",
+              "ticket_data": "ticket_data"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false
+        }
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the next periodical process
+    When I send an event:
+    """json
+    {
+      "event_type": "check",
+      "state": 2,
+      "output": "test-output-action-correlation-8",
+      "connector": "test-connector-action-correlation-8",
+      "connector_name": "test-connector-name-action-correlation-8",
+      "component":  "test-component-action-correlation-8",
+      "resource": "test-resource-action-correlation-8",
+      "source_type": "resource"
+    }
+    """
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "connector": "test-connector-action-correlation-8",
+        "connector_name": "test-connector-name-action-correlation-8",
+        "component":  "test-component-action-correlation-8",
+        "resource": "test-resource-action-correlation-8",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "declareticketwebhook",
+        "connector": "test-connector-action-correlation-8",
+        "connector_name": "test-connector-name-action-correlation-8",
+        "component":  "test-component-action-correlation-8",
+        "resource": "test-resource-action-correlation-8",
+        "source_type": "resource"
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-action-correlation-8
+    Then the response code should be 200
+    When I save response alarmID={{ (index .lastResponse.data 0)._id }}
+    When I do GET /api/v4/alarms?search=test-resource-action-correlation-8&correlation=true until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "children": 1,
+          "meta_alarm_rule": {
+            "name": "test-metaalarmrule-action-correlation-8"
+          }
+        }
+      ],
+      "meta": {
+        "total_count": 1
+      }
+    }
+    """
+    When I save response metaAlarmID={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmID }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response array key "0.data.steps.data" should contain only:
+    """json
+    [
+      {
+        "_t": "stateinc"
+      },
+      {
+        "_t": "statusinc"
+      },
+      {
+        "_t": "webhookstart",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario: test-scenario-action-correlation-8-name"
+      },
+      {
+        "_t": "webhookcomplete",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario: test-scenario-action-correlation-8-name"
+      },
+      {
+        "_t": "declareticket",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario: test-scenario-action-correlation-8-name. Ticket ID: testticket. Ticket ticket_data: testdata."
+      }
+    ]
+    """
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .alarmID }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response array key "0.data.steps.data" should contain only:
+    """json
+    [
+      {
+        "_t": "stateinc"
+      },
+      {
+        "_t": "statusinc"
+      },
+      {
+        "_t": "metaalarmattach"
+      },
+      {
+        "_t": "declareticket",
+        "a": "system",
+        "user_id": "",
+        "m": "Scenario: test-scenario-action-correlation-8-name. Ticket ID: testticket. Ticket ticket_data: testdata."
+      }
+    ]
+    """

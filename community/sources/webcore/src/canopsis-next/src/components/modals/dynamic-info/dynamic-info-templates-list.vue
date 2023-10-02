@@ -46,7 +46,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { templateToDynamicInfoInfos } from '@/helpers/forms/dynamic-info-template';
+import { templateToDynamicInfoInfos } from '@/helpers/entities/dynamic-info/template/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesDynamicInfoTemplatesMixin } from '@/mixins/entities/associative-table/dynamic-info-templates';

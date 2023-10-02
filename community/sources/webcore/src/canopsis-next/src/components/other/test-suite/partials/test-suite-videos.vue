@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { getTestSuiteFileUrl } from '@/helpers/url';
+import { getTestSuiteFileUrl } from '@/helpers/entities/junit/url';
 
 export default {
   props: {

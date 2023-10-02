@@ -1,18 +1,16 @@
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import { COLOR_INDICATOR_TYPES, ENTITIES_STATES } from '@/constants';
 
 import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {};
 
 describe('color-indicator-wrapper', () => {
   const snapshotFactory = generateRenderer(ColorIndicatorWrapper, {
-    localVue,
+
     stubs,
     attachTo: document.body,
   });

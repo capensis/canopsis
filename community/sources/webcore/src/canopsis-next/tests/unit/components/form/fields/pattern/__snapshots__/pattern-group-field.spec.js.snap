@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pattern-group-field Renders \`pattern-group-field\` with custom props 1`] = `
+<div
+  class="layout"
+>
+  <div
+    class="flex pa-2 mr-2"
+  >
+    <pattern-operator-information-stub>
+      And
+    </pattern-operator-information-stub>
+  </div>
+  <div
+    class="flex xs11"
+  >
+    <div
+      class="layout column"
+    >
+      <pattern-rules-field-stub
+        attributes="[object Object]"
+        disabled="true"
+        name="rules"
+        rules=""
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`pattern-group-field Renders \`pattern-group-field\` with default props 1`] = `
+<div
+  class="layout"
+>
+  <div
+    class="flex pa-2 mr-2"
+  >
+    <pattern-operator-information-stub>
+      And
+    </pattern-operator-information-stub>
+  </div>
+  <div
+    class="flex xs11"
+  >
+    <div
+      class="layout column"
+    >
+      <pattern-rules-field-stub
+        attributes=""
+        name="rules"
+        rules=""
+      />
+    </div>
+  </div>
+</div>
+`;

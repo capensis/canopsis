@@ -25,14 +25,13 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { remediationInstructionFilterToForm } from '@/helpers/forms/remediation-instruction-filter';
+import { remediationInstructionFilterToForm } from '@/helpers/entities/remediation/instruction-filter/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import RemediationInstructionsFilterForm
-  from '@/components/other/remediation/instructions-filter/remediation-instructions-filter-form.vue';
+import RemediationInstructionsFilterForm from '@/components/other/remediation/instructions-filter/form/remediation-instructions-filter-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

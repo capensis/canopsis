@@ -18,7 +18,7 @@ Les données collectées sont stockées dans une base `timescaledb` et donc `pos
 === "Docker Compose"
 
     ```sh
-    CPS_EDITION=pro docker-compose -f docker-compose.yml -f docker-compose.override.yml exec timescaledb psql postgresql://cpspostgres:canopsis@timescaledb:5432/postgres
+    CPS_EDITION=pro docker compose exec timescaledb psql postgresql://cpspostgres:canopsis@timescaledb:5432/postgres
     postgres=# CREATE database canopsis_tech_metrics;
     postgres=# \c canopsis_tech_metrics
     canopsis_tech_metrics=# CREATE EXTENSION IF NOT EXISTS timescaledb;
@@ -33,7 +33,7 @@ Les données collectées sont stockées dans une base `timescaledb` et donc `pos
     CPS_POSTGRES_TECH_URL=postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis_tech_metrics
     ```
 
-=== "Paquets RedHat 8"
+=== "Paquets RHEL 8"
 
     ```sh
     psql postgresql://cpspostgres:canopsis@timescaledb:5432/postgres
@@ -77,10 +77,10 @@ L'option `DumpKeepInterval` définit le délai au dela duquel un dump demandé d
     Ajouter le bloc de configuration dans votre fichier d'override `files-pro/reconfigure/reconfigure.override.toml` puis exécutez un `up -d`.
 
     ```sh
-    CPS_EDITION=pro docker-compose up -d
+    CPS_EDITION=pro docker compose up -d
     ```
 
-=== "Paquets RedHat 8"
+=== "Paquets RHEL 8"
 
     Ajouter le bloc de configuration dans votre fichier d'override `canopsis.override.yml` puis exécutez `canopsis-reconfigure`
 

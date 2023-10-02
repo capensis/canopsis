@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { isJobExecutionSucceeded, isJobFinished } from '@/helpers/forms/remediation-job';
+import { isJobExecutionSucceeded, isJobFinished } from '@/helpers/entities/remediation/job/form';
 
 import RemediationInstructionExecuteJobsTable from './remediation-instruction-assigned-jobs-table.vue';
 

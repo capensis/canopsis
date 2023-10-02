@@ -1,19 +1,18 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import CEnabled from '@/components/icons/c-enabled.vue';
 
-const localVue = createVueInstance();
-
 describe('c-enabled', () => {
+  const snapshotFactory = generateRenderer(CEnabled);
+
   it('Renders `c-enabled` correctly.', () => {
-    const wrapper = mount(CEnabled, { localVue });
+    const wrapper = snapshotFactory();
 
     expect(wrapper.element).toMatchSnapshot();
   });
 
   it('Renders `c-enabled` with enabled prop correctly.', () => {
-    const wrapper = mount(CEnabled, {
-      localVue,
+    const wrapper = snapshotFactory({
       propsData: { value: true },
     });
 

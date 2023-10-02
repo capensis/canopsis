@@ -6,13 +6,16 @@
     v-layout(row)
       v-flex(xs6)
         c-enabled-field(v-field="action.emit_trigger", :label="$t('common.emitTrigger')")
+        action-author-field(v-if="!isPbehaviorAction", v-model="parameters")
       v-flex(v-if="isWebhookActionType", xs6)
         c-enabled-field(
-          :value="parameters.skip_for_child",
-          :label="$t('scenario.skipForChild')",
-          @input="updateSkipForChild"
+          v-model="parameters.skip_for_child",
+          :label="$t('scenario.skipForChild')"
         )
-    action-author-field(v-if="!isPbehaviorAction", v-model="parameters")
+        c-enabled-field.mt-0(
+          v-model="parameters.skip_for_instruction",
+          :label="$t('scenario.skipForInstruction')"
+        )
     c-workflow-field(
       v-field="action.drop_scenario_if_not_matched",
       :label="$t('scenario.workflow')",
@@ -42,15 +45,15 @@
 </template>
 
 <script>
-import { isPbehaviorActionType, isWebhookActionType } from '@/helpers/forms/action';
+import { isPbehaviorActionType, isWebhookActionType } from '@/helpers/entities/action';
 
 import { formMixin } from '@/mixins/form';
 import { confirmableFormMixinCreator } from '@/mixins/confirmable-form';
 
 import ActionParametersForm from '@/components/other/action/form/action-parameters-form.vue';
-import ActionAuthorField from '@/components/other/action/form/partials/action-author-field.vue';
+import ActionAuthorField from '@/components/other/action/form/fields/action-author-field.vue';
 
-import ScenarioActionPatternsForm from './scenario-action-patterns-form.vue';
+import ScenarioActionPatternsForm from '../scenario-action-patterns-form.vue';
 
 export default {
   inject: ['$validator'],
@@ -127,13 +130,6 @@ export default {
     });
   },
   methods: {
-    updateSkipForChild(value) {
-      this.parameters = {
-        ...this.parameters,
-        skip_for_child: value,
-      };
-    },
-
     removeAction() {
       this.$emit('remove');
     },

@@ -10,9 +10,8 @@ exports[`snooze-event-form Renders \`snooze-event-form\` with custom props 1`] =
   />
   <c-description-field-stub
     label="Note"
-    name="output"
+    name="comment"
     required="true"
-    value="output"
   />
 </div>
 `;
@@ -26,7 +25,7 @@ exports[`snooze-event-form Renders \`snooze-event-form\` with required props 1`]
   />
   <c-description-field-stub
     label="Note"
-    name="output"
+    name="comment"
   />
 </div>
 `;

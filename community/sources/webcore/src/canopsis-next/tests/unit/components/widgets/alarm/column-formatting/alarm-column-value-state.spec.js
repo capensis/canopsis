@@ -1,22 +1,16 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import { EVENT_ENTITY_TYPES } from '@/constants';
-import AlarmColumnValueState from '@/components/widgets/alarm/columns-formatting/alarm-column-value-state.vue';
 
-const localVue = createVueInstance();
+import AlarmColumnValueState from '@/components/widgets/alarm/columns-formatting/alarm-column-value-state.vue';
 
 const stubs = {
   'c-alarm-chip': true,
 };
 
-const snapshotFactory = (options = {}) => mount(AlarmColumnValueState, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 describe('alarm-column-value-state', () => {
+  const snapshotFactory = generateRenderer(AlarmColumnValueState, { stubs });
+
   it('Renders `alarm-column-value-state` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {

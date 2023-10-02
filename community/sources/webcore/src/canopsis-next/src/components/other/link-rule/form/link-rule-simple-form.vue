@@ -7,7 +7,7 @@ import { LINK_RULE_TYPES } from '@/constants';
 
 import { formValidationHeaderMixin } from '@/mixins/form/validation-header';
 
-import LinkRuleLinksForm from './partials/link-rule-links-form.vue';
+import LinkRuleLinksForm from './fields/link-rule-links-form.vue';
 
 export default {
   inject: ['$validator'],

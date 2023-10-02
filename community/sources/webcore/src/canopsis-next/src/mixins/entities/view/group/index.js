@@ -2,7 +2,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { MAX_LIMIT } from '@/constants';
 
-const { mapGetters, mapActions } = createNamespacedHelpers('view/group');
+const { mapGetters, mapActions } = createNamespacedHelpers('view');
 const { mapActions: mapAuthActions } = createNamespacedHelpers('auth');
 
 /**
@@ -13,7 +13,9 @@ export const entitiesViewGroupMixin = {
     ...mapGetters({
       groupsPending: 'pending',
       groups: 'items',
-      getGroupById: 'getItemById',
+      getGroupById: 'getGroupById',
+      getViewById: 'getViewById',
+      getViewTabById: 'getViewTabById',
     }),
   },
   methods: {

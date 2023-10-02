@@ -99,11 +99,6 @@ export default {
       description: 'Triggers the actions launch',
     },
 
-    [HEALTHCHECK_ENGINES_NAMES.service]: {
-      name: 'Service',
-      description: 'Updates counters and generates service-events',
-    },
-
     [HEALTHCHECK_ENGINES_NAMES.dynamicInfos]: {
       name: 'Dynamic infos',
       description: 'Adds dynamic infos to alarm',

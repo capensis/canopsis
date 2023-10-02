@@ -3,8 +3,8 @@
     v-field="value",
     v-validate="rules",
     :label="label || $t('common.type')",
-    :loading="pending",
-    :items="items",
+    :loading="fieldPbehaviorTypesPending",
+    :items="preparedItems",
     :error-messages="errors.collect(name)",
     :name="name",
     :disabled="disabled",
@@ -20,15 +20,15 @@
 </template>
 
 <script>
-import { MAX_LIMIT } from '@/constants';
+import { isArray, isObject, isEmpty } from 'lodash';
 
-import { mapIds } from '@/helpers/entities';
+import { mapIds } from '@/helpers/array';
 
-import { entitiesPbehaviorTypeMixin } from '@/mixins/entities/pbehavior/types';
+import { entitiesFieldPbehaviorFieldTypeMixin } from '@/mixins/entities/pbehavior/types-field';
 
 export default {
   inject: ['$validator'],
-  mixins: [entitiesPbehaviorTypeMixin],
+  mixins: [entitiesFieldPbehaviorFieldTypeMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -70,52 +70,56 @@ export default {
       type: Number,
       required: false,
     },
-    types: {
-      type: Array,
-      required: false,
-    },
   },
   data() {
     return {
-      items: [],
-      pending: false,
+      originalValue: this.value,
     };
   },
   computed: {
+    selectedTypesIds() {
+      return this.getSelectedTypesIds();
+    },
+
+    originalSelectedTypesIds() {
+      return this.getSelectedTypesIds(this.originalValue);
+    },
+
+    preparedItems() {
+      return this.fieldPbehaviorTypes.filter(type => (
+        !type.hidden || this.originalSelectedTypesIds.includes(type._id)
+      ));
+    },
+
     rules() {
       return {
         required: this.required,
       };
     },
   },
-  mounted() {
-    this.fetchList();
-  },
   methods: {
-    async fetchList() {
-      this.pending = true;
-
-      const { data: reasons } = await this.fetchPbehaviorTypesListWithoutStore({
-        params: {
-          types: this.types,
-          limit: MAX_LIMIT,
-        },
-      });
-
-      this.items = reasons;
-      this.pending = false;
-    },
-
     isItemDisabled(item) {
       if (this.max) {
-        const types = this.returnObject
-          ? mapIds(this.value)
-          : this.value;
-
-        return this.value.length === this.max && !types.includes(item._id);
+        return this.value.length === this.max && !this.selectedTypesIds.includes(item._id);
       }
 
       return false;
+    },
+
+    getSelectedTypesIds(value = this.value) {
+      if (isArray(value)) {
+        return this.returnObject
+          ? mapIds(value)
+          : value;
+      }
+
+      return isEmpty(value)
+        ? []
+        : [
+          isObject(value)
+            ? value._id
+            : value,
+        ];
     },
   },
 };

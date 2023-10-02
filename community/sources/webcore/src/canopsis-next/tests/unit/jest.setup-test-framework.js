@@ -39,7 +39,6 @@ expect.extend({
         kebabCase(`${currentTestName.replace(/(.*\sRenders\s)|(.$)/g, '')}-${counter}`)
       ),
 
-      ...options,
     };
 
     return toMatchImageSnapshot.call(this, data, newOptions, ...args);

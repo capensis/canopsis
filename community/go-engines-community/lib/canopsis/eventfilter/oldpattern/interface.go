@@ -48,47 +48,47 @@ func (p *InterfacePattern) AsMongoDriverQuery() bson.M {
 
 func (p InterfacePattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.EqualNil {
-		return bsontype.Null, []byte{}, nil
+		return bson.TypeNull, []byte{}, nil
 	}
 
 	iPattern := IntegerPattern{IntegerConditions: p.IntegerConditions}
 	marshalledType, marshalledData, err := iPattern.MarshalBSONValue()
 	if err != nil {
-		return bsontype.Undefined, nil, err
+		return bson.TypeUndefined, nil, err
 	}
 
-	if marshalledType != bsontype.Undefined {
+	if marshalledType != bson.TypeUndefined {
 		return marshalledType, marshalledData, err
 	}
 
 	sPattern := StringPattern{StringConditions: p.StringConditions}
 	marshalledType, marshalledData, err = sPattern.MarshalBSONValue()
 	if err != nil {
-		return bsontype.Undefined, nil, err
+		return bson.TypeUndefined, nil, err
 	}
 
-	if marshalledType != bsontype.Undefined {
+	if marshalledType != bson.TypeUndefined {
 		return marshalledType, marshalledData, err
 	}
 
 	saPattern := StringArrayPattern{StringArrayConditions: p.StringArrayConditions}
 	marshalledType, marshalledData, err = saPattern.MarshalBSONValue()
 	if err != nil {
-		return bsontype.Undefined, nil, err
+		return bson.TypeUndefined, nil, err
 	}
 
-	if marshalledType != bsontype.Undefined {
+	if marshalledType != bson.TypeUndefined {
 		return marshalledType, marshalledData, err
 	}
 
-	return bsontype.Undefined, nil, nil
+	return bson.TypeUndefined, nil, nil
 }
 
 func (p *InterfacePattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
-	case bsontype.Null:
+	case bson.TypeNull:
 		p.EqualNil = true
-	case bsontype.Int32:
+	case bson.TypeInt32:
 		value, _, ok := bsoncore.ReadInt32(b)
 		if !ok {
 			return errors.New("invalid value, expected int32")
@@ -96,7 +96,7 @@ func (p *InterfacePattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte)
 
 		p.IntegerConditions.Equal.Value = int64(value)
 		p.IntegerConditions.Equal.Set = true
-	case bsontype.Int64:
+	case bson.TypeInt64:
 		value, _, ok := bsoncore.ReadInt64(b)
 		if !ok {
 			return errors.New("invalid value, expected int64")
@@ -104,7 +104,7 @@ func (p *InterfacePattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte)
 
 		p.IntegerConditions.Equal.Value = value
 		p.IntegerConditions.Equal.Set = true
-	case bsontype.String:
+	case bson.TypeString:
 		value, _, ok := bsoncore.ReadString(b)
 		if !ok {
 			return errors.New("invalid value, expected int64")
@@ -112,7 +112,7 @@ func (p *InterfacePattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte)
 
 		p.StringConditions.Equal.Value = value
 		p.StringConditions.Equal.Set = true
-	case bsontype.EmbeddedDocument:
+	case bson.TypeEmbeddedDocument:
 		err := bson.Unmarshal(b, &p.IntegerConditions)
 		if err != nil {
 			return err

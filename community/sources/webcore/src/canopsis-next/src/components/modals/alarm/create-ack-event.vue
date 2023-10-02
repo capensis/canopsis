@@ -42,7 +42,7 @@
 <script>
 import { MODALS, ACK_MODAL_ACTIONS_TYPES } from '@/constants';
 
-import { isEntityComponentType } from '@/helpers/entities/entity';
+import { isEntityComponentType } from '@/helpers/entities/entity/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -71,7 +71,7 @@ export default {
     return {
       actionType: ACK_MODAL_ACTIONS_TYPES.ack,
       form: {
-        output: '',
+        comment: '',
         ack_resources: false,
       },
     };

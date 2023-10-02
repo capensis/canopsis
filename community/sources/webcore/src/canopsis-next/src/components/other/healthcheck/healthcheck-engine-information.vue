@@ -19,7 +19,7 @@ import { PRO_ENGINES, HEALTHCHECK_ENGINES_NAMES, HEALTHCHECK_SERVICES_NAMES } fr
 
 import { healthcheckNodesMixin } from '@/mixins/healthcheck/healthcheck-nodes';
 
-import HealthcheckEngineInstanceDiagram from './healthcheck-engine-instance-diagram.vue';
+import HealthcheckEngineInstanceDiagram from './partials/healthcheck-engine-instance-diagram.vue';
 
 export default {
   components: { HealthcheckEngineInstanceDiagram },

@@ -41,7 +41,7 @@ exports[`confirmation Renders \`confirmation\` with hidden title 1`] = `
   titlecolor="var(--v-primary-base)"
 >
   <span
-    class="subheading"
+    class="subheading pre-wrap"
   >
     Confirmation text
   </span>
@@ -81,7 +81,7 @@ exports[`confirmation Renders \`confirmation\` with text, title and actions 1`] 
     Confirmation title
   </span>
   <span
-    class="subheading"
+    class="subheading pre-wrap"
   >
     Confirmation text
   </span>

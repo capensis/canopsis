@@ -22,11 +22,13 @@ func TestEnrichmentApplyOnSuccess(t *testing.T) {
 	expectedOutcome := eventfilter.OutcomePass
 	expectedEvent := types.Event{Resource: "updated"}
 
-	actionProcessor := mock_eventfilter.NewMockActionProcessor(ctrl)
-	actionProcessor.EXPECT().Process(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(expectedEvent, nil)
+	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
+	mockActionProcessor := mock_eventfilter.NewMockActionProcessor(ctrl)
+	mockActionProcessor.EXPECT().Process(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		Return(expectedEvent, nil)
 
-	applicator := eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), actionProcessor)
-	resOutcome, resEvent, resError := applicator.Apply(context.Background(), eventfilter.Rule{Config: eventfilter.RuleConfig{Actions: []eventfilter.Action{{}}, OnSuccess: expectedOutcome}}, types.Event{}, eventfilter.RegexMatchWrapper{})
+	applicator := eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), mockActionProcessor, mockFailureService)
+	resOutcome, resEvent, resError := applicator.Apply(context.Background(), eventfilter.ParsedRule{Config: eventfilter.ParsedRuleConfig{Actions: []eventfilter.ParsedAction{{}}, OnSuccess: expectedOutcome}}, types.Event{}, eventfilter.RegexMatchWrapper{})
 	if resError != nil {
 		t.Errorf("expected not error but got %v", resError)
 	}
@@ -47,11 +49,13 @@ func TestEnrichmentApplyOnFailed(t *testing.T) {
 	expectedOutcome := eventfilter.OutcomeBreak
 	expectedEvent := types.Event{}
 
-	actionProcessor := mock_eventfilter.NewMockActionProcessor(ctrl)
-	actionProcessor.EXPECT().Process(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(expectedEvent, fmt.Errorf("error"))
+	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
+	mockActionProcessor := mock_eventfilter.NewMockActionProcessor(ctrl)
+	mockActionProcessor.EXPECT().Process(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		Return(expectedEvent, fmt.Errorf("error"))
 
-	applicator := eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), actionProcessor)
-	resOutcome, resEvent, resError := applicator.Apply(context.Background(), eventfilter.Rule{Config: eventfilter.RuleConfig{Actions: []eventfilter.Action{{}}, OnFailure: expectedOutcome}}, types.Event{}, eventfilter.RegexMatchWrapper{})
+	applicator := eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), mockActionProcessor, mockFailureService)
+	resOutcome, resEvent, resError := applicator.Apply(context.Background(), eventfilter.ParsedRule{Config: eventfilter.ParsedRuleConfig{Actions: []eventfilter.ParsedAction{{}}, OnFailure: expectedOutcome}}, types.Event{}, eventfilter.RegexMatchWrapper{})
 	if resError == nil {
 		t.Errorf("expected error but nothing")
 	}
@@ -69,18 +73,19 @@ func TestApplyWithExternalData(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	getter := mock_eventfilter.NewMockExternalDataGetter(ctrl)
-	getter.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any()).Return(types.Entity{ID: "test_value"}, nil)
+	mockGetter := mock_eventfilter.NewMockExternalDataGetter(ctrl)
+	mockGetter.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		Return(types.Entity{ID: "test_value"}, nil)
 
 	externalDataContainer := eventfilter.NewExternalDataGetterContainer()
-	externalDataContainer.Set("test", getter)
-
+	externalDataContainer.Set("test", mockGetter)
+	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 
-	applicator := eventfilter.NewChangeEntityApplicator(externalDataContainer, tplExecutor)
+	applicator := eventfilter.NewChangeEntityApplicator(externalDataContainer, mockFailureService, tplExecutor)
 
-	externalData := make(map[string]eventfilter.ExternalDataParameters)
-	externalData["test"] = eventfilter.ExternalDataParameters{
+	externalData := make(map[string]eventfilter.ParsedExternalDataParameters)
+	externalData["test"] = eventfilter.ParsedExternalDataParameters{
 		Type: "test",
 	}
 
@@ -100,10 +105,10 @@ func TestApplyWithExternalData(t *testing.T) {
 
 	outcome, resultEvent, err := applicator.Apply(
 		context.Background(),
-		eventfilter.Rule{
+		eventfilter.ParsedRule{
 			ExternalData: externalData,
-			Config: eventfilter.RuleConfig{
-				Resource: "{{.ExternalData.test.ID}}",
+			Config: eventfilter.ParsedRuleConfig{
+				Resource: tplExecutor.Parse("{{.ExternalData.test.ID}}"),
 			},
 		},
 		event,

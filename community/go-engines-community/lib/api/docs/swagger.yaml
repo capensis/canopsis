@@ -359,14 +359,15 @@ paths:
   /alarm-tags:
     get:
       tags:
-        - alarms
-      summary: Get alarms' tags
+        - alarm-tags
+      summary: Get alarm tags
       description: |
-        Get paginated list of alarms' tags.
+        Get paginated list of alarm tags.
         
-        -  PERMISSIONS: `api_alarm_read`
-      operationId: alarms-tags-get
+        -  PERMISSIONS: `api_alarm_tag:read`
+      operationId: alarm-tags-get
       parameters:
+        - $ref: '#/components/parameters/withFlags'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/search'
@@ -392,6 +393,182 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+    post:
+      tags:
+        - alarm-tags
+      summary: Create an internal alarm tag
+      description: |
+        Create an internal alarm tag.
+        
+        -  PERMISSIONS: `api_alarm_tag:create`
+      operationId: alarm-tags-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmtag.CreateRequest'
+            examples:
+              create:
+                summary: Create a tag
+                description: Create a tag
+                value: {
+                  "value": "cloud",
+                  "color": "#AABBCC",
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.state.val",
+                        "cond": {
+                          "type": "eq",
+                          "value": 3
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmtag.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarm-tags/{id}:
+    get:
+      tags:
+        - alarm-tags
+      summary: Get an alarm tag by id
+      description: |
+        Get an alarm tag by id.
+
+        -  PERMISSIONS: `api_alarm_tag:read`
+      operationId: alarm-tags-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmtag.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - alarm-tags
+      summary: Update an alarm tag by id
+      description: |
+        Update an alarm tag by id.
+
+        -  PERMISSIONS: `api_alarm_tag:update`
+      operationId: alarm-tags-update-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmtag.UpdateRequest'
+            examples:
+              internal:
+                summary: Update an internal tag
+                description: Update an internal tag
+                value: {
+                  "color": "#AABBCC",
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.state.val",
+                        "cond": {
+                          "type": "eq",
+                          "value": 3
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              external:
+                summary: Update an external tag
+                description: Update an external tag
+                value: {
+                  "color": "#AABBCC"
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmtag.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - alarm-tags
+      summary: Delete an alarm tag by id
+      description: |
+        Delete an alarm tag by id.
+
+        -  PERMISSIONS: `api_alarm_tag:delete`
+      operationId: alarm-tags-delete-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /alarms:
     get:
       tags:
@@ -469,7 +646,7 @@ paths:
           name: pbehavior_pattern
           schema:
             type: string
-          example: "[[{\"field\":\"pbehavior_info.type\",\"cond\":{\"type\":\"eq\",\"value\":\"default_maintenance\"}}]]"
+          example: "[[{\"field\":\"pbehavior_info.type\",\"cond\":{\"type\":\"eq\",\"value\":\"df17b079-03fb-4a4f-a19d-14d9c0c3563b\"}}]]"
         - name: with_links
           in: query
           description: Links are retrieved from external service so use carefully with big limit.
@@ -546,6 +723,367 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/alarm.Alarm'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/ack:
+    put:
+      tags:
+        - alarms
+      summary: Ack alarm
+      description: |
+        Ack alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-ack
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.AckRequest'
+            examples:
+              ack:
+                summary: Ack
+                description: Ack an alarm.
+                value: {
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+              ack_resources:
+                summary: Ack with resources
+                description: Ack an alarm of a component and all alarms of related resources.
+                value: {
+                  "ack_resources": true,
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/ackremove:
+    put:
+      tags:
+        - alarms
+      summary: Remove ack alarm
+      description: |
+        Remove ack alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-ackremove
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.Request'
+            examples:
+              ackremove:
+                summary: Remove ack
+                description: Remove ack from an alarm.
+                value: {
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/assocticket:
+    put:
+      tags:
+        - alarms
+      summary: Assoc ticket alarm
+      description: |
+        Assoc ticket alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-assocticket
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.AssocTicketRequest'
+            examples:
+              assocticket:
+                summary: Associate ticket
+                description: Associate ticket with an alarm.
+                value: {
+                  "ticket": "ENV-116",
+                  "url": "https://jira.local/ENV-116",
+                  "system_name": "Jira",
+                  "data": {
+                    "priority": "high",
+                    "tag": "env"
+                  },
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+              assocticket_resources:
+                summary: Associate ticket with resources
+                description: Associate ticket with an alarm of a component and all alarms of related resources.
+                value: {
+                  "ticket_resources": true,
+                  "ticket": "ENV-116",
+                  "url": "https://jira.local/ENV-116",
+                  "system_name": "Jira",
+                  "data": {
+                    "priority": "high",
+                    "tag": "env"
+                  },
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/cancel:
+    put:
+      tags:
+        - alarms
+      summary: Cancel alarm
+      description: |
+        Cancel alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-cancel
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.Request'
+            examples:
+              cancel:
+                summary: Cancel
+                description: Cancel an alarm.
+                value: {
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/changestate:
+    put:
+      tags:
+        - alarms
+      summary: Change state alarm
+      description: |
+        Change state alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-changestate
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.ChangeStateRequest'
+            examples:
+              changestate:
+                summary: Change state
+                description: Change a state of an alarm.
+                value: {
+                  "state": 3,
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/comment:
+    put:
+      tags:
+        - alarms
+      summary: Comment alarm
+      description: |
+        Comment alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-comment
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.CommentRequest'
+            examples:
+              comment:
+                summary: Comment
+                description: Comment an alarm.
+                value: {
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/snooze:
+    put:
+      tags:
+        - alarms
+      summary: Snooze alarm
+      description: |
+        Snooze alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-snooze
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.SnoozeRequest'
+            examples:
+              snooze:
+                summary: Snooze
+                description: Snooze an alarm.
+                value: {
+                  "duration": {
+                    "value": 15,
+                    "unit": "m"
+                  },
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/uncancel:
+    put:
+      tags:
+        - alarms
+      summary: Uncancel alarm
+      description: |
+        Uncancel alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-uncancel
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.Request'
+            examples:
+              uncancel:
+                summary: Uncancel
+                description: Uncancel an alarm.
+                value: {
+                  "comment": "Lorem ipsum dolor sit amet"
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
         404:
           description: Not Found
           content:
@@ -812,6 +1350,522 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /bulk/alarm-tags:
+    delete:
+      tags:
+        - alarm-tags
+      summary: Bulk delete alarm tags
+      description: |
+        Bulk delete alarm tags.
+
+        -  PERMISSIONS: `api_alarm_tag:delete`
+      operationId: alarm-tags-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmtag.BulkDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete tags
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmtag.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /bulk/alarms/ack:
+    put:
+      tags:
+        - alarms
+      summary: Ack alarms
+      description: |
+        Ack alarms.
+
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-bulk-ack
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkAckRequestItem'
+            examples:
+              ack:
+                summary: Ack
+                description: Ack alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "ack_resources": true,
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkAckRequestItem'
+  /bulk/alarms/ackremove:
+    put:
+      tags:
+        - alarms
+      summary: Remove ack alarms
+      description: |
+        Remove ack alarms.
+
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-bulk-ackremove
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkRequestItem'
+            examples:
+              ackremove:
+                summary: Remove ack
+                description: Remove ack from alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkRequestItem'
+  /bulk/alarms/assocticket:
+    put:
+      tags:
+        - alarms
+      summary: Assoc ticket alarms
+      description: |
+        Assoc ticket alarms.
+
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-bulk-assocticket
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkAssocTicketRequestItem'
+            examples:
+              assocticket:
+                summary: Associate ticket
+                description: Associate tickets with alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "ticket": "ENV-116",
+                    "url": "https://jira.local/ENV-116",
+                    "system_name": "Jira",
+                    "data": {
+                      "priority": "high",
+                      "tag": "env"
+                    },
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "ticket_resources": true,
+                    "ticket": "ENV-117",
+                    "url": "https://jira.local/ENV-117",
+                    "system_name": "Jira",
+                    "data": {
+                      "priority": "low",
+                      "tag": "env"
+                    },
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkAssocTicketRequestItem'
+  /bulk/alarms/cancel:
+    put:
+      tags:
+        - alarms
+      summary: Cancel alarms
+      description: |
+        Cancel alarms.
+
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-bulk-cancel
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkRequestItem'
+            examples:
+              cancel:
+                summary: Cancel
+                description: Cancel alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkRequestItem'
+  /bulk/alarms/changestate:
+    put:
+      tags:
+        - alarms
+      summary: Change state alarms
+      description: |
+        Change state alarms.
+
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-bulk-changestate
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkChangeStateRequestItem'
+            examples:
+              changestate:
+                summary: Change state
+                description: Change state of alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "state": 3,
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "state": 2,
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkChangeStateRequestItem'
+  /bulk/alarms/comment:
+    put:
+      tags:
+        - alarms
+      summary: Comment alarms
+      description: |
+        Comment alarms.
+
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-bulk-comment
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkCommentRequestItem'
+            examples:
+              comment:
+                summary: Comment
+                description: Comment alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkCommentRequestItem'
+  /bulk/alarms/snooze:
+    put:
+      tags:
+        - alarms
+      summary: Snooze alarms
+      description: |
+        Snooze alarms.
+
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-bulk-snooze
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkSnoozeRequestItem'
+            examples:
+              snooze:
+                summary: Snooze
+                description: Snooze alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "duration": {
+                      "value": 15,
+                      "unit": "m"
+                    },
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "duration": {
+                      "value": 30,
+                      "unit": "s"
+                    },
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkSnoozeRequestItem'
+  /bulk/alarms/uncancel:
+    put:
+      tags:
+        - alarms
+      summary: Uncancel alarms
+      description: |
+        Uncancel alarms.
+
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: alarms-bulk-uncancel
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkRequestItem'
+            examples:
+              uncancel:
+                summary: Uncancel
+                description: Uncancel alarms.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  },
+                  {
+                    "_id": "4fb64340-dd69-4775-8334-b7cbd1dc1156",
+                    "comment": "Lorem ipsum dolor sit amet"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkRequestItem'
+  /bulk/color-themes:
+    delete:
+      tags:
+        - color-themes
+      summary: Bulk delete color themes
+      description: |
+        Bulk delete color themes.
+        
+        -  PERMISSIONS: `api_color_theme:delete`
+      operationId: colorthemes-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/colortheme.BulkDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete color themes
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/colortheme.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'                            
   /bulk/entities/disable:
     put:
       tags:
@@ -836,10 +1890,10 @@ paths:
                 description: Disable entities.
                 value: [
                   {
-                    "_id": "test-entity-id-1"
+                    "_id": "cps_resource/cps_component"
                   },
                   {
-                    "_id": "test-entity-id-2"
+                    "_id": "293d7b83-e622-40d9-95ef-86b06eda3746"
                   }
                 ]
         required: true
@@ -889,10 +1943,10 @@ paths:
                 description: Enable entities.
                 value: [
                   {
-                    "_id": "test-entity-id-1"
+                    "_id": "csp_resource/cps_component"
                   },
                   {
-                    "_id": "test-entity-id-2"
+                    "_id": "293d7b83-e622-40d9-95ef-86b06eda3746"
                   }
                 ]
         required: true
@@ -952,9 +2006,9 @@ paths:
                       StateMajor: {{.State.Major}}
                       StateMinor: {{.State.Minor}}
                       StateInfo: {{.State.Info}}
-                      Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
-                      Pause: {{index .PbehaviorCounters \"default_pause\"}}
-                      Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                      Maintenance: {{index .PbehaviorCounters \"df17b079-03fb-4a4f-a19d-14d9c0c3563b\"}}
+                      Pause: {{index .PbehaviorCounters \"0b6f6266-59ed-4350-8786-85a3ebdf45b8\"}}
+                      Inactive: {{index .PbehaviorCounters \"e37d7772-6964-4293-a7ff-9e9b3fa26332\"}}",
                     "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
                     "impact_level": 2,
                     "enabled": true,
@@ -1041,9 +2095,9 @@ paths:
                       StateMajor: {{.State.Major}}
                       StateMinor: {{.State.Minor}}
                       StateInfo: {{.State.Info}}
-                      Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
-                      Pause: {{index .PbehaviorCounters \"default_pause\"}}
-                      Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                      Maintenance: {{index .PbehaviorCounters \"df17b079-03fb-4a4f-a19d-14d9c0c3563b\"}}
+                      Pause: {{index .PbehaviorCounters \"0b6f6266-59ed-4350-8786-85a3ebdf45b8\"}}
+                      Inactive: {{index .PbehaviorCounters \"e37d7772-6964-4293-a7ff-9e9b3fa26332\"}}",
                     "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
                     "impact_level": 2,
                     "enabled": true,
@@ -1517,8 +2571,8 @@ paths:
                     "tstart": 1650855600,
                     "tstop": 1650891600,
                     "rrule": "FREQ=DAILY",
-                    "type": "default_active",
-                    "reason": "default_reason",
+                    "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                    "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
                     "entity_pattern": [
                       [
                         {
@@ -1534,10 +2588,12 @@ paths:
                       {
                         "begin": 1651460400,
                         "end": 1651496400,
-                        "type": "default_maintenance"
+                        "type": "7e5866f8-dbfa-4b14-a4bf-febd0a35ff63"
                       }
                     ],
-                    "exceptions": [ "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101" ]
+                    "exceptions": [
+                      "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                    ]
                   }
                 ]
         required: true
@@ -1591,8 +2647,8 @@ paths:
                     "tstart": 1650855600,
                     "tstop": 1650891600,
                     "rrule": "FREQ=DAILY",
-                    "type": "default_active",
-                    "reason": "default_reason",
+                    "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                    "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
                     "entity_pattern": [
                       [
                         {
@@ -1608,10 +2664,12 @@ paths:
                       {
                         "begin": 1651460400,
                         "end": 1651496400,
-                        "type": "default_maintenance"
+                        "type": "7e5866f8-dbfa-4b14-a4bf-febd0a35ff63"
                       }
                     ],
-                    "exceptions": [ "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101" ]
+                    "exceptions": [
+                      "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                    ]
                   }
                 ]
         required: true
@@ -1715,8 +2773,8 @@ paths:
                     "name": "Downtime",
                     "tstart": 1650855600,
                     "tstop": 1650891600,
-                    "type": "default_maintenance",
-                    "reason": "default_reason",
+                    "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                    "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
                     "comment": "Downtime by centreon"
                   }
                 ]
@@ -2149,6 +3207,232 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /color-themes:
+    get:
+      tags:
+        - color-themes
+      summary: Find all color theme
+      description: |
+        Get paginated list of color theme.
+        
+        -  PERMISSIONS: `api_color_theme:read`
+      operationId: color-themes-find-all
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    post:
+      tags:
+        - color-themes
+      summary: Create color theme
+      description: |
+        Create color theme.
+        
+        -  PERMISSIONS: `api_color_theme:create`
+      operationId: color-themes-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/colortheme.CreateRequest'
+            examples:
+              create:
+                summary: Create a color theme
+                description: Create a color theme
+                value: {
+                  "name": "test_1",
+                  "font_color": 2,
+                  "colors": {
+                    "main": {
+                      "primary": "#AAAAAA",
+                      "secondary": "#AAAAAA",
+                      "accent": "#AAAAAA",
+                      "error": "#AAAAAA",
+                      "info": "#AAAAAA",
+                      "success": "#AAAAAA",
+                      "warning": "#AAAAAA",
+                      "background": "#AAAAAA"
+                    },
+                    "table": {
+                      "background": "#AAAAAA",
+                      "active_color": "#AAAAAA",
+                      "row_color": "#AAAAAA",
+                      "shift_row_color": "#AAAAAA",
+                      "hover_row_color": "#AAAAAA"
+                    },
+                    "state": {
+                      "ok": "#AAAAAA",
+                      "minor": "#AAAAAA",
+                      "major": "#AAAAAA",
+                      "critical": "#AAAAAA"
+                    }
+                  }
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /color-themes/{id}:
+    get:
+      tags:
+        - color-themes
+      summary: Get color theme by id
+      description: |
+        Get color theme by id.
+        
+        -  PERMISSIONS: `api_color_theme:read`
+      operationId: color-themes-get-by-id
+      parameters:
+        - name: id
+          in: path
+          description: color theme id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - color-themes
+      summary: Update color theme by id
+      description: |
+        Update color theme by id.
+        
+        -  PERMISSIONS: `api_color_theme:update`
+      operationId: color-themes-update-by-id
+      parameters:
+        - name: id
+          in: path
+          description: color theme id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/colortheme.UpdateRequest'
+            examples:
+              update:
+                summary: Update a color theme
+                description: Update a color theme
+                value: {
+                  "name": "test_1_updated",
+                  "font_color": 2,
+                  "colors": {
+                    "main": {
+                      "primary": "#FFFFFF",
+                      "secondary": "#FFFFFF",
+                      "accent": "#FFFFFF",
+                      "error": "#FFFFFF",
+                      "info": "#FFFFFF",
+                      "success": "#FFFFFF",
+                      "warning": "#FFFFFF",
+                      "background": "#FFFFFF"
+                    },
+                    "table": {
+                      "background": "#FFFFFF",
+                      "active_color": "#FFFFFF",
+                      "row_color": "#FFFFFF",
+                      "shift_row_color": "#FFFFFF",
+                      "hover_row_color": "#FFFFFF"
+                    },
+                    "state": {
+                      "ok": "#FFFFFF",
+                      "minor": "#FFFFFF",
+                      "major": "#FFFFFF",
+                      "critical": "#FFFFFF"
+                    }
+                  }
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - color-themes
+      summary: Delete color theme by id
+      description: |
+        Delete color theme by id.
+        
+        -  PERMISSIONS: `api_color_theme:delete`
+      operationId: color-themes-delete-by-id
+      parameters:
+        - name: id
+          in: path
+          description: color theme id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'                
   /component-alarms:
     get:
       tags:
@@ -2338,9 +3622,9 @@ paths:
                           StateMajor: {{.State.Major}}
                           StateMinor: {{.State.Minor}}
                           StateInfo: {{.State.Info}}
-                          Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
-                          Pause: {{index .PbehaviorCounters \"default_pause\"}}
-                          Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                          Maintenance: {{index .PbehaviorCounters \"df17b079-03fb-4a4f-a19d-14d9c0c3563b\"}}
+                          Pause: {{index .PbehaviorCounters \"0b6f6266-59ed-4350-8786-85a3ebdf45b8\"}}
+                          Inactive: {{index .PbehaviorCounters \"e37d7772-6964-4293-a7ff-9e9b3fa26332\"}}",
                         "entity_pattern": [
                           [
                             {
@@ -2382,9 +3666,9 @@ paths:
                           StateMajor: {{.State.Major}}
                           StateMinor: {{.State.Minor}}
                           StateInfo: {{.State.Info}}
-                          Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
-                          Pause: {{index .PbehaviorCounters \"default_pause\"}}
-                          Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                          Maintenance: {{index .PbehaviorCounters \"df17b079-03fb-4a4f-a19d-14d9c0c3563b\"}}
+                          Pause: {{index .PbehaviorCounters \"0b6f6266-59ed-4350-8786-85a3ebdf45b8\"}}
+                          Inactive: {{index .PbehaviorCounters \"e37d7772-6964-4293-a7ff-9e9b3fa26332\"}}",
                         "entity_pattern": [
                           [
                             {
@@ -2426,9 +3710,9 @@ paths:
                           StateMajor: {{.State.Major}}
                           StateMinor: {{.State.Minor}}
                           StateInfo: {{.State.Info}}
-                          Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
-                          Pause: {{index .PbehaviorCounters \"default_pause\"}}
-                          Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                          Maintenance: {{index .PbehaviorCounters \"df17b079-03fb-4a4f-a19d-14d9c0c3563b\"}}
+                          Pause: {{index .PbehaviorCounters \"0b6f6266-59ed-4350-8786-85a3ebdf45b8\"}}
+                          Inactive: {{index .PbehaviorCounters \"e37d7772-6964-4293-a7ff-9e9b3fa26332\"}}",
                         "entity_pattern": [
                           [
                             {
@@ -2628,9 +3912,9 @@ paths:
                           StateMajor: {{.State.Major}}
                           StateMinor: {{.State.Minor}}
                           StateInfo: {{.State.Info}}
-                          Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
-                          Pause: {{index .PbehaviorCounters \"default_pause\"}}
-                          Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                          Maintenance: {{index .PbehaviorCounters \"df17b079-03fb-4a4f-a19d-14d9c0c3563b\"}}
+                          Pause: {{index .PbehaviorCounters \"0b6f6266-59ed-4350-8786-85a3ebdf45b8\"}}
+                          Inactive: {{index .PbehaviorCounters \"e37d7772-6964-4293-a7ff-9e9b3fa26332\"}}",
                         "entity_patterns": [
                           {
                             "type": "resource",
@@ -2664,9 +3948,9 @@ paths:
                           StateMajor: {{.State.Major}}
                           StateMinor: {{.State.Minor}}
                           StateInfo: {{.State.Info}}
-                          Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
-                          Pause: {{index .PbehaviorCounters \"default_pause\"}}
-                          Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                          Maintenance: {{index .PbehaviorCounters \"df17b079-03fb-4a4f-a19d-14d9c0c3563b\"}}
+                          Pause: {{index .PbehaviorCounters \"0b6f6266-59ed-4350-8786-85a3ebdf45b8\"}}
+                          Inactive: {{index .PbehaviorCounters \"e37d7772-6964-4293-a7ff-9e9b3fa26332\"}}",
                         "entity_patterns": [
                           {
                             "type": "resource",
@@ -2700,9 +3984,9 @@ paths:
                           StateMajor: {{.State.Major}}
                           StateMinor: {{.State.Minor}}
                           StateInfo: {{.State.Info}}
-                          Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
-                          Pause: {{index .PbehaviorCounters \"default_pause\"}}
-                          Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                          Maintenance: {{index .PbehaviorCounters \"df17b079-03fb-4a4f-a19d-14d9c0c3563b\"}}
+                          Pause: {{index .PbehaviorCounters \"0b6f6266-59ed-4350-8786-85a3ebdf45b8\"}}
+                          Inactive: {{index .PbehaviorCounters \"e37d7772-6964-4293-a7ff-9e9b3fa26332\"}}",
                         "entity_patterns": [
                           {
                             "type": "resource",
@@ -2838,7 +4122,7 @@ paths:
                 description: Import services
                 value: [
                   {
-                    "name": "cps-service-1",
+                    "name": "cps_service_1",
                     "output_template": "All: {{.All}}
                           Alarms: {{.Alarms}}
                           Acknowledged: {{.Acknowledged}}
@@ -2847,9 +4131,9 @@ paths:
                           StateMajor: {{.State.Major}}
                           StateMinor: {{.State.Minor}}
                           StateInfo: {{.State.Info}}
-                          Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
-                          Pause: {{index .PbehaviorCounters \"default_pause\"}}
-                          Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                          Maintenance: {{index .PbehaviorCounters \"df17b079-03fb-4a4f-a19d-14d9c0c3563b\"}}
+                          Pause: {{index .PbehaviorCounters \"0b6f6266-59ed-4350-8786-85a3ebdf45b8\"}}
+                          Inactive: {{index .PbehaviorCounters \"e37d7772-6964-4293-a7ff-9e9b3fa26332\"}}",
                     "entity_pattern": [
                       [
                         {
@@ -2881,17 +4165,17 @@ paths:
                     "enabled": true
                   },
                   {
-                    "name": "cps-service-2",
+                    "name": "cps_service_2",
                     "type": "service",
                     "action": "delete"
                   },
                   {
-                    "name": "cps-service-3",
+                    "name": "cps_service_3",
                     "type": "service",
                     "action": "enable"
                   },
                   {
-                    "name": "cps-service-4",
+                    "name": "cps_service_4",
                     "type": "service",
                     "action": "disable"
                   }
@@ -2993,7 +4277,7 @@ paths:
                 description: Import services
                 value: [
                   {
-                    "name": "cps-service-1",
+                    "name": "cps_service_1",
                     "output_template": "All: {{.All}}
                           Alarms: {{.Alarms}}
                           Acknowledged: {{.Acknowledged}}
@@ -3002,9 +4286,9 @@ paths:
                           StateMajor: {{.State.Major}}
                           StateMinor: {{.State.Minor}}
                           StateInfo: {{.State.Info}}
-                          Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
-                          Pause: {{index .PbehaviorCounters \"default_pause\"}}
-                          Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                          Maintenance: {{index .PbehaviorCounters \"df17b079-03fb-4a4f-a19d-14d9c0c3563b\"}}
+                          Pause: {{index .PbehaviorCounters \"0b6f6266-59ed-4350-8786-85a3ebdf45b8\"}}
+                          Inactive: {{index .PbehaviorCounters \"e37d7772-6964-4293-a7ff-9e9b3fa26332\"}}",
                     "entity_pattern": [
                       [
                         {
@@ -3036,17 +4320,17 @@ paths:
                     "enabled": true
                   },
                   {
-                    "name": "cps-service-2",
+                    "name": "cps_service_2",
                     "type": "service",
                     "action": "delete"
                   },
                   {
-                    "name": "cps-service-3",
+                    "name": "cps_service_3",
                     "type": "service",
                     "action": "enable"
                   },
                   {
-                    "name": "cps-service-4",
+                    "name": "cps_service_4",
                     "type": "service",
                     "action": "disable"
                   }
@@ -3166,6 +4450,11 @@ paths:
             type: array
             items:
               type: string
+        - name: entity_pattern
+          in: query
+          schema:
+            type: string
+          example: "[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"cps_resource\"}}]]"
         - name: no_events
           in: query
           schema:
@@ -4070,9 +5359,9 @@ paths:
                     StateMajor: {{.State.Major}}
                     StateMinor: {{.State.Minor}}
                     StateInfo: {{.State.Info}}
-                    Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
-                    Pause: {{index .PbehaviorCounters \"default_pause\"}}
-                    Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                    Maintenance: {{index .PbehaviorCounters \"df17b079-03fb-4a4f-a19d-14d9c0c3563b\"}}
+                    Pause: {{index .PbehaviorCounters \"0b6f6266-59ed-4350-8786-85a3ebdf45b8\"}}
+                    Inactive: {{index .PbehaviorCounters \"e37d7772-6964-4293-a7ff-9e9b3fa26332\"}}",
                   "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
                   "impact_level": 2,
                   "enabled": true,
@@ -4183,9 +5472,9 @@ paths:
                     StateMajor: {{.State.Major}}
                     StateMinor: {{.State.Minor}}
                     StateInfo: {{.State.Info}}
-                    Maintenance: {{index .PbehaviorCounters \"default_maintenance\"}}
-                    Pause: {{index .PbehaviorCounters \"default_pause\"}}
-                    Inactive: {{index .PbehaviorCounters \"default_inactive\"}}",
+                    Maintenance: {{index .PbehaviorCounters \"df17b079-03fb-4a4f-a19d-14d9c0c3563b\"}}
+                    Pause: {{index .PbehaviorCounters \"0b6f6266-59ed-4350-8786-85a3ebdf45b8\"}}
+                    Inactive: {{index .PbehaviorCounters \"e37d7772-6964-4293-a7ff-9e9b3fa26332\"}}",
                   "category": "d73a4b2a-1927-49d5-bdc3-ae1559ebc7e7",
                   "impact_level": 2,
                   "enabled": true,
@@ -4289,8 +5578,8 @@ paths:
                   "resource": "cps_resource",
                   "source_type": "resource",
                   "state": 3,
-                  "output": "Something bag h",
-                  "long_output": ""
+                  "output": "Lorem ipsum dolor sit amet",
+                  "long_output": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
                 }
               ack:
                 summary: Ack
@@ -4304,7 +5593,7 @@ paths:
                   "source_type": "resource",
                   "author": "root",
                   "user_id": "root",
-                  "output": ""
+                  "output": "Lorem ipsum dolor sit amet"
                 }
               ackremove:
                 summary: Ack remove
@@ -4318,7 +5607,7 @@ paths:
                   "source_type": "resource",
                   "author": "root",
                   "user_id": "root",
-                  "output": ""
+                  "output": "Lorem ipsum dolor sit amet"
                 }
               cancel:
                 summary: Cancel
@@ -4332,7 +5621,7 @@ paths:
                   "source_type": "resource",
                   "author": "root",
                   "user_id": "root",
-                  "output": ""
+                  "output": "Lorem ipsum dolor sit amet"
                 }
               uncancel:
                 summary: Uncancel
@@ -4346,7 +5635,7 @@ paths:
                   "source_type": "resource",
                   "author": "root",
                   "user_id": "root",
-                  "output": ""
+                  "output": "Lorem ipsum dolor sit amet"
                 }
               comment:
                 summary: Comment
@@ -4360,7 +5649,7 @@ paths:
                   "source_type": "resource",
                   "author": "root",
                   "user_id": "root",
-                  "output": ""
+                  "output": "Lorem ipsum dolor sit amet"
                 }
               snooze:
                 summary: Snooze
@@ -4374,7 +5663,7 @@ paths:
                   "source_type": "resource",
                   "author": "root",
                   "user_id": "root",
-                  "output": "",
+                  "output": "Lorem ipsum dolor sit amet",
                   "duration": 600
                 }
               changestate:
@@ -4389,7 +5678,7 @@ paths:
                   "source_type": "resource",
                   "author": "root",
                   "user_id": "root",
-                  "output": "",
+                  "output": "Lorem ipsum dolor sit amet",
                   "state": 3
                 }
               assocticket:
@@ -4405,12 +5694,13 @@ paths:
                   "author": "root",
                   "user_id": "root",
                   "ticket": "ENV-116",
-                  "ticket_url": "https://%ticket_url%",
-                  "ticket_system_name": "Jira Helpdesk",
+                  "ticket_url": "https://jira.local/ENV-116",
+                  "ticket_system_name": "Jira",
                   "ticket_data": {
-                    "key_1": "value_1",
-                    "key_2": "value_2"
-                  }
+                    "priority": "high",
+                    "tag": "env"
+                  },
+                  "ticket_comment": "Lorem ipsum dolor sit amet"
                 }
               declareticket:
                 summary: Declare ticket
@@ -4504,7 +5794,7 @@ paths:
                       "field": "component",
                       "cond": {
                         "type": "eq",
-                        "value": "example-component"
+                        "value": "cps_component"
                       }
                     }
                   ]],
@@ -4529,7 +5819,7 @@ paths:
                       "field": "component",
                       "cond": {
                         "type": "eq",
-                        "value": "example-component"
+                        "value": "cps_component"
                       }
                     }
                   ]],
@@ -4549,7 +5839,7 @@ paths:
                         "field": "name",
                         "cond": {
                           "type": "eq",
-                          "value": "pattern"
+                          "value": "cps_resource"
                         }
                       }
                     ]
@@ -4580,7 +5870,7 @@ paths:
                         "field": "name",
                         "cond": {
                           "type": "eq",
-                          "value": "pattern"
+                          "value": "cps_resource"
                         }
                       }
                     ]
@@ -4620,7 +5910,7 @@ paths:
                         "field": "component",
                         "cond": {
                           "type": "eq",
-                          "value": "example component"
+                          "value": "cps_component"
                         }
                       }
                     ]
@@ -4661,7 +5951,7 @@ paths:
                         "field": "component",
                         "cond": {
                           "type": "eq",
-                          "value": "component-example"
+                          "value": "csp_component"
                         }
                       }
                     ]
@@ -4694,7 +5984,7 @@ paths:
                         "field": "connector",
                         "cond": {
                           "type": "eq",
-                          "value": "test_connector"
+                          "value": "cps_connector"
                         }
                       },
                       {
@@ -4731,7 +6021,7 @@ paths:
                       "field": "component",
                       "cond": {
                         "type": "eq",
-                        "value": "example-component"
+                        "value": "csp_component"
                       }
                     }
                   ]],
@@ -4759,7 +6049,7 @@ paths:
                       "field": "component",
                       "cond": {
                         "type": "eq",
-                        "value": "example-component"
+                        "value": "csp_component"
                       }
                     }
                   ]],
@@ -4787,7 +6077,7 @@ paths:
                       "field": "component",
                       "cond": {
                         "type": "eq",
-                        "value": "example-component"
+                        "value": "csp_component"
                       }
                     }
                   ]],
@@ -4821,7 +6111,7 @@ paths:
                       "field": "component",
                       "cond": {
                         "type": "eq",
-                        "value": "example-component"
+                        "value": "csp_component"
                       }
                     }
                   ]],
@@ -4829,7 +6119,7 @@ paths:
                   "priority": 1,
                   "enabled": true,
                   "exceptions": [
-                    "test-exception"
+                    "0249b7a8-1e1a-4e3f-b88c-c6d9c1f7db85"
                   ]
                 }
         required: true
@@ -4903,7 +6193,7 @@ paths:
                 summary: Update
                 description: Update an eventfilter.
                 value: {
-                  "description": "test update",
+                  "description": "Update rule",
                   "type": "enrichment",
                   "entity_pattern": [
                     [
@@ -4911,7 +6201,7 @@ paths:
                         "field": "name",
                         "cond": {
                           "type": "eq",
-                          "value": "updated pattern"
+                          "value": "cps_resource"
                         }
                       }
                     ]
@@ -4928,11 +6218,6 @@ paths:
                     ],
                     "on_success": "pass",
                     "on_failure": "pass"
-                  },
-                  "external_data": {
-                    "test": {
-                      "type": "mongo"
-                    }
                   }
                 }
         required: true
@@ -4980,6 +6265,64 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /eventfilter/{id}/failures:
+    get:
+      tags:
+        - eventfilters
+      summary: Get failures of event filter rule by id
+      description: |
+        Get failures of event filter rule by id.
+        
+        -  PERMISSIONS: `api_eventfilter:read`
+      operationId: eventfilters-get-failures
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/eventfilter.FailureResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - eventfilters
+      summary: Make failures of event filter rule by id as read
+      description: |
+        Make failures of event filter rule by id as read.
+        
+        -  PERMISSIONS: `api_eventfilter:create`
+      operationId: eventfilters-read-failures
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /export-configuration:
     post:
       tags:
@@ -5012,8 +6355,7 @@ paths:
                     "view",
                     "view_tab",
                     "widget",
-                    "widget_filter",
-                    "rights"
+                    "widget_filter"
                   ]
                 }
         required: true
@@ -5234,15 +6576,15 @@ paths:
                 summary: Create flapping rule
                 description: Create flapping rule
                 value: {
-                  "name": "test-flapping-rule-name",
-                  "description": "test-flapping-rule-description",
+                  "name": "3 changes in 10s",
+                  "description": "Lorem ipsum dolor sit amet",
                   "alarm_pattern": [
                     [
                       {
                         "field": "v.component",
                         "cond": {
                           "type": "eq",
-                          "value": "test-flapping-rule-pattern"
+                          "value": "cps_component"
                         }
                       }
                     ]
@@ -5253,7 +6595,7 @@ paths:
                         "field": "name",
                         "cond": {
                           "type": "eq",
-                          "value": "test-flapping-rule-resource"
+                          "value": "cps_resource"
                         }
                       }
                     ]
@@ -5336,15 +6678,15 @@ paths:
                 summary: Update flapping rule
                 description: Update flapping rule
                 value: {
-                  "name": "test-flapping-rule-name",
-                  "description": "test-flapping-rule-description",
+                  "name": "3 changes in 10s",
+                  "description": "Lorem ipsum dolor sit amet",
                   "alarm_pattern": [
                     [
                       {
                         "field": "v.component",
                         "cond": {
                           "type": "eq",
-                          "value": "test-flapping-rule-pattern"
+                          "value": "cps_component"
                         }
                       }
                     ]
@@ -5355,7 +6697,7 @@ paths:
                         "field": "name",
                         "cond": {
                           "type": "eq",
-                          "value": "test-flapping-rule-resource"
+                          "value": "cps_resource"
                         }
                       }
                     ]
@@ -5472,8 +6814,8 @@ paths:
                 summary: Alarm rule
                 description: Create an alarm rule.
                 value: {
-                  "name": "test-idle-rule-name",
-                  "description": "test-idle-rule-description",
+                  "name": "No events in 3s",
+                  "description": "Lorem ipsum dolor sit amet",
                   "type": "alarm",
                   "alarm_condition": "last_event",
                   "enabled": true,
@@ -5488,7 +6830,7 @@ paths:
                         "field": "v.component",
                         "cond": {
                           "type": "eq",
-                          "value": "test-idle-rule-alarm"
+                          "value": "cps_component"
                         }
                       }
                     ]
@@ -5499,7 +6841,7 @@ paths:
                         "field": "name",
                         "cond": {
                           "type": "eq",
-                          "value": "test-idle-rule-resource"
+                          "value": "cps_resource"
                         }
                       }
                     ]
@@ -5507,7 +6849,7 @@ paths:
                   "operation": {
                     "type": "snooze",
                     "parameters": {
-                      "output": "test-idle-rule-operation-output",
+                      "output": "Lorem ipsum dolor sit amet",
                       "duration": {
                         "value": 3,
                         "unit": "s"
@@ -5520,8 +6862,8 @@ paths:
                 summary: Entity rule
                 description: Create an entity rule.
                 value: {
-                  "name": "test-idle-rule-name",
-                  "description": "test-idle-rule-description",
+                  "name": "Np events in 3s",
+                  "description": "Lorem ipsum dolor sit amet",
                   "type": "entity",
                   "enabled": true,
                   "priority": 21,
@@ -5535,7 +6877,7 @@ paths:
                         "field": "name",
                         "cond": {
                           "type": "eq",
-                          "value": "test-idle-rule-resource"
+                          "value": "cps_resource"
                         }
                       }
                     ]
@@ -5619,8 +6961,8 @@ paths:
                 summary: Alarm rule
                 description: Update an alarm rule.
                 value: {
-                  "name": "test-idle-rule-name",
-                  "description": "test-idle-rule-description",
+                  "name": "No events in 3s",
+                  "description": "Lorem ipsum dolor sit amet",
                   "type": "alarm",
                   "alarm_condition": "last_event",
                   "enabled": true,
@@ -5635,7 +6977,7 @@ paths:
                         "field": "v.component",
                         "cond": {
                           "type": "eq",
-                          "value": "test-idle-rule-alarm"
+                          "value": "cps_component"
                         }
                       }
                     ]
@@ -5646,7 +6988,7 @@ paths:
                         "field": "name",
                         "cond": {
                           "type": "eq",
-                          "value": "test-idle-rule-resource"
+                          "value": "cps_resource"
                         }
                       }
                     ]
@@ -5654,7 +6996,7 @@ paths:
                   "operation": {
                     "type": "snooze",
                     "parameters": {
-                      "output": "test-idle-rule-operation-output",
+                      "output": "Lorem ipsum dolor sit amet",
                       "duration": {
                         "value": 3,
                         "unit": "s"
@@ -5667,8 +7009,8 @@ paths:
                 summary: Entity rule
                 description: Update an entity rule.
                 value: {
-                  "name": "test-idle-rule-name",
-                  "description": "test-idle-rule-description",
+                  "name": "No events in 3s",
+                  "description": "Lorem ipsum dolor sit amet",
                   "type": "entity",
                   "enabled": true,
                   "priority": 21,
@@ -5682,7 +7024,7 @@ paths:
                         "field": "name",
                         "cond": {
                           "type": "eq",
-                          "value": "test-idle-rule-resource"
+                          "value": "cps_resource"
                         }
                       }
                     ]
@@ -5825,6 +7167,46 @@ paths:
           description: OK
       security:
         - BearerAuth: [ ]
+  /maintenance:
+    put:
+      tags:
+        - maintenance
+      summary: Enable or disable maintenance
+      description: |
+        Enable or disable maintenance.
+        
+        -  PERMISSIONS: `api_maintenance`
+      operationId: maintenance
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/maintenance.Request'
+            examples:
+              enable:
+                summary: Enable
+                description: Enable maintenance
+                value: {
+                  "enable": true,
+                  "message": "test maintenance"
+                }
+              disable:
+                summary: Disable
+                description: Disable maintenance
+                value: {
+                  "enable": false
+                }
+        required: true
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /message-rate-stats:
     get:
       tags:
@@ -5958,118 +7340,13 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-  /patterns-alarms:
+  /patterns-alarms-count:
     post:
       tags:
         - saved-patterns
-      summary: Get matched alarms
-      description: Get matched alarms by patterns.
-      operationId: get-matched-alarms-by-patterns
-      requestBody:
-        description: body
-        content:
-          application/json:
-            schema:
-              $ref: 'schemas_swagger.yaml#/definitions/pattern.GetAlarmsRequest'
-            examples:
-              getMatchedAlarms:
-                summary: Get matched alarms
-                description: Get matched alarms by patterns.
-                value: {
-                  "alarm_pattern": [
-                    [
-                      {
-                        "field": "v.component",
-                        "cond": {
-                          "type": "eq",
-                          "value": "cps_component"
-                        }
-                      }
-                    ]
-                  ],
-                  "entity_pattern": [
-                    [
-                      {
-                        "field": "name",
-                        "cond": {
-                          "type": "eq",
-                          "value": "cps_resource"
-                        }
-                      }
-                    ]
-                  ],
-                  "pbehavior_pattern": [
-                    [
-                      {
-                        "field": "pbehavior_info.type",
-                        "cond": {
-                          "type": "eq",
-                          "value": "default_maintenance"
-                        }
-                      }
-                    ]
-                  ]
-                }
-              getMatchedAlarmsWithSearch:
-                summary: Get matched alarms with search
-                description: Get matched alarms by patterns with search.
-                value: {
-                  "search": "AAA-BBB-CCC",
-                  "alarm_pattern": [
-                    [
-                      {
-                        "field": "v.component",
-                        "cond": {
-                          "type": "eq",
-                          "value": "cps_component"
-                        }
-                      }
-                    ]
-                  ],
-                  "entity_pattern": [
-                    [
-                      {
-                        "field": "name",
-                        "cond": {
-                          "type": "eq",
-                          "value": "cps_resource"
-                        }
-                      }
-                    ]
-                  ],
-                  "pbehavior_pattern": [
-                    [
-                      {
-                        "field": "pbehavior_info.type",
-                        "cond": {
-                          "type": "eq",
-                          "value": "default_maintenance"
-                        }
-                      }
-                    ]
-                  ]
-                }
-        required: true
-      responses:
-        200:
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pattern.GetAlarmsResponse'
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-  /patterns-count:
-    post:
-      tags:
-        - saved-patterns
-      summary: Count matches
-      description: Count matches of pattern.
-      operationId: saved-patterns-count
+      summary: Count alarm matches
+      description: Count alarm matches of pattern.
+      operationId: saved-patterns-alarms-count
       requestBody:
         description: body
         content:
@@ -6079,7 +7356,73 @@ paths:
             examples:
               count:
                 summary: Count
-                description: Count matches of patterns.
+                description: Count alarm matches of patterns.
+                value: {
+                  "alarm_pattern": [
+                    [
+                      {
+                        "field": "v.component",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_component"
+                        }
+                      }
+                    ]
+                  ],
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ],
+                  "pbehavior_pattern": [
+                    [
+                      {
+                        "field": "pbehavior_info.type",
+                        "cond": {
+                          "type": "eq",
+                          "value": "7e5866f8-dbfa-4b14-a4bf-febd0a35ff63"
+                        }
+                      }
+                    ]
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.CountAlarmsResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /patterns-entities-count:
+    post:
+      tags:
+        - saved-patterns
+      summary: Count entity matches
+      description: Count entity matches of pattern.
+      operationId: saved-patterns-entities-count
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pattern.CountRequest'
+            examples:
+              count:
+                summary: Count
+                description: Count entity matches of patterns.
                 value: {
                   "alarm_pattern": [
                     [
@@ -6122,7 +7465,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pattern.CountResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.CountEntitiesResponse'
         400:
           description: Bad Request
           content:
@@ -6297,14 +7640,14 @@ paths:
                         "field": "pbehavior_info.type",
                         "cond": {
                           "type": "eq",
-                          "value": "default_maintenance"
+                          "value": "7e5866f8-dbfa-4b14-a4bf-febd0a35ff63"
                         }
                       },
                       {
                         "field": "pbehavior_info.reason",
                         "cond": {
                           "type": "eq",
-                          "value": "default_reason"
+                          "value": "f8d6373b-15f0-42a0-9cbe-25249343e5a7"
                         }
                       }
                     ]
@@ -6480,7 +7823,7 @@ paths:
                 description: Create a comment
                 value: {
                   "pbehavior": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
-                  "message": "A comment for the pbehavior"
+                  "message": "Lorem ipsum dolor sit amet"
                 }
         required: true
       responses:
@@ -6522,6 +7865,47 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /pbehavior-exception-import:
+    post:
+      tags:
+        - pbehavior-exceptions
+      summary: Import pbehavior exception
+      description: |
+        Import pbehavior exception.
+
+        -  PERMISSIONS: `api_pbehaviorexception:create`
+      operationId: pbehavior-exceptions-import
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - type
+                - file
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                file:
+                  type: string
+                  format: binary
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Exception'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /pbehavior-exceptions:
     get:
       tags:
@@ -6593,17 +7977,17 @@ paths:
                     {
                       "begin": 1640991600,
                       "end": 1641078000,
-                      "type": "default_inactive"
+                      "type": "7e5866f8-dbfa-4b14-a4bf-febd0a35ff63"
                     },
                     {
                       "begin": 1650232800,
                       "end": 1650319200,
-                      "type": "default_inactive"
+                      "type": "7e5866f8-dbfa-4b14-a4bf-febd0a35ff63"
                     },
                     {
                       "begin": 1671922800,
                       "end": 1672009200,
-                      "type": "default_inactive"
+                      "type": "7e5866f8-dbfa-4b14-a4bf-febd0a35ff63"
                     }
                   ]
                 }
@@ -6684,17 +8068,17 @@ paths:
                     {
                       "begin": 1640991600,
                       "end": 1641078000,
-                      "type": "default_inactive"
+                      "type": "7e5866f8-dbfa-4b14-a4bf-febd0a35ff63"
                     },
                     {
                       "begin": 1650232800,
                       "end": 1650319200,
-                      "type": "default_inactive"
+                      "type": "7e5866f8-dbfa-4b14-a4bf-febd0a35ff63"
                     },
                     {
                       "begin": 1671922800,
                       "end": 1672009200,
-                      "type": "default_inactive"
+                      "type": "7e5866f8-dbfa-4b14-a4bf-febd0a35ff63"
                     }
                   ]
                 }
@@ -6846,7 +8230,7 @@ paths:
                 description: Create a reason
                 value: {
                   "name": "Deployment",
-                  "description": "New version deployment"
+                  "description": "Lorem ipsum dolor sit amet"
                 }
         required: true
       responses:
@@ -6920,7 +8304,7 @@ paths:
                 description: Update a reason
                 value: {
                   "name": "Deployment",
-                  "description": "New version deployment"
+                  "description": "Lorem ipsum dolor sit amet"
                 }
         required: true
       responses:
@@ -7327,8 +8711,8 @@ paths:
                   "tstart": 1591172881,
                   "tstop": 1591536400,
                   "rrule": "",
-                  "type": "default_Maintenance",
-                  "reason": "default_reason",
+                  "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                  "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
                   "entity_pattern": [
                     [
                       {
@@ -7350,8 +8734,8 @@ paths:
                   "tstart": 1591172881,
                   "tstop": null,
                   "rrule": "",
-                  "type": "default_pause",
-                  "reason": "default_reason",
+                  "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                  "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
                   "entity_pattern": [
                     [
                       {
@@ -7373,8 +8757,8 @@ paths:
                   "tstart": 1651269600,
                   "tstop": 1651442400,
                   "rrule": "FREQ=WEEKLY",
-                  "type": "default_inactive",
-                  "reason": "default_reason",
+                  "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                  "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
                   "entity_pattern": [
                     [
                       {
@@ -7396,8 +8780,8 @@ paths:
                   "tstart": 1650855600,
                   "tstop": 1650891600,
                   "rrule": "FREQ=DAILY",
-                  "type": "default_active",
-                  "reason": "default_reason",
+                  "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                  "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
                   "entity_pattern": [
                     [
                       {
@@ -7413,10 +8797,34 @@ paths:
                     {
                       "begin": 1651460400,
                       "end": 1651496400,
-                      "type": "default_maintenance"
+                      "type": "3b46e648-f7c0-4c94-8167-30e78728706e"
                     }
                   ],
                   "exceptions": [ "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101" ]
+                }
+              with_id:
+                summary: Pbehavior with custom id
+                description: Create a pbehavior with custom id. **Not recommended**, can lead to performance issues.
+                value: {
+                  "_id": "maintenance_period",
+                  "name": "Maintenance period",
+                  "enabled": true,
+                  "tstart": 1591172881,
+                  "tstop": 1591536400,
+                  "rrule": "",
+                  "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                  "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
+                  "entity_pattern": [
+                    [
+                      {
+                        "field": "name",
+                        "cond": {
+                          "type": "eq",
+                          "value": "cps_resource"
+                        }
+                      }
+                    ]
+                  ]
                 }
         required: true
       responses:
@@ -7494,8 +8902,8 @@ paths:
                   "tstart": 1650855600,
                   "tstop": 1650891600,
                   "rrule": "FREQ=DAILY",
-                  "type": "default_active",
-                  "reason": "default_reason",
+                  "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                  "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
                   "entity_pattern": [
                     [
                       {
@@ -7511,7 +8919,7 @@ paths:
                     {
                       "begin": 1651460400,
                       "end": 1651496400,
-                      "type": "default_maintenance"
+                      "type": "3b46e648-f7c0-4c94-8167-30e78728706e"
                     }
                   ],
                   "exceptions": [ "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101" ]
@@ -7923,15 +9331,15 @@ paths:
                 summary: Create a resolve rule
                 description: Create a resolve rule
                 value: {
-                  "name": "test-resolve-rule-name",
-                  "description": "test-resolve-rule-desc",
+                  "name": "Resolve after 2s",
+                  "description": "Lorem ipsum dolor sit amet",
                   "entity_pattern": [
                     [
                       {
                         "field": "name",
                         "cond": {
                           "type": "eq",
-                          "value": "test-resource-name"
+                          "value": "cps_resource"
                         }
                       }
                     ]
@@ -7942,7 +9350,7 @@ paths:
                         "field": "v.component",
                         "cond": {
                           "type": "eq",
-                          "value": "test-component"
+                          "value": "cps_component"
                         }
                       }
                     ]
@@ -8024,15 +9432,15 @@ paths:
                 summary: Update a resolve rule
                 description: Update a resolve rule
                 value: {
-                  "name": "test-resolve-rule-name-updated",
-                  "description": "test-resolve-rule-desc-updated",
+                  "name": "Resolve after 2s",
+                  "description": "Lorem ipsum dolor sit amet",
                   "entity_pattern": [
                     [
                       {
                         "field": "name",
                         "cond": {
                           "type": "eq",
-                          "value": "test-resource-name-updated"
+                          "value": "cps_resource"
                         }
                       }
                     ]
@@ -8043,7 +9451,7 @@ paths:
                         "field": "v.component",
                         "cond": {
                           "type": "eq",
-                          "value": "test-component-updated"
+                          "value": "cps_component"
                         }
                       }
                     ]
@@ -8157,6 +9565,23 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /role-templates:
+    get:
+      tags:
+        - roles
+      summary: Get role templates
+      description: |
+        Get list of role templates.
+
+        -  PERMISSIONS: `api_acl:read`
+      operationId: roles-get-templates
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/role.TemplateResponse'
   /roles:
     get:
       tags:
@@ -8190,7 +9615,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/role.Role'
+                          $ref: 'schemas_swagger.yaml#/definitions/role.Response'
         400:
           description: Bad Request
           content:
@@ -8219,7 +9644,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/role.Role'
+                $ref: 'schemas_swagger.yaml#/definitions/role.Response'
         400:
           description: Bad Request
           content:
@@ -8255,7 +9680,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/role.Role'
+                $ref: 'schemas_swagger.yaml#/definitions/role.Response'
         404:
           description: Not Found
           content:
@@ -8291,7 +9716,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/role.Role'
+                $ref: 'schemas_swagger.yaml#/definitions/role.Response'
         400:
           description: Bad Request
           content:
@@ -8498,11 +9923,11 @@ paths:
                       "parameters": {
                         "output": "The ticket is added to the alarm by scenario",
                         "ticket": "ENV-116",
-                        "ticket_url": "https://%ticket_url%",
-                        "ticket_system_name": "Jira Helpdesk",
+                        "ticket_url": "https://jira.local/ENV-116",
+                        "ticket_system_name": "Jira",
                         "ticket_data": {
-                          "key_1": "value_1",
-                          "key_2": "value_2"
+                          "priority": "high",
+                          "tag": "env"
                         }
                       },
                       "alarm_pattern": [
@@ -8652,8 +10077,8 @@ paths:
                       "type": "pbehavior",
                       "parameters": {
                         "name": "The pbehavior is created by scenario",
-                        "reason": "default_reason",
-                        "type": "default_pause",
+                        "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                        "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
                         "start_on_trigger": true,
                         "duration": {
                           "value": 10,
@@ -8762,7 +10187,7 @@ paths:
                       "parameters": {
                         "request": {
                           "method": "POST",
-                          "url": "https://test-rest-api.com/ticket",
+                          "url": "https://localhost/ticket",
                           "auth": {
                             "username": "admin",
                             "password": "admin"
@@ -9156,8 +10581,8 @@ paths:
                       "type": "pbehavior",
                       "parameters": {
                         "name": "The pbehavior is created by scenario",
-                        "reason": "default_reason",
-                        "type": "default_pause",
+                        "type": "53010391-8f34-4e00-a493-0264431eddd6",
+                        "reason": "f8d6373b-15f0-42a0-9cbe-25249343e5a7",
                         "start_on_trigger": true,
                         "duration": {
                           "value": 10,
@@ -9266,7 +10691,7 @@ paths:
                       "parameters": {
                         "request": {
                           "method": "POST",
-                          "url": "https://test-rest-api.com/ticket",
+                          "url": "https://localhost/ticket",
                           "auth": {
                             "username": "admin",
                             "password": "admin"
@@ -9610,6 +11035,40 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /link-categories:
+    get:
+      tags:
+        - linkrules
+      summary: Get link categories
+      description: |
+        Get list of distinct categories, empty list if no categories found.
+        
+        -  PERMISSIONS: `api_link_rule:get`
+      operationId: linkrules-categories
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - name: type
+          in: query
+          description: type
+          schema:
+            type: string
+            enum:
+              - alarm
+              - entity
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/linkrule.CategoryResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /link-rules:
     get:
       tags:
@@ -9644,39 +11103,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-  /link-categories:
-    get:
-      tags:
-        - linkrules
-      summary: Get categories by link type
-      description: |
-        Get list of distinct categories, empty list if no categories found 
-        
-        -  PERMISSIONS: `api_link_rule:get`
-      operationId: linkrules-categories
-      parameters:
-        - $ref: '#/components/parameters/limit'
-        - name: type
-          in: query
-          description: id
-          schema:
-            type: string
-            enum:
-              - alarm
-              - entity
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/linkrule.CategoryResponse'
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
     post:
       tags:
         - linkrules
@@ -9704,7 +11130,9 @@ paths:
                       "label": "Dashboard",
                       "category": "Prod",
                       "icon_name": "build",
-                      "url": "https://prod.local?{{ .range Alarms }}resources[]={{ .Entity.ID }}&{{ end }}"
+                      "url": "https://prod.local?{{ .range Alarms }}resources[]={{ .Entity.ID }}&{{ end }}",
+                      "action": "open",
+                      "single": false
                     }
                   ],
                   "entity_pattern": [
@@ -9736,7 +11164,7 @@ paths:
                 value: {
                   "name": "Link rule",
                   "enabled": true,
-                  "source_code": "function generate(alarms, data) {\n    var queryStr = \"\";\n    for (var alarm of alarms) {\n        queryStr += \"resources[]=\" + alarm.Entity.ID + \"&\";\n    }\n    return [{\"label\": \"Dashboard\", \"category\": \"Prod\", \"icon_name\": \"build\", \"url\": \"https://prod.local\" + queryStr}];\n}",
+                  "source_code": "function generate(alarms, data) {\n    var queryStr = \"\";\n    for (var alarm of alarms) {\n        queryStr += \"resources[]=\" + alarm.Entity.ID + \"&\";\n    }\n    return [{\"label\": \"Dashboard\", \"category\": \"Prod\", \"icon_name\": \"build\", \"url\": \"https://prod.local\" + queryStr, \"action\": \"copy\", \"single\": false}];\n}",
                   "entity_pattern": [
                     [
                       {
@@ -9839,7 +11267,9 @@ paths:
                         "label": "Dashboard",
                         "category": "Prod",
                         "icon_name": "build",
-                        "url": "https://prod.local?{{ .range Alarms }}resources[]={{ .Entity.ID }}&{{ end }}"
+                        "url": "https://prod.local?{{ .range Alarms }}resources[]={{ .Entity.ID }}&{{ end }}",
+                        "action": "open",
+                        "single": true
                       }
                     ],
                     "entity_pattern": [
@@ -9923,14 +11353,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/template.Request'
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/template.Request'
             examples:
               check:
                 summary: Check
                 description: Check if template is valid
-                value: {
-                  "text": "{{ range .Alarms }} {{ .Value.Resource }} {{ end }}"
-                }
+                value: [
+                  {
+                    "text": "{{ range .Alarms }} {{ .Value.Resource }} {{ end }}"
+                  }
+                ]
         required: true
       responses:
         200:
@@ -9938,7 +11372,49 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/template.Response'
+                type: array
+                items:
+                  $ref: 'schemas_swagger.yaml#/definitions/template.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /template-validator/event-filter-rules:
+    post:
+      tags:
+        - template-validator
+      summary: Validate event filter rule template
+      description: Validate event filter rule template.
+      operationId: template-validator-event-filter-rules
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/template.Request'
+            examples:
+              check:
+                summary: Check
+                description: Check if template is valid
+                value: [
+                  {
+                    "text": "{{ .ExtraData.component.name }}"
+                  }
+                ]
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'schemas_swagger.yaml#/definitions/template.Response'
         400:
           description: Bad Request
           content:
@@ -9957,14 +11433,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/template.Request'
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/template.Request'
             examples:
               check:
                 summary: Check
                 description: Check if template is valid
-                value: {
-                  "text": "{{ .Alarm.Value.Output }}"
-                }
+                value: [
+                  {
+                    "text": "{{ .Alarm.Value.Output }}"
+                  }
+                ]
         required: true
       responses:
         200:
@@ -9972,7 +11452,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/template.Response'
+                type: array
+                items:
+                  $ref: 'schemas_swagger.yaml#/definitions/template.Response'
         400:
           description: Bad Request
           content:
@@ -11539,7 +13021,7 @@ paths:
                         "field": "pbehavior_info.type",
                         "cond": {
                           "type": "eq",
-                          "value": "default_maintenance"
+                          "value": "df17b079-03fb-4a4f-a19d-14d9c0c3563b"
                         }
                       }
                     ]
@@ -11658,7 +13140,7 @@ paths:
                         "field": "pbehavior_info.type",
                         "cond": {
                           "type": "eq",
-                          "value": "default_maintenance"
+                          "value": "df17b079-03fb-4a4f-a19d-14d9c0c3563b"
                         }
                       }
                     ]
@@ -11898,6 +13380,14 @@ paths:
                 value: {
                   "title": "Template",
                   "type": "alarm_more_infos",
+                  "content": "Name: {{ alarm.v.display_name }}"
+                }
+              alarm_export_to_pdf:
+                summary: Alarm export to pdf template
+                description: Create a template for alarms list.
+                value: {
+                  "title": "Template",
+                  "type": "alarm_export_to_pdf",
                   "content": "Name: {{ alarm.v.display_name }}"
                 }
         required: true

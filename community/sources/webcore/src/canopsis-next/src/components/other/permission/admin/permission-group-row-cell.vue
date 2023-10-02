@@ -12,7 +12,7 @@
 <script>
 import { CRUD_ACTIONS } from '@/constants';
 
-import { getPermissionActions, getCheckboxValue } from '@/helpers/permission';
+import { getPermissionActions, getCheckboxValue } from '@/helpers/entities/permissions/list';
 
 export default {
   model: {

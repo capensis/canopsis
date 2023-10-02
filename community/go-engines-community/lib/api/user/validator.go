@@ -6,7 +6,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -19,14 +18,18 @@ type Validator interface {
 }
 
 type baseValidator struct {
-	dbClient     mongo.DbClient
-	dbCollection mongo.DbCollection
+	dbCollection           mongo.DbCollection
+	dbRoleCollection       mongo.DbCollection
+	dbViewCollection       mongo.DbCollection
+	dbColorThemeCollection mongo.DbCollection
 }
 
 func NewValidator(dbClient mongo.DbClient) Validator {
 	return &baseValidator{
-		dbClient:     dbClient,
-		dbCollection: dbClient.Collection(mongo.RightsMongoCollection),
+		dbCollection:           dbClient.Collection(mongo.UserCollection),
+		dbRoleCollection:       dbClient.Collection(mongo.RoleCollection),
+		dbViewCollection:       dbClient.Collection(mongo.ViewMongoCollection),
+		dbColorThemeCollection: dbClient.Collection(mongo.ColorThemeCollection),
 	}
 }
 
@@ -81,7 +84,7 @@ func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.St
 			}
 		} else if err == mongodriver.ErrNoDocuments {
 			// Check unique by name
-			err := v.dbCollection.FindOne(ctx, bson.M{"crecord_name": r.Name}).Decode(&res)
+			err := v.dbCollection.FindOne(ctx, bson.M{"name": r.Name}).Decode(&res)
 			if err == nil {
 				if res.ID != id {
 					sl.ReportError(r.Name, "Name", "Name", "unique", "")
@@ -96,7 +99,7 @@ func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.St
 
 	// Validate default view
 	if r.DefaultView != "" {
-		err := v.dbClient.Collection(mongo.ViewMongoCollection).FindOne(ctx, bson.M{"_id": r.DefaultView}).Err()
+		err := v.dbViewCollection.FindOne(ctx, bson.M{"_id": r.DefaultView}).Err()
 		if err != nil {
 			if err == mongodriver.ErrNoDocuments {
 				sl.ReportError(r.DefaultView, "DefaultView", "DefaultView", "not_exist", "")
@@ -106,11 +109,21 @@ func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.St
 		}
 	}
 	// Validate role
-	if r.Role != "" {
-		err := v.dbCollection.FindOne(ctx, bson.M{"_id": r.Role, "crecord_type": model.LineTypeRole}).Err()
+	if len(r.Roles) > 0 {
+		c, err := v.dbRoleCollection.CountDocuments(ctx, bson.M{"_id": bson.M{"$in": r.Roles}})
+		if err != nil {
+			panic(err)
+		}
+		if int(c) < len(r.Roles) {
+			sl.ReportError(r.Roles, "Roles", "Roles", "not_exist", "")
+		}
+	}
+	// Validate UITheme
+	if r.UITheme != "" {
+		err := v.dbColorThemeCollection.FindOne(ctx, bson.M{"_id": r.UITheme}).Err()
 		if err != nil {
 			if err == mongodriver.ErrNoDocuments {
-				sl.ReportError(r.Role, "Role", "Role", "not_exist", "")
+				sl.ReportError(r.UITheme, "UITheme", "UITheme", "not_exist", "")
 			} else {
 				panic(err)
 			}

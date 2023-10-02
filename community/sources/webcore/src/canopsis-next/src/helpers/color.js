@@ -1,82 +1,39 @@
-import { get, camelCase, isNumber } from 'lodash';
 import tinycolor from 'tinycolor2';
 
-import { COLORS } from '@/config';
-import { PRO_ENGINES, COLOR_INDICATOR_TYPES, ENTITIES_STATES_STYLES, EVENT_ENTITY_COLORS_BY_TYPE } from '@/constants';
+/**
+ * @typedef {Object} ReadableColorOptions
+ * @property {'AA' | 'AAA'} level
+ * @property {'small' | 'large'} size
+ */
+
+/**
+ * Check color is readable
+ *
+ * @param {string} firstColor
+ * @param {string} secondColor
+ * @param {ReadableColorOptions} [options = {}]
+ * @return {boolean}
+ */
+export const isReadableColor = (firstColor, secondColor, options = {}) => tinycolor.isReadable(
+  firstColor,
+  secondColor,
+  options,
+);
 
 /**
  * Get most readable text color ('white' or 'black')
  *
  * @param {string} color
- * @param {{ level: 'AA' | 'AAA', size: 'small' | 'large' }} [options = {}]
+ * @param {ReadableColorOptions} [options = {}]
  */
 export const getMostReadableTextColor = (color, options = {}) => {
   if (!color) {
     return 'black';
   }
 
-  const isWhiteReadable = tinycolor.isReadable(color, 'white', options);
+  const isWhiteReadable = isReadableColor(color, 'white', options);
 
   return isWhiteReadable ? 'white' : 'black';
-};
-
-/**
- * Get color by entity impact state
- *
- * @param {number} value
- * @returns {string}
- */
-export const getImpactStateColor = value => COLORS.impactState[value];
-
-/**
- * Get color by entity impact state
- *
- * @param {number} value
- * @returns {string}
- */
-export const getEntityStateColor = value => get(ENTITIES_STATES_STYLES, [value, 'color']);
-
-/**
- * Get color for a entity by colorIndicator and isGrey parameters
- *
- * @param {Service | Entity | {}} [entity = {}]
- * @param {string} [colorIndicator = COLOR_INDICATOR_TYPES.state]
- * @returns {string|*}
- */
-export const getEntityColor = (entity = {}, colorIndicator = COLOR_INDICATOR_TYPES.state) => {
-  if (entity.is_grey) {
-    return COLORS.state.pause;
-  }
-
-  if (colorIndicator === COLOR_INDICATOR_TYPES.state) {
-    const state = isNumber(entity.state) ? entity.state : entity.state?.val;
-
-    return getEntityStateColor(state);
-  }
-
-  return getImpactStateColor(entity.impact_state);
-};
-
-/**
- * Get color for a node
- *
- * @param {HealthcheckNode} node
- * @returns {string}
- */
-export const getHealthcheckNodeColor = (node = {}) => {
-  if (node.is_unknown) {
-    return COLORS.healthcheck.unknown;
-  }
-
-  if (!node.is_running || node.is_queue_overflown) {
-    return COLORS.healthcheck.error;
-  }
-
-  if (node.is_too_few_instances || node.is_diff_instances_config) {
-    return COLORS.healthcheck.warning;
-  }
-
-  return PRO_ENGINES.includes(node.name) ? COLORS.secondary : COLORS.primary;
 };
 
 /**
@@ -115,18 +72,12 @@ export const colorToHex = color => tinycolor(color).toHexString();
 export const isValidColor = color => tinycolor(color).isValid();
 
 /**
- * Get color for metric
+ * Check color is dark
  *
- * @param {string} metric
+ * @param {string|Object} color
+ * @return {boolean}
  */
-export const getMetricColor = metric => COLORS.metrics[camelCase(metric)] || COLORS.secondary;
-
-/**
- * Get color for entity event
- *
- * @param {string} type
- */
-export const getEntityEventColor = type => EVENT_ENTITY_COLORS_BY_TYPE[type];
+export const isDarkColor = color => tinycolor(color).isDark();
 
 /**
  * Get darken color
@@ -137,3 +88,28 @@ export const getEntityEventColor = type => EVENT_ENTITY_COLORS_BY_TYPE[type];
 export const getDarkenColor = (color, amount) => tinycolor(color)
   .darken(amount)
   .toString();
+
+/**
+ * Check property is css variable
+ *
+ * @param {string} property
+ * @returns {boolean}
+ */
+export const isCSSVariable = property => /^var\(.+\)$/.test(property);
+
+/**
+ * Get css variable name
+ *
+ * @param {string} property
+ * @returns {string}
+ */
+export const getCSSVariableName = property => property.match(/^var\((.+)\)$/)[1];
+
+/**
+ * Get darken color
+ *
+ * @param {Element} element
+ * @param {string} property
+ */
+export const getCSSVariableColor = (element, property) => getComputedStyle(element)
+  .getPropertyValue(property);

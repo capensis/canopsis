@@ -17,7 +17,7 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { formToShareToken, shareTokenToForm } from '@/helpers/forms/share-token';
+import { formToShareToken, shareTokenToForm } from '@/helpers/entities/share-ticket/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

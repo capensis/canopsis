@@ -2,13 +2,11 @@ import { range } from 'lodash';
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorEntitiesModule } from '@unit/utils/store';
 
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import PbehaviorEntities from '@/components/other/pbehavior/pbehaviors/partials/pbehavior-entities.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
@@ -36,8 +34,8 @@ describe('pbehavior-entities', () => {
 
   const store = createMockedStoreModules([pbehaviorEntitiesModule]);
 
-  const factory = generateShallowRenderer(PbehaviorEntities, { localVue, stubs });
-  const snapshotFactory = generateRenderer(PbehaviorEntities, { localVue, stubs });
+  const factory = generateShallowRenderer(PbehaviorEntities, { stubs });
+  const snapshotFactory = generateRenderer(PbehaviorEntities, { stubs });
 
   test('Pbehavior entities fetched after mount', async () => {
     const pbehaviorId = Faker.datatype.string();

@@ -14,14 +14,16 @@ Feature: get a PBehavior
           "_id": "test-pbehavior-to-get-by-name-1",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "comments": [
             {
               "_id": "test-pbehavior-to-get-by-name-1-comment-1",
               "author": {
                 "_id": "root",
-                "name": "root"
+                "name": "root",
+                "display_name": "root John Doe admin@canopsis.net"
               },
               "ts": 1592215337,
               "message": "test-pbehavior-to-get-by-name-1-comment-1-message"
@@ -30,7 +32,8 @@ Feature: get a PBehavior
               "_id": "test-pbehavior-to-get-by-name-1-comment-2",
               "author": {
                 "_id": "root",
-                "name": "root"
+                "name": "root",
+                "display_name": "root John Doe admin@canopsis.net"
               },
               "ts": 1592215337,
               "message": "test-pbehavior-to-get-by-name-1-comment-2-message"
@@ -112,7 +115,8 @@ Feature: get a PBehavior
           "_id": "test-pbehavior-to-get-by-name-2",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "comments": [],
           "color": "",
@@ -153,7 +157,8 @@ Feature: get a PBehavior
           "_id": "test-pbehavior-to-get-by-name-3",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "comments": [],
           "color": "#FFFFFF",
@@ -352,14 +357,16 @@ Feature: get a PBehavior
       "_id": "test-pbehavior-to-get-by-name-1",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "comments": [
         {
           "_id": "test-pbehavior-to-get-by-name-1-comment-1",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "ts": 1592215337,
           "message": "test-pbehavior-to-get-by-name-1-comment-1-message"
@@ -368,7 +375,8 @@ Feature: get a PBehavior
           "_id": "test-pbehavior-to-get-by-name-1-comment-2",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "ts": 1592215337,
           "message": "test-pbehavior-to-get-by-name-1-comment-2-message"
@@ -434,6 +442,7 @@ Feature: get a PBehavior
         "description": "test-reason-to-pbh-edit-description"
       },
       "rrule": "",
+      "rrule_end": null,
       "tstart": 1591172881,
       "tstop": 1591536400,
       "type": {

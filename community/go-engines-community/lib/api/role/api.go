@@ -12,6 +12,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type API interface {
+	common.CrudAPI
+	ListTemplates(c *gin.Context)
+}
+
 type api struct {
 	store        Store
 	actionLogger logger.ActionLogger
@@ -20,7 +25,7 @@ type api struct {
 func NewApi(
 	store Store,
 	actionLogger logger.ActionLogger,
-) common.CrudAPI {
+) API {
 	return &api{
 		store:        store,
 		actionLogger: actionLogger,
@@ -28,7 +33,7 @@ func NewApi(
 }
 
 // List
-// @Success 200 {object} common.PaginatedListResponse{data=[]Role}
+// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
 	var query ListRequest
 	query.Query = pagination.GetDefaultQuery()
@@ -53,7 +58,7 @@ func (a *api) List(c *gin.Context) {
 }
 
 // Get
-// @Success 200 {object} Role
+// @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
 	role, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
@@ -69,7 +74,7 @@ func (a *api) Get(c *gin.Context) {
 
 // Create
 // @Param body body CreateRequest true "body"
-// @Success 201 {object} Role
+// @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
 	if err := c.ShouldBind(&request); err != nil {
@@ -99,7 +104,7 @@ func (a *api) Create(c *gin.Context) {
 
 // Update
 // @Param body body EditRequest true "body"
-// @Success 200 {object} Role
+// @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
 	id := c.Param("id")
 
@@ -170,4 +175,17 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// ListTemplates
+// @Success 200 {object} TemplateResponse
+func (a *api) ListTemplates(c *gin.Context) {
+	tpls, err := a.store.GetTemplates(c)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, TemplateResponse{
+		Data: tpls,
+	})
 }

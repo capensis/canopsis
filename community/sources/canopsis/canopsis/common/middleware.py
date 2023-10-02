@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 from canopsis.logger import Logger
 

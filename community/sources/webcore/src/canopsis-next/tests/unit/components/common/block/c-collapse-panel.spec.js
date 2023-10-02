@@ -1,16 +1,10 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import CCollapsePanel from '@/components/common/block/c-collapse-panel.vue';
 
-const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(CCollapsePanel, {
-  localVue,
-
-  ...options,
-});
-
 describe('c-collapse-panel', () => {
+  const snapshotFactory = generateRenderer(CCollapsePanel);
+
   it('Renders `c-collapse-panel` with default props', () => {
     const wrapper = snapshotFactory();
 

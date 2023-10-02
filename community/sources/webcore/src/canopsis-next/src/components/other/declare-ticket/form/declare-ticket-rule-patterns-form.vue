@@ -7,7 +7,8 @@
     some-required,
     with-pbehavior,
     with-alarm,
-    with-entity
+    with-entity,
+    both-counters
   )
 </template>
 

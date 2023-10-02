@@ -6,11 +6,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarmaction"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/appinfo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/associativetable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
 	libcontextgraphV1 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph/v1"
@@ -31,6 +34,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/linkrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/maintenance"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/notification"
@@ -63,6 +67,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgettemplate"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -77,6 +82,7 @@ import (
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/userprovider"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -91,6 +97,8 @@ func RegisterRoutes(
 	linkGenerator link.Generator,
 	dbClient mongo.DbClient,
 	pgPoolProvider postgres.PoolProvider,
+	amqpChannel amqp.Channel,
+	apiConfigProvider config.ApiConfigProvider,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	templateConfigProvider config.TemplateConfigProvider,
 	pbhEntityTypeResolver libpbehavior.EntityTypeResolver,
@@ -109,16 +117,21 @@ func RegisterRoutes(
 	broadcastMessageChan chan<- bool,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
+	authorProvider author.Provider,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
 	authMiddleware := security.GetAuthMiddleware()
 	security.RegisterCallbackRoutes(router, dbClient)
+
+	maintenanceAdapter := config.NewMaintenanceAdapter(dbClient)
 	authApi := auth.NewApi(
 		security.GetTokenService(),
 		security.GetTokenProviders(),
 		security.GetAuthProviders(),
 		websocketStore,
+		maintenanceAdapter,
+		enforcer,
 		security.GetCookieOptions().FileAccessName,
 		security.GetCookieOptions().MaxAge,
 		logger,
@@ -126,13 +139,15 @@ func RegisterRoutes(
 	sessionauthApi := sessionauth.NewApi(
 		sessionStore,
 		security.GetAuthProviders(),
+		maintenanceAdapter,
+		enforcer,
 		logger,
 	)
 	router.POST("/auth", sessionauthApi.LoginHandler())
 
 	sessionProtected := router.Group("")
 	{
-		sessionProtected.Use(middleware.SessionAuth(dbClient, sessionStore), middleware.OnlyAuth())
+		sessionProtected.Use(middleware.SessionAuth(dbClient, apiConfigProvider, sessionStore), middleware.OnlyAuth())
 		sessionProtected.GET("/logout", sessionauthApi.LogoutHandler())
 	}
 
@@ -151,7 +166,7 @@ func RegisterRoutes(
 		accountRouter := protected.Group("/account/me")
 		{
 			accountRouter.Use(middleware.OnlyAuth())
-			accountAPI := account.NewApi(account.NewStore(dbClient, security.GetPasswordEncoder()), actionLogger)
+			accountAPI := account.NewApi(account.NewStore(dbClient, security.GetPasswordEncoder(), authorProvider), actionLogger)
 			accountRouter.GET("", accountAPI.Me)
 			accountRouter.PUT("", accountAPI.Update)
 		}
@@ -161,13 +176,13 @@ func RegisterRoutes(
 		userPreferencesRouter := protected.Group("/user-preferences")
 		{
 			userPreferencesRouter.Use(middleware.OnlyAuth())
-			userPreferencesApi := userpreferences.NewApi(userpreferences.NewStore(dbClient), widget.NewStore(dbClient), enforcer, actionLogger)
+			userPreferencesApi := userpreferences.NewApi(userpreferences.NewStore(dbClient, authorProvider), widget.NewStore(dbClient, authorProvider), enforcer, actionLogger)
 			userPreferencesRouter.GET("/:id", userPreferencesApi.Get)
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
 
-		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder(), websocketStore), actionLogger, logger,
-			metricsUserMetaUpdater)
+		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder(), websocketStore, authorProvider),
+			actionLogger, logger, metricsUserMetaUpdater)
 		userRouter := protected.Group("/users")
 		{
 			userRouter.POST("",
@@ -193,9 +208,9 @@ func RegisterRoutes(
 				userApi.Delete,
 			)
 		}
+		roleApi := role.NewApi(role.NewStore(dbClient), actionLogger)
 		roleRouter := protected.Group("/roles")
 		{
-			roleApi := role.NewApi(role.NewStore(dbClient), actionLogger)
 			roleRouter.POST("",
 				middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer),
 				roleApi.Create,
@@ -218,6 +233,10 @@ func RegisterRoutes(
 				roleApi.Delete,
 			)
 		}
+		protected.GET("/role-templates",
+			middleware.Authorize(apisecurity.PermAcl, model.PermissionRead, enforcer),
+			roleApi.ListTemplates,
+		)
 		permissionRouter := protected.Group("/permissions")
 		{
 			permissionApi := permission.NewApi(permission.NewStore(dbClient))
@@ -227,7 +246,7 @@ func RegisterRoutes(
 			)
 		}
 
-		sharetokenApi := sharetoken.NewApi(sharetoken.NewStore(dbClient, security.GetTokenGenerator()), actionLogger)
+		sharetokenApi := sharetoken.NewApi(sharetoken.NewStore(dbClient, security.GetTokenGenerator(), authorProvider), actionLogger)
 		sharetokenRouter := protected.Group("/share-tokens")
 		{
 			sharetokenRouter.POST("",
@@ -244,8 +263,10 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(dbClient, linkGenerator, timezoneConfigProvider, logger)
-		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, logger)
+		alarmStore := alarm.NewStore(dbClient, linkGenerator, timezoneConfigProvider, authorProvider, json.NewDecoder(), logger)
+		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, json.NewEncoder(), logger)
+		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(dbClient, amqpChannel, "",
+			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, logger), logger)
 		alarmRouter := protected.Group("/alarms")
 		{
 			alarmRouter.GET(
@@ -257,6 +278,46 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
 				alarmAPI.Get,
+			)
+			alarmRouter.PUT(
+				"/:id/ack",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+				alarmActionAPI.Ack,
+			)
+			alarmRouter.PUT(
+				"/:id/ackremove",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+				alarmActionAPI.AckRemove,
+			)
+			alarmRouter.PUT(
+				"/:id/snooze",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+				alarmActionAPI.Snooze,
+			)
+			alarmRouter.PUT(
+				"/:id/cancel",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+				alarmActionAPI.Cancel,
+			)
+			alarmRouter.PUT(
+				"/:id/uncancel",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+				alarmActionAPI.Uncancel,
+			)
+			alarmRouter.PUT(
+				"/:id/assocticket",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+				alarmActionAPI.AssocTicket,
+			)
+			alarmRouter.PUT(
+				"/:id/comment",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+				alarmActionAPI.Comment,
+			)
+			alarmRouter.PUT(
+				"/:id/changestate",
+				middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+				alarmActionAPI.ChangeState,
 			)
 		}
 		protected.POST(
@@ -322,7 +383,7 @@ func RegisterRoutes(
 			exportConfigurationAPI.Export,
 		)
 
-		entityStore := entity.NewStore(dbClient, timezoneConfigProvider)
+		entityStore := entity.NewStore(dbClient, timezoneConfigProvider, json.NewDecoder())
 		entityAPI := entity.NewApi(
 			entityStore,
 			exportExecutor,
@@ -330,6 +391,7 @@ func RegisterRoutes(
 			entityPublChan,
 			metricsEntityMetaUpdater,
 			actionLogger,
+			json.NewEncoder(),
 			logger,
 		)
 
@@ -362,12 +424,12 @@ func RegisterRoutes(
 		protected.GET(
 			"/pbehavior-ics/:id",
 			middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionRead, enforcer),
-			pbehaviorics.GetICS(pbehaviorics.NewStore(dbClient), pbehaviorics.NewService(timezoneConfigProvider)),
+			pbehaviorics.GetICS(pbehaviorics.NewStore(dbClient, authorProvider), pbehaviorics.NewService(timezoneConfigProvider)),
 		)
 
 		// event-filter API
 		eventFilterApi := eventfilter.NewApi(
-			eventfilter.NewStore(dbClient),
+			eventfilter.NewStore(dbClient, authorProvider),
 			actionLogger,
 			logger,
 			common.NewPatternFieldsTransformer(dbClient),
@@ -397,6 +459,14 @@ func RegisterRoutes(
 				middleware.SetAuthor(),
 				eventFilterApi.Update)
 		}
+		protected.GET(
+			"/eventfilter/:id/failures",
+			middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionRead, enforcer),
+			eventFilterApi.ListFailures)
+		protected.PUT(
+			"/eventfilter/:id/failures",
+			middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionCreate, enforcer),
+			eventFilterApi.ReadFailures)
 
 		pbehaviorApi := pbehavior.NewApi(
 			pbehavior.NewStore(
@@ -405,6 +475,7 @@ func RegisterRoutes(
 				pbhEntityTypeResolver,
 				libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(dbClient), json.NewDecoder()),
 				timezoneConfigProvider,
+				authorProvider,
 			),
 			pbhComputeChan,
 			common.NewPatternFieldsTransformer(dbClient),
@@ -451,7 +522,7 @@ func RegisterRoutes(
 		}
 		pbehaviorCommentRouter := protected.Group("/pbehavior-comments")
 		{
-			pbehaviorCommentAPI := pbehaviorcomment.NewApi(pbehaviorcomment.NewStore(dbClient))
+			pbehaviorCommentAPI := pbehaviorcomment.NewApi(pbehaviorcomment.NewStore(dbClient, authorProvider))
 			pbehaviorCommentRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer),
@@ -608,15 +679,15 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjPbehaviorReason, model.PermissionDelete, enforcer),
 				reasonAPI.Delete)
 		}
+		exceptionAPI := pbehaviorexception.NewApi(
+			pbehaviorexception.NewModelTransformer(dbClient),
+			pbehaviorexception.NewStore(dbClient, timezoneConfigProvider),
+			pbhComputeChan,
+			actionLogger,
+			logger,
+		)
 		exceptionRouter := protected.Group("/pbehavior-exceptions")
 		{
-			exceptionAPI := pbehaviorexception.NewApi(
-				pbehaviorexception.NewModelTransformer(dbClient),
-				pbehaviorexception.NewStore(dbClient),
-				pbhComputeChan,
-				actionLogger,
-				logger,
-			)
 			exceptionRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjPbehaviorException, model.PermissionCreate, enforcer),
@@ -639,6 +710,12 @@ func RegisterRoutes(
 				exceptionAPI.Delete)
 		}
 
+		protected.POST(
+			"/pbehavior-exception-import",
+			middleware.Authorize(apisecurity.ObjPbehaviorException, model.PermissionCreate, enforcer),
+			exceptionAPI.Import,
+		)
+
 		weatherRouter := protected.Group("/weather-services")
 		{
 			weatherAPI := serviceweather.NewApi(serviceweather.NewStore(
@@ -646,6 +723,7 @@ func RegisterRoutes(
 				linkGenerator,
 				alarmStore,
 				timezoneConfigProvider,
+				authorProvider,
 				logger,
 			))
 			weatherRouter.GET(
@@ -662,7 +740,7 @@ func RegisterRoutes(
 
 		entityCategoryRouter := protected.Group("/entity-categories")
 		{
-			entityCategoryAPI := entitycategory.NewApi(entitycategory.NewStore(dbClient), actionLogger)
+			entityCategoryAPI := entitycategory.NewApi(entitycategory.NewStore(dbClient, authorProvider), actionLogger)
 			entityCategoryRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjEntityCategory, model.PermissionCreate, enforcer),
@@ -692,7 +770,7 @@ func RegisterRoutes(
 			)
 		}
 
-		eventApi := event.NewApi(publisher, dbClient, userInterfaceConfig.Get().IsAllowChangeSeverityToInfo, logger)
+		eventApi := event.NewApi(publisher, dbClient, logger)
 		eventRouter := protected.Group("/event")
 		{
 			eventRouter.POST(
@@ -702,7 +780,7 @@ func RegisterRoutes(
 		}
 
 		securityConfig := security.GetConfig().Security
-		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient, securityConfig.AuthProviders,
+		appInfoApi := appinfo.NewApi(appinfo.NewStore(dbClient, maintenanceAdapter, securityConfig.AuthProviders,
 			securityConfig.Cas.Title, securityConfig.Saml.Title))
 		protected.GET("app-info", appInfoApi.GetAppInfo)
 		appInfoRouter := protected.Group("/internal")
@@ -729,7 +807,7 @@ func RegisterRoutes(
 			engineinfo.GetRunInfo(runInfoManager),
 		)
 
-		viewAPI := view.NewApi(view.NewStore(dbClient, viewtab.NewStore(dbClient, widget.NewStore(dbClient))), enforcer, actionLogger)
+		viewAPI := view.NewApi(view.NewStore(dbClient, viewtab.NewStore(dbClient, widget.NewStore(dbClient, authorProvider), authorProvider), authorProvider), enforcer, actionLogger)
 		viewRouter := protected.Group("/views")
 		{
 			viewRouter.POST(
@@ -767,7 +845,7 @@ func RegisterRoutes(
 			)
 		}
 
-		viewTabAPI := viewtab.NewApi(viewtab.NewStore(dbClient, widget.NewStore(dbClient)), enforcer, actionLogger)
+		viewTabAPI := viewtab.NewApi(viewtab.NewStore(dbClient, widget.NewStore(dbClient, authorProvider), authorProvider), enforcer, actionLogger)
 		viewTabRouter := protected.Group("/view-tabs")
 		{
 			viewTabRouter.POST(
@@ -795,7 +873,7 @@ func RegisterRoutes(
 		}
 
 		widgetAPI := widget.NewApi(
-			widget.NewStore(dbClient),
+			widget.NewStore(dbClient, authorProvider),
 			enforcer,
 			widget.NewRequestTransformer(common.NewPatternFieldsTransformer(dbClient), dbClient),
 			actionLogger,
@@ -826,7 +904,7 @@ func RegisterRoutes(
 			)
 		}
 
-		widgetFilterAPI := widgetfilter.NewApi(widgetfilter.NewStore(dbClient), enforcer, widgetfilter.NewPatternFieldsTransformer(dbClient), actionLogger)
+		widgetFilterAPI := widgetfilter.NewApi(widgetfilter.NewStore(dbClient, authorProvider), enforcer, widgetfilter.NewPatternFieldsTransformer(dbClient), actionLogger)
 		widgetFilterRouter := protected.Group("/widget-filters")
 		{
 			widgetFilterRouter.GET(
@@ -864,7 +942,7 @@ func RegisterRoutes(
 			widgetFilterAPI.UpdatePositions,
 		)
 
-		widgetTemplateAPI := widgettemplate.NewApi(widgettemplate.NewStore(dbClient), actionLogger)
+		widgetTemplateAPI := widgettemplate.NewApi(widgettemplate.NewStore(dbClient, authorProvider), actionLogger)
 		widgetTemplateRouter := protected.Group("/widget-templates")
 		{
 			widgetTemplateRouter.GET(
@@ -896,7 +974,7 @@ func RegisterRoutes(
 			)
 		}
 
-		viewGroupAPI := viewgroup.NewApi(viewgroup.NewStore(dbClient), actionLogger)
+		viewGroupAPI := viewgroup.NewApi(viewgroup.NewStore(dbClient, authorProvider), actionLogger)
 		viewGroupRouter := protected.Group("/view-groups")
 		{
 			viewGroupRouter.POST(
@@ -991,7 +1069,7 @@ func RegisterRoutes(
 
 		// broadcast message API
 		broadcastMessageApi := broadcastmessage.NewApi(
-			broadcastmessage.NewStore(dbClient),
+			broadcastmessage.NewStore(dbClient, maintenanceAdapter),
 			broadcastMessageChan,
 			actionLogger,
 		)
@@ -1046,7 +1124,7 @@ func RegisterRoutes(
 			)
 		}
 
-		scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient), actionLogger, common.NewPatternFieldsTransformer(dbClient), logger)
+		scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient, authorProvider), actionLogger, common.NewPatternFieldsTransformer(dbClient), logger)
 		scenarioRouter := protected.Group("/scenarios")
 		{
 			scenarioRouter.POST(
@@ -1142,7 +1220,7 @@ func RegisterRoutes(
 
 		playlistRouter := protected.Group("/playlists")
 		{
-			playlistApi := playlist.NewApi(playlist.NewStore(dbClient), viewtab.NewStore(dbClient, widget.NewStore(dbClient)), enforcer, actionLogger)
+			playlistApi := playlist.NewApi(playlist.NewStore(dbClient, authorProvider), viewtab.NewStore(dbClient, widget.NewStore(dbClient, authorProvider), authorProvider), enforcer, actionLogger)
 			playlistRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjPlaylist, model.PermissionCreate, enforcer),
@@ -1178,7 +1256,7 @@ func RegisterRoutes(
 			)
 		}
 
-		idleRuleAPI := idlerule.NewApi(idlerule.NewStore(dbClient), common.NewPatternFieldsTransformer(dbClient), actionLogger, logger)
+		idleRuleAPI := idlerule.NewApi(idlerule.NewStore(dbClient, authorProvider), common.NewPatternFieldsTransformer(dbClient), actionLogger, logger)
 		idleRuleRouter := protected.Group("/idle-rules")
 		{
 			idleRuleRouter.POST(
@@ -1210,8 +1288,8 @@ func RegisterRoutes(
 			)
 		}
 
-		patternAPI := pattern.NewApi(pattern.NewStore(dbClient, pbhComputeChan, entityPublChan, logger), userInterfaceConfig,
-			enforcer, actionLogger, logger)
+		patternAPI := pattern.NewApi(pattern.NewStore(dbClient, pbhComputeChan, entityPublChan, authorProvider, logger),
+			userInterfaceConfig, enforcer, actionLogger, logger)
 		patternRouter := protected.Group("/patterns")
 		{
 			patternRouter.Use(middleware.OnlyAuth())
@@ -1239,18 +1317,18 @@ func RegisterRoutes(
 			)
 		}
 		protected.POST(
-			"/patterns-count",
+			"/patterns-alarms-count",
 			middleware.OnlyAuth(),
-			patternAPI.Count,
+			patternAPI.CountAlarms,
 		)
 		protected.POST(
-			"/patterns-alarms",
+			"/patterns-entities-count",
 			middleware.OnlyAuth(),
-			patternAPI.GetAlarms,
+			patternAPI.CountEntities,
 		)
 
 		linkRuleAPI := linkrule.NewApi(
-			linkrule.NewStore(dbClient),
+			linkrule.NewStore(dbClient, authorProvider),
 			common.NewPatternFieldsTransformer(dbClient),
 			actionLogger,
 			logger,
@@ -1291,6 +1369,73 @@ func RegisterRoutes(
 				"",
 				middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionRead, enforcer),
 				linkRuleAPI.GetCategories,
+			)
+		}
+
+		alarmTagAPI := alarmtag.NewApi(
+			alarmtag.NewStore(dbClient, authorProvider),
+			common.NewPatternFieldsTransformer(dbClient),
+			actionLogger,
+			logger,
+		)
+		alarmTagRouter := protected.Group("/alarm-tags")
+		{
+			alarmTagRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
+				alarmTagAPI.List,
+			)
+			alarmTagRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionCreate, enforcer),
+				middleware.SetAuthor(),
+				alarmTagAPI.Create,
+			)
+			alarmTagRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionRead, enforcer),
+				alarmTagAPI.Get,
+			)
+			alarmTagRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				alarmTagAPI.Update,
+			)
+			alarmTagRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionDelete, enforcer),
+				alarmTagAPI.Delete,
+			)
+		}
+
+		colorThemeApi := colortheme.NewApi(colortheme.NewStore(dbClient), actionLogger, logger)
+		colorThemeRouter := protected.Group("/color-themes")
+		{
+			colorThemeRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionCreate, enforcer),
+				colorThemeApi.Create,
+			)
+			colorThemeRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionRead, enforcer),
+				colorThemeApi.List,
+			)
+			colorThemeRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionRead, enforcer),
+				colorThemeApi.Get,
+			)
+			colorThemeRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionUpdate, enforcer),
+				colorThemeApi.Update,
+			)
+			colorThemeRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionDelete, enforcer),
+				colorThemeApi.Delete,
 			)
 		}
 
@@ -1478,6 +1623,70 @@ func RegisterRoutes(
 					linkRuleAPI.BulkDelete,
 				)
 			}
+
+			alarmRouter := bulkRouter.Group("alarms")
+			{
+				alarmRouter.PUT(
+					"/ack",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+					alarmActionAPI.BulkAck,
+				)
+				alarmRouter.PUT(
+					"/ackremove",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+					alarmActionAPI.BulkAckRemove,
+				)
+				alarmRouter.PUT(
+					"/snooze",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+					alarmActionAPI.BulkSnooze,
+				)
+				alarmRouter.PUT(
+					"/cancel",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+					alarmActionAPI.BulkCancel,
+				)
+				alarmRouter.PUT(
+					"/uncancel",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+					alarmActionAPI.BulkUncancel,
+				)
+				alarmRouter.PUT(
+					"/assocticket",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+					alarmActionAPI.BulkAssocTicket,
+				)
+				alarmRouter.PUT(
+					"/comment",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+					alarmActionAPI.BulkComment,
+				)
+				alarmRouter.PUT(
+					"/changestate",
+					middleware.Authorize(apisecurity.PermAlarmUpdate, model.PermissionCan, enforcer),
+					alarmActionAPI.BulkChangeState,
+				)
+			}
+
+			alarmTagRouter := bulkRouter.Group("/alarm-tags")
+			{
+				alarmTagRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionDelete, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					alarmTagAPI.BulkDelete,
+				)
+			}
+
+			colorThemeRouter := bulkRouter.Group("/color-themes")
+			{
+				colorThemeRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionDelete, enforcer),
+					middleware.PreProcessBulk(conf, false),
+					colorThemeApi.BulkDelete,
+				)
+			}
 		}
 
 		dateStorageRouter := protected.Group("data-storage")
@@ -1535,7 +1744,7 @@ func RegisterRoutes(
 		resolveRuleRouter := protected.Group("/resolve-rules")
 		{
 			resolveRuleAPI := resolverule.NewApi(
-				resolverule.NewStore(dbClient),
+				resolverule.NewStore(dbClient, authorProvider),
 				common.NewPatternFieldsTransformer(dbClient),
 				actionLogger,
 			)
@@ -1570,7 +1779,7 @@ func RegisterRoutes(
 
 		flappingRuleRouter := protected.Group("/flapping-rules")
 		{
-			flappingRuleAPI := flappingrule.NewApi(flappingrule.NewStore(dbClient), common.NewPatternFieldsTransformer(dbClient), actionLogger)
+			flappingRuleAPI := flappingrule.NewApi(flappingrule.NewStore(dbClient, authorProvider), common.NewPatternFieldsTransformer(dbClient), actionLogger)
 			flappingRuleRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionCreate, enforcer),
@@ -1610,16 +1819,6 @@ func RegisterRoutes(
 			entityInfoDictionaryApi.ListValues,
 		)
 
-		alarmTagRouter := protected.Group("/alarm-tags")
-		{
-			alarmTagAPI := alarmtag.NewApi(alarmtag.NewStore(dbClient))
-			alarmTagRouter.GET(
-				"",
-				middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
-				alarmTagAPI.List,
-			)
-		}
-
 		techMetricsRouter := protected.Group("/tech-metrics-export")
 		{
 			techMetricsAPI := techmetrics.NewApi(techMetricsTaskExecutor, timezoneConfigProvider)
@@ -1654,10 +1853,29 @@ func RegisterRoutes(
 				middleware.OnlyAuth(),
 				templateValidatorApi.ValidateScenarios,
 			)
+			templateValidatorRouter.POST(
+				"/event-filter-rules",
+				middleware.OnlyAuth(),
+				templateValidatorApi.ValidateEventFilterRules,
+			)
 		}
 		protected.GET(
 			"/template-vars",
 			templateValidatorApi.GetEnvVars,
+		)
+
+		maintenanceApi := maintenance.NewApi(
+			maintenance.NewStore(
+				dbClient,
+				userprovider.NewMongoProvider(dbClient, apiConfigProvider),
+				security.GetTokenService(),
+				sessionStore,
+			),
+		)
+		protected.PUT(
+			"/maintenance",
+			middleware.Authorize(apisecurity.PermMaintenance, model.PermissionCan, enforcer),
+			maintenanceApi.Maintenance,
 		)
 	}
 }

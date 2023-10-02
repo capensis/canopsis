@@ -1,15 +1,6 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import HorizontalBar from '@/components/common/chart/horizontal-bar.vue';
-
-const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(HorizontalBar, {
-  localVue,
-  attachTo: document.body,
-
-  ...options,
-});
 
 describe('horizontal-bar', () => {
   const labels = [1, 2, 3, 4];
@@ -47,6 +38,8 @@ describe('horizontal-bar', () => {
       },
     },
   };
+
+  const snapshotFactory = generateRenderer(HorizontalBar, { attachTo: document.body });
 
   it('Renders `horizontal-bar` with default props and options.', () => {
     const wrapper = snapshotFactory({

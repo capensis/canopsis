@@ -1,14 +1,12 @@
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import ClickOutside from '@/services/click-outside';
 
 import ConfirmAckWithTicket from '@/components/modals/alarm/confirm-ack-with-ticket.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
@@ -19,33 +17,6 @@ const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
 };
 
-const factory = (options = {}) => shallowMount(ConfirmAckWithTicket, {
-  localVue,
-  stubs,
-  attachTo: document.body,
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(ConfirmAckWithTicket, {
-  localVue,
-  stubs: snapshotStubs,
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
 const selectContinueWithTicketButton = wrapper => selectButtons(wrapper).at(2);
 const selectContinueButton = wrapper => selectButtons(wrapper).at(1);
@@ -53,6 +24,24 @@ const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
 
 describe('confirm-ack-with-ticket', () => {
   const $modals = mockModals();
+
+  const factory = generateShallowRenderer(ConfirmAckWithTicket, {
+    stubs,
+    attachTo: document.body,
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(ConfirmAckWithTicket, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
 
   test('Ack confirmed after trigger continue button', async () => {
     const continueAction = jest.fn();

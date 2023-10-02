@@ -1,18 +1,12 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import { ALARM_DENSE_TYPES } from '@/constants';
 
 import CDensityBtnToggle from '@/components/common/groups/c-density-btn-toggle.vue';
 
-const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(CDensityBtnToggle, {
-  localVue,
-
-  ...options,
-});
-
 describe('c-density-btn-toggle', () => {
+  const snapshotFactory = generateRenderer(CDensityBtnToggle);
+
   it('Renders `c-density-btn-toggle` with default props', () => {
     const wrapper = snapshotFactory();
 

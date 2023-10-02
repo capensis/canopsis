@@ -20,14 +20,10 @@ exports[`create-snooze-event Renders \`create-snooze-event\` with config data 1`
     <div
       class="text"
     >
-      <div
-        class="container"
-      >
-        <snooze-event-form-stub
-          form="[object Object]"
-          isnoterequired="true"
-        />
-      </div>
+      <snooze-event-form-stub
+        form="[object Object]"
+        isnoterequired="true"
+      />
     </div>
      
     <div
@@ -78,13 +74,9 @@ exports[`create-snooze-event Renders \`create-snooze-event\` with empty modal 1`
     <div
       class="text"
     >
-      <div
-        class="container"
-      >
-        <snooze-event-form-stub
-          form="[object Object]"
-        />
-      </div>
+      <snooze-event-form-stub
+        form="[object Object]"
+      />
     </div>
      
     <div

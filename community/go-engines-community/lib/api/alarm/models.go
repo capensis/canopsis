@@ -1,5 +1,7 @@
 package alarm
 
+//go:generate easyjson -no_std_marshalers
+
 import (
 	"fmt"
 
@@ -128,6 +130,8 @@ type SortRequest struct {
 
 type DetailsRequest struct {
 	ID                 string               `json:"_id" binding:"required"`
+	Search             string               `json:"search"`
+	SearchBy           []string             `json:"search_by"`
 	Opened             *bool                `json:"opened"`
 	WithInstructions   bool                 `json:"with_instructions"`
 	WithDeclareTickets bool                 `json:"with_declare_tickets"`
@@ -136,17 +140,31 @@ type DetailsRequest struct {
 	PerfData           []string             `json:"perf_data"`
 }
 
-type StepsRequest struct {
-	pagination.Query
-	Reversed bool `json:"reversed"`
+func (r *DetailsRequest) Format() {
+	defaultQuery := pagination.GetDefaultQuery()
+
+	if r.Steps != nil {
+		r.Steps.Paginate = true
+		if r.Steps.Page == 0 {
+			r.Steps.Page = defaultQuery.Page
+		}
+		if r.Steps.Limit == 0 {
+			r.Steps.Limit = defaultQuery.Limit
+		}
+	}
+
+	if r.Children != nil {
+		r.Children.Paginate = true
+		if r.Children.Page == 0 {
+			r.Children.Page = defaultQuery.Page
+		}
+		if r.Children.Limit == 0 {
+			r.Children.Limit = defaultQuery.Limit
+		}
+	}
 }
 
-type ChildDetailsRequest struct {
-	pagination.Query
-	SortRequest
-}
-
-func (r DetailsRequest) GetOpenedFilter() int {
+func (r *DetailsRequest) GetOpenedFilter() int {
 	if r.Opened == nil {
 		return OpenedAndRecentResolved
 	}
@@ -158,6 +176,17 @@ func (r DetailsRequest) GetOpenedFilter() int {
 	return OnlyResolved
 }
 
+type StepsRequest struct {
+	pagination.Query
+	Reversed bool   `json:"reversed"`
+	Type     string `json:"type"`
+}
+
+type ChildDetailsRequest struct {
+	pagination.Query
+	SortRequest
+}
+
 type DetailsResponse struct {
 	ID     string            `json:"_id"`
 	Status int               `json:"status"`
@@ -167,6 +196,9 @@ type DetailsResponse struct {
 }
 
 type Details struct {
+	// Only for websocket
+	ID string `bson:"-" json:"_id,omitempty"`
+
 	Steps    *StepDetails     `bson:"steps" json:"steps,omitempty"`
 	Children *ChildrenDetails `bson:"children" json:"children,omitempty"`
 
@@ -193,6 +225,8 @@ type ExportRequest struct {
 	Separator string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
 }
 
+// ExportFetchParameters
+// easyjson:json
 type ExportFetchParameters struct {
 	BaseFilterRequest
 	TimeFormat string `json:"time_format" binding:"time_format"`
@@ -221,8 +255,9 @@ type Alarm struct {
 	MetaAlarmRule        *MetaAlarmRule `bson:"meta_alarm_rule,omitempty" json:"meta_alarm_rule,omitempty"`
 	IsMetaAlarm          *bool          `bson:"is_meta_alarm,omitempty" json:"is_meta_alarm,omitempty"`
 	Children             *int64         `bson:"children,omitempty" json:"children,omitempty"`
+	OpenedChildren       *int64         `bson:"opened_children,omitempty" json:"opened_children,omitempty"`
+	ClosedChildren       *int64         `bson:"closed_children,omitempty" json:"closed_children,omitempty"`
 	ChildrenInstructions *bool          `bson:"children_instructions" json:"children_instructions,omitempty"`
-	FilteredChildrenIDs  []string       `bson:"filtered_children,omitempty" json:"filtered_children,omitempty"`
 	// Meta alarm child fields
 	Parents        *int64          `bson:"parents" json:"parents,omitempty"`
 	MetaAlarmRules []MetaAlarmRule `bson:"meta_alarm_rules" json:"meta_alarm_rules,omitempty"`
@@ -240,6 +275,9 @@ type Alarm struct {
 	ImpactState int64                `bson:"impact_state" json:"impact_state"`
 
 	AssignedDeclareTicketRules []AssignedDeclareTicketRule `bson:"-" json:"assigned_declare_ticket_rules,omitempty"`
+
+	// Only for details request
+	Filtered *bool `bson:"filtered" json:"filtered,omitempty"`
 }
 
 type MetaAlarmRule struct {

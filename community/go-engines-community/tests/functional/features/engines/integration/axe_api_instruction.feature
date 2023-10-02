@@ -1,22 +1,22 @@
 Feature: instruction execution should be added to alarm steps
   I need to be able to see instruction execution steps in alarm timeline.
 
+  @concurrent
   Scenario: given instruction should add instruction start step to alarm steps
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
-      "connector" : "test-connector-axe-api-instruction-1",
-      "connector_name" : "test-connector-name-axe-api-instruction-1",
-      "source_type" : "resource",
-      "event_type" : "check",
-      "component" : "test-component-axe-api-instruction-1",
-      "resource" : "test-resource-axe-api-instruction-1",
-      "state" : 1,
-      "output" : "noveo alarm"
+      "connector": "test-connector-axe-api-instruction-1",
+      "connector_name": "test-connector-name-axe-api-instruction-1",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-axe-api-instruction-1",
+      "resource": "test-resource-axe-api-instruction-1",
+      "state": 1,
+      "output": "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-1
     Then the response code should be 200
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
@@ -68,7 +68,14 @@ Feature: instruction execution should be added to alarm steps
     """
     Then the response code should be 200
     When I save response executionID={{ .lastResponse._id }}
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructionstarted",
+      "resource": "test-resource-axe-api-instruction-1",
+      "source_type": "resource"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-1
     Then the response code should be 200
     When I do POST /api/v4/alarm-details:
@@ -95,7 +102,8 @@ Feature: instruction execution should be added to alarm steps
               {},
               {
                 "_t": "instructionstart",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
                 "m": "Instruction test-instruction-axe-api-instruction-1-name."
               }
             ],
@@ -112,24 +120,23 @@ Feature: instruction execution should be added to alarm steps
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/cancel
     Then the response code should be 204
-    When I wait the end of event processing
 
+  @concurrent
   Scenario: given instruction should add instruction complete step to alarm steps
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
-      "connector" : "test-connector-axe-api-instruction-2",
-      "connector_name" : "test-connector-name-axe-api-instruction-2",
-      "source_type" : "resource",
-      "event_type" : "check",
-      "component" : "test-component-axe-api-instruction-2",
-      "resource" : "test-resource-axe-api-instruction-2",
-      "state" : 1,
-      "output" : "noveo alarm"
+      "connector": "test-connector-axe-api-instruction-2",
+      "connector_name": "test-connector-name-axe-api-instruction-2",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-axe-api-instruction-2",
+      "resource": "test-resource-axe-api-instruction-2",
+      "state": 1,
+      "output": "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-2
     Then the response code should be 200
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
@@ -192,12 +199,26 @@ Feature: instruction execution should be added to alarm steps
     }
     """
     Then the response code should be 200
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructionstarted",
+      "resource": "test-resource-axe-api-instruction-2",
+      "source_type": "resource"
+    }
+    """
     When I do PUT /api/v4/cat/executions/{{ .lastResponse._id }}/next-step
     Then the response code should be 200
     When I do PUT /api/v4/cat/executions/{{ .lastResponse._id }}/next-step
     Then the response code should be 200
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructioncompleted",
+      "resource": "test-resource-axe-api-instruction-2",
+      "source_type": "resource"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-2
     Then the response code should be 200
     When I do POST /api/v4/alarm-details:
@@ -224,12 +245,14 @@ Feature: instruction execution should be added to alarm steps
               {},
               {
                 "_t": "instructionstart",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
                 "m": "Instruction test-instruction-axe-api-instruction-2-name."
               },
               {
                 "_t": "instructioncomplete",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
                 "m": "Instruction test-instruction-axe-api-instruction-2-name."
               }
             ],
@@ -245,22 +268,22 @@ Feature: instruction execution should be added to alarm steps
     ]
     """
 
+  @concurrent
   Scenario: given paused instruction by request should add instruction pause step to alarm steps
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
-      "connector" : "test-connector-axe-api-instruction-3",
-      "connector_name" : "test-connector-name-axe-api-instruction-3",
-      "source_type" : "resource",
-      "event_type" : "check",
-      "component" : "test-component-axe-api-instruction-3",
-      "resource" : "test-resource-axe-api-instruction-3",
-      "state" : 1,
-      "output" : "noveo alarm"
+      "connector": "test-connector-axe-api-instruction-3",
+      "connector_name": "test-connector-name-axe-api-instruction-3",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-axe-api-instruction-3",
+      "resource": "test-resource-axe-api-instruction-3",
+      "state": 1,
+      "output": "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-3
     Then the response code should be 200
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
@@ -311,10 +334,24 @@ Feature: instruction execution should be added to alarm steps
     }
     """
     Then the response code should be 200
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructionstarted",
+      "resource": "test-resource-axe-api-instruction-3",
+      "source_type": "resource"
+    }
+    """
     When I do PUT /api/v4/cat/executions/{{ .lastResponse._id }}/pause
     Then the response code should be 204
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructionpaused",
+      "resource": "test-resource-axe-api-instruction-3",
+      "source_type": "resource"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-3
     Then the response code should be 200
     When I do POST /api/v4/alarm-details:
@@ -341,12 +378,14 @@ Feature: instruction execution should be added to alarm steps
               {},
               {
                 "_t": "instructionstart",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
                 "m": "Instruction test-instruction-axe-api-instruction-3-name."
               },
               {
                 "_t": "instructionpause",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
                 "m": "Instruction test-instruction-axe-api-instruction-3-name."
               }
             ],
@@ -362,22 +401,22 @@ Feature: instruction execution should be added to alarm steps
     ]
     """
 
+  @concurrent
   Scenario: given instruction should add instruction resume step to alarm steps
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
-      "connector" : "test-connector-axe-api-instruction-4",
-      "connector_name" : "test-connector-name-axe-api-instruction-4",
-      "source_type" : "resource",
-      "event_type" : "check",
-      "component" : "test-component-axe-api-instruction-4",
-      "resource" : "test-resource-axe-api-instruction-4",
-      "state" : 1,
-      "output" : "noveo alarm"
+      "connector": "test-connector-axe-api-instruction-4",
+      "connector_name": "test-connector-name-axe-api-instruction-4",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-axe-api-instruction-4",
+      "resource": "test-resource-axe-api-instruction-4",
+      "state": 1,
+      "output": "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-4
     Then the response code should be 200
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
@@ -429,13 +468,34 @@ Feature: instruction execution should be added to alarm steps
     """
     Then the response code should be 200
     When I save response executionID={{ .lastResponse._id }}
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructionstarted",
+      "resource": "test-resource-axe-api-instruction-4",
+      "source_type": "resource"
+    }
+    """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/pause
     Then the response code should be 204
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructionpaused",
+      "resource": "test-resource-axe-api-instruction-4",
+      "source_type": "resource"
+    }
+    """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/resume
     Then the response code should be 200
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructionresumed",
+      "resource": "test-resource-axe-api-instruction-4",
+      "source_type": "resource"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-4
     Then the response code should be 200
     When I do POST /api/v4/alarm-details:
@@ -462,17 +522,20 @@ Feature: instruction execution should be added to alarm steps
               {},
               {
                 "_t": "instructionstart",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
                 "m": "Instruction test-instruction-axe-api-instruction-4-name."
               },
               {
                 "_t": "instructionpause",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
                 "m": "Instruction test-instruction-axe-api-instruction-4-name."
               },
               {
                 "_t": "instructionresume",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
                 "m": "Instruction test-instruction-axe-api-instruction-4-name."
               }
             ],
@@ -489,24 +552,23 @@ Feature: instruction execution should be added to alarm steps
     """
     When I do PUT /api/v4/cat/executions/{{ .executionID }}/cancel
     Then the response code should be 204
-    When I wait the end of event processing
 
+  @concurrent
   Scenario: given instruction should add instruction abort step to alarm steps
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
-      "connector" : "test-connector-axe-api-instruction-5",
-      "connector_name" : "test-connector-name-axe-api-instruction-5",
-      "source_type" : "resource",
-      "event_type" : "check",
-      "component" : "test-component-axe-api-instruction-5",
-      "resource" : "test-resource-axe-api-instruction-5",
-      "state" : 1,
-      "output" : "noveo alarm"
+      "connector": "test-connector-axe-api-instruction-5",
+      "connector_name": "test-connector-name-axe-api-instruction-5",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-axe-api-instruction-5",
+      "resource": "test-resource-axe-api-instruction-5",
+      "state": 1,
+      "output": "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-5
     Then the response code should be 200
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
@@ -557,10 +619,24 @@ Feature: instruction execution should be added to alarm steps
     }
     """
     Then the response code should be 200
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructionstarted",
+      "resource": "test-resource-axe-api-instruction-5",
+      "source_type": "resource"
+    }
+    """
     When I do PUT /api/v4/cat/executions/{{ .lastResponse._id }}/cancel
     Then the response code should be 204
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructionaborted",
+      "resource": "test-resource-axe-api-instruction-5",
+      "source_type": "resource"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-5
     Then the response code should be 200
     When I do POST /api/v4/alarm-details:
@@ -587,12 +663,14 @@ Feature: instruction execution should be added to alarm steps
               {},
               {
                 "_t": "instructionstart",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
                 "m": "Instruction test-instruction-axe-api-instruction-5-name."
               },
               {
                 "_t": "instructionabort",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
                 "m": "Instruction test-instruction-axe-api-instruction-5-name."
               }
             ],
@@ -608,22 +686,22 @@ Feature: instruction execution should be added to alarm steps
     ]
     """
 
+  @concurrent
   Scenario: given instruction should add instruction fail step to alarm steps
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
-      "connector" : "test-connector-axe-api-instruction-6",
-      "connector_name" : "test-connector-name-axe-api-instruction-6",
-      "source_type" : "resource",
-      "event_type" : "check",
-      "component" : "test-component-axe-api-instruction-6",
-      "resource" : "test-resource-axe-api-instruction-6",
-      "state" : 1,
-      "output" : "noveo alarm"
+      "connector": "test-connector-axe-api-instruction-6",
+      "connector_name": "test-connector-name-axe-api-instruction-6",
+      "source_type": "resource",
+      "event_type": "check",
+      "component": "test-component-axe-api-instruction-6",
+      "resource": "test-resource-axe-api-instruction-6",
+      "state": 1,
+      "output": "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-6
     Then the response code should be 200
     When I save response alarmID={{ (index .lastResponse.data 0)._id }}
@@ -686,7 +764,14 @@ Feature: instruction execution should be added to alarm steps
     }
     """
     Then the response code should be 200
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructionstarted",
+      "resource": "test-resource-axe-api-instruction-6",
+      "source_type": "resource"
+    }
+    """
     When I do PUT /api/v4/cat/executions/{{ .lastResponse._id }}/next-step
     Then the response code should be 200
     When I do PUT /api/v4/cat/executions/{{ .lastResponse._id }}/next-step:
@@ -696,7 +781,14 @@ Feature: instruction execution should be added to alarm steps
     }
     """
     Then the response code should be 200
-    When I wait the end of event processing
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "instructionfailed",
+      "resource": "test-resource-axe-api-instruction-6",
+      "source_type": "resource"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-axe-api-instruction-6
     Then the response code should be 200
     When I do POST /api/v4/alarm-details:
@@ -723,12 +815,14 @@ Feature: instruction execution should be added to alarm steps
               {},
               {
                 "_t": "instructionstart",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
                 "m": "Instruction test-instruction-axe-api-instruction-6-name."
               },
               {
                 "_t": "instructionfail",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
+                "user_id": "root",
                 "m": "Instruction test-instruction-axe-api-instruction-6-name."
               }
             ],

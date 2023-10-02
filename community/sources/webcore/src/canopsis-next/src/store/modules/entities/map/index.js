@@ -1,16 +1,13 @@
 import { API_ROUTES } from '@/config';
-import { ENTITIES_TYPES } from '@/constants';
 
 import request from '@/services/request';
 
-import { createEntityModule } from '@/store/plugins/entities';
+import { createCRUDModule } from '@/store/plugins/entities';
 
-export default createEntityModule({
+export default createCRUDModule({
   route: API_ROUTES.maps,
-  entityType: ENTITIES_TYPES.map,
-  dataPreparer: d => d.data,
   withFetchingParams: true,
-  withMeta: true,
+  withWithoutStore: true,
 }, {
   actions: {
     fetchItemWithoutStore(context, { id, params }) {
@@ -19,10 +16,6 @@ export default createEntityModule({
 
     bulkRemove(context, { data }) {
       return request.delete(API_ROUTES.bulkMaps, { data });
-    },
-
-    fetchListWithoutStore(context, { params }) {
-      return request.get(API_ROUTES.maps, { params });
     },
 
     fetchItemStateWithoutStore(context, { id, params }) {

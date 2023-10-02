@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout.alarm-column-value-extra-details
+  v-layout.alarm-column-value-extra-details(wrap)
     extra-details-ack(v-if="alarm.v.ack", :ack="alarm.v.ack")
     extra-details-last-comment(
       v-if="alarm.v.last_comment && alarm.v.last_comment.m",
@@ -30,6 +30,8 @@
     extra-details-children(
       v-if="alarm.children",
       :total="alarm.children",
+      :opened="alarm.opened_children",
+      :closed="alarm.closed_children",
       :rule="alarm.meta_alarm_rule"
     )
 </template>

@@ -37,14 +37,17 @@ exports[`alarm-column-cell-popup-body Renders \`alarm-column-cell-popup-body\` w
     <div
       class="v-card__text pa-2"
     >
-      <v-runtime-template-stub
-        template=<div>
-  <p>Test</p>
-  <p>alarm-name</p>
-  <p>entity-name</p>
-</div>
-        templateprops="[object Object]"
-      />
+      <div>
+        <p>
+          Test
+        </p>
+        <p>
+          alarm-name
+        </p>
+        <p>
+          entity-name
+        </p>
+      </div>
     </div>
   </transition-stub>
 </div>

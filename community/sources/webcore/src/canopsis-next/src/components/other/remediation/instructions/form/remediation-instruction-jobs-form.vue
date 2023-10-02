@@ -34,7 +34,7 @@
 <script>
 import { MAX_LIMIT } from '@/constants';
 
-import { remediationInstructionJobToForm } from '@/helpers/forms/remediation-instruction';
+import { remediationInstructionJobToForm } from '@/helpers/entities/remediation/instruction/form';
 
 import { formArrayMixin } from '@/mixins/form';
 import { entitiesRemediationJobMixin } from '@/mixins/entities/remediation/job';

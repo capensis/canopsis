@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import GeomapEditor from './partials/geomap-editor.vue';
+import GeomapEditor from './fields/geomap-editor.vue';
 
 export default {
   inject: ['$validator'],

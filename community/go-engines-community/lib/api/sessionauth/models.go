@@ -6,9 +6,9 @@ type loginRequest struct {
 }
 
 type loginResponse struct {
-	Name       string `json:"crecord_name"`
-	AuthApiKey string `json:"authkey"`
-	Role       string `json:"role"`
+	Name       string   `json:"crecord_name"`
+	AuthApiKey string   `json:"authkey"`
+	Roles      []string `json:"roles"`
 	Contact    struct {
 		Name    string `json:"name"`
 		Address string `json:"address"`

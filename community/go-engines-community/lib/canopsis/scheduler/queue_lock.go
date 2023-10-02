@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/keymutex"
-	redismod "github.com/go-redis/redis/v8"
+	redismod "github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
 

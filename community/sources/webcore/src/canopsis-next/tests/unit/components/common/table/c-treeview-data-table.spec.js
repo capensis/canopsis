@@ -1,17 +1,9 @@
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { fakeUsersForTreeview } from '@unit/data/treeview';
 
 import CTreeviewDataTable from '@/components/common/table/c-treeview-data-table.vue';
-
-const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(CTreeviewDataTable, {
-  localVue,
-
-  ...options,
-});
 
 describe('c-treeview-data-table', () => {
   const snapshotItems = fakeUsersForTreeview({ count: 3, fake: false, depths: 2 });
@@ -21,6 +13,8 @@ describe('c-treeview-data-table', () => {
     { text: 'Lastname', value: 'lastname' },
     { text: 'Email', value: 'email' },
   ];
+
+  const snapshotFactory = generateRenderer(CTreeviewDataTable);
 
   it('Renders `c-treeview-data-table` with default and required props', async () => {
     const wrapper = snapshotFactory({

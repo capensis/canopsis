@@ -41,7 +41,7 @@ class MongoStore(object):
 
         if from_singleton:
             cfg_values = cfg.get(MongoStore.CONF_CAT, {}).values()
-            fingerprint = hashlib.md5('.'.join(sorted(cfg_values))).hexdigest()
+            fingerprint = hashlib.md5('.'.join(sorted(cfg_values)).encode('utf-8')).hexdigest()
 
             if fingerprint not in singletons_cache:
                 singletons_cache[fingerprint] = MongoStore(cfg)
@@ -98,13 +98,13 @@ class MongoStore(object):
         if self._db_uri:
             self.conn = MongoClient(
                 self._db_uri,
-                w=1, j=True, read_preference=self.read_preference
+                w=1, journal=True, read_preference=self.read_preference
             )
 
         else:
             db_uri = 'mongodb://{}:{}@{}:{}/{}'.format(
                 self._user, self._pwd, self.host, self.port, self.db_name)
-            self.conn = MongoClient(db_uri, w=1, j=True)
+            self.conn = MongoClient(db_uri, w=1, journal=True)
 
         self.client = self.get_database()
 

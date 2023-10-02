@@ -64,8 +64,9 @@ func (r *AggregationResult) GetTotal() int64 {
 }
 
 type CategoriesRequest struct {
-	Limit int64  `form:"limit" binding:"numeric,gte=0"`
-	Type  string `form:"type" binding:"oneoforempty=alarm entity"`
+	Limit  int64  `form:"limit" binding:"numeric,gte=0"`
+	Type   string `form:"type" binding:"oneoforempty=alarm entity"`
+	Search string `form:"search"`
 }
 
 type CategoryResponse struct {

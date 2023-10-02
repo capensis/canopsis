@@ -1,31 +1,19 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { LINE_TYPES, STROKE_TYPES } from '@/constants';
 
 import FlowchartStrokeTypeField from '@/components/common/flowchart/fields/flowchart-stroke-type-field.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = (options = {}) => shallowMount(FlowchartStrokeTypeField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(FlowchartStrokeTypeField, {
-  localVue,
-
-  ...options,
-});
-
 const selectSelectField = wrapper => wrapper.find('.v-select');
 
 describe('flowchart-stroke-type-field', () => {
+  const factory = generateShallowRenderer(FlowchartStrokeTypeField, { stubs });
+  const snapshotFactory = generateRenderer(FlowchartStrokeTypeField);
+
   test('Value changed after trigger select field', () => {
     const wrapper = factory();
 

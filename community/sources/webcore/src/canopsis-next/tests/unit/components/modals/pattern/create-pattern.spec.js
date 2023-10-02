@@ -1,7 +1,7 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
@@ -10,8 +10,6 @@ import { PATTERN_TYPES } from '@/constants';
 import ClickOutside from '@/services/click-outside';
 
 import CreatePattern from '@/components/modals/pattern/create-pattern.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
@@ -25,33 +23,6 @@ const snapshotStubs = {
   'pattern-form': true,
 };
 
-const factory = (options = {}) => shallowMount(CreatePattern, {
-  localVue,
-  stubs,
-  attachTo: document.body,
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CreatePattern, {
-  localVue,
-  stubs: snapshotStubs,
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
 const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
@@ -61,6 +32,24 @@ const selectPatternForm = wrapper => wrapper
 describe('create-pattern', () => {
   const $modals = mockModals();
   const $popups = mockPopups();
+
+  const factory = generateShallowRenderer(CreatePattern, {
+    stubs,
+    attachTo: document.body,
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(CreatePattern, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
 
   test('Form submitted after trigger submit button', async () => {
     const action = jest.fn();

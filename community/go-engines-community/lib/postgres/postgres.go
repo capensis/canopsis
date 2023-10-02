@@ -1,7 +1,7 @@
 package postgres
 
 //go:generate mockgen -destination=../../mocks/lib/postgres/postgres.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres BasePool,Pool
-//go:generate mockgen -destination=../../mocks/github.com/jackc/pgx/pgx.go github.com/jackc/pgx/v4 Rows,Tx,BatchResults
+//go:generate mockgen -destination=../../mocks/github.com/jackc/pgx/pgx.go github.com/jackc/pgx/v5 Rows,Tx,BatchResults
 
 import (
 	"context"
@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jackc/pgconn"
-	"github.com/jackc/pgx/v4"
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 const EnvURL = "CPS_POSTGRES_URL"
@@ -81,7 +81,7 @@ func NewTechMetricsPool(ctx context.Context, retryCount int, minRetryTimeout tim
 }
 
 func newPool(ctx context.Context, connStr string, retryCount int, minRetryTimeout time.Duration) (Pool, error) {
-	pgxPool, err := pgxpool.Connect(ctx, connStr)
+	pgxPool, err := pgxpool.New(ctx, connStr)
 	if err != nil {
 		return nil, err
 	}
@@ -95,24 +95,26 @@ func newPool(ctx context.Context, connStr string, retryCount int, minRetryTimeou
 }
 
 type BasePool interface {
-	Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error)
-	Query(ctx context.Context, sql string, args ...interface{}) (pgx.Rows, error)
-	QueryRow(ctx context.Context, sql string, args ...interface{}) pgx.Row
+	Exec(ctx context.Context, sql string, arguments ...any) (pgconn.CommandTag, error)
+	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
+	QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
 	SendBatch(ctx context.Context, b *pgx.Batch) pgx.BatchResults
 	Begin(ctx context.Context) (pgx.Tx, error)
 	Close()
 	Stat() *pgxpool.Stat
 	Ping(ctx context.Context) error
+	CopyFrom(ctx context.Context, tableName pgx.Identifier, columnNames []string, rowSrc pgx.CopyFromSource) (int64, error)
 }
 
 type Pool interface {
-	Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error)
-	Query(ctx context.Context, sql string, args ...interface{}) (pgx.Rows, error)
-	QueryRow(ctx context.Context, sql string, args ...interface{}) pgx.Row
+	Exec(ctx context.Context, sql string, arguments ...any) (pgconn.CommandTag, error)
+	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
+	QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
 	SendBatch(ctx context.Context, b *pgx.Batch) error
 	Close()
 	WithTransaction(ctx context.Context, f func(context.Context, pgx.Tx) error) error
 	Ping(ctx context.Context) error
+	CopyFrom(ctx context.Context, tableName pgx.Identifier, columnNames []string, rowSrc pgx.CopyFromSource) (int64, error)
 }
 
 type poolWithRetries struct {
@@ -157,13 +159,9 @@ func (p *poolWithRetries) SendBatch(ctx context.Context, b *pgx.Batch) error {
 	return p.WithTransaction(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		br := tx.SendBatch(ctx, b)
 
-		for {
+		for i := 0; i < b.Len(); i++ {
 			_, err := br.Exec()
 			if err != nil {
-				if err.Error() == "no result" {
-					break
-				}
-
 				return err
 			}
 		}
@@ -209,6 +207,10 @@ func (p *poolWithRetries) WithTransaction(ctx context.Context, f func(context.Co
 
 func (p *poolWithRetries) Ping(ctx context.Context) error {
 	return p.pgxPool.Ping(ctx)
+}
+
+func (p *poolWithRetries) CopyFrom(ctx context.Context, tableName pgx.Identifier, columnNames []string, rowSrc pgx.CopyFromSource) (int64, error) {
+	return p.pgxPool.CopyFrom(ctx, tableName, columnNames, rowSrc)
 }
 
 func (p *poolWithRetries) retry(ctx context.Context, f func() error) {

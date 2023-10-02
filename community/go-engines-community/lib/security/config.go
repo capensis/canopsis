@@ -49,6 +49,7 @@ type LdapConfig struct {
 	Filter             string            `yaml:"ufilter"`
 	DefaultRole        string            `yaml:"default_role"`
 	InsecureSkipVerify bool              `yaml:"insecure_skip_verify"`
+	MinTLSVersion      string            `yaml:"min_tls_ver"`
 	MaxTLSVersion      string            `yaml:"max_tls_ver"`
 }
 

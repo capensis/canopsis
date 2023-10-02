@@ -23,14 +23,10 @@
 import { get, cloneDeep } from 'lodash';
 import dependentMixin from 'vuetify/es5/mixins/dependent';
 
-import {
-  calendarEventToPbehaviorForm,
-  formToCalendarEvent,
-} from '@/helpers/forms/planning-pbehavior';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { MODALS } from '@/constants';
-
-import { isOmitEqual } from '@/helpers/equal';
+import { calendarEventToPbehaviorForm, formToCalendarEvent } from '@/helpers/entities/pbehavior/form';
+import { isOmitEqual } from '@/helpers/collection';
 import { getMenuClassByCalendarEvent } from '@/helpers/calendar/dayspan';
 
 import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-form.vue';
@@ -38,6 +34,7 @@ import PbehaviorForm from '@/components/other/pbehavior/pbehaviors/form/pbehavio
 export default {
   $_veeValidate: {
     validator: 'new',
+    delay: VALIDATION_DELAY,
   },
   inject: ['$system'],
   components: { PbehaviorForm },
@@ -140,7 +137,6 @@ export default {
 <style lang="scss" scoped>
   .pbehavior-form {
     overflow: auto;
-    width: 500px;
-    max-height: 615px;
+    width: 100%;
   }
 </style>

@@ -14,18 +14,18 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { permissionsTechnicalPbehaviorExceptionsMixin } from '@/mixins/permissions/technical/pbehavior-exceptions';
-import entitiesPbehaviorExceptionsMixin from '@/mixins/entities/pbehavior/exceptions';
 import { localQueryMixin } from '@/mixins/query-local/query';
+import { entitiesPbehaviorExceptionMixin } from '@/mixins/entities/pbehavior/exceptions';
+import { permissionsTechnicalPbehaviorExceptionsMixin } from '@/mixins/permissions/technical/pbehavior-exceptions';
 
 import PlanningExceptionsList from './pbehavior-exceptions-list.vue';
 
 export default {
   components: { PlanningExceptionsList },
   mixins: [
-    permissionsTechnicalPbehaviorExceptionsMixin,
-    entitiesPbehaviorExceptionsMixin,
     localQueryMixin,
+    entitiesPbehaviorExceptionMixin,
+    permissionsTechnicalPbehaviorExceptionsMixin,
   ],
   mounted() {
     this.fetchList();

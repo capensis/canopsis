@@ -39,9 +39,7 @@ const (
 	EventTypeCancel      = "cancel"
 	EventTypeCheck       = "check"
 	EventTypeComment     = "comment"
-
 	EventTypeChangestate = "changestate"
-	EventTypeKeepstate   = "keepstate"
 	EventTypeSnooze      = "snooze"
 	EventTypeUnsnooze    = "unsnooze"
 	EventTypeUncancel    = "uncancel"
@@ -54,8 +52,6 @@ const (
 	EventTypeAutoWebhookCompleted = "autowebhookcompleted"
 	EventTypeAutoWebhookFailed    = "autowebhookfailed"
 
-	EventTypeMetaAlarm          = "metaalarm"
-	EventTypeMetaAlarmUpdated   = "metaalarmupdated"
 	EventTypePbhEnter           = "pbhenter"
 	EventTypePbhLeaveAndEnter   = "pbhleaveandenter"
 	EventTypePbhLeave           = "pbhleave"
@@ -63,11 +59,16 @@ const (
 	EventTypeResolveClose       = "resolve_close"
 	EventTypeResolveDeleted     = "resolve_deleted"
 	EventTypeUpdateStatus       = "updatestatus"
-	EventManualMetaAlarmGroup   = "manual_metaalarm_group"
-	EventManualMetaAlarmUngroup = "manual_metaalarm_ungroup"
-	EventManualMetaAlarmUpdate  = "manual_metaalarm_update"
 	EventTypeActivate           = "activate"
 	EventTypeRunDelayedScenario = "run_delayed_scenario"
+
+	EventTypeMetaAlarm               = "metaalarm"
+	EventTypeMetaAlarmAttachChildren = "metaalarmattachchildren"
+	EventTypeMetaAlarmDetachChildren = "metaalarmdetachchildren"
+	EventTypeMetaAlarmUngroup        = "metaalarm_ungroup"
+	EventTypeManualMetaAlarmGroup    = "manual_metaalarm_group"
+	EventTypeManualMetaAlarmUngroup  = "manual_metaalarm_ungroup"
+	EventTypeManualMetaAlarmUpdate   = "manual_metaalarm_update"
 
 	// Following event types are used to add manual instruction execution to alarm steps.
 	EventTypeInstructionStarted   = "instructionstarted"
@@ -89,26 +90,17 @@ const (
 
 	// EventTypeRecomputeEntityService is used to recompute service context graph and state.
 	EventTypeRecomputeEntityService = "recomputeentityservice"
-	// EventTypeUpdateEntityService is used to update service cache in engines.
-	EventTypeUpdateEntityService = "updateentityservice"
 	// EventTypeEntityUpdated is used to notify engines that entity is updated out of
 	// event flow.
 	EventTypeEntityUpdated = "entityupdated"
 	// EventTypeEntityToggled is used to notify engines that entity is enabled/disabled.
 	EventTypeEntityToggled = "entitytoggled"
-	// EventTypeAlarmSkipped is used to check alarm in service counters if alarm was skipped
-	// during service recompute.
-	EventTypeAlarmSkipped = "alarmskipped"
+
+	EventTypeUpdateCounters = "updatecounters"
 	// EventTypeJunitTestSuiteUpdated is used to notify that test suite is updated but state is not changed.
 	EventTypeJunitTestSuiteUpdated = "junittestsuiteupdated"
 	// EventTypeJunitTestCaseUpdated is used to notify that test case is updated but state is not changed.
 	EventTypeJunitTestCaseUpdated = "junittestcaseeupdated"
-
-	EventTypeStateIncrease  = "stateinc"
-	EventTypeStateDecrease  = "statedec"
-	EventTypeStatusIncrease = "statusinc"
-	EventTypeStatusDecrease = "statusdec"
-
 	// EventTypeNoEvents is used to create alarm for entity by idle rule.
 	EventTypeNoEvents = "noevents"
 	// EventTypeTrigger is used in axe rpc to send auto and manual instruction triggers
@@ -143,18 +135,16 @@ type Event struct {
 	Alarm         *Alarm     `bson:"current_alarm" json:"current_alarm"`
 	Entity        *Entity    `bson:"current_entity" json:"current_entity"`
 
+	// AlarmID is used if an event is emitted for the specific alarm.
+	AlarmID string `bson:"aid,omitempty" json:"aid,omitempty"`
+
 	Author string `bson:"author" json:"author"`
 	UserID string `bson:"user_id" json:"user_id"`
 
 	Timestamp         CpsTime   `bson:"timestamp" json:"timestamp"`
 	ReceivedTimestamp MicroTime `bson:"rt" json:"rt"`
 
-	RK string `bson:"routing_key" json:"routing_key"`
-	// AckResources is used to ack all resource alarms on ack component alarm.
-	AckResources bool `bson:"ack_resources,omitempty" json:"ack_resources,omitempty"`
-	// TicketResource is used to add ticket to all resource alarms on assoc ticket component alarm.
-	TicketResources bool `bson:"ticket_resources,omitempty" json:"ticket_resources,omitempty"`
-
+	RK          string                 `bson:"routing_key" json:"routing_key"`
 	Duration    CpsNumber              `bson:"duration,omitempty" json:"duration,omitempty"`
 	StatName    string                 `bson:"stat_name" json:"stat_name"`
 	Debug       bool                   `bson:"debug" json:"debug"`
@@ -168,13 +158,16 @@ type Event struct {
 	// Tags contains external tags for alarm.
 	Tags map[string]string `bson:"tags" json:"tags"`
 
-	MetaAlarmRuleID    string `bson:"metaalarm_rule_id" json:"metaalarm_rule_id"`
-	MetaAlarmValuePath string `bson:"metaalarm_value_path" json:"metaalarm_value_path"`
+	MetaAlarmRuleID    string `bson:"metaalarm_rule_id,omitempty" json:"metaalarm_rule_id,omitempty"`
+	MetaAlarmValuePath string `bson:"metaalarm_value_path,omitempty" json:"metaalarm_value_path,omitempty"`
 
-	MetaAlarmParents  *[]string `bson:"ma_parents" json:"ma_parents"`
-	MetaAlarmChildren *[]string `bson:"ma_children" json:"ma_children"`
+	MetaAlarmParents  []string `bson:"ma_parents,omitempty" json:"ma_parents,omitempty"`
+	MetaAlarmChildren []string `bson:"ma_children,omitempty" json:"ma_children,omitempty"`
+
+	// ManualMetaAlarmAutoResolve is used for manual meta alarms.
+	ManualMetaAlarmAutoResolve bool `bson:"manual_meta_alarm_auto_resolve,omitempty" json:"manual_meta_alarm_auto_resolve,omitempty"`
 	// DisplayName is used for manual meta alarms.
-	DisplayName string `bson:"display_name" json:"display_name"`
+	DisplayName string `bson:"display_name,omitempty" json:"display_name,omitempty"`
 
 	PbehaviorInfo PbehaviorInfo `bson:"pbehavior_info" json:"pbehavior_info"`
 
@@ -202,8 +195,10 @@ type Event struct {
 	// Instruction is used only for manual instructions kpi metrics
 	Instruction string `bson:"instruction,omitempty" json:"instruction,omitempty"`
 
-	// TODO: should be refactored
-	IsEntityUpdated bool `bson:"-" json:"-"`
+	// IsMetaAlarmUpdated is true if an alarm is added to a meta alarm on an event.
+	IsMetaAlarmUpdated bool `bson:"ma_updated,omitempty" json:"ma_updated,omitempty"`
+	// IsInstructionMatched is true if an alarm is matched to an auto instruction on an event.
+	IsInstructionMatched bool `bson:"instr_matched,omitempty" json:"instr_matched,omitempty"`
 }
 
 // Format an event
@@ -439,14 +434,14 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 	case cpsNumberType:
 		integerValue, success := AsInteger(value)
 		if !success {
-			return fmt.Errorf("value cannot be converted to an integer: %+v", value)
+			return fmt.Errorf("%[1]T value cannot be converted to an integer: %+[1]v", value)
 		}
 		field.Set(reflect.ValueOf(CpsNumber(integerValue)))
 
 	case cpsNumberPtrType:
 		integerValue, success := AsInteger(value)
 		if !success {
-			return fmt.Errorf("value cannot be converted to an integer: %+v", value)
+			return fmt.Errorf("%[1]T value cannot be converted to an integer: %+[1]v", value)
 		}
 		cpsNumberValue := CpsNumber(integerValue)
 		field.Set(reflect.ValueOf(&cpsNumberValue))
@@ -454,7 +449,7 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 	case cpsTimeType:
 		integerValue, success := AsInteger(value)
 		if !success {
-			return fmt.Errorf("value cannot be converted to an integer: %+v", value)
+			return fmt.Errorf("%[1]T value cannot be converted to an integer: %+[1]v", value)
 		}
 		cpsTimeValue := CpsTime{Time: time.Unix(integerValue, 0)}
 		field.Set(reflect.ValueOf(cpsTimeValue))
@@ -462,21 +457,21 @@ func (e *Event) SetField(name string, value interface{}) (err error) {
 	case stringType:
 		stringValue, success := utils.AsString(value)
 		if !success {
-			return fmt.Errorf("value cannot be assigned to a string: %+v", value)
+			return fmt.Errorf("%[1]T value cannot be assigned to a string: %+[1]v", value)
 		}
 		field.Set(reflect.ValueOf(stringValue))
 
 	case stringPtrType:
 		stringValue, success := utils.AsString(value)
 		if !success {
-			return fmt.Errorf("value cannot be assigned to a string: %+v", value)
+			return fmt.Errorf("%[1]T value cannot be assigned to a string: %+[1]v", value)
 		}
 		field.Set(reflect.ValueOf(&stringValue))
 
 	case boolType:
 		boolValue, success := value.(bool)
 		if !success {
-			return fmt.Errorf("value cannot be assigned to a bool: %+v", value)
+			return fmt.Errorf("%[1]T value cannot be assigned to a bool: %+[1]v", value)
 		}
 		field.Set(reflect.ValueOf(boolValue))
 
@@ -515,12 +510,13 @@ func isValidEventType(t string) bool {
 		EventTypePbhLeave,
 		EventTypeUpdateStatus,
 		EventTypeMetaAlarm,
-		EventTypeMetaAlarmUpdated,
-		EventManualMetaAlarmGroup,
-		EventManualMetaAlarmUngroup,
-		EventManualMetaAlarmUpdate,
+		EventTypeMetaAlarmAttachChildren,
+		EventTypeMetaAlarmDetachChildren,
+		EventTypeMetaAlarmUngroup,
+		EventTypeManualMetaAlarmGroup,
+		EventTypeManualMetaAlarmUngroup,
+		EventTypeManualMetaAlarmUpdate,
 		EventTypeRecomputeEntityService,
-		EventTypeUpdateEntityService,
 		EventTypeEntityUpdated,
 		EventTypeEntityToggled,
 		EventTypeNoEvents,
@@ -537,14 +533,8 @@ func isValidEventType(t string) bool {
 		EventTypeInstructionJobStarted,
 		EventTypeInstructionJobCompleted,
 		EventTypeInstructionJobFailed,
-		EventTypeAlarmSkipped,
 		EventTypeJunitTestSuiteUpdated,
 		EventTypeJunitTestCaseUpdated,
-		EventTypeKeepstate,
-		EventTypeStateIncrease,
-		EventTypeStateDecrease,
-		EventTypeStatusIncrease,
-		EventTypeStatusDecrease,
 		EventTypeTrigger,
 		EventTypeAutoInstructionActivate:
 		return true

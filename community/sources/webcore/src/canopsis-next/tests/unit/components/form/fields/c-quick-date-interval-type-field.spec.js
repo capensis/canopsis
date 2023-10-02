@@ -1,32 +1,20 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createSelectInputStub } from '@unit/stubs/input';
 import { QUICK_RANGES } from '@/constants';
 
 import CQuickDateIntervalTypeField from '@/components/forms/fields/c-quick-date-interval-type-field.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = (options = {}) => shallowMount(CQuickDateIntervalTypeField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CQuickDateIntervalTypeField, {
-  localVue,
-
-  ...options,
-});
-
 const selectSelectField = wrapper => wrapper.find('.v-select');
 
 describe('c-quick-date-interval-type-field', () => {
+  const factory = generateShallowRenderer(CQuickDateIntervalTypeField, { stubs });
+  const snapshotFactory = generateRenderer(CQuickDateIntervalTypeField);
+
   test('Value changed after trigger select field', () => {
     const wrapper = factory({
       propsData: {

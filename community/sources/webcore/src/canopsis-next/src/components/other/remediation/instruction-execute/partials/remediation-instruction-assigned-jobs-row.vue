@@ -49,7 +49,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { isJobExecutionCancelled, isJobExecutionRunning } from '@/helpers/forms/remediation-job';
+import { isJobExecutionCancelled, isJobExecutionRunning } from '@/helpers/entities/remediation/job/form';
 
 import ProgressCell from '@/components/common/table/progress-cell.vue';
 

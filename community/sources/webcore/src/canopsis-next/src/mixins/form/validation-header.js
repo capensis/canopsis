@@ -15,5 +15,3 @@ export const formValidationHeaderMixin = {
     },
   },
 };
-
-export default formValidationHeaderMixin;

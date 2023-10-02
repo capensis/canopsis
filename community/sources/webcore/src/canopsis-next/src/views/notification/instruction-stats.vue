@@ -17,14 +17,8 @@
 <script>
 import { MODALS, QUICK_RANGES } from '@/constants';
 
-import {
-  convertStartDateIntervalToTimestamp,
-  convertStopDateIntervalToTimestamp,
-} from '@/helpers/date/date-intervals';
-import {
-  convertDateToEndOfDayTimestamp,
-  convertDateToStartOfDayTimestamp,
-} from '@/helpers/date/date';
+import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { convertDateToEndOfDayTimestamp, convertDateToStartOfDayTimestamp } from '@/helpers/date/date';
 
 import { authMixin } from '@/mixins/auth';
 import { localQueryMixin } from '@/mixins/query-local/query';

@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { filterValue } from '@/helpers/entities';
+import { filterValue } from '@/helpers/array';
 
 import { formMixin } from '@/mixins/form';
 

@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-layout.c-information-block-row.pt-2(row)
-    v-flex.c-information-block-row--label
+  v-layout.pt-2(row)
+    v-flex(:style="labelStyles")
       h4.subheading.font-weight-bold {{ label }}
     v-flex
       slot {{ value }}
@@ -17,15 +17,18 @@ export default {
       type: [String, Number],
       required: false,
     },
+    width: {
+      type: [Number, String],
+      default: 160,
+    },
+  },
+  computed: {
+    labelStyles() {
+      return {
+        minWidth: `${this.width}px`,
+        maxWidth: `${this.width}px`,
+      };
+    },
   },
 };
 </script>
-
-<style lang="scss">
-.c-information-block-row {
-  &--label {
-    min-width: 160px;
-    max-width: 160px;
-  }
-}
-</style>

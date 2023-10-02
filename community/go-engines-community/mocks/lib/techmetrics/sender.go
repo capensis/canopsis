@@ -108,6 +108,18 @@ func (mr *MockSenderMockRecorder) SendCheEvent(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCheEvent", reflect.TypeOf((*MockSender)(nil).SendCheEvent), arg0)
 }
 
+// SendCorrelationRetries mocks base method.
+func (m *MockSender) SendCorrelationRetries(arg0 techmetrics.CorrelationRetriesMetric) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendCorrelationRetries", arg0)
+}
+
+// SendCorrelationRetries indicates an expected call of SendCorrelationRetries.
+func (mr *MockSenderMockRecorder) SendCorrelationRetries(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCorrelationRetries", reflect.TypeOf((*MockSender)(nil).SendCorrelationRetries), arg0)
+}
+
 // SendPBehaviorPeriodical mocks base method.
 func (m *MockSender) SendPBehaviorPeriodical(arg0 techmetrics.PbehaviorPeriodicalMetric) {
 	m.ctrl.T.Helper()

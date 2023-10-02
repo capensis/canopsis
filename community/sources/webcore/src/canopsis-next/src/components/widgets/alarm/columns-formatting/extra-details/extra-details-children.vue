@@ -8,6 +8,8 @@
         strong {{ $t('alarm.actions.iconsTitles.grouping') }}
         div {{ $t('common.title') }} : {{ ruleName }}
         div {{ $t('alarm.actions.iconsFields.children') }} : {{ total }}
+        div {{ $t('alarm.fields.openedChildren') }} : {{ opened }}
+        div {{ $t('alarm.fields.closedChildren') }} : {{ closed }}
 </template>
 
 <script>
@@ -20,6 +22,14 @@ export default {
       required: true,
     },
     total: {
+      type: Number,
+      default: 0,
+    },
+    opened: {
+      type: Number,
+      default: 0,
+    },
+    closed: {
       type: Number,
       default: 0,
     },

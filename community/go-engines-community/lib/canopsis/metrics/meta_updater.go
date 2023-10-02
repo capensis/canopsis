@@ -1,5 +1,7 @@
 package metrics
 
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/metrics/metrics.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics MetaUpdater
+
 import "context"
 
 type MetaUpdater interface {

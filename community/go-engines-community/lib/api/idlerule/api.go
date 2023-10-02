@@ -2,18 +2,16 @@ package idlerule
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog"
-	"github.com/valyala/fastjson"
 )
 
 type api struct {
@@ -195,70 +193,16 @@ func (a *api) Delete(c *gin.Context) {
 // @Param body body []CreateRequest true "body"
 func (a *api) BulkCreate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-
-	var ar fastjson.Arena
-
-	raw, err := c.GetRawData()
-	if err != nil {
-		panic(err)
-	}
-
-	jsonValue, err := fastjson.ParseBytes(raw)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	rawObjects, err := jsonValue.Array()
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	ctx := c.Request.Context()
-	response := ar.NewArray()
-
-	for idx, rawObject := range rawObjects {
-		object, err := rawObject.Object()
+	bulk.Handler(c, func(request CreateRequest) (string, error) {
+		err := a.transformEditRequest(c, &request.EditRequest)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
+			return "", err
 		}
 
-		var request CreateRequest
-		err = json.Unmarshal(object.MarshalTo(nil), &request)
+		rule, err := a.store.Insert(c, request)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
+			return "", err
 		}
-
-		err = binding.Validator.ValidateStruct(request)
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
-			continue
-		}
-
-		err = a.transformEditRequest(ctx, &request.EditRequest)
-		if err != nil {
-			valErr := common.ValidationError{}
-			if errors.As(err, &valErr) {
-				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
-				continue
-			}
-
-			a.logger.Err(err).Msg("cannot create idle rule")
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
-			continue
-		}
-
-		rule, err := a.store.Insert(ctx, request)
-		if err != nil {
-			a.logger.Err(err).Msg("cannot create idle rule")
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
-			continue
-		}
-
-		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, rule.ID, http.StatusOK, rawObject, nil))
 
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionCreate,
@@ -268,84 +212,25 @@ func (a *api) BulkCreate(c *gin.Context) {
 		if err != nil {
 			a.actionLogger.Err(err, "failed to log action")
 		}
-	}
 
-	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+		return rule.ID, nil
+	}, a.logger)
 }
 
 // BulkUpdate
 // @Param body body []BulkUpdateRequestItem true "body"
 func (a *api) BulkUpdate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-
-	var ar fastjson.Arena
-
-	raw, err := c.GetRawData()
-	if err != nil {
-		panic(err)
-	}
-
-	jsonValue, err := fastjson.ParseBytes(raw)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	rawObjects, err := jsonValue.Array()
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	ctx := c.Request.Context()
-	response := ar.NewArray()
-
-	for idx, rawObject := range rawObjects {
-		userObject, err := rawObject.Object()
+	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
+		err := a.transformEditRequest(c, &request.EditRequest)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
+			return "", err
 		}
 
-		var request BulkUpdateRequestItem
-		err = json.Unmarshal(userObject.MarshalTo(nil), &request)
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
+		rule, err := a.store.Update(c, UpdateRequest(request))
+		if err != nil || rule == nil {
+			return "", err
 		}
-
-		err = binding.Validator.ValidateStruct(request)
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
-			continue
-		}
-
-		err = a.transformEditRequest(ctx, &request.EditRequest)
-		if err != nil {
-			valErr := common.ValidationError{}
-			if errors.As(err, &valErr) {
-				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
-				continue
-			}
-
-			a.logger.Err(err).Msg("cannot update idle rule")
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
-			continue
-		}
-
-		rule, err := a.store.Update(ctx, UpdateRequest(request))
-		if err != nil {
-			a.logger.Err(err).Msg("cannot update idle rule")
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
-			continue
-		}
-
-		if rule == nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
-			continue
-		}
-
-		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, rule.ID, http.StatusOK, rawObject, nil))
 
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionUpdate,
@@ -355,71 +240,20 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		if err != nil {
 			a.actionLogger.Err(err, "failed to log action")
 		}
-	}
 
-	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+		return rule.ID, nil
+	}, a.logger)
 }
 
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-
-	var ar fastjson.Arena
-
-	raw, err := c.GetRawData()
-	if err != nil {
-		panic(err)
-	}
-
-	jsonValue, err := fastjson.ParseBytes(raw)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	rawObjects, err := jsonValue.Array()
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	ctx := c.Request.Context()
-	response := ar.NewArray()
-
-	for idx, rawObject := range rawObjects {
-		object, err := rawObject.Object()
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
+	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
+		ok, err := a.store.Delete(c, request.ID)
+		if err != nil || !ok {
+			return "", err
 		}
-
-		var request BulkDeleteRequestItem
-		err = json.Unmarshal(object.MarshalTo(nil), &request)
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
-		}
-
-		err = binding.Validator.ValidateStruct(request)
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
-			continue
-		}
-
-		ok, err := a.store.Delete(ctx, request.ID)
-		if err != nil {
-			a.logger.Err(err).Msg("cannot delete idle rule")
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
-			continue
-		}
-
-		if !ok {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
-			continue
-		}
-
-		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
 
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionDelete,
@@ -429,9 +263,9 @@ func (a *api) BulkDelete(c *gin.Context) {
 		if err != nil {
 			a.actionLogger.Err(err, "failed to log action")
 		}
-	}
 
-	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+		return request.ID, nil
+	}, a.logger)
 }
 
 func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {

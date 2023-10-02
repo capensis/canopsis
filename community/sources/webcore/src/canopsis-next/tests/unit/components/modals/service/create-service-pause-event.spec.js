@@ -1,7 +1,7 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
@@ -9,8 +9,6 @@ import { createModalWrapperStub } from '@unit/stubs/modal';
 import ClickOutside from '@/services/click-outside';
 
 import CreateServicePauseEvent from '@/components/modals/service/create-service-pause-event.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
@@ -24,43 +22,6 @@ const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
 };
 
-const factory = (options = {}) => shallowMount(CreateServicePauseEvent, {
-  localVue,
-  stubs,
-  attachTo: document.body,
-  propsData: {
-    modal: {
-      config: {},
-    },
-  },
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CreateServicePauseEvent, {
-  localVue,
-  stubs: snapshotStubs,
-  propsData: {
-    modal: {
-      config: {},
-    },
-  },
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
 const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
@@ -73,6 +34,34 @@ describe('create-service-pause-event', () => {
 
   const $modals = mockModals();
   const $popups = mockPopups();
+
+  const factory = generateShallowRenderer(CreateServicePauseEvent, {
+    stubs,
+    attachTo: document.body,
+    propsData: {
+      modal: {
+        config: {},
+      },
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(CreateServicePauseEvent, {
+    stubs: snapshotStubs,
+    propsData: {
+      modal: {
+        config: {},
+      },
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
 
   test('Default parameters applied to form', () => {
     const wrapper = factory({

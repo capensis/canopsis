@@ -2,7 +2,7 @@ Feature: create service entity
   I need to be able to create service entity
 
   @concurrent
-  Scenario: given disabled service entity should not update service context graph
+  Scenario: given disabled service entity should update service context graph
     Given I am admin
     When I do POST /api/v4/entityservices:
     """json
@@ -156,9 +156,7 @@ Feature: create service entity
     Then the response body should be:
     """json
     {
-      "depends": [
-        "test-resource-che-service-second-1-1/test-component-che-service-second-1"
-      ],
+      "depends": [],
       "impact": []
     }
     """
@@ -173,8 +171,7 @@ Feature: create service entity
     Then the response array key "impact" should contain:
     """json
     [
-      "test-component-che-service-second-1",
-      "{{ .serviceID }}"
+      "test-component-che-service-second-1"
     ]
     """
 

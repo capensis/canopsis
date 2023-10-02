@@ -144,7 +144,7 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
     class="layout row wrap"
   >
     <button
-      class="mr-2 mx-0 v-btn theme--light primary"
+      class="mr-2 mx-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
       type="button"
     >
       <div
@@ -329,7 +329,7 @@ exports[`c-movable-card-iterator-field Renders \`c-movable-card-iterator-field\`
     class="layout row wrap"
   >
     <button
-      class="mr-2 mx-0 v-btn theme--light primary"
+      class="mr-2 mx-0 v-btn v-btn--outline v-btn--depressed theme--light primary--text"
       type="button"
     >
       <div

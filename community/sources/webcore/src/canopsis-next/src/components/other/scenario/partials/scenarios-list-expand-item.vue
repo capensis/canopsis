@@ -7,7 +7,7 @@
             v-flex(xs12)
               scenario-info-item(
                 :label="$t('common.author')",
-                :value="scenario.author.name",
+                :value="scenario.author.display_name",
                 icon="person"
               )
             v-flex(xs12)

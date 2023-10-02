@@ -1,14 +1,12 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorReasonModule } from '@unit/utils/store';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { MAX_LIMIT } from '@/constants';
 
 import CPbehaviorReasonField from '@/components/forms/fields/pbehavior/c-pbehavior-reason-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
@@ -22,16 +20,8 @@ describe('c-pbehavior-reason-field', () => {
     pbehaviorReasonModule,
   ]);
 
-  const factory = generateShallowRenderer(CPbehaviorReasonField, {
-    localVue,
-    stubs,
-    store,
-  });
-
-  const snapshotFactory = generateRenderer(CPbehaviorReasonField, {
-    localVue,
-    store,
-  });
+  const factory = generateShallowRenderer(CPbehaviorReasonField, { stubs, store });
+  const snapshotFactory = generateRenderer(CPbehaviorReasonField, { store });
 
   test('Reasons fetched after mount', async () => {
     factory({

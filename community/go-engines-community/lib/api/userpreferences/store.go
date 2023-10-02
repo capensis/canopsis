@@ -22,15 +22,18 @@ type store struct {
 	client           mongo.DbClient
 	collection       mongo.DbCollection
 	filterCollection mongo.DbCollection
+	authorProvider   author.Provider
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
+	authorProvider author.Provider,
 ) Store {
 	return &store{
 		client:           dbClient,
 		collection:       dbClient.Collection(mongo.UserPreferencesMongoCollection),
 		filterCollection: dbClient.Collection(mongo.WidgetFiltersMongoCollection),
+		authorProvider:   authorProvider,
 	}
 }
 
@@ -46,14 +49,25 @@ func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, e
 			"widget": widgetId,
 		}},
 		{"$lookup": bson.M{
-			"from":         mongo.WidgetFiltersMongoCollection,
-			"localField":   "widget",
-			"foreignField": "widget",
-			"as":           "filters",
+			"from": mongo.WidgetFiltersMongoCollection,
+			"let": bson.M{
+				"widget": "$widget",
+				"user":   "$user",
+			},
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"$expr": bson.M{"$and": []bson.M{
+						{"$eq": bson.A{"$widget", "$$widget"}},
+						{"$eq": bson.A{"$author", "$$user"}},
+					}},
+					"is_private": true,
+				}},
+			},
+			"as": "filters",
 		}},
 		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
 	}
-	pipeline = append(pipeline, author.PipelineForField("filters.author")...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("filters.author")...)
 	pipeline = append(pipeline,
 		bson.M{"$sort": bson.M{"filters.position": 1}},
 		bson.M{"$group": bson.M{
@@ -61,16 +75,11 @@ func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, e
 			"user":    bson.M{"$first": "$user"},
 			"widget":  bson.M{"$first": "$widget"},
 			"content": bson.M{"$first": "$content"},
-			"filters": bson.M{"$push": "$filters"},
-		}},
-		bson.M{"$addFields": bson.M{
-			"filters": bson.M{"$filter": bson.M{
-				"input": "$filters",
-				"cond": bson.M{"$and": []bson.M{
-					{"$eq": bson.A{"$$this.author._id", "$user"}},
-					{"$eq": bson.A{"$$this.is_private", true}},
-				}},
-			}},
+			"filters": bson.M{"$push": bson.M{"$cond": bson.M{
+				"if":   "$filters._id",
+				"then": "$filters",
+				"else": "$$REMOVE",
+			}}},
 		}},
 	)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
@@ -93,7 +102,7 @@ func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, e
 			}},
 			{"$sort": bson.M{"position": 1}},
 		}
-		pipeline = append(pipeline, author.Pipeline()...)
+		pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 		filterCursor, err := s.filterCollection.Aggregate(ctx, pipeline)
 		if err != nil {
 			return nil, err

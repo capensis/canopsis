@@ -7,6 +7,7 @@ import (
 	"time"
 
 	alarmapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -27,15 +28,17 @@ func NewStore(
 	linkGenerator link.Generator,
 	alarmStore alarmapi.Store,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	authorProvider author.Provider,
 	logger zerolog.Logger,
 ) Store {
 	return &store{
 		dbClient:         dbClient,
 		dbCollection:     dbClient.Collection(mongo.EntityMongoCollection),
-		userDbCollection: dbClient.Collection(mongo.RightsMongoCollection),
+		userDbCollection: dbClient.Collection(mongo.UserCollection),
 
-		alarmStore:    alarmStore,
-		linkGenerator: linkGenerator,
+		alarmStore:     alarmStore,
+		linkGenerator:  linkGenerator,
+		authorProvider: authorProvider,
 
 		timezoneConfigProvider: timezoneConfigProvider,
 
@@ -48,8 +51,9 @@ type store struct {
 	dbCollection     mongo.DbCollection
 	userDbCollection mongo.DbCollection
 
-	linkGenerator link.Generator
-	alarmStore    alarmapi.Store
+	linkGenerator  link.Generator
+	alarmStore     alarmapi.Store
+	authorProvider author.Provider
 
 	timezoneConfigProvider config.TimezoneConfigProvider
 
@@ -209,14 +213,14 @@ func (s *store) fillLinks(ctx context.Context, result *EntityAggregationResult, 
 }
 
 func (s *store) getQueryBuilder() *MongoQueryBuilder {
-	return NewMongoQueryBuilder(s.dbClient)
+	return NewMongoQueryBuilder(s.dbClient, s.authorProvider)
 }
 
 func (s *store) findUser(ctx context.Context, id string) (link.User, error) {
 	user := link.User{}
 	cursor, err := s.userDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"_id": id}},
-		{"$addFields": bson.M{"username": "$crecord_name"}},
+		{"$addFields": bson.M{"username": "$name"}},
 	})
 	if err != nil {
 		return user, err

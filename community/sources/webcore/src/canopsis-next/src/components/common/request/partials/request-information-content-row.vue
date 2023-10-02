@@ -10,12 +10,14 @@
           v-list-tile-content
             v-list-tile-title {{ item.text }}
     span.request-information-content-row__key(@contextmenu.prevent="openContextmenu") {{ row.name }}
-    template(v-if="row.value")
+    template(v-if="hasRowValue")
       span :&nbsp;
-      span.request-information-content-row__value(@contextmenu.prevent="openContextmenu") {{ row.value }}
+      span.request-information-content-row__value(@contextmenu.prevent="openContextmenu") {{ parsedValue }}
 </template>
 
 <script>
+import { isNull, isString, isUndefined } from 'lodash';
+
 import { writeTextToClipboard } from '@/helpers/clipboard';
 
 export default {
@@ -35,6 +37,22 @@ export default {
     };
   },
   computed: {
+    hasRowValue() {
+      return !isUndefined(this.row.value);
+    },
+
+    parsedValue() {
+      if (isNull(this.row.value)) {
+        return 'null';
+      }
+
+      if (isString(this.row.value) && !this.row.value.length) {
+        return '""';
+      }
+
+      return this.row.value;
+    },
+
     clickOutsideDirective() {
       return {
         handler: this.closeContextMenu,
@@ -45,7 +63,7 @@ export default {
     items() {
       const items = [];
 
-      if (this.row.value) {
+      if (this.hasRowValue) {
         items.push({
           text: this.$t('common.copyValue'),
           action: this.copyRowValue,
@@ -112,6 +130,7 @@ export default {
     border-radius: 4px;
     padding: 2px;
     cursor: pointer;
+    word-wrap: break-word;
 
     &:hover {
       background: rgba(0, 0, 0, 0.1);

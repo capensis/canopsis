@@ -1,10 +1,8 @@
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import CClickableTooltip from '@/components/common/clickable-tooltip/c-clickable-tooltip.vue';
 import ExtraDetailsLastComment from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-last-comment.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-clickable-tooltip': CClickableTooltip,
@@ -24,7 +22,7 @@ describe('extra-details-last-comment', () => {
   };
 
   const snapshotFactory = generateRenderer(ExtraDetailsLastComment, {
-    localVue,
+
     stubs,
     attachTo: document.body,
   });

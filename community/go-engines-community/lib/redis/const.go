@@ -18,17 +18,19 @@ const (
 
 	AxePeriodicalLockKey                 = "axe-periodical-lock-key"
 	AxeResolvedArchiverPeriodicalLockKey = "axe-resolved-archiver-periodical-lock-key"
+	AxeInternalTagsPeriodicalLockKey     = "axe-internal-tags-periodical-lock-key"
+	AxeEntityServiceStateLockKey         = "axe-entity-service-state-lock-key"
 
 	FifoDeleteOutdatedRatesLockKey = "fifo-delete-outdated-rates-lock-key"
 
 	ChePeriodicalLockKey           = "che-periodical-lock-key"
 	CheSoftDeletePeriodicalLockKey = "che-soft-delete-periodical-lock-key"
 
-	ServicePeriodicalLockKey          = "service-periodical-lock"
-	ServiceIdleSincePeriodicalLockKey = "service-periodical-idle-since-lock"
+	AxeIdleSincePeriodicalLockKey = "axe-periodical-idle-since-lock"
 
-	RemediationPeriodicalLockKey      = "remediation-periodical-lock-key"
-	RemediationStatsPeriodicalLockKey = "remediation-stats-periodical-lock-key"
+	RemediationPeriodicalLockKey        = "remediation-periodical-lock-key"
+	RemediationStatsPeriodicalLockKey   = "remediation-stats-periodical-lock-key"
+	RemediationPostponedJobTasksLockKey = "remediation-postponed-job-tasks-lock-key"
 
 	PbehaviorSpanKey              = "pbehavior-span"
 	PbehaviorTypesKey             = "pbehavior-types"
@@ -44,4 +46,5 @@ const (
 
 	ApiCleanEntitiesLockKey      = "api-clean-entities-lock-key"
 	ApiUserActivityMetricLockKey = "api-user-activity-metric"
+	ApiCacheRequestKey           = "api-cache-request"
 )

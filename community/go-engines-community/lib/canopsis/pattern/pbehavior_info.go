@@ -26,7 +26,7 @@ func (p PbehaviorInfo) Match(pbhInfo types.PbehaviorInfo) (bool, error) {
 			matched = false
 
 			if str, ok := getPbehaviorInfoStringField(pbhInfo, f); ok {
-				matched, _, err = cond.MatchString(str)
+				matched, err = cond.MatchString(str)
 			} else {
 				err = ErrUnsupportedField
 			}
@@ -62,7 +62,7 @@ func (p PbehaviorInfo) Validate() bool {
 			var err error
 
 			if str, ok := getPbehaviorInfoStringField(emptyPbhInfo, f); ok {
-				_, _, err = cond.MatchString(str)
+				_, err = cond.MatchString(str)
 			} else {
 				err = ErrUnsupportedField
 			}

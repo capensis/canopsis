@@ -48,6 +48,15 @@ export default {
     },
   },
   computed: {
+    quickRanges() {
+      const ranges = this.ranges ?? Object.values(QUICK_RANGES);
+
+      return ranges.map(range => ({
+        ...range,
+        text: this.$t(`quickRanges.types.${range.value}`),
+      }));
+    },
+
     range() {
       if (!isObject(this.value)) {
         return this.value;
@@ -56,15 +65,6 @@ export default {
       const range = findQuickRangeValue(this.value.start, this.value.stop, this.ranges);
 
       return this.quickRanges.find(({ value }) => value === range.value);
-    },
-
-    quickRanges() {
-      const ranges = this.ranges ?? Object.values(QUICK_RANGES);
-
-      return ranges.map(range => ({
-        ...range,
-        text: this.$t(`quickRanges.types.${range.value}`),
-      }));
     },
   },
 };

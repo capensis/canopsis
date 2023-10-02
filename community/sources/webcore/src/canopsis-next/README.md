@@ -148,9 +148,9 @@ export const WIDGET_TYPES_RULES = {
   [WIDGET_TYPES.counterCustom]: { edition: 'pro' },
 };
 ```
-9. Put the widget title and widget settings title in the i18n messages `i18n/messages/en.js` and `i18n/messages/fr.js` (the files must have the same structure):
+9. Put the widget title and widget settings title in the i18n messages `i18n/messages/en/modals.js` and `i18n/messages/fr/modals.js` (the files must have the same structure):
 ```js
-// file i18n/messages/en.js
+// file i18n/messages/en/modals.js
 import { WIDGET_TYPES, SIDE_BARS } from '../../constants';
 
 export default {
@@ -422,9 +422,9 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.counter]: SIDE_BARS.counterSettings, // <-- here
 };
 ```
-5. Create a new component for the widget settings in the `src/components/sidebars/settings`. Example: `counter.vue` for the `Counter` widget. Here you must import `src/mixins/widget/settings` mixin:
+5. Create a new component for the widget settings in the `src/components/sidebars`. Example: `counter.vue` for the `Counter` widget. Here you must import `src/mixins/widget/settings` mixin:
 ```js
-// file src/components/side-bars/settings/counter.vue
+// file src/components/sidebars/counter/counter.vue
 
 import { SIDE_BARS } from '@/constants';
    
@@ -458,7 +458,14 @@ export const WIDGET_TYPES_RULES = {
   [WIDGET_TYPES.statsCalendar]: { edition: CANOPSIS_EDITION.pro }, // <-- here. Example for the statsCalendar widget type
 };
 ```
-8. Put the widget title in the i18n messages `src/i18n/messages/en.js` and `src/i18n/messages/fr.js` (the files has the same structure):
+8. Put widget into available widget types for creation in `src/constants/widget.js`:
+```js
+export const TOP_LEVEL_WIDGET_TYPES = [
+  // ...another widget types
+  WIDGET_TYPES.counter,
+];
+```
+9. Put the widget title in the i18n messages `src/i18n/messages/en/modals.js` and `src/i18n/messages/fr/modals.js` (the files has the same structure):
 ```js
 export default {
   // ...another code
@@ -480,7 +487,7 @@ export default {
   },
 };
 ```
-9. We should put messages for the widget settings in the i18n messages: `src/i18n/messages/en.js` and `src/i18n/messages/fr.js`:
+10. We should put messages for the widget settings in the i18n messages: `src/i18n/messages/en/settings.js` and `src/i18n/messages/fr/settings.js`:
 ```js
 export default {
   // ...another code
@@ -493,10 +500,10 @@ export default {
   },
 };
 ```
-10. If we need to put default parameters of the widget on creation then we must do the following steps:
-* Create new file `src/helpers/forms/widgets/counter.js` with parameters preparation
+11. If we need to put default parameters of the widget on creation then we must do the following steps:
+* Create new file `src/helpers/entities/widget/forms/counter.js` with parameters preparation
 ```js
-   // file src/helpers/forms/widgets/counter.js
+   // file src/helpers/entities/widget/forms/counter.js
 export const counterWidgetParametersToForm = (parameters = {}) => ({ // <-- Special parameters preparation for our new widget type
   opened: isBoolean(opened) || isNull(opened) ? parameters.opened : true,
   blockTemplate: parameters.blockTemplate ?? DEFAULT_COUNTER_BLOCK_TEMPLATE,
@@ -518,11 +525,11 @@ export const counterWidgetParametersToForm = (parameters = {}) => ({ // <-- Spec
   alarmsList: alarmListBaseParametersToForm(parameters.alarmsList),
 });
  ```
-* Put this function call inside `src/helpers/forms/widgets/common.js`:
+* Put this function call inside `src/helpers/entities/widget/form.js`:
 ```js
-// file src/helpers/forms/widgets/common.js
+// file src/helpers/entities/widget/form.js
 
-import { counterWidgetParametersToForm } from './counter';
+import { counterWidgetParametersToForm } from './forms/counter';
 
 // ...another code
 
@@ -535,9 +542,17 @@ export const widgetParametersToForm = ({ type, parameters } = {}) => {
    }
 };
 ```
-11. Create a folder for the widget components in the `src/components/widgets`. Example: `counter` folder in the `src/components/widgets`.
-12. Create a main component for the widget inside our new folder. This component will receive some props: `widget`, `tabId`, `edition`. Example: `counter.vue` in the `src/components/widgets/counter`. Possible content of the component you can see in another components.
-13. Put import of our new widget component and put new map value into `widgetProps` in the `src/components/widgets/widget-wrapper.vue`:
+12. Create a folder for the widget components in the `src/components/widgets`. Example: `counter` folder in the `src/components/widgets`.
+13. Create a main component for the widget inside our new folder. This component will receive some props: `widget`, `tabId`, `edition`. Example: `counter.vue` in the `src/components/widgets/counter`. Possible content of the component you can see in another components.
+14. Put new map for widget type and new widget component into `src/constants/widget.js`: 
+```js
+export const COMPONENTS_BY_WIDGET_TYPES = {
+  // ... another widgets
+  [WIDGET_TYPES.counter]: 'counter-widget',
+  // ... another widgets
+};
+```
+15. Put import of our new widget component in the `src/components/widgets/widget-wrapper.vue`:
 ```js
 // file src/components/widgets/widget-wrapper.vue
 
@@ -554,22 +569,10 @@ export default {
     CounterWidget, // <-- here
   },
   // ...another code
-  computed: {
-    // ...another code
-    widgetProps() {
-      // ...another code
-
-      const widgetComponentsMap = {
-        // ...another widgets
-
-        [WIDGET_TYPES.counter]: 'counter-widget', // <-- here
-      };
-    },
-  },
 };
 ```
-14. If we want to define widget preparer before displaying we can do it in the `src/components/widgets/widget-wrapper.vue` in `preparedWidget` computed property;
-15. Profit!
+16. If we want to define widget preparer before displaying we can do it in the `src/components/widgets/widget-wrapper.vue` in `preparedWidget` computed property;
+6Profit!
 
 # How can I use data from API ?
 
@@ -947,7 +950,7 @@ Allows us to add preparer for new widget type parameters or change exists prepar
 **We should define this function only if we need to put special preparation from `parameters` to `form`.**
 ```js
 // index.js
-import { counterWidgetParametersToForm } from './helpers/forms/widgets/counter-custom';
+import { counterWidgetParametersToForm } from './helpers/entities/widget/forms/counter-custom';
 
 // ...another code
 export default {
@@ -983,7 +986,7 @@ Allows us to add preparer for new widget type form or change exists preparer for
 **We should define this function if we need to put special preparation from `form` to `parameters`.**
 ```js
 // index.js
-import { formToCounterWidgetParameters } from './helpers/forms/widgets/counter-custom';
+import { formToCounterWidgetParameters } from './helpers/entities/widget/forms/counter-custom';
 
 // ...another code
 export default {

@@ -43,17 +43,16 @@ import {
   prepareImportedGroups,
   prepareCurrentGroupsForImporting,
   prepareViewGroupsForImportRequest,
-} from '@/helpers/forms/view';
+} from '@/helpers/entities/view/form';
 
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
-
 import { authMixin } from '@/mixins/auth';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesViewMixin } from '@/mixins/entities/view';
 import { submittableMixinCreator } from '@/mixins/submittable';
 
-import DraggableGroupViews from '@/components/layout/navigation/partial/groups-side-bar/draggable-group-views.vue';
-import DraggableGroups from '@/components/layout/navigation/partial/groups-side-bar/draggable-groups.vue';
+import DraggableGroupViews from '@/components/layout/navigation/partials/groups-side-bar/draggable-group-views.vue';
+import DraggableGroups from '@/components/layout/navigation/partials/groups-side-bar/draggable-groups.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

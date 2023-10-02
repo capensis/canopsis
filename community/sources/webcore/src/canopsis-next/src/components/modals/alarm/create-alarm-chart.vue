@@ -27,15 +27,15 @@
 <script>
 import { MODALS, VALIDATION_DELAY, WIDGET_TYPES } from '@/constants';
 
-import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/forms/widgets/alarm';
+import { alarmListChartToForm, formToAlarmListChart } from '@/helpers/entities/widget/forms/alarm';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import BarChartWidgetForm from '@/components/sidebars/settings/forms/widgets/bar-chart-widget-form.vue';
-import LineChartWidgetForm from '@/components/sidebars/settings/forms/widgets/line-chart-widget-form.vue';
-import NumbersWidgetForm from '@/components/sidebars/settings/forms/widgets/numbers-widget-form.vue';
+import BarChartWidgetForm from '@/components/sidebars/chart/form/bar-chart-widget-form.vue';
+import LineChartWidgetForm from '@/components/sidebars/chart/form/line-chart-widget-form.vue';
+import NumbersWidgetForm from '@/components/sidebars/chart/form/numbers-widget-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

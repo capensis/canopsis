@@ -34,6 +34,7 @@ export default {
   pbehaviorReason: 'Raison PBehavior',
   pbehaviorName: 'Nom PBehavior',
   pbehaviorCanonicalType: 'Type canonique de PBehavior',
+  rruleEnd: 'Fin de récurrence',
   buttons: {
     addFilter: 'Ajouter un filtre',
     editFilter: 'Modifier le filtre',

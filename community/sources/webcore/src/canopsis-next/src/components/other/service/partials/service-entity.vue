@@ -62,9 +62,9 @@ import { isNull } from 'lodash';
 
 import { ENTITY_TYPES, MODALS, USERS_PERMISSIONS } from '@/constants';
 
-import { getEntityColor } from '@/helpers/color';
-import { getAvailableActionsByEntity } from '@/helpers/entities/entity';
-import { isInstructionManual } from '@/helpers/forms/remediation-instruction';
+import { getEntityColor } from '@/helpers/entities/entity/color';
+import { getAvailableActionsByEntity } from '@/helpers/entities/entity/actions';
+import { isInstructionManual } from '@/helpers/entities/remediation/instruction/form';
 
 import { authMixin } from '@/mixins/auth';
 import { vuetifyTabsMixin } from '@/mixins/vuetify/tabs';

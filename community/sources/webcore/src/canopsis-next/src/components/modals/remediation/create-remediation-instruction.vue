@@ -4,7 +4,7 @@
       template(#title="")
         span {{ title }}
       template(#text="")
-        remediation-instruction-form(v-model="form", :disabled="disabled")
+        remediation-instruction-form(v-model="form", :disabled="disabled", :is-new="isNew")
       template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
@@ -21,7 +21,7 @@ import {
   formToRemediationInstruction,
   remediationInstructionErrorsToForm,
   remediationInstructionToForm,
-} from '@/helpers/forms/remediation-instruction';
+} from '@/helpers/entities/remediation/instruction/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
@@ -60,6 +60,10 @@ export default {
 
     disabled() {
       return this.config.disabled;
+    },
+
+    isNew() {
+      return !this.modal.config.remediationInstruction?._id;
     },
   },
   methods: {

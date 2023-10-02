@@ -1,12 +1,10 @@
 import Faker from 'faker';
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { createNumberInputStub } from '@unit/stubs/input';
 import { TIME_UNITS } from '@/constants';
 
 import CDurationField from '@/components/forms/fields/duration/c-duration-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-number-field': createNumberInputStub('c-number-field'),
@@ -31,12 +29,12 @@ const selectSelectField = wrapper => wrapper.find('.v-select');
 
 describe('c-duration-field', () => {
   const factory = generateShallowRenderer(CDurationField, {
-    localVue,
+
     stubs,
   });
 
   const snapshotFactory = generateRenderer(CDurationField, {
-    localVue,
+
     stubs: snapshotStubs,
     parentComponent: {
       $_veeValidate: {

@@ -2,15 +2,15 @@
 
 exports[`numbers-metrics Renders \`numbers-metrics\` with custom props 1`] = `
 <div
-  class="layout numbers-metrics column align-center"
+  class="layout kpi-widget column align-center"
 >
   <h4
-    class="numbers-metrics__title"
+    class="kpi-widget__title"
   >
     Custom title
   </h4>
   <div
-    class="layout numbers-metrics__list row wrap"
+    class="layout kpi-widget__list row wrap"
   >
     <numbers-metrics-item-stub
       metric="[object Object]"
@@ -24,7 +24,7 @@ exports[`numbers-metrics Renders \`numbers-metrics\` with custom props 1`] = `
     />
   </div>
   <div
-    class="layout numbers-metrics__actions mt-4 row justify-end"
+    class="layout kpi-widget__actions mt-4 row justify-end"
   >
     <button
       class="ma-0 v-btn v-btn--small theme--light primary"
@@ -51,18 +51,18 @@ exports[`numbers-metrics Renders \`numbers-metrics\` with custom props 1`] = `
 
 exports[`numbers-metrics Renders \`numbers-metrics\` with default props 1`] = `
 <div
-  class="layout numbers-metrics column align-center"
+  class="layout kpi-widget column align-center"
 >
   <h4
-    class="numbers-metrics__title"
+    class="kpi-widget__title"
   >
     
   </h4>
   <div
-    class="layout numbers-metrics__list row wrap"
+    class="layout kpi-widget__list row wrap"
   />
   <div
-    class="layout numbers-metrics__actions mt-4 row justify-end"
+    class="layout kpi-widget__actions mt-4 row justify-end"
   >
     <button
       class="ma-0 v-btn v-btn--small theme--light primary"

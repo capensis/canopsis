@@ -26,7 +26,6 @@
 import { keyBy, omit } from 'lodash';
 
 import { COLORS } from '@/config';
-
 import {
   TREE_OF_DEPENDENCIES_GRAPH_OPTIONS,
   TREE_OF_DEPENDENCIES_GRAPH_LAYOUT_OPTIONS,

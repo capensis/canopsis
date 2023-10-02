@@ -4,7 +4,7 @@
       template(#title="")
         span {{ title }}
       template(#text="")
-        role-form(v-model="form")
+        role-form(v-model="form", :with-template="config.withTemplate")
       template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary.white--text(
@@ -16,7 +16,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { roleToForm, formToRole } from '@/helpers/forms/role';
+import { roleToForm, formToRole } from '@/helpers/entities/role/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

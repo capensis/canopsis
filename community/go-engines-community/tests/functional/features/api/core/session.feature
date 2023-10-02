@@ -15,7 +15,7 @@ Feature: Session auth user
 	  {
 		"crecord_name": "root",
 		"authkey": "2be1d0ee-5e9e-4b1f-9d80-e857e50f4191",
-		"role": "admin",
+		"roles": ["admin"],
 		"contact": {
 		  "name": "John Doe",
           "address": "30 Rue du Triez 59290 Wasquehal France"

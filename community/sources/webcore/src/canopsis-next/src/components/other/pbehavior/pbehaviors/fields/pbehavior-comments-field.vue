@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 
 import { formArrayMixin } from '@/mixins/form';
 

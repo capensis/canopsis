@@ -36,7 +36,7 @@ exports[`create-associate-ticket-event Renders \`create-associate-ticket-event\`
         />
         <c-description-field-stub
           label="Comment"
-          name="ticket_comment"
+          name="comment"
           value=""
         />
         <c-alert-stub
@@ -111,7 +111,7 @@ exports[`create-associate-ticket-event Renders \`create-associate-ticket-event\`
         />
         <c-description-field-stub
           label="Comment"
-          name="ticket_comment"
+          name="comment"
           value=""
         />
         <c-alert-stub

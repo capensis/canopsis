@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`tag-form Renders \`tag-form\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <input
+    class="v-text-field"
+    disabled="disabled"
+    error-messages=""
+    max-length="11"
+    name="value"
+  />
+  <c-color-picker-field-stub
+    value="#2b3e4f"
+  />
+  <!---->
+</div>
+`;
+
+exports[`tag-form Renders \`tag-form\` with default props 1`] = `
+<div
+  class="layout column"
+>
+  <input
+    class="v-text-field"
+    error-messages=""
+    max-length="20"
+    name="value"
+  />
+  <c-color-picker-field-stub />
+  <tag-patterns-form-stub
+    form="[object Object]"
+  />
+</div>
+`;

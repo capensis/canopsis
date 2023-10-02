@@ -1,32 +1,20 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 
 import FlowchartNumberField from '@/components/common/flowchart/fields/flowchart-number-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-select': createSelectInputStub('v-select'),
 };
 
-const factory = (options = {}) => shallowMount(FlowchartNumberField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(FlowchartNumberField, {
-  localVue,
-
-  ...options,
-});
-
 const selectSelectField = wrapper => wrapper.find('.v-select');
 
 describe('flowchart-number-field', () => {
+  const factory = generateShallowRenderer(FlowchartNumberField, { stubs });
+  const snapshotFactory = generateRenderer(FlowchartNumberField);
+
   test('Value changed after trigger select field', () => {
     const wrapper = factory();
 

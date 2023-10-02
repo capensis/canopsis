@@ -27,7 +27,7 @@ export default {
   props: {
     periodicRefresh: {
       type: Object,
-      required: true,
+      default: () => ({}),
     },
     label: {
       type: String,

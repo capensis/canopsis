@@ -9,8 +9,10 @@
     )
     declare-ticket-rule-ticket-mapping-field(v-field="webhook.declare_ticket")
     v-layout(row, justify-end)
-      v-btn.orange.white--text(
+      v-btn(
         :loading="checking",
+        color="orange",
+        dark,
         @click="validateTemplateVariables"
       ) {{ $t('declareTicket.checkSyntax') }}
 </template>
@@ -18,7 +20,7 @@
 <script>
 import flatten from 'flat';
 
-import { requestTemplateVariablesErrorsToForm } from '@/helpers/forms/shared/request';
+import { requestTemplateVariablesErrorsToForm } from '@/helpers/entities/shared/request/form';
 
 import { formMixin, validationErrorsMixinCreator } from '@/mixins/form';
 import { entitiesTemplateValidatorMixin } from '@/mixins/entities/template-validator';
@@ -71,18 +73,14 @@ export default {
     },
   },
   methods: {
-    validateRequestHeadersTemplates(headers) {
-      return Promise.all(
-        headers.map(({ value }) => this.validateScenariosVariables({ data: { text: value } })),
-      );
-    },
-
     async validateRequestTemplates(request) {
-      const [url, payload, headers] = await Promise.all([
-        this.validateScenariosVariables({ data: { text: request.url } }),
-        this.validateScenariosVariables({ data: { text: request.payload } }),
-        this.validateRequestHeadersTemplates(request.headers),
-      ]);
+      const [url, payload, ...headers] = await this.validateScenariosVariables({
+        data: [
+          { text: request.url },
+          { text: request.payload },
+          ...request.headers.map(({ value }) => ({ text: value })),
+        ],
+      });
 
       return {
         url,
@@ -97,7 +95,7 @@ export default {
       };
     },
 
-    scenarioRequestErrorsRoForm({ request }) {
+    scenarioRequestErrorsToForm({ request }) {
       const flattenErrors = flatten({
         request: requestTemplateVariablesErrorsToForm(request, this.webhook.request),
       });
@@ -115,7 +113,7 @@ export default {
       try {
         const errors = await this.validateFormTemplates(this.webhook);
 
-        const wasSet = this.setFormErrors(this.scenarioRequestErrorsRoForm(errors, this.form));
+        const wasSet = this.setFormErrors(this.scenarioRequestErrorsToForm(errors));
 
         if (!wasSet) {
           this.$popups.success({ text: this.$t('declareTicket.syntaxIsValid') });

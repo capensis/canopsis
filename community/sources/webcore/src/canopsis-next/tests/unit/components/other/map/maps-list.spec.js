@@ -1,6 +1,6 @@
 import { range } from 'lodash';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import {
   selectRowRemoveButtonByIndex,
   selectRowEditButtonByIndex,
@@ -14,8 +14,6 @@ import { MAP_TYPES } from '@/constants';
 import MapsList from '@/components/other/map/maps-list.vue';
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'c-advanced-data-table': CAdvancedDataTable,
   'c-search-field': true,
@@ -27,13 +25,6 @@ const stubs = {
   'maps-list-expand-item': true,
 };
 
-const snapshotFactory = (options = {}) => mount(MapsList, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 describe('maps-list', () => {
   const totalItems = 11;
 
@@ -43,11 +34,13 @@ describe('maps-list', () => {
     _id: `map-id-${index}`,
     type: types[index % 3],
     author: {
-      name: `author-${index}`,
+      display_name: `author-${index}`,
     },
     deletable: true,
     updated: 1614861888 + index,
   }));
+
+  const snapshotFactory = generateRenderer(MapsList, { stubs });
 
   test('Selected items removed after trigger mass remove button', async () => {
     const wrapper = snapshotFactory({

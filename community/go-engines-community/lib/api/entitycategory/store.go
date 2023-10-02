@@ -22,12 +22,13 @@ type Store interface {
 	Delete(ctx context.Context, id string) (bool, error)
 }
 
-func NewStore(dbClient mongo.DbClient) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
 		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.EntityCategoryMongoCollection),
 		defaultSearchByFields: []string{"_id", "name"},
 		defaultSortBy:         "name",
+		authorProvider:        authorProvider,
 	}
 }
 
@@ -36,6 +37,7 @@ type store struct {
 	dbCollection          mongo.DbCollection
 	defaultSearchByFields []string
 	defaultSortBy         string
+	authorProvider        author.Provider
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -54,7 +56,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		r.Query,
 		pipeline,
 		common.GetSortQuery(sortBy, r.Sort),
-		author.Pipeline(),
+		s.authorProvider.Pipeline(),
 	))
 
 	if err != nil {
@@ -77,7 +79,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 
 func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
-	pipeline = append(pipeline, author.Pipeline()...)
+	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {

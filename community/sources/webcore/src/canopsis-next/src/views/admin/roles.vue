@@ -122,6 +122,7 @@ export default {
       this.$modals.show({
         name: MODALS.createRole,
         config: {
+          withTemplate: true,
           action: async (data) => {
             await this.createRole({ data });
 

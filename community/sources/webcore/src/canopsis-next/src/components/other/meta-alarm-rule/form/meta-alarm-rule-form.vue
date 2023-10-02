@@ -35,7 +35,7 @@ import {
   isMetaAlarmRuleTypeHasTotalEntityPatterns,
   isTimebasedMetaAlarmRuleType,
   isValueGroupMetaAlarmRuleType,
-} from '@/helpers/forms/meta-alarm-rule';
+} from '@/helpers/entities/meta-alarm/rule/form';
 
 import MetaAlarmRuleThresholdForm from './meta-alarm-rule-threshold-form.vue';
 import MetaAlarmRuleTimeBasedForm from './meta-alarm-rule-time-based-form.vue';

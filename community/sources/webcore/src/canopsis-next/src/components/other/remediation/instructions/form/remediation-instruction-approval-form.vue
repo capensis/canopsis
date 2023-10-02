@@ -83,7 +83,7 @@ export default {
     },
 
     assignValue() {
-      return this.isRoleType ? this.approval.role.name : this.approval.user.name;
+      return this.isRoleType ? this.approval.role.name : this.approval.user.display_name;
     },
   },
   methods: {

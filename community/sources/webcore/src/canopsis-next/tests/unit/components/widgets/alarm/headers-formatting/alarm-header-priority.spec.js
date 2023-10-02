@@ -1,21 +1,14 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import AlarmHeaderPriority from '@/components/widgets/alarm/headers-formatting/alarm-header-priority.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-help-icon': true,
 };
 
-const snapshotFactory = (options = {}) => mount(AlarmHeaderPriority, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 describe('alarm-header-priority', () => {
+  const snapshotFactory = generateRenderer(AlarmHeaderPriority, { stubs });
+
   it('Renders `alarm-header-priority` without slot', () => {
     const wrapper = snapshotFactory();
 

@@ -1,28 +1,12 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import CDateTimeIntervalField from '@/components/forms/fields/date-time-picker/c-date-time-interval-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'date-time-picker-field': true,
 };
-
-const factory = (options = {}) => shallowMount(CDateTimeIntervalField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CDateTimeIntervalField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectDateTimePickerField = wrapper => wrapper.findAll('date-time-picker-field-stub');
 const selectFromDateTimePickerField = wrapper => selectDateTimePickerField(wrapper)
@@ -32,6 +16,9 @@ const selectToDateTimePickerField = wrapper => selectDateTimePickerField(wrapper
 
 describe('c-date-time-interval-field', () => {
   const timestamp = 1386435600000;
+
+  const factory = generateShallowRenderer(CDateTimeIntervalField, { stubs });
+  const snapshotFactory = generateRenderer(CDateTimeIntervalField, { stubs });
 
   test('From changed after trigger from date time picker field', () => {
     const value = {

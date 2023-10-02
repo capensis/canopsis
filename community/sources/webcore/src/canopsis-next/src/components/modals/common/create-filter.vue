@@ -23,7 +23,7 @@ import { omit } from 'lodash';
 
 import { MODALS, OLD_PATTERNS_FIELDS, PATTERNS_FIELDS, VALIDATION_DELAY } from '@/constants';
 
-import { filterToForm, formToFilter } from '@/helpers/forms/filter';
+import { filterToForm, formToFilter } from '@/helpers/entities/filter/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';

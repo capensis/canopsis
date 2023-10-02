@@ -103,7 +103,7 @@ endef
 docker-images: docker-nginx docker-nginx-openshift
 
 docker-check-version:
-	@if test "$$(docker version --format '{{.Server.Version}}' 2>/dev/null | awk -F'.' '{print 0+$$1 $$2}')" -lt "$$(echo $(REQUIRED_DOCKER_VERSION) | sed 's/\.//')" ; then\
+	@if test "$$(docker version --format '{{.Server.Version}}' 2>/dev/null | awk -F. '{printf "%02i%02i", $$1,$$2}')" -lt "$$(echo $(REQUIRED_DOCKER_VERSION) | sed 's/\.//')" ; then\
 		echo "ERROR: Docker >= $(REQUIRED_DOCKER_VERSION) is required";\
 		exit 1;\
 	fi

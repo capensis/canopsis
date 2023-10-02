@@ -50,7 +50,8 @@
               v-card-text
                 alarms-expand-panel-more-infos(
                   :alarm="alarm",
-                  :template="widget.parameters.moreInfoTemplate"
+                  :template="widget.parameters.moreInfoTemplate",
+                  @select:tag="$emit('select:tag', $event)"
                 )
       v-tab-item(:value="$constants.ALARMS_EXPAND_PANEL_TABS.timeLine")
         v-layout.pa-3(row)
@@ -102,7 +103,6 @@
                   :children="children",
                   :alarm="alarm",
                   :widget="widget",
-                  :editing="editing",
                   :pending="pending",
                   :query.sync="childrenQuery",
                   :refresh-alarms-list="fetchList"
@@ -139,19 +139,15 @@
 </template>
 
 <script>
-import { isEqual } from 'lodash';
+import { isEqual, map } from 'lodash';
 
-import {
-  ENTITY_TYPES,
-  GRID_SIZES,
-  TOURS,
-  JUNIT_ALARM_CONNECTOR,
-} from '@/constants';
+import { ENTITY_TYPES, GRID_SIZES, TOURS, JUNIT_ALARM_CONNECTOR } from '@/constants';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 import { getStepClass } from '@/helpers/tour';
-import { alarmToServiceDependency } from '@/helpers/treeview/service-dependencies';
-import { convertAlarmDetailsQueryToRequest, convertWidgetChartsToPerfDataQuery } from '@/helpers/query';
+import { alarmToServiceDependency } from '@/helpers/entities/service-dependencies/list';
+import { convertAlarmDetailsQueryToRequest } from '@/helpers/entities/alarm/query';
+import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/query';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
@@ -164,6 +160,7 @@ import EntityCharts from '@/components/widgets/chart/entity-charts.vue';
 
 import AlarmsTimeLine from '../time-line/alarms-time-line.vue';
 import EntityGantt from '../entity-gantt/entity-gantt.vue';
+
 import AlarmsExpandPanelMoreInfos from './alarms-expand-panel-more-infos.vue';
 import AlarmsExpandPanelChildren from './alarms-expand-panel-children.vue';
 
@@ -196,10 +193,6 @@ export default {
       type: Object,
       required: true,
     },
-    editing: {
-      type: Boolean,
-      default: false,
-    },
     hideChildren: {
       type: Boolean,
       default: false,
@@ -207,6 +200,10 @@ export default {
     isTourEnabled: {
       type: Boolean,
       default: false,
+    },
+    search: {
+      type: String,
+      default: '',
     },
   },
   data() {
@@ -314,6 +311,16 @@ export default {
       },
     },
 
+    'widget.parameters.widgetGroupColumns': {
+      handler(columns) {
+        this.query = {
+          ...this.query,
+
+          search_by: map(columns, 'value'),
+        };
+      },
+    },
+
     isTourEnabled() {
       this.refreshTabs();
     },
@@ -322,6 +329,17 @@ export default {
       if (!isEqual(query, oldQuery)) {
         this.fetchList();
       }
+    },
+
+    search: {
+      immediate: true,
+      handler(search) {
+        this.query = {
+          ...this.query,
+
+          search,
+        };
+      },
     },
   },
   beforeDestroy() {

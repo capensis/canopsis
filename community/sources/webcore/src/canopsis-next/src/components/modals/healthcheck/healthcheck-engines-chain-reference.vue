@@ -27,7 +27,7 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { healthcheckNodesMixin } from '@/mixins/healthcheck/healthcheck-nodes';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 
-import HealthcheckNetworkGraph from '@/components/other/healthcheck/exploitation/healthcheck-network-graph.vue';
+import HealthcheckNetworkGraph from '@/components/other/healthcheck/healthcheck-network-graph.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

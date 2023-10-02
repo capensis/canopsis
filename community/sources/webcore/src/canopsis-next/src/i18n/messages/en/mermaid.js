@@ -1,7 +1,7 @@
 import { MERMAID_THEMES } from '@/constants';
 
 export default {
-  theme: 'Color theme',
+  theme: 'Theme',
   panzoom: {
     helpText: 'Useful shortcuts:\n'
       + 'Ctrl + mouse wheel - zoom in/out\n'
