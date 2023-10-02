@@ -408,7 +408,6 @@ func (p *checkProcessor) newAlarm(
 	entity types.Entity,
 	timestamp types.CpsTime,
 	alarmConfig config.AlarmConfig,
-	timestamp types.CpsTime,
 ) types.Alarm {
 	tags := types.TransformEventTags(params.Tags)
 	alarm := types.Alarm{
