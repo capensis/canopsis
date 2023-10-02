@@ -874,6 +874,18 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					in.AddError((*out.PreviousPbehaviorTime).UnmarshalJSON(data))
 				}
 			}
+		case "PreviousEntityPbehaviorTime":
+			if in.IsNull() {
+				in.Skip()
+				out.PreviousEntityPbehaviorTime = nil
+			} else {
+				if out.PreviousEntityPbehaviorTime == nil {
+					out.PreviousEntityPbehaviorTime = new(CpsTime)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.PreviousEntityPbehaviorTime).UnmarshalJSON(data))
+				}
+			}
 		case "PreviousPbehaviorTypeID":
 			out.PreviousPbehaviorTypeID = string(in.String())
 		case "PreviousPbehaviorCannonicalType":
@@ -924,6 +936,15 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.Raw((*in.PreviousPbehaviorTime).MarshalJSON())
+		}
+	}
+	{
+		const prefix string = ",\"PreviousEntityPbehaviorTime\":"
+		out.RawString(prefix)
+		if in.PreviousEntityPbehaviorTime == nil {
+			out.RawString("null")
+		} else {
+			out.Raw((*in.PreviousEntityPbehaviorTime).MarshalJSON())
 		}
 	}
 	{
