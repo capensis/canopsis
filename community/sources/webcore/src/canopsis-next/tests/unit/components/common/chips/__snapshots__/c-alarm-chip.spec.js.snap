@@ -70,7 +70,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: ack 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -100,7 +100,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: ackRemove 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -130,7 +130,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: assocTicket 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -160,7 +160,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionAlread
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -190,7 +190,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionComple
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -220,7 +220,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionFail 1
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -250,7 +250,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: autoInstructionStart 
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -280,7 +280,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: cancel 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -310,7 +310,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: changeState 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -340,7 +340,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: check 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -370,7 +370,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: comment 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -400,7 +400,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: createManualMetaAlarm
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -430,7 +430,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: declareTicket 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -460,7 +460,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: declareTicketFail 1`]
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -490,7 +490,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: delete 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -520,7 +520,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: executeInstruction 1`
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -550,7 +550,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: fastAck 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -580,7 +580,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: group 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -610,7 +610,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: groupRequest 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -640,7 +640,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionAbort 1`] 
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -670,7 +670,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionComplete 1
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -700,7 +700,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionFail 1`] =
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -730,7 +730,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobAbort 1
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -760,7 +760,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobComplet
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -790,7 +790,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobFail 1`
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -820,7 +820,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionJobStart 1
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -850,7 +850,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionPause 1`] 
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -880,7 +880,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionResume 1`]
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -910,7 +910,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: instructionStart 1`] 
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -940,7 +940,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: invalidate 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -970,7 +970,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: junitTestCaseUpdate 1
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1000,7 +1000,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: junitTestSuiteUpdate 
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1030,7 +1030,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: metaalarmattach 1`] =
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1060,7 +1060,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pause 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1090,7 +1090,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbehaviorAdd 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1120,7 +1120,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbehaviorList 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1150,7 +1150,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbhenter 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1180,7 +1180,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: pbhleave 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1210,7 +1210,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: play 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1240,7 +1240,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: removeAlarmsFromAutoM
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1270,7 +1270,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: removeAlarmsFromManua
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1300,7 +1300,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: snooze 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1330,7 +1330,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: statedec 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1360,7 +1360,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: stateinc 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1390,7 +1390,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: statusdec 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1420,7 +1420,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: statusinc 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1450,7 +1450,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: uncancel 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1480,7 +1480,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: unsooze 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1510,7 +1510,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: validate 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1540,7 +1540,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: webhookComplete 1`] =
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1570,7 +1570,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: webhookFail 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
@@ -1600,7 +1600,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: webhookStart 1`] = `
   >
     <span
       class="chip"
-      style="background-color: black;"
+      style="background-color: rgb(0, 0, 0);"
     >
       Invalid val
     </span>
