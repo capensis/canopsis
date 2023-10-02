@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
 
@@ -23,7 +23,7 @@ const (
 
 	LockStorage
 	QueueStorage
-	CacheQueue
+	ApiCacheQueue
 	AxePeriodicalLockStorage
 	RuleTotalEntitiesStorage
 	AlarmGroupStorage
@@ -159,7 +159,7 @@ func NewFailoverOptions(sURL string, db int, logger zerolog.Logger,
 
 	if redisIdleTimeoutStr := redisURL.Query().Get("timeout"); redisIdleTimeoutStr != "" {
 		if redisIdleTimeout, err := time.ParseDuration(redisIdleTimeoutStr); err == nil {
-			failoverOptions.IdleTimeout = redisIdleTimeout
+			failoverOptions.ConnMaxIdleTime = redisIdleTimeout
 		} else {
 			return nil, fmt.Errorf("redis-sentinel timeout parameter error %s", err)
 		}

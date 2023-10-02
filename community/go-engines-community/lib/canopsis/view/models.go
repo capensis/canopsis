@@ -27,6 +27,7 @@ const (
 	WidgetTemplateTypeAlarmColumns         = "alarm_columns"
 	WidgetTemplateTypeEntityColumns        = "entity_columns"
 	WidgetTemplateTypeAlarmMoreInfos       = "alarm_more_infos"
+	WidgetTemplateTypeAlarmExportToPDF     = "alarm_export_to_pdf"
 	WidgetTemplateTypeServiceWeatherItem   = "weather_item"
 	WidgetTemplateTypeServiceWeatherModal  = "weather_modal"
 	WidgetTemplateTypeServiceWeatherEntity = "weather_entity"
@@ -187,10 +188,12 @@ type WidgetTemplate struct {
 }
 
 type WidgetColumn struct {
-	Value          string `bson:"value," json:"value" binding:"required"`
-	Label          string `bson:"label,omitempty" json:"label,omitempty" binding:"max=255"`
-	IsHtml         bool   `bson:"isHtml,omitempty" json:"isHtml,omitempty"`
-	IconOnly       bool   `bson:"iconOnly,omitempty" json:"iconOnly,omitempty"`
-	ColorIndicator string `bson:"colorIndicator,omitempty" json:"colorIndicator,omitempty"`
-	Template       string `bson:"template,omitempty" json:"template,omitempty"`
+	Value            string `bson:"value," json:"value" binding:"required"`
+	Label            string `bson:"label,omitempty" json:"label,omitempty" binding:"max=255"`
+	IsHtml           bool   `bson:"isHtml,omitempty" json:"isHtml,omitempty"`
+	OnlyIcon         bool   `bson:"onlyIcon,omitempty" json:"onlyIcon,omitempty"`
+	ColorIndicator   string `bson:"colorIndicator,omitempty" json:"colorIndicator,omitempty"`
+	Template         string `bson:"template,omitempty" json:"template,omitempty"`
+	InlineLinksCount int64  `bson:"inlineLinksCount,omitempty" json:"inlineLinksCount,omitempty"`
+	LinksInRowCount  int64  `bson:"linksInRowCount,omitempty" json:"linksInRowCount,omitempty"`
 }

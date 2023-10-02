@@ -44,8 +44,8 @@ export const CreateManualMetaAlarm = () => ({
   component: import(/* webpackChunkName: "Alarm" */ './alarm/create-manual-meta-alarm.vue'),
   loading: LoaderOverlay,
 });
-export const RemoveAlarmsFromManualMetaAlarm = () => ({
-  component: import(/* webpackChunkName: "Alarm" */ './alarm/remove-alarms-from-manual-meta-alarm.vue'),
+export const RemoveAlarmsFromMetaAlarm = () => ({
+  component: import(/* webpackChunkName: "Alarm" */ './alarm/remove-alarms-from-meta-alarm.vue'),
   loading: LoaderOverlay,
 });
 export const AlarmsList = () => ({
@@ -77,10 +77,6 @@ export const PbehaviorRecurrenceRule = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-recurrence-rule.vue'),
   loading: LoaderOverlay,
 });
-export const SelectExceptionsLists = () => ({
-  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/select-exceptions-lists.vue'),
-  loading: LoaderOverlay,
-});
 export const CreateRecurrenceRule = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/create-recurrence-rule.vue'),
   loading: LoaderOverlay,
@@ -103,6 +99,10 @@ export const CreatePbehaviorReason = () => ({
 });
 export const CreatePbehaviorException = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/create-pbehavior-exception.vue'),
+  loading: LoaderOverlay,
+});
+export const ImportPbehaviorException = () => ({
+  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/import-pbehavior-exception.vue'),
   loading: LoaderOverlay,
 });
 export const PbehaviorPatterns = () => ({
@@ -171,6 +171,10 @@ export const CreateEntity = () => ({
 });
 export const CreateEntityInfo = () => ({
   component: import(/* webpackChunkName: "Context" */ './entity/create-entity-info.vue'),
+  loading: LoaderOverlay,
+});
+export const EntitiesList = () => ({
+  component: import(/* webpackChunkName: "Context" */ './entity/entities-list.vue'),
   loading: LoaderOverlay,
 });
 export const ServiceEntities = () => ({
@@ -381,5 +385,20 @@ export const CreateAssociateTicketEvent = () => ({
 
 export const CreateLinkRule = () => ({
   component: import(/* webpackChunkName: "LinkRule" */ './link-rule/create-link-rule.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateMaintenance = () => ({
+  component: import(/* webpackChunkName: "Maintenance" */ './maintenance/create-maintenance.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateTag = () => ({
+  component: import(/* webpackChunkName: "Tags" */ './tag/create-tag.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateTheme = () => ({
+  component: import(/* webpackChunkName: "Theme" */ './theme/create-theme.vue'),
   loading: LoaderOverlay,
 });

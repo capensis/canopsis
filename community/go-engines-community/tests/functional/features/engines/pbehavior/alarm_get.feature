@@ -1,44 +1,44 @@
 Feature: Get alarms
   I need to be able to get a alarms
 
+  @concurrent
   Scenario: given alarms in pbehavior should return alarms
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     [
       {
+        "event_type": "check",
+        "state": 2,
+        "output": "test-output-pbehavior-alarm-get-1",
         "connector": "test-connector-pbehavior-alarm-get-1",
         "connector_name": "test-connector-name-pbehavior-alarm-get-1",
-        "source_type": "resource",
-        "event_type": "check",
         "component":  "test-component-pbehavior-alarm-get-1",
         "resource": "test-resource-pbehavior-alarm-get-1-1",
-        "state": 2,
-        "output": "test-output-pbehavior-alarm-get-1"
+        "source_type": "resource"
       },
       {
+        "event_type": "check",
+        "state": 2,
+        "output": "test-output-pbehavior-alarm-get-1",
         "connector": "test-connector-pbehavior-alarm-get-1",
         "connector_name": "test-connector-name-pbehavior-alarm-get-1",
-        "source_type": "resource",
-        "event_type": "check",
         "component":  "test-component-pbehavior-alarm-get-1",
         "resource": "test-resource-pbehavior-alarm-get-1-2",
-        "state": 2,
-        "output": "test-output-pbehavior-alarm-get-1"
+        "source_type": "resource"
       },
       {
+        "event_type": "check",
+        "state": 2,
+        "output": "test-output-pbehavior-alarm-get-1",
         "connector": "test-connector-pbehavior-alarm-get-1",
         "connector_name": "test-connector-name-pbehavior-alarm-get-1",
-        "source_type": "resource",
-        "event_type": "check",
         "component":  "test-component-pbehavior-alarm-get-1",
         "resource": "test-resource-pbehavior-alarm-get-1-3",
-        "state": 2,
-        "output": "test-output-pbehavior-alarm-get-1"
+        "source_type": "resource"
       }
     ]
     """
-    When I wait the end of 3 events processing
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -63,7 +63,17 @@ Feature: Get alarms
     }
     """
     Then the response code should be 201
-    When I wait the end of event processing
+    When I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "pbhenter",
+      "connector": "test-connector-pbehavior-alarm-get-1",
+      "connector_name": "test-connector-name-pbehavior-alarm-get-1",
+      "component":  "test-component-pbehavior-alarm-get-1",
+      "resource": "test-resource-pbehavior-alarm-get-1-2",
+      "source_type": "resource"
+    }
+    """
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -88,7 +98,17 @@ Feature: Get alarms
     }
     """
     Then the response code should be 201
-    When I wait the end of event processing
+    When I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "pbhenter",
+      "connector": "test-connector-pbehavior-alarm-get-1",
+      "connector_name": "test-connector-name-pbehavior-alarm-get-1",
+      "component":  "test-component-pbehavior-alarm-get-1",
+      "resource": "test-resource-pbehavior-alarm-get-1-3",
+      "source_type": "resource"
+    }
+    """
     When I do POST /api/v4/widget-filters:
     """json
     {

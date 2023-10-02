@@ -27,7 +27,7 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
       class="layout mt-2 row"
     >
       <span
-        class="c-information-block__subtitle"
+        class="text--secondary"
       >
         Script launched at 21/01/2021 21:13:20. Alarms deleted: 1611270000. Alarms archived: 1611280000.
       </span>
@@ -66,7 +66,7 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
       class="layout mt-2 row"
     >
       <span
-        class="c-information-block__subtitle"
+        class="text--secondary"
       >
         Script launched at 22/01/2021 5:33:20. Entities deleted: 1611300000. Entities archived: 1611310000.
       </span>
@@ -243,7 +243,7 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
       class="layout mt-2 row"
     >
       <span
-        class="c-information-block__subtitle"
+        class="text--secondary"
       >
         Script launched at 21/01/2021 10:06:40.
       </span>
@@ -284,7 +284,7 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
       class="layout mt-2 row"
     >
       <span
-        class="c-information-block__subtitle"
+        class="text--secondary"
       >
         Script launched at 21/01/2021 12:53:20.
       </span>
@@ -313,7 +313,7 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
       class="layout mt-2 row"
     >
       <span
-        class="c-information-block__subtitle"
+        class="text--secondary"
       >
         Script launched at 21/01/2021 7:20:00.
       </span>
@@ -342,7 +342,7 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
       class="layout mt-2 row"
     >
       <span
-        class="c-information-block__subtitle"
+        class="text--secondary"
       >
         Script launched at 21/01/2021 15:40:00.
       </span>
@@ -376,7 +376,7 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
       class="layout mt-2 row"
     >
       <span
-        class="c-information-block__subtitle"
+        class="text--secondary"
       >
         Script launched at 21/01/2021 18:26:40.
       </span>
@@ -444,6 +444,33 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with custom for
       help-text="All external metrics older than the defined time period will be deleted"
       label="Clear metrics storage after"
       name="perf_data_metrics.delete_after"
+      value="[object Object]"
+    />
+  </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        Error messages data storage
+      </div>
+      <c-help-icon-stub
+        color="info"
+        icon-class="ml-2"
+        max-width="300"
+        text="When enabled, error messages data will be deleted after the defined time period. However, all errors are available in logs."
+        top="top"
+      />
+    </div>
+    <!---->
+    <c-enabled-duration-field-stub
+      help-text="All error messages older than the defined time period will be deleted"
+      label="Clear error messages older than"
+      name="errors.delete_after"
       value="[object Object]"
     />
   </div>
@@ -837,6 +864,33 @@ exports[`storage-settings-form Renders \`storage-settings-form\` with default fo
       help-text="All external metrics older than the defined time period will be deleted"
       label="Clear metrics storage after"
       name="perf_data_metrics.delete_after"
+      value="[object Object]"
+    />
+  </div>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        Error messages data storage
+      </div>
+      <c-help-icon-stub
+        color="info"
+        icon-class="ml-2"
+        max-width="300"
+        text="When enabled, error messages data will be deleted after the defined time period. However, all errors are available in logs."
+        top="top"
+      />
+    </div>
+    <!---->
+    <c-enabled-duration-field-stub
+      help-text="All error messages older than the defined time period will be deleted"
+      label="Clear error messages older than"
+      name="errors.delete_after"
       value="[object Object]"
     />
   </div>

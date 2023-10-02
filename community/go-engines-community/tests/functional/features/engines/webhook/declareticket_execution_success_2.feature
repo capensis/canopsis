@@ -9,21 +9,21 @@ Feature: run a declare ticket rule
     """json
     [
       {
-        "event_type" : "check",
-        "state" : 2,
-        "connector" : "test-connector-declareticket-execution-second-1",
-        "connector_name" : "test-connector-name-declareticket-execution-second-1",
-        "component" :  "test-component-declareticket-execution-second-1",
-        "source_type" : "component"
+        "event_type": "check",
+        "state": 2,
+        "connector": "test-connector-declareticket-execution-second-1",
+        "connector_name": "test-connector-name-declareticket-execution-second-1",
+        "component": "test-component-declareticket-execution-second-1",
+        "source_type": "component"
       },
       {
-        "event_type" : "check",
-        "state" : 2,
-        "connector" : "test-connector-declareticket-execution-second-1",
-        "connector_name" : "test-connector-name-declareticket-execution-second-1",
-        "component" :  "test-component-declareticket-execution-second-1",
-        "resource" : "test-resource-declareticket-execution-second-1",
-        "source_type" : "resource"
+        "event_type": "check",
+        "state": 2,
+        "connector": "test-connector-declareticket-execution-second-1",
+        "connector_name": "test-connector-name-declareticket-execution-second-1",
+        "component": "test-component-declareticket-execution-second-1",
+        "resource": "test-resource-declareticket-execution-second-1",
+        "source_type": "resource"
       }
     ]
     """
@@ -108,11 +108,11 @@ Feature: run a declare ticket rule
     """json
     {
       "event_type": "declareticketwebhook",
-      "connector" : "test-connector-declareticket-execution-second-1",
-      "connector_name" : "test-connector-name-declareticket-execution-second-1",
-      "component" :  "test-component-declareticket-execution-second-1",
-      "resource" : "test-resource-declareticket-execution-second-1",
-      "source_type" : "resource"
+      "connector": "test-connector-declareticket-execution-second-1",
+      "connector_name": "test-connector-name-declareticket-execution-second-1",
+      "component": "test-component-declareticket-execution-second-1",
+      "resource": "test-resource-declareticket-execution-second-1",
+      "source_type": "resource"
     }
     """
     When I do GET /api/v4/alarms?search=test-component-declareticket-execution-second-1&sort_by=v.resource&sort=asc until response code is 200 and body contains:
@@ -123,7 +123,7 @@ Feature: run a declare ticket rule
           "v": {
             "ticket": {
               "_t": "declareticket",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-1-name. Ticket ID: test-ticket-declareticket-execution-second-1. Ticket URL: https://test-host. Ticket name: test-component-declareticket-execution-second-1.",
               "ticket": "test-ticket-declareticket-execution-second-1",
               "ticket_url": "https://test-host",
@@ -138,7 +138,7 @@ Feature: run a declare ticket rule
             "tickets": [
               {
                 "_t": "declareticket",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-1-name. Ticket ID: test-ticket-declareticket-execution-second-1. Ticket URL: https://test-host. Ticket name: test-component-declareticket-execution-second-1.",
                 "ticket": "test-ticket-declareticket-execution-second-1",
                 "ticket_url": "https://test-host",
@@ -151,16 +151,16 @@ Feature: run a declare ticket rule
                 "ticket_system_name": "test-declareticketrule-declareticket-execution-second-1-system-name"
               }
             ],
-            "connector" : "test-connector-declareticket-execution-second-1",
-            "connector_name" : "test-connector-name-declareticket-execution-second-1",
-            "component" :  "test-component-declareticket-execution-second-1"
+            "connector": "test-connector-declareticket-execution-second-1",
+            "connector_name": "test-connector-name-declareticket-execution-second-1",
+            "component": "test-component-declareticket-execution-second-1"
           }
         },
         {
           "v": {
             "ticket": {
               "_t": "declareticket",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-1-name. Ticket ID: test-ticket-declareticket-execution-second-1. Ticket URL: https://test-host. Ticket name: test-component-declareticket-execution-second-1.",
               "ticket": "test-ticket-declareticket-execution-second-1",
               "ticket_url": "https://test-host",
@@ -175,7 +175,7 @@ Feature: run a declare ticket rule
             "tickets": [
               {
                 "_t": "declareticket",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-1-name. Ticket ID: test-ticket-declareticket-execution-second-1. Ticket URL: https://test-host. Ticket name: test-component-declareticket-execution-second-1.",
                 "ticket": "test-ticket-declareticket-execution-second-1",
                 "ticket_url": "https://test-host",
@@ -188,10 +188,10 @@ Feature: run a declare ticket rule
                 "ticket_system_name": "test-declareticketrule-declareticket-execution-second-1-system-name"
               }
             ],
-            "connector" : "test-connector-declareticket-execution-second-1",
-            "connector_name" : "test-connector-name-declareticket-execution-second-1",
-            "component" :  "test-component-declareticket-execution-second-1",
-            "resource" : "test-resource-declareticket-execution-second-1"
+            "connector": "test-connector-declareticket-execution-second-1",
+            "connector_name": "test-connector-name-declareticket-execution-second-1",
+            "component": "test-component-declareticket-execution-second-1",
+            "resource": "test-resource-declareticket-execution-second-1"
           }
         }
       ],
@@ -232,19 +232,19 @@ Feature: run a declare ticket rule
       },
       {
         "_t": "webhookstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-1-name"
       },
       {
         "_t": "webhookcomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-1-name"
       },
       {
         "_t": "declareticket",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-1-name. Ticket ID: test-ticket-declareticket-execution-second-1. Ticket URL: https://test-host. Ticket name: test-component-declareticket-execution-second-1."
       }
@@ -261,7 +261,7 @@ Feature: run a declare ticket rule
       },
       {
         "_t": "declareticket",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-1-name. Ticket ID: test-ticket-declareticket-execution-second-1. Ticket URL: https://test-host. Ticket name: test-component-declareticket-execution-second-1."
       }
@@ -306,13 +306,13 @@ Feature: run a declare ticket rule
     When I send an event and wait the end of event processing:
     """json
     {
-      "event_type" : "check",
-      "state" : 2,
-      "connector" : "test-connector-declareticket-execution-second-2",
-      "connector_name" : "test-connector-name-declareticket-execution-second-2",
-      "component" :  "test-component-declareticket-execution-second-2",
-      "resource" : "test-resource-declareticket-execution-second-2",
-      "source_type" : "resource"
+      "event_type": "check",
+      "state": 2,
+      "connector": "test-connector-declareticket-execution-second-2",
+      "connector_name": "test-connector-name-declareticket-execution-second-2",
+      "component": "test-component-declareticket-execution-second-2",
+      "resource": "test-resource-declareticket-execution-second-2",
+      "source_type": "resource"
     }
     """
     When I do GET /api/v4/alarms?search=test-component-declareticket-execution-second-2
@@ -378,11 +378,11 @@ Feature: run a declare ticket rule
     """json
     {
       "event_type": "trigger",
-      "connector" : "test-connector-declareticket-execution-second-2",
-      "connector_name" : "test-connector-name-declareticket-execution-second-2",
-      "component" :  "test-component-declareticket-execution-second-2",
-      "resource" : "test-resource-declareticket-execution-second-2",
-      "source_type" : "resource"
+      "connector": "test-connector-declareticket-execution-second-2",
+      "connector_name": "test-connector-name-declareticket-execution-second-2",
+      "component": "test-component-declareticket-execution-second-2",
+      "resource": "test-resource-declareticket-execution-second-2",
+      "source_type": "resource"
     }
     """
     When I do GET /api/v4/alarms?search=test-component-declareticket-execution-second-2
@@ -395,20 +395,20 @@ Feature: run a declare ticket rule
           "v": {
             "ticket": {
               "_t": "declareticket",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "ticket": "test-ticket-declareticket-execution-second-2"
             },
             "tickets": [
               {
                 "_t": "declareticket",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "ticket": "test-ticket-declareticket-execution-second-2"
               }
             ],
-            "connector" : "test-connector-declareticket-execution-second-2",
-            "connector_name" : "test-connector-name-declareticket-execution-second-2",
-            "component" :  "test-component-declareticket-execution-second-2",
-            "resource" : "test-resource-declareticket-execution-second-2"
+            "connector": "test-connector-declareticket-execution-second-2",
+            "connector_name": "test-connector-name-declareticket-execution-second-2",
+            "component": "test-component-declareticket-execution-second-2",
+            "resource": "test-resource-declareticket-execution-second-2"
           }
         }
       ],
@@ -443,19 +443,19 @@ Feature: run a declare ticket rule
       },
       {
         "_t": "webhookstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-2-name"
       },
       {
         "_t": "webhookcomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-2-name"
       },
       {
         "_t": "declareticket",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-2-name. Ticket ID: test-ticket-declareticket-execution-second-2."
       },
@@ -517,13 +517,13 @@ Feature: run a declare ticket rule
     When I send an event and wait the end of event processing:
     """json
     {
-      "event_type" : "check",
-      "state" : 2,
-      "connector" : "test-connector-declareticket-execution-second-3",
-      "connector_name" : "test-connector-name-declareticket-execution-second-3",
-      "component" :  "test-component-declareticket-execution-second-3",
-      "resource" : "test-resource-declareticket-execution-second-3",
-      "source_type" : "resource"
+      "event_type": "check",
+      "state": 2,
+      "connector": "test-connector-declareticket-execution-second-3",
+      "connector_name": "test-connector-name-declareticket-execution-second-3",
+      "component": "test-component-declareticket-execution-second-3",
+      "resource": "test-resource-declareticket-execution-second-3",
+      "source_type": "resource"
     }
     """
     When I do GET /api/v4/alarms?search=test-component-declareticket-execution-second-3
@@ -593,20 +593,20 @@ Feature: run a declare ticket rule
           "v": {
             "ticket": {
               "_t": "declareticket",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "ticket": "test-ticket-declareticket-execution-second-3"
             },
             "tickets": [
               {
                 "_t": "declareticket",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "ticket": "test-ticket-declareticket-execution-second-3"
               }
             ],
-            "connector" : "test-connector-declareticket-execution-second-3",
-            "connector_name" : "test-connector-name-declareticket-execution-second-3",
-            "component" :  "test-component-declareticket-execution-second-3",
-            "resource" : "test-resource-declareticket-execution-second-3"
+            "connector": "test-connector-declareticket-execution-second-3",
+            "connector_name": "test-connector-name-declareticket-execution-second-3",
+            "component": "test-component-declareticket-execution-second-3",
+            "resource": "test-resource-declareticket-execution-second-3"
           }
         }
       ],
@@ -642,19 +642,19 @@ Feature: run a declare ticket rule
       },
       {
         "_t": "webhookstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-3-name"
       },
       {
         "_t": "webhookcomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-3-name"
       },
       {
         "_t": "declareticket",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-3-name. Ticket ID: test-ticket-declareticket-execution-second-3."
       }
@@ -668,22 +668,22 @@ Feature: run a declare ticket rule
     """json
     [
       {
-        "event_type" : "check",
-        "state" : 2,
-        "connector" : "test-connector-declareticket-execution-second-4",
-        "connector_name" : "test-connector-name-declareticket-execution-second-4",
-        "component" :  "test-component-declareticket-execution-second-4",
-        "resource" : "test-resource-declareticket-execution-second-4-1",
-        "source_type" : "resource"
+        "event_type": "check",
+        "state": 2,
+        "connector": "test-connector-declareticket-execution-second-4",
+        "connector_name": "test-connector-name-declareticket-execution-second-4",
+        "component": "test-component-declareticket-execution-second-4",
+        "resource": "test-resource-declareticket-execution-second-4-1",
+        "source_type": "resource"
       },
       {
-        "event_type" : "check",
-        "state" : 2,
-        "connector" : "test-connector-declareticket-execution-second-4",
-        "connector_name" : "test-connector-name-declareticket-execution-second-4",
-        "component" :  "test-component-declareticket-execution-second-4",
-        "resource" : "test-resource-declareticket-execution-second-4-2",
-        "source_type" : "resource"
+        "event_type": "check",
+        "state": 2,
+        "connector": "test-connector-declareticket-execution-second-4",
+        "connector_name": "test-connector-name-declareticket-execution-second-4",
+        "component": "test-component-declareticket-execution-second-4",
+        "resource": "test-resource-declareticket-execution-second-4-2",
+        "source_type": "resource"
       }
     ]
     """
@@ -787,7 +787,7 @@ Feature: run a declare ticket rule
           "v": {
             "ticket": {
               "_t": "declareticket",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name. Ticket ID: N/A. Ticket URL: https://test/test-ticket-declareticket-execution-second-4. Ticket name: test-ticket-declareticket-execution-second-4 test-resource-declareticket-execution-second-4-1.",
               "ticket": "N/A",
               "ticket_url": "https://test/test-ticket-declareticket-execution-second-4",
@@ -802,7 +802,7 @@ Feature: run a declare ticket rule
             "tickets": [
               {
                 "_t": "declareticket",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name. Ticket ID: N/A. Ticket URL: https://test/test-ticket-declareticket-execution-second-4. Ticket name: test-ticket-declareticket-execution-second-4 test-resource-declareticket-execution-second-4-1.",
                 "ticket": "N/A",
                 "ticket_url": "https://test/test-ticket-declareticket-execution-second-4",
@@ -815,17 +815,17 @@ Feature: run a declare ticket rule
                 "ticket_system_name": "test-declareticketrule-declareticket-execution-second-4-system-name"
               }
             ],
-            "connector" : "test-connector-declareticket-execution-second-4",
-            "connector_name" : "test-connector-name-declareticket-execution-second-4",
-            "component" :  "test-component-declareticket-execution-second-4",
-            "resource" : "test-resource-declareticket-execution-second-4-1"
+            "connector": "test-connector-declareticket-execution-second-4",
+            "connector_name": "test-connector-name-declareticket-execution-second-4",
+            "component": "test-component-declareticket-execution-second-4",
+            "resource": "test-resource-declareticket-execution-second-4-1"
           }
         },
         {
           "v": {
             "ticket": {
               "_t": "declareticket",
-              "a": "root",
+              "a": "root John Doe admin@canopsis.net",
               "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name. Ticket ID: N/A. Ticket URL: https://test/test-ticket-declareticket-execution-second-4. Ticket name: test-ticket-declareticket-execution-second-4 test-resource-declareticket-execution-second-4-2.",
               "ticket": "N/A",
               "ticket_url": "https://test/test-ticket-declareticket-execution-second-4",
@@ -840,7 +840,7 @@ Feature: run a declare ticket rule
             "tickets": [
               {
                 "_t": "declareticket",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name. Ticket ID: N/A. Ticket URL: https://test/test-ticket-declareticket-execution-second-4. Ticket name: test-ticket-declareticket-execution-second-4 test-resource-declareticket-execution-second-4-2.",
                 "ticket": "N/A",
                 "ticket_url": "https://test/test-ticket-declareticket-execution-second-4",
@@ -853,10 +853,10 @@ Feature: run a declare ticket rule
                 "ticket_system_name": "test-declareticketrule-declareticket-execution-second-4-system-name"
               }
             ],
-            "connector" : "test-connector-declareticket-execution-second-4",
-            "connector_name" : "test-connector-name-declareticket-execution-second-4",
-            "component" :  "test-component-declareticket-execution-second-4",
-            "resource" : "test-resource-declareticket-execution-second-4-2"
+            "connector": "test-connector-declareticket-execution-second-4",
+            "connector_name": "test-connector-name-declareticket-execution-second-4",
+            "component": "test-component-declareticket-execution-second-4",
+            "resource": "test-resource-declareticket-execution-second-4-2"
           }
         }
       ],
@@ -897,19 +897,19 @@ Feature: run a declare ticket rule
       },
       {
         "_t": "webhookstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name"
       },
       {
         "_t": "webhookcomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name"
       },
       {
         "_t": "declareticket",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name. Ticket ID: N/A. Ticket URL: https://test/test-ticket-declareticket-execution-second-4. Ticket name: test-ticket-declareticket-execution-second-4 test-resource-declareticket-execution-second-4-1."
       }
@@ -926,21 +926,167 @@ Feature: run a declare ticket rule
       },
       {
         "_t": "webhookstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name"
       },
       {
         "_t": "webhookcomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name"
       },
       {
         "_t": "declareticket",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-4-name. Ticket ID: N/A. Ticket URL: https://test/test-ticket-declareticket-execution-second-4. Ticket name: test-ticket-declareticket-execution-second-4 test-resource-declareticket-execution-second-4-2."
       }
     ]
+    """
+
+  @concurrent
+  Scenario: given declare ticket rule with url template should execute return url
+    When I am admin
+    When I send an event and wait the end of event processing:
+    """json
+    {
+      "event_type": "check",
+      "state": 2,
+      "connector": "test-connector-declareticket-execution-second-5",
+      "connector_name": "test-connector-name-declareticket-execution-second-5",
+      "component": "test-component-declareticket-execution-second-5",
+      "resource": "test-resource-declareticket-execution-second-5",
+      "source_type": "resource"
+    }
+    """
+    When I do GET /api/v4/alarms?search=test-resource-declareticket-execution-second-5
+    Then the response code should be 200
+    When I save response alarmId={{ (index .lastResponse.data 0)._id }}
+    When I do POST /api/v4/cat/declare-ticket-rules:
+    """json
+    {
+      "name": "test-declareticketrule-declareticket-execution-second-5-name",
+      "system_name": "test-declareticketrule-declareticket-execution-second-5-system-name",
+      "enabled": true,
+      "emit_trigger": true,
+      "webhooks": [
+        {
+          "request": {
+            "url": "{{ .dummyApiURL }}/webhook/request",
+            "payload": "{\"host\":\"https://test-host-declareticket-execution-second-5\"}",
+            "method": "POST",
+            "auth": {
+              "username": "test",
+              "password": "test"
+            }
+          },
+          "stop_on_fail": true
+        },
+        {
+          "request": {
+            "url": "{{ .dummyApiURL }}/webhook/request",
+            "payload": "{\"_id\":\"test-ticket-declareticket-execution-second-5\"}",
+            "method": "POST",
+            "auth": {
+              "username": "test",
+              "password": "test"
+            }
+          },
+          "declare_ticket": {
+            "ticket_id": "_id",
+            "ticket_url_tpl": "{{ `{{ index .Response \"host\" }}/{{ index .Response \"_id\" }}` }}"
+          },
+          "stop_on_fail": true
+        }
+      ],
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "is_one_of",
+              "value": [
+                "test-resource-declareticket-execution-second-5"
+              ]
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    Then I save response ruleId={{ .lastResponse._id }}
+    When I do POST /api/v4/cat/bulk/declare-ticket-executions:
+    """json
+    [
+      {
+        "_id": "{{ .ruleId }}",
+        "alarms": [
+          "{{ .alarmId }}"
+        ],
+        "comment": "test-comment-declareticket-execution-second-5"
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "item": {
+          "_id": "{{ .ruleId }}",
+          "alarms": [
+            "{{ .alarmId }}"
+          ],
+          "comment": "test-comment-declareticket-execution-second-5"
+        }
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-declareticket-execution-second-5 until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "ticket": {
+              "_t": "declareticket",
+              "a": "root John Doe admin@canopsis.net",
+              "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-5-name. Ticket ID: test-ticket-declareticket-execution-second-5. Ticket URL: https://test-host-declareticket-execution-second-5/test-ticket-declareticket-execution-second-5.",
+              "ticket": "test-ticket-declareticket-execution-second-5",
+              "ticket_url": "https://test-host-declareticket-execution-second-5/test-ticket-declareticket-execution-second-5",
+              "ticket_comment": "test-comment-declareticket-execution-second-5",
+              "ticket_rule_id": "{{ .ruleId }}",
+              "ticket_rule_name": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-5-name",
+              "ticket_system_name": "test-declareticketrule-declareticket-execution-second-5-system-name"
+            },
+            "tickets": [
+              {
+                "_t": "declareticket",
+                "a": "root John Doe admin@canopsis.net",
+                "m": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-5-name. Ticket ID: test-ticket-declareticket-execution-second-5. Ticket URL: https://test-host-declareticket-execution-second-5/test-ticket-declareticket-execution-second-5.",
+                "ticket": "test-ticket-declareticket-execution-second-5",
+                "ticket_url": "https://test-host-declareticket-execution-second-5/test-ticket-declareticket-execution-second-5",
+                "ticket_comment": "test-comment-declareticket-execution-second-5",
+                "ticket_rule_id": "{{ .ruleId }}",
+                "ticket_rule_name": "Ticket declaration rule: test-declareticketrule-declareticket-execution-second-5-name",
+                "ticket_system_name": "test-declareticketrule-declareticket-execution-second-5-system-name"
+              }
+            ],
+            "connector": "test-connector-declareticket-execution-second-5",
+            "connector_name": "test-connector-name-declareticket-execution-second-5",
+            "component": "test-component-declareticket-execution-second-5",
+            "resource": "test-resource-declareticket-execution-second-5"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
     """

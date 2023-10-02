@@ -2,11 +2,7 @@ import { debounce } from 'lodash';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
-import {
-  findSelectedVariable,
-  matchPayloadOperators,
-  matchPayloadVariables,
-} from '@/helpers/payload-json';
+import { findSelectedVariable, matchPayloadOperators, matchPayloadVariables } from '@/helpers/payload-json';
 
 import { formBaseMixin } from '@/mixins/form';
 

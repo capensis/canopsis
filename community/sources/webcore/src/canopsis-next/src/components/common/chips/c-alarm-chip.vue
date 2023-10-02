@@ -9,7 +9,7 @@
 <script>
 import { ENTITY_INFOS_TYPE } from '@/constants';
 
-import { formatState, formatStatus } from '@/helpers/formatting';
+import { formatState, formatStatus } from '@/helpers/entities/entity/formatting';
 
 /**
  * Chips for the state/status of the alarm on timeline
@@ -49,6 +49,7 @@ export default {
   },
 };
 </script>
+
 <style lang="scss" scoped>
   .chip-container {
     display: inline-block;

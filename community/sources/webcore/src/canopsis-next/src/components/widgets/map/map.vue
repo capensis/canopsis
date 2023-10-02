@@ -58,7 +58,7 @@ import { pick } from 'lodash';
 
 import { ENTITY_TYPES, MAP_TYPES, MODALS } from '@/constants';
 
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
 import { permissionsWidgetsMapCategory } from '@/mixins/permissions/widgets/map/category';
 import { permissionsWidgetsMapFilters } from '@/mixins/permissions/widgets/map/filters';
@@ -66,8 +66,8 @@ import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 
-import FilterSelector from '@/components/other/filter/filter-selector.vue';
-import FiltersListBtn from '@/components/other/filter/filters-list-btn.vue';
+import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
+import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 
 import MapBreadcrumbs from './partials/map-breadcrumbs.vue';
 
@@ -136,9 +136,7 @@ export default {
     this.unregisterEditingOffHandler(this.clearPreviousMaps);
   },
   mounted() {
-    if (this.editing) {
-      this.fetchList();
-    }
+    this.fetchList();
   },
   methods: {
     ...mapMapActions({

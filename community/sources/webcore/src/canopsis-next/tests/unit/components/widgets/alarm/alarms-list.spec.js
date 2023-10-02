@@ -2,8 +2,8 @@ import Faker from 'faker';
 import flushPromises from 'flush-promises';
 import { omit } from 'lodash';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
-import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { mockDateNow, mockModals, mockPopups, mockSocket } from '@unit/utils/mock-hooks';
 import { createMockedStoreModule, createMockedStoreModules } from '@unit/utils/store';
 import { fakeAlarmDetails, fakeStaticAlarms } from '@unit/data/alarm';
 import { API_HOST, API_ROUTES } from '@/config';
@@ -18,11 +18,9 @@ import {
   USERS_PERMISSIONS,
 } from '@/constants';
 
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
 import AlarmsList from '@/components/widgets/alarm/alarms-list.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-advanced-search-field': true,
@@ -62,30 +60,6 @@ const snapshotStubs = {
   'mass-actions-panel': true,
 };
 
-const factory = (options = {}) => shallowMount(AlarmsList, {
-  localVue,
-  stubs,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(AlarmsList, {
-  localVue,
-  stubs: snapshotStubs,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-
-  ...options,
-});
-
 const selectCorrelationField = wrapper => wrapper.find('v-switch-stub');
 const selectFilterSelectorField = wrapper => wrapper.find('filter-selector-stub');
 const selectCategoryField = wrapper => wrapper.find('c-entity-category-field-stub');
@@ -99,6 +73,7 @@ const selectAlarmsExpandPanelTour = wrapper => wrapper.find('alarms-expand-panel
 describe('alarms-list', () => {
   const $popups = mockPopups();
   const $modals = mockModals();
+  const $socket = mockSocket();
 
   const nowTimestamp = 1386435600000;
   const nowSubtractOneYearUnix = 1354921200;
@@ -282,6 +257,29 @@ describe('alarms-list', () => {
     authModule,
     alarmTagModule,
   ]);
+
+  const factory = generateShallowRenderer(AlarmsList, {
+    stubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+    mocks: {
+      $socket,
+    },
+  });
+  const snapshotFactory = generateRenderer(AlarmsList, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+    mocks: {
+      $socket,
+    },
+  });
 
   afterEach(() => {
     fetchUserPreference.mockClear();
@@ -1539,6 +1537,7 @@ describe('alarms-list', () => {
 
   it('Periodic started after mount with enabled value', async () => {
     jest.useFakeTimers();
+    jest.spyOn(window, 'setInterval');
 
     const expanded = {};
     factory({
@@ -1571,7 +1570,7 @@ describe('alarms-list', () => {
       1000,
     );
 
-    jest.runTimersToTime(1000);
+    jest.advanceTimersByTime(1000);
 
     expect(fetchAlarmsList).toHaveBeenCalledWith(
       expect.any(Object),
@@ -1591,7 +1590,7 @@ describe('alarms-list', () => {
   });
 
   it('Interval cleared after update periodic refresh', async () => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
 
     const expanded = {};
     const wrapper = factory({
@@ -1647,7 +1646,7 @@ describe('alarms-list', () => {
   });
 
   it('Interval cleared after destroy', async () => {
-    jest.useFakeTimers();
+    jest.useFakeTimers('legacy');
 
     const expanded = {};
     const wrapper = factory({
@@ -1753,6 +1752,18 @@ describe('alarms-list', () => {
             currentUserPermissionsById: {
               [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
             },
+          },
+        },
+        {
+          ...userPreferenceModule,
+          getters: {
+            getItemByWidgetId: () => () => ({
+              content: {
+                ...userPreferences,
+
+                searches: ['item 1', 'item 2'],
+              },
+            }),
           },
         },
       ]),

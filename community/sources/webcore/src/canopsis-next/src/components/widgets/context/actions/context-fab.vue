@@ -28,7 +28,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import entitiesServiceMixin from '@/mixins/entities/service';
+import { entitiesServiceMixin } from '@/mixins/entities/service';
 import { entitiesContextEntityMixin } from '@/mixins/entities/context-entity';
 
 /**

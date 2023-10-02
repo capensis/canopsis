@@ -1,12 +1,10 @@
 import { omit } from 'lodash';
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import ExtraDetailsSnooze from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-snooze.vue';
-
-const localVue = createVueInstance();
 
 describe('extra-details-snooze', () => {
   const nowTimestamp = 1386435500000;
@@ -24,7 +22,7 @@ describe('extra-details-snooze', () => {
   };
 
   const snapshotFactory = generateRenderer(ExtraDetailsSnooze, {
-    localVue,
+
     attachTo: document.body,
   });
 

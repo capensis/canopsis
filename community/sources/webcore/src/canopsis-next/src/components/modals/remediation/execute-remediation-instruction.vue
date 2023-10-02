@@ -26,14 +26,13 @@ import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants'
 
 import Socket from '@/plugins/socket/services/socket';
 
-import { getEmptyRemediationJobExecution } from '@/helpers/forms/remediation-job';
+import { getEmptyRemediationJobExecution } from '@/helpers/entities/remediation/job/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesRemediationJobExecutionMixin } from '@/mixins/entities/remediation/job-execution';
 import { entitiesRemediationInstructionExecutionMixin } from '@/mixins/entities/remediation/instruction-execution';
 
-import RemediationInstructionExecute
-  from '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';
+import RemediationInstructionExecute from '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

@@ -61,29 +61,22 @@ type CountRequest struct {
 	PbehaviorPattern pattern.PbehaviorInfo `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
 }
 
-type CountResponse struct {
-	AlarmPattern     Count `json:"alarm_pattern" binding:"alarm_pattern"`
-	EntityPattern    Count `json:"entity_pattern" binding:"entity_pattern"`
-	PbehaviorPattern Count `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
+type CountAlarmsResponse struct {
+	AlarmPattern     Count `json:"alarm_pattern"`
+	EntityPattern    Count `json:"entity_pattern"`
+	PbehaviorPattern Count `json:"pbehavior_pattern"`
+	All              Count `json:"all"`
+	Entities         Count `json:"entities"`
+}
+
+type CountEntitiesResponse struct {
+	AlarmPattern     Count `json:"alarm_pattern"`
+	EntityPattern    Count `json:"entity_pattern"`
+	PbehaviorPattern Count `json:"pbehavior_pattern"`
+	All              Count `json:"all"`
 }
 
 type Count struct {
 	Count     int64 `bson:"count" json:"count"`
 	OverLimit bool  `bson:"-" json:"over_limit"`
-}
-
-type GetAlarmsRequest struct {
-	Search           string                `json:"search"`
-	AlarmPattern     pattern.Alarm         `json:"alarm_pattern" binding:"alarm_pattern"`
-	EntityPattern    pattern.Entity        `json:"entity_pattern" binding:"entity_pattern"`
-	PbehaviorPattern pattern.PbehaviorInfo `json:"pbehavior_pattern" binding:"pbehavior_pattern"`
-}
-
-type GetAlarmsResponse struct {
-	Alarms []MatchedAlarm `bson:"alarms" json:"alarms"`
-}
-
-type MatchedAlarm struct {
-	ID   string `bson:"_id" json:"_id"`
-	Name string `bson:"name" json:"name"`
 }

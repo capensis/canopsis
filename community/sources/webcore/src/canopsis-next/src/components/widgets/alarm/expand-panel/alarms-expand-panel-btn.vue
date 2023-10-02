@@ -11,7 +11,7 @@
 import { TOURS } from '@/constants';
 
 import { getStepClass } from '@/helpers/tour';
-import { prepareAlarmDetailsQuery, convertAlarmDetailsQueryToRequest } from '@/helpers/query';
+import { prepareAlarmDetailsQuery, convertAlarmDetailsQueryToRequest } from '@/helpers/entities/alarm/query';
 
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
 
@@ -43,6 +43,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    search: {
+      type: String,
+      default: '',
+    },
   },
   computed: {
     expandButtonClass() {
@@ -55,7 +59,7 @@ export default {
   methods: {
     async showExpandPanel() {
       if (!this.expanded) {
-        this.query = prepareAlarmDetailsQuery(this.alarm, this.widget);
+        this.query = prepareAlarmDetailsQuery(this.alarm, this.widget, this.search);
 
         await this.fetchAlarmDetails({
           widgetId: this.widget._id,

@@ -1,10 +1,10 @@
 <template lang="pug">
   tr.alarm-list-row(v-on="listeners", :class="classes")
-    td.pr-0(v-if="hasRowActions")
+    td.alarm-list-row__icons.pr-0(v-if="hasRowActions")
       v-layout(row, align-center, justify-space-between)
         v-layout.alarm-list-row__checkbox
           template(v-if="selectable")
-            v-checkbox-functional.ma-0(v-if="!isClosedAlarm", v-field="selected", hide-details)
+            v-checkbox-functional.ma-0(v-if="isAlarmSelectable", v-field="selected", hide-details)
             v-checkbox-functional(v-else, disabled, hide-details)
         v-layout(v-if="hasAlarmInstruction", align-center, justify-center)
           alarms-list-row-icon(:alarm="alarm")
@@ -14,9 +14,10 @@
           :alarm="alarm",
           :widget="widget",
           :is-tour-enabled="isTourEnabled",
-          :small="small"
+          :small="small",
+          :search="search"
         )
-    td(v-for="column in columns")
+    td.alarm-list-row__cell(v-for="column in columns", :key="column.value")
       alarm-column-value(
         :alarm="alarm",
         :widget="widget",
@@ -26,14 +27,24 @@
         @activate="activateRow",
         @select:tag="$emit('select:tag', $event)"
       )
+      span.alarms-list-table__resize-handler(
+        v-if="resizing",
+        @mousedown.prevent="$emit('start:resize', column.value)",
+        @click.stop=""
+      )
     td(v-if="!hideActions")
       actions-panel(
         :item="alarm",
         :widget="widget",
-        :is-resolved-alarm="isClosedAlarm",
         :parent-alarm="parentAlarm",
         :refresh-alarms-list="refreshAlarmsList",
-        :small="small"
+        :small="small",
+        :wrap="wrapActions"
+      )
+      span.alarms-list-table__resize-handler(
+        v-if="resizing",
+        @mousedown.prevent="$emit('start:resize', 'actions')",
+        @click.stop=""
       )
 </template>
 
@@ -42,7 +53,7 @@ import { flow, isNumber } from 'lodash';
 
 import featuresService from '@/services/features';
 
-import { isClosedAlarm } from '@/helpers/entities';
+import { isActionAvailableForAlarm } from '@/helpers/entities/alarm/form';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -126,6 +137,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    resizing: {
+      type: Boolean,
+      default: false,
+    },
+    wrapActions: {
+      type: Boolean,
+      default: false,
+    },
+    search: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -154,14 +177,12 @@ export default {
       return hasAssignedInstructions || isNumber(this.alarm.instruction_execution_icon);
     },
 
-    isClosedAlarm() {
-      return isClosedAlarm(this.alarm);
+    isAlarmSelectable() {
+      return isActionAvailableForAlarm(this.alarm);
     },
 
     isNotFiltered() {
-      return this.parentAlarm
-        && this.parentAlarm.filtered_children
-        && !this.parentAlarm.filtered_children.includes(this.alarm._id);
+      return this.alarm.filtered === false;
     },
 
     listeners() {
@@ -212,6 +233,14 @@ export default {
     width: 24px;
     max-width: 24px;
     height: 24px;
+  }
+
+  &__icons {
+    width: 82px;
+  }
+
+  &__cell {
+    position: relative;
   }
 
   &--not-filtered {

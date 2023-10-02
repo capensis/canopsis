@@ -269,37 +269,37 @@ Feature: run a job
     [
       {
         "_t": "instructionstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-1-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-2-name."
       },
       {
         "_t": "instructionjobcomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-2-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-1-name."
       },
       {
         "_t": "instructionjobcomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-1-name. Job test-job-to-job-execution-start-1-1-name."
       },
       {
         "_t": "instructioncomplete",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-1-name."
       }
@@ -340,12 +340,7 @@ Feature: run a job
       "config": "test-job-config-to-run-manual-job-1",
       "job_id": "test-job-running",
       "payload": "{\"resource\": \"{{ `{{ .Alarm.Value.Resource }}` }}\",\"entity\": \"{{ `{{ .Entity.ID }}` }}\"}",
-      "multiple_executions": false,
-      "retry_amount": 2,
-      "retry_interval": {
-        "value": 2,
-        "unit": "s"
-      }
+      "multiple_executions": false
     }
     """
     Then the response code should be 201
@@ -517,11 +512,11 @@ Feature: run a job
                   "status": 2
                 },
                 {
-                  "fail_reason": "job is executing too long, cannot retrieve status after 2 retries by 2s",
+                  "fail_reason": "job is executing too long, cannot retrieve status after 4s",
                   "status": 2
                 },
                 {
-                  "fail_reason": "job is executing too long, cannot retrieve status after 1 retries by 1s",
+                  "fail_reason": "job is executing too long, cannot retrieve status after 4s",
                   "status": 2
                 },
                 {
@@ -585,67 +580,67 @@ Feature: run a job
     [
       {
         "_t": "instructionstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-1-name."
       },
       {
         "_t": "instructionjobfail",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-1-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-2-name."
       },
       {
         "_t": "instructionjobfail",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-2-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-3-name."
       },
       {
         "_t": "instructionjobfail",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-3-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-4-name."
       },
       {
         "_t": "instructionjobfail",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-4-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-5-name."
       },
       {
         "_t": "instructionjobfail",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-2-name. Job test-job-to-job-execution-start-2-5-name."
       }
@@ -1982,13 +1977,13 @@ Feature: run a job
       },
       {
         "_t": "instructionstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-9-name."
       },
       {
         "_t": "instructionjobstart",
-        "a": "root",
+        "a": "root John Doe admin@canopsis.net",
         "user_id": "root",
         "m": "Instruction test-instruction-to-job-execution-start-9-name. Job test-job-to-job-execution-start-9-name."
       },

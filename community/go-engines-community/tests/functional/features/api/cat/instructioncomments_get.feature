@@ -17,7 +17,8 @@ Feature: get instruction comments
           "created": 1596550518,
           "user": {
             "_id": "test-user-author-1-id",
-            "name": "test-user-author-1-username"
+            "name": "test-user-author-1-username",
+            "display_name": "test-user-author-1-username   "
           }
         },
         {
@@ -27,7 +28,8 @@ Feature: get instruction comments
           "created": 1596550518,
           "user": {
             "_id": "test-user-author-1-id",
-            "name": "test-user-author-1-username"
+            "name": "test-user-author-1-username",
+            "display_name": "test-user-author-1-username   "
           }
         }
       ],

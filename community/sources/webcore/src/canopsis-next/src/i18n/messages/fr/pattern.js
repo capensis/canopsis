@@ -13,6 +13,11 @@ export default {
   noDataDisabled: 'Aucun modèle.',
   discard: 'Effacer le motif',
   oldPatternTooltip: 'Les modèles de filtre ne sont pas migrés',
+  alarmsCount: '{alarmsCount} alarmes trouvées',
+  entitiesCount: '{entitiesCount} entités trouvées',
+  alarmsEntitiesCount: '{alarmsCount} alarmes et {entitiesCount} entités trouvées',
+  patternAlarms: 'Alarmes de modèle',
+  patternEntities: 'Entités de modèle',
   types: {
     [PATTERN_TYPES.alarm]: 'Modèle d\'alarme',
     [PATTERN_TYPES.entity]: 'Modèle d\'entité',

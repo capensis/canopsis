@@ -101,9 +101,6 @@ export default {
   createCancelEvent: {
     title: 'Annuler',
   },
-  createGroupRequestEvent: {
-    title: 'Proposition de regroupement pour méta-alarmes',
-  },
   createGroupEvent: {
     title: 'Créer une méta-alarme',
   },
@@ -181,6 +178,9 @@ export default {
   },
   createAckRemove: {
     title: 'Annuler l\'acquittement',
+  },
+  createUnCancel: {
+    title: 'Annuler l\'annulation',
   },
   liveReporting: {
     editLiveReporting: 'Suivi personnalisé',
@@ -276,6 +276,18 @@ export default {
       },
       [WIDGET_TYPES.numbers]: {
         title: 'Nombres',
+      },
+      [WIDGET_TYPES.userStatistics]: {
+        title: 'Statistiques des utilisateurs',
+      },
+      [WIDGET_TYPES.alarmStatistics]: {
+        title: 'Statistiques des alarmes',
+      },
+      chart: {
+        title: 'Graphique',
+      },
+      report: {
+        title: 'Rapport',
       },
     },
   },
@@ -378,6 +390,9 @@ export default {
     },
     edit: {
       title: 'Modifier la règle SNMP',
+    },
+    duplicate: {
+      title: 'Dupliquer la règle SNMP',
     },
   },
   selectView: {
@@ -484,9 +499,6 @@ export default {
   pbehaviorPlanning: {
     title: 'Comportements périodiques',
   },
-  selectExceptionsLists: {
-    title: 'Choisissez la liste des exceptions',
-  },
   createRrule: {
     title: 'Créer une règle de récurrence',
   },
@@ -506,7 +518,7 @@ export default {
     canonicalTypes: {
       [PBEHAVIOR_TYPE_TYPES.active]: 'Actif',
       [PBEHAVIOR_TYPE_TYPES.inactive]: 'Inactif',
-      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Entretien',
+      [PBEHAVIOR_TYPE_TYPES.maintenance]: 'Maintenance',
       [PBEHAVIOR_TYPE_TYPES.pause]: 'Pause',
     },
   },
@@ -846,13 +858,13 @@ export default {
   },
   createMermaidMap: {
     create: {
-      title: 'Créer un diagramme de mermaid',
+      title: 'Créer un diagramme mermaid',
     },
     edit: {
-      title: 'Modifier un diagramme de mermaid',
+      title: 'Modifier un diagramme mermaid',
     },
     duplicate: {
-      title: 'Dupliquer un diagramme de mermaid',
+      title: 'Dupliquer un diagramme mermaid',
     },
   },
   createTreeOfDependenciesMap: {
@@ -942,6 +954,44 @@ export default {
       edit: {
         title: 'Modifier le tableau des nombres',
       },
+    },
+  },
+  importPbehaviorException: {
+    title: 'Importer des dates d\'exception',
+  },
+  createMaintenance: {
+    enableMaintenance: 'Activer le mode maintenance',
+    setup: {
+      title: 'Activer le mode maintenance',
+    },
+    edit: {
+      title: 'Modifier le mode maintenance',
+    },
+  },
+  confirmationLeaveMaintenance: {
+    title: 'Quitter le mode maintenance',
+    text: 'Êtes-vous sûr de vouloir quitter le mode maintenance ?\\nTous les utilisateurs pourront se connecter au système après avoir quitté.',
+  },
+  createTag: {
+    create: {
+      title: 'Créer une balise',
+    },
+    edit: {
+      title: 'Modifier une balise',
+    },
+    duplicate: {
+      title: 'Dupliquer une balise',
+    },
+  },
+  createTheme: {
+    create: {
+      title: 'Créer un thème',
+    },
+    edit: {
+      title: 'Modifier le thème',
+    },
+    duplicate: {
+      title: 'Thème en double',
     },
   },
 };

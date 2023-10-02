@@ -1,10 +1,12 @@
 <template lang="pug">
-  v-card.white--text.weather-item(
+  card-with-see-alarms-btn.counter-item(
     :class="itemClasses",
-    :style="{ height: itemHeight + 'em', backgroundColor: color }",
-    tile
+    :style="itemStyle",
+    :show-button="hasAlarmsListAccess",
+    tile,
+    @show:alarms="showAlarmListModal"
   )
-    v-btn.helpBtn.ma-0(
+    v-btn.counter-item__help-btn.ma-0(
       v-if="hasVariablesHelpAccess",
       icon,
       small,
@@ -13,38 +15,29 @@
       v-icon help
     div
       v-layout(justify-start)
-        v-icon.px-3.py-2.white--text(size="2em") {{ icon }}
-        v-runtime-template.weather-item__service-name.pt-3(:template="compiledTemplate")
-        v-btn.see-alarms-btn(
-          v-if="hasAlarmsListAccess",
-          flat,
-          @click.stop="showAlarmListModal"
-        ) {{ $t('serviceWeather.seeAlarms') }}
+        v-icon.px-3.py-2(size="2em") {{ icon }}
+        c-compiled-template.counter-item__template.pt-3(
+          :template="widget.parameters.blockTemplate",
+          :context="templateContext"
+        )
 </template>
 
 <script>
 import { createNamespacedHelpers } from 'vuex';
-import VRuntimeTemplate from 'v-runtime-template';
 
-import {
-  MODALS,
-  USERS_PERMISSIONS,
-  ENTITIES_STATES_KEYS,
-  COUNTER_STATES_ICONS,
-} from '@/constants';
+import { MODALS, USERS_PERMISSIONS, ENTITIES_STATES_KEYS, COUNTER_STATES_ICONS } from '@/constants';
 
-import { compile } from '@/helpers/handlebars';
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
 import { authMixin } from '@/mixins/auth';
 
+import CardWithSeeAlarmsBtn from '@/components/common/card/card-with-see-alarms-btn.vue';
+
 const { mapActions } = createNamespacedHelpers('alarm');
 
 export default {
-  components: {
-    VRuntimeTemplate,
-  },
+  components: { CardWithSeeAlarmsBtn },
   mixins: [authMixin],
   props: {
     counter: {
@@ -60,22 +53,14 @@ export default {
       default: () => ({}),
     },
   },
-  asyncComputed: {
-    compiledTemplate: {
-      async get() {
-        const { blockTemplate, levels } = this.widget.parameters;
-        const compiledTemplate = await compile(blockTemplate, {
-          levels,
-
-          counter: this.counter,
-        });
-
-        return `<div>${compiledTemplate}</div>`;
-      },
-      default: '',
-    },
-  },
   computed: {
+    templateContext() {
+      return {
+        levels: this.widget.parameters.levels,
+        counter: this.counter,
+      };
+    },
+
     stateKey() {
       const {
         counter,
@@ -111,7 +96,6 @@ export default {
 
     itemClasses() {
       return [
-        'v-card__with-see-alarms-btn',
         `mt-${this.widget.parameters.margin.top}`,
         `mr-${this.widget.parameters.margin.right}`,
         `mb-${this.widget.parameters.margin.bottom}`,
@@ -122,13 +106,20 @@ export default {
     itemHeight() {
       return 4 + this.widget.parameters.heightFactor;
     },
+
+    itemStyle() {
+      return {
+        height: `${this.itemHeight}em`,
+        backgroundColor: this.color,
+      };
+    },
   },
   methods: {
     ...mapActions({
       fetchAlarmsListWithoutStore: 'fetchListWithoutStore',
     }),
 
-    async showAlarmListModal() {
+    showAlarmListModal() {
       const widget = generatePreparedDefaultAlarmListWidget();
 
       widget.parameters = {
@@ -163,3 +154,25 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.counter-item {
+  &__template {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2em;
+  }
+
+  &__help-btn {
+    position: absolute;
+    right: 0.2em;
+    top: 0;
+    z-index: 1;
+
+    &:hover, &:focus {
+      position: absolute;
+    }
+  }
+}
+</style>

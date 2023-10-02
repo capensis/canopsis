@@ -302,7 +302,7 @@ Feature: update service weather on event
       "output": "noveo alarm"
     }
     """
-    When I wait the end of event processing
+    When I wait the end of 2 events processing
     When I do POST /api/v4/widget-filters:
     """json
     {

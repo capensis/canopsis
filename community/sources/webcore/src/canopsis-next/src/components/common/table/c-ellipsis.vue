@@ -18,20 +18,25 @@ export default {
       default: EXPAND_DEFAULT_MAX_LETTERS,
     },
     text: {
-      type: String,
+      type: [String, Number],
       default: '',
     },
   },
   computed: {
-    isShort() {
-      return this.text.length <= this.maxLetters;
+    preparedText() {
+      return String(this.text);
     },
+
+    isShort() {
+      return this.preparedText.length <= this.maxLetters;
+    },
+
     shortenedText() {
       if (this.isShort) {
-        return this.text;
+        return this.preparedText;
       }
 
-      return this.text.substr(0, this.maxLetters);
+      return this.preparedText.substring(0, this.maxLetters);
     },
   },
   methods: {

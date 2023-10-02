@@ -1,11 +1,12 @@
 <template lang="pug">
-  c-pattern-editor-field(
+  pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
     :readonly="readonly",
     :name="name",
     :required="required",
-    :attributes="eventFilterAttributes"
+    :attributes="eventFilterAttributes",
+    :counter="counter"
   )
 </template>
 
@@ -21,8 +22,10 @@ import {
 } from '@/constants';
 
 import CEntityOldStateField from '@/components/forms/fields/entity/c-entity-old-state-field.vue';
+import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
 export default {
+  components: { PatternEditorField },
   model: {
     prop: 'patterns',
     event: 'input',
@@ -47,6 +50,10 @@ export default {
     readonly: {
       type: Boolean,
       default: false,
+    },
+    counter: {
+      type: Object,
+      required: false,
     },
   },
   computed: {

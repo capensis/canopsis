@@ -10,6 +10,8 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
     >
       <c-advanced-search-field-stub
         columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        combobox="combobox"
+        items="item 1,item 2"
         query="[object Object]"
         tooltip=<span>Help on the advanced research :</span>
 <p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
@@ -87,15 +89,21 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
   </div>
   <alarms-list-table-stub
     alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    cellscontentbehavior="wrap"
     class="mt-1"
     columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    columnssettings="[object Object]"
     densable="true"
     dense="0"
+    draggableclass="alarms-list-table__draggable-column"
     expandable="true"
     hidechildren="true"
     istourenabled="true"
+    mincolumnwidth="10"
     pagination="[object Object]"
     refreshalarmslist="[Function]"
+    resizingcolumnthrottledelay="10"
+    search="search"
     selectable="true"
     selectedtag=""
     totalitems="10"
@@ -117,6 +125,8 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
     >
       <c-advanced-search-field-stub
         columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        combobox="combobox"
+        items=""
         query="[object Object]"
         tooltip=<span>Help on the advanced research :</span>
 <p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
@@ -181,15 +191,21 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
   </div>
   <alarms-list-table-stub
     alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    cellscontentbehavior="wrap"
     class="mt-1"
     columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    columnssettings="[object Object]"
     densable="true"
     dense="0"
+    draggableclass="alarms-list-table__draggable-column"
     expandable="true"
     hidechildren="true"
     istourenabled="true"
+    mincolumnwidth="10"
     pagination="[object Object]"
     refreshalarmslist="[Function]"
+    resizingcolumnthrottledelay="10"
+    search="search"
     selectable="true"
     selectedtag=""
     totalitems="10"
@@ -211,6 +227,8 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
     >
       <c-advanced-search-field-stub
         columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        combobox="combobox"
+        items=""
         query="[object Object]"
         tooltip=<span>Help on the advanced research :</span>
 <p>- [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt;</p> [ AND|OR [ NOT ] &lt;ColumnName&gt; &lt;Operator&gt; &lt;Value&gt; ]
@@ -289,15 +307,21 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
   </div>
   <alarms-list-table-stub
     alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    cellscontentbehavior="wrap"
     class="mt-1"
     columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    columnssettings="[object Object]"
     densable="true"
     dense="0"
+    draggableclass="alarms-list-table__draggable-column"
     expandable="true"
     hidechildren="true"
     istourenabled="true"
+    mincolumnwidth="10"
     pagination="[object Object]"
     refreshalarmslist="[Function]"
+    resizingcolumnthrottledelay="10"
+    search="search"
     selectable="true"
     selectedtag=""
     totalitems="10"

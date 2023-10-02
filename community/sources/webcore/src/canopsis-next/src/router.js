@@ -2,17 +2,11 @@ import Vue from 'vue';
 import Router from 'vue-router';
 
 import { ROUTER_MODE, ROUTER_ACCESS_TOKEN_KEY } from '@/config';
-import {
-  CRUD_ACTIONS,
-  ROUTES_NAMES,
-  ROUTES,
-  USERS_PERMISSIONS,
-} from '@/constants';
+import { CRUD_ACTIONS, ROUTES_NAMES, ROUTES, USERS_PERMISSIONS } from '@/constants';
+
 import store from '@/store';
-import {
-  checkAppInfoAccessForRoute,
-  checkUserAccessForRoute,
-} from '@/helpers/router';
+
+import { checkAppInfoAccessForRoute, checkUserAccessForRoute } from '@/helpers/router';
 
 import Login from '@/views/login.vue';
 import Error from '@/views/error.vue';
@@ -33,6 +27,7 @@ const AdminEngines = () => import(/* webpackChunkName: "Engines" */ '@/views/adm
 const AdminHealthcheck = () => import(/* webpackChunkName: "Healthcheck" */ '@/views/admin/healthcheck.vue');
 const AdminKPI = () => import(/* webpackChunkName: "KPI" */ '@/views/admin/kpi.vue');
 const AdminMaps = () => import(/* webpackChunkName: "Maps" */ '@/views/admin/maps.vue');
+const AdminTags = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/tags.vue');
 const ExploitationPbehaviors = () => import(/* webpackChunkName: "Pbehavior" */ '@/views/exploitation/pbehaviors.vue');
 const ExploitationEventFilters = () => import(/* webpackChunkName: "EventFilters" */ '@/views/exploitation/event-filters.vue');
 const ExploitationSnmpRules = () => import(/* webpackChunkName: "SnmpRule" */ '@/views/exploitation/snmp-rules.vue');
@@ -45,6 +40,7 @@ const ExploitationResolveRules = () => import(/* webpackChunkName: "AlarmStatusR
 const ExploitationDeclareTicketRules = () => import(/* webpackChunkName: "DeclareTicketRule" */ '@/views/exploitation/declare-ticket-rules.vue');
 const ExploitationLinkRules = () => import(/* webpackChunkName: "LinkRule" */ '@/views/exploitation/link-rules.vue');
 const ProfilePatterns = () => import(/* webpackChunkName: "Pattern" */ '@/views/profile/patterns.vue');
+const ProfileThemes = () => import(/* webpackChunkName: "Theme" */ '@/views/profile/themes.vue');
 const Playlist = () => import(/* webpackChunkName: "Playlist" */ '@/views/playlist.vue');
 const NotificationInstructionStats = () => import(/* webpackChunkName: "InstructionStats" */ '@/views/notification/instruction-stats.vue');
 
@@ -241,6 +237,17 @@ const routes = [
     },
   },
   {
+    path: ROUTES.adminTags,
+    name: ROUTES_NAMES.adminTags,
+    component: AdminTags,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.tag,
+      },
+    },
+  },
+  {
     path: ROUTES.exploitationPbehaviors,
     name: ROUTES_NAMES.exploitationPbehaviors,
     component: ExploitationPbehaviors,
@@ -380,6 +387,17 @@ const routes = [
     component: ProfilePatterns,
     meta: {
       requiresLogin: true,
+    },
+  },
+  {
+    path: ROUTES.profileThemes,
+    name: ROUTES_NAMES.profileThemes,
+    component: ProfileThemes,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USERS_PERMISSIONS.technical.profile.theme,
+      },
     },
   },
   {

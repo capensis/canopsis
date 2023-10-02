@@ -1,18 +1,21 @@
-import { API_ROUTES } from '@/config';
-import { ENTITIES_TYPES } from '@/constants';
+import { find } from 'lodash';
 
-import { createEntityModule } from '@/store/plugins/entities';
+import { API_ROUTES } from '@/config';
+
 import request from '@/services/request';
 
-export default createEntityModule({
-  route: API_ROUTES.roles,
-  entityType: ENTITIES_TYPES.role,
-  dataPreparer: d => d.data,
-  withMeta: true,
+import { createCRUDModule } from '@/store/plugins/entities';
+
+export default createCRUDModule({
+  route: API_ROUTES.roles.list,
+  withWithoutStore: true,
 }, {
+  getters: {
+    getItemById: state => id => find(state.items, { _id: id }),
+  },
   actions: {
-    fetchListWithoutStore(context, { params }) {
-      return request.get(API_ROUTES.roles, { params });
+    fetchTemplatesListWithoutStore(context, { params }) {
+      return request.get(API_ROUTES.roles.templates, { params });
     },
   },
 });

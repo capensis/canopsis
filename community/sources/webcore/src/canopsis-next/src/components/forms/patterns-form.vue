@@ -18,6 +18,7 @@
       :alarm-attributes="alarmAttributes",
       :entity-attributes="entityAttributes",
       :entity-types="entityTypes",
+      :entity-counters-type="entityCountersType",
       some-required
     )
 </template>
@@ -69,6 +70,10 @@ export default {
     entityTypes: {
       type: Array,
       required: false,
+    },
+    entityCountersType: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

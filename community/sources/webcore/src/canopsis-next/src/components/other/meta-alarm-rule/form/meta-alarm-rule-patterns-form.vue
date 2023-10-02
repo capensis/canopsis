@@ -7,7 +7,8 @@
     :with-total-entity="withTotalEntity",
     :some-required="someRequired",
     with-alarm,
-    with-entity
+    with-entity,
+    both-counters
   )
 </template>
 
