@@ -125,20 +125,31 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 
 func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity, params rpc.AxeParameters) (Result, error) {
 	now := types.NewCpsTime()
-
 	result := Result{}
 	if *params.State == types.AlarmStateOK {
 		return result, nil
 	}
 
-	alarmChange := p.newAlarmChange(nil, entity)
-	pbehaviorInfo, err := resolvePbehaviorInfo(ctx, entity, p.pbhTypeResolver, now)
-	if err != nil {
-		return result, err
+	alarmChange := types.NewAlarmChange()
+	var pbehaviorInfo types.PbehaviorInfo
+	updateEntityPbhInfo := false
+	var err error
+	if entity.PbehaviorInfo.IsDefaultActive() {
+		updateEntityPbhInfo = true
+		pbehaviorInfo, err = resolvePbehaviorInfo(ctx, entity, now, p.pbhTypeResolver)
+		if err != nil {
+			return result, err
+		}
+	} else {
+		pbehaviorInfo = entity.PbehaviorInfo
+		pbehaviorInfo.Timestamp = &now
+		alarmChange.PreviousPbehaviorTypeID = entity.PbehaviorInfo.TypeID
+		alarmChange.PreviousPbehaviorCannonicalType = entity.PbehaviorInfo.CanonicalType
+		alarmChange.PreviousEntityPbehaviorTime = entity.PbehaviorInfo.Timestamp
 	}
 
 	alarmConfig := p.alarmConfigProvider.Get()
-	alarm := p.newAlarm(params, entity, alarmConfig, now)
+	alarm := p.newAlarm(params, entity, now, alarmConfig)
 	stateStep := types.NewAlarmStep(types.AlarmStepStateIncrease, params.Timestamp, params.Author,
 		params.Output, params.User, params.Role, params.Initiator)
 	stateStep.Value = *params.State
@@ -204,10 +215,11 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 		"idle_since":           params.Timestamp,
 		"last_idle_rule_apply": params.IdleRuleApply,
 	}}
-	if alarmChange.Type == types.AlarmChangeTypeCreateAndPbhEnter {
+	if alarmChange.Type == types.AlarmChangeTypeCreateAndPbhEnter && updateEntityPbhInfo {
 		entityUpdate["pbehavior_info"] = alarm.Value.PbehaviorInfo
 		entityUpdate["last_pbehavior_date"] = alarm.Value.PbehaviorInfo.Timestamp
 	}
+
 	result.Entity, err = updateEntityByID(ctx, entity.ID, entityUpdate, p.entityCollection)
 	if err != nil {
 		return result, err
@@ -222,7 +234,7 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 
 func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, entity types.Entity, params rpc.AxeParameters) (Result, error) {
 	result := Result{}
-	alarmChange := p.newAlarmChange(&alarm, entity)
+	alarmChange := p.newAlarmChange(alarm)
 	previousState := alarm.Value.State.Value
 	previousStatus := alarm.Value.Status.Value
 	newState := *params.State
@@ -328,27 +340,18 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 	return result, nil
 }
 
-func (p *noEventsProcessor) newAlarmChange(alarm *types.Alarm, entity types.Entity) types.AlarmChange {
+func (p *noEventsProcessor) newAlarmChange(alarm types.Alarm) types.AlarmChange {
 	alarmChange := types.NewAlarmChange()
-	if alarm == nil {
-		alarmChange.PreviousPbehaviorTypeID = entity.PbehaviorInfo.TypeID
-		alarmChange.PreviousPbehaviorCannonicalType = entity.PbehaviorInfo.CanonicalType
-		alarmChange.PreviousPbehaviorTime = entity.PbehaviorInfo.Timestamp
-	} else {
-		alarmChange.PreviousState = alarm.Value.State.Value
-		alarmChange.PreviousStateChange = alarm.Value.State.Timestamp
-		alarmChange.PreviousStatus = alarm.Value.Status.Value
-		alarmChange.PreviousPbehaviorTypeID = alarm.Value.PbehaviorInfo.TypeID
-		alarmChange.PreviousPbehaviorCannonicalType = alarm.Value.PbehaviorInfo.CanonicalType
-		alarmChange.PreviousPbehaviorTime = alarm.Value.PbehaviorInfo.Timestamp
-	}
-
+	alarmChange.PreviousState = alarm.Value.State.Value
+	alarmChange.PreviousStateChange = alarm.Value.State.Timestamp
+	alarmChange.PreviousStatus = alarm.Value.Status.Value
 	return alarmChange
 }
 
 func (p *noEventsProcessor) newAlarm(
 	params rpc.AxeParameters,
 	entity types.Entity,
+	timestamp types.CpsTime,
 	alarmConfig config.AlarmConfig,
 	timestamp types.CpsTime,
 ) types.Alarm {
