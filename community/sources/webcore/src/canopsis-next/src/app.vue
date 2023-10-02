@@ -22,12 +22,12 @@ import { createNamespacedHelpers } from 'vuex';
 import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
 import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, ROUTES_NAMES } from '@/constants';
 
-import { reloadPageWithTrailingSlashes } from '@/helpers/url';
-import { convertDateToString } from '@/helpers/date/date';
+import Socket from '@/plugins/socket/services/socket';
 
 import localStorageService from '@/services/local-storage';
 
-import Socket from '@/plugins/socket/services/socket';
+import { reloadPageWithTrailingSlashes } from '@/helpers/url';
+import { convertDateToString } from '@/helpers/date/date';
 
 import { authMixin } from '@/mixins/auth';
 import { systemMixin } from '@/mixins/system';
@@ -92,7 +92,11 @@ export default {
       this.fetchTemplateVars(),
     ]);
 
-    this.fetchAppInfoWithErrorHandling();
+    await this.fetchAppInfoWithErrorHandling();
+
+    if (!this.isLoggedIn) {
+      this.setTheme(this.defaultColorTheme);
+    }
   },
   methods: {
     ...mapActions({
@@ -111,6 +115,7 @@ export default {
       const unwatch = this.$watch('currentUser', async (currentUser) => {
         if (!isEmpty(currentUser)) {
           this.$socket.authenticate(localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY));
+
           this.setTheme(currentUser.ui_theme);
 
           await this.filesAccess();
@@ -209,17 +214,17 @@ export default {
 </script>
 
 <style lang="scss">
-  #app {
-    &.-fullscreen {
-      width: 100%;
+#app {
+  &.-fullscreen {
+    width: 100%;
 
-      #main-navigation {
-        display: none;
-      }
+    #main-navigation {
+      display: none;
+    }
 
-      #main-content {
-        padding: 0 !important;
-      }
+    #main-content {
+      padding: 0 !important;
     }
   }
+}
 </style>

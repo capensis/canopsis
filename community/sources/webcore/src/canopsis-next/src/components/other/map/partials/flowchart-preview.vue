@@ -28,8 +28,9 @@
 <script>
 import { keyBy } from 'lodash';
 
-import { getDarkenColor, getEntityColor } from '@/helpers/color';
-import { isNotActivePbehaviorType } from '@/helpers/entities/pbehavior';
+import { getCSSVariableColor, getCSSVariableName, getDarkenColor, isCSSVariable } from '@/helpers/color';
+import { getEntityColor } from '@/helpers/entities/entity/color';
+import { isNotActivePbehaviorType } from '@/helpers/entities/pbehavior/form';
 
 import Flowchart from '@/components/common/flowchart/flowchart.vue';
 
@@ -82,7 +83,10 @@ export default {
   },
   methods: {
     getShapeByEntity(shape, point) {
-      const color = getEntityColor(point.entity, this.colorIndicator);
+      const entityColor = getEntityColor(point.entity, this.colorIndicator);
+      const color = isCSSVariable(entityColor)
+        ? getCSSVariableColor(document.body, getCSSVariableName(entityColor))
+        : entityColor;
       const darkenColor = getDarkenColor(color, 20);
 
       return {

@@ -101,9 +101,6 @@ export default {
   createCancelEvent: {
     title: 'Cancel',
   },
-  createGroupRequestEvent: {
-    title: 'Suggest group request for meta alarm',
-  },
   createGroupEvent: {
     title: 'Create meta alarm',
   },
@@ -181,6 +178,9 @@ export default {
   },
   createAckRemove: {
     title: 'Remove ack',
+  },
+  createUnCancel: {
+    title: 'Create uncancel event',
   },
   liveReporting: {
     editLiveReporting: 'Live reporting',
@@ -276,6 +276,18 @@ export default {
       },
       [WIDGET_TYPES.numbers]: {
         title: 'Numbers',
+      },
+      [WIDGET_TYPES.userStatistics]: {
+        title: 'User statistics',
+      },
+      [WIDGET_TYPES.alarmStatistics]: {
+        title: 'Alarm statistics',
+      },
+      chart: {
+        title: 'Chart',
+      },
+      report: {
+        title: 'Report',
       },
     },
   },
@@ -378,6 +390,9 @@ export default {
     },
     edit: {
       title: 'Edit SNMP rule',
+    },
+    duplicate: {
+      title: 'Duplicate SNMP rule',
     },
   },
   selectView: {
@@ -483,9 +498,6 @@ export default {
   },
   pbehaviorPlanning: {
     title: 'Periodical behaviors',
-  },
-  selectExceptionsLists: {
-    title: 'Choose list of exceptions',
   },
   createRrule: {
     title: 'Create recurrence rule',
@@ -942,6 +954,44 @@ export default {
       edit: {
         title: 'Edit numbers chart',
       },
+    },
+  },
+  importPbehaviorException: {
+    title: 'Import exception dates',
+  },
+  createMaintenance: {
+    enableMaintenance: 'Enable maintenance mode',
+    setup: {
+      title: 'Maintenance mode setup',
+    },
+    edit: {
+      title: 'Edit maintenance mode',
+    },
+  },
+  confirmationLeaveMaintenance: {
+    title: 'Leave maintenance mode',
+    text: 'Are you sure you want to leave the maintenance mode?\nAll users will be able to login to the system after leaving.',
+  },
+  createTag: {
+    create: {
+      title: 'Create a tag',
+    },
+    edit: {
+      title: 'Edit a tag',
+    },
+    duplicate: {
+      title: 'Duplicate a tag',
+    },
+  },
+  createTheme: {
+    create: {
+      title: 'Create theme',
+    },
+    edit: {
+      title: 'Edit theme',
+    },
+    duplicate: {
+      title: 'Duplicate theme',
     },
   },
 };

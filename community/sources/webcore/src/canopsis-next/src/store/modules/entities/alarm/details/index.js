@@ -2,12 +2,13 @@ import Vue from 'vue';
 import { get } from 'lodash';
 
 import { API_ROUTES } from '@/config';
-
 import { ENTITIES_TYPES } from '@/constants';
+
+import request from '@/services/request';
 
 import { alarmDetailsSchema } from '@/store/schemas';
 
-import { generateAlarmDetailsId, getAlarmDetailsDataPreparer } from '@/helpers/entities';
+import { generateAlarmDetailsId, getAlarmDetailsDataPreparer } from '@/helpers/entities/alarm/list';
 
 export const types = {
   FETCH_ITEM: 'FETCH_ITEM',
@@ -145,6 +146,17 @@ export default {
     },
 
     /**
+     * Fetch alarms details list without store
+     *
+     * @param {Object} context
+     * @param {Object} params
+     * @returns {Promise<void>}
+     */
+    async fetchListWithoutStore(context, { params } = {}) {
+      return request.post(API_ROUTES.alarmDetails, params);
+    },
+
+    /**
      * Update query for special alarm details
      *
      * @param {Function} commit
@@ -165,6 +177,20 @@ export default {
      */
     removeQuery({ commit }, { widgetId, id }) {
       commit(types.REMOVE_QUERY, { widgetId, id });
+    },
+
+    /**
+     * Update alarm details item in store
+     *
+     * @param {Function} dispatch
+     * @param {Object} alarmDetails
+     * @returns {*}
+     */
+    updateItemInStore({ dispatch }, alarmDetails) {
+      return dispatch('entities/addToStore', {
+        schema: alarmDetailsSchema,
+        data: alarmDetails,
+      }, { root: true });
     },
   },
 };

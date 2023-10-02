@@ -44,3 +44,38 @@ func (w *loadConfigPeriodicalWorker) Work(ctx context.Context) {
 		updater.Update(cfg)
 	}
 }
+
+func NewLoadUserInterfaceConfigPeriodicalWorker(
+	periodicalInterval time.Duration,
+	adapter config.UserInterfaceAdapter,
+	logger zerolog.Logger,
+	updater *config.BaseUserInterfaceConfigProvider,
+) PeriodicalWorker {
+	return &loadUserInterfaceConfigPeriodicalWorker{
+		periodicalInterval: periodicalInterval,
+		adapter:            adapter,
+		updater:            updater,
+		logger:             logger,
+	}
+}
+
+type loadUserInterfaceConfigPeriodicalWorker struct {
+	periodicalInterval time.Duration
+	adapter            config.UserInterfaceAdapter
+	logger             zerolog.Logger
+	updater            *config.BaseUserInterfaceConfigProvider
+}
+
+func (w *loadUserInterfaceConfigPeriodicalWorker) GetInterval() time.Duration {
+	return w.periodicalInterval
+}
+
+func (w *loadUserInterfaceConfigPeriodicalWorker) Work(ctx context.Context) {
+	cfg, err := w.adapter.GetConfig(ctx)
+	if err != nil {
+		w.logger.Err(err).Msgf("cannot load config")
+		return
+	}
+
+	w.updater.Update(cfg)
+}

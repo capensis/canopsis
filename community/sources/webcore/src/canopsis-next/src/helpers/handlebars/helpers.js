@@ -1,13 +1,21 @@
-import { get, isFunction, isNumber, isObject, unescape, isString } from 'lodash';
+import {
+  get,
+  isFunction,
+  isNumber,
+  isObject,
+  unescape,
+  isString,
+  pick,
+} from 'lodash';
 import Handlebars from 'handlebars';
 import axios from 'axios';
 
 import { DATETIME_FORMATS, MAX_LIMIT } from '@/constants';
 
+import i18n from '@/i18n';
+
 import { convertDurationToString } from '@/helpers/date/duration';
 import { convertDateToStringWithFormatForToday, convertDateToString } from '@/helpers/date/date';
-
-import i18n from '@/i18n';
 
 /**
  * Prepare object attributes from `{ key: value, keySecond: valueSecond }` format
@@ -27,6 +35,7 @@ function prepareAttributes(attributes) {
  *
  * First example: {{timestamp 1673932037}} -> 07:07:17 (it's today time)
  * Second example: {{timestamp 1673932037 format='long'}} -> 17/01/2023 07:07:17
+ * Third example: {{timestamp 1673932037 format='MMMM Do YYYY, h:mm:ss a'}} -> January 17th 2023, 07:07:17 am
  *
  * @param {string|number} date
  * @param {Object} options
@@ -39,8 +48,8 @@ export function timestampHelper(date, options = {}) {
     return '';
   }
 
-  return format === 'long'
-    ? convertDateToString(date)
+  return format
+    ? convertDateToString(date, format)
     : convertDateToStringWithFormatForToday(date);
 }
 
@@ -92,7 +101,13 @@ export function alarmStateHelper(state) {
  * @return {string}
  */
 export function alarmTagsHelper() {
-  return new Handlebars.SafeString(`<c-alarm-tags-chips :alarm="alarm" inline-count="${MAX_LIMIT}"></c-alarm-tags-chips>`);
+  return new Handlebars.SafeString(
+    `<c-alarm-tags-chips
+      :alarm="alarm"
+      inline-count="${MAX_LIMIT}"
+      @select="$emit('select:tag', $event)"
+    ></c-alarm-tags-chips>`,
+  );
 }
 
 /**
@@ -443,5 +458,26 @@ export function copyHelper(value = '', options = {}) {
     throw new Error('handlebars helper {{copy}} expects options.fn');
   }
 
-  return new Handlebars.SafeString(`<c-copy-wrapper value="${value}" />${options.fn(this)}</c-copy-wrapper>`);
+  return new Handlebars.SafeString(
+    `<c-copy-wrapper ${prepareAttributes({ value })} />${options.fn(this)}</c-copy-wrapper>`,
+  );
+}
+
+/**
+ * JSON stringify helper
+ *
+ * Example: {{ json alarm.v 'display_name' }}
+ *
+ * @param {Object} [object]
+ * @param {Array} [args]
+ * @returns {*}
+ */
+export function jsonHelper(object, ...args) {
+  if (!isObject(object)) {
+    throw new Error('handlebars helper {{json}} expects object');
+  }
+
+  const fields = args.filter(isString);
+
+  return JSON.stringify(fields.length ? pick(object, fields) : object, undefined, 2);
 }

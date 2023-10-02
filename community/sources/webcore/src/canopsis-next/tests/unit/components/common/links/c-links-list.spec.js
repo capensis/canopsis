@@ -1,9 +1,7 @@
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 
 import CLinksList from '@/components/common/links/c-links-list.vue';
 import { LINK_RULE_ACTIONS } from '@/constants';
-
-const localVue = createVueInstance();
 
 const snapshotStubs = {
   'c-copy-wrapper': true,
@@ -14,6 +12,8 @@ describe('c-links-list', () => {
     FirstCategory: [
       { label: 'FirstCategoryLinkLabel1', url: 'FirstCategoryLink1', rule_id: '1' },
       { label: 'FirstCategoryLinkLabel2', url: 'FirstCategoryLink2', rule_id: '2' },
+      { label: 'FirstCategoryLinkLabel3', url: 'FirstCategoryLink3' },
+      { label: 'FirstCategoryLinkLabel4', url: 'FirstCategoryLink4' },
     ],
     SecondCategory: [
       { label: 'SecondCategoryLinkLabel1', url: 'SecondCategoryLink1', rule_id: '2' },
@@ -24,7 +24,7 @@ describe('c-links-list', () => {
   };
 
   const snapshotFactory = generateRenderer(CLinksList, {
-    localVue,
+
     stubs: snapshotStubs,
   });
 

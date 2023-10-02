@@ -14,6 +14,8 @@
       :with-template="withTemplate",
       :with-html="withHtml",
       :with-color-indicator="withColorIndicator",
+      :with-instructions="withInstructions",
+      :without-infos-attributes="withoutInfosAttributes",
       :type="type",
       @input="updateColumns"
     )
@@ -24,7 +26,7 @@ import { CUSTOM_WIDGET_TEMPLATE } from '@/constants';
 
 import { formBaseMixin } from '@/mixins/form';
 
-import WidgetSettingsItem from '@/components/sidebars/settings/partials/widget-settings-item.vue';
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
   components: { WidgetSettingsItem },
@@ -63,6 +65,14 @@ export default {
       default: false,
     },
     withColorIndicator: {
+      type: Boolean,
+      default: false,
+    },
+    withInstructions: {
+      type: Boolean,
+      default: false,
+    },
+    withoutInfosAttributes: {
       type: Boolean,
       default: false,
     },

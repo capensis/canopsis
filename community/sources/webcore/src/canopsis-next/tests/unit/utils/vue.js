@@ -1,16 +1,13 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import Vuetify from 'vuetify';
 import { get, merge } from 'lodash';
-import VueAsyncComputed from 'vue-async-computed';
-import VueResizeText from 'vue-resize-text';
 import { shallowMount as testUtilsShallowMount, mount as testUtilsMount, createLocalVue } from '@vue/test-utils';
+import theme from 'vuetify/es5/components/Vuetify/mixins/theme';
 
 import { MqLayout } from '@unit/stubs/mq';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import ValidatorPlugin from '@/plugins/validator';
-import VuetifyReplacerPlugin from '@/plugins/vuetify-replacer';
-import GridPlugin from '@/plugins/grid';
+import Vuetify from '@/plugins/vuetify';
 import ToursPlugin from '@/plugins/tours';
 import * as constants from '@/constants';
 import * as config from '@/config';
@@ -18,6 +15,7 @@ import i18n from '@/i18n';
 import { convertDateToString, convertDateToTimezoneDateString } from '@/helpers/date/date';
 import SetSeveralPlugin from '@/plugins/set-several';
 import { stringifyJsonFilter } from '@/helpers/json';
+import { themePropertiesToCSSVariables } from '@/helpers/entities/theme/entity';
 
 /**
  * @typedef {Wrapper<Vue>} CustomWrapper
@@ -32,18 +30,16 @@ import { stringifyJsonFilter } from '@/helpers/json';
 document.body.setAttribute('data-app', true);
 
 const mocks = {
-  $constants: Object.freeze(constants),
-  $config: Object.freeze(config),
+  $constants: constants,
+  $config: config,
 };
 
-Vue.use(VueAsyncComputed);
-Vue.use(VueResizeText);
 Vue.use(Vuex);
-Vue.use(Vuetify);
+Vue.use(Vuetify, {
+  theme: theme(themePropertiesToCSSVariables(config.DEFAULT_THEME_COLORS)),
+});
 Vue.use(UpdateFieldPlugin);
 Vue.use(ValidatorPlugin, { i18n });
-Vue.use(VuetifyReplacerPlugin);
-Vue.use(GridPlugin);
 Vue.use(SetSeveralPlugin);
 Vue.use(ToursPlugin);
 
@@ -83,6 +79,7 @@ const enhanceWrapper = (wrapper) => {
   wrapper.findMenu = () => wrapper.find('.v-menu__content');
   wrapper.findAllTooltips = () => wrapper.findAll('.v-tooltip__content');
   wrapper.findTooltip = () => wrapper.find('.v-tooltip__content');
+  wrapper.findRoot = () => wrapper.vm.$children[0];
   wrapper.clickOutside = () => {
     const elementZIndex = +document.body.style.zIndex;
 
@@ -104,95 +101,51 @@ const enhanceWrapper = (wrapper) => {
 };
 
 /**
- * Function for mount vue component with mocked i18n, constants and config.
- *
- * @param {Object} component
- * @param {Object} options
- * @return {CustomWrapper}
- *
- * @deprecated Should be used generateRenderer instead
- */
-export const mount = (component, options = {}) => {
-  const wrapper = testUtilsMount(
-    component,
-    merge({ mocks, stubs }, options, { i18n }),
-  );
-
-  enhanceWrapper(wrapper);
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  return wrapper;
-};
-
-/**
  * Generate render function
  *
  * @param {Object} component
  * @param {Object} baseOptions
  * @param {Object} basePropsData
+ * @param {Boolean} [noDestroy = false]
  * @returns {Function}
  */
 export const generateRenderer = (
   component,
   { propsData: basePropsData, ...baseOptions } = {},
+  { noDestroy = false } = {},
 ) => {
   let wrapper;
 
   afterEach(() => {
     jest.clearAllMocks();
-    wrapper?.destroy?.();
+
+    if (!noDestroy) {
+      wrapper?.destroy?.();
+    }
   });
 
   return ({ propsData, ...options } = {}) => {
     wrapper = testUtilsMount(
       component,
-      merge(
-        {},
-        { mocks, stubs },
-        baseOptions,
-        options,
-        { i18n },
-        {
-          propsData: {
-            ...basePropsData,
-            ...propsData,
-          },
+      {
+        ...merge(
+          {},
+          { mocks, stubs },
+          baseOptions,
+          options,
+          { i18n },
+        ),
+        propsData: {
+          ...basePropsData,
+          ...propsData,
         },
-      ),
+      },
     );
 
     enhanceWrapper(wrapper);
 
     return wrapper;
   };
-};
-
-/**
- * Function for shallow mount vue component with mocked i18n, constants and config.
- *
- * @param {Object} component
- * @param {Object} options
- * @return {CustomWrapper}
- *
- * @deprecated Should be used generateShallowRenderer instead
- */
-export const shallowMount = (component, options = {}) => {
-  const wrapper = testUtilsShallowMount(
-    component,
-    merge(options, { mocks, i18n, stubs }),
-  );
-
-  enhanceWrapper(wrapper);
-
-  afterEach(() => {
-    jest.clearAllMocks();
-    wrapper.destroy();
-  });
-
-  return wrapper;
 };
 
 /**
@@ -217,18 +170,18 @@ export const generateShallowRenderer = (
   return ({ propsData, ...options } = {}) => {
     wrapper = testUtilsShallowMount(
       component,
-      merge(
-        {},
-        baseOptions,
-        options,
-        { mocks, i18n, stubs },
-        {
-          propsData: {
-            ...basePropsData,
-            ...propsData,
-          },
+      {
+        ...merge(
+          {},
+          baseOptions,
+          options,
+          { mocks, i18n, stubs },
+        ),
+        propsData: {
+          ...basePropsData,
+          ...propsData,
         },
-      ),
+      },
     );
 
     enhanceWrapper(wrapper);

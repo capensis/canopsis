@@ -3271,6 +3271,7 @@ Feature: update alarm on idle rule
     When I do DELETE /api/v4/idle-rules/{{ .ruleID }}
     Then the response code should be 204
 
+  @concurrent
   Scenario: given idle rule with ok changestate operation should update next alarm
     Given I am admin
     When I do POST /api/v4/idle-rules:
@@ -3306,20 +3307,30 @@ Feature: update alarm on idle rule
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type": "check",
+      "state": 2,
+      "output": "test-output-axe-idlerule-12",
       "connector": "test-connector-axe-idlerule-12",
       "connector_name": "test-connector-name-axe-idlerule-12",
-      "source_type": "resource",
       "component":  "test-component-axe-idlerule-12",
       "resource": "test-resource-axe-idlerule-12",
-      "state": 2,
-      "output": "test-output-axe-idlerule-12"
+      "source_type": "resource"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "changestate",
+      "connector": "test-connector-axe-idlerule-12",
+      "connector_name": "test-connector-name-axe-idlerule-12",
+      "component":  "test-component-axe-idlerule-12",
+      "resource": "test-resource-axe-idlerule-12",
+      "source_type": "resource"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-12
     Then the response code should be 200
     Then the response body should contain:
@@ -3350,33 +3361,42 @@ Feature: update alarm on idle rule
       }
     }
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type": "resolve_close",
+      "output": "test-output-axe-idlerule-12",
       "connector": "test-connector-axe-idlerule-12",
       "connector_name": "test-connector-name-axe-idlerule-12",
-      "source_type": "resource",
       "component":  "test-component-axe-idlerule-12",
       "resource": "test-resource-axe-idlerule-12",
-      "output": "test-output-axe-idlerule-12"
+      "source_type": "resource"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type": "check",
+      "state": 2,
+      "output": "test-output-axe-idlerule-12",
       "connector": "test-connector-axe-idlerule-12",
       "connector_name": "test-connector-name-axe-idlerule-12",
-      "source_type": "resource",
       "component":  "test-component-axe-idlerule-12",
       "resource": "test-resource-axe-idlerule-12",
-      "state": 2,
-      "output": "test-output-axe-idlerule-12"
+      "source_type": "resource"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "changestate",
+      "connector": "test-connector-axe-idlerule-12",
+      "connector_name": "test-connector-name-axe-idlerule-12",
+      "component":  "test-component-axe-idlerule-12",
+      "resource": "test-resource-axe-idlerule-12",
+      "source_type": "resource"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-12
     Then the response code should be 200
     Then the response body should contain:
@@ -3423,6 +3443,7 @@ Feature: update alarm on idle rule
     }
     """
 
+  @concurrent
   Scenario: given idle rule with cancel operation should update next alarm
     Given I am admin
     When I do POST /api/v4/idle-rules:
@@ -3455,20 +3476,30 @@ Feature: update alarm on idle rule
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type": "check",
+      "state": 2,
+      "output": "test-output-axe-idlerule-13",
       "connector": "test-connector-axe-idlerule-13",
       "connector_name": "test-connector-name-axe-idlerule-13",
-      "source_type": "resource",
       "component":  "test-component-axe-idlerule-13",
       "resource": "test-resource-axe-idlerule-13",
-      "state": 2,
-      "output": "test-output-axe-idlerule-13"
+      "source_type": "resource"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "cancel",
+      "connector": "test-connector-axe-idlerule-13",
+      "connector_name": "test-connector-name-axe-idlerule-13",
+      "component":  "test-component-axe-idlerule-13",
+      "resource": "test-resource-axe-idlerule-13",
+      "source_type": "resource"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-13
     Then the response code should be 200
     Then the response body should contain:
@@ -3501,33 +3532,42 @@ Feature: update alarm on idle rule
       }
     }
     """
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type": "resolve_cancel",
+      "output": "test-output-axe-idlerule-13",
       "connector": "test-connector-axe-idlerule-13",
       "connector_name": "test-connector-name-axe-idlerule-13",
-      "source_type": "resource",
       "component":  "test-component-axe-idlerule-13",
       "resource": "test-resource-axe-idlerule-13",
-      "output": "test-output-axe-idlerule-13"
+      "source_type": "resource"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "event_type": "check",
+      "state": 2,
+      "output": "test-output-axe-idlerule-13",
       "connector": "test-connector-axe-idlerule-13",
       "connector_name": "test-connector-name-axe-idlerule-13",
-      "source_type": "resource",
       "component":  "test-component-axe-idlerule-13",
       "resource": "test-resource-axe-idlerule-13",
-      "state": 2,
-      "output": "test-output-axe-idlerule-13"
+      "source_type": "resource"
     }
     """
-    When I wait the end of 2 events processing
+    When I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "cancel",
+      "connector": "test-connector-axe-idlerule-13",
+      "connector_name": "test-connector-name-axe-idlerule-13",
+      "component":  "test-component-axe-idlerule-13",
+      "resource": "test-resource-axe-idlerule-13",
+      "source_type": "resource"
+    }
+    """
     When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-13
     Then the response code should be 200
     Then the response body should contain:

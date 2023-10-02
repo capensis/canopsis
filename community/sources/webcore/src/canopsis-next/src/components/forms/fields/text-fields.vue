@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { defaultPrimitiveArrayItemCreator } from '@/helpers/forms/shared/common';
+import { defaultPrimitiveArrayItemCreator } from '@/helpers/entities/shared/form';
 
 import { formArrayMixin } from '@/mixins/form';
 

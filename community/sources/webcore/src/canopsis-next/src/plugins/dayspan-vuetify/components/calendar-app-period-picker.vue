@@ -5,24 +5,28 @@
         v-if="isWeekType",
         v-model="week",
         :items="weeks",
-        :menu-props="menuProps"
+        :menu-props="menuProps",
+        hide-details
       )
       template(v-else)
         v-select.ds-calendar-app-period-picker__day(
           v-if="!isMonthType",
           v-model="day",
           :items="days",
-          :menu-props="menuProps"
+          :menu-props="menuProps",
+          hide-details
         )
         v-select.ds-calendar-app-period-picker__month(
           v-model="month",
           :items="months",
-          :menu-props="menuProps"
+          :menu-props="menuProps",
+          hide-details
         )
     v-select.ds-calendar-app-period-picker__year(
       v-model="year",
       :items="years",
-      :menu-props="menuProps"
+      :menu-props="menuProps",
+      hide-details
     )
 </template>
 

@@ -1,6 +1,6 @@
 package config
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/config/config.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config AlarmConfigProvider,TimezoneConfigProvider,RemediationConfigProvider,UserInterfaceConfigProvider,DataStorageConfigProvider,TechMetricsConfigProvider,TemplateConfigProvider
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/config/provider.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config AlarmConfigProvider,TimezoneConfigProvider,RemediationConfigProvider,UserInterfaceConfigProvider,DataStorageConfigProvider,TechMetricsConfigProvider,TemplateConfigProvider
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/rs/zerolog"
 )
 
@@ -68,7 +68,6 @@ type TemplateConfigProvider interface {
 
 type AlarmConfig struct {
 	StealthyInterval      time.Duration
-	EnableLastEventDate   bool
 	CancelAutosolveDelay  time.Duration
 	DisplayNameScheme     *template.Template
 	displayNameSchemeText string
@@ -86,18 +85,18 @@ type TimezoneConfig struct {
 }
 
 type ApiConfig struct {
-	TokenSigningMethod jwt.SigningMethod
-	BulkMaxSize        int
+	TokenSigningMethod     jwt.SigningMethod
+	BulkMaxSize            int
+	AuthorScheme           []string
+	MetricsCacheExpiration time.Duration
 }
 
 type RemediationConfig struct {
-	HttpTimeout                    time.Duration
-	LaunchJobRetriesAmount         int
-	LaunchJobRetriesInterval       time.Duration
-	WaitJobCompleteRetriesAmount   int
-	WaitJobCompleteRetriesInterval time.Duration
-	PauseManualInstructionInterval time.Duration
 	ExternalAPI                    map[string]ExternalApiConfig
+	HttpTimeout                    time.Duration
+	PauseManualInstructionInterval time.Duration
+	JobWaitInterval                time.Duration
+	JobRetryInterval               time.Duration
 }
 
 type TechMetricsConfig struct {
@@ -114,6 +113,7 @@ type DataStorageConfig struct {
 type MetricsConfig struct {
 	FlushInterval          time.Duration
 	SliInterval            time.Duration
+	UserSessionGapInterval time.Duration
 	EnabledInstructions    bool
 	EnabledNotAckedMetrics bool
 }
@@ -175,14 +175,13 @@ func NewAlarmConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseAlarmC
 	sectionName := "alarm"
 	conf := AlarmConfig{
 		StealthyInterval:                  parseTimeDurationBySeconds(cfg.Alarm.StealthyInterval, 0, "StealthyInterval", sectionName, logger),
-		EnableLastEventDate:               parseBool(cfg.Alarm.EnableLastEventDate, "EnableLastEventDate", sectionName, logger),
 		CancelAutosolveDelay:              parseTimeDurationByStr(cfg.Alarm.CancelAutosolveDelay, AlarmCancelAutosolveDelay, "CancelAutosolveDelay", sectionName, logger),
 		DisableActionSnoozeDelayOnPbh:     parseBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, logger),
 		TimeToKeepResolvedAlarms:          parseTimeDurationByStr(cfg.Alarm.TimeToKeepResolvedAlarms, 0, "TimeToKeepResolvedAlarms", sectionName, logger),
 		AllowDoubleAck:                    parseBool(cfg.Alarm.AllowDoubleAck, "AllowDoubleAck", sectionName, logger),
 		ActivateAlarmAfterAutoRemediation: parseBool(cfg.Alarm.ActivateAlarmAfterAutoRemediation, "activate_after_auto_remediation_on_create", sectionName, logger),
 	}
-	conf.DisplayNameScheme, conf.displayNameSchemeText = parseTemplate(cfg.Alarm.DisplayNameScheme, AlarmDefaultNameScheme, "DisplayNameScheme", sectionName, logger)
+	conf.DisplayNameScheme, conf.displayNameSchemeText = parseTemplate(cfg.Alarm.DisplayNameScheme, AlarmDisplayNameScheme, "DisplayNameScheme", sectionName, logger)
 
 	if cfg.Alarm.OutputLength <= 0 {
 		logger.Warn().Msg("OutputLength of alarm config section is not set or less than 1: the event's output won't be truncated")
@@ -256,12 +255,7 @@ func (p *BaseAlarmConfigProvider) Update(cfg CanopsisConf) {
 		p.conf.TimeToKeepResolvedAlarms = d
 	}
 
-	b, ok := parseUpdatedBool(cfg.Alarm.EnableLastEventDate, p.conf.EnableLastEventDate, "EnableLastEventDate", sectionName, p.logger)
-	if ok {
-		p.conf.EnableLastEventDate = b
-	}
-
-	b, ok = parseUpdatedBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, p.conf.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, p.logger)
+	b, ok := parseUpdatedBool(cfg.Alarm.DisableActionSnoozeDelayOnPbh, p.conf.DisableActionSnoozeDelayOnPbh, "DisableActionSnoozeDelayOnPbh", sectionName, p.logger)
 	if ok {
 		p.conf.DisableActionSnoozeDelayOnPbh = b
 	}
@@ -319,8 +313,22 @@ func (p *BaseTimezoneConfigProvider) Get() TimezoneConfig {
 func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfigProvider {
 	sectionName := "api"
 	conf := ApiConfig{
-		TokenSigningMethod: parseJwtSigningMethod(cfg.API.TokenSigningMethod, jwt.GetSigningMethod(ApiTokenSigningMethod), "TokenSigningMethod", sectionName, logger),
-		BulkMaxSize:        parseInt(cfg.API.BulkMaxSize, ApiBulkMaxSize, "BulkMaxSize", sectionName, logger),
+		TokenSigningMethod:     parseJwtSigningMethod(cfg.API.TokenSigningMethod, jwt.GetSigningMethod(ApiTokenSigningMethod), "TokenSigningMethod", sectionName, logger),
+		BulkMaxSize:            parseInt(cfg.API.BulkMaxSize, ApiBulkMaxSize, "BulkMaxSize", sectionName, logger),
+		MetricsCacheExpiration: parseTimeDurationByStr(cfg.API.MetricsCacheExpiration, ApiMetricsCacheExpiration, "MetricsCacheExpiration", sectionName, logger),
+	}
+
+	if len(cfg.API.AuthorScheme) == 0 {
+		conf.AuthorScheme = ApiAuthorScheme
+		logger.Error().
+			Strs("default", ApiAuthorScheme).
+			Strs("invalid", cfg.API.AuthorScheme).
+			Msgf("bad value AuthorScheme of %s config section, default value is used instead", sectionName)
+	} else {
+		conf.AuthorScheme = cfg.API.AuthorScheme
+		logger.Info().
+			Strs("value", cfg.API.AuthorScheme).
+			Msgf("AuthorScheme of %s config section is used", sectionName)
 	}
 
 	return &BaseApiConfigProvider{
@@ -349,6 +357,23 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 	if ok {
 		p.conf.BulkMaxSize = i
 	}
+
+	if len(cfg.API.AuthorScheme) == 0 {
+		p.logger.Error().
+			Strs("invalid", cfg.API.AuthorScheme).
+			Msgf("bad value AuthorScheme of %s config section, previous value is used", sectionName)
+	} else if !reflect.DeepEqual(cfg.API.AuthorScheme, p.conf.AuthorScheme) {
+		p.logger.Info().
+			Strs("previous", p.conf.AuthorScheme).
+			Strs("new", cfg.API.AuthorScheme).
+			Msgf("AuthorScheme of %s config section is loaded", sectionName)
+		p.conf.AuthorScheme = cfg.API.AuthorScheme
+	}
+
+	d, ok := parseUpdatedTimeDurationByStr(cfg.API.MetricsCacheExpiration, p.conf.MetricsCacheExpiration, "MetricsCacheExpiration", sectionName, p.logger)
+	if ok {
+		p.conf.MetricsCacheExpiration = d
+	}
 }
 
 func (p *BaseApiConfigProvider) Get() ApiConfig {
@@ -373,12 +398,10 @@ func NewRemediationConfigProvider(cfg RemediationConf, logger zerolog.Logger) *B
 	return &BaseRemediationConfigProvider{
 		conf: RemediationConfig{
 			HttpTimeout:                    parseTimeDurationByStr(cfg.HttpTimeout, RemediationHttpTimeout, "http_timeout", sectionName, logger),
-			LaunchJobRetriesAmount:         parseInt(cfg.LaunchJobRetriesAmount, RemediationLaunchJobRetriesAmount, "launch_job_retries_amount", sectionName, logger),
-			LaunchJobRetriesInterval:       parseTimeDurationByStr(cfg.LaunchJobRetriesInterval, RemediationLaunchJobRetriesInterval, "launch_job_retries_interval", sectionName, logger),
-			WaitJobCompleteRetriesAmount:   parseInt(cfg.WaitJobCompleteRetriesAmount, RemediationWaitJobCompleteRetriesAmount, "wait_job_complete_retries_amount", sectionName, logger),
-			WaitJobCompleteRetriesInterval: parseTimeDurationByStr(cfg.WaitJobCompleteRetriesInterval, RemediationWaitJobCompleteRetriesInterval, "wait_job_complete_retries_interval", sectionName, logger),
 			PauseManualInstructionInterval: parseTimeDurationByStr(cfg.PauseManualInstructionInterval, RemediationPauseManualInstructionInterval, "pause_manual_instruction_interval", sectionName, logger),
 			ExternalAPI:                    cfg.ExternalAPI,
+			JobWaitInterval:                parseTimeDurationByStrWithMin(cfg.JobWaitInterval, RemediationJobWaitInterval, time.Second, "job_wait_interval", sectionName, logger),
+			JobRetryInterval:               parseTimeDurationByStrWithMin(cfg.JobRetryInterval, RemediationJobRetryInterval, time.Second, "job_retry_interval", sectionName, logger),
 		},
 		logger: logger,
 	}
@@ -399,25 +422,17 @@ func (p *BaseRemediationConfigProvider) Update(cfg RemediationConf) {
 	if ok {
 		p.conf.HttpTimeout = d
 	}
-	i, ok := parseUpdatedInt(cfg.LaunchJobRetriesAmount, p.conf.LaunchJobRetriesAmount, "launch_job_retries_amount", sectionName, p.logger)
-	if ok {
-		p.conf.LaunchJobRetriesAmount = i
-	}
-	d, ok = parseUpdatedTimeDurationByStr(cfg.LaunchJobRetriesInterval, p.conf.LaunchJobRetriesInterval, "launch_job_retries_interval", sectionName, p.logger)
-	if ok {
-		p.conf.LaunchJobRetriesInterval = d
-	}
-	i, ok = parseUpdatedInt(cfg.WaitJobCompleteRetriesAmount, p.conf.WaitJobCompleteRetriesAmount, "wait_job_complete_retries_amount", sectionName, p.logger)
-	if ok {
-		p.conf.WaitJobCompleteRetriesAmount = i
-	}
-	d, ok = parseUpdatedTimeDurationByStr(cfg.WaitJobCompleteRetriesInterval, p.conf.WaitJobCompleteRetriesInterval, "wait_job_complete_retries_interval", sectionName, p.logger)
-	if ok {
-		p.conf.WaitJobCompleteRetriesInterval = d
-	}
 	d, ok = parseUpdatedTimeDurationByStr(cfg.PauseManualInstructionInterval, p.conf.PauseManualInstructionInterval, "pause_manual_instruction_interval", sectionName, p.logger)
 	if ok {
 		p.conf.PauseManualInstructionInterval = d
+	}
+	d, ok = parseUpdatedTimeDurationByStrWithMin(cfg.JobRetryInterval, p.conf.JobRetryInterval, time.Second, "job_retry_interval", sectionName, p.logger)
+	if ok {
+		p.conf.JobRetryInterval = d
+	}
+	d, ok = parseUpdatedTimeDurationByStrWithMin(cfg.JobWaitInterval, p.conf.JobWaitInterval, time.Second, "job_wait_interval", sectionName, p.logger)
+	if ok {
+		p.conf.JobWaitInterval = d
 	}
 
 	if !reflect.DeepEqual(cfg.ExternalAPI, p.conf.ExternalAPI) {
@@ -651,8 +666,9 @@ func (p *BaseTemplateConfigProvider) Get() SectionTemplate {
 
 func GetMetricsConfig(cfg CanopsisConf, logger zerolog.Logger) MetricsConfig {
 	return MetricsConfig{
-		FlushInterval: parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", "metrics", logger),
-		SliInterval:   parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
+		FlushInterval:          parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", "metrics", logger),
+		SliInterval:            parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
+		UserSessionGapInterval: parseTimeDurationByStr(cfg.Metrics.UserSessionGapInterval, MetricsUserSessionGapInterval, "UserSessionGapInterval", "metrics", logger),
 	}
 }
 
@@ -699,9 +715,7 @@ func parseUpdatedScheduledTime(
 	t, ok := stringToScheduledTime(v)
 	if !ok {
 		if oldVal != nil {
-			logger.Error().
-				Str("invalid", v).
-				Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+			logErrInvalidValueUsePrevious(logger, name, sectionName, oldVal.String(), v, nil)
 		}
 		return nil, false
 	}
@@ -714,10 +728,8 @@ func parseUpdatedScheduledTime(
 	if oldVal != nil {
 		oldValStr = oldVal.String()
 	}
-	logger.Info().
-		Str("previous", oldValStr).
-		Str("new", t.String()).
-		Msgf("%s of %s config section is loaded", name, sectionName)
+
+	logInfoNewValue(logger, name, sectionName, oldValStr, t.String())
 
 	return &t, true
 }
@@ -747,9 +759,7 @@ func parseTimeDurationByStr(
 ) time.Duration {
 	if v == "" {
 		if defaultVal > 0 {
-			logger.Warn().
-				Str("default", defaultVal.String()).
-				Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
+			logWarnUndefinedSection(logger, name, sectionName, defaultVal.String())
 		} else {
 			logger.Info().Msgf("%s of %s config section is not defined", name, sectionName)
 		}
@@ -760,10 +770,7 @@ func parseTimeDurationByStr(
 	d, err := time.ParseDuration(v)
 	if err != nil {
 		if defaultVal > 0 {
-			logger.Err(err).
-				Str("default", defaultVal.String()).
-				Str("invalid", v).
-				Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+			logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal.String(), v, err)
 		} else {
 			logger.Err(err).
 				Str("invalid", v).
@@ -787,20 +794,13 @@ func parseTimeDurationByStrWithMax(
 	logger zerolog.Logger,
 ) time.Duration {
 	if v == "" {
-		logger.Warn().
-			Str("default", defaultVal.String()).
-			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
-
+		logWarnUndefinedSection(logger, name, sectionName, defaultVal.String())
 		return defaultVal
 	}
 
 	d, err := time.ParseDuration(v)
 	if err != nil {
-		logger.Err(err).
-			Str("default", defaultVal.String()).
-			Str("invalid", v).
-			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
-
+		logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal.String(), v, err)
 		return defaultVal
 	}
 
@@ -810,6 +810,40 @@ func parseTimeDurationByStrWithMax(
 			Str("max", maxVal.String()).
 			Str("invalid", v).
 			Msgf("%s of %s config section is greater than max value, default value is used instead", name, sectionName)
+
+		return defaultVal
+	}
+
+	logger.Info().
+		Str("value", d.String()).
+		Msgf("%s of %s config section is used", name, sectionName)
+
+	return d
+}
+
+func parseTimeDurationByStrWithMin(
+	v string,
+	defaultVal, minVal time.Duration,
+	name, sectionName string,
+	logger zerolog.Logger,
+) time.Duration {
+	if v == "" {
+		logWarnUndefinedSection(logger, name, sectionName, defaultVal.String())
+		return defaultVal
+	}
+
+	d, err := time.ParseDuration(v)
+	if err != nil {
+		logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal.String(), v, err)
+		return defaultVal
+	}
+
+	if d < minVal {
+		logger.Err(err).
+			Str("default", defaultVal.String()).
+			Str("min", minVal.String()).
+			Str("invalid", v).
+			Msgf("%s of %s config section is greater than min value, default value is used instead", name, sectionName)
 
 		return defaultVal
 	}
@@ -840,10 +874,7 @@ func parseUpdatedTimeDurationByStrWithMax(
 	d, err := time.ParseDuration(v)
 	if err != nil {
 		if oldVal > 0 {
-			logger.Err(err).
-				Str("previous", oldVal.String()).
-				Str("invalid", v).
-				Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+			logErrInvalidValueUsePrevious(logger, name, sectionName, oldVal.String(), v, err)
 		}
 		return 0, false
 	}
@@ -862,10 +893,50 @@ func parseUpdatedTimeDurationByStrWithMax(
 		return 0, false
 	}
 
-	logger.Info().
-		Str("previous", oldVal.String()).
-		Str("new", d.String()).
-		Msgf("%s of %s config section is loaded", name, sectionName)
+	logInfoNewValue(logger, name, sectionName, oldVal.String(), d.String())
+
+	return d, true
+}
+
+func parseUpdatedTimeDurationByStrWithMin(
+	v string,
+	oldVal, minVal time.Duration,
+	name, sectionName string,
+	logger zerolog.Logger,
+) (time.Duration, bool) {
+	if v == "" {
+		if oldVal > 0 {
+			logger.Warn().
+				Str("previous", oldVal.String()).
+				Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
+		}
+
+		return 0, false
+	}
+
+	d, err := time.ParseDuration(v)
+	if err != nil {
+		if oldVal > 0 {
+			logErrInvalidValueUsePrevious(logger, name, sectionName, oldVal.String(), v, err)
+		}
+		return 0, false
+	}
+
+	if d < minVal {
+		logger.Err(err).
+			Str("previous", oldVal.String()).
+			Str("min", minVal.String()).
+			Str("invalid", v).
+			Msgf("%s of %s config section is greater than min value, previous value is used instead", name, sectionName)
+
+		return 0, false
+	}
+
+	if d == oldVal {
+		return 0, false
+	}
+
+	logInfoNewValue(logger, name, sectionName, oldVal.String(), d.String())
 
 	return d, true
 }
@@ -888,10 +959,7 @@ func parseUpdatedTimeDurationByStr(
 	d, err := time.ParseDuration(v)
 	if err != nil {
 		if oldVal > 0 {
-			logger.Err(err).
-				Str("previous", oldVal.String()).
-				Str("invalid", v).
-				Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+			logErrInvalidValueUsePrevious(logger, name, sectionName, oldVal.String(), v, err)
 		}
 		return 0, false
 	}
@@ -900,10 +968,7 @@ func parseUpdatedTimeDurationByStr(
 		return 0, false
 	}
 
-	logger.Info().
-		Str("previous", oldVal.String()).
-		Str("new", d.String()).
-		Msgf("%s of %s config section is loaded", name, sectionName)
+	logInfoNewValue(logger, name, sectionName, oldVal.String(), d.String())
 
 	return d, true
 }
@@ -915,11 +980,7 @@ func parseTimeDurationBySeconds(
 	logger zerolog.Logger,
 ) time.Duration {
 	if v < 0 {
-		logger.Error().
-			Str("default", defaultVal.String()).
-			Int("invalid", v).
-			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
-
+		logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal.String(), v, nil)
 		return defaultVal
 	}
 
@@ -938,9 +999,7 @@ func parseUpdatedTimeDurationBySeconds(
 	logger zerolog.Logger,
 ) (time.Duration, bool) {
 	if v < 0 {
-		logger.Error().
-			Int("invalid", v).
-			Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		logErrInvalidValueUsePrevious(logger, name, sectionName, oldVal.String(), v, nil)
 		return 0, false
 	}
 
@@ -949,10 +1008,7 @@ func parseUpdatedTimeDurationBySeconds(
 		return 0, false
 	}
 
-	logger.Info().
-		Str("previous", oldVal.String()).
-		Str("new", d.String()).
-		Msgf("%s of %s config section is loaded", name, sectionName)
+	logInfoNewValue(logger, name, sectionName, oldVal.String(), d.String())
 
 	return d, true
 }
@@ -963,10 +1019,7 @@ func parseInt(
 	logger zerolog.Logger,
 ) int {
 	if v < 0 {
-		logger.Error().
-			Int("default", defaultVal).
-			Int("invalid", v).
-			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+		logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal, v, nil)
 		return defaultVal
 	}
 
@@ -999,10 +1052,7 @@ func parseUpdatedInt(
 		return 0, false
 	}
 
-	logger.Info().
-		Int("previous", oldVal).
-		Int("new", v).
-		Msgf("%s of %s config section is loaded", name, sectionName)
+	logInfoNewValue(logger, name, sectionName, oldVal, v)
 
 	return v, true
 }
@@ -1017,10 +1067,8 @@ func parseTemplate(
 		if err != nil {
 			panic(fmt.Errorf("invalid contant %s: %w", name, err))
 		}
-		logger.Warn().
-			Str("default", defaultVal).
-			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
 
+		logWarnUndefinedSection(logger, name, sectionName, defaultVal)
 		return tpl, defaultVal
 	}
 
@@ -1031,10 +1079,7 @@ func parseTemplate(
 			panic(fmt.Errorf("invalid contant %s: %w", name, parseErr))
 		}
 
-		logger.Err(err).
-			Str("default", defaultVal).
-			Str("invalid", v).
-			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+		logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal, v, err)
 
 		return tpl, defaultVal
 	}
@@ -1063,16 +1108,11 @@ func parseUpdatedTemplate(
 
 	tpl, err := CreateDisplayNameTpl(v)
 	if err != nil {
-		logger.Err(err).
-			Str("invalid", v).
-			Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		logErrInvalidValueUsePrevious(logger, name, sectionName, oldVal, v, err)
 		return nil, "", false
 	}
 
-	logger.Info().
-		Str("previous", oldVal).
-		Str("new", v).
-		Msgf("%s of %s config section is loaded", name, sectionName)
+	logInfoNewValue(logger, name, sectionName, oldVal, v)
 
 	return tpl, v, true
 }
@@ -1097,10 +1137,8 @@ func parseUpdatedBool(
 	if v == oldVal {
 		return false, false
 	}
-	logger.Info().
-		Bool("previous", oldVal).
-		Bool("new", v).
-		Msgf("%s of %s config section is loaded", name, sectionName)
+
+	logInfoNewValue(logger, name, sectionName, oldVal, v)
 
 	return v, true
 }
@@ -1112,18 +1150,13 @@ func parseLocation(
 	logger zerolog.Logger,
 ) *time.Location {
 	if v == "" {
-		logger.Warn().
-			Str("default", defaultVal.String()).
-			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
+		logWarnUndefinedSection(logger, name, sectionName, defaultVal.String())
 		return defaultVal
 	}
 
 	location, err := time.LoadLocation(v)
 	if err != nil {
-		logger.Err(err).
-			Str("default", defaultVal.String()).
-			Str("invalid", v).
-			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+		logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal.String(), v, err)
 		return defaultVal
 	}
 
@@ -1147,9 +1180,7 @@ func parseUpdatedLocation(
 	}
 	location, err := time.LoadLocation(v)
 	if err != nil {
-		logger.Err(err).
-			Str("invalid", v).
-			Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
+		logErrInvalidValueUsePrevious(logger, name, sectionName, oldVal.String(), v, err)
 		return nil, false
 	}
 
@@ -1157,10 +1188,7 @@ func parseUpdatedLocation(
 		return nil, false
 	}
 
-	logger.Info().
-		Str("previous", oldVal.String()).
-		Str("new", location.String()).
-		Msgf("%s of %s config section is loaded", name, sectionName)
+	logInfoNewValue(logger, name, sectionName, oldVal.String(), location.String())
 
 	return location, true
 }
@@ -1172,20 +1200,13 @@ func parseJwtSigningMethod(
 	logger zerolog.Logger,
 ) jwt.SigningMethod {
 	if v == "" {
-		logger.Warn().
-			Str("default", defaultVal.Alg()).
-			Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
-
+		logWarnUndefinedSection(logger, name, sectionName, defaultVal.Alg())
 		return defaultVal
 	}
 
 	m := jwt.GetSigningMethod(v)
 	if m == nil {
-		logger.Error().
-			Str("default", defaultVal.Alg()).
-			Str("invalid", v).
-			Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
-
+		logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal.Alg(), v, nil)
 		return defaultVal
 	}
 
@@ -1213,10 +1234,7 @@ func parseUpdatedJwtSigningMethod(
 		return nil, false
 	}
 
-	logger.Info().
-		Str("previous", oldVal.Alg()).
-		Str("new", v).
-		Msgf("%s of %s config section is loaded", name, sectionName)
+	logInfoNewValue(logger, name, sectionName, oldVal.Alg(), v)
 
 	return m, true
 }
@@ -1236,6 +1254,7 @@ func NewMetricsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseMetr
 			EnabledInstructions:    parseBool(cfg.Metrics.EnabledInstructions, "EnabledInstructions", sectionName, logger),
 			FlushInterval:          parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", sectionName, logger),
 			SliInterval:            parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
+			UserSessionGapInterval: parseTimeDurationByStr(cfg.Metrics.UserSessionGapInterval, MetricsUserSessionGapInterval, "UserSessionGapInterval", "metrics", logger),
 		},
 		logger: logger,
 	}
@@ -1266,6 +1285,11 @@ func (p *BaseMetricsSettingsConfigProvider) Update(cfg CanopsisConf) {
 	if ok {
 		p.conf.SliInterval = d
 	}
+
+	d, ok = parseUpdatedTimeDurationByStr(cfg.Metrics.UserSessionGapInterval, p.conf.UserSessionGapInterval, "UserSessionGapInterval", sectionName, p.logger)
+	if ok {
+		p.conf.UserSessionGapInterval = d
+	}
 }
 
 func (p *BaseMetricsSettingsConfigProvider) Get() MetricsConfig {
@@ -1273,4 +1297,49 @@ func (p *BaseMetricsSettingsConfigProvider) Get() MetricsConfig {
 	defer p.mx.RUnlock()
 
 	return p.conf
+}
+
+func logInfoNewValue(
+	logger zerolog.Logger,
+	name, sectionName string,
+	oldVal, newVal any,
+) {
+	logger.Info().
+		Any("previous", oldVal).
+		Any("new", newVal).
+		Msgf("%s of %s config section is loaded", name, sectionName)
+}
+
+func logWarnUndefinedSection(
+	logger zerolog.Logger,
+	name, sectionName string,
+	defaultVal any,
+) {
+	logger.Warn().
+		Any("default", defaultVal).
+		Msgf("%s of %s config section is not defined, default value is used instead", name, sectionName)
+}
+
+func logErrInvalidValueUseDefault(
+	logger zerolog.Logger,
+	name, sectionName string,
+	defaultVal, invalidVal any,
+	err error,
+) {
+	logger.Error().Err(err).
+		Any("default", defaultVal).
+		Any("invalid", invalidVal).
+		Msgf("bad value %s of %s config section, default value is used instead", name, sectionName)
+}
+
+func logErrInvalidValueUsePrevious(
+	logger zerolog.Logger,
+	name, sectionName string,
+	previousVal, invalidVal any,
+	err error,
+) {
+	logger.Error().Err(err).
+		Any("previous", previousVal).
+		Any("invalid", invalidVal).
+		Msgf("bad value %s of %s config section, previous value is used instead", name, sectionName)
 }

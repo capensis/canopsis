@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-layout(column)
+  v-layout(:row="row", :column="column")
     c-enabled-field(
       v-model="enabled",
       :label="label",
@@ -27,7 +27,7 @@ export default {
   props: {
     color: {
       type: String,
-      required: true,
+      required: false,
     },
     label: {
       type: String,
@@ -36,6 +36,14 @@ export default {
     name: {
       type: String,
       default: 'color',
+    },
+    row: {
+      type: Boolean,
+      default: false,
+    },
+    column: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

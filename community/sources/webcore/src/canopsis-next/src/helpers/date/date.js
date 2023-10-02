@@ -190,7 +190,7 @@ export const convertDateToTimestampByTimezone = (date, timezone = getLocaleTimez
 /**
  * Check if date is start of day
  *
- * @param {Date|moment.Moment} date
+ * @param {LocalDate} date
  * @param {string} unit
  * @returns {boolean}
  */
@@ -409,6 +409,24 @@ export const convertDateToEndOfDayTimestamp = date => convertDateToEndOfDayMomen
  * @return {Date}
  */
 export const convertDateToEndOfDayDateObject = date => convertDateToEndOfDayMoment(date).toDate();
+
+/**
+ * Convert date to special format with new timezone without strict parsing
+ *
+ * @param {LocalDate} date
+ * @param {string} [format = DATETIME_FORMATS.long]
+ * @param {string} [timezone = getLocaleTimezone()]
+ * @returns {string}
+ */
+export const convertDateToStringWithNewTimezone = (
+  date,
+  format = DATETIME_FORMATS.long,
+  timezone = getLocaleTimezone(),
+) => (
+  date
+    ? convertDateToMoment(date).tz(timezone).format(format)
+    : ''
+);
 
 /**
  * Check time unit is valid

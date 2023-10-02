@@ -48,7 +48,9 @@ type EditRequest struct {
 	//   * `instructionjobcomplete` - Manual or auto instruction's job is completed
 	//   * `instructioncomplete` - Manual instruction is completed
 	//   * `autoinstructioncomplete` - Auto instruction is completed
-	Triggers             []string                `json:"triggers" binding:"required,notblank,dive,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment declareticketwebhook assocticket snooze unsnooze resolve activate pbhenter pbhleave instructionfail autoinstructionfail instructionjobfail instructionjobcomplete instructioncomplete autoinstructioncomplete"`
+	//   * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
+	//   * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
+	Triggers             []string                `json:"triggers" binding:"required,notblank,dive,oneof=create statedec stateinc changestate changestatus ack ackremove cancel uncancel comment declareticketwebhook assocticket snooze unsnooze resolve activate pbhenter pbhleave instructionfail autoinstructionfail instructionjobfail instructionjobcomplete instructioncomplete autoinstructioncomplete autoinstructionresultok autoinstructionresultfail"`
 	DisableDuringPeriods []string                `json:"disable_during_periods" binding:"dive,oneof=maintenance pause inactive"`
 	Delay                *types.DurationWithUnit `json:"delay"`
 	Actions              []ActionRequest         `json:"actions" binding:"required,notblank,dive"`
@@ -138,9 +140,10 @@ type Parameters struct {
 	Tstop          *int64            `json:"tstop,omitempty" bson:"tstop"`
 	StartOnTrigger *bool             `json:"start_on_trigger,omitempty" bson:"start_on_trigger"`
 	// Webhook
-	Request       *request.Parameters           `json:"request,omitempty" bson:"request"`
-	SkipForChild  *bool                         `json:"skip_for_child,omitempty" bson:"skip_for_child"`
-	DeclareTicket *request.WebhookDeclareTicket `json:"declare_ticket,omitempty" bson:"declare_ticket"`
+	Request            *request.Parameters           `json:"request,omitempty" bson:"request"`
+	SkipForChild       *bool                         `json:"skip_for_child,omitempty" bson:"skip_for_child"`
+	SkipForInstruction *bool                         `json:"skip_for_instruction,omitempty" bson:"skip_for_instruction,omitempty"`
+	DeclareTicket      *request.WebhookDeclareTicket `json:"declare_ticket,omitempty" bson:"declare_ticket"`
 }
 
 type AggregationResult struct {

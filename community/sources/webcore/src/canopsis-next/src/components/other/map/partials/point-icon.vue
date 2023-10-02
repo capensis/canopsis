@@ -10,11 +10,10 @@
 import { isNumber } from 'lodash';
 
 import { ENTITIES_STATES } from '@/constants';
+import { CSS_COLORS_VARS } from '@/config';
 
-import { isNotActivePbehaviorType } from '@/helpers/entities/pbehavior';
-import { getEntityColor } from '@/helpers/color';
-
-import { COLORS } from '@/config';
+import { isNotActivePbehaviorType } from '@/helpers/entities/pbehavior/form';
+import { getEntityColor, getEntityStateColor } from '@/helpers/entities/entity/color';
 
 export default {
   props: {
@@ -49,7 +48,7 @@ export default {
         return {
           name: 'check_circle_outline',
           color: 'white',
-          backgroundColor: COLORS.primary,
+          backgroundColor: getEntityStateColor(ENTITIES_STATES.ok),
         };
       }
 
@@ -78,7 +77,7 @@ export default {
           name: this.entity.pbehavior_info.icon_name,
           color: 'white',
           size: this.size - 8,
-          backgroundColor: COLORS.secondary,
+          backgroundColor: CSS_COLORS_VARS.secondary,
         };
       }
 

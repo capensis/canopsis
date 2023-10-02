@@ -32,7 +32,8 @@ Feature: Get a widget
           "is_private": false,
           "author": {
             "_id": "nopermsuser",
-            "name": "nopermsuser"
+            "name": "nopermsuser",
+            "display_name": "nopermsuser   "
           },
           "created": 1611229670,
           "updated": 1611229670,
@@ -54,7 +55,8 @@ Feature: Get a widget
           "is_private": false,
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1611229670,
           "updated": 1611229670,
@@ -73,7 +75,8 @@ Feature: Get a widget
       ],
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "created": 1611229670,
       "updated": 1611229670

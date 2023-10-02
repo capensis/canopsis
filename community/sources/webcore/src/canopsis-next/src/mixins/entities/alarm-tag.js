@@ -6,7 +6,6 @@ export const entitiesAlarmTagMixin = {
   computed: {
     ...mapGetters({
       alarmTags: 'items',
-      getAlarmTagById: 'getItemById',
       alarmTagsPending: 'pending',
       alarmTagsMeta: 'meta',
     }),
@@ -14,9 +13,10 @@ export const entitiesAlarmTagMixin = {
   methods: {
     ...mapActions({
       fetchAlarmTagsList: 'fetchList',
-      removeAlarmTag: 'remove',
       createAlarmTag: 'create',
       updateAlarmTag: 'update',
+      removeAlarmTag: 'remove',
+      bulkRemoveAlarmTag: 'bulkRemove',
     }),
 
     getTagColor(tag) {

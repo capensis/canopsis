@@ -7,6 +7,9 @@
         :pending="playlistsPending",
         :pagination.sync="pagination",
         :total-items="playlistsMeta.total_count",
+        :creatable="hasCreateAnyPlaylistAccess",
+        :updatable="hasUpdateAnyPlaylistAccess",
+        :removable="hasDeleteAnyPlaylistAccess",
         @edit="showEditPlaylistModal",
         @remove="showRemovePlaylistModal",
         @duplicate="showDuplicatePlaylistModal"
@@ -29,7 +32,7 @@ import { permissionsTechnicalPlaylistMixin } from '@/mixins/permissions/technica
 import { entitiesPlaylistMixin } from '@/mixins/entities/playlist';
 import { localQueryMixin } from '@/mixins/query-local/query';
 
-import PlaylistsList from '@/components/other/playlists/admin/playlists-list.vue';
+import PlaylistsList from '@/components/other/playlists/playlists-list.vue';
 
 export default {
   components: {

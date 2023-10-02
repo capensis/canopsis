@@ -1,7 +1,7 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
@@ -9,28 +9,12 @@ import { ALARM_METRIC_PARAMETERS, QUICK_RANGES, SAMPLINGS } from '@/constants';
 
 import KpiAlarmsFilters from '@/components/other/kpi/charts/partials/kpi-alarms-filters';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'c-quick-date-interval-field': true,
   'c-filter-field': true,
   'c-sampling-field': true,
   'c-alarm-metric-parameters-field': true,
 };
-
-const factory = (options = {}) => shallowMount(KpiAlarmsFilters, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(KpiAlarmsFilters, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 describe('kpi-alarms-filters', () => {
   const nowTimestamp = 1386435600000;
@@ -48,6 +32,9 @@ describe('kpi-alarms-filters', () => {
    * Year ago date
    */
   const nowSubtractYearTimestamp = 1354834800;
+
+  const factory = generateShallowRenderer(KpiAlarmsFilters, { stubs });
+  const snapshotFactory = generateRenderer(KpiAlarmsFilters, { stubs });
 
   it('Query changed after trigger a quick interval field', async () => {
     const wrapper = factory({

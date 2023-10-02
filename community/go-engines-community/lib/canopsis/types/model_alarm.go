@@ -16,7 +16,6 @@ const (
 	AlarmStateMinor
 	AlarmStateMajor
 	AlarmStateCritical
-	AlarmStateUnknown
 )
 
 const (
@@ -97,10 +96,14 @@ const (
 
 // Alarm represents an alarm document.
 type Alarm struct {
-	ID       string   `bson:"_id" json:"_id"`
-	Time     CpsTime  `bson:"t" json:"t"`
-	EntityID string   `bson:"d" json:"d"`
-	Tags     []string `bson:"tags" json:"tags"`
+	ID       string  `bson:"_id" json:"_id"`
+	Time     CpsTime `bson:"t" json:"t"`
+	EntityID string  `bson:"d" json:"d"`
+
+	Tags                []string  `bson:"tags" json:"tags"`
+	ExternalTags        []string  `bson:"etags" json:"etags"`
+	InternalTags        []string  `bson:"itags" json:"itags"`
+	InternalTagsUpdated MicroTime `bson:"itags_upd" json:"itags_upd"`
 	// todo move all field from Value to Alarm
 	Value AlarmValue `bson:"v" json:"v"`
 	// update contains alarm changes after last mongo update. Use functions Update* to
@@ -198,28 +201,6 @@ func (a *Alarm) UpdateOutput(newOutput string) {
 	})
 }
 
-// UpdateLongOutput updates an alarm output field
-func (a *Alarm) UpdateLongOutput(newOutput string) {
-	if (len(a.Value.LongOutputHistory) == 0) || (a.Value.LongOutputHistory[len(a.Value.LongOutputHistory)-1] != newOutput) {
-		a.Value.LongOutput = newOutput
-		history := append(a.Value.LongOutputHistory, newOutput)
-		if len(history) > 100 {
-			history = history[len(history)-100:]
-		}
-		a.Value.LongOutputHistory = history
-
-		a.AddUpdate("$set", bson.M{
-			"v.long_output":         a.Value.LongOutput,
-			"v.long_output_history": a.Value.LongOutputHistory,
-		})
-	}
-}
-
-// Resolve mark as resolved an Alarm with a timestamp [sic]
-func (a *Alarm) Resolve(timestamp *CpsTime) {
-	a.Value.Resolved = timestamp
-}
-
 // Closable checks the last step for it's state to be OK for at least d interval.
 // Reference time is time.Now() when this function is called.
 func (a *Alarm) Closable(d time.Duration) bool {
@@ -310,7 +291,7 @@ func (a *Alarm) IsMetaAlarm() bool {
 	return a.Value.Meta != ""
 }
 
-func (a *Alarm) IsMetaChildren() bool {
+func (a *Alarm) IsMetaChild() bool {
 	return len(a.Value.Parents) > 0
 }
 
@@ -326,6 +307,16 @@ func (a *Alarm) HasChildByEID(childEID string) bool {
 
 func (a *Alarm) HasParentByEID(parentEID string) bool {
 	for _, parent := range a.Value.Parents {
+		if parent == parentEID {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (a *Alarm) HasUnlinkedParentByEID(parentEID string) bool {
+	for _, parent := range a.Value.UnlinkedParents {
 		if parent == parentEID {
 			return true
 		}
@@ -389,7 +380,9 @@ func (a *Alarm) RemoveParent(parentEID string) bool {
 	}
 
 	a.parentsRemove = append(a.parentsRemove, parentEID)
+	a.Value.UnlinkedParents = append(a.Value.UnlinkedParents, parentEID)
 	a.AddUpdate("$pull", bson.M{"v.parents": bson.M{"$in": a.parentsRemove}})
+	a.AddUpdate("$push", bson.M{"v.unlinked_parents": parentEID})
 	return true
 }
 
@@ -417,4 +410,12 @@ func (a *Alarm) IsInActivePeriod() bool {
 
 func (a *Alarm) CanActivate() bool {
 	return !a.IsActivated() && !a.IsSnoozed() && a.Value.PbehaviorInfo.IsActive() && !a.InactiveAutoInstructionInProgress
+}
+
+func (a *Alarm) IncrementEventsCount(count CpsNumber) {
+	a.AddUpdate("$inc", bson.M{"v.events_count": count})
+}
+
+func (a *Alarm) DecrementEventsCount(count CpsNumber) {
+	a.AddUpdate("$inc", bson.M{"v.events_count": -count})
 }

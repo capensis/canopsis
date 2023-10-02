@@ -4,15 +4,22 @@ import Faker from 'faker';
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import {
   createActiveViewModule,
-  createAlarmModule, createAuthModule,
+  createAlarmModule,
+  createAuthModule,
   createMockedStoreModules,
   createQueryModule,
   createServiceModule,
   createUserPreferenceModule,
 } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
-import { ENTITY_TYPES, MAP_TYPES, MODALS, USERS_PERMISSIONS, WIDGET_TYPES } from '@/constants';
-import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities';
+import {
+  ENTITY_TYPES,
+  MAP_TYPES,
+  MODALS,
+  USERS_PERMISSIONS,
+  WIDGET_TYPES,
+} from '@/constants';
+import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
 import MapWidget from '@/components/widgets/map/map.vue';
 
@@ -91,7 +98,6 @@ describe('map', () => {
     const wrapper = factory({
       propsData: {
         tabId,
-        editing: true,
         widget,
       },
       store,
@@ -111,7 +117,6 @@ describe('map', () => {
       store,
       propsData: {
         tabId,
-        editing: true,
         widget,
       },
     });
@@ -137,7 +142,6 @@ describe('map', () => {
       store,
       propsData: {
         tabId,
-        editing: true,
         widget,
       },
     });
@@ -169,7 +173,6 @@ describe('map', () => {
       store,
       propsData: {
         tabId,
-        editing: true,
         widget,
       },
     });
@@ -206,7 +209,6 @@ describe('map', () => {
       store,
       propsData: {
         tabId,
-        editing: true,
         widget,
       },
     });
@@ -261,7 +263,6 @@ describe('map', () => {
       ]),
       propsData: {
         tabId,
-        editing: true,
         widget,
       },
     });
@@ -313,7 +314,6 @@ describe('map', () => {
       store,
       propsData: {
         tabId,
-        editing: true,
         widget,
       },
       mocks: {
@@ -376,7 +376,6 @@ describe('map', () => {
       store,
       propsData: {
         tabId,
-        editing: true,
         widget,
       },
       mocks: {
@@ -463,7 +462,6 @@ describe('map', () => {
             entities_under_pbehavior_enabled: true,
           },
         },
-        editing: true,
       },
       store: createMockedStoreModules([
         authModule,
@@ -482,6 +480,11 @@ describe('map', () => {
   });
 
   test('Renders `map` with default props', async () => {
+    fetchMapStateWithoutStore.mockReturnValue({
+      type: MAP_TYPES.geo,
+      _id: mapId,
+    });
+
     const wrapper = snapshotFactory({
       propsData: {
         tabId: 'tab-id',
@@ -493,7 +496,6 @@ describe('map', () => {
             map: 'map',
           },
         },
-        editing: false,
       },
       store,
     });

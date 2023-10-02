@@ -26,6 +26,8 @@ definitions:
         type: string
       defaultview:
         $ref: '#/definitions/user.View'
+      display_name:
+        type: string
       email:
         type: string
       enable:
@@ -42,8 +44,10 @@ definitions:
         items:
           $ref: '#/definitions/role.Permission'
         type: array
-      role:
-        $ref: '#/definitions/user.Role'
+      roles:
+        items:
+          $ref: '#/definitions/user.Role'
+        type: array
       source:
         type: string
       ui_groups_navigation_type:
@@ -51,7 +55,7 @@ definitions:
       ui_language:
         type: string
       ui_theme:
-        type: string
+        $ref: '#/definitions/colortheme.Theme'
       ui_tours:
         additionalProperties:
           type: boolean
@@ -86,6 +90,10 @@ definitions:
         description: RRule is used in pbehavior action.
         type: string
       skip_for_child:
+        description: SkipForChild is used in webhook action.
+        type: boolean
+      skip_for_instruction:
+        description: SkipForInstruction is used in webhook action.
         type: boolean
       start_on_trigger:
         description: StartOnTrigger is used in pbehavior action.
@@ -141,6 +149,8 @@ definitions:
         type: integer
       children_instructions:
         type: boolean
+      closed_children:
+        type: integer
       entity:
         $ref: '#/definitions/entity.Entity'
       failed_auto_instructions:
@@ -151,10 +161,9 @@ definitions:
         items:
           type: string
         type: array
-      filtered_children:
-        items:
-          type: string
-        type: array
+      filtered:
+        description: Only for details request
+        type: boolean
       impact_state:
         type: integer
       infos:
@@ -175,6 +184,8 @@ definitions:
         items:
           $ref: '#/definitions/alarm.MetaAlarmRule'
         type: array
+      opened_children:
+        type: integer
       parents:
         description: Meta alarm child fields
         type: integer
@@ -360,6 +371,9 @@ definitions:
     type: object
   alarm.Details:
     properties:
+      _id:
+        description: Only for websocket
+        type: string
       children:
         $ref: '#/definitions/alarm.ChildrenDetails'
       filtered_perf_data:
@@ -378,6 +392,12 @@ definitions:
       opened:
         type: boolean
       perf_data:
+        items:
+          type: string
+        type: array
+      search:
+        type: string
+      search_by:
         items:
           type: string
         type: array
@@ -535,17 +555,262 @@ definitions:
         type: boolean
       reversed:
         type: boolean
+      type:
+        type: string
+    type: object
+  alarmaction.AckRequest:
+    properties:
+      ack_resources:
+        type: boolean
+      comment:
+        maxLength: 255
+        type: string
+    type: object
+  alarmaction.AssocTicketRequest:
+    properties:
+      comment:
+        maxLength: 255
+        type: string
+      data:
+        additionalProperties:
+          type: string
+        type: object
+      system_name:
+        maxLength: 255
+        type: string
+      ticket:
+        type: string
+      ticket_resources:
+        type: boolean
+      url:
+        maxLength: 255
+        type: string
+    required:
+    - ticket
+    type: object
+  alarmaction.BulkAckRequestItem:
+    properties:
+      _id:
+        type: string
+      ack_resources:
+        type: boolean
+      comment:
+        maxLength: 255
+        type: string
+    required:
+    - _id
+    type: object
+  alarmaction.BulkAssocTicketRequestItem:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+      data:
+        additionalProperties:
+          type: string
+        type: object
+      system_name:
+        maxLength: 255
+        type: string
+      ticket:
+        type: string
+      ticket_resources:
+        type: boolean
+      url:
+        maxLength: 255
+        type: string
+    required:
+    - _id
+    - ticket
+    type: object
+  alarmaction.BulkChangeStateRequestItem:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+      state:
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        type: integer
+    required:
+    - _id
+    - state
+    type: object
+  alarmaction.BulkCommentRequestItem:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+    required:
+    - _id
+    - comment
+    type: object
+  alarmaction.BulkRequestItem:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+    required:
+    - _id
+    type: object
+  alarmaction.BulkSnoozeRequestItem:
+    properties:
+      _id:
+        type: string
+      comment:
+        maxLength: 255
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+    required:
+    - _id
+    - duration
+    type: object
+  alarmaction.ChangeStateRequest:
+    properties:
+      comment:
+        maxLength: 255
+        type: string
+      state:
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        type: integer
+    required:
+    - state
+    type: object
+  alarmaction.CommentRequest:
+    properties:
+      comment:
+        maxLength: 255
+        type: string
+    required:
+    - comment
+    type: object
+  alarmaction.Request:
+    properties:
+      comment:
+        maxLength: 255
+        type: string
+    type: object
+  alarmaction.SnoozeRequest:
+    properties:
+      comment:
+        maxLength: 255
+        type: string
+      duration:
+        $ref: '#/definitions/types.DurationWithUnit'
+    required:
+    - duration
+    type: object
+  alarmtag.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  alarmtag.CreateRequest:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      color:
+        type: string
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      value:
+        maxLength: 255
+        type: string
+    required:
+    - color
+    - value
     type: object
   alarmtag.Response:
     properties:
       _id:
         type: string
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      author:
+        $ref: '#/definitions/author.Author'
       color:
+        type: string
+      corporate_alarm_pattern:
+        type: string
+      corporate_alarm_pattern_title:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
         type: string
       created:
         type: integer
+      deletable:
+        type: boolean
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      type:
+        type: integer
+      updated:
+        type: integer
       value:
         type: string
+    type: object
+  alarmtag.UpdateRequest:
+    properties:
+      alarm_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      color:
+        type: string
+      corporate_alarm_pattern:
+        type: string
+      corporate_entity_pattern:
+        type: string
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+    required:
+    - color
     type: object
   appinfo.AppInfoResponse:
     properties:
@@ -555,6 +820,8 @@ definitions:
         type: string
       check_count_request_timeout:
         type: integer
+      default_color_theme:
+        $ref: '#/definitions/colortheme.Theme'
       edition:
         type: string
       file_upload_max_size:
@@ -569,6 +836,8 @@ definitions:
         type: string
       logo:
         type: string
+      maintenance:
+        type: boolean
       max_matched_items:
         type: integer
       popup_timeout:
@@ -592,6 +861,10 @@ definitions:
         type: string
       name:
         type: string
+      with_body:
+        type: boolean
+      with_query:
+        type: boolean
     type: object
   appinfo.LoginConf:
     properties:
@@ -682,6 +955,8 @@ definitions:
     properties:
       _id:
         type: string
+      display_name:
+        type: string
       name:
         type: string
     type: object
@@ -702,6 +977,8 @@ definitions:
         type: integer
       end:
         type: integer
+      maintenance:
+        type: boolean
       message:
         type: string
       start:
@@ -722,6 +999,8 @@ definitions:
         type: integer
       end:
         type: integer
+      maintenance:
+        type: boolean
       message:
         type: string
       start:
@@ -733,6 +1012,108 @@ definitions:
     - end
     - message
     - start
+    type: object
+  colortheme.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  colortheme.Colors:
+    properties:
+      main:
+        properties:
+          accent:
+            type: string
+          active_color:
+            type: string
+          background:
+            type: string
+          error:
+            type: string
+          info:
+            type: string
+          primary:
+            type: string
+          secondary:
+            type: string
+          success:
+            type: string
+          warning:
+            type: string
+        required:
+        - accent
+        - active_color
+        - background
+        - error
+        - info
+        - primary
+        - secondary
+        - success
+        - warning
+        type: object
+      state:
+        properties:
+          critical:
+            type: string
+          major:
+            type: string
+          minor:
+            type: string
+          ok:
+            type: string
+        required:
+        - critical
+        - major
+        - minor
+        - ok
+        type: object
+      table:
+        properties:
+          background:
+            type: string
+          hover_row_color:
+            type: string
+          row_color:
+            type: string
+          shift_row_color:
+            type: string
+        required:
+        - background
+        - row_color
+        type: object
+    type: object
+  colortheme.EditRequest:
+    properties:
+      colors:
+        $ref: '#/definitions/colortheme.Colors'
+      font_size:
+        enum:
+        - 1
+        - 2
+        - 3
+        type: integer
+      name:
+        type: string
+    required:
+    - font_size
+    - name
+    type: object
+  colortheme.Theme:
+    properties:
+      _id:
+        type: string
+      colors:
+        $ref: '#/definitions/colortheme.Colors'
+      deletable:
+        type: boolean
+      font_size:
+        type: integer
+      name:
+        type: string
+      updated:
+        type: integer
     type: object
   common.AlarmStep:
     properties:
@@ -847,6 +1228,11 @@ definitions:
           delete_after:
             $ref: '#/definitions/types.DurationWithEnabled'
         type: object
+      event_filter_failure:
+        properties:
+          delete_after:
+            $ref: '#/definitions/types.DurationWithEnabled'
+        type: object
       health_check:
         properties:
           delete_after:
@@ -902,6 +1288,8 @@ definitions:
         $ref: '#/definitions/datastorage.HistoryWithCount'
       entity:
         $ref: '#/definitions/datastorage.HistoryWithCount'
+      event_filter_failure:
+        type: integer
       health_check:
         type: integer
       junit:
@@ -1045,6 +1433,8 @@ definitions:
   entity.ExportRequest:
     properties:
       category:
+        type: string
+      entity_pattern:
         type: string
       fields:
         items:
@@ -1671,6 +2061,22 @@ definitions:
       type:
         type: string
     type: object
+  eventfilter.FailureResponse:
+    properties:
+      _id:
+        type: string
+      event:
+        additionalProperties: {}
+        type: object
+      message:
+        type: string
+      t:
+        type: integer
+      type:
+        type: integer
+      unread:
+        type: boolean
+    type: object
   eventfilter.Response:
     properties:
       _id:
@@ -1699,6 +2105,8 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+      events_count:
+        type: integer
       exceptions:
         items:
           $ref: '#/definitions/eventfilter.Exception'
@@ -1711,6 +2119,8 @@ definitions:
         additionalProperties:
           $ref: '#/definitions/eventfilter.ExternalDataParameters'
         type: object
+      failures_count:
+        type: integer
       old_patterns:
         $ref: '#/definitions/oldpattern.EventPatternList'
       priority:
@@ -1723,6 +2133,8 @@ definitions:
         type: integer
       type:
         type: string
+      unread_failures_count:
+        type: integer
       updated:
         type: integer
     type: object
@@ -1824,7 +2236,9 @@ definitions:
         description: |-
           Possible export values.
             * `configuration` - export configuration collection
-            * `acl` - export default_rights collection
+            * `user` - export user collection
+            * `role` - export role collection
+            * `permission` - export permission collection
             * `pbehavior` - export pbehavior collection
             * `pbehavior_type` - export pbehavior_types collection
             * `pbehavior_reason` - export pbehavior_reason collection
@@ -2394,6 +2808,8 @@ definitions:
     properties:
       action:
         type: string
+      hide_in_menu:
+        type: boolean
       icon_name:
         type: string
       label:
@@ -2421,6 +2837,8 @@ definitions:
       category:
         maxLength: 255
         type: string
+      hide_in_menu:
+        type: boolean
       icon_name:
         maxLength: 255
         type: string
@@ -2543,6 +2961,17 @@ definitions:
       updated:
         type: integer
     type: object
+  maintenance.Request:
+    properties:
+      color:
+        type: string
+      enabled:
+        type: boolean
+      message:
+        type: string
+    required:
+    - enabled
+    type: object
   messageratestats.StatsListResponse:
     properties:
       data:
@@ -2603,6 +3032,30 @@ definitions:
       over_limit:
         type: boolean
     type: object
+  pattern.CountAlarmsResponse:
+    properties:
+      alarm_pattern:
+        $ref: '#/definitions/pattern.Count'
+      all:
+        $ref: '#/definitions/pattern.Count'
+      entities:
+        $ref: '#/definitions/pattern.Count'
+      entity_pattern:
+        $ref: '#/definitions/pattern.Count'
+      pbehavior_pattern:
+        $ref: '#/definitions/pattern.Count'
+    type: object
+  pattern.CountEntitiesResponse:
+    properties:
+      alarm_pattern:
+        $ref: '#/definitions/pattern.Count'
+      all:
+        $ref: '#/definitions/pattern.Count'
+      entity_pattern:
+        $ref: '#/definitions/pattern.Count'
+      pbehavior_pattern:
+        $ref: '#/definitions/pattern.Count'
+    type: object
   pattern.CountRequest:
     properties:
       alarm_pattern:
@@ -2623,15 +3076,6 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
-    type: object
-  pattern.CountResponse:
-    properties:
-      alarm_pattern:
-        $ref: '#/definitions/pattern.Count'
-      entity_pattern:
-        $ref: '#/definitions/pattern.Count'
-      pbehavior_pattern:
-        $ref: '#/definitions/pattern.Count'
     type: object
   pattern.EditRequest:
     properties:
@@ -2677,43 +3121,6 @@ definitions:
         type: string
       field_type:
         description: 'FieldType is only defined for custom fields, ex: infos.'
-        type: string
-    type: object
-  pattern.GetAlarmsRequest:
-    properties:
-      alarm_pattern:
-        items:
-          items:
-            $ref: '#/definitions/pattern.FieldCondition'
-          type: array
-        type: array
-      entity_pattern:
-        items:
-          items:
-            $ref: '#/definitions/pattern.FieldCondition'
-          type: array
-        type: array
-      pbehavior_pattern:
-        items:
-          items:
-            $ref: '#/definitions/pattern.FieldCondition'
-          type: array
-        type: array
-      search:
-        type: string
-    type: object
-  pattern.GetAlarmsResponse:
-    properties:
-      alarms:
-        items:
-          $ref: '#/definitions/pattern.MatchedAlarm'
-        type: array
-    type: object
-  pattern.MatchedAlarm:
-    properties:
-      _id:
-        type: string
-      name:
         type: string
     type: object
   pattern.Response:
@@ -3011,6 +3418,8 @@ definitions:
         $ref: '#/definitions/pbehaviorreason.Reason'
       rrule:
         type: string
+      rrule_end:
+        type: integer
       tstart:
         type: integer
       tstop:
@@ -3392,7 +3801,7 @@ definitions:
       author:
         type: string
       created:
-        $ref: '#/definitions/types.CpsTime'
+        type: integer
       enabled:
         type: boolean
       fullscreen:
@@ -3406,7 +3815,7 @@ definitions:
           type: string
         type: array
       updated:
-        $ref: '#/definitions/types.CpsTime'
+        type: integer
     type: object
   request.BasicAuth:
     properties:
@@ -3464,6 +3873,8 @@ definitions:
       ticket_id:
         type: string
       ticket_url:
+        type: string
+      ticket_url_tpl:
         type: string
     type: object
   resolverule.CreateRequest:
@@ -3631,7 +4042,7 @@ definitions:
       type:
         type: string
     type: object
-  role.Role:
+  role.Response:
     properties:
       _id:
         type: string
@@ -3650,6 +4061,26 @@ definitions:
       permissions:
         items:
           $ref: '#/definitions/role.Permission'
+        type: array
+    type: object
+  role.Template:
+    properties:
+      _id:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      permissions:
+        items:
+          $ref: '#/definitions/role.Permission'
+        type: array
+    type: object
+  role.TemplateResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/role.Template'
         type: array
     type: object
   role.View:
@@ -3801,6 +4232,8 @@ definitions:
             * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
+            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
+            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
           type: string
         type: array
@@ -3864,6 +4297,8 @@ definitions:
             * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
+            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
+            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
           type: string
         type: array
@@ -3924,6 +4359,8 @@ definitions:
             * `instructionjobcomplete` - Manual or auto instruction's job is completed
             * `instructioncomplete` - Manual instruction is completed
             * `autoinstructioncomplete` - Auto instruction is completed
+            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
+            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
           type: string
         type: array
@@ -3958,6 +4395,8 @@ definitions:
       rrule:
         type: string
       skip_for_child:
+        type: boolean
+      skip_for_instruction:
         type: boolean
       start_on_trigger:
         type: boolean
@@ -4248,8 +4687,10 @@ definitions:
         type: string
       expired:
         type: integer
-      role:
-        $ref: '#/definitions/author.Role'
+      roles:
+        items:
+          $ref: '#/definitions/author.Role'
+        type: array
       user:
         $ref: '#/definitions/author.Author'
       value:
@@ -4366,11 +4807,6 @@ definitions:
     - lat
     - lng
     type: object
-  types.CpsTime:
-    properties:
-      time.Time:
-        type: string
-    type: object
   types.CropCounter:
     properties:
       state:0:
@@ -4472,8 +4908,10 @@ definitions:
         type: string
       password:
         type: string
-      role:
-        type: string
+      roles:
+        items:
+          type: string
+        type: array
       ui_groups_navigation_type:
         maxLength: 255
         type: string
@@ -4488,7 +4926,7 @@ definitions:
     - email
     - enable
     - name
-    - role
+    - roles
     type: object
   user.CreateRequest:
     properties:
@@ -4511,8 +4949,10 @@ definitions:
         type: string
       password:
         type: string
-      role:
-        type: string
+      roles:
+        items:
+          type: string
+        type: array
       source:
         type: string
       ui_groups_navigation_type:
@@ -4528,7 +4968,7 @@ definitions:
     - email
     - enable
     - name
-    - role
+    - roles
     type: object
   user.Role:
     properties:
@@ -4558,8 +4998,10 @@ definitions:
         type: string
       password:
         type: string
-      role:
-        type: string
+      roles:
+        items:
+          type: string
+        type: array
       ui_groups_navigation_type:
         maxLength: 255
         type: string
@@ -4573,7 +5015,7 @@ definitions:
     - email
     - enable
     - name
-    - role
+    - roles
     type: object
   user.User:
     properties:
@@ -4585,6 +5027,8 @@ definitions:
         type: string
       defaultview:
         $ref: '#/definitions/user.View'
+      display_name:
+        type: string
       email:
         type: string
       enable:
@@ -4597,8 +5041,10 @@ definitions:
         type: string
       name:
         type: string
-      role:
-        $ref: '#/definitions/user.Role'
+      roles:
+        items:
+          $ref: '#/definitions/user.Role'
+        type: array
       source:
         type: string
       ui_groups_navigation_type:
@@ -4606,7 +5052,7 @@ definitions:
       ui_language:
         type: string
       ui_theme:
-        type: string
+        $ref: '#/definitions/colortheme.Theme'
     type: object
   user.View:
     properties:
@@ -4842,13 +5288,17 @@ definitions:
     properties:
       colorIndicator:
         type: string
-      iconOnly:
-        type: boolean
+      inlineLinksCount:
+        type: integer
       isHtml:
         type: boolean
       label:
         maxLength: 255
         type: string
+      linksInRowCount:
+        type: integer
+      onlyIcon:
+        type: boolean
       template:
         type: string
       value:
@@ -4901,11 +5351,11 @@ definitions:
       author:
         $ref: '#/definitions/author.Author'
       created:
-        $ref: '#/definitions/types.CpsTime'
+        type: integer
       title:
         type: string
       updated:
-        $ref: '#/definitions/types.CpsTime'
+        type: integer
       widgets:
         items:
           $ref: '#/definitions/widget.Response'
@@ -5122,6 +5572,7 @@ definitions:
         - alarm_columns
         - entity_columns
         - alarm_more_infos
+        - alarm_export_to_pdf
         - weather_item
         - weather_modal
         - weather_entity

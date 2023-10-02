@@ -38,10 +38,6 @@ type Adapter interface {
 	// GetAllOpenedResourceAlarmsByComponent returns all ongoing alarms for component
 	GetAllOpenedResourceAlarmsByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error)
 
-	// GetUnacknowledgedAlarmsByComponent returns all ongoing alarms which have
-	// not been acknowledged, given a component's name.
-	GetUnacknowledgedAlarmsByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error)
-
 	// GetAlarmsWithoutTicketByComponent returns all ongoing alarms which do
 	// not have a ticket, given a component's name.
 	GetAlarmsWithoutTicketByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error)
@@ -91,7 +87,7 @@ type Adapter interface {
 
 	FindToCheckPbehaviorInfo(ctx context.Context, createdBefore types.CpsTime, idsWithPbehaviors []string) (mongo.Cursor, error)
 
-	GetWorstAlarmState(ctx context.Context, entityIds []string) (int64, error)
+	GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context, entityIds []string) (int64, int64, error)
 
 	UpdateLastEventDate(ctx context.Context, entityIds []string, t types.CpsTime) error
 }
@@ -105,16 +101,14 @@ type EventProcessor interface {
 }
 
 type MetaAlarmEventProcessor interface {
-	// Process handles related meta alarm parents and children after alarm change.
-	Process(ctx context.Context, event types.Event) error
 	// ProcessAxeRpc handles related meta alarm parents and children after alarm change.
 	ProcessAxeRpc(ctx context.Context, event rpc.AxeEvent, eventRes rpc.AxeResultEvent) error
 	// CreateMetaAlarm creates meta alarm by event.
-	CreateMetaAlarm(ctx context.Context, event types.Event) (*types.Alarm, error)
-	// ProcessAckResources ackes resource after component ack.
-	ProcessAckResources(ctx context.Context, event types.Event) error
-	// ProcessTicketResources add ticket to resource after component assoc ticket.
-	ProcessTicketResources(ctx context.Context, event types.Event) error
+	CreateMetaAlarm(ctx context.Context, event rpc.AxeEvent) (*types.Alarm, []types.Alarm, error)
+	// AttachChildrenToMetaAlarm attaches children to meta alarm by event.
+	AttachChildrenToMetaAlarm(ctx context.Context, event rpc.AxeEvent) (*types.Alarm, []types.Alarm, []types.Event, error)
+	// DetachChildrenFromMetaAlarm detaches children from meta alarm by event.
+	DetachChildrenFromMetaAlarm(ctx context.Context, event rpc.AxeEvent) (*types.Alarm, error)
 }
 
 type Service interface {

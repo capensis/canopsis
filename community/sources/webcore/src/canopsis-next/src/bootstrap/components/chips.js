@@ -1,0 +1,11 @@
+export { default as CAlarmChip } from '@/components/common/chips/c-alarm-chip.vue';
+export { default as CAlarmActionChip } from '@/components/common/chips/c-alarm-action-chip.vue';
+export { default as CAlarmActionsChips } from '@/components/common/chips/c-alarm-actions-chips.vue';
+export { default as CAlarmTagsChips } from '@/components/common/chips/c-alarm-tags-chips.vue';
+export { default as CAlarmLinksChips } from '@/components/common/chips/c-alarm-links-chips.vue';
+export { default as CStateCountChangesChips } from '@/components/common/chips/c-state-count-changes-chips.vue';
+export { default as CStateCountChangesChip } from '@/components/common/chips/c-state-count-changes-chip.vue';
+export { default as CTestSuiteChip } from '@/components/common/chips/c-test-suite-chip.vue';
+export { default as CInstructionJobChip } from '@/components/common/chips/c-instruction-job-chip.vue';
+export { default as CEngineChip } from '@/components/common/chips/c-engine-chip.vue';
+export { default as CPatternOperatorChip } from '@/components/common/chips/c-pattern-operator-chip.vue';

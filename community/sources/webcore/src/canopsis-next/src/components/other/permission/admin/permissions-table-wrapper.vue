@@ -1,32 +1,19 @@
 <template lang="pug">
   div.permissions-table-wrapper
     permissions-groups-table(
-      v-if="isGroup",
       :groups="permissions",
       :roles="roles",
       :changed-roles="changedRoles",
       :disabled="disabled",
-      :sort-by="sortBy",
-      @change="$listeners.change"
-    )
-    permissions-table(
-      v-else,
-      :permissions="permissions",
-      :roles="roles",
-      :changed-roles="changedRoles",
-      :disabled="disabled",
-      :sort-by="sortBy",
       @change="$listeners.change"
     )
 </template>
 
 <script>
-import PermissionsTable from './permissions-table.vue';
 import PermissionsGroupsTable from './permissions-groups-table.vue';
 
 export default {
   components: {
-    PermissionsTable,
     PermissionsGroupsTable,
   },
   props: {
@@ -45,15 +32,6 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
-    },
-    sortBy: {
-      type: [Function, Array, String],
-      required: false,
-    },
-  },
-  computed: {
-    isGroup() {
-      return this.permissions.length && this.permissions[0].permissions;
     },
   },
 };
@@ -81,10 +59,10 @@ export default {
         top: 48px;
         z-index: 1;
 
-        background: white;
+        background: var(--v-table-background-base);
 
         .theme--dark & {
-          background: #424242;
+          background: var(--v-table-background-base);
         }
       }
     }

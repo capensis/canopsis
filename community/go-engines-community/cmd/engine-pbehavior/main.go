@@ -18,6 +18,7 @@ func main() {
 	flag.IntVar(&opts.FrameDuration, "frameDuration", 120, "The engine computes all pbehaviors for a further interval which duration controls this parameter. The default value is 120 minutes. This could be reduced when pre-compute takes too much system resources.")
 	flag.BoolVar(&opts.FeaturePrintEventOnError, "printEventOnError", false, "Print event on processing error")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
+	flag.BoolVar(&opts.ComputeRruleEnd, "computeRruleEnd", false, "Compute rrule end for pbehaviors and exit")
 	flagVersion := flag.Bool("version", false, "Show the version information")
 
 	flag.Parse()
@@ -33,8 +34,14 @@ func main() {
 	// Graceful shutdown.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
-	engine := NewEnginePBehavior(ctx, opts, logger)
-	err := engine.Run(ctx)
+	var err error
+	if opts.ComputeRruleEnd {
+		err = computeRruleEnd(ctx, logger)
+	} else {
+		engine := NewEnginePBehavior(ctx, opts, logger)
+		err = engine.Run(ctx)
+	}
+
 	exitStatus := 0
 	if err != nil {
 		logger.Err(err).Msg("exit with error")

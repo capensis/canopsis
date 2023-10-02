@@ -18,23 +18,11 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
           <c-density-btn-toggle-stub
             value="1"
           />
-          <transition-stub
-            name="fade-transition"
-          >
-            <div
-              class="flex px-1"
-              style="display: none;"
-            >
-              <!---->
-            </div>
-          </transition-stub>
+          <!---->
         </div>
       </div>
-      <div
-        class="flex alarms-list-table__top-pagination--center-absolute xs4"
-      >
-        <!---->
-      </div>
+      <!---->
+      <!---->
     </div>
     <div
       class="alarms-list-table columns-sm"
@@ -43,7 +31,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
         class="v-table__overflow"
       >
         <table
-          class="v-datatable v-table v-datatable--select-all v-datatable--dense theme--light"
+          class="v-datatable v-table v-datatable--expand v-datatable--select-all v-datatable--dense theme--light"
         >
           <thead
             style="transform: translateY(0px); opacity: 1;"
@@ -85,7 +73,8 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               <th
                 aria-label=""
                 aria-sort="none"
-                class="column sortable text-xs-left"
+                class="column sortable text-xs-left alarms-list-table__draggable-column"
+                data-value="label"
                 role="columnheader"
                 scope="col"
                 tabindex="0"
@@ -94,6 +83,8 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
                   header="[object Object]"
                   selectedtag="tag"
                 />
+                <!---->
+                <!---->
                 <i
                   aria-hidden="true"
                   class="v-icon material-icons theme--light"
@@ -161,6 +152,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectable="true"
               selectedtag="tag"
               widget="[object Object]"
@@ -183,6 +175,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectable="true"
               selectedtag="tag"
               widget="[object Object]"
@@ -205,6 +198,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectable="true"
               selectedtag="tag"
               widget="[object Object]"
@@ -227,6 +221,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectable="true"
               selectedtag="tag"
               widget="[object Object]"
@@ -249,6 +244,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
               parentalarm="[object Object]"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectable="true"
               selectedtag="tag"
               widget="[object Object]"
@@ -304,7 +300,8 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
               <th
                 aria-label=""
                 aria-sort="none"
-                class="column sortable text-xs-left"
+                class="column sortable text-xs-left alarms-list-table__draggable-column"
+                data-value="label"
                 role="columnheader"
                 scope="col"
                 tabindex="0"
@@ -313,6 +310,8 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
+                <!---->
                 <i
                   aria-hidden="true"
                   class="v-icon material-icons theme--light"
@@ -325,6 +324,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 aria-label="Actions: Not sorted."
                 aria-sort="none"
                 class="column text-xs-left"
+                data-value="actions"
                 role="columnheader"
                 scope="col"
               >
@@ -332,6 +332,93 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
+                <!---->
+              </th>
+            </tr>
+            <tr
+              class="v-datatable__progress"
+            >
+              <th
+                class="column"
+                colspan="2"
+              />
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                class="text-xs-center"
+                colspan="2"
+              >
+                No data available
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <c-table-pagination-stub />
+  <!---->
+</div>
+`;
+
+exports[`alarms-list-table Renders \`alarms-list-table\` with default and required props with links column with links in row count 1`] = `
+<div
+  class="flex"
+>
+  <div>
+    <!---->
+    <div
+      class="alarms-list-table columns-sm"
+    >
+      <div
+        class="v-table__overflow"
+      >
+        <table
+          class="v-datatable v-table theme--light"
+        >
+          <thead>
+            <tr>
+              <th
+                aria-label=""
+                aria-sort="none"
+                class="column sortable text-xs-left alarms-list-table__draggable-column"
+                data-value="links"
+                role="columnheader"
+                scope="col"
+                tabindex="0"
+                width="40px"
+              >
+                <alarm-header-cell-stub
+                  header="[object Object]"
+                  selectedtag=""
+                />
+                <!---->
+                <!---->
+                <i
+                  aria-hidden="true"
+                  class="v-icon material-icons theme--light"
+                  style="font-size: 16px;"
+                >
+                  arrow_upward
+                </i>
+              </th>
+              <th
+                aria-label="Actions: Not sorted."
+                aria-sort="none"
+                class="column text-xs-left"
+                data-value="actions"
+                role="columnheader"
+                scope="col"
+              >
+                <alarm-header-cell-stub
+                  header="[object Object]"
+                  selectedtag=""
+                />
+                <!---->
+                <!---->
               </th>
             </tr>
             <tr
@@ -416,7 +503,8 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
               <th
                 aria-label=""
                 aria-sort="none"
-                class="column sortable text-xs-left"
+                class="column sortable text-xs-left alarms-list-table__draggable-column"
+                data-value="label"
                 role="columnheader"
                 scope="col"
                 tabindex="0"
@@ -425,6 +513,8 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
+                <!---->
                 <i
                   aria-hidden="true"
                   class="v-icon material-icons theme--light"
@@ -437,6 +527,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 aria-label="Actions: Not sorted."
                 aria-sort="none"
                 class="column text-xs-left"
+                data-value="actions"
                 role="columnheader"
                 scope="col"
               >
@@ -444,6 +535,8 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
+                <!---->
               </th>
             </tr>
             <tr
@@ -530,7 +623,8 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
               <th
                 aria-label=""
                 aria-sort="none"
-                class="column sortable text-xs-left"
+                class="column sortable text-xs-left alarms-list-table__draggable-column"
+                data-value="label"
                 role="columnheader"
                 scope="col"
                 tabindex="0"
@@ -539,6 +633,8 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
+                <!---->
                 <i
                   aria-hidden="true"
                   class="v-icon material-icons theme--light"
@@ -551,6 +647,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 aria-label="Actions: Not sorted."
                 aria-sort="none"
                 class="column text-xs-left"
+                data-value="actions"
                 role="columnheader"
                 scope="col"
               >
@@ -558,6 +655,8 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
+                <!---->
               </th>
             </tr>
             <tr
@@ -629,6 +728,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
           type="top"
         />
       </div>
+      <!---->
     </div>
     <div
       class="alarms-list-table columns-sm"
@@ -637,7 +737,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
         class="v-table__overflow"
       >
         <table
-          class="v-datatable v-table theme--light"
+          class="v-datatable v-table v-datatable--expand theme--light"
         >
           <thead>
             <tr>
@@ -645,6 +745,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 aria-label=": Not sorted."
                 aria-sort="none"
                 class="column text-xs-left"
+                data-value=""
                 role="columnheader"
                 scope="col"
               >
@@ -652,11 +753,14 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
+                <!---->
               </th>
               <th
                 aria-label=""
                 aria-sort="none"
-                class="column sortable text-xs-left"
+                class="column sortable text-xs-left alarms-list-table__draggable-column"
+                data-value="label"
                 role="columnheader"
                 scope="col"
                 tabindex="0"
@@ -665,6 +769,8 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
+                <!---->
                 <i
                   aria-hidden="true"
                   class="v-icon material-icons theme--light"
@@ -677,6 +783,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 aria-label="Actions: Not sorted."
                 aria-sort="none"
                 class="column text-xs-left"
+                data-value="actions"
                 role="columnheader"
                 scope="col"
               >
@@ -684,6 +791,8 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                   header="[object Object]"
                   selectedtag=""
                 />
+                <!---->
+                <!---->
               </th>
             </tr>
             <tr
@@ -702,6 +811,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               expandable="true"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectedtag=""
               widget="[object Object]"
             />
@@ -720,6 +830,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               expandable="true"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectedtag=""
               widget="[object Object]"
             />
@@ -738,6 +849,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               expandable="true"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectedtag=""
               widget="[object Object]"
             />
@@ -756,6 +868,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               expandable="true"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectedtag=""
               widget="[object Object]"
             />
@@ -774,6 +887,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
               expandable="true"
               refreshalarmslist="[Function]"
               row="[object Object]"
+              search=""
               selectedtag=""
               widget="[object Object]"
             />
