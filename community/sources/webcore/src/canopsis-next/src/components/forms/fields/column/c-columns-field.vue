@@ -3,8 +3,7 @@
     c-draggable-list-field(
       v-field="columns",
       :class="{ empty: isColumnsEmpty }",
-      :handle="`.${itemHandleClass}`",
-      :group="draggableGroup"
+      :handle="`.${dragItemHandleClass}`"
     )
       column-field.mb-3(
         v-for="(column, index) in columns",
@@ -12,7 +11,7 @@
         :key="column.key",
         :name="column.key",
         :type="type",
-        :drag-handle-class="itemHandleClass",
+        :drag-handle-class="dragItemHandleClass",
         :with-html="withHtml",
         :with-template="withTemplate",
         :with-color-indicator="withColorIndicator",
@@ -74,12 +73,8 @@ export default {
     },
   },
   computed: {
-    itemHandleClass() {
+    dragItemHandleClass() {
       return 'column-drag-handle';
-    },
-
-    draggableGroup() {
-      return 'columns';
     },
 
     isColumnsEmpty() {
