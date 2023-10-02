@@ -10,7 +10,7 @@ import {
 import Handlebars from 'handlebars';
 import axios from 'axios';
 
-import { DATETIME_FORMATS, MAX_LIMIT } from '@/constants';
+import { DATETIME_FORMATS, MAX_LIMIT, RESPONSE_STATUSES } from '@/constants';
 
 import i18n from '@/i18n';
 
@@ -178,9 +178,9 @@ export async function requestHelper(options) {
     const { status } = err.response || {};
 
     switch (status) {
-      case 401:
+      case RESPONSE_STATUSES.unauthorized:
         return i18n.t('handlebars.requestHelper.errors.unauthorized');
-      case 408:
+      case RESPONSE_STATUSES.timeout:
         return i18n.t('handlebars.requestHelper.errors.timeout');
       default:
         return i18n.t('handlebars.requestHelper.errors.other');
