@@ -1,11 +1,9 @@
 import flushPromises from 'flush-promises';
 
-import { shallowMount, mount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { deleteAction, editAction, fakeAction } from '@unit/data/actions-panel';
 import { createButtonStub } from '@unit/stubs/button';
 import ActionsPanel from '@/components/common/actions-panel/actions-panel.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-action-btn': createButtonStub('c-action-btn'),
@@ -16,19 +14,10 @@ const snapshotStubs = {
   'c-action-btn': true,
 };
 
-const factory = (options = {}) => shallowMount(ActionsPanel, {
-  localVue,
-  stubs,
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(ActionsPanel, {
-  localVue,
-  stubs: snapshotStubs,
-  ...options,
-});
-
 describe('actions-panel', () => {
+  const factory = generateShallowRenderer(ActionsPanel, { stubs });
+  const snapshotFactory = generateRenderer(ActionsPanel, { stubs: snapshotStubs });
+
   it('Method into list called after trigger click on action item button. On the extra large size.', async () => {
     const actions = [
       fakeAction(),

@@ -1,13 +1,12 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createCheckboxInputStub } from '@unit/stubs/input';
+import { createMockedStoreModules, createPbehaviorTypesModule } from '@unit/utils/store';
 import { PBEHAVIOR_TYPE_TYPES, TIME_UNITS } from '@/constants';
 
 import PbehaviorGeneralForm from '@/components/other/pbehavior/pbehaviors/form/pbehavior-general-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-name-field': true,
@@ -46,6 +45,11 @@ const selectNoEndingCheckbox = wrapper => selectCheckboxFields(wrapper)
   .at(1);
 
 describe('pbehavior-general-form', () => {
+  const { pbehaviorTypesModule } = createPbehaviorTypesModule();
+  const store = createMockedStoreModules([
+    pbehaviorTypesModule,
+  ]);
+
   const form = {
     name: Faker.datatype.string(),
     enabled: Faker.datatype.boolean(),
@@ -56,10 +60,15 @@ describe('pbehavior-general-form', () => {
     type: {},
     color: Faker.internet.color(),
   };
-  const factory = generateShallowRenderer(PbehaviorGeneralForm, { localVue, stubs });
+
+  const factory = generateShallowRenderer(PbehaviorGeneralForm, {
+    stubs,
+    store,
+  });
+
   const snapshotFactory = generateRenderer(PbehaviorGeneralForm, {
-    localVue,
     stubs: snapshotStubs,
+    store,
   });
 
   test('Name changed after trigger name field', () => {

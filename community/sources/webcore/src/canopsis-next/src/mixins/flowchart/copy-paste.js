@@ -1,6 +1,6 @@
 import { isObject, isString } from 'lodash';
 
-import uid from '@/helpers/uid';
+import { uid } from '@/helpers/uid';
 import { readTextFromClipboard, writeTextToClipboard } from '@/helpers/clipboard';
 
 export const copyPasteShapesMixin = {

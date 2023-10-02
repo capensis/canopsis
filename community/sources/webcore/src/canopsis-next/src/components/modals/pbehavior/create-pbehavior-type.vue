@@ -13,7 +13,7 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { pbehaviorTypeToForm } from '@/helpers/forms/type-pbehavior';
+import { pbehaviorTypeToForm } from '@/helpers/entities/pbehavior/type/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -40,7 +40,7 @@ export default {
   ],
   data() {
     return {
-      pendingPriority: true,
+      pendingPriority: false,
       form: pbehaviorTypeToForm(this.modal.config.pbehaviorType),
     };
   },

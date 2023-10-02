@@ -205,7 +205,7 @@ Feature: update alarm by RPC stream
               },
               {
                 "_t": "ack",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "m": "test-output-axe-rpc-2",
                 "val": 0
               },
@@ -276,7 +276,7 @@ Feature: update alarm by RPC stream
             },
             "status": {
               "_t": "statusinc",
-              "a": "test-connector-axe-rpc-3.test-connector-name-axe-rpc-3",
+              "a": "system",
               "m": "test-output-axe-rpc-3",
               "val": 4
             }
@@ -327,7 +327,7 @@ Feature: update alarm by RPC stream
               },
               {
                 "_t": "statusinc",
-                "a": "test-connector-axe-rpc-3.test-connector-name-axe-rpc-3",
+                "a": "system",
                 "m": "test-output-axe-rpc-3",
                 "val": 4
               }

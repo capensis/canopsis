@@ -18,9 +18,15 @@ import (
 
 const EnvVar = "Env"
 
+type ParsedTemplate struct {
+	Text string
+	Tpl  *template.Template
+	Err  error
+}
+
 type Executor interface {
 	Execute(tplStr string, data any) (string, error)
-	Parse(tplStr string) (*template.Template, error)
+	Parse(text string) ParsedTemplate
 	ExecuteByTpl(tpl *template.Template, data any) (string, error)
 }
 
@@ -46,23 +52,37 @@ func NewExecutor(
 }
 
 func (e *executor) Execute(tplStr string, data any) (string, error) {
-	tpl, err := e.Parse(tplStr)
-	if err != nil {
-		return "", err
+	if tplStr == "" {
+		return "", nil
 	}
 
-	return e.ExecuteByTpl(tpl, data)
+	tpl := e.Parse(tplStr)
+	if tpl.Err != nil {
+		return "", tpl.Err
+	}
+
+	return e.ExecuteByTpl(tpl.Tpl, data)
 }
 
-func (e *executor) Parse(tplStr string) (*template.Template, error) {
+func (e *executor) Parse(text string) ParsedTemplate {
+	if text == "" {
+		return ParsedTemplate{}
+	}
+
 	location := e.timezoneConfigProvider.Get().Location
-	tpl, err := template.New("tpl").Funcs(GetFunctions(location)).Parse(tplStr)
+	tpl, err := template.New("tpl").Funcs(GetFunctions(location)).Parse(text)
 	if err != nil {
-		return nil, err
+		return ParsedTemplate{
+			Text: text,
+			Err:  err,
+		}
 	}
 
 	tpl.Option("missingkey=error")
-	return tpl, err
+	return ParsedTemplate{
+		Text: text,
+		Tpl:  tpl,
+	}
 }
 
 func (e *executor) ExecuteByTpl(tpl *template.Template, data any) (string, error) {

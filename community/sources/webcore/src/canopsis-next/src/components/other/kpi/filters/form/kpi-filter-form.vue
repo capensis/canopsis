@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import KpiFilterPatternsForm from './partials/kpi-filter-patterns-form.vue';
+import KpiFilterPatternsForm from './kpi-filter-patterns-form.vue';
 
 export default {
   inject: ['$validator'],

@@ -14,7 +14,7 @@ La commande `engine-correlation -help` liste toutes les options acceptées par l
 
 Il est possible, à partir de Canopsis 3.43.0, de lancer plusieurs instances du moteur `engine-correlation`, afin d'améliorer sa performance de traitement et sa résilience.
 
-En environnement Docker, il vous suffit par exemple de lancer Docker Compose avec `docker-compose up -d --scale correlation=2` pour que le moteur `engine-correlation` soit lancé avec 2 instances.
+En environnement Docker, il vous suffit par exemple de lancer Docker Compose avec `docker compose up -d --scale correlation=2` pour que le moteur `engine-correlation` soit lancé avec 2 instances.
 
 Cette fonctionnalité sera aussi disponible en installation par paquets lors d'une prochaine mise à jour.
 

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import MermaidEditor from './partials/mermaid-editor.vue';
+import MermaidEditor from './fields/mermaid-editor.vue';
 
 export default {
   inject: ['$validator'],

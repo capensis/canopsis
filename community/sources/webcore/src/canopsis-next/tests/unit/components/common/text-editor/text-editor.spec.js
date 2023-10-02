@@ -1,25 +1,15 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { mockXMLHttpRequest } from '@unit/utils/mock-hooks';
 import { API_HOST, API_ROUTES } from '@/config';
 
 import TextEditor from '@/components/common/text-editor/text-editor.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'variables-menu': true,
 };
-
-const snapshotFactory = (options = {}) => mount(TextEditor, {
-  localVue,
-  attachTo: document.body,
-  stubs,
-
-  ...options,
-});
 
 const selectEditor = wrapper => wrapper.find('.jodit_wysiwyg');
 const selectEditorImageControl = wrapper => wrapper.find('.jodit_toolbar_btn-image');
@@ -52,7 +42,8 @@ describe('text-editor', () => {
   ];
   const files = filesMeta.map(({ filename, mediatype }) => new File(
     [new ArrayBuffer(1)],
-    filename, { type: mediatype },
+    filename,
+    { type: mediatype },
   ));
 
   const filesResponse = filesMeta.map(({ filename, mediatype }) => ({
@@ -61,6 +52,11 @@ describe('text-editor', () => {
     mediatype,
     created: 1653398538,
   }));
+
+  const snapshotFactory = generateRenderer(TextEditor, {
+    attachTo: document.body,
+    stubs,
+  }, { noDestroy: true });
 
   test('Value changed after change props', async () => {
     const wrapper = snapshotFactory();

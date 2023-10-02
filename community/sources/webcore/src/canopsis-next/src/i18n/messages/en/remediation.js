@@ -46,7 +46,6 @@ export default {
       lastExecutedOn: 'Last executed on',
     },
     errors: {
-      runningInstruction: 'New changes cannot be applied to the instruction in progress. Would you like to cancel started instruction and apply new changes?',
       operationRequired: 'Please add at least one operation',
       stepRequired: 'Please add at least one step',
       jobRequired: 'Please add at least one job',

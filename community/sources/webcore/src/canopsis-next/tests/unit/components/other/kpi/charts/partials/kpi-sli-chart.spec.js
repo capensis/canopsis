@@ -1,28 +1,13 @@
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { KPI_SLI_GRAPH_DATA_TYPE, SAMPLINGS } from '@/constants';
 
 import KpiSliChart from '@/components/other/kpi/charts/partials/kpi-sli-chart';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'kpi-chart-export-actions': true,
 };
-
-const snapshotFactory = (options = {}) => mount(KpiSliChart, {
-  localVue,
-  stubs,
-  attachTo: document.body,
-  parentComponent: {
-    provide: {
-      $system: {},
-    },
-  },
-
-  ...options,
-});
 
 describe('kpi-sli-chart', () => {
   const metricsInPercent = [
@@ -143,6 +128,16 @@ describe('kpi-sli-chart', () => {
       maintenance: 326592,
     },
   ];
+
+  const snapshotFactory = generateRenderer(KpiSliChart, {
+    stubs,
+    attachTo: document.body,
+    parentComponent: {
+      provide: {
+        $system: {},
+      },
+    },
+  });
 
   it('Export csv event emitted', async () => {
     const exportCsv = jest.fn();

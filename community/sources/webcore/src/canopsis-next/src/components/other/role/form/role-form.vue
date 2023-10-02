@@ -1,5 +1,6 @@
 <template lang="pug">
   v-layout(column)
+    role-template-field(v-if="withTemplate", v-field="form.permissions")
     c-name-field(v-field="form.name", required)
     v-text-field(v-field="form.description", :label="$t('common.description')")
 
@@ -27,9 +28,11 @@
 <script>
 import ViewSelector from '@/components/forms/fields/view-selector.vue';
 
+import RoleTemplateField from './fields/role-template-field.vue';
+
 export default {
   inject: ['$validator'],
-  components: { ViewSelector },
+  components: { ViewSelector, RoleTemplateField },
   model: {
     prop: 'form',
     event: 'input',
@@ -38,6 +41,10 @@ export default {
     form: {
       type: Object,
       default: () => ({}),
+    },
+    withTemplate: {
+      type: Boolean,
+      default: false,
     },
   },
 };

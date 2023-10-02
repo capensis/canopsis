@@ -1,12 +1,10 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
 import { PATTERN_CUSTOM_ITEM_VALUE, PATTERN_TYPES } from '@/constants';
 
 import PatternForm from '@/components/forms/pattern-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-text-field': createInputStub('v-text-field'),
@@ -15,26 +13,15 @@ const stubs = {
   'c-pbehavior-patterns-field': true,
 };
 
-const factory = (options = {}) => shallowMount(PatternForm, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(PatternForm, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 const selectTextField = wrapper => wrapper.find('.v-text-field');
 const selectAlarmPatternsField = wrapper => wrapper.find('c-alarm-patterns-field-stub');
 const selectEntityPatternsField = wrapper => wrapper.find('c-entity-patterns-field-stub');
 const selectPbehaviorPatternsField = wrapper => wrapper.find('c-pbehavior-patterns-field-stub');
 
 describe('pattern-form', () => {
+  const factory = generateShallowRenderer(PatternForm, { stubs });
+  const snapshotFactory = generateRenderer(PatternForm, { stubs });
+
   test('Title changed after trigger text field', () => {
     const form = {
       title: '',

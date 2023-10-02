@@ -10,8 +10,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
-	redismod "github.com/go-redis/redis/v8"
 	amqp "github.com/rabbitmq/amqp091-go"
+	redismod "github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
 

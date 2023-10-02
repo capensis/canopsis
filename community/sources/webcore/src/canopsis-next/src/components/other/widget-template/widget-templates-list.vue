@@ -59,7 +59,7 @@ export default {
         { text: this.$t('common.name'), value: 'title', sortable: false },
         { text: this.$t('common.type'), value: 'type', sortable: false },
         { text: this.$t('common.lastModifiedOn'), value: 'updated', sortable: false },
-        { text: this.$t('common.lastModifiedBy'), value: 'author.name', sortable: false },
+        { text: this.$t('common.lastModifiedBy'), value: 'author.display_name', sortable: false },
         { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
       ];
     },

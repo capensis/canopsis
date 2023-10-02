@@ -3,6 +3,7 @@ package sharetoken
 import (
 	"context"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -19,8 +20,9 @@ type Store interface {
 }
 
 type store struct {
-	client     mongo.DbClient
-	collection mongo.DbCollection
+	client         mongo.DbClient
+	collection     mongo.DbCollection
+	authorProvider author.Provider
 
 	tokenGenerator token.Generator
 
@@ -31,13 +33,15 @@ type store struct {
 func NewStore(
 	dbClient mongo.DbClient,
 	tokenGenerator token.Generator,
+	authorProvider author.Provider,
 ) Store {
 	return &store{
 		client:         dbClient,
 		collection:     dbClient.Collection(mongo.ShareTokenMongoCollection),
 		tokenGenerator: tokenGenerator,
+		authorProvider: authorProvider,
 
-		defaultSearchByFields: []string{"value", "user.name", "role.name", "description"},
+		defaultSearchByFields: []string{"value", "user.name", "roles.name", "description"},
 		defaultSortBy:         "created",
 	}
 }
@@ -76,7 +80,8 @@ func (s *store) Insert(ctx context.Context, userId string, r EditRequest) (*Resp
 		pipeline := []bson.M{
 			{"$match": bson.M{"_id": model.ID}},
 		}
-		pipeline = append(pipeline, getUserPipeline()...)
+		pipeline = append(pipeline, s.authorProvider.PipelineForField("user")...)
+		pipeline = append(pipeline, getRolePipeline()...)
 		cursor, err := s.collection.Aggregate(ctx, pipeline)
 		if err != nil {
 			return err
@@ -97,7 +102,8 @@ func (s *store) Insert(ctx context.Context, userId string, r EditRequest) (*Resp
 }
 
 func (s *store) Find(ctx context.Context, request ListRequest) (*AggregationResult, error) {
-	pipeline := getUserPipeline()
+	pipeline := s.authorProvider.PipelineForField("user")
+	pipeline = append(pipeline, getRolePipeline()...)
 	filter := common.GetSearchQuery(request.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
@@ -153,25 +159,46 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 	return deleted > 0, nil
 }
 
-func getUserPipeline() []bson.M {
+func getRolePipeline() []bson.M {
 	return []bson.M{
 		{"$lookup": bson.M{
-			"from":         mongo.RightsMongoCollection,
-			"localField":   "user",
+			"from":         mongo.UserCollection,
+			"localField":   "user._id",
 			"foreignField": "_id",
-			"as":           "user",
+			"as":           "user_with_roles",
 		}},
-		{"$unwind": bson.M{"path": "$user", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$user_with_roles", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"user.roles": "$user_with_roles.roles",
+		}},
+		{"$project": bson.M{"user_with_roles": 0}},
+		{"$unwind": bson.M{
+			"path":                       "$user.roles",
+			"preserveNullAndEmptyArrays": true,
+			"includeArrayIndex":          "role_index",
+		}},
 		{"$lookup": bson.M{
-			"from":         mongo.RightsMongoCollection,
-			"localField":   "user.role",
+			"from":         mongo.RoleCollection,
+			"localField":   "user.roles",
 			"foreignField": "_id",
 			"as":           "role",
 		}},
 		{"$unwind": bson.M{"path": "$role", "preserveNullAndEmptyArrays": true}},
-		{"$addFields": bson.M{
-			"user.name": "$user.crecord_name",
-			"role.name": "$role.crecord_name",
+		{"$sort": bson.M{"role_index": 1}},
+		{"$group": bson.M{
+			"_id":  "$_id",
+			"data": bson.M{"$first": "$$ROOT"},
+			"roles": bson.M{"$push": bson.M{
+				"$cond": bson.M{
+					"if":   "$role._id",
+					"then": "$role",
+					"else": "$$REMOVE",
+				},
+			}},
 		}},
+		{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+			"$data",
+			bson.M{"roles": "$roles"},
+		}}}},
 	}
 }

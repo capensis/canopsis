@@ -1,4 +1,4 @@
-import { QUICK_RANGES } from '@/constants/common';
+import { QUICK_RANGES } from './common';
 
 export const PATTERN_TYPES = {
   alarm: 'alarm',
@@ -115,6 +115,7 @@ export const PATTERN_RULE_TYPES = {
   duration: 'duration',
   string: 'string',
   number: 'number',
+  object: 'object',
 };
 
 export const PATTERN_RULE_INFOS_FIELDS = {

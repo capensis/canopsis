@@ -4,16 +4,19 @@ exports[`alarms-expand-panel-more-infos Renders \`alarms-expand-panel-more-infos
 <div
   class="more-infos"
 >
-  <v-runtime-template-stub
-    template=<div>
   <div>
-    <p>Template</p>
-    <p>more-infos-alarm</p>
-    <p>more-infos-entity</p>
+    <div>
+      <p>
+        Template
+      </p>
+      <p>
+        more-infos-alarm
+      </p>
+      <p>
+        more-infos-entity
+      </p>
+    </div>
   </div>
-</div>
-    templateprops="[object Object]"
-  />
 </div>
 `;
 

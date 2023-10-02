@@ -1,35 +1,22 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { TIME_UNITS } from '@/constants';
 
 import SnoozeEventForm from '@/components/widgets/alarm/forms/snooze-event-form.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-duration-field': true,
   'c-description-field': true,
 };
 
-const factory = (options = {}) => shallowMount(SnoozeEventForm, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(SnoozeEventForm, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 const selectDurationField = wrapper => wrapper.find('c-duration-field-stub');
 const selectDescriptionField = wrapper => wrapper.find('c-description-field-stub');
 
 describe('snooze-event-form', () => {
+  const factory = generateShallowRenderer(SnoozeEventForm, { stubs });
+  const snapshotFactory = generateRenderer(SnoozeEventForm, { stubs });
+
   test('Duration changed after trigger duration field', () => {
     const form = {
       duration: {
@@ -60,19 +47,19 @@ describe('snooze-event-form', () => {
         unit: TIME_UNITS.day,
         value: Faker.datatype.number(),
       },
-      output: Faker.datatype.string(),
+      comment: Faker.datatype.string(),
     };
     const wrapper = factory({
       propsData: { form },
     });
 
-    const output = Faker.datatype.string();
+    const comment = Faker.datatype.string();
 
     const descriptionField = selectDescriptionField(wrapper);
 
-    descriptionField.vm.$emit('input', output);
+    descriptionField.vm.$emit('input', comment);
 
-    expect(wrapper).toEmit('input', { ...form, output });
+    expect(wrapper).toEmit('input', { ...form, comment });
   });
 
   test('Renders `snooze-event-form` with required props', () => {

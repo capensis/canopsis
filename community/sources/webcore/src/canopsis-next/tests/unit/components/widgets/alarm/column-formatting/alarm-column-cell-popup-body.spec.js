@@ -1,31 +1,22 @@
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
-
 import flushPromises from 'flush-promises';
-import AlarmColumnCellPopupBody from '@/components/widgets/alarm/columns-formatting/alarm-column-cell-popup-body.vue';
 
-const localVue = createVueInstance();
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+
+import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
+import AlarmColumnCellPopupBody from '@/components/widgets/alarm/columns-formatting/alarm-column-cell-popup-body.vue';
+import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 
 const stubs = {
-  'v-runtime-template': true,
+  'c-compiled-template': CCompiledTemplate,
+  'c-runtime-template': CRuntimeTemplate,
 };
-
-const factory = (options = {}) => shallowMount(AlarmColumnCellPopupBody, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(AlarmColumnCellPopupBody, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectCloseButton = wrapper => wrapper.find('v-btn-stub');
 
 describe('alarm-column-cell-popup-body', () => {
+  const factory = generateShallowRenderer(AlarmColumnCellPopupBody, { stubs });
+  const snapshotFactory = generateRenderer(AlarmColumnCellPopupBody, { stubs });
+
   it('Popup template closed after click on the button', async () => {
     const wrapper = factory({
       propsData: {

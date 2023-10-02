@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-navigation-drawer.flowchart-sidebar(width="100%", permanent, light, touchless)
+  v-navigation-drawer.flowchart-sidebar(width="100%", permanent, touchless)
     v-expansion-panel(color="grey", expand)
       v-layout(column)
         slot(name="prepend")
@@ -12,7 +12,7 @@
         )
       v-expansion-panel-content
         template(#header="")
-          span.v-label.theme--light {{ $tc('flowchart.shape', 2) }}
+          span.v-label {{ $tc('flowchart.shape', 2) }}
         v-divider
         v-layout(row, wrap)
           v-tooltip(v-for="(button, index) in buttons", :key="index", z-index="230", top)
@@ -23,7 +23,7 @@
                 large,
                 @click="button.action"
               )
-                component.grey--text.text--darken-3.pa-1(:is="button.icon")
+                component.pa-1.text--disabled(:is="button.icon")
             span {{ button.label }}
           file-selector(ref="fileSelector", hide-details, @change="addImage")
             template(#activator="{ on }")
@@ -34,7 +34,7 @@
                 span {{ $t('flowchart.shapes.image') }}
       v-expansion-panel-content
         template(#header="")
-          span.v-label.theme--light {{ $t('flowchart.icons') }}
+          span.v-label {{ $t('flowchart.icons') }}
         v-divider
         v-layout(v-for="group in iconGroups", :key="group.name", row, wrap)
           v-btn.flowchart-sidebar__button-icon.ma-0(
@@ -43,14 +43,13 @@
             flat,
             @click="addIconAsset(icon)"
           )
-            span.grey--text.text--darken-3.flowchart-sidebar__button-svg(v-html="icon")
+            span.text--disabled.flowchart-sidebar__button-svg(v-html="icon")
           v-flex(xs12)
             v-divider
 </template>
 
 <script>
 import { COLORS } from '@/config';
-
 import { LINE_TYPES } from '@/constants';
 
 import { getFileDataUrlContent } from '@/helpers/file/file-select';
@@ -95,7 +94,6 @@ import ProcessShapeIcon from './icons/process-shape.vue';
 import DocumentShapeIcon from './icons/document-shape.vue';
 import TextShapeIcon from './icons/text-shape.vue';
 import TextboxShapeIcon from './icons/textbox-shape.vue';
-
 import assetGroups from './assets';
 
 export default {

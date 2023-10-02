@@ -37,7 +37,7 @@
 <script>
 import { OLD_PATTERNS_FIELDS, PATTERNS_FIELDS } from '@/constants';
 
-import { filterPatternsToForm } from '@/helpers/forms/filter';
+import { filterPatternsToForm } from '@/helpers/entities/filter/form';
 
 import PbehaviorPatternsForm from '../form/pbehavior-patterns-form.vue';
 

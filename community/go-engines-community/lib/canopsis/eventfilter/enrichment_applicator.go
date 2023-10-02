@@ -10,18 +10,24 @@ import (
 type enrichmentApplicator struct {
 	externalDataContainer *ExternalDataContainer
 	actionProcessor       ActionProcessor
+	failureService        FailureService
 }
 
-func NewEnrichmentApplicator(externalDataContainer *ExternalDataContainer, processor ActionProcessor) RuleApplicator {
+func NewEnrichmentApplicator(
+	externalDataContainer *ExternalDataContainer,
+	processor ActionProcessor,
+	failureService FailureService,
+) RuleApplicator {
 	return &enrichmentApplicator{
 		externalDataContainer: externalDataContainer,
 		actionProcessor:       processor,
+		failureService:        failureService,
 	}
 }
 
 func (a *enrichmentApplicator) Apply(
 	ctx context.Context,
-	rule Rule,
+	rule ParsedRule,
 	event types.Event,
 	regexMatchWrapper RegexMatchWrapper,
 ) (string, types.Event, error) {
@@ -31,7 +37,7 @@ func (a *enrichmentApplicator) Apply(
 	}
 
 	for _, action := range rule.Config.Actions {
-		event, err = a.actionProcessor.Process(ctx, action, event, regexMatchWrapper, externalData)
+		event, err = a.actionProcessor.Process(ctx, rule.ID, action, event, regexMatchWrapper, externalData)
 		if err != nil {
 			return rule.Config.OnFailure, event, fmt.Errorf("invalid action name=%q type=%q: %w", action.Name, action.Type, err)
 		}
@@ -40,16 +46,18 @@ func (a *enrichmentApplicator) Apply(
 	return rule.Config.OnSuccess, event, nil
 }
 
-func (a *enrichmentApplicator) getExternalData(ctx context.Context, rule Rule, event types.Event, regexMatchWrapper RegexMatchWrapper) (map[string]interface{}, error) {
+func (a *enrichmentApplicator) getExternalData(ctx context.Context, rule ParsedRule, event types.Event, regexMatchWrapper RegexMatchWrapper) (map[string]interface{}, error) {
 	externalData := make(map[string]interface{})
 
 	for name, parameters := range rule.ExternalData {
 		getter, ok := a.externalDataContainer.Get(parameters.Type)
 		if !ok {
+			failReason := fmt.Sprintf("external data %q has invalid type %q", name, parameters.Type)
+			a.failureService.Add(rule.ID, FailureTypeOther, failReason, nil)
 			return nil, fmt.Errorf("no such data source: %s", parameters.Type)
 		}
 
-		data, err := getter.Get(ctx, parameters, Template{
+		data, err := getter.Get(ctx, rule.ID, name, event, parameters, Template{
 			Event:             event,
 			RegexMatchWrapper: regexMatchWrapper,
 		})

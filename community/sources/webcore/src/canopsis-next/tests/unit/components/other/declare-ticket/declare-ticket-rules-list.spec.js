@@ -27,7 +27,7 @@ describe('declare-ticket-rules-list', () => {
     created: 1614861888 + index,
     updated: 1614861888 + index,
     author: {
-      name: `author-name-${index}`,
+      display_name: `author-name-${index}`,
     },
   }));
 

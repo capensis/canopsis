@@ -21,7 +21,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
       class="v-table__overflow"
     >
       <table
-        class="v-datatable v-table theme--light"
+        class="v-datatable v-table v-datatable--expand theme--light"
       >
         <thead>
           <tr>
@@ -29,6 +29,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               aria-label=": Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value=""
               role="columnheader"
               scope="col"
               width="20"
@@ -39,6 +40,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               aria-label="Name: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="name"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -56,6 +58,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               aria-label="Creation date: Sorted descending. Activate to remove sorting."
               aria-sort="descending"
               class="column active desc sortable text-xs-left"
+              data-value="created"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -73,6 +76,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               aria-label="Last modified on: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="updated"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -90,6 +94,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with custom props 1`] = `
               aria-label="Actions: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value="actions"
               role="columnheader"
               scope="col"
             >
@@ -677,7 +682,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
       class="v-table__overflow"
     >
       <table
-        class="v-datatable v-table theme--light"
+        class="v-datatable v-table v-datatable--expand theme--light"
       >
         <thead>
           <tr>
@@ -685,6 +690,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               aria-label=": Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value=""
               role="columnheader"
               scope="col"
               width="20"
@@ -695,6 +701,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               aria-label="Name: Sorted ascending. Activate to sort descending."
               aria-sort="ascending"
               class="column active asc sortable text-xs-left"
+              data-value="name"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -712,6 +719,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               aria-label="Creation date: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="created"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -729,6 +737,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               aria-label="Last modified on: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="updated"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -746,6 +755,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with default props 1`] = 
               aria-label="Actions: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value="actions"
               role="columnheader"
               scope="col"
             >
@@ -799,7 +809,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
       class="v-table__overflow"
     >
       <table
-        class="v-datatable v-table theme--light"
+        class="v-datatable v-table v-datatable--expand theme--light"
       >
         <thead>
           <tr>
@@ -807,6 +817,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               aria-label=": Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value=""
               role="columnheader"
               scope="col"
               width="20"
@@ -817,6 +828,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               aria-label="Name: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="name"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -834,6 +846,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               aria-label="Creation date: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="created"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -851,6 +864,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               aria-label="Last modified on: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="updated"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -868,6 +882,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
               aria-label="Actions: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value="actions"
               role="columnheader"
               scope="col"
             >
@@ -919,7 +934,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with expanded panel 1`] =
             class="v-datatable__expand-row"
           >
             <transition-group-stub
-              class="v-datatable__expand-col"
+              class="v-datatable__expand-col v-datatable__expand-col--expanded"
               colspan="5"
               tag="td"
             >
@@ -1359,7 +1374,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
       class="v-table__overflow"
     >
       <table
-        class="v-datatable v-table theme--light"
+        class="v-datatable v-table v-datatable--expand theme--light"
       >
         <thead>
           <tr>
@@ -1367,6 +1382,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
               aria-label=": Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value=""
               role="columnheader"
               scope="col"
               width="20"
@@ -1377,6 +1393,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
               aria-label="Name: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="name"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -1394,6 +1411,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
               aria-label="Creation date: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="created"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -1411,6 +1429,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
               aria-label="Last modified on: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
+              data-value="updated"
               role="columnheader"
               scope="col"
               tabindex="0"
@@ -1428,6 +1447,7 @@ exports[`kpi-filters-list Renders \`kpi-filters-list\` with updatable and old_en
               aria-label="Actions: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value="actions"
               role="columnheader"
               scope="col"
             >

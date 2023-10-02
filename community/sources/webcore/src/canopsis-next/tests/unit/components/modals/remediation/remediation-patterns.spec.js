@@ -1,7 +1,7 @@
 import Faker from 'faker';
 import flushPromises from 'flush-promises';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
@@ -10,8 +10,6 @@ import ClickOutside from '@/services/click-outside';
 
 import RemediationPatterns from '@/components/modals/remediation/remediation-patterns.vue';
 import { PATTERN_CUSTOM_ITEM_VALUE } from '@/constants';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
@@ -29,33 +27,6 @@ const snapshotStubs = {
   'remediation-patterns-pbehavior-types-form': true,
 };
 
-const factory = (options = {}) => shallowMount(RemediationPatterns, {
-  localVue,
-  stubs,
-  attachTo: document.body,
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(RemediationPatterns, {
-  localVue,
-  stubs: snapshotStubs,
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
 const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
@@ -66,6 +37,24 @@ const selectRemediationPatternsPbehaviorTypesForm = wrapper => wrapper
 describe('remediation-patterns', () => {
   const $modals = mockModals();
   const $popups = mockPopups();
+
+  const factory = generateShallowRenderer(RemediationPatterns, {
+    stubs,
+    attachTo: document.body,
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(RemediationPatterns, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
 
   const alarmPattern = {
     id: PATTERN_CUSTOM_ITEM_VALUE,

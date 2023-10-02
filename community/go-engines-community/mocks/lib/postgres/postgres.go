@@ -9,9 +9,9 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	pgconn "github.com/jackc/pgconn"
-	pgx "github.com/jackc/pgx/v4"
-	pgxpool "github.com/jackc/pgx/v4/pgxpool"
+	pgx "github.com/jackc/pgx/v5"
+	pgconn "github.com/jackc/pgx/v5/pgconn"
+	pgxpool "github.com/jackc/pgx/v5/pgxpool"
 )
 
 // MockBasePool is a mock of BasePool interface.
@@ -62,6 +62,21 @@ func (m *MockBasePool) Close() {
 func (mr *MockBasePoolMockRecorder) Close() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockBasePool)(nil).Close))
+}
+
+// CopyFrom mocks base method.
+func (m *MockBasePool) CopyFrom(arg0 context.Context, arg1 pgx.Identifier, arg2 []string, arg3 pgx.CopyFromSource) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CopyFrom", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CopyFrom indicates an expected call of CopyFrom.
+func (mr *MockBasePoolMockRecorder) CopyFrom(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CopyFrom", reflect.TypeOf((*MockBasePool)(nil).CopyFrom), arg0, arg1, arg2, arg3)
 }
 
 // Exec mocks base method.
@@ -198,6 +213,21 @@ func (m *MockPool) Close() {
 func (mr *MockPoolMockRecorder) Close() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockPool)(nil).Close))
+}
+
+// CopyFrom mocks base method.
+func (m *MockPool) CopyFrom(arg0 context.Context, arg1 pgx.Identifier, arg2 []string, arg3 pgx.CopyFromSource) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CopyFrom", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CopyFrom indicates an expected call of CopyFrom.
+func (mr *MockPoolMockRecorder) CopyFrom(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CopyFrom", reflect.TypeOf((*MockPool)(nil).CopyFrom), arg0, arg1, arg2, arg3)
 }
 
 // Exec mocks base method.

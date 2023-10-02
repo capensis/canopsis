@@ -29,7 +29,8 @@ Feature: Job update
       "name": "test-job-name-to-update",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "config": {
         "_id": "test-job-config-to-edit-job",
@@ -38,7 +39,8 @@ Feature: Job update
         "host": "http://example.com",
         "author": {
           "_id": "root",
-          "name": "root"
+          "name": "root",
+          "display_name": "root John Doe admin@canopsis.net"
         },
         "auth_username": "",
         "auth_token": "test-auth-token"
@@ -70,7 +72,8 @@ Feature: Job update
       "name": "test-job-name-to-update",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "config": {
         "_id": "test-job-config-to-edit-job",
@@ -79,7 +82,8 @@ Feature: Job update
         "host": "http://example.com",
         "author": {
           "_id": "root",
-          "name": "root"
+          "name": "root",
+          "display_name": "root John Doe admin@canopsis.net"
         },
         "auth_username": "",
         "auth_token": "test-auth-token"

@@ -22,7 +22,7 @@ type Response struct {
 	ID          string         `bson:"_id" json:"_id"`
 	Value       string         `bson:"value" json:"value"`
 	User        *author.Author `bson:"user" json:"user"`
-	Role        *author.Role   `bson:"role" json:"role"`
+	Roles       []author.Role  `bson:"roles" json:"roles"`
 	Description string         `bson:"description" json:"description"`
 	Created     types.CpsTime  `bson:"created" json:"created" swaggertype:"integer"`
 	Accessed    types.CpsTime  `bson:"accessed" json:"accessed" swaggertype:"integer"`

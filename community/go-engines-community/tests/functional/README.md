@@ -21,13 +21,13 @@ Execute Go test command to run functional tests. Use required `paths` argument t
 All api tests from [api](./features/api) folder can be executed by  
 
 ```bash
-go test --paths feauture/api
+go test --paths features/api
 ```  
 
 All engines tests from [engines](./features/engines) folder can be executed by  
 
 ```bash
-go test --paths feauture/engines
+go test --paths features/engines
 ``` 
 
 #### Environment vars

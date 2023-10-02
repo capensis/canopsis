@@ -1,29 +1,13 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
 import AlarmHeaderTag from '@/components/widgets/alarm/headers-formatting/alarm-header-tag.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-alarm-action-chip': {
     template: '<span v-on="$listeners" class="c-alarm-action-chip"></span>',
   },
 };
-
-const factory = (options = {}) => shallowMount(AlarmHeaderTag, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(AlarmHeaderTag, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectChip = wrapper => wrapper.find('.c-alarm-action-chip');
 
@@ -42,6 +26,9 @@ describe('alarm-header-tag', () => {
   };
 
   const store = createMockedStoreModules([alarmTagModule]);
+
+  const factory = generateShallowRenderer(AlarmHeaderTag, { stubs });
+  const snapshotFactory = generateRenderer(AlarmHeaderTag, { stubs });
 
   test('Should emit `clear` event', () => {
     const wrapper = factory({

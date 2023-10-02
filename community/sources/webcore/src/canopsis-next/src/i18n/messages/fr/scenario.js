@@ -11,6 +11,7 @@ export default {
   output: 'Format d\'action de sortie',
   forwardAuthor: 'Transmettre l\'auteur à l\'étape suivante',
   skipForChild: 'Sauter pour les enfants de la méta-alarme',
+  skipForInstruction: 'Ignorer si l\'événement a déclenché une instruction automatique',
   outputHelp: '<p>Les variables accessibles sont : <strong>.Alarm</strong> et <strong>.Entity</strong></p>'
     + '<i>Quelques exemples:</i>'
     + '<pre>Resource - {{ .Alarm.Value.Resource }}. Entity - {{ .Entity.ID }}.</pre>',

@@ -11,8 +11,8 @@
         :disabled="disabled",
         :readonly="readonly",
         :name="alarmFieldName",
-        :check-count-name="$constants.PATTERNS_FIELDS.alarm",
         :attributes="alarmAttributes",
+        :counter="counters.alarm_pattern",
         with-type,
         @input="errors.remove(alarmFieldName)"
       )
@@ -28,9 +28,9 @@
         :disabled="disabled",
         :readonly="readonly",
         :name="entityFieldName",
-        :check-count-name="$constants.PATTERNS_FIELDS.entity",
         :attributes="entityAttributes",
         :entity-types="entityTypes",
+        :counter="counters.entity_pattern",
         with-type,
         @input="errors.remove(entityFieldName)"
       )
@@ -46,7 +46,7 @@
         :disabled="disabled",
         :readonly="readonly",
         :name="pbehaviorFieldName",
-        :check-count-name="$constants.PATTERNS_FIELDS.pbehavior",
+        :counter="counters.pbehavior_pattern",
         with-type,
         @input="errors.remove(pbehaviorFieldName)"
       )
@@ -62,6 +62,7 @@
         :disabled="disabled",
         :readonly="readonly",
         :name="eventFieldName",
+        :counter="counters.event_pattern",
         @input="errors.remove(eventFieldName)"
       )
 
@@ -76,6 +77,7 @@
         :disabled="disabled",
         :readonly="readonly",
         :name="totalEntityFieldName",
+        :counter="counters.total_entity_pattern",
         with-type,
         @input="errors.remove(totalEntityFieldName)"
       )
@@ -90,24 +92,59 @@
         :required="isPatternRequired",
         :disabled="disabled",
         :name="serviceWeatherFieldName",
+        :counter="counters.weather_service_pattern",
         @input="errors.remove(serviceWeatherFieldName)"
       )
-
-    v-messages(v-if="someRequired && !hasPatterns", :value="[$t('pattern.errors.required')]", color="error")
+    c-alert(:value="allOverLimit", type="warning", transition="fade-transition")
+      span {{ $t('pattern.errors.countOverLimit', { count: allCount }) }}
+    v-layout(row, justify-end, align-center)
+      pattern-count-message(:error="hasError", :message="checkFilterMessages")
+      template(v-if="hasAllInCounter")
+        v-btn(
+          v-if="entityCountersType",
+          flat,
+          small,
+          @click="showPatternEntities"
+        ) {{ $t('common.seeEntities') }}
+        v-btn(
+          v-else,
+          flat,
+          small,
+          @click="showPatternAlarms"
+        ) {{ $t('common.seeAlarms') }}
+      v-btn.mr-0.ml-4(
+        :disabled="!hasPatterns",
+        :loading="countersPending",
+        color="primary",
+        @click="checkFilter"
+      ) {{ $t('common.checkFilter') }}
 </template>
 
 <script>
-import { isString } from 'lodash';
+import { isString, isEmpty } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
 
+import { CSS_COLORS_VARS } from '@/config';
 import { PATTERNS_FIELDS } from '@/constants';
 
-import { COLORS } from '@/config';
+import {
+  isValidPatternRule,
+  formGroupsToPatternRules,
+  formGroupsToPatternRulesQuery,
+} from '@/helpers/entities/pattern/form';
+import { formFilterToPatterns } from '@/helpers/entities/filter/form';
 
-import { isValidPatternRule } from '@/helpers/pattern';
-import { formGroupsToPatternRules } from '@/helpers/forms/pattern';
+import { patternCountAlarmsModalMixin } from '@/mixins/pattern/pattern-count-alarms-modal';
+import { patternCountEntitiesModalMixin } from '@/mixins/pattern/pattern-count-entities-modal';
+
+import PatternCountMessage from '@/components/forms/fields/pattern/pattern-count-message.vue';
+
+const { mapActions: mapPatternActions } = createNamespacedHelpers('pattern');
 
 export default {
   inject: ['$validator'],
+  components: { PatternCountMessage },
+  mixins: [patternCountAlarmsModalMixin, patternCountEntitiesModalMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -173,10 +210,20 @@ export default {
       type: Boolean,
       default: false,
     },
+    entityCountersType: {
+      type: Boolean,
+      default: false,
+    },
+    bothCounters: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       activePatternTab: 0,
+      counters: {},
+      countersPending: false,
     };
   },
   computed: {
@@ -235,8 +282,106 @@ export default {
     serviceWeatherPatternOutlineColor() {
       return this.getPatternOutlineColor(PATTERNS_FIELDS.serviceWeather);
     },
+
+    hasError() {
+      return this.isPatternRequired && !this.hasPatterns;
+    },
+
+    hasAllInCounter() {
+      return this.counters?.all?.count > 0;
+    },
+
+    checkFilterMessages() {
+      if (this.hasError) {
+        return this.$t('pattern.errors.required');
+      }
+
+      if (isEmpty(this.counters)) {
+        return '';
+      }
+
+      const allCount = this.counters?.all?.count ?? 0;
+      const entitiesCount = this.counters?.entities?.count ?? 0;
+
+      if (this.entityCountersType) {
+        return this.$t('pattern.entitiesCount', { entitiesCount: allCount });
+      }
+
+      if (this.bothCounters) {
+        return this.$t('pattern.alarmsEntitiesCount', {
+          entitiesCount,
+          alarmsCount: allCount,
+        });
+      }
+
+      return this.$t('pattern.alarmsCount', { alarmsCount: allCount });
+    },
+
+    patternsFields() {
+      const FIELDS_TO_FLAGS = {
+        [PATTERNS_FIELDS.alarm]: this.withAlarm,
+        [PATTERNS_FIELDS.entity]: this.withEntity,
+        [PATTERNS_FIELDS.event]: this.withEvent,
+        [PATTERNS_FIELDS.pbehavior]: this.withPbehavior,
+        [PATTERNS_FIELDS.totalEntity]: this.withTotalEntity,
+        [PATTERNS_FIELDS.serviceWeather]: this.withServiceWeather,
+      };
+
+      return Object.entries(FIELDS_TO_FLAGS)
+        .filter(([, value]) => value)
+        .map(([key]) => key);
+    },
+
+    patterns() {
+      return formFilterToPatterns(this.value, this.patternsFields);
+    },
+
+    allOverLimit() {
+      return this.counters?.all?.over_limit ?? false;
+    },
+
+    allCount() {
+      return this.counters?.all?.count ?? 0;
+    },
   },
   methods: {
+    ...mapPatternActions({
+      checkPatternsEntitiesCount: 'checkPatternsEntitiesCount',
+      checkPatternsAlarmsCount: 'checkPatternsAlarmsCount',
+    }),
+
+    showPatternAlarms() {
+      this.showAlarmsModalByPatterns({
+        alarm_pattern: formGroupsToPatternRulesQuery(this.value.alarm_pattern?.groups),
+        entity_pattern: formGroupsToPatternRulesQuery(this.value.entity_pattern?.groups),
+        pbehavior_pattern: formGroupsToPatternRulesQuery(this.value.pbehavior_pattern?.groups),
+      });
+    },
+
+    showPatternEntities() {
+      this.showEntitiesModalByPatterns({
+        entity_pattern: formGroupsToPatternRulesQuery(this.value.entity_pattern.groups),
+      });
+    },
+
+    async checkFilter() {
+      try {
+        this.countersPending = true;
+
+        const method = this.entityCountersType
+          ? this.checkPatternsEntitiesCount
+          : this.checkPatternsAlarmsCount;
+
+        this.counters = await method({ data: this.patterns });
+      } catch (err) {
+        console.error(err);
+
+        this.counters = {};
+      } finally {
+        this.countersPending = false;
+      }
+    },
+
     isValidPatternRules(rules) {
       return !!rules.length && rules.every(
         group => group.every((rule) => {
@@ -260,7 +405,7 @@ export default {
         return undefined;
       }
 
-      return this.isValidPatternRules(rules) ? COLORS.primary : COLORS.error;
+      return this.isValidPatternRules(rules) ? CSS_COLORS_VARS.primary : CSS_COLORS_VARS.error;
     },
 
     preparePatternsFieldName(name) {

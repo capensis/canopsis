@@ -4,15 +4,6 @@ const faker = require('faker');
 const { omit, merge } = require('lodash');
 
 const { API_ROUTES, DEFAULT_LOCALE } = require('@/config');
-const {
-  generateViewTab,
-  generateUser,
-  prepareUserByData,
-  generateRight,
-  generateRoleRightByChecksum,
-  generateWidgetByType,
-  generateViewRow,
-} = require('@/helpers/entities');
 const { generateTemporaryView } = require('./entities');
 const { queueFunction, onNextQueueFunction } = require('./nightwatch-child-process');
 
@@ -20,6 +11,14 @@ const { CREDENTIALS } = require('../constants');
 const { USERS_RIGHTS_MASKS, USERS_RIGHTS_TYPES } = require('@/constants');
 
 const { getBaseUrl } = require('./url');
+
+const generateViewTab = () => ({});
+const generateUser = () => ({});
+const prepareUserByData = () => ({});
+const generateRight = () => ({});
+const generateRoleRightByChecksum = () => ({});
+const generateWidgetByType = () => ({});
+const generateViewRow = () => ({});
 
 const request = axios.create({
   baseURL: getBaseUrl('/backend'),

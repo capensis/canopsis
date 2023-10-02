@@ -1,6 +1,7 @@
 class SocketRoom {
-  constructor(name, authNeeded) {
+  constructor(name, data, authNeeded) {
     this.name = name;
+    this.data = data;
     this.authNeeded = authNeeded;
     this.count = 1;
     this.listeners = [];

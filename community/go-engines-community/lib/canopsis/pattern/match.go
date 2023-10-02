@@ -2,6 +2,7 @@ package pattern
 
 import (
 	"fmt"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter/oldpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"go.mongodb.org/mongo-driver/bson"
@@ -21,7 +22,7 @@ func Match(
 	}
 
 	if len(entityPattern) > 0 {
-		ok, _, err := entityPattern.Match(entity)
+		ok, err := entityPattern.Match(entity)
 		if err != nil {
 			return false, fmt.Errorf("entity pattern is invalid: %w", err)
 		}

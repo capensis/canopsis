@@ -2,9 +2,10 @@ Feature: Get a map's state
   I need to be able to get a map's state
   Only admin should be able to get a map's state
 
+  @concurrent
   Scenario: given mermaid map with snoozed alarm should return alarm
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-pbehavior-axe-api-map-1",
@@ -17,8 +18,7 @@ Feature: Get a map's state
       "output": "test-output-pbehavior-axe-api-map-1"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-pbehavior-axe-api-map-1",
@@ -32,7 +32,6 @@ Feature: Get a map's state
       "initiator": "user"
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/cat/maps:
     """json
     {
@@ -84,7 +83,7 @@ Feature: Get a map's state
               "status": 1,
               "snooze": {
                 "_t": "snooze",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "m": "test-output-pbehavior-axe-api-map-1-snooze",
                 "initiator": "user"
@@ -99,9 +98,10 @@ Feature: Get a map's state
     }
     """
 
+  @concurrent
   Scenario: given mermaid map with acked alarm should return alarm
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-pbehavior-axe-api-map-2",
@@ -114,8 +114,7 @@ Feature: Get a map's state
       "output": "test-output-pbehavior-axe-api-map-2"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-pbehavior-axe-api-map-2",
@@ -128,7 +127,6 @@ Feature: Get a map's state
       "initiator": "user"
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/cat/maps:
     """json
     {
@@ -180,7 +178,7 @@ Feature: Get a map's state
               "status": 1,
               "ack": {
                 "_t": "ack",
-                "a": "root",
+                "a": "root John Doe admin@canopsis.net",
                 "user_id": "root",
                 "m": "test-output-pbehavior-axe-api-map-2-ack",
                 "initiator": "user",
@@ -196,9 +194,10 @@ Feature: Get a map's state
     }
     """
 
+  @concurrent
   Scenario: given mermaid map with alarm in pbehavior should return alarm
     When I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-pbehavior-axe-api-map-3",
@@ -211,7 +210,6 @@ Feature: Get a map's state
       "output": "test-output-pbehavior-axe-api-map-3"
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -236,7 +234,17 @@ Feature: Get a map's state
     }
     """
     Then the response code should be 201
-    When I wait the end of event processing
+    When I wait the end of event processing which contains:
+    """json
+    {
+      "event_type": "pbhenter",
+      "connector": "test-connector-pbehavior-axe-api-map-3",
+      "connector_name": "test-connector-name-pbehavior-axe-api-map-3",
+      "component":  "test-component-pbehavior-axe-api-map-3",
+      "resource": "test-resource-pbehavior-axe-api-map-3",
+      "source_type": "resource"
+    }
+    """
     When I do POST /api/v4/cat/maps:
     """json
     {

@@ -1,21 +1,13 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
-import { DEFAULT_LOCALE, THEMES_NAMES } from '@/config';
+import { DEFAULT_LOCALE } from '@/config';
 import { GROUPS_NAVIGATION_TYPES, TOURS } from '@/constants';
 
 import AlarmsExpandPanelTour from '@/components/widgets/alarm/expand-panel/alarms-expand-panel-tour.vue';
-
-const localVue = createVueInstance();
-
-const snapshotFactory = (options = {}) => mount(AlarmsExpandPanelTour, {
-  localVue,
-
-  ...options,
-});
 
 const tours = {
   [Faker.datatype.string()]: Faker.datatype.boolean(),
@@ -30,11 +22,11 @@ const currentUser = {
   lastname: Faker.name.lastName(),
   name: Faker.name.firstName(),
   password: Faker.datatype.string(),
-  role: '',
+  roles: [],
   ui_groups_navigation_type: GROUPS_NAVIGATION_TYPES.sideBar,
   ui_language: DEFAULT_LOCALE,
   ui_tours: tours,
-  ui_theme: THEMES_NAMES.canopsis,
+  ui_theme: { _id: 'canopsis' },
 };
 
 const fetchCurrentUser = jest.fn();
@@ -66,6 +58,8 @@ const selectNextButton = wrapper => wrapper.find('.v-step__button-next');
 const selectStopButton = wrapper => wrapper.find('.v-step__button-stop');
 
 describe('alarms-expand-panel-tour', () => {
+  const snapshotFactory = generateRenderer(AlarmsExpandPanelTour);
+
   jest.useFakeTimers();
 
   afterAll(() => {
@@ -192,6 +186,7 @@ describe('alarms-expand-panel-tour', () => {
       {
         data: {
           ...currentUser,
+          ui_theme: 'canopsis',
           ui_tours: {
             ...tours,
             [TOURS.alarmsExpandPanel]: true,
@@ -227,6 +222,7 @@ describe('alarms-expand-panel-tour', () => {
       {
         data: {
           ...currentUser,
+          ui_theme: 'canopsis',
           ui_tours: {
             ...tours,
             [TOURS.alarmsExpandPanel]: true,

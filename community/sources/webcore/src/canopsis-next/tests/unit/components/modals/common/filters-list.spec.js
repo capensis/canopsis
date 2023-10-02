@@ -2,7 +2,7 @@ import Faker from 'faker';
 import AxiosMockAdapter from 'axios-mock-adapter';
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { API_ROUTES } from '@/config';
@@ -12,8 +12,6 @@ import ClickOutside from '@/services/click-outside';
 import request from '@/services/request';
 
 import FiltersList from '@/components/modals/common/filters-list.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
@@ -78,7 +76,7 @@ describe('filters-list', () => {
     .reply(400);
 
   const factory = generateShallowRenderer(FiltersList, {
-    localVue,
+
     stubs,
     store,
     mocks: { $popups, $modals },
@@ -89,7 +87,7 @@ describe('filters-list', () => {
     },
   });
   const snapshotFactory = generateRenderer(FiltersList, {
-    localVue,
+
     stubs,
     store,
     mocks: { $popups, $modals },

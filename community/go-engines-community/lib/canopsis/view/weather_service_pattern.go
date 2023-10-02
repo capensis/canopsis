@@ -24,7 +24,7 @@ func (p WeatherServicePattern) Validate() bool {
 			case "is_grey":
 				_, err = cond.MatchBool(true)
 			case "icon", "secondary_icon":
-				_, _, err = cond.MatchString("")
+				_, err = cond.MatchString("")
 			case "state.val":
 				_, err = cond.MatchInt(0)
 			default:

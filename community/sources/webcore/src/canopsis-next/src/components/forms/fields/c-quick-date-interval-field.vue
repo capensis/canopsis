@@ -53,12 +53,7 @@
 <script>
 import { DATETIME_FORMATS, QUICK_RANGES } from '@/constants';
 
-import {
-  convertDateToString,
-  convertDateToTimestamp,
-  getNowTimestamp,
-  getWeekdayNumber,
-} from '@/helpers/date/date';
+import { convertDateToString, convertDateToTimestamp, getNowTimestamp, getWeekdayNumber } from '@/helpers/date/date';
 import {
   convertStartDateIntervalToTimestamp,
   convertStopDateIntervalToTimestamp,
@@ -161,7 +156,7 @@ export default {
     },
 
     isLessToDate(dateTimestamp) {
-      return dateTimestamp < this.intervalToAsTimestamp;
+      return this.interval.to && dateTimestamp < this.intervalToAsTimestamp;
     },
 
     isLessNowDate(dateTimestamp) {

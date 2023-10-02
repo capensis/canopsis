@@ -31,7 +31,8 @@ Feature: send an event
     {
       "sent_events": [
         {
-          "author": "root",
+          "author": "root John Doe admin@canopsis.net",
+          "user_id": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "source_type": "resource",
@@ -78,7 +79,8 @@ Feature: send an event
     {
       "sent_events": [
         {
-          "author": "root",
+          "author": "root John Doe admin@canopsis.net",
+          "user_id": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "source_type": "resource",
@@ -265,7 +267,8 @@ Feature: send an event
     {
       "sent_events": [
         {
-          "author": "root",
+          "author": "root John Doe admin@canopsis.net",
+          "user_id": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "source_type": "resource",
@@ -318,7 +321,8 @@ Feature: send an event
           "state": 1,
           "long_output": "",
           "resource": "test_resource2",
-          "author": "root"
+          "author": "root John Doe admin@canopsis.net",
+          "user_id": "root"
         }
       ],
       "failed_events": [],
@@ -353,7 +357,8 @@ Feature: send an event
           "component": "test_component2",
           "state": 2,
           "resource": "test_resource",
-          "author": "root"
+          "author": "root John Doe admin@canopsis.net",
+          "user_id": "root"
         }
       ],
       "failed_events": [],
@@ -378,7 +383,8 @@ Feature: send an event
     {
       "sent_events": [
         {
-          "author": "root",
+          "author": "root John Doe admin@canopsis.net",
+          "user_id": "root",
           "connector": "test_connector",
           "connector_name": "test_connectorname",
           "source_type": "resource",
@@ -517,7 +523,8 @@ Feature: send an event
           "event_type": "check",
           "state": 1,
           "resource": "test_resource",
-          "author": "root"
+          "author": "root John Doe admin@canopsis.net",
+          "user_id": "root"
         },
         {
           "connector": "test_connector",
@@ -526,7 +533,8 @@ Feature: send an event
           "event_type": "check",
           "state": 1,
           "resource": "test_resource",
-          "author": "root"
+          "author": "root John Doe admin@canopsis.net",
+          "user_id": "root"
         }
       ],
       "retry_events": []
@@ -590,7 +598,8 @@ Feature: send an event
           "event_type": "check",
           "state": 1,
           "resource": "test_resource",
-          "author": "root"
+          "author": "root John Doe admin@canopsis.net",
+          "user_id": "root"
         },
         {
           "connector": "test_connector",
@@ -600,7 +609,8 @@ Feature: send an event
           "event_type": "check",
           "state": 1,
           "resource": "test_resource",
-          "author": "root"
+          "author": "root John Doe admin@canopsis.net",
+          "user_id": "root"
         },
         {
           "connector": "test_connector",
@@ -610,7 +620,8 @@ Feature: send an event
           "event_type": "check",
           "state": 1,
           "resource": "test_resource",
-          "author": "root"
+          "author": "root John Doe admin@canopsis.net",
+          "user_id": "root"
         },
         {
           "connector": "test_connector",
@@ -620,7 +631,8 @@ Feature: send an event
           "event_type": "check",
           "state": 1,
           "resource": 123,
-          "author": "root"
+          "author": "root John Doe admin@canopsis.net",
+          "user_id": "root"
         }
       ],
       "retry_events": []
@@ -665,7 +677,8 @@ Feature: send an event
           "event_type": "ack",
           "role": "admin",
           "source_type": "connector",
-          "author": "root"
+          "author": "root John Doe admin@canopsis.net",
+          "user_id": "root"
         },
         {
           "connector": "test_connector",
@@ -674,7 +687,8 @@ Feature: send an event
           "event_type": "check",
           "source_type": "component",
           "state": 1,
-          "author": "root"
+          "author": "root John Doe admin@canopsis.net",
+          "user_id": "root"
         },
         {
           "connector": "test_connector",
@@ -684,7 +698,8 @@ Feature: send an event
           "source_type": "resource",
           "state": 1,
           "resource": "test_resource",
-          "author": "root"
+          "author": "root John Doe admin@canopsis.net",
+          "user_id": "root"
         }
       ],
       "failed_events": [],
@@ -733,7 +748,8 @@ Feature: send an event
           "event_type": "ack",
           "role": "admin",
           "source_type": "connector",
-          "author": "root"
+          "author": "root John Doe admin@canopsis.net",
+          "user_id": "root"
         },
         {
           "connector": "test_connector",
@@ -742,7 +758,8 @@ Feature: send an event
           "event_type": "check",
           "source_type": "component",
           "state": 1,
-          "author": "root"
+          "author": "root John Doe admin@canopsis.net",
+          "user_id": "root"
         },
         {
           "connector": "test_connector",
@@ -752,7 +769,8 @@ Feature: send an event
           "source_type": "resource",
           "state": 1,
           "resource": "test_resource",
-          "author": "root"
+          "author": "root John Doe admin@canopsis.net",
+          "user_id": "root"
         }
       ],
       "failed_events": [],
@@ -784,7 +802,8 @@ Feature: send an event
           "connector_name": "test_connectorname",
           "event_type": "check",
           "state": 1,
-          "author": "root"
+          "author": "root John Doe admin@canopsis.net",
+          "user_id": "root"
         }
       ],
       "retry_events": []

@@ -1,5 +1,12 @@
 <template lang="pug">
-  c-search-field(v-model="searchingText", @submit="submit", @clear="clear")
+  c-search-field(
+    :combobox="combobox",
+    :items="items",
+    @submit="submit",
+    @clear="clear",
+    @toggle-pin="togglePin",
+    @remove="remove"
+  )
     v-tooltip(v-if="tooltip", bottom)
       template(#activator="{ on }")
         v-btn(v-on="on", icon)
@@ -30,28 +37,39 @@ export default {
       type: String,
       default: '',
     },
-  },
-  data() {
-    return {
-      searchingText: this.query.search || '',
-    };
+    combobox: {
+      type: Boolean,
+      default: false,
+    },
+    items: {
+      type: Array,
+      required: false,
+    },
   },
   methods: {
-    getRequestData() {
-      if (this.searchingText.startsWith('-')) {
-        const preparedSearchingText = this.searchingText.replace(/^-(\s*)/, '');
-
-        if (this.columns.length) {
-          return this.columns.reduce(
-            (acc, { text, value }) => replaceTextNotInQuotes(acc, text, value),
-            preparedSearchingText,
-          );
-        }
-
-        return preparedSearchingText;
+    prepareRequestData(search = '') {
+      if (!search.startsWith('-')) {
+        return search;
       }
 
-      return this.searchingText;
+      const preparedSearch = search.replace(/^-(\s*)/, '');
+
+      if (this.columns.length) {
+        return this.columns.reduce(
+          (acc, { text, value }) => replaceTextNotInQuotes(acc, text, value),
+          preparedSearch,
+        );
+      }
+
+      return preparedSearch;
+    },
+
+    remove(search) {
+      this.$emit('remove', search);
+    },
+
+    togglePin(search) {
+      this.$emit('toggle-pin', search);
     },
 
     clear() {
@@ -59,12 +77,13 @@ export default {
 
       newQuery.page = 1;
 
-      this.searchingText = '';
       this.$emit('update:query', newQuery);
     },
 
-    submit() {
-      const requestData = this.getRequestData();
+    submit(search) {
+      const requestData = this.prepareRequestData(search);
+
+      this.$emit('submit', search);
 
       if (requestData || this.query[this.field]) {
         this.$emit('update:query', {

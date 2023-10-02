@@ -1,8 +1,6 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import CExpandBtn from '@/components/common/buttons/c-expand-btn.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-btn': {
@@ -17,13 +15,10 @@ const stubs = {
   },
 };
 
-const factory = (options = {}) => shallowMount(CExpandBtn, {
-  localVue,
-  stubs,
-  ...options,
-});
-
 describe('c-expand-btn', () => {
+  const factory = generateShallowRenderer(CExpandBtn, { stubs });
+  const snapshotFactory = generateRenderer(CExpandBtn);
+
   it('Expand button expand is worked.', () => {
     const wrapper = factory({ propsData: { expanded: false } });
 
@@ -51,16 +46,13 @@ describe('c-expand-btn', () => {
   });
 
   it('Renders `c-expand-btn` correctly.', () => {
-    const wrapper = mount(CExpandBtn, {
-      localVue,
-    });
+    const wrapper = snapshotFactory();
 
     expect(wrapper.element).toMatchSnapshot();
   });
 
   it('Renders `c-expand-btn` expanded correctly.', () => {
-    const wrapper = mount(CExpandBtn, {
-      localVue,
+    const wrapper = snapshotFactory({
       propsData: { expanded: true },
     });
 
@@ -68,8 +60,7 @@ describe('c-expand-btn', () => {
   });
 
   it('Renders `c-expand-btn` with custom color correctly.', () => {
-    const wrapper = mount(CExpandBtn, {
-      localVue,
+    const wrapper = snapshotFactory({
       propsData: { color: 'custom-color' },
     });
 

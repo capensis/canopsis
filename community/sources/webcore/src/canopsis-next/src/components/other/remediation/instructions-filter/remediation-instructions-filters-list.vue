@@ -14,7 +14,7 @@
 <script>
 import { formArrayMixin } from '@/mixins/form';
 
-import RemediationInstructionsFiltersItem from './remediation-instructions-filters-item.vue';
+import RemediationInstructionsFiltersItem from './partials/remediation-instructions-filters-item.vue';
 
 export default {
   components: { RemediationInstructionsFiltersItem },

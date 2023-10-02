@@ -1,8 +1,8 @@
 <template lang="pug">
-  v-expansion-panel(color="grey", light)
+  v-expansion-panel(color="grey")
     v-expansion-panel-content
       template(#header="")
-        span.white {{ $t('flowchart.properties') }}
+        span {{ $t('flowchart.properties') }}
       v-divider
       v-card
         v-card-text
@@ -62,10 +62,10 @@
 import { merge } from 'lodash';
 
 import { COLORS } from '@/config';
-
 import { STROKE_TYPES } from '@/constants';
 
 import { getPropertyValueByShapes } from '@/helpers/flowchart/shapes';
+import { calculateCenterBetweenPoint } from '@/helpers/flowchart/points';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -73,7 +73,6 @@ import FlowchartColorField from './fields/flowchart-color-field.vue';
 import FlowchartNumberField from './fields/flowchart-number-field.vue';
 import FlowchartStrokeTypeField from './fields/flowchart-stroke-type-field.vue';
 import FlowchartLineTypeField from './fields/flowchart-line-type-field.vue';
-import { calculateCenterBetweenPoint } from '@/helpers/flowchart/points';
 
 export default {
   components: {

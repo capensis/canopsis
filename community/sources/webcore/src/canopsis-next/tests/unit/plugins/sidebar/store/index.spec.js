@@ -81,6 +81,8 @@ describe('Sidebar plugin store module', () => {
 
   it('Hide sidebar. Action: hide', () => {
     jest.useFakeTimers();
+    jest.spyOn(global, 'setTimeout');
+
     const commit = jest.fn();
     const state = cloneDeep(initialState);
 
@@ -104,6 +106,8 @@ describe('Sidebar plugin store module', () => {
 
   it('Hide sidebar with hidden. Action: hide', () => {
     jest.useFakeTimers();
+    jest.spyOn(global, 'setTimeout');
+
     const commit = jest.fn();
     const state = { ...initialState, hidden: true };
 

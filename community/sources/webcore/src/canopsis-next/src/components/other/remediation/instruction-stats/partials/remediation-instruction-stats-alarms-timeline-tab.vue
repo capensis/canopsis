@@ -29,14 +29,14 @@
     template(#timeout_after_execution="{ item }")
       span {{ item.timeout_after_execution | duration }}
     template(#timeline="{ item }")
-      span.grey--text.text--darken-2(v-if="!item.alarm") {{ $t('remediation.instructionStat.instructionChanged') }}
+      span.text--secondary(v-if="!item.alarm") {{ $t('remediation.instructionStat.instructionChanged') }}
       alarm-horizontal-time-line.my-2(v-else, :alarm="item.alarm")
 </template>
 
 <script>
 import {
   prepareRemediationInstructionExecutionsForAlarmTimeline,
-} from '@/helpers/entities/remediation-instruction-execution';
+} from '@/helpers/entities/remediation/instruction-execution/list';
 
 import { localQueryMixin } from '@/mixins/query-local/query';
 import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';

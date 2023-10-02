@@ -1,8 +1,8 @@
 import { KPI_ALARM_METRICS_FILENAME_PREFIX } from '@/config';
-
 import { DATETIME_FORMATS } from '@/constants';
 
 import { convertDateToString } from '@/helpers/date/date';
+
 import { metricsExportMixinCreator } from '@/mixins/widget/metrics/export';
 
 export const widgetChartExportMixinCreator = ({ createExport, fetchExport }) => ({

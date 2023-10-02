@@ -1,5 +1,7 @@
 package entity
 
+//go:generate easyjson -no_std_marshalers
+
 import (
 	"strings"
 
@@ -32,12 +34,15 @@ type SortRequest struct {
 	SortBy string `form:"sort_by" json:"sort_by"`
 }
 
+// BaseFilterRequest
+// easyjson:json
 type BaseFilterRequest struct {
-	Search   string   `form:"search" json:"search"`
-	Filters  []string `form:"filters[]" json:"filters"`
-	Category string   `form:"category" json:"category"`
-	Type     []string `form:"type[]" json:"type"`
-	NoEvents bool     `form:"no_events" json:"no_events"`
+	Search        string   `form:"search" json:"search"`
+	Filters       []string `form:"filters[]" json:"filters"`
+	Category      string   `form:"category" json:"category"`
+	Type          []string `form:"type[]" json:"type"`
+	NoEvents      bool     `form:"no_events" json:"no_events"`
+	EntityPattern string   `form:"entity_pattern" json:"entity_pattern"`
 }
 
 type ExportRequest struct {

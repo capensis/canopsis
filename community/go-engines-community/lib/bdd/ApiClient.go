@@ -13,6 +13,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strconv"
 	"strings"
@@ -20,7 +21,6 @@ import (
 
 	libhttp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
@@ -50,18 +50,21 @@ type ApiClient struct {
 	db            mongo.DbClient
 	requestLogger zerolog.Logger
 	templater     *Templater
+	// directory with scenario's test data, which IReadFile can access
+	dirScenarioData string
 }
 
 // NewApiClient creates new API client.
-func NewApiClient(db mongo.DbClient, url string, requestLogger zerolog.Logger, templater *Templater) *ApiClient {
+func NewApiClient(db mongo.DbClient, url, dirScenarioData string, requestLogger zerolog.Logger, templater *Templater) *ApiClient {
 	return &ApiClient{
 		url: url,
 		client: &http.Client{
 			Timeout: requestTimeout,
 		},
-		db:            db,
-		requestLogger: requestLogger,
-		templater:     templater,
+		db:              db,
+		templater:       templater,
+		dirScenarioData: dirScenarioData,
+		requestLogger:   requestLogger,
 	}
 }
 
@@ -266,6 +269,72 @@ func (a *ApiClient) TheResponseKeyShouldNotBe(ctx context.Context, path, value s
 		}
 
 		return fmt.Errorf("%v is equal to %v", value, nestedVal)
+	}
+
+	responseBodyOutput, ok := getResponseBodyOutput(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+
+	return fmt.Errorf("%s not exists in response:\n%v", path, responseBodyOutput)
+}
+
+/*
+*
+Step example:
+
+	Then the response key "data.0.created_at" should be "0"
+*/
+func (a *ApiClient) TheResponseKeyShouldBe(ctx context.Context, path, value string) error {
+	responseBody, ok := getResponseBody(ctx)
+	if !ok {
+		return fmt.Errorf("response is nil")
+	}
+
+	b, err := a.templater.Execute(ctx, value)
+	if err != nil {
+		return err
+	}
+
+	value = b.String()
+
+	if nestedVal, ok := getNestedJsonVal(responseBody, strings.Split(path, ".")); ok {
+		switch v := nestedVal.(type) {
+		case types.Nil:
+			if value == "null" {
+				return nil
+			}
+		case string:
+			if v == value {
+				return nil
+			}
+		case int:
+			if i, err := strconv.ParseInt(value, 10, 0); err != nil || v == int(i) {
+				return nil
+			}
+		case int32:
+			if i, err := strconv.ParseInt(value, 10, 0); err != nil || v == int32(i) {
+				return nil
+			}
+		case int64:
+			if i, err := strconv.ParseInt(value, 10, 0); err != nil || v == i {
+				return nil
+			}
+		case float32:
+			if f, err := strconv.ParseFloat(value, 32); err != nil || v == float32(f) {
+				return nil
+			}
+		case float64:
+			if f, err := strconv.ParseFloat(value, 64); err != nil || v == f {
+				return nil
+			}
+		case bool:
+			if b, err := strconv.ParseBool(value); err != nil || v == b {
+				return nil
+			}
+		}
+
+		return fmt.Errorf("%v doesn't equal to %v", value, nestedVal)
 	}
 
 	responseBodyOutput, ok := getResponseBodyOutput(ctx)
@@ -796,36 +865,29 @@ Step example:
 	Given I am admin
 */
 func (a *ApiClient) IAm(ctx context.Context, role string) (context.Context, error) {
-	var line model.Rbac
-	res := a.db.Collection(mongo.RightsMongoCollection).FindOne(ctx, bson.M{
-		"crecord_type": model.LineTypeRole,
-		"crecord_name": role,
-	})
-	if err := res.Err(); err != nil {
+	var r struct {
+		ID string `bson:"_id"`
+	}
+	err := a.db.Collection(mongo.RoleCollection).FindOne(ctx, bson.M{
+		"name": role,
+	}).Decode(&r)
+	if err != nil {
 		return ctx, fmt.Errorf("cannot fetch role: %w", err)
 	}
 
-	err := res.Decode(&line)
-	if err != nil {
-		return ctx, fmt.Errorf("cannot decode role: %w", err)
+	var u struct {
+		Name string `bson:"name"`
 	}
-
-	res = a.db.Collection(mongo.RightsMongoCollection).FindOne(ctx, bson.M{
-		"crecord_type": model.LineTypeSubject,
-		"role":         line.ID,
-	})
-	if err := res.Err(); err != nil {
+	err = a.db.Collection(mongo.UserCollection).FindOne(ctx, bson.M{
+		"roles": r.ID,
+	}).Decode(&u)
+	if err != nil {
 		return ctx, fmt.Errorf("cannot fetch user: %w", err)
-	}
-
-	err = res.Decode(&line)
-	if err != nil {
-		return ctx, fmt.Errorf("cannot decode user: %w", err)
 	}
 
 	uri := fmt.Sprintf("%s/api/v4/login", a.url)
 	body, err := json.Marshal(map[string]string{
-		"username": line.Name,
+		"username": u.Name,
 		"password": userPass,
 	})
 	if err != nil {
@@ -1339,6 +1401,22 @@ func (a *ApiClient) ISaveResponse(ctx context.Context, key, value string) (conte
 	}
 
 	return setVar(ctx, key, b.String()), nil
+}
+
+/*
+*
+IReadFile reads text file specified by "name" under testdata/scenariodata
+Step example:
+
+	When I read file TEST-MIB as testMIB
+*/
+func (a *ApiClient) IReadFile(ctx context.Context, name, key string) (context.Context, error) {
+	b, err := os.ReadFile(filepath.Join(a.dirScenarioData, name))
+	if err != nil {
+		return ctx, err
+	}
+
+	return setVar(ctx, key, string(b)), nil
 }
 
 // ValueShouldBeGteLteThan

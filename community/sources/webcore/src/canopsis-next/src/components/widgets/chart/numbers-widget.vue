@@ -1,6 +1,6 @@
 <template lang="pug">
   v-layout.py-2(column)
-    chart-widget-filters.mx-3(
+    kpi-widget-filters.mx-3(
       :widget-id="widget._id",
       :user-filters="userPreference.filters",
       :widget-filters="widget.filters",
@@ -42,7 +42,7 @@ import {
   NUMBERS_CHART_MIN_AUTO_FONT_SIZE,
 } from '@/constants';
 
-import { convertFilterToQuery } from '@/helpers/query';
+import { convertFilterToQuery } from '@/helpers/entities/shared/query';
 
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
@@ -56,7 +56,7 @@ import { permissionsWidgetsNumbersInterval } from '@/mixins/permissions/widgets/
 import { permissionsWidgetsNumbersSampling } from '@/mixins/permissions/widgets/chart/numbers/sampling';
 import { permissionsWidgetsNumbersFilters } from '@/mixins/permissions/widgets/chart/numbers/filters';
 
-import ChartWidgetFilters from '@/components/widgets/chart/partials/chart-widget-filters.vue';
+import KpiWidgetFilters from '../partials/kpi-widget-filters.vue';
 
 import ChartLoader from './partials/chart-loader.vue';
 import NumbersMetrics from './partials/numbers-metrics.vue';
@@ -66,7 +66,7 @@ const { mapActions: mapMetricsActions } = createNamespacedHelpers('metrics');
 export default {
   inject: ['$system'],
   components: {
-    ChartWidgetFilters,
+    KpiWidgetFilters,
     ChartLoader,
     NumbersMetrics,
   },

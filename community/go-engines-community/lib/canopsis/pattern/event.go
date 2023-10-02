@@ -50,7 +50,88 @@ func (m *EventRegexMatches) SetInfoRegexMatches(fieldName string, matches RegexM
 	m.ExtraInfos[fieldName] = matches
 }
 
-func (p Event) Match(event types.Event) (bool, EventRegexMatches, error) {
+func (p Event) Match(event types.Event) (bool, error) {
+	if len(p) == 0 {
+		return true, nil
+	}
+
+	for _, group := range p {
+		matched := false
+
+		for _, v := range group {
+			f := v.Field
+			cond := v.Condition
+			var err error
+			matched = false
+
+			if infoName := getEventExtraInfoName(f); infoName != "" {
+				infoVal, ok := getEventExtraInfoVal(event, infoName)
+				if v.FieldType == "" {
+					matched, err = cond.MatchRef(infoVal)
+				} else if ok {
+					switch v.FieldType {
+					case FieldTypeString:
+						var s string
+						if s, err = getStringValue(infoVal); err == nil {
+							matched, err = cond.MatchString(s)
+						}
+					case FieldTypeInt:
+						var i int64
+						if i, err = getIntValue(infoVal); err == nil {
+							matched, err = cond.MatchInt(i)
+						}
+					case FieldTypeBool:
+						var b bool
+						if b, err = getBoolValue(infoVal); err == nil {
+							matched, err = cond.MatchBool(b)
+						}
+					case FieldTypeStringArray:
+						var a []string
+						if a, err = getStringArrayValue(infoVal); err == nil {
+							matched, err = cond.MatchStringArray(a)
+						}
+					default:
+						return false, fmt.Errorf("invalid field type for %q field: %s", f, v.FieldType)
+					}
+				}
+
+				if err != nil {
+					return false, fmt.Errorf("invalid condition for %q field: %w", f, err)
+				}
+
+				if !matched {
+					break
+				}
+
+				continue
+			}
+
+			if str, ok := getEventStringField(event, f); ok {
+				matched, err = cond.MatchString(str)
+			} else if i, ok := getEventIntField(event, f); ok {
+				matched, err = cond.MatchInt(i)
+			} else {
+				err = ErrUnsupportedField
+			}
+
+			if err != nil {
+				return false, fmt.Errorf("invalid condition for %q field: %w", f, err)
+			}
+
+			if !matched {
+				break
+			}
+		}
+
+		if matched {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
+func (p Event) MatchWithRegexMatches(event types.Event) (bool, EventRegexMatches, error) {
 	eventRegexMatches := NewEventRegexMatches()
 
 	if len(p) == 0 {
@@ -77,7 +158,7 @@ func (p Event) Match(event types.Event) (bool, EventRegexMatches, error) {
 					case FieldTypeString:
 						var s string
 						if s, err = getStringValue(infoVal); err == nil {
-							matched, regexMatches, err = cond.MatchString(s)
+							matched, regexMatches, err = cond.MatchStringWithRegexpMatches(s)
 							if matched {
 								eventRegexMatches.SetInfoRegexMatches(infoName, regexMatches)
 							}
@@ -114,7 +195,7 @@ func (p Event) Match(event types.Event) (bool, EventRegexMatches, error) {
 			}
 
 			if str, ok := getEventStringField(event, f); ok {
-				matched, regexMatches, err = cond.MatchString(str)
+				matched, regexMatches, err = cond.MatchStringWithRegexpMatches(str)
 				if matched {
 					eventRegexMatches.SetRegexMatches(f, regexMatches)
 				}
@@ -157,7 +238,7 @@ func (p Event) Validate() bool {
 			if infoName := getEventExtraInfoName(f); infoName != "" {
 				switch v.FieldType {
 				case FieldTypeString:
-					_, _, err = cond.MatchString("")
+					_, err = cond.MatchString("")
 				case FieldTypeInt:
 					_, err = cond.MatchInt(0)
 				case FieldTypeBool:
@@ -176,7 +257,7 @@ func (p Event) Validate() bool {
 			}
 
 			if str, ok := getEventStringField(emptyEvent, f); ok {
-				_, _, err = cond.MatchString(str)
+				_, err = cond.MatchString(str)
 			} else if i, ok := getEventIntField(emptyEvent, f); ok {
 				_, err = cond.MatchInt(i)
 			} else {

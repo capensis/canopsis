@@ -1,13 +1,10 @@
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import { COLORS } from '@/config';
 import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, PBEHAVIOR_TYPE_TYPES, SHAPES } from '@/constants';
 import { shapeToForm } from '@/helpers/flowchart/shapes';
+import { getImpactStateColor } from '@/helpers/entities/entity/color';
 
 import FlowchartPreview from '@/components/other/map/partials/flowchart-preview.vue';
-import { getImpactStateColor } from '@/helpers/color';
-
-const localVue = createVueInstance();
 
 const stubs = {
   panzoom: true,
@@ -28,20 +25,6 @@ const stubs = {
   'flowchart-points-preview': true,
   'c-help-icon': true,
 };
-
-const factory = (options = {}) => shallowMount(FlowchartPreview, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(FlowchartPreview, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectFlowchart = wrapper => wrapper.find('div.flowchart');
 
@@ -96,6 +79,9 @@ describe('flowchart-preview', () => {
     },
   };
 
+  const factory = generateShallowRenderer(FlowchartPreview, { stubs });
+  const snapshotFactory = generateRenderer(FlowchartPreview, { stubs });
+
   test('Shapes color changed by point with color indicator impact state', async () => {
     const wrapper = factory({
       propsData: {
@@ -108,7 +94,7 @@ describe('flowchart-preview', () => {
 
     const flowchart = selectFlowchart(wrapper);
 
-    const okColorDarken = '#004023';
+    const okColorDarken = '#000000';
 
     expect(flowchart.vm.shapes).toEqual({
       [lineShape._id]: lineShape,
@@ -117,7 +103,7 @@ describe('flowchart-preview', () => {
         ...circleShape,
         properties: {
           ...circleShape.properties,
-          fill: COLORS.state.ok,
+          fill: '',
           stroke: okColorDarken,
         },
         textProperties: {

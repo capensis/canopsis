@@ -47,7 +47,7 @@ import {
   convertDateToStartOfUnitTimestamp,
   convertDateToTimestampByTimezone,
 } from '@/helpers/date/date';
-import { pbehaviorToTimespanRequest } from '@/helpers/forms/timespans-pbehavior';
+import { pbehaviorToTimespanRequest } from '@/helpers/entities/pbehavior/timespans/form';
 
 import { entitiesPbehaviorTimespansMixin } from '@/mixins/entities/pbehavior/timespans';
 

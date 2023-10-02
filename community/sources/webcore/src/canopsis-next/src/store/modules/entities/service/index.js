@@ -1,12 +1,15 @@
 import Vue from 'vue';
 import { get } from 'lodash';
 
-import i18n from '@/i18n';
 import { API_ROUTES } from '@/config';
-import { serviceSchema } from '@/store/schemas';
 import { ENTITIES_TYPES } from '@/constants';
-import { createEntityModule } from '@/store/plugins/entities';
+
 import request from '@/services/request';
+
+import i18n from '@/i18n';
+
+import { serviceSchema } from '@/store/schemas';
+import { createEntityModule } from '@/store/plugins/entities';
 
 import entityModule from './entity';
 

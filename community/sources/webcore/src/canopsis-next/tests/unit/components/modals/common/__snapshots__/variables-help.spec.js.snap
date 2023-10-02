@@ -38,7 +38,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                 >
                   :
                   <div
-                    class="pl-1 d-inline-block grey--text text--darken-1 body-1 font-italic"
+                    class="pl-1 d-inline-block text--secondary body-1 font-italic"
                   >
                     Empty object
                   </div>
@@ -50,6 +50,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
               left="left"
               tooltip="Export"
             />
+            <!---->
           </div>
         </div>
       </div>
@@ -81,6 +82,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
               left="left"
               tooltip="Export"
             />
+            <!---->
           </div>
         </div>
         <div
@@ -105,7 +107,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                     >
                       :
                       <c-ellipsis-stub
-                        class="pl-1 d-inline-block grey--text body-1 pre-wrap"
+                        class="pl-1 d-inline-block text--secondary body-1 pre-wrap"
                         text="1"
                       />
                     </span>
@@ -116,6 +118,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                   tooltip="Copy to clipboard"
                   value="test2.number_prop"
                 />
+                <!---->
               </div>
             </div>
           </div>
@@ -138,7 +141,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                     >
                       :
                       <c-ellipsis-stub
-                        class="pl-1 d-inline-block grey--text body-1 pre-wrap"
+                        class="pl-1 d-inline-block text--secondary body-1 pre-wrap"
                         text="string"
                       />
                     </span>
@@ -149,6 +152,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                   tooltip="Copy to clipboard"
                   value="test2.string_prop"
                 />
+                <!---->
               </div>
             </div>
           </div>
@@ -171,7 +175,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                     >
                       :
                       <c-ellipsis-stub
-                        class="pl-1 d-inline-block grey--text body-1 pre-wrap"
+                        class="pl-1 d-inline-block text--secondary body-1 pre-wrap"
                         text="false"
                       />
                     </span>
@@ -182,6 +186,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                   tooltip="Copy to clipboard"
                   value="test2.bool_prop"
                 />
+                <!---->
               </div>
             </div>
           </div>
@@ -204,7 +209,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                     >
                       :
                       <c-ellipsis-stub
-                        class="pl-1 d-inline-block grey--text body-1 pre-wrap"
+                        class="pl-1 d-inline-block text--secondary body-1 pre-wrap"
                         text="null"
                       />
                     </span>
@@ -215,6 +220,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                   tooltip="Copy to clipboard"
                   value="test2.null_prop"
                 />
+                <!---->
               </div>
             </div>
           </div>
@@ -237,7 +243,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                     >
                       :
                       <c-ellipsis-stub
-                        class="pl-1 d-inline-block grey--text body-1 pre-wrap"
+                        class="pl-1 d-inline-block text--secondary body-1 pre-wrap"
                         text="undefined"
                       />
                     </span>
@@ -248,6 +254,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                   tooltip="Copy to clipboard"
                   value="test2.undefined_prop"
                 />
+                <!---->
               </div>
             </div>
           </div>
@@ -284,6 +291,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                   left="left"
                   tooltip="Export"
                 />
+                <!---->
               </div>
             </div>
             <div
@@ -317,6 +325,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                       left="left"
                       tooltip="Export"
                     />
+                    <!---->
                   </div>
                 </div>
                 <div
@@ -350,6 +359,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                           left="left"
                           tooltip="Export"
                         />
+                        <!---->
                       </div>
                     </div>
                     <div
@@ -374,7 +384,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                                 >
                                   :
                                   <c-ellipsis-stub
-                                    class="pl-1 d-inline-block grey--text body-1 pre-wrap"
+                                    class="pl-1 d-inline-block text--secondary body-1 pre-wrap"
                                     text="53"
                                   />
                                 </span>
@@ -385,6 +395,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                               tooltip="Copy to clipboard"
                               value="test2.array_prop.[0].obj_prop.deep_prop"
                             />
+                            <!---->
                           </div>
                         </div>
                       </div>
@@ -407,7 +418,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                                 >
                                   :
                                   <div
-                                    class="pl-1 d-inline-block grey--text text--darken-1 body-1 font-italic"
+                                    class="pl-1 d-inline-block text--secondary body-1 font-italic"
                                   >
                                     Empty object
                                   </div>
@@ -419,6 +430,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                               left="left"
                               tooltip="Export"
                             />
+                            <!---->
                           </div>
                         </div>
                       </div>
@@ -450,7 +462,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                         >
                           :
                           <div
-                            class="pl-1 d-inline-block grey--text text--darken-1 body-1 font-italic"
+                            class="pl-1 d-inline-block text--secondary body-1 font-italic"
                           >
                             Empty object
                           </div>
@@ -462,6 +474,7 @@ exports[`variables-help Renders \`variables-help\` with all parameters 1`] = `
                       left="left"
                       tooltip="Export"
                     />
+                    <!---->
                   </div>
                 </div>
               </div>
@@ -497,6 +510,105 @@ exports[`variables-help Renders \`variables-help\` with empty modal 1`] = `
     <div
       class="v-treeview theme--light"
     />
+  </div>
+   
+  <div
+    class="actions"
+  />
+</div>
+`;
+
+exports[`variables-help Renders \`variables-help\` with original flag 1`] = `
+<div
+  class="modal-wrapper"
+  close="close"
+>
+  <div
+    class="title"
+  >
+    <span>
+      Variables
+    </span>
+  </div>
+   
+  <div
+    class="text"
+  >
+    <div
+      class="v-treeview theme--light"
+    >
+      <div
+        class="v-treeview-node v-treeview-node--leaf"
+      >
+        <div
+          class="v-treeview-node__root"
+        >
+          <div
+            class="v-treeview-node__content"
+          >
+            <div
+              class="v-treeview-node__label"
+            >
+              <div>
+                alarm
+                <span
+                  class="pl-1"
+                >
+                  :
+                  <div
+                    class="pl-1 d-inline-block text--secondary body-1 font-italic"
+                  >
+                    Empty object
+                  </div>
+                </span>
+              </div>
+            </div>
+            <c-action-btn-stub
+              icon="file_download"
+              left="left"
+              tooltip="Export"
+            />
+            <c-action-btn-stub
+              icon="assignment_returned"
+              left="left"
+              tooltip="Export alarm to PDF file"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        class="v-treeview-node"
+      >
+        <div
+          class="v-treeview-node__root"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon v-treeview-node__toggle v-icon--link material-icons theme--light"
+          >
+            arrow_drop_down
+          </i>
+          <div
+            class="v-treeview-node__content"
+          >
+            <div
+              class="v-treeview-node__label"
+            >
+              <div>
+                test2
+                <!---->
+              </div>
+            </div>
+            <c-action-btn-stub
+              icon="file_download"
+              left="left"
+              tooltip="Export"
+            />
+            <!---->
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
    
   <div

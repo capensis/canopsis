@@ -171,15 +171,6 @@ func (a mongoAdapter) GetAllOpenedResourceAlarmsByComponent(ctx context.Context,
 	return a.getAlarmsWithEntity(ctx, req)
 }
 
-func (a mongoAdapter) GetUnacknowledgedAlarmsByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error) {
-	return a.getAlarmsWithEntity(ctx, bson.M{
-		"v.component": component,
-		"v.meta":      bson.M{"$exists": false},
-		"v.resolved":  nil,
-		"v.ack":       nil,
-	})
-}
-
 func (a mongoAdapter) GetAlarmsWithoutTicketByComponent(ctx context.Context, component string) ([]types.AlarmWithEntity, error) {
 	return a.getAlarmsWithEntity(ctx, bson.M{
 		"v.component": component,
@@ -681,33 +672,35 @@ func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdBefo
 	})
 }
 
-func (a *mongoAdapter) GetWorstAlarmState(ctx context.Context, entityIds []string) (int64, error) {
+func (a *mongoAdapter) GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context, entityIds []string) (int64, int64, error) {
 	cursor, err := a.mainDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"d":          bson.M{"$in": entityIds},
 			"v.resolved": nil,
 		}},
 		{"$group": bson.M{
-			"_id":   nil,
-			"state": bson.M{"$max": "$v.state.val"},
+			"_id":             nil,
+			"state":           bson.M{"$max": "$v.state.val"},
+			"last_event_date": bson.M{"$max": "$v.last_event_date"},
 		}},
 	})
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
 	defer cursor.Close(ctx)
 	for cursor.Next(ctx) {
 		res := struct {
-			State int64 `bson:"state"`
+			State         int64 `bson:"state"`
+			LastEventDate int64 `bson:"last_event_date"`
 		}{}
 
 		err := cursor.Decode(&res)
 
-		return res.State, err
+		return res.State, res.LastEventDate, err
 	}
 
-	return 0, nil
+	return 0, 0, nil
 }
 
 func (a *mongoAdapter) UpdateLastEventDate(ctx context.Context, entityIds []string, t types.CpsTime) error {
@@ -715,7 +708,7 @@ func (a *mongoAdapter) UpdateLastEventDate(ctx context.Context, entityIds []stri
 		"d":          bson.M{"$in": entityIds},
 		"v.resolved": nil,
 	}, bson.M{
-		"$set": bson.M{"last_event_date": t},
+		"$set": bson.M{"v.last_event_date": t},
 	})
 
 	return err

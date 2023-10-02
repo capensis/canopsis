@@ -1,5 +1,4 @@
 import popupsStoreModule from './store';
-
 import ThePopups from './components/the-popups.vue';
 
 export default {

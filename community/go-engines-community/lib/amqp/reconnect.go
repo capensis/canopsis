@@ -356,7 +356,7 @@ func (ch *baseChannel) QueueInspect(name string) (amqp.Queue, error) {
 	var res amqp.Queue
 	err := ch.retry(func() error {
 		var err error
-		res, err = ch.amqpCh.QueueInspect(name)
+		res, err = ch.amqpCh.QueueDeclarePassive(name, false, false, false, false, nil)
 		return err
 	})
 

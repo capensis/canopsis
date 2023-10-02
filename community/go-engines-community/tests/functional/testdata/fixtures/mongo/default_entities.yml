@@ -162,6 +162,10 @@ default_entities:
     <<: *resource
     _id: test-resource-to-pattern-count-4/test-component-default
     name: test-resource-to-pattern-count-4
+  entity_to_pattern_count_5:
+    <<: *resource
+    _id: test-resource-to-pattern-count-5/test-component-default
+    name: test-resource-to-pattern-count-5
 
   entity_to_pbehavior_get_by_entity_id_1:
     <<: *resource
@@ -468,23 +472,13 @@ default_entities:
     <<: *service
     _id: test-service-weather-entity-7
     name: test-service-weather-entity-7
+    depends:
+      - test-resource-service-weather-entity-7/test-component-service-weather-entity-7
     entity_pattern:
       - - field: name
           cond:
             type: regexp
             value: test-resource-service-weather-entity-7
-
-  service_weather_entity_8:
-    <<: *service
-    _id: test-service-weather-entity-8
-    name: test-service-weather-entity-8
-    depends:
-      - test-resource-service-weather-entity-8/test-component-service-weather-entity-8
-    entity_pattern:
-      - - field: name
-          cond:
-            type: regexp
-            value: test-resource-service-weather-entity-8
 
   service_to_emit_resource_entityupdated_events_on_component_infos_update:
     <<: *service
@@ -1071,6 +1065,7 @@ default_entities:
     <<: *resource
     _id: test-resource-to-alarm-export-2/test-component-default
     name: test-resource-to-alarm-export-2
+    category: test-category-to-alarm-export
 
   resource_to_export_1:
     <<: *resource

@@ -50,7 +50,8 @@ Feature: Get a link rule
           ],
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1605263992,
           "updated": 1605263992
@@ -86,7 +87,8 @@ Feature: Get a link rule
           ],
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1605263992,
           "updated": 1605263992
@@ -119,7 +121,8 @@ Feature: Get a link rule
           ],
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1605263992,
           "updated": 1605263992
@@ -180,7 +183,8 @@ Feature: Get a link rule
       ],
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "created": 1605263992,
       "updated": 1605263992

@@ -141,6 +141,7 @@ exports[`service-weather Renders \`service-weather\` with full access 1`] = `
         <filters-list-btn-stub
           addable="true"
           editable="true"
+          entitycounterstype="true"
           entitytypes="service"
           private="true"
           widgetid="service-weather-widget-id"
@@ -162,8 +163,13 @@ exports[`service-weather Renders \`service-weather\` with full access 1`] = `
       class="flex xs6"
     >
       <service-weather-item-stub
+        actionrequiredblinking="true"
+        counterssettings="[object Object]"
+        heightfactor="0"
+        margin="[object Object]"
+        priorityenabled="true"
         service="[object Object]"
-        widget="[object Object]"
+        template=""
       />
     </div>
   </div>

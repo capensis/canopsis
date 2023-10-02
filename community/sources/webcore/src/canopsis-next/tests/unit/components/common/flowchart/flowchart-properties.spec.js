@@ -1,12 +1,10 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { lineShapeToForm, rectShapeToForm } from '@/helpers/flowchart/shapes';
 
 import FlowchartProperties from '@/components/common/flowchart/flowchart-properties.vue';
 import { LINE_TYPES, STROKE_TYPES } from '@/constants';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'flowchart-color-field': true,
@@ -14,20 +12,6 @@ const stubs = {
   'flowchart-stroke-type-field': true,
   'flowchart-line-type-field': true,
 };
-
-const factory = (options = {}) => shallowMount(FlowchartProperties, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(FlowchartProperties, {
-  localVue,
-  stubs,
-
-  ...options,
-});
 
 const selectFillColorField = wrapper => wrapper.find('flowchart-color-field-stub[label="Fill"]');
 const selectStrokeColorField = wrapper => wrapper.find('flowchart-color-field-stub[label="Stroke"]');
@@ -39,6 +23,9 @@ const selectFontBackgroundColorField = wrapper => wrapper.find('flowchart-color-
 const selectFontSizeField = wrapper => wrapper.find('flowchart-number-field-stub[label="Font size"]');
 
 describe('flowchart-properties', () => {
+  const factory = generateShallowRenderer(FlowchartProperties, { stubs });
+  const snapshotFactory = generateRenderer(FlowchartProperties, { stubs });
+
   test('Fill changed after trigger color field', () => {
     const firstShape = rectShapeToForm({
       _id: 'first',

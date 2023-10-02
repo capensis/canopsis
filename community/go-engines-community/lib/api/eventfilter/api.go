@@ -2,20 +2,24 @@ package eventfilter
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"github.com/rs/zerolog"
-	"github.com/valyala/fastjson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
+
+type API interface {
+	common.BulkCrudAPI
+	ListFailures(c *gin.Context)
+	ReadFailures(c *gin.Context)
+}
 
 type api struct {
 	store        Store
@@ -29,7 +33,7 @@ func NewApi(
 	actionLogger logger.ActionLogger,
 	logger zerolog.Logger,
 	transformer common.PatternFieldsTransformer,
-) common.BulkCrudAPI {
+) API {
 	return &api{
 		store:        store,
 		actionLogger: actionLogger,
@@ -41,7 +45,7 @@ func NewApi(
 // Create
 // @Param body body CreateRequest true "body"
 // @Success 201 {object} Response
-func (a api) Create(c *gin.Context) {
+func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
 	var err error
 
@@ -50,9 +54,7 @@ func (a api) Create(c *gin.Context) {
 		return
 	}
 
-	ctx := c.Request.Context()
-
-	err = a.transformEditRequest(ctx, &request.EditRequest)
+	err = a.transformEditRequest(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -62,7 +64,7 @@ func (a api) Create(c *gin.Context) {
 		panic(err)
 	}
 
-	eventfilter, err := a.store.Insert(ctx, request)
+	eventfilter, err := a.store.Insert(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -81,7 +83,7 @@ func (a api) Create(c *gin.Context) {
 
 // List
 // @Success 200 {object} common.PaginatedListResponse{data=[]Response}
-func (a api) List(c *gin.Context) {
+func (a *api) List(c *gin.Context) {
 	var query FilteredQuery
 	query.Query = pagination.GetDefaultQuery()
 
@@ -90,7 +92,7 @@ func (a api) List(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.Find(c.Request.Context(), query)
+	aggregationResult, err := a.store.Find(c, query)
 	if err != nil {
 		panic(err)
 	}
@@ -106,8 +108,8 @@ func (a api) List(c *gin.Context) {
 
 // Get
 // @Success 200 {object} Response
-func (a api) Get(c *gin.Context) {
-	evf, err := a.store.GetById(c.Request.Context(), c.Param("id"))
+func (a *api) Get(c *gin.Context) {
+	evf, err := a.store.GetById(c, c.Param("id"))
 
 	if err == mongodriver.ErrNoDocuments || evf == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -124,7 +126,7 @@ func (a api) Get(c *gin.Context) {
 // Update
 // @Param body body UpdateRequest true "body"
 // @Success 200 {object} Response
-func (a api) Update(c *gin.Context) {
+func (a *api) Update(c *gin.Context) {
 	request := UpdateRequest{
 		ID: c.Param("id"),
 	}
@@ -135,9 +137,7 @@ func (a api) Update(c *gin.Context) {
 		return
 	}
 
-	ctx := c.Request.Context()
-
-	err := a.transformEditRequest(ctx, &request.EditRequest)
+	err := a.transformEditRequest(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -147,7 +147,7 @@ func (a api) Update(c *gin.Context) {
 		panic(err)
 	}
 
-	eventfilter, err := a.store.Update(ctx, request)
+	eventfilter, err := a.store.Update(c, request)
 	if err != nil {
 		panic(err)
 	}
@@ -169,8 +169,8 @@ func (a api) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, eventfilter)
 }
 
-func (a api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c.Request.Context(), c.Param("id"))
+func (a *api) Delete(c *gin.Context) {
+	ok, err := a.store.Delete(c, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -196,70 +196,16 @@ func (a api) Delete(c *gin.Context) {
 // @Param body body []CreateRequest true "body"
 func (a *api) BulkCreate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-
-	var ar fastjson.Arena
-
-	raw, err := c.GetRawData()
-	if err != nil {
-		panic(err)
-	}
-
-	jsonValue, err := fastjson.ParseBytes(raw)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	rawObjects, err := jsonValue.Array()
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	ctx := c.Request.Context()
-	response := ar.NewArray()
-
-	for idx, rawObject := range rawObjects {
-		object, err := rawObject.Object()
+	bulk.Handler(c, func(request CreateRequest) (string, error) {
+		err := a.transformEditRequest(c, &request.EditRequest)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
+			return "", err
 		}
 
-		var request CreateRequest
-		err = json.Unmarshal(object.MarshalTo(nil), &request)
+		eventfilter, err := a.store.Insert(c, request)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
+			return "", err
 		}
-
-		err = binding.Validator.ValidateStruct(request)
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
-			continue
-		}
-
-		err = a.transformEditRequest(ctx, &request.EditRequest)
-		if err != nil {
-			valErr := common.ValidationError{}
-			if errors.As(err, &valErr) {
-				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
-				continue
-			}
-
-			a.logger.Err(err).Msg("cannot create event filter")
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
-			continue
-		}
-
-		eventfilter, err := a.store.Insert(ctx, request)
-		if err != nil {
-			a.logger.Err(err).Msg("cannot create event filter")
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
-			continue
-		}
-
-		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, eventfilter.ID, http.StatusOK, rawObject, nil))
 
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionCreate,
@@ -269,84 +215,25 @@ func (a *api) BulkCreate(c *gin.Context) {
 		if err != nil {
 			a.actionLogger.Err(err, "failed to log action")
 		}
-	}
 
-	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+		return eventfilter.ID, nil
+	}, a.logger)
 }
 
 // BulkUpdate
 // @Param body body []BulkUpdateRequestItem true "body"
 func (a *api) BulkUpdate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-
-	var ar fastjson.Arena
-
-	raw, err := c.GetRawData()
-	if err != nil {
-		panic(err)
-	}
-
-	jsonValue, err := fastjson.ParseBytes(raw)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	rawObjects, err := jsonValue.Array()
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	ctx := c.Request.Context()
-	response := ar.NewArray()
-
-	for idx, rawObject := range rawObjects {
-		object, err := rawObject.Object()
+	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
+		err := a.transformEditRequest(c, &request.EditRequest)
 		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
+			return "", err
 		}
 
-		var request BulkUpdateRequestItem
-		err = json.Unmarshal(object.MarshalTo(nil), &request)
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
+		eventfilter, err := a.store.Update(c, UpdateRequest(request))
+		if err != nil || eventfilter == nil {
+			return "", err
 		}
-
-		err = binding.Validator.ValidateStruct(request)
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
-			continue
-		}
-
-		err = a.transformEditRequest(ctx, &request.EditRequest)
-		if err != nil {
-			valErr := common.ValidationError{}
-			if errors.As(err, &valErr) {
-				response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, valErr, request)))
-				continue
-			}
-
-			a.logger.Err(err).Msg("cannot update event filter")
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
-			continue
-		}
-
-		eventfilter, err := a.store.Update(ctx, UpdateRequest(request))
-		if err != nil {
-			a.logger.Err(err).Msg("cannot update event filter")
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
-			continue
-		}
-
-		if eventfilter == nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
-			continue
-		}
-
-		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, eventfilter.ID, http.StatusOK, rawObject, nil))
 
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionUpdate,
@@ -356,71 +243,20 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		if err != nil {
 			a.actionLogger.Err(err, "failed to log action")
 		}
-	}
 
-	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+		return eventfilter.ID, nil
+	}, a.logger)
 }
 
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
-
-	var ar fastjson.Arena
-
-	raw, err := c.GetRawData()
-	if err != nil {
-		panic(err)
-	}
-
-	jsonValue, err := fastjson.ParseBytes(raw)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	rawObjects, err := jsonValue.Array()
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
-	ctx := c.Request.Context()
-	response := ar.NewArray()
-
-	for idx, rawObject := range rawObjects {
-		userObject, err := rawObject.Object()
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
+	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
+		ok, err := a.store.Delete(c, request.ID)
+		if err != nil || !ok {
+			return "", err
 		}
-
-		var request BulkDeleteRequestItem
-		err = json.Unmarshal(userObject.MarshalTo(nil), &request)
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, ar.NewString(err.Error())))
-			continue
-		}
-
-		err = binding.Validator.ValidateStruct(request)
-		if err != nil {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&ar, err, request)))
-			continue
-		}
-
-		ok, err := a.store.Delete(ctx, request.ID)
-		if err != nil {
-			a.logger.Err(err).Msg("cannot delete event filter")
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusInternalServerError, rawObject, ar.NewString(common.InternalServerErrorResponse.Error)))
-			continue
-		}
-
-		if !ok {
-			response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, "", http.StatusNotFound, rawObject, ar.NewString(common.NotFoundResponse.Error)))
-			continue
-		}
-
-		response.SetArrayItem(idx, common.GetBulkResponseItem(&ar, request.ID, http.StatusOK, rawObject, nil))
 
 		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
 			Action:    logger.ActionDelete,
@@ -430,9 +266,52 @@ func (a *api) BulkDelete(c *gin.Context) {
 		if err != nil {
 			a.actionLogger.Err(err, "failed to log action")
 		}
+
+		return request.ID, nil
+	}, a.logger)
+}
+
+// ListFailures
+// @Success 200 {object} common.PaginatedListResponse{data=[]FailureResponse}
+func (a *api) ListFailures(c *gin.Context) {
+	r := FailureRequest{}
+	r.Query = pagination.GetDefaultQuery()
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
 	}
 
-	c.Data(http.StatusMultiStatus, gin.MIMEJSON, response.MarshalTo(nil))
+	aggregationResult, err := a.store.FindFailures(c, c.Param("id"), r)
+	if err != nil {
+		panic(err)
+	}
+
+	if aggregationResult == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (a *api) ReadFailures(c *gin.Context) {
+	exists, err := a.store.ReadFailures(c, c.Param("id"))
+	if err != nil {
+		panic(err)
+	}
+
+	if !exists {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	c.Status(http.StatusNoContent)
 }
 
 func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {

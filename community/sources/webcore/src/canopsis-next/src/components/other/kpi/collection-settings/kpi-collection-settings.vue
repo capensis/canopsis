@@ -19,7 +19,7 @@
 <script>
 import { cloneDeep, isEqual } from 'lodash';
 
-import { metricsSettingsToForm } from '@/helpers/forms/metrics-settings';
+import { metricsSettingsToForm } from '@/helpers/entities/metrics-settings/form';
 
 import { entitiesMetricsSettingsMixin } from '@/mixins/entities/metrics-settings';
 import { submittableMixinCreator } from '@/mixins/submittable';

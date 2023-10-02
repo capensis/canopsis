@@ -16,17 +16,6 @@ template:
   }
 
 instruction_execution:
-  instruction_execution_running:
-    <<: *manual_execution_running
-    _id: test-instruction-execution-running
-    instruction: test-instruction-execution-running
-    instruction_modified_on: 1596712203
-    step_history:
-      - operation_history:
-          - operation: test-instruction-execution-running-step-1-operation-1
-            started_at: 1597905434
-        step: test-instruction-execution-running-step-1
-
   instruction_execution_to_get_stats_1:
     <<: *manual_execution_completed
     _id: test-instruction-execution-to-get-stats-1

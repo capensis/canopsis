@@ -1,37 +1,25 @@
 import Faker from 'faker';
 
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import CDescriptionField from '@/components/forms/fields/c-description-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-textarea': true,
 };
 
-const factory = (options = {}) => shallowMount(CDescriptionField, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CDescriptionField, {
-  localVue,
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-  },
-
-  ...options,
-});
-
 const selectTextareaNode = wrapper => wrapper.vm.$children[0];
 
 describe('c-description-field', () => {
+  const factory = generateShallowRenderer(CDescriptionField, { stubs });
+  const snapshotFactory = generateRenderer(CDescriptionField, {
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+    },
+  });
+
   test('Value changed after trigger the textarea', () => {
     const wrapper = factory({
       propsData: {

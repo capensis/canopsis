@@ -1,15 +1,13 @@
 import flushPromises from 'flush-promises';
 import { range } from 'lodash';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createPbehaviorTimespanModule } from '@unit/utils/store';
 import { mockDateNow, mockModals } from '@unit/utils/mock-hooks';
 import { createSelectInputStub } from '@unit/stubs/input';
 import { MODALS, PBEHAVIOR_RRULE_PERIODS_RANGES } from '@/constants';
 
 import PbehaviorRecurrenceRulePeriods from '@/components/other/pbehavior/pbehaviors/partials/pbehavior-recurrence-rule-periods.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-action-btn': true,
@@ -56,7 +54,7 @@ describe('pbehavior-recurrence-rule-periods', () => {
   const store = createMockedStoreModules([pbehaviorTimespanModule]);
 
   const factory = generateShallowRenderer(PbehaviorRecurrenceRulePeriods, {
-    localVue,
+
     stubs,
     mocks: { $modals },
     parentComponent: {
@@ -68,7 +66,7 @@ describe('pbehavior-recurrence-rule-periods', () => {
     },
   });
   const snapshotFactory = generateRenderer(PbehaviorRecurrenceRulePeriods, {
-    localVue,
+
     stubs: snapshotStubs,
     parentComponent: {
       provide: {

@@ -547,8 +547,7 @@ Feature: create service entity
         "on_failure": "pass"
       },
       "description": "test-eventfilter-che-service-4-description",
-      "enabled": true,
-      "priority": 2
+      "enabled": true
     }
     """
     Then the response code should be 201
@@ -704,8 +703,7 @@ Feature: create service entity
         "on_failure": "pass"
       },
       "description": "test-eventfilter-che-service-5-description",
-      "enabled": true,
-      "priority": 2
+      "enabled": true
     }
     """
     Then the response code should be 201
@@ -804,8 +802,7 @@ Feature: create service entity
         "on_failure": "pass"
       },
       "description": "test-eventfilter-che-service-5-description",
-      "enabled": true,
-      "priority": 2
+      "enabled": true
     }
     """
     Then the response code should be 200

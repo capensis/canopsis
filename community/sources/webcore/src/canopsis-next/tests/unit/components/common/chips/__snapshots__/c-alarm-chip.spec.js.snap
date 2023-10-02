@@ -9,7 +9,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with custom props 1`] = `
   >
     <span
       class="chip"
-      style="background-color: rgb(117, 117, 117);"
     >
       stealthy
     </span>
@@ -39,7 +38,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with default props 1`] = `
   >
     <span
       class="chip"
-      style="background-color: rgb(0, 166, 90);"
     >
       ok
     </span>
@@ -594,36 +592,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: group 1`] = `
           class="px-1"
         >
           group20
-        </span>
-      </span>
-    </transition-stub>
-  </span>
-</div>
-`;
-
-exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: groupRequest 1`] = `
-<div
-  class="chip-container"
->
-  <span
-    class="v-badge v-badge--overlap"
-  >
-    <span
-      class="chip"
-      style="background-color: black;"
-    >
-      Invalid val
-    </span>
-    <transition-stub
-      name="fab-transition"
-    >
-      <span
-        class="v-badge__badge secondary"
-      >
-        <span
-          class="px-1"
-        >
-          groupRequest20
         </span>
       </span>
     </transition-stub>
@@ -1231,6 +1199,36 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: play 1`] = `
 </div>
 `;
 
+exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: removeAlarmsFromAutoMetaAlarm 1`] = `
+<div
+  class="chip-container"
+>
+  <span
+    class="v-badge v-badge--overlap"
+  >
+    <span
+      class="chip"
+      style="background-color: black;"
+    >
+      Invalid val
+    </span>
+    <transition-stub
+      name="fab-transition"
+    >
+      <span
+        class="v-badge__badge secondary"
+      >
+        <span
+          class="px-1"
+        >
+          removeAlarmsFromAutoMetaAlarm20
+        </span>
+      </span>
+    </transition-stub>
+  </span>
+</div>
+`;
+
 exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: removeAlarmsFromManualMetaAlarm 1`] = `
 <div
   class="chip-container"
@@ -1600,7 +1598,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: cancelled 1`] = `
   >
     <span
       class="chip"
-      style="background-color: rgb(117, 117, 117);"
     >
       cancelled
     </span>
@@ -1630,7 +1627,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: closed 1`] = `
   >
     <span
       class="chip"
-      style="background-color: rgb(47, 171, 99);"
     >
       closed
     </span>
@@ -1660,7 +1656,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: flapping 1`] = `
   >
     <span
       class="chip"
-      style="background-color: rgb(43, 62, 79);"
     >
       flapping
     </span>
@@ -1690,7 +1685,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: noEvents 1`] = `
   >
     <span
       class="chip"
-      style="background-color: rgb(255, 82, 82);"
     >
       no events
     </span>
@@ -1720,7 +1714,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: ongoing 1`] = `
   >
     <span
       class="chip"
-      style="background-color: rgb(249, 168, 37);"
     >
       ongoing
     </span>
@@ -1750,7 +1743,6 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with status: stealthy 1`] = `
   >
     <span
       class="chip"
-      style="background-color: rgb(117, 117, 117);"
     >
       stealthy
     </span>

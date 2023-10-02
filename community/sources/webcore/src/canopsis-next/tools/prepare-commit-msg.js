@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const loadEnv = require('./load-env'); // eslint-disable-line import/no-extraneous-dependencies
 
@@ -63,18 +63,10 @@ if (!branchPrefix || !issueNumber) {
   process.exit();
 }
 
-const huskyGitParams = process.env.HUSKY_GIT_PARAMS;
-
-if (!huskyGitParams) {
-  console.error('The script expects Git parameters to be accessible via HUSKY_GIT_PARAMS.');
-  process.exit(1);
-}
-
-
-const [commitMessageFile] = huskyGitParams.split(' ');
+const [, , commitMessageFile] = process.argv;
 
 if (!commitMessageFile) {
-  console.error('The script requires HUSKY_GIT_PARAMS to contain the name of the file containing the commit log message.');
+  console.error('The script requires $1 to contain the name of the file containing the commit log message.');
   process.exit(1);
 }
 

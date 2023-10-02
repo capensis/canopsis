@@ -83,6 +83,8 @@ export const SOCKET_ROOMS = {
   broadcastMessages: 'broadcast-messages',
   execution: 'execution',
   declareticket: 'declareticket',
+  alarms: 'alarms',
+  alarmDetails: 'alarm-details',
 };
 
 export const API_ROUTES = {
@@ -90,7 +92,11 @@ export const API_ROUTES = {
   logout: '/api/v4/logout',
   loggedUserCount: '/api/v4/logged-user-count',
   currentUser: '/api/v4/account/me',
-  alarmList: '/api/v4/alarms',
+  maintenance: '/api/v4/maintenance',
+  alarms: {
+    list: '/api/v4/alarms',
+    bulkList: '/api/v4/bulk/alarms',
+  },
   componentAlarms: '/api/v4/component-alarms',
   resolvedAlarms: '/api/v4/resolved-alarms',
   alarmDetails: '/api/v4/alarm-details',
@@ -108,7 +114,10 @@ export const API_ROUTES = {
   entityInfosKeys: '/api/v4/entity-infos-dictionary/keys',
   weatherService: '/api/v4/weather-services',
   alarmListExport: '/api/v4/alarm-export',
-  alarmTags: '/api/v4/alarm-tags',
+  alarmTag: {
+    list: '/api/v4/alarm-tags',
+    bulkList: '/api/v4/bulk/alarm-tags',
+  },
   contextExport: '/api/v4/entity-export',
   event: '/api/v4/event',
   userPreferences: '/api/v4/user-preferences',
@@ -132,21 +141,16 @@ export const API_ROUTES = {
   widgetTemplate: '/api/v4/widget-templates',
   permissions: '/api/v4/permissions',
   users: '/api/v4/users',
-  roles: '/api/v4/roles',
+  roles: {
+    list: '/api/v4/roles',
+    templates: '/api/v4/role-templates',
+  },
   eventFilter: {
+    list: '/api/v4/eventfilter',
     rules: '/api/v4/eventfilter/rules',
   },
   file: '/api/v4/file',
   fileAccess: '/api/v4/file-access',
-  snmpRule: {
-    list: '/api/snmprule',
-    create: '/api/snmprule/put',
-  },
-  snmpMib: {
-    list: '/api/snmpmib',
-    distinct: '/api/snmpmibdistinct',
-    upload: '/api/uploadmib',
-  },
   infos: {
     app: '/api/v4/app-info',
     userInterface: '/api/v4/internal/user_interface',
@@ -162,6 +166,7 @@ export const API_ROUTES = {
   pbehavior: {
     timespan: '/api/v4/pbehavior-timespans',
     exceptions: '/api/v4/pbehavior-exceptions',
+    exceptionImport: '/api/v4/pbehavior-exception-import',
     types: '/api/v4/pbehavior-types',
     nextTypesPriority: '/api/v4/pbehavior-types/next-priority',
     pbehaviors: '/api/v4/pbehaviors',
@@ -192,18 +197,26 @@ export const API_ROUTES = {
   flappingRules: '/api/v4/flapping-rules',
   resolveRules: '/api/v4/resolve-rules',
   messageRateStats: '/api/v4/message-rate-stats',
-  patterns: '/api/v4/patterns',
-  bulkPatterns: '/api/v4/bulk/patterns',
-  patternsCount: '/api/v4/patterns-count',
+  pattern: {
+    list: '/api/v4/patterns',
+    bulkList: '/api/v4/bulk/patterns',
+    entitiesCount: '/api/v4/patterns-entities-count',
+    alarmsCount: '/api/v4/patterns-alarms-count',
+  },
   shareTokens: '/api/v4/share-tokens',
   techMetrics: '/api/v4/tech-metrics-export',
   templateVars: '/api/v4/template-vars',
   templateValidator: {
     declareTicketRules: '/api/v4/template-validator/declare-ticket-rules',
     scenarios: '/api/v4/template-validator/scenarios',
+    eventFilterRules: '/api/v4/template-validator/event-filter-rules',
   },
   linkRule: '/api/v4/link-rules',
   linkCategories: '/api/v4/link-categories',
+  themes: {
+    list: '/api/v4/color-themes',
+    bulkList: '/api/v4/bulk/color-themes',
+  },
 
   /**
    * Cat routes
@@ -253,11 +266,16 @@ export const API_ROUTES = {
     perfDataMetrics: '/api/v4/cat/perf-data-metrics',
     entityAlarmMetrics: '/api/v4/cat/entity-metrics/alarm',
     entityAggregateMetrics: '/api/v4/cat/entity-metrics/aggregate',
+    group: '/api/v4/cat/metrics/group',
+    exportGroup: '/api/v4/cat/metrics-export/group',
   },
   maps: '/api/v4/cat/maps',
   bulkMaps: '/api/v4/cat/maps/bulk',
   mapState: '/api/v4/cat/map-state',
   manualMetaAlarm: '/api/v4/cat/manual-meta-alarms',
+  metaAlarm: '/api/v4/cat/meta-alarms',
+  snmpRule: '/api/v4/cat/snmprules',
+  snmpMib: '/api/v4/cat/snmpmibs',
   declareTicket: {
     rules: '/api/v4/cat/declare-ticket-rules',
     bulkRules: '/api/v4/cat/bulk/declare-ticket-rules',
@@ -267,12 +285,25 @@ export const API_ROUTES = {
     declareTicketExecution: '/api/v4/cat/declare-ticket-executions',
     bulkDeclareTicket: '/api/v4/cat/bulk/declare-ticket-executions',
   },
+  tags: '/api/v4/cat/tags',
 };
 
 export const COLORS = {
   primary: '#2fab63',
   secondary: '#2b3e4f',
+  accent: '#82b1ff',
   error: '#ff5252',
+  info: '#2196f3',
+  success: '#4caf50',
+  warning: '#fb8c00',
+  background: '#ffffff',
+  activeColor: '#000000',
+  table: {
+    background: '#FFFFFF',
+    rowColor: '#FFFFFF',
+    shiftRowColor: '#F5F5F5',
+    hoverRowColor: '#F5F5F5',
+  },
   state: {
     ok: '#00a65a',
     minor: '#fcdc00',
@@ -312,7 +343,6 @@ export const COLORS = {
     edgeGray: '#979797',
     edgeBlack: '#000000',
   },
-  statsDefault: '#dddddd',
   impactState: [
     '#2FAB63',
     '#7CB342',
@@ -474,53 +504,46 @@ export const COLORS = {
   },
 };
 
-export const THEMES_NAMES = {
-  canopsis: 'canopsis',
-  canopsisDark: 'canopsisDark',
-  colorBlind: 'colorBlind',
-  colorBlindDark: 'colorBlindDark',
+export const CSS_COLORS_VARS = {
+  primary: 'var(--v-primary-base)',
+  secondary: 'var(--v-secondary-base)',
+  error: 'var(--v-error-base)',
+
+  state: {
+    ok: 'var(--v-state-ok-base)',
+    minor: 'var(--v-state-minor-base)',
+    major: 'var(--v-state-major-base)',
+    critical: 'var(--v-state-critical-base)',
+    pause: 'var(--v-state-pause-base)',
+  },
+
+  status: {
+    closed: 'var(--v-status-closed-base)',
+    stealthy: 'var(--v-status-stealthy-base)',
+    flapping: 'var(--v-status-flapping-base)',
+    ongoing: 'var(--v-status-ongoing-base)',
+    cancelled: 'var(--v-status-cancelled-base)',
+    noEvents: 'var(--v-status-noEvents-base)',
+  },
 };
 
-const CANOPSIS_THEME_COLORS = {
+export const DEFAULT_THEME_COLORS = {
   primary: COLORS.primary,
   secondary: COLORS.secondary,
-  background: '#ffffff',
-};
+  accent: COLORS.accent,
+  error: COLORS.error,
+  info: COLORS.info,
+  success: COLORS.success,
+  warning: COLORS.warning,
+  background: COLORS.background,
+  active_color: COLORS.activeColor,
 
-const CANOPSIS_DARK_THEME_COLORS = {
-  ...CANOPSIS_THEME_COLORS,
-  error: '#ff8b8b',
-  background: '#303030',
-};
-
-const COLOR_BLIND_THEME_COLORS = {
-  primary: '#2196f3',
-  secondary: COLORS.secondary,
-  background: CANOPSIS_THEME_COLORS.background,
-};
-
-const COLOR_BLIND_DARK_THEME_COLORS = {
-  ...COLOR_BLIND_THEME_COLORS,
-  error: CANOPSIS_DARK_THEME_COLORS.error,
-  background: CANOPSIS_DARK_THEME_COLORS.background,
-};
-
-export const THEMES = {
-  [THEMES_NAMES.canopsis]: {
-    dark: false,
-    colors: CANOPSIS_THEME_COLORS,
-  },
-  [THEMES_NAMES.canopsisDark]: {
-    dark: true,
-    colors: CANOPSIS_DARK_THEME_COLORS,
-  },
-  [THEMES_NAMES.colorBlind]: {
-    dark: false,
-    colors: COLOR_BLIND_THEME_COLORS,
-  },
-  [THEMES_NAMES.colorBlindDark]: {
-    dark: true,
-    colors: COLOR_BLIND_DARK_THEME_COLORS,
+  state: COLORS.state,
+  status: COLORS.status,
+  table: {
+    background: COLORS.table.background,
+    row_color: COLORS.table.rowColor,
+    hover_row_color: COLORS.table.hoverRowColor,
   },
 };
 

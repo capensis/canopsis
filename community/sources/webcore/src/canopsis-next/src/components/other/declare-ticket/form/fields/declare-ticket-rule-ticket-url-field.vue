@@ -1,29 +1,42 @@
 <template lang="pug">
-  v-text-field(
-    v-field="value",
-    :label="$t('declareTicket.ticketURL')",
-    :name="name",
-    :disabled="disabled"
-  )
-    template(#append="")
-      c-help-icon(
-        :text="$t('declareTicket.responseFieldHelpText', { field: $t('declareTicket.ticketURL') })",
-        icon="help",
-        color="grey darken-1",
-        left
+  v-layout
+    v-flex(xs6)
+      c-enabled-field(
+        v-field="form.template",
+        :label="$t('declareTicket.allowTicketURLTemplate')"
+      )
+    v-flex(xs6)
+      declare-ticket-rule-ticket-url-payload-text-field(
+        v-if="form.template",
+        v-field="form.value",
+        :name="name",
+        :disabled="disabled"
+      )
+      declare-ticket-rule-ticket-url-text-field(
+        v-else,
+        v-field="form.value",
+        :name="name",
+        :disabled="disabled"
       )
 </template>
 
 <script>
+import DeclareTicketRuleTicketUrlTextField from './declare-ticket-rule-ticket-url-text-field.vue';
+import DeclareTicketRuleTicketUrlPayloadTextField from './declare-ticket-rule-ticket-url-payload-text-field.vue';
+
 export default {
+  components: {
+    DeclareTicketRuleTicketUrlTextField,
+    DeclareTicketRuleTicketUrlPayloadTextField,
+  },
   model: {
-    prop: 'value',
+    prop: 'form',
     event: 'input',
   },
   props: {
-    value: {
-      type: String,
-      required: true,
+    form: {
+      type: Object,
+      default: () => ({}),
     },
     name: {
       type: String,

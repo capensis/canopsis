@@ -30,7 +30,7 @@ type MongoQuery struct {
 	project           []bson.M
 }
 
-func CreateMongoQuery(client mongo.DbClient) MongoQuery {
+func CreateMongoQuery(client mongo.DbClient, authorProvider author.Provider) MongoQuery {
 	return MongoQuery{
 		typeCollection:        client.Collection(mongo.PbehaviorTypeMongoCollection),
 		reasonCollection:      client.Collection(mongo.PbehaviorReasonMongoCollection),
@@ -42,8 +42,8 @@ func CreateMongoQuery(client mongo.DbClient) MongoQuery {
 			"type":            GetNestedTypePipeline(),
 			"reason":          GetNestedReasonPipeline(),
 			"exdate":          GetNestedExdatesPipeline(),
-			"author":          author.Pipeline(),
-			"comments.author": getCommentAuthorPipeline(),
+			"author":          authorProvider.Pipeline(),
+			"comments.author": getCommentAuthorPipeline(authorProvider),
 		},
 		project: []bson.M{
 			{"$addFields": bson.M{
@@ -227,11 +227,11 @@ func (q *MongoQuery) adjustLookupsForSort(sortBy string) {
 	}
 }
 
-func GetNestedObjectsPipeline() []bson.M {
+func GetNestedObjectsPipeline(authorProvider author.Provider) []bson.M {
 	pipeline := append(GetNestedReasonPipeline(), GetNestedTypePipeline()...)
 	pipeline = append(pipeline, GetNestedExdatesPipeline()...)
-	pipeline = append(pipeline, author.Pipeline()...)
-	pipeline = append(pipeline, getCommentAuthorPipeline()...)
+	pipeline = append(pipeline, authorProvider.Pipeline()...)
+	pipeline = append(pipeline, getCommentAuthorPipeline(authorProvider)...)
 
 	return pipeline
 }
@@ -356,7 +356,7 @@ func GetNestedExdatesPipeline() []bson.M {
 	}
 }
 
-func getCommentAuthorPipeline() []bson.M {
+func getCommentAuthorPipeline(authorProvider author.Provider) []bson.M {
 	pipeline := []bson.M{
 		{"$unwind": bson.M{
 			"path":                       "$comments",
@@ -365,7 +365,7 @@ func getCommentAuthorPipeline() []bson.M {
 		}},
 	}
 
-	pipeline = append(pipeline, author.PipelineForField("comments.author")...)
+	pipeline = append(pipeline, authorProvider.PipelineForField("comments.author")...)
 	pipeline = append(pipeline,
 		bson.M{"$group": bson.M{
 			"_id":  "$_id",

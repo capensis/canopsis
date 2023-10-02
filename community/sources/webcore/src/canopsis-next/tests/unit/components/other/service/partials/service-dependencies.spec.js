@@ -1,22 +1,15 @@
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
-import {
-  ENTITY_FIELDS,
-  ENTITY_FIELDS_TO_LABELS_KEYS,
-  ENTITY_TYPES,
-  MODALS,
-} from '@/constants';
+import { ENTITY_FIELDS, ENTITY_FIELDS_TO_LABELS_KEYS, ENTITY_TYPES, MODALS } from '@/constants';
 
-import { getColumnLabel } from '@/helpers/widgets';
+import { getWidgetColumnLabel } from '@/helpers/entities/widget/list';
 
 import CTreeviewDataTable from '@/components/common/table/c-treeview-data-table.vue';
 import ServiceDependencies from '@/components/other/service/partials/service-dependencies.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'c-treeview-data-table': CTreeviewDataTable,
@@ -113,15 +106,15 @@ describe('service-dependencies', () => {
 
     value: `entity.${column.value}`,
     sortable: false,
-    text: getColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
+    text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
   }));
 
   const store = createMockedStoreModules([
     serviceModule,
   ]);
 
-  const snapshotFactory = generateRenderer(ServiceDependencies, { localVue, stubs });
-  const factory = generateShallowRenderer(ServiceDependencies, { localVue, stubs });
+  const snapshotFactory = generateRenderer(ServiceDependencies, { stubs });
+  const factory = generateShallowRenderer(ServiceDependencies, { stubs });
 
   it('Dependencies fetched after mount', async () => {
     factory({
@@ -324,7 +317,7 @@ describe('service-dependencies', () => {
 
           value: `entity.${column.value}`,
           sortable: false,
-          text: getColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
+          text: getWidgetColumnLabel(column, ENTITY_FIELDS_TO_LABELS_KEYS),
         })),
         root: entity,
       },

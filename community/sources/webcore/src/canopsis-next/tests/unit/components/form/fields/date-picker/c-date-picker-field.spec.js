@@ -1,13 +1,11 @@
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
 import { COLORS } from '@/config';
 import { DATETIME_FORMATS } from '@/constants';
 
 import CDatePickerField from '@/components/forms/fields/date-picker/c-date-picker-field.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'v-menu': {
@@ -22,12 +20,12 @@ const selectTextField = wrapper => wrapper.find('.v-text-field');
 
 describe('c-date-picker-field', () => {
   const factory = generateShallowRenderer(CDatePickerField, {
-    localVue,
+
     stubs,
     attachTo: document.body,
   });
   const snapshotFactory = generateRenderer(CDatePickerField, {
-    localVue,
+
     attachTo: document.body,
   });
 

@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { isDefaultSourceCode } from '@/helpers/forms/link-rule';
+import { isDefaultSourceCode } from '@/helpers/entities/link/form';
 
 import LinkRuleGeneralForm from './link-rule-general-form.vue';
 import LinkRuleSimpleForm from './link-rule-simple-form.vue';

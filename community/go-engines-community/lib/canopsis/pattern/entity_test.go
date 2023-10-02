@@ -16,7 +16,15 @@ func TestEntity_Match(t *testing.T) {
 
 	for name, data := range dataSets {
 		t.Run(name, func(t *testing.T) {
-			ok, _, err := data.pattern.Match(data.entity)
+			ok, err := data.pattern.Match(data.entity)
+			if !errors.Is(err, data.matchErr) {
+				t.Errorf("expected error %v but got %v", data.matchErr, err)
+			}
+			if ok != data.matchResult {
+				t.Errorf("expected result %v but got %v", data.matchResult, ok)
+			}
+
+			ok, _, err = data.pattern.MatchWithRegexMatches(data.entity)
 			if !errors.Is(err, data.matchErr) {
 				t.Errorf("expected error %v but got %v", data.matchErr, err)
 			}
@@ -272,7 +280,7 @@ func benchmarkEntityMatch(b *testing.B, fieldCond pattern.FieldCondition, entity
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_, _, err := p.Match(entity)
+		_, err := p.Match(entity)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}
@@ -303,7 +311,7 @@ func benchmarkEntityUnmarshalBsonAndMatch(b *testing.B, fieldCond pattern.FieldC
 			b.Fatalf("unexpected error %v", err)
 		}
 
-		_, _, err = w.Pattern.Match(entity)
+		_, err = w.Pattern.Match(entity)
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}

@@ -1,7 +1,7 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockModals } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
@@ -10,8 +10,6 @@ import ClickOutside from '@/services/click-outside';
 import { MODALS } from '@/constants';
 
 import InfoPopupSetting from '@/components/modals/alarm/info-popup-setting/info-popup-setting.vue';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
@@ -24,33 +22,6 @@ const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'date-interval-selector': true,
 };
-
-const factory = (options = {}) => shallowMount(InfoPopupSetting, {
-  localVue,
-  stubs,
-  attachTo: document.body,
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(InfoPopupSetting, {
-  localVue,
-  stubs: snapshotStubs,
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
 
 const selectModalActionsButtons = wrapper => wrapper.findAll('.actions button.v-btn');
 const selectSubmitButton = wrapper => selectModalActionsButtons(wrapper).at(1);
@@ -65,6 +36,24 @@ const selectEditPopupButtonByIndex = (wrapper, index) => selectPopupCardByIndex(
 
 describe('info-popup-setting', () => {
   const $modals = mockModals();
+
+  const factory = generateShallowRenderer(InfoPopupSetting, {
+    stubs,
+    attachTo: document.body,
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(InfoPopupSetting, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
 
   test('Form submitted after trigger submit button', async () => {
     const action = jest.fn();

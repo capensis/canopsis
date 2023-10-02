@@ -10,6 +10,8 @@ import (
 	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	alarmapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
@@ -18,6 +20,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	apilogger "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	apitechmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -43,6 +46,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/proxy"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session/mongostore"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/sharetoken"
@@ -142,7 +146,7 @@ func Default(
 	if p.ApiConfigProvider == nil {
 		p.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
 	}
-	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, p.ApiConfigProvider, cookieOptions, logger)
+	security := NewSecurity(securityConfig, dbClient, sessionStore, enforcer, p.ApiConfigProvider, config.NewMaintenanceAdapter(dbClient), cookieOptions, logger)
 
 	if flags.EnableSameServiceNames {
 		logger.Info().Msg("Non-unique names for services ENABLED")
@@ -205,8 +209,11 @@ func Default(
 		exportExecutor = export.NewTaskExecutor(dbClient, p.TimezoneConfigProvider, logger)
 	}
 
+	alarmStore := alarmapi.NewStore(dbClient, linkGenerator, p.TimezoneConfigProvider,
+		author.NewProvider(dbClient, p.ApiConfigProvider), json.NewDecoder(), logger)
 	websocketStore := websocket.NewStore(dbClient, flags.IntegrationPeriodicalWaitTime)
-	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProviders(), flags.IntegrationPeriodicalWaitTime, logger)
+	websocketHub, err := newWebsocketHub(enforcer, security.GetTokenProviders(), flags.IntegrationPeriodicalWaitTime,
+		dbClient, alarmStore, logger)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot create websocket hub: %w", err)
 	}
@@ -270,7 +277,7 @@ func Default(
 	}
 
 	api.AddRouter(func(router gin.IRouter) {
-		router.Use(middleware.Cache())
+		router.Use(middleware.CacheControl())
 
 		router.Use(func(c *gin.Context) {
 			start := time.Now()
@@ -293,6 +300,8 @@ func Default(
 			linkGenerator,
 			dbClient,
 			pgPoolProvider,
+			amqpChannel,
+			p.ApiConfigProvider,
 			p.TimezoneConfigProvider,
 			p.TemplateConfigProvider,
 			pbhEntityTypeResolver,
@@ -311,6 +320,7 @@ func Default(
 			broadcastMessageChan,
 			metricsEntityMetaUpdater,
 			metricsUserMetaUpdater,
+			author.NewProvider(dbClient, p.ApiConfigProvider),
 			logger,
 		)
 	})
@@ -346,46 +356,48 @@ func Default(
 	})
 	api.SetWebsocketHub(websocketHub)
 
-	api.AddWorker("tech metrics", func(ctx context.Context) {
+	api.AddWorker("tech_metrics", func(ctx context.Context) {
 		techMetricsSender.Run(ctx)
 	})
-	api.AddWorker("session clean", func(ctx context.Context) {
+	api.AddWorker("session_clean", func(ctx context.Context) {
 		security.GetSessionStore().StartAutoClean(ctx, flags.IntegrationPeriodicalWaitTime)
 	})
-	api.AddWorker("enforce policy load", func(ctx context.Context) {
+	api.AddWorker("enforce_policy_load", func(ctx context.Context) {
 		enforcer.StartAutoLoadPolicy(ctx)
 	})
-	api.AddWorker("pbehavior compute", sendPbhRecomputeEvents(pbhComputeChan, json.NewEncoder(), amqpChannel, logger))
-	api.AddWorker("entity event publish", func(ctx context.Context) {
+	api.AddWorker("pbehavior_compute", sendPbhRecomputeEvents(pbhComputeChan, json.NewEncoder(), amqpChannel, logger))
+	api.AddWorker("entity_event_publish", func(ctx context.Context) {
 		entityServiceEventPublisher.Publish(ctx, entityPublChan)
 	})
-	api.AddWorker("entity cleaner", func(ctx context.Context) {
+	api.AddWorker("entity_cleaner", func(ctx context.Context) {
 		disabledEntityCleaner.RunCleanerProcess(ctx, entityCleanerTaskChan)
 	})
-	api.AddWorker("import job", func(ctx context.Context) {
+	api.AddWorker("import_job", func(ctx context.Context) {
 		importWorker.Run(ctx)
 	})
-	api.AddWorker("config reload", updateConfig(p.TimezoneConfigProvider, p.DataStorageConfigProvider, p.ApiConfigProvider,
+	api.AddWorker("config_reload", updateConfig(p.TimezoneConfigProvider, p.DataStorageConfigProvider, p.ApiConfigProvider,
 		p.TemplateConfigProvider, techMetricsConfigProvider, configAdapter, p.UserInterfaceConfigProvider,
 		userInterfaceAdapter, flags.PeriodicalWaitTime, logger))
-	api.AddWorker("data export", func(ctx context.Context) {
+	api.AddWorker("data_export", func(ctx context.Context) {
 		exportExecutor.Execute(ctx)
 	})
-	api.AddWorker("tech metrics export", func(ctx context.Context) {
+	api.AddWorker("tech_metrics_export", func(ctx context.Context) {
 		techMetricsTaskExecutor.Run(ctx)
 	})
 	tokenStore := token.NewMongoStore(dbClient, logger)
 	shareTokenStore := sharetoken.NewMongoStore(dbClient, logger)
-	api.AddWorker("auth token activity", updateTokenActivity(flags.IntegrationPeriodicalWaitTime, tokenStore, shareTokenStore,
+	api.AddWorker("auth_token_activity", updateTokenActivity(flags.IntegrationPeriodicalWaitTime, tokenStore, shareTokenStore,
 		websocketHub, logger))
-	api.AddWorker("auth token expiration", removeExpiredTokens(flags.PeriodicalWaitTime, tokenStore, shareTokenStore,
+	api.AddWorker("auth_token_expiration", removeExpiredTokens(flags.PeriodicalWaitTime, tokenStore, shareTokenStore,
 		logger))
 	api.AddWorker("websocket", func(ctx context.Context) {
 		websocketHub.Start(ctx)
 	})
-	api.AddWorker("websocket conns", updateWebsocketConns(flags.IntegrationPeriodicalWaitTime, websocketHub, websocketStore, logger))
-	broadcastMessageService := broadcastmessage.NewService(broadcastmessage.NewStore(dbClient), websocketHub, canopsis.PeriodicalWaitTime, logger)
-	api.AddWorker("broadcast message", func(ctx context.Context) {
+	api.AddWorker("websocket_conns", updateWebsocketConns(flags.IntegrationPeriodicalWaitTime, websocketHub, websocketStore, logger))
+
+	maintenanceAdapter := config.NewMaintenanceAdapter(dbClient)
+	broadcastMessageService := broadcastmessage.NewService(broadcastmessage.NewStore(dbClient, maintenanceAdapter), websocketHub, canopsis.PeriodicalWaitTime, logger)
+	api.AddWorker("broadcast_message", func(ctx context.Context) {
 		broadcastMessageService.Start(ctx, broadcastMessageChan)
 	})
 	api.AddWorker("links", func(ctx context.Context) {
@@ -412,6 +424,8 @@ func newWebsocketHub(
 	enforcer libsecurity.Enforcer,
 	tokenProviders []libsecurity.TokenProvider,
 	checkAuthInterval time.Duration,
+	dbClient mongo.DbClient,
+	alarmStore alarmapi.Store,
 	logger zerolog.Logger,
 ) (websocket.Hub, error) {
 	websocketUpgrader := websocket.NewUpgrader(gorillawebsocket.Upgrader{
@@ -422,13 +436,31 @@ func newWebsocketHub(
 		},
 	})
 	websocketAuthorizer := websocket.NewAuthorizer(enforcer, tokenProviders)
-	websocketHub := websocket.NewHub(websocketUpgrader, websocketAuthorizer,
-		checkAuthInterval, logger)
+	websocketHub := websocket.NewHub(websocketUpgrader, websocketAuthorizer, checkAuthInterval, logger)
 	if err := websocketHub.RegisterRoom(websocket.RoomBroadcastMessages); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("fail to register websocket room: %w", err)
 	}
+
 	if err := websocketHub.RegisterRoom(websocket.RoomLoggedUserCount); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("fail to register websocket room: %w", err)
 	}
+
+	alarmWatcher := alarmapi.NewWatcher(dbClient, websocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
+	err := websocketHub.RegisterGroup(websocket.RoomAlarmsGroup, websocket.GroupParameters{
+		OnJoin:  alarmWatcher.StartWatch,
+		OnLeave: alarmWatcher.StopWatch,
+	}, apisecurity.PermAlarmRead, securitymodel.PermissionCan)
+	if err != nil {
+		return nil, fmt.Errorf("fail to register websocket group: %w", err)
+	}
+
+	err = websocketHub.RegisterGroup(websocket.RoomAlarmDetailsGroup, websocket.GroupParameters{
+		OnJoin:  alarmWatcher.StartWatchDetails,
+		OnLeave: alarmWatcher.StopWatch,
+	}, apisecurity.PermAlarmRead, securitymodel.PermissionCan)
+	if err != nil {
+		return nil, fmt.Errorf("fail to register websocket group: %w", err)
+	}
+
 	return websocketHub, nil
 }

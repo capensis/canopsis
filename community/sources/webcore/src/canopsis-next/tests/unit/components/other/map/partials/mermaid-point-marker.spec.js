@@ -1,31 +1,18 @@
-import { mount, shallowMount, createVueInstance } from '@unit/utils/vue';
+import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
 import MermaidPointMarker from '@/components/other/map/partials/mermaid-point-marker.vue';
 import { COLOR_INDICATOR_TYPES } from '@/constants';
-
-const localVue = createVueInstance();
 
 const stubs = {
   'point-icon': true,
 };
 
-const factory = (options = {}) => shallowMount(MermaidPointMarker, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(MermaidPointMarker, {
-  localVue,
-  stubs,
-
-  ...options,
-});
-
 const selectPointIconNode = wrapper => wrapper.vm.$children[0];
 
 describe('mermaid-point-marker', () => {
+  const factory = generateShallowRenderer(MermaidPointMarker, { stubs });
+  const snapshotFactory = generateRenderer(MermaidPointMarker, { stubs });
+
   test('Listeners applied to point icon', () => {
     const click = jest.fn();
     const wrapper = factory({

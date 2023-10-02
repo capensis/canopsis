@@ -1,43 +1,53 @@
 <template lang="pug">
   div.view(:id="`view-tab-${tab._id}`")
-    grid-overview-widget(
-      v-show="!editing",
-      :tab="tab"
+    portal(v-if="editing", :to="$constants.PORTALS_NAMES.additionalTopBarItems")
+      window-size-field(v-model="size", color="white", light)
+    grid-layout(
+      v-model="layouts[size]",
+      :margin="[$constants.WIDGET_GRID_ROW_HEIGHT, $constants.WIDGET_GRID_ROW_HEIGHT]",
+      :columns-count="$constants.WIDGET_GRID_COLUMNS_COUNT",
+      :row-height="$constants.WIDGET_GRID_ROW_HEIGHT",
+      :style="layoutStyle",
+      :disabled="!editing"
     )
-      template(#default="{ widget }")
-        widget-wrapper(
-          :widget="widget",
-          :tab="tab",
-          :kiosk="kiosk"
+      template(#item="{ on, item }")
+        widget-edit-drag-handler(
+          v-if="editing",
+          v-on="on",
+          :widget="item.widget",
+          :auto-height="item.autoHeight",
+          :tab="tab"
         )
-    grid-edit-widgets(
-      v-if="editing",
-      :tab="tab",
-      @update:widgets-grid="updateWidgetsGrid"
-    )
-      template(#default="{ widget }")
         widget-wrapper(
-          :widget="widget",
+          :widget="item.widget",
           :tab="tab",
           :kiosk="kiosk",
-          editing
+          :editing="editing"
         )
 </template>
 
 <script>
+import { isEqual } from 'lodash';
+
+import { WIDGET_GRID_SIZES_KEYS, MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP, WIDGET_LAYOUT_MAX_WIDTHS } from '@/constants';
+
+import { widgetsToLayouts, layoutsToWidgetsGrid } from '@/helpers/entities/widget/grid';
+
 import { queryMixin } from '@/mixins/query';
 import { activeViewMixin } from '@/mixins/active-view';
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
-import GridOverviewWidget from '@/components/widgets/grid-overview-widget.vue';
-import GridEditWidgets from '@/components/widgets/grid-edit-widgets.vue';
+import GridLayout from '@/components/common/grid/grid-layout.vue';
 import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
+import WindowSizeField from '@/components/forms/fields/window-size.vue';
+import WidgetEditDragHandler from '@/components/widgets/widget-edit-drag-handler.vue';
 
 export default {
   components: {
+    GridLayout,
     WidgetWrapper,
-    GridOverviewWidget,
-    GridEditWidgets,
+    WindowSizeField,
+    WidgetEditDragHandler,
   },
   mixins: [
     queryMixin,
@@ -55,9 +65,37 @@ export default {
     },
   },
   data() {
+    const layouts = widgetsToLayouts(this.tab.widgets);
+
     return {
-      widgetsGrid: {},
+      layouts,
+
+      size: WIDGET_GRID_SIZES_KEYS.desktop,
+      widgetsGrid: layoutsToWidgetsGrid(layouts),
     };
+  },
+  computed: {
+    layoutStyle() {
+      return {
+        maxWidth: WIDGET_LAYOUT_MAX_WIDTHS[this.size],
+      };
+    },
+  },
+  watch: {
+    'tab.widgets': function tabWidgets(widgets) {
+      this.layouts = widgetsToLayouts(widgets, this.layouts);
+    },
+
+    $mq: {
+      immediate: true,
+      handler(mq) {
+        this.size = MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[mq];
+      },
+    },
+
+    editing() {
+      this.size = MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.$mq];
+    },
   },
   created() {
     this.registerEditingOffHandler(this.updatePositions);
@@ -67,23 +105,17 @@ export default {
     this.removeWidgetsQueries();
   },
   methods: {
-    updateWidgetsGrid(widgetsGrid) {
-      this.widgetsGrid = widgetsGrid;
-    },
-
     async updatePositions() {
       try {
-        const data = Object.entries(this.widgetsGrid)
-          .map(([id, gridParameters]) => ({
-            _id: id,
-            grid_parameters: gridParameters,
-          }));
+        const newWidgetsGrid = layoutsToWidgetsGrid(this.layouts);
 
-        if (!data.length) {
+        if (isEqual(this.widgetsGrid, newWidgetsGrid) || !newWidgetsGrid.length) {
           return;
         }
 
-        await this.updateWidgetGridPositions({ data });
+        this.widgetsGrid = newWidgetsGrid;
+
+        await this.updateWidgetGridPositions({ data: newWidgetsGrid });
         await this.fetchActiveView();
       } catch (err) {
         this.$popups.error({ text: this.$t('errors.default') });

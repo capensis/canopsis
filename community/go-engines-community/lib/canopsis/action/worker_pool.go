@@ -29,20 +29,23 @@ const (
 )
 
 type Task struct {
-	Source            string
-	Action            Action
-	Alarm             types.Alarm
-	Entity            types.Entity
-	Step              int
-	ExecutionCacheKey string
-	ExecutionID       string
-	ScenarioID        string
-	ScenarioName      string
-	SkipForChild      bool
-	Header            map[string]string
-	Response          map[string]interface{}
-	ResponseMap       map[string]interface{}
-	AdditionalData    AdditionalData
+	Source               string
+	Action               Action
+	Alarm                types.Alarm
+	Entity               types.Entity
+	Step                 int
+	ExecutionCacheKey    string
+	ExecutionID          string
+	ScenarioID           string
+	ScenarioName         string
+	SkipForChild         bool
+	IsMetaAlarmUpdated   bool
+	SkipForInstruction   bool
+	IsInstructionMatched bool
+	Header               map[string]string
+	Response             map[string]interface{}
+	ResponseMap          map[string]interface{}
+	AdditionalData       AdditionalData
 }
 
 type TaskResult struct {
@@ -296,17 +299,25 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 			return nil, false, fmt.Errorf("cannot decode children: %w", err)
 		}
 	}
+	// Skip if instruction is in progress
+	if task.SkipForInstruction && task.IsInstructionMatched {
+		return nil, true, nil
+	}
 	// Skip webhooks for children
-	if task.SkipForChild && len(task.Alarm.Value.Parents) > 0 {
-		err := s.alarmCollection.FindOne(ctx, bson.M{
-			"d":          bson.M{"$in": task.Alarm.Value.Parents},
-			"v.resolved": nil,
-		}).Err()
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, false, fmt.Errorf("cannot find parents: %w", err)
-		}
-		if err == nil {
+	if task.SkipForChild {
+		if task.IsMetaAlarmUpdated {
 			return nil, true, nil
+		} else if len(task.Alarm.Value.Parents) > 0 {
+			err := s.alarmCollection.FindOne(ctx, bson.M{
+				"d":          bson.M{"$in": task.Alarm.Value.Parents},
+				"v.resolved": nil,
+			}, options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
+			if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil, false, fmt.Errorf("cannot find parents: %w", err)
+			}
+			if err == nil {
+				return nil, true, nil
+			}
 		}
 	}
 

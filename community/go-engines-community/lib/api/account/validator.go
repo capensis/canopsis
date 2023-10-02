@@ -16,12 +16,14 @@ type Validator interface {
 }
 
 type baseValidator struct {
-	dbClient mongo.DbClient
+	dbViewCollection       mongo.DbCollection
+	dbColorThemeCollection mongo.DbCollection
 }
 
 func NewValidator(dbClient mongo.DbClient) Validator {
 	return &baseValidator{
-		dbClient: dbClient,
+		dbViewCollection:       dbClient.Collection(mongo.ViewMongoCollection),
+		dbColorThemeCollection: dbClient.Collection(mongo.ColorThemeCollection),
 	}
 }
 
@@ -38,10 +40,21 @@ func (v *baseValidator) ValidateEditRequest(ctx context.Context, sl validator.St
 	}
 	// Validate default view
 	if r.DefaultView != "" {
-		err := v.dbClient.Collection(mongo.ViewMongoCollection).FindOne(ctx, bson.M{"_id": r.DefaultView}).Err()
+		err := v.dbViewCollection.FindOne(ctx, bson.M{"_id": r.DefaultView}).Err()
 		if err != nil {
 			if err == mongodriver.ErrNoDocuments {
 				sl.ReportError(r.DefaultView, "DefaultView", "DefaultView", "not_exist", "")
+			} else {
+				panic(err)
+			}
+		}
+	}
+
+	if r.UITheme != "" {
+		err := v.dbColorThemeCollection.FindOne(ctx, bson.M{"_id": r.UITheme}).Err()
+		if err != nil {
+			if err == mongodriver.ErrNoDocuments {
+				sl.ReportError(r.UITheme, "UITheme", "UITheme", "not_exist", "")
 			} else {
 				panic(err)
 			}

@@ -98,7 +98,7 @@ export default {
         },
         {
           text: this.$t('common.lastModifiedBy'),
-          value: 'author.name',
+          value: 'author.display_name',
         },
         {
           text: this.$t('common.actionsLabel'),

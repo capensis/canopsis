@@ -1,12 +1,10 @@
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 import { EVENT_ENTITY_TYPES } from '@/constants';
 
 import ExtraDetailsTicket from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-ticket.vue';
-
-const localVue = createVueInstance();
 
 describe('extra-details-ticket', () => {
   const nowTimestamp = 1386435500000;
@@ -32,7 +30,7 @@ describe('extra-details-ticket', () => {
   ];
 
   const snapshotFactory = generateRenderer(ExtraDetailsTicket, {
-    localVue,
+
     attachTo: document.body,
   });
 

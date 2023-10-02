@@ -16,6 +16,7 @@ exports[`date-time-splitted-picker-field Renders \`date-time-splitted-picker-fie
         label="Custom label"
         max="1970-01-03"
         min="1970-01-02"
+        placeholder=""
         value="1970-01-02"
       />
     </div>
@@ -45,11 +46,12 @@ exports[`date-time-splitted-picker-field Renders \`date-time-splitted-picker-fie
     class="layout row"
   >
     <div
-      class="flex date-time-splitted-field__date pr-1"
+      class="flex date-time-splitted-field__date"
     >
       <c-date-picker-field-stub
         hide-details="hide-details"
         label=""
+        placeholder=""
       />
     </div>
     <time-picker-field-stub
@@ -83,12 +85,13 @@ exports[`date-time-splitted-picker-field Renders \`date-time-splitted-picker-fie
     class="layout row"
   >
     <div
-      class="flex date-time-splitted-field__date pr-1"
+      class="flex date-time-splitted-field__date"
     >
       <c-date-picker-field-stub
         error="true"
         hide-details="hide-details"
         label=""
+        placeholder=""
       />
     </div>
     <time-picker-field-stub

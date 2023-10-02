@@ -27,7 +27,8 @@ Feature: Get a widget template
           ],
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1605263992,
           "updated": 1605263992
@@ -46,7 +47,8 @@ Feature: Get a widget template
           ],
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1605263992,
           "updated": 1605263992
@@ -58,7 +60,21 @@ Feature: Get a widget template
           "content": "{{ `{{ alarm.v.display_name }}` }}",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
+          },
+          "created": 1605263992,
+          "updated": 1605263992
+        },
+        {
+          "_id": "test-widgettemplate-to-get-4",
+          "title": "test-widgettemplate-to-get-4-title",
+          "type": "alarm_export_to_pdf",
+          "content": "{{ `{{ alarm.v.display_name }}` }}",
+          "author": {
+            "_id": "root",
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           },
           "created": 1605263992,
           "updated": 1605263992
@@ -68,7 +84,7 @@ Feature: Get a widget template
         "page": 1,
         "page_count": 1,
         "per_page": 10,
-        "total_count": 3
+        "total_count": 4
       }
     }
     """
@@ -127,7 +143,8 @@ Feature: Get a widget template
       ],
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       },
       "created": 1605263992,
       "updated": 1605263992

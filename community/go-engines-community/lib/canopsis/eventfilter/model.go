@@ -59,13 +59,14 @@ type Rule struct {
 	Type         string                            `bson:"type" json:"type" binding:"required,oneof=break drop enrichment change_entity"`
 	Priority     int64                             `bson:"priority" json:"priority"`
 	Enabled      bool                              `bson:"enabled" json:"enabled"`
-	OldPatterns  oldpattern.EventPatternList       `bson:"old_patterns,omitempty" json:"old_patterns,omitempty"`
 	Config       RuleConfig                        `bson:"config" json:"config"`
 	ExternalData map[string]ExternalDataParameters `bson:"external_data" json:"external_data,omitempty"`
 	Created      *types.CpsTime                    `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated      *types.CpsTime                    `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	EventsCount  int64                             `bson:"events_count,omitempty" json:"events_count,omitempty"`
 
-	EventPattern                     pattern.Event `json:"event_pattern" bson:"event_pattern"`
+	OldPatterns                      oldpattern.EventPatternList `bson:"old_patterns,omitempty" json:"old_patterns,omitempty"`
+	EventPattern                     pattern.Event               `json:"event_pattern" bson:"event_pattern"`
 	savedpattern.EntityPatternFields `bson:",inline"`
 
 	RRule string         `json:"rrule" bson:"rrule"`

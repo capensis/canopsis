@@ -1,22 +1,13 @@
-import { mount, createVueInstance } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 
 import { createMockedStoreModules } from '@unit/utils/store';
 import AlarmsList from '@/components/modals/alarm/alarms-list.vue';
 
-const localVue = createVueInstance();
-
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'alarms-list-table-with-pagination': true,
 };
-
-const snapshotFactory = (options = {}) => mount(AlarmsList, {
-  localVue,
-  stubs: snapshotStubs,
-
-  ...options,
-});
 
 describe('alarms-list', () => {
   const associativeTableModule = {
@@ -29,6 +20,8 @@ describe('alarms-list', () => {
   const store = createMockedStoreModules([
     associativeTableModule,
   ]);
+
+  const snapshotFactory = generateRenderer(AlarmsList, { stubs: snapshotStubs });
 
   test('Renders `alarms-list`', () => {
     const wrapper = snapshotFactory({

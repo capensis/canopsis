@@ -13,6 +13,8 @@ type Payload struct {
 
 	Created *types.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated *types.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+
+	Maintenance bool `bson:"-" json:"maintenance,omitempty"`
 }
 
 type BroadcastMessage struct {

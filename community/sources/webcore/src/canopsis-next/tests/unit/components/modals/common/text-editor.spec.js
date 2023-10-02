@@ -1,7 +1,7 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
 import { mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
@@ -23,39 +23,6 @@ const snapshotStubs = {
   'text-editor-field': true,
 };
 
-const factory = (options = {}) => shallowMount(TextEditor, {
-  stubs,
-  attachTo: document.body,
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-    provide: {
-      $clickOutside: new ClickOutside(),
-      $system: {},
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(TextEditor, {
-  stubs: snapshotStubs,
-
-  parentComponent: {
-    $_veeValidate: {
-      validator: 'new',
-    },
-    provide: {
-      $clickOutside: new ClickOutside(),
-      $system: {},
-    },
-  },
-
-  ...options,
-});
-
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
 const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
@@ -64,6 +31,32 @@ const selectTextEditorField = wrapper => wrapper.find('text-editor-field-stub');
 describe('text-editor', () => {
   const $modals = mockModals();
   const $popups = mockPopups();
+
+  const factory = generateShallowRenderer(TextEditor, {
+    stubs,
+    attachTo: document.body,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+      provide: {
+        $clickOutside: new ClickOutside(),
+        $system: {},
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(TextEditor, {
+    stubs: snapshotStubs,
+    parentComponent: {
+      $_veeValidate: {
+        validator: 'new',
+      },
+      provide: {
+        $clickOutside: new ClickOutside(),
+        $system: {},
+      },
+    },
+  });
 
   test('Form submitted with empty string after trigger submit button', async () => {
     const action = jest.fn();
@@ -88,6 +81,8 @@ describe('text-editor', () => {
 
     expect(action).toBeCalledWith('');
     expect($modals.hide).toBeCalledWith();
+
+    wrapper.destroy();
   });
 
   test('Form submitted with correct value after trigger submit button', async () => {
@@ -115,6 +110,8 @@ describe('text-editor', () => {
 
     expect(action).toBeCalledWith(text);
     expect($modals.hide).toBeCalledWith();
+
+    wrapper.destroy();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -152,6 +149,8 @@ describe('text-editor', () => {
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
+
+    wrapper.destroy();
   });
 
   test('Form submitted after trigger submit button without action', async () => {
@@ -173,6 +172,8 @@ describe('text-editor', () => {
     await flushPromises();
 
     expect($modals.hide).toBeCalledWith();
+
+    wrapper.destroy();
   });
 
   test('Validation rules applied to form from config', async () => {
@@ -204,6 +205,8 @@ describe('text-editor', () => {
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
+
+    wrapper.destroy();
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -238,6 +241,8 @@ describe('text-editor', () => {
     expect(formErrors).toEqual(addedErrors);
     expect(action).toBeCalledWith(text);
     expect($modals.hide).not.toBeCalledWith();
+
+    wrapper.destroy();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -278,6 +283,8 @@ describe('text-editor', () => {
     expect($modals.hide).not.toBeCalledWith();
 
     consoleErrorSpy.mockClear();
+
+    wrapper.destroy();
   });
 
   test('Modal submitted with correct data after trigger form', async () => {
@@ -311,6 +318,8 @@ describe('text-editor', () => {
 
     expect(action).toBeCalledWith(newValue);
     expect($modals.hide).toBeCalled();
+
+    wrapper.destroy();
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -332,6 +341,8 @@ describe('text-editor', () => {
     await flushPromises();
 
     expect($modals.hide).toBeCalled();
+
+    wrapper.destroy();
   });
 
   test('Renders `text-editor` with empty modal', async () => {
@@ -350,6 +361,8 @@ describe('text-editor', () => {
     await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
+
+    wrapper.destroy();
   });
 
   test('Renders `text-editor` with all parameters', async () => {
@@ -375,5 +388,7 @@ describe('text-editor', () => {
     await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
+
+    wrapper.destroy();
   });
 });

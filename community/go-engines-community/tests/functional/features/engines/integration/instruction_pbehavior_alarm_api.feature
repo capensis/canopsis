@@ -1,6 +1,7 @@
 Feature: Get alarms
   I need to be able to get a alarms
 
+  @concurrent
   Scenario: given get search request should return assigned instructions for the alarm by pbehavior
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -141,7 +142,7 @@ Feature: Get alarms
     Then the response code should be 201
     When I save response instructionID3={{ .lastResponse._id }}
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-instruction-pbehavior-alarm-api-1",
@@ -153,8 +154,7 @@ Feature: Get alarms
       "state": 1
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-instruction-pbehavior-alarm-api-1",
@@ -166,8 +166,7 @@ Feature: Get alarms
       "state": 1
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-instruction-pbehavior-alarm-api-1",
@@ -179,7 +178,6 @@ Feature: Get alarms
       "state": 1
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -228,7 +226,27 @@ Feature: Get alarms
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "pbhenter",
+        "connector": "test-connector-instruction-pbehavior-alarm-api-1",
+        "connector_name": "test-connector-name-instruction-pbehavior-alarm-api-1",
+        "component": "test-component-instruction-pbehavior-alarm-api-1",
+        "resource": "test-resource-instruction-pbehavior-alarm-api-1-2",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "pbhenter",
+        "connector": "test-connector-instruction-pbehavior-alarm-api-1",
+        "connector_name": "test-connector-name-instruction-pbehavior-alarm-api-1",
+        "component": "test-component-instruction-pbehavior-alarm-api-1",
+        "resource": "test-resource-instruction-pbehavior-alarm-api-1-3",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?instructions[]={"include":["{{ .instructionID1 }}"]}&with_instructions=true&sort_by=d&sort=asc
     Then the response code should be 200
     Then the response body should contain:
@@ -365,6 +383,7 @@ Feature: Get alarms
     }
     """
 
+  @concurrent
   Scenario: instruction must not run if alarm is under pbh
     When I am admin
     When I do POST /api/v4/cat/instructions:
@@ -425,7 +444,7 @@ Feature: Get alarms
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-instruction-pbehavior-alarm-api-2",
@@ -437,7 +456,6 @@ Feature: Get alarms
       "state": 1
     }
     """
-    When I wait the end of event processing
     When I wait 100ms
     When I do GET /api/v4/alarms?search=test-resource-instruction-pbehavior-alarm-api-2
     Then the response code should be 200

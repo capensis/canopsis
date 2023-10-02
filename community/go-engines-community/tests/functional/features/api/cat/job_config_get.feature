@@ -19,7 +19,8 @@ Feature: get a job's config
           "type": "rundeck",
           "author": {
             "_id": "root",
-            "name": "root"
+            "name": "root",
+            "display_name": "root John Doe admin@canopsis.net"
           }
         }
       ],
@@ -42,8 +43,7 @@ Feature: get a job's config
       "data": [
         {
           "_id": "test-job-config-to-get",
-          "deletable": true,
-          "running": false
+          "deletable": true
         }
       ],
       "meta": {
@@ -79,7 +79,8 @@ Feature: get a job's config
       "type": "rundeck",
       "author": {
         "_id": "root",
-        "name": "root"
+        "name": "root",
+        "display_name": "root John Doe admin@canopsis.net"
       }
     }
     """
@@ -94,8 +95,7 @@ Feature: get a job's config
       "data": [
         {
           "_id": "test-job-config-to-check-linked",
-          "deletable": false,
-          "running": false
+          "deletable": false
         }
       ]
     }

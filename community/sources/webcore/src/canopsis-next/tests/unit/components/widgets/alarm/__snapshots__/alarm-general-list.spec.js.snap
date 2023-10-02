@@ -20,6 +20,7 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               aria-label="Author: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value=""
               role="columnheader"
               scope="col"
             >
@@ -29,6 +30,7 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               aria-label="Connector: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value=""
               role="columnheader"
               scope="col"
             >
@@ -38,6 +40,7 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               aria-label="Component: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value=""
               role="columnheader"
               scope="col"
             >
@@ -47,6 +50,7 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with alarms 1`] = `
               aria-label="Resource: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value=""
               role="columnheader"
               scope="col"
             >
@@ -178,6 +182,7 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               aria-label="Author: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value=""
               role="columnheader"
               scope="col"
             >
@@ -187,6 +192,7 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               aria-label="Connector: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value=""
               role="columnheader"
               scope="col"
             >
@@ -196,6 +202,7 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               aria-label="Component: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value=""
               role="columnheader"
               scope="col"
             >
@@ -205,6 +212,7 @@ exports[`alarm-general-list Renders \`alarm-general-list\` with empty items 1`] 
               aria-label="Resource: Not sorted."
               aria-sort="none"
               class="column text-xs-left"
+              data-value=""
               role="columnheader"
               scope="col"
             >

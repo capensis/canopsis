@@ -21,7 +21,7 @@
 <script>
 import { VALIDATION_DELAY } from '@/constants';
 
-import { userInterfaceToForm } from '@/helpers/forms/user-interface';
+import { userInterfaceToForm } from '@/helpers/entities/user-interface/form';
 import { getFileDataUrlContent } from '@/helpers/file/file-select';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';

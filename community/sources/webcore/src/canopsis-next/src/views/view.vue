@@ -13,13 +13,13 @@
 <script>
 import Observer from '@/services/observer';
 
-import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
-import ViewFabBtns from '@/components/other/view/buttons/view-fab-btns.vue';
-
 import { authMixin } from '@/mixins/auth';
 import { queryMixin } from '@/mixins/query';
 import { activeViewMixin } from '@/mixins/active-view';
 import { viewRouterMixin } from '@/mixins/view/router';
+
+import ViewFabBtns from '@/components/other/view/partials/view-fab-btns.vue';
+import ViewTabsWrapper from '@/components/other/view/view-tabs-wrapper.vue';
 
 export default {
   provide() {

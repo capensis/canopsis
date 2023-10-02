@@ -8,6 +8,8 @@
     :is="component",
     :item-text="itemText",
     :item-value="itemValue",
+    :name="name",
+    :error-messages="errors.collect(name)",
     ref="select"
   )
     template(v-if="$scopedSlots.selection || ellipsis", #selection="props")
@@ -20,10 +22,15 @@
 </template>
 
 <script>
+import { Validator } from 'vee-validate';
 import { isArray, isFunction, isObject } from 'lodash';
 
 export default {
-  inject: ['$validator'],
+  inject: {
+    $validator: {
+      default: new Validator(),
+    },
+  },
   inheritAttrs: false,
   model: {
     prop: 'value',
@@ -31,7 +38,7 @@ export default {
   },
   props: {
     value: {
-      type: [Array, Object, String, Symbol],
+      type: [Array, Object, String, Symbol, Number],
       default: '',
     },
     required: {
@@ -55,6 +62,10 @@ export default {
       default: 'text',
     },
     itemValue: {
+      type: String,
+      default: 'value',
+    },
+    name: {
       type: String,
       default: 'value',
     },

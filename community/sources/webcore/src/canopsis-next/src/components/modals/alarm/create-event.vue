@@ -4,20 +4,18 @@
       template(#title="")
         span {{ config.title }}
       template(#text="")
-        v-container
-          v-layout(row)
-            v-flex.text-xs-center
-              alarm-general-table(:items="items")
-          v-layout(row)
-            v-divider.my-3
-          v-layout(row)
-            v-text-field(
-              v-model="form.output",
-              v-validate="'required'",
-              :label="$t('modals.createEvent.fields.output')",
-              :error-messages="errors.collect('output')",
-              name="output"
-            )
+        v-layout(row)
+          v-flex.text-xs-center
+            alarm-general-table(:items="config.items")
+        v-layout(row)
+          v-divider.my-3
+        v-layout(row)
+          c-name-field(
+            v-model="form.comment",
+            :label="$t('common.note')",
+            :required="isCommentRequired",
+            name="comment"
+          )
       template(#actions="")
         v-btn(
           depressed,
@@ -32,11 +30,9 @@
 </template>
 
 <script>
-import { MODALS, EVENT_ENTITY_TYPES } from '@/constants';
+import { MODALS } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
-import { modalInnerItemsMixin } from '@/mixins/modal/inner-items';
-import { eventActionsAlarmMixin } from '@/mixins/event-actions/alarm';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
@@ -55,30 +51,27 @@ export default {
   components: { AlarmGeneralTable, ModalWrapper },
   mixins: [
     modalInnerMixin,
-    modalInnerItemsMixin,
-    eventActionsAlarmMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
   data() {
     return {
       form: {
-        output: '',
+        comment: '',
       },
     };
+  },
+  computed: {
+    isCommentRequired() {
+      return this.config.isCommentRequired ?? true;
+    },
   },
   methods: {
     async submit() {
       const isFormValid = await this.$validator.validateAll();
 
       if (isFormValid) {
-        const data = { ...this.form };
-
-        if (this.config.eventType === EVENT_ENTITY_TYPES.cancel) {
-          data.cancel = 1;
-        }
-
-        await this.createEvent(this.config.eventType, this.items, data);
+        await this.config?.action(this.form);
 
         this.$modals.hide();
       }

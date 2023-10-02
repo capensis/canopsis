@@ -2,16 +2,16 @@
   div.alarms-timeline-steps
     ul(v-for="(steps, day) in groupedSteps", :key="day")
       li(v-for="(step, index) in steps", :key="index")
-        div.alarms-timeline-steps-date(v-show="index === 0")
+        div.alarms-timeline-steps-date.text--disabled(v-show="index === 0")
           div.date {{ day }}
         div.alarms-timeline-steps-card
-          div.time {{ step.t | date('time') }}
+          div.time.text--disabled {{ step.t | date('time') }}
           alarms-time-line-flag.flag(:step="step")
           slot(name="card", :step="step")
 </template>
 
 <script>
-import { groupAlarmSteps } from '@/helpers/entities';
+import { groupAlarmSteps } from '@/helpers/entities/alarm/list';
 
 import AlarmsTimeLineFlag from './alarms-time-line-flag.vue';
 
@@ -37,7 +37,6 @@ $borderLine: #DDDDE0;
 .alarms-timeline-steps {
   ul {
     list-style: none;
-    color: #858585;
   }
 
   &-date {

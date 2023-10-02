@@ -1,11 +1,9 @@
 import flushPromises from 'flush-promises';
 
-import { createVueInstance, generateRenderer } from '@unit/utils/vue';
+import { generateRenderer } from '@unit/utils/vue';
 import { SERVICE_WEATHER_STATE_COUNTERS } from '@/constants';
 
 import AlarmStateCounters from '@/components/widgets/service-weather/alarm-state-counters.vue';
-
-const localVue = createVueInstance();
 
 describe('alarm-state-counters', () => {
   const counters = {
@@ -24,7 +22,7 @@ describe('alarm-state-counters', () => {
     under_pbh: 11,
   };
   const snapshotFactory = generateRenderer(AlarmStateCounters, {
-    localVue,
+
     attachTo: document.body,
   });
 

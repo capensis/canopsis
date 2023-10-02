@@ -1,16 +1,19 @@
 package alarm
 
+//go:generate mockgen -destination=../../../mocks/lib/api/alarm/alarm.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm Store
+
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"sort"
 	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/perfdata"
@@ -44,7 +47,7 @@ type Store interface {
 	GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, error)
 	GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string, assignedInstructionsMap map[string][]AssignedInstruction) (map[string]ExecutionStatus, error)
 	Count(ctx context.Context, r FilterRequest) (*Count, error)
-	GetByID(ctx context.Context, id, userId string) (*Alarm, error)
+	GetByID(ctx context.Context, id, userId string, onlyParents bool) (*Alarm, error)
 	GetOpenByEntityID(ctx context.Context, id, userId string) (*Alarm, bool, error)
 	FindByService(ctx context.Context, id string, r ListByServiceRequest, userId string) (*AggregationResult, error)
 	FindByComponent(ctx context.Context, r ListByComponentRequest, userId string) (*AggregationResult, error)
@@ -64,10 +67,13 @@ type store struct {
 	dbEntityCollection               mongo.DbCollection
 	dbDeclareTicketCollection        mongo.DbCollection
 	dbUserCollection                 mongo.DbCollection
+	authorProvider                   author.Provider
 
 	linkGenerator link.Generator
 
 	timezoneConfigProvider config.TimezoneConfigProvider
+
+	decoder encoding.Decoder
 
 	logger zerolog.Logger
 }
@@ -76,6 +82,8 @@ func NewStore(
 	dbClient mongo.DbClient,
 	linkGenerator link.Generator,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	authorProvider author.Provider,
+	decoder encoding.Decoder,
 	logger zerolog.Logger,
 ) Store {
 	return &store{
@@ -86,11 +94,14 @@ func NewStore(
 		dbInstructionExecutionCollection: dbClient.Collection(mongo.InstructionExecutionMongoCollection),
 		dbEntityCollection:               dbClient.Collection(mongo.EntityMongoCollection),
 		dbDeclareTicketCollection:        dbClient.Collection(mongo.DeclareTicketRuleMongoCollection),
-		dbUserCollection:                 dbClient.Collection(mongo.RightsMongoCollection),
+		dbUserCollection:                 dbClient.Collection(mongo.UserCollection),
+		authorProvider:                   authorProvider,
 
 		linkGenerator: linkGenerator,
 
 		timezoneConfigProvider: timezoneConfigProvider,
+
+		decoder: decoder,
 
 		logger: logger,
 	}
@@ -125,8 +136,8 @@ func (s *store) Find(ctx context.Context, r ListRequestWithPagination, userId st
 	return &result, s.postProcessResult(ctx, &result, r.WithDeclareTickets, r.WithInstructions, r.WithLinks, r.OnlyParents, userId)
 }
 
-func (s *store) GetByID(ctx context.Context, id, userId string) (*Alarm, error) {
-	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"_id": id}, types.NewCpsTime())
+func (s *store) GetByID(ctx context.Context, id, userId string, onlyParents bool) (*Alarm, error) {
+	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{"_id": id}, types.NewCpsTime(), onlyParents)
 	if err != nil {
 		return nil, err
 	}
@@ -182,7 +193,7 @@ func (s *store) GetOpenByEntityID(ctx context.Context, entityID, userId string) 
 	pipeline, err := s.getQueryBuilder().CreateGetAggregationPipeline(bson.M{
 		"d":          entityID,
 		"v.resolved": nil,
-	}, types.NewCpsTime())
+	}, types.NewCpsTime(), false)
 	if err != nil {
 		return nil, false, err
 	}
@@ -374,11 +385,46 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 	}
 
 	if r.Steps != nil {
-		var stepsArray any
-		if r.Steps.Reversed {
+		stepMatch := bson.M{}
+		if r.Steps.Type != "" {
+			stepMatch["v.steps._t"] = r.Steps.Type
+		}
+
+		var stepsArray any = "$v.steps"
+		if len(stepMatch) > 0 {
+			pipeline = append(pipeline,
+				bson.M{"$unwind": bson.M{
+					"path":                       "$v.steps",
+					"preserveNullAndEmptyArrays": true,
+					"includeArrayIndex":          "step_index",
+				}},
+				bson.M{"$match": stepMatch},
+			)
+			if r.Steps.Reversed {
+				pipeline = append(pipeline, bson.M{"$sort": bson.M{"step_index": -1}})
+			} else {
+				pipeline = append(pipeline, bson.M{"$sort": bson.M{"step_index": 1}})
+			}
+			pipeline = append(pipeline,
+				bson.M{"$group": bson.M{
+					"_id":   "$_id",
+					"data":  bson.M{"$first": "$$ROOT"},
+					"steps": bson.M{"$push": "$v.steps"},
+				}},
+				bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{
+					"$mergeObjects": bson.A{
+						"$data",
+						bson.M{"v": bson.M{
+							"$mergeObjects": bson.A{
+								"$v",
+								bson.M{"steps": "$steps"},
+							},
+						}},
+					},
+				}}},
+			)
+		} else if r.Steps.Reversed {
 			stepsArray = bson.M{"$reverseArray": "$v.steps"}
-		} else {
-			stepsArray = "$v.steps"
 		}
 
 		pipeline = append(pipeline, bson.M{"$addFields": bson.M{
@@ -424,7 +470,8 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userId string)
 		}
 
 		if details.IsMetaAlarm {
-			childrenPipeline, err := s.getQueryBuilder().CreateChildrenAggregationPipeline(*r.Children, r.GetOpenedFilter(), details.Entity.ID, now)
+			childrenPipeline, err := s.getQueryBuilder().CreateChildrenAggregationPipeline(*r.Children,
+				r.GetOpenedFilter(), details.Entity.ID, r.Search, r.SearchBy, now)
 			if err != nil {
 				return nil, err
 			}
@@ -568,7 +615,7 @@ func (s *store) GetAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 
 func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, error) {
 	r := ExportFetchParameters{}
-	err := json.Unmarshal([]byte(t.Parameters), &r)
+	err := s.decoder.Decode([]byte(t.Parameters), &r)
 	if err != nil {
 		return nil, err
 	}
@@ -590,19 +637,55 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	}
 
 	project := make(bson.M, len(t.Fields))
+	withInstructions := false
+	withLinks := false
 	for _, field := range t.Fields {
+		if field.Name == "assigned_instructions" {
+			withInstructions = true
+			continue
+		}
+		if field.Name == "links" || strings.HasPrefix(field.Name, "links.") {
+			withLinks = true
+			continue
+		}
+
 		found := false
 		for anotherField := range project {
-			if strings.HasPrefix(field.Name, anotherField) {
+			if strings.HasPrefix(field.Name, anotherField+".") {
 				found = true
 				break
-			} else if strings.HasPrefix(anotherField, field.Name) {
+			} else if strings.HasPrefix(anotherField, field.Name+".") {
 				delete(project, anotherField)
 				break
 			}
 		}
 		if !found {
 			project[field.Name] = 1
+		}
+	}
+
+	if withInstructions || withLinks {
+		project["model"] = bson.M{
+			"alarm": "$$ROOT",
+			"entity": bson.M{"$mergeObjects": bson.A{
+				"$entity",
+				bson.M{"category": "$entity.category._id"},
+			}},
+		}
+	}
+
+	var instructions []Instruction
+	if withInstructions {
+		cursor, err := s.dbInstructionCollection.Find(ctx, bson.M{
+			"type":   bson.M{"$in": bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}},
+			"status": bson.M{"$in": bson.A{InstructionStatusApproved, nil}},
+		}, options.Find().SetProjection(bson.M{"steps": 0}))
+		if err != nil {
+			return nil, err
+		}
+		err = cursor.All(ctx, &instructions)
+		if err != nil {
+			return nil, err
 		}
 	}
 
@@ -613,7 +696,18 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	}
 
 	location := s.timezoneConfigProvider.Get().Location
-	return export.NewMongoCursor(cursor, t.Fields.Fields(), transformExportField(common.GetRealFormatTime(r.TimeFormat), location)), nil
+	var linkGenerator link.Generator
+	var user link.User
+	if withLinks {
+		linkGenerator = s.linkGenerator
+		user, err = s.findUser(ctx, t.User)
+		if err != nil {
+			return nil, err
+		}
+	}
+	exportCursor := newExportCursor(cursor, t.Fields.Fields(), common.GetRealFormatTime(r.TimeFormat), location,
+		instructions, linkGenerator, user, s.logger)
+	return exportCursor, nil
 }
 
 func (s *store) GetLinks(ctx context.Context, ruleId string, alarmIds []string, userId string) ([]link.Link, bool, error) {
@@ -649,8 +743,9 @@ func (s *store) getAssignedInstructionsMap(ctx context.Context, alarmIds []strin
 		ctx,
 		[]bson.M{
 			{"$match": bson.M{
-				"type":   bson.M{"$in": bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}},
-				"status": bson.M{"$in": bson.A{InstructionStatusApproved, nil}},
+				"type":    bson.M{"$in": bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}},
+				"status":  bson.M{"$in": bson.A{InstructionStatusApproved, nil}},
+				"enabled": true,
 			}},
 			{"$lookup": bson.M{
 				"from":         mongo.InstructionExecutionMongoCollection,
@@ -1263,7 +1358,7 @@ func (s *store) fillLinks(ctx context.Context, result *AggregationResult, userId
 }
 
 func (s *store) getQueryBuilder() *MongoQueryBuilder {
-	return NewMongoQueryBuilder(s.dbClient)
+	return NewMongoQueryBuilder(s.dbClient, s.authorProvider)
 }
 
 func (s *store) fillAssignedDeclareTickets(ctx context.Context, result *AggregationResult) error {
@@ -1345,7 +1440,7 @@ func (s *store) findUser(ctx context.Context, id string) (link.User, error) {
 	user := link.User{}
 	cursor, err := s.dbUserCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"_id": id}},
-		{"$addFields": bson.M{"username": "$crecord_name"}},
+		{"$addFields": bson.M{"username": "$name"}},
 	})
 	if err != nil {
 		return user, err

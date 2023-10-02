@@ -12,5 +12,9 @@ export default {
     validateScenariosVariables(context, { data }) {
       return request.post(API_ROUTES.templateValidator.scenarios, data);
     },
+
+    validateEventFilterRulesVariables(context, { data }) {
+      return request.post(API_ROUTES.templateValidator.eventFilterRules, data);
+    },
   },
 };

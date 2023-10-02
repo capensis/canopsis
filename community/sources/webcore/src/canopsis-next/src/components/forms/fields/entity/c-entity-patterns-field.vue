@@ -1,5 +1,5 @@
 <template lang="pug">
-  c-pattern-editor-field(
+  pattern-editor-field(
     v-field="patterns",
     :disabled="disabled",
     :readonly="readonly",
@@ -8,8 +8,15 @@
     :required="required",
     :attributes="availableEntityAttributes",
     :with-type="withType",
-    :check-count-name="checkCountName"
+    :counter="counter"
   )
+    template(#append-count="")
+      v-btn(
+        v-if="counter && counter.count",
+        flat,
+        small,
+        @click="showPatternEntitiesModal"
+      ) {{ $t('common.seeEntities') }}
 </template>
 
 <script>
@@ -26,10 +33,18 @@ import {
   PATTERN_RULE_TYPES,
 } from '@/constants';
 
-const { mapActions: entityCategoryMapActions } = createNamespacedHelpers('entityCategory');
-const { mapActions: serviceMapActions } = createNamespacedHelpers('service');
+import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
+
+import { patternCountEntitiesModalMixin } from '@/mixins/pattern/pattern-count-entities-modal';
+
+import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
+
+const { mapActions: mapEntityCategoryActions } = createNamespacedHelpers('entityCategory');
+const { mapActions: mapServiceActions } = createNamespacedHelpers('service');
 
 export default {
+  components: { PatternEditorField },
+  mixins: [patternCountEntitiesModalMixin],
   model: {
     prop: 'patterns',
     event: 'input',
@@ -70,6 +85,10 @@ export default {
     readonly: {
       type: Boolean,
       default: false,
+    },
+    counter: {
+      type: Object,
+      required: false,
     },
   },
   data() {
@@ -303,8 +322,14 @@ export default {
     this.fetchInfos();
   },
   methods: {
-    ...entityCategoryMapActions({ fetchCategoriesListWithoutStore: 'fetchListWithoutStore' }),
-    ...serviceMapActions({ fetchEntityInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
+    ...mapEntityCategoryActions({ fetchCategoriesListWithoutStore: 'fetchListWithoutStore' }),
+    ...mapServiceActions({ fetchEntityInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
+
+    showPatternEntitiesModal() {
+      this.showEntitiesModalByPatterns({
+        entity_pattern: formGroupsToPatternRulesQuery(this.patterns.groups),
+      });
+    },
 
     async fetchCategories() {
       this.categoriesPending = true;

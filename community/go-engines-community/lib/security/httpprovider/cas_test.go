@@ -170,10 +170,12 @@ func TestCasProvider_Auth_GivenTicketByQueryParamAndNoUserInStore_ShouldCreateNe
 		ExternalID: externalID,
 		Source:     security.SourceCas,
 		IsEnabled:  true,
+		Roles:      []string{"admin"},
 	}
 	service := "http://test-service"
 	config := security.CasConfig{
 		ValidateUrl: "http://test-validate",
+		DefaultRole: "admin",
 	}
 	mockDoer := mock_http.NewMockDoer(ctrl)
 	casRequest, _ := http.NewRequest("GET", "http://test-validate", nil)

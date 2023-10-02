@@ -1,7 +1,7 @@
 import flushPromises from 'flush-promises';
 import Faker from 'faker';
 
-import { mount, createVueInstance, shallowMount } from '@unit/utils/vue';
+import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { mockDateNow, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
@@ -13,11 +13,9 @@ import ClickOutside from '@/services/click-outside';
 
 import CreateCommentEvent from '@/components/modals/common/create-comment-event.vue';
 
-const localVue = createVueInstance();
-
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
-  'v-text-field': createInputStub('v-text-field'),
+  'c-name-field': createInputStub('c-name-field'),
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
 };
@@ -27,42 +25,10 @@ const snapshotStubs = {
   'alarm-general-table': true,
 };
 
-const factory = (options = {}) => shallowMount(CreateCommentEvent, {
-  localVue,
-  stubs,
-  attachTo: document.body,
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
-const snapshotFactory = (options = {}) => mount(CreateCommentEvent, {
-  localVue,
-  stubs: snapshotStubs,
-  propsData: {
-    modal: {
-      config: {},
-    },
-  },
-
-  parentComponent: {
-    provide: {
-      $clickOutside: new ClickOutside(),
-    },
-  },
-
-  ...options,
-});
-
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
 const selectSubmitButton = wrapper => selectButtons(wrapper).at(1);
 const selectCancelButton = wrapper => selectButtons(wrapper).at(0);
-const selectTextField = wrapper => wrapper.find('.v-text-field');
+const selectNameField = wrapper => wrapper.find('.c-name-field');
 
 describe('create-comment-event', () => {
   const timestamp = 1386435600000;
@@ -70,6 +36,29 @@ describe('create-comment-event', () => {
   mockDateNow(timestamp);
   const $modals = mockModals();
   const $popups = mockPopups();
+
+  const factory = generateShallowRenderer(CreateCommentEvent, {
+    stubs,
+    attachTo: document.body,
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
+  const snapshotFactory = generateRenderer(CreateCommentEvent, {
+    stubs: snapshotStubs,
+    propsData: {
+      modal: {
+        config: {},
+      },
+    },
+    parentComponent: {
+      provide: {
+        $clickOutside: new ClickOutside(),
+      },
+    },
+  });
 
   test('Form submitted after trigger submit button', async () => {
     const action = jest.fn();
@@ -87,18 +76,18 @@ describe('create-comment-event', () => {
     });
 
     const submitButton = selectSubmitButton(wrapper);
-    const textField = selectTextField(wrapper);
+    const textField = selectNameField(wrapper);
 
-    const output = Faker.datatype.string();
+    const comment = Faker.datatype.string();
 
-    textField.setValue(output);
+    textField.setValue(comment);
 
     submitButton.trigger('click');
 
     await flushPromises();
 
     expect(action).toBeCalledTimes(1);
-    expect(action).toBeCalledWith({ output });
+    expect(action).toBeCalledWith({ comment });
     expect($modals.hide).toBeCalledWith();
   });
 
@@ -116,11 +105,17 @@ describe('create-comment-event', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
+    const validator = wrapper.getValidator();
 
-    submitButton.trigger('click');
+    validator.attach({
+      name: 'name',
+      rules: 'required:true',
+      getter: () => false,
+      context: () => wrapper.vm,
+      vm: wrapper.vm,
+    });
 
-    await flushPromises();
+    selectSubmitButton(wrapper).trigger('click');
 
     expect(action).not.toBeCalled();
     expect($modals.hide).not.toBeCalled();
@@ -129,7 +124,7 @@ describe('create-comment-event', () => {
   test('Errors added after trigger submit button with action errors', async () => {
     const action = jest.fn();
     const formErrors = {
-      output: 'Output error',
+      comment: 'Comment error',
     };
     action.mockRejectedValueOnce({ ...formErrors, unavailableField: 'Error' });
     const wrapper = factory({
@@ -143,14 +138,10 @@ describe('create-comment-event', () => {
       },
     });
 
-    const submitButton = selectSubmitButton(wrapper);
-    const textField = selectTextField(wrapper);
+    const comment = Faker.datatype.string();
 
-    const output = Faker.datatype.string();
-
-    textField.setValue(output);
-
-    submitButton.trigger('click');
+    selectNameField(wrapper).setValue(comment);
+    selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();
 
@@ -158,7 +149,7 @@ describe('create-comment-event', () => {
 
     expect(formErrors).toEqual(addedErrors);
     expect(action).toBeCalledTimes(1);
-    expect(action).toBeCalledWith({ output });
+    expect(action).toBeCalledWith({ comment });
     expect($modals.hide).not.toBeCalledWith();
   });
 
@@ -184,11 +175,11 @@ describe('create-comment-event', () => {
     });
 
     const submitButton = selectSubmitButton(wrapper);
-    const textField = selectTextField(wrapper);
+    const textField = selectNameField(wrapper);
 
-    const output = Faker.datatype.string();
+    const comment = Faker.datatype.string();
 
-    textField.setValue(output);
+    textField.setValue(comment);
 
     submitButton.trigger('click');
 
@@ -199,7 +190,7 @@ describe('create-comment-event', () => {
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
     expect(action).toBeCalledTimes(1);
-    expect(action).toBeCalledWith({ output });
+    expect(action).toBeCalledWith({ comment });
     expect($modals.hide).not.toBeCalledWith();
 
     consoleErrorSpy.mockClear();

@@ -11,7 +11,7 @@ import {
   isDeclareTicketExecutionFailed,
   isDeclareTicketExecutionSucceeded,
   isDeclareTicketExecutionWaiting,
-} from '@/helpers/forms/declare-ticket-rule';
+} from '@/helpers/entities/declare-ticket/rule/form';
 
 import AlarmsTimeLineSteps from '@/components/widgets/alarm/time-line/alarms-time-line-steps.vue';
 

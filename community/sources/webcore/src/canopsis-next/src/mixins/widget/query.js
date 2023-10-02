@@ -2,7 +2,7 @@ import { pick, isEqual } from 'lodash';
 
 import { SORT_ORDERS } from '@/constants';
 
-import { convertWidgetQueryToRequest } from '@/helpers/query';
+import { convertWidgetQueryToRequest } from '@/helpers/entities/shared/query';
 
 import { queryMixin } from '@/mixins/query';
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';

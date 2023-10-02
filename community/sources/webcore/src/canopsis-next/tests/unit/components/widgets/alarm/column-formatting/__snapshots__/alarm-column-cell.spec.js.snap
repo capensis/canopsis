@@ -61,11 +61,11 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups 1`] = `
   <alarm-column-cell-popup-body-stub alarm="[object Object]" template="template"></alarm-column-cell-popup-body-stub>
 </div>
 <div class="layout d-inline-flex align-center">
-  <c-ellipsis-stub text="Name"></c-ellipsis-stub><button type="button" class="ma-0 v-btn v-btn--icon v-btn--small theme--light">
+  <c-ellipsis-stub title="Name" text="Name" class="alarm-column-cell__text"></c-ellipsis-stub><button type="button" class="ma-0 alarms-column-cell__show-info-btn v-btn v-btn--icon v-btn--small theme--light">
     <div class="v-btn__content"><i aria-hidden="true" class="v-icon material-icons theme--light" style="font-size: 16px;">info</i></div>
   </button>
 </div>
-<div class="v-menu">
+<div class="v-menu alarms-column-cell">
   <transition-stub name="v-menu-transition"></transition-stub>
 </div>
 `;
@@ -84,7 +84,7 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups 2`] = `
 
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups after hide 1`] = `
 <div
-  class="v-menu"
+  class="v-menu alarms-column-cell"
 >
   <transition-stub
     name="v-menu-transition"
@@ -106,7 +106,7 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups after hide 
 
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups and html 1`] = `
 <div
-  class="v-menu"
+  class="v-menu alarms-column-cell"
 >
   <transition-stub
     name="v-menu-transition"

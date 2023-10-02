@@ -37,7 +37,7 @@ import { getNowTimestamp } from '@/helpers/date/date';
 
 import { permissionsTechnicalBroadcastMessageMixin } from '@/mixins/permissions/technical/broadcast-message';
 
-import BroadcastMessage from '@/components/other/broadcast-message/broadcast-message.vue';
+import BroadcastMessage from '@/components/other/broadcast-message/partials/broadcast-message.vue';
 
 export default {
   components: {

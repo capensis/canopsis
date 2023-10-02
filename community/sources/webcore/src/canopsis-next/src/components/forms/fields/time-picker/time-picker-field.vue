@@ -126,19 +126,18 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .time-picker__select {
   display: inline-block;
   width: 56px;
+  min-width: 56px;
 
   &.v-select--is-menu-active .v-input__slot {
     background: #686868;
   }
 
-  & ::v-deep {
-    .v-select__slot {
-      padding: 0 5px;
-    }
+  .v-input__slot {
+    padding: 0 5px;
   }
 }
 </style>
