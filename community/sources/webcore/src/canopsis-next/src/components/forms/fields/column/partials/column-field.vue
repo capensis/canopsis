@@ -4,7 +4,10 @@
       v-layout(row, align-center)
         span.handler.mr-1
           v-icon.draggable(:class="dragHandleClass") drag_indicator
-        c-expand-btn.mr-1(v-model="expanded")
+        c-expand-btn.mr-1(
+          v-model="expanded",
+          :color="hasChildrenError ? 'error' : ''"
+        )
         v-select(
           v-field="column.column",
           v-validate="'required'",
@@ -37,14 +40,17 @@ import {
   ENTITY_FIELDS_TO_LABELS_KEYS,
 } from '@/constants';
 
-import { formBaseMixin } from '@/mixins/form';
+import { formBaseMixin, validationChildrenMixin } from '@/mixins/form';
 
 import ColumnFieldExpandPanel from './column-field-expand-panel.vue';
 
 export default {
   inject: ['$validator'],
   components: { ColumnFieldExpandPanel },
-  mixins: [formBaseMixin],
+  mixins: [
+    formBaseMixin,
+    validationChildrenMixin,
+  ],
   model: {
     prop: 'column',
     event: 'input',
