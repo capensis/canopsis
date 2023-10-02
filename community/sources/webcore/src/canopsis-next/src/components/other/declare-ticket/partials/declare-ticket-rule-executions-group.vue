@@ -12,8 +12,6 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
-
 import {
   isDeclareTicketExecutionRunning,
   isDeclareTicketExecutionSucceeded,
@@ -22,11 +20,7 @@ import {
 import DeclareTicketRuleExecutionStatus from './declare-ticket-rule-execution-status.vue';
 import DeclareTicketRuleExecutionAlarms from './declare-ticket-rule-execution-alarms.vue';
 
-/**
- * Modal to execute declare tickets
- */
 export default {
-  name: MODALS.executeDeclareTickets,
   components: {
     DeclareTicketRuleExecutionAlarms,
     DeclareTicketRuleExecutionStatus,
