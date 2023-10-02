@@ -1644,3 +1644,148 @@ Feature: update alarm on pbehavior
       }
     ]
     """
+
+  Scenario: given entity with pbehavior_info should set creation date in alarm's pbehavior info
+    Given I am admin
+    When I send an event:
+    """json
+    {
+      "event_type": "check",
+      "state": 0,
+      "output": "noveo alarm",
+      "connector": "test-connector-pbehavior-15",
+      "connector_name": "test-connector-name-pbehavior-15",
+      "component": "test-component-pbehavior-15",
+      "resource": "test-resource-pbehavior-15",
+      "source_type": "resource"
+    }
+    """
+    When I wait the end of event processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-15",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-pbehavior-15"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of event processing
+    When I do GET /api/v4/entities?search=test-resource-pbehavior-15
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "pbehavior_info": {
+            "name": "test-pbehavior-15"
+          }
+        }
+      ]
+    }
+    """
+    When I save response entityPbhTs={{ (index .lastResponse.data 0).pbehavior_info.timestamp }}
+    When I wait 2s
+    When I send an event:
+    """json
+    {
+      "event_type": "check",
+      "state": 1,
+      "output": "noveo alarm",
+      "connector": "test-connector-pbehavior-15",
+      "connector_name": "test-connector-name-pbehavior-15",
+      "component": "test-component-pbehavior-15",
+      "resource": "test-resource-pbehavior-15",
+      "source_type": "resource"
+    }
+    """
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?search=test-resource-pbehavior-15
+    Then the response code should be 200
+    When I save response alarmCreationDate={{ (index .lastResponse.data 0).t }}
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "pbehavior_info": {
+              "timestamp": {{ .alarmCreationDate }},
+              "name": "test-pbehavior-15"
+            }
+          }
+        }
+      ]
+    }
+    """
+    When I save response alarmPbhTs={{ (index .lastResponse.data 0).v.pbehavior_info.timestamp }}
+    Then "entityPbhTs" < "alarmPbhTs"
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ (index .lastResponse.data 0)._id }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc",
+                "val": 1
+              },
+              {
+                "_t": "statusinc",
+                "val": 1
+              },
+              {
+                "_t": "pbhenter",
+                "t": {{ .alarmCreationDate }}
+              }
+            ]
+          }
+        }
+      }
+    ]
+    """
+    When I do GET /api/v4/entities?search=test-resource-pbehavior-15
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "pbehavior_info": {
+            "timestamp": {{ .entityPbhTs }},
+            "name": "test-pbehavior-15"
+          }
+        }
+      ]
+    }
+    """

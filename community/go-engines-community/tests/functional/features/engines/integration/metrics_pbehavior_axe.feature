@@ -630,3 +630,89 @@ Feature: SLI metrics should be added on alarm changes
       "data": []
     }
     """
+
+  Scenario: given entity in maintenance pbehavior and new alarm should add SLI maintenance metrics
+    Given I am admin
+    When I do POST /api/v4/cat/kpi-filters:
+    """json
+    {
+      "name": "test-filter-metrics-pbehavior-axe-9-name",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-9"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I save response filterID={{ .lastResponse._id }}
+    When I send an event:
+    """json
+    {
+      "event_type": "check",
+      "state": 0,
+      "connector": "test-connector-metrics-pbehavior-axe-9",
+      "connector_name": "test-connector-name-metrics-pbehavior-axe-9",
+      "component": "test-component-metrics-pbehavior-axe-9",
+      "resource": "test-resource-metrics-pbehavior-axe-9",
+      "source_type": "resource"
+    }
+    """
+    When I wait the end of event processing
+    When I do POST /api/v4/pbehaviors:
+    """json
+    {
+      "enabled": true,
+      "name": "test-pbehavior-metrics-pbehavior-axe-9",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "5s" }},
+      "color": "#FFFFFF",
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-resource-metrics-pbehavior-axe-9"
+            }
+          }
+        ]
+      ]
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of event processing
+    When I wait 2s
+    When I send an event:
+    """json
+    {
+      "event_type": "check",
+      "state": 1,
+      "connector": "test-connector-metrics-pbehavior-axe-9",
+      "connector_name": "test-connector-name-metrics-pbehavior-axe-9",
+      "component": "test-component-metrics-pbehavior-axe-9",
+      "resource": "test-resource-metrics-pbehavior-axe-9",
+      "source_type": "resource"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/cat/metrics/sli?filter={{ .filterID }}&sampling=day&from={{ nowDate }}&to={{ nowDate }} until response code is 200 and response key "data.0.maintenance" is greater or equal than 4
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "timestamp": {{ nowDate }},
+          "downtime": 0
+        }
+      ]
+    }
+    """
