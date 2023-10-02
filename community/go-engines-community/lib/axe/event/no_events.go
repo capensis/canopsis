@@ -353,7 +353,6 @@ func (p *noEventsProcessor) newAlarm(
 	entity types.Entity,
 	timestamp types.CpsTime,
 	alarmConfig config.AlarmConfig,
-	timestamp types.CpsTime,
 ) types.Alarm {
 	alarm := types.Alarm{
 		EntityID: entity.ID,
