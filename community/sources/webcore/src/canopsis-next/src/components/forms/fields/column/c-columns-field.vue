@@ -1,16 +1,26 @@
 <template lang="pug">
-  c-movable-card-iterator-field(v-field="columns", addable, @add="add")
-    template(#item="{ item, index }")
-      column-field(
+  v-layout(column)
+    c-draggable-list-field(
+      v-field="columns",
+      :class="{ empty: isColumnsEmpty }",
+      :handle="`.${itemHandleClass}`",
+      :group="draggableGroup"
+    )
+      column-field.mb-3(
+        v-for="(column, index) in columns",
         v-field="columns[index]",
-        :name="item.key",
+        :key="column.key",
+        :name="column.key",
         :type="type",
+        :drag-handle-class="itemHandleClass",
         :with-html="withHtml",
         :with-template="withTemplate",
         :with-color-indicator="withColorIndicator",
         :with-instructions="withInstructions",
         :without-infos-attributes="withoutInfosAttributes"
       )
+    v-flex
+      v-btn.mr-2.mx-0(color="primary", @click.prevent="add") {{ $t('common.add') }}
 </template>
 
 <script>
@@ -61,6 +71,19 @@ export default {
     withoutInfosAttributes: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    itemHandleClass() {
+      return 'column-drag-handle';
+    },
+
+    draggableGroup() {
+      return 'columns';
+    },
+
+    isColumnsEmpty() {
+      return !this.columns.length;
     },
   },
   methods: {
