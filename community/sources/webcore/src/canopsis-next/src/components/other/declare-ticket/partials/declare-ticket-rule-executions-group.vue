@@ -17,7 +17,7 @@ import { MODALS } from '@/constants';
 import {
   isDeclareTicketExecutionRunning,
   isDeclareTicketExecutionSucceeded,
-} from '@/helpers/entities/declare-ticket/rule/form';
+} from '@/helpers/forms/declare-ticket-rule';
 
 import DeclareTicketRuleExecutionStatus from './declare-ticket-rule-execution-status.vue';
 import DeclareTicketRuleExecutionAlarms from './declare-ticket-rule-execution-alarms.vue';
