@@ -30,7 +30,6 @@ from canopsis.common.collection import MongoCollection
 from canopsis.common.mongo_store import MongoStore
 from canopsis.confng import Configuration, Json
 from canopsis.logger import Logger
-from canopsis.version import CanopsisVersionManager
 
 DEFAULT_MODULES = ['canopsis.migration.purge.PurgeModule',
                    'canopsis.migration.indexes.IndexesModule',
@@ -67,21 +66,7 @@ class MigrationTool(object):
         self.__canopsis_stack = canopsis_stack
         self.__canopsis_version = canopsis_version
 
-    def __put_canopsis_document(self):
-        """
-        Put Canopsis version document if a ``__canopsis_version`` attribute
-        is set.
-        """
-        if self.__canopsis_version:
-            store = MongoStore.get_default()
-            collection = \
-                store.get_collection(CanopsisVersionManager.COLLECTION)
-            CanopsisVersionManager(collection)\
-                .put_canopsis_document(self.__canopsis_edition, self.__canopsis_stack, self.__canopsis_version)
-
     def fill(self, init=None, yes=False, reinit_auth=False):
-        self.__put_canopsis_document()
-
         tools = []
 
         for module in self.modules:

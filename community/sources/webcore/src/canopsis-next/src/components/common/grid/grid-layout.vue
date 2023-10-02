@@ -4,7 +4,7 @@
     :class="{ 'grid-layout--disabled': disabled }",
     :style="style"
   )
-    grid-item.grid-layout__placeholder(
+    grid-item.grid-layout__placeholder.primary.darken-1(
       v-if="!disabled",
       v-show="resizing || moving",
       v-bind="itemBind",
@@ -276,7 +276,6 @@ export default {
   }
 
   &__placeholder {
-    background: var(--v-primary-darken1);
     opacity: .35;
 
     &:after {

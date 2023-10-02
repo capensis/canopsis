@@ -205,12 +205,12 @@ func postProcessResolve(
 
 func getResolveAlarmUpdate(t types.CpsTime) []bson.M {
 	return []bson.M{
-		{"$addFields": bson.M{
-			"duration": bson.M{"$subtract": bson.A{
+		{"$set": bson.M{
+			"v.duration": bson.M{"$subtract": bson.A{
 				t,
 				"$t",
 			}},
-			"inactive_duration": bson.M{"$sum": bson.A{
+			"v.inactive_duration": bson.M{"$sum": bson.A{
 				"$v.inactive_duration",
 				bson.M{"$cond": bson.M{
 					"if": bson.M{"$and": []bson.M{
@@ -230,15 +230,13 @@ func getResolveAlarmUpdate(t types.CpsTime) []bson.M {
 		}},
 		{"$set": bson.M{
 			"v.resolved": t,
-			"v.duration": "$duration",
 			"v.current_state_duration": bson.M{"$subtract": bson.A{
 				t,
 				"$v.state.t",
 			}},
-			"v.inactive_duration": "$inactive_duration",
 			"v.active_duration": bson.M{"$subtract": bson.A{
-				"$duration",
-				"$inactive_duration",
+				"$v.duration",
+				"$v.inactive_duration",
 			}},
 			"v.snooze_duration": bson.M{"$sum": bson.A{
 				"$v.snooze_duration",
