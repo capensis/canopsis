@@ -2,44 +2,75 @@
 
 exports[`c-columns-field Renders \`c-columns-field\` with custom props 1`] = `
 <div
-  class="c-movable-card-iterator-field"
+  class="layout column"
 >
-  <div>
+  <c-draggable-list-field-stub
+    class=""
+    group="columns"
+    handle=".column-drag-handle"
+    value="[object Object],[object Object]"
+  >
     <column-field-stub
+      class="mb-3"
       column="[object Object]"
+      draghandleclass="column-drag-handle"
       name="key-1"
       type="entity"
       withcolorindicator="true"
       withhtml="true"
       withtemplate="true"
     />
-  </div>
-  <div>
     <column-field-stub
+      class="mb-3"
       column="[object Object]"
-      name="key-1"
+      draghandleclass="column-drag-handle"
+      name="key-2"
       type="entity"
       withcolorindicator="true"
       withhtml="true"
       withtemplate="true"
     />
+  </c-draggable-list-field-stub>
+  <div
+    class="flex"
+  >
+    <button
+      class="mr-2 mx-0 v-btn theme--light primary"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        Add
+      </div>
+    </button>
   </div>
-   
-  <button
-    class="add-item-btn"
-    type="button"
-  />
 </div>
 `;
 
 exports[`c-columns-field Renders \`c-columns-field\` with default props 1`] = `
 <div
-  class="c-movable-card-iterator-field"
+  class="layout column"
 >
-   
-  <button
-    class="add-item-btn"
-    type="button"
+  <c-draggable-list-field-stub
+    class="empty"
+    group="columns"
+    handle=".column-drag-handle"
+    value=""
   />
+  <div
+    class="flex"
+  >
+    <button
+      class="mr-2 mx-0 v-btn theme--light primary"
+      type="button"
+    >
+      <div
+        class="v-btn__content"
+      >
+        Add
+      </div>
+    </button>
+  </div>
 </div>
 `;
