@@ -11,6 +11,8 @@ import {
 } from '@/helpers/entities/widget/forms/alarm';
 
 import AlarmColumnCell from '@/components/widgets/alarm/columns-formatting/alarm-column-cell.vue';
+import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
+import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 
 const stubs = {
   'alarm-column-cell-popup-body': true,
@@ -20,6 +22,8 @@ const stubs = {
   'alarm-column-value-categories': true,
   'alarm-column-value-extra-details': true,
   'c-alarm-links-chips': true,
+  'c-runtime-template': CRuntimeTemplate,
+  'c-compiled-template': CCompiledTemplate,
   'c-ellipsis': true,
 };
 
