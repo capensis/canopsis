@@ -28,7 +28,7 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	msg := d.Body
 	var event rpc.AxeEvent
 	err := p.Decoder.Decode(msg, &event)
-	if err != nil || event.Alarm == nil || event.Entity == nil {
+	if err != nil || event.Alarm == nil || event.Alarm.ID == "" || event.Entity == nil || event.Entity.ID == "" {
 		p.logError(err, "RPC Message Processor: invalid event", msg)
 
 		return p.getErrRpcEvent(errors.New("invalid event"), nil), nil
