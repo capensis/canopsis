@@ -88,6 +88,8 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 		case "no_events":
 			out.NoEvents = bool(in.Bool())
+		case "entity_pattern":
+			out.EntityPattern = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -148,6 +150,11 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"no_events\":"
 		out.RawString(prefix)
 		out.Bool(bool(in.NoEvents))
+	}
+	{
+		const prefix string = ",\"entity_pattern\":"
+		out.RawString(prefix)
+		out.String(string(in.EntityPattern))
 	}
 	out.RawByte('}')
 }
