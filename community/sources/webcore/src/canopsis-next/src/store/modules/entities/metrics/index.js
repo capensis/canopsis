@@ -26,7 +26,7 @@ export default {
     },
 
     createRemediationExport(context, { data }) {
-      return request.post(API_ROUTES.metrics.exportRemediation, data);
+      return request.post(API_ROUTES.metrics.exportRemediation, null, { params: data });
     },
 
     createKpiRatingExport(context, { data }) {
