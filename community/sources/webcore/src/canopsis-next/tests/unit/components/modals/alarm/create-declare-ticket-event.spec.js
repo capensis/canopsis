@@ -123,7 +123,7 @@ describe('create-declare-ticket-event', () => {
     await flushPromises();
 
     expect(action).toBeCalledTimes(1);
-    expect(action).toBeCalledWith([]);
+    expect(action).toBeCalledWith([], false);
     expect($modals.hide).toBeCalledWith();
   });
 
@@ -155,7 +155,7 @@ describe('create-declare-ticket-event', () => {
     expect($popups.error).toBeCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toBeCalledWith([]);
+    expect(action).toBeCalledWith([], false);
     expect($modals.hide).not.toBeCalledWith();
 
     consoleErrorSpy.mockClear();
