@@ -25,9 +25,10 @@ import { ACTION_TYPES } from '@/constants';
 import { convertDurationToString } from '@/helpers/date/duration';
 
 import ScenarioInfoItem from './scenario-info-item.vue';
+import ScenarioActionCardCompiledTemplate from './scenario-action-card-compiled-template.vue';
 
 export default {
-  components: { ScenarioInfoItem },
+  components: { ScenarioInfoItem, ScenarioActionCardCompiledTemplate },
   props: {
     action: {
       type: Object,
@@ -39,14 +40,9 @@ export default {
       return {
         icon: 'message',
         label: this.$t('scenario.output'),
-        subcomponent: 'v-textarea',
+        subcomponent: 'scenario-action-card-compiled-template',
         subcomponentProps: {
-          value: this.action.parameters.output,
-          rows: 3,
-          autoGrow: true,
-          readonly: true,
-          box: true,
-          disabled: true,
+          template: this.action.parameters.output,
         },
       };
     },
@@ -73,14 +69,9 @@ export default {
         {
           icon: 'message',
           label: this.$tc('common.comment'),
-          subcomponent: 'v-textarea',
+          subcomponent: 'scenario-action-card-compiled-template',
           subcomponentProps: {
-            value: this.action.comment,
-            rows: 3,
-            autoGrow: true,
-            readonly: true,
-            box: true,
-            disabled: true,
+            template: this.action.comment,
           },
         },
         {
@@ -363,11 +354,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.scenario-action-card-general-tab ::v-deep .v-input {
-  padding-left: 16px;
+.scenario-action-card-general-tab ::v-deep {
+  .v-input, .compiled-template__wrapper {
+    margin-left: 16px;
 
-  textarea {
-    margin: 0;
+    textarea {
+      margin: 0;
+    }
   }
 }
 </style>
