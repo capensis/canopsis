@@ -6,7 +6,6 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props 1`] = `
 >
   <c-draggable-list-field-stub
     class=""
-    group="columns"
     handle=".column-drag-handle"
     value="[object Object],[object Object]"
   >
@@ -54,7 +53,6 @@ exports[`c-columns-field Renders \`c-columns-field\` with default props 1`] = `
 >
   <c-draggable-list-field-stub
     class="empty"
-    group="columns"
     handle=".column-drag-handle"
     value=""
   />
