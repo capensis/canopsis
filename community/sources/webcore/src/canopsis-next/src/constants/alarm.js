@@ -80,6 +80,13 @@ export const ALARM_INFOS_FIELDS = [
   ALARM_FIELDS.entityComponentInfos,
 ];
 
+export const ALARM_OUTPUT_FIELDS = [
+  ALARM_FIELDS.output,
+  ALARM_FIELDS.longOutput,
+  ALARM_FIELDS.initialOutput,
+  ALARM_FIELDS.initialLongOutput,
+];
+
 export const ALARM_LEVELS = {
   minor: 20,
   major: 30,
