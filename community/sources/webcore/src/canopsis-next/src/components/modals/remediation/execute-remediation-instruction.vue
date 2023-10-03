@@ -8,6 +8,8 @@
           remediation-instruction-execute(
             v-if="instructionExecution",
             :instruction-execution="instructionExecution",
+            :next-pending="nextPending",
+            :previous-pending="previousPending",
             @next-step="nextStep",
             @next-operation="nextOperation",
             @previous-operation="previousOperation",
@@ -22,7 +24,7 @@
 import { pick } from 'lodash';
 
 import { SOCKET_ROOMS } from '@/config';
-import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants';
+import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES, RESPONSE_STATUSES } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
 
@@ -51,6 +53,8 @@ export default {
   data() {
     return {
       pending: true,
+      nextPending: false,
+      previousPending: false,
       instructionExecution: null,
     };
   },
@@ -135,16 +139,50 @@ export default {
       }
     },
 
+    async tryToCallWithHandleNotFound(func) {
+      try {
+        await func();
+      } catch (err) {
+        const message = err?.status === RESPONSE_STATUSES.notFound
+          ? this.$t('remediation.instructionExecute.popups.wasRemovedOrDisabled', {
+            instructionName: this.instructionExecution?.name,
+          })
+          : err?.data?.error;
+
+        this.$popups.error({ text: message || this.$t('errors.default') });
+
+        this.closeModal();
+      }
+    },
+
+    async callFunctionWithPreviousPending(func) {
+      this.previousPending = true;
+
+      await this.tryToCallWithHandleNotFound(func);
+
+      this.previousPending = false;
+    },
+
+    async callFunctionWithNextPending(func) {
+      this.nextPending = true;
+
+      await this.tryToCallWithHandleNotFound(func);
+
+      this.nextPending = false;
+    },
+
     /**
      * Goto next step
      *
      * @param {boolean} success
      * @return {Promise<void>}
      */
-    async nextStep(success = false) {
-      this.instructionExecution = await this.nextStepRemediationInstructionExecution({
-        id: this.instructionExecutionId,
-        data: { failed: !success },
+    nextStep(success = false) {
+      return this.callFunctionWithNextPending(async () => {
+        this.instructionExecution = await this.nextStepRemediationInstructionExecution({
+          id: this.instructionExecutionId,
+          data: { failed: !success },
+        });
       });
     },
 
@@ -154,8 +192,10 @@ export default {
      * @return {Promise<void>}
      */
     async nextOperation() {
-      this.instructionExecution = await this.nextOperationRemediationInstructionExecution({
-        id: this.instructionExecutionId,
+      return this.callFunctionWithNextPending(async () => {
+        this.instructionExecution = await this.nextOperationRemediationInstructionExecution({
+          id: this.instructionExecutionId,
+        });
       });
     },
 
@@ -164,10 +204,76 @@ export default {
      *
      * @return {Promise<void>}
      */
-    async previousOperation() {
-      this.instructionExecution = await this.previousOperationRemediationInstructionExecution({
-        id: this.instructionExecutionId,
+    previousOperation() {
+      return this.callFunctionWithPreviousPending(async () => {
+        this.instructionExecution = await this.previousOperationRemediationInstructionExecution({
+          id: this.instructionExecutionId,
+        });
       });
+    },
+
+    /**
+     * Create remediation instruction execution with error handler
+     *
+     * @return {Promise<void>}
+     */
+    createExecution() {
+      return this.tryToCallWithHandleNotFound(async () => {
+        this.instructionExecution = await this.createRemediationInstructionExecution({
+          data: {
+            alarm: this.config.alarmId,
+            instruction: this.instructionId,
+          },
+        });
+      });
+    },
+
+    /**
+     * Fetch remediation instruction execution with error handler
+     *
+     * @return {Promise<void>}
+     */
+    fetchExecution() {
+      return this.tryToCallWithHandleNotFound(async () => {
+        this.instructionExecution = await this.fetchRemediationInstructionExecutionWithoutStore({
+          id: this.instructionExecutionId,
+        });
+      });
+    },
+
+    /**
+     * Resume remediation instruction execution with error handler
+     *
+     * @return {Promise<void>}
+     */
+    resumeExecution() {
+      return this.tryToCallWithHandleNotFound(async () => {
+        this.instructionExecution = await this.resumeRemediationInstructionExecution({
+          id: this.instructionExecutionId,
+        });
+      });
+    },
+
+    /**
+     * Cancel remediation instruction execution with error handler
+     *
+     * @return {Promise<void>}
+     */
+    cancelExecution() {
+      return this.tryToCallWithHandleNotFound(
+        () => this.cancelRemediationInstructionExecution({ id: this.instructionExecutionId }),
+      );
+    },
+
+    /**
+     * Pause remediation instruction execution with error handler
+     *
+     * @return {Promise<void>}
+     */
+    pauseExecution() {
+      return this.tryToCallWithHandleNotFound(
+        () => this.pauseRemediationInstructionExecution({ id: this.instructionExecutionId }),
+      );
     },
 
     /**
@@ -269,56 +375,16 @@ export default {
      * @param {RemediationInstructionStepOperation} operation
      */
     setOperation(operation) {
-      this.instructionExecution.steps.some((step) => {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const step of this.instructionExecution.steps) {
         const operationIndex = step.operations
           .findIndex(({ operation_id: operationId }) => operationId === operation.operation_id);
 
-        const wasFound = operationIndex !== -1;
-
-        if (wasFound) {
+        if (operationIndex !== -1) {
           this.$set(step.operations, operationIndex, operation);
+
+          return;
         }
-
-        return wasFound;
-      });
-    },
-
-    /**
-     * Fetch instruction execution method (create if not exists, resume or fetch if exists)
-     *
-     * @return {Promise<void>}
-     */
-    async fetchInstructionExecution() {
-      const { execution } = this.config.assignedInstruction;
-
-      try {
-        this.pending = true;
-
-        if (!execution) {
-          this.instructionExecution = await this.createRemediationInstructionExecution({
-            data: {
-              alarm: this.config.alarmId,
-              instruction: this.instructionId,
-            },
-          });
-        } else if (execution.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused) {
-          this.instructionExecution = await this.resumeRemediationInstructionExecution({
-            id: this.instructionExecutionId,
-          });
-        } else {
-          this.instructionExecution = await this.fetchRemediationInstructionExecutionWithoutStore({
-            id: this.instructionExecutionId,
-          });
-        }
-
-        if (this.config.onExecute) {
-          await this.config.onExecute();
-        }
-      } catch (err) {
-        this.$popups.error({ text: err.error || this.$t('errors.default') });
-        this.closeModal();
-      } finally {
-        this.pending = false;
       }
     },
 
@@ -336,6 +402,31 @@ export default {
     },
 
     /**
+     * Fetch instruction execution method (create if not exists, resume or fetch if exists)
+     *
+     * @return {Promise<void>}
+     */
+    async fetchInstructionExecution() {
+      const { execution } = this.config.assignedInstruction;
+
+      this.pending = true;
+
+      if (!execution) {
+        await this.createExecution();
+      } else if (execution.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused) {
+        await this.resumeExecution();
+      } else {
+        await this.fetchExecution();
+      }
+
+      if (this.config.onExecute) {
+        await this.config.onExecute();
+      }
+
+      this.pending = false;
+    },
+
+    /**
      * Close handler
      */
     close() {
@@ -345,7 +436,8 @@ export default {
           hideTitle: true,
           text: this.$t('remediation.instructionExecute.closeConfirmationText'),
           action: async () => {
-            await this.pauseRemediationInstructionExecution({ id: this.instructionExecutionId });
+            await this.pauseExecution();
+
             await this.closeModal();
           },
           cancel: async (cancelled) => {
@@ -353,7 +445,8 @@ export default {
               return;
             }
 
-            await this.cancelRemediationInstructionExecution({ id: this.instructionExecutionId });
+            await this.cancelExecution();
+
             await this.closeModal();
           },
         },

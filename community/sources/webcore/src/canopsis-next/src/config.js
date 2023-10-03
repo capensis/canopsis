@@ -285,7 +285,7 @@ export const COLORS = {
     ongoing: '#f9A825',
     cancelled: '#757575',
     noEvents: '#ff5252',
-    unknown: 'black',
+    unknown: '#000',
   },
   entitiesEvents: {
     ack: '#9c27b0',
