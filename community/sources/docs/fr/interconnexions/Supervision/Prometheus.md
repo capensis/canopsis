@@ -45,7 +45,7 @@ Deux méthodes d'installation ou d'exécution sont proposées :
 
 - Installation en tant que service sur un système de production
 - Exécution en tant que conteneur *Docker* avec l'image fournie :
-  [canopsis/canopsis-connector-prometheus][docker-image] et l'exemple de configuration [docker compose](https://git.canopsis.net/canopsis-connectors/connector-prometheus#deployment-docker-compose)
+  [canopsis/canopsis-connector-prometheus][docker-image] et l'exemple de configuration [Docker Compose](https://git.canopsis.net/canopsis-connectors/connector-prometheus#deployment-docker-compose)
 
 ### Configuration Prometheus
 
