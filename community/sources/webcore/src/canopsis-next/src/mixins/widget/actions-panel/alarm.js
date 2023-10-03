@@ -64,10 +64,11 @@ export const widgetActionsPanelAlarmMixin = {
             items: alarms,
             alarmsByTickets,
             ticketsByAlarms,
-            action: (events) => {
+            action: (events, singleMode) => {
               this.$modals.show({
                 name: MODALS.executeDeclareTickets,
                 config: {
+                  singleMode,
                   executions: events,
                   tickets: events.map(({ _id: id }) => ({
                     _id: id,
