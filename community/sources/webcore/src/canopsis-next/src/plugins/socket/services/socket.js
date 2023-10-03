@@ -331,7 +331,6 @@ class Socket {
 
     this.reconnectingTimeout = setTimeout(() => {
       this.reconnect();
-      this.startReconnecting();
     }, RECONNECT_INTERVAL);
   }
 
@@ -387,7 +386,6 @@ class Socket {
    */
   stopReconnecting() {
     this.reconnecting = false;
-    this.reconnectsCount = 0;
 
     clearTimeout(this.reconnectingTimeout);
   }
@@ -396,6 +394,7 @@ class Socket {
    * Base handler for 'open' event
    */
   baseOpenHandler() {
+    this.reconnectsCount = 0;
     this.stopReconnecting();
 
     if (this.token) {
@@ -435,10 +434,6 @@ class Socket {
 
     this.authenticated = false;
 
-    if (this.reconnecting) {
-      return;
-    }
-
     this.stopReconnecting();
     this.startReconnecting();
   }
@@ -456,7 +451,6 @@ class Socket {
         this.lastPongedAt = Date.now();
         break;
       case RESPONSE_MESSAGES_TYPES.ok:
-        // eslint-disable-next-line no-unused-expressions
         this.rooms[room]?.call(null, msg);
         break;
       case RESPONSE_MESSAGES_TYPES.error:
