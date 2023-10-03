@@ -10,6 +10,13 @@
     :with-type="withType",
     :counter="counter"
   )
+    template(#append-count="")
+      v-btn(
+        v-if="counter && counter.count",
+        flat,
+        small,
+        @click="showPatternAlarms"
+      ) {{ $t('common.seeAlarms') }}
 </template>
 
 <script>
@@ -30,7 +37,10 @@ import {
   PATTERN_STRING_OPERATORS,
 } from '@/constants';
 
+import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
+
 import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { patternCountAlarmsModalMixin } from '@/mixins/pattern/pattern-count-alarms-modal';
 
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
@@ -38,7 +48,7 @@ const { mapActions: dynamicInfoMapActions } = createNamespacedHelpers('dynamicIn
 
 export default {
   components: { PatternEditorField },
-  mixins: [entitiesInfoMixin],
+  mixins: [entitiesInfoMixin, patternCountAlarmsModalMixin],
   model: {
     prop: 'patterns',
     event: 'input',
@@ -472,6 +482,12 @@ export default {
   },
   methods: {
     ...dynamicInfoMapActions({ fetchDynamicInfosKeysWithoutStore: 'fetchInfosKeysWithoutStore' }),
+
+    showPatternAlarms() {
+      this.showAlarmsModalByPatterns({
+        alarm_pattern: formGroupsToPatternRulesQuery(this.patterns.groups),
+      });
+    },
 
     async fetchInfos() {
       const { data: infos } = await this.fetchDynamicInfosKeysWithoutStore({

@@ -4450,6 +4450,11 @@ paths:
             type: array
             items:
               type: string
+        - name: entity_pattern
+          in: query
+          schema:
+            type: string
+          example: "[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"cps_resource\"}}]]"
         - name: no_events
           in: query
           schema:
@@ -7335,111 +7340,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-  /patterns-alarms:
-    post:
-      tags:
-        - saved-patterns
-      summary: Get matched alarms
-      description: Get matched alarms by patterns.
-      operationId: get-matched-alarms-by-patterns
-      requestBody:
-        description: body
-        content:
-          application/json:
-            schema:
-              $ref: 'schemas_swagger.yaml#/definitions/pattern.GetAlarmsRequest'
-            examples:
-              getMatchedAlarms:
-                summary: Get matched alarms
-                description: Get matched alarms by patterns.
-                value: {
-                  "alarm_pattern": [
-                    [
-                      {
-                        "field": "v.component",
-                        "cond": {
-                          "type": "eq",
-                          "value": "cps_component"
-                        }
-                      }
-                    ]
-                  ],
-                  "entity_pattern": [
-                    [
-                      {
-                        "field": "name",
-                        "cond": {
-                          "type": "eq",
-                          "value": "cps_resource"
-                        }
-                      }
-                    ]
-                  ],
-                  "pbehavior_pattern": [
-                    [
-                      {
-                        "field": "pbehavior_info.type",
-                        "cond": {
-                          "type": "eq",
-                          "value": "7e5866f8-dbfa-4b14-a4bf-febd0a35ff63"
-                        }
-                      }
-                    ]
-                  ]
-                }
-              getMatchedAlarmsWithSearch:
-                summary: Get matched alarms with search
-                description: Get matched alarms by patterns with search.
-                value: {
-                  "search": "AAA-BBB-CCC",
-                  "alarm_pattern": [
-                    [
-                      {
-                        "field": "v.component",
-                        "cond": {
-                          "type": "eq",
-                          "value": "cps_component"
-                        }
-                      }
-                    ]
-                  ],
-                  "entity_pattern": [
-                    [
-                      {
-                        "field": "name",
-                        "cond": {
-                          "type": "eq",
-                          "value": "cps_resource"
-                        }
-                      }
-                    ]
-                  ],
-                  "pbehavior_pattern": [
-                    [
-                      {
-                        "field": "pbehavior_info.type",
-                        "cond": {
-                          "type": "eq",
-                          "value": "7e5866f8-dbfa-4b14-a4bf-febd0a35ff63"
-                        }
-                      }
-                    ]
-                  ]
-                }
-        required: true
-      responses:
-        200:
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pattern.GetAlarmsResponse'
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /patterns-alarms-count:
     post:
       tags:
