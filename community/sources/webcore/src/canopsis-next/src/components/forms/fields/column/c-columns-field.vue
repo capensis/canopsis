@@ -65,13 +65,7 @@ export default {
   },
   methods: {
     add() {
-      const defaultColumn = widgetColumnToForm();
-
-      if (this.withHtml) {
-        defaultColumn.isHtml = true;
-      }
-
-      this.addItemIntoArray(defaultColumn);
+      this.addItemIntoArray(widgetColumnToForm());
     },
   },
 };
