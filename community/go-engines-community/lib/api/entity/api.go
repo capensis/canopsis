@@ -27,7 +27,9 @@ type API interface {
 	StartExport(c *gin.Context)
 	GetExport(c *gin.Context)
 	DownloadExport(c *gin.Context)
-	Clean(c *gin.Context)
+	ArchiveDisabled(c *gin.Context)
+	ArchiveUnlinked(c *gin.Context)
+	CleanArchived(c *gin.Context)
 	GetContextGraph(c *gin.Context)
 }
 
@@ -180,10 +182,10 @@ func (a *api) DownloadExport(c *gin.Context) {
 	c.File(t.File)
 }
 
-// Clean
-// @Param body body CleanRequest true "body"
-func (a *api) Clean(c *gin.Context) {
-	var r CleanRequest
+// ArchiveDisabled
+// @Param body body ArchiveDisabledRequest true "body"
+func (a *api) ArchiveDisabled(c *gin.Context) {
+	var r ArchiveDisabledRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
 		return
@@ -191,9 +193,44 @@ func (a *api) Clean(c *gin.Context) {
 
 	select {
 	case a.cleanTaskChan <- CleanTask{
-		Archive:             r.Archive,
-		ArchiveDependencies: r.ArchiveDependencies,
-		UserID:              c.MustGet(auth.UserKey).(string),
+		Type:                    CleanTaskTypeArchiveDisabled,
+		ArchiveWithDependencies: r.WithDependencies,
+		UserID:                  c.MustGet(auth.UserKey).(string),
+	}:
+	default:
+		a.logger.Debug().Msg("cleaning in progress, skip")
+	}
+
+	c.Status(http.StatusAccepted)
+}
+
+// ArchiveUnlinked
+// @Param body body ArchiveUnlinkedRequest true "body"
+func (a *api) ArchiveUnlinked(c *gin.Context) {
+	var r ArchiveUnlinkedRequest
+	if err := c.ShouldBindJSON(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+		return
+	}
+
+	select {
+	case a.cleanTaskChan <- CleanTask{
+		Type:          CleanTaskTypeArchiveUnlinked,
+		ArchiveBefore: &r.ArchiveBefore,
+		UserID:        c.MustGet(auth.UserKey).(string),
+	}:
+	default:
+		a.logger.Debug().Msg("cleaning in progress, skip")
+	}
+
+	c.Status(http.StatusAccepted)
+}
+
+func (a *api) CleanArchived(c *gin.Context) {
+	select {
+	case a.cleanTaskChan <- CleanTask{
+		Type:   CleanTaskTypeCleanArchived,
+		UserID: c.MustGet(auth.UserKey).(string),
 	}:
 	default:
 		a.logger.Debug().Msg("cleaning in progress, skip")

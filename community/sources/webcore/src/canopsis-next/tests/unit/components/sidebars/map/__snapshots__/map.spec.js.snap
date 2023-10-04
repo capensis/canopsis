@@ -70,7 +70,6 @@ exports[`map Renders \`map\` widget settings with custom props 1`] = `
       templates=""
       type="entity"
       withcolorindicator="true"
-      withhtml="true"
     />
   </widget-settings-group-stub>
   <hr
@@ -151,7 +150,6 @@ exports[`map Renders \`map\` widget settings with default props 1`] = `
       templates=""
       type="entity"
       withcolorindicator="true"
-      withhtml="true"
     />
   </widget-settings-group-stub>
   <hr

@@ -27,6 +27,7 @@ import { BASE_URL, FILE_BASE_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/confi
 
 import localStorageService from '@/services/local-storage';
 
+import { sanitizeHtml } from '@/helpers/html';
 import { matchPayloadVariableBySelection } from '@/helpers/payload-json';
 
 import VariablesMenu from './variables-menu.vue';
@@ -114,6 +115,7 @@ export default {
   },
   data() {
     return {
+      sanitized: false,
       variablesShown: false,
       variablesMenuValue: '',
       variablesMenuPosition: {
@@ -123,6 +125,10 @@ export default {
     };
   },
   computed: {
+    sanitizedValue() {
+      return sanitizeHtml(this.value);
+    },
+
     hasError() {
       return this.errorMessages.length;
     },
@@ -222,7 +228,10 @@ export default {
       this.createJodit();
     },
     value(newValue) {
-      if (this.$editor.value !== newValue) {
+      if (this.value && !this.sanitized) {
+        this.$editor.setEditorValue(this.sanitizedValue);
+        this.sanitized = true;
+      } else if (this.$editor.value !== newValue) {
         this.$editor.setEditorValue(newValue);
       }
     },
@@ -236,7 +245,7 @@ export default {
   methods: {
     createJodit() {
       this.$editor = new Jodit(this.$refs.textEditor, this.editorConfig);
-      this.$editor.setEditorValue(this.value);
+      this.$editor.setEditorValue(this.sanitizedValue);
       this.$editor.events.on('change', this.onChange);
     },
 
