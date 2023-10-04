@@ -81,11 +81,12 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 
 		alarmChange := types.NewAlarmChange()
 		if alarm.ID == "" {
-			alarmChange.PreviousPbehaviorTime = event.Entity.PbehaviorInfo.Timestamp
+			alarmChange.PreviousEntityPbehaviorTime = event.Entity.PbehaviorInfo.Timestamp
 			alarmChange.PreviousPbehaviorTypeID = event.Entity.PbehaviorInfo.TypeID
 			alarmChange.PreviousPbehaviorCannonicalType = event.Entity.PbehaviorInfo.CanonicalType
 		} else {
 			alarmChange.PreviousPbehaviorTime = alarm.Value.PbehaviorInfo.Timestamp
+			alarmChange.PreviousEntityPbehaviorTime = event.Entity.PbehaviorInfo.Timestamp
 			alarmChange.PreviousPbehaviorTypeID = alarm.Value.PbehaviorInfo.TypeID
 			alarmChange.PreviousPbehaviorCannonicalType = alarm.Value.PbehaviorInfo.CanonicalType
 			newStep := types.NewAlarmStep(types.AlarmStepPbhLeave, event.Parameters.Timestamp, event.Parameters.Author, event.Parameters.Output,

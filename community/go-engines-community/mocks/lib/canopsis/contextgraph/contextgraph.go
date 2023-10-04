@@ -99,18 +99,18 @@ func (mr *MockManagerMockRecorder) RecomputeService(arg0, arg1 interface{}) *gom
 }
 
 // UpdateEntities mocks base method.
-func (m *MockManager) UpdateEntities(arg0 context.Context, arg1 string, arg2 []types.Entity) (types.Entity, error) {
+func (m *MockManager) UpdateEntities(arg0 context.Context, arg1 string, arg2 []types.Entity, arg3 bool) (types.Entity, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateEntities", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "UpdateEntities", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(types.Entity)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // UpdateEntities indicates an expected call of UpdateEntities.
-func (mr *MockManagerMockRecorder) UpdateEntities(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockManagerMockRecorder) UpdateEntities(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateEntities", reflect.TypeOf((*MockManager)(nil).UpdateEntities), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateEntities", reflect.TypeOf((*MockManager)(nil).UpdateEntities), arg0, arg1, arg2, arg3)
 }
 
 // UpdateImpactedServicesFromDependencies mocks base method.

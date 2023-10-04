@@ -25,7 +25,7 @@ So the main rule is that if you receive alarm lock has been expired kind of log 
 
 ## Deployment
 In the section below there are changes need to be done to run and test application.  
-A new engine, engine-fifo must be added to docker-compose.yml  
+A new engine, engine-fifo must be added to `docker-compose.yml`  
 
 #### An example of new section for docker-compose.yml with new engine-fifo:
 ```
@@ -38,7 +38,7 @@ A new engine, engine-fifo must be added to docker-compose.yml
 ```
 
 Dockerfile to build image must be the same as for engine-che except directory paths.  
-To start with engine-che multiple instances docker-compose can be run with command line arguments:  
+To start with engine-che multiple instances, `docker compose` can be run with command line arguments:  
 `--scale che=N` where N is number of engine-che instances.  
 With replacement in .env file *"MONGO_TAG=3.6-jessie"* to *"MONGO_TAG=3.6"* we've got latest revision of MongoDB v3.6  (3.6.17 for the moment) built with newer Go version with significant changes to memory management in Go garbage collector.  
 Not only engine-che was changed but other engines were changed too: engine-action, engine-axe, engine-watcher, so respective images have to be re-build as well.  

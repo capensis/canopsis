@@ -260,6 +260,10 @@ func (s *service) ProcessAbandonedExecutions(ctx context.Context) error {
 }
 
 func (s *service) sendEventToFifoAck(ctx context.Context, event types.Event) {
+	if event.Healthcheck {
+		return
+	}
+
 	body, err := s.encoder.Encode(event)
 	if err != nil {
 		s.logger.Error().Err(err).Msg("failed to send fifo ack event: failed to encode fifo ack event")
