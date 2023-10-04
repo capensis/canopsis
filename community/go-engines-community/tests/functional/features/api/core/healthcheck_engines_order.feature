@@ -3,17 +3,17 @@ Feature: get healthcheck engines' order
   Only admin should be able to get healthcheck engines' order
 
   Scenario: given get engines' order request and no auth user should not allow access
-    When I do GET /api/v4/cat/healthcheck/engines-order
+    When I do GET /api/v4/healthcheck/engines-order
     Then the response code should be 401
 
   Scenario: given get engines' order request and auth user by api key without permissions should not allow access
     When I am noperms
-    When I do GET /api/v4/cat/healthcheck/engines-order
+    When I do GET /api/v4/healthcheck/engines-order
     Then the response code should be 403
 
   Scenario: given get engines' order request should return ok
     When I am admin
-    When I do GET /api/v4/cat/healthcheck/engines-order
+    When I do GET /api/v4/healthcheck/engines-order
     Then the response code should be 200
     Then the response body should be:
     """
