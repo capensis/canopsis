@@ -1,3 +1,4 @@
+<script>
 import dedupeModelListeners from 'vuetify/es5/util/dedupeModelListeners';
 import rebuildSlots from 'vuetify/es5/util/rebuildFunctionalSlots';
 import VCombobox from 'vuetify/es5/components/VCombobox';
@@ -6,7 +7,8 @@ import VOverflowBtn from 'vuetify/es5/components/VOverflowBtn';
 import { deprecate } from 'vuetify/es5/util/console';
 import VSelectOriginal from 'vuetify/es5/components/VSelect/VSelect';
 
-const VSelect = VSelectOriginal.extend({
+const VSelect = {
+  extends: VSelectOriginal,
   props: {
     alwaysDirty: {
       type: Boolean,
@@ -56,7 +58,7 @@ const VSelect = VSelectOriginal.extend({
       );
     },
   },
-});
+};
 
 const wrapper = {
   functional: true,
@@ -126,3 +128,17 @@ const wrapper = {
 };
 
 export default wrapper;
+</script>
+
+<style lang="scss">
+.v-select-list .v-list__tile__action .v-input--checkbox {
+  margin: 0;
+
+  .v-input__slot {
+    margin: 0;
+  }
+  .v-messages {
+    display: none;
+  }
+}
+</style>
