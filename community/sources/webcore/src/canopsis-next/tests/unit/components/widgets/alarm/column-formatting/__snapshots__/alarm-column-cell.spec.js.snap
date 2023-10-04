@@ -54,7 +54,11 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with column status 1`] 
 />
 `;
 
-exports[`alarm-column-cell Renders \`alarm-column-cell\` with invalid html 1`] = `<div />`;
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with invalid html 1`] = `
+<div>
+  <div />
+</div>
+`;
 
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with popups 1`] = `
 <div class="v-menu__content theme--light menuable__content__active " style="max-height: auto; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 8; display: none; z-index: 8;">
