@@ -6,7 +6,7 @@
       div.v-input__slot
         div.v-text-field__slot
           label.v-label(:class="[{ 'v-label--active': value }, themeClasses]") {{ label }}
-          div(ref="content", v-html="value", :class="{ 'v-text-field--input__disabled': disabled }")
+          c-compiled-template(ref="content", :template="value", :class="{ 'v-text-field--input__disabled': disabled }")
       div.v-text-field__details(v-if="!hideDetails")
         v-messages(:value="errorMessages", color="error")
 </template>

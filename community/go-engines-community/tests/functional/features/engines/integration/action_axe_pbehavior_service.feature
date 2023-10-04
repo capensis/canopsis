@@ -27,7 +27,6 @@ Feature: update service when alarm is updated by action pbehavior
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
-    When I save response serviceID={{ .lastResponse._id }}
     Then I wait the end of events processing which contain:
     """json
     [
@@ -42,8 +41,7 @@ Feature: update service when alarm is updated by action pbehavior
         "event_type": "check",
         "connector": "service",
         "connector_name": "service",
-        "component": "{{ .serviceID }}",
-        "source_type": "service"
+        "component": "{{ .serviceID }}"
       }
     ]
     """
@@ -74,8 +72,11 @@ Feature: update service when alarm is updated by action pbehavior
           "type": "pbehavior",
           "parameters": {
             "name": "test-pbehavior-action-axe-pbehavior-service-1",
-            "tstart": {{ now }},
-            "tstop": {{ nowAdd "1h" }},
+            "start_on_trigger": true,
+            "duration": {
+              "value": 1,
+              "unit": "h"
+            },
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },
@@ -90,14 +91,14 @@ Feature: update service when alarm is updated by action pbehavior
     When I send an event:
     """json
     {
+      "event_type": "check",
+      "state": 1,
+      "output": "test-output-action-axe-pbehavior-service-1",
       "connector": "test-connector-action-axe-pbehavior-service-1",
       "connector_name": "test-connector-name-action-axe-pbehavior-service-1",
-      "source_type": "resource",
-      "event_type": "check",
       "component":  "test-component-action-axe-pbehavior-service-1",
       "resource": "test-resource-action-axe-pbehavior-service-1",
-      "state": 1,
-      "output": "test-output-action-axe-pbehavior-service-1"
+      "source_type": "resource"
     }
     """
     Then I wait the end of events processing which contain:
@@ -122,13 +123,13 @@ Feature: update service when alarm is updated by action pbehavior
     When I send an event:
     """json
     {
+      "event_type": "cancel",
+      "output": "test-output-action-axe-pbehavior-service-1",
       "connector": "test-connector-action-axe-pbehavior-service-1",
       "connector_name": "test-connector-name-action-axe-pbehavior-service-1",
-      "source_type": "resource",
-      "event_type": "cancel",
       "component":  "test-component-action-axe-pbehavior-service-1",
       "resource": "test-resource-action-axe-pbehavior-service-1",
-      "output": "test-output-action-axe-pbehavior-service-1"
+      "source_type": "resource"
     }
     """
     Then I wait the end of events processing which contain:
