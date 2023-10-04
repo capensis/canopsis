@@ -980,7 +980,7 @@ func parseInt(
 	name, sectionName string,
 	logger zerolog.Logger,
 ) int {
-	if v < 0 {
+	if v <= 0 {
 		logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal, v, nil)
 		return defaultVal
 	}
@@ -998,7 +998,7 @@ func parseUpdatedInt(
 	logger zerolog.Logger,
 	invalidMsg ...string,
 ) (int, bool) {
-	if v < 0 {
+	if v <= 0 {
 		msg := "bad value %s of %s config section, previous value is used instead"
 		if len(invalidMsg) == 1 {
 			msg = invalidMsg[0]
