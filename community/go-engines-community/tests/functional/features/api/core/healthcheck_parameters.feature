@@ -3,26 +3,26 @@ Feature: to get and update healthcheck parameters
   Only admin should be able to get and update healthcheck parameters
 
   Scenario: given get healthcheck parameters request and no auth user should not allow access
-    When I do GET /api/v4/cat/healthcheck/parameters
+    When I do GET /api/v4/healthcheck/parameters
     Then the response code should be 401
 
   Scenario: given get healthcheck parameters request and auth user by api key without permissions should not allow access
     When I am noperms
-    When I do GET /api/v4/cat/healthcheck/parameters
+    When I do GET /api/v4/healthcheck/parameters
     Then the response code should be 403
 
   Scenario: given update healthcheck parameters request and no auth user should not allow access
-    When I do PUT /api/v4/cat/healthcheck/parameters
+    When I do PUT /api/v4/healthcheck/parameters
     Then the response code should be 401
 
   Scenario: given update healthcheck parameters request and auth user by api key without permissions should not allow access
     When I am noperms
-    When I do PUT /api/v4/cat/healthcheck/parameters
+    When I do PUT /api/v4/healthcheck/parameters
     Then the response code should be 403
 
   Scenario: given update and get healthcheck parameters requests should return ok
     When I am admin
-    When I do PUT /api/v4/cat/healthcheck/parameters:
+    When I do PUT /api/v4/healthcheck/parameters:
     """
     {}
     """
@@ -85,7 +85,7 @@ Feature: to get and update healthcheck parameters
       }
     }
     """
-    When I do GET /api/v4/cat/healthcheck/parameters
+    When I do GET /api/v4/healthcheck/parameters
     Then the response code should be 200
     Then the response body should be:
     """
@@ -145,7 +145,7 @@ Feature: to get and update healthcheck parameters
       }
     }
     """
-    When I do PUT /api/v4/cat/healthcheck/parameters:
+    When I do PUT /api/v4/healthcheck/parameters:
     """
     {
       "queue": {
@@ -260,7 +260,7 @@ Feature: to get and update healthcheck parameters
       }
     }
     """
-    When I do GET /api/v4/cat/healthcheck/parameters
+    When I do GET /api/v4/healthcheck/parameters
     Then the response code should be 200
     Then the response body should be:
     """
@@ -323,7 +323,7 @@ Feature: to get and update healthcheck parameters
 
   Scenario: given update healthcheck parameters requests should return error
     When I am admin
-    When I do PUT /api/v4/cat/healthcheck/parameters:
+    When I do PUT /api/v4/healthcheck/parameters:
     """
     {
       "queue": {
@@ -391,7 +391,7 @@ Feature: to get and update healthcheck parameters
       }
     }
     """
-    When I do PUT /api/v4/cat/healthcheck/parameters:
+    When I do PUT /api/v4/healthcheck/parameters:
     """
     {
       "queue": {
@@ -458,7 +458,7 @@ Feature: to get and update healthcheck parameters
       }
     }
     """
-    When I do PUT /api/v4/cat/healthcheck/parameters:
+    When I do PUT /api/v4/healthcheck/parameters:
     """
     {
       "queue": {
