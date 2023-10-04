@@ -11,8 +11,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type MessageProcessor struct {
@@ -22,6 +24,7 @@ type MessageProcessor struct {
 	Encoder           encoding.Encoder
 	Decoder           encoding.Decoder
 	TechMetricsSender techmetrics.Sender
+	AlarmCollection   mongo.DbCollection
 	Logger            zerolog.Logger
 }
 
@@ -73,6 +76,13 @@ func (p *MessageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 
 		p.logError(err, "cannot process event", "", msg)
 		return nil, nil
+	}
+
+	if event.Healthcheck {
+		_, err := p.AlarmCollection.DeleteMany(ctx, bson.M{"healthcheck": true})
+		if err != nil {
+			p.logError(err, "cannot delete temporary alarm", "", d.Body)
+		}
 	}
 
 	if !res.Forward {
@@ -145,11 +155,12 @@ func (p *MessageProcessor) transformEvent(event types.Event) rpc.AxeEvent {
 	}
 
 	return rpc.AxeEvent{
-		EventType:  event.EventType,
-		Parameters: params,
-		Alarm:      event.Alarm,
-		AlarmID:    event.AlarmID,
-		Entity:     event.Entity,
+		EventType:   event.EventType,
+		Parameters:  params,
+		Alarm:       event.Alarm,
+		AlarmID:     event.AlarmID,
+		Entity:      event.Entity,
+		Healthcheck: event.Healthcheck,
 	}
 }
 

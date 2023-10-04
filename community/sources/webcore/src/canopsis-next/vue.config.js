@@ -59,5 +59,8 @@ module.exports = {
     static: {
       watch: true,
     },
+    client: {
+      overlay: false,
+    },
   },
 };
