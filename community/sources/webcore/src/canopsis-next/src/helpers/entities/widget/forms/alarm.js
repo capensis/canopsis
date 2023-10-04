@@ -339,7 +339,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isUncancelAlarmsCommentRequired: parameters.isUncancelAlarmsCommentRequired ?? true,
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
   isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
-  isHtmlEnabledOnTimeLine: !!parameters.isHtmlEnabledOnTimeLine,
+  isHtmlEnabledOnTimeLine: parameters.isHtmlEnabledOnTimeLine ?? true,
   isActionsAllowWithOkState: !!parameters.isActionsAllowWithOkState,
   sticky_header: !!parameters.sticky_header,
   dense: parameters.dense ?? ALARM_DENSE_TYPES.large,

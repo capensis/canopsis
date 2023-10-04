@@ -114,11 +114,11 @@
 import ThemeEnabledColorPickerField from '@/components/other/theme/form/fields/theme-enabled-color-picker-field.vue';
 import ThemeColorFontSizeField from '@/components/other/theme/form/fields/theme-color-font-size-field.vue';
 
+import { THEME_FONT_PIXEL_SIZES } from '@/constants/theme';
+
 import ThemeColorsPreview from '../partials/theme-colors-preview.vue';
 
 import ThemeColorPickerField from './fields/theme-color-picker-field.vue';
-
-import { THEME_FONT_PIXEL_SIZES } from '@/constants/theme';
 
 export default {
   inject: ['$validator'],

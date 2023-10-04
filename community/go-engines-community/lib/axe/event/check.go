@@ -108,7 +108,7 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 		}
 
 		if alarm.ID == "" {
-			result, err = p.createAlarm(ctx, entity, event.Parameters)
+			result, err = p.createAlarm(ctx, entity, event)
 		} else {
 			result, err = p.updateAlarm(ctx, alarm, entity, event.Parameters)
 		}
@@ -117,11 +117,14 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 			return err
 		}
 
-		if result.Alarm.ID == "" {
-			updatedServiceStates, err = p.stateCountersService.UpdateServiceCounters(ctx, entity, nil, result.AlarmChange)
-		} else {
-			updatedServiceStates, err = p.stateCountersService.UpdateServiceCounters(ctx, entity, &result.Alarm, result.AlarmChange)
+		if !event.Healthcheck {
+			if result.Alarm.ID == "" {
+				updatedServiceStates, err = p.stateCountersService.UpdateServiceCounters(ctx, entity, nil, result.AlarmChange)
+			} else {
+				updatedServiceStates, err = p.stateCountersService.UpdateServiceCounters(ctx, entity, &result.Alarm, result.AlarmChange)
+			}
 		}
+
 		return err
 	})
 
@@ -134,12 +137,15 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 		result.AlarmChange.EventsCount = int(result.Alarm.Value.EventsCount)
 	}
 
-	go p.postProcess(context.Background(), event, result, updatedServiceStates)
+	if !event.Healthcheck {
+		go p.postProcess(context.Background(), event, result, updatedServiceStates)
+	}
 
 	return result, nil
 }
 
-func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, params rpc.AxeParameters) (Result, error) {
+func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, event rpc.AxeEvent) (Result, error) {
+	params := event.Parameters
 	now := types.NewCpsTime()
 	result := Result{
 		Forward: true,
@@ -235,6 +241,7 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, p
 	alarm.InternalTags = p.internalTagAlarmMatcher.Match(entity, alarm)
 	alarm.InternalTagsUpdated = types.NewMicroTime()
 	alarm.Tags = append(alarm.Tags, alarm.InternalTags...)
+	alarm.Healthcheck = event.Healthcheck
 	_, err = p.alarmCollection.InsertOne(ctx, alarm)
 	if err != nil {
 		return result, fmt.Errorf("cannot create alarm: %w", err)

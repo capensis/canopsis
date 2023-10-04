@@ -22,6 +22,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice/statecounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -286,6 +287,15 @@ func NewEngine(
 		return nil
 	})
 
+	mainMessageProcessor := &MessageProcessor{
+		FeaturePrintEventOnError: options.FeaturePrintEventOnError,
+		EventProcessor:           eventProcessor,
+		Encoder:                  json.NewEncoder(),
+		Decoder:                  json.NewDecoder(),
+		TechMetricsSender:        techMetricsSender,
+		AlarmCollection:          dbClient.Collection(mongo.AlarmMongoCollection),
+		Logger:                   logger,
+	}
 	engineAxe.AddConsumer(libengine.NewDefaultConsumer(
 		canopsis.AxeConsumerName,
 		canopsis.AxeQueueName,
@@ -297,14 +307,7 @@ func NewEngine(
 		options.FifoAckExchange,
 		canopsis.FIFOAckQueueName,
 		amqpConnection,
-		&MessageProcessor{
-			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
-			EventProcessor:           eventProcessor,
-			Encoder:                  json.NewEncoder(),
-			Decoder:                  json.NewDecoder(),
-			TechMetricsSender:        techMetricsSender,
-			Logger:                   logger,
-		},
+		mainMessageProcessor,
 		logger,
 	))
 	engineAxe.AddConsumer(libengine.NewRPCServer(
@@ -410,6 +413,14 @@ func NewEngine(
 		logger,
 		userInterfaceConfigProvider,
 	))
+
+	healthcheck.Start(ctx, healthcheck.NewChecker(
+		"axe",
+		mainMessageProcessor,
+		json.NewEncoder(),
+		true,
+		false,
+	), logger)
 
 	return engineAxe
 }
