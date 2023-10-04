@@ -4,7 +4,7 @@ import theme from 'vuetify/es5/components/Vuetify/mixins/theme';
 import icons from './components/icons';
 import ClickOutside from './directives/click-outside';
 import VTabs from './components/v-tabs/v-tabs.vue';
-import VSelect from './components/v-select/v-select.vue';
+import VSelect from './components/v-select';
 import VTextarea from './components/v-textarea/v-textarea.vue';
 import VDataTable from './components/v-data-table/v-data-table.vue';
 import VTooltip from './components/v-tooltip/v-tooltip.vue';
