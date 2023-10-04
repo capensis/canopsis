@@ -17,6 +17,7 @@ variables:
 include:
   - community/.gitlab-ci-common.yml
   - community/.gitlab-ci-template.yml
+  - community/.gitlab-ci-builder.yml
 
 create_release:
   extends: .create_release
