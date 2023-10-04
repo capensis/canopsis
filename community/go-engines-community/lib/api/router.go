@@ -544,9 +544,19 @@ func RegisterRoutes(
 			)
 
 			entityRouter.POST(
-				"/clean",
+				"/archive-disabled",
 				middleware.Authorize(apisecurity.ObjEntity, model.PermissionDelete, enforcer),
-				entityAPI.Clean,
+				entityAPI.ArchiveDisabled,
+			)
+			entityRouter.POST(
+				"/archive-unlinked",
+				middleware.Authorize(apisecurity.ObjEntity, model.PermissionDelete, enforcer),
+				entityAPI.ArchiveUnlinked,
+			)
+			entityRouter.POST(
+				"/clean-archived",
+				middleware.Authorize(apisecurity.ObjEntity, model.PermissionDelete, enforcer),
+				entityAPI.CleanArchived,
 			)
 
 			entityRouter.GET(
@@ -1325,11 +1335,6 @@ func RegisterRoutes(
 			"/patterns-entities-count",
 			middleware.OnlyAuth(),
 			patternAPI.CountEntities,
-		)
-		protected.POST(
-			"/patterns-alarms",
-			middleware.OnlyAuth(),
-			patternAPI.GetAlarms,
 		)
 
 		linkRuleAPI := linkrule.NewApi(

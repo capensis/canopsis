@@ -135,8 +135,16 @@ export default createEntityModule({
       return request.get(`${API_ROUTES.contextExport}/${id}`, { params });
     },
 
-    cleanEntitiesData(context, { data }) {
-      return request.post(`${API_ROUTES.entity}/clean`, data);
+    archiveDisabledEntitiesData(context, { data }) {
+      return request.post(`${API_ROUTES.entity}/archive-disabled`, data);
+    },
+
+    archiveUnlinkedEntitiesData(context, { data }) {
+      return request.post(`${API_ROUTES.entity}/archive-unlinked`, data);
+    },
+
+    cleanArchivedEntitiesData() {
+      return request.post(`${API_ROUTES.entity}/clean-archived`);
     },
 
     bulkEnable(context, { data }) {

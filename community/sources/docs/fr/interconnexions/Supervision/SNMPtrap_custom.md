@@ -283,7 +283,7 @@ On redémarre le service ou conteneur `snmp` Canopsis. Cette étape dépend du
 type d'installation. Par exemple, sur une installation Docker Compose :
 
 ```sh
-docker-compose restart snmp
+docker compose restart snmp
 ```
 
 Pour la validation de fonctionnement de la classe avec le script, placer

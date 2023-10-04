@@ -10,10 +10,10 @@ Ce document ne prend en compte que Canopsis Community et Canopsis Pro : tout dé
 
 Les fichiers de référence qui sont mentionnés dans ce guide sont disponibles à ces adresses
 
-| Edition           | Sources                                                                                                                              |
+| Édition           | Sources                                                                                                                              |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Edition Community | [https://git.canopsis.net/canopsis/canopsis-community/-/releases](https://git.canopsis.net/canopsis/canopsis-community/-/releases)   |
-| Edition pro       | [https://git.canopsis.net/sources/canopsis-pro-sources/-/releases](https://git.canopsis.net/sources/canopsis-pro-sources/-/releases) |
+| Édition Community | [https://git.canopsis.net/canopsis/canopsis-community/-/releases](https://git.canopsis.net/canopsis/canopsis-community/-/releases)   |
+| Édition pro       | [https://git.canopsis.net/sources/canopsis-pro-sources/-/releases](https://git.canopsis.net/sources/canopsis-pro-sources/-/releases) |
 
 ## Procédure de mise à jour
 
@@ -32,20 +32,20 @@ La restructuration apportée dans les bases de données pour cette version de Ca
 
     === "Docker Compose"
         ```sh
-        CPS_EDITION=pro docker-compose exec mongodb bash
+        CPS_EDITION=pro docker compose exec mongodb bash
         mongo -u root -p root
         > db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )
         > exit
         ```
 
-    === "Paquets RH8"
+    === "Paquets RHEL 8"
 
         ```sh
         mongo -u root -p root
         > db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )
         > exit
         ```
-    
+
     Le retour doit être de la forme `{ "featureCompatibilityVersion" : { "version" : "4.4" }, "ok" : 1 }`
     Si ce n'est pas le cas, vous ne pouvez pas continuer la mise à jour.
 
@@ -56,10 +56,10 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 === "Docker Compose"
 
     ```sh
-    CPS_EDITION=pro docker-compose down
+    CPS_EDITION=pro docker compose down
     ```
 
-=== "Paquets RH8"
+=== "Paquets RHEL 8"
 
     ```sh
     systemctl stop canopsis
@@ -80,7 +80,7 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 === "Docker Compose"
 
     Si vous êtes utilisateur de l'édition `community`, voici les étapes à suivre.
-    
+
     Télécharger le paquet de la version 23.04.0 (canopsis-community-docker-compose-23.04.0.tar.gz) disponible à cette adresse [https://git.canopsis.net/canopsis/canopsis-community/-/releases](https://git.canopsis.net/canopsis/canopsis-community/-/releases).
 
     ```sh
@@ -99,11 +99,11 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
     cd canopsis-pro-docker-compose-23.04.0
     ```
 
-    A ce stade, vous devez synchroniser les modifications réalisées sur vos anciens fichiers de configuration `docker-compose` avec les fichiers `docker-compose.yml` et/ou `docker-compose.override.yml`.
+    À ce stade, vous devez synchroniser les modifications réalisées sur vos anciens fichiers de configuration `docker-compose` avec les fichiers `docker-compose.yml` et/ou `docker-compose.override.yml`.
 
-=== "Paquets RH8"
+=== "Paquets RHEL 8"
 
-    A venir
+    À venir
 
 ### Mise à jour de MongoDB
 
@@ -114,19 +114,19 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
     Démarrez le conteneur `mongodb` :
 
     ```sh
-    CPS_EDITION=pro docker-compose up -d mongodb
+    CPS_EDITION=pro docker compose up -d mongodb
     ```
 
     Entrez ensuite à l'intérieur de ce conteneur, afin de compléter la mise à jour vers MongoDB 5.0 :
 
     ```sh
-    CPS_EDITION=pro docker-compose exec mongodb bash
+    CPS_EDITION=pro docker compose exec mongodb bash
     mongo -u root -p root
     > db.adminCommand( { setFeatureCompatibilityVersion: "5.0" } )
     exit
     ```
 
-=== "Paquets RH8"
+=== "Paquets RHEL 8"
 
     !!! note
         Si vous avez mis en place des exclusions dans le fichier `/etc/yum.conf`, veillez à la désactiver le temps de cette procédure.
@@ -167,13 +167,13 @@ Dans cette version de Canopsis, la base de données TimescaleDB passe de la vers
     Relancez le conteneur `timescaledb` :
 
     ```sh
-    CPS_EDITION=pro docker-compose up -d timescaledb
+    CPS_EDITION=pro docker compose up -d timescaledb
     ```
 
     Puis mettez à jour l'extension timescaledb (La chaîne de connexion doit être adaptée à votre environnement)
 
     ```sh
-    CPS_EDITION=pro docker-compose exec timescaledb psql postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis
+    CPS_EDITION=pro docker compose exec timescaledb psql postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis
     canopsis=# ALTER EXTENSION timescaledb UPDATE;
     ```
 
@@ -186,9 +186,8 @@ Dans cette version de Canopsis, la base de données TimescaleDB passe de la vers
     ...
     exit
     ```
-   
 
-=== "Paquets RH8"
+=== "Paquets RHEL 8"
 
     Mise à jour des paquets `timescaledb` :
 
@@ -235,20 +234,20 @@ Dans cette version de Canopsis, la base de données TimescaleDB passe de la vers
 Dans cette version de Canopsis, le bus rabbitMQ passe à la version 3.11.11.  
 
 === "Docker Compose"
-    
+
     Un passage par la version 3.10.20 est nécessaire lorsque votre installation part de la version 3.7.28.
 
     Passage en version 3.10.20 puis lancement du conteneur `rabbitmq` :
 
     ```sh
     sed -i "s/RABBITMQ_TAG=.*-management$/RABBITMQ_TAG=3.10.20-management/g" .env
-    CPS_EDITION=pro docker-compose up -d rabbitmq
+    CPS_EDITION=pro docker compose up -d rabbitmq
     ```
 
     Il faut à présent activer la fonctionnalité `FEATURE_FLAGS` de rabbitmq :
 
     ```sh
-    CPS_EDITION=pro docker-compose exec rabbitmq /bin/bash
+    CPS_EDITION=pro docker compose exec rabbitmq /bin/bash
     rabbitmqctl enable_feature_flag all
     Enabling all feature flags ...
     exit
@@ -258,10 +257,10 @@ Dans cette version de Canopsis, le bus rabbitMQ passe à la version 3.11.11.
 
     ```sh
     sed -i "s/RABBITMQ_TAG=.*-management$/RABBITMQ_TAG=3.11.11-management/g" .env
-    CPS_EDITION=pro docker-compose up -d rabbitmq
+    CPS_EDITION=pro docker compose up -d rabbitmq
     ```
 
-=== "Paquets RH8"
+=== "Paquets RHEL 8"
 
     Il faut commencer par activer la fonctionnalité `FEATURE_FLAGS` de rabbitmq :
 
@@ -269,7 +268,7 @@ Dans cette version de Canopsis, le bus rabbitMQ passe à la version 3.11.11.
     systemctl start rabbitmq-server
     rabbitmqctl enable_feature_flag all
     ```
-   
+
     Passage en version 3.11.11 puis lancement du service `rabbitmq-server` :
 
     ```sh
@@ -284,12 +283,12 @@ Dans cette version de Canopsis, le cache de Canopsis doit repartir à 0.
 === "Docker Compose"
 
     ```sh
-    CPS_EDITION=pro docker-compose up -d redis
-    CPS_EDITION=pro docker-compose exec redis /usr/local/bin/redis-cli flushall
+    CPS_EDITION=pro docker compose up -d redis
+    CPS_EDITION=pro docker compose exec redis /usr/local/bin/redis-cli flushall
     OK
     ```
 
-=== "Paquets RH8"
+=== "Paquets RHEL 8"
 
     ```sh
     systemctl start redis
@@ -317,12 +316,12 @@ Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, 
 === "Docker Compose"
 
     !!! Attention
-    
+
     Si vous avez personnalisé la ligne de commande de l'outil `canopsis-reconfigure`, nous vous conseillons de supprimer cette personnalisation.
     L'outil est en effet pré paramétré pour fonctionner naturellement.
 
     ```sh
-    CPS_EDITION=pro docker-compose up -d reconfigure
+    CPS_EDITION=pro docker compose up -d reconfigure
     ```
 
     !!! information "Information"
@@ -332,18 +331,18 @@ Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, 
     Vous pouvez ensuite vérifier que le mécanisme de provisioning/reconfigure s'est correctement déroulé. Le conteneur doit présenté un "exit 0"
 
     ```sh
-    CPS_EDITION=pro docker-compose ps -a|grep reconfigure
+    CPS_EDITION=pro docker compose ps -a|grep reconfigure
     canopsis-pro-reconfigure-1            "/canopsis-reconfigu…"   reconfigure            exited (0)
     ```
 
-=== "Paquets RH8"
+=== "Paquets RHEL 8"
 
     La commande `canopsis-reconfigure` doit être exécutée après mise à jour de Canopsis dans le cadre d'installation par paquets RPM.
 
 #### Migration des statistiques de remédiation
 
 Historiquement, les statistiques de remédiation étaient stockées dans la base mongoDB.  
-A présent, c'est TimescaleDB qui porte ces statistiques.
+À présent, c'est TimescaleDB qui porte ces statistiques.
 
 Une migration des données est donc nécessaire.
 
@@ -356,7 +355,7 @@ Une migration des données est donc nécessaire.
     INF git.canopsis.net/canopsis/canopsis-pro/pro/go-engines-pro/cmd/migrate-instruction-metrics/main.go:48 > instruction metrics migration finished 8.777198ms
     ```
 
-=== "Paquets RH8"
+=== "Paquets RHEL 8"
 
     Exécution de la commande `migrate-instruction-metrics`
 
@@ -373,13 +372,13 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
 === "Docker Compose"
 
     ```sh
-    CPS_EDITION=pro docker-compose up -d
+    CPS_EDITION=pro docker compose up -d
     ```
 
     Vous pouvez ensuite vérifier que l'ensemble des conteneurs soient correctement exécutés.
 
     ```sh
-    CPS_EDITION=pro docker-compose ps
+    CPS_EDITION=pro docker compose ps
     NAME                                  COMMAND                  SERVICE                STATUS              PORTS
     canopsis-pro-action-1                 "/engine-action -wit…"   action                 running             
     canopsis-pro-api-1                    "/canopsis-api -docs"    api                    running (healthy)   0.0.0.0:8082->8082/tcp, :::8082->8082/tcp
@@ -401,21 +400,21 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
     canopsis-pro-timescaledb-1            "docker-entrypoint.s…"   timescaledb            running (healthy)   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp
     ```
 
-=== "Paquets RH8"
+=== "Paquets RHEL 8"
 
-    Mise à jour de Canopsis 
+    Mise à jour de Canopsis
 
     ```sh
     dnf install canopsis-pro-23.04.0 canopsis-webui-23.04.0
     ```
 
-    Reconfiguration de Canopsis 
+    Reconfiguration de Canopsis
 
     !!! Attention
-    
+
         Si vous avez personnalisé la ligne de commande de l'outil `canopsis-reconfigure`, nous vous conseillons de supprimer cette personnalisation.
         L'outil est en effet pré paramétré pour fonctionner naturellement.
-        
+
 
     Si vous utilisez un fichier d'override du canopsis.toml, veuillez ajouter à la ligne de commande suivante l'option `-override` suivie du chemin du fichier en question.
 
@@ -463,7 +462,7 @@ Vous devez simplement définir la variable d'environnement `CPS_OLD_API` dans `/
     Par ailleurs, si vous utilisiez déjà la partie SNMP dans votre installation alors la collection `schema` existe très certainement dans mongoDB.  
     Si ce n'était pas le cas, vous allez devoir la créer avec ces instructions.  
     ```
-    docker-compose exec snmp /bin/bash
+    docker compose exec snmp /bin/bash
     schema2db
     ```
 
@@ -479,8 +478,8 @@ On remplace l'entrypoint pour être en mesure d'exécuter les commandes `env2cfg
 
 ```sh
 sed -i 's/#entrypoint/entrypoint/' docker-compose.yml
-docker-compose up -d oldapi
-docker-compose exec oldapi bash
+docker compose up -d oldapi
+docker compose exec oldapi bash
 env2cfg
 schema2db
 ```
@@ -501,9 +500,9 @@ Enfin, on rétablit l'entrypoint d'origine et on démarre les services :
 
 ```sh
 sed -i 's/entrypoint/#entrypoint/' docker-compose.yml
-docker-compose up -d
+docker compose up -d
 ```
 
 Vous pouvez vérifier que votre installation SNMP est fonctionnelle en vous rendant sur l'interface graphique dans le menu `Exploitation->Règles SNMP`.  
-Si vous aviez déjà des règles SNMP en place alors elles s'affichent dans la liste. 
+Si vous aviez déjà des règles SNMP en place alors elles s'affichent dans la liste.
 Si l'interface vous déconnecte, alors la focntionnalité SNMP n'est pas déployée correctement. Dans ce cas, contactez notre support.

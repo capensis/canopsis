@@ -274,6 +274,7 @@ export default {
   currentDate: 'Current date',
   chooseFile: 'Choose file',
   seeAlarms: 'See alarms',
+  seeEntities: 'See entities',
   new: 'New',
   regexp: 'Regexp',
   variableTypes: {
