@@ -2,7 +2,7 @@
 
 exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 1`] = `
 <div
-  class="v-input v-text-field v-select v-select--chips v-select--chips--small v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+  class="v-input c-alarm-tag-field v-text-field v-select v-select--chips v-select--chips--small v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
   role="combobox"
 >
   <div
@@ -25,8 +25,11 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 1`] =
           class="v-select__selections"
         >
           <c-alarm-action-chip-stub
+            class="c-alarm-tag-field__tag"
             closable="closable"
             color="#444"
+            ellipsis="ellipsis"
+            title="Tag 1"
           >
             Tag 1
           </c-alarm-action-chip-stub>
@@ -79,7 +82,7 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 1`] =
 
 exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 2`] = `
 <div
-  class="v-menu__content theme--light "
+  class="v-menu__content theme--light c-alarm-tag-field__list"
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
@@ -90,7 +93,7 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 2`] =
       role="list"
     >
       <div
-        class="primary--text"
+        class="c-alarm-tag-field__list-item primary--text"
         role="listitem"
       >
         <a
@@ -131,25 +134,24 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 2`] =
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
           <div
-            class="v-list__tile__content"
+            class="v-list__tile__content c-word-break-all"
           >
-            <div
-              class="v-list__tile__title"
-            >
-              Tag 1
-            </div>
+            Tag 1
           </div>
         </a>
       </div>
       <div
+        class="c-alarm-tag-field__list-item"
         role="listitem"
       >
         <a
@@ -190,25 +192,24 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 2`] =
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
           <div
-            class="v-list__tile__content"
+            class="v-list__tile__content c-word-break-all"
           >
-            <div
-              class="v-list__tile__title"
-            >
-              Tag 2
-            </div>
+            Tag 2
           </div>
         </a>
       </div>
       <div
+        class="c-alarm-tag-field__list-item"
         role="listitem"
       >
         <a
@@ -249,21 +250,19 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 2`] =
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
           <div
-            class="v-list__tile__content"
+            class="v-list__tile__content c-word-break-all"
           >
-            <div
-              class="v-list__tile__title"
-            >
-              Tag 3
-            </div>
+            Tag 3
           </div>
         </a>
       </div>
@@ -274,7 +273,7 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 2`] =
 
 exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with default props 1`] = `
 <div
-  class="v-input v-text-field v-select v-select--chips v-select--chips--small v-input--hide-details theme--light"
+  class="v-input c-alarm-tag-field v-text-field v-select v-select--chips v-select--chips--small v-input--hide-details theme--light"
   role="combobox"
 >
   <div
@@ -342,7 +341,7 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with default props 1`] 
 
 exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with default props 2`] = `
 <div
-  class="v-menu__content theme--light "
+  class="v-menu__content theme--light c-alarm-tag-field__list"
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
@@ -353,6 +352,7 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with default props 2`] 
       role="list"
     >
       <div
+        class="c-alarm-tag-field__list-item"
         role="listitem"
       >
         <a
@@ -393,25 +393,24 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with default props 2`] 
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
           <div
-            class="v-list__tile__content"
+            class="v-list__tile__content c-word-break-all"
           >
-            <div
-              class="v-list__tile__title"
-            >
-              Tag 1
-            </div>
+            Tag 1
           </div>
         </a>
       </div>
       <div
+        class="c-alarm-tag-field__list-item"
         role="listitem"
       >
         <a
@@ -452,25 +451,24 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with default props 2`] 
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
           <div
-            class="v-list__tile__content"
+            class="v-list__tile__content c-word-break-all"
           >
-            <div
-              class="v-list__tile__title"
-            >
-              Tag 2
-            </div>
+            Tag 2
           </div>
         </a>
       </div>
       <div
+        class="c-alarm-tag-field__list-item"
         role="listitem"
       >
         <a
@@ -511,21 +509,19 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with default props 2`] 
                 <div
                   class="v-messages theme--light"
                 >
-                  <div
+                  <transition-group-stub
                     class="v-messages__wrapper"
+                    name="message-transition"
+                    tag="div"
                   />
                 </div>
               </div>
             </div>
           </div>
           <div
-            class="v-list__tile__content"
+            class="v-list__tile__content c-word-break-all"
           >
-            <div
-              class="v-list__tile__title"
-            >
-              Tag 3
-            </div>
+            Tag 3
           </div>
         </a>
       </div>
