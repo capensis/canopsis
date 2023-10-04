@@ -15,11 +15,11 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` with html as me
   <div
     class="time-line-card__content text--disabled"
   >
-    <p>
+    <div>
       <p>
         Pbehavior Name pbh. Type: Default pause. Reason: Test reason
       </p>
-    </p>
+    </div>
   </div>
 </div>
 `;
