@@ -3,7 +3,6 @@ package engine_test
 import (
 	"context"
 	"reflect"
-	"sort"
 	"testing"
 	"time"
 
@@ -65,14 +64,26 @@ func TestNewRunInfoManager(t *testing.T) {
 	}
 	expected := []engine.RunInfo{
 		{
-			Name:         "test-axe",
-			ConsumeQueue: "test-consume-axe-2",
-			PublishQueue: "test-publish-axe-2",
+			Name:             "test-axe",
+			ConsumeQueue:     "test-consume-axe-2",
+			PublishQueue:     "test-publish-axe-2",
+			RpcConsumeQueues: []string{"test-rpc-consume-axe"},
+			RpcPublishQueues: []string{"test-rpc-publish-axe"},
+			Instances:        2,
+			QueueLength:      10,
+			Time:             instances[1].Time,
+			HasDiffConfig:    true,
 		},
 		{
-			Name:         "test-che",
-			ConsumeQueue: "test-consume-che",
-			PublishQueue: "test-publish-che",
+			Name:             "test-che",
+			ConsumeQueue:     "test-consume-che",
+			PublishQueue:     "test-publish-che",
+			RpcConsumeQueues: []string{"test-rpc-consume-che"},
+			RpcPublishQueues: []string{"test-rpc-publish-che"},
+			Instances:        1,
+			QueueLength:      11,
+			Time:             instances[2].Time,
+			HasDiffConfig:    false,
 		},
 	}
 
@@ -83,16 +94,29 @@ func TestNewRunInfoManager(t *testing.T) {
 		}
 	}
 
-	engines, err := manager.GetEngineQueues(ctx)
+	engines, err := manager.GetEngines(ctx)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
 
-	sort.Slice(engines, func(i, j int) bool {
-		return engines[i].Name < engines[j].Name
-	})
+	times := make([]types.CpsTime, len(engines))
+	expectedTimes := make([]types.CpsTime, len(expected))
+	for i, v := range engines {
+		times[i] = v.Time
+		engines[i].Time = types.CpsTime{}
+	}
+	for i, v := range expected {
+		expectedTimes[i] = v.Time
+		expected[i].Time = types.CpsTime{}
+	}
 
-	if !reflect.DeepEqual(engines, expected) {
+	if reflect.DeepEqual(engines, expected) {
+		for i := range times {
+			if times[i].Unix() != expectedTimes[i].Unix() {
+				t.Errorf("expected time %+v for %q but got %+v", expectedTimes[i].Unix(), expected[i].Name, times[i].Unix())
+			}
+		}
+	} else {
 		t.Errorf("expected %+v but got %+v", expected, engines)
 	}
 

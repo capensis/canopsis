@@ -72,15 +72,19 @@ type RPCMessage struct {
 // RunInfoManager interface is used to implement engine run info storage.
 type RunInfoManager interface {
 	SaveInstance(ctx context.Context, info InstanceRunInfo, expiration time.Duration) error
-	GetEngineQueues(ctx context.Context) ([]RunInfo, error)
-	GetCacheKey(info InstanceRunInfo) string
+	GetEngines(ctx context.Context) ([]RunInfo, error)
 }
 
-// RunInfo is engine run information.
 type RunInfo struct {
-	Name         string `json:"name"`
-	ConsumeQueue string `json:"consume_queue"`
-	PublishQueue string `json:"publish_queue"`
+	Name             string
+	ConsumeQueue     string
+	PublishQueue     string
+	RpcConsumeQueues []string
+	RpcPublishQueues []string
+	Instances        int
+	QueueLength      int
+	Time             types.CpsTime
+	HasDiffConfig    bool
 }
 
 // InstanceRunInfo is instance of engine run information.
