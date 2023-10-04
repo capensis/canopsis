@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"embed"
+	"errors"
 	"fmt"
 	"io/fs"
 	"net/http"
@@ -18,6 +19,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/docs"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/healthcheck"
 	apilogger "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
@@ -124,13 +126,12 @@ func Default(
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot connect to redis: %w", err)
 	}
-	engineRedisSession, err := libredis.NewSession(ctx, libredis.EngineRunInfo, logger,
+	lockRedisSession, err := libredis.NewSession(ctx, libredis.EngineLockStorage, logger,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot connect to redis: %w", err)
 	}
-	lockRedisSession, err := libredis.NewSession(ctx, libredis.EngineLockStorage, logger,
-		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
+	runInfoClient, err := libredis.NewSession(ctx, libredis.EngineRunInfo, logger, -1, -1)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot connect to redis: %w", err)
 	}
@@ -197,7 +198,7 @@ func Default(
 
 	userInterfaceAdapter := config.NewUserInterfaceAdapter(dbClient)
 	userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
-	if err != nil && err != mongodriver.ErrNoDocuments {
+	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 		return nil, nil, fmt.Errorf("cannot load user interface config: %w", err)
 	}
 	if p.UserInterfaceConfigProvider == nil {
@@ -225,6 +226,22 @@ func Default(
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
 	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(techMetricsConfigProvider, logger)
 
+	healthCheckConfigAdapter := config.NewHealthCheckAdapter(dbClient)
+	healthCheckCfg, err := healthCheckConfigAdapter.GetConfig(ctx)
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot load healthcheck config: %w", err)
+	}
+
+	healthCheckConfigProvider := config.NewBaseHealthCheckConfigProvider(healthCheckCfg, logger)
+	healthcheckStore := healthcheck.NewStore(
+		dbClient,
+		engine.NewRunInfoManager(runInfoClient),
+		healthCheckConfigAdapter,
+		healthCheckConfigProvider,
+		logger,
+		websocketHub,
+	)
+
 	// Create api.
 	api := New(
 		fmt.Sprintf(":%d", flags.Port),
@@ -248,12 +265,12 @@ func Default(
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
 
-			err = engineRedisSession.Close()
+			err = lockRedisSession.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
 
-			err = lockRedisSession.Close()
+			err = runInfoClient.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
@@ -308,7 +325,6 @@ func Default(
 			pbhComputeChan,
 			entityPublChan,
 			entityCleanerTaskChan,
-			engine.NewRunInfoManager(engineRedisSession),
 			exportExecutor,
 			techMetricsTaskExecutor,
 			apilogger.NewActionLogger(dbClient, logger),
@@ -321,6 +337,7 @@ func Default(
 			metricsEntityMetaUpdater,
 			metricsUserMetaUpdater,
 			author.NewProvider(dbClient, p.ApiConfigProvider),
+			healthcheckStore,
 			logger,
 		)
 	})
@@ -416,6 +433,9 @@ func Default(
 			}
 		}
 	})
+	api.AddWorker("healthcheck", func(ctx context.Context) {
+		healthcheckStore.Load(ctx)
+	})
 
 	return api, docsFile, nil
 }
@@ -442,6 +462,14 @@ func newWebsocketHub(
 	}
 
 	if err := websocketHub.RegisterRoom(websocket.RoomLoggedUserCount); err != nil {
+		return nil, fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	if err := websocketHub.RegisterRoom(websocket.RoomHealthcheck, apisecurity.PermHealthcheck, securitymodel.PermissionCan); err != nil {
+		return nil, fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	if err := websocketHub.RegisterRoom(websocket.RoomHealthcheckStatus, apisecurity.PermHealthcheck, securitymodel.PermissionCan); err != nil {
 		return nil, fmt.Errorf("fail to register websocket room: %w", err)
 	}
 
