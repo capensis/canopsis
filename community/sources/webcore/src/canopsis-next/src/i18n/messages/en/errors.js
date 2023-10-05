@@ -6,6 +6,7 @@ export default {
   statsRequestProblem: 'An error occurred while retrieving stats data',
   statsWrongEditionError: "Stats widgets are not available with 'community' edition",
   socketConnectionProblem: 'Problem with connection to socket server',
+  socketConnectionRoomNotFound: 'Socket room not found. Please reload page or contact admin',
   endDateLessOrEqualStartDate: 'End date should be after start date',
   unknownWidgetType: 'Unknown widget type: {type}',
   unique: 'Field must be unique',

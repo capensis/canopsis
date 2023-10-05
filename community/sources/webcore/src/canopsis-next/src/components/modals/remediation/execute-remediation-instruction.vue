@@ -24,18 +24,24 @@
 import { pick } from 'lodash';
 
 import { SOCKET_ROOMS } from '@/config';
-import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES, RESPONSE_STATUSES } from '@/constants';
+import { MODALS, RESPONSE_STATUSES } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
 
 import { getEmptyRemediationJobExecution } from '@/helpers/forms/remediation-job';
+import {
+  isInstructionExecutionAborted,
+  isInstructionExecutionCompleted,
+  isInstructionExecutionFailed,
+  isInstructionExecutionPaused,
+  isInstructionExecutionRunning,
+} from '@/helpers/forms/remediation-instruction-execution';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesRemediationJobExecutionMixin } from '@/mixins/entities/remediation/job-execution';
 import { entitiesRemediationInstructionExecutionMixin } from '@/mixins/entities/remediation/instruction-execution';
 
-import RemediationInstructionExecute
-  from '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';
+import RemediationInstructionExecute from '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -79,11 +85,9 @@ export default {
   },
   watch: {
     async instructionExecution(instructionExecution) {
-      if (instructionExecution.status !== REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running) {
-        const isFailedExecution = [
-          REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.failed,
-          REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.aborted,
-        ].includes(instructionExecution.status);
+      if (!isInstructionExecutionRunning(instructionExecution)) {
+        const isFailedExecution = isInstructionExecutionFailed(instructionExecution)
+          || isInstructionExecutionAborted(instructionExecution);
 
         const type = isFailedExecution ? 'failed' : 'success';
         const text = this.$t(`remediation.instructionExecute.popups.${type}`, {
@@ -117,13 +121,20 @@ export default {
      * Join from execution room
      */
     joinToSocketRoom() {
-      if (this.instructionExecutionId) {
-        this.$socket
-          .on(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
-          .on(Socket.EVENTS_TYPES.closeRoom, this.socketCloseRoomHandler)
-          .join(this.socketRoomName)
-          .addListener(this.setOperation);
+      if (
+        !this.instructionExecutionId
+        || isInstructionExecutionFailed(this.instructionExecution)
+        || isInstructionExecutionAborted(this.instructionExecution)
+        || isInstructionExecutionCompleted(this.instructionExecution)
+      ) {
+        return;
       }
+
+      this.$socket
+        .on(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
+        .on(Socket.EVENTS_TYPES.closeRoom, this.socketCloseRoomHandler)
+        .join(this.socketRoomName)
+        .addListener(this.setOperation);
     },
 
     /**
@@ -413,7 +424,7 @@ export default {
 
       if (!execution) {
         await this.createExecution();
-      } else if (execution.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused) {
+      } else if (isInstructionExecutionPaused(execution)) {
         await this.resumeExecution();
       } else {
         await this.fetchExecution();
