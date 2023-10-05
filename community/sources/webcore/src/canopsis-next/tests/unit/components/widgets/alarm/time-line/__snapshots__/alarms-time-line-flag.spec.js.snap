@@ -570,7 +570,7 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: chec
   <i
     aria-hidden="true"
     class="v-icon material-icons theme--light"
-    style="color: black; caret-color: black;"
+    style="color: rgb(0, 0, 0); caret-color: #000;"
   >
     clear
   </i>
@@ -803,7 +803,7 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: grou
   <i
     aria-hidden="true"
     class="v-icon material-icons theme--light"
-    style="color: black; caret-color: black;"
+    style="color: rgb(0, 0, 0); caret-color: #000;"
   >
     clear
   </i>
@@ -1504,7 +1504,7 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: stat
   <i
     aria-hidden="true"
     class="v-icon material-icons theme--light"
-    style="color: black; caret-color: black;"
+    style="color: rgb(0, 0, 0); caret-color: #000;"
   >
     clear
   </i>
@@ -1534,7 +1534,7 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: stat
   <i
     aria-hidden="true"
     class="v-icon material-icons theme--light"
-    style="color: black; caret-color: black;"
+    style="color: rgb(0, 0, 0); caret-color: #000;"
   >
     clear
   </i>
@@ -1564,7 +1564,7 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: stat
   <i
     aria-hidden="true"
     class="v-icon material-icons theme--light"
-    style="color: black; caret-color: black;"
+    style="color: rgb(0, 0, 0); caret-color: #000;"
   >
     clear
   </i>
@@ -1594,7 +1594,7 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: stat
   <i
     aria-hidden="true"
     class="v-icon material-icons theme--light"
-    style="color: black; caret-color: black;"
+    style="color: rgb(0, 0, 0); caret-color: #000;"
   >
     clear
   </i>
@@ -1653,7 +1653,7 @@ exports[`alarms-time-line-flag Renders \`alarms-time-line-flag\` with type: unso
   <i
     aria-hidden="true"
     class="v-icon material-icons theme--light"
-    style="color: black; caret-color: black;"
+    style="color: rgb(0, 0, 0); caret-color: #000;"
   >
     clear
   </i>
