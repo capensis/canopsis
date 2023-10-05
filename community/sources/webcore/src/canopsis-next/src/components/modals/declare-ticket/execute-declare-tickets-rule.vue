@@ -119,9 +119,7 @@ export default {
     },
 
     isAllExecutionsFinished() {
-      return this.alarmExecutions.every(
-        execution => isDeclareTicketExecutionSucceeded(execution) || isDeclareTicketExecutionFailed(execution),
-      );
+      return this.alarmExecutions.every(this.isExecutionFinished);
     },
 
     failReason() {
@@ -162,6 +160,10 @@ export default {
       this.$set(this.executionsStatusesById, executionStatus._id, executionStatus);
     },
 
+    isExecutionFinished(execution) {
+      return isDeclareTicketExecutionSucceeded(execution) || isDeclareTicketExecutionFailed(execution);
+    },
+
     /**
      * Socket customClose event handler (we need to use for connection checking)
      */
@@ -187,6 +189,12 @@ export default {
      */
     joinToSocketRooms() {
       this.successExecutions.forEach(({ executionId }) => {
+        const execution = this.executionsStatusesById[executionId] ?? {};
+
+        if (this.isExecutionFinished(execution)) {
+          return;
+        }
+
         this.$socket
           .on(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
           .on(Socket.EVENTS_TYPES.closeRoom, this.socketCloseRoomHandler)
@@ -230,10 +238,12 @@ export default {
     },
 
     fetchExecutionsStatuses() {
-      this.successExecutions.forEach(({ executionId }) => {
-        this.fetchDeclareTicketExecutionWithoutStore({ id: executionId })
-          .then(this.setExecutionStatus);
-      });
+      return Promise.all(
+        this.successExecutions.map(
+          ({ executionId }) => this.fetchDeclareTicketExecutionWithoutStore({ id: executionId })
+            .then(this.setExecutionStatus),
+        ),
+      );
     },
   },
 };
