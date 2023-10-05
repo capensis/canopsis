@@ -1117,7 +1117,7 @@ Feature: New import entities
     {
       "title": "test-widgetfilter-entityservice-context-graph-new-import-1",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "widget_private": true,
       "entity_pattern": [
         [
           {
