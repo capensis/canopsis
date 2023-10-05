@@ -361,11 +361,13 @@ export const CONTENT_TYPES = {
 };
 
 export const RESPONSE_STATUSES = {
+  badRequest: 400,
   unauthorized: 401,
   notFound: 404,
   forbidden: 403,
   timeout: 408,
 
+  internalServerError: 500,
   badGateway: 502,
   serviceUnavailable: 503,
 };
