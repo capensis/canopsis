@@ -83,7 +83,7 @@ func NewEngine(
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
 	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
-	templateConfigProvider := config.NewTemplateConfigProvider(cfg)
+	templateConfigProvider := config.NewTemplateConfigProvider(cfg, logger)
 	userInterfaceAdapter := config.NewUserInterfaceAdapter(dbClient)
 	userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
 	if err != nil {
