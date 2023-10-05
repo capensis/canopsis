@@ -1,12 +1,13 @@
 <template lang="pug">
   v-layout(justify-center, column)
     v-select(
-      v-field="column.column",
       v-validate="'required'",
+      :value="column.column",
       :items="availableColumns",
       :label="$tc('common.column', 1)",
       :error-messages="errors.collect(`${name}.column`)",
-      :name="`${name}.column`"
+      :name="`${name}.column`",
+      @change="changeColumn"
     )
     template(v-if="!withoutInfosAttributes")
       c-alarm-infos-attribute-field(
@@ -112,6 +113,7 @@ import {
   ALARM_FIELDS_TO_LABELS_KEYS,
   ENTITY_FIELDS_TO_LABELS_KEYS,
   ALARM_FIELDS,
+  ALARM_OUTPUT_FIELDS,
 } from '@/constants';
 
 import { isLinksWidgetColumn } from '@/helpers/entities/widget/column/form';
@@ -245,6 +247,20 @@ export default {
       }
 
       this.updateField('label', '');
+    },
+
+    changeColumn(column) {
+      const newValue = {
+        ...this.column,
+
+        column,
+      };
+
+      if (this.withHtml) {
+        newValue.isHtml = ALARM_OUTPUT_FIELDS.includes(column);
+      }
+
+      this.updateModel(newValue);
     },
 
     enableTemplate(checked) {

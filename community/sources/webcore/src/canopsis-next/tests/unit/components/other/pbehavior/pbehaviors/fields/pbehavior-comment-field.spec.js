@@ -18,9 +18,7 @@ const selectMessageField = wrapper => wrapper.find('.v-textarea');
 const selectRemoveButton = wrapper => wrapper.find('c-action-btn-stub');
 
 describe('pbehavior-comment-field', () => {
-  const factory = generateShallowRenderer(PbehaviorCommentField, {
-    stubs,
-  });
+  const factory = generateShallowRenderer(PbehaviorCommentField, { stubs });
   const snapshotFactory = generateRenderer(PbehaviorCommentField, {
     stubs: snapshotStubs,
   });

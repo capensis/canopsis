@@ -391,6 +391,9 @@ export default {
     edit: {
       title: 'Edit SNMP rule',
     },
+    duplicate: {
+      title: 'Duplicate SNMP rule',
+    },
   },
   selectView: {
     title: 'Select view',
@@ -767,7 +770,7 @@ export default {
       phrase: 'update the storage policy',
     },
     cleanStorage: {
-      title: 'Archive/delete disabled entities. Are you sure ?',
+      title: 'Archive/delete entities. Are you sure ?',
       text: 'You are about to archive and/or delete data.\n'
         + '<strong>Deletion operation won\'t be cancellable.</strong>',
       phraseText: 'Please, type the following to confirm:',
@@ -978,6 +981,17 @@ export default {
     },
     duplicate: {
       title: 'Duplicate a tag',
+    },
+  },
+  createTheme: {
+    create: {
+      title: 'Create theme',
+    },
+    edit: {
+      title: 'Edit theme',
+    },
+    duplicate: {
+      title: 'Duplicate theme',
     },
   },
 };

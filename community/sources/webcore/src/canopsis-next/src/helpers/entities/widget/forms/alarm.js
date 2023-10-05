@@ -28,6 +28,8 @@ import { convertDurationToString, durationWithEnabledToForm, isValidUnit } from 
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
 import { kioskParametersToForm } from '@/helpers/entities/shared/kiosk/form';
 
+import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
+
 import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../template/form';
 import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
@@ -35,8 +37,6 @@ import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
 import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './bar-chart';
 import { formToLineChartWidgetParameters, lineChartWidgetParametersToForm } from './line-chart';
 import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './numbers-chart';
-
-import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
 
 /**
  * @typedef {'BarChart', 'LineChart', 'Numbers'} AlarmChartType
@@ -339,7 +339,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isUncancelAlarmsCommentRequired: parameters.isUncancelAlarmsCommentRequired ?? true,
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
   isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
-  isHtmlEnabledOnTimeLine: !!parameters.isHtmlEnabledOnTimeLine,
+  isHtmlEnabledOnTimeLine: parameters.isHtmlEnabledOnTimeLine ?? true,
   isActionsAllowWithOkState: !!parameters.isActionsAllowWithOkState,
   sticky_header: !!parameters.sticky_header,
   dense: parameters.dense ?? ALARM_DENSE_TYPES.large,

@@ -24,6 +24,15 @@ internal = false
 noWait = false
 # args =
 
+[[RabbitMQ.exchanges]]
+name = "canopsis.snmp"
+kind = "topic"
+durable = true
+autoDelete = false
+internal = false
+noWait = false
+# args =
+
 [[RabbitMQ.queues]]
 name = "Engine_action"
 durable = true
@@ -178,6 +187,19 @@ noWait = false
 # args =
 
 [[RabbitMQ.queues]]
+name = "Engine_snmp"
+durable = true
+autoDelete = false
+exclusive = false
+noWait = false
+# args =
+[RabbitMQ.queues.bind]
+key = "#"
+exchange = "canopsis.snmp"
+noWait = false
+# args =
+
+[[RabbitMQ.queues]]
 name = "Engine_pbehavior_recompute"
 durable = true
 autoDelete = false
@@ -203,12 +225,19 @@ BuildDynamicInfosDictionary = true
 # to catch up following parameters.
 [Canopsis.file]
 # Local storage for Upload artifacts. Upload artifacts are used in Remedaiton and Administration -> Parameters.
+# This directory must have write permissions for canopsis-api
+# Muli-instance canopsis-api configuration has to share storage via NFS directory or DRBD partition 
+# when instances run on different servers
 Upload = "/opt/canopsis/var/lib/upload-files"
 UploadMaxSize = 314572800 # 300Mb
 # Local storage for Junit artifacts.
 Junit = "/opt/canopsis/var/lib/junit-files"
 # Temporary local storage for Junit data which are uploaded by API.
 JunitApi = "/tmp/canopsis/junit"
+# Paths to SNMP MIB modules fetched by API
+SnmpMib = ["/usr/share/snmp/mibs"]
+# Another example when MIBs installed by snmp-mibs-downloader.deb package:
+# SnmpMib = ["/usr/share/snmp/mibs", "/usr/share/snmp/mibs/ietf", "/usr/share/snmp/mibs/iana"]
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.alarm]
@@ -284,6 +313,13 @@ UserSessionGapInterval = "1h"
 Enabled = false
 # DumpKeepInterval defines how long dump with tech metrics should be kept before delete.
 DumpKeepInterval = "1h"
+
+# System env vars can be used in any template like {{ .Env.System.ENV_MyVar }}.
+# The system_env_var_prefixes parameter defines the list of prefixes to filter the list of system variables.
+# Only those variables which contain the prefix are available for use in templates.
+# It's possible to use "" as a prefix, which allows all env variables in go and ui templates, it shouldn't be used in a production environment.
+[Canopsis.template]
+system_env_var_prefixes = ["ENV_"]
 
 # Template vars can be used in any template like this {{ .Env.Location }}.
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
