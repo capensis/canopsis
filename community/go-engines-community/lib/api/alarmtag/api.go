@@ -51,7 +51,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	tags, err := a.store.Find(c.Request.Context(), r)
+	tags, err := a.store.Find(c, r)
 	if err != nil {
 		panic(err)
 	}
