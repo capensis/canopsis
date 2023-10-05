@@ -115,8 +115,6 @@ export const MONTHS_IN_YEAR = 12;
 
 export const DAYS_IN_WEEK = 7;
 
-export const EXCLUDED_SERVER_ERROR_STATUSES = [401, 403];
-
 export const CANOPSIS_DOCUMENTATION = 'https://doc.canopsis.net';
 
 export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';
@@ -379,3 +377,5 @@ export const RESPONSE_STATUSES = {
   badGateway: 502,
   serviceUnavailable: 503,
 };
+
+export const EXCLUDED_SERVER_ERROR_STATUSES = [RESPONSE_STATUSES.unauthorized, RESPONSE_STATUSES.forbidden];
