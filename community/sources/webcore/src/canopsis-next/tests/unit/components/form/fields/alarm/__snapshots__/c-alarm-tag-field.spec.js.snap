@@ -2,8 +2,12 @@
 
 exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 1`] = `
 <div
-  class="v-input c-alarm-tag-field v-text-field v-select v-select--chips v-select--chips--small v-input--hide-details v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
-  role="combobox"
+  chips="chips"
+  class="v-input c-select-field c-lazy-search-field c-alarm-tag-field v-text-field v-select v-select--chips v-select--chips--small v-autocomplete v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
+  dense="dense"
+  hide-details="hide-details"
+  menu-props="[object Object]"
+  multiple="multiple"
 >
   <div
     class="v-input__control"
@@ -27,7 +31,6 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 1`] =
           <c-alarm-action-chip-stub
             class="c-alarm-tag-field__tag"
             closable="closable"
-            color="#444"
             ellipsis="ellipsis"
             title="Tag 1"
           >
@@ -35,11 +38,10 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 1`] =
           </c-alarm-action-chip-stub>
           <input
             aria-label="Custom label"
-            aria-readonly="false"
-            autocomplete="on"
+            autocomplete="off"
             disabled="disabled"
             name="customName"
-            readonly="readonly"
+            role="combobox"
             type="text"
           />
         </div>
@@ -76,13 +78,26 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 1`] =
         class="v-menu"
       />
     </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <transition-group-stub
+          class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
+        />
+      </div>
+    </div>
   </div>
 </div>
 `;
 
 exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 2`] = `
 <div
-  class="v-menu__content theme--light c-alarm-tag-field__list"
+  class="v-menu__content theme--light v-autocomplete__content c-lazy-search-field__list"
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
@@ -151,121 +166,8 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 2`] =
         </a>
       </div>
       <div
-        class="c-alarm-tag-field__list-item"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__action"
-          >
-            <div
-              class="v-input v-input--selection-controls v-input--checkbox theme--light"
-            >
-              <div
-                class="v-input__control"
-              >
-                <div
-                  class="v-input__slot"
-                >
-                  <div
-                    class="v-input--selection-controls__input"
-                  >
-                    <input
-                      aria-checked="false"
-                      role="checkbox"
-                      type="checkbox"
-                      value=""
-                    />
-                    <div
-                      class="v-input--selection-controls__ripple"
-                    />
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      check_box_outline_blank
-                    </i>
-                  </div>
-                </div>
-                <div
-                  class="v-messages theme--light"
-                >
-                  <transition-group-stub
-                    class="v-messages__wrapper"
-                    name="message-transition"
-                    tag="div"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="v-list__tile__content c-word-break-all"
-          >
-            Tag 2
-          </div>
-        </a>
-      </div>
-      <div
-        class="c-alarm-tag-field__list-item"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__action"
-          >
-            <div
-              class="v-input v-input--selection-controls v-input--checkbox theme--light"
-            >
-              <div
-                class="v-input__control"
-              >
-                <div
-                  class="v-input__slot"
-                >
-                  <div
-                    class="v-input--selection-controls__input"
-                  >
-                    <input
-                      aria-checked="false"
-                      role="checkbox"
-                      type="checkbox"
-                      value=""
-                    />
-                    <div
-                      class="v-input--selection-controls__ripple"
-                    />
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      check_box_outline_blank
-                    </i>
-                  </div>
-                </div>
-                <div
-                  class="v-messages theme--light"
-                >
-                  <transition-group-stub
-                    class="v-messages__wrapper"
-                    name="message-transition"
-                    tag="div"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="v-list__tile__content c-word-break-all"
-          >
-            Tag 3
-          </div>
-        </a>
-      </div>
+        class="c-lazy-search-field__append"
+      />
     </div>
   </div>
 </div>
@@ -273,8 +175,12 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 2`] =
 
 exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with default props 1`] = `
 <div
-  class="v-input c-alarm-tag-field v-text-field v-select v-select--chips v-select--chips--small v-input--hide-details theme--light"
-  role="combobox"
+  chips="chips"
+  class="v-input c-select-field c-lazy-search-field c-alarm-tag-field v-text-field v-select v-select--chips v-select--chips--small v-autocomplete theme--light"
+  dense="dense"
+  hide-details="hide-details"
+  menu-props="[object Object]"
+  multiple="multiple"
 >
   <div
     class="v-input__control"
@@ -297,10 +203,9 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with default props 1`] 
         >
           <input
             aria-label="Tag"
-            aria-readonly="false"
-            autocomplete="on"
+            autocomplete="off"
             name="tag"
-            readonly="readonly"
+            role="combobox"
             type="text"
           />
         </div>
@@ -335,13 +240,26 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with default props 1`] 
         class="v-menu"
       />
     </div>
+    <div
+      class="v-text-field__details"
+    >
+      <div
+        class="v-messages theme--light"
+      >
+        <transition-group-stub
+          class="v-messages__wrapper"
+          name="message-transition"
+          tag="div"
+        />
+      </div>
+    </div>
   </div>
 </div>
 `;
 
 exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with default props 2`] = `
 <div
-  class="v-menu__content theme--light c-alarm-tag-field__list"
+  class="v-menu__content theme--light v-autocomplete__content c-lazy-search-field__list"
   style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; transform-origin: top left; z-index: 0; display: none;"
 >
   <div
@@ -352,179 +270,25 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with default props 2`] 
       role="list"
     >
       <div
-        class="c-alarm-tag-field__list-item"
         role="listitem"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list__tile theme--light"
         >
           <div
-            class="v-list__tile__action"
+            class="v-list__tile__content"
           >
             <div
-              class="v-input v-input--selection-controls v-input--checkbox theme--light"
+              class="v-list__tile__title"
             >
-              <div
-                class="v-input__control"
-              >
-                <div
-                  class="v-input__slot"
-                >
-                  <div
-                    class="v-input--selection-controls__input"
-                  >
-                    <input
-                      aria-checked="false"
-                      role="checkbox"
-                      type="checkbox"
-                      value=""
-                    />
-                    <div
-                      class="v-input--selection-controls__ripple"
-                    />
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      check_box_outline_blank
-                    </i>
-                  </div>
-                </div>
-                <div
-                  class="v-messages theme--light"
-                >
-                  <transition-group-stub
-                    class="v-messages__wrapper"
-                    name="message-transition"
-                    tag="div"
-                  />
-                </div>
-              </div>
+              No data available
             </div>
           </div>
-          <div
-            class="v-list__tile__content c-word-break-all"
-          >
-            Tag 1
-          </div>
-        </a>
+        </div>
       </div>
       <div
-        class="c-alarm-tag-field__list-item"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__action"
-          >
-            <div
-              class="v-input v-input--selection-controls v-input--checkbox theme--light"
-            >
-              <div
-                class="v-input__control"
-              >
-                <div
-                  class="v-input__slot"
-                >
-                  <div
-                    class="v-input--selection-controls__input"
-                  >
-                    <input
-                      aria-checked="false"
-                      role="checkbox"
-                      type="checkbox"
-                      value=""
-                    />
-                    <div
-                      class="v-input--selection-controls__ripple"
-                    />
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      check_box_outline_blank
-                    </i>
-                  </div>
-                </div>
-                <div
-                  class="v-messages theme--light"
-                >
-                  <transition-group-stub
-                    class="v-messages__wrapper"
-                    name="message-transition"
-                    tag="div"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="v-list__tile__content c-word-break-all"
-          >
-            Tag 2
-          </div>
-        </a>
-      </div>
-      <div
-        class="c-alarm-tag-field__list-item"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__action"
-          >
-            <div
-              class="v-input v-input--selection-controls v-input--checkbox theme--light"
-            >
-              <div
-                class="v-input__control"
-              >
-                <div
-                  class="v-input__slot"
-                >
-                  <div
-                    class="v-input--selection-controls__input"
-                  >
-                    <input
-                      aria-checked="false"
-                      role="checkbox"
-                      type="checkbox"
-                      value=""
-                    />
-                    <div
-                      class="v-input--selection-controls__ripple"
-                    />
-                    <i
-                      aria-hidden="true"
-                      class="v-icon material-icons theme--light"
-                    >
-                      check_box_outline_blank
-                    </i>
-                  </div>
-                </div>
-                <div
-                  class="v-messages theme--light"
-                >
-                  <transition-group-stub
-                    class="v-messages__wrapper"
-                    name="message-transition"
-                    tag="div"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="v-list__tile__content c-word-break-all"
-          >
-            Tag 3
-          </div>
-        </a>
-      </div>
+        class="c-lazy-search-field__append"
+      />
     </div>
   </div>
 </div>
