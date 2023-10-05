@@ -163,17 +163,25 @@ export default {
 
     socketErrorHandler({ message } = {}) {
       if (message) {
-        if (+message === RESPONSE_STATUSES.notFound) {
-          this.$popups.error({ text: this.$t('errors.socketConnectionRoomNotFound') });
+        const statusCode = +message;
+
+        if (statusCode === RESPONSE_STATUSES.unauthorized || message === Socket.ERROR_MESSAGES.authenticationFailed) {
+          localStorageService.set('warningPopup', this.$t('warnings.authTokenExpired'));
+          this.logout();
+
           return;
         }
 
-        this.$popups.error({ text: message });
+        const textKey = {
+          [RESPONSE_STATUSES.notFound]: 'errors.socketConnectionRoomNotFound',
+          [RESPONSE_STATUSES.forbidden]: 'errors.socketConnectionRoomForbidden',
+          [RESPONSE_STATUSES.badRequest]: 'errors.socketConnectionRoomBadRequest',
+          [RESPONSE_STATUSES.internalServerError]: 'errors.socketConnectionRoomInternalServerError',
+        }[statusCode];
 
-        if (message === Socket.ERROR_MESSAGES.authenticationFailed) {
-          localStorageService.set('warningPopup', this.$t('warnings.authTokenExpired'));
-          this.logout();
-        }
+        const text = this.$te(textKey) ? this.$t(textKey) : message;
+
+        this.$popups.error({ text });
       }
     },
 
