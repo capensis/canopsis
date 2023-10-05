@@ -381,7 +381,7 @@ permission:
     <<: *permission_rw
     _id: test-view-to-update-1
     name: <Current()._id>
-    
+
   permission_view_to_update-2:
     <<: *permission_rw
     _id: test-view-to-update-2
@@ -395,7 +395,7 @@ permission:
   permission_view_to_update-4:
     <<: *permission_rw
     _id: test-view-to-update-4
-    name: <Current()._id>    
+    name: <Current()._id>
 
   permission_view_to_check_access:
     <<: *permission_rw
@@ -608,6 +608,12 @@ permission:
     _id: test-view-to-weather-get
     name: <Current()._id>
 
+  permission_api_color_theme:
+    <<: *permission_crud
+    _id: api_color_theme
+    name: <Current()._id>
+    description: Color theme
+
 role:
   role_admin:
     <<: *role
@@ -705,6 +711,7 @@ role:
       "@permission_view_dynamic_infos": 6
       "@permission_view_to_weather_get": 6
       "@permission_api_maintenance": 1
+      "@permission_api_color_theme": 15
       "@permission_api_private_views": 1
       "@permission_api_private_view_groups": 1
 
@@ -974,13 +981,13 @@ role:
     _id: test-role-to-private-view-update
     name: <Current()._id>
     description: test-role-to-private-view-update-description
-    
+
   role_to_private_view_delete:
     <<: *role
     _id: test-role-to-private-view-delete
     name: <Current()._id>
-    description: test-role-to-private-view-delete-description    
-      
+    description: test-role-to-private-view-delete-description
+
   role_to_view_copy:
     <<: *role
     _id: test-role-to-view-copy
@@ -1137,6 +1144,38 @@ user:
     roles:
       - "@role_to_user_edit_1"
 
+  user_to_update_5:
+    <<: *user
+    _id: test-user-to-update-5
+    name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    roles:
+      - "@role_to_user_edit_1"
+
+  user_to_update_6:
+    <<: *user
+    _id: test-user-to-update-6
+    name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    roles:
+      - "@role_to_user_edit_1"
+
+  user_to_update_7:
+    <<: *user
+    _id: test-user-to-update-7
+    name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    roles:
+      - "@role_to_user_edit_1"
+
+  user_to_update_8:
+    <<: *user
+    _id: test-user-to-update-8
+    name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    roles:
+      - "@role_to_user_edit_1"
+
   user_to_delete_role_linked_to_user:
     <<: *user
     _id: test-user-to-delete-role-linked-to-user
@@ -1216,6 +1255,26 @@ user:
     firstname:
     lastname:
 
+  user_to_bulk_update_5:
+    <<: *user
+    _id: test-user-to-bulk-update-5
+    name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    roles:
+      - "@role_to_user_edit_1"
+    firstname:
+    lastname:
+
+  user_to_bulk_update_6:
+    <<: *user
+    _id: test-user-to-bulk-update-6
+    name: <Current()._id>
+    authkey: 5ez4e3jj-7e1e-5c2g-0e91-e079f72o6424
+    roles:
+      - "@role_to_user_edit_1"
+    firstname:
+    lastname:
+
   user_to_bulk_delete_1:
     <<: *user
     _id: test-user-to-bulk-delete-1
@@ -1243,7 +1302,7 @@ user:
     name: <Current()._id>
     roles:
       - "@role_to_view_get"
-        
+
   user_to_view_copy:
     <<: *user
     _id: test-user-to-view-copy
@@ -1380,13 +1439,49 @@ user:
     roles:
       - "@role_to_websocket_connect"
 
+  user_to_pick_color_theme_1:
+    <<: *user
+    _id: test-user-to-pick-color-theme-1
+    name: <Current()._id>
+    roles:
+      - "@role_noperms"
+
+  user_to_pick_color_theme_2:
+    <<: *user
+    _id: test-user-to-pick-color-theme-2
+    name: <Current()._id>
+    roles:
+      - "@role_noperms"
+
+  user_to_pick_color_theme_3:
+    <<: *user
+    _id: test-user-to-pick-color-theme-3
+    name: <Current()._id>
+    roles:
+      - "@role_noperms"
+
+  user_to_pick_color_theme_4:
+    <<: *user
+    _id: test-user-to-pick-color-theme-4
+    name: <Current()._id>
+    roles:
+      - "@role_noperms"
+
+  user_to_pick_color_theme_5:
+    <<: *user
+    _id: test-user-to-pick-color-theme-5
+    name: <Current()._id>
+    roles:
+      - "@role_noperms"
+    ui_theme: "canopsis_dark"
+
   user_to_private_view_update:
     <<: *user
     _id: test-user-to-private-view-update
     name: <Current()._id>
     roles:
       - "@role_to_private_view_update"
-        
+
   user_to_private_view_delete:
     <<: *user
     _id: test-user-to-private-view-delete

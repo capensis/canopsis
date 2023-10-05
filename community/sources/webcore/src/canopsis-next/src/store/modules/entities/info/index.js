@@ -24,6 +24,7 @@ export default {
     logo: state => state.appInfo.logo,
     appTitle: state => state.appInfo.app_title,
     maintenance: state => state.appInfo.maintenance,
+    defaultColorTheme: state => state.appInfo.default_color_theme,
     popupTimeout: state => state.appInfo.popup_timeout || {},
     maxMatchedItems: state => state.appInfo.max_matched_items,
     checkCountRequestTimeout: state => state.appInfo.check_count_request_timeout,

@@ -25,7 +25,7 @@ func NewEngine(ctx context.Context, opts che.Options, logger zerolog.Logger) eng
 
 	e := che.NewEngine(ctx, opts, dbClient, cfg, metrics.NewNullSender(), metrics.NewNullMetaUpdater(),
 		eventfilter.NewExternalDataGetterContainer(), config.NewTimezoneConfigProvider(cfg, logger),
-		config.NewTemplateConfigProvider(cfg), eventFilterEventCounter, eventFilterFailureService, logger)
+		config.NewTemplateConfigProvider(cfg, logger), eventFilterEventCounter, eventFilterFailureService, logger)
 	e.AddDeferFunc(func(ctx context.Context) {
 		err := dbClient.Disconnect(ctx)
 		if err != nil {

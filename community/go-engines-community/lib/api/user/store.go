@@ -87,6 +87,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	}
 
 	project = append(project, getViewPipeline()...)
+	project = append(project, getUiThemePipeline()...)
 
 	sortBy := s.defaultSortBy
 	if r.SortBy != "" {
@@ -276,6 +277,7 @@ func getNestedObjectsPipeline(authorProvider author.Provider) []bson.M {
 	}
 	pipeline = append(pipeline, getRolePipeline()...)
 	pipeline = append(pipeline, getViewPipeline()...)
+	pipeline = append(pipeline, getUiThemePipeline()...)
 
 	return pipeline
 }
@@ -325,5 +327,37 @@ func getViewPipeline() []bson.M {
 			"as":           "defaultview",
 		}},
 		{"$unwind": bson.M{"path": "$defaultview", "preserveNullAndEmptyArrays": true}},
+	}
+}
+
+func getUiThemePipeline() []bson.M {
+	return []bson.M{
+		{
+			"$addFields": bson.M{
+				"ui_theme": bson.M{
+					"$cond": bson.M{
+						"if": bson.M{
+							"$or": bson.A{
+								bson.M{"$eq": bson.A{"$ui_theme", ""}},
+								bson.M{"$eq": bson.A{bson.M{"$ifNull": bson.A{"$ui_theme", ""}}, ""}},
+							},
+						},
+						"then": "canopsis",
+						"else": "$ui_theme",
+					},
+				},
+			},
+		},
+		{
+			"$lookup": bson.M{
+				"from":         mongo.ColorThemeCollection,
+				"localField":   "ui_theme",
+				"foreignField": "_id",
+				"as":           "ui_theme",
+			},
+		},
+		{
+			"$unwind": bson.M{"path": "$ui_theme", "preserveNullAndEmptyArrays": true},
+		},
 	}
 }

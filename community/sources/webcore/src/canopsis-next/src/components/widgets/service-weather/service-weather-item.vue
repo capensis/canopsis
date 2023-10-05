@@ -214,10 +214,6 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 1.2em;
-
-    &, & a {
-      color: white;
-    }
   }
 
   &__background {

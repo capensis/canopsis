@@ -8,7 +8,7 @@
       hide-details,
       @change="updateIsFilled"
     )
-    span.v-label.theme--light(v-else) {{ label }}
+    span.v-label(v-else) {{ label }}
     v-flex(v-show="isFilled || hideCheckbox", xs3)
       v-btn.flowchart-color-field__button.ma-0.pa-0(
         :style="style",

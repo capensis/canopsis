@@ -67,6 +67,7 @@ export const convertWidgetQueryToRequest = (query) => {
     'limit',
     'filter',
     'lockedFilter',
+    'search',
   ]);
 
   const {
@@ -77,6 +78,7 @@ export const convertWidgetQueryToRequest = (query) => {
     category,
     filter,
     lockedFilter,
+    search,
     multiSortBy = [],
     limit = PAGINATION_LIMIT,
   } = query;
@@ -104,6 +106,10 @@ export const convertWidgetQueryToRequest = (query) => {
 
   if (multiSortBy.length) {
     result.multi_sort = convertMultiSortToRequest(multiSortBy);
+  }
+
+  if (search) {
+    result.search = search;
   }
 
   result.limit = limit;

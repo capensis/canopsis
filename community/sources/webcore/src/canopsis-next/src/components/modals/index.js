@@ -173,6 +173,10 @@ export const CreateEntityInfo = () => ({
   component: import(/* webpackChunkName: "Context" */ './entity/create-entity-info.vue'),
   loading: LoaderOverlay,
 });
+export const EntitiesList = () => ({
+  component: import(/* webpackChunkName: "Context" */ './entity/entities-list.vue'),
+  loading: LoaderOverlay,
+});
 export const ServiceEntities = () => ({
   component: import(/* webpackChunkName: "Context" */ './service/service-entities.vue'),
   loading: LoaderOverlay,
@@ -391,5 +395,10 @@ export const CreateMaintenance = () => ({
 
 export const CreateTag = () => ({
   component: import(/* webpackChunkName: "Tags" */ './tag/create-tag.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateTheme = () => ({
+  component: import(/* webpackChunkName: "Theme" */ './theme/create-theme.vue'),
   loading: LoaderOverlay,
 });

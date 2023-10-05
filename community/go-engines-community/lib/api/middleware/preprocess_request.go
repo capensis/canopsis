@@ -44,7 +44,7 @@ func SetAuthor() func(c *gin.Context) {
 }
 
 // PreProcessBulk middleware checks if bulk has valid size and sets authorized user id to author field to bulk request body. Use it for create and update model endpoints.
-func PreProcessBulk(cfg config.CanopsisConf, addAuthor bool) func(c *gin.Context) {
+func PreProcessBulk(configProvider config.ApiConfigProvider, addAuthor bool) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		var ar fastjson.Arena
 
@@ -65,8 +65,9 @@ func PreProcessBulk(cfg config.CanopsisConf, addAuthor bool) func(c *gin.Context
 			return
 		}
 
-		if len(rawObjects) > cfg.API.BulkMaxSize {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("number of elements shouldn't be greater than %d", cfg.API.BulkMaxSize)))
+		bulkMaxSize := configProvider.Get().BulkMaxSize
+		if len(rawObjects) > bulkMaxSize {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("number of elements shouldn't be greater than %d", bulkMaxSize)))
 			return
 		}
 
