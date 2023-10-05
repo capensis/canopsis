@@ -2,11 +2,12 @@ Feature: Get a user
   I need to be able to get a user
   Only admin should be able to get a user
 
+  @concurrent
   Scenario: given search request should return users
     When I am admin
     When I do GET /api/v4/users?search=test-user-to-get
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "data": [
@@ -45,7 +46,34 @@ Feature: Get a user
           "source": "",
           "ui_groups_navigation_type": "side-bar",
           "ui_language": "en",
-          "ui_theme": "canopsis",
+          "ui_theme": {
+            "name": "Canopsis",
+            "font_size": 2,
+            "colors": {
+              "main": {
+                "primary": "#2fab63",
+                "secondary": "#2b3e4f",
+                "accent": "#82b1ff",
+                "error": "#ff5252",
+                "info": "#2196f3",
+                "success": "#4caf50",
+                "warning": "#fb8c00",
+                "background": "#ffffff",
+                "active_color": "#000"
+              },
+              "table": {
+                "background": "#fff",
+                "row_color": "#fff",
+                "hover_row_color": "#eee"
+              },
+              "state": {
+                "ok": "#00a65a",
+                "minor": "#fcdc00",
+                "major": "#ff9900",
+                "critical": "#f56954"
+              }
+            }
+          },
           "active_connects": 0
         },
         {
@@ -75,7 +103,34 @@ Feature: Get a user
           "source": "",
           "ui_groups_navigation_type": "side-bar",
           "ui_language": "en",
-          "ui_theme": "canopsis",
+          "ui_theme": {
+            "name": "Canopsis",
+            "font_size": 2,
+            "colors": {
+              "main": {
+                "primary": "#2fab63",
+                "secondary": "#2b3e4f",
+                "accent": "#82b1ff",
+                "error": "#ff5252",
+                "info": "#2196f3",
+                "success": "#4caf50",
+                "warning": "#fb8c00",
+                "background": "#ffffff",
+                "active_color": "#000"
+              },
+              "table": {
+                "background": "#fff",
+                "row_color": "#fff",
+                "hover_row_color": "#eee"
+              },
+              "state": {
+                "ok": "#00a65a",
+                "minor": "#fcdc00",
+                "major": "#ff9900",
+                "critical": "#f56954"
+              }
+            }
+          },
           "active_connects": 0
         }
       ],
@@ -88,6 +143,7 @@ Feature: Get a user
     }
     """
 
+  @concurrent
   Scenario: given search request should return users with permission and search query
     When I am admin
     When I do GET /api/v4/users?permission=api_instruction_approve&search=test-user-to-get
@@ -109,6 +165,7 @@ Feature: Get a user
     }
     """
 
+  @concurrent
   Scenario: given search by role request should return users
     When I am admin
     When I do GET /api/v4/users?search=test-role-to-user-edit-3
@@ -130,11 +187,12 @@ Feature: Get a user
     }
     """
 
+  @concurrent
   Scenario: given get request should return user
     When I am admin
     When I do GET /api/v4/users/test-user-to-get-1
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "_id": "test-user-to-get-1",
@@ -171,10 +229,38 @@ Feature: Get a user
       "source": "",
       "ui_groups_navigation_type": "side-bar",
       "ui_language": "en",
-      "ui_theme": "canopsis"
+      "ui_theme": {
+        "name": "Canopsis",
+        "font_size": 2,
+        "colors": {
+          "main": {
+            "primary": "#2fab63",
+            "secondary": "#2b3e4f",
+            "accent": "#82b1ff",
+            "error": "#ff5252",
+            "info": "#2196f3",
+            "success": "#4caf50",
+            "warning": "#fb8c00",
+            "background": "#ffffff",
+            "active_color": "#000"
+          },
+          "table": {
+            "background": "#fff",
+            "row_color": "#fff",
+            "hover_row_color": "#eee"
+          },
+          "state": {
+            "ok": "#00a65a",
+            "minor": "#fcdc00",
+            "major": "#ff9900",
+            "critical": "#f56954"
+          }
+        }
+      }
     }
     """
 
+  @concurrent
   Scenario: given sort request should return sorted users
     When I am admin
     When I do GET /api/v4/users?search=test-user-to-get&sort=desc&sort_by=name
@@ -199,24 +285,29 @@ Feature: Get a user
     }
     """
 
+  @concurrent
   Scenario: given get all request and no auth user should not allow access
     When I do GET /api/v4/users
     Then the response code should be 401
 
+  @concurrent
   Scenario: given get all request and auth user by api key without permissions should not allow access
     When I am noperms
     When I do GET /api/v4/users
     Then the response code should be 403
 
+  @concurrent
   Scenario: given get request and no auth user should not allow access
     When I do GET /api/v4/users/test-user-to-get-1
     Then the response code should be 401
 
+  @concurrent
   Scenario: given get request and auth user by api key without permissions should not allow access
     When I am noperms
     When I do GET /api/v4/users/test-user-to-get-1
     Then the response code should be 403
 
+  @concurrent
   Scenario: given get request with not exist id should return not found error
     When I am admin
     When I do GET /api/v4/users/test-user-not-found

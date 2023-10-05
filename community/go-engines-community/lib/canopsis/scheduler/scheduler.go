@@ -7,6 +7,7 @@ import (
 	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -114,9 +115,17 @@ func (s *scheduler) ProcessEvent(ctx context.Context, event types.Event) error {
 	}
 
 	locked, err := s.queueLock.LockOrPush(ctx, lockID, bevent)
-
-	if !locked || err != nil {
+	if err != nil {
 		return err
+	}
+
+	if event.Healthcheck {
+		_, err := s.queueLock.PopOrUnlock(ctx, lockID, false)
+		return err
+	}
+
+	if !locked {
+		return nil
 	}
 
 	return s.publishToNext(ctx, bevent)
@@ -147,7 +156,7 @@ func (s *scheduler) publishToNext(ctx context.Context, eventByte []byte) error {
 		false,
 		false,
 		amqp.Publishing{
-			ContentType:  "application/json", // this type is mandatory to avoid bad conversions into Python.
+			ContentType:  canopsis.JsonContentType,
 			Body:         eventByte,
 			DeliveryMode: amqp.Persistent,
 		},

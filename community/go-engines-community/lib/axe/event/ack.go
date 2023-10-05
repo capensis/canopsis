@@ -73,20 +73,12 @@ func (p *ackProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result,
 	}
 	var updatedServiceStates map[string]statecounters.UpdatedServicesInfo
 	notAckedMetricType := ""
-	firstTry := true
+
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		updatedServiceStates = nil
 		notAckedMetricType = ""
-		var err error
-		if !firstTry {
-			entity, err = findEntity(ctx, event.Entity.ID, p.entityCollection)
-			if err != nil {
-				return err
-			}
-		}
 
-		firstTry = false
 		doubleAck := false
 		beforeAlarm := types.Alarm{}
 		opts := options.FindOneAndUpdate().
@@ -95,7 +87,7 @@ func (p *ackProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result,
 				"not_acked_metric_type":      1,
 				"not_acked_metric_send_time": 1,
 			})
-		err = p.alarmCollection.FindOneAndUpdate(ctx, match, update, opts).Decode(&beforeAlarm)
+		err := p.alarmCollection.FindOneAndUpdate(ctx, match, update, opts).Decode(&beforeAlarm)
 		if err != nil {
 			if !errors.Is(err, mongodriver.ErrNoDocuments) {
 				return err

@@ -70,7 +70,7 @@ func main() {
 		logger.Fatal().Err(err).Msg("failed to run mongo fixtures")
 	}
 
-	err = updateMongoConfig(ctx, f, conf, client)
+	err = updateMongoConfig(ctx, conf, client)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to update config in mongo")
 	}
@@ -88,6 +88,12 @@ func main() {
 	err = migrateTechPostgres(f, logger)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to run tech postgres migrations")
+	}
+
+	// keep it in the end for cmd/ready
+	err = updateVersionConfig(ctx, f, client)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("failed to update config in mongo")
 	}
 }
 
@@ -200,48 +206,56 @@ func applyMongoFixtures(ctx context.Context, f flags, dbClient mongo.DbClient, l
 	return nil
 }
 
-func updateMongoConfig(ctx context.Context, f flags, conf Conf, dbClient mongo.DbClient) error {
-	versionConfAdapter := config.NewVersionAdapter(dbClient)
-	prevVersionConf, err := versionConfAdapter.GetConfig(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to fetch version config: %w", err)
-	}
-	buildInfo := canopsis.GetBuildInfo()
-	versionConf := config.VersionConf{
-		Version: buildInfo.Version,
-		Edition: f.edition,
-		Stack:   "go",
-	}
-	if prevVersionConf.Version != versionConf.Version {
-		versionUpdated := types.NewCpsTime()
-		versionConf.VersionUpdated = &versionUpdated
-	}
-	err = versionConfAdapter.UpsertConfig(ctx, versionConf)
-	if err != nil {
-		return fmt.Errorf("failed to update version config: %w", err)
-	}
-
-	//todo: fix it with config refactoring
+func updateMongoConfig(ctx context.Context, conf Conf, dbClient mongo.DbClient) error {
 	globalConfAdapter := config.NewAdapter(dbClient)
 	prevGlobalConf, err := globalConfAdapter.GetConfig(ctx)
 	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 		return fmt.Errorf("failed to fetch global config: %w", err)
 	}
 
+	//todo: fix it with config refactoring
 	conf.Canopsis.Metrics.EnabledInstructions = prevGlobalConf.Metrics.EnabledInstructions
 	conf.Canopsis.Metrics.EnabledNotAckedMetrics = prevGlobalConf.Metrics.EnabledNotAckedMetrics
-
 	err = globalConfAdapter.UpsertConfig(ctx, conf.Canopsis)
 	if err != nil {
 		return fmt.Errorf("failed to update global config: %w", err)
 	}
+
 	err = config.NewRemediationAdapter(dbClient).UpsertConfig(ctx, conf.Remediation)
 	if err != nil {
 		return fmt.Errorf("failed to update remediation config: %w", err)
 	}
+
 	err = config.NewHealthCheckAdapter(dbClient).UpsertConfig(ctx, conf.HealthCheck)
 	if err != nil {
 		return fmt.Errorf("failed to update healthcheck config: %w", err)
+	}
+
+	return nil
+}
+
+func updateVersionConfig(ctx context.Context, f flags, dbClient mongo.DbClient) error {
+	adapter := config.NewVersionAdapter(dbClient)
+	prevConf, err := adapter.GetConfig(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to fetch version config: %w", err)
+	}
+
+	buildInfo := canopsis.GetBuildInfo()
+	conf := config.VersionConf{
+		Version: buildInfo.Version,
+		Edition: f.edition,
+		Stack:   "go",
+	}
+
+	if prevConf.Version != conf.Version {
+		versionUpdated := types.NewCpsTime()
+		conf.VersionUpdated = &versionUpdated
+	}
+
+	err = adapter.UpsertConfig(ctx, conf)
+	if err != nil {
+		return fmt.Errorf("failed to update version config: %w", err)
 	}
 
 	return nil
@@ -347,7 +361,7 @@ func runPostgresMigrations(migrationDirectory, mode string, steps int, connStr s
 		return errors.New("postgres migration mode should be up or down")
 	}
 
-	if err != migrate.ErrNoChange {
+	if !errors.Is(err, migrate.ErrNoChange) {
 		return err
 	}
 

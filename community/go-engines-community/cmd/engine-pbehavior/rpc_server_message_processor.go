@@ -43,19 +43,22 @@ func (p *rpcServerMessageProcessor) Process(ctx context.Context, d amqp.Delivery
 		return p.getErrRpcEvent(errors.New("invalid event")), nil
 	}
 
-	pbhEvent, err := p.processCreatePbhEvent(
-		ctx,
-		*event.Alarm,
-		*event.Entity,
-		event.Params,
-	)
-	if err != nil {
-		if engine.IsConnectionError(err) {
-			return nil, err
-		}
+	var pbhEvent *types.Event
+	if !event.Healthcheck {
+		pbhEvent, err = p.processCreatePbhEvent(
+			ctx,
+			*event.Alarm,
+			*event.Entity,
+			event.Params,
+		)
+		if err != nil {
+			if engine.IsConnectionError(err) {
+				return nil, err
+			}
 
-		p.logError(err, "cannot process event", msg)
-		return p.getErrRpcEvent(err), nil
+			p.logError(err, "cannot process event", msg)
+			return p.getErrRpcEvent(err), nil
+		}
 	}
 
 	if pbhEvent == nil {

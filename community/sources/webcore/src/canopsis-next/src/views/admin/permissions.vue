@@ -1,7 +1,7 @@
 <template lang="pug">
   v-container.admin-rights
     c-page-header
-    div.position-relative
+    v-card.position-relative
       v-fade-transition
         v-layout.progress(v-show="pending", column)
           v-progress-circular(indeterminate, color="primary")

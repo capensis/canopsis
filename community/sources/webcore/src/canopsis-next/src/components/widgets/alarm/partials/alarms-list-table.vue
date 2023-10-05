@@ -72,8 +72,11 @@
             :resizing="resizingMode",
             @clear:tag="$emit('clear:tag')"
           )
-          template(v-if="header.value !== 'actions'")
-            span.alarms-list-table__dragging-handler(v-if="draggingMode", @click.stop="")
+          template
+            span.alarms-list-table__dragging-handler(
+              v-if="draggingMode && header.value !== 'actions'",
+              @click.stop=""
+            )
             span.alarms-list-table__resize-handler(
               v-if="resizingMode",
               @mousedown.stop.prevent="startColumnResize(header.value)",
@@ -130,7 +133,7 @@
 </template>
 
 <script>
-import { intersectionBy } from 'lodash';
+import { get, intersectionBy } from 'lodash';
 
 import { ALARM_DENSE_TYPES, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
 
@@ -321,7 +324,16 @@ export default {
         };
 
         if (column.linksInRowCount) {
-          header.width = calculateAlarmLinksColumnWidth(this.dense, column.linksInRowCount);
+          const linksCounts = this.alarms.map(alarm => Object.values(get(alarm, column.value, {})).flat().length);
+          const maxLinksCount = Math.max(...linksCounts);
+          const actualInlineLinksCount = maxLinksCount > column.inlineLinksCount
+            ? column.inlineLinksCount + 1
+            : maxLinksCount;
+
+          header.width = calculateAlarmLinksColumnWidth(
+            this.dense,
+            Math.max(Math.min(actualInlineLinksCount, column.linksInRowCount), 1),
+          );
         }
 
         return header;
@@ -537,10 +549,6 @@ export default {
     transition: .3s cubic-bezier(.25, .8, .5,1);
     transition-property: opacity, background-color;
 
-    .theme--dark & {
-      background: #424242;
-    }
-
     &:after {
       content: ' ';
       width: 100%;
@@ -717,11 +725,11 @@ export default {
     }
 
     tr {
-      background: white;
+      background: var(--v-table-background-base);
       transition: background-color .3s cubic-bezier(.25,.8,.5,1);
 
       .theme--dark & {
-        background: #424242;
+        background: var(--v-table-background-base);
       }
 
       th {

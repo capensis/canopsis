@@ -1,6 +1,5 @@
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 
-import { COLORS } from '@/config';
 import { COLOR_INDICATOR_TYPES, ENTITIES_STATES, PBEHAVIOR_TYPE_TYPES, SHAPES } from '@/constants';
 import { shapeToForm } from '@/helpers/flowchart/shapes';
 import { getImpactStateColor } from '@/helpers/entities/entity/color';
@@ -95,7 +94,7 @@ describe('flowchart-preview', () => {
 
     const flowchart = selectFlowchart(wrapper);
 
-    const okColorDarken = '#004023';
+    const okColorDarken = '#000000';
 
     expect(flowchart.vm.shapes).toEqual({
       [lineShape._id]: lineShape,
@@ -104,7 +103,7 @@ describe('flowchart-preview', () => {
         ...circleShape,
         properties: {
           ...circleShape.properties,
-          fill: COLORS.state.ok,
+          fill: '',
           stroke: okColorDarken,
         },
         textProperties: {

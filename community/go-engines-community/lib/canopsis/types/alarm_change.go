@@ -81,6 +81,7 @@ type AlarmChange struct {
 	PreviousStatus                  CpsNumber
 	PreviousStatusChange            CpsTime
 	PreviousPbehaviorTime           *CpsTime
+	PreviousEntityPbehaviorTime     *CpsTime
 	PreviousPbehaviorTypeID         string
 	PreviousPbehaviorCannonicalType string
 }

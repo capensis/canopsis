@@ -3,7 +3,8 @@
     v-list-tile-title
       v-layout(justify-space-between)
         span {{ link.title }}
-        v-icon.ml-2 {{ link.icon }}
+    v-list-tile-avatar.ml-2(size="24")
+      v-icon(size="24") {{ link.icon }}
 </template>
 
 <script>
@@ -26,5 +27,9 @@ export default {
 .top-bar-menu-link ::v-deep a {
   text-decoration: none;
   color: inherit;
+
+  .v-list__tile__avatar {
+    min-width: unset;
+  }
 }
 </style>

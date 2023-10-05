@@ -1,6 +1,10 @@
 $seeAlarmBtnHeight: 18px;
 $mobileBreakpoint: 450px;
 
+html {
+  background-color: var(--v-application-background-base);
+}
+
 .v-toolbar--fixed {
   z-index: 3;
 }
@@ -13,18 +17,20 @@ $mobileBreakpoint: 450px;
   z-index: 9;
 }
 
-.v-list {
-  .v-input {
-    &, &__slot {
-      margin-top: 4px;
-    }
+.v-list .v-list__tile {
+  > *:not(.v-list__tile__action) {
+    .v-input {
+      &, &__slot {
+        margin-top: 4px;
+      }
 
-    &__slot {
-      margin-bottom: 8px;
-    }
+      &__slot {
+        margin-bottom: 8px;
+      }
 
-    .v-messages {
-      display: block;
+      .v-messages {
+        display: block;
+      }
     }
   }
 }
@@ -158,16 +164,6 @@ $mobileBreakpoint: 450px;
     max-width: 600px;
     white-space: pre-line;
   }
-}
-
-.c-state-count-changes-chip {
-  font-size: 12px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 30px;
-  height: 20px;
-  border-radius: 10px;
 }
 
 .c-table-header {

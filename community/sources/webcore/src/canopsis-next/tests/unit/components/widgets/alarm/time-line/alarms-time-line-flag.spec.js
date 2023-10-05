@@ -8,9 +8,7 @@ const stubs = {
 };
 
 describe('alarms-time-line-flag', () => {
-  const snapshotFactory = generateRenderer(TimeLineFlag, {
-    stubs,
-  });
+  const snapshotFactory = generateRenderer(TimeLineFlag, { stubs });
 
   it.each(
     Object.entries(ENTITIES_STATUSES),
