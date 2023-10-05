@@ -10,7 +10,7 @@
         template(#label="{ item, leaf }")
           div {{ item.name }}
             span.pl-1(v-if="leaf") :
-              c-ellipsis.pl-1.d-inline-block.text--secondary.body-1.pre-wrap(:text="String(item.value).repeat(10)")
+              c-ellipsis.pl-1.d-inline-block.text--secondary.body-1.pre-wrap(:text="String(item.value)")
             span.pl-1(v-else-if="!leaf && !(item.children && item.children.length)") :
               div.pl-1.d-inline-block.text--secondary.body-1.font-italic {{ $t('common.emptyObject') }}
 
