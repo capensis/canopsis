@@ -217,6 +217,11 @@ export const API_ROUTES = {
     list: '/api/v4/color-themes',
     bulkList: '/api/v4/bulk/color-themes',
   },
+  healthcheck: {
+    engines: '/api/v4/healthcheck',
+    status: '/api/v4/healthcheck/status',
+    parameters: '/api/v4/healthcheck/parameters',
+  },
 
   /**
    * Cat routes
@@ -244,11 +249,6 @@ export const API_ROUTES = {
     history: '/api/v4/cat/junit/test-suites-history',
     widget: '/api/v4/cat/junit/test-suites-widget',
     file: '/api/v4/cat/junit/test-cases-file',
-  },
-  healthcheck: {
-    engines: '/api/v4/cat/healthcheck',
-    status: '/api/v4/cat/healthcheck/status',
-    parameters: '/api/v4/cat/healthcheck/parameters',
   },
   metrics: {
     settings: '/api/v4/cat/metrics-settings',
