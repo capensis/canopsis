@@ -369,3 +369,13 @@ export const CONTENT_TYPES = {
 export const MAX_SEARCH_ITEMS = 8;
 
 export const LOGIN_APP_INFO_POLLING_DELAY = 5000;
+
+export const RESPONSE_STATUSES = {
+  unauthorized: 401,
+  notFound: 404,
+  forbidden: 403,
+  timeout: 408,
+
+  badGateway: 502,
+  serviceUnavailable: 503,
+};
