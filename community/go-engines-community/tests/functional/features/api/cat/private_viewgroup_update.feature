@@ -83,7 +83,7 @@ Feature: Update a private view group
     When I do PUT /api/v4/cat/private-view-groups/test-private-viewgroup-to-update-2:
     """json
     {
-      "title": "test-private-viewgroup-to-check-unique-title-1-title"
+      "title": "test-private-viewgroup-to-check-unique-title-7-title"
     }
     """
     Then the response code should be 200
@@ -94,7 +94,7 @@ Feature: Update a private view group
     When I do PUT /api/v4/cat/private-view-groups/test-private-viewgroup-to-update-2:
     """json
     {
-      "title": "test-private-viewgroup-to-check-unique-title-2-title"
+      "title": "test-private-viewgroup-to-check-unique-title-8-title"
     }
     """
     Then the response code should be 200
