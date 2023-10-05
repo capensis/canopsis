@@ -2,12 +2,11 @@ package view
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -26,7 +25,6 @@ const (
 )
 
 type Store interface {
-	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*Response, error)
 	Insert(ctx context.Context, r EditRequest, withDefaultTab bool) (*Response, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
@@ -77,54 +75,6 @@ type store struct {
 	tabStore viewtab.Store
 }
 
-func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
-	pipeline := make([]bson.M, 0)
-
-	if len(r.Ids) > 0 {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{"_id": bson.M{"$in": r.Ids}}})
-	}
-
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
-	if len(filter) > 0 {
-		pipeline = append(pipeline, bson.M{"$match": filter})
-	}
-
-	project := []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.ViewGroupMongoCollection,
-			"localField":   "group_id",
-			"foreignField": "_id",
-			"as":           "group",
-		}},
-		{"$unwind": bson.M{"path": "$group", "preserveNullAndEmptyArrays": true}},
-	}
-	project = append(project, s.authorProvider.PipelineForField("group.author")...)
-	project = append(project, s.authorProvider.Pipeline()...)
-	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
-		r.Query,
-		pipeline,
-		common.GetSortQuery("position", common.SortAsc),
-		project,
-	))
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer cursor.Close(ctx)
-
-	res := AggregationResult{}
-
-	if cursor.Next(ctx) {
-		err := cursor.Decode(&res)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return &res, nil
-}
-
 func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
 	pipeline = append(pipeline, s.getNestedObjectsPipeline()...)
@@ -150,14 +100,25 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 
 func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) (*Response, error) {
 	var response *Response
+
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
+
+		group, err := s.getGroupInfo(ctx, r.Group)
+		if err != nil {
+			return err
+		}
+
+		if group.IsPrivate && group.Author != r.Author {
+			return common.NewValidationError("group", "Group is private.")
+		}
+
 		position, err := s.getNextPosition(ctx)
 		if err != nil {
 			return err
 		}
 
-		now := types.CpsTime{Time: time.Now()}
+		now := types.NewCpsTime()
 		id := utils.NewID()
 		_, err = s.collection.InsertOne(ctx, view.View{
 			ID:              id,
@@ -169,6 +130,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 			Tags:            r.Tags,
 			PeriodicRefresh: r.PeriodicRefresh,
 			Author:          r.Author,
+			IsPrivate:       group.IsPrivate,
 			Created:         now,
 			Updated:         now,
 		})
@@ -178,13 +140,14 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 
 		if withDefaultTab {
 			_, err := s.tabCollection.InsertOne(ctx, view.Tab{
-				ID:       utils.NewID(),
-				Title:    defaultTabTitle,
-				View:     id,
-				Author:   r.Author,
-				Position: 0,
-				Created:  now,
-				Updated:  now,
+				ID:        utils.NewID(),
+				Title:     defaultTabTitle,
+				View:      id,
+				Author:    r.Author,
+				IsPrivate: group.IsPrivate,
+				Position:  0,
+				Created:   now,
+				Updated:   now,
 			})
 			if err != nil {
 				return err
@@ -196,7 +159,11 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 			return err
 		}
 
-		return s.createPermissions(ctx, r.Author, map[string]string{response.ID: response.Title})
+		if !group.IsPrivate {
+			err = s.createPermissions(ctx, r.Author, map[string]string{response.ID: response.Title})
+		}
+
+		return err
 	})
 
 	return response, err
@@ -210,10 +177,27 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		oldView := view.View{}
 		err := s.collection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&oldView)
 		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+
 			return err
 		}
 
-		now := types.CpsTime{Time: time.Now()}
+		group, err := s.getGroupInfo(ctx, r.Group)
+		if err != nil {
+			return err
+		}
+
+		if group.IsPrivate && (!oldView.IsPrivate || group.Author != r.Author) {
+			return common.NewValidationError("group", "Group is private.")
+		}
+
+		if !group.IsPrivate && oldView.IsPrivate {
+			return common.NewValidationError("group", "Group is public.")
+		}
+
+		now := types.NewCpsTime()
 		_, err = s.collection.UpdateOne(ctx, bson.M{"_id": oldView.ID}, bson.M{"$set": bson.M{
 			"enabled":          *r.Enabled,
 			"title":            r.Title,
@@ -221,6 +205,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			"group_id":         r.Group,
 			"tags":             r.Tags,
 			"periodic_refresh": r.PeriodicRefresh,
+			"is_private":       oldView.IsPrivate,
 			"author":           r.Author,
 			"updated":          now,
 		}})
@@ -240,7 +225,11 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
-		return s.updatePermissions(ctx, *response)
+		if !oldView.IsPrivate {
+			err = s.updatePermissions(ctx, *response)
+		}
+
+		return err
 	})
 
 	return response, err
@@ -286,7 +275,7 @@ func (s *store) Copy(ctx context.Context, id string, r EditRequest) (*Response, 
 			return err
 		}
 
-		err = s.tabStore.CopyForView(ctx, v.ID, newView.ID, r.Author)
+		err = s.tabStore.CopyForView(ctx, v.ID, newView.ID, r.Author, newView.IsPrivate)
 		if err != nil {
 			return err
 		}
@@ -355,7 +344,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			"pipeline": []bson.M{
 				{"$match": bson.M{"$and": []bson.M{
 					{"$expr": bson.M{"$eq": bson.A{"$widget", "$$id"}}},
-					{"is_private": false},
+					{"widget_private": false},
 					{"old_mongo_query": nil}, //do not import old filters
 				}}},
 			},
@@ -369,7 +358,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			"filters.corporate_entity_pattern_title":    0,
 			"filters.corporate_pbehavior_pattern":       0,
 			"filters.corporate_pbehavior_pattern_title": 0,
-			"filters.is_private":                        0,
+			"filters.widget_private":                    0,
 			"filters.author":                            0,
 			"filters.updated":                           0,
 			"filters.created":                           0,
@@ -732,10 +721,10 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userId string) erro
 
 										filterId := utils.NewID()
 										newWidgetFilters = append(newWidgetFilters, view.WidgetFilter{
-											ID:        filterId,
-											Title:     filter.Title,
-											Widget:    widgetId,
-											IsPrivate: false,
+											ID:            filterId,
+											Title:         filter.Title,
+											Widget:        widgetId,
+											WidgetPrivate: false,
 											AlarmPatternFields: savedpattern.AlarmPatternFields{
 												AlarmPattern: filter.AlarmPattern,
 											},
@@ -1107,6 +1096,17 @@ func (s *store) getNextGroupPosition(ctx context.Context) (int64, error) {
 	return 0, nil
 }
 
+func (s *store) getGroupInfo(ctx context.Context, groupID string) (GroupInfo, error) {
+	var group GroupInfo
+
+	err := s.groupCollection.FindOne(ctx, bson.M{"_id": groupID}).Decode(&group)
+	if err != nil && errors.Is(err, mongodriver.ErrNoDocuments) {
+		return group, common.NewValidationError("group", "Group doesn't exist.")
+	}
+
+	return group, err
+}
+
 func (s *store) getNestedObjectsPipeline() []bson.M {
 	pipeline := []bson.M{
 		{"$lookup": bson.M{
@@ -1134,8 +1134,8 @@ func (s *store) getNestedObjectsPipeline() []bson.M {
 			"let":  bson.M{"widget": "$widgets._id"},
 			"pipeline": []bson.M{
 				{"$match": bson.M{
-					"$expr":      bson.M{"$eq": bson.A{"$widget", "$$widget"}},
-					"is_private": false,
+					"$expr":          bson.M{"$eq": bson.A{"$widget", "$$widget"}},
+					"widget_private": false,
 				}},
 			},
 			"as": "filters",

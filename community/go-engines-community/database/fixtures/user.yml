@@ -49,7 +49,7 @@ template:
   }
   - &filter {
     _id: <UUID()>,
-    is_private: false,
+    widget_private: false,
     created: <NowUnix()>,
     updated: <Current().created>,
     author: root,

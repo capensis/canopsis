@@ -214,18 +214,17 @@ func RegisterValidators(client mongo.DbClient, enableSameServiceNames bool) {
 	accountValidator := account.NewValidator(client)
 	v.RegisterStructValidationCtx(accountValidator.ValidateEditRequest, account.EditRequest{})
 
-	viewValidator := view.NewValidator(client)
-	v.RegisterStructValidationCtx(viewValidator.ValidateEditRequest, view.EditRequest{})
 	v.RegisterStructValidation(view.ValidateEditPositionRequest, view.EditPositionRequest{})
 
-	viewGroupUniqueTitleValidator := common.NewUniqueFieldValidator(client, mongo.ViewGroupMongoCollection, "Title")
-	v.RegisterStructValidationCtx(viewGroupUniqueTitleValidator.Validate, viewgroup.EditRequest{})
+	viewGroupValidator := viewgroup.NewValidator(client)
+	v.RegisterStructValidationCtx(viewGroupValidator.ValidateEditRequest, viewgroup.EditRequest{})
 
 	widgetValidator := widget.NewValidator(client)
 	v.RegisterStructValidation(widgetValidator.ValidateEditRequest, widget.EditRequest{})
 	v.RegisterStructValidationCtx(widgetValidator.ValidateFilterRequest, widget.FilterRequest{})
 
-	v.RegisterStructValidationCtx(widgetfilter.NewValidator(client).ValidateEditRequest, widgetfilter.EditRequest{})
+	v.RegisterStructValidationCtx(widgetfilter.NewValidator(client).ValidateCreateRequest, widgetfilter.CreateRequest{})
+	v.RegisterStructValidationCtx(widgetfilter.NewValidator(client).ValidateUpdateRequest, widgetfilter.UpdateRequest{})
 
 	v.RegisterStructValidation(widgettemplate.ValidateEditRequest, widgettemplate.EditRequest{})
 
