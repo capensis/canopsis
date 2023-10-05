@@ -12268,8 +12268,7 @@ paths:
                 summary: Update
                 description: Update a tab.
                 value: {
-                  "title": "Alarms",
-                  "view": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2"
+                  "title": "Alarms"
                 }
         required: true
       responses:
@@ -12816,7 +12815,7 @@ paths:
                 value: {
                   "title": "Filter",
                   "widget": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
-                  "is_private": true,
+                  "widget_private": true,
                   "alarm_pattern": [
                     [
                       {
@@ -12934,8 +12933,7 @@ paths:
                 description: Update a filter.
                 value: {
                   "title": "Filter",
-                  "widget": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
-                  "is_private": true,
+                  "widget_private": true,
                   "alarm_pattern": [
                     [
                       {
@@ -13540,7 +13538,6 @@ paths:
                 summary: Update
                 description: Update a widget.
                 value: {
-                  "tab": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
                   "title": "Opened",
                   "type": "AlarmsList",
                   "grid_parameters": {

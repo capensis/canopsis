@@ -15,7 +15,7 @@ import (
 )
 
 type Store interface {
-	Find(ctx context.Context, r ListRequest, authorizedViewIds []string) (*AggregationResult, error)
+	Find(ctx context.Context, r ListRequest, authorizedViewIds, ownedPrivateIds []string) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*ViewGroup, error)
 	Insert(ctx context.Context, r EditRequest) (*ViewGroup, error)
 	Update(ctx context.Context, r EditRequest) (*ViewGroup, error)
@@ -29,7 +29,6 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 		dbViewCollection:      dbClient.Collection(mongo.ViewMongoCollection),
 		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "title"},
-		defaultSortBy:         "position",
 	}
 }
 
@@ -39,17 +38,25 @@ type store struct {
 	dbViewCollection      mongo.DbCollection
 	authorProvider        author.Provider
 	defaultSearchByFields []string
-	defaultSortBy         string
 }
 
-func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []string) (*AggregationResult, error) {
-	pipeline := make([]bson.M, 0)
+func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds, ownedPrivateIds []string) (*AggregationResult, error) {
+	var pipeline []bson.M
+	if r.WithPrivate {
+		pipeline = []bson.M{{"$match": bson.M{"$or": bson.A{bson.M{"is_private": false}, bson.M{"author": r.UserID}}}}}
+		if r.WithViews {
+			authorizedViewIds = append(authorizedViewIds, ownedPrivateIds...)
+		}
+	} else {
+		pipeline = []bson.M{{"$match": bson.M{"is_private": false}}}
+	}
+
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	sort := common.GetSortQuery(s.defaultSortBy, common.SortAsc)
+	sort := bson.M{"$sort": bson.D{{Key: "is_private", Value: 1}, {Key: "position", Value: 1}, {Key: "title", Value: 1}}}
 	project := s.authorProvider.Pipeline()
 
 	if r.WithFlags || r.WithViews {
@@ -117,8 +124,8 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds []str
 						"let":  bson.M{"widget": "$widgets._id"},
 						"pipeline": []bson.M{
 							{"$match": bson.M{
-								"$expr":      bson.M{"$eq": bson.A{"$widget", "$$widget"}},
-								"is_private": false,
+								"$expr":          bson.M{"$eq": bson.A{"$widget", "$$widget"}},
+								"widget_private": false,
 							}},
 						},
 						"as": "filters",

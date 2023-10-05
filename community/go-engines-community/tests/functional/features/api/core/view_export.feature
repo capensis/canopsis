@@ -2,6 +2,7 @@ Feature: Export views
   I need to be able to export views
   Only admin should be able to export views
 
+  @concurrent
   Scenario: given export request should return views
     When I am admin
     When I do POST /api/v4/view-export:
@@ -29,6 +30,7 @@ Feature: Export views
             {
               "description": "test-view-to-export-1-description",
               "enabled": true,
+              "is_private": false,
               "title": "test-view-to-export-1-title",
               "periodic_refresh": {
                 "enabled": true,
@@ -41,10 +43,12 @@ Feature: Export views
               "tabs": [
                 {
                   "title": "test-tab-to-export-1-title",
+                  "is_private": false,
                   "widgets": [
                     {
                       "title": "test-widget-to-export-1-title",
                       "type": "test-widget-to-export-1-type",
+                      "is_private": false,
                       "grid_parameters": {
                         "desktop": {"x": 0, "y": 0}
                       },
@@ -63,6 +67,8 @@ Feature: Export views
                         {
                           "_id": "test-widgetfilter-to-export-1",
                           "title": "test-widgetfilter-to-export-1-title",
+                          "is_private": false,
+                          "widget_private": false,
                           "alarm_pattern": [
                             [
                               {
@@ -78,6 +84,8 @@ Feature: Export views
                         {
                           "_id": "test-widgetfilter-to-export-2",
                           "title": "test-widgetfilter-to-export-2-title",
+                          "is_private": false,
+                          "widget_private": false,
                           "alarm_pattern": [
                             [
                               {
@@ -118,6 +126,7 @@ Feature: Export views
                 },
                 {
                   "title": "test-tab-to-export-2-title",
+                  "is_private": false,
                   "widgets": []
                 }
               ]
@@ -125,6 +134,7 @@ Feature: Export views
             {
               "description": "test-view-to-export-2-description",
               "enabled": true,
+              "is_private": false,
               "title": "test-view-to-export-2-title",
               "periodic_refresh": {
                 "enabled": true,
@@ -157,7 +167,7 @@ Feature: Export views
     }
     """
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "groups": [
@@ -181,7 +191,7 @@ Feature: Export views
     }
     """
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "groups": [
@@ -220,7 +230,7 @@ Feature: Export views
     }
     """
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "groups": [
@@ -248,6 +258,7 @@ Feature: Export views
     }
     """
 
+  @concurrent
   Scenario: given export request should not return views without access
     When I am admin
     When I do POST /api/v4/view-export:
@@ -278,10 +289,39 @@ Feature: Export views
     """
     Then the response code should be 403
 
+  @concurrent
+  Scenario: given export private views request should not allow access
+    When I am admin
+    When I do POST /api/v4/view-export:
+    """json
+    {
+      "views": ["test-private-view-to-export-1"]
+    }
+    """
+    Then the response code should be 403
+
+  @concurrent
+  Scenario: given export private viewgroup with view request should not allow access
+    When I am admin
+    When I do POST /api/v4/view-export:
+    """json
+    {
+      "groups": [
+        {
+          "_id": "test-private-viewgroup-to-export-1",
+          "views": ["test-private-view-to-export-1"]
+        }
+      ]
+    }
+    """
+    Then the response code should be 403
+
+  @concurrent
   Scenario: given get all request and no auth user should not allow access
     When I do POST /api/v4/view-export
     Then the response code should be 401
 
+  @concurrent
   Scenario: given get all request and auth user without view permission should not allow access
     When I am noperms
     When I do POST /api/v4/view-export
