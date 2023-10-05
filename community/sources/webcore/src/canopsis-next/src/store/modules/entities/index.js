@@ -28,7 +28,6 @@ import broadcastMessageModule from './broadcast-message';
 import counterModule from './counter';
 import playlistModule from './playlist';
 import metaAlarmRuleModule from './meta-alarm-rule';
-import engineRunInfoModule from './engine-run-info';
 import scenarioModule from './scenario';
 import entityCategoryModule from './entity-category';
 import testSuiteModule from './test-suite';
@@ -88,7 +87,6 @@ export default {
   counter: counterModule,
   playlist: playlistModule,
   metaAlarmRule: metaAlarmRuleModule,
-  engineRunInfo: engineRunInfoModule,
   remediationInstruction: remediationInstructionModule,
   remediationJob: remediationJobModule,
   remediationConfiguration: remediationConfigurationModule,
