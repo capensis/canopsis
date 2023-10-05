@@ -126,6 +126,7 @@ func TestMain(m *testing.M) {
 	templater := bdd.NewTemplater(map[string]interface{}{
 		"apiURL":      apiUrl,
 		"dummyApiURL": dummyApiUrl,
+		"mongoURL":    os.Getenv(mongo.EnvURL), // for system env variables tests
 	})
 	apiClient := bdd.NewApiClient(dbClient, apiUrl, flags.scenarioData, requestLogger, templater)
 	amqpClient := bdd.NewAmqpClient(dbClient, amqpConnection, flags.eventWaitExchange, flags.eventWaitKey,
