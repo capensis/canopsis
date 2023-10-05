@@ -65,6 +65,8 @@ configuration:
     timezone:
       timezone: Europe/Paris
     template:
+      system_env_var_prefixes:
+        - "CPS_"
       vars:
         Name: Test
         Location: FR
