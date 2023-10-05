@@ -122,7 +122,7 @@ Feature: get service weather
     {
       "title": "test-widgetfilter-pbehavior-weather-service-third-1",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "widget_private": true,
       "entity_pattern": [
         [
           {
@@ -632,7 +632,7 @@ Feature: get service weather
     {
       "title": "test-widgetfilter-pbehavior-weather-service-third-2",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "widget_private": true,
       "entity_pattern": [
         [
           {
@@ -999,7 +999,7 @@ Feature: get service weather
     {
       "title": "test-widgetfilter-pbehavior-weather-service-third-3",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "widget_private": true,
       "entity_pattern": [
         [
           {
@@ -1357,7 +1357,7 @@ Feature: get service weather
     {
       "title": "test-widgetfilter-pbehavior-weather-service-third-4",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "widget_private": true,
       "entity_pattern": [
         [
           {
@@ -1706,7 +1706,7 @@ Feature: get service weather
     {
       "title": "test-widgetfilter-pbehavior-weather-service-third-5",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "widget_private": true,
       "entity_pattern": [
         [
           {
@@ -2019,7 +2019,7 @@ Feature: get service weather
     {
       "title": "test-widgetfilter-pbehavior-weather-service-third-6",
       "widget": "test-widget-to-weather-get",
-      "is_private": true,
+      "widget_private": true,
       "entity_pattern": [
         [
           {
