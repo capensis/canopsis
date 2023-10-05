@@ -2,88 +2,7 @@ Feature: Get a view
   I need to be able to get a view
   Only admin should be able to get a view
 
-  Scenario: given search request should return views
-    When I am admin
-    When I do GET /api/v4/views?search=test-view-to-get
-    Then the response code should be 200
-    Then the response body should be:
-    """json
-    {
-      "data": [
-        {
-          "_id": "test-view-to-get-1",
-          "author": {
-            "_id": "root",
-            "name": "root",
-            "display_name": "root John Doe admin@canopsis.net"
-          },
-          "created": 1611229670,
-          "description": "test-view-to-get-1-description",
-          "enabled": true,
-          "group": {
-            "_id": "test-viewgroup-to-view-edit",
-            "author": {
-              "_id": "root",
-              "name": "root",
-              "display_name": "root John Doe admin@canopsis.net"
-            },
-            "created": 1611229670,
-            "title": "test-viewgroup-to-view-edit-title",
-            "updated": 1611229670
-          },
-          "title": "test-view-to-get-1-title",
-          "periodic_refresh": {
-            "enabled": true,
-            "value": 1,
-            "unit": "s"
-          },
-          "tags": [
-            "test-view-to-get-1-tag"
-          ],
-          "updated": 1611229670
-        },
-        {
-          "_id": "test-view-to-get-2",
-          "author": {
-            "_id": "root",
-            "name": "root",
-            "display_name": "root John Doe admin@canopsis.net"
-          },
-          "created": 1611229670,
-          "description": "test-view-to-get-2-description",
-          "enabled": true,
-          "group": {
-            "_id": "test-viewgroup-to-view-edit",
-            "author": {
-              "_id": "root",
-              "name": "root",
-              "display_name": "root John Doe admin@canopsis.net"
-            },
-            "created": 1611229670,
-            "title": "test-viewgroup-to-view-edit-title",
-            "updated": 1611229670
-          },
-          "title": "test-view-to-get-2-title",
-          "periodic_refresh": {
-            "enabled": true,
-            "value": 1,
-            "unit": "s"
-          },
-          "tags": [
-            "test-view-to-get-2-tag"
-          ],
-          "updated": 1611229670
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 2
-      }
-    }
-    """
-
+  @concurrent
   Scenario: given get request should return view
     When I am admin
     When I do GET /api/v4/views/test-view-to-get-1
@@ -100,6 +19,7 @@ Feature: Get a view
       "created": 1611229670,
       "description": "test-view-to-get-1-description",
       "enabled": true,
+      "is_private": false,
       "group": {
         "_id": "test-viewgroup-to-view-edit",
         "author": {
@@ -121,6 +41,7 @@ Feature: Get a view
         {
           "_id": "test-tab-to-view-get-1",
           "title": "test-tab-to-view-get-1-title",
+          "is_private": false,
           "author": {
             "_id": "root",
             "name": "root",
@@ -136,6 +57,7 @@ Feature: Get a view
                 "name": "root",
                 "display_name": "root John Doe admin@canopsis.net"
               },
+              "is_private": false,
               "created": 1611229670,
               "updated": 1611229670,
               "grid_parameters": {
@@ -155,6 +77,7 @@ Feature: Get a view
                 {
                   "_id": "test-widgetfilter-to-view-get-1",
                   "title": "test-widgetfilter-to-view-get-1-title",
+                  "widget_private": false,
                   "is_private": false,
                   "author": {
                     "_id": "nopermsuser",
@@ -178,6 +101,7 @@ Feature: Get a view
                 {
                   "_id": "test-widgetfilter-to-view-get-2",
                   "title": "test-widgetfilter-to-view-get-2-title",
+                  "widget_private": false,
                   "is_private": false,
                   "author": {
                     "_id": "root",
@@ -209,6 +133,7 @@ Feature: Get a view
                 "name": "root",
                 "display_name": "root John Doe admin@canopsis.net"
               },
+              "is_private": false,
               "created": 1611229670,
               "updated": 1611229670,
               "grid_parameters": {
@@ -233,6 +158,7 @@ Feature: Get a view
         {
           "_id": "test-tab-to-view-get-2",
           "title": "test-tab-to-view-get-2-title",
+          "is_private": false,
           "author": {
             "_id": "root",
             "name": "root",
@@ -263,6 +189,7 @@ Feature: Get a view
       "created": 1611229670,
       "description": "test-view-to-get-2-description",
       "enabled": true,
+      "is_private": false,
       "group": {
         "_id": "test-viewgroup-to-view-edit",
         "author": {
@@ -288,47 +215,60 @@ Feature: Get a view
     }
     """
 
-  Scenario: given search request should not return views without access
+  @concurrent
+  Scenario: given get private view request should return view only for owner
     When I am admin
-    When I do GET /api/v4/views?search=test-view-to-check-access
+    When I do GET /api/v4/views/test-private-view-to-get-1
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
-      "data": [],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 0
-      }
+      "_id": "test-private-view-to-get-1",
+      "title": "test-private-view-to-get-1-title",
+      "is_private": true,
+      "group": {
+        "_id": "test-private-viewgroup-to-get-view-1",
+        "title": "test-private-viewgroup-to-get-view-1-title",
+        "author": {
+          "_id": "root",
+          "name": "root"
+        }
+      },
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "is_private": true
     }
     """
-
-  Scenario: given get all request and no auth user should not allow access
-    When I do GET /api/v4/views
-    Then the response code should be 401
-
-  Scenario: given get all request and auth user without view permission should not allow access
-    When I am noperms
-    When I do GET /api/v4/views
+    When I do GET /api/v4/views/test-private-view-to-get-2
     Then the response code should be 403
 
+  @concurrent
+  Scenario: given get private view request shouldn't return private view if there are no view rights
+    When I am noperms
+    When I do GET /api/v4/views/test-private-view-to-get-3
+    Then the response code should be 403
+
+  @concurrent
   Scenario: given get request and no auth user should not allow access
     When I do GET /api/v4/views/test-view-to-get-1
     Then the response code should be 401
 
+  @concurrent
   Scenario: given get request and auth user without permissions should not allow access
     When I am noperms
     When I do GET /api/v4/views/test-view-to-get-1
     Then the response code should be 403
 
+  @concurrent
   Scenario: given get request and auth user without permissions should not allow access
     When I am admin
     When I do GET /api/v4/views/test-view-to-check-access
     Then the response code should be 403
 
-  Scenario: given get request with not exist id should return not allow access error
+  @concurrent
+  Scenario: given get request with not exist id should return not found error
     When I am admin
     When I do GET /api/v4/views/test-view-not-found
-    Then the response code should be 403
+    Then the response code should be 404

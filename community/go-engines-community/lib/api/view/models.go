@@ -4,16 +4,9 @@ import (
 	"encoding/json"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
-
-type ListRequest struct {
-	pagination.Query
-	Search string   `form:"search"`
-	Ids    []string `form:"-"`
-}
 
 type EditRequest struct {
 	ID          string   `json:"-"`
@@ -56,6 +49,8 @@ type Response struct {
 	Author          *author.Author             `bson:"author" json:"author,omitempty"`
 	Created         *types.CpsTime             `bson:"created" json:"created,omitempty" swaggertype:"integer"`
 	Updated         *types.CpsTime             `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
+
+	IsPrivate bool `bson:"is_private" json:"is_private"`
 }
 
 type ViewGroup struct {
@@ -64,19 +59,6 @@ type ViewGroup struct {
 	Author  *author.Author `bson:"author" json:"author,omitempty"`
 	Created *types.CpsTime `bson:"created" json:"created,omitempty" swaggertype:"integer"`
 	Updated *types.CpsTime `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
-}
-
-type AggregationResult struct {
-	Data       []Response `bson:"data" json:"data"`
-	TotalCount int64      `bson:"total_count" json:"total_count"`
-}
-
-func (r *AggregationResult) GetData() interface{} {
-	return r.Data
-}
-
-func (r *AggregationResult) GetTotal() int64 {
-	return r.TotalCount
 }
 
 type ImportItemRequest struct {
@@ -112,4 +94,9 @@ type ExportViewGroupResponse struct {
 type ExportResponse struct {
 	Groups []ExportViewGroupResponse `json:"groups"`
 	Views  []Response                `json:"views"`
+}
+
+type GroupInfo struct {
+	IsPrivate bool   `bson:"is_private"`
+	Author    string `bson:"author"`
 }

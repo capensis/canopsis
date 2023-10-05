@@ -5,7 +5,17 @@ template:
     position: 0,
     author: root,
     created: <NowUnix()>,
-    updated: <Current().created>
+    updated: <Current().created>,
+    is_private: false
+  }
+  - &private_tab {
+    _id: <UUID()>,
+    title: <UniqueName()>,
+    position: 0,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>,
+    is_private: true
   }
 
 viewtabs:
@@ -59,13 +69,11 @@ viewtabs:
     updated: 1611229670
     view: test-view-to-tab-edit
   
-  tab_to_update:
+  tab_to_update_1:
     <<: *tab
-    _id: test-tab-to-update
-    created: 1611229670
-    updated: <Current().created>
+    _id: test-tab-to-update-1
     view: test-view-to-tab-edit
-  
+
   tab_to_delete:
     <<: *tab
     _id: test-tab-to-delete
@@ -94,7 +102,7 @@ viewtabs:
   tab_to_view_delete:
     <<: *tab
     _id: test-tab-to-view-delete
-    view: test-view-to-delete-2
+    view: test-view-to-delete-1
   
   tab_to_user_preferences_update_1:
     <<: *tab
@@ -199,17 +207,23 @@ viewtabs:
     _id: test-tab-to-view-copy-1
     title: test-tab-to-view-copy-1-title
     view: test-view-to-copy-1
-  
+
+  tab_to_view_copy_4:
+    <<: *tab
+    _id: test-tab-to-view-copy-4
+    title: test-tab-to-view-copy-4-title
+    view: test-view-to-copy-4
+
   tab_to_copy_1:
     <<: *tab
     _id: test-tab-to-copy-1
     view: test-view-to-tab-copy-1
-  
+
   tab_to_copy_2:
     <<: *tab
     _id: test-tab-to-copy-2
     view: test-view-to-tab-copy-2
-  
+
   tab_to_copy_3:
     <<: *tab
     _id: test-tab-to-copy-3
@@ -229,6 +243,11 @@ viewtabs:
     <<: *tab
     _id: test-tab-to-widget-copy-3
     view: test-view-to-widget-copy-3
+
+  tab_to_widget_copy_4:
+    <<: *tab
+    _id: test-tab-to-widget-copy-4
+    view: test-view-to-widget-copy-4
 
   tab_to_filter_edit:
     <<: *tab
@@ -274,3 +293,172 @@ viewtabs:
     <<: *tab
     _id: test-tab-to-alarm-test-tags-filter
     view: test-view-to-test-alarm-tags-filter
+
+  private_tab_to_get_1:
+    <<: *private_tab
+    _id: test-private-tab-to-get-1
+    view: private-view-to-tab-get-1
+    author: root
+
+  private_tab_to_get_2:
+    <<: *private_tab
+    _id: test-private-tab-to-get-2
+    view: private-view-to-tab-get-2
+    author: private-view-to-tab-get-2-author
+
+  private_tab_to_update_1:
+    <<: *private_tab
+    _id: test-private-tab-to-update-1
+    view: private-view-to-tab-update-1
+    author: root
+
+  private_tab_to_update_2:
+    <<: *private_tab
+    _id: test-private-tab-to-update-2
+    view: private-view-to-tab-update-2
+    author: private-view-to-tab-update-2-author
+
+  private_tab_to_delete_1:
+    <<: *private_tab
+    _id: test-private-tab-to-delete-1
+    view: private-view-to-tab-delete-1
+    author: root
+
+  private_tab_to_delete_2:
+    <<: *private_tab
+    _id: test-private-tab-to-delete-2
+    view: private-view-to-tab-delete-2
+    author: private-view-to-tab-delete-2-author
+
+  private_tab_to_copy_1:
+    <<: *private_tab
+    _id: test-private-tab-to-copy-1
+    view: private-view-to-tab-copy-1
+    author: root
+
+  private_tab_to_copy_2:
+    <<: *private_tab
+    _id: test-private-tab-to-copy-2
+    view: private-view-to-tab-copy-2
+    author: private-view-to-tab-copy-2-author
+
+  private_tab_to_view_copy_1:
+    <<: *private_tab
+    _id: test-private-tab-to-private-view-copy-1
+    title: test-private-tab-to-private-view-copy-1-title
+    view: test-private-view-to-copy-1
+    author: root
+
+  private_tab_to_private_widget_create_1:
+    <<: *private_tab
+    _id: test-private-tab-to-private-widget-create-1
+    view: test-private-view-to-private-widget-create-1
+    author: root
+    
+  private_tab_to_private_widget_create_2:
+    <<: *private_tab
+    _id: test-private-tab-to-private-widget-create-2
+    view: test-private-view-to-private-widget-create-2
+    author: test-private-view-to-private-widget-create-2-author
+
+  private_tab_to_private_view_delete:
+    <<: *private_tab
+    _id: test-private-tab-to-private-view-delete
+    view: test-private-view-to-delete-1
+    author: root
+
+  private_tab_to_private_widget_update_1:
+    <<: *private_tab
+    _id: test-private-tab-to-private-widget-update-1
+    view: test-private-view-to-private-widget-update-1
+    author: root
+  
+  private_tab_to_private_widget_update_2:
+    <<: *private_tab
+    _id: test-private-tab-to-private-widget-update-2
+    view: test-private-view-to-private-widget-update-2
+    author: test-private-view-to-private-widget-update-2-author
+
+  private_tab_to_private_widget_copy_1:
+    <<: *private_tab
+    _id: test-private-tab-to-private-widget-copy-1
+    view: test-private-view-to-private-widget-copy-1
+    author: root
+    
+  private_tab_to_private_widget_copy_2:
+    <<: *private_tab
+    _id: test-private-tab-to-private-widget-copy-2
+    view: test-private-view-to-private-widget-copy-2
+    author: test-private-view-to-private-widget-copy-2-author
+
+  private_tab_to_private_widget_copy_3:
+    <<: *private_tab
+    _id: test-private-tab-to-private-widget-copy-3
+    view: test-private-view-to-private-widget-copy-3
+    author: root
+
+  private_tab_to_private_filter_create-1:
+    <<: *private_tab
+    _id: test-private-tab-to-private-filter-create-1
+    view: test-private-view-to-private-filter-create-1
+    author: root
+
+  private_tab_to_private_filter_create-2:
+    <<: *private_tab
+    _id: test-private-tab-to-private-filter-create-2
+    view: test-private-view-to-private-filter-create-2
+    author: test-private-view-to-private-filter-create-2-author
+
+  private_tab_to_private_filter_delete-1:
+    <<: *private_tab
+    _id: test-private-tab-to-private-filter-delete-1
+    view: test-private-view-to-private-filter-delete-1
+    author: root
+
+  private_tab_to_private_filter_delete-2:
+    <<: *private_tab
+    _id: test-private-tab-to-private-filter-delete-2
+    view: test-private-view-to-private-filter-delete-2
+    author: test-private-view-to-private-filter-delete-2-author
+
+  private_tab_to_private_filter_update-1:
+    <<: *private_tab
+    _id: test-private-tab-to-private-filter-update-1
+    view: test-private-view-to-private-filter-update-1
+    author: root
+
+  private_tab_to_private_filter_update-2:
+    <<: *private_tab
+    _id: test-private-tab-to-private-filter-update-2
+    view: test-private-view-to-private-filter-update-2
+    author: test-private-view-to-private-filter-update-2-author
+
+  private_tab_to_private_filter_get-1:
+    <<: *private_tab
+    _id: test-private-tab-to-private-filter-get-1
+    view: test-private-view-to-private-filter-get-1
+    author: root
+
+  private_tab_to_private_filter_get-2:
+    <<: *private_tab
+    _id: test-private-tab-to-private-filter-get-2
+    view: test-private-view-to-private-filter-get-2
+    author: test-private-view-to-private-filter-get-2-author
+
+  private_tab_to_playlist_edit_1:
+    <<: *private_tab
+    _id: test-private-tab-to-playlist-edit-1
+    view: test-private-view-to-playlist-edit-1
+    author: root
+
+  private_tab_to_private_widget_update_grid_position_1:
+    <<: *private_tab
+    _id: test-private-tab-to-private-widget-update-grid-position-1
+    view: test-private-view-to-private-widget-update-grid-position-1
+    author: root
+
+  private_tab_to_private_filter_update_position:
+    <<: *private_tab
+    _id: test-private-tab-to-private-filter-update-position
+    view: test-private-view-to-private-filter-update-position
+    author: root

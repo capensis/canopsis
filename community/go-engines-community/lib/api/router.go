@@ -175,7 +175,7 @@ func RegisterRoutes(
 		userPreferencesRouter := protected.Group("/user-preferences")
 		{
 			userPreferencesRouter.Use(middleware.OnlyAuth())
-			userPreferencesApi := userpreferences.NewApi(userpreferences.NewStore(dbClient, authorProvider), widget.NewStore(dbClient, authorProvider), enforcer, actionLogger)
+			userPreferencesApi := userpreferences.NewApi(userpreferences.NewStore(dbClient, authorProvider), widget.NewStore(dbClient, authorProvider, enforcer), enforcer, actionLogger)
 			userPreferencesRouter.GET("/:id", userPreferencesApi.Get)
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
@@ -806,7 +806,7 @@ func RegisterRoutes(
 			engineinfo.GetRunInfo(runInfoManager),
 		)
 
-		viewAPI := view.NewApi(view.NewStore(dbClient, viewtab.NewStore(dbClient, widget.NewStore(dbClient, authorProvider), authorProvider), authorProvider), enforcer, actionLogger)
+		viewAPI := view.NewApi(view.NewStore(dbClient, viewtab.NewStore(dbClient, widget.NewStore(dbClient, authorProvider, enforcer), authorProvider, enforcer), authorProvider), enforcer, actionLogger)
 		viewRouter := protected.Group("/views")
 		{
 			viewRouter.POST(
@@ -817,34 +817,28 @@ func RegisterRoutes(
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
 			)
 			viewRouter.GET(
-				"",
-				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
-				middleware.ProvideAuthorizedIds(model.PermissionRead, enforcer),
-				viewAPI.List,
-			)
-			viewRouter.GET(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
-				middleware.AuthorizeByID(model.PermissionRead, enforcer),
+				middleware.AuthorizeOwnership(apisecurity.NewViewOwnerStrategy(dbClient, enforcer, model.PermissionRead)),
 				viewAPI.Get,
 			)
 			viewRouter.PUT(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
-				middleware.AuthorizeByID(model.PermissionUpdate, enforcer),
+				middleware.AuthorizeOwnership(apisecurity.NewViewOwnerStrategy(dbClient, enforcer, model.PermissionUpdate)),
 				middleware.SetAuthor(),
 				viewAPI.Update,
 			)
 			viewRouter.DELETE(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjView, model.PermissionDelete, enforcer),
-				middleware.AuthorizeByID(model.PermissionDelete, enforcer),
+				middleware.AuthorizeOwnership(apisecurity.NewViewOwnerStrategy(dbClient, enforcer, model.PermissionDelete)),
 				viewAPI.Delete,
 				middleware.ReloadEnforcerPolicyOnChange(enforcer),
 			)
 		}
 
-		viewTabAPI := viewtab.NewApi(viewtab.NewStore(dbClient, widget.NewStore(dbClient, authorProvider), authorProvider), enforcer, actionLogger)
+		viewTabAPI := viewtab.NewApi(viewtab.NewStore(dbClient, widget.NewStore(dbClient, authorProvider, enforcer), authorProvider, enforcer), enforcer, actionLogger)
 		viewTabRouter := protected.Group("/view-tabs")
 		{
 			viewTabRouter.POST(
@@ -856,23 +850,26 @@ func RegisterRoutes(
 			viewTabRouter.GET(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+				middleware.AuthorizeOwnership(apisecurity.NewViewTabOwnershipStrategy(dbClient, enforcer, model.PermissionRead)),
 				viewTabAPI.Get,
 			)
 			viewTabRouter.PUT(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.AuthorizeOwnership(apisecurity.NewViewTabOwnershipStrategy(dbClient, enforcer, model.PermissionUpdate)),
 				middleware.SetAuthor(),
 				viewTabAPI.Update,
 			)
 			viewTabRouter.DELETE(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.AuthorizeOwnership(apisecurity.NewViewTabOwnershipStrategy(dbClient, enforcer, model.PermissionUpdate)),
 				viewTabAPI.Delete,
 			)
 		}
 
 		widgetAPI := widget.NewApi(
-			widget.NewStore(dbClient, authorProvider),
+			widget.NewStore(dbClient, authorProvider, enforcer),
 			enforcer,
 			widget.NewRequestTransformer(common.NewPatternFieldsTransformer(dbClient), dbClient),
 			actionLogger,
@@ -888,17 +885,20 @@ func RegisterRoutes(
 			widgetRouter.GET(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+				middleware.AuthorizeOwnership(apisecurity.NewWidgetOwnershipStrategy(dbClient, enforcer, model.PermissionRead)),
 				widgetAPI.Get,
 			)
 			widgetRouter.PUT(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.AuthorizeOwnership(apisecurity.NewWidgetOwnershipStrategy(dbClient, enforcer, model.PermissionUpdate)),
 				middleware.SetAuthor(),
 				widgetAPI.Update,
 			)
 			widgetRouter.DELETE(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
+				middleware.AuthorizeOwnership(apisecurity.NewWidgetOwnershipStrategy(dbClient, enforcer, model.PermissionUpdate)),
 				widgetAPI.Delete,
 			)
 		}
@@ -984,7 +984,7 @@ func RegisterRoutes(
 			)
 			viewGroupRouter.GET(
 				"",
-				middleware.ProvideAuthorizedIds(model.PermissionRead, enforcer),
+				middleware.ProvideAuthorizedIds(model.PermissionRead, enforcer, apisecurity.NewViewOwnedObjectsProvider(dbClient)),
 				middleware.Authorize(apisecurity.ObjViewGroup, model.PermissionRead, enforcer),
 				viewGroupAPI.List,
 			)
@@ -1008,9 +1008,9 @@ func RegisterRoutes(
 
 		protected.POST(
 			"/view-copy/:id",
-			middleware.Authorize(apisecurity.ObjView, model.PermissionCreate, enforcer),
+			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
 			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
-			middleware.AuthorizeByID(model.PermissionRead, enforcer),
+			middleware.AuthorizeOwnership(apisecurity.NewViewOwnerStrategy(dbClient, enforcer, model.PermissionRead)),
 			middleware.SetAuthor(),
 			viewAPI.Copy,
 			middleware.ReloadEnforcerPolicyOnChange(enforcer),
@@ -1042,6 +1042,7 @@ func RegisterRoutes(
 			"/view-tab-copy/:id",
 			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
 			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+			middleware.AuthorizeOwnership(apisecurity.NewViewTabOwnershipStrategy(dbClient, enforcer, model.PermissionRead)),
 			middleware.SetAuthor(),
 			viewTabAPI.Copy,
 		)
@@ -1056,6 +1057,7 @@ func RegisterRoutes(
 			"/widget-copy/:id",
 			middleware.Authorize(apisecurity.ObjView, model.PermissionUpdate, enforcer),
 			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+			middleware.AuthorizeOwnership(apisecurity.NewWidgetOwnershipStrategy(dbClient, enforcer, model.PermissionRead)),
 			middleware.SetAuthor(),
 			widgetAPI.Copy,
 		)
@@ -1219,7 +1221,7 @@ func RegisterRoutes(
 
 		playlistRouter := protected.Group("/playlists")
 		{
-			playlistApi := playlist.NewApi(playlist.NewStore(dbClient, authorProvider), viewtab.NewStore(dbClient, widget.NewStore(dbClient, authorProvider), authorProvider), enforcer, actionLogger)
+			playlistApi := playlist.NewApi(playlist.NewStore(dbClient, authorProvider), viewtab.NewStore(dbClient, widget.NewStore(dbClient, authorProvider, enforcer), authorProvider, enforcer), enforcer, actionLogger)
 			playlistRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjPlaylist, model.PermissionCreate, enforcer),
@@ -1230,7 +1232,7 @@ func RegisterRoutes(
 			playlistRouter.GET(
 				"",
 				middleware.Authorize(apisecurity.ObjPlaylist, model.PermissionRead, enforcer),
-				middleware.ProvideAuthorizedIds(model.PermissionRead, enforcer),
+				middleware.ProvideAuthorizedIds(model.PermissionRead, enforcer, nil),
 				playlistApi.List,
 			)
 			playlistRouter.GET(
