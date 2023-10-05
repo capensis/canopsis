@@ -1,4 +1,4 @@
-import baseUid from 'uid';
+import { uid as baseUid } from 'uid';
 
 export const uid = (prefix, suffix) => {
   let result = baseUid();

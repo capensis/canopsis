@@ -127,7 +127,13 @@ func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider)
 func (q *MongoQueryBuilder) clear(now types.CpsTime) {
 	q.searchPipeline = make([]bson.M, 0)
 	q.alarmMatch = make([]bson.M, 0)
-	q.additionalMatch = []bson.M{{"$match": bson.M{"entity.enabled": true}}}
+	q.additionalMatch = []bson.M{
+		{"$match": bson.M{
+			"entity.enabled":     true,
+			"entity.healthcheck": bson.M{"$in": bson.A{nil, false}},
+			"healthcheck":        bson.M{"$in": bson.A{nil, false}},
+		}},
+	}
 
 	q.lookupsForAdditionalMatch = map[string]bool{"entity": true}
 	q.lookupsOnlyForAdditionalMatch = make(map[string]bool)
@@ -568,7 +574,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 			return fmt.Errorf("invalid entity pattern in widget filter id=%q: %w", filter.ID, err)
 		}
 
-		if len(r.AlarmPattern) == 0 && len(r.PbehaviorPattern) == 0 && len(r.EntityPattern) == 0 &&
+		if len(filter.AlarmPattern) == 0 && len(filter.PbehaviorPattern) == 0 && len(filter.EntityPattern) == 0 &&
 			len(filter.OldMongoQuery) > 0 {
 			var query map[string]any
 			err := json.Unmarshal([]byte(filter.OldMongoQuery), &query)

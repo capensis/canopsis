@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
+	"github.com/rs/zerolog"
 )
 
 func TestSetAuthor_ShouldUpdateAuthor(t *testing.T) {
@@ -94,7 +95,7 @@ func TestPreProcessBulk_ShouldUpdateAuthorToAllItems(t *testing.T) {
 		func(c *gin.Context) {
 			c.Set(auth.UserKey, author)
 		},
-		PreProcessBulk(config.CanopsisConf{API: config.SectionApi{BulkMaxSize: 100}}, true),
+		PreProcessBulk(config.NewApiConfigProvider(config.CanopsisConf{API: config.SectionApi{BulkMaxSize: 100}}, zerolog.Nop()), true),
 		func(c *gin.Context) {
 			var body []map[string]interface{}
 
@@ -153,7 +154,7 @@ func TestPreProcessBulk_ShouldCheckBulkSize(t *testing.T) {
 		func(c *gin.Context) {
 			c.Set(auth.UserKey, "test-author")
 		},
-		PreProcessBulk(config.CanopsisConf{API: config.SectionApi{BulkMaxSize: 3}}, true),
+		PreProcessBulk(config.NewApiConfigProvider(config.CanopsisConf{API: config.SectionApi{BulkMaxSize: 3}}, zerolog.Nop()), true),
 	)
 
 	w := httptest.NewRecorder()

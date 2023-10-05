@@ -71,6 +71,7 @@ export default {
       connectionError: 'Il y a un problème de connexion. Veuillez cliquer sur le bouton d\'actualisation ou recharger la page.',
       wasAborted: '{instructionName} a été abandonnée',
       wasPaused: 'La consigne {instructionName} sur l\'alarme {alarmName} a été interrompue à {date}. Vous pouvez la reprendre manuellement.',
+      wasRemovedOrDisabled: 'La consigne {instructionName} a été supprimée ou désactivée.',
     },
     jobs: {
       title: 'Tâches attribuées :',

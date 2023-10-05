@@ -5,6 +5,7 @@ import { DEPRECATED_TRIGGERS } from '@/constants';
 import { durationToForm } from '@/helpers/date/duration';
 import { formToAction, actionToForm } from '@/helpers/entities/action';
 import { getLocaleTimezone } from '@/helpers/date/date';
+import { flattenErrorMap } from '@/helpers/entities/shared/form';
 
 /**
  * @typedef {Object} Scenario
@@ -89,5 +90,5 @@ export const scenarioErrorToForm = (errors, form) => {
     return errorMessages;
   };
 
-  return form(errors, prepareActionsErrors);
+  return flattenErrorMap(errors, prepareActionsErrors);
 };

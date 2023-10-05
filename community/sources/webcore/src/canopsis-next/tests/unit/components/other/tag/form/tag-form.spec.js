@@ -19,12 +19,8 @@ const selectColorPickerField = wrapper => wrapper.find('c-color-picker-field-stu
 const selectTagPatternsForm = wrapper => wrapper.find('tag-patterns-form-stub');
 
 describe('tag-form', () => {
-  const factory = generateShallowRenderer(TagForm, {
-    stubs,
-  });
-  const snapshotFactory = generateRenderer(TagForm, {
-    stubs,
-  });
+  const factory = generateShallowRenderer(TagForm, { stubs });
+  const snapshotFactory = generateRenderer(TagForm, { stubs });
 
   test('Value changed after trigger name field', () => {
     const wrapper = factory({

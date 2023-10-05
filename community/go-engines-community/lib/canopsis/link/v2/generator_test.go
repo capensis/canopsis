@@ -55,7 +55,7 @@ func benchmarkGeneratorGenerateForAlarms(
 	})
 
 	cfg := config.CanopsisConf{}
-	generator := linkv2.NewGenerator(dbClient, template.NewExecutor(config.NewTemplateConfigProvider(cfg),
+	generator := linkv2.NewGenerator(dbClient, template.NewExecutor(config.NewTemplateConfigProvider(cfg, zerolog.Nop()),
 		config.NewTimezoneConfigProvider(cfg, zerolog.Nop())), zerolog.Nop())
 	user := link.User{}
 	ids := make([]string, 100)

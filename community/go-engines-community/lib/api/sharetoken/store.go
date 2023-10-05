@@ -161,6 +161,17 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 
 func getRolePipeline() []bson.M {
 	return []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.UserCollection,
+			"localField":   "user._id",
+			"foreignField": "_id",
+			"as":           "user_with_roles",
+		}},
+		{"$unwind": bson.M{"path": "$user_with_roles", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"user.roles": "$user_with_roles.roles",
+		}},
+		{"$project": bson.M{"user_with_roles": 0}},
 		{"$unwind": bson.M{
 			"path":                       "$user.roles",
 			"preserveNullAndEmptyArrays": true,

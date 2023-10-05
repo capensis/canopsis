@@ -554,6 +554,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     />
     <field-switcher-stub
       title="HTML enabled on timeline?"
+      value="true"
     />
     <hr
       class="v-divider theme--light"
@@ -1867,6 +1868,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     />
     <field-switcher-stub
       title="HTML enabled on timeline?"
+      value="true"
     />
     <hr
       class="v-divider theme--light"
