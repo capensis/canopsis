@@ -4,9 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
-
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
