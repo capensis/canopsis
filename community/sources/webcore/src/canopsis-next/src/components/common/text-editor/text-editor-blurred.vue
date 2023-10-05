@@ -55,7 +55,7 @@ export default {
     addImagesListeners() {
       this.removeImagesListeners();
 
-      this.imagesElements = this.$refs.content.querySelectorAll('img');
+      this.imagesElements = this.$refs.content.$el.querySelectorAll('img');
       this.imagesElements.forEach(image => image.addEventListener('click', this.clickHandler));
     },
 
