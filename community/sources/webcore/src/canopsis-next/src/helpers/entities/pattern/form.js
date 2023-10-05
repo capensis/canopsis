@@ -312,6 +312,7 @@ export const isArrayPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.connector,
   ALARM_PATTERN_FIELDS.connectorName,
   ALARM_PATTERN_FIELDS.resource,
+  ALARM_PATTERN_FIELDS.tags,
   ENTITY_PATTERN_FIELDS.id,
   EVENT_FILTER_PATTERN_FIELDS.component,
   EVENT_FILTER_PATTERN_FIELDS.connector,

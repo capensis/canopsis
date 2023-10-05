@@ -1,6 +1,7 @@
 Feature: update service when alarm is updated by action pbehavior
   I need to be able to update service when action pbehavior is applied to alarm.
 
+  @concurrent
   Scenario: given entity service and scenario with pbehavior action for dependency should update service alarm
     Given I am admin
     When I do POST /api/v4/entityservices:
@@ -26,7 +27,24 @@ Feature: update service when alarm is updated by action pbehavior
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}",
+        "source_type": "service"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      }
+    ]
+    """
     When I do POST /api/v4/scenarios:
     """json
     {
@@ -50,8 +68,11 @@ Feature: update service when alarm is updated by action pbehavior
           "type": "pbehavior",
           "parameters": {
             "name": "test-pbehavior-action-axe-pbehavior-service-1",
-            "tstart": {{ now }},
-            "tstop": {{ nowAdd "1h" }},
+            "start_on_trigger": true,
+            "duration": {
+              "value": 1,
+              "unit": "h"
+            },
             "type": "test-maintenance-type-to-engine",
             "reason": "test-reason-to-engine"
           },
@@ -66,30 +87,66 @@ Feature: update service when alarm is updated by action pbehavior
     When I send an event:
     """json
     {
+      "event_type": "check",
+      "state": 1,
+      "output": "test-output-action-axe-pbehavior-service-1",
       "connector": "test-connector-action-axe-pbehavior-service-1",
       "connector_name": "test-connector-name-action-axe-pbehavior-service-1",
-      "source_type": "resource",
-      "event_type": "check",
       "component":  "test-component-action-axe-pbehavior-service-1",
       "resource": "test-resource-action-axe-pbehavior-service-1",
-      "state": 1,
-      "output": "test-output-action-axe-pbehavior-service-1"
+      "source_type": "resource"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "connector": "test-connector-action-axe-pbehavior-service-1",
+        "connector_name": "test-connector-name-action-axe-pbehavior-service-1",
+        "component":  "test-component-action-axe-pbehavior-service-1",
+        "resource": "test-resource-action-axe-pbehavior-service-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      }
+    ]
+    """
     When I send an event:
     """json
     {
+      "event_type": "cancel",
+      "output": "test-output-action-axe-pbehavior-service-1",
       "connector": "test-connector-action-axe-pbehavior-service-1",
       "connector_name": "test-connector-name-action-axe-pbehavior-service-1",
-      "source_type": "resource",
-      "event_type": "cancel",
       "component":  "test-component-action-axe-pbehavior-service-1",
       "resource": "test-resource-action-axe-pbehavior-service-1",
-      "output": "test-output-action-axe-pbehavior-service-1"
+      "source_type": "resource"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "cancel",
+        "connector": "test-connector-action-axe-pbehavior-service-1",
+        "connector_name": "test-connector-name-action-axe-pbehavior-service-1",
+        "component":  "test-component-action-axe-pbehavior-service-1",
+        "resource": "test-resource-action-axe-pbehavior-service-1",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search={{ .serviceID }}
     Then the response code should be 200
     Then the response body should contain:

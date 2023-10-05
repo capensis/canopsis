@@ -1455,7 +1455,7 @@ func RegisterRoutes(
 			{
 				patternRouter.DELETE(
 					"",
-					middleware.PreProcessBulk(conf, false),
+					middleware.PreProcessBulk(apiConfigProvider, false),
 					patternAPI.BulkDelete,
 				)
 			}
@@ -1465,19 +1465,19 @@ func RegisterRoutes(
 				scenarioRouter.POST(
 					"",
 					middleware.Authorize(apisecurity.ObjAction, model.PermissionCreate, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(apiConfigProvider, true),
 					scenarioAPI.BulkCreate,
 				)
 				scenarioRouter.PUT(
 					"",
 					middleware.Authorize(apisecurity.ObjAction, model.PermissionUpdate, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(apiConfigProvider, true),
 					scenarioAPI.BulkUpdate,
 				)
 				scenarioRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.ObjAction, model.PermissionDelete, enforcer),
-					middleware.PreProcessBulk(conf, false),
+					middleware.PreProcessBulk(apiConfigProvider, false),
 					scenarioAPI.BulkDelete,
 				)
 			}
@@ -1487,19 +1487,19 @@ func RegisterRoutes(
 				idleruleRouter.POST(
 					"",
 					middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionCreate, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(apiConfigProvider, true),
 					idleRuleAPI.BulkCreate,
 				)
 				idleruleRouter.PUT(
 					"",
 					middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionUpdate, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(apiConfigProvider, true),
 					idleRuleAPI.BulkUpdate,
 				)
 				idleruleRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionDelete, enforcer),
-					middleware.PreProcessBulk(conf, false),
+					middleware.PreProcessBulk(apiConfigProvider, false),
 					idleRuleAPI.BulkDelete,
 				)
 			}
@@ -1509,19 +1509,19 @@ func RegisterRoutes(
 				eventFilterRouter.POST(
 					"",
 					middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionCreate, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(apiConfigProvider, true),
 					eventFilterApi.BulkCreate,
 				)
 				eventFilterRouter.PUT(
 					"",
 					middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionUpdate, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(apiConfigProvider, true),
 					eventFilterApi.BulkUpdate,
 				)
 				eventFilterRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionDelete, enforcer),
-					middleware.PreProcessBulk(conf, false),
+					middleware.PreProcessBulk(apiConfigProvider, false),
 					eventFilterApi.BulkDelete,
 				)
 			}
@@ -1531,19 +1531,19 @@ func RegisterRoutes(
 				entityserviceRouter.POST(
 					"",
 					middleware.Authorize(apisecurity.ObjEntityService, model.PermissionCreate, enforcer),
-					middleware.PreProcessBulk(conf, false),
+					middleware.PreProcessBulk(apiConfigProvider, false),
 					entityserviceAPI.BulkCreate,
 				)
 				entityserviceRouter.PUT(
 					"",
 					middleware.Authorize(apisecurity.ObjEntityService, model.PermissionUpdate, enforcer),
-					middleware.PreProcessBulk(conf, false),
+					middleware.PreProcessBulk(apiConfigProvider, false),
 					entityserviceAPI.BulkUpdate,
 				)
 				entityserviceRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.ObjEntityService, model.PermissionDelete, enforcer),
-					middleware.PreProcessBulk(conf, false),
+					middleware.PreProcessBulk(apiConfigProvider, false),
 					entityserviceAPI.BulkDelete,
 				)
 			}
@@ -1553,19 +1553,19 @@ func RegisterRoutes(
 				userRouter.POST(
 					"",
 					middleware.Authorize(apisecurity.PermAcl, model.PermissionCreate, enforcer),
-					middleware.PreProcessBulk(conf, false),
+					middleware.PreProcessBulk(apiConfigProvider, false),
 					userApi.BulkCreate,
 				)
 				userRouter.PUT(
 					"",
 					middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer),
-					middleware.PreProcessBulk(conf, false),
+					middleware.PreProcessBulk(apiConfigProvider, false),
 					userApi.BulkUpdate,
 				)
 				userRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.PermAcl, model.PermissionDelete, enforcer),
-					middleware.PreProcessBulk(conf, false),
+					middleware.PreProcessBulk(apiConfigProvider, false),
 					userApi.BulkDelete,
 				)
 			}
@@ -1575,19 +1575,19 @@ func RegisterRoutes(
 				pbehaviorRouter.POST(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionCreate, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(apiConfigProvider, true),
 					pbehaviorApi.BulkCreate,
 				)
 				pbehaviorRouter.PUT(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(apiConfigProvider, true),
 					pbehaviorApi.BulkUpdate,
 				)
 				pbehaviorRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
-					middleware.PreProcessBulk(conf, false),
+					middleware.PreProcessBulk(apiConfigProvider, false),
 					pbehaviorApi.BulkDelete,
 				)
 			}
@@ -1597,13 +1597,13 @@ func RegisterRoutes(
 				entityPbehaviorRouter.POST(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionCreate, enforcer),
-					middleware.PreProcessBulk(conf, true),
+					middleware.PreProcessBulk(apiConfigProvider, true),
 					pbehaviorApi.BulkEntityCreate,
 				)
 				entityPbehaviorRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
-					middleware.PreProcessBulk(conf, false),
+					middleware.PreProcessBulk(apiConfigProvider, false),
 					pbehaviorApi.BulkEntityDelete,
 				)
 			}
@@ -1613,13 +1613,13 @@ func RegisterRoutes(
 				entityRouter.PUT(
 					"/enable",
 					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer),
-					middleware.PreProcessBulk(conf, false),
+					middleware.PreProcessBulk(apiConfigProvider, false),
 					entityAPI.BulkEnable,
 				)
 				entityRouter.PUT(
 					"/disable",
 					middleware.Authorize(apisecurity.ObjEntity, model.PermissionUpdate, enforcer),
-					middleware.PreProcessBulk(conf, false),
+					middleware.PreProcessBulk(apiConfigProvider, false),
 					entityAPI.BulkDisable,
 				)
 			}
@@ -1629,7 +1629,7 @@ func RegisterRoutes(
 				linkRuleRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionDelete, enforcer),
-					middleware.PreProcessBulk(conf, false),
+					middleware.PreProcessBulk(apiConfigProvider, false),
 					linkRuleAPI.BulkDelete,
 				)
 			}
@@ -1683,7 +1683,7 @@ func RegisterRoutes(
 				alarmTagRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.ObjAlarmTag, model.PermissionDelete, enforcer),
-					middleware.PreProcessBulk(conf, false),
+					middleware.PreProcessBulk(apiConfigProvider, false),
 					alarmTagAPI.BulkDelete,
 				)
 			}
@@ -1693,7 +1693,7 @@ func RegisterRoutes(
 				colorThemeRouter.DELETE(
 					"",
 					middleware.Authorize(apisecurity.ObjColorTheme, model.PermissionDelete, enforcer),
-					middleware.PreProcessBulk(conf, false),
+					middleware.PreProcessBulk(apiConfigProvider, false),
 					colorThemeApi.BulkDelete,
 				)
 			}
