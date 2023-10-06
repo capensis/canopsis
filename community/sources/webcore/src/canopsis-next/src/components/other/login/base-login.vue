@@ -10,10 +10,12 @@
         login-form(v-field.model="form")
         v-flex
           v-layout.mb-1(justify-space-between, align-center)
-            v-btn.ma-0(type="submit", color="primary") {{ $t('common.connect') }}
-            v-flex(v-if="hasServerError", xs9)
-              v-alert.py-1.my-0.font-weight-bold(:value="hasServerError", type="error")
-                span {{ $t('login.errors.incorrectEmailOrPassword') }}
+            v-btn.ma-0(
+              type="submit",
+              color="primary"
+            ) {{ $t('common.connect') }}
+            v-flex(xs9)
+              c-alert.py-1.my-0.font-weight-bold(:value="!!serverErrorMessage", type="error") {{ serverErrorMessage }}
           template(v-if="footer")
             v-divider.my-2
             v-layout
@@ -21,7 +23,7 @@
 </template>
 
 <script>
-import { ROUTES_NAMES, ROUTES } from '@/constants';
+import { ROUTES_NAMES, ROUTES, RESPONSE_STATUSES } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
@@ -40,7 +42,7 @@ export default {
   mixins: [authMixin, entitiesInfoMixin],
   data() {
     return {
-      hasServerError: false,
+      serverErrorMessage: '',
       form: {
         username: '',
         password: '',
@@ -50,7 +52,7 @@ export default {
   methods: {
     async submit() {
       try {
-        this.hasServerError = false;
+        this.serverErrorMessage = '';
 
         const formIsValid = await this.$validator.validateAll();
 
@@ -76,7 +78,11 @@ export default {
           this.$router.push({ name: ROUTES_NAMES.home });
         }
       } catch (err) {
-        this.hasServerError = true;
+        if (err?.status === RESPONSE_STATUSES.serviceUnavailable) {
+          this.serverErrorMessage = this.$t('login.errors.underMaintenance');
+        } else {
+          this.serverErrorMessage = this.$t('login.errors.incorrectEmailOrPassword');
+        }
       }
     },
   },

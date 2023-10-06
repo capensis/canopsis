@@ -2,7 +2,11 @@ import flatten from 'flat';
 
 import { DECLARE_TICKET_EXECUTION_STATUSES } from '@/constants';
 
-import { formToRequest, requestTemplateVariablesErrorsToForm, requestToForm } from '@/helpers/entities/shared/request/form';
+import {
+  formToRequest,
+  requestTemplateVariablesErrorsToForm,
+  requestToForm,
+} from '@/helpers/entities/shared/request/form';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 import { removeKeyFromEntities } from '@/helpers/array';

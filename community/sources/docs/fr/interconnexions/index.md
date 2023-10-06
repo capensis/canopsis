@@ -22,6 +22,7 @@ Un connecteur permet d’envoyer à Canopsis des évènements à partir de sourc
 | **Nom** | **Source** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:------------:|
 | [SQL](Base-de-donnees/Mysql-MariaDB-PostgreSQL-Oracle.md) | Mysql, PostgeSQL, Oracle, DB2 et MSSQL | Community | Oui | Toutes versions |
+| [Elasticsearch](Base-de-donnees/Elasticsearch.md) | Elasticsearch | Community | Oui | Toutes versions |
 
 ### Transport
 

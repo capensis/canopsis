@@ -34,6 +34,6 @@ type Response struct {
 	Position int64              `bson:"position" json:"-"`
 	Widgets  *[]widget.Response `bson:"widgets" json:"widgets,omitempty"`
 	Author   *author.Author     `bson:"author" json:"author,omitempty"`
-	Created  *types.CpsTime     `bson:"created" json:"created,omitempty"`
-	Updated  *types.CpsTime     `bson:"updated" json:"updated,omitempty"`
+	Created  *types.CpsTime     `bson:"created" json:"created,omitempty" swaggertype:"integer"`
+	Updated  *types.CpsTime     `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`
 }

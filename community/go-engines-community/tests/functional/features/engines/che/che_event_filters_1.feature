@@ -586,14 +586,6 @@ Feature: modify event on event filter
         "connector_name": "test-connector-name-che-event-filters-5",
         "component": "test-component-che-event-filters-5",
         "source_type": "component"
-      },
-      {
-        "event_type": "entityupdated",
-        "connector": "test-connector-che-event-filters-5",
-        "connector_name": "test-connector-name-che-event-filters-5",
-        "component": "test-component-che-event-filters-5",
-        "resource": "test-resource-che-event-filters-5",
-        "source_type": "resource"
       }
     ]
     """

@@ -31,8 +31,7 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import RemediationInstructionsFilterForm
-  from '@/components/other/remediation/instructions-filter/form/remediation-instructions-filter-form.vue';
+import RemediationInstructionsFilterForm from '@/components/other/remediation/instructions-filter/form/remediation-instructions-filter-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

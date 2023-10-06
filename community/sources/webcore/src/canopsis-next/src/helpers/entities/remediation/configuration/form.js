@@ -15,6 +15,8 @@ import { REMEDIATION_CONFIGURATION_JOBS_AUTH_TYPES_WITH_USERNAME } from '@/const
  * @typedef {Object} RemediationConfigurationFormType
  * @property {string} name
  * @property {string} auth_type
+ * @property {boolean} with_query
+ * @property {boolean} with_body
  */
 
 /**

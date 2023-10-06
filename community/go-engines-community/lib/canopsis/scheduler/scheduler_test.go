@@ -7,11 +7,11 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	mock_v8 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/go-redis/redis/v8"
+	mock_redis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/redis/go-redis/v9"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
 	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
-	"github.com/go-redis/redis/v8"
 	"github.com/golang/mock/gomock"
+	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
 
@@ -30,10 +30,10 @@ func TestScheduler_ProcessEvent_GivenEventAndNoLock_ShouldPublishEvent(t *testin
 	lockID := "test-resource/test-component"
 	body := []byte("test-body")
 
-	mockRedisLockStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisLockStorage := mock_redis.NewMockUniversalClient(ctrl)
 	mockRedisLockStorage.EXPECT().SetNX(gomock.Any(), gomock.Eq(lockID), gomock.Any(), gomock.Any()).
 		Return(redis.NewBoolResult(true, nil))
-	mockRedisQueueStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisQueueStorage := mock_redis.NewMockUniversalClient(ctrl)
 	mockChannel := mock_amqp.NewMockChannel(ctrl)
 	mockChannel.EXPECT().PublishWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(nil)
@@ -67,10 +67,10 @@ func TestScheduler_ProcessEvent_GivenEventAndLock_ShouldAddEventToQueue(t *testi
 	lockID := "test-resource/test-component"
 	body := []byte("test-body")
 
-	mockRedisLockStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisLockStorage := mock_redis.NewMockUniversalClient(ctrl)
 	mockRedisLockStorage.EXPECT().SetNX(gomock.Any(), gomock.Eq(lockID), gomock.Any(), gomock.Any()).
 		Return(redis.NewBoolResult(false, nil))
-	mockRedisQueueStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisQueueStorage := mock_redis.NewMockUniversalClient(ctrl)
 	mockRedisQueueStorage.EXPECT().RPush(gomock.Any(), gomock.Eq(lockID), gomock.Any()).
 		Return(redis.NewIntResult(1, nil))
 	mockChannel := mock_amqp.NewMockChannel(ctrl)
@@ -103,12 +103,12 @@ func TestScheduler_AckEvent_GivenEventAndNoNextEventInQueue_ShouldUnlock(t *test
 	}
 	lockID := "test-resource/test-component"
 
-	mockRedisLockStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisLockStorage := mock_redis.NewMockUniversalClient(ctrl)
 	mockRedisLockStorage.EXPECT().Expire(gomock.Any(), gomock.Eq(lockID), gomock.Any()).
 		Return(redis.NewBoolResult(true, nil))
 	mockRedisLockStorage.EXPECT().Del(gomock.Any(), gomock.Eq(lockID)).
 		Return(redis.NewIntResult(1, nil))
-	mockRedisQueueStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisQueueStorage := mock_redis.NewMockUniversalClient(ctrl)
 	mockRedisQueueStorage.EXPECT().LPop(gomock.Any(), gomock.Eq(lockID)).
 		Return(redis.NewStringResult("", redis.Nil))
 	mockChannel := mock_amqp.NewMockChannel(ctrl)
@@ -144,10 +144,10 @@ func TestScheduler_AckEvent_GivenEventAndNextEvent_ShouldPublishNextEvent(t *tes
 	lockID := "test-resource/test-component"
 	body := []byte("test-body")
 
-	mockRedisLockStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisLockStorage := mock_redis.NewMockUniversalClient(ctrl)
 	mockRedisLockStorage.EXPECT().Expire(gomock.Any(), gomock.Eq(lockID), gomock.Any()).
 		Return(redis.NewBoolResult(true, nil))
-	mockRedisQueueStorage := mock_v8.NewMockUniversalClient(ctrl)
+	mockRedisQueueStorage := mock_redis.NewMockUniversalClient(ctrl)
 	mockRedisQueueStorage.EXPECT().LPop(gomock.Any(), gomock.Eq(lockID)).
 		Return(redis.NewStringResult(string(body), nil))
 	mockChannel := mock_amqp.NewMockChannel(ctrl)

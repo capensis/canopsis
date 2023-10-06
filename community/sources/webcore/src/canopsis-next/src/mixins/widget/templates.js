@@ -38,6 +38,10 @@ export const widgetTemplatesMixin = {
       return filter(this.preparedWidgetTemplates, { type: WIDGET_TEMPLATES_TYPES.alarmMoreInfos });
     },
 
+    alarmExportToPdfWidgetTemplates() {
+      return filter(this.preparedWidgetTemplates, { type: WIDGET_TEMPLATES_TYPES.alarmExportToPdf });
+    },
+
     weatherItemWidgetTemplates() {
       return filter(this.preparedWidgetTemplates, { type: WIDGET_TEMPLATES_TYPES.weatherItem });
     },

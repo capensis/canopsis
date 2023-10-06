@@ -78,20 +78,56 @@ db.widgets.updateMany(
             {
                 "type": "AlarmsList"
             },
-            {
-                "$or": [
-                    {"parameters.widgetColumns.value": "v.ticket.val"},
-                    {"parameters.widgetGroupColumns.value": "v.ticket.val"},
-                    {"parameters.widgetExportColumns.value": "v.ticket.val"}
-                ]
-            }
+            { "parameters.widgetColumns.value": "v.ticket.val" },
         ]
     },
     {
         $set: {
             "parameters.widgetColumns.$[column].value": "v.ticket.ticket",
+        }
+    },
+    {
+        arrayFilters: [
+            {
+                "column.value": "v.ticket.val"
+            }
+        ]
+    }
+);
+db.widgets.updateMany(
+    {
+        "$and": [
+            {
+                "type": "AlarmsList"
+            },
+            { "parameters.widgetGroupColumns.value": "v.ticket.val" },
+        ]
+    },
+    {
+        $set: {
             "parameters.widgetGroupColumns.$[column].value": "v.ticket.ticket",
-            "parameters.widgetExportColumns.$[column].value": "v.ticket.ticket"
+        }
+    },
+    {
+        arrayFilters: [
+            {
+                "column.value": "v.ticket.val"
+            }
+        ]
+    }
+);
+db.widgets.updateMany(
+    {
+        "$and": [
+            {
+                "type": "AlarmsList"
+            },
+            { "parameters.widgetExportColumns.value": "v.ticket.val" },
+        ]
+    },
+    {
+        $set: {
+            "parameters.widgetExportColumns.$[column].value": "v.ticket.ticket",
         }
     },
     {

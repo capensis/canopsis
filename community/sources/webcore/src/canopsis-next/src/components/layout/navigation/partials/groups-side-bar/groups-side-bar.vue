@@ -5,27 +5,29 @@
       :width="$config.SIDE_BAR_WIDTH",
       :class="{ editing: isNavigationEditingMode }",
       :ignore-click-outside="isGroupsOrderChanged || hasMaximizedModal",
-      data-test="groupsSideBar",
       app
     )
       div.brand.ma-0.secondary.lighten-1
         app-logo.logo
         logged-users-count
         app-version.version
-      c-draggable-list-field.groups-panel(
-        v-if="hasReadAnyViewAccess",
-        v-model="mutatedGroups",
-        :class="{ ordering: isGroupsOrderChanged }",
-        :component-data="{ props: { expand: true, dark: true, focusable: true } }",
-        :disabled="!isNavigationEditingMode",
-        component="v-expansion-panel"
-      )
-        groups-side-bar-group(
-          v-for="(group, index) in mutatedGroups",
-          :key="group._id",
-          :group.sync="mutatedGroups[index]",
-          :isGroupsOrderChanged="isGroupsOrderChanged"
+      template(v-if="hasReadAnyViewAccess")
+        v-layout.pa-2(v-if="!mutatedGroups.length && groupsPending", row, justify-center)
+          v-progress-circular(color="primary", indeterminate)
+        c-draggable-list-field.groups-panel(
+          v-else,
+          v-model="mutatedGroups",
+          :class="{ ordering: isGroupsOrderChanged }",
+          :component-data="{ props: { expand: true, dark: true, focusable: true } }",
+          :disabled="!isNavigationEditingMode",
+          component="v-expansion-panel"
         )
+          groups-side-bar-group(
+            v-for="(group, index) in mutatedGroups",
+            :key="group._id",
+            :group.sync="mutatedGroups[index]",
+            :is-groups-order-changed="isGroupsOrderChanged"
+          )
       v-divider
       v-fade-transition
         div.v-overlay.v-overlay--active(v-show="isGroupsOrderChanged")
@@ -33,7 +35,7 @@
           v-btn(@click="resetMutatedGroups") {{ $t('common.cancel') }}
       groups-side-bar-playlists
       groups-settings-button(
-        tooltipRight,
+        tooltip-right,
         @toggleEditingMode="toggleNavigationEditingMode"
       )
     v-fade-transition
@@ -43,14 +45,11 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { groupSchema } from '@/store/schemas';
-
 import { isDeepOrderChanged } from '@/helpers/dragdrop';
 import { groupsWithViewsToPositions } from '@/helpers/entities/view/form';
 
 import { entitiesViewMixin } from '@/mixins/entities/view';
-import layoutNavigationGroupsBarMixin from '@/mixins/layout/navigation/groups-bar';
-import { registrableMixin } from '@/mixins/registrable';
+import { layoutNavigationGroupsBarMixin } from '@/mixins/layout/navigation/groups-bar';
 
 import GroupsSettingsButton from '../groups-settings-button.vue';
 import AppLogo from '../app-logo.vue';
@@ -81,8 +80,6 @@ export default {
   mixins: [
     entitiesViewMixin,
     layoutNavigationGroupsBarMixin,
-
-    registrableMixin([groupSchema], 'groups'),
   ],
   props: {
     value: {

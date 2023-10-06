@@ -1,9 +1,10 @@
 Feature: no update service when entity is inactive
   I need to be able to not update service when pause or maintenance pbehavior is in action.
 
+  @concurrent
   Scenario: given entity service and maintenance pbehavior should not update service alarm on create with pbhenter event
     Given I am admin
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector": "test-connector-pbehavior-service-1",
@@ -16,7 +17,6 @@ Feature: no update service when entity is inactive
       "output": "test-output-pbehavior-service-1"
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/entityservices:
     """json
     {
@@ -40,7 +40,24 @@ Feature: no update service when entity is inactive
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+
+      }
+    ]
+    """
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -65,7 +82,24 @@ Feature: no update service when entity is inactive
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "pbhenter",
+        "connector": "test-connector-pbehavior-service-1",
+        "connector_name": "test-connector-name-pbehavior-service-1",
+        "component": "test-component-pbehavior-service-1",
+        "resource": "test-resource-pbehavior-service-1"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      }
+    ]
+    """
     When I send an event:
     """json
     {
@@ -79,7 +113,24 @@ Feature: no update service when entity is inactive
       "output": "test-output-pbehavior-service-1"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "check",
+        "connector": "test-connector-pbehavior-service-1",
+        "connector_name": "test-connector-name-pbehavior-service-1",
+        "component": "test-component-pbehavior-service-1",
+        "resource": "test-resource-pbehavior-service-1"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search={{ .serviceID }}
     Then the response code should be 200
     Then the response body should contain:
@@ -95,6 +146,7 @@ Feature: no update service when entity is inactive
     }
     """
 
+  @concurrent
   Scenario: given entity service and maintenance pbehavior should update service alarm on pbhenter event
     Given I am admin
     When I do POST /api/v4/entityservices:
@@ -120,7 +172,23 @@ Feature: no update service when entity is inactive
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      }
+    ]
+    """
     When I send an event:
     """json
     {
@@ -134,7 +202,24 @@ Feature: no update service when entity is inactive
       "output": "test-output-pbehavior-service-2"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "connector": "test-connector-pbehavior-service-2",
+        "connector_name": "test-connector-name-pbehavior-service-2",
+        "component": "test-component-pbehavior-service-2",
+        "resource": "test-resource-pbehavior-service-2"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      }
+    ]
+    """
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -159,7 +244,24 @@ Feature: no update service when entity is inactive
     }
     """
     Then the response code should be 201
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "pbhenter",
+        "connector": "test-connector-pbehavior-service-2",
+        "connector_name": "test-connector-name-pbehavior-service-2",
+        "component": "test-component-pbehavior-service-2",
+        "resource": "test-resource-pbehavior-service-2"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search={{ .serviceID }}
     Then the response code should be 200
     Then the response body should contain:
@@ -245,6 +347,7 @@ Feature: no update service when entity is inactive
     ]
     """
 
+  @concurrent
   Scenario: given entity service and maintenance pbehavior should update service alarm on pbhleave event
     Given I am admin
     When I do POST /api/v4/entityservices:
@@ -270,7 +373,24 @@ Feature: no update service when entity is inactive
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+
+      }
+    ]
+    """
     When I send an event:
     """json
     {
@@ -284,14 +404,31 @@ Feature: no update service when entity is inactive
       "output": "test-output-pbehavior-service-3"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "connector": "test-connector-pbehavior-service-3",
+        "connector_name": "test-connector-name-pbehavior-service-3",
+        "component": "test-component-pbehavior-service-3",
+        "resource": "test-resource-pbehavior-service-3"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      }
+    ]
+    """
     When I do POST /api/v4/pbehaviors:
     """json
     {
       "enabled": true,
       "name": "test-pbehavior-service-3",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "2s" }},
+      "tstop": {{ nowAdd "3s" }},
       "color": "#FFFFFF",
       "type": "test-maintenance-type-to-engine",
       "reason": "test-reason-to-engine",
@@ -309,7 +446,37 @@ Feature: no update service when entity is inactive
     }
     """
     Then the response code should be 201
-    When I wait the end of 4 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "pbhenter",
+        "connector": "test-connector-pbehavior-service-3",
+        "connector_name": "test-connector-name-pbehavior-service-3",
+        "component": "test-component-pbehavior-service-3",
+        "resource": "test-resource-pbehavior-service-3"
+      },
+      {
+        "event_type": "pbhleave",
+        "connector": "test-connector-pbehavior-service-3",
+        "connector_name": "test-connector-name-pbehavior-service-3",
+        "component": "test-component-pbehavior-service-3",
+        "resource": "test-resource-pbehavior-service-3"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search={{ .serviceID }}
     Then the response code should be 200
     Then the response body should contain:
@@ -407,6 +574,7 @@ Feature: no update service when entity is inactive
     ]
     """
 
+  @concurrent
   Scenario: given entity service and maintenance and inactive pbehaviors should update service alarm on pbhleave and enter event
     Given I am admin
     When I do POST /api/v4/entityservices:
@@ -435,7 +603,24 @@ Feature: no update service when entity is inactive
     """
     Then the response code should be 201
     When I save response serviceID={{ .lastResponse._id }}
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "recomputeentityservice",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+
+      }
+    ]
+    """
     When I send an event:
     """json
     {
@@ -449,14 +634,31 @@ Feature: no update service when entity is inactive
       "output": "test-output-pbehavior-service-4"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "connector": "test-connector-pbehavior-service-4",
+        "connector_name": "test-connector-name-pbehavior-service-4",
+        "component": "test-component-pbehavior-service-4",
+        "resource": "test-resource-pbehavior-service-4-1"
+      },
+      {
+        "event_type": "activate",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      }
+    ]
+    """
     When I do POST /api/v4/pbehaviors:
     """json
     {
       "enabled": true,
       "name": "test-pbehavior-service-4-1",
       "tstart": {{ now }},
-      "tstop": {{ nowAdd "2s" }},
+      "tstop": {{ nowAdd "3s" }},
       "color": "#FFFFFF",
       "type": "test-inactive-type-to-engine",
       "reason": "test-reason-to-engine",
@@ -498,7 +700,37 @@ Feature: no update service when entity is inactive
     }
     """
     Then the response code should be 201
-    When I wait the end of 4 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "pbhenter",
+        "connector": "test-connector-pbehavior-service-4",
+        "connector_name": "test-connector-name-pbehavior-service-4",
+        "component": "test-component-pbehavior-service-4",
+        "resource": "test-resource-pbehavior-service-4-1"
+      },
+      {
+        "event_type": "pbhleaveandenter",
+        "connector": "test-connector-pbehavior-service-4",
+        "connector_name": "test-connector-name-pbehavior-service-4",
+        "component": "test-component-pbehavior-service-4",
+        "resource": "test-resource-pbehavior-service-4-1"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      }
+    ]
+    """
     When I send an event:
     """json
     {
@@ -512,7 +744,24 @@ Feature: no update service when entity is inactive
       "output": "test-output-pbehavior-service-4"
     }
     """
-    When I wait the end of 2 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type": "activate",
+        "connector": "test-connector-pbehavior-service-4",
+        "connector_name": "test-connector-name-pbehavior-service-4",
+        "component": "test-component-pbehavior-service-4",
+        "resource": "test-resource-pbehavior-service-4-2"
+      },
+      {
+        "event_type": "check",
+        "connector": "service",
+        "connector_name": "service",
+        "component": "{{ .serviceID }}"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search={{ .serviceID }}
     Then the response code should be 200
     Then the response body should contain:
@@ -541,7 +790,7 @@ Feature: no update service when entity is inactive
       }
     }
     """
-    When I do POST /api/v4/alarm-details:
+    When I save request:
     """json
     [
       {
@@ -552,8 +801,7 @@ Feature: no update service when entity is inactive
       }
     ]
     """
-    Then the response code should be 207
-    Then the response body should contain:
+    When I do POST /api/v4/alarm-details until response code is 207 and body contains:
     """json
     [
       {

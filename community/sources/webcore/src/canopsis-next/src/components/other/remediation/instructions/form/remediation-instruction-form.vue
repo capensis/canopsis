@@ -4,7 +4,7 @@
       v-flex(xs3)
         c-instruction-type-field.mb-2(
           v-field="form.type",
-          :disabled="disabled"
+          :disabled="disabled || !isNew"
         )
       v-flex
         c-enabled-field.mt-0(
@@ -77,6 +77,10 @@ export default {
       default: false,
     },
     disabledCommon: {
+      type: Boolean,
+      default: false,
+    },
+    isNew: {
       type: Boolean,
       default: false,
     },

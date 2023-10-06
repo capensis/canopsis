@@ -53,12 +53,7 @@
 <script>
 import { DATETIME_FORMATS, QUICK_RANGES } from '@/constants';
 
-import {
-  convertDateToString,
-  convertDateToTimestamp,
-  getNowTimestamp,
-  getWeekdayNumber,
-} from '@/helpers/date/date';
+import { convertDateToString, convertDateToTimestamp, getNowTimestamp, getWeekdayNumber } from '@/helpers/date/date';
 import {
   convertStartDateIntervalToTimestamp,
   convertStopDateIntervalToTimestamp,

@@ -1,8 +1,4 @@
-import {
-  DEFAULT_PERIODIC_REFRESH,
-  QUICK_RANGES,
-  SAMPLINGS,
-} from '@/constants';
+import { DEFAULT_PERIODIC_REFRESH, QUICK_RANGES, SAMPLINGS } from '@/constants';
 
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
 import { metricPresetsToForm, formToMetricPresets } from '@/helpers/entities/metric/form';

@@ -13,8 +13,8 @@
           c-name-field(
             v-model="form.comment",
             :label="$t('common.note')",
-            name="comment",
-            required
+            :required="isCommentRequired",
+            name="comment"
           )
       template(#actions="")
         v-btn(
@@ -60,6 +60,11 @@ export default {
         comment: '',
       },
     };
+  },
+  computed: {
+    isCommentRequired() {
+      return this.config.isCommentRequired ?? true;
+    },
   },
   methods: {
     async submit() {

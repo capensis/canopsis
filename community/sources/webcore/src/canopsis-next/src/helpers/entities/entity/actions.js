@@ -1,11 +1,6 @@
 import { isNull, uniq } from 'lodash';
 
-import {
-  ENTITIES_STATES,
-  ENTITIES_STATUSES,
-  ENTITY_EVENT_BY_ACTION_TYPE,
-  WEATHER_ACTIONS_TYPES,
-} from '@/constants';
+import { ENTITIES_STATES, ENTITIES_STATUSES, ENTITY_EVENT_BY_ACTION_TYPE, WEATHER_ACTIONS_TYPES } from '@/constants';
 
 import { getEntityEventIcon } from './icons';
 import { getEntityEventColor } from './color';

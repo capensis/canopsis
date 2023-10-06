@@ -1,150 +1,62 @@
 <template lang="pug">
   v-layout(column)
-    c-information-block(
-      :title="$t('storageSetting.alarm.title')",
-      :help-text="$t('storageSetting.alarm.titleHelp')",
-      help-icon-color="info"
+    storage-settings-alarm-form(v-field="form.alarm", :history="history.alarm")
+    storage-settings-entity-disabled-form(
+      v-field="form.entity_disabled",
+      :history="history.entity_disabled",
+      @archive="$emit('archive:disabled')"
     )
-      template(v-if="history.alarm", #subtitle="") {{ alarmSubTitle }}
-      c-enabled-duration-field(
-        v-field="form.alarm.archive_after",
-        :label="$t('storageSetting.alarm.archiveAfter')",
-        :name="alarmArchiveAfterFieldName"
-      )
-      c-enabled-duration-field(
-        v-field="form.alarm.delete_after",
-        :label="$t('storageSetting.alarm.deleteAfter')",
-        :name="alarmDeleteAfterFieldName"
-      )
-    c-information-block(
-      :title="$t('storageSetting.entity.title')",
-      :help-text="$t('storageSetting.entity.titleHelp')",
-      help-icon-color="info"
+    storage-settings-entity-unlinked-form(
+      v-field="form.entity_unlinked",
+      :history="history.entity_unlinked",
+      @archive="$emit('archive:unlinked')"
     )
-      template(v-if="history.entity", #subtitle="") {{ entitySubTitle }}
-      v-radio-group(
-        v-field="form.entity.archive",
-        name="entity.archive",
-        hide-details,
-        mandatory,
-        row
-      )
-        v-radio(:value="true", :label="$t('storageSetting.entity.archiveEntity')", color="primary")
-        v-radio(:value="false", :label="$t('storageSetting.entity.deleteEntity')", color="primary")
-      v-checkbox(
-        v-field="form.entity.archive_dependencies",
-        :label="$t('storageSetting.entity.archiveDependencies')",
-        color="primary"
-      )
-        template(#append="")
-          c-help-icon(:text="$t('storageSetting.entity.archiveDependenciesHelp')", color="info", max-width="300", top)
-      v-flex
-        v-btn.primary.ma-0.mb-4(@click="$emit('clean-entities')") {{ $t('storageSetting.entity.cleanStorage') }}
-    c-information-block(
-      :title="$t('storageSetting.remediation.title')",
-      help-icon-color="info"
+    storage-settings-entity-clean-form(
+      :history="history.entity_cleaned",
+      @clean="$emit('clean:archive')"
     )
-      template(v-if="history.remediation", #subtitle="") {{ remediationSubTitle }}
-      c-enabled-duration-field(
-        v-field="form.remediation.delete_after",
-        :label="$t('storageSetting.remediation.deleteAfter')",
-        :help-text="$t('storageSetting.remediation.deleteAfterHelpText')",
-        :name="remediationDeleteAfterFieldName"
-      )
-      c-enabled-duration-field(
-        v-field="form.remediation.delete_stats_after",
-        :label="$t('storageSetting.remediation.deleteStatsAfter')",
-        :help-text="$t('storageSetting.remediation.deleteStatsAfterHelpText')",
-        :name="remediationDeleteStatsAfterFieldName"
-      )
-      c-enabled-duration-field(
-        v-field="form.remediation.delete_mod_stats_after",
-        :label="$t('storageSetting.remediation.deleteModStatsAfter')",
-        :help-text="$t('storageSetting.remediation.deleteModStatsAfterHelpText')",
-        :name="remediationDeleteModStatsAfterFieldName"
-      )
-    c-information-block(
-      :title="$t('storageSetting.pbehavior.title')",
-      help-icon-color="info"
-    )
-      template(v-if="history.pbehavior", #subtitle="") {{ pbehaviorSubTitle }}
-      c-enabled-duration-field(
-        v-field="form.pbehavior.delete_after",
-        :label="$t('storageSetting.pbehavior.deleteAfter')",
-        :help-text="$t('storageSetting.pbehavior.deleteAfterHelpText')",
-        :name="pbehaviorDeleteAfterFieldName"
-      )
-    c-information-block(
-      :title="$t('storageSetting.junit.title')",
-      help-icon-color="info"
-    )
-      template(v-if="history.junit", #subtitle="") {{ junitSubTitle }}
-      c-enabled-duration-field(
-        v-field="form.junit.delete_after",
-        :label="$t('storageSetting.junit.deleteAfter')",
-        :help-text="$t('storageSetting.junit.deleteAfterHelpText')",
-        :name="junitDeleteAfterFieldName"
-      )
-    c-information-block(
-      :title="$t('storageSetting.healthCheck.title')",
-      help-icon-color="info"
-    )
-      template(v-if="history.health_check", #subtitle="") {{ healthCheckSubTitle }}
-      c-enabled-duration-field(
-        v-field="form.health_check.delete_after",
-        :label="$t('storageSetting.healthCheck.deleteAfter')",
-        :name="healthCheckDeleteAfterFieldName"
-      )
-    c-information-block(
-      :title="$t('storageSetting.webhook.title')",
-      :help-text="$t('storageSetting.webhook.titleHelp')",
-      help-icon-color="info"
-    )
-      template(v-if="history.webhook", #subtitle="") {{ webhookSubTitle }}
-      c-enabled-duration-field(
-        v-field="form.webhook.delete_after",
-        :label="$t('storageSetting.webhook.deleteAfter')",
-        :help-text="$t('storageSetting.webhook.deleteAfterHelpText')",
-        :name="webhookDeleteAfterFieldName"
-      )
-      c-enabled-field(
-        v-field="form.webhook.log_credentials",
-        :label="$t('storageSetting.webhook.logCredentials')",
-        :name="webhookLogCredentialsFieldName"
-      )
-        template(#append="")
-          c-help-icon(:text="$t('storageSetting.webhook.logCredentialsHelpText')", color="info", top)
-    c-information-block(
-      :title="$t('storageSetting.metrics.title')",
-      :help-text="$t('storageSetting.metrics.titleHelp')",
-      help-icon-color="info"
-    )
-      c-enabled-duration-field(
-        v-field="form.metrics.delete_after",
-        :label="$t('storageSetting.metrics.deleteAfter')",
-        :help-text="$t('storageSetting.metrics.deleteAfterHelpText')",
-        :name="metricsDeleteAfterFieldName"
-      )
-    c-information-block(
-      :title="$t('storageSetting.perfDataMetrics.title')",
-      :help-text="$t('storageSetting.perfDataMetrics.titleHelp')",
-      help-icon-color="info"
-    )
-      c-enabled-duration-field(
-        v-field="form.perf_data_metrics.delete_after",
-        :label="$t('storageSetting.perfDataMetrics.deleteAfter')",
-        :help-text="$t('storageSetting.perfDataMetrics.deleteAfterHelpText')",
-        :name="perfDataMetricsDeleteAfterFieldName"
-      )
+    storage-settings-remediation-form(v-field="form.remediation", :history="history.remediation")
+    storage-settings-pbehavior-form(v-field="form.pbehavior", :history="history.pbehavior")
+    storage-settings-junit-form(v-field="form.junit", :history="history.junit")
+    storage-settings-health-check-form(v-field="form.health_check", :history="history.health_check")
+    storage-settings-webhook-form(v-field="form.webhook", :history="history.webhook")
+    storage-settings-metrics-form(v-field="form.metrics")
+    storage-settings-perf-data-metrics-form(v-field="form.perf_data_metrics")
+    storage-settings-event-filter-failure-form(v-field="form.event_filter_failure")
 </template>
 
 <script>
-import { isNumber } from 'lodash';
+import StorageSettingsEntityUnlinkedForm
+  from '@/components/other/storage-setting/form/storage-settings-entity-unlinked-form.vue';
 
-import { convertDateToString } from '@/helpers/date/date';
+import StorageSettingsAlarmForm from './storage-settings-alarm-form.vue';
+import StorageSettingsEntityDisabledForm from './storage-settings-entity-disabled-form.vue';
+import StorageSettingsRemediationForm from './storage-settings-remediation-form.vue';
+import StorageSettingsPbehaviorForm from './storage-settings-pbehavior-form.vue';
+import StorageSettingsJunitForm from './storage-settings-junit-form.vue';
+import StorageSettingsHealthCheckForm from './storage-settings-health-check-form.vue';
+import StorageSettingsWebhookForm from './storage-settings-webhook-form.vue';
+import StorageSettingsMetricsForm from './storage-settings-metrics-form.vue';
+import StorageSettingsPerfDataMetricsForm from './storage-settings-perf-data-metrics-form.vue';
+import StorageSettingsEventFilterFailureForm from './storage-settings-event-filter-failure-form.vue';
+import StorageSettingsEntityCleanForm from './storage-settings-entity-clean-form.vue';
 
 export default {
   inject: ['$validator'],
+  components: {
+    StorageSettingsEntityCleanForm,
+    StorageSettingsEntityUnlinkedForm,
+    StorageSettingsEntityDisabledForm,
+    StorageSettingsEventFilterFailureForm,
+    StorageSettingsPerfDataMetricsForm,
+    StorageSettingsMetricsForm,
+    StorageSettingsWebhookForm,
+    StorageSettingsHealthCheckForm,
+    StorageSettingsJunitForm,
+    StorageSettingsPbehaviorForm,
+    StorageSettingsRemediationForm,
+    StorageSettingsAlarmForm,
+  },
   model: {
     prop: 'form',
     event: 'input',
@@ -157,147 +69,6 @@ export default {
     history: {
       type: Object,
       required: true,
-    },
-  },
-  computed: {
-    junitDeleteAfterFieldName() {
-      return 'junit.delete_after';
-    },
-
-    alarmArchiveAfterFieldName() {
-      return 'alarm.archive_after';
-    },
-
-    alarmDeleteAfterFieldName() {
-      return 'alarm.delete_after';
-    },
-
-    remediationDeleteAfterFieldName() {
-      return 'remediation.delete_after';
-    },
-
-    remediationDeleteStatsAfterFieldName() {
-      return 'remediation.delete_stats_after';
-    },
-
-    remediationDeleteModStatsAfterFieldName() {
-      return 'remediation.delete_mod_stats_after';
-    },
-
-    pbehaviorDeleteAfterFieldName() {
-      return 'pbehavior.delete_after';
-    },
-
-    healthCheckDeleteAfterFieldName() {
-      return 'health_check.delete_after';
-    },
-
-    metricsDeleteAfterFieldName() {
-      return 'metrics.delete_after';
-    },
-
-    perfDataMetricsDeleteAfterFieldName() {
-      return 'perf_data_metrics.delete_after';
-    },
-
-    webhookDeleteAfterFieldName() {
-      return 'webhook.delete_after';
-    },
-
-    webhookLogCredentialsFieldName() {
-      return 'webhook.log_credentials';
-    },
-
-    junitSubTitle() {
-      return this.$t('storageSetting.history.scriptLaunched', {
-        launchedAt: convertDateToString(this.history.junit),
-      });
-    },
-
-    remediationSubTitle() {
-      return this.$t('storageSetting.history.scriptLaunched', {
-        launchedAt: convertDateToString(this.history.remediation),
-      });
-    },
-
-    pbehaviorSubTitle() {
-      return this.$t('storageSetting.history.scriptLaunched', {
-        launchedAt: convertDateToString(this.history.pbehavior),
-      });
-    },
-
-    healthCheckSubTitle() {
-      return this.$t('storageSetting.history.scriptLaunched', {
-        launchedAt: convertDateToString(this.history.health_check),
-      });
-    },
-
-    webhookSubTitle() {
-      return this.$t('storageSetting.history.scriptLaunched', {
-        launchedAt: convertDateToString(this.history.webhook),
-      });
-    },
-
-    alarmSubTitle() {
-      const { time, deleted, archived } = this.history.alarm || {};
-
-      const result = [
-        this.$t('storageSetting.history.scriptLaunched', {
-          launchedAt: convertDateToString(time),
-        }),
-      ];
-
-      if (isNumber(deleted)) {
-        result.push(this.$t('storageSetting.history.alarm.deletedCount', {
-          count: deleted,
-        }));
-      }
-
-      if (isNumber(archived)) {
-        result.push(this.$t('storageSetting.history.alarm.archivedCount', {
-          count: archived,
-        }));
-      }
-
-      return result.join(' ');
-    },
-
-    entitySubTitle() {
-      const { time, deleted, archived } = this.history.entity || {};
-
-      const result = [
-        this.$t('storageSetting.history.scriptLaunched', {
-          launchedAt: convertDateToString(time),
-        }),
-      ];
-
-      if (isNumber(deleted)) {
-        result.push(this.$t('storageSetting.history.entity.deletedCount', {
-          count: deleted,
-        }));
-      }
-
-      if (isNumber(archived)) {
-        result.push(this.$t('storageSetting.history.entity.archivedCount', {
-          count: archived,
-        }));
-      }
-
-      return result.join(' ');
-    },
-  },
-  watch: {
-    'form.remediation': function remediationWatcher() {
-      this.$validator.validateAll([
-        this.remediationAccumulateAfterFieldName,
-        this.remediationDeleteAfterFieldName,
-      ]);
-    },
-    'form.alarm': function alarmWatcher() {
-      this.$validator.validateAll([
-        this.alarmArchiveAfterFieldName,
-        this.alarmDeleteAfterFieldName,
-      ]);
     },
   },
 };

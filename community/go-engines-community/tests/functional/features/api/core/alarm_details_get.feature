@@ -16,6 +16,28 @@ Feature: Get alarms
       },
       {
         "_id": "test-alarm-to-get-1",
+        "opened": true,
+        "steps": {
+          "reversed": true
+        }
+      },
+      {
+        "_id": "test-alarm-to-get-1",
+        "opened": true,
+        "steps": {
+          "type": "comment"
+        }
+      },
+      {
+        "_id": "test-alarm-to-get-1",
+        "opened": true,
+        "steps": {
+          "reversed": true,
+          "type": "comment"
+        }
+      },
+      {
+        "_id": "test-alarm-to-get-1",
         "steps": {
           "page": 2,
           "limit": 2
@@ -111,6 +133,112 @@ Feature: Get alarms
               "page_count": 1,
               "per_page": 10,
               "total_count": 4
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "_id": "test-alarm-to-get-1",
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "comment",
+                "a": "root",
+                "m": "test-alarm-to-get-1-comment-2",
+                "t": 1597030221,
+                "initiator": "user"
+              },
+              {
+                "_t": "comment",
+                "a": "root",
+                "m": "test-alarm-to-get-1-comment-1",
+                "t": 1597030220,
+                "initiator": "user"
+              },
+              {
+                "_t": "statusinc",
+                "a": "test-connector-default.test-connector-default-name",
+                "m": "test-alarm-to-get-1-output",
+                "t": 1597030219,
+                "initiator": "external",
+                "val": 1
+              },
+              {
+                "_t": "stateinc",
+                "a": "test-connector-default.test-connector-default-name",
+                "m": "test-alarm-to-get-1-output",
+                "t": 1597030219,
+                "initiator": "external",
+                "val": 3
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 4
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "_id": "test-alarm-to-get-1",
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "comment",
+                "a": "root",
+                "m": "test-alarm-to-get-1-comment-1",
+                "t": 1597030220,
+                "initiator": "user"
+              },
+              {
+                "_t": "comment",
+                "a": "root",
+                "m": "test-alarm-to-get-1-comment-2",
+                "t": 1597030221,
+                "initiator": "user"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "_id": "test-alarm-to-get-1",
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "comment",
+                "a": "root",
+                "m": "test-alarm-to-get-1-comment-2",
+                "t": 1597030221,
+                "initiator": "user"
+              },
+              {
+                "_t": "comment",
+                "a": "root",
+                "m": "test-alarm-to-get-1-comment-1",
+                "t": 1597030220,
+                "initiator": "user"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
             }
           }
         }

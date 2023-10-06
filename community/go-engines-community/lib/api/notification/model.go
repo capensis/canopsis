@@ -8,5 +8,5 @@ type Notification struct {
 
 type InstructionNotification struct {
 	Rate          *bool                  `json:"rate" bson:"rate" binding:"required"`
-	RateFrequency types.DurationWithUnit `json:"rate_frequency" bson:"rate_frequency" binding:"required,numeric,gte=0"`
+	RateFrequency types.DurationWithUnit `json:"rate_frequency" bson:"rate_frequency" binding:"required"`
 }

@@ -108,6 +108,27 @@ export const mockSidebar = () => {
 };
 
 /**
+ * Mock for the socket. Clear yourself after all tests.
+ */
+export const mockSocket = () => {
+  const room = {
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+  };
+  const socket = {
+    join: jest.fn().mockReturnValue(room),
+    leave: jest.fn().mockReturnValue(room),
+  };
+
+  afterEach(() => {
+    socket.join.mockClear();
+    socket.leave.mockClear();
+  });
+
+  return socket;
+};
+
+/**
  * Mock for the router. Clear yourself after all tests.
  */
 export const mockRouter = () => {

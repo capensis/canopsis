@@ -28,11 +28,12 @@ type entityData struct {
 }
 
 type softDeletePeriodicalWorker struct {
-	collection         mongo.DbCollection
-	periodicalInterval time.Duration
-	eventPublisher     importcontextgraph.EventPublisher
-	softDeleteWaitTime time.Duration
-	logger             zerolog.Logger
+	entityCollection          mongo.DbCollection
+	serviceCountersCollection mongo.DbCollection
+	periodicalInterval        time.Duration
+	eventPublisher            importcontextgraph.EventPublisher
+	softDeleteWaitTime        time.Duration
+	logger                    zerolog.Logger
 }
 
 func (w *softDeletePeriodicalWorker) GetInterval() time.Duration {
@@ -42,7 +43,7 @@ func (w *softDeletePeriodicalWorker) GetInterval() time.Duration {
 func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 	now := types.CpsTime{Time: time.Now()}
 
-	cursor, err := w.collection.Aggregate(
+	cursor, err := w.entityCollection.Aggregate(
 		ctx,
 		[]bson.M{
 			{
@@ -93,6 +94,7 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 	defer cursor.Close(ctx)
 
 	writeModels := make([]libmongo.WriteModel, 0, canopsis.DefaultBulkSize)
+	serviceCountersIDs := make([]string, 0, canopsis.DefaultBulkSize)
 	events := make([]types.Event, 0, canopsis.DefaultBulkSize)
 	bulkBytesSize := 0
 
@@ -107,6 +109,19 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 		}
 
 		var newModels []libmongo.WriteModel
+
+		if ent.Type == types.EntityTypeService {
+			serviceCountersIDs = append(serviceCountersIDs, ent.ID)
+
+			if len(serviceCountersIDs) == canopsis.DefaultBulkSize {
+				_, err = w.serviceCountersCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": serviceCountersIDs}})
+				if err != nil {
+					w.logger.Error().Err(err).Msg("unable to delete entity service counters")
+				}
+
+				serviceCountersIDs = serviceCountersIDs[:0]
+			}
+		}
 
 		if !ent.AlarmExists {
 			if now.Add(-w.softDeleteWaitTime).Before(ent.SoftDeleted.Time) {
@@ -156,7 +171,7 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 
 		newModelLen := len(b)
 		if bulkBytesSize+newModelLen > canopsis.DefaultBulkBytesSize {
-			_, err := w.collection.BulkWrite(ctx, writeModels)
+			_, err := w.entityCollection.BulkWrite(ctx, writeModels)
 			if err != nil {
 				w.logger.Error().Err(err).Msg("unable to bulk write soft deletable entities")
 			}
@@ -188,7 +203,7 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 		bulkBytesSize += newModelLen
 
 		if len(writeModels) == canopsis.DefaultBulkSize {
-			_, err := w.collection.BulkWrite(ctx, writeModels)
+			_, err := w.entityCollection.BulkWrite(ctx, writeModels)
 			if err != nil {
 				w.logger.Error().Err(err).Msg("unable to bulk write soft deletable entities")
 			}
@@ -208,7 +223,7 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 	}
 
 	if len(writeModels) > 0 {
-		_, err := w.collection.BulkWrite(ctx, writeModels)
+		_, err := w.entityCollection.BulkWrite(ctx, writeModels)
 		if err != nil {
 			w.logger.Error().Err(err).Msg("unable to bulk write soft deletable entities")
 		}
@@ -219,6 +234,13 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 				w.logger.Error().Err(err).Msg("failed to send event")
 				return
 			}
+		}
+	}
+
+	if len(serviceCountersIDs) > 0 {
+		_, err = w.serviceCountersCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": serviceCountersIDs}})
+		if err != nil {
+			w.logger.Error().Err(err).Msg("unable to delete entity service counters")
 		}
 	}
 }

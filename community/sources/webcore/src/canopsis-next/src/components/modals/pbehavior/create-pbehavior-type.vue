@@ -40,7 +40,7 @@ export default {
   ],
   data() {
     return {
-      pendingPriority: true,
+      pendingPriority: false,
       form: pbehaviorTypeToForm(this.modal.config.pbehaviorType),
     };
   },

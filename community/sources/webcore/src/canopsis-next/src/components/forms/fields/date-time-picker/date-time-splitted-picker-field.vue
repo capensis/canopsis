@@ -5,6 +5,7 @@
         c-date-picker-field(
           :value="value | date('vuetifyDatePicker', null)",
           :label="!reverse || fullDay ? label : ''",
+          :placeholder="placeholder",
           :error="errors.has(name)",
           :disabled="disabled",
           :min="min",
@@ -62,6 +63,10 @@ export default {
       default: false,
     },
     label: {
+      type: String,
+      default: '',
+    },
+    placeholder: {
       type: String,
       default: '',
     },

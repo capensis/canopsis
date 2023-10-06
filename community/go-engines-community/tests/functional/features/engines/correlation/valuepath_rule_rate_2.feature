@@ -531,7 +531,6 @@ Feature: correlation feature - valuegroup rule with threshold rate
       "source_type": "resource"
     }
     """
-    When I wait 1s
     When I do GET /api/v4/alarms?search=test-resource-correlation-valuegroup-rate-second-2&correlation=true&sort_by=v.meta&sort=desc until response code is 200 and body contains:
     """json
     {

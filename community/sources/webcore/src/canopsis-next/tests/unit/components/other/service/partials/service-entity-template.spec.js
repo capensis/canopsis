@@ -7,9 +7,11 @@ import { USERS_PERMISSIONS } from '@/constants';
 
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import ServiceEntityTemplate from '@/components/other/service/partials/service-entity-template.vue';
+import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 
 const stubs = {
   'c-runtime-template': CRuntimeTemplate,
+  'c-compiled-template': CCompiledTemplate,
   'c-links-list': true,
 };
 

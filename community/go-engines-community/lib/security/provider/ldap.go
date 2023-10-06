@@ -30,16 +30,9 @@ func (baseDialer) DialURL(config security.LdapConfig) (ldap.Client, error) {
 	tc := &tls.Config{
 		InsecureSkipVerify: config.InsecureSkipVerify,
 	}
-	switch config.MaxTLSVersion {
-	case "tls10":
-		tc.MaxVersion = tls.VersionTLS10
-	case "tls11":
-		tc.MaxVersion = tls.VersionTLS11
-	case "tls12":
-		tc.MaxVersion = tls.VersionTLS12
-	case "tls13":
-		tc.MaxVersion = tls.VersionTLS13
-	}
+	tc.MinVersion = strToTlsVersion(config.MinTLSVersion)
+	tc.MaxVersion = strToTlsVersion(config.MaxTLSVersion)
+
 	return ldap.DialURL(config.Url, ldap.DialWithTLSConfig(tc))
 }
 
@@ -237,4 +230,19 @@ func (p *ldapProvider) saveUser(
 	}
 
 	return user, nil
+}
+
+func strToTlsVersion(str string) uint16 {
+	switch str {
+	case "tls10":
+		return tls.VersionTLS10
+	case "tls11":
+		return tls.VersionTLS11
+	case "tls12":
+		return tls.VersionTLS12
+	case "tls13":
+		return tls.VersionTLS13
+	}
+
+	return 0
 }

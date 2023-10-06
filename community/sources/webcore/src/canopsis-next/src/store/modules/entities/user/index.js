@@ -1,9 +1,8 @@
 import { API_ROUTES } from '@/config';
-import { ENTITIES_TYPES } from '@/constants';
 
 import request from '@/services/request';
 
-import { createEntityModule } from '@/store/plugins/entities';
+import { createCRUDModule } from '@/store/plugins/entities';
 
 export const types = {
   FETCH_LIST: 'FETCH_LIST',
@@ -11,12 +10,11 @@ export const types = {
   FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
 };
 
-export default createEntityModule({
+export default createCRUDModule({
   route: API_ROUTES.users,
-  entityType: ENTITIES_TYPES.user,
-  dataPreparer: d => d.data,
   withFetchingParams: true,
   withMeta: true,
+  withWithoutStore: true,
 }, {
   actions: {
     /**
@@ -40,30 +38,6 @@ export default createEntityModule({
      */
     updateCurrentUser(context, { data }) {
       return request.put(API_ROUTES.currentUser, data);
-    },
-
-    /**
-     * Fetch users list with previous params
-     *
-     * @param {Function} dispatch
-     * @param {Object} state
-     * @returns {*}
-     */
-    fetchListWithPreviousParams({ dispatch, state }) {
-      return dispatch('fetchList', {
-        params: state.fetchingParams,
-      });
-    },
-
-    /**
-     * Fetch users list without store
-     *
-     * @param {VuexActionContext} context
-     * @param {Object} [params]
-     * @returns {*}
-     */
-    fetchListWithoutStore(context, { params } = {}) {
-      return request.get(API_ROUTES.users, params);
     },
   },
 });

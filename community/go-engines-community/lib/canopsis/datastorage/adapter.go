@@ -82,10 +82,42 @@ func (a *adapter) UpdateHistoryAlarm(ctx context.Context, history HistoryWithCou
 	return nil
 }
 
-func (a *adapter) UpdateHistoryEntity(ctx context.Context, history HistoryWithCount) error {
+func (a *adapter) UpdateHistoryEntityDisabled(ctx context.Context, history HistoryWithCount) error {
 	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{
 		"$set": bson.M{
-			"history.entity": history,
+			"history.entity_disabled": history,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	if res.MatchedCount == 0 {
+		return fmt.Errorf("cannot find configuration _id=%s", ID)
+	}
+
+	return nil
+}
+
+func (a *adapter) UpdateHistoryEntityUnlinked(ctx context.Context, history HistoryWithCount) error {
+	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{
+		"$set": bson.M{
+			"history.entity_unlinked": history,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	if res.MatchedCount == 0 {
+		return fmt.Errorf("cannot find configuration _id=%s", ID)
+	}
+
+	return nil
+}
+
+func (a *adapter) UpdateHistoryEntityCleaned(ctx context.Context, history HistoryWithCount) error {
+	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{
+		"$set": bson.M{
+			"history.entity_cleaned": history,
 		},
 	})
 	if err != nil {
@@ -134,6 +166,22 @@ func (a *adapter) UpdateHistoryWebhook(ctx context.Context, t types.CpsTime) err
 	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{
 		"$set": bson.M{
 			"history.webhook": t,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	if res.MatchedCount == 0 {
+		return fmt.Errorf("cannot find configuration _id=%s", ID)
+	}
+
+	return nil
+}
+
+func (a *adapter) UpdateHistoryEventFilterFailure(ctx context.Context, t types.CpsTime) error {
+	res, err := a.collection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{
+		"$set": bson.M{
+			"history.event_filter_failure": t,
 		},
 	})
 	if err != nil {

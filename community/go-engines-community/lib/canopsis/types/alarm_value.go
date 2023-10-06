@@ -10,8 +10,9 @@ import (
 
 // Alarm consts
 const (
-	AlarmStepCropMinStates = 20
-	AlarmStepsHardLimit    = 2000
+	AlarmStepCropMinStates      = 20
+	AlarmStepsHardLimit         = 2000
+	AlarmLongOutputHistoryLimit = 100
 )
 
 const (

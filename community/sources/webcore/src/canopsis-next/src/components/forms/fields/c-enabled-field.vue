@@ -8,6 +8,8 @@
     :readonly="readonly",
     :hide-details="hideDetails"
   )
+    template(#label="")
+      slot(name="label")
     template(#append="")
       slot(name="append")
 </template>

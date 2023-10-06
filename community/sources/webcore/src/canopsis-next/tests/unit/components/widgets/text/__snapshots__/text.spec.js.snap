@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`text Renders \`text\` with default template 1`] = `
+<div
+  class="position-relative"
+>
+  <div>
+    <div>
+      <b>
+        bold template
+      </b>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`text Renders \`text\` with request template 1`] = `
+<div
+  class="position-relative"
+>
+  <div>
+    <li>
+      <strong>
+        userId
+      </strong>
+      : 1
+    </li>
+     
+    <li>
+      <strong>
+        title
+      </strong>
+      : test
+    </li>
+     
+    <li>
+      <strong>
+        completed
+      </strong>
+      : false
+    </li>
+     
+    <li>
+      <strong>
+        id
+      </strong>
+      : 201
+    </li>
+  </div>
+</div>
+`;

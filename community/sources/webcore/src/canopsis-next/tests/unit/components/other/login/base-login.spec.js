@@ -14,6 +14,7 @@ const stubs = {
   'ldap-login-information': true,
   'login-form': true,
   'c-compiled-template': true,
+  'c-alert': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
 };
@@ -21,12 +22,13 @@ const stubs = {
 const snapshotStubs = {
   'ldap-login-information': true,
   'login-form': true,
+  'c-alert': true,
   'c-compiled-template': true,
 };
 
 const selectSubmitButton = wrapper => wrapper.find('button.v-btn');
 const selectLoginForm = wrapper => wrapper.find('login-form-stub');
-const selectAlert = wrapper => wrapper.find('v-alert-stub');
+const selectAlert = wrapper => wrapper.find('c-alert-stub');
 
 describe('base-login', () => {
   const $router = mockRouter();
@@ -194,7 +196,7 @@ describe('base-login', () => {
       },
     });
 
-    await wrapper.setData({ hasServerError: true });
+    await wrapper.setData({ serverErrorMessage: 'Server error message' });
 
     expect(wrapper.element).toMatchSnapshot();
   });

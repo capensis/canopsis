@@ -10,9 +10,9 @@
         template(#label="{ item, leaf }")
           div {{ item.name }}
             span.pl-1(v-if="leaf") :
-              c-ellipsis.pl-1.d-inline-block.grey--text.body-1.pre-wrap(:text="String(item.value)")
+              c-ellipsis.pl-1.d-inline-block.text--secondary.body-1.pre-wrap(:text="String(item.value)")
             span.pl-1(v-else-if="!leaf && !(item.children && item.children.length)") :
-              div.pl-1.d-inline-block.grey--text.text--darken-1.body-1.font-italic {{ $t('common.emptyObject') }}
+              div.pl-1.d-inline-block.text--secondary.body-1.font-italic {{ $t('common.emptyObject') }}
 
         template(#append="{ leaf, item }")
           c-copy-btn(
@@ -30,6 +30,14 @@
             left,
             @click="exportAsJson(item)"
           )
+          c-action-btn(
+            v-if="item.original",
+            :tooltip="$t('alarm.actions.titles.exportPdf')",
+            :loading="exportAlarmToPdfPending",
+            icon="assignment_returned",
+            left,
+            @click="exportAsPdf(item.original, config.exportPdfTemplate)"
+          )
 </template>
 
 <script>
@@ -40,13 +48,22 @@ import { convertTreeviewToObject } from '@/helpers/treeview';
 import { convertDateToString, getNowTimestamp } from '@/helpers/date/date';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
+import { widgetActionsPanelAlarmExportPdfMixin } from '@/mixins/widget/actions-panel/alarm-export-pdf';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.variablesHelp,
   components: { ModalWrapper },
-  mixins: [modalInnerMixin],
+  mixins: [
+    modalInnerMixin,
+    widgetActionsPanelAlarmExportPdfMixin,
+  ],
+  data() {
+    return {
+      exportAlarmToPdfPending: false,
+    };
+  },
   methods: {
     exportAsJson(item) {
       const object = convertTreeviewToObject(item);
@@ -57,6 +74,14 @@ export default {
       );
 
       saveJsonFile(object, `${item.name}-${dateString}`);
+    },
+
+    async exportAsPdf(alarm, template) {
+      this.exportAlarmToPdfPending = true;
+
+      await this.exportAlarmToPdf(alarm, template);
+
+      this.exportAlarmToPdfPending = false;
     },
 
     onSuccessCopied() {

@@ -6,7 +6,6 @@
     :total-items="totalItems",
     :pagination="pagination",
     advanced-pagination,
-    select-all,
     expand,
     search,
     @update:pagination="$emit('update:pagination', $event)"
@@ -17,35 +16,31 @@
     template(#enabled="{ item }")
       c-enabled(:value="item.enabled")
     template(#actions="{ item }")
-      v-layout(row)
-        c-action-btn(:tooltip="$t('common.play')")
-          template(#button="")
-            v-btn.mx-1.ma-0(
-              :to="getPlaylistRouteById(item._id, true)",
-              icon
-            )
-              v-icon play_arrow
-        c-copy-btn(
-          :value="getPlaylistRouteFullUrlById(item._id)",
-          :tooltip="$t('common.copyLink')",
-          @success="onSuccessCopied",
-          @error="onErrorCopied"
-        )
-        c-action-btn(
-          v-if="hasCreateAnyPlaylistAccess",
-          type="duplicate",
-          @click="$emit('duplicate', item)"
-        )
-        c-action-btn(
-          v-if="hasUpdateAnyPlaylistAccess",
-          type="edit",
-          @click="$emit('edit', item)"
-        )
-        c-action-btn(
-          v-if="hasDeleteAnyPlaylistAccess",
-          type="delete",
-          @click="$emit('remove', item._id)"
-        )
+      c-action-btn(:tooltip="$t('common.play')")
+        template(#button="")
+          v-btn.mx-1.ma-0(:to="getPlaylistRouteById(item._id, true)", icon)
+            v-icon play_arrow
+      c-copy-btn(
+        :value="getPlaylistRouteFullUrlById(item._id)",
+        :tooltip="$t('common.copyLink')",
+        @success="onSuccessCopied",
+        @error="onErrorCopied"
+      )
+      c-action-btn(
+        v-if="duplicable",
+        type="duplicate",
+        @click="$emit('duplicate', item)"
+      )
+      c-action-btn(
+        v-if="updatable",
+        type="edit",
+        @click="$emit('edit', item)"
+      )
+      c-action-btn(
+        v-if="removable",
+        type="delete",
+        @click="$emit('remove', item._id)"
+      )
     template(#expand="{ item }")
       playlist-list-expand-item(:playlist="item")
 </template>
@@ -56,15 +51,12 @@ import { ROUTES_NAMES } from '@/constants';
 
 import { removeTrailingSlashes } from '@/helpers/url';
 
-import { permissionsTechnicalPlaylistMixin } from '@/mixins/permissions/technical/playlist';
-
 import PlaylistListExpandItem from './partials/playlists-list-expand-item.vue';
 
 export default {
   components: {
     PlaylistListExpandItem,
   },
-  mixins: [permissionsTechnicalPlaylistMixin],
   props: {
     playlists: {
       type: Array,
@@ -81,6 +73,18 @@ export default {
     pagination: {
       type: Object,
       required: true,
+    },
+    removable: {
+      type: Boolean,
+      default: false,
+    },
+    updatable: {
+      type: Boolean,
+      default: false,
+    },
+    duplicable: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

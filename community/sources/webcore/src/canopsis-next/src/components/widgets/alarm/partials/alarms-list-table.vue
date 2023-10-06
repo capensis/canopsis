@@ -72,8 +72,11 @@
             :resizing="resizingMode",
             @clear:tag="$emit('clear:tag')"
           )
-          template(v-if="header.value !== 'actions'")
-            span.alarms-list-table__dragging-handler(v-if="draggingMode", @click.stop="")
+          template
+            span.alarms-list-table__dragging-handler(
+              v-if="draggingMode && header.value !== 'actions'",
+              @click.stop=""
+            )
             span.alarms-list-table__resize-handler(
               v-if="resizingMode",
               @mousedown.stop.prevent="startColumnResize(header.value)",
@@ -84,6 +87,7 @@
             v-model="props.selected",
             v-on="rowListeners",
             :ref="`row${props.item._id}`",
+            :key="props.item._id",
             :selectable="selectable",
             :expandable="expandable",
             :row="props",
@@ -98,6 +102,7 @@
             :medium="isMediumHeight",
             :small="isSmallHeight",
             :resizing="resizingMode",
+            :search="search",
             :wrap-actions="resizableColumn",
             @start:resize="startColumnResize",
             @select:tag="$emit('select:tag', $event)"
@@ -107,8 +112,10 @@
             :alarm="item",
             :parent-alarm-id="parentAlarmId",
             :widget="widget",
+            :search="search",
             :hide-children="hideChildren",
-            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)"
+            :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)",
+            @select:tag="$emit('select:tag', $event)"
           )
     c-table-pagination(
       v-if="!hidePagination",
@@ -126,12 +133,9 @@
 </template>
 
 <script>
-import { differenceBy } from 'lodash';
+import { get, intersectionBy } from 'lodash';
 
-import {
-  ALARM_DENSE_TYPES,
-  ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
-} from '@/constants';
+import { ALARM_DENSE_TYPES, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
 
 import featuresService from '@/services/features';
 
@@ -177,10 +181,6 @@ export default {
     widget: {
       type: Object,
       required: true,
-    },
-    editing: {
-      type: Boolean,
-      default: false,
     },
     alarms: {
       type: Array,
@@ -258,6 +258,10 @@ export default {
       type: String,
       required: false,
     },
+    search: {
+      type: String,
+      default: '',
+    },
   },
 
   computed: {
@@ -320,7 +324,16 @@ export default {
         };
 
         if (column.linksInRowCount) {
-          header.width = calculateAlarmLinksColumnWidth(this.dense, column.linksInRowCount);
+          const linksCounts = this.alarms.map(alarm => Object.values(get(alarm, column.value, {})).flat().length);
+          const maxLinksCount = Math.max(...linksCounts);
+          const actualInlineLinksCount = maxLinksCount > column.inlineLinksCount
+            ? column.inlineLinksCount + 1
+            : maxLinksCount;
+
+          header.width = calculateAlarmLinksColumnWidth(
+            this.dense,
+            Math.max(Math.min(actualInlineLinksCount, column.linksInRowCount), 1),
+          );
         }
 
         return header;
@@ -371,6 +384,7 @@ export default {
       return {
         [`columns-${label}`]: true,
         'alarms-list-table__selecting': this.selecting,
+        'alarms-list-table__selecting--text-unselectable': this.selectingMousePressed,
         'alarms-list-table__grid': this.isColumnsChanging,
         'alarms-list-table__dragging': this.draggingMode,
         'alarms-list-table--wrapped': this.isCellContentWrapped,
@@ -428,15 +442,11 @@ export default {
   },
 
   watch: {
-    alarms(alarms, prevAlarms) {
-      const diff = differenceBy(alarms, prevAlarms, '_id');
-
-      if (diff.length) {
-        this.clearSelected();
-      }
+    alarms(alarms) {
+      this.selected = intersectionBy(alarms, this.selected, '_id');
     },
 
-    editing() {
+    columns() {
       if (this.isColumnsChanging) {
         this.updateColumnsSettings();
 
@@ -539,10 +549,6 @@ export default {
     transition: .3s cubic-bezier(.25, .8, .5,1);
     transition-property: opacity, background-color;
 
-    .theme--dark & {
-      background: #424242;
-    }
-
     &:after {
       content: ' ';
       width: 100%;
@@ -639,8 +645,10 @@ export default {
       opacity: 1;
     }
 
-    * {
-      user-select: none;
+    &--text-unselectable {
+      * {
+        user-select: none;
+      }
     }
   }
 
@@ -717,11 +725,11 @@ export default {
     }
 
     tr {
-      background: white;
+      background: var(--v-table-background-base);
       transition: background-color .3s cubic-bezier(.25,.8,.5,1);
 
       .theme--dark & {
-        background: #424242;
+        background: var(--v-table-background-base);
       }
 
       th {
