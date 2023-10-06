@@ -311,6 +311,8 @@ export const testsEntityModule = ({
 };
 
 export const createAuthModule = () => {
+  const currentUser = jest.fn()
+    .mockReturnValue({});
   const currentUserPermissionsById = jest.fn()
     .mockReturnValue({});
   const login = jest.fn();
@@ -319,6 +321,7 @@ export const createAuthModule = () => {
   const authModule = {
     name: 'auth',
     getters: {
+      currentUser,
       currentUserPermissionsById,
     },
     actions: {
@@ -328,6 +331,7 @@ export const createAuthModule = () => {
   };
 
   afterEach(() => {
+    currentUser.mockClear();
     currentUserPermissionsById.mockClear();
     login.mockClear();
     fetchCurrentUser.mockClear();
@@ -335,6 +339,7 @@ export const createAuthModule = () => {
 
   return {
     authModule,
+    currentUser,
     currentUserPermissionsById,
     login,
     fetchCurrentUser,
@@ -1060,6 +1065,7 @@ export const createPatternModule = () => {
 
 export const createInfoModule = () => {
   const description = jest.fn().mockReturnValue('');
+  const maintenance = jest.fn().mockReturnValue(false);
   const footer = jest.fn().mockReturnValue('');
   const casConfig = jest.fn().mockReturnValue({});
   const samlConfig = jest.fn().mockReturnValue({});
@@ -1070,6 +1076,7 @@ export const createInfoModule = () => {
   const isLDAPAuthEnabled = jest.fn().mockReturnValue(false);
 
   afterEach(() => {
+    maintenance.mockClear();
     description.mockClear();
     footer.mockClear();
     casConfig.mockClear();
@@ -1084,6 +1091,7 @@ export const createInfoModule = () => {
   const infoModule = {
     name: 'info',
     getters: {
+      maintenance,
       description,
       footer,
       casConfig,
@@ -1098,6 +1106,7 @@ export const createInfoModule = () => {
 
   return {
     infoModule,
+    maintenance,
     description,
     footer,
     casConfig,
