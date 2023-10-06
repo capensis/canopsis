@@ -13,13 +13,11 @@ import (
 
 const (
 	OwnershipNone byte = iota
-	OwnershipPublicOwner
+	OwnershipPublic
 	OwnershipOwner
 	OwnershipNotOwner
 	OwnershipNotFound
 )
-
-var ObjNotExist = errors.New("object doesn't exist")
 
 type OwnershipStrategy interface {
 	IsOwner(ctx context.Context, id, userID string) (byte, error)
@@ -30,16 +28,16 @@ type OwnedObjectsProvider interface {
 }
 
 type viewOwnerStrategy struct {
-	collection libmongo.DbCollection
-	enforcer   security.Enforcer
-	permission string
+	collection           libmongo.DbCollection
+	enforcer             security.Enforcer
+	linkedViewPermission string
 }
 
-func NewViewOwnerStrategy(client libmongo.DbClient, enforcer security.Enforcer, permission string) OwnershipStrategy {
+func NewViewOwnerStrategy(client libmongo.DbClient, enforcer security.Enforcer, linkedViewPermission string) OwnershipStrategy {
 	return &viewOwnerStrategy{
-		collection: client.Collection(libmongo.ViewMongoCollection),
-		enforcer:   enforcer,
-		permission: permission,
+		collection:           client.Collection(libmongo.ViewMongoCollection),
+		enforcer:             enforcer,
+		linkedViewPermission: linkedViewPermission,
 	}
 }
 
@@ -59,7 +57,7 @@ func (v *viewOwnerStrategy) IsOwner(ctx context.Context, id, userID string) (byt
 	}
 
 	if !obj.IsPrivate {
-		ok, err := v.enforcer.Enforce(userID, id, v.permission)
+		ok, err := v.enforcer.Enforce(userID, id, v.linkedViewPermission)
 		if err != nil {
 			panic(err)
 		}
@@ -68,7 +66,7 @@ func (v *viewOwnerStrategy) IsOwner(ctx context.Context, id, userID string) (byt
 			return OwnershipNotOwner, nil
 		}
 
-		return OwnershipPublicOwner, nil
+		return OwnershipPublic, nil
 	}
 
 	if obj.Author == userID {
@@ -156,7 +154,7 @@ func (v *viewGroupOwnerStrategy) IsOwner(ctx context.Context, id, userID string)
 	}
 
 	if !obj.IsPrivate {
-		return OwnershipPublicOwner, nil
+		return OwnershipPublic, nil
 	}
 
 	if obj.Author == userID {
@@ -167,16 +165,16 @@ func (v *viewGroupOwnerStrategy) IsOwner(ctx context.Context, id, userID string)
 }
 
 type viewTabOwnerStrategy struct {
-	collection libmongo.DbCollection
-	enforcer   security.Enforcer
-	permission string
+	collection           libmongo.DbCollection
+	enforcer             security.Enforcer
+	linkedViewPermission string
 }
 
-func NewViewTabOwnershipStrategy(client libmongo.DbClient, enforcer security.Enforcer, permission string) OwnershipStrategy {
+func NewViewTabOwnershipStrategy(client libmongo.DbClient, enforcer security.Enforcer, linkedViewPermission string) OwnershipStrategy {
 	return &viewTabOwnerStrategy{
-		collection: client.Collection(libmongo.ViewTabMongoCollection),
-		enforcer:   enforcer,
-		permission: permission,
+		collection:           client.Collection(libmongo.ViewTabMongoCollection),
+		enforcer:             enforcer,
+		linkedViewPermission: linkedViewPermission,
 	}
 }
 
@@ -197,7 +195,7 @@ func (v *viewTabOwnerStrategy) IsOwner(ctx context.Context, id, userID string) (
 	}
 
 	if !obj.IsPrivate {
-		ok, err := v.enforcer.Enforce(userID, obj.View, v.permission)
+		ok, err := v.enforcer.Enforce(userID, obj.View, v.linkedViewPermission)
 		if err != nil {
 			panic(err)
 		}
@@ -206,7 +204,7 @@ func (v *viewTabOwnerStrategy) IsOwner(ctx context.Context, id, userID string) (
 			return OwnershipNotOwner, nil
 		}
 
-		return OwnershipPublicOwner, nil
+		return OwnershipPublic, nil
 	}
 
 	if obj.Author == userID {
@@ -290,7 +288,7 @@ func (v *widgetOwnershipStrategy) IsOwner(ctx context.Context, id, userID string
 			return OwnershipNotOwner, nil
 		}
 
-		return OwnershipPublicOwner, nil
+		return OwnershipPublic, nil
 	}
 
 	if obj.Author == userID {

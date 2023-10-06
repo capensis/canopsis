@@ -31,16 +31,11 @@ func AuthorizeOwnership(strategy security.OwnershipStrategy) gin.HandlerFunc {
 
 		ownership, err := strategy.IsOwner(c, obj, subj.(string))
 		if err != nil {
-			if errors.Is(err, security.ObjNotExist) {
-				c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
-				return
-			}
-
 			panic(err)
 		}
 
 		switch ownership {
-		case security.OwnershipPublicOwner, security.OwnershipOwner:
+		case security.OwnershipPublic, security.OwnershipOwner:
 			break
 		case security.OwnershipNotOwner:
 			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
