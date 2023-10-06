@@ -51,7 +51,11 @@ Feature: update service when alarm is updated by action pbehavior
       "name": "test-scenario-action-axe-pbehavior-service-1-name",
       "priority": 10043,
       "enabled": true,
-      "triggers": ["cancel"],
+      "triggers": [
+        {
+          "type": "cancel"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
