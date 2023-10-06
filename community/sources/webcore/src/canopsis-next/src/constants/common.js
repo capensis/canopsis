@@ -306,7 +306,7 @@ export const DEFAULT_COLUMN_TEMPLATE_VALUE = '{{ value }}';
 
 export const VALIDATION_DELAY = 300;
 
-export const TRIGGERS = {
+export const TRIGGERS_TYPES = {
   create: 'create',
   stateinc: 'stateinc',
   statedec: 'statedec',
@@ -334,23 +334,24 @@ export const TRIGGERS = {
   autoinstructioncomplete: 'autoinstructioncomplete',
   autoinstructionresultok: 'autoinstructionresultok',
   autoinstructionresultfail: 'autoinstructionresultfail',
+  eventscount: 'eventscount',
 };
 
 export const PRO_TRIGGERS = [
-  TRIGGERS.declareticket,
-  TRIGGERS.declareticketwebhook,
-  TRIGGERS.instructionfail,
-  TRIGGERS.autoinstructionfail,
-  TRIGGERS.instructionjobcomplete,
-  TRIGGERS.instructionjobfail,
-  TRIGGERS.instructioncomplete,
-  TRIGGERS.autoinstructioncomplete,
-  TRIGGERS.autoinstructionresultok,
-  TRIGGERS.autoinstructionresultfail,
+  TRIGGERS_TYPES.declareticket,
+  TRIGGERS_TYPES.declareticketwebhook,
+  TRIGGERS_TYPES.instructionfail,
+  TRIGGERS_TYPES.autoinstructionfail,
+  TRIGGERS_TYPES.instructionjobcomplete,
+  TRIGGERS_TYPES.instructionjobfail,
+  TRIGGERS_TYPES.instructioncomplete,
+  TRIGGERS_TYPES.autoinstructioncomplete,
+  TRIGGERS_TYPES.autoinstructionresultok,
+  TRIGGERS_TYPES.autoinstructionresultfail,
 ];
 
 export const DEPRECATED_TRIGGERS = [
-  TRIGGERS.declareticket,
+  TRIGGERS_TYPES.declareticket,
 ];
 
 export const HEADERS = {
