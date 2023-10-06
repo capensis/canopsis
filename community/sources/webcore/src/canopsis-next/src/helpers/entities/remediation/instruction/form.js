@@ -62,7 +62,6 @@ import { durationToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {RemediationInstructionApproval} RemediationInstructionApprovalForm
- * @property {boolean} need_approve
  * @property {number} type
  */
 
@@ -193,13 +192,12 @@ const remediationInstructionStepsToForm = (steps = [undefined]) => steps.map(rem
  * @return {RemediationInstructionApprovalForm}
  */
 const remediationInstructionApprovalToForm = (approval = {}) => ({
-  need_approve: !!approval.comment,
-  type: approval.user && approval.user._id
+  type: approval?.user?._id
     ? REMEDIATION_INSTRUCTION_APPROVAL_TYPES.user
     : REMEDIATION_INSTRUCTION_APPROVAL_TYPES.role,
-  user: approval.user,
-  role: approval.role,
-  comment: approval.comment || '',
+  user: approval?.user,
+  role: approval?.role,
+  comment: approval?.comment ?? '',
 });
 
 /**
@@ -301,7 +299,7 @@ const formStepsToRemediationInstructionSteps = steps => steps.map(step => ({
  * @returns {RemediationInstructionApprovalRequest | undefined}
  */
 const formApprovalToRemediationInstructionApproval = (approval) => {
-  if (!approval.need_approve) {
+  if (!approval.comment) {
     return undefined;
   }
 
