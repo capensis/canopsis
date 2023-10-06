@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`storage-settings-health-check-form Renders \`storage-settings-health-check-form\` with custom form and history 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        Healthcheck data storage
+      </div>
+      <!---->
+    </div>
+    <div
+      class="layout mt-2 row"
+    >
+      <span
+        class="text--secondary"
+      >
+        <storage-settings-history-message-stub
+          history="1611240000"
+        />
+      </span>
+    </div>
+    <c-enabled-duration-field-stub
+      label="Delete FIFO incoming flow data after"
+      name="health_check.delete_after"
+      value="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`storage-settings-health-check-form Renders \`storage-settings-health-check-form\` with default form 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout c-information-block column"
+  >
+    <div
+      class="layout row"
+    >
+      <div
+        class="subheading font-weight-bold"
+      >
+        Healthcheck data storage
+      </div>
+      <!---->
+    </div>
+    <!---->
+    <c-enabled-duration-field-stub
+      label="Delete FIFO incoming flow data after"
+      name="health_check.delete_after"
+      value="[object Object]"
+    />
+  </div>
+</div>
+`;

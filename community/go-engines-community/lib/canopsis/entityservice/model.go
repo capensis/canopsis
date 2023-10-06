@@ -8,24 +8,8 @@ import (
 
 type EntityService struct {
 	types.Entity   `bson:",inline"`
-	OutputTemplate string        `bson:"output_template" json:"output_template"`
-	Counters       AlarmCounters `bson:"counters" json:"counters"`
+	OutputTemplate string `bson:"output_template" json:"output_template"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	OldEntityPatterns                oldpattern.EntityPatternList `bson:"old_entity_patterns,omitempty" json:"old_entity_patterns,omitempty"`
-}
-
-// GetServiceState returns the state of the service.
-func GetServiceState(counters AlarmCounters) int {
-	if counters.State.Critical > 0 {
-		return types.AlarmStateCritical
-	}
-	if counters.State.Major > 0 {
-		return types.AlarmStateMajor
-	}
-	if counters.State.Minor > 0 {
-		return types.AlarmStateMinor
-	}
-
-	return types.AlarmStateOK
 }

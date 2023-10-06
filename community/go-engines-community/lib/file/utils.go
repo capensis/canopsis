@@ -1,6 +1,7 @@
 package file
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -104,4 +105,47 @@ func CopyFile(src, dest string) (resErr error) {
 	}
 
 	return nil
+}
+
+// DirHasReadableFiles returns false when input directories don't have any file that can be open for read
+func DirHasReadableFiles(ctx context.Context, paths []string) bool {
+	result := false
+	for _, p := range paths {
+		fi, err := os.Stat(p)
+		if err != nil || !fi.IsDir() {
+			continue
+		}
+		files, err := os.ReadDir(p)
+		if err != nil {
+			continue
+		}
+		for _, dirEntry := range files {
+			if dirEntry.IsDir() {
+				continue
+			}
+			file, err := os.Open(filepath.Join(p, dirEntry.Name()))
+			if err != nil {
+				continue
+			}
+			err = file.Close()
+			if err == nil {
+				result = true
+				break
+			}
+			select {
+			case <-ctx.Done():
+				return result
+			default:
+			}
+		}
+		if result {
+			break
+		}
+		select {
+		case <-ctx.Done():
+			return result
+		default:
+		}
+	}
+	return result
 }

@@ -196,20 +196,22 @@ class Socket {
    * Join to a room
    *
    * @param {string} room
+   * @param {Object} [data = {}]
    * @param {boolean} [authNeeded = true]
    * @returns {SocketRoom}
    */
-  join(room, authNeeded = true) {
+  join(room, data = {}, authNeeded = true) {
     if (!this.rooms[room]) {
-      this.rooms[room] = new SocketRoom(room, authNeeded);
+      this.rooms[room] = new SocketRoom(room, data, authNeeded);
+
+      this.send({
+        room,
+        data,
+        type: REQUEST_MESSAGES_TYPES.join,
+      }, authNeeded);
     } else {
       this.rooms[room].increment();
     }
-
-    this.send({
-      room,
-      type: REQUEST_MESSAGES_TYPES.join,
-    }, authNeeded);
 
     return this.rooms[room];
   }
@@ -228,13 +230,13 @@ class Socket {
 
       if (!socketRoom.count) {
         delete this.rooms[room];
+
+        this.send({
+          room,
+          type: REQUEST_MESSAGES_TYPES.leave,
+        });
       }
     }
-
-    this.send({
-      room,
-      type: REQUEST_MESSAGES_TYPES.leave,
-    });
 
     return socketRoom ?? new SocketRoom(room);
   }
@@ -331,7 +333,6 @@ class Socket {
 
     this.reconnectingTimeout = setTimeout(() => {
       this.reconnect();
-      this.startReconnecting();
     }, RECONNECT_INTERVAL);
   }
 
@@ -342,7 +343,7 @@ class Socket {
     Object.entries(this.rooms).forEach(([name, room]) => {
       room.decrement();
 
-      this.join(name, room.authNeeded);
+      this.join(name, room.data, room.authNeeded);
     });
 
     return this;
@@ -387,7 +388,6 @@ class Socket {
    */
   stopReconnecting() {
     this.reconnecting = false;
-    this.reconnectsCount = 0;
 
     clearTimeout(this.reconnectingTimeout);
   }
@@ -396,6 +396,7 @@ class Socket {
    * Base handler for 'open' event
    */
   baseOpenHandler() {
+    this.reconnectsCount = 0;
     this.stopReconnecting();
 
     if (this.token) {
@@ -435,10 +436,6 @@ class Socket {
 
     this.authenticated = false;
 
-    if (this.reconnecting) {
-      return;
-    }
-
     this.stopReconnecting();
     this.startReconnecting();
   }
@@ -456,7 +453,6 @@ class Socket {
         this.lastPongedAt = Date.now();
         break;
       case RESPONSE_MESSAGES_TYPES.ok:
-        // eslint-disable-next-line no-unused-expressions
         this.rooms[room]?.call(null, msg);
         break;
       case RESPONSE_MESSAGES_TYPES.error:

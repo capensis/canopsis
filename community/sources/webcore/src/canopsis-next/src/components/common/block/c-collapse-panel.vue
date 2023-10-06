@@ -6,7 +6,8 @@
       :lazy="lazy"
     )
       template(#actions="")
-        v-icon(color="white") {{ icon }}
+        slot(name="actions")
+          v-icon(color="white") {{ icon }}
       template(#header="")
         slot(name="header")
           span.white--text {{ title }}

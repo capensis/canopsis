@@ -4,12 +4,18 @@
       template(#title="")
         span {{ $t('modals.createDeclareTicketEvent.title') }}
       template(#text="")
+        c-enabled-field(
+          v-if="config.items.length > 1",
+          v-model="singleMode",
+          :label="$t('declareTicket.oneTicketForAlarms')"
+        )
         declare-ticket-events-form(
           v-model="form",
           :alarms="config.items",
           :tickets-by-alarms="config.ticketsByAlarms",
           :alarms-by-tickets="config.alarmsByTickets",
-          :hide-ticket-resource="!isAllComponentAlarms"
+          :hide-ticket-resource="!isAllComponentAlarms",
+          :single-mode="singleMode"
         )
       template(#actions="")
         v-btn(
@@ -27,7 +33,10 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { alarmsToDeclareTicketEventForm, formToDeclareTicketEvents } from '@/helpers/entities/declare-ticket/event/form';
+import {
+  alarmsToDeclareTicketEventForm,
+  formToDeclareTicketEvents,
+} from '@/helpers/entities/declare-ticket/event/form';
 import { isEntityComponentType } from '@/helpers/entities/entity/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
@@ -57,6 +66,7 @@ export default {
     const { alarmsByTickets } = this.modal.config;
 
     return {
+      singleMode: false,
       form: alarmsToDeclareTicketEventForm(alarmsByTickets),
     };
   },
@@ -71,7 +81,7 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToDeclareTicketEvents(this.form));
+          await this.config.action(formToDeclareTicketEvents(this.form, this.singleMode), this.singleMode);
         }
 
         this.$modals.hide();

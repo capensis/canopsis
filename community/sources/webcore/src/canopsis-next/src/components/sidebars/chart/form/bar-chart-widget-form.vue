@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(column)
     field-title(v-field="form.title", :required="requiredTitle")
-    field-periodic-refresh(v-if="withPeriodicRefresh", v-field="form.parameters.periodic_refresh")
+    field-periodic-refresh(v-if="withPeriodicRefresh", v-field="form.parameters")
     field-preset(v-if="withPreset", v-field="form.parameters", :type="form.type")
     widget-settings-group(:title="$t('settings.chart.metricsDisplay')")
       field-alarm-metric-presets(

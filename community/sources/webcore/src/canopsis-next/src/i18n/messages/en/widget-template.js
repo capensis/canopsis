@@ -5,6 +5,7 @@ export default {
     [WIDGET_TEMPLATES_TYPES.alarmColumns]: 'General : Alarms columns',
     [WIDGET_TEMPLATES_TYPES.entityColumns]: 'General : Entities columns',
     [WIDGET_TEMPLATES_TYPES.alarmMoreInfos]: 'Alarm list : More Infos template',
+    [WIDGET_TEMPLATES_TYPES.alarmExportToPdf]: 'Alarm list : Export to PDF template',
     [WIDGET_TEMPLATES_TYPES.weatherItem]: 'Service Weather : Tile template',
     [WIDGET_TEMPLATES_TYPES.weatherModal]: 'Service Weather : Modal template',
     [WIDGET_TEMPLATES_TYPES.weatherEntity]: 'Service Weather : Entity template',

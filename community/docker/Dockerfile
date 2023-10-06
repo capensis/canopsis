@@ -14,7 +14,9 @@ ENV http_proxy ${PROXY}
 ENV https_proxy ${PROXY}
 
 COPY docker/build/build-${CANOPSIS_DISTRIBUTION}.sh /build.sh
+COPY docker/build/build-python3-${CANOPSIS_DISTRIBUTION}.sh /build-python3.sh
 RUN /bin/bash /build.sh
+RUN /build-python3.sh
 
 WORKDIR ${CPS_HOME}
 
@@ -43,8 +45,6 @@ RUN ln -s ${CPS_HOME}/bin/canoctl /usr/bin/canoctl
 COPY sources/webcore /sources/webcore
 RUN mkdir -p ${CPS_HOME}/var/www && rsync -a /sources/webcore/ ${CPS_HOME}/var/www/
 
-COPY VERSION.txt /${CPS_HOME}/
-
 ## Canopsis Core Image
 FROM canopsis/canopsis-sysbase:${CANOPSIS_DISTRIBUTION}-${CANOPSIS_TAG}
 
@@ -55,6 +55,8 @@ ENV https_proxy ${PROXY}
 ENV CPS_OLD_API 0
 
 COPY --from=build /${CPS_HOME} /${CPS_HOME}
+COPY --from=build /opt/python /opt/python
+COPY --from=build /usr/bin/python3 /usr/bin/python3
 
 WORKDIR ${CPS_HOME}
 
@@ -68,7 +70,7 @@ COPY docker/files/sudoers /etc/sudoers.d/canopsis
 COPY docker/files/bashrc .bashrc
 COPY docker/files/bash_profile .bash_profile
 COPY docker/files/etc/ ./etc/
-COPY sources/canopsis/canopsis/webcore/services/swagger/ ./lib/python2.7/site-packages/canopsis/webcore/services/swagger/
+COPY sources/canopsis/canopsis/webcore/services/swagger/ ./lib/python3/site-packages/canopsis/webcore/services/swagger/
 
 RUN chmod +x /opt/canopsis/.bash_profile
 

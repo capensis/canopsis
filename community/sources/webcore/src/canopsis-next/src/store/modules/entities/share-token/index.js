@@ -1,12 +1,8 @@
 import { API_ROUTES } from '@/config';
-import { ENTITIES_TYPES } from '@/constants';
 
-import { createEntityModule } from '@/store/plugins/entities';
+import { createCRUDModule } from '@/store/plugins/entities';
 
-export default createEntityModule({
+export default createCRUDModule({
   route: API_ROUTES.shareTokens,
-  entityType: ENTITIES_TYPES.shareToken,
-  dataPreparer: d => d.data,
   withFetchingParams: true,
-  withMeta: true,
 });

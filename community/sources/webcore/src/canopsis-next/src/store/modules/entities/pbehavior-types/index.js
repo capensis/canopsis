@@ -1,11 +1,10 @@
 import Vue from 'vue';
 
 import { API_ROUTES } from '@/config';
-import { ENTITIES_TYPES } from '@/constants';
 
 import request from '@/services/request';
 
-import { createEntityModule } from '@/store/plugins/entities';
+import { createCRUDModule } from '@/store/plugins/entities';
 
 const types = {
   FETCH_FIELD_LIST: 'FETCH_FIELD_LIST',
@@ -13,12 +12,10 @@ const types = {
   FETCH_FIELD_LIST_FAILED: 'FETCH_FIELD_LIST_FAILED',
 };
 
-export default createEntityModule({
+export default createCRUDModule({
   route: API_ROUTES.pbehavior.types,
-  entityType: ENTITIES_TYPES.pbehaviorTypes,
-  dataPreparer: d => d.data,
   withFetchingParams: true,
-  withMeta: true,
+  withWithoutStore: true,
 }, {
   state: {
     field: {},
@@ -39,10 +36,6 @@ export default createEntityModule({
     },
   },
   actions: {
-    fetchListWithoutStore(context, { params }) {
-      return request.get(API_ROUTES.pbehavior.types, { params });
-    },
-
     fetchNextPriority() {
       return request.get(API_ROUTES.pbehavior.nextTypesPriority);
     },

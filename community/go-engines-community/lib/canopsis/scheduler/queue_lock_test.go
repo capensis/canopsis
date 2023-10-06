@@ -3,21 +3,22 @@ package scheduler_test
 import (
 	"bytes"
 	"context"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
-	mock_v8 "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/go-redis/redis/v8"
-	"github.com/go-redis/redis/v8"
-	"github.com/golang/mock/gomock"
-	"github.com/rs/zerolog"
 	"testing"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
+	mock_redis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/redis/go-redis/v9"
+	"github.com/golang/mock/gomock"
+	"github.com/redis/go-redis/v9"
+	"github.com/rs/zerolog"
 )
 
 func TestQueueLock_LockOrPush_GivenLockIsNotSet_ShouldSetLock(t *testing.T) {
 	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	lockClient := mock_v8.NewMockCmdable(ctrl)
-	queueClient := mock_v8.NewMockCmdable(ctrl)
+	lockClient := mock_redis.NewMockCmdable(ctrl)
+	queueClient := mock_redis.NewMockCmdable(ctrl)
 	logger := zerolog.Nop()
 	lockExpirationTime := time.Second
 	queueLock := scheduler.NewQueueLock(
@@ -50,8 +51,8 @@ func TestQueueLock_LockOrPush_GivenLockIsNotSet_ShouldNotAddItemToQueue(t *testi
 	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	lockClient := mock_v8.NewMockCmdable(ctrl)
-	queueClient := mock_v8.NewMockCmdable(ctrl)
+	lockClient := mock_redis.NewMockCmdable(ctrl)
+	queueClient := mock_redis.NewMockCmdable(ctrl)
 	logger := zerolog.Nop()
 	queueLock := scheduler.NewQueueLock(
 		lockClient,
@@ -79,8 +80,8 @@ func TestQueueLock_LockOrPush_GivenLockIsSet_ShouldAddItemToQueue(t *testing.T) 
 	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	lockClient := mock_v8.NewMockCmdable(ctrl)
-	queueClient := mock_v8.NewMockCmdable(ctrl)
+	lockClient := mock_redis.NewMockCmdable(ctrl)
+	queueClient := mock_redis.NewMockCmdable(ctrl)
 	logger := zerolog.Nop()
 	queueLock := scheduler.NewQueueLock(
 		lockClient,
@@ -117,8 +118,8 @@ func TestQueueLock_PopOrUnlock_GivenLockIsSetAndQueueIsNotEmpty_ShouldReturnNext
 	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	lockClient := mock_v8.NewMockCmdable(ctrl)
-	queueClient := mock_v8.NewMockCmdable(ctrl)
+	lockClient := mock_redis.NewMockCmdable(ctrl)
+	queueClient := mock_redis.NewMockCmdable(ctrl)
 	logger := zerolog.Nop()
 	lockExpirationTime := time.Second
 	queueLock := scheduler.NewQueueLock(
@@ -157,8 +158,8 @@ func TestQueueLock_PopOrUnlock_GivenLockIsNotSet_ShouldNotReturnNextItem(t *test
 	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	lockClient := mock_v8.NewMockCmdable(ctrl)
-	queueClient := mock_v8.NewMockCmdable(ctrl)
+	lockClient := mock_redis.NewMockCmdable(ctrl)
+	queueClient := mock_redis.NewMockCmdable(ctrl)
 	logger := zerolog.Nop()
 	queueLock := scheduler.NewQueueLock(
 		lockClient,
@@ -198,8 +199,8 @@ func TestQueueLock_PopOrUnlock_GivenLockIsSetAndQueueIsEmpty_ShouldNotReturnNext
 	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	lockClient := mock_v8.NewMockCmdable(ctrl)
-	queueClient := mock_v8.NewMockCmdable(ctrl)
+	lockClient := mock_redis.NewMockCmdable(ctrl)
+	queueClient := mock_redis.NewMockCmdable(ctrl)
 	logger := zerolog.Nop()
 	queueLock := scheduler.NewQueueLock(
 		lockClient,
@@ -240,8 +241,8 @@ func TestQueueLock_PopOrUnlock_GivenLockIsSetAndQueueIsEmpty_ShouldDeleteLock(t 
 	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	lockClient := mock_v8.NewMockCmdable(ctrl)
-	queueClient := mock_v8.NewMockCmdable(ctrl)
+	lockClient := mock_redis.NewMockCmdable(ctrl)
+	queueClient := mock_redis.NewMockCmdable(ctrl)
 	logger := zerolog.Nop()
 	queueLock := scheduler.NewQueueLock(
 		lockClient,
@@ -274,8 +275,8 @@ func TestQueueLock_LockAndPop_GivenLockIsNotSetAndQueueIsNotEmpty_ShouldReturnNe
 	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	lockClient := mock_v8.NewMockCmdable(ctrl)
-	queueClient := mock_v8.NewMockCmdable(ctrl)
+	lockClient := mock_redis.NewMockCmdable(ctrl)
+	queueClient := mock_redis.NewMockCmdable(ctrl)
 	logger := zerolog.Nop()
 	lockExpirationTime := time.Second
 	queueLock := scheduler.NewQueueLock(
@@ -314,8 +315,8 @@ func TestQueueLock_LockAndPop_GivenLockIsSet_ShouldNotReturnNextItem(t *testing.
 	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	lockClient := mock_v8.NewMockCmdable(ctrl)
-	queueClient := mock_v8.NewMockCmdable(ctrl)
+	lockClient := mock_redis.NewMockCmdable(ctrl)
+	queueClient := mock_redis.NewMockCmdable(ctrl)
 	logger := zerolog.Nop()
 	queueLock := scheduler.NewQueueLock(
 		lockClient,
@@ -350,8 +351,8 @@ func TestQueueLock_LockAndPop_GivenLockIsNotSetAndQueueIsEmpty_ShouldNotReturnNe
 	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	lockClient := mock_v8.NewMockCmdable(ctrl)
-	queueClient := mock_v8.NewMockCmdable(ctrl)
+	lockClient := mock_redis.NewMockCmdable(ctrl)
+	queueClient := mock_redis.NewMockCmdable(ctrl)
 	logger := zerolog.Nop()
 	queueLock := scheduler.NewQueueLock(
 		lockClient,
@@ -392,8 +393,8 @@ func TestQueueLock_LockAndPop_GivenLockIsNotSetAndQueueIsEmpty_ShouldDeleteLock(
 	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	lockClient := mock_v8.NewMockCmdable(ctrl)
-	queueClient := mock_v8.NewMockCmdable(ctrl)
+	lockClient := mock_redis.NewMockCmdable(ctrl)
+	queueClient := mock_redis.NewMockCmdable(ctrl)
 	logger := zerolog.Nop()
 	queueLock := scheduler.NewQueueLock(
 		lockClient,

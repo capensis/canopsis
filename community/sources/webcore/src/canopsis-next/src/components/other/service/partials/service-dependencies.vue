@@ -52,12 +52,7 @@
 import { get, uniq } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
-import {
-  MODALS,
-  ENTITY_TYPES,
-  ENTITY_FIELDS,
-  COLOR_INDICATOR_TYPES,
-} from '@/constants';
+import { MODALS, ENTITY_TYPES, ENTITY_FIELDS, COLOR_INDICATOR_TYPES } from '@/constants';
 
 import { getIconByEntityType } from '@/helpers/entities/entity/icons';
 import { getEntityColor } from '@/helpers/entities/entity/color';

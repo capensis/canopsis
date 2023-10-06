@@ -219,7 +219,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with array value 2`] = `
 
 exports[`c-entity-field Renders \`c-entity-field\` with custom props 1`] = `
 <div
-  class="v-input c-select-field c-lazy-search-field v-text-field v-select v-autocomplete v-input--is-label-active v-input--is-dirty v-input--is-focused theme--light primary--text"
+  class="v-input c-select-field c-lazy-search-field v-text-field v-select v-autocomplete v-input--is-label-active v-input--is-dirty v-input--is-disabled theme--light"
   items="[object Object],[object Object],[object Object]"
   loading="true"
   search="Text 2"
@@ -235,7 +235,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 1`] = `
       >
         <label
           aria-hidden="true"
-          class="v-label v-label--active theme--light primary--text"
+          class="v-label v-label--active v-label--is-disabled theme--light"
           style="left: 0px; position: absolute;"
         >
           Custom label
@@ -247,6 +247,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 1`] = `
           <input
             aria-label="Custom label"
             autocomplete="off"
+            disabled="disabled"
             name="customName"
             role="combobox"
             type="text"
@@ -260,7 +261,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 1`] = `
           >
             <i
               aria-hidden="true"
-              class="v-icon material-icons theme--light primary--text"
+              class="v-icon v-icon--disabled material-icons theme--light"
             >
               arrow_drop_down
             </i>
@@ -275,7 +276,7 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 1`] = `
       class="v-text-field__details"
     >
       <div
-        class="v-messages theme--light primary--text"
+        class="v-messages theme--light"
       >
         <transition-group-stub
           class="v-messages__wrapper"
@@ -301,61 +302,21 @@ exports[`c-entity-field Renders \`c-entity-field\` with custom props 2`] = `
       role="list"
     >
       <div
-        class="c-lazy-search-field--tile"
         role="listitem"
       >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
+        <div
+          class="v-list__tile theme--light"
         >
           <div
             class="v-list__tile__content"
           >
-            Text
+            <div
+              class="v-list__tile__title"
+            >
+              No data available
+            </div>
           </div>
-          <span
-            class="ml-4 grey--text"
-          >
-            type1
-          </span>
-        </a>
-      </div>
-      <div
-        class="c-lazy-search-field--tile"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            Text 2
-          </div>
-          <span
-            class="ml-4 grey--text"
-          >
-            type2
-          </span>
-        </a>
-      </div>
-      <div
-        class="c-lazy-search-field--tile"
-        role="listitem"
-      >
-        <a
-          class="v-list__tile v-list__tile--link theme--light"
-        >
-          <div
-            class="v-list__tile__content"
-          >
-            Text 3
-          </div>
-          <span
-            class="ml-4 grey--text"
-          >
-            type3
-          </span>
-        </a>
+        </div>
       </div>
       <div
         class="c-lazy-search-field__append"

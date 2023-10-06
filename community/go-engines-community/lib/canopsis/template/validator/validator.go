@@ -40,6 +40,7 @@ type RegexpInfo struct {
 type Validator interface {
 	ValidateDeclareTicketRuleTemplate(s string) (bool, *ErrReport, []WrnReport, error)
 	ValidateScenarioTemplate(s string) (bool, *ErrReport, []WrnReport, error)
+	ValidateEventFilterRuleTemplate(s string) (bool, *ErrReport, []WrnReport, error)
 }
 
 type validator struct {
@@ -50,6 +51,7 @@ type validator struct {
 
 	declareTicketTplDataKeys []string
 	scenarioTplDataKeys      []string
+	eventFilterTplDataKeys   []string
 
 	warningOutOfBlockRegex *regexp.Regexp
 }
@@ -119,6 +121,12 @@ func NewValidator(timezoneConfigProvider config.TimezoneConfigProvider) Validato
 			// for range children case
 			".Value",
 		},
+		eventFilterTplDataKeys: []string{
+			"." + libtemplate.EnvVar,
+			".Event",
+			".RegexMatch",
+			".ExternalData",
+		},
 		warningOutOfBlockRegex: regexp.MustCompile(`\{{2}[^\}]*\}{2}`),
 	}
 }
@@ -154,6 +162,10 @@ func (v *validator) ValidateDeclareTicketRuleTemplate(s string) (bool, *ErrRepor
 
 func (v *validator) ValidateScenarioTemplate(s string) (bool, *ErrReport, []WrnReport, error) {
 	return v.validate(s, v.scenarioTplDataKeys)
+}
+
+func (v *validator) ValidateEventFilterRuleTemplate(s string) (bool, *ErrReport, []WrnReport, error) {
+	return v.validate(s, v.eventFilterTplDataKeys)
 }
 
 func (v *validator) validate(s string, tplKeys []string) (bool, *ErrReport, []WrnReport, error) {

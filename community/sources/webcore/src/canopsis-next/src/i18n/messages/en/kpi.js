@@ -1,8 +1,4 @@
-import {
-  ALARM_METRIC_PARAMETERS,
-  USER_METRIC_PARAMETERS,
-  AGGREGATE_FUNCTIONS,
-} from '@/constants';
+import { ALARM_METRIC_PARAMETERS, USER_METRIC_PARAMETERS, AGGREGATE_FUNCTIONS } from '@/constants';
 
 export default {
   alarmMetrics: 'Alarm metrics',

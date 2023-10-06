@@ -1,15 +1,11 @@
 import { API_ROUTES } from '@/config';
-import { ENTITIES_TYPES } from '@/constants';
 
 import request from '@/services/request';
 
-import { createEntityModule } from '@/store/plugins/entities';
+import { createCRUDModule } from '@/store/plugins/entities';
 
-export default createEntityModule({
+export default createCRUDModule({
   route: API_ROUTES.declareTicket.rules,
-  entityType: ENTITIES_TYPES.declareTicketRule,
-  dataPreparer: d => d.data,
-  withMeta: true,
 }, {
   actions: {
     bulkRemove(context, { data }) {

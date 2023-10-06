@@ -87,7 +87,7 @@ type Adapter interface {
 
 	FindToCheckPbehaviorInfo(ctx context.Context, createdBefore types.CpsTime, idsWithPbehaviors []string) (mongo.Cursor, error)
 
-	GetWorstAlarmState(ctx context.Context, entityIds []string) (int64, error)
+	GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context, entityIds []string) (int64, int64, error)
 
 	UpdateLastEventDate(ctx context.Context, entityIds []string, t types.CpsTime) error
 }
@@ -101,12 +101,14 @@ type EventProcessor interface {
 }
 
 type MetaAlarmEventProcessor interface {
-	// Process handles related meta alarm parents and children after alarm change.
-	Process(ctx context.Context, event types.Event) error
 	// ProcessAxeRpc handles related meta alarm parents and children after alarm change.
 	ProcessAxeRpc(ctx context.Context, event rpc.AxeEvent, eventRes rpc.AxeResultEvent) error
 	// CreateMetaAlarm creates meta alarm by event.
-	CreateMetaAlarm(ctx context.Context, event types.Event) (*types.Alarm, error)
+	CreateMetaAlarm(ctx context.Context, event rpc.AxeEvent) (*types.Alarm, []types.Alarm, error)
+	// AttachChildrenToMetaAlarm attaches children to meta alarm by event.
+	AttachChildrenToMetaAlarm(ctx context.Context, event rpc.AxeEvent) (*types.Alarm, []types.Alarm, []types.Event, error)
+	// DetachChildrenFromMetaAlarm detaches children from meta alarm by event.
+	DetachChildrenFromMetaAlarm(ctx context.Context, event rpc.AxeEvent) (*types.Alarm, error)
 }
 
 type Service interface {

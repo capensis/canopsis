@@ -1,9 +1,9 @@
 <template lang="pug">
-  v-list-group
+  v-list-group.widget-settings-group
     template(#activator="")
       v-list-tile
         div(:class="validationHeaderClass") {{ title }}
-    v-list.grey.px-2.py-0(:class="{ 'darken-2': $vuetify.dark, 'lighten-4': !$vuetify.dark }", expand)
+    v-list.px-2.py-0.background.darken-1(expand)
       slot
 </template>
 

@@ -102,6 +102,14 @@ export default {
     title: 'Maps',
     message: '', // TODO: add correct message
   },
+  [USERS_PERMISSIONS.technical.maintenance]: {
+    title: 'Maintenance mode',
+    message: '', // TODO: add correct message
+  },
+  [USERS_PERMISSIONS.technical.tag]: {
+    title: 'Tags management',
+    message: '', // TODO: add correct message
+  },
 
   /**
    * Admin general
@@ -124,5 +132,13 @@ export default {
   [USERS_PERMISSIONS.technical.notification.instructionStats]: {
     title: 'Instruction rating',
     message: 'This page contains the statistics on the instructions execution. Users can rate instructions based on their performance.',
+  },
+
+  /**
+   * Profile
+   */
+  [USERS_PERMISSIONS.technical.profile.theme]: {
+    title: 'Theme',
+    message: '', // TODO: add correct message
   },
 };

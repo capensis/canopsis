@@ -6,20 +6,21 @@
         v-btn.ma-0.ml-3(icon, small, @click="close")
           v-icon(color="white") close
     v-card-text
-      c-runtime-template(
+      c-compiled-template(
         v-if="point.entity && template",
-        :template="compiledTemplate"
+        :template="template",
+        :context="templateContext"
       )
       v-layout(v-else, column)
         span(v-if="point.entity") {{ $tc('common.entity') }}: {{ point.entity.name }}
         span(v-if="point.map") {{ $tc('common.map') }}: {{ point.map.name }}
-    v-layout.ma-0.point-popup__actions(v-if="actions")
+    v-layout.ma-0.background.darken-1(v-if="actions")
       v-btn.ma-0(
         v-if="hasAlarmsListAccess && point.entity",
         flat,
         block,
         @click.stop="$emit('show:alarms')"
-      ) {{ $t('serviceWeather.seeAlarms') }}
+      ) {{ $t('common.seeAlarms') }}
       v-btn.ma-0(
         v-if="point.map",
         flat,
@@ -33,10 +34,9 @@
 <script>
 import { isNumber } from 'lodash';
 
-import { COLORS } from '@/config';
+import { CSS_COLORS_VARS } from '@/config';
 import { USERS_PERMISSIONS } from '@/constants';
 
-import { compile } from '@/helpers/handlebars';
 import { getEntityColor } from '@/helpers/entities/entity/color';
 
 import { authMixin } from '@/mixins/auth';
@@ -64,22 +64,15 @@ export default {
       default: false,
     },
   },
-  asyncComputed: {
-    compiledTemplate: {
-      async get() {
-        const compiledTemplate = await compile(this.template, { entity: this.point.entity });
-
-        return `<div>${compiledTemplate}</div>`;
-      },
-      lazy: true,
-      default: '',
-    },
-  },
   computed: {
+    templateContext() {
+      return { entity: this.point.entity };
+    },
+
     color() {
       return isNumber(this.point.entity?.state)
         ? getEntityColor(this.point.entity, this.colorIndicator)
-        : COLORS.primary;
+        : CSS_COLORS_VARS.primary;
     },
 
     title() {
@@ -97,15 +90,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.point-popup {
-  &__actions {
-    background: #eee;
-
-    .theme--dark & {
-      background: #2f2f2f;
-    }
-  }
-}
-</style>

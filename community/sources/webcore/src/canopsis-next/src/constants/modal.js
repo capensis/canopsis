@@ -7,11 +7,7 @@ export const MODALS = {
   createChangeStateEvent: 'create-change-state-event',
   createSnoozeEvent: 'create-snooze-event',
   variablesHelp: 'variables-help',
-  createEntity: 'create-entity',
-  createService: 'create-service',
-  entityDependenciesList: 'entity-dependencies-list',
-  createEntityInfo: 'create-entity-info',
-  serviceEntities: 'service-entities',
+
   serviceDependencies: 'service-dependencies',
   createServicePauseEvent: 'create-service-pause-event',
   editLiveReporting: 'edit-live-reporting',
@@ -58,7 +54,6 @@ export const MODALS = {
   pbehaviorsCalendar: 'pbehaviors-calendar',
   pbehaviorRecurrenceRule: 'pbehavior-recurrence-rule',
   createRecurrenceRule: 'create-recurrence-rule',
-  selectExceptionsLists: 'select-exceptions-lists',
   pbehaviorRecurrentChangesConfirmation: 'pbehavior-recurrent-changes-confirmation',
   createPbehavior: 'create-pbehavior',
   createPbehaviorType: 'create-pbehavior-type',
@@ -103,4 +98,17 @@ export const MODALS = {
   executeDeclareTickets: 'execute-declare-tickets',
 
   createLinkRule: 'create-link-rule',
+
+  createMaintenance: 'create-maintenance',
+
+  createTag: 'create-tag',
+
+  createEntity: 'create-entity',
+  createService: 'create-service',
+  entityDependenciesList: 'entity-dependencies-list',
+  createEntityInfo: 'create-entity-info',
+  serviceEntities: 'service-entities',
+  entitiesList: 'entities-list',
+
+  createTheme: 'create-theme',
 };

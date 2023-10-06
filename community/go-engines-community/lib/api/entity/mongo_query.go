@@ -10,6 +10,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -61,7 +62,10 @@ func NewMongoQueryBuilder(client mongo.DbClient) *MongoQueryBuilder {
 }
 
 func (q *MongoQueryBuilder) clear(now types.CpsTime) {
-	q.entityMatch = []bson.M{{"$match": bson.M{"soft_deleted": bson.M{"$exists": false}}}}
+	q.entityMatch = []bson.M{{"$match": bson.M{
+		"soft_deleted": bson.M{"$exists": false},
+		"healthcheck":  bson.M{"$in": bson.A{nil, false}},
+	}}}
 	q.additionalMatch = make([]bson.M, 0)
 
 	q.lookupsForAdditionalMatch = make(map[string]bool)
@@ -86,6 +90,10 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	q.clear(now)
 
 	err := q.handleWidgetFilter(ctx, r.ListRequest, now)
+	if err != nil {
+		return nil, err
+	}
+	err = q.handleEntityPattern(r.ListRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -341,6 +349,29 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 
 			q.entityMatch = append(q.entityMatch, bson.M{"$match": query})
 		}
+	}
+
+	return nil
+}
+
+func (q *MongoQueryBuilder) handleEntityPattern(r ListRequest) error {
+	if r.EntityPattern == "" {
+		return nil
+	}
+
+	var entityPattern pattern.Entity
+	err := json.Unmarshal([]byte(r.EntityPattern), &entityPattern)
+	if err != nil {
+		return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
+	}
+
+	entityPatternQuery, err := entityPattern.ToMongoQuery("")
+	if err != nil {
+		return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
+	}
+
+	if len(entityPatternQuery) > 0 {
+		q.entityMatch = append(q.entityMatch, bson.M{"$match": entityPatternQuery})
 	}
 
 	return nil

@@ -59,6 +59,7 @@ Puis vous devez renseigner les différents paramètres d'authentification LDAP.
     default_role: Visualisation
     insecure_skip_verify: false
     max_tls_ver:
+    min_tls_ver:
 ```
 
 Définition des paramètres :
@@ -75,6 +76,7 @@ Définition des paramètres :
 | `default_role`    | Rôle Canopsis par défaut au moment de la première connexion   | `Visualisation`                                      |
 | `insecure_skip_verify` | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `true`   |
 | `max_tls_ver` (optionnel) | La version maximale de TLS qui est acceptable      | `tls10` ou `tls11` ou `tls12` ou `tls13`                        |
+| `min_tls_ver` (optionnel) | La version minimale de TLS qui est acceptable      | `tls10` ou `tls11` ou `tls12` ou `tls13`                        |
 
 Vous devez ensuite **obligatoirement** redémarrer le service API.
 
@@ -82,12 +84,12 @@ Vous devez ensuite **obligatoirement** redémarrer le service API.
 
 === "Canopsis Pro"
 	```sh
-	CPS_EDITION=pro docker-compose restart api
+	CPS_EDITION=pro docker compose restart api
 	```
 
 === "Canopsis Community"
 	```sh
-	CPS_EDITION=community docker-compose restart api
+	CPS_EDITION=community docker compose restart api
 	```
 
 * Installation Paquets
@@ -148,12 +150,12 @@ Vous devez ensuite **obligatoirement** redémarrer le service API.
 
 === "Canopsis Pro"
 	```sh
-	CPS_EDITION=pro docker-compose restart api
+	CPS_EDITION=pro docker compose restart api
 	```
 
 === "Canopsis Community"
 	```sh
-	CPS_EDITION=community docker-compose restart api
+	CPS_EDITION=community docker compose restart api
 	```
 
 * Installation Paquets
@@ -243,12 +245,12 @@ Vous devez ensuite **obligatoirement** redémarrer le service API.
 
 === "Canopsis Pro"
 	```sh
-	CPS_EDITION=pro docker-compose restart api
+	CPS_EDITION=pro docker compose restart api
 	```
 
 === "Canopsis Community"
 	```sh
-	CPS_EDITION=community docker-compose restart api
+	CPS_EDITION=community docker compose restart api
 	```
 
 * Installation Paquets
@@ -274,12 +276,12 @@ Redémarrer le service `api` de Canopsis
 * Installation via Docker Compose
 === "Canopsis Pro"
 	```sh
-	CPS_EDITION=pro docker-compose logs -f api
+	CPS_EDITION=pro docker compose logs -f api
 	```
 
 === "Canopsis Community"
 	```sh
-	CPS_EDITION=community docker-compose logs -f api
+	CPS_EDITION=community docker compose logs -f api
 	```
 
 * Installation Paquets
