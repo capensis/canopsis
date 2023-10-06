@@ -4,7 +4,6 @@
 
 <script>
 import { difference } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
 
 import { EVENT_ENTITY_TYPES, ALARM_LIST_ACTIONS_TYPES, BUSINESS_USER_PERMISSIONS_ACTIONS_MAP } from '@/constants';
 
@@ -18,8 +17,6 @@ import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alar
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 
 import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
-
-const { mapGetters: entitiesMapGetters } = createNamespacedHelpers('entities');
 
 /**
  * Panel regrouping mass actions icons
@@ -49,8 +46,6 @@ export default {
     },
   },
   computed: {
-    ...entitiesMapGetters({ getEntitiesList: 'getList' }),
-
     openedAlarms() {
       return this.items.filter(item => !isCancelledAlarmStatus(item) && !isClosedAlarmStatus(item));
     },

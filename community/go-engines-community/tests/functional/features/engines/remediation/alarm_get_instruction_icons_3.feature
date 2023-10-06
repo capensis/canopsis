@@ -331,10 +331,25 @@ Feature: update an instruction statistics
         "component": "test-component-to-alarm-instruction-get-icons-third-5",
         "resource": "test-resource-to-alarm-instruction-get-icons-third-5",
         "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-alarm-instruction-get-icons-third-5",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-icons-third-5",
+        "component": "test-component-to-alarm-instruction-get-icons-third-5",
+        "resource": "test-resource-to-alarm-instruction-get-icons-third-5",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-alarm-instruction-get-icons-third-5",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-icons-third-5",
+        "component": "test-component-to-alarm-instruction-get-icons-third-5",
+        "resource": "test-resource-to-alarm-instruction-get-icons-third-5",
+        "source_type": "resource"
       }
     ]
     """
-    When I wait 3s
     When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-third-5&with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
@@ -383,6 +398,14 @@ Feature: update an instruction statistics
     [
       {
         "event_type": "instructionstarted",
+        "connector": "test-connector-to-alarm-instruction-get-icons-third-6",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-icons-third-6",
+        "component": "test-component-to-alarm-instruction-get-icons-third-6",
+        "resource": "test-resource-to-alarm-instruction-get-icons-third-6",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
         "connector": "test-connector-to-alarm-instruction-get-icons-third-6",
         "connector_name": "test-connector-name-to-alarm-instruction-get-icons-third-6",
         "component": "test-component-to-alarm-instruction-get-icons-third-6",
@@ -497,6 +520,14 @@ Feature: update an instruction statistics
         "component": "test-component-to-alarm-instruction-get-icons-third-7",
         "resource": "test-resource-to-alarm-instruction-get-icons-third-7",
         "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-alarm-instruction-get-icons-third-7",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-icons-third-7",
+        "component": "test-component-to-alarm-instruction-get-icons-third-7",
+        "resource": "test-resource-to-alarm-instruction-get-icons-third-7",
+        "source_type": "resource"
       }
     ]
     """
@@ -561,6 +592,14 @@ Feature: update an instruction statistics
         "component": "test-component-to-alarm-instruction-get-icons-third-8",
         "resource": "test-resource-to-alarm-instruction-get-icons-third-8",
         "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-alarm-instruction-get-icons-third-8",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-icons-third-8",
+        "component": "test-component-to-alarm-instruction-get-icons-third-8",
+        "resource": "test-resource-to-alarm-instruction-get-icons-third-8",
+        "source_type": "resource"
       }
     ]
     """
@@ -590,10 +629,17 @@ Feature: update an instruction statistics
         "component": "test-component-to-alarm-instruction-get-icons-third-8",
         "resource": "test-resource-to-alarm-instruction-get-icons-third-8",
         "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
+        "connector": "test-connector-to-alarm-instruction-get-icons-third-8",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-icons-third-8",
+        "component": "test-component-to-alarm-instruction-get-icons-third-8",
+        "resource": "test-resource-to-alarm-instruction-get-icons-third-8",
+        "source_type": "resource"
       }
     ]
     """
-    When I wait 3s
     When I do GET /api/v4/alarms?search=test-resource-to-alarm-instruction-get-icons-third-8&with_instructions=true
     Then the response code should be 200
     Then the response body should contain:
@@ -641,6 +687,14 @@ Feature: update an instruction statistics
     [
       {
         "event_type": "instructionstarted",
+        "connector": "test-connector-to-alarm-instruction-get-icons-third-9",
+        "connector_name": "test-connector-name-to-alarm-instruction-get-icons-third-9",
+        "component": "test-component-to-alarm-instruction-get-icons-third-9",
+        "resource": "test-resource-to-alarm-instruction-get-icons-third-9",
+        "source_type": "resource"
+      },
+      {
+        "event_type": "trigger",
         "connector": "test-connector-to-alarm-instruction-get-icons-third-9",
         "connector_name": "test-connector-name-to-alarm-instruction-get-icons-third-9",
         "component": "test-component-to-alarm-instruction-get-icons-third-9",

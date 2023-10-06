@@ -2,17 +2,18 @@
 
 exports[`login Renders \`login\` with custom state 1`] = `
 <div
-  class="mainContainer secondary"
+  class="login"
 >
+  <!---->
   <div
-    class="description"
+    class="login__description"
   >
     <c-compiled-template-stub
       template="description"
     />
   </div>
   <div
-    class="loginContainer"
+    class="login__container"
   >
     <base-login-stub />
     <cas-login-stub
@@ -28,17 +29,18 @@ exports[`login Renders \`login\` with custom state 1`] = `
 
 exports[`login Renders \`login\` with default state 1`] = `
 <div
-  class="mainContainer secondary"
+  class="login"
 >
+  <!---->
   <div
-    class="description"
+    class="login__description"
   >
     <c-compiled-template-stub
       template=""
     />
   </div>
   <div
-    class="loginContainer"
+    class="login__container"
   >
     <base-login-stub />
     <!---->

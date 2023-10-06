@@ -125,27 +125,18 @@ export const ENTITIES_STATUSES = {
   noEvents: 5,
 };
 
-export const ENTITIES_STATES_STYLES = {
-  [ENTITIES_STATES.ok]: {
-    color: COLORS.state.ok,
-    text: 'ok',
-    icon: 'assistant_photo',
-  },
-  [ENTITIES_STATES.minor]: {
-    color: COLORS.state.minor,
-    text: 'minor',
-    icon: 'assistant_photo',
-  },
-  [ENTITIES_STATES.major]: {
-    color: COLORS.state.major,
-    text: 'major',
-    icon: 'assistant_photo',
-  },
-  [ENTITIES_STATES.critical]: {
-    color: COLORS.state.critical,
-    text: 'critical',
-    icon: 'assistant_photo',
-  },
+export const ENTITIES_STATES_STYLES_ICONS = {
+  [ENTITIES_STATES.ok]: 'assistant_photo',
+  [ENTITIES_STATES.minor]: 'assistant_photo',
+  [ENTITIES_STATES.major]: 'assistant_photo',
+  [ENTITIES_STATES.critical]: 'assistant_photo',
+};
+
+export const ENTITIES_STATES_STYLES_TEXT = {
+  [ENTITIES_STATES.ok]: 'ok',
+  [ENTITIES_STATES.minor]: 'minor',
+  [ENTITIES_STATES.major]: 'major',
+  [ENTITIES_STATES.critical]: 'critical',
 };
 
 export const SERVICE_STATES = {
@@ -154,13 +145,6 @@ export const SERVICE_STATES = {
   major: 'major',
   critical: 'critical',
   pause: 'pause',
-};
-
-export const SERVICE_STATES_COLORS = {
-  [SERVICE_STATES.ok]: ENTITIES_STATES_STYLES[ENTITIES_STATES.ok].color,
-  [SERVICE_STATES.minor]: ENTITIES_STATES_STYLES[ENTITIES_STATES.minor].color,
-  [SERVICE_STATES.major]: ENTITIES_STATES_STYLES[ENTITIES_STATES.major].color,
-  [SERVICE_STATES.critical]: ENTITIES_STATES_STYLES[ENTITIES_STATES.critical].color,
 };
 
 export const COUNTER_STATES_ICONS = {
@@ -181,37 +165,22 @@ export const WEATHER_ICONS = {
   [PBEHAVIOR_TYPE_TYPES.pause]: 'pause',
 };
 
-export const ENTITY_STATUS_STYLES = {
-  [ENTITIES_STATUSES.closed]: {
-    color: COLORS.status.closed,
-    text: 'closed',
-    icon: 'check_circle_outline',
-  },
-  [ENTITIES_STATUSES.ongoing]: {
-    color: COLORS.status.ongoing,
-    text: 'ongoing',
-    icon: 'warning',
-  },
-  [ENTITIES_STATUSES.stealthy]: {
-    color: COLORS.status.stealthy,
-    text: 'stealthy',
-    icon: 'swap_vert',
-  },
-  [ENTITIES_STATUSES.flapping]: {
-    color: COLORS.status.flapping,
-    text: 'flapping',
-    icon: 'swap_vert',
-  },
-  [ENTITIES_STATUSES.cancelled]: {
-    color: COLORS.status.cancelled,
-    text: 'cancelled',
-    icon: 'highlight_off',
-  },
-  [ENTITIES_STATUSES.noEvents]: {
-    color: COLORS.status.noEvents,
-    text: 'no events',
-    icon: 'sync_problem',
-  },
+export const ENTITIES_STATUSES_STYLES_ICONS = {
+  [ENTITIES_STATUSES.closed]: 'check_circle_outline',
+  [ENTITIES_STATUSES.ongoing]: 'warning',
+  [ENTITIES_STATUSES.stealthy]: 'swap_vert',
+  [ENTITIES_STATUSES.flapping]: 'swap_vert',
+  [ENTITIES_STATUSES.cancelled]: 'highlight_off',
+  [ENTITIES_STATUSES.noEvents]: 'sync_problem',
+};
+
+export const ENTITIES_STATUSES_STYLES_TEXT = {
+  [ENTITIES_STATUSES.closed]: 'closed',
+  [ENTITIES_STATUSES.ongoing]: 'ongoing',
+  [ENTITIES_STATUSES.stealthy]: 'stealthy',
+  [ENTITIES_STATUSES.flapping]: 'flapping',
+  [ENTITIES_STATUSES.cancelled]: 'cancelled',
+  [ENTITIES_STATUSES.noEvents]: 'no events',
 };
 
 export const WEATHER_ACTIONS_TYPES = {

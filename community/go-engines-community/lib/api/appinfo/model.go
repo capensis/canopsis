@@ -1,6 +1,9 @@
 package appinfo
 
-import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+)
 
 type VersionConf struct {
 	Edition string `json:"edition" bson:"edition"`
@@ -38,8 +41,10 @@ type RemediationConf struct {
 }
 
 type JobConfigType struct {
-	Name     string `json:"name"`
-	AuthType string `json:"auth_type"`
+	Name      string `json:"name"`
+	AuthType  string `json:"auth_type"`
+	WithBody  bool   `json:"with_body"`
+	WithQuery bool   `json:"with_query"`
 }
 
 type AppInfoResponse struct {
@@ -48,6 +53,9 @@ type AppInfoResponse struct {
 	VersionConf
 	Login       LoginConf        `json:"login"`
 	Remediation *RemediationConf `json:"remediation,omitempty"`
+
+	DefaultColorTheme colortheme.Theme `json:"default_color_theme"`
+	Maintenance       bool             `json:"maintenance"`
 }
 
 type LoginConf struct {

@@ -60,7 +60,13 @@ func (p *modelProvider) GetEnabledPbehaviors(ctx context.Context, span timespan.
 		{"$match": bson.M{
 			"enabled": true,
 			"$or": []bson.M{
-				{"rrule": bson.M{"$nin": bson.A{nil, ""}}},
+				{
+					"rrule": bson.M{"$nin": bson.A{nil, ""}},
+					"$or": []bson.M{
+						{"rrule_end": nil},
+						{"rrule_end": bson.M{"$gte": span.From().Unix()}},
+					},
+				},
 				{
 					"tstart": bson.M{"$lte": span.To().Unix()},
 					"$or": []bson.M{

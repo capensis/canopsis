@@ -1,10 +1,5 @@
 <template lang="pug">
   v-layout(column)
-    c-enabled-field(
-      v-if="alarms.length > 1",
-      v-model="singleMode",
-      :label="$t('declareTicket.oneTicketForAlarms')"
-    )
     c-information-block(v-if="!singleMode", :title="$t('declareTicket.applyRules')")
       declare-ticket-event-form(
         :form="commonValue",
@@ -76,11 +71,10 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  data() {
-    return {
-      singleMode: false,
-    };
+    singleMode: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     declareTicketFieldName() {

@@ -3,9 +3,9 @@ package oldpattern
 import (
 	"errors"
 	"fmt"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
@@ -110,7 +110,7 @@ func (p StringPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.RegexMatch.Set {
 		bsonFieldName, err := GetFieldBsonName(p, "RegexMatch", "regexmatch")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		return bson.MarshalValue(bson.M{
@@ -118,12 +118,12 @@ func (p StringPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		})
 	}
 
-	return bsontype.Undefined, nil, nil
+	return bson.TypeUndefined, nil, nil
 }
 
 func (p *StringPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
-	case bsontype.String:
+	case bson.TypeString:
 		value, _, ok := bsoncore.ReadString(b)
 		if !ok {
 			return errors.New("invalid value, expected string")
@@ -131,7 +131,7 @@ func (p *StringPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) er
 
 		p.Equal.Value = value
 		p.Equal.Set = true
-	case bsontype.EmbeddedDocument:
+	case bson.TypeEmbeddedDocument:
 		err := bson.Unmarshal(b, &p.StringConditions)
 		if err != nil {
 			return err
@@ -187,7 +187,7 @@ func (p StringRefPattern) Matches(value *string, matches *RegexMatches) bool {
 
 func (p StringRefPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.EqualNil {
-		return bsontype.Null, []byte{}, nil
+		return bson.TypeNull, []byte{}, nil
 	}
 
 	return p.StringPattern.MarshalBSONValue()
@@ -199,7 +199,7 @@ func (p StringRefPattern) IsSet() bool {
 
 func (p *StringRefPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
-	case bsontype.Null:
+	case bson.TypeNull:
 		p.EqualNil = true
 	default:
 		return p.StringPattern.UnmarshalBSONValue(valueType, b)

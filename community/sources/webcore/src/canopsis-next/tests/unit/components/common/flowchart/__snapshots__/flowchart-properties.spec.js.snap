@@ -12,9 +12,7 @@ exports[`flowchart-properties Renders \`flowchart-properties\` with all properti
     <div
       class="v-expansion-panel__header"
     >
-      <span
-        class="white"
-      >
+      <span>
         Properties
       </span>
       <transition-stub
@@ -113,9 +111,7 @@ exports[`flowchart-properties Renders \`flowchart-properties\` with lines 1`] = 
     <div
       class="v-expansion-panel__header"
     >
-      <span
-        class="white"
-      >
+      <span>
         Properties
       </span>
       <transition-stub

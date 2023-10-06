@@ -1,4 +1,3 @@
-import { THEMES_NAMES } from '@/config';
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
@@ -272,8 +271,12 @@ export default {
   hidden: 'Hidden',
   numberField: 'Number field',
   chart: 'Chart | Charts',
+  currentDate: 'Current date',
   chooseFile: 'Choose file',
   seeAlarms: 'See alarms',
+  seeEntities: 'See entities',
+  new: 'New',
+  regexp: 'Regexp',
   variableTypes: {
     string: 'String',
     number: 'Number',
@@ -292,6 +295,13 @@ export default {
     },
   },
   saveChanges: 'Save changes',
+  ordinals: {
+    first: 'First',
+    second: 'Second',
+    third: 'Third',
+    fourth: 'Fourth',
+    fifth: 'Fifth',
+  },
   times: {
     second: 'second | seconds',
     minute: 'minute | minutes',
@@ -492,12 +502,6 @@ export default {
     [TRIGGERS.autoinstructionresultfail]: {
       text: 'Alarm is in not OK state after all auto instructions',
     },
-  },
-  themes: {
-    [THEMES_NAMES.canopsis]: 'Canopsis',
-    [THEMES_NAMES.canopsisDark]: 'Canopsis dark',
-    [THEMES_NAMES.colorBlind]: 'Color blind',
-    [THEMES_NAMES.colorBlindDark]: 'Color blind dark',
   },
   request: {
     timeout: 'Timeout',

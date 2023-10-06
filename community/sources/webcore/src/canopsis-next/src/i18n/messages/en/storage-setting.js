@@ -22,11 +22,20 @@ export default {
   entity: {
     title: 'Entities data storage',
     titleHelp: 'All disabled entities with associated alarms can be archived (moved to the separate collection) and/or deleted forever.',
-    archiveEntity: 'Archive disabled entities',
-    deleteEntity: 'Delete disabled entities forever from archive',
     archiveDependencies: 'Remove the impacting and dependent entities as well',
     archiveDependenciesHelp: 'For connectors, all impacting and dependent components and resources will be archived or deleted forever. For components, all dependent resources will be archived or deleted forever as well.',
-    cleanStorage: 'Clean storage',
+    archiveDisabled: 'Archive disabled entities',
+  },
+  entityUnlinked: {
+    title: 'Unlinked entities storage',
+    titleHelp: 'All unlinked connectors, components and resources without alarms and updated long time ago can be archived.',
+    archiveBefore: 'Archive entities when no events received for',
+    archiveUnlinked: 'Archive unlinked entities',
+  },
+  entityArchived: {
+    title: 'Archived data storage',
+    titleHelp: 'All the archived entities can be deleted forever.',
+    cleanArchive: 'Clean archive',
   },
   pbehavior: {
     title: 'PBehavior data storage',
@@ -57,6 +66,12 @@ export default {
     titleHelp: 'When enabled, external metrics data will be deleted after the defined time period',
     deleteAfter: 'Clear metrics storage after',
     deleteAfterHelpText: 'All external metrics older than the defined time period will be deleted',
+  },
+  eventFilterFailure: {
+    title: 'Error messages data storage',
+    titleHelp: 'When enabled, error messages data will be deleted after the defined time period. However, all errors are available in logs.',
+    deleteAfter: 'Clear error messages older than',
+    deleteAfterHelpText: 'All error messages older than the defined time period will be deleted',
   },
   history: {
     scriptLaunched: 'Script launched at {launchedAt}.',

@@ -1401,6 +1401,16 @@ instruction:
     entity_pattern:
     alarm_pattern:
 
+  instruction_alarm_instruction_get_5_3:
+    <<: *instruction_manual
+    _id: test-instruction-to-alarm-instruction-get-5-3
+    enabled: false
+    old_entity_patterns:
+      - name: test-resource-to-alarm-instruction-get-5-1
+    old_alarm_patterns:
+    entity_pattern:
+    alarm_pattern:
+
   instruction_alarm_instruction_get_7:
     <<: *instruction_auto
     entity_pattern:
@@ -1453,13 +1463,12 @@ instruction:
 
   instruction_alarm_correlation_instruction_get_4_1:
     <<: *instruction_manual
-    enabled: false
-    _id: test-instruction-to-alarm-correlation-instruction-get-4-1
+    _id: test-instruction-correlation-alarm-get-instruction-get-4-1
     entity_pattern:
       - - field: name
           cond:
             type: regexp
-            value: test-resource-to-alarm-correlation-get-4-2
+            value: test-resource-correlation-alarm-get-4-2
     alarm_pattern:
 
   instruction_alarm_correlation_instruction_get_4_2:
@@ -1469,7 +1478,7 @@ instruction:
       - - field: name
           cond:
             type: regexp
-            value: test-resource-to-alarm-correlation-get-4-3
+            value: test-resource-correlation-alarm-get-4-3
     alarm_pattern:
 
   instruction_action_remediation_triggers_1:
@@ -2895,13 +2904,13 @@ instruction:
 
   instruction_correlation_get_alarms_6_1:
     <<: *instruction_manual
-    _id: test-instruction-to-alarm-correlation-get-6-1
-    name: test-instruction-to-alarm-correlation-get-6-1-name
+    _id: test-instruction-correlation-alarm-get-6-1
+    name: test-instruction-correlation-alarm-get-6-1-name
     entity_pattern:
       - - field: name
           cond:
             type: eq
-            value: test-resource-to-alarm-correlation-get-6-1
+            value: test-resource-correlation-alarm-get-6-1
     alarm_pattern:
     timeout_after_execution:
       value: 1
@@ -2909,13 +2918,13 @@ instruction:
 
   instruction_correlation_get_alarms_6_2:
     <<: *instruction_auto
-    _id: test-instruction-to-alarm-correlation-get-6-2
-    name: test-instruction-to-alarm-correlation-get-6-2-name
+    _id: test-instruction-correlation-alarm-get-6-2
+    name: test-instruction-correlation-alarm-get-6-2-name
     entity_pattern:
       - - field: name
           cond:
             type: eq
-            value: test-resource-to-alarm-correlation-get-6-2
+            value: test-resource-correlation-alarm-get-6-2
     alarm_pattern:
     jobs:
       - job: test-job-to-run-auto-instruction-1
@@ -2926,13 +2935,13 @@ instruction:
 
   instruction_correlation_get_alarms_6_3:
     <<: *instruction_auto
-    _id: test-instruction-to-alarm-correlation-get-6-3
-    name: test-instruction-to-alarm-correlation-get-6-3-name
+    _id: test-instruction-correlation-alarm-get-6-3
+    name: test-instruction-correlation-alarm-get-6-3-name
     entity_pattern:
       - - field: name
           cond:
             type: eq
-            value: test-resource-to-alarm-correlation-get-6-3
+            value: test-resource-correlation-alarm-get-6-3
     alarm_pattern:
     jobs:
       - job: test-job-to-run-auto-instruction-3
@@ -2943,13 +2952,13 @@ instruction:
 
   instruction_correlation_get_alarms_6_4:
     <<: *instruction_manual_simplified
-    _id: test-instruction-to-alarm-correlation-get-6-4
-    name: test-instruction-to-alarm-correlation-get-6-4-name
+    _id: test-instruction-correlation-alarm-get-6-4
+    name: test-instruction-correlation-alarm-get-6-4-name
     entity_pattern:
       - - field: name
           cond:
             type: eq
-            value: test-resource-to-alarm-correlation-get-6-4
+            value: test-resource-correlation-alarm-get-6-4
     alarm_pattern:
     jobs:
       - job: test-job-to-run-manual-simplified-instruction-1
@@ -2960,95 +2969,13 @@ instruction:
 
   instruction_correlation_get_alarms_6_5:
     <<: *instruction_manual_simplified
-    _id: test-instruction-to-alarm-correlation-get-6-5
-    name: test-instruction-to-alarm-correlation-get-6-5-name
+    _id: test-instruction-correlation-alarm-get-6-5
+    name: test-instruction-correlation-alarm-get-6-5-name
     entity_pattern:
       - - field: name
           cond:
             type: eq
-            value: test-resource-to-alarm-correlation-get-6-5
-    alarm_pattern:
-    jobs:
-      - job: test-job-to-run-manual-simplified-instruction-3
-        stop_on_fail: false
-    timeout_after_execution:
-      value: 1
-      unit: s
-
-  instruction_instruction_service_weather_entity_7_1:
-    <<: *instruction_manual
-    _id: test-instruction-service-weather-entity-7-1
-    name: test-instruction-service-weather-entity-7-1-name
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resource-service-weather-entity-7-1
-    alarm_pattern:
-    timeout_after_execution:
-      value: 1
-      unit: s
-
-  instruction_instruction_service_weather_entity_7_2:
-    <<: *instruction_auto
-    _id: test-instruction-service-weather-entity-7-2
-    name: test-instruction-service-weather-entity-7-2-name
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resource-service-weather-entity-7-2
-    alarm_pattern:
-    jobs:
-      - job: test-job-to-run-auto-instruction-1
-        stop_on_fail: false
-    timeout_after_execution:
-      value: 1
-      unit: s
-
-  instruction_instruction_service_weather_entity_7_3:
-    <<: *instruction_auto
-    _id: test-instruction-service-weather-entity-7-3
-    name: test-instruction-service-weather-entity-7-3-name
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resource-service-weather-entity-7-3
-    alarm_pattern:
-    jobs:
-      - job: test-job-to-run-auto-instruction-3
-        stop_on_fail: false
-    timeout_after_execution:
-      value: 1
-      unit: s
-
-  instruction_instruction_service_weather_entity_7_4:
-    <<: *instruction_manual_simplified
-    _id: test-instruction-service-weather-entity-7-4
-    name: test-instruction-service-weather-entity-7-4-name
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resource-service-weather-entity-7-4
-    alarm_pattern:
-    jobs:
-      - job: test-job-to-run-manual-simplified-instruction-1
-        stop_on_fail: false
-    timeout_after_execution:
-      value: 1
-      unit: s
-
-  instruction_instruction_service_weather_entity_7_5:
-    <<: *instruction_manual_simplified
-    _id: test-instruction-service-weather-entity-7-5
-    name: test-instruction-service-weather-entity-7-5-name
-    entity_pattern:
-      - - field: name
-          cond:
-            type: eq
-            value: test-resource-service-weather-entity-7-5
+            value: test-resource-correlation-alarm-get-6-5
     alarm_pattern:
     jobs:
       - job: test-job-to-run-manual-simplified-instruction-3
@@ -3316,6 +3243,88 @@ instruction:
     timeout_after_execution:
       unit: s
       value: 4
+
+  instruction_weather_services_instruction_5_1:
+    <<: *instruction_manual
+    _id: test-instruction-weather-services-instruction-5-1
+    name: test-instruction-weather-services-instruction-5-1-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-alarm-weather-widget-instructions-resource-5-1
+    alarm_pattern:
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_weather_services_instruction_5_2:
+    <<: *instruction_auto
+    _id: test-instruction-weather-services-instruction-5-2
+    name: test-instruction-weather-services-instruction-5-2-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-alarm-weather-widget-instructions-resource-5-2
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_weather_services_instruction_5_3:
+    <<: *instruction_auto
+    _id: test-instruction-weather-services-instruction-5-3
+    name: test-instruction-weather-services-instruction-5-3-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-alarm-weather-widget-instructions-resource-5-3
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-auto-instruction-3
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_weather_services_instruction_5_4:
+    <<: *instruction_manual_simplified
+    _id: test-instruction-weather-services-instruction-5-4
+    name: test-instruction-weather-services-instruction-5-4-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-alarm-weather-widget-instructions-resource-5-4
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-1
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
+
+  instruction_weather_services_instruction_5_5:
+    <<: *instruction_manual_simplified
+    _id: test-instruction-weather-services-instruction-5-5
+    name: test-instruction-weather-services-instruction-5-5-name
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: test-alarm-weather-widget-instructions-resource-5-5
+    alarm_pattern:
+    jobs:
+      - job: test-job-to-run-manual-simplified-instruction-3
+        stop_on_fail: false
+    timeout_after_execution:
+      value: 1
+      unit: s
 
   instruction_to_alarm_export_1:
     <<: *instruction_manual

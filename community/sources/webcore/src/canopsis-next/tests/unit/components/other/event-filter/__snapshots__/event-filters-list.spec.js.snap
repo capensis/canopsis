@@ -30,7 +30,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
       class="v-table__overflow"
     >
       <table
-        class="v-datatable v-table v-datatable--select-all theme--light"
+        class="v-datatable v-table v-datatable--expand v-datatable--select-all theme--light"
       >
         <thead>
           <tr>
@@ -124,6 +124,24 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               Enabled
             </th>
             <th
+              aria-label="Errors: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              data-value="unread_failures_count"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Errors
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
               aria-label="Author: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
@@ -203,7 +221,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           >
             <th
               class="column"
-              colspan="10"
+              colspan="11"
             >
               <div
                 aria-valuemax="100"
@@ -261,13 +279,16 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0
             </td>
             <td>
-              type-0
+              Drop
             </td>
             <td>
               -
             </td>
             <td>
               <c-enabled-stub />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-0
@@ -314,7 +335,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -337,7 +358,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-1
             </td>
             <td>
-              type-1
+              Break
             </td>
             <td>
               1
@@ -346,6 +367,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               <c-enabled-stub
                 value="true"
               />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-1
@@ -392,7 +416,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -415,13 +439,16 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-2
             </td>
             <td>
-              type-2
+              Enrichment
             </td>
             <td>
               2
             </td>
             <td>
               <c-enabled-stub />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-2
@@ -468,7 +495,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -491,7 +518,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-3
             </td>
             <td>
-              type-3
+              Change entity
             </td>
             <td>
               3
@@ -500,6 +527,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               <c-enabled-stub
                 value="true"
               />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-3
@@ -546,7 +576,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -569,13 +599,16 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-4
             </td>
             <td>
-              type-4
+              Drop
             </td>
             <td>
               4
             </td>
             <td>
               <c-enabled-stub />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-4
@@ -622,7 +655,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -645,7 +678,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-5
             </td>
             <td>
-              type-5
+              Break
             </td>
             <td>
               5
@@ -654,6 +687,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               <c-enabled-stub
                 value="true"
               />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-5
@@ -700,7 +736,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -723,13 +759,16 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-6
             </td>
             <td>
-              type-6
+              Enrichment
             </td>
             <td>
               6
             </td>
             <td>
               <c-enabled-stub />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-6
@@ -776,7 +815,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -799,7 +838,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-7
             </td>
             <td>
-              type-7
+              Change entity
             </td>
             <td>
               7
@@ -808,6 +847,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               <c-enabled-stub
                 value="true"
               />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-7
@@ -854,7 +896,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -877,13 +919,16 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-8
             </td>
             <td>
-              type-8
+              Drop
             </td>
             <td>
               8
             </td>
             <td>
               <c-enabled-stub />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-8
@@ -930,7 +975,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -953,7 +998,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-9
             </td>
             <td>
-              type-9
+              Break
             </td>
             <td>
               9
@@ -962,6 +1007,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               <c-enabled-stub
                 value="true"
               />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-9
@@ -1008,7 +1056,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -1031,13 +1079,16 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-10
             </td>
             <td>
-              type-10
+              Enrichment
             </td>
             <td>
               10
             </td>
             <td>
               <c-enabled-stub />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-10
@@ -1084,7 +1135,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -1128,7 +1179,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
       class="v-table__overflow"
     >
       <table
-        class="v-datatable v-table theme--light"
+        class="v-datatable v-table v-datatable--expand theme--light"
       >
         <thead>
           <tr>
@@ -1200,6 +1251,24 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
               Enabled
             </th>
             <th
+              aria-label="Errors: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              data-value="unread_failures_count"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Errors
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
               aria-label="Author: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
@@ -1279,7 +1348,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
           >
             <th
               class="column"
-              colspan="10"
+              colspan="11"
             >
               <div
                 aria-valuemax="100"
@@ -1321,7 +1390,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
           <tr>
             <td
               class="text-xs-center"
-              colspan="10"
+              colspan="11"
             >
               No data available
             </td>
@@ -1364,7 +1433,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
       class="v-table__overflow"
     >
       <table
-        class="v-datatable v-table theme--light"
+        class="v-datatable v-table v-datatable--expand theme--light"
       >
         <thead>
           <tr>
@@ -1436,6 +1505,24 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               Enabled
             </th>
             <th
+              aria-label="Errors: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              data-value="unread_failures_count"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Errors
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
+            </th>
+            <th
               aria-label="Author: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="column sortable text-xs-left"
@@ -1515,7 +1602,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           >
             <th
               class="column"
-              colspan="10"
+              colspan="11"
             >
               <div
                 aria-valuemax="100"
@@ -1570,13 +1657,16 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0
             </td>
             <td>
-              type-0
+              Drop
             </td>
             <td>
               -
             </td>
             <td>
               <c-enabled-stub />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-0
@@ -1615,8 +1705,8 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
             class="v-datatable__expand-row"
           >
             <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="10"
+              class="v-datatable__expand-col v-datatable__expand-col--expanded"
+              colspan="11"
               tag="td"
             >
               <div
@@ -1647,7 +1737,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-1
             </td>
             <td>
-              type-1
+              Break
             </td>
             <td>
               1
@@ -1656,6 +1746,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               <c-enabled-stub
                 value="true"
               />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-1
@@ -1695,7 +1788,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -1714,13 +1807,16 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-2
             </td>
             <td>
-              type-2
+              Enrichment
             </td>
             <td>
               2
             </td>
             <td>
               <c-enabled-stub />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-2
@@ -1760,7 +1856,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -1779,7 +1875,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-3
             </td>
             <td>
-              type-3
+              Change entity
             </td>
             <td>
               3
@@ -1788,6 +1884,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               <c-enabled-stub
                 value="true"
               />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-3
@@ -1827,7 +1926,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -1846,13 +1945,16 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-4
             </td>
             <td>
-              type-4
+              Drop
             </td>
             <td>
               4
             </td>
             <td>
               <c-enabled-stub />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-4
@@ -1892,7 +1994,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -1911,7 +2013,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-5
             </td>
             <td>
-              type-5
+              Break
             </td>
             <td>
               5
@@ -1920,6 +2022,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               <c-enabled-stub
                 value="true"
               />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-5
@@ -1959,7 +2064,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -1978,13 +2083,16 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-6
             </td>
             <td>
-              type-6
+              Enrichment
             </td>
             <td>
               6
             </td>
             <td>
               <c-enabled-stub />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-6
@@ -2024,7 +2132,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -2043,7 +2151,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-7
             </td>
             <td>
-              type-7
+              Change entity
             </td>
             <td>
               7
@@ -2052,6 +2160,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               <c-enabled-stub
                 value="true"
               />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-7
@@ -2091,7 +2202,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -2110,13 +2221,16 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-8
             </td>
             <td>
-              type-8
+              Drop
             </td>
             <td>
               8
             </td>
             <td>
               <c-enabled-stub />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-8
@@ -2156,7 +2270,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -2175,7 +2289,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-9
             </td>
             <td>
-              type-9
+              Break
             </td>
             <td>
               9
@@ -2184,6 +2298,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               <c-enabled-stub
                 value="true"
               />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-9
@@ -2223,7 +2340,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -2242,13 +2359,16 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-10
             </td>
             <td>
-              type-10
+              Enrichment
             </td>
             <td>
               10
             </td>
             <td>
               <c-enabled-stub />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-10
@@ -2288,7 +2408,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -2334,7 +2454,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
       class="v-table__overflow"
     >
       <table
-        class="v-datatable v-table theme--light"
+        class="v-datatable v-table v-datatable--expand theme--light"
       >
         <thead>
           <tr>
@@ -2404,6 +2524,24 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               scope="col"
             >
               Enabled
+            </th>
+            <th
+              aria-label="Errors: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="column sortable text-xs-left"
+              data-value="unread_failures_count"
+              role="columnheader"
+              scope="col"
+              tabindex="0"
+            >
+              Errors
+              <i
+                aria-hidden="true"
+                class="v-icon material-icons theme--light"
+                style="font-size: 16px;"
+              >
+                arrow_upward
+              </i>
             </th>
             <th
               aria-label="Author: Not sorted. Activate to sort ascending."
@@ -2485,7 +2623,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           >
             <th
               class="column"
-              colspan="10"
+              colspan="11"
             >
               <div
                 aria-valuemax="100"
@@ -2539,13 +2677,16 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0
             </td>
             <td>
-              type-0
+              Drop
             </td>
             <td>
               -
             </td>
             <td>
               <c-enabled-stub />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-0
@@ -2589,7 +2730,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -2608,7 +2749,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-1
             </td>
             <td>
-              type-1
+              Break
             </td>
             <td>
               1
@@ -2617,6 +2758,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               <c-enabled-stub
                 value="true"
               />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-1
@@ -2660,7 +2804,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -2679,13 +2823,16 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-2
             </td>
             <td>
-              type-2
+              Enrichment
             </td>
             <td>
               2
             </td>
             <td>
               <c-enabled-stub />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-2
@@ -2729,7 +2876,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -2748,7 +2895,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-3
             </td>
             <td>
-              type-3
+              Change entity
             </td>
             <td>
               3
@@ -2757,6 +2904,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               <c-enabled-stub
                 value="true"
               />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-3
@@ -2800,7 +2950,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -2819,13 +2969,16 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-4
             </td>
             <td>
-              type-4
+              Drop
             </td>
             <td>
               4
             </td>
             <td>
               <c-enabled-stub />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-4
@@ -2869,7 +3022,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -2888,7 +3041,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-5
             </td>
             <td>
-              type-5
+              Break
             </td>
             <td>
               5
@@ -2897,6 +3050,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               <c-enabled-stub
                 value="true"
               />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-5
@@ -2940,7 +3096,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -2959,13 +3115,16 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-6
             </td>
             <td>
-              type-6
+              Enrichment
             </td>
             <td>
               6
             </td>
             <td>
               <c-enabled-stub />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-6
@@ -3009,7 +3168,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -3028,7 +3187,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-7
             </td>
             <td>
-              type-7
+              Change entity
             </td>
             <td>
               7
@@ -3037,6 +3196,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               <c-enabled-stub
                 value="true"
               />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-7
@@ -3080,7 +3242,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -3099,13 +3261,16 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-8
             </td>
             <td>
-              type-8
+              Drop
             </td>
             <td>
               8
             </td>
             <td>
               <c-enabled-stub />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-8
@@ -3149,7 +3314,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -3168,7 +3333,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-9
             </td>
             <td>
-              type-9
+              Break
             </td>
             <td>
               9
@@ -3177,6 +3342,9 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               <c-enabled-stub
                 value="true"
               />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-9
@@ -3220,7 +3388,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>
@@ -3239,13 +3407,16 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
               c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-10
             </td>
             <td>
-              type-10
+              Enrichment
             </td>
             <td>
               10
             </td>
             <td>
               <c-enabled-stub />
+            </td>
+            <td>
+              -
             </td>
             <td>
               author-10
@@ -3289,7 +3460,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
           >
             <transition-group-stub
               class="v-datatable__expand-col"
-              colspan="10"
+              colspan="11"
               tag="td"
             />
           </tr>

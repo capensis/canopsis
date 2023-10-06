@@ -8,37 +8,23 @@ import (
 )
 
 const (
-	// Component-resource matching
-	RuleTypeRelation  = "relation"
-	RuleTypeTimeBased = "timebased"
-	// RuleTypeAttribute for Attribute matching
-	RuleTypeAttribute = "attribute"
-	// RuleTypeComplex for complex rules
-	RuleTypeComplex = "complex"
-
-	RuleTypeValueGroup = "valuegroup"
-
+	RuleTypeRelation    = "relation"
+	RuleTypeTimeBased   = "timebased"
+	RuleTypeAttribute   = "attribute"
+	RuleTypeComplex     = "complex"
+	RuleTypeValueGroup  = "valuegroup"
 	RuleTypeManualGroup = "manualgroup"
-
-	RuleTypeCorel = "corel"
+	RuleTypeCorel       = "corel"
 )
 
 type Rule struct {
-	// ID is a unique id for the rule.
-	ID string `bson:"_id" json:"_id"`
-
-	Type string `bson:"type" json:"type"`
-
-	Config RuleConfig `bson:"config" json:"config"`
-
-	// Name was added to identify manual grouping
-	Name string `bson:"name" json:"name"`
-
-	Author string `bson:"author" json:"author"`
-
-	AutoResolve bool `bson:"auto_resolve" json:"auto_resolve"`
-
-	OutputTemplate string `bson:"output_template" json:"output_template"`
+	ID             string     `bson:"_id" json:"_id"`
+	Type           string     `bson:"type" json:"type"`
+	Name           string     `bson:"name" json:"name"`
+	Author         string     `bson:"author" json:"author"`
+	OutputTemplate string     `bson:"output_template" json:"output_template"`
+	Config         RuleConfig `bson:"config" json:"config"`
+	AutoResolve    bool       `bson:"auto_resolve" json:"auto_resolve"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`
@@ -76,6 +62,10 @@ func (r *Rule) Matches(event types.Event, alarmWithEntity types.AlarmWithEntity)
 	}
 
 	return pattern.Match(alarmWithEntity.Entity, alarmWithEntity.Alarm, r.EntityPattern, r.AlarmPattern, r.OldEntityPatterns, r.OldAlarmPatterns)
+}
+
+func (r *Rule) IsManual() bool {
+	return r.Type == RuleTypeManualGroup
 }
 
 type TotalEntityPatternFields struct {
