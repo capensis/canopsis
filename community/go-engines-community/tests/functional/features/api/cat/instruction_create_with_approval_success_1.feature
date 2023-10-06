@@ -195,7 +195,7 @@ Feature: instruction approval creation
     """
 
   @concurrent
-  Scenario: given create request with approval request with user or role should return ok
+  Scenario: given create request with approval request with role should return ok
     When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
@@ -388,119 +388,35 @@ Feature: instruction approval creation
     """
 
   @concurrent
-  Scenario: given create request with approval request with not existed username should return ok
-    When I am admin
-    When I do POST /api/v4/cat/instructions:
-    """json
-    {
-      "approval": {
-        "user": "notexist"
-      }
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """json
-    {
-      "errors": {
-        "approval.user": "User doesn't have approve rights or doesn't exist."
-      }
-    }
-    """
-
-  @concurrent
-  Scenario: given create request with approval request with a username without approve right should return error
-    When I am admin
-    When I do POST /api/v4/cat/instructions:
-    """json
-    {
-      "approval": {
-        "user": "nopermsuser"
-      }
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """json
-    {
-      "errors": {
-        "approval.user": "User doesn't have approve rights or doesn't exist."
-      }
-    }
-    """
-
-  @concurrent
-  Scenario: given create request with approval request with not existed role should return error
-    When I am admin
-    When I do POST /api/v4/cat/instructions:
-    """json
-    {
-      "approval": {
-        "role": "notexist"
-      }
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """json
-    {
-      "errors": {
-        "approval.role": "Role doesn't have approve rights or doesn't exist."
-      }
-    }
-    """
-
-  @concurrent
-  Scenario: given create request with approval request with a role without approve right should return error
-    When I am admin
-    When I do POST /api/v4/cat/instructions:
-    """json
-    {
-      "approval": {
-        "role": "noperms"
-      }
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """json
-    {
-      "errors": {
-        "approval.role": "Role doesn't have approve rights or doesn't exist."
-      }
-    }
-    """
-
-  @concurrent
-  Scenario: given create request with approval request with role and username should return error
-    When I am admin
-    When I do POST /api/v4/cat/instructions:
-    """json
-    {
-      "approval": {
-        "user": "root",
-        "role": "admin"
-      }
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """json
-    {
-      "errors": {
-        "approval.role": "Can't be present both Role and User."
-      }
-    }
-    """
-
-  @concurrent
-  Scenario: given create request with valid approval request with existed name should return error
+  Scenario: the approver should be able to get approval data by username
     When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
       "type": 0,
-      "name": "test-instruction-to-check-unique-name",
+      "name": "test-instruction-to-create-with-approval-3-name",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-create-with-approval-3-pattern"
+            }
+          }
+        ]
+      ],
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-instruction-to-create-with-approval-3-pattern"
+            }
+          }
+        ]
+      ],
       "description": "test-instruction-to-create-with-approval-3-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -522,23 +438,83 @@ Feature: instruction approval creation
         }
       ],
       "approval": {
-        "role": "role-to-instruction-approve-1",
+        "user": "user-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
     """
-    Then the response code should be 400
+    Then the response code should be 201
+    When I save response instructionID={{ .lastResponse._id }}
+    When I am role-to-instruction-approve-1
+    When I do GET /api/v4/cat/instructions/{{ .instructionID }}/approval
+    Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "errors": {
-        "name": "Name already exists."
+      "original": {
+        "_id": "{{ .instructionID }}",
+        "type": 0,
+        "status": 1,
+        "entity_pattern": [
+          [
+            {
+              "field": "name",
+              "cond": {
+                "type": "eq",
+                "value": "test-instruction-to-create-with-approval-3-pattern"
+              }
+            }
+          ]
+        ],
+        "alarm_pattern": [
+          [
+            {
+              "field": "v.component",
+              "cond": {
+                "type": "eq",
+                "value": "test-instruction-to-create-with-approval-3-pattern"
+              }
+            }
+          ]
+        ],
+        "name": "test-instruction-to-create-with-approval-3-name",
+        "description": "test-instruction-to-create-with-approval-3-description",
+        "author": {
+          "_id": "root",
+          "name": "root"
+        },
+        "enabled": true,
+        "steps": [
+          {
+            "name": "test-instruction-to-create-with-approval-3-step-1",
+            "operations": [
+              {
+                "name": "test-instruction-to-create-with-approval-3-step-1-operation-1",
+                "time_to_complete": {
+                    "value": 1,
+                    "unit": "s"
+                },
+                "description": "test-instruction-to-create-with-approval-3-step-1-operation-1-description"
+              }
+            ],
+            "stop_on_fail": true,
+            "endpoint": "test-instruction-to-create-with-approval-3-step-1-endpoint"
+          }
+        ]
+      },
+      "approval": {
+        "comment": "test comment",
+        "user": {
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
+        },
+        "requested_by": "root"
       }
     }
     """
 
   @concurrent
-  Scenario: the approver should be able to get approval data by username
+  Scenario: the approver should be able to get approval data by role
     When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
@@ -588,7 +564,7 @@ Feature: instruction approval creation
         }
       ],
       "approval": {
-        "user": "user-to-instruction-approve-1",
+        "role": "role-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
@@ -654,9 +630,9 @@ Feature: instruction approval creation
       },
       "approval": {
         "comment": "test comment",
-        "user": {
-          "_id": "user-to-instruction-approve-1",
-          "name": "user-to-instruction-approve-1"
+        "role": {
+          "_id": "role-to-instruction-approve-1",
+          "name": "role-to-instruction-approve-1"
         },
         "requested_by": "root"
       }
@@ -664,35 +640,13 @@ Feature: instruction approval creation
     """
 
   @concurrent
-  Scenario: the approver should be able to get approval data by role
+  Scenario: should be possible for any user to get waiting for approval created instruction
     When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
     {
       "type": 0,
       "name": "test-instruction-to-create-with-approval-5-name",
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-instruction-to-create-with-approval-5-pattern"
-            }
-          }
-        ]
-      ],
-      "alarm_pattern": [
-        [
-          {
-            "field": "v.component",
-            "cond": {
-              "type": "eq",
-              "value": "test-instruction-to-create-with-approval-5-pattern"
-            }
-          }
-        ]
-      ],
       "description": "test-instruction-to-create-with-approval-5-description",
       "enabled": true,
       "timeout_after_execution": {
@@ -714,75 +668,137 @@ Feature: instruction approval creation
         }
       ],
       "approval": {
-        "role": "role-to-instruction-approve-1",
+        "user": "user-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
     """
     Then the response code should be 201
     When I save response instructionID={{ .lastResponse._id }}
-    When I am role-to-instruction-approve-1
-    When I do GET /api/v4/cat/instructions/{{ .instructionID }}/approval
+    When I am admin
+    When I do GET /api/v4/cat/instructions/{{ .instructionID }}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "original": {
-        "_id": "{{ .instructionID }}",
-        "type": 0,
-        "status": 1,
-        "entity_pattern": [
-          [
-            {
-              "field": "name",
-              "cond": {
-                "type": "eq",
-                "value": "test-instruction-to-create-with-approval-5-pattern"
-              }
-            }
-          ]
-        ],
-        "alarm_pattern": [
-          [
-            {
-              "field": "v.component",
-              "cond": {
-                "type": "eq",
-                "value": "test-instruction-to-create-with-approval-5-pattern"
-              }
-            }
-          ]
-        ],
-        "name": "test-instruction-to-create-with-approval-5-name",
-        "description": "test-instruction-to-create-with-approval-5-description",
-        "author": {
-          "_id": "root",
-          "name": "root"
-        },
-        "enabled": true,
-        "steps": [
-          {
-            "name": "test-instruction-to-create-with-approval-5-step-1",
-            "operations": [
-              {
-                "name": "test-instruction-to-create-with-approval-5-step-1-operation-1",
-                "time_to_complete": {
-                    "value": 1,
-                    "unit": "s"
-                },
-                "description": "test-instruction-to-create-with-approval-5-step-1-operation-1-description"
-              }
-            ],
-            "stop_on_fail": true,
-            "endpoint": "test-instruction-to-create-with-approval-5-step-1-endpoint"
-          }
-        ]
+      "_id": "{{ .instructionID }}",
+      "type": 0,
+      "status": 1,
+      "name": "test-instruction-to-create-with-approval-5-name",
+      "description": "test-instruction-to-create-with-approval-5-description",
+      "author": {
+        "_id": "root",
+        "name": "root"
       },
+      "enabled": true,
+      "steps": [
+        {
+          "name": "test-instruction-to-create-with-approval-5-step-1",
+          "operations": [
+            {
+              "name": "test-instruction-to-create-with-approval-5-step-1-operation-1",
+              "time_to_complete": {
+                  "value": 1,
+                  "unit": "s"
+              },
+              "description": "test-instruction-to-create-with-approval-5-step-1-operation-1-description"
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-create-with-approval-5-step-1-endpoint"
+        }
+      ],
       "approval": {
         "comment": "test comment",
-        "role": {
-          "_id": "role-to-instruction-approve-1",
-          "name": "role-to-instruction-approve-1"
+        "user": {
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
+        },
+        "requested_by": "root"
+      }
+    }
+    """
+    When I am manager
+    When I do GET /api/v4/cat/instructions/{{ .instructionID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "{{ .instructionID }}",
+      "type": 0,
+      "status": 1,
+      "name": "test-instruction-to-create-with-approval-5-name",
+      "description": "test-instruction-to-create-with-approval-5-description",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "enabled": true,
+      "steps": [
+        {
+          "name": "test-instruction-to-create-with-approval-5-step-1",
+          "operations": [
+            {
+              "name": "test-instruction-to-create-with-approval-5-step-1-operation-1",
+              "time_to_complete": {
+                  "value": 1,
+                  "unit": "s"
+              },
+              "description": "test-instruction-to-create-with-approval-5-step-1-operation-1-description"
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-create-with-approval-5-step-1-endpoint"
+        }
+      ],
+      "approval": {
+        "comment": "test comment",
+        "user": {
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
+        },
+        "requested_by": "root"
+      }
+    }
+    """
+    When I am role-to-instruction-approve-1
+    When I do GET /api/v4/cat/instructions/{{ .instructionID }}
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "{{ .instructionID }}",
+      "type": 0,
+      "status": 1,
+      "name": "test-instruction-to-create-with-approval-5-name",
+      "description": "test-instruction-to-create-with-approval-5-description",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "enabled": true,
+      "steps": [
+        {
+          "name": "test-instruction-to-create-with-approval-5-step-1",
+          "operations": [
+            {
+              "name": "test-instruction-to-create-with-approval-5-step-1-operation-1",
+              "time_to_complete": {
+                  "value": 1,
+                  "unit": "s"
+              },
+              "description": "test-instruction-to-create-with-approval-5-step-1-operation-1-description"
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-create-with-approval-5-step-1-endpoint"
+        }
+      ],
+      "approval": {
+        "comment": "test comment",
+        "user": {
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
         },
         "requested_by": "root"
       }
@@ -790,7 +806,7 @@ Feature: instruction approval creation
     """
 
   @concurrent
-  Scenario: the user, which is not set in approval should receive 403
+  Scenario: the users that didn't request the approval can update only name/description/enabled
     When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
@@ -826,17 +842,77 @@ Feature: instruction approval creation
     Then the response code should be 201
     When I save response instructionID={{ .lastResponse._id }}
     When I am manager
-    When I do GET /api/v4/cat/instructions/{{ .instructionID }}/approval
-    Then the response code should be 403
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}:
+    """json
+    {
+      "type": 0,
+      "name": "test-instruction-to-create-with-approval-6-name-changed",
+      "description": "test-instruction-to-create-with-approval-6-description-changed",
+      "enabled": false,
+      "timeout_after_execution": {
+        "value": 12,
+        "unit": "m"
+      },
+      "steps": [
+        {
+          "name": "new step",
+          "operations": [
+            {
+              "name": "new operation",
+              "time_to_complete": {"value": 55, "unit":"s"},
+              "description": "new operation"
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "new endpoint"
+        }
+      ],
+      "approval": {
+        "comment": "test comment",
+        "user": "user-to-instruction-approve-1"
+      }
+    }
+    """
+    Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "error": "user is not assigned to approval"
+      "_id": "{{ .instructionID }}",
+      "type": 0,
+      "status": 1,
+      "name": "test-instruction-to-create-with-approval-6-name-changed",
+      "description": "test-instruction-to-create-with-approval-6-description-changed",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "enabled": false,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "steps": [
+        {
+          "name": "test-instruction-to-create-with-approval-6-step-1",
+          "operations": [
+            {
+              "name": "test-instruction-to-create-with-approval-6-step-1-operation-1",
+              "time_to_complete": {
+                  "value": 1,
+                  "unit": "s"
+              },
+              "description": "test-instruction-to-create-with-approval-6-step-1-operation-1-description"
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-create-with-approval-6-step-1-endpoint"
+        }
+      ]
     }
     """
 
   @concurrent
-  Scenario: the user with a role, which is not set in approval should receive 403
+  Scenario: the user that requested the approval can update any field
     When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
@@ -864,25 +940,92 @@ Feature: instruction approval creation
         }
       ],
       "approval": {
-        "role": "role-to-instruction-approve-1",
+        "user": "user-to-instruction-approve-1",
         "comment": "test comment"
       }
     }
     """
     Then the response code should be 201
     When I save response instructionID={{ .lastResponse._id }}
-    When I am manager
-    When I do GET /api/v4/cat/instructions/{{ .instructionID }}/approval
-    Then the response code should be 403
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}:
+    """json
+    {
+      "type": 0,
+      "name": "test-instruction-to-create-with-approval-7-name-updated",
+      "description": "test-instruction-to-create-with-approval-7-description-updated",
+      "enabled": false,
+      "timeout_after_execution": {
+        "value": 11,
+        "unit": "m"
+      },
+      "steps": [
+        {
+          "name": "test-instruction-to-create-with-approval-7-step-1-updated",
+          "operations": [
+            {
+              "name": "test-instruction-to-create-with-approval-7-step-1-operation-1-updated",
+              "time_to_complete": {"value": 5, "unit":"s"},
+              "description": "test-instruction-to-create-with-approval-7-step-1-operation-1-description-updated"
+            }
+          ],
+          "stop_on_fail": false,
+          "endpoint": "test-instruction-to-create-with-approval-7-step-1-endpoint-updated"
+        }
+      ],
+      "approval": {
+        "comment": "test comment",
+        "user": "user-to-instruction-approve-1"
+      }
+    }
+    """
+    Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "error": "role is not assigned to approval"
+      "_id": "{{ .instructionID }}",
+      "type": 0,
+      "status": 1,
+      "name": "test-instruction-to-create-with-approval-7-name-updated",
+      "description": "test-instruction-to-create-with-approval-7-description-updated",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "enabled": false,
+      "timeout_after_execution": {
+        "value": 11,
+        "unit": "m"
+      },
+      "steps": [
+        {
+          "name": "test-instruction-to-create-with-approval-7-step-1-updated",
+          "operations": [
+            {
+              "name": "test-instruction-to-create-with-approval-7-step-1-operation-1-updated",
+              "time_to_complete": {
+                  "value": 5,
+                  "unit": "s"
+              },
+              "description": "test-instruction-to-create-with-approval-7-step-1-operation-1-description-updated"
+            }
+          ],
+          "stop_on_fail": false,
+          "endpoint": "test-instruction-to-create-with-approval-7-step-1-endpoint-updated"
+        }
+      ],
+      "approval": {
+        "comment": "test comment",
+        "user": {
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
+        },
+        "requested_by": "root"
+      }
     }
     """
 
   @concurrent
-  Scenario: if no approval return 404
+  Scenario: the users that didn't request the approval can't change approver
     When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
@@ -908,15 +1051,64 @@ Feature: instruction approval creation
           "stop_on_fail": true,
           "endpoint": "test-instruction-to-create-with-approval-8-step-1-endpoint"
         }
-      ]
+      ],
+      "approval": {
+        "user": "user-to-instruction-approve-1",
+        "comment": "test comment"
+      }
     }
     """
     Then the response code should be 201
-    When I do GET /api/v4/cat/instructions/{{ .lastResponse._id }}/approval
-    Then the response code should be 404
+    When I save response instructionID={{ .lastResponse._id }}
+    When I am manager
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}:
+    """json
+    {
+      "type": 0,
+      "name": "test-instruction-to-create-with-approval-8-name",
+      "description": "test-instruction-to-create-with-approval-8-description",
+      "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "steps": [
+        {
+          "name": "test-instruction-to-create-with-approval-8-step-1",
+          "operations": [
+            {
+              "name": "test-instruction-to-create-with-approval-8-step-1-operation-1",
+              "time_to_complete": {"value": 1, "unit":"s"},
+              "description": "test-instruction-to-create-with-approval-8-step-1-operation-1-description"
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "test-instruction-to-create-with-approval-8-step-1-endpoint"
+        }
+      ],
+      "approval": {
+        "comment": "test comment",
+        "user": "user-to-instruction-approve-2"
+      }
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "approval": {
+        "comment": "test comment",
+        "user": {
+          "_id": "user-to-instruction-approve-1",
+          "name": "user-to-instruction-approve-1"
+        },
+        "requested_by": "root"
+      }
+    }
+    """
 
   @concurrent
-  Scenario: should be possible for any user to get waiting for approval created instruction
+  Scenario: the user that requested the approval can change approver username
     When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
@@ -951,130 +1143,46 @@ Feature: instruction approval creation
     """
     Then the response code should be 201
     When I save response instructionID={{ .lastResponse._id }}
-    When I am admin
-    When I do GET /api/v4/cat/instructions/{{ .instructionID }}
-    Then the response code should be 200
-    Then the response body should contain:
+    When I do PUT /api/v4/cat/instructions/{{ .instructionID }}:
     """json
     {
-      "_id": "{{ .instructionID }}",
       "type": 0,
-      "status": 1,
       "name": "test-instruction-to-create-with-approval-9-name",
       "description": "test-instruction-to-create-with-approval-9-description",
-      "author": {
-        "_id": "root",
-        "name": "root"
-      },
       "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
       "steps": [
         {
           "name": "test-instruction-to-create-with-approval-9-step-1",
           "operations": [
             {
               "name": "test-instruction-to-create-with-approval-9-step-1-operation-1",
-              "time_to_complete": {
-                  "value": 1,
-                  "unit": "s"
-              },
+              "time_to_complete": {"value": 5, "unit":"s"},
               "description": "test-instruction-to-create-with-approval-9-step-1-operation-1-description"
             }
           ],
-          "stop_on_fail": true,
-          "endpoint": "test-instruction-to-create-with-approval-9-step-1-endpoint"
+          "stop_on_fail": false,
+          "endpoint": "new endpoint"
         }
       ],
       "approval": {
         "comment": "test comment",
-        "user": {
-          "_id": "user-to-instruction-approve-1",
-          "name": "user-to-instruction-approve-1"
-        },
-        "requested_by": "root"
+        "user": "user-to-instruction-approve-2"
       }
     }
     """
-    When I am manager
-    When I do GET /api/v4/cat/instructions/{{ .instructionID }}
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "{{ .instructionID }}",
-      "type": 0,
-      "status": 1,
-      "name": "test-instruction-to-create-with-approval-9-name",
-      "description": "test-instruction-to-create-with-approval-9-description",
-      "author": {
-        "_id": "root",
-        "name": "root"
-      },
-      "enabled": true,
-      "steps": [
-        {
-          "name": "test-instruction-to-create-with-approval-9-step-1",
-          "operations": [
-            {
-              "name": "test-instruction-to-create-with-approval-9-step-1-operation-1",
-              "time_to_complete": {
-                  "value": 1,
-                  "unit": "s"
-              },
-              "description": "test-instruction-to-create-with-approval-9-step-1-operation-1-description"
-            }
-          ],
-          "stop_on_fail": true,
-          "endpoint": "test-instruction-to-create-with-approval-9-step-1-endpoint"
-        }
-      ],
       "approval": {
         "comment": "test comment",
         "user": {
-          "_id": "user-to-instruction-approve-1",
-          "name": "user-to-instruction-approve-1"
-        },
-        "requested_by": "root"
-      }
-    }
-    """
-    When I am role-to-instruction-approve-1
-    When I do GET /api/v4/cat/instructions/{{ .instructionID }}
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "_id": "{{ .instructionID }}",
-      "type": 0,
-      "status": 1,
-      "name": "test-instruction-to-create-with-approval-9-name",
-      "description": "test-instruction-to-create-with-approval-9-description",
-      "author": {
-        "_id": "root",
-        "name": "root"
-      },
-      "enabled": true,
-      "steps": [
-        {
-          "name": "test-instruction-to-create-with-approval-9-step-1",
-          "operations": [
-            {
-              "name": "test-instruction-to-create-with-approval-9-step-1-operation-1",
-              "time_to_complete": {
-                  "value": 1,
-                  "unit": "s"
-              },
-              "description": "test-instruction-to-create-with-approval-9-step-1-operation-1-description"
-            }
-          ],
-          "stop_on_fail": true,
-          "endpoint": "test-instruction-to-create-with-approval-9-step-1-endpoint"
-        }
-      ],
-      "approval": {
-        "comment": "test comment",
-        "user": {
-          "_id": "user-to-instruction-approve-1",
-          "name": "user-to-instruction-approve-1"
+          "_id": "user-to-instruction-approve-2",
+          "name": "user-to-instruction-approve-2"
         },
         "requested_by": "root"
       }
