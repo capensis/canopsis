@@ -50,8 +50,8 @@ export const EXPLOITATION_PAGES_RULES = {
 };
 
 export const ADMIN_PAGES_RULES = {
-  remediation: { stack: CANOPSIS_STACK.go },
-  healthcheck: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
+  remediation: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
+  healthcheck: { stack: CANOPSIS_STACK.go },
   kpi: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
   tag: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
 };
