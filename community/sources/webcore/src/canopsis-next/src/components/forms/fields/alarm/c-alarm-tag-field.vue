@@ -95,7 +95,7 @@ export default {
   mounted() {
     this.fetchTags({
       ...this.getQuery(),
-      value: this.value,
+      values: this.value,
     });
   },
   methods: {
