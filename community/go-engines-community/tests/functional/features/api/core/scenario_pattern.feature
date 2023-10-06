@@ -1,4 +1,6 @@
 Feature: Update and delete corporate pattern should affect eventfilter models
+
+  @concurrent
   Scenario: given eventfilter and corporate pattern update and delete actions should update patterns in eventfiler
     When I am admin
     When I do POST /api/v4/scenarios:
@@ -7,7 +9,11 @@ Feature: Update and delete corporate pattern should affect eventfilter models
       "_id": "scenario-pattern-1",
       "name": "scenario-pattern-1-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -135,7 +141,11 @@ Feature: Update and delete corporate pattern should affect eventfilter models
         "name": "root"
       },
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "old_alarm_patterns": null,
@@ -384,7 +394,11 @@ Feature: Update and delete corporate pattern should affect eventfilter models
         "name": "root"
       },
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "old_alarm_patterns": null,
@@ -717,7 +731,11 @@ Feature: Update and delete corporate pattern should affect eventfilter models
         "name": "root"
       },
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "old_alarm_patterns": null,
@@ -938,7 +956,11 @@ Feature: Update and delete corporate pattern should affect eventfilter models
         "name": "root"
       },
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "old_alarm_patterns": null,
@@ -1159,7 +1181,11 @@ Feature: Update and delete corporate pattern should affect eventfilter models
         "name": "root"
       },
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "old_alarm_patterns": null,

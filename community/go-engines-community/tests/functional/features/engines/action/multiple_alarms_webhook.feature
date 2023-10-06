@@ -11,7 +11,9 @@ Feature: execute action on trigger
       "priority": 10000,
       "enabled": true,
       "triggers": [
-        "create"
+        {
+          "type": "create"
+        }
       ],
       "actions": [
         {

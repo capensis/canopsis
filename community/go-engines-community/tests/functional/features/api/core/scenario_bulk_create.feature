@@ -2,15 +2,18 @@ Feature: Bulk create scenarios
   I need to be able to bulk create scenarios
   Only admin should be able to bulk create scenarios
 
+  @concurrent
   Scenario: given bulk create request and no auth user should not allow access
     When I do POST /api/v4/bulk/scenarios
     Then the response code should be 401
 
+  @concurrent
   Scenario: given bulk create request and auth user by api key without permissions should not allow access
     When I am noperms
     When I do POST /api/v4/bulk/scenarios
     Then the response code should be 403
 
+  @concurrent
   Scenario: given bulk create request should return multi status and should be handled independently
     When I am admin
     When I do POST /api/v4/bulk/scenarios:
@@ -20,7 +23,11 @@ Feature: Bulk create scenarios
         "_id": "bulk-create-scenario-1",
         "name": "test-scenario-to-bulk-create-1-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "actions": [
           {
             "alarm_pattern": [
@@ -154,7 +161,11 @@ Feature: Bulk create scenarios
         "_id": "bulk-create-scenario-1",
         "name": "test-scenario-to-bulk-create-1-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "actions": [
           {
             "alarm_pattern": [
@@ -288,7 +299,11 @@ Feature: Bulk create scenarios
       {
         "name": "test-scenario-to-check-unique-name-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "actions": [
           {
             "alarm_pattern": [
@@ -329,7 +344,11 @@ Feature: Bulk create scenarios
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "actions": [
           {
           }
@@ -338,7 +357,11 @@ Feature: Bulk create scenarios
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "actions": [
           {
             "alarm_pattern": [
@@ -372,7 +395,11 @@ Feature: Bulk create scenarios
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "actions": [
           {
             "alarm_pattern": [
@@ -406,7 +433,11 @@ Feature: Bulk create scenarios
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "actions": [
           {
             "alarm_pattern": [
@@ -440,7 +471,11 @@ Feature: Bulk create scenarios
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "actions": [
           {
             "alarm_pattern": [
@@ -478,7 +513,11 @@ Feature: Bulk create scenarios
       {
         "name": "test-scenario-to-bulk-create-4-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "actions": [
           {
             "alarm_pattern": [
@@ -513,7 +552,11 @@ Feature: Bulk create scenarios
         "_id": "test-scenario-to-check-id",
         "name": "my_scenario-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "actions": [
           {
             "alarm_pattern": [
@@ -556,7 +599,11 @@ Feature: Bulk create scenarios
         "_id": "bulk-create-scenario-2",
         "name": "test-scenario-to-bulk-create-2-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "actions": [
           {
             "alarm_pattern": [
@@ -690,7 +737,11 @@ Feature: Bulk create scenarios
         "_id": "bulk-create-scenario-3",
         "name": "test-scenario-to-bulk-create-3-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "delay": {
           "value": 3,
           "unit": "s"
@@ -763,7 +814,11 @@ Feature: Bulk create scenarios
       {
         "name": "test-scenario-to-create-4-name",
         "enabled": true,
-        "triggers": ["create"],
+        "triggers": [
+          {
+            "type": "create"
+          }
+        ],
         "delay": {
           "value": 3,
           "unit": "s"
@@ -832,7 +887,11 @@ Feature: Bulk create scenarios
           "_id": "bulk-create-scenario-1",
           "name": "test-scenario-to-bulk-create-1-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -969,7 +1028,11 @@ Feature: Bulk create scenarios
           "_id": "bulk-create-scenario-1",
           "name": "test-scenario-to-bulk-create-1-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -1121,7 +1184,11 @@ Feature: Bulk create scenarios
         "item": {
           "name": "test-scenario-to-check-unique-name-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -1170,7 +1237,11 @@ Feature: Bulk create scenarios
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [
             {
             }
@@ -1185,7 +1256,11 @@ Feature: Bulk create scenarios
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -1225,7 +1300,11 @@ Feature: Bulk create scenarios
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -1265,7 +1344,11 @@ Feature: Bulk create scenarios
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -1309,7 +1392,11 @@ Feature: Bulk create scenarios
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -1353,7 +1440,11 @@ Feature: Bulk create scenarios
         "item": {
           "name": "test-scenario-to-bulk-create-4-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -1394,7 +1485,11 @@ Feature: Bulk create scenarios
           "_id": "test-scenario-to-check-id",
           "name": "my_scenario-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -1445,7 +1540,11 @@ Feature: Bulk create scenarios
           "_id": "bulk-create-scenario-2",
           "name": "test-scenario-to-bulk-create-2-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [
             {
               "alarm_pattern": [
@@ -1583,7 +1682,11 @@ Feature: Bulk create scenarios
           "_id": "bulk-create-scenario-3",
           "name": "test-scenario-to-bulk-create-3-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "delay": {
             "value": 3,
             "unit": "s"
@@ -1659,7 +1762,11 @@ Feature: Bulk create scenarios
         "item": {
           "name": "test-scenario-to-create-4-name",
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "delay": {
             "value": 3,
             "unit": "s"
@@ -1736,7 +1843,11 @@ Feature: Bulk create scenarios
             "name": "root"
           },
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [
             {
               "old_alarm_patterns": null,
@@ -1891,7 +2002,11 @@ Feature: Bulk create scenarios
             "name": "root"
           },
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "actions": [
             {
               "old_alarm_patterns": null,
@@ -2046,7 +2161,11 @@ Feature: Bulk create scenarios
             "name": "root"
           },
           "enabled": true,
-          "triggers": ["create"],
+          "triggers": [
+            {
+              "type": "create"
+            }
+          ],
           "delay": {
             "value": 3,
             "unit": "s"
