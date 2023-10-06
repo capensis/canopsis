@@ -30,7 +30,7 @@ Les logs devront donc être formatés d'une certaine manière afin que Canopsis 
 Actuellement, un évènement de type `log` doit être remonté dans Canopsis comme un évènement de type `check`.
 
 !!! attention
-    Un événement de type `check` entraîne la création ou mise à jour d'une alarme par le [moteur `engine-axe`](../../guide-administration/moteurs/moteur-axe.md#evenements-de-type-check). Il est important de s'assurer qu'elle puisse être également résolue par Logstash. À défaut, il est nécessaire que vous l'annuliez vous-même une fois l'alarme traitée.
+    Un événement de type `check` entraîne la création ou mise à jour d'une alarme par le moteur `engine-axe`. Il est important de s'assurer qu'elle puisse être également résolue par Logstash. À défaut, il est nécessaire que vous l'annuliez vous-même une fois l'alarme traitée.
 
 ## Exemple de configuration Logstash
 
