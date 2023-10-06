@@ -1,13 +1,13 @@
 <template lang="pug">
   v-layout(column)
     v-checkbox(
-      v-field="approval.need_approve",
+      v-model="needApprove",
       :label="$t('remediation.instruction.requestApproval')",
-      :disabled="disabled",
+      :disabled="disabled || required",
       color="primary",
       hide-details
     )
-    template(v-if="approval.need_approve")
+    template(v-if="needApprove")
       v-layout(v-if="disabled", row)
         span.subheading.grey--text.my-4 {{ assignLabel }}: {{ assignValue }}
       v-layout(v-else, row, align-center)
@@ -64,6 +64,15 @@ export default {
       type: Boolean,
       default: false,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      needApprove: !!this.approval?.comment || this.required,
+    };
   },
   computed: {
     isRoleType() {
