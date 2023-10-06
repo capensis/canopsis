@@ -46,7 +46,16 @@ exports[`base-login Renders \`base-login\` with custom state 1`] = `
               Connect
             </div>
           </button>
-          <!---->
+          <div
+            class="flex xs9"
+          >
+            <c-alert-stub
+              class="py-1 my-0 font-weight-bold"
+              type="error"
+            >
+              
+            </c-alert-stub>
+          </div>
         </div>
         <hr
           class="my-2 v-divider theme--light"
@@ -110,7 +119,16 @@ exports[`base-login Renders \`base-login\` with default state 1`] = `
               Connect
             </div>
           </button>
-          <!---->
+          <div
+            class="flex xs9"
+          >
+            <c-alert-stub
+              class="py-1 my-0 font-weight-bold"
+              type="error"
+            >
+              
+            </c-alert-stub>
+          </div>
         </div>
         <!---->
       </div>
@@ -168,21 +186,13 @@ exports[`base-login Renders \`base-login\` with error 1`] = `
           <div
             class="flex xs9"
           >
-            <div
-              class="v-alert py-1 my-0 font-weight-bold error"
+            <c-alert-stub
+              class="py-1 my-0 font-weight-bold"
+              type="error"
+              value="true"
             >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light v-alert__icon"
-              >
-                warning
-              </i>
-              <div>
-                <span>
-                  Incorrect email or password
-                </span>
-              </div>
-            </div>
+              Server error message
+            </c-alert-stub>
           </div>
         </div>
         <!---->

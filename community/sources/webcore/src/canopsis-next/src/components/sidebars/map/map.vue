@@ -2,7 +2,7 @@
   widget-settings(:submitting="submitting", @submit="submit")
     field-title(v-model="form.title")
     v-divider
-    field-periodic-refresh(v-model="form.parameters.periodic_refresh")
+    field-periodic-refresh(v-model="form.parameters")
     v-divider
     field-map(v-model="form.parameters.map")
     v-divider
@@ -53,7 +53,6 @@
         :templates-pending="widgetTemplatesPending",
         :label="$t('settings.entitiesColumns')",
         :type="$constants.ENTITIES_TYPES.entity",
-        with-html,
         with-color-indicator,
         @update:template="updateEntitiesColumnsTemplate"
       )

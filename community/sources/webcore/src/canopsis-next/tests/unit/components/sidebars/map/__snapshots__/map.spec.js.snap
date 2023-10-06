@@ -10,7 +10,7 @@ exports[`map Renders \`map\` widget settings with custom props 1`] = `
     class="v-divider theme--light"
   />
   <field-periodic-refresh-stub
-    value="[object Object]"
+    form="[object Object]"
   />
   <hr
     class="v-divider theme--light"
@@ -43,6 +43,7 @@ exports[`map Renders \`map\` widget settings with custom props 1`] = `
   >
     <!---->
     <field-text-editor-stub
+      defaultvalue=""
       title="Entity info popup"
       value=<div>TEMPLATE</div>
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -69,7 +70,6 @@ exports[`map Renders \`map\` widget settings with custom props 1`] = `
       templates=""
       type="entity"
       withcolorindicator="true"
-      withhtml="true"
     />
   </widget-settings-group-stub>
   <hr
@@ -88,7 +88,7 @@ exports[`map Renders \`map\` widget settings with default props 1`] = `
     class="v-divider theme--light"
   />
   <field-periodic-refresh-stub
-    value="[object Object]"
+    form="[object Object]"
   />
   <hr
     class="v-divider theme--light"
@@ -121,6 +121,7 @@ exports[`map Renders \`map\` widget settings with default props 1`] = `
   >
     <!---->
     <field-text-editor-stub
+      defaultvalue=""
       title="Entity info popup"
       value=<ul>
   <li><strong>Libellé</strong> : {{entity.name}}</li>
@@ -149,7 +150,6 @@ exports[`map Renders \`map\` widget settings with default props 1`] = `
       templates=""
       type="entity"
       withcolorindicator="true"
-      withhtml="true"
     />
   </widget-settings-group-stub>
   <hr

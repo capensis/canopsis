@@ -1,15 +1,17 @@
 <template lang="pug">
-  c-runtime-template(:template="compiledTemplate", :parent="$parent")
+  c-runtime-template(v-on="$listeners", v-bind="$attrs", :template="compiledTemplate", :parent="$parent")
 </template>
 
 <script>
+import { sanitizeHtml, linkifyHtml, normalizeHtml } from '@/helpers/html';
 import { compile } from '@/helpers/handlebars';
 
 export default {
+  inheritAttrs: false,
   props: {
     template: {
       type: String,
-      required: false,
+      default: '',
     },
     parentElement: {
       type: String,
@@ -20,14 +22,32 @@ export default {
       required: false,
     },
   },
-  asyncComputed: {
-    compiledTemplate: {
-      async get() {
+  data() {
+    return {
+      compiledTemplate: '',
+    };
+  },
+  watch: {
+    template: 'compileTemplate',
+    context: 'compileTemplate',
+    parentElement: 'compileTemplate',
+  },
+  created() {
+    this.compileTemplate();
+  },
+  methods: {
+    async compileTemplate() {
+      try {
         const compiledTemplate = await compile(this.template, this.context);
 
-        return `<${this.parentElement}>${compiledTemplate}</${this.parentElement}>`;
-      },
-      default: '',
+        this.compiledTemplate = `<${this.parentElement}>${
+          normalizeHtml(sanitizeHtml(linkifyHtml(compiledTemplate)))
+        }</${this.parentElement}>`;
+      } catch (err) {
+        console.error(err);
+
+        this.compiledTemplate = '';
+      }
     },
   },
 };

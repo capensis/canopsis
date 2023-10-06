@@ -212,10 +212,11 @@ export const widgetActionsPanelAlarmMixin = {
             items: alarms,
             alarmsByTickets,
             ticketsByAlarms,
-            action: (events) => {
+            action: (events, singleMode) => {
               this.$modals.show({
                 name: MODALS.executeDeclareTickets,
                 config: {
+                  singleMode,
                   executions: events,
                   tickets: events.map(({ _id: id }) => ({
                     _id: id,
@@ -288,6 +289,7 @@ export const widgetActionsPanelAlarmMixin = {
         config: {
           items: alarms,
           title: this.$t('modals.createUnCancel.title'),
+          isCommentRequired: this.widget.parameters.isUncancelAlarmsCommentRequired,
           action: async (unCancelEvent) => {
             await this.bulkCreateAlarmUnCancelEvent({
               data: alarms.map(alarm => ({ ...unCancelEvent, _id: alarm._id })),
@@ -392,9 +394,11 @@ export const widgetActionsPanelAlarmMixin = {
       infos,
       ...alarm
     }) {
-      const variables = [];
+      const variables = [{
+        ...convertObjectToTreeview(alarm, 'alarm'),
 
-      variables.push(convertObjectToTreeview(alarm, 'alarm'));
+        original: this.item,
+      }];
 
       if (entity) {
         variables.push(convertObjectToTreeview(entity, 'entity'));

@@ -1,3 +1,4 @@
+export * from './recurrence-rule';
 export * from './common';
 export * from './entity';
 export * from './alarm';
@@ -27,3 +28,4 @@ export * from './parameters';
 export * from './declare-ticket';
 export * from './link-rule';
 export * from './external-data';
+export * from './tag';

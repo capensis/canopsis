@@ -508,15 +508,24 @@ func getPbehaviorAlarmCountersLookup() []bson.M {
 	}
 
 	return []bson.M{
-		{"$addFields": bson.M{
-			"pbh_types": bson.M{"$ifNull": bson.A{
-				bson.M{"$map": bson.M{
-					"input": bson.M{"$objectToArray": "$counters.pbehavior"},
-					"in":    "$$this.k",
-				}},
-				[]int{-1},
+		{
+			"$lookup": bson.M{
+				"from":         mongo.EntityServiceCountersCollection,
+				"localField":   "_id",
+				"foreignField": "_id",
+				"as":           "counters",
+			},
+		},
+		{
+			"$unwind": bson.M{"path": "$counters", "preserveNullAndEmptyArrays": true},
+		},
+		{"$addFields": bson.M{"pbh_types": bson.M{"$ifNull": bson.A{
+			bson.M{"$map": bson.M{
+				"input": bson.M{"$objectToArray": "$counters.pbehavior"},
+				"in":    "$$this.k",
 			}},
-		}},
+			[]int{-1},
+		}}}},
 		{"$lookup": bson.M{
 			"from": mongo.PbehaviorTypeMongoCollection,
 			"as":   "pbh_types_counters",

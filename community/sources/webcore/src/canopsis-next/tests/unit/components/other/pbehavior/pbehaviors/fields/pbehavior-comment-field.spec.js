@@ -7,18 +7,20 @@ import PbehaviorCommentField from '@/components/other/pbehavior/pbehaviors/field
 
 const stubs = {
   'v-textarea': createTextareaInputStub('v-textarea'),
+  'c-action-btn': true,
+};
+
+const snapshotStubs = {
+  'c-action-btn': true,
 };
 
 const selectMessageField = wrapper => wrapper.find('.v-textarea');
-const selectRemoveButton = wrapper => wrapper.find('v-btn-stub');
+const selectRemoveButton = wrapper => wrapper.find('c-action-btn-stub');
 
 describe('pbehavior-comment-field', () => {
-  const factory = generateShallowRenderer(PbehaviorCommentField, {
-
-    stubs,
-  });
+  const factory = generateShallowRenderer(PbehaviorCommentField, { stubs });
   const snapshotFactory = generateRenderer(PbehaviorCommentField, {
-
+    stubs: snapshotStubs,
   });
 
   test('Message changed after trigger textarea', () => {

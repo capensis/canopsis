@@ -3,7 +3,7 @@
     template(v-if="!config.hideTitle", #title="")
       span {{ title }}
     template(v-if="config.text", #text="")
-      span.subheading {{ config.text }}
+      span.subheading.pre-wrap {{ config.text }}
     template(#actions="")
       v-layout(wrap, justify-center)
         v-btn(

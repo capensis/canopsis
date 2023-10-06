@@ -14,7 +14,7 @@ import {
   generateDefaultServiceWeatherWidget,
   generatePreparedDefaultAlarmListWidget,
 } from '@/helpers/entities/widget/form';
-import { COLORS, DEFAULT_WEATHER_LIMIT } from '@/config';
+import { DEFAULT_WEATHER_LIMIT } from '@/config';
 
 import ServiceWeatherWidget from '@/components/widgets/service-weather/service-weather.vue';
 import { mockModals } from '@unit/utils/mock-hooks';
@@ -391,7 +391,7 @@ describe('service-weather', () => {
       {
         name: MODALS.serviceEntities,
         config: {
-          color: COLORS.state.pause,
+          color: 'var(--v-state-pause-base)',
           service,
           widgetParameters: widget.parameters,
         },

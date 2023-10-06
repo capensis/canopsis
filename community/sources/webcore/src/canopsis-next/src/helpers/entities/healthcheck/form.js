@@ -23,7 +23,6 @@ import { HEALTHCHECK_ENGINES_NAMES } from '@/constants';
  * @property {EngineParameters} engine-che
  * @property {EngineParameters} engine-pbehavior
  * @property {EngineParameters} engine-action
- * @property {EngineParameters} engine-service
  * @property {EngineParameters} dynamic-infos
  * @property {EngineParameters} engine-correlation
  * @property {EngineParameters} engine-remediation

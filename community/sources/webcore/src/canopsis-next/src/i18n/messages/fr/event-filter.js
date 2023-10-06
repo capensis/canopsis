@@ -1,12 +1,9 @@
-import {
-  EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
-  EVENT_FILTER_TYPES,
-} from '@/constants';
+import { EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES, EVENT_FILTER_FAILURE_TYPES, EVENT_FILTER_TYPES } from '@/constants';
 
 export default {
   externalData: 'Données externes',
   actionsRequired: 'Veuillez ajouter au moins une action',
-  configRequired: 'No configuration defined. Please add at least one config parameter',
+  configRequired: 'Aucune configuration définie. Veuillez ajouter au moins un paramètre de configuration',
   idHelp: 'Si ce champ n\'est pas renseigné, un identifiant unique sera généré automatiquement à la création de la règle',
   editPattern: 'Éditer le modèle',
   advanced: 'Avancée',
@@ -30,11 +27,26 @@ export default {
   duringPeriod: 'Appliqué pendant cette période uniquement',
   enrichmentOptions: 'Options d\'enrichissement',
   changeEntityOptions: 'Modifier les options d\'entité',
+  eventsFilteredSinceLastUpdate: 'Evénements filtrés depuis la dernière mise à jour',
+  errorsSinceLastUpdate: 'Erreurs depuis la dernière mise à jour',
+  markAsRead: 'Marquer comme lu',
+  filterByType: 'Filtrer par type',
+  copyEventToClipboard: 'Copier l\'événement dans le presse papier',
+  event: 'Evénement',
+  eventCopied: 'Evénement copié dans le presse papier',
+  syntaxIsValid: 'La syntaxe est valide',
   types: {
-    [EVENT_FILTER_TYPES.drop]: 'Drop',
+    [EVENT_FILTER_TYPES.drop]: 'Suppression',
     [EVENT_FILTER_TYPES.break]: 'Break',
-    [EVENT_FILTER_TYPES.enrichment]: 'Enrichment',
-    [EVENT_FILTER_TYPES.changeEntity]: 'Change entity',
+    [EVENT_FILTER_TYPES.enrichment]: 'Enrichissement',
+    [EVENT_FILTER_TYPES.changeEntity]: 'Changement d\'entité',
+  },
+  failureTypes: {
+    [EVENT_FILTER_FAILURE_TYPES.invalidPattern]: 'Pattern invalide',
+    [EVENT_FILTER_FAILURE_TYPES.invalidTemplate]: 'Template invalide',
+    [EVENT_FILTER_FAILURE_TYPES.externalDataMongo]: 'Mongo',
+    [EVENT_FILTER_FAILURE_TYPES.externalDataApi]: 'API externe',
+    [EVENT_FILTER_FAILURE_TYPES.other]: 'Autre',
   },
   tooltips: {
     addValueRuleField: 'Ajouter une règle',
@@ -42,8 +54,6 @@ export default {
     addObjectRuleField: 'Ajouter un groupe de règles',
     editObjectRuleField: 'Éditer le groupe de règles',
     removeRuleField: 'Supprimer le groupe/la règle',
-    copyFromHelp: '<p>Les variables accessibles sont: <strong>Event</strong></p>'
-      + '<i>Quelques exemples:</i> <span>"Event.ExtraInfos.datecustom"</span>',
   },
   actionsTypes: {
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {

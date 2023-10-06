@@ -1,3 +1,0 @@
----
-postgresql_main_version: "13"
-timescaledb_full_version: "-{{ postgresql_main_version }}"
