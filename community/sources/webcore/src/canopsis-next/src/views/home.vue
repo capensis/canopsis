@@ -6,6 +6,8 @@
 <script>
 import { ROUTES_NAMES } from '@/constants';
 
+import { getFirstRoleWithDefaultView } from '@/helpers/entities/user/entity';
+
 import { authMixin } from '@/mixins/auth';
 import { entitiesRoleMixin } from '@/mixins/entities/role';
 
@@ -37,7 +39,7 @@ export default {
     },
 
     async redirectToRoleDefaultView() {
-      const { defaultview: roleDefaultView } = this.currentUser.roles.find(role => !!role.defaultview);
+      const { defaultview: roleDefaultView } = getFirstRoleWithDefaultView(this.currentUser);
 
       if (!roleDefaultView) {
         this.addRedirectInfoPopup(this.$t('home.popups.info.notSelectedRoleDefaultView'));
