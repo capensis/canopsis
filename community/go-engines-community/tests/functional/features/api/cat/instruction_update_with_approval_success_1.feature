@@ -507,124 +507,13 @@ Feature: instruction approval update
     """
 
   @concurrent
-  Scenario: PUT a valid instruction with approval request with a not found user should return error
-    When I am manager
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-3:
-    """json
-    {
-      "approval": {
-        "user": "approvernotexist",
-        "comment": "test comment"
-      }
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """json
-    {
-      "errors": {
-        "approval.user": "User doesn't have approve rights or doesn't exist."
-      }
-    }
-    """
-
-  @concurrent
-  Scenario: PUT a valid instruction with approval request with a username without approve right should return error
-    When I am manager
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-3:
-    """json
-    {
-      "approval": {
-        "user": "nopermsuser",
-        "comment": "test comment"
-      }
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """json
-    {
-      "errors": {
-        "approval.user": "User doesn't have approve rights or doesn't exist."
-      }
-    }
-    """
-
-  @concurrent
-  Scenario: PUT a valid instruction with approval request with a not found role should return error
-    When I am manager
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-3:
-    """json
-    {
-      "approval": {
-        "role": "rolenotexist",
-        "comment": "test comment"
-      }
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """json
-    {
-      "errors": {
-        "approval.role": "Role doesn't have approve rights or doesn't exist."
-      }
-    }
-    """
-  
-  @concurrent
-  Scenario: PUT a valid instruction with approval request with a role without approve right should return error
-    When I am manager
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-3:
-    """json
-    {
-      "approval": {
-        "role": "noperms",
-        "comment": "test comment"
-      }
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """json
-    {
-      "errors": {
-        "approval.role": "Role doesn't have approve rights or doesn't exist."
-      }
-    }
-    """
-
-  @concurrent
-  Scenario: PUT a valid instruction with approval request with a role without approve right should return error
-    When I am manager
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-3:
-    """json
-    {
-      "approval": {
-        "user": "root",
-        "role": "admin",
-        "comment": "test comment"
-      }
-    }
-    """
-    Then the response code should be 400
-    Then the response body should contain:
-    """json
-    {
-      "errors": {
-        "approval.role": "Can't be present both Role and User."
-      }
-    }
-    """
-
-  @concurrent
   Scenario: Requester should receive updated version on GET request, other users should receive original version on GET request
     When I am manager
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-4:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-3:
     """json
     {
-      "name": "test-instruction-to-update-with-approval-4-name",
-      "description": "test-instruction-to-update-with-approval-4-description",
+      "name": "test-instruction-to-update-with-approval-3-name",
+      "description": "test-instruction-to-update-with-approval-3-description",
       "enabled": true,
       "timeout_after_execution": {
         "value": 10,
@@ -632,12 +521,12 @@ Feature: instruction approval update
       },
       "steps": [
         {
-          "name": "test-instruction-to-update-with-approval-4-step-1-name",
+          "name": "test-instruction-to-update-with-approval-3-step-1-name",
           "operations": [
             {
-              "name": "test-instruction-to-update-with-approval-4-step-1-operation-1-name",
+              "name": "test-instruction-to-update-with-approval-3-step-1-operation-1-name",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-update-with-approval-4-step-1-operation-1-description",
+              "description": "test-instruction-to-update-with-approval-3-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
               ]
@@ -655,16 +544,16 @@ Feature: instruction approval update
     """
     Then the response code should be 200
     When I am manager
-    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-4
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-3
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "test-instruction-to-update-with-approval-4",
+      "_id": "test-instruction-to-update-with-approval-3",
       "type": 0,
       "status": 2,
-      "name": "test-instruction-to-update-with-approval-4-name",
-      "description": "test-instruction-to-update-with-approval-4-description",
+      "name": "test-instruction-to-update-with-approval-3-name",
+      "description": "test-instruction-to-update-with-approval-3-description",
       "author": {
         "_id": "manageruser",
         "name": "manageruser"
@@ -672,12 +561,12 @@ Feature: instruction approval update
       "enabled": true,
       "steps": [
         {
-          "name": "test-instruction-to-update-with-approval-4-step-1-name",
+          "name": "test-instruction-to-update-with-approval-3-step-1-name",
           "operations": [
             {
-              "name": "test-instruction-to-update-with-approval-4-step-1-operation-1-name",
+              "name": "test-instruction-to-update-with-approval-3-step-1-operation-1-name",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-update-with-approval-4-step-1-operation-1-description",
+              "description": "test-instruction-to-update-with-approval-3-step-1-operation-1-description",
               "jobs": [
                 {
                   "_id": "test-job-to-instruction-edit-1",
@@ -714,16 +603,16 @@ Feature: instruction approval update
     }
     """
     When I am admin
-    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-4
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-3
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "test-instruction-to-update-with-approval-4",
+      "_id": "test-instruction-to-update-with-approval-3",
       "type": 0,
       "status": 0,
-      "name": "test-instruction-to-update-with-approval-4-name",
-      "description": "test-instruction-to-update-with-approval-4-description",
+      "name": "test-instruction-to-update-with-approval-3-name",
+      "description": "test-instruction-to-update-with-approval-3-description",
       "created": 1596712203,
       "last_modified": 1596712203,
       "author": {
@@ -733,19 +622,19 @@ Feature: instruction approval update
       "enabled": true,
       "steps": [
         {
-          "name": "test-instruction-to-update-with-approval-4-step-1-name",
+          "name": "test-instruction-to-update-with-approval-3-step-1-name",
           "operations": [
             {
-              "name": "test-instruction-to-update-with-approval-4-step-1-operation-1-name",
+              "name": "test-instruction-to-update-with-approval-3-step-1-operation-1-name",
               "time_to_complete": {
                 "value": 1,
                 "unit": "s"
               },
-              "description": "test-instruction-to-update-with-approval-4-step-1-operation-1-description"
+              "description": "test-instruction-to-update-with-approval-3-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
-          "endpoint": "test-instruction-to-update-with-approval-4-step-1-endpoint"
+          "endpoint": "test-instruction-to-update-with-approval-3-step-1-endpoint"
         }
       ]
     }
@@ -754,11 +643,11 @@ Feature: instruction approval update
   @concurrent
   Scenario: The users that didn't request the approval can update only name/description/enabled
     When I am manager
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-5:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-4:
     """json
     {
-      "name": "test-instruction-to-update-with-approval-5-name",
-      "description": "test-instruction-to-update-with-approval-5-description",
+      "name": "test-instruction-to-update-with-approval-4-name",
+      "description": "test-instruction-to-update-with-approval-4-description",
       "enabled": true,
       "timeout_after_execution": {
         "value": 10,
@@ -766,12 +655,12 @@ Feature: instruction approval update
       },
       "steps": [
         {
-          "name": "test-instruction-to-update-with-approval-5-step-1-name",
+          "name": "test-instruction-to-update-with-approval-4-step-1-name",
           "operations": [
             {
-              "name": "test-instruction-to-update-with-approval-5-step-1-operation-1-name",
+              "name": "test-instruction-to-update-with-approval-4-step-1-operation-1-name",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-update-with-approval-5-step-1-operation-1-description",
+              "description": "test-instruction-to-update-with-approval-4-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
               ]
@@ -789,11 +678,11 @@ Feature: instruction approval update
     """
     Then the response code should be 200
     When I am admin
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-5:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-4:
     """json
     {
-      "name": "test-instruction-to-update-with-approval-5-name-changed",
-      "description": "test-instruction-to-update-with-approval-5-description-changed",
+      "name": "test-instruction-to-update-with-approval-4-name-changed",
+      "description": "test-instruction-to-update-with-approval-4-description-changed",
       "enabled": false,
       "timeout_after_execution": {
         "value": 10,
@@ -801,12 +690,12 @@ Feature: instruction approval update
       },
       "steps": [
         {
-          "name": "test-instruction-to-update-with-approval-5-step-1-name",
+          "name": "test-instruction-to-update-with-approval-4-step-1-name",
           "operations": [
             {
-              "name": "test-instruction-to-update-with-approval-5-step-1-operation-1-name",
+              "name": "test-instruction-to-update-with-approval-4-step-1-operation-1-name",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-update-with-approval-5-step-1-operation-1-description",
+              "description": "test-instruction-to-update-with-approval-4-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1",
                 "test-job-to-instruction-edit-2"
@@ -821,7 +710,7 @@ Feature: instruction approval update
     """
     Then the response code should be 200
     When I am role-to-instruction-approve-1
-    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-5/approval
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-4/approval
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -835,12 +724,12 @@ Feature: instruction approval update
         "requested_by": "manageruser"
       },
       "original": {
-        "_id": "test-instruction-to-update-with-approval-5",
+        "_id": "test-instruction-to-update-with-approval-4",
         "type": 0,
         "status": 0,
         "created": 1596712203,
-        "name": "test-instruction-to-update-with-approval-5-name-changed",
-        "description": "test-instruction-to-update-with-approval-5-description-changed",
+        "name": "test-instruction-to-update-with-approval-4-name-changed",
+        "description": "test-instruction-to-update-with-approval-4-description-changed",
         "author": {
           "_id": "root",
           "name": "root"
@@ -848,27 +737,27 @@ Feature: instruction approval update
         "enabled": false,
         "steps": [
           {
-            "name": "test-instruction-to-update-with-approval-5-step-1-name",
+            "name": "test-instruction-to-update-with-approval-4-step-1-name",
             "operations": [
               {
-                "name": "test-instruction-to-update-with-approval-5-step-1-operation-1-name",
+                "name": "test-instruction-to-update-with-approval-4-step-1-operation-1-name",
                 "time_to_complete": {
                   "value": 1,
                   "unit": "s"
                 },
-                "description": "test-instruction-to-update-with-approval-5-step-1-operation-1-description"
+                "description": "test-instruction-to-update-with-approval-4-step-1-operation-1-description"
               }
             ],
             "stop_on_fail": true,
-            "endpoint": "test-instruction-to-update-with-approval-5-step-1-endpoint"
+            "endpoint": "test-instruction-to-update-with-approval-4-step-1-endpoint"
           }
         ]
       },
       "updated": {
         "type": 0,
         "status": 2,
-        "name": "test-instruction-to-update-with-approval-5-name",
-        "description": "test-instruction-to-update-with-approval-5-description",
+        "name": "test-instruction-to-update-with-approval-4-name",
+        "description": "test-instruction-to-update-with-approval-4-description",
         "author": {
           "_id": "manageruser",
           "name": "manageruser"
@@ -876,12 +765,12 @@ Feature: instruction approval update
         "enabled": true,
         "steps": [
           {
-            "name": "test-instruction-to-update-with-approval-5-step-1-name",
+            "name": "test-instruction-to-update-with-approval-4-step-1-name",
             "operations": [
               {
-                "name": "test-instruction-to-update-with-approval-5-step-1-operation-1-name",
+                "name": "test-instruction-to-update-with-approval-4-step-1-operation-1-name",
                 "time_to_complete": {"value": 1, "unit":"s"},
-                "description": "test-instruction-to-update-with-approval-5-step-1-operation-1-description",
+                "description": "test-instruction-to-update-with-approval-4-step-1-operation-1-description",
                 "jobs": [
                   {
                     "_id": "test-job-to-instruction-edit-1",
@@ -918,7 +807,7 @@ Feature: instruction approval update
       }
     }
     """
-    When I do GET /api/v4/cat/instruction-stats?search=test-instruction-to-update-with-approval-5&from=1000000000&to=2000000000
+    When I do GET /api/v4/cat/instruction-stats?search=test-instruction-to-update-with-approval-4&from=1000000000&to=2000000000
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -936,11 +825,11 @@ Feature: instruction approval update
   @concurrent
   Scenario: The requester can update any updated fields
     When I am manager
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-6:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-5:
     """json
     {
-      "name": "test-instruction-to-update-with-approval-6-name",
-      "description": "test-instruction-to-update-with-approval-6-description",
+      "name": "test-instruction-to-update-with-approval-5-name",
+      "description": "test-instruction-to-update-with-approval-5-description",
       "enabled": true,
       "timeout_after_execution": {
         "value": 10,
@@ -948,12 +837,12 @@ Feature: instruction approval update
       },
       "steps": [
         {
-          "name": "test-instruction-to-update-with-approval-6-step-1-name",
+          "name": "test-instruction-to-update-with-approval-5-step-1-name",
           "operations": [
             {
-              "name": "test-instruction-to-update-with-approval-6-step-1-operation-1-name",
+              "name": "test-instruction-to-update-with-approval-5-step-1-operation-1-name",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-update-with-approval-6-step-1-operation-1-description",
+              "description": "test-instruction-to-update-with-approval-5-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
               ]
@@ -970,11 +859,11 @@ Feature: instruction approval update
     }
     """
     Then the response code should be 200
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-6:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-5:
     """json
     {
-      "name": "test-instruction-to-update-with-approval-6-name",
-      "description": "test-instruction-to-update-with-approval-6-description",
+      "name": "test-instruction-to-update-with-approval-5-name",
+      "description": "test-instruction-to-update-with-approval-5-description",
       "enabled": true,
       "timeout_after_execution": {
         "value": 10,
@@ -982,12 +871,12 @@ Feature: instruction approval update
       },
       "steps": [
         {
-          "name": "test-instruction-to-update-with-approval-6-step-1-name",
+          "name": "test-instruction-to-update-with-approval-5-step-1-name",
           "operations": [
             {
-              "name": "test-instruction-to-update-with-approval-6-step-1-operation-1-name",
+              "name": "test-instruction-to-update-with-approval-5-step-1-operation-1-name",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-update-with-approval-6-step-1-operation-1-description",
+              "description": "test-instruction-to-update-with-approval-5-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
               ]
@@ -1005,7 +894,7 @@ Feature: instruction approval update
     """
     Then the response code should be 200
     When I am role-to-instruction-approve-1
-    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-6/approval
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-5/approval
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1019,11 +908,11 @@ Feature: instruction approval update
         "requested_by": "manageruser"
       },
       "original": {
-        "_id": "test-instruction-to-update-with-approval-6",
+        "_id": "test-instruction-to-update-with-approval-5",
         "type": 0,
         "status": 0,
-        "name": "test-instruction-to-update-with-approval-6-name",
-        "description": "test-instruction-to-update-with-approval-6-description",
+        "name": "test-instruction-to-update-with-approval-5-name",
+        "description": "test-instruction-to-update-with-approval-5-description",
         "author": {
           "_id": "root",
           "name": "root"
@@ -1031,27 +920,27 @@ Feature: instruction approval update
         "enabled": true,
         "steps": [
           {
-            "name": "test-instruction-to-update-with-approval-6-step-1-name",
+            "name": "test-instruction-to-update-with-approval-5-step-1-name",
             "operations": [
               {
-                "name": "test-instruction-to-update-with-approval-6-step-1-operation-1-name",
+                "name": "test-instruction-to-update-with-approval-5-step-1-operation-1-name",
                 "time_to_complete": {
                   "value": 1,
                   "unit": "s"
                 },
-                "description": "test-instruction-to-update-with-approval-6-step-1-operation-1-description"
+                "description": "test-instruction-to-update-with-approval-5-step-1-operation-1-description"
               }
             ],
             "stop_on_fail": true,
-            "endpoint": "test-instruction-to-update-with-approval-6-step-1-endpoint"
+            "endpoint": "test-instruction-to-update-with-approval-5-step-1-endpoint"
           }
         ]
       },
       "updated": {
         "type": 0,
         "status": 2,
-        "name": "test-instruction-to-update-with-approval-6-name",
-        "description": "test-instruction-to-update-with-approval-6-description",
+        "name": "test-instruction-to-update-with-approval-5-name",
+        "description": "test-instruction-to-update-with-approval-5-description",
         "author":{
           "_id": "manageruser",
           "name": "manageruser"
@@ -1059,12 +948,12 @@ Feature: instruction approval update
         "enabled": true,
         "steps": [
           {
-            "name": "test-instruction-to-update-with-approval-6-step-1-name",
+            "name": "test-instruction-to-update-with-approval-5-step-1-name",
             "operations": [
               {
-                "name": "test-instruction-to-update-with-approval-6-step-1-operation-1-name",
+                "name": "test-instruction-to-update-with-approval-5-step-1-operation-1-name",
                 "time_to_complete": {"value": 1, "unit":"s"},
-                "description": "test-instruction-to-update-with-approval-6-step-1-operation-1-description",
+                "description": "test-instruction-to-update-with-approval-5-step-1-operation-1-description",
                 "jobs": [
                   {
                     "_id": "test-job-to-instruction-edit-1",
@@ -1109,11 +998,11 @@ Feature: instruction approval update
   @concurrent
   Scenario: The users that didn't request the approval couldn't change or remove the approval
     When I am manager
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-7:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-6:
     """json
     {
-      "name": "test-instruction-to-update-with-approval-7-name",
-      "description": "test-instruction-to-update-with-approval-7-description",
+      "name": "test-instruction-to-update-with-approval-6-name",
+      "description": "test-instruction-to-update-with-approval-6-description",
       "enabled": true,
       "timeout_after_execution": {
         "value": 10,
@@ -1121,12 +1010,12 @@ Feature: instruction approval update
       },
       "steps": [
         {
-          "name": "test-instruction-to-update-with-approval-7-step-1-name",
+          "name": "test-instruction-to-update-with-approval-6-step-1-name",
           "operations": [
             {
-              "name": "test-instruction-to-update-with-approval-7-step-1-operation-1-name",
+              "name": "test-instruction-to-update-with-approval-6-step-1-operation-1-name",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-update-with-approval-7-step-1-operation-1-description",
+              "description": "test-instruction-to-update-with-approval-6-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
               ]
@@ -1144,11 +1033,11 @@ Feature: instruction approval update
     """
     Then the response code should be 200
     When I am admin
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-7:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-6:
     """json
     {
-      "name": "test-instruction-to-update-with-approval-7-name",
-      "description": "test-instruction-to-update-with-approval-7-description",
+      "name": "test-instruction-to-update-with-approval-6-name",
+      "description": "test-instruction-to-update-with-approval-6-description",
       "enabled": true,
       "timeout_after_execution": {
         "value": 10,
@@ -1156,12 +1045,12 @@ Feature: instruction approval update
       },
       "steps": [
         {
-          "name": "test-instruction-to-update-with-approval-7-step-1-name",
+          "name": "test-instruction-to-update-with-approval-6-step-1-name",
           "operations": [
             {
-              "name": "test-instruction-to-update-with-approval-7-step-1-operation-1-name",
+              "name": "test-instruction-to-update-with-approval-6-step-1-operation-1-name",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-update-with-approval-7-step-1-operation-1-description",
+              "description": "test-instruction-to-update-with-approval-6-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1",
                 "test-job-to-instruction-edit-2"
@@ -1180,7 +1069,7 @@ Feature: instruction approval update
     """
     Then the response code should be 200
     When I am role-to-instruction-approve-1
-    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-7/approval
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-6/approval
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1206,11 +1095,11 @@ Feature: instruction approval update
     }
     """
     When I am admin
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-7:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-6:
     """json
     {
-      "name": "test-instruction-to-update-with-approval-7-name",
-      "description": "test-instruction-to-update-with-approval-7-description",
+      "name": "test-instruction-to-update-with-approval-6-name",
+      "description": "test-instruction-to-update-with-approval-6-description",
       "enabled": true,
       "timeout_after_execution": {
         "value": 10,
@@ -1218,12 +1107,12 @@ Feature: instruction approval update
       },
       "steps": [
         {
-          "name": "test-instruction-to-update-with-approval-7-step-1-name",
+          "name": "test-instruction-to-update-with-approval-6-step-1-name",
           "operations": [
             {
-              "name": "test-instruction-to-update-with-approval-7-step-1-operation-1-name",
+              "name": "test-instruction-to-update-with-approval-6-step-1-operation-1-name",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-update-with-approval-7-step-1-operation-1-description",
+              "description": "test-instruction-to-update-with-approval-6-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
               ]
@@ -1237,7 +1126,7 @@ Feature: instruction approval update
     """
     Then the response code should be 200
     When I am role-to-instruction-approve-1
-    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-7/approval
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-6/approval
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1266,11 +1155,11 @@ Feature: instruction approval update
   @concurrent
   Scenario: The requester can update or remove the approval, after removal instruction should be updated
     When I am manager
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-8:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-7:
     """json
     {
-      "name": "test-instruction-to-update-with-approval-8-name",
-      "description": "test-instruction-to-update-with-approval-8-description",
+      "name": "test-instruction-to-update-with-approval-7-name",
+      "description": "test-instruction-to-update-with-approval-7-description",
       "enabled": true,
       "timeout_after_execution": {
         "value": 10,
@@ -1278,12 +1167,12 @@ Feature: instruction approval update
       },
       "steps": [
         {
-          "name": "test-instruction-to-update-with-approval-8-step-1-name",
+          "name": "test-instruction-to-update-with-approval-7-step-1-name",
           "operations": [
             {
-              "name": "test-instruction-to-update-with-approval-8-step-1-operation-1-name",
+              "name": "test-instruction-to-update-with-approval-7-step-1-operation-1-name",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-update-with-approval-8-step-1-operation-1-description",
+              "description": "test-instruction-to-update-with-approval-7-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1"
               ]
@@ -1301,11 +1190,11 @@ Feature: instruction approval update
     """
     Then the response code should be 200
     When I am manager
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-8:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-7:
     """json
     {
-      "name": "test-instruction-to-update-with-approval-8-name",
-      "description": "test-instruction-to-update-with-approval-8-description",
+      "name": "test-instruction-to-update-with-approval-7-name",
+      "description": "test-instruction-to-update-with-approval-7-description",
       "enabled": true,
       "timeout_after_execution": {
         "value": 10,
@@ -1313,12 +1202,12 @@ Feature: instruction approval update
       },
       "steps": [
         {
-          "name": "test-instruction-to-update-with-approval-8-step-1-name",
+          "name": "test-instruction-to-update-with-approval-7-step-1-name",
           "operations": [
             {
-              "name": "test-instruction-to-update-with-approval-8-step-1-operation-1-name",
+              "name": "test-instruction-to-update-with-approval-7-step-1-operation-1-name",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-update-with-approval-8-step-1-operation-1-description",
+              "description": "test-instruction-to-update-with-approval-7-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1",
                 "test-job-to-instruction-edit-2"
@@ -1337,10 +1226,10 @@ Feature: instruction approval update
     """
     Then the response code should be 200
     When I am role-to-instruction-approve-1
-    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-8/approval
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-7/approval
     Then the response code should be 403
     When I am role-to-instruction-approve-2
-    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-8/approval
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-7/approval
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -1366,11 +1255,11 @@ Feature: instruction approval update
     }
     """
     When I am manager
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-8:
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-7:
     """json
     {
-      "name": "test-instruction-to-update-with-approval-8-name",
-      "description": "test-instruction-to-update-with-approval-8-description",
+      "name": "test-instruction-to-update-with-approval-7-name",
+      "description": "test-instruction-to-update-with-approval-7-description",
       "enabled": true,
       "timeout_after_execution": {
         "value": 10,
@@ -1378,12 +1267,12 @@ Feature: instruction approval update
       },
       "steps": [
         {
-          "name": "test-instruction-to-update-with-approval-8-step-1-name",
+          "name": "test-instruction-to-update-with-approval-7-step-1-name",
           "operations": [
             {
-              "name": "test-instruction-to-update-with-approval-8-step-1-operation-1-name",
+              "name": "test-instruction-to-update-with-approval-7-step-1-operation-1-name",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-update-with-approval-8-step-1-operation-1-description",
+              "description": "test-instruction-to-update-with-approval-7-step-1-operation-1-description",
               "jobs": [
                 "test-job-to-instruction-edit-1",
                 "test-job-to-instruction-edit-2"
@@ -1398,18 +1287,18 @@ Feature: instruction approval update
     """
     Then the response code should be 200
     When I am role-to-instruction-approve-2
-    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-8/approval
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-7/approval
     Then the response code should be 404
-    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-8
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-7
     Then the response code should be 200
     Then the response body should contain:
     """json
     {
-      "_id": "test-instruction-to-update-with-approval-8",
+      "_id": "test-instruction-to-update-with-approval-7",
       "type": 0,
       "status": 0,
-      "name": "test-instruction-to-update-with-approval-8-name",
-      "description": "test-instruction-to-update-with-approval-8-description",
+      "name": "test-instruction-to-update-with-approval-7-name",
+      "description": "test-instruction-to-update-with-approval-7-description",
       "author": {
         "_id": "manageruser",
         "name": "manageruser"
@@ -1417,12 +1306,12 @@ Feature: instruction approval update
       "enabled": true,
       "steps": [
         {
-          "name": "test-instruction-to-update-with-approval-8-step-1-name",
+          "name": "test-instruction-to-update-with-approval-7-step-1-name",
           "operations": [
             {
-              "name": "test-instruction-to-update-with-approval-8-step-1-operation-1-name",
+              "name": "test-instruction-to-update-with-approval-7-step-1-operation-1-name",
               "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-update-with-approval-8-step-1-operation-1-description",
+              "description": "test-instruction-to-update-with-approval-7-step-1-operation-1-description",
               "jobs": [
                 {
                   "_id": "test-job-to-instruction-edit-1",
@@ -1479,6 +1368,145 @@ Feature: instruction approval update
   @concurrent
   Scenario: Only the user from approval should be able to approve
     When I am manager
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-8:
+    """json
+    {
+      "name": "test-instruction-to-update-with-approval-8-name",
+      "description": "test-instruction-to-update-with-approval-8-description",
+      "enabled": true,
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "steps": [
+        {
+          "name": "test-instruction-to-update-with-approval-8-step-1-name",
+          "operations": [
+            {
+              "name": "test-instruction-to-update-with-approval-8-step-1-operation-1-name",
+              "time_to_complete": {"value": 1, "unit":"s"},
+              "description": "test-instruction-to-update-with-approval-8-step-1-operation-1-description",
+              "jobs": [
+                "test-job-to-instruction-edit-1"
+              ]
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "new endpoint 2"
+        }
+      ],
+      "approval": {
+        "role": "role-to-instruction-approve-2",
+        "comment": "test comment"
+      }
+    }
+    """
+    Then the response code should be 200
+    When I am admin
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-8/approval:
+    """json
+    {
+      "approve": true
+    }
+    """
+    Then the response code should be 403
+    Then the response body should be:
+    """json
+    {
+      "error": "role is not assigned to approval"
+    }
+    """
+    When I am manager
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-8/approval:
+    """json
+    {
+      "approve": true
+    }
+    """
+    Then the response code should be 403
+    Then the response body should be:
+    """json
+    {
+      "error": "role is not assigned to approval"
+    }
+    """
+    When I am role-to-instruction-approve-2
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-8/approval:
+    """json
+    {
+      "approve": true
+    }
+    """
+    Then the response code should be 200
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-8/approval
+    Then the response code should be 404
+    When I do GET /api/v4/cat/instructions/test-instruction-to-update-with-approval-8
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "type": 0,
+      "status": 0,
+      "name": "test-instruction-to-update-with-approval-8-name",
+      "description": "test-instruction-to-update-with-approval-8-description",
+      "author": {
+        "_id": "manageruser",
+        "name": "manageruser"
+      },
+      "enabled": true,
+      "steps": [
+        {
+          "name": "test-instruction-to-update-with-approval-8-step-1-name",
+          "operations": [
+            {
+              "name": "test-instruction-to-update-with-approval-8-step-1-operation-1-name",
+              "time_to_complete": {"value": 1, "unit":"s"},
+              "description": "test-instruction-to-update-with-approval-8-step-1-operation-1-description",
+              "jobs": [
+                {
+                  "_id": "test-job-to-instruction-edit-1",
+                  "name": "test-job-to-instruction-edit-1-name",
+                  "author": {
+                    "_id": "root",
+                    "name": "root"
+                  },
+                  "config": {
+                    "_id": "test-job-config-to-edit-instruction",
+                    "name": "test-job-config-to-edit-instruction-name",
+                    "type": "rundeck",
+                    "host": "http://example.com",
+                    "auth_token": "test-auth-token"
+                  },
+                  "job_id": "test-job-to-instruction-edit-1-external-id",
+                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+                }
+              ]
+            }
+          ],
+          "stop_on_fail": true,
+          "endpoint": "new endpoint 2"
+        }
+      ]
+    }
+    """
+    When I do GET /api/v4/cat/instruction-stats?search=test-instruction-to-update-with-approval-8&from=1000000000&to=2000000000
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "last_executed_on": 1596712203,
+          "avg_complete_time": 10,
+          "rating": 3.5
+        }
+      ]
+    }
+    """
+
+  @concurrent
+  Scenario: Only the user from approval should be able to dismiss
+    When I am manager
     When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-9:
     """json
     {
@@ -1503,49 +1531,35 @@ Feature: instruction approval update
             }
           ],
           "stop_on_fail": true,
-          "endpoint": "new endpoint 2"
+          "endpoint": "new endpoint 3"
         }
       ],
       "approval": {
-        "role": "role-to-instruction-approve-2",
+        "user": "user-to-instruction-approve-2",
         "comment": "test comment"
       }
     }
     """
     Then the response code should be 200
-    When I am admin
-    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-9/approval:
-    """json
-    {
-      "approve": true
-    }
-    """
-    Then the response code should be 403
-    Then the response body should be:
-    """json
-    {
-      "error": "role is not assigned to approval"
-    }
-    """
     When I am manager
     When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-9/approval:
     """json
     {
-      "approve": true
+      "approve": false
     }
     """
     Then the response code should be 403
     Then the response body should be:
     """json
     {
-      "error": "role is not assigned to approval"
+      "error": "user is not assigned to approval"
     }
     """
     When I am role-to-instruction-approve-2
     When I do PUT /api/v4/cat/instructions/test-instruction-to-update-with-approval-9/approval:
     """json
     {
-      "approve": true
+      "approve": false
     }
     """
     Then the response code should be 200
@@ -1556,13 +1570,14 @@ Feature: instruction approval update
     Then the response body should contain:
     """json
     {
+      "_id": "test-instruction-to-update-with-approval-9",
       "type": 0,
       "status": 0,
       "name": "test-instruction-to-update-with-approval-9-name",
       "description": "test-instruction-to-update-with-approval-9-description",
       "author": {
-        "_id": "manageruser",
-        "name": "manageruser"
+        "_id": "root",
+        "name": "root"
       },
       "enabled": true,
       "steps": [
@@ -1571,31 +1586,15 @@ Feature: instruction approval update
           "operations": [
             {
               "name": "test-instruction-to-update-with-approval-9-step-1-operation-1-name",
-              "time_to_complete": {"value": 1, "unit":"s"},
-              "description": "test-instruction-to-update-with-approval-9-step-1-operation-1-description",
-              "jobs": [
-                {
-                  "_id": "test-job-to-instruction-edit-1",
-                  "name": "test-job-to-instruction-edit-1-name",
-                  "author": {
-                    "_id": "root",
-                    "name": "root"
-                  },
-                  "config": {
-                    "_id": "test-job-config-to-edit-instruction",
-                    "name": "test-job-config-to-edit-instruction-name",
-                    "type": "rundeck",
-                    "host": "http://example.com",
-                    "auth_token": "test-auth-token"
-                  },
-                  "job_id": "test-job-to-instruction-edit-1-external-id",
-                  "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
-                }
-              ]
+              "time_to_complete": {
+                "value": 1,
+                "unit": "s"
+              },
+              "description": "test-instruction-to-update-with-approval-9-step-1-operation-1-description"
             }
           ],
           "stop_on_fail": true,
-          "endpoint": "new endpoint 2"
+          "endpoint": "test-instruction-to-update-with-approval-9-step-1-endpoint"
         }
       ]
     }
