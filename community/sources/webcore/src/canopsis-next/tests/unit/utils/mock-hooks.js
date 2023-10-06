@@ -129,6 +129,21 @@ export const mockSocket = () => {
 };
 
 /**
+ * Mock for the router. Clear yourself after all tests.
+ */
+export const mockRouter = () => {
+  const router = {
+    push: jest.fn(),
+  };
+
+  afterEach(() => {
+    router.push.mockReset();
+  });
+
+  return router;
+};
+
+/**
  * Mock for XMLHttpRequest. Clear yourself after all tests.
  */
 export const mockXMLHttpRequest = () => {
