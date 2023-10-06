@@ -1,4 +1,4 @@
-import { TRIGGERS } from './common';
+import { TRIGGERS_TYPES } from './common';
 
 export const REMEDIATION_TABS = {
   instructions: 'instructions',
@@ -60,13 +60,14 @@ export const INSTRUCTION_EXECUTION_ICONS = {
   manualSuccessfulWithManualAvailable: 15,
 };
 
-export const REMEDIATION_AUTO_INSTRUCTION_TRIGGERS = [
-  TRIGGERS.create,
-  TRIGGERS.statedec,
-  TRIGGERS.stateinc,
-  TRIGGERS.changestate,
-  TRIGGERS.unsnooze,
-  TRIGGERS.activate,
-  TRIGGERS.pbhenter,
-  TRIGGERS.pbhleave,
+export const REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES = [
+  TRIGGERS_TYPES.create,
+  TRIGGERS_TYPES.statedec,
+  TRIGGERS_TYPES.stateinc,
+  TRIGGERS_TYPES.changestate,
+  TRIGGERS_TYPES.unsnooze,
+  TRIGGERS_TYPES.activate,
+  TRIGGERS_TYPES.pbhenter,
+  TRIGGERS_TYPES.pbhleave,
+  TRIGGERS_TYPES.eventscount,
 ];
