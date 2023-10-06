@@ -4,6 +4,7 @@ template:
     created: <NowUnix()>,
     updated: <Current().created>,
     position: <Index()>,
+    is_private: false,
     author: root
   }
   - &view {
@@ -11,6 +12,7 @@ template:
     created: <NowUnix()>,
     updated: <Current().created>,
     position: <Index()>,
+    is_private: false,
     enabled: true,
     author: root
   }
@@ -19,13 +21,15 @@ template:
     created: <NowUnix()>,
     updated: <Current().created>,
     position: 0,
+    is_private: false,
     author: root
   }
   - &widget {
     _id: <UUID()>,
     created: <NowUnix()>,
     updated: <Current().created>,
-    author: root
+    author: root,
+    is_private: false
   }
   - &widget_alarm_columns [
     { value: v.connector },
@@ -50,6 +54,7 @@ template:
   - &filter {
     _id: <UUID()>,
     widget_private: false,
+    is_private: false,
     created: <NowUnix()>,
     updated: <Current().created>,
     author: root,
@@ -1362,6 +1367,11 @@ permission:
     _id: "@view_context_explorer"
     name: <Current()._id>
     description: "Rights on view: Explorateur de Contexte"
+  permission_api_private_view_groups:
+    <<: *permission
+    _id: api_private_view_groups
+    name: <Current()._id>
+    description: Create private view groups
 
 role:
   role_admin:
@@ -1579,6 +1589,7 @@ role:
       "@permission_view_open_alarms": 15
       "@permission_view_resolved_alarms": 15
       "@permission_view_context_explorer": 15
+      "@permission_api_private_view_groups": 1
 
 role_template:
   tpl_pilot:
