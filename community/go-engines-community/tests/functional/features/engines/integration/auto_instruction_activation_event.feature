@@ -532,7 +532,11 @@ Feature: send activation event on unsnooze
     {
       "name": "test-scenario-to-test-auto-instruction-activate-event-5-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -1019,7 +1023,11 @@ Feature: send activation event on unsnooze
     {
       "name": "test-scenario-to-test-auto-instruction-activate-event-8-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [

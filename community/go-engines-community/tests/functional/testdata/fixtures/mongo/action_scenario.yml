@@ -216,6 +216,14 @@ action_scenario:
         emit_trigger: false
         type: ack
 
+  scenario_to_update_4:
+    <<: *scenario
+    _id: test-scenario-to-update-4
+
+  scenario_to_update_5:
+    <<: *scenario
+    _id: test-scenario-to-update-5
+
   scenario_to_bulk_update_3:
     <<: *scenario
     _id: test-scenario-to-bulk-update-3
