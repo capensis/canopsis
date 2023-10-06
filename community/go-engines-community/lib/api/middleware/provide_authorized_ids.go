@@ -47,13 +47,15 @@ func ProvideAuthorizedIds(
 			}
 		}
 
-		ownedIds, err := provider.GetOwnedIDs(c, subj.(string))
-		if err != nil {
-			panic(err)
+		if provider != nil {
+			ownedIds, err := provider.GetOwnedIDs(c, subj.(string))
+			if err != nil {
+				panic(err)
+			}
+			c.Set(OwnedIds, ownedIds)
 		}
 
 		c.Set(AuthorizedIds, ids)
-		c.Set(OwnedIds, ownedIds)
 
 		c.Next()
 	}
