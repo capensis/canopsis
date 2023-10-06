@@ -13,7 +13,8 @@
     :step="step",
     :loading="loading",
     type="number",
-    @paste="$emit('paste', $event)"
+    @paste="$emit('paste', $event)",
+    @click="$emit('click', $event)"
   )
     template(#append="")
       slot(name="append")
