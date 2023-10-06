@@ -491,11 +491,20 @@ func NewUserInterfaceConfigProvider(cfg UserInterfaceConf, logger zerolog.Logger
 			Msg("CheckCountRequestTimeout of user interface config is used")
 	}
 
+	logger.Info().
+		Bool("value", cfg.IsAllowChangeSeverityToInfo).
+		Msg("IsAllowChangeSeverityToInfo of user interface config is used")
+
+	logger.Info().
+		Bool("value", cfg.RequiredInstructionApprove).
+		Msg("RequiredInstructionApprove of user interface config is used")
+
 	return &BaseUserInterfaceConfigProvider{
 		conf: UserInterfaceConf{
 			IsAllowChangeSeverityToInfo: cfg.IsAllowChangeSeverityToInfo,
 			MaxMatchedItems:             maxMatchedItems,
 			CheckCountRequestTimeout:    checkCountRequestTimeout,
+			RequiredInstructionApprove:  cfg.RequiredInstructionApprove,
 		},
 		logger: logger,
 	}
@@ -542,6 +551,15 @@ func (p *BaseUserInterfaceConfigProvider) Update(conf UserInterfaceConf) {
 			Msg("IsAllowChangeSeverityToInfo of user interface config is loaded")
 
 		p.conf.IsAllowChangeSeverityToInfo = conf.IsAllowChangeSeverityToInfo
+	}
+
+	if conf.RequiredInstructionApprove != p.conf.RequiredInstructionApprove {
+		p.logger.Info().
+			Bool("previous", p.conf.RequiredInstructionApprove).
+			Bool("new", conf.RequiredInstructionApprove).
+			Msg("RequiredInstructionApprove of user interface config is loaded")
+
+		p.conf.RequiredInstructionApprove = conf.RequiredInstructionApprove
 	}
 }
 

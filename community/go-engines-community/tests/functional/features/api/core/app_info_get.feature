@@ -48,6 +48,7 @@ Feature: Get application information
       "version": "development",
       "check_count_request_timeout": 30,
       "show_header_on_kiosk_mode": false,
+      "required_instruction_approve": false,
       "file_upload_max_size": 314572800,
       "version_updated": null,
       "max_matched_items": 4,

@@ -846,6 +846,8 @@ definitions:
         $ref: '#/definitions/appinfo.PopupTimeout'
       remediation:
         $ref: '#/definitions/appinfo.RemediationConf'
+      required_instruction_approve:
+        type: boolean
       show_header_on_kiosk_mode:
         type: boolean
       stack:
@@ -918,6 +920,8 @@ definitions:
         type: integer
       popup_timeout:
         $ref: '#/definitions/appinfo.PopupTimeout'
+      required_instruction_approve:
+        type: boolean
       show_header_on_kiosk_mode:
         type: boolean
     type: object
@@ -2073,7 +2077,8 @@ definitions:
       _id:
         type: string
       event:
-        additionalProperties: {}
+        additionalProperties:
+          type: any
         type: object
       message:
         type: string
