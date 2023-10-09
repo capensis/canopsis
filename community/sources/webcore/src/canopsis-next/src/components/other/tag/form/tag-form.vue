@@ -4,8 +4,8 @@
       v-field="form.value",
       :disabled="isImported",
       :max-length="maxTagNameLength",
-      required,
-      name="value"
+      name="value",
+      required
     )
     c-color-picker-field(v-field="form.color")
     tag-patterns-form(v-if="!isImported", v-field="form.patterns")
