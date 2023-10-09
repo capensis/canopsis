@@ -16,17 +16,18 @@ Feature: get healthcheck engines' order
     When I do GET /api/v4/healthcheck/engines-order
     Then the response code should be 200
     Then the response body should be:
-    """
+    """json
     {
       "nodes": [
         "engine-fifo",
         "engine-che",
-        "engine-pbehavior",
-        "engine-axe",
         "engine-axe",
         "engine-correlation",
+        "engine-remediation",
+        "engine-pbehavior",
         "engine-dynamic-infos",
-        "engine-action"
+        "engine-action",
+        "engine-webhook"
       ],
       "edges": [
         {
@@ -35,10 +36,6 @@ Feature: get healthcheck engines' order
         },
         {
           "from": "engine-che",
-          "to": "engine-pbehavior"
-        },
-        {
-          "from": "engine-pbehavior",
           "to": "engine-axe"
         },
         {
@@ -48,6 +45,10 @@ Feature: get healthcheck engines' order
         {
           "from": "engine-axe",
           "to": "engine-remediation"
+        },
+        {
+          "from": "engine-axe",
+          "to": "engine-pbehavior"
         },
         {
           "from": "engine-correlation",

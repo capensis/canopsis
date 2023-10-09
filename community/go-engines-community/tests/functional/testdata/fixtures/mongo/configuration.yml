@@ -224,13 +224,13 @@ configuration:
     - from: engine-fifo
       to: engine-che
     - from: engine-che
-      to: engine-pbehavior
-    - from: engine-pbehavior
       to: engine-axe
     - from: engine-axe
       to: engine-correlation
     - from: engine-axe
       to: engine-remediation
+    - from: engine-axe
+      to: engine-pbehavior
     - from: engine-correlation
       to: engine-dynamic-infos
     - from: engine-dynamic-infos
