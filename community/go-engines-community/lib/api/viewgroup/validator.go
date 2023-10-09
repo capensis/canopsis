@@ -2,6 +2,7 @@ package viewgroup
 
 import (
 	"context"
+	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
@@ -29,7 +30,7 @@ func (v *baseValidator) ValidateEditRequest(ctx context.Context, sl validator.St
 	err := v.collection.FindOne(ctx, bson.M{"title": r.Title, "is_private": false}).Err()
 	if err == nil {
 		sl.ReportError(r.Title, "Title", "Title", "unique", "")
-	} else if err != mongodriver.ErrNoDocuments {
+	} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
 		panic(err)
 	}
 }
