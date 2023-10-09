@@ -1,14 +1,17 @@
 Feature: Instruction update
 
+  @concurrent
   Scenario: given update request and no auth user should not allow access
     When I do PUT /api/v4/cat/instructions/test-instruction-to-update
     Then the response code should be 401
 
+  @concurrent
   Scenario: given update request and auth user without permissions should not allow access
     When I am noperms
     When I do PUT /api/v4/cat/instructions/test-instruction-to-update
     Then the response code should be 403
 
+  @concurrent
   Scenario: given update manual instruction request should return ok
     When I am admin
     When I do PUT /api/v4/cat/instructions/test-instruction-to-update-1:
@@ -271,6 +274,7 @@ Feature: Instruction update
     }
     """
 
+  @concurrent
   Scenario: given update auto instruction request should return ok
     When I am admin
     When I do PUT /api/v4/cat/instructions/test-instruction-to-update-2:
@@ -281,8 +285,11 @@ Feature: Instruction update
       "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
       "description": "test-instruction-to-update-2-description",
       "enabled": true,
-      "priority": 21,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -339,8 +346,11 @@ Feature: Instruction update
         "name": "root"
       },
       "enabled": true,
-      "priority": 21,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -411,6 +421,7 @@ Feature: Instruction update
     }
     """
 
+  @concurrent
   Scenario: given update request with already exists name should return error
     When I am admin
     When I do PUT /api/v4/cat/instructions/test-instruction-to-update:
@@ -429,6 +440,7 @@ Feature: Instruction update
     }
     """
 
+  @concurrent
   Scenario: given update request for a instruction with old patterns should return keep old patterns
     When I am admin
     When I do PUT /api/v4/cat/instructions/test-instruction-to-update-3:
@@ -437,8 +449,11 @@ Feature: Instruction update
       "name": "test-instruction-to-update-3-name",
       "description": "test-instruction-to-update-3-description",
       "enabled": true,
-      "priority": 21,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -464,8 +479,11 @@ Feature: Instruction update
         "name": "root"
       },
       "enabled": true,
-      "priority": 21,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -514,8 +532,11 @@ Feature: Instruction update
       "name": "test-instruction-to-update-3-name",
       "description": "test-instruction-to-update-3-description",
       "enabled": true,
-      "priority": 21,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -552,8 +573,11 @@ Feature: Instruction update
         "name": "root"
       },
       "enabled": true,
-      "priority": 21,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -609,8 +633,11 @@ Feature: Instruction update
       "name": "test-instruction-to-update-3-name",
       "description": "test-instruction-to-update-3-description",
       "enabled": true,
-      "priority": 21,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -658,8 +685,11 @@ Feature: Instruction update
         "name": "root"
       },
       "enabled": true,
-      "priority": 21,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "timeout_after_execution": {
         "value": 10,
         "unit": "m"
@@ -717,6 +747,7 @@ Feature: Instruction update
     }
     """
 
+  @concurrent
   Scenario: given update simplified manual instruction request should return ok
     When I am admin
     When I do PUT /api/v4/cat/instructions/test-instruction-to-update-4:
@@ -836,5 +867,222 @@ Feature: Instruction update
           }
         }
       ]
+    }
+    """
+
+  @concurrent
+  Scenario: given update auto instruction request with events count trigger should return ok
+    When I am admin
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-5:
+    """json
+    {
+      "name": "test-instruction-to-update-5-name",
+      "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "description": "test-instruction-to-update-5-description",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount",
+          "threshold": 3
+        }
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "jobs": [
+        {
+          "stop_on_fail": true,
+          "job": "test-job-to-instruction-edit-1"
+        }
+      ]
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-instruction-to-update-5",
+      "type": 1,
+      "status": 0,
+      "name": "test-instruction-to-update-5-name",
+      "created": 1596712203,
+      "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+      "corporate_alarm_pattern_title": "test-pattern-to-rule-edit-1-title",
+      "alarm_pattern": [
+        [
+          {
+            "field": "v.component",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-rule-edit-1-pattern"
+            }
+          }
+        ]
+      ],
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "corporate_entity_pattern_title": "test-pattern-to-rule-edit-2-title",
+      "entity_pattern": [
+        [
+          {
+            "field": "name",
+            "cond": {
+              "type": "eq",
+              "value": "test-pattern-to-rule-edit-2-pattern"
+            }
+          }
+        ]
+      ],
+      "description": "test-instruction-to-update-5-description",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount",
+          "threshold": 3
+        }
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "jobs": [
+        {
+          "stop_on_fail": true,
+          "job": {
+            "_id": "test-job-to-instruction-edit-1",
+            "author": {
+              "_id": "root",
+              "name": "root"
+            },
+            "config": {
+              "_id": "test-job-config-to-edit-instruction",
+              "auth_token": "test-auth-token",
+              "author": {
+                "_id": "root",
+                "name": "root"
+              },
+              "host": "http://example.com",
+              "name": "test-job-config-to-edit-instruction-name",
+              "type": "rundeck"
+            },
+            "job_id": "test-job-to-instruction-edit-1-external-id",
+            "name": "test-job-to-instruction-edit-1-name",
+            "payload": "{\"key1\": \"val1\",\"key2\": \"val2\"}"
+          }
+        }
+      ]
+    }
+    """
+
+  @concurrent
+  Scenario: given update auto instruction request with invalid threshold value should return errors
+    When I am admin
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-6:
+    """json
+    {
+      "name": "test-instruction-to-update-6-name",
+      "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "description": "test-instruction-to-update-6-description",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount"
+        }
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "jobs": [
+        {
+          "stop_on_fail": true,
+          "job": "test-job-to-instruction-edit-1"
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "triggers.0.threshold": "Threshold is required when Type eventscount is defined."
+      }
+    }
+    """
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-6:
+    """json
+    {
+      "name": "test-instruction-to-update-6-name",
+      "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "description": "test-instruction-to-update-6-description",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount",
+          "threshold": 1
+        }
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "jobs": [
+        {
+          "stop_on_fail": true,
+          "job": "test-job-to-instruction-edit-1"
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "triggers.0.threshold": "Threshold should be greater than 1."
+      }
+    }
+    """
+    When I do PUT /api/v4/cat/instructions/test-instruction-to-update-6:
+    """json
+    {
+      "name": "test-instruction-to-update-6-name",
+      "corporate_alarm_pattern": "test-pattern-to-rule-edit-1",
+      "corporate_entity_pattern": "test-pattern-to-rule-edit-2",
+      "description": "test-instruction-to-update-6-description",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "create",
+          "threshold": 1
+        }
+      ],
+      "timeout_after_execution": {
+        "value": 10,
+        "unit": "m"
+      },
+      "jobs": [
+        {
+          "stop_on_fail": true,
+          "job": "test-job-to-instruction-edit-1"
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "triggers.0.threshold": "Threshold should be empty when Type eventscount is not defined."
+      }
     }
     """

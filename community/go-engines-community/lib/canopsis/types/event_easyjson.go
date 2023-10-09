@@ -897,6 +897,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.PreviousPbehaviorTypeID = string(in.String())
 		case "PreviousPbehaviorCannonicalType":
 			out.PreviousPbehaviorCannonicalType = string(in.String())
+		case "EventsCount":
+			out.EventsCount = int(in.Int())
 		default:
 			in.SkipRecursive()
 		}
@@ -963,6 +965,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"PreviousPbehaviorCannonicalType\":"
 		out.RawString(prefix)
 		out.String(string(in.PreviousPbehaviorCannonicalType))
+	}
+	{
+		const prefix string = ",\"EventsCount\":"
+		out.RawString(prefix)
+		out.Int(int(in.EventsCount))
 	}
 	out.RawByte('}')
 }

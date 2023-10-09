@@ -10,7 +10,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-webhook-1-name",
       "priority": 10008,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -172,7 +176,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-webhook-2-1-name",
       "priority": 10010,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -213,7 +221,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-webhook-2-2-name",
       "priority": 10012,
       "enabled": true,
-      "triggers": ["declareticketwebhook"],
+      "triggers": [
+        {
+          "type": "declareticketwebhook"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -342,7 +354,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-webhook-4-name",
       "priority": 10015,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -459,7 +475,9 @@ Feature: execute action on trigger
       "priority": 10019,
       "enabled": true,
       "triggers": [
-        "create"
+        {
+          "type": "create"
+        }
       ],
       "actions": [
         {
@@ -534,7 +552,9 @@ Feature: execute action on trigger
       "priority": 10022,
       "enabled": true,
       "triggers": [
-        "declareticketwebhook"
+        {
+          "type": "declareticketwebhook"
+        }
       ],
       "actions": [
         {
@@ -579,7 +599,9 @@ Feature: execute action on trigger
       "priority": 10024,
       "enabled": true,
       "triggers": [
-        "create"
+        {
+          "type": "create"
+        }
       ],
       "actions": [
         {
@@ -786,7 +808,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-webhook-7-name",
       "priority": 10026,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -983,7 +1009,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-webhook-8-name",
       "priority": 10028,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -1135,7 +1165,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-webhook-9-name",
       "priority": 10030,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -1287,7 +1321,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-webhook-3-name",
       "priority": 10014,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -1420,7 +1458,11 @@ Feature: execute action on trigger
       "name": "test-scenario-action-webhook-5-name",
       "priority": 10011,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [

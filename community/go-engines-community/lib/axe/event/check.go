@@ -134,6 +134,7 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 
 	if result.Alarm.ID != "" {
 		result.IsInstructionMatched = isInstructionMatched(event, result, p.autoInstructionMatcher, p.logger)
+		result.AlarmChange.EventsCount = int(result.Alarm.Value.EventsCount)
 	}
 
 	if !event.Healthcheck {
@@ -229,7 +230,7 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 	}
 
 	if p.alarmConfigProvider.Get().ActivateAlarmAfterAutoRemediation {
-		matched, err := p.autoInstructionMatcher.Match(types.GetTriggers(alarmChange.Type), types.AlarmWithEntity{Alarm: alarm, Entity: entity})
+		matched, err := p.autoInstructionMatcher.Match(alarmChange.GetTriggers(), types.AlarmWithEntity{Alarm: alarm, Entity: entity})
 		if err != nil {
 			return result, err
 		}
@@ -561,7 +562,12 @@ func sendRemediationEvent(
 	}
 
 	switch result.AlarmChange.Type {
-	case types.AlarmChangeTypeCreate,
+	case types.AlarmChangeTypeNone:
+		if result.AlarmChange.EventsCount < types.MinimalEventsCountThreshold {
+			return nil
+		}
+	case
+		types.AlarmChangeTypeCreate,
 		types.AlarmChangeTypeCreateAndPbhEnter,
 		types.AlarmChangeTypeStateIncrease,
 		types.AlarmChangeTypeStateDecrease,
@@ -632,7 +638,7 @@ func updatePbhLastAlarmDate(ctx context.Context, result Result, pbehaviorCollect
 }
 
 func isInstructionMatched(event rpc.AxeEvent, result Result, autoInstructionMatcher AutoInstructionMatcher, logger zerolog.Logger) bool {
-	triggers := types.GetTriggers(result.AlarmChange.Type)
+	triggers := result.AlarmChange.GetTriggers()
 	if len(triggers) == 0 {
 		return false
 	}
