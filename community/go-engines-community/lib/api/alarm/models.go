@@ -59,7 +59,8 @@ type ListRequest struct {
 
 type FilterRequest struct {
 	BaseFilterRequest
-	SearchBy []string `form:"active_columns[]" json:"active_columns[]"`
+	SearchBy      []string `form:"active_columns[]" json:"active_columns[]"`
+	WithBookmarks bool     `form:"with_bookmarks" json:"with_bookmarks"`
 }
 
 func (r BaseFilterRequest) GetOpenedFilter() int {
@@ -278,6 +279,8 @@ type Alarm struct {
 
 	// Only for details request
 	Filtered *bool `bson:"filtered" json:"filtered,omitempty"`
+
+	Bookmark bool `bson:"bookmark" json:"bookmark"`
 }
 
 type MetaAlarmRule struct {
