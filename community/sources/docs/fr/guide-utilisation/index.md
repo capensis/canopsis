@@ -33,6 +33,7 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
   * [Bilan de santé](menu-administration/bilan-de-sante.md)
   * [Cartographie](menu-administration/cartographie.md)
   * [Consignes](menu-administration/consignes.md)
+  * [Gestion des tags](menu-administration/gestion-des-tags.md)
   * [KPI](menu-administration/kpi.md)
   * [Paramètres](menu-administration/parametres.md)
   * [Planification](menu-administration/planification.md) 
