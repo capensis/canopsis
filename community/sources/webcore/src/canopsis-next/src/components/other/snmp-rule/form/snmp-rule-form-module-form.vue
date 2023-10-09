@@ -23,7 +23,6 @@
           v-validate="'required'",
           :value="form.mib",
           :items="moduleMibs",
-          :search-input.sync="mibSearchInput",
           :loading="moduleMibsPending",
           :menu-props="{ offsetY: true }",
           :error-messages="errors.collect('mib')",
@@ -69,7 +68,6 @@ export default {
       searchInput: '',
       modulesPending: false,
       moduleMibs: [],
-      mibSearchInput: '',
       moduleMibsPending: false,
     };
   },
