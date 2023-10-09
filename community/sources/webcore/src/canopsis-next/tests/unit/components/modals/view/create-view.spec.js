@@ -10,7 +10,13 @@ import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 
 import ClickOutside from '@/services/click-outside';
-import { CRUD_ACTIONS, DEFAULT_PERIODIC_REFRESH, MODALS, ROUTES_NAMES, USERS_PERMISSIONS } from '@/constants';
+import {
+  CRUD_ACTIONS,
+  DEFAULT_PERIODIC_REFRESH,
+  MODALS,
+  ROUTES_NAMES,
+  USERS_PERMISSIONS,
+} from '@/constants';
 
 import CreateView from '@/components/modals/view/create-view.vue';
 
