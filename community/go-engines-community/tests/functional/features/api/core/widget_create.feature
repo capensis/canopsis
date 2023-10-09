@@ -93,7 +93,7 @@ Feature: Create a widget
         {
           "title": "test-widgetfilter-to-widget-create-1-1-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -135,7 +135,7 @@ Feature: Create a widget
         {
           "title": "test-widgetfilter-to-widget-create-1-2-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -187,7 +187,7 @@ Feature: Create a widget
         {
           "title": "test-widgetfilter-to-widget-create-1-1-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -229,7 +229,7 @@ Feature: Create a widget
         {
           "title": "test-widgetfilter-to-widget-create-1-2-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -829,7 +829,7 @@ Feature: Create a widget
         {
           "title": "test-private-widgetfilter-to-private-widget-create-1-1-title",
           "is_private": true,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -871,7 +871,7 @@ Feature: Create a widget
         {
           "title": "test-private-widgetfilter-to-private-widget-create-1-2-title",
           "is_private": true,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -923,7 +923,7 @@ Feature: Create a widget
         {
           "title": "test-private-widgetfilter-to-private-widget-create-1-1-title",
           "is_private": true,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -965,7 +965,7 @@ Feature: Create a widget
         {
           "title": "test-private-widgetfilter-to-private-widget-create-1-2-title",
           "is_private": true,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"

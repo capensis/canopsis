@@ -133,13 +133,13 @@ func (s *store) Find(ctx context.Context, r ListRequest, userId string) (*Aggreg
 	if r.Private == nil {
 		match["$or"] = []bson.M{
 			{"author": userId},
-			{"widget_private": false},
+			{"is_user_preference": false},
 		}
 	} else if *r.Private {
 		match["author"] = userId
-		match["widget_private"] = true
+		match["is_user_preference"] = true
 	} else {
-		match["widget_private"] = false
+		match["is_user_preference"] = false
 	}
 
 	pipeline := []bson.M{
@@ -149,7 +149,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, userId string) (*Aggreg
 	var sort bson.M
 	if r.Private == nil {
 		sort = bson.M{"$sort": bson.D{
-			{Key: "widget_private", Value: 1},
+			{Key: "is_user_preference", Value: 1},
 			{Key: "position", Value: 1},
 			{Key: "_id", Value: 1},
 		}}
@@ -191,7 +191,7 @@ func (s *store) GetOneBy(ctx context.Context, id, userId string) (*Response, err
 			"_id": id,
 			"$or": bson.A{
 				bson.M{"author": userId},
-				bson.M{"widget_private": false},
+				bson.M{"is_user_preference": false},
 			}},
 		},
 	}
@@ -300,7 +300,7 @@ func (s *store) Delete(ctx context.Context, id, userId string) (bool, error) {
 		res = false
 		delCount, err := s.collection.DeleteOne(ctx, bson.M{"_id": id, "$or": bson.A{
 			bson.M{"author": userId},
-			bson.M{"widget_private": false},
+			bson.M{"is_user_preference": false},
 		}})
 		if err != nil {
 			return err
@@ -341,8 +341,8 @@ func (s *store) UpdatePositions(ctx context.Context, ids []string, widgetId, use
 		res = false
 
 		match := bson.M{
-			"widget":         widgetId,
-			"widget_private": isPrivate,
+			"widget":             widgetId,
+			"is_user_preference": isPrivate,
 		}
 		if isPrivate {
 			match["author"] = userId
@@ -412,7 +412,7 @@ func (s *store) updateUserPreferences(ctx context.Context, filterId string) erro
 }
 
 func (s *store) getNextPosition(ctx context.Context, widget string, isPrivate bool, user string) (int64, error) {
-	match := bson.M{"widget": widget, "widget_private": isPrivate}
+	match := bson.M{"widget": widget, "is_user_preference": isPrivate}
 	if isPrivate {
 		match["author"] = user
 	}

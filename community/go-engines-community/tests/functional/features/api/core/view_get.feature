@@ -77,7 +77,7 @@ Feature: Get a view
                 {
                   "_id": "test-widgetfilter-to-view-get-1",
                   "title": "test-widgetfilter-to-view-get-1-title",
-                  "widget_private": false,
+                  "is_user_preference": false,
                   "is_private": false,
                   "author": {
                     "_id": "nopermsuser",
@@ -101,7 +101,7 @@ Feature: Get a view
                 {
                   "_id": "test-widgetfilter-to-view-get-2",
                   "title": "test-widgetfilter-to-view-get-2-title",
-                  "widget_private": false,
+                  "is_user_preference": false,
                   "is_private": false,
                   "author": {
                     "_id": "root",

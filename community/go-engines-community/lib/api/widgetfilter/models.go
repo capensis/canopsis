@@ -22,7 +22,7 @@ type ListRequest struct {
 
 type EditRequest struct {
 	BaseEditRequest
-	WidgetPrivate *bool  `json:"widget_private" binding:"required"`
+	WidgetPrivate *bool  `json:"is_user_preference" binding:"required"`
 	Author        string `json:"author" swaggerignore:"true"`
 	IsPrivate     bool   `json:"-"`
 }
@@ -51,7 +51,7 @@ type Response struct {
 	ID            string         `bson:"_id" json:"_id"`
 	Widget        string         `bson:"widget" json:"-"`
 	Title         string         `bson:"title" json:"title"`
-	WidgetPrivate bool           `bson:"widget_private" json:"widget_private"`
+	WidgetPrivate bool           `bson:"is_user_preference" json:"is_user_preference"`
 	Author        *author.Author `bson:"author" json:"author,omitempty"`
 	Created       *types.CpsTime `bson:"created" json:"created,omitempty" swaggertype:"integer"`
 	Updated       *types.CpsTime `bson:"updated" json:"updated,omitempty" swaggertype:"integer"`

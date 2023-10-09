@@ -76,7 +76,7 @@ Feature: get service weather
     {
       "title": "test-widgetfilter-pbehavior-weather-service-second-1",
       "widget": "test-widget-to-weather-get",
-      "widget_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -271,7 +271,7 @@ Feature: get service weather
     {
       "title": "test-widgetfilter-pbehavior-weather-service-second-2",
       "widget": "test-widget-to-weather-get",
-      "widget_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -326,7 +326,7 @@ Feature: get service weather
     {
       "title": "test-widgetfilter-pbehavior-weather-service-second-2",
       "widget": "test-widget-to-weather-get",
-      "widget_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -445,7 +445,7 @@ Feature: get service weather
     {
       "title": "test-widgetfilter-pbehavior-weather-service-second-3",
       "widget": "test-widget-to-weather-get",
-      "widget_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -577,7 +577,7 @@ Feature: get service weather
     {
       "title": "test-widgetfilter-pbehavior-weather-service-second-4",
       "widget": "test-widget-to-weather-get",
-      "widget_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -757,7 +757,7 @@ Feature: get service weather
     {
       "title": "test-widgetfilter-pbehavior-weather-service-second-5",
       "widget": "test-widget-to-weather-get",
-      "widget_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -984,7 +984,7 @@ Feature: get service weather
     {
       "title": "test-widgetfilter-pbehavior-weather-service-second-6",
       "widget": "test-widget-to-weather-get",
-      "widget_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -1400,7 +1400,7 @@ Feature: get service weather
     {
       "title": "test-widgetfilter-pbehavior-weather-service-second-7",
       "widget": "test-widget-to-weather-get",
-      "widget_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -1755,7 +1755,7 @@ Feature: get service weather
     {
       "title": "test-widgetfilter-pbehavior-weather-service-second-8",
       "widget": "test-widget-to-weather-get",
-      "widget_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -1807,7 +1807,7 @@ Feature: get service weather
     {
       "title": "test-widgetfilter-pbehavior-weather-service-second-8",
       "widget": "test-widget-to-weather-get",
-      "widget_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -2007,7 +2007,7 @@ Feature: get service weather
     {
       "title": "test-widgetfilter-pbehavior-weather-service-second-9",
       "widget": "test-widget-to-weather-get",
-      "widget_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
@@ -2059,7 +2059,7 @@ Feature: get service weather
     {
       "title": "test-widgetfilter-pbehavior-weather-service-second-9",
       "widget": "test-widget-to-weather-get",
-      "widget_private": true,
+      "is_user_preference": true,
       "entity_pattern": [
         [
           {
