@@ -145,6 +145,8 @@ definitions:
         items:
           $ref: '#/definitions/alarm.AssignedInstruction'
         type: array
+      bookmark:
+        type: boolean
       children:
         type: integer
       children_instructions:
