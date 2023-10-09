@@ -757,61 +757,6 @@ exports[`maps-list Renders \`maps-list\` with custom props 1`] = `
               tag="td"
             />
           </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
-              >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <c-expand-btn-stub
-                  class="ml-2"
-                />
-              </div>
-            </td>
-            <td>
-              
-            </td>
-            <td>
-              <span>
-                Mermaid
-              </span>
-            </td>
-            <td>
-              04/03/2021 13:44:58
-            </td>
-            <td>
-              author-10
-            </td>
-            <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="duplicate"
-                />
-                <c-action-btn-stub
-                  tooltip="Delete"
-                  type="delete"
-                />
-              </div>
-            </td>
-          </tr>
-          <tr
-            class="v-datatable__expand-row"
-          >
-            <transition-group-stub
-              class="v-datatable__expand-col"
-              colspan="6"
-              tag="td"
-            />
-          </tr>
         </tbody>
       </table>
     </div>
