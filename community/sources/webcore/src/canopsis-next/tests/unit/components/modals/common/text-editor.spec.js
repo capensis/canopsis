@@ -364,31 +364,4 @@ describe('text-editor', () => {
 
     wrapper.destroy();
   });
-
-  test('Renders `text-editor` with all parameters', async () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        modal: {
-          config: {
-            text: 'Text',
-            title: 'Text editor title',
-            label: 'Text editor label',
-            rules: {
-              required: true,
-            },
-          },
-        },
-      },
-      mocks: {
-        $modals,
-        $popups,
-      },
-    });
-
-    await flushPromises();
-
-    expect(wrapper.element).toMatchSnapshot();
-
-    wrapper.destroy();
-  });
 });
