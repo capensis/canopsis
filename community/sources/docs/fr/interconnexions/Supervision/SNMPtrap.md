@@ -15,9 +15,12 @@ Bon nombre d'équipements émettent des traps. Canopsis est en mesure de :
 2. les traduire grâce à un jeu de règles ;
 3. les convertir en évènements.
 
-Ce document vous guide pas à pas dans cette mise en œuvre.
+Ce document aborde la première étape de cette mise en œuvre.
 
-Pour comprendre ce qu'il adviendra des événements `type : trap` générés, vous pouvez consulter la documentation des [règles SNMP](../../../guide-utilisation/menu-exploitation/regles-snmp/)
+Pour comprendre le principe complet de traitement des traps, et 
+notamment savoir ce qu'il adviendra des événements de type `trap` 
+générés par le connecteur, consultez également la documentation des
+[règles SNMP](../../../guide-utilisation/menu-exploitation/regles-snmp/).
 
 ## Émission des traps SNMP
 
@@ -219,6 +222,17 @@ ou conteneur `snmp2canopsis`. Exemple de log :
 
 ## Suite
 
-Dans le cas où les traps peuvent l'objet de règles de traitement grâce à des MIB, 
-ou dans le cas où les traps ne sont pas standard (ou en l'absence de MIB), se référer à la
-documentation sur les [règles SNMP](../../../guide-utilisation/menu-exploitation/regles-snmp/) 
+Afin d'être transformés en évènements Canopsis susceptibles de créer
+ou mettre à jour des alarmes, les traps doivent encore faire l'objet
+d'un traitement spécifique.
+
+Deux cas sont possibles :
+
+1. Les traps « standard » peuvent faire l'objet de règles de 
+traitement grâce à des MIB ;
+2. Les traps « non standard » ou traps pour lesquels vous ne 
+possédez pas les MIB peuvent être traités avec du code personnalisé.
+
+Se référer à la documentation sur les
+[règles SNMP](../../../guide-utilisation/menu-exploitation/regles-snmp/)
+qui détaille ces parties de la mise en œuvre.
