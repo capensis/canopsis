@@ -1,9 +1,9 @@
-db.viewgroups.updateMany({}, {$set: {"is_private": false}})
-db.views.updateMany({}, {$set: {"is_private": false}})
-db.viewtabs.updateMany({}, {$set: {"is_private": false}})
-db.widgets.updateMany({}, {$set: {"is_private": false}})
-db.widget_filters.updateMany({"is_private": {$in: [null, false]}}, {$set: {"is_user_preference": false, "is_private": false}})
-db.widget_filters.updateMany({"is_private": true}, {$set: {"is_user_preference": true, "is_private": false}})
+db.viewgroups.updateMany({is_private: null}, {$set: {"is_private": false}});
+db.views.updateMany({is_private: null}, {$set: {"is_private": false}});
+db.viewtabs.updateMany({is_private: null}, {$set: {"is_private": false}});
+db.widgets.updateMany({is_private: null}, {$set: {"is_private": false}});
+db.widget_filters.updateMany({is_user_preference: null, "is_private": {$in: [null, false]}}, {$set: {"is_user_preference": false, "is_private": false}});
+db.widget_filters.updateMany({is_user_preference: null, "is_private": true}, {$set: {"is_user_preference": true, "is_private": false}});
 
 if (!db.permission.findOne({_id: "api_private_view_groups"})) {
     db.permission.insertOne({

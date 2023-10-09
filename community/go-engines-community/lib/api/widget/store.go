@@ -6,6 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -18,7 +19,7 @@ import (
 )
 
 type Store interface {
-	FindTabInfos(ctx context.Context, ids []string) (map[string]TabInfo, error)
+	FindTabPrivacySettings(ctx context.Context, ids []string) (map[string]apisecurity.ViewTabPrivacySettings, error)
 	FindViewIdByTab(ctx context.Context, tabId string) (string, error)
 	GetOneBy(ctx context.Context, id string) (*Response, error)
 	Insert(ctx context.Context, r CreateRequest) (*Response, error)
@@ -52,10 +53,10 @@ type store struct {
 	enforcer security.Enforcer
 }
 
-func (s *store) FindTabInfos(ctx context.Context, ids []string) (map[string]TabInfo, error) {
+func (s *store) FindTabPrivacySettings(ctx context.Context, ids []string) (map[string]apisecurity.ViewTabPrivacySettings, error) {
 	results := make([]struct {
-		ID      string `bson:"_id"`
-		TabInfo `bson:"inline"`
+		ID                                 string `bson:"_id"`
+		apisecurity.ViewTabPrivacySettings `bson:"inline"`
 	}, 0)
 	cursor, err := s.collection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"_id": bson.M{"$in": ids}}},
@@ -80,10 +81,10 @@ func (s *store) FindTabInfos(ctx context.Context, ids []string) (map[string]TabI
 		return nil, err
 	}
 
-	tabInfos := make(map[string]TabInfo)
+	tabInfos := make(map[string]apisecurity.ViewTabPrivacySettings)
 	for _, result := range results {
 		if result.View != "" {
-			tabInfos[result.ID] = result.TabInfo
+			tabInfos[result.ID] = result.ViewTabPrivacySettings
 		}
 	}
 
@@ -160,7 +161,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 }
 
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
-	tabInfo, err := s.getTabInfo(ctx, r.Tab)
+	tabInfo, err := s.getTabPrivacySettings(ctx, r.Tab)
 	if err != nil {
 		return nil, err
 	}
@@ -363,7 +364,7 @@ func (s *store) Copy(ctx context.Context, widgetID string, r CreateRequest) (*Re
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		tabInfo, err := s.getTabInfo(ctx, r.Tab)
+		tabInfo, err := s.getTabPrivacySettings(ctx, r.Tab)
 		if err != nil {
 			return err
 		}
@@ -543,8 +544,8 @@ func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositio
 	return res, err
 }
 
-func (s *store) getTabInfo(ctx context.Context, tabID string) (TabInfo, error) {
-	var tabInfo TabInfo
+func (s *store) getTabPrivacySettings(ctx context.Context, tabID string) (apisecurity.ViewTabPrivacySettings, error) {
+	var tabInfo apisecurity.ViewTabPrivacySettings
 
 	err := s.tabCollection.FindOne(ctx, bson.M{"_id": tabID}).Decode(&tabInfo)
 	if err != nil && errors.Is(err, mongodriver.ErrNoDocuments) {

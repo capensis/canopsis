@@ -66,9 +66,3 @@ type Response struct {
 
 	IsPrivate bool `bson:"is_private" json:"is_private"`
 }
-
-type TabInfo struct {
-	IsPrivate bool   `bson:"is_private"`
-	Author    string `bson:"author"`
-	View      string `bson:"view"`
-}

@@ -32,6 +32,10 @@ func NewStore(
 		collection:             dbClient.Collection(mongo.UserCollection),
 		userPrefCollection:     dbClient.Collection(mongo.UserPreferencesMongoCollection),
 		patternCollection:      dbClient.Collection(mongo.PatternMongoCollection),
+		viewGroupsCollection:   dbClient.Collection(mongo.ViewGroupMongoCollection),
+		viewCollection:         dbClient.Collection(mongo.ViewMongoCollection),
+		viewTabCollection:      dbClient.Collection(mongo.ViewTabMongoCollection),
+		widgetCollection:       dbClient.Collection(mongo.WidgetMongoCollection),
 		widgetFilterCollection: dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 		shareTokenCollection:   dbClient.Collection(mongo.ShareTokenMongoCollection),
 
@@ -49,6 +53,10 @@ type store struct {
 	collection             mongo.DbCollection
 	userPrefCollection     mongo.DbCollection
 	patternCollection      mongo.DbCollection
+	viewGroupsCollection   mongo.DbCollection
+	viewCollection         mongo.DbCollection
+	viewTabCollection      mongo.DbCollection
+	widgetCollection       mongo.DbCollection
 	widgetFilterCollection mongo.DbCollection
 	shareTokenCollection   mongo.DbCollection
 
@@ -219,7 +227,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		return false, err
 	}
 
-	err = s.deleteWidgetFilters(ctx, id)
+	err = s.deleteViewPrivateObjects(ctx, id)
 	if err != nil {
 		return false, err
 	}
@@ -249,10 +257,45 @@ func (s *store) deletePatterns(ctx context.Context, id string) error {
 	return err
 }
 
-func (s *store) deleteWidgetFilters(ctx context.Context, id string) error {
-	_, err := s.widgetFilterCollection.DeleteMany(ctx, bson.M{
-		"author":             id,
-		"is_user_preference": true,
+func (s *store) deleteViewPrivateObjects(ctx context.Context, id string) error {
+	_, err := s.viewGroupsCollection.DeleteMany(ctx, bson.M{
+		"author":     id,
+		"is_private": true,
+	})
+	if err != nil {
+		return err
+	}
+
+	_, err = s.viewCollection.DeleteMany(ctx, bson.M{
+		"author":     id,
+		"is_private": true,
+	})
+	if err != nil {
+		return err
+	}
+
+	_, err = s.viewTabCollection.DeleteMany(ctx, bson.M{
+		"author":     id,
+		"is_private": true,
+	})
+	if err != nil {
+		return err
+	}
+
+	_, err = s.widgetCollection.DeleteMany(ctx, bson.M{
+		"author":     id,
+		"is_private": true,
+	})
+	if err != nil {
+		return err
+	}
+
+	_, err = s.widgetFilterCollection.DeleteMany(ctx, bson.M{
+		"author": id,
+		"$or": bson.A{
+			bson.M{"is_user_preference": true},
+			bson.M{"is_private": true},
+		},
 	})
 
 	return err

@@ -42,10 +42,7 @@ func NewViewOwnerStrategy(client libmongo.DbClient, enforcer security.Enforcer, 
 }
 
 func (v *viewOwnerStrategy) IsOwner(ctx context.Context, id, userID string) (byte, error) {
-	var obj struct {
-		Author    string `bson:"author"`
-		IsPrivate bool   `bson:"is_private"`
-	}
+	var obj PrivacySettings
 
 	err := v.collection.FindOne(ctx, bson.M{"_id": id}, options.FindOne().SetProjection(bson.M{"author": 1, "is_private": 1})).Decode(&obj)
 	if err != nil {
@@ -71,9 +68,9 @@ func (v *viewOwnerStrategy) IsOwner(ctx context.Context, id, userID string) (byt
 
 	if obj.Author == userID {
 		return OwnershipOwner, nil
-	} else {
-		return OwnershipNotOwner, nil
 	}
+
+	return OwnershipNotOwner, nil
 }
 
 type viewOwnedObjectsProvider struct {
@@ -139,10 +136,7 @@ func NewViewGroupOwnershipStrategy(client libmongo.DbClient) OwnershipStrategy {
 }
 
 func (v *viewGroupOwnerStrategy) IsOwner(ctx context.Context, id, userID string) (byte, error) {
-	var obj struct {
-		Author    string `bson:"author"`
-		IsPrivate bool   `bson:"is_private"`
-	}
+	var obj PrivacySettings
 
 	err := v.collection.FindOne(ctx, bson.M{"_id": id}, options.FindOne().SetProjection(bson.M{"author": 1, "is_private": 1})).Decode(&obj)
 	if err != nil {
@@ -159,9 +153,9 @@ func (v *viewGroupOwnerStrategy) IsOwner(ctx context.Context, id, userID string)
 
 	if obj.Author == userID {
 		return OwnershipOwner, nil
-	} else {
-		return OwnershipNotOwner, nil
 	}
+
+	return OwnershipNotOwner, nil
 }
 
 type viewTabOwnerStrategy struct {
@@ -179,11 +173,7 @@ func NewViewTabOwnershipStrategy(client libmongo.DbClient, enforcer security.Enf
 }
 
 func (v *viewTabOwnerStrategy) IsOwner(ctx context.Context, id, userID string) (byte, error) {
-	var obj struct {
-		View      string `bson:"view"`
-		Author    string `bson:"author"`
-		IsPrivate bool   `bson:"is_private"`
-	}
+	var obj ViewTabPrivacySettings
 
 	err := v.collection.FindOne(ctx, bson.M{"_id": id}, options.FindOne().SetProjection(bson.M{"author": 1, "is_private": 1, "view": 1})).Decode(&obj)
 	if err != nil {
@@ -209,9 +199,9 @@ func (v *viewTabOwnerStrategy) IsOwner(ctx context.Context, id, userID string) (
 
 	if obj.Author == userID {
 		return OwnershipOwner, nil
-	} else {
-		return OwnershipNotOwner, nil
 	}
+
+	return OwnershipNotOwner, nil
 }
 
 type widgetOwnershipStrategy struct {
@@ -229,11 +219,7 @@ func NewWidgetOwnershipStrategy(client libmongo.DbClient, enforcer security.Enfo
 }
 
 func (v *widgetOwnershipStrategy) IsOwner(ctx context.Context, id, userID string) (byte, error) {
-	var obj struct {
-		View      string `bson:"view"`
-		Author    string `bson:"author"`
-		IsPrivate bool   `bson:"is_private"`
-	}
+	var obj ViewTabPrivacySettings
 
 	cursor, err := v.collection.Aggregate(ctx, []bson.M{
 		{
@@ -293,7 +279,7 @@ func (v *widgetOwnershipStrategy) IsOwner(ctx context.Context, id, userID string
 
 	if obj.Author == userID {
 		return OwnershipOwner, nil
-	} else {
-		return OwnershipNotOwner, nil
 	}
+
+	return OwnershipNotOwner, nil
 }

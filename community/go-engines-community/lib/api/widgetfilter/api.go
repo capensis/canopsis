@@ -360,12 +360,12 @@ func (a *api) UpdatePositions(c *gin.Context) {
 		}
 	}
 
-	var granted bool
+	perm := model.PermissionUpdate
 	if isPrivate {
-		granted, _, err = a.checkAccess(c, firstItem, userId, model.PermissionRead)
-	} else {
-		granted, _, err = a.checkAccess(c, firstItem, userId, model.PermissionUpdate)
+		perm = model.PermissionRead
 	}
+
+	granted, _, err := a.checkAccess(c, firstItem, userId, perm)
 	if err != nil {
 		panic(err)
 	}

@@ -6,6 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
@@ -180,7 +181,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 			return err
 		}
 
-		viewInfo, err := s.getViewInfo(ctx, r.View)
+		viewInfo, err := s.getViewPrivacySettings(ctx, r.View)
 		if err != nil {
 			return err
 		}
@@ -295,7 +296,7 @@ func (s *store) Copy(ctx context.Context, tabID string, r CreateRequest) (*Respo
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		viewInfo, err := s.getViewInfo(ctx, r.View)
+		viewInfo, err := s.getViewPrivacySettings(ctx, r.View)
 		if err != nil {
 			return err
 		}
@@ -492,8 +493,8 @@ func (s *store) getNextPosition(ctx context.Context, view string) (int64, error)
 	return 0, nil
 }
 
-func (s *store) getViewInfo(ctx context.Context, viewID string) (ViewInfo, error) {
-	var viewInfo ViewInfo
+func (s *store) getViewPrivacySettings(ctx context.Context, viewID string) (apisecurity.PrivacySettings, error) {
+	var viewInfo apisecurity.PrivacySettings
 
 	err := s.viewCollection.FindOne(ctx, bson.M{"_id": viewID}).Decode(&viewInfo)
 	if err != nil && errors.Is(err, mongodriver.ErrNoDocuments) {

@@ -95,8 +95,3 @@ type ExportResponse struct {
 	Groups []ExportViewGroupResponse `json:"groups"`
 	Views  []Response                `json:"views"`
 }
-
-type GroupInfo struct {
-	IsPrivate bool   `bson:"is_private"`
-	Author    string `bson:"author"`
-}
