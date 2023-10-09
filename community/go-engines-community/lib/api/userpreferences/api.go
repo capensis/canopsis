@@ -115,7 +115,7 @@ func (a api) Update(c *gin.Context) {
 }
 
 func (a *api) checkAccess(ctx context.Context, widgetId, userId string) (bool, error) {
-	tabInfos, err := a.widgetStore.FindTabInfos(ctx, []string{widgetId})
+	tabInfos, err := a.widgetStore.FindTabPrivacySettings(ctx, []string{widgetId})
 	if err != nil || len(tabInfos) == 0 {
 		return false, err
 	}

@@ -6,6 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -111,11 +112,8 @@ func (s *store) FindViewIdByWidget(ctx context.Context, widgetId string) (string
 
 	defer cursor.Close(ctx)
 	if cursor.Next(ctx) {
-		doc := struct {
-			View      string `bson:"view"`
-			Author    string `bson:"author"`
-			IsPrivate bool   `bson:"is_private"`
-		}{}
+		var doc security.ViewTabPrivacySettings
+
 		err = cursor.Decode(&doc)
 		if err != nil {
 			return "", "", false, err

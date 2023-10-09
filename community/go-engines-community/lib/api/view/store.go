@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -104,7 +105,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		group, err := s.getGroupInfo(ctx, r.Group)
+		group, err := s.getGroupPrivacySettings(ctx, r.Group)
 		if err != nil {
 			return err
 		}
@@ -184,7 +185,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
-		group, err := s.getGroupInfo(ctx, r.Group)
+		group, err := s.getGroupPrivacySettings(ctx, r.Group)
 		if err != nil {
 			return err
 		}
@@ -1096,8 +1097,8 @@ func (s *store) getNextGroupPosition(ctx context.Context) (int64, error) {
 	return 0, nil
 }
 
-func (s *store) getGroupInfo(ctx context.Context, groupID string) (GroupInfo, error) {
-	var group GroupInfo
+func (s *store) getGroupPrivacySettings(ctx context.Context, groupID string) (apisecurity.PrivacySettings, error) {
+	var group apisecurity.PrivacySettings
 
 	err := s.groupCollection.FindOne(ctx, bson.M{"_id": groupID}).Decode(&group)
 	if err != nil && errors.Is(err, mongodriver.ErrNoDocuments) {

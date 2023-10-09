@@ -303,11 +303,6 @@ permission:
     _id: api_maintenance
     name: <Current()._id>
     description: Trigger maintenance mode
-  permission_api_private_views:
-    <<: *permission
-    _id: api_private_views
-    name: <Current()._id>
-    description: Create private views
   permission_api_private_view_groups:
     <<: *permission
     _id: api_private_view_groups
@@ -712,7 +707,6 @@ role:
       "@permission_view_to_weather_get": 6
       "@permission_api_maintenance": 1
       "@permission_api_color_theme": 15
-      "@permission_api_private_views": 1
       "@permission_api_private_view_groups": 1
 
   role_noperms:
