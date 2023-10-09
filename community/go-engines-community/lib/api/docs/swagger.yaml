@@ -662,6 +662,11 @@ paths:
           description: show assigned declare ticket rules
           schema:
             type: boolean
+        - name: with_bookmarks
+          in: query
+          description: show bookmarked alarms
+          schema:
+            type: boolean
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/search'
