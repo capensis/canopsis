@@ -16,7 +16,6 @@ const (
 	AlarmStateMinor
 	AlarmStateMajor
 	AlarmStateCritical
-	AlarmStateUnknown
 )
 
 const (
@@ -97,10 +96,14 @@ const (
 
 // Alarm represents an alarm document.
 type Alarm struct {
-	ID       string   `bson:"_id" json:"_id"`
-	Time     CpsTime  `bson:"t" json:"t"`
-	EntityID string   `bson:"d" json:"d"`
-	Tags     []string `bson:"tags" json:"tags"`
+	ID       string  `bson:"_id" json:"_id"`
+	Time     CpsTime `bson:"t" json:"t"`
+	EntityID string  `bson:"d" json:"d"`
+
+	Tags                []string  `bson:"tags" json:"tags"`
+	ExternalTags        []string  `bson:"etags" json:"etags"`
+	InternalTags        []string  `bson:"itags" json:"itags"`
+	InternalTagsUpdated MicroTime `bson:"itags_upd" json:"itags_upd"`
 	// todo move all field from Value to Alarm
 	Value AlarmValue `bson:"v" json:"v"`
 	// update contains alarm changes after last mongo update. Use functions Update* to
@@ -125,6 +128,8 @@ type Alarm struct {
 
 	// InactiveAutoInstructionInProgress shows that autoremediation is launched and alarm is not active until the remediation is finished
 	InactiveAutoInstructionInProgress bool `bson:"auto_instruction_in_progress,omitempty" json:"auto_instruction_in_progress,omitempty"`
+
+	Healthcheck bool `bson:"healthcheck,omitempty" json:"-"`
 }
 
 // AlarmWithEntity is an encapsulated type, mostly to facilitate the alarm manipulation for the post-processors
@@ -196,28 +201,6 @@ func (a *Alarm) UpdateOutput(newOutput string) {
 	a.AddUpdate("$set", bson.M{
 		"v.output": a.Value.Output,
 	})
-}
-
-// UpdateLongOutput updates an alarm output field
-func (a *Alarm) UpdateLongOutput(newOutput string) {
-	if (len(a.Value.LongOutputHistory) == 0) || (a.Value.LongOutputHistory[len(a.Value.LongOutputHistory)-1] != newOutput) {
-		a.Value.LongOutput = newOutput
-		history := append(a.Value.LongOutputHistory, newOutput)
-		if len(history) > 100 {
-			history = history[len(history)-100:]
-		}
-		a.Value.LongOutputHistory = history
-
-		a.AddUpdate("$set", bson.M{
-			"v.long_output":         a.Value.LongOutput,
-			"v.long_output_history": a.Value.LongOutputHistory,
-		})
-	}
-}
-
-// Resolve mark as resolved an Alarm with a timestamp [sic]
-func (a *Alarm) Resolve(timestamp *CpsTime) {
-	a.Value.Resolved = timestamp
 }
 
 // Closable checks the last step for it's state to be OK for at least d interval.
@@ -310,7 +293,7 @@ func (a *Alarm) IsMetaAlarm() bool {
 	return a.Value.Meta != ""
 }
 
-func (a *Alarm) IsMetaChildren() bool {
+func (a *Alarm) IsMetaChild() bool {
 	return len(a.Value.Parents) > 0
 }
 
@@ -429,4 +412,12 @@ func (a *Alarm) IsInActivePeriod() bool {
 
 func (a *Alarm) CanActivate() bool {
 	return !a.IsActivated() && !a.IsSnoozed() && a.Value.PbehaviorInfo.IsActive() && !a.InactiveAutoInstructionInProgress
+}
+
+func (a *Alarm) IncrementEventsCount(count CpsNumber) {
+	a.AddUpdate("$inc", bson.M{"v.events_count": count})
+}
+
+func (a *Alarm) DecrementEventsCount(count CpsNumber) {
+	a.AddUpdate("$inc", bson.M{"v.events_count": -count})
 }

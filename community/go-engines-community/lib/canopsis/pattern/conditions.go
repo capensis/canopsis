@@ -1101,7 +1101,10 @@ func getTimeIntervalValue(v interface{}) (int64, int64, error) {
 	if m, ok := v.(map[string]interface{}); ok {
 		mapVal = m
 	} else if m, ok := v.(bson.D); ok {
-		mapVal = m.Map()
+		mapVal = make(map[string]interface{}, len(m))
+		for _, e := range m {
+			mapVal[e.Key] = e.Value
+		}
 	} else if m, ok := v.(bson.M); ok {
 		mapVal = m
 	} else {
@@ -1136,7 +1139,10 @@ func getDurationValue(v interface{}) (types.DurationWithUnit, error) {
 	if m, ok := v.(map[string]interface{}); ok {
 		mapVal = m
 	} else if m, ok := v.(bson.D); ok {
-		mapVal = m.Map()
+		mapVal = make(map[string]interface{}, len(m))
+		for _, e := range m {
+			mapVal[e.Key] = e.Value
+		}
 	} else if m, ok := v.(bson.M); ok {
 		mapVal = m
 	} else {

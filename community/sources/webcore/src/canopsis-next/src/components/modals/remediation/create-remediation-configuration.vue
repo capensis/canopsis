@@ -26,8 +26,7 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import RemediationConfigurationForm
-  from '@/components/other/remediation/configurations/form/remediation-configuration-form.vue';
+import RemediationConfigurationForm from '@/components/other/remediation/configurations/form/remediation-configuration-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

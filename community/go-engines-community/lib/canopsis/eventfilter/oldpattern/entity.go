@@ -249,7 +249,7 @@ func (e EntityPattern) Matches(entity *types.Entity, matches *EntityRegexMatches
 
 func (e EntityPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if e.ShouldBeNil {
-		return bsontype.Null, []byte{}, nil
+		return bson.TypeNull, []byte{}, nil
 	}
 
 	resultBson := bson.M{}
@@ -257,7 +257,7 @@ func (e EntityPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if e.ID.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(e, "ID", "id")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = e.ID
@@ -266,7 +266,7 @@ func (e EntityPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if e.Name.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(e, "Name", "name")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = e.Name
@@ -275,7 +275,7 @@ func (e EntityPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if e.Enabled.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(e, "Enabled", "enabled")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = e.Enabled
@@ -284,7 +284,7 @@ func (e EntityPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if len(e.Infos) > 0 {
 		bsonFieldName, err := GetFieldBsonName(e, "Infos", "infos")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = e.Infos
@@ -293,7 +293,7 @@ func (e EntityPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if len(e.ComponentInfos) > 0 {
 		bsonFieldName, err := GetFieldBsonName(e, "ComponentInfos", "componentinfos")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = e.ComponentInfos
@@ -302,7 +302,7 @@ func (e EntityPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if e.Component.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(e, "Component", "component")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = e.Component
@@ -311,7 +311,7 @@ func (e EntityPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if e.Category.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(e, "Category", "category")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = e.Category
@@ -320,7 +320,7 @@ func (e EntityPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if e.Type.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(e, "Type", "type")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = e.Type
@@ -330,12 +330,12 @@ func (e EntityPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		return bson.MarshalValue(resultBson)
 	}
 
-	return bsontype.Undefined, nil, nil
+	return bson.TypeUndefined, nil, nil
 }
 
 func (e *EntityPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
-	case bsontype.Null:
+	case bson.TypeNull:
 		// The BSON value is null. The field should not be set.
 		e.ShouldBeNil = true
 		e.ShouldNotBeNil = false
@@ -416,7 +416,7 @@ func (l EntityPatternList) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 
-	if bsonType == bsontype.Null {
+	if bsonType == bson.TypeNull {
 		res, err := json.Marshal(nil)
 		if err != nil {
 			return nil, err
@@ -427,7 +427,7 @@ func (l EntityPatternList) MarshalJSON() ([]byte, error) {
 
 	var unmarshalledBson []map[string]interface{}
 	raw := bson.RawValue{
-		Type:  bsontype.Array,
+		Type:  bson.TypeArray,
 		Value: b,
 	}
 	err = raw.Unmarshal(&unmarshalledBson)
@@ -445,7 +445,7 @@ func (l EntityPatternList) MarshalJSON() ([]byte, error) {
 
 func (l EntityPatternList) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if !l.Set {
-		return bsontype.Null, nil, nil
+		return bson.TypeNull, nil, nil
 	}
 
 	return bson.MarshalValue(l.Patterns)
@@ -522,10 +522,10 @@ func (l EntityPatternList) IsZero() bool {
 
 func (l *EntityPatternList) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
-	case bsontype.Null:
+	case bson.TypeNull:
 		l.Set = false
 		l.Valid = false
-	case bsontype.Array:
+	case bson.TypeArray:
 		l.Set = true
 		l.Valid = false
 

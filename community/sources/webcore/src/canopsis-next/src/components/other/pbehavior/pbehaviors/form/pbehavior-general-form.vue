@@ -1,7 +1,7 @@
 <template lang="pug">
   v-layout(column)
-    c-name-field(v-field="form.name", required)
     c-enabled-field(v-if="!noEnabled", v-field="form.enabled", hide-details)
+    c-name-field(v-field="form.name", required)
     v-flex.mt-3(xs12)
       c-enabled-field.mt-0.mb-1(
         v-if="withStartOnTrigger",
@@ -16,35 +16,41 @@
         required
       )
       template(v-else)
-        date-time-splitted-range-picker-field(
-          :start="form.tstart",
-          :end="form.tstop",
-          :start-label="$t('modals.createPbehavior.steps.general.fields.start')",
-          :end-label="$t('modals.createPbehavior.steps.general.fields.stop')",
-          :start-rules="tstartRules",
-          :end-rules="tstopRules",
-          :end-min="tstopMin",
-          :end-max="tstopMax",
-          :no-ending="noEnding",
-          :full-day="fullDay",
-          @update:start="updateField('tstart', $event)",
-          @update:end="updateTStop"
-        )
-        v-checkbox.mt-0(
-          v-model="fullDay",
-          :label="$t('modals.createPbehavior.steps.general.fields.fullDay')",
-          color="primary",
-          hide-details
-        )
-        v-checkbox.mt-0.mb-2(
-          v-if="hasPauseType",
-          v-model="noEnding",
-          :label="$t('modals.createPbehavior.steps.general.fields.noEnding')",
-          color="primary",
-          hide-details
-        )
-    c-pbehavior-reason-field(v-field="form.reason", required, return-object)
-    c-pbehavior-type-field(v-field="form.type", required, return-object)
+        v-layout(row, align-center)
+          v-flex(xs3)
+            v-checkbox.mt-0(
+              v-model="fullDay",
+              :label="$t('modals.createPbehavior.steps.general.fields.fullDay')",
+              color="primary",
+              hide-details
+            )
+          v-flex(v-if="hasPauseType", xs3)
+            v-checkbox.mt-0(
+              v-model="noEnding",
+              :label="$t('modals.createPbehavior.steps.general.fields.noEnding')",
+              color="primary",
+              hide-details
+            )
+          v-flex(xs6)
+            date-time-splitted-range-picker-field(
+              :start="form.tstart",
+              :end="form.tstop",
+              :start-label="$t('modals.createPbehavior.steps.general.fields.start')",
+              :end-label="$t('modals.createPbehavior.steps.general.fields.stop')",
+              :start-rules="tstartRules",
+              :end-rules="tstopRules",
+              :end-min="tstopMin",
+              :end-max="tstopMax",
+              :no-ending="noEnding",
+              :full-day="fullDay",
+              @update:start="updateField('tstart', $event)",
+              @update:end="updateTStop"
+            )
+      v-layout(row)
+        v-flex(xs6)
+          c-pbehavior-reason-field.mr-2(v-field="form.reason", required, return-object)
+        v-flex(xs6)
+          c-pbehavior-type-field.ml-2(v-field="form.type", required, return-object)
 </template>
 
 <script>

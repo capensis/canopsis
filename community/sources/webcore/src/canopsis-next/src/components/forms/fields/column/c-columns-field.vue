@@ -8,7 +8,8 @@
         :with-html="withHtml",
         :with-template="withTemplate",
         :with-color-indicator="withColorIndicator",
-        :with-instructions="withInstructions"
+        :with-instructions="withInstructions",
+        :without-infos-attributes="withoutInfosAttributes"
       )
 </template>
 
@@ -54,6 +55,10 @@ export default {
       default: false,
     },
     withInstructions: {
+      type: Boolean,
+      default: false,
+    },
+    withoutInfosAttributes: {
       type: Boolean,
       default: false,
     },

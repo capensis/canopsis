@@ -6,8 +6,9 @@ package session
 import (
 	"context"
 	"errors"
-	"github.com/gorilla/sessions"
 	"time"
+
+	"github.com/gorilla/sessions"
 )
 
 var ErrNoSession = errors.New("mongo: no session found")
@@ -21,4 +22,5 @@ type Store interface {
 	// GetActiveSessionsCount returns count of active sessions.
 	GetActiveSessionsCount(ctx context.Context) (int64, error)
 	ExpireSessions(ctx context.Context, user string, provider string) error
+	ExpireSessionsByUserIDs(ctx context.Context, ids []string) error
 }

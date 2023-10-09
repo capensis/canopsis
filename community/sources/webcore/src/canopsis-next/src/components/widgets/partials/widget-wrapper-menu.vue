@@ -1,7 +1,11 @@
 <template lang="pug">
   v-menu(offset-y)
     template(#activator="{ on }")
-      v-btn.ma-0(v-on="on", icon, small)
+      v-btn.ma-0(
+        v-on="on",
+        icon,
+        small
+      )
         v-icon(small) more_horiz
     v-list(dense)
       v-list-tile(@click="showSettings")
@@ -22,7 +26,7 @@
 <script>
 import { MODALS, SIDE_BARS_BY_WIDGET_TYPES } from '@/constants';
 
-import { getNewWidgetGridParametersY } from '@/helpers/entities/widget/layout';
+import { calculateNewWidgetGridParametersY } from '@/helpers/entities/widget/grid';
 import { setSeveralFields } from '@/helpers/immutable';
 
 import { activeViewMixin } from '@/mixins/active-view';
@@ -63,7 +67,7 @@ export default {
     async cloneWidget({ viewId, tabId }) {
       const tab = await this.fetchViewTab({ id: tabId });
 
-      const { mobile, tablet, desktop } = getNewWidgetGridParametersY(tab.widgets);
+      const { mobile, tablet, desktop } = calculateNewWidgetGridParametersY(tab.widgets);
       const newWidget = setSeveralFields(this.widget, {
         tab: tabId,
         'grid_parameters.mobile.y': mobile,

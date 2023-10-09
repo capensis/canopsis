@@ -1,11 +1,17 @@
+import flushPromises from 'flush-promises';
+
 import { generateRenderer } from '@unit/utils/vue';
 import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import CClickableTooltip from '@/components/common/clickable-tooltip/c-clickable-tooltip.vue';
 import ExtraDetailsLastComment from '@/components/widgets/alarm/columns-formatting/extra-details/extra-details-last-comment.vue';
+import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
+import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 
 const stubs = {
   'c-clickable-tooltip': CClickableTooltip,
+  'c-runtime-template': CRuntimeTemplate,
+  'c-compiled-template': CCompiledTemplate,
 };
 
 describe('extra-details-last-comment', () => {
@@ -27,12 +33,14 @@ describe('extra-details-last-comment', () => {
     attachTo: document.body,
   });
 
-  it('Renders `extra-details-last-comment` with full last comment', () => {
+  it('Renders `extra-details-last-comment` with full last comment', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         lastComment,
       },
     });
+
+    await flushPromises();
 
     const tooltipContent = wrapper.findTooltip();
 
@@ -40,7 +48,7 @@ describe('extra-details-last-comment', () => {
     expect(tooltipContent.element).toMatchSnapshot();
   });
 
-  it('Renders `extra-details-last-comment` with date in previous month', () => {
+  it('Renders `extra-details-last-comment` with date in previous month', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         lastComment: {
@@ -49,6 +57,8 @@ describe('extra-details-last-comment', () => {
         },
       },
     });
+
+    await flushPromises();
 
     const tooltipContent = wrapper.findTooltip();
 

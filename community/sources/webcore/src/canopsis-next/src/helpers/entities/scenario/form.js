@@ -5,6 +5,13 @@ import { DEPRECATED_TRIGGERS } from '@/constants';
 import { durationToForm } from '@/helpers/date/duration';
 import { formToAction, actionToForm } from '@/helpers/entities/action';
 import { getLocaleTimezone } from '@/helpers/date/date';
+import { flattenErrorMap } from '@/helpers/entities/shared/form';
+
+/**
+ * @typedef {Object} Trigger
+ * @property {string} type
+ * @property {number} [threshold]
+ */
 
 /**
  * @typedef {Object} Scenario
@@ -13,7 +20,7 @@ import { getLocaleTimezone } from '@/helpers/date/date';
  * @property {number} priority
  * @property {boolean} enabled
  * @property {Duration} delay
- * @property {string[]} triggers
+ * @property {Trigger[]} triggers
  * @property {DisableDuringPeriods[]} disable_during_periods
  * @property {Action[]} actions
  */
@@ -26,10 +33,10 @@ import { getLocaleTimezone } from '@/helpers/date/date';
 /**
  * Check trigger is deprecated
  *
- * @param {string} trigger
+ * @param {string} type
  * @returns {boolean}
  */
-export const isDeprecatedTrigger = trigger => DEPRECATED_TRIGGERS.includes(trigger);
+export const isDeprecatedTrigger = type => DEPRECATED_TRIGGERS.includes(type);
 /**
  * Convert scenario to form
  *
@@ -89,5 +96,5 @@ export const scenarioErrorToForm = (errors, form) => {
     return errorMessages;
   };
 
-  return form(errors, prepareActionsErrors);
+  return flattenErrorMap(errors, prepareActionsErrors);
 };

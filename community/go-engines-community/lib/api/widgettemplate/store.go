@@ -200,6 +200,7 @@ func (s *store) updateLinkedWidgets(ctx context.Context, tpl Response) error {
 				view.WidgetTemplateTypeEntityColumns:
 				val = tpl.Columns
 			case view.WidgetTemplateTypeAlarmMoreInfos,
+				view.WidgetTemplateTypeAlarmExportToPDF,
 				view.WidgetTemplateTypeServiceWeatherItem,
 				view.WidgetTemplateTypeServiceWeatherModal,
 				view.WidgetTemplateTypeServiceWeatherEntity:

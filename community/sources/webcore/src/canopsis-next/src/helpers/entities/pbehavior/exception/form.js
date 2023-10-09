@@ -1,7 +1,8 @@
 import {
   convertDateToTimestampByTimezone,
   getLocaleTimezone,
-  convertDateToDateObjectByTimezone, isStartOfDay,
+  convertDateToDateObjectByTimezone,
+  isStartOfDay,
 } from '@/helpers/date/date';
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
 

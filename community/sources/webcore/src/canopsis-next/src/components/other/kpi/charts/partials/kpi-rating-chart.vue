@@ -6,19 +6,10 @@
 
 <script>
 import { COLORS } from '@/config';
-import {
-  DATETIME_FORMATS,
-  KPI_SLI_GRAPH_BAR_PERCENTAGE,
-  TIME_UNITS,
-  USER_METRIC_PARAMETERS,
-} from '@/constants';
+import { DATETIME_FORMATS, KPI_SLI_GRAPH_BAR_PERCENTAGE, TIME_UNITS, USER_METRIC_PARAMETERS } from '@/constants';
 
 import { colorToRgba } from '@/helpers/color';
-import {
-  convertDurationToMaxUnitDuration,
-  convertDurationToString,
-  fromSeconds,
-} from '@/helpers/date/duration';
+import { convertDurationToMaxUnitDuration, convertDurationToString, fromSeconds } from '@/helpers/date/duration';
 import { isRatioMetric, isTimeMetric } from '@/helpers/entities/metric/form';
 
 import BarChart from '@/components/common/chart/bar-chart.vue';

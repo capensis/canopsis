@@ -17,7 +17,7 @@ type RuleChangesWatcher interface {
 
 func NewRulesChangesWatcher(client mongo.DbClient, service Service) RuleChangesWatcher {
 	return &rulesChangesWatcher{
-		collection:        client.Collection(mongo.EventFilterRulesMongoCollection),
+		collection:        client.Collection(mongo.EventFilterRuleCollection),
 		service:           service,
 		loadSleepDuration: loadTimerDuration,
 	}

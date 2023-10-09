@@ -1107,7 +1107,7 @@ Feature: correlation feature - timebased rule
       }
     }
     """
-    When I wait 2s
+    When I wait 3s
     When I send an event and wait the end of event processing:
     """json
     {

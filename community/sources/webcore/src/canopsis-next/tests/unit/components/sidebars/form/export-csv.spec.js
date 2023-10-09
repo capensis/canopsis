@@ -7,10 +7,12 @@ import ExportCsv from '@/components/sidebars/form/export-csv.vue';
 
 const stubs = {
   'c-columns-with-template-field': true,
+  'widget-settings-item': true,
   'v-select': createSelectInputStub('v-select'),
 };
 
 const snapshotStubs = {
+  'widget-settings-item': true,
   'c-columns-with-template-field': true,
 };
 
@@ -25,12 +27,8 @@ describe('export-csv', () => {
     isHtml: false,
   }];
 
-  const factory = generateShallowRenderer(ExportCsv, {
-
-    stubs,
-  });
+  const factory = generateShallowRenderer(ExportCsv, { stubs });
   const snapshotFactory = generateRenderer(ExportCsv, {
-
     stubs: snapshotStubs,
 
     parentComponent: {

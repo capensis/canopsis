@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-btn-toggle(:value="value", light, @change="inputHandler")
-    v-btn.ma-0(:value="true", flat, large, block)
+  v-btn-toggle(:value="value", @change="inputHandler")
+    v-btn.ma-0(:value="true", light, flat, large, block)
       v-icon(left) add_location
       span {{ $t('map.addPoint') }}
 </template>

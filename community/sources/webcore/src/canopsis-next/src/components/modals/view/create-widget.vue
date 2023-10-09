@@ -34,7 +34,7 @@ import {
   TOP_LEVEL_WIDGET_TYPES,
 } from '@/constants';
 
-import { getNewWidgetGridParametersY } from '@/helpers/entities/widget/layout';
+import { calculateNewWidgetGridParametersY } from '@/helpers/entities/widget/grid';
 import { getEmptyWidgetByType } from '@/helpers/entities/widget/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
@@ -120,7 +120,7 @@ export default {
     getWidgetWithUpdatedGridParametersByType(type) {
       const { tab } = this.config;
       const widget = getEmptyWidgetByType(type);
-      const { mobile, tablet, desktop } = getNewWidgetGridParametersY(tab.widgets);
+      const { mobile, tablet, desktop } = calculateNewWidgetGridParametersY(tab.widgets);
 
       widget.grid_parameters.mobile.y = mobile;
       widget.grid_parameters.tablet.y = tablet;

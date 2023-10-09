@@ -78,7 +78,7 @@ func (v *Validator) validateEventFilter(ctx context.Context, sl validator.Struct
 
 	if len(r.EntityPattern) == 0 && r.CorporateEntityPattern == "" && len(r.EventPattern) == 0 {
 		if id != "" {
-			err := v.dbClient.Collection(mongo.EventFilterRulesMongoCollection).FindOne(
+			err := v.dbClient.Collection(mongo.EventFilterRuleCollection).FindOne(
 				ctx,
 				bson.M{
 					"_id":          id,

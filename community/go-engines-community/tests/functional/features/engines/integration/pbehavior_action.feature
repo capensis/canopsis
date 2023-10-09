@@ -1,6 +1,7 @@
 Feature: no execute action when entity is inactive
   I need to be able to disable action when pause or maintenance pbehavior is in action.
 
+  @concurrent
   Scenario: given action and maintenance pbehavior should not update alarm
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -9,7 +10,11 @@ Feature: no execute action when entity is inactive
       "name": "test-scenario-pbehavior-action-1-name",
       "priority": 10060,
       "enabled": true,
-      "triggers": ["stateinc"],
+      "triggers": [
+        {
+          "type": "stateinc"
+        }
+      ],
       "disable_during_periods": ["maintenance"],
       "actions": [
         {
@@ -33,7 +38,7 @@ Feature: no execute action when entity is inactive
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-pbehavior-action-1",
@@ -46,7 +51,6 @@ Feature: no execute action when entity is inactive
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do POST /api/v4/pbehaviors:
     """json
     {
@@ -71,8 +75,18 @@ Feature: no execute action when entity is inactive
     }
     """
     Then the response code should be 201
-    When I wait the end of event processing
-    When I send an event:
+    Then I wait the end of event processing which contains:
+    """json
+    {
+      "event_type" : "pbhenter",
+      "connector" : "test-connector-pbehavior-action-1",
+      "connector_name" : "test-connector-name-pbehavior-action-1",
+      "component" : "test-component-pbehavior-action-1",
+      "resource" : "test-resource-pbehavior-action-1",
+      "source_type": "resource"
+    }
+    """
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-pbehavior-action-1",
@@ -85,7 +99,6 @@ Feature: no execute action when entity is inactive
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-pbehavior-action-1
     Then the response code should be 200
     Then the response body should contain:
@@ -151,6 +164,7 @@ Feature: no execute action when entity is inactive
     ]
     """
 
+  @concurrent
   Scenario: given delayed action and maintenance pbehavior should update alarm after pbehavior
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -159,7 +173,11 @@ Feature: no execute action when entity is inactive
       "name": "test-scenario-pbehavior-action-2-name",
       "priority": 10061,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "delay": {
         "value": 10,
         "unit": "s"
@@ -211,7 +229,7 @@ Feature: no execute action when entity is inactive
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-pbehavior-action-2",
@@ -224,7 +242,27 @@ Feature: no execute action when entity is inactive
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of 3 events processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type" : "pbhenter",
+        "connector" : "test-connector-pbehavior-action-2",
+        "connector_name" : "test-connector-name-pbehavior-action-2",
+        "component" : "test-component-pbehavior-action-2",
+        "resource" : "test-resource-pbehavior-action-2",
+        "source_type": "resource"
+      },
+      {
+        "event_type" : "pbhleave",
+        "connector" : "test-connector-pbehavior-action-2",
+        "connector_name" : "test-connector-name-pbehavior-action-2",
+        "component" : "test-component-pbehavior-action-2",
+        "resource" : "test-resource-pbehavior-action-2",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-resource-pbehavior-action-2
     Then the response code should be 200
     Then the response body should contain:
@@ -292,7 +330,19 @@ Feature: no execute action when entity is inactive
       }
     ]
     """
-    When I wait the end of event processing
+    Then I wait the end of events processing which contain:
+    """json
+    [
+      {
+        "event_type" : "run_delayed_scenario",
+        "connector" : "test-connector-pbehavior-action-2",
+        "connector_name" : "test-connector-name-pbehavior-action-2",
+        "component" : "test-component-pbehavior-action-2",
+        "resource" : "test-resource-pbehavior-action-2",
+        "source_type": "resource"
+      }
+    ]
+    """
     When I do GET /api/v4/alarms?search=test-resource-pbehavior-action-2
     Then the response code should be 200
     Then the response body should contain:
@@ -366,6 +416,7 @@ Feature: no execute action when entity is inactive
     ]
     """
 
+  @concurrent
   Scenario: given pbehavior action should create pbehavior and update new alarm
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -374,7 +425,11 @@ Feature: no execute action when entity is inactive
       "name": "test-scenario-pbehavior-action-3-name",
       "priority": 10062,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -404,7 +459,7 @@ Feature: no execute action when entity is inactive
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-pbehavior-action-3",
@@ -417,7 +472,6 @@ Feature: no execute action when entity is inactive
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-pbehavior-action-3
     Then the response code should be 200
     Then the response body should contain:
@@ -484,6 +538,7 @@ Feature: no execute action when entity is inactive
     ]
     """
 
+  @concurrent
   Scenario: given pbehavior action with start on trigger should create pbehavior
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -492,7 +547,11 @@ Feature: no execute action when entity is inactive
       "name": "test-scenario-pbehavior-action-4-name",
       "priority": 10063,
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -525,7 +584,7 @@ Feature: no execute action when entity is inactive
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-pbehavior-action-4",
@@ -538,7 +597,6 @@ Feature: no execute action when entity is inactive
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-pbehavior-action-4
     Then the response code should be 200
     Then the response body should contain:
@@ -605,6 +663,7 @@ Feature: no execute action when entity is inactive
     ]
     """
 
+  @concurrent
   Scenario: given pbehavior action should create pbehavior and update old alarm
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -613,8 +672,11 @@ Feature: no execute action when entity is inactive
       "name": "test-scenario-pbehavior-action-5-name",
       "priority": 10064,
       "enabled": true,
-      "priority": 75,
-      "triggers": ["stateinc"],
+      "triggers": [
+        {
+          "type": "stateinc"
+        }
+      ],
       "actions": [
         {
           "_id": "test-action-pbehavior-action-5",
@@ -646,7 +708,7 @@ Feature: no execute action when entity is inactive
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-pbehavior-action-5",
@@ -659,8 +721,7 @@ Feature: no execute action when entity is inactive
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-pbehavior-action-5",
@@ -673,7 +734,6 @@ Feature: no execute action when entity is inactive
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/alarms?search=test-resource-pbehavior-action-5
     Then the response code should be 200
     Then the response body should contain:
@@ -741,6 +801,7 @@ Feature: no execute action when entity is inactive
     ]
     """
 
+  @concurrent
   Scenario: given pbehavior action should create pbehavior and update last alarm date of pbehavior
     Given I am admin
     When I do POST /api/v4/scenarios:
@@ -749,7 +810,11 @@ Feature: no execute action when entity is inactive
       "name": "test-scenario-pbehavior-action-6-name",
       "priority": 10065,
       "enabled": true,
-      "triggers": ["stateinc"],
+      "triggers": [
+        {
+          "type": "stateinc"
+        }
+      ],
       "actions": [
         {
           "_id": "test-action-pbehavior-action-6",
@@ -781,7 +846,7 @@ Feature: no execute action when entity is inactive
     """
     Then the response code should be 201
     When I wait the next periodical process
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-pbehavior-action-6",
@@ -794,8 +859,7 @@ Feature: no execute action when entity is inactive
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
-    When I send an event:
+    When I send an event and wait the end of event processing:
     """json
     {
       "connector" : "test-connector-pbehavior-action-6",
@@ -808,7 +872,6 @@ Feature: no execute action when entity is inactive
       "output" : "noveo alarm"
     }
     """
-    When I wait the end of event processing
     When I do GET /api/v4/pbehaviors?search=pbehavior-action-6
     Then the response code should be 200
     Then the response key "data.0.last_alarm_date" should not be "null"

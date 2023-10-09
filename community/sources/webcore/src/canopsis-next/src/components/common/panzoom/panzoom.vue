@@ -131,7 +131,6 @@ export default {
 
   &__help-icon {
     cursor: pointer;
-    color: var(--v-secondary-base) !important;
   }
 }
 </style>

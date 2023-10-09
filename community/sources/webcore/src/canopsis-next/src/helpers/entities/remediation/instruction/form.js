@@ -1,9 +1,4 @@
-import {
-  isUndefined,
-  omit,
-  pick,
-  cloneDeep,
-} from 'lodash';
+import { isUndefined, omit, pick, cloneDeep } from 'lodash';
 
 import {
   REMEDIATION_INSTRUCTION_APPROVAL_TYPES,

@@ -1,6 +1,7 @@
 package types
 
 import (
+	"strconv"
 	"time"
 )
 
@@ -66,12 +67,16 @@ const (
 	AlarmChangeTypeJunitTestSuiteUpdate AlarmChangeType = "junittestsuiteupdate"
 	AlarmChangeTypeJunitTestCaseUpdate  AlarmChangeType = "junittestcaseupdate"
 
-	// AlarmChangeTypeEntityToggled is used to update entity service's counters on disable/enable entity actions.
-	AlarmChangeTypeEntityToggled AlarmChangeType = "entitytoggled"
+	AlarmChangeTypeEnabled AlarmChangeType = "enabled"
 
 	// AlarmChangeTypeAutoInstructionActivate is used to activate alarm when an autoremediation triggered by create trigger is completed
 	AlarmChangeTypeAutoInstructionActivate AlarmChangeType = "autoinstructionactivate"
+
+	// AlarmChangeEventsCount is used for eventscount trigger and alarm's events_count value should be added to the end of a trigger name, e.g. "eventscount3"
+	AlarmChangeEventsCount AlarmChangeType = "eventscount"
 )
+
+const MinimalEventsCountThreshold = 2
 
 // AlarmChange is a struct containing the type of change that occured on an
 // alarm, as well as its previous state.
@@ -81,8 +86,12 @@ type AlarmChange struct {
 	PreviousStateChange             CpsTime
 	PreviousStatus                  CpsNumber
 	PreviousStatusChange            CpsTime
+	PreviousPbehaviorTime           *CpsTime
+	PreviousEntityPbehaviorTime     *CpsTime
 	PreviousPbehaviorTypeID         string
 	PreviousPbehaviorCannonicalType string
+
+	EventsCount int
 }
 
 func NewAlarmChange() AlarmChange {
@@ -113,13 +122,23 @@ func NewAlarmChangeByAlarm(alarm Alarm, t ...AlarmChangeType) AlarmChange {
 }
 
 func (ac *AlarmChange) GetTriggers() []string {
-	return GetTriggers(ac.Type)
-}
-
-func GetTriggers(t AlarmChangeType) []string {
 	var triggers []string
 
-	switch t {
+	switch ac.Type {
+	case AlarmChangeTypeNone:
+		if ac.EventsCount >= MinimalEventsCountThreshold {
+			triggers = append(triggers, string(AlarmChangeEventsCount)+strconv.Itoa(ac.EventsCount))
+		}
+	case AlarmChangeTypeStateIncrease:
+		triggers = append(triggers, string(AlarmChangeTypeStateIncrease))
+		if ac.EventsCount >= MinimalEventsCountThreshold {
+			triggers = append(triggers, string(AlarmChangeEventsCount)+strconv.Itoa(ac.EventsCount))
+		}
+	case AlarmChangeTypeStateDecrease:
+		triggers = append(triggers, string(AlarmChangeTypeStateDecrease))
+		if ac.EventsCount >= MinimalEventsCountThreshold {
+			triggers = append(triggers, string(AlarmChangeEventsCount)+strconv.Itoa(ac.EventsCount))
+		}
 	case AlarmChangeTypeCreateAndPbhEnter:
 		triggers = append(triggers, string(AlarmChangeTypeCreate), string(AlarmChangeTypePbhEnter))
 	case AlarmChangeTypePbhLeaveAndEnter:
@@ -140,11 +159,19 @@ func GetTriggers(t AlarmChangeType) []string {
 		AlarmChangeTypeAutoDeclareTicketWebhook:
 		triggers = append(triggers, string(AlarmChangeTypeDeclareTicketWebhook))
 	default:
-		trigger := string(t)
+		trigger := string(ac.Type)
 		if trigger != "" {
 			triggers = append(triggers, trigger)
 		}
 	}
 
 	return triggers
+}
+
+func (ac *AlarmChange) IsZero() bool {
+	if ac == nil {
+		return true
+	}
+
+	return *ac == AlarmChange{}
 }

@@ -10,8 +10,10 @@ import { MODALS } from '@/constants';
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
 import PbehaviorsSimpleList from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-simple-list.vue';
+import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 
 const stubs = {
+  'c-advanced-data-table': CAdvancedDataTable,
   'c-search-field': true,
   'c-expand-btn': true,
   'c-action-btn': true,
@@ -37,6 +39,8 @@ describe('pbehaviors-simple-list', () => {
     editable: !!(index % 2),
     tstart: 1614861000 + index,
     tstop: 1614861200 + index,
+    rrule: index % 2 ? 'RRULE:' : null,
+    rrule_end: index % 4 ? 1614861888 + index : null,
     type: {
       name: `type-name-${index}`,
       icon_name: `type-icon-name-${index}`,
@@ -52,7 +56,6 @@ describe('pbehaviors-simple-list', () => {
   const store = createMockedStoreModules([pbehaviorModule]);
 
   const factory = generateShallowRenderer(PbehaviorsSimpleList, {
-
     stubs,
     mocks: { $modals },
     parentComponent: {

@@ -1,9 +1,4 @@
-import {
-  ALARM_FIELDS,
-  ALARM_INFOS_FIELDS,
-  ALARM_LIST_WIDGET_COLUMNS,
-  ENTITY_INFOS_FIELDS,
-} from '@/constants';
+import { ALARM_FIELDS, ALARM_INFOS_FIELDS, ALARM_LIST_WIDGET_COLUMNS, ENTITY_INFOS_FIELDS } from '@/constants';
 
 import { uid } from '@/helpers/uid';
 
@@ -63,6 +58,7 @@ export const isLinksWidgetColumn = (value = '') => value.startsWith(ALARM_LIST_W
  * @param {string} [value = '']
  * @param {string} [label = '']
  * @param {boolean} [onlyIcon = false]
+ * @param {boolean} [withHtml = true]
  * @param {WidgetColumn & { value: undefined, label: undefined }} [rest]
  * @returns {WidgetColumnForm}
  */

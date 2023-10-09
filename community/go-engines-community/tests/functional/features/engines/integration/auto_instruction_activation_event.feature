@@ -69,7 +69,7 @@ Feature: send activation event on unsnooze
     """
     When I save response createTimestamp={{ (index .lastResponse.data 0).v.creation_date }}
     When I save response alarmActivationDate={{ (index .lastResponse.data 0).v.activation_date }}
-    Then the difference between alarmActivationDate createTimestamp is in range 5,8
+    Then the difference between alarmActivationDate createTimestamp is in range 6,9
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -181,7 +181,7 @@ Feature: send activation event on unsnooze
     """
     When I save response createTimestamp={{ (index .lastResponse.data 0).v.creation_date }}
     When I save response alarmActivationDate={{ (index .lastResponse.data 0).v.activation_date }}
-    Then the difference between alarmActivationDate createTimestamp is in range 1,4
+    Then the difference between alarmActivationDate createTimestamp is in range 2,5
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -457,7 +457,7 @@ Feature: send activation event on unsnooze
     """
     When I save response createTimestamp={{ (index .lastResponse.data 0).v.creation_date }}
     When I save response alarmActivationDate={{ (index .lastResponse.data 0).v.activation_date }}
-    Then the difference between alarmActivationDate createTimestamp is in range 3,6
+    Then the difference between alarmActivationDate createTimestamp is in range 5,8
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -532,7 +532,11 @@ Feature: send activation event on unsnooze
     {
       "name": "test-scenario-to-test-auto-instruction-activate-event-5-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -630,7 +634,7 @@ Feature: send activation event on unsnooze
     """
     When I save response createTimestamp={{ (index .lastResponse.data 0).v.creation_date }}
     When I save response alarmActivationDate={{ (index .lastResponse.data 0).v.activation_date }}
-    Then the difference between alarmActivationDate createTimestamp is in range 5,8
+    Then the difference between alarmActivationDate createTimestamp is in range 6,9
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -776,7 +780,7 @@ Feature: send activation event on unsnooze
     """
     When I save response createTimestamp={{ (index .lastResponse.data 0).v.creation_date }}
     When I save response alarmActivationDate={{ (index .lastResponse.data 0).v.activation_date }}
-    Then the difference between alarmActivationDate createTimestamp is in range 5,8
+    Then the difference between alarmActivationDate createTimestamp is in range 6,9
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -924,7 +928,7 @@ Feature: send activation event on unsnooze
     """
     When I save response createTimestamp={{ (index .lastResponse.data 0).v.creation_date }}
     When I save response alarmActivationDate={{ (index .lastResponse.data 0).v.activation_date }}
-    Then the difference between alarmActivationDate createTimestamp is in range 8,11
+    Then the difference between alarmActivationDate createTimestamp is in range 10,13
     When I do POST /api/v4/alarm-details:
     """json
     [
@@ -1019,7 +1023,11 @@ Feature: send activation event on unsnooze
     {
       "name": "test-scenario-to-test-auto-instruction-activate-event-8-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -1263,7 +1271,7 @@ Feature: send activation event on unsnooze
     """
     When I save response createTimestamp={{ (index .lastResponse.data 0).v.creation_date }}
     When I save response alarmActivationDate={{ (index .lastResponse.data 0).v.activation_date }}
-    Then the difference between alarmActivationDate createTimestamp is in range 5,8
+    Then the difference between alarmActivationDate createTimestamp is in range 6,9
     When I do POST /api/v4/alarm-details:
     """json
     [

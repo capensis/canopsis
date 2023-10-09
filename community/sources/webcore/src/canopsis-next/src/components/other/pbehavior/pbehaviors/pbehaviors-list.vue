@@ -24,8 +24,9 @@
       c-ellipsis(:text="item.name")
     template(#enabled="{ item }")
       c-enabled(:value="item.enabled")
-    template(#tstart="{ item }") {{ item.tstart | timezone($system.timezone) }}
-    template(#tstop="{ item }") {{ item.tstop | timezone($system.timezone) }}
+    template(#tstart="{ item }") {{ formatIntervalDate(item, 'tstart') }}
+    template(#tstop="{ item }") {{ formatIntervalDate(item, 'tstop') }}
+    template(#rrule_end="{ item }") {{ formatRruleEndDate(item) }}
     template(#last_alarm_date="{ item }") {{ item.last_alarm_date | timezone($system.timezone) }}
     template(#created="{ item }") {{ item.created | date }}
     template(#updated="{ item }") {{ item.updated | date }}
@@ -62,6 +63,8 @@
 <script>
 import { isOldPattern } from '@/helpers/entities/pattern/form';
 
+import { pbehaviorsDateFormatMixin } from '@/mixins/pbehavior/pbehavior-date-format';
+
 import PbehaviorsMassActionsPanel from './actions/pbehaviors-mass-actions-panel.vue';
 import PbehaviorsListExpandItem from './partials/pbehaviors-list-expand-item.vue';
 
@@ -71,6 +74,7 @@ export default {
     PbehaviorsListExpandItem,
     PbehaviorsMassActionsPanel,
   },
+  mixins: [pbehaviorsDateFormatMixin],
   props: {
     pbehaviors: {
       type: Array,
@@ -117,12 +121,13 @@ export default {
         { text: this.$t('pbehavior.isEnabled'), value: 'enabled' },
         { text: this.$t('pbehavior.begins'), value: 'tstart' },
         { text: this.$t('pbehavior.ends'), value: 'tstop' },
+        { text: this.$t('pbehavior.rruleEnd'), value: 'rrule_end' },
+        { text: this.$t('common.recurrence'), value: 'rrule' },
         { text: this.$t('common.type'), value: 'type.name' },
         { text: this.$t('common.reason'), value: 'reason.name' },
         { text: this.$t('common.created'), value: 'created' },
         { text: this.$t('common.updated'), value: 'updated' },
         { text: this.$t('pbehavior.lastAlarmDate'), value: 'last_alarm_date' },
-        { text: this.$t('common.recurrence'), value: 'rrule' },
         { text: this.$t('common.icon'), value: 'type.icon_name' },
         { text: this.$t('common.status'), value: 'is_active_status', sortable: false },
         { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },

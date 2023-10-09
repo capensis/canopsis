@@ -102,6 +102,14 @@ export default {
     title: 'Cartographie',
     message: '', // TODO: add correct message
   },
+  [USERS_PERMISSIONS.technical.maintenance]: {
+    title: 'Mode de Maintenance',
+    message: '', // TODO: add correct message
+  },
+  [USERS_PERMISSIONS.technical.tag]: {
+    title: 'Gestion des balises',
+    message: '', // TODO: add correct message
+  },
 
   /**
    * Admin general
@@ -124,5 +132,13 @@ export default {
   [USERS_PERMISSIONS.technical.notification.instructionStats]: {
     title: 'Évaluation des consignes',
     message: 'Cette page contient les statistiques sur l\'exécution des consignes. Les utilisateurs peuvent noter les consignes en fonction de leurs performances.',
+  },
+
+  /**
+   * Profile
+   */
+  [USERS_PERMISSIONS.technical.profile.theme]: {
+    title: 'Thèmes de couleurs',
+    message: '', // TODO: add correct message
   },
 };
