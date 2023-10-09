@@ -17,16 +17,7 @@ Bon nombre d'équipements émettent des traps. Canopsis est en mesure de :
 
 Ce document vous guide pas à pas dans cette mise en œuvre.
 
-## Schéma de fonctionnement
-
-Ce schéma présente le cycle de vie d'un trap SNMP depuis son émission jusqu'à sa conversion en alarme Canopsis.
-
-![img1](img/Cycle_vie_trap_snmp.png)
-
-## Prérequis
-
-Le moteur `snmp` de Canopsis doit être démarré pour que les traps envoyés par
-`snmp2canopsis` soient traités jusqu'au bout.
+Pour comprendre ce qu'il adviendra des événements `type : trap` générés, vous pouvez consulter la documentation des [règles SNMP](../../../guide-utilisation/menu-exploitation/regles-snmp/)
 
 ## Émission des traps SNMP
 
@@ -228,11 +219,6 @@ ou conteneur `snmp2canopsis`. Exemple de log :
 
 ## Suite
 
-La suite de la configuration concerne le traitement des traps décodés.
-
-Si les traps peuvent faire l'objet de règles de traitement grâce à des MIB,
-se référer à la documentation du
-[moteur `snmp`](../../guide-administration/moteurs/moteur-snmp.md).
-
-Si les traps ne sont pas standard, ou en l'absence de MIB, se référer à la
-documentation sur les [traps SNMP custom](./SNMPtrap_custom.md).
+Dans le cas où les traps peuvent l'objet de règles de traitement grâce à des MIB, 
+ou dans le cas où les traps ne sont pas standard (ou en l'absence de MIB), se référer à la
+documentation sur les [règles SNMP](../../../guide-utilisation/menu-exploitation/regles-snmp/) 
