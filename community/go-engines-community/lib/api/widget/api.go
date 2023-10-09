@@ -261,7 +261,7 @@ func (a *api) UpdateGridPositions(c *gin.Context) {
 }
 
 func (a *api) checkAccess(ctx context.Context, ids []string, userId, perm string) (bool, error) {
-	tabInfos, err := a.store.FindTabInfos(ctx, ids)
+	tabInfos, err := a.store.FindTabPrivacySettings(ctx, ids)
 	if err != nil || len(tabInfos) != len(ids) {
 		return false, err
 	}

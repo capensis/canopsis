@@ -2,6 +2,7 @@ package viewgroup
 
 import (
 	"context"
+	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -337,7 +338,7 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		res = false
 		err := s.dbViewCollection.FindOne(ctx, bson.M{"group_id": id}).Err()
 		if err != nil {
-			if err != mongodriver.ErrNoDocuments {
+			if !errors.Is(err, mongodriver.ErrNoDocuments) {
 				return err
 			}
 		} else {
