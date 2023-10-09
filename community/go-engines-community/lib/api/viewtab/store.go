@@ -107,8 +107,8 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			"let":  bson.M{"widget": "$widgets._id"},
 			"pipeline": []bson.M{
 				{"$match": bson.M{
-					"$expr":          bson.M{"$eq": bson.A{"$widget", "$$widget"}},
-					"widget_private": false,
+					"$expr":              bson.M{"$eq": bson.A{"$widget", "$$widget"}},
+					"is_user_preference": false,
 				}},
 			},
 			"as": "filters",

@@ -44,7 +44,7 @@ Feature: Copy a view tab
             {
               "title": "test-widgetfilter-to-tab-copy-1-title",
               "is_private": false,
-              "widget_private": false,
+              "is_user_preference": false,
               "author": {
                 "_id": "root",
                 "name": "root"
@@ -53,7 +53,7 @@ Feature: Copy a view tab
             {
               "title": "test-widgetfilter-to-tab-copy-2-title",
               "is_private": false,
-              "widget_private": false,
+              "is_user_preference": false,
               "author": {
                 "_id": "root",
                 "name": "root"
@@ -105,7 +105,7 @@ Feature: Copy a view tab
                 "name": "root"
               },
               "is_private": false,
-              "widget_private": false,
+              "is_user_preference": false,
               "alarm_pattern": [
                 [
                   {
@@ -125,7 +125,7 @@ Feature: Copy a view tab
                 "name": "root"
               },
               "is_private": false,
-              "widget_private": false,
+              "is_user_preference": false,
               "alarm_pattern": [
                 [
                   {
@@ -295,7 +295,7 @@ Feature: Copy a view tab
             {
               "title": "test-private-widgetfilter-to-private-tab-copy-1-title",
               "is_private": true,
-              "widget_private": false,
+              "is_user_preference": false,
               "author": {
                 "_id": "root",
                 "name": "root"
@@ -304,7 +304,7 @@ Feature: Copy a view tab
             {
               "title": "test-private-widgetfilter-to-private-tab-copy-2-title",
               "is_private": true,
-              "widget_private": false,
+              "is_user_preference": false,
               "author": {
                 "_id": "root",
                 "name": "root"
@@ -353,7 +353,7 @@ Feature: Copy a view tab
             {
               "title": "test-private-widgetfilter-to-private-tab-copy-1-title",
               "is_private": true,
-              "widget_private": false,
+              "is_user_preference": false,
               "author": {
                 "_id": "root",
                 "name": "root"
@@ -362,7 +362,7 @@ Feature: Copy a view tab
             {
               "title": "test-private-widgetfilter-to-private-tab-copy-2-title",
               "is_private": true,
-              "widget_private": false,
+              "is_user_preference": false,
               "author": {
                 "_id": "root",
                 "name": "root"
@@ -462,7 +462,7 @@ Feature: Copy a view tab
             {
               "title": "test-private-widgetfilter-to-private-tab-copy-1-title",
               "is_private": true,
-              "widget_private": false,
+              "is_user_preference": false,
               "author": {
                 "_id": "root",
                 "name": "root"
@@ -471,7 +471,7 @@ Feature: Copy a view tab
             {
               "title": "test-private-widgetfilter-to-private-tab-copy-2-title",
               "is_private": true,
-              "widget_private": false,
+              "is_user_preference": false,
               "author": {
                 "_id": "root",
                 "name": "root"
@@ -520,7 +520,7 @@ Feature: Copy a view tab
             {
               "title": "test-private-widgetfilter-to-private-tab-copy-1-title",
               "is_private": true,
-              "widget_private": false,
+              "is_user_preference": false,
               "author": {
                 "_id": "root",
                 "name": "root"
@@ -529,7 +529,7 @@ Feature: Copy a view tab
             {
               "title": "test-private-widgetfilter-to-private-tab-copy-2-title",
               "is_private": true,
-              "widget_private": false,
+              "is_user_preference": false,
               "author": {
                 "_id": "root",
                 "name": "root"
@@ -606,7 +606,7 @@ Feature: Copy a view tab
             {
               "title": "test-private-widgetfilter-to-private-tab-copy-1-title",
               "is_private": false,
-              "widget_private": false,
+              "is_user_preference": false,
               "author": {
                 "_id": "root",
                 "name": "root"
@@ -615,7 +615,7 @@ Feature: Copy a view tab
             {
               "title": "test-private-widgetfilter-to-private-tab-copy-2-title",
               "is_private": false,
-              "widget_private": false,
+              "is_user_preference": false,
               "author": {
                 "_id": "root",
                 "name": "root"
@@ -664,7 +664,7 @@ Feature: Copy a view tab
             {
               "title": "test-private-widgetfilter-to-private-tab-copy-1-title",
               "is_private": false,
-              "widget_private": false,
+              "is_user_preference": false,
               "author": {
                 "_id": "root",
                 "name": "root"
@@ -673,7 +673,7 @@ Feature: Copy a view tab
             {
               "title": "test-private-widgetfilter-to-private-tab-copy-2-title",
               "is_private": false,
-              "widget_private": false,
+              "is_user_preference": false,
               "author": {
                 "_id": "root",
                 "name": "root"
@@ -755,7 +755,7 @@ Feature: Copy a view tab
             {
               "title": "test-widgetfilter-to-tab-copy-1-title",
               "is_private": true,
-              "widget_private": false,
+              "is_user_preference": false,
               "author": {
                 "_id": "root",
                 "name": "root"
@@ -764,7 +764,7 @@ Feature: Copy a view tab
             {
               "title": "test-widgetfilter-to-tab-copy-2-title",
               "is_private": true,
-              "widget_private": false,
+              "is_user_preference": false,
               "author": {
                 "_id": "root",
                 "name": "root"
@@ -816,7 +816,7 @@ Feature: Copy a view tab
                 "name": "root"
               },
               "is_private": true,
-              "widget_private": false,
+              "is_user_preference": false,
               "alarm_pattern": [
                 [
                   {
@@ -836,7 +836,7 @@ Feature: Copy a view tab
                 "name": "root"
               },
               "is_private": true,
-              "widget_private": false,
+              "is_user_preference": false,
               "alarm_pattern": [
                 [
                   {

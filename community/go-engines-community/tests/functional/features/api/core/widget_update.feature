@@ -100,7 +100,7 @@ Feature: Update a widget
         {
           "title": "test-widgetfilter-to-widget-update-1-3-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -143,7 +143,7 @@ Feature: Update a widget
           "_id": "test-widgetfilter-to-widget-update-1-2",
           "title": "test-widgetfilter-to-widget-update-1-2-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -166,7 +166,7 @@ Feature: Update a widget
           "_id": "test-widgetfilter-to-widget-update-1-4",
           "title": "test-widgetfilter-to-widget-update-1-4-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -187,7 +187,7 @@ Feature: Update a widget
         {
           "title": "test-widgetfilter-to-widget-update-1-3-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -230,7 +230,7 @@ Feature: Update a widget
           "_id": "test-widgetfilter-to-widget-update-1-2",
           "title": "test-widgetfilter-to-widget-update-1-2-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -253,7 +253,7 @@ Feature: Update a widget
           "_id": "test-widgetfilter-to-widget-update-1-4",
           "title": "test-widgetfilter-to-widget-update-1-4-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -266,7 +266,7 @@ Feature: Update a widget
           "_id": "test-widgetfilter-to-widget-update-1-5",
           "title": "test-widgetfilter-to-widget-update-1-5-title",
           "is_private": false,
-          "widget_private": true,
+          "is_user_preference": true,
           "author": {
             "_id": "root",
             "name": "root"
@@ -444,7 +444,7 @@ Feature: Update a widget
         {
           "title": "test-private-widgetfilter-to-private-widget-update-1-3-title",
           "is_private": true,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -487,7 +487,7 @@ Feature: Update a widget
           "_id": "test-private-widgetfilter-to-private-widget-update-1-2",
           "title": "test-private-widgetfilter-to-private-widget-update-1-2-title",
           "is_private": true,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -510,7 +510,7 @@ Feature: Update a widget
           "_id": "test-private-widgetfilter-to-private-widget-update-1-4",
           "title": "test-private-widgetfilter-to-private-widget-update-1-4-title",
           "is_private": true,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"

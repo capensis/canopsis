@@ -124,8 +124,8 @@ func (s *store) Find(ctx context.Context, r ListRequest, authorizedViewIds, owne
 						"let":  bson.M{"widget": "$widgets._id"},
 						"pipeline": []bson.M{
 							{"$match": bson.M{
-								"$expr":          bson.M{"$eq": bson.A{"$widget", "$$widget"}},
-								"widget_private": false,
+								"$expr":              bson.M{"$eq": bson.A{"$widget", "$$widget"}},
+								"is_user_preference": false,
 							}},
 						},
 						"as": "filters",

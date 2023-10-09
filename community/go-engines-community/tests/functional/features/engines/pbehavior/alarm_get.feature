@@ -114,7 +114,7 @@ Feature: Get alarms
     {
       "title": "test-widgetfilter-pbehavior-alarm-get-1-1",
       "widget": "test-widget-to-alarm-get",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -165,7 +165,7 @@ Feature: Get alarms
     {
       "title": "test-widgetfilter-pbehavior-alarm-get-1-2",
       "widget": "test-widget-to-alarm-get",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -224,7 +224,7 @@ Feature: Get alarms
     {
       "title": "test-widgetfilter-pbehavior-alarm-get-1-3",
       "widget": "test-widget-to-alarm-get",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -283,7 +283,7 @@ Feature: Get alarms
     {
       "title": "test-widgetfilter-pbehavior-alarm-get-1-4",
       "widget": "test-widget-to-alarm-get",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -334,7 +334,7 @@ Feature: Get alarms
     {
       "title": "test-widgetfilter-pbehavior-alarm-get-1-5",
       "widget": "test-widget-to-alarm-get",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -385,7 +385,7 @@ Feature: Get alarms
     {
       "title": "test-widgetfilter-pbehavior-alarm-get-1-6",
       "widget": "test-widget-to-alarm-get",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {

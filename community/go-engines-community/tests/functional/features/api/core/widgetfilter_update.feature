@@ -9,7 +9,7 @@ Feature: Update a widget filter
     """json
     {
       "title": "test-widgetfilter-to-update-1-title",
-      "widget_private": false,
+      "is_user_preference": false,
       "alarm_pattern": [
         [
           {
@@ -54,7 +54,7 @@ Feature: Update a widget filter
         "name": "test-user-to-widget-filter-edit-2"
       },
       "title": "test-widgetfilter-to-update-1-title",
-      "widget_private": false,
+      "is_user_preference": false,
       "is_private": false,
       "created": 1605263992,
       "alarm_pattern": [
@@ -100,7 +100,7 @@ Feature: Update a widget filter
     """json
     {
       "title": "test-widgetfilter-to-update-2-title",
-      "widget_private": true,
+      "is_user_preference": true,
       "corporate_alarm_pattern": "test-pattern-to-filter-edit-1",
       "corporate_entity_pattern": "test-pattern-to-filter-edit-2",
       "corporate_pbehavior_pattern": "test-pattern-to-filter-edit-3"
@@ -115,7 +115,7 @@ Feature: Update a widget filter
         "name": "test-user-to-widget-filter-edit-1"
       },
       "title": "test-widgetfilter-to-update-2-title",
-      "widget_private": true,
+      "is_user_preference": true,
       "is_private": false,
       "created": 1605263992,
       "corporate_alarm_pattern": "test-pattern-to-filter-edit-1",
@@ -167,7 +167,7 @@ Feature: Update a widget filter
     """json
     {
       "title": "test-widgetfilter-to-update-6-title",
-      "widget_private": false
+      "is_user_preference": false
     }
     """
     Then the response code should be 200
@@ -179,7 +179,7 @@ Feature: Update a widget filter
         "name": "root"
       },
       "title": "test-widgetfilter-to-update-6-title",
-      "widget_private": false,
+      "is_user_preference": false,
       "is_private": false,
       "created": 1605263992,
       "old_mongo_query": {
@@ -191,7 +191,7 @@ Feature: Update a widget filter
     """json
     {
       "title": "test-widgetfilter-to-update-6-title",
-      "widget_private": false,
+      "is_user_preference": false,
       "entity_pattern": [
         [
           {
@@ -214,7 +214,7 @@ Feature: Update a widget filter
         "name": "root"
       },
       "title": "test-widgetfilter-to-update-6-title",
-      "widget_private": false,
+      "is_user_preference": false,
       "is_private": false,
       "created": 1605263992,
       "entity_pattern": [
@@ -250,7 +250,7 @@ Feature: Update a widget filter
     """json
     {
       "title": "test-widgetfilter-to-update-3-title",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -273,7 +273,7 @@ Feature: Update a widget filter
     """json
     {
       "title": "test-widgetfilter-to-update-4-title",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -296,7 +296,7 @@ Feature: Update a widget filter
     """json
     {
       "title": "test-widgetfilter-to-update-5-title",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -315,7 +315,7 @@ Feature: Update a widget filter
     """json
     {
       "errors": {
-        "widget_private": "WidgetPrivate cannot be changed"
+        "is_user_preference": "WidgetPrivate cannot be changed"
       }
     }
     """
@@ -327,7 +327,7 @@ Feature: Update a widget filter
     """json
     {
       "title": "test-widgetfilter-not-exist-title",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -357,7 +357,7 @@ Feature: Update a widget filter
     {
       "errors": {
         "title": "Title is missing.",
-        "widget_private": "WidgetPrivate is missing.",
+        "is_user_preference": "WidgetPrivate is missing.",
         "alarm_pattern": "AlarmPattern is missing.",
         "corporate_alarm_pattern": "CorporateAlarmPattern is missing.",
         "entity_pattern": "EntityPattern is missing.",
@@ -376,7 +376,7 @@ Feature: Update a widget filter
     """json
     {
       "title": "test-private-widgetfilter-to-update-1-title",
-      "widget_private": false,
+      "is_user_preference": false,
       "alarm_pattern": [
         [
           {
@@ -421,7 +421,7 @@ Feature: Update a widget filter
         "name": "root"
       },
       "title": "test-private-widgetfilter-to-update-1-title",
-      "widget_private": false,
+      "is_user_preference": false,
       "is_private": true,
       "alarm_pattern": [
         [
@@ -466,7 +466,7 @@ Feature: Update a widget filter
     """json
     {
       "title": "test-private-widgetfilter-to-update-2-title",
-      "widget_private": false,
+      "is_user_preference": false,
       "alarm_pattern": [
         [
           {

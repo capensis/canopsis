@@ -51,7 +51,7 @@ Feature: Copy a widget
         {
           "title": "test-widgetfilter-to-widget-copy-1-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -73,7 +73,7 @@ Feature: Copy a widget
         {
           "title": "test-widgetfilter-to-widget-copy-2-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -122,7 +122,7 @@ Feature: Copy a widget
         {
           "title": "test-widgetfilter-to-widget-copy-1-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -144,7 +144,7 @@ Feature: Copy a widget
         {
           "title": "test-widgetfilter-to-widget-copy-2-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -327,7 +327,7 @@ Feature: Copy a widget
         {
           "title": "test-private-widgetfilter-to-widget-copy-1-title",
           "is_private": true,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -349,7 +349,7 @@ Feature: Copy a widget
         {
           "title": "test-private-widgetfilter-to-widget-copy-2-title",
           "is_private": true,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -398,7 +398,7 @@ Feature: Copy a widget
         {
           "title": "test-private-widgetfilter-to-widget-copy-1-title",
           "is_private": true,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -420,7 +420,7 @@ Feature: Copy a widget
         {
           "title": "test-private-widgetfilter-to-widget-copy-2-title",
           "is_private": true,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -557,7 +557,7 @@ Feature: Copy a widget
         {
           "title": "test-private-widgetfilter-to-widget-copy-1-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -579,7 +579,7 @@ Feature: Copy a widget
         {
           "title": "test-private-widgetfilter-to-widget-copy-2-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -628,7 +628,7 @@ Feature: Copy a widget
         {
           "title": "test-private-widgetfilter-to-widget-copy-1-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -650,7 +650,7 @@ Feature: Copy a widget
         {
           "title": "test-private-widgetfilter-to-widget-copy-2-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -748,7 +748,7 @@ Feature: Copy a widget
         {
           "title": "test-widgetfilter-to-widget-copy-1-title",
           "is_private": true,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -770,7 +770,7 @@ Feature: Copy a widget
         {
           "title": "test-widgetfilter-to-widget-copy-2-title",
           "is_private": true,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -819,7 +819,7 @@ Feature: Copy a widget
         {
           "title": "test-widgetfilter-to-widget-copy-1-title",
           "is_private": true,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
@@ -841,7 +841,7 @@ Feature: Copy a widget
         {
           "title": "test-widgetfilter-to-widget-copy-2-title",
           "is_private": true,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root"
