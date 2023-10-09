@@ -2772,6 +2772,42 @@ periodical_alarm:
       resource: test-resource-to-alarm-link-get-2
       output: test-output-to-alarm-link-get-2
 
+  alarm_bookmark_1_1:
+    <<: *alarm
+    _id: test-alarm-bookmark-1-1
+    d: test-resource-alarm-bookmark-1-1/test-component-alarm-bookmark-1
+    v:
+      <<: *alarm_value
+      resource: test-resource-alarm-bookmark-1-1
+
+  alarm_bookmark_1_2:
+    <<: *alarm
+    _id: test-alarm-bookmark-1-2
+    d: test-resource-alarm-bookmark-1-2/test-component-alarm-bookmark-1
+    v:
+      <<: *alarm_value
+      resource: test-resource-alarm-bookmark-1-2
+
+  alarm_bookmark_2_1:
+    <<: *alarm
+    _id: test-alarm-bookmark-2-1
+    d: test-resource-alarm-bookmark-2-1/test-component-alarm-bookmark-2
+    bookmarks:
+      - root
+    v:
+      <<: *alarm_value
+      resource: test-resource-alarm-bookmark-2-1
+
+  alarm_bookmark_2_2:
+    <<: *alarm
+    _id: test-alarm-bookmark-2-2
+    d: test-resource-alarm-bookmark-2-2/test-component-alarm-bookmark-2
+    bookmarks:
+      - manageruser
+    v:
+      <<: *alarm_value
+      resource: test-resource-alarm-bookmark-2-2
+
 resolved_alarms:
   alarm_to_get_3:
     <<: *alarm_to_get_3
@@ -2854,3 +2890,39 @@ resolved_alarms:
     v:
       <<: *alarm_value
       resource: test-resource-manual-correlation-fail-1
+
+  alarm_bookmark_3_1:
+    <<: *resolved_alarm
+    _id: test-alarm-bookmark-3-1
+    d: test-resource-alarm-bookmark-3-1/test-component-alarm-bookmark-3
+    v:
+      <<: *alarm_value
+      resource: test-resource-alarm-bookmark-3-1
+
+  alarm_bookmark_3_2:
+    <<: *resolved_alarm
+    _id: test-alarm-bookmark-3-2
+    d: test-resource-alarm-bookmark-3-2/test-component-alarm-bookmark-3
+    v:
+      <<: *alarm_value
+      resource: test-resource-alarm-bookmark-3-2
+
+  alarm_bookmark_4_1:
+    <<: *resolved_alarm
+    _id: test-alarm-bookmark-4-1
+    d: test-resource-alarm-bookmark-4-1/test-component-alarm-bookmark-4
+    bookmarks:
+      - root
+    v:
+      <<: *alarm_value
+      resource: test-resource-alarm-bookmark-4-1
+
+  alarm_bookmark_4_2:
+    <<: *resolved_alarm
+    _id: test-alarm-bookmark-4-2
+    d: test-resource-alarm-bookmark-4-2/test-component-alarm-bookmark-4
+    bookmarks:
+      - manageruser
+    v:
+      <<: *alarm_value
+      resource: test-resource-alarm-bookmark-4-2

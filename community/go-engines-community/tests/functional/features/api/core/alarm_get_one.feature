@@ -115,7 +115,7 @@ Feature: Get alarms
     """
     When I do GET /api/v4/alarms/test-alarm-to-get-4
     Then the response code should be 200
-    Then the response body should be:
+    Then the response body should contain:
     """json
     {
       "_id": "test-alarm-to-get-4",
