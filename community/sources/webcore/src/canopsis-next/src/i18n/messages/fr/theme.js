@@ -48,7 +48,7 @@ export default {
   table: {
     title: 'Paramètres du bac à alarmes',
 
-    background: 'Couleur d\’arrière-plan du bac',
+    background: 'Couleur d\'arrière-plan du bac',
     backgroundHelpText: 'Couleur d\'arrière plan pour le bac à alarmes',
 
     rowColor: 'Couleur des lignes du bac',
