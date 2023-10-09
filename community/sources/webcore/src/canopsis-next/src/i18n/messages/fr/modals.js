@@ -974,13 +974,13 @@ export default {
   },
   createTag: {
     create: {
-      title: 'Créer une balise',
+      title: 'Créer un tag',
     },
     edit: {
-      title: 'Modifier une balise',
+      title: 'Modifier un tag',
     },
     duplicate: {
-      title: 'Dupliquer une balise',
+      title: 'Dupliquer un tag',
     },
   },
   createTheme: {
