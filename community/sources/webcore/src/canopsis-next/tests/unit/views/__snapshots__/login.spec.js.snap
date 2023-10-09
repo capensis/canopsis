@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`login Renders \`login\` with custom state 1`] = `
+<div
+  class="login"
+>
+  <!---->
+  <div
+    class="login__description"
+  >
+    <c-compiled-template-stub
+      template="description"
+    />
+  </div>
+  <div
+    class="login__container"
+  >
+    <base-login-stub />
+    <cas-login-stub
+      class="mt-2"
+    />
+    <saml-login-stub
+      class="mt-2"
+    />
+  </div>
+  <login-footer-stub />
+</div>
+`;
+
+exports[`login Renders \`login\` with default state 1`] = `
+<div
+  class="login"
+>
+  <!---->
+  <div
+    class="login__description"
+  >
+    <c-compiled-template-stub
+      template=""
+    />
+  </div>
+  <div
+    class="login__container"
+  >
+    <base-login-stub />
+    <!---->
+    <!---->
+  </div>
+  <login-footer-stub />
+</div>
+`;

@@ -59,10 +59,10 @@ export default {
         top: 48px;
         z-index: 1;
 
-        background: white;
+        background: var(--v-table-background-base);
 
         .theme--dark & {
-          background: #424242;
+          background: var(--v-table-background-base);
         }
       }
     }

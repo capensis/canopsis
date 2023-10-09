@@ -1,4 +1,15 @@
-import { isNil, isArray, isBoolean, isEmpty, isNan, isNull, isNumber, isString, isUndefined, omit } from 'lodash';
+import {
+  isNil,
+  isArray,
+  isBoolean,
+  isEmpty,
+  isNan,
+  isNull,
+  isNumber,
+  isString,
+  isUndefined,
+  omit,
+} from 'lodash';
 
 import {
   PATTERN_FIELD_TYPES,
@@ -201,6 +212,14 @@ export const isDateRuleType = type => type === PATTERN_RULE_TYPES.date;
 export const isDurationRuleType = type => type === PATTERN_RULE_TYPES.duration;
 
 /**
+ * Check rule is object
+ *
+ * @param {string} type
+ * @return {boolean}
+ */
+export const isObjectRuleType = type => type === PATTERN_RULE_TYPES.object;
+
+/**
  * Check field type is string array
  *
  * @param {PatternFieldType} type
@@ -293,6 +312,7 @@ export const isArrayPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.connector,
   ALARM_PATTERN_FIELDS.connectorName,
   ALARM_PATTERN_FIELDS.resource,
+  ALARM_PATTERN_FIELDS.tags,
   ENTITY_PATTERN_FIELDS.id,
   EVENT_FILTER_PATTERN_FIELDS.component,
   EVENT_FILTER_PATTERN_FIELDS.connector,
@@ -310,7 +330,14 @@ export const isInfosPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.infos,
   ENTITY_PATTERN_FIELDS.componentInfos,
   ENTITY_PATTERN_FIELDS.infos,
-].some(field => value?.startsWith(field));
+].some((field) => {
+  /**
+   * @TODO: update babel-eslint for resolving problem with templates inside optional chaiging function call
+   */
+  const start = `${field}.`;
+
+  return value === field || value?.startsWith(start);
+});
 
 /**
  * Check pattern field is duration
@@ -326,7 +353,39 @@ export const isDurationPatternRuleField = value => value === ALARM_PATTERN_FIELD
  * @param {string} value
  * @return {boolean}
  */
-export const isExtraInfosPatternRuleField = value => value?.startsWith(EVENT_FILTER_PATTERN_FIELDS.extraInfos);
+export const isExtraInfosPatternRuleField = (value) => {
+  /**
+   * @TODO: update babel-eslint for resolving problem with templates inside optional chaiging function call
+   */
+  const start = `${EVENT_FILTER_PATTERN_FIELDS.extraInfos}.`;
+
+  return value === EVENT_FILTER_PATTERN_FIELDS.extraInfos
+    || value?.startsWith(start);
+};
+
+/**
+ * Get object pattern field
+ *
+ * @param {string} value
+ * @return {string}
+ */
+export const getObjectPatternRuleField = value => [ALARM_PATTERN_FIELDS.ticketData]
+  .find((field) => {
+    /**
+     * @TODO: update babel-eslint for resolving problem with templates inside optional chaiging function call
+     */
+    const start = `${field}.`;
+
+    return value === field || value?.startsWith(start);
+  });
+
+/**
+ * Check pattern field is object
+ *
+ * @param {string} value
+ * @return {boolean}
+ */
+export const isObjectPatternRuleField = value => !!getObjectPatternRuleField(value);
 
 /**
  * Check rule value is valid without field type
@@ -513,7 +572,7 @@ export const getOperatorsByRule = (rule, ruleType) => {
   }
 
   if (
-    (isInfosRuleType(ruleType) || isExtraInfosPatternRuleField(ruleType))
+    (isInfosRuleType(ruleType) || isExtraInfosRuleType(ruleType))
     && rule.field === PATTERN_RULE_INFOS_FIELDS.name
   ) {
     return PATTERN_INFOS_NAME_OPERATORS;
@@ -636,6 +695,7 @@ export const patternRuleToForm = (rule = {}) => {
   const isDuration = rule.field === ALARM_PATTERN_FIELDS.duration;
   const isInfos = isAlarmInfos || isEntityInfos || isEntityComponentInfos;
   const isExtraInfos = !isInfos && rule.field?.startsWith(EVENT_FILTER_PATTERN_FIELDS.extraInfos);
+  const patternObjectField = getObjectPatternRuleField(rule.field);
 
   switch (rule.cond.type) {
     case PATTERN_CONDITIONS.equal: {
@@ -800,6 +860,11 @@ export const patternRuleToForm = (rule = {}) => {
       : PATTERN_RULE_INFOS_FIELDS.value;
   }
 
+  if (patternObjectField) {
+    form.attribute = patternObjectField;
+    form.dictionary = rule.field.replace(`${patternObjectField}.`, '');
+  }
+
   return form;
 };
 
@@ -894,8 +959,9 @@ export const formRuleToPatternRule = (rule) => {
   const isInfos = isInfosPatternRuleField(rule.attribute);
   const isExtraInfos = isExtraInfosPatternRuleField(rule.attribute);
   const isDate = isDatePatternRuleField(rule.attribute);
+  const isObject = isObjectPatternRuleField(rule.attribute);
 
-  if (isInfos || isExtraInfos) {
+  if (isInfos || isExtraInfos || isObject) {
     pattern.field = [rule.attribute, rule.dictionary].join('.');
   }
 
@@ -1034,6 +1100,14 @@ export const formGroupToPatternRules = group => group.rules.map(formRuleToPatter
  * @return {PatternGroups}
  */
 export const formGroupsToPatternRules = groups => groups.map(formGroupToPatternRules);
+
+/**
+ * Convert form groups to pattern rules query
+ *
+ * @param {PatternGroupsForm} [groups = []]
+ * @return {string}
+ */
+export const formGroupsToPatternRulesQuery = (groups = []) => JSON.stringify(formGroupsToPatternRules(groups));
 
 /**
  * Convert pattern form to pattern

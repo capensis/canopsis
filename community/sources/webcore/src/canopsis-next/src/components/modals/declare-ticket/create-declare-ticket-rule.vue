@@ -11,8 +11,10 @@
           flat,
           @click="$modals.hide"
         ) {{ $t('common.cancel') }}
-        v-btn.orange.white--text(
+        v-btn(
           :loading="checking",
+          color="orange",
+          dark,
           @click="validateTemplateVariables"
         ) {{ $t('declareTicket.checkSyntax') }}
         v-btn.primary(
@@ -65,18 +67,14 @@ export default {
     },
   },
   methods: {
-    validateRequestHeadersTemplates(headers) {
-      return Promise.all(
-        headers.map(({ value }) => this.validateDeclareTicketRulesVariables({ data: { text: value } })),
-      );
-    },
-
     async validateRequestTemplates(request) {
-      const [url, payload, headers] = await Promise.all([
-        this.validateDeclareTicketRulesVariables({ data: { text: request.url } }),
-        this.validateDeclareTicketRulesVariables({ data: { text: request.payload } }),
-        this.validateRequestHeadersTemplates(request.headers),
-      ]);
+      const [url, payload, ...headers] = await this.validateDeclareTicketRulesVariables({
+        data: [
+          { text: request.url },
+          { text: request.payload },
+          ...request.headers.map(({ value }) => ({ text: value })),
+        ],
+      });
 
       return {
         url,

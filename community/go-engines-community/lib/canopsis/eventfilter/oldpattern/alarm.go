@@ -106,7 +106,7 @@ func (p AlarmPattern) Matches(alarm *types.Alarm, matches *AlarmRegexMatches) bo
 
 func (p AlarmPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.ShouldBeNil {
-		return bsontype.Null, []byte{}, nil
+		return bson.TypeNull, []byte{}, nil
 	}
 
 	resultBson := bson.M{}
@@ -114,7 +114,7 @@ func (p AlarmPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.ID.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "ID", "id")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.ID
@@ -123,7 +123,7 @@ func (p AlarmPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Time.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "Time", "time")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Time
@@ -132,7 +132,7 @@ func (p AlarmPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.EntityID.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "EntityID", "entityid")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.EntityID
@@ -141,7 +141,7 @@ func (p AlarmPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if p.Value.IsSet() {
 		bsonFieldName, err := GetFieldBsonName(p, "Value", "value")
 		if err != nil {
-			return bsontype.Undefined, nil, err
+			return bson.TypeUndefined, nil, err
 		}
 
 		resultBson[bsonFieldName] = p.Value
@@ -151,12 +151,12 @@ func (p AlarmPattern) MarshalBSONValue() (bsontype.Type, []byte, error) {
 		return bson.MarshalValue(resultBson)
 	}
 
-	return bsontype.Undefined, nil, nil
+	return bson.TypeUndefined, nil, nil
 }
 
 func (p *AlarmPattern) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
-	case bsontype.Null:
+	case bson.TypeNull:
 		// The BSON value is null. The field should not be set.
 		p.ShouldBeNil = true
 		p.ShouldNotBeNil = false
@@ -236,7 +236,7 @@ func (l AlarmPatternList) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 
-	if bsonType == bsontype.Null {
+	if bsonType == bson.TypeNull {
 		res, err := json.Marshal(nil)
 		if err != nil {
 			return nil, err
@@ -247,7 +247,7 @@ func (l AlarmPatternList) MarshalJSON() ([]byte, error) {
 
 	var unmarshalledBson []map[string]interface{}
 	raw := bson.RawValue{
-		Type:  bsontype.Array,
+		Type:  bson.TypeArray,
 		Value: b,
 	}
 	err = raw.Unmarshal(&unmarshalledBson)
@@ -265,7 +265,7 @@ func (l AlarmPatternList) MarshalJSON() ([]byte, error) {
 
 func (l AlarmPatternList) MarshalBSONValue() (bsontype.Type, []byte, error) {
 	if !l.Set {
-		return bsontype.Null, nil, nil
+		return bson.TypeNull, nil, nil
 	}
 
 	return bson.MarshalValue(l.Patterns)
@@ -322,10 +322,10 @@ func (l AlarmPatternList) IsZero() bool {
 
 func (l *AlarmPatternList) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	switch valueType {
-	case bsontype.Null:
+	case bson.TypeNull:
 		l.Set = false
 		l.Valid = false
-	case bsontype.Array:
+	case bson.TypeArray:
 		l.Set = true
 		l.Valid = false
 

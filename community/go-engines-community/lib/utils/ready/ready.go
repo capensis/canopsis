@@ -62,6 +62,7 @@ func Check(
 	logger zerolog.Logger,
 ) error {
 	infinite := retries == 0
+	var t *time.Ticker
 	for retry := 0; retry < retries || infinite; retry++ {
 		err := checker(ctx, logger)
 		if err == nil {
@@ -70,10 +71,14 @@ func Check(
 
 		logger.Info().Err(err).Msgf("%v: %v/%v", name, retry+1, retries)
 
-		t := time.NewTimer(retryDelay)
+		if t == nil {
+			t = time.NewTicker(retryDelay)
+			defer t.Stop()
+		} else {
+			t.Reset(retryDelay)
+		}
 		select {
 		case <-ctx.Done():
-			t.Stop()
 			return ctx.Err()
 		case <-t.C:
 		}

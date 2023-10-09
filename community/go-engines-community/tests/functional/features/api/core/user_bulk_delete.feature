@@ -2,15 +2,18 @@ Feature: Bulk delete users
   I need to be able to bulk delete users
   Only admin should be able to bulk delete users
 
+  @concurrent
   Scenario: given bulk delete request and no auth user should not allow access
     When I do DELETE /api/v4/bulk/users
     Then the response code should be 401
 
+  @concurrent
   Scenario: given bulk delete request and auth user by api key without permissions should not allow access
     When I am noperms
     When I do DELETE /api/v4/bulk/users
     Then the response code should be 403
 
+  @concurrent
   Scenario: given delete request should return multi status and should be handled independently
     When I am admin
     When I do DELETE /api/v4/bulk/users:

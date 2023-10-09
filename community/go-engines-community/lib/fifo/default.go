@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
 	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
@@ -60,6 +61,8 @@ func Default(
 	externalDataContainer *eventfilter.ExternalDataContainer,
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 	templateConfigProvider *config.BaseTemplateConfigProvider,
+	eventFilterEventCounter eventfilter.EventCounter,
+	eventFilterFailureService eventfilter.FailureService,
 	logger zerolog.Logger,
 ) libengine.Engine {
 	var m depmake.DependencyMaker
@@ -98,8 +101,8 @@ func Default(
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 	ruleAdapter := eventfilter.NewRuleAdapter(mongoClient)
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer, templateExecutor))
-	eventfilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, logger)
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer, eventFilterFailureService, templateExecutor))
+	eventfilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, eventFilterEventCounter, eventFilterFailureService, templateExecutor, logger)
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
@@ -171,6 +174,16 @@ func Default(
 		return nil
 	})
 
+	mainMessageProcessor := &messageProcessor{
+		FeaturePrintEventOnError: options.PrintEventOnError,
+
+		EventFilterService: eventfilterService,
+		TechMetricsSender:  techMetricsSender,
+		Scheduler:          scheduler,
+		StatsSender:        statsSender,
+		Decoder:            json.NewDecoder(),
+		Logger:             logger,
+	}
 	engine.AddConsumer(libengine.NewDefaultConsumer(
 		canopsis.FIFOConsumerName,
 		options.ConsumeFromQueue,
@@ -182,16 +195,7 @@ func Default(
 		"",
 		"",
 		amqpConnection,
-		&messageProcessor{
-			FeaturePrintEventOnError: options.PrintEventOnError,
-
-			EventFilterService: eventfilterService,
-			TechMetricsSender:  techMetricsSender,
-			Scheduler:          scheduler,
-			StatsSender:        statsSender,
-			Decoder:            json.NewDecoder(),
-			Logger:             logger,
-		},
+		mainMessageProcessor,
 		logger,
 	))
 	engine.AddConsumer(libengine.NewDefaultConsumer(
@@ -262,6 +266,22 @@ func Default(
 			Logger:             logger,
 		})
 	}
+	engine.AddRoutine(func(ctx context.Context) error {
+		eventFilterEventCounter.Run(ctx)
+		return nil
+	})
+	engine.AddRoutine(func(ctx context.Context) error {
+		eventFilterFailureService.Run(ctx)
+		return nil
+	})
+
+	healthcheck.Start(ctx, healthcheck.NewChecker(
+		"fifo",
+		mainMessageProcessor,
+		json.NewEncoder(),
+		false,
+		false,
+	), logger)
 
 	return engine
 }

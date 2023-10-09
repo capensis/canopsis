@@ -16,12 +16,10 @@ const (
 	ApiBulkMaxSize            = 10000
 	ApiMetricsCacheExpiration = 24 * time.Hour
 
-	RemediationHttpTimeout                    = 30 * time.Second
-	RemediationLaunchJobRetriesAmount         = 3
-	RemediationLaunchJobRetriesInterval       = 5 * time.Second
-	RemediationWaitJobCompleteRetriesAmount   = 12
-	RemediationWaitJobCompleteRetriesInterval = 5 * time.Second
+	RemediationHttpTimeout                    = 5 * time.Second
 	RemediationPauseManualInstructionInterval = 15 * time.Second
+	RemediationJobRetryInterval               = 10 * time.Second
+	RemediationJobWaitInterval                = 60 * time.Second
 
 	MetricsFlushInterval          = 10 * time.Second
 	MetricsSliInterval            = time.Hour
@@ -34,6 +32,8 @@ const (
 	UserInterfaceCheckCountRequestTimeout = 30
 
 	DataStorageMaxUpdates = 100000
+
+	DefaultEventsCountThreshold = 10
 )
 
 var ApiAuthorScheme = []string{"$username"}

@@ -18,12 +18,7 @@
 
 <script>
 import { KPI_ALARM_METRICS_FILENAME_PREFIX } from '@/config';
-import {
-  QUICK_RANGES,
-  ALARM_METRIC_PARAMETERS,
-  SAMPLINGS,
-  DATETIME_FORMATS,
-} from '@/constants';
+import { QUICK_RANGES, ALARM_METRIC_PARAMETERS, SAMPLINGS, DATETIME_FORMATS } from '@/constants';
 
 import { convertDateToStartOfDayTimestampByTimezone, convertDateToString } from '@/helpers/date/date';
 import { convertMetricsToTimezone } from '@/helpers/entities/metric/list';

@@ -3,7 +3,6 @@ cmd/engine-action/engine-action
 cmd/engine-axe/engine-axe
 cmd/engine-che/engine-che
 cmd/engine-lifeline/engine-lifeline
-cmd/engine-service/engine-service
 cmd/feeder/feeder
 cmd/ready/ready
 vendor/

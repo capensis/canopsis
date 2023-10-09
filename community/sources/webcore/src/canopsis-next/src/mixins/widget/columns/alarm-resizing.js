@@ -137,7 +137,7 @@ export const widgetColumnResizingAlarmMixin = {
 
       document.body.removeEventListener('mousemove', this.handleColumnResize);
       document.body.removeEventListener('mouseup', this.finishColumnResize);
-      document.body.addEventListener('mouseleave', this.finishColumnResize);
+      document.body.removeEventListener('mouseleave', this.finishColumnResize);
     },
 
     startColumnResize(columnName) {

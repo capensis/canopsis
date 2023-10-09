@@ -120,9 +120,21 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
   <c-information-block-stub
     title="Change entity options"
   >
+    <c-collapse-panel-stub
+      class="mb-2"
+      title="External data"
+    >
+      <external-data-form-stub
+        form=""
+        name="external_data"
+        types=""
+        variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      />
+    </c-collapse-panel-stub>
     <event-filter-change-entity-form-stub
       form="[object Object]"
       name="config"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
   </c-information-block-stub>
 </div>
@@ -248,9 +260,21 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
   <c-information-block-stub
     title="Enrichment options"
   >
+    <c-collapse-panel-stub
+      class="mb-2"
+      title="External data"
+    >
+      <external-data-form-stub
+        form=""
+        name="external_data"
+        types=""
+        variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      />
+    </c-collapse-panel-stub>
     <event-filter-enrichment-form-stub
       form="[object Object]"
-      name="actions"
+      name="config.actions"
+      templatevariables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
   </c-information-block-stub>
 </div>

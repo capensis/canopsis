@@ -9,9 +9,16 @@ export const widgetRowsSelectingAlarmMixin = {
   },
   data() {
     return {
+      prevEvent: null,
       selecting: false,
       selected: [],
     };
+  },
+
+  computed: {
+    selectingMousePressed() {
+      return this.selecting && !!this.prevEvent;
+    },
   },
 
   created() {
@@ -65,10 +72,10 @@ export const widgetRowsSelectingAlarmMixin = {
       return this.rowsPositions?.reduce((acc, { position, row }) => {
         if (
           (prevX >= position.x1 && prevX <= position.x2 && prevY >= position.y1 && prevY <= position.y2)
-  || (newX < position.x1 && prevX < position.x1)
-  || (newX > position.x2 && prevX > position.x2)
-  || (newY < position.y1 && prevY < position.y1)
-  || (newY > position.y2 && prevY > position.y2)
+          || (newX < position.x1 && prevX < position.x1)
+          || (newX > position.x2 && prevX > position.x2)
+          || (newY < position.y1 && prevY < position.y1)
+          || (newY > position.y2 && prevY > position.y2)
         ) {
           return acc;
         }
@@ -84,7 +91,7 @@ export const widgetRowsSelectingAlarmMixin = {
     },
 
     mouseupHandler() {
-      delete this.prevEvent;
+      this.prevEvent = null;
     },
 
     mousemoveHandler(event) {

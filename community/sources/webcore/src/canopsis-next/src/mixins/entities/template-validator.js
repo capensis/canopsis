@@ -7,6 +7,7 @@ export const entitiesTemplateValidatorMixin = {
     ...mapActions({
       validateDeclareTicketRulesVariables: 'validateDeclareTicketRulesVariables',
       validateScenariosVariables: 'validateScenariosVariables',
+      validateEventFilterRulesVariables: 'validateEventFilterRulesVariables',
     }),
   },
 };

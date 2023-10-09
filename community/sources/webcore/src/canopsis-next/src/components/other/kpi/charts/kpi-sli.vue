@@ -17,12 +17,7 @@
 
 <script>
 import { KPI_SLI_METRICS_FILENAME_PREFIX } from '@/config';
-import {
-  QUICK_RANGES,
-  SAMPLINGS,
-  KPI_SLI_GRAPH_DATA_TYPE,
-  DATETIME_FORMATS,
-} from '@/constants';
+import { QUICK_RANGES, SAMPLINGS, KPI_SLI_GRAPH_DATA_TYPE, DATETIME_FORMATS } from '@/constants';
 
 import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
 import { convertDateToStartOfDayTimestampByTimezone, convertDateToString } from '@/helpers/date/date';

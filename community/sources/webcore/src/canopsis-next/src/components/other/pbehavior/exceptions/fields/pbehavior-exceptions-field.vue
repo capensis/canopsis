@@ -2,8 +2,7 @@
   v-layout(column)
     v-layout.mt-3(row)
       v-flex(xs12)
-        v-layout
-          slot(name="no-data", v-if="!exdates.length")
+        slot(name="no-data", v-if="!exdates.length")
         pbehavior-exception-field.mb-3(
           v-for="(exdate, index) in exdates",
           v-field="exdates[index]",
@@ -16,7 +15,6 @@
       slot(name="actions")
         v-flex
           v-btn.ml-0(color="secondary", @click="addExceptionDate") {{ $t('modals.createPbehaviorException.addDate') }}
-    v-alert(:value="errors.has('exdates')", type="error") {{ errors.first('exdates') }}
 </template>
 
 <script>
@@ -53,14 +51,6 @@ export default {
       default: false,
     },
   },
-  created() {
-    this.$validator.attach({
-      name: 'exdates',
-      rules: 'required:true',
-      getter: () => !!this.exdates.length,
-      vm: this,
-    });
-  },
   mounted() {
     this.fetchFieldPbehaviorTypesList();
   },
@@ -72,7 +62,6 @@ export default {
         end: convertDateToStartOfDayDateObject(),
         type: '',
       });
-      this.$nextTick(() => this.$validator.validate('exdates'));
     },
   },
 };

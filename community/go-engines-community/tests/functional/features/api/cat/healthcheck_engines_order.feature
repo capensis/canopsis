@@ -25,7 +25,6 @@ Feature: get healthcheck engines' order
         "engine-axe",
         "engine-axe",
         "engine-correlation",
-        "engine-service",
         "engine-dynamic-infos",
         "engine-action"
       ],
@@ -52,10 +51,6 @@ Feature: get healthcheck engines' order
         },
         {
           "from": "engine-correlation",
-          "to": "engine-service"
-        },
-        {
-          "from": "engine-service",
           "to": "engine-dynamic-infos"
         },
         {

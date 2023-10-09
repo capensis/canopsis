@@ -17,7 +17,10 @@ import { isEqual, isUndefined } from 'lodash';
 
 import { KPI_PIE_CHART_SHOW_MODS, CHART_PRESET_CUSTOM_ITEM_VALUE } from '@/constants';
 
-import { getWidgetChartPresetParameters, getWidgetChartPresetTypesByWidgetType } from '@/helpers/entities/metric/widget';
+import {
+  getWidgetChartPresetParameters,
+  getWidgetChartPresetTypesByWidgetType,
+} from '@/helpers/entities/metric/widget';
 import { formToMetricPresets } from '@/helpers/entities/metric/form';
 
 import { formBaseMixin } from '@/mixins/form';

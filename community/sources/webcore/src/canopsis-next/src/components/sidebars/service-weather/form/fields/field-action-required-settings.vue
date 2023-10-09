@@ -7,7 +7,8 @@
       )
       c-enabled-color-picker-field(
         v-field="value.color",
-        :label="$t('settings.actionRequiredSettings.customColor')"
+        :label="$t('settings.actionRequiredSettings.customColor')",
+        column
       )
       c-enabled-icon-field(
         v-field="value.icon_name",

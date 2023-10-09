@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -26,6 +27,7 @@ type Store interface {
 
 type store struct {
 	dbCollection          mongo.DbCollection
+	maintenanceAdapter    config.MaintenanceAdapter
 	defaultSearchByFields []string
 	defaultSortBy         string
 }
@@ -120,6 +122,12 @@ func (s store) Delete(ctx context.Context, id string) (bool, error) {
 
 func (s store) GetActive(ctx context.Context) ([]BroadcastMessage, error) {
 	now := time.Now().Unix()
+
+	conf, err := s.maintenanceAdapter.GetConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	cursor, err := s.dbCollection.Find(ctx, bson.M{
 		"start": bson.M{
 			"$lte": now,
@@ -138,14 +146,25 @@ func (s store) GetActive(ctx context.Context) ([]BroadcastMessage, error) {
 		return nil, err
 	}
 
+	if conf.Enabled {
+		for idx := range messages {
+			if messages[idx].ID == conf.BroadcastID {
+				messages[idx].Maintenance = true
+				break
+			}
+		}
+	}
+
 	return messages, nil
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
+	maintenanceAdapter config.MaintenanceAdapter,
 ) Store {
 	return &store{
 		dbCollection:          dbClient.Collection(mongo.BroadcastMessageMongoCollection),
+		maintenanceAdapter:    maintenanceAdapter,
 		defaultSortBy:         "_id",
 		defaultSearchByFields: []string{"_id", "message"},
 	}

@@ -17,10 +17,13 @@ type Adapter interface {
 	UpdateHistoryJunit(ctx context.Context, t types.CpsTime) error
 	UpdateHistoryRemediation(ctx context.Context, t types.CpsTime) error
 	UpdateHistoryAlarm(ctx context.Context, history HistoryWithCount) error
-	UpdateHistoryEntity(ctx context.Context, history HistoryWithCount) error
+	UpdateHistoryEntityDisabled(ctx context.Context, history HistoryWithCount) error
+	UpdateHistoryEntityUnlinked(ctx context.Context, history HistoryWithCount) error
+	UpdateHistoryEntityCleaned(ctx context.Context, history HistoryWithCount) error
 	UpdateHistoryPbehavior(ctx context.Context, t types.CpsTime) error
 	UpdateHistoryHealthCheck(ctx context.Context, t types.CpsTime) error
 	UpdateHistoryWebhook(ctx context.Context, t types.CpsTime) error
+	UpdateHistoryEventFilterFailure(ctx context.Context, t types.CpsTime) error
 }
 
 type DataStorage struct {
@@ -57,20 +60,26 @@ type Config struct {
 	PerfDataMetrics struct {
 		DeleteAfter *types.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
 	} `bson:"perf_data_metrics" json:"perf_data_metrics"`
+	EventFilterFailure struct {
+		DeleteAfter *types.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
+	} `bson:"event_filter_failure" json:"event_filter_failure"`
 }
 
 type History struct {
-	Junit       *types.CpsTime    `bson:"junit" json:"junit" swaggertype:"integer"`
-	Remediation *types.CpsTime    `bson:"remediation" json:"remediation" swaggertype:"integer"`
-	Alarm       *HistoryWithCount `bson:"alarm" json:"alarm"`
-	Entity      *HistoryWithCount `bson:"entity" json:"entity"`
-	Pbehavior   *types.CpsTime    `bson:"pbehavior" json:"pbehavior" swaggertype:"integer"`
-	HealthCheck *types.CpsTime    `bson:"health_check" json:"health_check" swaggertype:"integer"`
-	Webhook     *types.CpsTime    `bson:"webhook" json:"webhook" swaggertype:"integer"`
+	Junit              *types.CpsTime    `bson:"junit" json:"junit" swaggertype:"integer"`
+	Remediation        *types.CpsTime    `bson:"remediation" json:"remediation" swaggertype:"integer"`
+	Alarm              *HistoryWithCount `bson:"alarm" json:"alarm"`
+	EntityDisabled     *HistoryWithCount `bson:"entity_disabled" json:"entity_disabled"`
+	EntityUnlinked     *HistoryWithCount `bson:"entity_unlinked" json:"entity_unlinked"`
+	EntityCleaned      *HistoryWithCount `bson:"entity_cleaned" json:"entity_cleaned"`
+	Pbehavior          *types.CpsTime    `bson:"pbehavior" json:"pbehavior" swaggertype:"integer"`
+	HealthCheck        *types.CpsTime    `bson:"health_check" json:"health_check" swaggertype:"integer"`
+	Webhook            *types.CpsTime    `bson:"webhook" json:"webhook" swaggertype:"integer"`
+	EventFilterFailure *types.CpsTime    `bson:"event_filter_failure" json:"event_filter_failure" swaggertype:"integer"`
 }
 
 type HistoryWithCount struct {
 	Time     types.CpsTime `bson:"time" json:"time" swaggertype:"integer"`
-	Archived int64         `bson:"archived" json:"archived"`
-	Deleted  int64         `bson:"deleted" json:"deleted"`
+	Archived int64         `bson:"archived,omitempty" json:"archived"`
+	Deleted  int64         `bson:"deleted,omitempty" json:"deleted"`
 }

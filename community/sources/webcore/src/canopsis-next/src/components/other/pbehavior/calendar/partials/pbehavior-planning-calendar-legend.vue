@@ -9,9 +9,9 @@
     offset-overflow
   )
     template(#activator="{ on }")
-      v-tooltip(v-on="on", top)
+      v-tooltip(top)
         template(#activator="{ on: tooltipOn }")
-          v-btn(v-on="tooltipOn", icon)
+          v-btn(v-on="{ ...tooltipOn, ...on }", icon)
             v-icon info
         div {{ $t('calendar.pbehaviorPlanningLegend.title') }}
     v-card

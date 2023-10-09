@@ -12,7 +12,6 @@ const stubs = {
 
 describe('alarm-column-value-status', () => {
   const snapshotFactory = generateRenderer(AlarmColumnValueStatus, {
-
     stubs,
     attachTo: document.body,
   });

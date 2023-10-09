@@ -77,10 +77,6 @@ export const PbehaviorRecurrenceRule = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-recurrence-rule.vue'),
   loading: LoaderOverlay,
 });
-export const SelectExceptionsLists = () => ({
-  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/select-exceptions-lists.vue'),
-  loading: LoaderOverlay,
-});
 export const CreateRecurrenceRule = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/create-recurrence-rule.vue'),
   loading: LoaderOverlay,
@@ -175,6 +171,10 @@ export const CreateEntity = () => ({
 });
 export const CreateEntityInfo = () => ({
   component: import(/* webpackChunkName: "Context" */ './entity/create-entity-info.vue'),
+  loading: LoaderOverlay,
+});
+export const EntitiesList = () => ({
+  component: import(/* webpackChunkName: "Context" */ './entity/entities-list.vue'),
   loading: LoaderOverlay,
 });
 export const ServiceEntities = () => ({
@@ -385,5 +385,20 @@ export const CreateAssociateTicketEvent = () => ({
 
 export const CreateLinkRule = () => ({
   component: import(/* webpackChunkName: "LinkRule" */ './link-rule/create-link-rule.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateMaintenance = () => ({
+  component: import(/* webpackChunkName: "Maintenance" */ './maintenance/create-maintenance.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateTag = () => ({
+  component: import(/* webpackChunkName: "Tags" */ './tag/create-tag.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateTheme = () => ({
+  component: import(/* webpackChunkName: "Theme" */ './theme/create-theme.vue'),
   loading: LoaderOverlay,
 });

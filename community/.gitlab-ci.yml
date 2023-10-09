@@ -1,5 +1,4 @@
 stages:
-  - test
   - build
   - publish
   - release
@@ -10,7 +9,6 @@ before_script:
 variables:
   COMPOSE_HTTP_TIMEOUT: "180"
   COMPOSE_PROJECT_NAME: "test${CI_JOB_ID}"
-  CANOPSIS_DISTRIBUTION: "debian-9"
   CANOPSIS_TAG: "ci"
   CANOPSIS_DOCKER_MODE: "test-ci"
   CANOPSIS_ENV_CONFIRM: "0"
@@ -19,20 +17,6 @@ variables:
 include:
   - community/.gitlab-ci-common.yml
   - community/.gitlab-ci-template.yml
-
-stage_test:
-  stage: test
-  tags: ["canopsis"]
-  script:
-    - set
-    - ./build-docker.sh
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "push"'
-      changes:
-        - community/{build*,.gitlab-ci.yml,{docker*,sources/{canopsis,db-conf,functional_testing,webcore}}/**/*}
-  artifacts:
-    paths:
-      #- tests_report
 
 create_release:
   extends: .create_release

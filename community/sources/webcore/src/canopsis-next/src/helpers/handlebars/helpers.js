@@ -1,8 +1,16 @@
-import { get, isFunction, isNumber, isObject, unescape, isString } from 'lodash';
+import {
+  get,
+  isFunction,
+  isNumber,
+  isObject,
+  unescape,
+  isString,
+  pick,
+} from 'lodash';
 import Handlebars from 'handlebars';
 import axios from 'axios';
 
-import { DATETIME_FORMATS, MAX_LIMIT } from '@/constants';
+import { DATETIME_FORMATS, MAX_LIMIT, RESPONSE_STATUSES } from '@/constants';
 
 import i18n from '@/i18n';
 
@@ -93,7 +101,13 @@ export function alarmStateHelper(state) {
  * @return {string}
  */
 export function alarmTagsHelper() {
-  return new Handlebars.SafeString(`<c-alarm-tags-chips :alarm="alarm" inline-count="${MAX_LIMIT}"></c-alarm-tags-chips>`);
+  return new Handlebars.SafeString(
+    `<c-alarm-tags-chips
+      :alarm="alarm"
+      inline-count="${MAX_LIMIT}"
+      @select="$emit('select:tag', $event)"
+    ></c-alarm-tags-chips>`,
+  );
 }
 
 /**
@@ -164,9 +178,9 @@ export async function requestHelper(options) {
     const { status } = err.response || {};
 
     switch (status) {
-      case 401:
+      case RESPONSE_STATUSES.unauthorized:
         return i18n.t('handlebars.requestHelper.errors.unauthorized');
-      case 408:
+      case RESPONSE_STATUSES.timeout:
         return i18n.t('handlebars.requestHelper.errors.timeout');
       default:
         return i18n.t('handlebars.requestHelper.errors.other');
@@ -444,5 +458,26 @@ export function copyHelper(value = '', options = {}) {
     throw new Error('handlebars helper {{copy}} expects options.fn');
   }
 
-  return new Handlebars.SafeString(`<c-copy-wrapper value="${value}" />${options.fn(this)}</c-copy-wrapper>`);
+  return new Handlebars.SafeString(
+    `<c-copy-wrapper ${prepareAttributes({ value })} />${options.fn(this)}</c-copy-wrapper>`,
+  );
+}
+
+/**
+ * JSON stringify helper
+ *
+ * Example: {{ json alarm.v 'display_name' }}
+ *
+ * @param {Object} [object]
+ * @param {Array} [args]
+ * @returns {*}
+ */
+export function jsonHelper(object, ...args) {
+  if (!isObject(object)) {
+    throw new Error('handlebars helper {{json}} expects object');
+  }
+
+  const fields = args.filter(isString);
+
+  return JSON.stringify(fields.length ? pick(object, fields) : object, undefined, 2);
 }

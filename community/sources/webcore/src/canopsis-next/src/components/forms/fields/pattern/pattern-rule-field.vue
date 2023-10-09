@@ -2,7 +2,7 @@
   v-layout(row)
     v-flex(:xs5="isAnyInfosRule", xs4)
       v-layout(row)
-        v-flex(:xs4="isAnyInfosRule")
+        v-flex(:xs4="isAnyInfosRule", :xs6="isObjectRule")
           pattern-attribute-field(
             v-field="rule.attribute",
             :items="attributes",
@@ -18,6 +18,15 @@
             :disabled="disabled",
             :combobox="isInfosRule",
             row
+          )
+        v-flex.pl-3(v-else-if="isObjectRule", xs6)
+          v-text-field(
+            v-field="rule.dictionary",
+            v-validate="'required'",
+            :name="objectDictionaryName",
+            :disabled="disabled",
+            :label="$t('common.dictionary')",
+            :error-messages="errors.collect(objectDictionaryName)"
           )
 
     v-flex(v-if="rule.attribute", :xs8="!isAnyInfosRule", xs7)
@@ -80,6 +89,7 @@ import {
   isDurationRuleType,
   isExtraInfosRuleType,
   isInfosRuleType,
+  isObjectRuleType,
   isOperatorHasValue,
 } from '@/helpers/entities/pattern/form';
 
@@ -91,6 +101,7 @@ import PatternAttributeField from './pattern-attribute-field.vue';
 import PatternOperatorField from './pattern-operator-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: { DateTimePickerTextField, PatternAttributeField, PatternOperatorField },
   mixins: [formMixin],
   model: {
@@ -167,6 +178,10 @@ export default {
 
     isExtraInfosRule() {
       return isExtraInfosRuleType(this.type);
+    },
+
+    isObjectRule() {
+      return isObjectRuleType(this.type);
     },
 
     isAnyInfosRule() {
@@ -249,6 +264,10 @@ export default {
 
     shownOperatorField() {
       return this.operators.length !== 1 || this.operators[0] !== this.rule.operator;
+    },
+
+    objectDictionaryName() {
+      return `${this.name}.dictionary`;
     },
   },
   methods: {

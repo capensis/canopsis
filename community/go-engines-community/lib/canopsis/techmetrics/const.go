@@ -15,4 +15,6 @@ const (
 	PBehaviorPeriodical = "pbehavior_periodical"
 	CheInfos            = "che_infos"
 	ApiRequests         = "api_requests"
+
+	CorrelationRetries = "correlation_retries"
 )
