@@ -2,7 +2,7 @@
   v-layout(row, align-center)
     v-flex(xs6)
       c-number-field(
-        v-model="value.interval",
+        v-field="value.interval",
         :label="$t('recurrenceRule.repeatEvery')",
         :min="1",
         name="interval"
