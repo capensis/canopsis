@@ -251,8 +251,8 @@ func (s *store) deletePatterns(ctx context.Context, id string) error {
 
 func (s *store) deleteWidgetFilters(ctx context.Context, id string) error {
 	_, err := s.widgetFilterCollection.DeleteMany(ctx, bson.M{
-		"author":         id,
-		"widget_private": true,
+		"author":             id,
+		"is_user_preference": true,
 	})
 
 	return err

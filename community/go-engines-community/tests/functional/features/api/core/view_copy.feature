@@ -115,7 +115,7 @@ Feature: Copy a view
                 {
                   "title": "test-widgetfilter-to-view-copy-1-title",
                   "is_private": false,
-                  "widget_private": false,
+                  "is_user_preference": false,
                   "author": {
                     "_id": "root",
                     "name": "root"
@@ -135,7 +135,7 @@ Feature: Copy a view
                 {
                   "title": "test-widgetfilter-to-view-copy-2-title",
                   "is_private": false,
-                  "widget_private": false,
+                  "is_user_preference": false,
                   "author": {
                     "_id": "root",
                     "name": "root"
@@ -403,7 +403,7 @@ Feature: Copy a view
                 {
                   "title": "test-private-widgetfilter-to-private-view-copy-1-title",
                   "is_private": true,
-                  "widget_private": false,
+                  "is_user_preference": false,
                   "author": {
                     "_id": "root",
                     "name": "root"
@@ -423,7 +423,7 @@ Feature: Copy a view
                 {
                   "title": "test-private-widgetfilter-to-private-view-copy-2-title",
                   "is_private": true,
-                  "widget_private": false,
+                  "is_user_preference": false,
                   "author": {
                     "_id": "root",
                     "name": "root"
@@ -603,7 +603,7 @@ Feature: Copy a view
                 {
                   "title": "test-private-widgetfilter-to-private-view-copy-1-title",
                   "is_private": true,
-                  "widget_private": false,
+                  "is_user_preference": false,
                   "author": {
                     "_id": "root",
                     "name": "root"
@@ -623,7 +623,7 @@ Feature: Copy a view
                 {
                   "title": "test-private-widgetfilter-to-private-view-copy-2-title",
                   "is_private": true,
-                  "widget_private": false,
+                  "is_user_preference": false,
                   "author": {
                     "_id": "root",
                     "name": "root"
@@ -801,7 +801,7 @@ Feature: Copy a view
                 {
                   "title": "test-private-widgetfilter-to-private-view-copy-1-title",
                   "is_private": false,
-                  "widget_private":false,
+                  "is_user_preference":false,
                   "author": {
                     "_id": "root",
                     "name": "root"
@@ -821,7 +821,7 @@ Feature: Copy a view
                 {
                   "title": "test-private-widgetfilter-to-private-view-copy-2-title",
                   "is_private": false,
-                  "widget_private":false,
+                  "is_user_preference":false,
                   "author": {
                     "_id": "root",
                     "name": "root"
@@ -1012,7 +1012,7 @@ Feature: Copy a view
                 {
                   "title": "test-widgetfilter-to-view-copy-1-title",
                   "is_private": true,
-                  "widget_private": false,
+                  "is_user_preference": false,
                   "author": {
                     "_id": "root",
                     "name": "root"
@@ -1032,7 +1032,7 @@ Feature: Copy a view
                 {
                   "title": "test-widgetfilter-to-view-copy-2-title",
                   "is_private": true,
-                  "widget_private": false,
+                  "is_user_preference": false,
                   "author": {
                     "_id": "root",
                     "name": "root"

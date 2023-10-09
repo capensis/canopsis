@@ -13029,7 +13029,7 @@ paths:
                 value: {
                   "title": "Filter",
                   "widget": "7c573640-239b-4e8d-84e2-e1baf4bd0ae2",
-                  "widget_private": true,
+                  "is_user_preference": true,
                   "alarm_pattern": [
                     [
                       {
@@ -13147,7 +13147,7 @@ paths:
                 description: Update a filter.
                 value: {
                   "title": "Filter",
-                  "widget_private": true,
+                  "is_user_preference": true,
                   "alarm_pattern": [
                     [
                       {

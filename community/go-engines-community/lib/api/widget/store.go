@@ -113,8 +113,8 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			"let":  bson.M{"widget": "$_id"},
 			"pipeline": []bson.M{
 				{"$match": bson.M{
-					"$expr":          bson.M{"$eq": bson.A{"$widget", "$$widget"}},
-					"widget_private": false,
+					"$expr":              bson.M{"$eq": bson.A{"$widget", "$$widget"}},
+					"is_user_preference": false,
 				}},
 			},
 			"as": "filters",
@@ -256,7 +256,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		cursor, err := s.filterCollection.Find(ctx, bson.M{"widget": widget.ID, "widget_private": false})
+		cursor, err := s.filterCollection.Find(ctx, bson.M{"widget": widget.ID, "is_user_preference": false})
 		if err != nil {
 			return err
 		}
@@ -317,9 +317,9 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		}
 
 		_, err = s.filterCollection.DeleteMany(ctx, bson.M{
-			"widget":         widget.ID,
-			"widget_private": false,
-			"_id":            bson.M{"$nin": updateFilterIds},
+			"widget":             widget.ID,
+			"is_user_preference": false,
+			"_id":                bson.M{"$nin": updateFilterIds},
 		})
 		if err != nil {
 			return err
@@ -438,9 +438,9 @@ func (s *store) copy(ctx context.Context, widgetID string, isPrivate bool, r Cre
 	}
 
 	cursor, err := s.filterCollection.Find(ctx, bson.M{
-		"widget":          widgetID,
-		"widget_private":  false,
-		"old_mongo_query": nil, //do not copy old filters
+		"widget":             widgetID,
+		"is_user_preference": false,
+		"old_mongo_query":    nil, //do not copy old filters
 	}, options.Find().SetProjection(bson.M{"author": 0}))
 	if err != nil {
 		return nil, err

@@ -181,7 +181,7 @@ type WidgetFilter struct {
 
 	WeatherServicePattern WeatherServicePattern `bson:"weather_service_pattern,omitempty"`
 
-	WidgetPrivate bool `bson:"widget_private"`
+	WidgetPrivate bool `bson:"is_user_preference"`
 }
 
 type WidgetTemplate struct {

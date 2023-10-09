@@ -46,7 +46,7 @@ Feature: Get a view tab
               "_id": "test-widgetfilter-to-tab-get-1",
               "title": "test-widgetfilter-to-tab-get-1-title",
               "is_private": false,
-              "widget_private": false,
+              "is_user_preference": false,
               "author": {
                 "_id": "nopermsuser",
                 "name": "nopermsuser",
@@ -98,7 +98,7 @@ Feature: Get a view tab
               "_id": "test-widgetfilter-to-tab-get-2",
               "title": "test-widgetfilter-to-tab-get-2-title",
               "is_private": false,
-              "widget_private": false,
+              "is_user_preference": false,
               "author": {
                 "_id": "root",
                 "name": "root",

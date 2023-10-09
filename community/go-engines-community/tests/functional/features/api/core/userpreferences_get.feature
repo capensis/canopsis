@@ -21,7 +21,7 @@ Feature: Get user preferences
         {
           "_id": "test-widgetfilter-to-user-preferences-get-1",
           "title": "test-widgetfilter-to-user-preferences-get-1-title",
-          "widget_private": true,
+          "is_user_preference": true,
           "author": {
             "_id": "test-user-to-user-preferences-edit",
             "name": "test-user-to-user-preferences-edit",
@@ -44,7 +44,7 @@ Feature: Get user preferences
         {
           "_id": "test-widgetfilter-to-user-preferences-get-2",
           "title": "test-widgetfilter-to-user-preferences-get-2-title",
-          "widget_private": true,
+          "is_user_preference": true,
           "author": {
             "_id": "test-user-to-user-preferences-edit",
             "name": "test-user-to-user-preferences-edit",
