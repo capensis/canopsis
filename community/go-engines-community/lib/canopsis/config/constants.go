@@ -32,6 +32,8 @@ const (
 	UserInterfaceCheckCountRequestTimeout = 30
 
 	DataStorageMaxUpdates = 100000
+
+	DefaultEventsCountThreshold = 10
 )
 
 var ApiAuthorScheme = []string{"$username"}

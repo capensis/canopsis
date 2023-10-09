@@ -239,7 +239,7 @@ func benchmarkMessageProcessorWithConfig(
 
 	failureService := eventfilter.NewFailureService(dbClient, time.Hour, zerolog.Nop())
 	eventCounter := eventfilter.NewEventCounter(dbClient, time.Hour, zerolog.Nop())
-	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(cfg), config.NewTimezoneConfigProvider(cfg, zerolog.Nop()))
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(cfg, zerolog.Nop()), config.NewTimezoneConfigProvider(cfg, zerolog.Nop()))
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, zerolog.Nop())
 	techMetricsSender := techmetrics.NewSender(techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), zerolog.Nop())

@@ -17,7 +17,6 @@ export const entitiesRemediationInstructionExecutionMixin = {
       pauseRemediationInstructionExecution: 'pause',
       previousOperationRemediationInstructionExecution: 'previousOperation',
       resumeRemediationInstructionExecution: 'resume',
-      rateRemediationInstructionExecution: 'rate',
     }),
   },
 };

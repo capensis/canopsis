@@ -68,7 +68,11 @@ Feature: update meta alarm on action
       "name": "test-scenario-action-correlation-1-name",
       "priority": 10045,
       "enabled": true,
-      "triggers": ["comment"],
+      "triggers": [
+        {
+          "type": "comment"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -411,7 +415,11 @@ Feature: update meta alarm on action
       "name": "test-scenario-action-correlation-2-name",
       "priority": 10046,
       "enabled": true,
-      "triggers": ["comment"],
+      "triggers": [
+        {
+          "type": "comment"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -849,7 +857,11 @@ Feature: update meta alarm on action
       "name": "test-scenario-action-correlation-4-name",
       "priority": 10049,
       "enabled": true,
-      "triggers": ["comment"],
+      "triggers": [
+        {
+          "type": "comment"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -1081,7 +1093,11 @@ Feature: update meta alarm on action
     {
       "name": "test-scenario-action-correlation-5-name",
       "enabled": true,
-      "triggers": ["comment"],
+      "triggers": [
+        {
+          "type": "comment"
+        }
+      ],
       "priority": 10016,
       "actions": [
         {
@@ -1287,7 +1303,11 @@ Feature: update meta alarm on action
     {
       "name": "test-scenario-action-correlation-6-name",
       "enabled": true,
-      "triggers": ["comment"],
+      "triggers": [
+        {
+          "type": "comment"
+        }
+      ],
       "priority": 10101,
       "actions": [
         {
@@ -1477,7 +1497,11 @@ Feature: update meta alarm on action
       "name": "test-scenario-action-correlation-7-name",
       "priority": 10013,
       "enabled": true,
-      "triggers": ["comment"],
+      "triggers": [
+        {
+          "type": "comment"
+        }
+      ],
       "actions": [
         {
           "entity_pattern": [
@@ -1761,7 +1785,11 @@ Feature: update meta alarm on action
     {
       "name": "test-scenario-action-correlation-8-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "priority": 10101,
       "actions": [
         {

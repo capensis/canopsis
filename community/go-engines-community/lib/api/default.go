@@ -105,7 +105,7 @@ func Default(
 		p.DataStorageConfigProvider = config.NewDataStorageConfigProvider(cfg, logger)
 	}
 	if p.TemplateConfigProvider == nil {
-		p.TemplateConfigProvider = config.NewTemplateConfigProvider(cfg)
+		p.TemplateConfigProvider = config.NewTemplateConfigProvider(cfg, logger)
 	}
 	// Set mongodb setting.
 	config.SetDbClientRetry(dbClient, cfg)
