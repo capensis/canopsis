@@ -53,7 +53,7 @@ template:
   }
   - &filter {
     _id: <UUID()>,
-    widget_private: false,
+    is_user_preference: false,
     is_private: false,
     created: <NowUnix()>,
     updated: <Current().created>,

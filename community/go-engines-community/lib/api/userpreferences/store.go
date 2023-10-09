@@ -60,7 +60,7 @@ func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, e
 						{"$eq": bson.A{"$widget", "$$widget"}},
 						{"$eq": bson.A{"$author", "$$user"}},
 					}},
-					"widget_private": true,
+					"is_user_preference": true,
 				}},
 			},
 			"as": "filters",
@@ -96,9 +96,9 @@ func (s *store) Find(ctx context.Context, userId, widgetId string) (*Response, e
 	} else {
 		pipeline := []bson.M{
 			{"$match": bson.M{
-				"author":         userId,
-				"widget":         widgetId,
-				"widget_private": true,
+				"author":             userId,
+				"widget":             widgetId,
+				"is_user_preference": true,
 			}},
 			{"$sort": bson.M{"position": 1}},
 		}

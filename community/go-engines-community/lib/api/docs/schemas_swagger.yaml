@@ -5498,11 +5498,11 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
-      widget_private:
+      is_user_preference:
         type: boolean
     required:
     - title
-    - widget_private
+    - is_user_preference
     type: object
   widgetfilter.OldMongoQuery:
     additionalProperties: true
@@ -5559,7 +5559,7 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
-      widget_private:
+      is_user_preference:
         type: boolean
     type: object
   widgettemplate.EditRequest:

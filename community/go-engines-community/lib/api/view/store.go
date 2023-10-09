@@ -344,7 +344,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			"pipeline": []bson.M{
 				{"$match": bson.M{"$and": []bson.M{
 					{"$expr": bson.M{"$eq": bson.A{"$widget", "$$id"}}},
-					{"widget_private": false},
+					{"is_user_preference": false},
 					{"old_mongo_query": nil}, //do not import old filters
 				}}},
 			},
@@ -358,7 +358,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			"filters.corporate_entity_pattern_title":    0,
 			"filters.corporate_pbehavior_pattern":       0,
 			"filters.corporate_pbehavior_pattern_title": 0,
-			"filters.widget_private":                    0,
+			"filters.is_user_preference":                0,
 			"filters.author":                            0,
 			"filters.updated":                           0,
 			"filters.created":                           0,
@@ -1134,8 +1134,8 @@ func (s *store) getNestedObjectsPipeline() []bson.M {
 			"let":  bson.M{"widget": "$widgets._id"},
 			"pipeline": []bson.M{
 				{"$match": bson.M{
-					"$expr":          bson.M{"$eq": bson.A{"$widget", "$$widget"}},
-					"widget_private": false,
+					"$expr":              bson.M{"$eq": bson.A{"$widget", "$$widget"}},
+					"is_user_preference": false,
 				}},
 			},
 			"as": "filters",

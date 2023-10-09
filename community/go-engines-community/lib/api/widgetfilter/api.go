@@ -235,7 +235,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if filter.WidgetPrivate != *request.WidgetPrivate {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: map[string]string{"widget_private": "WidgetPrivate cannot be changed"}})
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: map[string]string{"is_user_preference": "WidgetPrivate cannot be changed"}})
 		return
 	}
 

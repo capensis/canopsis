@@ -10,7 +10,7 @@ Feature: Update widget filter positions
     {
       "title": "test-widgetfilter-to-update-position-1-1-title",
       "widget": "test-widget-to-filter-update-position-1",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -31,7 +31,7 @@ Feature: Update widget filter positions
     {
       "title": "test-widgetfilter-to-update-position-1-2-title",
       "widget": "test-widget-to-filter-update-position-1",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -52,7 +52,7 @@ Feature: Update widget filter positions
     {
       "title": "test-widgetfilter-to-update-position-1-3-title",
       "widget": "test-widget-to-filter-update-position-1",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -405,7 +405,7 @@ Feature: Update widget filter positions
     {
       "title": "test-private-widgetfilter-to-update-position-1-1-title",
       "widget": "test-private-widget-to-private-filter-update-position-1",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -426,7 +426,7 @@ Feature: Update widget filter positions
     {
       "title": "test-private-widgetfilter-to-update-position-1-2-title",
       "widget": "test-private-widget-to-private-filter-update-position-1",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -447,7 +447,7 @@ Feature: Update widget filter positions
     {
       "title": "test-private-widgetfilter-to-update-position-1-3-title",
       "widget": "test-private-widget-to-private-filter-update-position-1",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {

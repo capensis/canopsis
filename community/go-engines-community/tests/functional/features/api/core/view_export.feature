@@ -68,7 +68,7 @@ Feature: Export views
                           "_id": "test-widgetfilter-to-export-1",
                           "title": "test-widgetfilter-to-export-1-title",
                           "is_private": false,
-                          "widget_private": false,
+                          "is_user_preference": false,
                           "alarm_pattern": [
                             [
                               {
@@ -85,7 +85,7 @@ Feature: Export views
                           "_id": "test-widgetfilter-to-export-2",
                           "title": "test-widgetfilter-to-export-2-title",
                           "is_private": false,
-                          "widget_private": false,
+                          "is_user_preference": false,
                           "alarm_pattern": [
                             [
                               {

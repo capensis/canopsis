@@ -32,7 +32,7 @@ Feature: Get a widget
           "_id": "test-widgetfilter-to-widget-get-1",
           "title": "test-widgetfilter-to-widget-get-1-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "nopermsuser",
             "name": "nopermsuser",
@@ -56,7 +56,7 @@ Feature: Get a widget
           "_id": "test-widgetfilter-to-widget-get-2",
           "title": "test-widgetfilter-to-widget-get-2-title",
           "is_private": false,
-          "widget_private": false,
+          "is_user_preference": false,
           "author": {
             "_id": "root",
             "name": "root",

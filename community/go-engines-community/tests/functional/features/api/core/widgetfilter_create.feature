@@ -10,7 +10,7 @@ Feature: Create a widget filter
     {
       "title": "test-widgetfilter-to-create-1-title",
       "widget": "test-widget-to-filter-edit",
-      "widget_private": false,
+      "is_user_preference": false,
       "alarm_pattern": [
         [
           {
@@ -55,7 +55,7 @@ Feature: Create a widget filter
         "name": "test-user-to-widget-filter-edit-2"
       },
       "title": "test-widgetfilter-to-create-1-title",
-      "widget_private": false,
+      "is_user_preference": false,
       "is_private": false,
       "alarm_pattern": [
         [
@@ -102,7 +102,7 @@ Feature: Create a widget filter
         "name": "test-user-to-widget-filter-edit-2"
       },
       "title": "test-widgetfilter-to-create-1-title",
-      "widget_private": false,
+      "is_user_preference": false,
       "is_private": false,
       "alarm_pattern": [
         [
@@ -141,14 +141,14 @@ Feature: Create a widget filter
     """
 
   @concurrent
-  Scenario: given create private widgetfilter to public widget request should create public widgetfilter with widget_private flag
+  Scenario: given create private widgetfilter to public widget request should create public widgetfilter with is_user_preference flag
     When I am test-role-to-widget-filter-edit-1
     When I do POST /api/v4/widget-filters:
     """json
     {
       "title": "test-widgetfilter-to-create-4-title",
       "widget": "test-widget-to-filter-edit",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -193,7 +193,7 @@ Feature: Create a widget filter
         "name": "test-user-to-widget-filter-edit-1"
       },
       "title": "test-widgetfilter-to-create-4-title",
-      "widget_private": true,
+      "is_user_preference": true,
       "is_private": false,
       "alarm_pattern": [
         [
@@ -240,7 +240,7 @@ Feature: Create a widget filter
         "name": "test-user-to-widget-filter-edit-1"
       },
       "title": "test-widgetfilter-to-create-4-title",
-      "widget_private": true,
+      "is_user_preference": true,
       "is_private": false,
       "alarm_pattern": [
         [
@@ -286,7 +286,7 @@ Feature: Create a widget filter
     {
       "title": "test-widgetfilter-to-create-2-title",
       "widget": "test-widget-to-filter-edit",
-      "widget_private": false,
+      "is_user_preference": false,
       "corporate_alarm_pattern": "test-pattern-to-filter-edit-1",
       "corporate_entity_pattern": "test-pattern-to-filter-edit-2",
       "corporate_pbehavior_pattern": "test-pattern-to-filter-edit-3"
@@ -301,7 +301,7 @@ Feature: Create a widget filter
         "name": "root"
       },
       "title": "test-widgetfilter-to-create-2-title",
-      "widget_private": false,
+      "is_user_preference": false,
       "corporate_alarm_pattern": "test-pattern-to-filter-edit-1",
       "corporate_alarm_pattern_title": "test-pattern-to-filter-edit-1-title",
       "alarm_pattern": [
@@ -353,7 +353,7 @@ Feature: Create a widget filter
         "name": "root"
       },
       "title": "test-widgetfilter-to-create-2-title",
-      "widget_private": false,
+      "is_user_preference": false,
       "corporate_alarm_pattern": "test-pattern-to-filter-edit-1",
       "corporate_alarm_pattern_title": "test-pattern-to-filter-edit-1-title",
       "alarm_pattern": [
@@ -404,7 +404,7 @@ Feature: Create a widget filter
     {
       "title": "test-widgetfilter-to-create-3-title",
       "widget": "test-widget-to-filter-edit",
-      "widget_private": true,
+      "is_user_preference": true,
       "corporate_alarm_pattern": "test-pattern-to-filter-edit-4",
       "corporate_entity_pattern": "test-pattern-to-filter-edit-5",
       "corporate_pbehavior_pattern": "test-pattern-to-filter-edit-6"
@@ -419,7 +419,7 @@ Feature: Create a widget filter
         "name": "root"
       },
       "title": "test-widgetfilter-to-create-3-title",
-      "widget_private": true,
+      "is_user_preference": true,
       "corporate_alarm_pattern": "test-pattern-to-filter-edit-4",
       "corporate_alarm_pattern_title": "test-pattern-to-filter-edit-4-title",
       "alarm_pattern": [
@@ -481,7 +481,7 @@ Feature: Create a widget filter
     {
       "widget": "test-widget-to-filter-check-access",
       "title": "test-widgetfilter-to-create-3-title",
-      "widget_private": false,
+      "is_user_preference": false,
       "alarm_pattern": [
         [
           {
@@ -505,7 +505,7 @@ Feature: Create a widget filter
     {
       "widget": "test-widget-to-filter-check-access",
       "title": "test-widgetfilter-to-create-3-title",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -529,7 +529,7 @@ Feature: Create a widget filter
     {
       "widget": "test-widget-not-exist",
       "title": "test-widgetfilter-to-create-3-title",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -560,7 +560,7 @@ Feature: Create a widget filter
       "errors": {
         "title": "Title is missing.",
         "widget": "Widget is missing.",
-        "widget_private": "WidgetPrivate is missing.",
+        "is_user_preference": "WidgetPrivate is missing.",
         "alarm_pattern": "AlarmPattern is missing.",
         "corporate_alarm_pattern": "CorporateAlarmPattern is missing.",
         "entity_pattern": "EntityPattern is missing.",
@@ -605,7 +605,7 @@ Feature: Create a widget filter
     {
       "title": "test-widgetfilter-to-create-3-title",
       "widget": "test-widget-to-filter-edit",
-      "widget_private": true,
+      "is_user_preference": true,
       "corporate_alarm_pattern": "test-pattern-not-exist"
     }
     """
@@ -623,7 +623,7 @@ Feature: Create a widget filter
     {
       "title": "test-widgetfilter-to-create-3-title",
       "widget": "test-widget-to-filter-edit",
-      "widget_private": true,
+      "is_user_preference": true,
       "corporate_entity_pattern": "test-pattern-not-exist"
     }
     """
@@ -641,7 +641,7 @@ Feature: Create a widget filter
     {
       "title": "test-widgetfilter-to-create-3-title",
       "widget": "test-widget-to-filter-edit",
-      "widget_private": true,
+      "is_user_preference": true,
       "corporate_pbehavior_pattern": "test-pattern-not-exist"
     }
     """
@@ -659,7 +659,7 @@ Feature: Create a widget filter
     {
       "title": "test-widgetfilter-to-create-3-title",
       "widget": "test-widget-to-filter-edit",
-      "widget_private": false,
+      "is_user_preference": false,
       "corporate_alarm_pattern": "test-pattern-to-filter-edit-4"
     }
     """
@@ -681,7 +681,7 @@ Feature: Create a widget filter
     {
       "title": "test-private-widgetfilter-to-create-1-title",
       "widget": "test-private-widget-to-private-filter-create-1",
-      "widget_private": false,
+      "is_user_preference": false,
       "alarm_pattern": [
         [
           {
@@ -726,7 +726,7 @@ Feature: Create a widget filter
         "name": "root"
       },
       "title": "test-private-widgetfilter-to-create-1-title",
-      "widget_private": false,
+      "is_user_preference": false,
       "is_private": true,
       "alarm_pattern": [
         [
@@ -773,7 +773,7 @@ Feature: Create a widget filter
         "name": "root"
       },
       "title": "test-private-widgetfilter-to-create-1-title",
-      "widget_private": false,
+      "is_user_preference": false,
       "is_private": true,
       "alarm_pattern": [
         [
@@ -819,7 +819,7 @@ Feature: Create a widget filter
     {
       "title": "test-private-widgetfilter-to-create-1-title",
       "widget": "test-private-widget-to-private-filter-create-2",
-      "widget_private": false,
+      "is_user_preference": false,
       "alarm_pattern": [
         [
           {
@@ -858,14 +858,14 @@ Feature: Create a widget filter
     Then the response code should be 403
 
   @concurrent
-  Scenario: given create private widgetfilter to owned private widget request should create private widget with widget_private flag
+  Scenario: given create private widgetfilter to owned private widget request should create private widget with is_user_preference flag
     When I am admin
     When I do POST /api/v4/widget-filters:
     """json
     {
       "title": "test-private-widgetfilter-to-create-1-title",
       "widget": "test-private-widget-to-private-filter-create-1",
-      "widget_private": true,
+      "is_user_preference": true,
       "alarm_pattern": [
         [
           {
@@ -910,7 +910,7 @@ Feature: Create a widget filter
         "name": "root"
       },
       "title": "test-private-widgetfilter-to-create-1-title",
-      "widget_private": true,
+      "is_user_preference": true,
       "is_private": true,
       "alarm_pattern": [
         [
@@ -957,7 +957,7 @@ Feature: Create a widget filter
         "name": "root"
       },
       "title": "test-private-widgetfilter-to-create-1-title",
-      "widget_private": true,
+      "is_user_preference": true,
       "is_private": true,
       "alarm_pattern": [
         [
