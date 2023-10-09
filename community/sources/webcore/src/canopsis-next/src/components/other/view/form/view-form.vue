@@ -2,12 +2,11 @@
   div
     v-layout(wrap, justify-center)
       v-flex(xs12)
-        v-text-field(
+        c-name-field(
           v-field="form.title",
-          v-validate="'required'",
           :label="$t('common.title')",
-          :error-messages="errors.collect('title')",
-          name="title"
+          name="title",
+          required
         )
         v-text-field(
           v-field="form.description",
