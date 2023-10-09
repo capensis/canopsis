@@ -391,6 +391,9 @@ export default {
     edit: {
       title: 'Edit SNMP rule',
     },
+    duplicate: {
+      title: 'Duplicate SNMP rule',
+    },
   },
   selectView: {
     title: 'Select view',
@@ -495,9 +498,6 @@ export default {
   },
   pbehaviorPlanning: {
     title: 'Periodical behaviors',
-  },
-  selectExceptionsLists: {
-    title: 'Choose list of exceptions',
   },
   createRrule: {
     title: 'Create recurrence rule',
@@ -770,7 +770,7 @@ export default {
       phrase: 'update the storage policy',
     },
     cleanStorage: {
-      title: 'Archive/delete disabled entities. Are you sure ?',
+      title: 'Archive/delete entities. Are you sure ?',
       text: 'You are about to archive and/or delete data.\n'
         + '<strong>Deletion operation won\'t be cancellable.</strong>',
       phraseText: 'Please, type the following to confirm:',
@@ -958,5 +958,40 @@ export default {
   },
   importPbehaviorException: {
     title: 'Import exception dates',
+  },
+  createMaintenance: {
+    enableMaintenance: 'Enable maintenance mode',
+    setup: {
+      title: 'Maintenance mode setup',
+    },
+    edit: {
+      title: 'Edit maintenance mode',
+    },
+  },
+  confirmationLeaveMaintenance: {
+    title: 'Leave maintenance mode',
+    text: 'Are you sure you want to leave the maintenance mode?\nAll users will be able to login to the system after leaving.',
+  },
+  createTag: {
+    create: {
+      title: 'Create a tag',
+    },
+    edit: {
+      title: 'Edit a tag',
+    },
+    duplicate: {
+      title: 'Duplicate a tag',
+    },
+  },
+  createTheme: {
+    create: {
+      title: 'Create theme',
+    },
+    edit: {
+      title: 'Edit theme',
+    },
+    duplicate: {
+      title: 'Duplicate theme',
+    },
   },
 };

@@ -9,7 +9,7 @@
       div.pre-line
         div
           strong {{ stepTitle }}
-        div(v-html="step.m")
+        c-compiled-template(:template="step.m")
 </template>
 
 <script>

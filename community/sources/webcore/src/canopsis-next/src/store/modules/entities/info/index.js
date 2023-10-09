@@ -23,6 +23,8 @@ export default {
     version: state => state.appInfo.version,
     logo: state => state.appInfo.logo,
     appTitle: state => state.appInfo.app_title,
+    maintenance: state => state.appInfo.maintenance,
+    defaultColorTheme: state => state.appInfo.default_color_theme,
     popupTimeout: state => state.appInfo.popup_timeout || {},
     maxMatchedItems: state => state.appInfo.max_matched_items,
     checkCountRequestTimeout: state => state.appInfo.check_count_request_timeout,
@@ -41,6 +43,7 @@ export default {
     isLDAPAuthEnabled: state => !!state.appInfo?.login?.ldapconfig?.enable,
     isCASAuthEnabled: state => !!state.appInfo?.login?.casconfig?.enable,
     isSAMLAuthEnabled: state => !!state.appInfo?.login?.saml2config?.enable,
+    eventsCountTriggerDefaultThreshold: state => state.appInfo?.events_count_trigger_default_threshold,
   },
   mutations: {
     [types.FETCH_APP_INFO](state) {
@@ -79,6 +82,10 @@ export default {
 
     updateUserInterface(context, { data } = {}) {
       return request.post(API_ROUTES.infos.userInterface, data);
+    },
+
+    updateMaintenanceMode(context, { data } = {}) {
+      return request.put(API_ROUTES.maintenance, data);
     },
 
     setPopupTimeouts({ dispatch }, { popupTimeout = {} }) {

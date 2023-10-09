@@ -1,9 +1,12 @@
 package request
 
-import "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+)
 
 type Parameters struct {
-	URL        string                  `bson:"url" json:"url" binding:"required,url"`
+	URL        string                  `bson:"url" json:"url" binding:"required"`
 	Method     string                  `bson:"method" json:"method" binding:"required,oneof=GET HEAD POST PUT PATCH DELETE CONNECT OPTIONS TRACE"`
 	Auth       *BasicAuth              `bson:"auth,omitempty" json:"auth"`
 	Headers    map[string]string       `bson:"headers,omitempty" json:"headers"`
@@ -17,4 +20,16 @@ type Parameters struct {
 type BasicAuth struct {
 	Username string `bson:"username" json:"username"`
 	Password string `bson:"password" json:"password"`
+}
+
+type ParsedParameters struct {
+	URL        template.ParsedTemplate
+	Method     string
+	Auth       *BasicAuth
+	Headers    map[string]string
+	Payload    template.ParsedTemplate
+	SkipVerify bool
+	Timeout    *types.DurationWithUnit
+	RetryCount int64
+	RetryDelay *types.DurationWithUnit
 }

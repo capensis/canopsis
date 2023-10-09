@@ -1,0 +1,165 @@
+import { range } from 'lodash';
+
+import { TAG_TYPES } from '@/constants';
+import { generateRenderer } from '@unit/utils/vue';
+import {
+  selectRowRemoveButtonByIndex,
+  selectRowEditButtonByIndex,
+  selectRowCheckboxByIndex,
+  selectMassRemoveButton,
+  selectRowDuplicateButtonByIndex,
+  selectRowExpandButtonByIndex,
+} from '@unit/utils/table';
+import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
+
+import TagsList from '@/components/other/tag/tags-list.vue';
+
+const stubs = {
+  'c-advanced-data-table': CAdvancedDataTable,
+  'c-search-field': true,
+  'v-checkbox': true,
+  'v-checkbox-functional': true,
+  'c-expand-btn': true,
+  'c-action-btn': true,
+  'c-table-pagination': true,
+  'c-alarm-action-chip': true,
+  'tags-list-expand-panel': true,
+};
+
+describe('tags-list', () => {
+  const totalItems = 11;
+
+  const types = [TAG_TYPES.created, TAG_TYPES.imported];
+
+  const tags = range(totalItems).map(index => ({
+    _id: `pattern-id-${index}`,
+    value: `pattern-value-${index}`,
+    type: types[index % 2],
+    enabled: !!(index % 2),
+    deletable: true,
+    author: {
+      display_name: `author-${index}`,
+    },
+    created: 1614851888 + index,
+    updated: 1614861888 + index,
+  }));
+
+  const snapshotFactory = generateRenderer(TagsList, { stubs });
+
+  it('Selected items removed after trigger mass remove button', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        tags,
+        pagination: {
+          page: 1,
+          rowsPerPage: 10,
+        },
+        totalItems,
+        removable: true,
+      },
+    });
+
+    await selectRowCheckboxByIndex(wrapper, 1).vm.$emit('change', true);
+    await selectRowCheckboxByIndex(wrapper, 2).vm.$emit('change', true);
+    await selectMassRemoveButton(wrapper).vm.$emit('click');
+
+    expect(wrapper).toEmit('remove-selected', [tags[1], tags[2]]);
+  });
+
+  it('Remove event emitted after trigger click on the remove button', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        tags,
+        pagination: {
+          page: 1,
+          rowsPerPage: 10,
+        },
+        totalItems,
+        removable: true,
+      },
+    });
+
+    const removeRowIndex = 2;
+
+    await selectRowRemoveButtonByIndex(wrapper, removeRowIndex).vm.$emit('click');
+
+    expect(wrapper).toEmit('remove', tags[removeRowIndex]._id);
+  });
+
+  it('Update event emitted after trigger click on the remove button', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        tags,
+        pagination: {
+          page: 1,
+          rowsPerPage: 10,
+        },
+        totalItems,
+        updatable: true,
+      },
+    });
+
+    const editRowIndex = 5;
+
+    await selectRowEditButtonByIndex(wrapper, editRowIndex).vm.$emit('click');
+
+    expect(wrapper).toEmit('edit', tags[editRowIndex]);
+  });
+
+  it('Duplicate event emitted after trigger click on the duplicate button', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        tags,
+        pagination: {
+          page: 1,
+          rowsPerPage: 10,
+        },
+        totalItems,
+        duplicable: true,
+      },
+    });
+
+    const duplicateRowIndex = 5;
+
+    await selectRowDuplicateButtonByIndex(wrapper, duplicateRowIndex).vm.$emit('click');
+
+    expect(wrapper).toEmit('duplicate', tags[duplicateRowIndex]);
+  });
+
+  it('Renders `tags-list` with default props', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        tags,
+        pagination: {},
+      },
+    });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('Renders `tags-list` with custom props', async () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        tags,
+        pagination: {
+          page: 2,
+          rowsPerPage: 10,
+          search: 'Tag',
+          sortBy: 'updated',
+          descending: true,
+        },
+        totalItems,
+        pending: true,
+        removable: true,
+        updatable: true,
+        duplicable: true,
+      },
+    });
+
+    const expandButton = selectRowExpandButtonByIndex(wrapper, 0);
+
+    await expandButton.vm.$emit('expand');
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+});

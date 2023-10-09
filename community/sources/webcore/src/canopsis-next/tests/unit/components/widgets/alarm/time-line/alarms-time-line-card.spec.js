@@ -1,11 +1,17 @@
+import flushPromises from 'flush-promises';
+
 import { generateRenderer } from '@unit/utils/vue';
 
 import { ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR, ENTITIES_STATES } from '@/constants';
 
 import AlarmsTimeLineCard from '@/components/widgets/alarm/time-line/alarms-time-line-card.vue';
+import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
+import CCompiledTemplate from '@/components/common/runtime-template/c-compiled-template.vue';
 
 const stubs = {
   'c-alarm-chip': true,
+  'c-runtime-template': CRuntimeTemplate,
+  'c-compiled-template': CCompiledTemplate,
 };
 
 describe('alarms-time-line-card', () => {
@@ -61,21 +67,21 @@ describe('alarms-time-line-card', () => {
     m: `<p>${pbehaviorEnterStep.m}</p>`,
   };
 
-  const snapshotFactory = generateRenderer(AlarmsTimeLineCard, {
-    stubs,
-  });
+  const snapshotFactory = generateRenderer(AlarmsTimeLineCard, { stubs });
 
-  it('Renders `alarms-time-line-card` with state counter type', () => {
+  it('Renders `alarms-time-line-card` with state counter type', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         step: stateCounterStep,
       },
     });
 
+    await flushPromises();
+
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarms-time-line-card` with html as message', () => {
+  it('Renders `alarms-time-line-card` with html as message', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         step: pbehaviorEnterStepWithHtml,
@@ -83,45 +89,55 @@ describe('alarms-time-line-card', () => {
       },
     });
 
+    await flushPromises();
+
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarms-time-line-card` without translate', () => {
+  it('Renders `alarms-time-line-card` without translate', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         step: pbehaviorEnterStep,
       },
     });
 
+    await flushPromises();
+
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarms-time-line-card` with state but without translate', () => {
+  it('Renders `alarms-time-line-card` with state but without translate', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         step: stateIncStep,
       },
     });
 
+    await flushPromises();
+
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarms-time-line-card` with state but without translate', () => {
+  it('Renders `alarms-time-line-card` with state but without translate', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         step: statusDecStep,
       },
     });
 
+    await flushPromises();
+
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('Renders `alarms-time-line-card` with states', () => {
+  it('Renders `alarms-time-line-card` with states', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         step: stateStepWithStates,
       },
     });
+
+    await flushPromises();
 
     expect(wrapper.element).toMatchSnapshot();
   });

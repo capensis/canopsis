@@ -1,6 +1,6 @@
 import { TIME_UNITS } from '@/constants';
 
-import { durationWithEnabledToForm } from '@/helpers/date/duration';
+import { durationToForm, durationWithEnabledToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} DataStorageJunitConfig
@@ -22,8 +22,12 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} DataStorageEntityConfig
- * @property {boolean} archive
- * @property {boolean} archive_dependencies
+ * @property {boolean} with_dependencies
+ */
+
+/**
+ * @typedef {Object} DataStorageUnlinkedEntityConfig
+ * @property {DurationWithEnabled} archive_before
  */
 
 /**
@@ -48,16 +52,23 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  */
 
 /**
+ * @typedef {Object} DataStorageEventFilterFailureConfig
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
  * @typedef {Object} DataStorageConfig
  * @property {DataStorageJunitConfig} junit
  * @property {DataStorageRemediationConfig} remediation
  * @property {DataStorageAlarmConfig} alarm
- * @property {DataStorageEntityConfig} [entity]
+ * @property {DataStorageEntityConfig} [entity_disabled]
+ * @property {DataStorageUnlinkedEntityConfig} [entity_unlinked]
  * @property {DataStoragePbehaviorConfig} pbehavior
  * @property {DataStorageHealthCheckConfig} health_check
  * @property {DataStorageWebhookConfig} webhook
  * @property {DataStorageMetricsConfig} metrics
  * @property {DataStorageMetricsConfig} perf_data_metrics
+ * @property {DataStorageEventFilterFailureConfig} errors
  */
 
 /**
@@ -74,6 +85,7 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  * @property {HistoryWithCount} alarm
  * @property {HistoryWithCount} entity
  * @property {number} health_check
+ * @property {number} event_filter_failure
  */
 
 /**
@@ -151,8 +163,19 @@ export const dataStoragePbehaviorSettingsToForm = (pbehaviorConfig = {}) => ({
  * @return {DataStorageEntityConfig}
  */
 export const dataStorageEntitySettingsToForm = (entityConfig = {}) => ({
-  archive: entityConfig.archive || false,
-  archive_dependencies: entityConfig.archive_dependencies || false,
+  with_dependencies: entityConfig.with_dependencies || false,
+});
+
+/**
+ * Convert data storage unlinked entity config to unlinked entity form object
+ *
+ * @param {DataStorageUnlinkedEntityConfig} unlinkedEntityConfig
+ * @return {DataStorageUnlinkedEntityConfig}
+ */
+export const dataStorageEntityUnlinkedSettingsToForm = (unlinkedEntityConfig = {}) => ({
+  archive_before: unlinkedEntityConfig.archive_before
+    ? durationToForm(unlinkedEntityConfig.archive_before)
+    : { value: 60, unit: TIME_UNITS.day },
 });
 
 /**
@@ -205,6 +228,18 @@ export const dataStoragePerfDataMetricsToForm = (perfDataMetrics = {}) => ({
 });
 
 /**
+ * Convert data storage event filter failure config to errors form object
+ *
+ * @param {DataStorageEventFilterFailureConfig} errors
+ * @return {DataStorageEventFilterFailureConfig}
+ */
+export const dataStorageEventFilterFailureToForm = (errors = {}) => ({
+  delete_after: errors.delete_after
+    ? durationWithEnabledToForm(errors.delete_after)
+    : { value: 30, unit: TIME_UNITS.day, enabled: false },
+});
+
+/**
  * Convert data storage object to data storage form
  *
  * @param {DataStorageConfig} dataStorage
@@ -214,10 +249,12 @@ export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   junit: dataStorageJunitSettingsToForm(dataStorage.junit),
   remediation: dataStorageRemediationSettingsToForm(dataStorage.remediation),
   alarm: dataStorageAlarmSettingsToForm(dataStorage.alarm),
-  entity: dataStorageEntitySettingsToForm(dataStorage.entity),
+  entity_disabled: dataStorageEntitySettingsToForm(dataStorage.entity_disabled),
+  entity_unlinked: dataStorageEntityUnlinkedSettingsToForm(dataStorage.entity_unlinked),
   pbehavior: dataStoragePbehaviorSettingsToForm(dataStorage.pbehavior),
   health_check: dataStorageHealthCheckSettingsToForm(dataStorage.health_check),
   webhook: dataStorageWebhookSettingsToForm(dataStorage.webhook),
   metrics: dataStorageMetricsToForm(dataStorage.metrics),
   perf_data_metrics: dataStoragePerfDataMetricsToForm(dataStorage.perf_data_metrics),
+  event_filter_failure: dataStorageEventFilterFailureToForm(dataStorage.errors),
 });

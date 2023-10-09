@@ -46,7 +46,13 @@
 </template>
 
 <script>
-import { debounce, isArray, isString, isFunction, get } from 'lodash';
+import {
+  debounce,
+  isArray,
+  isString,
+  isFunction,
+  get,
+} from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 

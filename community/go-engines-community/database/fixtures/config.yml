@@ -16,6 +16,14 @@ configuration:
     max_matched_items: 10000
     check_count_request_timeout: 30
     app_title: Canopsis
+  data_storage:
+    _id: data_storage
+    config:
+      event_filter_failure:
+        delete_after:
+          value: 30
+          unit: d
+          enabled: true
   alarm_tag_color:
     _id: alarm_tag_color
     colors:

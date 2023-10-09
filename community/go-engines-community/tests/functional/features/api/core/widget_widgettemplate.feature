@@ -13,7 +13,8 @@ Feature: Update a widget
       "parameters": {
         "widgetColumnsTemplate": "test-widgettemplate-to-widget-widgettemplate-1",
         "serviceDependenciesColumnsTemplate": "test-widgettemplate-to-widget-widgettemplate-2",
-        "moreInfoTemplateTemplate": "test-widgettemplate-to-widget-widgettemplate-3"
+        "moreInfoTemplateTemplate": "test-widgettemplate-to-widget-widgettemplate-3",
+        "exportPdfTemplateTemplate": "test-widgettemplate-to-widget-widgettemplate-9"
       }
     }
     """
@@ -47,7 +48,10 @@ Feature: Update a widget
         ],
         "moreInfoTemplateTemplate": "test-widgettemplate-to-widget-widgettemplate-3",
         "moreInfoTemplateTemplateTitle": "test-widgettemplate-to-widget-widgettemplate-3-title",
-        "moreInfoTemplate": "{{ `{{ alarm.v.display_name }}` }}"
+        "moreInfoTemplate": "{{ `{{ alarm.v.display_name }}` }}",
+        "exportPdfTemplateTemplate": "test-widgettemplate-to-widget-widgettemplate-9",
+        "exportPdfTemplateTemplateTitle": "test-widgettemplate-to-widget-widgettemplate-9-title",
+        "exportPdfTemplate": "{{ `{{ alarm.v.display_name }}` }}"
       }
     }
     """
@@ -102,6 +106,15 @@ Feature: Update a widget
     }
     """
     Then the response code should be 200
+    When I do PUT /api/v4/widget-templates/test-widgettemplate-to-widget-widgettemplate-9:
+    """json
+    {
+      "title": "test-widgettemplate-to-widget-widgettemplate-9-title-updated",
+      "type": "alarm_export_to_pdf",
+      "content": "updated {{ `{{ alarm.v.display_name }}` }}"
+    }
+    """
+    Then the response code should be 200
     When I do GET /api/v4/widgets/{{ .widgetId }}
     Then the response code should be 200
     Then the response body should contain:
@@ -139,7 +152,10 @@ Feature: Update a widget
         ],
         "moreInfoTemplateTemplate": "test-widgettemplate-to-widget-widgettemplate-3",
         "moreInfoTemplateTemplateTitle": "test-widgettemplate-to-widget-widgettemplate-3-title-updated",
-        "moreInfoTemplate": "updated {{ `{{ alarm.v.display_name }}` }}"
+        "moreInfoTemplate": "updated {{ `{{ alarm.v.display_name }}` }}",
+        "exportPdfTemplateTemplate": "test-widgettemplate-to-widget-widgettemplate-9",
+        "exportPdfTemplateTemplateTitle": "test-widgettemplate-to-widget-widgettemplate-9-title-updated",
+        "exportPdfTemplate": "updated {{ `{{ alarm.v.display_name }}` }}"
       }
     }
     """

@@ -18,21 +18,22 @@ import (
 func TestChangeEntityApply(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	applicator := eventfilter.NewChangeEntityApplicator(eventfilter.NewExternalDataGetterContainer(), tplExecutor)
+	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	applicator := eventfilter.NewChangeEntityApplicator(eventfilter.NewExternalDataGetterContainer(), mockFailureService, tplExecutor)
 
 	var dataSets = []struct {
 		testName      string
-		rule          eventfilter.Rule
+		rule          eventfilter.ParsedRule
 		event         types.Event
 		expectedEvent types.Event
 		regexMatches  eventfilter.RegexMatch
 	}{
 		{
 			testName: "given event and rule, resource should be changed",
-			rule: eventfilter.Rule{
-				Config: eventfilter.RuleConfig{
-					Resource: "new value",
+			rule: eventfilter.ParsedRule{
+				Config: eventfilter.ParsedRuleConfig{
+					Resource: tplExecutor.Parse("new value"),
 				},
 			},
 			event: types.Event{
@@ -50,9 +51,9 @@ func TestChangeEntityApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, component should be changed",
-			rule: eventfilter.Rule{
-				Config: eventfilter.RuleConfig{
-					Component: "new value",
+			rule: eventfilter.ParsedRule{
+				Config: eventfilter.ParsedRuleConfig{
+					Component: tplExecutor.Parse("new value"),
 				},
 			},
 			event: types.Event{
@@ -70,9 +71,9 @@ func TestChangeEntityApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, connector should be changed",
-			rule: eventfilter.Rule{
-				Config: eventfilter.RuleConfig{
-					Connector: "new value",
+			rule: eventfilter.ParsedRule{
+				Config: eventfilter.ParsedRuleConfig{
+					Connector: tplExecutor.Parse("new value"),
 				},
 			},
 			event: types.Event{
@@ -90,9 +91,9 @@ func TestChangeEntityApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, connector_name should be changed",
-			rule: eventfilter.Rule{
-				Config: eventfilter.RuleConfig{
-					ConnectorName: "new value",
+			rule: eventfilter.ParsedRule{
+				Config: eventfilter.ParsedRuleConfig{
+					ConnectorName: tplExecutor.Parse("new value"),
 				},
 			},
 			event: types.Event{
@@ -110,9 +111,9 @@ func TestChangeEntityApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, resource should be changed by template",
-			rule: eventfilter.Rule{
-				Config: eventfilter.RuleConfig{
-					Resource: "{{.Event.Output}}",
+			rule: eventfilter.ParsedRule{
+				Config: eventfilter.ParsedRuleConfig{
+					Resource: tplExecutor.Parse("{{.Event.Output}}"),
 				},
 			},
 			event: types.Event{
@@ -132,9 +133,9 @@ func TestChangeEntityApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, component should be changed by template",
-			rule: eventfilter.Rule{
-				Config: eventfilter.RuleConfig{
-					Component: "{{.Event.Output}}",
+			rule: eventfilter.ParsedRule{
+				Config: eventfilter.ParsedRuleConfig{
+					Component: tplExecutor.Parse("{{.Event.Output}}"),
 				},
 			},
 			event: types.Event{
@@ -154,9 +155,9 @@ func TestChangeEntityApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, connector should be changed by template",
-			rule: eventfilter.Rule{
-				Config: eventfilter.RuleConfig{
-					Connector: "{{.Event.Output}}",
+			rule: eventfilter.ParsedRule{
+				Config: eventfilter.ParsedRuleConfig{
+					Connector: tplExecutor.Parse("{{.Event.Output}}"),
 				},
 			},
 			event: types.Event{
@@ -176,9 +177,9 @@ func TestChangeEntityApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, connector_name should be changed by template",
-			rule: eventfilter.Rule{
-				Config: eventfilter.RuleConfig{
-					ConnectorName: "{{.Event.Output}}",
+			rule: eventfilter.ParsedRule{
+				Config: eventfilter.ParsedRuleConfig{
+					ConnectorName: tplExecutor.Parse("{{.Event.Output}}"),
 				},
 			},
 			event: types.Event{
@@ -198,9 +199,9 @@ func TestChangeEntityApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, resource should be changed by regexMatches template",
-			rule: eventfilter.Rule{
-				Config: eventfilter.RuleConfig{
-					Resource: "{{.RegexMatch.ExtraInfos.data.match}}",
+			rule: eventfilter.ParsedRule{
+				Config: eventfilter.ParsedRuleConfig{
+					Resource: tplExecutor.Parse("{{.RegexMatch.ExtraInfos.data.match}}"),
 				},
 			},
 			event: types.Event{
@@ -227,9 +228,9 @@ func TestChangeEntityApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, component should be changed by regexMatches template",
-			rule: eventfilter.Rule{
-				Config: eventfilter.RuleConfig{
-					Component: "{{.RegexMatch.ExtraInfos.data.match}}",
+			rule: eventfilter.ParsedRule{
+				Config: eventfilter.ParsedRuleConfig{
+					Component: tplExecutor.Parse("{{.RegexMatch.ExtraInfos.data.match}}"),
 				},
 			},
 			event: types.Event{
@@ -256,9 +257,9 @@ func TestChangeEntityApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, connector should be changed by regexMatches template",
-			rule: eventfilter.Rule{
-				Config: eventfilter.RuleConfig{
-					Connector: "{{.RegexMatch.ExtraInfos.data.match}}",
+			rule: eventfilter.ParsedRule{
+				Config: eventfilter.ParsedRuleConfig{
+					Connector: tplExecutor.Parse("{{.RegexMatch.ExtraInfos.data.match}}"),
 				},
 			},
 			event: types.Event{
@@ -285,9 +286,9 @@ func TestChangeEntityApply(t *testing.T) {
 		},
 		{
 			testName: "given event and rule, connector_name should be changed by regexMatches template",
-			rule: eventfilter.Rule{
-				Config: eventfilter.RuleConfig{
-					ConnectorName: "{{.RegexMatch.ExtraInfos.data.match}}",
+			rule: eventfilter.ParsedRule{
+				Config: eventfilter.ParsedRuleConfig{
+					ConnectorName: tplExecutor.Parse("{{.RegexMatch.ExtraInfos.data.match}}"),
 				},
 			},
 			event: types.Event{
@@ -341,17 +342,19 @@ func TestChangeEntityApplyWithExternalData(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockGetter := mock_eventfilter.NewMockExternalDataGetter(ctrl)
-	mockGetter.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any()).Return(types.Entity{ID: "test_value"}, nil)
+	mockGetter.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		Return(types.Entity{ID: "test_value"}, nil)
 
 	externalDataContainer := eventfilter.NewExternalDataGetterContainer()
 	externalDataContainer.Set("test", mockGetter)
 
-	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
+	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 
-	applicator := eventfilter.NewChangeEntityApplicator(externalDataContainer, tplExecutor)
+	applicator := eventfilter.NewChangeEntityApplicator(externalDataContainer, mockFailureService, tplExecutor)
 
-	externalData := make(map[string]eventfilter.ExternalDataParameters)
-	externalData["test"] = eventfilter.ExternalDataParameters{
+	externalData := make(map[string]eventfilter.ParsedExternalDataParameters)
+	externalData["test"] = eventfilter.ParsedExternalDataParameters{
 		Type: "test",
 	}
 
@@ -371,10 +374,10 @@ func TestChangeEntityApplyWithExternalData(t *testing.T) {
 
 	outcome, resultEvent, err := applicator.Apply(
 		context.Background(),
-		eventfilter.Rule{
+		eventfilter.ParsedRule{
 			ExternalData: externalData,
-			Config: eventfilter.RuleConfig{
-				Resource: "{{.ExternalData.test.ID}}",
+			Config: eventfilter.ParsedRuleConfig{
+				Resource: tplExecutor.Parse("{{.ExternalData.test.ID}}"),
 			},
 		},
 		event,

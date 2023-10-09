@@ -39,3 +39,11 @@ export const EVENT_FILTER_SOURCE_TYPES = {
   connectorName: 'connector_name',
   resource: 'resource',
 };
+
+export const EVENT_FILTER_FAILURE_TYPES = {
+  invalidPattern: 0,
+  invalidTemplate: 1,
+  externalDataMongo: 2,
+  externalDataApi: 3,
+  other: 4,
+};

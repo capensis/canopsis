@@ -22,9 +22,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"github.com/cucumber/godog"
-	redismod "github.com/go-redis/redis/v8"
 	"github.com/go-testfixtures/testfixtures/v3"
 	_ "github.com/golang-migrate/migrate/v4/database/pgx"
+	redismod "github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
 
@@ -126,8 +126,9 @@ func TestMain(m *testing.M) {
 	templater := bdd.NewTemplater(map[string]interface{}{
 		"apiURL":      apiUrl,
 		"dummyApiURL": dummyApiUrl,
+		"mongoURL":    os.Getenv(mongo.EnvURL), // for system env variables tests
 	})
-	apiClient := bdd.NewApiClient(dbClient, apiUrl, requestLogger, templater)
+	apiClient := bdd.NewApiClient(dbClient, apiUrl, flags.scenarioData, requestLogger, templater)
 	amqpClient := bdd.NewAmqpClient(dbClient, amqpConnection, flags.eventWaitExchange, flags.eventWaitKey,
 		libjson.NewEncoder(), libjson.NewDecoder(), eventLogger, templater)
 	mongoClient := bdd.NewMongoClient(dbClient)
@@ -248,6 +249,7 @@ func InitializeScenario(
 		scenarioCtx.Step(`^the response key \"([^"]+)\" should exist$`, apiClient.TheResponseKeyShouldExist)
 		scenarioCtx.Step(`^the response key \"([^"]+)\" should not exist$`, apiClient.TheResponseKeyShouldNotExist)
 		scenarioCtx.Step(`^the response key \"([^"]+)\" should not be \"([^\"]+)\"$`, apiClient.TheResponseKeyShouldNotBe)
+		scenarioCtx.Step(`^the response key \"([^"]+)\" should be \"([^\"]+)\"$`, apiClient.TheResponseKeyShouldBe)
 		scenarioCtx.Step(`^the difference between ([^"]+) ([^"]+) is in range (-?\d+\.?\d*),(-?\d+\.?\d*)$`, apiClient.TheDifferenceBetweenValues)
 		scenarioCtx.Step(`^the response key \"([^"]+)\" should be greater or equal than (\d+)$`, apiClient.TheResponseKeyShouldBeGreaterOrEqualThan)
 		scenarioCtx.Step(`^the response key \"([^"]+)\" should be greater than (\d+)$`, apiClient.TheResponseKeyShouldBeGreaterThan)
@@ -293,13 +295,19 @@ func InitializeScenario(
 		scenarioCtx.Step(`^I wait next message from websocket:$`, websocketClient.IWaitNextMessage)
 		scenarioCtx.Step(`^I wait next message from websocket which contains:$`, websocketClient.IWaitNextMessageWhichContains)
 		scenarioCtx.Step(`^I authenticate in websocket$`, websocketClient.IAuthenticate)
+		scenarioCtx.Step(`^I subscribe to websocket room \"([^\"]+)\":$`, websocketClient.ISubscribeToRoomWithData)
 		scenarioCtx.Step(`^I subscribe to websocket room \"([^\"]+)\"$`, websocketClient.ISubscribeToRoom)
 		scenarioCtx.Step(`^I wait message from websocket room \"([^\"]+)\":$`, websocketClient.IWaitMessageFromRoom)
 		scenarioCtx.Step(`^I wait message from websocket room \"([^\"]+)\" which contains:$`, websocketClient.IWaitMessageFromRoomWhichContains)
+		scenarioCtx.Step(`^I read file (\w[-\w\.\/]*) as (\w+)$`, apiClient.IReadFile)
 		scenarioCtx.Step(`^I set config parameter (.+)=(true|false)$`, mongoClient.ISetConfigParameter)
 	}
 }
 
+// It's important to load postgres fixtures first and only then mongo fixtures.
+// If mongo fixtures are loaded first, some engine workers may send metrics to the postgres,
+// which will be cleaned by postgres fixtures loading.
+// Because of that some metrics functional tests may fail.
 func clearStores(
 	ctx context.Context,
 	flags Flags,
@@ -307,12 +315,6 @@ func clearStores(
 	redisClient redismod.Cmdable,
 	logger zerolog.Logger,
 ) error {
-	err := loader.Load(ctx)
-	if err != nil {
-		return fmt.Errorf("cannot load mongo fixtures: %w", err)
-	}
-
-	logger.Info().Msg("MongoDB fixtures are applied")
 	pgConnStr, err := postgres.GetConnStr()
 	if err != nil {
 		return err
@@ -344,6 +346,13 @@ func clearStores(
 	}
 
 	logger.Info().Msg("PostgresSQL fixtures are applied")
+
+	err = loader.Load(ctx)
+	if err != nil {
+		return fmt.Errorf("cannot load mongo fixtures: %w", err)
+	}
+
+	logger.Info().Msg("MongoDB fixtures are applied")
 
 	err = redisClient.FlushAll(ctx).Err()
 	if err != nil {

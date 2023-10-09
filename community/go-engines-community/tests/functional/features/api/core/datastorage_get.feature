@@ -77,6 +77,13 @@ Feature: Get and update data storage config
           "value": 1,
           "unit": "M"
         }
+      },
+      "event_filter_failure": {
+        "delete_after": {
+          "enabled": true,
+          "value": 1,
+          "unit": "M"
+        }
       }
     }
     """
@@ -156,16 +163,26 @@ Feature: Get and update data storage config
             "value": 1,
             "unit": "M"
           }
+        },
+        "event_filter_failure": {
+          "delete_after": {
+            "enabled": true,
+            "value": 1,
+            "unit": "M"
+          }
         }
       },
       "history": {
         "junit": null,
         "remediation": null,
         "alarm": null,
-        "entity": null,
+        "entity_disabled": null,
+        "entity_unlinked": null,
+        "entity_cleaned": null,
         "pbehavior": null,
         "health_check": null,
-        "webhook": null
+        "webhook": null,
+        "event_filter_failure": null
       }
     }
     """
@@ -246,16 +263,26 @@ Feature: Get and update data storage config
             "value": 1,
             "unit": "M"
           }
+        },
+        "event_filter_failure": {
+          "delete_after": {
+            "enabled": true,
+            "value": 1,
+            "unit": "M"
+          }
         }
       },
       "history": {
         "junit": null,
         "remediation": null,
         "alarm": null,
-        "entity": null,
+        "entity_disabled": null,
+        "entity_unlinked": null,
+        "entity_cleaned": null,
         "pbehavior": null,
         "health_check": null,
-        "webhook": null
+        "webhook": null,
+        "event_filter_failure": null
       }
     }
     """
@@ -295,16 +322,22 @@ Feature: Get and update data storage config
         },
         "perf_data_metrics": {
           "delete_after": null
+        },
+        "event_filter_failure": {
+          "delete_after": null
         }
       },
       "history": {
         "junit": null,
         "remediation": null,
         "alarm": null,
-        "entity": null,
+        "entity_disabled": null,
+        "entity_unlinked": null,
+        "entity_cleaned": null,
         "pbehavior": null,
         "health_check": null,
-        "webhook": null
+        "webhook": null,
+        "event_filter_failure": null
       }
     }
     """
@@ -341,16 +374,22 @@ Feature: Get and update data storage config
         },
         "perf_data_metrics": {
           "delete_after": null
+        },
+        "event_filter_failure": {
+          "delete_after": null
         }
       },
       "history": {
         "junit": null,
         "remediation": null,
         "alarm": null,
-        "entity": null,
+        "entity_disabled": null,
+        "entity_unlinked": null,
+        "entity_cleaned": null,
         "pbehavior": null,
         "health_check": null,
-        "webhook": null
+        "webhook": null,
+        "event_filter_failure": null
       }
     }
     """

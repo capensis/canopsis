@@ -101,6 +101,11 @@ func (s *MongoStore) DeleteBy(ctx context.Context, user, provider string) error 
 	return err
 }
 
+func (s *MongoStore) DeleteByUserIDs(ctx context.Context, ids []string) error {
+	_, err := s.collection.DeleteMany(ctx, bson.M{"user": bson.M{"$in": ids}})
+	return err
+}
+
 func (s *MongoStore) DeleteExpired(ctx context.Context) error {
 	now := types.NewCpsTime()
 	deleted, err := s.collection.DeleteMany(ctx, bson.M{

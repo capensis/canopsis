@@ -15,6 +15,7 @@ type TokenStore interface {
 	Save(ctx context.Context, token token.Token) error
 	Delete(ctx context.Context, id string) (bool, error)
 	DeleteBy(ctx context.Context, user, provider string) error
+	DeleteByUserIDs(ctx context.Context, ids []string) error
 }
 
 type TokenService interface {
@@ -22,6 +23,7 @@ type TokenService interface {
 	CreateWithExpiration(ctx context.Context, user security.User, provider string, expiredAt time.Time) (string, error)
 	Delete(ctx context.Context, token string) (bool, error)
 	DeleteBy(ctx context.Context, user, provider string) error
+	DeleteByUserIDs(ctx context.Context, ids []string) error
 }
 
 type AuthMethodConf struct {
@@ -133,6 +135,10 @@ func (s *tokenService) Delete(ctx context.Context, token string) (bool, error) {
 
 func (s *tokenService) DeleteBy(ctx context.Context, user, provider string) error {
 	return s.tokenStore.DeleteBy(ctx, user, provider)
+}
+
+func (s *tokenService) DeleteByUserIDs(ctx context.Context, ids []string) error {
+	return s.tokenStore.DeleteByUserIDs(ctx, ids)
 }
 
 func (s *tokenService) getIntervals(ctx context.Context, user security.User, provider string) (types.DurationWithUnit, types.DurationWithUnit, error) {

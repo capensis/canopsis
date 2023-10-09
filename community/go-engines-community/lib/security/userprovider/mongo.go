@@ -29,6 +29,35 @@ func NewMongoProvider(db libmongo.DbClient, configProvider config.ApiConfigProvi
 	}
 }
 
+func (p *mongoProvider) FindWithoutPermission(ctx context.Context, perm string) ([]security.User, error) {
+	var users []security.User
+
+	cursor, err := p.collection.Aggregate(ctx, []bson.M{
+		{
+			"$lookup": bson.M{
+				"from":         "role",
+				"localField":   "roles",
+				"foreignField": "_id",
+				"as":           "roles_objects",
+			},
+		},
+		{
+			"$match": bson.M{
+				"roles_objects": bson.M{
+					"$elemMatch": bson.M{
+						"permissions." + perm: bson.M{"$exists": false},
+					},
+				},
+			},
+		},
+	})
+	if err != nil {
+		return users, err
+	}
+
+	return users, cursor.All(ctx, &users)
+}
+
 func (p *mongoProvider) FindByUsername(ctx context.Context, username string) (*security.User, error) {
 	return p.findByFilter(ctx, bson.M{
 		"name":   username,
