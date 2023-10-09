@@ -17,6 +17,7 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
   * [Filtres d'événements](menu-exploitation/filtres-evenements.md)
   * [Générateur de liens](menu-exploitation/generateur-liens.md)
   * [Informations dynamiques](menu-exploitation/informations-dynamiques.md)
+  * [Règles SNMP](menu-exploitation/regles-snmp.md)
   * [Règles d'inactivité](menu-exploitation/regles-inactivite.md)
   * [Règles de bagot](menu-exploitation/regles-bagot.md)
   * [Règles de déclaration de tickets](menu-exploitation/regles-declaration-tickets.md)
