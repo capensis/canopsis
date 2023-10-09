@@ -104,12 +104,22 @@ func (s *store) UpdateParameters(ctx context.Context, params config.HealthCheckP
 func (s *store) GetEnginesOrder() Graph {
 	engineOrder := s.configProvider.Get().EngineOrder
 	graph := Graph{
-		Nodes: make([]string, len(engineOrder)),
+		Nodes: make([]string, 0, len(engineOrder)),
 		Edges: make([]Edge, len(engineOrder)),
 	}
+	nodeExists := make(map[string]struct{}, len(engineOrder))
 
 	for idx, pair := range engineOrder {
-		graph.Nodes[idx] = pair.From
+		if _, ok := nodeExists[pair.From]; !ok {
+			graph.Nodes = append(graph.Nodes, pair.From)
+			nodeExists[pair.From] = struct{}{}
+		}
+
+		if _, ok := nodeExists[pair.To]; !ok {
+			graph.Nodes = append(graph.Nodes, pair.To)
+			nodeExists[pair.To] = struct{}{}
+		}
+
 		graph.Edges[idx].From = pair.From
 		graph.Edges[idx].To = pair.To
 	}
