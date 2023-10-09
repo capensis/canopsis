@@ -9,6 +9,8 @@
     remediation-instruction-execute-steps(
       :steps="instructionExecution.steps",
       :execution-id="instructionExecution._id",
+      :next-pending="nextPending",
+      :previous-pending="previousPending",
       v-on="$listeners"
     )
 </template>
@@ -22,6 +24,14 @@ export default {
     instructionExecution: {
       type: Object,
       required: true,
+    },
+    previousPending: {
+      type: Boolean,
+      default: false,
+    },
+    nextPending: {
+      type: Boolean,
+      default: false,
     },
   },
 };

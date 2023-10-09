@@ -18,11 +18,6 @@ export default {
       },
     },
   },
-  computed: {
-    menuDisabled() {
-      return !this.hasPopover || this.placeholder.data.resizing || this.placeholder.data.moving;
-    },
-  },
   data() {
     return {
       menu: false,
@@ -30,6 +25,15 @@ export default {
       openTimer: null,
       closeTimer: null,
     };
+  },
+  computed: {
+    contentClass() {
+      return `${this.$dayspan.fullscreenPopovers ? 'ds-fullscreen' : ''} ${this.popoverProps?.contentClass ?? ''}`;
+    },
+
+    menuDisabled() {
+      return !this.hasPopover || this.placeholder.data.resizing || this.placeholder.data.moving;
+    },
   },
   watch: {
     menu(menu) {

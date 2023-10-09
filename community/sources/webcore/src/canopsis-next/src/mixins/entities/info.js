@@ -34,6 +34,9 @@ export const entitiesInfoMixin = {
       timezone: 'timezone',
       fileUploadMaxSize: 'fileUploadMaxSize',
       remediationJobConfigTypes: 'remediationJobConfigTypes',
+      maintenance: 'maintenance',
+      defaultColorTheme: 'defaultColorTheme',
+      eventsCountTriggerDefaultThreshold: 'eventsCountTriggerDefaultThreshold',
     }),
 
     isProVersion() {

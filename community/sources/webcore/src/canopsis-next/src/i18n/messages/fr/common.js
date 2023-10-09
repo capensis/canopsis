@@ -1,11 +1,10 @@
-import { THEMES_NAMES } from '@/config';
 import {
   ENTITIES_STATES,
   ENTITIES_STATUSES,
   EVENT_ENTITY_TYPES,
   PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
-  TRIGGERS,
+  TRIGGERS_TYPES,
 } from '@/constants';
 
 export default {
@@ -20,7 +19,7 @@ export default {
   addPbehavior: 'Ajouter un comportement périodique',
   refresh: 'Rafraîchir',
   toggleEditView: 'Activer/Désactiver le mode édition',
-  toggleEditViewSubtitle: 'Si vous souhaitez enregistrer les positions des widgets, vous devez désactiver le mode édition pour cela',
+  toggleEditViewSubtitle: 'Si vous souhaitez enregistrer les positions des widgets, vous devez désactiver le mode édition',
   name: 'Nom',
   description: 'Description',
   author: 'Auteur',
@@ -52,7 +51,7 @@ export default {
   state: 'Criticité',
   sla: 'SLA',
   authors: 'Auteurs',
-  stat: 'Statistique',
+  stat: 'Statistiques',
   trend: 'Tendance',
   user: 'Utilisateur | Utilisateurs',
   role: 'Rôle | Rôles',
@@ -121,13 +120,13 @@ export default {
   deleteAll: 'Tout supprimer',
   payload: 'Payload',
   note: 'Note',
-  output: 'Output',
+  output: 'Message',
   created: 'Date de création',
   updated: 'Date de dernière modification',
   expired: 'Date d\'expiration',
   accessed: 'Consulté à',
   lastEventDate: 'Date du dernier événement',
-  lastPbehaviorDate: 'Date du dernier comportement',
+  lastPbehaviorDate: 'Date du dernier comportement périodique',
   activated: 'Activé',
   pattern: 'Modèle | Modèles',
   correlation: 'Corrélation',
@@ -148,7 +147,7 @@ export default {
   selectColor: 'Sélectionner la couleur',
   disableDuringPeriods: 'Désactiver pendant les pauses',
   retryDelay: 'Délai entre les tentatives',
-  retryUnit: 'Unité d\'essai',
+  retryUnit: 'Unité des tentatives',
   retryCount: 'Nombre de tentatives après échec',
   ticket: 'Ticket | Tickets',
   method: 'Méthode',
@@ -253,7 +252,7 @@ export default {
   countOfTotal: '{count} sur {total}',
   deprecatedTrigger: 'Ce déclencheur n\'est plus pris en charge',
   initialLongOutput: 'Sortie initiale longue',
-  totalStateChanges: 'Changements d\'état totaux',
+  totalStateChanges: 'Nombre de changements d\'état',
   noReceivedEvents: 'Aucun événement reçu pendant {duration} par certaines dépendances',
   frequencyLimit: 'Nombre d\'oscillations',
   clearSearch: 'Ne plus appliquer cette recherche',
@@ -272,8 +271,12 @@ export default {
   hidden: 'Caché',
   numberField: 'Champ numérique',
   chart: 'Graphique | Graphiques',
+  currentDate: 'Date actuelle',
   chooseFile: 'Choisir le fichier',
   seeAlarms: 'Voir les alarmes',
+  seeEntities: 'Voir les entités',
+  new: 'Nouvelle',
+  regexp: 'Expression régulière',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
@@ -292,6 +295,13 @@ export default {
     },
   },
   saveChanges: 'Sauvegarder',
+  ordinals: {
+    first: 'Premier',
+    second: 'Second',
+    third: 'Troisième',
+    fourth: 'Quatrième',
+    fifth: 'Cinquième',
+  },
   times: {
     second: 'seconde | secondes',
     minute: 'minute | minutes',
@@ -370,8 +380,8 @@ export default {
     [PATTERN_OPERATORS.higher]: 'Plus haut que',
     [PATTERN_OPERATORS.lower]: 'Plus bas que',
 
-    [PATTERN_OPERATORS.longer]: 'Supérieure à',
-    [PATTERN_OPERATORS.shorter]: 'Inférieure à',
+    [PATTERN_OPERATORS.longer]: 'Supérieur à',
+    [PATTERN_OPERATORS.shorter]: 'Inférieur à',
 
     [PATTERN_OPERATORS.ticketAssociated]: 'Un ticket est associé',
     [PATTERN_OPERATORS.ticketNotAssociated]: 'Un ticket n\'est pas associé',
@@ -398,7 +408,7 @@ export default {
   },
   entityEventTypes: {
     [EVENT_ENTITY_TYPES.ack]: 'Acquitter',
-    [EVENT_ENTITY_TYPES.ackRemove]: 'Suppression d\'acquittement',
+    [EVENT_ENTITY_TYPES.ackRemove]: 'Supprimer l\'acquittement',
     [EVENT_ENTITY_TYPES.assocTicket]: 'Associer un ticket',
     [EVENT_ENTITY_TYPES.declareTicket]: 'Déclarer un incident',
     [EVENT_ENTITY_TYPES.cancel]: 'Annuler',
@@ -410,94 +420,93 @@ export default {
   },
 
   triggers: {
-    [TRIGGERS.create]: {
+    [TRIGGERS_TYPES.create]: {
       text: 'Création d\'alarme',
     },
-    [TRIGGERS.statedec]: {
+    [TRIGGERS_TYPES.statedec]: {
       text: 'Diminution de la criticité',
     },
-    [TRIGGERS.changestate]: {
+    [TRIGGERS_TYPES.changestate]: {
       text: 'Changement et verrouillage de la criticité',
     },
-    [TRIGGERS.stateinc]: {
+    [TRIGGERS_TYPES.stateinc]: {
       text: 'Augmentation de la criticité',
     },
-    [TRIGGERS.changestatus]: {
+    [TRIGGERS_TYPES.changestatus]: {
       text: 'Changement de statut (flapping, bagot, ...)',
     },
-    [TRIGGERS.ack]: {
+    [TRIGGERS_TYPES.ack]: {
       text: 'Acquittement d\'une alarme',
     },
-    [TRIGGERS.ackremove]: {
+    [TRIGGERS_TYPES.ackremove]: {
       text: 'Suppression de l\'acquittement d\'une alarme',
     },
-    [TRIGGERS.cancel]: {
+    [TRIGGERS_TYPES.cancel]: {
       text: 'Annulation d\'une alarme',
     },
-    [TRIGGERS.uncancel]: {
+    [TRIGGERS_TYPES.uncancel]: {
       text: 'Annulation de l\'annulation d\'une alarme',
       helpText: 'L\'annulation ne peut se faire que par un événement posté sur l\'API',
     },
-    [TRIGGERS.comment]: {
+    [TRIGGERS_TYPES.comment]: {
       text: 'Commentaire sur une alarme',
     },
-    [TRIGGERS.declareticket]: {
+    [TRIGGERS_TYPES.declareticket]: {
       text: 'Déclaration de ticket depuis l\'interface graphique',
     },
-    [TRIGGERS.declareticketwebhook]: {
+    [TRIGGERS_TYPES.declareticketwebhook]: {
       text: 'Déclaration de ticket depuis un webhook',
     },
-    [TRIGGERS.assocticket]: {
+    [TRIGGERS_TYPES.assocticket]: {
       text: 'Association de ticket sur une alarme',
     },
-    [TRIGGERS.snooze]: {
+    [TRIGGERS_TYPES.snooze]: {
       text: 'Mise en veille d\'une alarme',
     },
-    [TRIGGERS.unsnooze]: {
+    [TRIGGERS_TYPES.unsnooze]: {
       text: 'Sortie de veille d\'une alarme',
     },
-    [TRIGGERS.resolve]: {
+    [TRIGGERS_TYPES.resolve]: {
       text: 'Résolution d\'une alarme',
     },
-    [TRIGGERS.activate]: {
+    [TRIGGERS_TYPES.activate]: {
       text: 'Activation d\'une alarme',
     },
-    [TRIGGERS.pbhenter]: {
+    [TRIGGERS_TYPES.pbhenter]: {
       text: 'Comportement périodique démarré',
     },
-    [TRIGGERS.pbhleave]: {
+    [TRIGGERS_TYPES.pbhleave]: {
       text: 'Comportement périodique terminé',
     },
-    [TRIGGERS.instructionfail]: {
+    [TRIGGERS_TYPES.instructionfail]: {
       text: 'Consigne manuelle en erreur',
     },
-    [TRIGGERS.autoinstructionfail]: {
+    [TRIGGERS_TYPES.autoinstructionfail]: {
       text: 'Consigne automatique en erreur',
     },
-    [TRIGGERS.instructionjobfail]: {
+    [TRIGGERS_TYPES.instructionjobfail]: {
       text: 'Job de remédiation en erreur',
     },
-    [TRIGGERS.instructionjobcomplete]: {
+    [TRIGGERS_TYPES.instructionjobcomplete]: {
       text: 'Job de remédiation terminé',
     },
-    [TRIGGERS.instructioncomplete]: {
+    [TRIGGERS_TYPES.instructioncomplete]: {
       text: 'Consigne manuelle terminée',
     },
-    [TRIGGERS.autoinstructioncomplete]: {
+    [TRIGGERS_TYPES.autoinstructioncomplete]: {
       text: 'Consigne automatique terminée',
     },
-    [TRIGGERS.autoinstructionresultok]: {
+    [TRIGGERS_TYPES.autoinstructionresultok]: {
       text: 'L\'alarme est en état OK après toutes les instructions automatiques',
     },
-    [TRIGGERS.autoinstructionresultfail]: {
+    [TRIGGERS_TYPES.autoinstructionresultfail]: {
       text: 'L\'alarme n\'est pas dans l\'état OK après toutes les instructions automatiques',
     },
-  },
-  themes: {
-    [THEMES_NAMES.canopsis]: 'Canopsis',
-    [THEMES_NAMES.canopsisDark]: 'Canopsis sombre',
-    [THEMES_NAMES.colorBlind]: 'Daltonien',
-    [THEMES_NAMES.colorBlindDark]: 'Daltonien foncé',
+    [TRIGGERS_TYPES.eventscount]: {
+      text: 'L\'alarme a été reçue pour un certain nombre d\'événements',
+      selectedText: 'L\'alarme a été reçue {additionalValue} événements',
+      additionalFieldLabel: 'Nombre d\'événements',
+    },
   },
   request: {
     timeout: 'Temps libre',

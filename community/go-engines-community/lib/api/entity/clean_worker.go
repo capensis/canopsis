@@ -10,7 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
 
@@ -94,7 +94,7 @@ func (w *worker) processTask(ctx context.Context, task CleanTask) {
 		case <-lockCtx.Done():
 			return
 		case <-ticker.C:
-			err := w.redisClient.SetEX(lockCtx, libredis.ApiCleanEntitiesLockKey, lockValue, lockExpirationTime).Err()
+			err := w.redisClient.SetEx(lockCtx, libredis.ApiCleanEntitiesLockKey, lockValue, lockExpirationTime).Err()
 			if err != nil {
 				w.logger.Err(err).Msg("cannot update redis lock")
 			}
@@ -118,20 +118,20 @@ func (w *worker) doTask(ctx context.Context, task CleanTask) {
 	}()
 
 	arch := NewArchiver(dbClient)
-
-	if *task.Archive {
-		archived, err := arch.ArchiveDisabledEntities(ctx, task.ArchiveDependencies)
+	switch task.Type {
+	case CleanTaskTypeArchiveDisabled:
+		archived, err := arch.ArchiveDisabledEntities(ctx, task.ArchiveWithDependencies)
 		if err != nil {
-			w.logger.Err(err).Msg("Failed to archive entities")
+			w.logger.Err(err).Msg("failed to archive disabled entities")
 			return
 		}
 
-		err = w.dataStorageAdapter.UpdateHistoryEntity(ctx, datastorage.HistoryWithCount{
-			Time:     types.CpsTime{Time: time.Now()},
+		err = w.dataStorageAdapter.UpdateHistoryEntityDisabled(ctx, datastorage.HistoryWithCount{
+			Time:     types.NewCpsTime(),
 			Archived: archived,
 		})
 		if err != nil {
-			w.logger.Err(err).Msg("Failed to update entity history")
+			w.logger.Err(err).Msg("failed to update entity history")
 			return
 		}
 
@@ -140,23 +140,61 @@ func (w *worker) doTask(ctx context.Context, task CleanTask) {
 		}
 
 		w.logger.Info().Int64("entities_number", archived).Str("user", task.UserID).Msg("disabled entities have been archived")
-		return
-	}
+	case CleanTaskTypeArchiveUnlinked:
+		if task.ArchiveBefore == nil {
+			return
+		}
 
-	deleted, err := arch.DeleteArchivedEntities(ctx)
-	if err != nil {
-		w.logger.Err(err).Msg("Failed to delete archived entities")
-		return
-	}
+		before := task.ArchiveBefore.SubFrom(types.NewCpsTime())
+		totalArchived, err := arch.ArchiveUnlinkedResources(ctx, before)
+		if err != nil {
+			w.logger.Err(err).Msg("failed to archive unlinked resources")
+		}
 
-	err = w.dataStorageAdapter.UpdateHistoryEntity(ctx, datastorage.HistoryWithCount{
-		Time:    types.CpsTime{Time: time.Now()},
-		Deleted: deleted,
-	})
-	if err != nil {
-		w.logger.Err(err).Msg("Failed to update entity history")
-		return
-	}
+		archivedComponents, err := arch.ArchiveUnlinkedComponents(ctx, before)
+		if err != nil {
+			w.logger.Err(err).Msg("failed to archive unlinked components")
+		}
 
-	w.logger.Info().Int64("alarm_number", deleted).Str("user", task.UserID).Msg("archived entities have been deleted")
+		totalArchived += archivedComponents
+		archivedConnectors, err := arch.ArchiveUnlinkedConnectors(ctx, before)
+		if err != nil {
+			w.logger.Err(err).Msg("failed to archive unlinked connectors")
+		}
+
+		totalArchived += archivedConnectors
+		err = w.dataStorageAdapter.UpdateHistoryEntityUnlinked(ctx, datastorage.HistoryWithCount{
+			Time:     types.NewCpsTime(),
+			Archived: totalArchived,
+		})
+		if err != nil {
+			w.logger.Err(err).Msg("failed to update entity history")
+			return
+		}
+
+		if totalArchived > 0 {
+			w.metricMetaUpdater.UpdateAll(ctx)
+		}
+
+		w.logger.Info().Int64("entities_number", totalArchived).Str("user", task.UserID).Msg("unlinked entities have been archived")
+	case CleanTaskTypeCleanArchived:
+		deleted, err := arch.DeleteArchivedEntities(ctx)
+		if err != nil {
+			w.logger.Err(err).Msg("failed to delete archived entities")
+			return
+		}
+
+		err = w.dataStorageAdapter.UpdateHistoryEntityCleaned(ctx, datastorage.HistoryWithCount{
+			Time:    types.NewCpsTime(),
+			Deleted: deleted,
+		})
+		if err != nil {
+			w.logger.Err(err).Msg("failed to update entity history")
+			return
+		}
+
+		w.logger.Info().Int64("alarm_number", deleted).Str("user", task.UserID).Msg("archived entities have been deleted")
+	default:
+		w.logger.Error().Msgf("unknown task type %d", task.Type)
+	}
 }

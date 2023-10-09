@@ -94,13 +94,13 @@
       :dense="dense",
       :refresh-alarms-list="fetchList",
       :selected-tag="query.tag",
+      :search="query.search",
       :selectable="!hideMassSelection",
       :hide-actions="hideActions",
       :resizable-column="resizableColumn",
       :draggable-column="draggableColumn",
       :cells-content-behavior="cellsContentBehavior",
       :columns-settings="columnsSettings",
-      :editing="editing",
       expandable,
       densable,
       @select:tag="selectTag",
@@ -127,6 +127,7 @@ import { exportMixinCreator } from '@/mixins/widget/export';
 import { widgetSearchMixin } from '@/mixins/widget/search';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
+import { widgetAlarmsSocketMixin } from '@/mixins/widget/alarms-socket';
 import { widgetRemediationInstructionsFilterMixin } from '@/mixins/widget/remediation-instructions-filter-select';
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
 import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
@@ -134,8 +135,9 @@ import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
 import { permissionsWidgetsAlarmsListCorrelation } from '@/mixins/permissions/widgets/alarms-list/correlation';
 import { permissionsWidgetsAlarmsListCategory } from '@/mixins/permissions/widgets/alarms-list/category';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
-import { permissionsWidgetsAlarmsListRemediationInstructionsFilters }
-  from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
+import {
+  permissionsWidgetsAlarmsListRemediationInstructionsFilters,
+} from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
 
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
@@ -167,6 +169,7 @@ export default {
     widgetSearchMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
+    widgetAlarmsSocketMixin,
     widgetRemediationInstructionsFilterMixin,
     entitiesAlarmMixin,
     entitiesAlarmTagMixin,

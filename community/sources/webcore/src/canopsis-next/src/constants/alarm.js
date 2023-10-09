@@ -63,6 +63,7 @@ export const ALARM_FIELDS = {
    */
   ack: 'v.ack',
   ticket: 'v.ticket',
+  ticketData: 'v.ticket.ticket_data',
   canceled: 'v.canceled',
   snooze: 'v.snooze',
   pbehaviorInfo: 'v.pbehavior_info',
@@ -77,6 +78,13 @@ export const ALARM_INFOS_FIELDS = [
   ALARM_FIELDS.infos,
   ALARM_FIELDS.entityInfos,
   ALARM_FIELDS.entityComponentInfos,
+];
+
+export const ALARM_OUTPUT_FIELDS = [
+  ALARM_FIELDS.output,
+  ALARM_FIELDS.longOutput,
+  ALARM_FIELDS.initialOutput,
+  ALARM_FIELDS.initialLongOutput,
 ];
 
 export const ALARM_LEVELS = {
@@ -101,6 +109,8 @@ export const ALARM_LIST_ACTIONS_TYPES = {
   changeState: 'changeState',
   variablesHelp: 'variablesHelp',
   history: 'history',
+  exportPdf: 'exportPdf',
+  groupRequest: 'groupRequest',
   createManualMetaAlarm: 'createManualMetaAlarm',
   removeAlarmsFromManualMetaAlarm: 'removeAlarmsFromManualMetaAlarm',
   removeAlarmsFromAutoMetaAlarm: 'removeAlarmsFromAutoMetaAlarm',
@@ -155,21 +165,21 @@ export const META_ALARMS_THRESHOLD_TYPES = {
 export const ALARMS_LIST_TIME_LINE_SYSTEM_AUTHOR = 'canopsis.engine';
 
 export const DEFAULT_ALARMS_WIDGET_COLUMNS = [
-  { value: ALARM_FIELDS.connector },
-  { value: ALARM_FIELDS.connectorName },
-  { value: ALARM_FIELDS.component },
-  { value: ALARM_FIELDS.resource },
-  { value: ALARM_FIELDS.output },
+  { value: ALARM_FIELDS.connector, isHtml: true },
+  { value: ALARM_FIELDS.connectorName, isHtml: true },
+  { value: ALARM_FIELDS.component, isHtml: true },
+  { value: ALARM_FIELDS.resource, isHtml: true },
+  { value: ALARM_FIELDS.output, isHtml: true },
   { value: ALARM_FIELDS.extraDetails },
   { value: ALARM_FIELDS.state },
   { value: ALARM_FIELDS.status },
 ];
 
 export const DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS = [
-  { value: ALARM_FIELDS.connector },
-  { value: ALARM_FIELDS.connectorName },
-  { value: ALARM_FIELDS.resource },
-  { value: ALARM_FIELDS.output },
+  { value: ALARM_FIELDS.connector, isHtml: true },
+  { value: ALARM_FIELDS.connectorName, isHtml: true },
+  { value: ALARM_FIELDS.resource, isHtml: true },
+  { value: ALARM_FIELDS.output, isHtml: true },
   { value: ALARM_FIELDS.extraDetails },
   { value: ALARM_FIELDS.state },
   { value: ALARM_FIELDS.status },
@@ -293,6 +303,9 @@ export const ALARM_PATTERN_FIELDS = {
   totalStateChanges: ALARM_FIELDS.totalStateChanges,
   tags: ALARM_FIELDS.tags,
   activated: ALARM_FIELDS.activated,
+  ticketValue: ALARM_FIELDS.ticketValue,
+  ticketMessage: ALARM_FIELDS.ticketMessage,
+  ticketData: ALARM_FIELDS.ticketData,
 };
 
 export const ALARM_ACK_INITIATORS = {
@@ -326,6 +339,60 @@ export const ALARM_TEMPLATE_FIELDS = {
   pbehaviorInfo: `alarm.${ALARM_FIELDS.pbehaviorInfo}`,
   duration: `alarm.${ALARM_FIELDS.duration}`,
   eventsCount: `alarm.${ALARM_FIELDS.eventsCount}`,
+};
+
+export const ALARM_EXPORT_PDF_FIELDS = {
+  currentDate: 'current_date',
+  displayName: 'display_name',
+  state: 'state',
+  status: 'status',
+  connector: 'connector',
+  connectorName: 'connector_name',
+  component: 'component',
+  resource: 'resource',
+  initialOutput: 'initial_output',
+  output: 'output',
+  eventsCount: 'events_count',
+  duration: 'duration',
+  creationDate: 'creation_date',
+  lastEventDate: 'last_event_date',
+  lastUpdateDate: 'last_update_date',
+  acknowledgeDate: 'acknowledge_date',
+  resolved: 'resolved',
+  activationDate: 'activation_date',
+  infos: 'infos',
+  pbehaviorInfo: 'pbehavior_info',
+  ticket: 'ticket',
+  comments: 'comments',
+  tags: 'tags',
+  links: 'links',
+};
+
+export const ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS = {
+  [ALARM_EXPORT_PDF_FIELDS.currentDate]: 'current_date',
+  [ALARM_EXPORT_PDF_FIELDS.displayName]: 'alarm.v.display_name',
+  [ALARM_EXPORT_PDF_FIELDS.state]: 'alarm.v.state',
+  [ALARM_EXPORT_PDF_FIELDS.status]: 'alarm.v.status',
+  [ALARM_EXPORT_PDF_FIELDS.connector]: 'alarm.v.connector',
+  [ALARM_EXPORT_PDF_FIELDS.connectorName]: 'alarm.v.connector_name',
+  [ALARM_EXPORT_PDF_FIELDS.component]: 'alarm.v.component',
+  [ALARM_EXPORT_PDF_FIELDS.resource]: 'alarm.v.resource',
+  [ALARM_EXPORT_PDF_FIELDS.initialOutput]: 'alarm.v.initial_output',
+  [ALARM_EXPORT_PDF_FIELDS.output]: 'alarm.v.output',
+  [ALARM_EXPORT_PDF_FIELDS.eventsCount]: 'alarm.v.events_count',
+  [ALARM_EXPORT_PDF_FIELDS.duration]: 'alarm.v.duration',
+  [ALARM_EXPORT_PDF_FIELDS.creationDate]: 'alarm.v.creation_date',
+  [ALARM_EXPORT_PDF_FIELDS.lastEventDate]: 'alarm.v.last_event_date',
+  [ALARM_EXPORT_PDF_FIELDS.lastUpdateDate]: 'alarm.v.last_update_date',
+  [ALARM_EXPORT_PDF_FIELDS.acknowledgeDate]: 'alarm.v.acknowledge_date',
+  [ALARM_EXPORT_PDF_FIELDS.resolved]: 'alarm.v.resolved',
+  [ALARM_EXPORT_PDF_FIELDS.activationDate]: 'alarm.v.activation_date',
+  [ALARM_EXPORT_PDF_FIELDS.infos]: 'alarm.v.infos',
+  [ALARM_EXPORT_PDF_FIELDS.pbehaviorInfo]: 'alarm.v.pbehavior_info',
+  [ALARM_EXPORT_PDF_FIELDS.ticket]: 'alarm.v.ticket',
+  [ALARM_EXPORT_PDF_FIELDS.comments]: 'alarm.comments',
+  [ALARM_EXPORT_PDF_FIELDS.tags]: 'alarm.tags',
+  [ALARM_EXPORT_PDF_FIELDS.links]: 'alarm.links',
 };
 
 export const ALARM_FIELDS_TO_LABELS_KEYS = {
@@ -391,6 +458,7 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
    */
   [ALARM_FIELDS.ack]: 'common.ack',
   [ALARM_FIELDS.ticket]: 'common.ticket',
+  [ALARM_FIELDS.ticketData]: 'alarm.fields.ticketData',
   [ALARM_FIELDS.canceled]: 'common.canceled',
   [ALARM_FIELDS.snooze]: 'common.snooze',
   [ALARM_FIELDS.pbehaviorInfo]: 'pbehavior.pbehaviorInfo',

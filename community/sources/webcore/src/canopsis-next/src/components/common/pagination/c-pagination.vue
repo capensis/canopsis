@@ -19,7 +19,7 @@
         )
           v-icon chevron_right
     v-layout(v-else, align-center, justify-center)
-      span.grey--text.text--darken-1 {{ $t('common.paginationItems', { first, last, total }) }}
+      span.text--secondary {{ $t('common.paginationItems', { first, last, total }) }}
       v-pagination(
         data-test="vPagination",
         :value="page",

@@ -28,6 +28,8 @@ import { convertDurationToString, durationWithEnabledToForm, isValidUnit } from 
 import { addKeyInEntities, removeKeyFromEntities } from '@/helpers/array';
 import { kioskParametersToForm } from '@/helpers/entities/shared/kiosk/form';
 
+import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
+
 import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../template/form';
 import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
@@ -124,6 +126,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  */
 
 /**
+
  * @typedef {Object} AlarmListBaseParameters
  * @property {number} itemsPerPage
  * @property {WidgetSort} sort
@@ -132,6 +135,8 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {WidgetInfoPopup[]} infoPopups
  * @property {string} widgetColumnsTemplate
  * @property {WidgetColumn[]} widgetColumns
+ * @property {string} exportPdfTemplate
+ * @property {string} exportPdfTemplateTemplate
  */
 
 /**
@@ -147,6 +152,8 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {string} widgetGroupColumnsTemplate
  * @property {string} widgetExportColumnsTemplate
  * @property {string} serviceDependenciesColumnsTemplate
+ * @property {string} exportPdfTemplate
+ * @property {string} exportPdfTemplateTemplate
  * @property {WidgetColumn[]} widgetColumns
  * @property {WidgetColumn[]} widgetGroupColumns
  * @property {WidgetColumn[]} widgetExportColumns
@@ -154,6 +161,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} isAckNoteRequired
  * @property {boolean} isSnoozeNoteRequired
  * @property {boolean} isRemoveAlarmsFromMetaAlarmCommentRequired
+ * @property {boolean} isUncancelAlarmsCommentRequired
  * @property {boolean} isMultiAckEnabled
  * @property {boolean} isMultiDeclareTicketEnabled
  * @property {boolean} isHtmlEnabledOnTimeLine
@@ -165,6 +173,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
 /**
  * @typedef {AlarmListWidgetDefaultParameters} AlarmListWidgetParameters
  * @property {DurationWithEnabled} periodic_refresh
+ * @property {boolean} liveWatching
  * @property {string | null} mainFilter
  * @property {WidgetLiveReporting} liveReporting
  * @property {WidgetSort} sort
@@ -269,6 +278,8 @@ export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
   infoPopups: infoPopupsToForm(alarmListParameters.infoPopups),
   widgetColumnsTemplate: widgetTemplateValueToForm(alarmListParameters.widgetColumnsTemplate),
   widgetColumns: widgetColumnsToForm(alarmListParameters.widgetColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
+  exportPdfTemplate: alarmListParameters.exportPdfTemplate ?? ALARM_EXPORT_PDF_TEMPLATE,
+  exportPdfTemplateTemplate: widgetTemplateValueToForm(alarmListParameters.exportPdfTemplateTemplate),
 });
 
 /**
@@ -325,9 +336,10 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isAckNoteRequired: !!parameters.isAckNoteRequired,
   isSnoozeNoteRequired: !!parameters.isSnoozeNoteRequired,
   isRemoveAlarmsFromMetaAlarmCommentRequired: parameters.isRemoveAlarmsFromMetaAlarmCommentRequired ?? true,
+  isUncancelAlarmsCommentRequired: parameters.isUncancelAlarmsCommentRequired ?? true,
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
   isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
-  isHtmlEnabledOnTimeLine: !!parameters.isHtmlEnabledOnTimeLine,
+  isHtmlEnabledOnTimeLine: parameters.isHtmlEnabledOnTimeLine ?? true,
   isActionsAllowWithOkState: !!parameters.isActionsAllowWithOkState,
   sticky_header: !!parameters.sticky_header,
   dense: parameters.dense ?? ALARM_DENSE_TYPES.large,
@@ -356,6 +368,8 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   widgetExportColumns:
     widgetColumnsToForm(parameters.widgetExportColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
   inlineLinksCount: parameters.inlineLinksCount ?? DEFAULT_LINKS_INLINE_COUNT,
+  exportPdfTemplate: parameters.exportPdfTemplate ?? ALARM_EXPORT_PDF_TEMPLATE,
+  exportPdfTemplateTemplate: widgetTemplateValueToForm(parameters.exportPdfTemplateTemplate),
 });
 
 /**
@@ -369,6 +383,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   ...alarmListWidgetDefaultParametersToForm(parameters),
 
   periodic_refresh: periodicRefreshToDurationForm(parameters.periodic_refresh),
+  liveWatching: parameters.liveWatching ?? false,
   mainFilter: parameters.mainFilter ?? null,
   clearFilterDisabled: parameters.clearFilterDisabled ?? false,
   liveReporting: parameters.liveReporting
@@ -396,6 +411,7 @@ export const formToAlarmListBaseParameters = (form = {}) => ({
   ...form,
 
   moreInfoTemplateTemplate: formToWidgetTemplateValue(form.moreInfoTemplateTemplate),
+  exportPdfTemplateTemplate: formToWidgetTemplateValue(form.exportPdfTemplateTemplate),
   widgetColumnsTemplate: formToWidgetTemplateValue(form.widgetColumnsTemplate),
   widgetColumns: formToWidgetColumns(form.widgetColumns),
 });
@@ -432,6 +448,7 @@ export const formToAlarmListWidgetParameters = form => ({
   ...form,
 
   moreInfoTemplateTemplate: formToWidgetTemplateValue(form.moreInfoTemplateTemplate),
+  exportPdfTemplateTemplate: formToWidgetTemplateValue(form.exportPdfTemplateTemplate),
   widgetColumnsTemplate: formToWidgetTemplateValue(form.widgetColumnsTemplate),
   widgetGroupColumnsTemplate: formToWidgetTemplateValue(form.widgetGroupColumnsTemplate),
   serviceDependenciesColumnsTemplate: formToWidgetTemplateValue(form.serviceDependenciesColumnsTemplate),

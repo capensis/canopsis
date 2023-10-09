@@ -1,11 +1,11 @@
 <template lang="pug">
-  c-runtime-template(:template="compiledTemplate")
+  c-compiled-template(:template="modalTemplate", :context="templateContext")
 </template>
 
 <script>
 import Handlebars from 'handlebars';
 
-import { compile, registerHelper, unregisterHelper } from '@/helpers/handlebars';
+import { registerHelper, unregisterHelper } from '@/helpers/handlebars';
 
 import ServiceEntitiesList from './service-entities-list.vue';
 
@@ -35,17 +35,11 @@ export default {
       required: false,
     },
   },
-  asyncComputed: {
-    compiledTemplate: {
-      async get() {
-        const compiledTemplate = await compile(this.modalTemplate, { entity: this.service });
-
-        return `<div>${compiledTemplate}</div>`;
-      },
-      default: '',
-    },
-  },
   computed: {
+    templateContext() {
+      return { entity: this.service };
+    },
+
     modalTemplate() {
       return this.widgetParameters.modalTemplate || '';
     },

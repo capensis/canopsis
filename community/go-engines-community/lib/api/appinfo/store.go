@@ -4,6 +4,7 @@ import (
 	"context"
 	"sort"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -23,24 +24,30 @@ type Store interface {
 	RetrieveRemediationConfig(ctx context.Context) (RemediationConf, error)
 	UpdateUserInterfaceConfig(ctx context.Context, conf *UserInterfaceConf) error
 	DeleteUserInterfaceConfig(ctx context.Context) error
+	RetrieveMaintenanceState(ctx context.Context) (bool, error)
+	RetrieveDefaultColorTheme(ctx context.Context) (colortheme.Theme, error)
 }
 
 type store struct {
-	dbClient         mongo.DbClient
-	configCollection mongo.DbCollection
+	dbClient             mongo.DbClient
+	configCollection     mongo.DbCollection
+	colorThemeCollection mongo.DbCollection
+	maintenanceAdapter   config.MaintenanceAdapter
 
 	authProviders       []string
 	casTitle, samlTitle string
 }
 
 // NewStore instantiates configuration store.
-func NewStore(db mongo.DbClient, authProviders []string, casTitle, samlTitle string) Store {
+func NewStore(db mongo.DbClient, maintenanceAdapter config.MaintenanceAdapter, authProviders []string, casTitle, samlTitle string) Store {
 	return &store{
-		dbClient:         db,
-		configCollection: db.Collection(mongo.ConfigurationMongoCollection),
-		authProviders:    authProviders,
-		casTitle:         casTitle,
-		samlTitle:        samlTitle,
+		dbClient:             db,
+		configCollection:     db.Collection(mongo.ConfigurationMongoCollection),
+		colorThemeCollection: db.Collection(mongo.ColorThemeCollection),
+		maintenanceAdapter:   maintenanceAdapter,
+		authProviders:        authProviders,
+		casTitle:             casTitle,
+		samlTitle:            samlTitle,
 	}
 }
 
@@ -91,7 +98,11 @@ func (s *store) RetrieveVersionConfig(ctx context.Context) (VersionConf, error) 
 }
 
 func (s *store) RetrieveGlobalConfig(ctx context.Context) (GlobalConf, error) {
-	conf := config.CanopsisConf{}
+	conf := config.CanopsisConf{
+		Global: config.SectionGlobal{
+			EventsCountTriggerDefaultThreshold: config.DefaultEventsCountThreshold,
+		},
+	}
 	err := s.configCollection.FindOne(ctx, bson.M{"_id": config.ConfigKeyName}).Decode(&conf)
 	if err != nil {
 		if err == mongodriver.ErrNoDocuments {
@@ -102,8 +113,9 @@ func (s *store) RetrieveGlobalConfig(ctx context.Context) (GlobalConf, error) {
 	}
 
 	return GlobalConf{
-		Timezone:          conf.Timezone.Timezone,
-		FileUploadMaxSize: conf.File.UploadMaxSize,
+		Timezone:                           conf.Timezone.Timezone,
+		FileUploadMaxSize:                  conf.File.UploadMaxSize,
+		EventsCountTriggerDefaultThreshold: conf.Global.EventsCountTriggerDefaultThreshold,
 	}, nil
 }
 
@@ -123,8 +135,10 @@ func (s *store) RetrieveRemediationConfig(ctx context.Context) (RemediationConf,
 	i := 0
 	for name, apiConfig := range conf.ExternalAPI {
 		result.JobConfigTypes[i] = JobConfigType{
-			Name:     name,
-			AuthType: apiConfig.Auth.Type,
+			Name:      name,
+			AuthType:  apiConfig.Auth.Type,
+			WithBody:  apiConfig.LaunchEndpoint.WithBody,
+			WithQuery: apiConfig.LaunchEndpoint.WithUrlQuery,
 		}
 		i++
 	}
@@ -134,6 +148,15 @@ func (s *store) RetrieveRemediationConfig(ctx context.Context) (RemediationConf,
 	})
 
 	return result, nil
+}
+
+func (s *store) RetrieveMaintenanceState(ctx context.Context) (bool, error) {
+	maintenanceConf, err := s.maintenanceAdapter.GetConfig(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	return maintenanceConf.Enabled, nil
 }
 
 func (s *store) UpdateUserInterfaceConfig(ctx context.Context, model *UserInterfaceConf) error {
@@ -174,4 +197,10 @@ func (s *store) UpdateUserInterfaceConfig(ctx context.Context, model *UserInterf
 func (s *store) DeleteUserInterfaceConfig(ctx context.Context) error {
 	_, err := s.configCollection.DeleteOne(ctx, bson.M{"_id": config.UserInterfaceKeyName})
 	return err
+}
+
+func (s *store) RetrieveDefaultColorTheme(ctx context.Context) (colortheme.Theme, error) {
+	var t colortheme.Theme
+
+	return t, s.colorThemeCollection.FindOne(ctx, bson.M{"_id": colortheme.Canopsis}).Decode(&t)
 }
