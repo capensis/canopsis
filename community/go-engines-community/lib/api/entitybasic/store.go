@@ -40,6 +40,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Entity, error) {
 			"_id":          id,
 			"type":         bson.M{"$in": s.basicTypes},
 			"soft_deleted": bson.M{"$exists": false},
+			"healthcheck":  bson.M{"$in": bson.A{nil, false}},
 		}},
 		// Find category
 		{"$lookup": bson.M{

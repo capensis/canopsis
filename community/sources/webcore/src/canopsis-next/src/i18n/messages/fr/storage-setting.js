@@ -22,11 +22,20 @@ export default {
   entity: {
     title: 'Stockage des données des entités',
     titleHelp: 'Toutes les entités désactivées avec des alarmes associées peuvent être archivées (déplacées dans la collection séparée) et/ou supprimées pour toujours.',
-    archiveEntity: 'Archiver les entités désactivées',
-    deleteEntity: 'Supprimer définitivement les entités désactivées de l\'archive',
     archiveDependencies: 'Supprimer également les entités impactantes et dépendantes',
     archiveDependenciesHelp: 'Pour les connecteurs, tous les composants et toutes les ressources impactants et dépendants seront archivés ou supprimés pour toujours. Pour les composants, toutes les ressources dépendantes seront également archivées ou supprimées pour toujours.',
-    cleanStorage: 'Archiver ou Supprimer les entités désactivées',
+    archiveDisabled: 'Archiver les entités désactivées',
+  },
+  entityUnlinked: {
+    title: 'Unlinked entities storage',
+    titleHelp: 'All unlinked connectors, components and resources without alarms and updated long time ago can be archived.',
+    archiveBefore: 'Archive entities when no events received for',
+    archiveUnlinked: 'Archive unlinked entities',
+  },
+  entityArchived: {
+    title: 'Archived data storage',
+    titleHelp: 'All the archived entities can be deleted forever.',
+    cleanArchive: 'Clean archive',
   },
   pbehavior: {
     title: 'Stockage des données de comportements périodiques',

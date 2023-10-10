@@ -26,6 +26,6 @@ func NewEngine(ctx context.Context, options fifo.Options, logger zerolog.Logger)
 		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), logger)
 
 	return fifo.Default(ctx, options, dbClient, cfg, eventfilter.NewExternalDataGetterContainer(),
-		config.NewTimezoneConfigProvider(cfg, logger), config.NewTemplateConfigProvider(cfg), eventFilterEventCounter,
+		config.NewTimezoneConfigProvider(cfg, logger), config.NewTemplateConfigProvider(cfg, logger), eventFilterEventCounter,
 		eventFilterFailureService, logger)
 }

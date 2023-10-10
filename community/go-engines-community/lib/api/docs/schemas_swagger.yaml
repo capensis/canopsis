@@ -824,6 +824,8 @@ definitions:
         $ref: '#/definitions/colortheme.Theme'
       edition:
         type: string
+      events_count_trigger_default_threshold:
+        type: integer
       file_upload_max_size:
         type: integer
       footer:
@@ -1286,7 +1288,11 @@ definitions:
     properties:
       alarm:
         $ref: '#/definitions/datastorage.HistoryWithCount'
-      entity:
+      entity_cleaned:
+        $ref: '#/definitions/datastorage.HistoryWithCount'
+      entity_disabled:
+        $ref: '#/definitions/datastorage.HistoryWithCount'
+      entity_unlinked:
         $ref: '#/definitions/datastorage.HistoryWithCount'
       event_filter_failure:
         type: integer
@@ -1310,6 +1316,16 @@ definitions:
       time:
         type: integer
     type: object
+  entity.ArchiveDisabledRequest:
+    properties:
+      with_dependencies:
+        type: boolean
+    type: object
+  entity.ArchiveUnlinkedRequest:
+    properties:
+      archive_before:
+        $ref: '#/definitions/types.DurationWithUnit'
+    type: object
   entity.BulkToggleRequestItem:
     properties:
       _id:
@@ -1323,15 +1339,6 @@ definitions:
         type: string
       name:
         type: string
-    type: object
-  entity.CleanRequest:
-    properties:
-      archive:
-        type: boolean
-      archive_dependencies:
-        type: boolean
-    required:
-    - archive
     type: object
   entity.ContextGraphResponse:
     properties:
@@ -4206,36 +4213,8 @@ definitions:
         minimum: 0
         type: integer
       triggers:
-        description: |-
-          Possible trigger values.
-            * `create` - Alarm creation
-            * `statedec` - Alarm state decrease
-            * `changestate` - Alarm state has been changed by "change state" action
-            * `stateinc` - Alarm state increase
-            * `changestatus` - Alarm status changes eg. flapping
-            * `ack` - Alarm has been acked
-            * `ackremove` - Alarm has been unacked
-            * `cancel` - Alarm has been cancelled
-            * `uncancel` - Alarm has been uncancelled
-            * `comment` - Alarm has been commented
-            * `declareticketwebhook` - Ticket has been declared by the webhook
-            * `assocticket` - Ticket has been associated with an alarm
-            * `snooze` - Alarm has been snoozed
-            * `unsnooze` - Alarm has been unsnoozed
-            * `pbhenter` - Alarm enters a periodic behavior
-            * `activate` - Alarm has been activated
-            * `resolve` - Alarm has been resolved
-            * `pbhleave` - Alarm leaves a periodic behavior
-            * `instructionfail` - Manual instruction has failed
-            * `autoinstructionfail` - Auto instruction has failed
-            * `instructionjobfail` - Manual or auto instruction's job is failed
-            * `instructionjobcomplete` - Manual or auto instruction's job is completed
-            * `instructioncomplete` - Manual instruction is completed
-            * `autoinstructioncomplete` - Auto instruction is completed
-            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
-            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
-          type: string
+          $ref: '#/definitions/scenario.Trigger'
         type: array
     required:
     - _id
@@ -4271,36 +4250,8 @@ definitions:
         minimum: 0
         type: integer
       triggers:
-        description: |-
-          Possible trigger values.
-            * `create` - Alarm creation
-            * `statedec` - Alarm state decrease
-            * `changestate` - Alarm state has been changed by "change state" action
-            * `stateinc` - Alarm state increase
-            * `changestatus` - Alarm status changes eg. flapping
-            * `ack` - Alarm has been acked
-            * `ackremove` - Alarm has been unacked
-            * `cancel` - Alarm has been cancelled
-            * `uncancel` - Alarm has been uncancelled
-            * `comment` - Alarm has been commented
-            * `declareticketwebhook` - Ticket has been declared by the webhook
-            * `assocticket` - Ticket has been associated with an alarm
-            * `snooze` - Alarm has been snoozed
-            * `unsnooze` - Alarm has been unsnoozed
-            * `pbhenter` - Alarm enters a periodic behavior
-            * `activate` - Alarm has been activated
-            * `resolve` - Alarm has been resolved
-            * `pbhleave` - Alarm leaves a periodic behavior
-            * `instructionfail` - Manual instruction has failed
-            * `autoinstructionfail` - Auto instruction has failed
-            * `instructionjobfail` - Manual or auto instruction's job is failed
-            * `instructionjobcomplete` - Manual or auto instruction's job is completed
-            * `instructioncomplete` - Manual instruction is completed
-            * `autoinstructioncomplete` - Auto instruction is completed
-            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
-            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
-          type: string
+          $ref: '#/definitions/scenario.Trigger'
         type: array
     required:
     - actions
@@ -4333,36 +4284,8 @@ definitions:
         minimum: 0
         type: integer
       triggers:
-        description: |-
-          Possible trigger values.
-            * `create` - Alarm creation
-            * `statedec` - Alarm state decrease
-            * `changestate` - Alarm state has been changed by "change state" action
-            * `stateinc` - Alarm state increase
-            * `changestatus` - Alarm status changes eg. flapping
-            * `ack` - Alarm has been acked
-            * `ackremove` - Alarm has been unacked
-            * `cancel` - Alarm has been cancelled
-            * `uncancel` - Alarm has been uncancelled
-            * `comment` - Alarm has been commented
-            * `declareticketwebhook` - Ticket has been declared by the webhook
-            * `assocticket` - Ticket has been associated with an alarm
-            * `snooze` - Alarm has been snoozed
-            * `unsnooze` - Alarm has been unsnoozed
-            * `pbhenter` - Alarm enters a periodic behavior
-            * `activate` - Alarm has been activated
-            * `resolve` - Alarm has been resolved
-            * `pbhleave` - Alarm leaves a periodic behavior
-            * `instructionfail` - Manual instruction has failed
-            * `autoinstructionfail` - Auto instruction has failed
-            * `instructionjobfail` - Manual or auto instruction's job is failed
-            * `instructionjobcomplete` - Manual or auto instruction's job is completed
-            * `instructioncomplete` - Manual instruction is completed
-            * `autoinstructioncomplete` - Auto instruction is completed
-            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
-            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
-          type: string
+          $ref: '#/definitions/scenario.Trigger'
         type: array
     required:
     - actions
@@ -4448,10 +4371,76 @@ definitions:
         type: integer
       triggers:
         items:
-          type: string
+          $ref: '#/definitions/scenario.Trigger'
         type: array
       updated:
         type: integer
+    type: object
+  scenario.Trigger:
+    properties:
+      threshold:
+        type: integer
+      type:
+        description: |-
+          Possible trigger type values.
+            * `create` - Alarm creation
+            * `statedec` - Alarm state decrease
+            * `changestate` - Alarm state has been changed by "change state" action
+            * `stateinc` - Alarm state increase
+            * `changestatus` - Alarm status changes eg. flapping
+            * `ack` - Alarm has been acked
+            * `ackremove` - Alarm has been unacked
+            * `cancel` - Alarm has been cancelled
+            * `uncancel` - Alarm has been uncancelled
+            * `comment` - Alarm has been commented
+            * `declareticketwebhook` - Ticket has been declared by the webhook
+            * `assocticket` - Ticket has been associated with an alarm
+            * `snooze` - Alarm has been snoozed
+            * `unsnooze` - Alarm has been unsnoozed
+            * `pbhenter` - Alarm enters a periodic behavior
+            * `activate` - Alarm has been activated
+            * `resolve` - Alarm has been resolved
+            * `pbhleave` - Alarm leaves a periodic behavior
+            * `instructionfail` - Manual instruction has failed
+            * `autoinstructionfail` - Auto instruction has failed
+            * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructionjobcomplete` - Manual or auto instruction's job is completed
+            * `instructioncomplete` - Manual instruction is completed
+            * `autoinstructioncomplete` - Auto instruction is completed
+            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
+            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
+            * `eventscount` - Alarm check events count
+        enum:
+        - create
+        - statedec
+        - stateinc
+        - changestate
+        - changestatus
+        - ack
+        - ackremove
+        - cancel
+        - uncancel
+        - comment
+        - declareticketwebhook
+        - assocticket
+        - snooze
+        - unsnooze
+        - resolve
+        - activate
+        - pbhenter
+        - pbhleave
+        - instructionfail
+        - autoinstructionfail
+        - instructionjobfail
+        - instructionjobcomplete
+        - instructioncomplete
+        - autoinstructioncomplete
+        - autoinstructionresultok
+        - autoinstructionresultfail
+        - eventscount
+        type: string
+    required:
+    - type
     type: object
   security.AuthMethodConf:
     properties:

@@ -156,6 +156,7 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | TokenSigningMethod  | "HS256"            | Méthode de signature d'un token d'authentification |
 | BulkMaxSize         | 1000               | Taille maximum d'un batch de changement de données en base |
 | ExportBulkize       | 5000               | Nombre maximum d'alarmes d'un batch pour l'export. Ce paramètre doit être diminué si les alarmes que vous souhaitez exporter sont volumineuses |
+| AuthorScheme        | ["$username"]      | Permet de définir la manière de représenter l'auteur d'une action dans Canopsis. Ex : `["$username", " ", "$firstname", " ", "$lastname", " ", "$email", " ", "$_id"] ` |
 
 
 ### Section [Canopsis.logger]
@@ -190,9 +191,10 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 
 ### Section [Canopsis.template.vars]
 
-| Attribut     | Exemple de valeur  | Description                           |
-| :----------- | :------------------| :------------------------------------ |
-| var1 | "valeur1" | Ces variables peuvent être utilisées dans des [templates Go](../../guide-utilisation/templates-go/index.md) sous la forme `{{ .Env.var }}` ou dans l'interface graphique en [Handlebars](../../guide-utilisation/cas-d-usage/template_handlebars.md) sous la forme `{{ env.var1 }}` |
+| Attribut                | Exemple de valeur  | Description                           |
+| :---------------------- | :------------------| :------------------------------------ |
+| system_env_var_prefixes | ["ENV_"]           | Les variables d'environnement peuvent être utilisées dans des [templates Go](../../guide-utilisation/templates-go/index.md) sous la forme `{{ .Env.System.ENV_var }}` ou dans l'interface graphique en [Handlebars](../../guide-utilisation/cas-d-usage/template_handlebars.md) sous la forme `{{ env.System.ENV_var }}`.<br />Seules les variables dont le prefixe est mentionné dans ce paramètre seront lues. |
+| var1                    | "valeur1"          | Ces variables peuvent être utilisées dans des [templates Go](../../guide-utilisation/templates-go/index.md) sous la forme `{{ .Env.var }}` ou dans l'interface graphique en [Handlebars](../../guide-utilisation/cas-d-usage/template_handlebars.md) sous la forme `{{ env.var1 }}` |
  
 
 ### Section [Remediation]

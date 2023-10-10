@@ -2,15 +2,18 @@ Feature: Update a scenario
   I need to be able to update a scenario
   Only admin should be able to update a scenario
 
+  @concurrent
   Scenario: given update request and no auth user should not allow access
     When I do PUT /api/v4/scenarios/notexist
     Then the response code should be 401
 
+  @concurrent
   Scenario: given update request and auth user by api key without permissions should not allow access
     When I am noperms
     When I do PUT /api/v4/scenarios/notexist
     Then the response code should be 403
 
+  @concurrent
   Scenario: given update scenario request should return ok
     When I am admin
     When I do PUT /api/v4/scenarios/test-scenario-to-update-1:
@@ -18,8 +21,14 @@ Feature: Update a scenario
     {
       "name": "test-scenario-to-update-1-name",
       "enabled": true,
-      "triggers": ["create","pbhenter"],
-      "priority": 6,
+      "triggers": [
+        {
+          "type": "create"
+        },
+        {
+          "type": "pbhenter"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -60,9 +69,15 @@ Feature: Update a scenario
       },
       "enabled": true,
       "delay": null,
-      "priority": 6,
       "disable_during_periods": null,
-      "triggers": ["create","pbhenter"],
+      "triggers": [
+        {
+          "type": "create"
+        },
+        {
+          "type": "pbhenter"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -94,6 +109,7 @@ Feature: Update a scenario
     }
     """
 
+  @concurrent
   Scenario: given update request with already exists name should return error
     When I am admin
     When I do PUT /api/v4/scenarios/test-scenario-to-update-1:
@@ -101,8 +117,14 @@ Feature: Update a scenario
     {
       "name": "test-scenario-to-check-unique-name-name",
       "enabled": true,
-      "priority": 6,
-      "triggers": ["create","pbhenter"],
+      "triggers": [
+        {
+          "type": "create"
+        },
+        {
+          "type": "pbhenter"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -140,6 +162,7 @@ Feature: Update a scenario
     }
     """
 
+  @concurrent
   Scenario: given no exist scenario id should return error
     When I am admin
     When I do PUT /api/v4/scenarios/notexist:
@@ -147,7 +170,11 @@ Feature: Update a scenario
     {
       "name": "test-scenario-to-update-notexist-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -177,6 +204,7 @@ Feature: Update a scenario
     """
     Then the response code should be 404
 
+  @concurrent
   Scenario: given create request with custom_id shouldn't update id
     When I am admin
     When I do PUT /api/v4/scenarios/test-scenario-to-check-id:
@@ -185,8 +213,11 @@ Feature: Update a scenario
       "_id": "change-id",
       "name": "my_scenario-name-new",
       "enabled": true,
-      "priority": 13,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "actions": [
         {
           "alarm_pattern": [
@@ -234,6 +265,7 @@ Feature: Update a scenario
     }
     """
 
+  @concurrent
   Scenario: given update request with corporate patterns in different actions should return success
     When I am admin
     When I do PUT /api/v4/scenarios/test-scenario-to-update-2:
@@ -241,8 +273,11 @@ Feature: Update a scenario
     {
       "name": "test-scenario-to-update-2-name",
       "enabled": true,
-      "priority": 15,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "delay": {
         "value": 3,
         "unit": "s"
@@ -323,7 +358,11 @@ Feature: Update a scenario
         "name": "root"
       },
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "delay": {
         "value": 3,
         "unit": "s"
@@ -449,6 +488,7 @@ Feature: Update a scenario
     }
     """
 
+  @concurrent
   Scenario: given update request with invalid patterns in different actions should return errors
     When I am admin
     When I do PUT /api/v4/scenarios/test-scenario-to-update-2:
@@ -456,7 +496,11 @@ Feature: Update a scenario
     {
       "name": "test-scenario-to-update-2-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "delay": {
         "value": 3,
         "unit": "s"
@@ -538,6 +582,7 @@ Feature: Update a scenario
     }
     """
 
+  @concurrent
   Scenario: given update request should update old patterns but keep them if they're not updated
     When I am admin
     When I do PUT /api/v4/scenarios/test-scenario-to-update-3:
@@ -545,7 +590,11 @@ Feature: Update a scenario
     {
       "name": "test-scenario-to-update-3-name",
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "delay": {
         "value": 3,
         "unit": "s"
@@ -608,7 +657,11 @@ Feature: Update a scenario
         "name": "root"
       },
       "enabled": true,
-      "triggers": ["create"],
+      "triggers": [
+        {
+          "type": "create"
+        }
+      ],
       "delay": {
         "value": 3,
         "unit": "s"
@@ -661,3 +714,242 @@ Feature: Update a scenario
       ]
     }    
     """    
+
+  @concurrent
+  Scenario: given update scenario request should return ok
+    When I am admin
+    When I do PUT /api/v4/scenarios/test-scenario-to-update-4:
+    """json
+    {
+      "name": "test-scenario-to-update-4-name",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount",
+          "threshold": 3
+        }
+      ],
+      "actions": [
+        {
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-scenario-to-update-4-alarm-updated"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "output": "test snooze updated",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "test comment"
+        }
+      ]
+    }
+    """
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "_id": "test-scenario-to-update-4",
+      "name": "test-scenario-to-update-4-name",
+      "author": {
+        "_id": "root",
+        "name": "root"
+      },
+      "enabled": true,
+      "delay": null,
+      "disable_during_periods": null,
+      "triggers": [
+        {
+          "type": "eventscount",
+          "threshold": 3
+        }
+      ],
+      "actions": [
+        {
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-scenario-to-update-4-alarm-updated"
+                }
+              }
+            ]
+          ],
+          "old_entity_patterns": null,
+          "old_alarm_patterns": null,
+          "type": "snooze",
+          "parameters": {
+            "output": "test snooze updated",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "test comment"
+        }
+      ]
+    }
+    """
+    
+  @concurrent
+  Scenario: given update scenario request with invalid threshold value should return errors
+    When I am admin
+    When I do PUT /api/v4/scenarios/test-scenario-to-update-5:
+    """json
+    {
+      "name": "test-scenario-to-update-5-name",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount"
+        }
+      ],
+      "actions": [
+        {
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-scenario-to-update-5-alarm-updated"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "output": "test snooze updated",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "test comment"
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "triggers.0.threshold": "Threshold is required when Type eventscount is defined."
+      }
+    }
+    """
+    When I do PUT /api/v4/scenarios/test-scenario-to-update-5:
+    """json
+    {
+      "name": "test-scenario-to-update-5-name",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "eventscount",
+          "threshold": 1
+        }
+      ],
+      "actions": [
+        {
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-scenario-to-update-5-alarm-updated"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "output": "test snooze updated",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "test comment"
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "triggers.0.threshold": "Threshold should be greater than 1."
+      }
+    }
+    """
+    When I do PUT /api/v4/scenarios/test-scenario-to-update-5:
+    """json
+    {
+      "name": "test-scenario-to-update-5-name",
+      "enabled": true,
+      "triggers": [
+        {
+          "type": "create",
+          "threshold": 3
+        }
+      ],
+      "actions": [
+        {
+          "alarm_pattern": [
+            [
+              {
+                "field": "v.component",
+                "cond": {
+                  "type": "eq",
+                  "value": "test-scenario-to-update-5-alarm-updated"
+                }
+              }
+            ]
+          ],
+          "type": "snooze",
+          "parameters": {
+            "output": "test snooze updated",
+            "duration": {
+              "value": 3,
+              "unit": "s"
+            }
+          },
+          "drop_scenario_if_not_matched": false,
+          "emit_trigger": false,
+          "comment": "test comment"
+        }
+      ]
+    }
+    """
+    Then the response code should be 400
+    Then the response body should contain:
+    """json
+    {
+      "errors": {
+        "triggers.0.threshold": "Threshold should be empty when Type eventscount is not defined."
+      }
+    }
+    """

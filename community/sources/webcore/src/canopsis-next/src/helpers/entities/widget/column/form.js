@@ -58,6 +58,7 @@ export const isLinksWidgetColumn = (value = '') => value.startsWith(ALARM_LIST_W
  * @param {string} [value = '']
  * @param {string} [label = '']
  * @param {boolean} [onlyIcon = false]
+ * @param {boolean} [withHtml = true]
  * @param {WidgetColumn & { value: undefined, label: undefined }} [rest]
  * @returns {WidgetColumnForm}
  */

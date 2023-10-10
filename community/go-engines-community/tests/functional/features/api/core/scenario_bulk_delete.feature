@@ -2,15 +2,18 @@ Feature: Bulk delete scenarios
   I need to be able to bulk delete scenarios
   Only admin should be able to bulk delete scenarios
 
+  @concurrent
   Scenario: given bulk delete request and no auth scenario should not allow access
     When I do DELETE /api/v4/bulk/scenarios
     Then the response code should be 401
 
+  @concurrent
   Scenario: given bulk delete request and auth scenario by api key without permissions should not allow access
     When I am noperms
     When I do DELETE /api/v4/bulk/scenarios
     Then the response code should be 403
 
+  @concurrent
   Scenario: given delete request should return multi status and should be handled independently
     When I am admin
     When I do DELETE /api/v4/bulk/scenarios:

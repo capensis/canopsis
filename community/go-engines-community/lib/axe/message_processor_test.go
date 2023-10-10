@@ -295,7 +295,7 @@ func benchmarkMessageProcessor(
 	metricsSender := metrics.NewNullSender()
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	tzConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
-	templateConfigProvider := config.NewTemplateConfigProvider(cfg)
+	templateConfigProvider := config.NewTemplateConfigProvider(cfg, logger)
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(config.UserInterfaceConf{}, logger)
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)

@@ -15,9 +15,7 @@ const snapshotStubs = {
 const selectRadioGroup = wrapper => wrapper.find('.v-radio-group');
 
 describe('pie-show-mode', () => {
-  const factory = generateShallowRenderer(CPieShowModeField, {
-    stubs,
-  });
+  const factory = generateShallowRenderer(CPieShowModeField, { stubs });
   const snapshotFactory = generateRenderer(CPieShowModeField, {
     stubs: snapshotStubs,
   });

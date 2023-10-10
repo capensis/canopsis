@@ -13,7 +13,7 @@
             v-flex(xs12)
               scenario-info-item(
                 :label="$tc('common.trigger', 2)",
-                :value="scenario.triggers.join(', ')",
+                :value="preparedTriggers",
                 icon="bolt"
               )
             v-flex(v-if="hasDisableDuringPeriods", xs12)
@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash';
+
 import ScenarioInfoItem from './scenario-info-item.vue';
 import ScenarioActionCard from './scenario-action-card.vue';
 
@@ -42,6 +44,20 @@ export default {
     },
   },
   computed: {
+    preparedTriggers() {
+      return this.scenario.triggers.map(({ type, ...rest }) => {
+        if (isEmpty(rest)) {
+          return type;
+        }
+
+        const preparedRest = Object.entries(rest)
+          .map(([key, value]) => `${key}: ${value}`)
+          .join(', ');
+
+        return `${type} (${preparedRest})`;
+      }).join(', ');
+    },
+
     hasDisableDuringPeriods() {
       return this.scenario.disable_during_periods?.length;
     },

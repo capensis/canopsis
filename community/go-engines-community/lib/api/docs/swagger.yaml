@@ -2880,7 +2880,11 @@ paths:
                     "comment": "The scenario acknowledges an alarm on create",
                     "enabled": true,
                     "priority": 10,
-                    "triggers": [ "create" ],
+                    "triggers": [
+                      {
+                        "type": "create"
+                      }
+                    ],
                     "actions": [
                       {
                         "type": "ack",
@@ -2972,7 +2976,11 @@ paths:
                     "comment": "The scenario acknowledges an alarm on create",
                     "enabled": true,
                     "priority": 10,
-                    "triggers": [ "create" ],
+                    "triggers": [
+                      {
+                        "type": "create"
+                      }
+                    ],
                     "actions": [
                       {
                         "type": "ack",
@@ -4511,22 +4519,22 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-  /entities/clean:
+  /entities/archive-disabled:
     post:
       tags:
         - entities
-      summary: Clean disabled entities
+      summary: Archive disabled entities
       description: |
-        Clean disabled entities.
+        Archive disabled entities.
         
         -  PERMISSIONS: `api_entity:delete`
-      operationId: entities-clean
+      operationId: entities-archive-disabled
       requestBody:
         description: body
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/entity.CleanRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/entity.ArchiveDisabledRequest'
       responses:
         202:
           description: OK
@@ -4536,6 +4544,44 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entities/archive-unlinked:
+    post:
+      tags:
+        - entities
+      summary: Archive unlinked entities
+      description: |
+        Archive unlinked entities.
+        
+        -  PERMISSIONS: `api_entity:delete`
+      operationId: entities-archive-unlinked
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/entity.ArchiveUnlinkedRequest'
+      responses:
+        202:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entities/clean-archived:
+    post:
+      tags:
+        - entities
+      summary: Clean archived entities
+      description: |
+        Clean archived entities.
+        
+        -  PERMISSIONS: `api_entity:delete`
+      operationId: entities-clean-archived
+      responses:
+        202:
+          description: OK
   /entities/context-graph:
     get:
       tags:
@@ -9818,7 +9864,11 @@ paths:
                   "comment": "The scenario acknowledges an alarm on create",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "create" ],
+                  "triggers": [
+                    {
+                      "type": "create"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "ack",
@@ -9867,7 +9917,11 @@ paths:
                   "comment": "The scenario removes an acknowledge of an alarm on state increase",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "stateinc" ],
+                  "triggers": [
+                    {
+                      "type": "stateinc"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "ackremove",
@@ -9916,7 +9970,11 @@ paths:
                   "comment": "The scenario adds a ticket to an alarm on activate",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "activate" ],
+                  "triggers": [
+                    {
+                      "type": "activate"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "assocticket",
@@ -9972,7 +10030,11 @@ paths:
                   "comment": "The scenario cancels an alarm on state decrease",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "statedec" ],
+                  "triggers": [
+                    {
+                      "type": "create"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "cancel",
@@ -10021,7 +10083,11 @@ paths:
                   "comment": "The scenario changes a state of an alarm on acknowledge",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "ack" ],
+                  "triggers": [
+                    {
+                      "type": "ack"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "changestate",
@@ -10071,7 +10137,11 @@ paths:
                   "comment": "The scenario creates a pbehavior for an alarm on create",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "create" ],
+                  "triggers": [
+                    {
+                      "type": "create"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "pbehavior",
@@ -10127,7 +10197,11 @@ paths:
                   "comment": "The scenario snoozes an alarm on create",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "create" ],
+                  "triggers": [
+                    {
+                      "type": "create"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "snooze",
@@ -10180,7 +10254,11 @@ paths:
                   "comment": "The scenario does webhook request for an alarm on declare ticket",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "declareticket" ],
+                  "triggers": [
+                    {
+                      "type": "declareticket"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "webhook",
@@ -10232,6 +10310,42 @@ paths:
                             "cond": {
                               "type": "eq",
                               "value": "g1"
+                            }
+                          }
+                        ]
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
+              eventscount:
+                summary: Scenario with check events count trigger
+                description: Create a scenario with acknowledge action.
+                value: {
+                  "name": "Scenario with check events count trigger",
+                  "comment": "The scenario triggers after 3rd check event",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [
+                    {
+                      "type": "eventscount",
+                      "threshold": 3
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": "ack",
+                      "parameters": {
+                        "output": "The alarm is acknowledged by scenario"
+                      },
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
                         ]
@@ -10322,7 +10436,11 @@ paths:
                   "comment": "The scenario acknowledges an alarm on create",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "create" ],
+                  "triggers": [
+                    {
+                      "type": "create"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "ack",
@@ -10371,7 +10489,11 @@ paths:
                   "comment": "The scenario removes an acknowledge of an alarm on state increase",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "stateinc" ],
+                  "triggers": [
+                    {
+                      "type": "stateinc"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "ackremove",
@@ -10420,7 +10542,11 @@ paths:
                   "comment": "The scenario adds a ticket to an alarm on activate",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "activate" ],
+                  "triggers": [
+                    {
+                      "type": "activate"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "assocticket",
@@ -10476,7 +10602,11 @@ paths:
                   "comment": "The scenario cancels an alarm on state decrease",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "statedec" ],
+                  "triggers": [
+                    {
+                      "type": "statedec"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "cancel",
@@ -10525,7 +10655,11 @@ paths:
                   "comment": "The scenario changes a state of an alarm on acknowledge",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "ack" ],
+                  "triggers": [
+                    {
+                      "type": "ack"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "changestate",
@@ -10575,7 +10709,11 @@ paths:
                   "comment": "The scenario creates a pbehavior for an alarm on create",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "create" ],
+                  "triggers": [
+                    {
+                      "type": "create"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "pbehavior",
@@ -10631,7 +10769,11 @@ paths:
                   "comment": "The scenario snoozes an alarm on create",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "create" ],
+                  "triggers": [
+                    {
+                      "type": "create"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "snooze",
@@ -10684,7 +10826,11 @@ paths:
                   "comment": "The scenario does webhook request for an alarm on declare ticket",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "declareticket" ],
+                  "triggers": [
+                    {
+                      "type": "declareticket"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "webhook",
@@ -10736,6 +10882,42 @@ paths:
                             "cond": {
                               "type": "eq",
                               "value": "g1"
+                            }
+                          }
+                        ]
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
+              eventscount:
+                summary: Scenario with check events count trigger
+                description: Create a scenario with acknowledge action.
+                value: {
+                  "name": "Scenario with check events count trigger",
+                  "comment": "The scenario triggers after 3rd check event",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [
+                    {
+                      "type": "eventscount",
+                      "threshold": 3
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": "ack",
+                      "parameters": {
+                        "output": "The alarm is acknowledged by scenario"
+                      },
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
                         ]

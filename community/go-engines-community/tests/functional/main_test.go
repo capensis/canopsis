@@ -126,6 +126,7 @@ func TestMain(m *testing.M) {
 	templater := bdd.NewTemplater(map[string]interface{}{
 		"apiURL":      apiUrl,
 		"dummyApiURL": dummyApiUrl,
+		"mongoURL":    os.Getenv(mongo.EnvURL), // for system env variables tests
 	})
 	apiClient := bdd.NewApiClient(dbClient, apiUrl, flags.scenarioData, requestLogger, templater)
 	amqpClient := bdd.NewAmqpClient(dbClient, amqpConnection, flags.eventWaitExchange, flags.eventWaitKey,
@@ -303,6 +304,10 @@ func InitializeScenario(
 	}
 }
 
+// It's important to load postgres fixtures first and only then mongo fixtures.
+// If mongo fixtures are loaded first, some engine workers may send metrics to the postgres,
+// which will be cleaned by postgres fixtures loading.
+// Because of that some metrics functional tests may fail.
 func clearStores(
 	ctx context.Context,
 	flags Flags,
@@ -310,12 +315,6 @@ func clearStores(
 	redisClient redismod.Cmdable,
 	logger zerolog.Logger,
 ) error {
-	err := loader.Load(ctx)
-	if err != nil {
-		return fmt.Errorf("cannot load mongo fixtures: %w", err)
-	}
-
-	logger.Info().Msg("MongoDB fixtures are applied")
 	pgConnStr, err := postgres.GetConnStr()
 	if err != nil {
 		return err
@@ -347,6 +346,13 @@ func clearStores(
 	}
 
 	logger.Info().Msg("PostgresSQL fixtures are applied")
+
+	err = loader.Load(ctx)
+	if err != nil {
+		return fmt.Errorf("cannot load mongo fixtures: %w", err)
+	}
+
+	logger.Info().Msg("MongoDB fixtures are applied")
 
 	err = redisClient.FlushAll(ctx).Err()
 	if err != nil {

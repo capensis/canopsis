@@ -12,6 +12,9 @@ import (
 
 type Archiver interface {
 	ArchiveDisabledEntities(ctx context.Context, archiveDeps bool) (int64, error)
+	ArchiveUnlinkedResources(ctx context.Context, before types.CpsTime) (int64, error)
+	ArchiveUnlinkedComponents(ctx context.Context, before types.CpsTime) (int64, error)
+	ArchiveUnlinkedConnectors(ctx context.Context, before types.CpsTime) (int64, error)
 	DeleteArchivedEntities(ctx context.Context) (int64, error)
 }
 
@@ -55,6 +58,225 @@ func (a *archiver) ArchiveDisabledEntities(ctx context.Context, archiveDeps bool
 	totalArchived += archived
 
 	return totalArchived, nil
+}
+
+func (a *archiver) ArchiveUnlinkedResources(ctx context.Context, before types.CpsTime) (int64, error) {
+	cursor, err := a.mainCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{
+			"type":     types.EntityTypeResource,
+			"services": bson.M{"$in": bson.A{nil, bson.A{}}},
+			"$or": []bson.M{
+				{"last_event_date": bson.M{"$lt": before}},
+				{
+					"last_event_date": nil,
+					"created":         bson.M{"$lt": before},
+				},
+				{
+					"last_event_date": nil,
+					"created":         nil,
+				},
+			},
+		}},
+		{"$lookup": bson.M{
+			"from": mongo.AlarmMongoCollection,
+			"let":  bson.M{"entity": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"$expr": bson.M{"$eq": bson.A{"$d", "$$entity"}},
+				}},
+				{"$limit": 1},
+			},
+			"as": "alarms",
+		}},
+		{"$match": bson.M{"alarms": bson.A{}}},
+		{"$lookup": bson.M{
+			"from": mongo.ResolvedAlarmMongoCollection,
+			"let":  bson.M{"entity": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"$expr": bson.M{"$eq": bson.A{"$d", "$$entity"}},
+				}},
+				{"$limit": 1},
+			},
+			"as": "resolved_alarms",
+		}},
+		{"$match": bson.M{"resolved_alarms": bson.A{}}},
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	return a.archiveUnlinked(ctx, cursor)
+}
+
+func (a *archiver) ArchiveUnlinkedComponents(ctx context.Context, before types.CpsTime) (int64, error) {
+	cursor, err := a.mainCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{
+			"type":     types.EntityTypeComponent,
+			"services": bson.M{"$in": bson.A{nil, bson.A{}}},
+			"$or": []bson.M{
+				{"last_event_date": bson.M{"$lt": before}},
+				{
+					"last_event_date": nil,
+					"created":         bson.M{"$lt": before},
+				},
+				{
+					"last_event_date": nil,
+					"created":         nil,
+				},
+			},
+		}},
+		{"$lookup": bson.M{
+			"from": mongo.EntityMongoCollection,
+			"let":  bson.M{"entity": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"type":  types.EntityTypeResource,
+					"$expr": bson.M{"$eq": bson.A{"$component", "$$entity"}},
+				}},
+				{"$limit": 1},
+			},
+			"as": "depends",
+		}},
+		{"$match": bson.M{"depends": bson.A{}}},
+		{"$lookup": bson.M{
+			"from": mongo.AlarmMongoCollection,
+			"let":  bson.M{"entity": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"$expr": bson.M{"$eq": bson.A{"$d", "$$entity"}},
+				}},
+				{"$limit": 1},
+			},
+			"as": "alarms",
+		}},
+		{"$match": bson.M{"alarms": bson.A{}}},
+		{"$lookup": bson.M{
+			"from": mongo.ResolvedAlarmMongoCollection,
+			"let":  bson.M{"entity": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"$expr": bson.M{"$eq": bson.A{"$d", "$$entity"}},
+				}},
+				{"$limit": 1},
+			},
+			"as": "resolved_alarms",
+		}},
+		{"$match": bson.M{"resolved_alarms": bson.A{}}},
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	return a.archiveUnlinked(ctx, cursor)
+}
+
+func (a *archiver) ArchiveUnlinkedConnectors(ctx context.Context, before types.CpsTime) (int64, error) {
+	cursor, err := a.mainCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{
+			"type":     types.EntityTypeConnector,
+			"services": bson.M{"$in": bson.A{nil, bson.A{}}},
+			"$or": []bson.M{
+				{
+					"last_event_date": bson.M{"$lt": before},
+				},
+				{
+					"last_event_date": nil,
+					"created":         bson.M{"$lt": before},
+				},
+				{
+					"last_event_date": nil,
+					"created":         nil,
+				},
+			},
+		}},
+		{"$lookup": bson.M{
+			"from": mongo.EntityMongoCollection,
+			"let":  bson.M{"entity": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"$expr": bson.M{"$eq": bson.A{"$connector", "$$entity"}},
+				}},
+				{"$limit": 1},
+			},
+			"as": "depends",
+		}},
+		{"$match": bson.M{"depends": bson.A{}}},
+		{"$lookup": bson.M{
+			"from": mongo.AlarmMongoCollection,
+			"let":  bson.M{"entity": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"$expr": bson.M{"$eq": bson.A{"$d", "$$entity"}},
+				}},
+				{"$limit": 1},
+			},
+			"as": "alarms",
+		}},
+		{"$match": bson.M{"alarms": bson.A{}}},
+		{"$lookup": bson.M{
+			"from": mongo.ResolvedAlarmMongoCollection,
+			"let":  bson.M{"entity": "$_id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"$expr": bson.M{"$eq": bson.A{"$d", "$$entity"}},
+				}},
+				{"$limit": 1},
+			},
+			"as": "resolved_alarms",
+		}},
+		{"$match": bson.M{"resolved_alarms": bson.A{}}},
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	return a.archiveUnlinked(ctx, cursor)
+}
+
+func (a *archiver) DeleteArchivedEntities(ctx context.Context) (int64, error) {
+	var totalDeleted int64
+	ids := make([]string, 0, canopsis.DefaultBulkSize)
+	cursor, err := a.archivedCollection.Find(ctx, bson.M{})
+	if err != nil {
+		return 0, err
+	}
+
+	defer cursor.Close(ctx)
+	for cursor.Next(ctx) {
+		var doc struct {
+			ID string `bson:"_id"`
+		}
+
+		err = cursor.Decode(&doc)
+		if err != nil {
+			return 0, err
+		}
+
+		ids = append(ids, doc.ID)
+
+		if len(ids) == canopsis.DefaultBulkSize {
+			deleted, err := a.archivedCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
+			if err != nil {
+				return 0, err
+			}
+
+			ids = ids[:0]
+
+			totalDeleted += deleted
+		}
+	}
+
+	if len(ids) > 0 {
+		deleted, err := a.archivedCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
+		if err != nil {
+			return 0, err
+		}
+
+		totalDeleted += deleted
+	}
+
+	return totalDeleted, nil
 }
 
 func (a *archiver) archiveEntitiesByType(ctx context.Context, eType string, archiveDeps bool) (int64, error) {
@@ -218,47 +440,67 @@ func (a *archiver) bulkArchive(ctx context.Context, models, contextGraphModels [
 	return count, nil
 }
 
-func (a *archiver) DeleteArchivedEntities(ctx context.Context) (int64, error) {
-	var totalDeleted int64
+func (a *archiver) archiveUnlinked(ctx context.Context, cursor mongo.Cursor) (int64, error) {
+	defer cursor.Close(ctx)
+	archiveModels := make([]mongodriver.WriteModel, 0, canopsis.DefaultBulkSize)
 	ids := make([]string, 0, canopsis.DefaultBulkSize)
-
-	cursor, err := a.archivedCollection.Find(ctx, bson.M{})
-	if err != nil {
-		return 0, err
-	}
-
+	archiveBulkBytesSize := 0
+	var totalArchived int64
 	for cursor.Next(ctx) {
-		var doc struct {
-			ID string `bson:"_id"`
-		}
-
-		err = cursor.Decode(&doc)
+		entity := types.Entity{}
+		err := cursor.Decode(&entity)
 		if err != nil {
 			return 0, err
 		}
 
-		ids = append(ids, doc.ID)
+		newArchiveModel := mongodriver.NewUpdateOneModel().
+			SetFilter(bson.M{"_id": entity.ID}).
+			SetUpdate(bson.M{"$set": entity}).
+			SetUpsert(true)
+		b, err := bson.Marshal(newArchiveModel)
+		if err != nil {
+			return 0, err
+		}
 
-		if len(ids) == canopsis.DefaultBulkSize {
-			deleted, err := a.archivedCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
+		newArchiveModelLen := len(b)
+		archiveBulkBytesSize += newArchiveModelLen
+
+		if archiveBulkBytesSize > canopsis.DefaultBulkBytesSize {
+			archived, err := a.bulkArchive(ctx, archiveModels, nil, ids)
 			if err != nil {
 				return 0, err
 			}
 
+			totalArchived += archived
+			archiveModels = archiveModels[:0]
 			ids = ids[:0]
+			archiveBulkBytesSize = newArchiveModelLen
+		}
 
-			totalDeleted += deleted
+		archiveModels = append(archiveModels, newArchiveModel)
+		ids = append(ids, entity.ID)
+
+		if len(archiveModels) == canopsis.DefaultBulkSize {
+			archived, err := a.bulkArchive(ctx, archiveModels, nil, ids)
+			if err != nil {
+				return 0, err
+			}
+
+			totalArchived += archived
+			archiveModels = archiveModels[:0]
+			ids = ids[:0]
+			archiveBulkBytesSize = 0
 		}
 	}
 
-	if len(ids) > 0 {
-		deleted, err := a.archivedCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
+	if len(archiveModels) > 0 {
+		archived, err := a.bulkArchive(ctx, archiveModels, nil, ids)
 		if err != nil {
 			return 0, err
 		}
 
-		totalDeleted += deleted
+		totalArchived += archived
 	}
 
-	return totalDeleted, nil
+	return totalArchived, nil
 }
