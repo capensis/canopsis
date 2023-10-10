@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import { keyBy } from 'lodash';
+
 import {
   isDeclareTicketExecutionRunning,
   isDeclareTicketExecutionSucceeded,
@@ -57,7 +59,7 @@ export default {
     },
 
     failReason() {
-      return this.executions.map(execution => execution.fail_reason).join('\n');
+      return Object.values(keyBy(this.executions, 'executionId')).map(execution => execution.fail_reason).join('\n');
     },
   },
 };
