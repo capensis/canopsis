@@ -2,7 +2,8 @@ export default {
   sideBar: {
     buttons: {
       edit: 'Activer/Désactiver le mode édition',
-      create: 'Créer une vue',
+      createView: 'Créer une vue',
+      createPrivateView: 'Créer une vue privée',
       settings: 'Paramètres',
     },
     loggedUsersCount: 'Sessions actives',

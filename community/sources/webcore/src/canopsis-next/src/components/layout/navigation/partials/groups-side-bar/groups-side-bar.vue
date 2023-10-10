@@ -29,7 +29,7 @@
             :group.sync="mutatedGroups[index]",
             :is-groups-order-changed="isGroupsOrderChanged"
           )
-          template(#footer="")
+          template(v-if="hasAccessToPrivateView", #footer="")
             groups-side-bar-group(
               v-for="privateGroup in privateGroups",
               :key="privateGroup._id",

@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { find, isString } from 'lodash';
+import { find, isObject, isString } from 'lodash';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
@@ -88,6 +88,15 @@ export default {
 
     isInitialViewPrivate() {
       return this.modal.config.view?.is_private ?? false;
+    },
+  },
+  watch: {
+    'form.is_private': {
+      handler(isPrivate) {
+        if (isObject(this.form.group) && this.form.group.is_private !== isPrivate) {
+          this.form.group = undefined;
+        }
+      },
     },
   },
   async mounted() {
