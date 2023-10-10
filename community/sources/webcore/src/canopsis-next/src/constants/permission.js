@@ -88,6 +88,7 @@ export const USER_PERMISSIONS_PREFIXES = {
 export const USERS_PERMISSIONS = {
   technical: {
     view: `${USER_PERMISSIONS_PREFIXES.technical.admin}_userview`,
+    privateView: `${USER_PERMISSIONS_PREFIXES.technical.admin}_privateView`,
     role: `${USER_PERMISSIONS_PREFIXES.technical.admin}_role`,
     permission: `${USER_PERMISSIONS_PREFIXES.technical.admin}_permission`,
     user: `${USER_PERMISSIONS_PREFIXES.technical.admin}_user`,
