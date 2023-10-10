@@ -220,6 +220,7 @@ export const API_ROUTES = {
   healthcheck: {
     engines: '/api/v4/healthcheck',
     status: '/api/v4/healthcheck/status',
+    enginesOrder: '/api/v4/healthcheck/engines-order',
     parameters: '/api/v4/healthcheck/parameters',
   },
 

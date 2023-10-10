@@ -12,5 +12,9 @@ export default {
     fetchStatusWithoutStore() {
       return request.get(API_ROUTES.healthcheck.status);
     },
+
+    fetchEnginesOrderWithoutStore() {
+      return request.get(API_ROUTES.healthcheck.enginesOrder);
+    },
   },
 };
