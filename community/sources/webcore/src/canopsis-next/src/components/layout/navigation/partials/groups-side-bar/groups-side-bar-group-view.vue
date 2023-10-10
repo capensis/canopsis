@@ -10,7 +10,7 @@
       :is-editing="isNavigationEditingMode",
       :is-order-changed="isGroupsOrderChanged",
       :is-view-active="isViewActive",
-      :editable="hasViewEditButtonAccess || view.is_private",
+      :editable="hasViewEditButtonAccess",
       allow-editing,
       @duplicate="showDuplicateViewModal",
       @change="showEditViewModal"

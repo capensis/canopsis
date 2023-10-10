@@ -5,7 +5,7 @@
         span {{ title }}
       template(#text="")
         c-alert(:value="duplicate", type="info") {{ $t('modals.view.duplicate.infoMessage') }}
-        view-form(v-model="form", :groups="groups", :duplicate-private="isInitialViewPrivate && duplicate")
+        view-form(v-model="form", :groups="availableGroups", :duplicate-private="isInitialViewPrivate && duplicate")
       template(#actions="")
         v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.cancel') }}
         v-btn.primary(
@@ -89,6 +89,14 @@ export default {
     isInitialViewPrivate() {
       return this.modal.config.view?.is_private ?? false;
     },
+
+    availableGroups() {
+      if (this.duplicate) {
+        return this.groups;
+      }
+
+      return this.groups.filter(group => group.is_private === this.form.is_private);
+    },
   },
   watch: {
     'form.is_private': {
@@ -98,8 +106,15 @@ export default {
         }
       },
     },
+    'form.group': {
+      handler(group) {
+        if (isObject(group)) {
+          this.form.is_private = group.is_private;
+        }
+      },
+    },
   },
-  async mounted() {
+  mounted() {
     this.fetchAllGroupsListWithWidgetsWithCurrentUser();
   },
   methods: {

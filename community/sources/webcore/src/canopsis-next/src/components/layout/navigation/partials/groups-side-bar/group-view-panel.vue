@@ -5,24 +5,25 @@
         slot(name="title") {{ view.title }}
       div.panel-item-content__actions
         v-icon.panel-header__icon.mr-2(v-if="view.is_private", small) lock
-        v-btn.ma-0(
-          v-show="editable",
-          :disabled="isOrderChanged",
-          depressed,
-          small,
-          icon,
-          @click.prevent="$emit('change')"
-        )
-          v-icon(small) edit
-        v-btn.ma-0(
-          v-show="isEditing",
-          :disabled="isOrderChanged",
-          depressed,
-          small,
-          icon,
-          @click.prevent="$emit('duplicate')"
-        )
-          v-icon(small) file_copy
+        template(v-if="allowEditing")
+          v-btn.ma-0(
+            v-show="editable",
+            :disabled="isOrderChanged",
+            depressed,
+            small,
+            icon,
+            @click.prevent="$emit('change')"
+          )
+            v-icon(small) edit
+          v-btn.ma-0(
+            v-show="isEditing",
+            :disabled="isOrderChanged",
+            depressed,
+            small,
+            icon,
+            @click.prevent="$emit('duplicate')"
+          )
+            v-icon(small) file_copy
     v-divider
 </template>
 

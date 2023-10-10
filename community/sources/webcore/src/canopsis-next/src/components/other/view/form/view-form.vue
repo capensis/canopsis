@@ -18,7 +18,7 @@
       :label="$t('view.periodicRefresh')"
     )
     view-tags-field(v-field="form.tags")
-    view-group-field(v-field="form.group", :groups="groups", :private="form.is_private")
+    view-group-field(v-field="form.group", :groups="groups")
 </template>
 
 <script>

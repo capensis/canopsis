@@ -1,8 +1,8 @@
 <template lang="pug">
-  v-combobox(
+  v-combobox.view-group-field(
     v-field="value",
     v-validate="'required'",
-    :items="availableGroups",
+    :items="groups",
     :label="$t('view.groupIds')",
     :error-messages="errors.collect('group')",
     item-text="title",
@@ -11,6 +11,11 @@
     return-object,
     blur-on-create
   )
+    template(#item="{ item }")
+      v-list-tile-avatar.view-group-field__avatar(v-if="item.is_private", size="20")
+        v-icon(small) lock
+      v-list-tile-content
+        v-list-tile-title {{ item.title }}
     template(#no-data="")
       v-list-tile
         v-list-tile-content
@@ -33,15 +38,14 @@ export default {
       type: Array,
       default: () => [],
     },
-    private: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  computed: {
-    availableGroups() {
-      return this.groups.filter(group => group.is_private === this.private);
-    },
   },
 };
 </script>
+
+<style lang="scss">
+.view-group-field {
+  &__avatar {
+    min-width: 30px;
+  }
+}
+</style>
