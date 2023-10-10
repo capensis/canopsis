@@ -145,7 +145,7 @@ export default {
   },
   methods: {
     hasDeprecatedTrigger(item) {
-      return item.triggers.some(isDeprecatedTrigger);
+      return item.triggers.some(({ type }) => isDeprecatedTrigger(type));
     },
 
     isOldPattern({ actions = [] }) {

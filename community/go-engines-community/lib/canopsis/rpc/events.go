@@ -8,11 +8,12 @@ import (
 )
 
 type AxeEvent struct {
-	EventType  string        `json:"event_type"`
-	Parameters AxeParameters `json:"parameters,omitempty"`
-	Alarm      *types.Alarm  `json:"alarm,omitempty"`
-	AlarmID    string        `json:"alarm_id,omitempty"`
-	Entity     *types.Entity `json:"entity,omitempty"`
+	EventType   string        `json:"event_type"`
+	Parameters  AxeParameters `json:"parameters,omitempty"`
+	Alarm       *types.Alarm  `json:"alarm,omitempty"`
+	AlarmID     string        `json:"alarm_id,omitempty"`
+	Entity      *types.Entity `json:"entity,omitempty"`
+	Healthcheck bool          `json:"healthcheck,omitempty"`
 }
 
 type AxeParameters struct {
@@ -74,7 +75,8 @@ type AxeResultEvent struct {
 }
 
 type WebhookEvent struct {
-	Execution string `json:"execution"`
+	Execution   string `json:"execution"`
+	Healthcheck bool   `json:"healthcheck"`
 }
 
 type PbehaviorRecomputeEvent struct {
@@ -82,9 +84,10 @@ type PbehaviorRecomputeEvent struct {
 }
 
 type PbehaviorEvent struct {
-	Alarm  *types.Alarm        `json:"alarm"`
-	Entity *types.Entity       `json:"entity"`
-	Params PbehaviorParameters `json:"params"`
+	Alarm       *types.Alarm        `json:"alarm"`
+	Entity      *types.Entity       `json:"entity"`
+	Params      PbehaviorParameters `json:"params"`
+	Healthcheck bool                `json:"healthcheck"`
 }
 
 type PbehaviorParameters struct {

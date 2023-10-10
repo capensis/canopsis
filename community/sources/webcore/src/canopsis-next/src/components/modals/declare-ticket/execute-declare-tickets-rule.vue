@@ -5,29 +5,37 @@
         span {{ title }}
         declare-ticket-rule-execution-status.ml-2.declare-ticket-rule-execute-status(
           v-if="modal.minimized",
-          :running="isExecutionsRunning",
-          :success="isExecutionsSucceeded",
+          :running="isAllExecutionsRunning",
+          :success="isAllExecutionsSucceeded",
           :fail-reason="failReason",
           color="white"
         )
     template(#text="")
       v-layout(v-if="pending", justify-center)
         v-progress-circular(color="primary", indeterminate)
-      template(v-else)
-        v-layout.mb-4(v-if="isOneTicket", row, align-center)
-          span.subheading.mr-5 {{ $t('declareTicket.webhookStatus') }}:
-          declare-ticket-rule-execution-status(
-            :running="isExecutionsRunning",
-            :success="isExecutionsSucceeded",
-            :fail-reason="failReason"
+      template(v-else-if="config.singleMode")
+        v-layout.declare-ticket-rule-execute-status__executions(column)
+          declare-ticket-rule-executions-group(
+            v-for="(executions, ruleName) of alarmExecutionsByTicketName",
+            :key="ruleName",
+            :executions="executions",
+            :rule-name="ruleName",
+            is-one-execution,
+            show-status,
+            show-rule-name
           )
-        declare-ticket-rule-execution-alarms(:alarm-executions="alarmExecutions", :is-one-execution="isOneTicket")
+      template(v-else)
+        declare-ticket-rule-executions-group(
+          :executions="alarmExecutions",
+          :is-one-execution="isOneTicket",
+          :show-status="isOneTicket"
+        )
     template(#actions="")
       v-btn(depressed, flat, @click="$modals.hide") {{ $t('common.close') }}
 </template>
 
 <script>
-import { keyBy } from 'lodash';
+import { groupBy, keyBy } from 'lodash';
 
 import { SOCKET_ROOMS } from '@/config';
 import { DECLARE_TICKET_EXECUTION_STATUSES, MODALS } from '@/constants';
@@ -43,8 +51,8 @@ import {
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 
+import DeclareTicketRuleExecutionsGroup from '@/components/other/declare-ticket/partials/declare-ticket-rule-executions-group.vue';
 import DeclareTicketRuleExecutionStatus from '@/components/other/declare-ticket/partials/declare-ticket-rule-execution-status.vue';
-import DeclareTicketRuleExecutionAlarms from '@/components/other/declare-ticket/partials/declare-ticket-rule-execution-alarms.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -54,8 +62,8 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.executeDeclareTickets,
   components: {
-    DeclareTicketRuleExecutionAlarms,
     DeclareTicketRuleExecutionStatus,
+    DeclareTicketRuleExecutionsGroup,
     ModalWrapper,
   },
   mixins: [
@@ -93,22 +101,20 @@ export default {
       }, []);
     },
 
-    isExecutionsRunning() {
+    alarmExecutionsByTicketName() {
+      return groupBy(this.alarmExecutions, 'ruleName');
+    },
+
+    isAllExecutionsRunning() {
       return this.alarmExecutions.some(isDeclareTicketExecutionRunning);
     },
 
-    isExecutionsSucceeded() {
+    isAllExecutionsSucceeded() {
       return this.alarmExecutions.every(isDeclareTicketExecutionSucceeded);
     },
 
-    isExecutionsFailed() {
-      return this.alarmExecutions.every(isDeclareTicketExecutionFailed);
-    },
-
-    isExecutionsFinished() {
-      return this.alarmExecutions.every(
-        execution => isDeclareTicketExecutionSucceeded(execution) || isDeclareTicketExecutionFailed(execution),
-      );
+    isAllExecutionsFinished() {
+      return this.alarmExecutions.every(this.isExecutionFinished);
     },
 
     failReason() {
@@ -127,7 +133,7 @@ export default {
   },
   watch: {
     alarmExecutions(value) {
-      if (value.length && this.isExecutionsFinished) {
+      if (value.length && this.isAllExecutionsFinished) {
         this.config.onExecute?.();
       }
     },
@@ -147,6 +153,10 @@ export default {
 
     setExecutionStatus(executionStatus) {
       this.$set(this.executionsStatusesById, executionStatus._id, executionStatus);
+    },
+
+    isExecutionFinished(execution) {
+      return isDeclareTicketExecutionSucceeded(execution) || isDeclareTicketExecutionFailed(execution);
     },
 
     /**
@@ -174,6 +184,12 @@ export default {
      */
     joinToSocketRooms() {
       this.successExecutions.forEach(({ executionId }) => {
+        const execution = this.executionsStatusesById[executionId] ?? {};
+
+        if (this.isExecutionFinished(execution)) {
+          return;
+        }
+
         this.$socket
           .on(Socket.EVENTS_TYPES.customClose, this.socketCloseHandler)
           .on(Socket.EVENTS_TYPES.closeRoom, this.socketCloseRoomHandler)
@@ -217,10 +233,12 @@ export default {
     },
 
     fetchExecutionsStatuses() {
-      this.successExecutions.forEach(({ executionId }) => {
-        this.fetchDeclareTicketExecutionWithoutStore({ id: executionId })
-          .then(this.setExecutionStatus);
-      });
+      return Promise.all(
+        this.successExecutions.map(
+          ({ executionId }) => this.fetchDeclareTicketExecutionWithoutStore({ id: executionId })
+            .then(this.setExecutionStatus),
+        ),
+      );
     },
   },
 };
@@ -230,5 +248,9 @@ export default {
 .declare-ticket-rule-execute-status {
   display: flex;
   line-height: 24px !important;
+
+  &__executions {
+    gap: 24px;
+  }
 }
 </style>

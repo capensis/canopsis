@@ -91,6 +91,7 @@ Feature: Get application information
             "critical": "#f56954"
           }
         }
-      }
+      },
+      "events_count_trigger_default_threshold": 15
     }
     """

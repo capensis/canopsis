@@ -86,7 +86,7 @@ export default {
 
       return this.genTR([transition], {
         class: 'v-datatable__expand-row',
-        key: `${getObjectValueByPath(props.item, this.itemKey)}-row`,
+        key: `${getObjectValueByPath(props.item, this.itemKey) || props.index}-row`,
       });
     },
 
