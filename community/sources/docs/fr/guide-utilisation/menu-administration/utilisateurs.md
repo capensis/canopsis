@@ -28,7 +28,7 @@ Les champs obligatoires sont notés en **gras**.
   - *Nom*: Nom de l'utilisateur;
   - **Email**: Couriel de l'utilisateur;
   - **Mot de passe**: Mot de passe pour la connexion. 8 caractères minimum;
-  - **Rôle**: Associe l'utilisateur à un rôle;
+  - **Rôle**: Associe l'utilisateur à un rôle ou des rôles. Si plusieurs rôles sont associés, les droits sont fusionnés;
   - *Langue par défaut*: Définit la langue de l'interface de l'utilisateur;
   - *Type d'affichage de la barre de vues*: Définit la position de la barre de menu;
   - **Activé(e)**: Active ou non l'utilisateur. Désactivé par défaut;
