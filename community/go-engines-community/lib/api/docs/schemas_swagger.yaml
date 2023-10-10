@@ -456,6 +456,8 @@ definitions:
         items:
           $ref: '#/definitions/alarm.InstructionFilterRequest'
         type: array
+      only_bookmarks:
+        type: boolean
       opened:
         type: boolean
       pbehavior_pattern:
@@ -474,8 +476,6 @@ definitions:
         type: integer
       tstop:
         type: integer
-      with_bookmarks:
-        type: boolean
     type: object
   alarm.ExportResponse:
     properties:

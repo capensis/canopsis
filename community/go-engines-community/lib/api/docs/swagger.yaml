@@ -662,7 +662,7 @@ paths:
           description: show assigned declare ticket rules
           schema:
             type: boolean
-        - name: with_bookmarks
+        - name: only_bookmarks
           in: query
           description: show bookmarked alarms
           schema:

@@ -2827,6 +2827,46 @@ periodical_alarm:
     v:
       <<: *alarm_value
       resource: test-resource-alarm-bookmark-5-2
+      
+  alarm_bookmark_6_1:
+    <<: *resolved_alarm
+    _id: test-alarm-bookmark-6-1
+    d: test-resource-alarm-bookmark-6-1/test-component-alarm-bookmark-6
+    v:
+      <<: *alarm_value
+      resource: test-resource-alarm-bookmark-6-1
+      resolved: <NowUnix()>
+
+  alarm_bookmark_6_2:
+    <<: *resolved_alarm
+    _id: test-alarm-bookmark-6-2
+    d: test-resource-alarm-bookmark-6-2/test-component-alarm-bookmark-6
+    v:
+      <<: *alarm_value
+      resource: test-resource-alarm-bookmark-6-2
+      resolved: <NowUnix()>
+      
+  alarm_bookmark_7_1:
+    <<: *resolved_alarm
+    _id: test-alarm-bookmark-7-1
+    d: test-resource-alarm-bookmark-7-1/test-component-alarm-bookmark-7
+    bookmarks:
+      - root
+    v:
+      <<: *alarm_value
+      resource: test-resource-alarm-bookmark-7-1
+      resolved: <NowUnix()>
+
+  alarm_bookmark_7_2:
+    <<: *resolved_alarm
+    _id: test-alarm-bookmark-7-2
+    d: test-resource-alarm-bookmark-7-2/test-component-alarm-bookmark-7
+    bookmarks:
+      - manageruser
+    v:
+      <<: *alarm_value
+      resource: test-resource-alarm-bookmark-7-2
+      resolved: <NowUnix()>
 
 resolved_alarms:
   alarm_to_get_3:
@@ -2946,3 +2986,43 @@ resolved_alarms:
     v:
       <<: *alarm_value
       resource: test-resource-alarm-bookmark-4-2
+
+  alarm_bookmark_6_1_resolved:
+    <<: *resolved_alarm
+    _id: test-alarm-bookmark-6-1
+    d: test-resource-alarm-bookmark-6-1/test-component-alarm-bookmark-6
+    v:
+      <<: *alarm_value
+      resource: test-resource-alarm-bookmark-6-1
+      resolved: <NowUnix()>
+
+  alarm_bookmark_6_2_resolved:
+    <<: *resolved_alarm
+    _id: test-alarm-bookmark-6-2
+    d: test-resource-alarm-bookmark-6-2/test-component-alarm-bookmark-6
+    v:
+      <<: *alarm_value
+      resource: test-resource-alarm-bookmark-6-2
+      resolved: <NowUnix()>
+
+  alarm_bookmark_7_1_resolved:
+    <<: *resolved_alarm
+    _id: test-alarm-bookmark-7-1
+    d: test-resource-alarm-bookmark-7-1/test-component-alarm-bookmark-7
+    bookmarks:
+      - root
+    v:
+      <<: *alarm_value
+      resource: test-resource-alarm-bookmark-7-1
+      resolved: <NowUnix()>
+
+  alarm_bookmark_7_2_resolved:
+    <<: *resolved_alarm
+    _id: test-alarm-bookmark-7-2
+    d: test-resource-alarm-bookmark-7-2/test-component-alarm-bookmark-7
+    bookmarks:
+      - manageruser
+    v:
+      <<: *alarm_value
+      resource: test-resource-alarm-bookmark-7-2
+      resolved: <NowUnix()>
