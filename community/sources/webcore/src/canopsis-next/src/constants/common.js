@@ -370,11 +370,13 @@ export const MAX_SEARCH_ITEMS = 8;
 export const LOGIN_APP_INFO_POLLING_DELAY = 5000;
 
 export const RESPONSE_STATUSES = {
+  badRequest: 400,
   unauthorized: 401,
   notFound: 404,
   forbidden: 403,
   timeout: 408,
 
+  internalServerError: 500,
   badGateway: 502,
   serviceUnavailable: 503,
 };
