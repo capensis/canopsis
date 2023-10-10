@@ -505,9 +505,44 @@ Ce helper permet d'afficher les `liens` d'une alarme ou d'une entité.
 
 ```handlebars
 {{#copy 'Valeur à copier'}}Label{{/copy}}
-{{#copy alarm.v.display_name}}<button>Cliquer pour copier</button>{{/copy}}
 ```
 
 Ce helper permet de copier le contenu de sa valeur dans le clipboard pour utilsiation ultérieure.
 
+#### Exemple d'utilisation du helper `copy`
+
+Copier dans le presse papier la valeur de l'identifiant d'une alarme :
+
+{{#copy alarm.v.display_name}}<button>Cliquer pour copier</button>{{/copy}}
+
+Copier dans le presse papier la structure d'un événement à partir d'une alarme :
+
+```handlebars
+{{#copy (concat '{
+  "connector" : "' alarm.v.connector '",
+  "connector_name" : "' alarm.v.connector_name '",
+  "component" : "' alarm.v.component '",
+  "resource" : "' alarm.v.resource '",
+  "source_type" : "resource",
+  "event_type" : "check",
+  "output" : "' alarm.v.output '",
+  "state" : ' alarm.v.state.val '
+}') }}Cliquez pour copier la base de l'événement d'origine{{/copy}}
+```
+
+### Helper `json`
+
+```handlebars
+{{json alarm.v 'display_name'}}
+```
+
+Ce helper permet de renvoyer des informations au format json
+
+#### Exemple d'utilisation du helper `json`
+
+Renvoyer au format json une alarme complète :
+
+```handlebars
+{{json alarm.v }}
+```
 
