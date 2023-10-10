@@ -13,3 +13,12 @@ if (!db.permission.findOne({_id: "api_private_view_groups"})) {
     });
     db.role.updateMany({_id: "admin"}, {$set: {"permissions.api_private_view_groups": 1}});
 }
+
+if (!db.permission.findOne({_id: "models_privateView"})) {
+    db.permission.insertOne({
+        _id: "models_privateView",
+        name: "models_privateView",
+        description: "Private view"
+    });
+    db.role.updateMany({_id: "admin"}, {$set: {"permissions.models_privateView": 1}});
+}
