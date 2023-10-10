@@ -58,9 +58,9 @@
           @click.stop="showCreateViewModal"
         )
           v-icon(dark) add
-      span {{ $t('layout.sideBar.buttons.create') }}
+      span {{ $t('layout.sideBar.buttons.createView') }}
     v-tooltip(
-      v-if="hasCreateAnyViewAccess",
+      v-if="hasAccessToPrivateView && hasCreateAnyViewAccess",
       :right="tooltipRight",
       :left="tooltipLeft",
       z-index="10",
@@ -76,7 +76,7 @@
           @click.stop="showCreatePrivateViewModal"
         )
           v-icon(dark) $vuetify.icons.person_lock
-      span {{ $t('layout.sideBar.buttons.create') }}
+      span {{ $t('layout.sideBar.buttons.createPrivateView') }}
 </template>
 
 <script>

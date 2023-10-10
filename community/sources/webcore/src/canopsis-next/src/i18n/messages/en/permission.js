@@ -442,6 +442,10 @@ export default {
       name: 'Views',
       description: 'This permission defines the access to the list of views',
     },
+    [USERS_PERMISSIONS.technical.privateView]: {
+      name: 'Private views',
+      description: 'This permission defines the access to the list of private views',
+    },
     [USERS_PERMISSIONS.technical.role]: {
       name: 'Roles',
       description: 'This permission defines the access to the list of roles',
