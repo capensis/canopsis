@@ -379,4 +379,13 @@ export const RESPONSE_STATUSES = {
   serviceUnavailable: 503,
 };
 
-export const EXCLUDED_SERVER_ERROR_STATUSES = [RESPONSE_STATUSES.unauthorized, RESPONSE_STATUSES.forbidden];
+export const LOGOUT_RESPONSE_STATUSES = [
+  RESPONSE_STATUSES.unauthorized,
+  RESPONSE_STATUSES.badGateway,
+  RESPONSE_STATUSES.serviceUnavailable,
+];
+
+export const EXCLUDED_SERVER_ERROR_STATUSES = [
+  RESPONSE_STATUSES.unauthorized,
+  RESPONSE_STATUSES.forbidden,
+];

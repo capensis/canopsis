@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-menu(v-show="administrationGroupedLinks.length", bottom, offset-y)
+  v-menu(v-if="administrationGroupedLinks.length", bottom, offset-y)
     template(#activator="{ on }")
       v-btn.white--text(v-on="on", flat) {{ $t('common.administration') }}
     v-list.py-0
