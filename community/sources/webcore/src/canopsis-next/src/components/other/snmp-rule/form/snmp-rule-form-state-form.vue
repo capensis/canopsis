@@ -39,9 +39,9 @@
 </template>
 
 <script>
-import { SNMP_STATE_TYPES } from '@/constants';
+import { SNMP_STATE_TYPES, SNMP_TEMPLATE_STATE_STATES } from '@/constants';
 
-import { getEntityStateColor } from '@/helpers/entities/entity/color';
+import { getSnmpRuleStateColor } from '@/helpers/entities/snmp-rule/color';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -70,6 +70,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    stateValues: {
+      type: Object,
+      default: () => SNMP_TEMPLATE_STATE_STATES,
+    },
   },
   computed: {
     isTemplate() {
@@ -79,9 +83,9 @@ export default {
     availableStates() {
       return Object.entries(this.stateValues).map(([key, state]) => ({
         key,
-        text: this.$t(`modals.createChangeStateEvent.states.${key}`),
+        text: this.$t(`snmpRule.states.${key}`),
         value: state,
-        color: getEntityStateColor(state),
+        color: getSnmpRuleStateColor(state),
       }));
     },
   },
