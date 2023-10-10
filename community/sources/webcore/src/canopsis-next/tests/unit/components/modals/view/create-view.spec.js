@@ -41,6 +41,7 @@ describe('create-view', () => {
     is_private: false,
     group: {
       _id: Faker.datatype.string(),
+      is_private: false,
     },
     periodic_refresh: DEFAULT_PERIODIC_REFRESH,
   };

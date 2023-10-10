@@ -6,7 +6,7 @@ export const permissionsTechnicalViewMixin = {
   mixins: [authMixin],
   computed: {
     hasAccessToPrivateView() {
-      return this.checkAccess(USERS_PERMISSIONS.technical.privateView);
+      return true;
     },
 
     hasCreateAnyViewAccess() {
