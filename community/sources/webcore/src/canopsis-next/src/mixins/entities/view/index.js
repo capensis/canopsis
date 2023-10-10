@@ -10,7 +10,7 @@ export const entitiesViewMixin = {
     ...mapActions({
       createView: 'createView',
       updateView: 'updateView',
-      updateViewsPositions: 'updatePositionsView',
+      updateViewsPositions: 'updateViewPositions',
       updateViewWithoutStore: 'updateWithoutStoreView',
       removeView: 'removeView',
       copyView: 'copyView',

@@ -2,8 +2,8 @@
   v-list-tile(:to="viewLink")
     v-list-tile-title
       span {{ view.title }}
+      v-icon.ml-1(v-if="view.is_private", color="white", small) lock
       v-btn.edit-view-button(
-        :data-test="`editViewButton-view-${view._id}`",
         v-show="hasViewEditButtonAccess",
         color="grey darken-2",
         depressed,
@@ -13,7 +13,6 @@
       )
         v-icon(small) edit
       v-btn.duplicate-view-button(
-        :data-test="`copyViewButton-view-${view._id}`",
         v-show="isNavigationEditingMode",
         depressed,
         small,
