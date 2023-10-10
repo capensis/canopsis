@@ -1,31 +1,28 @@
 <template lang="pug">
   v-card(:color="cardColor")
     v-card-text.panel-item-content
-      v-layout(align-center, justify-space-between)
-        v-flex(:class="{ 'panel-view-title--editing': isEditing }")
-          v-layout(align-center)
-            span.pl-2(:class="{ ellipsis: ellipsis }")
-              slot(name="title") {{ view.title }}
-        v-flex
-          v-layout(v-if="allowEditing", justify-end)
-            v-btn.ma-0(
-              v-show="hasEditAccess",
-              :disabled="isOrderChanged",
-              depressed,
-              small,
-              icon,
-              @click.prevent="$emit('change')"
-            )
-              v-icon(small) edit
-            v-btn.ma-0(
-              v-show="isEditing",
-              :disabled="isOrderChanged",
-              depressed,
-              small,
-              icon,
-              @click.prevent="$emit('duplicate')"
-            )
-              v-icon(small) file_copy
+      div.panel-item-content__title.pl-2(:class="{ ellipsis: ellipsis }")
+        slot(name="title") {{ view.title }}
+      div.panel-item-content__actions
+        v-icon.panel-header__icon.mr-2(v-if="view.is_private", small) lock
+        v-btn.ma-0(
+          v-show="editable",
+          :disabled="isOrderChanged",
+          depressed,
+          small,
+          icon,
+          @click.prevent="$emit('change')"
+        )
+          v-icon(small) edit
+        v-btn.ma-0(
+          v-show="isEditing",
+          :disabled="isOrderChanged",
+          depressed,
+          small,
+          icon,
+          @click.prevent="$emit('duplicate')"
+        )
+          v-icon(small) file_copy
     v-divider
 </template>
 
@@ -40,7 +37,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    hasEditAccess: {
+    editable: {
       type: Boolean,
       default: false,
     },
@@ -71,29 +68,27 @@ export default {
 
 <style lang="scss" scoped>
   .panel-item-content {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
     cursor: pointer;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
     align-items: center;
+    justify-content: space-between;
     position: relative;
     padding: 12px 24px;
     height: 48px;
 
-    & > div {
-      max-width: 100%;
+    &__title {
+      width: 100%;
+    }
+
+    &__actions {
+      flex-shrink: 0;
+
+      display: flex;
+      align-items: center;
     }
 
     & ::v-deep .v-btn:not(:last-child) {
       margin-right: 0;
-    }
-  }
-
-  .panel-view-title {
-    &--editing {
-      max-width: 73%;
     }
   }
 </style>

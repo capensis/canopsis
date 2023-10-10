@@ -59,18 +59,40 @@
         )
           v-icon(dark) add
       span {{ $t('layout.sideBar.buttons.create') }}
+    v-tooltip(
+      v-if="hasCreateAnyViewAccess",
+      :right="tooltipRight",
+      :left="tooltipLeft",
+      z-index="10",
+      custom-activator
+    )
+      template(#activator="{ on }")
+        v-btn(
+          v-on="on",
+          color="blue darken-3",
+          small,
+          dark,
+          fab,
+          @click.stop="showCreatePrivateViewModal"
+        )
+          v-icon(dark) $vuetify.icons.person_lock
+      span {{ $t('layout.sideBar.buttons.create') }}
 </template>
 
 <script>
 import { MODALS } from '@/constants';
 
 import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
-import layoutNavigationEditingModeMixin from '@/mixins/layout/navigation/editing-mode';
+import { layoutNavigationEditingModeMixin } from '@/mixins/layout/navigation/editing-mode';
+import { entitiesViewMixin } from '@/mixins/entities/view';
+import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 
 export default {
   mixins: [
     permissionsTechnicalViewMixin,
     layoutNavigationEditingModeMixin,
+    entitiesViewMixin,
+    entitiesViewGroupMixin,
   ],
   props: {
     tooltipRight: {
@@ -104,9 +126,23 @@ export default {
     };
   },
   methods: {
-    showCreateViewModal() {
+    showCreateViewModal(initialView) {
       this.$modals.show({
         name: MODALS.createView,
+        config: {
+          view: initialView,
+          action: async (data) => {
+            await this.createViewWithPopup({ data });
+
+            return this.fetchAllGroupsListWithWidgetsWithCurrentUser();
+          },
+        },
+      });
+    },
+
+    showCreatePrivateViewModal() {
+      this.showCreateViewModal({
+        is_private: true,
       });
     },
   },

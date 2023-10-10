@@ -60,12 +60,6 @@ export default {
       title: 'Dupliquer une vue - {viewTitle}',
       infoMessage: 'Vous êtes en train de dupliquer une vue. Toutes les lignes et les widgets de la vue dupliquée seront copiés dans la nouvelle vue.',
     },
-    noData: 'Aucun groupe correspondant. Appuyez sur <kbd>enter</kbd> pour en créer un nouveau.',
-    fields: {
-      periodicRefresh: 'Rafraichissement périodique',
-      groupIds: 'Choisissez une groupe, ou créez-en un nouveau',
-      groupTags: 'Étiquettes de groupe',
-    },
     success: {
       create: 'Nouvelle vue créée !',
       edit: 'Vue éditée avec succès !',
@@ -77,11 +71,6 @@ export default {
       edit: 'Erreur lors de l\'édition de la vue...',
       duplicate: 'Échec de la duplication de la vue...',
       delete: 'Erreur lors de la suppression de la vue...',
-    },
-  },
-  createEvent: {
-    fields: {
-      output: 'Note',
     },
   },
   confirmAckWithTicket: {
