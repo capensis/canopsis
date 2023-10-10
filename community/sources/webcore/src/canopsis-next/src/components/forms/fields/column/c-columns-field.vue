@@ -16,10 +16,21 @@
         :with-template="withTemplate",
         :with-color-indicator="withColorIndicator",
         :with-instructions="withInstructions",
-        :without-infos-attributes="withoutInfosAttributes"
+        :without-infos-attributes="withoutInfosAttributes",
+        @remove="remove(index)"
       )
-    v-flex
-      v-btn.mr-2.mx-0(color="primary", @click.prevent="add") {{ $t('common.add') }}
+    v-layout(justify-end)
+      v-tooltip(left)
+        template(#activator="{ on }")
+          v-btn.mr-2.mx-0(
+            v-on="on",
+            color="primary",
+            icon,
+            large,
+            @click.prevent="add"
+          )
+            v-icon add
+        span {{ $t('common.add') }}
 </template>
 
 <script>
@@ -84,6 +95,10 @@ export default {
   methods: {
     add() {
       this.addItemIntoArray(widgetColumnToForm());
+    },
+
+    remove(index) {
+      this.removeItemFromArray(index);
     },
   },
 };
