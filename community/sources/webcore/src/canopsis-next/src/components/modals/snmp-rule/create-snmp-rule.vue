@@ -17,7 +17,7 @@
 <script>
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { snmpRuleToForm, formToSnmpRule } from '@/helpers/forms/snmp-rule';
+import { snmpRuleToForm, formToSnmpRule } from '@/helpers/entities/snmp-rule/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
