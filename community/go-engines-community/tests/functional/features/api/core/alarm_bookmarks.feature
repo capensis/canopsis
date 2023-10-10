@@ -409,7 +409,7 @@ Feature: Alarm bookmarks
     """
 
   @concurrent
-  Scenario: given remove bookmarks requests should remove bookmarks, bookmarks should be removed differently for different users
+  Scenario: given remove bookmarks requests for resolved alarms should remove bookmarks, bookmarks should be removed differently for different users
     When I am admin
     When I do GET /api/v4/alarms?search=test-resource-alarm-bookmark-4&opened=false
     Then the response code should be 200
@@ -592,4 +592,24 @@ Feature: Alarm bookmarks
     ID
     test-alarm-bookmark-5-2
 
+    """
+
+  @concurrent
+  Scenario: given alarm bookmark requests for not found alarm should return not found error
+    When I am admin
+    When I do PUT /api/v4/alarms/test-alarm-bookmark-not-found/bookmark
+    Then the response code should be 404
+    Then the response body should be:
+    """
+    {
+      "error": "Not found"
+    }
+    """
+    When I do DELETE /api/v4/alarms/test-alarm-bookmark-not-found/bookmark
+    Then the response code should be 404
+    Then the response body should be:
+    """
+    {
+      "error": "Not found"
+    }
     """
