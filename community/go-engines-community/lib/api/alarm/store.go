@@ -56,8 +56,6 @@ type Store interface {
 	GetAssignedDeclareTicketsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedDeclareTicketRule, error)
 	Export(ctx context.Context, t export.Task) (export.DataCursor, error)
 	GetLinks(ctx context.Context, ruleId string, alarmIds []string, userId string) ([]link.Link, bool, error)
-	AddBookmark(ctx context.Context, alarmID, userID string) (bool, error)
-	RemoveBookmark(ctx context.Context, alarmID, userID string) (bool, error)
 }
 
 type store struct {
@@ -1436,62 +1434,6 @@ func (s *store) GetAssignedDeclareTicketsMap(ctx context.Context, alarmIds []str
 	}
 
 	return assignedRulesMap, err
-}
-
-func (s *store) AddBookmark(ctx context.Context, alarmID, userID string) (bool, error) {
-	res, err := s.mainDbCollection.UpdateOne(
-		ctx,
-		bson.M{"_id": alarmID},
-		bson.M{"$addToSet": bson.M{"bookmarks": userID}},
-	)
-	if err != nil {
-		return false, err
-	}
-
-	if res.MatchedCount == 0 {
-		res, err = s.resolvedDbCollection.UpdateOne(
-			ctx,
-			bson.M{"_id": alarmID},
-			bson.M{"$addToSet": bson.M{"bookmarks": userID}},
-		)
-		if err != nil {
-			return false, err
-		}
-
-		if res.MatchedCount == 0 {
-			return false, nil
-		}
-	}
-
-	return true, nil
-}
-
-func (s *store) RemoveBookmark(ctx context.Context, alarmID, userID string) (bool, error) {
-	res, err := s.mainDbCollection.UpdateOne(
-		ctx,
-		bson.M{"_id": alarmID},
-		bson.M{"$pull": bson.M{"bookmarks": userID}},
-	)
-	if err != nil {
-		return false, err
-	}
-
-	if res.MatchedCount == 0 {
-		res, err = s.resolvedDbCollection.UpdateOne(
-			ctx,
-			bson.M{"_id": alarmID},
-			bson.M{"$pull": bson.M{"bookmarks": userID}},
-		)
-		if err != nil {
-			return false, err
-		}
-
-		if res.MatchedCount == 0 {
-			return false, nil
-		}
-	}
-
-	return true, nil
 }
 
 func (s *store) findUser(ctx context.Context, id string) (link.User, error) {

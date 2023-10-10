@@ -90,7 +90,7 @@ type BaseFilterRequest struct {
 	PbehaviorPattern string `form:"pbehavior_pattern" json:"pbehavior_pattern"`
 
 	Instructions  []InstructionFilterRequest `form:"instructions[]" json:"instructions"`
-	WithBookmarks bool                       `form:"with_bookmarks" json:"with_bookmarks"`
+	OnlyBookmarks bool                       `form:"only_bookmarks" json:"only_bookmarks"`
 }
 
 type InstructionFilterRequest struct {
