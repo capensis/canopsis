@@ -885,6 +885,47 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarms/{id}/bookmark:
+    put:
+      tags:
+        - alarms
+      summary: Add bookmark to an alarm
+      description: |
+        Add bookmark to an alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: add-alarm-bookmark
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - alarms
+      summary: Remove bookmark from an alarm
+      description: |
+        Remove bookmark from an alarm.
+        
+        -  PERMISSIONS: `api_alarm_update`
+      operationId: remove-alarm-bookmark
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /alarms/{id}/cancel:
     put:
       tags:
