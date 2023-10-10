@@ -536,3 +536,60 @@ Feature: Alarm bookmarks
       }
     }
     """
+
+  @concurrent
+  Scenario: given alarm export request with bookmarks should export alarm only with user's bookmarks
+    When I am admin
+    When I do POST /api/v4/alarm-export:
+    """json
+    {
+      "search": "test-resource-alarm-bookmark-5",
+      "with_bookmarks": true,
+      "fields": [
+         {"name": "_id", "label": "ID"}
+      ]
+    }
+    """
+    Then the response code should be 200
+    When I save response exportID={{ .lastResponse._id }}
+    When I do GET /api/v4/alarm-export/{{ .exportID }} until response code is 200 and body contains:
+    """json
+    {
+       "status": 1
+    }
+    """
+    When I do GET /api/v4/alarm-export/{{ .exportID }}/download
+    Then the response code should be 200
+    Then the response raw body should be:
+    """csv
+    ID
+    test-alarm-bookmark-5-1
+
+    """
+    When I am manager
+    When I do POST /api/v4/alarm-export:
+    """json
+    {
+      "search": "test-resource-alarm-bookmark-5",
+      "with_bookmarks": true,
+      "fields": [
+         {"name": "_id", "label": "ID"}
+      ]
+    }
+    """
+    Then the response code should be 200
+    When I save response exportID={{ .lastResponse._id }}
+    When I do GET /api/v4/alarm-export/{{ .exportID }} until response code is 200 and body contains:
+    """json
+    {
+       "status": 1
+    }
+    """
+    When I do GET /api/v4/alarm-export/{{ .exportID }}/download
+    Then the response code should be 200
+    Then the response raw body should be:
+    """csv
+    ID
+    test-alarm-bookmark-5-2
+
+    """
