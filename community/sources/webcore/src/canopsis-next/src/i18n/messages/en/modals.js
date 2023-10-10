@@ -60,12 +60,6 @@ export default {
       title: 'Duplicate the view - {viewTitle}',
       infoMessage: 'You\'re duplicating a view. All duplicated view\'s rows/widgets will be copied on the new view.',
     },
-    noData: 'No group corresponding. Press <kbd>enter</kbd> to create a new one',
-    fields: {
-      periodicRefresh: 'Periodic refresh',
-      groupIds: 'Choose a group, or create a new one',
-      groupTags: 'Group tags',
-    },
     success: {
       create: 'New view created!',
       edit: 'View successfully edited!',
@@ -77,11 +71,6 @@ export default {
       edit: 'View edition failed...',
       duplicate: 'View duplication failed...',
       delete: 'View deletion failed...',
-    },
-  },
-  createEvent: {
-    fields: {
-      output: 'Note',
     },
   },
   confirmAckWithTicket: {

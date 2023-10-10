@@ -20,14 +20,22 @@
           :class="{ ordering: isGroupsOrderChanged }",
           :component-data="{ props: { expand: true, dark: true, focusable: true } }",
           :disabled="!isNavigationEditingMode",
+          draggable=".groups-panel__item--public",
           component="v-expansion-panel"
         )
-          groups-side-bar-group(
+          groups-side-bar-group.groups-panel__item--public(
             v-for="(group, index) in mutatedGroups",
             :key="group._id",
             :group.sync="mutatedGroups[index]",
             :is-groups-order-changed="isGroupsOrderChanged"
           )
+          template(#footer="")
+            groups-side-bar-group(
+              v-for="privateGroup in privateGroups",
+              :key="privateGroup._id",
+              :group="privateGroup",
+              :is-groups-order-changed="isGroupsOrderChanged"
+            )
       v-divider
       v-fade-transition
         div.v-overlay.v-overlay--active(v-show="isGroupsOrderChanged")
@@ -106,9 +114,17 @@ export default {
       },
     },
 
+    privateGroups() {
+      return this.availableGroups.filter(group => group.is_private);
+    },
+
+    publicGroups() {
+      return this.availableGroups.filter(group => !group.is_private);
+    },
+
     isGroupsOrderChanged() {
       return isDeepOrderChanged(
-        this.availableGroups,
+        this.publicGroups,
         this.mutatedGroups,
         '_id',
         (entity = {}, anotherEntity = {}) => isDeepOrderChanged(entity.views, anotherEntity.views),
@@ -116,7 +132,7 @@ export default {
     },
   },
   watch: {
-    availableGroups: {
+    publicGroups: {
       deep: true,
       immediate: true,
       handler(groups) {
@@ -129,7 +145,7 @@ export default {
      * Reset mutated groups method
      */
     resetMutatedGroups() {
-      this.setMutatedGroups(this.availableGroups);
+      this.setMutatedGroups(this.publicGroups);
     },
 
     /**

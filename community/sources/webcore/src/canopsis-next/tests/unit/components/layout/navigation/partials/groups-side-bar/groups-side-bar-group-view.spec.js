@@ -47,11 +47,13 @@ describe('groups-side-bar-group-view', () => {
       config: {
         title: `Duplicate the view - ${view.title}`,
         duplicate: true,
+        submittable: false,
         view: {
           ...view,
           name: '',
           title: '',
         },
+        action: expect.any(Function),
       },
     });
   });
@@ -76,6 +78,10 @@ describe('groups-side-bar-group-view', () => {
       config: {
         title: 'Edit the view',
         view,
+        deletable: false,
+        submittable: false,
+        remove: expect.any(Function),
+        action: expect.any(Function),
       },
     });
   });

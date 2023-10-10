@@ -8,67 +8,52 @@ exports[`group-view-panel Renders \`group-view-panel\` with custom props 1`] = `
     class="v-card__text panel-item-content"
   >
     <div
-      class="layout align-center justify-space-between"
+      class="panel-item-content__title pl-2"
     >
       <div
-        class="flex panel-view-title--editing"
+        class="title-slot"
+      >
+        TITLE
+      </div>
+    </div>
+    <div
+      class="panel-item-content__actions"
+    >
+      <!---->
+      <button
+        class="ma-0 v-btn v-btn--disabled v-btn--icon v-btn--depressed v-btn--small theme--light"
+        disabled="disabled"
+        type="button"
       >
         <div
-          class="layout align-center"
+          class="v-btn__content"
         >
-          <span
-            class="pl-2"
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+            style="font-size: 16px;"
           >
-            <div
-              class="title-slot"
-            >
-              TITLE
-            </div>
-          </span>
+            edit
+          </i>
         </div>
-      </div>
-      <div
-        class="flex"
+      </button>
+      <button
+        class="ma-0 v-btn v-btn--disabled v-btn--icon v-btn--depressed v-btn--small theme--light"
+        disabled="disabled"
+        type="button"
       >
         <div
-          class="layout justify-end"
+          class="v-btn__content"
         >
-          <button
-            class="ma-0 v-btn v-btn--disabled v-btn--icon v-btn--depressed v-btn--small theme--light"
-            disabled="disabled"
-            type="button"
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+            style="font-size: 16px;"
           >
-            <div
-              class="v-btn__content"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
-              >
-                edit
-              </i>
-            </div>
-          </button>
-          <button
-            class="ma-0 v-btn v-btn--disabled v-btn--icon v-btn--depressed v-btn--small theme--light"
-            disabled="disabled"
-            type="button"
-          >
-            <div
-              class="v-btn__content"
-            >
-              <i
-                aria-hidden="true"
-                class="v-icon material-icons theme--light"
-                style="font-size: 16px;"
-              >
-                file_copy
-              </i>
-            </div>
-          </button>
+            file_copy
+          </i>
         </div>
-      </div>
+      </button>
     </div>
   </div>
   <hr
@@ -85,26 +70,48 @@ exports[`group-view-panel Renders \`group-view-panel\` with required props 1`] =
     class="v-card__text panel-item-content"
   >
     <div
-      class="layout align-center justify-space-between"
+      class="panel-item-content__title pl-2 ellipsis"
     >
-      <div
-        class="flex"
+      View title
+    </div>
+    <div
+      class="panel-item-content__actions"
+    >
+      <!---->
+      <button
+        class="ma-0 v-btn v-btn--icon v-btn--depressed v-btn--small theme--light"
+        style="display: none;"
+        type="button"
       >
         <div
-          class="layout align-center"
+          class="v-btn__content"
         >
-          <span
-            class="pl-2 ellipsis"
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+            style="font-size: 16px;"
           >
-            View title
-          </span>
+            edit
+          </i>
         </div>
-      </div>
-      <div
-        class="flex"
+      </button>
+      <button
+        class="ma-0 v-btn v-btn--icon v-btn--depressed v-btn--small theme--light"
+        style="display: none;"
+        type="button"
       >
-        <!---->
-      </div>
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+            style="font-size: 16px;"
+          >
+            file_copy
+          </i>
+        </div>
+      </button>
     </div>
   </div>
   <hr

@@ -75,6 +75,7 @@ describe('groups-side-bar', () => {
         with_tabs: true,
         with_widgets: true,
         with_flags: true,
+        with_private: true,
       },
     });
   });
