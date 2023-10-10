@@ -10,11 +10,10 @@
   )
     div(v-if="title")
       v-toolbar(color="secondary")
-        v-list
-          v-list-tile
-            v-list-tile-title.white--text {{ title }}
-        v-btn(icon, @click.stop="closeHandler")
-          v-icon(color="white") close
+        v-layout(row, align-center)
+          v-flex.white--text.subheading {{ title }}
+          v-btn(icon, @click.stop="closeHandler")
+            v-icon(color="white") close
       v-divider
     slot
 </template>
