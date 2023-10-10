@@ -474,6 +474,8 @@ definitions:
         type: integer
       tstop:
         type: integer
+      with_bookmarks:
+        type: boolean
     type: object
   alarm.ExportResponse:
     properties:
