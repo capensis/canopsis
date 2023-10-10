@@ -70,8 +70,16 @@ export default createCRUDModule({
     },
   },
   actions: {
-    createView(context, { data } = {}) {
-      return request.post(API_ROUTES.view.list, data);
+    createPrivateGroup(context, { data } = {}) {
+      return request.post(API_ROUTES.privateView.groups, data);
+    },
+
+    updatePrivateView(context, { id, data } = {}) {
+      return request.put(`${API_ROUTES.privateView.groups}/${id}`, data);
+    },
+
+    removePrivateView(context, { id } = {}) {
+      return request.delete(`${API_ROUTES.privateView.groups}/${id}`);
     },
 
     cloneView(context, { data, id } = {}) {

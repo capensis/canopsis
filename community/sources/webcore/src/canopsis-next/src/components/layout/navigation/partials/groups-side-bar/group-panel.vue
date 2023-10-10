@@ -6,16 +6,18 @@
     template(#header="")
       div.panel-header
         slot(name="title")
-          span {{ group.title }}
-        v-btn(
-          v-show="isEditing",
-          :disabled="orderChanged",
-          depressed,
-          small,
-          icon,
-          @click.stop="handleChange"
-        )
-          v-icon(small) edit
+          v-icon.panel-header__icon.mr-2(v-if="group.is_private", small) lock
+          div.panel-header__title {{ group.title }}
+        div.panel-header__actions
+          v-btn(
+            v-show="isEditing",
+            :disabled="orderChanged",
+            depressed,
+            small,
+            icon,
+            @click.stop="handleChange"
+          )
+            v-icon(small) edit
     slot
 </template>
 
@@ -54,17 +56,16 @@ export default {
     align-items: center;
     justify-content: space-between;
 
-    span {
-      max-width: 100%;
+    &__icon, &__actions {
+      flex-shrink: 0;
+    }
+
+    &__title {
+      width: 100%;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
       display: inline-block;
-      vertical-align: middle;
-
-      .editing & {
-        max-width: 73%;
-      }
     }
   }
 </style>
