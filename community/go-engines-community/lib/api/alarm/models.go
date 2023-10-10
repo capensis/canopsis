@@ -59,8 +59,7 @@ type ListRequest struct {
 
 type FilterRequest struct {
 	BaseFilterRequest
-	SearchBy      []string `form:"active_columns[]" json:"active_columns[]"`
-	WithBookmarks bool     `form:"with_bookmarks" json:"with_bookmarks"`
+	SearchBy []string `form:"active_columns[]" json:"active_columns[]"`
 }
 
 func (r BaseFilterRequest) GetOpenedFilter() int {
@@ -90,7 +89,8 @@ type BaseFilterRequest struct {
 	EntityPattern    string `form:"entity_pattern" json:"entity_pattern"`
 	PbehaviorPattern string `form:"pbehavior_pattern" json:"pbehavior_pattern"`
 
-	Instructions []InstructionFilterRequest `form:"instructions[]" json:"instructions"`
+	Instructions  []InstructionFilterRequest `form:"instructions[]" json:"instructions"`
+	WithBookmarks bool                       `form:"with_bookmarks" json:"with_bookmarks"`
 }
 
 type InstructionFilterRequest struct {
