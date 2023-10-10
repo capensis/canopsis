@@ -31,8 +31,6 @@ type API interface {
 	GetExport(c *gin.Context)
 	DownloadExport(c *gin.Context)
 	GetLinks(c *gin.Context)
-	AddBookmark(c *gin.Context)
-	RemoveBookmark(c *gin.Context)
 }
 
 type api struct {
@@ -440,32 +438,4 @@ func (a *api) GetLinks(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, links)
-}
-
-func (a *api) AddBookmark(c *gin.Context) {
-	found, err := a.store.AddBookmark(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
-	if err != nil {
-		panic(err)
-	}
-
-	if !found {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
-		return
-	}
-
-	c.Status(http.StatusNoContent)
-}
-
-func (a *api) RemoveBookmark(c *gin.Context) {
-	found, err := a.store.RemoveBookmark(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
-	if err != nil {
-		panic(err)
-	}
-
-	if !found {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
-		return
-	}
-
-	c.Status(http.StatusNoContent)
 }

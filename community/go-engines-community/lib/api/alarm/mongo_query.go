@@ -859,7 +859,7 @@ func (q *MongoQueryBuilder) addTagFilter(r FilterRequest, match *[]bson.M) {
 }
 
 func (q *MongoQueryBuilder) addBookmarkFilter(r FilterRequest, userID string, match *[]bson.M) {
-	if !r.WithBookmarks {
+	if !r.OnlyBookmarks {
 		return
 	}
 
