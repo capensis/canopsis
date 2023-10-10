@@ -666,6 +666,10 @@ export default {
       name: 'Afficher les groupes',
       description: 'Accès à la route de l\'API vers les groupes de vues CRUD',
     },
+    [USERS_PERMISSIONS.api.general.privateViewGroups]: {
+      name: 'Groupes de vue privée',
+      description: 'Accès à la route API vers les groupes de vues privées CRUD',
+    },
     [USERS_PERMISSIONS.api.general.userInterfaceUpdate]: {
       name: 'Mettre à jour l\'interface utilisateur',
       description: 'Accès à la route API pour mettre à jour l\'interface utilisateur',

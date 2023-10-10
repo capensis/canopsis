@@ -339,6 +339,7 @@ export const USERS_PERMISSIONS = {
       event: `${USER_PERMISSIONS_PREFIXES.api}_event`,
       view: `${USER_PERMISSIONS_PREFIXES.api}_view`,
       viewgroup: `${USER_PERMISSIONS_PREFIXES.api}_viewgroup`,
+      privateViewGroups: `${USER_PERMISSIONS_PREFIXES.api}_private_view_groups`,
       userInterfaceUpdate: `${USER_PERMISSIONS_PREFIXES.api}_user_interface_update`,
       userInterfaceDelete: `${USER_PERMISSIONS_PREFIXES.api}_user_interface_delete`,
       datastorageRead: `${USER_PERMISSIONS_PREFIXES.api}_datastorage_read`,

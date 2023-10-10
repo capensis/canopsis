@@ -666,6 +666,10 @@ export default {
       name: 'View groups',
       description: 'Access to API route to CRUD view groups',
     },
+    [USERS_PERMISSIONS.api.general.privateViewGroups]: {
+      name: 'Private view groups',
+      description: 'Access to API route to CRUD private view groups',
+    },
     [USERS_PERMISSIONS.api.general.userInterfaceUpdate]: {
       name: 'Update user interface',
       description: 'Access to API route to update user interface',

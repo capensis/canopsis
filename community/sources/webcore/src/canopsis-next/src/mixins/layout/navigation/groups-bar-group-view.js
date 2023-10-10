@@ -1,13 +1,17 @@
 import { MODALS, ROUTES_NAMES } from '@/constants';
 
 import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
+import { entitiesViewMixin } from '@/mixins/entities/view';
+import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 
-import layoutNavigationEditingModeMixin from './editing-mode';
+import { layoutNavigationEditingModeMixin } from './editing-mode';
 
 export default {
   mixins: [
     permissionsTechnicalViewMixin,
     layoutNavigationEditingModeMixin,
+    entitiesViewMixin,
+    entitiesViewGroupMixin,
   ],
   props: {
     view: {
@@ -49,6 +53,20 @@ export default {
         config: {
           title: this.$t('modals.view.edit.title'),
           view: this.view,
+          deletable: this.view.is_private || this.hasDeleteViewAccess,
+          submittable: this.view.is_private || this.hasUpdateViewAccess,
+          action: async (data) => {
+            await this.updateViewWithPopup({ id: this.view._id, data });
+
+            return this.fetchAllGroupsListWithWidgetsWithCurrentUser();
+          },
+          remove: async () => {
+            await this.removeViewWithPopup({ id: this.view._id });
+
+            await this.fetchAllGroupsListWithWidgetsWithCurrentUser();
+
+            this.redirectToHomeIfCurrentRoute();
+          },
         },
       });
     },
@@ -64,6 +82,12 @@ export default {
 
             name: '',
             title: '',
+          },
+          submittable: this.hasCreateAnyViewAccess,
+          action: async (data) => {
+            await this.copyViewWithPopup({ id: this.view._id, data });
+
+            return this.fetchAllGroupsListWithWidgetsWithCurrentUser();
           },
         },
       });
