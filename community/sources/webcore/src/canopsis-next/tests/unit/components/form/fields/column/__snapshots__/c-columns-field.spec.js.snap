@@ -31,18 +31,30 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props 1`] = `
     />
   </c-draggable-list-field-stub>
   <div
-    class="flex"
+    class="layout justify-end"
   >
-    <button
-      class="mr-2 mx-0 v-btn theme--light primary"
-      type="button"
+    <span
+      class="v-tooltip v-tooltip--left"
     >
-      <div
-        class="v-btn__content"
+      <transition-stub
+        name="slide-x-reverse-transition"
+      />
+      <button
+        class="mr-2 mx-0 v-btn v-btn--icon v-btn--large theme--light primary"
+        type="button"
       >
-        Add
-      </div>
-    </button>
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            add
+          </i>
+        </div>
+      </button>
+    </span>
   </div>
 </div>
 `;
@@ -57,18 +69,30 @@ exports[`c-columns-field Renders \`c-columns-field\` with default props 1`] = `
     value=""
   />
   <div
-    class="flex"
+    class="layout justify-end"
   >
-    <button
-      class="mr-2 mx-0 v-btn theme--light primary"
-      type="button"
+    <span
+      class="v-tooltip v-tooltip--left"
     >
-      <div
-        class="v-btn__content"
+      <transition-stub
+        name="slide-x-reverse-transition"
+      />
+      <button
+        class="mr-2 mx-0 v-btn v-btn--icon v-btn--large theme--light primary"
+        type="button"
       >
-        Add
-      </div>
-    </button>
+        <div
+          class="v-btn__content"
+        >
+          <i
+            aria-hidden="true"
+            class="v-icon material-icons theme--light"
+          >
+            add
+          </i>
+        </div>
+      </button>
+    </span>
   </div>
 </div>
 `;

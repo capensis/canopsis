@@ -2,6 +2,8 @@ import Faker from 'faker';
 
 import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createButtonStub } from '@unit/stubs/button';
+import { createActivatorElementStub } from '@unit/stubs/vuetify';
+
 import { ENTITIES_TYPES } from '@/constants';
 
 import CColumnsField from '@/components/forms/fields/column/c-columns-field.vue';
@@ -12,6 +14,7 @@ const snapshotStubs = {
 };
 const stubs = {
   ...snapshotStubs,
+  'v-tooltip': createActivatorElementStub('v-tooltip'),
   'v-btn': createButtonStub('v-btn'),
 };
 
@@ -67,6 +70,23 @@ describe('c-columns-field', () => {
       columns[0],
       columns[1],
       newColumn,
+      columns[3],
+    ]);
+  });
+
+  test('Column removed after trigger remove event', () => {
+    const columnToRemoveIndex = 2;
+    const wrapper = factory({
+      propsData: {
+        columns,
+      },
+    });
+
+    selectColumnFieldByIndex(wrapper, columnToRemoveIndex).vm.$emit('remove');
+
+    expect(wrapper).toEmit('input', [
+      columns[0],
+      columns[1],
       columns[3],
     ]);
   });
