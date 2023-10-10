@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/ratelimit"
 	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statistics"
@@ -173,6 +174,16 @@ func Default(
 		return nil
 	})
 
+	mainMessageProcessor := &messageProcessor{
+		FeaturePrintEventOnError: options.PrintEventOnError,
+
+		EventFilterService: eventfilterService,
+		TechMetricsSender:  techMetricsSender,
+		Scheduler:          scheduler,
+		StatsSender:        statsSender,
+		Decoder:            json.NewDecoder(),
+		Logger:             logger,
+	}
 	engine.AddConsumer(libengine.NewDefaultConsumer(
 		canopsis.FIFOConsumerName,
 		options.ConsumeFromQueue,
@@ -184,16 +195,7 @@ func Default(
 		"",
 		"",
 		amqpConnection,
-		&messageProcessor{
-			FeaturePrintEventOnError: options.PrintEventOnError,
-
-			EventFilterService: eventfilterService,
-			TechMetricsSender:  techMetricsSender,
-			Scheduler:          scheduler,
-			StatsSender:        statsSender,
-			Decoder:            json.NewDecoder(),
-			Logger:             logger,
-		},
+		mainMessageProcessor,
 		logger,
 	))
 	engine.AddConsumer(libengine.NewDefaultConsumer(
@@ -272,6 +274,14 @@ func Default(
 		eventFilterFailureService.Run(ctx)
 		return nil
 	})
+
+	healthcheck.Start(ctx, healthcheck.NewChecker(
+		"fifo",
+		mainMessageProcessor,
+		json.NewEncoder(),
+		false,
+		false,
+	), logger)
 
 	return engine
 }

@@ -770,7 +770,7 @@ export default {
       phrase: 'modifier la politique de stockage',
     },
     cleanStorage: {
-      title: 'Archivage/Suppression des entités désactivées. Êtes vous sur ?',
+      title: 'Archivage/Suppression des entités. Êtes vous sur ?',
       text: 'Vous êtes sur le point d\'archiver et/ou de supprimer des données.\n'
         + '<strong>Les opérations de suppression sont irreversibles.</strong>',
       phraseText: 'Merci de recopier le texte qui suit pour confirmer:',
@@ -974,13 +974,13 @@ export default {
   },
   createTag: {
     create: {
-      title: 'Créer une balise',
+      title: 'Créer un tag',
     },
     edit: {
-      title: 'Modifier une balise',
+      title: 'Modifier un tag',
     },
     duplicate: {
-      title: 'Dupliquer une balise',
+      title: 'Dupliquer un tag',
     },
   },
   createTheme: {
