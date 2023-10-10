@@ -16,6 +16,17 @@
           :error-messages="errors.collect(`${name}.column`)",
           :name="`${name}.column`"
         )
+        v-tooltip(left)
+          template(#activator="{ on }")
+            v-btn.mr-0(
+              v-on="on",
+              small,
+              flat,
+              icon,
+              @click="$emit('remove')"
+            )
+              v-icon(color="error", small) close
+          span {{ $t('common.delete') }}
       v-expand-transition(mode="out-in")
         column-field-expand-panel.pl-1(
           v-show="expanded",
