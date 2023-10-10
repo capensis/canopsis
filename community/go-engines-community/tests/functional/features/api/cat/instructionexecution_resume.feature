@@ -2,7 +2,7 @@ Feature: pause a instruction execution
   I need to be able to pause instruction operation
   Only admin should be able to pause a instruction
 
-  Scenario: given running instruction should pause execution
+  Scenario: given paused execution should resume execution
     When I am admin
     When I do POST /api/v4/cat/instructions:
     """json
@@ -132,7 +132,12 @@ Feature: pause a instruction execution
     When I do PUT /api/v4/cat/executions/notexist/resume
     Then the response code should be 401
 
-  Scenario: given get request and auth user without permissions should not allow access
+  Scenario: given resume request and auth user without permissions should not allow access
     When I am noperms
     When I do PUT /api/v4/cat/executions/notexist/resume
     Then the response code should be 403
+
+  Scenario: given resume request with not found id should return error
+    When I am admin
+    When I do PUT /api/v4/cat/executions/notexist/resume
+    Then the response code should be 404

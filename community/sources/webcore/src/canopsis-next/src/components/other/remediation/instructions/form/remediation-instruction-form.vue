@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { REMEDIATION_AUTO_INSTRUCTION_TRIGGERS } from '@/constants';
+import { REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES } from '@/constants';
 
 import { isInstructionAuto, isInstructionSimpleManual } from '@/helpers/entities/remediation/instruction/form';
 
@@ -95,7 +95,7 @@ export default {
     },
 
     availableTriggers() {
-      return REMEDIATION_AUTO_INSTRUCTION_TRIGGERS;
+      return REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES;
     },
   },
 };

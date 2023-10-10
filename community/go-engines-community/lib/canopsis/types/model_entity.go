@@ -73,6 +73,8 @@ type Entity struct {
 	// IsNew and IsUpdated used in engine che in entity creation and eventfilter
 	IsNew     bool `bson:"-" json:"-"`
 	IsUpdated bool `bson:"-" json:"-"`
+
+	Healthcheck bool `bson:"healthcheck,omitempty" json:"-"`
 }
 
 type Coordinates struct {

@@ -9,12 +9,13 @@
           :color="hasChildrenError ? 'error' : ''"
         )
         v-select(
-          v-field="column.column",
           v-validate="'required'",
+          :value="column.column",
           :items="availableColumns",
           :label="$tc('common.column', 1)",
           :error-messages="errors.collect(`${name}.column`)",
-          :name="`${name}.column`"
+          :name="`${name}.column`",
+          @change="changeColumn"
         )
         v-tooltip(left)
           template(#activator="{ on }")
@@ -49,6 +50,7 @@ import {
   CONTEXT_WIDGET_COLUMNS,
   ALARM_FIELDS_TO_LABELS_KEYS,
   ENTITY_FIELDS_TO_LABELS_KEYS,
+  ALARM_OUTPUT_FIELDS,
 } from '@/constants';
 
 import { formBaseMixin, validationChildrenMixin } from '@/mixins/form';
@@ -146,6 +148,21 @@ export default {
       }));
 
       this.updateModel(columns);
+    },
+  },
+  methods: {
+    changeColumn(column) {
+      const newValue = {
+        ...this.column,
+
+        column,
+      };
+
+      if (this.withHtml) {
+        newValue.isHtml = ALARM_OUTPUT_FIELDS.includes(column);
+      }
+
+      this.updateModel(newValue);
     },
   },
 };

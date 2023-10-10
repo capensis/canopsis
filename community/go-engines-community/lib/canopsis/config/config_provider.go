@@ -5,6 +5,7 @@ package config
 import (
 	"fmt"
 	"html/template"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
@@ -14,6 +15,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/rs/zerolog"
 )
+
+const SystemEnvVariablesKey = "System"
 
 var weekdays = map[string]time.Weekday{}
 
@@ -603,20 +606,55 @@ func (p *BaseDataStorageConfigProvider) Get() DataStorageConfig {
 type BaseTemplateConfigProvider struct {
 	conf SectionTemplate
 	mx   sync.RWMutex
+
+	logger zerolog.Logger
 }
 
-func NewTemplateConfigProvider(cfg CanopsisConf) *BaseTemplateConfigProvider {
-	return &BaseTemplateConfigProvider{
-		conf: cfg.Template,
-		mx:   sync.RWMutex{},
-	}
+func NewTemplateConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseTemplateConfigProvider {
+	p := BaseTemplateConfigProvider{mx: sync.RWMutex{}, logger: logger}
+	p.parseVariables(cfg.Template)
+
+	return &p
 }
 
 func (p *BaseTemplateConfigProvider) Update(cfg CanopsisConf) {
 	p.mx.Lock()
 	defer p.mx.Unlock()
 
-	p.conf = cfg.Template
+	p.parseVariables(cfg.Template)
+}
+
+func (p *BaseTemplateConfigProvider) parseVariables(templateCfg SectionTemplate) {
+	p.conf = templateCfg
+	if p.conf.Vars == nil {
+		p.conf.Vars = make(map[string]any)
+	}
+
+	if len(templateCfg.SystemEnvVarPrefixes) == 0 {
+		return
+	}
+
+	for _, prefix := range templateCfg.SystemEnvVarPrefixes {
+		if prefix == "" {
+			p.logger.Warn().Msg("system_env_var_prefixes contains an empty prefix, all system env variables are exposed to the UI")
+			break
+		}
+	}
+
+	systemVars := make(map[string]string)
+	for _, env := range os.Environ() {
+		for _, prefix := range templateCfg.SystemEnvVarPrefixes {
+			if strings.HasPrefix(env, prefix) {
+				if key, value, ok := strings.Cut(env, "="); ok {
+					systemVars[key] = value
+				}
+			}
+		}
+	}
+
+	if len(systemVars) != 0 {
+		p.conf.Vars[SystemEnvVariablesKey] = systemVars
+	}
 }
 
 func (p *BaseTemplateConfigProvider) Get() SectionTemplate {
@@ -980,7 +1018,7 @@ func parseInt(
 	name, sectionName string,
 	logger zerolog.Logger,
 ) int {
-	if v < 0 {
+	if v <= 0 {
 		logErrInvalidValueUseDefault(logger, name, sectionName, defaultVal, v, nil)
 		return defaultVal
 	}
@@ -998,7 +1036,7 @@ func parseUpdatedInt(
 	logger zerolog.Logger,
 	invalidMsg ...string,
 ) (int, bool) {
-	if v < 0 {
+	if v <= 0 {
 		msg := "bad value %s of %s config section, previous value is used instead"
 		if len(invalidMsg) == 1 {
 			msg = invalidMsg[0]

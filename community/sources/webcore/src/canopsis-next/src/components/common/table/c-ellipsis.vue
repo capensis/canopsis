@@ -4,7 +4,7 @@
     v-menu(v-if="!isShort", :close-on-content-click="false")
       template(#activator="{ on }")
         span.ml-1(v-on="on") ...
-      v-card(dark)
+      v-card
         v-card-title.pre-wrap {{ text }}
 </template>
 

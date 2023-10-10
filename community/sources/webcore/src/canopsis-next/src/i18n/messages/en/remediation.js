@@ -71,6 +71,7 @@ export default {
       connectionError: 'There is a problem with connection. Please click on refresh button or reload the page.',
       wasAborted: '{instructionName} has been aborted',
       wasPaused: 'The {instructionName} instruction on {alarmName} alarm was paused at {date}. You can resume it manually.',
+      wasRemovedOrDisabled: 'The {instructionName} instruction was removed or disabled.',
     },
     jobs: {
       title: 'Jobs assigned:',
