@@ -24,6 +24,8 @@ type Store interface {
 	AssocTicket(ctx context.Context, id string, r AssocTicketRequest, userId, username string) (bool, error)
 	Comment(ctx context.Context, id string, r CommentRequest, userId, username string) (bool, error)
 	ChangeState(ctx context.Context, id string, r ChangeStateRequest, userId, username string) (bool, error)
+	AddBookmark(ctx context.Context, alarmID, userID string) (bool, error)
+	RemoveBookmark(ctx context.Context, alarmID, userID string) (bool, error)
 }
 
 func NewStore(
@@ -35,25 +37,27 @@ func NewStore(
 	logger zerolog.Logger,
 ) Store {
 	return &store{
-		dbClient:      dbClient,
-		dbCollection:  dbClient.Collection(mongo.AlarmMongoCollection),
-		amqpPublisher: amqpPublisher,
-		exchange:      exchange,
-		queue:         queue,
-		encoder:       encoder,
-		contentType:   contentType,
-		logger:        logger,
+		dbClient:             dbClient,
+		dbCollection:         dbClient.Collection(mongo.AlarmMongoCollection),
+		resolvedDbCollection: dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
+		amqpPublisher:        amqpPublisher,
+		exchange:             exchange,
+		queue:                queue,
+		encoder:              encoder,
+		contentType:          contentType,
+		logger:               logger,
 	}
 }
 
 type store struct {
-	dbClient        mongo.DbClient
-	dbCollection    mongo.DbCollection
-	amqpPublisher   libamqp.Publisher
-	exchange, queue string
-	encoder         encoding.Encoder
-	contentType     string
-	logger          zerolog.Logger
+	dbClient             mongo.DbClient
+	dbCollection         mongo.DbCollection
+	resolvedDbCollection mongo.DbCollection
+	amqpPublisher        libamqp.Publisher
+	exchange, queue      string
+	encoder              encoding.Encoder
+	contentType          string
+	logger               zerolog.Logger
 }
 
 func (s *store) Ack(ctx context.Context, id string, r AckRequest, userId, username string) (bool, error) {
@@ -446,4 +450,48 @@ func (s *store) ticketResources(
 	}
 
 	return nil
+}
+
+func (s *store) AddBookmark(ctx context.Context, alarmID, userID string) (bool, error) {
+	mainRes, err := s.dbCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": alarmID},
+		bson.M{"$addToSet": bson.M{"bookmarks": userID}},
+	)
+	if err != nil {
+		return false, err
+	}
+
+	resolvedRes, err := s.resolvedDbCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": alarmID},
+		bson.M{"$addToSet": bson.M{"bookmarks": userID}},
+	)
+	if err != nil {
+		return false, err
+	}
+
+	return mainRes.MatchedCount != 0 || resolvedRes.MatchedCount != 0, nil
+}
+
+func (s *store) RemoveBookmark(ctx context.Context, alarmID, userID string) (bool, error) {
+	mainRes, err := s.dbCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": alarmID},
+		bson.M{"$pull": bson.M{"bookmarks": userID}},
+	)
+	if err != nil {
+		return false, err
+	}
+
+	resolvedRes, err := s.resolvedDbCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": alarmID},
+		bson.M{"$pull": bson.M{"bookmarks": userID}},
+	)
+	if err != nil {
+		return false, err
+	}
+
+	return mainRes.MatchedCount != 0 || resolvedRes.MatchedCount != 0, nil
 }
