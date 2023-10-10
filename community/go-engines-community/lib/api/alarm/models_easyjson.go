@@ -135,6 +135,8 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				in.Delim(']')
 			}
+		case "with_bookmarks":
+			out.WithBookmarks = bool(in.Bool())
 		default:
 			in.SkipRecursive()
 		}
@@ -252,6 +254,11 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 			out.RawByte(']')
 		}
+	}
+	{
+		const prefix string = ",\"with_bookmarks\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.WithBookmarks))
 	}
 	out.RawByte('}')
 }

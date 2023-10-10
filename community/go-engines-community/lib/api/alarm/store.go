@@ -633,7 +633,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 			BaseFilterRequest: r.BaseFilterRequest,
 			SearchBy:          t.Fields.Fields(),
 		},
-	}, now, "")
+	}, now, t.User)
 	if err != nil {
 		return nil, err
 	}
