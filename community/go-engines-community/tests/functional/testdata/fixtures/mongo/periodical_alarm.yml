@@ -2808,6 +2808,26 @@ periodical_alarm:
       <<: *alarm_value
       resource: test-resource-alarm-bookmark-2-2
 
+  alarm_bookmark_5_1:
+    <<: *alarm
+    _id: test-alarm-bookmark-5-1
+    d: test-resource-alarm-bookmark-5-1/test-component-alarm-bookmark-5
+    bookmarks:
+      - root
+    v:
+      <<: *alarm_value
+      resource: test-resource-alarm-bookmark-5-1
+
+  alarm_bookmark_5_2:
+    <<: *alarm
+    _id: test-alarm-bookmark-5-2
+    d: test-resource-alarm-bookmark-5-2/test-component-alarm-bookmark-5
+    bookmarks:
+      - manageruser
+    v:
+      <<: *alarm_value
+      resource: test-resource-alarm-bookmark-5-2
+
 resolved_alarms:
   alarm_to_get_3:
     <<: *alarm_to_get_3

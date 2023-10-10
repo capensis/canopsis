@@ -3532,3 +3532,13 @@ default_entities:
     <<: *resource
     _id: test-resource-alarm-bookmark-4-2/test-component-alarm-bookmark-4
     name: test-resource-alarm-bookmark-4-2
+
+  entity_alarm_bookmark_5_1:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-5-1/test-component-alarm-bookmark-5
+    name: test-resource-alarm-bookmark-5-1
+
+  entity_alarm_bookmark_5_2:
+    <<: *resource
+    _id: test-resource-alarm-bookmark-5-2/test-component-alarm-bookmark-5
+    name: test-resource-alarm-bookmark-5-2
