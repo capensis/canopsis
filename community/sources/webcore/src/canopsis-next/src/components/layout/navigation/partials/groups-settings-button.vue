@@ -126,23 +126,31 @@ export default {
     };
   },
   methods: {
-    showCreateViewModal(initialView) {
+    async createViewModalCallback(data) {
+      await this.createViewWithPopup({ data });
+
+      return this.fetchAllGroupsListWithWidgetsWithCurrentUser();
+    },
+
+    showCreateViewModal() {
       this.$modals.show({
         name: MODALS.createView,
         config: {
-          view: initialView,
-          action: async (data) => {
-            await this.createViewWithPopup({ data });
-
-            return this.fetchAllGroupsListWithWidgetsWithCurrentUser();
-          },
+          action: this.createViewModalCallback,
         },
       });
     },
 
     showCreatePrivateViewModal() {
-      this.showCreateViewModal({
-        is_private: true,
+      this.$modals.show({
+        name: MODALS.createView,
+        config: {
+          view: {
+            is_private: true,
+          },
+          title: this.$t('modals.view.create.privateTitle'),
+          action: this.createViewModalCallback,
+        },
       });
     },
   },

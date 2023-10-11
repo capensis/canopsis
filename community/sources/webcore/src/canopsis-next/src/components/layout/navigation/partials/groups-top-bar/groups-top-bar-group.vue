@@ -9,8 +9,8 @@
   )
     template(#activator="{ on }")
       v-btn.group-item__dropdown-btn(v-on="on", flat, dark)
-        v-icon.mr-1(v-if="group.is_private", color="white", small) lock
         span {{ group.title }}
+        v-icon.ml-1(v-if="group.is_private", color="white", small) lock
         v-btn(
           v-show="isNavigationEditingMode",
           depressed,
