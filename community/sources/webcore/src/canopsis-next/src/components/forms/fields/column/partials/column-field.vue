@@ -1,134 +1,68 @@
 <template lang="pug">
-  v-layout(justify-center, column)
-    v-select(
-      v-validate="'required'",
-      :value="column.column",
-      :items="availableColumns",
-      :label="$tc('common.column', 1)",
-      :error-messages="errors.collect(`${name}.column`)",
-      :name="`${name}.column`",
-      @change="changeColumn"
-    )
-    template(v-if="!withoutInfosAttributes")
-      c-alarm-infos-attribute-field(
-        v-if="isAlarmInfos",
-        v-field="column",
-        :rules="alarmInfosRules",
-        :pending="infosPending",
-        :name="`${name}.column`"
-      )
-      c-infos-attribute-field(
-        v-else-if="isInfos",
-        v-field="column",
-        :items="infosItems",
-        :pending="infosPending",
-        :name="`${name}.column`",
-        combobox,
-        column
-      )
-    template(v-if="isLinks")
-      column-links-category-field(v-field="column.field")
-      c-number-field(
-        v-field="column.inlineLinksCount",
-        :label="$t('settings.columns.inlineLinksCount')"
-      )
-      v-switch.pa-0.my-2(
-        v-field="column.onlyIcon",
-        :label="$t('settings.columns.onlyIcon')",
-        color="primary",
-        hide-details
-      )
-      c-number-field(
-        v-if="column.onlyIcon",
-        v-field="column.linksInRowCount",
-        :label="$t('settings.columns.linksInRowCount')"
-      )
-        template(#append="")
-          c-help-icon(:text="$t('settings.columns.linksInRowCountTooltip')", left)
-    v-switch.pa-0.my-2(
-      v-model="customLabel",
-      :label="$t('settings.columns.customLabel')",
-      color="primary",
-      hide-details,
-      @change="updateCustomLabel"
-    )
-    v-text-field(
-      v-if="customLabel",
-      v-field="column.label",
-      v-validate="'required'",
-      :label="$t('common.label')",
-      :error-messages="errors.collect(`${name}.label`)",
-      :name="`${name}.label`"
-    )
-    v-layout(v-if="withTemplate", row, align-center)
-      v-switch.pa-0.my-2(
-        :label="$t('settings.columns.withTemplate')",
-        :input-value="!!column.template",
-        color="primary",
-        hide-details,
-        @change="enableTemplate($event)"
-      )
-      v-btn.primary(
-        v-if="column.template",
-        small,
-        @click="showEditTemplateModal"
-      )
-        span {{ $t('common.edit') }}
-    v-switch.pa-0.my-2(
-      v-if="withHtml",
-      v-field="column.isHtml",
-      :label="$t('settings.columns.isHtml')",
-      :disabled="!!column.template",
-      color="primary",
-      hide-details
-    )
-    v-switch.pa-0.my-2(
-      v-if="withColorIndicator",
-      :label="$t('settings.colorIndicator.title')",
-      :input-value="!!column.colorIndicator",
-      :disabled="!!column.template",
-      color="primary",
-      hide-details,
-      @change="switchChangeColorIndicator($event)"
-    )
-    v-layout(v-if="column.colorIndicator", row)
-      c-color-indicator-field(
-        v-field="column.colorIndicator",
-        :disabled="!!column.template"
-      )
+  v-card
+    v-card-text
+      v-layout(row, align-center)
+        span.handler.mr-1
+          v-icon.draggable(:class="dragHandleClass") drag_indicator
+        c-expand-btn.mr-1(
+          v-model="expanded",
+          :color="hasChildrenError ? 'error' : ''"
+        )
+        v-select(
+          v-validate="'required'",
+          :value="column.column",
+          :items="availableColumns",
+          :label="$tc('common.column', 1)",
+          :error-messages="errors.collect(`${name}.column`)",
+          :name="`${name}.column`",
+          @change="changeColumn"
+        )
+        v-tooltip(left)
+          template(#activator="{ on }")
+            v-btn.mr-0(
+              v-on="on",
+              small,
+              flat,
+              icon,
+              @click="$emit('remove')"
+            )
+              v-icon(color="error", small) close
+          span {{ $t('common.delete') }}
+      v-expand-transition(mode="out-in")
+        column-field-expand-panel.pl-1(
+          v-show="expanded",
+          v-field="column",
+          :name="name",
+          :with-html="withHtml",
+          :with-template="withTemplate",
+          :with-color-indicator="withColorIndicator",
+          :with-instructions="withInstructions",
+          :without-infos-attributes="withoutInfosAttributes"
+        )
 </template>
 
 <script>
 import { omit } from 'lodash';
 
 import {
-  MODALS,
   ENTITIES_TYPES,
-  COLOR_INDICATOR_TYPES,
-  DEFAULT_COLUMN_TEMPLATE_VALUE,
-  ALARM_INFOS_FIELDS,
-  ENTITY_INFOS_FIELDS,
   ALARM_LIST_WIDGET_COLUMNS,
   CONTEXT_WIDGET_COLUMNS,
   ALARM_FIELDS_TO_LABELS_KEYS,
   ENTITY_FIELDS_TO_LABELS_KEYS,
-  ALARM_FIELDS,
   ALARM_OUTPUT_FIELDS,
 } from '@/constants';
 
-import { isLinksWidgetColumn } from '@/helpers/entities/widget/column/form';
+import { formBaseMixin, validationChildrenMixin } from '@/mixins/form';
 
-import { formMixin } from '@/mixins/form';
-import { entitiesInfosMixin } from '@/mixins/entities/infos';
-
-import ColumnLinksCategoryField from './column-links-category-field.vue';
+import ColumnFieldExpandPanel from './column-field-expand-panel.vue';
 
 export default {
   inject: ['$validator'],
-  components: { ColumnLinksCategoryField },
+  components: { ColumnFieldExpandPanel },
   mixins: [
-    formMixin,
-    entitiesInfosMixin,
+    formBaseMixin,
+    validationChildrenMixin,
   ],
   model: {
     prop: 'column',
@@ -143,6 +77,14 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    name: {
+      type: String,
+      default: '',
+    },
+    dragHandleClass: {
+      type: String,
+      default: 'drag-handle',
+    },
     withTemplate: {
       type: Boolean,
       default: false,
@@ -155,10 +97,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    name: {
-      type: String,
-      default: '',
-    },
     withInstructions: {
       type: Boolean,
       default: false,
@@ -170,40 +108,12 @@ export default {
   },
   data() {
     return {
-      customLabel: !!this.column.label,
+      expanded: !this.column?.column,
     };
   },
   computed: {
-    infosFields() {
-      return [
-        ...ALARM_INFOS_FIELDS,
-        ...ENTITY_INFOS_FIELDS,
-      ];
-    },
-
     isAlarmType() {
       return this.type === ENTITIES_TYPES.alarm;
-    },
-
-    isLinks() {
-      return isLinksWidgetColumn(this.column?.column);
-    },
-
-    isAlarmInfos() {
-      return ALARM_FIELDS.infos === this.column?.column;
-    },
-
-    isInfos() {
-      return this.infosFields.includes(this.column?.column);
-    },
-
-    infosItems() {
-      return [
-        ALARM_LIST_WIDGET_COLUMNS.entityInfos,
-        ALARM_LIST_WIDGET_COLUMNS.entityComponentInfos,
-        CONTEXT_WIDGET_COLUMNS.infos,
-        CONTEXT_WIDGET_COLUMNS.componentInfos,
-      ].includes(this.column?.column) ? this.entityInfos : this.alarmInfos;
     },
 
     alarmListAvailableColumns() {
@@ -241,14 +151,6 @@ export default {
     },
   },
   methods: {
-    updateCustomLabel(checked) {
-      if (checked) {
-        return;
-      }
-
-      this.updateField('label', '');
-    },
-
     changeColumn(column) {
       const newValue = {
         ...this.column,
@@ -261,43 +163,6 @@ export default {
       }
 
       this.updateModel(newValue);
-    },
-
-    enableTemplate(checked) {
-      const template = checked
-        ? DEFAULT_COLUMN_TEMPLATE_VALUE
-        : null;
-
-      return this.updateModel({
-        ...this.column,
-
-        template,
-        isHtml: checked && this.column.isHtml ? false : this.column.isHtml,
-        colorIndicator: checked && this.column.isHtml ? null : this.column.isHtml,
-      });
-    },
-
-    switchChangeColorIndicator(colorIndicator) {
-      const value = colorIndicator
-        ? COLOR_INDICATOR_TYPES.state
-        : null;
-
-      return this.updateField('colorIndicator', value);
-    },
-
-    showEditTemplateModal() {
-      this.$modals.show({
-        name: MODALS.textEditor,
-        config: {
-          text: this.column?.template ?? '',
-          title: this.$t('settings.columns.withTemplate'),
-          label: this.$t('common.template'),
-          rules: {
-            required: true,
-          },
-          action: value => this.updateField('template', value),
-        },
-      });
     },
   },
 };
