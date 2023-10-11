@@ -109,13 +109,12 @@ Après toute modification d'une valeur présente dans `canopsis.toml`, `canopsis
 | JunitApi       | "/tmp/canopsis/junit"                    | Emplacement des fichiers temporaires uploadés par le module Junit (via API) |
 
 
-
 ### Section [Canopsis.alarm]
 
 | Attribut                          | Exemple de valeur     | Description                          |
 | :-------------------------------- | :---------------------| :----------------------------------- |
 | StealthyInterval                  |                       | Encore utilisé ?          |
-| EnableLastEventDate               | true,false            | Active la mise à jour du champ `last_event_date` d'une alarme à chaque événement        | 
+| :warning: Obsolète :warning: EnableLastEventDate               | true,false            | Active la mise à jour du champ `last_event_date` d'une alarme à chaque événement :warning: Depuis Canopsis 23.10, la date de dernier changement est nécessairement calculée :warning:  | 
 | CancelAutosolveDelay              | "1h"                  | Délai de résolution effective d'une alarme après annulation depuis l'interface graphiqe |
 | DisplayNameScheme                 | "{{ rand_string 3 }}-{{ rand_string 3 }}-{{ rand_string 3 }}" | Schéma utilisé pour générer le champ `display_name` d'une alarme |
 | OutputLength                      | 255                   | Nombre maximum de caractères du champ `output` avant troncage | 
