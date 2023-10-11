@@ -609,48 +609,6 @@ exports[`patterns-list Renders \`patterns-list\` with custom props 1`] = `
               </div>
             </td>
           </tr>
-          <tr>
-            <td>
-              <div
-                class="layout c-checkbox-wrapper row justify-start"
-              >
-                <v-checkbox-functional-stub
-                  hidedetails="true"
-                  label=""
-                  primary="primary"
-                />
-                <!---->
-              </div>
-            </td>
-            <td>
-              
-            </td>
-            <td>
-              <span>
-                Entity pattern
-              </span>
-            </td>
-            <td>
-              <span>
-                04/03/2021 13:44:58
-              </span>
-            </td>
-            <td>
-              author-10
-            </td>
-            <td>
-              <div
-                class="layout row"
-              >
-                <c-action-btn-stub
-                  type="edit"
-                />
-                <c-action-btn-stub
-                  type="delete"
-                />
-              </div>
-            </td>
-          </tr>
         </tbody>
       </table>
     </div>
