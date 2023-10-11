@@ -55,7 +55,7 @@ definitions:
       ui_language:
         type: string
       ui_theme:
-        type: string
+        $ref: '#/definitions/colortheme.Theme'
       ui_tours:
         additionalProperties:
           type: boolean
@@ -161,10 +161,9 @@ definitions:
         items:
           type: string
         type: array
-      filtered_children:
-        items:
-          type: string
-        type: array
+      filtered:
+        description: Only for details request
+        type: boolean
       impact_state:
         type: integer
       infos:
@@ -372,6 +371,9 @@ definitions:
     type: object
   alarm.Details:
     properties:
+      _id:
+        description: Only for websocket
+        type: string
       children:
         $ref: '#/definitions/alarm.ChildrenDetails'
       filtered_perf_data:
@@ -390,6 +392,12 @@ definitions:
       opened:
         type: boolean
       perf_data:
+        items:
+          type: string
+        type: array
+      search:
+        type: string
+      search_by:
         items:
           type: string
         type: array
@@ -812,8 +820,12 @@ definitions:
         type: string
       check_count_request_timeout:
         type: integer
+      default_color_theme:
+        $ref: '#/definitions/colortheme.Theme'
       edition:
         type: string
+      events_count_trigger_default_threshold:
+        type: integer
       file_upload_max_size:
         type: integer
       footer:
@@ -1003,6 +1015,108 @@ definitions:
     - message
     - start
     type: object
+  colortheme.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  colortheme.Colors:
+    properties:
+      main:
+        properties:
+          accent:
+            type: string
+          active_color:
+            type: string
+          background:
+            type: string
+          error:
+            type: string
+          info:
+            type: string
+          primary:
+            type: string
+          secondary:
+            type: string
+          success:
+            type: string
+          warning:
+            type: string
+        required:
+        - accent
+        - active_color
+        - background
+        - error
+        - info
+        - primary
+        - secondary
+        - success
+        - warning
+        type: object
+      state:
+        properties:
+          critical:
+            type: string
+          major:
+            type: string
+          minor:
+            type: string
+          ok:
+            type: string
+        required:
+        - critical
+        - major
+        - minor
+        - ok
+        type: object
+      table:
+        properties:
+          background:
+            type: string
+          hover_row_color:
+            type: string
+          row_color:
+            type: string
+          shift_row_color:
+            type: string
+        required:
+        - background
+        - row_color
+        type: object
+    type: object
+  colortheme.EditRequest:
+    properties:
+      colors:
+        $ref: '#/definitions/colortheme.Colors'
+      font_size:
+        enum:
+        - 1
+        - 2
+        - 3
+        type: integer
+      name:
+        type: string
+    required:
+    - font_size
+    - name
+    type: object
+  colortheme.Theme:
+    properties:
+      _id:
+        type: string
+      colors:
+        $ref: '#/definitions/colortheme.Colors'
+      deletable:
+        type: boolean
+      font_size:
+        type: integer
+      name:
+        type: string
+      updated:
+        type: integer
+    type: object
   common.AlarmStep:
     properties:
       _t:
@@ -1174,7 +1288,11 @@ definitions:
     properties:
       alarm:
         $ref: '#/definitions/datastorage.HistoryWithCount'
-      entity:
+      entity_cleaned:
+        $ref: '#/definitions/datastorage.HistoryWithCount'
+      entity_disabled:
+        $ref: '#/definitions/datastorage.HistoryWithCount'
+      entity_unlinked:
         $ref: '#/definitions/datastorage.HistoryWithCount'
       event_filter_failure:
         type: integer
@@ -1198,6 +1316,16 @@ definitions:
       time:
         type: integer
     type: object
+  entity.ArchiveDisabledRequest:
+    properties:
+      with_dependencies:
+        type: boolean
+    type: object
+  entity.ArchiveUnlinkedRequest:
+    properties:
+      archive_before:
+        $ref: '#/definitions/types.DurationWithUnit'
+    type: object
   entity.BulkToggleRequestItem:
     properties:
       _id:
@@ -1211,15 +1339,6 @@ definitions:
         type: string
       name:
         type: string
-    type: object
-  entity.CleanRequest:
-    properties:
-      archive:
-        type: boolean
-      archive_dependencies:
-        type: boolean
-    required:
-    - archive
     type: object
   entity.ContextGraphResponse:
     properties:
@@ -1321,6 +1440,8 @@ definitions:
   entity.ExportRequest:
     properties:
       category:
+        type: string
+      entity_pattern:
         type: string
       fields:
         items:
@@ -1952,8 +2073,7 @@ definitions:
       _id:
         type: string
       event:
-        additionalProperties:
-          type: any
+        additionalProperties: {}
         type: object
       message:
         type: string
@@ -3008,43 +3128,6 @@ definitions:
         type: string
       field_type:
         description: 'FieldType is only defined for custom fields, ex: infos.'
-        type: string
-    type: object
-  pattern.GetAlarmsRequest:
-    properties:
-      alarm_pattern:
-        items:
-          items:
-            $ref: '#/definitions/pattern.FieldCondition'
-          type: array
-        type: array
-      entity_pattern:
-        items:
-          items:
-            $ref: '#/definitions/pattern.FieldCondition'
-          type: array
-        type: array
-      pbehavior_pattern:
-        items:
-          items:
-            $ref: '#/definitions/pattern.FieldCondition'
-          type: array
-        type: array
-      search:
-        type: string
-    type: object
-  pattern.GetAlarmsResponse:
-    properties:
-      alarms:
-        items:
-          $ref: '#/definitions/pattern.MatchedAlarm'
-        type: array
-    type: object
-  pattern.MatchedAlarm:
-    properties:
-      _id:
-        type: string
-      name:
         type: string
     type: object
   pattern.Response:
@@ -4130,36 +4213,8 @@ definitions:
         minimum: 0
         type: integer
       triggers:
-        description: |-
-          Possible trigger values.
-            * `create` - Alarm creation
-            * `statedec` - Alarm state decrease
-            * `changestate` - Alarm state has been changed by "change state" action
-            * `stateinc` - Alarm state increase
-            * `changestatus` - Alarm status changes eg. flapping
-            * `ack` - Alarm has been acked
-            * `ackremove` - Alarm has been unacked
-            * `cancel` - Alarm has been cancelled
-            * `uncancel` - Alarm has been uncancelled
-            * `comment` - Alarm has been commented
-            * `declareticketwebhook` - Ticket has been declared by the webhook
-            * `assocticket` - Ticket has been associated with an alarm
-            * `snooze` - Alarm has been snoozed
-            * `unsnooze` - Alarm has been unsnoozed
-            * `pbhenter` - Alarm enters a periodic behavior
-            * `activate` - Alarm has been activated
-            * `resolve` - Alarm has been resolved
-            * `pbhleave` - Alarm leaves a periodic behavior
-            * `instructionfail` - Manual instruction has failed
-            * `autoinstructionfail` - Auto instruction has failed
-            * `instructionjobfail` - Manual or auto instruction's job is failed
-            * `instructionjobcomplete` - Manual or auto instruction's job is completed
-            * `instructioncomplete` - Manual instruction is completed
-            * `autoinstructioncomplete` - Auto instruction is completed
-            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
-            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
-          type: string
+          $ref: '#/definitions/scenario.Trigger'
         type: array
     required:
     - _id
@@ -4195,36 +4250,8 @@ definitions:
         minimum: 0
         type: integer
       triggers:
-        description: |-
-          Possible trigger values.
-            * `create` - Alarm creation
-            * `statedec` - Alarm state decrease
-            * `changestate` - Alarm state has been changed by "change state" action
-            * `stateinc` - Alarm state increase
-            * `changestatus` - Alarm status changes eg. flapping
-            * `ack` - Alarm has been acked
-            * `ackremove` - Alarm has been unacked
-            * `cancel` - Alarm has been cancelled
-            * `uncancel` - Alarm has been uncancelled
-            * `comment` - Alarm has been commented
-            * `declareticketwebhook` - Ticket has been declared by the webhook
-            * `assocticket` - Ticket has been associated with an alarm
-            * `snooze` - Alarm has been snoozed
-            * `unsnooze` - Alarm has been unsnoozed
-            * `pbhenter` - Alarm enters a periodic behavior
-            * `activate` - Alarm has been activated
-            * `resolve` - Alarm has been resolved
-            * `pbhleave` - Alarm leaves a periodic behavior
-            * `instructionfail` - Manual instruction has failed
-            * `autoinstructionfail` - Auto instruction has failed
-            * `instructionjobfail` - Manual or auto instruction's job is failed
-            * `instructionjobcomplete` - Manual or auto instruction's job is completed
-            * `instructioncomplete` - Manual instruction is completed
-            * `autoinstructioncomplete` - Auto instruction is completed
-            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
-            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
-          type: string
+          $ref: '#/definitions/scenario.Trigger'
         type: array
     required:
     - actions
@@ -4257,36 +4284,8 @@ definitions:
         minimum: 0
         type: integer
       triggers:
-        description: |-
-          Possible trigger values.
-            * `create` - Alarm creation
-            * `statedec` - Alarm state decrease
-            * `changestate` - Alarm state has been changed by "change state" action
-            * `stateinc` - Alarm state increase
-            * `changestatus` - Alarm status changes eg. flapping
-            * `ack` - Alarm has been acked
-            * `ackremove` - Alarm has been unacked
-            * `cancel` - Alarm has been cancelled
-            * `uncancel` - Alarm has been uncancelled
-            * `comment` - Alarm has been commented
-            * `declareticketwebhook` - Ticket has been declared by the webhook
-            * `assocticket` - Ticket has been associated with an alarm
-            * `snooze` - Alarm has been snoozed
-            * `unsnooze` - Alarm has been unsnoozed
-            * `pbhenter` - Alarm enters a periodic behavior
-            * `activate` - Alarm has been activated
-            * `resolve` - Alarm has been resolved
-            * `pbhleave` - Alarm leaves a periodic behavior
-            * `instructionfail` - Manual instruction has failed
-            * `autoinstructionfail` - Auto instruction has failed
-            * `instructionjobfail` - Manual or auto instruction's job is failed
-            * `instructionjobcomplete` - Manual or auto instruction's job is completed
-            * `instructioncomplete` - Manual instruction is completed
-            * `autoinstructioncomplete` - Auto instruction is completed
-            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
-            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
         items:
-          type: string
+          $ref: '#/definitions/scenario.Trigger'
         type: array
     required:
     - actions
@@ -4372,10 +4371,76 @@ definitions:
         type: integer
       triggers:
         items:
-          type: string
+          $ref: '#/definitions/scenario.Trigger'
         type: array
       updated:
         type: integer
+    type: object
+  scenario.Trigger:
+    properties:
+      threshold:
+        type: integer
+      type:
+        description: |-
+          Possible trigger type values.
+            * `create` - Alarm creation
+            * `statedec` - Alarm state decrease
+            * `changestate` - Alarm state has been changed by "change state" action
+            * `stateinc` - Alarm state increase
+            * `changestatus` - Alarm status changes eg. flapping
+            * `ack` - Alarm has been acked
+            * `ackremove` - Alarm has been unacked
+            * `cancel` - Alarm has been cancelled
+            * `uncancel` - Alarm has been uncancelled
+            * `comment` - Alarm has been commented
+            * `declareticketwebhook` - Ticket has been declared by the webhook
+            * `assocticket` - Ticket has been associated with an alarm
+            * `snooze` - Alarm has been snoozed
+            * `unsnooze` - Alarm has been unsnoozed
+            * `pbhenter` - Alarm enters a periodic behavior
+            * `activate` - Alarm has been activated
+            * `resolve` - Alarm has been resolved
+            * `pbhleave` - Alarm leaves a periodic behavior
+            * `instructionfail` - Manual instruction has failed
+            * `autoinstructionfail` - Auto instruction has failed
+            * `instructionjobfail` - Manual or auto instruction's job is failed
+            * `instructionjobcomplete` - Manual or auto instruction's job is completed
+            * `instructioncomplete` - Manual instruction is completed
+            * `autoinstructioncomplete` - Auto instruction is completed
+            * `autoinstructionresultok` - Alarm is in OK state after all auto instructions
+            * `autoinstructionresultfail` - Alarm is in not in OK state after all auto instructions
+            * `eventscount` - Alarm check events count
+        enum:
+        - create
+        - statedec
+        - stateinc
+        - changestate
+        - changestatus
+        - ack
+        - ackremove
+        - cancel
+        - uncancel
+        - comment
+        - declareticketwebhook
+        - assocticket
+        - snooze
+        - unsnooze
+        - resolve
+        - activate
+        - pbhenter
+        - pbhleave
+        - instructionfail
+        - autoinstructionfail
+        - instructionjobfail
+        - instructionjobcomplete
+        - instructioncomplete
+        - autoinstructioncomplete
+        - autoinstructionresultok
+        - autoinstructionresultfail
+        - eventscount
+        type: string
+    required:
+    - type
     type: object
   security.AuthMethodConf:
     properties:
@@ -4976,7 +5041,7 @@ definitions:
       ui_language:
         type: string
       ui_theme:
-        type: string
+        $ref: '#/definitions/colortheme.Theme'
     type: object
   user.View:
     properties:
@@ -5219,6 +5284,8 @@ definitions:
       label:
         maxLength: 255
         type: string
+      linksInRowCount:
+        type: integer
       onlyIcon:
         type: boolean
       template:

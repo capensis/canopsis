@@ -107,7 +107,7 @@ export default {
     message: '', // TODO: add correct message
   },
   [USERS_PERMISSIONS.technical.tag]: {
-    title: 'Gestion des balises',
+    title: 'Gestion des Tags',
     message: '', // TODO: add correct message
   },
 
@@ -132,5 +132,13 @@ export default {
   [USERS_PERMISSIONS.technical.notification.instructionStats]: {
     title: 'Évaluation des consignes',
     message: 'Cette page contient les statistiques sur l\'exécution des consignes. Les utilisateurs peuvent noter les consignes en fonction de leurs performances.',
+  },
+
+  /**
+   * Profile
+   */
+  [USERS_PERMISSIONS.technical.profile.theme]: {
+    title: 'Thèmes de couleurs',
+    message: '', // TODO: add correct message
   },
 };

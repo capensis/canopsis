@@ -5,7 +5,7 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` with html as me
   class="time-line-card"
 >
   <div
-    class="time-line-card__header"
+    class="time-line-card__header text--secondary"
   >
     <!---->
     <p>
@@ -13,13 +13,13 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` with html as me
     </p>
   </div>
   <div
-    class="time-line-card__content"
+    class="time-line-card__content text--disabled"
   >
-    <p>
+    <div>
       <p>
         Pbehavior Name pbh. Type: Default pause. Reason: Test reason
       </p>
-    </p>
+    </div>
   </div>
 </div>
 `;
@@ -29,7 +29,7 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` with state but 
   class="time-line-card"
 >
   <div
-    class="time-line-card__header"
+    class="time-line-card__header text--secondary"
   >
     <c-alarm-chip-stub
       class="chips pr-2"
@@ -41,7 +41,7 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` with state but 
     </p>
   </div>
   <div
-    class="time-line-card__content"
+    class="time-line-card__content text--disabled"
   >
     <p>
       Idle rule Test all resource
@@ -55,7 +55,7 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` with state but 
   class="time-line-card"
 >
   <div
-    class="time-line-card__header"
+    class="time-line-card__header text--secondary"
   >
     <c-alarm-chip-stub
       class="chips pr-2"
@@ -67,7 +67,7 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` with state but 
     </p>
   </div>
   <div
-    class="time-line-card__content"
+    class="time-line-card__content text--disabled"
   >
     <p>
       Status dec
@@ -81,14 +81,14 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` with state coun
   class="time-line-card"
 >
   <div
-    class="time-line-card__header"
+    class="time-line-card__header text--secondary"
   >
     <p>
       Cropped Severity (since last change of status)
     </p>
   </div>
   <div
-    class="time-line-card__content"
+    class="time-line-card__content text--disabled"
   >
     <table>
       <tr>
@@ -117,14 +117,14 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` with states 1`]
   class="time-line-card"
 >
   <div
-    class="time-line-card__header"
+    class="time-line-card__header text--secondary"
   >
     <p>
       Cropped Severity (since last change of status)
     </p>
   </div>
   <div
-    class="time-line-card__content"
+    class="time-line-card__content text--disabled"
   >
     <table>
       <tr>
@@ -185,7 +185,7 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` without transla
   class="time-line-card"
 >
   <div
-    class="time-line-card__header"
+    class="time-line-card__header text--secondary"
   >
     <!---->
     <p>
@@ -193,7 +193,7 @@ exports[`alarms-time-line-card Renders \`alarms-time-line-card\` without transla
     </p>
   </div>
   <div
-    class="time-line-card__content"
+    class="time-line-card__content text--disabled"
   >
     <p>
       Pbehavior Name pbh. Type: Default pause. Reason: Test reason

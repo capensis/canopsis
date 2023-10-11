@@ -367,6 +367,14 @@ paths:
         -  PERMISSIONS: `api_alarm_tag:read`
       operationId: alarm-tags-get
       parameters:
+        - name: values[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
         - $ref: '#/components/parameters/withFlags'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
@@ -1816,6 +1824,56 @@ paths:
                         properties:
                           item:
                             $ref: 'schemas_swagger.yaml#/definitions/alarmaction.BulkRequestItem'
+  /bulk/color-themes:
+    delete:
+      tags:
+        - color-themes
+      summary: Bulk delete color themes
+      description: |
+        Bulk delete color themes.
+        
+        -  PERMISSIONS: `api_color_theme:delete`
+      operationId: colorthemes-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/colortheme.BulkDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete color themes
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/colortheme.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'                            
   /bulk/entities/disable:
     put:
       tags:
@@ -2830,7 +2888,11 @@ paths:
                     "comment": "The scenario acknowledges an alarm on create",
                     "enabled": true,
                     "priority": 10,
-                    "triggers": [ "create" ],
+                    "triggers": [
+                      {
+                        "type": "create"
+                      }
+                    ],
                     "actions": [
                       {
                         "type": "ack",
@@ -2922,7 +2984,11 @@ paths:
                     "comment": "The scenario acknowledges an alarm on create",
                     "enabled": true,
                     "priority": 10,
-                    "triggers": [ "create" ],
+                    "triggers": [
+                      {
+                        "type": "create"
+                      }
+                    ],
                     "actions": [
                       {
                         "type": "ack",
@@ -3157,6 +3223,232 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /color-themes:
+    get:
+      tags:
+        - color-themes
+      summary: Find all color theme
+      description: |
+        Get paginated list of color theme.
+        
+        -  PERMISSIONS: `api_color_theme:read`
+      operationId: color-themes-find-all
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    post:
+      tags:
+        - color-themes
+      summary: Create color theme
+      description: |
+        Create color theme.
+        
+        -  PERMISSIONS: `api_color_theme:create`
+      operationId: color-themes-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/colortheme.CreateRequest'
+            examples:
+              create:
+                summary: Create a color theme
+                description: Create a color theme
+                value: {
+                  "name": "test_1",
+                  "font_color": 2,
+                  "colors": {
+                    "main": {
+                      "primary": "#AAAAAA",
+                      "secondary": "#AAAAAA",
+                      "accent": "#AAAAAA",
+                      "error": "#AAAAAA",
+                      "info": "#AAAAAA",
+                      "success": "#AAAAAA",
+                      "warning": "#AAAAAA",
+                      "background": "#AAAAAA"
+                    },
+                    "table": {
+                      "background": "#AAAAAA",
+                      "active_color": "#AAAAAA",
+                      "row_color": "#AAAAAA",
+                      "shift_row_color": "#AAAAAA",
+                      "hover_row_color": "#AAAAAA"
+                    },
+                    "state": {
+                      "ok": "#AAAAAA",
+                      "minor": "#AAAAAA",
+                      "major": "#AAAAAA",
+                      "critical": "#AAAAAA"
+                    }
+                  }
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /color-themes/{id}:
+    get:
+      tags:
+        - color-themes
+      summary: Get color theme by id
+      description: |
+        Get color theme by id.
+        
+        -  PERMISSIONS: `api_color_theme:read`
+      operationId: color-themes-get-by-id
+      parameters:
+        - name: id
+          in: path
+          description: color theme id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - color-themes
+      summary: Update color theme by id
+      description: |
+        Update color theme by id.
+        
+        -  PERMISSIONS: `api_color_theme:update`
+      operationId: color-themes-update-by-id
+      parameters:
+        - name: id
+          in: path
+          description: color theme id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/colortheme.UpdateRequest'
+            examples:
+              update:
+                summary: Update a color theme
+                description: Update a color theme
+                value: {
+                  "name": "test_1_updated",
+                  "font_color": 2,
+                  "colors": {
+                    "main": {
+                      "primary": "#FFFFFF",
+                      "secondary": "#FFFFFF",
+                      "accent": "#FFFFFF",
+                      "error": "#FFFFFF",
+                      "info": "#FFFFFF",
+                      "success": "#FFFFFF",
+                      "warning": "#FFFFFF",
+                      "background": "#FFFFFF"
+                    },
+                    "table": {
+                      "background": "#FFFFFF",
+                      "active_color": "#FFFFFF",
+                      "row_color": "#FFFFFF",
+                      "shift_row_color": "#FFFFFF",
+                      "hover_row_color": "#FFFFFF"
+                    },
+                    "state": {
+                      "ok": "#FFFFFF",
+                      "minor": "#FFFFFF",
+                      "major": "#FFFFFF",
+                      "critical": "#FFFFFF"
+                    }
+                  }
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - color-themes
+      summary: Delete color theme by id
+      description: |
+        Delete color theme by id.
+        
+        -  PERMISSIONS: `api_color_theme:delete`
+      operationId: color-themes-delete-by-id
+      parameters:
+        - name: id
+          in: path
+          description: color theme id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'                
   /component-alarms:
     get:
       tags:
@@ -4174,6 +4466,11 @@ paths:
             type: array
             items:
               type: string
+        - name: entity_pattern
+          in: query
+          schema:
+            type: string
+          example: "[[{\"field\":\"name\",\"cond\":{\"type\":\"eq\",\"value\":\"cps_resource\"}}]]"
         - name: no_events
           in: query
           schema:
@@ -4230,22 +4527,22 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-  /entities/clean:
+  /entities/archive-disabled:
     post:
       tags:
         - entities
-      summary: Clean disabled entities
+      summary: Archive disabled entities
       description: |
-        Clean disabled entities.
+        Archive disabled entities.
         
         -  PERMISSIONS: `api_entity:delete`
-      operationId: entities-clean
+      operationId: entities-archive-disabled
       requestBody:
         description: body
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/entity.CleanRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/entity.ArchiveDisabledRequest'
       responses:
         202:
           description: OK
@@ -4255,6 +4552,44 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entities/archive-unlinked:
+    post:
+      tags:
+        - entities
+      summary: Archive unlinked entities
+      description: |
+        Archive unlinked entities.
+        
+        -  PERMISSIONS: `api_entity:delete`
+      operationId: entities-archive-unlinked
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/entity.ArchiveUnlinkedRequest'
+      responses:
+        202:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entities/clean-archived:
+    post:
+      tags:
+        - entities
+      summary: Clean archived entities
+      description: |
+        Clean archived entities.
+        
+        -  PERMISSIONS: `api_entity:delete`
+      operationId: entities-clean-archived
+      responses:
+        202:
+          description: OK
   /entities/context-graph:
     get:
       tags:
@@ -7059,111 +7394,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-  /patterns-alarms:
-    post:
-      tags:
-        - saved-patterns
-      summary: Get matched alarms
-      description: Get matched alarms by patterns.
-      operationId: get-matched-alarms-by-patterns
-      requestBody:
-        description: body
-        content:
-          application/json:
-            schema:
-              $ref: 'schemas_swagger.yaml#/definitions/pattern.GetAlarmsRequest'
-            examples:
-              getMatchedAlarms:
-                summary: Get matched alarms
-                description: Get matched alarms by patterns.
-                value: {
-                  "alarm_pattern": [
-                    [
-                      {
-                        "field": "v.component",
-                        "cond": {
-                          "type": "eq",
-                          "value": "cps_component"
-                        }
-                      }
-                    ]
-                  ],
-                  "entity_pattern": [
-                    [
-                      {
-                        "field": "name",
-                        "cond": {
-                          "type": "eq",
-                          "value": "cps_resource"
-                        }
-                      }
-                    ]
-                  ],
-                  "pbehavior_pattern": [
-                    [
-                      {
-                        "field": "pbehavior_info.type",
-                        "cond": {
-                          "type": "eq",
-                          "value": "7e5866f8-dbfa-4b14-a4bf-febd0a35ff63"
-                        }
-                      }
-                    ]
-                  ]
-                }
-              getMatchedAlarmsWithSearch:
-                summary: Get matched alarms with search
-                description: Get matched alarms by patterns with search.
-                value: {
-                  "search": "AAA-BBB-CCC",
-                  "alarm_pattern": [
-                    [
-                      {
-                        "field": "v.component",
-                        "cond": {
-                          "type": "eq",
-                          "value": "cps_component"
-                        }
-                      }
-                    ]
-                  ],
-                  "entity_pattern": [
-                    [
-                      {
-                        "field": "name",
-                        "cond": {
-                          "type": "eq",
-                          "value": "cps_resource"
-                        }
-                      }
-                    ]
-                  ],
-                  "pbehavior_pattern": [
-                    [
-                      {
-                        "field": "pbehavior_info.type",
-                        "cond": {
-                          "type": "eq",
-                          "value": "7e5866f8-dbfa-4b14-a4bf-febd0a35ff63"
-                        }
-                      }
-                    ]
-                  ]
-                }
-        required: true
-      responses:
-        200:
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pattern.GetAlarmsResponse'
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /patterns-alarms-count:
     post:
       tags:
@@ -9642,7 +9872,11 @@ paths:
                   "comment": "The scenario acknowledges an alarm on create",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "create" ],
+                  "triggers": [
+                    {
+                      "type": "create"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "ack",
@@ -9691,7 +9925,11 @@ paths:
                   "comment": "The scenario removes an acknowledge of an alarm on state increase",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "stateinc" ],
+                  "triggers": [
+                    {
+                      "type": "stateinc"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "ackremove",
@@ -9740,7 +9978,11 @@ paths:
                   "comment": "The scenario adds a ticket to an alarm on activate",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "activate" ],
+                  "triggers": [
+                    {
+                      "type": "activate"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "assocticket",
@@ -9796,7 +10038,11 @@ paths:
                   "comment": "The scenario cancels an alarm on state decrease",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "statedec" ],
+                  "triggers": [
+                    {
+                      "type": "create"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "cancel",
@@ -9845,7 +10091,11 @@ paths:
                   "comment": "The scenario changes a state of an alarm on acknowledge",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "ack" ],
+                  "triggers": [
+                    {
+                      "type": "ack"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "changestate",
@@ -9895,7 +10145,11 @@ paths:
                   "comment": "The scenario creates a pbehavior for an alarm on create",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "create" ],
+                  "triggers": [
+                    {
+                      "type": "create"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "pbehavior",
@@ -9951,7 +10205,11 @@ paths:
                   "comment": "The scenario snoozes an alarm on create",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "create" ],
+                  "triggers": [
+                    {
+                      "type": "create"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "snooze",
@@ -10004,7 +10262,11 @@ paths:
                   "comment": "The scenario does webhook request for an alarm on declare ticket",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "declareticket" ],
+                  "triggers": [
+                    {
+                      "type": "declareticket"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "webhook",
@@ -10056,6 +10318,42 @@ paths:
                             "cond": {
                               "type": "eq",
                               "value": "g1"
+                            }
+                          }
+                        ]
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
+              eventscount:
+                summary: Scenario with check events count trigger
+                description: Create a scenario with acknowledge action.
+                value: {
+                  "name": "Scenario with check events count trigger",
+                  "comment": "The scenario triggers after 3rd check event",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [
+                    {
+                      "type": "eventscount",
+                      "threshold": 3
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": "ack",
+                      "parameters": {
+                        "output": "The alarm is acknowledged by scenario"
+                      },
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
                         ]
@@ -10146,7 +10444,11 @@ paths:
                   "comment": "The scenario acknowledges an alarm on create",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "create" ],
+                  "triggers": [
+                    {
+                      "type": "create"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "ack",
@@ -10195,7 +10497,11 @@ paths:
                   "comment": "The scenario removes an acknowledge of an alarm on state increase",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "stateinc" ],
+                  "triggers": [
+                    {
+                      "type": "stateinc"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "ackremove",
@@ -10244,7 +10550,11 @@ paths:
                   "comment": "The scenario adds a ticket to an alarm on activate",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "activate" ],
+                  "triggers": [
+                    {
+                      "type": "activate"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "assocticket",
@@ -10300,7 +10610,11 @@ paths:
                   "comment": "The scenario cancels an alarm on state decrease",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "statedec" ],
+                  "triggers": [
+                    {
+                      "type": "statedec"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "cancel",
@@ -10349,7 +10663,11 @@ paths:
                   "comment": "The scenario changes a state of an alarm on acknowledge",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "ack" ],
+                  "triggers": [
+                    {
+                      "type": "ack"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "changestate",
@@ -10399,7 +10717,11 @@ paths:
                   "comment": "The scenario creates a pbehavior for an alarm on create",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "create" ],
+                  "triggers": [
+                    {
+                      "type": "create"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "pbehavior",
@@ -10455,7 +10777,11 @@ paths:
                   "comment": "The scenario snoozes an alarm on create",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "create" ],
+                  "triggers": [
+                    {
+                      "type": "create"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "snooze",
@@ -10508,7 +10834,11 @@ paths:
                   "comment": "The scenario does webhook request for an alarm on declare ticket",
                   "enabled": true,
                   "priority": 10,
-                  "triggers": [ "declareticket" ],
+                  "triggers": [
+                    {
+                      "type": "declareticket"
+                    }
+                  ],
                   "actions": [
                     {
                       "type": "webhook",
@@ -10560,6 +10890,42 @@ paths:
                             "cond": {
                               "type": "eq",
                               "value": "g1"
+                            }
+                          }
+                        ]
+                      ],
+                      "drop_scenario_if_not_matched": false,
+                      "emit_trigger": false
+                    }
+                  ]
+                }
+              eventscount:
+                summary: Scenario with check events count trigger
+                description: Create a scenario with acknowledge action.
+                value: {
+                  "name": "Scenario with check events count trigger",
+                  "comment": "The scenario triggers after 3rd check event",
+                  "enabled": true,
+                  "priority": 10,
+                  "triggers": [
+                    {
+                      "type": "eventscount",
+                      "threshold": 3
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": "ack",
+                      "parameters": {
+                        "output": "The alarm is acknowledged by scenario"
+                      },
+                      "alarm_pattern": [
+                        [
+                          {
+                            "field": "v.state.val",
+                            "cond": {
+                              "type": "eq",
+                              "value": 3
                             }
                           }
                         ]

@@ -72,7 +72,7 @@
             :resizing="resizingMode",
             @clear:tag="$emit('clear:tag')"
           )
-          template(v-if="header.value !== 'actions'")
+          template
             span.alarms-list-table__dragging-handler(v-if="draggingMode", @click.stop="")
             span.alarms-list-table__resize-handler(
               v-if="resizingMode",
@@ -89,17 +89,18 @@
             :expandable="expandable",
             :row="props",
             :widget="widget",
-            :columns="sortedColumns",
+            :headers="headers",
             :parent-alarm="parentAlarm",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(props.index)",
             :refresh-alarms-list="refreshAlarmsList",
             :selecting="selecting",
             :selected-tag="selectedTag",
-            :hide-actions="hideActions",
             :medium="isMediumHeight",
             :small="isSmallHeight",
             :resizing="resizingMode",
+            :search="search",
             :wrap-actions="resizableColumn",
+            :show-instruction-icon="hasInstructionsAlarms",
             @start:resize="startColumnResize",
             @select:tag="$emit('select:tag', $event)"
           )
@@ -108,6 +109,7 @@
             :alarm="item",
             :parent-alarm-id="parentAlarmId",
             :widget="widget",
+            :search="search",
             :hide-children="hideChildren",
             :is-tour-enabled="checkIsTourEnabledForAlarmByIndex(index)",
             @select:tag="$emit('select:tag', $event)"
@@ -128,7 +130,7 @@
 </template>
 
 <script>
-import { intersectionBy } from 'lodash';
+import { get, intersectionBy } from 'lodash';
 
 import { ALARM_DENSE_TYPES, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
 
@@ -253,6 +255,10 @@ export default {
       type: String,
       required: false,
     },
+    search: {
+      type: String,
+      default: '',
+    },
   },
 
   computed: {
@@ -290,15 +296,6 @@ export default {
       return this.cellsContentBehavior === ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate;
     },
 
-    sortedColumns() {
-      if (this.draggableColumn) {
-        return [...this.preparedColumns]
-          .sort((a, b) => this.getColumnPositionByField(a.value) - this.getColumnPositionByField(b.value));
-      }
-
-      return this.preparedColumns;
-    },
-
     needToAddLeftActionsCell() {
       return (this.expandable || this.hasInstructionsAlarms) && !this.selectable;
     },
@@ -308,31 +305,47 @@ export default {
     },
 
     headers() {
-      const headers = this.sortedColumns.map((column) => {
+      const headers = this.preparedColumns.map((column) => {
         const header = {
           ...column,
           class: this.draggableClass,
         };
 
         if (column.linksInRowCount) {
-          header.width = calculateAlarmLinksColumnWidth(this.dense, column.linksInRowCount);
+          const linksCounts = this.alarms.map(alarm => Object.values(get(alarm, column.value, {})).flat().length);
+          const maxLinksCount = Math.max(...linksCounts);
+          const actualInlineLinksCount = maxLinksCount > column.inlineLinksCount
+            ? column.inlineLinksCount + 1
+            : maxLinksCount;
+
+          header.width = calculateAlarmLinksColumnWidth(
+            this.dense,
+            Math.max(Math.min(actualInlineLinksCount, column.linksInRowCount), 1),
+          );
         }
 
         return header;
       });
 
       if (!this.hideActions) {
-        headers.push({ text: this.$t('common.actionsLabel'), value: 'actions', sortable: false });
+        headers.push({
+          text: this.$t('common.actionsLabel'),
+          value: 'actions',
+          sortable: false,
+          class: this.draggableClass,
+        });
       }
 
       if (this.needToAddLeftActionsCell) {
         /**
          * We need it for the expand panel open button
          */
-        headers.unshift({ sortable: false });
+        headers.unshift({ sortable: false, width: 82 });
       }
 
-      return headers;
+      return this.draggableColumn
+        ? headers.sort((a, b) => this.getColumnPositionByField(a.value) - this.getColumnPositionByField(b.value))
+        : headers;
     },
 
     headersWithWidth() {
@@ -531,10 +544,6 @@ export default {
     transition: .3s cubic-bezier(.25, .8, .5,1);
     transition-property: opacity, background-color;
 
-    .theme--dark & {
-      background: #424242;
-    }
-
     &:after {
       content: ' ';
       width: 100%;
@@ -711,11 +720,11 @@ export default {
     }
 
     tr {
-      background: white;
+      background: var(--v-table-background-base);
       transition: background-color .3s cubic-bezier(.25,.8,.5,1);
 
       .theme--dark & {
-        background: #424242;
+        background: var(--v-table-background-base);
       }
 
       th {

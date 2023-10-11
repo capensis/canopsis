@@ -3,36 +3,65 @@
     template(#activator="{ on }")
       v-btn.white--text(v-on="on", flat) {{ userName }}
     v-list.py-0
-      v-list-tile(@click="showEditUserModal")
-        v-list-tile-avatar
-          v-icon person
-        v-list-tile-title.text-uppercase.body-2 {{ $t('user.seeProfile') }}
-      v-list-tile(:to="profilePatternsLink", active-class="")
-        v-list-tile-avatar
-          v-icon filter_list
-        v-list-tile-title.text-uppercase.body-2 {{ $t('pattern.patterns') }}
-      v-list-tile.logout-btn(@click="logoutHandler")
-        v-list-tile-avatar
-          v-icon(color="error") exit_to_app
-        v-list-tile-title.text-uppercase.error--text.body-2 {{ $t('common.logout') }}
+      top-bar-profile-menu-link(
+        v-for="link in links",
+        :key="link.title",
+        :link="link"
+      )
 </template>
 
 <script>
-import { MODALS, ROUTES_NAMES } from '@/constants';
+import { MODALS, ROUTES_NAMES, USERS_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesUserMixin } from '@/mixins/entities/user';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { layoutNavigationTopBarMenuMixin } from '@/mixins/layout/navigation/top-bar-menu';
+
+import TopBarProfileMenuLink from './top-bar-profile-menu-link.vue';
 
 export default {
   inject: ['$system'],
-  mixins: [authMixin, entitiesUserMixin],
+  components: { TopBarProfileMenuLink },
+  mixins: [
+    authMixin,
+    entitiesUserMixin,
+    entitiesInfoMixin,
+    layoutNavigationTopBarMenuMixin,
+  ],
   computed: {
-    profilePatternsLink() {
-      return { name: ROUTES_NAMES.profilePatterns };
-    },
-
     userName() {
       return this.currentUser.display_name || this.currentUser._id;
+    },
+
+    links() {
+      const links = [
+        {
+          icon: 'person',
+          title: this.$t('user.seeProfile'),
+          handler: this.showEditUserModal,
+        },
+        {
+          icon: 'filter_list',
+          title: this.$t('pattern.patterns'),
+          route: { name: ROUTES_NAMES.profilePatterns },
+        },
+        {
+          icon: 'palette',
+          title: this.$t('theme.themes'),
+          route: { name: ROUTES_NAMES.profileThemes },
+          permission: USERS_PERMISSIONS.technical.profile.theme,
+        },
+        {
+          icon: 'exit_to_app',
+          color: 'error',
+          class: 'top-bar-user-menu__logout-btn',
+          title: this.$t('common.logout'),
+          handler: this.logoutHandler,
+        },
+      ];
+
+      return this.filterLinks(links);
     },
   },
   methods: {
@@ -61,18 +90,20 @@ export default {
         redirect: () => this.$router.replaceAsync({ name: ROUTES_NAMES.login }),
       });
 
-      this.$system.setTheme();
+      this.$system.setTheme(this.defaultColorTheme);
     },
   },
 };
 </script>
 
-<style lang="scss" scoped>
-$btnErrorColor: rgba(255, 82, 82, .1);
+<style lang="scss">
+.top-bar-user-menu {
+  --btn-error-color: rgba(255, 82, 82, .1);
 
-.logout-btn {
-  &:hover, &:active {
-    background: $btnErrorColor;
+  &__logout-btn {
+    &:hover, &:active {
+      background: var(--btn-error-color);
+    }
   }
 }
 </style>

@@ -124,7 +124,12 @@ Feature: cancel a instruction execution
     When I do PUT /api/v4/cat/executions/notexist/cancel
     Then the response code should be 401
 
-  Scenario: given get request and auth user without permissions should not allow access
+  Scenario: given cancel request and auth user without permissions should not allow access
     When I am noperms
     When I do PUT /api/v4/cat/executions/notexist/cancel
     Then the response code should be 403
+
+  Scenario: given cancel request with not found id should return error
+    When I am admin
+    When I do PUT /api/v4/cat/executions/notexist/cancel
+    Then the response code should be 404

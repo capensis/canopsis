@@ -74,9 +74,12 @@ func (w *internalTagPeriodicalWorker) addTag(
 	microNow types.MicroTime,
 ) error {
 	alarmMatch := bson.M{
-		"t":         bson.M{"$lt": secNow},
-		"itags_upd": bson.M{"$lt": microNow},
-		"itags":     bson.M{"$nin": bson.A{tag.Value}},
+		"t": bson.M{"$lt": secNow},
+		"$or": []bson.M{
+			{"itags_upd": bson.M{"$lt": microNow}},
+			{"itags_upd": nil},
+		},
+		"itags": bson.M{"$nin": bson.A{tag.Value}},
 	}
 	if len(tag.AlarmPattern) > 0 {
 		q, err := tag.AlarmPattern.ToMongoQuery("")
@@ -230,15 +233,22 @@ func (w *internalTagPeriodicalWorker) updateByCursor(
 		matchedTags := w.matchAlarm(alarm.Entity, alarm.Alarm, tags)
 		writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
 			SetFilter(bson.M{
-				"_id":       alarm.Alarm.ID,
-				"itags_upd": bson.M{"$lt": microNow},
+				"_id": alarm.Alarm.ID,
+				"$or": []bson.M{
+					{"itags_upd": bson.M{"$lt": microNow}},
+					{"itags_upd": nil},
+				},
 			}).
 			SetUpdate([]bson.M{
 				{"$set": bson.M{
 					"itags_upd": microNow,
 					"itags":     matchedTags,
 					"tags": bson.M{"$concatArrays": bson.A{
-						"$etags",
+						bson.M{"$cond": bson.M{
+							"if":   "$etags",
+							"then": "$etags",
+							"else": bson.A{},
+						}},
 						matchedTags,
 					}},
 				}},
