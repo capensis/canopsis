@@ -52,6 +52,7 @@ export default {
   view: {
     create: {
       title: 'Create a view',
+      privateTitle: 'Create a private view',
     },
     edit: {
       title: 'Edit the view',

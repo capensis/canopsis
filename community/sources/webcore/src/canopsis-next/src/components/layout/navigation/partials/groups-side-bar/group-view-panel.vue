@@ -4,7 +4,7 @@
       div.panel-item-content__title.pl-2(:class="{ ellipsis: ellipsis }")
         slot(name="title") {{ view.title }}
       div.panel-item-content__actions
-        v-icon.panel-header__icon.mr-2(v-if="view.is_private", small) lock
+        v-icon.mr-2(v-if="view.is_private", small) lock
         template(v-if="allowEditing")
           v-btn.ma-0(
             v-show="editable",
