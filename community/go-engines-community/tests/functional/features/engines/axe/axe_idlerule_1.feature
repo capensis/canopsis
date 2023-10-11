@@ -7,8 +7,8 @@ Feature: update alarm on idle rule
     When I do POST /api/v4/idle-rules:
     """json
     {
-      "_id": "test-idlerule-axe-idlerule-first",
-      "name": "test-idlerule-axe-idlerule-first-name",
+      "_id": "test-idlerule-axe-idlerule-1",
+      "name": "test-idlerule-axe-idlerule-1-name",
       "type": "alarm",
       "alarm_condition": "last_event",
       "enabled": true,
@@ -23,18 +23,18 @@ Feature: update alarm on idle rule
             "field": "name",
             "cond": {
               "type": "eq",
-              "value": "test-resource-axe-idlerule-first"
+              "value": "test-resource-axe-idlerule-1"
             }
           }
         ]
       ],
-      "comment": "test-idlerule-axe-idlerule-first-comment",
+      "comment": "test-idlerule-axe-idlerule-1-comment",
       "operation": {
         "type": "assocticket",
         "parameters": {
-          "ticket": "test-idlerule-axe-idlerule-first-ticket",
-          "ticket_system_name": "test-idlerule-axe-idlerule-first-system-name",
-          "ticket_url": "test-idlerule-axe-idlerule-first-ticket-url",
+          "ticket": "test-idlerule-axe-idlerule-1-ticket",
+          "ticket_system_name": "test-idlerule-axe-idlerule-1-system-name",
+          "ticket_url": "test-idlerule-axe-idlerule-1-ticket-url",
           "ticket_data": {
             "ticket_param_1": "ticket_value_1"
           }
@@ -48,13 +48,13 @@ Feature: update alarm on idle rule
     """json
     {
       "event_type": "check",
-      "connector": "test-connector-axe-idlerule-first",
-      "connector_name": "test-connector-name-axe-idlerule-first",
+      "connector": "test-connector-axe-idlerule-1",
+      "connector_name": "test-connector-name-axe-idlerule-1",
       "source_type": "resource",
-      "component":  "test-component-axe-idlerule-first",
-      "resource": "test-resource-axe-idlerule-first",
+      "component":  "test-component-axe-idlerule-1",
+      "resource": "test-resource-axe-idlerule-1",
       "state": 2,
-      "output": "test-output-axe-idlerule-first"
+      "output": "test-output-axe-idlerule-1"
     }
     """
     When I wait 3s
@@ -62,17 +62,17 @@ Feature: update alarm on idle rule
     """json
     {
       "event_type": "check",
-      "connector": "test-connector-axe-idlerule-first",
-      "connector_name": "test-connector-name-axe-idlerule-first",
+      "connector": "test-connector-axe-idlerule-1",
+      "connector_name": "test-connector-name-axe-idlerule-1",
       "source_type": "resource",
-      "component":  "test-component-axe-idlerule-first",
-      "resource": "test-resource-axe-idlerule-first",
+      "component":  "test-component-axe-idlerule-1",
+      "resource": "test-resource-axe-idlerule-1",
       "state": 2,
-      "output": "test-output-axe-idlerule-first"
+      "output": "test-output-axe-idlerule-1"
     }
     """
     When I wait 3s
-    When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-first
+    When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -80,10 +80,10 @@ Feature: update alarm on idle rule
       "data": [
         {
           "v": {
-            "component": "test-component-axe-idlerule-first",
-            "connector": "test-connector-axe-idlerule-first",
-            "connector_name": "test-connector-name-axe-idlerule-first",
-            "resource": "test-resource-axe-idlerule-first",
+            "component": "test-component-axe-idlerule-1",
+            "connector": "test-connector-axe-idlerule-1",
+            "connector_name": "test-connector-name-axe-idlerule-1",
+            "resource": "test-resource-axe-idlerule-1",
             "state": {
               "val": 2
             },
@@ -145,14 +145,14 @@ Feature: update alarm on idle rule
     """json
     {
       "event_type": "assocticket",
-      "connector": "test-connector-axe-idlerule-first",
-      "connector_name": "test-connector-name-axe-idlerule-first",
+      "connector": "test-connector-axe-idlerule-1",
+      "connector_name": "test-connector-name-axe-idlerule-1",
       "source_type": "resource",
-      "component":  "test-component-axe-idlerule-first",
-      "resource": "test-resource-axe-idlerule-first"
+      "component":  "test-component-axe-idlerule-1",
+      "resource": "test-resource-axe-idlerule-1"
     }
     """
-    When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-first
+    When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -160,10 +160,10 @@ Feature: update alarm on idle rule
       "data": [
         {
           "v": {
-            "component": "test-component-axe-idlerule-first",
-            "connector": "test-connector-axe-idlerule-first",
-            "connector_name": "test-connector-name-axe-idlerule-first",
-            "resource": "test-resource-axe-idlerule-first",
+            "component": "test-component-axe-idlerule-1",
+            "connector": "test-connector-axe-idlerule-1",
+            "connector_name": "test-connector-name-axe-idlerule-1",
+            "resource": "test-resource-axe-idlerule-1",
             "state": {
               "val": 2
             },
@@ -174,31 +174,33 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "system",
-                "m": "Idle rule: test-idlerule-axe-idlerule-first-name. Ticket ID: test-idlerule-axe-idlerule-first-ticket. Ticket URL: test-idlerule-axe-idlerule-first-ticket-url. Ticket ticket_param_1: ticket_value_1.",
-                "ticket": "test-idlerule-axe-idlerule-first-ticket",
-                "ticket_rule_id": "test-idlerule-axe-idlerule-first",
-                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-first-name",
-                "ticket_system_name": "test-idlerule-axe-idlerule-first-system-name",
-                "ticket_url": "test-idlerule-axe-idlerule-first-ticket-url",
+                "initiator": "system",
+                "m": "Idle rule: test-idlerule-axe-idlerule-1-name. Ticket ID: test-idlerule-axe-idlerule-1-ticket. Ticket URL: test-idlerule-axe-idlerule-1-ticket-url. Ticket ticket_param_1: ticket_value_1.",
+                "ticket": "test-idlerule-axe-idlerule-1-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-1",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-1-name",
+                "ticket_system_name": "test-idlerule-axe-idlerule-1-system-name",
+                "ticket_url": "test-idlerule-axe-idlerule-1-ticket-url",
                 "ticket_data": {
                   "ticket_param_1": "ticket_value_1"
                 },
-                "ticket_comment": "test-idlerule-axe-idlerule-first-comment"
+                "ticket_comment": "test-idlerule-axe-idlerule-1-comment"
               }
             ],
             "ticket": {
               "_t": "assocticket",
               "a": "system",
-              "m": "Idle rule: test-idlerule-axe-idlerule-first-name. Ticket ID: test-idlerule-axe-idlerule-first-ticket. Ticket URL: test-idlerule-axe-idlerule-first-ticket-url. Ticket ticket_param_1: ticket_value_1.",
-              "ticket": "test-idlerule-axe-idlerule-first-ticket",
-              "ticket_rule_id": "test-idlerule-axe-idlerule-first",
-              "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-first-name",
-              "ticket_system_name": "test-idlerule-axe-idlerule-first-system-name",
-              "ticket_url": "test-idlerule-axe-idlerule-first-ticket-url",
+              "initiator": "system",
+              "m": "Idle rule: test-idlerule-axe-idlerule-1-name. Ticket ID: test-idlerule-axe-idlerule-1-ticket. Ticket URL: test-idlerule-axe-idlerule-1-ticket-url. Ticket ticket_param_1: ticket_value_1.",
+              "ticket": "test-idlerule-axe-idlerule-1-ticket",
+              "ticket_rule_id": "test-idlerule-axe-idlerule-1",
+              "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-1-name",
+              "ticket_system_name": "test-idlerule-axe-idlerule-1-system-name",
+              "ticket_url": "test-idlerule-axe-idlerule-1-ticket-url",
               "ticket_data": {
                 "ticket_param_1": "ticket_value_1"
               },
-              "ticket_comment": "test-idlerule-axe-idlerule-first-comment"
+              "ticket_comment": "test-idlerule-axe-idlerule-1-comment"
             }
           }
         }
@@ -243,16 +245,17 @@ Feature: update alarm on idle rule
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
-                "m": "Idle rule: test-idlerule-axe-idlerule-first-name. Ticket ID: test-idlerule-axe-idlerule-first-ticket. Ticket URL: test-idlerule-axe-idlerule-first-ticket-url. Ticket ticket_param_1: ticket_value_1.",
-                "ticket": "test-idlerule-axe-idlerule-first-ticket",
-                "ticket_rule_id": "test-idlerule-axe-idlerule-first",
-                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-first-name",
-                "ticket_system_name": "test-idlerule-axe-idlerule-first-system-name",
-                "ticket_url": "test-idlerule-axe-idlerule-first-ticket-url",
+                "initiator": "system",
+                "m": "Idle rule: test-idlerule-axe-idlerule-1-name. Ticket ID: test-idlerule-axe-idlerule-1-ticket. Ticket URL: test-idlerule-axe-idlerule-1-ticket-url. Ticket ticket_param_1: ticket_value_1.",
+                "ticket": "test-idlerule-axe-idlerule-1-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-1",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-1-name",
+                "ticket_system_name": "test-idlerule-axe-idlerule-1-system-name",
+                "ticket_url": "test-idlerule-axe-idlerule-1-ticket-url",
                 "ticket_data": {
                   "ticket_param_1": "ticket_value_1"
                 },
-                "ticket_comment": "test-idlerule-axe-idlerule-first-comment"
+                "ticket_comment": "test-idlerule-axe-idlerule-1-comment"
               }
             ],
             "meta": {
@@ -270,27 +273,27 @@ Feature: update alarm on idle rule
     """json
     {
       "event_type": "check",
-      "connector": "test-connector-axe-idlerule-first",
-      "connector_name": "test-connector-name-axe-idlerule-first",
+      "connector": "test-connector-axe-idlerule-1",
+      "connector_name": "test-connector-name-axe-idlerule-1",
       "source_type": "resource",
-      "component":  "test-component-axe-idlerule-first",
-      "resource": "test-resource-axe-idlerule-first",
+      "component":  "test-component-axe-idlerule-1",
+      "resource": "test-resource-axe-idlerule-1",
       "state": 2,
-      "output": "test-output-axe-idlerule-first"
+      "output": "test-output-axe-idlerule-1"
     }
     """
     Then I wait the end of event processing which contains:
     """json
     {
       "event_type": "assocticket",
-      "connector": "test-connector-axe-idlerule-first",
-      "connector_name": "test-connector-name-axe-idlerule-first",
+      "connector": "test-connector-axe-idlerule-1",
+      "connector_name": "test-connector-name-axe-idlerule-1",
       "source_type": "resource",
-      "component":  "test-component-axe-idlerule-first",
-      "resource": "test-resource-axe-idlerule-first"
+      "component":  "test-component-axe-idlerule-1",
+      "resource": "test-resource-axe-idlerule-1"
     }
     """
-    When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-first
+    When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-1
     Then the response code should be 200
     Then the response body should contain:
     """json
@@ -298,10 +301,10 @@ Feature: update alarm on idle rule
       "data": [
         {
           "v": {
-            "component": "test-component-axe-idlerule-first",
-            "connector": "test-connector-axe-idlerule-first",
-            "connector_name": "test-connector-name-axe-idlerule-first",
-            "resource": "test-resource-axe-idlerule-first",
+            "component": "test-component-axe-idlerule-1",
+            "connector": "test-connector-axe-idlerule-1",
+            "connector_name": "test-connector-name-axe-idlerule-1",
+            "resource": "test-resource-axe-idlerule-1",
             "state": {
               "val": 2
             },
@@ -312,45 +315,48 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "system",
-                "m": "Idle rule: test-idlerule-axe-idlerule-first-name. Ticket ID: test-idlerule-axe-idlerule-first-ticket. Ticket URL: test-idlerule-axe-idlerule-first-ticket-url. Ticket ticket_param_1: ticket_value_1.",
-                "ticket": "test-idlerule-axe-idlerule-first-ticket",
-                "ticket_rule_id": "test-idlerule-axe-idlerule-first",
-                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-first-name",
-                "ticket_system_name": "test-idlerule-axe-idlerule-first-system-name",
-                "ticket_url": "test-idlerule-axe-idlerule-first-ticket-url",
+                "initiator": "system",
+                "m": "Idle rule: test-idlerule-axe-idlerule-1-name. Ticket ID: test-idlerule-axe-idlerule-1-ticket. Ticket URL: test-idlerule-axe-idlerule-1-ticket-url. Ticket ticket_param_1: ticket_value_1.",
+                "ticket": "test-idlerule-axe-idlerule-1-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-1",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-1-name",
+                "ticket_system_name": "test-idlerule-axe-idlerule-1-system-name",
+                "ticket_url": "test-idlerule-axe-idlerule-1-ticket-url",
                 "ticket_data": {
                   "ticket_param_1": "ticket_value_1"
                 },
-                "ticket_comment": "test-idlerule-axe-idlerule-first-comment"
+                "ticket_comment": "test-idlerule-axe-idlerule-1-comment"
               },
               {
                 "_t": "assocticket",
                 "a": "system",
-                "m": "Idle rule: test-idlerule-axe-idlerule-first-name. Ticket ID: test-idlerule-axe-idlerule-first-ticket. Ticket URL: test-idlerule-axe-idlerule-first-ticket-url. Ticket ticket_param_1: ticket_value_1.",
-                "ticket": "test-idlerule-axe-idlerule-first-ticket",
-                "ticket_rule_id": "test-idlerule-axe-idlerule-first",
-                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-first-name",
-                "ticket_system_name": "test-idlerule-axe-idlerule-first-system-name",
-                "ticket_url": "test-idlerule-axe-idlerule-first-ticket-url",
+                "initiator": "system",
+                "m": "Idle rule: test-idlerule-axe-idlerule-1-name. Ticket ID: test-idlerule-axe-idlerule-1-ticket. Ticket URL: test-idlerule-axe-idlerule-1-ticket-url. Ticket ticket_param_1: ticket_value_1.",
+                "ticket": "test-idlerule-axe-idlerule-1-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-1",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-1-name",
+                "ticket_system_name": "test-idlerule-axe-idlerule-1-system-name",
+                "ticket_url": "test-idlerule-axe-idlerule-1-ticket-url",
                 "ticket_data": {
                   "ticket_param_1": "ticket_value_1"
                 },
-                "ticket_comment": "test-idlerule-axe-idlerule-first-comment"
+                "ticket_comment": "test-idlerule-axe-idlerule-1-comment"
               }
             ],
             "ticket": {
               "_t": "assocticket",
               "a": "system",
-              "m": "Idle rule: test-idlerule-axe-idlerule-first-name. Ticket ID: test-idlerule-axe-idlerule-first-ticket. Ticket URL: test-idlerule-axe-idlerule-first-ticket-url. Ticket ticket_param_1: ticket_value_1.",
-              "ticket": "test-idlerule-axe-idlerule-first-ticket",
-              "ticket_rule_id": "test-idlerule-axe-idlerule-first",
-              "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-first-name",
-              "ticket_system_name": "test-idlerule-axe-idlerule-first-system-name",
-              "ticket_url": "test-idlerule-axe-idlerule-first-ticket-url",
+              "initiator": "system",
+              "m": "Idle rule: test-idlerule-axe-idlerule-1-name. Ticket ID: test-idlerule-axe-idlerule-1-ticket. Ticket URL: test-idlerule-axe-idlerule-1-ticket-url. Ticket ticket_param_1: ticket_value_1.",
+              "ticket": "test-idlerule-axe-idlerule-1-ticket",
+              "ticket_rule_id": "test-idlerule-axe-idlerule-1",
+              "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-1-name",
+              "ticket_system_name": "test-idlerule-axe-idlerule-1-system-name",
+              "ticket_url": "test-idlerule-axe-idlerule-1-ticket-url",
               "ticket_data": {
                 "ticket_param_1": "ticket_value_1"
               },
-              "ticket_comment": "test-idlerule-axe-idlerule-first-comment"
+              "ticket_comment": "test-idlerule-axe-idlerule-1-comment"
             }
           }
         }
@@ -395,31 +401,33 @@ Feature: update alarm on idle rule
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
-                "m": "Idle rule: test-idlerule-axe-idlerule-first-name. Ticket ID: test-idlerule-axe-idlerule-first-ticket. Ticket URL: test-idlerule-axe-idlerule-first-ticket-url. Ticket ticket_param_1: ticket_value_1.",
-                "ticket": "test-idlerule-axe-idlerule-first-ticket",
-                "ticket_rule_id": "test-idlerule-axe-idlerule-first",
-                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-first-name",
-                "ticket_system_name": "test-idlerule-axe-idlerule-first-system-name",
-                "ticket_url": "test-idlerule-axe-idlerule-first-ticket-url",
+                "initiator": "system",
+                "m": "Idle rule: test-idlerule-axe-idlerule-1-name. Ticket ID: test-idlerule-axe-idlerule-1-ticket. Ticket URL: test-idlerule-axe-idlerule-1-ticket-url. Ticket ticket_param_1: ticket_value_1.",
+                "ticket": "test-idlerule-axe-idlerule-1-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-1",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-1-name",
+                "ticket_system_name": "test-idlerule-axe-idlerule-1-system-name",
+                "ticket_url": "test-idlerule-axe-idlerule-1-ticket-url",
                 "ticket_data": {
                   "ticket_param_1": "ticket_value_1"
                 },
-                "ticket_comment": "test-idlerule-axe-idlerule-first-comment"
+                "ticket_comment": "test-idlerule-axe-idlerule-1-comment"
               },
               {
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
-                "m": "Idle rule: test-idlerule-axe-idlerule-first-name. Ticket ID: test-idlerule-axe-idlerule-first-ticket. Ticket URL: test-idlerule-axe-idlerule-first-ticket-url. Ticket ticket_param_1: ticket_value_1.",
-                "ticket": "test-idlerule-axe-idlerule-first-ticket",
-                "ticket_rule_id": "test-idlerule-axe-idlerule-first",
-                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-first-name",
-                "ticket_system_name": "test-idlerule-axe-idlerule-first-system-name",
-                "ticket_url": "test-idlerule-axe-idlerule-first-ticket-url",
+                "initiator": "system",
+                "m": "Idle rule: test-idlerule-axe-idlerule-1-name. Ticket ID: test-idlerule-axe-idlerule-1-ticket. Ticket URL: test-idlerule-axe-idlerule-1-ticket-url. Ticket ticket_param_1: ticket_value_1.",
+                "ticket": "test-idlerule-axe-idlerule-1-ticket",
+                "ticket_rule_id": "test-idlerule-axe-idlerule-1",
+                "ticket_rule_name": "Idle rule: test-idlerule-axe-idlerule-1-name",
+                "ticket_system_name": "test-idlerule-axe-idlerule-1-system-name",
+                "ticket_url": "test-idlerule-axe-idlerule-1-ticket-url",
                 "ticket_data": {
                   "ticket_param_1": "ticket_value_1"
                 },
-                "ticket_comment": "test-idlerule-axe-idlerule-first-comment"
+                "ticket_comment": "test-idlerule-axe-idlerule-1-comment"
               }
             ],
             "meta": {
@@ -605,6 +613,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "system",
+                "initiator": "system",
                 "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
                 "ticket": "test-idlerule-axe-idlerule-2-ticket",
                 "ticket_rule_id": "test-idlerule-axe-idlerule-2",
@@ -614,6 +623,7 @@ Feature: update alarm on idle rule
             "ticket": {
               "_t": "assocticket",
               "a": "system",
+              "initiator": "system",
               "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
               "ticket": "test-idlerule-axe-idlerule-2-ticket",
               "ticket_rule_id": "test-idlerule-axe-idlerule-2",
@@ -666,6 +676,7 @@ Feature: update alarm on idle rule
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
+                "initiator": "system",
                 "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
                 "ticket": "test-idlerule-axe-idlerule-2-ticket",
                 "ticket_rule_id": "test-idlerule-axe-idlerule-2",
@@ -719,6 +730,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "system",
+                "initiator": "system",
                 "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
                 "ticket": "test-idlerule-axe-idlerule-2-ticket",
                 "ticket_rule_id": "test-idlerule-axe-idlerule-2",
@@ -728,6 +740,7 @@ Feature: update alarm on idle rule
             "ticket": {
               "_t": "assocticket",
               "a": "system",
+              "initiator": "system",
               "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
               "ticket": "test-idlerule-axe-idlerule-2-ticket",
               "ticket_rule_id": "test-idlerule-axe-idlerule-2",
@@ -780,6 +793,7 @@ Feature: update alarm on idle rule
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
+                "initiator": "system",
                 "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
                 "ticket": "test-idlerule-axe-idlerule-2-ticket",
                 "ticket_rule_id": "test-idlerule-axe-idlerule-2",
@@ -843,6 +857,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "system",
+                "initiator": "system",
                 "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
                 "ticket": "test-idlerule-axe-idlerule-2-ticket",
                 "ticket_rule_id": "test-idlerule-axe-idlerule-2",
@@ -851,6 +866,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "system",
+                "initiator": "system",
                 "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
                 "ticket": "test-idlerule-axe-idlerule-2-ticket",
                 "ticket_rule_id": "test-idlerule-axe-idlerule-2",
@@ -860,6 +876,7 @@ Feature: update alarm on idle rule
             "ticket": {
               "_t": "assocticket",
               "a": "system",
+              "initiator": "system",
               "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
               "ticket": "test-idlerule-axe-idlerule-2-ticket",
               "ticket_rule_id": "test-idlerule-axe-idlerule-2",
@@ -912,6 +929,7 @@ Feature: update alarm on idle rule
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
+                "initiator": "system",
                 "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
                 "ticket": "test-idlerule-axe-idlerule-2-ticket",
                 "ticket_rule_id": "test-idlerule-axe-idlerule-2",
@@ -925,6 +943,7 @@ Feature: update alarm on idle rule
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
+                "initiator": "system",
                 "m": "Idle rule: test-idlerule-axe-idlerule-2-name. Ticket ID: test-idlerule-axe-idlerule-2-ticket.",
                 "ticket": "test-idlerule-axe-idlerule-2-ticket",
                 "ticket_rule_id": "test-idlerule-axe-idlerule-2",
@@ -1043,12 +1062,14 @@ Feature: update alarm on idle rule
               "val": 3,
               "a": "system",
               "user_id": "",
+              "initiator": "system",
               "m": "Idle rule test-idlerule-axe-idlerule-3-name"
             },
             "status": {
               "val": 5,
               "a": "system",
               "user_id": "",
+              "initiator": "system",
               "m": "Idle rule test-idlerule-axe-idlerule-3-name"
             }
           }
@@ -1089,6 +1110,7 @@ Feature: update alarm on idle rule
                 "val": 3,
                 "a": "system",
                 "user_id": "",
+                "initiator": "system",
                 "m": "Idle rule test-idlerule-axe-idlerule-3-name"
               },
               {
@@ -1096,6 +1118,7 @@ Feature: update alarm on idle rule
                 "val": 5,
                 "a": "system",
                 "user_id": "",
+                "initiator": "system",
                 "m": "Idle rule test-idlerule-axe-idlerule-3-name"
               }
             ],
@@ -1203,6 +1226,7 @@ Feature: update alarm on idle rule
               {
                 "_t": "statusdec",
                 "a": "test-connector-axe-idlerule-3.test-connector-name-axe-idlerule-3",
+                "initiator": "external",
                 "m": "test-output-axe-idlerule-3",
                 "val": 1
               }
@@ -1304,11 +1328,13 @@ Feature: update alarm on idle rule
             "state": {
               "val": 3,
               "a": "system",
+              "initiator": "system",
               "m": "Idle rule test-idlerule-axe-idlerule-4-name"
             },
             "status": {
               "val": 5,
               "a": "system",
+              "initiator": "system",
               "m": "Idle rule test-idlerule-axe-idlerule-4-name"
             }
           }
@@ -1346,12 +1372,14 @@ Feature: update alarm on idle rule
                 "_t": "stateinc",
                 "val": 3,
                 "a": "system",
+                "initiator": "system",
                 "m": "Idle rule test-idlerule-axe-idlerule-4-name"
               },
               {
                 "_t": "statusinc",
                 "val": 5,
                 "a": "system",
+                "initiator": "system",
                 "m": "Idle rule test-idlerule-axe-idlerule-4-name"
               }
             ],
@@ -1521,11 +1549,13 @@ Feature: update alarm on idle rule
             "state": {
               "val": 3,
               "a": "system",
+              "initiator": "system",
               "m": "Idle rule test-idlerule-axe-idlerule-5-name"
             },
             "status": {
               "val": 5,
               "a": "system",
+              "initiator": "system",
               "m": "Idle rule test-idlerule-axe-idlerule-5-name"
             }
           }
@@ -1563,12 +1593,14 @@ Feature: update alarm on idle rule
                 "_t": "stateinc",
                 "val": 3,
                 "a": "system",
+                "initiator": "system",
                 "m": "Idle rule test-idlerule-axe-idlerule-5-name"
               },
               {
                 "_t": "statusinc",
                 "val": 5,
                 "a": "system",
+                "initiator": "system",
                 "m": "Idle rule test-idlerule-axe-idlerule-5-name"
               }
             ],
@@ -1798,12 +1830,14 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "system",
+                "initiator": "system",
                 "ticket": "test-idlerule-axe-idlerule-6-2-ticket"
               }
             ],
             "ticket": {
               "_t": "assocticket",
               "a": "system",
+              "initiator": "system",
               "ticket": "test-idlerule-axe-idlerule-6-2-ticket"
             }
           }
@@ -1849,6 +1883,7 @@ Feature: update alarm on idle rule
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
+                "initiator": "system",
                 "ticket": "test-idlerule-axe-idlerule-6-2-ticket"
               }
             ],
@@ -2117,7 +2152,8 @@ Feature: update alarm on idle rule
               {
                 "_t": "statusinc",
                 "val": 5,
-                "a": "system"
+                "a": "system",
+                "initiator": "system"
               }
             ],
             "meta": {
@@ -2227,7 +2263,8 @@ Feature: update alarm on idle rule
               {
                 "_t": "statusinc",
                 "val": 5,
-                "a": "system"
+                "a": "system",
+                "initiator": "system"
               },
               {
                 "_t": "statedec",
@@ -2244,7 +2281,8 @@ Feature: update alarm on idle rule
               {
                 "_t": "statusinc",
                 "val": 5,
-                "a": "system"
+                "a": "system",
+                "initiator": "system"
               }
             ],
             "meta": {
@@ -2372,22 +2410,26 @@ Feature: update alarm on idle rule
               {
                 "_t": "stateinc",
                 "val": 1,
-                "a": "test-connector-axe-idlerule-8.test-connector-name-axe-idlerule-8"
+                "a": "test-connector-axe-idlerule-8.test-connector-name-axe-idlerule-8",
+                "initiator": "external"
               },
               {
                 "_t": "statusinc",
                 "val": 1,
-                "a": "test-connector-axe-idlerule-8.test-connector-name-axe-idlerule-8"
+                "a": "test-connector-axe-idlerule-8.test-connector-name-axe-idlerule-8",
+                "initiator": "external"
               },
               {
                 "_t": "stateinc",
                 "val": 3,
-                "a": "system"
+                "a": "system",
+                "initiator": "system"
               },
               {
                 "_t": "statusinc",
                 "val": 5,
-                "a": "system"
+                "a": "system",
+                "initiator": "system"
               }
             ],
             "meta": {
@@ -2650,12 +2692,14 @@ Feature: update alarm on idle rule
               {
                 "_t": "assocticket",
                 "a": "system",
+                "initiator": "system",
                 "ticket": "test-idlerule-axe-idlerule-9-1-ticket"
               }
             ],
             "ticket": {
               "_t": "assocticket",
               "a": "system",
+              "initiator": "system",
               "ticket": "test-idlerule-axe-idlerule-9-1-ticket"
             }
           }
@@ -2701,6 +2745,7 @@ Feature: update alarm on idle rule
                 "_t": "assocticket",
                 "a": "system",
                 "user_id": "",
+                "initiator": "system",
                 "ticket": "test-idlerule-axe-idlerule-9-1-ticket"
               }
             ],
@@ -2836,784 +2881,3 @@ Feature: update alarm on idle rule
     Then the response code should be 204
     When I do DELETE /api/v4/idle-rules/{{ .rule2ID }}
     Then the response code should be 204
-
-  @concurrent
-  Scenario: given idle rule and no events for alarm and entity should apply most priority entity rule
-    Given I am admin
-    When I do POST /api/v4/idle-rules:
-    """json
-    {
-      "name": "test-idlerule-axe-idlerule-10-1-name",
-      "type": "alarm",
-      "alarm_condition": "last_event",
-      "enabled": true,
-      "priority": 53,
-      "duration": {
-        "value": 3,
-        "unit": "s"
-      },
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-resource-axe-idlerule-10"
-            }
-          }
-        ]
-      ],
-      "operation": {
-        "type": "ack",
-        "parameters": {
-          "output": "test-idlerule-axe-idlerule-10-1-output"
-        }
-      }
-    }
-    """
-    Then the response code should be 201
-    Then I save response rule1ID={{ .lastResponse._id }}
-    When I do POST /api/v4/idle-rules:
-    """json
-    {
-      "name": "test-idlerule-axe-idlerule-10-2-name",
-      "type": "entity",
-      "enabled": true,
-      "priority": 52,
-      "duration": {
-        "value": 3,
-        "unit": "s"
-      },
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-resource-axe-idlerule-10"
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    Then I save response rule2ID={{ .lastResponse._id }}
-    When I wait the next periodical process
-    When I send an event and wait the end of event processing:
-    """json
-    {
-      "event_type": "check",
-      "connector": "test-connector-axe-idlerule-10",
-      "connector_name": "test-connector-name-axe-idlerule-10",
-      "source_type": "resource",
-      "component":  "test-component-axe-idlerule-10",
-      "resource": "test-resource-axe-idlerule-10",
-      "state": 2,
-      "output": "test-output-axe-idlerule-10"
-    }
-    """
-    Then I wait the end of event processing which contains:
-    """json
-    {
-      "event_type": "noevents",
-      "connector": "test-connector-axe-idlerule-10",
-      "connector_name": "test-connector-name-axe-idlerule-10",
-      "source_type": "resource",
-      "component":  "test-component-axe-idlerule-10",
-      "resource": "test-resource-axe-idlerule-10"
-    }
-    """
-    When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-10
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "v": {
-            "component": "test-component-axe-idlerule-10",
-            "connector": "test-connector-axe-idlerule-10",
-            "connector_name": "test-connector-name-axe-idlerule-10",
-            "resource": "test-resource-axe-idlerule-10",
-            "state": {
-              "val": 3
-            },
-            "status": {
-              "val": 5
-            }
-          }
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
-    When I do POST /api/v4/alarm-details:
-    """json
-    [
-      {
-        "_id": "{{ (index .lastResponse.data 0)._id }}",
-        "steps": {
-          "page": 1
-        }
-      }
-    ]
-    """
-    Then the response code should be 207
-    Then the response body should contain:
-    """json
-    [
-      {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc",
-                "val": 2
-              },
-              {
-                "_t": "statusinc",
-                "val": 1
-              },
-              {
-                "_t": "stateinc",
-                "val": 3
-              },
-              {
-                "_t": "statusinc",
-                "val": 5
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 4
-            }
-          }
-        }
-      }
-    ]
-    """
-    When I wait 5s
-    When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-10
-    Then the response code should be 200
-    When I do POST /api/v4/alarm-details:
-    """json
-    [
-      {
-        "_id": "{{ (index .lastResponse.data 0)._id }}",
-        "steps": {
-          "page": 1
-        }
-      }
-    ]
-    """
-    Then the response code should be 207
-    Then the response body should contain:
-    """json
-    [
-      {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc",
-                "val": 2
-              },
-              {
-                "_t": "statusinc",
-                "val": 1
-              },
-              {
-                "_t": "stateinc",
-                "val": 3
-              },
-              {
-                "_t": "statusinc",
-                "val": 5
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 4
-            }
-          }
-        }
-      }
-    ]
-    """
-    When I send an event and wait the end of event processing:
-    """json
-    {
-      "event_type": "check",
-      "connector": "test-connector-axe-idlerule-10",
-      "connector_name": "test-connector-name-axe-idlerule-10",
-      "source_type": "resource",
-      "component":  "test-component-axe-idlerule-10",
-      "resource": "test-resource-axe-idlerule-10",
-      "state": 2,
-      "output": "test-output-axe-idlerule-10"
-    }
-    """
-    Then I wait the end of event processing which contains:
-    """json
-    {
-      "event_type": "noevents",
-      "connector": "test-connector-axe-idlerule-10",
-      "connector_name": "test-connector-name-axe-idlerule-10",
-      "source_type": "resource",
-      "component":  "test-component-axe-idlerule-10",
-      "resource": "test-resource-axe-idlerule-10"
-    }
-    """
-    When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-10
-    Then the response code should be 200
-    When I do POST /api/v4/alarm-details:
-    """json
-    [
-      {
-        "_id": "{{ (index .lastResponse.data 0)._id }}",
-        "steps": {
-          "page": 1
-        }
-      }
-    ]
-    """
-    Then the response code should be 207
-    Then the response body should contain:
-    """json
-    [
-      {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc",
-                "val": 2
-              },
-              {
-                "_t": "statusinc",
-                "val": 1
-              },
-              {
-                "_t": "stateinc",
-                "val": 3
-              },
-              {
-                "_t": "statusinc",
-                "val": 5
-              },
-              {
-                "_t": "statedec",
-                "val": 2
-              },
-              {
-                "_t": "statusdec",
-                "val": 1
-              },
-              {
-                "_t": "stateinc",
-                "val": 3
-              },
-              {
-                "_t": "statusinc",
-                "val": 5
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 8
-            }
-          }
-        }
-      }
-    ]
-    """
-    When I do DELETE /api/v4/idle-rules/{{ .rule1ID }}
-    Then the response code should be 204
-    When I do DELETE /api/v4/idle-rules/{{ .rule2ID }}
-    Then the response code should be 204
-
-  @concurrent
-  Scenario: given idle rule and no events for component which is created by resource event should create alarm
-    Given I am admin
-    When I do POST /api/v4/idle-rules:
-    """json
-    {
-      "name": "test-idlerule-axe-idlerule-11-name",
-      "type": "entity",
-      "enabled": true,
-      "priority": 54,
-      "duration": {
-        "value": 3,
-        "unit": "s"
-      },
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-component-axe-idlerule-11"
-            }
-          }
-        ]
-      ]
-    }
-    """
-    Then the response code should be 201
-    Then I save response ruleID={{ .lastResponse._id }}
-    When I wait the next periodical process
-    When I send an event and wait the end of event processing:
-    """json
-    {
-      "event_type": "check",
-      "connector": "test-connector-axe-idlerule-11",
-      "connector_name": "test-connector-name-axe-idlerule-11",
-      "source_type": "resource",
-      "component":  "test-component-axe-idlerule-11",
-      "resource":  "test-resource-axe-idlerule-11",
-      "state": 0,
-      "output": "test-output-axe-idlerule-11"
-    }
-    """
-    Then I wait the end of event processing which contains:
-    """json
-    {
-      "event_type": "activate",
-      "connector": "test-connector-axe-idlerule-11",
-      "connector_name": "test-connector-name-axe-idlerule-11",
-      "source_type": "component",
-      "component":  "test-component-axe-idlerule-11"
-    }
-    """
-    When I do GET /api/v4/alarms?search=test-component-axe-idlerule-11
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "v": {
-            "component": "test-component-axe-idlerule-11",
-            "connector": "test-connector-axe-idlerule-11",
-            "connector_name": "test-connector-name-axe-idlerule-11",
-            "state": {
-              "val": 3
-            },
-            "status": {
-              "val": 5
-            }
-          }
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
-    When I do POST /api/v4/alarm-details:
-    """json
-    [
-      {
-        "_id": "{{ (index .lastResponse.data 0)._id }}",
-        "steps": {
-          "page": 1
-        }
-      }
-    ]
-    """
-    Then the response code should be 207
-    Then the response body should contain:
-    """json
-    [
-      {
-        "status": 200,
-        "data": {
-          "steps": {
-            "data": [
-              {
-                "_t": "stateinc",
-                "val": 3
-              },
-              {
-                "_t": "statusinc",
-                "val": 5
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "page_count": 1,
-              "per_page": 10,
-              "total_count": 2
-            }
-          }
-        }
-      }
-    ]
-    """
-    When I do DELETE /api/v4/idle-rules/{{ .ruleID }}
-    Then the response code should be 204
-
-  @concurrent
-  Scenario: given idle rule with ok changestate operation should update next alarm
-    Given I am admin
-    When I do POST /api/v4/idle-rules:
-    """json
-    {
-      "name": "test-idlerule-axe-idlerule-12-name",
-      "type": "alarm",
-      "alarm_condition": "last_event",
-      "enabled": true,
-      "priority": 40,
-      "duration": {
-        "value": 2,
-        "unit": "s"
-      },
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-resource-axe-idlerule-12"
-            }
-          }
-        ]
-      ],
-      "operation": {
-        "type": "changestate",
-        "parameters": {
-          "state": 0
-        }
-      }
-    }
-    """
-    Then the response code should be 201
-    When I wait the next periodical process
-    When I send an event and wait the end of event processing:
-    """json
-    {
-      "event_type": "check",
-      "state": 2,
-      "output": "test-output-axe-idlerule-12",
-      "connector": "test-connector-axe-idlerule-12",
-      "connector_name": "test-connector-name-axe-idlerule-12",
-      "component":  "test-component-axe-idlerule-12",
-      "resource": "test-resource-axe-idlerule-12",
-      "source_type": "resource"
-    }
-    """
-    When I wait the end of event processing which contains:
-    """json
-    {
-      "event_type": "changestate",
-      "connector": "test-connector-axe-idlerule-12",
-      "connector_name": "test-connector-name-axe-idlerule-12",
-      "component":  "test-component-axe-idlerule-12",
-      "resource": "test-resource-axe-idlerule-12",
-      "source_type": "resource"
-    }
-    """
-    When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-12
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "v": {
-            "component": "test-component-axe-idlerule-12",
-            "connector": "test-connector-axe-idlerule-12",
-            "connector_name": "test-connector-name-axe-idlerule-12",
-            "resource": "test-resource-axe-idlerule-12",
-            "state": {
-              "_t": "changestate",
-              "val": 0
-            },
-            "status": {
-              "val": 0
-            }
-          }
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
-    When I send an event and wait the end of event processing:
-    """json
-    {
-      "event_type": "resolve_close",
-      "output": "test-output-axe-idlerule-12",
-      "connector": "test-connector-axe-idlerule-12",
-      "connector_name": "test-connector-name-axe-idlerule-12",
-      "component":  "test-component-axe-idlerule-12",
-      "resource": "test-resource-axe-idlerule-12",
-      "source_type": "resource"
-    }
-    """
-    When I send an event and wait the end of event processing:
-    """json
-    {
-      "event_type": "check",
-      "state": 2,
-      "output": "test-output-axe-idlerule-12",
-      "connector": "test-connector-axe-idlerule-12",
-      "connector_name": "test-connector-name-axe-idlerule-12",
-      "component":  "test-component-axe-idlerule-12",
-      "resource": "test-resource-axe-idlerule-12",
-      "source_type": "resource"
-    }
-    """
-    When I wait the end of event processing which contains:
-    """json
-    {
-      "event_type": "changestate",
-      "connector": "test-connector-axe-idlerule-12",
-      "connector_name": "test-connector-name-axe-idlerule-12",
-      "component":  "test-component-axe-idlerule-12",
-      "resource": "test-resource-axe-idlerule-12",
-      "source_type": "resource"
-    }
-    """
-    When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-12
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "v": {
-            "component": "test-component-axe-idlerule-12",
-            "connector": "test-connector-axe-idlerule-12",
-            "connector_name": "test-connector-name-axe-idlerule-12",
-            "resource": "test-resource-axe-idlerule-12",
-            "state": {
-              "_t": "changestate",
-              "val": 0
-            },
-            "status": {
-              "val": 0
-            }
-          }
-        },
-        {
-          "v": {
-            "component": "test-component-axe-idlerule-12",
-            "connector": "test-connector-axe-idlerule-12",
-            "connector_name": "test-connector-name-axe-idlerule-12",
-            "resource": "test-resource-axe-idlerule-12",
-            "state": {
-              "_t": "changestate",
-              "val": 0
-            },
-            "status": {
-              "val": 0
-            }
-          }
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 2
-      }
-    }
-    """
-
-  @concurrent
-  Scenario: given idle rule with cancel operation should update next alarm
-    Given I am admin
-    When I do POST /api/v4/idle-rules:
-    """json
-    {
-      "name": "test-idlerule-axe-idlerule-13-name",
-      "type": "alarm",
-      "alarm_condition": "last_event",
-      "enabled": true,
-      "priority": 40,
-      "duration": {
-        "value": 2,
-        "unit": "s"
-      },
-      "entity_pattern": [
-        [
-          {
-            "field": "name",
-            "cond": {
-              "type": "eq",
-              "value": "test-resource-axe-idlerule-13"
-            }
-          }
-        ]
-      ],
-      "operation": {
-        "type": "cancel"
-      }
-    }
-    """
-    Then the response code should be 201
-    When I wait the next periodical process
-    When I send an event and wait the end of event processing:
-    """json
-    {
-      "event_type": "check",
-      "state": 2,
-      "output": "test-output-axe-idlerule-13",
-      "connector": "test-connector-axe-idlerule-13",
-      "connector_name": "test-connector-name-axe-idlerule-13",
-      "component":  "test-component-axe-idlerule-13",
-      "resource": "test-resource-axe-idlerule-13",
-      "source_type": "resource"
-    }
-    """
-    When I wait the end of event processing which contains:
-    """json
-    {
-      "event_type": "cancel",
-      "connector": "test-connector-axe-idlerule-13",
-      "connector_name": "test-connector-name-axe-idlerule-13",
-      "component":  "test-component-axe-idlerule-13",
-      "resource": "test-resource-axe-idlerule-13",
-      "source_type": "resource"
-    }
-    """
-    When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-13
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "v": {
-            "component": "test-component-axe-idlerule-13",
-            "connector": "test-connector-axe-idlerule-13",
-            "connector_name": "test-connector-name-axe-idlerule-13",
-            "resource": "test-resource-axe-idlerule-13",
-            "canceled": {
-              "_t": "cancel"
-            },
-            "state": {
-              "val": 2
-            },
-            "status": {
-              "val": 4
-            }
-          }
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 1
-      }
-    }
-    """
-    When I send an event and wait the end of event processing:
-    """json
-    {
-      "event_type": "resolve_cancel",
-      "output": "test-output-axe-idlerule-13",
-      "connector": "test-connector-axe-idlerule-13",
-      "connector_name": "test-connector-name-axe-idlerule-13",
-      "component":  "test-component-axe-idlerule-13",
-      "resource": "test-resource-axe-idlerule-13",
-      "source_type": "resource"
-    }
-    """
-    When I send an event and wait the end of event processing:
-    """json
-    {
-      "event_type": "check",
-      "state": 2,
-      "output": "test-output-axe-idlerule-13",
-      "connector": "test-connector-axe-idlerule-13",
-      "connector_name": "test-connector-name-axe-idlerule-13",
-      "component":  "test-component-axe-idlerule-13",
-      "resource": "test-resource-axe-idlerule-13",
-      "source_type": "resource"
-    }
-    """
-    When I wait the end of event processing which contains:
-    """json
-    {
-      "event_type": "cancel",
-      "connector": "test-connector-axe-idlerule-13",
-      "connector_name": "test-connector-name-axe-idlerule-13",
-      "component":  "test-component-axe-idlerule-13",
-      "resource": "test-resource-axe-idlerule-13",
-      "source_type": "resource"
-    }
-    """
-    When I do GET /api/v4/alarms?search=test-resource-axe-idlerule-13
-    Then the response code should be 200
-    Then the response body should contain:
-    """json
-    {
-      "data": [
-        {
-          "v": {
-            "component": "test-component-axe-idlerule-13",
-            "connector": "test-connector-axe-idlerule-13",
-            "connector_name": "test-connector-name-axe-idlerule-13",
-            "resource": "test-resource-axe-idlerule-13",
-            "canceled": {
-              "_t": "cancel"
-            },
-            "state": {
-              "val": 2
-            },
-            "status": {
-              "val": 4
-            }
-          }
-        },
-        {
-          "v": {
-            "component": "test-component-axe-idlerule-13",
-            "connector": "test-connector-axe-idlerule-13",
-            "connector_name": "test-connector-name-axe-idlerule-13",
-            "resource": "test-resource-axe-idlerule-13",
-            "canceled": {
-              "_t": "cancel"
-            },
-            "state": {
-              "val": 2
-            },
-            "status": {
-              "val": 4
-            }
-          }
-        }
-      ],
-      "meta": {
-        "page": 1,
-        "page_count": 1,
-        "per_page": 10,
-        "total_count": 2
-      }
-    }
-    """
