@@ -145,3 +145,118 @@ Feature: update meta alarm on pbehavior
       }
     }
     """
+
+  Scenario: given meta alarm and pbehavior should update meta alarm and not update children
+    Given I am admin
+    When I do POST /api/v4/cat/metaalarmrules:
+    """
+    {
+      "name": "test-metaalarmrule-pbehavior-axe-correlation-2",
+      "type": "attribute",
+      "config": {
+        "alarm_patterns": [
+          {
+            "v": {
+              "component": "test-component-pbehavior-axe-correlation-2"
+            }
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 201
+    Then I save response metaAlarmRuleID={{ .lastResponse._id }}
+    When I wait the next periodical process
+    When I send an event:
+    """
+    {
+      "connector": "test-connector-pbehavior-axe-correlation-2",
+      "connector_name": "test-connector-name-pbehavior-axe-correlation-2",
+      "source_type": "resource",
+      "event_type": "check",
+      "component":  "test-component-pbehavior-axe-correlation-2",
+      "resource": "test-resource-pbehavior-axe-correlation-2",
+      "state": 2,
+      "output": "test-output-pbehavior-axe-correlation-2",
+      "long_output": "test-long-output-pbehavior-axe-correlation-2",
+      "author": "test-author-pbehavior-axe-correlation-2"
+    }
+    """
+    When I wait the end of 2 events processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    Then the response code should be 200
+    When I save response metalarmEntityID={{ (index .lastResponse.data 0).entity._id }}
+    When I do POST /api/v4/pbehaviors:
+    """
+    {
+      "enabled": true,
+      "name": "test-pbehavior-axe-correlation-2",
+      "tstart": {{ now }},
+      "tstop": {{ nowAdd "1h" }},
+      "color": "#FFFFFF",
+      "type": "test-maintenance-type-to-engine",
+      "reason": "test-reason-to-engine",
+      "filter":{
+        "$and":[
+          {
+            "_id": "test-resource-pbehavior-axe-correlation-2/test-component-pbehavior-axe-correlation-2"
+          }
+        ]
+      }
+    }
+    """
+    Then the response code should be 201
+    When I wait the end of event processing
+    When I do GET /api/v4/alarms?filter={"$and":[{"v.meta":"{{ .metaAlarmRuleID }}"}]}&with_steps=true&with_consequences=true&correlation=true
+    Then the response code should be 200
+    Then the response body should contain:
+    """
+    {
+      "data": [
+        {
+          "consequences": {
+            "data": [
+              {
+                "v": {
+                  "component": "test-component-pbehavior-axe-correlation-2",
+                  "connector": "test-connector-pbehavior-axe-correlation-2",
+                  "connector_name": "test-connector-name-pbehavior-axe-correlation-2",
+                  "resource": "test-resource-pbehavior-axe-correlation-2",
+                  "pbehavior_info": {
+                    "canonical_type": "maintenance",
+                    "name": "test-pbehavior-axe-correlation-2"
+                  }
+                },
+                "pbehavior": {
+                  "name": "test-pbehavior-axe-correlation-2",
+                  "author": {
+                    "_id": "root",
+                    "name": "root"
+                  },
+                  "reason": {
+                    "_id": "test-reason-to-engine",
+                    "name": "Test Engine",
+                    "description": "Test Engine"
+                  },
+                  "type": {
+                    "_id": "test-maintenance-type-to-engine",
+                    "icon_name": "test-maintenance-to-engine-icon",
+                    "name": "Engine maintenance",
+                    "type": "maintenance"
+                  }
+                }
+              }
+            ],
+            "total": 1
+          },
+          "metaalarm": true
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
