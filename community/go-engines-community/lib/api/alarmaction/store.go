@@ -2,6 +2,7 @@ package alarmaction
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -9,10 +10,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Store interface {
@@ -29,7 +32,7 @@ type Store interface {
 }
 
 func NewStore(
-	dbClient mongo.DbClient,
+	dbClient libmongo.DbClient,
 	amqpPublisher libamqp.Publisher,
 	exchange, queue string,
 	encoder encoding.Encoder,
@@ -38,8 +41,8 @@ func NewStore(
 ) Store {
 	return &store{
 		dbClient:             dbClient,
-		dbCollection:         dbClient.Collection(mongo.AlarmMongoCollection),
-		resolvedDbCollection: dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
+		dbCollection:         dbClient.Collection(libmongo.AlarmMongoCollection),
+		resolvedDbCollection: dbClient.Collection(libmongo.ResolvedAlarmMongoCollection),
 		amqpPublisher:        amqpPublisher,
 		exchange:             exchange,
 		queue:                queue,
@@ -50,9 +53,9 @@ func NewStore(
 }
 
 type store struct {
-	dbClient             mongo.DbClient
-	dbCollection         mongo.DbCollection
-	resolvedDbCollection mongo.DbCollection
+	dbClient             libmongo.DbClient
+	dbCollection         libmongo.DbCollection
+	resolvedDbCollection libmongo.DbCollection
 	amqpPublisher        libamqp.Publisher
 	exchange, queue      string
 	encoder              encoding.Encoder
@@ -278,7 +281,7 @@ func (s *store) findAlarm(ctx context.Context, match bson.M) (types.AlarmWithEnt
 	cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
 		{"$match": match},
 		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
+			"from":         libmongo.EntityMongoCollection,
 			"localField":   "d",
 			"foreignField": "_id",
 			"as":           "entity",
@@ -346,7 +349,7 @@ func (s *store) ackResources(
 			"v.ack":       nil,
 		}},
 		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
+			"from":         libmongo.EntityMongoCollection,
 			"localField":   "d",
 			"foreignField": "_id",
 			"as":           "entity",
@@ -406,7 +409,7 @@ func (s *store) ticketResources(
 			"v.ticket":    nil,
 		}},
 		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
+			"from":         libmongo.EntityMongoCollection,
 			"localField":   "d",
 			"foreignField": "_id",
 			"as":           "entity",
@@ -453,45 +456,83 @@ func (s *store) ticketResources(
 }
 
 func (s *store) AddBookmark(ctx context.Context, alarmID, userID string) (bool, error) {
-	mainRes, err := s.dbCollection.UpdateOne(
-		ctx,
-		bson.M{"_id": alarmID},
-		bson.M{"$addToSet": bson.M{"bookmarks": userID}},
-	)
-	if err != nil {
-		return false, err
-	}
+	found := false
 
-	resolvedRes, err := s.resolvedDbCollection.UpdateOne(
-		ctx,
-		bson.M{"_id": alarmID},
-		bson.M{"$addToSet": bson.M{"bookmarks": userID}},
-	)
-	if err != nil {
-		return false, err
-	}
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		found = false
 
-	return mainRes.MatchedCount != 0 || resolvedRes.MatchedCount != 0, nil
+		var doc alarmResolvedField
+
+		err := s.dbCollection.FindOneAndUpdate(
+			ctx,
+			bson.M{"_id": alarmID},
+			bson.M{"$addToSet": bson.M{"bookmarks": userID}},
+			options.FindOneAndUpdate().SetProjection(bson.M{"resolved": "$v.resolved"}).SetReturnDocument(options.After),
+		).Decode(&doc)
+		if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+			return err
+		}
+
+		if doc.ID != "" && doc.Resolved == nil {
+			found = true
+
+			return nil
+		}
+
+		resolvedRes, err := s.resolvedDbCollection.UpdateOne(
+			ctx,
+			bson.M{"_id": alarmID},
+			bson.M{"$addToSet": bson.M{"bookmarks": userID}},
+		)
+		if err != nil {
+			return err
+		}
+
+		found = resolvedRes.MatchedCount != 0
+
+		return nil
+	})
+
+	return found, err
 }
 
 func (s *store) RemoveBookmark(ctx context.Context, alarmID, userID string) (bool, error) {
-	mainRes, err := s.dbCollection.UpdateOne(
-		ctx,
-		bson.M{"_id": alarmID},
-		bson.M{"$pull": bson.M{"bookmarks": userID}},
-	)
-	if err != nil {
-		return false, err
-	}
+	found := false
 
-	resolvedRes, err := s.resolvedDbCollection.UpdateOne(
-		ctx,
-		bson.M{"_id": alarmID},
-		bson.M{"$pull": bson.M{"bookmarks": userID}},
-	)
-	if err != nil {
-		return false, err
-	}
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		found = false
 
-	return mainRes.MatchedCount != 0 || resolvedRes.MatchedCount != 0, nil
+		var doc alarmResolvedField
+
+		err := s.dbCollection.FindOneAndUpdate(
+			ctx,
+			bson.M{"_id": alarmID},
+			bson.M{"$pull": bson.M{"bookmarks": userID}},
+			options.FindOneAndUpdate().SetProjection(bson.M{"resolved": "$v.resolved"}).SetReturnDocument(options.After),
+		).Decode(&doc)
+		if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+			return err
+		}
+
+		if doc.ID != "" && doc.Resolved == nil {
+			found = true
+
+			return nil
+		}
+
+		resolvedRes, err := s.resolvedDbCollection.UpdateOne(
+			ctx,
+			bson.M{"_id": alarmID},
+			bson.M{"$pull": bson.M{"bookmarks": userID}},
+		)
+		if err != nil {
+			return err
+		}
+
+		found = resolvedRes.MatchedCount != 0
+
+		return nil
+	})
+
+	return found, err
 }
