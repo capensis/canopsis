@@ -148,7 +148,8 @@ Feature: no execute action when entity is inactive
               {
                 "_t": "pbhenter",
                 "a": "system",
-                "user_id": ""
+                "user_id": "",
+                "initiator": "system"
               },
               {"_t": "stateinc"}
             ],
@@ -311,12 +312,14 @@ Feature: no execute action when entity is inactive
               {
                 "_t": "pbhenter",
                 "a": "system",
-                "user_id": ""
+                "user_id": "",
+                "initiator": "system"
               },
               {
                 "_t": "pbhleave",
                 "a": "system",
-                "user_id": ""
+                "user_id": "",
+                "initiator": "system"
               }
             ],
             "meta": {
@@ -353,7 +356,9 @@ Feature: no execute action when entity is inactive
           "v": {
             "ack": {
               "_t": "ack",
-              "a": "system"
+              "a": "system",
+              "user_id": "",
+              "initiator": "system"
             },
             "connector" : "test-connector-pbehavior-action-2",
             "connector_name" : "test-connector-name-pbehavior-action-2",
@@ -395,12 +400,14 @@ Feature: no execute action when entity is inactive
               {
                 "_t": "pbhenter",
                 "a": "system",
-                "user_id": ""
+                "user_id": "",
+                "initiator": "system"
               },
               {
                 "_t": "pbhleave",
                 "a": "system",
-                "user_id": ""
+                "user_id": "",
+                "initiator": "system"
               },
               {"_t": "ack"}
             ],
@@ -523,7 +530,8 @@ Feature: no execute action when entity is inactive
               {
                 "_t": "pbhenter",
                 "a": "system",
-                "user_id": ""
+                "user_id": "",
+                "initiator": "system"
               }
             ],
             "meta": {
@@ -648,7 +656,8 @@ Feature: no execute action when entity is inactive
               {
                 "_t": "pbhenter",
                 "a": "system",
-                "user_id": ""
+                "user_id": "",
+                "initiator": "system"
               }
             ],
             "meta": {
@@ -786,7 +795,8 @@ Feature: no execute action when entity is inactive
               {
                 "_t": "pbhenter",
                 "a": "system",
-                "user_id": ""
+                "user_id": "",
+                "initiator": "system"
               }
             ],
             "meta": {

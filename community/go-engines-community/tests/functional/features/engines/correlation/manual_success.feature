@@ -210,11 +210,15 @@ Feature: Manual meta alarms
             "data": [
               {
                 "_t": "stateinc",
+                "a": "engine.correlation",
+                "initiator": "system",
                 "m": "test-metaalarm-manual-correlation-1-1-comment",
                 "val": 1
               },
               {
                 "_t": "statusinc",
+                "a": "engine.correlation",
+                "initiator": "system",
                 "m": "test-metaalarm-manual-correlation-1-1-comment",
                 "val": 1
               }
@@ -253,11 +257,15 @@ Feature: Manual meta alarms
             "data": [
               {
                 "_t": "stateinc",
+                "a": "engine.correlation",
+                "initiator": "system",
                 "m": "test-metaalarm-manual-correlation-1-2-comment",
                 "val": 1
               },
               {
                 "_t": "statusinc",
+                "a": "engine.correlation",
+                "initiator": "system",
                 "m": "test-metaalarm-manual-correlation-1-2-comment",
                 "val": 1
               }
@@ -284,6 +292,8 @@ Feature: Manual meta alarms
               },
               {
                 "_t": "metaalarmattach",
+                "a": "engine.correlation",
+                "initiator": "system",
                 "m": "Rule: {test-metaalarm-rule-manual-name}\n Displayname: {test-metaalarm-manual-correlation-1-1}\n Entity: {{ `{` }}{{ .metaAlarmEntityId1 }}{{ `}` }}"
               }
             ],
@@ -309,6 +319,8 @@ Feature: Manual meta alarms
               },
               {
                 "_t": "metaalarmattach",
+                "a": "engine.correlation",
+                "initiator": "system",
                 "m": "Rule: {test-metaalarm-rule-manual-name}\n Displayname: {test-metaalarm-manual-correlation-1-2}\n Entity: {{ `{` }}{{ .metaAlarmEntityId2 }}{{ `}` }}"
               }
             ],
@@ -325,7 +337,7 @@ Feature: Manual meta alarms
     """
 
   @concurrent
-  Scenario: given manual meta alarm should add alarm to it
+  Scenario: given manual meta alarm should add alarm to it and not change state
     When I am admin
     When I send an event and wait the end of event processing:
     """json
@@ -491,11 +503,15 @@ Feature: Manual meta alarms
             "data": [
               {
                 "_t": "stateinc",
+                "a": "engine.correlation",
+                "initiator": "system",
                 "m": "test-metaalarm-manual-correlation-2-1-comment",
                 "val": 1
               },
               {
                 "_t": "statusinc",
+                "a": "engine.correlation",
+                "initiator": "system",
                 "m": "test-metaalarm-manual-correlation-2-1-comment",
                 "val": 1
               }
@@ -522,6 +538,8 @@ Feature: Manual meta alarms
               },
               {
                 "_t": "metaalarmattach",
+                "a": "engine.correlation",
+                "initiator": "system",
                 "m": "Rule: {test-metaalarm-rule-manual-name}\n Displayname: {test-metaalarm-manual-correlation-2}\n Entity: {{ `{` }}{{ .metaAlarmEntityId }}{{ `}` }}"
               }
             ],
@@ -538,7 +556,7 @@ Feature: Manual meta alarms
     """
 
   @concurrent
-  Scenario: given manual meta alarm should remove alarm from it
+  Scenario: given manual meta alarm should remove alarm from it and not change state
     When I am admin
     When I send an event and wait the end of event processing:
     """json
@@ -704,11 +722,15 @@ Feature: Manual meta alarms
             "data": [
               {
                 "_t": "stateinc",
+                "a": "engine.correlation",
+                "initiator": "system",
                 "m": "test-metaalarm-manual-correlation-3-1-comment",
                 "val": 1
               },
               {
                 "_t": "statusinc",
+                "a": "engine.correlation",
+                "initiator": "system",
                 "m": "test-metaalarm-manual-correlation-3-1-comment",
                 "val": 1
               }
@@ -735,6 +757,8 @@ Feature: Manual meta alarms
               },
               {
                 "_t": "metaalarmattach",
+                "a": "engine.correlation",
+                "initiator": "system",
                 "m": "Rule: {test-metaalarm-rule-manual-name}\n Displayname: {test-metaalarm-manual-correlation-3}\n Entity: {{ `{` }}{{ .metaAlarmEntityId }}{{ `}` }}"
               }
             ],
@@ -758,4 +782,456 @@ Feature: Manual meta alarms
     Then the response body should be:
     """json
     []
+    """
+
+  @concurrent
+  Scenario: given manual meta alarm should add alarm to it and change state
+    When I am admin
+    When I send an event and wait the end of event processing:
+    """json
+    [
+      {
+        "connector": "test-connector-manual-correlation-5",
+        "connector_name": "test-connector-name-manual-correlation-5",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-manual-correlation-5",
+        "resource": "test-resource-manual-correlation-5-1",
+        "state": 1,
+        "output": "test-output-manual-correlation-5"
+      },
+      {
+        "connector": "test-connector-manual-correlation-5",
+        "connector_name": "test-connector-name-manual-correlation-5",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-manual-correlation-5",
+        "resource": "test-resource-manual-correlation-5-2",
+        "state": 2,
+        "output": "test-output-manual-correlation-5"
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-manual-correlation-5&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-manual-correlation-5-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-manual-correlation-5-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I save response alarmId1={{ (index .lastResponse.data 0)._id }}
+    When I save response alarmId2={{ (index .lastResponse.data 1)._id }}
+    When I do POST /api/v4/cat/manual-meta-alarms:
+    """json
+    {
+      "name": "test-metaalarm-manual-correlation-5",
+      "comment": "test-metaalarm-manual-correlation-5-1-comment",
+      "alarms": ["{{ .alarmId1 }}"]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/cat/manual-meta-alarms?search=test-metaalarm-manual-correlation-5 until response code is 200 and body contains:
+    """json
+    [
+      {
+        "name": "test-metaalarm-manual-correlation-5"
+      }
+    ]
+    """
+    When I do PUT /api/v4/cat/manual-meta-alarms/{{ (index .lastResponse 0)._id }}/add:
+    """json
+    {
+      "comment": "test-metaalarm-manual-correlation-5-2-comment",
+      "alarms": ["{{ .alarmId2 }}"]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/alarms?search=test-resource-manual-correlation-5&correlation=true&sort_by=v.display_name&sort=asc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 2,
+          "meta_alarm_rule": {
+            "_id": "test-metaalarm-rule-manual",
+            "name": "test-metaalarm-rule-manual-name",
+            "type": "manualgroup"
+          },
+          "v": {
+            "display_name": "test-metaalarm-manual-correlation-5",
+            "output": "test-metaalarm-manual-correlation-5-2-comment"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 1
+      }
+    }
+    """
+    When I save response metaAlarmId={{ (index .lastResponse.data 0)._id }}
+    When I save response metaAlarmEntityId={{ (index .lastResponse.data 0).entity._id }}
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmId }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        },
+        "steps": {
+          "page": 1
+        }
+      },
+      {
+        "_id": "{{ .alarmId2 }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-connector-manual-correlation-5",
+                  "connector_name": "test-connector-name-manual-correlation-5",
+                  "component": "test-component-manual-correlation-5",
+                  "resource": "test-resource-manual-correlation-5-1"
+                }
+              },
+              {
+                "v": {
+                  "connector": "test-connector-manual-correlation-5",
+                  "connector_name": "test-connector-name-manual-correlation-5",
+                  "component": "test-component-manual-correlation-5",
+                  "resource": "test-resource-manual-correlation-5-2"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 2
+            }
+          },
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc",
+                "a": "engine.correlation",
+                "initiator": "system",
+                "m": "test-metaalarm-manual-correlation-5-1-comment",
+                "val": 1
+              },
+              {
+                "_t": "statusinc",
+                "a": "engine.correlation",
+                "initiator": "system",
+                "m": "test-metaalarm-manual-correlation-5-1-comment",
+                "val": 1
+              },
+              {
+                "_t": "stateinc",
+                "a": "engine.correlation",
+                "initiator": "system",
+                "m": "test-metaalarm-manual-correlation-5-1-comment",
+                "val": 2
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              },
+              {
+                "_t": "metaalarmattach",
+                "a": "engine.correlation",
+                "initiator": "system",
+                "m": "Rule: {test-metaalarm-rule-manual-name}\n Displayname: {test-metaalarm-manual-correlation-5}\n Entity: {{ `{` }}{{ .metaAlarmEntityId }}{{ `}` }}"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
+    """
+
+  @concurrent
+  Scenario: given manual meta alarm should remove alarm from it and change state
+    When I am admin
+    When I send an event and wait the end of event processing:
+    """json
+    [
+      {
+        "connector": "test-connector-manual-correlation-6",
+        "connector_name": "test-connector-name-manual-correlation-6",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-manual-correlation-6",
+        "resource": "test-resource-manual-correlation-6-1",
+        "state": 1,
+        "output": "test-output-manual-correlation-6"
+      },
+      {
+        "connector": "test-connector-manual-correlation-6",
+        "connector_name": "test-connector-name-manual-correlation-6",
+        "source_type": "resource",
+        "event_type": "check",
+        "component": "test-component-manual-correlation-6",
+        "resource": "test-resource-manual-correlation-6-2",
+        "state": 2,
+        "output": "test-output-manual-correlation-6"
+      }
+    ]
+    """
+    When I do GET /api/v4/alarms?search=test-resource-manual-correlation-6&sort_by=v.resource&sort=asc
+    Then the response code should be 200
+    Then the response body should contain:
+    """json
+    {
+      "data": [
+        {
+          "v": {
+            "resource": "test-resource-manual-correlation-6-1"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-manual-correlation-6-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I save response alarmId1={{ (index .lastResponse.data 0)._id }}
+    When I save response alarmId2={{ (index .lastResponse.data 1)._id }}
+    When I do POST /api/v4/cat/manual-meta-alarms:
+    """json
+    {
+      "name": "test-metaalarm-manual-correlation-6",
+      "comment": "test-metaalarm-manual-correlation-6-1-comment",
+      "alarms": [
+        "{{ .alarmId1 }}",
+        "{{ .alarmId2 }}"
+      ]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/cat/manual-meta-alarms?search=test-metaalarm-manual-correlation-6 until response code is 200 and body contains:
+    """json
+    [
+      {
+        "name": "test-metaalarm-manual-correlation-6"
+      }
+    ]
+    """
+    When I do PUT /api/v4/cat/manual-meta-alarms/{{ (index .lastResponse 0)._id }}/remove:
+    """json
+    {
+      "comment": "test-metaalarm-manual-correlation-6-2-comment",
+      "alarms": ["{{ .alarmId2 }}"]
+    }
+    """
+    Then the response code should be 204
+    When I do GET /api/v4/alarms?search=test-resource-manual-correlation-6&correlation=true&sort_by=v.component&sort=asc until response code is 200 and body contains:
+    """json
+    {
+      "data": [
+        {
+          "is_meta_alarm": true,
+          "children": 1,
+          "meta_alarm_rule": {
+            "_id": "test-metaalarm-rule-manual",
+            "name": "test-metaalarm-rule-manual-name",
+            "type": "manualgroup"
+          },
+          "v": {
+            "display_name": "test-metaalarm-manual-correlation-6",
+            "output": "test-metaalarm-manual-correlation-6-2-comment"
+          }
+        },
+        {
+          "v": {
+            "resource": "test-resource-manual-correlation-6-2"
+          }
+        }
+      ],
+      "meta": {
+        "page": 1,
+        "page_count": 1,
+        "per_page": 10,
+        "total_count": 2
+      }
+    }
+    """
+    When I save response metaAlarmId={{ (index .lastResponse.data 0)._id }}
+    When I save response metaAlarmEntityId={{ (index .lastResponse.data 0).entity._id }}
+    When I do POST /api/v4/alarm-details:
+    """json
+    [
+      {
+        "_id": "{{ .metaAlarmId }}",
+        "children": {
+          "page": 1,
+          "sort_by": "v.resource",
+          "sort": "asc"
+        },
+        "steps": {
+          "page": 1
+        }
+      },
+      {
+        "_id": "{{ .alarmId2 }}",
+        "steps": {
+          "page": 1
+        }
+      }
+    ]
+    """
+    Then the response code should be 207
+    Then the response body should contain:
+    """json
+    [
+      {
+        "status": 200,
+        "data": {
+          "children": {
+            "data": [
+              {
+                "v": {
+                  "connector": "test-connector-manual-correlation-6",
+                  "connector_name": "test-connector-name-manual-correlation-6",
+                  "component": "test-component-manual-correlation-6",
+                  "resource": "test-resource-manual-correlation-6-1"
+                }
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 1
+            }
+          },
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc",
+                "a": "engine.correlation",
+                "initiator": "system",
+                "m": "test-metaalarm-manual-correlation-6-1-comment",
+                "val": 2
+              },
+              {
+                "_t": "statusinc",
+                "a": "engine.correlation",
+                "initiator": "system",
+                "m": "test-metaalarm-manual-correlation-6-1-comment",
+                "val": 1
+              },
+              {
+                "_t": "statedec",
+                "a": "engine.correlation",
+                "initiator": "system",
+                "m": "test-metaalarm-manual-correlation-6-1-comment",
+                "val": 1
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      },
+      {
+        "status": 200,
+        "data": {
+          "steps": {
+            "data": [
+              {
+                "_t": "stateinc"
+              },
+              {
+                "_t": "statusinc"
+              },
+              {
+                "_t": "metaalarmattach",
+                "a": "engine.correlation",
+                "initiator": "system",
+                "m": "Rule: {test-metaalarm-rule-manual-name}\n Displayname: {test-metaalarm-manual-correlation-6}\n Entity: {{ `{` }}{{ .metaAlarmEntityId }}{{ `}` }}"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "page_count": 1,
+              "per_page": 10,
+              "total_count": 3
+            }
+          }
+        }
+      }
+    ]
     """
