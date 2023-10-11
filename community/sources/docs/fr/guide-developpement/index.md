@@ -24,9 +24,6 @@ Ces nouvelles API suivent l'[OpenAPI Specification 2.0](https://github.com/OAI/
     Il est possible d'activer la documentation swagger de la version installée en ajoutant l'option `-docs` aux options de démarrage du binaire `canopsis-api`. 
     Une url `/swagger/index.html` sera ainsi accessible et disponible derrière le port d'écoute de l'api ( par défaut TCP/8082 )
 
-### Anciennes API
-
-Les anciennes API v1 ou v2 ne sont plus utilisées par les dernières versions de Canopsis, et n'ont donc plus lieu d'être utilisées ou documentées.
 
 ### URL de l'API
 
@@ -123,11 +120,10 @@ curl -X GET -H "Content-Type: application/json" -H "x-canopsis-authkey: 5ba7537d
 
 * [Structure des évènements](structures/index.md)
 
-## Collections de base de données
-
-* [Collection `default_entities` pour les entités](base-de-donnees/default-entities.md)
-* [Collection `periodical_alarm` pour les alarmes](base-de-donnees/periodical-alarm.md)
-
 ## Aides au développement
 
-* [Développement d'un linkbuilder](linkbuilder/index.md)
+* [:warning: Obsolète :warning: Développement d'un linkbuilder](linkbuilder/index.md)
+
+## Schémas 
+
+* [Interactions entre les différents composants de Canopsis](./schemas/all-engines.md)
