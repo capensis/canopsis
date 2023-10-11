@@ -19,29 +19,27 @@
               div.pl-1.d-inline-block.text--secondary.body-1.font-italic {{ $t('common.emptyObject') }}
 
         template(#append="{ leaf, item }")
-          c-copy-btn(
-            v-if="leaf",
-            :value="item.path",
-            :tooltip="$t('modals.variablesHelp.copyToClipboard')",
-            left,
-            @success="onSuccessCopied",
-            @error="onErrorCopied"
-          )
-          c-action-btn(
-            v-else,
-            :tooltip="$t('common.export')",
-            icon="file_download",
-            left,
-            @click="exportAsJson(item)"
-          )
-          c-action-btn(
-            v-if="item.original",
-            :tooltip="$t('alarm.actions.titles.exportPdf')",
-            :loading="exportAlarmToPdfPending",
-            icon="assignment_returned",
-            left,
-            @click="exportAsPdf(item.original, config.exportPdfTemplate)"
-          )
+          v-menu(bottom, left)
+            template(#activator="{ on }")
+              v-tooltip(left)
+                template(#activator="{ on: tooltipOn }")
+                  v-btn(v-on="{ ...tooltipOn, ...on }", icon)
+                    v-icon save_alt
+                span {{ getTooltipContent(leaf, item) }}
+
+            v-list(dense)
+              v-list-tile(v-if="leaf", @click="copyPathToClipboard(item.path)")
+                v-list-tile-avatar
+                  v-icon content_copy
+                v-list-tile-title {{ $t('common.copyPathToClipboard') }}
+              v-list-tile(v-else, @click="exportAsJson(item)")
+                v-list-tile-avatar
+                  v-icon(size="24") $vuetify.icons.json
+                v-list-tile-title {{ $t('common.exportToJson') }}
+              v-list-tile(v-if="item.original", @click="exportAsPdf(item.original, config.exportPdfTemplate)")
+                v-list-tile-avatar
+                  v-icon(size="24") $vuetify.icons.pdf
+                v-list-tile-title {{ $t('common.exportToPdf') }}
 </template>
 
 <script>
@@ -69,6 +67,18 @@ export default {
     };
   },
   methods: {
+    getTooltipContent(leaf, item) {
+      if (item.original) {
+        return leaf
+          ? this.$t('common.copyFieldPathOrExportFieldToPdf', { field: item.name })
+          : this.$t('common.exportFieldToPdfOrJson', { field: item.name });
+      }
+
+      return leaf
+        ? this.$t('common.copyFieldPath', { field: item.name })
+        : this.$t('common.exportFieldToJson', { field: item.name });
+    },
+
     getNowDateString() {
       return convertDateToString(
         getNowTimestamp(),
@@ -92,6 +102,12 @@ export default {
       await this.exportAlarmToPdf(alarm, template);
 
       this.exportAlarmToPdfPending = false;
+    },
+
+    copyPathToClipboard(path) {
+      this.$copyText(path)
+        .then(this.onSuccessCopied)
+        .catch(this.onErrorCopied);
     },
 
     onSuccessCopied() {
