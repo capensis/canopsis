@@ -49,7 +49,7 @@ func TestMessageProcessor_Process_GivenRecomputeEntityServiceEvent_ShouldPassItT
 	mockEnrichmentCenter := mock_context.NewMockEnrichmentCenter(ctrl)
 	mockEnrichmentCenter.EXPECT().HandleEntityServiceUpdate(gomock.Any(), gomock.Eq("test-component")).
 		Return(&libcontext.UpdatedEntityServices{}, nil)
-	mockEnrichmentCenter.EXPECT().Get(gomock.Any(), gomock.Any()).Return(nil, nil)
+	mockEnrichmentCenter.EXPECT().Get(gomock.Any(), gomock.Any()).Return(&types.Entity{Enabled: true}, nil)
 	mockDecoder := mock_encoding.NewMockDecoder(ctrl)
 	mockDecoder.EXPECT().Decode(gomock.Eq(body), gomock.Any()).Do(func(_ []byte, e *types.Event) {
 		*e = event
