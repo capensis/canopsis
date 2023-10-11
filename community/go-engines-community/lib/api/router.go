@@ -86,7 +86,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-const baseUrl = "/api/v4"
+const BaseUrl = "/api/v4"
 
 func RegisterRoutes(
 	conf config.CanopsisConf,
@@ -150,13 +150,13 @@ func RegisterRoutes(
 		sessionProtected.GET("/logout", sessionauthApi.LogoutHandler())
 	}
 
-	unprotected := router.Group(baseUrl)
+	unprotected := router.Group(BaseUrl)
 	{
 		unprotected.POST("/login", authApi.Login)
 		unprotected.POST("/logout", authApi.Logout)
 	}
 
-	protected := router.Group(baseUrl)
+	protected := router.Group(BaseUrl)
 	{
 		protected.Use(authMiddleware...)
 
@@ -1102,7 +1102,7 @@ func RegisterRoutes(
 				broadcastMessageApi.Update)
 			// can not make typical format like /api/v4/broadcast-message/active
 			// because it would be failed with conflict error apart of get /:id route
-			router.GET(baseUrl+"/active-broadcast-message", broadcastMessageApi.GetActive)
+			router.GET(BaseUrl+"/active-broadcast-message", broadcastMessageApi.GetActive)
 		}
 
 		associativeTableApi := associativetable.NewApi(

@@ -294,7 +294,7 @@ func Default(
 		linkGenerator = wrapper.NewGenerator(linkGenerators...)
 	}
 
-	api.AddRouter(func(router gin.IRouter) {
+	api.AddRouter(func(router *gin.Engine) {
 		router.Use(middleware.CacheControl())
 
 		router.Use(func(c *gin.Context) {
@@ -343,7 +343,7 @@ func Default(
 		)
 	})
 	if flags.EnableDocs {
-		api.AddRouter(func(router gin.IRouter) {
+		api.AddRouter(func(router *gin.Engine) {
 			router.GET("/swagger/*filepath", func(c *gin.Context) {
 				c.FileFromFS(fmt.Sprintf("swaggerui/%s", c.Param("filepath")), http.FS(docsUiFile))
 			})
@@ -357,7 +357,7 @@ func Default(
 			if err != nil {
 				return nil, nil, fmt.Errorf("cannot read swagger: %w", err)
 			}
-			api.AddRouter(func(router gin.IRouter) {
+			api.AddRouter(func(router *gin.Engine) {
 				router.GET("/swagger.yaml", docs.GetHandler(schemasContent, content))
 			})
 		}
