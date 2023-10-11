@@ -6,10 +6,15 @@ import { entitiesInfoMixin } from '@/mixins/entities/info';
 export const layoutNavigationTopBarMenuMixin = {
   mixins: [authMixin, entitiesInfoMixin],
   methods: {
-    prepareLinks(links) {
+    filterLinks(links) {
       const { permissionsWithDefaultType = [] } = this;
-      const preparedLinks = links
+
+      return links
         .filter(({ permission }) => {
+          if (!permission) {
+            return true;
+          }
+
           if (this.checkAppInfoAccessByPermission(permission)) {
             return permissionsWithDefaultType.includes(permission)
               ? this.checkAccess(permission)
@@ -17,7 +22,11 @@ export const layoutNavigationTopBarMenuMixin = {
           }
 
           return false;
-        })
+        });
+    },
+
+    prepareLinks(links) {
+      const preparedLinks = this.filterLinks(links)
         .map(link => ({ ...link, title: this.$t(`pageHeaders.${link.permission}.title`) }));
 
       return sortBy(preparedLinks, 'title');

@@ -370,13 +370,24 @@ export const MAX_SEARCH_ITEMS = 8;
 export const LOGIN_APP_INFO_POLLING_DELAY = 5000;
 
 export const RESPONSE_STATUSES = {
+  badRequest: 400,
   unauthorized: 401,
   notFound: 404,
   forbidden: 403,
   timeout: 408,
 
+  internalServerError: 500,
   badGateway: 502,
   serviceUnavailable: 503,
 };
 
-export const EXCLUDED_SERVER_ERROR_STATUSES = [RESPONSE_STATUSES.unauthorized, RESPONSE_STATUSES.forbidden];
+export const LOGOUT_RESPONSE_STATUSES = [
+  RESPONSE_STATUSES.unauthorized,
+  RESPONSE_STATUSES.badGateway,
+  RESPONSE_STATUSES.serviceUnavailable,
+];
+
+export const EXCLUDED_SERVER_ERROR_STATUSES = [
+  RESPONSE_STATUSES.unauthorized,
+  RESPONSE_STATUSES.forbidden,
+];

@@ -1,4 +1,4 @@
-import { INSTRUCTION_EXECUTION_ICONS } from '@/constants';
+import { INSTRUCTION_EXECUTION_ICONS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants';
 
 /**
  * Check type is manual in progress
@@ -92,3 +92,53 @@ export const isInstructionExecutionManual = icon => [
   INSTRUCTION_EXECUTION_ICONS.manualSuccessfulWithInProgress,
   INSTRUCTION_EXECUTION_ICONS.manualSuccessfulWithManualAvailable,
 ].includes(icon);
+
+/**
+ * Check instruction execution status is completed
+ *
+ * @param {number} status
+ * @returns {boolean}
+ */
+export const isInstructionExecutionCompleted = ({
+  status,
+}) => status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed;
+
+/**
+ * Check instruction execution status is failed
+ *
+ * @param {number} status
+ * @returns {boolean}
+ */
+export const isInstructionExecutionFailed = ({
+  status,
+} = {}) => status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.failed;
+
+/**
+ * Check instruction execution status is aborted
+ *
+ * @param {number} status
+ * @returns {boolean}
+ */
+export const isInstructionExecutionAborted = ({
+  status,
+} = {}) => status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.aborted;
+
+/**
+ * Check instruction execution status is paused
+ *
+ * @param {number} status
+ * @returns {boolean}
+ */
+export const isInstructionExecutionPaused = ({
+  status,
+} = {}) => status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused;
+
+/**
+ * Check instruction execution status is running
+ *
+ * @param {number} status
+ * @returns {boolean}
+ */
+export const isInstructionExecutionRunning = ({
+  status,
+} = {}) => status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running;
